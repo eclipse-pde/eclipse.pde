@@ -201,7 +201,7 @@
       </wizard>
       <wizard
             name="%projectGenerators.choice.name"
-            icon="icons/full/ctool16/defcon_wiz.gif"
+            icon="icons/full/ctool16/script_wiz.gif"
             class="org.eclipse.pde.internal.ui.wizards.templates.NewPluginTemplateChoiceWizard"
             id="org.eclipse.pde.ui.projectGenerators.choice">
          <description>

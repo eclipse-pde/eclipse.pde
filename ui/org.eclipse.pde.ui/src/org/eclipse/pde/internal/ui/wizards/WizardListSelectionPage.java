@@ -43,6 +43,9 @@ public WizardListSelectionPage(ElementList wizardElements, String message) {
 public void advanceToNextPage() {
 	getContainer().showPage(getNextPage());
 }
+public ElementList getWizardElements() {
+	return wizardElements;
+}
 public void createControl(Composite parent) {
 	// create composite for page.
 	Composite outerContainer = new Composite(parent, SWT.NONE);
@@ -118,5 +121,16 @@ public void selectionChanged(SelectionChangedEvent event) {
 }
 public void setSelectedNode(IWizardNode node) {
 	super.setSelectedNode(node);
+}
+
+protected void focusAndSelectFirst() {
+	Table table = wizardSelectionViewer.getTable();
+	table.setFocus();
+	TableItem [] items = table.getItems();
+	if (items.length>0) {
+		TableItem first = items[0];
+		Object obj = first.getData();
+		wizardSelectionViewer.setSelection(new StructuredSelection(obj));
+	}
 }
 }

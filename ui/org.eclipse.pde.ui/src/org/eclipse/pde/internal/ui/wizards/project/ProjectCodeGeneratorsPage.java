@@ -10,6 +10,7 @@ import org.eclipse.jface.operation.*;
 import org.eclipse.pde.internal.ui.util.*;
 import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.pde.internal.ui.elements.*;
@@ -90,7 +91,7 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 		gd.horizontalAlignment = GridData.FILL;
 		gd.verticalAlignment = GridData.BEGINNING;
 		gd.grabExcessHorizontalSpace = true;
-		blankPageRadio.setSelection(true);
+		blankPageRadio.setSelection(false);
 		String labelText =
 			fragment
 				? PDEPlugin.getResourceString(KEY_BLANK_FLABEL)
@@ -104,7 +105,7 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 				? PDEPlugin.getResourceString(KEY_TEMPLATE_FLABEL)
 				: PDEPlugin.getResourceString(KEY_TEMPLATE_LABEL);
 		templateRadio.setText(labelText);
-		templateRadio.setSelection(false);
+		templateRadio.setSelection(true);
 		gd = new GridData();
 		gd.horizontalAlignment = GridData.FILL;
 		gd.verticalAlignment = GridData.BEGINNING;
@@ -124,7 +125,7 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 		wizardList = super.wizardSelectionViewer.getControl();
 		Control control = getControl();
 		control.setLayoutData(gd);
-		setWizardListEnabled(false);
+		//setWizardListEnabled(false);
 		setControl(outerContainer);
 	}
 
@@ -132,7 +133,11 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 		super.setVisible(visible);
 		
 		if (visible && firstTime) {
-			blankPageRadio.setFocus();
+			if (blankPageRadio.getSelection())
+				blankPageRadio.setFocus();
+			else {
+				focusAndSelectFirst();
+			}
 			firstTime=false;
 		}
 	}

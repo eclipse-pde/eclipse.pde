@@ -42,7 +42,8 @@ public class PluginsView extends ViewPart {
 	private DrillDownAdapter drillDownAdapter;
 	private IPropertyChangeListener propertyListener;
 	private Action openAction;
-	private Action importAction;
+	private Action importBinaryAction;
+	private Action importSourceAction;
 	private Action disabledFilterAction;
 	private Action workspaceFilterAction;
 	private Action openManifestAction;
@@ -150,12 +151,19 @@ public class PluginsView extends ViewPart {
 			}
 		};
 		openAction.setText("Open");
-		importAction = new Action() {
+		
+		importBinaryAction = new Action() {
 			public void run() {
-				handleImport();
+				handleImport(false);
 			}
 		};
-		importAction.setText("Import As Project");
+		importBinaryAction.setText("As Binary Project");
+		importSourceAction = new Action() {
+			public void run() {
+				handleImport(true);
+			}
+		};
+		importSourceAction.setText("As Source Project");
 		disabledFilterAction = new Action() {
 			public void run() {
 				boolean checked = disabledFilterAction.isChecked();
@@ -256,7 +264,10 @@ public class PluginsView extends ViewPart {
 				manager.add(new Separator());
 			}
 			if (canImport(selection)) {
-				manager.add(importAction);
+				MenuManager importMenu = new MenuManager("Import");
+				importMenu.add(importBinaryAction);
+				importMenu.add(importSourceAction);
+				manager.add(importMenu);
 				manager.add(new Separator());
 			}
 		}
@@ -367,7 +378,7 @@ public class PluginsView extends ViewPart {
 		}
 	}
 
-	private void handleImport() {
+	private void handleImport(boolean extractSource) {
 		IStructuredSelection selection =
 			(IStructuredSelection) treeViewer.getSelection();
 		IPluginModelBase[] models = new IPluginModelBase[selection.size()];
@@ -379,7 +390,7 @@ public class PluginsView extends ViewPart {
 		try {
 			Shell shell = treeViewer.getTree().getShell();
 			IRunnableWithProgress op =
-				PluginImportWizard.getImportOperation(shell, true, false, models);
+				PluginImportWizard.getImportOperation(shell, true, extractSource, models);
 			ProgressMonitorDialog pmd = new ProgressMonitorDialog(shell);
 			pmd.run(true, true, op);
 		} catch (InterruptedException e) {
