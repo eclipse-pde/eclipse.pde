@@ -78,7 +78,7 @@ public class ViewTemplate extends PDETemplateSection {
 
 		IPluginElement categoryElement = factory.createElement(extension);
 		categoryElement.setName("category");
-		categoryElement.setAttribute("name", "Sample View");
+		categoryElement.setAttribute("name", getStringOption("viewCategory"));
 		String cid = plugin.getId();
 		categoryElement.setAttribute("id", cid);
 		extension.add(categoryElement);

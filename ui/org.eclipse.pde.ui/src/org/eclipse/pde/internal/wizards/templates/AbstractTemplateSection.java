@@ -16,6 +16,7 @@ import java.util.MissingResourceException;
 public abstract class AbstractTemplateSection implements ITemplateSection, IVariableProvider {
 	protected IProject project;
 	protected IPluginModelBase model;
+	public static final String KEY_PLUGIN_CLASS = "pluginClass";
 	public static final String KEY_PLUGIN_ID = "pluginId";
 	public static final String KEY_PLUGIN_NAME = "pluginName";
 
@@ -23,6 +24,12 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	 * @see ITemplateSection#getReplacementString(String)
 	 */
 	public String getReplacementString(String fileName, String key) {
+		if (key.equals(KEY_PLUGIN_CLASS) && model != null) {
+			if (model instanceof IPluginModel) {
+				IPlugin plugin = (IPlugin)model.getPluginBase();
+				return plugin.getClassName();
+			}
+		}
 		if (key.equals(KEY_PLUGIN_ID) && model != null) {
 			IPluginBase plugin = model.getPluginBase();
 			return plugin.getId();

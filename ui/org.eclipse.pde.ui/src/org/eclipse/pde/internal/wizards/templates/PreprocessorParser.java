@@ -22,6 +22,12 @@ public class PreprocessorParser {
 	private static final int OP_NEQ = 4;
 	private static final int OP_NOT = 5;
 	private static final int OP_DEFER = 55;
+	
+	private IVariableProvider provider;
+	private String line;
+	private Stack exprStack;	
+	private int loc;
+	private String tvalue;
 
 	abstract class Node {
 		abstract Object getValue();
@@ -104,13 +110,6 @@ public class PreprocessorParser {
 	class RootEntry {
 		Node root;
 	}
-
-	private IVariableProvider provider;
-	private String line;
-	private Object tvalue, savedTvalue;
-	private int loc, savedLoc;
-	private Stack exprStack;
-
 	public PreprocessorParser() {
 		this(null);
 	}
@@ -146,9 +145,9 @@ public class PreprocessorParser {
 	public boolean parseAndEvaluate(String line) throws Exception {
 		reset();
 		this.line = line;
-		System.out.println("Line: " + line);
+		//System.out.println("Line: " + line);
 		parse();
-		printExpression();
+		//printExpression();
 		return evaluate();
 	}
 	
@@ -181,10 +180,7 @@ public class PreprocessorParser {
 
 	private void reset() {
 		loc = 0;
-		savedLoc = 0;
-		int token;
 		tvalue = null;
-		savedTvalue = null;
 		exprStack.clear();
 	}
 
@@ -297,20 +293,26 @@ public class PreprocessorParser {
 		throw new Exception(message);
 	}
 
-	private void undoGetNextToken() {
-		loc = savedLoc;
-		tvalue = savedTvalue;
-	}
 
 	private int getNextToken() {
-		savedLoc = loc;
-		savedTvalue = tvalue;
 		boolean string = false;
 		boolean variable = false;
 		int vloc = loc;
 		tvalue = null;
 		for (;;) {
 			if (loc == line.length()) {
+				// check if we have panding identifier
+				if (variable) {
+					tvalue = line.substring(vloc, loc);
+					variable = false;
+					return T_VAR;
+				}
+				if (string) {
+					// EOF in string
+					string = false;
+					return T_ERROR;
+				}
+				// regular end of line
 				tvalue = "EOF";
 				return T_EOF;
 			}
@@ -319,6 +321,7 @@ public class PreprocessorParser {
 			if (c == '\"') {
 				if (string) {
 					tvalue = line.substring(vloc, loc - 1);
+					string = false;
 					return T_STRING;
 				} else {
 					vloc = loc;
@@ -335,8 +338,8 @@ public class PreprocessorParser {
 			}
 			if (variable) {
 				if (!Character.isJavaIdentifierPart(c)) {
-					loc--;
 					tvalue = line.substring(vloc, loc);
+					variable = false;
 					return T_VAR;
 				} else
 					continue;
