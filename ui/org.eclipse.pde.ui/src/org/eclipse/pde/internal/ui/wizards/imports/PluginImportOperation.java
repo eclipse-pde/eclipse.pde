@@ -217,12 +217,18 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			boolean sourceFound = false;
 			if (isJavaProject & extractSource) 
 				sourceFound = doExtractSource(project, model, monitor);
-
+				
 			//Mark this project so that we can show image overlay
 			// using the label decorator
 			if (!isJavaProject || !sourceFound)
-				project.setPersistentProperty(PDECore.EXTERNAL_PROJECT_PROPERTY, PDECore.BINARY_PROJECT_VALUE);
+				project.setPersistentProperty(
+					PDECore.EXTERNAL_PROJECT_PROPERTY,
+					PDECore.BINARY_PROJECT_VALUE);
 
+			if (isJavaProject)
+				JavaCore.create(project).setRawClasspath(
+					new IClasspathEntry[0],
+					monitor);
 		} finally {
 			monitor.done();
 		}

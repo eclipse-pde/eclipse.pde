@@ -92,7 +92,7 @@ public class BuildPathUtilCore {
 			addSourceFolders(buildModel, result);
 		else {
 			// just keep the source folders
-			//keepExistingSourceFolders(javaProject, result);
+			keepExistingSourceFolders(javaProject, result);
 		}
 		if (useClasspathContainer) {
 			// Do not set dependent plug-ins explicitly,
