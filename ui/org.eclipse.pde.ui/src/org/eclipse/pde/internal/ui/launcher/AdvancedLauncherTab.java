@@ -57,11 +57,13 @@ public class AdvancedLauncherTab
 	private Label restoreLabel;
 	private NamedElement workspacePlugins;
 	private NamedElement externalPlugins;
-	private Vector externalList;
-	private Vector workspaceList;
+	private IPluginModelBase[] externalModels;
+	private IPluginModelBase[] workspaceModels;
 	private Button defaultsButton;
 	private Button pluginPathButton;
-
+	private int numExternalChecked = 0;
+	private int numWorkspaceChecked = 0;
+	
 	class PluginContentProvider
 		extends DefaultContentProvider
 		implements ITreeContentProvider {
@@ -72,10 +74,10 @@ public class AdvancedLauncherTab
 		}
 		public Object[] getChildren(Object parent) {
 			if (parent == externalPlugins) {
-				return getExternalPlugins();
+				return externalModels;
 			}
 			if (parent == workspacePlugins) {
-				return getWorkspacePlugins();
+				return workspaceModels;
 			}
 			return new Object[0];
 		}
@@ -138,6 +140,8 @@ public class AdvancedLauncherTab
 
 	public AdvancedLauncherTab() {
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
+		externalModels = getExternalPlugins();
+		workspaceModels = getWorkspacePlugins();
 	}
 
 	public void dispose() {
@@ -232,9 +236,9 @@ public class AdvancedLauncherTab
 	}
 
 	private void adjustCustomControlEnableState(boolean enable) {
-//		visibleLabel.setEnabled(enable);
-//		pluginTreeViewer.getTree().setEnabled(enable);
-//		defaultsButton.setEnabled(enable);
+		//		visibleLabel.setEnabled(enable);
+		//		pluginTreeViewer.getTree().setEnabled(enable);
+		//		defaultsButton.setEnabled(enable);
 		visibleLabel.setVisible(enable);
 		pluginTreeViewer.getTree().setVisible(enable);
 		defaultsButton.setVisible(enable);
@@ -333,109 +337,100 @@ public class AdvancedLauncherTab
 	}
 
 	public void initializeFrom(ILaunchConfiguration config) {
-		// Need to set these before we refresh the viewer
+	}
 
-		boolean useDefault = true;
+	private ArrayList parseDeselectedIds(ILaunchConfiguration config) throws CoreException {
+		ArrayList deselected = new ArrayList();
+		String deselectedPluginIDs =
+			config.getAttribute(WSPROJECT, (String) null);
+		if (deselectedPluginIDs != null) {
+			StringTokenizer tok =
+				new StringTokenizer(deselectedPluginIDs, File.pathSeparator);
+			while (tok.hasMoreTokens()) {
+				deselected.add(tok.nextToken());
+			}
+		}
+		return deselected;
+	}
+
+	private ArrayList initWorkspacePluginsState(ILaunchConfiguration config)
+		throws CoreException {
+
+		ArrayList result = new ArrayList();
+		ArrayList deselected = parseDeselectedIds(config);
+
+		for (int i = 0; i < workspaceModels.length; i++) {
+			IPluginModelBase desc = workspaceModels[i];
+			if (!deselected.contains(desc.getPluginBase().getId())) {
+				result.add(desc);
+			}
+		}
+
+		int size = result.size();
+		
+		if (size > 0)
+			result.add(workspacePlugins);
+		pluginTreeViewer.setGrayed(
+			workspacePlugins,
+			size > 0 && size < workspaceModels.length);
+		return result;
+	}
+
+	private ArrayList initExternalPluginsState(ILaunchConfiguration config)
+		throws CoreException {
+
+		String exSettings = config.getAttribute(EXTPLUGINS, (String) null);
+		ExternalStates states =
+			new ExternalStates((exSettings != null) ? exSettings : "");
+		ArrayList result = new ArrayList();
+
+		for (int i = 0; i < externalModels.length; i++) {
+			IPluginModelBase desc = externalModels[i];
+			ExternalState es = states.getState(desc.getPluginBase().getId());
+			if (es != null) {
+				// use the saved state
+				if (es.state) {
+					result.add(desc);
+				}
+			} else if (desc.isEnabled()) {
+				result.add(desc);
+			}
+		}
+
+		int size = result.size();
+
+		if (size > 0)
+			result.add(externalPlugins);
+		pluginTreeViewer.setGrayed(
+			externalPlugins,
+			size > 0 && size < externalModels.length);
+
+		return result;
+	}
+
+	public void initialize(ILaunchConfiguration config) {
+
 		try {
-			useDefault = config.getAttribute(USECUSTOM, useDefault);
+			useDefaultRadio.setSelection(config.getAttribute(USECUSTOM, true));
+			useListRadio.setSelection(!useDefaultRadio.getSelection());
+
+			if (pluginTreeViewer.getInput() == null)
+				pluginTreeViewer.setInput(PDEPlugin.getDefault());
+
+			if (useDefaultRadio.getSelection()) {
+				pluginTreeViewer.setCheckedElements(
+					computeInitialCheckState().toArray());
+			} else {
+				ArrayList result =
+					initWorkspacePluginsState(config);
+				result.addAll(initExternalPluginsState(config));
+				pluginTreeViewer.setCheckedElements(result.toArray());
+			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
-		useDefaultRadio.setSelection(useDefault);
-		useListRadio.setSelection(!useDefault);
-		if (pluginTreeViewer.getInput() == null)
-			pluginTreeViewer.setInput(PDEPlugin.getDefault());
-		Vector result = null;
-		if (useDefault) {
-			result = computeInitialCheckState();
-		} else {
-			result = new Vector();
-			boolean addRoot = false;
-			boolean mixed = false;
 
-			IPluginModelBase[] ws = getWorkspacePlugins();
-
-			try {
-				// Deselected workspace plug-ins
-				String deselectedPluginIDs =
-					config.getAttribute(WSPROJECT, (String) null);
-				if (!useDefault && deselectedPluginIDs != null) {
-					ArrayList deselected = new ArrayList();
-					StringTokenizer tok =
-						new StringTokenizer(
-							deselectedPluginIDs,
-							File.pathSeparator);
-					while (tok.hasMoreTokens()) {
-						deselected.add(tok.nextToken());
-					}
-					for (int i = 0; i < ws.length; i++) {
-						IPluginModelBase desc = ws[i];
-						if (!deselected
-							.contains(desc.getPluginBase().getId())) {
-							if (!addRoot) {
-								addRoot = true;
-								result.add(workspacePlugins);
-							}
-							result.add(desc);
-						} else
-							mixed = true;
-					}
-				} else {
-					for (int i = 0; i < ws.length; i++) {
-						result.add(ws[i]);
-					}
-					result.add(workspacePlugins);
-					addRoot = true;
-				}
-				if (addRoot && mixed) {
-					pluginTreeViewer.setGrayed(workspacePlugins, true);
-				}
-				// External state
-				addRoot = false;
-				mixed = false;
-
-				IPluginModelBase[] ex = getExternalPlugins();
-
-				String exSettings =
-					config.getAttribute(EXTPLUGINS, (String) null);
-				if (exSettings == null)
-					exSettings = "";
-				ExternalStates states = new ExternalStates(exSettings);
-
-				for (int i = 0; i < ex.length; i++) {
-					IPluginModelBase desc = ex[i];
-					ExternalState es =
-						states.getState(desc.getPluginBase().getId());
-					if (es != null) {
-						// use the saved state
-						if (es.state) {
-							addRoot = true;
-							result.add(desc);
-						} else {
-							mixed = true;
-						}
-					} else {
-						// use the preference
-						if (desc.isEnabled()) {
-							addRoot = true;
-							result.add(desc);
-						} else {
-							mixed = true;
-						}
-					}
-				}
-			} catch (CoreException e) {
-				PDEPlugin.logException(e);
-			}
-			if (addRoot) {
-				result.add(externalPlugins);
-				if (mixed) {
-					pluginTreeViewer.setGrayed(externalPlugins, true);
-				}
-			}
-		}
-		pluginTreeViewer.setCheckedElements(result.toArray());
-		adjustCustomControlEnableState(!useDefault);
+		adjustCustomControlEnableState(!useDefaultRadio.getSelection());
 		updateStatus();
 	}
 
@@ -449,101 +444,84 @@ public class AdvancedLauncherTab
 	}
 
 	private Vector computeInitialCheckState() {
-		IPluginModelBase[] models = (IPluginModelBase[]) getWorkspacePlugins();
 		Vector checked = new Vector();
 		Hashtable wtable = new Hashtable();
+		numWorkspaceChecked = 0;
+		numExternalChecked = 0;
 
-		for (int i = 0; i < models.length; i++) {
-			IPluginModelBase model = models[i];
+		for (int i = 0; i < workspaceModels.length; i++) {
+			IPluginModelBase model = workspaceModels[i];
 			checked.add(model);
+			numWorkspaceChecked += 1;
 			wtable.put(getModelKey(model), model);
 		}
-		checked.add(workspacePlugins);
-		if (pluginTreeViewer.getGrayed(workspacePlugins))
-			pluginTreeViewer.setGrayed(workspacePlugins, false);
+		if (checked.size() > 0)
+			checked.add(workspacePlugins);
+		pluginTreeViewer.setGrayed(workspacePlugins, false);
 
-		models = (IPluginModelBase[]) getExternalPlugins();
-		for (int i = 0; i < models.length; i++) {
-			IPluginModelBase model = models[i];
+		for (int i = 0; i < externalModels.length; i++) {
+			IPluginModelBase model = externalModels[i];
 			boolean masked = wtable.get(getModelKey(model)) != null;
-			if (!masked && model.isEnabled())
+			if (!masked && model.isEnabled()) {
 				checked.add(model);
-		}
-		CoreSettings pstore = PDECore.getDefault().getSettings();
-		String exMode = pstore.getString(ICoreConstants.CHECKED_PLUGINS);
-		boolean externalMixed = false;
-		if (exMode.length() > 0) {
-			if (exMode.equals(ICoreConstants.VALUE_SAVED_ALL)) {
-				checked.add(externalPlugins);
-			} else if (!exMode.equals(ICoreConstants.VALUE_SAVED_NONE)) {
-				checked.add(externalPlugins);
-				externalMixed = true;
+				numExternalChecked += 1;
 			}
 		}
-		if (pluginTreeViewer.getGrayed(externalPlugins) != externalMixed)
-			pluginTreeViewer.setGrayed(externalPlugins, externalMixed);
+
+		if (numExternalChecked > 0)
+			checked.add(externalPlugins);
+		pluginTreeViewer.setGrayed(
+			externalPlugins,
+			numExternalChecked > 0
+				&& numExternalChecked < externalModels.length);
+
 		return checked;
 	}
 
 	private void handleCheckStateChanged(
 		IPluginModelBase model,
 		boolean checked) {
-		boolean external = model.getUnderlyingResource() == null;
-		NamedElement parent = external ? externalPlugins : workspacePlugins;
-		IPluginModelBase[] siblings;
 
-		if (external) {
-			siblings = (IPluginModelBase[]) getExternalPlugins();
-		} else {
-			siblings = (IPluginModelBase[]) getWorkspacePlugins();
-		}
-
-		int groupState = -1;
-
-		for (int i = 0; i < siblings.length; i++) {
-			boolean state = pluginTreeViewer.getChecked(siblings[i]);
-			if (groupState == -1)
-				groupState = state ? 1 : 0;
-			else if (groupState == 1 && state == false) {
-				groupState = -1;
-				break;
-			} else if (groupState == 0 && state == true) {
-				groupState = -1;
-				break;
+		if (model.getUnderlyingResource() == null) {
+			if (checked) {
+				numExternalChecked += 1;
+			} else {
+				numExternalChecked -= 1;
 			}
+			pluginTreeViewer.setChecked(
+				externalPlugins,
+				numExternalChecked > 0);
+			pluginTreeViewer.setGrayed(
+				externalPlugins,
+				numExternalChecked > 0
+					&& numExternalChecked < externalModels.length);
+		} else {
+			if (checked) {
+				numWorkspaceChecked += 1;
+			} else {
+				numWorkspaceChecked -= 1;
+			}
+			pluginTreeViewer.setChecked(
+				workspacePlugins,
+				numWorkspaceChecked > 0);
+			pluginTreeViewer.setGrayed(
+				workspacePlugins,
+				numWorkspaceChecked > 0
+					&& numWorkspaceChecked < workspaceModels.length);
 		}
-		// If group state is -1 (mixed), we should gray the parent.
-		// Otherwise, we should set it to the children group state
-		switch (groupState) {
-			case 0 :
-				pluginTreeViewer.setChecked(parent, false);
-				pluginTreeViewer.setGrayed(parent, false);
-				break;
-			case 1 :
-				pluginTreeViewer.setChecked(parent, true);
-				pluginTreeViewer.setGrayed(parent, false);
-				break;
-			case -1 :
-				pluginTreeViewer.setChecked(parent, true);
-				pluginTreeViewer.setGrayed(parent, true);
-				break;
-		}
+
 		setChanged(true);
 	}
 
 	private void handleGroupStateChanged(Object group, boolean checked) {
-		IPluginModelBase[] models;
-
-		if (group.equals(workspacePlugins)) {
-			models = (IPluginModelBase[]) getWorkspacePlugins();
-		} else {
-			models = (IPluginModelBase[]) getExternalPlugins();
-		}
-		for (int i = 0; i < models.length; i++) {
-			pluginTreeViewer.setChecked(models[i], checked);
-		}
-		if (pluginTreeViewer.getGrayed(group))
-			pluginTreeViewer.setGrayed(group, false);
+		pluginTreeViewer.setSubtreeChecked(group, checked);
+		pluginTreeViewer.setGrayed(group, false);
+		
+		if (group == workspacePlugins)
+			numWorkspaceChecked = checked ? workspaceModels.length : 0;
+		else if (group == externalPlugins)
+			numExternalChecked = checked ? externalModels.length : 0;
+			
 		setChanged(true);
 	}
 
@@ -551,41 +529,46 @@ public class AdvancedLauncherTab
 		config.setAttribute(USECUSTOM, true);
 	}
 
-	public void performApply(ILaunchConfigurationWorkingCopy config) {
+	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		if (!isChanged())
 			return;
-		boolean useDefault = useDefaultRadio.getSelection();
-		config.setAttribute(USECUSTOM, useDefault);
 
-		if (useDefault)
-			return;
+		final ILaunchConfigurationWorkingCopy config = configuration;
+		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
+			public void run() {
+				config.setAttribute(USECUSTOM, useDefaultRadio.getSelection());
+				
+				if (useDefaultRadio.getSelection())
+					return;
 
-		// store deselected projects
-		StringBuffer wbuf = new StringBuffer();
-		IPluginModelBase[] workspaceModels = getWorkspacePlugins();
+				// store deselected projects
+				StringBuffer wbuf = new StringBuffer();
 
-		for (int i = 0; i < workspaceModels.length; i++) {
-			IPluginModelBase model = (IPluginModelBase) workspaceModels[i];
-			if (pluginTreeViewer.getChecked(model))
-				continue;
-			wbuf.append(model.getPluginBase().getId());
-			wbuf.append(File.pathSeparatorChar);
-		}
+				for (int i = 0; i < workspaceModels.length; i++) {
+					IPluginModelBase model =
+						(IPluginModelBase) workspaceModels[i];
+					if (!pluginTreeViewer.getChecked(model))
+						wbuf.append(
+							model.getPluginBase().getId()
+								+ File.pathSeparatorChar);
+				}
 
-		StringBuffer exbuf = new StringBuffer();
-		IPluginModelBase[] externalModels = getExternalPlugins();
+				StringBuffer exbuf = new StringBuffer();
 
-		// Store external state
-		for (int i = 0; i < externalModels.length; i++) {
-			IPluginModelBase model = (IPluginModelBase) externalModels[i];
-			boolean state = pluginTreeViewer.getChecked(model);
-			exbuf.append(model.getPluginBase().getId());
-			exbuf.append(state ? ",t" : ",f");
-			exbuf.append(File.pathSeparatorChar);
-		}
-		config.setAttribute(WSPROJECT, wbuf.toString());
-		config.setAttribute(EXTPLUGINS, exbuf.toString());
-		setChanged(false);
+				// Store external state
+				for (int i = 0; i < externalModels.length; i++) {
+					IPluginModelBase model =
+						(IPluginModelBase) externalModels[i];
+					exbuf.append(model.getPluginBase().getId());
+					exbuf.append(
+						pluginTreeViewer.getChecked(model) ? ",t" : ",f");
+					exbuf.append(File.pathSeparatorChar);
+				}
+				config.setAttribute(WSPROJECT, wbuf.toString());
+				config.setAttribute(EXTPLUGINS, exbuf.toString());
+				setChanged(false);
+			}
+		});
 	}
 
 	private void showPluginPaths() {
@@ -655,18 +638,16 @@ public class AdvancedLauncherTab
 		ArrayList res = new ArrayList();
 		boolean useDefault = useDefaultRadio.getSelection();
 		if (useDefault) {
-			IPluginModelBase[] models = getWorkspacePlugins();
 			Hashtable wtable = new Hashtable();
-			for (int i = 0; i < models.length; i++) {
-				res.add(models[i]);
-				wtable.put(getModelKey(models[i]), models[i]);
+			for (int i = 0; i < workspaceModels.length; i++) {
+				res.add(workspaceModels[i]);
+				wtable.put(getModelKey(workspaceModels[i]), workspaceModels[i]);
 			}
-			models = getExternalPlugins();
-			for (int i = 0; i < models.length; i++) {
-				IPluginModelBase model = models[i];
+			for (int i = 0; i < externalModels.length; i++) {
+				IPluginModelBase model = externalModels[i];
 				boolean masked = wtable.get(getModelKey(model)) != null;
-				if (!masked && models[i].isEnabled())
-					res.add(models[i]);
+				if (!masked && externalModels[i].isEnabled())
+					res.add(externalModels[i]);
 			}
 
 		} else {

@@ -63,9 +63,12 @@ public abstract class AbstractLauncherTab extends AbstractLaunchConfigurationTab
 	 * Updates the status line and the ok button depending on the status
 	 */
 	protected void updateStatus(IStatus status) {
+		IStatus oldStatus = currentStatus;
 		currentStatus = status;
 		setValid(!status.matches(IStatus.ERROR));
-		applyToStatusLine(this, status);
+		if (oldStatus.getSeverity() != currentStatus.getSeverity()
+			|| !oldStatus.getMessage().equals(currentStatus.getMessage()))
+			applyToStatusLine(this, status);
 	}
 
 	/**
