@@ -44,12 +44,13 @@ public class FeatureSection extends TableSection {
 	}
 	
 	private static String[] getButtonLabels() {
-		String[] labels = new String[5];
+		String[] labels = new String[6];
 		labels[0] = PDEPlugin.getResourceString("Product.FeatureSection.add"); //$NON-NLS-1$
-		labels[1] = PDEPlugin.getResourceString("Product.PluginSection.removeAll"); //$NON-NLS-1$
-		labels[2] = null;
+		labels[1] = PDEPlugin.getResourceString("Product.FeatureSection.remove"); //$NON-NLS-1$
+		labels[2] = PDEPlugin.getResourceString("Product.PluginSection.removeAll"); //$NON-NLS-1$
 		labels[3] = null;
-		labels[4] = PDEPlugin.getResourceString("Product.FeatureSection.newFeature"); //$NON-NLS-1$
+		labels[4] = null;
+		labels[5] = PDEPlugin.getResourceString("Product.FeatureSection.newFeature"); //$NON-NLS-1$
 		return labels;
 	}
 
@@ -92,10 +93,13 @@ public class FeatureSection extends TableSection {
 		case 0:
 			handleAdd();
 			break;
-		case 1: 
+		case 1:
+			handleDelete();
+			break;
+		case 2: 
 			handleRemoveAll();
 			break;
-		case 4:
+		case 5:
 			handleNewFeature();
 		}
 	}
@@ -151,8 +155,32 @@ public class FeatureSection extends TableSection {
 			handleDelete();
 			return true;
 		}
+		if (actionId.equals(ActionFactory.CUT.getId())) {
+			handleDelete();
+			return false;
+		}
+		if (actionId.equals(ActionFactory.PASTE.getId())) {
+			doPaste();
+			return true;
+		}
 		return false;
 	}
+	
+	protected boolean canPaste(Object target, Object[] objects) {
+		for (int i = 0; i < objects.length; i++) {
+			if (objects[i] instanceof IProductFeature)
+				return true;
+		}
+		return false;
+	}
+	
+	protected void doPaste(Object target, Object[] objects) {
+		for (int i = 0; i < objects.length; i++) {
+			if (objects[i] instanceof IProductFeature)
+				getProduct().addFeature((IProductFeature)objects[i]);		
+		}
+	}
+
 	
 	private void handleDelete() {
 		IStructuredSelection ssel = (IStructuredSelection)fFeatureTable.getSelection();
@@ -169,7 +197,39 @@ public class FeatureSection extends TableSection {
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
 	protected void fillContextMenu(IMenuManager manager) {
-		super.fillContextMenu(manager);
+		IStructuredSelection ssel = (IStructuredSelection)fFeatureTable.getSelection();
+		if (ssel == null)
+			return;
+		
+		Action openAction = new Action(PDEPlugin.getResourceString("Product.FeatureSection.open")) { //$NON-NLS-1$
+			public void run() {
+				handleDoubleClick((IStructuredSelection)fFeatureTable.getSelection());
+			}
+		};
+		openAction.setEnabled(isEditable() && ssel.size() == 1);
+		manager.add(openAction);
+		
+		manager.add(new Separator());
+		
+		Action removeAction = new Action(PDEPlugin.getResourceString("Product.FeatureSection.remove")) { //$NON-NLS-1$
+			public void run() {
+				handleDelete();
+			}
+		};
+		removeAction.setEnabled(isEditable() && ssel.size() > 0);
+		manager.add(removeAction);
+		
+		Action removeAll = new Action(PDEPlugin.getResourceString("FeatureSection.removeAll")) { //$NON-NLS-1$
+			public void run() {
+				handleRemoveAll();
+			}
+		};
+		removeAll.setEnabled(isEditable());
+		manager.add(removeAll);
+
+		manager.add(new Separator());
+		
+		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
 	}
 
 	private void handleOpen(IStructuredSelection selection) {

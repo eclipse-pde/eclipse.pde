@@ -80,7 +80,7 @@ public class PluginClassCodeGenerator {
 		}
 		if (fPluginData.isUIPlugin()) {
 			writer.println("import org.eclipse.ui.plugin.*;"); //$NON-NLS-1$
-			writer.println("import org.eclipse.jface.resource.ImageDescriptor;");
+			writer.println("import org.eclipse.jface.resource.ImageDescriptor;"); //$NON-NLS-1$
 		} else {
 			writer.println("import org.eclipse.core.runtime.Plugin;"); //$NON-NLS-1$
 		}
@@ -160,18 +160,19 @@ public class PluginClassCodeGenerator {
 		writer.println("\t\t}"); //$NON-NLS-1$
 		writer.println("\t\treturn resourceBundle;"); //$NON-NLS-1$
 		writer.println("\t}"); //$NON-NLS-1$
+		writer.println();
 		
 		if (fPluginData.isUIPlugin()) {
-			writer.println("\t/**");
-		    writer.println("\t * Returns an image descriptor for the image file at the given");
-		    writer.println("\t * plug-in relative path.");
-		    writer.println("\t *");
-		    writer.println("\t * @param path the path");
-		    writer.println("\t * @return the image descriptor");
-		    writer.println("\t */");
-		    writer.println("\tpublic static ImageDescriptor getImageDescriptor(String path) {");
-		    writer.println("\t\treturn AbstractUIPlugin.imageDescriptorFromPlugin(\"" + fPluginData.getId() + "\", path);");
-		    writer.println("\t}");
+			writer.println("\t/**"); //$NON-NLS-1$
+		    writer.println("\t * Returns an image descriptor for the image file at the given"); //$NON-NLS-1$
+		    writer.println("\t * plug-in relative path."); //$NON-NLS-1$
+		    writer.println("\t *"); //$NON-NLS-1$
+		    writer.println("\t * @param path the path"); //$NON-NLS-1$
+		    writer.println("\t * @return the image descriptor"); //$NON-NLS-1$
+		    writer.println("\t */"); //$NON-NLS-1$
+		    writer.println("\tpublic static ImageDescriptor getImageDescriptor(String path) {"); //$NON-NLS-1$
+		    writer.println("\t\treturn AbstractUIPlugin.imageDescriptorFromPlugin(\"" + fPluginData.getId() + "\", path);"); //$NON-NLS-1$ //$NON-NLS-2$
+		    writer.println("\t}"); //$NON-NLS-1$
 		}
 		writer.println("}"); //$NON-NLS-1$
 	}

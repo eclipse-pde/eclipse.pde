@@ -47,15 +47,16 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 	}
 	
 	private static String[] getButtonLabels() {
-		String[] labels = new String[8];
+		String[] labels = new String[9];
 		labels[0] = PDEPlugin.getResourceString("Product.PluginSection.add"); //$NON-NLS-1$
 		labels[1] = PDEPlugin.getResourceString("Product.PluginSection.working"); //$NON-NLS-1$
 		labels[2] = PDEPlugin.getResourceString("Product.PluginSection.required"); //$NON-NLS-1$
-		labels[3] = PDEPlugin.getResourceString("Product.PluginSection.removeAll"); //$NON-NLS-1$
-		labels[4] = null;
+		labels[3] = PDEPlugin.getResourceString("PluginSection.remove"); //$NON-NLS-1$
+		labels[4] = PDEPlugin.getResourceString("Product.PluginSection.removeAll"); //$NON-NLS-1$
 		labels[5] = null;
-		labels[6] = PDEPlugin.getResourceString("Product.PluginSection.newPlugin"); //$NON-NLS-1$
-		labels[7] = PDEPlugin.getResourceString("Product.PluginSection.newFragment"); //$NON-NLS-1$
+		labels[6] = null;
+		labels[7] = PDEPlugin.getResourceString("Product.PluginSection.newPlugin"); //$NON-NLS-1$
+		labels[8] = PDEPlugin.getResourceString("Product.PluginSection.newFragment"); //$NON-NLS-1$
 		return labels;
 	}
 
@@ -124,12 +125,15 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 			handleAddRequired();
 			break;
 		case 3:
+			handleDelete();
+			break;
+		case 4:
 			handleRemoveAll();
 			break;
-		case 6:
+		case 7:
 			handleNewPlugin();
 			break;
-		case 7:
+		case 8:
 			handleNewFragment();
 		}
 	}
@@ -176,6 +180,22 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			handleDelete();
 			return true;
+		} 	
+		if (actionId.equals(ActionFactory.CUT.getId())) {
+			handleDelete();
+			return false;
+		}
+		if (actionId.equals(ActionFactory.PASTE.getId())) {
+			doPaste();
+			return true;
+		}
+		return false;
+	}
+	
+	protected boolean canPaste(Object target, Object[] objects) {
+		for (int i = 0; i < objects.length; i++) {
+			if (objects[i] instanceof IProductPlugin)
+				return true;
 		}
 		return false;
 	}
@@ -184,7 +204,39 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
 	protected void fillContextMenu(IMenuManager manager) {
-		super.fillContextMenu(manager);
+		IStructuredSelection ssel = (IStructuredSelection)fPluginTable.getSelection();
+		if (ssel == null)
+			return;
+		
+		Action openAction = new Action(PDEPlugin.getResourceString("PluginSection.open")) { //$NON-NLS-1$
+			public void run() {
+				handleDoubleClick((IStructuredSelection)fPluginTable.getSelection());
+			}
+		};
+		openAction.setEnabled(isEditable() && ssel.size() == 1);
+		manager.add(openAction);
+		
+		manager.add(new Separator());
+		
+		Action removeAction = new Action(PDEPlugin.getResourceString("PluginSection.remove")) { //$NON-NLS-1$
+			public void run() {
+				handleDelete();
+			}
+		};
+		removeAction.setEnabled(isEditable() && ssel.size() > 0);
+		manager.add(removeAction);
+		
+		Action removeAll = new Action(PDEPlugin.getResourceString("PluginSection.removeAll")) { //$NON-NLS-1$
+			public void run() {
+				handleRemoveAll();
+			}
+		};
+		removeAll.setEnabled(isEditable());
+		manager.add(removeAll);
+
+		manager.add(new Separator());
+		
+		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
 	}
 
 	private void handleOpen(IStructuredSelection selection) {
@@ -335,6 +387,10 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
 	public void modelChanged(IModelChangedEvent e) {
+		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
+			markStale();
+			return;
+		}
 		Object[] objects = e.getChangedObjects();
 		if (e.getChangeType() == IModelChangedEvent.INSERT) {
 			for (int i = 0; i < objects.length; i++) {
@@ -394,6 +450,13 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 			return true;
 		}
 		return super.setFormInput(input);
+	}
+	
+	protected void doPaste(Object target, Object[] objects) {
+		for (int i = 0; i < objects.length; i++) {
+			if (objects[i] instanceof IProductPlugin)
+				getProduct().addPlugin((IProductPlugin)objects[i]);		
+		}
 	}
 	
 }

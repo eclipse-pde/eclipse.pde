@@ -320,7 +320,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 					urls[i] = classpath[i].getEntryURL();
 				}
 				IPath path = new Path(entry.getEntryURL().toString()).removeLastSegments(2);
-				path = path.append("bin");
+				path = path.append("bin"); //$NON-NLS-1$
 				try {
 					urls[classpath.length] = new URL(path.toString());
 				} catch (MalformedURLException e) {
