@@ -678,6 +678,9 @@ public class DetailExtensionSection
 		IPluginElement element,
 		String iconPathName) {
 		IPluginModelBase model = element.getModel();
+		if (model == null)
+			return null;
+			
 		URL modelURL = null;
 		String path = model.getInstallLocation();
 

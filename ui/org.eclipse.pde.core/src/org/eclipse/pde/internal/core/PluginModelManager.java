@@ -135,6 +135,8 @@ public class PluginModelManager implements IAdaptable {
 		boolean added,
 		PluginModelDelta delta) {
 		boolean workspace = model.getUnderlyingResource()!=null;
+		if (id == null)
+			return;
 		ModelEntry entry = (ModelEntry) entries.get(id);
 		int kind = 0;
 		if (added && entry == null) {
