@@ -26,7 +26,6 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.plugin.*;
 
 public class EventDetailsDialog extends Dialog {
 	private LogEntry entry, parentEntry;
@@ -551,8 +550,7 @@ public class EventDetailsDialog extends Dialog {
 	 * @return the dialog settings to be used
 	 */
 	private IDialogSettings getDialogSettings() {
-		AbstractUIPlugin plugin= (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
-		IDialogSettings settings= plugin.getDialogSettings();
+		IDialogSettings settings= PDERuntimePlugin.getDefault().getDialogSettings();
 		dialogSettings= settings.getSection(getClass().getName());
 		if (dialogSettings == null)
 			dialogSettings= settings.addNewSection(getClass().getName());
