@@ -43,11 +43,12 @@ public class FeatureExportWizard extends BaseExportWizard {
 	}
 
 	protected void scheduleExportJob() {
-		String[] signingInfo = fPage1.getExportType() == FeatureExportJob.EXPORT_AS_UPDATE_JARS ? fPage2.getSigningInfo() : null;
-		String[] jnlpInfo = fPage1.getExportType() == FeatureExportJob.EXPORT_AS_UPDATE_JARS ? fPage2.getJNLPInfo() : null;
+		String[] signingInfo = fPage1.useJARFormat() ? fPage2.getSigningInfo() : null;
+		String[] jnlpInfo = fPage1.useJARFormat() ? fPage2.getJNLPInfo() : null;
 		FeatureExportJob job =
 			new FeatureExportJob(
-				fPage1.getExportType(),
+				fPage1.doExportToDirectory(),
+				fPage1.useJARFormat(),
 				fPage1.doExportSource(),
 				fPage1.getDestination(),
 				fPage1.getFileName(),
@@ -62,9 +63,6 @@ public class FeatureExportWizard extends BaseExportWizard {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.exports.BaseExportWizard#generateAntTask(java.io.PrintWriter)
 	 */
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.exports.BaseExportWizard#generateAntTask(java.io.PrintWriter)
-	 */
 	protected void generateAntTask(PrintWriter writer) {
 		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
 		writer.println("<project name=\"build\" default=\"feature_export\">"); //$NON-NLS-1$
@@ -75,7 +73,8 @@ public class FeatureExportWizard extends BaseExportWizard {
 		if (filename != null)
 			writer.print("filename=\"" + filename + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.print("exportType=\"" + getExportOperation() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
-		writer.println("exportSource=\"" + (fPage1.doExportSource() ? "true" : "false") + "\"/>");  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		writer.print("useJARFormat=\"" + Boolean.toString(fPage1.useJARFormat()) + "\" ");
+		writer.println("exportSource=\"" + Boolean.toString(fPage1.doExportSource())+ "\"/>"); 
 		writer.println("\t</target>"); //$NON-NLS-1$
 		writer.println("</project>"); //$NON-NLS-1$
 	}

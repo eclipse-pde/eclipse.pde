@@ -34,17 +34,13 @@ import org.eclipse.swt.widgets.*;
 
 public class FeatureExportJob extends Job implements IPreferenceConstants {
 
-	// The three supported export types
-	public static final int EXPORT_AS_ZIP = 0;
-	public static final int EXPORT_AS_DIRECTORY = 1;
-	public static final int EXPORT_AS_UPDATE_JARS = 2;
-
 	// write to the ant build listener log
 	protected static PrintWriter writer;
 	protected static File logFile;
 
 	// Export options specified in the wizard
-	protected int fExportType;
+	protected boolean fExportToDirectory;
+	protected boolean fUseJarFormat;
 	protected boolean fExportSource;
 	protected String fDestinationDirectory;
 	protected String fZipFilename;
@@ -80,29 +76,23 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		fBuildTempLocation = PDEPlugin.getDefault().getStateLocation().append("temp").toString(); //$NON-NLS-1$
 		setRule(new SchedulingRule());
 	}
-
-	public FeatureExportJob(int exportType, boolean exportSource, String destination, String zipFileName, Object[] items, String[] signingInfo, String[] jnlpInfo) {
+	
+	public FeatureExportJob(boolean toDirectory, boolean useJarFormat, boolean exportSource, String destination, String zipFileName, Object[] items, String[] signingInfo, String[] jnlpInfo) {
 		super(PDEPlugin.getResourceString("FeatureExportJob.name")); //$NON-NLS-1$
-		fSigningInfo = signingInfo;
-		fJnlpInfo = jnlpInfo;
-		fExportType = exportType;
+		fExportToDirectory = toDirectory;
+		fUseJarFormat = useJarFormat;
 		fExportSource = exportSource;
 		fDestinationDirectory = destination;
 		fZipFilename = zipFileName;
 		fItems = items;
+		fSigningInfo = signingInfo;
+		fJnlpInfo = jnlpInfo;
 		fBuildTempLocation = PDEPlugin.getDefault().getStateLocation().append("temp").toString(); //$NON-NLS-1$
 		setRule(new SchedulingRule());
 	}
 
-	public FeatureExportJob(int exportType, boolean exportSource, String destination, String zipFileName, Object[] items) {
-		super(PDEPlugin.getResourceString("FeatureExportJob.name")); //$NON-NLS-1$
-		fExportType = exportType;
-		fExportSource = exportSource;
-		fDestinationDirectory = destination;
-		fZipFilename = zipFileName;
-		fItems = items;
-		fBuildTempLocation = PDEPlugin.getDefault().getStateLocation().append("temp").toString(); //$NON-NLS-1$
-		setRule(new SchedulingRule());
+	public FeatureExportJob(boolean toDirectory, boolean useJarFormat, boolean exportSource, String destination, String zipFileName, Object[] items) {
+		this(toDirectory, useJarFormat, exportSource, destination, zipFileName, items, null, null);
 	}
 
 	/*
@@ -269,7 +259,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 			fAntBuildProperties.put(IXMLConstants.PROPERTY_COLLECTING_FOLDER, "."); //$NON-NLS-1$
 			String prefix = Platform.getOS().equals("macosx") ? "." : ""; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			fAntBuildProperties.put(IXMLConstants.PROPERTY_ARCHIVE_PREFIX, prefix);
-			if (fExportType == EXPORT_AS_ZIP)
+			if (!fExportToDirectory)
 				fAntBuildProperties.put(IXMLConstants.PROPERTY_ARCHIVE_FULLPATH, fDestinationDirectory + File.separator + fZipFilename);
 			else
 				fAntBuildProperties.put(IXMLConstants.PROPERTY_ASSEMBLY_TMP, fDestinationDirectory);
@@ -291,13 +281,14 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		generator.setSignJars(fSigningInfo != null);
 		generator.setGenerateJnlp(fJnlpInfo != null);
 		String format;
-		if (fExportType == EXPORT_AS_ZIP)
-			format = Platform.getOS().equals("macosx") ? "tarGz" : "antZip"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		else
+		if (fExportToDirectory)
 			format = "folder"; //$NON-NLS-1$
+		else
+			format = Platform.getOS().equals("win32") ? "antZip" : "tarGz"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			
 		AbstractScriptGenerator.setOutputFormat(format);
-		AbstractScriptGenerator.setForceUpdateJar(fExportType == EXPORT_AS_UPDATE_JARS);
-		AbstractScriptGenerator.setEmbeddedSource(fExportSource && fExportType != EXPORT_AS_UPDATE_JARS);
+		AbstractScriptGenerator.setForceUpdateJar(fUseJarFormat);
+		AbstractScriptGenerator.setEmbeddedSource(fExportSource);
 		AbstractScriptGenerator.setConfigInfo(os + "," + ws + "," + arch); //$NON-NLS-1$ //$NON-NLS-2$
 		generator.generate();
 	}
@@ -352,7 +343,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 	}
 
 	private String[] getBuildExecutionTargets() {
-		if (fExportSource && fExportType != EXPORT_AS_UPDATE_JARS)
+		if (fExportSource)
 			return new String[] {"build.jars", "build.sources", "gather.logs"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		return new String[] {"build.jars", "gather.logs"}; //$NON-NLS-1$ //$NON-NLS-2$
 	}

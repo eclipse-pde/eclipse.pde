@@ -14,20 +14,16 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jface.preference.*;
-import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.preferences.*;
 import org.eclipse.swt.custom.*;
-import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.events.*;
-import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.help.*;
 
 
 public class FeatureExportWizardPage extends BaseExportWizardPage implements IHyperlinkListener {
@@ -44,20 +40,6 @@ public class FeatureExportWizardPage extends BaseExportWizardPage implements IHy
 	public Object[] getListElements() {
 		WorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
 		return manager.getFeatureModels();
-	}
-	
-	protected Composite createOptionsSection(Composite parent) {
-		Composite comp =  super.createOptionsSection(parent);
-		FormToolkit toolkit = new FormToolkit(comp.getDisplay());	
-		FormText text = toolkit.createFormText(comp, true);
-		text.setText(PDEPlugin.getResourceString("FeatureExportWizardPage.targetEnvironmentText"), true, false); //$NON-NLS-1$
-		toolkit.dispose();
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = ((GridLayout)comp.getLayout()).numColumns;
-		text.setLayoutData(gd);
-		text.setBackground(null);
-		text.addHyperlinkListener(this);
-		return comp;
 	}
 	
 	protected void hookHelpContext(Control control) {

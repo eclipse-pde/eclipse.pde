@@ -90,7 +90,7 @@ public abstract class BaseExportWizard
 		if (fPage1.doGenerateAntFile()) {
 			generateAntBuildFile(fPage1.getAntBuildFileName());
 		}
-		if (fPage1.doExportAsZip()) {
+		if (!fPage1.doExportToDirectory()) {
 			File zipFile = new File(fPage1.getDestination(), fPage1.getFileName());
 			if (zipFile.exists()) {
 				if (!MessageDialog.openQuestion(getContainer().getShell(),
@@ -157,16 +157,7 @@ public abstract class BaseExportWizard
 	protected abstract void scheduleExportJob();
 	
 	protected String getExportOperation() {
-		int exportType = fPage1.getExportType();
-		switch (exportType) {
-			case FeatureExportJob.EXPORT_AS_ZIP:
-				return "zip"; //$NON-NLS-1$
-			case FeatureExportJob.EXPORT_AS_DIRECTORY:
-				return "directory"; //$NON-NLS-1$
-			case FeatureExportJob.EXPORT_AS_UPDATE_JARS:
-				return "update"; //$NON-NLS-1$
-		}
-		return "zip"; //$NON-NLS-1$
+		return fPage1.doExportToDirectory() ? "directory" : "zip"; 
 	}
 
 }

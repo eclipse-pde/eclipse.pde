@@ -24,7 +24,8 @@ public class FeatureExportTask extends BaseExportTask {
 	 * @see org.eclipse.pde.internal.ui.ant.BaseExportTask#getExportJob()
 	 */
 	protected Job getExportJob() {
-		return new FeatureExportJob(fExportType, fExportSource,
+		return new FeatureExportJob(
+				fToDirectory, fUseJarFormat, fExportSource,
 				fDestination, fZipFilename, fFeatures);
 	}
 	

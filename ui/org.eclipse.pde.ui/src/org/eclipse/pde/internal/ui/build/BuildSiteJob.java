@@ -48,7 +48,7 @@ public class BuildSiteJob extends FeatureExportJob {
 
 	public BuildSiteJob(Display display, IFeatureModel[] models,
 			ISiteModel siteModel) {
-		super(EXPORT_AS_UPDATE_JARS, false, siteModel.getUnderlyingResource()
+		super(true, true, false, siteModel.getUnderlyingResource()
 				.getParent().getLocation().toOSString(), null, models);
 		fDisplay = display;
 		fFeaturemodels = models;

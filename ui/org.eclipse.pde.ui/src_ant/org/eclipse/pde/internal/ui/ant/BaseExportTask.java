@@ -12,20 +12,16 @@ package org.eclipse.pde.internal.ui.ant;
 
 import org.apache.tools.ant.*;
 import org.eclipse.core.runtime.jobs.*;
-import org.eclipse.pde.internal.ui.wizards.exports.*;
-
 
 public abstract class BaseExportTask extends Task {
 	
 	protected String fDestination;
 	protected String fZipFilename;
-	protected int fExportType;
+	protected boolean fToDirectory;
+	protected boolean fUseJarFormat;
 	protected boolean fExportSource;
-	/**
-	 * 
-	 */
+
 	public BaseExportTask() {
-		fExportType = FeatureExportJob.EXPORT_AS_ZIP;
 	}
 	
 	/* (non-Javadoc)
@@ -35,18 +31,18 @@ public abstract class BaseExportTask extends Task {
 		if (fDestination == null)
 			throw new BuildException("No destination is specified");
 		
-		if (fExportType == FeatureExportJob.EXPORT_AS_ZIP && fZipFilename == null)
+		if (!fToDirectory && fZipFilename == null)
 			throw new BuildException("No zip file is specified");
 		
 		getExportJob().schedule(2000);
 	}
 	
 	public void setExportType(String type) {
-		if ("update".equals(type)) {
-			fExportType = FeatureExportJob.EXPORT_AS_UPDATE_JARS;
-		} else if ("directory".equals(type)){
-			fExportType = FeatureExportJob.EXPORT_AS_DIRECTORY;
-		}
+		fToDirectory = !"zip".equals(type);
+	}
+	
+	public void setUseJARFormat(String useJarFormat) {
+		fUseJarFormat = "true".equals(useJarFormat);
 	}
 	
 	public void setExportSource(String doExportSource) {

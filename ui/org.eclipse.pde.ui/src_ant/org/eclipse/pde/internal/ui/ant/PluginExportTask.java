@@ -24,7 +24,8 @@ public class PluginExportTask extends BaseExportTask {
 	 * @see org.eclipse.pde.internal.ui.ant.BaseExportTask#getExportJob()
 	 */
 	protected Job getExportJob() {
-		return new PluginExportJob(fExportType, fExportSource,
+		return new PluginExportJob(
+				fToDirectory, fUseJarFormat, fExportSource,
 				fDestination, fZipFilename, fModels);
 	}
 	
@@ -41,5 +42,4 @@ public class PluginExportTask extends BaseExportTask {
 		fModels = (IPluginModelBase[])models.toArray(new IPluginModelBase[models.size()]);
 	}
 	
-
 }

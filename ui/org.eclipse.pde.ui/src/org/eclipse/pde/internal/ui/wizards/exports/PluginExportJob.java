@@ -24,22 +24,24 @@ public class PluginExportJob extends FeatureExportJob {
 	private String fFeatureLocation;
 
 	public PluginExportJob(
-			int exportType,
+			boolean toDirectory,
+			boolean useJarFormat,
 			boolean exportSource,
 			String destination,
 			String zipFileName,
 			Object[] items) {
-			super(exportType, exportSource, destination, zipFileName, items);
+			this(toDirectory, useJarFormat, exportSource, destination, zipFileName, items, null);
 		}
 
 	public PluginExportJob(
-			int exportType,
+			boolean toDirectory,
+			boolean useJarFormat,
 			boolean exportSource,
 			String destination,
 			String zipFileName,
 			Object[] items,
 			String[] signingInfo) {
-			super(exportType, exportSource, destination, zipFileName, items, signingInfo, null);
+			super(toDirectory, useJarFormat, exportSource, destination, zipFileName, items, signingInfo, null);
 		}
 
 	/* (non-Javadoc)

@@ -42,10 +42,11 @@ public class PluginExportWizard extends BaseExportWizard {
 	}
 
 	protected void scheduleExportJob() {
-		String[] signingInfo = fPage1.getExportType() == FeatureExportJob.EXPORT_AS_UPDATE_JARS ? fPage2.getSigningInfo() : null;
+		String[] signingInfo = fPage1.useJARFormat() ? fPage2.getSigningInfo() : null;
 		PluginExportJob job =
 			new PluginExportJob(
-				fPage1.getExportType(),
+				fPage1.doExportToDirectory(),
+				fPage1.useJARFormat(),
 				fPage1.doExportSource(),
 				fPage1.getDestination(),
 				fPage1.getFileName(),
@@ -69,7 +70,8 @@ public class PluginExportWizard extends BaseExportWizard {
 		if (filename != null)
 			writer.print("filename=\"" + filename + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.print("exportType=\"" + getExportOperation() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
-		writer.println("exportSource=\"" + (fPage1.doExportSource() ? "true" : "false") + "\"/>");  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		writer.print("useJARFormat=\"" + Boolean.toString(fPage1.useJARFormat()) + "\" ");
+		writer.println("exportSource=\"" + Boolean.toString(fPage1.doExportSource()) + "\"/>");  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		writer.println("\t</target>"); //$NON-NLS-1$
 		writer.println("</project>"); //$NON-NLS-1$
 	}

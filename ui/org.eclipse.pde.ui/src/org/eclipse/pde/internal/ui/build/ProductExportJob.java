@@ -52,9 +52,9 @@ public class ProductExportJob extends FeatureExportJob {
 		} else {
 			fItems = getPluginModels();
 		}
-		computeDestination();
-
-		fExportType = EXPORT_AS_ZIP;
+		computeDestination();	
+		fExportToDirectory = false;
+		fUseJarFormat = false;
 		fExportSource = fProduct.includeSource();
 	}
 
