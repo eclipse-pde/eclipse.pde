@@ -48,7 +48,7 @@ public class NewSiteProjectWizard
 
 	public NewSiteProjectWizard() {
 		super();
-		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWFTRPRJ_WIZ);
+		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWSITEPRJ_WIZ);
 		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
 		setNeedsProgressMonitor(true);
 		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));

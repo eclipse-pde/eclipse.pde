@@ -159,7 +159,7 @@
       </wizard>
       <wizard
             name="%new.site.name"
-            icon="icons/full/ctool16/newftrprj_wiz.gif"
+            icon="icons/full/ctool16/newsiteprj_wiz.gif"
             category="org.eclipse.pde.PDE"
             class="org.eclipse.pde.internal.ui.feature.NewSiteProjectWizard"
             project="true"
