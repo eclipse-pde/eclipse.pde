@@ -22,7 +22,7 @@ public class PDERuntimePluginImages {
 	private final static ImageRegistry PLUGIN_REGISTRY =
 		PDERuntimePlugin.getDefault().getImageRegistry();
 
-	public final static String ICONS_PATH = "icons/full/";
+	public final static String ICONS_PATH = "icons/";
 
 	private static final String PATH_FORMS = ICONS_PATH + "forms/";
 	private static final String PATH_OBJ = ICONS_PATH + "obj16/";
