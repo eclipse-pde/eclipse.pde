@@ -15,25 +15,26 @@ import java.util.Properties;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 
 public class QualifierReplacer implements IBuildPropertiesConstants {
+	private static final String DOT_QUALIFIER = '.' + PROPERTY_QUALIFIER;
 	public static String replaceQualifierInVersion(String version, String id, String replaceTag, Properties newVersions) {
 		if (replaceTag == null)
 			return null;
 
-		if (!version.endsWith(PROPERTY_QUALIFIER))
+		if (!version.endsWith(DOT_QUALIFIER))
 			return null;
 
 		String newQualifier = null;
 		if (replaceTag.equalsIgnoreCase(PROPERTY_CONTEXT)) {
 			newQualifier = (String) newVersions.get(id);
 			if (newQualifier == null)
-				newQualifier = getDate();
+				newQualifier = '.' + getDate();
 		} else if (replaceTag.equalsIgnoreCase(PROPERTY_NONE)) {
 			newQualifier = ""; //$NON-NLS-1$
 		} else {
-			newQualifier = replaceTag;
+			newQualifier = '.' + replaceTag;
 		}
 
-		return version.replaceFirst(PROPERTY_QUALIFIER, newQualifier);
+		return version.replaceFirst(DOT_QUALIFIER, newQualifier);
 	}
 
 	private static String getDate() {
