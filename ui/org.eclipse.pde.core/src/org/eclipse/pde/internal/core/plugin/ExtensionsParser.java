@@ -66,7 +66,7 @@ public class ExtensionsParser extends DefaultHandler {
 				fOpenElements = new Stack();
 				IPluginModelBase model = (IPluginModelBase)fModel;
 				PluginBase base = (PluginBase)model.getPluginBase();
-				if (attributes.getIndex("id") != -1)
+				if (attributes.getIndex("id") != -1) //$NON-NLS-1$
 					base.range = new int[] {fLocator.getLineNumber(), fLocator.getLineNumber()};
 				base.range = new int[] {0,0};
 			}

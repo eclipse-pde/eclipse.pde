@@ -1,0 +1,118 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.pde.core">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.pde.core" id="javadoc" name="Javadoc Attachments"/>
+      </appInfo>
+      <documentation>
+         This extension point associates plug-ins with the javadoc location of the code they contain.  PDE uses these mappings to automatically attach javadoc to plug-in libraries when it computes a plug-in&apos;s classpath.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="javadoc" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="javadoc">
+      <complexType>
+         <attribute name="plugin" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the id of the plug-in whose javadoc location is specified by the &lt;code&gt;path&lt;/code&gt; attribute
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="path" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the relative path of the javadoc location.  This location can be a directory, a file or a path inside a zip file.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.1
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example of the &lt;code&gt;javadoc&lt;/code&gt; extension:
+&lt;pre&gt;
+ &lt;extension point=&quot;org.eclipse.pde.core.javadoc&quot;&gt;
+     &lt;javadoc plugin=&quot;com.example.abc&quot; path=&quot;doc.zip!/references/api/&quot; /&gt;
+  &lt;/extension&gt;
+&lt;/pre&gt;
+
+In the example above, the plug-in whose id is &lt;code&gt;com.example.abc&lt;/code&gt; has its javadoc located in a &lt;code&gt;references/api/&lt;/code&gt; directory inside a &lt;code&gt;doc.zip&lt;/code&gt; zip file.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         No Java code is requied for this extension point.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         Eclipse SDK comes with ISV documentation plug-ins that use this extension point.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2004 IBM Corporation and others.
+&lt;br&gt;
+All rights reserved. This program and the accompanying materials are made 
+available under the terms of the Common Public License v1.0 which 
+accompanies this distribution, and is available at 
+&lt;a href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;.
+      </documentation>
+   </annotation>
+
+</schema>
