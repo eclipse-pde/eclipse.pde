@@ -9,20 +9,24 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.build.*;
 import org.eclipse.pde.internal.ui.launcher.*;
 import org.eclipse.swt.*;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.editor.*;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.help.*;
+import org.eclipse.ui.progress.IProgressService;
 
 
 public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
@@ -36,26 +40,24 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 
 	private RuntimeWorkbenchShortcut fLaunchShortcut;
 	private PluginExportAction fExportAction;
-	/**
-	 * @param editor
-	 * @param id
-	 * @param title
-	 */
+
 	public OverviewPage(FormEditor editor) {
 		super(editor, PAGE_ID, PDEPlugin.getResourceString("OverviewPage.tabName"));  //$NON-NLS-1$
 	}
+	
 	protected String getHelpResource() {
-		return PDEPlugin.getResourceString("OverviewPage.help.manifest"); //$NON-NLS-1$
+		return "/org.eclipse.pde.doc.user/guide/pde_manifest_overview.htm"; //$NON-NLS-1$
 	}
+	
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
-		form.setText(PDEPlugin
-				.getResourceString("ManifestEditor.OverviewPage.title")); //$NON-NLS-1$
+		form.setText(PDEPlugin.getResourceString("ManifestEditor.OverviewPage.title")); //$NON-NLS-1$
 		fillBody(managedForm, toolkit);
 		managedForm.refresh();
 	}
+	
 	private void fillBody(IManagedForm managedForm, FormToolkit toolkit) {
 		Composite body = managedForm.getForm().getBody();
 		TableWrapLayout layout = new TableWrapLayout();
@@ -69,108 +71,113 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		body.setLayout(layout);
 
 		// sections
-		createGeneralInfoSection(managedForm, body, toolkit);
+		GeneralInfoSection general = null;
+		if (isFragment())
+			general = new FragmentGeneralInfoSection(this, body);
+		else
+			general = new PluginGeneralInfoSection(this, body);
+		managedForm.addPart(general);
 		createContentSection(managedForm, body, toolkit);
-		createTestingSection(managedForm, body, toolkit);
-		createDeployingSection(managedForm, body, toolkit);
-	}
-
-	private void createGeneralInfoSection(IManagedForm managedForm,
-			Composite parent, FormToolkit toolkit) {
-		managedForm.addPart(new GeneralInfoSection(this, parent));
+        if (isEditable()) {
+    		createTestingSection(managedForm, body, toolkit);
+    		createExportingSection(managedForm, body, toolkit);
+        }
 	}
 	
 	private void createContentSection(IManagedForm managedForm,
 			Composite parent, FormToolkit toolkit) {
-		Section section = createStaticSection(parent, toolkit);
-		FormText text;
-		if (isFragment()) {
-			section.setText(PDEPlugin
-					.getResourceString("ManifestEditor.ContentSection.ftitle")); //$NON-NLS-1$
-			text = createClient(section, fcontentText, toolkit);
-		} else {
-			section.setText(PDEPlugin
-					.getResourceString("ManifestEditor.ContentSection.title")); //$NON-NLS-1$
-			text = createClient(section, contentText, toolkit);
-		}
+		Section section = createStaticSection(
+							toolkit, 
+							parent, 
+							PDEPlugin.getResourceString("ManifestEditor.ContentSection." + (isFragment() ? "ftitle" : "title"))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
+		Composite container = toolkit.createComposite(section, SWT.NONE);
+		TableWrapLayout layout = new TableWrapLayout();
+		layout.leftMargin = layout.rightMargin = layout.topMargin = layout.bottomMargin = 0;
+		container.setLayout(layout);
+		container.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
+		
+		FormText text = createClient(container, isFragment() ? fcontentText : contentText, toolkit);
 		PDELabelProvider lp = PDEPlugin.getDefault().getLabelProvider();
-		text.setImage("page", lp.get(PDEPluginImages.DESC_PAGE_OBJ, //$NON-NLS-1$
-				PDELabelProvider.F_EDIT));
+		text.setImage("page", lp.get(PDEPluginImages.DESC_PAGE_OBJ, PDELabelProvider.F_EDIT)); //$NON-NLS-1$
+		
+		if (!isBundle() && isEditable())
+			text = createClient(container, PDEPlugin.getResourceString("OverviewPage." + (isFragment() ? "fOsgi" : "osgi")), toolkit); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		section.setClient(container);
+		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 	}
 	
 	private void createTestingSection(IManagedForm managedForm,
 			Composite parent, FormToolkit toolkit) {
-		Section section = createStaticSection(parent, toolkit);
-		section.setText(PDEPlugin
-				.getResourceString("ManifestEditor.TestingSection.title")); //$NON-NLS-1$
+		Section section = createStaticSection(toolkit, parent, PDEPlugin.getResourceString("ManifestEditor.TestingSection.title")); //$NON-NLS-1$
+		PDELabelProvider lp = PDEPlugin.getDefault().getLabelProvider();
+		
 		ImageHyperlink info = new ImageHyperlink(section, SWT.NULL);
 		toolkit.adapt(info, true, true);
-		Image image = PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_HELP);
-		info.setImage(image);
+		info.setImage(lp.get(PDEPluginImages.DESC_HELP));
 		info.setBackground(section.getTitleBarGradientBackground());
 		info.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
-				WorkbenchHelp
-						.displayHelpResource(PDEPlugin.getResourceString("OverviewPage.help.pdeRunning")); //$NON-NLS-1$
+				displayHelpResource("/org.eclipse.pde.doc.user/guide/pde_running.htm"); //$NON-NLS-1$
 			}
 		});
 		section.setTextClient(info);
-		FormText text;
-		if (isFragment())
-			text = createClient(section, ftestingText, toolkit);
-		else
-			text = createClient(section, testingText, toolkit);
-		PDELabelProvider lp = PDEPlugin.getDefault().getLabelProvider();
+		
+		FormText text = createClient(section, isFragment() ? ftestingText : testingText, toolkit);
 		text.setImage("run", lp.get(PDEPluginImages.DESC_RUN_EXC)); //$NON-NLS-1$
 		text.setImage("debug", lp.get(PDEPluginImages.DESC_DEBUG_EXC)); //$NON-NLS-1$
-		text.setImage("workbench", lp //$NON-NLS-1$
-				.get(PDEPluginImages.DESC_WORKBENCH_LAUNCHER_WIZ));
+		section.setClient(text);
 	}
-	private void createDeployingSection(IManagedForm managedForm,
+	
+	private void createExportingSection(IManagedForm managedForm,
 			Composite parent, FormToolkit toolkit) {
-		Section section = createStaticSection(parent, toolkit);
-		section.setText(PDEPlugin
-				.getResourceString("ManifestEditor.DeployingSection.title")); //$NON-NLS-1$
+		Section section = createStaticSection(toolkit, parent, PDEPlugin.getResourceString("ManifestEditor.DeployingSection.title")); //$NON-NLS-1$
 		ImageHyperlink info = new ImageHyperlink(section, SWT.NULL);
 		toolkit.adapt(info, true, true);
-		Image image = PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_HELP);
-		info.setImage(image);
+		info.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_HELP));
 		info.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
-				WorkbenchHelp
-						.displayHelpResource(PDEPlugin.getResourceString("OverviewPage.help.deploy")); //$NON-NLS-1$
+				displayHelpResource("/org.eclipse.pde.doc.user/guide/pde_deploy.htm"); //$NON-NLS-1$
 			}
 		});
 		info.setBackground(section.getTitleBarGradientBackground());
 		section.setTextClient(info);
-		if (isFragment())
-			createClient(section, fdeployingText, toolkit);
-		else
-			createClient(section, deployingText, toolkit);
+		section.setClient(createClient(section, isFragment() ? fdeployingText : deployingText, toolkit));
 	}
-	private Section createStaticSection(Composite parent, FormToolkit toolkit) {
+	
+	private Section createStaticSection(FormToolkit toolkit, Composite parent, String text) {
 		Section section = toolkit.createSection(parent, Section.TITLE_BAR);
 		section.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
+		section.setText(text);
 		return section;
 	}
-	private FormText createClient(Section section, String content,
-			FormToolkit toolkit) {
+	
+	private FormText createClient(Composite section, String content, FormToolkit toolkit) {
 		FormText text = toolkit.createFormText(section, true);
 		try {
 			text.setText(content, true, false);
 		} catch (SWTException e) {
 			text.setText(e.getMessage(), false, false);
 		}
-		section.setClient(text);
 		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		text.addHyperlinkListener(this);
 		return text;
 	}
+	
 	private boolean isFragment() {
-		IPluginModelBase model = (IPluginModelBase) getPDEEditor()
-				.getContextManager().getAggregateModel();
+		IPluginModelBase model = (IPluginModelBase) getPDEEditor().getContextManager().getAggregateModel();
 		return model.isFragmentModel();
 	}
+	
+	private boolean isBundle() {
+		return getPDEEditor().getContextManager().findContext(BundleInputContext.CONTEXT_ID) != null;
+	}
+
+	private boolean isEditable() {
+		IPluginModelBase model = (IPluginModelBase) getPDEEditor().getContextManager().getAggregateModel();
+		return model.isEditable();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -195,9 +202,13 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		} else if (href.equals("action.debug")) { //$NON-NLS-1$
 			getEditor().doSave(null);
 			getLaunchShortcut().debug((IPluginModelBase)getModel());
-		} else if (href.equals("export")) //$NON-NLS-1$
+		} else if (href.equals("export")) { //$NON-NLS-1$
 			getExportAction().run();
+		} else if (href.equals("action.convert")) { //$NON-NLS-1$
+			handleConvert();
+		}
 	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -208,6 +219,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 				.getStatusLineManager();
 		mng.setMessage(e.getLabel());
 	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -218,14 +230,35 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 				.getStatusLineManager();
 		mng.setMessage(null);
 	}
+	
 	private RuntimeWorkbenchShortcut getLaunchShortcut() {
 		if (fLaunchShortcut == null)
 			fLaunchShortcut = new RuntimeWorkbenchShortcut();
 		return fLaunchShortcut;
 	}
+	
 	private PluginExportAction getExportAction() {
 		if (fExportAction == null)
 			fExportAction = new PluginExportAction((PDEFormEditor) getEditor());
 		return fExportAction;
 	}
+	
+	private void displayHelpResource(String resource) {
+		PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(resource);
+	}
+	
+	private void handleConvert() {
+		try {
+			PDEFormEditor editor = getPDEEditor();
+			IPluginModelBase model = (IPluginModelBase)editor.getAggregateModel();
+			IRunnableWithProgress op = new CreateManifestOperation(model);
+			IProgressService service = PlatformUI.getWorkbench().getProgressService();
+			editor.doSave(null);
+			service.runInUI(service, op, model.getUnderlyingResource().getProject());
+		} catch (InvocationTargetException e) {
+			MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), PDEPlugin.getResourceString("OverviewPage.error"), e.getCause().getMessage()); //$NON-NLS-1$
+		} catch (InterruptedException e) {
+		}
+	}
+	
 }

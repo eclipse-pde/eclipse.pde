@@ -14,7 +14,8 @@ import java.util.*;
 import org.eclipse.pde.internal.core.ibundle.*;
 
 public class Bundle extends BundleObject implements IBundle {
-	private Properties fProperties;
+    private static final long serialVersionUID = 1L;
+    private Properties fProperties;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.ibundle.IBundle#setHeader(java.lang.String, java.lang.String)

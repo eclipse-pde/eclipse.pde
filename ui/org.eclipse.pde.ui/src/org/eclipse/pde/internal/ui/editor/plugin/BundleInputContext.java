@@ -8,12 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-/*
- * Created on Jan 27, 2004
- *
- * To change the template for this generated file go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
 package org.eclipse.pde.internal.ui.editor.plugin;
 
 import java.io.*;
@@ -78,6 +72,9 @@ public class BundleInputContext extends UTF8InputContext {
 		if (objects != null) {
 			for (int i = 0; i < objects.length; i++) {
 				Object object = objects[i];
+                if (object instanceof PackageObject)
+                    object = ((PackageObject)object).getHeader();
+                
 				if (object instanceof ManifestHeader) {
 					ManifestHeader header = (ManifestHeader)object;
 					TextEdit op = (TextEdit)fOperationTable.get(header);

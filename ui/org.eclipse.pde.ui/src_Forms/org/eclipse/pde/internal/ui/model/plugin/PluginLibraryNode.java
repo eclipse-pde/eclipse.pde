@@ -216,5 +216,9 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 		buffer.append(">"); //$NON-NLS-1$
 		return buffer.toString();
 	}
+    
+    public String toString() {
+        return getName();
+    }
 
 }

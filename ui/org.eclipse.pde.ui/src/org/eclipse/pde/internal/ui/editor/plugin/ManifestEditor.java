@@ -31,6 +31,9 @@ import org.eclipse.ui.part.*;
 import org.eclipse.ui.views.properties.*;
 
 public class ManifestEditor extends MultiSourceEditor {
+    
+    private static int BUILD_INDEX = 5;
+    
 	protected void createResourceContexts(InputContextManager manager,
 			IFileEditorInput input) {
 		IFile file = input.getFile();
@@ -101,7 +104,7 @@ public class ManifestEditor extends MultiSourceEditor {
 			}
 		}
 		else if (name.equalsIgnoreCase("build.properties")) { //$NON-NLS-1$
-			if (!inputContextManager.hasContext(BundleInputContext.CONTEXT_ID)) {			
+			if (!inputContextManager.hasContext(BuildInputContext.CONTEXT_ID)) {			
 				IEditorInput in = new FileEditorInput(file);
 				inputContextManager.putContext(in, new BuildInputContext(this, in, false));
 			}
@@ -134,8 +137,17 @@ public class ManifestEditor extends MultiSourceEditor {
 	public void contextAdded(InputContext context) {
 		addSourcePage(context.getId());
 		try {
-			if (context.getId().equals(BuildPage.PAGE_ID))
-				addPage(new BuildPage(this));
+			if (context.getId().equals(BuildInputContext.CONTEXT_ID))
+				addPage(BUILD_INDEX, new BuildPage(this));
+            else if (context.getId().equals(BundleInputContext.CONTEXT_ID)) {
+                removePage(0);
+                removePage(0);
+                removePage(0);
+                addPage(0, new RuntimePage(this));
+                addPage(0, new DependenciesPage(this));
+                addPage(0, new OverviewPage(this));
+                setActivePage(0);
+            }
 		}
 		catch (PartInitException e) {
 			PDEPlugin.logException(e);
@@ -151,6 +163,7 @@ public class ManifestEditor extends MultiSourceEditor {
 			removePage(context.getId());
 			if (context.getId().equals(BuildInputContext.CONTEXT_ID))
 				removePage(BuildPage.PAGE_ID);
+            
 		}
 	}
 

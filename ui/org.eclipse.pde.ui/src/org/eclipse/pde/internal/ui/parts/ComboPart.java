@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.parts;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -27,6 +28,13 @@ public class ComboPart {
 			((Combo) combo).addSelectionListener(listener);
 		else
 			((CCombo) combo).addSelectionListener(listener);
+	}
+	
+	public void addModifyListener(ModifyListener listener) {
+		if (combo instanceof Combo)
+			((Combo) combo).addModifyListener(listener);
+		else
+			((CCombo) combo).addModifyListener(listener);
 	}
 	public void createControl(Composite parent, FormToolkit toolkit, int style) {
 		if (toolkit.getBorderStyle() == SWT.BORDER)
@@ -64,8 +72,8 @@ public class ComboPart {
 	}
 	public String getSelection() {
 		if (combo instanceof Combo)
-			return ((Combo) combo).getItem(getSelectionIndex());
-		return ((CCombo) combo).getItem(getSelectionIndex());
+			return ((Combo) combo).getItem(getSelectionIndex()).trim();
+		return ((CCombo) combo).getItem(getSelectionIndex()).trim();
 	}
 	public void setText(String text) {
 		if (combo instanceof Combo)

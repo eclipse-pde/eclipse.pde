@@ -85,22 +85,11 @@ public class EditableTablePart extends TablePart {
 			dialog.getShell().setText(PDEPlugin.getResourceString("EditableTablePart.renameTitle")); //$NON-NLS-1$
 			dialog.getShell().setSize(300, 150);
 			if (dialog.open()==Dialog.OK) {
-				entryModified(doFindItem(obj), dialog.getNewName());
+				entryModified(obj, dialog.getNewName());
 			}
 		}
 	}
 	
-	private Widget doFindItem(Object element) {
-		TableItem[] children = getTableViewer().getTable().getItems();
-		for (int i = 0; i < children.length; i++) {
-			TableItem item = children[i];
-			Object data = item.getData();
-			if (data != null && data.equals(element))
-				return item;
-		}
-		return null;
-	}
-
 	protected void entryModified(Object entry, String value) {
 	}
 }

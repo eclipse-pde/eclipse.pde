@@ -10,12 +10,21 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.bundle;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.ibundle.*;
+import java.io.Serializable;
 
-public class BundleObject {
-	private IBundleModel model;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.pde.core.IModelChangeProvider;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.ModelChangedEvent;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.ibundle.IBundleModel;
+
+public class BundleObject implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
+    private transient IBundleModel model;
 
 	public BundleObject() {
 	}
@@ -40,4 +49,31 @@ public class BundleObject {
 				null);
 		throw new CoreException(status);
 	}
+    
+    protected void fireStructureChanged(BundleObject child, int changeType) {
+        if (model.isEditable() && model instanceof IModelChangeProvider) {
+            IModelChangedEvent e = new ModelChangedEvent(
+                    (IModelChangeProvider)model, 
+                    changeType,
+                    new Object[]{child}, 
+                    null);
+            fireModelChanged(e);
+        }
+    }
+
+    protected void fireModelChanged(IModelChangedEvent e) {
+        if (model.isEditable() && model instanceof IModelChangeProvider) {
+            IModelChangeProvider provider = (IModelChangeProvider) model;
+            provider.fireModelChanged(e);
+        }
+    }
+    protected void firePropertyChanged(BundleObject object, String property,
+            Object oldValue, Object newValue) {
+        if (model.isEditable() && model instanceof IModelChangeProvider) {
+            IModelChangeProvider provider = (IModelChangeProvider) model;
+            provider.fireModelObjectChanged(object, property, oldValue, newValue);
+        }
+    }
+
+
 }
