@@ -217,7 +217,7 @@ public class UpdateClasspathOperation implements IWorkspaceRunnable {
 				IPluginLibrary[] libraries = fragment.getLibraries();
 				for (int j = 0; j < libraries.length; j++) {
 					IProject project = root.getProject(fragment.getId());
-					IClasspathEntry entry = getLibraryEntry(project, libraries[i], true);
+					IClasspathEntry entry = getLibraryEntry(project, libraries[j], true);
 					if (root.exists(entry.getPath()))
 						entries.add(entry);
 				}
