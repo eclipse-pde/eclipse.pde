@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.wizards.templates;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.ui.templates.*;
+import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.osgi.framework.*;
 
@@ -45,7 +46,7 @@ public abstract class PDETemplateSection extends OptionTemplateSection {
 	}
 
 	private String[] getDirectoryCandidates() {
-		String version = model.getPluginBase().getTargetVersion();
+		String version = ((PluginBase)model.getPluginBase()).getTargetVersion();
 		if ("3.0".equals(version)) //$NON-NLS-1$
 			return new String[] { "templates_3.0" + "/" + getSectionId() + "/" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if ("3.1".equals(version)) //$NON-NLS-1$

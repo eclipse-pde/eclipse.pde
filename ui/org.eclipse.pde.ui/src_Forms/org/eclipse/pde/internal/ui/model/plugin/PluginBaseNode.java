@@ -399,9 +399,4 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	}
 	
 	protected abstract String[] getSpecificAttributes();
-	
-	public String getTargetVersion() {
-		return PDECore.getDefault().getTargetVersion();
-	}
-	
 }

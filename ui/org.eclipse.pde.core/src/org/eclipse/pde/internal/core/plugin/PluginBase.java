@@ -36,7 +36,7 @@ public abstract class PluginBase
 	private String schemaVersion;
 	private boolean valid;
 
-	private String fTargetVersion;
+	private String fTargetVersion = "3.1";
 
 	public String getSchemaVersion() {
 		return schemaVersion;
@@ -89,7 +89,6 @@ public abstract class PluginBase
 		this.version = bundleDesc.getVersion().toString();
 		this.name = state.getPluginName(bundleDesc.getBundleId());
 		this.providerName = state.getProviderName(bundleDesc.getBundleId());
-		fTargetVersion = "3.1"; //$NON-NLS-1$
 		loadRuntime(bundleDesc, state);
 		loadImports(bundleDesc);		
 		if (!ignoreExtensions) {
@@ -376,11 +375,12 @@ public abstract class PluginBase
 		return IMatchRules.NONE;  // no real match rule for this
 	}
 	
+	public void setTargetVersion(String target) {
+		fTargetVersion = target;
+	}
+	
 	public String getTargetVersion() {
 		return fTargetVersion;
 	}
 	
-	public void setTargetVersion(String version) {
-		fTargetVersion = version;
-	}
 }

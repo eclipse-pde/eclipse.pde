@@ -660,9 +660,4 @@ public class BundlePluginBase
 		}
 	}
 
-	public String getTargetVersion() {
-		String manifestVersion = parseSingleValuedHeader(Constants.BUNDLE_MANIFESTVERSION);
-		return manifestVersion == null ? "3.0" : "3.1"; //$NON-NLS-1$ //$NON-NLS-2$
-	}
-
 }
