@@ -5,9 +5,7 @@ import org.eclipse.ui.editors.text.TextEditor;
 public class $editorClass$ extends TextEditor {
 
 	private ColorManager colorManager;
-	/**
-	 * Constructor for SampleEditor.
-	 */
+
 	public $editorClass$() {
 		super();
 		colorManager = new ColorManager();
@@ -18,5 +16,5 @@ public class $editorClass$ extends TextEditor {
 		colorManager.dispose();
 		super.dispose();
 	}
-	
+
 }

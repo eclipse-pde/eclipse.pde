@@ -5,9 +5,6 @@ import org.eclipse.jface.text.*;
 public class XMLDoubleClickStrategy implements ITextDoubleClickStrategy {
 	protected ITextViewer fText;
 
-	public XMLDoubleClickStrategy() {
-		super();
-	}
 	public void doubleClicked(ITextViewer part) {
 		int pos = part.getSelectedRange().x;
 
@@ -58,8 +55,8 @@ public class XMLDoubleClickStrategy implements ITextDoubleClickStrategy {
 				return false;
 
 			endPos = pos;
-			
-			int offset = startPos +1;
+
+			int offset = startPos + 1;
 			int len = endPos - offset;
 			fText.setSelectedRange(offset, len);
 			return true;
@@ -106,9 +103,9 @@ public class XMLDoubleClickStrategy implements ITextDoubleClickStrategy {
 
 		return false;
 	}
-	
+
 	private void selectRange(int startPos, int stopPos) {
-		int offset = startPos+1;
+		int offset = startPos + 1;
 		int length = stopPos - offset;
 		fText.setSelectedRange(offset, length);
 	}
