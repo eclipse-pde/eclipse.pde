@@ -316,7 +316,7 @@ public class BasicLauncherTab
 
 		workspaceCombo.setItems((String[]) items.toArray(new String[items.size()]));
 		if (workspaceCombo.getItemCount() > 0)
-			workspaceCombo.select(0);
+			workspaceCombo.setText(items.get(0).toString());
 
 		clearWorkspaceCheck.setSelection(config.getAttribute(DOCLEAR, false));
 		askClearCheck.setSelection(config.getAttribute(ASKCLEAR, true));
