@@ -399,10 +399,10 @@ public class ClasspathUtilCore {
 	}
 	
 	private static boolean containsVariables(String name) {
-		return name.indexOf("$os") != -1
-			|| name.indexOf("$ws") != -1
-			|| name.indexOf("$nl") != -1
-			|| name.indexOf("$arch") != -1;
+		return name.indexOf("$os$") != -1
+			|| name.indexOf("$ws$") != -1
+			|| name.indexOf("$nl$") != -1
+			|| name.indexOf("$arch$") != -1;
 	}
 
 	public static String expandLibraryName(String source) {
