@@ -89,10 +89,10 @@ public class SourcePreferencePage
 				case 1 :
 					handleDelete();
 					break;
-				case 2 :
+				case 3 :
 					selectAll(true);
 					break;
-				case 3 :
+				case 4 :
 					selectAll(false);
 					break;
 			}
@@ -143,6 +143,7 @@ public class SourcePreferencePage
 				new String[] {
 					PDEPlugin.getResourceString(KEY_ADD),
 					PDEPlugin.getResourceString(KEY_DELETE),
+					null,
 					PDEPlugin.getResourceString(KEY_SELECT_ALL),
 					PDEPlugin.getResourceString(KEY_DESELECT_ALL)
 					});
@@ -199,8 +200,6 @@ public class SourcePreferencePage
 	 * @see IWorkbenchPreferencePage#init(IWorkbench)
 	 */
 	public void init(IWorkbench workbench) {
-		//initializeExtensionLocations();
-		//initializeUserlocations();
 	}
 
 	/**
@@ -302,7 +301,6 @@ public class SourcePreferencePage
 		tableViewer.setLabelProvider(new SourceLabelProvider());
 		tableViewer.setInput(this);
 		initializeStates();
-		tablePart.setButtonEnabled(4, false);
 		Dialog.applyDialogFont(parent);
 		WorkbenchHelp.setHelp(parent, IHelpContextIds.SOURCE_PREFERENCE_PAGE);
 		return container;
