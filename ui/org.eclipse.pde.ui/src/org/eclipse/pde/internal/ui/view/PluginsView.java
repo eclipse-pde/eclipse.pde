@@ -5,6 +5,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.core.IClassFile;
@@ -546,6 +548,16 @@ public class PluginsView extends ViewPart {
 		try {
 			Shell shell = treeViewer.getTree().getShell();
 			ArrayList modelIds = new ArrayList();
+			
+			boolean isAutoBuilding = PDEPlugin.getWorkspace().isAutoBuilding();
+
+			if (isAutoBuilding) {
+				IWorkspace workspace = PDEPlugin.getWorkspace();
+				IWorkspaceDescription description = workspace.getDescription();
+				description.setAutoBuilding(false);
+				workspace.setDescription(description);
+			}
+			
 			IRunnableWithProgress op =
 				PluginImportWizard.getImportOperation(
 					shell,
@@ -555,9 +567,15 @@ public class PluginsView extends ViewPart {
 					modelIds);
 			ProgressMonitorDialog pmd = new ProgressMonitorDialog(shell);
 			pmd.run(true, true, op);
-			UpdateClasspathAction.doUpdateClasspath(
-				new NullProgressMonitor(),
-				getWorkspaceCounterparts(modelIds));
+			
+			if (isAutoBuilding) {
+				IWorkspace workspace = PDEPlugin.getWorkspace();
+				IWorkspaceDescription description = workspace.getDescription();
+				description.setAutoBuilding(true);
+				workspace.setDescription(description);
+			}
+			
+			pmd.run(true,true, new UpdateClasspathOperation(getWorkspaceCounterparts(modelIds)));
 		} catch (InterruptedException e) {
 		} catch (InvocationTargetException e) {
 			PDEPlugin.logException(e);

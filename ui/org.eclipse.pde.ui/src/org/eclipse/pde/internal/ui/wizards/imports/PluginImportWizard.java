@@ -8,6 +8,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -91,28 +93,56 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 
 			page1.storeSettings(true);
 			page2.storeSettings(true);
-			final boolean doImportToWorkspace = page1.doImportToWorkspace();
-			final boolean doExtractPluginSource = page1.doExtractPluginSource();
+			
 			final ArrayList modelIds = new ArrayList();
+			
+			boolean isAutoBuilding = PDEPlugin.getWorkspace().isAutoBuilding();
+
+			if (isAutoBuilding) {
+				IWorkspace workspace = PDEPlugin.getWorkspace();
+				IWorkspaceDescription description = workspace.getDescription();
+				description.setAutoBuilding(false);
+				workspace.setDescription(description);
+			}
+			
 			IRunnableWithProgress op =
 				getImportOperation(
 					getShell(),
-					doImportToWorkspace,
-					doExtractPluginSource,
+					page1.doImportToWorkspace(),
+					page1.doExtractPluginSource(),
 					models,
 					modelIds);
 			getContainer().run(true, true, op);
-					
-			UpdateClasspathAction.run(true, getContainer(), getWorkspaceCounterparts(modelIds));
+
+			if (isAutoBuilding) {
+				IWorkspace workspace = PDEPlugin.getWorkspace();
+				IWorkspaceDescription description = workspace.getDescription();
+				description.setAutoBuilding(true);
+				workspace.setDescription(description);
+			}
+			
+			UpdateClasspathAction.run(
+				true,
+				getContainer(),
+				getWorkspaceCounterparts(modelIds));
+				
+			if (isAutoBuilding) {
+				IWorkspace workspace = PDEPlugin.getWorkspace();
+				IWorkspaceDescription description = workspace.getDescription();
+				description.setAutoBuilding(true);
+				workspace.setDescription(description);
+			}
 		} catch (InterruptedException e) {
 			return false;
 		} catch (InvocationTargetException e) {
 			PDEPlugin.logException(e);
 			return true; // exception handled
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+			return true;
 		}
 		return true;
 	}
-
 	public static IRunnableWithProgress getImportOperation(
 		final Shell shell,
 		final boolean doImport,
