@@ -130,7 +130,7 @@ public class ClassAttributeRow extends ReferenceAttributeRow {
 						PlatformUI.getWorkbench().getProgressService(),
 						SearchEngine.createWorkspaceScope(),
 						IJavaElementSearchConstants.CONSIDER_CLASSES, false,
-						"*"); //$NON-NLS-1$
+						""); //$NON-NLS-1$
 				dialog.setTitle(PDEPlugin.getResourceString("ClassAttributeRow.dialogTitle")); //$NON-NLS-1$
 				if (dialog.open() == SelectionDialog.OK) {
 					IType type = (IType) dialog.getResult()[0];
