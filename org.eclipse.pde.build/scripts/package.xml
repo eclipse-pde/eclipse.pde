@@ -44,7 +44,7 @@
 
 	<!-- Call the assemble.xml script -->
 	<target name="callAssembleScripts">
-		<ant antfile="assemble.xml" dir="${workingDirectory}"/>
+		<ant antfile="package.all.xml" dir="${workingDirectory}"/>
 	</target>
 	
 	

@@ -18,6 +18,7 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.ant.FileSet;
+import org.eclipse.pde.internal.build.site.BuildTimeFeature;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.IncludedFeatureReferenceModel;
 import org.eclipse.update.core.model.URLEntryModel;
@@ -172,10 +173,11 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_BUILDDIRECTORY_LOCATION_MISSING, Messages.error_missingInstallLocation, null));
 		}
 		initializeVariables();
+
 		// if the feature defines its own custom script, we do not generate a
 		// new one but we do try to update the version number
 		String custom = (String) getBuildProperties().get(PROPERTY_CUSTOM);
-		if (TRUE.equalsIgnoreCase(custom)) { //$NON-NLS-1$
+		if (TRUE.equalsIgnoreCase(custom)) {
 			File buildFile = new File(featureRootLocation, DEFAULT_BUILD_SCRIPT_FILENAME);
 			try {
 				updateVersion(buildFile, PROPERTY_FEATURE_VERSION_SUFFIX, feature.getVersionedIdentifier().getVersion().toString());
@@ -645,6 +647,10 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		Set writtenCalls = new HashSet(plugins.size());
 		for (Iterator iter = plugins.iterator(); iter.hasNext();) {
 			BundleDescription current = (BundleDescription) iter.next();
+			//If it is not a compiled element, then we don't generate a call
+			Properties bundleProperties = (Properties) current.getUserObject();
+			if (bundleProperties == null || bundleProperties.get("isCompiled") == Boolean.FALSE)	//TODO Need to check what is going on when packaging
+				continue;
 			// Get the os / ws / arch to pass as a parameter to the plugin
 			if (writtenCalls.contains(current))
 				continue;
@@ -682,6 +688,11 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 					String message = NLS.bind(Messages.exception_missingFeature, featureId + ' ' + versionId);
 					throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, message, null));
 				}
+				if (includedFeature instanceof BuildTimeFeature) {
+					if (((BuildTimeFeature) includedFeature).isBinary())
+						continue;
+				}
+				
 				String includedFeatureDirectory = includedFeature.getURL().getPath();
 				int j = includedFeatureDirectory.lastIndexOf(DEFAULT_FEATURE_FILENAME_DESCRIPTOR);
 				if (j != -1)
@@ -761,6 +772,9 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		this.featureIdentifier = featureID;
 	}
 
+	public static String getNormalizedName(IFeature feature) {
+		return feature.getVersionedIdentifier().toString();
+	}
 	private void initializeVariables() throws CoreException {
 		feature = getSite(false).findFeature(featureIdentifier, searchedVersion, true);
 
@@ -770,15 +784,18 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			if (i != -1)
 				featureRootLocation = featureRootLocation.substring(0, i);
 		}
-		featureFullName = feature.getVersionedIdentifier().toString();
+		featureFullName = getNormalizedName(feature);
 		featureFolderName = DEFAULT_FEATURE_LOCATION + '/' + featureFullName; //$NON-NLS-1$
 		sourceFeatureFullName = computeSourceFeatureName(feature, false);
 		sourceFeatureFullNameVersionned = computeSourceFeatureName(feature, true);
 		featureTempFolder = getPropertyFormat(PROPERTY_FEATURE_TEMP_FOLDER);
-		
-		if (getBuildProperties().size() == 0) {
-			buildProperties.put(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES, "**/**"); //$NON-NLS-1$
-			buildProperties.put(IBuildPropertiesConstants.PROPERTY_BIN_EXCLUDES, ".project, .classpath, build.xml"); //$NON-NLS-1$			
+
+		if (feature instanceof BuildTimeFeature) {
+			if (getBuildProperties() == MissingProperties.getInstance()) {
+				BuildTimeFeature buildFeature = (BuildTimeFeature) feature;
+				scriptGeneration = false;
+				buildFeature.setBinary(true);
+			}
 		}
 	}
 
@@ -853,7 +870,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	}
 
 	protected void collectElementToAssemble(IFeature featureToCollect) throws CoreException {
-		if (assemblyData == null || getBuildProperties().get(PROPERTY_BIN_INCLUDES) == null)
+		if (scriptGeneration == true && (assemblyData == null || getBuildProperties().get(PROPERTY_BIN_INCLUDES) == null))
 			return;
 		List correctConfigs = selectConfigs(featureToCollect);
 		// Here, we could sort if the feature is a common one or not by

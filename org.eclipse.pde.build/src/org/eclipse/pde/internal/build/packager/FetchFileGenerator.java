@@ -19,8 +19,10 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.*;
 
 public class FetchFileGenerator extends AbstractScriptGenerator {
-	private static final String ENTRY_SEPARATOR = "|"; //$NON-NLS-1$
+	private static final String ENTRY_SEPARATOR = "%"; //$NON-NLS-1$
 	private static final String FILTER_SEPARATOR = "&"; //$NON-NLS-1$
+	private static final String DATA_SEPARATOR = "|"; //$NON-NLS-1$
+	
 	// Unknown component name
 	private static final String UNKNOWN = "*"; //$NON-NLS-1$ 	
 
@@ -120,7 +122,7 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 		for (Iterator iter = mapContent.entrySet().iterator(); iter.hasNext();) {
 			Map.Entry mapEntry = (Map.Entry) iter.next();
 			String fileName = (String) mapEntry.getKey();
-			String[] fileDescription = Utils.getArrayFromStringWithBlank((String) mapEntry.getValue(), ENTRY_SEPARATOR);
+			String[] fileDescription = Utils.getArrayFromStringWithBlank((String) mapEntry.getValue(), DATA_SEPARATOR);
 
 			if (fileDescription.length < 4) {
 				String message = NLS.bind(Messages.error_incorrectDirectoryEntry, (String) mapEntry.getKey() + '=' + (String) mapEntry.getValue());
@@ -138,7 +140,7 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 
 			if (filterByConfig(fileDescription[CONFIGS]) && filterByFilter(fileDescription[FILTERS]) && filterByComponentName(fileDescription.length > 4 ? fileDescription[COMPONENT] : UNKNOWN)) {
 				generateFetchFileFor(fileName, fileDescription[URL], userInfos);
-				collectedFiles += fileName + ", " + (fileDescription[DIRECTORY].equals("") ? "." : fileDescription[DIRECTORY]) + " & "; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$				
+				collectedFiles += fileName + DATA_SEPARATOR + (fileDescription[DIRECTORY].equals("") ? "." : fileDescription[DIRECTORY]) + DATA_SEPARATOR + fileDescription[CONFIGS] +  ENTRY_SEPARATOR; //$NON-NLS-1$ //$NON-NLS-2$				
 			} else {
 				if (BundleHelper.getDefault().isDebugging()) {
 					IStatus status = new Status(IStatus.INFO, PI_PDEBUILD, WARNING_ELEMENT_NOT_FETCHED, NLS.bind(Messages.error_fetchingFailed, fileDescription[DIRECTORY]), null);

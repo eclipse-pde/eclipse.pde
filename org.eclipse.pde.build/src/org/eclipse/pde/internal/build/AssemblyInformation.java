@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,7 @@ import org.eclipse.pde.internal.build.site.BuildTimeFeature;
 import org.eclipse.update.core.IFeature;
 
 public class AssemblyInformation {
-	// The list of all the features and plugins to assemble listed on a per config basis 
+	// List all the features and plugins to assemble sorted on a per config basis 
 	//	key: string[] representing the tuple of a config 
 	// value: (AssemblyLevelConfigInfo) representing the info for the given config
 	private Map assembleInformation = new HashMap(8);
@@ -47,6 +47,58 @@ public class AssemblyInformation {
 		return ((AssemblyLevelConfigInfo) assembleInformation.get(config)).getPlugins();
 	}
 
+	public Collection getBinaryPlugins(Config config) {
+		Collection allPlugins = getPlugins(config);
+		Set result = new HashSet(allPlugins.size()); 
+		for (Iterator iter = allPlugins.iterator(); iter.hasNext();) {
+			BundleDescription bundle = (BundleDescription) iter.next();
+			Properties bundleProperties = ((Properties) bundle.getUserObject());
+			if (bundleProperties == null || bundleProperties.get("isCompiled").equals(Boolean.FALSE))
+				result.add(bundle);
+		}
+		return result;
+	}
+	
+	public Collection getCompiledPlugins(Config config) {
+		Collection allPlugins = getPlugins(config);
+		Set result = new HashSet(allPlugins.size()); 
+		for (Iterator iter = allPlugins.iterator(); iter.hasNext();) {
+			BundleDescription bundle = (BundleDescription) iter.next();
+			Properties bundleProperties = ((Properties) bundle.getUserObject());
+			if (bundleProperties != null && bundleProperties.get("isCompiled").equals(Boolean.TRUE))
+				result.add(bundle);
+		}
+		return result;
+	}
+	
+	public Collection getCompiledFeatures(Config config) {
+		Collection allFeatures= getFeatures(config);
+		Set result = new HashSet(allFeatures.size()); 
+		for (Iterator iter = allFeatures.iterator(); iter.hasNext();) {
+			Object tmp = iter.next();
+			if (tmp instanceof BuildTimeFeature) {
+				if (! ((BuildTimeFeature) tmp).isBinary())
+					result.add(tmp);
+			}
+		}
+		return result;
+	}
+	
+	public Collection getBinaryFeatures(Config config) {
+		Collection allFeatures= getFeatures(config);
+		Set result = new HashSet(allFeatures.size()); 
+		for (Iterator iter = allFeatures.iterator(); iter.hasNext();) {
+			Object tmp = iter.next();
+			if (tmp instanceof BuildTimeFeature) {
+				if (((BuildTimeFeature) tmp).isBinary())
+					result.add(tmp);
+			} else {
+				result.add(tmp);
+			}
+		}
+		return result;
+	}
+	
 	public Collection getFeatures(Config config) {
 		return ((AssemblyLevelConfigInfo) assembleInformation.get(config)).getFeatures();
 	}

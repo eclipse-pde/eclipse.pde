@@ -82,7 +82,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		Properties modelProps = getBuildPropertiesFor(model);
 		ModelBuildScriptGenerator.specialDotProcessing(modelProps, libraries);
 		for (int i = 0; i < libraries.length; i++) {
-			addDevEntries(model, baseLocation, classpath, Utils.getArrayFromString(generator.getBuildProperties().getProperty(PROPERTY_OUTPUT_PREFIX + libraries[i])));
+			addDevEntries(model, baseLocation, classpath, Utils.getArrayFromString(modelProps.getProperty(PROPERTY_OUTPUT_PREFIX + libraries[i])));
 			addPathAndCheck(model.getSymbolicName(), base, libraries[i], modelProps, classpath);
 		}
 	}
@@ -160,7 +160,12 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	// path : The path to add
 	// classpath : The classpath in which we want to add this path 
 	private void addPathAndCheck(String pluginId, IPath basePath, String libraryName, Properties modelProperties, List classpath) {
-		String path = basePath.append(libraryName).toString();
+		String path = null;
+		if ("jar".equalsIgnoreCase(basePath.getFileExtension())) {
+			path = basePath.toOSString();
+		} else {
+			path = basePath.append(libraryName).toString();
+		}
 		path = generator.replaceVariables(path, pluginId == null ? false : generator.getCompiledElements().contains(pluginId));
 		if (generator.getCompiledElements().contains(pluginId)) {
 			if (modelProperties == null || modelProperties.getProperty(IBuildPropertiesConstants.PROPERTY_SOURCE_PREFIX + libraryName) != null) //$NON-NLS-1$

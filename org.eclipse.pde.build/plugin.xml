@@ -27,7 +27,7 @@
       <antTask
             library="lib/pdebuild-ant.jar"
             name="eclipse.assembler"
-            class="org.eclipse.pde.internal.build.tasks.AssemblerTask">
+            class="org.eclipse.pde.internal.build.tasks.PackagerTask">
       </antTask>
       <antTask
             library="lib/pdebuild-ant.jar"

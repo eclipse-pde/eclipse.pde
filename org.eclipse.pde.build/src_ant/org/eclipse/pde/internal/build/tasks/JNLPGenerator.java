@@ -13,9 +13,9 @@ package org.eclipse.pde.internal.build.tasks;
 
 import java.io.*;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import javax.xml.parsers.*;
-import org.eclipse.update.internal.configurator.FeatureEntry;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -26,8 +26,7 @@ import org.xml.sax.helpers.DefaultHandler;
 public class JNLPGenerator extends DefaultHandler {
 
 	private SAXParser parser;
-	private FeatureEntry feature;
-	private URL url;
+	private File featureRoot;
 
 	private String codebase;
 	private String j2se;
@@ -57,16 +56,16 @@ public class JNLPGenerator extends DefaultHandler {
 	 * For testing purposes only.
 	 */
 	public static void main(String[] args) throws MalformedURLException {
-		JNLPGenerator generator = new JNLPGenerator(new URL(args[0]), args[1], args[2], args[3]);
+		JNLPGenerator generator = new JNLPGenerator(args[0], args[1], args[2], args[3]);
 		generator.process();
 	}
 
 	/**
 	 * Constructs a feature parser.
 	 */
-	public JNLPGenerator(URL featureURL, String destination, String codebase, String j2se) {
+	public JNLPGenerator(String feature, String destination, String codebase, String j2se) {
 		super();
-		this.url = featureURL;
+		this.featureRoot = new File(feature);
 		this.destination = destination;
 		this.codebase = codebase;
 		this.j2se = j2se;
@@ -85,8 +84,16 @@ public class JNLPGenerator extends DefaultHandler {
 	 */
 	public void process() {
 		InputStream in = null;
+			
 		try {
-			in = url.openStream();
+			ZipFile featureArchive = null;
+			if (featureRoot.isFile()) {
+				featureArchive = new ZipFile(featureRoot);
+				ZipEntry featureXML = featureArchive.getEntry("feature.xml");
+				in = featureArchive.getInputStream(featureXML);
+			} else {
+				in = new FileInputStream(new File(featureRoot, "feature.xml"));
+			}
 			try {
 				parser.parse(new InputSource(in), this);
 				writeResourceEpilogue();
@@ -96,6 +103,8 @@ public class JNLPGenerator extends DefaultHandler {
 				in.close();
 				if (out != null)
 					out.close();
+				if (featureArchive != null)
+					featureArchive.close();
 			}
 		} catch (IOException e) {
 		}
@@ -124,7 +133,7 @@ public class JNLPGenerator extends DefaultHandler {
 		String os = attributes.getValue("os"); //$NON-NLS-1$
 		String ws = attributes.getValue("ws"); //$NON-NLS-1$
 		writeResourcePrologue(os, ws);
-		out.println("\t\t<jar href=\"../plugins/" + id + "_" + version + ".jar\"/>");
+		out.println("\t\t<jar href=\"plugins/" + id + "_" + version + ".jar\"/>");
 	}
 
 	private void writeResourceEpilogue() {
@@ -171,13 +180,12 @@ public class JNLPGenerator extends DefaultHandler {
 	}
 
 	private void processDescription(Attributes attributes) {
-
 	}
 
 	private void processIncludes(Attributes attributes) throws IOException {
 		writePrologue();
-		String id = attributes.getValue("id"); //$NON-NLS-1$
-//		String version = attributes.getValue("version"); //$NON-NLS-1$
+		String inclusionId = attributes.getValue("id"); //$NON-NLS-1$
+		String inclusionVersion = attributes.getValue("version"); //$NON-NLS-1$
 		String name = attributes.getValue("name"); //$NON-NLS-1$
 		String os = attributes.getValue("os"); //$NON-NLS-1$
 		String ws = attributes.getValue("ws"); //$NON-NLS-1$
@@ -185,8 +193,12 @@ public class JNLPGenerator extends DefaultHandler {
 		out.print("\t\t<extension ");
 		if (name != null)
 			out.print("name=\"" + name + "\" ");
-		if (id != null)
-			out.print("href=\"features/" + id + ".jnlp\" ");
+		if (inclusionId != null) {
+			out.print("href=\"features/" + inclusionId);
+			if (inclusionVersion != null)
+				out.print("_" + inclusionVersion);
+			out.print(".jnlp\" ");
+		}
 		out.println("/>");
 	}
 
@@ -195,24 +207,17 @@ public class JNLPGenerator extends DefaultHandler {
 		version = attributes.getValue("version"); //$NON-NLS-1$
 		label = attributes.getValue("label"); //$NON-NLS-1$
 		provider = attributes.getValue("provider-name"); //$NON-NLS-1$
-//		String imageURL = attributes.getValue("image"); //$NON-NLS-1$
-//		String os = attributes.getValue("os"); //$NON-NLS-1$
-//		String ws = attributes.getValue("ws"); //$NON-NLS-1$
-//		String nl = attributes.getValue("nl"); //$NON-NLS-1$
-//		String arch = attributes.getValue("arch"); //$NON-NLS-1$
 	}
 
 	private void writePrologue() throws IOException {
 		if (out != null)
 			return;
 		if (destination == null) {
-			URL sourceURL = url;
-			if (url.getProtocol().equalsIgnoreCase("jar"))
-				sourceURL = new URL(url.getPath().replace('!', '/'));
-			destination = new File(sourceURL.getPath()).getParentFile().getParent() + "/";
+			featureRoot.getParentFile();
+			destination = featureRoot.getParent() + '/';
 		}
 		if (destination.endsWith("/") || destination.endsWith("\\"))
-			destination = new File(destination, id + "_" + version + ".jnlp").getAbsolutePath();
+			destination = new File(featureRoot.getParentFile(), id + "_" + version + ".jnlp").getAbsolutePath();
 		out = new PrintWriter(new FileOutputStream(destination));
 		writePrologue();
 		out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");

@@ -108,6 +108,22 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		return model.getLocation();
 	}
 
+	static public class MissingProperties extends Properties {
+//		private static final long serialVersionUID = 3546924667060303927L;
+		private static MissingProperties singleton;
+		private MissingProperties(){
+			//nothing to do;
+		}
+		public synchronized int size() {
+			return -1;
+		}
+		public static MissingProperties getInstance() {
+			if (singleton == null)
+				singleton = new MissingProperties();
+			return singleton;
+		}
+	}
+	 
 	public static Properties readProperties(String location, String fileName, int errorLevel) throws CoreException {
 		Properties result = new Properties();
 		File file = new File(location, fileName);
@@ -123,6 +139,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 				String message = NLS.bind(Messages.exception_missingFile, file);
 				BundleHelper.getDefault().getLog().log(new Status(errorLevel, PI_PDEBUILD, EXCEPTION_READING_FILE, message, null));
 			}
+			result = MissingProperties.getInstance();
 		} catch (IOException e) {
 			String message = NLS.bind(Messages.exception_readingFile, file);
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READING_FILE, message, e));

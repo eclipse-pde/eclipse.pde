@@ -10,12 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build;
 
-import java.io.*;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.environment.Constants;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.ant.*;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.core.IPluginEntry;
@@ -28,7 +26,8 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	protected String directory; // representing the directory where to generate the file
 	protected String featureId;
 	protected Config configInfo;
-	protected IFeature[] features;
+	protected IFeature[] features; // the features that will be assembled
+	protected IFeature[] allFeatures; //the set of all the features that have been considered
 	protected BundleDescription[] plugins;
 	protected String filename;
 	protected Collection rootFileProviders;
@@ -46,8 +45,8 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 
 	private static final String FOLDER = "folder"; //$NON-NLS-1$
 	private static final String FILE = "file"; //$NON-NLS-1$
-	private String PROPERTY_ECLIPSE_PLUGINS = "eclipse.plugins"; //$NON-NLS-1$
-	private String PROPERTY_ECLIPSE_FEATURES = "eclipse.features"; //$NON-NLS-1$
+	protected String PROPERTY_ECLIPSE_PLUGINS = "eclipse.plugins"; //$NON-NLS-1$
+	protected String PROPERTY_ECLIPSE_FEATURES = "eclipse.features"; //$NON-NLS-1$
 	private boolean signJars;
 	private boolean generateJnlp;
 
@@ -55,28 +54,22 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		super();
 	}
 
-	public void initialize(String directoryName, String scriptName, String feature, Config configurationInformation, Collection elementList, Collection featureList, Collection rootProviders) throws CoreException {
+	public void initialize(String directoryName, String feature, Config configurationInformation, Collection elementList, Collection featureList, Collection allFeaturesList, Collection rootProviders) throws CoreException {
 		this.directory = directoryName;
 		this.featureId = feature;
 		this.configInfo = configurationInformation;
-		this.rootFileProviders = rootProviders;
+		this.rootFileProviders = rootProviders != null ? rootProviders : new ArrayList(0);
 
 		this.features = new IFeature[featureList.size()];
 		featureList.toArray(this.features);
 
+		this.allFeatures = new IFeature[allFeaturesList.size()];
+		allFeaturesList.toArray(this.allFeatures);
+		
 		this.plugins = new BundleDescription[elementList.size()];
 		this.plugins = (BundleDescription[]) elementList.toArray(this.plugins);
 
-		filename = directory + '/' + (scriptName != null ? scriptName : getFilename()); //$NON-NLS-1$
-		try {
-			script = new AntScript(new FileOutputStream(filename));
-		} catch (FileNotFoundException e) {
-			//TODO Log an error
-			// a file doesn't exist so we will create a new one
-		} catch (IOException e) {
-			String message = NLS.bind(Messages.exception_writingFile, filename);
-			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
-		}
+		openScript(directoryName, getTargetName() + ".xml");
 		loadPostProcessingSteps();
 	}
 
@@ -114,7 +107,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		if (outputFormat.equalsIgnoreCase("folder")) //$NON-NLS-1$
 			return;
 		
-		//Windows and archived are archived as zip
+		//Windows is archived as zip
 		if (configInfo.getOs().equalsIgnoreCase(Constants.OS_WIN32) || configInfo.equals(Config.genericConfig())) {
 			if (outputFormat.equalsIgnoreCase("zip")) //$NON-NLS-1$
 				generateZipTarget();
@@ -155,7 +148,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		}
 	}
 
-	private void generatePackagingTargets() {
+	protected void generatePackagingTargets() {
 		String fileName = getPropertyFormat(PROPERTY_SOURCE) + '/' + getPropertyFormat(PROPERTY_ELEMENT_NAME);
 		String fileExists = getPropertyFormat(PROPERTY_SOURCE) + '/' + getPropertyFormat(PROPERTY_ELEMENT_NAME) + "_exists"; //$NON-NLS-1$
 
@@ -191,7 +184,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		script.printExecTask("rm", null, args, null); //$NON-NLS-1$
 	}
 
-	private void generatePrologue() {
+	protected void generatePrologue() {
 		script.printProjectDeclaration("Assemble " + featureId, TARGET_MAIN, null); //$NON-NLS-1$  
 		script.printProperty(PROPERTY_ARCHIVE_NAME, computeArchiveName());
 		script.printProperty(PROPERTY_OS, configInfo.getOs());
@@ -227,15 +220,14 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		script.printProperty(PROPERTY_FEATURE_ARCHIVE_PREFIX, getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + DEFAULT_FEATURE_LOCATION);
 
 		script.println();
-		if (!"folder".equalsIgnoreCase(outputFormat)) //$NON-NLS-1$
-			script.printDeleteTask(getPropertyFormat(PROPERTY_ASSEMBLY_TMP), null, null);
+
 		script.printDirName(PROPERTY_ARCHIVE_PARENT, getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH));
 		script.printMkdirTask(getPropertyFormat(PROPERTY_ARCHIVE_PARENT));
 		script.printMkdirTask(getPropertyFormat(PROPERTY_ASSEMBLY_TMP));
 		script.printMkdirTask(getPropertyFormat(PROPERTY_BUILD_LABEL));
 	}
 
-	private void generatePostProcessingSteps() {
+	protected void generatePostProcessingSteps() {
 		for (int i = 0; i < plugins.length; i++) {
 			BundleDescription plugin = plugins[i];
 			if (forceUpdateJarFormat) //Force the updateJar if it is asked as an output format
@@ -251,7 +243,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		}
 	}
 
-	private void generateGatherBinPartsCalls() {
+	protected void generateGatherBinPartsCalls() {
 		Map properties = new HashMap(1);
 		properties.put(PROPERTY_DESTINATION_TEMP_FOLDER, getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS));
 		for (int i = 0; i < plugins.length; i++) {
@@ -302,9 +294,10 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	//Get the unpack clause from the feature.xml
+	//TODO Need to improve the algorithm
 	private String getPluginUnpackClause(String name, String version) {
-		for (int i = 0; i < features.length; i++) {
-			IPluginEntry[] entries = features[i].getPluginEntries(); //Only plugin being built needs to be considered 
+		for (int i = 0; i < allFeatures.length; i++) {
+			IPluginEntry[] entries = allFeatures[i].getPluginEntries(); //Only plugin being built needs to be considered 
 			for (int j = 0; j < entries.length; j++) {
 				if (entries[j].getVersionedIdentifier().getIdentifier().equals(name))
 					return ((org.eclipse.update.core.PluginEntry) entries[j]).isUnpack() ? FLAT : UPDATEJAR;
@@ -313,7 +306,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		return FLAT;
 	}
 
-	private Object[] getFinalShape(String name, String version, byte type) {
+	protected Object[] getFinalShape(String name, String version, byte type) {
 		String style = getPluginUnpackClause(name, version);
 		Properties currentProperties = type == BUNDLE ? pluginsPostProcessingSteps : featuresPostProcessingSteps;
 		if (currentProperties.size() != 0) {
@@ -340,13 +333,12 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	private void generateEpilogue() {
+		if (!"folder".equalsIgnoreCase(outputFormat)) //$NON-NLS-1$
+			script.printDeleteTask(getPropertyFormat(PROPERTY_ASSEMBLY_TMP), null, null);
 		script.printTargetEnd();
 		script.printProjectEnd();
 		script.close();
-	}
-
-	public String getFilename() {
-		return getTargetName() + ".xml"; //$NON-NLS-1$
+		script = null;
 	}
 
 	public String getTargetName() {
@@ -426,7 +418,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		script.printExecTask("tar", getPropertyFormat(PROPERTY_ASSEMBLY_TMP), parameters, null); //$NON-NLS-1$ 
 	}
 
-	private void generateAntZipTarget() {
+	protected void generateAntZipTarget() {
 		FileSet[] filesPlugins = new FileSet[plugins.length];
 		for (int i = 0; i < plugins.length; i++) {
 			Object[] shape = getFinalShape(plugins[i].getSymbolicName(), plugins[i].getVersion().toString(), BUNDLE);
