@@ -485,7 +485,7 @@ public class EventDetailsDialog extends Dialog {
 		msgText.setEditable(false);
 		gd = new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_BEGINNING | GridData.GRAB_VERTICAL);
 		gd.horizontalSpan = 2;
-		gd.verticalSpan = 8;
+		gd.heightHint = 44;
 		gd.grabExcessVerticalSpace = true;
 		msgText.setLayoutData(gd);
 	}
