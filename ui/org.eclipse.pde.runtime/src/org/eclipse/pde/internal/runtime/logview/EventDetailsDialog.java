@@ -90,12 +90,16 @@ public class EventDetailsDialog extends Dialog {
 		parentEntry = (LogEntry) entry.getParent(entry);
 		if (isChild(entry)){
 			setEntryChildren(parentEntry);
-			for (int i = 0; i<entryChildren.length; i++){
-				if (entryChildren[i].getMessage().equals(entry.getMessage())
-						&& entryChildren[i].getDate().equals(entry.getDate())){
-					childIndex = i;
-					break;
-				}
+			resetChildIndex();
+		}
+	}
+	
+	private void resetChildIndex(){
+		for (int i = 0; i<entryChildren.length; i++){
+			if (entryChildren[i].getMessage().equals(entry.getMessage())
+					&& entryChildren[i].getDate().equals(entry.getDate())){
+				childIndex = i;
+				break;
 			}
 		}
 	}
@@ -207,7 +211,7 @@ public class EventDetailsDialog extends Dialog {
 		// set the clipboard contents
 		clipboard.setContents(new Object[] { textVersion }, new Transfer[] { TextTransfer.getInstance()});	
 	}
-	
+
 	private void setComparator(byte sortType, final int sortOrder){
 		if (sortType == LogView.DATE){
 			comparator = new Comparator(){
@@ -266,13 +270,13 @@ public class EventDetailsDialog extends Dialog {
 		provider.setSelection(selection);
 	}
 	
-	public void updateProperties() {		
-		if (entry.hasChildren()) {
-			setEntryChildren(entry);
-		} else if (isChild(entry)){
+	public void updateProperties() {	
+		if (isChild(entry)){
 			parentEntry = (LogEntry) entry.getParent(entry);
 			setEntryChildren(parentEntry);
+			resetChildIndex();
 		}
+
 
 		totalElementCount = provider.getTableTree().getTable().getItemCount() - getVisibleChildrenCount();
 		dateLabel.setText(entry.getDate());
@@ -316,8 +320,7 @@ public class EventDetailsDialog extends Dialog {
 	
 	private int getParentElementNum(){
 		LogEntry itemEntry = (LogEntry)((IStructuredSelection)provider.getSelection()).getFirstElement();
-		if (isChild(itemEntry))
-			itemEntry = (LogEntry)itemEntry.getParent(itemEntry);
+		itemEntry = getRootEntry(itemEntry);
 		
 		for (int i = 0; i<provider.getTableTree().getItemCount(); i++){
 			try {
@@ -331,7 +334,11 @@ public class EventDetailsDialog extends Dialog {
 		}
 		return 0;
 	}
-	
+	private LogEntry getRootEntry(LogEntry entry){
+		if (!isChild(entry))
+			return entry;
+		return getRootEntry((LogEntry)entry.getParent(entry));
+	}
 	private int getVisibleChildrenCount(){
 		Object[] elements = provider.getVisibleExpandedElements();
 		LogEntry[] expandedElements = new LogEntry[elements.length];

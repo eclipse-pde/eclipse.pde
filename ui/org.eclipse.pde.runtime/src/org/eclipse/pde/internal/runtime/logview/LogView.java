@@ -85,6 +85,10 @@ public class LogView extends ViewPart implements ILogListener {
 	private TableColumn column3;
 	private TableColumn column4;
 	
+	private static Font boldFont;
+	private Comparator comparator;
+	private Collator collator;
+	
 	// hover text
 	private boolean canOpenTextShell; 
 	private Text textLabel;
@@ -103,7 +107,7 @@ public class LogView extends ViewPart implements ILogListener {
 		tableTree.setLayoutData(new GridData(GridData.FILL_BOTH));
 		createColumns(tableTree.getTable());		
 		createViewer(tableTree);
-		
+		applyFonts();
 		createPopupMenuManager(tableTree);
 		makeActions(tableTree.getTable());
 		fillToolBar();
@@ -114,9 +118,84 @@ public class LogView extends ViewPart implements ILogListener {
 		
 		WorkbenchHelp.setHelp(tableTree,IHelpContextIds.LOG_VIEW);
 		tableTreeViewer.getTableTree().getTable().setToolTipText("");
+		initializeFonts();
+		applyFonts();
+	}
+	
+	private void initializeFonts(){
+		Font tableFont = tableTreeViewer.getTableTree().getFont();
+		FontData[] fontDataList = tableFont.getFontData();
+		FontData fontData;
+		if (fontDataList.length >0)
+			fontData = fontDataList[0];
+		else
+			fontData = new FontData();
+		fontData.setStyle(SWT.BOLD);
+		boldFont = new Font(tableTreeViewer.getTableTree().getDisplay(), fontData);
 	}
 	
 	
+	/*
+	 * Set all rows where the tableTreeItem has children to have a <b>bold</b> font.
+	 */
+	private void applyFonts() {
+		int max = tableTreeViewer.getTableTree().getItemCount();
+		int index = 0, tableIndex=0;
+		while (index <max){
+			LogEntry entry = (LogEntry)tableTreeViewer.getElementAt(index);
+			if (entry == null)
+				return;
+			if (entry.hasChildren()){
+				getTableItem(tableIndex).setFont(boldFont);
+				tableIndex = applyChildFonts(entry, tableIndex);
+			} else {
+				getTableItem(tableIndex).setFont(tableTreeViewer.getTableTree().getFont());
+			}
+
+			index++;
+			tableIndex++;
+			
+		}
+	}
+	private int applyChildFonts(LogEntry parent, int index){
+		if (!tableTreeViewer.getExpandedState(parent) || !parent.hasChildren())
+			return index;
+
+		LogEntry[] children = getEntryChildren(parent);
+		for (int i = 0; i<children.length; i++){
+			index ++;
+			if (children[i].hasChildren()){
+				TableItem tableItem = getTableItem(index);
+				if (tableItem!=null){
+					tableItem.setFont(boldFont);
+				}
+				index = applyChildFonts(children[i], index) ;
+			} else {
+				TableItem tableItem = getTableItem(index);
+				if (tableItem!=null){
+					tableItem.setFont(tableTreeViewer.getTableTree().getFont());
+				}
+			}
+		}
+		return index;
+	}
+	
+	private LogEntry[] getEntryChildren(LogEntry parent){
+		Object[] entryChildren = parent.getChildren(parent);
+		if (comparator != null)
+			Arrays.sort(entryChildren, comparator);
+		LogEntry[] children = new LogEntry[entryChildren.length];
+		System.arraycopy(entryChildren,0,children,0,entryChildren.length);
+		return children;
+	}
+
+	private TableItem getTableItem(int index){
+		TableItem[] tableItems = tableTreeViewer.getTableTree().getTable().getItems();
+		if (index > tableItems.length -1)
+			return null;
+		return tableItems[index];
+	}
+
 	private void fillToolBar() {
 		IActionBars bars = getViewSite().getActionBars();
 		bars.setGlobalActionHandler(ActionFactory.COPY.getId(), copyAction);
@@ -143,15 +222,26 @@ public class LogView extends ViewPart implements ILogListener {
 		tableTreeViewer
 			.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent e) {
-				handleSelectionChanged(e.getSelection());
+				handleSelectionChanged(e.getSelection());				
 				if (propertiesAction.isEnabled())
-					((EvenDetailsDialogAction)propertiesAction).resetSelection();
+					((EventDetailsDialogAction)propertiesAction).resetSelection();
 			}
 		});	
 		tableTreeViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
 				propertiesAction.run();
 			}
+		});
+		tableTreeViewer.addTreeListener(new ITreeViewerListener(){
+
+			public void treeCollapsed(TreeExpansionEvent event) {
+				applyFonts();
+			}
+
+			public void treeExpanded(TreeExpansionEvent event) {
+				applyFonts();
+			}
+			
 		});
 		addMouseListeners();
 		tableTreeViewer.setInput(Platform.class);
@@ -182,14 +272,12 @@ public class LogView extends ViewPart implements ILogListener {
 		column2.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				MESSAGE_ORDER *= -1;
-				tableTreeViewer.setSorter(new ViewerSorter() {
-					public int compare(Viewer viewer, Object e1, Object e2) {
-						LogEntry entry1 = (LogEntry)e1;
-						LogEntry entry2 = (LogEntry)e2;
-						return super.compare(viewer, entry1.getMessage(), entry2.getMessage()) * MESSAGE_ORDER;
-					}
-				});
-				((EvenDetailsDialogAction)propertiesAction).resetSelection(MESSAGE, MESSAGE_ORDER);
+				ViewerSorter sorter = getViewerSorter(MESSAGE);
+				tableTreeViewer.setSorter(sorter);
+				collator = sorter.getCollator();
+				((EventDetailsDialogAction)propertiesAction).resetSelection(MESSAGE, MESSAGE_ORDER);
+				setComparator(MESSAGE);
+				applyFonts();
 			}
 		});
 		
@@ -198,14 +286,12 @@ public class LogView extends ViewPart implements ILogListener {
 		column3.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				PLUGIN_ORDER *= -1;
-				tableTreeViewer.setSorter(new ViewerSorter() {
-					public int compare(Viewer viewer, Object e1, Object e2) {
-						LogEntry entry1 = (LogEntry)e1;
-						LogEntry entry2 = (LogEntry)e2;
-						return super.compare(viewer, entry1.getPluginId(), entry2.getPluginId()) * PLUGIN_ORDER;
-					}
-				});
-				((EvenDetailsDialogAction)propertiesAction).resetSelection(PLUGIN, PLUGIN_ORDER);
+				ViewerSorter sorter = getViewerSorter(PLUGIN);
+				tableTreeViewer.setSorter(sorter);
+				collator = sorter.getCollator();
+				((EventDetailsDialogAction)propertiesAction).resetSelection(PLUGIN, PLUGIN_ORDER);
+				setComparator(PLUGIN);
+				applyFonts();
 			}
 		});
 		
@@ -218,23 +304,12 @@ public class LogView extends ViewPart implements ILogListener {
 				} else {
 					DATE_ORDER = ASCENDING;
 				}
-				tableTreeViewer.setSorter(new ViewerSorter() {
-					public int compare(Viewer viewer, Object e1, Object e2) {
-						try {
-							SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy HH:mm:ss.SS"); //$NON-NLS-1$
-							Date date1 = formatter.parse(((LogEntry)e1).getDate());
-							Date date2 = formatter.parse(((LogEntry)e2).getDate());
-							if (DATE_ORDER == ASCENDING) {
-								return date1.before(date2) ? -1 : 1;
-							} else {
-								return date1.after(date2) ? -1 : 1;
-							}
-						} catch (ParseException e) {
-						}
-						return 0;
-					}
-				});
-				((EvenDetailsDialogAction)propertiesAction).resetSelection(DATE, DATE_ORDER);
+				ViewerSorter sorter = getViewerSorter(DATE);
+				tableTreeViewer.setSorter(sorter);
+				collator = sorter.getCollator();
+				((EventDetailsDialogAction)propertiesAction).resetSelection(DATE, DATE_ORDER);
+				setComparator(DATE);
+				applyFonts();
 			}
 		});
 		
@@ -249,7 +324,7 @@ public class LogView extends ViewPart implements ILogListener {
 	}
 	
 	private void makeActions(Table table) {
-		propertiesAction = new EvenDetailsDialogAction(table.getShell(), tableTreeViewer);
+		propertiesAction = new EventDetailsDialogAction(table.getShell(), tableTreeViewer);
 		propertiesAction.setImageDescriptor(PDERuntimePluginImages.DESC_PROPERTIES);
 		propertiesAction.setDisabledImageDescriptor(
 			PDERuntimePluginImages.DESC_PROPERTIES_DISABLED);
@@ -401,7 +476,7 @@ public class LogView extends ViewPart implements ILogListener {
 			} finally {
 				readLogAction.setText(PDERuntimePlugin.getResourceString("LogView.readLog.reload"));
 				readLogAction.setToolTipText(PDERuntimePlugin.getResourceString("LogView.readLog.reload"));
-				asyncRefresh(false);								
+				asyncRefresh(false);	
 			}
 		}	
 	}
@@ -528,7 +603,7 @@ public class LogView extends ViewPart implements ILogListener {
 				PDERuntimePlugin.getResourceString("LogView.readLog.restore"));
 			readLogAction.setToolTipText(
 				PDERuntimePlugin.getResourceString("LogView.readLog.restore"));
-			asyncRefresh(false);				
+			asyncRefresh(false);	
 		}
 	}
 	
@@ -586,6 +661,7 @@ public class LogView extends ViewPart implements ILogListener {
 								page.activate(view);
 						}
 					}
+					applyFonts();
 				}
 			});
 		}
@@ -786,5 +862,80 @@ public class LogView extends ViewPart implements ILogListener {
 			canOpenTextShell = e.x < (column0.getWidth() + column1.getWidth());
 		}
 	}
+	
+	private void setComparator(byte sortType){
+		if (sortType == DATE){
+			comparator = new Comparator(){
+				public int compare(Object e1, Object e2) {
+					try {
+						SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy HH:mm:ss.SS"); //$NON-NLS-1$
+						Date date1 = formatter.parse(((LogEntry)e1).getDate());
+						Date date2 = formatter.parse(((LogEntry)e2).getDate());
+						if (DATE_ORDER == ASCENDING) {
+							return date1.before(date2) ? -1 : 1;
+						} else {
+							return date1.after(date2) ? -1 : 1;
+						}
+					} catch (ParseException e) {
+					}
+					return 0;
+				}
+			};
+		} else if (sortType == PLUGIN){
+			comparator = new Comparator(){
+				public int compare(Object e1, Object e2) {
+					LogEntry entry1 = (LogEntry)e1;
+					LogEntry entry2 = (LogEntry)e2;
+					return collator.compare(entry1.getPluginId(), entry2.getPluginId()) * PLUGIN_ORDER;
+				}
+			};
+		} else {
+			comparator = new Comparator(){
+				public int compare(Object e1, Object e2) {
+					LogEntry entry1 = (LogEntry)e1;
+					LogEntry entry2 = (LogEntry)e2;
+					return collator.compare(entry1.getMessage(), entry2.getMessage()) * MESSAGE_ORDER;
+				}
+			};
+		}
+	}
+	
+	private ViewerSorter getViewerSorter(byte sortType){
+		if (sortType == PLUGIN){
+			return	new ViewerSorter() {
+			public int compare(Viewer viewer, Object e1, Object e2) {
+				LogEntry entry1 = (LogEntry)e1;
+				LogEntry entry2 = (LogEntry)e2;
+				return super.compare(viewer, entry1.getPluginId(), entry2.getPluginId()) * PLUGIN_ORDER;
+			}
+			};
+		} else if (sortType == MESSAGE){
+			return new ViewerSorter() {
+				public int compare(Viewer viewer, Object e1, Object e2) {
+					LogEntry entry1 = (LogEntry)e1;
+					LogEntry entry2 = (LogEntry)e2;
+					return super.compare(viewer, entry1.getMessage(), entry2.getMessage()) * MESSAGE_ORDER;
+				}
+			};
+		} else {
+			return new ViewerSorter() {
+				public int compare(Viewer viewer, Object e1, Object e2) {
+					try {
+						SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy HH:mm:ss.SS"); //$NON-NLS-1$
+						Date date1 = formatter.parse(((LogEntry)e1).getDate());
+						Date date2 = formatter.parse(((LogEntry)e2).getDate());
+						if (DATE_ORDER == ASCENDING) {
+							return date1.before(date2) ? -1 : 1;
+						} else {
+							return date1.after(date2) ? -1 : 1;
+						}
+					} catch (ParseException e) {
+					}
+					return 0;
+				}
+			};
+		}
+	}
+	
 
 }

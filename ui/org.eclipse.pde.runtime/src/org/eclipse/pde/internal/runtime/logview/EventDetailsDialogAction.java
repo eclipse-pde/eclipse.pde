@@ -19,7 +19,7 @@ import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 
-public class EvenDetailsDialogAction extends SelectionProviderAction{
+public class EventDetailsDialogAction extends SelectionProviderAction{
 
 	/**
 	 * The shell in which to open the property dialog
@@ -34,7 +34,7 @@ public class EvenDetailsDialogAction extends SelectionProviderAction{
 	 * @param provider - the selection provider whose elements
 	 * the property dialog will describe
 	 */
-	public EvenDetailsDialogAction(Shell shell, ISelectionProvider provider){
+	public EventDetailsDialogAction(Shell shell, ISelectionProvider provider){
 		super(provider, WorkbenchMessages.getString("PropertyDialog.text"));
 		Assert.isNotNull(shell);
 		this.shell = shell;
