@@ -330,7 +330,7 @@ protected void generateModelTarget(PrintWriter output, PluginModel descriptor) {
 	output.println("  </target>");
 }
 protected void generatePrologue(PrintWriter output, PluginModel descriptor) {
-	output.println("<?xml version=\"1.0\"?>");
+	output.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 	output.println("<project name=\"" + descriptor.getId() + "\" default=\"" + getModelTypeName() + ".zip\" basedir=\".\">");
 	output.println("  <target name=\"init\">");
 	output.println("    <initTemplate/>");

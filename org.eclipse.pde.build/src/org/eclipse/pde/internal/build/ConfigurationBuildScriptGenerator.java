@@ -167,7 +167,7 @@ protected void generateEpilogue(PrintWriter output) {
 	output.println("</project>");
 }
 protected void generatePrologue(PrintWriter output) {
-	output.println("<?xml version=\"1.0\"?>");
+	output.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 	output.println("<project name=\"main\" default=\"" + TARGET_ALL + "\" basedir=\".\">");
 	output.println("  <target name=\"init\">");
 	output.println("    <initTemplate/>");
