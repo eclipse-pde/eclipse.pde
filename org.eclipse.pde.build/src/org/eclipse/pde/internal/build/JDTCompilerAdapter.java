@@ -52,6 +52,7 @@ protected Path getCompileClasspath() {
 }
 protected Commandline setupJavacCommand() {
 	Commandline cmd = new Commandline();
+	cmd.createArgument().setValue("-noExit");
 
 	if (deprecation == true)
 		cmd.createArgument().setValue("-deprecation");
@@ -97,7 +98,6 @@ protected Commandline setupJavacCommand() {
 	cmd.createArgument().setValue("-time");
 	cmd.createArgument().setValue("-noImportError");
 	cmd.createArgument().setValue("-g");
-	cmd.createArgument().setValue("-noExit");
 
 	logAndAddFilesToCompile(cmd);
 	return cmd;
