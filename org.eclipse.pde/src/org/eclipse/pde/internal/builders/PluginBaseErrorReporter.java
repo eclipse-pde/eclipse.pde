@@ -134,15 +134,21 @@ public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {
 	protected void validateLibrary(Element element) {
 		assertAttributeDefined(element, "name", CompilerFlags.ERROR); //$NON-NLS-1$
 		
-		int severity = CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_ELEMENT);
+		int unknownSev = CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_ELEMENT);
+		int deprecatedSev = CompilerFlags.getFlag(CompilerFlags.P_NOT_USED);
 		NodeList children = element.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Element child = (Element)children.item(i);
-			if (child.getNodeName().equals("export")) { //$NON-NLS-1$
+			String elementName = child.getNodeName();
+			if ("export".equals(elementName)) { //$NON-NLS-1$
 				assertAttributeDefined(child, "name", CompilerFlags.ERROR); //$NON-NLS-1$
-			} else if (severity != CompilerFlags.IGNORE) {
-				reportIllegalElement(child, severity);			
-			} 
+			} else if ("packages".equals(elementName)) {
+				if (deprecatedSev != CompilerFlags.IGNORE) {
+					reportDeprecatedElement(child, deprecatedSev);
+				}
+			} else if (unknownSev != CompilerFlags.IGNORE) {
+				reportIllegalElement(child, unknownSev);			
+			}
 		}
 	}
 	
@@ -159,6 +165,11 @@ public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {
 						severity);
 			}
 		}
+	}
+	
+	private void reportDeprecatedElement(Element element, int severity) {
+		report(PDE.getFormattedMessage("Builders.Manifest.deprecated-3.0",
+				element.getNodeName()), getLine(element), severity);
 	}
 
 }
