@@ -4,11 +4,14 @@ package org.eclipse.pde.internal.ui.feature;
  * All Rights Reserved.
  */
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.build.IBuildEntry;
@@ -39,6 +42,8 @@ public class NewFeatureProjectWizard
 	public static final String CREATING_MANIFEST =
 		"NewFeatureWizard.creatingManifest";
 	public static final String MAIN_PAGE_DESC = "NewFeatureWizard.MainPage.desc";
+	public static final String OVERWRITE_FEATURE = "NewFeatureWizard.overwriteFeature";
+	
 	private WizardNewProjectCreationPage mainPage;
 	private FeatureSpecPage specPage;
 	private PluginListPage pluginListPage;
@@ -124,16 +129,40 @@ public class NewFeatureProjectWizard
 		IProgressMonitor monitor)
 		throws CoreException {
 		monitor.beginTask(PDEPlugin.getResourceString(CREATING_PROJECT), 2);
-		CoreUtility.createProject(project, location, monitor);
-		project.open(monitor);
-		CoreUtility.addNatureToProject(project, JavaCore.NATURE_ID, monitor);
-		CoreUtility.addNatureToProject(project, PDE.FEATURE_NATURE, monitor);
-		monitor.subTask(PDEPlugin.getResourceString(CREATING_MANIFEST));
-		createBuildProperties(project);
-		// create install.xml
-		IFile file = createFeatureManifest(project, data, plugins);
-		// open manifest for editing
-		openFeatureManifest(file);
+
+		boolean overwrite = true;
+		if (location.append(project.getName()).toFile().exists()) {
+			overwrite =
+				MessageDialog.openQuestion(
+					PDEPlugin.getActiveWorkbenchShell(),
+					getWindowTitle(),
+					PDEPlugin.getResourceString(OVERWRITE_FEATURE));
+		}
+		if (overwrite) {
+			CoreUtility.createProject(project, location, monitor);
+			project.open(monitor);
+			CoreUtility.addNatureToProject(
+				project,
+				JavaCore.NATURE_ID,
+				monitor);
+			CoreUtility.addNatureToProject(
+				project,
+				PDE.FEATURE_NATURE,
+				monitor);
+			monitor.subTask(PDEPlugin.getResourceString(CREATING_MANIFEST));
+			createBuildProperties(project);
+			// create install.xml
+			IFile file = createFeatureManifest(project, data, plugins);
+			// open manifest for editing
+			openFeatureManifest(file);
+		} else {
+			project.create(monitor);
+			project.open(monitor);
+			IFile featureFile = project.getFile("feature.xml");
+			if (featureFile.exists())
+				openFeatureManifest(featureFile);
+		}
+
 	}
 	private boolean hasInterestingProjects(boolean fragments) {
 		IWorkspace workspace = PDEPlugin.getWorkspace();
