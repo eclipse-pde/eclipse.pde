@@ -1,13 +1,13 @@
-/*******************************************************************************
+/**********************************************************************
  * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.pde.internal.build;
 
 /**
@@ -24,29 +24,62 @@ public interface IPDEBuildConstants {
 
 	/** file names */
 	public final static String PROPERTIES_FILE = "build.properties"; //$NON-NLS-1$
+	public final static String PERMISSIONS_FILE = "permissions.properties"; //$NON-NLS-1$
+	public final static String ABOUT_HTML_FILE = "about.html"; //$NON-NLS-1$
+	public final static String FEATURE_PROPERTIES_FILE = "feature.properties"; //$NON-NLS-1$
+	public final static String SOURCE_PLUGIN_ATTRIBUTE = "sourcePlugin"; //$NON-NLS-1$
 
 	// command line arguments
 	public static final String ARG_CVS_PASSFILE_LOCATION = "-cvspassfile"; //$NON-NLS-1$
 	public static final String ARG_DEV_ENTRIES = "-dev"; //$NON-NLS-1$
 	public static final String ARG_DIRECTORY_LOCATION = "-directory"; //$NON-NLS-1$
 	public static final String ARG_ELEMENTS = "-elements"; //$NON-NLS-1$
-	public static final String ARG_INSTALL_LOCATION = "-install"; //$NON-NLS-1$
+	//public static final String ARG_INSTALL_LOCATION = "-installDir"; //$NON-NLS-1$
 	public static final String ARG_NO_CHILDREN = "-nochildren"; //$NON-NLS-1$
 	public static final String ARG_PLUGIN_PATH = "-pluginpath"; //$NON-NLS-1$
 	public static final String ARG_SCRIPT_NAME = "-scriptname"; //$NON-NLS-1$
 	public static final String ARG_SOURCE_LOCATION = "-source"; //$NON-NLS-1$
-	
+	public static final String ARG_RECURSIVE_GENERATION = "-recursiveGeneration"; //$NON-NLS-1$
+
 	// default values
 	public final static String DEFAULT_BUILD_SCRIPT_FILENAME = "build.xml"; //$NON-NLS-1$
 	public final static String DEFAULT_FEATURE_FILENAME_DESCRIPTOR = "feature.xml"; //$NON-NLS-1$
+	public final static String DEFAULT_FRAGMENT_FILENAME_DESCRIPTOR = "fragment.xml"; //$NON-NLS-1$
+	public final static String DEFAULT_PLUGIN_FILENAME_DESCRIPTOR = "plugin.xml"; //$NON-NLS-1$
 	public final static String DEFAULT_FEATURE_LOCATION = "features"; //$NON-NLS-1$
 	public final static String DEFAULT_FETCH_SCRIPT_FILENAME = "fetch.xml"; //$NON-NLS-1$
+	public final static String DEFAULT_ASSEMBLE_FILENAME = "assemble.xml"; //$NON-NLS-1$
 	public final static String DEFAULT_PLUGIN_LOCATION = "plugins"; //$NON-NLS-1$
 	public final static String DEFAULT_TEMPLATE_SCRIPT_FILENAME = "template.xml"; //$NON-NLS-1$
+	public final static String GENERIC_VERSION_NUMBER = "0.0.0"; //$NON-NLS-1$ 
+	public final static String ANY_STRING = "ANY"; //$NON-NLS-1$
+	public final static String DEFAULT_ASSEMBLE_NAME = "assemble"; //$NON-NLS-1$
+	public final static String DEFAULT_ASSEMBLE_ALL = "all.xml"; //$NON-NLS-1$
+	public final static String DEFAULT_CUSTOM_TARGETS = "customTargets"; //$NON-NLS-1$
+	public final static String DEFAULT_RETRIEVE_FILENAME_DESCRIPTOR = "retrieve.xml"; //$NON-NLS-1$
+	public final static String DEFAULT_ISV_DOC_PLUGIN_SUFFIX = "doc.isv"; //$NON-NLS-1$
+	public final static String DEFAULT_SOURCE_PLUGIN_SUFFIX = "source"; //$NON-NLS-1$
+	public final static String DEFAULT_PACKAGER_DIRECTORY_FILENAME_DESCRIPTOR = "packager.directory.txt"; //$NON-NLS-1$
+	public final static String DEFAULT_UNZIPPER_FILENAME_DESCRIPTOR = "unzipper.xml"; //$NON-NLS-1$
+
+	//permission prefixes
+	public final static String PERMISSIONS = "permissions"; //$NON-NLS-1$
+	public final static String LINK = "link"; //$NON-NLS-1$
+	public final static String EXECUTABLE = "executable"; //$NON-NLS-1$
+
+	// Tag replaced in files
+	public final static String REPLACED_PLUGIN_ID = "PLUGIN_ID"; //$NON-NLS-1$
+	public final static String REPLACED_PLUGIN_VERSION = "PLUGIN_VERSION"; //$NON-NLS-1$
+	public final static String REPLACED_FRAGMENT_VERSION = "FRAGMENT_VERSION"; //$NON-NLS-1$ 
+	public final static String REPLACED_FRAGMENT_ID = "FRAGMENT_ID"; //$NON-NLS-1$
+
+	public final static String GENERATION_SOURCE_PREFIX = "generate."; //$NON-NLS-1$
+	public final static String GENERATION_SOURCE_FEATURE_PREFIX = GENERATION_SOURCE_PREFIX + "feature@"; //$NON-NLS-1$
+	public final static String GENERATION_SOURCE_PLUGIN_PREFIX = GENERATION_SOURCE_PREFIX + "plugin@"; //$NON-NLS-1$
 
 	// status constants	
 	public final static int EXCEPTION_FEATURE_MISSING = 1;
-	public final static int EXCEPTION_INSTALL_LOCATION_MISSING = 2;
+	public final static int EXCEPTION_BUILDDIRECTORY_LOCATION_MISSING = 2;
 	public final static int EXCEPTION_MALFORMED_URL = 3;
 	public final static int EXCEPTION_MODEL_PARSE = 4;
 	public final static int EXCEPTION_PLUGIN_MISSING = 5;
