@@ -1,8 +1,9 @@
-package org.eclipse.pde.internal.ui.editor.site;
+package org.eclipse.pde.internal.ui.ant;
 
 import java.io.*;
 
 import org.apache.tools.ant.*;
+import org.eclipse.pde.internal.ui.editor.site.FeatureBuildOperation;
 
 /**
  * @author dejan
@@ -20,9 +21,7 @@ public class SiteBuildListener implements BuildListener {
 	 */
 	public void buildStarted(BuildEvent event) {
 		try {
-			File staticFile = FeatureBuildOperation.getDefault().getLogFile();
-			//File file = FeatureBuildOperation.getDefault().getLogFile();
-			File file = new File("d:\\buildlog.txt");
+			File file = FeatureBuildOperation.getDefault().getLogFile();
 			FileOutputStream fos = new FileOutputStream(file);
 			writer = new PrintWriter(fos, true);
 		} catch (IOException e) {

@@ -1143,5 +1143,11 @@
          </viewShortcut>
       </perspectiveExtension>
    </extension>
+   <extension
+         point="org.eclipse.ant.core.extraClasspathEntries">
+      <extraClasspathEntry
+            library="pdeuiant.jar">
+      </extraClasspathEntry>
+   </extension>
 
 </plugin>

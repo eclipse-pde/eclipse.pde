@@ -32,7 +32,7 @@ public class FeatureBuildOperation implements IRunnableWithProgress {
 		"GenerateFeatureJars.generating";
 	public static final String KEY_RUNNING = "FeatureBuildOperation.running";
 	private static final String BUILD_LISTENER_CLASS =
-		"org.eclipse.pde.internal.ui.editor.site.SiteBuildListener";
+		"org.eclipse.pde.internal.ui.ant.SiteBuildListener";
 	private ArrayList features;
 	private boolean fullBuild;
 
@@ -233,8 +233,8 @@ public class FeatureBuildOperation implements IRunnableWithProgress {
 		runner.setBuildFileLocation(scriptFile.getLocation().toOSString());
 		runner.setArguments(computeBuildArguments(buildModel));
 		URL [] customURLs = computeCustomClasspath();
-		if (customURLs!=null)
-			runner.setCustomClasspath(customURLs);
+		//if (customURLs!=null)
+			//runner.setCustomClasspath(customURLs);
 		runner.setExecutionTargets(computeTargets());
 		runner.setMessageOutputLevel(Project.MSG_ERR);
 		runner.addBuildListener(BUILD_LISTENER_CLASS);
@@ -248,10 +248,9 @@ public class FeatureBuildOperation implements IRunnableWithProgress {
 		URL installURL = PDEPlugin.getDefault().getDescriptor().getInstallURL();
 		try {
 			int length = defaultAntURLs.length;
-			URL [] customURLs = new URL[length+2];
+			URL [] customURLs = new URL[length+1];
 			System.arraycopy(defaultAntURLs, 0, customURLs, 0, length);
 			customURLs[length] = new URL(installURL, "bin/");
-			customURLs[length+1] = new URL(installURL, "pdeui.jar");
 			return customURLs;
 		}
 		catch (IOException e) {

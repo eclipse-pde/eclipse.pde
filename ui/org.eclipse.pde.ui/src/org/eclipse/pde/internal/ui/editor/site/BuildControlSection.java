@@ -7,19 +7,22 @@ package org.eclipse.pde.internal.ui.editor.site;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.pde.core.*;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.core.site.WorkspaceSiteBuildModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.editor.PDEFormSection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 import org.eclipse.update.ui.forms.internal.*;
 
 public class BuildControlSection extends PDEFormSection {
@@ -117,12 +120,15 @@ public class BuildControlSection extends PDEFormSection {
 			public void widgetSelected(SelectionEvent e) {
 			}
 		});
+		
+		GridData gd;
+/*
 		consoleButton =
 			factory.createButton(
 				container,
 				PDEPlugin.getResourceString(SECTION_CONSOLE),
 				SWT.CHECK);
-		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = 3;
 		consoleButton.setLayoutData(gd);
 		consoleButton.addSelectionListener(new SelectionAdapter() {
@@ -144,6 +150,7 @@ public class BuildControlSection extends PDEFormSection {
 				setAutobuild(autobuildButton.getSelection());
 			}
 		});
+*/
 
 		scrubOutputButton =
 			factory.createButton(
@@ -160,10 +167,11 @@ public class BuildControlSection extends PDEFormSection {
 		});
 
 		Composite buttonContainer = factory.createComposite(container);
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan = 3;
 		buttonContainer.setLayoutData(gd);
 		GridLayout blayout = new GridLayout();
+		blayout.numColumns = 2;
 		buttonContainer.setLayout(blayout);
 		//blayout.makeColumnsEqualWidth = true;
 		//blayout.numColumns = 2;
@@ -185,8 +193,38 @@ public class BuildControlSection extends PDEFormSection {
 					| GridData.VERTICAL_ALIGN_BEGINNING);
 		buildButton.setLayoutData(gd);
 
+		SelectableFormLabel openLogLink =
+			factory.createSelectableLabel(buttonContainer, "Build Log");
+		final IPath buildLogPath =
+			new Path(PDECore.SITEBUILD_DIR).append(PDECore.SITEBUILD_LOG);
+		factory.turnIntoHyperlink(openLogLink, new HyperlinkAdapter() {
+			public void linkActivated(Control link) {
+				openBuildLog(buildLogPath);
+			}
+		});
+		openLogLink.setToolTipText(buildLogPath.toString());
+
 		factory.paintBordersFor(container);
 		return container;
+	}
+
+	private void openBuildLog(IPath buildLogPath) {
+		ISiteModel model = (ISiteModel) getFormPage().getModel();
+		IProject project = model.getUnderlyingResource().getProject();
+		final IFile file = project.getFile(buildLogPath);
+		if (file.exists()) {
+			BusyIndicator.showWhile(buildButton.getDisplay(), new Runnable() {
+				public void run() {
+					try {
+
+						IWorkbenchPage page = PDEPlugin.getActivePage();
+						page.openEditor(file);
+					} catch (PartInitException e) {
+						PDEPlugin.logException(e);
+					}
+				}
+			});
+		}
 	}
 
 	private void setPluginDestination(String text) {
