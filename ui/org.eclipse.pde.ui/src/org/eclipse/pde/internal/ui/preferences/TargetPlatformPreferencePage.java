@@ -91,6 +91,9 @@ public class TargetPlatformPreferencePage
 		otherRadio = new Button(group, SWT.RADIO);
 		otherRadio.setText(PDEPlugin.getResourceString(KEY_USE_OTHER));
 		
+		if (PDECore.isDevInstance())
+			thisRadio.setEnabled(false);
+		
 		SelectionListener listener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				modeChanged(otherRadio.getSelection());
@@ -109,7 +112,6 @@ public class TargetPlatformPreferencePage
 		homeLabel.setText(PDEPlugin.getResourceString(KEY_PLATFORM_HOME));
 		homeText = new Text(home, SWT.BORDER);
 		homeText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
 
 		browseButton = new Button(home, SWT.PUSH);
 		browseButton.setText(PDEPlugin.getResourceString(KEY_PLATFORM_HOME_BUTTON));

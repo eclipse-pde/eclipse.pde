@@ -20,6 +20,7 @@ import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
+import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -51,15 +52,18 @@ public class PDECore extends Plugin {
 		new QualifiedName(PLUGIN_ID, "imported");
 	public static final String EXTERNAL_PROJECT_VALUE = "external";
 	public static final String BINARY_PROJECT_VALUE = "binary";
-	public static final String BINARY_REPOSITORY_PROVIDER = PLUGIN_ID + "."+"BinaryRepositoryProvider";
-	
-	public static final String CLASSPATH_CONTAINER_ID = PLUGIN_ID+".requiredPlugins";
+	public static final String BINARY_REPOSITORY_PROVIDER =
+		PLUGIN_ID + "." + "BinaryRepositoryProvider";
+
+	public static final String CLASSPATH_CONTAINER_ID =
+		PLUGIN_ID + ".requiredPlugins";
 	public static final String SITEBUILD_DIR = ".sitebuild";
 	public static final String SITEBUILD_SCRIPTS = "scripts";
 	public static final String SITEBUILD_TEMP_FOLDER = "temp.folder";
 	public static final String SITEBUILD_LOG = "build.log";
 	public static final String SITEBUILD_PROPERTIES = "sitebuild.xml";
-	public static final String SITEBUILD_FILE = SITEBUILD_DIR + "/"+SITEBUILD_PROPERTIES;
+	public static final String SITEBUILD_FILE =
+		SITEBUILD_DIR + "/" + SITEBUILD_PROPERTIES;
 
 	// Shared instance
 	private static PDECore inst;
@@ -69,7 +73,7 @@ public class PDECore extends Plugin {
 	private ExternalModelManager externalModelManager;
 	// Tracing options manager
 	private TracingOptionsManager tracingOptionsManager;
-	
+
 	// User-defined attachments manager
 	private SourceAttachmentManager sourceAttachmentManager;
 	// Schema registry
@@ -78,7 +82,7 @@ public class PDECore extends Plugin {
 	private PluginModelManager modelManager;
 	private SourceLocationManager sourceLocationManager;
 	private TempFileManager tempFileManager;
-	private boolean modelsLocked=false;
+	private boolean modelsLocked = false;
 
 	public PDECore(IPluginDescriptor descriptor) {
 		super(descriptor);
@@ -112,14 +116,15 @@ public class PDECore extends Plugin {
 		}
 		return null;
 	}
-	
+
 	private IFeature findFeature(
 		IFeatureModel[] models,
 		String id,
 		String version,
 		int match) {
-			
-		if (modelsLocked) return null;
+
+		if (modelsLocked)
+			return null;
 
 		for (int i = 0; i < models.length; i++) {
 			IFeatureModel model = models[i];
@@ -179,45 +184,56 @@ public class PDECore extends Plugin {
 	}
 
 	public IFragment[] findFragmentsFor(String id, String version) {
-		if (modelsLocked) return new IFragment[0];
+		if (modelsLocked)
+			return new IFragment[0];
 		HashMap result = new HashMap();
-		IFragment[] extFragments = externalModelManager.getFragmentsFor(id, version);
+		IFragment[] extFragments =
+			externalModelManager.getFragmentsFor(id, version);
 		for (int i = 0; i < extFragments.length; i++) {
 			if (extFragments[i].getModel().isEnabled())
 				result.put(extFragments[i].getId(), extFragments[i]);
 		}
-		
-		IFragment[] wFragments = workspaceModelManager.getFragmentsFor(id, version);
+
+		IFragment[] wFragments =
+			workspaceModelManager.getFragmentsFor(id, version);
 		for (int i = 0; i < wFragments.length; i++) {
 			result.put(wFragments[i].getId(), wFragments[i]);
 		}
-		return (IFragment[])result.values().toArray(new IFragment[result.size()]);
+		return (IFragment[]) result.values().toArray(
+			new IFragment[result.size()]);
 	}
-	
+
 	public IPlugin findPlugin(String id) {
 		return findPlugin(id, null, IMatchRules.NONE);
 	}
-	
+
 	public IPlugin findPlugin(String id, String version, int match) {
-		if (modelsLocked) return null;
-		IPluginModelBase model = getModelManager().findPlugin(id, version, match);
+		if (modelsLocked)
+			return null;
+		IPluginModelBase model =
+			getModelManager().findPlugin(id, version, match);
 		if (model != null
 			&& model.isEnabled()
 			&& model.getPluginBase() instanceof IPlugin)
 			return (IPlugin) model.getPluginBase();
 		return null;
 	}
-	
+
 	public IFeature findFeature(String id) {
 		return findFeature(id, null, IMatchRules.NONE);
 	}
-	
+
 	public IFeature findFeature(String id, String version, int match) {
-		if (modelsLocked) return null;
+		if (modelsLocked)
+			return null;
 		WorkspaceModelManager manager = getWorkspaceModelManager();
-		return findFeature(manager.getWorkspaceFeatureModels(), id, version, match);
+		return findFeature(
+			manager.getWorkspaceFeatureModels(),
+			id,
+			version,
+			match);
 	}
-	
+
 	public static PDECore getDefault() {
 		return inst;
 	}
@@ -285,21 +301,21 @@ public class PDECore extends Plugin {
 			sourceLocationManager = new SourceLocationManager();
 		return sourceLocationManager;
 	}
-	
+
 	public SourceAttachmentManager getSourceAttachmentManager() {
 		if (sourceAttachmentManager == null)
 			sourceAttachmentManager = new SourceAttachmentManager();
 		return sourceAttachmentManager;
 	}
-	
+
 	public TempFileManager getTempFileManager() {
-		if (tempFileManager==null)
+		if (tempFileManager == null)
 			tempFileManager = new TempFileManager();
 		return tempFileManager;
 	}
-	
+
 	private void initializeModels() {
-		modelsLocked=true;
+		modelsLocked = true;
 		if (externalModelManager == null)
 			externalModelManager = new ExternalModelManager();
 
@@ -313,7 +329,7 @@ public class PDECore extends Plugin {
 		}
 		modelsLocked = false;
 	}
-		
+
 	public static void log(IStatus status) {
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
@@ -328,9 +344,7 @@ public class PDECore extends Plugin {
 				null));
 	}
 
-	public static void logException(
-		Throwable e,
-		String message) {
+	public static void logException(Throwable e, String message) {
 		if (e instanceof InvocationTargetException) {
 			e = ((InvocationTargetException) e).getTargetException();
 		}
@@ -384,13 +398,15 @@ public class PDECore extends Plugin {
 			workspaceModelManager.shutdown();
 		if (externalModelManager != null)
 			externalModelManager.shutdown();
-		if (tempFileManager!=null)
+		if (tempFileManager != null)
 			tempFileManager.shutdown();
 		super.shutdown();
 	}
 
 	private void loadSettings() {
-		File file = new File(getStateLocation().append("settings.properties").toOSString());
+		File file =
+			new File(
+				getStateLocation().append("settings.properties").toOSString());
 		if (file.exists()) {
 			Properties settings = new Properties();
 			try {
@@ -416,12 +432,24 @@ public class PDECore extends Plugin {
 	protected void initializeDefaultPluginPreferences() {
 		loadSettings();
 		Preferences preferences = PDECore.getDefault().getPluginPreferences();
-		preferences.setDefault(ICoreConstants.TARGET_MODE, ICoreConstants.VALUE_USE_THIS);
-		preferences.setDefault(ICoreConstants.CHECKED_PLUGINS, ICoreConstants.VALUE_SAVED_NONE);
-		if (preferences.getString(ICoreConstants.TARGET_MODE).equals(ICoreConstants.VALUE_USE_THIS))
-			preferences.setValue(ICoreConstants.PLATFORM_PATH,ExternalModelManager.computeDefaultPlatformPath());
+		preferences.setDefault(
+			ICoreConstants.TARGET_MODE,
+			isDevInstance()
+				? ICoreConstants.VALUE_USE_OTHER
+				: ICoreConstants.VALUE_USE_THIS);
+		preferences.setDefault(
+			ICoreConstants.CHECKED_PLUGINS,
+			ICoreConstants.VALUE_SAVED_NONE);
+		if (preferences
+			.getString(ICoreConstants.TARGET_MODE)
+			.equals(ICoreConstants.VALUE_USE_THIS))
+			preferences.setValue(
+				ICoreConstants.PLATFORM_PATH,
+				ExternalModelManager.computeDefaultPlatformPath());
 		else
-			preferences.setDefault(ICoreConstants.PLATFORM_PATH, ExternalModelManager.computeDefaultPlatformPath());
+			preferences.setDefault(
+				ICoreConstants.PLATFORM_PATH,
+				ExternalModelManager.computeDefaultPlatformPath());
 		try {
 			JavaCore.setClasspathVariable(
 				PDECore.ECLIPSE_HOME_VARIABLE,
@@ -431,5 +459,8 @@ public class PDECore extends Plugin {
 		}
 	}
 
+	public static boolean isDevInstance() {
+		return BootLoader.inDevelopmentMode();
+	}
 
 }
