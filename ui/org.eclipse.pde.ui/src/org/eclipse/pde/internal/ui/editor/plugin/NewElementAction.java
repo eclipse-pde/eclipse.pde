@@ -72,7 +72,7 @@ private String getCounterKey(ISchemaElement elementInfo) {
 private String getElementName() {
 	return elementInfo!=null?elementInfo.getName() : UNKNOWN_ELEMENT_TAG;
 }
-private void initializeRequiredAttribute(
+private void initializeAttribute(
 	IPluginElement element,
 	ISchemaAttribute attInfo,
 	int counter)
@@ -80,12 +80,16 @@ private void initializeRequiredAttribute(
 	String value = null;
 	if (attInfo.getKind() == ISchemaAttribute.JAVA)
 		value = createDefaultClassName(attInfo, counter);
+	else if (attInfo.getUse() == ISchemaAttribute.DEFAULT && attInfo.getValue() != null)
+		value = attInfo.getValue().toString();
+	else if (attInfo.getType().getRestriction()!= null)
+		value = attInfo.getType().getRestriction().getChildren()[0].toString();
 	else
 		value = createDefaultName(attInfo, counter);
 
 	element.setAttribute(attInfo.getName(), value);
 }
-private void initializeRequiredAttributes(IPluginElement element) throws CoreException {
+private void initializeAttributes(IPluginElement element) throws CoreException {
 	ISchemaElement elementInfo = (ISchemaElement)((IPluginElement)element).getElementInfo();
 	if (elementInfo==null) return;
 	String counterKey = getCounterKey(elementInfo);
@@ -98,8 +102,8 @@ private void initializeRequiredAttributes(IPluginElement element) throws CoreExc
 	ISchemaAttribute [] attributes = elementInfo.getAttributes();
 	for (int i=0; i<attributes.length; i++) {
 		ISchemaAttribute attInfo = attributes[i];
-		if (attInfo.getUse()!=ISchemaAttribute.REQUIRED) continue;
-		initializeRequiredAttribute(element, attInfo, counter.intValue());
+		if (attInfo.getUse()==ISchemaAttribute.REQUIRED || attInfo.getUse() == ISchemaAttribute.DEFAULT)
+			initializeAttribute(element, attInfo, counter.intValue());
 	}
 }
 public void run() {
@@ -107,7 +111,7 @@ public void run() {
 		parent.getModel().getFactory().createElement(parent);
 	try {
 		newElement.setName(getElementName());
-		initializeRequiredAttributes(newElement);
+		initializeAttributes(newElement);
 		parent.add(newElement);
 	} catch (CoreException e) {
 		PDEPlugin.logException(e);
