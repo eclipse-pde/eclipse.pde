@@ -145,6 +145,7 @@ public void setPropertyValue(Object name, Object value) {
 			if (att.getType() instanceof SchemaSimpleType) {
 				SchemaSimpleType type = (SchemaSimpleType) att.getType();
 				type.setRestriction(restriction);
+				att.setType(type);
 			}
 		} else
 			if (value instanceof String) {

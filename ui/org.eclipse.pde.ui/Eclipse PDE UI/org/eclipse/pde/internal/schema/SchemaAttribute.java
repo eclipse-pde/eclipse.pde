@@ -20,6 +20,7 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 	public static final String P_KIND = "kindProperty";
 	public static final String P_TYPE = "typeProperty";
 	public static final String P_BASED_ON = "basedOnProperty";
+	private boolean verifying;
 
 public SchemaAttribute(ISchemaAttribute att, String newName) {
 	super(att.getParent(), newName);
@@ -53,27 +54,70 @@ public String getValueFilter() {
 public void setBasedOn(java.lang.String newBasedOn) {
 	basedOn = newBasedOn;
 	getSchema().fireModelObjectChanged(this, P_BASED_ON);
+	verifyProperties();
 }
 public void setKind(int newKind) {
 	kind = newKind;
 	getSchema().fireModelObjectChanged(this, P_KIND);
+	verifyProperties();
 }
 public void setType(ISchemaSimpleType newType) {
 	type = newType;
 	getSchema().fireModelObjectChanged(this, P_TYPE);
+	verifyProperties();
 }
 public void setUse(int newUse) {
 	use = newUse;
 	getSchema().fireModelObjectChanged(this, P_USE);
+	verifyProperties();
 }
 public void setValue(String value) {
 	this.value = value;
 	getSchema().fireModelObjectChanged(this, P_VALUE);
+	verifyProperties();
 }
 public void setValueFilter(String valueFilter) {
 	this.valueFilter = valueFilter;
 	getSchema().fireModelObjectChanged(this, P_VALUE_FILTER);
 }
+
+private void verifyProperties() {
+	if (verifying) return;
+	verifying=true;
+// check if the current combination of properties
+// make sense.
+	if (kind != STRING) {
+		// type must be 'string' and no restriction
+		ensureStringType();
+		ensureNoRestriction();
+	}
+	if (kind != JAVA) {
+		// basedOn makes no sense
+		setBasedOn(null);
+	}
+	if (type!=null && type.getName().equals("boolean"))
+		// no restriction for boolean
+		ensureNoRestriction();
+	if (use != DEFAULT)
+		// value makes no sense without 'default' use
+		setValue(null);
+	verifying = false;
+}
+
+private void ensureStringType() {
+	if (type==null || type.getName().equals("boolean")) 
+	   setType(new SchemaSimpleType(getSchema(), "string"));
+}
+
+private void ensureNoRestriction() {
+	if (type instanceof SchemaSimpleType &&
+		((SchemaSimpleType)type).getRestriction()!=null) {
+		SchemaSimpleType simpleType = (SchemaSimpleType)type;
+		simpleType.setRestriction(null);
+		setType(simpleType);
+	}
+}
+
 public void write(String indent, PrintWriter writer) {
 	writeComments(writer);
 	boolean annotation=false;

@@ -14,6 +14,11 @@ import java.io.*;
 import org.eclipse.pde.internal.PDEPlugin;
 
 public class SchemaTransformer implements ISchemaTransformer {
+	private static final String KEY_BOOLEAN_INVALID="Builders.Schema.Verifier.booleanInvalid";
+	private static final String KEY_RESTRICTION_INVALID="Builders.Schema.Verifier.restrictionInvalid";
+	private static final String KEY_BASED_ON_INVALID="Builders.Schema.Verifier.basedOnInvalid";
+	private static final String KEY_VALUE_WITHOUT_DEFAULT="Builders.Schema.Verifier.valueWithoutDefault";
+	private static final String KEY_DEFAULT_WITHOUT_VALUE="Builders.Schema.Verifier.defaultWithoutValue";
 
 private void appendAttlist(
 	StringBuffer out,
@@ -30,8 +35,10 @@ private void appendAttlist(
 	}
 	// add data type
 	ISchemaSimpleType type = att.getType();
-	ISchemaRestriction restriction = type.getRestriction();
-	String typeName = type.getName().toLowerCase();
+	ISchemaRestriction restriction = null;
+	if (type!=null)
+	   restriction = type.getRestriction();
+	String typeName = type!=null ? type.getName().toLowerCase() : "string";
 	if (typeName.equals("boolean")) {
 		out.append("(true | false) \"false\"");
 	} else
@@ -103,8 +110,84 @@ public void transform(InputStream is, StringBuffer out, PluginErrorReporter repo
 	if (root==null) return;
 	Schema schema = new Schema((ISchemaDescriptor)null, null);
 	schema.traverseDocumentTree(root);
-	transform(out, schema);
+	if (verifySchema(schema, reporter))
+		transform(out, schema);
 }
+
+private boolean verifySchema(Schema schema, PluginErrorReporter reporter) {
+	if (schema.isLoaded()==false) return false;
+	ISchemaElement [] elements = schema.getElements();
+	int errors = 0;
+	for (int i=0; i<elements.length; i++) {
+		ISchemaElement element = elements[i];
+		ISchemaAttribute [] attributes = element.getAttributes();
+		for (int j=0; j<attributes.length; j++) {
+			ISchemaAttribute attribute = attributes[j];
+			errors +=verifyAttribute(element, attribute, reporter);
+		}
+	}
+	return (errors == 0);
+}
+
+private int verifyAttribute(ISchemaElement element, ISchemaAttribute attribute, PluginErrorReporter reporter) {
+	int errors=0;	
+	ISchemaType type = attribute.getType();
+	String message;
+	String [] args = new String [] { element.getName(), attribute.getName() };
+
+	if (attribute.getKind() != ISchemaAttribute.STRING) {
+		if (type!=null) {
+			if (type.getName().equals("boolean")) {
+				message=PDEPlugin.getFormattedMessage(KEY_BOOLEAN_INVALID, args);
+				// this kind cannot have boolean type
+				reporter.reportError(message);
+				errors++;
+			}
+			if (type instanceof SchemaSimpleType && 
+				((SchemaSimpleType)type).getRestriction()!=null) {
+				// should not have restriction
+				message=PDEPlugin.getFormattedMessage(KEY_RESTRICTION_INVALID, args);
+				reporter.reportError(message);
+				errors++;
+			}
+		}
+	}
+	if (attribute.getKind() != ISchemaAttribute.JAVA) {
+		if (attribute.getBasedOn()!=null) {
+			// basedOn makes no sense
+			message=PDEPlugin.getFormattedMessage(KEY_BASED_ON_INVALID, args);
+			reporter.reportError(message);
+			errors++;
+		}
+	}
+	if (type!=null && type.getName().equals("boolean")) {
+		if (type instanceof SchemaSimpleType && 
+			((SchemaSimpleType)type).getRestriction()!=null) {
+				// should not have restriction
+				message=PDEPlugin.getFormattedMessage(KEY_RESTRICTION_INVALID, args);
+				reporter.reportError(message);
+				errors++;
+		}
+	}
+	if (attribute.getUse() != ISchemaAttribute.DEFAULT) {
+		if (attribute.getValue()!=null) {
+			// value makes no sense without 'default' use
+			message=PDEPlugin.getFormattedMessage(KEY_VALUE_WITHOUT_DEFAULT, args);
+			reporter.reportError(message);
+			errors++;
+		}
+	}
+	else {
+		if (attribute.getValue()==null) {
+			// there must be a value set for this use
+			message=PDEPlugin.getFormattedMessage(KEY_DEFAULT_WITHOUT_VALUE, args);
+			reporter.reportError(message);
+			errors++;
+		}
+	}
+	return errors;
+}
+
 public void transform(StringBuffer out, ISchema schema) {
 	out.append("<HTML>\n");
 	out.append("<BODY>\n");

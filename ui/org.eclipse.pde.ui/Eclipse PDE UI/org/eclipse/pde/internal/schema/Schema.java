@@ -297,8 +297,9 @@ private SchemaSimpleType processAttributeRestriction(SchemaAttribute attribute, 
 
 	String baseName = getAttribute(node, "base");
 
-	if (baseName.equals("string")==false) return null;
-
+	if (baseName.equals("string")==false) {
+		return new SchemaSimpleType(attribute.getSchema(), "string");
+	}
 	SchemaSimpleType type = new SchemaSimpleType(attribute.getSchema(), baseName);
 
 	Vector items = new Vector();
