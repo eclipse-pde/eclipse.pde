@@ -583,39 +583,15 @@ public class PluginsView extends ViewPart {
 				new IPluginModelBase[externalModels.size()]);
 		try {
 			Shell shell = treeViewer.getTree().getShell();
-			ArrayList modelIds = new ArrayList();
-
-			boolean isAutoBuilding = PDEPlugin.getWorkspace().isAutoBuilding();
-
-			if (isAutoBuilding) {
-				IWorkspace workspace = PDEPlugin.getWorkspace();
-				IWorkspaceDescription description = workspace.getDescription();
-				description.setAutoBuilding(false);
-				workspace.setDescription(description);
-			}
-
 			IRunnableWithProgress op =
 				PluginImportWizard.getImportOperation(
 					shell,
 					true,
 					extractSource,
 					models,
-					modelIds);
+					new ArrayList());
 			ProgressMonitorDialog pmd = new ProgressMonitorDialog(shell);
 			pmd.run(true, true, op);
-
-			if (isAutoBuilding) {
-				IWorkspace workspace = PDEPlugin.getWorkspace();
-				IWorkspaceDescription description = workspace.getDescription();
-				description.setAutoBuilding(true);
-				workspace.setDescription(description);
-			}
-
-			pmd.run(
-				true,
-				true,
-				new UpdateClasspathOperation(
-					getWorkspaceCounterparts(modelIds)));
 		} catch (InterruptedException e) {
 		} catch (InvocationTargetException e) {
 			PDEPlugin.logException(e);
@@ -885,17 +861,5 @@ public class PluginsView extends ViewPart {
 		}
 		return ""; //$NON-NLS-1$
 	}
-	private IPluginModelBase[] getWorkspaceCounterparts(ArrayList modelIds) {
 
-		IPluginModelBase[] allModels =
-			PDECore.getDefault().getWorkspaceModelManager().getAllModels();
-		ArrayList desiredModels = new ArrayList();
-		for (int i = 0; i < allModels.length; i++) {
-			if (modelIds.contains(allModels[i].getPluginBase().getId()))
-				desiredModels.add(allModels[i]);
-		}
-
-		return (IPluginModelBase[]) desiredModels.toArray(
-			new IPluginModelBase[desiredModels.size()]);
-	}
 }

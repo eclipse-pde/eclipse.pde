@@ -13,6 +13,7 @@ import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -81,7 +82,6 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 	 * @see Wizard#performFinish()
 	 */
 	public boolean performFinish() {
-		boolean isAutoBuilding = PDEPlugin.getWorkspace().isAutoBuilding();
 		final ArrayList modelIds = new ArrayList();
 		long start;
 		try {
@@ -97,12 +97,6 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 			page1.storeSettings(true);
 			page2.storeSettings(true);
 			
-			if (isAutoBuilding) {
-				IWorkspace workspace = PDEPlugin.getWorkspace();
-				IWorkspaceDescription description = workspace.getDescription();
-				description.setAutoBuilding(false);
-				workspace.setDescription(description);
-			}
 			
 			IRunnableWithProgress op =
 				getImportOperation(
@@ -119,25 +113,8 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 		} catch (InvocationTargetException e) {
 			PDEPlugin.logException(e);
 			return true; // exception handled
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
-			return true;
-		} finally {
-			try {
-				if (isAutoBuilding) {
-					IWorkspace workspace = PDEPlugin.getWorkspace();
-					IWorkspaceDescription description = workspace.getDescription();
-					description.setAutoBuilding(true);
-					workspace.setDescription(description);
-				}
-				
-				UpdateClasspathAction.run(
-					true,
-					getContainer(),
-					getWorkspaceCounterparts(modelIds));
-			} catch (CoreException e) {
-			}
 		}
+		
 		long stop = System.currentTimeMillis();
 		//System.out.println("Total time: "+(stop-start)+"ms");
 		return true;
@@ -152,7 +129,17 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 		return new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor)
 				throws InvocationTargetException, InterruptedException {
+				boolean isAutoBuilding =
+					PDEPlugin.getWorkspace().isAutoBuilding();
 				try {
+					monitor.beginTask("",2);
+					if (isAutoBuilding) {
+						IWorkspace workspace = PDEPlugin.getWorkspace();
+						IWorkspaceDescription description =
+							workspace.getDescription();
+						description.setAutoBuilding(false);
+						workspace.setDescription(description);
+					}
 					IReplaceQuery query = new ReplaceQuery(shell);
 					PluginImportOperation op =
 						new PluginImportOperation(
@@ -161,11 +148,26 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 							doImport,
 							doExtract,
 							query);
-					PDEPlugin.getWorkspace().run(op, monitor);
+					PDEPlugin.getWorkspace().run(op, new SubProgressMonitor(monitor,1));
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
 				} catch (OperationCanceledException e) {
 					throw new InterruptedException(e.getMessage());
+				} finally {
+					try {
+						if (isAutoBuilding) {
+							IWorkspace workspace = PDEPlugin.getWorkspace();
+							IWorkspaceDescription description =
+								workspace.getDescription();
+							description.setAutoBuilding(true);
+							workspace.setDescription(description);
+						}
+
+						UpdateClasspathAction.doUpdateClasspath(
+							new SubProgressMonitor(monitor,1),
+							getWorkspaceCounterparts(modelIds));
+					} catch (CoreException e) {
+					}
 				}
 			}
 		};
@@ -239,7 +241,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 		}
 	}
 	
-	private IPluginModelBase[] getWorkspaceCounterparts(ArrayList modelIds) {
+	private static IPluginModelBase[] getWorkspaceCounterparts(ArrayList modelIds) {
 		
 		IPluginModelBase[] allModels = PDECore.getDefault().getWorkspaceModelManager().getAllModels();
 		ArrayList desiredModels = new ArrayList();
