@@ -59,6 +59,9 @@ public void addPages() {
 		public IProject getProject() {
 			return mainPage.getProjectHandle();
 		}
+		public IPath getLocationPath() {
+			return mainPage.getLocationPath();
+		}
 	};
 
 	structurePage = new ProjectStructurePage(provider, isFragmentWizard());

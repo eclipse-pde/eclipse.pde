@@ -20,7 +20,8 @@ import java.io.*;
 public class ComponentConsistencyChecker extends IncrementalProjectBuilder {
 	public static final String BUILDERS_VERIFYING = "Builders.verifying";
 	public static final String BUILDERS_COMPONENT_REFERENCE = "Builders.Component.reference";
-public static final String BUILDERS_UPDATING = "Builders.updating";
+	public static final String BUILDERS_UPDATING = "Builders.updating";
+	public static final String BUILDERS_COMPONENT_FOLDER_SYNC = "Builders.Component.folderSync";
 
 	class DeltaVisitor implements IResourceDeltaVisitor {
 		private IProgressMonitor monitor;
@@ -131,11 +132,13 @@ private boolean isValidReference(IComponentPlugin plugin) {
 protected void startupOnInitialize() {
 	super.startupOnInitialize();
 }
+
 private void testPluginReferences(IFile file, PluginErrorReporter reporter) {
 	WorkspaceComponentModel model = new WorkspaceComponentModel(file);
 	model.load();
 	if (model.isLoaded()) {
-		IComponentPlugin[] plugins = model.getComponent().getPlugins();
+		IComponent component = model.getComponent();
+		IComponentPlugin[] plugins = component.getPlugins();
 		for (int i = 0; i < plugins.length; i++) {
 			IComponentPlugin plugin = plugins[i];
 			if (isValidReference(plugin) == false) {
@@ -145,6 +148,18 @@ private void testPluginReferences(IFile file, PluginErrorReporter reporter) {
 						plugin.getLabel());
 				reporter.reportError(message);
 			}
+		}
+		String version = component.getVersion();
+		String id = component.getId();
+		String expectedFolderName = id+"_"+version;
+		IFolder folder = (IFolder)file.getParent();
+		String realName = folder.getName();
+		if (realName.equals(expectedFolderName)==false) {
+			String message =
+				PDEPlugin.getFormattedMessage(
+					BUILDERS_COMPONENT_FOLDER_SYNC,
+					realName);
+			reporter.reportWarning(message);
 		}
 	}
 }

@@ -20,6 +20,7 @@ import org.eclipse.swt.*;
 import org.eclipse.ui.*;
 import org.eclipse.pde.internal.PDEPlugin;
 import org.eclipse.swt.custom.*;
+import org.eclipse.core.runtime.IPath;
 
 public class ComponentSpecSection extends PDEFormSection {
 	public static final String SECTION_TITLE = "ComponentEditor.SpecSection.title";
@@ -42,10 +43,28 @@ public ComponentSpecSection(ComponentFormPage page) {
 	setDescription(PDEPlugin.getResourceString(SECTION_DESC));
 }
 public void commitChanges(boolean onSave) {
+	IComponentModel model = (IComponentModel) getFormPage().getModel();
+	IComponent component = model.getComponent();
+	String oldId = component.getId();
+	String oldVersion = component.getVersion();
 	titleText.commit();
 	providerText.commit();
 	idText.commit();
 	versionText.commit();
+	String newId = component.getId();
+	String newVersion = component.getVersion();
+	if (!oldId.equals(newId) || !oldVersion.equals(newVersion)) {
+		// component folder must be renamed
+		String newName = newId+"_"+newVersion;
+		IFolder folder = (IFolder)model.getUnderlyingResource().getParent();
+		IPath newPath = folder.getFullPath().removeLastSegments(1).append(newName);
+		try {
+		   folder.move(newPath, false, null);
+		}
+		catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}
+	}
 }
 public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	Composite container = factory.createComposite(parent);

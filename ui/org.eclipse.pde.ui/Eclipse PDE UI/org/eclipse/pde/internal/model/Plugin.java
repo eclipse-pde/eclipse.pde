@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.PlatformObject;
 public class Plugin extends PluginBase implements IPlugin {
 	private String className;
 	private Vector imports=new Vector();
+	private Vector requiresComments;
 
 public Plugin() {
 }
@@ -78,8 +79,10 @@ void loadImports(Node node) {
 }
 protected void processChild(Node child) {
 	String name = child.getNodeName().toLowerCase();
-	if (name.equals("requires"))
+	if (name.equals("requires")) {
 		loadImports(child);
+		requiresComments = addComments(child, requiresComments);
+	}
 	else
 		super.processChild(child);
 }
@@ -91,6 +94,7 @@ public void remove(IPluginImport iimport) throws CoreException {
 public void reset() {
 	imports = new Vector();
 	className = null;
+	requiresComments = null;
 	super.reset();
 }
 public void setClassName(String newClassName) throws CoreException {
@@ -123,34 +127,29 @@ public void write(String indent, PrintWriter writer) {
 		writer.print("   class=\"" + getClassName() + "\"");
 	}
 	writer.println(">");
-	writer.println();
 	// add requires
 	Object [] children = getImports();
 	if (children.length>0) {
-		writer.println("<!-- Required plugins -->");
-		writer.println();
+		//writer.println("<!-- Required plugins -->");
+		//writer.println();
+		writeComments(writer, requiresComments);
 		writeChildren("requires", children, writer);
-		writer.println();
 	}
-	writer.println("<!-- Runtime -->");
+	//writer.println("<!-- Runtime -->");
 	writer.println();
 	// add runtime
 	children = getLibraries();
 	writeChildren("runtime", children, writer);
-	// add extension points
-	writer.println();
 
-	writer.println("<!-- Extension points -->");
-	writer.println();
 	children = getExtensionPoints();
+	if (children.length>0) writer.println();
 	for (int i=0; i<children.length; i++) {
 		((IPluginExtensionPoint) children[i]).write("", writer);
 	}
-	writer.println();
 
 	// add extensions
 	children = getExtensions();
-	writer.println("<!-- Extensions -->");
+	if (children.length>0) writer.println();
 	for (int i=0; i<children.length; i++) {
 		((IPluginExtension) children[i]).write("", writer);
 	}

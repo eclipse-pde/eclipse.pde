@@ -109,6 +109,6 @@ protected boolean updateModel() {
 		stream.close();
 	} catch (IOException e) {
 	}
-	return false;
+	return cleanModel;
 }
 }

@@ -31,6 +31,7 @@ public class ComponentEditor extends PDEMultiPageXMLEditor {
 	public static final String UNRESOLVED_TITLE = "ComponentEditor.Unresolved.title";
 	public static final String VERSION_TITLE = "ComponentEditor.Version.title";
 	public static final String VERSION_MESSAGE = "ComponentEditor.Version.message";
+	public static final String VERSION_EXISTS = "ComponentEditor.Version.exists";
 	public static final String UNRESOLVED_MESSAGE = "ComponentEditor.Unresolved.message";
 	public static final String COMPONENT_PAGE_TITLE = "ComponentEditor.ComponentPage.title";
 	public static final String REFERENCE_PAGE_TITLE = "ComponentEditor.ReferencePage.title";
@@ -127,44 +128,21 @@ public void doSave(IProgressMonitor monitor) {
 	IComponentModel model = (IComponentModel) getModel();
 	IComponent component = model.getComponent();
 	String version = component.getVersion();
+	String id = component.getId();
 	IFile file = (IFile) model.getUnderlyingResource();
 	IContainer parent = file.getParent();
 	if (parent instanceof IFolder) {
 		String name = parent.getName();
-		int uloc = name.lastIndexOf('_');
-		if (uloc != -1) {
-			String dirVersion = name.substring(uloc + 1);
-			if (dirVersion.equals(version) == false) {
-				MessageDialog.openError(
-					PDEPlugin.getActiveWorkbenchShell(),
-					PDEPlugin.getResourceString(VERSION_TITLE),
-					PDEPlugin.getFormattedMessage(VERSION_MESSAGE, name));
-				/*
-				String newName = name.substring(0, uloc + 1) + version;
-				IPath newPath = parent.getFullPath().removeLastSegments(1).append(newName);
-				IFolder folder = file.getWorkspace().getRoot().getFolder(newPath);
-				if (folder.exists()) {
-				
-					MessageDialog.openError(
-						PDEPlugin.getActiveWorkbenchShell(),
-						"Save Error",
-						"Folder \""
-							+ newName
-							+ "\" already exists. Component version and folder name will not be in sync");
-							
-				} else {
-					try {
-						folder = (IFolder) parent;
-						folder.move(newPath, false, true, monitor);
-					} catch (CoreException e) {
-						PDEPlugin.logException(e);
-					}
-				}
-				*/
-			}
+		String expectedName = id + "_"+ version;
+		if (name.equals(expectedName)==false) {
+			MessageDialog.openInformation(
+				PDEPlugin.getActiveWorkbenchShell(),
+				PDEPlugin.getResourceString(VERSION_TITLE),
+				PDEPlugin.getFormattedMessage(VERSION_MESSAGE, name));
 		}
 	}
 }
+
 public IPDEEditorPage getHomePage() {
 	return getPage(COMPONENT_PAGE);
 }

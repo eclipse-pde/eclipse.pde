@@ -73,8 +73,24 @@ public void setName(String name) throws CoreException {
 public String toString() {
 	return name;
 }
+
+private String createWritableName(String source) {
+	if (source.indexOf(' ')== -1) return source;
+	// has blanks 
+	StringBuffer writableName = new StringBuffer();
+	for (int i=0; i<source.length(); i++) {
+		char c = source.charAt(i);
+		if (c== ' ') {
+			writableName.append("\\ ");
+		}
+		else writableName.append(c);
+	}
+	return writableName.toString();
+}
+
 public void write(String indent, PrintWriter writer) {
-	writer.print(name + " = ");
+	String writableName = createWritableName(name);
+	writer.print(writableName + " = ");
 	if (tokens.size()==0) {
 		writer.println();
 		return;

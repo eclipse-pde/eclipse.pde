@@ -35,6 +35,10 @@ public interface IDocumentSection extends ISchemaObject {
 	 * Section Id for the "API Information" section of the target reference document
 	 */
 	String API_INFO = "apiInfo";
+	/**
+	 * Section Id for the copyright statement section of the target reference document
+	 */
+	String COPYRIGHT = "copyright";
 /**
  * Returns the Id of this section.
  */

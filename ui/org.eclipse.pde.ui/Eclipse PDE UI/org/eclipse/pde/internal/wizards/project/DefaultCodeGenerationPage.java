@@ -30,6 +30,7 @@ import org.eclipse.pde.internal.editor.manifest.*;
 import org.eclipse.pde.internal.editor.*;
 import java.util.List;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.pde.internal.preferences.*;
 
 
 public class DefaultCodeGenerationPage extends WizardPage {
@@ -277,7 +278,8 @@ private IFile createFile(IContainer parent, String contents, IProgressMonitor mo
 }
 private void createProject(IProject project, IProgressMonitor monitor) throws CoreException {
 	if (project.exists() == false) {
-		project.create(monitor);
+		CoreUtility.createProject(project, projectProvider.getLocationPath(),
+											monitor);		
 		project.open(monitor);
 	}
 	if (!project.hasNature(JavaCore.NATURE_ID))
@@ -496,10 +498,18 @@ private void setJavaSettings(
 			result.addElement(WORKBENCH_ID);
 		}
 	}
-	PluginPathUpdater updater = new PluginPathUpdater(project, missing.iterator());
-	IClasspathEntry[] libraries = updater.getClasspathEntries();
-
-	BuildPathUtil.setBuildPath(project, data.structureData, libraries, monitor);
+	boolean updateBuildpath;
+	
+	if (fragment)
+		updateBuildpath = BuildpathPreferencePage.isFragmentProjectUpdate();
+	else 
+		updateBuildpath = BuildpathPreferencePage.isPluginProjectUpdate();
+	
+	if (updateBuildpath) {
+	   PluginPathUpdater updater = new PluginPathUpdater(project, missing.iterator());
+	   IClasspathEntry[] libraries = updater.getClasspathEntries();
+	   BuildPathUtil.setBuildPath(project, data.structureData, libraries, monitor);
+	}
 	if (!fragment) {
 		String[] resultArray = new String[result.size()];
 		result.copyInto(resultArray);

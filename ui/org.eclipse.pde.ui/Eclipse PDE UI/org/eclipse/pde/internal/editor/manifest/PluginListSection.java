@@ -194,7 +194,7 @@ public boolean addWorkspacePlugins(IPluginModel model, boolean hasExternal) {
 }
 public void commitChanges(boolean onSave) {
 	if (onSave) {
-		boolean shouldUpdate = ManifestPreferencePage.getUpdateBuildPath();
+		boolean shouldUpdate = BuildpathPreferencePage.isManifestUpdate();
 		if (shouldUpdate)
 		   updateBuildPath();
 	}

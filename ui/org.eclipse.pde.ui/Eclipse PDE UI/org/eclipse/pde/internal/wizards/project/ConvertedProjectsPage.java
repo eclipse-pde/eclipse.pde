@@ -24,6 +24,7 @@ import org.eclipse.pde.internal.wizards.*;
 import java.util.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.jdt.core.*;
+import org.eclipse.pde.internal.preferences.*;
 
 public class ConvertedProjectsPage extends WizardPage implements ICheckStateListener {
 	private Label selectedLabel;
@@ -202,7 +203,8 @@ public void createControl(Composite parent) {
 
 	updateBuildPathButton = new Button(container, SWT.CHECK);
 	updateBuildPathButton.setText(PDEPlugin.getResourceString(KEY_UPDATE_BUILD_PATH));
-	updateBuildPathButton.setSelection(true);
+	boolean value = BuildpathPreferencePage.isConversionUpdate();
+	updateBuildPathButton.setSelection(value);
 	gd = new GridData(GridData.FILL_HORIZONTAL);
 	updateBuildPathButton.setLayoutData(gd);
 	

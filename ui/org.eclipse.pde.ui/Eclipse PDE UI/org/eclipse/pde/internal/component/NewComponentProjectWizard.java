@@ -116,14 +116,14 @@ private IFile createComponentManifest(
 }
 private void createComponentProject(
 	IProject project,
+	IPath location,
 	ComponentData data,
 	IPlugin[] plugins,
 	IFragment[] fragments,
 	IProgressMonitor monitor)
 	throws CoreException {
-	// add the nature
 	monitor.beginTask(PDEPlugin.getResourceString(CREATING_PROJECT), 2);
-	project.create(monitor);
+	CoreUtility.createProject(project, location, monitor);
 	project.open(monitor);
 	CoreUtility.addNatureToProject(project, PDEPlugin.COMPONENT_NATURE, monitor);
 	// create initial folder structure
@@ -192,6 +192,7 @@ private void openComponentManifest(IFile manifestFile) {
 }
 public boolean performFinish() {
 	final IProject project = mainPage.getProjectHandle();
+	final IPath location = mainPage.getLocationPath();
 	final ComponentData data = specPage.getComponentData();
 	final IPlugin[] plugins =
 		pluginListPage != null ? pluginListPage.getSelectedPlugins() : (new IPlugin[0]);
@@ -202,7 +203,7 @@ public boolean performFinish() {
 	IRunnableWithProgress operation = new WorkspaceModifyOperation() {
 		public void execute(IProgressMonitor monitor) {
 			try {
-				createComponentProject(project, data, plugins, fragments, monitor);
+				createComponentProject(project, location, data, plugins, fragments, monitor);
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);
 			} finally {

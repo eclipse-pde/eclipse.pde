@@ -167,6 +167,8 @@ String getObjectLabel(Object obj) {
 			return PDEPlugin.getResourceString(DocSection.KEY_TOPIC_IMPLEMENTATION);
 		if (sectionId.equals(IDocumentSection.API_INFO))
 			return PDEPlugin.getResourceString(DocSection.KEY_TOPIC_API);
+		if (sectionId.equals(IDocumentSection.COPYRIGHT))
+			return PDEPlugin.getResourceString(DocSection.KEY_TOPIC_COPYRIGHT);
 	}
 	return null;
 }

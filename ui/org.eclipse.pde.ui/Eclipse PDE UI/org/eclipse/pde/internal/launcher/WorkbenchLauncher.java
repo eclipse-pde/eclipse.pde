@@ -97,12 +97,52 @@ public static void addExternalModels(PrintWriter writer, String itpDir) {
 			}
 		}
 }
+
+public static void addWorkspaceModels(PrintWriter writer) {
+	IWorkspace workspace = PDEPlugin.getWorkspace();
+	IProject [] projects = workspace.getRoot().getProjects();
+	for (int i=0; i<projects.length; i++) {
+		IProject project = projects[i];
+		try {
+		   if (project.hasNature(JavaCore.NATURE_ID)==false) continue;
+		   if (project.hasNature(PDEPlugin.COMPONENT_NATURE)) continue;
+		}
+		catch (CoreException e) {
+			continue;
+		}
+		IFile file = getPluginFile(project);
+		if (file==null)
+		   file = getFragmentFile(project);
+		if (file!=null) {
+			String key = project.getName();
+			String value = "file:"+file.getLocation().toOSString();
+		    value = fixEscapeChars(value);
+		    writer.println(key+" = "+value);
+		}
+	}
+}
+
+private static IFile getPluginFile(IProject project) {
+	IPath path = project.getFullPath().append("plugin.xml");
+	IFile file = project.getWorkspace().getRoot().getFile(path);
+	if (file.exists()) return file;
+	return null;
+}
+
+private static IFile getFragmentFile(IProject project) {
+	IPath path = project.getFullPath().append("fragment.xml");
+	IFile file = project.getWorkspace().getRoot().getFile(path);
+	if (file.exists()) return file;
+	return null;
+}
+
 private String[] buildClassPath(String eclipseDir) {
 	String startupPath = eclipseDir + File.separator + "startup.jar";
 	String newStartupPath = eclipseDir + File.separator + "bin" + File.separator + "startup.jar";
 	return new String [] { startupPath, newStartupPath };
 }
-private String createPluginPath(String itpDir) {
+
+private String createPluginPath(String eclipseDir) {
 	IPath stateLocation = PDEPlugin.getDefault().getStateLocation();
 
 	File file = stateLocation.append("pde_plugin_path.properties").toFile();
@@ -112,10 +152,8 @@ private String createPluginPath(String itpDir) {
 		OutputStream stream = new FileOutputStream(file);
 		PrintWriter writer = new PrintWriter(stream);
 		String projectPath = Platform.getLocation().toOSString();
-		addExternalModels(writer, itpDir);
-		String line = "pdePath = file:" + projectPath + "/";
-		line = fixEscapeChars(line);
-		writer.println(line);
+		addExternalModels(writer, eclipseDir);
+		addWorkspaceModels(writer);
 		writer.flush();
 		writer.close();
 	} catch (IOException e) {
@@ -124,6 +162,7 @@ private String createPluginPath(String itpDir) {
 	String option = "-plugins " + fileName;
 	return option;
 }
+
 protected boolean doLaunch(
 	final IJavaProject p,
 	final String mode,

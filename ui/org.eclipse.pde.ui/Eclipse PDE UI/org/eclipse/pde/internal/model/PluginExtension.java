@@ -68,6 +68,7 @@ void load(Node node) {
 			childElement.load(child);
 		}
 	}
+	addComments(node);
 }
 public void setPoint(String point) throws CoreException {
 	ensureModelEditable();
@@ -79,6 +80,7 @@ public String toString() {
 	return getPoint();
 }
 public void write(String indent, PrintWriter writer) {
+	writeComments(writer);
 	writer.print(indent);
 	writer.print("<extension");
 	String attIndent = indent + PluginElement.ATTRIBUTE_SHIFT;

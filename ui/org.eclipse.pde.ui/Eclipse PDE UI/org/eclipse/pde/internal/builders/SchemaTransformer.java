@@ -121,6 +121,7 @@ public void transform(StringBuffer out, ISchema schema) {
 	transformSection(out, schema, IDocumentSection.API_INFO);
 	out.append("<H2>Supplied Implementation</H2>\n");
 	transformSection(out, schema, IDocumentSection.IMPLEMENTATION);
+	transformSection(out, schema, IDocumentSection.COPYRIGHT);
 	out.append("</BODY>\n");
 	out.append("</HTML>\n");
 }

@@ -36,11 +36,13 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 	public static final String KEY_NAME = "BaseExtensionPoint.name";
 	public static final String KEY_SCHEMA = "BaseExtensionPoint.schema";
 	public static final String KEY_EDIT = "BaseExtensionPoint.edit";
+	public static final String KEY_MISSING_ID = "BaseExtensionPoint.missingId";
 	public static final String KEY_SECTIONS_OVERVIEW = "BaseExtensionPoint.sections.overview";
 	public static final String KEY_SECTIONS_USAGE = "BaseExtensionPoint.sections.usage";
 	public static final String KEY_GENERATING = "BaseExtensionPoint.generating";
 	public static final String KEY_SECTIONS_API = "BaseExtensionPoint.sections.api";
 	public static final String KEY_SECTIONS_SUPPLIED = "BaseExtensionPoint.sections.supplied";
+	public static final String KEY_SECTIONS_COPYRIGHT = "BaseExtensionPoint.sections.copyright";
 	private IContainer container;
 	protected Text idText;
 	protected Text pluginIdText;
@@ -149,6 +151,14 @@ private InputStream createSchemaStream(String plugin, String id, String name) {
 	section.setDescription(
 		PDEPlugin.getResourceString(KEY_SECTIONS_SUPPLIED));
 	schema.addDocumentSection(section);
+	section =
+		new DocumentSection(
+			schema,
+			IDocumentSection.COPYRIGHT,
+			"Copyright");
+	section.setDescription(
+		PDEPlugin.getResourceString(KEY_SECTIONS_COPYRIGHT));
+	schema.addDocumentSection(section);
 
 	ByteArrayOutputStream bstream = new ByteArrayOutputStream();
 	try {
@@ -248,6 +258,11 @@ private void verifyIdNotEmpty() {
 		empty = pluginIdText.getText().length()==0;
 	}
 	setPageComplete(!empty);
+	String message=null;
+	if (empty) {
+		message = PDEPlugin.getResourceString(KEY_MISSING_ID);
+	}
+	setErrorMessage(message);
 	String location = getSchemaLocation();
 	String prefix = location!=null ? location + "/" : "";
 	String schema = (!empty)?(prefix+id+".xsd"):"";

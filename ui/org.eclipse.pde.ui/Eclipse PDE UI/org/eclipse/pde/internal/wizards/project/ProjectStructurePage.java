@@ -83,6 +83,21 @@ public ProjectStructurePage(IProjectProvider provider, boolean fragment) {
 		setDescription(PDEPlugin.getResourceString(KEY_DESC));
 	}
 }
+
+private void createProject(IProject project, IProgressMonitor monitor) 
+                      throws CoreException {
+	if (project.exists() == false) {
+		CoreUtility.createProject(project, provider.getLocationPath(),
+											monitor);
+		project.open(monitor);
+	}
+	if (!project.hasNature(JavaCore.NATURE_ID))
+		CoreUtility.addNatureToProject(project, JavaCore.NATURE_ID, monitor);
+	if (!project.hasNature(PDEPlugin.PLUGIN_NATURE))
+		CoreUtility.addNatureToProject(project, PDEPlugin.PLUGIN_NATURE, monitor);
+	PDEPlugin.registerPlatformLaunchers(project);
+}
+
 private void createBuildProperties(IProject project, String library, String source) throws CoreException {
 	String fileName = "build.properties";
 	IPath path = project.getFullPath().append(fileName);
@@ -150,6 +165,7 @@ public boolean finish() {
 			try {
 				String message = PDEPlugin.getResourceString(KEY_CREATING);
 				monitor.beginTask(message, 1);
+				createProject(project, monitor);
 				createBuildProperties(project, library, source);
 				monitor.worked(1);
 			} catch (CoreException e) {

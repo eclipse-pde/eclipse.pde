@@ -45,6 +45,7 @@ void load(Node node) {
 	this.version = version;
 	this.id = id;
 	this.reexported = reexport;
+	addComments(node);
 }
 public void setMatch(int match) throws CoreException {
 	ensureModelEditable();
@@ -61,7 +62,8 @@ public void setVersion(String version) throws CoreException {
 	this.version = version;
 	firePropertyChanged(P_VERSION);
 }
-public void write(java.lang.String indent, PrintWriter writer) {
+public void write(String indent, PrintWriter writer) {
+	writeComments(writer);
 	writer.print(indent);
 	writer.print("<import plugin=\"" + getId() + "\"");
 	if (isReexported())

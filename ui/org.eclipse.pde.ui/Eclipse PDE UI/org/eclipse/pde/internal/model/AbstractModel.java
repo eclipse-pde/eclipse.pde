@@ -52,6 +52,7 @@ public String getResourceString(String key) {
 		nlHelper = createNLResourceHelper();
 	}
 	if (nlHelper==null) return key;
+	if (key==null) return "";
 	return nlHelper.getResourceString(key);
 }
 public IResource getUnderlyingResource() {

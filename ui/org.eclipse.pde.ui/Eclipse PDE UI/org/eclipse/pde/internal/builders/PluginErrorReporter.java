@@ -34,9 +34,11 @@ private void addMarker(
 		PDEPlugin.logException(e);
 	}
 }
+
 private void addMarker(SAXParseException e, int severity, boolean fatal) {
 	addMarker(e.getMessage(), e.getLineNumber(), severity, fatal);
 }
+
 public void error(SAXParseException exception) throws SAXException {
 	addMarker(exception, IMarker.SEVERITY_ERROR, false);
 	errorCount++;
@@ -56,8 +58,13 @@ private void removeFileMarkers() {
 	}
 }
 public void reportError(String message) {
-	addMarker(message, -1, IMarker.PRIORITY_HIGH, false);
+	addMarker(message, -1, IMarker.SEVERITY_ERROR, false);
 }
+
+public void reportWarning(String message) {
+	addMarker(message, -1, IMarker.SEVERITY_WARNING, false);
+}
+
 public void reportErrors() {
 	//addFileMarkers();
 }

@@ -36,6 +36,7 @@ void load(Node node) {
 	this.id = getNodeAttribute(node, "id");
 	this.name = getNodeAttribute(node, "name");
 	this.schema = getNodeAttribute(node, "schema");
+	addComments(node);
 }
 public void setSchema(String newSchema) throws CoreException {
 	ensureModelEditable();
@@ -43,6 +44,7 @@ public void setSchema(String newSchema) throws CoreException {
 	firePropertyChanged(P_SCHEMA);
 }
 public void write(String indent, PrintWriter writer) {
+	writeComments(writer);
 	writer.print(indent);
 	writer.print("<extension-point");
 	if (getId()!=null) writer.print(" id=\""+getId()+"\"");

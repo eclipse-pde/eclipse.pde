@@ -113,4 +113,14 @@ of the platform extension points.
       </documentation>
    </annotation>
 
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         &lt;p&gt;&lt;a href="hglegal.htm"&gt;
+&lt;img SRC="ngibmcpy.gif" ALT="Copyright IBM Corporation 2000" BORDER=0 height=12 width=195&gt;&lt;/a&gt;
+      </documentation>
+   </annotation>
+
 </schema>

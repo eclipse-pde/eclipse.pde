@@ -116,6 +116,7 @@ public void createControl(Composite parent) {
 	setControl(container);
 	loadSettings();
 }
+
 private String createPluginPath(String eclipseDir) {
 	IPath stateLocation = PDEPlugin.getDefault().getStateLocation();
 
@@ -127,9 +128,7 @@ private String createPluginPath(String eclipseDir) {
 		PrintWriter writer = new PrintWriter(stream);
 		String projectPath = Platform.getLocation().toOSString();
 		WorkbenchLauncher.addExternalModels(writer, eclipseDir);
-		String line = "pdePath = " + "file:"+projectPath + "/";
-		line = WorkbenchLauncher.fixEscapeChars(line);
-		writer.println(line);
+		WorkbenchLauncher.addWorkspaceModels(writer);
 		writer.flush();
 		writer.close();
 	} catch (IOException e) {
@@ -137,6 +136,7 @@ private String createPluginPath(String eclipseDir) {
 	}
 	return fileName;
 }
+
 public boolean finish() {
 	saveSettings();
 	final boolean makeScripts = makeScriptsButton.getSelection();

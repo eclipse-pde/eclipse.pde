@@ -4,17 +4,20 @@ package org.eclipse.pde.internal.model;
  * All Rights Reserved.
  */
 
-import org.w3c.dom.Node;
+import org.w3c.dom.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.pde.internal.base.model.plugin.*;
 import org.eclipse.pde.internal.*;
+import java.util.*;
+import java.io.PrintWriter;
 
 public abstract class PluginObject extends PlatformObject implements IPluginObject {
 	protected String name;
 	private IPluginObject parent;
 	private IPluginModelBase model;
+	private Vector comments;
 
 public PluginObject() {
 }
@@ -93,5 +96,35 @@ protected void throwCoreException(String message) throws CoreException {
 public String toString() {
 	if (name!=null) return name;
 	return super.toString();
+}
+
+public void addComments(Node node) {
+	comments = addComments(node, comments);
+}
+
+public Vector addComments(Node node, Vector result) {
+	for (Node prev=node.getPreviousSibling(); 
+				prev!=null; prev=prev.getPreviousSibling()) {
+		if (prev.getNodeType()==Node.TEXT_NODE) continue;
+		if (prev instanceof Comment) {
+			String comment = prev.getNodeValue();
+			if (result==null) result = new Vector();
+			result.add(comment);
+		}
+		else break;
+	}
+	return result;
+}
+
+void writeComments(PrintWriter writer) {
+	writeComments(writer, comments);
+}
+
+void writeComments(PrintWriter writer, Vector source) {
+	if (source==null) return;
+	for (int i=0; i<source.size(); i++) {
+		String comment = (String)source.elementAt(i);
+		writer.println("<!--"+comment+"-->");
+	}
 }
 }

@@ -157,6 +157,7 @@ protected void processChild(Node child) {
 		} else
 			if (name.equals("runtime")) {
 				loadRuntime(child);
+				addComments(child);
 			}
 }
 public void remove(IPluginExtension extension) throws CoreException {
@@ -205,6 +206,8 @@ public void swap(IPluginLibrary l1, IPluginLibrary l2) throws CoreException {
 	firePropertyChanged(l2, null);
 }
 void writeChildren(String tag, Object[] children, PrintWriter writer) {
+	if (tag.equals("runtime")) 
+	   writeComments(writer);
 	writer.println("<" + tag + ">");
 	for (int i = 0; i < children.length; i++) {
 		IPluginObject obj = (IPluginObject) children[i];

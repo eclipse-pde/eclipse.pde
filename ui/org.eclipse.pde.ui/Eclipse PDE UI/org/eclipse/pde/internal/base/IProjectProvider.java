@@ -5,6 +5,7 @@ package org.eclipse.pde.internal.base;
  */
 
 import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 /**
  * This interface is used to insulate
  * the client's wizards from the
@@ -30,4 +31,12 @@ IProject getProject();
  * @return new project name
  */
 String getProjectName();
+
+/**
+ * Returns absolute path of the new plug-in 
+ * project that will be created. 
+ * 
+ * @return absolute project path
+ */
+IPath getLocationPath();
 }

@@ -29,12 +29,9 @@ import org.eclipse.pde.internal.preferences.*;
 
 public class PluginPathUpdater {
 	public static final String KEY_UPDATING = "PluginPathUpdater.updating";
-	public static final String PROP_JDK= "org.eclipse.jdt.ui.build.jdk.library";
 	public static final String JDK_VAR= "JRE_LIB";
 	public static final String JDK_SRCVAR= "JRE_SRC";
 	public static final String JDK_SRCROOTVAR= "JRE_SRCROOT";
-	public static final String PROP_JDK_SOURCE= "org.eclipse.jdt.ui.build.jdk.source";
-	public static final String PROP_JDK_PREFIX = "org.eclipse.jdt.ui.build.jdk.prefix";
 	private IProject project;
 	private Iterator checkedPlugins;
 	private IJavaProject javaProject;
@@ -89,7 +86,6 @@ private void addToClasspathEntries(CheckedPlugin element, Vector result) {
 	boolean internal = model.getUnderlyingResource() != null;
 
 	if (internal) {
-		//addFoldersToClasspathEntries(model, result);
 		IPath projectPath = model.getUnderlyingResource().getProject().getFullPath();
 		IClasspathEntry projectEntry = JavaCore.newProjectEntry(projectPath);
 		result.addElement(projectEntry);
@@ -178,11 +174,6 @@ public static boolean isAlreadyPresent(
 	}
 	return false;
 }
-private void releaseJarsModel(IJarsModel jarsModel) {
-	WorkspaceModelManager manager = PDEPlugin.getDefault().getWorkspaceModelManager();
-	IFile jarsFile = (IFile)jarsModel.getUnderlyingResource();
-	manager.disconnect(jarsFile, null);
-}
 public void updateClasspath(IProgressMonitor monitor) {
 	try {
 		// create java nature
@@ -220,14 +211,11 @@ private void updateLibrariesFor(
 	boolean internal = plugin.getModel().getUnderlyingResource() != null;
 	boolean add = element.isChecked();
 	IPluginLibrary[] libraries = plugin.getLibraries();
-	IJarsModel jarsModel = null;
-	if (internal) {
-		jarsModel = getJarsModel(plugin);
-	}
+
 	for (int i = 0; i < libraries.length; i++) {
 		IPluginLibrary library = libraries[i];
 		if (internal) {
-			updateLibrary(plugin, jarsModel, library.getName(), add, entries, result);
+			updateLibrary(plugin, library.getName(), add, entries, result);
 		} else {
 			updateLibrary(
 				((ExternalPluginModelBase)plugin.getModel()).getEclipseHomeRelativePath(),
@@ -236,9 +224,6 @@ private void updateLibrariesFor(
 				entries,
 				result);
 		}
-	}
-	if (jarsModel!=null) {
-		releaseJarsModel(jarsModel);
 	}
 }
 private void updateLibrary(
@@ -280,7 +265,6 @@ private void updateLibrary(
 }
 private void updateLibrary(
 	IPlugin plugin,
-	IJarsModel jarsModel,
 	String name,
 	boolean add,
 	IClasspathEntry[] entries,

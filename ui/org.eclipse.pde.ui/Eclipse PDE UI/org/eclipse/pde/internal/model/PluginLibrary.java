@@ -58,6 +58,7 @@ void load(Node node) {
 		exports.copyInto(contentFilters);
 	}
 	exported = all || exports.size()>0;
+	addComments(node);
 }
 public void setContentFilters(String[] filters) throws CoreException {
 	ensureModelEditable();
@@ -70,6 +71,7 @@ public void setExported(boolean value) throws CoreException {
 	firePropertyChanged(P_EXPORTED);
 }
 public void write(String indent, PrintWriter writer) {
+	writeComments(writer);
 	writer.print(indent);
 	writer.print("<library name=\"" + getName() + "\"");
 	if (isExported() == false) {

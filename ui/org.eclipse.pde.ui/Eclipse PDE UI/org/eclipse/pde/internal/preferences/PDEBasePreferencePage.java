@@ -85,7 +85,7 @@ public static void initializePlatformPath() {
 		//IPath ppath = new Path(file).removeTrailingSeparator().removeLastSegments(1);
 		//path = ppath.toOSString();
 		//if (path.charAt(0)=='/') path = path.substring(1);
-		IPath ppath = new Path(file);
+		IPath ppath = new Path(file).removeTrailingSeparator();
 		path = ppath.toOSString();
 		store.setDefault(PROP_PLATFORM_PATH, path);
 		store.setValue(PROP_PLATFORM_PATH, path);

@@ -36,6 +36,7 @@ public class DocSection extends PDEFormSection {
 	public static final String KEY_TOPIC_IMPLEMENTATION =
 		"SchemaEditor.topic.implementation";
 	public static final String KEY_TOPIC_API = "SchemaEditor.topic.api";
+	public static final String KEY_TOPIC_COPYRIGHT = "SchemaEditor.topic.copyright";
 	private SourceViewer editor;
 	private IDocument document;
 	private IDocumentPartitioner partitioner;
@@ -187,6 +188,8 @@ private String getTopicName(Object object) {
 				return PDEPlugin.getResourceString(KEY_TOPIC_IMPLEMENTATION);
 			if (sectionId.equals(IDocumentSection.API_INFO))
 				return PDEPlugin.getResourceString(KEY_TOPIC_API);
+			if (sectionId.equals(IDocumentSection.COPYRIGHT))
+				return PDEPlugin.getResourceString(KEY_TOPIC_COPYRIGHT);
 		}
 	return "?";
 }

@@ -21,6 +21,9 @@ import org.eclipse.core.resources.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jdt.core.*;
+import org.eclipse.pde.internal.model.*;
+import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.core.resources.IProjectDescription;
 
 
 public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
@@ -151,6 +154,7 @@ private void runJavaSettingsOperation() {
 	IRunnableWithProgress operation = new WorkspaceModifyOperation() {
 		public void execute(IProgressMonitor monitor) {
 			try {
+				createBlankManifest(project, structureData, monitor);
 				setJavaSettings(project, structureData, monitor);
 			} catch (JavaModelException e) {
 				PDEPlugin.logException(e);
@@ -174,7 +178,10 @@ private void setJavaSettings(
 	IProgressMonitor monitor)
 	throws JavaModelException, CoreException {
 	if (project.exists() == false) {
-		project.create(monitor);
+		IProjectDescription desc = project.getWorkspace()
+		                      .newProjectDescription(project.getName());
+		desc.setLocation(provider.getLocationPath());
+		project.create(desc, monitor);
 		project.open(monitor);
 	}
 	if (!project.hasNature(JavaCore.NATURE_ID))
@@ -185,6 +192,30 @@ private void setJavaSettings(
 	IClasspathEntry[] libraries = new IClasspathEntry[0];
 	BuildPathUtil.setBuildPath(project, structureData, libraries, monitor);
 }
+
+private void createBlankManifest(IProject project, IPluginStructureData structureData, IProgressMonitor monitor)
+          							        throws CoreException {
+   String id = project.getName();
+   IPath path;
+   if (fragment) 
+      path = project.getFullPath().append("fragment.xml");
+   else
+      path = project.getFullPath().append("plugin.xml");
+   IFile file = project.getWorkspace().getRoot().getFile(path);
+   WorkspacePluginModelBase model = null;
+   if (fragment)
+      model = new WorkspaceFragmentModel(file);
+   else
+      model = new WorkspacePluginModel(file);
+   model.load();
+   model.getPluginBase().setId(id);
+   String libName = structureData.getRuntimeLibraryName();
+   IPluginLibrary library = model.getFactory().createLibrary();
+   library.setName(libName);
+   model.getPluginBase().add(library);
+   model.save();
+}
+
 private void setWizardListEnabled(boolean enabled) {
 	if (!enabled) {
 		wizardListEnableState = ControlEnableState.disable(wizardList);

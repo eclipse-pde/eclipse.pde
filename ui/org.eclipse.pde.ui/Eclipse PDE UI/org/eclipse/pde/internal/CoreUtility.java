@@ -10,6 +10,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
 
 
 public class CoreUtility {
@@ -40,5 +42,17 @@ public static void createFolder(
 		}
 		folder.create(force, local, monitor);
 	}
+}
+
+public static void createProject(IProject project, IPath location, IProgressMonitor monitor) 
+							throws CoreException {
+	IPath defaultLocation = Platform.getLocation();
+	if (defaultLocation.equals(location)==false) {
+		IProjectDescription desc = project.getWorkspace().
+		                   newProjectDescription(project.getName());
+		desc.setLocation(location.append(project.getFullPath()));
+		project.create(desc, monitor);
+	}
+	else project.create(monitor);
 }
 }

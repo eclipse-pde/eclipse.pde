@@ -43,8 +43,7 @@ public class PDEPlugin extends AbstractUIPlugin {
 	public static final String RUN_LAUNCHER_ID = PLUGIN_ID + "." + "WorkbenchRunLauncher";
 	public static final String DEBUG_LAUNCHER_ID = PLUGIN_ID + "." + "WorkbenchDebugLauncher";
 
-	public static final String JDK_HOME_VARIABLE = "PDE_JDK_HOME";
-	public static final String ECLIPSE_HOME_VARIABLE = "PDE_ECLIPSE_HOME";
+	public static final String ECLIPSE_HOME_VARIABLE = "ECLIPSE_HOME";
 
 // Shared instance
 	private static PDEPlugin inst;
