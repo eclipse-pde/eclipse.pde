@@ -226,6 +226,8 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 				converter = acquirePluginConverter();
 				return converter.convertManifest(bundleLocation, false, AbstractBuildScriptGenerator.isBuildingOSGi() ? null : "2.1"); //$NON-NLS-1$
 			} catch (PluginConversionException convertException) {
+				if (bundleLocation.getName().equals("feature.xml")) //$NON-NLS-1$
+					return null;
 				IStatus status = new Status(IStatus.WARNING, PI_PDEBUILD, 0, Policy.bind("exception.errorConverting", bundleLocation.getAbsolutePath()), convertException); //$NON-NLS-1$
 				BundleHelper.getDefault().getLog().log(status);
 				return null;
