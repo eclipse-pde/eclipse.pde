@@ -23,7 +23,8 @@ public interface IPDEUIConstants {
 	String PRODUCT_EDITOR_ID = PLUGIN_ID + ".productEditor"; //$NON-NLS-1$
 	String PLUGINS_VIEW_ID = "org.eclipse.pde.ui.PluginsView"; //$NON-NLS-1$
 	String DEPENDENCIES_VIEW_ID = "org.eclipse.pde.ui.DependenciesView"; //$NON-NLS-1$
-
+	String PERSPECTIVE_ID = "org.eclipse.pde.ui.PDEPerspective"; //$NON-NLS-1$
+	
 	String RUN_LAUNCHER_ID = PLUGIN_ID + "." + "WorkbenchRunLauncher"; //$NON-NLS-1$ //$NON-NLS-2$
 	String DEBUG_LAUNCHER_ID = PLUGIN_ID + "." + "WorkbenchDebugLauncher"; //$NON-NLS-1$ //$NON-NLS-2$
 	String MARKER_SYSTEM_FILE_PATH = PLUGIN_ID + "."+ "systemFilePath"; //$NON-NLS-1$ //$NON-NLS-2$

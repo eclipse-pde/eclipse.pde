@@ -10,16 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.tests.macro;
 
-import java.io.PrintWriter;
-import java.util.ArrayList;
+import java.io.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.action.*;
-import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.*;
-import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.widgets.*;
 import org.w3c.dom.*;
 

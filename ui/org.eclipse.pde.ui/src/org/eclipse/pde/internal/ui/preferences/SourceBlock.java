@@ -267,7 +267,7 @@ public class SourceBlock implements IHyperlinkListener {
 	}
 
 	public void linkActivated(HyperlinkEvent e) {
-		IPluginExtensionPoint point = PDECore.getDefault().findExtensionPoint("org.eclipse.pde.core.source");
+		IPluginExtensionPoint point = PDECore.getDefault().findExtensionPoint("org.eclipse.pde.core.source"); //$NON-NLS-1$
 		if (point != null)
 			new ShowDescriptionAction(point).run();
 	}

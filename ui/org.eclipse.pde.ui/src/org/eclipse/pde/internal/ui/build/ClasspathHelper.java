@@ -89,7 +89,7 @@ public class ClasspathHelper {
 		IPath[] paths = getOutputFolders(model, false);
 		String entry = writeEntry(paths);
 		Hashtable map = new Hashtable(1);
-		map.put(id, entry.length() > 0 ? entry : "bin");
+		map.put(id, entry.length() > 0 ? entry : "bin"); //$NON-NLS-1$
 		return map;		
 	}
 

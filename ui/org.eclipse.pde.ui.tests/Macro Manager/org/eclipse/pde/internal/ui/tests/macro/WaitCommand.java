@@ -10,15 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.tests.macro;
 
-import java.io.PrintWriter;
+import java.io.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.jobs.*;
-import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.jface.dialogs.MessageDialog;
 
 /**
  * @author dejan

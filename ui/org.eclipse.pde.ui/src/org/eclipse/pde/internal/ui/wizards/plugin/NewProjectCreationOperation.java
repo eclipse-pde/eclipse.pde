@@ -103,8 +103,12 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 
 		if (fData.hasBundleStructure()) {
 			PDEPluginConverter.convertToOSGIFormat(project, fData.getTargetVersion(), null, new SubProgressMonitor(monitor, 1));
-			trimModel(fModel.getPluginBase());
-			fModel.save();
+			if (fModel.getPluginBase().getExtensions().length == 0) {
+				project.getFile(fData instanceof IPluginFieldData ? "plugin.xml" : "fragment.xml").delete(true, null); //$NON-NLS-1$ //$NON-NLS-2$
+			} else {
+				trimModel(fModel.getPluginBase());
+				fModel.save();
+			}
 			openFile(project.getFile("META-INF/MANIFEST.MF")); //$NON-NLS-1$
 		} else {
 			openFile((IFile) fModel.getUnderlyingResource());
@@ -235,8 +239,9 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
             IBuildModelFactory factory = model.getFactory();
             IBuildEntry binEntry = factory
             .createEntry(IBuildEntry.BIN_INCLUDES);
-            binEntry.addToken(fData instanceof IFragmentFieldData ? "fragment.xml" //$NON-NLS-1$
-                    : "plugin.xml"); //$NON-NLS-1$
+			if (!fData.hasBundleStructure() || fModel.getPluginBase().getExtensions().length > 0)
+				binEntry.addToken(fData instanceof IFragmentFieldData ? "fragment.xml" //$NON-NLS-1$
+									: "plugin.xml"); //$NON-NLS-1$
             if (fData.hasBundleStructure())
                 binEntry.addToken("META-INF/"); //$NON-NLS-1$
             if (!fData.isSimple() && fData.getLibraryName() != null) {

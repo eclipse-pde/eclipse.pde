@@ -8,25 +8,16 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.ui.tests;
-
-
-import org.eclipse.pde.ui.tests.imports.*;
-import org.eclipse.pde.ui.tests.wizards.*;
-import org.eclipse.pde.ui.tests.wizards.plugin.*;
+package org.eclipse.pde.ui.tests.wizards.plugin;
 
 import junit.framework.*;
 
-
-public class AllPDETests {
-
+public class AllNewProjectTests {
+	
 	public static Test suite() {
-		TestSuite suite = new TestSuite("Test Suite for org.eclipse.pde.ui"); //$NON-NLS-1$
-		suite.addTest(AllNewProjectTests.suite());
-		suite.addTest(PluginImportTest.suite());
-		suite.addTest(NewSiteProjectTest.suite());
+		TestSuite suite = new TestSuite("Test Suite to test new project creation wizards."); //$NON-NLS-1$
+		suite.addTest(SimplePluginTestCase.suite());
 		return suite;
 	}
-	
-	
+
 }
