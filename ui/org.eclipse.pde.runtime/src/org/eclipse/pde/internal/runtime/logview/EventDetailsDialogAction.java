@@ -58,6 +58,10 @@ public class EventDetailsDialogAction extends SelectionProviderAction{
 			propertyDialog.resetSelection(element);
 	}
 	
+	public void resetDialogButtons(){
+		if (propertyDialog != null && propertyDialog.isOpen())
+			propertyDialog.resetButtons();
+	}
 	public void run(){
 		if (propertyDialog != null && propertyDialog.isOpen()){
 			resetSelection();

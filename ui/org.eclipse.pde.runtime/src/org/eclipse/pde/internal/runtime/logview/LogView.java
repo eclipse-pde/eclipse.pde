@@ -479,6 +479,7 @@ public class LogView extends ViewPart implements ILogListener {
 				readLogAction.setText(PDERuntimePlugin.getResourceString("LogView.readLog.reload"));
 				readLogAction.setToolTipText(PDERuntimePlugin.getResourceString("LogView.readLog.reload"));
 				asyncRefresh(false);	
+				resetDialogButtons();
 			}
 		}	
 	}
@@ -552,6 +553,7 @@ public class LogView extends ViewPart implements ILogListener {
 		if (inputFile.delete()) {
 			logs.clear();
 			asyncRefresh(false);
+			resetDialogButtons();
 		}
 	}
 	
@@ -581,6 +583,7 @@ public class LogView extends ViewPart implements ILogListener {
 			public void run() {
 				logs.clear();
 				asyncRefresh(false);
+				resetDialogButtons();
 			}
 		});
 	}
@@ -606,6 +609,7 @@ public class LogView extends ViewPart implements ILogListener {
 			readLogAction.setToolTipText(
 				PDERuntimePlugin.getResourceString("LogView.readLog.restore"));
 			asyncRefresh(false);	
+			resetDialogButtons();
 		}
 	}
 	
@@ -939,5 +943,8 @@ public class LogView extends ViewPart implements ILogListener {
 		}
 	}
 	
+	private void resetDialogButtons(){
+		((EventDetailsDialogAction)propertiesAction).resetDialogButtons();
+	}
 
 }

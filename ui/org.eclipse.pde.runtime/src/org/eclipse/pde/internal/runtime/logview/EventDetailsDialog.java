@@ -277,6 +277,13 @@ public class EventDetailsDialog extends Dialog {
 		updateProperties();
 	}
 	
+	public void resetButtons(){
+		backButton.setEnabled(false);
+		nextButton.setEnabled(false);
+		backButton.setImage(imgPrevDisabled);
+		nextButton.setImage(imgNextDisabled);
+	}
+	
 	private void setEntrySelectionInTable(){
 		ISelection selection = new StructuredSelection(entry);
 		provider.setSelection(selection);
