@@ -185,7 +185,7 @@ public class PluginObjectNode extends PluginDocumentNode implements IPluginObjec
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
-	/*public boolean equals(Object obj) {
+	public boolean equals(Object obj) {
 		if (!(obj instanceof PluginObjectNode)) 
 			return false;	
 		
@@ -209,6 +209,6 @@ public class PluginObjectNode extends PluginDocumentNode implements IPluginObjec
 		}
 
 		return true;
-	}*/
+	}
 
 }
