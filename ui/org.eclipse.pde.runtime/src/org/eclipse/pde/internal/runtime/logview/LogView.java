@@ -46,7 +46,7 @@ public class LogView extends ViewPart implements ILogListener {
 	public static final String P_SHOW_ALL_SESSIONS = "allSessions"; //$NON-NLS-1$
 	
 	private static final String P_COLUMN_1 = "column1"; //$NON-NLS-1$
-	private static final String P_COLUMN_2 = "column2"; //$NON-NLS-1$
+	private static final String P_COLUMN_2 = "column2"; //$NOwN-NLS-1$
 	private static final String P_COLUMN_3 = "column3"; //$NON-NLS-1$
 	private static final String P_COLUMN_4 = "column4"; //$NON-NLS-1$
 	
@@ -426,7 +426,13 @@ public class LogView extends ViewPart implements ILogListener {
 						Program.launch(inputFile.getAbsolutePath());
 					else {
 						Program p = Program.findProgram (".txt"); //$NON-NLS-1$
-						if (p != null) p.execute (inputFile.getAbsolutePath());
+						if (p != null) 
+							p.execute (inputFile.getAbsolutePath());
+						else {
+							OpenLogDialog openDialog = new OpenLogDialog(tableTreeViewer.getControl().getShell(), inputFile);
+							openDialog.create();
+							openDialog.open();
+						}
 					}
 			}
 		};
@@ -870,11 +876,9 @@ public class LogView extends ViewPart implements ILogListener {
 						SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy HH:mm:ss.SS"); //$NON-NLS-1$
 						Date date1 = formatter.parse(((LogEntry)e1).getDate());
 						Date date2 = formatter.parse(((LogEntry)e2).getDate());
-						if (DATE_ORDER == ASCENDING) {
+						if (DATE_ORDER == ASCENDING) 
 							return date1.before(date2) ? -1 : 1;
-						} else {
-							return date1.after(date2) ? -1 : 1;
-						}
+						return date1.after(date2) ? -1 : 1;
 					} catch (ParseException e) {
 					}
 					return 0;
@@ -923,11 +927,10 @@ public class LogView extends ViewPart implements ILogListener {
 						SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy HH:mm:ss.SS"); //$NON-NLS-1$
 						Date date1 = formatter.parse(((LogEntry)e1).getDate());
 						Date date2 = formatter.parse(((LogEntry)e2).getDate());
-						if (DATE_ORDER == ASCENDING) {
+						if (DATE_ORDER == ASCENDING) 
 							return date1.before(date2) ? -1 : 1;
-						} else {
-							return date1.after(date2) ? -1 : 1;
-						}
+						return date1.after(date2) ? -1 : 1;
+						
 					} catch (ParseException e) {
 					}
 					return 0;
