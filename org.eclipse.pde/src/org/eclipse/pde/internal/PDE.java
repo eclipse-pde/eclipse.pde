@@ -23,16 +23,6 @@ public class PDE extends Plugin {
 	public static final String FEATURE_BUILDER_ID =
 		PLUGIN_ID + "." + "FeatureBuilder";
 
-	private static boolean inVAJ;
-	static {
-		try {
-			Class.forName("com.ibm.uvm.lang.ProjectClassLoader");
-			inVAJ = true;
-		} catch (Exception e) {
-			inVAJ = false;
-		}
-	}
-
 	// Shared instance
 	private static PDE inst;
 	// Resource bundle
