@@ -43,32 +43,24 @@ public class UpdateClasspathAction implements IWorkbenchWindowActionDelegate {
 			Object[] elems = ((IStructuredSelection) fSelection).toArray();
 			ArrayList models = new ArrayList(elems.length);
 
-			try {
-				for (int i = 0; i < elems.length; i++) {
-					Object elem = elems[i];
-					IProject project = null;
-					
-					if (elem instanceof IFile) {
-						IFile file = (IFile) elem;
-						project = file.getProject();
-					}
-					else if (elem instanceof IProject) {
-						project = (IProject)elem;
-					}
-					else if (elem instanceof IJavaProject) {
-						project = ((IJavaProject)elem).getProject();
-					}
-					if (project!=null && project.hasNature(PDEPlugin.PLUGIN_NATURE)) {
-						IPluginModelBase model = findModelFor(project);
-						if (model != null) {
-							models.add(model);
-						}
+			for (int i = 0; i < elems.length; i++) {
+				Object elem = elems[i];
+				IProject project = null;
+
+				if (elem instanceof IFile) {
+					IFile file = (IFile) elem;
+					project = file.getProject();
+				} else if (elem instanceof IProject) {
+					project = (IProject) elem;
+				} else if (elem instanceof IJavaProject) {
+					project = ((IJavaProject) elem).getProject();
+				}
+				if (project != null && WorkspaceModelManager.isPluginProject(project)) {
+					IPluginModelBase model = findModelFor(project);
+					if (model != null) {
+						models.add(model);
 					}
 				}
-			} catch (CoreException e) {
-				String title = PDEPlugin.getResourceString(KEY_TITLE);
-				String message = PDEPlugin.getResourceString(KEY_MESSAGE);
-				PDEPlugin.logException(e, title, message);
 			}
 
 			final IPluginModelBase[] modelArray =
@@ -79,7 +71,8 @@ public class UpdateClasspathAction implements IWorkbenchWindowActionDelegate {
 			run(true, pd, modelArray);
 			*/
 			UpdateBuildpathWizard wizard = new UpdateBuildpathWizard(modelArray);
-			WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
+			WizardDialog dialog =
+				new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 			dialog.open();
 		}
 	}

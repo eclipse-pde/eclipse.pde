@@ -233,9 +233,11 @@ public class PluginPathUpdater {
 			if (!project.hasNature(JavaCore.NATURE_ID)) {
 				CoreUtility.addNatureToProject(project, JavaCore.NATURE_ID, monitor);
 			}
+			/*
 			if (!project.hasNature(PDEPlugin.PLUGIN_NATURE)) {
 				CoreUtility.addNatureToProject(project, PDEPlugin.PLUGIN_NATURE, monitor);
 			}
+			*/
 			Vector result = new Vector();
 			if (javaProject == null)
 				javaProject = JavaCore.create(project);

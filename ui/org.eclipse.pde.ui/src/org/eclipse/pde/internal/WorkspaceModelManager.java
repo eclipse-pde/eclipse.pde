@@ -18,6 +18,7 @@ import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.pde.internal.wizards.PluginPathUpdater;
 import org.eclipse.pde.internal.wizards.imports.UpdateBuildpathWizard;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.jdt.core.JavaCore;
 
 public class WorkspaceModelManager
 	implements IModelProvider, IResourceChangeListener, IResourceDeltaVisitor {
@@ -307,22 +308,14 @@ public class WorkspaceModelManager
 			&& (delta.getFlags() | IResourceDelta.DESCRIPTION) != 0) {
 			// Project description changed. Test if this
 			// is now a PDE project and act
-			try {
-				if (project.hasNature(PDEPlugin.PLUGIN_NATURE)) {
-					ensureModelExists(project);
-				}
-			} catch (CoreException e) {
+			if (isPluginProject(project)) {
+				ensureModelExists(project);
 			}
 		}
 	}
 
 	private void handleProjectToBeDeleted(IProject project) {
-		try {
-			if (project.hasNature(PDEPlugin.PLUGIN_NATURE) == false) {
-				return;
-			}
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
+		if (isPluginProject(project) == false) {
 			return;
 		}
 		IPluginModelBase model = getWorkspaceModel(project);
@@ -345,7 +338,7 @@ public class WorkspaceModelManager
 		for (int i = 0; i < projects.length; i++) {
 			IProject project = projects[i];
 			try {
-				if (project.hasNature(PDEPlugin.PLUGIN_NATURE)) {
+				if (project.hasNature(JavaCore.NATURE_ID)) {
 					IPluginModelBase model = createWorkspacePluginModel(project);
 					if (model != null) {
 						if (model.isFragmentModel())
@@ -389,11 +382,12 @@ public class WorkspaceModelManager
 		if (project.isOpen() == false)
 			return false;
 		try {
-			return project.hasNature(PDEPlugin.PLUGIN_NATURE);
+			if (!project.hasNature(JavaCore.NATURE_ID)) return false;
+			
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
-		return false;
+		return project.exists(new Path("plugin.xml")) || project.exists(new Path("fragment.xml"));
 	}
 
 	private void ensureModelExists(IProject pluginProject) {

@@ -134,6 +134,7 @@ public class Fragment extends PluginBase implements IFragment {
 		if (children.length > 0) {
 			writeComments(writer, requiresComments);
 			writeChildren("requires", children, writer);
+			writer.println();
 		}
 
 		children = getExtensionPoints();

@@ -25,7 +25,8 @@ import org.eclipse.jdt.ui.wizards.*;
 import org.eclipse.pde.internal.util.*;
 import org.eclipse.pde.internal.wizards.*;
 import org.eclipse.core.runtime.*;import org.eclipse.core.runtime.CoreException;import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;;
+import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
+import org.eclipse.jdt.core.JavaCore;
 
 public class NewComponentProjectWizard extends NewWizard 
 	implements IExecutableExtension {
@@ -159,7 +160,7 @@ private boolean hasInterestingProjects(boolean fragments) {
 	for (int i = 0; i < projects.length; i++) {
 		IProject project = projects[i];
 		try {
-			if (project.hasNature(PDEPlugin.PLUGIN_NATURE)) {
+			if (project.hasNature(JavaCore.NATURE_ID)) {
 				String name = fragments ? "fragment.xml" : "plugin.xml";
 				IPath path = project.getFullPath().append(name);
 				IFile file = root.getFile(path);

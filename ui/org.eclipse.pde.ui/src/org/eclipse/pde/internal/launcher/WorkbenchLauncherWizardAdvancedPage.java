@@ -57,7 +57,7 @@ public class WorkbenchLauncherWizardAdvancedPage extends StatusWizardPage {
 
 	class PluginLabelProvider extends LabelProvider {
 		public String getText(Object obj) {
-			if (obj instanceof IPluginModel) {
+			if (obj instanceof IPluginModelBase) {
 				IPluginModelBase model = (IPluginModelBase) obj;
 				IPluginBase plugin = model.getPluginBase();
 				String name = plugin.getId();
@@ -82,7 +82,7 @@ public class WorkbenchLauncherWizardAdvancedPage extends StatusWizardPage {
 		extends DefaultContentProvider
 		implements ITreeContentProvider {
 		public boolean hasChildren(Object parent) {
-			if (parent instanceof IPluginModel)
+			if (parent instanceof IPluginModelBase)
 				return false;
 			return true;
 		}
@@ -96,8 +96,8 @@ public class WorkbenchLauncherWizardAdvancedPage extends StatusWizardPage {
 			return new Object[0];
 		}
 		public Object getParent(Object child) {
-			if (child instanceof IPluginModel) {
-				IPluginModel model = (IPluginModel) child;
+			if (child instanceof IPluginModelBase) {
+				IPluginModelBase model = (IPluginModelBase) child;
 				if (model.getUnderlyingResource() != null)
 					return workspacePlugins;
 				else
@@ -433,7 +433,7 @@ public class WorkbenchLauncherWizardAdvancedPage extends StatusWizardPage {
 			return;
 		// store deselected projects
 		StringBuffer wbuf = new StringBuffer();
-		IPluginModelBase[] workspaceModels = (IPluginModelBase[]) getWorkspacePlugins();
+		IPluginModelBase[] workspaceModels = getWorkspacePlugins();
 
 		for (int i = 0; i < workspaceModels.length; i++) {
 			IPluginModelBase model = (IPluginModelBase) workspaceModels[i];

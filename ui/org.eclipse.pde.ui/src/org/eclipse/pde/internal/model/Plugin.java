@@ -81,6 +81,14 @@ public void write(String indent, PrintWriter writer) {
 	// add runtime
 	Object [] children = getLibraries();
 	writeChildren("runtime", children, writer);
+	
+	// add requires
+	children = getImports();
+	if (children.length > 0) {
+		writeComments(writer, requiresComments);
+		writeChildren("requires", children, writer);
+		writer.println();
+	}
 
 	children = getExtensionPoints();
 	if (children.length>0) writer.println();
@@ -94,6 +102,7 @@ public void write(String indent, PrintWriter writer) {
 	for (int i=0; i<children.length; i++) {
 		((IPluginExtension) children[i]).write("", writer);
 	}
+	writer.println();
 	writer.println("</plugin>");
 }
 }

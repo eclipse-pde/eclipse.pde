@@ -280,7 +280,7 @@ public boolean visit(IResourceDelta delta) throws CoreException {
 	if (resource instanceof IFile) {
 		IFile file = (IFile) resource;
 		if (file.getName().toLowerCase().endsWith(".xsd")==false) return true;
-		if (file.getProject().hasNature(PDEPlugin.PLUGIN_NATURE)==false) return true;
+		if (WorkspaceModelManager.isPluginProject(file.getProject())==false) return true;
 		if (delta.getKind() == IResourceDelta.CHANGED) {
 			if ((IResourceDelta.CONTENT & delta.getFlags()) != 0) {
 				updateExtensionPoint(file);
