@@ -25,7 +25,6 @@ import org.eclipse.pde.internal.ui.editor.build.*;
 import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.pde.internal.ui.util.*;
-import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -35,45 +34,35 @@ import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.model.*;
 import org.eclipse.ui.views.navigator.*;
 
-public class LibrarySection
-	extends TableSection
-	implements IModelChangedListener {
-	public static final String SECTION_TITLE =
-		"ManifestEditor.LibrarySection.title"; //$NON-NLS-1$
-	public static final String SECTION_DESC = "ManifestEditor.LibrarySection.desc"; //$NON-NLS-1$
-	public static final String SECTION_FDESC =
-		"ManifestEditor.LibrarySection.fdesc"; //$NON-NLS-1$
-	public static final String SECTION_ADD = "NewManifestEditor.LibrarySection.add"; //$NON-NLS-1$
-	public static final String SECTION_NEW = "NewManifestEditor.LibrarySection.new"; //$NON-NLS-1$
-	public static final String SECTION_UP = "ManifestEditor.LibrarySection.up"; //$NON-NLS-1$
-	public static final String SECTION_DOWN = "ManifestEditor.LibrarySection.down"; //$NON-NLS-1$
-	public static final String POPUP_NEW_LIBRARY =
-		"ManifestEditor.LibrarySection.newLibrary"; //$NON-NLS-1$
-	public static final String POPUP_DELETE = "Actions.delete.label"; //$NON-NLS-1$
-	public static final String NEW_LIBRARY_ENTRY =
-		"ManifestEditor.LibrarySection.newLibraryEntry"; //$NON-NLS-1$
+public class LibrarySection extends TableSection implements IModelChangedListener {
 
-	private RenameAction renameAction;
-	private TableViewer libraryTable;
-	
-	class RenameAction extends Action {
-		public RenameAction() {
-			super(PDEPlugin.getResourceString("EditableTablePart.renameAction")); //$NON-NLS-1$
-		}
-		public void run() {
-			doRename();
-		}
-		
-	}
-	
-	class LibraryFilter extends JARFileFilter {
+    private static final int NEW_INDEX = 0;
+    private static final int ADD_INDEX = 1;
+    private static final int REMOVE_INDEX = 2;
+    private static final int UP_INDEX = 3;
+    private static final int DOWN_INDEX = 4;
+    
+    private static final String SECTION_TITLE ="ManifestEditor.LibrarySection.title"; //$NON-NLS-1$
+	private static final String SECTION_DESC = "ManifestEditor.LibrarySection.desc"; //$NON-NLS-1$
+	private static final String SECTION_FDESC ="ManifestEditor.LibrarySection.fdesc"; //$NON-NLS-1$
+	private static final String SECTION_ADD = "NewManifestEditor.LibrarySection.add"; //$NON-NLS-1$
+	private static final String SECTION_NEW = "NewManifestEditor.LibrarySection.new"; //$NON-NLS-1$
+	private static final String SECTION_UP = "ManifestEditor.LibrarySection.up"; //$NON-NLS-1$
+	private static final String SECTION_DOWN = "ManifestEditor.LibrarySection.down"; //$NON-NLS-1$
+	private static final String POPUP_NEW_LIBRARY = "ManifestEditor.LibrarySection.newLibrary"; //$NON-NLS-1$
+	private static final String NEW_LIBRARY_ENTRY = "ManifestEditor.LibrarySection.newLibraryEntry"; //$NON-NLS-1$
+
+	private Action fRenameAction;
+    private Action fRemoveAction;
+    private Action fNewAction;
+	    
+    private TableViewer fLibraryTable;
+    
+    class LibraryFilter extends JARFileFilter {
 		public LibraryFilter(HashSet set) {
 			super(set);
 		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.pde.internal.ui.neweditor.build.JARFileFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-		 */
+
 		public boolean select(Viewer viewer, Object parent, Object element) {
 			if (element instanceof IFolder)
 				return isPathValid(((IFolder)element).getProjectRelativePath());
@@ -88,18 +77,13 @@ public class LibrarySection
 		public LibrarySelectionValidator(Class[] acceptedTypes, boolean allowMultipleSelection) {
 			super(acceptedTypes, allowMultipleSelection);
 		}
-		/* (non-Javadoc)
-		 * @see org.eclipse.pde.internal.ui.editor.build.JarSelectionValidator#isValid(java.lang.Object)
-		 */
+
 		public boolean isValid(Object element) {
-			if (element instanceof IFolder)
-				return true;
-			return super.isValid(element);
+			return (element instanceof IFolder) ? true : super.isValid(element);
 		}
 	}
 
-	class TableContentProvider
-		extends DefaultContentProvider
+	class TableContentProvider extends DefaultContentProvider
 		implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
 			IPluginModelBase model = (IPluginModelBase)getPage().getModel();
@@ -115,54 +99,101 @@ public class LibrarySection
 			new String[] {
 				PDEPlugin.getResourceString(SECTION_NEW),
 				PDEPlugin.getResourceString(SECTION_ADD),
+                PDEPlugin.getResourceString("Remove"),
 				PDEPlugin.getResourceString(SECTION_UP),
 				PDEPlugin.getResourceString(SECTION_DOWN)});
-		getSection().setText(PDEPlugin.getResourceString(SECTION_TITLE));
-		IPluginModelBase model = (IPluginModelBase)page.getPDEEditor().getAggregateModel();
-		boolean fragment = model.isFragmentModel();
-		if (fragment)
-			getSection().setDescription(PDEPlugin.getResourceString(SECTION_FDESC));
-		else
-			getSection().setDescription(PDEPlugin.getResourceString(SECTION_DESC));
 	}
-	
+    
+    private String getSectionDescription() {
+        IPluginModelBase model = (IPluginModelBase)getPage().getPDEEditor().getAggregateModel();
+        return (model.isFragmentModel())
+                    ? PDEPlugin.getResourceString(SECTION_FDESC)
+                    : PDEPlugin.getResourceString(SECTION_DESC);   
+    }
+    
 	public void createClient(Section section, FormToolkit toolkit) {
+        section.setText(PDEPlugin.getResourceString(SECTION_TITLE));
+        section.setDescription(getSectionDescription());
+        
 		Composite container = createClientContainer(section, 2, toolkit);
 		EditableTablePart tablePart = getTablePart();
-		IModel model = (IModel) getPage().getModel();
-		tablePart.setEditable(model.isEditable());
+		tablePart.setEditable(isEditable());
 
 		createViewerPartControl(container, SWT.FULL_SELECTION, 2, toolkit);
-		libraryTable = tablePart.getTableViewer();
-		libraryTable.setContentProvider(new TableContentProvider());
-		libraryTable.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
+		fLibraryTable = tablePart.getTableViewer();
+		fLibraryTable.setContentProvider(new TableContentProvider());
+		fLibraryTable.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		toolkit.paintBordersFor(container);
-
-		tablePart.setButtonEnabled(2, false);
-		tablePart.setButtonEnabled(3, false);
+        
+        makeActions();
+        updateButtons();
         section.setLayoutData(new GridData(GridData.FILL_BOTH));
 		section.setClient(container);
-		initialize();
+
+        IPluginModelBase model = (IPluginModelBase) getPage().getModel();
+        fLibraryTable.setInput(model.getPluginBase());
+        model.addModelChangedListener(this);
 	}
 
-	protected void selectionChanged(IStructuredSelection selection) {
+	private void updateButtons() {
+        Table table = fLibraryTable.getTable();
+        boolean hasSelection = table.getSelection().length > 0;
+        int count = table.getItemCount();
+        boolean canMoveUp = count > 1 && table.getSelectionIndex() > 0;
+        boolean canMoveDown = count > 1 && hasSelection && table.getSelectionIndex() < count - 1;
+        
+        TablePart tablePart = getTablePart();
+        tablePart.setButtonEnabled(ADD_INDEX, isEditable());
+        tablePart.setButtonEnabled(NEW_INDEX, isEditable());
+        tablePart.setButtonEnabled(REMOVE_INDEX, isEditable() && hasSelection);
+        tablePart.setButtonEnabled(UP_INDEX, isEditable() && canMoveUp);
+        tablePart.setButtonEnabled(DOWN_INDEX, isEditable() && canMoveDown);
+    }
+
+    private void makeActions() {
+        fNewAction = new Action(PDEPlugin.getResourceString(POPUP_NEW_LIBRARY)) {
+            public void run() {
+                handleAdd();
+            }
+        };
+        fNewAction.setEnabled(isEditable());
+        
+        fRenameAction = new Action(PDEPlugin.getResourceString("EditableTablePart.renameAction")) {
+            public void run() {
+                getRenameAction().run();
+            }
+        };
+        fRenameAction.setEnabled(isEditable());
+        
+        fRemoveAction = new Action(PDEPlugin.getResourceString("Remove")) {
+            public void run() {
+                handleRemove();
+            }
+        };
+        fRemoveAction.setEnabled(isEditable());
+    }
+
+    protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);
 		if (getPage().getModel().isEditable())
-			updateDirectionalButtons();
+			updateButtons();
 	}
 
 	protected void buttonSelected(int index) {
 		switch (index) {
-			case 0 :
+			case NEW_INDEX :
 				handleNew();
 				break;
-			case 1:
+			case ADD_INDEX:
 				handleAdd();
 				break;
-			case 2 :
+            case REMOVE_INDEX:
+                handleRemove();
+                break;
+			case UP_INDEX :
 				handleUp();
 				break;
-			case 3 :
+			case DOWN_INDEX :
 				handleDown();
 				break;
 		}
@@ -170,20 +201,20 @@ public class LibrarySection
 
 	public void dispose() {
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
-		if (model!=null)
+		if (model != null)
 			model.removeModelChangedListener(this);
 		super.dispose();
 	}
 
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
-			handleDelete();
+			handleRemove();
 			return true;
 		}
 		if (actionId.equals(ActionFactory.CUT.getId())) {
 			// delete here and let the editor transfer
 			// the selection to the clipboard
-			handleDelete();
+			handleRemove();
 			return false;
 		}
 		if (actionId.equals(ActionFactory.PASTE.getId())) {
@@ -192,45 +223,27 @@ public class LibrarySection
 		}
 		return false;
 	}
+    
 	public boolean setFormInput(Object object) {
 		if (object instanceof IPluginLibrary) {
-			libraryTable.setSelection(new StructuredSelection(object), true);
+			fLibraryTable.setSelection(new StructuredSelection(object), true);
 			return true;
 		}
 		return false;
 	}
 
 	protected void fillContextMenu(IMenuManager manager) {
-		IModel model = (IModel)getPage().getModel();
-		ISelection selection = libraryTable.getSelection();
-
-		Action newAction = new Action(PDEPlugin.getResourceString(POPUP_NEW_LIBRARY)) {
-			public void run() {
-				handleAdd();
-			}
-		};
-		newAction.setEnabled(model.isEditable());
-		manager.add(newAction);
-
-		if (!selection.isEmpty()) {
+		manager.add(fNewAction);
+		if (!fLibraryTable.getSelection().isEmpty()) {
 			manager.add(new Separator());
-			renameAction = new RenameAction();
-			renameAction.setEnabled(model.isEditable());
-			manager.add(renameAction);
-			
-			Action deleteAction = new Action(PDEPlugin.getResourceString(POPUP_DELETE)) {
-				public void run() {
-					handleDelete();
-				}
-			};
-			deleteAction.setEnabled(model.isEditable());
-			manager.add(deleteAction);
+			manager.add(fRenameAction);			
+			manager.add(fRemoveAction);
 		}
 		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
 	}
-	private void handleDelete() {
-		Object object =
-			((IStructuredSelection) libraryTable.getSelection()).getFirstElement();
+    
+	private void handleRemove() {
+		Object object = ((IStructuredSelection) fLibraryTable.getSelection()).getFirstElement();
 		if (object != null && object instanceof IPluginLibrary) {
 			IPluginLibrary ep = (IPluginLibrary) object;
 			IPluginBase plugin = ep.getPluginBase();
@@ -244,16 +257,14 @@ public class LibrarySection
 	private void handleDown() {
 		Table table = getTablePart().getTableViewer().getTable();
 		int index = table.getSelectionIndex();
-		if (index == table.getItemCount() - 1)
-			return;
-		swap(index, index + 1);		
+		if (index != table.getItemCount() - 1)
+            swap(index, index + 1);		
 	}
 	
 	private void handleUp() {
 		int index = getTablePart().getTableViewer().getTable().getSelectionIndex();
-		if (index < 1)
-			return;
-		swap(index, index - 1);
+		if (index >= 1)
+            swap(index, index - 1);
 	}
 	
 	public void swap(int index1, int index2) {
@@ -266,7 +277,7 @@ public class LibrarySection
 			IPluginBase pluginBase = model.getPluginBase();
 			pluginBase.swap(l1, l2);
 			refresh();
-			updateDirectionalButtons();
+			updateButtons();
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}		
@@ -334,20 +345,11 @@ public class LibrarySection
 		}	
 	}
 
-	public void initialize() {
-		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
-		libraryTable.setInput(model.getPluginBase());
-		getTablePart().setButtonEnabled(0, model.isEditable());
-		getTablePart().setButtonEnabled(1, model.isEditable());
-		getTablePart().setButtonEnabled(2, false);
-		getTablePart().setButtonEnabled(3, false);
-		model.addModelChangedListener(this);
-	}
 	public void refresh() {
-		if (libraryTable.getControl().isDisposed())
+		if (fLibraryTable.getControl().isDisposed())
 			return;
-		libraryTable.setSelection(null);
-		libraryTable.refresh();
+		fLibraryTable.setSelection(null);
+		fLibraryTable.refresh();
 		super.refresh();
 	}
 	public void modelChanged(IModelChangedEvent event) {
@@ -358,38 +360,23 @@ public class LibrarySection
 		Object changeObject = event.getChangedObjects()[0];
 		if (changeObject instanceof IPluginLibrary) {
 			if (event.getChangeType() == IModelChangedEvent.INSERT) {
-				libraryTable.add(changeObject);
+				fLibraryTable.add(changeObject);
 			} else if (event.getChangeType() == IModelChangedEvent.REMOVE) {
-				libraryTable.remove(changeObject);
+				fLibraryTable.remove(changeObject);
 			} else {
-				if (event.getChangedProperty() == null) {
-					libraryTable.update(changeObject, null);
-				}
+                fLibraryTable.update(changeObject, null);
 			}
-		} else if (changeObject.equals(libraryTable.getInput())) {
+		} else if (changeObject.equals(fLibraryTable.getInput())) {
 			markStale();
 		} else if (changeObject instanceof IPluginElement && ((IPluginElement)changeObject).getParent() instanceof IPluginLibrary) {
-			libraryTable.update(((IPluginElement)changeObject).getParent(), null);
+			fLibraryTable.update(((IPluginElement)changeObject).getParent(), null);
 		}
 	}
+    
 	public void setFocus() {
-		libraryTable.getTable().setFocus();
+		fLibraryTable.getTable().setFocus();
 	}
-	private void updateDirectionalButtons() {
-		Table table = libraryTable.getTable();
-		TableItem[] selection = table.getSelection();
-		boolean hasSelection = selection.length > 0;
-		boolean canMove = table.getItemCount() > 1;
-		TablePart tablePart = getTablePart();
-		tablePart.setButtonEnabled(
-			2,
-			canMove && hasSelection && table.getSelectionIndex() > 0);
-		tablePart.setButtonEnabled(
-			3,
-			canMove
-				&& hasSelection
-				&& table.getSelectionIndex() < table.getItemCount() - 1);
-	}
+    
 	protected void doPaste(Object target, Object[] objects) {
 		/*IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		IPluginBase plugin = model.getPluginBase();
@@ -407,34 +394,19 @@ public class LibrarySection
 			PDEPlugin.logException(e);
 		}*/
 	}
+    
 	protected boolean canPaste(Object target, Object[] objects) {
-		if (objects[0] instanceof IPluginLibrary) return true;
-		return false;
+		return (objects[0] instanceof IPluginLibrary);
 	}
+    
+    protected void entryModified(Object entry, String value) {
+        try {
+            IPluginLibrary library = (IPluginLibrary)entry;
+            library.setName(value);
+        } catch (CoreException e) {
+            PDEPlugin.logException(e);
+        }
+    }
 	
-	private void doRename() {
-		TableViewer viewer = getTablePart().getTableViewer();
-		IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
-		if (selection.size()==1 && isEditable()) {
-			Object obj = selection.getFirstElement();
-			String oldName = ""; //$NON-NLS-1$
-			if (obj instanceof IPluginLibrary)
-				oldName = ((IPluginLibrary)obj).getName();
-			
-			IPluginModelBase model = (IPluginModelBase)getPage().getModel();
-			IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
-			String[] libNames = new String[libraries.length];
-			for (int i = 0 ; i<libNames.length ; i++)
-				libNames[i] = libraries[i].getName();
-			
-			RenameDialog dialog = new RenameDialog(getTablePart().getControl().getShell(), false, libNames, oldName);
-			dialog.create();
-			dialog.getShell().setText(PDEPlugin.getResourceString("LibrarySection.rename")); //$NON-NLS-1$
-			SWTUtil.setDialogSize(dialog, 300,150);
-			
-			if (dialog.open()==Dialog.OK) {
-			}
-		}
-	}
-	
+
 }
