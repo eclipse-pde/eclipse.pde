@@ -10,11 +10,19 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.ILibrary;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IPluginPrerequisite;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.pde.internal.runtime.*;
+import org.eclipse.pde.internal.runtime.OverlayIcon;
+import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
+import org.eclipse.pde.internal.runtime.PDERuntimePluginImages;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 public class RegistryBrowserLabelProvider extends LabelProvider {
 	private Image pluginImage;
@@ -33,7 +41,8 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 	private Image extensionPointsImage;
 	private Image requiresImage;
 	private Image reqPluginImage;
-
+	private boolean useUniqueId = false;
+	
 	public RegistryBrowserLabelProvider() {
 		pluginImage = PDERuntimePluginImages.DESC_PLUGIN_OBJ.createImage();
 		reqPluginImage = PDERuntimePluginImages.DESC_REQ_PLUGIN_OBJ.createImage();
@@ -109,6 +118,8 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 		if (element instanceof PluginObjectAdapter)
 			element = ((PluginObjectAdapter) element).getObject();
 		if (element instanceof IPluginDescriptor) {
+			if (useUniqueId)
+				return ((IPluginDescriptor)element).getUniqueIdentifier();
 			return ((IPluginDescriptor) element).getLabel();
 		}
 		if (element instanceof IPluginFolder) {
@@ -136,8 +147,28 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 			return ((ILibrary) element).getPath().toString();
 		}
 		if (element instanceof IConfigurationElement) {
-			return ((IConfigurationElement) element).getName();
+			ConfigurationElementPropertySource source = new ConfigurationElementPropertySource((IConfigurationElement) element);
+			IPropertyDescriptor[] descriptors = source.getPropertyDescriptors();
+			String label = ((IConfigurationElement) element).getAttribute("label");
+			if (label == null){
+				label = ((IConfigurationElement) element).getAttribute("name");
+			}
+			if (label == null && ((IConfigurationElement) element).getAttribute("id") != null){
+				String[] labelSplit = ((IConfigurationElement) element).getAttribute("id").split("\\.");
+				label = labelSplit.length == 0 ? null: labelSplit[labelSplit.length-1];
+			} 
+			if (label == null){
+				label = ((IConfigurationElement) element).getName();
+			}
+				
+			return label;
 		}
 		return super.getText(element);
 	}
+	
+	public void setUseUniqueId(boolean useId){
+		useUniqueId = useId;
+	}
+	
+
 }
