@@ -20,6 +20,7 @@ import org.eclipse.pde.internal.build.AbstractScriptGenerator;
 import org.eclipse.pde.internal.build.builder.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.feature.FeatureChild;
 import org.eclipse.pde.internal.core.ifeature.*;
 
 public class BuildFeatureAction extends BaseBuildAction {
@@ -69,6 +70,20 @@ public class BuildFeatureAction extends BaseBuildAction {
 				refmodel.getUnderlyingResource().getProject().refreshLocal(
 					IResource.DEPTH_ONE,
 					monitor);
+			}
+		}
+		IFeatureChild[] included = feature.getIncludedFeatures();
+		for (int i = 0; i < included.length; i++) {
+			IFeature child = ((FeatureChild) included[i])
+					.getReferencedFeature();
+			if (child != null && child != model.getFeature()) {
+				IFeatureModel refmodel = child.getModel();
+				if (refmodel != null) {
+					refmodel.getUnderlyingResource().getProject().refreshLocal(
+							IResource.DEPTH_ONE, monitor);
+				}
+				refreshLocal(child, monitor);
+
 			}
 		}
 	}
