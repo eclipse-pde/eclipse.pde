@@ -128,7 +128,6 @@ public class SourcePreferencePage
 	public void dispose() {
 		super.dispose();
 		userImage.dispose();
-		extensionImage.dispose();
 	}
 
 	/**
