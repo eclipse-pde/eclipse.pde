@@ -163,73 +163,103 @@ public class ClasspathUtilCore {
 	}
 
 	private static void addDependency(
-		IPlugin plugin,
+		IPluginBase  plugin,
 		boolean isExported,
 		Vector result,
 		HashSet alreadyAdded)
 		throws CoreException {
-
+		
 		if (!alreadyAdded.add(plugin))
 			return;
 
-		IResource resource = plugin.getModel().getUnderlyingResource();
-		if (resource != null) {
-			IProject project = resource.getProject();
-			if (project.hasNature(JavaCore.NATURE_ID)) {
-				IClasspathEntry entry =
-					JavaCore.newProjectEntry(project.getFullPath(), isExported);
-				if (!result.contains(entry))
-					result.add(entry);
-			}
-			return;
-		}
-
-		String location = plugin.getModel().getInstallLocation();
+		boolean inWorkspace = addPlugin(plugin, isExported, result, alreadyAdded);
 		
-		// handle Plugin-in-a-JAR
-		if (new File(location).isFile() && location.endsWith(".jar")) { //$NON-NLS-1$
-			IClasspathEntry entry =
-				JavaCore.newLibraryEntry(
-						new Path(location),
-						new Path(location),
-						null,
-						isExported);
-			if (entry != null && !result.contains(entry)) {
-				result.add(entry);
-			}			
-		} else {
-			IPluginLibrary[] libraries = plugin.getLibraries();
-			for (int i = 0; i < libraries.length; i++) {
-				if (IPluginLibrary.RESOURCE.equals(libraries[i].getType())
-					|| !libraries[i].isExported())
-					continue;
-				IClasspathEntry entry =
-					createLibraryEntry(libraries[i], isExported);
-				if (entry != null && !result.contains(entry)) {
-					result.add(entry);
+		if (plugin instanceof IPlugin && ((IPlugin)plugin).hasExtensibleAPI()) {
+			String id  = plugin.getId();
+			String version = plugin.getVersion();
+			IFragment[] fragments = PDECore.getDefault().findFragmentsFor(id, version);
+			for (int i = 0; i < fragments.length; i++) {
+				addDependency(fragments[i], isExported, result, alreadyAdded);
+			}		
+		}
+		
+		if (!inWorkspace) {
+			IPluginImport[] imports = plugin.getImports();
+			for (int i = 0; i < imports.length; i++) {
+				IPluginImport dependency = imports[i];
+				if (dependency.isReexported()) {
+					IPlugin importedPlugin =
+						PDECore.getDefault().findPlugin(
+							dependency.getId(),
+							dependency.getVersion(),
+							dependency.getMatch());
+					if (importedPlugin != null)
+						addDependency(
+							importedPlugin,
+							isExported,
+							result,
+							alreadyAdded);
 				}
 			}
 		}
-
-		IPluginImport[] imports = plugin.getImports();
-		for (int i = 0; i < imports.length; i++) {
-			IPluginImport dependency = imports[i];
-			if (dependency.isReexported()) {
-				IPlugin importedPlugin =
-					PDECore.getDefault().findPlugin(
-						dependency.getId(),
-						dependency.getVersion(),
-						dependency.getMatch());
-				if (importedPlugin != null)
-					addDependency(
-						importedPlugin,
-						isExported,
-						result,
-						alreadyAdded);
-			}
+	}
+	
+	private static boolean addPlugin(IPluginBase plugin, boolean isExported, Vector result, HashSet alreadyAdded) throws CoreException {
+		IPluginModelBase model = (IPluginModelBase)plugin.getModel();
+		IResource resource = model.getUnderlyingResource();
+		if (resource != null) {
+			addProjectEntry(resource.getProject(), isExported, result);
+		} else {
+			addLibraries(model, isExported, result);
+		}
+		return resource != null;
+	}
+	
+	private static void addProjectEntry(IProject project, boolean isExported, Vector result) throws CoreException {
+		if (project.hasNature(JavaCore.NATURE_ID)) {
+			IClasspathEntry entry =
+				JavaCore.newProjectEntry(project.getFullPath(), isExported);
+			if (!result.contains(entry))
+				result.add(entry);
+		}	
+	}
+	
+	public static void addLibraries(IPluginModelBase model, boolean isExported, Vector result) {
+		String location = model.getInstallLocation();	
+		// handle Plugin-in-a-JAR
+		if (new File(location).isFile() && location.endsWith(".jar")) { //$NON-NLS-1$
+			addJARdPlugin(location, isExported, result);
+		} else {
+			addLibraryEntries(model.getPluginBase(), isExported, result);
 		}
 	}
-
+	
+	private static void addLibraryEntries(IPluginBase plugin, boolean isExported, Vector result) {
+		IPluginLibrary[] libraries = plugin.getLibraries();
+		for (int i = 0; i < libraries.length; i++) {
+			if (IPluginLibrary.RESOURCE.equals(libraries[i].getType())
+				|| !libraries[i].isExported())
+				continue;
+			IClasspathEntry entry =
+				createLibraryEntry(libraries[i], isExported);
+			if (entry != null && !result.contains(entry)) {
+				result.add(entry);
+			}
+		}		
+	}
+	
+	private static void addJARdPlugin(String location, boolean isExported, Vector result) {
+		IClasspathEntry entry =
+			JavaCore.newLibraryEntry(
+					new Path(location),
+					new Path(location),
+					null,
+					isExported);
+		if (entry != null && !result.contains(entry)) {
+			result.add(entry);
+		}					
+	}
+	
 	private static boolean isOSGiRuntime() {
 		return PDECore.getDefault().getModelManager().isOSGiRuntime();
 	}
@@ -272,32 +302,6 @@ public class ClasspathUtilCore {
 		"org.eclipse.jdt.launching.JRE_CONTAINER")); //$NON-NLS-1$
 	}
 
-	public static void addLibraries(
-		IPluginModelBase model,
-		boolean unconditionallyExport,
-		Vector result) {
-		String location = model.getInstallLocation();
-		if (new File(location).isFile()) { 
-			IClasspathEntry entry =
-				JavaCore.newLibraryEntry(
-						new Path(location),
-						new Path(location),
-						null,
-						unconditionallyExport);
-			if (entry != null && !result.contains(entry)) {
-				result.add(entry);
-			}			
-		} else {
-			IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
-			for (int i = 0; i < libraries.length; i++) {
-				IClasspathEntry entry =
-					createLibraryEntry(libraries[i], unconditionallyExport);
-				if (entry != null && !result.contains(entry))
-					result.add(entry);
-			}
-		}
-	}
-
 	private static void addParentPlugin(
 		IFragment fragment,
 		Vector result,
@@ -308,11 +312,16 @@ public class ClasspathUtilCore {
 				fragment.getPluginId(),
 				fragment.getPluginVersion(),
 				fragment.getRule());
-		if (parent != null) {
-			addDependency(parent, false, result, alreadyAdded);
+		if (parent != null && alreadyAdded.add(parent)) {
+			// add parent plug-in
+			boolean inWorkspace = addPlugin(parent, false, result, alreadyAdded);
 			IPluginImport[] imports = parent.getImports();
 			for (int i = 0; i < imports.length; i++) {
-				if (!imports[i].isReexported()) {
+				// if the plug-in is a project in the workspace, only add non-reexported dependencies
+				// since the fragment will automatically get the reexported dependencies.
+				// if the plug-in is in the target, then you need to explicit all the parent plug-in's
+				// dependencies.
+				if (!inWorkspace || !imports[i].isReexported()) {
 					IPlugin plugin =
 						PDECore.getDefault().findPlugin(
 							imports[i].getId(),

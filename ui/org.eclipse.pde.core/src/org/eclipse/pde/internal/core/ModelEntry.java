@@ -123,26 +123,14 @@ public class ModelEntry extends PlatformObject {
 		if (!project.hasNature(JavaCore.NATURE_ID))
 			return false;
 		
-		if (doCheckClasspath && (!workspaceModel.isLoaded() || !usesContainers(JavaCore.create(project))))
+		if (doCheckClasspath && (!workspaceModel.isLoaded()))
 			return false;
-		
-		
+			
 		if (force)
 			classpathContainer = null;
 		RequiredPluginsClasspathContainer container = getClasspathContainer();
 		container.reset();
 		return true;	
-	}
-	
-	private boolean usesContainers(IJavaProject jProject) throws CoreException {
-		/*IClasspathEntry[] entries = jProject.getRawClasspath();
-		for (int i = 0; i < entries.length; i++) {
-			IClasspathEntry entry = entries[i];
-			if (entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER
-				&& entry.getPath().equals(new Path(PDECore.CLASSPATH_CONTAINER_ID)))
-				return true;
-		}*/
-		return true;
 	}
 	
 	public static void updateUnknownClasspathContainer(IJavaProject javaProject)
@@ -166,33 +154,35 @@ public class ModelEntry extends PlatformObject {
 			IPluginBase changedPlugin = changedPlugins[i];
 			String id = changedPlugin.getId();
 			if (id == null)
-				return false;
+				continue;
 			if (plugin.getId().equals(id))
 				return true;
-			if (isRequired(plugin, changedPlugin))
+			if (isRequired(changedPlugin))
 				return true;
 		}
 		for (int i=0; i<oldIds.size(); i++) {
 			String oldId = (String)oldIds.get(i);
 			if (plugin.getId().equals(oldId))
 				return true;
-			if (isRequired(plugin, oldId))
+			if (isRequired(oldId))
 				return true;
 		}
 		return false;
 	}
 	
-	private boolean isRequired(IPluginBase plugin, IPluginBase changedPlugin) {
-		if (changedPlugin instanceof IFragment)
-			return false;
-		return getRequiredIds(plugin).contains(changedPlugin.getId());
+	private boolean isRequired(IPluginBase changedPlugin) {
+		String id = (changedPlugin instanceof IFragment) ? 
+				((IFragment)changedPlugin).getPluginId() : 
+					changedPlugin.getId();
+		return isRequired(id);
 	}
 	
-	private boolean isRequired(IPluginBase plugin, String changedId) {
-		return getRequiredIds(plugin).contains(changedId);
+	private boolean isRequired(String changedId) {
+		return id == null ? false : getRequiredIds().contains(changedId);
 	}
 	
-	private HashSet getRequiredIds(IPluginBase plugin) {
+	private HashSet getRequiredIds() {
+		IPluginBase plugin = workspaceModel.getPluginBase();
 		HashSet set = new HashSet();
 		if (plugin instanceof IFragment) {
 			addParentPlugin(((IFragment)plugin).getPluginId(), set);
