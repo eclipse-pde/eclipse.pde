@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 
 
@@ -151,20 +152,27 @@ public void modelsChanged(IModelProviderEvent e) {
 	if ((type & IModelProviderEvent.MODELS_ADDED)!=0) {
 		IModel [] added = e.getAddedModels();
 		for (int i=0; i<added.length; i++) {
-			loadWorkspaceDescriptors((IPluginModelBase)added[i]);
+			IModel model = added[i];
+			if (!(model instanceof IPluginModelBase)) continue;
+			loadWorkspaceDescriptors((IPluginModelBase)model);
 		}
 	}
 	if ((type & IModelProviderEvent.MODELS_REMOVED)!=0) {
 		IModel [] removed = e.getRemovedModels();
+
 		for (int i=0; i<removed.length; i++) {
-			removeWorkspaceDescriptors((IPluginModelBase)removed[i]);
+			IModel model = removed[i];
+			if (!(model instanceof IPluginModelBase)) continue;
+			removeWorkspaceDescriptors((IPluginModelBase)model);
 		}
 	}
 	if ((type & IModelProviderEvent.MODELS_CHANGED)!=0) {
 		IModel [] changed = e.getChangedModels();
 		if (dirtyWorkspaceModels==null) dirtyWorkspaceModels = new Vector();
 		for (int i=0; i<changed.length; i++) {
-			dirtyWorkspaceModels.add((IPluginModelBase)changed[i]);
+			IModel model = changed[i];
+			if (!(model instanceof IPluginModelBase)) continue;
+			dirtyWorkspaceModels.add((IPluginModelBase)model);
 		}
 	}
 }
@@ -175,7 +183,7 @@ private void processMapElement(IConfigurationElement element) {
 		String point = element.getAttribute(MappedSchemaDescriptor.ATT_POINT);
 		String schema = element.getAttribute(MappedSchemaDescriptor.ATT_SCHEMA);
 		if (point == null || schema == null) {
-			System.out.println("Schema map: point or schema null");
+			//System.out.println("Schema map: point or schema null");
 			return;
 		}
 		if (getSchemaDescriptor(point)==null) {
