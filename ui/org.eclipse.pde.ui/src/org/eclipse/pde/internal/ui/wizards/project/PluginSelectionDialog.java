@@ -111,7 +111,7 @@ public class PluginSelectionDialog extends ElementTreeSelectionDialog {
 		Control tree = createTree(container);
 		tree.setLayoutData(new GridData(GridData.FILL_BOTH));
 		WorkbenchHelp.setHelp(container, IHelpContextIds.FRAGMENT_ADD_TARGET);
-		
+		applyDialogFont(container);
 		
 		return container;
 	}
