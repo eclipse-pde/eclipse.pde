@@ -69,11 +69,13 @@ public abstract class InputContext {
 			doRevert();
 		}
 		public void elementDeleted(Object element) {
+            dispose();
 		}
 		public void elementDirtyStateChanged(Object element, boolean isDirty) {
 			fMustSynchronize=true;
 		}
 		public void elementMoved(Object originalElement, Object movedElement) {
+            dispose();
 			fEditor.close(true);
 		}
 	}
