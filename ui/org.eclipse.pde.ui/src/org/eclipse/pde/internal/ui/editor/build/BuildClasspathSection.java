@@ -344,8 +344,7 @@ public class BuildClasspathSection
 		int sameSegments = path.matchingFirstSegments(projectPath);
 		if (sameSegments > 0)
 			return path.removeFirstSegments(sameSegments).toString();
-		else
-			return ".."+path.toString(); //$NON-NLS-1$
+		return ".."+path.toString(); //$NON-NLS-1$
 	}
 
 	protected void buttonSelected(int index) {

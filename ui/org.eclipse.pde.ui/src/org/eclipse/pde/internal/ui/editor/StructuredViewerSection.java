@@ -94,7 +94,7 @@ public abstract class StructuredViewerSection extends PDESection {
 		if (objects!=null && objects.length>0) {
 			return canPaste(target, objects);
 		}
-		else return false;
+		return false;
 	}
 	protected ISelection getViewerSelection() {
 		return viewerPart.getViewer().getSelection();

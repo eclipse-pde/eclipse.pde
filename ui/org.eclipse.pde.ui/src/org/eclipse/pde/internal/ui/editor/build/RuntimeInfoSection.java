@@ -1100,20 +1100,21 @@ public class RuntimeInfoSection extends PDESection
 			if (event.getOldValue() != null && event.getNewValue() != null){
 				fLibraryViewer.update(entry, null);
 				return;
-			} else { // add/remove source folder
-				refresh();
-				if (fCurrentSelection != null) {
-					fFolderViewer.setSelection(fCurrentSelection);
-					updateDirectionalButtons();
-				} else {
-					fFolderPart.setButtonEnabled(0, false);
-					fLibraryViewer.setSelection(null);
-					fFolderViewer.setInput(null);
-					fIncludeLibraryButton.setVisible(false);
-				}
-				if (fCurrentLibrary != null)
-					update(fCurrentLibrary);
+			} 
+			// add/remove source folder
+			refresh();
+			if (fCurrentSelection != null) {
+				fFolderViewer.setSelection(fCurrentSelection);
+				updateDirectionalButtons();
+			} else {
+				fFolderPart.setButtonEnabled(0, false);
+				fLibraryViewer.setSelection(null);
+				fFolderViewer.setInput(null);
+				fIncludeLibraryButton.setVisible(false);
 			}
+			if (fCurrentLibrary != null)
+				update(fCurrentLibrary);
+			
 		} else if (keyName!= null && keyName.equals(IBuildPropertiesConstants.PROPERTY_JAR_ORDER)){
 			// account for change in jars compile order
 			if (event.getNewValue() == null && event.getOldValue() != null){

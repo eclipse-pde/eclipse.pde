@@ -15,19 +15,14 @@ import org.eclipse.jface.text.*;
 public class XMLDoubleClickStrategy implements ITextDoubleClickStrategy {
 	protected ITextViewer fText;
 
-	public XMLDoubleClickStrategy() {
-		super();
-	}
 	public void doubleClicked(ITextViewer part) {
 		int pos = part.getSelectedRange().x;
-
-		if (pos < 0)
-			return;
-
-		fText = part;
-
-		selectWord(pos);
+		if (pos > 0) {
+			fText = part;
+			selectWord(pos);
+		}
 	}
+	
 	protected boolean selectWord(int caretPos) {
 
 		IDocument doc = fText.getDocument();
