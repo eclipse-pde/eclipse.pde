@@ -64,7 +64,7 @@ public class ProjectNamesPage extends WizardPage {
 			}
 			else {
 				for (int i=0; i<projects.length; i++) {
-					String label = "Project name #"+(i+1)+":"; //$NON-NLS-1$ //$NON-NLS-2$
+					String label = PDEPlugin.getFormattedMessage("ProjectNamesPage.multiProjectName", ""+(i+1));
 					createEntry(label, projects[i].getAttribute("name")); //$NON-NLS-1$
 				}
 			}
