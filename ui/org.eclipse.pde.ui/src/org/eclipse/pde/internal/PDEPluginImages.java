@@ -190,6 +190,8 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_NEWPCOMP_WIZ   = create(PATH_WIZBAN, "newpcomp_wiz.gif");
 	public static final ImageDescriptor DESC_CONVJPPRJ_WIZ =create(PATH_WIZBAN, "convjpprj_wiz.gif");
 	public static final ImageDescriptor DESC_FORM_WIZ     = create(PATH_WIZBAN, "form_wiz.gif");
+	public static final ImageDescriptor DESC_DEBUG_WIZ     = create(PATH_WIZBAN, "debug_wiz.gif");
+	public static final ImageDescriptor DESC_RUN_WIZ     = create(PATH_WIZBAN, "run_wiz.gif");
 	public static final ImageDescriptor DESC_FORM_BANNER  = create(PATH_WIZBAN, "form_banner.gif");
 	private static ImageDescriptor create(String prefix, String name) {
 		return ImageDescriptor.createFromURL(makeImageURL(prefix, name));
