@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -94,7 +95,12 @@ public class ExportFeatureBuildScriptGenerator extends FeatureBuildScriptGenerat
 					params.put(PROPERTY_WS, aMatchingConfig.getWs());
 				if (!aMatchingConfig.getArch().equals(Config.ANY))
 					params.put(PROPERTY_ARCH, aMatchingConfig.getArch());
-				params.put(PROPERTY_BUILD_RESULT_FOLDER, PDEPlugin.getDefault().getStateLocation() + "/temp/build_result/" + plugin.getId());
+					
+				String loc = PDEPlugin.getDefault().getStateLocation() + "/temp/build_result/" + plugin.getId();
+				File dir = new File(loc);
+				if (!dir.exists() || !dir.isDirectory())
+					dir.mkdirs();
+				params.put(PROPERTY_BUILD_RESULT_FOLDER, loc);
 				params.put(PROPERTY_TEMP_FOLDER, PDEPlugin.getDefault().getStateLocation() + "/temp/temp.folder/" + plugin.getId());
 
 				IPath location = Utils.makeRelative(new Path(getLocation(plugin)), new Path(featureRootLocation));

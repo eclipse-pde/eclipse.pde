@@ -51,7 +51,11 @@ public class PluginExportWizard extends BaseExportWizard {
 
 	protected HashMap createProperties(String destination, IPluginBase model, boolean doZip) {
 		HashMap map = new HashMap(4);
-		map.put("build.result.folder", buildTempLocation + "/build_result/" + model.getId());
+		String location = buildTempLocation + "/build_result/" + model.getId();
+		File dir = new File(location);
+		if (!dir.exists() || !dir.isDirectory())
+			dir.mkdirs();
+		map.put("build.result.folder", location);
 		map.put("temp.folder", buildTempLocation + "/temp.folder/" + model.getId());
 		if (doZip)
 			map.put("destination.temp.folder", buildTempLocation + "/destination/plugins");
