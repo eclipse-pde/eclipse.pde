@@ -6,7 +6,7 @@ package org.eclipse.pde.internal.base;
 
 import org.eclipse.core.runtime.*;
 /**
- * This interface provides data set up in the master plug-in
+ * This interface provides data entered in the master plug-in
  * project wizard that can be used by plug-in content
  * wizards to set it up. Master wizard is only responsible
  * for collecting this information - it is the content
@@ -16,24 +16,28 @@ public interface IPluginStructureData {
 /**
  * Returns the folder name for the Java build output.
  *
- * @return Java build output
+ * @return Java build output folder name
  */
 public String getJavaBuildFolderName();
 /**
- * Returns the path for the JRE runtime library.
+ * Returns the path for the JRE runtime library. This information 
+ * will be provided by the Java plug-in depending on the current
+ * selection. JRE library path must be added to the build path of
+ * the plug-in project to allow Java builder to compile the project.
  * @return JRE default library path
  */
 IPath getJREPath();
 /**
  * Returns paths for JRE source annotation. This
  * information is required for being able to
- * step through the JRE source code in Java debugger.
+ * step through the JRE source code in Java debugger. This
+ * information is obtained from the Java plug-in.
  */
 IPath [] getJRESourceAnnotation();
 /**
  * Returns the JAR library name. A plug-in can contain
- * more than one JAR, so this one will be only the
- * first to use.
+ * more than one JAR. This initial library name is
+ * entered by the user in the master plug-in project wizard.
  *
  * @return the initial JAR library name
  */
@@ -42,7 +46,9 @@ public String getRuntimeLibraryName();
  * Returns the initial source folder name.
  * Source code should be in one or more
  * source folders. Each folder will
- * be added to the Java build path.
+ * be added to the Java build path. This initial source
+ * folder is entered by the user in the master plug-in project
+ * wizard.
  *
  * @return the initial source folder name
  */

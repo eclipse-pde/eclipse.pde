@@ -16,14 +16,14 @@ import org.eclipse.core.resources.IResource;
  * <li>Dispose (clear all the data and reset)
  * <li>Be associated with a resource (optional)
  * </ul>
- * If a model is not coming from a workspace
+ * If a model is not created from a workspace
  * resource file, its underlying resource will
- * be <ul>null</ul>.
+ * be <samp>null</samp>.
  */
 public interface IModel {
 /**
  * Releases all the data in this model and
- * clears the state. Disposed model
+ * clears the state. A disposed model
  * can be returned to the normal state
  * by reloading.
  */
@@ -40,22 +40,22 @@ void dispose();
 String getResourceString(String key);
 /**
  * Returns a workspace resource that this model
- * is coming from. Load/reload operations are
+ * is created from. Load/reload operations are
  * not directly connected with the resource
  * (although they can be). In some cases,
  * models will load from a buffer (an editor
  * document) rather than a resource. However,
  * the buffer will eventually be synced up
  * with this resource.
- * <p>Other than stages in loading the
- * content, all other properties of
+ * <p>With the caveat of stepped loading, 
+ * all other properties of
  * the underlying resource could
  * be used directly (path, project etc.).
  *
  * @return a workspace resource (file)
  * that this model is associated with,
  * or <samp>null</samp> if the model
- * is not loaded from a resource.
+ * is not created from a resource.
  */
 public IResource getUnderlyingResource();
 /**
@@ -72,6 +72,7 @@ boolean isDisposed();
  * @return true if this model can be modified
  */
 boolean isEditable();
+
 /**
  * Tests if this model is loaded and can be used.
  * @return true if the model has been loaded
@@ -112,7 +113,10 @@ public void load(InputStream source) throws CoreException;
  * in the underlying buffer or resource.
  * Since we don't know the extent of the
  * change, the only safe thing to do is
- * to reparse the buffer to sync up.
+ * to reparse the buffer to sync up. The event that is
+ * subsequently fired should be used by listeners to
+ * discard all caches and/or fully refresh views
+ * that shows any portion of the model.
  */
 public void reload(InputStream source) throws CoreException;
 }

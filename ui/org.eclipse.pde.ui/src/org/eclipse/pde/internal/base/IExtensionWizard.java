@@ -15,11 +15,13 @@ import org.eclipse.core.resources.*;
 public interface IExtensionWizard extends IBasePluginWizard {
 /**
  * Initializes the wizard with the project of the plug-in and
- * the model object for the manifest file. Java code and
- * other resorces should be released directly under the
+ * the model object for the plug-in manifest file. Java code and
+ * other resorces should be created in the source folder under the
  * provided project. Changes in the plug-in manifest
  * should be made using the APIs of the provided
- * model.
+ * model. Changing the model will make the model dirty. This will
+ * show up in the UI indicating that the currently opened manifest
+ * file is modifed and needs to be saved.
  *
  * @param project the plug-in project where the new
  * code and resources should go

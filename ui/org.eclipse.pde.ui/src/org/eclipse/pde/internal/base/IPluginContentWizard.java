@@ -10,7 +10,7 @@ import org.eclipse.jface.wizard.*;
  * Clients should implement this interface if they
  * need to provide a wizard that will define the
  * initial content of a new plug-in project.
- * These wizard set up folder structure, create
+ * These wizards set up folder structure, create
  * the manifest file and the top-level Java class.
  * They can also create any number of additional
  * files and folders if the purpose of

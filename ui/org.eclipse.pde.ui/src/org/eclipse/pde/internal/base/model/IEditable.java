@@ -9,7 +9,7 @@ import java.io.*;
  * Models that implement this interface indicate that
  * they can be changed. When a model is changed,
  * it becomes 'dirty'. This state can either be reset
- * (in case of a 'false allarm' or naturally set to
+ * (in case of a 'false alarm' or naturally set to
  * false as a result of saving the changes.
  * Models that implement this interface are expected
  * to be able to save in ASCII file format
@@ -25,7 +25,7 @@ public boolean isDirty();
 /**
  * Saves the model into the provided writer.
  * The assumption is that the model can be
- * persisted in an ASCII file (for example, an XML file).
+ * persisted in an ASCII output stream (for example, an XML file).
  * This method should clear the 'dirty' flag when
  * done.
  *
@@ -35,8 +35,8 @@ public boolean isDirty();
 public void save(PrintWriter writer);
 /**
  * Sets the dirty flag of the model. This method is
- * not intended to be used outside the model. Instead,
- * a dirty model should be saved to clear the flag.
+ * normally not intended to be used outside the model. 
+ * Most often, a dirty model should be saved to clear the flag.
  *
  * @param dirty a new value for the 'dirty' flag
  */

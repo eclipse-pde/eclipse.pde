@@ -4,8 +4,6 @@ package org.eclipse.pde.internal.base.model.plugin;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.resources.IResource;
-import org.w3c.dom.*;
 /**
  * This factory should be used to create
  * instances of the plug-in model objects.

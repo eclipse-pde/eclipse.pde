@@ -9,7 +9,7 @@ import java.io.*;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.pde.internal.base.model.IWritable;
 /**
- * A base for all model objects of the plug-in model.
+ * A base interface for all the objects in the plug-in model.
  */
 public interface IPluginObject extends IWritable, IAdaptable {
 /**

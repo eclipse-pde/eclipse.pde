@@ -7,14 +7,14 @@ package org.eclipse.pde.internal.base.model;
 import java.io.*;
 /**
  * Classes that implement this interface can participate
- * in saving the model to the ASCII file using
+ * in saving the model to the ASCII output stream using
  * the provided writer.
  */
 public interface IWritable {
 /**
  * Writes the ASCII representation of the writable
  * into the provider writer. The writable should
- * use the provided intent to write the content
+ * use the provided indent to write the stream
  * starting from the specified column number.
  * Indent string should be written to
  * the writer after every new line.

@@ -119,7 +119,11 @@ void setProviderName(String providerName) throws CoreException;
 void setVersion(String version) throws CoreException;
 /**
  * Swaps the positions of the provided libraries
- * in the list of libraries.
+ * in the list of libraries. Libraries are looked up
+ * by the class loader in the order of declaration.
+ * If two libraries contain classes with the same
+ * name, library order will determine which one is
+ * encountered first.
  *
  * @param l1 the first library object
  * @param l2 the second library object

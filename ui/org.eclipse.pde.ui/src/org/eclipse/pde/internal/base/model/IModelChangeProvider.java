@@ -6,7 +6,7 @@ package org.eclipse.pde.internal.base.model;
 
 /**
  * Classes that implement this interface are
- * capable of notifying listener about
+ * capable of notifying listeners about
  * model changes. Interested parties
  * should implement <samp>IModelChangedListener</samp>
  * and add as listeners to be able to receive
