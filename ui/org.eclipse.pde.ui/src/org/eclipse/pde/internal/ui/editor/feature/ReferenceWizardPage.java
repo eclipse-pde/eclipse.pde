@@ -30,6 +30,7 @@ public abstract class ReferenceWizardPage extends WizardPage {
 	protected IFeatureModel model;
 	private TablePart checkboxTablePart;
 	private CheckboxTableViewer pluginViewer;
+	private boolean includeExternal;
 
 	class PluginContentProvider
 		extends DefaultContentProvider
@@ -58,12 +59,13 @@ public abstract class ReferenceWizardPage extends WizardPage {
 		}
 	}
 
-	public ReferenceWizardPage(IFeatureModel model) {
+	public ReferenceWizardPage(IFeatureModel model, boolean includeExternal) {
 		super("newFeaturePluginPage");
 		this.model = model;
 		setPageComplete(false);
 		checkboxTablePart = new TablePart();	
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
+		this.includeExternal = includeExternal;
 	}
 	
 	public void dispose() {
@@ -97,6 +99,7 @@ public abstract class ReferenceWizardPage extends WizardPage {
 				return true;
 			}
 		});
+		pluginViewer.setSorter(ListUtil.PLUGIN_SORTER);
 		GridData gd = (GridData)checkboxTablePart.getControl().getLayoutData();
 		gd.heightHint = 300;
 	}
@@ -110,11 +113,18 @@ public abstract class ReferenceWizardPage extends WizardPage {
 		pluginViewer.setInput(model.getFeature());
 		checkboxTablePart.setSelection(new Object[0]);
 	}
+	
+	private Object[] getAllChoices() {
+		PluginModelManager pmng = PDECore.getDefault().getModelManager();
+		return pmng.getPlugins();
+	}
 
 	private Object[] getChoices() {
+		if (includeExternal) return getAllChoices();
 		WorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
 		IPluginModel[] plugins = mng.getWorkspacePluginModels();
 		IFragmentModel[] fragments = mng.getWorkspaceFragmentModels();
+
 		Object[] choices = new Object[plugins.length + fragments.length];
 		System.arraycopy(plugins, 0, choices, 0, plugins.length);
 		System.arraycopy(fragments, 0, choices, plugins.length, fragments.length);

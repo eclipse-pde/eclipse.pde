@@ -25,7 +25,7 @@ public class NewFeaturePluginWizardPage extends ReferenceWizardPage {
 		"FeatureEditor.PluginSection.new.updating";
 
 	public NewFeaturePluginWizardPage(IFeatureModel model) {
-		super(model);
+		super(model, false);
 		setTitle(PDEPlugin.getResourceString(KEY_TITLE));
 		setDescription(PDEPlugin.getResourceString(KEY_DESC));
 	}
