@@ -854,7 +854,7 @@
       </shortcut>
       <shortcut
             label="%launcher.shortcut.label"
-            icon="icons/etool16/eclipse_launcher_wiz.gif"
+            icon="icons/etool16/eclipse_launcher.gif"
             modes="run, debug"
             class="org.eclipse.pde.internal.ui.launcher.RuntimeWorkbenchShortcut"
             id="org.eclipse.pde.ui.runtimeWorkbenchShortcut">
