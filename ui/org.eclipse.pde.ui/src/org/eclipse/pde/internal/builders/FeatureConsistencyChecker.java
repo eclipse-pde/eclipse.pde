@@ -114,15 +114,17 @@ private void checkFile(IFile file, IProgressMonitor monitor) {
 	monitor.done();
 }
 private boolean isManifestFile(IFile file) {
-   return file.getName().toLowerCase().equals("install.xml");
+   return file.getName().toLowerCase().equals("feature.xml");
 }
 private boolean isValidReference(IFeaturePlugin plugin) {
 	WorkspaceModelManager manager =
 		PDEPlugin.getDefault().getWorkspaceModelManager();
-	IPluginModel[] models = manager.getWorkspacePluginModels();
+	IPluginModelBase [] models = plugin.isFragment() ? 
+		(IPluginModelBase[])manager.getWorkspaceFragmentModels() :
+		(IPluginModelBase[])manager.getWorkspacePluginModels();
 	for (int i = 0; i < models.length; i++) {
-		IPluginModel model = models[i];
-		if (model.getPlugin().getId().equals(plugin.getId())) {
+		IPluginModelBase model = models[i];
+		if (model.getPluginBase().getId().equals(plugin.getId())) {
 			return true;
 		}
 	}

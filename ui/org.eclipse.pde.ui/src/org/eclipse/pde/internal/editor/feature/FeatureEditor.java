@@ -54,10 +54,8 @@ private void checkStaleReferences(IFeatureModel model) {
 	}
 	if (unresolved.size() > 0 && model.isEditable()) {
 		try {
-			for (int i = 0; i < unresolved.size(); i++) {
-				IFeaturePlugin ref = (IFeaturePlugin) unresolved.elementAt(i);
-				feature.removePlugin((IFeaturePlugin) ref);
-			}
+			IFeaturePlugin [] removed = (IFeaturePlugin[])unresolved.toArray(new IFeaturePlugin[unresolved.size()]);
+			feature.removePlugins(removed);
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}

@@ -99,14 +99,17 @@ private IFile createFeatureManifest(
 	feature.setVersion(data.version);
 	feature.setProviderName(data.provider);
 	
+	IFeaturePlugin [] added = new IFeaturePlugin[plugins.length];
+	
 	for (int i = 0; i < plugins.length; i++) {
 		IPluginBase plugin = plugins[i];
 		IFeaturePlugin cplugin = model.getFactory().createPlugin();
 		cplugin.setId(plugin.getId());
 		cplugin.setLabel(plugin.getName());
 		cplugin.setVersion(plugin.getVersion());
-		feature.addPlugin(cplugin);
+		added[i] = cplugin;
 	}
+	feature.addPlugins(added);
 	feature.computeImports();
 	// Save the model
 	model.save();

@@ -287,8 +287,8 @@ public class InfoSection extends PDEFormSection {
 		sectionCombo.setItems(
 			new String[] {
 				PDEPlugin.getResourceString(KEY_INFO_DESCRIPTION),
-				PDEPlugin.getResourceString(KEY_INFO_LICENSE),
-				PDEPlugin.getResourceString(KEY_INFO_COPYRIGHT)});
+				PDEPlugin.getResourceString(KEY_INFO_COPYRIGHT),
+				PDEPlugin.getResourceString(KEY_INFO_LICENSE) });
 
 		sectionCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {

@@ -25,11 +25,17 @@ IFeaturePlugin createPlugin();
  */
 IFeatureImport createImport();
 /**
- * Creates a new component URL instance.
+ * Creates a new feature URL instance.
  *
- * @return a new component URL instance
+ * @return a new feature URL instance
  */
 IFeatureURL createURL();
+/**
+ * Creates a new feature install handler.
+ *
+ * @return a new feature install handler.
+ */
+IFeatureInstallHandler createInstallHandler();
 /**
  * 
  */

@@ -20,11 +20,17 @@ public class Feature extends VersionableObject implements IFeature {
 	private IFeatureInfo[] infos = new IFeatureInfo[3];
 	private Vector plugins = new Vector();
 	private Vector imports = new Vector();
+	private String os;
+	private String ws;
+	private String nl;
+	private IFeatureInstallHandler handler;
 
-	public void addPlugin(IFeaturePlugin plugin) throws CoreException {
+	public void addPlugins(IFeaturePlugin [] newPlugins) throws CoreException {
 		ensureModelEditable();
-		plugins.add(plugin);
-		fireStructureChanged(plugin, IModelChangedEvent.INSERT);
+		for (int i=0; i<newPlugins.length; i++) {
+			plugins.add(newPlugins[i]);
+		}
+		fireStructureChanged(newPlugins, IModelChangedEvent.INSERT);
 	}
 	public void setPlugins(IFeaturePlugin[] newPlugins) throws CoreException {
 		ensureModelEditable();
@@ -81,10 +87,16 @@ public class Feature extends VersionableObject implements IFeature {
 	public IFeatureURL getURL() {
 		return url;
 	}
+	public IFeatureInstallHandler getInstallHandler() {
+		return handler;
+	}
 
 	protected void parse(Node node) {
 		super.parse(node);
 		providerName = getNodeAttribute(node, "provider-name");
+		os = getNodeAttribute(node, "os");
+		ws = getNodeAttribute(node, "ws");
+		nl = getNodeAttribute(node, "nl");
 		NodeList children = node.getChildNodes();
 
 		for (int i = 0; i < children.getLength(); i++) {
@@ -111,6 +123,10 @@ public class Feature extends VersionableObject implements IFeature {
 					}
 				} else if (tag.equals("requires")) {
 					parseRequires(child);
+				} else if (tag.equals("install-handler")) {
+					IFeatureInstallHandler handler = getModel().getFactory().createInstallHandler();
+					((FeatureInstallHandler)handler).parse(child);
+					this.handler = handler;
 				} else if (tag.equals("plugin")) {
 					IFeaturePlugin plugin = getModel().getFactory().createPlugin();
 					((FeaturePlugin) plugin).parse(child);
@@ -247,22 +263,58 @@ public class Feature extends VersionableObject implements IFeature {
 		return null;
 	}
 
-	public void removePlugin(IFeaturePlugin plugin) throws CoreException {
+	public void removePlugins(IFeaturePlugin [] removed) throws CoreException {
 		ensureModelEditable();
-		plugins.remove(plugin);
-		fireStructureChanged(plugin, IModelChangedEvent.REMOVE);
+		for (int i=0; i<removed.length; i++)
+			plugins.remove(removed[i]);
+		fireStructureChanged(removed, IModelChangedEvent.REMOVE);
 	}
 	public void removeImport(IFeatureImport iimport) throws CoreException {
 		ensureModelEditable();
 		imports.remove(iimport);
 		fireStructureChanged(iimport, IModelChangedEvent.REMOVE);
 	}
+	
+	public String getOS() {
+		return os;
+	}
+	
+	public String getWS() {
+		return ws;
+	}
+	
+	public String getNL() {
+		return nl;
+	}
+	
+	public void setOS(String os) throws CoreException {
+		ensureModelEditable();
+		Object oldValue = this.os;
+		this.os = os;
+		firePropertyChanged(P_OS, oldValue, os);
+	}
+	public void setWS(String ws) throws CoreException {
+		ensureModelEditable();
+		Object oldValue = this.ws;
+		this.ws = ws;
+		firePropertyChanged(P_WS, oldValue, ws);
+	}
+	public void setNL(String nl) throws CoreException {
+		ensureModelEditable();
+		Object oldValue = this.nl;
+		this.nl = nl;
+		firePropertyChanged(P_NL, oldValue, nl);
+	}
+	
 	public void reset() {
 		super.reset();
 		plugins.clear();
 		imports.clear();
 		url = null;
 		providerName = null;
+		os = null;
+		ws = null;
+		nl = null;
 	}
 
 	public void setProviderName(String providerName) throws CoreException {
@@ -276,6 +328,12 @@ public class Feature extends VersionableObject implements IFeature {
 		Object oldValue = this.url;
 		this.url = url;
 		firePropertyChanged(P_URL, oldValue, url);
+	}
+	public void setInstallHandler(IFeatureInstallHandler handler) throws CoreException {
+		ensureModelEditable();
+		Object oldValue = this.handler;
+		this.handler = handler;
+		firePropertyChanged(P_INSTALL_HANDLER, oldValue, handler);
 	}
 
 	public IFeatureInfo getFeatureInfo(int index) {
@@ -313,20 +371,25 @@ public class Feature extends VersionableObject implements IFeature {
 			writer,
 			"provider-name",
 			getWritableString(providerName));
+		writeIfDefined(indenta, writer, "os", os);
+		writeIfDefined(indenta, writer, "ws", ws);
+		writeIfDefined(indenta, writer, "nl", nl);
+		
 		writer.println(">");
+		if (handler != null) {
+			writer.println();
+			handler.write(indent2, writer);
+		}
+		
 		for (int i = 0; i < 3; i++) {
 			IFeatureInfo info = infos[i];
 			if (info != null && !info.isEmpty())
 				info.write(indent2, writer);
 		}
+		
 		if (url != null) {
 			writer.println();
 			url.write(indent2, writer);
-		}
-		for (int i = 0; i < plugins.size(); i++) {
-			IFeaturePlugin plugin = (IFeaturePlugin) plugins.elementAt(i);
-			writer.println();
-			plugin.write(indent2, writer);
 		}
 		if (imports.size() > 0) {
 			writer.println();
@@ -336,6 +399,11 @@ public class Feature extends VersionableObject implements IFeature {
 				iimport.write(indenta, writer);
 			}
 			writer.println(indent2 + "</requires>");
+		}
+		for (int i = 0; i < plugins.size(); i++) {
+			IFeaturePlugin plugin = (IFeaturePlugin) plugins.elementAt(i);
+			writer.println();
+			plugin.write(indent2, writer);
 		}
 		writer.println();
 		writer.println(indent + "</feature>");

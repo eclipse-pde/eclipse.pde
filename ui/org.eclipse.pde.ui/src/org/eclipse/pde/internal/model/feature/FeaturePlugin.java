@@ -9,11 +9,15 @@ import java.io.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.base.model.feature.*;
 import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.internal.PDEPlugin;
 
-public class FeaturePlugin extends VersionableObject implements IFeaturePlugin {
+public class FeaturePlugin
+	extends VersionableObject
+	implements IFeaturePlugin {
 	private String os;
 	private String ws;
 	private String nl;
+	private IPluginBase pluginBase;
 
 	private int downloadSize;
 	private int installSize;
@@ -25,29 +29,53 @@ public class FeaturePlugin extends VersionableObject implements IFeaturePlugin {
 	public boolean isFragment() {
 		return fragment;
 	}
-	
+
+	public IPluginBase getPluginBase() {
+		return pluginBase;
+	}
+
 	public void setFragment(boolean fragment) throws CoreException {
 		ensureModelEditable();
 		this.fragment = fragment;
 	}
-	
+
 	protected void parse(Node node) {
 		super.parse(node);
 		os = getNodeAttribute(node, "os");
 		ws = getNodeAttribute(node, "ws");
 		nl = getNodeAttribute(node, "nl");
 		String f = getNodeAttribute(node, "fragment");
-		if (f!=null && f.equalsIgnoreCase("true"))
+		if (f != null && f.equalsIgnoreCase("true"))
 			fragment = true;
 		downloadSize = getIntegerAttribute(node, "download-size");
 		installSize = getIntegerAttribute(node, "install-size");
+		hookWithWorkspace();
 	}
-	
+
+	private void hookWithWorkspace() {
+		if (fragment) {
+			IFragmentModel[] fragments =
+				PDEPlugin.getDefault().getWorkspaceModelManager().getWorkspaceFragmentModels();
+			for (int i = 0; i < fragments.length; i++) {
+				IFragment fragment = fragments[i].getFragment();
+				if (fragment.getId().equals(id)) {
+					if (version == null || fragment.getVersion().equals(version)) {
+						pluginBase = fragment;
+						break;
+					}
+				}
+			}
+		} else {
+			pluginBase = PDEPlugin.getDefault().findPlugin(id, version, 0);
+		}
+	}
+
 	public void loadFrom(IPluginBase plugin) {
 		id = plugin.getId();
 		label = plugin.getTranslatedName();
 		version = plugin.getVersion();
 		fragment = plugin instanceof IFragment;
+		this.pluginBase = plugin;
 	}
 
 	public void write(String indent, PrintWriter writer) {
@@ -63,7 +91,7 @@ public class FeaturePlugin extends VersionableObject implements IFeaturePlugin {
 		}
 		if (isFragment()) {
 			writer.println();
-			writer.print(indent2+"fragment=\"true\"");
+			writer.print(indent2 + "fragment=\"true\"");
 		}
 		if (getOS() != null) {
 			writer.println();
@@ -78,13 +106,13 @@ public class FeaturePlugin extends VersionableObject implements IFeaturePlugin {
 			writer.print(indent2 + "nl=\"" + getNL() + "\"");
 		}
 		writer.println();
-		writer.print(indent2 + "download-size=\""+getDownloadSize()+"\"");
+		writer.print(indent2 + "download-size=\"" + getDownloadSize() + "\"");
 		writer.println();
-		writer.print(indent2 + "install-size=\""+getInstallSize()+"\"");
+		writer.print(indent2 + "install-size=\"" + getInstallSize() + "\"");
 		writer.println(">");
 		writer.println(indent + "</plugin>");
 	}
-	
+
 	/**
 	 * Gets the os.
 	 * @return Returns a String
@@ -179,9 +207,11 @@ public class FeaturePlugin extends VersionableObject implements IFeaturePlugin {
 		this.installSize = installSize;
 		firePropertyChanged(P_DOWNLOAD_SIZE, oldValue, new Integer(installSize));
 	}
-	
-	public void setLabel(String newLabel) throws CoreException {
-		ensureModelEditable();
-		label = newLabel;
+
+	public String getLabel() {
+		if (pluginBase != null) {
+			return pluginBase.getTranslatedName();
+		}
+		return super.getLabel();
 	}
 }

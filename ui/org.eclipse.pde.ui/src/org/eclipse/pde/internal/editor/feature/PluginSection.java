@@ -29,37 +29,40 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.editor.PropertiesAction;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.pde.internal.model.feature.FeaturePlugin;
-import java.util.Vector;
+import java.util.*;
+import org.eclipse.jface.wizard.WizardDialog;
 
 public class PluginSection
 	extends PDEFormSection
 	implements IModelProviderListener {
 	private static final String PLUGIN_TITLE =
 		"FeatureEditor.PluginSection.pluginTitle";
-	private static final String FRAGMENT_TITLE =
-		"FeatureEditor.PluginSection.fragmentTitle";
-	private static final String FRAGMENT_DESC =
-		"FeatureEditor.PluginSection.fragmentDesc";
 	private static final String PLUGIN_DESC =
 		"FeatureEditor.PluginSection.pluginDesc";
-	private static final String KEY_SELECT_ALL = "ExternalPluginsBlock.selectAll";
-	private static final String KEY_DESELECT_ALL =
-		"ExternalPluginsBlock.deselectAll";
+	private static final String KEY_NEW = "FeatureEditor.PluginSection.new";
+	public static final String POPUP_NEW = "Menus.new.label";
+	public static final String POPUP_OPEN = "Actions.open.label";
+	public static final String POPUP_DELETE = "Actions.delete.label";
 	private boolean updateNeeded;
 	private Object[] references;
 	private OpenReferenceAction openAction;
 	private PropertiesAction propertiesAction;
-	private CheckboxTableViewer pluginViewer;
+	private TableViewer pluginViewer;
 	private Image pluginImage;
 	private Image warningPluginImage;
 	private Image fragmentImage;
 	private Image warningFragmentImage;
+	private Action newAction;
+	private Action deleteAction;
 
 	class PluginContentProvider
 		extends DefaultContentProvider
 		implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
-			return createPluginReferences();
+			if (parent instanceof IFeature) {
+				return ((IFeature) parent).getPlugins();
+			}
+			return new Object[0];
 		}
 	}
 
@@ -67,12 +70,12 @@ public class PluginSection
 		extends LabelProvider
 		implements ITableLabelProvider {
 		public String getColumnText(Object obj, int index) {
-			if (obj instanceof PluginReference) {
-				PluginReference ref = (PluginReference) obj;
-				String version = ref.getModel().getPluginBase().getVersion();
-				if (ref.isInSync())
-					return obj.toString() + " (" + version + ")";
-				else
+			if (obj instanceof FeaturePlugin) {
+				FeaturePlugin fref = (FeaturePlugin) obj;
+				IPluginBase pluginBase = fref.getPluginBase();
+				if (pluginBase != null) {
+					return pluginBase.getTranslatedName() + " (" + pluginBase.getVersion() + ")";
+				} else
 					return obj.toString();
 			}
 			return obj.toString();
@@ -100,20 +103,12 @@ public class PluginSection
 		layout.verticalSpacing = 9;
 		container.setLayout(layout);
 
-		pluginViewer = CheckboxTableViewer.newCheckList(container, SWT.NULL);
+		pluginViewer =
+			new TableViewer(container, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
 		pluginViewer.setContentProvider(new PluginContentProvider());
 		pluginViewer.setLabelProvider(new PluginLabelProvider());
 		pluginViewer.setSorter(ListUtil.NAME_SORTER);
 
-		pluginViewer.addCheckStateListener(new ICheckStateListener() {
-			public void checkStateChanged(final CheckStateChangedEvent e) {
-				BusyIndicator.showWhile(pluginViewer.getTable().getDisplay(), new Runnable() {
-					public void run() {
-						handlePluginChecked((PluginReference) e.getElement(), e.getChecked());
-					}
-				});
-			}
-		});
 		pluginViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent e) {
 				handleSelectionChanged(e);
@@ -147,66 +142,17 @@ public class PluginSection
 		Button button =
 			factory.createButton(
 				buttonContainer,
-				PDEPlugin.getResourceString(KEY_SELECT_ALL),
+				PDEPlugin.getResourceString(KEY_NEW),
 				SWT.PUSH);
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				handleSelectAll(true);
-			}
-		});
-		button =
-			factory.createButton(
-				buttonContainer,
-				PDEPlugin.getResourceString(KEY_DESELECT_ALL),
-				SWT.PUSH);
-		button.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleSelectAll(false);
+				handleNew();
 			}
 		});
 
 		factory.paintBordersFor(container);
-		openAction = new OpenReferenceAction(pluginViewer);
-		propertiesAction = new PropertiesAction(getFormPage().getEditor());
+		makeActions();
 		return container;
-	}
-	private Object[] createPluginReferences() {
-		if (references == null) {
-			WorkspaceModelManager manager =
-				PDEPlugin.getDefault().getWorkspaceModelManager();
-			IPluginModel[] workspaceModels = manager.getWorkspacePluginModels();
-			IFragmentModel[] workspaceFragmentModels = manager.getWorkspaceFragmentModels();
-			references =
-				new Object[workspaceFragmentModels.length + workspaceModels.length];
-			for (int i = 0; i < workspaceFragmentModels.length; i++) {
-				IFragmentModel model = workspaceFragmentModels[i];
-				IFeaturePlugin cref = findFeatureFragment(model.getFragment().getId());
-				PluginReference reference = new PluginReference(cref, model);
-				reference.setFragment(true);
-				references[i] = reference;
-				if (cref != null) {
-					try {
-						cref.setLabel(model.getFragment().getTranslatedName());
-					} catch (CoreException e) {
-					}
-				}
-			}
-			int offset = workspaceFragmentModels.length;
-
-			for (int i = 0; i < workspaceModels.length; i++) {
-				IPluginModel model = workspaceModels[i];
-				IFeaturePlugin cref = findFeaturePlugin(model.getPlugin().getId());
-				PluginReference reference = new PluginReference(cref, model);
-				references[offset + i] = reference;
-				if (cref != null) {
-					try {
-						cref.setLabel(model.getPlugin().getTranslatedName());
-					} catch (CoreException e) {
-					}
-				}
-			}
-		}
-		return references;
 	}
 
 	private Image createWarningImage(
@@ -233,115 +179,101 @@ public class PluginSection
 	}
 	public void expandTo(Object object) {
 		if (object instanceof IFeaturePlugin) {
-			PluginReference reference = findReference((IFeaturePlugin) object);
-			if (reference != null)
-				pluginViewer.setSelection(new StructuredSelection(reference), true);
+			pluginViewer.setSelection(new StructuredSelection(object), true);
 		}
 	}
 	private void fillContextMenu(IMenuManager manager) {
 		manager.add(openAction);
-		manager.add(propertiesAction);
+		// add new
 		manager.add(new Separator());
+		manager.add(newAction);
+		manager.add(deleteAction);
+		// add delete
+		manager.add(new Separator());
+		manager.add(propertiesAction);
 		getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager);
 	}
-	private IFeaturePlugin findFeatureFragment(String id) {
-		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
-		IFeature feature = model.getFeature();
-		IFeaturePlugin[] plugins = feature.getPlugins();
-		for (int i = 0; i < plugins.length; i++) {
-			IFeaturePlugin plugin = plugins[i];
-			if (plugin.getId().equals(id) && plugin.isFragment())
-				return plugin;
-		}
-		return null;
-	}
-	private IFeaturePlugin findFeaturePlugin(String id) {
-		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
-		IFeature feature = model.getFeature();
-		IFeaturePlugin[] plugins = feature.getPlugins();
-		for (int i = 0; i < plugins.length; i++) {
-			if (plugins[i].getId().equals(id))
-				return plugins[i];
-		}
-		return null;
-	}
 	private Image getReferenceImage(Object obj) {
-		if (!(obj instanceof PluginReference))
+		if (!(obj instanceof FeaturePlugin))
 			return null;
-		PluginReference reference = (PluginReference) obj;
-		if (reference.isInSync()) {
-			if (reference.isFragment())
+		FeaturePlugin fref = (FeaturePlugin) obj;
+		IPluginBase pluginBase = fref.getPluginBase();
+		if (pluginBase != null) {
+			if (fref.isFragment())
 				return fragmentImage;
 			else
 				return pluginImage;
 		} else {
 			if (warningFragmentImage == null)
 				initializeOverlays();
-			if (reference.isFragment())
+			if (fref.isFragment())
 				return warningFragmentImage;
 			else
 				return warningPluginImage;
 		}
 	}
-	private void handlePluginChecked(PluginReference reference, boolean checked) {
-		try {
-			IFeatureModel fmodel = (IFeatureModel) getFormPage().getModel();
-			IFeature feature = fmodel.getFeature();
-			if (checked) {
-				IPluginModelBase model = reference.getModel();
-				IPluginBase plugin = model.getPluginBase();
-				IFeaturePlugin fref = null;
-				fref = fmodel.getFactory().createPlugin();
-				((FeaturePlugin) fref).loadFrom(plugin);
-				feature.addPlugin(fref);
-				reference.setReference(fref);
-			} else {
-				if (reference.getReference() != null) {
-					feature.removePlugin(reference.getReference());
-					reference.setReference(null);
-				}
+
+	private void handleNew() {
+		final IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+		BusyIndicator.showWhile(pluginViewer.getTable().getDisplay(), new Runnable() {
+			public void run() {
+				NewFeaturePluginWizard wizard = new NewFeaturePluginWizard(model);
+				WizardDialog dialog =
+					new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
+				dialog.create();
+				dialog.getShell().setSize(500, 500);
+				dialog.open();
 			}
+		});
+	}
+	private void handleSelectAll() {
+		IStructuredContentProvider provider =
+			(IStructuredContentProvider) pluginViewer.getContentProvider();
+		Object[] elements = provider.getElements(pluginViewer.getInput());
+		StructuredSelection ssel = new StructuredSelection(elements);
+		pluginViewer.setSelection(ssel);
+	}
+	private void handleDelete() {
+		IStructuredSelection ssel = (IStructuredSelection) pluginViewer.getSelection();
+
+		if (ssel.isEmpty())
+			return;
+		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+		IFeature feature = model.getFeature();
+
+		try {
+			IFeaturePlugin[] removed = new IFeaturePlugin[ssel.size()];
+			int i = 0;
+			for (Iterator iter = ssel.iterator(); iter.hasNext();) {
+				IFeaturePlugin iobj = (IFeaturePlugin) iter.next();
+				removed[i++] = iobj;
+			}
+			feature.removePlugins(removed);
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
 	}
-	private void handleSelectAll(boolean select) {
-		pluginViewer.setAllChecked(select);
-		IFeaturePlugin[] plugins = null;
-		IFeatureModel fmodel = (IFeatureModel) getFormPage().getModel();
-		IFeature feature = fmodel.getFeature();
-		if (select) {
-			Object[] refs = createPluginReferences();
-			Vector frefs = new Vector();
-			for (int i = 0; i < refs.length; i++) {
-				PluginReference ref = (PluginReference) refs[i];
-				IPluginModelBase model = ref.getModel();
-				IPluginBase plugin = model.getPluginBase();
-				IFeaturePlugin fref = null;
-				fref = fmodel.getFactory().createPlugin();
-				((FeaturePlugin) fref).loadFrom(plugin);
-				ref.setReference(fref);
-				frefs.add(fref);
-			}
-			plugins = (IFeaturePlugin[]) frefs.toArray(new IFeaturePlugin[frefs.size()]);
+	public boolean doGlobalAction(String actionId) {
+		if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {
+			BusyIndicator.showWhile(pluginViewer.getTable().getDisplay(), new Runnable() {
+				public void run() {
+					handleDelete();
+				}
+			});
+			return true;
 		}
-		try {
-			feature.setPlugins(plugins);
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
+		if (actionId.equals(IWorkbenchActionConstants.SELECT_ALL)) {
+			BusyIndicator.showWhile(pluginViewer.getTable().getDisplay(), new Runnable() {
+				public void run() {
+					handleSelectAll();
+				}
+			});
+			return true;
 		}
+		return false;
 	}
 	private void handleSelectionChanged(SelectionChangedEvent e) {
-		PluginReference reference =
-			(PluginReference) ((IStructuredSelection) e.getSelection()).getFirstElement();
-
-		StructuredSelection selection = null;
-
-		if (reference != null && reference.getReference() != null) {
-			selection = new StructuredSelection(reference.getReference());
-		} else
-			selection = new StructuredSelection();
-		getFormPage().setSelection(selection);
+		getFormPage().setSelection(e.getSelection());
 	}
 	public void initialize(Object input) {
 		IFeatureModel model = (IFeatureModel) input;
@@ -370,11 +302,39 @@ public class PluginSection
 			if (getFormPage().isVisible()) {
 				update();
 			}
-		} else if (e.getChangeType() == IModelChangedEvent.CHANGE) {
+		} else {
 			Object obj = e.getChangedObjects()[0];
-			if (obj instanceof IFeaturePlugin)
-				pluginViewer.update(obj, null);
+			if (obj instanceof IFeaturePlugin) {
+				if (e.getChangeType() == IModelChangedEvent.CHANGE) {
+					pluginViewer.update(obj, null);
+				} else if (e.getChangeType() == IModelChangedEvent.INSERT) {
+					pluginViewer.add(e.getChangedObjects());
+				} else if (e.getChangeType() == IModelChangedEvent.REMOVE) {
+					pluginViewer.remove(e.getChangedObjects());
+				}
+			}
 		}
+	}
+	private void makeActions() {
+		newAction = new Action() {
+			public void run() {
+				handleNew();
+			}
+		};
+		newAction.setText(PDEPlugin.getResourceString(POPUP_NEW));
+
+		deleteAction = new Action() {
+			public void run() {
+				BusyIndicator.showWhile(pluginViewer.getTable().getDisplay(), new Runnable() {
+					public void run() {
+						handleDelete();
+					}
+				});
+			}
+		};
+		deleteAction.setText(PDEPlugin.getResourceString(POPUP_DELETE));
+		openAction = new OpenReferenceAction(pluginViewer);
+		propertiesAction = new PropertiesAction(getFormPage().getEditor());
 	}
 
 	public void modelsChanged(IModelProviderEvent event) {
@@ -394,24 +354,10 @@ public class PluginSection
 		}
 	}
 
-	private PluginReference findReference(IFeaturePlugin plugin) {
-		for (int i = 0; i < references.length; i++) {
-			PluginReference reference = (PluginReference) references[i];
-			if (plugin.equals(reference.getReference()))
-				return reference;
-		}
-		return null;
-	}
 	public void update(Object input) {
 		IFeatureModel model = (IFeatureModel) input;
-		IFeature component = model.getFeature();
-		pluginViewer.setInput(model.getFeature());
-		for (int i = 0; i < references.length; i++) {
-			PluginReference reference = (PluginReference) references[i];
-			if (reference.getReference() != null) {
-				pluginViewer.setChecked(reference, true);
-			}
-		}
+		IFeature feature = model.getFeature();
+		pluginViewer.setInput(feature);
 		updateNeeded = false;
 	}
 }

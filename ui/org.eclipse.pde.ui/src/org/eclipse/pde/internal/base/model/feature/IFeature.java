@@ -37,11 +37,18 @@ public static final String P_PROVIDER = "provider";
  */
 public static final String P_URL = "url";
 
+public static final String P_INSTALL_HANDLER = "installHandler";
+
+public static final String P_OS = "os";
+public static final String P_WS = "ws";
+public static final String P_NL = "nl";
+
 
 public static final int INFO_DESCRIPTION = 0;
-public static final int INFO_LICENSE = 1;
-public static final int INFO_COPYRIGHT = 2;
-public static final String [] INFO_TAGS = { "description", "license", "copyright" };
+public static final int INFO_COPYRIGHT = 1;
+public static final int INFO_LICENSE = 2;
+
+public static final String [] INFO_TAGS = { "description", "copyright", "license" };
 /**
  * Adds a plug-in reference to this feature.
  * This method may throw a CoreException if
@@ -49,7 +56,7 @@ public static final String [] INFO_TAGS = { "description", "license", "copyright
  *
  * @param reference a plug-in reference to add
  */
-public void addPlugin(IFeaturePlugin plugin) throws CoreException;
+public void addPlugins(IFeaturePlugin [] plugins) throws CoreException;
 
 /**
  * Adds a required plug-in reference to this feature.
@@ -93,6 +100,9 @@ IPluginModelBase getReferencedModel(IFeaturePlugin reference);
  */
 public IFeatureURL getURL();
 
+public IFeatureInstallHandler getInstallHandler();
+public void setInstallHandler(IFeatureInstallHandler handler) throws CoreException;
+
 public IFeatureInfo getFeatureInfo(int index);
 
 public void setFeatureInfo(IFeatureInfo info, int index) throws CoreException;
@@ -104,7 +114,7 @@ public void setFeatureInfo(IFeatureInfo info, int index) throws CoreException;
  *
  * @param plugin a plug-in reference to remove 
  */
-public void removePlugin(IFeaturePlugin plugin) throws CoreException;
+public void removePlugins(IFeaturePlugin [] plugins) throws CoreException;
 /**
  * Removes a required plug-in reference from this feature.
  * This method may throw a CoreException if
@@ -128,4 +138,12 @@ public void setProviderName(String providerName) throws CoreException;
 public void setURL(IFeatureURL url) throws CoreException;
 
 public void computeImports() throws CoreException;
+
+public String getOS();
+public String getWS();
+public String getNL();
+
+public void setOS(String os) throws CoreException;
+public void setWS(String ws) throws CoreException;
+public void setNL(String nl) throws CoreException;
 }

@@ -33,6 +33,13 @@ public IFeatureURL createURL() {
 	return url;
 }
 
+public IFeatureInstallHandler createInstallHandler() {
+	FeatureInstallHandler handler = new FeatureInstallHandler();
+	handler.model = model;
+	handler.parent = model.getFeature();
+	return handler;
+}
+
 public IFeatureInfo createInfo(int index) {
 	FeatureInfo info = new FeatureInfo(index);
 	info.model = model;
