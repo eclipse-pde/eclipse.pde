@@ -44,7 +44,6 @@ public class ExternalPluginsBlock {
 	private final static int SELECT_SOME = 0;
 
 	private ExternalModelManager registry;
-	private Image externalPluginImage;
 	private IModel[] initialModels;
 	private boolean reloaded;
 	private Vector changed;
@@ -62,24 +61,6 @@ public class ExternalPluginsBlock {
 
 			} else
 				return new Object[0];
-		}
-	}
-
-	public class PluginLabelProvider
-		extends LabelProvider
-		implements ITableLabelProvider {
-		public String getColumnText(Object obj, int index) {
-			if (index == 0) {
-				IPluginModel model = (IPluginModel) obj;
-				return model.getPlugin().getTranslatedName();
-			}
-			return "";
-		}
-		public Image getColumnImage(Object obj, int index) {
-			if (index == 0) {
-				return externalPluginImage;
-			}
-			return null;
 		}
 	}
 
@@ -113,7 +94,6 @@ public class ExternalPluginsBlock {
 
 	public ExternalPluginsBlock(ExternalPluginsEditor editor) {
 		registry = PDEPlugin.getDefault().getExternalModelManager();
-		externalPluginImage = PDEPluginImages.DESC_PLUGIN_OBJ.createImage();
 		this.editor = editor;
 		String[] buttonLabels =
 			{
@@ -125,6 +105,7 @@ public class ExternalPluginsBlock {
 		tablePart = new TablePart(buttonLabels);
 		tablePart.setSelectAllIndex(2);
 		tablePart.setDeselectAllIndex(3);
+		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 
 	public Control createContents(Composite parent) {
@@ -139,7 +120,7 @@ public class ExternalPluginsBlock {
 
 		pluginListViewer = tablePart.getTableViewer();
 		pluginListViewer.setContentProvider(new PluginContentProvider());
-		pluginListViewer.setLabelProvider(new PluginLabelProvider());
+		pluginListViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 
 		GridData gd = (GridData) tablePart.getControl().getLayoutData();
 		gd.heightHint = 200;
@@ -182,7 +163,7 @@ public class ExternalPluginsBlock {
 		return result;
 	}
 	public void dispose() {
-		externalPluginImage.dispose();
+		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 	}
 	public Control getControl() {
 		return control;

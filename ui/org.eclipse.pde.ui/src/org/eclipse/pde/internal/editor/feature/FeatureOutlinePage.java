@@ -17,34 +17,14 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.pde.internal.elements.NamedElement;
 
 public class FeatureOutlinePage extends FormOutlinePage {
 	private static final String KEY_REFERENCED_PLUGINS =
 		"FeatureEditor.Outline.referencedPlugins";
 	private static final String KEY_REQUIRED_PLUGINS =
 		"FeatureEditor.Outline.requiredPlugins";
-	private Image urlImage;
-	private Image pluginImage;
-	private Image pluginReqImage;
-	private Image fragmentImage;
-	private Image requiredPluginImage;
-	private Image infoImage;
-	private FolderObject referencedPlugins, requiredPlugins;
-
-	class FolderObject {
-		private Image image;
-		private String key;
-		public FolderObject(String key, Image image) {
-			this.key = key;
-			this.image = image;
-		}
-		public Image getImage() {
-			return image;
-		}
-		public String toString() {
-			return PDEPlugin.getResourceString(key);
-		}
-	}
+	private NamedElement referencedPlugins, requiredPlugins;
 
 	class ContentProvider extends BasicContentProvider {
 		public Object[] getChildren(Object parent) {
@@ -73,33 +53,13 @@ public class FeatureOutlinePage extends FormOutlinePage {
 		}
 	}
 
-	class OutlineLabelProvider extends BasicLabelProvider {
-		public String getText(Object obj) {
-			String label = getObjectLabel(obj);
-			if (label != null)
-				return label;
-			return super.getText(obj);
-		}
-		public Image getImage(Object obj) {
-			Image image = getObjectImage(obj);
-			if (image != null)
-				return image;
-			return super.getImage(obj);
-		}
-	}
-
 	public FeatureOutlinePage(PDEFormPage formPage) {
 		super(formPage);
-		urlImage = PDEPluginImages.DESC_LINK_OBJ.createImage();
-		pluginImage = PDEPluginImages.get(PDEPluginImages.IMG_PLUGIN_OBJ);
-		fragmentImage = PDEPluginImages.get(PDEPluginImages.IMG_FRAGMENT_OBJ);
-		pluginReqImage = PDEPluginImages.DESC_REQ_PLUGIN_OBJ.createImage();
-		infoImage = PDEPluginImages.DESC_DOC_SECTION_OBJ.createImage();
 		Image folderImage =
 			PlatformUI.getWorkbench().getSharedImages().getImage(
 				ISharedImages.IMG_OBJ_FOLDER);
-		requiredPlugins = new FolderObject(KEY_REQUIRED_PLUGINS, folderImage);
-		referencedPlugins = new FolderObject(KEY_REFERENCED_PLUGINS, folderImage);
+		requiredPlugins = new NamedElement(PDEPlugin.getResourceString(KEY_REQUIRED_PLUGINS), folderImage);
+		referencedPlugins = new NamedElement(PDEPlugin.getResourceString(KEY_REFERENCED_PLUGINS), folderImage);
 	}
 	protected ITreeContentProvider createContentProvider() {
 		return new ContentProvider();
@@ -110,54 +70,14 @@ public class FeatureOutlinePage extends FormOutlinePage {
 		model.addModelChangedListener(this);
 	}
 	protected ILabelProvider createLabelProvider() {
-		return new OutlineLabelProvider();
+		return PDEPlugin.getDefault().getLabelProvider();
 	}
 	public void dispose() {
 		super.dispose();
-		urlImage.dispose();
-		pluginReqImage.dispose();
-		infoImage.dispose();
 		IFeatureModel model = (IFeatureModel) formPage.getModel();
 		model.removeModelChangedListener(this);
 	}
-	Image getObjectImage(Object obj) {
-		if (obj instanceof IFeatureURLElement) {
-			return urlImage;
-		}
-		if (obj instanceof IFeaturePlugin) {
-			IFeaturePlugin fref = (IFeaturePlugin) obj;
-			if (fref.isFragment())
-				return fragmentImage;
-			else
-				return pluginImage;
-		}
-		if (obj instanceof IFeatureImport) {
-			IFeatureImport iimport = (IFeatureImport) obj;
-			return pluginReqImage;
-		}
-		if (obj instanceof FolderObject) {
-			return ((FolderObject) obj).getImage();
-		}
-		if (obj instanceof IFeatureInfo) {
-			return infoImage;
-		}
-		return null;
-	}
-	String getObjectLabel(Object obj) {
-		if (obj instanceof IFeatureURLElement) {
-			return ((IFeatureURLElement) obj).getLabel();
-		}
-		if (obj instanceof IFeaturePlugin) {
-			return ((IFeaturePlugin) obj).getLabel();
-		}
-		if (obj instanceof FolderObject) {
-			return obj.toString();
-		}
-		if (obj instanceof IFeatureInfo) {
-			return obj.toString();
-		}
-		return null;
-	}
+
 	public IPDEEditorPage getParentPage(Object item) {
 		if (item instanceof IFeatureURLElement)
 			return formPage.getEditor().getPage(FeatureEditor.FEATURE_PAGE);
@@ -226,7 +146,7 @@ public class FeatureOutlinePage extends FormOutlinePage {
 					property.equals(IFeature.P_COPYRIGHT) ||
 					property.equals(IFeature.P_LICENSE)) {
 					IPDEEditorPage page = formPage.getEditor().getPage(FeatureEditor.INFO_PAGE);
-					treeViewer.update(page, null);
+					treeViewer.refresh(page);
 					return;
 				}
 			}

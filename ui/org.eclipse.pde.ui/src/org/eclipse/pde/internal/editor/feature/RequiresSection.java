@@ -43,8 +43,6 @@ public class RequiresSection
 	private boolean updateNeeded;
 	private Button syncButton;
 	private TableViewer pluginViewer;
-	private Image pluginImage;
-	private Image warningPluginImage;
 
 	class ImportContentProvider
 		extends DefaultContentProvider
@@ -56,26 +54,10 @@ public class RequiresSection
 		}
 	}
 
-	class ImportLabelProvider
-		extends LabelProvider
-		implements ITableLabelProvider {
-		public String getColumnText(Object obj, int index) {
-			return getReferenceText(obj);
-		}
-		public Image getColumnImage(Object obj, int index) {
-			return getReferenceImage(obj);
-		}
-	}
-
 	public RequiresSection(FeatureReferencePage page) {
 		super(page, new String[] { PDEPlugin.getResourceString(KEY_COMPUTE)});
 		setHeaderText(PDEPlugin.getResourceString(KEY_TITLE));
 		setDescription(PDEPlugin.getResourceString(KEY_DESC));
-		pluginImage = PDEPluginImages.DESC_REQ_PLUGIN_OBJ.createImage();
-		warningPluginImage =
-			createWarningImage(
-				PDEPluginImages.DESC_PLUGIN_OBJ,
-				PDEPluginImages.DESC_ERROR_CO);
 	}
 
 	public void commitChanges(boolean onSave) {
@@ -99,7 +81,7 @@ public class RequiresSection
 		TablePart tablePart = getTablePart();
 		pluginViewer = tablePart.getTableViewer();
 		pluginViewer.setContentProvider(new ImportContentProvider());
-		pluginViewer.setLabelProvider(new ImportLabelProvider());
+		pluginViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		factory.paintBordersFor(container);
 		return container;
 	}
@@ -125,9 +107,6 @@ public class RequiresSection
 		model.removeModelChangedListener(this);
 		WorkspaceModelManager mng = PDEPlugin.getDefault().getWorkspaceModelManager();
 		mng.removeModelProviderListener(this);
-		if (warningPluginImage != null)
-			warningPluginImage.dispose();
-		pluginImage.dispose();
 		super.dispose();
 	}
 	public void expandTo(Object object) {
@@ -145,25 +124,6 @@ public class RequiresSection
 		getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager);
 	}
 
-	private String getReferenceText(Object obj) {
-		FeatureImport iimport = (FeatureImport) obj;
-		IPlugin plugin = iimport.getPlugin();
-		if (plugin != null) {
-			return plugin.getTranslatedName();
-		}
-		return iimport.getId();
-	}
-
-	private Image getReferenceImage(Object obj) {
-		if (!(obj instanceof FeatureImport))
-			return null;
-		FeatureImport iimport = (FeatureImport) obj;
-		IPlugin plugin = iimport.getPlugin();
-		if (plugin != null)
-			return pluginImage;
-		else
-			return warningPluginImage;
-	}
 	protected void selectionChanged(IStructuredSelection selection) {
 		IFeatureImport iimport = (IFeatureImport) selection.getFirstElement();
 		getFormPage().setSelection(selection);

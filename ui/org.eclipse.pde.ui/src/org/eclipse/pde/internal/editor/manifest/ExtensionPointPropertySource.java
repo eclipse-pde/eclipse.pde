@@ -53,10 +53,11 @@ public IPluginExtensionPoint getPoint() {
 }
 public IPropertyDescriptor [] getPropertyDescriptors() {
 	if (descriptors == null) {
+		PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
 		descriptors = new Vector();
 		PropertyDescriptor desc = createTextPropertyDescriptor(P_ID, "id");
 		desc.setLabelProvider(
-			new PropertyLabelProvider(P_ID, PDEPluginImages.get(PDEPluginImages.IMG_ATT_REQ_OBJ)));
+			new PropertyLabelProvider(P_ID, provider.get(PDEPluginImages.DESC_ATT_REQ_OBJ)));
 		descriptors.addElement(desc);
 		desc = createTextPropertyDescriptor(P_NAME, "name");
 		descriptors.addElement(desc);

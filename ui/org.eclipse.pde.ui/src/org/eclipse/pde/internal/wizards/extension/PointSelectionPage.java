@@ -37,7 +37,6 @@ public class PointSelectionPage
 	private final static String KEY_DESC = "NewExtensionWizard.PointSelectionPage.desc";
 	private final static String KEY_MISSING_TITLE = "NewExtensionWizard.PointSelectionPage.missingTitle";
 	private final static String KEY_MISSING_IMPORT = "NewExtensionWizard.PointSelectionPage.missingImport";
-	private Image pointImage;
 	private IPluginExtension newExtension;
 
 	public class NameSorter extends ViewerSorter {
@@ -76,30 +75,15 @@ public class PointSelectionPage
 		}
 	}
 
-	class PointLabelProvider extends LabelProvider implements ITableLabelProvider {
-		public String getColumnText(Object obj, int index) {
-			IPluginExtensionPoint info = (IPluginExtensionPoint) obj;
-			if (index == 0)
-				return info.getTranslatedName();
-			return "";
-		}
-		public String getText(Object obj) {
-			return getColumnText(obj, 0);
-		}
-		public Image getColumnImage(Object obj, int index) {
-			if (index == 0)
-				return pointImage;
-			return null;
-		}
-	}
-
 public PointSelectionPage(IPluginBase model) {
 	super("pointSelectionPage");
 	this.pluginBase = model;
 	setTitle(PDEPlugin.getResourceString(KEY_TITLE));
 	setDescription(PDEPlugin.getResourceString(KEY_DESC));
-	pointImage = PDEPluginImages.DESC_EXT_POINT_OBJ.createImage();
+	PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
+	provider.connect(this);
 }
+
 void addPoints(IPluginBase pluginBase, Vector points) {
 	IPluginExtensionPoint[] pts = pluginBase.getExtensionPoints();
 	for (int i = 0; i < pts.length; i++) {
@@ -136,7 +120,7 @@ public void createControl(Composite parent) {
 	// plugin pane
 	pointListViewer = new TableViewer(table);
 	pointListViewer.setContentProvider(new ContentProvider());
-	pointListViewer.setLabelProvider(new PointLabelProvider());
+	pointListViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 	pointListViewer.addSelectionChangedListener(this);
 
 	GridData gd = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
@@ -180,7 +164,8 @@ public void createDescriptionIn(Composite composite) {
 	description.setLayoutData(gd);
 }
 public void dispose() {
-	pointImage.dispose();
+	PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
+	provider.disconnect(this);
 	super.dispose();
 }
 public boolean finish() {

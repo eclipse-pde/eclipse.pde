@@ -16,9 +16,9 @@ import org.eclipse.pde.internal.PDEPlugin;
  * @author
  */
 public class FeatureInfo extends FeatureObject implements IFeatureInfo {
-	private static final String KEY_INFO_DESCRIPTION ="SchemaEditor.info.description";
-	private static final String KEY_INFO_LICENSE = "SchemaEditor.info.license";
-	private static final String KEY_INFO_COPYRIGHT = "SchemaEditor.info.copyright";
+	private static final String KEY_INFO_DESCRIPTION ="FeatureEditor.info.description";
+	private static final String KEY_INFO_LICENSE = "FeatureEditor.info.license";
+	private static final String KEY_INFO_COPYRIGHT = "FeatureEditor.info.copyright";
 	private URL url;
 	private String description;
 	private int index;

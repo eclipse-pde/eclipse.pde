@@ -94,9 +94,11 @@ public class NewDependencyWizardPage extends WizardPage {
 public NewDependencyWizardPage(IPluginModel model) {
 	super("newDependencyPage");
 	this.model = model;
+	PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
+	provider.connect(this);
 	pluginImage = PDEPluginImages.get(PDEPluginImages.IMG_PLUGIN_OBJ);
 	errorPluginImage = PDEPluginImages.get(PDEPluginImages.IMG_ERR_PLUGIN_OBJ);
-	pluginsImage = PDEPluginImages.DESC_REQ_PLUGINS_OBJ.createImage();
+	pluginsImage = provider.get(PDEPluginImages.DESC_REQ_PLUGINS_OBJ);
 	setTitle(PDEPlugin.getResourceString(KEY_TITLE));
 	setDescription(PDEPlugin.getResourceString(KEY_DESC));
 	setPageComplete(false);
@@ -165,8 +167,8 @@ protected Control createPluginList(Composite parent) {
 }
 
 public void dispose() {
-	pluginsImage.dispose();
 	super.dispose();
+	PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 }
 
 private boolean isOnTheList(IPluginModel candidate) {

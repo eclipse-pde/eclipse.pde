@@ -212,6 +212,12 @@ public class FeaturePlugin
 		if (pluginBase != null) {
 			return pluginBase.getTranslatedName();
 		}
-		return super.getLabel();
+		String name = super.getLabel();
+		if (name==null) name = getId();
+		return name;
+	}
+	
+	public String toString() {
+		return getLabel();
 	}
 }

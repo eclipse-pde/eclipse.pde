@@ -38,9 +38,8 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 	private static final String KEY_DESC = "ImportWizard.DetailedPage.desc";
 	private PluginImportWizardFirstPage firstPage;
 	private IPath dropLocation;
-	private Button showNamesCheck;
 	private CheckboxTableViewer pluginListViewer;
-	private WizardCheckboxTablePart tablePart;
+	private TablePart tablePart;
 	private static final String SETTINGS_SHOW_IDS = "showIds";
 	private static final String KEY_SHOW_NAMES =
 		"ImportWizard.DetailedPage.showNames";
@@ -63,8 +62,6 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 	private static final String KEY_NO_PLUGINS = "ImportWizard.messages.noPlugins";
 	private static final String KEY_NO_SELECTED =
 		"ImportWizard.errors.noPluginSelected";
-	private Image externalPluginImage;
-	private Image externalFragmentImage;
 	private IPluginModelBase[] models;
 	private boolean loadFromRegistry;
 	private boolean block;
@@ -74,38 +71,6 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 		implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
 			return getModels();
-		}
-	}
-
-	public class PluginLabelProvider
-		extends LabelProvider
-		implements ITableLabelProvider {
-		public String getColumnText(Object obj, int index) {
-			if (index == 0) {
-				IPluginModelBase model = (IPluginModelBase) obj;
-				IPluginBase plugin = model.getPluginBase();
-				String name;
-				if (showNamesCheck.getSelection())
-					name = plugin.getTranslatedName();
-				else
-					name = plugin.getId();
-
-				String version = plugin.getVersion();
-				return name + " (" + version + ")";
-			}
-			return "";
-		}
-		public String getText(Object obj) {
-			return getColumnText(obj, 0);
-		}
-		public Image getColumnImage(Object obj, int index) {
-			if (index == 0) {
-				if (obj instanceof IFragmentModel)
-					return externalFragmentImage;
-				else
-					return externalPluginImage;
-			}
-			return null;
 		}
 	}
 
@@ -132,8 +97,6 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 		setTitle(PDEPlugin.getResourceString(KEY_TITLE));
 		setDescription(PDEPlugin.getResourceString(KEY_DESC));
 
-		externalPluginImage = PDEPluginImages.DESC_PLUGIN_OBJ.createImage();
-		externalFragmentImage = PDEPluginImages.DESC_FRAGMENT_OBJ.createImage();
 		this.firstPage = firstPage;
 		dropLocation = null;
 		updateStatus(createStatus(IStatus.ERROR, ""));
@@ -152,18 +115,12 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 
 		tablePart =
 			new TablePart(PDEPlugin.getResourceString(KEY_PLUGIN_LIST), buttonLabels);
+		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 
 	private void initializeFields(IPath dropLocation) {
-		boolean showIds = false;
 		IDialogSettings settings = getDialogSettings();
 
-		if (settings != null) {
-			showIds = settings.getBoolean(SETTINGS_SHOW_IDS);
-		}
-		block = true;
-		showNamesCheck.setSelection(!showIds);
-		block = false;
 		loadFromRegistry = !firstPage.isOtherLocation();
 		if (!dropLocation.equals(this.dropLocation)) {
 			updateStatus(createStatus(IStatus.OK, ""));
@@ -171,15 +128,11 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 			models = null;
 		}
 		pluginListViewer.setInput(PDEPlugin.getDefault());
-		dialogChanged();
+		tablePart.updateCounter(0);
 	}
 
 	public void storeSettings(boolean finishPressed) {
 		IDialogSettings settings = getDialogSettings();
-		boolean showIds = !showNamesCheck.getSelection();
-		if (finishPressed) {
-			settings.put(SETTINGS_SHOW_IDS, showIds);
-		}
 	}
 
 	/*
@@ -205,51 +158,19 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 		layout.marginWidth = 5;
 		container.setLayout(layout);
 
-		showNamesCheck = new Button(container, SWT.CHECK);
-		showNamesCheck.setText(PDEPlugin.getResourceString(KEY_SHOW_NAMES));
-		GridData gd = new GridData();
-		gd.horizontalSpan = 2;
-		showNamesCheck.setLayoutData(gd);
-		showNamesCheck.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (!block)
-					pluginListViewer.refresh();
-			}
-		});
-
 		tablePart.createControl(container);
 		pluginListViewer = tablePart.getTableViewer();
 		pluginListViewer.setContentProvider(new PluginContentProvider());
-		pluginListViewer.setLabelProvider(new PluginLabelProvider());
-		gd = (GridData) tablePart.getControl().getLayoutData();
+		pluginListViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
+		GridData gd = (GridData) tablePart.getControl().getLayoutData();
 		gd.heightHint = 300;
 		gd.widthHint = 300;
 		setControl(container);
 	}
 
-	/*
-		private Button createButton(
-			Composite container,
-			String text,
-			SelectionListener listener) {
-			Button button = new Button(container, SWT.PUSH);
-			button.setText(text);
-			GridData gd =
-				new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
-			gd.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-			int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-			gd.widthHint =
-				Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
-			button.setLayoutData(gd);
-			button.addSelectionListener(listener);
-			return button;
-		}
-	*/
-
 	public void dispose() {
-		externalPluginImage.dispose();
-		externalFragmentImage.dispose();
 		super.dispose();
+		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 	}
 
 	public IPluginModelBase[] getModels() {

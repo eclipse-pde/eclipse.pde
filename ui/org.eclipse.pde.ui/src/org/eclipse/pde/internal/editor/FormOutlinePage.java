@@ -23,7 +23,6 @@ import org.eclipse.pde.internal.base.model.*;
 public class FormOutlinePage extends ContentOutlinePage implements IModelChangedListener {
 
 	protected PDEFormPage formPage;
-	private Image linkImage;
 
 	public class BasicContentProvider
 		extends DefaultContentProvider
@@ -46,18 +45,13 @@ public class FormOutlinePage extends ContentOutlinePage implements IModelChanged
 			return obj.toString();
 		}
 		public Image getImage(Object obj) {
-			if (obj instanceof IPDEEditorPage) {
-				IPDEEditorPage page = (IPDEEditorPage) obj;
-				return linkImage;
-			}
-			return null;
+			return PDEPlugin.getDefault().getLabelProvider().getImage(obj);
 		}
 	}
 	protected TreeViewer treeViewer;
 
 public FormOutlinePage(PDEFormPage formPage) {
 	this.formPage = formPage;
-	linkImage = PDEPluginImages.DESC_PAGE_OBJ.createImage();
 }
 protected ITreeContentProvider createContentProvider() {
 	return new BasicContentProvider();
@@ -83,7 +77,6 @@ protected ILabelProvider createLabelProvider() {
 }
 public void dispose() {
 	super.dispose();
-	linkImage.dispose();
 	Object model = formPage.getModel();
 	if (model instanceof IModelChangeProvider) {
 		((IModelChangeProvider) model).removeModelChangedListener(this);

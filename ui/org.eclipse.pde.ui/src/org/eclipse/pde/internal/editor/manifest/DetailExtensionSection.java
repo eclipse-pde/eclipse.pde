@@ -31,6 +31,7 @@ import java.net.URL;
 import java.net.MalformedURLException;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.pde.internal.parts.TreePart;
+import org.eclipse.pde.internal.preferences.MainPreferencePage;
 
 public class DetailExtensionSection
 	extends TreeSection
@@ -186,8 +187,6 @@ public class DetailExtensionSection
 	}
 				
 	public void dispose() {
-		extensionImage.dispose();
-		genericElementImage.dispose();
 		IPluginModelBase model = (IPluginModelBase) getFormPage().getModel();
 		model.removeModelChangedListener(this);
 		super.dispose();
@@ -325,8 +324,9 @@ public class DetailExtensionSection
 		model.addModelChangedListener(this);
 	}
 	public void initializeImages() {
-		extensionImage = PDEPluginImages.DESC_EXTENSION_OBJ.createImage();
-		genericElementImage = PDEPluginImages.DESC_GENERIC_XML_OBJ.createImage();
+		PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
+		extensionImage = provider.get(PDEPluginImages.DESC_EXTENSION_OBJ);
+		genericElementImage = provider.get(PDEPluginImages.DESC_GENERIC_XML_OBJ);
 	}
 	public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
@@ -415,7 +415,7 @@ public class DetailExtensionSection
 		}
 		try {
 			modelURL = new URL("file:" + path);
-			return PDEPluginImages.getImageFromURL(modelURL, iconPathName);
+			return PDEPlugin.getDefault().getLabelProvider().getImageFromURL(modelURL, iconPathName);
 		} catch (MalformedURLException e) {
 			return null;
 		}
@@ -428,8 +428,11 @@ public class DetailExtensionSection
 		SchemaRegistry schemaRegistry,
 		ExternalModelManager pluginInfoRegistry,
 		Object obj) {
+		boolean fullNames = MainPreferencePage.isFullNameModeEnabled();
 		if (obj instanceof IPluginExtension) {
 			IPluginExtension extension = (IPluginExtension) obj;
+			if (!fullNames) return extension.getPoint();
+			
 			ISchema schema = schemaRegistry.getSchema(extension.getPoint());
 
 			// try extension point schema definition
@@ -446,6 +449,7 @@ public class DetailExtensionSection
 		} else if (obj instanceof IPluginElement) {
 			String name = obj.toString();
 			IPluginElement element = (IPluginElement) obj;
+			if (!fullNames) return name;
 			ISchemaElement elementInfo = element.getElementInfo();
 			if (elementInfo != null && elementInfo.getLabelProperty() != null) {
 				IPluginAttribute att = element.getAttribute(elementInfo.getLabelProperty());

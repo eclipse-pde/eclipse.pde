@@ -38,9 +38,9 @@ public class InfoSection extends PDEFormSection {
 	private static final String KEY_URL = "FeatureEditor.InfoSection.url";
 	private static final String KEY_TEXT = "FeatureEditor.InfoSection.text";
 	private static final String KEY_INFO_DESCRIPTION =
-		"SchemaEditor.info.description";
-	private static final String KEY_INFO_LICENSE = "SchemaEditor.info.license";
-	private static final String KEY_INFO_COPYRIGHT = "SchemaEditor.info.copyright";
+		"FeatureEditor.info.description";
+	private static final String KEY_INFO_LICENSE = "FeatureEditor.info.license";
+	private static final String KEY_INFO_COPYRIGHT = "FeatureEditor.info.copyright";
 	private IDocument document;
 	private IDocumentPartitioner partitioner;
 	private boolean editable = true;

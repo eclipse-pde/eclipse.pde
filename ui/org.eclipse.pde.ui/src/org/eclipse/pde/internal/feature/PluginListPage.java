@@ -21,8 +21,6 @@ public class PluginListPage extends WizardPage {
 	public static final String PAGE_TITLE = "NewFeatureWizard.PlugPage.title";
 	public static final String PAGE_DESC = "NewFeatureWizard.PlugPage.desc";
 	private WizardCheckboxTablePart tablePart;
-	private Image pluginImage;
-	private Image fragmentImage;
 	private IPluginModelBase [] models;
 
 	class PluginContentProvider
@@ -33,31 +31,17 @@ public class PluginListPage extends WizardPage {
 		}
 	}
 
-	class PluginLabelProvider
-		extends LabelProvider
-		implements ITableLabelProvider {
-		public String getColumnText(Object obj, int index) {
-			if (index == 0) {
-				IPluginModelBase model = (IPluginModelBase) obj;
-				IPluginBase base = model.getPluginBase();
-				String label = model.getResourceString(base.getName());
-				return label + " (" + base.getVersion() + ")";
-			}
-			return "";
-		}
-		public Image getColumnImage(Object obj, int index) {
-			IPluginModelBase model = (IPluginModelBase) obj;
-			return model.isFragmentModel() ? fragmentImage : pluginImage;
-		}
-	}
-
 	public PluginListPage() {
 		super("pluginListPage");
-		pluginImage = PDEPluginImages.get(PDEPluginImages.IMG_PLUGIN_OBJ);
-		fragmentImage = PDEPluginImages.get(PDEPluginImages.IMG_FRAGMENT_OBJ);
 		setTitle(PDEPlugin.getResourceString(PAGE_TITLE));
 		setDescription(PDEPlugin.getResourceString(PAGE_DESC));
 		tablePart = new WizardCheckboxTablePart(null);
+		PDEPlugin.getDefault().getLabelProvider().connect(this);
+	}
+	
+	public void dispose() {
+		super.dispose();
+		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 	}
 
 	public void createControl(Composite parent) {
@@ -70,7 +54,7 @@ public class PluginListPage extends WizardPage {
 		tablePart.createControl(container);
 		CheckboxTableViewer pluginViewer = tablePart.getTableViewer();
 		pluginViewer.setContentProvider(new PluginContentProvider());
-		pluginViewer.setLabelProvider(new PluginLabelProvider());
+		pluginViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		GridData gd = (GridData) tablePart.getControl().getLayoutData();
 		gd.heightHint = 250;
 		pluginViewer.setInput(PDEPlugin.getDefault().getWorkspaceModelManager());

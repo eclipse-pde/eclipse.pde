@@ -44,7 +44,7 @@ protected WizardElement createWizardElement(IConfigurationElement config) {
 	if (imageName!=null) {
 		IExtension extension = config.getDeclaringExtension();
 		IPluginDescriptor pd = extension.getDeclaringPluginDescriptor();
-		Image image = PDEPluginImages.getImageFromPlugin(pd, imageName);
+		Image image = PDEPlugin.getDefault().getLabelProvider().getImageFromPlugin(pd, imageName);
 		element.setImage(image);
 	}
 	return element;

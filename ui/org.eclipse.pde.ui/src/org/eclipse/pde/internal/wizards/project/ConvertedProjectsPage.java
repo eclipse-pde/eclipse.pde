@@ -62,7 +62,7 @@ public class ConvertedProjectsPage extends WizardPage {
 			return "";
 		}
 		public Image getColumnImage(Object obj, int index) {
-			return null;
+			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_PROJECT);
 		}
 	}
 

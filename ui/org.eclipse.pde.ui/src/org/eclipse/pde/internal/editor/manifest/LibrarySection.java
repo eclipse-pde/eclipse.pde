@@ -46,7 +46,6 @@ public class LibrarySection
 	public static final String NEW_LIBRARY_ENTRY =
 		"ManifestEditor.LibrarySection.newLibraryEntry";
 
-	private Image libraryImage;
 	private FormWidgetFactory factory;
 	private TableViewer libraryTable;
 
@@ -58,20 +57,6 @@ public class LibrarySection
 				return ((IPluginBase) parent).getLibraries();
 			}
 			return new Object[0];
-		}
-	}
-
-	class TableLabelProvider extends LabelProvider implements ITableLabelProvider {
-		public String getColumnText(Object obj, int index) {
-			if (obj instanceof IPluginLibrary && index == 0) {
-				return ((IPluginLibrary) obj).getName();
-			}
-			return obj.toString();
-		}
-		public Image getColumnImage(Object obj, int index) {
-			if (index == 0)
-				return libraryImage;
-			return null;
 		}
 	}
 
@@ -92,7 +77,6 @@ public class LibrarySection
 	}
 	public Composite createClient(Composite parent, FormWidgetFactory factory) {
 		this.factory = factory;
-		initializeImages();
 		Composite container = createClientContainer(parent, 2, factory);
 		EditableTablePart tablePart = getTablePart();
 		IModel model = (IModel) getFormPage().getModel();
@@ -101,7 +85,7 @@ public class LibrarySection
 		createViewerPartControl(container, SWT.FULL_SELECTION, 2, factory);
 		libraryTable = tablePart.getTableViewer();
 		libraryTable.setContentProvider(new TableContentProvider());
-		libraryTable.setLabelProvider(new TableLabelProvider());
+		libraryTable.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		factory.paintBordersFor(container);
 
 		tablePart.setButtonEnabled(2, false);
@@ -150,7 +134,6 @@ public class LibrarySection
 	}
 
 	public void dispose() {
-		libraryImage.dispose();
 		IPluginModelBase model = (IPluginModelBase) getFormPage().getModel();
 		model.removeModelChangedListener(this);
 		super.dispose();
@@ -250,9 +233,6 @@ public class LibrarySection
 		setReadOnly(!model.isEditable());
 		getTablePart().setButtonEnabled(0, model.isEditable());
 		model.addModelChangedListener(this);
-	}
-	private void initializeImages() {
-		libraryImage = PDEPluginImages.DESC_JAVA_LIB_OBJ.createImage();
 	}
 	public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {

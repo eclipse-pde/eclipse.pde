@@ -43,9 +43,6 @@ public class ImportListSection
 	implements IModelChangedListener, IModelProviderListener {
 	private TableViewer importTable;
 	private FormWidgetFactory factory;
-	private Image importImage;
-	private Image exportImportImage;
-	private Image errorImportImage;
 	public static final String SECTION_TITLE = "ManifestEditor.ImportListSection.title";
 	public static final String SECTION_DESC = "ManifestEditor.ImportListSection.desc";
 	public static final String SECTION_NEW = "ManifestEditor.ImportListSection.new";
@@ -79,16 +76,7 @@ public class ImportListSection
 		}
 	}
 
-	class ImportLabelProvider extends LabelProvider implements ITableLabelProvider {
-		public String getColumnText(Object obj, int index) {
-			return resolveObjectName(obj);
-		}
-		public Image getColumnImage(Object obj, int index) {
-			return resolveObjectImage(obj);
-		}
-	}
-
-public ImportListSection(ManifestDependenciesPage page) {
+	public ImportListSection(ManifestDependenciesPage page) {
 	super(page, new String [] { PDEPlugin.getResourceString(SECTION_NEW) });
 	setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
 	setDescription(PDEPlugin.getResourceString(SECTION_DESC));
@@ -96,14 +84,13 @@ public ImportListSection(ManifestDependenciesPage page) {
 
 public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	this.factory = factory;
-	initializeImages();
 	Composite container = createClientContainer(parent, 2, factory);
 	createViewerPartControl(container, SWT.MULTI, 2, factory);
 	TablePart tablePart = getTablePart();
 	importTable = tablePart.getTableViewer();
 
 	importTable.setContentProvider(new ImportContentProvider());
-	importTable.setLabelProvider(new ImportLabelProvider());
+	importTable.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 	factory.paintBordersFor(container);
 	makeActions();
 	return container;
@@ -125,9 +112,6 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	}
 
 public void dispose() {
-	importImage.dispose();
-	errorImportImage.dispose();
-	exportImportImage.dispose();
 	IPluginModelBase model = (IPluginModelBase)getFormPage().getModel();
 	model.removeModelChangedListener(this);
 	PDEPlugin.getDefault().getWorkspaceModelManager().removeModelProviderListener(this);
@@ -220,19 +204,6 @@ public void initialize(Object input) {
 	PDEPlugin.getDefault().getExternalModelManager().addModelProviderListener(this);
 }
 
-public void initializeImages() {
-	importImage = PDEPluginImages.DESC_REQ_PLUGIN_OBJ.createImage();
-	ImageDescriptor errorDesc = 
-		new OverlayIcon(PDEPluginImages.DESC_REQ_PLUGIN_OBJ, 
-		new ImageDescriptor[][] { {}, {}, { PDEPluginImages.DESC_ERROR_CO }
-	});
-	errorImportImage = errorDesc.createImage();	
-	ImageDescriptor exportDesc = 
-		new OverlayIcon(PDEPluginImages.DESC_REQ_PLUGIN_OBJ, 
-		new ImageDescriptor[][] { { PDEPluginImages.DESC_EXPORT_CO }
-	});
-	exportImportImage = exportDesc.createImage();
-}
 
 private void makeActions() {
 	newAction = new Action() {
@@ -308,21 +279,6 @@ private ImportObject findImportObject(IPluginImport iimport) {
 		   return iobj;
 	}
 	return null;
-}
-
-private Image resolveObjectImage(Object obj) {
-	ImportObject importObject = (ImportObject)obj;
-	if (importObject.isResolved()) {
-		if (importObject.getImport().isReexported())
-			return exportImportImage;
-		else
-	 	  	return importImage;
-	}
-	return errorImportImage;
-}
-
-private String resolveObjectName(Object obj) {
-	return obj.toString();
 }
 
 public void commitChanges(boolean onSave) {

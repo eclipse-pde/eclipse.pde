@@ -48,15 +48,8 @@ public class PDEPluginImages {
 	/**
 	 * Frequently used images
 	 */
-	public static final String IMG_ATT_REQ_OBJ = NAME_PREFIX+"ATT_REQ_OBJ";
-	/**
-	 * Frequently used images
-	 */
 	public static final String IMG_FORM_WIZ = NAME_PREFIX+"FORM_WIZ";
 	public static final String IMG_FORM_BANNER = NAME_PREFIX+"FORM_BANNER";
-	public static final String IMG_ATT_CLASS_OBJ = NAME_PREFIX+"ATT_CLASS_OBJ";
-	public static final String IMG_ATT_IMPL_OBJ = NAME_PREFIX+"ATT_IMPL_OBJ";
-	public static final String IMG_ATT_FILE_OBJ = NAME_PREFIX+"ATT_FILE_OBJ";
 	public static final String IMG_PLUGIN_OBJ = NAME_PREFIX+"PLUGIN_OBJ";
 	public static final String IMG_FRAGMENT_OBJ = NAME_PREFIX+"FRAGMENT_OBJ";
 	public static final String IMG_ERR_PLUGIN_OBJ = NAME_PREFIX+"ERR_PLUGIN_OBJ";
@@ -214,40 +207,9 @@ public static ImageDescriptor getImageDescriptorFromPlugin(
 	return null;
 }
 
-public static Image getImageFromPlugin(
-	IPluginDescriptor pluginDescriptor,
-	String subdirectoryAndFilename) {
-	URL installURL = pluginDescriptor.getInstallURL();
-	return getImageFromURL(installURL, subdirectoryAndFilename);
-}
-
-public static Image getImageFromURL(
-	URL installURL,
-	String subdirectoryAndFilename) {
-	Image image = null;
-	try {
-		URL newURL = new URL(installURL, subdirectoryAndFilename);
-		String key = newURL.toString();
-		if (PLUGIN_REGISTRY==null) initialize();
-		image = PLUGIN_REGISTRY.get(key);
-		if (image==null) {
-			ImageDescriptor desc = ImageDescriptor.createFromURL(newURL);
-			image = desc.createImage();
-			PLUGIN_REGISTRY.put(key, image);
-		}
-	}
-	catch (MalformedURLException e) {
-	}
-	return image;
-}
-
 /* package */
 private static final void initialize() {
 	PLUGIN_REGISTRY = new ImageRegistry();
-	manage(IMG_ATT_REQ_OBJ, DESC_ATT_REQ_OBJ);
-	manage(IMG_ATT_CLASS_OBJ, DESC_ATT_CLASS_OBJ);
-	manage(IMG_ATT_IMPL_OBJ, DESC_ATT_IMPL_OBJ);
-	manage(IMG_ATT_FILE_OBJ, DESC_ATT_FILE_OBJ);
 	manage(IMG_FORM_WIZ, DESC_FORM_WIZ);
 	manage(IMG_FORM_BANNER, DESC_FORM_BANNER);
 	

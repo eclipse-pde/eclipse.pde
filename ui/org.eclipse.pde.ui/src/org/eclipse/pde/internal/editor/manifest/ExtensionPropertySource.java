@@ -51,12 +51,13 @@ public String getNonzeroValue(String value) {
 public IPropertyDescriptor[] getPropertyDescriptors() {
 	if (descriptors == null) {
 		descriptors = new Vector();
+		PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
 		PropertyDescriptor desc = createTextPropertyDescriptor(P_POINT, "point");
 		descriptors.addElement(desc);
 		desc.setLabelProvider(
 			new PropertyLabelProvider(
 				P_POINT,
-				PDEPluginImages.get(PDEPluginImages.IMG_ATT_REQ_OBJ)));
+				provider.get(PDEPluginImages.DESC_ATT_REQ_OBJ)));
 		desc = createTextPropertyDescriptor(P_ID, "id");
 		descriptors.addElement(desc);
 		desc = createTextPropertyDescriptor(P_NAME, "name");

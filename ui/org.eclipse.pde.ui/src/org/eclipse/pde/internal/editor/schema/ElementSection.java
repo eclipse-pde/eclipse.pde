@@ -30,7 +30,6 @@ public class ElementSection
 	private NewElementAction newElementAction = new NewElementAction();
 	private NewAttributeAction newAttributeAction = new NewAttributeAction();
 	private ElementList elements;
-	private Image globalElementImage;
 	public static final String SECTION_TITLE = "SchemaEditor.ElementSection.title";
 	public static final String SECTION_DESC = "SchemaEditor.ElementSection.desc";
 	public static final String SECTION_NEW_ELEMENT = "SchemaEditor.ElementSection.newElement";
@@ -38,41 +37,6 @@ public class ElementSection
 	public static final String POPUP_NEW = "Menus.new.label";
 	public static final String POPUP_DELETE = "Actions.delete.label";
 	private FormWidgetFactory factory;
-
-	public class ElementLabelProvider
-		extends LabelProvider
-		implements ITableLabelProvider {
-		public String getText(Object object) {
-			return getColumnText(object, 1);
-		}
-		public String getColumnText(Object object, int column) {
-			if (column != 1)
-				return "";
-			ISchemaObject sobj = (ISchemaObject) object;
-			String text = sobj.getName();
-			return text != null ? text : "";
-		}
-		public Image getImage(Object object) {
-			return getColumnImage(object, 1);
-		}
-		public Image getColumnImage(Object object, int column) {
-			if (column != 1)
-				return null;
-			if (object instanceof ISchemaElement)
-				return globalElementImage;
-			if (object instanceof ISchemaAttribute) {
-				ISchemaAttribute att = (ISchemaAttribute) object;
-				if (att.getKind() == ISchemaAttribute.JAVA)
-					return PDEPluginImages.get(PDEPluginImages.IMG_ATT_CLASS_OBJ);
-				if (att.getKind() == ISchemaAttribute.RESOURCE)
-				    return PDEPluginImages.get(PDEPluginImages.IMG_ATT_FILE_OBJ);
-				if (att.getUse() == ISchemaAttribute.REQUIRED)
-					return PDEPluginImages.get(PDEPluginImages.IMG_ATT_REQ_OBJ);
-				return PDEPluginImages.get(PDEPluginImages.IMG_ATT_IMPL_OBJ);
-			}
-			return null;
-		}
-	}
 
 	class ContentProvider
 		extends DefaultContentProvider
@@ -118,7 +82,7 @@ private void createTree(Composite container, FormWidgetFactory factory) {
 	treeViewer = treePart.getTreeViewer();
 	treeViewer.setAutoExpandLevel(TreeViewer.ALL_LEVELS);
 	treeViewer.setContentProvider(new ContentProvider()); 
-	treeViewer.setLabelProvider(new ElementLabelProvider());
+	treeViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 }
 
 protected void buttonSelected(int index) {
@@ -128,7 +92,6 @@ protected void buttonSelected(int index) {
 
 public void dispose() {
 	schema.removeModelChangedListener(this);
-	globalElementImage.dispose();
 	super.dispose();
 }
 
@@ -229,14 +192,11 @@ private void handleNewElement() {
 	newElementAction.run();
 }
 public void initialize(Object input) {
-	initializeImages();
 	this.schema = (Schema)input;
 	treeViewer.setInput(input);
 	schema.addModelChangedListener(this);
 }
-private void initializeImages() {
-	globalElementImage = PDEPluginImages.DESC_GEL_SC_OBJ.createImage();
-}
+
 public void modelChanged(IModelChangedEvent e) {
 	if (e.getChangeType()==IModelChangedEvent.WORLD_CHANGED) {
 		treeViewer.refresh();

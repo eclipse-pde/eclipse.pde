@@ -44,7 +44,6 @@ public class VariableSection
 	public static final String SECTION_DESC = "BuildEditor.VariableSection.desc";
 	private FormWidgetFactory factory;
 	private TableViewer variableTable;
-	private Image variableImage;
 
 	class TableContentProvider
 		extends DefaultContentProvider
@@ -58,20 +57,6 @@ public class VariableSection
 		}
 	}
 
-	class TableLabelProvider extends LabelProvider implements ITableLabelProvider {
-		public String getColumnText(Object obj, int index) {
-			if (obj instanceof IBuildEntry && index == 0) {
-				return ((IBuildEntry) obj).getName();
-			}
-			return obj.toString();
-		}
-		public Image getColumnImage(Object obj, int index) {
-			if (index == 0)
-				return variableImage;
-			return null;
-		}
-	}
-
 	public VariableSection(BuildPage page) {
 		super(page, new String[] { PDEPlugin.getResourceString(SECTION_NEW)});
 		setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
@@ -79,7 +64,6 @@ public class VariableSection
 	}
 	public Composite createClient(Composite parent, FormWidgetFactory factory) {
 		this.factory = factory;
-		initializeImages();
 		Composite container = createClientContainer(parent, 2, factory);
 
 		EditableTablePart tablePart = getTablePart();
@@ -90,7 +74,7 @@ public class VariableSection
 
 		variableTable = tablePart.getTableViewer();
 		variableTable.setContentProvider(new TableContentProvider());
-		variableTable.setLabelProvider(new TableLabelProvider());
+		variableTable.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		factory.paintBordersFor(container);
 		return container;
 	}
@@ -126,7 +110,6 @@ public class VariableSection
 	}
 
 	public void dispose() {
-		variableImage.dispose();
 		IBuildModel model = (IBuildModel) getFormPage().getModel();
 		model.removeModelChangedListener(this);
 		super.dispose();
@@ -206,9 +189,6 @@ public class VariableSection
 		setReadOnly(!model.isEditable());
 		getTablePart().setButtonEnabled(0, model.isEditable());
 		model.addModelChangedListener(this);
-	}
-	private void initializeImages() {
-		variableImage = PDEPluginImages.DESC_BUILD_VAR_OBJ.createImage();
 	}
 	public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {

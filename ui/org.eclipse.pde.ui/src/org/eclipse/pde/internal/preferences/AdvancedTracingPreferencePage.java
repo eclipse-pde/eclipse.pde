@@ -29,8 +29,6 @@ public class AdvancedTracingPreferencePage extends PreferencePage implements IWo
 	public static final String KEY_EXTERNAL_PLUGINS = "Preferences.AdvancedTracingPage.externalPlugins";
 	public static final String KEY_OPTIONS = "Preferences.AdvancedTracingPage.options";
 	private TreeViewer pluginTreeViewer;
-	private Image pluginImage;
-	private Image pluginsImage;
 	private NamedElement workspacePlugins;
 	private Properties masterOptions;
 	private NamedElement externalPlugins;
@@ -41,26 +39,6 @@ public class AdvancedTracingPreferencePage extends PreferencePage implements IWo
 	private boolean wasHidden=false;
 	private PropertySheetPage propertySheet;
 	
-	class PluginLabelProvider extends LabelProvider {
-		public String getText(Object obj) {
-			if (obj instanceof IPluginModel) {
-				IPluginModel model = (IPluginModel) obj;
-				String name = model.getPlugin().getName();
-				name = model.getResourceString(name);
-				//return name + " " + model.getPlugin().getVersion();
-				return name;
-			}
-			return obj.toString();
-		}
-		public Image getImage(Object obj) {
-			if (obj instanceof IPluginModel)
-				return pluginImage;
-			if (obj instanceof NamedElement)
-				return ((NamedElement) obj).getImage();
-			return null;
-		}
-	}
-
 	class PluginContentProvider
 		extends DefaultContentProvider
 		implements ITreeContentProvider {
@@ -93,9 +71,8 @@ public class AdvancedTracingPreferencePage extends PreferencePage implements IWo
 	}
 
 public AdvancedTracingPreferencePage() {
-	pluginImage = PDEPluginImages.DESC_PLUGIN_OBJ.createImage();
-	pluginsImage = PDEPluginImages.DESC_REQ_PLUGINS_OBJ.createImage();
 	setDescription(PDEPlugin.getResourceString(KEY_DESC));
+	PDEPlugin.getDefault().getLabelProvider().connect(this);
 }
 protected Control createContents(Composite parent) {
 	Composite container = new Composite(parent, SWT.NULL);
@@ -124,7 +101,7 @@ protected Control createContents(Composite parent) {
 protected Control createPluginList(Composite parent) {
 	pluginTreeViewer = new TreeViewer(parent, SWT.BORDER);
 	pluginTreeViewer.setContentProvider(new PluginContentProvider());
-	pluginTreeViewer.setLabelProvider(new PluginLabelProvider());
+	pluginTreeViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 	pluginTreeViewer.addFilter(new ViewerFilter () {
 		public boolean select(Viewer v, Object parent, Object object) {
 			if (object instanceof IPluginModel) {
@@ -142,6 +119,7 @@ protected Control createPluginList(Composite parent) {
 				pluginSelected(null);
 		}
 	});
+	Image pluginsImage = PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_REQ_PLUGINS_OBJ);
 	workspacePlugins = new NamedElement(PDEPlugin.getResourceString(KEY_WORKSPACE_PLUGINS), pluginsImage);
 	externalPlugins = new NamedElement(PDEPlugin.getResourceString(KEY_EXTERNAL_PLUGINS), pluginsImage);
 	return pluginTreeViewer.getTree();
@@ -160,10 +138,9 @@ protected Control createPropertySheet(Composite parent) {
 	return composite;
 }
 public void dispose() {
-	pluginImage.dispose();
-	pluginsImage.dispose();
 	propertySheet.dispose();
 	super.dispose();
+	PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 }
 private void fillTraceableModelList(IPluginModel[] models, Vector result) {
 	for (int i = 0; i < models.length; i++) {

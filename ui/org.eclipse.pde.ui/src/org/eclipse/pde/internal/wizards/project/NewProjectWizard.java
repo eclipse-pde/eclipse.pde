@@ -40,6 +40,7 @@ public class NewProjectWizard extends NewWizard
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWPPRJ_WIZ);
 		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
 		setNeedsProgressMonitor(true);
+		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 public void addPages() {
 	super.addPages();
@@ -95,13 +96,16 @@ protected WizardElement createWizardElement(IConfigurationElement config) {
 	if (imageName != null) {
 		IPluginDescriptor pd =
 			config.getDeclaringExtension().getDeclaringPluginDescriptor();
-		Image image = PDEPluginImages.getImageFromPlugin(pd, imageName);
+		Image image = PDEPlugin.getDefault().getLabelProvider().getImageFromPlugin(pd, imageName);
 		element.setImage(image);
 	}
 	return element;
 }
 public void dispose() {
+	super.dispose();
+	PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 }
+
 public ElementList getAvailableCodegenWizards() {
 	ElementList wizards = new ElementList("CodegenWizards");
 	IPluginRegistry registry = Platform.getPluginRegistry();

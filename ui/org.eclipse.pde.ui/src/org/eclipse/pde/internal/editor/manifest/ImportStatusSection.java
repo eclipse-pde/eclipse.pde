@@ -181,9 +181,6 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	return container;
 }
 public void dispose() {
-	importImage.dispose();
-	warningLoopImage.dispose();
-	loopNodeImage.dispose();
 	IPluginModelBase model = (IPluginModelBase)getFormPage().getModel();
 	model.removeModelChangedListener(this);
 	super.dispose();
@@ -225,15 +222,13 @@ public void initialize(Object input) {
 }
 
 public void initializeImages() {
-	importImage = PDEPluginImages.DESC_REQ_PLUGIN_OBJ.createImage();
+	PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
 	pluginImage = PDEPluginImages.get(PDEPluginImages.IMG_PLUGIN_OBJ);
 	fragmentImage = PDEPluginImages.get(PDEPluginImages.IMG_FRAGMENT_OBJ);
-	loopNodeImage = PDEPluginImages.DESC_LOOP_NODE_OBJ.createImage();
-	ImageDescriptor warningDesc = 
-		new OverlayIcon(PDEPluginImages.DESC_LOOP_OBJ, 
-		new ImageDescriptor[][] { {}, {}, { PDEPluginImages.DESC_WARNING_CO }
-	});
-	warningLoopImage = warningDesc.createImage();
+
+	importImage = provider.get(PDEPluginImages.DESC_REQ_PLUGIN_OBJ);
+	loopNodeImage = provider.get(PDEPluginImages.DESC_LOOP_NODE_OBJ);
+	warningLoopImage = provider.get(PDEPluginImages.DESC_LOOP_OBJ, provider.F_WARNING);
 }
 
 private void makeActions() {
@@ -390,16 +385,15 @@ private Image resolveObjectImage(Object obj) {
 }
 
 private String resolveObjectName(Object obj) {
+	PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
 	if (mode==REFERENCE_MODE) {
 		if (obj instanceof IPlugin) {
-			IPlugin plugin = (IPlugin)obj;
-			return plugin.getTranslatedName();
+			return provider.getText(obj);			
 		}
 	}
 	if (mode==FREFERENCE_MODE) {
 		if (obj instanceof IFragment) {
-			IFragment fragment = (IFragment)obj;
-			return fragment.getTranslatedName();
+			return provider.getText(obj);
 		}
 	}
 	return obj.toString();

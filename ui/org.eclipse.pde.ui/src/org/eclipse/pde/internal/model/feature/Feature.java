@@ -357,8 +357,10 @@ public class Feature extends VersionableObject implements IFeature {
 			case INFO_COPYRIGHT :
 				property = P_COPYRIGHT;
 				break;
+			default:
+				return;
 		}
-		firePropertyChanged(P_DESCRIPTION, oldValue, info);
+		firePropertyChanged(property, oldValue, info);
 	}
 
 	public void write(String indent, PrintWriter writer) {

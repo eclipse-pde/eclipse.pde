@@ -19,38 +19,21 @@ import org.eclipse.pde.internal.*;
 
 public class PluginSelectionDialog extends SelectionDialog {
 	public static final String KEY_TITLE = "PluginSelectionDialog.title";
-	public static final String KEY_WORKSPACE_PLUGINS = "PluginSelectionDialog.workspacePlugins";
-	public static final String KEY_EXTERNAL_PLUGINS = "PluginSelectionDialog.externalPlugins";
+	public static final String KEY_WORKSPACE_PLUGINS =
+		"PluginSelectionDialog.workspacePlugins";
+	public static final String KEY_EXTERNAL_PLUGINS =
+		"PluginSelectionDialog.externalPlugins";
 	private TreeViewer treeViewer;
-	private Image pluginImage;
-	private Image pluginsImage;
 	private NamedElement workspacePlugins;
 	private NamedElement externalPlugins;
 	private Label messageLabel;
 
-	class PluginLabelProvider extends LabelProvider {
-		public String getText(Object obj) {
-			if (obj instanceof IPluginModel) {
-				IPluginModel model = (IPluginModel) obj;
-				String name = model.getPlugin().getName();
-				name = model.getResourceString(name);
-				return name + " (" + model.getPlugin().getVersion()+")";
-			}
-			return obj.toString();
-		}
-		public Image getImage(Object obj) {
-			if (obj instanceof IPluginModel)
-				return pluginImage;
-			if (obj instanceof NamedElement)
-				return ((NamedElement) obj).getImage();
-			return null;
-		}
-	}
 	class PluginContentProvider
 		extends DefaultContentProvider
 		implements ITreeContentProvider {
 		public boolean hasChildren(Object parent) {
-			if (parent instanceof IPluginModel) return false;
+			if (parent instanceof IPluginModel)
+				return false;
 			return true;
 		}
 		public Object[] getChildren(Object parent) {
@@ -84,80 +67,89 @@ public class PluginSelectionDialog extends SelectionDialog {
 		}
 	}
 
-public PluginSelectionDialog(Shell parentShell) {
-	super(parentShell);
-	pluginImage = PDEPluginImages.DESC_PLUGIN_OBJ.createImage();
-	pluginsImage = PDEPluginImages.DESC_REQ_PLUGINS_OBJ.createImage();
-	setTitle(PDEPlugin.getResourceString(KEY_TITLE));
-}
-public boolean close() {
-	pluginImage.dispose();
-	pluginsImage.dispose();
-	return super.close();
-}
-protected Control createDialogArea(Composite parent) {
-	Composite container = new Composite(parent, SWT.NULL);
-	GridLayout layout = new GridLayout();
-	layout.marginWidth = 10;
-	layout.marginHeight = 10;
-	container.setLayout(layout);
-	container.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-	Control tree = createTree(container);
-	GridData gd = new GridData(GridData.FILL_BOTH);
-	tree.setLayoutData(gd);
-	messageLabel = new Label(container, SWT.NULL);
-	gd = new GridData(GridData.FILL_HORIZONTAL);
-	messageLabel.setLayoutData(gd);
-	updateMessageLabel();
-	return container;
-}
-private Control createTree(Composite container) {
-	Tree tree = new Tree(container, SWT.SINGLE | SWT.BORDER);
-
-	treeViewer = new TreeViewer(tree);
-	treeViewer.setLabelProvider(new PluginLabelProvider());
-	treeViewer.setContentProvider(new PluginContentProvider());
-	treeViewer.setAutoExpandLevel(999);
-	treeViewer.addFilter(new ViewerFilter () {
-		public boolean select(Viewer v, Object parent, Object object) {
-			if (object instanceof IPluginModel) {
-				return ((IPluginModel)object).isEnabled();
-			}
-			return true;
-		}
-	});
-	treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-		public void selectionChanged(SelectionChangedEvent e) {
-			Object item = ((IStructuredSelection) e.getSelection()).getFirstElement();
-			if (item instanceof IPluginModel)
-				pluginSelected((IPluginModel) item);
-			else
-				pluginSelected(null);
-		}
-	});
-	workspacePlugins = new NamedElement(PDEPlugin.getResourceString(KEY_WORKSPACE_PLUGINS), pluginsImage);
-	externalPlugins = new NamedElement(PDEPlugin.getResourceString(KEY_EXTERNAL_PLUGINS), pluginsImage);
-	treeViewer.setInput(PDEPlugin.getDefault());
-	return tree;
-}
-private void pluginSelected(IPluginModel model) {
-	if (model != null) {
-		Vector result = new Vector();
-		result.add(model);
-		setResult(result);
-		setMessage(((LabelProvider) treeViewer.getLabelProvider()).getText(model));
-	} else {
-		setResult(null);
-		setMessage("");
+	public PluginSelectionDialog(Shell parentShell) {
+		super(parentShell);
+		setTitle(PDEPlugin.getResourceString(KEY_TITLE));
+		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
-}
-public void setMessage(String message) {
-	super.setMessage(message);
-	updateMessageLabel();
-}
-public void updateMessageLabel() {
-	if (getMessage()!=null) messageLabel.setText(getMessage());
-	else messageLabel.setText("");
-}
+	public boolean close() {
+		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
+		return super.close();
+	}
+	protected Control createDialogArea(Composite parent) {
+		Composite container = new Composite(parent, SWT.NULL);
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = 10;
+		layout.marginHeight = 10;
+		container.setLayout(layout);
+		container.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		Control tree = createTree(container);
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		tree.setLayoutData(gd);
+		messageLabel = new Label(container, SWT.NULL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		messageLabel.setLayoutData(gd);
+		updateMessageLabel();
+		return container;
+	}
+	private Control createTree(Composite container) {
+		Tree tree = new Tree(container, SWT.SINGLE | SWT.BORDER);
+
+		treeViewer = new TreeViewer(tree);
+		treeViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
+		treeViewer.setContentProvider(new PluginContentProvider());
+		treeViewer.setAutoExpandLevel(999);
+		treeViewer.addFilter(new ViewerFilter() {
+			public boolean select(Viewer v, Object parent, Object object) {
+				if (object instanceof IPluginModel) {
+					return ((IPluginModel) object).isEnabled();
+				}
+				return true;
+			}
+		});
+		treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent e) {
+				Object item = ((IStructuredSelection) e.getSelection()).getFirstElement();
+				if (item instanceof IPluginModel)
+					pluginSelected((IPluginModel) item);
+				else
+					pluginSelected(null);
+			}
+		});
+		Image pluginsImage =
+			PDEPlugin.getDefault().getLabelProvider().get(
+				PDEPluginImages.DESC_REQ_PLUGINS_OBJ);
+		workspacePlugins =
+			new NamedElement(
+				PDEPlugin.getResourceString(KEY_WORKSPACE_PLUGINS),
+				pluginsImage);
+		externalPlugins =
+			new NamedElement(
+				PDEPlugin.getResourceString(KEY_EXTERNAL_PLUGINS),
+				pluginsImage);
+		treeViewer.setInput(PDEPlugin.getDefault());
+		return tree;
+	}
+	private void pluginSelected(IPluginModel model) {
+		if (model != null) {
+			Vector result = new Vector();
+			result.add(model);
+			setResult(result);
+			setMessage(((LabelProvider) treeViewer.getLabelProvider()).getText(model));
+		} else {
+			setResult(null);
+			setMessage("");
+		}
+	}
+	public void setMessage(String message) {
+		super.setMessage(message);
+		updateMessageLabel();
+	}
+	public void updateMessageLabel() {
+		if (getMessage() != null)
+			messageLabel.setText(getMessage());
+		else
+			messageLabel.setText("");
+	}
 }

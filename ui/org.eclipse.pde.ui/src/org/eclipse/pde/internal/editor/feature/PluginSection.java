@@ -67,25 +67,6 @@ public class PluginSection
 		}
 	}
 
-	class PluginLabelProvider
-		extends LabelProvider
-		implements ITableLabelProvider {
-		public String getColumnText(Object obj, int index) {
-			if (obj instanceof FeaturePlugin) {
-				FeaturePlugin fref = (FeaturePlugin) obj;
-				IPluginBase pluginBase = fref.getPluginBase();
-				if (pluginBase != null) {
-					return pluginBase.getTranslatedName() + " (" + pluginBase.getVersion() + ")";
-				} else
-					return obj.toString();
-			}
-			return obj.toString();
-		}
-		public Image getColumnImage(Object obj, int index) {
-			return getReferenceImage(obj);
-		}
-	}
-
 	public PluginSection(FeatureReferencePage page) {
 		super(page, new String[] { PDEPlugin.getResourceString(KEY_NEW)});
 		setHeaderText(PDEPlugin.getResourceString(PLUGIN_TITLE));
@@ -106,7 +87,7 @@ public class PluginSection
 		TablePart tablePart = getTablePart();
 		pluginViewer = tablePart.getTableViewer();
 		pluginViewer.setContentProvider(new PluginContentProvider());
-		pluginViewer.setLabelProvider(new PluginLabelProvider());
+		pluginViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		factory.paintBordersFor(container);
 		makeActions();
 		return container;
@@ -158,25 +139,6 @@ public class PluginSection
 		manager.add(new Separator());
 		manager.add(propertiesAction);
 		getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager);
-	}
-	private Image getReferenceImage(Object obj) {
-		if (!(obj instanceof FeaturePlugin))
-			return null;
-		FeaturePlugin fref = (FeaturePlugin) obj;
-		IPluginBase pluginBase = fref.getPluginBase();
-		if (pluginBase != null) {
-			if (fref.isFragment())
-				return fragmentImage;
-			else
-				return pluginImage;
-		} else {
-			if (warningFragmentImage == null)
-				initializeOverlays();
-			if (fref.isFragment())
-				return warningFragmentImage;
-			else
-				return warningPluginImage;
-		}
 	}
 
 	private void handleNew() {
@@ -249,16 +211,6 @@ public class PluginSection
 		model.addModelChangedListener(this);
 		WorkspaceModelManager mng = PDEPlugin.getDefault().getWorkspaceModelManager();
 		mng.addModelProviderListener(this);
-	}
-	private void initializeOverlays() {
-		warningFragmentImage =
-			createWarningImage(
-				PDEPluginImages.DESC_FRAGMENT_OBJ,
-				PDEPluginImages.DESC_ERROR_CO);
-		warningPluginImage =
-			createWarningImage(
-				PDEPluginImages.DESC_PLUGIN_OBJ,
-				PDEPluginImages.DESC_ERROR_CO);
 	}
 
 	public void modelChanged(IModelChangedEvent e) {

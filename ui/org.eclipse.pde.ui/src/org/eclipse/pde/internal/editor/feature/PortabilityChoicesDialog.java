@@ -117,6 +117,8 @@ public class PortabilityChoicesDialog extends Dialog {
 			}
 			checkboxTablePart.setSelection(selected.toArray());
 		}
+		else 
+			checkboxTablePart.selectAll(false);
 	}
 
 	private PortabilityChoice findChoice(String value) {

@@ -43,52 +43,11 @@ public class WorkbenchLauncherWizardAdvancedPage
 	private CheckboxTreeViewer pluginTreeViewer;
 	private Label visibleLabel;
 	private Label restoreLabel;
-	private Image pluginImage;
-	private Image fragmentImage;
-	private Image pluginsImage;
-	private Image errorFragmentImage;
-	private Image errorPluginImage;
 	private NamedElement workspacePlugins;
 	private NamedElement externalPlugins;
 	private Vector externalList;
 	private Vector workspaceList;
 	private Button defaultsButton;
-
-	class PluginLabelProvider extends LabelProvider {
-		public String getText(Object obj) {
-			if (obj instanceof IPluginModelBase) {
-				IPluginModelBase model = (IPluginModelBase) obj;
-				IPluginBase plugin = model.getPluginBase();
-				String id = plugin.getId();
-				String name = plugin.getTranslatedName();
-				String version = plugin.getVersion();
-				String result = id;
-
-				if (showNamesCheck.getSelection() && name != null)
-					result = name;
-				if (version != null)
-					result += " (" + version + ")";
-				if (!model.isInSync()) {
-					result += " "+PDEPlugin.getResourceString(KEY_OUT_OF_SYNC);
-				}
-				return result;
-			}
-			return obj.toString();
-		}
-		public Image getImage(Object obj) {
-			if (obj instanceof IPluginModelBase) {
-				IPluginModelBase model = (IPluginModelBase)obj;
-				boolean error = !(model.isLoaded() && model.isInSync());
-				if (obj instanceof IPluginModel)
-					return error ? errorPluginImage : pluginImage;
-				if (obj instanceof IFragmentModel)
-					return error ? errorFragmentImage : fragmentImage;
-			}
-			if (obj instanceof NamedElement)
-				return ((NamedElement) obj).getImage();
-			return null;
-		}
-	}
 
 	class PluginContentProvider
 		extends DefaultContentProvider
@@ -167,15 +126,11 @@ public class WorkbenchLauncherWizardAdvancedPage
 		super("WorkbenchLauncherWizardAdvancedPage", false);
 		setTitle(title);
 		setDescription("Plug-ins and fragments visible to the plug-in loader.");
-		pluginImage = PDEPluginImages.get(PDEPluginImages.IMG_PLUGIN_OBJ);
-		errorPluginImage = PDEPluginImages.get(PDEPluginImages.IMG_ERR_PLUGIN_OBJ);
-		fragmentImage = PDEPluginImages.get(PDEPluginImages.IMG_FRAGMENT_OBJ);
-		errorFragmentImage = PDEPluginImages.get(PDEPluginImages.IMG_ERR_FRAGMENT_OBJ);
-		pluginsImage = PDEPluginImages.DESC_REQ_PLUGINS_OBJ.createImage();
+		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 
 	public void dispose() {
-		pluginsImage.dispose();
+		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();
 	}
 
@@ -285,7 +240,7 @@ public class WorkbenchLauncherWizardAdvancedPage
 	protected Control createPluginList(Composite parent) {
 		pluginTreeViewer = new CheckboxTreeViewer(parent, SWT.BORDER);
 		pluginTreeViewer.setContentProvider(new PluginContentProvider());
-		pluginTreeViewer.setLabelProvider(new PluginLabelProvider());
+		pluginTreeViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		pluginTreeViewer.setAutoExpandLevel(2);
 		pluginTreeViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
@@ -308,6 +263,8 @@ public class WorkbenchLauncherWizardAdvancedPage
 				return 0;
 			}
 		});
+		
+		Image pluginsImage = PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_REQ_PLUGINS_OBJ);
 
 		workspacePlugins =
 			new NamedElement(

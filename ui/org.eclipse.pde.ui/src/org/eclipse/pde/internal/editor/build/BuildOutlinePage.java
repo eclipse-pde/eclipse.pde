@@ -48,7 +48,7 @@ public class BuildOutlinePage extends FormOutlinePage {
 
 public BuildOutlinePage(PDEFormPage formPage) {
 	super(formPage);
-	variableImage = PDEPluginImages.DESC_BUILD_VAR_OBJ.createImage();
+	variableImage = PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_BUILD_VAR_OBJ);
 }
 protected ITreeContentProvider createContentProvider() {
 	return new ContentProvider();
@@ -63,7 +63,6 @@ protected ILabelProvider createLabelProvider() {
 }
 public void dispose() {
 	super.dispose();
-	variableImage.dispose();
 	IBuildModel model = (IBuildModel)formPage.getModel();
 	model.removeModelChangedListener(this);
 }

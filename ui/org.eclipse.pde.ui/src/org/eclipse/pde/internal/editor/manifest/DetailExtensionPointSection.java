@@ -44,7 +44,6 @@ public class DetailExtensionPointSection
 	private TableViewer pointTable;
 	private SchemaRegistry schemaRegistry;
 	private ExternalModelManager pluginInfoRegistry;
-	private Image pointImage;
 
 	class TableContentProvider
 		extends DefaultContentProvider
@@ -57,21 +56,6 @@ public class DetailExtensionPointSection
 		}
 	}
 
-	class TableLabelProvider extends LabelProvider implements ITableLabelProvider {
-		public String getColumnText(Object obj, int index) {
-			if (obj instanceof IPluginExtensionPoint && index == 0) {
-				IPluginExtensionPoint point = (IPluginExtensionPoint) obj;
-				return point.getResourceString(point.getName());
-			}
-			return obj.toString();
-		}
-		public Image getColumnImage(Object obj, int index) {
-			if (index == 0)
-				return pointImage;
-			return null;
-		}
-	}
-
 	public DetailExtensionPointSection(ManifestExtensionPointPage page) {
 		super(page, new String [] { PDEPlugin.getResourceString(SECTION_NEW) });
 		this.setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
@@ -80,14 +64,13 @@ public class DetailExtensionPointSection
 	}
 	public Composite createClient(Composite parent, FormWidgetFactory factory) {
 		this.factory = factory;
-		initializeImages();
 		Composite container = createClientContainer(parent, 2, factory);
 		
 		createViewerPartControl(container, SWT.FULL_SELECTION, 2, factory);
 		TablePart part = getTablePart();
 		pointTable = part.getTableViewer();
 		pointTable.setContentProvider(new TableContentProvider());
-		pointTable.setLabelProvider(new TableLabelProvider());
+		pointTable.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		factory.paintBordersFor(container);
 		
 		GridData gd = (GridData)part.getControl().getLayoutData();
@@ -102,7 +85,6 @@ public class DetailExtensionPointSection
 	}
 	
 	public void dispose() {
-		pointImage.dispose();
 		IPluginModelBase model = (IPluginModelBase) getFormPage().getModel();
 		model.removeModelChangedListener(this);
 		super.dispose();
@@ -187,9 +169,6 @@ public class DetailExtensionPointSection
 		setReadOnly(!model.isEditable());
 		getTablePart().setButtonEnabled(0, model.isEditable());
 		model.addModelChangedListener(this);
-	}
-	private void initializeImages() {
-		pointImage = PDEPluginImages.DESC_EXT_POINT_OBJ.createImage();
 	}
 	public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {

@@ -21,6 +21,7 @@ import org.eclipse.pde.internal.base.model.plugin.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.parts.TreePart;
+import org.eclipse.pde.internal.preferences.MainPreferencePage;
 
 public class DetailChildrenSection
 	extends TreeSection
@@ -176,7 +177,6 @@ public class DetailChildrenSection
 	}
 
 	public void dispose() {
-		genericElementImage.dispose();
 		IPluginModelBase model = (IPluginModelBase) getFormPage().getModel();
 		model.removeModelChangedListener(this);
 		super.dispose();
@@ -246,7 +246,9 @@ public class DetailChildrenSection
 		updateInput();
 	}
 	public void initializeImages() {
-		genericElementImage = PDEPluginImages.DESC_GENERIC_XML_OBJ.createImage();
+		genericElementImage =
+			PDEPlugin.getDefault().getLabelProvider().get(
+				PDEPluginImages.DESC_GENERIC_XML_OBJ);
 	}
 	public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
@@ -288,6 +290,7 @@ public class DetailChildrenSection
 	}
 	private String resolveObjectName(Object obj) {
 		String value = obj.toString();
+		if (!MainPreferencePage.isFullNameModeEnabled()) return value;
 		if (obj instanceof IPluginElement) {
 			IPluginElement element = (IPluginElement) obj;
 			ISchemaElement elementInfo = element.getElementInfo();
