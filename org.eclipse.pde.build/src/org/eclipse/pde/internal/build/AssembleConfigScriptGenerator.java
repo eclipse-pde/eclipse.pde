@@ -197,8 +197,8 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		for (int i = 0; i < plugins.length; i++) {
 			BundleDescription plugin = plugins[i];
 			if (forceUpdateJarFormat) //Force the updateJar if it is asked as an output format
-				pluginsPostProcessingSteps.put(plugin.getUniqueId(), UPDATEJAR);
-			generatePostProcessingSteps(plugin.getUniqueId(), plugin.getVersion().toString(), BUNDLE);
+				pluginsPostProcessingSteps.put(plugin.getSymbolicName(), UPDATEJAR);
+			generatePostProcessingSteps(plugin.getSymbolicName(), plugin.getVersion().toString(), BUNDLE);
 		}
 
 		for (int i = 0; i < features.length; i++) {
@@ -302,7 +302,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		final int parameterSize = 15;
 		List parameters = new ArrayList(parameterSize + 1);
 		for (int i = 0; i < plugins.length; i++) {
-			parameters.add(getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + (String) getFinalShape(plugins[i].getUniqueId(), plugins[i].getVersion().toString(), BUNDLE)[0]);
+			parameters.add(getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + (String) getFinalShape(plugins[i].getSymbolicName(), plugins[i].getVersion().toString(), BUNDLE)[0]);
 			if (i % parameterSize == 0) {
 				createZipExecCommand(parameters);
 				parameters.clear();
@@ -374,7 +374,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	private void generateAntZipTarget() {
 		FileSet[] filesPlugins = new FileSet[plugins.length];
 		for (int i = 0; i < plugins.length; i++) {
-			Object[] shape = getFinalShape(plugins[i].getUniqueId(), plugins[i].getVersion().toString(), BUNDLE);
+			Object[] shape = getFinalShape(plugins[i].getSymbolicName(), plugins[i].getVersion().toString(), BUNDLE);
 			filesPlugins[i] = new ZipFileSet(getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + (String) shape[0], shape[1].equals(new Byte(FILE)), null, null, null, null, null, getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + (String) shape[0], null);
 		}
 		script.printZipTask(getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH), null, false, true, filesPlugins);

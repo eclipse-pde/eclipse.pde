@@ -773,7 +773,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		try {
 			pluginRoot = new File(getLocation(model));
 		} catch (CoreException e) {
-			Platform.getPlugin(PI_PDEBUILD).getLog().log(e.getStatus());
+			BundleHelper.getDefault().getLog().log(e.getStatus());
 			return;
 		}
 		for (int i = 0; i < sources.length; i++) {
@@ -781,7 +781,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			if (!file.exists()) {
 				sources[i] = null;
 				IStatus status = new Status(IStatus.WARNING, PI_PDEBUILD, EXCEPTION_SOURCE_LOCATION_MISSING, Policy.bind("warning.cannotLocateSource", file.getAbsolutePath()), null); //$NON-NLS-1$
-				Platform.getPlugin(PI_PDEBUILD).getLog().log(status);
+				BundleHelper.getDefault().getLog().log(status);
 			}
 		}
 	}

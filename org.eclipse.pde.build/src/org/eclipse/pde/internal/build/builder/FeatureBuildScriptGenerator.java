@@ -107,7 +107,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, message, null));
 			} else {
 				result.add(model);
-				getCompiledElements().add(model.getUniqueId());
+				getCompiledElements().add(model.getSymbolicName());
 			}
 			collectElementToAssemble(pluginList[i]);
 			collectSourcePlugins(pluginList[i], model);
@@ -642,7 +642,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			if (writtenCalls.contains(current))
 				continue;
 			writtenCalls.add(current);
-			IPluginEntry[] entries = Utils.getPluginEntry(feature, current.getUniqueId(), false);
+			IPluginEntry[] entries = Utils.getPluginEntry(feature, current.getSymbolicName(), false);
 			for (int j = 0; j < entries.length; j++) {
 				List list = selectConfigs(entries[j]);
 				if (list.size() == 0)
@@ -932,11 +932,11 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 			if (model == null) {
 				String message = Policy.bind("exception.missingPlugin", extraPlugins[i]); //$NON-NLS-1$
-				Platform.getPlugin(PI_PDEBUILD).getLog().log(new Status(IStatus.WARNING, extraPlugins[i], EXCEPTION_PLUGIN_MISSING, message, null));
+				BundleHelper.getDefault().getLog().log(new Status(IStatus.WARNING, extraPlugins[i], EXCEPTION_PLUGIN_MISSING, message, null));
 				continue;
 			}
 			PluginEntry entry = new PluginEntry();
-			entry.setPluginIdentifier(model.getUniqueId());
+			entry.setPluginIdentifier(model.getSymbolicName());
 			entry.setPluginVersion(model.getVersion().toString());
 			sourceFeature.addPluginEntryModel(entry);
 		}
@@ -960,7 +960,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		// Create the plugin.xml
 		StringBuffer buffer;
 		Path templatePluginXML = new Path("templates/plugin/" + DEFAULT_PLUGIN_FILENAME_DESCRIPTOR); //$NON-NLS-1$
-		URL templatePluginURL = Platform.getPlugin(PI_PDEBUILD).find(templatePluginXML);
+		URL templatePluginURL = BundleHelper.getDefault().find(templatePluginXML);
 		if (templatePluginURL == null) {
 			IStatus status = new Status(IStatus.WARNING, PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_READING_FILE, Policy.bind("error.readingDirectory", templatePluginURL.toExternalForm()), null); //$NON-NLS-1$
 			BundleHelper.getDefault().getLog().log(status);
