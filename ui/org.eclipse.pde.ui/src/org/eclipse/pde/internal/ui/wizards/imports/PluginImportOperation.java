@@ -287,9 +287,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		return buildModel;
 	}
 	
-	private void importPluginContent(IProject project, IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
-		boolean isSWTPlugin = model.getPluginBase().getId().equals("org.eclipse.swt");
-		
+	private void importPluginContent(IProject project, IPluginModelBase model, IProgressMonitor monitor) throws CoreException {		
 		monitor.beginTask("", 2);
 		
 		importContent(
@@ -305,6 +303,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 					new Path(model.getInstallLocation()),
 					new SubProgressMonitor(monitor, 1));
 		
+		boolean isSWTPlugin = model.getPluginBase().getId().equals("org.eclipse.swt");
 		if (isSWTPlugin) {
 			IFragment swtFragment = getSWTFragment(model);
 			if (swtFragment != null) {
@@ -538,12 +537,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		for (int i = 0; i < fModels.length; i++) {
 			if (fModels[i] instanceof IFragmentModel) {
 				IFragment fragment = ((IFragmentModel) fModels[i]).getFragment();
-				if (PDECore.compare(
-						model.getPluginBase().getId(),
-						model.getPluginBase().getVersion(),
-						fragment.getPluginId(),
-						fragment.getVersion(),
-						fragment.getRule())) {
+				if (fragment.getId().equals("org.eclipse.swt.win32")) {
 					return fragment;
 				}
 			}
