@@ -111,7 +111,7 @@ public void generateBuildScript(PrintWriter output,PluginModel descriptor) {
 
 	generateBinTarget(output, descriptor);
 
-//	generateLogsTarget(output, descriptor);
+	generateLogsTarget(output, descriptor);
 				
 	generateCleanTarget(output, descriptor);
 	generateEpilogue(output, descriptor);

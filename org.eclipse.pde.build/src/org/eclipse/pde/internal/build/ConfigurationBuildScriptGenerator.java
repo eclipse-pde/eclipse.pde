@@ -128,6 +128,7 @@ protected void generateBuildScript(PrintWriter output) {
 	generateTemplateTargetCall(output,TARGET_JAR);
 	generateBinTarget(output);
 	generateTemplateTargetCall(output,TARGET_SRC);
+	generateTemplateTargetCall(output,TARGET_LOG);
 	generateCleanTarget(output);
 	generateAllTarget(output);
 	generateEpilogue(output);
