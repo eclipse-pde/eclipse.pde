@@ -243,7 +243,7 @@ public class MailTemplate extends PDETemplateSection {
 		
 		property = model.getFactory().createElement(element);
 		property.setName("property"); //$NON-NLS-1$
-		property.setAttribute("name", "windowImage"); //$NON-NLS-1$ //$NON-NLS-2$
+		property.setAttribute("name", "windowImages"); //$NON-NLS-1$ //$NON-NLS-2$
 		property.setAttribute("value", "icons/sample2.gif"); //$NON-NLS-1$ //$NON-NLS-2$
 		element.add(property);
 
