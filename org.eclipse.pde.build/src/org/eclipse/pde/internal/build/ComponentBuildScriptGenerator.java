@@ -1,12 +1,12 @@
 package org.eclipse.pde.internal.core;
+
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
 
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.*;
 import java.util.*;
 import org.eclipse.core.internal.plugins.PluginParser;
 import org.eclipse.core.runtime.*;
@@ -58,7 +58,7 @@ protected String determineFullComponentModelId() {
 	if (componentModel == null)
 		return "";
 
-	return componentModel.getId() + "_" + componentModel.getVersion();
+	return componentModel.getId() + SEPARATOR_VERSION + componentModel.getVersion();
 }
 protected PluginModel[] determinePlugins() {
 	if (plugins == null) {
@@ -413,7 +413,7 @@ public static void main(String[] args) throws Exception {
 public static void main(String argString) throws Exception {
 	main(tokenizeArgs(argString));
 }
-public String[][] computePrerequisiteOrder(PluginModel[] plugins) {
+protected String[][] computePrerequisiteOrder(PluginModel[] plugins) {
 	List prereqs = new ArrayList(9);
 	List pluginList = new ArrayList(plugins.length);
 	for (int i = 0; i < plugins.length; i++) 
@@ -434,7 +434,7 @@ public String[][] computePrerequisiteOrder(PluginModel[] plugins) {
 	String[][] prereqArray = (String[][]) prereqs.toArray(new String[prereqs.size()][]);
 	return computeNodeOrder(prereqArray);
 }
-public static String[][] computeNodeOrder(String[][] specs) {
+protected static String[][] computeNodeOrder(String[][] specs) {
 	HashMap counts = computeCounts(specs);
 	List nodes = new ArrayList(counts.size());
 	while (!counts.isEmpty()) {
@@ -451,7 +451,7 @@ public static String[][] computeNodeOrder(String[][] specs) {
 	result[1] = (String[]) counts.keySet().toArray(new String[counts.size()]);
 	return result;
 }
-private static HashMap computeCounts(String[][] mappings) {
+protected static HashMap computeCounts(String[][] mappings) {
 	HashMap counts = new HashMap(5);
 	for (int i = 0; i < mappings.length; i++) {
 		String from = mappings[i][0];
@@ -468,7 +468,7 @@ private static HashMap computeCounts(String[][] mappings) {
 	}
 	return counts;
 }
-private static List findRootNodes(HashMap counts) {
+protected static List findRootNodes(HashMap counts) {
 	List result = new ArrayList(5);
 	for (Iterator i = counts.keySet().iterator(); i.hasNext();) {
 		String node = (String) i.next();
@@ -478,7 +478,7 @@ private static List findRootNodes(HashMap counts) {
 	}
 	return result;
 }
-private static void removeArcs(String[][] mappings, List roots, HashMap counts) {
+protected static void removeArcs(String[][] mappings, List roots, HashMap counts) {
 	for (Iterator j = roots.iterator(); j.hasNext();) {
 		String root = (String) j.next();
 		for (int i = 0; i < mappings.length; i++) {
