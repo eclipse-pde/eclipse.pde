@@ -93,32 +93,12 @@ public class ExtensionsSection extends TreeSection
 			return getChildren(parent);
 		}
 	}
-	class ExtensionLabelProvider extends LabelProvider
-			implements
-				ITableLabelProvider {
-		public String getColumnText(Viewer v, Object obj, int index) {
-			return getColumnText(obj, index);
-		}
+	class ExtensionLabelProvider extends LabelProvider {
 		public String getText(Object obj) {
-			return getColumnText(obj, 1);
+			return resolveObjectName(obj);
 		}
 		public Image getImage(Object obj) {
-			return getColumnImage(obj, 1);
-		}
-		public String getColumnText(Object obj, int index) {
-			if (index == 1) {
-				return resolveObjectName(obj);
-			}
-			return "";
-		}
-		public Image getColumnImage(Object obj, int index) {
-			if (index == 1) {
-				return resolveObjectImage(obj);
-			}
-			return null;
-		}
-		public Image getColumnImage(Viewer v, Object obj, int index) {
-			return getColumnImage(obj, index);
+			return resolveObjectImage(obj);
 		}
 	}
 	public ExtensionsSection(PDEFormPage page, Composite parent) {
@@ -576,8 +556,8 @@ public class ExtensionsSection extends TreeSection
 				return pointInfo.getResourceString(pointInfo.getName());
 			}
 		} else if (obj instanceof IPluginElement) {
-			String baseName = obj.toString();
 			IPluginElement element = (IPluginElement) obj;
+			String baseName = element.getName();			
 			String fullName = null;
 			ISchemaElement elementInfo = getSchemaElement(element);
 			IPluginAttribute labelAtt = null;

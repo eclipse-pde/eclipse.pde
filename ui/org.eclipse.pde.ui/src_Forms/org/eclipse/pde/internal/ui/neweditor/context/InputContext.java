@@ -164,7 +164,7 @@ public abstract class InputContext {
 	}
 	
 	public boolean mustSave() {
-		return documentProvider.mustSaveDocument(input);
+		return documentProvider.canSaveDocument(input);
 	}
 	
 	public void dispose() {
