@@ -72,6 +72,7 @@ public class PDECore extends Plugin {
 	private PluginModelManager modelManager;
 	private SourceLocationManager sourceLocationManager;
 	private TempFileManager tempFileManager;
+	private boolean modelsLocked=false;
 
 	public PDECore(IPluginDescriptor descriptor) {
 		super(descriptor);
@@ -111,6 +112,8 @@ public class PDECore extends Plugin {
 		String id,
 		String version,
 		int match) {
+			
+		if (modelsLocked) return null;
 
 		for (int i = 0; i < models.length; i++) {
 			IFeatureModel model = models[i];
@@ -170,6 +173,7 @@ public class PDECore extends Plugin {
 	}
 
 	public IFragment[] findFragmentsFor(String id, String version) {
+		if (modelsLocked) return new IFragment[0];
 		HashMap result = new HashMap();
 		IFragment[] extFragments = externalModelManager.getFragmentsFor(id, version);
 		for (int i = 0; i < extFragments.length; i++) {
@@ -189,6 +193,7 @@ public class PDECore extends Plugin {
 	}
 	
 	public IPlugin findPlugin(String id, String version, int match) {
+		if (modelsLocked) return null;
 		IPluginModelBase model = getModelManager().findPlugin(id, version, match);
 		if (model != null
 			&& model.isEnabled()
@@ -202,6 +207,7 @@ public class PDECore extends Plugin {
 	}
 	
 	public IFeature findFeature(String id, String version, int match) {
+		if (modelsLocked) return null;
 		WorkspaceModelManager manager = getWorkspaceModelManager();
 		return findFeature(manager.getWorkspaceFeatureModels(), id, version, match);
 	}
@@ -287,6 +293,7 @@ public class PDECore extends Plugin {
 	}
 	
 	private void initializeModels() {
+		modelsLocked=true;
 		if (externalModelManager == null)
 			externalModelManager = new ExternalModelManager();
 
@@ -298,6 +305,7 @@ public class PDECore extends Plugin {
 			modelManager = new PluginModelManager();
 			modelManager.connect(workspaceModelManager, externalModelManager);
 		}
+		modelsLocked = false;
 	}
 		
 	public static void log(IStatus status) {
