@@ -189,7 +189,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory {
 				IPluginModelBase model = entry.getExternalModel();
 				if (model == null)
 					continue;
-				ClasspathUtilCore.addLibraries(model, false, entryResult);
+				ClasspathUtilCore.addLibraries(model, false, false, entryResult);
 			}
 			addUniqueEntries(result, entryResult);			
 		}

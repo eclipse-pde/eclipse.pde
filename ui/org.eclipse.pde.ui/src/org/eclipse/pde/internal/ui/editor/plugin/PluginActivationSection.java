@@ -25,7 +25,6 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.build.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.context.*;
 import org.eclipse.pde.internal.ui.elements.*;

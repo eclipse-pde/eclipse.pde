@@ -20,7 +20,6 @@ import org.eclipse.debug.core.model.*;
 import org.eclipse.jdt.launching.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.build.*;
 import org.eclipse.pde.internal.core.*;
 
 public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDelegate 

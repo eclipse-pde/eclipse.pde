@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.*;
 import java.util.*;
 
 import org.eclipse.core.resources.*;
@@ -485,9 +484,7 @@ public class PluginModelManager implements IAdaptable {
 		if (model.getBundleDescription() != null) {
 			state.removeBundleDescription(model.getBundleDescription());
 		}
-		IResource file = model.getUnderlyingResource();
-		int segments = file.getName().equals("MANIFEST.MF") ? 2 : 1; //$NON-NLS-1$
-		model.setBundleDescription(state.addBundle(new File(file.getLocation().removeLastSegments(segments).toString())));		
+		model.setBundleDescription(state.addBundle(model));		
 	}
 	
 	private void removeWorkspaceBundleFromState(IPluginModelBase model, PDEState state) {
@@ -521,7 +518,7 @@ public class PluginModelManager implements IAdaptable {
 		PDEState state = fExternalManager.getState();
 		state.removeBundleDescription(description);
 		
-		BundleDescription newDesc = state.addBundle(new File(model.getInstallLocation()));
+		BundleDescription newDesc = state.addBundle(model);
 		model.setBundleDescription(newDesc);
 	}
 	

@@ -14,6 +14,7 @@ import java.io.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.plugin.*;
 import org.w3c.dom.*;
 
@@ -33,7 +34,16 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 		return name!=null;
 	}
 	public String[] getContentFilters() {
-		return contentFilters;
+		IPluginModelBase model = (IPluginModelBase)getModel();
+		BundleDescription desc = model.getBundleDescription();
+		ArrayList list = new ArrayList();
+		if (desc != null) {
+			ExportPackageDescription[] exports = desc.getExportPackages();
+			for (int i = 0; i < exports.length; i++) {
+				list.add(exports[i].getName());
+			}
+		}
+		return (String[])list.toArray(new String[list.size()]);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginLibrary#addContentFilter(java.lang.String)

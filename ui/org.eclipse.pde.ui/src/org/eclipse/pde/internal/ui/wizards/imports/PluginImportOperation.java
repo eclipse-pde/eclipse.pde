@@ -557,7 +557,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 	}
 	
 	private void getLinkedLibraries(IProject project, IPluginModelBase model, Vector entries) throws CoreException {
-		ClasspathUtilCore.addLibraries(model, true, entries);
+		ClasspathUtilCore.addLibraries(model, true, false, entries);
 		for (int i = 0; i < entries.size(); i++) {
 			IPath path = new Path(model.getInstallLocation());
 			IClasspathEntry entry = (IClasspathEntry)entries.get(i);	

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import java.io.*;
 import java.lang.reflect.*;
 import java.util.*;
 
@@ -200,7 +199,7 @@ public class PluginValidationOperation implements IRunnableWithProgress {
 	public void run(IProgressMonitor monitor) throws InvocationTargetException,
 			InterruptedException {
 		for (int i = 0; i < fModels.length; i++) {
-			BundleDescription desc = fState.addBundle(new File(fModels[i].getInstallLocation()), false, false);
+			BundleDescription desc = fState.addBundle(fModels[i]);
 			if (desc == null)
 				fInvalidModels.add(fModels[i]);
 		}

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.build;
+package org.eclipse.pde.internal.core;
 
 import java.io.*;
 import java.net.*;
@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
 
 public class ClasspathHelper {
 
@@ -83,6 +82,9 @@ public class ClasspathHelper {
 	}
 	
 	public static Dictionary getDevDictionary(IPluginModelBase model) {
+		if (model.getUnderlyingResource() == null)
+			return null;
+		
 		String id = model.getPluginBase().getId();
 		if (id == null || id.trim().length() == 0)
 			return null;

@@ -16,11 +16,14 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
+import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 
 public class ClasspathUtilCore {
+	
+	private static boolean ENABLE_RESTRICTIONS = false;
 
 	public static void setClasspath(
 		IPluginModelBase model,
@@ -208,59 +211,81 @@ public class ClasspathUtilCore {
 		IPluginModelBase model = (IPluginModelBase)plugin.getModel();
 		IResource resource = model.getUnderlyingResource();
 		if (resource != null) {
-			addProjectEntry(resource.getProject(), isExported, result);
+			addProjectEntry(resource.getProject(), (IPluginModelBase)plugin.getModel(), isExported, result);
 		} else {
-			addLibraries(model, isExported, result);
+			addLibraries(model, isExported, true, result);
 		}
 		return resource != null;
 	}
 	
-	private static void addProjectEntry(IProject project, boolean isExported, Vector result) throws CoreException {
+	private static void addProjectEntry(IProject project, IPluginModelBase model, boolean isExported, Vector result) throws CoreException {
 		if (project.hasNature(JavaCore.NATURE_ID)) {
-			IClasspathEntry entry =
-				JavaCore.newProjectEntry(project.getFullPath(), isExported);
-			if (!result.contains(entry))
+			IClasspathEntry entry = null;
+			if (ENABLE_RESTRICTIONS) {
+				IPath[] inclusionPatterns = getInclusionPatterns(model);
+				IPath[] exclusionPatterns = (inclusionPatterns.length == 0) ? new IPath[] {new Path("**/*")} : new Path[0]; //$NON-NLS-1$
+				entry = JavaCore.newProjectEntry(project.getFullPath(), inclusionPatterns, exclusionPatterns, isExported);
+			} else {
+				entry = JavaCore.newProjectEntry(project.getFullPath(), isExported);		
+			}
+			if (entry != null && !result.contains(entry))
 				result.add(entry);
-		}	
-	}
-	
-	public static void addLibraries(IPluginModelBase model, boolean isExported, Vector result) throws CoreException {
-		String location = model.getInstallLocation();	
-		// handle Plugin-in-a-JAR
-		if (new File(location).isFile() && location.endsWith(".jar")) { //$NON-NLS-1$
-			addJARdPlugin(model, isExported, result);
-		} else {
-			addLibraryEntries(model.getPluginBase(), isExported, result);
 		}
 	}
 	
-	private static void addLibraryEntries(IPluginBase plugin, boolean isExported, Vector result) {
+	public static void addLibraries(IPluginModelBase model, boolean isExported, boolean useInclusionPatterns, Vector result) throws CoreException {
+		String location = model.getInstallLocation();	
+		// handle Plugin-in-a-JAR
+		if (new File(location).isFile() && location.endsWith(".jar")) { //$NON-NLS-1$
+			addJARdPlugin(model, isExported, useInclusionPatterns, result);
+		} else {
+			addLibraryEntries(model.getPluginBase(), isExported, useInclusionPatterns, result);
+		}
+	}
+	
+	private static void addLibraryEntries(IPluginBase plugin, boolean isExported, boolean useInclusionPatterns, Vector result) {
 		IPluginLibrary[] libraries = plugin.getLibraries();
 		for (int i = 0; i < libraries.length; i++) {
 			if (IPluginLibrary.RESOURCE.equals(libraries[i].getType())
 				|| !libraries[i].isExported())
 				continue;
 			IClasspathEntry entry =
-				createLibraryEntry(libraries[i], isExported);
+				createLibraryEntry(libraries[i], isExported, useInclusionPatterns);
 			if (entry != null && !result.contains(entry)) {
 				result.add(entry);
 			}
 		}		
 	}
 	
-	private static void addJARdPlugin(IPluginModelBase model, boolean isExported, Vector result) throws CoreException {
+	private static void addJARdPlugin(IPluginModelBase model,
+			boolean isExported, boolean useInclusionPatterns, Vector result)
+			throws CoreException {
+		
 		IPath sourcePath = getSourceAnnotation(model, "."); //$NON-NLS-1$
 		if (sourcePath == null)
 			sourcePath = new Path(model.getInstallLocation());
-		IClasspathEntry entry =
-			JavaCore.newLibraryEntry(
-					new Path(model.getInstallLocation()),
-					sourcePath,
-					null,
-					isExported);
+		
+		IClasspathEntry entry = null;
+		if (ENABLE_RESTRICTIONS) {
+			IPath[] inclusionPatterns = useInclusionPatterns ? getInclusionPatterns(model) : new IPath[0];
+			IPath[] exclusionPatterns = (inclusionPatterns.length == 0 && useInclusionPatterns) ? new IPath[] { new Path("**/*") } : new Path[0]; //$NON-NLS-1$
+			entry = JavaCore.newLibraryEntry(
+						new Path(model.getInstallLocation()), 
+						sourcePath, 
+						null,
+						inclusionPatterns, 
+						exclusionPatterns, 
+						isExported);
+		} else {
+			entry = JavaCore.newLibraryEntry(
+						new Path(model.getInstallLocation()), 
+						sourcePath, 
+						null, 
+						isExported);
+		}
 		if (entry != null && !result.contains(entry)) {
 			result.add(entry);
-		}					
+		}
 	}
 	
 	protected static void addImplicitDependencies(
@@ -362,7 +387,7 @@ public class ClasspathUtilCore {
 					}
 				}
 			} else {
-				IClasspathEntry entry = createLibraryEntry(library, library.isExported());
+				IClasspathEntry entry = createLibraryEntry(library, library.isExported(), false);
 				if (entry != null && !result.contains(entry))
 					result.add(entry);
 			}
@@ -412,7 +437,10 @@ public class ClasspathUtilCore {
 
 	private static IClasspathEntry createLibraryEntry(
 		IPluginLibrary library,
-		boolean exported) {
+		boolean exported,
+		boolean useInclusionPatterns) {
+		
+		IClasspathEntry entry = null;
 		try {
 			String name = library.getName();
 			String expandedName = expandLibraryName(name);
@@ -427,14 +455,41 @@ public class ClasspathUtilCore {
 					return null;
 				path = getPath(model, expandedName);
 			}
-			return JavaCore.newLibraryEntry(
-				path,
-				getSourceAnnotation(model, expandedName),
-				null,
-				exported);
+			
+			if (ENABLE_RESTRICTIONS) {
+				IPath[] inclusionPatterns = useInclusionPatterns ? getInclusionPatterns((IPluginModelBase) library.getModel()) : new IPath[0];
+				IPath[] exclusionPatterns = (inclusionPatterns.length == 0 && useInclusionPatterns) ? new IPath[] { new Path("**/*") } : new Path[0]; //$NON-NLS-1$
+				entry = JavaCore.newLibraryEntry(
+							path, 
+							getSourceAnnotation(model, expandedName), 
+							null, 
+							inclusionPatterns,
+							exclusionPatterns, 
+							exported);
+			} else {
+				entry = JavaCore.newLibraryEntry(
+						path, 
+						getSourceAnnotation(model, expandedName),
+						null, 
+						exported);
+
+			}
 		} catch (CoreException e) {
 			return null;
 		}
+		return entry;
+	}
+	
+	private static IPath[] getInclusionPatterns(IPluginModelBase model) {
+		BundleDescription desc = model.getBundleDescription();
+		ArrayList list = new ArrayList();
+		if (desc != null) {
+			ExportPackageDescription[] exports = desc.getExportPackages();
+			for (int i = 0; i < exports.length; i++) {
+				list.add(new Path(exports[i].getName().replaceAll("\\.", "/") + "/*")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			}
+		}
+		return (IPath[])list.toArray(new IPath[list.size()]);
 	}
 	
 	public static boolean containsVariables(String name) {

@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
+import java.io.*;
 import java.net.*;
 import java.util.*;
 
@@ -208,8 +209,37 @@ public class ExternalModelManager {
 		}
 		
 		PDECore.getDefault().savePluginPreferences();
+		clearStaleStates();
 	}
 	
+	private void clearStaleStates() {
+		File dir = new File(PDECore.getDefault().getStateLocation().toOSString());
+		File[] children = dir.listFiles();
+		if (children != null) {
+			for (int i = 0; i < children.length; i++) {
+				File child = children[i];
+				if (child.isDirectory()) {
+					String name = child.getName();
+					if (name.endsWith(".cache")  //$NON-NLS-1$
+							&& name.length() != 6
+							&& !name.equals(Long.toString(fState.getTimestamp()) + ".cache")) { //$NON-NLS-1$
+						clearDirectory(child);
+					}
+				}
+			}
+		}
+	}
+
+	private void clearDirectory(File dir) {
+		File[] children = dir.listFiles();
+		if (children != null) {
+			for (int i = 0; i < children.length; i++) {
+				children[i].delete();
+			}
+		}
+		dir.delete();
+	}
+
 	public PDEState getState() {
 		loadModels(new NullProgressMonitor());
 		return fState;

@@ -52,11 +52,12 @@ public class PDEState {
 	private IPluginModelBase[] fModels;
 	private HashMap fPluginInfos;
 	private HashMap fExtensions;
+	private long fTimestamp;
 	
 	static {
 		DEBUG  = PDECore.getDefault().isDebugging() 
 					&& "true".equals(Platform.getDebugOption("org.eclipse.pde.core/cache")); //$NON-NLS-1$ //$NON-NLS-2$
-		DIR = DIR = PDECore.getDefault().getStateLocation().append(".cache").toOSString(); //$NON-NLS-1$
+		DIR = PDECore.getDefault().getStateLocation().toOSString(); 
 		stateObjectFactory = Platform.getPlatformAdmin().getFactory();
 	}
 	
@@ -75,22 +76,24 @@ public class PDEState {
 
 		long start = System.currentTimeMillis();
 		if (fResolve) {
-			long timestamp = computeTimestamp(fURLs);
-			if (!readStateCache(timestamp) || !reachPluginInfoCache(timestamp)) {
+			fTimestamp = computeTimestamp(fURLs);
+			File dir = new File(DIR, Long.toString(fTimestamp) + ".cache"); //$NON-NLS-1$
+			if (dir.exists() && (!readStateCache(dir) || !reachPluginInfoCache(dir))) {
 				createState();
-				saveState(timestamp);
-				savePluginInfo(timestamp);
+				saveState(dir);
+				savePluginInfo(dir);
 			} else {
 				if (fState != null) {
 					fId = fState.getBundles().length;
 				} else {
+					dir.mkdirs();
 					createState();
-					saveState(timestamp);
-					savePluginInfo(timestamp);					
+					saveState(dir);
+					savePluginInfo(dir);					
 				}				
 			}
-			if (!readExtensionsCache(timestamp)) {
-				saveExtensions(timestamp);
+			if (!readExtensionsCache(dir)) {
+				saveExtensions(dir);
 			}
 		} else {
 			createState();
@@ -106,8 +109,8 @@ public class PDEState {
 			System.out.println("Total time elapsed to initialize models: " + (end - start) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
-	private boolean reachPluginInfoCache(long timestamp) {
-		File file = new File(DIR, Long.toString(timestamp) + ".pluginInfo"); //$NON-NLS-1$
+	private boolean reachPluginInfoCache(File dir) {
+		File file = new File(dir, ".pluginInfo"); //$NON-NLS-1$
 		if (file.exists() && file.isFile()) {
 			long start = System.currentTimeMillis();
 			try {
@@ -136,9 +139,9 @@ public class PDEState {
 		return false;
 	}
 
-	private boolean readExtensionsCache(long timestamp) {
+	private boolean readExtensionsCache(File dir) {
 		fExtensions = new HashMap();
-		File file = new File(DIR, Long.toString(timestamp) + ".extensions"); //$NON-NLS-1$
+		File file = new File(dir, ".extensions"); //$NON-NLS-1$
 		if (file.exists() && file.isFile()) {
 			long start = System.currentTimeMillis();
 			try {
@@ -169,14 +172,11 @@ public class PDEState {
 		return false;
 	}
 	
-	private boolean readStateCache(long timestamp) {
-		File file = new File(DIR, Long.toString(timestamp) + ".state"); //$NON-NLS-1$
-		if (file.exists() && file.isFile()) {
+	private boolean readStateCache(File dir) {
+		if (dir.exists() && dir.isDirectory()) {
 			long start = System.currentTimeMillis();
-			InputStream stream = null;
 			try {
-				stream = new FileInputStream(file);
-				fState = stateObjectFactory.readState(stream);	
+				fState = stateObjectFactory.readState(dir);	
 				return fState != null;
 			} catch (IllegalStateException e) {
 				PDECore.log(e);
@@ -185,11 +185,6 @@ public class PDEState {
 			} catch (IOException e) {
 				PDECore.log(e);
 			} finally {
-				try {
-					if (stream != null)
-						stream.close();
-				} catch (IOException e1) {
-				}
 				long end = System.currentTimeMillis();
 				if (DEBUG)
 					System.out.println("########Time to read state from cache: " + (end - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -209,32 +204,24 @@ public class PDEState {
 			System.out.println("########Time to create state from scratch: " + (end - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
-	private void saveState(long timestamp) {
+	private void saveState(File dir) {
 		long start = System.currentTimeMillis();
-		File file = createFile(timestamp, "state"); //$NON-NLS-1$
-		OutputStream stream = null;
 		try {
-			stream = new FileOutputStream(file);
-			stateObjectFactory.writeState(fState, stream);
+			stateObjectFactory.writeState(fState, dir);
 		} catch (FileNotFoundException e) {
 			PDECore.log(e);
 		} catch (IOException e) {
 			PDECore.log(e);
 		} finally {
-			try {
-				if (stream != null)
-					stream.close();
-			} catch (IOException e1) {
-			}
 		}
 		long end = System.currentTimeMillis();
 		if (DEBUG)
 			System.out.println("########Time to save new state: " + (end - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
-	private void savePluginInfo(long timestamp) {
+	private void savePluginInfo(File dir) {
 		long start = System.currentTimeMillis();
-		File file = createFile(timestamp, "pluginInfo"); //$NON-NLS-1$
+		File file = new File(dir, ".pluginInfo"); //$NON-NLS-1$
 		OutputStream out = null;
 		Writer writer = null;
 		try {
@@ -288,10 +275,10 @@ public class PDEState {
 			System.out.println("########Time to save new aux plugin info: " + (end - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
-	private void saveExtensions(long timestamp) {
+	private void saveExtensions(File dir) {
 		fExtensions = new HashMap();
 		long start = System.currentTimeMillis();
-		File file = createFile(timestamp, "extensions"); //$NON-NLS-1$
+		File file = new File(dir, ".extensions"); //$NON-NLS-1$
 		OutputStream out = null;
 		Writer writer = null;
 		try {
@@ -331,23 +318,6 @@ public class PDEState {
 		long end = System.currentTimeMillis();
 		if (DEBUG)
 			System.out.println("########Time to parse and save extensions: " + (end - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
-	}
-
-	private File createFile(long timestamp, String extension) {
-		File dir = new File(DIR);
-		if (!dir.exists() || !dir.isDirectory()) {
-			dir.mkdirs();
-		} else {
-			File[] files = dir.listFiles();
-			if (files != null) {
-				for (int i = 0; i < files.length; i++) {
-					File file = files[i];
-					if (file.isFile() && file.getName().endsWith("." + extension)) //$NON-NLS-1$
-						file.delete();
-				}
-			}
-		}	
-		return new File(dir, Long.toString(timestamp) + "." + extension); //$NON-NLS-1$
 	}
 
 	private long getNextId() {
@@ -424,7 +394,7 @@ public class PDEState {
 		setTargetMode();
 		fMonitor.beginTask("", fURLs.length); //$NON-NLS-1$
 		for (int i = 0; i < fURLs.length; i++) {
-			addBundle(new File(fURLs[i].getFile()), true, true);
+			addBundle(new File(fURLs[i].getFile()), true, true, null);
 			fMonitor.worked(1);
 		}
 	}
@@ -507,11 +477,12 @@ public class PDEState {
 		}
 		fPluginInfos.put(element.getAttribute("bundleID"), info); //$NON-NLS-1$
 	}
-	public BundleDescription addBundle(File bundleLocation) {
-		return addBundle(bundleLocation, false, false);
+	
+	public BundleDescription addBundle(IPluginModelBase model) {
+		return addBundle(new File(model.getInstallLocation()), false, false, ClasspathHelper.getDevDictionary(model));
 	}
 	
-	public BundleDescription addBundle(File bundleLocation, boolean keepLibraries, boolean logException) {
+	public BundleDescription addBundle(File bundleLocation, boolean keepLibraries, boolean logException, Dictionary dictionary) {
 		Dictionary manifest =  loadManifest(bundleLocation);
 		if (manifest == null || manifest.get(Constants.BUNDLE_SYMBOLICNAME) == null) {
 			try {
@@ -519,7 +490,7 @@ public class PDEState {
 						!new File(bundleLocation, "fragment.xml").exists()) //$NON-NLS-1$
 					return null;
 				PluginConverter converter = acquirePluginConverter();
-				manifest = converter.convertManifest(bundleLocation, false, getTargetMode(), false);
+				manifest = converter.convertManifest(bundleLocation, false, getTargetMode(), true, dictionary);
 				if (manifest == null || manifest.get(Constants.BUNDLE_SYMBOLICNAME) == null)
 					throw new Exception();
 			} catch (Exception e1) {
@@ -681,6 +652,10 @@ public class PDEState {
 			}
 		}
 		return null;
+	}
+	
+	public long getTimestamp() {
+		return fTimestamp;
 	}
 
 }
