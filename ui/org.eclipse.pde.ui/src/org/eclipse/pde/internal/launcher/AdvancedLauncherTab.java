@@ -394,7 +394,7 @@ public class AdvancedLauncherTab
 	private String getModelKey(IPluginModelBase model) {
 		IPluginBase plugin = model.getPluginBase();
 		String id = plugin.getId();
-		String version = plugin.getVersion();
+		//String version = plugin.getVersion();
 		//String key = id + "_"+version;
 		String key = id;
 		return key;

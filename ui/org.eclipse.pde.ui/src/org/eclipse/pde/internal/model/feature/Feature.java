@@ -230,7 +230,6 @@ public class Feature extends VersionableObject implements IFeature {
 		String id,
 		String version,
 		int match) {
-		PluginVersionIdentifier vid = null;
 
 		for (int i = 0; i < plugins.size(); i++) {
 			IFeaturePlugin fp = (IFeaturePlugin) plugins.get(i);

@@ -56,7 +56,6 @@ public class TemplateForm extends WebForm {
 		FormWidgetFactory factory = getFactory();
 
 		FormEngine text;
-		HyperlinkAction action;
 		SharedLabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
 		Image pageImage = provider.get(PDEPluginImages.DESC_PAGE_OBJ);
 		Image runImage = provider.get(PDEPluginImages.DESC_RUN_EXC);

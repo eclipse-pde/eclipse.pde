@@ -108,7 +108,6 @@ public class UpdateClasspathOperation implements IWorkspaceRunnable {
 		IWorkspaceRoot root,
 		IClasspathEntry entry,
 		ArrayList entries) {
-		IPlugin plugin = (IPlugin) model.getPluginBase();
 		IProject[] projects = root.getProjects();
 
 		for (int i = 0; i < projects.length; i++) {

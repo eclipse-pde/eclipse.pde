@@ -39,7 +39,6 @@ public class ViewTemplate extends PDETemplateSection {
 		lists[1] = new ArrayList();
 
 		// first page	
-		TemplateOption option;
 		addOption(KEY_PACKAGE_NAME, "&Java Package Name:", (String)null, lists[0]);
 		addOption("className", "&View Class Name:", "SampleView", lists[0]);
 		addOption("viewName", "View &Name:", "Sample View", lists[0]);
@@ -59,6 +58,7 @@ public class ViewTemplate extends PDETemplateSection {
 		addOption("sorter", "Add &support for sorting", true, lists[1]);
 		//addOption("filter", "Add support for filtering", true, lists[1]);
 		addOption("drillDown", "Add d&rill-down capability", true, lists[1]);
+		setOptionEnabled("drillDown", false);
 		return lists;
 	}
 

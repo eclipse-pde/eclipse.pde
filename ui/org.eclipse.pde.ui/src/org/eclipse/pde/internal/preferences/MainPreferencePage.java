@@ -51,7 +51,7 @@ protected void createFieldEditors() {
 			getFieldEditorParent());
 	addField(editor);
 	
-	Label space = new Label(getFieldEditorParent(), SWT.NULL);
+	new Label(getFieldEditorParent(), SWT.NULL);
 	
 	RadioGroupFieldEditor reditor =
 		new RadioGroupFieldEditor(

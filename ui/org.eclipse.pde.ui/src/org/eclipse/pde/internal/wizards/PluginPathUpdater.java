@@ -43,6 +43,7 @@ public class PluginPathUpdater {
 	public static class CheckedPlugin {
 		private boolean checked;
 		private IPlugin info;
+		private boolean exported;
 		public CheckedPlugin(IPlugin info, boolean checked) {
 			this.info = info;
 			this.checked = checked;
@@ -52,6 +53,12 @@ public class PluginPathUpdater {
 		}
 		public boolean isChecked() {
 			return checked;
+		}
+		public void setExported(boolean exported) {
+			this.exported = exported;
+		}
+		public boolean isExported() {
+			return exported;
 		}
 	}
 
@@ -98,7 +105,7 @@ public class PluginPathUpdater {
 		if (internal) {
 			IPath projectPath = model.getUnderlyingResource().getProject().getFullPath();
 			if (!isEntryAdded(projectPath, IClasspathEntry.CPE_PROJECT, result)) {
-				IClasspathEntry projectEntry = JavaCore.newProjectEntry(projectPath);
+				IClasspathEntry projectEntry = JavaCore.newProjectEntry(projectPath, element.isExported());
 				result.addElement(projectEntry);
 			}
 			return;
@@ -112,7 +119,7 @@ public class PluginPathUpdater {
 
 			String name = expandLibraryName(library.getName());
 			IPath libraryPath = modelPath.append(name);
-			IPath[] sourceAnnot = getSourceAnnotation(libraryPath, library);
+			IPath[] sourceAnnot = getSourceAnnotation(libraryPath);
 			if (!isEntryAdded(libraryPath, IClasspathEntry.CPE_VARIABLE, result)) {
 				IClasspathEntry libraryEntry =
 					JavaCore.newVariableEntry(libraryPath, sourceAnnot[0], sourceAnnot[1]);
@@ -147,17 +154,11 @@ public class PluginPathUpdater {
 	
 	public static IClasspathEntry createLibraryEntry(
 		IPluginLibrary library,
-		IPath rootPath) {
-			return createLibraryEntry(library, rootPath, false);
-		}
-
-	public static IClasspathEntry createLibraryEntry(
-		IPluginLibrary library,
 		IPath rootPath,
 		boolean unconditionallyExport) {
 		String name = expandLibraryName(library.getName());
 		IPath libraryPath = rootPath.append(name);
-		IPath[] sourceAnnot = getSourceAnnotation(libraryPath, library);
+		IPath[] sourceAnnot = getSourceAnnotation(libraryPath);
 		return JavaCore.newLibraryEntry(
 			libraryPath,
 			sourceAnnot[0],
@@ -200,19 +201,9 @@ public class PluginPathUpdater {
 		IPath prefix = JavaCore.getClasspathVariable(JRE_SRCROOTVAR);
 		return new IPath[] { source, prefix };
 	}
-	public IRunnableWithProgress getOperation() {
-		return new WorkspaceModifyOperation() {
-			public void execute(IProgressMonitor monitor) {
-				monitor.beginTask(
-					PDEPlugin.getResourceString(KEY_UPDATING),
-					IProgressMonitor.UNKNOWN);
-				updateClasspath(monitor);
-			}
-		};
-	}
+
 	private static IPath[] getSourceAnnotation(
-		IPath libraryPath,
-		IPluginLibrary library) {
+		IPath libraryPath) {
 		IPath[] annot = new IPath[2];
 		annot[0] = new Path(libraryPath.removeFileExtension().toString() + "src.zip");
 		return annot;
@@ -239,37 +230,6 @@ public class PluginPathUpdater {
 		}
 		return false;
 	}
-	public void updateClasspath(IProgressMonitor monitor) {
-		try {
-			// create java nature
-			if (!project.hasNature(JavaCore.NATURE_ID)) {
-				CoreUtility.addNatureToProject(project, JavaCore.NATURE_ID, monitor);
-			}
-			/*
-			if (!project.hasNature(PDEPlugin.PLUGIN_NATURE)) {
-				CoreUtility.addNatureToProject(project, PDEPlugin.PLUGIN_NATURE, monitor);
-			}
-			*/
-			Vector result = new Vector();
-			if (javaProject == null)
-				javaProject = JavaCore.create(project);
-			IClasspathEntry[] entries = javaProject.getRawClasspath();
-			for (int i = 0; i < entries.length; i++)
-				result.addElement(entries[i]);
-
-			while (checkedPlugins.hasNext()) {
-				CheckedPlugin element = (CheckedPlugin) checkedPlugins.next();
-				updateLibrariesFor(element, entries, result);
-			}
-			IClasspathEntry[] finalEntries = new IClasspathEntry[result.size()];
-			result.copyInto(finalEntries);
-			javaProject.setRawClasspath(finalEntries, monitor);
-		} catch (JavaModelException e) {
-			PDEPlugin.logException(e);
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
-		}
-	}
 
 	public static void addImplicitLibraries(Vector result, boolean addRuntime) {
 		String bootId = "org.eclipse.core.boot";
@@ -287,85 +247,7 @@ public class PluginPathUpdater {
 		}
 	}
 
-	private void updateLibrariesFor(
-		CheckedPlugin element,
-		IClasspathEntry[] entries,
-		Vector result) {
-		IPlugin plugin = element.getPluginInfo();
-		boolean internal = plugin.getModel().getUnderlyingResource() != null;
-		boolean add = element.isChecked();
-		IPluginLibrary[] libraries = plugin.getLibraries();
 
-		for (int i = 0; i < libraries.length; i++) {
-			IPluginLibrary library = libraries[i];
-			if (internal) {
-				updateLibrary(plugin, library.getName(), add, entries, result);
-			} else {
-				updateLibrary(
-					((ExternalPluginModelBase) plugin.getModel()).getEclipseHomeRelativePath(),
-					library.getName(),
-					add,
-					entries,
-					result);
-			}
-		}
-		// Recursively add
-		IPluginImport[] imports = element.getPluginInfo().getImports();
-		for (int i = 0; i < imports.length; i++) {
-			IPluginImport iimport = imports[i];
-			if (iimport.isReexported() == false)
-				continue;
-			String id = iimport.getId();
-			IPlugin reference = PDEPlugin.getDefault().findPlugin(id);
-			if (reference != null) {
-				CheckedPlugin ref = new CheckedPlugin(reference, true);
-				updateLibrariesFor(ref, entries, result);
-			}
-		}
-	}
-
-	private void updateLibrary(
-		IPath relativePath,
-		String name,
-		boolean add,
-		IClasspathEntry[] entries,
-		Vector result) {
-		IPath basePath = new Path(PDEPlugin.ECLIPSE_HOME_VARIABLE).append(relativePath);
-		name = expandLibraryName(name);
-		IPath libraryPath = basePath.append(name);
-		// Search for this entry
-		IClasspathEntry libraryEntry = null;
-
-		if (add && isEntryAdded(libraryPath, IClasspathEntry.CPE_VARIABLE, result))
-			return;
-
-		for (int i = 0; i < entries.length; i++) {
-			IClasspathEntry entry = entries[i];
-			if (entry.getEntryKind() != IClasspathEntry.CPE_VARIABLE)
-				continue;
-			IPath path = entry.getPath();
-			if (path.equals(libraryPath)) {
-				libraryEntry = entry;
-				break;
-			}
-		}
-		if (libraryEntry != null) {
-			// already exists
-			if (add) {
-				// do nothing
-			} else {
-				// remove it
-				result.remove(libraryEntry);
-			}
-		} else if (add) {
-			IPath[] sourceAnnot = getSourceAnnotation(libraryPath, null);
-			libraryEntry =
-				JavaCore.newVariableEntry(libraryPath, sourceAnnot[0], sourceAnnot[1]);
-			IClasspathEntry resolved = JavaCore.getResolvedClasspathEntry(libraryEntry);
-			if (resolved != null && resolved.getPath().toFile().exists())
-				result.addElement(libraryEntry);
-		}
-	}
 
 	private static String expandLibraryName(String source) {
 		if (source.charAt(0) != '$')
@@ -393,72 +275,5 @@ public class PluginPathUpdater {
 		return source;
 	}
 
-	private void updateLibrary(
-		IPlugin plugin,
-		String name,
-		boolean add,
-		IClasspathEntry[] entries,
-		Vector result) {
-		IPath projectPath =
-			plugin.getModel().getUnderlyingResource().getProject().getFullPath();
-		// Add or remove project reference
-		IClasspathEntry projectEntry = null;
-		for (int i = 0; i < entries.length; i++) {
-			IClasspathEntry classpathEntry = entries[i];
-			if (classpathEntry.getEntryKind() != IClasspathEntry.CPE_PROJECT)
-				continue;
-			IPath path = classpathEntry.getPath();
-			if (path.equals(projectPath)) {
-				projectEntry = classpathEntry;
-				break;
-			}
-		}
-		if (projectEntry != null) {
-			// already exists
-			if (add) {
-				// do nothing
-			} else {
-				// remove it
-				result.remove(projectEntry);
-			}
-		} else if (add) {
-			projectEntry = JavaCore.newProjectEntry(projectPath);
-			result.addElement(projectEntry);
-		}
-	}
-	private boolean updateSourceFolder(
-		IPlugin plugin,
-		String folderName,
-		boolean add,
-		IClasspathEntry[] entries,
-		Vector result) {
-		IProject project = plugin.getModel().getUnderlyingResource().getProject();
-		IPath folderPath = project.getFullPath().append(folderName);
-		IClasspathEntry folderEntry = null;
-
-		for (int i = 0; i < entries.length; i++) {
-			IClasspathEntry classpathEntry = entries[i];
-			if (classpathEntry.getEntryKind() != IClasspathEntry.CPE_SOURCE)
-				continue;
-			IPath path = classpathEntry.getPath();
-			if (path.equals(folderPath)) {
-				folderEntry = classpathEntry;
-				break;
-			}
-		}
-		if (folderEntry != null) {
-			// already exists
-			if (add) {
-				// do nothing
-			} else {
-				// remove it
-				result.remove(folderEntry);
-			}
-		} else if (add) {
-			folderEntry = JavaCore.newSourceEntry(folderPath);
-			result.addElement(folderEntry);
-		}
-		return folderEntry != null;
-	}
 
 }

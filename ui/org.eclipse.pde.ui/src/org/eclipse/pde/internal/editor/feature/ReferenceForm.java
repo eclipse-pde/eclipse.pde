@@ -70,7 +70,6 @@ public void expandTo(Object object) {
 public void initialize(Object modelObject) {
 	IFeatureModel model = (IFeatureModel) modelObject;
 	super.initialize(model);
-	IFeature feature = model.getFeature();
 	setHeadingText(PDEPlugin.getResourceString(KEY_HEADING));
 	((Composite)getControl()).layout(true);
 }

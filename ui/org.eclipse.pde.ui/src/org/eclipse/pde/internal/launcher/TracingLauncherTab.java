@@ -432,7 +432,6 @@ public class TracingLauncherTab
 		if (model == null) {
 			text = PDEPlugin.getResourceString(KEY_OPTIONS);
 		} else {
-			IPluginBase pluginBase = model.getPluginBase();
 			text = PDEPlugin.getDefault().getLabelProvider().getText(model);
 		}
 		propertyLabel.setText(text);

@@ -112,7 +112,7 @@ public class BuildPathUtil {
 		}
 
 		// add own libraries, if present
-		addLibraries(project, model, false, result);
+		addLibraries(model, false, result);
 
 		// add dependencies
 		addDependencies(project, model.getPluginBase().getImports(), result);
@@ -188,7 +188,6 @@ public class BuildPathUtil {
 	}
 
 	private static void addLibraries(
-		IProject project,
 		IPluginModelBase model,
 		boolean unconditionallyExport,
 		Vector result) {
@@ -287,7 +286,9 @@ public class BuildPathUtil {
 			int match = iimport.getMatch();
 			IPlugin ref = PDEPlugin.getDefault().findPlugin(id, version, match);
 			if (ref != null) {
-				checkedPlugins.add(new PluginPathUpdater.CheckedPlugin(ref, true));
+				PluginPathUpdater.CheckedPlugin cplugin = new PluginPathUpdater.CheckedPlugin(ref, true);
+				cplugin.setExported(iimport.isReexported());
+				checkedPlugins.add(cplugin);
 			}
 		}
 		PluginPathUpdater ppu =
@@ -341,10 +342,7 @@ public class BuildPathUtil {
 					plugin.getId(),
 					plugin.getVersion(),
 					fragment.getRule())) {
-				IResource resource = models[i].getUnderlyingResource();
-				IProject project = resource != null ? resource.getProject() : null;
-
-				addLibraries(project, models[i], true, result);
+				addLibraries(models[i], true, result);
 			}
 		}
 	}

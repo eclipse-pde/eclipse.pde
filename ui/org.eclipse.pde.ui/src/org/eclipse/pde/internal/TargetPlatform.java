@@ -80,7 +80,6 @@ public class TargetPlatform implements IEnvironmentVariables {
 
 			for (int i = 0; i < plugins.length; i++) {
 				IPluginModelBase curr = plugins[i];
-				String prefix = "file:" + curr.getInstallLocation() + File.separator;
 				String id = curr.getPluginBase().getId();
 				properties.setProperty(id, createURL(curr));
 			}

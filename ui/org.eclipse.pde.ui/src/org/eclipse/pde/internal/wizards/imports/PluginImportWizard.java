@@ -36,6 +36,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 
 	private static final String STORE_SECTION = "PluginImportWizard";
 	private static final String KEY_WTITLE = "ImportWizard.title";
+	private static final String KEY_NO_TO_ALL_LABEL = "ImportWizard.noToAll";
 	private static final String KEY_MESSAGES_TITLE = "ImportWizard.messages.title";
 	private static final String KEY_MESSAGES_NO_PLUGINS =
 		"ImportWizard.messages.noPlugins";
@@ -148,6 +149,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 					IDialogConstants.YES_LABEL,
 					IDialogConstants.YES_TO_ALL_LABEL,
 					IDialogConstants.NO_LABEL,
+					PDEPlugin.getResourceString(KEY_NO_TO_ALL_LABEL),
 					IDialogConstants.CANCEL_LABEL },
 				0);
 		}
@@ -155,13 +157,13 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 
 	private class ReplaceQuery implements IReplaceQuery {
 
-		private boolean yesToAll;
+		private int yesToAll = 0;
 		private int[] RETURNCODES =
-			{ IReplaceQuery.YES, IReplaceQuery.YES, IReplaceQuery.NO, IReplaceQuery.CANCEL };
+			{ IReplaceQuery.YES, IReplaceQuery.YES, IReplaceQuery.NO, IReplaceQuery.NO, IReplaceQuery.CANCEL };
 
 		public int doQuery(IProject project) {
-			if (yesToAll) {
-				return IReplaceQuery.YES;
+			if (yesToAll!=0) {
+				return yesToAll>0?IReplaceQuery.YES : IReplaceQuery.NO;
 			}
 
 			final String message =
@@ -174,7 +176,10 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 					if (retVal >= 0) {
 						result[0] = RETURNCODES[retVal];
 						if (retVal == 1) {
-							yesToAll = true;
+							yesToAll = 1;
+						}
+						else if (retVal == 3) {
+							yesToAll = -1;
 						}
 					}
 				}

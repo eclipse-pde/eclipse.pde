@@ -44,15 +44,14 @@ public class NewDependencyWizardPage extends WizardPage {
 		public String getText(Object obj) {
 			if (obj instanceof IPluginModel) {
 				IPluginModel model = (IPluginModel) obj;
-				return model.getPlugin().getTranslatedName();
-				//return name + " " + model.getPlugin().getVersion();
+				return PDEPlugin.getDefault().getLabelProvider().getObjectText(model.getPlugin());
 			}
 			return obj.toString();
 		}
 		public Image getImage(Object obj) {
 			if (obj instanceof IPluginModel) {
-				boolean error = !((IPluginModel)obj).isLoaded();
-				return error?errorPluginImage:pluginImage;
+				IPluginModel model = (IPluginModel) obj;
+				return PDEPlugin.getDefault().getLabelProvider().getImage(model);
 			}
 			if (obj instanceof NamedElement)
 				return ((NamedElement) obj).getImage();

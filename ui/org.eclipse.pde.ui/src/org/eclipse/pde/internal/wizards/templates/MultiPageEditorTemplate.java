@@ -38,7 +38,6 @@ public class MultiPageEditorTemplate extends PDETemplateSection {
 		lists[0] = new ArrayList();
 
 		// first page	
-		TemplateOption option;
 		addOption(KEY_PACKAGE_NAME, "&Java Package Name:", (String)null, lists[0]);
 		addOption("editorClassName", "&Editor Class Name:", "MultiPageEditor", lists[0]);
 		addOption("contributorClassName", "Editor &Contributor Class &Name:", "MultiPageEditorContributor", lists[0]);

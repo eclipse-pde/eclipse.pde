@@ -220,7 +220,6 @@ public class TargetPlatformPreferencePage
 	}
 
 	String getPlatformPath() {
-		IPreferenceStore store = getPreferenceStore();
 		if (useOther) {
 			String value = targetPathEditor.getStringValue();
 			if (value != null)

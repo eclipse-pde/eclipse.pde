@@ -155,7 +155,7 @@ public class TemplateSelectionPage extends WizardPage {
 	public IWizardPage getNextPage() {
 		ITemplateSection [] sections = getSelectedTemplates();
 		visiblePages.clear();
-		IWizardPage nextPage = null;
+
 		for (int i=0; i<sections.length; i++) {
 			ITemplateSection section = sections[i];
 			if (section.getPages()==null)
