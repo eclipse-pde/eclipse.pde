@@ -212,13 +212,17 @@ public class BasicLauncherTab
 		fApplicationButton.setText(PDEPlugin.getResourceString("BasicLauncherTab.runApplication")); //$NON-NLS-1$
 			
 		fApplicationCombo = new Combo(parent, SWT.READ_ONLY|SWT.DROP_DOWN);
-		fApplicationCombo.setItems(TargetPlatform.getApplicationNames());
+		fApplicationCombo.setItems(getApplicationNames());
 		fApplicationCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fApplicationCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
 			}
 		});		
+	}
+	
+	protected String[] getApplicationNames() {
+		return TargetPlatform.getApplicationNames();
 	}
 	
 	protected String getApplicationAttribute() {

@@ -14,8 +14,6 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
 
 public class JUnitArgumentsTab extends BasicLauncherTab {
@@ -40,17 +38,10 @@ public class JUnitArgumentsTab extends BasicLauncherTab {
 	protected String[] getApplicationNames() {
 		TreeSet result = new TreeSet();
 		result.add(PDEPlugin.getResourceString("JUnitArgumentsTab.headless")); //$NON-NLS-1$
-		IPluginModelBase[] plugins = PDECore.getDefault().getModelManager().getPlugins();
-		for (int i = 0; i < plugins.length; i++) {
-			IPluginExtension[] extensions = plugins[i].getPluginBase().getExtensions();
-			for (int j = 0; j < extensions.length; j++) {
-				String point = extensions[j].getPoint();
-				if (point != null && point.equals("org.eclipse.core.runtime.applications")) { //$NON-NLS-1$
-					String id = extensions[j].getPluginBase().getId() + "." + extensions[j].getId(); //$NON-NLS-1$
-					if (id != null && !id.startsWith("org.eclipse.pde.junit.runtime")){ //$NON-NLS-1$
-						result.add(id);
-					}
-				}
+		String[] appNames = super.getApplicationNames();
+		for (int i = 0; i < appNames.length; i++) {
+			if (!appNames[i].startsWith("org.eclipse.pde.junit.runtime")) {
+				result.add(appNames[i]);
 			}
 		}
 		return (String[])result.toArray(new String[result.size()]);
