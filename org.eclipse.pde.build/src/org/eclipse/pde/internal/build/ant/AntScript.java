@@ -566,4 +566,26 @@ public void printRefreshLocalTask(int tab, String resource, String depth) {
 	output.println("/>"); //$NON-NLS-1$
 }
 
+
+/**
+ * Print a <code> eclipse.convertTask</code> task to the script. This task convert a file path to 
+ * an Eclipse resource or vice-versa. 
+ *
+ * @param tab the number of tabs to use when indenting
+ * @param toConvert the entry to convert 
+ * @param propertyName the property where to store the result of the convertion
+ * @param isEclipseResource true if toConvert refers to an eclipse resource. 
+ */
+public void printConvertPathTask(int tab, String toConvert, String propertyName, boolean isEclipseResource) {
+	printTab(tab);
+	output.print("<eclipse.convertPath"); //$NON-NLS-1$
+	// Don't use the IXMLConstants for these attributes since those constants
+	// are different than the ones used to build Ant scripts.
+	if (isEclipseResource)
+		printAttribute("resourcePath", toConvert, true); //$NON-NLS-1$
+	else
+		printAttribute("fileSystemPath", toConvert, true); //$NON-NLS-1$
+	printAttribute("property", propertyName, true);//$NON-NLS-1$
+	output.println("/>");//$NON-NLS-1$
+}
 }

@@ -579,7 +579,9 @@ protected void generateRefreshTarget(AntScript script) {
 	int tab = 1;
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_REFRESH, TARGET_INIT, PROPERTY_ECLIPSE_RUNNING, null, null);
-	script.printRefreshLocalTask(tab, getPropertyFormat(PROPERTY_FEATURE), "infinite"); //$NON-NLS-1$
+	script.printConvertPathTask(tab, new Path(featureRootLocation).removeLastSegments(0).toOSString(), PROPERTY_RESOURCE_PATH, false);
+	script.printRefreshLocalTask(tab, getPropertyFormat(PROPERTY_RESOURCE_PATH), "infinite"); //$NON-NLS-1$
+	
 	Map params = new HashMap(2);
 	params.put(PROPERTY_TARGET, TARGET_REFRESH);
 	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, null, params);

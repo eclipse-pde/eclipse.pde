@@ -282,11 +282,12 @@ protected void generateBuildUpdateJarTarget(AntScript script) {
  * 
  * @param script the script to add the target to
  */
-protected void generateRefreshTarget(AntScript script) {
+protected void generateRefreshTarget(AntScript script) throws CoreException {
 	int tab = 1;
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_REFRESH, TARGET_INIT, PROPERTY_ECLIPSE_RUNNING, null, null);
-	script.printRefreshLocalTask(tab, getPropertyFormat(getModelTypeName()), "infinite"); //$NON-NLS-1$
+	script.printConvertPathTask(tab, new Path(getLocation(model)).removeLastSegments(0).toOSString(), PROPERTY_RESOURCE_PATH, false);
+	script.printRefreshLocalTask(tab, getPropertyFormat(PROPERTY_RESOURCE_PATH), "infinite"); //$NON-NLS-1$
 	script.printTargetEnd(--tab);
 }
 
