@@ -24,7 +24,6 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.builders.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.core.schema.*;
 import org.osgi.framework.*;
@@ -37,53 +36,6 @@ public class ConvertSchemaToHTML extends Task {
 	private String destination;
 	private URL cssURL;
 	
-	/*
-     * The standalone descriptor is responsible for creating the schema
-     * and computing the location of the included schemas that span
-     * the plug-ins by computing the referenced plug-in location.
-     * The assumption is that all the plug-ins in the build
-     * are extracted into one folder, hence they are all colocated.
-	 */
-	private static class StandaloneSchemaDescriptor implements ISchemaDescriptor {
-		private IPluginExtensionPoint point;
-		private URL url;
-		private ISchema schema;
-		
-		public StandaloneSchemaDescriptor(IPluginExtensionPoint point, URL url) {
-			this.point = point;
-			this.url = url;
-			schema = new Schema(this, url);
-		}
-		public IPath getPluginRelativePath(String id, IPath schemaPath) {
-			IPluginModelBase model = (IPluginModelBase)point.getModel();
-			String location = model.getInstallLocation();
-			IPath path = new Path(location);
-			// Go one level up from the model location,
-			// and append the plug-in ID
-			// During the build, all the plug-ins are 
-			// colocated.
-			return path.removeLastSegments(1).append(id).append(schemaPath);			
-		}
-		public URL getSchemaURL() {
-			return url;
-			
-		}
-		public String getPointId() {
-			return point.getFullId();
-			
-		}
-		public ISchema getSchema() {
-			return schema;
-		}
-		public boolean isStandalone() {
-			return true;
-		}
-	}
-
-	public ConvertSchemaToHTML(){
-		cssURL = null;
-	}
-
 	public void execute() throws BuildException {
 		if (!validateDestination())
 			return;
@@ -114,13 +66,9 @@ public class ConvertSchemaToHTML extends Task {
 				XMLDefaultHandler handler = new XMLDefaultHandler();
 				fParser.parse(schemaFile, handler);
 
-				URL url = null;
-				try {
-					url = new URL("file:" + schemaFile.getAbsolutePath()); //$NON-NLS-1$
-				} catch (MalformedURLException e) {
-				}
-				StandaloneSchemaDescriptor desc = new StandaloneSchemaDescriptor(extPoints[i], url);
-				schema = (Schema)desc.getSchema();
+				URL url =  schemaFile.toURL(); //$NON-NLS-1$
+				SchemaDescriptor desc = new SchemaDescriptor(extPoints[i].getFullId(), url);
+				schema = (Schema)desc.getSchema(false);
 				schema.traverseDocumentTree(handler.getDocumentElement());
 					
 				File directory =
