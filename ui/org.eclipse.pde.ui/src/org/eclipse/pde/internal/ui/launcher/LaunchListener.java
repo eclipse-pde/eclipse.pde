@@ -15,7 +15,9 @@ import java.util.ArrayList;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * @author dejan
@@ -119,8 +121,27 @@ public class LaunchListener
 	private void launchTerminated(ILaunch launch, int returnValue) {
 		if (managedLaunches.contains(launch)) {
 			update(launch, true);
-			if (returnValue == 23)
+			if (returnValue == 23) {
 				doRestart(launch);
+			} else if (returnValue == 15) {
+				Display.getDefault().asyncExec(new Runnable() {
+					public void run() {
+						MessageDialog.openError(
+							PDEPlugin.getActiveWorkbenchShell(),
+							PDEPlugin.getResourceString("Launcher.error.title"),
+							PDEPlugin.getResourceString("Launcher.error.code15"));
+					}
+				});
+			} else if (returnValue == 13) {
+				Display.getDefault().asyncExec(new Runnable() {
+					public void run() {
+						MessageDialog.openError(
+							PDEPlugin.getActiveWorkbenchShell(),
+							PDEPlugin.getResourceString("Launcher.error.title"),
+							PDEPlugin.getResourceString("Launcher.error.code13"));
+					}
+				});
+			}
 		}
 	}
 }
