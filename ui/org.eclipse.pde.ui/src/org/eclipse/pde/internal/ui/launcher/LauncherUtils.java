@@ -599,8 +599,10 @@ public class LauncherUtils {
 			if (templateLoc != null) {
 				File templateFile = new File(templateLoc);
 				if (templateFile.exists() && templateFile.isFile()) {
+					FileInputStream stream = null;
 					try {
-						properties.load(new FileInputStream(templateFile));
+						stream = new FileInputStream(templateFile);
+						properties.load(stream);
 					} catch (Exception e) {
 						String message = e.getMessage();
 						if (message != null)
@@ -611,6 +613,13 @@ public class LauncherUtils {
 									IStatus.ERROR,
 									message,
 									e));
+					} finally {
+						if (stream != null) {
+							try {
+								stream.close();
+							} catch (IOException e) {
+							}
+						}
 					}
 				}
 			}
