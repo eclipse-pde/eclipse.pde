@@ -8,7 +8,7 @@ package org.eclipse.pde.core.plugin;
  * This factory should be used to create
  * instances of the plug-in model objects.
  * <p>
- * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+ * <b>Note:</b> This interface is part of an interim API that is still under development and expected to
  * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
  * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
  * (repeatedly) as the API evolves.
@@ -22,7 +22,7 @@ public interface IPluginModelFactory {
 	 * @param element the parent element
 	 * @return the new attribute instance
 	 * <p>
-	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
 	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
 	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
 	 * (repeatedly) as the API evolves.
@@ -36,7 +36,7 @@ public interface IPluginModelFactory {
 	 * @param parent the parent element
 	 * @return the new element instance
 	 * <p>
-	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
 	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
 	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
 	 * (repeatedly) as the API evolves.
@@ -47,7 +47,7 @@ public interface IPluginModelFactory {
 	 * Creates a new extension instance.
 	 * @return the new extension instance
 	 * <p>
-	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
 	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
 	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
 	 * (repeatedly) as the API evolves.
@@ -59,7 +59,7 @@ public interface IPluginModelFactory {
 	 *
 	 * @return a new extension point 
 	 * <p>
-	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
 	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
 	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
 	 * (repeatedly) as the API evolves.
@@ -70,7 +70,7 @@ public interface IPluginModelFactory {
 	 * Creates a new plug-in import
 	 * @return a new plug-in import instance
 	 * <p>
-	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
 	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
 	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
 	 * (repeatedly) as the API evolves.
@@ -82,7 +82,7 @@ public interface IPluginModelFactory {
 	 *
 	 *@return a new library instance
 	 * <p>
-	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
 	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
 	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
 	 * (repeatedly) as the API evolves.

@@ -9,7 +9,7 @@ import org.eclipse.core.runtime.CoreException;
  * Classes that implement this interface are
  * capable of containing other plug-in objects.
  * <p>
- * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+ * <b>Note:</b> This interface is part of an interim API that is still under development and expected to
  * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
  * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
  * (repeatedly) as the API evolves.
@@ -35,7 +35,7 @@ public interface IPluginParent extends IPluginObject {
 	 * @param index the location of the child
 	 * @param child the object to add
 	 * <p>
-	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
 	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
 	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
 	 * (repeatedly) as the API evolves.
@@ -49,7 +49,7 @@ public interface IPluginParent extends IPluginObject {
 	 *
 	 * @param child the object to add
 	 * <p>
-	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
 	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
 	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
 	 * (repeatedly) as the API evolves.
@@ -62,7 +62,7 @@ public interface IPluginParent extends IPluginObject {
 	 *
 	 * @return the number of children
 	 * <p>
-	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
 	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
 	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
 	 * (repeatedly) as the API evolves.
@@ -75,7 +75,7 @@ public interface IPluginParent extends IPluginObject {
 	 * @param child a child of this parent
 	 * @return a 0-based index of the child
 	 * <p>
-	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
 	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
 	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
 	 * (repeatedly) as the API evolves.
@@ -89,7 +89,7 @@ public interface IPluginParent extends IPluginObject {
 	 * @param child2 the second child
 	 * @throws CoreException thrown if the model is not editable.
 	 * <p>
-	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
 	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
 	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
 	 * (repeatedly) as the API evolves.
@@ -101,7 +101,7 @@ public interface IPluginParent extends IPluginObject {
 	 *
 	 * @return an array of children
 	 * <p>
-	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
 	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
 	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
 	 * (repeatedly) as the API evolves.
@@ -115,7 +115,7 @@ public interface IPluginParent extends IPluginObject {
 	 *
 	 * @param child the object to remove
 	 * <p>
-	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
 	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
 	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
 	 * (repeatedly) as the API evolves.

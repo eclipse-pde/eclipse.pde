@@ -10,7 +10,7 @@ import org.eclipse.pde.core.IWritable;
  * The top-level model object of the model that is created
  * from "plugin.jars" or "fragment.jars" file.
  * <p>
- * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+ * <b>Note:</b> This interface is part of an interim API that is still under development and expected to
  * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
  * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
  * (repeatedly) as the API evolves.
@@ -24,7 +24,7 @@ public interface IBuild extends IWritable {
 	 *
 	 * @param entry an entry to be added
 	 * <p>
-	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
 	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
 	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
 	 * (repeatedly) as the API evolves.
@@ -36,7 +36,7 @@ public interface IBuild extends IWritable {
 	 *
 	 * @return an array of build entries
 	 * <p>
-	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
 	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
 	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
 	 * (repeatedly) as the API evolves.
@@ -51,7 +51,7 @@ public interface IBuild extends IWritable {
 	 * @return the entry object with the specified name, or
 	 * <samp>null</samp> if not found.
 	 * <p>
-	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
 	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
 	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
 	 * (repeatedly) as the API evolves.
@@ -65,7 +65,7 @@ public interface IBuild extends IWritable {
 	 *
 	 * @param entry an entry to be removed
 	 * <p>
-	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
 	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
 	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
 	 * (repeatedly) as the API evolves.

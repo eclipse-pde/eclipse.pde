@@ -10,7 +10,7 @@ import org.eclipse.pde.core.IIdentifiable;
  * Classes that implement this interface model an extension point
  * element specified in the plug-in manifest.
  * <p>
- * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+ * <b>Note:</b> This interface is part of an interim API that is still under development and expected to
  * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
  * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
  * (repeatedly) as the API evolves.
@@ -36,7 +36,7 @@ public interface IPluginExtensionPoint extends IPluginObject, IIdentifiable {
 	 *
 	 * @return a full extension point Id
 	 * <p>
-	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
 	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
 	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
 	 * (repeatedly) as the API evolves.
@@ -49,7 +49,7 @@ public interface IPluginExtensionPoint extends IPluginObject, IIdentifiable {
 	 *
 	 * @return XML extension point schema file name
 	 * <p>
-	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
 	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
 	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
 	 * (repeatedly) as the API evolves.
@@ -63,7 +63,7 @@ public interface IPluginExtensionPoint extends IPluginObject, IIdentifiable {
 	 * This method will throw a CoreException
 	 * if the model is not editable.
 	 * <p>
-	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
 	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
 	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
 	 * (repeatedly) as the API evolves.

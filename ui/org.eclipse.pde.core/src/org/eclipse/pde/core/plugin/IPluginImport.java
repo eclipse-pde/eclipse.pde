@@ -9,7 +9,7 @@ import org.eclipse.core.runtime.CoreException;
  * Objects that implement this interface represent references
  * to required plug-ins.
  * <p>
- * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+ * <b>Note:</b> This interface is part of an interim API that is still under development and expected to
  * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
  * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
  * (repeatedly) as the API evolves.
@@ -44,7 +44,7 @@ public interface IPluginImport extends IPluginObject, IPluginReference {
 	 *
 	 * @return true if the required plug-in libraries are reexported
 	 * <p>
-	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
 	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
 	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
 	 * (repeatedly) as the API evolves.
@@ -57,7 +57,7 @@ public interface IPluginImport extends IPluginObject, IPluginReference {
 	 *
 	 * @return true if this import is optional
 	 * <p>
-	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
 	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
 	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
 	 * (repeatedly) as the API evolves.
@@ -72,7 +72,7 @@ public interface IPluginImport extends IPluginObject, IPluginReference {
 	 *
 	 * @param value true if reexporting is desired
 	 * <p>
-	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
 	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
 	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
 	 * (repeatedly) as the API evolves.
@@ -85,7 +85,7 @@ public interface IPluginImport extends IPluginObject, IPluginReference {
 	 *
 	 * @param value true if import is optional
 	 * <p>
-	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
 	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
 	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
 	 * (repeatedly) as the API evolves.

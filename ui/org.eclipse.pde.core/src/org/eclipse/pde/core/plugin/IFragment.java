@@ -9,7 +9,7 @@ import org.eclipse.core.runtime.CoreException;
  * A model object that represents the content of the fragment.xml
  * file.
  * <p>
- * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+ * <b>Note:</b> This interface is part of an interim API that is still under development and expected to
  * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
  * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
  * (repeatedly) as the API evolves.
@@ -54,7 +54,7 @@ public interface IFragment extends IPluginBase {
 	 * of this fragment.
 	 * @return target plug-in id
 	 * <p>
-	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
 	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
 	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
 	 * (repeatedly) as the API evolves.
@@ -66,7 +66,7 @@ public interface IFragment extends IPluginBase {
 	 * of this fragment.
 	 * @return target plug-in version
 	 * <p>
-	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
 	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
 	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
 	 * (repeatedly) as the API evolves.
@@ -78,7 +78,7 @@ public interface IFragment extends IPluginBase {
 	 * IMatchRule interface.
 	 * @see IMatchRule
 	 * <p>
-	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
 	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
 	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
 	 * (repeatedly) as the API evolves.
@@ -90,7 +90,7 @@ public interface IFragment extends IPluginBase {
 	 * @param id the id of the referenced plug-in.
 	 * @exception org.eclipse.core.runtime.CoreException attempts to modify a read-only fragment will result in an exception
 	 * <p>
-	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
 	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
 	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
 	 * (repeatedly) as the API evolves.
@@ -102,7 +102,7 @@ public interface IFragment extends IPluginBase {
 	 * @param version the version of the referenced version.
 	 * @exception org.eclipse.core.runtime.CoreException attempts to modify a read-only fragment will result in an exception
 	 * <p>
-	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
 	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
 	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
 	 * (repeatedly) as the API evolves.
@@ -116,7 +116,7 @@ public interface IFragment extends IPluginBase {
 	 * @param rule the match rule to be used when locating the referenced the plug-in.
 	 * @exception org.eclipse.core.runtime.CoreException attempts to modify a read-only fragment will result in an exception
 	 * <p>
-	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
 	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
 	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
 	 * (repeatedly) as the API evolves.

@@ -11,7 +11,7 @@ import org.eclipse.pde.core.IIdentifiable;
  * Classes that implement this interface model the extension
  * element found in the plug-in or fragment manifest.
  * <p>
- * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+ * <b>Note:</b> This interface is part of an interim API that is still under development and expected to
  * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
  * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
  * (repeatedly) as the API evolves.
@@ -33,7 +33,7 @@ public interface IPluginExtension extends IPluginParent, IIdentifiable {
 	 * Returns the full Id of the extension point that this extension
 	 * is plugged into.
 	 * <p>
-	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
 	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
 	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
 	 * (repeatedly) as the API evolves.
@@ -46,7 +46,7 @@ public interface IPluginExtension extends IPluginParent, IIdentifiable {
 	 * this model is not editable.
 	 * @param point the new extension point Id
 	 * <p>
-	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
 	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
 	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
 	 * (repeatedly) as the API evolves.
