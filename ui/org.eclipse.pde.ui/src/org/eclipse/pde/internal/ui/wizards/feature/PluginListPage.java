@@ -12,23 +12,19 @@ package org.eclipse.pde.internal.ui.wizards.feature;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
-import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
-import org.eclipse.pde.internal.ui.wizards.ListUtil;
-import org.eclipse.swt.SWT;
+import org.eclipse.pde.internal.ui.elements.*;
+import org.eclipse.pde.internal.ui.wizards.*;
+import org.eclipse.swt.*;
 import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.*;
 
-public class PluginListPage extends WizardPage {
+public class PluginListPage extends BasePluginListPage {
 	public static final String PAGE_TITLE = "NewFeatureWizard.PlugPage.title";
 	public static final String PAGE_DESC = "NewFeatureWizard.PlugPage.desc";
-	private WizardCheckboxTablePart tablePart;
 	private IPluginModelBase [] models;
 
 	class PluginContentProvider
@@ -43,13 +39,6 @@ public class PluginListPage extends WizardPage {
 		super("pluginListPage");
 		setTitle(PDEPlugin.getResourceString(PAGE_TITLE));
 		setDescription(PDEPlugin.getResourceString(PAGE_DESC));
-		tablePart = new WizardCheckboxTablePart(null);
-		PDEPlugin.getDefault().getLabelProvider().connect(this);
-	}
-	
-	public void dispose() {
-		super.dispose();
-		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 	}
 
 	public void createControl(Composite parent) {
@@ -97,10 +86,5 @@ public class PluginListPage extends WizardPage {
 		return plugins;
 	}
 	
-	public void setVisible(boolean visible) {
-		super.setVisible(visible);
-		if (visible) {
-			tablePart.getControl().setFocus();
-		}
-	}
+
 }

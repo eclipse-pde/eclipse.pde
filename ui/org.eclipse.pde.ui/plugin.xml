@@ -166,6 +166,18 @@
             %new.feature.description
          </description>
       </wizard>
+            <wizard
+            name="%new.patch.name"
+            icon="icons/etool16/newefix_wiz.gif"
+            category="org.eclipse.pde.PDE"
+            class="org.eclipse.pde.internal.ui.wizards.feature.NewFeaturePatchWizard"
+            finalPerspective="org.eclipse.pde.ui.PDEPerspective"
+            project="true"
+            id="org.eclipse.pde.ui.NewFeaturePatchWizard">
+         <description>
+            %new.patch.description
+         </description>
+      </wizard>
       <wizard
             name="%new.site.name"
             icon="icons/etool16/newsiteprj_wiz.gif"

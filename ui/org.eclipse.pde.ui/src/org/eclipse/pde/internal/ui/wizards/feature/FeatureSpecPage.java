@@ -1,226 +1,70 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation
+ ******************************************************************************/
+
 package org.eclipse.pde.internal.ui.wizards.feature;
 
-import java.util.*;
-
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.*;
-import org.eclipse.ui.help.*;
 
-public class FeatureSpecPage extends WizardPage {
+public class FeatureSpecPage extends BaseFeatureSpecPage {
+
 	public static final String PAGE_TITLE = "NewFeatureWizard.SpecPage.title";
-	public static final String PAGE_ID = "NewFeatureWizard.SpecPage.id";
-	public static final String PAGE_NAME = "NewFeatureWizard.SpecPage.name";
-	public static final String PAGE_VERSION = "NewFeatureWizard.SpecPage.version";
-	public static final String PAGE_PROVIDER = "NewFeatureWizard.SpecPage.provider";
 	public static final String PAGE_DESC = "NewFeatureWizard.SpecPage.desc";
-	public static final String KEY_VERSION_FORMAT = "NewFeatureWizard.SpecPage.versionFormat";
-	public static final String KEY_MISSING = "NewFeatureWizard.SpecPage.missing";
-	public static final String KEY_INVALID_ID = "NewFeatureWizard.SpecPage.invalidId";
-	private WizardNewProjectCreationPage mainPage;
-	private Text idText;
-	private Text nameText;
-	private Text versionText;
-	private Text providerText;
-	private String initialId;
-	private String initialName;
-	private boolean isInitialized = false;
 
-protected FeatureSpecPage(WizardNewProjectCreationPage mainPage) {
-	super("specPage");
-	setTitle(PDEPlugin.getResourceString(PAGE_TITLE));
-	setDescription(PDEPlugin.getResourceString(PAGE_DESC));
-	this.mainPage = mainPage;
-}
-public void createControl(Composite parent) {
-	Composite container = new Composite(parent, SWT.NULL);
-	GridLayout layout = new GridLayout();
-	layout.numColumns = 2;
-	layout.verticalSpacing = 9;
-	layout.horizontalSpacing = 9;
-	container.setLayout(layout);
+	protected FeatureSpecPage(WizardNewProjectCreationPage mainPage) {
+		super(mainPage, false);
+		setTitle(PDEPlugin.getResourceString(PAGE_TITLE));
+		setDescription(PDEPlugin.getResourceString(PAGE_DESC));
+	}
 
-	ModifyListener listener = new ModifyListener() {
-		public void modifyText(ModifyEvent e) {
-			verifyComplete();
+	protected void initialize() {
+		if (isInitialized)
+			return;
+
+		String projectName = mainPage.getProjectName();
+		if (initialId == null){
+			featureIdText.setText(computeInitialId(projectName));
 		}
-	};
+		if (initialName == null)
+			featureNameText.setText(projectName);
+		featureVersionText.setText("1.0.0");
+	}
 
-	Label label = new Label(container, SWT.NULL);
-	label.setText(PDEPlugin.getResourceString(PAGE_ID));
-	idText = new Text(container, SWT.BORDER);
-	GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-	idText.setLayoutData(gd);
-	if (initialId!=null)
-		idText.setText(initialId);	
-	idText.addModifyListener(listener);
-
-	label = new Label(container, SWT.NULL);
-	label.setText(PDEPlugin.getResourceString(PAGE_NAME));
-	nameText = new Text(container, SWT.BORDER);
-	gd = new GridData(GridData.FILL_HORIZONTAL);
-	nameText.setLayoutData(gd);
-	if (initialName!=null)
-		nameText.setText(initialName);	
-	nameText.addModifyListener(listener);
-
-	label = new Label(container, SWT.NULL);
-	label.setText(PDEPlugin.getResourceString(PAGE_VERSION));
-	versionText = new Text(container, SWT.BORDER);
-	gd = new GridData(GridData.FILL_HORIZONTAL);
-	versionText.setLayoutData(gd);
-	versionText.addModifyListener(listener);
-
-	label = new Label(container, SWT.NULL);
-	label.setText(PDEPlugin.getResourceString(PAGE_PROVIDER));
-	providerText = new Text(container, SWT.BORDER);
-	gd = new GridData(GridData.FILL_HORIZONTAL);
-	providerText.setLayoutData(gd);
-	providerText.addModifyListener(listener);
-
-	verifyComplete();
-	setControl(container);
-	Dialog.applyDialogFont(container);
-	WorkbenchHelp.setHelp(container, IHelpContextIds.NEW_FEATURE_DATA);
-}
-
-private void initialize() {
-	if (isInitialized)
-		return;
-	String projectName = mainPage.getProjectName();
-	if (initialId==null)
-		idText.setText(computeInitialId(projectName));
-	if (initialName==null)
-		nameText.setText(projectName);
-	versionText.setText("1.0.0");	
-}
-
-private String computeInitialId(String projectName) {
-	StringBuffer buffer = new StringBuffer();
-	StringTokenizer stok = new StringTokenizer(projectName,".");
-	while (stok.hasMoreTokens()) {
-		String token = stok.nextToken();
-		for (int i=0; i<token.length(); i++) {
-			if (Character.isLetterOrDigit(token.charAt(i)))
-			   buffer.append(token.charAt(i));
+	public FeatureData getFeatureData() {
+		FeatureData data = new FeatureData();
+		data.id = featureIdText.getText();
+		try {
+			PluginVersionIdentifier pvi = new PluginVersionIdentifier(
+					featureVersionText.getText());
+			data.version = pvi.toString();
+		} catch (NumberFormatException e) {
+			data.version = featureVersionText.getText();
 		}
-		if (stok.hasMoreTokens() && buffer.charAt(buffer.length()-1) != '.')
-			buffer.append(".");
+		data.provider = featureProviderText.getText();
+		data.name = featureNameText.getText();
+		return data;
 	}
-	return buffer.toString();
-}
 
-public void setVisible(boolean visible) {
-	super.setVisible(visible);
-	if (visible) {
-		initialize();
-		isInitialized=true;
-		idText.setFocus();
-	}
-}
-
-public FeatureData getFeatureData() {
-	FeatureData data = new FeatureData();
-	data.id = idText.getText();
-	try {
-	   PluginVersionIdentifier pvi = new PluginVersionIdentifier(versionText.getText());
-	   data.version = pvi.toString();
-	}
-	catch (NumberFormatException e) {
-	   data.version = versionText.getText();
-	}
-	data.provider = providerText.getText();
-	data.name = nameText.getText();
-	return data;
-}
-private void verifyComplete() {
-   boolean complete =
-	   idText.getText().length() > 0;
-   setPageComplete(complete);
-   if (complete) {
-   	  String message = verifyIdRules();
-   	  if (message!=null) {
-   	  	 setPageComplete(false);
-   	  	 setErrorMessage(message);
-   	  }
-   	  else {
-         setErrorMessage(null);
-         verifyVersion();
-   	  }
-   }
-   else 
-      setErrorMessage(PDEPlugin.getResourceString(KEY_MISSING));
-}
-
-private boolean verifyVersion() {
-	String value = versionText.getText();
-	boolean result = true;
-	if (value.length()==0) result = false;
-	try {
-	   new PluginVersionIdentifier(value);
-	}
-	catch (Throwable e) {
-		result = false;
-	}
-	if (result==false) {
-		setPageComplete(false);
-		setErrorMessage(PDEPlugin.getResourceString(KEY_VERSION_FORMAT));
-	}
-	return result;
-}
-
-private String verifyIdRules() {
-	String problemText = PDEPlugin.getResourceString(KEY_INVALID_ID);
-	String name = idText.getText();
-	StringTokenizer stok = new StringTokenizer(name, ".");
-	while (stok.hasMoreTokens()) {
-		String token = stok.nextToken();
-		for (int i=0; i<token.length(); i++) {
-			if (Character.isLetterOrDigit(token.charAt(i))==false)
-			   return problemText;
-		}
-	}
-	return null;
-}
-	/**
-	 * @return Returns the initialName.
-	 */
-	public String getInitialName() {
-		return initialName;
-	}
-	/**
-	 * @param initialName The initialName to set.
-	 */
-	public void setInitialName(String initialName) {
-		this.initialName = initialName;
-	}
-	/**
-	 * 
-	 * @param initialId
-	 */
-	public void setInitialId(String initialId) {
-		this.initialId = initialId;
-	}
-	/**
-	 * @return Returns the initialId.
-	 */
-	public String getInitialId() {
-		return initialId;
+	protected void verifyComplete() {
+		boolean complete = featureIdText.getText().length() > 0;
+		setPageComplete(complete);
+		if (complete) {
+			String message = verifyIdRules();
+			if (message != null) {
+				setPageComplete(false);
+				setErrorMessage(message);
+			} else {
+				setErrorMessage(null);
+				verifyVersion();
+			}
+		} else
+			setErrorMessage(PDEPlugin.getResourceString(KEY_MISSING));
 	}
 }

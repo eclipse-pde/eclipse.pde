@@ -1,0 +1,150 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+
+package org.eclipse.pde.internal.ui.wizards.feature;
+
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.resource.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.elements.*;
+import org.eclipse.pde.internal.ui.wizards.*;
+import org.eclipse.pde.internal.ui.wizards.feature.NewFeaturePatchWizard.*;
+import org.eclipse.swt.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.*;
+
+/**
+ * @author cgwong
+ */
+public class PatchPluginListPage extends BasePluginListPage {
+
+	public static final String PAGE_TITLE = "PatchPlugins.title";
+	public static final String PAGE_DESC = "PatchPlugins.desc";
+	private IProjectProvider provider;
+	private CheckboxTableViewer pluginViewer;
+
+	/**
+	 * @param pageName
+	 */
+	public PatchPluginListPage(String pageName) {
+		super(pageName);
+		setTitle(PDEPlugin.getResourceString(PAGE_TITLE));
+		setDescription(PDEPlugin.getResourceString(PAGE_DESC));
+	}
+
+	/**
+	 * @param provider
+	 */
+	public PatchPluginListPage(IProjectProvider provider) {
+		super("patchPluginList");
+		this.provider = provider;
+		setTitle(PDEPlugin.getResourceString(PAGE_TITLE));
+		setDescription(PDEPlugin.getResourceString(PAGE_DESC));
+	}
+
+	/**
+	 * @param pageName
+	 * @param title
+	 * @param titleImage
+	 */
+	public PatchPluginListPage(String pageName, String title,
+			ImageDescriptor titleImage) {
+		super(pageName, title, titleImage);
+		// TODO Auto-generated constructor stub
+	}
+
+	class PluginContentProvider extends DefaultContentProvider
+			implements
+				IStructuredContentProvider {
+
+		public Object[] getElements(Object parent) {
+			return getPluginModels();
+		}
+	}
+
+	public PatchPluginListPage() {
+		super("patchPluginListPage");
+		setTitle(PDEPlugin.getResourceString(PAGE_TITLE));
+		setDescription(PDEPlugin.getResourceString(PAGE_DESC));
+	}
+
+	public void createControl(Composite parent) {
+		Composite container = new Composite(parent, SWT.NULL);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.verticalSpacing = 9;
+		container.setLayout(layout);
+
+		tablePart.createControl(container);
+		pluginViewer = tablePart.getTableViewer();
+		pluginViewer.setContentProvider(new PluginContentProvider());
+		pluginViewer
+				.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
+		pluginViewer.setSorter(ListUtil.PLUGIN_SORTER);
+		GridData gd = (GridData) tablePart.getControl().getLayoutData();
+		gd.heightHint = 250;
+		pluginViewer.setInput(PDECore.getDefault().getWorkspaceModelManager());
+		tablePart.setSelection(new Object[0]);
+		setControl(container);
+		Dialog.applyDialogFont(container);
+		WorkbenchHelp.setHelp(container,
+				IHelpContextIds.NEW_FEATURE_REFERENCED_PLUGINS);
+	}
+
+	private Object[] getPluginModels() {
+		IFeatureModel featureModel = ((FeaturePatchProvider)provider).getFeatureToPatch();
+		if (featureModel== null)
+			return new Object[0];
+		return featureModel.getFeature().getPlugins();
+	}
+
+//	public IFeature[] getSelectedFeatures() {
+//		Object[] result = tablePart.getSelection();
+//		IFeature[] features = new IFeature[result.length];
+//		for (int i = 0; i < result.length; i++) {
+//			IFeatureChild child = (IFeatureChild) result[i];
+//			features[i] = child.getModel().getFeature();
+//		}
+//		return features;
+//	}
+//	
+//	public IFeatureChild[] getSelectedFeatureChildren(){
+//		Object[] result = tablePart.getSelection();
+//		IFeatureChild[] children = new IFeatureChild[result.length];
+//		for (int i = 0 ;i<children.length; i++){
+//			children[i] = (IFeatureChild)result[i];
+//		}
+//		return children;
+//	}
+	
+	public IFeaturePlugin[] getSelectedPlugins(){
+		Object[] result = tablePart.getSelection();
+		IFeaturePlugin[] plugins = new IFeaturePlugin[result.length];
+		for (int i = 0 ;i<plugins.length; i++){
+			plugins[i] = (IFeaturePlugin)result[i];
+		}
+		return plugins;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.wizards.feature.BasePluginListPage#setVisible(boolean)
+	 */
+	public void setVisible(boolean visible) {
+		if (visible = true){
+			pluginViewer.refresh();
+		}
+		super.setVisible(visible);
+	}
+}
