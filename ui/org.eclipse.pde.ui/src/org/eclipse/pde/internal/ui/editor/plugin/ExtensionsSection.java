@@ -544,7 +544,7 @@ public class ExtensionsSection extends TreeSection
 					.getSelection();
 			IPluginExtension extension = (IPluginExtension) sel
 					.getFirstElement();
-			//extensionTree.refresh();
+			extensionTree.refresh();
 			extensionTree.setSelection(new StructuredSelection(extension));
 			return;
 		}
