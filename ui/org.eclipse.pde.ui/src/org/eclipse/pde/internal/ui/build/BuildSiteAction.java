@@ -14,6 +14,7 @@ import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.progress.*;
 
 /**
  * @author melhem
@@ -43,6 +44,7 @@ public class BuildSiteAction implements IObjectActionDelegate, IPreferenceConsta
 			BuildSiteJob job = new BuildSiteJob(models, fSiteXML.getProject(), fBuildModel);
 			job.setUser(true);
 			job.schedule();
+			job.setProperty(IProgressConstants.ICON_PROPERTY, PDEPluginImages.DESC_SITE_OBJ);
 		}		
 	}
 	

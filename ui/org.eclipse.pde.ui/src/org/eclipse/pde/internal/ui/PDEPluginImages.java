@@ -113,7 +113,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_INFO_ST_OBJ = create(PATH_OBJ, "info_st_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_CATEGORY_OBJ = create(PATH_OBJ, "category_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_PSEARCH_OBJ = create(PATH_OBJ, "psearch_obj.gif"); //$NON-NLS-1$
-
+	public static final ImageDescriptor DESC_SITE_OBJ = create(PATH_OBJ, "site_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_JUNIT_MAIN_TAB = create(PATH_OBJ, "test.gif"); //$NON-NLS-1$
 	
 	/**

@@ -16,6 +16,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.ui.progress.*;
 
 /**
  * Insert the type's description here.
@@ -56,6 +57,7 @@ public class FeatureExportWizard extends BaseExportWizard {
 				page1.getSelectedItems());
 		job.setUser(true);
 		job.schedule();
+		job.setProperty(IProgressConstants.ICON_PROPERTY, PDEPluginImages.DESC_FEATURE_OBJ);
 	}
 	
 	/* (non-Javadoc)
