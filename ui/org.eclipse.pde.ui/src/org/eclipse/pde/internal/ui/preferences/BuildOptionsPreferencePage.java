@@ -21,11 +21,11 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
  */
 public class BuildOptionsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage, IPreferenceConstants {
 	private IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-	private Button failOnError;
-	private Button verbose;
-	private Button debugInfo;
-	private Combo javacSource;
-	private Combo javacTarget;
+	private Button fFailOnError;
+	private Button fVerbose;
+	private Button fDebugInfo;
+	private Combo fJavacSource;
+	private Combo fJavacTarget;
 
 	/**
 	 *
@@ -50,46 +50,46 @@ public class BuildOptionsPreferencePage extends PreferencePage implements IWorkb
 		layout.marginWidth = 15;
 		composite.setLayout(layout);
 		
-		failOnError = new Button(composite, SWT.CHECK);
-		failOnError.setText(PDEPlugin.getResourceString("BuildPropertiesPreferencePage.failOnError")); //$NON-NLS-1$
-		failOnError.setSelection(store.getBoolean(PROP_JAVAC_FAIL_ON_ERROR));
+		fFailOnError = new Button(composite, SWT.CHECK);
+		fFailOnError.setText(PDEPlugin.getResourceString("BuildPropertiesPreferencePage.failOnError")); //$NON-NLS-1$
+		fFailOnError.setSelection(store.getBoolean(PROP_JAVAC_FAIL_ON_ERROR));
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
-		failOnError.setLayoutData(gd);
+		fFailOnError.setLayoutData(gd);
 		
-		verbose = new Button(composite, SWT.CHECK);
-		verbose.setText(PDEPlugin.getResourceString("BuildPropertiesPreferencePage.compilerVerbose")); //$NON-NLS-1$
-		verbose.setSelection(store.getBoolean(PROP_JAVAC_VERBOSE));
+		fVerbose = new Button(composite, SWT.CHECK);
+		fVerbose.setText(PDEPlugin.getResourceString("BuildPropertiesPreferencePage.compilerVerbose")); //$NON-NLS-1$
+		fVerbose.setSelection(store.getBoolean(PROP_JAVAC_VERBOSE));
 		gd = new GridData();
 		gd.horizontalSpan = 2;
-		verbose.setLayoutData(gd);
+		fVerbose.setLayoutData(gd);
 		
-		debugInfo = new Button(composite, SWT.CHECK);
-		debugInfo.setText(PDEPlugin.getResourceString("BuildPropertiesPreferencePage.compilerDebug")); //$NON-NLS-1$
-		debugInfo.setSelection(store.getBoolean(PROP_JAVAC_DEBUG_INFO));
+		fDebugInfo = new Button(composite, SWT.CHECK);
+		fDebugInfo.setText(PDEPlugin.getResourceString("BuildPropertiesPreferencePage.compilerDebug")); //$NON-NLS-1$
+		fDebugInfo.setSelection(store.getBoolean(PROP_JAVAC_DEBUG_INFO));
 		gd = new GridData();
 		gd.horizontalSpan = 2;
-		debugInfo.setLayoutData(gd);
+		fDebugInfo.setLayoutData(gd);
 		
 		Label label = new Label(composite, SWT.NONE);
 		label.setText(PDEPlugin.getResourceString("BuildPropertiesPreferencePage.javacSource")); //$NON-NLS-1$
 		
-		javacSource = new Combo(composite, SWT.READ_ONLY);
-		javacSource.setItems(new String[] {"1.3", "1.4"}); //$NON-NLS-1$ //$NON-NLS-2$
-		javacSource.select(javacSource.indexOf(store.getString(PROP_JAVAC_SOURCE)));
+		fJavacSource = new Combo(composite, SWT.READ_ONLY);
+		fJavacSource.setItems(new String[] {"1.3", "1.4"}); //$NON-NLS-1$ //$NON-NLS-2$
+		fJavacSource.setText(store.getString(PROP_JAVAC_SOURCE));
 		gd = new GridData();
 		gd.widthHint = 50;
-		javacSource.setLayoutData(gd);
+		fJavacSource.setLayoutData(gd);
 		
 		label = new Label(composite, SWT.NONE);
 		label.setText(PDEPlugin.getResourceString("BuildPropertiesPreferencePage.javacTarget")); //$NON-NLS-1$
 			
-		javacTarget = new Combo(composite, SWT.READ_ONLY);
-		javacTarget.setItems(new String[] {"1.1", "1.2", "1.3", "1.4"}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		javacTarget.select(javacTarget.indexOf(store.getString(PROP_JAVAC_TARGET)));
+		fJavacTarget = new Combo(composite, SWT.READ_ONLY);
+		fJavacTarget.setItems(new String[] {"1.1", "1.2", "1.3", "1.4"}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		fJavacTarget.setText(store.getString(PROP_JAVAC_TARGET));
 		gd = new GridData();
 		gd.widthHint = 50;
-		javacTarget.setLayoutData(gd);
+		fJavacTarget.setLayoutData(gd);
 		
 		Dialog.applyDialogFont(composite);
 		
@@ -100,12 +100,23 @@ public class BuildOptionsPreferencePage extends PreferencePage implements IWorkb
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
 	public boolean performOk() {
-		store.setValue(PROP_JAVAC_FAIL_ON_ERROR, failOnError.getSelection());
-		store.setValue(PROP_JAVAC_VERBOSE, verbose.getSelection());
-		store.setValue(PROP_JAVAC_DEBUG_INFO, debugInfo.getSelection());
-		store.setValue(PROP_JAVAC_SOURCE, javacSource.getText());
-		store.setValue(PROP_JAVAC_TARGET, javacTarget.getText());
+		store.setValue(PROP_JAVAC_FAIL_ON_ERROR, fFailOnError.getSelection());
+		store.setValue(PROP_JAVAC_VERBOSE, fVerbose.getSelection());
+		store.setValue(PROP_JAVAC_DEBUG_INFO, fDebugInfo.getSelection());
+		store.setValue(PROP_JAVAC_SOURCE, fJavacSource.getText());
+		store.setValue(PROP_JAVAC_TARGET, fJavacTarget.getText());
 		PDEPlugin.getDefault().savePluginPreferences();
 		return super.performOk();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
+	 */
+	protected void performDefaults() {
+		fFailOnError.setSelection(store.getDefaultBoolean(PROP_JAVAC_FAIL_ON_ERROR));
+		fVerbose.setSelection(store.getDefaultBoolean(PROP_JAVAC_VERBOSE));
+		fDebugInfo.setSelection(store.getDefaultBoolean(PROP_JAVAC_DEBUG_INFO));
+		fJavacSource.setText(store.getDefaultString(PROP_JAVAC_SOURCE));
+		fJavacTarget.setText(store.getDefaultString(PROP_JAVAC_TARGET));
 	}
 }
