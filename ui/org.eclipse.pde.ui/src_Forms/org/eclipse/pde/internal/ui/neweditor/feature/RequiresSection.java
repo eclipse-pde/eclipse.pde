@@ -24,9 +24,10 @@ import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.core.plugin.Plugin;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
 import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.pde.internal.ui.parts.*;
+import org.eclipse.pde.internal.ui.neweditor.TableSection;
+import org.eclipse.pde.internal.ui.newparts.TablePart;
 import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.*;
@@ -34,7 +35,8 @@ import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.*;
-import org.eclipse.update.ui.forms.internal.*;
+import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.forms.widgets.Section;
 
 public class RequiresSection
 	extends TableSection
@@ -52,7 +54,6 @@ public class RequiresSection
 	private static final String KEY_COMPUTE =
 		"FeatureEditor.RequiresSection.compute";
 	private static final String KEY_DELETE = "Actions.delete.label";
-	private boolean updateNeeded;
 	private Button syncButton;
 	private TableViewer pluginViewer;
 	private Action deleteAction;
@@ -67,29 +68,32 @@ public class RequiresSection
 		}
 	}
 
-	public RequiresSection(FeatureReferencePage page) {
+	public RequiresSection(FeatureReferencePage page, Composite parent) {
 		super(
 			page,
+			parent,
+			Section.DESCRIPTION,
 			new String[] {
 				PDEPlugin.getResourceString(KEY_NEW_PLUGIN_BUTTON),
 				PDEPlugin.getResourceString(KEY_NEW_FEATURE_BUTTON),
 				null,
 				PDEPlugin.getResourceString(KEY_COMPUTE)});
-		setHeaderText(PDEPlugin.getResourceString(KEY_TITLE));
-		setDescription(PDEPlugin.getResourceString(KEY_DESC));
+		getSection().setText(PDEPlugin.getResourceString(KEY_TITLE));
+		getSection().setDescription(PDEPlugin.getResourceString(KEY_DESC));
 		getTablePart().setEditable(false);
 	}
 
-	public void commitChanges(boolean onSave) {
+	public void commit(boolean onSave) {
+		super.commit(onSave);
 	}
 
-	public Composite createClient(
-		Composite parent,
-		FormWidgetFactory factory) {
-		Composite container = createClientContainer(parent, 2, factory);
+	public void createClient(
+		Section section,
+		FormToolkit toolkit) {
+		Composite container = createClientContainer(section, 2, toolkit);
 
 		syncButton =
-			factory.createButton(
+			toolkit.createButton(
 				container,
 				PDEPlugin.getResourceString(KEY_SYNC_BUTTON),
 				SWT.CHECK);
@@ -98,7 +102,7 @@ public class RequiresSection
 		gd.horizontalSpan = 2;
 		syncButton.setLayoutData(gd);
 
-		createViewerPartControl(container, SWT.MULTI, 2, factory);
+		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
 
 		TablePart tablePart = getTablePart();
 		pluginViewer = tablePart.getTableViewer();
@@ -113,8 +117,8 @@ public class RequiresSection
 			}
 		};
 		deleteAction.setText(PDEPlugin.getResourceString(KEY_DELETE));
-		factory.paintBordersFor(container);
-		return container;
+		toolkit.paintBordersFor(container);
+		section.setClient(container);
 	}
 
 	protected void buttonSelected(int index) {
@@ -134,7 +138,7 @@ public class RequiresSection
 	}
 
 	private void handleNewPlugin() {
-		final IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+		final IFeatureModel model = (IFeatureModel) getPage().getModel();
 		BusyIndicator
 			.showWhile(pluginViewer.getTable().getDisplay(), new Runnable() {
 			public void run() {
@@ -152,7 +156,7 @@ public class RequiresSection
 	}
 
 	private void handleNewFeature() {
-		final IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+		final IFeatureModel model = (IFeatureModel) getPage().getModel();
 		BusyIndicator
 			.showWhile(pluginViewer.getTable().getDisplay(), new Runnable() {
 			public void run() {
@@ -169,7 +173,7 @@ public class RequiresSection
 	}
 
 	private void handleDelete() {
-		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		IFeature feature = model.getFeature();
 		IStructuredSelection selection =
 			(IStructuredSelection) pluginViewer.getSelection();
@@ -197,7 +201,7 @@ public class RequiresSection
 		pluginViewer.setSelection(ssel);
 	}
 	public void dispose() {
-		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		model.removeModelChangedListener(this);
 		WorkspaceModelManager mng =
 			PDECore.getDefault().getWorkspaceModelManager();
@@ -259,22 +263,17 @@ public class RequiresSection
 			manager.add(deleteAction);
 			manager.add(new Separator());
 		}
-		getFormPage().getEditor().getContributor().contextMenuAboutToShow(
+		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(
 			manager);
 	}
 
 	protected void selectionChanged(IStructuredSelection selection) {
-		//IFeatureImport iimport = (IFeatureImport) selection.getFirstElement();
-		getFormPage().setSelection(selection);
-		/*
-		if (iimport != null)
-			fireSelectionNotification(iimport);
-		*/
-		fireChangeNotification(MULTI_SELECTION, selection);
+		getPage().getPDEEditor().setSelection(selection);
+		getPage().getManagedForm().fireSelectionChanged(this, selection);
 	}
-	public void initialize(Object input) {
-		IFeatureModel model = (IFeatureModel) input;
-		update(input);
+	public void initialize() {
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
+		refresh();
 		if (model.isEditable() == false) {
 			getTablePart().setButtonEnabled(0, false);
 			getTablePart().setButtonEnabled(1, false);
@@ -289,10 +288,8 @@ public class RequiresSection
 
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
-			updateNeeded = true;
-			if (getFormPage().isVisible()) {
-				update();
-			}
+			markStale();
+			return;
 		} else if (e.getChangeType() == IModelChangedEvent.CHANGE) {
 			Object obj = e.getChangedObjects()[0];
 			if (obj instanceof IFeatureImport) {
@@ -314,7 +311,7 @@ public class RequiresSection
 	}
 
 	private void recomputeImports() {
-		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		IFeature feature = model.getFeature();
 		try {
 			feature.computeImports();
@@ -324,8 +321,7 @@ public class RequiresSection
 	}
 
 	public void modelsChanged(IModelProviderEvent event) {
-		updateNeeded = true;
-		update();
+		markStale();
 	}
 
 	public void setFocus() {
@@ -333,21 +329,11 @@ public class RequiresSection
 			pluginViewer.getTable().setFocus();
 	}
 
-	public void update() {
-		if (updateNeeded) {
-			pluginViewer.getControl().getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					update(getFormPage().getModel());
-				}
-			});
-		}
-	}
-
-	public void update(Object input) {
-		IFeatureModel model = (IFeatureModel) input;
+	public void refresh() {
+		IFeatureModel model = (IFeatureModel)getPage().getModel();
 		IFeature feature = model.getFeature();
 		pluginViewer.setInput(feature);
-		updateNeeded = false;
+		super.refresh();
 	}
 	/**
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(Clipboard)
@@ -374,7 +360,7 @@ public class RequiresSection
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste()
 	 */
 	protected void doPaste() {
-		Clipboard clipboard = getFormPage().getEditor().getClipboard();
+		Clipboard clipboard = getPage().getPDEEditor().getClipboard();
 		Object[] objects =
 			(Object[]) clipboard.getContents(ModelDataTransfer.getInstance());
 		if (objects != null && canPaste(null, objects))
@@ -384,7 +370,7 @@ public class RequiresSection
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(Object, Object[])
 	 */
 	protected void doPaste(Object target, Object[] objects) {
-		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		IFeature feature = model.getFeature();
 
 		IFeatureImport[] imports = new IFeatureImport[objects.length];
@@ -437,5 +423,4 @@ public class RequiresSection
 			}
 		}
 	}
-
 }

@@ -19,7 +19,6 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.neweditor.*;
 import org.eclipse.pde.internal.ui.neweditor.build.*;
-import org.eclipse.pde.internal.ui.neweditor.build.BuildInputContext;
 import org.eclipse.pde.internal.ui.neweditor.context.*;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.dnd.*;
@@ -80,7 +79,7 @@ public class FeatureEditor extends MultiSourceEditor {
 	
 	protected InputContextManager createInputContextManager() {
 		FeatureInputContextManager manager =  new FeatureInputContextManager();
-		//manager.setUndoManager(new PluginUndoManager(this));
+		manager.setUndoManager(new FeatureUndoManager(this));
 		return manager;
 	}
 	
@@ -163,6 +162,8 @@ public class FeatureEditor extends MultiSourceEditor {
 		try {
 			addPage(new FeatureFormPage(this, PDEPlugin.getResourceString(FEATURE_PAGE_TITLE)));
 			addPage(new InfoFormPage(this, PDEPlugin.getResourceString(INFO_PAGE_TITLE)));
+			addPage(new FeatureReferencePage(this, PDEPlugin.getResourceString(REFERENCE_PAGE_TITLE)));
+			addPage(new FeatureAdvancedPage(this, PDEPlugin.getResourceString(ADVANCED_PAGE_TITLE)));			
 			if (inputContextManager.hasContext(BuildInputContext.CONTEXT_ID))
 				addPage(new BuildPage(this));			
 		} catch (PartInitException e) {

@@ -10,19 +10,19 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.neweditor.feature;
 
-import java.util.*;
+import java.util.Iterator;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.editor.manifest.*;
-import org.eclipse.swt.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.pde.internal.core.ifeature.IFeatureImport;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.neweditor.PDEFormPage;
+import org.eclipse.pde.internal.ui.neweditor.plugin.MatchSection;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.update.ui.forms.internal.*;
+import org.eclipse.ui.forms.widgets.*;
 
 /**
  * @author dejan
@@ -39,15 +39,16 @@ public class FeatureMatchSection extends MatchSection {
 	 * Constructor for FeatureMatchSection.
 	 * @param formPage
 	 */
-	public FeatureMatchSection(PDEFormPage formPage) {
-		super(formPage, false);
+	public FeatureMatchSection(PDEFormPage formPage, Composite parent) {
+		super(formPage, parent, false);
 	}
 
-	public Composite createClient(
-		Composite parent,
-		FormWidgetFactory factory) {
-		Composite client = super.createClient(parent, factory);
-		patchButton = factory.createButton(client, "Patch", SWT.CHECK);
+	public void createClient(
+		Section section,
+		FormToolkit toolkit) {
+		super.createClient(section, toolkit);
+		Composite client = (Composite)section.getClient();
+		patchButton = toolkit.createButton(client, "Patch", SWT.CHECK);
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		patchButton.setLayoutData(gd);
@@ -58,8 +59,6 @@ public class FeatureMatchSection extends MatchSection {
 				handlePatchChange(patchButton.getSelection());
 			}
 		});
-
-		return client;
 	}
 
 	private void handlePatchChange(boolean patch) {
@@ -109,7 +108,7 @@ public class FeatureMatchSection extends MatchSection {
 					nfalse++;
 			}
 		}
-		patchButton.setEnabled(!isReadOnly() && (ntrue > 0 || nfalse > 0));
+		patchButton.setEnabled(isEditable() && (ntrue > 0 || nfalse > 0));
 		patchButton.setSelection(ntrue > 0);
 	}
 
@@ -123,7 +122,7 @@ public class FeatureMatchSection extends MatchSection {
 			patchButton.setEnabled(false);
 			return;
 		}
-		patchButton.setEnabled(!isReadOnly());
+		patchButton.setEnabled(isEditable());
 		patchButton.setSelection(fimport.isPatch());
 	}
 }

@@ -21,9 +21,11 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.feature.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
 import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.pde.internal.ui.parts.*;
+import org.eclipse.pde.internal.ui.neweditor.*;
+import org.eclipse.pde.internal.ui.neweditor.TableSection;
+import org.eclipse.pde.internal.ui.newparts.TablePart;
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.dnd.*;
@@ -31,7 +33,8 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.dialogs.*;
-import org.eclipse.update.ui.forms.internal.*;
+import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.forms.widgets.Section;
 
 public class DataSection
 	extends TableSection
@@ -41,7 +44,6 @@ public class DataSection
 	private static final String KEY_NEW = "FeatureEditor.DataSection.new";
 	private static final String POPUP_NEW = "Menus.new.label";
 	private static final String POPUP_DELETE = "Actions.delete.label";
-	private boolean updateNeeded;
 	private PropertiesAction propertiesAction;
 	private TableViewer dataViewer;
 	private Action newAction;
@@ -59,10 +61,10 @@ public class DataSection
 		}
 	}
 
-	public DataSection(FeatureAdvancedPage page) {
-		super(page, new String[] { PDEPlugin.getResourceString(KEY_NEW)});
-		setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
-		setDescription(PDEPlugin.getResourceString(SECTION_DESC));
+	public DataSection(FeatureAdvancedPage page, Composite parent) {
+		super(page, parent, Section.DESCRIPTION, new String[] { PDEPlugin.getResourceString(KEY_NEW)});
+		getSection().setText(PDEPlugin.getResourceString(SECTION_TITLE));
+		getSection().setDescription(PDEPlugin.getResourceString(SECTION_DESC));
 		getTablePart().setEditable(false);
 		//setCollapsable(true);
 		//IFeatureModel model = (IFeatureModel)page.getModel();
@@ -70,22 +72,24 @@ public class DataSection
 		//setCollapsed(feature.getData().length==0);
 	}
 
-	public void commitChanges(boolean onSave) {
+	public void commit(boolean onSave) {
+		super.commit(onSave);
 	}
 
-	public Composite createClient(Composite parent, FormWidgetFactory factory) {
-		Composite container = createClientContainer(parent, 2, factory);
+	public void createClient(Section section, FormToolkit toolkit) {
+		Composite container = createClientContainer(section, 2, toolkit);
 		GridLayout layout = (GridLayout) container.getLayout();
 		layout.verticalSpacing = 9;
 
-		createViewerPartControl(container, SWT.MULTI, 2, factory);
+		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
 		TablePart tablePart = getTablePart();
 		dataViewer = tablePart.getTableViewer();
 		dataViewer.setContentProvider(new PluginContentProvider());
 		dataViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
-		factory.paintBordersFor(container);
+		toolkit.paintBordersFor(container);
 		makeActions();
-		return container;
+		section.setClient(container);
+		initialize();
 	}
 
 	protected void handleDoubleClick(IStructuredSelection selection) {
@@ -98,16 +102,18 @@ public class DataSection
 	}
 
 	public void dispose() {
-		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		model.removeModelChangedListener(this);
 		WorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
 		mng.removeModelProviderListener(this);
 		super.dispose();
 	}
-	public void expandTo(Object object) {
+	public boolean setFormInput(Object object) {
 		if (object instanceof IFeatureData) {
 			dataViewer.setSelection(new StructuredSelection(object), true);
+			return true;
 		}
+		return false;
 	}
 	protected void fillContextMenu(IMenuManager manager) {
 		manager.add(openAction);
@@ -115,13 +121,13 @@ public class DataSection
 		manager.add(newAction);
 		manager.add(deleteAction);
 		manager.add(new Separator());
-		getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager);
+		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
 		manager.add(new Separator());
 		manager.add(propertiesAction);
 	}
 
 	private void handleNew() {
-		final IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+		final IFeatureModel model = (IFeatureModel) getPage().getModel();
 		IResource resource = model.getUnderlyingResource();
 		final IContainer folder = resource.getParent();
 
@@ -179,7 +185,7 @@ public class DataSection
 
 		if (ssel.isEmpty())
 			return;
-		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		IFeature feature = model.getFeature();
 
 		try {
@@ -224,11 +230,11 @@ public class DataSection
 		return false;
 	}
 	protected void selectionChanged(IStructuredSelection selection) {
-		getFormPage().setSelection(selection);
+		getPage().getPDEEditor().setSelection(selection);
 	}
-	public void initialize(Object input) {
-		IFeatureModel model = (IFeatureModel) input;
-		update(input);
+	public void initialize() {
+		IFeatureModel model = (IFeatureModel)getPage().getModel();
+		refresh();
 		getTablePart().setButtonEnabled(0, model.isEditable());
 		model.addModelChangedListener(this);
 		WorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
@@ -237,10 +243,8 @@ public class DataSection
 
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
-			updateNeeded = true;
-			if (getFormPage().isVisible()) {
-				update();
-			}
+			markStale();
+			return;
 		} else {
 			Object obj = e.getChangedObjects()[0];
 			if (obj instanceof IFeatureData && !(obj instanceof IFeaturePlugin)) {
@@ -255,7 +259,7 @@ public class DataSection
 		}
 	}
 	private void makeActions() {
-		IModel model = (IModel)getFormPage().getModel();
+		IModel model = (IModel)getPage().getModel();
 		newAction = new Action() {
 			public void run() {
 				handleNew();
@@ -276,12 +280,11 @@ public class DataSection
 		deleteAction.setEnabled(model.isEditable());
 		deleteAction.setText(PDEPlugin.getResourceString(POPUP_DELETE));
 		openAction = new OpenReferenceAction(dataViewer);
-		propertiesAction = new PropertiesAction(getFormPage().getEditor());
+		propertiesAction = new PropertiesAction(getPage().getPDEEditor());
 	}
 
 	public void modelsChanged(IModelProviderEvent event) {
-		updateNeeded = true;
-		update();
+		markStale();
 	}
 
 	public void setFocus() {
@@ -289,23 +292,11 @@ public class DataSection
 			dataViewer.getTable().setFocus();
 	}
 
-	public void update() {
-		if (updateNeeded) {
-			dataViewer.getControl().getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					update(getFormPage().getModel());
-				}
-			});
-		}
-	}
-
-	public void update(Object input) {
-		if (getFormPage().isVisible()) { 
-			IFeatureModel model = (IFeatureModel) input;
-			IFeature feature = model.getFeature();
-			dataViewer.setInput(feature);
-			updateNeeded = false;
-		}
+	public void refresh() {
+		IFeatureModel model = (IFeatureModel)getPage().getModel();
+		IFeature feature = model.getFeature();
+		dataViewer.setInput(feature);
+		super.refresh();
 	}
 	/**
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(Object, Object[])
@@ -321,7 +312,7 @@ public class DataSection
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste()
 	 */
 	protected void doPaste() {
-		Clipboard clipboard = getFormPage().getEditor().getClipboard();
+		Clipboard clipboard = getPage().getPDEEditor().getClipboard();
 		ModelDataTransfer modelTransfer = ModelDataTransfer.getInstance();
 		Object [] objects = (Object[])clipboard.getContents(modelTransfer);
 		if (objects != null) {
@@ -332,7 +323,7 @@ public class DataSection
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(Object, Object[])
 	 */
 	protected void doPaste(Object target, Object[] objects) {
-		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		IFeature feature = model.getFeature();
 		FeatureData[] fData = new FeatureData[objects.length];
 		try {

@@ -15,7 +15,8 @@ import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.feature.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.neweditor.*;
+import org.eclipse.pde.internal.ui.neweditor.ModelUndoManager;
 
 /**
  * @version 	1.0
@@ -23,7 +24,7 @@ import org.eclipse.pde.internal.ui.editor.*;
  */
 public class FeatureUndoManager extends ModelUndoManager {
 
-	public FeatureUndoManager(PDEMultiPageEditor editor) {
+	public FeatureUndoManager(PDEFormEditor editor) {
 		super(editor);
 		setUndoLevelLimit(30);
 	}

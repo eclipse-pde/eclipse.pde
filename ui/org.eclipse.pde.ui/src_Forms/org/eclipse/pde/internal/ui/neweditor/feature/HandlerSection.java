@@ -16,13 +16,16 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.neweditor.*;
+import org.eclipse.pde.internal.ui.neweditor.PDESection;
+import org.eclipse.pde.internal.ui.newparts.FormEntry;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.update.ui.forms.internal.*;
+import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.forms.widgets.Section;
 
-public class HandlerSection extends PDEFormSection {
+public class HandlerSection extends PDESection {
 	public static final String SECTION_TITLE =
 		"FeatureEditor.HandlerSection.title";
 	public static final String SECTION_DESC =
@@ -34,16 +37,16 @@ public class HandlerSection extends PDEFormSection {
 	private FormEntry urlText;
 	private FormEntry libraryText;
 	private FormEntry handlerText;
-	private boolean updateNeeded;
 
-	public HandlerSection(FeatureAdvancedPage page) {
-		super(page);
-		setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
-		setDescription(PDEPlugin.getResourceString(SECTION_DESC));
+	public HandlerSection(FeatureAdvancedPage page, Composite parent) {
+		super(page, parent, Section.DESCRIPTION);
+		getSection().setText(PDEPlugin.getResourceString(SECTION_TITLE));
+		getSection().setDescription(PDEPlugin.getResourceString(SECTION_DESC));
 		//setCollapsable(true);
 		//IFeatureModel model = (IFeatureModel)page.getModel();
 		//IFeature feature = model.getFeature();
 		//setCollapsed(feature.getInstallHandler()==null);
+		createClient(getSection(), page.getManagedForm().getToolkit());
 	}
 	public boolean canPaste(Clipboard clipboard) {
 		TransferData[] types = clipboard.getAvailableTypes();
@@ -57,27 +60,30 @@ public class HandlerSection extends PDEFormSection {
 		}
 		return false;
 	}
-	public void commitChanges(boolean onSave) {
+	public void commit(boolean onSave) {
 		urlText.commit();
 		libraryText.commit();
 		handlerText.commit();
+		super.commit(onSave);
 	}
 
-	public Composite createClient(Composite parent, FormWidgetFactory factory) {
-		Composite container = factory.createComposite(parent);
+	public void createClient(Section section, FormToolkit toolkit) {
+		Composite container = toolkit.createComposite(section);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.verticalSpacing = 9;
 		layout.horizontalSpacing = 6;
 		container.setLayout(layout);
 
-		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		final IFeature feature = model.getFeature();
 
 		urlText =
-			new FormEntry(
-				createText(container, PDEPlugin.getResourceString(SECTION_URL), factory));
-		urlText.addFormTextListener(new IFormTextListener() {
+			new FormEntry(container, toolkit,
+			PDEPlugin.getResourceString(SECTION_URL),
+			null,
+			false);
+		urlText.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
 				try {
 					setURL(feature, text.getValue());
@@ -85,14 +91,13 @@ public class HandlerSection extends PDEFormSection {
 					PDEPlugin.logException(e);
 				}
 			}
-			public void textDirty(FormEntry text) {
-				forceDirty();
-			}
 		});
 		libraryText =
-			new FormEntry(
-				createText(container, PDEPlugin.getResourceString(SECTION_LIBRARY), factory));
-		libraryText.addFormTextListener(new IFormTextListener() {
+			new FormEntry(container, toolkit,
+			PDEPlugin.getResourceString(SECTION_LIBRARY), 
+			null,
+			false);
+		libraryText.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
 				try {
 					setLibrary(feature, text.getValue());
@@ -100,14 +105,13 @@ public class HandlerSection extends PDEFormSection {
 					PDEPlugin.logException(e);
 				}
 			}
-			public void textDirty(FormEntry text) {
-				forceDirty();
-			}
 		});
 		handlerText =
-			new FormEntry(
-				createText(container, PDEPlugin.getResourceString(SECTION_HANDLER), factory));
-		handlerText.addFormTextListener(new IFormTextListener() {
+			new FormEntry(container, toolkit,
+				PDEPlugin.getResourceString(SECTION_HANDLER), 
+				null,
+				false);
+		handlerText.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
 				try {
 					setHandler(feature, text.getValue());
@@ -115,12 +119,10 @@ public class HandlerSection extends PDEFormSection {
 					PDEPlugin.logException(e);
 				}
 			}
-			public void textDirty(FormEntry text) {
-				forceDirty();
-			}
 		});
-		factory.paintBordersFor(container);
-		return container;
+		toolkit.paintBordersFor(container);
+		section.setClient(container);
+		initialize();
 	}
 	
 	private void setURL(IFeature feature, String value) throws CoreException {
@@ -150,43 +152,31 @@ public class HandlerSection extends PDEFormSection {
 		return handler;
 	}
 
-	private void forceDirty() {
-		setDirty(true);
-		IModel model = (IModel) getFormPage().getModel();
-		if (model instanceof IEditable) {
-			IEditable editable = (IEditable) model;
-			editable.setDirty(true);
-			getFormPage().getEditor().fireSaveNeeded();
-		}
-	}
-
 	public void dispose() {
-		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		model.removeModelChangedListener(this);
 		super.dispose();
 	}
 
-	public void initialize(Object input) {
-		IFeatureModel model = (IFeatureModel) input;
-		update(input);
+	public void initialize() {
+		IFeatureModel model = (IFeatureModel)getPage().getModel();
+		refresh();
 		if (model.isEditable() == false) {
-			urlText.getControl().setEditable(false);
-			libraryText.getControl().setEditable(false);
-			handlerText.getControl().setEditable(false);
+			urlText.getText().setEditable(false);
+			libraryText.getText().setEditable(false);
+			handlerText.getText().setEditable(false);
 		}
 		model.addModelChangedListener(this);
 	}
-	public boolean isDirty() {
-		return urlText.isDirty() || libraryText.isDirty() || handlerText.isDirty();
-	}
+
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
-			updateNeeded = true;
+			markStale();
 		}
 	}
 	public void setFocus() {
 		if (urlText != null)
-			urlText.getControl().setFocus();
+			urlText.getText().setFocus();
 	}
 
 	private void setIfDefined(FormEntry formText, Object value) {
@@ -194,13 +184,9 @@ public class HandlerSection extends PDEFormSection {
 			formText.setValue(value.toString(), true);
 		}
 	}
-	public void update() {
-		if (updateNeeded) {
-			this.update(getFormPage().getModel());
-		}
-	}
-	public void update(Object input) {
-		IFeatureModel model = (IFeatureModel) input;
+
+	public void refresh() {
+		IFeatureModel model = (IFeatureModel)getPage().getModel();
 		IFeature feature = model.getFeature();
 		IFeatureInstallHandler handler = feature.getInstallHandler();
 		if (handler!=null) {
@@ -208,6 +194,6 @@ public class HandlerSection extends PDEFormSection {
 			setIfDefined(libraryText, handler.getLibrary());
 			setIfDefined(handlerText, handler.getHandlerName());
 		}
-		updateNeeded = false;
+		super.refresh();
 	}
 }

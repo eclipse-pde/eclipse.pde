@@ -84,19 +84,15 @@ public class FeatureOutlinePage extends FormOutlinePage {
 	public String getParentPageId(Object item) {
 		if (item instanceof IFeatureURLElement)
 			return FeatureFormPage.PAGE_ID;
-		/*
 		if (item.equals(requiredPlugins)
 			|| item.equals(referencedPlugins)
 			|| item instanceof IFeaturePlugin
 			|| item instanceof IFeatureImport)
-			return formPage.getEditor().getPage(FeatureEditor.REFERENCE_PAGE);
-		*/
+			return FeatureReferencePage.PAGE_ID;
 		if (item instanceof IFeatureInfo)
 			return InfoFormPage.PAGE_ID;
-		/*
 		if (item instanceof IFeatureData)
-			return formPage.getEditor().getPage(FeatureEditor.ADVANCED_PAGE);
-		*/
+			return FeatureAdvancedPage.PAGE_ID;
 		return super.getParentPageId(item);
 	}
 	private Object[] getInfos() {
