@@ -34,6 +34,24 @@ public class DetailsForm extends ScrollableSectionForm {
 		setHeadingText(PDERuntimePlugin.getResourceString("logView.preview.header"));
 	}
 	
+	private boolean isWhiteBackground() {
+		Color color = factory.getBackgroundColor();
+		return (
+			color.getRed() == 255 && color.getGreen() == 255 && color.getBlue() == 255);
+	}
+
+	public void openTo(LogEntry entry) {
+		if (entry == null) {
+			parent.setVisible(false);
+		} else {
+			parent.setVisible(true);
+			sessionSection.expandTo(entry);
+			stackSection.expandTo(entry);
+			updateTopSection(entry);
+		}
+		update();
+	}
+	
 	protected void createFormClient(Composite parent) {
 		this.parent = parent;
 		GridLayout layout = new GridLayout();
@@ -43,10 +61,25 @@ public class DetailsForm extends ScrollableSectionForm {
 		parent.setLayout(layout);
 		parent.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		FormWidgetFactory factory = getFactory();
+		createTopSection(parent);
 
+		sessionSection = new SessionDataSection(this);
+		Control control = sessionSection.createControl(parent, factory);
+		control.setLayoutData(
+			new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
+
+		stackSection = new StackSection(this);
+		control = stackSection.createControl(parent, factory);
+		control.setLayoutData(
+			new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_FILL));
+
+		registerSection(sessionSection);
+		registerSection(stackSection);
+	}
+
+	private void createTopSection(Composite parent) {
 		Composite comp = factory.createComposite(parent);
-		layout = new GridLayout();
+		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		comp.setLayout(layout);
 		comp.setLayoutData(
@@ -73,38 +106,7 @@ public class DetailsForm extends ScrollableSectionForm {
 		gd = new GridData();
 		gd.widthHint = 380;
 		message.setLayoutData(gd);
-
-		sessionSection = new SessionDataSection(this);
-		Control control = sessionSection.createControl(parent, factory);
-		control.setLayoutData(
-			new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
-
-		stackSection = new StackSection(this);
-		control = stackSection.createControl(parent, factory);
-		control.setLayoutData(
-			new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_FILL));
-
-		registerSection(sessionSection);
-		registerSection(stackSection);
-	}
-
-	private boolean isWhiteBackground() {
-		Color color = getFactory().getBackgroundColor();
-		return (
-			color.getRed() == 255 && color.getGreen() == 255 && color.getBlue() == 255);
-	}
-
-	public void openTo(LogEntry entry) {
-		if (entry == null) {
-			parent.setVisible(false);
-		} else {
-			parent.setVisible(true);
-			sessionSection.expandTo(entry);
-			stackSection.expandTo(entry);
-			updateTopSection(entry);
-		}
-		update();
-
+		
 	}
 
 	private void updateTopSection(LogEntry entry) {
@@ -131,5 +133,7 @@ public class DetailsForm extends ScrollableSectionForm {
 	public void dispose() {
 		super.dispose();
 		headingImage.dispose();
+		unregisterSection(sessionSection);
+		unregisterSection(stackSection);
 	}
 }
