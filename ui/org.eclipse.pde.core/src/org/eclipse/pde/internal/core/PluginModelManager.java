@@ -52,6 +52,8 @@ public class PluginModelManager implements IAdaptable {
 	}
 
 	public IPluginModelBase [] getPlugins() {
+		if (entries == null)
+			initializeTable();
 		Collection values = entries.values();
 		IPluginModelBase [] plugins = new IPluginModelBase[values.size()];
 		int i=0;
