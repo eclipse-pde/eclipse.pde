@@ -94,8 +94,10 @@ public class SiteEditor extends PDEMultiPageXMLEditor {
 		} catch (CoreException e) {
 			//cleanModel = false;
 		}
-		String buildName = ".sitebuild";
-		IPath buildPath = file.getProject().getFullPath().append(buildName);
+		IPath buildPath =
+			file.getProject().getFullPath().append(
+				PDECore.SITEBUILD_DIR).append(
+				PDECore.SITEBUILD_PROPERTIES);
 		IFile buildFile = file.getWorkspace().getRoot().getFile(buildPath);
 		provider.connect(buildFile, this);
 		ISiteBuildModel buildModel =

@@ -12,6 +12,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.PDE;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.CoreUtility;
 import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.core.site.*;
@@ -73,7 +74,7 @@ public class NewSiteProjectWizard
 		
 		// Create and save build model
 		WorkspaceSiteBuildModel buildModel = new WorkspaceSiteBuildModel();
-		IFile buildFile = project.getFile(".sitebuild");
+		IFile buildFile = project.getFile(PDECore.SITEBUILD_FILE);
 		buildModel.setFile(buildFile);
 		ISiteBuild siteBuild = buildModel.getSiteBuild();
 	 	siteBuild.setAutobuild(false);
@@ -136,6 +137,7 @@ public class NewSiteProjectWizard
 	private void createFolders(IProject project, IProgressMonitor monitor) throws CoreException {
 		createFolder(project, "features", monitor);
 		createFolder(project, "plugins", monitor);
+		createFolder(project, PDECore.SITEBUILD_DIR, monitor);
 	}
 	
 	private void createFolder(IProject project, String name, IProgressMonitor monitor) throws CoreException {

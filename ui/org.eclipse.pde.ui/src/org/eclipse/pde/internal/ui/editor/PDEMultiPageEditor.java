@@ -380,6 +380,10 @@ public abstract class PDEMultiPageEditor
 	public Clipboard getClipboard() {
 		return clipboard;
 	}
+	
+	public Control getControl() {
+		return formWorkbook.getControl();
+	}
 
 	public ISelection getSelection() {
 		return selectionProvider.getSelection();

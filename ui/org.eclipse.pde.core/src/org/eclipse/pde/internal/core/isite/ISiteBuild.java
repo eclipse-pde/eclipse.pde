@@ -14,13 +14,16 @@ public interface ISiteBuild extends ISiteBuildObject {
 	String P_FEATURE_LOCATION = "feature-location";
 	String P_SHOW_CONSOLE = "show-console";
 	String P_AUTOBUILD = "autobuild";
+	String P_SCRUB_OUTPUT = "scrub-output";
 
 	void setPluginLocation(IPath location) throws CoreException;
 	void setFeatureLocation(IPath location) throws CoreException;
 	IPath getPluginLocation();
 	IPath getFeatureLocation();
+	boolean getScrubOutput();
 	boolean isAutobuild();
 	void setAutobuild(boolean value) throws CoreException;
+	void setScrubOutput(boolean value) throws CoreException;
 	boolean getShowConsole();
 	void setShowConsole(boolean value) throws CoreException;
 	

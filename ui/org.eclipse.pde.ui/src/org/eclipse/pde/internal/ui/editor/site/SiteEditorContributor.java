@@ -11,7 +11,7 @@ import org.eclipse.pde.internal.ui.editor.*;
 
 
 public class SiteEditorContributor extends PDEEditorContributor {
-//	private EditorBuildFeatureAction buildAction;
+	private Action buildAction;
 //	private SynchronizeVersionsAction synchronizeAction;
 //	private PreviewAction previewAction;
 
@@ -20,13 +20,8 @@ public SiteEditorContributor() {
 }
 public void contextMenuAboutToShow(IMenuManager mng) {
 	super.contextMenuAboutToShow(mng);
-/*
 	mng.add(new Separator());
-	mng.add(previewAction);
-	mng.add(new Separator());
-	mng.add(synchronizeAction);
 	mng.add(buildAction);
-*/
 }
 /*
 public Action getBuildAction() {
@@ -38,12 +33,15 @@ public Action getSynchronizeAction() {
 */
 protected void makeActions() {
 	super.makeActions();
-/*
-	buildAction = new EditorBuildFeatureAction();
-	synchronizeAction = new SynchronizeVersionsAction();
-	previewAction = new PreviewAction();
-*/
+	buildAction = new Action() {
+		public void run() {
+			PDEMultiPageEditor editor = getEditor();
+			BuildControlSection.handleBuild(editor);
+		}
+	};
+	buildAction.setText("&Rebuild All");
 }
+
 public void setActiveEditor(IEditorPart targetEditor) {
 	super.setActiveEditor(targetEditor);
 /*

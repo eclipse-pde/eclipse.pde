@@ -26,6 +26,12 @@ public class PDECore extends Plugin {
 	public static final String BINARY_REPOSITORY_PROVIDER = PLUGIN_ID + "."+"BinaryRepositoryProvider";
 	
 	public static final String CLASSPATH_CONTAINER_ID = PLUGIN_ID+".requiredPlugins";
+	public static final String SITEBUILD_DIR = ".sitebuild";
+	public static final String SITEBUILD_SCRIPTS = "scripts";
+	public static final String SITEBUILD_TEMP_FOLDER = "temp.folder";
+	public static final String SITEBUILD_LOG = "build.log";
+	public static final String SITEBUILD_PROPERTIES = "sitebuild.xml";
+	public static final String SITEBUILD_FILE = SITEBUILD_DIR + "/"+SITEBUILD_PROPERTIES;
 
 	// Shared instance
 	private static PDECore inst;

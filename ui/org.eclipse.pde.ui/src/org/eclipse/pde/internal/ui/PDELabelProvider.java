@@ -482,7 +482,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 	public Image getObjectImage(ISiteFeature obj) {
 		int flags = 0;
 		if (obj.getArchiveFile()!=null) {
-			flags = F_JAR;
+			flags = F_BINARY;
 		}
 		return get(PDEPluginImages.DESC_JAVA_LIB_OBJ, flags);
 	}

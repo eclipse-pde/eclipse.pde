@@ -175,7 +175,7 @@ public class FeatureProjectSection extends CheckboxObjectListSection {
 				doBuild();
 			}
 		};
-		buildAction.setText("Build JARs");
+		buildAction.setText("Build Selected");
 	}
 
 	protected void fillClientActions(IMenuManager manager) {
@@ -199,7 +199,7 @@ public class FeatureProjectSection extends CheckboxObjectListSection {
 		}
 		if (result.size() == 0) {
 		} else {
-			FeatureBuildOperation op = new FeatureBuildOperation(result);
+			FeatureBuildOperation op = new FeatureBuildOperation(result, false);
 			ProgressMonitorDialog dialog =
 				new ProgressMonitorDialog(tableViewer.getControl().getShell());
 			try {

@@ -24,6 +24,7 @@ public class SiteBuild extends SiteBuildObject implements ISiteBuild {
 	private IPath featureLocation;
 	private boolean useConsole;
 	private boolean autobuild;
+	private boolean scrubOutput;
 
 	/**
 	 * @see org.eclipse.pde.internal.core.isite.ISite#setType(java.lang.String)
@@ -67,6 +68,17 @@ public class SiteBuild extends SiteBuildObject implements ISiteBuild {
 	
 	public boolean isAutobuild() {
 		return autobuild;
+	}
+	
+	public void setScrubOutput(boolean value) throws CoreException {
+		ensureModelEditable();
+		Object oldValue = new Boolean(this.scrubOutput);
+		this.scrubOutput = value;
+		firePropertyChanged(P_AUTOBUILD, oldValue, new Boolean(value));
+	}
+
+	public boolean getScrubOutput() {
+		return scrubOutput;
 	}
 	
 	public void setShowConsole(boolean value) throws CoreException {
@@ -122,6 +134,7 @@ public class SiteBuild extends SiteBuildObject implements ISiteBuild {
 		featureLocation = null;
 		useConsole = false;
 		autobuild = false;
+		scrubOutput = false;
 	}
 	
 	protected void parse(Node node) {
@@ -132,6 +145,7 @@ public class SiteBuild extends SiteBuildObject implements ISiteBuild {
 		if (value!=null)
 			featureLocation = new Path(value);
 		autobuild = getBooleanAttribute(node, "autobuild");
+		scrubOutput = getBooleanAttribute(node, "scrub-output");
 		useConsole = getBooleanAttribute(node, "use-console");
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
@@ -159,6 +173,8 @@ public class SiteBuild extends SiteBuildObject implements ISiteBuild {
 			setFeatureLocation((IPath)newValue);
 		} else if (name.equals(P_AUTOBUILD)) {
 			setAutobuild(newValue!=null?((Boolean)newValue).booleanValue():false);
+		} else if (name.equals(P_SCRUB_OUTPUT)) {
+			setScrubOutput(newValue!=null?((Boolean)newValue).booleanValue():false);
 		} else if (name.equals(P_SHOW_CONSOLE)) {
 			setShowConsole(newValue!=null?((Boolean)newValue).booleanValue():false);
 		}
@@ -172,6 +188,7 @@ public class SiteBuild extends SiteBuildObject implements ISiteBuild {
 		writeIfDefined(indenta, writer, "feature-location", featureLocation!=null?featureLocation.toOSString():null);
 		writeIfDefined(indenta, writer, "plugin-location", pluginLocation!=null?pluginLocation.toOSString():null);
 		writeIfDefined(indenta, writer, "autobuild", autobuild?"true":"false");
+		writeIfDefined(indenta, writer, "scrub-output", scrubOutput?"true":"false");
 		writeIfDefined(indenta, writer, "use-console", useConsole?"true":"false");
 		writer.println(">");
 

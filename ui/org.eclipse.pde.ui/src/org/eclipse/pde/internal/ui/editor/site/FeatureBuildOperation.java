@@ -5,12 +5,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
 
+import org.apache.tools.ant.Project;
+import org.eclipse.ant.core.AntRunner;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.pde.internal.build.FeatureBuildScriptGenerator;
-import org.eclipse.pde.internal.core.TargetPlatform;
-import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 
@@ -29,21 +31,46 @@ public class FeatureBuildOperation implements IRunnableWithProgress {
 	public static final String KEY_GENERATING =
 		"GenerateFeatureJars.generating";
 	public static final String KEY_RUNNING = "FeatureBuildOperation.running";
+	private static final String BUILD_LISTENER_CLASS =
+		"org.eclipse.pde.internal.ui.editor.site.SiteBuildListener";
 	private ArrayList features;
+	private boolean fullBuild;
 
-	public FeatureBuildOperation(ArrayList features) {
+	private File logFile = null;
+
+	private static FeatureBuildOperation instance;
+
+	public FeatureBuildOperation(ArrayList features, boolean fullBuild) {
 		this.features = features;
+		instance = this;
+		this.fullBuild = fullBuild;
 	}
 
-	public FeatureBuildOperation(ISiteBuildFeature sbfeature) {
+	public FeatureBuildOperation(
+		ISiteBuildFeature sbfeature,
+		boolean fullBuild) {
 		this.features = new ArrayList();
 		features.add(sbfeature);
+		this.fullBuild = fullBuild;
+		instance = this;
+	}
+
+	public static FeatureBuildOperation getDefault() {
+		return instance;
 	}
 
 	public void run(IProgressMonitor monitor)
 		throws InvocationTargetException, InterruptedException {
 		try {
-			monitor.beginTask("Building:", features.size());
+			int count = fullBuild ? 2*features.size() + 1 : 2*features.size();
+			monitor.beginTask("Building:", count);
+			if (fullBuild) {
+				monitor.setTaskName("Scrubbing output folders ...");
+				scrubOutput(
+					(ISiteBuildFeature) features.get(0),
+					new SubProgressMonitor(monitor, 1));
+			}
+			monitor.setTaskName("Building:");
 			for (int i = 0; i < features.size(); i++) {
 				if (monitor.isCanceled())
 					break;
@@ -52,14 +79,37 @@ public class FeatureBuildOperation implements IRunnableWithProgress {
 				SubProgressMonitor subMonitor =
 					new SubProgressMonitor(
 						monitor,
-						1,
+						2,
 						SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
 				doBuildFeature(sbfeature, subMonitor);
 			}
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
 		} finally {
+			postBuildCleanup((ISiteBuildFeature) features.get(0));
 			monitor.done();
+		}
+	}
+
+	private void scrubOutput(
+		ISiteBuildFeature sbfeature,
+		IProgressMonitor monitor) throws CoreException {
+		monitor.beginTask("", 2);
+		ISiteBuildModel model = sbfeature.getModel();
+		IProject project = model.getUnderlyingResource().getProject();
+		ISiteBuild siteBuild = model.getSiteBuild();
+		IFolder pluginFolder = project.getFolder(siteBuild.getPluginLocation());
+		IFolder featureFolder = project.getFolder(siteBuild.getFeatureLocation());
+		scrubFolder(pluginFolder, new SubProgressMonitor(monitor, 1));
+		scrubFolder(featureFolder, new SubProgressMonitor(monitor, 1));
+	}
+	
+	private void scrubFolder(IFolder folder, IProgressMonitor monitor) throws CoreException {
+		IResource [] members = folder.members();
+		monitor.beginTask("Scrubbing "+folder.getName(), members.length);
+		for (int i=0; i<members.length; i++) {
+			IResource member = members[i];
+			member.delete(true, new SubProgressMonitor(monitor, 1));
 		}
 	}
 
@@ -70,42 +120,37 @@ public class FeatureBuildOperation implements IRunnableWithProgress {
 		IFeatureModel featureModel =
 			sbfeature.getReferencedFeature().getModel();
 		monitor.subTask("'" + featureModel.getFeature().getLabel() + "'");
-		monitor.beginTask(PDEPlugin.getResourceString(KEY_VERIFYING), 4);
-		File workingFolder = createWorkingFolder(featureModel);
+		monitor.beginTask(PDEPlugin.getResourceString(KEY_VERIFYING), 5);
 		monitor.worked(1);
 		ensureValid(featureModel, monitor);
 		monitor.worked(1);
 		monitor.setTaskName(PDEPlugin.getResourceString(KEY_GENERATING));
-		File scriptFile = makeScript(featureModel, workingFolder, monitor);
+		IFile scriptFile = makeScript(featureModel, monitor);
 		monitor.worked(1);
 		monitor.setTaskName(PDEPlugin.getResourceString(KEY_RUNNING));
-		runScript(scriptFile, sbfeature.getModel(), monitor);
-		monitor.worked(1);
-		removeWorkingFolder(workingFolder);
+		runScript(
+			scriptFile,
+			sbfeature.getModel(),
+			new SubProgressMonitor(monitor, 1));
+		IProject buildProject =
+			sbfeature.getModel().getUnderlyingResource().getProject();
+		buildProject.refreshLocal(
+			IResource.DEPTH_INFINITE,
+			new SubProgressMonitor(monitor, 1));
+
 	}
 
-	private File createWorkingFolder(IFeatureModel featureModel) {
-		IPath stateLocation = PDEPlugin.getDefault().getStateLocation();
-		IFeature feature = featureModel.getFeature();
-		String folder = feature.getId() + "_" + feature.getVersion();
-		IPath workingPath = stateLocation.append("builds");
-		ensureDirectoryExists(workingPath.toFile(), false);
-		workingPath = workingPath.append(folder);
-		File dir = workingPath.toFile();
-		ensureDirectoryExists(dir, true);
-		return dir;
-	}
-
-	private void removeWorkingFolder(File folder) {
-		folder.delete();
-	}
-
-	private void ensureDirectoryExists(File dir, boolean clean) {
-		if (dir.exists() == false) {
-			dir.mkdir();
-		} else if (clean) {
-			dir.delete();
-			dir.mkdir();
+	private void postBuildCleanup(ISiteBuildFeature sbfeature) {
+		ISiteBuildModel model = sbfeature.getModel();
+		IProject siteProject = model.getUnderlyingResource().getProject();
+		IFolder tempFolder =
+			siteProject.getFolder(
+				PDECore.SITEBUILD_DIR + "/" + PDECore.SITEBUILD_TEMP_FOLDER);
+		if (tempFolder.exists()) {
+			try {
+				tempFolder.delete(true, false, null);
+			} catch (CoreException e) {
+			}
 		}
 	}
 
@@ -150,9 +195,8 @@ public class FeatureBuildOperation implements IRunnableWithProgress {
 		return false;
 	}
 
-	private File makeScript(
+	private IFile makeScript(
 		IFeatureModel featureModel,
-		File workingFolder,
 		IProgressMonitor monitor)
 		throws InvocationTargetException, CoreException {
 
@@ -163,7 +207,7 @@ public class FeatureBuildOperation implements IRunnableWithProgress {
 		generator.setBuildScriptName(scriptName);
 		generator.setFeatureRootLocation(
 			featureFile.getParent().getLocation().toOSString());
-		generator.setScriptTargetLocation(workingFolder.getPath());
+		generator.setGenerateChildrenScript(true);
 		IPath platform =
 			Platform.getLocation().append(featureFile.getProject().getName());
 		generator.setInstallLocation(platform.toOSString());
@@ -172,17 +216,61 @@ public class FeatureBuildOperation implements IRunnableWithProgress {
 		generator.setPluginPath(pluginPath);
 		generator.setFeature(featureModel.getFeature().getId());
 		generator.generate();
-		File scriptFile = new File(workingFolder, scriptName);
-		return scriptFile;
+		return featureFile.getProject().getFile(scriptName);
 	}
 
 	private void runScript(
-		File scriptFile,
+		IFile scriptFile,
 		ISiteBuildModel buildModel,
-		IProgressMonitor monitor) {
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
-		}
+		IProgressMonitor monitor)
+		throws CoreException {
+		AntRunner runner = new AntRunner();
+		createLogFile(buildModel);
+		runner.setBuildFileLocation(scriptFile.getLocation().toOSString());
+		runner.setArguments(computeBuildArguments(buildModel));
+		runner.setExecutionTargets(computeTargets());
+		runner.setMessageOutputLevel(Project.MSG_ERR);
+		runner.addBuildListener(BUILD_LISTENER_CLASS);
+		runner.run(monitor);
+	}
+
+	private void createLogFile(ISiteBuildModel buildModel) {
+		IProject project = buildModel.getUnderlyingResource().getProject();
+		IPath location =
+			project.getLocation().append(PDECore.SITEBUILD_DIR).append(
+				PDECore.SITEBUILD_LOG);
+		logFile = new File(location.toOSString());
+	}
+
+	public File getLogFile() {
+		return logFile;
+	}
+
+	private String computeBuildArguments(ISiteBuildModel buildModel) {
+		StringBuffer buff = new StringBuffer();
+		IProject project = buildModel.getUnderlyingResource().getProject();
+		IPath projectLocation = project.getLocation();
+		IPath resultFolder = projectLocation.append(PDECore.SITEBUILD_DIR);
+		resultFolder = resultFolder.append(PDECore.SITEBUILD_TEMP_FOLDER);
+		ISiteBuild siteBuild = buildModel.getSiteBuild();
+
+		buff.append(
+			createArgument("build.result.folder", resultFolder.toOSString()));
+		String location =
+			projectLocation.append(siteBuild.getPluginLocation()).toOSString();
+		buff.append(createArgument("plugin.destination", location));
+		location =
+			projectLocation.append(siteBuild.getFeatureLocation()).toOSString();
+		buff.append(createArgument("feature.destination", location));
+
+		return buff.toString().trim();
+	}
+
+	private String createArgument(String name, String value) {
+		return "-D" + name + "=" + "\"" + value + "\" ";
+	}
+
+	private String[] computeTargets() {
+		return new String[] { "build.update.jar", "refresh" };
 	}
 }

@@ -4,11 +4,16 @@ package org.eclipse.pde.internal.ui.editor.site;
  * All Rights Reserved.
  */
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.core.site.WorkspaceSiteBuildModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.PDEFormSection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.*;
@@ -30,6 +35,8 @@ public class BuildControlSection extends PDEFormSection {
 		"SiteEditor.BuildControlSection.console";
 	public static final String SECTION_AUTOBUILD =
 		"SiteEditor.BuildControlSection.autobuild";
+	public static final String SECTION_SCRUB_OUTPUT =
+		"SiteEditor.BuildControlSection.scrubOutput";
 	public static final String SECTION_BUILD =
 		"SiteEditor.BuildControlSection.build";
 
@@ -38,6 +45,7 @@ public class BuildControlSection extends PDEFormSection {
 
 	private Button consoleButton;
 	private Button autobuildButton;
+	private Button scrubOutputButton;
 	private Button buildButton;
 
 	private boolean updateNeeded;
@@ -84,7 +92,7 @@ public class BuildControlSection extends PDEFormSection {
 				forceDirty();
 			}
 		});
-		browse= factory.createButton(container, "Browse...", SWT.PUSH);
+		browse = factory.createButton(container, "Browse...", SWT.PUSH);
 		browse.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 			}
@@ -104,7 +112,7 @@ public class BuildControlSection extends PDEFormSection {
 				forceDirty();
 			}
 		});
-		browse= factory.createButton(container, "Browse...", SWT.PUSH);
+		browse = factory.createButton(container, "Browse...", SWT.PUSH);
 		browse.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 			}
@@ -137,6 +145,20 @@ public class BuildControlSection extends PDEFormSection {
 			}
 		});
 
+		scrubOutputButton =
+			factory.createButton(
+				container,
+				PDEPlugin.getResourceString(SECTION_SCRUB_OUTPUT),
+				SWT.CHECK);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan = 3;
+		scrubOutputButton.setLayoutData(gd);
+		scrubOutputButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				setScrubOutput(scrubOutputButton.getSelection());
+			}
+		});
+
 		Composite buttonContainer = factory.createComposite(container);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		gd.horizontalSpan = 3;
@@ -154,7 +176,7 @@ public class BuildControlSection extends PDEFormSection {
 				SWT.PUSH);
 		buildButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				handleBuild();
+				handleBuild(getFormPage().getEditor());
 			}
 		});
 		gd =
@@ -207,6 +229,20 @@ public class BuildControlSection extends PDEFormSection {
 		}
 	}
 
+	private void setScrubOutput(boolean value) {
+		ISiteModel model = (ISiteModel) getFormPage().getModel();
+		ISiteBuildModel buildModel = model.getBuildModel();
+		if (buildModel == null)
+			return;
+		ISiteBuild siteBuild = buildModel.getSiteBuild();
+		try {
+			siteBuild.setScrubOutput(value);
+			forceDirty();
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}
+	}
+
 	private void setShowConsole(boolean value) {
 		ISiteModel model = (ISiteModel) getFormPage().getModel();
 		ISiteBuildModel buildModel = model.getBuildModel();
@@ -242,16 +278,30 @@ public class BuildControlSection extends PDEFormSection {
 		super.dispose();
 	}
 
-	private void handleBuild() {
-		/*
-			final FeatureEditorContributor contributor =
-				(FeatureEditorContributor) getFormPage().getEditor().getContributor();
-			BusyIndicator.showWhile(createJarButton.getDisplay(), new Runnable() {
-				public void run() {
-					contributor.getBuildAction().run();
-				}
-			});
-		*/
+	static void handleBuild(PDEMultiPageEditor editor) {
+		ISiteModel model = (ISiteModel) editor.getModel();
+		ISiteBuildModel buildModel = model.getBuildModel();
+		ISiteBuild siteBuild = buildModel.getSiteBuild();
+		ISiteBuildFeature[] features = siteBuild.getFeatures();
+		ArrayList result = new ArrayList();
+		for (int i = 0; i < features.length; i++) {
+			ISiteBuildFeature sbfeature = features[i];
+			if (sbfeature.getReferencedFeature() != null)
+				result.add(sbfeature);
+		}
+		if (result.size() == 0)
+			return;
+
+		FeatureBuildOperation op =
+			new FeatureBuildOperation(result, siteBuild.getScrubOutput());
+		ProgressMonitorDialog dialog =
+			new ProgressMonitorDialog(editor.getControl().getShell());
+		try {
+			dialog.run(true, true, op);
+		} catch (InterruptedException e) {
+		} catch (InvocationTargetException e) {
+			PDEPlugin.logException(e);
+		}
 	}
 
 	public void initialize(Object input) {
@@ -266,11 +316,11 @@ public class BuildControlSection extends PDEFormSection {
 		}
 		model.addModelChangedListener(this);
 	}
-/*
-	public boolean isDirty() {
-		return pluginDest.isDirty() || featureDest.isDirty();
-	}
-*/
+	/*
+		public boolean isDirty() {
+			return pluginDest.isDirty() || featureDest.isDirty();
+		}
+	*/
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			updateNeeded = true;

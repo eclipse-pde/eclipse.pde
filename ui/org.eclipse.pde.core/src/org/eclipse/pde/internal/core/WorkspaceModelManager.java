@@ -134,7 +134,7 @@ public class WorkspaceModelManager
 				model.setEditable(editable && model.isEditable());
 				return model;
 			}
-			if (name.equals(".sitebuild")) {
+			if (name.equals(PDECore.SITEBUILD_PROPERTIES)) {
 				WorkspaceSiteBuildModel model = new WorkspaceSiteBuildModel(file);
 				model.setEditable(editable && model.isEditable());
 				return model;
