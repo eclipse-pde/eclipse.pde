@@ -14,6 +14,10 @@ import java.util.*;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.IClasspathContainer;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 
@@ -208,16 +212,31 @@ public class PluginModelManager implements IAdaptable {
 	private void updateAffectedEntries(IPluginBase [] changedPlugins) {
 		// Reset classpath containers for affected entries
 		ModelEntry [] entries = getEntries();
-		
+		Map map = new HashMap();
 		for (int i=0; i<entries.length; i++) {
 			ModelEntry entry = entries[i];
 
 			if (entry.isAffected(changedPlugins)) {
 				try {
-					entry.updateClasspathContainer(true, true);
+					if (entry.shouldUpdateClasspathContainer(true, true)) {
+						IProject proj = entry.getWorkspaceModel().getUnderlyingResource().getProject();
+						map.put(JavaCore.create(proj), entry.getClasspathContainer());
+					}
 				}
 				catch (CoreException e) {
 				}
+			}
+		}
+		if (map.size() > 0) {
+			try {
+				IJavaProject[] jProjects = (IJavaProject[])map.keySet().toArray(new IJavaProject[map.size()]);
+				IClasspathContainer[] containers = (IClasspathContainer[])map.values().toArray(new IClasspathContainer[map.size()]);
+				JavaCore.setClasspathContainer(
+					new Path(PDECore.CLASSPATH_CONTAINER_ID),
+					jProjects,
+					containers,
+					null);
+			} catch (JavaModelException e) {
 			}
 		}
 	}

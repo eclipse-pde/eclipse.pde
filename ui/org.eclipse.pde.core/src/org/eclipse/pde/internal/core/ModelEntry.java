@@ -97,20 +97,26 @@ public class ModelEntry extends PlatformObject {
 				new RequiredPluginsClasspathContainer(workspaceModel);
 		return classpathContainer;
 	}
-	public void updateClasspathContainer(boolean force, boolean doCheckClasspath) throws CoreException {
+	public void updateClasspathContainer(boolean force, boolean doCheckClasspath)
+		throws CoreException {
+		if (shouldUpdateClasspathContainer(force, doCheckClasspath)) {
+			IProject project = workspaceModel.getUnderlyingResource().getProject();
+			IJavaProject[] javaProjects = new IJavaProject[] { JavaCore.create(project)};
+			IClasspathContainer[] containers =
+				new IClasspathContainer[] { getClasspathContainer()};
+			IPath path = new Path(PDECore.CLASSPATH_CONTAINER_ID);
+			JavaCore.setClasspathContainer(path, javaProjects, containers, null);
+		}
+	}
+	
+	public boolean shouldUpdateClasspathContainer(boolean force, boolean doCheckClasspath) throws CoreException  {
 		if (workspaceModel == null || (doCheckClasspath && !usesContainers()))
-			return;
+			return false;
 		if (force)
 			classpathContainer = null;
 		RequiredPluginsClasspathContainer container = getClasspathContainer();
 		container.reset();
-		IProject project = workspaceModel.getUnderlyingResource().getProject();
-		IJavaProject[] javaProjects =
-			new IJavaProject[] { JavaCore.create(project)};
-		IClasspathContainer[] containers =
-			new IClasspathContainer[] { container };
-		IPath path = new Path(PDECore.CLASSPATH_CONTAINER_ID);
-		JavaCore.setClasspathContainer(path, javaProjects, containers, null);
+		return true;	
 	}
 
 	private boolean usesContainers() throws CoreException {
