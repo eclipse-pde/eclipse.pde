@@ -23,7 +23,6 @@ import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.IFeatureObject;
 import org.eclipse.pde.internal.core.ischema.*;
-import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.ui.editor.feature.FeatureAdapterFactory;
 import org.eclipse.pde.internal.ui.editor.manifest.PluginAdapterFactory;
 import org.eclipse.pde.internal.ui.editor.schema.SchemaAdapterFactory;
@@ -33,6 +32,7 @@ import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.view.PluginsViewAdapterFactory;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.texteditor.ExtendedTextEditorPreferenceConstants;
 
@@ -48,6 +48,9 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants, IPre
 	private LaunchListener launchListener;
 
 	private java.util.Hashtable counters;
+	
+	// Shared colors for all forms
+	private FormColors formColors;
 
 	public PDEPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
@@ -168,6 +171,14 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants, IPre
 				new Status(IStatus.ERROR, getPluginId(), IStatus.OK, e.getMessage(), e);
 		log(status);
 	}
+	
+	public FormColors getFormColors(Display display) {
+		if (formColors == null) {
+			formColors = new FormColors(display);
+			formColors.markShared();
+		}
+		return formColors;
+	}
 
 	public void startup() throws CoreException {
 		super.startup();
@@ -187,6 +198,10 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants, IPre
 	public void shutdown() throws CoreException {
 		if (launchListener!=null)
 			launchListener.shutdown();
+		if (formColors!=null) {
+			formColors.dispose();
+			formColors=null;
+		}
 		super.shutdown();
 	}
 
