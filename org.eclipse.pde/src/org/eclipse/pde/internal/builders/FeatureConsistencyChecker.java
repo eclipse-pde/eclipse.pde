@@ -28,6 +28,8 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 	public static final String BUILDERS_VERIFYING = "Builders.verifying";
 	public static final String BUILDERS_FEATURE_REFERENCE =
 		"Builders.Feature.reference";
+	public static final String BUILDERS_FEATURE_FREFERENCE =
+		"Builders.Feature.freference";
 	public static final String BUILDERS_UPDATING = "Builders.updating";
 	
 	private boolean fileCompiled=false;
@@ -196,6 +198,20 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 		}
 		return false;
 	}
+	
+	private boolean isValidReference(IFeatureChild child) {
+		WorkspaceModelManager manager =
+			PDECore.getDefault().getWorkspaceModelManager();
+		IFeatureModel[] models = manager.getWorkspaceFeatureModels();
+
+		for (int i = 0; i < models.length; i++) {
+			IFeatureModel model = models[i];
+			if (model.getFeature().getId().equals(child.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	private void validateFeature(IFile file, PluginErrorReporter reporter) {
 		WorkspaceFeatureModel model = new WorkspaceFeatureModel(file);
@@ -206,6 +222,7 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 			if (reporter.getErrorCount() > 0)
 				return;
 			testPluginReferences(feature, reporter);
+			testFeatureReferences(feature, reporter);
 		}
 	}
 
@@ -213,6 +230,9 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 		IFeature feature,
 		PluginErrorReporter reporter) {
 		IFeaturePlugin[] plugins = feature.getPlugins();
+		int flag = CompilerFlags.getFlag(CompilerFlags.F_UNRESOLVED_PLUGINS);
+		if (flag==CompilerFlags.IGNORE) return;
+
 		for (int i = 0; i < plugins.length; i++) {
 			IFeaturePlugin plugin = plugins[i];
 			if (isValidReference(plugin) == false) {
@@ -220,10 +240,36 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 					PDE.getFormattedMessage(
 						BUILDERS_FEATURE_REFERENCE,
 						plugin.getLabel());
-				reporter.reportError(message);
+				reporter.report(
+					message,
+					getLine(plugin),
+					flag);
 			}
 		}
 	}
+	
+	private void testFeatureReferences(
+		IFeature feature,
+		PluginErrorReporter reporter) {
+		IFeatureChild[] included = feature.getIncludedFeatures();
+		int flag = CompilerFlags.getFlag(CompilerFlags.F_UNRESOLVED_FEATURES);
+		if (flag==CompilerFlags.IGNORE) return;
+
+		for (int i = 0; i < included.length; i++) {
+			IFeatureChild child = included[i];
+			if (isValidReference(child) == false) {
+				String message =
+					PDE.getFormattedMessage(
+						BUILDERS_FEATURE_FREFERENCE,
+						child.getId());
+				reporter.report(
+					message,
+					getLine(child),
+					flag);
+			}
+		}
+	}
+
 	private void validateRequiredAttributes(
 		IFeature feature,
 		PluginErrorReporter reporter) {

@@ -56,6 +56,11 @@ public class CompilerFlags {
 	public static final String S_CREATE_DOCS = "compilers.s.create-docs";
 	public static final String S_DOC_FOLDER = "compilers.s.doc-folder";
 
+	public static final String F_UNRESOLVED_PLUGINS =
+		"compilers.f.unresolved-plugins";
+	public static final String F_UNRESOLVED_FEATURES =
+		"compilers.f.unresolved-features";
+
 	private static final String[][] flags =
 		{
 			{
@@ -68,9 +73,8 @@ public class CompilerFlags {
 				P_UNKNOWN_RESOURCE,
 				P_NO_REQUIRED_ATT },
 			{
-			S_CREATE_DOCS,
-			S_DOC_FOLDER }, {
-		}, {
+			S_CREATE_DOCS, S_DOC_FOLDER }, {
+			F_UNRESOLVED_PLUGINS, F_UNRESOLVED_FEATURES }, {
 		}
 	};
 
@@ -86,27 +90,27 @@ public class CompilerFlags {
 		Preferences pref = PDE.getDefault().getPluginPreferences();
 		return pref.getInt(flagId);
 	}
-	
+
 	public static boolean getBoolean(String flagId) {
 		Preferences pref = PDE.getDefault().getPluginPreferences();
 		return pref.getBoolean(flagId);
 	}
-	
+
 	public static String getString(String flagId) {
 		Preferences pref = PDE.getDefault().getPluginPreferences();
 		return pref.getString(flagId);
 	}
-	
+
 	public static int getDefaultFlag(String flagId) {
 		Preferences pref = PDE.getDefault().getPluginPreferences();
 		return pref.getDefaultInt(flagId);
 	}
-	
+
 	public static String getDefaultString(String flagId) {
 		Preferences pref = PDE.getDefault().getPluginPreferences();
 		return pref.getDefaultString(flagId);
 	}
-	
+
 	public static boolean getDefaultBoolean(String flagId) {
 		Preferences pref = PDE.getDefault().getPluginPreferences();
 		return pref.getDefaultBoolean(flagId);
@@ -116,12 +120,12 @@ public class CompilerFlags {
 		Preferences pref = PDE.getDefault().getPluginPreferences();
 		pref.setValue(flagId, value);
 	}
-	
+
 	public static void setBoolean(String flagId, boolean value) {
 		Preferences pref = PDE.getDefault().getPluginPreferences();
 		pref.setValue(flagId, value);
 	}
-	
+
 	public static void setString(String flagId, String value) {
 		Preferences pref = PDE.getDefault().getPluginPreferences();
 		pref.setValue(flagId, value);
@@ -137,9 +141,12 @@ public class CompilerFlags {
 		pref.setDefault(P_UNKNOWN_CLASS, IGNORE);
 		pref.setDefault(P_UNKNOWN_RESOURCE, IGNORE);
 		pref.setDefault(P_NO_REQUIRED_ATT, WARNING);
-		
+
 		pref.setDefault(S_CREATE_DOCS, false);
 		pref.setDefault(S_DOC_FOLDER, "doc");
+
+		pref.setDefault(F_UNRESOLVED_PLUGINS, WARNING);
+		pref.setDefault(F_UNRESOLVED_FEATURES, WARNING);
 	}
 
 	public static boolean isGroupActive(int group) {
