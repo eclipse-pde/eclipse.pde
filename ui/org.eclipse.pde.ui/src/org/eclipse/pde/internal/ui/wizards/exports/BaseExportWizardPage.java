@@ -64,7 +64,7 @@ public abstract class BaseExportWizardPage extends WizardPage {
 	private Combo fAntCombo;
 	private Button fBrowseAnt;
 	private Button fSaveAsAntButton;
-	private String fZipExtension = Platform.getOS().equals("macosx") ? ".tar.gz" : ".zip"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	private String fZipExtension = TargetPlatform.getOS().equals("win32") ? ".zip" : ".tar.gz"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 	
 	class ExportListProvider

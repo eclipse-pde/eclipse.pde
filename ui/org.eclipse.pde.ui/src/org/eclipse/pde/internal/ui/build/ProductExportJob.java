@@ -6,7 +6,6 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -27,7 +26,7 @@ public class ProductExportJob extends FeatureExportJob {
 
 	private IProduct fProduct;
 
-	private String fZipExtension = Platform.getOS().equals("macosx") ? ".tar.gz" : ".zip"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$	
+	private String fZipExtension = TargetPlatform.getOS().equals("win32") ? ".zip" : ".tar.gz"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$	
 
 	private String fFeatureLocation;
 

@@ -2,10 +2,10 @@ package org.eclipse.pde.internal.ui.editor.product;
 
 import java.lang.reflect.*;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.pde.core.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
@@ -65,7 +65,7 @@ public class ExportSection extends PDESection implements IHyperlinkListener{
 			private void handleBrowse() {
 				FileDialog dialog = new FileDialog(getShell(), SWT.SAVE);
 				dialog.setFileName(fArchiveEntry.getValue());
-				String extension = Platform.getOS().equals("macosx") ? ".tar.gz" : ".zip"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				String extension = TargetPlatform.getOS().equals("win32") ? ".zip" : ".tar.gz"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				dialog.setFilterExtensions(new String[] {"*" + extension}); //$NON-NLS-1$
 				String res = dialog.open();
 				if (res != null) {
