@@ -320,21 +320,42 @@ public class SearchablePluginsManager implements IFileAdapterFactory {
 	}
 
 	private IPackageFragmentRoot findPackageFragmentRoot(String absolutePath) {
-		if (proxyProject == null)
-			return null;
 		IPath jarPath = new Path(absolutePath);
-		try {
-			IPackageFragmentRoot[] roots = proxyProject
-					.getAllPackageFragmentRoots();
-			for (int i = 0; i < roots.length; i++) {
-				IPackageFragmentRoot root = roots[i];
-				IPath path = root.getPath();
-				if (path.equals(jarPath))
-					return root;
+		// Find in proxy project jars
+		if (proxyProject != null) {
+			try {
+				IPackageFragmentRoot[] roots = proxyProject
+						.getAllPackageFragmentRoots();
+				for (int i = 0; i < roots.length; i++) {
+					IPackageFragmentRoot root = roots[i];
+					IPath path = root.getPath();
+					if (path.equals(jarPath))
+						return root;
 
+				}
+			} catch (JavaModelException e) {
 			}
-		} catch (JavaModelException e) {
 		}
+		// Find in other plugin (and fragments) projects dependencies
+		IPluginModelBase[] pluginModels = PDECore.getDefault()
+				.getWorkspaceModelManager().getAllModels();
+		for (int i = 0; i < pluginModels.length; i++) {
+			IProject project = pluginModels[i].getUnderlyingResource()
+					.getProject();
+			IJavaProject javaProject = JavaCore.create(project);
+			try {
+				IPackageFragmentRoot[] roots = javaProject
+						.getAllPackageFragmentRoots();
+				for (int j = 0; j < roots.length; j++) {
+					IPackageFragmentRoot root = roots[j];
+					IPath path = root.getPath();
+					if (path.equals(jarPath))
+						return root;
+				}
+			} catch (JavaModelException e) {
+			}
+		}
+
 		return null;
 	}
 	
