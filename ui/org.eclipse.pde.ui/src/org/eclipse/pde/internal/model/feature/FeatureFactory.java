@@ -20,6 +20,14 @@ public IFeaturePlugin createPlugin() {
 	plugin.parent = model.getFeature();
 	return plugin;
 }
+
+public IFeatureData createData() {
+	FeatureData data = new FeatureData();
+	data.model = model;
+	data.parent = model.getFeature();
+	return data;
+}
+
 public IFeatureImport createImport() {
 	FeatureImport iimport = new FeatureImport();
 	iimport.model = model;

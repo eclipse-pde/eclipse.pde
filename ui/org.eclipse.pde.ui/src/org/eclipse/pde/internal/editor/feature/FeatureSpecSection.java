@@ -31,6 +31,7 @@ public class FeatureSpecSection extends PDEFormSection {
 	public static final String SECTION_NAME = "FeatureEditor.SpecSection.name";
 	public static final String SECTION_VERSION = "FeatureEditor.SpecSection.version";
 	public static final String SECTION_PROVIDER = "FeatureEditor.SpecSection.provider";
+	public static final String SECTION_PRIMARY = "FeatureEditor.SpecSection.primary";
 	public static final String SECTION_CREATE_JAR = "FeatureEditor.SpecSection.createJar";
 	public static final String SECTION_SYNCHRONIZE = "FeatureEditor.SpecSection.synchronize";
 	public static final String KEY_BAD_VERSION_TITLE = "FeatureEditor.SpecSection.badVersionTitle";
@@ -38,6 +39,7 @@ public class FeatureSpecSection extends PDEFormSection {
 	
 	private FormEntry idText;
 	private FormEntry titleText;
+	private Button primaryButton;
 	private Button createJarButton;
 	private Button synchronizeButton;
 
@@ -72,6 +74,12 @@ public void commitChanges(boolean onSave) {
 		catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
+	}
+	try {
+		feature.setPrimary(primaryButton.getSelection());
+	}
+	catch (CoreException e) {
+		PDEPlugin.logException(e);
 	}
 }
 public Composite createClient(Composite parent, FormWidgetFactory factory) {
@@ -146,6 +154,20 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	GridData gd = (GridData) idText.getControl().getLayoutData();
 	gd.widthHint = 150;
 	
+	primaryButton = factory.createButton(container, PDEPlugin.getResourceString(SECTION_PRIMARY), SWT.CHECK);
+	gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+	gd.horizontalSpan = 2;
+	primaryButton.setLayoutData(gd);
+	primaryButton.addSelectionListener(new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			try {
+				feature.setPrimary(primaryButton.getSelection());
+			} catch (CoreException ex) {
+				PDEPlugin.logException(ex);
+			}
+		}
+	});
+
 	Composite buttonContainer = factory.createComposite(container);
 	gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 	gd.horizontalSpan = 2;
@@ -237,6 +259,7 @@ public void initialize(Object input) {
 		titleText.getControl().setEnabled(false);
 		versionText.getControl().setEnabled(false);
 		providerText.getControl().setEnabled(false);
+		primaryButton.setEnabled(false);
 	}
 	model.addModelChangedListener(this);
 }
@@ -277,6 +300,7 @@ public void update(Object input) {
 	getFormPage().getForm().setHeadingText(model.getResourceString(feature.getLabel()));
 	setIfDefined(versionText, feature.getVersion());
 	setIfDefined(providerText, feature.getProviderName());
+	primaryButton.setSelection(feature.isPrimary());
 	updateNeeded=false;
 }
 }

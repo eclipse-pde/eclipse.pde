@@ -35,11 +35,13 @@ public class PortabilitySection extends PDEFormSection {
 	public static final String SECTION_OS = "FeatureEditor.PortabilitySection.os";
 	public static final String SECTION_WS = "FeatureEditor.PortabilitySection.ws";
 	public static final String SECTION_NL = "FeatureEditor.PortabilitySection.nl";
+	public static final String SECTION_ARCH = "FeatureEditor.PortabilitySection.arch";
 	public static final String SECTION_EDIT = "FeatureEditor.PortabilitySection.edit";
 
 	private FormEntry osText;
 	private FormEntry wsText;
 	private FormEntry nlText;
+	private FormEntry archText;
 	private boolean updateNeeded;
 
 	public PortabilitySection(FeatureFormPage page) {
@@ -55,6 +57,7 @@ public class PortabilitySection extends PDEFormSection {
 		osText.commit();
 		wsText.commit();
 		nlText.commit();
+		archText.commit();
 	}
 
 	public Composite createClient(Composite parent, FormWidgetFactory factory) {
@@ -148,6 +151,33 @@ public class PortabilitySection extends PDEFormSection {
 				});
 			}
 		});
+		
+		archText =
+			new FormEntry(
+				createText(container, PDEPlugin.getResourceString(SECTION_ARCH), factory));
+		archText.addFormTextListener(new IFormTextListener() {
+			public void textValueChanged(FormEntry text) {
+				try {
+					feature.setArch(text.getValue());
+				} catch (CoreException e) {
+					PDEPlugin.logException(e);
+				}
+			}
+			public void textDirty(FormEntry text) {
+				forceDirty();
+			}
+		});
+		editButton = factory.createButton(container, editLabel, SWT.PUSH);
+		editButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				BusyIndicator.showWhile(nlText.getControl().getDisplay(), new Runnable() {
+					public void run() {
+						Choice[] choices = ReferencePropertySource.getArchChoices();
+						openPortabilityChoiceDialog(archText, choices);
+					}
+				});
+			}
+		});
 
 		factory.paintBordersFor(container);
 		return container;
@@ -196,11 +226,12 @@ public class PortabilitySection extends PDEFormSection {
 			osText.getControl().setEnabled(false);
 			wsText.getControl().setEnabled(false);
 			nlText.getControl().setEnabled(false);
+			archText.getControl().setEnabled(false);
 		}
 		model.addModelChangedListener(this);
 	}
 	public boolean isDirty() {
-		return osText.isDirty() || wsText.isDirty() || nlText.isDirty();
+		return osText.isDirty() || wsText.isDirty() || nlText.isDirty() || archText.isDirty();
 	}
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
@@ -232,6 +263,7 @@ public class PortabilitySection extends PDEFormSection {
 		setIfDefined(osText, feature.getOS());
 		setIfDefined(wsText, feature.getWS());
 		setIfDefined(nlText, feature.getNL());
+		setIfDefined(archText, feature.getArch());
 		updateNeeded = false;
 	}
 }

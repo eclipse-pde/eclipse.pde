@@ -19,6 +19,12 @@ public interface IFeatureModelFactory {
  */
 IFeaturePlugin createPlugin();
 /**
+ * Creates a new data model object.
+ *
+ * @return new instance of the feature data object
+ */
+IFeatureData createData();
+/**
  * Creates a new import model object.
  *
  * @return new instance of the feature import object

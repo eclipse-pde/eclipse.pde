@@ -19,7 +19,7 @@ public class FeatureInstallHandler
 	implements IFeatureInstallHandler {
 		private URL url;
 		private String library;
-		private String className;
+		private String handlerName;
 
 	/*
 	 * @see IFeatureInstallHandler#getURL()
@@ -38,8 +38,8 @@ public class FeatureInstallHandler
 	/*
 	 * @see IFeatureInstallHandler#getClassName()
 	 */
-	public String getClassName() {
-		return className;
+	public String getHandlerName() {
+		return handlerName;
 	}
 
 	/*
@@ -65,11 +65,11 @@ public class FeatureInstallHandler
 	/*
 	 * @see IFeatureInstallHandler#setClassName(String)
 	 */
-	public void setClassName(String className) throws CoreException {
+	public void setHandlerName(String handlerName) throws CoreException {
 		ensureModelEditable();
-		Object oldValue = this.className;
-		this.className = className;
-		firePropertyChanged(P_URL, oldValue, className);
+		Object oldValue = this.handlerName;
+		this.handlerName = handlerName;
+		firePropertyChanged(P_URL, oldValue, handlerName);
 	}
 	protected void parse(Node node) {
 		String urlName = getNodeAttribute(node, "url");
@@ -81,7 +81,7 @@ public class FeatureInstallHandler
 			}
 		}
 		library = getNodeAttribute(node, "library");
-		className = getNodeAttribute(node, "class");
+		handlerName = getNodeAttribute(node, "handler");
 	}
 public void write(String indent, PrintWriter writer) {
 	writer.print(indent+"<install-handler");
@@ -91,8 +91,8 @@ public void write(String indent, PrintWriter writer) {
 	if (library!=null) {
 		writer.print(" library=\""+library+"\"");
 	}
-	if (className!=null) {
-		writer.print(" class=\""+className+"\"");
+	if (handlerName!=null) {
+		writer.print(" handler=\""+handlerName+"\"");
 	}
 	writer.println(">");
 	writer.println(indent+"</install-handler>");

@@ -12,13 +12,13 @@ import org.eclipse.core.runtime.CoreException;
 public interface IFeatureInstallHandler extends IFeatureObject {
 	String P_URL = "url";
 	String P_LIBRARY = "library";
-	String P_CLASS_NAME = "className";
+	String P_HANDLER_NAME = "handlerName";
 
 	public URL getURL();
 	public String getLibrary();
-	public String getClassName();
+	public String getHandlerName();
 	
 	public void setURL(URL url) throws CoreException;
 	public void setLibrary(String library) throws CoreException;
-	public void setClassName(String className) throws CoreException;
+	public void setHandlerName(String handlerName) throws CoreException;
 }

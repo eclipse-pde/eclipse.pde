@@ -35,6 +35,7 @@ public class ReferencePropertySource extends FeaturePropertySource {
 	private final static String P_OS = "os";
 	private final static String P_WS = "ws";
 	private final static String P_NL = "nl";
+	private final static String P_ARCH = "arch";
 
 	public class VersionProvider extends LabelProvider {
 		public Image getImage(Object obj) {
@@ -104,6 +105,8 @@ public class ReferencePropertySource extends FeaturePropertySource {
 			descriptors.addElement(desc);
 			desc = createChoicePropertyDescriptor(P_NL, P_NL, getNLChoices());
 			descriptors.addElement(desc);
+			desc = createChoicePropertyDescriptor(P_ARCH, P_ARCH, getArchChoices());
+			descriptors.addElement(desc);
 		}
 		return toDescriptorArray(descriptors);
 	}
@@ -141,6 +144,9 @@ public class ReferencePropertySource extends FeaturePropertySource {
 		if (name.equals(P_NL)) {
 			return getPluginReference().getNL();
 		}
+		if (name.equals(P_ARCH)) {
+			return getPluginReference().getArch();
+		}
 		return null;
 	}
 	public void setElement(IFeaturePlugin plugin) {
@@ -160,6 +166,8 @@ public class ReferencePropertySource extends FeaturePropertySource {
 				getPluginReference().setWS(realValue);
 			} else if (name.equals(P_NL)) {
 				getPluginReference().setNL(realValue);
+			} else if (name.equals(P_ARCH)) {
+				getPluginReference().setArch(realValue);
 			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
@@ -167,30 +175,18 @@ public class ReferencePropertySource extends FeaturePropertySource {
 	}
 
 	public static Choice[] getOSChoices() {
-		return new Choice[] {
-			new Choice(BootLoader.OS_WIN32, BootLoader.OS_WIN32),
-			new Choice(BootLoader.OS_LINUX, BootLoader.OS_LINUX),
-			new Choice(BootLoader.OS_AIX, BootLoader.OS_AIX),
-			new Choice(BootLoader.OS_HPUX, BootLoader.OS_HPUX),
-			new Choice(BootLoader.OS_QNX, BootLoader.OS_QNX),
-			new Choice(BootLoader.OS_SOLARIS, BootLoader.OS_SOLARIS)};
+		return TargetPlatform.getOSChoices();
 	}
 
 	public static Choice[] getWSChoices() {
-		return new Choice[] {
-			new Choice(BootLoader.WS_WIN32, BootLoader.WS_WIN32),
-			new Choice(BootLoader.WS_MOTIF, BootLoader.WS_MOTIF),
-			new Choice(BootLoader.WS_GTK, BootLoader.WS_GTK),
-			new Choice(BootLoader.WS_PHOTON, BootLoader.WS_PHOTON)};
+		return TargetPlatform.getWSChoices();
+	}
+	
+	public static Choice[] getArchChoices() {
+		return TargetPlatform.getArchChoices();
 	}
 
 	public static Choice[] getNLChoices() {
-		Locale[] locales = Locale.getAvailableLocales();
-		Choice[] choices = new Choice[locales.length];
-		for (int i = 0; i < locales.length; i++) {
-			Locale locale = locales[i];
-			choices[i] = new Choice(locale.toString(), locale.getDisplayName());
-		}
-		return choices;
+		return TargetPlatform.getNLChoices();
 	}
 }

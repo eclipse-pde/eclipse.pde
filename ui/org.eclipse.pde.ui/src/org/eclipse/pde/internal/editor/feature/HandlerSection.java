@@ -32,11 +32,11 @@ public class HandlerSection extends PDEFormSection {
 		"FeatureEditor.HandlerSection.desc";
 	public static final String SECTION_URL = "FeatureEditor.HandlerSection.url";
 	public static final String SECTION_LIBRARY = "FeatureEditor.HandlerSection.library";
-	public static final String SECTION_CLASS = "FeatureEditor.HandlerSection.class";
+	public static final String SECTION_HANDLER = "FeatureEditor.HandlerSection.handler";
 
 	private FormEntry urlText;
 	private FormEntry libraryText;
-	private FormEntry classText;
+	private FormEntry handlerText;
 	private boolean updateNeeded;
 
 	public HandlerSection(FeatureFormPage page) {
@@ -51,7 +51,7 @@ public class HandlerSection extends PDEFormSection {
 	public void commitChanges(boolean onSave) {
 		urlText.commit();
 		libraryText.commit();
-		classText.commit();
+		handlerText.commit();
 	}
 
 	public Composite createClient(Composite parent, FormWidgetFactory factory) {
@@ -95,13 +95,13 @@ public class HandlerSection extends PDEFormSection {
 				forceDirty();
 			}
 		});
-		classText =
+		handlerText =
 			new FormEntry(
-				createText(container, PDEPlugin.getResourceString(SECTION_CLASS), factory));
-		classText.addFormTextListener(new IFormTextListener() {
+				createText(container, PDEPlugin.getResourceString(SECTION_HANDLER), factory));
+		handlerText.addFormTextListener(new IFormTextListener() {
 			public void textValueChanged(FormEntry text) {
 				try {
-					setClass(feature, text.getValue());
+					setHandler(feature, text.getValue());
 				} catch (CoreException e) {
 					PDEPlugin.logException(e);
 				}
@@ -128,9 +128,9 @@ public class HandlerSection extends PDEFormSection {
 		IFeatureInstallHandler handler = getHandler(feature);
 		handler.setLibrary(value);
 	}
-	private void setClass(IFeature feature, String value) throws CoreException {
+	private void setHandler(IFeature feature, String value) throws CoreException {
 		IFeatureInstallHandler handler = getHandler(feature);
-		handler.setClassName(value);
+		handler.setHandlerName(value);
 	}
 	private IFeatureInstallHandler getHandler(IFeature feature) throws CoreException {
 		IFeatureInstallHandler handler = feature.getInstallHandler();
@@ -163,12 +163,12 @@ public class HandlerSection extends PDEFormSection {
 		if (model.isEditable() == false) {
 			urlText.getControl().setEnabled(false);
 			libraryText.getControl().setEnabled(false);
-			classText.getControl().setEnabled(false);
+			handlerText.getControl().setEnabled(false);
 		}
 		model.addModelChangedListener(this);
 	}
 	public boolean isDirty() {
-		return urlText.isDirty() || libraryText.isDirty() || classText.isDirty();
+		return urlText.isDirty() || libraryText.isDirty() || handlerText.isDirty();
 	}
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
@@ -201,7 +201,7 @@ public class HandlerSection extends PDEFormSection {
 		if (handler!=null) {
 			setIfDefined(urlText, handler.getURL());
 			setIfDefined(libraryText, handler.getLibrary());
-			setIfDefined(classText, handler.getClassName());
+			setIfDefined(handlerText, handler.getHandlerName());
 		}
 		updateNeeded = false;
 	}

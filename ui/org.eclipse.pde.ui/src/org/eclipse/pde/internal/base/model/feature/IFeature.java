@@ -42,7 +42,9 @@ public static final String P_INSTALL_HANDLER = "installHandler";
 public static final String P_OS = "os";
 public static final String P_WS = "ws";
 public static final String P_NL = "nl";
+public static final String P_ARCH = "arch";
 
+public static final String P_PRIMARY = "primary";
 
 public static final int INFO_DESCRIPTION = 0;
 public static final int INFO_COPYRIGHT = 1;
@@ -73,10 +75,6 @@ public void addImport(IFeatureImport iimport) throws CoreException;
  */
 public IFeaturePlugin [] getPlugins();
 
-/**
- * 
- */
-public void setPlugins(IFeaturePlugin [] plugins) throws CoreException;
 /**
  * Returns references to required plug-ins in this feature
  *
@@ -142,8 +140,13 @@ public void computeImports() throws CoreException;
 public String getOS();
 public String getWS();
 public String getNL();
+public String getArch();
 
 public void setOS(String os) throws CoreException;
 public void setWS(String ws) throws CoreException;
 public void setNL(String nl) throws CoreException;
+public void setArch(String arch) throws CoreException;
+
+boolean isPrimary();
+public void setPrimary(boolean value) throws CoreException;
 }
