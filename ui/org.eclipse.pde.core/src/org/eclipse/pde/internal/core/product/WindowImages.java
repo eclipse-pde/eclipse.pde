@@ -40,20 +40,20 @@ public class WindowImages extends ProductObject implements IWindowImages {
 	public void parse(Node node) {
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
 			Element element = (Element)node;
-			fSmallImagePath = element.getAttribute("small");
-			fLargeImagePath = element.getAttribute("large");
+			fSmallImagePath = element.getAttribute("small"); //$NON-NLS-1$
+			fLargeImagePath = element.getAttribute("large"); //$NON-NLS-1$
 		}
 	}
 
 	public void write(String indent, PrintWriter writer) {
-		writer.print(indent + "<windowImages");
+		writer.print(indent + "<windowImages"); //$NON-NLS-1$
 		if (fSmallImagePath != null && fSmallImagePath.length() > 0) {
-			writer.print(" small=\"" + getWritableString(fSmallImagePath) + "\"");
+			writer.print(" small=\"" + getWritableString(fSmallImagePath) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (fLargeImagePath != null && fLargeImagePath.length() > 0) {
-			writer.print(" large=\"" + getWritableString(fLargeImagePath) + "\"");
+			writer.print(" large=\"" + getWritableString(fLargeImagePath) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		writer.println("/>");
+		writer.println("/>"); //$NON-NLS-1$
 	}
 
 }

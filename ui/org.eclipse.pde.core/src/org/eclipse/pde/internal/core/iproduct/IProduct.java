@@ -6,9 +6,9 @@ public interface IProduct extends IProductObject {
 	String P_ID = "id"; //$NON-NLS-1$
 	String P_NAME = "name"; //$NON-NLS-1$
 	String P_APPLICATION = "application"; //$NON-NLS-1$
-	String P_USEFEATURES = "useFeatures";
-	String P_DESTINATION = "destination";
-	String P_INCLUDE_FRAGMENTS = "includeFragments";
+	String P_USEFEATURES = "useFeatures"; //$NON-NLS-1$
+	String P_DESTINATION = "destination"; //$NON-NLS-1$
+	String P_INCLUDE_FRAGMENTS = "includeFragments"; //$NON-NLS-1$
 	
 	String getId();
 	

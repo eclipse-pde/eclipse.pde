@@ -94,17 +94,17 @@ public class Product extends ProductObject implements IProduct {
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent + "<product"); //$NON-NLS-1$
 		if (fName != null && fName.length() > 0)
-			writer.print(" " + P_NAME + "=\"" + getWritableString(fName) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			writer.print(" " + P_NAME + "=\"" + getWritableString(fName) + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (fId != null && fId.length() > 0)
-			writer.print(" " + P_ID + "=\"" + fId + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			writer.print(" " + P_ID + "=\"" + fId + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (fApplication != null && fApplication.length() > 0)
-			writer.print(" " + P_APPLICATION + "=\"" + fApplication + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		writer.print(" " + P_USEFEATURES + "=\"" + Boolean.toString(fUseFeatures) + "\"");
+			writer.print(" " + P_APPLICATION + "=\"" + fApplication + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		writer.print(" " + P_USEFEATURES + "=\"" + Boolean.toString(fUseFeatures) + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		writer.println(">"); //$NON-NLS-1$
 
 		if (fExportDestination != null && fExportDestination.length() > 0) {
 			writer.println();
-			writer.println(indent + "   <export " + P_DESTINATION + "=\"" + getWritableString(fExportDestination) + "\"/>");
+			writer.println(indent + "   <export " + P_DESTINATION + "=\"" + getWritableString(fExportDestination) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		
 		if (fAboutInfo != null) {
@@ -119,21 +119,21 @@ public class Product extends ProductObject implements IProduct {
 		
 		if (fWindowImages != null) {
 			writer.println();
-			fWindowImages.write(indent + "   ", writer);
+			fWindowImages.write(indent + "   ", writer); //$NON-NLS-1$
 		}
 		
 		if (fSplashInfo != null) {
 			writer.println();
-			fSplashInfo.write(indent + "   ", writer);
+			fSplashInfo.write(indent + "   ", writer); //$NON-NLS-1$
 		}
 		
 		if (fLauncherInfo != null) {
 			writer.println();
-			fLauncherInfo.write(indent + "   ", writer);
+			fLauncherInfo.write(indent + "   ", writer); //$NON-NLS-1$
 		}
 		
 		writer.println();
-		writer.println(indent + "   <plugins " + P_INCLUDE_FRAGMENTS + "=\"" + Boolean.toString(fIncludeFragments) + "\">"); //$NON-NLS-1$
+		writer.println(indent + "   <plugins " + P_INCLUDE_FRAGMENTS + "=\"" + Boolean.toString(fIncludeFragments) + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		Iterator iter = fPlugins.values().iterator();
 		while (iter.hasNext()) {
 			IProductPlugin plugin = (IProductPlugin)iter.next();
@@ -173,7 +173,7 @@ public class Product extends ProductObject implements IProduct {
 			fApplication = element.getAttribute(P_APPLICATION); //$NON-NLS-1$
 			fId = element.getAttribute(P_ID); //$NON-NLS-1$
 			fName = element.getAttribute(P_NAME); //$NON-NLS-1$
-			fUseFeatures = "true".equals(element.getAttribute(P_USEFEATURES));
+			fUseFeatures = "true".equals(element.getAttribute(P_USEFEATURES)); //$NON-NLS-1$
 			NodeList children = node.getChildNodes();
 			IProductModelFactory factory = getModel().getFactory();
 			for (int i = 0; i < children.getLength(); i++) {
@@ -184,20 +184,20 @@ public class Product extends ProductObject implements IProduct {
 						fAboutInfo = factory.createAboutInfo();
 						fAboutInfo.parse(child);
 					} else if (name.equals("plugins")) { //$NON-NLS-1$
-						fIncludeFragments = "true".equals(((Element)child).getAttribute(P_INCLUDE_FRAGMENTS));
+						fIncludeFragments = "true".equals(((Element)child).getAttribute(P_INCLUDE_FRAGMENTS)); //$NON-NLS-1$
 						parsePlugins(child.getChildNodes());
 					} else if (name.equals("configIni")) { //$NON-NLS-1$
 						fConfigIniInfo = factory.createConfigFileInfo();
 						fConfigIniInfo.parse(child);
-					} else if (name.equals("export")) {
+					} else if (name.equals("export")) { //$NON-NLS-1$
 						fExportDestination = ((Element)child).getAttribute(P_DESTINATION);
-					} else if (name.equals("windowImages")) {
+					} else if (name.equals("windowImages")) { //$NON-NLS-1$
 						fWindowImages = factory.createWindowImages();
 						fWindowImages.parse(child);
-					} else if (name.equals("splash")) {
+					} else if (name.equals("splash")) { //$NON-NLS-1$
 						fSplashInfo = factory.createSplashInfo();
 						fSplashInfo.parse(child);
-					} else if (name.equals("launcher")) {
+					} else if (name.equals("launcher")) { //$NON-NLS-1$
 						fLauncherInfo = factory.createLauncherInfo();
 						fLauncherInfo.parse(child);
 					}
