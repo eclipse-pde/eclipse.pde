@@ -196,7 +196,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
         }
         PluginBase pluginBase = (PluginBase)fModel.getPluginBase();
         if (!fData.isLegacy())
-            pluginBase.setSchemaVersion(fData.getTargetVersion()); //$NON-NLS-1$
+            pluginBase.setSchemaVersion("3.0"); //$NON-NLS-1$
         pluginBase.setId(fData.getId());
         pluginBase.setVersion(fData.getVersion());
         pluginBase.setName(fData.getName());
