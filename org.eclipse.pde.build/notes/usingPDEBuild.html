@@ -48,87 +48,52 @@ How do I use PDE Build?</h2>
 <h2>
 <b>Fetch</b></h2>
 &nbsp;&nbsp;&nbsp; This step is done by the <font face="Fixedsys">eclipse.fetch</font> 
-Ant task provided by PDE Build. Here is an example:<font SIZE="2"><p></font>
-<font SIZE="2" COLOR="#000080">&lt;eclipse.fetch </font></p>
-<p><font SIZE="2" COLOR="#000080">scriptName=</font><font SIZE="2" COLOR="#008000">&quot;${script}&quot;</p>
+Ant task provided by PDE Build. Here is an example:<font SIZE="2"><p style="margin-top: 0; margin-bottom: 0"></font>
+</p>
+<p style="margin-top: 0; margin-bottom: 0"><font size="2" color="#000080">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;eclipse.fetch
+</font></p>
+<p style="margin-top: 0; margin-bottom: 0"><font SIZE="2" COLOR="#000080">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; scriptName=</font><font SIZE="2" COLOR="#008000">&quot;fetch.xml&quot;</font></p>
+<p style="margin-top: 0; margin-bottom: 0"><font SIZE="2" COLOR="#000080">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; elements=</font><font SIZE="2" COLOR="#008000">&quot;feature@org.eclipse.platform-feature&quot;</p>
 </font><font SIZE="2" COLOR="#000080">
-<p>elements=</font><font SIZE="2" COLOR="#008000">&quot;feature@org.eclipse.platform-feature&quot;</p>
+<p style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; directory=</font><font SIZE="2" COLOR="#008000">&quot;${basedir}/test.map&quot;</p>
 </font><font SIZE="2" COLOR="#000080">
-<p>directory=</font><font SIZE="2" COLOR="#008000">&quot;${basedir}/test.map&quot;</p>
+<p style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; install=</font><font SIZE="2" COLOR="#008000">&quot;${basedir}/source&quot;</p>
 </font><font SIZE="2" COLOR="#000080">
-<p>install=</font><font SIZE="2" COLOR="#008000">&quot;${basedir}/source&quot;</p>
+<p style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; children=</font><font SIZE="2" COLOR="#008000">&quot;true&quot;</p>
 </font><font SIZE="2" COLOR="#000080">
-<p>children=</font><font SIZE="2" COLOR="#008000">&quot;true&quot;</p>
-</font><font SIZE="2" COLOR="#000080">
-<p>/&gt;</p>
+<p style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /&gt;</p>
+<p style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
 </font>
-<p>&nbsp;</p>
-<p><b>Generate Scripts</b>
-<br>&nbsp;&nbsp;&nbsp; In order to generate build.xml scripts for some
-element, it is necessary to use the <tt>org.eclipse.pde.core.script</tt>
-application extension point provided by PDE Build. The arguments for this
-application are: </p>
-<ul>
-<li>
-<tt>-?&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-prints usage</tt></li>
-
-<li>
-<tt>-cvspassfile&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; specifies the location of
-the cvspass file</tt></li>
-
-<li>
-<tt>-dev &lt;args>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; plugin relative
-development entries to be added to the compile classpath of the elements.
-Specially useful when building a specific plug-in but its prerequisites
-do not have jars generated yet but are compiled in a folder like pluginFolder/bin.</tt></li>
-
-<li>
-<tt>-directory&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; location of the
-directory file</tt></li>
-
-<li>
-<tt>-elements &lt;arg>&nbsp;&nbsp; list of elements</tt></li>
-
-<li>
-<tt>-install &lt;arg>&nbsp;&nbsp;&nbsp; element's location</tt></li>
-
-<li>
-<tt>-nochildren&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; feature's children
-should not have scripts generated</tt></li>
-
-<li>
-<tt>-pluginpath&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; specify the URLs where
-the plugins are located</tt></li>
-
-<li>
-<tt>-scriptname&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; location of the fetch
-script</tt></li>
-</ul>
-
-<p><br>Examples:
-<p><tt>(1) java -cp startup.jar org.eclipse.core.launcher.Main</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -application org.eclipse.pde.core.buildScript</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -elements plugin@org.eclipse.core.resources</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -install c:\mybuild\</tt>
-<p><tt>(2) java -cp startup.jar org.eclipse.core.launcher.Main</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -application org.eclipse.pde.core.buildScript</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -elements plugin@org.eclipse.core.resources,fragment@my.fragment</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -install c:\mybuild\</tt>
-<p><tt>(3) java -cp startup.jar org.eclipse.core.launcher.Main</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -application org.eclipse.pde.core.buildScript</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -elements feature@org.eclipse.platform.feature
--nochildren</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -install c:\mybuild\</tt>
-<p>&nbsp;&nbsp;&nbsp; ...
-<br>&nbsp;&nbsp;&nbsp; [explain the ant task as well]
-<br>&nbsp;&nbsp;&nbsp; ...
-<br>&nbsp;
-<p><b>build.properties</b>
-<br>&nbsp;&nbsp;&nbsp; The build mechanism is driven by a build specification.
+<p style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp; The above task 
+generates an Ant buildfile called fetch.xml. It consists basically of some Ant 
+CVS tasks that retrieve the Eclipse Platform feature and all its plug-ins and 
+fragments.</p>
+<h2><b>Generate Scripts</b></h2>
+<p>&nbsp;&nbsp;&nbsp; Once features, plug-ins and fragments are downloaded you 
+need to generate their Ant buildfiles. This step is done by the <font face="Fixedsys">
+eclipse.buildScripts</font> 
+Ant task provided by PDE Build. Here is an example:<font SIZE="2"></p>
+<p style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font>
+<font SIZE="2" COLOR="#000080">&lt;eclipse.buildScript</p>
+<p style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+elements=</font><font SIZE="2" COLOR="#008000">&quot;feature@org.eclipse.platform-feature&quot;</p>
+</font><font SIZE="2" COLOR="#000080">
+<p style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+install=</font><font SIZE="2" COLOR="#008000">&quot;${basedir}/source&quot;</p>
+</font><font SIZE="2" COLOR="#000080">
+<p style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+children=</font><font SIZE="2" COLOR="#008000">&quot;true&quot;</p>
+</font><font SIZE="2" COLOR="#000080">
+<p style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+/&gt;</p>
+</font>
+<p>&nbsp;&nbsp;&nbsp; The above task will generate Ant buildfiles for the 
+Eclipse Platform feature and all its plug-ins and fragments.<p><b>build.properties</b><br>&nbsp;&nbsp;&nbsp; The build mechanism is driven by a build specification.
 The specification for an individual plug-in, fragment, or feature is found
-in a build.properties file in the corresponding element. It is a simple
-properties file that describes where to find the source code for the element.&nbsp;
+in a build.properties file in the corresponding element (feature, plug-in or 
+fragment). It is a simple
+properties file that describes, for example, where to find the source code for the element.&nbsp;
 Other entries describe which files should be included/excluded in/from
 various forms of distribution (e.g., binary, source). The possible entries
 are described bellow:
@@ -138,7 +103,6 @@ for the current element. It is usually used when a custom build.xml script
 is provided. The build.xml script has to be in the root folder of the element.
 <p><b>bin.includes =</b>
 <br><b>bin.excludes =</b>
-<br><b>jar.external =</b>
 <p><b>source.&lt;jar_name>=&lt;source_locations></b>
 <br>&nbsp;&nbsp;&nbsp; Indicates, for the specified jar, where to find
 its source. The source_locations is a comma-separated list of <b><font color="#CC0000">[element-relative?]</font></b>
@@ -146,33 +110,13 @@ locations. Plug-ins <b><font color="#CC0000">[elements?]</font></b> requiring
 compilation must define this entry.
 <br>&nbsp;&nbsp;&nbsp; Example:
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; source.resources.jar = src/
-<p><b>zip.external =</b>
-<br><b>zip.program =</b>
-<br><b>zip.argument =</b>
-<br><b>${zip.file}</b>
-<p><b>jars.compile.order =</b>
-<br>&nbsp;
-<p><b><tt>build variables</tt></b>
-<br>&nbsp;&nbsp;&nbsp; There are currenttly 4 build variables: os, ws,
-nl and arch. The <tt>build.properties</tt> file or a custom <tt>build.xml</tt>
-script can make use of them in order to create platform specific builds.
-They can be referenced inside the script as normal Ant properties, whose
-values are referenced by ${variable_name}.
-<br>&nbsp;&nbsp;&nbsp; In the <tt>build.properties</tt> file, they can
-be used as follows:
-<p><tt>&nbsp; ${os/linux}.bin.includes = src/linux</tt>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Indicates that the folder
-src/linux should be include to the bin target if os=linux .
-<p><tt>&nbsp; ${os/linux,ws/motif}.bin.includes = src/linux</tt>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Indicates that the folder
-src/linux should be include to the bin target if os=linux and ws=motif
-.
-<p><tt>&nbsp; ${ws/motif}.bin.includes = src/motif</tt>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Indicates that the folder
-src/motif should be include to the bin target if ws=motif.
-<br>&nbsp;
-<br>&nbsp;
-<h2>
+<p style="margin-top: 0; margin-bottom: 0">&nbsp;<p style="margin-top: 0; margin-bottom: 0"><b>jars.compile.order =</b> 
+&lt;comma separated list of JARs&gt;<br>&nbsp;&nbsp;&nbsp; Specifies in what order the 
+JARs should be compiled. Should be used to solve build dependencies within the 
+same plug-in/fragment.<p style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp; 
+Example:<p style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+jars.compile.order=resources.jar,lib/resources-ant.jar<br>
+&nbsp;<p>&nbsp;<h2>
 <b>Build</b></h2>
 &nbsp;&nbsp;&nbsp; The generated build.xml scripts from the previous step
 have many targets. They public ones described bellow. These are the targets
