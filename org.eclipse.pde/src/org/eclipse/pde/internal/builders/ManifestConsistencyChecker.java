@@ -20,6 +20,7 @@ import org.eclipse.pde.internal.PDE;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.plugin.*;
+import org.osgi.framework.*;
 
 public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 	public static final String BUILDERS_VERIFYING = "Builders.verifying";
@@ -113,6 +114,8 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 	}
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
 			throws CoreException {
+		if (PDECore.getDefault().getBundle().getState() != Bundle.ACTIVE)
+			return new IProject[0];
 
 		IProject project = getProject();
 		fileCompiled = false;
