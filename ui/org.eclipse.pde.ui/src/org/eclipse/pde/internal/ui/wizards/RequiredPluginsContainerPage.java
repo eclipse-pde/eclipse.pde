@@ -290,11 +290,21 @@ public class RequiredPluginsContainerPage
 		IJavaProject javaProject = getJavaProject();
 
 		if (entry == null) {
+/*
 			entry = ClasspathUtilCore.createContainerEntry();
 			try {
 				ModelEntry.updateUnknownClasspathContainer(javaProject);
 				realEntries = new IClasspathEntry[0];
 			} catch (CoreException e) {
+			}
+*/
+			entry = ClasspathUtilCore.createContainerEntry();
+			PluginModelManager mng = PDECore.getDefault().getModelManager();
+			ModelEntry entry = mng.findEntry(javaProject.getProject());
+			if (entry!=null) {
+				IClasspathContainer container = entry.getClasspathContainer();
+				if (container!=null)
+					realEntries = container.getClasspathEntries();
 			}
 		} else {
 			try {
