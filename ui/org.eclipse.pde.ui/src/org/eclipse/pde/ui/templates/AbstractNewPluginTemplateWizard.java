@@ -306,10 +306,10 @@ public abstract class AbstractNewPluginTemplateWizard
 					null,
 		// accept the default window icon
 	message,
-		MessageDialog.WARNING,
+		MessageDialog.INFORMATION,
 		new String[] {
 			IDialogConstants.OK_LABEL,
-			IDialogConstants.CANCEL_LABEL },
+			/*IDialogConstants.CANCEL_LABEL*/ },
 		0);
 		// OK is the default
 		return dialog.open() == 0;

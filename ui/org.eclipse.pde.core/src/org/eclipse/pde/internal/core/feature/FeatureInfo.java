@@ -20,10 +20,10 @@ import org.w3c.dom.Node;
  */
 public class FeatureInfo extends FeatureObject implements IFeatureInfo {
 	private static final String KEY_INFO_DESCRIPTION =
-		"FeatureEditor.info.description";
-	private static final String KEY_INFO_LICENSE = "FeatureEditor.info.license";
+		"FeatureInfo.description";
+	private static final String KEY_INFO_LICENSE = "FeatureInfo.license";
 	private static final String KEY_INFO_COPYRIGHT =
-		"FeatureEditor.info.copyright";
+		"FeatureInfo.copyright";
 	private String url;
 	private String description;
 	private int index;
