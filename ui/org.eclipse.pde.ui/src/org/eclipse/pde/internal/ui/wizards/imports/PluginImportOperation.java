@@ -176,45 +176,39 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 	}
 	
 	private void importJARdPlugin(File file, IProject project, IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
-		if (fImportType != IMPORT_WITH_SOURCE) {
-			monitor.beginTask("", 2); //$NON-NLS-1$
-			extractZipFile(file, project.getFullPath(), new SubProgressMonitor(monitor, 1));
-			IPath srcPath = getJARdPluginSrcPath(project);
-			if (srcPath == null) {
-				srcPath = ClasspathUtilCore.getSourceAnnotation(model, "."); //$NON-NLS-1$
-				if (srcPath != null) {
-					importArchive(project, srcPath.toFile(), new Path("src.zip")); //$NON-NLS-1$
-					monitor.worked(1);
-				}
+		monitor.beginTask("", 2); //$NON-NLS-1$
+		extractZipFile(file, project.getFullPath(), new SubProgressMonitor(monitor, 1));
+		IPath srcPath = getJARdPluginSrcPath(project);
+		if (srcPath == null) {
+			srcPath = ClasspathUtilCore.getSourceAnnotation(model, "."); //$NON-NLS-1$
+			if (srcPath != null) {
+				importArchive(project, srcPath.toFile(), new Path("src.zip")); //$NON-NLS-1$
+				monitor.worked(1);
 			}
-			project.setPersistentProperty(
-					PDECore.EXTERNAL_PROJECT_PROPERTY,
-					PDECore.BINARY_PROJECT_VALUE);
-		} else {
-			importJARdPluginWithSource(file, project, model, monitor);
 		}
+		project.setPersistentProperty(
+				PDECore.EXTERNAL_PROJECT_PROPERTY,
+				PDECore.BINARY_PROJECT_VALUE);
 	}
 	
 	private void importJARdPluginWithSource(File file, IProject project, IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask("", 2); //$NON-NLS-1$
-		fBuildModel = new WorkspaceBuildModel(project.getFile("build.properties")); //$NON-NLS-1$
-		IBuild build = fBuildModel.getBuild(true);
-		IBuildEntry entry = fBuildModel.getFactory().createEntry("bin.includes"); //$NON-NLS-1$
-		entry.addToken("*"); //$NON-NLS-1$
 		
 		IPath srcPath = ClasspathUtilCore.getSourceAnnotation(model, "."); //$NON-NLS-1$
 		if (srcPath != null) {
 			extractZipFile(srcPath.toFile(), project.getFullPath(), new SubProgressMonitor(monitor, 1));
-		}
-		extractResources(file, project, false, new SubProgressMonitor(monitor, 1));
-		
-		if (srcPath != null) {
+			extractResources(file, project, false, new SubProgressMonitor(monitor, 1));
+			fBuildModel = new WorkspaceBuildModel(project.getFile("build.properties")); //$NON-NLS-1$
+			IBuild build = fBuildModel.getBuild(true);
+			IBuildEntry entry = fBuildModel.getFactory().createEntry("bin.includes"); //$NON-NLS-1$
+			entry.addToken("*"); //$NON-NLS-1$
 			entry = fBuildModel.getFactory().createEntry("source.."); //$NON-NLS-1$
 			entry.addToken("*"); //$NON-NLS-1$
 			build.add(entry);
-		}
-		fBuildModel.save();		
-	
+			fBuildModel.save();		
+		} else {
+			importJARdPlugin(file, project, model, monitor);
+		}	
 	}
 
 	private IPath getJARdPluginSrcPath(IProject project) {
