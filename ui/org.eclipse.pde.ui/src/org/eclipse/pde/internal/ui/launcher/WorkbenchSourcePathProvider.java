@@ -16,9 +16,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IVMInstall;
@@ -120,7 +122,7 @@ public class WorkbenchSourcePathProvider extends StandardSourcePathProvider {
 					IJavaProject project = JavaCore.create((IProject)resource);
 					IPackageFragmentRoot[] roots = project.getPackageFragmentRoots();
 					for (int j = 0; j < roots.length; j++) {
-						if (roots[j].isArchive() && !roots[j].getPath().equals("JRE_LIB")) {
+						if (roots[j].isArchive() && !isJRELibrary(roots[j])) {
 							IRuntimeClasspathEntry rte = JavaRuntime.newArchiveRuntimeClasspathEntry(roots[j].getPath());
 							rte.setSourceAttachmentPath(roots[j].getSourceAttachmentPath());
 							rte.setSourceAttachmentRootPath(roots[j].getSourceAttachmentRootPath());
@@ -137,6 +139,17 @@ public class WorkbenchSourcePathProvider extends StandardSourcePathProvider {
 			}
 		}
 		return (IRuntimeClasspathEntry[])all.toArray(new IRuntimeClasspathEntry[all.size()]);
+	}
+	
+	private boolean isJRELibrary(IPackageFragmentRoot root) {
+		try {
+			IClasspathEntry entry = root.getRawClasspathEntry();
+			if (entry.getPath().equals(new Path(JavaRuntime.JRE_CONTAINER))) {
+				return true;
+			}
+		} catch (JavaModelException e) {
+		}		
+		return false;
 	}
 
 }

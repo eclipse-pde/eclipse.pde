@@ -231,10 +231,8 @@ public class ClasspathUtilCore {
 	
 	protected static void addJRE(Vector result) {
 		result.add(
-			JavaCore.newVariableEntry(
-				new Path("JRE_LIB"),
-				new Path("JRE_SRC"),
-				new Path("JRE_SRCROOT")));
+			JavaCore.newContainerEntry(
+				new Path("org.eclipse.jdt.launching.JRE_CONTAINER")));
 	}
 	
 	public static void addLibraries(
