@@ -227,6 +227,8 @@ protected String[] processCommandLine(String[] args) {
 
 		if (previousArg.equalsIgnoreCase(SWITCH_CONFIGURATION))
 			configurationId = currentArg;
+		if (previousArg.equalsIgnoreCase("-elements"))
+			configurationId = currentArg;
 	}
 	
 	return new String[0];

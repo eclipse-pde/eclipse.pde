@@ -25,10 +25,10 @@ public void execute() throws BuildException {
 			args.add("-children");
 		if (recursive)
 			args.add("-recursive");
-		args.add("-cvs");
-		args.add(cvs);
+//		args.add("-cvs");
+//		args.add(cvs);
 		String[] argArray = (String[])args.toArray(new String[args.size()]);
-		new Fetch().run(argArray);
+		new Fetch().run(argArray, getProject());
 	} catch (Exception e) {
 		throw new BuildException("Unable to generate fetch.xml", e);
 	}

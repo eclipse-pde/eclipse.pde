@@ -59,18 +59,21 @@ protected String computeCompilePathClause(PluginModel descriptor, String fullJar
 	List jars = new ArrayList(9);
 	List devEntries = getDevEntries();
 	PluginModel desc = getRegistry().getPlugin(PLUGIN_RUNTIME);
-	if (devEntries != null)
-		for (Iterator i = devEntries.iterator(); i.hasNext();) 
-			addEntry(jars, getLocation(desc) + i.next());
-	addEntry(jars, getLocation(desc) + RUNTIME_FILENAME);
-	
-	// The boot jar must be located relative to the runtime jar.  This reflects the actual
-	// runtime requirements.
-	String location = new Path(getLocation(desc)).removeLastSegments(1).toString();
-	if (devEntries != null)
-		for (Iterator i = devEntries.iterator(); i.hasNext();) 
-			addEntry(jars, location + "org.eclipse.core.boot/" +  i.next());
-	addEntry(jars, location + BOOT_FILENAME);
+	if (desc == null)
+		addProblem(new Status(IStatus.WARNING, PluginTool.PI_PDECORE, 13, "XXX missing runtime plugin", null));
+	else {
+		if (devEntries != null)
+			for (Iterator i = devEntries.iterator(); i.hasNext();) 
+				addEntry(jars, getLocation(desc) + i.next());
+		addEntry(jars, getLocation(desc) + RUNTIME_FILENAME);
+		// The boot jar must be located relative to the runtime jar.  This reflects the actual
+		// runtime requirements.
+		String location = new Path(getLocation(desc)).removeLastSegments(1).toString();
+		if (devEntries != null)
+			for (Iterator i = devEntries.iterator(); i.hasNext();) 
+				addEntry(jars, location + "org.eclipse.core.boot/" +  i.next());
+		addEntry(jars, location + BOOT_FILENAME);
+	}
 
 	for (Iterator i = requiredJars.iterator(); i.hasNext();) 
 		addEntry(jars, i.next());
@@ -633,7 +636,7 @@ protected String[] processCommandLine(String[] args) {
 		// accumulate the list of models to generate
 		if (previousArg.substring(1).equalsIgnoreCase(getModelTypeName()))
 			commandLineModelNames.addElement(currentArg);
-		if (previousArg.substring(1).equalsIgnoreCase(getModelTypeName() + "s"))
+		if (previousArg.equalsIgnoreCase("-elements"))
 			commandLineModelNames.addAll(getListFromString(currentArg));
 	}
 	
@@ -701,18 +704,19 @@ protected Hashtable trimDevJars(PluginModel descriptor, Hashtable devJars) {
 		try {
 			base = new File(new URL(descriptor.getLocation()).getFile());
 		} catch (MalformedURLException e) {
+			continue;
 		}
-		ArrayList dirs = new ArrayList(list.size());
+		boolean found = false;
 		for (Iterator i = list.iterator(); i.hasNext();) {
 			String src = (String) i.next();
-			File sourceDir = new File(base, src).getAbsoluteFile();
-			if (!sourceDir.exists())
-				addProblem(new Status(IStatus.WARNING,PluginTool.PI_PDECORE,WARNING_MISSING_SOURCE,Policy.bind("warning.cannotLocateSource",sourceDir.getPath()),null));
+			File entry = new File(base, src).getAbsoluteFile();
+			if (!entry.exists())
+				addProblem(new Status(IStatus.WARNING, PluginTool.PI_PDECORE, WARNING_MISSING_SOURCE, Policy.bind("warning.cannotLocateSource", entry.getPath()), null));
 			else
-				dirs.add(src);
+				found = true;;
 		}
-		if (!dirs.isEmpty())
-			result.put(key, dirs);
+		if (found)
+			result.put(key, list);
 	}
 	return result;
 }

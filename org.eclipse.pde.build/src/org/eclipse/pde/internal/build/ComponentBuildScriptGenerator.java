@@ -283,6 +283,8 @@ protected String[] processCommandLine(String[] args) {
 		currentArg = args[++i];
 		if (previousArg.equalsIgnoreCase(SWITCH_COMPONENT))
 			componentId = currentArg;
+		if (previousArg.equalsIgnoreCase("-elements"))
+			componentId = currentArg;
 	}
 	return new String[0];
 }
@@ -377,17 +379,11 @@ protected String[][] computePrerequisiteOrder(PluginModel[] plugins) {
 	Set pluginList = new HashSet(plugins.length);
 	for (int i = 0; i < plugins.length; i++) 
 		pluginList.add(plugins[i].getId());
+	// create a collection of directed edges from plugin to prereq
 	for (int i = 0; i < plugins.length; i++) {
 		boolean boot = false;
 		boolean runtime = false;
-		// if this plugin is runtime and boot is on the list of things to build,
-		// add the boot plugin as a default prereq as 
-		// this is not stated in the plugin.xml.  Otherwise, add a null prereq
-		// to ensure that this plugin is in the output list.
-//		if (plugins[i].getId().equals(Platform.PI_RUNTIME) && pluginList.contains(BootLoader.PI_BOOT))
-//			prereqs.add(new String[] { plugins[i].getId(), BootLoader.PI_BOOT});
-//		else		
-			prereqs.add(new String[] { plugins[i].getId(), null });
+		boolean found = false;
 		PluginPrerequisiteModel[] prereqList = plugins[i].getRequires();
 		if (prereqList != null) {
 			for (int j = 0; j < prereqList.length; j++) {
@@ -395,13 +391,20 @@ protected String[][] computePrerequisiteOrder(PluginModel[] plugins) {
 				String prereq = prereqList[j].getPlugin();
 				boot = boot || prereq.equals(BootLoader.PI_BOOT);
 				runtime = runtime || prereq.equals(Platform.PI_RUNTIME);
-				if (pluginList.contains(prereq))
+				if (pluginList.contains(prereq)) {
+					found = true;
 					prereqs.add(new String[] { plugins[i].getId(), prereq });
+				}
 			}
 		}
+		// if we didn't find any prereqs for this plugin, add a null prereq 
+		// to ensure the value is in the output
+		if (!found)
+			prereqs.add(new String[] { plugins[i].getId(), null });
 		// if we didn't find the boot or runtime plugins as prereqs and they are in the list
 		// of plugins to build, add prereq relations for them.  This is required since the 
 		// boot and runtime are implicitly added to a plugin's requires list by the platform runtime.
+		// Note that we should skip the xerces plugin as this would cause a circularity.
 		if (plugins[i].getId().equals("org.apache.xerces"))
 			continue;
 		if (!boot && pluginList.contains(BootLoader.PI_BOOT) && !plugins[i].getId().equals(BootLoader.PI_BOOT))
@@ -409,6 +412,7 @@ protected String[][] computePrerequisiteOrder(PluginModel[] plugins) {
 		if (!runtime && pluginList.contains(Platform.PI_RUNTIME) && !plugins[i].getId().equals(Platform.PI_RUNTIME) && !plugins[i].getId().equals(BootLoader.PI_BOOT))
 			prereqs.add(new String[] { plugins[i].getId(), Platform.PI_RUNTIME});
 	}
+	// do a topological sort and return the prereqs
 	String[][] prereqArray = (String[][]) prereqs.toArray(new String[prereqs.size()][]);
 	return computeNodeOrder(prereqArray);
 }

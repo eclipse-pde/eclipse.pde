@@ -11,18 +11,18 @@ public class ScriptBuilder extends PluginTool {
 public void execute() throws Exception {
 	List[] types = sortElements();
 	if (!types[0].isEmpty())
-		new PluginBuildScriptGenerator().run(new String[] {"-install", getInstall(), "-plugins", getStringFromCollection(types[0], "", "", ",")});
+		new PluginBuildScriptGenerator().run(new String[] {"-install", getInstall(), "-elements", getStringFromCollection(types[0], "", "", ",")});
 	if (!types[1].isEmpty())
-		new FragmentBuildScriptGenerator().run(new String[] {"-install", getInstall(), "-fragments", getStringFromCollection(types[1], "", "", ",")});
+		new FragmentBuildScriptGenerator().run(new String[] {"-install", getInstall(), "-elements", getStringFromCollection(types[1], "", "", ",")});
 	if (!types[2].isEmpty()) {
 		List components = types[2];
 		for (int i = 0; i < components.size(); i++)
-			new ComponentBuildScriptGenerator().run(new String[] {"-install", getInstall(), "-component", (String)components.get(i), children ? "" : "-noChildren"});
+			new ComponentBuildScriptGenerator().run(new String[] {"-install", getInstall(), "-elements", (String)components.get(i), children ? "" : "-noChildren"});
 	}
 	if (!types[3].isEmpty()) {
 		List configurations = types[3];
 		for (int i = 0; i < configurations.size(); i++)
-			new ConfigurationBuildScriptGenerator().run(new String[] {"-install", getInstall(), "-configuration", (String)configurations.get(i), children ? "" : "-noChildren"});
+			new ConfigurationBuildScriptGenerator().run(new String[] {"-install", getInstall(), "-elements", (String)configurations.get(i), children ? "" : "-noChildren"});
 	}
 }
 protected void printUsage(PrintWriter out) {
