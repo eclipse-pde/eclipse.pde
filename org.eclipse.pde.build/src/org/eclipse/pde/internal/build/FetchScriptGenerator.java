@@ -114,6 +114,9 @@ protected void generateFetchEntry(int tab, String entry) throws CoreException {
 	String element = entry.substring(index + 1);
 	String location = getElementLocation(type);
 	String[] cvsFields = Utils.getArrayFromString(cvsInfo);
+	if (cvsFields.length < 2)
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ENTRY_MISSING, Policy.bind("error.incorrectDirectoryEntry", entry), null)); //$NON-NLS-1$
+		
 	String tag = cvsFields[0];
 	String cvsRoot = cvsFields[1];
 	String password = (cvsFields.length > 2) ? cvsFields[2] : null;
