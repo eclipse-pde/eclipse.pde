@@ -43,7 +43,7 @@ public class CoreUtility {
 		if (!Platform.getLocation().equals(location)) {
 			IProjectDescription desc = project.getWorkspace()
 					.newProjectDescription(project.getName());
-			desc.setLocation(location.append(project.getFullPath()));
+			desc.setLocation(location);
 			project.create(desc, monitor);
 		} else
 			project.create(monitor);
