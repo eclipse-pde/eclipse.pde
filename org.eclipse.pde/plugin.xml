@@ -137,13 +137,13 @@
    		 point="org.eclipse.ui.cheatsheets.cheatSheetContent">
       <cheatsheet
             name="%cheatsheet.helloworld.name"
-            contentFile="cheatsheets/helloworld.xml"
+            contentFile="$nl$/cheatsheets/helloworld.xml"
             id="org.eclipse.pde.helloworld">
          <description>%cheatsheet.helloworld.desc</description>
       </cheatsheet>
       <cheatsheet
             name="%cheatsheet.updates.name"
-            contentFile="cheatsheets/updates.xml"
+            contentFile="$nl$/cheatsheets/updates.xml"
             id="org.eclipse.pde.updates">
          <description>%cheatsheet.updates.desc</description>
       </cheatsheet>
