@@ -538,7 +538,13 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		for (int i = 0; i < fModels.length; i++) {
 			if (fModels[i] instanceof IFragmentModel) {
 				IFragment fragment = ((IFragmentModel) fModels[i]).getFragment();
-				if (fragment.getId().equals("org.eclipse.swt.win32")) {
+				if (PDECore.compare(
+						model.getPluginBase().getId(),
+						model.getPluginBase().getVersion(),
+						fragment.getId(),
+						fragment.getVersion(),
+						fragment.getRule())
+					&& fragment.getLibraries().length == 0) {
 					return fragment;
 				}
 			}
