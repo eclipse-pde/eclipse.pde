@@ -27,8 +27,8 @@ public class FeatureSelectionDialog extends ElementListSelectionDialog {
 	 */
 	public FeatureSelectionDialog(Shell parent, IFeatureModel[] models) {
 		super(parent, PDEPlugin.getDefault().getLabelProvider());
-		setTitle(PDEPlugin.getResourceString("PluginSelectionDialog.title"));
-		setMessage(PDEPlugin.getResourceString("PluginSelectionDialog.message"));
+		setTitle(PDEPlugin.getResourceString("FeatureSelectionDialog.title"));
+		setMessage(PDEPlugin.getResourceString("FeatureSelectionDialog.message"));
 		setElements(models);
 		setMultipleSelection(false);
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
