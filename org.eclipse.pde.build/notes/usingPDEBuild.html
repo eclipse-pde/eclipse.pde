@@ -2,7 +2,6 @@
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="GENERATOR" content="Microsoft FrontPage 5.0">
    <title>Using PDE Core to build Plug-ins, Fragments and Features</title>
 </head>
 <body>
@@ -18,21 +17,23 @@ generate scripts and build that are described bellow.
 <p><b>Fetch</b>
 <br>&nbsp;&nbsp;&nbsp; Consists of taking the interesting elements from a 
 repository to the build machine. These elements can be plug-ins, fragments or 
-features. &quot;Map files&quot; are responsible for identifying
+features. &quot;Directory files&quot; or &quot;map files&quot; are responsible for identifying
 where, how and which plug-ins should go to the build machine. These files are basically Java properties files where the entries have the following
-format: <i>&nbsp;&nbsp;&nbsp; element@element_id=tag,:connection_type:user@host:repository</i>
-<br>&nbsp;<p>Examples:
-<ul>
-<li>
-plugin@org.eclipse.pde=v20011211, :pserver:anonymous@dev.eclipse.org:/home/eclipse,</li>
-
-<li>
-feature@org.eclipse.jdt=v20011120, :pserver:anonymous@dev.eclipse.org:/home/eclipse,</li>
-</ul>
+format: <i>&nbsp;&nbsp;&nbsp;  </i>
+<p> <i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; element@element_id=tag,:connection_type:user@host:repository</i>
+<br>&nbsp;<p>&nbsp;&nbsp;&nbsp;
 The current implementation of fetch only works against CVS repositories
 and there are no plans for supporting different kinds. Skipping or substituting
 this step should not be hard for users of other VCM systems or other kind
-of storage.
+of storage. <p>Examples:
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; plugin@org.eclipse.pde.build=v20020717, 
+:pserver:anonymous@dev.eclipse.org:/home/eclipse,</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+fragment@org.eclipse.core.resources.win32=v20020627, 
+:pserver:anonymous@dev.eclipse.org:/home/eclipse, </p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; plugin@org.eclipse.platform=v20020820, 
+:pserver:anonymous@dev.eclipse.org:/home/eclipse, </p>
+<p>&nbsp;</p>
 <p><b>Generate Ant buildfiles</b>
 <br>&nbsp;&nbsp;&nbsp; Once the plug-ins, fragments and features are in
 place, we need to generate the build.xml scripts. These Ant buildfiles drive
@@ -46,16 +47,27 @@ How do I use PDE Build?</h2>
 
 <h2>
 <b>Fetch</b></h2>
-&nbsp;&nbsp;&nbsp; PDE Build provides the <tt>org.eclipse.pde.core.fetch</tt>
-application...
-<br>&nbsp;&nbsp;&nbsp; ...
-<br>&nbsp;&nbsp;&nbsp; explain the ant task as well
-<br>&nbsp;&nbsp;&nbsp; ...
+&nbsp;&nbsp;&nbsp; This step is done by the <font face="Fixedsys">eclipse.fetch</font> 
+Ant task provided by PDE Build. Here is an example:<font SIZE="2"><p></font>
+<font SIZE="2" COLOR="#000080">&lt;eclipse.fetch </font></p>
+<p><font SIZE="2" COLOR="#000080">scriptName=</font><font SIZE="2" COLOR="#008000">&quot;${script}&quot;</p>
+</font><font SIZE="2" COLOR="#000080">
+<p>elements=</font><font SIZE="2" COLOR="#008000">&quot;feature@org.eclipse.platform-feature&quot;</p>
+</font><font SIZE="2" COLOR="#000080">
+<p>directory=</font><font SIZE="2" COLOR="#008000">&quot;${basedir}/test.map&quot;</p>
+</font><font SIZE="2" COLOR="#000080">
+<p>install=</font><font SIZE="2" COLOR="#008000">&quot;${basedir}/source&quot;</p>
+</font><font SIZE="2" COLOR="#000080">
+<p>children=</font><font SIZE="2" COLOR="#008000">&quot;true&quot;</p>
+</font><font SIZE="2" COLOR="#000080">
+<p>/&gt;</p>
+</font>
+<p>&nbsp;</p>
 <p><b>Generate Scripts</b>
 <br>&nbsp;&nbsp;&nbsp; In order to generate build.xml scripts for some
 element, it is necessary to use the <tt>org.eclipse.pde.core.script</tt>
 application extension point provided by PDE Build. The arguments for this
-application are:
+application are: </p>
 <ul>
 <li>
 <tt>-?&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -268,7 +280,18 @@ favorite pde build developer before making any assumptions based on it.</p>
   rely on this structure so that changes to it should be considered very 
   carefully. The easiest way to understand the structure is to take a look at a 
   recent generated fetch script.</li>
-  <li>&nbsp;</li>
+  <li>During the Eclipse Platform build the SWT plug-in and its fragments have 
+  to be built before the platform feature since it is a very special plug-in. 
+  All the JARs are placed in its platform specific fragments. For example, when 
+  building Eclipse Platform for Win32, if we build the platform feature first 
+  there will be no swt.jar since its JAR is built by the swt.win32 fragment and 
+  it is not part of the base platform feature (it is part of the win32 platform 
+  feature). So the eclipse.ui plug-in will not build since it depends on SWT and 
+  the JAR is not there yet.</li>
+  <li>Plug-ins and fragments from one feature cannot depend on plug-ins from 
+  another feature unless one feature depends on the other. For example, a 
+  plug-in in the JDT feature can depend on a plug-in in the Platform feature but 
+  not the other way around.</li>
 </ul>
 
 </body>
