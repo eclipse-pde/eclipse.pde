@@ -16,6 +16,7 @@
 		<project>org.eclipse.jdt.ui</project>
 		<project>org.eclipse.pde</project>
 		<project>org.eclipse.pde.build</project>
+		<project>org.eclipse.search</project>
 		<project>org.eclipse.ui</project>
 		<project>org.eclipse.ui.externaltools</project>
 		<project>org.eclipse.update.core</project>
