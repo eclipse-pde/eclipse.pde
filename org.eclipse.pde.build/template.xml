@@ -32,6 +32,7 @@
     </copy>
     <copy file="${out}.log" todir="${basedir}"/>
     <jar jarfile="${dest}" basedir="${out}"/>
+    <copy file="${dest}" todir="${basedir}"/>
     <delete dir="${out}"/>
   </target>
 

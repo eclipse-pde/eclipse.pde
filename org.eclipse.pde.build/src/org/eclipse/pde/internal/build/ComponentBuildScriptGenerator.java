@@ -124,7 +124,7 @@ protected void generateBinTarget(PrintWriter output) {
 	output.println("  <target name=\"" + TARGET_BIN + "\" depends=\"init\">");
 	output.println("    <antcall target=\"" + TARGET_ALL_TEMPLATE + "\">");
 	output.println("      <param name=\"target\" value=\"" + TARGET_BIN + "\"/>");
-	output.println("      <param name=\"destroot\" value=\"${basedir}/_temp___/\"/>");
+	output.println("      <param name=\"destbase\" value=\"${basedir}/_temp___/\"/>");
 	output.println("    </antcall>");
 
 	output.println("    <property name=\"comp.auto.includes\" value=\"install.xml\"/>");
@@ -215,7 +215,7 @@ protected void generateGatherTemplateCall(PrintWriter output, String targetName,
 	output.println("  <target name=\"" + targetName + "\" depends=\"init\">");
 	output.println("    <antcall target=\"" + TARGET_ALL_TEMPLATE + "\">");
 	output.println("      <param name=\"target\" value=\"" + targetName + "\"/>");
-	output.println("      <param name=\"destroot\" value=\"${basedir}/_temp___/\"/>");
+	output.println("      <param name=\"destbase\" value=\"${basedir}/_temp___/\"/>");
 	output.println("    </antcall>");
 	
 	if (outputTerminatingTag)
@@ -260,8 +260,11 @@ protected void generatePluginTemplateTarget(PrintWriter output) {
 	output.println("  <target name=\"" + TARGET_PLUGIN_TEMPLATE + "\" depends=\"init\">");
 	for (int list = 0; list < 2; list++) {
 		for (int i = 0; i < sortedPlugins[list].length; i++) {
-			String location = makeRelative(getLocation(getRegistry().getPlugin(sortedPlugins[list][i])), base);
-			output.println("      <ant dir=\"" + location + "\" target=\"${target}\"/>");
+			PluginModel plugin = getRegistry().getPlugin(sortedPlugins[list][i]);
+			String location = makeRelative(getLocation(plugin), base);
+			output.println("      <ant dir=\"" + location + "\" target=\"${target}\">");
+			output.println("        <property name=\"destroot\" value=\"${destbase}/plugins/" + plugin.getId() + "/>");
+			output.println("      </ant>");
 		}
 	}
 	output.println("  </target>");
@@ -271,7 +274,7 @@ protected void generateTemplateTargetCall(PrintWriter output, String target) {
 	output.println("  <target name=\"" + target + "\" depends=\"init\">");
 	output.println("    <antcall target=\"" + TARGET_ALL_TEMPLATE + "\">");
 	output.println("      <param name=\"target\" value=\"" + target + "\"/>");
-	output.println("      <param name=\"destroot\" value=\"${basedir}/_temp___/\"/>");
+	output.println("      <param name=\"destbase\" value=\"${basedir}/_temp___/\"/>");
 	output.println("    </antcall>");
 	output.println("  </target>");
 }
