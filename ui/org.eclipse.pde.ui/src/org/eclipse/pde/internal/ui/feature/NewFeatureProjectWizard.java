@@ -9,6 +9,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -128,7 +129,7 @@ public class NewFeatureProjectWizard
 		IPluginBase[] plugins,
 		IProgressMonitor monitor)
 		throws CoreException {
-		monitor.beginTask(PDEPlugin.getResourceString(CREATING_PROJECT), 2);
+		monitor.beginTask(PDEPlugin.getResourceString(CREATING_PROJECT), 3);
 
 		boolean overwrite = true;
 		if (location.append(project.getName()).toFile().exists()) {
@@ -149,10 +150,21 @@ public class NewFeatureProjectWizard
 				project,
 				PDE.FEATURE_NATURE,
 				monitor);
+			JavaCore.create(project).setRawClasspath(
+				new IClasspathEntry[] {
+					 JavaCore.newVariableEntry(
+						new Path("JRE_LIB"),
+						new Path("JRE_SRC"),
+						new Path("JRE_SRCROOT")),
+					JavaCore.newSourceEntry(new Path(project.getFullPath().toOSString()))},
+				monitor);
 			monitor.subTask(PDEPlugin.getResourceString(CREATING_MANIFEST));
+			monitor.worked(1);
 			createBuildProperties(project);
+			monitor.worked(1);
 			// create install.xml
 			IFile file = createFeatureManifest(project, data, plugins);
+			monitor.worked(1);
 			// open manifest for editing
 			openFeatureManifest(file);
 		} else {
@@ -161,6 +173,7 @@ public class NewFeatureProjectWizard
 			IFile featureFile = project.getFile("feature.xml");
 			if (featureFile.exists())
 				openFeatureManifest(featureFile);
+			monitor.worked(3);
 		}
 
 	}
@@ -237,5 +250,4 @@ public class NewFeatureProjectWizard
 		throws CoreException {
 		this.config = config;
 	}
-
 }
