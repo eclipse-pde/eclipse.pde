@@ -202,7 +202,8 @@ public class ExportSection extends TableSection implements IPartSelectionListene
 	
 	public void selectionChanged(IFormPart source, ISelection selection) {
 		IStructuredSelection ssel = (IStructuredSelection)selection;
-		update((IPluginLibrary) ssel.getFirstElement());
+		if (ssel.getFirstElement() instanceof IPluginLibrary)
+			update((IPluginLibrary) ssel.getFirstElement());
 	}
 	
 	private boolean isReadOnly() {
