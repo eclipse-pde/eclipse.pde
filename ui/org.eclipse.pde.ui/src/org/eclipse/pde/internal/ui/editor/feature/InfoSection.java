@@ -99,11 +99,12 @@ public class InfoSection extends PDEFormSection {
 		label.setLayoutData(gd);
 
 		factory.createLabel(container, PDEPlugin.getResourceString(KEY_INFO));
-		int comboStyle = SWT.READ_ONLY;
+		int borderStyle;
 		if (SWT.getPlatform().equals("motif") == false)
-			comboStyle |= SWT.FLAT;
+			borderStyle = SWT.FLAT;
 		else
-			comboStyle |= SWT.BORDER;
+			borderStyle = SWT.BORDER;
+		int comboStyle = SWT.READ_ONLY | borderStyle;
 		sectionCombo = new CCombo(container, comboStyle);
 		sectionCombo.setBackground(factory.getBackgroundColor());
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -113,7 +114,7 @@ public class InfoSection extends PDEFormSection {
 
 		factory.createLabel(container, PDEPlugin.getResourceString(KEY_URL));
 
-		urlText = factory.createText(container, null);
+		urlText = factory.createText(container, null, SWT.SINGLE | borderStyle);
 		urlText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				infoModified();
