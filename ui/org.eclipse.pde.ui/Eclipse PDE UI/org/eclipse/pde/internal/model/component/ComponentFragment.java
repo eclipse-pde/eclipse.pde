@@ -20,7 +20,7 @@ public void write(String indent, PrintWriter writer) {
 	}
 	if (getLabel() != null) {
 		writer.println();
-		writer.print(indent2 + "label=\"" + getLabel() + "\"");
+		writer.print(indent2 + "label=\"" + getWritableString(getLabel()) + "\"");
 	}
 	if (getVersion() != null) {
 		writer.println();

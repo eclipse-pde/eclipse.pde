@@ -112,7 +112,7 @@ private static void addSourceFolders(IBuildModel model, Vector result)throws Cor
 		if (entry.getName().startsWith("source.")) {
 			String [] folders = entry.getTokens();
 			for (int j=0; j<folders.length; j++) {
-				addSourceFolder(folders[i], 
+				addSourceFolder(folders[j], 
 				       model.getUnderlyingResource().getProject(), 
 				       result);
 			}

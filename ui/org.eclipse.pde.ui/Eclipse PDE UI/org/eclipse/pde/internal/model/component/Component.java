@@ -159,13 +159,13 @@ public void write(String indent, PrintWriter writer) {
 	String indent2 = indent + INDENT;
 	String indenta = indent + INDENT+INDENT;
 	writeIfDefined(indenta, writer, "id", id);
-	writeIfDefined(indenta, writer, "label", label);
+	writeIfDefined(indenta, writer, "label", getWritableString(label));
 	writeIfDefined(indenta, writer, "version", version);
-	writeIfDefined(indenta, writer, "provider-name", providerName);
+	writeIfDefined(indenta, writer, "provider-name", getWritableString(providerName));
 	writer.println(">");
 	if (description!=null) {
 		String indent3 = indent2+INDENT;
-		description = description.trim();
+		description = getWritableString(description.trim());
 		writer.println();
 		writer.println(indent2+"<description>");
 		writer.println(indent3+description);

@@ -61,10 +61,10 @@ public void write(String indent, PrintWriter writer) {
 		return;
 	writer.print(indent + "<" + tag);
 	if (label != null) {
-		writer.print(" label=\""+label+"\"");
+		writer.print(" label=\""+getWritableString(label)+"\"");
 	}
 	if (url != null) {
-		writer.print(" url=\"" + url.toString() + "\"");
+		writer.print(" url=\"" + getWritableString(url.toString()) + "\"");
 	}
 	writer.println("/>");
 }

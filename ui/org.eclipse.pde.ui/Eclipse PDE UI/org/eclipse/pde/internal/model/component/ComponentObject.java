@@ -67,6 +67,36 @@ protected void throwCoreException(String message) throws CoreException {
 		new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.OK, message, null);
 	throw new CoreException(status);
 }
+
+public static String getWritableString(String source) {
+	if (source==null) return "";
+	StringBuffer buf = new StringBuffer();
+	for (int i=0; i<source.length(); i++) {
+		char c = source.charAt(i);
+		switch (c) {
+			case '&': 
+				buf.append("&amp;");
+				break;
+			case '<':
+				buf.append("&lt;");
+				break;
+			case '>':
+				buf.append("&gt;");
+				break;
+			case '\'':
+				buf.append("&apos;");
+				break;
+			case '\"':
+				buf.append("&quot;");
+				break;
+			default:
+			buf.append(c);
+			break;
+		}
+	}
+	return buf.toString();
+}
+
 public void write(String indent, PrintWriter writer) {
 }
 }
