@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.build;
 import java.lang.reflect.*;
 import java.util.*;
 
+import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.launchConfigurations.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -207,6 +208,15 @@ public abstract class BaseBuildAction
 					(String) null);
 			launchCopy.setAttribute(
 					IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE,
+					(String) null);
+			launchCopy.setAttribute(
+					IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME,
+					(String) null);
+			launchCopy.setAttribute(
+					IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,
+					(String) null);
+			launchCopy.setAttribute(
+					IAntUIConstants.ATTR_DEFAULT_VM_INSTALL,
 					(String) null);
 			launchCopy.doSave();
 		} catch (CoreException e) {
