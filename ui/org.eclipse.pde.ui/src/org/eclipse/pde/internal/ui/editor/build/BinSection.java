@@ -63,14 +63,14 @@ public class BinSection
 		String resourceName = resource.getFullPath().removeFirstSegments(1).toString();
 		IBuild build = buildModel.getBuild();
 		IBuildEntry includes = build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
-		IBuildEntry excludes = build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
+		IBuildEntry excludes = build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_EXCLUDES);
 
 		resourceName = handleResourceFolder(resource, resourceName);
 
 		if (checked)
 			handleCheck(includes, excludes, resourceName, resource, wasTopParentChecked, IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
 		else
-			handleUncheck(includes, excludes, resourceName, resource, IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
+			handleUncheck(includes, excludes, resourceName, resource, IBuildPropertiesConstants.PROPERTY_BIN_EXCLUDES);
 
 		deleteEmptyEntries();
 	}
