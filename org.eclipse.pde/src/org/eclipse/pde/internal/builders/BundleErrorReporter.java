@@ -40,6 +40,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.PDE;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.search.PluginJavaSearchUtil;
 import org.eclipse.pde.internal.core.util.IdUtil;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
@@ -211,8 +212,21 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				}
 				IResource resource = model.getUnderlyingResource();
 				if (resource != null) {
-					addProjectPackages(map, resource.getProject());
-				}
+                    addProjectPackages(map, resource.getProject());
+                } else {
+                    try {
+                        IPackageFragment[] packages = PluginJavaSearchUtil
+                                .collectPackageFragments(
+                                        new IPluginBase[] { model
+                                                .getPluginBase() }, JavaCore
+                                                .create(fProject));
+                        for (int i = 0; i < packages.length; i++)
+                            fHostPackagesMap.put(packages[i].getElementName(),
+                                    packages[i]);
+                    } catch (JavaModelException jme) {
+                        PDE.log(jme);
+                    }
+                }
 			}
 			fHostPackagesMap = map;
 		}
