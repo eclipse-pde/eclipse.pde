@@ -159,6 +159,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_HORIZONTAL = create(PATH_LCL, "th_horizontal.gif");
 	public static final ImageDescriptor DESC_VERTICAL = create(PATH_LCL, "th_vertical.gif");
 	public static final ImageDescriptor DESC_COLLAPSE_ALL = create(PATH_LCL, "collapseall.gif");
+	public static final ImageDescriptor DESC_HELP = create(PATH_LCL, "help.gif");
 
 	public static final ImageDescriptor DESC_ADD_ATT_DISABLED = create(PATH_LCL_DISABLED, "add_att.gif");
 	public static final ImageDescriptor DESC_CLONE_ATT_DISABLED = create(PATH_LCL_DISABLED, "clone_att.gif");
