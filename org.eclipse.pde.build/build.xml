@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="org.eclipse.pde.core" default="plugin.zip" basedir=".">
+<project name="org.eclipse.pde.build" default="plugin.zip" basedir=".">
   <target name="initTemplate" unless="template">
     <initTemplate/>
   </target>
   <target name="init" depends="initTemplate">
-    <property name="plugin" value="org.eclipse.pde.core"/>
+    <property name="plugin" value="org.eclipse.pde.build"/>
     <property name="version" value="2.1.2"/>
     <property name="stamp" value=""/>
     <property name="os" value="win32"/>
@@ -62,50 +62,50 @@
     <delete dir="${base}"/>
   </target>
 
-  <target name="pdecore.jar" depends="init">
+  <target name="pdebuild.jar" depends="init">
     <ant antfile="${template}" target="jar">
       <property name="mapping" value="src/"/>
       <property name="includes" value="src/"/>
       <property name="excludes" value=""/>
-      <property name="dest" value="${basedir}/pdecore.jar"/>
+      <property name="dest" value="${basedir}/pdebuild.jar"/>
       <property name="compilePath" value="../org.eclipse.core.runtime/bin;../org.eclipse.core.runtime/runtime.jar;../org.eclipse.core.boot/bin;../org.eclipse.core.boot/boot.jar;../org.eclipse.ant.core/bin;../org.eclipse.ant.core/antsupport.jar;../org.apache.xerces/bin;../org.apache.xerces/xerces.jar;../org.apache.ant/bin;../org.apache.ant/ant.jar;../org.apache.ant/jakarta-ant-1.4.1-optional.jar;../org.eclipse.jdt.core/bin;../org.eclipse.jdt.core/jdtcore.jar;../org.eclipse.core.resources/bin;../org.eclipse.core.resources/resources.jar;../org.eclipse.update.core/bin;../org.eclipse.update.core/updatecore.jar;../org.eclipse.help/bin;../org.eclipse.help/help.jar;../org.apache.lucene/bin;../org.apache.lucene/lucene-1.2-rc2.jar;../org.apache.lucene/lucenedemo.zip"/>
     </ant>
   </target>
 
-  <target name="lib/pdecore-ant.jar" depends="init">
+  <target name="lib/pdebuild-ant.jar" depends="init">
     <ant antfile="${template}" target="jar">
       <property name="mapping" value="src_ant/"/>
       <property name="includes" value="src_ant/"/>
       <property name="excludes" value=""/>
-      <property name="dest" value="${basedir}/lib/pdecore-ant.jar"/>
-      <property name="compilePath" value="../org.eclipse.core.runtime/bin;../org.eclipse.core.runtime/runtime.jar;../org.eclipse.core.boot/bin;../org.eclipse.core.boot/boot.jar;pdecore.jar;bin/;../org.eclipse.ant.core/bin;../org.eclipse.ant.core/antsupport.jar;../org.apache.xerces/bin;../org.apache.xerces/xerces.jar;../org.apache.ant/bin;../org.apache.ant/ant.jar;../org.apache.ant/jakarta-ant-1.4.1-optional.jar;../org.eclipse.jdt.core/bin;../org.eclipse.jdt.core/jdtcore.jar;../org.eclipse.core.resources/bin;../org.eclipse.core.resources/resources.jar;../org.eclipse.update.core/bin;../org.eclipse.update.core/updatecore.jar;../org.eclipse.help/bin;../org.eclipse.help/help.jar;../org.apache.lucene/bin;../org.apache.lucene/lucene-1.2-rc2.jar;../org.apache.lucene/lucenedemo.zip"/>
+      <property name="dest" value="${basedir}/lib/pdebuild-ant.jar"/>
+      <property name="compilePath" value="../org.eclipse.core.runtime/bin;../org.eclipse.core.runtime/runtime.jar;../org.eclipse.core.boot/bin;../org.eclipse.core.boot/boot.jar;pdebuild.jar;bin/;../org.eclipse.ant.core/bin;../org.eclipse.ant.core/antsupport.jar;../org.apache.xerces/bin;../org.apache.xerces/xerces.jar;../org.apache.ant/bin;../org.apache.ant/ant.jar;../org.apache.ant/jakarta-ant-1.4.1-optional.jar;../org.eclipse.jdt.core/bin;../org.eclipse.jdt.core/jdtcore.jar;../org.eclipse.core.resources/bin;../org.eclipse.core.resources/resources.jar;../org.eclipse.update.core/bin;../org.eclipse.update.core/updatecore.jar;../org.eclipse.help/bin;../org.eclipse.help/help.jar;../org.apache.lucene/bin;../org.apache.lucene/lucene-1.2-rc2.jar;../org.apache.lucene/lucenedemo.zip"/>
     </ant>
   </target>
 
-  <target name="jar" depends="init,pdecore.jar,lib/pdecore-ant.jar">
+  <target name="jar" depends="init,pdebuild.jar,lib/pdebuild-ant.jar">
   </target>
 
-  <target name="pdecoresrc.zip" depends="init">
+  <target name="pdebuildsrc.zip" depends="init">
     <property name="destroot" value="${basedir}"/>
     <ant antfile="${template}" target="src">
       <property name="mapping" value="src/"/>
       <property name="includes" value="src/**/*.java"/>
       <property name="excludes" value=""/>
-      <property name="dest" value="${destroot}/pdecoresrc.zip"/>
+      <property name="dest" value="${destroot}/pdebuildsrc.zip"/>
     </ant>
   </target>
 
-  <target name="lib/pdecore-antsrc.zip" depends="init">
+  <target name="lib/pdebuild-antsrc.zip" depends="init">
     <property name="destroot" value="${basedir}"/>
     <ant antfile="${template}" target="src">
       <property name="mapping" value="src_ant/"/>
       <property name="includes" value="src_ant/**/*.java"/>
       <property name="excludes" value=""/>
-      <property name="dest" value="${destroot}/lib/pdecore-antsrc.zip"/>
+      <property name="dest" value="${destroot}/lib/pdebuild-antsrc.zip"/>
     </ant>
   </target>
 
-  <target name="src" depends="init,pdecoresrc.zip,lib/pdecore-antsrc.zip">
+  <target name="src" depends="init,pdebuildsrc.zip,lib/pdebuild-antsrc.zip">
   </target>
 
   <target name="bin" depends="init">
@@ -126,8 +126,8 @@
 
   <target name="clean" depends="init">
     <ant antfile="${template}" target="clean">
-      <property name="jar" value="pdecore.jar,lib/pdecore-ant.jar"/>
-      <property name="srczips" value="pdecoresrc.zip,lib/pdecore-antsrc.zip"/>
+      <property name="jar" value="pdebuild.jar,lib/pdebuild-ant.jar"/>
+      <property name="srczips" value="pdebuildsrc.zip,lib/pdebuild-antsrc.zip"/>
     </ant>
     <delete>
       <fileset dir="." includes="**/*.pdetemp"/>

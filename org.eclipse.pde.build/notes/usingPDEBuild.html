@@ -1,0 +1,288 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.7 [en] (WinNT; I) [Netscape]">
+   <title>Using PDE Core to build Plug-ins, Fragments and Features</title>
+</head>
+<body>
+
+<h2>
+What is PDE Core?</h2>
+&nbsp;&nbsp;&nbsp; PDE Core is a plug-in that helps users building their
+own plug-ins. The term building here is related to deployment and not development.
+Basically, PDE Core takes an Eclipse Plug-in Project, its plugin.xml and
+build.properties files and generate a build.xml script to be run by Ant.
+Building plug-ins, fragments or features consists of the 3 stages: fetch,
+generate scripts and build that are described bellow.
+<p><b>Fetch</b>
+<br>&nbsp;&nbsp;&nbsp; Consists of taking the interesting elements from
+a repository to the build machine. These elements can be plug-ins, fragments
+or features. A file called directory.txt is responsible for identifying
+where, how and which plug-ins should go to the build machine. Ths file
+is basically a Java properties file where the entries have the following
+format: <i>element@element_id=tag,:connection_type:user@host:repository</i>
+<br>Examples:
+<ul>
+<li>
+plugin@org.eclipse.pde=v20011211, :pserver:anonymous@dev.eclipse.org:/home/eclipse,</li>
+
+<li>
+feature@org.eclipse.jdt=v20011120, :pserver:anonymous@dev.eclipse.org:/home/eclipse,</li>
+</ul>
+The current implementation of fetch only works against CVS repositories
+and there are no plans for supporting different kinds. Skiping or substituting
+this step should not be hard for users of other VCM systems or other kind
+of storage.
+<p><b>Generate Scripts</b>
+<br>&nbsp;&nbsp;&nbsp; Once the plug-ins, fragments and features are in
+place, we need to generate the build.xml scripts. These Ant scripts drive
+the build process. In order to generate them, PDE Core takes as input the
+plugin.xml, fragment.xml, feature.xml and build.properties files. The complete
+description of the first 3 files are elsewhere. Here we will only fully
+describe the build.properties file and relevant parts of the others.
+<p><b>Build</b>
+<br>&nbsp;&nbsp;&nbsp; This step is basically executed by Ant, although
+we do need Eclipse defined tasks and types. One important thing here is
+to know exactly what targets to call in order to get the desired result.
+<br>&nbsp;
+<h2>
+How do I use PDE Core?</h2>
+
+<h2>
+<b>Fetch</b></h2>
+&nbsp;&nbsp;&nbsp; PDE Core provides the <tt>org.eclipse.pde.core.fetch</tt>
+application...
+<br>&nbsp;&nbsp;&nbsp; ...
+<br>&nbsp;&nbsp;&nbsp; explain the ant task as well
+<br>&nbsp;&nbsp;&nbsp; ...
+<p><b>Generate Scripts</b>
+<br>&nbsp;&nbsp;&nbsp; In order to generate build.xml scripts for some
+element, it is necessary to use the <tt>org.eclipse.pde.core.script</tt>
+application extension point provided by PDE Core. The arguments for this
+application are:
+<ul>
+<li>
+<tt>-?&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+prints usage</tt></li>
+
+<li>
+<tt>-cvspassfile&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; specifies the location of
+the cvspass file</tt></li>
+
+<li>
+<tt>-dev &lt;args>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; plugin relative
+development entries to be added to the compile classpath of the elements.
+Specially useful when building a specific plug-in but its prerequisites
+do not have jars generated yet but are compiled in a folder like pluginFolder/bin.</tt></li>
+
+<li>
+<tt>-directory&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; location of the
+directory file</tt></li>
+
+<li>
+<tt>-elements &lt;arg>&nbsp;&nbsp; list of elements</tt></li>
+
+<li>
+<tt>-install &lt;arg>&nbsp;&nbsp;&nbsp; element's location</tt></li>
+
+<li>
+<tt>-nochildren&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; feature's children
+should not have scripts generated</tt></li>
+
+<li>
+<tt>-pluginpath&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; specify the URLs where
+the plugins are located</tt></li>
+
+<li>
+<tt>-scriptname&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; location of the fetch
+script</tt></li>
+</ul>
+
+<p><br>Examples:
+<p><tt>(1) java -cp startup.jar org.eclipse.core.launcher.Main</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -application org.eclipse.pde.core.buildScript</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -elements plugin@org.eclipse.core.resources</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -install c:\mybuild\</tt>
+<p><tt>(2) java -cp startup.jar org.eclipse.core.launcher.Main</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -application org.eclipse.pde.core.buildScript</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -elements plugin@org.eclipse.core.resources,fragment@my.fragment</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -install c:\mybuild\</tt>
+<p><tt>(3) java -cp startup.jar org.eclipse.core.launcher.Main</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -application org.eclipse.pde.core.buildScript</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -elements feature@org.eclipse.platform.feature
+-nochildren</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -install c:\mybuild\</tt>
+<p>&nbsp;&nbsp;&nbsp; ...
+<br>&nbsp;&nbsp;&nbsp; [explain the ant task as well]
+<br>&nbsp;&nbsp;&nbsp; ...
+<br>&nbsp;
+<p><b>build.properties</b>
+<br>&nbsp;&nbsp;&nbsp; The build mechanism is driven by a build specification.
+The specification for an individual plug-in, fragment, or feature is found
+in a build.properties file in the corresponding element. It is a simple
+properties file that describes where to find the source code for the element.&nbsp;
+Other entries describe which files should be included/excluded in/from
+various forms of distribution (e.g., binary, source). The possible entries
+are described bellow:
+<p><b><tt>custom = yes</tt></b>
+<br>&nbsp;&nbsp;&nbsp; Tells the script generator that no script is necessary
+for the current element. It is usually used when a custom build.xml script
+is provided. The build.xml script has to be in the root folder of the element.
+<p><b>bin.includes =</b>
+<br><b>bin.excludes =</b>
+<br><b>jar.external =</b>
+<p><b>source.&lt;jar_name>=&lt;source_locations></b>
+<br>&nbsp;&nbsp;&nbsp; Indicates, for the specified jar, where to find
+its source. The source_locations is a comma-separated list of <b><font color="#CC0000">[element-relative?]</font></b>
+locations. Plug-ins <b><font color="#CC0000">[elements?]</font></b> requiring
+compilation must define this entry.
+<br>&nbsp;&nbsp;&nbsp; Example:
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; source.resources.jar = src/
+<p><b>zip.external =</b>
+<br><b>zip.program =</b>
+<br><b>zip.argument =</b>
+<br><b>${zip.file}</b>
+<br>&nbsp;
+<p><b><tt>build variables</tt></b>
+<br>&nbsp;&nbsp;&nbsp; There are currenttly 4 build variables: os, ws,
+nl and arch. The <tt>build.properties</tt> file or a custom <tt>build.xml</tt>
+script can make use of them in order to create platform specific builds.
+They can be referenced inside the script as normal Ant properties, whose
+values are referenced by ${variable_name}.
+<br>&nbsp;&nbsp;&nbsp; In the <tt>build.properties</tt> file, they can
+be used as follows:
+<p><tt>&nbsp; ${os/linux}.bin.includes = src/linux</tt>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Indicates that the folder
+src/linux should be include to the bin target if os=linux .
+<p><tt>&nbsp; ${os/linux,ws/motif}.bin.includes = src/linux</tt>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Indicates that the folder
+src/linux should be include to the bin target if os=linux and ws=motif
+.
+<p><tt>&nbsp; ${ws/motif}.bin.includes = src/motif</tt>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Indicates that the folder
+src/motif should be include to the bin target if ws=motif.
+<br>&nbsp;
+<br>&nbsp;
+<h2>
+<b>Build</b></h2>
+&nbsp;&nbsp;&nbsp; The generated build.xml scripts from the previous step
+have many targets. They public ones described bellow. These are the targets
+that a custom build.xml script has to implement.
+<p><b><font size=+2>Feature targets:</font></b>
+<p><b>all.children</b>
+<br>&nbsp;&nbsp;&nbsp; Calls plugin-template and fragment-template.
+<p><b>all.plugins</b>
+<br>&nbsp;&nbsp;&nbsp; Delegates target calls to all the feature's plug-ins.
+<p><b>all.fragments</b>
+<br>&nbsp;&nbsp;&nbsp; Delegates target calls to all the feature's fragments.
+<p><b>build.jars</b>
+<br>&nbsp;&nbsp;&nbsp; Generates the required jars for the feature and
+its children.
+<p><b>build.sources</b>
+<br>&nbsp;&nbsp;&nbsp; Creates all the *src.zip files corresponding to
+this feature's jars and its children. E.g. for startup.jar, it creates
+startupsrc.zip .
+<p><b>build.update.jar</b>
+<br>&nbsp;&nbsp;&nbsp; Creates a jar file containing a binary build of
+the feature. Source is not included. The jar is in a format supported by
+install/update.
+<p><b>gather.bin.parts</b>
+<br>&nbsp;&nbsp;&nbsp; Copies all feature relevant parts (defined by <b>bin.includes</b>
+and <b>bin.excludes</b>) to ${destination}/install/features/${feature}.
+<p><b>gather.logs</b>
+<br>&nbsp;&nbsp;&nbsp; Copies *.log files to ${destination}/install/features/${feature}.
+<p><b>gather.sources</b>
+<br>&nbsp;&nbsp;&nbsp; Copies files generated by <b>build.sources</b> (*src.zip)
+to ${destination}/install/features/${feature}.
+<br>&nbsp;
+<p><b><font size=+2>Plug-ins and fragments targets:</font></b>
+<p><b>build.jars</b>
+<br>&nbsp;&nbsp;&nbsp; Generates the required jars for this plugin/fragment.
+<p><b>build.sources</b>
+<br>&nbsp;&nbsp;&nbsp; Creates all the *src.zip files corresponding to
+this element's jars. E.g. for resources.jar, it creates resourcessrc.zip
+.
+<p><b>build.update.jar</b>
+<br>&nbsp;&nbsp;&nbsp; Creates a jar file containing a binary build of
+the element. Source is not included. The jar is in a format supported by
+install/update.
+<p><b>clean</b>
+<br>&nbsp;&nbsp;&nbsp; Cleans all temp files and folders plus files created
+by the script targets (e.g. *.jar, *.zip, ...).
+<p><b>gather.bin.parts</b>
+<br>&nbsp;&nbsp;&nbsp; Copies all plugin relevant parts (defined by <b>bin.includes</b>
+and <b>bin.excludes</b>) to ${destination}/(plugins | fragments)/(${plugin}
+| ${fragment}). E.g., ${destination}/plugins/${plugin}.
+<p><b>gather.logs</b>
+<br>&nbsp;&nbsp;&nbsp; Copies *.log files to ${destination}/(plugins |
+fragments)/(${plugin} | ${fragment}). E.g., ${destination}/plugins/${plugin}.
+<p><b>gather.sources</b>
+<br>&nbsp;&nbsp;&nbsp; Copies files generated by <b>build.sources</b> (*src.zip)
+to ${destination}/(plugins | fragments)/(${plugin} | ${fragment}). E.g.,
+${destination}/plugins/${plugin}.
+<br>&nbsp;
+<br>&nbsp;
+<p><b><font color="#FF0000">To be implemented:</font></b>
+<ul>
+<li>
+Write comments.</li>
+
+<li>
+ant should not pass bin when -dev bin is specified (will require ant hack
+or a command line filter)</li>
+
+<li>
+create template.xml dinamically</li>
+
+<li>
+users should define their own compiler</li>
+
+<li>
+users should define their own runtime libraries (rt.jar)</li>
+
+<li>
+use temp vars to reduce garbage (specially in cases like getPropertyFormat())</li>
+
+<li>
+review error handling</li>
+
+<li>
+verify if all messages and exception constants are used otherwise delete
+them</li>
+
+<li>
+fix the way properties are loaded and overwritten (should be easier and
+clearer)</li>
+
+<li>
+make sure we are following Ant guidelines wrt our tasks parameters and
+their relation to Ant properties</li>
+
+<li>
+unify temp folder relative to the ${install} property - should think of
+the consequences - multiple simultaneous builds?</li>
+
+<li>
+remove all strings and replace by contants when possible</li>
+
+<li>
+review scripts to see if relative folders are correct - take special care
+about considering plug-ins relative to the ${install}locations</li>
+
+<li>
+review scripts to see if the clean target offers risk of removing more
+than necessary. For example, if boot.jar is not generated by the script,
+it should not remove boot.jar. Having *.jar on a clean target can be dangerous.
+We should try to clean every entry by name and not use masks.</li>
+
+<li>
+maybe we should expose the way we store the attributes for an ant script
+(the ones shown in the Ant Wizard). Users could be able to add or replace
+them. It would be really good for plugin build scripts. For example, PDE
+UI would be able to set variables like os, ws, arch, etc... After the script
+generation, freeing users from that.</li>
+</ul>
+
+</body>
+</html>

@@ -11,7 +11,7 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.compilers.DefaultCompilerAdapter;
 import org.apache.tools.ant.types.Commandline;
 import org.apache.tools.ant.types.Path;
-import org.eclipse.pde.internal.core.Policy;
+import org.eclipse.pde.internal.build.Policy;
 /**
  * Compiler adapter for the JDT Compiler. 
  * 
