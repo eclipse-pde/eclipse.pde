@@ -49,6 +49,7 @@ public void createPartControl(Composite parent) {
 	treeViewer.setContentProvider(new RegistryBrowserContentProvider());
 	treeViewer.setLabelProvider(new RegistryBrowserLabelProvider());
 	treeViewer.setUseHashlookup(true);
+	treeViewer.setSorter(new ViewerSorter() {});
 
 	MenuManager popupMenuManager = new MenuManager();
 	IMenuListener listener = new IMenuListener () {
@@ -73,10 +74,11 @@ public void createPartControl(Composite parent) {
 	site.setSelectionProvider(treeViewer);
 }
 public void fillContextMenu(IMenuManager manager) {
-	manager.add(propertiesAction);
 	manager.add(refreshAction);
 	manager.add(new Separator());
 	drillDownAdapter.addNavigationActions(manager);
+	manager.add(new Separator());
+	manager.add(propertiesAction);
 }
 public TreeViewer getTreeViewer() {
 	return treeViewer;
