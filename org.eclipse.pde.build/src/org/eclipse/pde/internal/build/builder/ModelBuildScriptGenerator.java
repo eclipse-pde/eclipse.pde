@@ -700,9 +700,10 @@ public abstract class ModelBuildScriptGenerator extends AbstractBuildScriptGener
 			return;
 		}
 		for (int i = 0; i < sources.length; i++) {
-			if (! new File(pluginRoot, sources[i]).exists()) {
+			File file = new File(pluginRoot, sources[i]);
+			if (!file.exists()) {
 				sources[i] = null;
-				IStatus status = new Status(IStatus.WARNING, PI_PDEBUILD, EXCEPTION_SOURCE_LOCATION_MISSING, Policy.bind("warning.cannotLocateSource", new File(pluginRoot, sources[i]).getAbsolutePath()), null); //$NON-NLS-1$
+				IStatus status = new Status(IStatus.WARNING, PI_PDEBUILD, EXCEPTION_SOURCE_LOCATION_MISSING, Policy.bind("warning.cannotLocateSource", file.getAbsolutePath()), null); //$NON-NLS-1$
 				Platform.getPlugin(PI_PDEBUILD).getLog().log(status);
 			}
 		}
