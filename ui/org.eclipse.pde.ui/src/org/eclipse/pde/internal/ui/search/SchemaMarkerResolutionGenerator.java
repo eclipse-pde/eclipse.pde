@@ -20,12 +20,12 @@ public class SchemaMarkerResolutionGenerator implements IMarkerResolutionGenerat
 	class SchemaMarkerResolution implements IMarkerResolution {
 		private ShowDescriptionAction action;
 		public String getLabel() {
-			return "Show the extension point reference document";
+			return PDEPlugin.getResourceString("SchemaMarkerResolutionGenerator.label"); //$NON-NLS-1$
 		}
 		
 		public void run(IMarker marker) {
 			try {
-				String point = (String)marker.getAttribute("point");
+				String point = (String)marker.getAttribute("point"); //$NON-NLS-1$
 				if (point==null) return;
 				ISchema schema = PDECore.getDefault().getSchemaRegistry().getSchema(point);
 
