@@ -12,7 +12,6 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
 
 public class LauncherUtils {
@@ -617,15 +616,7 @@ public class LauncherUtils {
 		} catch (CoreException e) {
 			return ""; //$NON-NLS-1$
 		}
-
-		String tracingArg = "file:" + optionsFileName; //$NON-NLS-1$
-		if (SWT.getPlatform().equals("motif")) //$NON-NLS-1$
-			tracingArg = "file:" + optionsFileName; //$NON-NLS-1$
-		// defect 17661
-		else if (SWT.getPlatform().equals("gtk")) //$NON-NLS-1$
-			tracingArg = "file://localhost" + optionsFileName; //$NON-NLS-1$
-
-		return tracingArg;
+		return optionsFileName;
 	}
 
 	public static String getPrimaryFeatureId() {
