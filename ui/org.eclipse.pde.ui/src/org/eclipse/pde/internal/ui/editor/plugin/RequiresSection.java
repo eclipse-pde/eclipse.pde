@@ -100,8 +100,7 @@ public class RequiresSection
 
 	protected void selectionChanged(IStructuredSelection sel) {
 		getPage().getPDEEditor().setSelection(sel);
-		if (getPage().getModel().isEditable())
-			updateButtons();
+		updateButtons();
 	}
 	
 	private void updateButtons() {
@@ -238,7 +237,7 @@ public class RequiresSection
 		if (((IModel)getPage().getModel()).getUnderlyingResource()!=null) {
 			manager.add(new UnusedDependenciesAction((IPluginModelBase) getPage().getModel(), false));
 		}
-        if (fPropertiesAction != null) {
+        if (fPropertiesAction != null && !fImportViewer.getSelection().isEmpty()) {
             manager.add(new Separator());
             manager.add(fPropertiesAction);
         }

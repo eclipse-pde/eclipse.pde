@@ -23,63 +23,117 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.bundle.*;
 import org.eclipse.pde.internal.core.ibundle.*;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.context.*;
 import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.pde.internal.ui.parts.*;
+import org.eclipse.pde.internal.ui.util.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.osgi.framework.*;
 
 public class ImportPackageSection extends TableSection implements IModelChangedListener {
-	/**
-	 * @param formPage
-	 * @param parent
-	 * @param style
-	 * @param buttonLabels
-	 */
-	private TableViewer importPackageTable;
 
-	private Vector importPackages;
-
+    class PackageObject {
+        String name;
+        String version;
+        boolean optional;
+        ManifestElement element;
+        
+        public String toString() {
+            StringBuffer buffer = new StringBuffer(name);
+            if (version != null && version.length() > 0) {
+                buffer.append(" ");
+                boolean wrap = Character.isDigit(version.charAt(0));
+                if (wrap)
+                    buffer.append("(");
+                buffer.append(version);
+                if (wrap)
+                    buffer.append(")");
+            }
+            return buffer.toString();
+        }
+        
+        public String write() {
+            StringBuffer buffer = new StringBuffer();
+            buffer.append(name);
+            if (version != null && version.length() > 0) {
+                buffer.append(";");
+                buffer.append(getVersionAttribute());
+                buffer.append("=\"");
+                buffer.append(version.trim());
+                buffer.append("\"");
+            }
+            if (optional) {
+                buffer.append(";");
+                buffer.append(Constants.RESOLUTION_DIRECTIVE);
+                buffer.append(":=");
+                buffer.append(Constants.RESOLUTION_OPTIONAL);
+            }
+            if (element == null)
+                return buffer.toString();
+            
+            Enumeration attrs = element.getKeys();
+            if (attrs != null) {
+                while (attrs.hasMoreElements()) {
+                    String attr = attrs.nextElement().toString();
+                    if (attr.equals(getVersionAttribute()))
+                        continue;
+                    buffer.append(";");
+                    buffer.append(attr);
+                    buffer.append("=\"");
+                    buffer.append(element.getAttribute(attr));
+                    buffer.append("\"");
+                }
+            }
+            Enumeration directives = element.getDirectiveKeys();
+            if (directives != null) {
+                while (directives.hasMoreElements()) {
+                    String directive = directives.nextElement().toString();
+                    if (directive.equals(Constants.RESOLUTION_DIRECTIVE))
+                        continue;
+                    buffer.append(";");
+                    buffer.append(directive);
+                    buffer.append(":=");
+                    buffer.append("\"");
+                    buffer.append(element.getDirective(directive));
+                    buffer.append("\"");
+                }
+            }
+            return buffer.toString();
+        }
+    }
+    
 	class ImportPackageContentProvider extends DefaultTableProvider {
 		public Object[] getElements(Object parent) {
-			if (importPackages == null) {
+			if (fPackages == null)
 				createImportObjects();
-			}
-			return importPackages.toArray();
+			return fPackages.values().toArray();
 		}
 
 		private void createImportObjects() {
-			importPackages = new Vector();
-
-			BundlePluginBase base = getPluginBase();
-			if (base != null) {
-				IBundle bundle = base.getBundle();
-				if (bundle != null) {
-					try {
-						String value = bundle
-								.getHeader(Constants.IMPORT_PACKAGE);
-						if (value != null && !(value.trim()).equals("")) { //$NON-NLS-1$
-							ManifestElement[] elements = ManifestElement
-									.parseHeader(Constants.IMPORT_PACKAGE,
-											value);
-							for (int i = 0; i < elements.length; i++) {
-								PackageObject p = new PackageObject(
-										elements[i].getValue(),
-										elements[i]
-												.getAttribute(Constants.PACKAGE_SPECIFICATION_VERSION));
-								importPackages.add(p);
-							}
-						}
-					} catch (BundleException e) {
+			fPackages = new TreeMap();
+			try {
+				String value = getBundle().getHeader(Constants.IMPORT_PACKAGE);
+				if (value != null) {
+					ManifestElement[] elements = ManifestElement.parseHeader(Constants.IMPORT_PACKAGE, value);
+					for (int i = 0; i < elements.length; i++) {
+						PackageObject p = new PackageObject();
+                        p.name = elements[i].getValue();
+                        p.version = elements[i].getAttribute(getVersionAttribute());
+                        p.optional = Constants.RESOLUTION_OPTIONAL.equals(elements[i].getDirective(Constants.RESOLUTION_DIRECTIVE));
+                        p.element = elements[i];
+                        fPackages.put(p.name, p);
 					}
 				}
+			} catch (BundleException e) {
 			}
-		}
+        }
 	}
 
 	class ImportPackageLabelProvider extends LabelProvider implements
@@ -89,22 +143,31 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 		}
 
 		public Image getColumnImage(Object obj, int index) {
-			return JavaUI.getSharedImages().getImage(
-					ISharedImages.IMG_OBJS_PACKAGE);
+			return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_PACKAGE);
 		}
 	}
 
 	class ImportPackageDialogLabelProvider extends LabelProvider {
 		public Image getImage(Object element) {
-			return JavaUI.getSharedImages().getImage(
-					ISharedImages.IMG_OBJS_PACKAGE);
+			return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_PACKAGE);
 		}
 
 		public String getText(Object element) {
-			ImportPackageSpecification p = (ImportPackageSpecification) element;
-			return p.getName() + "(" + p.getVersionRange() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+			ExportPackageDescription p = (ExportPackageDescription) element;
+            StringBuffer buffer = new StringBuffer(p.getName());
+            String version = p.getVersion().toString();
+            if (!version.equals(Version.emptyVersion.toString())) {
+                buffer.append(" (");
+                buffer.append(version);
+                buffer.append(")");
+            }
+			return buffer.toString();
 		}
 	}
+
+    private TableViewer fPackageViewer;
+
+    private Map fPackages;
 
 	public ImportPackageSection(PDEFormPage page, Composite parent) {
 		super(
@@ -128,11 +191,21 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 		Composite container = createClientContainer(section, 2, toolkit);
 		createViewerPartControl(container, SWT.SINGLE, 2, toolkit);
 		TablePart tablePart = getTablePart();
-		importPackageTable = tablePart.getTableViewer();
-		importPackageTable
+		fPackageViewer = tablePart.getTableViewer();
+		fPackageViewer
 				.setContentProvider(new ImportPackageContentProvider());
-		importPackageTable.setLabelProvider(new ImportPackageLabelProvider());
-		importPackageTable.setSorter(new ViewerSorter());
+		fPackageViewer.setLabelProvider(new ImportPackageLabelProvider());
+		fPackageViewer.setSorter(new ViewerSorter() {
+            public int compare(Viewer viewer, Object e1, Object e2) {
+                String s1 = e1.toString();
+                String s2 = e2.toString();
+                if (s1.indexOf(" ") != -1)
+                    s1 = s1.substring(0, s1.indexOf(" "));
+                if (s2.indexOf(" ") != -1)
+                    s2 = s2.substring(0, s2.indexOf(" "));
+                return super.compare(viewer, s1, s2);
+            }
+        });
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
 		section.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -156,10 +229,10 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 	 * 
 	 */
 	protected void handleDelete() {
-		IStructuredSelection ssel = (IStructuredSelection) importPackageTable
+		IStructuredSelection ssel = (IStructuredSelection) fPackageViewer
 				.getSelection();
 		Object[] items = ssel.toArray();
-		importPackageTable.remove(items);
+		fPackageViewer.remove(items);
 		removeImportPackages(items);
 
 	}
@@ -170,14 +243,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 	private void removeImportPackages(Object[] removed) {
 		for (int k = 0; k < removed.length; k++) {
 			PackageObject p = (PackageObject) removed[k];
-			for (int i = 0; i < importPackages.size(); i++) {
-				PackageObject element = (PackageObject) importPackages.get(i);
-				String name = element.getName();
-				if (name.equals(p.getName())) {
-					importPackages.remove(i);
-					break;
-				}
-			}
+			fPackages.remove(p.name);
 		}
 		writeImportPackages();
 	}
@@ -186,117 +252,75 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 	 * 
 	 */
 	protected void handleAdd() {
-		ImportPackageSelectionDialog dialog = new ImportPackageSelectionDialog(
-				importPackageTable.getTable().getShell(),
-				new ImportPackageDialogLabelProvider(), getAvailablePackages());
-		dialog.create();
-		if (dialog.open() == ImportPackageSelectionDialog.OK) {
-			Object[] models = dialog.getResult();
-			for (int i = 0; i < models.length; i++) {
-				ImportPackageSpecification candidate = (ImportPackageSpecification) models[i];
-				PackageObject p = new PackageObject(candidate.getName(), null);
-				importPackages.add(p);
-				importPackageTable.add(p);
+       ElementListSelectionDialog dialog = new ElementListSelectionDialog(
+                PDEPlugin.getActiveWorkbenchShell(), 
+                new ImportPackageDialogLabelProvider());
+        dialog.setElements(getAvailablePackages());
+        dialog.setMultipleSelection(true);
+        dialog.setMessage("Packages exported by other plug-ins:");
+        dialog.setTitle("Package Selection");
+        dialog.create();
+        SWTUtil.setDialogSize(dialog, 400, 500);
+		if (dialog.open() == ElementListSelectionDialog.OK) {
+			Object[] selected = dialog.getResult();
+			for (int i = 0; i < selected.length; i++) {
+				ExportPackageDescription candidate = (ExportPackageDescription) selected[i];
+				PackageObject p = new PackageObject();
+				p.name = candidate.getName();
+                String version = candidate.getVersion().toString();
+                if (!version.equals(Version.emptyVersion.toString()))
+                    p.version = candidate.getVersion().toString();
+                p.optional = Constants.RESOLUTION_OPTIONAL.equals(candidate.getDirective(Constants.RESOLUTION_DIRECTIVE));
 			}
-			if (models.length > 0) {
+			if (selected.length > 0) {
 				writeImportPackages();
 			}
 		}
 	}
 
 	public void addImportPackage(PackageObject p) {
-		importPackages.add(p);
-		importPackageTable.add(p);
-		writeImportPackages();
+		fPackages.put(p.name, p);
+		fPackageViewer.add(p);
+        writeImportPackages();
 	}
 
-	private BundlePluginBase getPluginBase() {
-		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
-		IPluginBase base = model.getPluginBase();
-		if (base instanceof BundlePluginBase) {
-			return (BundlePluginBase) model.getPluginBase();
-		}
-		return null;
-	}
-
-	/**
-	 * @param pluginBase
-	 * @param importNode
-	 */
 	private void writeImportPackages() {
-		BundlePluginBase base = getPluginBase();
-		if (base == null)
-			return;
-
-		IBundle bundle = base.getBundle();
-		if (bundle != null) {
-			StringBuffer buffer = new StringBuffer();
-			if (importPackages != null) {
-				for (int i = 0; i < importPackages.size(); i++) {
-					PackageObject iimport = (PackageObject) importPackages
-							.get(i);
-					buffer.append(iimport.getName());
-					String version = iimport.getVersion();
-					if (version != null && version.trim().length() > 0)
-						buffer
-								.append(";" + Constants.PACKAGE_SPECIFICATION_VERSION + "=\"" + version.trim() + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					if (i < importPackages.size() - 1) {
-						buffer
-								.append("," + System.getProperty("line.separator") + " "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					}
+		StringBuffer buffer = new StringBuffer();
+		if (fPackages != null) {
+            Iterator iter = fPackages.values().iterator();
+			while (iter.hasNext()) {
+				buffer.append(((PackageObject)iter.next()).write());
+				if (iter.hasNext()) {
+					buffer.append("," + System.getProperty("line.separator") + " "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				}
 			}
-			bundle.setHeader(Constants.IMPORT_PACKAGE, buffer.toString());
 		}
+		getBundle().setHeader(Constants.IMPORT_PACKAGE, buffer.toString());
 	}
 
-	private Vector getAvailablePackages() {
-		IPluginModelBase[] plugins = PDECore.getDefault().getModelManager()
-				.getPlugins();
-
-		Vector result = new Vector();
-		for (int i = 0; i < plugins.length; i++) {
-			if (!(plugins[i].getPluginBase().getId()).equals(getPluginBase()
-					.getId())) {
-				BundleDescription bd = plugins[i].getBundleDescription();
-				if (bd != null) {
-					ImportPackageSpecification[] elements = bd.getImportPackages();
-					if (elements != null) {
-						for (int j = 0; j < elements.length; j++) {
-								if (!isExistingPackage(elements[j]))
-									result.add(elements[j]);
-						}
-					}
-				}
-			}
+	private ExportPackageDescription[] getAvailablePackages() {
+		ArrayList result = new ArrayList();
+        String id = getId();
+        
+        //TODO add method to PluginModelManager
+        PDEState state = PDECore.getDefault().getExternalModelManager().getState();
+        ExportPackageDescription[] desc = state.getState().getExportedPackages();
+        for (int i = 0; i < desc.length; i++) {
+			if (desc[i].getExporter().getSymbolicName().equals(id))
+                continue;
+			if (fPackages != null && !fPackages.containsKey(desc[i].getName()))
+				result.add(desc[i]);			
 		}
-		return result;
-	}
-
-	private boolean isExistingPackage(ImportPackageSpecification ps) {
-		if (importPackages != null) {
-			for (int i = 0; i < importPackages.size(); i++) {
-				PackageObject p = (PackageObject) importPackages.get(i);
-				if (p.getName().equals(ps.getName())) {
-					return true;
-				}
-			}
-		}
-		return false;
+		return (ExportPackageDescription[])result.toArray(new ExportPackageDescription[result.size()]);
 	}
 
 	public void initialize() {
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
-		importPackageTable.setInput(model.getPluginBase());
+		fPackageViewer.setInput(model.getPluginBase());
 
-		if (isBundleMode()) {
-			getBundleModel().addModelChangedListener(this);
-			getTablePart().setButtonEnabled(0, true);
-		} else {
-			getTablePart().setButtonEnabled(0, false);
-		}
+		getBundleModel().addModelChangedListener(this);
+		getTablePart().setButtonEnabled(0, true);
 		getTablePart().setButtonEnabled(1, false);
-		getTablePart().setButtonEnabled(2, false);
 
 	}
 
@@ -309,13 +333,9 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 	}
 
 	public void refresh() {
-		importPackages = null;
-		importPackageTable.refresh();
+		fPackages = null;
+		fPackageViewer.refresh();
 		super.refresh();
-	}
-
-	private boolean isBundleMode() {
-		return getPage().getModel() instanceof IBundlePluginModelBase;
 	}
 
 	protected void fillContextMenu(IMenuManager manager) {
@@ -323,16 +343,36 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 				manager);
 	}
 
-	IBundleModel getBundleModel() {
-		InputContextManager contextManager = getPage().getPDEEditor()
-				.getContextManager();
-		if (contextManager == null)
-			return null;
-		InputContext context = contextManager
-				.findContext(BundleInputContext.CONTEXT_ID);
-		if (context != null)
-			return (IBundleModel) context.getModel();
-		return null;
-	}
+    private BundleInputContext getBundleContext() {
+        InputContextManager manager = getPage().getPDEEditor().getContextManager();
+        return (BundleInputContext) manager.findContext(BundleInputContext.CONTEXT_ID);
+    }
+    
+    private IBundleModel getBundleModel() {
+        BundleInputContext context = getBundleContext();
+        return (context != null) ? (IBundleModel)context.getModel() : null;
+        
+    }
+    
+    private IBundle getBundle() {
+        IBundleModel model = getBundleModel();
+         return (model != null) ? model.getBundle() : null;
+    }
+    
+    private String getVersionAttribute() {
+        int manifestVersion = BundlePluginBase.getBundleManifestVersion(getBundle());
+        return (manifestVersion < 2) ? Constants.PACKAGE_SPECIFICATION_VERSION : Constants.VERSION_ATTRIBUTE;
+    }
+    
+    private String getId() {
+        String value = getBundle().getHeader(Constants.BUNDLE_SYMBOLICNAME);
+        try {
+            ManifestElement[] elements = ManifestElement.parseHeader(Constants.BUNDLE_SYMBOLICNAME, value);
+            if (elements.length > 0)
+                return elements[0].getValue();
+        } catch (BundleException e) {
+        }
+        return null;
+    }
 
 }
