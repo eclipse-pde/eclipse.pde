@@ -85,6 +85,7 @@ public class ExtensionsPage extends PDEFormPage {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL|GridData.VERTICAL_ALIGN_BEGINNING);
 		bodyTextSection.getSection().setLayoutData(gd);
 		bodyTextSection.getSection().marginWidth = 5;
+		managedForm.addPart(bodyTextSection);
 		//refire selection
 		section.fireSelection();
 	}
