@@ -303,6 +303,7 @@ protected void generateJARTarget(AntScript script, String classpath, JAR jar) th
 	script.printComment(tab, "compile the source code");
 	JavacTask javac = new JavacTask();
 	javac.setClasspath(classpath);
+	javac.setBootClasspath(getPropertyFormat(PROPERTY_BOOTCLASSPATH));
 	javac.setDestdir(destdir);
 	javac.setFailOnError("false");
 	javac.setDebug("on");

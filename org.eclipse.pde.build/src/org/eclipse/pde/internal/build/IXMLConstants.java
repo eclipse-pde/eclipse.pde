@@ -17,7 +17,7 @@ public interface IXMLConstants {
 	public static final String PROPERTY_JAR_SUFFIX = ".jar";
 	public static final String PROPERTY_SOURCE_PREFIX = "source.";
 	public static final String PROPERTY_ZIP_SUFFIX = ".zip";
-	public static final String JDT_COMPILER_ADAPTER = "org.eclipse.pde.internal.core.JDTCompilerAdapter";
+	public static final String JDT_COMPILER_ADAPTER = "org.eclipse.jdt.internal.core.JDTCompilerAdapter";
 
 
 	// element description variables (used in files like plugin.xml, e.g. $ws$)
@@ -58,6 +58,7 @@ public interface IXMLConstants {
 	public static final String PROPERTY_BASEDIR = "basedir";
 	public static final String PROPERTY_BIN_EXCLUDES = "bin.excludes";
 	public static final String PROPERTY_BIN_INCLUDES = "bin.includes";
+	public static final String PROPERTY_BOOTCLASSPATH = "bootclasspath";
 	public static final String PROPERTY_BUILD_COMPILER = "build.compiler";
 	public static final String PROPERTY_BUILD_ID = "build.id";
 	public static final String PROPERTY_BUILD_QUALIFIER = "build.qualifier";

@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.build.ant;
 public class JavacTask implements ITask {
 	
 	protected String classpath;
+	protected String bootclasspath;
 	protected String destdir;
 	protected String failonerror;
 	protected String[] srcdir;
@@ -36,6 +37,7 @@ public void print(AntScript script, int tab) {
 	script.printAttribute("fork", fork, false);
 	script.printAttribute("debug", debug, false);
 	script.printAttribute("includeAntRuntime", includeAntRuntime, false);
+	script.printAttribute("bootclasspath", bootclasspath, false);
 	script.printAttribute("classpath", classpath, false);
 	script.println(">");
 	tab++;
@@ -50,6 +52,10 @@ public void print(AntScript script, int tab) {
 
 public void setClasspath(String classpath) {
 	this.classpath = classpath;
+}
+
+public void setBootClasspath(String bootclasspath) {
+	this.bootclasspath = bootclasspath;
 }
 
 public void setDestdir(String destdir) {

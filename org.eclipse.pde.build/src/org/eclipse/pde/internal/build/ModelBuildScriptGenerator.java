@@ -248,6 +248,7 @@ protected void generatePrologue() {
 	script.printProjectDeclaration(model.getId(), TARGET_BUILD_JARS, ".");
 	script.println();
 	script.printProperty(tab, PROPERTY_BUILD_COMPILER, JDT_COMPILER_ADAPTER);
+	script.printProperty(tab, PROPERTY_BOOTCLASSPATH, "");
 	script.printProperty(tab, PROPERTY_WS, BootLoader.getWS());
 	script.printProperty(tab, PROPERTY_OS, BootLoader.getOS());
 	script.printProperty(tab, PROPERTY_ARCH, BootLoader.getOSArch());
