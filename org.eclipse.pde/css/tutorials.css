@@ -7,12 +7,4 @@ a#pde-hello-world:hover img { background-image : url(graphics/obj_48/hovplugin_o
 a#features img { background-image : url(graphics/obj_48/deployfeat_obj.gif); }
 a#features:hover img { background-image : url(graphics/obj_48/hovdeployfeat_obj.gif); }
 
-#pde {
-	width : 870px;
-	height : 150px;
-	position : relative;
-	left : 50%;
-	margin-left : -425px;
-	top : -50px;
-	margin-bottom : 30px;
-}
+
