@@ -34,7 +34,7 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 
 	public void write(String indent, PrintWriter writer) {
 		if (fLocation != null && fLocation.length() > 0)
-			writer.println(indent + "<splash " + P_LOCATION + "=\"" + fLocation + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			writer.println(indent + "<splash " + P_LOCATION + "=\"" + getWritableString(fLocation) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 }

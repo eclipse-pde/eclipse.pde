@@ -146,7 +146,7 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 		writeIcon(indent + "   ", WIN32_32_LOW, writer); //$NON-NLS-1$
 		writeIcon(indent + "   ", WIN32_48_HIGH, writer); //$NON-NLS-1$
 		writeIcon(indent + "   ", WIN32_48_LOW, writer); //$NON-NLS-1$
-		writer.println(indent + "   />"); //$NON-NLS-1$
+		writer.println("/>"); //$NON-NLS-1$
 		writer.println(indent + "</win>"); //$NON-NLS-1$
 	}
 
@@ -156,14 +156,14 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 		writeIcon(indent + "   ", SOLARIS_MEDIUM, writer); //$NON-NLS-1$
 		writeIcon(indent + "   ", SOLARIS_SMALL, writer); //$NON-NLS-1$
 		writeIcon(indent + "   ", SOLARIS_TINY, writer); //$NON-NLS-1$
-		writer.println(indent + "/>"); //$NON-NLS-1$
+		writer.println("/>"); //$NON-NLS-1$
 	}
 	
 	private void writeIcon(String indent, String iconId, PrintWriter writer) {
 		String icon = (String)fIcons.get(iconId);
 		if (icon != null && icon.length() > 0) {
 			writer.println();
-			writer.print(indent + "   " + iconId + "=\"" + icon + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			writer.print(indent + "   " + iconId + "=\"" + getWritableString(icon) + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		
 	}
@@ -171,13 +171,13 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 	private void writeMac(String indent, PrintWriter writer) {
 		String icon = (String)fIcons.get(MACOSX_ICON);
 		if (icon != null && icon.length() > 0)
-			writer.println(indent + "<macosx " + MACOSX_ICON + "=\"" + icon + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			writer.println(indent + "<macosx " + MACOSX_ICON + "=\"" + getWritableString(icon) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	private void writeLinux(String indent, PrintWriter writer) {
 		String icon = (String)fIcons.get(LINUX_ICON);
 		if (icon != null && icon.length() > 0)
-			writer.println(indent + "<linux " + LINUX_ICON + "=\"" + icon + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			writer.println(indent + "<linux " + LINUX_ICON + "=\"" + getWritableString(icon) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 }
