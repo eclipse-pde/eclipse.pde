@@ -277,7 +277,7 @@ public class LibrarySection
 	public void swap(int index1, int index2) {
 		Table table = getTablePart().getTableViewer().getTable();
 		IPluginLibrary l1 = (IPluginLibrary)table.getItem(index1).getData();
-		IPluginLibrary l2 = (IPluginLibrary)table.getItem(index1).getData();
+		IPluginLibrary l2 = (IPluginLibrary)table.getItem(index2).getData();
 
 		try {
 			IPluginModelBase model = (IPluginModelBase) getPage().getModel();
@@ -305,6 +305,7 @@ public class LibrarySection
 			try {
 				IPluginLibrary library = model.getPluginFactory().createLibrary();
 				library.setName(libName);
+				library.setExported(true);
 				model.getPluginBase().add(library);
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);
@@ -373,7 +374,6 @@ public class LibrarySection
 		if (changeObject instanceof IPluginLibrary) {
 			if (event.getChangeType() == IModelChangedEvent.INSERT) {
 				libraryTable.add(changeObject);
-				libraryTable.editElement(changeObject, 0);
 			} else if (event.getChangeType() == IModelChangedEvent.REMOVE) {
 				libraryTable.remove(changeObject);
 			} else {

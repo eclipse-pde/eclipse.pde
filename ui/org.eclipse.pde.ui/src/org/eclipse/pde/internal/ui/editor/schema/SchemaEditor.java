@@ -16,7 +16,6 @@ import org.eclipse.core.resources.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.IEditable;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.schema.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -94,7 +93,6 @@ public class SchemaEditor extends PDEMultiPageXMLEditor {
 	}
 
 	public void dispose() {
-		PDECore.getDefault().getTempFileManager().disconnect(this);
 		super.dispose();
 	}
 

@@ -200,7 +200,7 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 	// User-defined attachments manager
 	private SourceAttachmentManager sourceAttachmentManager;
 	private SourceLocationManager sourceLocationManager;
-	private TempFileManager tempFileManager;
+
 	// Tracing options manager
 	private TracingOptionsManager tracingOptionsManager;
 	private BundleContext context;
@@ -340,11 +340,6 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		return sourceLocationManager;
 	}
 
-	public TempFileManager getTempFileManager() {
-		if (tempFileManager == null)
-			tempFileManager = new TempFileManager();
-		return tempFileManager;
-	}
 	public TracingOptionsManager getTracingOptionsManager() {
 		if (tracingOptionsManager == null)
 			tracingOptionsManager = new TracingOptionsManager();
@@ -450,10 +445,6 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		if (workspaceModelManager!=null) {
 			workspaceModelManager.shutdown();
 			workspaceModelManager = null;
-		}
-		if (tempFileManager != null) {
-			tempFileManager.shutdown();
-			tempFileManager = null;
 		}
 		super.shutdown();
 	}

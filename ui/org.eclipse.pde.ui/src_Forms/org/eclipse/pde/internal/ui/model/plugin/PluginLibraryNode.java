@@ -91,6 +91,13 @@ public class PluginLibraryNode extends PluginObjectNode
 		if (isInTheModel())
 			fireStructureChanged((IPluginElement)node, IModelChangedEvent.INSERT);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.plugin.IPluginLibrary#removeContentFilter(java.lang.String)
+	 */
+	public void removeContentFilter(String filter) throws CoreException {
+		
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginLibrary#setPackages(java.lang.String[])
 	 */

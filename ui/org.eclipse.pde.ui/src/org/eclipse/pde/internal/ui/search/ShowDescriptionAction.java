@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search;
 
+import java.io.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
@@ -95,11 +96,9 @@ public class ShowDescriptionAction extends Action {
 
 	private void showSchemaDocument() {
 		try {
-			if (previewFile==null) {
-				previewFile = getPreviewFile();
-				if (previewFile == null)
-					return;
-			}
+			previewFile = getPreviewFile();
+			if (previewFile == null)
+				return;
 
 			SchemaTransformer transformer = new SchemaTransformer();
 			OutputStream os = new FileOutputStream(previewFile);
@@ -114,14 +113,13 @@ public class ShowDescriptionAction extends Action {
 	}
 	
 	private File getPreviewFile() throws CoreException {
-		String prefix = "pde";
-		String suffix = ".html";
-		File file =
-			PDECore.getDefault().getTempFileManager().createTempFile(
-				this,
-				prefix,
-				suffix);
-		return file;
+		try {
+			File file = File.createTempFile("pde", ".html");
+			file.deleteOnExit();
+			return file;
+		} catch (IOException e) {
+		}
+		return null;
 	}
 	
 	private void showURL(String url) {

@@ -131,7 +131,6 @@ public class PluginsView extends ViewPart {
 			.getPreferenceStore()
 			.removePropertyChangeListener(
 			propertyListener);
-		PDECore.getDefault().getTempFileManager().disconnect(this);
 		openDependenciesAction.dispose();
 		if (clipboard!=null) {
 			clipboard.dispose();
@@ -795,11 +794,8 @@ public class PluginsView extends ViewPart {
 			prefix = fileName;
 		}
 
-		File tmpFile =
-			PDECore.getDefault().getTempFileManager().createTempFile(
-				this,
-				prefix,
-				suffix);
+		File tmpFile = File.createTempFile(prefix, suffix);
+		tmpFile.deleteOnExit();
 		FileOutputStream fos = new FileOutputStream(tmpFile);
 		FileInputStream fis = new FileInputStream(file);
 		byte[] cbuffer = new byte[1024];

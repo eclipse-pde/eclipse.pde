@@ -13,6 +13,7 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.ui.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
@@ -27,7 +28,6 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.*;
-import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.widgets.*;
 
@@ -47,9 +47,10 @@ public class ExportSection extends TableSection implements IPartSelectionListene
 	public static final String KEY_ADD = "ManifestEditor.ExportSection.add";
 	public static final String KEY_REMOVE = "ManifestEditor.ExportSection.remove";
 	public static final String SECTION_ADD_TITLE = "ManifestEditor.ExportSection.addTitle";
-	public static final String PACKAGE_MESSAGE = "PackageSelectionDialog.label";
-	private Vector filters;
-	private boolean ignoreModelEvents;
+	
+	private Vector fPackageFilters;
+	private boolean fIgnoreModelEvents;
+	
 	class NameFilter {
 		private String name;
 		public NameFilter(String name) {
@@ -95,7 +96,7 @@ public class ExportSection extends TableSection implements IPartSelectionListene
 		handleDefaultButton = false;
 	}
 	private void buttonChanged(Button selectedButton) {
-		ignoreModelEvents = true;
+		fIgnoreModelEvents = true;
 		nameFilterContainer.setVisible(selectedButton == selectedExportButton
 				&& selectedButton.getSelection());
 		try {
@@ -108,28 +109,9 @@ public class ExportSection extends TableSection implements IPartSelectionListene
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
-		ignoreModelEvents = false;
+		fIgnoreModelEvents = false;
 	}
-	public void commit(boolean onSave) {
-		ignoreModelEvents = true;
-		if (filters != null && currentLibrary != null) {
-			try {
-				if (filters.size() == 0) {
-					currentLibrary.setContentFilters(null);
-				} else {
-					String[] result = new String[filters.size()];
-					for (int i = 0; i < filters.size(); i++) {
-						result[i] = filters.elementAt(i).toString();
-					}
-					currentLibrary.setContentFilters(result);
-				}
-			} catch (CoreException e) {
-				PDEPlugin.logException(e);
-			}
-		}
-		ignoreModelEvents = false;
-		super.commit(onSave);
-	}
+
 	public void createClient(Section section, FormToolkit toolkit) {
 		Composite container = toolkit.createComposite(section);
 		GridLayout layout = new GridLayout();
@@ -180,16 +162,16 @@ public class ExportSection extends TableSection implements IPartSelectionListene
 		section.setClient(container);
 	}
 	private Object[] createFilters(String[] names) {
-		if (filters == null) {
-			filters = new Vector();
+		if (fPackageFilters == null) {
+			fPackageFilters = new Vector();
 			if (names != null) {
 				for (int i = 0; i < names.length; i++) {
-					filters.add(new NameFilter(names[i]));
+					fPackageFilters.add(new NameFilter(names[i]));
 				}
 			}
 		}
-		Object[] result = new Object[filters.size()];
-		filters.copyInto(result);
+		Object[] result = new Object[fPackageFilters.size()];
+		fPackageFilters.copyInto(result);
 		return result;
 	}
 	private void createNameTable(Composite parent, FormToolkit toolkit) {
@@ -203,7 +185,6 @@ public class ExportSection extends TableSection implements IPartSelectionListene
 	}
 	protected void selectionChanged(IStructuredSelection selection) {
 		Object item = selection.getFirstElement();
-		//getFormPage().setSelection(selection);
 		getTablePart().setButtonEnabled(1, item != null);
 	}
 	protected void buttonSelected(int index) {
@@ -218,18 +199,6 @@ public class ExportSection extends TableSection implements IPartSelectionListene
 			return true;
 		}
 		return false;
-	}
-	protected void entryModified(Object entry, String newValue) {
-		Item item = (Item) entry;
-		final NameFilter filter = (NameFilter) item.getData();
-		filter.setName(newValue);
-		markDirty();
-		commit(false);
-		getTablePart().getControl().getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				nameTableViewer.update(filter, null);
-			}
-		});
 	}
 	public void dispose() {
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
@@ -246,29 +215,34 @@ public class ExportSection extends TableSection implements IPartSelectionListene
 				manager);
 	}
 	private void handleAdd() {
-		IProject project= ((IPluginModelBase)getPage().getModel()).getUnderlyingResource().getProject();
-		PackageSelectionDialog dialog = new PackageSelectionDialog(nameTableViewer.getTable().getShell(),
-				PackageSelectionDialog.F_SHOW_PARENTS | PackageSelectionDialog.F_REMOVE_DUPLICATES, project);
-		dialog.setTitle(PDEPlugin.getResourceString(SECTION_ADD_TITLE));
-		dialog.setMessage(PDEPlugin.getResourceString(PACKAGE_MESSAGE));
-		if (dialog.open() == SelectionDialog.OK) {
-
-			IPackageFragment[] packages = dialog.getSelectedPackages();
-			for (int i = 0; i<packages.length; i++){
-//				TODO: add selected packages to nameTableViewer
-//				nameTableViewer.add(packages[i]);
-//				nameTableViewer.editElement(packages[i], 0);
-				markDirty();
-				commit(false);
+		IPluginModelBase model = (IPluginModelBase)getPage().getModel();
+		IProject project = model.getUnderlyingResource().getProject();
+		try {
+			if (project.hasNature(JavaCore.NATURE_ID)) {
+				ILabelProvider labelProvider = new JavaElementLabelProvider();
+				PackageSelectionDialog2 dialog = new PackageSelectionDialog2(
+						nameTableViewer.getTable().getShell(), labelProvider,
+						JavaCore.create(project), new Vector());
+				if (dialog.open() == PackageSelectionDialog2.OK) {
+					Object[] elements = dialog.getResult();
+					for (int i = 0; i < elements.length; i++) {
+						IPackageFragment fragment = (IPackageFragment)elements[i];
+						currentLibrary.addContentFilter(fragment.getElementName());
+					}
+				}
+				labelProvider.dispose();
 			}
-		}			
+		} catch (CoreException e) {
+		}		
 	}
+	
+	
 	
 	private void handleDelete() {
 		ISelection selection = nameTableViewer.getSelection();
 		Object item = ((IStructuredSelection) selection).getFirstElement();
 		if (item != null) {
-			filters.remove(item);
+			fPackageFilters.remove(item);
 			nameTableViewer.remove(item);
 		}
 		getTablePart().setButtonEnabled(1, false);
@@ -280,7 +254,7 @@ public class ExportSection extends TableSection implements IPartSelectionListene
 		model.addModelChangedListener(this);
 	}
 	public void modelChanged(IModelChangedEvent e) {
-		if (ignoreModelEvents)
+		if (fIgnoreModelEvents)
 			return;
 		if (e.getChangeType() == IModelChangedEvent.CHANGE) {
 			Object object = e.getChangedObjects()[0];
@@ -331,7 +305,7 @@ public class ExportSection extends TableSection implements IPartSelectionListene
 			selectButton(selectedExportButton);
 		}
 		nameFilterContainer.setVisible(selectedExportButton.getSelection());
-		filters = null;
+		fPackageFilters = null;
 		nameTableViewer.setInput(library);
 		getTablePart().setButtonEnabled(1, false);
 	}

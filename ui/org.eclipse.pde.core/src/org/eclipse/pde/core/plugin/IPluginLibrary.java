@@ -184,6 +184,23 @@ public interface IPluginLibrary extends IPluginObject {
 	 * </p>
 	 */
 	void addContentFilter(String filter) throws CoreException;
+
+	/**
+	 * Remove a package from the export list. 
+	 * This method may throw a CoreException if 
+	 * the model is not editable.
+	 *
+	 * @param filter a package name
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
+	 */
+	void removeContentFilter(String filter) throws CoreException;
+	
+	
 	/**
 	 * Sets the optional package prefixes for this library.
 	 * This method may throw a CoreException if the model is not 
