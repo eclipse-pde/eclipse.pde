@@ -51,5 +51,6 @@ public void setActiveEditor(FeatureEditor editor) {
 	buildDelegate.setActivePart(this, editor);
 	IFeatureModel model = (IFeatureModel) editor.getModel();
 	buildDelegate.setFeatureFile((IFile) model.getUnderlyingResource());
+	setEnabled(model.isEditable());
 }
 }

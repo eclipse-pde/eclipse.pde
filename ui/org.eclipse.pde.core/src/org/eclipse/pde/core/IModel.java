@@ -4,10 +4,10 @@ package org.eclipse.pde.core;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.*;
-import java.io.*;
+import java.io.InputStream;
+
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.*;
 /**
  * A generic model. Classes that implement this
  * interface are expected to be able to:

@@ -4,10 +4,7 @@ package org.eclipse.pde.core.plugin;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.CoreException;
-import java.io.*;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.pde.core.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.IWritable;
 /**
  * A base interface for all the objects in the plug-in model.

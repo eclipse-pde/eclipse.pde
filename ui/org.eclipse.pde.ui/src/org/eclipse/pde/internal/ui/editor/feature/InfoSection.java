@@ -37,7 +37,6 @@ public class InfoSection extends PDEFormSection {
 	private static final String KEY_INFO_COPYRIGHT = "FeatureEditor.info.copyright";
 	private IDocument document;
 	private IDocumentPartitioner partitioner;
-	private boolean editable = true;
 	private SourceViewerConfiguration sourceConfiguration;
 	private SourceViewer sourceViewer;
 	private CCombo sectionCombo;
@@ -105,7 +104,6 @@ public class InfoSection extends PDEFormSection {
 		factory.createLabel(container, PDEPlugin.getResourceString(KEY_URL));
 
 		urlText = factory.createText(container, null);
-		urlText.setEditable(isEditable());
 		urlText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				infoModified();
@@ -124,7 +122,6 @@ public class InfoSection extends PDEFormSection {
 		sourceViewer = new SourceViewer(container, null, styles);
 		sourceViewer.configure(sourceConfiguration);
 		sourceViewer.setDocument(document);
-		sourceViewer.setEditable(isEditable());
 		StyledText styledText = sourceViewer.getTextWidget();
 		styledText.setFont(JFaceResources.getTextFont());
 		if (SWT.getPlatform().equals("motif") == false)
@@ -266,6 +263,8 @@ public class InfoSection extends PDEFormSection {
 			public void documentAboutToBeChanged(DocumentEvent e) {
 			}
 		});
+		urlText.setEditable(featureModel.isEditable());
+		sourceViewer.getTextWidget().setEditable(featureModel.isEditable());
 		featureModel.addModelChangedListener(this);
 		updateEditorInput(featureModel.getFeature().getFeatureInfo(0), false);
 	}
@@ -316,17 +315,11 @@ public class InfoSection extends PDEFormSection {
 		});
 		sectionCombo.select(0);
 	}
-	public boolean isEditable() {
-		return editable;
-	}
 	private String resolveObjectName(Object object) {
 		if (object instanceof IFeatureObject) {
 			return ((IFeatureObject) object).getLabel();
 		}
 		return object.toString();
-	}
-	public void setEditable(boolean newEditable) {
-		editable = newEditable;
 	}
 	public void setFocus() {
 		sourceViewer.getTextWidget().setFocus();

@@ -5,7 +5,6 @@ package org.eclipse.pde.core.plugin;
  */
 
 import org.eclipse.core.runtime.CoreException;
-import java.util.*;
 /**
  * Classes that implement this interface are
  * capable of containing other plug-in objects.

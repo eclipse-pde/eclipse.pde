@@ -363,7 +363,6 @@ public class WorkspaceModelManager
 			IResourceChangeEvent.PRE_CLOSE
 				| IResourceChangeEvent.PRE_DELETE
 				| IResourceChangeEvent.PRE_AUTO_BUILD);
-		//workspace.addResourceChangeListener(this);
 		initialized = true;
 	}
 //	private boolean isEditorOpened(PDEMultiPageEditor pdeEditor) {

@@ -185,32 +185,37 @@ public class URLSection extends PDEFormSection {
 		urlTree.setSelection(new StructuredSelection(object), true);
 	}
 	private void fillContextMenu(IMenuManager manager) {
-		if (!(getFormPage().getModel() instanceof IEditable))
-			return;
+		IModel model = (IModel)getFormPage().getModel();
 		ISelection selection = urlTree.getSelection();
 		Object object = ((IStructuredSelection) selection).getFirstElement();
 
 		MenuManager submenu = new MenuManager(PDEPlugin.getResourceString(POPUP_NEW));
 
-		submenu.add(new Action(PDEPlugin.getResourceString(POPUP_UPDATE_URL)) {
+		Action updateUrl = new Action(PDEPlugin.getResourceString(POPUP_UPDATE_URL)) {
 			public void run() {
 				handleNewURL(IFeatureURLElement.UPDATE);
 			}
-		});
-		submenu.add(new Action(PDEPlugin.getResourceString(POPUP_DISCOVERY_URL)) {
+		};
+		updateUrl.setEnabled(model.isEditable());
+		submenu.add(updateUrl);
+		Action discoveryUrl = new Action(PDEPlugin.getResourceString(POPUP_DISCOVERY_URL)) {
 			public void run() {
 				handleNewURL(IFeatureURLElement.DISCOVERY);
 			}
-		});
+		};
+		discoveryUrl.setEnabled(model.isEditable());
+		submenu.add(discoveryUrl);
 		manager.add(submenu);
 
 		if (object != null && object instanceof IFeatureURLElement) {
 			manager.add(new Separator());
-			manager.add(new Action(PDEPlugin.getResourceString(POPUP_DELETE)) {
+			Action deleteAction = new Action(PDEPlugin.getResourceString(POPUP_DELETE)) {
 				public void run() {
 					handleDelete();
 				}
-			});
+			};
+			deleteAction.setEnabled(model.isEditable());
+			manager.add(deleteAction);
 		}
 		manager.add(new Separator());
 		getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager);

@@ -4,8 +4,6 @@
  */
 package org.eclipse.pde.core;
 
-import org.eclipse.core.runtime.CoreException;
-
 /**
  * This interface indicates that a model object is created by
  * parsing an editable source file and can be traced back

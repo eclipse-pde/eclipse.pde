@@ -5,17 +5,26 @@ package org.eclipse.pde.internal.ui.editor.feature;
  */
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.IEditable;
+import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.internal.core.ifeature.IFeature;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.PDEFormSection;
-import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.util.Choice;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.update.ui.forms.internal.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.update.ui.forms.internal.FormEntry;
+import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
+import org.eclipse.update.ui.forms.internal.IFormTextListener;
 
 public class PortabilitySection extends PDEFormSection {
 	public static final String KEY_DIALOG_TITLE =
@@ -27,13 +36,19 @@ public class PortabilitySection extends PDEFormSection {
 	public static final String SECTION_OS = "FeatureEditor.PortabilitySection.os";
 	public static final String SECTION_WS = "FeatureEditor.PortabilitySection.ws";
 	public static final String SECTION_NL = "FeatureEditor.PortabilitySection.nl";
-	public static final String SECTION_ARCH = "FeatureEditor.PortabilitySection.arch";
-	public static final String SECTION_EDIT = "FeatureEditor.PortabilitySection.edit";
+	public static final String SECTION_ARCH =
+		"FeatureEditor.PortabilitySection.arch";
+	public static final String SECTION_EDIT =
+		"FeatureEditor.PortabilitySection.edit";
 
 	private FormEntry osText;
+	private Button osButton;
 	private FormEntry wsText;
+	private Button wsButton;
 	private FormEntry nlText;
+	private Button nlButton;
 	private FormEntry archText;
+	private Button archButton;
 	private boolean updateNeeded;
 
 	public PortabilitySection(FeatureFormPage page) {
@@ -41,9 +56,10 @@ public class PortabilitySection extends PDEFormSection {
 		setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
 		setDescription(PDEPlugin.getResourceString(SECTION_DESC));
 		setCollapsable(true);
-		IFeatureModel model = (IFeatureModel)page.getModel();
+		IFeatureModel model = (IFeatureModel) page.getModel();
 		IFeature feature = model.getFeature();
-		setCollapsed(feature.getOS()==null && feature.getWS()==null && feature.getNL()==null);
+		setCollapsed(
+			feature.getOS() == null && feature.getWS() == null && feature.getNL() == null);
 	}
 	public void commitChanges(boolean onSave) {
 		osText.commit();
@@ -78,9 +94,11 @@ public class PortabilitySection extends PDEFormSection {
 				forceDirty();
 			}
 		});
+		GridData gd = (GridData) osText.getControl().getLayoutData();
+		gd.widthHint = 150;
 		String editLabel = PDEPlugin.getResourceString(SECTION_EDIT);
-		Button editButton = factory.createButton(container, editLabel, SWT.PUSH);
-		editButton.addSelectionListener(new SelectionAdapter() {
+		osButton = factory.createButton(container, editLabel, SWT.PUSH);
+		osButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				BusyIndicator.showWhile(osText.getControl().getDisplay(), new Runnable() {
 					public void run() {
@@ -106,8 +124,8 @@ public class PortabilitySection extends PDEFormSection {
 				forceDirty();
 			}
 		});
-		editButton = factory.createButton(container, editLabel, SWT.PUSH);
-		editButton.addSelectionListener(new SelectionAdapter() {
+		wsButton = factory.createButton(container, editLabel, SWT.PUSH);
+		wsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				BusyIndicator.showWhile(wsText.getControl().getDisplay(), new Runnable() {
 					public void run() {
@@ -132,8 +150,8 @@ public class PortabilitySection extends PDEFormSection {
 				forceDirty();
 			}
 		});
-		editButton = factory.createButton(container, editLabel, SWT.PUSH);
-		editButton.addSelectionListener(new SelectionAdapter() {
+		nlButton = factory.createButton(container, editLabel, SWT.PUSH);
+		nlButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				BusyIndicator.showWhile(nlText.getControl().getDisplay(), new Runnable() {
 					public void run() {
@@ -143,7 +161,7 @@ public class PortabilitySection extends PDEFormSection {
 				});
 			}
 		});
-		
+
 		archText =
 			new FormEntry(
 				createText(container, PDEPlugin.getResourceString(SECTION_ARCH), factory));
@@ -159,8 +177,8 @@ public class PortabilitySection extends PDEFormSection {
 				forceDirty();
 			}
 		});
-		editButton = factory.createButton(container, editLabel, SWT.PUSH);
-		editButton.addSelectionListener(new SelectionAdapter() {
+		archButton = factory.createButton(container, editLabel, SWT.PUSH);
+		archButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				BusyIndicator.showWhile(nlText.getControl().getDisplay(), new Runnable() {
 					public void run() {
@@ -175,9 +193,7 @@ public class PortabilitySection extends PDEFormSection {
 		return container;
 	}
 
-	private void openPortabilityChoiceDialog(
-		FormEntry text,
-		Choice[] choices) {
+	private void openPortabilityChoiceDialog(FormEntry text, Choice[] choices) {
 		String value = text.getValue();
 
 		PortabilityChoicesDialog dialog =
@@ -219,11 +235,18 @@ public class PortabilitySection extends PDEFormSection {
 			wsText.getControl().setEnabled(false);
 			nlText.getControl().setEnabled(false);
 			archText.getControl().setEnabled(false);
+			osButton.setEnabled(false);
+			wsButton.setEnabled(false);
+			nlButton.setEnabled(false);
+			archButton.setEnabled(false);
 		}
 		model.addModelChangedListener(this);
 	}
 	public boolean isDirty() {
-		return osText.isDirty() || wsText.isDirty() || nlText.isDirty() || archText.isDirty();
+		return osText.isDirty()
+			|| wsText.isDirty()
+			|| nlText.isDirty()
+			|| archText.isDirty();
 	}
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {

@@ -254,6 +254,8 @@ public void initialize(Object input) {
 		versionText.getControl().setEnabled(false);
 		providerText.getControl().setEnabled(false);
 		primaryButton.setEnabled(false);
+		createJarButton.setEnabled(false);
+		synchronizeButton.setEnabled(false);
 	}
 	model.addModelChangedListener(this);
 }

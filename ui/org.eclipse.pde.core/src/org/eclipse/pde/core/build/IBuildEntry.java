@@ -5,7 +5,6 @@ package org.eclipse.pde.core.build;
  */
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.IWritable;
 /**
  * Jar entry represents one 'library=folder list' entry

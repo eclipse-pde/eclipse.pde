@@ -7,15 +7,27 @@ package org.eclipse.pde.internal.ui.editor.feature;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.core.IModelProviderEvent;
+import org.eclipse.pde.internal.core.IModelProviderListener;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.WorkspaceModelManager;
+import org.eclipse.pde.internal.core.ifeature.IFeature;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.editor.PropertiesAction;
+import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
-import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -205,12 +217,14 @@ public class PluginSection
 		}
 	}
 	private void makeActions() {
+		IModel model = (IModel)getFormPage().getModel();
 		newAction = new Action() {
 			public void run() {
 				handleNew();
 			}
 		};
 		newAction.setText(PDEPlugin.getResourceString(POPUP_NEW));
+		newAction.setEnabled(model.isEditable());
 
 		deleteAction = new Action() {
 			public void run() {
@@ -222,6 +236,7 @@ public class PluginSection
 			}
 		};
 		deleteAction.setText(PDEPlugin.getResourceString(POPUP_DELETE));
+		deleteAction.setEnabled(model.isEditable());
 		openAction = new OpenReferenceAction(pluginViewer);
 		propertiesAction = new PropertiesAction(getFormPage().getEditor());
 	}

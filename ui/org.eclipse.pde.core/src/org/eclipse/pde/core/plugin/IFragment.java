@@ -4,7 +4,7 @@ package org.eclipse.pde.core.plugin;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
 /**
  * A model object that represents the content of the fragment.xml
  * file.

@@ -5,7 +5,6 @@ package org.eclipse.pde.core.plugin;
  */
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.IIdentifiable;
 /**
  * Object that implement this interface represent references of
