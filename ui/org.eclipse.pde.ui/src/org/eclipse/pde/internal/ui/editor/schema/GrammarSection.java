@@ -22,14 +22,16 @@ public class GrammarSection extends PDEFormSection {
 	private FormWidgetFactory factory;
 	private TreeViewer treeViewer;
 	private Text dtdLabel;
-	public static final String SECTION_TITLE = "SchemaEditor.GrammarSection.title";
+	public static final String SECTION_TITLE =
+		"SchemaEditor.GrammarSection.title";
 	public static final String SECTION_COMPOSITOR =
 		"SchemaEditor.GrammarSection.compositor";
 	public static final String SECTION_REFERENCE =
 		"SchemaEditor.GrammarSection.reference";
 	public static final String POPUP_NEW = "Menus.new.label";
 	public static final String POPUP_DELETE = "Actions.delete.label";
-	public static final String SECTION_DESC = "SchemaEditor.GrammarSection.desc";
+	public static final String SECTION_DESC =
+		"SchemaEditor.GrammarSection.desc";
 	public static final String KEY_DTD = "SchemaEditor.GrammarSection.dtd";
 
 	class GrammarContentProvider
@@ -41,7 +43,8 @@ public class GrammarSection extends PDEFormSection {
 				&& !(parent instanceof SchemaElementReference)) {
 				ISchemaType type = ((ISchemaElement) parent).getType();
 				if (type instanceof ISchemaComplexType) {
-					Object compositor = ((ISchemaComplexType) type).getCompositor();
+					Object compositor =
+						((ISchemaComplexType) type).getCompositor();
 					if (compositor != null) {
 						children = new Object[1];
 						children[0] = compositor;
@@ -70,10 +73,14 @@ public class GrammarSection extends PDEFormSection {
 		}
 		public Image getImage(Object o) {
 			if (o instanceof ISchemaObjectReference) {
-				ISchemaObjectReference ref = (ISchemaObjectReference)o;
-				int flags = ref.getReferencedObject()==null?PDELabelProvider.F_ERROR:0;
+				ISchemaObjectReference ref = (ISchemaObjectReference) o;
+				int flags =
+					ref.getReferencedObject() == null
+						? PDELabelProvider.F_ERROR
+						: 0;
 				return PDEPlugin.getDefault().getLabelProvider().get(
-					PDEPluginImages.DESC_ELREF_SC_OBJ, flags);
+					PDEPluginImages.DESC_ELREF_SC_OBJ,
+					flags);
 			}
 			return PDEPlugin.getDefault().getLabelProvider().getImage(o);
 		}
@@ -84,7 +91,9 @@ public class GrammarSection extends PDEFormSection {
 		setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
 		setDescription(PDEPlugin.getResourceString(SECTION_DESC));
 	}
-	public Composite createClient(Composite parent, FormWidgetFactory factory) {
+	public Composite createClient(
+		Composite parent,
+		FormWidgetFactory factory) {
 		this.factory = factory;
 		Composite container = factory.createComposite(parent);
 		GridLayout layout = new GridLayout();
@@ -101,10 +110,17 @@ public class GrammarSection extends PDEFormSection {
 		 */
 		tree.setLayoutData(gd);
 
-		dtdLabel = factory.createText(container, "", SWT.WRAP|SWT.V_SCROLL|SWT.MULTI);
-		dtdLabel.setData(FormWidgetFactory.KEY_DRAW_BORDER, FormWidgetFactory.TREE_BORDER);
+		dtdLabel =
+			factory.createText(
+				container,
+				"",
+				SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
+		dtdLabel.setData(
+			FormWidgetFactory.KEY_DRAW_BORDER,
+			FormWidgetFactory.TREE_BORDER);
 		dtdLabel.setEditable(false);
-		dtdLabel.setForeground(factory.getColor(FormWidgetFactory.DEFAULT_HEADER_COLOR));
+		dtdLabel.setForeground(
+			factory.getColor(FormWidgetFactory.DEFAULT_HEADER_COLOR));
 		gd = new GridData(GridData.FILL_BOTH);
 		dtdLabel.setLayoutData(gd);
 		updateDTDLabel(null);
@@ -119,7 +135,8 @@ public class GrammarSection extends PDEFormSection {
 		treeViewer.setLabelProvider(new GrammarLabelProvider());
 		treeViewer.setContentProvider(new GrammarContentProvider());
 		treeViewer.setAutoExpandLevel(999);
-		treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+		treeViewer
+			.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent e) {
 				getFormPage().setSelection(e.getSelection());
 			}
@@ -153,54 +170,75 @@ public class GrammarSection extends PDEFormSection {
 	}
 	protected void fillContextMenu(IMenuManager manager) {
 		ISelection selection = treeViewer.getSelection();
-		final Object object = ((IStructuredSelection) selection).getFirstElement();
+		final Object object =
+			((IStructuredSelection) selection).getFirstElement();
 		ISchemaElement sourceElement = (ISchemaElement) treeViewer.getInput();
-		ISchema schema = sourceElement.getSchema();
 
-		MenuManager submenu = new MenuManager(PDEPlugin.getResourceString(POPUP_NEW));
-		MenuManager cmenu =
-			new MenuManager(PDEPlugin.getResourceString(SECTION_COMPOSITOR));
+		if (sourceElement != null) {
+			ISchema schema = sourceElement.getSchema();
 
-		cmenu.add(
-			new NewCompositorAction(sourceElement, object, ISchemaCompositor.ALL));
-		cmenu.add(
-			new NewCompositorAction(sourceElement, object, ISchemaCompositor.CHOICE));
-		cmenu.add(
-			new NewCompositorAction(sourceElement, object, ISchemaCompositor.SEQUENCE));
-		cmenu.add(
-			new NewCompositorAction(sourceElement, object, ISchemaCompositor.GROUP));
-		submenu.add(cmenu);
+			MenuManager submenu =
+				new MenuManager(PDEPlugin.getResourceString(POPUP_NEW));
+			MenuManager cmenu =
+				new MenuManager(
+					PDEPlugin.getResourceString(SECTION_COMPOSITOR));
 
-		if (schema.getResolvedElementCount() > 1
-			&& object != null
-			&& object instanceof SchemaCompositor) {
-			MenuManager refMenu =
-				new MenuManager(PDEPlugin.getResourceString(SECTION_REFERENCE));
-			ISchemaElement[] elements = schema.getResolvedElements();
-			for (int i = 0; i < elements.length; i++) {
-				ISchemaElement element = elements[i];
-				//if (element == sourceElement)
+			cmenu.add(
+				new NewCompositorAction(
+					sourceElement,
+					object,
+					ISchemaCompositor.ALL));
+			cmenu.add(
+				new NewCompositorAction(
+					sourceElement,
+					object,
+					ISchemaCompositor.CHOICE));
+			cmenu.add(
+				new NewCompositorAction(
+					sourceElement,
+					object,
+					ISchemaCompositor.SEQUENCE));
+			cmenu.add(
+				new NewCompositorAction(
+					sourceElement,
+					object,
+					ISchemaCompositor.GROUP));
+			submenu.add(cmenu);
+
+			if (schema.getResolvedElementCount() > 1
+				&& object != null
+				&& object instanceof SchemaCompositor) {
+				MenuManager refMenu =
+					new MenuManager(
+						PDEPlugin.getResourceString(SECTION_REFERENCE));
+				ISchemaElement[] elements = schema.getResolvedElements();
+				for (int i = 0; i < elements.length; i++) {
+					ISchemaElement element = elements[i];
+					//if (element == sourceElement)
 					//continue;
-				refMenu.add(new NewReferenceAction(sourceElement, object, element));
-			}
-			submenu.add(refMenu);
-		}
-		if (object == null || object instanceof SchemaCompositor) {
-			manager.add(submenu);
-		}
-
-		if (object != null) {
-			manager.add(new Separator());
-			Action deleteAction = new Action() {
-				public void run() {
-					handleDelete(object);
+					refMenu.add(
+						new NewReferenceAction(sourceElement, object, element));
 				}
-			};
-			deleteAction.setText(PDEPlugin.getResourceString(POPUP_DELETE));
-			deleteAction.setEnabled(schema.isEditable());
-			manager.add(deleteAction);
+				submenu.add(refMenu);
+			}
+			if (object == null || object instanceof SchemaCompositor) {
+				manager.add(submenu);
+			}
+
+			if (object != null) {
+				manager.add(new Separator());
+				Action deleteAction = new Action() {
+					public void run() {
+						handleDelete(object);
+					}
+				};
+				deleteAction.setText(PDEPlugin.getResourceString(POPUP_DELETE));
+				deleteAction.setEnabled(schema.isEditable());
+				manager.add(deleteAction);
+			}
 		}
-		getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager);
+		getFormPage().getEditor().getContributor().contextMenuAboutToShow(
+			manager);
 		manager.add(new Separator());
 		manager.add(new PropertiesAction(getFormPage().getEditor()));
 	}
@@ -211,9 +249,11 @@ public class GrammarSection extends PDEFormSection {
 			if (parent instanceof ISchemaElement) {
 				// root
 				SchemaElement element = (SchemaElement) parent;
-				SchemaComplexType complexType = (SchemaComplexType) element.getType();
+				SchemaComplexType complexType =
+					(SchemaComplexType) element.getType();
 				if (complexType.getAttributeCount() == 0)
-					element.setType(new SchemaSimpleType(element.getSchema(), "string"));
+					element.setType(
+						new SchemaSimpleType(element.getSchema(), "string"));
 				else
 					complexType.setCompositor(null);
 			} else if (parent instanceof SchemaCompositor) {
@@ -221,7 +261,8 @@ public class GrammarSection extends PDEFormSection {
 			}
 		} else if (object instanceof SchemaElementReference) {
 			SchemaCompositor compositor =
-				(SchemaCompositor) ((SchemaElementReference) object).getCompositor();
+				(SchemaCompositor) ((SchemaElementReference) object)
+					.getCompositor();
 			compositor.removeChild((SchemaElementReference) object);
 		}
 	}
@@ -245,7 +286,9 @@ public class GrammarSection extends PDEFormSection {
 				treeViewer.add(parent, sobj);
 				treeViewer.getTree().getDisplay().asyncExec(new Runnable() {
 					public void run() {
-						treeViewer.setSelection(new StructuredSelection(sobj), true);
+						treeViewer.setSelection(
+							new StructuredSelection(sobj),
+							true);
 					}
 				});
 
@@ -261,15 +304,16 @@ public class GrammarSection extends PDEFormSection {
 				final ISchemaCompositor compositor = type.getCompositor();
 				treeViewer.getTree().getDisplay().asyncExec(new Runnable() {
 					public void run() {
-						treeViewer.setSelection(new StructuredSelection(compositor), true);
+						treeViewer.setSelection(
+							new StructuredSelection(compositor),
+							true);
 					}
 				});
 			}
-		}
-		else if (obj instanceof ISchemaElement) {
-			if (e.getChangeType() == IModelChangedEvent.CHANGE &&
-				e.getChangedProperty()==SchemaElement.P_TYPE) {
-					treeViewer.refresh();
+		} else if (obj instanceof ISchemaElement) {
+			if (e.getChangeType() == IModelChangedEvent.CHANGE
+				&& e.getChangedProperty() == SchemaElement.P_TYPE) {
+				treeViewer.refresh();
 			}
 		}
 
