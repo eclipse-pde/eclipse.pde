@@ -24,7 +24,6 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.core.schema.*;
-import org.xml.sax.*;
 
 public class ConvertSchemaToHTML extends Task {
 
@@ -60,9 +59,9 @@ public class ConvertSchemaToHTML extends Task {
 					fParser = factory.newSAXParser();
 				}
 				File schemaFile = new File(model.getInstallLocation(), schemaLocation);
-				XMLDefaultHandler handler = new XMLDefaultHandler(schemaFile);
+				XMLDefaultHandler handler = new XMLDefaultHandler();
 				fParser.setProperty("http://xml.org/sax/properties/lexical-handler", handler);
-				fParser.parse(new InputSource(new StringReader(handler.getText())), handler);
+				fParser.parse(schemaFile, handler);
 
 				URL url = null;
 				try {
