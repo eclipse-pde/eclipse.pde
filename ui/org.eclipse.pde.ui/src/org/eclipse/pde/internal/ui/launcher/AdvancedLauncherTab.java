@@ -573,7 +573,6 @@ public class AdvancedLauncherTab
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration config) {
-		initializeProductFrom(config);
 		try {
 			fUseDefaultRadio.setSelection(config.getAttribute(USE_DEFAULT, true));
 			if (fShowFeatures) {
@@ -773,13 +772,6 @@ public class AdvancedLauncherTab
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void activated(ILaunchConfigurationWorkingCopy config) {
-		initializeProductFrom(config);
-	}
-
-	/**
-	 * @param config
-	 */
-	private void initializeProductFrom(ILaunchConfiguration config) {
 		try {
 			if (config.getAttribute(USE_PRODUCT, false)) {
 				fProductID = config.getAttribute(PRODUCT, (String)null);
