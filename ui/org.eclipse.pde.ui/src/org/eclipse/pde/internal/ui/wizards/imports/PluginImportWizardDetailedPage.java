@@ -10,6 +10,8 @@ package org.eclipse.pde.internal.ui.wizards.imports;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
@@ -100,6 +102,15 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 				return !selected.contains(element);
 			}
 		});
+		availableListViewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				IStructuredSelection ssel = (IStructuredSelection)availableListViewer.getSelection();
+				if (ssel.size() > 0) {
+					selected.addAll(ssel.toList());
+					pageChanged();
+				}
+			}
+		});
 		return container;
 	}
 	
@@ -126,6 +137,15 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		importListViewer.addFilter(new ViewerFilter() {
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
 				return selected.contains(element);
+			}
+		});
+		importListViewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				IStructuredSelection ssel = (IStructuredSelection)importListViewer.getSelection();
+				if (ssel.size() > 0) {
+					selected.removeAll(ssel.toList());
+					pageChanged();
+				}
 			}
 		});
 				
