@@ -323,7 +323,7 @@ public abstract class PDEFormEditor extends FormEditor
 	public void fireSaveNeeded(IEditorInput input, boolean notify) {
 		if (notify)
 			editorDirtyStateChanged();
-		validateEdit(input);
+		if (isDirty()) validateEdit(input);
 	}
 	public void editorDirtyStateChanged() {
 		super.editorDirtyStateChanged();
