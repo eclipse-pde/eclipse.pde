@@ -497,13 +497,16 @@ public class JavaAttributeWizardPage extends WizardPage {
 	private void handleFindContainer() {
 		FolderSelectionDialog dialog =
 			new FolderSelectionDialog(
-				PDEPlugin.getActiveWorkbenchShell(),
+				getContainer().getShell(),
 				new WorkbenchLabelProvider(),
 				new ContentProvider() {
 		});
-		dialog.setInput(project);
+		dialog.setInput(project.getWorkspace());
 		dialog.addFilter(new ViewerFilter() {
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
+				if (element instanceof IProject) {
+					return ((IProject)element).equals(project);
+				}
 				return element instanceof IFolder;
 			}			
 		});
@@ -512,17 +515,17 @@ public class JavaAttributeWizardPage extends WizardPage {
 		int status = dialog.open();
 		if (status == FolderSelectionDialog.OK) {
 			Object[] result = dialog.getResult();
-		
-			if (result.length == 1) {
-				IFolder folder = (IFolder) result[0];
-				containerText.setText(
-					folder.getFullPath()
-						.removeFirstSegments(1)
-						.addTrailingSeparator()
-						.toString());
-				containerBrowse.setFocus();
-		
-			}
+			if (!(result[0] instanceof IFolder))
+				return;
+			IFolder folder = (IFolder) result[0];
+			containerText.setText(
+				folder
+					.getFullPath()
+					.removeFirstSegments(1)
+					.addTrailingSeparator()
+					.toString());
+			containerBrowse.setFocus();
+
 		}
 	}
 
@@ -535,12 +538,12 @@ public class JavaAttributeWizardPage extends WizardPage {
 			if (sourceFolder != null) {
 				dialog =
 					JavaUI.createPackageDialog(
-						PDEPlugin.getActiveWorkbenchShell(),
+						getContainer().getShell(),
 						sourceFolder);
 			} else {
 				dialog =
 					JavaUI.createPackageDialog(
-						PDEPlugin.getActiveWorkbenchShell(),
+						getContainer().getShell(),
 						JavaCore.create(project),
 						0,
 						"");
@@ -576,7 +579,7 @@ public class JavaAttributeWizardPage extends WizardPage {
 		try {
 			SelectionDialog dialog =
 				JavaUI.createTypeDialog(
-					PDEPlugin.getActiveWorkbenchShell(),
+					getContainer().getShell(),
 					getContainer(),
 					project,
 					IJavaElementSearchConstants.CONSIDER_TYPES,

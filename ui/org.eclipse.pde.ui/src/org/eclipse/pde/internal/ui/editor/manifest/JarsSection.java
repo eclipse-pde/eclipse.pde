@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.internal.ui.wizards.buildpaths.FolderSelectionDialog;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -34,7 +35,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.*;
-import org.eclipse.ui.dialogs.ContainerSelectionDialog;
+import org.eclipse.ui.model.WorkbenchContentProvider;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.update.ui.forms.internal.*;
 
 public class JarsSection
@@ -59,6 +61,20 @@ public class JarsSection
 		"ManifestEditor.JarsSection.missingSource.message";
 	public static final String DUPLICATE_FOLDER_MESSAGE =
 		"ManifestEditor.JarsSection.missingSource.duplicateFolder";
+		
+		class ContentProvider extends WorkbenchContentProvider {
+			public boolean hasChildren(Object element) {
+				Object[] children = getChildren(element);
+				for (int i = 0; i < children.length; i++) {
+					if (children[i] instanceof IFolder) {
+						return true;
+					}
+				}
+				return false;
+			}
+			
+		
+		}
 
 	class TableContentProvider
 		extends DefaultContentProvider
@@ -195,48 +211,61 @@ public class JarsSection
 	private void handleNew() {
 		IPluginModelBase model = (IPluginModelBase) getFormPage().getModel();
 		IFile file = (IFile) model.getUnderlyingResource();
-		IProject project = file.getProject();
-		ContainerSelectionDialog dialog =
-			new ContainerSelectionDialog(
+		final IProject project = file.getProject();
+		FolderSelectionDialog dialog =
+			new FolderSelectionDialog(
 				PDEPlugin.getActiveWorkbenchShell(),
-				project,
-				true,
-				PDEPlugin.getResourceString(SECTION_DIALOG_TITLE));
-		if (dialog.open() == ContainerSelectionDialog.OK) {
-			Object[] result = dialog.getResult();
-			if (result.length == 1) {
-				IPath path = (IPath) result[0];
-				IPath projectPath = project.getFullPath();
-				if (!projectPath.isPrefixOf(path))
-					return;
-				int matching = path.matchingFirstSegments(projectPath);
-				path = path.removeFirstSegments(matching);
-				String folder = path.toString();
-				if (!verifyFolderExists(project, folder))
-					return;
-				try {
-					if (!folder.endsWith("/"))
-						folder = folder + "/";
-					IBuildModel buildModel = model.getBuildModel();
-					String libKey = IBuildEntry.JAR_PREFIX + currentLibrary.getName();
-					IBuildEntry entry = buildModel.getBuild().getEntry(libKey);
-					if (entry == null) {
-						entry = buildModel.getFactory().createEntry(libKey);
-						buildModel.getBuild().add(entry);
-					} else {
-						if (entry.contains(folder)) {
-							String message =
-								PDEPlugin.getFormattedMessage(DUPLICATE_FOLDER_MESSAGE, folder);
-							MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(),"", message);
-							return;
-						}
-					}
-					entry.addToken(folder);
-					entryTable.add(folder);
-					((WorkspaceBuildModel) buildModel).save();
-				} catch (CoreException e) {
-					PDEPlugin.logException(e);
+				new WorkbenchLabelProvider(),
+				new ContentProvider() {
+		});
+		dialog.setInput(project.getWorkspace());
+		dialog.addFilter(new ViewerFilter() {
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
+				if (element instanceof IProject) {
+					return ((IProject)element).equals(project);
 				}
+				return element instanceof IFolder;
+			}
+		});
+		dialog.setAllowMultiple(false);
+		dialog.setTitle(PDEPlugin.getResourceString(SECTION_DIALOG_TITLE));
+
+		if (dialog.open() == FolderSelectionDialog.OK) {
+			Object result = dialog.getResult()[0];
+			if (result instanceof IProject)
+				return;
+			IFolder folder = (IFolder) result;
+			String folderPath =
+				folder
+					.getFullPath()
+					.removeFirstSegments(1)
+					.addTrailingSeparator()
+					.toString();
+			try {
+				IBuildModel buildModel = model.getBuildModel();
+				String libKey = IBuildEntry.JAR_PREFIX + currentLibrary.getName();
+				IBuildEntry entry = buildModel.getBuild().getEntry(libKey);
+				if (entry == null) {
+					entry = buildModel.getFactory().createEntry(libKey);
+					buildModel.getBuild().add(entry);
+				} else {
+					if (entry.contains(folderPath)) {
+						String message =
+							PDEPlugin.getFormattedMessage(
+								DUPLICATE_FOLDER_MESSAGE,
+								folderPath);
+						MessageDialog.openError(
+							PDEPlugin.getActiveWorkbenchShell(),
+							"",
+							message);
+						return;
+					}
+				}
+				entry.addToken(folderPath);
+				entryTable.add(folderPath);
+				((WorkspaceBuildModel) buildModel).save();
+			} catch (CoreException e) {
+				PDEPlugin.logException(e);
 			}
 		}
 	}
