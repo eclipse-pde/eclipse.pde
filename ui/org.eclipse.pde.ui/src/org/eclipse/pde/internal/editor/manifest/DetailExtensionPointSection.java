@@ -37,6 +37,8 @@ public class DetailExtensionPointSection
 	implements IModelChangedListener {
 	public static final String SECTION_TITLE =
 		"ManifestEditor.DetailExtensionPointSection.title";
+	public static final String SECTION_DESC =
+		"ManifestEditor.DetailExtensionPointSection.desc";
 	public static final String SECTION_NEW =
 		"ManifestEditor.DetailExtensionPointSection.new";
 	public static final String POPUP_NEW_EXTENSION_POINT =
@@ -61,6 +63,7 @@ public class DetailExtensionPointSection
 	public DetailExtensionPointSection(ManifestExtensionPointPage page) {
 		super(page, new String [] { PDEPlugin.getResourceString(SECTION_NEW) });
 		this.setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
+		this.setDescription(PDEPlugin.getResourceString(SECTION_DESC));
 		schemaRegistry = PDEPlugin.getDefault().getSchemaRegistry();
 		pluginInfoRegistry = PDEPlugin.getDefault().getExternalModelManager();
 	}

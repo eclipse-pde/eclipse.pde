@@ -37,7 +37,7 @@ public abstract class SharedPartWithButtons extends SharedPart {
 	}
 	
 	public void setButtonEnabled(int index, boolean enabled) {
-		if (controls!=null && index>0 && controls.length>index) {
+		if (controls!=null && index >=0 && controls.length>index) {
 			Control c = controls[index];
 			if (c instanceof Button)
 				c.setEnabled(enabled);

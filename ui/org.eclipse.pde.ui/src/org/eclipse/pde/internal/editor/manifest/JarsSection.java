@@ -227,6 +227,7 @@ public class JarsSection
 		IBuildModel buildModel = model.getBuildModel();
 		boolean editable = model.isEditable() && buildModel.isEditable();
 		setReadOnly(!editable);
+		getTablePart().setButtonEnabled(0, false);
 		model.addModelChangedListener(this);
 		if (buildModel.isEditable() == false) {
 			String header = getHeaderText();

@@ -242,8 +242,8 @@ public class LibrarySection
 		libraryTable.setInput(model.getPluginBase());
 		setReadOnly(!model.isEditable());
 		getTablePart().setButtonEnabled(0, model.isEditable());
-		getTablePart().setButtonEnabled(2, model.isEditable());
-		getTablePart().setButtonEnabled(3, model.isEditable());
+		getTablePart().setButtonEnabled(2, false);
+		getTablePart().setButtonEnabled(3, false);
 		model.addModelChangedListener(this);
 	}
 	public void modelChanged(IModelChangedEvent event) {
