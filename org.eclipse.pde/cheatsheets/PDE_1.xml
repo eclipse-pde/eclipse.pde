@@ -51,7 +51,7 @@ Select the Extensions page tab in the Plug-in manifest editor and add extensions
 		href="/org.eclipse.pde.doc.user/guide/pde_manifest_runtime.htm"
 		title="Editing the Runtime Section of the Plug-in Manifest File" 
 		kind="manual">
-Select the Runtime page tab in the Plug-in manifest editor and define library types, visibility, and content as required. This step defines how the classes that are in source folders during the design time are packaged into the libraries. This is a manual task, you will need to perform the work and click the "Click to complete” button to move to the next step.	
+Select the Runtime page tab in the Plug-in manifest editor and define library types, visibility, and content as required. This step defines how the classes that are in source folders during the design time are packaged into the libraries. This is a manual task, you will need to perform the work and click the "Click to complete" button to move to the next step.	
 	</item>
 	
 	<item
@@ -76,6 +76,6 @@ Select Run-&gt;Run. Complete the launch dialog as required and click Run. In the
 		kind="both"
 		pluginId=""
 		class="" >
-Select File&gt;Export...&gt;Deployable plug-ins and fragments and select the appropriate plug-ins and fragments. This step packages the workspace plug-in in a format that will make it easily deployable in any Eclipse product. The “Deployable plug-ins and fragments” dialog is automatically displayed when you click the “Click to perform button”.
+Select File&gt;Export...&gt;Deployable plug-ins and fragments and select the appropriate plug-ins and fragments. This step packages the workspace plug-in in a format that will make it easily deployable in any Eclipse product. The "Deployable plug-ins and fragments" dialog is automatically displayed when you click the "Click to perform button".
 	</item>
 </cheatSheet>
