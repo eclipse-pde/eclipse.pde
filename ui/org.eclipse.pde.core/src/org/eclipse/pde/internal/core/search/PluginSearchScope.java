@@ -27,14 +27,19 @@ public class PluginSearchScope {
 	 * @param externalScope  one of EXTERNAL_SCOPE_NONE, EXTERNAL_SCOPE_ENABLED,
 	 * EXTERNAL_SCOPE_ALL
 	 * @param workingSets  goes with SCOPE_WORKING_SETS, otherwise null	 * @param description  an NL string that describes the entire scope	 */
-	public PluginSearchScope (int workspaceScope, int externalScope, IWorkingSet[] workingSets, String description) {
+	public PluginSearchScope(
+		int workspaceScope,
+		int externalScope,
+		IWorkingSet[] workingSets,
+		String description) {
 	}
 	
 	
 	/**
-	 * Creates a default scope object that will return all the entries int eh
-	 * Plugi
-	 * @see java.lang.Object#Object()	 */
+	 * Creates a default scope object that will return all the entries in the
+	 * PluginSearchScope.  It is equivalent to workspace scope being set to
+	 * 'Workspace' and external scope being set to 'Only Enabled'
+	 */
 	public PluginSearchScope() {
 	}
 	

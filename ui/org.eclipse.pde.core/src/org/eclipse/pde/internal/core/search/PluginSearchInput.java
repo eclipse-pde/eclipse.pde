@@ -19,6 +19,9 @@ public class PluginSearchInput {
 		
 	private String searchString = null;
 	private boolean caseSensitive = false;
+	private int searchElement = 0;
+	private int searchLimit = 0;
+	private PluginSearchScope searchScope;
 	
 	public String getSearchString() {
 		return searchString;
@@ -34,6 +37,30 @@ public class PluginSearchInput {
 	
 	public void setSearchString(String name) {
 		searchString = name;
+	}
+	
+	public int getSearchElement() {
+		return searchElement;
+	}
+	
+	public void setSearchElement(int element) {
+		searchElement = element;
+	}
+	
+	public int getSearchLimit() {
+		return searchLimit;
+	}
+	
+	public void setSearchLimit(int limit) {
+		searchLimit = limit;
+	}
+	
+	public PluginSearchScope getSearchScope() {
+		return searchScope;
+	}
+	
+	public void setSearchScope(PluginSearchScope scope) {
+		searchScope = scope;
 	}
 	
 }
