@@ -116,7 +116,7 @@ public class SiteEditor extends MultiSourceEditor {
 	protected void createStorageContexts(InputContextManager manager,
 			IStorageEditorInput input) {
 		String name = input.getName().toLowerCase();
-		if (name.equals("site.xml")) {
+		if (name.startsWith("site.xml")) {
 			manager.putContext(input,
 							new SiteInputContext(this, input, true));
 		}

@@ -148,7 +148,7 @@ public class FeatureEditor extends MultiSourceEditor {
 		String name = input.getName().toLowerCase();
 		if (name.equals("build.properties")) {
 			manager.putContext(input, new BuildInputContext(this, input, true));
-		} else if (name.equals("feature.xml")) {
+		} else if (name.startsWith("feature.xml")) {
 			manager.putContext(input, new FeatureInputContext(this, input, true));
 		}
 	}
