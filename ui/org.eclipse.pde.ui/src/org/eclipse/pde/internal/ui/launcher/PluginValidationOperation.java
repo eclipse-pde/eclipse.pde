@@ -40,7 +40,7 @@ public class PluginValidationOperation implements IRunnableWithProgress {
 	class MissingApplication {
 		public String toString() {
 			String pluginID = getApplicationPlugin();
-			if (fState.getState().getBundles(pluginID).length == 0)
+			if (getState().getBundles(pluginID).length == 0)
 				return PDEPlugin.getFormattedMessage("PluginValidationOperation.missingApp", new String[] {fApplicationID, pluginID}); //$NON-NLS-1$
 			return PDEPlugin.getFormattedMessage("PluginValidationOperation.missingApp2", new String[] {fApplicationID, pluginID}); //$NON-NLS-1$
 		}
@@ -49,7 +49,7 @@ public class PluginValidationOperation implements IRunnableWithProgress {
 	class MissingProduct {
 		public String toString() {
 			String pluginID = getProductPlugin();
-			if (fState.getState().getBundles(pluginID).length == 0)
+			if (getState().getBundles(pluginID).length == 0)
 				return PDEPlugin.getFormattedMessage("PluginValidationOperation.missingProduct", new String[] {fProductID, pluginID}); //$NON-NLS-1$
 			return PDEPlugin.getFormattedMessage("PluginValidationOperation.missingProduct2", new String[] {fProductID, pluginID}); //$NON-NLS-1$
 		}
@@ -123,7 +123,7 @@ public class PluginValidationOperation implements IRunnableWithProgress {
 		}
 		
 		private String toString(VersionConstraint constraint) {
-			State state = fState.getState();
+			State state = getState();
 			String name = constraint.getName();
 			if (constraint instanceof BundleSpecification) {
 				if (state.getBundles(name).length == 0)
@@ -168,7 +168,7 @@ public class PluginValidationOperation implements IRunnableWithProgress {
 				result.add(new MissingCore());
 			if (fInvalidModels.size() > 0)
 				result.add(new InvalidNode());
-			BundleDescription[] all = fState.getState().getBundles();
+			BundleDescription[] all = getState().getBundles();
 			for (int i = 0; i < all.length; i++) {
 				if (!all[i].isResolved())
 					result.add(all[i]);
@@ -190,7 +190,7 @@ public class PluginValidationOperation implements IRunnableWithProgress {
 	public void run(IProgressMonitor monitor) throws InvocationTargetException,
 			InterruptedException {
 		for (int i = 0; i < fModels.length; i++) {
-			BundleDescription desc = fState.addBundle(new File(fModels[i].getInstallLocation()), false);
+			BundleDescription desc = fState.addBundle(new File(fModels[i].getInstallLocation()), false, false);
 			if (desc == null)
 				fInvalidModels.add(fModels[i]);
 		}
@@ -202,7 +202,7 @@ public class PluginValidationOperation implements IRunnableWithProgress {
 	}
 	
 	public boolean hasErrors() {
-		State state = fState.getState();
+		State state = getState();
 		if (fInvalidModels.size() > 0 || state.getBundles().length > state.getResolvedBundles().length)
 			return true;	
 		return isApplicationMissing() || isProductMissing();	
@@ -212,7 +212,7 @@ public class PluginValidationOperation implements IRunnableWithProgress {
 		if (fProductID == null)
 			return false;
 		
-		BundleDescription[] desc = fState.getState().getBundles(getProductPlugin());
+		BundleDescription[] desc = getState().getBundles(getProductPlugin());
 		for (int i = 0; i < desc.length; i++) {
 			if (desc[i].isResolved()) 
 				return false;
@@ -222,7 +222,7 @@ public class PluginValidationOperation implements IRunnableWithProgress {
 	private boolean isApplicationMissing() {
 		if (fApplicationID == null)
 			return false;
-		BundleDescription[] desc = fState.getState().getBundles(getApplicationPlugin());
+		BundleDescription[] desc = getState().getBundles(getApplicationPlugin());
 		for (int i = 0; i < desc.length; i++) {
 			if (desc[i].isResolved()) 
 				return false;
@@ -239,7 +239,7 @@ public class PluginValidationOperation implements IRunnableWithProgress {
 	}
 	
 	private boolean isCoreMissing() {
-		return (fState.getState().getBundles(getCorePluginID()).length == 0);
+		return (getState().getBundles(getCorePluginID()).length == 0);
 	}
 	
 	private String getCorePluginID() {

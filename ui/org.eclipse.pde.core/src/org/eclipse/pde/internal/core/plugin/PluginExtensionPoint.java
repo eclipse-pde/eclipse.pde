@@ -45,6 +45,14 @@ public class PluginExtensionPoint
 		this.schema = getNodeAttribute(node, "schema"); //$NON-NLS-1$
 		bindSourceLocation(node, lineTable);
 	}
+	
+	void load(Node node) {
+		this.id = getNodeAttribute(node, "id"); //$NON-NLS-1$
+		this.name = getNodeAttribute(node, "name"); //$NON-NLS-1$
+		this.schema = getNodeAttribute(node, "schema"); //$NON-NLS-1$
+		int line = Integer.parseInt(getNodeAttribute(node, "line"));
+		this.range = new int[] {line, line};
+	}
 
 	public boolean equals(Object obj) {
 		if (obj == this)

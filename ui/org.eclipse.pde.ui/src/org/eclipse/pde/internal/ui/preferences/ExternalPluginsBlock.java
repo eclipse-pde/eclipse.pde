@@ -61,8 +61,8 @@ public class ExternalPluginsBlock {
 			
 		public void run(IProgressMonitor monitor)
 			throws InvocationTargetException, InterruptedException {	
-			fCurrentState = new PDEState();
-			fModels = TargetPlatformRegistryLoader.loadModels(pluginPaths, true, fCurrentState, monitor);		
+			fCurrentState = new PDEState(pluginPaths, true, monitor);
+			fModels = fCurrentState.getModels();		
 		}
 		
 	}

@@ -417,7 +417,8 @@ public class PluginImportWizardFirstPage extends WizardPage {
 				files[0] = new File(location);
 				files[1] = new File(location, "plugins"); //$NON-NLS-1$
 				URL[] urls = PluginPathFinder.scanLocations(files);
-				models=TargetPlatformRegistryLoader.loadModels(urls, false, monitor);
+				PDEState state = new PDEState(urls, false, monitor);
+				models = state.getModels();
 				monitor.done();
 			}
 		};

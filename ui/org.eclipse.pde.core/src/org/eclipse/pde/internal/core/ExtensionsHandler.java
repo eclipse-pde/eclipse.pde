@@ -8,36 +8,24 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.core.plugin;
+package org.eclipse.pde.internal.core;
 
 import java.util.*;
 
-import org.eclipse.pde.core.plugin.*;
+import org.w3c.dom.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
 
-public class ExtensionsParser extends DefaultHandler {
-
-	private Vector fExtensions;
-
-	private Vector fExtensionPoints;
-
+public class ExtensionsHandler extends DefaultHandler {
+	
 	private Stack fOpenElements;
 
 	private Locator fLocator;
 
-	private boolean fIsLegacy = true;
+	private Element fParent;
 
-	private ISharedPluginModel fModel;
-
-	/**
-	 *  
-	 */
-	public ExtensionsParser(ISharedPluginModel model) {
-		super();
-		fExtensionPoints = new Vector();
-		fExtensions = new Vector();
-		fModel = model;
+	public ExtensionsHandler(Element parent) {
+		fParent = parent;
 	}
 
 	/*
@@ -48,9 +36,6 @@ public class ExtensionsParser extends DefaultHandler {
 	 */
 	public void processingInstruction(String target, String data)
 			throws SAXException {
-		if ("eclipse".equals(target)) { //$NON-NLS-1$
-			fIsLegacy = false;
-		}
 	}
 
 	/*
@@ -64,11 +49,6 @@ public class ExtensionsParser extends DefaultHandler {
 		if (fOpenElements == null) {
 			if ((qName.equals("plugin") || qName.equals("fragment"))) { //$NON-NLS-1$ //$NON-NLS-2$
 				fOpenElements = new Stack();
-				IPluginModelBase model = (IPluginModelBase)fModel;
-				PluginBase base = (PluginBase)model.getPluginBase();
-				if (attributes.getIndex("id") != -1) //$NON-NLS-1$
-					base.range = new int[] {fLocator.getLineNumber(), fLocator.getLineNumber()};
-				base.range = new int[] {0,0};
 			}
 		} else if (fOpenElements.size() == 0) {
 			if (qName.equals("extension")) { //$NON-NLS-1$
@@ -85,45 +65,59 @@ public class ExtensionsParser extends DefaultHandler {
 	 * @param attributes
 	 */
 	private void createExtension(Attributes attributes) {
-		PluginExtension extension = (PluginExtension) fModel.getFactory()
-				.createExtension();
-		extension.point = attributes.getValue("point"); //$NON-NLS-1$
-		extension.id = attributes.getValue("id"); //$NON-NLS-1$
-		extension.name = attributes.getValue("name"); //$NON-NLS-1$
-		extension.range = new int[] { fLocator.getLineNumber(),
-				fLocator.getLineNumber() };
-		if (extension.isValid()) {
-			extension.setInTheModel(true);
-			fExtensions.add(extension);
-			if ("org.eclipse.pde.core.source".equals(extension.point) || "org.eclipse.core.runtime.products".equals(extension.point)) //$NON-NLS-1$ //$NON-NLS-2$
-				fOpenElements.push(extension);
-		}
+		Element extension = fParent.getOwnerDocument().createElement("extension");
+		String point = attributes.getValue("point");
+		if (point == null)
+			return;
+		extension.setAttribute("point", point); //$NON-NLS-1$
+		
+		String id = attributes.getValue("id");
+		if (id != null)
+			extension.setAttribute("id", id); //$NON-NLS-1$
+		
+		String name = attributes.getValue("name");
+		if (name != null)
+			extension.setAttribute("name", name);
+		
+		extension.setAttribute("line", Integer.toString(fLocator.getLineNumber()));
+
+		fParent.appendChild(extension);
+		
+		if ("org.eclipse.pde.core.source".equals(point) || "org.eclipse.core.runtime.products".equals(point)) //$NON-NLS-1$ //$NON-NLS-2$
+			fOpenElements.push(extension);
 	}
 
 	/**
 	 * @param attributes
 	 */
 	private void createExtensionPoint(Attributes attributes) {
-		PluginExtensionPoint extPoint = (PluginExtensionPoint) fModel
-				.getFactory().createExtensionPoint();
-		extPoint.id = attributes.getValue("id"); //$NON-NLS-1$
-		extPoint.name = attributes.getValue("name"); //$NON-NLS-1$
-		extPoint.schema = attributes.getValue("schema"); //$NON-NLS-1$
-		extPoint.range = new int[] {fLocator.getLineNumber(), fLocator.getLineNumber()};
-		if (extPoint.isValid()) {
-			extPoint.setInTheModel(true);
-			fExtensionPoints.add(extPoint);
-		}
+		Element extPoint = fParent.getOwnerDocument().createElement("extension-point");
+
+		String id = attributes.getValue("id");
+		if (id == null)
+			return;
+		extPoint.setAttribute("id", id); //$NON-NLS-1$
+		
+		String name = attributes.getValue("name");
+		if (name == null)
+			return;
+		extPoint.setAttribute("name", name);
+		
+		String schema = attributes.getValue("schema");
+		if (schema != null)
+			extPoint.setAttribute("schema", schema);
+		
+		extPoint.setAttribute("line", Integer.toString(fLocator.getLineNumber()));
+
+		fParent.appendChild(extPoint);
 	}
 
 	private void createElement(String tagName, Attributes attributes) {
-		PluginElement element = new PluginElement();
-		PluginParent parent = (PluginParent) fOpenElements.peek();
-		element.setParent(parent);
-		element.setInTheModel(true);
-		element.setModel(fModel);
-		element.load(tagName, attributes);
-		parent.appendChild(element);
+		Element element = fParent.getOwnerDocument().createElement(tagName);
+		for (int i = 0; i < attributes.getLength(); i++) {
+			element.setAttribute(attributes.getQName(i), attributes.getValue(i));
+		}
+		((Element)fOpenElements.peek()).appendChild(element);
 		fOpenElements.push(element);
 	}
 
@@ -148,15 +142,4 @@ public class ExtensionsParser extends DefaultHandler {
 		fLocator = locator;
 	}
 
-	public boolean isLegacy() {
-		return fIsLegacy;
-	}
-
-	public Vector getExtensions() {
-		return fExtensions;
-	}
-
-	public Vector getExtensionPoints() {
-		return fExtensionPoints;
-	}
 }

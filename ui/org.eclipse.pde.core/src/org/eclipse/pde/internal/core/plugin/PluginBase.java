@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
-import java.io.*;
-import java.net.*;
 import java.util.*;
 
 import javax.xml.parsers.*;
@@ -21,7 +19,6 @@ import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
-import org.osgi.framework.*;
 import org.w3c.dom.*;
 import org.xml.sax.*;
 
@@ -82,48 +79,45 @@ public abstract class PluginBase
 		return id;
 	}
 
-	void load(BundleDescription bundleDescription, PDEState state) {
-		this.id = bundleDescription.getSymbolicName();
-		this.version = bundleDescription.getVersion().toString();
-		Dictionary manifest = state.getManifest(bundleDescription.getBundleId());
-		this.name = (String)manifest.get(Constants.BUNDLE_NAME);
-		this.providerName = (String)manifest.get(Constants.BUNDLE_VENDOR);
-		loadRuntime(bundleDescription, state);
-		loadImports(bundleDescription);
-		
-		try {
-			String filename = bundleDescription.getHost() == null ? "plugin.xml" : "fragment.xml"; //$NON-NLS-1$ //$NON-NLS-2$
-			SAXParser parser = getSaxParser();
-			ExtensionsParser handler = new ExtensionsParser(getModel());
-			URL url = getModel().getResourceURL(filename);
-			if (url != null) {
-				InputStream stream = url.openStream();
-				parser.parse(stream, handler);
-				loadExtensions(handler.getExtensions());
-				loadExtensionPoints(handler.getExtensionPoints());
-				schemaVersion = handler.isLegacy() ? null : "3.0"; //$NON-NLS-1$
-				stream.close();
+	void load(BundleDescription bundleDesc, PDEState state, boolean ignoreExtensions) {
+		this.id = bundleDesc.getSymbolicName();
+		this.version = bundleDesc.getVersion().toString();
+		this.name = state.getPluginName(bundleDesc.getBundleId());
+		this.providerName = state.getProviderName(bundleDesc.getBundleId());
+		loadRuntime(bundleDesc, state);
+		loadImports(bundleDesc);		
+		if (!ignoreExtensions) {
+			loadExtensionPoints(state.getExtensionPoints(bundleDesc.getBundleId()));
+			loadExtensions(state.getExtensions(bundleDesc.getBundleId()));
+		}
+	}
+	
+	void loadExtensions(NodeList list) {
+		if (list != null) {
+			extensions = new Vector();
+			for (int i = 0; i < list.getLength(); i++) {
+				PluginExtension extension = new PluginExtension();
+				extension.setInTheModel(true);
+				extension.setModel(getModel());
+				extension.setParent(this);
+				extension.load(list.item(i));
+				extensions.add(extension);
 			}
-		} catch (IOException e) {
-		} catch (SAXException e1) {		
-		} catch (ParserConfigurationException e2) {
 		}
 	}
 	
-	private void loadExtensions(Vector collected) {
-		for (int i = 0; i < collected.size(); i++) {
-			PluginExtension extension = (PluginExtension)collected.get(i);
-			extension.setParent(this);
-			this.extensions.add(extension);
-		}
-	}
-	
-	private void loadExtensionPoints(Vector collected) {
-		for (int i = 0; i < collected.size(); i++) {
-			PluginExtensionPoint extPoint = (PluginExtensionPoint)collected.get(i);
-			extPoint.setParent(this);
-			this.extensionPoints.add(extPoint);
-		}		
+	void loadExtensionPoints(NodeList list) {
+		if (list != null) {
+			extensionPoints = new Vector();
+			for (int i = 0; i < list.getLength(); i++) {
+				PluginExtensionPoint extPoint = new PluginExtensionPoint();
+				extPoint.setInTheModel(true);
+				extPoint.setModel(getModel());
+				extPoint.setParent(this);
+				extPoint.load(list.item(i));
+				extensionPoints.add(extPoint);
+			}
+		}	
 	}
 	
 	public void restoreProperty(String name, Object oldValue, Object newValue)
@@ -186,18 +180,15 @@ public abstract class PluginBase
 	}
 
 	void loadRuntime(BundleDescription description, PDEState state) {
-		Dictionary dictionary = state.getManifest(description.getBundleId());
-		if (dictionary != null) {
-			String[] libraryNames = PDEStateHelper.getClasspath(dictionary);
-			for (int i = 0; i < libraryNames.length; i++) {
-				PluginLibrary library = new PluginLibrary();
-				library.setModel(getModel());
-				library.setInTheModel(true);
-				library.setParent(this);
-				library.load(libraryNames[i]);
-				libraries.add(library);
-			}
-		}		
+		String[] libraryNames = state.getLibraryNames(description.getBundleId());
+		for (int i = 0; i < libraryNames.length; i++) {
+			PluginLibrary library = new PluginLibrary();
+			library.setModel(getModel());
+			library.setInTheModel(true);
+			library.setParent(this);
+			library.load(libraryNames[i]);
+			libraries.add(library);
+		}
 	}
 
 	void loadRuntime(Node node, Hashtable lineTable) {

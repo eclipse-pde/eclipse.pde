@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
-import org.osgi.framework.*;
 import org.w3c.dom.*;
 
 public class Plugin extends PluginBase implements IPlugin {
@@ -34,10 +33,9 @@ public class Plugin extends PluginBase implements IPlugin {
 		return this;
 	}
 
-	void load(BundleDescription bundleDescription, PDEState state) {
-		Dictionary manifest = state.getManifest(bundleDescription.getBundleId());
-		this.className = (String)manifest.get(Constants.BUNDLE_ACTIVATOR);
-		super.load(bundleDescription, state);
+	void load(BundleDescription bundleDescription, PDEState state, boolean ignoreExtensions) {
+		this.className = state.getClassName(bundleDescription.getBundleId());
+		super.load(bundleDescription, state, ignoreExtensions);
 	}
 	
 	void load(Node node, String schemaVersion, Hashtable lineTable) {

@@ -44,6 +44,26 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 		return schema;
 	}
 	
+	void load(Node node) {
+		this.id = getNodeAttribute(node, "id"); //$NON-NLS-1$
+		this.name = getNodeAttribute(node, "name"); //$NON-NLS-1$
+		this.point = getNodeAttribute(node, "point"); //$NON-NLS-1$
+		NodeList children = node.getChildNodes();
+		for (int i = 0; i < children.getLength(); i++) {
+			Node child = children.item(i);
+			if (child.getNodeType() == Node.ELEMENT_NODE) {
+				PluginElement childElement = new PluginElement();
+				childElement.setModel(getModel());
+				childElement.setInTheModel(true);
+				childElement.setParent(this);
+				this.children.add(childElement);
+				childElement.load((Element)child);
+			}
+		}
+		int line = Integer.parseInt(getNodeAttribute(node, "line"));
+		this.range = new int[] {line, line};		
+	}
+	
 	void load(Node node, Hashtable lineTable) {
 		this.id = getNodeAttribute(node, "id"); //$NON-NLS-1$
 		this.name = getNodeAttribute(node, "name"); //$NON-NLS-1$

@@ -47,7 +47,7 @@ public class Fragment extends PluginBase implements IFragment {
 		return super.hasRequiredAttributes();
 	}
 
-	void load(BundleDescription bundleDescription, PDEState state) {
+	void load(BundleDescription bundleDescription, PDEState state, boolean ignoreExtensions) {
 		HostSpecification host = bundleDescription.getHost();
 		this.pluginId = host.getName();
 		VersionRange versionRange = host.getVersionRange();
@@ -57,7 +57,7 @@ public class Fragment extends PluginBase implements IFragment {
 					: null;
 			this.rule = PluginBase.getMatchRule(versionRange);
 		}
-		super.load(bundleDescription, state);
+		super.load(bundleDescription, state, ignoreExtensions);
 	}
 
 	void load(Node node, String schemaVersion, Hashtable lineTable) {

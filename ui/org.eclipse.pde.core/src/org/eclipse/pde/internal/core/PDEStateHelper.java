@@ -10,17 +10,22 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import java.io.*;
+import java.net.*;
 import java.util.*;
+
+import javax.xml.parsers.*;
 
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.osgi.util.*;
 import org.osgi.framework.*;
+import org.w3c.dom.*;
+import org.xml.sax.*;
 
-/**
- * @author melhem
- *
- */
+
 public class PDEStateHelper {
+	private static SAXParserFactory saxParserFactory;
+
 	public static BundleDescription[] getDependentBundles(BundleDescription root) {
 		BundleDescription[] imported = getImportedBundles(root);  // Import-Package
 		BundleDescription[] required = getRequiredBundles(root);  // require-bundle <=> <import> from plugin.xml
@@ -124,5 +129,45 @@ public class PDEStateHelper {
 		BundleDescription[] result = new BundleDescription[resolvedRequired.size()];
 		return (BundleDescription[]) resolvedRequired.toArray(result);
 	}
+	
+	public static void parseExtensions(BundleDescription desc, Element parent) {
+		InputStream stream = null;
+		try {
+			String filename = desc.getHost() == null ? "plugin.xml" : "fragment.xml"; //$NON-NLS-1$ //$NON-NLS-2$
+			String path = desc.getLocation();
+
+			File file = new File(path);
+			if (file.isFile() && file.getName().endsWith(".jar")) {
+				URL url = new URL("jar:file:" + path + "!/" + filename); //$NON-NLS-1$ //$NON-NLS-2$
+				stream = url.openStream();			
+			} else if (file.isDirectory()) {
+				File manifest = new File(file, filename);
+				if (manifest.exists() && manifest.isFile()) {
+					stream = new FileInputStream(manifest);
+				}
+			}
+			if (stream != null)
+				getParser().parse(stream, new ExtensionsHandler(parent));
+			
+		} catch (IOException e) {
+		} catch (ParserConfigurationException e) {
+		} catch (SAXException e) {
+		} catch (FactoryConfigurationError e) {
+		} finally {
+			try {
+				if (stream != null)
+					stream.close();
+			} catch (IOException e1) {
+			}
+		}
+	}
+	
+	private static SAXParser getParser() throws ParserConfigurationException, SAXException{
+		if (saxParserFactory == null)
+			saxParserFactory = SAXParserFactory.newInstance();
+		return saxParserFactory.newSAXParser();
+	}
+
+
 
 }

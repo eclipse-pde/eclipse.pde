@@ -56,14 +56,14 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 	public void load() {
 	}
 	
-	public void load(BundleDescription description, PDEState state) {
+	public void load(BundleDescription description, PDEState state, boolean ignoreExtensions) {
 		IPath path = new Path(description.getLocation());
 		String device = path.getDevice();
 		if (device != null)
 			path = path.setDevice(device.toUpperCase());
 		setInstallLocation(path.toOSString());
 		setBundleDescription(description);
-		((PluginBase)getPluginBase()).load(description, state);
+		((PluginBase)getPluginBase()).load(description, state, ignoreExtensions);
 		updateTimeStamp();
 		loaded = true;
 		

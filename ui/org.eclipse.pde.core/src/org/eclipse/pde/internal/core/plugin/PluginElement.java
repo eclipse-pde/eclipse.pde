@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.w3c.dom.*;
-import org.xml.sax.*;
 
 public class PluginElement extends PluginParent implements IPluginElement {
 	static final String ATTRIBUTE_SHIFT = "      "; //$NON-NLS-1$
@@ -113,14 +112,28 @@ public class PluginElement extends PluginParent implements IPluginElement {
 		return fText;
 	}
 
-	void load(String tagName, Attributes attributes) {
-		this.name = tagName;
+	void load(Element element) {
+		this.name = element.getTagName();
+		NamedNodeMap attributes = element.getAttributes();
 		for (int i = 0; i < attributes.getLength(); i++) {
 			PluginAttribute att = (PluginAttribute) getModel().getFactory()
 					.createAttribute(this);
-			att.name = attributes.getQName(i);
-			att.value = attributes.getValue(i);
-			fAttributes.put(attributes.getQName(i), att);
+			Attr attr = (Attr)attributes.item(i);
+			att.name = attr.getName();
+			att.value = attr.getValue();
+			fAttributes.put(att.getName(), att);
+		}
+		NodeList children = element.getChildNodes();
+		for (int i = 0; i < children.getLength(); i++) {
+			Node child = children.item(i);
+			if (child.getNodeType() == Node.ELEMENT_NODE) {
+				PluginElement childElement = new PluginElement();
+				childElement.setModel(getModel());
+				childElement.setInTheModel(true);
+				childElement.setParent(this);
+				this.children.add(childElement);
+				childElement.load((Element)child);
+			}
 		}
 	}
 
