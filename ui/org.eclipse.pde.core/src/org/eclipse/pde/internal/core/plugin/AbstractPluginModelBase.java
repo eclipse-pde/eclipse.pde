@@ -293,5 +293,13 @@ public abstract class AbstractPluginModelBase
 	public boolean isBundleModel() {
 		return false;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.IModel#dispose()
+	 */
+	public void dispose() {
+		documentModel = null;
+		super.dispose();
+	}
 
 }

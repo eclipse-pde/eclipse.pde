@@ -41,7 +41,6 @@ public class Schema extends PlatformObject implements ISchema {
 	private Hashtable lineTable;
 	private boolean valid;
 	private int startLine, endLine;
-	private SAXParser fParser;
 	
 	public Schema(String pluginId, String pointId, String name) {
 		this.pluginId = pluginId;
@@ -337,11 +336,10 @@ public class Schema extends PlatformObject implements ISchema {
 
 	public void load(InputStream stream) {
 		try {
-			if (fParser == null)
-				fParser = SAXParserFactory.newInstance().newSAXParser();
+			SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
 			XMLDefaultHandler handler = new XMLDefaultHandler();			
-			fParser.setProperty("http://xml.org/sax/properties/lexical-handler", handler);
-			fParser.parse(stream, handler);
+			parser.setProperty("http://xml.org/sax/properties/lexical-handler", handler);
+			parser.parse(stream, handler);
 			traverseDocumentTree(handler.getDocumentElement(), handler.getLineTable());
 		} catch (Exception e) {
 			PDECore.logException(e);
