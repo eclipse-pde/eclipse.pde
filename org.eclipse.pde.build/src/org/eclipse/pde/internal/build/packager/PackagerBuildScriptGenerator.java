@@ -58,7 +58,7 @@ public class PackagerBuildScriptGenerator extends FeatureBuildScriptGenerator {
 		removeIgnoredFeatures(assemblageInformation);
 		PackagingConfigScriptGenerator configAssembler = new PackagingConfigScriptGenerator();
 		Config config = (Config) getConfigInfos().get(0);
-		configAssembler.initialize(workingDirectory, DEFAULT_ASSEMBLE_FILENAME, "", config, assemblageInformation.getPlugins(config), assemblageInformation.getFeatures(config), true); //$NON-NLS-1$ //Here the last arg is true because we do not have the root info while packaging
+		configAssembler.initialize(workingDirectory, DEFAULT_ASSEMBLE_FILENAME, "", config, assemblageInformation.getPlugins(config), assemblageInformation.getFeatures(config), assemblageInformation.getRootFileProviders(config)); //$NON-NLS-1$ //Here the last arg is true because we do not have the root info while packaging
 		configAssembler.setPackagingPropertiesLocation(packagingPropertiesLocation);
 		configAssembler.rootFiles(rootFiles);
 		configAssembler.rootDirs(rootDirs);
@@ -127,7 +127,7 @@ public class PackagerBuildScriptGenerator extends FeatureBuildScriptGenerator {
 	public void setIgnoredFeatures(String[] features) {
 		ignoredFeatures = features;
 	}
-	
+
 	protected void collectElementToAssemble(IFeature featureToCollect) throws CoreException {
 		if (assemblyData == null)
 			return;

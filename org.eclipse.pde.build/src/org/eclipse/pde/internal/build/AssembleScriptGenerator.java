@@ -57,7 +57,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 
 	protected void generateAssembleConfigFileTargetCall(Config aConfig) throws CoreException {
 		// generate the script for a configuration
-		configScriptGenerator.initialize(directory, null, featureId, aConfig, assemblageInformation.getPlugins(aConfig), assemblageInformation.getFeatures(aConfig), assemblageInformation.copyRootFile(aConfig));
+		configScriptGenerator.initialize(directory, null, featureId, aConfig, assemblageInformation.getPlugins(aConfig), assemblageInformation.getFeatures(aConfig), assemblageInformation.getRootFileProviders(aConfig));
 		configScriptGenerator.generate();
 
 		Map params = new HashMap(1);

@@ -30,7 +30,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	protected IFeature[] features;
 	protected BundleDescription[] plugins;
 	protected String filename;
-	protected boolean copyRootFile;
+	protected Collection rootFileProviders;
 	protected Properties pluginsPostProcessingSteps;
 	protected Properties featuresPostProcessingSteps;
 
@@ -52,11 +52,11 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		super();
 	}
 
-	public void initialize(String directoryName, String scriptName, String feature, Config configurationInformation, Collection elementList, Collection featureList, boolean rootFileCopy) throws CoreException {
+	public void initialize(String directoryName, String scriptName, String feature, Config configurationInformation, Collection elementList, Collection featureList, Collection rootFileProviders) throws CoreException {
 		this.directory = directoryName;
 		this.featureId = feature;
 		this.configInfo = configurationInformation;
-		this.copyRootFile = rootFileCopy;
+		this.rootFileProviders = rootFileProviders;
 
 		this.features = new IFeature[featureList.size()];
 		featureList.toArray(this.features);
@@ -243,6 +243,18 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 				placeToGather = placeToGather.substring(0, j);
 			script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, Utils.makeRelative(new Path(placeToGather), new Path(workingDirectory)).toOSString(), TARGET_GATHER_BIN_PARTS, null, null, properties);
 		}
+
+		//This will generate gather.bin.parts call to features that provides files for the root
+		properties = new HashMap(1);
+		properties.put(PROPERTY_FEATURE_BASE, getPropertyFormat(PROPERTY_ECLIPSE_BASE));
+		for (Iterator iter = rootFileProviders.iterator(); iter.hasNext();) {
+			IFeature feature = (IFeature) iter.next();
+			String placeToGather = feature.getURL().getPath();
+			int j = placeToGather.lastIndexOf(DEFAULT_FEATURE_FILENAME_DESCRIPTOR);
+			if (j != -1)
+				placeToGather = placeToGather.substring(0, j);
+			script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, Utils.makeRelative(new Path(placeToGather), new Path(workingDirectory)).toOSString(), TARGET_GATHER_BIN_PARTS, null, null, properties);
+		}
 	}
 
 	//generate the appropriate postProcessingCall
@@ -349,7 +361,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	 *  Zip the root files
 	 */
 	private void createZipRootFileCommand() {
-		if (!copyRootFile)
+		if (rootFileProviders.size() == 0)
 			return;
 
 		List parameters = new ArrayList(1);
@@ -371,10 +383,10 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		//This task only support creation of archive with eclipse at the root 
 		//Need to do the copy using cp because of the link
 		List parameters = new ArrayList(2);
-		if (copyRootFile) {
+		if (rootFileProviders.size() > 0) {
 			parameters.add("-r " + getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER) + ' ' + getPropertyFormat(PROPERTY_ASSEMBLY_TMP)); //$NON-NLS-1$ //$NON-NLS-2$  
 			script.printExecTask("cp", getPropertyFormat(PROPERTY_BASEDIR), parameters, null); //$NON-NLS-1$
-	
+
 			parameters.clear();
 			parameters.add("-rf " + getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING)); //$NON-NLS-1$ //$NON-NLS-2$
 			script.printExecTask("rm", getPropertyFormat(PROPERTY_BASEDIR), parameters, null); //$NON-NLS-1$
@@ -401,7 +413,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		if (features.length != 0)
 			script.printZipTask(getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH), null, false, true, filesFeatures);
 
-		if (!copyRootFile)
+		if (rootFileProviders.size() == 0)
 			return;
 
 		FileSet[] rootFiles = new FileSet[1];

@@ -35,8 +35,9 @@ public class AssemblyInformation {
 
 	public void removeFeature(Config config, IFeature feature) {
 		AssemblyLevelConfigInfo entry = (AssemblyLevelConfigInfo) assembleInformation.get(config);
-		entry.removeFeature(feature);		
+		entry.removeFeature(feature);
 	}
+
 	public void addPlugin(Config config, BundleDescription plugin) {
 		AssemblyLevelConfigInfo entry = (AssemblyLevelConfigInfo) assembleInformation.get(config);
 		entry.addPlugin(plugin);
@@ -54,8 +55,12 @@ public class AssemblyInformation {
 		return ((AssemblyLevelConfigInfo) assembleInformation.get(config)).hasRootFile();
 	}
 
-	public void setCopyRootFile(Config config) {
-		((AssemblyLevelConfigInfo) assembleInformation.get(config)).setHasRootFile(true);
+	public Collection getRootFileProviders(Config config) {
+		return ((AssemblyLevelConfigInfo) assembleInformation.get(config)).getRootFileProvider();
+	}
+
+	public void addRootFileProvider(Config config, IFeature feature) {
+		((AssemblyLevelConfigInfo) assembleInformation.get(config)).addRootFileProvider(feature);
 	}
 
 	// All the information that will go into the assemble file for a specific info
@@ -64,15 +69,24 @@ public class AssemblyInformation {
 		private Collection plugins = new HashSet(20);
 		// the features that are contained into this config
 		private Collection features = new HashSet(7);
-		// indicate whether root files needs to be copied
-		private boolean hasRootFile = false;
+		// indicate whether root files needs to be copied and where they are coming from
+		private Collection rootFileProviders = new HashSet(7);
 
-		public void setHasRootFile(boolean rootFile) {
-			hasRootFile = rootFile;
+		public void addRootFileProvider(IFeature feature) {
+			for (Iterator iter = rootFileProviders.iterator(); iter.hasNext();) {
+				BuildTimeFeature featureDescriptor = (BuildTimeFeature) iter.next();
+				if (((BuildTimeFeature) feature).getFeatureIdentifier().equals(featureDescriptor.getFeatureIdentifier()) && ((BuildTimeFeature) feature).getFeatureVersion().equals(featureDescriptor.getFeatureVersion()))
+					return;
+			}
+			rootFileProviders.add(feature);
+		}
+
+		public Collection getRootFileProvider() {
+			return rootFileProviders;
 		}
 
 		public boolean hasRootFile() {
-			return hasRootFile;
+			return rootFileProviders.size() > 0;
 		}
 
 		public Collection getFeatures() {
@@ -95,7 +109,7 @@ public class AssemblyInformation {
 		public void addPlugin(BundleDescription plugin) {
 			plugins.add(plugin);
 		}
-		
+
 		public void removeFeature(IFeature feature) {
 			for (Iterator iter = features.iterator(); iter.hasNext();) {
 				BuildTimeFeature featureDescriptor = (BuildTimeFeature) iter.next();

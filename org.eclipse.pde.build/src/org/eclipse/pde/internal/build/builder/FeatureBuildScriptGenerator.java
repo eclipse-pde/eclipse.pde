@@ -421,10 +421,10 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			script.printMkdirTask(root);
 
 		if (AbstractScriptGenerator.outputFormat.equalsIgnoreCase("antzip")) //$NON-NLS-1$
-//			script.printMkdirTask(root);
+		//			script.printMkdirTask(root);
 
-		if (AbstractScriptGenerator.outputFormat.equalsIgnoreCase("zip") && include != null) //$NON-NLS-1$
-			script.printMkdirTask(root);
+			if (AbstractScriptGenerator.outputFormat.equalsIgnoreCase("zip") && include != null) //$NON-NLS-1$
+				script.printMkdirTask(root);
 
 		if (include != null) {
 			if (include != null || exclude != null) {
@@ -472,7 +472,6 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 *  
 	 */
 	private void generateRootFilesAndPermissions() throws CoreException {
-				
 		for (Iterator iter = getConfigInfos().iterator(); iter.hasNext();) {
 			Config aConfig = (Config) iter.next();
 			script.printTargetDeclaration(TARGET_ROOTFILES_PREFIX + aConfig.toString("_"), null, null, null, null); //$NON-NLS-1$ //$NON-NLS-2$
@@ -489,9 +488,8 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		fileList = (fileList.length() == 0 ? "" : fileList + ',') + baseList; //$NON-NLS-1$ //$NON-NLS-2$
 		if (fileList.equals("")) //$NON-NLS-1$
 			return;
-		
-		assemblyData.addFeature(aConfig, feature); //Add the feature because it may not have been added because 
-		assemblyData.setCopyRootFile(aConfig);
+
+		assemblyData.addRootFileProvider(aConfig, feature);
 		configName = aConfig.toStringReplacingAny(".", ANY_STRING); //$NON-NLS-1$
 		script.printMkdirTask(getPropertyFormat(PROPERTY_FEATURE_BASE) + '/' + configName + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER)); //$NON-NLS-1$ //$NON-NLS-2$
 		String[] files = Utils.getArrayFromString(fileList, ","); //$NON-NLS-1$

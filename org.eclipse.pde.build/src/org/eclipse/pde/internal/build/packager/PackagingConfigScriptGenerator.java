@@ -50,13 +50,13 @@ public class PackagingConfigScriptGenerator extends AssembleConfigScriptGenerato
 		script.println("\t<equals arg1=\"" + getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + "\"  arg2=\"\" trim=\"true\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		script.println("</condition>"); //$NON-NLS-1$
 		script.printProperty(PROPERTY_PLUGIN_ARCHIVE_PREFIX, getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + DEFAULT_PLUGIN_LOCATION);
-		
+
 		script.println();
 		script.println("<condition property=\"" + PROPERTY_FEATURE_ARCHIVE_PREFIX + "\" value=\"" + DEFAULT_FEATURE_LOCATION + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		script.println("\t<equals arg1=\"" + getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + "\"  arg2=\"\" trim=\"true\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		script.println("</condition>"); //$NON-NLS-1$
 		script.printProperty(PROPERTY_FEATURE_ARCHIVE_PREFIX, getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + DEFAULT_FEATURE_LOCATION);
-		
+
 		Map parameters = new HashMap(1);
 		parameters.put("assembleScriptName", filename); //$NON-NLS-1$
 		//TODO Improve the name handling
@@ -178,7 +178,7 @@ public class PackagingConfigScriptGenerator extends AssembleConfigScriptGenerato
 		FileSet[] files = new FileSet[plugins.length + features.length + rootFiles.length + rootDirs.length];
 		if (files.length == 0)
 			return;
-		
+
 		for (int i = 0; i < plugins.length; i++) {
 			Path pluginLocation = new Path(plugins[i].getLocation());
 			boolean isFolder = isFolder(pluginLocation);
@@ -191,7 +191,7 @@ public class PackagingConfigScriptGenerator extends AssembleConfigScriptGenerato
 			files[index++] = new TarFileSet(featureLocation.toOSString(), false, null, null, null, null, null, getPropertyFormat(PROPERTY_FEATURE_ARCHIVE_PREFIX) + '/' + featureLocation.lastSegment(), null);
 		}
 
-		if (!copyRootFile) {
+		if (rootFileProviders.size() == 0) {
 			FileSet[] filesCorrectSize = new FileSet[plugins.length + features.length];
 			System.arraycopy(files, 0, filesCorrectSize, 0, plugins.length + features.length);
 			script.printTarTask(getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH), null, false, true, files);
@@ -214,7 +214,7 @@ public class PackagingConfigScriptGenerator extends AssembleConfigScriptGenerato
 		FileSet[] files = new FileSet[plugins.length + features.length + rootFiles.length + rootDirs.length];
 		if (files.length == 0)
 			return;
-		
+
 		for (int i = 0; i < plugins.length; i++) {
 			Path pluginLocation = new Path(plugins[i].getLocation());
 			boolean isFolder = isFolder(pluginLocation);
@@ -227,7 +227,7 @@ public class PackagingConfigScriptGenerator extends AssembleConfigScriptGenerato
 			files[index++] = new ZipFileSet(featureLocation.toOSString(), false, null, null, null, null, null, getPropertyFormat(PROPERTY_FEATURE_ARCHIVE_PREFIX) + '/' + featureLocation.lastSegment(), null);
 		}
 
-		if (!copyRootFile) {
+		if (rootFileProviders.size() == 0) {
 			FileSet[] filesCorrectSize = new FileSet[plugins.length + features.length];
 			System.arraycopy(files, 0, filesCorrectSize, 0, plugins.length + features.length);
 			script.printTarTask(getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH), null, false, true, files);

@@ -279,18 +279,20 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		Properties properties = getBuildProperties();
 		CompiledEntry[] availableJars = extractEntriesToCompile(properties);
 		script.printTargetDeclaration(TARGET_CLEAN, TARGET_INIT, null, null, Policy.bind("build.plugin.clean", model.getSymbolicName())); //$NON-NLS-1$
-		for (int i = 0; i < availableJars.length; i++) {
-			String jarName = availableJars[i].getName(true);
-			if (availableJars[i].type == CompiledEntry.JAR) {
-				script.printDeleteTask(null, getJARLocation(jarName), null);
-			} else {
-				script.printDeleteTask(getJARLocation(jarName), null, null);
+		if (!binaryPlugin) {
+			for (int i = 0; i < availableJars.length; i++) {
+				String jarName = availableJars[i].getName(true);
+				if (availableJars[i].type == CompiledEntry.JAR) {
+					script.printDeleteTask(null, getJARLocation(jarName), null);
+				} else {
+					script.printDeleteTask(getJARLocation(jarName), null, null);
+				}
+				script.printDeleteTask(null, getSRCLocation(jarName), null);
 			}
-			script.printDeleteTask(null, getSRCLocation(jarName), null);
+			script.printDeleteTask(null, pluginUpdateJarDestination, null);
+			script.printDeleteTask(null, pluginZipDestination, null);
+			script.printDeleteTask(getPropertyFormat(IXMLConstants.PROPERTY_TEMP_FOLDER), null, null);
 		}
-		script.printDeleteTask(null, pluginUpdateJarDestination, null);
-		script.printDeleteTask(null, pluginZipDestination, null);
-		script.printDeleteTask(getPropertyFormat(IXMLConstants.PROPERTY_TEMP_FOLDER), null, null);
 		script.printTargetEnd();
 	}
 
