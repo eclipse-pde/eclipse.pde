@@ -19,6 +19,7 @@ import org.eclipse.jdt.launching.*;
 
 import org.eclipse.pde.internal.PDEPlugin;
 import org.eclipse.pde.internal.PDEPluginImages;
+import org.eclipse.pde.internal.base.model.plugin.IPluginModelBase;
 
 public class WorkbenchLauncherWizard extends Wizard implements ILaunchWizard {
 
@@ -29,6 +30,7 @@ public class WorkbenchLauncherWizard extends Wizard implements ILaunchWizard {
 
 	private WorkbenchLauncherWizardBasicPage page1;
 	private WorkbenchLauncherWizardAdvancedPage page2;
+	private IStructuredSelection selection;
 
 	public WorkbenchLauncherWizard() {
 		setDialogSettings(getSettingsSection());
@@ -96,16 +98,17 @@ public class WorkbenchLauncherWizard extends Wizard implements ILaunchWizard {
 	}
 
 	private void delegateLaunch(IProgressMonitor monitor) throws CoreException {
-		/*
 		IPath targetWorkbenchLocation= page1.getWorkspaceLocation();
 		boolean clearWorkspace= page1.doClearWorkspace();
 		IVMInstall install= page1.getVMInstall();
-		IVMRunner runner= install.getVMRunner(fMode);
+		IVMRunner runner= install.getVMRunner(mode);
 		IPluginModelBase[] plugins= page2.getPlugins();
-		ExecutionArguments args= new ExecutionArguments(fPage1.getVMArguments(), fPage1.getProgramArguments());
-		String appname= fPage1.getApplicationName();
-		EclipseLauncherDelegate delegate= (EclipseLauncherDelegate) fLauncher.getDelegate();
-		delegate.doLaunch(fLauncher, fMode, runner, targetWorkbenchLocation, clearWorkspace, args, plugins, appname, monitor);
+		ExecutionArguments args= new ExecutionArguments(page1.getVMArguments(), page1.getProgramArguments());
+		String appname= page1.getApplicationName();
+		/*
+		NewWorkbenchLauncher delegate= (NewWorkbenchLauncher) launcher.getDelegate();
+		delegate.initialize(runner, targetWorkbenchLocation, clearWorkspace, args, plugins, appname);
+		delegate.launch(selection.toArray(), mode, launcher, monitor);
 		*/
 	}
 
@@ -118,6 +121,7 @@ public class WorkbenchLauncherWizard extends Wizard implements ILaunchWizard {
 		IStructuredSelection selection) {
 		this.mode = mode;
 		this.launcher = launcher;
+		this.selection = selection;
 		initializeDefaultPageImageDescriptor();
 	}
 

@@ -37,12 +37,13 @@ public class ExternalPluginsBlock implements ICheckStateListener {
 	private Button selectAllButton;
 	private ExternalPluginsEditor editor;
 	private Label selectedLabel;
-	private static final String SAVED_ALL = "[all]";
+	public static final String SAVED_ALL = "[all]";
+	public static final String SAVED_NONE = "[none]";
 	private static final String KEY_RELOAD = "ExternalPluginsBlock.reload";
 	private static final String KEY_SELECT_ALL = "ExternalPluginsBlock.selectAll";
 	private static final String KEY_DESELECT_ALL = "ExternalPluginsBlock.deselectAll";
 	private static final String KEY_SELECTED = "ExternalPluginsBlock.selected";
-	private static final String SAVED_NONE = "[none]";
+
 	private int selectedCount;
 	private ExternalModelManager registry;
 	private Image externalPluginImage;

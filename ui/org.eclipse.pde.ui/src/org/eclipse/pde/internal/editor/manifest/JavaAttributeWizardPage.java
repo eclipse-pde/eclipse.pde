@@ -366,6 +366,7 @@ private void handleFindType(Text target) {
 				project,
 				IJavaElementSearchConstants.CONSIDER_TYPES,
 				false);
+		dialog.setMessage("");
 		int status = dialog.open();
 		if (status == SelectionDialog.OK) {
 			Object[] result = dialog.getResult();

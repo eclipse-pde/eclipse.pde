@@ -123,7 +123,7 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage {
 		label.setText(
 			"You can restore launcher settings to the values set in the Preferences.");
 		data = fillIntoGrid(label, 2, false);
-		data.verticalAlignment = GridData.BEGINNING;
+		//data.verticalAlignment = GridData.BEGINNING;
 
 		initializeFields();
 		hookListeners();

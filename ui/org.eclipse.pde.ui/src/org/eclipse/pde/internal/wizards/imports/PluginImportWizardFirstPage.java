@@ -21,7 +21,7 @@ import org.eclipse.jface.resource.JFaceResources;
 public class PluginImportWizardFirstPage extends StatusWizardPage {
 
 	private static final String SETTINGS_DROPLOCATION = "droplocation";
-	private static final String SETTINGS_DOOTHER = "doimport";
+	private static final String SETTINGS_DOOTHER = "doother";
 	private static final String SETTINGS_DOIMPORT = "doimport";
 	private static final String SETTINGS_DOEXTRACT = "doextract";
 	private static final String KEY_TITLE = "ImportWizard.FirstPage.title";
@@ -32,8 +32,7 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 		"ImportWizard.FirstPage.otherLocation";
 	private static final String KEY_RUNTIME_DESC =
 		"ImportWizard.FirstPage.runtimeDesc";
-	private static final String KEY_OTHER_DESC =
-		"ImportWizard.FirstPage.otherDesc";
+	private static final String KEY_OTHER_DESC = "ImportWizard.FirstPage.otherDesc";
 	private static final String KEY_OTHER_FOLDER =
 		"ImportWizard.FirstPage.otherFolder";
 	private static final String KEY_BROWSE = "ImportWizard.FirstPage.browse";
@@ -41,11 +40,16 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 		"ImportWizard.FirstPage.importCheck";
 	private static final String KEY_EXTRACT_CHECK =
 		"ImportWizard.FirstPage.extractCheck";
-	private static final String KEY_FOLDER_TITLE = "ImportWizard.messages.folder.title";
-	private static final String KEY_FOLDER_MESSAGE = "ImportWizard.messages.folder.message";
-	private static final String KEY_LOCATION_MISSING = "ImportWizard.errors.locationMissing";
-	private static final String KEY_BUILD_INVALID = "ImportWizard.errors.buildFolderInvalid";
-	private static final String KEY_BUILD_MISSING = "ImportWizard.errors.buildFolderMissing";
+	private static final String KEY_FOLDER_TITLE =
+		"ImportWizard.messages.folder.title";
+	private static final String KEY_FOLDER_MESSAGE =
+		"ImportWizard.messages.folder.message";
+	private static final String KEY_LOCATION_MISSING =
+		"ImportWizard.errors.locationMissing";
+	private static final String KEY_BUILD_INVALID =
+		"ImportWizard.errors.buildFolderInvalid";
+	private static final String KEY_BUILD_MISSING =
+		"ImportWizard.errors.buildFolderMissing";
 
 	private Label otherLocationLabel;
 	private Button runtimeLocationButton;
@@ -176,7 +180,7 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 		});
 		setControl(composite);
 	}
-	
+
 	private GridData fillHorizontal(Control control, int span) {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = span;
@@ -254,8 +258,6 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 		}
 		return null;
 	}
-	
-
 
 	private void validateDropLocation() {
 		if (isOtherLocation()) {
