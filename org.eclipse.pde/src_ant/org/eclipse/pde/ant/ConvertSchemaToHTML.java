@@ -12,8 +12,8 @@ import org.xml.sax.*;
 
 public class ConvertSchemaToHTML extends Task {
 	
-	private static SourceDOMParser parser = new SourceDOMParser();
-	private static SchemaTransformer transformer = new SchemaTransformer();
+	private SourceDOMParser parser = new SourceDOMParser();
+	private SchemaTransformer transformer = new SchemaTransformer();
 	private String schemalocation;
 	private String outputlocation;
 	
