@@ -214,8 +214,9 @@ public class MigratePluginWizard extends Wizard {
 	
 	private String[] getAdditionalImports(IPluginModelBase model) {
 		ArrayList result = new ArrayList();
-		if (findImport(model, "org.eclipse.core.runtime") == null)
-			result.add("org.eclipse.core.runtime.compatibility");
+		//TODO do no just add.  If core.runtime exists, replace it.
+		//if (findImport(model, "org.eclipse.core.runtime") == null)
+		result.add("org.eclipse.core.runtime.compatibility");
 		IPluginImport uiImport = findImport(model, "org.eclipse.ui");
 		if (uiImport != null) {
 			ArrayList list = new ArrayList();
