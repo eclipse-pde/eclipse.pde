@@ -78,7 +78,7 @@ public class BuildOptionsPreferencePage extends PreferencePage implements IWorkb
 		fJavacSource.setItems(new String[] {"1.3", "1.4"}); //$NON-NLS-1$ //$NON-NLS-2$
 		fJavacSource.setText(store.getString(PROP_JAVAC_SOURCE));
 		gd = new GridData();
-		gd.widthHint = 50;
+		gd.widthHint = 100;
 		fJavacSource.setLayoutData(gd);
 		
 		label = new Label(composite, SWT.NONE);
@@ -88,7 +88,7 @@ public class BuildOptionsPreferencePage extends PreferencePage implements IWorkb
 		fJavacTarget.setItems(new String[] {"1.1", "1.2", "1.3", "1.4"}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		fJavacTarget.setText(store.getString(PROP_JAVAC_TARGET));
 		gd = new GridData();
-		gd.widthHint = 50;
+		gd.widthHint = 100;
 		fJavacTarget.setLayoutData(gd);
 		
 		Dialog.applyDialogFont(composite);
