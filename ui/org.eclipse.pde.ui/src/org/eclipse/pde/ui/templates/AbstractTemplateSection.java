@@ -322,7 +322,7 @@ public abstract class AbstractTemplateSection
 				}
 				if (dstContainer == null) {
 					if (isOkToCreateFolder(member) == false)
-						return;
+						continue;
 					String folderName = getProcessedString(member.getName(), member.getName());
 					dstContainer = dst.getFolder(new Path(folderName));
 				}
@@ -330,8 +330,10 @@ public abstract class AbstractTemplateSection
 					 ((IFolder) dstContainer).create(true, true, monitor);
 				generateFiles(member, dstContainer, false, binary, monitor);
 			} else {
-				if (isOkToCreateFile(member))
+				if (isOkToCreateFile(member)) {
+					if (firstLevel)  binary=false;
 					copyFile(member, dst, binary, monitor);
+				}
 			}
 		}
 	}

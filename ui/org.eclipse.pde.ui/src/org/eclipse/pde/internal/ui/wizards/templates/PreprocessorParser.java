@@ -14,6 +14,8 @@ public class PreprocessorParser {
 	private static final int T_EQ = 7;
 	private static final int T_NEQ = 8;
 	private static final int T_STRING = 9;
+	private static final int T_TRUE = 22;
+	private static final int T_FALSE = 23;
 	private static final int T_ERROR = 99;
 	private static final int T_EOF = 10;
 
@@ -198,7 +200,13 @@ public class PreprocessorParser {
 				pushNode(node);
 				continue;
 			}
-			if (token == T_VAR || token == T_STRING) {
+			if (token == T_TRUE || token == T_FALSE) {
+				Object value = token==T_TRUE?Boolean.TRUE:Boolean.FALSE;
+				Node node = new LeafNode(value);
+				pushNode(node);
+				continue;
+			}
+			if (token == T_STRING) {
 				Node node = new LeafNode(tvalue);
 				pushNode(node);
 				continue;
@@ -343,6 +351,10 @@ public class PreprocessorParser {
 					loc--;
 					tvalue = line.substring(vloc, loc);
 					variable = false;
+					if (tvalue.equalsIgnoreCase("false"))
+						return T_FALSE;
+					if (tvalue.equalsIgnoreCase("true"))
+						return T_TRUE;
 					return T_VAR;
 				} else
 					continue;

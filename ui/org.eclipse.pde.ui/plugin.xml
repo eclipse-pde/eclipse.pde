@@ -372,6 +372,19 @@
             %newExtension.templates.editor.desc
          </description>
       </wizard>
+      <wizard
+            category="templates"
+            class="org.eclipse.pde.internal.ui.wizards.templates.HelpTemplate"
+            icon="icons/full/ctool16/newex_wiz.gif"
+            template="true"
+            availableAsShortcut="true"
+            id="org.eclipse.pde.ui.newExtension.help"
+            name="%newExtension.templates.help.name">
+         <description>
+            %newExtension.templates.help.desc
+
+         </description>
+      </wizard>
    </extension>
    <extension
          point="org.eclipse.ui.editors">
@@ -799,6 +812,11 @@
             name="%template.preferences.name"
             class="org.eclipse.pde.internal.ui.wizards.templates.PreferencePageTemplate"
             id="org.eclipse.pde.ui.templates.perspectiveExtensions">
+      </template>
+      <template
+            name="%template.help.name"
+            class="org.eclipse.pde.internal.ui.wizards.templates.HelpTemplate"
+            id="org.eclipse.pde.ui.templates.help">
       </template>
    </extension>
 
