@@ -22,6 +22,7 @@
       <import plugin="org.eclipse.text"/>
       <import plugin="org.eclipse.core.runtime.compatibility"/>
       <import plugin="org.eclipse.ui.intro"/>
+      <import plugin="org.eclipse.ui.cheatsheets"/>
    </requires>
 
 
@@ -126,47 +127,70 @@
             value="true">
       </persistent>
    </extension>
-   
-  <extension point="org.eclipse.ui.intro.configExtension"> 
-  	<configExtension configId="org.eclipse.platform.introConfig">  
-  		<!-- Extension to the SDK Overview Page. -->
-  		<extensionContent path="overview/overview-links" style="css/overview.css" alt-style="css/swt.properties">
-        	<link
-	        	url="http://org.eclipse.ui.intro/showHelpTopic?id=/org.eclipse.pde.doc.user/guide/pde.htm"
-	            label="%intro.pde.label"
-	            id="pde">
-	            <text>%intro.pde.text</text>
-	        </link>
-    	</extensionContent>
-    	<!-- This is where you define shared divs or pages to be used by the   -->
-    	<!-- above extension.   -->
-     </configExtension>
-     
-     <!-- Extension to the SDK Tutorial Page. -->
-     <configExtension configId="org.eclipse.platform.introConfig">  
-  		<extensionContent path="tutorials" style="css/tutorials.css" alt-style="css/swt.properties">
-        	<div label="%intro.div.pde.label"
-	            id="pde">
-	            <link
-	               label="%intro.rcp.label"
-	               url="about:blank;"
-	               id="rcp">
-	               <text>%intro.rcp.text</text>
-	         	</link>
-	         	<link
-	               label="%intro.hello.label"
-	               url="about:blank;"
-	               id="pde-hello-world">
-	            	<text>%intro.hello.text</text>
-	         	</link>
-	         	<link
-	               label="%intro.feature.label"
-	               url="about:blank;"
-	               id="features">
-	            	<text>%intro.feature.text</text>
-	         	</link>
-	        </div>
-    	</extensionContent>
-     </configExtension>  
-   </extension>    
+   <extension
+         point="org.eclipse.ui.intro.configExtension">
+      <configExtension
+            configId="org.eclipse.platform.introConfig">
+<!-- Extension to the SDK Overview Page. -->
+         <extensionContent
+               alt-style="css/swt.properties"
+               style="css/overview.css"
+               path="overview/overview-links">
+            <link
+                  label="%intro.pde.label"
+                  url="http://org.eclipse.ui.intro/showHelpTopic?id=/org.eclipse.pde.doc.user/guide/pde.htm"
+                  id="pde">
+               <text>
+                  %intro.pde.text
+               </text>
+            </link>
+         </extensionContent>
+      </configExtension>
+<!-- Extension to the SDK Tutorial Page. -->
+      <configExtension
+            configId="org.eclipse.platform.introConfig">
+         <extensionContent
+               alt-style="css/swt.properties"
+               style="css/tutorials.css"
+               path="tutorials">
+            <div
+                  label="%intro.div.pde.label"
+                  id="pde">
+               <link
+                     url="http://org.eclipse.ui.intro/showMessage?message=Action not implemented."
+                     label="%intro.rcp.label"
+                     id="rcp">
+                  <text>
+                     %intro.rcp.text
+                  </text>
+               </link>
+               <link
+                     url="http://org.eclipse.ui.intro/showStandby?partId=org.eclipse.ui.cheatsheets.standbyPart&amp;input=org.eclipse.pde.pde_1"
+                     label="%intro.hello.label"
+                     id="pde-hello-world">
+                  <text>
+                     %intro.hello.text
+                  </text>
+               </link>
+               <link
+                     url="http://org.eclipse.ui.intro/showMessage?message=Action not implemented."
+                     label="%intro.feature.label"
+                     id="features">
+                  <text>
+                     %intro.feature.text
+                  </text>
+               </link>
+            </div>
+         </extensionContent>
+      </configExtension>
+   </extension>
+
+   <extension point="org.eclipse.ui.cheatsheets.cheatSheetContent">
+      <cheatSheet
+            name="%cheatsheet.name"
+            contentFile="cheatsheets/PDE_1.xml"
+            id="org.eclipse.pde.pde_1">
+         <description>%cheatsheet.desc</description>
+      </cheatSheet>
+   </extension>
 </plugin>

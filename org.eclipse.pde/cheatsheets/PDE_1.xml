@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<cheatSheet title="Creating a plug-in">
+
+	<intro 
+		href="/org.eclipse.ui.cheatsheets.doc/tasks/tcheatst.htm">
+This cheat sheet will automatically launch wizards, perform actions, and guide you through the individual steps to create a plug-in using the Plug-in Development Environment (PDE). To learn more about using cheat sheets or to see a list of available cheat sheets click help (?). To start working on this cheat sheet, click the &quot;Click to begin&quot; button below.
+	</intro>
+
+	<item
+		href="/org.eclipse.pde.doc.user/guide/pde_configuring.htm"
+		title="Configuring PDE" 
+		kind="both"
+		pluginId=""
+		class="">
+Select the &quot;Target Platform&quot; page under Plug-in Development in the Window&gt;Preferences dialog and choose the location of your run-time workspace. This step sets the run-time workbench instance path. The &quot;Target Platform&quot; page is automatically launched when you click the &quot;Click to perform button&quot;.	
+	</item>
+
+	<item
+		href="/org.eclipse.pde.doc.user/guide/pde_setup.htm"
+		title="Setting up the Workbench"
+		kind="both"
+		pluginId=""
+		class="">
+Select Window-&gt;Open Perspective-&gt;Other... and choose Plug-in Development. This step changes the perspective to set up the workbench for PDE. The &quot;Plug-in Development&quot; perspective is automatically displayed when you click the &quot;Click to perform button&quot;.
+	</item>
+
+	<item
+		href="/org.eclipse.pde.doc.user/guide/pde_creating.htm" 
+		title="Creating a New Plug-in Project" 
+		kind="both"
+		pluginId=""
+		class="" >
+Select File&gt;New&gt;Project... and choose Plug-in Project in the list of wizards under the &quot;Plug-in Development&quot; category. Complete the subsequent pages as required. This step creates the plug-in project. The &quot;New Plug-in Project&quot; wizard is automatically displayed when you click the &quot;Click to perform button&quot;.		
+	</item>
+
+	<item
+		href="/org.eclipse.pde.doc.user/guide/pde_manifest_dependencies.htm"
+		title="Editing the Dependencies Section of the Plug-in Manifest File" 
+		kind="manual">
+Select the Dependencies page tab in the Plug-in manifest editor and add or remove plug-ins as required. This step modifies the list of dependencies by adding or removing plug-ins. This is a manual task, you will need to perform the work and click the &quot;Click to complete&quot; button to move to the next step.
+ 	</item>
+
+	<item
+		href="/org.eclipse.pde.doc.user/guide/pde_manifest_extensions.htm"
+		title="Editing the Extensions Section of the Plug-in Manifest File" 
+		kind="manual">
+Select the Extensions page tab in the Plug-in manifest editor and add extensions as required. This step adds extensions to extension points declared by other plug-ins. This is a manual task, you will need to perform the work and click the &quot;Click to complete&quot; button to move to the next step.	
+	</item>
+
+	<item
+		href="/org.eclipse.pde.doc.user/guide/pde_manifest_runtime.htm"
+		title="Editing the Runtime Section of the Plug-in Manifest File" 
+		kind="manual">
+Select the Runtime page tab in the Plug-in manifest editor and define library types, visibility, and content as required. This step defines how the classes that are in source folders during the design time are packaged into the libraries. This is a manual task, you will need to perform the work and click the "Click to complete” button to move to the next step.	
+	</item>
+	
+	<item
+		href="/org.eclipse.pde.doc.user/guide/pde_manifest_extensionpoints.htm"
+		title="Editing the Extension Points Section of the Plug-in Manifest File" 
+		kind="manual">
+Select the Extension Points page tab in the Plug-in manifest editor and define extension points as required. This step defines plug-in extension points. This is a manual task, you will need to perform the work and click the &quot;Click to complete&quot; button to move to the next step.
+	</item>
+		
+	<item
+		href="/org.eclipse.pde.doc.user/guide/pde_running.htm"
+		title="Running the plug-in" 
+		kind="both"
+		pluginId=""
+		class="" >
+Select Run-&gt;Run. Complete the launch dialog as required and click Run. In the menu bar of the new runtime workbench click the new sample menu item and select the new sample action. This step will send the output to the Console view of the perspective. The &quot;Run&quot; dialog is automatically displayed when you click the &quot;Click to perform button&quot;.
+	</item>
+	
+	<item
+		href="/org.eclipse.pde.doc.user/guide/pde_deploy.htm"
+		title="Deploying a plug-in" 
+		kind="both"
+		pluginId=""
+		class="" >
+Select File&gt;Export...&gt;Deployable plug-ins and fragments and select the appropriate plug-ins and fragments. This step packages the workspace plug-in in a format that will make it easily deployable in any Eclipse product. The “Deployable plug-ins and fragments” dialog is automatically displayed when you click the “Click to perform button”.
+	</item>
+</cheatSheet>
