@@ -517,6 +517,7 @@ public class FirstTemplateWizardPage extends WizardPage {
 			// add library
 			IPluginLibrary library = model.getFactory().createLibrary();
 			library.setName(structureData.getRuntimeLibraryName());
+			library.setExported(true);
 			plugin.add(library);
 		}
 		
