@@ -39,7 +39,11 @@ public interface ILauncherSettings {
 	String TRACING_CHECKED = "checked";
 	String TRACING_NONE = "[NONE]";
 	
-	
+	// Configuration tab
+	String CONFIG_USE_DEFAULT = "useDefaultConfig";
+	String CONFIG_AUTO_START = "autoStartList";
+	String CONFIG_CLEAR = "clearConfig";
+		
 	// config file location
 	String CONFIG_LOCATION = "configLocation";
 	

@@ -162,9 +162,14 @@ public class LaunchListener
 				});
 			}
 
-			String configDir = launch.getAttribute(ILauncherSettings.CONFIG_LOCATION);
-			if (configDir != null)
-				deleteConfig(new File(configDir));
+			try {
+				String configDir = launch.getAttribute(ILauncherSettings.CONFIG_LOCATION);
+				if (configDir != null
+						&& launch.getLaunchConfiguration().getAttribute(ILauncherSettings.CONFIG_CLEAR, true)) {
+					deleteConfig(new File(configDir));
+				}
+			} catch (CoreException e) {
+			}
 		}
 	}
 	

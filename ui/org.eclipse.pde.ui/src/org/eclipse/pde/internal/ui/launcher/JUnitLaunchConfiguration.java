@@ -180,7 +180,8 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 			TargetPlatform.createPlatformConfigurationArea(
 				pluginMap,
 				new Path(targetWorkspace),
-				primaryFeatureId);
+				primaryFeatureId,
+				LauncherUtils.getAutoStartPlugins(configuration));
 		programArgs.add("file:" + configFile.getPath());
 
 		if (!PDECore.getDefault().getModelManager().isOSGiRuntime()) {

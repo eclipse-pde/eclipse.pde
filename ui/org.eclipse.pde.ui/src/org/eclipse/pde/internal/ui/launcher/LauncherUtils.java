@@ -200,21 +200,11 @@ public class LauncherUtils {
 
 		StringBuffer errorText = new StringBuffer();		
 		final String lineSeparator = System.getProperty("line.separator");
-		if (!PDECore.getDefault().getModelManager().isOSGiRuntime()) {
-			if (!map.containsKey("org.eclipse.core.boot")) {
-				errorText.append("org.eclipse.core.boot" + lineSeparator);
-			}
-		} else {
-			if (!map.containsKey("org.eclipse.osgi"))
-				errorText.append("org.eclipse.osgi" + lineSeparator);
-			if (!map.containsKey("org.eclipse.osgi.services"))
-				errorText.append("org.eclipse.osgi.services" + lineSeparator);
-			if (!map.containsKey("org.eclipse.osgi.util"))
-				errorText.append("org.eclipse.osgi.util" + lineSeparator);
-			if (!map.containsKey("org.eclipse.core.runtime"))
-				errorText.append("org.eclipse.core.runtime" + lineSeparator);
-			if (!map.containsKey("org.eclipse.update.configurator"))
-				errorText.append("org.eclipse.update.configurator");
+		ArrayList list = getAutoStartPlugins(config);
+		for (int i = 0; i < list.size(); i++) {
+			String id = list.get(i).toString();
+			if (!map.containsKey(id))
+				errorText.append(id + lineSeparator);
 		}
 		
 		if (errorText.length() > 0) {
@@ -247,6 +237,30 @@ public class LauncherUtils {
 			}
 		}		
 		return map;
+	}
+	
+	public static ArrayList getAutoStartPlugins(ILaunchConfiguration config) {
+		ArrayList list = new ArrayList();
+		if (!PDECore.getDefault().getModelManager().isOSGiRuntime()) {
+			list.add("org.eclipse.core.boot");
+		} else {
+			try {
+				list.add("org.eclipse.osgi");
+				if (config.getAttribute(ILauncherSettings.CONFIG_USE_DEFAULT, true)) {
+					list.add("org.eclipse.osgi.services");
+					list.add("org.eclipse.osgi.util");
+					list.add("org.eclipse.core.runtime");
+					list.add("org.eclipse.update.configurator");
+				} else {
+					String selected = config.getAttribute(ILauncherSettings.CONFIG_AUTO_START, "");
+					StringTokenizer tokenizer = new StringTokenizer(selected, ",");
+					while (tokenizer.hasMoreTokens())
+						list.add(tokenizer.nextToken());
+				}
+			} catch (CoreException e) {
+			}
+		}		
+		return list;
 	}
 	
 	private static IPluginModelBase[] getPluginAndPrereqs(String id) {

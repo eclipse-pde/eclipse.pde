@@ -134,7 +134,8 @@ public class WorkbenchLaunchConfigurationDelegate
 				TargetPlatform.createPlatformConfigurationArea(
 					pluginMap,
 					new Path(targetWorkspace),
-					primaryFeatureId);
+					primaryFeatureId,
+					LauncherUtils.getAutoStartPlugins(configuration));
 			programArgs.add("file:" + configFile.getPath());
 			
 			if (!isOSGI) {

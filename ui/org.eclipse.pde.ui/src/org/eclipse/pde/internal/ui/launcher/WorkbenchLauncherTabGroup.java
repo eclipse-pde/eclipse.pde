@@ -15,6 +15,7 @@ import org.eclipse.debug.core.*;
 import org.eclipse.debug.ui.*;
 import org.eclipse.jdt.debug.ui.launchConfigurations.*;
 import org.eclipse.jdt.launching.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.widgets.*;
 
@@ -24,15 +25,19 @@ public class WorkbenchLauncherTabGroup extends AbstractLaunchConfigurationTabGro
 	 * @see ILaunchConfigurationTabGroup#createTabs(ILaunchConfigurationDialog,
 	 *      String)
 	 */
-	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
-		ILaunchConfigurationTab[] tabs =
-			new ILaunchConfigurationTab[] {
-				new BasicLauncherTab(),
-				new AdvancedLauncherTab(),
-				new TracingLauncherTab(),
-				new JavaSourceLookupTab(),
-				new EnvironmentTab(),
-				new CommonTab()};
+public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
+		ILaunchConfigurationTab[] tabs = null;
+		if (PDECore.getDefault().getModelManager().isOSGiRuntime()) {
+			tabs = new ILaunchConfigurationTab[]{new BasicLauncherTab(),
+					new AdvancedLauncherTab(), new TracingLauncherTab(),
+					new ConfigurationTab(), new JavaSourceLookupTab(),
+					new EnvironmentTab(), new CommonTab()};
+		} else {
+			tabs = new ILaunchConfigurationTab[]{new BasicLauncherTab(),
+					new AdvancedLauncherTab(), new TracingLauncherTab(),
+					new JavaSourceLookupTab(), new EnvironmentTab(),
+					new CommonTab()};
+		}
 		setTabs(tabs);
 	}
 	/**

@@ -22,7 +22,7 @@ import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 
 public class PluginModelManager implements IAdaptable {
-	private static final String OSGI_RUNTIME ="org.eclipse.core.runtime.compatibility";
+	private static final String OSGI_RUNTIME ="org.eclipse.osgi";
 	private IModelProviderListener providerListener;
 	private IExternalModelManager externalManager;
 	private IWorkspaceModelManager workspaceManager;
