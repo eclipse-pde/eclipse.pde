@@ -489,6 +489,7 @@ public class PluginActivationSection extends TableSection
 			update();
 			topBook.getParent().layout();
 			getManagedForm().reflow(true);
+			fExceptionsTableViewer.setInput(getBundleModel());
 		}
 	}
 	/* (non-Javadoc)
