@@ -146,6 +146,8 @@ public class PluginModelManager implements IAdaptable {
 			return null;
 		IPluginModelBase modelBase = (IPluginModelBase)model;
 		String id = modelBase.getPluginBase().getId();
+		if (id == null || id.length() == 0)
+			return null;
 		return (ModelEntry)entries.get(id);
 	}
 	

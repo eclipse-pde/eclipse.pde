@@ -26,7 +26,7 @@ import org.eclipse.ui.intro.IIntroSite;
 import org.eclipse.ui.intro.internal.model.IIntroAction;
 import org.eclipse.ui.intro.internal.model.IntroURL;
 import org.eclipse.ui.intro.internal.model.IntroURLParser;
-import org.eclipse.update.internal.standalone.InstallCommand;
+import org.eclipse.update.standalone.*;
 /**
  * @author dejan
  * 
