@@ -381,9 +381,12 @@ public class WorkspaceModelManager
 			if (delta.getKind() == IResourceDelta.REMOVED) {
 				IModel model = getWorkspaceModel(file, false);
 				// manifest has been removed - ditch the model
-				removeWorkspaceModel(model);
+				if (model != null)
+					removeWorkspaceModel(model);
 			} else if (delta.getKind() == IResourceDelta.CHANGED) {
 				IModel model = getWorkspaceModel(file);
+				if (model == null)
+					return;
 				if ((IResourceDelta.CONTENT & delta.getFlags()) != 0) {
 					// file content modified - sync up
 					if (model instanceof IFeatureModel)
