@@ -372,20 +372,15 @@ public class ClasspathUtilCore {
 			boolean isExported = unconditionallyExport ? true : library.isFullyExported();
 
 			IPluginModelBase model = library.getModel();
-
-			IPath path = new Path(model.getInstallLocation()).append(expandedName);
-
-			if (!path.toFile().exists()) {
-				if (!model.isFragmentModel()) {
-					model = resolveLibraryInFragments(library, expandedName);
-					if (model == null)
-						return null;
-					path = new Path(model.getInstallLocation()).append(expandedName);
-				} else {
+			IPath path = getPath(model, expandedName);
+			if (path == null) {
+				if (model.isFragmentModel())
 					return null;
-				}
+				model = resolveLibraryInFragments(library, expandedName);
+				if (model == null)
+					return null;
+				path = getPath(model, expandedName);
 			}
-
 			if (relative && model.getUnderlyingResource() == null) {
 				return JavaCore.newVariableEntry(
 					EclipseHomeInitializer.createEclipseRelativeHome(path.toOSString()),
@@ -394,10 +389,6 @@ public class ClasspathUtilCore {
 					isExported);
 			}
 
-			IResource resource = model.getUnderlyingResource();
-			if (resource != null)
-				path = resource.getProject().getFullPath().append(expandedName);
-			
 			return JavaCore.newLibraryEntry(
 				path,
 				getSourceAnnotation(model, expandedName, relative),
@@ -457,19 +448,15 @@ public class ClasspathUtilCore {
 	private static IPath getSourceAnnotation(
 		IPluginModelBase model,
 		String libraryName,
-		boolean relative) throws CoreException {
+		boolean relative)
+		throws CoreException {
 		IPath path = null;
 		int dot = libraryName.lastIndexOf('.');
 		if (dot != -1) {
 			String zipName = libraryName.substring(0, dot) + "src.zip";
-
-			path = new Path(model.getInstallLocation()).append(zipName);
-			IResource resource = model.getUnderlyingResource();
-			if (path.toFile().exists()) {
-				if (resource != null) {
-					path = resource.getProject().getFullPath().append(zipName);
-				}
-			} else {
+			path = getPath(model, zipName);
+			if (path == null) {
+				IResource resource = model.getUnderlyingResource();
 				SourceLocationManager manager =
 					PDECore.getDefault().getSourceLocationManager();
 				path =
@@ -477,8 +464,11 @@ public class ClasspathUtilCore {
 						model.getPluginBase(),
 						new Path(zipName));
 				if (path != null) {
-					if (!relative || (resource != null && !resource.getProject().hasNature(JavaCore.NATURE_ID)))
-					path = JavaCore.getResolvedVariablePath(path);
+					if (!relative
+						|| (resource != null
+							&& !resource.getProject().hasNature(JavaCore.NATURE_ID))
+						|| (resource != null && resource.isLinked()))
+						path = JavaCore.getResolvedVariablePath(path);
 				}
 			}
 		}
@@ -494,15 +484,29 @@ public class ClasspathUtilCore {
 				library.getPluginBase().getVersion());
 
 		for (int i = 0; i < fragments.length; i++) {
-			IFragment fragment = fragments[i];
+			IPath path = getPath(fragments[i].getModel(), libraryName);
+			if (path != null)
+				return fragments[i].getModel();
+		}
+		return null;
+	}
+	
+	private static IPath getPath(IPluginModelBase model, String libraryName) {
+		IResource resource = model.getUnderlyingResource();
+		if (resource != null) {
+			IResource jarFile = resource.getProject().findMember(libraryName);
+			if (jarFile != null)
+				return jarFile.getFullPath();
+		} else {
 			IPath path =
-				new Path(fragment.getModel().getInstallLocation()).append(
+				new Path(model.getInstallLocation()).append(
 					libraryName);
 			if (path.toFile().exists()) {
-				return fragment.getModel();
+				return path;
 			}
 		}
 		return null;
+		
 	}
 		
 }
