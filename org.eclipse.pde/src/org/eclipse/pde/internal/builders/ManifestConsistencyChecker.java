@@ -36,6 +36,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 
 	private boolean javaDelta = false;
 	private boolean fileCompiled = false;
+	private boolean ignoreJavaChanges=false;
 
 	class DeltaVisitor implements IResourceDeltaVisitor {
 		private IProgressMonitor monitor;
@@ -59,7 +60,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 						checkFile(candidate, monitor);
 						return false;
 					}
-				} else if (isJavaFile(candidate)) {
+				} else if (!ignoreJavaChanges && isJavaFile(candidate)) {
 					javaDelta = true;
 					return false;
 				}
@@ -106,6 +107,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		IProject project = getProject();
 		fileCompiled = false;
 		javaDelta = false;
+		ignoreJavaChanges = CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_CLASS)==CompilerFlags.IGNORE;
 
 		// Ignore binary plug-in projects
 		if (WorkspaceModelManager.isBinaryPluginProject(project))
@@ -398,7 +400,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		validateExtensionPoints(pluginBase, reporter);
 	}
 
-	public static void validateRequiredAttributes(
+	private void validateRequiredAttributes(
 		IPluginBase pluginBase,
 		PluginErrorReporter reporter) {
 		// validate name, id, version

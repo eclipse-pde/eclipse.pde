@@ -134,8 +134,8 @@ public class CompilerFlags {
 		pref.setDefault(P_UNKNOWN_ELEMENT, WARNING);
 		pref.setDefault(P_UNKNOWN_ATTRIBUTE, WARNING);
 		pref.setDefault(P_ILLEGAL_ATT_VALUE, WARNING);
-		pref.setDefault(P_UNKNOWN_CLASS, WARNING);
-		pref.setDefault(P_UNKNOWN_RESOURCE, WARNING);
+		pref.setDefault(P_UNKNOWN_CLASS, IGNORE);
+		pref.setDefault(P_UNKNOWN_RESOURCE, IGNORE);
 		pref.setDefault(P_NO_REQUIRED_ATT, WARNING);
 		
 		pref.setDefault(S_CREATE_DOCS, false);

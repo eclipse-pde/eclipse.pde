@@ -15,6 +15,7 @@ import java.util.Map;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.pde.core.ISourceObject;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.PDE;
 import org.eclipse.pde.internal.core.*;
@@ -85,7 +86,9 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 	}
 	private void checkFile(IFile file, IProgressMonitor monitor) {
 		String message =
-			PDE.getFormattedMessage(BUILDERS_VERIFYING, file.getFullPath().toString());
+			PDE.getFormattedMessage(
+				BUILDERS_VERIFYING,
+				file.getFullPath().toString());
 		monitor.subTask(message);
 		PluginErrorReporter reporter = new PluginErrorReporter(file);
 		ValidatingSAXParser parser = new ValidatingSAXParser();
@@ -96,7 +99,7 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 			InputSource inputSource = new InputSource(source);
 			parser.parse(inputSource);
 			if (reporter.getErrorCount() == 0) {
-				testPluginReferences(file, reporter);
+				validateFeature(file, reporter);
 			}
 		} catch (CoreException e) {
 			PDE.logException(e);
@@ -115,10 +118,11 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 		monitor.done();
 	}
 	private boolean isManifestFile(IFile file) {
-		return file.getName().toLowerCase().equals("feature.xml");
+		return file.getParent().equals(file.getProject()) && file.getName().toLowerCase().equals("feature.xml");
 	}
 	private boolean isValidReference(IFeaturePlugin plugin) {
-		WorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
+		WorkspaceModelManager manager =
+			PDECore.getDefault().getWorkspaceModelManager();
 		IPluginModelBase[] models =
 			plugin.isFragment()
 				? (IPluginModelBase[]) manager.getWorkspaceFragmentModels()
@@ -132,20 +136,125 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 		return false;
 	}
 
-	private void testPluginReferences(IFile file, PluginErrorReporter reporter) {
+	private void validateFeature(IFile file, PluginErrorReporter reporter) {
 		WorkspaceFeatureModel model = new WorkspaceFeatureModel(file);
 		model.load();
 		if (model.isLoaded()) {
 			IFeature feature = model.getFeature();
-			IFeaturePlugin[] plugins = feature.getPlugins();
-			for (int i = 0; i < plugins.length; i++) {
-				IFeaturePlugin plugin = plugins[i];
-				if (isValidReference(plugin) == false) {
-					String message =
-						PDE.getFormattedMessage(BUILDERS_FEATURE_REFERENCE, plugin.getLabel());
-					reporter.reportError(message);
-				}
+			validateRequiredAttributes(feature, reporter);
+			if (reporter.getErrorCount() > 0)
+				return;
+			testPluginReferences(feature, reporter);
+		}
+	}
+
+	private void testPluginReferences(
+		IFeature feature,
+		PluginErrorReporter reporter) {
+		IFeaturePlugin[] plugins = feature.getPlugins();
+		for (int i = 0; i < plugins.length; i++) {
+			IFeaturePlugin plugin = plugins[i];
+			if (isValidReference(plugin) == false) {
+				String message =
+					PDE.getFormattedMessage(
+						BUILDERS_FEATURE_REFERENCE,
+						plugin.getLabel());
+				reporter.reportError(message);
 			}
+		}
+	}
+	private void validateRequiredAttributes(
+		IFeature feature,
+		PluginErrorReporter reporter) {
+		assertNotNull(
+			"id",
+			"feature",
+			getLine(feature),
+			feature.getId(),
+			reporter);
+		assertNotNull(
+			"version",
+			"feature",
+			getLine(feature),
+			feature.getVersion(),
+			reporter);
+
+		IFeatureChild[] children = feature.getIncludedFeatures();
+		for (int i = 0; i < children.length; i++) {
+			IFeatureChild child = children[i];
+			assertNotNull(
+				"id",
+				"includes",
+				getLine(child),
+				child.getId(),
+				reporter);
+			assertNotNull(
+				"version",
+				"includes",
+				getLine(child),
+				child.getVersion(),
+				reporter);
+		}
+		IFeaturePlugin[] plugins = feature.getPlugins();
+		for (int i = 0; i < plugins.length; i++) {
+			IFeaturePlugin plugin = plugins[i];
+			assertNotNull(
+				"id",
+				"plugin",
+				getLine(plugin),
+				plugin.getId(),
+				reporter);
+			assertNotNull(
+				"version",
+				"plugin",
+				getLine(plugin),
+				plugin.getVersion(),
+				reporter);
+		}
+		IFeatureData[] data = feature.getData();
+		for (int i = 0; i < data.length; i++) {
+			IFeatureData entry = data[i];
+			assertNotNull(
+				"id",
+				"data",
+				getLine(entry),
+				entry.getId(),
+				reporter);
+		}
+		IFeatureImport[] fimports = feature.getImports();
+		for (int i = 0; i < fimports.length; i++) {
+			IFeatureImport fimport = fimports[i];
+			if (fimport.getType()==IFeatureImport.PLUGIN) {
+				assertNotNull(
+				"plugin",
+				"import",
+				getLine(fimport),
+				fimport.getId(),
+				reporter);
+			}
+		}
+	}
+
+	private static int getLine(IFeatureObject object) {
+		int line = -1;
+		if (object instanceof ISourceObject) {
+			line = ((ISourceObject) object).getStartLine();
+		}
+		return line;
+	}
+
+	private static void assertNotNull(
+		String att,
+		String el,
+		int line,
+		String value,
+		PluginErrorReporter reporter) {
+		if (value == null) {
+			String message =
+				PDE.getFormattedMessage(
+					"Builders.manifest.missingRequired",
+					new String[] { att, el });
+			reporter.reportError(message, line);
 		}
 	}
 }
