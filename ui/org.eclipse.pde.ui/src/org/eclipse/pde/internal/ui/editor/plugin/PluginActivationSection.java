@@ -288,6 +288,8 @@ public class PluginActivationSection extends TableSection
 		Label activateLabel = toolkit.createLabel(ruleContainer,
 				PDEPlugin.getResourceString("PluginActivationSection.rule")); //$NON-NLS-1$
 		activateLabel.setFont(fBoldFont);
+		
+		toolkit.createLabel(ruleContainer, PDEPlugin.getResourceString("PluginActivationSection.ruleLabel")); //$NON-NLS-1$
 
 		fDoActivateButton = toolkit.createButton(ruleContainer,
 				PDEPlugin.getResourceString("PluginActivationSection.activate"), SWT.RADIO); //$NON-NLS-1$

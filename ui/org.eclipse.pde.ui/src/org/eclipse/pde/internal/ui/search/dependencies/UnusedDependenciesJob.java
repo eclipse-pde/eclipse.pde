@@ -61,20 +61,14 @@ public class UnusedDependenciesJob extends Job {
 							+ " " //$NON-NLS-1$
 							+ PDEPlugin.getResourceString("DependencyExtent.found")); //$NON-NLS-1$
 			}
-			IPluginImport[] unused = (IPluginImport[])list.toArray(new IPluginImport[list.size()]);
-			if (isModal()) {
-				showResults(unused);
-			} else {
-		        setProperty(IProgressConstants.KEEP_PROPERTY, Boolean.TRUE);
-		        setProperty(IProgressConstants.ACTION_PROPERTY, getShowResultsAction(unused));
-		    }
+			showResults((IPluginImport[])list.toArray(new IPluginImport[list.size()]));
 		} finally {
 			monitor.done();
 		}
 		return new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, PDEPlugin.getResourceString("UnusedDependenciesJob.viewResults"), null); //$NON-NLS-1$
 	}
 	
-	private boolean isModal() {
+	protected boolean isModal() {
 		Boolean isModal = (Boolean)getProperty(IProgressConstants.PROPERTY_IN_DIALOG);
 		return (isModal == null) ? false : isModal.booleanValue();
 	}
