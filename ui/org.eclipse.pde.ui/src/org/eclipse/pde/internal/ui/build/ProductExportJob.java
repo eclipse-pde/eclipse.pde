@@ -182,6 +182,11 @@ public class ProductExportJob extends FeatureExportJob {
 
 		Properties properties = new Properties();
 		properties.put(IBuildPropertiesConstants.ROOT, getRootFileLocations()); //To copy a folder
+		properties.put("root.permissions.755", getLauncherName());
+		if (TargetPlatform.getOS().equals("linux")) {
+			properties.put("root.linux.motif.x86.link", "libXm.so.2.1,libXm.so.2,libXm.so.2.1,libXm.so");
+			properties.put("root.linux.motif.x86.permissions.755", "*.so*");
+		}
 		save(new File(file, "build.properties"), properties, "Build Configuration"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
