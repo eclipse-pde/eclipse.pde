@@ -8,6 +8,8 @@ package org.eclipse.pde.internal.ui.wizards.imports;
 
 
 
+import java.util.ArrayList;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -15,8 +17,6 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
@@ -25,14 +25,12 @@ import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
@@ -94,21 +92,13 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	private void addViewerListeners() {
 		availableListViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
-				IStructuredSelection ssel = (IStructuredSelection)availableListViewer.getSelection();
-				if (ssel.size() > 0) {
-					selected.addAll(ssel.toList());
-					pageChanged();
-				}
+				handleAdd();
 			}
 		});
 				
 		importListViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
-				IStructuredSelection ssel = (IStructuredSelection)importListViewer.getSelection();
-				if (ssel.size() > 0) {
-					selected.removeAll(ssel.toList());
-					pageChanged();
-				}
+				handleRemove();
 			}
 		});
 	}
@@ -135,11 +125,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		availableListViewer.setContentProvider(new ContentProvider());
 		availableListViewer.setInput(PDECore.getDefault().getExternalModelManager());
 		availableListViewer.setSorter(ListUtil.PLUGIN_SORTER);
-		availableListViewer.addFilter(new ViewerFilter() {
-			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				return !selected.contains(element);
-			}
-		});
+
 		return container;
 	}
 	
@@ -161,12 +147,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				IStructuredSelection selection = (IStructuredSelection)availableListViewer.getSelection();
-				if (selection.size() > 0) {
-					selected.addAll(selection.toList());
-					pageChanged();
-				}
-				
+				handleAdd();
 			}
 		});
 		SWTUtil.setButtonDimensionHint(button);
@@ -176,12 +157,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				TableItem[] items = availableListViewer.getTable().getItems();
-				for (int i = 0; i < items.length; i++) {
-					selected.add(items[i].getData());
-				}
-				if (items.length > 0)
-					pageChanged();
+				handleAddAll();
 			}
 		});
 		SWTUtil.setButtonDimensionHint(button);
@@ -191,11 +167,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				IStructuredSelection selection = (IStructuredSelection)importListViewer.getSelection();
-				if (selection.size() > 0) {
-					selected.removeAll(selection.toList());
-					pageChanged();
-				} 
+				handleRemove();
 			}
 		});
 		SWTUtil.setButtonDimensionHint(button);
@@ -205,10 +177,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if (selected.size() > 0) {
-					selected.clear();
-					pageChanged();
-				}
+				handleRemoveAll();
 			}
 		});
 		SWTUtil.setButtonDimensionHint(button);
@@ -218,12 +187,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				selected.clear();
-				TableItem[] items = availableListViewer.getTable().getItems();
-				for (int i = 0; i < items.length; i++) {
-					selected.add(items[i].getData());
-				}
-				pageChanged();
+				handleSwap();
 			}
 		});
 		SWTUtil.setButtonDimensionHint(button);
@@ -233,18 +197,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				selected.clear();
-				for (int i = 0; i < models.length; i++) {
-					String id = models[i].getPluginBase().getId();
-					IProject project =
-						(IProject) PDEPlugin.getWorkspace().getRoot().findMember(id);
-					if (project != null
-						&& project.isOpen()
-						&& WorkspaceModelManager.isUnsharedPluginProject(project)) {
-						selected.add(models[i]);
-					}
-				}
-				pageChanged();
+				handleExistingUnshared();
 			}
 		});
 		SWTUtil.setButtonDimensionHint(button);
@@ -254,24 +207,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				TableItem[] items = importListViewer.getTable().getItems();
-				if (items.length == 0)
-					return;
-				if (items.length == 1) {
-					IPluginModelBase model = (IPluginModelBase) items[0].getData();
-					if (model.getPluginBase().getId().equals("org.eclipse.core.boot")) {
-						return;
-					}
-				}
-				
-				selected.clear();
-				for (int i = 0; i < items.length; i++) {
-					addPluginAndDependencies((IPluginModelBase) items[i].getData());
-				}
-				if (implicitButton.isVisible() && implicitButton.getSelection()) {
-					addImplicitDependencies();
-				}
-				pageChanged();
+				handleAddRequiredPlugins();
 			}
 
 		});
@@ -287,16 +223,14 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		setPageComplete(visible && importListViewer.getTable().getItemCount() > 0);
 		
 	}
-	
+	protected void refreshPage() {
+		availableListViewer.refresh();
+		importListViewer.getTable().removeAll();		
+		super.refreshPage();
+	}
 	protected void pageChanged() {
-		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
-			public void run() {
-				availableListViewer.refresh();
-				importListViewer.refresh();
-				updateCount();
-				setPageComplete(importListViewer.getTable().getItemCount() > 0);
-			}
-		});
+		updateCount();
+		setPageComplete(importListViewer.getTable().getItemCount() > 0);
 	}
 	private void updateCount() {
 		countLabel.setText(
@@ -306,6 +240,126 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 					new Integer(importListViewer.getTable().getItemCount()).toString(),
 					new Integer(models.length).toString()}));
 		countLabel.getParent().layout();
+	}
+	
+	private void handleAdd() {
+		IStructuredSelection ssel = (IStructuredSelection)availableListViewer.getSelection();
+		if (ssel.size() > 0) {
+			availableListViewer.remove(ssel.toArray());
+			importListViewer.add(ssel.toArray());
+			pageChanged();
+		}		
+	}
+	
+	private void handleAddAll() {
+		TableItem[] items = availableListViewer.getTable().getItems();
+
+		ArrayList data = new ArrayList();
+		for (int i = 0; i < items.length; i++) {
+			data.add(items[i].getData());
+		}
+		if (data.size() > 0) {
+			importListViewer.add(data.toArray());
+			availableListViewer.remove(data.toArray());
+			pageChanged();
+		}
+	}
+	
+	private void handleRemove() {
+		IStructuredSelection ssel = (IStructuredSelection)importListViewer.getSelection();
+		if (ssel.size() > 0) {
+			importListViewer.remove(ssel.toArray());
+			availableListViewer.add(ssel.toArray());
+			pageChanged();
+		}		
+	}
+	
+	private void handleRemoveAll() {
+		handleRemoveAll(true);
+	}
+	
+	private void handleRemoveAll(boolean refresh) {
+		TableItem[] items = importListViewer.getTable().getItems();
+		
+		ArrayList data = new ArrayList();
+		for (int i = 0; i < items.length; i++) {
+			data.add(items[i].getData());
+		}
+		if (data.size() > 0) {
+			availableListViewer.add(data.toArray());
+			importListViewer.remove(data.toArray());
+			pageChanged();
+		}		
+	}
+	
+	private void handleSwap() {
+		TableItem[] aItems = availableListViewer.getTable().getItems();
+		TableItem[] iItems = importListViewer.getTable().getItems();
+		
+		ArrayList data = new ArrayList();
+		for (int i = 0; i < iItems.length; i++) {
+			data.add(iItems[i].getData());
+		}
+		if (data.size() > 0) {
+			availableListViewer.add(data.toArray());
+			importListViewer.remove(data.toArray());
+		}
+		
+		data.clear();
+		for (int i = 0; i < aItems.length; i++) {
+			data.add(aItems[i].getData());
+		}
+		if (data.size() > 0) {
+			importListViewer.add(data.toArray());
+			availableListViewer.remove(data.toArray());
+		}
+		pageChanged();		
+	}
+	
+	private void handleExistingUnshared() {
+		handleRemoveAll(false);
+		ArrayList result = new ArrayList();
+		for (int i = 0; i < models.length; i++) {
+			String id = models[i].getPluginBase().getId();
+			IProject project =
+				(IProject) PDEPlugin.getWorkspace().getRoot().findMember(id);
+			if (project != null
+				&& project.isOpen()
+				&& WorkspaceModelManager.isUnsharedPluginProject(project)) {
+				result.add(models[i]);
+			}
+		}
+		if (result.size() > 0) {
+			importListViewer.add(result.toArray());
+			availableListViewer.remove(result.toArray());
+		}
+		pageChanged();		
+	}
+	
+	private void handleAddRequiredPlugins() {
+		TableItem[] items = importListViewer.getTable().getItems();
+		if (items.length == 0)
+			return;
+		if (items.length == 1) {
+			IPluginModelBase model = (IPluginModelBase) items[0].getData();
+			if (model.getPluginBase().getId().equals("org.eclipse.core.boot")) {
+				return;
+			}
+		}
+				
+		
+		ArrayList result = new ArrayList();
+		for (int i = 0; i < items.length; i++) {
+			addPluginAndDependencies((IPluginModelBase) items[i].getData(), result);
+		}
+		if (implicitButton.isVisible() && implicitButton.getSelection()) {
+			addImplicitDependencies(result);
+		}
+		
+		handleRemoveAll(false);
+		importListViewer.add(result.toArray());
+		availableListViewer.remove(result.toArray());
+		pageChanged();		
 	}
 	
 

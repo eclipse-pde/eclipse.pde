@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.IFragment;
 import org.eclipse.pde.core.plugin.IFragmentModel;
@@ -25,6 +23,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
 
 public abstract class BaseImportWizardSecondPage extends WizardPage {
 	
@@ -32,7 +31,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage {
 	
 	protected PluginImportWizardFirstPage page1;
 	protected IPluginModelBase[] models = new IPluginModelBase[0];
-	protected ArrayList selected = new ArrayList();
+	//protected ArrayList selected = new ArrayList();
 	private String location;
 	protected Button implicitButton;
 	protected TableViewer importListViewer;
@@ -41,7 +40,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage {
 		extends DefaultContentProvider
 		implements IStructuredContentProvider {
 		public Object[] getElements(Object element) {
-			return models;
+			return new Object[0];
 		}
 	}
 	
@@ -73,12 +72,6 @@ public abstract class BaseImportWizardSecondPage extends WizardPage {
 		importListViewer.setContentProvider(new ContentProvider());
 		importListViewer.setInput(PDECore.getDefault().getExternalModelManager());
 		importListViewer.setSorter(ListUtil.PLUGIN_SORTER);
-		importListViewer.addFilter(new ViewerFilter() {
-			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				return selected.contains(element);
-			}
-		});
-				
 		return container;
 	}
 
@@ -105,7 +98,6 @@ public abstract class BaseImportWizardSecondPage extends WizardPage {
 			}
 		}
 		implicitButton.setVisible(showButton);
-		selected.clear();
 		pageChanged();
 	}
 
@@ -142,21 +134,22 @@ public abstract class BaseImportWizardSecondPage extends WizardPage {
 		return (IFragmentModel[]) result.toArray(new IFragmentModel[result.size()]);
 	}
 
-	protected void addPluginAndDependencies(IPluginModelBase model) {
-		addPluginAndDependencies(model, true);
+	protected void addPluginAndDependencies(IPluginModelBase model, ArrayList selected) {
+		addPluginAndDependencies(model, selected, true);
 	}
 
 	private void addPluginAndDependencies(
 		IPluginModelBase model,
+		ArrayList selected,
 		boolean addFragmentPlugin) {
 			
 		if (!selected.contains(model)) {
 			selected.add(model);
-			addDependencies(model, addFragmentPlugin);
+			addDependencies(model, selected, addFragmentPlugin);
 		}
 	}
 	
-	protected void addDependencies(IPluginModelBase model, boolean addFragmentPlugin) {
+	protected void addDependencies(IPluginModelBase model, ArrayList selected, boolean addFragmentPlugin) {
 		if (model instanceof IPluginModel) {
 			IPlugin plugin = ((IPluginModel) model).getPlugin();
 			IPluginImport[] required = plugin.getImports();
@@ -164,38 +157,43 @@ public abstract class BaseImportWizardSecondPage extends WizardPage {
 				for (int i = 0; i < required.length; i++) {
 					IPluginModelBase found = findModel(required[i].getId());
 					if (found != null) {
-						addPluginAndDependencies(found);
+						addPluginAndDependencies(found, selected);
 					}
 				}
 			}
 			IFragmentModel[] fragments = findFragments(plugin);
 			for (int i = 0; i < fragments.length; i++) {
-				addPluginAndDependencies(fragments[i], false);
+				addPluginAndDependencies(fragments[i], selected, false);
 			}
 		}
 		if (addFragmentPlugin && model instanceof IFragmentModel) {
 			IFragment fragment = ((IFragmentModel) model).getFragment();
 			IPluginModelBase found = findModel(fragment.getPluginId());
 			if (found != null) {
-				addPluginAndDependencies(found);
+				addPluginAndDependencies(found, selected);
 			}
 		}
 		
 	}
 	
-	protected void addImplicitDependencies() {
+	protected void addImplicitDependencies(ArrayList selected) {
 		for (int i = 0; i < models.length; i++) {
 			String id = models[i].getPluginBase().getId();
 			if (id.equals("org.eclipse.core.boot")) {
 				if (!selected.contains(models[i]))
 					selected.add(models[i]);
 			} else if (id.equals("org.eclipse.core.runtime")) {
-				addPluginAndDependencies(models[i]);
+				addPluginAndDependencies(models[i], selected);
 			}			
 		}
 	}
 	public IPluginModelBase[] getModelsToImport() {
-		return (IPluginModelBase[]) selected.toArray(new IPluginModelBase[selected.size()]);
+		TableItem[] items = importListViewer.getTable().getItems();
+		ArrayList result = new ArrayList();
+		for (int i = 0; i < items.length; i++) {
+			result.add(items[i].getData());
+		}
+		return (IPluginModelBase[]) result.toArray(new IPluginModelBase[result.size()]);
 	}
 	
 	public void storeSettings() {

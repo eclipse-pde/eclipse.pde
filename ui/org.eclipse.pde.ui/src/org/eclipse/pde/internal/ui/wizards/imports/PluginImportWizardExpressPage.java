@@ -191,12 +191,14 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 	
 	
 	private void computeModelsToImport() {
-		selected.clear();
+		importListViewer.getTable().removeAll();
+		
+		ArrayList result = new ArrayList();
 		Object[] wModels = tablePart.getSelection();
 		for (int i = 0; i < wModels.length; i++) {
 			IPluginModelBase model = (IPluginModelBase)wModels[i];
-			addDependencies(model, true);
-			addExtraPrerequisites(model);
+			addDependencies(model, result, true);
+			addExtraPrerequisites(model, result);
 		}
 		
 		if (wModels.length > 0) {
@@ -205,25 +207,27 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 					"org.eclipse.core.boot"))
 				&& implicitButton.isVisible()
 				&& implicitButton.getSelection())
-				addImplicitDependencies();
-			removeCheckedModels();
+				addImplicitDependencies(result);
+			removeCheckedModels(result);
 		}
+		
+		importListViewer.add(result.toArray());
 	}
 	
-	private void removeCheckedModels() {
+	private void removeCheckedModels(ArrayList result) {
 		HashSet set = new HashSet();
 		Object[] wModels = tablePart.getSelection();
 		for (int i = 0; i < wModels.length; i++) {
 			set.add(((IPluginModelBase)wModels[i]).getPluginBase().getId());
 		}
-		IPluginModelBase[] smodels = (IPluginModelBase[])selected.toArray(new IPluginModelBase[selected.size()]);
+		IPluginModelBase[] smodels = (IPluginModelBase[])result.toArray(new IPluginModelBase[result.size()]);
 		for (int i = 0; i < smodels.length; i++) {
 			if (set.contains(smodels[i].getPluginBase().getId()))
-				selected.remove(smodels[i]);
+				result.remove(smodels[i]);
 		}
 	}
 
-	private void addExtraPrerequisites(IPluginModelBase model) {
+	private void addExtraPrerequisites(IPluginModelBase model, ArrayList result) {
 		try {
 			IBuildModel buildModel = model.getBuildModel();
 			if (buildModel == null) {
@@ -246,8 +250,8 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 				if (path.segmentCount() >= 2 && path.segment(0).equals("..")) {
 					for (int j = 0; j < models.length; j++) {
 						if (models[j].getPluginBase().getId().equals(path.segment(1))
-							&& !selected.contains(models[j])) {
-							selected.add(models[j]);
+							&& !result.contains(models[j])) {
+							result.add(models[j]);
 						}
 					}
 				}
@@ -258,16 +262,15 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 	
 	protected void pageChanged() {
 		computeModelsToImport();
-		importListViewer.refresh();
 		updateCount();
-		setPageComplete(selected.size() > 0);	
+		setPageComplete(importListViewer.getTable().getItemCount() > 0);	
 	}
 
 	private void updateCount() {
 		counterLabel.setText(
 			PDEPlugin.getFormattedMessage(
 				"ImportWizard.expressPage.total",
-				new Integer(selected.size()).toString()));
+				new Integer(importListViewer.getTable().getItemCount()).toString()));
 		counterLabel.getParent().layout();
 	}
 
