@@ -130,16 +130,18 @@ public class ClasspathUtilCore {
 
 	}
 
-	private static void addExtraClasspathEntries(IPluginModelBase model, Vector result) throws CoreException {
+	private static void addExtraClasspathEntries(IPluginModelBase model, Vector result)
+		throws CoreException {
 		IBuildModel buildModel = model.getBuildModel();
 		if (buildModel == null) {
-			IFile buildFile = model.getUnderlyingResource().getProject().getFile("build.properties");
+			IFile buildFile =
+				model.getUnderlyingResource().getProject().getFile("build.properties");
 			if (buildFile.exists()) {
 				buildModel = new WorkspaceBuildModel(buildFile);
 				buildModel.load();
 			}
 		}
-		
+
 		if (buildModel == null)
 			return;
 
@@ -149,28 +151,48 @@ public class ClasspathUtilCore {
 
 		String[] tokens = entry.getTokens();
 		for (int i = 0; i < tokens.length; i++) {
-			Path path = new Path(tokens[i]);
-			if (path.segmentCount() >= 2 && path.segment(0).equals("..")) {
-				IPlugin plugin = PDECore.getDefault().findPlugin(path.segment(1));
-				if (plugin == null)
-					continue;
-				IResource resource = plugin.getModel().getUnderlyingResource();
-				if (resource != null) {
+			String device = new Path(tokens[i]).getDevice();
+			IPath path = null;
+			if (device == null) {
+				path = new Path(model.getUnderlyingResource().getProject().getName());
+				path = path.append(tokens[i]);
+			} else if (device.equals("platform:")) {
+				path = new Path(tokens[i]);
+				if (path.segmentCount() > 1 && path.segment(0).equals("plugin")) {
+					path = path.setDevice(null);
+					path = path.removeFirstSegments(1);
+				}
+			}
+			if (path != null) {
+				IResource resource = PDECore.getWorkspace().getRoot().findMember(path);
+				if (resource != null && resource instanceof IFile) {
+					IClasspathEntry newEntry =
+						JavaCore.newLibraryEntry(resource.getFullPath(), null, null);
 					IProject project = resource.getProject();
-					try {
-						if (project.hasNature(JavaCore.NATURE_ID)) {
-							IClasspathEntry projectEntry =
-								JavaCore.newProjectEntry(project.getFullPath());
-							if (!result.contains(projectEntry))
-								result.add(projectEntry);
+					if (project.hasNature(JavaCore.NATURE_ID)) {
+						IJavaProject jProject = JavaCore.create(project);
+						IPackageFragmentRoot[] roots = jProject.getPackageFragmentRoots();
+						for (int j = 0; j < roots.length; j++) {
+							if (roots[j].getResource() != null && roots[j].getResource().equals(resource)) {
+								IPath attPath = roots[j].getSourceAttachmentPath();
+								if (attPath != null) {
+									newEntry =
+										JavaCore.newLibraryEntry(
+											resource.getFullPath(),
+											attPath,
+											roots[j].getSourceAttachmentRootPath());
+								}
+								break;
+							}
 						}
-					} catch (CoreException e) {
 					}
+					if (!result.contains(newEntry))
+						result.add(newEntry);
 				}
 			}
 		}
 	}
-	
+
 	public static IClasspathEntry[] computePluginEntries(
 		IPluginModelBase model,
 		IMissingPluginConfirmation confirmation) {
