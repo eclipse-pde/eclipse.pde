@@ -10,8 +10,6 @@
  **********************************************************************/
 package org.eclipse.pde.internal.build.site;
 
-import java.net.URL;
-import java.util.Properties;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
 import org.eclipse.pde.internal.build.*;
