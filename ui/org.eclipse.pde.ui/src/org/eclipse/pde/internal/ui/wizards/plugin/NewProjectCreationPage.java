@@ -147,7 +147,14 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		});
 		return text;
 	}
-	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.dialogs.WizardNewProjectCreationPage#setVisible(boolean)
+	 */
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+		if (!visible)
+			updateData();
+	}
 	public void updateData() {
 		fData.setIsSimple(!isJavaProject());
 		fData.setSourceFolderName(fSourceText.getText().trim());
