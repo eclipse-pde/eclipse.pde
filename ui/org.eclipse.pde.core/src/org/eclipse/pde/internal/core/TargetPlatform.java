@@ -60,11 +60,11 @@ public class TargetPlatform implements IEnvironmentVariables {
 				// defect 37319
 				if (location.segmentCount() > 2)
 					location = location.removeFirstSegments(location.segmentCount() - 2);
-				if (!PDECore.getDefault().getModelManager().isOSGiRuntime()) {
+				//if (!PDECore.getDefault().getModelManager().isOSGiRuntime()) {
 					location = location.append(model.isFragmentModel()
 							? "fragment.xml" //$NON-NLS-1$
 							: "plugin.xml"); //$NON-NLS-1$
-				}
+				//}
 				//31489 - entry must be relative
 				list[i] = location.setDevice(null).makeRelative().toString();
 			}
