@@ -17,8 +17,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.internal.ui.wizards.TypedElementSelectionValidator;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModelChangedListener;
+import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.internal.build.IXMLConstants;
@@ -64,13 +64,14 @@ public class BuildClasspathSection
 		extends DefaultContentProvider
 		implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
-			if (parent instanceof IBuildEntry) {
-				IBuildEntry entry = (IBuildEntry) parent;
-				if (entry != null)
+			if (parent instanceof IBuildModel) {
+				IBuild build = ((IBuildModel)parent).getBuild();
+				IBuildEntry entry = build.getEntry(IXMLConstants.PROPERTY_JAR_EXTRA_CLASSPATH);
+				if (entry != null) {
 					return entry.getTokens();
+				}
 			}
 			return new Object[0];
-
 		}
 	}
 
@@ -98,12 +99,6 @@ public class BuildClasspathSection
 		setCollapsable(true);
 		setCollapsed(true);
 
-	}
-
-	private void initializeInput() {
-		IBuildEntry jarsEntry = buildModel.getBuild().getEntry(IXMLConstants.PROPERTY_JAR_EXTRA_CLASSPATH);
-		if (entryTable.getInput() == null)
-			entryTable.setInput(jarsEntry);
 	}
 
 	private void initializeImages() {
@@ -135,7 +130,7 @@ public class BuildClasspathSection
 
 			}
 		});
-		initializeInput();
+		entryTable.setInput(getFormPage().getModel());
 		
 		return container;
 	}
@@ -262,7 +257,7 @@ public class BuildClasspathSection
 		dialog.setInitialSelection(
 			buildModel.getUnderlyingResource().getProject());
 
-		if (dialog.open() == Window.OK) {
+		if (dialog.open() == ElementTreeSelectionDialog.OK) {
 			IBuildEntry entry = buildModel.getBuild().getEntry(IXMLConstants.PROPERTY_JAR_EXTRA_CLASSPATH);
 			Object[] elements = dialog.getResult();
 
