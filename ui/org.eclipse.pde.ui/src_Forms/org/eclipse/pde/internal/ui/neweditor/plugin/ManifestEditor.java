@@ -18,6 +18,7 @@ import org.eclipse.pde.internal.ui.neweditor.runtime.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 /**
  * @author dejan
  * 
@@ -221,6 +222,10 @@ public class ManifestEditor extends MultiSourceEditor {
 	 */
 	protected PDESourcePage createXMLSourcePage(PDEFormEditor editor, String title, String name) {
 		return new ManifestSourcePage(editor, title, name);
+	}
+	
+	protected IContentOutlinePage createContentOutline() {
+		return new ManifestOutlinePage(this);
 	}
 
 }

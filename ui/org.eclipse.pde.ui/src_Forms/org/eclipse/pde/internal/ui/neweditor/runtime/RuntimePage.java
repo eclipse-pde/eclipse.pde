@@ -66,8 +66,4 @@ public class RuntimePage extends PDEFormPage {
 		else
 			WorkbenchHelp.setHelp(form, IHelpContextIds.MANIFEST_PLUGIN_RUNTIME);
 	}
-	
-	public void expandTo(Object object) {
-		librarySection.expandTo(object);
-	}
 }

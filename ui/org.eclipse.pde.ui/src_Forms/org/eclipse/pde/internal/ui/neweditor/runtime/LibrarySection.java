@@ -153,8 +153,12 @@ public class LibrarySection
 		}
 		return false;
 	}
-	public void expandTo(Object object) {
-		libraryTable.setSelection(new StructuredSelection(object), true);
+	public boolean setFormInput(Object object) {
+		if (object instanceof IPluginLibrary) {
+			libraryTable.setSelection(new StructuredSelection(object), true);
+			return true;
+		}
+		return false;
 	}
 
 	protected void fillContextMenu(IMenuManager manager) {

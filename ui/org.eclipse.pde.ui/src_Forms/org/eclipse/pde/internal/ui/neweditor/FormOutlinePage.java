@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -31,7 +31,7 @@ public class FormOutlinePage extends ContentOutlinePage
 			return getPages();
 		}
 		public Object[] getChildren(Object obj) {
-			return new Object[0];
+			return FormOutlinePage.this.getChildren(obj);
 		}
 		public boolean hasChildren(Object obj) {
 			return getChildren(obj).length > 0;
@@ -44,9 +44,11 @@ public class FormOutlinePage extends ContentOutlinePage
 		public String getText(Object obj) {
 			if (obj instanceof IFormPage)
 				return ((IFormPage)obj).getTitle();
-			return obj.toString();
+			return PDEPlugin.getDefault().getLabelProvider().getText(obj);
 		}
 		public Image getImage(Object obj) {
+			if (obj instanceof IFormPage)
+				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PAGE_OBJ);
 			return PDEPlugin.getDefault().getLabelProvider().getImage(obj);
 		}
 	}
@@ -68,24 +70,20 @@ public class FormOutlinePage extends ContentOutlinePage
 		treeViewer.setAutoExpandLevel(TreeViewer.ALL_LEVELS);
 		treeViewer.setUseHashlookup(true);
 		treeViewer.setInput(editor);
-		/*
-		 * Object model = formPage.getModel(); if (model instanceof
-		 * IModelChangeProvider) {
-		 * ((IModelChangeProvider)model).addModelChangedListener(this); }
-		 */
+		IModel model = editor.getAggregateModel();
+		if (model instanceof IModelChangeProvider)
+			((IModelChangeProvider)model).addModelChangedListener(this);
 	}
 	protected ILabelProvider createLabelProvider() {
 		return new BasicLabelProvider();
 	}
 	public void dispose() {
 		super.dispose();
-		/*
-		Object model = formPage.getModel();
-		if (model instanceof IModelChangeProvider) {
-			((IModelChangeProvider) model).removeModelChangedListener(this);
-		}
-		*/
+		IModel model = editor.getAggregateModel();
+		if (model instanceof IModelChangeProvider)
+			((IModelChangeProvider)model).removeModelChangedListener(this);
 	}
+	
 	public Control getControl() {
 		return treeViewer != null ? treeViewer.getControl() : null;
 	}
@@ -100,24 +98,29 @@ public class FormOutlinePage extends ContentOutlinePage
 	}
 
 	public void modelChanged(IModelChangedEvent event) {
-		// a really suboptimal refresh - subclasses should be more selective
 		treeViewer.refresh();
 		treeViewer.expandAll();
 	}
 	
-	protected IFormPage getParentPage(Object item) {
+	protected String getParentPageId(Object item) {
 		if (item instanceof IFormPage)
-			return (IFormPage)item;
+			return ((IFormPage)item).getId();
 		return null;
+	}
+	
+	protected Object[] getChildren(Object parent) {
+		return new Object[0];
 	}
 
 	public void selectionChanged(Object item) {
 		IFormPage page = editor.getActivePageInstance();
-		IFormPage newPage = getParentPage(item);
-		if (newPage != page)
-			editor.setActivePage(newPage.getId());
-		if (newPage != item)
-			newPage.selectReveal(item);
+		String id = getParentPageId(item);
+		IFormPage newPage=null;
+		if (id!=null && (page==null || !page.getId().equals(id)))
+			newPage = editor.setActivePage(id);
+		IFormPage revealPage = newPage!=null?newPage:page;
+		if (revealPage!=null && !(item instanceof IFormPage))
+			revealPage.selectReveal(item);
 	}
 	
 	public void selectionChanged(SelectionChangedEvent event) {

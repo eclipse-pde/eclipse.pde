@@ -344,9 +344,13 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 
 	protected IContentOutlinePage getFormOutline() {
 		if (formOutline==null) {
-			formOutline = new FormOutlinePage(this);
+			formOutline = createContentOutline();
 		}
 		return formOutline;
+	}
+	
+	protected IContentOutlinePage createContentOutline() {
+		return new FormOutlinePage(this);
 	}
 
 	private void updateContentOutline(IFormPage page) {

@@ -68,6 +68,14 @@ public class ExtensionPointsSection extends TableSection {
 		pointTable.refresh();
 		getForm().fireSelectionChanged(this, pointTable.getSelection());
 	}
+	public boolean setFormInput(Object object) {
+		if (object instanceof IPluginExtensionPoint) {
+			pointTable.setSelection(new StructuredSelection(object), true);
+			return true;
+		}
+		return false;
+	}
+	
 	public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			markStale();

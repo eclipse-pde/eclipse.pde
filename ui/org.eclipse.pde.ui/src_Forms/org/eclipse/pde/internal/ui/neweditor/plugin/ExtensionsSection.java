@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.neweditor.plugin;
 import java.io.File;
 import java.net.*;
 import java.util.Iterator;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
@@ -154,14 +155,13 @@ public class ExtensionsSection extends TreeSection
 			parent = parent.getParent();
 		}
 		if (parent != null) {
-			ISchema schema = getSchema((IPluginExtension)parent);
+			ISchema schema = getSchema((IPluginExtension) parent);
 			if (schema != null) {
 				return schema.findElement(element.getName());
 			}
 		}
 		return null;
 	}
-
 	public void createClient(Section section, FormToolkit toolkit) {
 		initializeImages();
 		Composite container = createClientContainer(section, 2, toolkit);
@@ -225,8 +225,12 @@ public class ExtensionsSection extends TreeSection
 		return false;
 	}
 	public boolean setFormInput(Object object) {
-		extensionTree.setSelection(new StructuredSelection(object), true);
-		return true;
+		if (object instanceof IPluginExtension
+				|| object instanceof IPluginElement) {
+			extensionTree.setSelection(new StructuredSelection(object), true);
+			return true;
+		}
+		return false;
 	}
 	protected void fillContextMenu(IMenuManager manager) {
 		ISelection selection = extensionTree.getSelection();
@@ -417,7 +421,8 @@ public class ExtensionsSection extends TreeSection
 		extensionTree.getControl().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				extensionTree.refresh();
-				getForm().fireSelectionChanged(ExtensionsSection.this, extensionTree.getSelection());
+				getForm().fireSelectionChanged(ExtensionsSection.this,
+						extensionTree.getSelection());
 			}
 		});
 		super.refresh();
@@ -702,7 +707,7 @@ public class ExtensionsSection extends TreeSection
 					downEnabled = true;
 			} else if (item instanceof IPluginExtension) {
 				IPluginExtension extension = (IPluginExtension) item;
-				IExtensions extensions = (IExtensions)extension.getParent();
+				IExtensions extensions = (IExtensions) extension.getParent();
 				int index = extensions.getIndexOf(extension);
 				int size = extensions.getExtensions().length;
 				if (index > 0)
