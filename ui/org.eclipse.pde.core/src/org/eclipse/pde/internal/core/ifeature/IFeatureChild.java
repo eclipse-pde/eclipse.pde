@@ -11,6 +11,12 @@ import org.eclipse.pde.core.IIdentifiable;
  */
 public interface IFeatureChild extends IFeatureObject, IIdentifiable {
 	String P_VERSION = "version";
+	String P_OPTIONAL = "optional";
+	String P_NAME = "name";
 	String getVersion();
 	void setVersion(String version) throws CoreException;
+	boolean isOptional();
+	void setOptional(boolean optional) throws CoreException;
+	String getName();
+	void setName(String name) throws CoreException;
 }
