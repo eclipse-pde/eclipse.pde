@@ -12,6 +12,7 @@ import org.eclipse.jdt.core.*;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
+import org.eclipse.pde.internal.core.plugin.ExternalPluginModelBase;
 
 /**
  * A utility class that can be used by plug-in project
@@ -320,7 +321,7 @@ public class BuildPathUtilCore {
 		if (project != null)
 			return project.getFullPath();
 		else
-			return PluginPathUpdater.getExternalPath(model);
+			return ((ExternalPluginModelBase)model).getEclipseHomeRelativePath();
 	}
 
 	private static boolean exists(

@@ -21,6 +21,7 @@ import org.eclipse.pde.internal.core.plugin.*;
 /**
  */
 public class ExternalModelManager {
+	private static ArrayList eclipseLinks = new ArrayList();
 	private Vector models;
 	private Vector fmodels;
 	private static final String KEY_ERROR_TITLE = "Errors.SetupError";
@@ -48,9 +49,21 @@ public class ExternalModelManager {
 		String installLocation,
 		IProgressMonitor monitor) {
 		IPath fullPath = new Path(installLocation);
-		IPath eclipseHome = getEclipseHome(monitor);
-		int nmatching = fullPath.matchingFirstSegments(eclipseHome);
-		return fullPath.removeFirstSegments(nmatching);
+		
+		String correctVariable = PDECore.ECLIPSE_HOME_VARIABLE;
+		int maxMatching = fullPath.matchingFirstSegments(getEclipseHome(monitor));
+		
+		for (int i = 0; i < eclipseLinks.size(); i++) {
+			IPath currentPath = JavaCore.getClasspathVariable(eclipseLinks.get(i).toString());
+			if (currentPath != null) {
+				int currentMatch = fullPath.matchingFirstSegments(currentPath);
+				if (currentMatch > maxMatching) {
+					maxMatching = currentMatch;
+					correctVariable = eclipseLinks.get(i).toString();
+				}
+			}
+		}
+		return new Path(correctVariable).append(fullPath.removeFirstSegments(maxMatching));
 	}
 
 	public IPluginExtensionPoint findExtensionPoint(String fullID) {
@@ -221,10 +234,15 @@ public class ExternalModelManager {
 							+ "eclipse"
 							+ Path.SEPARATOR
 							+ "plugins";
-						if (new File(path).exists())
+						if (new File(path).exists()) {
+							String variable = PDECore.ECLIPSE_HOME_VARIABLE + "_" + linkFiles[i].getName().toUpperCase().replace('.','_');
+							eclipseLinks.add(variable);
+							JavaCore.setClasspathVariable(variable,new Path(path).removeLastSegments(1),null);
 							result.add(path);
+						}
 					}
 				} catch (IOException e) {
+				} catch (JavaModelException e) {
 				}
 			}
 		}
@@ -350,17 +368,15 @@ public class ExternalModelManager {
 			for (int i = 0; i < pluginPaths.length; i++) {
 				urls[i] = new URL("file:" + pluginPaths[i].replace('\\', '/') + "/");
 			}
-
-			//String pattern = PDECore.getResourceString(KEY_PROCESSING_PATH);
-			//String message = PDECore.getFormattedMessage(pattern, pluginPath);
-			//monitor.subTask(message);
 			PluginRegistryModel registryModel =
 				Platform.parsePlugins(urls, new Factory(errors));
 			IStatus resolveStatus = null;
 			if (resolve)
 				resolveStatus = registryModel.resolve(true, false);
+			
 			PluginDescriptorModel[] pluginDescriptorModels = registryModel.getPlugins();
 			PluginFragmentModel[] fragmentModels = registryModel.getFragments();
+			
 			for (int i = 0; i < pluginDescriptorModels.length; i++) {
 				PluginDescriptorModel pluginDescriptorModel = pluginDescriptorModels[i];
 				monitor.subTask(pluginDescriptorModel.getId());
@@ -401,9 +417,14 @@ public class ExternalModelManager {
 	public boolean reload(String platformPath, IProgressMonitor monitor) {
 		models = new Vector();
 		fmodels = new Vector();
-
 		if (monitor == null)
 			monitor = new NullProgressMonitor();
+		for (int i = 0; i < eclipseLinks.size(); i++) {
+			JavaCore.removeClasspathVariable(eclipseLinks.get(i).toString(),null);
+		}
+		eclipseLinks.clear();
+		
+		
 		if (platformPath != null)
 			setEclipseHome(platformPath, monitor);
 		String[] paths = getPluginPaths(platformPath);
@@ -421,6 +442,10 @@ public class ExternalModelManager {
 
 		if (monitor == null)
 			monitor = new NullProgressMonitor();
+		for (int i = 0; i < eclipseLinks.size(); i++) {
+			JavaCore.removeClasspathVariable(eclipseLinks.get(i).toString(),null);
+		}
+		eclipseLinks.clear();
 
 		IPluginRegistry liveRegistry = Platform.getPluginRegistry();
 		processPluginRegistryModel(

@@ -102,7 +102,7 @@ public class PluginPathUpdater {
 		}
 		IPath modelPath;
 		
-		if (relative) modelPath = getExternalPath(model);
+		if (relative) modelPath = ((ExternalPluginModelBase)model).getEclipseHomeRelativePath();
 		else modelPath = new Path(model.getInstallLocation());
 
 		IPluginLibrary[] libraries = plugin.getLibraries();
@@ -178,7 +178,7 @@ public class PluginPathUpdater {
 		for (int i = 0; i < fragments.length; i++) {
 			IFragmentModel fmodel = fragments[i];
 			IPath modelPath;
-			if (relative) modelPath = getExternalPath(fmodel);
+			if (relative) modelPath = ((ExternalPluginModelBase)fmodel).getEclipseHomeRelativePath();
 			else modelPath = new Path(fmodel.getInstallLocation());
 			IPath libraryPath = modelPath.append(name);
 			IPath[] sourceAnnot =
@@ -204,20 +204,20 @@ public class PluginPathUpdater {
 		return null;
 	}
 
-	public static IPath getExternalPath(IPluginModelBase model) {
+	/*public static IPath getExternalPath(IPluginModelBase model) {
 		IPath modelPath = new Path(PDECore.ECLIPSE_HOME_VARIABLE);
 		modelPath =
 			modelPath.append(
 				((ExternalPluginModelBase) model).getEclipseHomeRelativePath());
 		return modelPath;
-	}
+	}*/
 
 	public static IClasspathEntry createLibraryEntry(
 		IPluginLibrary library,
 		IPath rootPath,
 		boolean unconditionallyExport) {
 		String name = expandLibraryName(library.getName());
-		boolean variable = rootPath.segment(0).equals("ECLIPSE_HOME");
+		boolean variable = rootPath.segment(0).startsWith(PDECore.ECLIPSE_HOME_VARIABLE);
 		IPath libraryPath = rootPath.append(name);
 		IPath[] sourceAnnot =
 			getSourceAnnotation(library.getPluginBase(), rootPath, name, variable);
@@ -241,7 +241,7 @@ public class PluginPathUpdater {
 		IPath rootPath,
 		boolean unconditionallyExport) {
 		String name = expandLibraryName(library.getName());
-		boolean variable = rootPath.segment(0).equals("ECLIPSE_HOME");
+		boolean variable = rootPath.segment(0).startsWith(PDECore.ECLIPSE_HOME_VARIABLE);
 		IPath libraryPath = rootPath.append(name);
 		IPath[] sourceAnnot =
 			getSourceAnnotation(fragment.getPluginBase(), rootPath, name, true);
@@ -364,7 +364,7 @@ public class PluginPathUpdater {
 
 	private static IPath getAbsolutePath(IPath path) {
 		String firstSegment = path.segment(0);
-		if (firstSegment.equals("ECLIPSE_HOME")) {
+		if (firstSegment.startsWith(PDECore.ECLIPSE_HOME_VARIABLE)) {
 			IPath root = JavaCore.getClasspathVariable(firstSegment);
 			if (root != null)
 				return root.append(path.removeFirstSegments(1));

@@ -10,6 +10,8 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 
@@ -356,6 +358,13 @@ public class PDECore extends Plugin {
 			preferences.setValue(ICoreConstants.PLATFORM_PATH,ExternalModelManager.computeDefaultPlatformPath());
 		else
 			preferences.setDefault(ICoreConstants.PLATFORM_PATH, ExternalModelManager.computeDefaultPlatformPath());
+		try {
+			JavaCore.setClasspathVariable(
+				PDECore.ECLIPSE_HOME_VARIABLE,
+				new Path(preferences.getString(ICoreConstants.PLATFORM_PATH)),
+				null);
+		} catch (JavaModelException e) {
+		}
 			
 	}
 
