@@ -11,6 +11,7 @@
 
 package org.eclipse.pde.internal.ui.editor;
 
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.ui.model.*;
@@ -76,4 +77,10 @@ public class SourceOutlinePage extends ContentOutlinePage implements IModelChang
 		super.init(pageSite);
 	}
 	
+	public void makeContributions(
+			IMenuManager menuManager, 
+			IToolBarManager toolBarManager, 
+			IStatusLineManager statusLineManager) {
+		//Create actions and contribute into the provided managers
+	}
 }

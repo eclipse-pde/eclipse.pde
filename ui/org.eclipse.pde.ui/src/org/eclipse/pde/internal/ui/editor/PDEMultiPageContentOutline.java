@@ -28,6 +28,7 @@ public class PDEMultiPageContentOutline
 	private ArrayList listeners;
 	private IContentOutlinePage currentPage;
 	private IContentOutlinePage emptyPage;
+	private IActionBars actionBars;
 
 	public PDEMultiPageContentOutline() {
 		listeners = new ArrayList();
@@ -83,6 +84,10 @@ public class PDEMultiPageContentOutline
 	}
 
 	public void setActionBars(IActionBars actionBars) {
+		this.actionBars = actionBars;
+	}
+	public IActionBars getActionBars() {
+		return actionBars;
 	}
 	public void setFocus() {
 		if (currentPage != null)
@@ -110,6 +115,7 @@ public class PDEMultiPageContentOutline
 		if (control == null || control.isDisposed()) {
 			// first time
 			page.createControl(pagebook);
+			page.setActionBars(getActionBars());			
 			control = page.getControl();
 		}
 		pagebook.showPage(control);
