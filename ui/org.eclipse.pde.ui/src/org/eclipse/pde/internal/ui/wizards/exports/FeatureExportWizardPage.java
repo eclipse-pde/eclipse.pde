@@ -12,15 +12,15 @@ import org.eclipse.pde.internal.core.PDECore;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public class PluginExportWizardPage extends BaseExportWizardPage {
-	public PluginExportWizardPage(IStructuredSelection selection) {
-		super(selection, "pluginExport", "Available &Plug-ins and Fragments", false);
-		setTitle("Deployable plug-ins");
+public class FeatureExportWizardPage extends BaseExportWizardPage {
+	public FeatureExportWizardPage(IStructuredSelection selection) {
+		super(selection, "featureExport", "Available &Features", true);
+		setTitle("Deployable features");
 		setDescription("Export the selected projects into a form suitable for deploying in an Eclipse product");
 	}
 	
 	public Object [] getListElements() {
 		WorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
-		return manager.getAllModels();
+		return manager.getWorkspaceFeatureModels();
 	}
 }

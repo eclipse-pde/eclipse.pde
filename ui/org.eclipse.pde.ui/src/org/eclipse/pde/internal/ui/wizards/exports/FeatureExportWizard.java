@@ -10,14 +10,14 @@ import org.eclipse.pde.internal.ui.*;
  * Insert the type's description here.
  * @see Wizard
  */
-public class PluginExportWizard extends BaseExportWizard {
+public class FeatureExportWizard extends BaseExportWizard {
 	private static final String KEY_WTITLE = "BaseExportWizard.wtitle";
-	private static final String STORE_SECTION = "PluginExportWizard";
+	private static final String STORE_SECTION = "FeatureExportWizard";
 
 	/**
 	 * The constructor.
 	 */
-	public PluginExportWizard() {
+	public FeatureExportWizard() {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWEXPRJ_WIZ);
 		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
 	}
@@ -31,7 +31,7 @@ public class PluginExportWizard extends BaseExportWizard {
 	}
 
 	protected BaseExportWizardPage createPage1() {
-		return new PluginExportWizardPage(getSelection());
+		return new FeatureExportWizardPage(getSelection());
 	}
 
 	/**

@@ -213,6 +213,19 @@
                class="org.eclipse.core.resources.IFile">
          </selection>
       </wizard>
+      <wizard
+            class="org.eclipse.pde.internal.ui.wizards.exports.FeatureExportWizard"
+            name="%FeatureExportWizard.label"
+            id="org.eclipse.pde.ui.featureExportWizard"
+            icon="icons/full/ctool16/newexprj_wiz.gif">
+         <description>
+            %FeatureExportWizard.description
+         </description>
+         <selection
+               class="org.eclipse.core.resources.IFile"
+               name="feature.xml">
+         </selection>
+      </wizard>
    </extension>
    <extension
          point="org.eclipse.pde.ui.projectGenerators">

@@ -51,12 +51,14 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard {
 	public boolean performFinish()  {
 		page1.saveSettings();
 		final boolean exportZip = page1.getExportZip();
+		final boolean addSourceZips = page1.getAddZips();
+		final String destination = page1.getDestination();
 		final Object [] items = page1.getSelectedItems();
 		
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				try {
-					doPerformFinish(exportZip, items, monitor);
+					doPerformFinish(exportZip, addSourceZips, destination, items, monitor);
 				}
 				catch (CoreException e) {
 					throw new InvocationTargetException(e);
@@ -80,15 +82,15 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard {
 		return true;
 	}
 	
-	protected void doPerformFinish(boolean exportZip, Object [] items, IProgressMonitor monitor) throws CoreException {
+	protected void doPerformFinish(boolean exportZip, boolean addSourceZips, String destination, Object [] items, IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask("Exporting...", items.length);
 		for (int i=0; i<items.length; i++) {
 			IModel model = (IModel)items[i];
-			doExport(exportZip, model, new SubProgressMonitor(monitor, 1));
+			doExport(exportZip, addSourceZips, destination, model, new SubProgressMonitor(monitor, 1));
 		}
 	}
 	
-	protected abstract void doExport(boolean exportZip, IModel model, IProgressMonitor monitor) throws CoreException;
+	protected abstract void doExport(boolean exportZip, boolean addZips, String destination, IModel model, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Insert the method's description here.
