@@ -302,7 +302,7 @@ public class GeneralInfoSection extends PDESection {
 		toolkit.createLabel(client, PDEPlugin.getResourceString(KEY_MATCH));
 		fMatchCombo = new ComboPart();
 		fMatchCombo.createControl(client, toolkit, SWT.READ_ONLY);
-		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		gd.widthHint = 20;
 		fMatchCombo.getControl().setLayoutData(gd);
