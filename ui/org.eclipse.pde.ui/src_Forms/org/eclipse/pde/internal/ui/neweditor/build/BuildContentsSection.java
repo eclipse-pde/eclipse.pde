@@ -144,11 +144,8 @@ public abstract class BuildContentsSection extends TableSection
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
 	}
-	public void disableSection() {
-		fTreeViewer.getTree().setEnabled(false);
-	}
-	public void enableSection() {
-		fTreeViewer.getTree().setEnabled(true);
+	public void enableSection(boolean enable) {
+		fTreeViewer.getTree().setEnabled(enable);
 	}
 	protected void handleCheckStateChanged(IResource resource, boolean checked) {
 		fTreeViewer.setChecked(resource, checked);

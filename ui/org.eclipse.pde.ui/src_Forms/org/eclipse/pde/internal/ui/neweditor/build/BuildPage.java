@@ -140,26 +140,15 @@ public class BuildPage extends PDEFormPage {
 	}
 	
 	private void handleCustomCheckState(boolean isCustom){
-		if (isCustom) 
-			disableAllSections();
-		else 
-			enableAllSections();
+		customButton.setSelection(isCustom);
+		enableAllSections(!isCustom);
 	}
 	
-	public void disableAllSections(){
-		customButton.setSelection(true);
-		runtimeSection.disableSection();
-		binSection.disableSection();
-		srcSection.disableSection();
-		classpathSection.disableSection();
-	}
-	
-	public void enableAllSections(){
-		customButton.setSelection(false);
-		runtimeSection.enableSection();
-		binSection.enableSection();
-		srcSection.enableSection();
-		classpathSection.enableSection();
+	public void enableAllSections(boolean enable){
+		runtimeSection.enableSection(enable);
+		binSection.enableSection(enable);
+		srcSection.enableSection(enable);
+		classpathSection.enableSection(enable);
 	}
 
 	private void setCustomEntryValue(IBuildEntry customEntry, boolean isCustom){
@@ -180,16 +169,6 @@ public class BuildPage extends PDEFormPage {
 	
 	private String getCustomText() {
 		return "Custom Build";
-		/*
-		IBuildModel buildModel = getBuildModel();
-		IProject project = buildModel.getUnderlyingResource().getProject();
-		IModel model = PDECore.getDefault().getWorkspaceModelManager().getWorkspaceModel(project);
-		if (model instanceof IFeatureModel)
-			return PDEPlugin.getResourceString("BuildPropertiesEditor.Custom.feature");
-		if (model instanceof IPluginModel)
-			return PDEPlugin.getResourceString("BuildPropertiesEditor.Custom.plugin");
-		return PDEPlugin.getResourceString("BuildPropertiesEditor.Custom.fragment");
-		*/
 	}
 
 }

@@ -531,24 +531,14 @@ public class RuntimeInfoSection
 		doRename();		
 	}
 
-	public void disableSection() {
-		fEnabled = false;
-		fFolderPart.setButtonEnabled(0, false);
-
-		fLibraryPart.setButtonEnabled(0, false);
+	public void enableSection(boolean enable) {
+		fEnabled = enable;
+		fLibraryPart.setButtonEnabled(0, enable);
 		fLibraryPart.setButtonEnabled(2, false);
 		fLibraryPart.setButtonEnabled(3, false);
-		fIncludeLibraryButton.setEnabled(false);
-	}
+		fIncludeLibraryButton.setEnabled(enable);
 
-	public void enableSection() {
-		fEnabled = true;
-		fLibraryPart.setButtonEnabled(0, true);
-		fLibraryPart.setButtonEnabled(2, false);
-		fLibraryPart.setButtonEnabled(3, false);
-		fIncludeLibraryButton.setEnabled(true);
-
-		fFolderPart.setButtonEnabled(0, !fLibraryViewer.getSelection().isEmpty());
+		fFolderPart.setButtonEnabled(0, enable && !fLibraryViewer.getSelection().isEmpty());
 	}
 
 	public boolean doGlobalAction(String actionId) {

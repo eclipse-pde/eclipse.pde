@@ -194,17 +194,10 @@ public class BuildClasspathSection
 		fTableViewer.setInput(getBuildModel());
 
 		toolkit.paintBordersFor(container);
-		enableSection();
+		enableSection(true);
 		section.setClient(container);
 	}
 	
-	public void disableSection(){
-		fEnabled = false;
-		EditableTablePart tablePart  = getTablePart();
-		tablePart.setButtonEnabled(1, false);
-		tablePart.setButtonEnabled(0, false);
-	}
- 
 	protected void fillContextMenu(IMenuManager manager) {
 		ISelection selection = fTableViewer.getSelection();
 
@@ -253,11 +246,11 @@ public class BuildClasspathSection
 		return false;
 	}
 	
-	public void enableSection(){
-		fEnabled = true;
+	public void enableSection(boolean enable){
+		fEnabled = enable;
 		EditableTablePart tablePart = getTablePart();
-		tablePart.setButtonEnabled(1, false);
-		tablePart.setButtonEnabled(0, true);
+		tablePart.setButtonEnabled(1, enable && !fTableViewer.getSelection().isEmpty());
+		tablePart.setButtonEnabled(0, enable);
 	}
 
 	protected void selectionChanged(IStructuredSelection selection) {
