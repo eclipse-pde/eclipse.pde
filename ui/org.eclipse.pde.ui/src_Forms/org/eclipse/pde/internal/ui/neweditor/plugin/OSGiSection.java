@@ -107,13 +107,17 @@ public class OSGiSection extends TableSection implements IModelChangedListener {
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
 		initializeFonts();
-		Composite mainContainer = toolkit.createComposite(section);
+		
 		GridLayout layout = new GridLayout();
+		section.setLayout(layout);
+		Composite mainContainer = toolkit.createComposite(section);
+		layout = new GridLayout();
 		layout.marginHeight = layout.marginWidth = 2;
 		layout.makeColumnsEqualWidth = false;
 		layout.numColumns = 3;
+		layout.verticalSpacing = 10;
 		mainContainer.setLayout(layout);
-		mainContainer.setLayoutData(new GridData());
+		mainContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		/*
 		 * create new manifest part
@@ -151,10 +155,25 @@ public class OSGiSection extends TableSection implements IModelChangedListener {
 		manifestLink.setLayout(new GridLayout());
 		gd = new GridData();
 		manifestLink.setLayoutData(gd);
+		
+		/*
+		 * Bottom parts (Activation Rule & Exceptions)
+		 */
+		Composite bottomContainer = toolkit.createComposite(mainContainer);
+		layout = new GridLayout();
+		layout.makeColumnsEqualWidth = false;
+		layout.marginHeight = layout.marginWidth = 0;
+		layout.numColumns = 3;
+		layout.horizontalSpacing = 25;
+		bottomContainer.setLayout(layout);
+		gd = new GridData(GridData.FILL_BOTH);
+		gd.grabExcessHorizontalSpace = true;
+		gd.horizontalSpan = 3;
+		bottomContainer.setLayoutData(gd);
 		/*
 		 * Activation rule part
 		 */
-		Composite ruleContainer = toolkit.createComposite(mainContainer);
+		Composite ruleContainer = toolkit.createComposite(bottomContainer);
 		layout = new GridLayout();
 		layout.marginHeight = layout.marginWidth = 2;
 		layout.numColumns = 1;
@@ -200,13 +219,17 @@ public class OSGiSection extends TableSection implements IModelChangedListener {
 		/*
 		 * Exceptions part
 		 */
-		Composite exceptionsContainer = toolkit.createComposite(mainContainer);
+		Composite exceptionsContainer = toolkit.createComposite(bottomContainer);
 		layout = new GridLayout();
 		layout.marginWidth = layout.marginHeight = 2;
 		layout.numColumns = 2;
 		layout.makeColumnsEqualWidth = false;
 		exceptionsContainer.setLayout(layout);
-		exceptionsContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
+		gd = new GridData(GridData.FILL_BOTH);
+		gd.grabExcessHorizontalSpace = true;
+		gd.horizontalSpan=2;
+		exceptionsContainer.setLayoutData(gd);
+		
 		Label exceptionLabel = toolkit.createLabel(exceptionsContainer, "Exceptions to the Rule");
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
@@ -216,10 +239,21 @@ public class OSGiSection extends TableSection implements IModelChangedListener {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		exceptionPkgLabel.setLayoutData(gd);
+		
+		Composite exceptionsPkgContainer = toolkit.createComposite(exceptionsContainer);
+		layout = new GridLayout();
+		layout.marginWidth = layout.marginHeight = 0;
+		layout.numColumns = 2;
+		layout.makeColumnsEqualWidth = false;
+		exceptionsPkgContainer.setLayout(layout);
+		gd = new GridData(GridData.FILL_BOTH);
+		gd.grabExcessHorizontalSpace = true;
+		gd.horizontalSpan = 2;
+		exceptionsPkgContainer.setLayoutData(gd);
 		EditableTablePart tablePart = getTablePart();
 		IModel model = (IModel) getPage().getModel();
 		tablePart.setEditable(model.isEditable());
-		createViewerPartControl(exceptionsContainer, SWT.FULL_SELECTION, 2, toolkit);
+		createViewerPartControl(exceptionsPkgContainer, SWT.FULL_SELECTION, 2, toolkit);
 		osgiTableViewer = tablePart.getTableViewer();
 		osgiTableViewer.setContentProvider(new TableContentProvider());
 		osgiTableViewer.setLabelProvider(new TableLabelProvider());
