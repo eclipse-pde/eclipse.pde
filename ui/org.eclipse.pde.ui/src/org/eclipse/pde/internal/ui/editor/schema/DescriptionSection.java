@@ -76,7 +76,6 @@ public class DescriptionSection extends PDEFormSection {
 	public void commitChanges(boolean onSave) {
 		handleApply();
 		setDirty(false);
-		resetButton.setEnabled(false);
 	}
 	public Composite createClient(Composite parent, FormWidgetFactory factory) {
 		Composite container = factory.createComposite(parent);
@@ -171,6 +170,7 @@ public class DescriptionSection extends PDEFormSection {
 		if (element != null)
 			 ((SchemaObject) element).setDescription(document.get());
 		applyButton.setEnabled(false);
+		resetButton.setEnabled(false);
 	}
 	private void handleReset() {
 		updateDocument();
