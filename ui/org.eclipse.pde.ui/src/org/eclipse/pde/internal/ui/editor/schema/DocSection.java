@@ -31,8 +31,7 @@ public class DocSection extends PDEFormSection {
 	public static final String SECTION_DESC = "SchemaEditor.DocSection.desc";
 	public static final String KEY_TOPIC_OVERVIEW =
 		"SchemaEditor.topic.overview";
-	public static final String KEY_TOPIC_SINCE =
-		"SchemaEditor.topic.since";
+	public static final String KEY_TOPIC_SINCE = "SchemaEditor.topic.since";
 	public static final String KEY_TOPIC_EXAMPLES =
 		"SchemaEditor.topic.examples";
 	public static final String KEY_TOPIC_IMPLEMENTATION =
@@ -89,7 +88,8 @@ public class DocSection extends PDEFormSection {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.marginWidth = FormWidgetFactory.BORDER_STYLE == SWT.NULL ? 2 : 0;
-		layout.marginHeight = FormWidgetFactory.BORDER_STYLE == SWT.NULL ? 2 : 0;
+		layout.marginHeight =
+			FormWidgetFactory.BORDER_STYLE == SWT.NULL ? 2 : 0;
 		layout.verticalSpacing = 6;
 		container.setLayout(layout);
 		GridData gd;
@@ -112,7 +112,8 @@ public class DocSection extends PDEFormSection {
 		sectionCombo.setLayoutData(gd);
 		factory.createLabel(container, null);
 
-		int styles = SWT.MULTI | SWT.WRAP | SWT.V_SCROLL | SWT.H_SCROLL /*| SWT.WRAP */
+		int styles =
+			SWT.MULTI | SWT.WRAP | SWT.V_SCROLL | SWT.H_SCROLL /*| SWT.WRAP */
 		| FormWidgetFactory.BORDER_STYLE;
 		sourceViewer = new SourceViewer(container, null, styles);
 		sourceViewer.configure(sourceConfiguration);
@@ -192,6 +193,10 @@ public class DocSection extends PDEFormSection {
 		} else if (
 			actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.PASTE)) {
 			sourceViewer.doOperation(SourceViewer.PASTE);
+			return true;
+		} else if (
+			actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.SELECT_ALL)) {
+			sourceViewer.doOperation(SourceViewer.SELECT_ALL);
 			return true;
 		} else if (
 			actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {

@@ -58,7 +58,9 @@ public class DescriptionSection extends PDEFormSection {
 		partitioner =
 			new DefaultPartitioner(
 				new PDEPartitionScanner(),
-				new String[] { PDEPartitionScanner.XML_TAG, PDEPartitionScanner.XML_COMMENT });
+				new String[] {
+					PDEPartitionScanner.XML_TAG,
+					PDEPartitionScanner.XML_COMMENT });
 		partitioner.connect(document);
 		document.setDocumentPartitioner(partitioner);
 	}
@@ -77,18 +79,26 @@ public class DescriptionSection extends PDEFormSection {
 		handleApply();
 		setDirty(false);
 	}
-	public Composite createClient(Composite parent, FormWidgetFactory factory) {
+	public Composite createClient(
+		Composite parent,
+		FormWidgetFactory factory) {
 		Composite container = factory.createComposite(parent);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		container.setLayout(layout);
 		GridData gd;
-		int styles = SWT.MULTI | SWT.WRAP | SWT.V_SCROLL | SWT.H_SCROLL | FormWidgetFactory.BORDER_STYLE;
+		int styles =
+			SWT.MULTI
+				| SWT.WRAP
+				| SWT.V_SCROLL
+				| SWT.H_SCROLL
+				| FormWidgetFactory.BORDER_STYLE;
 		sourceViewer = new SourceViewer(container, null, styles);
 		sourceViewer.configure(sourceConfiguration);
 		sourceViewer.setDocument(document);
 		sourceViewer.setEditable(isEditable());
-		sourceViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+		sourceViewer
+			.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateSelection(event.getSelection());
 			}
@@ -117,7 +127,9 @@ public class DescriptionSection extends PDEFormSection {
 				PDEPlugin.getResourceString(KEY_APPLY),
 				SWT.PUSH);
 		applyButton.setEnabled(false);
-		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
+		gd =
+			new GridData(
+				GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 		applyButton.setLayoutData(gd);
 		applyButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -131,7 +143,9 @@ public class DescriptionSection extends PDEFormSection {
 				PDEPlugin.getResourceString(KEY_RESET),
 				SWT.PUSH);
 		resetButton.setEnabled(false);
-		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
+		gd =
+			new GridData(
+				GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 		resetButton.setLayoutData(gd);
 		resetButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -149,26 +163,36 @@ public class DescriptionSection extends PDEFormSection {
 		if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.CUT)) {
 			sourceViewer.doOperation(SourceViewer.CUT);
 			return true;
-		} else if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.COPY)) {
+		} else if (
+			actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.COPY)) {
 			sourceViewer.doOperation(SourceViewer.COPY);
 			return true;
-		} else if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.PASTE)) {
+		} else if (
+			actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.PASTE)) {
 			sourceViewer.doOperation(SourceViewer.PASTE);
 			return true;
-		} else if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {
+		} else if (
+			actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.SELECT_ALL)) {
+			sourceViewer.doOperation(SourceViewer.SELECT_ALL);
+			return true;
+		} else if (
+			actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {
 			sourceViewer.doOperation(SourceViewer.DELETE);
 			return true;
-		} else if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.UNDO)) {
+		} else if (
+			actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.UNDO)) {
 			sourceViewer.doOperation(SourceViewer.UNDO);
 			return true;
-		} else if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.REDO)) {
+		} else if (
+			actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.REDO)) {
 			sourceViewer.doOperation(SourceViewer.REDO);
 			return true;
 		}
 		return false;
 	}
 	protected void fillContextMenu(IMenuManager manager) {
-		getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager);
+		getFormPage().getEditor().getContributor().contextMenuAboutToShow(
+			manager);
 	}
 	private void handleApply() {
 		if (element != null)
