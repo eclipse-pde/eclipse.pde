@@ -11,24 +11,26 @@
 package org.eclipse.pde.internal.ui.neweditor.plugin;
 
 import java.util.*;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.plugin.PluginLibrary;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.editor.build.JarSelectionValidator;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.core.plugin.*;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.editor.build.*;
+import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.pde.internal.ui.neweditor.*;
-import org.eclipse.pde.internal.ui.neweditor.build.*;
+import org.eclipse.pde.internal.ui.neweditor.build.JARFileFilter;
 import org.eclipse.pde.internal.ui.newparts.*;
-import org.eclipse.swt.SWT;
+import org.eclipse.pde.internal.ui.util.*;
+import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.actions.*;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.model.*;
@@ -42,7 +44,8 @@ public class LibrarySection
 	public static final String SECTION_DESC = "ManifestEditor.LibrarySection.desc";
 	public static final String SECTION_FDESC =
 		"ManifestEditor.LibrarySection.fdesc";
-	public static final String SECTION_NEW = "ManifestEditor.LibrarySection.new";
+	public static final String SECTION_ADD = "NewManifestEditor.LibrarySection.add";
+	public static final String SECTION_NEW = "NewManifestEditor.LibrarySection.new";
 	public static final String SECTION_UP = "ManifestEditor.LibrarySection.up";
 	public static final String SECTION_DOWN = "ManifestEditor.LibrarySection.down";
 	public static final String POPUP_NEW_LIBRARY =
@@ -101,7 +104,7 @@ public class LibrarySection
 			Section.DESCRIPTION,
 			new String[] {
 				PDEPlugin.getResourceString(SECTION_NEW),
-				null,
+				PDEPlugin.getResourceString(SECTION_ADD),
 				PDEPlugin.getResourceString(SECTION_UP),
 				PDEPlugin.getResourceString(SECTION_DOWN)});
 		getSection().setText(PDEPlugin.getResourceString(SECTION_TITLE));
@@ -140,6 +143,9 @@ public class LibrarySection
 		switch (index) {
 			case 0 :
 				handleNew();
+				break;
+			case 1:
+				handleAdd();
 				break;
 			case 2 :
 				handleUp();
@@ -206,7 +212,7 @@ public class LibrarySection
 
 		Action newAction = new Action(PDEPlugin.getResourceString(POPUP_NEW_LIBRARY)) {
 			public void run() {
-				handleNew();
+				handleAdd();
 			}
 		};
 		newAction.setEnabled(model.isEditable());
@@ -249,18 +255,38 @@ public class LibrarySection
 		IPluginLibrary l2 = libraries[index + 1];
 
 		try {
-			plugin.swap(l1, l2);
+		plugin.swap(l1, l2);
 		} catch (CoreException e) {
-			PDEPlugin.logException(e);
+		PDEPlugin.logException(e);
 		}
 		updateDirectionalButtons();*/
 	}
-	
-	private void handleNew() {
+	private void handleNew(){
+		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
+		NewRuntimeLibraryDialog dialog = new NewRuntimeLibraryDialog(getPage().getSite().getShell(), 
+				model.getPluginBase().getLibraries());
+		dialog.create();
+		dialog.getShell().setText(PDEPlugin.getResourceString(NEW_LIBRARY_ENTRY));
+		SWTUtil.setDialogSize(dialog, 250, 175);
+
+		if (dialog.open() == Dialog.OK){
+			String libName = dialog.getLibraryName();
+			if (libName==null || libName.length()==0)
+				return;
+			try {
+				IPluginLibrary library = model.getPluginFactory().createLibrary();
+				library.setName(libName);
+				model.getPluginBase().add(library);
+			} catch (CoreException e) {
+				PDEPlugin.logException(e);
+			}
+		}
+	}
+	private void handleAdd() {
 		ElementTreeSelectionDialog dialog =
 			new ElementTreeSelectionDialog(
-				getPage().getSite().getShell(),
-				new WorkbenchLabelProvider(),
+					getPage().getSite().getShell(),
+					new WorkbenchLabelProvider(),
 				new WorkbenchContentProvider());
 				
 		Class[] acceptedClasses = new Class[] { IFile.class };
@@ -314,6 +340,7 @@ public class LibrarySection
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		libraryTable.setInput(model.getPluginBase());
 		getTablePart().setButtonEnabled(0, model.isEditable());
+		getTablePart().setButtonEnabled(1, model.isEditable());
 		getTablePart().setButtonEnabled(2, false);
 		getTablePart().setButtonEnabled(3, false);
 		model.addModelChangedListener(this);
