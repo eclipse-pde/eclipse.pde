@@ -211,38 +211,51 @@ public class LauncherUtils {
 	}
 	
 	public static HashMap getAutoStartPlugins(ILaunchConfiguration config) {
+		boolean useDefault = true;
+		String customAutoStart = ""; //$NON-NLS-1$
+		try {
+			useDefault = config.getAttribute(ILauncherSettings.CONFIG_USE_DEFAULT, true);
+			customAutoStart = config.getAttribute(ILauncherSettings.CONFIG_AUTO_START, ""); //$NON-NLS-1$
+		} catch (CoreException e) {
+		}		
+		return getAutoStartPlugins(useDefault, customAutoStart);
+	}
+	
+	public static HashMap getAutoStartPlugins(boolean useDefault, String customAutoStart) {
 		HashMap list = new HashMap();
 		if (!PDECore.getDefault().getModelManager().isOSGiRuntime()) {
 			list.put("org.eclipse.core.boot", new Integer(0)); //$NON-NLS-1$
 		} else {
-			try {
-				list.put("org.eclipse.osgi", new Integer(0)); //$NON-NLS-1$
-				String bundles = null;
-				if (config.getAttribute(ILauncherSettings.CONFIG_USE_DEFAULT, true)) {
-					Properties prop = getConfigIniProperties(ExternalModelManager.getEclipseHome().toOSString(), "configuration/config.ini"); //$NON-NLS-1$
+			list.put("org.eclipse.osgi", new Integer(0)); //$NON-NLS-1$
+			String bundles = null;
+			if (useDefault) {
+				Properties prop = getConfigIniProperties(ExternalModelManager.getEclipseHome().toOSString(), "configuration/config.ini"); //$NON-NLS-1$
+				if (prop != null)
+					bundles = prop.getProperty("osgi.bundles"); //$NON-NLS-1$
+				if (prop == null || bundles == null) {
+					String path = getOSGiPath();
+					if (path != null)
+						prop = getConfigIniProperties(path, "eclipse.properties"); //$NON-NLS-1$
 					if (prop != null)
 						bundles = prop.getProperty("osgi.bundles"); //$NON-NLS-1$
-					if (prop == null || bundles == null) {
-						String path = getOSGiPath();
-						if (path != null)
-							prop = getConfigIniProperties(path, "eclipse.properties"); //$NON-NLS-1$
-						if (prop != null)
-							bundles = prop.getProperty("osgi.bundles"); //$NON-NLS-1$
-					} 
-				} else {
-					bundles = config.getAttribute(ILauncherSettings.CONFIG_AUTO_START, ""); //$NON-NLS-1$
-				}
-				if (bundles != null) {
-					StringTokenizer tokenizer = new StringTokenizer(bundles, ","); //$NON-NLS-1$
-					while (tokenizer.hasMoreTokens()) {
-						String token = tokenizer.nextToken().trim();
-						int index = token.indexOf('@');
-						Integer level = index != -1 ? getStartLevel(token.substring(index + 1)) : new Integer(-1);
-						list.put(index != -1 ? token.substring(0,token.indexOf('@')) : token, level);
-					}	
-				}				
-			} catch (CoreException e) {
+				} 
+			} else {
+				bundles = customAutoStart;
 			}
+			if (bundles != null) {
+				StringTokenizer tokenizer = new StringTokenizer(bundles, ","); //$NON-NLS-1$
+				while (tokenizer.hasMoreTokens()) {
+					String token = tokenizer.nextToken().trim();
+					int index = token.indexOf('@');
+					if (index == -1 || index == token.length() - 1)
+						continue;
+					String start = token.substring(index + 1);
+					if (start.indexOf("start") != -1 || !useDefault) {
+						Integer level = index != -1 ? getStartLevel(start) : new Integer(-1);
+						list.put(index != -1 ? token.substring(0,token.indexOf('@')) : token, level);
+					}
+				}	
+			}				
 		}		
 		return list;
 	}

@@ -122,7 +122,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 						return plugin.getId() + " (" + plugin.getVersion() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 					case 1:
 						int start = entry.startLevel.intValue();
-						return (start > 0) ? entry.startLevel.toString() : PDEPlugin.getResourceString("ConfigurationTab.unspecified"); //$NON-NLS-1$
+						return (start >= 0) ? entry.startLevel.toString() : PDEPlugin.getResourceString("ConfigurationTab.unspecified"); //$NON-NLS-1$
 				}
 			}
 			return null;
@@ -136,12 +136,17 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 	
 	private void initializeDefaultPlugins() {
 		fPluginList.clear();
-		IPluginModelBase model = getPlugin("org.eclipse.core.runtime"); //$NON-NLS-1$
-		if (model != null)
-			fPluginList.add(new Entry(model, 2));
-		model = getPlugin("org.eclipse.update.configurator"); //$NON-NLS-1$
-		if (model != null)
-			fPluginList.add(new Entry(model, 3));
+		HashMap map = LauncherUtils.getAutoStartPlugins(true, "");
+		map.remove("org.eclipse.osgi");
+		Iterator iter = map.keySet().iterator();
+		while (iter.hasNext()) {
+			Object object = iter.next();
+			String id = (String)object.toString().trim();
+			IPluginModelBase model = getPlugin(id);
+			if (model != null) {
+				fPluginList.add(new Entry(model, ((Integer)map.get(object)).intValue()));
+			}
+		}
 	}
 	
 	private void initializePlugins(String selected) {
@@ -235,6 +240,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 				enableButtons(!fUseDefault.getSelection());
 			}
 		});
+		fTableViewer.setSorter(ListUtil.PLUGIN_SORTER);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 100;
 		gd.widthHint = 300;
