@@ -423,6 +423,7 @@ public class WorkbenchLaunchConfigurationDelegate
 			if (monitor.isCanceled()) {
 				return false;
 			}
+			PDEPlugin.getDefault().getLaunchesListener().manage(launch);
 			runner.run(runnerConfig, launch, monitor);
 			monitor.worked(1);
 			ISourceLocator sourceLocator = constructSourceLocator(plugins);

@@ -21,6 +21,7 @@ import org.eclipse.pde.internal.ui.editor.feature.FeatureAdapterFactory;
 import org.eclipse.pde.internal.ui.editor.manifest.PluginAdapterFactory;
 import org.eclipse.pde.internal.ui.editor.schema.SchemaAdapterFactory;
 import org.eclipse.pde.internal.ui.editor.text.ColorManager;
+import org.eclipse.pde.internal.ui.launcher.LaunchListener;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.view.PluginsViewAdapterFactory;
 import org.eclipse.swt.widgets.*;
@@ -36,6 +37,8 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 	private ResourceBundle resourceBundle;
 	// Shared label labelProvider
 	private PDELabelProvider labelProvider;
+	// Launches listener
+	private LaunchListener launchListener;
 
 	private java.util.Hashtable counters;
 
@@ -173,6 +176,8 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 	}
 	
 	public void shutdown() throws CoreException {
+		if (launchListener!=null)
+			launchListener.shutdown();
 		super.shutdown();
 	}
 
@@ -191,6 +196,12 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 		if (labelProvider == null)
 			labelProvider = new PDELabelProvider();
 		return labelProvider;
+	}
+	
+	public LaunchListener getLaunchesListener() {
+		if (launchListener == null)
+			launchListener = new LaunchListener();
+		return launchListener;
 	}
 	
 	protected void initializeDefaultPreferences(IPreferenceStore store) {
