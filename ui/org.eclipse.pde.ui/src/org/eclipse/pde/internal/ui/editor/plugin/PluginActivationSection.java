@@ -132,7 +132,7 @@ public class PluginActivationSection extends TableSection
 	 */
 	public boolean isEditable() {
 		return getPage().getModel().isEditable()
-				&& getContextId().equals(BundleInputContext.CONTEXT_ID);
+				&& getBundleModel() != null;
 	}
 	/*
 	 * (non-Javadoc)
