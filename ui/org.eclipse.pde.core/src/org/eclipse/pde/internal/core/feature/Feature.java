@@ -236,78 +236,104 @@ public class Feature extends VersionableObject implements IFeature {
 	}
 
 	public void computeImports() throws CoreException {
-		IFeatureImport[] removed = null;
-
-		if (fImports.size() > 0) {
-			ArrayList list = new ArrayList();
-			for (int i = 0; i < fImports.size(); i++) {
-				IFeatureImport iimport = (IFeatureImport) fImports.get(i);
-				if (iimport.getType() != IFeatureImport.FEATURE)
-					list.add(iimport);
-			}
-			if (list.size() > 0) {
-				fImports.removeAll(list);
-				removed = (IFeatureImport[]) list
-						.toArray(new IFeatureImport[list.size()]);
-			}
-		}
-		fImports.clear();
-		if (removed != null)
-			fireStructureChanged(removed, IModelChangedEvent.REMOVE);
-		// Create full import list
+		// some existing imports may valid and can be preserved
+		Vector preservedImports = new Vector(fImports.size());
+		// new imports
+		ArrayList newImports = new ArrayList();
 		for (int i = 0; i < fPlugins.size(); i++) {
 			IFeaturePlugin fp = (IFeaturePlugin) fPlugins.get(i);
 			IPluginBase plugin = PDECore.getDefault().findPlugin(fp.getId(),
 					fp.getVersion(), 0);
 			if (plugin != null) {
-				addPluginImports(plugin);
+				addPluginImports(preservedImports, newImports, plugin);
 			}
 		}
-		// Find plug-ins that satisfy requirements within this feature.
-		// Whatever remains will be feature external requirements.
-		Vector inputImports = (Vector) fImports.clone();
-		for (int i = 0; i < inputImports.size(); i++) {
-			IFeatureImport iimport = (IFeatureImport) inputImports.get(i);
-			IFeaturePlugin local = findFeaturePlugin(iimport.getId(), iimport
-					.getVersion(), iimport.getMatch());
-			if (local != null)
-				fImports.remove(iimport);
+		// preserve imports of features
+		for (int i = 0; i < fImports.size(); i++) {
+			IFeatureImport iimport = (IFeatureImport) fImports.get(i);
+			if (iimport.getType() == IFeatureImport.FEATURE)
+				preservedImports.add(iimport);
 		}
-		if (fImports.size() > 0) {
-			IFeatureImport[] added = (IFeatureImport[]) fImports
-					.toArray(new IFeatureImport[fImports.size()]);
-			fireStructureChanged(added, IModelChangedEvent.INSERT);
+		// removed = old - preserved
+		Vector removedImports = ((Vector) fImports.clone());
+		removedImports.removeAll(preservedImports);
+		// perform remove
+		fImports = preservedImports;
+		if (removedImports.size() > 0) {
+			fireStructureChanged((IFeatureImport[]) removedImports
+					.toArray(new IFeatureImport[removedImports.size()]),
+					IModelChangedEvent.REMOVE);
+		}
+		// perform add
+		if (newImports.size() > 0) {
+			fImports.addAll(newImports);
+			fireStructureChanged((IFeatureImport[]) newImports
+					.toArray(new IFeatureImport[newImports.size()]),
+					IModelChangedEvent.INSERT);
 		}
 	}
 
-	private void addPluginImports(IPluginBase plugin) throws CoreException {
+	/**
+	 * Creates IFeatureImports based on IPluginImports. Ensures no duplicates in
+	 * preservedImports + newImports
+	 * 
+	 * @param preservedImports
+	 *            out for valid existing imports
+	 * @param newImports
+	 *            out for new imports
+	 * @param plugin
+	 * @throws CoreException
+	 */
+	private void addPluginImports(List preservedImports, List newImports,
+			IPluginBase plugin) throws CoreException {
 		IPluginImport[] pluginImports = plugin.getImports();
 		for (int i = 0; i < pluginImports.length; i++) {
 			IPluginImport pluginImport = pluginImports[i];
 			String id = pluginImport.getId();
 			String version = pluginImport.getVersion();
 			int match = pluginImport.getMatch();
-			// Don't add duplicates
-			if (findImport(id, version, match) != null)
+			if (findFeaturePlugin(id, version, match) != null) {
+				// don't add imports to local plug-ins
 				continue;
-			IFeatureImport iimport = getModel().getFactory().createImport();
+			}
+			if (findImport(preservedImports, id, version, match) != null) {
+				// already seen
+				continue;
+			}
+			if (findImport(newImports, id, version, match) != null) {
+				// already seen
+				continue;
+			}
+			IFeatureImport iimport = findImport(fImports, id, version, match);
+			if (iimport != null) {
+				// import still valid
+				preservedImports.add(iimport);
+				continue;
+			}
+			// a new one is needed
+			iimport = getModel().getFactory().createImport();
 			iimport.setId(id);
 			iimport.setVersion(version);
 			iimport.setMatch(match);
 			((FeatureImport) iimport).setInTheModel(true);
-			fImports.add(iimport);
+			newImports.add(iimport);
 			IPlugin p = PDECore.getDefault().findPlugin(pluginImport.getId(),
 					pluginImport.getVersion(), pluginImport.getMatch());
 			((FeatureImport) iimport).setPlugin(p);
-			/*
-			 * if (p != null) addPluginImports(p);
-			 */
 		}
 	}
 
-	private IFeatureImport findImport(String id, String version, int match) {
-		for (int i = 0; i < fImports.size(); i++) {
-			IFeatureImport iimport = (IFeatureImport) fImports.get(i);
+	/**
+	 * Finds a given import in the list
+	 * @param imports list of imports
+	 * @param id
+	 * @param version
+	 * @param match
+	 * @return IFeatureImport or null
+	 */
+	private IFeatureImport findImport(List imports, String id, String version, int match) {
+		for (int i = 0; i < imports.size(); i++) {
+			IFeatureImport iimport = (IFeatureImport) imports.get(i);
 			if (iimport.getId().equals(id)) {
 				if (version == null)
 					return iimport;
