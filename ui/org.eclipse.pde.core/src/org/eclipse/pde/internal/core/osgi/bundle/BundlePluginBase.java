@@ -86,7 +86,7 @@ public class BundlePluginBase
 	 */
 	public IExtensions getExtensionsRoot() {
 		if (model != null) {
-			IExtensionsModel emodel = model.getExtensionsModel();
+			ISharedExtensionsModel emodel = model.getExtensionsModel();
 			return emodel != null ? emodel.getExtensions() : null;
 		}
 		return null;

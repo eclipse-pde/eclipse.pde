@@ -38,6 +38,10 @@ public abstract class AbstractPluginModelBase
 	
 	public abstract IPluginBase createPluginBase();
 	
+	public IExtensions createExtensions() {
+		return createPluginBase();
+	}
+	
 	public IExtensionsModelFactory getFactory() {
 		return this;
 	}
@@ -62,6 +66,13 @@ public abstract class AbstractPluginModelBase
 			loaded = true;
 		}
 		return pluginBase;
+	}
+	
+	public IExtensions getExtensions() {
+		return getPluginBase();
+	}
+	public IExtensions getExtensions(boolean createIfMissing) {
+		return getPluginBase(createIfMissing);
 	}
 	public boolean isEnabled() {
 		return enabled;

@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.core.osgi.bundle;
+import org.eclipse.pde.core.IEditable;
 import org.eclipse.pde.core.plugin.*;
 /**
  * An adapter of the pre-3.0 plug-in model base interface that is capable of
@@ -19,7 +20,7 @@ import org.eclipse.pde.core.plugin.*;
  * 
  * @since 3.0
  */
-public interface IBundlePluginModelBase extends IPluginModelBase {
+public interface IBundlePluginModelBase extends IPluginModelBase, IEditable {
 	/**
 	 * Returns the underlying OSGi bundle model object if bundle manifest is
 	 * present.
@@ -34,7 +35,7 @@ public interface IBundlePluginModelBase extends IPluginModelBase {
 	 * 
 	 * @return extensions model or <code>null</code> if not present.
 	 */
-	IExtensionsModel getExtensionsModel();
+	ISharedExtensionsModel getExtensionsModel();
 	/**
 	 * Sets the bundle manifest model for this adapter. All calls related to
 	 * data that is normally stored in this model (e.g. plug-in ID, plug-in
@@ -54,7 +55,7 @@ public interface IBundlePluginModelBase extends IPluginModelBase {
 	 * @param extensionsModel
 	 *            the model that stores extensions and extension points
 	 */
-	void setExtensionsModel(IExtensionsModel extensionsModel);
+	void setExtensionsModel(ISharedExtensionsModel extensionsModel);
 	/**
 	 * Factory method for creating a new import object. This is important for
 	 * maintaining the adapter because <code>IPluginBase</code> returns an

@@ -32,18 +32,5 @@ package org.eclipse.pde.core.plugin;
  * about changes. An attempt to change a read-only
  * model will result in a CoreException.
  */
-public interface IExtensionsModel extends ISharedPluginModel, IBundlePluginModelProvider {
-	/**
-	 * Returns a top-level model object. Equivalent to
-	 * calling <pre>getPluginBase(true)</pre>.
-	 * @return a top-level model object representing a plug-in or a fragment.
-	 */
-	IExtensions getExtensions();
-	/**
-	 * Returns a top-level model object.
-	 * @param createIfMissing if true, root model object will
-	 * be created if not defined.
-	 * @return a top-level model object
-	 */
-	IExtensions getExtensions(boolean createIfMissing);
+public interface IExtensionsModel extends ISharedExtensionsModel, IBundlePluginModelProvider {
 }

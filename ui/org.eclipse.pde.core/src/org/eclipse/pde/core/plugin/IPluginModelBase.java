@@ -37,7 +37,7 @@ import org.eclipse.pde.core.build.*;
  * about changes. An attempt to change a read-only
  * model will result in a CoreException.
  */
-public interface IPluginModelBase extends ISharedPluginModel, IModelChangeProvider {
+public interface IPluginModelBase extends ISharedExtensionsModel, IModelChangeProvider {
 	/**
 	 * @return org.eclipse.pde.ui.model.plugin.IPluginBase
 	 */

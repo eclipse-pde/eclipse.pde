@@ -8,7 +8,7 @@ package org.eclipse.pde.internal.ui.neweditor.plugin;
 
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.osgi.bundle.IBundleModel;
-import org.eclipse.pde.core.plugin.IExtensionsModel;
+import org.eclipse.pde.core.plugin.ISharedExtensionsModel;
 import org.eclipse.pde.internal.core.osgi.bundle.*;
 import org.eclipse.pde.internal.ui.neweditor.build.BuildInputContext;
 import org.eclipse.pde.internal.ui.neweditor.context.*;
@@ -73,8 +73,8 @@ public class PluginInputContextManager extends InputContextManager {
 	
 	private void syncExtensions() {
 		IModel emodel = findPluginModel();
-		if (emodel!=null && emodel instanceof IExtensionsModel)
-			bmodel.setExtensionsModel((IExtensionsModel)emodel);
+		if (emodel!=null && emodel instanceof ISharedExtensionsModel)
+			bmodel.setExtensionsModel((ISharedExtensionsModel)emodel);
 		else
 			bmodel.setExtensionsModel(null);
 	}

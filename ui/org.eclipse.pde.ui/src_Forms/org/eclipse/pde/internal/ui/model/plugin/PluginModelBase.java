@@ -59,6 +59,10 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 	public IPluginBase getPluginBase() {
 		return getPluginBase(true);
 	}
+	
+	public IExtensions getExtensions() {
+		return getPluginBase();
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getPluginBase(boolean)
@@ -72,6 +76,10 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 			}
 		}
 		return fPluginBase;
+	}
+	
+	public IExtensions getExtensions(boolean createIfMissing) {
+		return getPluginBase(createIfMissing);
 	}
 
 	/* (non-Javadoc)

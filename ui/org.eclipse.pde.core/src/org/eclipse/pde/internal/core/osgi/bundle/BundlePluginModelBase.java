@@ -5,39 +5,37 @@
  * Java - Code Generation - Code and Comments
  */
 package org.eclipse.pde.internal.core.osgi.bundle;
-
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.net.URL;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.service.resolver.*;
+import org.eclipse.pde.core.IEditable;
 import org.eclipse.pde.core.IEditableModel;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.osgi.bundle.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.AbstractModel;
 import org.eclipse.pde.internal.core.plugin.*;
-
 /**
  * @author dejan
  * 
  * To change the template for this generated type comment go to Window -
  * Preferences - Java - Code Generation - Code and Comments
  */
-public abstract class BundlePluginModelBase
-	extends AbstractModel
-	implements IBundlePluginModelBase, IPluginModelFactory {
+public abstract class BundlePluginModelBase extends AbstractModel
+		implements
+			IBundlePluginModelBase,
+			IPluginModelFactory {
 	private IBundleModel bundleModel;
-	private IExtensionsModel extensionsModel;
+	private ISharedExtensionsModel extensionsModel;
 	private IBundlePluginBase bundlePluginBase;
 	private IBuildModel buildModel;
 	private BundleDescription fBundleDescription;
 	private boolean enabled;
-
 	public BundlePluginModelBase() {
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -46,20 +44,17 @@ public abstract class BundlePluginModelBase
 	public IBundleModel getBundleModel() {
 		return bundleModel;
 	}
-
 	public IResource getUnderlyingResource() {
 		return bundleModel.getUnderlyingResource();
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.pde.core.osgi.bundle.IBundlePluginModelBase#getExtensionsModel()
 	 */
-	public IExtensionsModel getExtensionsModel() {
+	public ISharedExtensionsModel getExtensionsModel() {
 		return extensionsModel;
 	}
-
 	public void dispose() {
 		if (bundleModel != null) {
 			if (bundlePluginBase != null)
@@ -73,7 +68,6 @@ public abstract class BundlePluginModelBase
 		}
 		super.dispose();
 	}
-
 	public void save() {
 		if (bundleModel != null && bundleModel instanceof IEditableModel) {
 			IEditableModel emodel = (IEditableModel) bundleModel;
@@ -81,13 +75,12 @@ public abstract class BundlePluginModelBase
 				emodel.save();
 		}
 		if (extensionsModel != null
-			&& extensionsModel instanceof IEditableModel) {
+				&& extensionsModel instanceof IEditableModel) {
 			IEditableModel emodel = (IEditableModel) extensionsModel;
 			if (emodel.isDirty())
 				emodel.save();
 		}
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -101,22 +94,19 @@ public abstract class BundlePluginModelBase
 		if (bundlePluginBase != null)
 			bundleModel.addModelChangedListener(bundlePluginBase);
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.pde.core.osgi.bundle.IBundlePluginModelBase#setExtensionsModel(org.eclipse.pde.core.plugin.IExtensionsModel)
 	 */
-	public void setExtensionsModel(IExtensionsModel extensionsModel) {
+	public void setExtensionsModel(ISharedExtensionsModel extensionsModel) {
 		this.extensionsModel = extensionsModel;
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#createPluginBase()
 	 */
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -125,11 +115,9 @@ public abstract class BundlePluginModelBase
 	public IBuildModel getBuildModel() {
 		return buildModel;
 	}
-
 	public void setBuildModel(IBuildModel buildModel) {
 		this.buildModel = buildModel;
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -138,7 +126,9 @@ public abstract class BundlePluginModelBase
 	public IPluginBase getPluginBase() {
 		return getPluginBase(true);
 	}
-
+	public IExtensions getExtensions() {
+		return getPluginBase();
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -153,7 +143,9 @@ public abstract class BundlePluginModelBase
 		}
 		return bundlePluginBase;
 	}
-
+	public IExtensions getExtensions(boolean createIfMissing) {
+		return getPluginBase(createIfMissing);
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -162,7 +154,6 @@ public abstract class BundlePluginModelBase
 	public IPluginModelFactory getPluginFactory() {
 		return this;
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -173,7 +164,6 @@ public abstract class BundlePluginModelBase
 			return extensionsModel.getFactory();
 		return null;
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -184,11 +174,9 @@ public abstract class BundlePluginModelBase
 			return bundleModel.getInstallLocation();
 		return null;
 	}
-
 	public URL getNLLookupLocation() {
 		return null;
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -197,38 +185,36 @@ public abstract class BundlePluginModelBase
 	public String getResourceString(String key) {
 		return key;
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.pde.core.IModel#isEditable()
 	 */
 	public boolean isEditable() {
+		if (bundleModel != null && bundleModel.isEditable() == false)
+			return false;
+		if (extensionsModel != null && extensionsModel.isEditable() == false)
+			return false;
 		return true;
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.pde.core.IModel#isInSync()
 	 */
 	public boolean isInSync() {
-		return (
-			(bundleModel == null || bundleModel.isInSync())
-				&& (extensionsModel == null || extensionsModel.isInSync()));
+		return ((bundleModel == null || bundleModel.isInSync()) && (extensionsModel == null || extensionsModel
+				.isInSync()));
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.pde.core.IModel#isValid()
 	 */
 	public boolean isValid() {
-		return (
-			(bundleModel == null || bundleModel.isValid())
-				&& (extensionsModel == null || extensionsModel.isValid()));
+		return ((bundleModel == null || bundleModel.isValid()) && (extensionsModel == null || extensionsModel
+				.isValid()));
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -236,23 +222,21 @@ public abstract class BundlePluginModelBase
 	 */
 	public void load() throws CoreException {
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.pde.core.IModel#load(java.io.InputStream, boolean)
 	 */
 	public void load(InputStream source, boolean outOfSync)
-		throws CoreException {
+			throws CoreException {
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.pde.core.IModel#reload(java.io.InputStream, boolean)
 	 */
 	public void reload(InputStream source, boolean outOfSync)
-		throws CoreException {
+			throws CoreException {
 	}
 	/**
 	 * @return Returns the enabled.
@@ -260,7 +244,6 @@ public abstract class BundlePluginModelBase
 	public boolean isEnabled() {
 		return enabled;
 	}
-
 	/**
 	 * @param enabled
 	 *            The enabled to set.
@@ -268,7 +251,6 @@ public abstract class BundlePluginModelBase
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -308,7 +290,9 @@ public abstract class BundlePluginModelBase
 			return extensionsModel.getFactory().createExtensionPoint();
 		return null;
 	}
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.core.IModel#isReconcilingModel()
 	 */
 	public boolean isReconcilingModel() {
@@ -317,18 +301,50 @@ public abstract class BundlePluginModelBase
 	public boolean isBundleModel() {
 		return true;
 	}
-	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getBundleDescription()
 	 */
 	public BundleDescription getBundleDescription() {
 		return fBundleDescription;
 	}
-	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#setBundleDescription(org.eclipse.osgi.service.resolver.BundleDescription)
 	 */
 	public void setBundleDescription(BundleDescription description) {
 		fBundleDescription = description;
+	}
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.core.IEditable#isDirty()
+	 */
+	public boolean isDirty() {
+		if (bundleModel != null && (bundleModel instanceof IEditable)
+				&& ((IEditable) bundleModel).isDirty())
+			return true;
+		if (extensionsModel != null && (extensionsModel instanceof IEditable)
+				&& ((IEditable) extensionsModel).isDirty())
+			return true;
+		return false;
+	}
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.core.IEditable#save(java.io.PrintWriter)
+	 */
+	public void save(PrintWriter writer) {
+		// Does nothing - individual models are saved instead
+	}
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.core.IEditable#setDirty(boolean)
+	 */
+	public void setDirty(boolean dirty) {
+		//does nothing
 	}
 }
