@@ -46,14 +46,14 @@ public class PluginsLabelProvider extends LabelProvider {
 		}
 		if (obj instanceof IPackageFragmentRoot) {
 			// use the short name
-			IPath path = ((IPackageFragmentRoot)obj).getPath();
+			IPath path = ((IPackageFragmentRoot) obj).getPath();
 			return path.lastSegment();
 		}
 		if (obj instanceof IJavaElement) {
 			return ((IJavaElement) obj).getElementName();
 		}
 		if (obj instanceof IStorage) {
-			return ((IStorage)obj).getName();
+			return ((IStorage) obj).getName();
 		}
 		return super.getText(obj);
 	}
@@ -66,8 +66,23 @@ public class PluginsLabelProvider extends LabelProvider {
 			return getImage((FileAdapter) obj);
 		}
 		if (obj instanceof IPackageFragmentRoot) {
+			IPackageFragmentRoot root = (IPackageFragmentRoot) obj;
+			boolean hasSource = false;
+			
+			try {
+				hasSource = root.getSourceAttachmentPath() != null;
+			}
+			catch (JavaModelException e) {
+			}
 			return JavaUI.getSharedImages().getImage(
-				org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_JAR);
+				hasSource
+					? org
+						.eclipse
+						.jdt
+						.ui
+						.ISharedImages
+						.IMG_OBJS_EXTERNAL_ARCHIVE_WITH_SOURCE
+					: org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_EXTERNAL_ARCHIVE);
 		}
 		if (obj instanceof IPackageFragment) {
 			return JavaUI.getSharedImages().getImage(
@@ -82,7 +97,7 @@ public class PluginsLabelProvider extends LabelProvider {
 				org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_CFILE);
 		}
 		if (obj instanceof IStorage) {
-			String name = ((IStorage)obj).getName();
+			String name = ((IStorage) obj).getName();
 			return getFileImage(name);
 		}
 		return null;
@@ -122,7 +137,7 @@ public class PluginsLabelProvider extends LabelProvider {
 		}
 		return getFileImage(fileAdapter.getFile().getName());
 	}
-	
+
 	private Image getFileImage(String fileName) {
 		ImageDescriptor desc =
 			PlatformUI.getWorkbench().getEditorRegistry().getImageDescriptor(

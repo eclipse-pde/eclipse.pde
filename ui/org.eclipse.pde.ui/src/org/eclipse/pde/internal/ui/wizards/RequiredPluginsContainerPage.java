@@ -33,6 +33,7 @@ public class RequiredPluginsContainerPage
 	private CheckboxTableViewer viewer;
 	private Image projectImage;
 	private Image libraryImage;
+	private Image slibraryImage;
 	private IClasspathEntry[] realEntries;
 	private IJavaProject javaProject;
 	private Button attachSourceButton;
@@ -79,8 +80,10 @@ public class RequiredPluginsContainerPage
 			int kind = entry.getEntryKind();
 			if (kind == IClasspathEntry.CPE_PROJECT)
 				return projectImage;
-			else if (kind == IClasspathEntry.CPE_LIBRARY)
-				return libraryImage;
+			else if (kind == IClasspathEntry.CPE_LIBRARY) {
+				IPath sourceAtt = entry.getSourceAttachmentPath();
+				return sourceAtt!=null?slibraryImage:libraryImage;
+			}
 			return null;
 		}
 		public String getColumnText(Object obj, int col) {
@@ -103,14 +106,12 @@ public class RequiredPluginsContainerPage
 		//libraryImage = PDEPluginImages.DESC_BUILD_VAR_OBJ.createImage();
 		libraryImage =
 			JavaUI.getSharedImages().getImage(
-				org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_JAR);
+				org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_EXTERNAL_ARCHIVE);
+		slibraryImage =
+				JavaUI.getSharedImages().getImage(
+				org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_EXTERNAL_ARCHIVE_WITH_SOURCE);
 		setImageDescriptor(PDEPluginImages.DESC_CONVJPPRJ_WIZ);
 		replacedEntries = new Hashtable();
-	}
-
-	public void dispose() {
-		//libraryImage.dispose();
-		super.dispose();
 	}
 
 	/**

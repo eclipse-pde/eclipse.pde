@@ -27,28 +27,28 @@ import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
 public class FeatureImportWizardDetailedPage extends StatusWizardPage {
 	private static final String KEY_TITLE =
-		"FeatureImportWizard.DetailedPage.title";
+		"FeatureImportWizard.DetailedPage.title"; //$NON-NLS-1$
 	private static final String KEY_DESC =
-		"FeatureImportWizard.DetailedPage.desc";
+		"FeatureImportWizard.DetailedPage.desc"; //$NON-NLS-1$
 	private FeatureImportWizardFirstPage firstPage;
 	private IPath dropLocation;
 	private CheckboxTreeViewer featureTreeViewer;
 	private TreePart treePart;
 	private static final String KEY_SHOW_NAMES =
-		"FeatureImportWizard.DetailedPage.showNames";
+		"FeatureImportWizard.DetailedPage.showNames"; //$NON-NLS-1$
 	private static final String KEY_FEATURE_LIST =
-		"FeatureImportWizard.DetailedPage.featureList";
+		"FeatureImportWizard.DetailedPage.featureList"; //$NON-NLS-1$
 
 	private static final String KEY_LOADING_RUNTIME =
-		"FeatureImportWizard.messages.loadingRuntime";
+		"FeatureImportWizard.messages.loadingRuntime"; //$NON-NLS-1$
 	private static final String KEY_UPDATING =
-		"FeatureImportWizard.messages.updating";
+		"FeatureImportWizard.messages.updating"; //$NON-NLS-1$
 	private static final String KEY_LOADING_FILE =
-		"FeatureImportWizard.messages.loadingFile";
+		"FeatureImportWizard.messages.loadingFile"; //$NON-NLS-1$
 	private static final String KEY_NO_FEATURES =
-		"FeatureImportWizard.messages.noFeatures";
+		"FeatureImportWizard.messages.noFeatures"; //$NON-NLS-1$
 	private static final String KEY_NO_SELECTED =
-		"FeatureImportWizard.errors.noFeatureSelected";
+		"FeatureImportWizard.errors.noFeatureSelected"; //$NON-NLS-1$
 	private IFeatureModel[] models;
 	private boolean block;
 
@@ -138,13 +138,13 @@ public class FeatureImportWizardDetailedPage extends StatusWizardPage {
 	}
 
 	public FeatureImportWizardDetailedPage(FeatureImportWizardFirstPage firstPage) {
-		super("FeatureImportWizardDetailedPage", false);
+		super("FeatureImportWizardDetailedPage", false); //$NON-NLS-1$
 		setTitle(PDEPlugin.getResourceString(KEY_TITLE));
 		setDescription(PDEPlugin.getResourceString(KEY_DESC));
 
 		this.firstPage = firstPage;
 		dropLocation = null;
-		updateStatus(createStatus(IStatus.ERROR, ""));
+		updateStatus(createStatus(IStatus.ERROR, "")); //$NON-NLS-1$
 
 		String[] buttonLabels =
 			{
@@ -160,7 +160,7 @@ public class FeatureImportWizardDetailedPage extends StatusWizardPage {
 
 	private void initializeFields(IPath dropLocation) {
 		if (!dropLocation.equals(this.dropLocation)) {
-			updateStatus(createStatus(IStatus.OK, ""));
+			updateStatus(createStatus(IStatus.OK, "")); //$NON-NLS-1$
 			this.dropLocation = dropLocation;
 			models = null;
 		}
@@ -291,7 +291,7 @@ public class FeatureImportWizardDetailedPage extends StatusWizardPage {
 	}
 
 	private File createPath(IPath dropLocation) {
-		File featuresDir = new File(dropLocation.toFile(), "features");
+		File featuresDir = new File(dropLocation.toFile(), "features"); //$NON-NLS-1$
 		if (featuresDir.exists())
 			return featuresDir;
 		return null;
@@ -304,12 +304,12 @@ public class FeatureImportWizardDetailedPage extends StatusWizardPage {
 		throws CoreException {
 		if (path==null) return null;
 		File[] dirs = path.listFiles();
-		monitor.beginTask("Loading...", dirs.length);
+		monitor.beginTask(PDEPlugin.getResourceString("FeatureImportWizard.DetailedPage.loading"), dirs.length); //$NON-NLS-1$
 		ArrayList resultStatus = new ArrayList();
 		for (int i = 0; i < dirs.length; i++) {
 			File dir = dirs[i];
 			if (dir.isDirectory()) {
-				File manifest = new File(dir, "feature.xml");
+				File manifest = new File(dir, "feature.xml"); //$NON-NLS-1$
 				if (manifest.exists()) {
 					IStatus status = doLoadFeature(dir, manifest, result);
 					if (status != null)
@@ -327,7 +327,7 @@ public class FeatureImportWizardDetailedPage extends StatusWizardPage {
 					PDEPlugin.PLUGIN_ID,
 					IStatus.OK,
 					children,
-					"Problems encountered while loading features",
+					PDEPlugin.getResourceString("FeatureImportWizard.DetailedPage.problemsLoading"), //$NON-NLS-1$
 					null);
 			return multiStatus;
 		}
@@ -389,7 +389,7 @@ public class FeatureImportWizardDetailedPage extends StatusWizardPage {
 				IStatus.INFO,
 				PDEPlugin.getResourceString(KEY_NO_SELECTED));
 		}
-		return createStatus(IStatus.OK, "");
+		return createStatus(IStatus.OK, ""); //$NON-NLS-1$
 	}
 
 	private void featureChecked(IFeatureModel model, boolean checked) {
