@@ -315,8 +315,8 @@ public class ClasspathComputer implements IPDEBuildConstants, IXMLConstants {
 			throw new CoreException(new Status(IStatus.ERROR, IPDEBuildConstants.PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_CLASSPATH_CYCLE, message, null));
 		}
 
-		//	The first prerequisite is ALWAYS runtime
-		if (target != getPlugin(PI_RUNTIME, null))
+		//	The first prerequisite is ALWAYS runtime, if we are not building for OSGi
+		if (!generator.isBuildingOSGi() && target != getPlugin(PI_RUNTIME, null))
 			addPluginAndPrerequisites(getPlugin(PI_RUNTIME, null), classpath, baseLocation, pluginChain);
 
 		// add libraries from pre-requisite plug-ins.  Don't worry about the export flag

@@ -115,4 +115,7 @@ public class BuildScriptGeneratorTask extends Task {
 	public void setBaseLocation(String baseLocation) {
 		BuildTimeSiteFactory.setInstalledBaseSite(baseLocation);
 	}
+	public void setBuildingOSGi(boolean osgi) {
+		generator.setBuildingOSGi(osgi);
+	}
 }

@@ -67,6 +67,7 @@ public interface IXMLConstants {
 	public static final String PROPERTY_BASEDIR = "basedir"; //$NON-NLS-1$
 	public static final String PROPERTY_BIN_EXCLUDES = "bin.excludes"; //$NON-NLS-1$
 	public static final String PROPERTY_BIN_INCLUDES = "bin.includes"; //$NON-NLS-1$
+	public static final String PROPERTY_EXTRA_PREREQUISITES = "extra.prerequisites"; //$NON-NLS-1$
 	public static final String PROPERTY_BOOTCLASSPATH = "bootclasspath"; //$NON-NLS-1$
 	public static final String PROPERTY_BUILD_COMPILER = "build.compiler"; //$NON-NLS-1$
 	public static final String PROPERTY_BUILD_DIRECTORY = "buildDirectory"; //$NON-NLS-1$

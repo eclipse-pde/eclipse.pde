@@ -210,10 +210,13 @@ public final class Utils implements IPDEBuildConstants {
 				continue;
 			if (buildingOSGi && plugins[i].getId().equals("org.eclipse.core.runtime.osgi")) //$NON-NLS-1$
 				continue;
-			if (!boot && pluginList.contains(BootLoader.PI_BOOT) && !plugins[i].getId().equals(BootLoader.PI_BOOT))
-				prereqs.add(new String[] { plugins[i].getId(), BootLoader.PI_BOOT });
-			if (!runtime && pluginList.contains(Platform.PI_RUNTIME) && !plugins[i].getId().equals(Platform.PI_RUNTIME) && !plugins[i].getId().equals(BootLoader.PI_BOOT))
-				prereqs.add(new String[] { plugins[i].getId(), Platform.PI_RUNTIME });
+			
+			if (!buildingOSGi) {
+				if (!boot && pluginList.contains(BootLoader.PI_BOOT) && !plugins[i].getId().equals(BootLoader.PI_BOOT))
+					prereqs.add(new String[] { plugins[i].getId(), BootLoader.PI_BOOT });
+				if (!runtime && pluginList.contains(Platform.PI_RUNTIME) && !plugins[i].getId().equals(Platform.PI_RUNTIME) && !plugins[i].getId().equals(BootLoader.PI_BOOT))
+					prereqs.add(new String[] { plugins[i].getId(), Platform.PI_RUNTIME });
+			}
 		}
 
 		if (fragments != null) {
