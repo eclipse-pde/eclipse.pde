@@ -57,7 +57,7 @@ public class SplashSection extends PDESection {
 	}
 	
 	public void refresh() {
-		fPluginEntry.setValue(getSplashInfo().getLocation());
+		fPluginEntry.setValue(getSplashInfo().getLocation(), true);
 		super.refresh();
 	}
 	
