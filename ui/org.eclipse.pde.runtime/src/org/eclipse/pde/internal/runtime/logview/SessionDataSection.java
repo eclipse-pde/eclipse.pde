@@ -20,7 +20,10 @@ public class SessionDataSection extends BasePreviewSection {
 	}
 
 	protected String getTextFromEntry() {
-		String data = getEntry().getSession().getSessionData();
+		String data = null;
+		LogSession session = getEntry().getSession();
+		if (session != null)
+			data = session.getSessionData();
 		if (data == null || data.length() == 0)
 			data = PDERuntimePlugin.getResourceString("LogView.preview.noSessionData");
 		return data;
