@@ -15,6 +15,8 @@ import java.io.*;
 import org.eclipse.pde.internal.core.ischema.*;
 
 public class DocumentSection extends SchemaObject implements IDocumentSection {
+
+	private static final long serialVersionUID = 1L;
 	private String sectionId;
 
 	public DocumentSection(ISchemaObject parent, String sectionId, String name) {

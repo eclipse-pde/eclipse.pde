@@ -16,6 +16,9 @@ import org.eclipse.pde.internal.core.ischema.*;
 
 public class SchemaElement extends RepeatableSchemaObject implements
 		ISchemaElement {
+
+	private static final long serialVersionUID = 1L;
+
 	public static final String P_ICON_NAME = "iconName"; //$NON-NLS-1$
 
 	public static final String P_LABEL_PROPERTY = "labelProperty"; //$NON-NLS-1$

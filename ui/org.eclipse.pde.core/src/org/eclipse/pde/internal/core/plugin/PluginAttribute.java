@@ -20,6 +20,8 @@ import org.eclipse.pde.internal.core.ischema.*;
 import org.w3c.dom.*;
 
 public class PluginAttribute extends PluginObject implements IPluginAttribute {
+	private static final long serialVersionUID = 1L;
+
 	protected String value;
 
 	private transient ISchemaAttribute attributeInfo;

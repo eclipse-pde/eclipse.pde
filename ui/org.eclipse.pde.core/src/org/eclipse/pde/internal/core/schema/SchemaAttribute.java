@@ -15,6 +15,9 @@ import java.io.*;
 import org.eclipse.pde.internal.core.ischema.*;
 
 public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
+
+	private static final long serialVersionUID = 1L;
+
 	private int kind = STRING;
 
 	private int use = OPTIONAL;

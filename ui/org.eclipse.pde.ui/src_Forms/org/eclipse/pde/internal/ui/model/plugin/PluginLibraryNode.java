@@ -17,11 +17,10 @@ import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.model.*;
 
-/**
- * @author melhem
- *
- */
 public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrary {
+
+	private static final long serialVersionUID = 1L;
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginLibrary#getContentFilters()
 	 */

@@ -16,6 +16,7 @@ import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 
 public class ImportObject extends PluginReference implements IWritable, Serializable {
+	private static final long serialVersionUID = 1L;
 	private IPluginImport iimport;
 	
 	public ImportObject() {

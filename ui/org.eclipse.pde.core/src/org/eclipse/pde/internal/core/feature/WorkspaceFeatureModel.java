@@ -18,13 +18,10 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.*;
 
-/**
- *  
- */
-
 public class WorkspaceFeatureModel extends AbstractFeatureModel
 		implements
 			IEditableModel {
+	private static final long serialVersionUID = 1L;
 	private boolean dirty;
 	private IFile file;
 	private boolean editable = true;

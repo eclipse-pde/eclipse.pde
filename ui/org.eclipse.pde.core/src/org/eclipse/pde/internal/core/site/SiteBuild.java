@@ -19,6 +19,7 @@ import org.eclipse.pde.internal.core.isite.*;
 import org.w3c.dom.*;
 
 public class SiteBuild extends SiteBuildObject implements ISiteBuild {
+	private static final long serialVersionUID = 1L;
 	final static String INDENT = "   "; //$NON-NLS-1$
 	private Vector features = new Vector();
 	public static final String DEFAULT_PLUGIN_DIR = "plugins"; //$NON-NLS-1$

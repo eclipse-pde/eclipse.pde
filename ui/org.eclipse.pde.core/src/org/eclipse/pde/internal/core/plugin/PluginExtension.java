@@ -21,6 +21,8 @@ import org.eclipse.pde.internal.core.schema.*;
 import org.w3c.dom.*;
 
 public class PluginExtension extends PluginParent implements IPluginExtension {
+
+	private static final long serialVersionUID = 1L;
 	protected String point;
 	private transient ISchema schema;
 

@@ -23,6 +23,7 @@ import org.eclipse.pde.internal.core.ibundle.*;
 public class WorkspaceExtensionsModel
 	extends AbstractExtensionsModel
 	implements IEditableModel, IBundlePluginModelProvider {
+	private static final long serialVersionUID = 1L;
 	private IFile fUnderlyingResource;
 	private boolean fDirty;
 	private boolean fEditable = true;

@@ -21,6 +21,7 @@ import org.w3c.dom.*;
 public class FeatureURLElement
 	extends FeatureObject
 	implements IFeatureURLElement {
+	private static final long serialVersionUID = 1L;
 	private int elementType;
 	private int siteType = UPDATE_SITE;
 	private URL url;

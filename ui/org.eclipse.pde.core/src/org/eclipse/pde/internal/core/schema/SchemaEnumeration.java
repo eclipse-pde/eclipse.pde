@@ -16,6 +16,8 @@ import org.eclipse.pde.internal.core.ischema.*;
 
 public class SchemaEnumeration extends SchemaObject implements ISchemaEnumeration {
 
+	private static final long serialVersionUID = 1L;
+
 	public SchemaEnumeration(ISchemaObject parent, String name) {
 		super(parent, name);
 	}

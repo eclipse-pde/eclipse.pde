@@ -17,11 +17,10 @@ import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.model.*;
 
-/**
- * @author melhem
- *
- */
 public class PluginParentNode extends PluginObjectNode implements IPluginParent {
+
+	private static final long serialVersionUID = 1L;
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginParent#add(int, org.eclipse.pde.core.plugin.IPluginObject)
 	 */

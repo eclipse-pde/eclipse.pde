@@ -20,6 +20,8 @@ import org.w3c.dom.*;
 public class PluginExtensionPoint
 	extends IdentifiablePluginObject
 	implements IPluginExtensionPoint {
+
+	private static final long serialVersionUID = 1L;
 	protected String schema;
 	static final String ID_SEPARATOR = "."; //$NON-NLS-1$
 

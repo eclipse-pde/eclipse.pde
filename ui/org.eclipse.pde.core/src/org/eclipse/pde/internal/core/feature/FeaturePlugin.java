@@ -20,6 +20,7 @@ import org.eclipse.pde.internal.core.ifeature.*;
 import org.w3c.dom.*;
 
 public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
+	private static final long serialVersionUID = 1L;
 	private IPluginBase pluginBase;
 	private boolean fragment;
 	private String version;

@@ -28,6 +28,8 @@ import org.osgi.framework.Constants;
 public class BundlePluginBase
 	extends PlatformObject
 	implements IBundlePluginBase, Serializable {
+
+	private static final long serialVersionUID = 1L;
 	protected IBundlePluginModelBase model;
 	private ArrayList libraries;
 	private ArrayList imports;

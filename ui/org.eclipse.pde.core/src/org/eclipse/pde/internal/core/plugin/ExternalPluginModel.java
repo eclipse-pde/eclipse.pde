@@ -15,6 +15,8 @@ import org.eclipse.pde.core.plugin.*;
 public class ExternalPluginModel extends ExternalPluginModelBase implements
 		IPluginModel {
 
+	private static final long serialVersionUID = 1L;
+
 	public IPluginBase createPluginBase() {
 		PluginBase base = new Plugin();
 		base.setModel(this);

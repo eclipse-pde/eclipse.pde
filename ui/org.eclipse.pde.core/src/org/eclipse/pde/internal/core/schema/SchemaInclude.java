@@ -18,6 +18,9 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ischema.*;
 
 public class SchemaInclude extends SchemaObject implements ISchemaInclude {
+
+	private static final long serialVersionUID = 1L;
+
 	private String fLocation;
 
 	private ISchema fIncludedSchema;

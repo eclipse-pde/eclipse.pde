@@ -21,6 +21,7 @@ import org.eclipse.pde.internal.core.ifeature.*;
 import org.w3c.dom.*;
 
 public class Feature extends VersionableObject implements IFeature {
+	private static final long serialVersionUID = 1L;
 	final static String INDENT = "   "; //$NON-NLS-1$
 	private String providerName;
 	private IFeatureURL url;

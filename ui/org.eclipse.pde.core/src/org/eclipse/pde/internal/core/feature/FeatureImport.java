@@ -22,6 +22,7 @@ import org.w3c.dom.*;
 public class FeatureImport
 	extends VersionableObject
 	implements IFeatureImport {
+	private static final long serialVersionUID = 1L;
 	private int match = NONE;
 	private int idMatch = PERFECT;
 	private IPlugin plugin;

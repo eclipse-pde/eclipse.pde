@@ -18,13 +18,8 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.w3c.dom.*;
 
-/**
- * @author dejan
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- */
 public class FeatureChild extends IdentifiableObject implements IFeatureChild {
+	private static final long serialVersionUID = 1L;
 	private String version;
 	private IFeature feature;
 	private String name;

@@ -23,6 +23,8 @@ import org.w3c.dom.*;
 public class PluginImport
 	extends IdentifiablePluginObject
 	implements IPluginImport, Serializable {
+
+	private static final long serialVersionUID = 1L;
 	private int match = NONE;
 	private boolean reexported = false;
 	private boolean optional = false;

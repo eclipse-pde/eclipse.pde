@@ -13,13 +13,12 @@ package org.eclipse.pde.internal.ui.model.plugin;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.*;
 
-/**
- * @author melhem
- *
- */
 public class PluginExtensionPointNode extends PluginObjectNode
 		implements
 			IPluginExtensionPoint {
+
+	private static final long serialVersionUID = 1L;
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginExtensionPoint#getFullId()
 	 */

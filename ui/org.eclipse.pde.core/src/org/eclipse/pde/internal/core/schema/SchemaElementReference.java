@@ -21,6 +21,9 @@ import org.w3c.dom.*;
 public class SchemaElementReference extends PlatformObject implements
 		ISchemaElement, IMetaElement, ISchemaObjectReference, ISourceObject,
 		Serializable {
+
+	private static final long serialVersionUID = 1L;
+
 	transient private ISchemaElement element;
 
 	private ISchemaCompositor compositor;

@@ -18,13 +18,10 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.w3c.dom.*;
 
-/**
- * @version 	1.0
- * @author
- */
 public class FeatureInstallHandler
 	extends FeatureObject
 	implements IFeatureInstallHandler {
+	private static final long serialVersionUID = 1L;
 	private URL url;
 	private String library;
 	private String handlerName;

@@ -15,13 +15,11 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.ui.model.*;
 
-/**
- * @author melhem
- *
- */
 public class PluginElementNode extends PluginParentNode
 		implements
 			IPluginElement {
+
+	private static final long serialVersionUID = 1L;
 
 	private transient ISchemaElement elementInfo;
 	/* (non-Javadoc)

@@ -13,11 +13,10 @@ package org.eclipse.pde.internal.ui.model.plugin;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.*;
 
-/**
- * @author melhem
- *
- */
 public class PluginNode extends PluginBaseNode implements IPlugin {
+
+	private static final long serialVersionUID = 1L;
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPlugin#getClassName()
 	 */

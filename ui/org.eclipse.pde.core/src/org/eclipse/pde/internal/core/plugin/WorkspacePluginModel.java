@@ -12,17 +12,22 @@ package org.eclipse.pde.internal.core.plugin;
 
 import org.eclipse.pde.core.plugin.*;
 
-public class WorkspacePluginModel extends WorkspacePluginModelBase implements IPluginModel {
+public class WorkspacePluginModel extends WorkspacePluginModelBase implements
+		IPluginModel {
 
-public WorkspacePluginModel(org.eclipse.core.resources.IFile file) {
-	super(file);
-}
-public IPluginBase createPluginBase() {
-	Plugin plugin = new Plugin();
-	plugin.setModel(this);
-	return plugin;
-}
-public IPlugin getPlugin() {
-	return (IPlugin)getPluginBase();
-}
+	private static final long serialVersionUID = 1L;
+
+	public WorkspacePluginModel(org.eclipse.core.resources.IFile file) {
+		super(file);
+	}
+
+	public IPluginBase createPluginBase() {
+		Plugin plugin = new Plugin();
+		plugin.setModel(this);
+		return plugin;
+	}
+
+	public IPlugin getPlugin() {
+		return (IPlugin) getPluginBase();
+	}
 }

@@ -18,6 +18,8 @@ import org.eclipse.pde.core.plugin.*;
 import org.w3c.dom.*;
 
 public class PluginLibrary extends PluginObject implements IPluginLibrary {
+
+	private static final long serialVersionUID = 1L;
 	private String[] contentFilters;
 	private String[] packages;
 	private boolean exported = false;

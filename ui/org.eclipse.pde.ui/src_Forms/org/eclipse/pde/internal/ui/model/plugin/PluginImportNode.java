@@ -14,6 +14,9 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.*;
 
 public class PluginImportNode extends PluginObjectNode implements IPluginImport {
+
+	private static final long serialVersionUID = 1L;
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginImport#isReexported()
 	 */

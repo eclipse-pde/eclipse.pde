@@ -17,13 +17,11 @@ import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.model.*;
 
-/**
- * @author melhem
- *  
- */
 public class PluginObjectNode extends PluginDocumentNode
 		implements
 			IPluginObject {
+
+	private static final long serialVersionUID = 1L;
 	private String fName;
 	private boolean fInTheModel;
 	private transient ISharedPluginModel fModel;

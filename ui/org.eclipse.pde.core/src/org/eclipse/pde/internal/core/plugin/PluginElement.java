@@ -19,6 +19,8 @@ import org.eclipse.pde.internal.core.ischema.*;
 import org.w3c.dom.*;
 
 public class PluginElement extends PluginParent implements IPluginElement {
+	private static final long serialVersionUID = 1L;
+
 	static final String ATTRIBUTE_SHIFT = "      "; //$NON-NLS-1$
 
 	static final String ELEMENT_SHIFT = "   "; //$NON-NLS-1$

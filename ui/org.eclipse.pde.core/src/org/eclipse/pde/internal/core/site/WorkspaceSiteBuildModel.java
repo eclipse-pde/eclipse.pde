@@ -20,6 +20,7 @@ import org.eclipse.pde.internal.core.*;
 public class WorkspaceSiteBuildModel
 	extends AbstractSiteBuildModel
 	implements IEditableModel {
+	private static final long serialVersionUID = 1L;
 	private boolean dirty;
 	private IFile file;
 	private boolean editable = true;

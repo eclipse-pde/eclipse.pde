@@ -14,14 +14,12 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.model.*;
 
-/**
- * @author melhem
- *
- */
 public class PluginAttribute extends PluginObjectNode
 		implements
 			IPluginAttribute , IDocumentAttribute{
 	
+	private static final long serialVersionUID = 1L;
+
 	private IDocumentNode fEnclosingElement;
 	private String fValue;
 	private int fNameOffset = -1;

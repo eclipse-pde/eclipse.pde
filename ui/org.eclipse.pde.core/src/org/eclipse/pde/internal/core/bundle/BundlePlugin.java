@@ -8,12 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-/*
- * Created on Oct 19, 2003
- * 
- * To change the template for this generated file go to Window - Preferences -
- * Java - Code Generation - Code and Comments
- */
+
 package org.eclipse.pde.internal.core.bundle;
 
 import org.eclipse.core.runtime.CoreException;
@@ -23,6 +18,7 @@ import org.osgi.framework.*;
 
 public class BundlePlugin extends BundlePluginBase implements IBundlePlugin {
 
+	private static final long serialVersionUID = 1L;
 	/*
 	 * (non-Javadoc)
 	 * 

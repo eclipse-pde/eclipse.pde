@@ -17,15 +17,8 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.core.isite.*;
 import org.w3c.dom.*;
 
-/**
- * @author dejan
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
- */
 public class SiteArchive extends SiteObject implements ISiteArchive {
+	private static final long serialVersionUID = 1L;
 	private String url;
 	private String path;
 	

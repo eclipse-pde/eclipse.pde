@@ -14,11 +14,11 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.*;
 
-/**
- * @author melhem
- *
- */
 public class FragmentNode extends PluginBaseNode implements IFragment {
+	/**
+	 * Comment for <code>serialVersionUID</code>
+	 */
+	private static final long serialVersionUID = 1L;
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IFragment#getPluginId()
 	 */

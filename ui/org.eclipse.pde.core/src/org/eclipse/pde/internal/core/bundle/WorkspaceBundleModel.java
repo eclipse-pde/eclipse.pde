@@ -18,6 +18,8 @@ import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.PDECore;
 
 public class WorkspaceBundleModel extends BundleModel implements IEditableModel {
+	private static final long serialVersionUID = 1L;
+
 	private IFile fUnderlyingResource;
 
 	private boolean fDirty;

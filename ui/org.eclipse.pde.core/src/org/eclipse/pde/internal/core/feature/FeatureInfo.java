@@ -18,11 +18,8 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.w3c.dom.*;
 
-/**
- * @version 	1.0
- * @author
- */
 public class FeatureInfo extends FeatureObject implements IFeatureInfo {
+	private static final long serialVersionUID = 1L;
 	private static final String KEY_INFO_DESCRIPTION =
 		"FeatureInfo.description"; //$NON-NLS-1$
 	private static final String KEY_INFO_LICENSE = "FeatureInfo.license"; //$NON-NLS-1$

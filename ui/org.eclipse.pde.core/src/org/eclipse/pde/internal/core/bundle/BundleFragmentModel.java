@@ -17,6 +17,8 @@ public class BundleFragmentModel
 	extends BundlePluginModelBase
 	implements IBundleFragmentModel {
 	
+	private static final long serialVersionUID = 1L;
+
 	public IPluginBase createPluginBase() {
 		BundleFragment bfragment = new BundleFragment();
 		bfragment.setModel(this);

@@ -18,6 +18,7 @@ import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.*;
 
 public class WorkspaceBuildModel extends BuildModel implements IEditableModel {
+	private static final long serialVersionUID = 1L;
 	private IFile fUnderlyingResource;
 	private boolean fDirty;
 	private boolean fEditable = true;

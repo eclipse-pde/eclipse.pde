@@ -19,6 +19,8 @@ import org.eclipse.pde.internal.core.ischema.*;
 public class SchemaComplexType
 	extends SchemaType
 	implements ISchemaComplexType {
+
+	private static final long serialVersionUID = 1L;
 	public static final String P_COMPOSITOR = "compositorProperty"; //$NON-NLS-1$
 	private boolean mixed;
 	private ISchemaCompositor compositor;

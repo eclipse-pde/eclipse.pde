@@ -18,6 +18,7 @@ import org.w3c.dom.*;
 
 public class Extensions
 	extends AbstractExtensions {
+	private static final long serialVersionUID = 1L;
 	private boolean valid;
 	private boolean fIsFragment;
 

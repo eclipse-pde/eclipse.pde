@@ -18,17 +18,10 @@ import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.isite.*;
 import org.w3c.dom.*;
 
-/**
- * @author dejan
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
- */
 public class SiteBuildFeature
 	extends SiteBuildObject
 	implements ISiteBuildFeature {
+	private static final long serialVersionUID = 1L;
 	private String id;
 	private String version;
 	private IFeature feature;

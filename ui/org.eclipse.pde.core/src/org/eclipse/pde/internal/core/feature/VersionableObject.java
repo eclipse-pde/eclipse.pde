@@ -19,6 +19,7 @@ import org.w3c.dom.*;
 public class VersionableObject
 	extends IdentifiableObject
 	implements IVersionable {
+	private static final long serialVersionUID = 1L;
 	protected String version;
 
 	public String getVersion() {

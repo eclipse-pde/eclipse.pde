@@ -18,6 +18,8 @@ import org.osgi.framework.*;
 
 public class BundleFragment extends BundlePluginBase implements IBundleFragment {
 
+	private static final long serialVersionUID = 1L;
+
 	public String getPluginId() {
 		return parseSingleValuedHeader(Constants.FRAGMENT_HOST);
 	}

@@ -20,6 +20,7 @@ import org.eclipse.pde.internal.core.*;
 import org.w3c.dom.*;
 
 public class Plugin extends PluginBase implements IPlugin {
+	private static final long serialVersionUID = 1L;
 	private String className;
 
 	public Plugin() {

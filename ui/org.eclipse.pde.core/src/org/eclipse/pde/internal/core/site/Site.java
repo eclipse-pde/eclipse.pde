@@ -18,15 +18,8 @@ import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.isite.*;
 import org.w3c.dom.*;
 
-/**
- * @author dejan
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
- */
 public class Site extends SiteObject implements ISite {
+	private static final long serialVersionUID = 1L;
 	final static String INDENT = "   "; //$NON-NLS-1$
 	private Vector features = new Vector();
 	private Vector archives = new Vector();

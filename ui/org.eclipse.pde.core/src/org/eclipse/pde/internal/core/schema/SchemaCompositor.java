@@ -20,6 +20,9 @@ import org.eclipse.pde.internal.core.ischema.*;
 public class SchemaCompositor
 	extends RepeatableSchemaObject
 	implements ISchemaCompositor {
+
+	private static final long serialVersionUID = 1L;
+
 	public static final String P_KIND = "p_kind"; //$NON-NLS-1$
 
 	private int kind;

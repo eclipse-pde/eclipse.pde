@@ -18,6 +18,8 @@ import org.eclipse.pde.internal.core.ischema.*;
 public class SchemaSimpleType
 	extends SchemaType
 	implements ISchemaSimpleType, IWritable {
+
+	private static final long serialVersionUID = 1L;
 	private ISchemaRestriction restriction;
 	public static final String P_RESTRICTION = "restriction"; //$NON-NLS-1$
 

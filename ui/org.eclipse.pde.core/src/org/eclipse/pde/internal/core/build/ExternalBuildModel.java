@@ -16,6 +16,8 @@ import java.net.*;
 import org.eclipse.core.runtime.*;
 
 public class ExternalBuildModel extends BuildModel {
+
+	private static final long serialVersionUID = 1L;
 	private String fInstallLocation;
 
 	public ExternalBuildModel(String installLocation) {

@@ -15,11 +15,11 @@ import java.io.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.isite.*;
 
-/**
- * @author melhem
- *
- */
 public class SiteFeatureAdapter implements Serializable, IWritable {
+	/**
+	 * Comment for <code>serialVersionUID</code>
+	 */
+	private static final long serialVersionUID = 1L;
 	String category;
 	ISiteFeature feature;
 	public SiteFeatureAdapter(String category, ISiteFeature feature) {

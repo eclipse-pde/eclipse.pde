@@ -20,6 +20,8 @@ import org.eclipse.pde.internal.core.*;
 import org.w3c.dom.*;
 
 public class Fragment extends PluginBase implements IFragment {
+	private static final long serialVersionUID = 1L;
+
 	private String pluginId = ""; //$NON-NLS-1$
 
 	private String pluginVersion = ""; //$NON-NLS-1$

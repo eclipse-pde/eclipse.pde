@@ -19,6 +19,7 @@ import org.eclipse.pde.internal.core.ifeature.*;
 import org.w3c.dom.*;
 
 public class FeatureURL extends FeatureObject implements IFeatureURL {
+	private static final long serialVersionUID = 1L;
 	private Vector updates = new Vector();
 	private Vector discoveries = new Vector();
 

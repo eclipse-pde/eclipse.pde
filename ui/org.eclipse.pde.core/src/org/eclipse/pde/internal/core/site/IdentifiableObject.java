@@ -17,6 +17,8 @@ import org.eclipse.pde.core.*;
 import org.w3c.dom.*;
 
 public class IdentifiableObject extends SiteObject implements IIdentifiable {
+
+	private static final long serialVersionUID = 1L;
 	protected String id;
 
 	public String getId() {

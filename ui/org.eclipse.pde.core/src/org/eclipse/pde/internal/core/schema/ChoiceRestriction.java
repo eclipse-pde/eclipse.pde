@@ -18,6 +18,8 @@ import org.eclipse.pde.internal.core.ischema.*;
 public class ChoiceRestriction
 	extends SchemaObject
 	implements ISchemaRestriction {
+
+	private static final long serialVersionUID = 1L;
 	private ISchemaSimpleType baseType;
 	private Vector children;
 	public static final String P_CHOICES = "choices"; //$NON-NLS-1$

@@ -20,6 +20,7 @@ import org.w3c.dom.*;
 public class FeatureData
 	extends IdentifiableObject
 	implements IFeatureData {
+	private static final long serialVersionUID = 1L;
 	private String os;
 	private String ws;
 	private String nl;
