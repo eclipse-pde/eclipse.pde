@@ -48,11 +48,11 @@ public class RuntimeInfoSection extends PDESection
 	public static final String SECTION_NEW = "BuildEditor.RuntimeInfoSection.addLibrary"; //$NON-NLS-1$
 	public static final String SECTION_UP = "ManifestEditor.LibrarySection.up"; //$NON-NLS-1$
 	public static final String SECTION_DOWN = "ManifestEditor.LibrarySection.down"; //$NON-NLS-1$
-	public static final String POPUP_NEW_LIBRARY = "BuildEditor.RuntimeInfoSection.popupAdd";
+	public static final String POPUP_NEW_LIBRARY = "BuildEditor.RuntimeInfoSection.popupAdd"; //$NON-NLS-1$
 	public static final String POPUP_DELETE = "Actions.delete.label"; //$NON-NLS-1$
-	public static final String JSECTION_NEW = "BuildEditor.RuntimeInfoSection.addFolder";
-	public static final String POPUP_NEW_FOLDER = "BuildEditor.RuntimeInfoSection.popupFolder";
-	public static final String JAR_INCLUDE = "BuildEditor.RuntimeInfoSection.buildInclude";
+	public static final String JSECTION_NEW = "BuildEditor.RuntimeInfoSection.addFolder"; //$NON-NLS-1$
+	public static final String POPUP_NEW_FOLDER = "BuildEditor.RuntimeInfoSection.popupFolder"; //$NON-NLS-1$
+	public static final String JAR_INCLUDE = "BuildEditor.RuntimeInfoSection.buildInclude"; //$NON-NLS-1$
 	protected TableViewer fLibraryViewer;
 	protected TableViewer fFolderViewer;
 
@@ -283,8 +283,8 @@ public class RuntimeInfoSection extends PDESection
 		try {
 			while (iter.hasNext()) {
 				String outputFolder = iter.next().toString();
-				if (!outputFolder.endsWith("" + Path.SEPARATOR))
-					outputFolder = outputFolder.concat("" + Path.SEPARATOR);
+				if (!outputFolder.endsWith("" + Path.SEPARATOR)) //$NON-NLS-1$
+					outputFolder = outputFolder.concat("" + Path.SEPARATOR); //$NON-NLS-1$
 				if (!outputEntry.contains(outputFolder.toString()))
 					outputEntry.addToken(outputFolder.toString());
 			}
@@ -917,7 +917,7 @@ public class RuntimeInfoSection extends PDESection
 				if (selection == null || selection.length != 1
 						|| !(selection[0] instanceof IFolder))
 					return new Status(IStatus.ERROR, PDEPlugin.getPluginId(),
-							IStatus.ERROR, "", null);
+							IStatus.ERROR, "", null); //$NON-NLS-1$
 
 				String libKey = fCurrentLibrary.getName();
 
@@ -934,11 +934,11 @@ public class RuntimeInfoSection extends PDESection
 							PDEPlugin.getPluginId(),
 							IStatus.ERROR,
 							PDEPlugin
-									.getResourceString("BuildEditor.RuntimeInfoSection.missingSource.duplicateFolder"),
+									.getResourceString("BuildEditor.RuntimeInfoSection.duplicateFolder"), //$NON-NLS-1$
 							null);
 
 				return new Status(IStatus.OK, PDEPlugin.getPluginId(),
-						IStatus.OK, "", null);
+						IStatus.OK, "", null); //$NON-NLS-1$
 			}
 		});
 

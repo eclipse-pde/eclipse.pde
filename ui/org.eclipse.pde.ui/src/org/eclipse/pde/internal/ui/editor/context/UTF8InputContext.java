@@ -19,7 +19,7 @@ public abstract class UTF8InputContext extends InputContext {
 	}
 	
 	protected String getDefaultCharset() {
-		return "UTF-8";
+		return "UTF-8"; //$NON-NLS-1$
 	}
 	
 }

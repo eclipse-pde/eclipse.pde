@@ -168,7 +168,7 @@ public class BuildPage extends PDEFormPage {
 	}
 	
 	private String getCustomText() {
-		return "Custom Build";
+		return PDEPlugin.getResourceString("BuildPage.custom"); //$NON-NLS-1$
 	}
 
 }

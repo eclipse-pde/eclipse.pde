@@ -15,7 +15,7 @@ import org.eclipse.swt.dnd.Clipboard;
 public class BuildEditorContributor extends PDEFormEditorContributor {
 
 	public BuildEditorContributor() {
-		super("&Build");
+		super("&Build"); //$NON-NLS-1$
 	}
 	protected boolean hasKnownTypes(Clipboard clipboard) {
 		return true;

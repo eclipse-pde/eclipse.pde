@@ -56,7 +56,7 @@ public class AddLibraryDialog extends SelectionStatusDialog {
 					PDEPlugin.getPluginId(),
 					IStatus.ERROR,
 					PDEPlugin.getResourceString(
-						"BuildEditor.RuntimeInfoSection.missingSource.duplicateLibrary"),
+						"BuildEditor.RuntimeInfoSection.duplicateLibrary"), //$NON-NLS-1$
 					null);
 			}
 			return new Status(

@@ -126,7 +126,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 				break;
 			if (sibling.getOffset() > -1) {
 				node.setLineIndent(sibling.getLineIndent());
-				return new InsertEdit(sibling.getOffset() + sibling.getLength(), System.getProperty("line.separator") + node.write(true));
+				return new InsertEdit(sibling.getOffset() + sibling.getLength(), System.getProperty("line.separator") + node.write(true)); //$NON-NLS-1$
 			}
 			sibling = sibling.getPreviousSibling();
 		}
@@ -137,7 +137,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		int offset = node.getParentNode().getOffset();
 		int length = getNextPosition(getDocumentProvider().getDocument(getInput()), offset, '>');
 		node.setLineIndent(node.getParentNode().getLineIndent() + 3);
-		return new InsertEdit(offset+ length + 1, System.getProperty("line.separator") + node.write(true));	
+		return new InsertEdit(offset+ length + 1, System.getProperty("line.separator") + node.write(true));	 //$NON-NLS-1$
 	}
 	
 
@@ -247,7 +247,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 				IDocument doc = getDocumentProvider().getDocument(getInput());
 				try {
 					String endChars = doc.get(parent.getOffset() + parent.getLength() - 2, 2);
-					if ("/>".equals(endChars)) {
+					if ("/>".equals(endChars)) { //$NON-NLS-1$
 						// parent element is of the form <element/>, rewrite it
 						insertNode(parent, ops);
 						return;
@@ -256,10 +256,10 @@ public abstract class XMLInputContext extends UTF8InputContext {
 				}
 				// add text as first child
 				changedObject = parent;
-				StringBuffer buffer = new StringBuffer(System.getProperty("line.separator"));
+				StringBuffer buffer = new StringBuffer(System.getProperty("line.separator")); //$NON-NLS-1$
 				for (int i = 0; i < parent.getLineIndent(); i++) 
-					buffer.append(" ");
-				buffer.append("   " + getWritableString(textNode.getText()));
+					buffer.append(" "); //$NON-NLS-1$
+				buffer.append("   " + getWritableString(textNode.getText())); //$NON-NLS-1$
 				int offset = parent.getOffset();
 				int length = getNextPosition(doc, offset, '>');
 				op = new InsertEdit(offset+ length + 1, buffer.toString());	
@@ -356,7 +356,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 			IDocument doc = getDocumentProvider().getDocument(getInput());
 			try {
 				String endChars = doc.get(parent.getOffset() + parent.getLength() - 2, 2);
-				return ("/>".equals(endChars)) ? parent : node;
+				return ("/>".equals(endChars)) ? parent : node; //$NON-NLS-1$
 			} catch (BadLocationException e) {
 				return node;
 			}
