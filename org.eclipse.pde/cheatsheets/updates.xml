@@ -17,12 +17,14 @@ This cheat sheet will automatically launch wizards, perform actions, and guide y
 			class="org.eclipse.pde.internal.ui.OpenPDEPerspectiveAction"/>
 		<description>
 			Select <b>Window&gt;Open Perspective&gt;Other...&gt;Plug-in Development</b>
-			to switch to the PDE perspective.
+			to switch to the PDE perspective. The PDE perspective is
+			automatically launched when you click the 
+			&quot;Click to perform button&quot;.
 		</description>
 	</item>
 	<item
 		href="/org.eclipse.pde.doc.user/guide/pde_creating.htm"
-		title="Configuring PDE">
+		title="Creating the plug-in project">
 		<action
 			confirm="true"
 			pluginId="org.eclipse.pde.ui"
@@ -32,7 +34,9 @@ This cheat sheet will automatically launch wizards, perform actions, and guide y
 		   	Select <b>File&gt;New&gt;Plug-in Project</b> to bring up the plug-in
 			project creation wizard. Choose 'com.example.xyz' for the project
 			name. Accept all the defaults. Pick the <b>Hello, World</b> template
-			from the list of templates and press <b>Finish</b>.
+			from the list of templates and press <b>Finish</b>. The wizard 
+			is automatically launched when you click the 
+			&quot;Click to perform button&quot;.
 		</description>
 	</item>
 </cheatsheet>
