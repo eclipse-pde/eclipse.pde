@@ -143,6 +143,18 @@ public class ExternalModelManager {
 		return null;
 	}
 
+	public IFragmentModel [] getFragmentsFor(IPluginModel model) {
+		IFragmentModel [] candidates = getFragmentModels(null);
+		IPlugin plugin = model.getPlugin();
+		ArrayList result = new ArrayList();
+		for (int i=0; i<candidates.length; i++) {
+			IFragment fragment = candidates[i].getFragment();
+			if (fragment.getPluginId().equals(plugin.getId()))
+				result.add(candidates[i]);
+		}
+		return (IFragmentModel [])result.toArray(new IFragmentModel[result.size()]);
+	}
+
 	public int getPluginCount() {
 		if (models == null)
 			loadModels(new NullProgressMonitor());
