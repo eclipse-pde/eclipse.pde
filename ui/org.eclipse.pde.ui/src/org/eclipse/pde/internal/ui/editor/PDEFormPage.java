@@ -79,7 +79,10 @@ public abstract class PDEFormPage extends FormPage {
 	}
 	
 	protected Control getFocusControl() {
-		Control control = getManagedForm().getForm();
+		IManagedForm form = getManagedForm();
+		if (form == null)
+			return null;
+		Control control = form.getForm();
 		if (control == null || control.isDisposed())
 			return null;
 		Display display = control.getDisplay();
