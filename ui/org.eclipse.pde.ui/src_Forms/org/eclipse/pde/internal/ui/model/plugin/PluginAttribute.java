@@ -110,4 +110,14 @@ public class PluginAttribute extends PluginObjectNode
 	public String write() {
 		return getName() + "=\"" + getWritableString(getValue()) + "\"";
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.model.plugin.PluginObjectNode#equals(java.lang.Object)
+	 */
+	/*public boolean equals(Object obj) {
+		if (!(obj instanceof PluginAttribute))
+			return false;
+		PluginAttribute attr = (PluginAttribute)obj;
+		return attr.getName().equals(getName()) && attr.getValue().equals(getValue());
+	}*/
 }
