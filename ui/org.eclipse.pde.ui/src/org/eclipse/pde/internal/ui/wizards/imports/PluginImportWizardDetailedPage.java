@@ -49,7 +49,6 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	}
 
 	private Label countLabel;
-	private TableViewer importListViewer;
 	private TableViewer availableListViewer;
 	
 	public PluginImportWizardDetailedPage(String pageName, PluginImportWizardFirstPage firstPage) {
@@ -63,6 +62,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
 		layout.horizontalSpacing = 5;
+		layout.verticalSpacing = 10;
 		container.setLayout(layout);
 		
 		createAvailableList(container).setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -70,17 +70,47 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		createImportList(container).setLayoutData(new GridData(GridData.FILL_BOTH));
 		updateCount();
 		
-
+		addViewerListeners();
+		
+		implicitButton = new Button(container, SWT.CHECK);
+		implicitButton.setText(PDEPlugin.getResourceString("ImportWizard.SecondPage.implicit"));
+		GridData gd = new GridData();
+		gd.horizontalSpan = 3;
+		implicitButton.setLayoutData(gd);
+		
 		setPageComplete(false);
 		setControl(container);
 		Dialog.applyDialogFont(container);
 		
 	}
 	
+	private void addViewerListeners() {
+		availableListViewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				IStructuredSelection ssel = (IStructuredSelection)availableListViewer.getSelection();
+				if (ssel.size() > 0) {
+					selected.addAll(ssel.toList());
+					pageChanged();
+				}
+			}
+		});
+				
+		importListViewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				IStructuredSelection ssel = (IStructuredSelection)importListViewer.getSelection();
+				if (ssel.size() > 0) {
+					selected.removeAll(ssel.toList());
+					pageChanged();
+				}
+			}
+		});
+	}
+
 	private Composite createAvailableList(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = 0;
+		layout.marginHeight = 0;
 		container.setLayout(layout);
 
 		Label label = new Label(container, SWT.NONE);
@@ -89,7 +119,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		Table table = new Table(container, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 180;
-		gd.heightHint = 300;
+		gd.heightHint = 250;
 		table.setLayoutData(gd);
 
 		availableListViewer = new TableViewer(table);
@@ -102,55 +132,9 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 				return !selected.contains(element);
 			}
 		});
-		availableListViewer.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event) {
-				IStructuredSelection ssel = (IStructuredSelection)availableListViewer.getSelection();
-				if (ssel.size() > 0) {
-					selected.addAll(ssel.toList());
-					pageChanged();
-				}
-			}
-		});
 		return container;
 	}
 	
-	private Composite createImportList(Composite parent) {
-		Composite container = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.marginWidth = 0;
-		container.setLayout(layout);
-		
-		Label label = new Label(container, SWT.NONE);
-		label.setText(PDEPlugin.getResourceString("ImportWizard.DetailedPage.importList"));
-
-		Table table = new Table(container, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.widthHint = 180;
-		gd.heightHint = 300;
-		table.setLayoutData(gd);
-
-		importListViewer = new TableViewer(table);
-		importListViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
-		importListViewer.setContentProvider(new ContentProvider());
-		importListViewer.setInput(PDECore.getDefault().getExternalModelManager());
-		importListViewer.setSorter(ListUtil.PLUGIN_SORTER);
-		importListViewer.addFilter(new ViewerFilter() {
-			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				return selected.contains(element);
-			}
-		});
-		importListViewer.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event) {
-				IStructuredSelection ssel = (IStructuredSelection)importListViewer.getSelection();
-				if (ssel.size() > 0) {
-					selected.removeAll(ssel.toList());
-					pageChanged();
-				}
-			}
-		});
-				
-		return container;
-	}
 	
 	private Composite createButtonArea(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
@@ -280,8 +264,12 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 				for (int i = 0; i < items.length; i++) {
 					addPluginAndDependencies((IPluginModelBase) items[i].getData());
 				}
+				if (implicitButton.isVisible() && implicitButton.getSelection()) {
+					addImplicitDependencies();
+				}
 				pageChanged();
 			}
+
 		});
 		
 		countLabel = new Label(comp, SWT.NONE);
@@ -294,12 +282,8 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		setPageComplete(visible && importListViewer.getTable().getItemCount() > 0);
 		
 	}
-	protected void refreshPage() {
-		selected.clear();
-		pageChanged();
-	}
 	
-	private void pageChanged() {
+	protected void pageChanged() {
 		availableListViewer.refresh();
 		importListViewer.refresh();
 		updateCount();

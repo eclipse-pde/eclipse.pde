@@ -28,6 +28,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
 /**
@@ -37,6 +38,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 
 	private TablePart tablePart;
 	private IStructuredSelection initialSelection;
+	private Label counterLabel;
 
 	class PluginContentProvider
 		extends DefaultContentProvider
@@ -81,12 +83,12 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		
 		protected void elementChecked(Object element, boolean checked) {
 			super.elementChecked(element, checked);
-			setPageComplete(getSelectionCount() > 0);
+			pageChanged();
 		}
 		
 		protected void handleSelectAll(boolean select) {
 			super.handleSelectAll(select);
-			setPageComplete(getSelectionCount() > 0);
+			pageChanged();
 		}		
 	}
 	
@@ -99,9 +101,21 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
-		container.setLayout(new GridLayout());
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.horizontalSpacing = 20;
+		layout.verticalSpacing = 10;
+		container.setLayout(layout);
 		
-		createTablePart(container).setLayoutData(new GridData(GridData.FILL_BOTH));
+		createTablePart(container);
+		createImportPart(container);
+
+		implicitButton = new Button(container, SWT.CHECK);
+		implicitButton.setText(PDEPlugin.getResourceString("ImportWizard.SecondPage.implicit"));
+		GridData gd = new GridData();
+		gd.horizontalSpan = 2;
+		implicitButton.setLayoutData(gd);
+
 		initialize();
 		setControl(container);
 		Dialog.applyDialogFont(container);
@@ -112,6 +126,8 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		container.setLayout(layout);
+		container.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
 		tablePart =
 			new TablePart(
 				PDEPlugin.getResourceString("ImportWizard.expressPage.nonBinary"),
@@ -128,6 +144,16 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		viewer.setInput(PDEPlugin.getWorkspace().getRoot());
 		
 		return container;
+	}
+	
+	private void createImportPart(Composite parent) {
+		Composite container = new Composite(parent, SWT.NONE);
+		container.setLayout(new GridLayout());
+		container.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
+		createImportList(container);
+		counterLabel = new Label(container, SWT.NONE);
+		counterLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));		
 	}
 	
 	private void initialize() {
@@ -153,7 +179,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 	}
 	
 	
-	public IPluginModelBase[] getModelsToImport() {
+	private void computeModelsToImport() {
 		selected.clear();
 		Object[] wModels = tablePart.getSelection();
 		for (int i = 0; i < wModels.length; i++) {
@@ -161,10 +187,11 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 			addDependencies(model, true);
 			addExtraPrerequisites(model);
 		}
+		if (implicitButton.isVisible() && implicitButton.getSelection())
+			addImplicitDependencies();
 		removeCheckedModels();
-		return super.getModelsToImport();
+		
 	}
-	
 	private void removeCheckedModels() {
 		HashSet set = new HashSet();
 		Object[] wModels = tablePart.getSelection();
@@ -179,11 +206,6 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		}
 	}
 
-	public void setVisible(boolean visible) {
-		super.setVisible(visible);
-		setPageComplete(visible && tablePart.getSelectionCount() > 0);
-	}
-	
 	private void addExtraPrerequisites(IPluginModelBase model) {
 		try {
 			IBuildModel buildModel = model.getBuildModel();
@@ -216,5 +238,20 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		} catch (CoreException e) {
 		}
 	}
+	
+	protected void pageChanged() {
+		computeModelsToImport();
+		importListViewer.refresh();
+		updateCount();
+		setPageComplete(selected.size() > 0);	
+	}
+
+	private void updateCount() {
+		counterLabel.setText(
+			PDEPlugin.getFormattedMessage(
+				"ImportWizard.expressPage.total",
+				new Integer(selected.size()).toString()));
+	}
+
 
 }

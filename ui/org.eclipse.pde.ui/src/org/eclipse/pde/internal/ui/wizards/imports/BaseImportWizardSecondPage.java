@@ -2,6 +2,10 @@ package org.eclipse.pde.internal.ui.wizards.imports;
 
 import java.util.ArrayList;
 
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.IFragment;
 import org.eclipse.pde.core.plugin.IFragmentModel;
@@ -9,7 +13,17 @@ import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.ui.wizards.ListUtil;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
 
 public abstract class BaseImportWizardSecondPage extends WizardPage {
 	
@@ -17,13 +31,52 @@ public abstract class BaseImportWizardSecondPage extends WizardPage {
 	protected IPluginModelBase[] models = new IPluginModelBase[0];
 	protected ArrayList selected = new ArrayList();
 	private String location;
+	protected Button implicitButton;
+	protected TableViewer importListViewer;
 
+	class ContentProvider
+		extends DefaultContentProvider
+		implements IStructuredContentProvider {
+		public Object[] getElements(Object element) {
+			return models;
+		}
+	}
+	
 	public BaseImportWizardSecondPage(String pageName, PluginImportWizardFirstPage page) {
 		super(pageName);
 		this.page1 = page;
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 
+	protected Composite createImportList(Composite parent) {
+		Composite container = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		container.setLayout(layout);
+		
+		Label label = new Label(container, SWT.NONE);
+		label.setText(PDEPlugin.getResourceString("ImportWizard.DetailedPage.importList"));
+
+		Table table = new Table(container, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.widthHint = 180;
+		gd.heightHint = 260;
+		table.setLayoutData(gd);
+
+		importListViewer = new TableViewer(table);
+		importListViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
+		importListViewer.setContentProvider(new ContentProvider());
+		importListViewer.setInput(PDECore.getDefault().getExternalModelManager());
+		importListViewer.setSorter(ListUtil.PLUGIN_SORTER);
+		importListViewer.addFilter(new ViewerFilter() {
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
+				return selected.contains(element);
+			}
+		});
+				
+		return container;
+	}
 
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
@@ -38,8 +91,22 @@ public abstract class BaseImportWizardSecondPage extends WizardPage {
 	}
 
 	protected void refreshPage() {
+		boolean showButton = false;
+		for (int i = 0; i < models.length; i++) {
+			String id = models[i].getPluginBase().getId();
+			if (id.equals("org.eclipse.core.boot")
+				|| id.equals("org.eclipse.core.runtime")) {
+				showButton = true;
+				break;
+			}
+		}
+		implicitButton.setVisible(showButton);
+		selected.clear();
+		pageChanged();
 	}
 
+	protected void pageChanged() {
+	}
 
 	protected boolean isRefreshNeeded() {
 		String currLocation = page1.getDropLocation();
@@ -112,6 +179,17 @@ public abstract class BaseImportWizardSecondPage extends WizardPage {
 		
 	}
 	
+	protected void addImplicitDependencies() {
+		for (int i = 0; i < models.length; i++) {
+			String id = models[i].getPluginBase().getId();
+			if (id.equals("org.eclipse.core.boot")) {
+				if (!selected.contains(models[i]))
+					selected.add(models[i]);
+			} else if (id.equals("org.eclipse.core.runtime")) {
+				addPluginAndDependencies(models[i]);
+			}			
+		}
+	}
 	public IPluginModelBase[] getModelsToImport() {
 		return (IPluginModelBase[]) selected.toArray(new IPluginModelBase[selected.size()]);
 	}

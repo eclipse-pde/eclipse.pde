@@ -100,7 +100,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		Group importChoices = new Group(container, SWT.NONE);
 		importChoices.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.importGroup"));
 		importChoices.setLayout(new GridLayout());
-		importChoices.setLayoutData(new GridData(GridData.FILL_BOTH));
+		importChoices.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 				
 		scanButton = new Button(importChoices, SWT.RADIO);
 		scanButton.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.scanAll"));		
