@@ -95,7 +95,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 	private boolean isInterestingProject(IProject project) {
 		if (!PDE.hasPluginNature(project))
 			return false;
-		if (NewWorkspaceModelManager.isBinaryPluginProject(project))
+		if (WorkspaceModelManager.isBinaryPluginProject(project))
 			return false;
 		// This is it - a plug-in project that is not external or binary
 		return true;
@@ -287,7 +287,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 	
 	private String getMangledPluginId(IFile file) {
 		IProject project = file.getProject();
-		NewWorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
+		WorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
 		IModel model = manager.getWorkspaceModel(project);
 		if (model instanceof IPluginModelBase) {
 			IPluginBase plugin = ((IPluginModelBase)model).getPluginBase();

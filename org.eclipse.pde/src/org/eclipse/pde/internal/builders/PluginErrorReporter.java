@@ -11,10 +11,10 @@
 package org.eclipse.pde.internal.builders;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.core.runtime.*;
+import org.eclipse.pde.internal.core.*;
 import org.xml.sax.*;
-import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.helpers.*;
 
 public class PluginErrorReporter extends DefaultHandler {
 	private IFile file;

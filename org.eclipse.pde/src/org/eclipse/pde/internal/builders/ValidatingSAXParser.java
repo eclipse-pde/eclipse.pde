@@ -11,18 +11,14 @@
 package org.eclipse.pde.internal.builders;
 
 import java.io.*;
-import java.io.IOException;
-import java.net.URL;
+import java.net.*;
 
 import javax.xml.parsers.*;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.internal.core.PDECore;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.pde.internal.core.*;
+import org.xml.sax.*;
 
 /**
  * @author Wassim Melhem

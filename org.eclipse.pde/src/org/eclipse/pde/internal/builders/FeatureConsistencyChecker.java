@@ -114,7 +114,7 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 		IProject[] interestingProjects = null;
 
 		// Compute interesting projects
-		NewWorkspaceModelManager wmanager =
+		WorkspaceModelManager wmanager =
 			PDECore.getDefault().getWorkspaceModelManager();
 		IModel thisModel = wmanager.getWorkspaceModel(project);
 		if (thisModel != null && thisModel instanceof IFeatureModel)
@@ -162,7 +162,7 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 	}
 	
 	private boolean isValidReference(IFeaturePlugin plugin) {
-		NewWorkspaceModelManager manager =
+		WorkspaceModelManager manager =
 			PDECore.getDefault().getWorkspaceModelManager();
 		IPluginModelBase[] models =
 			plugin.isFragment()
@@ -178,7 +178,7 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 	}
 	
 	private boolean isValidReference(IFeatureChild child) {
-		NewWorkspaceModelManager manager =
+		WorkspaceModelManager manager =
 			PDECore.getDefault().getWorkspaceModelManager();
 		IFeatureModel[] models = manager.getFeatureModels();
 

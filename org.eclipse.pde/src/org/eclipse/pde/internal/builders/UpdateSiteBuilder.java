@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.builders;
 
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.ISourceObject;
-import org.eclipse.pde.internal.PDE;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.core.isite.*;
-import org.eclipse.pde.internal.core.site.WorkspaceSiteModel;
+import org.eclipse.pde.internal.core.site.*;
 
 public class UpdateSiteBuilder extends IncrementalProjectBuilder {
 	public static final String BUILDERS_VERIFYING = "Builders.verifying";

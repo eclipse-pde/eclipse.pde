@@ -11,18 +11,16 @@
 package org.eclipse.pde.internal.builders;
 
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Stack;
-import java.util.StringTokenizer;
+import java.net.*;
+import java.util.*;
 
-import org.apache.tools.ant.util.StringUtils;
-import org.eclipse.core.boot.BootLoader;
-import org.eclipse.core.resources.IFile;
+import org.apache.tools.ant.util.*;
+import org.eclipse.core.boot.*;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.ISourceObject;
-import org.eclipse.pde.internal.PDE;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.internal.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.schema.*;
 import org.w3c.dom.*;

@@ -8,11 +8,8 @@ import javax.xml.parsers.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.IDocument;
 import org.w3c.dom.*;
 import org.xml.sax.*;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 
 /**
  * @author melhem
