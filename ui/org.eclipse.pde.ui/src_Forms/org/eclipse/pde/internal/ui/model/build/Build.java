@@ -96,6 +96,10 @@ public class Build implements IBuild {
 					int index = line.indexOf('=');
 					if (index == -1) 
 						index = line.indexOf(':');
+					if (index == -1)
+						index = line.indexOf(' ');
+					if (index == -1)
+						index = line.indexOf('\t');
 					String name = (index != -1) ? line.substring(0, index).trim() : line;
 					currentKey = (IDocumentKey)getEntry(name);
 					if (currentKey != null) {
