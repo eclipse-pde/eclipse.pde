@@ -422,7 +422,7 @@ public class LauncherUtils {
 				try {
 					deleteContent(workspaceFile, monitor);
 				} catch (IOException e) {
-					PDEPlugin.logErrorMessage("Error occurred while deleting the workspace data upon launching");
+					PDEPlugin.logErrorMessage("Error occurred while deleting the workspace data upon launching"); //$NON-NLS-1$
 				}
 			}
 		}
@@ -467,7 +467,7 @@ public class LauncherUtils {
 		try {
 			deleteContent(configDir, monitor);
 		} catch (IOException e) {
-			PDEPlugin.logErrorMessage("Error occurred while deleting the configuration area upon launching");
+			PDEPlugin.logErrorMessage("Error occurred while deleting the configuration area upon launching"); //$NON-NLS-1$
 		}
 	}
 	
