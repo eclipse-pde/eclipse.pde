@@ -314,7 +314,7 @@ IRegistryChangeListener {
 		final PluginObjectAdapter adapter = new PluginObjectAdapter(descriptor);
 		treeViewer.getTree().getDisplay().asyncExec(new Runnable() {
 			public void run() {
-				if (treeViewer == null || treeViewer.getTree() == null)
+				if (treeViewer == null || treeViewer.getTree() == null || treeViewer.getTree().isDisposed())
 					return;
 				TreeItem[] items = treeViewer.getTree().getItems();
 				if (items != null) {
