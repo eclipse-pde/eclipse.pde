@@ -136,7 +136,6 @@ public class DetailsForm extends ScrollableSectionForm {
 	public void dispose() {
 		super.dispose();
 		headingImage.dispose();
-		memento = null;
 		unregisterSection(sessionSection);
 		unregisterSection(stackSection);
 	}

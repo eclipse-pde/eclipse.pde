@@ -26,7 +26,7 @@ class LogReader {
 	private static final int TEXT_STATE = 60;
 	private static final int UNKNOWN_STATE = 70;
 	
-	public static LogSession currentSession;
+	private static LogSession currentSession;
 	
 	public static void parseLogFile(File file, ArrayList entries, IMemento memento) {
 		ArrayList parents = new ArrayList();
@@ -175,5 +175,9 @@ class LogReader {
 			parents.add(entry);
 		else
 			parents.set(depth, entry);
+	}
+	
+	public static void reset() {
+		currentSession = null;
 	}
 }

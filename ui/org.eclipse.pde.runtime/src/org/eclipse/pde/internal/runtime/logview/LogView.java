@@ -421,7 +421,7 @@ public class LogView extends ViewPart implements ILogListener {
 		Platform.removeLogListener(this);
 		clipboard.dispose();
 		detailsForm.dispose();
-		LogReader.currentSession = null;
+		LogReader.reset();
 		super.dispose();
 	}
 	
