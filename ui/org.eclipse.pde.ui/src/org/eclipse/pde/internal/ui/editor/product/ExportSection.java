@@ -1,5 +1,8 @@
 package org.eclipse.pde.internal.ui.editor.product;
 
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.*;
@@ -42,8 +45,20 @@ public class ExportSection extends PDESection {
 		fArchiveEntry = new FormEntry(comp, toolkit, null, "Browse...", false, 25);
 		fArchiveEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
+				getProduct().setExportDestination(entry.getValue().trim());
 			}
-			public void browseButtonSelected(FormEntry entry) {				
+			public void browseButtonSelected(FormEntry entry) {
+				handleBrowse();
+			}
+			private void handleBrowse() {
+				FileDialog dialog = new FileDialog(getShell(), SWT.SAVE);
+				dialog.setFileName(fArchiveEntry.getText().getText());
+				String extension = Platform.getOS().equals("macosx") ? ".tar.gz" : ".zip"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				dialog.setFilterExtensions(new String[] {"*" + extension});
+				String res = dialog.open();
+				if (res != null) {
+					fArchiveEntry.getText().setText(res);
+				}
 			}
 		});
 		fArchiveEntry.setEditable(isEditable());
@@ -75,5 +90,20 @@ public class ExportSection extends PDESection {
 		fArchiveEntry.cancelEdit();
 		super.cancelEdit();
 	}
+	
+	private IProduct getProduct() {
+		IBaseModel model = getPage().getPDEEditor().getAggregateModel();
+		return ((IProductModel)model).getProduct();
+	}
+	
+	private Shell getShell() {
+		return getPage().getEditor().getSite().getShell();
+	}
+	
+	public void refresh() {
+		fArchiveEntry.setValue(getProduct().getExportDestination(), true);
+		super.refresh();
+	}
+
 
 }

@@ -328,9 +328,9 @@ public class ManifestEditor extends MultiSourceEditor {
 	public static void openPluginEditor(
 		String pluginId,
 		Object object) {
-		IPlugin pluginToOpen = PDECore.getDefault().findPlugin(pluginId);
-		if (pluginToOpen != null) {
-			openPluginEditor(pluginToOpen, object);
+		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(pluginId);
+		if (model != null) {
+			openPluginEditor(model.getPluginBase(), object);
 		} else {
 			Display.getCurrent().beep();
 		}

@@ -47,7 +47,6 @@ public class SplashSection extends PDESection {
 		toolkit.paintBordersFor(client);
 		section.setClient(client);
 		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL|GridData.VERTICAL_ALIGN_BEGINNING));
-		
 	}
 
 }

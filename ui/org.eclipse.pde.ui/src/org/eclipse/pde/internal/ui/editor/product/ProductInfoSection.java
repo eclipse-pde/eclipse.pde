@@ -1,26 +1,34 @@
 package org.eclipse.pde.internal.ui.editor.product;
 
+import org.eclipse.jface.action.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.iproduct.*;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.swt.*;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.*;
+import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
 
 
 public class ProductInfoSection extends PDESection {
 
 	private FormEntry fNameEntry;
-	private FormEntry fIdEntry;
 	private ComboPart fAppCombo;
+	private ComboPart fProductCombo;
+	private Button fPluginButton;
+	private Button fFeatureButton;
+	
+	private static int NUM_COLUMNS = 3;
 
 	public ProductInfoSection(PDEFormPage page, Composite parent) {
-		super(page, parent, Section.TITLE_BAR);
+		super(page, parent, Section.DESCRIPTION);
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 
@@ -29,18 +37,20 @@ public class ProductInfoSection extends PDESection {
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText("Product Definition");
-		
+		section.setDescription("This section describes general information about the product:");
+
 		Composite client = toolkit.createComposite(section);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = toolkit.getBorderStyle() != SWT.NULL ? 0 : 2;
-		layout.numColumns = 3;
+		layout.numColumns = NUM_COLUMNS;
 		client.setLayout(layout);
 
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
 		
-		createNameEntry(client, toolkit, actionBars);
 		createIdEntry(client, toolkit, actionBars);
 		createApplicationEntry(client, toolkit, actionBars);
+		createNameEntry(client, toolkit, actionBars);
+		createConfigurationOption(client, toolkit);
 		
 		toolkit.paintBordersFor(client);
 		section.setClient(client);	
@@ -50,40 +60,109 @@ public class ProductInfoSection extends PDESection {
 	}
 	
 	private void createNameEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
+		createLabel(client, toolkit, "");
+		createLabel(client, toolkit, "Specify the name that appears in the title bar of the application:");
+
 		fNameEntry = new FormEntry(client, toolkit, "Product Name:", null, false); //$NON-NLS-1$
 		fNameEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
-				getProduct().setName(entry.getValue());
+				getProduct().setName(entry.getValue().trim());
 			}
 		});
 		fNameEntry.setEditable(isEditable());
 	}
 	
 	private void createIdEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
-		fIdEntry = new FormEntry(client, toolkit, "Product ID:", "Browse...", false); //$NON-NLS-1$
-		fIdEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
-			public void textValueChanged(FormEntry entry) {
-				getProduct().setId(entry.getValue());
-			}
-			public void browseButtonSelected(FormEntry entry) {			
+		createLabel(client, toolkit, "Specify the product identifier:");
+
+		Label label = toolkit.createLabel(client, "Product ID:");
+		label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
+		
+		fProductCombo = new ComboPart();
+		fProductCombo.createControl(client, toolkit, SWT.READ_ONLY);
+		fProductCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fProductCombo.setItems(TargetPlatform.getProductNames());
+		fProductCombo.add("");
+		fProductCombo.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				getProduct().setId(fProductCombo.getSelection());
 			}
 		});
-		fIdEntry.setEditable(isEditable());
+		
+		Button button = toolkit.createButton(client, "New...", SWT.PUSH);
+		button.setEnabled(isEditable());
+		
+		fProductCombo.getControl().setEnabled(isEditable());
 	}
 
 	private void createApplicationEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
+		createLabel(client, toolkit, "");
+		createLabel(client, toolkit, "Specify the application to run when launching this product:");
+		
 		Label label = toolkit.createLabel(client, "Application:");
 		label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
 		
 		fAppCombo = new ComboPart();
 		fAppCombo.createControl(client, toolkit, SWT.READ_ONLY);
-		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan = 2;
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = NUM_COLUMNS - 1;
 		fAppCombo.getControl().setLayoutData(gd);
 		fAppCombo.setItems(TargetPlatform.getApplicationNames());
 		fAppCombo.add("");
+		fAppCombo.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				getProduct().setApplication(fAppCombo.getSelection());
+			}
+		});
 		
 		fAppCombo.getControl().setEnabled(isEditable());
+	}
+	
+	private void createConfigurationOption(Composite client, FormToolkit toolkit) {
+		createLabel(client, toolkit, "");
+		FormText text = toolkit.createFormText(client, true);
+		text.setText(PDEPlugin.getResourceString("Product.overview.configuration"), true, true);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = NUM_COLUMNS;
+		text.setLayoutData(gd);
+		text.addHyperlinkListener(new IHyperlinkListener() {
+			public void linkEntered(HyperlinkEvent e) {
+				getStatusLineManager().setMessage(e.getLabel());
+			}
+			public void linkExited(HyperlinkEvent e) {
+				getStatusLineManager().setMessage(null);
+			}
+			public void linkActivated(HyperlinkEvent e) {
+				String pageId = fPluginButton.getSelection() ? ConfigurationPage.PLUGIN_ID : ConfigurationPage.FEATURE_ID;
+				getPage().getEditor().setActivePage(pageId);
+			}
+		});
+		
+		fPluginButton = toolkit.createButton(client, "plug-ins", SWT.RADIO);
+		gd = new GridData();
+		gd.horizontalIndent = 25;
+		fPluginButton.setLayoutData(gd);
+		fPluginButton.setEnabled(isEditable());
+		fPluginButton.addSelectionListener(new SelectionAdapter() {	
+			public void widgetSelected(SelectionEvent e) {
+				boolean selected = fPluginButton.getSelection();
+				getProduct().setUseFeatures(!selected);
+				((ProductEditor)getPage().getEditor()).updateConfigurationPage();
+			}
+		});
+		
+		fFeatureButton = toolkit.createButton(client, "features", SWT.RADIO);
+		gd = new GridData();
+		gd.horizontalIndent = 25;
+		fFeatureButton.setLayoutData(gd);
+		fFeatureButton.setEnabled(isEditable());
+	}
+	
+	private void createLabel(Composite client, FormToolkit toolkit, String text) {
+		Label label = toolkit.createLabel(client, text);
+		GridData gd = new GridData();
+		gd.horizontalSpan = NUM_COLUMNS;
+		label.setLayoutData(gd);
 	}
 	
 	/* (non-Javadoc)
@@ -91,7 +170,6 @@ public class ProductInfoSection extends PDESection {
 	 */
 	public void commit(boolean onSave) {
 		fNameEntry.commit();
-		fIdEntry.commit();
 		super.commit(onSave);
 	}
 	
@@ -100,7 +178,6 @@ public class ProductInfoSection extends PDESection {
 	 */
 	public void cancelEdit() {
 		fNameEntry.cancelEdit();
-		fIdEntry.cancelEdit();
 		super.cancelEdit();
 	}
 	
@@ -115,9 +192,16 @@ public class ProductInfoSection extends PDESection {
 	public void refresh() {
 		IProduct product = getProduct();
 		fNameEntry.setValue(product.getName(), true);
-		fIdEntry.setValue(product.getId(), true);
+		fProductCombo.setText(product.getId());
 		fAppCombo.setText(product.getApplication());
+		fPluginButton.setSelection(!product.useFeatures());
+		fFeatureButton.setSelection(product.useFeatures());
 		super.refresh();
+	}
+	
+	private IStatusLineManager getStatusLineManager() {
+		IEditorSite site = getPage().getEditor().getEditorSite();
+		return site.getActionBars().getStatusLineManager();
 	}
 
 }

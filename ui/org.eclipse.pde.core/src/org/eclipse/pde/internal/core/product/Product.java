@@ -3,6 +3,7 @@ package org.eclipse.pde.internal.core.product;
 import java.io.*;
 import java.util.*;
 
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.iproduct.*;
 import org.w3c.dom.*;
 
@@ -15,8 +16,11 @@ public class Product extends ProductObject implements IProduct {
 	private String fApplication;
 	private IAboutInfo fAboutInfo;
 	
-	private ArrayList fPlugins = new ArrayList();
+	private TreeMap fPlugins = new TreeMap();
 	private IConfigurationFileInfo fConfigIniInfo;
+	private boolean fUseFeatures;
+	private String fExportDestination;
+	private boolean fIncludeFragments;
 
 	public Product(IProductModel model) {
 		super(model);
@@ -86,12 +90,18 @@ public class Product extends ProductObject implements IProduct {
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent + "<product"); //$NON-NLS-1$
 		if (fName != null && fName.length() > 0)
-			writer.print(" name=\"" + fName + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			writer.print(" " + P_NAME + "=\"" + getWritableString(fName) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (fId != null && fId.length() > 0)
-			writer.print(" id=\"" + fId + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			writer.print(" " + P_ID + "=\"" + fId + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (fApplication != null && fApplication.length() > 0)
-			writer.print(" application=\"" + fApplication + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			writer.print(" " + P_APPLICATION + "=\"" + fApplication + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.print(" " + P_USEFEATURES + "=\"" + Boolean.toString(fUseFeatures) + "\"");
 		writer.println(">"); //$NON-NLS-1$
+
+		if (fExportDestination != null && fExportDestination.length() > 0) {
+			writer.println();
+			writer.println(indent + "   <export " + P_DESTINATION + "=\"" + getWritableString(fExportDestination) + "\"/>");
+		}
 		
 		if (fAboutInfo != null) {
 			writer.println();
@@ -103,15 +113,14 @@ public class Product extends ProductObject implements IProduct {
 			fConfigIniInfo.write(indent + "   ", writer); //$NON-NLS-1$
 		}
 		
-		if (fPlugins.size() > 0) {
-			writer.println();
-			writer.println(indent + "   <plugins>"); //$NON-NLS-1$
-			for (int i = 0; i < fPlugins.size(); i++) {
-				IProductPlugin plugin = (IProductPlugin)fPlugins.get(i);
-				plugin.write(indent + "      ", writer); //$NON-NLS-1$
-			}
-			writer.println(indent + "   </plugins>"); //$NON-NLS-1$
+		writer.println();
+		writer.println(indent + "   <plugins " + P_INCLUDE_FRAGMENTS + "=\"" + Boolean.toString(fIncludeFragments) + "\">"); //$NON-NLS-1$
+		Iterator iter = fPlugins.values().iterator();
+		while (iter.hasNext()) {
+			IProductPlugin plugin = (IProductPlugin)iter.next();
+			plugin.write(indent + "      ", writer); //$NON-NLS-1$
 		}
+		writer.println(indent + "   </plugins>"); //$NON-NLS-1$
 		
 		writer.println();
 		writer.println("</product>"); //$NON-NLS-1$
@@ -142,21 +151,26 @@ public class Product extends ProductObject implements IProduct {
 		if (node.getNodeType() == Node.ELEMENT_NODE 
 				&& node.getNodeName().equals("product")) { //$NON-NLS-1$
 			Element element = (Element)node;
-			fApplication = element.getAttribute("application"); //$NON-NLS-1$
-			fId = element.getAttribute("id"); //$NON-NLS-1$
-			fName = element.getAttribute("name"); //$NON-NLS-1$
+			fApplication = element.getAttribute(P_APPLICATION); //$NON-NLS-1$
+			fId = element.getAttribute(P_ID); //$NON-NLS-1$
+			fName = element.getAttribute(P_NAME); //$NON-NLS-1$
+			fUseFeatures = "true".equals(element.getAttribute(P_USEFEATURES));
 			NodeList children = node.getChildNodes();
 			for (int i = 0; i < children.getLength(); i++) {
 				Node child = children.item(i);
 				if (child.getNodeType() == Node.ELEMENT_NODE) {
-					if (child.getNodeName().equals("aboutInfo")) { //$NON-NLS-1$
+					String name = child.getNodeName();
+					if (name.equals("aboutInfo")) { //$NON-NLS-1$
 						fAboutInfo = getModel().getFactory().createAboutInfo();
 						fAboutInfo.parse(child);
-					} else if (child.getNodeName().equals("plugins")) { //$NON-NLS-1$
+					} else if (name.equals("plugins")) { //$NON-NLS-1$
+						fIncludeFragments = "true".equals(((Element)child).getAttribute(P_INCLUDE_FRAGMENTS));
 						parsePlugins(child.getChildNodes());
-					} else if (child.getNodeName().equals("configIni")) { //$NON-NLS-1$
+					} else if (name.equals("configIni")) { //$NON-NLS-1$
 						fConfigIniInfo = getModel().getFactory().createConfigFileInfo();
 						fConfigIniInfo.parse(child);
+					} else if (name.equals("export")) {
+						fExportDestination = ((Element)child).getAttribute(P_DESTINATION);
 					}
 				}
 			}
@@ -170,7 +184,7 @@ public class Product extends ProductObject implements IProduct {
 				if (child.getNodeName().equals("plugin")) { //$NON-NLS-1$
 					IProductPlugin plugin = getModel().getFactory().createPlugin();
 					plugin.parse(child);
-					fPlugins.add(plugin);
+					fPlugins.put(plugin.getId(), plugin);
 				}
 			}
 		}
@@ -180,21 +194,31 @@ public class Product extends ProductObject implements IProduct {
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#addPlugin(org.eclipse.pde.internal.core.iproduct.IProductPlugin)
 	 */
 	public void addPlugin(IProductPlugin plugin) {
-		fPlugins.add(plugin);
+		String id = plugin.getId();
+		if (fPlugins.containsKey(id))
+			return;
+		
+		fPlugins.put(plugin.getId(), plugin);
+		plugin.setInTheModel(true);
+		if (isEditable())
+			fireStructureChanged(plugin, IModelChangedEvent.INSERT);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#removePlugin(org.eclipse.pde.internal.core.iproduct.IProductPlugin)
 	 */
 	public void removePlugin(IProductPlugin plugin) {
-		fPlugins.remove(plugin);
+		fPlugins.remove(plugin.getId());
+		plugin.setInTheModel(false);
+		if (isEditable())
+			fireStructureChanged(plugin, IModelChangedEvent.REMOVE);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#getPlugins()
 	 */
 	public IProductPlugin[] getPlugins() {
-		return (IProductPlugin[])fPlugins.toArray(new IProductPlugin[fPlugins.size()]);
+		return (IProductPlugin[])fPlugins.values().toArray(new IProductPlugin[fPlugins.size()]);
 	}
 	
 	/* (non-Javadoc)
@@ -209,6 +233,43 @@ public class Product extends ProductObject implements IProduct {
 	 */
 	public void setConfigurationFileInfo(IConfigurationFileInfo info) {
 		fConfigIniInfo = info;
+	}
+
+	public boolean useFeatures() {
+		return fUseFeatures;
+	}
+
+	public void setUseFeatures(boolean use) {
+		boolean old = fUseFeatures;
+		fUseFeatures = use;
+		if (isEditable())
+			firePropertyChanged(P_USEFEATURES, Boolean.toString(old), Boolean.toString(fUseFeatures));
+	}
+
+	public String getExportDestination() {
+		return fExportDestination;
+	}
+
+	public void setExportDestination(String destination) {
+		String old = fExportDestination;
+		fExportDestination = destination;
+		if (isEditable())
+			firePropertyChanged(P_DESTINATION, old, fExportDestination);
+	}
+
+	public boolean includeFragments() {
+		return fIncludeFragments;
+	}
+
+	public void setIncludeFragments(boolean include) {
+		boolean old = fIncludeFragments;
+		fIncludeFragments = include;
+		if (isEditable())
+			firePropertyChanged(P_USEFEATURES, Boolean.toString(old), Boolean.toString(fIncludeFragments));
+	}
+
+	public boolean containsPlugin(String id) {
+		return fPlugins.containsKey(id);
 	}
 
 }

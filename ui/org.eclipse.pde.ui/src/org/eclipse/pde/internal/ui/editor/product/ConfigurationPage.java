@@ -10,10 +10,14 @@ import org.eclipse.ui.forms.widgets.*;
 
 public class ConfigurationPage extends PDEFormPage {
 	
-	public static final String PAGE_ID = "configuration";
+	public static final String PLUGIN_ID = "plugin-configuration";
+	public static final String FEATURE_ID = "feature-configuration";
 
-	public ConfigurationPage(FormEditor editor) {
-		super(editor, PAGE_ID, "Configuration");
+	private boolean fUseFeatures;
+
+	public ConfigurationPage(FormEditor editor, boolean useFeatures) {
+		super(editor, useFeatures ? FEATURE_ID : PLUGIN_ID, "Configuration");
+		fUseFeatures = useFeatures;
 	}
 	
 	/* (non-Javadoc)
@@ -39,7 +43,10 @@ public class ConfigurationPage extends PDEFormPage {
 		body.setLayout(layout);
 
 		// sections
-		managedForm.addPart(new PluginSection(this, body));	
+		if (fUseFeatures)
+			managedForm.addPart(new FeatureSection(this, body));
+		else
+			managedForm.addPart(new PluginSection(this, body));	
 		managedForm.addPart(new ConfigurationSection(this, body));
 	}
 	

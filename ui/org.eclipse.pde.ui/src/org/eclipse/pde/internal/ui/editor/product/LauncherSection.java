@@ -80,7 +80,6 @@ public class LauncherSection extends PDESection {
 		
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 2;
-		gd.horizontalIndent = 10;
 		ec.setLayoutData(gd);
 		ec.addExpansionListener(new ExpansionAdapter() {
 			public void expansionStateChanged(ExpansionEvent e) {
@@ -104,7 +103,7 @@ public class LauncherSection extends PDESection {
 		});
 		fIco.setEditable(isEditable());
 		
-		button = toolkit.createButton(comp, "Specify six '.bmp' images for both low and high color graphics", SWT.RADIO);
+		button = toolkit.createButton(comp, "Specify six '.bmp' images for both low (16-color) and high (256-color) graphics", SWT.RADIO);
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		button.setLayoutData(gd);
@@ -160,7 +159,6 @@ public class LauncherSection extends PDESection {
 			
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 2;
-		gd.horizontalIndent = 10;
 		ec.setLayoutData(gd);
 		ec.addExpansionListener(new ExpansionAdapter() {
 			public void expansionStateChanged(ExpansionEvent e) {
@@ -194,7 +192,6 @@ public class LauncherSection extends PDESection {
 		
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 2;
-		gd.horizontalIndent = 10;
 		ec.setLayoutData(gd);
 		ec.addExpansionListener(new ExpansionAdapter() {
 			public void expansionStateChanged(ExpansionEvent e) {
@@ -249,7 +246,6 @@ public class LauncherSection extends PDESection {
 		
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 2;
-		gd.horizontalIndent = 10;
 		ec.setLayoutData(gd);
 		ec.addExpansionListener(new ExpansionAdapter() {
 			public void expansionStateChanged(ExpansionEvent e) {

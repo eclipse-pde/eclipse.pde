@@ -100,4 +100,8 @@ public class NewFragmentProjectWizard extends NewWizard implements IExecutableEx
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
 		fConfig = config;
 	}
+	
+	public String getFragmentId() {
+		return fFragmentData.getId();
+	}
 }

@@ -139,15 +139,17 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 	
 	public String getObjectText(IProductPlugin obj) {
+		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(obj.getId());	
+		String version = model == null ? null : model.getPluginBase().getVersion();
+		String text = null;
 		if (isFullNameModeEnabled()) {
-			String id = obj.getId();
-			IPlugin plugin = PDECore.getDefault().findPlugin(obj.getId());
-			if (plugin != null) {
-				return plugin.getTranslatedName();
+			if (model != null) {
+				text = model.getPluginBase().getTranslatedName();
 			}
-			return id != null ? id : "?"; //$NON-NLS-1$
+		} else {
+			text = preventNull(obj.getId());
 		}
-		return preventNull(obj.getId());		
+		return version == null ? text : text + " (" + version + ")";
 	}
 	
 	public String getObjectText(IPluginImport obj) {

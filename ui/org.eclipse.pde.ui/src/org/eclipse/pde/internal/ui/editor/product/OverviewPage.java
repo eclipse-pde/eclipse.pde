@@ -48,7 +48,6 @@ public class OverviewPage extends PDEFormPage {
 		layout.numColumns = 2;
 		layout.verticalSpacing = 30;
 		layout.horizontalSpacing = 10;
-		layout.makeColumnsEqualWidth = true;
 		body.setLayout(layout);
 
 		// sections

@@ -100,9 +100,6 @@ public abstract class ContentPage extends WizardPage {
 		if (errorMessage != null)
 			return errorMessage;
 		
-		if (!fData.isSimple() && fLibraryText.getText().trim().length() == 0) {
-			errorMessage = PDEPlugin.getResourceString("ProjectStructurePage.noLibrary"); //$NON-NLS-1$
-		}
 		return errorMessage;
 	}
 
@@ -205,9 +202,13 @@ public abstract class ContentPage extends WizardPage {
 		fData.setProvider(fProviderText.getText().trim());
 		if (!fData.isSimple()) {
 			String library = fLibraryText.getText().trim();
-			if (!library.endsWith(".jar") &&!library.endsWith("/") && !library.equals(".")) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			if (library.length() > 0) {			
+				if (!library.endsWith(".jar") &&!library.endsWith("/") && !library.equals(".")) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					library += "/"; //$NON-NLS-1$
-			fData.setLibraryName(library);
+				fData.setLibraryName(library);
+			} else {
+				fData.setLibraryName(null);
+			}
 		}
 	}
 

@@ -3,6 +3,8 @@ package org.eclipse.pde.internal.ui.editor.product;
 import java.io.File;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
@@ -13,9 +15,14 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.forms.editor.*;
 
 
 public class ProductEditor extends PDEFormEditor {
+
+	private ConfigurationPage fPluginConfigurationPage;
+	private ConfigurationPage fFeatureConfigurationPage;
+	private BrandingPage fBrandingPage;
 
 	/**
 	 * 
@@ -86,11 +93,37 @@ public class ProductEditor extends PDEFormEditor {
 	protected void addPages() {
 		try {
 			addPage(new OverviewPage(this));
-			addPage(new ConfigurationPage(this));
-			addPage(new BrandingPage(this));
+			fPluginConfigurationPage = new ConfigurationPage(this, false);
+			fFeatureConfigurationPage = new ConfigurationPage(this, true);
+			if (useFeatures())
+				addPage(fFeatureConfigurationPage);
+			else
+				addPage(fPluginConfigurationPage);	
+			fBrandingPage = new BrandingPage(this);
+			addPage(fBrandingPage);
 		} catch (PartInitException e) {
 			PDEPlugin.logException(e);
 		}
+	}
+	
+	public void updateConfigurationPage() {
+		IFormPage pagetoRemove = useFeatures() ? fPluginConfigurationPage : fFeatureConfigurationPage;
+		if (pagetoRemove != null)
+			removePage(pagetoRemove.getIndex());
+		removePage(fBrandingPage.getIndex());
+		try {
+			if (useFeatures())
+				addPage(fFeatureConfigurationPage);
+			else
+				addPage(fPluginConfigurationPage);
+			addPage(fBrandingPage);
+		} catch (PartInitException e) {
+		}
+	}
+	
+	public boolean useFeatures() {
+		IBaseModel model = getAggregateModel();
+		return ((IProductModel)model).getProduct().useFeatures();
 	}
 
 	/* (non-Javadoc)

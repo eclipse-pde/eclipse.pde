@@ -51,10 +51,10 @@ public class AboutInfo extends ProductObject implements IAboutInfo {
 		if (isAboutImageDefined() || isAboutTextDefined()) {
 			writer.println(indent + "<aboutInfo>"); //$NON-NLS-1$
 			if (isAboutImageDefined())
-				writer.println(indent + "   <image path=\"" + fImagePath.trim() + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
+				writer.println(indent + "   <image path=\"" + getWritableString(fImagePath.trim()) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
 			if (isAboutTextDefined()) {
 				writer.println(indent + "   <text>"); //$NON-NLS-1$
-				writer.println(indent + "      " + fAboutText.trim()); //$NON-NLS-1$
+				writer.println(indent + "      " + getWritableString(fAboutText.trim())); //$NON-NLS-1$
 				writer.println(indent + "   </text>"); //$NON-NLS-1$
 			}
 			writer.println(indent + "</aboutInfo>"); //$NON-NLS-1$

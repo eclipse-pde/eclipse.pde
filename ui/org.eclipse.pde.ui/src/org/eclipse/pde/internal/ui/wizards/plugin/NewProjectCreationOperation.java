@@ -274,7 +274,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
                 ((IPlugin) pluginBase).setClassName(((IPluginFieldData) fData)
                         .getClassname());
         }
-        if (!fData.isSimple()) {
+        if (!fData.isSimple() && fData.getLibraryName() != null) {
             IPluginLibrary library = fModel.getPluginFactory().createLibrary();
             library.setName(fData.getLibraryName());
             library.setExported(true);
@@ -315,7 +315,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
                     : "plugin.xml"); //$NON-NLS-1$
             if (fData.hasBundleStructure())
                 binEntry.addToken("META-INF/"); //$NON-NLS-1$
-            if (!fData.isSimple()) {
+            if (!fData.isSimple() && fData.getLibraryName() != null) {
                 binEntry.addToken(fData.getLibraryName());
                 if (fContentWizard != null) {
                     String[] files = fContentWizard.getNewFiles();
