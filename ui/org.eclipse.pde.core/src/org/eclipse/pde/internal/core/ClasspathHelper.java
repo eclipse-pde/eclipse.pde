@@ -41,15 +41,22 @@ public class ClasspathHelper {
 			if (entry.length() > 0)
 				properties.put(id, entry);
 		}
+		properties.put("@ignoredot@", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 		
+		FileOutputStream stream = null;
 		try {
-			FileOutputStream stream = new FileOutputStream(fileName);
+			stream = new FileOutputStream(fileName);
 			properties.store(stream, ""); //$NON-NLS-1$
 			stream.flush();
-			stream.close();
 			return new URL("file:" + fileName).toString(); //$NON-NLS-1$
 		} catch (IOException e) {
 			PDECore.logException(e);
+		} finally {
+			try {
+				if (stream != null)
+					stream.close();
+			} catch (IOException e) {
+			}			
 		}
 		return getDevEntries(checkExcluded);
 	}
@@ -90,7 +97,8 @@ public class ClasspathHelper {
 			return null;
 		IPath[] paths = getOutputFolders(model, false);
 		String entry = writeEntry(paths);
-		Hashtable map = new Hashtable(1);
+		Hashtable map = new Hashtable(2);
+		map.put("@ignoredot@", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 		map.put(id, entry.length() > 0 ? entry : "bin"); //$NON-NLS-1$
 		return map;		
 	}
