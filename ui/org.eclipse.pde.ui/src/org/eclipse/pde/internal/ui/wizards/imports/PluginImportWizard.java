@@ -155,10 +155,14 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 	private static IWorkspaceRunnable getUpdateClasspathOperation(final ArrayList modelIds) {
 		return new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				UpdateClasspathAction.doUpdateClasspath(
+				/*UpdateClasspathAction.doUpdateClasspath(
 					monitor,
 					getWorkspaceCounterparts(modelIds),
-					new UpdateClasspathAction.MissingPluginConfirmation());
+					new UpdateClasspathAction.MissingPluginConfirmation());*/
+				UpdateClasspathAction.doUpdateClasspath(
+						monitor,
+						getWorkspaceCounterparts(modelIds),
+						null);
 			}
 		};
 	}
