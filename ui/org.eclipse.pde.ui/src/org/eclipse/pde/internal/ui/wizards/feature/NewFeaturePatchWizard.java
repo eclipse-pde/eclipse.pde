@@ -279,6 +279,9 @@ public class NewFeaturePatchWizard extends NewWizard implements IExecutableExten
 		feature.setId(data.id);
 		feature.setVersion("1.0.0"); //$NON-NLS-1$
 		feature.setProviderName(data.provider);
+		if(data.hasCustomHandler){
+			feature.setInstallHandler(model.getFactory().createInstallHandler());
+		}
 
 		IFeaturePlugin[] added = new IFeaturePlugin[plugins.length];
 		for (int i = 0; i < plugins.length; i++) {

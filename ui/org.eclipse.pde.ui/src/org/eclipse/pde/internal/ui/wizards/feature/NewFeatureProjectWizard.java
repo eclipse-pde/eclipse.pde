@@ -250,6 +250,9 @@ public class NewFeatureProjectWizard extends NewWizard
 		feature.setId(data.id);
 		feature.setVersion(data.version);
 		feature.setProviderName(data.provider);
+		if(data.hasCustomHandler){
+			feature.setInstallHandler(model.getFactory().createInstallHandler());
+		}
 
 		IFeaturePlugin[] added = new IFeaturePlugin[plugins.length];
 
