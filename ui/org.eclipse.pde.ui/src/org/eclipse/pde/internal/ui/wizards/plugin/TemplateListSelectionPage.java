@@ -33,7 +33,7 @@ public class TemplateListSelectionPage extends WizardListSelectionPage
 	class WizardFilter extends ViewerFilter {
 		public boolean select(Viewer viewer, Object parentElement,
 				Object element) {
-			IFieldData data = fContentPage.getData();
+			IPluginFieldData data = (IPluginFieldData) fContentPage.getData();
 			boolean simple = data.isSimple();
 			boolean generate = false;
 			boolean ui = false;
@@ -43,17 +43,22 @@ public class TemplateListSelectionPage extends WizardListSelectionPage
 			}
 			WizardElement welement = (WizardElement)element;
 			IConfigurationElement config = welement.getConfigurationElement();
-			boolean uiFlag = getFlag(config, "ui-content"); //$NON-NLS-1$
-			boolean javaFlag = getFlag(config, "java"); //$NON-NLS-1$
+			boolean uiFlag = getFlag(config, "ui-content", true); //$NON-NLS-1$
+			boolean javaFlag = getFlag(config, "java", true); //$NON-NLS-1$
+			boolean rcpFlag = getFlag(config, "rcp", false);
+			
 			//filter out java wizards for simple projects
 			if (simple && javaFlag) return false;
 			//filter out ui wizards for non-ui plug-ins
 			if (uiFlag && (simple || (generate && !ui))) return false;
+			// filter out non-RCP wizard if RCP option is selected
+			if (data.isRCPApplicationPlugin() && !rcpFlag) return false;
+
 			return true;
 		}
-		private boolean getFlag(IConfigurationElement config, String name) {
+		private boolean getFlag(IConfigurationElement config, String name, boolean defaultValue) {
 			String value = config.getAttribute(name);
-			if (value==null) return true;
+			if (value==null) return defaultValue;
 			return value.equalsIgnoreCase("true"); //$NON-NLS-1$
 		}
 }
