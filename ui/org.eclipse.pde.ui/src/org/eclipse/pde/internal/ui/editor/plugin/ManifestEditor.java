@@ -147,7 +147,7 @@ public class ManifestEditor extends MultiSourceEditor {
 		if (pluginFile.exists()) {
 			SystemFileEditorInput in = new SystemFileEditorInput(pluginFile);
 			manager.putContext(in, new PluginInputContext(this, in,
-					file == pluginFile, false));
+					file == pluginFile, name.equals("fragment.xml")));
 		}
 		if (buildFile.exists()) {
 			SystemFileEditorInput in = new SystemFileEditorInput(buildFile);
