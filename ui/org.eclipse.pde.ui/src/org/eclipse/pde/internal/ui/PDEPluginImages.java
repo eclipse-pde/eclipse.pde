@@ -64,6 +64,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_FEATURE_JAR_OBJ  = create(PATH_OBJ, "ftr_jar_obj.gif");
 	public static final ImageDescriptor DESC_FEATURE_MF_OBJ   = create(PATH_OBJ, "ftr_mf_obj.gif");
 	public static final ImageDescriptor DESC_FEATURE_OBJ   = create(PATH_OBJ, "feature_obj.gif");
+	public static final ImageDescriptor DESC_NOREF_FEATURE_OBJ = create(PATH_OBJ, "noref_feature_obj.gif");
 	public static final ImageDescriptor DESC_ELREF_SC_OBJ  = create(PATH_OBJ, "elref_sc_obj.gif");
 	public static final ImageDescriptor DESC_EXTENSIONS_OBJ = create(PATH_OBJ, "extensions_obj.gif");
 	public static final ImageDescriptor DESC_EXTENSION_OBJ = create(PATH_OBJ, "extension_obj.gif");
@@ -116,6 +117,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_EXTERNAL_CO   = create(PATH_OVR, "external_co.gif");
 	public static final ImageDescriptor DESC_BINARY_CO   = create(PATH_OVR, "binary_co.gif");
 	public static final ImageDescriptor DESC_JAVA_CO   = create(PATH_OVR, "java_co.gif");
+	public static final ImageDescriptor DESC_JAR_CO   = create(PATH_OVR, "jar_co.gif");
 
 	/**
 	 * TOOL16

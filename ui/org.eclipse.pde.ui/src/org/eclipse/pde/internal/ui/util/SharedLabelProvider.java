@@ -30,6 +30,7 @@ public class SharedLabelProvider
 	public static final int F_BINARY = 16;
 	public static final int F_EXTERNAL = 32;
 	public static final int F_JAVA = 64;
+	public static final int F_JAR = 128;
 	Hashtable images = new Hashtable();
 	ArrayList consumers = new ArrayList();
 
@@ -136,6 +137,8 @@ public class SharedLabelProvider
 	}
 	
 	private ImageDescriptor[] getLowerRightOverlays(int flags) {
+		if ((flags & F_JAR) != 0)
+			return new ImageDescriptor[] { PDEPluginImages.DESC_JAR_CO };
 		return null;
 	}
 	

@@ -3,7 +3,8 @@ package org.eclipse.pde.internal.core.site;
 import java.io.PrintWriter;
 import java.util.Vector;
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.isite.*;
 import org.w3c.dom.*;
@@ -150,5 +151,15 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 			writer.println(indent + "</feature>");
 		} else
 			writer.println("/>");
+	}
+	
+	public IFile getArchiveFile() {
+		if (url==null) return null;
+		IResource resource = getModel().getUnderlyingResource();
+		if (resource==null) return null;
+		IProject project = resource.getProject();
+		IFile file = project.getFile(new Path(url));
+		if (file.exists()) return file;
+		return null;
 	}
 }

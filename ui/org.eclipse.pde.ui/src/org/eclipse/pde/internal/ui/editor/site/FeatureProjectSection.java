@@ -308,6 +308,7 @@ public class FeatureProjectSection
 		ISiteModel model = (ISiteModel) input;
 		ISiteBuildModel buildModel = model.getBuildModel();
 		ISiteBuild build = buildModel.getSiteBuild();
+		build.resetReferences();
 		projectViewer.setInput(build);
 		updateNeeded = false;
 	}

@@ -1,5 +1,6 @@
 package org.eclipse.pde.internal.core.isite;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.ifeature.IVersionable;
 
@@ -21,4 +22,5 @@ public interface ISiteFeature extends IVersionable, ISiteObject {
 	String getURL();
 	void setType(String type) throws CoreException;
 	void setURL(String url) throws CoreException;
+	IFile getArchiveFile();
 }

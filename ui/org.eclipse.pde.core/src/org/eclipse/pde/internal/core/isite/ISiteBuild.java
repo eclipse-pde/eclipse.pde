@@ -27,4 +27,5 @@ public interface ISiteBuild extends ISiteBuildObject {
 	void addFeatures(ISiteBuildFeature [] features) throws CoreException;
 	void removeFeatures(ISiteBuildFeature [] features) throws CoreException;
 	ISiteBuildFeature [] getFeatures();
+	void resetReferences();
 }

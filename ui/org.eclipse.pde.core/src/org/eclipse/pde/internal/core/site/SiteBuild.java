@@ -187,6 +187,14 @@ public class SiteBuild extends SiteBuildObject implements ISiteBuild {
 			writable.write(indent, writer);
 		}
 	}
+	
+	public void resetReferences() {
+		for (int i=0; i<features.size(); i++) {
+			ISiteBuildFeature sbfeature = (ISiteBuildFeature)features.get(i);
+			sbfeature.setReferencedFeature(null);
+		}
+	}
+	
 	private void writeIfDefined(
 		String indent,
 		PrintWriter writer,

@@ -61,12 +61,14 @@ public class SiteBuildFeature
 
 	public IFeature getReferencedFeature() {
 		if (feature == null) {
-			WorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
-			IFeatureModel [] models = manager.getWorkspaceFeatureModels();
-			for (int i=0; i<models.length; i++) {
+			WorkspaceModelManager manager =
+				PDECore.getDefault().getWorkspaceModelManager();
+			IFeatureModel[] models = manager.getWorkspaceFeatureModels();
+			for (int i = 0; i < models.length; i++) {
 				IFeatureModel model = models[i];
 				IFeature feature = model.getFeature();
-				if (feature.getId().equals(id) && feature.getVersion().equals(version)) {
+				if (feature.getId().equals(id)
+					&& feature.getVersion().equals(version)) {
 					this.feature = feature;
 					break;
 				}
@@ -78,8 +80,10 @@ public class SiteBuildFeature
 
 	public void setReferencedFeature(IFeature feature) {
 		this.feature = feature;
-		id = feature.getId();
-		version = feature.getVersion();
+		if (feature != null) {
+			id = feature.getId();
+			version = feature.getVersion();
+		}
 	}
 
 	protected void reset() {
