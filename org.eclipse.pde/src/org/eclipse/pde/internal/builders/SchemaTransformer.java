@@ -337,6 +337,13 @@ public class SchemaTransformer implements ISchemaTransformer {
 			ISchemaElement element = elements[i];
 			transformElement(out, element);
 		}
+		if (elements.length>0) {
+			ISchemaElement lastElement = elements[elements.length-1];
+			if (lastElement.getAttributeCount()==0 &&
+				lastElement.getDescription()==null) {
+				out.print("<br><br>");
+			}
+		}
 	}
 
 	private void transformSection(
@@ -369,6 +376,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 		out.println("<p>");
 	}
 	private void transformText(PrintWriter out, String text) {
+		if (text==null) return;
 		boolean preformatted = false;
 		for (int i = 0; i < text.length(); i++) {
 			char c = text.charAt(i);
