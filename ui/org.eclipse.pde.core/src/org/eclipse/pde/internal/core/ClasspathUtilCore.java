@@ -315,8 +315,9 @@ public class ClasspathUtilCore {
 							addSourceFolder(folders[k], project, result);
 						}
 					}
+					found = true;
+					break;
 				}
-				found = true;
 			}
 			// add library, since no source folder was found.
 			if (!found) {
