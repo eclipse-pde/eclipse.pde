@@ -638,17 +638,11 @@ public class ExtensionsSection extends TreeSection
 				Object obj = objects[i];
 				if (obj instanceof IPluginExtension) {
 					IPluginExtension extension = (IPluginExtension) obj;
-					//TODO this will break with the XML model
-					((PluginExtension) extension).setModel(model);
-					((PluginExtension) extension).setParent(plugin);
 					plugin.add(extension);
 					((PluginParent) extension).reconnect();
 				} else if (obj instanceof IPluginElement
 						&& target instanceof IPluginParent) {
-					// TODO this will break with the XML model
-					PluginElement element = (PluginElement) obj;
-					element.setModel(model);
-					element.setParent((IPluginParent) target);
+					IPluginElement element = (IPluginElement) obj;
 					((IPluginParent) target).add(element);
 					if (element instanceof PluginParent)
 						((PluginParent) element).reconnect();
@@ -675,8 +669,7 @@ public class ExtensionsSection extends TreeSection
 			}
 		} else if (object instanceof IPluginExtension) {
 			IPluginExtension extension = (IPluginExtension) object;
-			//TODO illegal cast
-			PluginBase plugin = (PluginBase) extension.getPluginBase();
+			IPluginBase plugin = (IPluginBase) extension.getPluginBase();
 			IPluginExtension[] extensions = plugin.getExtensions();
 			int index = plugin.getIndexOf(extension);
 			int newIndex = up ? index - 1 : index + 1;

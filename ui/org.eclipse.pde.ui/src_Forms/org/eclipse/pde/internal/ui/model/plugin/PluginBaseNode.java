@@ -21,11 +21,11 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	 */
 	public void add(IPluginLibrary library) throws CoreException {
 		IDocumentNode parent = getEnclosingElement("runtime", true);
-		if (library instanceof IDocumentNode) {
+		if (library instanceof PluginLibraryNode) {
+			PluginLibraryNode node = (PluginLibraryNode)library;
+			node.setModel(getModel());
 			library.setInTheModel(true);
-			IDocumentNode node = (IDocumentNode)library;
 			parent.addChildNode(node);
-			library.setInTheModel(true);
 			fireStructureChanged(library, IModelChangedEvent.INSERT);
 		}
 	}
@@ -34,9 +34,10 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	 */
 	public void add(IPluginImport pluginImport) throws CoreException {
 		IDocumentNode parent = getEnclosingElement("requires", true);
-		if (pluginImport instanceof IDocumentNode) {
+		if (pluginImport instanceof PluginImportNode) {
+			PluginImportNode node = (PluginImportNode)pluginImport;
+			node.setModel(getModel());
 			pluginImport.setInTheModel(true);
-			IDocumentNode node = (IDocumentNode)pluginImport;
 			parent.addChildNode(node);
 			fireStructureChanged(pluginImport, IModelChangedEvent.INSERT);
 		}
@@ -177,33 +178,40 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	 * @see org.eclipse.pde.core.plugin.IExtensions#add(org.eclipse.pde.core.plugin.IPluginExtension)
 	 */
 	public void add(IPluginExtension extension) throws CoreException {
-		extension.setInTheModel(true);
-		addChildNode((IDocumentNode)extension);
-		fireStructureChanged(extension, IModelChangedEvent.INSERT);
+		if (extension instanceof PluginExtensionNode) {
+			PluginExtensionNode node = (PluginExtensionNode)extension;
+			node.setModel(getModel());
+			extension.setInTheModel(true);
+			addChildNode(node);
+			fireStructureChanged(extension, IModelChangedEvent.INSERT);
+		}
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IExtensions#add(org.eclipse.pde.core.plugin.IPluginExtensionPoint)
 	 */
 	public void add(IPluginExtensionPoint extensionPoint) throws CoreException {
-		extensionPoint.setInTheModel(true);
-		IDocumentNode node = (IDocumentNode)extensionPoint;
-		node.setParentNode(this);
-		IPluginExtensionPoint[] extPoints = getExtensionPoints();
-		if (extPoints.length > 0)
-			addChildNode(node, indexOf((IDocumentNode)extPoints[extPoints.length - 1]) + 1);
-		else {
-			IDocumentNode requires = getEnclosingElement("requires", false);
-			if (requires != null) {
-				addChildNode(node, indexOf(requires) + 1);
-			} else {
-				IDocumentNode runtime = getEnclosingElement("runtime", false);
-				if (runtime != null)
-					addChildNode(node, indexOf(runtime) + 1);
-				else
-					addChildNode(node, 0);
+		if (extensionPoint instanceof PluginExtensionPointNode) {
+			PluginExtensionPointNode node = (PluginExtensionPointNode)extensionPoint;
+			node.setModel(getModel());
+			extensionPoint.setInTheModel(true);
+			node.setParentNode(this);
+			IPluginExtensionPoint[] extPoints = getExtensionPoints();
+			if (extPoints.length > 0)
+				addChildNode(node, indexOf((IDocumentNode)extPoints[extPoints.length - 1]) + 1);
+			else {
+				IDocumentNode requires = getEnclosingElement("requires", false);
+				if (requires != null) {
+					addChildNode(node, indexOf(requires) + 1);
+				} else {
+					IDocumentNode runtime = getEnclosingElement("runtime", false);
+					if (runtime != null)
+						addChildNode(node, indexOf(runtime) + 1);
+					else
+						addChildNode(node, 0);
+				}
 			}
+			fireStructureChanged(extensionPoint, IModelChangedEvent.INSERT);
 		}
-		fireStructureChanged(extensionPoint, IModelChangedEvent.INSERT);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IExtensions#getExtensionPoints()
