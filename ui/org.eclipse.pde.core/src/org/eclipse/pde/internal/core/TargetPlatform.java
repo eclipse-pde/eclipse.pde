@@ -171,10 +171,12 @@ public class TargetPlatform implements IEnvironmentVariables {
 			File configDir = createWorkingDirectory(data);
 			if (PDECore.getDefault().getModelManager().isOSGiRuntime()) {
 				createConfigIniFile(configDir, pluginMap, primaryFeatureId, autoStartPlugins);
-				if (autoStartPlugins.containsKey("org.eclipse.update.configurator")) 
-					savePlatformConfiguration(configDir, pluginMap, primaryFeatureId);
+				if (autoStartPlugins.containsKey("org.eclipse.update.configurator")) { 
+					savePlatformConfiguration(BootLoader.getPlatformConfiguration(null),configDir, pluginMap, primaryFeatureId);
+					savePlatformConfiguration(new PlatformConfiguration(null),new File(configDir, "platform.cfg"), pluginMap, primaryFeatureId);	
+				}
 			} else {
-				savePlatformConfiguration(new File(configDir, "platform.cfg"), pluginMap, primaryFeatureId);
+				savePlatformConfiguration(new PlatformConfiguration(null), new File(configDir, "platform.cfg"), pluginMap, primaryFeatureId);
 			} 			
 			return configDir;
 		} catch (CoreException e) {
@@ -283,6 +285,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 	}
 
 	private static void savePlatformConfiguration(
+		IPlatformConfiguration platformConfiguration,
 		File configFile,
 		TreeMap pluginMap,
 		String primaryFeatureId)
@@ -299,11 +302,6 @@ public class TargetPlatform implements IEnvironmentVariables {
 
 		IPluginModelBase bootModel = (IPluginModelBase)pluginMap.get(BOOT_ID);	
 		URL configURL = new URL("file:" + configFile.getPath()); //$NON-NLS-1$
-		IPlatformConfiguration platformConfiguration = null;
-		if (PDECore.getDefault().getModelManager().isOSGiRuntime())
-			platformConfiguration = BootLoader.getPlatformConfiguration(null);
-		else
-			platformConfiguration = new PlatformConfiguration(null);
 		createConfigurationEntries(platformConfiguration, bootModel, sites);
 		createFeatureEntries(platformConfiguration, pluginMap, primaryFeatureId);
 		platformConfiguration.refresh();
