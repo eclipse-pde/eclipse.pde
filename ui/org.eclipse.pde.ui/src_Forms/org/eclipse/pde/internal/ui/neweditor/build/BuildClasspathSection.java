@@ -271,10 +271,8 @@ public class BuildClasspathSection
 		super.dispose();
 	}
 	
-	public void modelChanged(IModelChangedEvent event) {
-		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
-			entryTable.refresh();
-		}
+	public void refresh() {
+		entryTable.refresh();
 	}
 	
 	public boolean doGlobalAction(String actionId) {

@@ -426,11 +426,10 @@ public abstract class BuildContentsSection extends TableSection
 	public Control getSectionControl() {
 		return sectionControl;
 	}
-	public void modelChanged(IModelChangedEvent event) {
-		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
-			initializeCheckState();
-		}
+	public void refresh() {
+		initializeCheckState();
 	}
+	
 	public void uncheckAll() {
 		treeViewer.setCheckedElements(new Object[0]);
 	}
