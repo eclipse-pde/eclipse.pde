@@ -423,19 +423,14 @@ public class LogView extends ViewPart implements ILogListener {
 		viewLogAction = new Action(PDERuntimePlugin.getResourceString("LogView.view.currentLog")){ //$NON-NLS-1$
 			public void run(){
 				
-				if (inputFile.exists())
-					if (SWT.getPlatform().equals("win32")) //$NON-NLS-1$
-						Program.launch(inputFile.getAbsolutePath());
-					else {
-						Program p = Program.findProgram (".txt"); //$NON-NLS-1$
-						if (p != null) 
-							p.execute (inputFile.getAbsolutePath());
-						else {
-							OpenLogDialog openDialog = new OpenLogDialog(tableTreeViewer.getControl().getShell(), inputFile);
-							openDialog.create();
-							openDialog.open();
-						}
+				if (inputFile.exists()){
+					boolean canLaunch = Program.launch(inputFile.getAbsolutePath());
+					if (!canLaunch){
+						OpenLogDialog openDialog = new OpenLogDialog(tableTreeViewer.getControl().getShell(), inputFile);
+						openDialog.create();
+						openDialog.open();
 					}
+				}
 			}
 		};
 		viewLogAction.setImageDescriptor(PDERuntimePluginImages.DESC_OPEN_LOG);
