@@ -14,7 +14,6 @@
       <import plugin="org.eclipse.ant.core"/>
       <import plugin="org.eclipse.update.core"/>
       <import plugin="org.apache.ant"/>
-      <import plugin="org.apache.xerces"/>
    </requires>
 
 <!-- Tasks -->
