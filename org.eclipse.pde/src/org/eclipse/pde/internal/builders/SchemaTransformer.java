@@ -72,7 +72,11 @@ public class SchemaTransformer implements ISchemaTransformer {
 		"SchemaTransformer.Validator.general";
 	public static final String REPORT_OPEN = 
 		"SchemaTransformer.Validator.open_tag";
-
+	public static final String PLATFORM_PLUGIN_DOC =
+		"org.eclipse.platform.doc.isv";
+	public static final byte TEMP = 0x00;
+	public static final byte BUILD = 0x01;
+	public static final byte GENERATE_DOC = 0x02;
 	public static final String[] forbiddenEndTagKeys =
 		{
 			"area",
@@ -111,7 +115,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 		ISchemaAttribute att,
 		int maxWidth) {
 		// add three spaces
-		out.print("<br><samp class=dtd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+		out.print("<br><p class=code id=dtd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 		// add name
 		out.print(att.getName());
 		// fill spaces to align data type
@@ -145,7 +149,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 			out.print("\"" + att.getValue() + "\"");
 		} else if (!choices)
 			out.print("#IMPLIED");
-		out.println("</samp>");
+		out.println("</p>");
 	}
 	private void appendRestriction(
 		ISchemaRestriction restriction,
@@ -227,7 +231,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 		if (verifySchema(schema, reporter)
 			&& verifySections(schema, reporter)
 			&& CompilerFlags.getBoolean(CompilerFlags.S_CREATE_DOCS)){
-			transform(out, schema, cssURL, false);
+			transform(out, schema, cssURL, GENERATE_DOC);
 
 		}
 	}
@@ -339,23 +343,29 @@ public class SchemaTransformer implements ISchemaTransformer {
 	public static String getPlatformCSSName(){
 		return "book.css";
 	}
-	public void addCSS(PrintWriter out, URL cssURL, boolean isTemp) {
+	public void addCSS(PrintWriter out, URL cssURL, byte cssPurpose) {
 		File cssFile;
 
 		
 		if (cssURL == null) {
-			PluginDescriptor descriptor =(PluginDescriptor) Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.platform.doc.user");
+			PluginDescriptor descriptor =(PluginDescriptor) Platform.getPluginRegistry().getPluginDescriptor(PLATFORM_PLUGIN_DOC);
 			if (descriptor == null)
 				return;
 			cssFile =new File(descriptor.getInstallURLInternal().getFile() + getPlatformCSSName());
-			if (!isTemp){
+			if (cssPurpose == GENERATE_DOC){
 				out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\""+getPlatformCSSName()+"\"/>");
+				return;
+			} else if (cssPurpose == BUILD){
+				out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\"../../../"+getPlatformCSSName()+"\"/>");
 				return;
 			}
 		} else {
 			cssFile = new File(cssURL.getFile());
-			if (!isTemp){
+			if (cssPurpose == GENERATE_DOC){
 				out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\""+cssFile.getName()+"\"/>");
+				return;
+			} else if (cssPurpose == BUILD){
+				out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\""+cssURL.toExternalForm()+"\"/>");
 				return;
 			}
 		}
@@ -385,28 +395,29 @@ public class SchemaTransformer implements ISchemaTransformer {
 
 
 	public void transform(PrintWriter out, ISchema schema) {
-		transform(out, schema, null,true); 
-	}
+		transform(out, schema, null,TEMP); 
+	} 
 
-	public void transform(PrintWriter out, ISchema schema, URL cssURL, boolean isTemp) {
+	public void transform(PrintWriter out, ISchema schema, URL cssURL, byte cssPurpose) {
 		out.println(
 			"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">");
 		out.print("<HEAD>");
 		out.println(
 			"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">");
 		
-		addCSS(out, cssURL, isTemp);
-		addSchemaStyle(out, isTemp);
+		addCSS(out, cssURL, cssPurpose);
+		addSchemaStyle(out, cssPurpose);
+
 		out.println("</HEAD>");
 		out.println("<HTML>");
 		out.println("<BODY>");
 		out.println("<H1><CENTER>" + schema.getName() + "</CENTER></H1>");
-		out.print("<div class=header>Identifier: </div>");
+		out.print("<h6 class=CaptionFigColumn id=header>Identifier: </h6>");
 		out.print(schema.getQualifiedPointId());
 		out.println("<p>");
 		transformSection(out, schema, "Since:", IDocumentSection.SINCE);
 		transformDescription(out, schema);
-		out.println("<p><div class=header>Configuration Markup:</div></p>");
+		out.println("<p><h6 class=CaptionFigColumn id=header>Configuration Markup:</h6></p>");
 		transformMarkup(out, schema);
 		transformSection(out, schema, "Examples:", IDocumentSection.EXAMPLES);
 		transformSection(
@@ -419,31 +430,40 @@ public class SchemaTransformer implements ISchemaTransformer {
 			schema,
 			"Supplied Implementation:",
 			IDocumentSection.IMPLEMENTATION);
-		out.println("<div class=copyright-text>");
+		out.println("<h6 class=CaptionFigColumn id=copyright-text>");
 		transformSection(out, schema, IDocumentSection.COPYRIGHT);
-		out.println("</div>");
+		out.println("</h6>");
 		out.println("</BODY>");
 		out.println("</HTML>");
 	}
 
-	private void addSchemaStyle(PrintWriter out, boolean isTemp) {
+	private void addSchemaStyle(PrintWriter out, byte cssPurpose) {
 		PluginDescriptor descriptor =
 		(PluginDescriptor) Platform
 			.getPluginRegistry()
 			.getPluginDescriptor(
-			"org.eclipse.pde");
+			PLATFORM_PLUGIN_DOC);
 		try {
-			if(isTemp)
-				addCSS(out, new URL(descriptor.getInstallURLInternal() + "schema.css"), isTemp);
-			else
+			switch(cssPurpose){
+			case(TEMP):
+				addCSS(out, new URL(descriptor.getInstallURLInternal() + "schema.css"), cssPurpose);
+				break;
+			case(GENERATE_DOC):
 				out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\""+ getSchemaCSSName()+"\"/>");
+				break;
+			case(BUILD):
+				out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\"../../../"+ getSchemaCSSName()+"\"/>");
+				break;
+			default:
+				break;
+			}
 		} catch (MalformedURLException e) {
 			// do nothing
 		}
 	}
 
 	private void transformDescription(PrintWriter out, ISchema schema) {
-		out.print("<div class=header>Description: </div>");
+		out.print("<h6 class=CaptionFigColumn id=header>Description: </h6>");
 		transformText(out, schema.getDescription());
 		ISchemaInclude[] includes = schema.getIncludes();
 		for (int i = 0; i < includes.length; i++) {
@@ -462,11 +482,11 @@ public class SchemaTransformer implements ISchemaTransformer {
 		String nameLink = "<a name=\"e." + name + "\">" + name + "</a>";
 		//out.print("<div class=\"dtd-fragment\">");
 		out.print(
-			"<p><samp class=dtd>&nbsp;&nbsp; &lt;!ELEMENT "
+			"<p class=code id=dtd>&nbsp;&nbsp; &lt;!ELEMENT "
 				+ nameLink
 				+ " "
 				+ dtd);
-		out.println("&gt;</samp>");
+		out.println("&gt;</p>");
 
 		ISchemaAttribute[] attributes = element.getAttributes();
 		String description = element.getDescription();
@@ -484,14 +504,14 @@ public class SchemaTransformer implements ISchemaTransformer {
 
 		if (attributes.length > 0) {
 			out.println(
-				"<samp class=dtd>&nbsp;&nbsp; &lt;!ATTLIST "
+				"<p class=code id=dtd>&nbsp;&nbsp; &lt;!ATTLIST "
 					+ name
-					+ "</samp>");
+					+ "</p>");
 			int maxWidth = calculateMaxAttributeWidth(element.getAttributes());
 			for (int i = 0; i < attributes.length; i++) {
 				appendAttlist(out, attributes[i], maxWidth);
 			}
-			out.println("<br><samp class=dtd>&nbsp;&nbsp; &gt;</samp>");
+			out.println("<br><p class=code id=dtd>&nbsp;&nbsp; &gt;</p>");
 		}
 		//out.println("</div>");
 		if (attributes.length == 0)
@@ -842,7 +862,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 		if (description == null || description.trim().length() == 0)
 			return;
 		if (title != null)
-			out.print("<div class=header>" + title + " </div>");
+			out.print("<h6 class=CaptionFigColumn id=header>" + title + " </h6>");
 		transformText(out, description);
 		out.println("<p>");
 	}
@@ -875,12 +895,12 @@ public class SchemaTransformer implements ISchemaTransformer {
 				switch (c) {
 					case '<' :
 						inTag = true;
-						out.print("<div class=tag>");
+						out.print("<p class=code id=tag>");
 						out.print("&lt;");
 						break;
 					case '>' :
 						out.print("&gt;");
-						out.print("</div>");
+						out.print("</p>");
 						inTag = false;
 						inCstring = false;
 						break;
@@ -894,11 +914,12 @@ public class SchemaTransformer implements ISchemaTransformer {
 						if (inTag) {
 							if (inCstring) {
 								out.print("&quot;");
-								out.print("</div>");
+								out.print("</p>");
+								out.print("<p class=code id=tag>");
 								inCstring = false;
 							} else {
 								inCstring = true;
-								out.print("<div class=cstring>");
+								out.print("<p class=code id=cstring>");
 								out.print("&quot;");
 							}
 						}

@@ -124,8 +124,8 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 		return true;
 	}
 	private void compileFile(IFile file, IProgressMonitor monitor) {
-
-		String message =
+		
+		String message = 
 			PDE.getFormattedMessage(
 				BUILDERS_SCHEMA_COMPILING,
 				file.getFullPath().toString());
@@ -170,16 +170,17 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 								
 				outputPath = (Path)path.append(SchemaTransformer.getSchemaCSSName());
 				IFile schemaCSSFile = workspace.getRoot().getFile(outputPath);
-				if (!workspace.getRoot().exists(outputPath)){
-					stringWriter = new StringWriter();
-					pwriter = new PrintWriter(stringWriter);
-					addCSS(outputPath, pwriter);
+				
+				stringWriter = new StringWriter();
+				pwriter = new PrintWriter(stringWriter);
+				if(addCSS(outputPath, pwriter)){
+					if (schemaCSSFile.exists())
+						schemaCSSFile.delete(true,false,null);			
 					stringWriter.close();
 					target = new ByteArrayInputStream(stringWriter.toString().getBytes("UTF8"));
 					schemaCSSFile.create(target, true, monitor);
-				} 
-				
-				
+				}
+					
 				if (getCSSURL()==null)
 					outputPath=(Path)path.append(SchemaTransformer.getPlatformCSSName());
 				else
@@ -187,15 +188,15 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 				
 				outputPath = (Path)path.append(outputPath.toFile().getName());
 				IFile cssFile = workspace.getRoot().getFile(outputPath);
-				if (!workspace.getRoot().exists(outputPath)){
-					stringWriter = new StringWriter();
-					pwriter = new PrintWriter(stringWriter);
-					addCSS(outputPath, pwriter);
+				stringWriter = new StringWriter();
+				pwriter = new PrintWriter(stringWriter);
+				if (addCSS(outputPath, pwriter)){
+					if (cssFile.exists())
+						cssFile.delete(true,false,null);
 					stringWriter.close();
 					target = new ByteArrayInputStream(stringWriter.toString().getBytes("UTF8"));
 					cssFile.create(target, true, monitor);
-				} 
-
+				}
 			}
 
 		} catch (UnsupportedEncodingException e) {
@@ -209,19 +210,19 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 		monitor.done();
 	}
 	
-	private void addCSS(Path outputPath, PrintWriter pwriter) {
+	private boolean addCSS(Path outputPath, PrintWriter pwriter) {
 		File cssFile;
 		
 		if (outputPath.toFile().getName().equals(SchemaTransformer.getPlatformCSSName())){
-			PluginDescriptor descriptor =(PluginDescriptor) Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.platform.doc.user");
+			PluginDescriptor descriptor =(PluginDescriptor) Platform.getPluginRegistry().getPluginDescriptor(SchemaTransformer.PLATFORM_PLUGIN_DOC);
 			if (descriptor == null)
-				return;
-			cssFile =new File(descriptor.getInstallURLInternal().getFile() +SchemaTransformer.getPlatformCSSName());
+				return false;
+			cssFile = new File(descriptor.getInstallURLInternal().getFile() +SchemaTransformer.getPlatformCSSName());
 		} else if (outputPath.toFile().getName().equals(SchemaTransformer.getSchemaCSSName())){
-			PluginDescriptor descriptor =(PluginDescriptor) Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.pde");
+			PluginDescriptor descriptor =(PluginDescriptor) Platform.getPluginRegistry().getPluginDescriptor(SchemaTransformer.PLATFORM_PLUGIN_DOC);
 			if (descriptor == null)
-				return;
-			cssFile =new File(descriptor.getInstallURLInternal().getFile() +SchemaTransformer.getSchemaCSSName());
+				return false;
+			cssFile = new File(descriptor.getInstallURLInternal().getFile() +SchemaTransformer.getSchemaCSSName());
 		} else{
 			cssFile = new File(getCSSURL().getFile());
 		}
@@ -237,9 +238,11 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 
 			breader.close();
 			freader.close();
+			return true;
 		} catch (Exception e) {
 			// do nothing if problem with css as it will only affect formatting.  
 			// may want to log this error in the future.
+			return false;
 		}
 		
 	}
