@@ -99,8 +99,14 @@ public class SchemaHandler extends PluginErrorReporter {
 	}
 	
 	public Node getDocumentElement() {
-		fDocument.getDocumentElement().normalize();
-		return fDocument.getDocumentElement();
+		if (fDocument != null) {
+			Element docElement = fDocument.getDocumentElement();
+			if (docElement != null) {
+				docElement.normalize();
+				return docElement;
+			}
+		}
+		return null;
 	}
 	
 	public Hashtable getLineTable() {

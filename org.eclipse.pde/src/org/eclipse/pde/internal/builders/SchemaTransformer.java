@@ -186,7 +186,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 		ValidatingSAXParser.parse(is, reporter);
 		
 		Node root = reporter.getDocumentElement();
-		if (reporter.getErrorCount() > 0)
+		if (root == null || reporter.getErrorCount() > 0)
 			return;
 		Schema schema = new Schema((ISchemaDescriptor) null, schemaURL);
 		schema.traverseDocumentTree(root, reporter.getLineTable());
