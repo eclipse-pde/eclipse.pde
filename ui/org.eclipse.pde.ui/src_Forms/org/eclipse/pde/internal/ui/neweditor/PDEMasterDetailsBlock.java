@@ -37,7 +37,7 @@ public abstract class PDEMasterDetailsBlock extends MasterDetailsBlock {
 		FormToolkit toolkit = managedForm.getToolkit();
 		PDESection section = createMasterSection(managedForm, parent);
 		Section sc = section.getSection();
-		sc.marginWidth = 10;
+		sc.marginWidth = 5;
 		sc.marginHeight = 5;
 	}
 	protected void createToolBarActions(ManagedForm managedForm) {
