@@ -26,57 +26,7 @@ public class XMLDoubleClickStrategy implements ITextDoubleClickStrategy {
 
 		fText = part;
 
-		if (!selectComment(pos)) {
-			selectWord(pos);
-		}
-	}
-	protected boolean selectComment(int caretPos) {
-		IDocument doc = fText.getDocument();
-		int startPos, endPos;
-
-		try {
-			int pos = caretPos;
-			char c = ' ';
-
-			while (pos >= 0) {
-				c = doc.getChar(pos);
-				if (c == '\\') {
-					pos -= 2;
-					continue;
-				}
-				if (c == Character.LINE_SEPARATOR || c == '\"')
-					break;
-				--pos;
-			}
-
-			if (c != '\"')
-				return false;
-
-			startPos = pos;
-
-			pos = caretPos;
-			int length = doc.getLength();
-			c = ' ';
-
-			while (pos < length) {
-				c = doc.getChar(pos);
-				if (c == Character.LINE_SEPARATOR || c == '\"')
-					break;
-				++pos;
-			}
-			if (c != '\"')
-				return false;
-
-			endPos = pos;
-			
-			int offset = startPos +1;
-			int len = endPos - offset;
-			fText.setSelectedRange(offset, len);
-			return true;
-		} catch (BadLocationException x) {
-		}
-
-		return false;
+		selectWord(pos);
 	}
 	protected boolean selectWord(int caretPos) {
 
@@ -90,7 +40,7 @@ public class XMLDoubleClickStrategy implements ITextDoubleClickStrategy {
 
 			while (pos >= 0) {
 				c = doc.getChar(pos);
-				if (!Character.isJavaIdentifierPart(c))
+				if (!Character.isJavaIdentifierPart(c) && c != '.')
 					break;
 				--pos;
 			}
@@ -102,7 +52,7 @@ public class XMLDoubleClickStrategy implements ITextDoubleClickStrategy {
 
 			while (pos < length) {
 				c = doc.getChar(pos);
-				if (!Character.isJavaIdentifierPart(c))
+				if (!Character.isJavaIdentifierPart(c) && c != '.')
 					break;
 				++pos;
 			}
