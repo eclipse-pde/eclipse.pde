@@ -204,7 +204,6 @@ public class SchemaElement extends RepeatableSchemaObject implements
 	}
 
 	public void write(String indent, PrintWriter writer) {
-		writeComments(writer);
 		writer.print(indent + "<element name=\"" + getName() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		ISchemaType type = getType();
 		if (type instanceof SchemaSimpleType) {

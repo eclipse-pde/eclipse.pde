@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.pde.core">
-<annotation>
+   <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.pde.core" id="source" name="Source Locations"/>
       </appInfo>

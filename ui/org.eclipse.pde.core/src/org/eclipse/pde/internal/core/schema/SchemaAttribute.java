@@ -185,7 +185,6 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 	}
 
 	public void write(String indent, PrintWriter writer) {
-		writeComments(writer);
 		boolean annotation = false;
 		ISchemaSimpleType type = (ISchemaSimpleType) getType();
 		String typeName = type.getName();

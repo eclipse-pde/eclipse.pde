@@ -16,23 +16,24 @@ import org.eclipse.pde.internal.core.ischema.*;
 
 public class SchemaEnumeration extends SchemaObject implements ISchemaEnumeration {
 
-public SchemaEnumeration(ISchemaObject parent, String name) {
-	super(parent, name);
-}
-public void write(String indent, PrintWriter writer) {
-	writeComments(writer);
-	writer.println(indent+"<enumeration value=\""+getName()+"\">"); //$NON-NLS-1$ //$NON-NLS-2$
-	String description = getDescription();
-	if (description!=null) description.trim();
-	if (description!=null && description.length()>0) {
-		String indent2 = indent + Schema.INDENT;
-		String indent3 = indent2 + Schema.INDENT;
-		writer.println(indent2+"<annotation>"); //$NON-NLS-1$
-		writer.println(indent3+"<documentation>"); //$NON-NLS-1$
-		writer.println(indent3+description);
-		writer.println(indent3+"</documentation>"); //$NON-NLS-1$
-		writer.println(indent2+"</annotation>"); //$NON-NLS-1$
+	public SchemaEnumeration(ISchemaObject parent, String name) {
+		super(parent, name);
 	}
-	writer.println(indent+"</enumeration>"); //$NON-NLS-1$
-}
+
+	public void write(String indent, PrintWriter writer) {
+		writer.println(indent + "<enumeration value=\"" + getName() + "\">"); //$NON-NLS-1$ //$NON-NLS-2$
+		String description = getDescription();
+		if (description != null)
+			description.trim();
+		if (description != null && description.length() > 0) {
+			String indent2 = indent + Schema.INDENT;
+			String indent3 = indent2 + Schema.INDENT;
+			writer.println(indent2 + "<annotation>"); //$NON-NLS-1$
+			writer.println(indent3 + "<documentation>"); //$NON-NLS-1$
+			writer.println(indent3 + description);
+			writer.println(indent3 + "</documentation>"); //$NON-NLS-1$
+			writer.println(indent2 + "</annotation>"); //$NON-NLS-1$
+		}
+		writer.println(indent + "</enumeration>"); //$NON-NLS-1$
+	}
 }

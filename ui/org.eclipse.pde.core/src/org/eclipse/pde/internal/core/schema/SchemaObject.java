@@ -11,39 +11,44 @@
 package org.eclipse.pde.internal.core.schema;
 
 import java.io.*;
-import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.ischema.*;
-import org.w3c.dom.*;
 
-public abstract class SchemaObject
-	extends PlatformObject
-	implements ISchemaObject, ISourceObject, Serializable {
-	protected String name;
-	private String description;
-	transient private ISchemaObject parent;
-	private Vector comments;
-	private int [] range;
+public abstract class SchemaObject extends PlatformObject implements
+		ISchemaObject, ISourceObject, Serializable {
+	protected String fName;
+
+	private String fDescription;
+
+	transient private ISchemaObject fParent;
+
+	private int fStartLine;
+
+	private int fStopLine;
 
 	public SchemaObject(ISchemaObject parent, String name) {
-		this.parent = parent;
-		this.name = name;
+		fParent = parent;
+		fName = name;
 	}
+
 	public String getDescription() {
-		return description;
+		return fDescription;
 	}
+
 	public java.lang.String getName() {
-		return name;
+		return fName;
 	}
+
 	public ISchemaObject getParent() {
-		return parent;
+		return fParent;
 	}
-	
+
 	public void setParent(ISchemaObject parent) {
-		this.parent = parent;
+		fParent = parent;
 	}
+
 	public ISchema getSchema() {
 		ISchemaObject object = this;
 
@@ -52,9 +57,11 @@ public abstract class SchemaObject
 		}
 		return (ISchema) object;
 	}
+
 	public String getWritableDescription() {
 		return getWritableDescription(getDescription());
 	}
+
 	public static String getWritableDescription(String input) {
 		if (input == null)
 			return ""; //$NON-NLS-1$
@@ -63,94 +70,53 @@ public abstract class SchemaObject
 		for (int i = 0; i < result.length(); i++) {
 			char c = result.charAt(i);
 			switch (c) {
-				case '<' :
-					buf.append("&lt;"); //$NON-NLS-1$
-					break;
-				case '>' :
-					buf.append("&gt;"); //$NON-NLS-1$
-					break;
-				case '&' :
-					buf.append("&amp;"); //$NON-NLS-1$
-					break;
-				case '\'' :
-					buf.append("&apos;"); //$NON-NLS-1$
-					break;
-				case '\"' :
-					buf.append("&quot;"); //$NON-NLS-1$
-					break;
-				default :
-					buf.append(c);
+			case '<':
+				buf.append("&lt;"); //$NON-NLS-1$
+				break;
+			case '>':
+				buf.append("&gt;"); //$NON-NLS-1$
+				break;
+			case '&':
+				buf.append("&amp;"); //$NON-NLS-1$
+				break;
+			case '\'':
+				buf.append("&apos;"); //$NON-NLS-1$
+				break;
+			case '\"':
+				buf.append("&quot;"); //$NON-NLS-1$
+				break;
+			default:
+				buf.append(c);
 			}
 		}
 		return buf.toString();
 	}
+
 	public void setDescription(String newDescription) {
-		String oldValue = description;
-		description = newDescription;
-		getSchema().fireModelObjectChanged(this, P_DESCRIPTION, oldValue, description);
+		String oldValue = fDescription;
+		fDescription = newDescription;
+		getSchema().fireModelObjectChanged(this, P_DESCRIPTION, oldValue,
+				fDescription);
 	}
+
 	public void setName(String newName) {
-		String oldValue = name;
-		name = newName;
-		getSchema().fireModelObjectChanged(this, P_NAME, oldValue, name);
+		String oldValue = fName;
+		fName = newName;
+		getSchema().fireModelObjectChanged(this, P_NAME, oldValue, fName);
 	}
+
 	public String toString() {
-		if (name != null)
-			return name;
+		if (fName != null)
+			return fName;
 		return super.toString();
 	}
 
-	public void addComments(Node node) {
-		comments = addComments(node, comments);
-	}
-
-	public Vector addComments(Node node, Vector result) {
-		for (Node prev = node.getPreviousSibling();
-			prev != null;
-			prev = prev.getPreviousSibling()) {
-			if (prev.getNodeType() == Node.TEXT_NODE)
-				continue;
-			if (prev instanceof Comment) {
-				String comment = prev.getNodeValue();
-				if (result == null)
-					result = new Vector();
-				result.add(comment);
-			} else
-				break;
-		}
-		return result;
-	}
-
-	void writeComments(PrintWriter writer) {
-		writeComments(writer, comments);
-	}
-
-	void writeComments(PrintWriter writer, Vector source) {
-		if (source == null)
-			return;
-		for (int i = 0; i < source.size(); i++) {
-			String comment = (String) source.elementAt(i);
-			writer.println("<!--" + comment + "-->"); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-	}
-
 	public int getStartLine() {
-		if (range==null)
-			return -1;
-		return range[0];
-	}
-	
-	public int getStopLine() {
-		if (range==null)
-			return -1;
-		return range[1];
+		return fStartLine;
 	}
 
-	void bindSourceLocation(Node node, Hashtable lineTable) {
-		if (lineTable==null) return;
-		Integer [] lines = (Integer[]) lineTable.get(node);
-		if (lines != null) {
-			range = new int[] { lines[0].intValue(), lines[1].intValue() };
-		}
+	public int getStopLine() {
+		return fStopLine;
 	}
+
 }

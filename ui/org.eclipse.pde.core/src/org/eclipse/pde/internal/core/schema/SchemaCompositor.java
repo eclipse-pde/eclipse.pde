@@ -30,16 +30,16 @@ public class SchemaCompositor
 		this.kind = kind;
 		switch (kind) {
 			case ALL :
-				name = PDECore.getResourceString("SchemaCompositor.all"); //$NON-NLS-1$
+				fName = PDECore.getResourceString("SchemaCompositor.all"); //$NON-NLS-1$
 				break;
 			case CHOICE :
-				name = PDECore.getResourceString("SchemaCompositor.choice"); //$NON-NLS-1$
+				fName = PDECore.getResourceString("SchemaCompositor.choice"); //$NON-NLS-1$
 				break;
 			case GROUP :
-				name = PDECore.getResourceString("SchemaCompositor.group"); //$NON-NLS-1$
+				fName = PDECore.getResourceString("SchemaCompositor.group"); //$NON-NLS-1$
 				break;
 			case SEQUENCE :
-				name = PDECore.getResourceString("SchemaCompositor.sequence"); //$NON-NLS-1$
+				fName = PDECore.getResourceString("SchemaCompositor.sequence"); //$NON-NLS-1$
 				break;
 		}
 	}
@@ -89,16 +89,16 @@ public class SchemaCompositor
 			this.kind = kind;
 			switch (kind) {
 				case ALL :
-					name = PDECore.getResourceString("SchemaCompositor.all"); //$NON-NLS-1$
+					fName = PDECore.getResourceString("SchemaCompositor.all"); //$NON-NLS-1$
 					break;
 				case CHOICE :
-					name = PDECore.getResourceString("SchemaCompositor.choice"); //$NON-NLS-1$
+					fName = PDECore.getResourceString("SchemaCompositor.choice"); //$NON-NLS-1$
 					break;
 				case GROUP :
-					name = PDECore.getResourceString("SchemaCompositor.group"); //$NON-NLS-1$
+					fName = PDECore.getResourceString("SchemaCompositor.group"); //$NON-NLS-1$
 					break;
 				case SEQUENCE :
-					name = PDECore.getResourceString("SchemaCompositor.sequence"); //$NON-NLS-1$
+					fName = PDECore.getResourceString("SchemaCompositor.sequence"); //$NON-NLS-1$
 					break;
 			}
 			getSchema().fireModelObjectChanged(
@@ -164,7 +164,6 @@ public class SchemaCompositor
 		}
 	}
 	public void write(String indent, PrintWriter writer) {
-		writeComments(writer);
 		String tag = null;
 
 		switch (kind) {

@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.core.schema;
+
 import java.io.*;
 import java.net.URL;
 import java.util.*;
@@ -19,42 +20,63 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
+
 public class Schema extends PlatformObject implements ISchema {
 	private URL url;
+
 	private Vector listeners = new Vector();
+
 	private Vector elements = new Vector();
+
 	private Vector docSections = new Vector();
+
 	private Vector includes;
+
 	private String pointId;
+
 	private String pluginId;
+
 	private ISchemaDescriptor schemaDescriptor;
+
 	private boolean loaded;
+
 	private Vector references;
+
 	private String description;
+
 	private String name = ""; //$NON-NLS-1$
+
 	private boolean notificationEnabled;
+
 	public final static java.lang.String INDENT = "   "; //$NON-NLS-1$
+
 	private boolean disposed = false;
-	private Hashtable lineTable;
+
 	private boolean valid;
+
 	private int startLine, endLine;
+
 	public Schema(String pluginId, String pointId, String name) {
 		this.pluginId = pluginId;
 		this.pointId = pointId;
 		this.name = name;
 	}
+
 	public Schema(ISchemaDescriptor schemaDescriptor, URL url) {
 		this.schemaDescriptor = schemaDescriptor;
 		this.url = url;
 	}
+
 	public void addDocumentSection(IDocumentSection docSection) {
 		docSections.addElement(docSection);
 		fireModelChanged(new ModelChangedEvent(this, ModelChangedEvent.INSERT,
-				new Object[]{docSection}, null));
+				new Object[] { docSection }, null));
 	}
+
 	public void addElement(ISchemaElement element) {
 		addElement(element, null);
 	}
+
 	public void addElement(ISchemaElement element, ISchemaElement afterElement) {
 		int index = -1;
 		if (afterElement != null) {
@@ -65,25 +87,29 @@ public class Schema extends PlatformObject implements ISchema {
 		else
 			elements.add(element);
 		fireModelChanged(new ModelChangedEvent(this, ModelChangedEvent.INSERT,
-				new Object[]{element}, null));
+				new Object[] { element }, null));
 	}
+
 	public void addInclude(ISchemaInclude include) {
 		if (includes == null)
 			includes = new Vector();
 		includes.add(include);
 		fireModelChanged(new ModelChangedEvent(this, ModelChangedEvent.INSERT,
-				new Object[]{include}, null));
+				new Object[] { include }, null));
 	}
+
 	public void removeInclude(ISchemaInclude include) {
 		if (includes == null)
 			return;
 		includes.remove(include);
 		fireModelChanged(new ModelChangedEvent(this, ModelChangedEvent.REMOVE,
-				new Object[]{include}, null));
+				new Object[] { include }, null));
 	}
+
 	public void addModelChangedListener(IModelChangedListener listener) {
 		listeners.addElement(listener);
 	}
+
 	private void collectElements(ISchemaCompositor compositor, Vector result) {
 		Object[] children = compositor.getChildren();
 		for (int i = 0; i < children.length; i++) {
@@ -98,6 +124,7 @@ public class Schema extends PlatformObject implements ISchema {
 			}
 		}
 	}
+
 	public void dispose() {
 		if (includes != null) {
 			for (int i = 0; i < includes.size(); i++) {
@@ -108,6 +135,7 @@ public class Schema extends PlatformObject implements ISchema {
 		reset();
 		disposed = true;
 	}
+
 	public ISchemaElement findElement(String name) {
 		if (!isLoaded())
 			load();
@@ -129,6 +157,7 @@ public class Schema extends PlatformObject implements ISchema {
 		}
 		return null;
 	}
+
 	public void fireModelChanged(IModelChangedEvent event) {
 		if (!notificationEnabled)
 			return;
@@ -138,11 +167,13 @@ public class Schema extends PlatformObject implements ISchema {
 			listener.modelChanged(event);
 		}
 	}
+
 	public void fireModelObjectChanged(Object object, String property,
 			Object oldValue, Object newValue) {
 		fireModelChanged(new ModelChangedEvent(this, object, property,
 				oldValue, newValue));
 	}
+
 	private String getAttribute(Node node, String name) {
 		NamedNodeMap map = node.getAttributes();
 		Node attNode = map.getNamedItem(name);
@@ -153,6 +184,7 @@ public class Schema extends PlatformObject implements ISchema {
 		}
 		return null;
 	}
+
 	public ISchemaElement[] getCandidateChildren(ISchemaElement element) {
 		Vector candidates = new Vector();
 		ISchemaType type = element.getType();
@@ -166,20 +198,25 @@ public class Schema extends PlatformObject implements ISchema {
 		candidates.copyInto(result);
 		return result;
 	}
+
 	public String getDescription() {
 		return description;
 	}
+
 	public boolean isValid() {
 		return valid;
 	}
+
 	public IDocumentSection[] getDocumentSections() {
 		IDocumentSection[] result = new IDocumentSection[docSections.size()];
 		docSections.copyInto(result);
 		return result;
 	}
+
 	public int getElementCount() {
 		return elements.size();
 	}
+
 	public int getResolvedElementCount() {
 		int localCount = getElementCount();
 		if (includes == null)
@@ -194,6 +231,7 @@ public class Schema extends PlatformObject implements ISchema {
 		}
 		return totalCount;
 	}
+
 	public ISchemaElement[] getElements() {
 		if (!isLoaded())
 			load();
@@ -201,6 +239,7 @@ public class Schema extends PlatformObject implements ISchema {
 		elements.copyInto(result);
 		return result;
 	}
+
 	public ISchemaElement[] getResolvedElements() {
 		if (includes == null)
 			return getElements();
@@ -219,67 +258,71 @@ public class Schema extends PlatformObject implements ISchema {
 		return (ISchemaElement[]) result.toArray(new ISchemaElement[result
 				.size()]);
 	}
+
 	public ISchemaInclude[] getIncludes() {
 		if (includes == null)
 			return new ISchemaInclude[0];
 		return (ISchemaInclude[]) includes.toArray(new ISchemaInclude[includes
 				.size()]);
 	}
+
 	public String getName() {
 		return name;
 	}
+
 	private String getNormalizedText(String source) {
 		String result = source.replace('\t', ' ');
 		result = result.trim();
 		return result;
-		/*
-		 * boolean skip=false;
-		 * 
-		 * StringBuffer buff = new StringBuffer(); for (int i=0; i
-		 * <result.length(); i++) { char c = result.charAt(i); if (c=='\n') {
-		 * skip = true; } else if (c==' ') { if (skip) continue; } else skip =
-		 * false;
-		 * 
-		 * buff.append(c); } return buff.toString();
-		 */
 	}
+
 	public ISchemaObject getParent() {
 		return null;
 	}
+
 	public void setParent(ISchemaObject obj) {
 	}
+
 	public String getQualifiedPointId() {
-		//return
-		// schemaDescriptor!=null?schemaDescriptor.getPointId():internalId;
 		return pluginId + "." + pointId; //$NON-NLS-1$
 	}
+
 	public String getPluginId() {
 		return pluginId;
 	}
+
 	public String getPointId() {
 		return pointId;
 	}
+
 	public ISchema getSchema() {
 		return this;
 	}
+
 	public ISchemaDescriptor getSchemaDescriptor() {
 		return schemaDescriptor;
 	}
+
 	public URL getURL() {
 		return url;
 	}
+
 	public boolean isDisposed() {
 		return disposed;
 	}
+
 	public boolean isEditable() {
 		return false;
 	}
+
 	public boolean isLoaded() {
 		return loaded;
 	}
+
 	public boolean isNotificationEnabled() {
 		return notificationEnabled;
 	}
+
 	public void load() {
 		try {
 			InputStream source = getURL().openStream();
@@ -291,19 +334,20 @@ public class Schema extends PlatformObject implements ISchema {
 			PDECore.logException(e);
 		}
 	}
+
 	public void load(InputStream stream) {
 		try {
 			SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
 			XMLDefaultHandler handler = new XMLDefaultHandler();
 			parser.parse(stream, handler);
-			traverseDocumentTree(handler.getDocumentElement(), handler
-					.getLineTable());
+			traverseDocumentTree(handler.getDocumentElement());
 		} catch (SAXException e) {
 			// ignore parse errors - 'loaded' will be false anyway
 		} catch (Exception e) {
 			PDECore.logException(e);
 		}
 	}
+
 	private ISchemaAttribute processAttribute(ISchemaElement element,
 			Node elementNode) {
 		String aname = getAttribute(elementNode, "name"); //$NON-NLS-1$
@@ -315,8 +359,7 @@ public class Schema extends PlatformObject implements ISchema {
 			type = (ISchemaSimpleType) resolveTypeReference(atype);
 		}
 		SchemaAttribute attribute = new SchemaAttribute(element, aname);
-		attribute.bindSourceLocation(elementNode, lineTable);
-		attribute.addComments(elementNode);
+		//attribute.bindSourceLocation(elementNode, lineTable);
 		if (ause != null) {
 			int use = ISchemaAttribute.OPTIONAL;
 			if (ause.equals("required")) //$NON-NLS-1$
@@ -345,6 +388,7 @@ public class Schema extends PlatformObject implements ISchema {
 			attribute.setType(type);
 		return attribute;
 	}
+
 	private void processAttributeAnnotation(SchemaAttribute element, Node node) {
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
@@ -359,10 +403,17 @@ public class Schema extends PlatformObject implements ISchema {
 						Node meta = infos.item(j);
 						if (meta.getNodeType() == Node.ELEMENT_NODE) {
 							if (meta.getNodeName().equals("meta.attribute")) { //$NON-NLS-1$
-								element.setKind(processKind(getAttribute(meta,"kind"))); //$NON-NLS-1$
-								element.setBasedOn(getAttribute(meta,"basedOn")); //$NON-NLS-1$
-								element.setTranslatableProperty(processTranslatable(getAttribute(meta, "translatable"))); //$NON-NLS-1$
-								element.setDeprecatedProperty(processDeprecated(getAttribute(meta, "deprecated"))); //$NON-NLS-1$
+								element.setKind(processKind(getAttribute(meta,
+										"kind"))); //$NON-NLS-1$
+								element
+										.setBasedOn(getAttribute(meta,
+												"basedOn")); //$NON-NLS-1$
+								element
+										.setTranslatableProperty(processTranslatable(getAttribute(
+												meta, "translatable"))); //$NON-NLS-1$
+								element
+										.setDeprecatedProperty(processDeprecated(getAttribute(
+												meta, "deprecated"))); //$NON-NLS-1$
 							}
 						}
 					}
@@ -370,14 +421,15 @@ public class Schema extends PlatformObject implements ISchema {
 			}
 		}
 	}
-	
+
 	private boolean processTranslatable(String value) {
 		return (value != null && "true".equals(value)); //$NON-NLS-1$
 	}
-	
+
 	private boolean processDeprecated(String value) {
 		return value != null && "true".equals(value); //$NON-NLS-1$
 	}
+
 	private SchemaSimpleType processAttributeRestriction(
 			SchemaAttribute attribute, Node node) {
 		NodeList children = node.getChildNodes();
@@ -394,8 +446,8 @@ public class Schema extends PlatformObject implements ISchema {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
 				if (child.getNodeName().equals("enumeration")) { //$NON-NLS-1$
-					ISchemaEnumeration enumeration = processEnumeration(attribute
-							.getSchema(), child);
+					ISchemaEnumeration enumeration = processEnumeration(
+							attribute.getSchema(), child);
 					if (enumeration != null)
 						items.addElement(enumeration);
 				}
@@ -407,6 +459,7 @@ public class Schema extends PlatformObject implements ISchema {
 		type.setRestriction(restriction);
 		return type;
 	}
+
 	private void processAttributeSimpleType(SchemaAttribute attribute, Node node) {
 		NodeList children = node.getChildNodes();
 		if (children.getLength() == 0)
@@ -423,6 +476,7 @@ public class Schema extends PlatformObject implements ISchema {
 		if (type != null)
 			attribute.setType(type);
 	}
+
 	private SchemaComplexType processComplexType(ISchemaElement owner,
 			Node typeNode) {
 		String aname = getAttribute(typeNode, "name"); //$NON-NLS-1$
@@ -450,10 +504,10 @@ public class Schema extends PlatformObject implements ISchema {
 		complexType.setCompositor(compositor);
 		return complexType;
 	}
+
 	private ISchemaCompositor processCompositor(ISchemaObject parent,
 			Node node, int type) {
 		SchemaCompositor compositor = new SchemaCompositor(parent, type);
-		compositor.addComments(node);
 		NodeList children = node.getChildNodes();
 		int minOccurs = 1;
 		int maxOccurs = 1;
@@ -479,6 +533,7 @@ public class Schema extends PlatformObject implements ISchema {
 		}
 		return compositor;
 	}
+
 	private ISchemaObject processCompositorChild(ISchemaObject parent,
 			Node child, int parentKind) {
 		String tag = child.getNodeName();
@@ -505,6 +560,7 @@ public class Schema extends PlatformObject implements ISchema {
 		}
 		return null;
 	}
+
 	private ISchemaElement processElement(ISchemaObject parent, Node elementNode) {
 		String aname = getAttribute(elementNode, "name"); //$NON-NLS-1$
 		String atype = getAttribute(elementNode, "type"); //$NON-NLS-1$
@@ -530,7 +586,7 @@ public class Schema extends PlatformObject implements ISchema {
 			reference.setMinOccurs(minOccurs);
 			reference.setMaxOccurs(maxOccurs);
 			references.addElement(reference);
-			reference.bindSourceLocation(elementNode, lineTable);
+			//reference.bindSourceLocation(elementNode, lineTable);
 			return reference;
 		}
 		ISchemaType type = null;
@@ -538,8 +594,7 @@ public class Schema extends PlatformObject implements ISchema {
 			type = resolveTypeReference(atype);
 		}
 		SchemaElement element = new SchemaElement(parent, aname);
-		element.bindSourceLocation(elementNode, lineTable);
-		element.addComments(elementNode);
+		//element.bindSourceLocation(elementNode, lineTable);
 		element.setMinOccurs(minOccurs);
 		element.setMaxOccurs(maxOccurs);
 		NodeList children = elementNode.getChildNodes();
@@ -550,10 +605,6 @@ public class Schema extends PlatformObject implements ISchema {
 				if (type == null && tag.equals("complexType")) { //$NON-NLS-1$
 					type = processComplexType(element, child);
 				}
-				/*
-				 * if (tag.equals("attribute")) { processAttribute(element,
-				 * child); } else
-				 */
 				if (tag.equals("annotation")) { //$NON-NLS-1$
 					processElementAnnotation(element, child);
 				}
@@ -562,6 +613,7 @@ public class Schema extends PlatformObject implements ISchema {
 		element.setType(type);
 		return element;
 	}
+
 	private void processElementAnnotation(SchemaElement element, Node node) {
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
@@ -583,8 +635,12 @@ public class Schema extends PlatformObject implements ISchema {
 								if (element.getIconProperty() == null)
 									element.setIconProperty(getAttribute(meta,
 											"iconName")); //$NON-NLS-1$
-								element.setTranslatableProperty(processTranslatable(getAttribute(meta, "translatable"))); //$NON-NLS-1$
-								element.setDeprecatedProperty(processDeprecated(getAttribute(meta, "deprecated"))); //$NON-NLS-1$
+								element
+										.setTranslatableProperty(processTranslatable(getAttribute(
+												meta, "translatable"))); //$NON-NLS-1$
+								element
+										.setDeprecatedProperty(processDeprecated(getAttribute(
+												meta, "deprecated"))); //$NON-NLS-1$
 							}
 						}
 					}
@@ -592,13 +648,14 @@ public class Schema extends PlatformObject implements ISchema {
 			}
 		}
 	}
+
 	private ISchemaEnumeration processEnumeration(ISchema schema, Node node) {
 		String name = getAttribute(node, "value"); //$NON-NLS-1$
 		SchemaEnumeration enumeration = new SchemaEnumeration(schema, name);
-		enumeration.bindSourceLocation(node, lineTable);
-		enumeration.addComments(node);
+		//enumeration.bindSourceLocation(node, lineTable);
 		return enumeration;
 	}
+
 	private int processKind(String name) {
 		if (name != null) {
 			if (name.equals("java")) //$NON-NLS-1$
@@ -608,24 +665,15 @@ public class Schema extends PlatformObject implements ISchema {
 		}
 		return SchemaAttribute.STRING;
 	}
-	void setSourceLocation(Node node) {
-		if (lineTable == null)
-			return;
-		Integer[] lines = (Integer[]) lineTable.get(node);
-		if (lines != null) {
-			startLine = lines[0].intValue();
-			endLine = lines[1].intValue();
-		} else {
-			startLine = -1;
-			endLine = -1;
-		}
-	}
+
 	public int getOverviewStartLine() {
 		return startLine;
 	}
+
 	public int getOverviewEndLine() {
 		return endLine;
 	}
+
 	private void processSchemaAnnotation(Node node) {
 		NodeList children = node.getChildNodes();
 		String section = "overview"; //$NON-NLS-1$
@@ -639,11 +687,10 @@ public class Schema extends PlatformObject implements ISchema {
 					if (section != null) {
 						if (section.equals("overview")) { //$NON-NLS-1$
 							setDescription(text);
-							setSourceLocation(child);
 						} else {
 							DocumentSection sec = new DocumentSection(this,
 									section, sectionName);
-							sec.bindSourceLocation(child, lineTable);
+							//sec.bindSourceLocation(child, lineTable);
 							sec.setDescription(text);
 							docSections.addElement(sec);
 						}
@@ -672,6 +719,7 @@ public class Schema extends PlatformObject implements ISchema {
 			}
 		}
 	}
+
 	private void processInclude(Node node) {
 		String location = getAttribute(node, "schemaLocation"); //$NON-NLS-1$
 		SchemaInclude include = new SchemaInclude(this, location);
@@ -679,9 +727,11 @@ public class Schema extends PlatformObject implements ISchema {
 			includes = new Vector();
 		includes.add(include);
 	}
+
 	public void reload() {
 		reload(null);
 	}
+
 	public void reload(InputStream is) {
 		setNotificationEnabled(false);
 		reset();
@@ -694,21 +744,24 @@ public class Schema extends PlatformObject implements ISchema {
 			fireModelChanged(new ModelChangedEvent(this,
 					IModelChangedEvent.WORLD_CHANGED, new Object[0], null));
 	}
+
 	public void removeDocumentSection(IDocumentSection docSection) {
 		docSections.removeElement(docSection);
 		fireModelChanged(new ModelChangedEvent(this, ModelChangedEvent.REMOVE,
-				new Object[]{docSection}, null));
+				new Object[] { docSection }, null));
 	}
+
 	public void removeElement(ISchemaElement element) {
 		elements.removeElement(element);
 		fireModelChanged(new ModelChangedEvent(this, ModelChangedEvent.REMOVE,
-				new Object[]{element}, null));
+				new Object[] { element }, null));
 	}
+
 	public void removeModelChangedListener(IModelChangedListener listener) {
 		listeners.removeElement(listener);
 	}
+
 	private void reset() {
-		lineTable = null;
 		elements = new Vector();
 		docSections = new Vector();
 		includes = null;
@@ -719,6 +772,7 @@ public class Schema extends PlatformObject implements ISchema {
 		name = null;
 		valid = false;
 	}
+
 	private void resolveElementReference(ISchemaObjectReference reference) {
 		ISchemaElement[] elementList = getResolvedElements();
 		for (int i = 0; i < elementList.length; i++) {
@@ -731,12 +785,14 @@ public class Schema extends PlatformObject implements ISchema {
 			}
 		}
 	}
+
 	private void resolveReference(ISchemaObjectReference reference) {
 		Class clazz = reference.getReferencedObjectClass();
 		if (clazz.equals(ISchemaElement.class)) {
 			resolveElementReference(reference);
 		}
 	}
+
 	private void resolveReferences(Vector references) {
 		for (int i = 0; i < references.size(); i++) {
 			ISchemaObjectReference reference = (ISchemaObjectReference) references
@@ -744,15 +800,18 @@ public class Schema extends PlatformObject implements ISchema {
 			resolveReference(reference);
 		}
 	}
+
 	private SchemaType resolveTypeReference(String typeName) {
 		// for now, create a simple type
 		return new SchemaSimpleType(this, typeName);
 	}
+
 	public void setDescription(String newDescription) {
 		String oldValue = description;
 		description = newDescription;
 		fireModelObjectChanged(this, P_DESCRIPTION, oldValue, description);
 	}
+
 	public void setName(String newName) {
 		if (newName == null)
 			newName = ""; //$NON-NLS-1$
@@ -760,24 +819,28 @@ public class Schema extends PlatformObject implements ISchema {
 		name = newName;
 		fireModelObjectChanged(this, P_NAME, oldValue, name);
 	}
+
 	public void setPluginId(String newId) {
 		String oldValue = pluginId;
 		pluginId = newId;
 		fireModelObjectChanged(this, P_PLUGIN, oldValue, newId);
 	}
+
 	public void setPointId(String newId) {
 		String oldValue = pointId;
 		pointId = newId;
 		fireModelObjectChanged(this, P_POINT, oldValue, newId);
 	}
+
 	public void setNotificationEnabled(boolean newNotificationEnabled) {
 		notificationEnabled = newNotificationEnabled;
 	}
+
 	public String toString() {
 		return name;
 	}
-	public void traverseDocumentTree(Node root, Hashtable lineTable) {
-		this.lineTable = lineTable;
+
+	public void traverseDocumentTree(Node root) {
 		NodeList children = root.getChildNodes();
 		references = new Vector();
 		for (int i = 0; i < children.getLength(); i++) {
@@ -798,11 +861,12 @@ public class Schema extends PlatformObject implements ISchema {
 		if (references.size() > 0)
 			resolveReferences(references);
 		references = null;
-		this.lineTable = null;
 	}
+
 	public void updateReferencesFor(ISchemaElement element) {
 		updateReferencesFor(element, ISchema.REFRESH_RENAME);
 	}
+
 	public void updateReferencesFor(ISchemaElement element, int kind) {
 		for (int i = 0; i < elements.size(); i++) {
 			ISchemaElement el = (ISchemaElement) elements.elementAt(i);
@@ -817,6 +881,7 @@ public class Schema extends PlatformObject implements ISchema {
 			}
 		}
 	}
+
 	public void write(String indent, PrintWriter writer) {
 		String pointId = this.getQualifiedPointId();
 		int loc = pointId.lastIndexOf('.');
