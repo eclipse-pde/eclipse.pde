@@ -102,24 +102,16 @@ public class ManifestFormOutlinePage extends FormOutlinePage {
 				contextMenuAboutToShow(manager);
 			}
 			private void contextMenuAboutToShow(IMenuManager manager) {
-				ISelection selection = getSelection();
-				if (selection instanceof IStructuredSelection) {
-					IStructuredSelection sSelection =
-						(IStructuredSelection) selection;
-					if (sSelection.size() == 1) {
-						PluginSearchActionGroup actionGroup =
-							new PluginSearchActionGroup();
-						actionGroup.setContext(new ActionContext(selection));
-						actionGroup.fillContextMenu(manager);
-					}
-				}
+				PluginSearchActionGroup actionGroup =
+					new PluginSearchActionGroup();
+				actionGroup.setContext(new ActionContext(getSelection()));
+				actionGroup.fillContextMenu(manager);
 			}
 		});
-		
 		Menu menu = manager.createContextMenu(getControl());
 		getControl().setMenu(menu);
-
 	}
+	
 	protected ILabelProvider createLabelProvider() {
 		return new OutlineLabelProvider();
 	}
