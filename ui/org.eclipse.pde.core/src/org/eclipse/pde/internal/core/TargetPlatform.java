@@ -335,14 +335,10 @@ public class TargetPlatform implements IEnvironmentVariables {
 		if (resource != null) {
 			IPath realPath = resource.getLocation();
 			return realPath.removeLastSegments(bundle?4:3);
-		} else {
-			// external
-			//TODO we may need to do something for external
-			// bundle paths here
-			IPath path = new Path(model.getInstallLocation());
-			return path.removeLastSegments(2);
-		}
+		} 
+		return new Path(model.getInstallLocation()).removeLastSegments(2);		
 	}
+	
 	private static void repairConfigurationVersion(URL url) throws IOException {
 		File file = new File(url.getFile());
 		if (file.exists()) {
