@@ -17,6 +17,8 @@
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.apache.xerces"/>
       <import plugin="org.eclipse.jdt.core"/>
+      <import plugin="org.apache.ant"/>
+      <import plugin="org.eclipse.ant.core"/>
    </requires>
 
 
@@ -89,6 +91,14 @@
                class="org.eclipse.pde.internal.builders.UpdateSiteBuilder">
          </run>
       </builder>
+   </extension>
+   <extension
+         point="org.eclipse.ant.core.antTasks">
+      <antTask
+            library="ant_tasks/pde-ant.jar"
+            name="pde.convertSchemaToHTML"
+            class="org.eclipse.pde.ant.ConvertSchemaToHTML">
+      </antTask>
    </extension>
 
 </plugin>
