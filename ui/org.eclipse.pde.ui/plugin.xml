@@ -28,6 +28,7 @@
       <import plugin="org.eclipse.update.core"/>
       <import plugin="org.eclipse.ui.externaltools"/>
       <import plugin="org.eclipse.jdt.debug.ui"/>
+      <import plugin="org.eclipse.help.ui"/>
    </requires>
 
 
@@ -536,8 +537,8 @@
          </action>
          <action
                label="%OpenDependenciesAction.label"
-               class="org.eclipse.pde.internal.ui.view.OpenDependenciesAction"
                tooltip="%UpdateClasspathAction.tooltip"
+               class="org.eclipse.pde.internal.ui.view.OpenDependenciesAction"
                menubarPath="additions"
                enablesFor="+"
                id="org.eclipse.pde.ui.OpenDependenciesAction1">
@@ -560,12 +561,12 @@
                id="org.eclipse.pde.ui.UpdateClasspathAction2">
          </action>
          <action
-               menubarPath="additions"
-               class="org.eclipse.pde.internal.ui.view.OpenDependenciesAction"
                label="%OpenDependenciesAction.label"
+               tooltip="%UpdateClasspathAction.tooltip"
+               class="org.eclipse.pde.internal.ui.view.OpenDependenciesAction"
+               menubarPath="additions"
                enablesFor="+"
-               id="org.eclipse.pde.ui.OpenDependenciesAction2"
-               tooltip="%UpdateClasspathAction.tooltip">
+               id="org.eclipse.pde.ui.OpenDependenciesAction2">
          </action>
       </objectContribution>
       <objectContribution
@@ -585,12 +586,12 @@
                id="org.eclipse.pde.ui.UpdateClasspathAction3">
          </action>
          <action
-               menubarPath="additions"
-               class="org.eclipse.pde.internal.ui.view.OpenDependenciesAction"
                label="%OpenDependenciesAction.label"
+               tooltip="%UpdateClasspathAction.tooltip"
+               class="org.eclipse.pde.internal.ui.view.OpenDependenciesAction"
+               menubarPath="additions"
                enablesFor="+"
-               id="org.eclipse.pde.ui.OpenDependenciesAction3"
-               tooltip="%UpdateClasspathAction.tooltip">
+               id="org.eclipse.pde.ui.OpenDependenciesAction3">
          </action>
       </objectContribution>
    </extension>

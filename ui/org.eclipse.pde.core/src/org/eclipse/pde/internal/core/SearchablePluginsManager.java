@@ -171,7 +171,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory {
 		properties.setProperty(KEY, value);
 		try {
 			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-			properties.save(outStream, "");
+			properties.store(outStream, "");
 			outStream.flush();
 			outStream.close();
 			ByteArrayInputStream inStream =

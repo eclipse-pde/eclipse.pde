@@ -4,12 +4,9 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceDescription;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
-import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.actions.OpenAction;
 import org.eclipse.jface.action.*;
@@ -87,22 +84,20 @@ public class PluginsView extends ViewPart {
 			return true;
 		}
 	}
-	
+
 	class JavaFilter extends ViewerFilter {
 		public boolean select(Viewer v, Object parent, Object element) {
 			if (element instanceof IPackageFragment) {
-				IPackageFragment packageFragment = (IPackageFragment)element;
+				IPackageFragment packageFragment = (IPackageFragment) element;
 				try {
 					return packageFragment.hasChildren();
-				}
-				catch (JavaModelException e) {
+				} catch (JavaModelException e) {
 					return false;
 				}
 			}
 			return true;
 		}
 	}
-				
 
 	/**
 	 * Constructor for PluginsView.
@@ -124,7 +119,7 @@ public class PluginsView extends ViewPart {
 			.getPreferenceStore()
 			.removePropertyChangeListener(
 			propertyListener);
-		purgeTempFiles();
+		PDECore.getDefault().getTempFileManager().disconnect(this);
 		openDependenciesAction.dispose();
 		super.dispose();
 	}
@@ -182,19 +177,21 @@ public class PluginsView extends ViewPart {
 			}
 		};
 		openAction.setText("Open");
-		
+
 		openDependenciesAction = new OpenDependenciesAction();
 		openDependenciesAction.init(PDEPlugin.getActiveWorkbenchWindow());
 		openDependenciesAdapter = new Action() {
 			public void run() {
 				ModelEntry entry = getEnclosingEntry();
 				IPluginModelBase model = entry.getActiveModel();
-				openDependenciesAction.selectionChanged(this, new StructuredSelection(model));
+				openDependenciesAction.selectionChanged(
+					this,
+					new StructuredSelection(model));
 				openDependenciesAction.run(this);
 			}
 		};
 		openDependenciesAdapter.setText("Open Dependencies");
-		
+
 		importBinaryAction = new Action() {
 			public void run() {
 				handleImport(false);
@@ -285,7 +282,7 @@ public class PluginsView extends ViewPart {
 		showInPackagesAction =
 			new ShowInWorkspaceAction(JavaUI.ID_PACKAGES, treeViewer);
 		showInPackagesAction.setText("Show In Packages View");
-		
+
 		openClassFileAction = new OpenAction(getViewSite());
 	}
 	private FileAdapter getSelectedFile() {
@@ -294,18 +291,19 @@ public class PluginsView extends ViewPart {
 			return (FileAdapter) obj;
 		return null;
 	}
-	
+
 	private ModelEntry getEnclosingEntry() {
 		Object obj = getSelectedObject();
-		if (obj==null) return null;
+		if (obj == null)
+			return null;
 		if (obj instanceof ModelEntry)
-			return (ModelEntry)obj;
+			return (ModelEntry) obj;
 		if (obj instanceof FileAdapter) {
-			FileAdapter file = (FileAdapter)obj;
+			FileAdapter file = (FileAdapter) obj;
 			if (file.isManifest()) {
 				FileAdapter parent = file.getParent();
 				if (parent instanceof EntryFileAdapter)
-					return ((EntryFileAdapter)parent).getEntry();
+					return ((EntryFileAdapter) parent).getEntry();
 			}
 		}
 		return null;
@@ -331,22 +329,23 @@ public class PluginsView extends ViewPart {
 				MenuManager openWithMenu = new MenuManager("Open With");
 				fillOpenWithMenu(openWithMenu, sobj);
 				manager.add(openWithMenu);
-				addSeparator=true;
+				addSeparator = true;
 			}
 			if (sobj instanceof IStorage) {
 				manager.add(openAction);
-				addSeparator=true;
+				addSeparator = true;
 			}
 			if (sobj instanceof IClassFile) {
 				manager.add(openClassFileAction);
-				addSeparator=true;
+				addSeparator = true;
 			}
 			ModelEntry entry = getEnclosingEntry();
-			if (entry!=null) {
+			if (entry != null) {
 				manager.add(openDependenciesAdapter);
 				addSeparator = true;
 			}
-			if (addSeparator) manager.add(new Separator());
+			if (addSeparator)
+				manager.add(new Separator());
 		}
 		if (selection.size() > 0) {
 			boolean addSeparator = false;
@@ -517,17 +516,16 @@ public class PluginsView extends ViewPart {
 			openClassFileAction.run();
 		}
 		if (obj instanceof IStorage) {
-			handleOpenStorage((IStorage)obj);
+			handleOpenStorage((IStorage) obj);
 		}
 	}
-	
+
 	private void handleOpenStorage(IStorage obj) {
 		IWorkbenchPage page = PDEPlugin.getActivePage();
-		IEditorInput input = new JarEntryEditorInput((IStorage)obj);
+		IEditorInput input = new JarEntryEditorInput((IStorage) obj);
 		try {
 			page.openEditor(input, DEFAULT_EDITOR_ID);
-		}
-		catch (PartInitException e) {
+		} catch (PartInitException e) {
 			PDEPlugin.logException(e);
 		}
 	}
@@ -548,7 +546,7 @@ public class PluginsView extends ViewPart {
 		try {
 			Shell shell = treeViewer.getTree().getShell();
 			ArrayList modelIds = new ArrayList();
-			
+
 			boolean isAutoBuilding = PDEPlugin.getWorkspace().isAutoBuilding();
 
 			if (isAutoBuilding) {
@@ -557,7 +555,7 @@ public class PluginsView extends ViewPart {
 				description.setAutoBuilding(false);
 				workspace.setDescription(description);
 			}
-			
+
 			IRunnableWithProgress op =
 				PluginImportWizard.getImportOperation(
 					shell,
@@ -567,15 +565,19 @@ public class PluginsView extends ViewPart {
 					modelIds);
 			ProgressMonitorDialog pmd = new ProgressMonitorDialog(shell);
 			pmd.run(true, true, op);
-			
+
 			if (isAutoBuilding) {
 				IWorkspace workspace = PDEPlugin.getWorkspace();
 				IWorkspaceDescription description = workspace.getDescription();
 				description.setAutoBuilding(true);
 				workspace.setDescription(description);
 			}
-			
-			pmd.run(true,true, new UpdateClasspathOperation(getWorkspaceCounterparts(modelIds)));
+
+			pmd.run(
+				true,
+				true,
+				new UpdateClasspathOperation(
+					getWorkspaceCounterparts(modelIds)));
 		} catch (InterruptedException e) {
 		} catch (InvocationTargetException e) {
 			PDEPlugin.logException(e);
@@ -702,6 +704,8 @@ public class PluginsView extends ViewPart {
 		} catch (IOException e) {
 			PDEPlugin.logException(e);
 			return;
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
 		}
 		// Start busy indicator.
 		final File file = localFile;
@@ -725,20 +729,28 @@ public class PluginsView extends ViewPart {
 		}
 	}
 
-	private File getLocalCopy(File file) throws IOException {
+	private File getLocalCopy(File file) throws IOException, CoreException {
 		// create a tmp. copy of this file and make it
 		// read-only. This is to ensure that the original
 		// file belonging to the external plug-in directories
 		// will not be modified. 
 		String fileName = file.getName();
-		String suffix;
+		String prefix;
+		String suffix=null;
 		int dotLoc = fileName.indexOf('.');
-		if (dotLoc != -1)
+		if (dotLoc != -1) {
+			prefix = fileName.substring(0, dotLoc);
 			suffix = fileName.substring(dotLoc);
-		else
-			suffix = fileName;
+		}
+		else {
+			prefix = fileName;
+		}
 
-		File tmpFile = File.createTempFile("pde", suffix);
+		File tmpFile =
+			PDECore.getDefault().getTempFileManager().createTempFile(
+				this,
+				prefix,
+				suffix);
 		FileOutputStream fos = new FileOutputStream(tmpFile);
 		FileInputStream fis = new FileInputStream(file);
 		byte[] cbuffer = new byte[1024];
@@ -753,27 +765,7 @@ public class PluginsView extends ViewPart {
 		fos.close();
 		fis.close();
 		tmpFile.setReadOnly();
-		registerTempFile(tmpFile);
 		return tmpFile;
-	}
-
-	private void registerTempFile(File tempFile) {
-		if (tempFiles == null)
-			tempFiles = new ArrayList();
-		else if (tempFiles.size() > TEMP_FILE_LIMIT)
-			purgeTempFiles();
-		tempFiles.add(tempFile);
-	}
-
-	private void purgeTempFiles() {
-		if (tempFiles == null)
-			return;
-		File[] files = (File[]) tempFiles.toArray(new File[tempFiles.size()]);
-		for (int i = 0; i < files.length; i++) {
-			File tempFile = files[i];
-			if (tempFile.delete())
-				tempFiles.remove(tempFile);
-		}
 	}
 
 	private void handleSelectionChanged(ISelection selection) {

@@ -9,6 +9,7 @@
 		<project>org.eclipse.core.runtime</project>
 		<project>org.eclipse.debug.core</project>
 		<project>org.eclipse.debug.ui</project>
+		<project>org.eclipse.help.ui</project>
 		<project>org.eclipse.jdt.core</project>
 		<project>org.eclipse.jdt.debug.ui</project>
 		<project>org.eclipse.jdt.launching</project>

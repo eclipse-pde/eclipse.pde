@@ -37,6 +37,7 @@ public class PDECore extends Plugin {
 	private WorkspaceModelManager workspaceModelManager;
 	private PluginModelManager modelManager;
 	private SourceLocationManager sourceLocationManager;
+	private TempFileManager tempFileManager;
 
 	public PDECore(IPluginDescriptor descriptor) {
 		super(descriptor);
@@ -223,6 +224,12 @@ public class PDECore extends Plugin {
 			sourceLocationManager = new SourceLocationManager();
 		return sourceLocationManager;
 	}
+	
+	public TempFileManager getTempFileManager() {
+		if (tempFileManager==null)
+			tempFileManager = new TempFileManager();
+		return tempFileManager;
+	}
 	private void initializePlatformPath() {
 		ExternalModelManager.initializePlatformPath();
 	}
@@ -318,6 +325,8 @@ public class PDECore extends Plugin {
 
 		modelManager.shutdown();
 		workspaceModelManager.shutdown();
+		if (tempFileManager!=null)
+			tempFileManager.shutdown();
 		super.shutdown();
 	}
 
