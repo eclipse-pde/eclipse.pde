@@ -20,7 +20,8 @@ import org.eclipse.pde.internal.core.plugin.*;
 public class WorkspaceModelManager
 	implements IModelProvider, IResourceChangeListener, IResourceDeltaVisitor {
 
-	private static final String KEY_MISSING_NATURE_TITLE = "MissingPDENature.title";
+	private static final String KEY_MISSING_NATURE_TITLE =
+		"MissingPDENature.title";
 	private static final String KEY_MISSING_NATURE_MESSAGE =
 		"MissingPDENature.message";
 	private Hashtable models = new Hashtable();
@@ -62,7 +63,7 @@ public class WorkspaceModelManager
 			initializeWorkspacePluginModels();
 		if (model instanceof IFragmentModel)
 			workspaceFragmentModels.add(model);
-		if (model instanceof IFeatureModel)
+		else if (model instanceof IFeatureModel)
 			workspaceFeatureModels.add(model);
 		else
 			workspaceModels.add(model);
@@ -137,7 +138,7 @@ public class WorkspaceModelManager
 		loadWorkspaceModel(model);
 		return model;
 	}
-	private IPluginModelBase createWorkspacePluginModel(IProject project) {
+	private IModel createWorkspacePluginModel(IProject project) {
 		IPath pluginPath = project.getFullPath().append("plugin.xml");
 		IFile pluginFile = project.getWorkspace().getRoot().getFile(pluginPath);
 		if (pluginFile.exists() == false) {
@@ -147,7 +148,7 @@ public class WorkspaceModelManager
 		if (pluginFile.exists()) {
 			return createWorkspacePluginModel(pluginFile);
 		}
-		return null;
+		return createWorkspaceFeatureModel(project);
 	}
 
 	private IFeatureModel createWorkspaceFeatureModel(IFile featureFile) {
@@ -205,7 +206,8 @@ public class WorkspaceModelManager
 	public boolean getAllEditableModelsUnused(Class modelClass) {
 		for (Enumeration enum = models.elements(); enum.hasMoreElements();) {
 			ModelInfo info = (ModelInfo) enum.nextElement();
-			if (info.model != null && info.model.getClass().isInstance(modelClass)) {
+			if (info.model != null
+				&& info.model.getClass().isInstance(modelClass)) {
 				return false;
 			}
 		}
@@ -217,7 +219,8 @@ public class WorkspaceModelManager
 			initializeWorkspacePluginModels();
 		validate();
 		for (int i = 0; i < workspaceFragmentModels.size(); i++) {
-			IFragmentModel model = (IFragmentModel) workspaceFragmentModels.elementAt(i);
+			IFragmentModel model =
+				(IFragmentModel) workspaceFragmentModels.elementAt(i);
 			IFragment fragment = model.getFragment();
 			if (fragment.getPluginId().equals(pluginId)
 				&& fragment.getPluginVersion().equals(version)) {
@@ -244,7 +247,8 @@ public class WorkspaceModelManager
 			initializeWorkspacePluginModels();
 		}
 		validate();
-		IFragmentModel[] result = new IFragmentModel[workspaceFragmentModels.size()];
+		IFragmentModel[] result =
+			new IFragmentModel[workspaceFragmentModels.size()];
 		workspaceFragmentModels.copyInto(result);
 		return result;
 	}
@@ -253,7 +257,8 @@ public class WorkspaceModelManager
 			initializeWorkspacePluginModels();
 		}
 		validate();
-		IFeatureModel[] result = new IFeatureModel[workspaceFeatureModels.size()];
+		IFeatureModel[] result =
+			new IFeatureModel[workspaceFeatureModels.size()];
 		workspaceFeatureModels.copyInto(result);
 		return result;
 	}
@@ -322,7 +327,8 @@ public class WorkspaceModelManager
 		for (int i = 0; i < workspaceFragmentModels.size(); i++) {
 			result.add(workspaceFragmentModels.get(i));
 		}
-		return (IPluginModelBase[]) result.toArray(new IPluginModelBase[result.size()]);
+		return (IPluginModelBase[]) result.toArray(
+			new IPluginModelBase[result.size()]);
 	}
 	private void handleFileDelta(IResourceDelta delta) {
 		IFile file = (IFile) delta.getResource();
@@ -405,9 +411,9 @@ public class WorkspaceModelManager
 			if (!project.isOpen())
 				continue;
 			if (isPluginProject(project)) {
-				IPluginModelBase model = createWorkspacePluginModel(project);
+				IModel model = createWorkspacePluginModel(project);
 				if (model != null) {
-					if (model.isFragmentModel())
+					if (model instanceof IFragmentModel)
 						workspaceFragmentModels.add(model);
 					else
 						workspaceModels.add(model);
@@ -665,7 +671,12 @@ public class WorkspaceModelManager
 		modelChanges = null;
 		if (type != 0) {
 			final ModelProviderEvent event =
-				new ModelProviderEvent(this, type, addedArray, removedArray, null);
+				new ModelProviderEvent(
+					this,
+					type,
+					addedArray,
+					removedArray,
+					null);
 			fireModelProviderEvent(event);
 		}
 	}
