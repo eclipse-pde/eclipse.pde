@@ -7,27 +7,22 @@ package org.eclipse.pde.internal.ui.editor.schema;
 import java.io.*;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.help.ui.browser.IBrowser;
-import org.eclipse.help.ui.internal.browser.BrowserManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.IEditable;
-import org.eclipse.pde.internal.builders.SchemaTransformer;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.schema.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.program.Program;
+import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
 
 public class SchemaEditor extends PDEMultiPageXMLEditor {
 	public static final String DEFINITION_PAGE = "definition";
 	public static final String DOC_PAGE = "documentation";
 	public static final String SOURCE_PAGE = "source";
 	public static final String KEY_OLD_EXTENSION = "SchemaEditor.oldExtension";
-	private File previewFile;
+	private ShowDescriptionAction previewAction;
 
 	public SchemaEditor() {
 		super();
@@ -70,39 +65,13 @@ public class SchemaEditor extends PDEMultiPageXMLEditor {
 		super.dispose();
 	}
 
-	private File getPreviewFile() throws CoreException {
-		if (previewFile == null) {
-			String prefix = "pde";
-			String suffix = ".html";
-			previewFile =
-				PDECore.getDefault().getTempFileManager().createTempFile(
-					this,
-					prefix,
-					suffix);
-		}
-		return previewFile;
-	}
-
 	void previewReferenceDocument() {
 		ISchema schema = (ISchema) getModel();
-
-		try {
-			File tempFile = getPreviewFile();
-			if (tempFile == null)
-				return;
-
-			SchemaTransformer transformer = new SchemaTransformer();
-			OutputStream os = new FileOutputStream(tempFile);
-			PrintWriter printWriter = new PrintWriter(os, true);
-			transformer.transform(printWriter, schema);
-			os.flush();
-			os.close();
-			showURL(tempFile.getPath());
-		} catch (IOException e) {
-			PDEPlugin.logException(e);
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
-		}
+		if (previewAction==null)
+			previewAction = new ShowDescriptionAction(this, schema);
+		else
+			previewAction.setSchema(schema);
+		previewAction.run();
 	}
 
 	protected void createPages() {
@@ -148,15 +117,5 @@ public class SchemaEditor extends PDEMultiPageXMLEditor {
 			return false;
 		}
 		return true;
-	}
-	private void showURL(String url) {
-		boolean win32 = SWT.getPlatform().equals("win32");
-		if (win32) {
-			Program.launch(url);
-		}
-		else {
-			IBrowser browser = BrowserManager.getInstance().createBrowser();
-			browser.displayURL(url);
-		}
 	}
 }
