@@ -176,8 +176,6 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 	 * @throws IOException
 	 *
 	 */
-
-	//TODO Need to check what should happen when QUALIFIER is used
 	protected void updateVersion(File buildFile, String propertyName, String version) throws CoreException, IOException {
 		StringBuffer buffer = readFile(buildFile);
 		int pos = scan(buffer, 0, propertyName);
