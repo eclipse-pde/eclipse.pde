@@ -20,7 +20,7 @@ public interface ISchemaInclude extends ISchemaObject {
 	/**
 	 * Model property of the schema location.
 	 */
-	String P_LOCATION = "location";
+	String P_LOCATION = "location"; //$NON-NLS-1$
 	
 	String getLocation();
 	void setLocation(String location) throws CoreException;

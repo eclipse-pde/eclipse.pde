@@ -28,28 +28,28 @@ public interface IDocumentSection extends ISchemaObject {
 	/**
 	 * Section Id for the "Markup" section of the target reference document
 	 */
-	String MARKUP = "markup";
+	String MARKUP = "markup"; //$NON-NLS-1$
 	/**
 	 * Section Id for the "Examples" section of the target reference document
 	 */
-	String EXAMPLES = "examples";
+	String EXAMPLES = "examples"; //$NON-NLS-1$
 	/**
 	 * Section Id for the "Supplied Implementation" section of the target reference document
 	 */
-	String IMPLEMENTATION = "implementation";
+	String IMPLEMENTATION = "implementation"; //$NON-NLS-1$
 	/**
 	 * Section Id for the "API Information" section of the target reference document
 	 */
-	String API_INFO = "apiInfo";
+	String API_INFO = "apiInfo"; //$NON-NLS-1$
 	/**
 	 * Section Id for the copyright statement section of the target reference document
 	 */
-	String COPYRIGHT = "copyright";
+	String COPYRIGHT = "copyright"; //$NON-NLS-1$
 	
 	/**
 	 * Section Id for the first version in which the extension point appears.
 	 */
-	String SINCE = "since";
+	String SINCE = "since"; //$NON-NLS-1$
 /**
  * Returns the Id of this section.
  */

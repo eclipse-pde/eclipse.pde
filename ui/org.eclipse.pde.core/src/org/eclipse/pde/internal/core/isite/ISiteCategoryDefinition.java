@@ -17,8 +17,8 @@ import org.eclipse.core.runtime.*;
  *
  */
 public interface ISiteCategoryDefinition extends ISiteObject {
-	String P_NAME = "name";
-	String P_DESCRIPTION = "description";
+	String P_NAME = "name"; //$NON-NLS-1$
+	String P_DESCRIPTION = "description"; //$NON-NLS-1$
 	String getName();
 	void setName(String name) throws CoreException;
 	ISiteDescription getDescription();

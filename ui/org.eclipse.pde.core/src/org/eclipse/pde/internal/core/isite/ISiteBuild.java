@@ -15,11 +15,11 @@ import org.eclipse.core.runtime.*;
  * The top-level model object of the Eclipse update site model.
  */
 public interface ISiteBuild extends ISiteBuildObject {
-	String P_PLUGIN_LOCATION = "plugin-location";
-	String P_FEATURE_LOCATION = "feature-location";
-	String P_SHOW_CONSOLE = "show-console";
-	String P_AUTOBUILD = "autobuild";
-	String P_SCRUB_OUTPUT = "scrub-output";
+	String P_PLUGIN_LOCATION = "plugin-location"; //$NON-NLS-1$
+	String P_FEATURE_LOCATION = "feature-location"; //$NON-NLS-1$
+	String P_SHOW_CONSOLE = "show-console"; //$NON-NLS-1$
+	String P_AUTOBUILD = "autobuild"; //$NON-NLS-1$
+	String P_SCRUB_OUTPUT = "scrub-output"; //$NON-NLS-1$
 
 	void setPluginLocation(IPath location) throws CoreException;
 	void setFeatureLocation(IPath location) throws CoreException;

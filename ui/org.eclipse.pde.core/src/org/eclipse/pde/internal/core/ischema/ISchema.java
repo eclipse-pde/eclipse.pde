@@ -33,8 +33,8 @@ import org.eclipse.pde.core.*;
  * to receive notification about these changes.
  */
 public interface ISchema extends ISchemaObject, IBaseModel, IModelChangeProvider {
-	String P_POINT = "pointId";
-	String P_PLUGIN = "pluginId";
+	String P_POINT = "pointId"; //$NON-NLS-1$
+	String P_PLUGIN = "pluginId"; //$NON-NLS-1$
 	int REFRESH_ADD = 1;
 	int REFRESH_DELETE = 2;
 	int REFRESH_RENAME = 3;

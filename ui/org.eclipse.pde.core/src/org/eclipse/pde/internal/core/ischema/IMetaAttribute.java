@@ -31,7 +31,7 @@ public interface IMetaAttribute {
 	/*
 	 * non-Javadoc
 	 */
-	public static final String [] kindTable = { "string", "java", "resource" };
+	public static final String [] kindTable = { "string", "java", "resource" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 /**
  * Returns optional name of the Java type this type must be based on (only for JAVA kind).

@@ -43,7 +43,7 @@ public interface ISchemaCompositor extends ISchemaObject, ISchemaRepeatable {
 	 * Keyword table for compositors.
 	 */
 	public static final String[] kindTable =
-		{ "all", "choice", "sequence", "group" };
+		{ "all", "choice", "sequence", "group" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 /**
  * Returns the number of children of this compositor.
  * @return number of compositor children

@@ -17,8 +17,8 @@ import org.eclipse.core.runtime.*;
  *
  */
 public interface ISiteDescription extends ISiteObject {
-	String P_URL = "url";
-	String P_TEXT = "text";
+	String P_URL = "url"; //$NON-NLS-1$
+	String P_TEXT = "text"; //$NON-NLS-1$
 	
 	String getURL();
 	String getText();

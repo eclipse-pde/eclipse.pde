@@ -21,8 +21,8 @@ import org.eclipse.core.runtime.*;
  * Window>Preferences>Java>Code Generation.
  */
 public interface ISiteArchive extends ISiteObject {
-	String P_URL = "url";
-	String P_PATH = "path";
+	String P_URL = "url"; //$NON-NLS-1$
+	String P_PATH = "path"; //$NON-NLS-1$
 	String getURL();
 	void setURL(String url) throws CoreException;
 	String getPath();

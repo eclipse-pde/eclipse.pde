@@ -21,12 +21,12 @@ public interface ISchemaObject extends IAdaptable, IWritable {
  * Property constant that will be used in the model change event
  * when description field of this object changes.
  */	
-public static final String P_DESCRIPTION="description";
+public static final String P_DESCRIPTION="description"; //$NON-NLS-1$
 /**
  * Property constant that will be used in the model change event
  * when "name" field of this object changes.
  */		
-public static final String P_NAME = "name";
+public static final String P_NAME = "name"; //$NON-NLS-1$
 /**
  * Returns text associated with this schema object. Typically, it is
  * annotation that will be used to compose the reference HTML documentation.

@@ -15,9 +15,9 @@ import org.eclipse.core.runtime.*;
  * The top-level model object of the Eclipse update site model.
  */
 public interface ISite extends ISiteObject {
-	String P_URL = "URL";
-	String P_TYPE = "type";
-	String P_DESCRIPTION = "description";
+	String P_URL = "URL"; //$NON-NLS-1$
+	String P_TYPE = "type"; //$NON-NLS-1$
+	String P_DESCRIPTION = "description"; //$NON-NLS-1$
 	
 	void setType(String type) throws CoreException;
 	String getType();

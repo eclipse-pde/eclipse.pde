@@ -23,13 +23,13 @@ import org.eclipse.pde.internal.core.ifeature.*;
  * Window>Preferences>Java>Code Generation.
  */
 public interface ISiteFeature extends IVersionable, ISiteObject {
-	String P_TYPE = "type";
-	String P_URL = "url";
-	String P_OS = "os";
-	String P_WS = "ws";
-	String P_NL = "nl";
-	String P_ARCH = "arch";
-	String P_PATCH = "patch";
+	String P_TYPE = "type"; //$NON-NLS-1$
+	String P_URL = "url"; //$NON-NLS-1$
+	String P_OS = "os"; //$NON-NLS-1$
+	String P_WS = "ws"; //$NON-NLS-1$
+	String P_NL = "nl"; //$NON-NLS-1$
+	String P_ARCH = "arch"; //$NON-NLS-1$
+	String P_PATCH = "patch"; //$NON-NLS-1$
 	void addCategories(ISiteCategory[] categories) throws CoreException;
 	void removeCategories(ISiteCategory[] categories) throws CoreException;
 	ISiteCategory [] getCategories();

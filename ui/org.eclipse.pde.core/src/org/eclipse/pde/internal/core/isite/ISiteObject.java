@@ -22,7 +22,7 @@ public interface ISiteObject extends IWritable, IAdaptable, Serializable {
  * A property name that will be used to notify
  * about changes in the "label" field.
  */
-String P_LABEL = "label";
+String P_LABEL = "label"; //$NON-NLS-1$
 /**
  * Returns the top-level site model object.
  * @return root feature object
