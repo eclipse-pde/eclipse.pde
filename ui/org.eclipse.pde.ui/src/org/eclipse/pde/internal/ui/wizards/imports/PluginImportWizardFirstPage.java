@@ -375,7 +375,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	private void validateDropLocation() {
 		if (!runtimeLocationButton.getSelection()) {
 			IPath curr = new Path(dropLocation.getText());
-			if (curr.segmentCount() == 0) {
+			if (curr.segmentCount() == 0 && curr.getDevice() == null) {
 				setErrorMessage(PDEPlugin.getResourceString("ImportWizard.errors.locationMissing"));
 				setPageComplete(false);
 				return;
