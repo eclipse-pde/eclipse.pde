@@ -17,6 +17,17 @@ import java.io.*;
  */
 public interface IEditable {
 	/**
+	 * Tests whether the model marked as editable can be
+	 * edited. Even though a model is generally editable,
+	 * it can me marked as read-only because some condition
+	 * prevents it from changing state (for example,
+	 * the underlying resource is locked). While 
+	 * read-only models can never be changed, editable
+	 * models can go in and out editable state during
+	 * their life cycle.
+	 */
+	public boolean isEditable();
+	/**
 	 * Tests whether the model has been changed from the last clean
 	 * state.
 	 * @return true if the model has been changed and need saving

@@ -14,7 +14,7 @@ import org.eclipse.pde.internal.model.ModelDataTransfer;
 import org.eclipse.ui.texteditor.*;
 import java.util.*;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.pde.model.IModel;
+import org.eclipse.pde.model.IEditable;
 
 public abstract class PDEEditorContributor extends EditorActionBarContributor {
 	public static final String ACTIONS_SAVE = "EditorActions.save";
@@ -52,8 +52,10 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 		}
 		public boolean isEditable() {
 			if (editor==null) return false;
-			IModel model = (IModel) editor.getModel();
-			return model == null || model.isEditable();
+			Object model = editor.getModel();
+			if (model instanceof IEditable)
+				return ((IEditable)model).isEditable();
+			return false;
 		}
 	}
 
