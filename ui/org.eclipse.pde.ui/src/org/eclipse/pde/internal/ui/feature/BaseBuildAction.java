@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.ant.ui.internal.launchConfigurations.*;
 import org.eclipse.ant.ui.internal.launchConfigurations.AntLaunchShortcut;
-import org.eclipse.ant.ui.internal.model.IAntUIConstants;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -159,7 +159,7 @@ public abstract class BaseBuildAction implements IObjectActionDelegate, IPrefere
 
 			Map properties = new HashMap();
 			properties =
-				launchCopy.getAttribute(IAntUIConstants.ATTR_ANT_PROPERTIES, properties);
+				launchCopy.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_PROPERTIES, properties);
 			properties.put("basews", TargetPlatform.getWS());
 			properties.put("baseos", TargetPlatform.getOS());
 			properties.put("basearch", TargetPlatform.getOSArch());
@@ -171,7 +171,7 @@ public abstract class BaseBuildAction implements IObjectActionDelegate, IPrefere
 			properties.put("javacVerbose", store.getString(PROP_JAVAC_VERBOSE));
 			properties.put("javacSource", store.getString(PROP_JAVAC_SOURCE));
 			properties.put("javacTarget", store.getString(PROP_JAVAC_TARGET));
-			launchCopy.setAttribute(IAntUIConstants.ATTR_ANT_PROPERTIES, properties);
+			launchCopy.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_PROPERTIES, properties);
 			launchCopy.doSave();
 		} catch (CoreException e) {
 		}
