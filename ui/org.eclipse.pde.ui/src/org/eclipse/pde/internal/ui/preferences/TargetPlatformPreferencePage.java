@@ -186,6 +186,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	}
 
 	public boolean performOk() {
+		fEnvironmentBlock.performOk();
 		if (fNeedsReload && !ExternalModelManager.arePathsEqual(new Path(fOriginalText), new Path(fHomeText.getText()))) {
 			MessageDialog dialog =
 				new MessageDialog(
@@ -204,7 +205,6 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		} 
 		fSourceBlock.performOk();
 		fPluginsBlock.performOk();
-		fEnvironmentBlock.performOk();
 		return super.performOk();
 	}
 	
