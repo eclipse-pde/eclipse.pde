@@ -40,7 +40,7 @@ class LogReader {
 		currentSession = null;
 		RandomAccessFile random = null;
 		try {
-			random = new RandomAccessFile(file, "r");
+			random = new RandomAccessFile(file, "r"); //$NON-NLS-1$
 			random.seek(file.length() - MAX_FILE_LENGTH);
 			for (;;) {
 				String line = random.readLine();
