@@ -630,7 +630,8 @@ public class DetailExtensionSection
 		if (obj instanceof IPluginExtension) {
 			IPluginExtension extension = (IPluginExtension) obj;
 			if (!fullNames) {
-				if (extension.getName()!=null) return extension.getName();
+				//defect 17026
+				//if (extension.getName()!=null) return extension.getName();
 				return extension.getPoint();
 			}
 			if (extension.getName()!=null) return extension.getTranslatedName();
