@@ -46,7 +46,7 @@ public abstract class ReferenceAttributeRow extends TextAttributeRow {
 					openReference();
 			}
 		});
-		link.setToolTipText(getToolTipText());
+		link.setToolTipText(getToolTipText(link));
 	}
 	protected boolean isReferenceModel() {
 		return ((IPluginModelBase) part.getPage().getModel())

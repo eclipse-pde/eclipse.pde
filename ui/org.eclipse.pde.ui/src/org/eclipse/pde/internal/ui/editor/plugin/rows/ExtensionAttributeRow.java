@@ -11,16 +11,21 @@
 
 package org.eclipse.pde.internal.ui.editor.plugin.rows;
 
+import java.text.BreakIterator;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public abstract class ExtensionAttributeRow {
+	private static final int TOOLTIP_WIDTH_LIMIT = 300;
 	protected IContextPart part;
 	protected Object att;
 	protected IPluginElement input;
@@ -80,10 +85,10 @@ public abstract class ExtensionAttributeRow {
 	protected void createLabel(Composite parent, FormToolkit toolkit) {
 		Label label = toolkit.createLabel(parent, getPropertyLabel(), SWT.NULL);
 		label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
-		label.setToolTipText(getToolTipText());
+		label.setToolTipText(getToolTipText(label));
 	}
 	
-	protected String getToolTipText() {
+	protected String getToolTipText(Control control) {
 		String text = getDescription();
 		if (text==null) return null;
 		int dot = text.indexOf('.');
@@ -112,9 +117,34 @@ public abstract class ExtensionAttributeRow {
 					buf.append(c);
 				}
 			}
-			return buf.toString();
+			return wrapText(control, buf.toString(), TOOLTIP_WIDTH_LIMIT);
 		}
 		return text;
+	}
+	
+	private String wrapText(Control c, String src, int width) {
+		BreakIterator wb = BreakIterator.getWordInstance();
+		wb.setText(src);
+		int saved = 0;
+		int last = 0;
+		StringBuffer buff = new StringBuffer();
+		GC gc = new GC(c);
+		
+		for (int loc = wb.first(); loc != BreakIterator.DONE; loc = wb.next()) {
+			String word = src.substring(saved, loc);
+			Point extent = gc.textExtent(word);
+			if (extent.x > width) {
+				// overflow
+				String prevLine = src.substring(saved, last);
+				buff.append(prevLine);
+				buff.append(SWT.LF);
+				saved = last;
+			}
+			last = loc;
+		}
+		String lastLine = src.substring(saved, last);
+		buff.append(lastLine);
+		return buff.toString();
 	}
 	
 	public abstract void createContents(Composite parent, FormToolkit toolkit, int span);
