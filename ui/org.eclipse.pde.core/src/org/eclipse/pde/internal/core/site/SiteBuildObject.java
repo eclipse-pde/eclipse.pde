@@ -35,7 +35,7 @@ public abstract class SiteBuildObject
 
 	protected void ensureModelEditable() throws CoreException {
 		if (!model.isEditable()) {
-			throwCoreException("Illegal attempt to change read-only site manifest model");
+			throwCoreException(PDECore.getResourceString("SiteBuildObject.readOnlyException")); //$NON-NLS-1$
 		}
 	}
 	protected void firePropertyChanged(
@@ -98,7 +98,7 @@ public abstract class SiteBuildObject
 	boolean getBooleanAttribute(Node node, String name) {
 		String value = getNodeAttribute(node, name);
 		if (value != null) {
-			return value.equalsIgnoreCase("true");
+			return value.equalsIgnoreCase("true"); //$NON-NLS-1$
 		}
 		return false;
 	}
@@ -118,25 +118,25 @@ public abstract class SiteBuildObject
 
 	public static String getWritableString(String source) {
 		if (source == null)
-			return "";
+			return ""; //$NON-NLS-1$
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < source.length(); i++) {
 			char c = source.charAt(i);
 			switch (c) {
 				case '&' :
-					buf.append("&amp;");
+					buf.append("&amp;"); //$NON-NLS-1$
 					break;
 				case '<' :
-					buf.append("&lt;");
+					buf.append("&lt;"); //$NON-NLS-1$
 					break;
 				case '>' :
-					buf.append("&gt;");
+					buf.append("&gt;"); //$NON-NLS-1$
 					break;
 				case '\'' :
-					buf.append("&apos;");
+					buf.append("&apos;"); //$NON-NLS-1$
 					break;
 				case '\"' :
-					buf.append("&quot;");
+					buf.append("&quot;"); //$NON-NLS-1$
 					break;
 				default :
 					buf.append(c);

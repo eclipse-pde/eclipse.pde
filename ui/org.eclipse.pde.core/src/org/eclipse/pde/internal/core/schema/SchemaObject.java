@@ -57,26 +57,26 @@ public abstract class SchemaObject
 	}
 	public static String getWritableDescription(String input) {
 		if (input == null)
-			return "";
+			return ""; //$NON-NLS-1$
 		String result = input.trim();
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < result.length(); i++) {
 			char c = result.charAt(i);
 			switch (c) {
 				case '<' :
-					buf.append("&lt;");
+					buf.append("&lt;"); //$NON-NLS-1$
 					break;
 				case '>' :
-					buf.append("&gt;");
+					buf.append("&gt;"); //$NON-NLS-1$
 					break;
 				case '&' :
-					buf.append("&amp;");
+					buf.append("&amp;"); //$NON-NLS-1$
 					break;
 				case '\'' :
-					buf.append("&apos;");
+					buf.append("&apos;"); //$NON-NLS-1$
 					break;
 				case '\"' :
-					buf.append("&quot;");
+					buf.append("&quot;"); //$NON-NLS-1$
 					break;
 				default :
 					buf.append(c);
@@ -130,7 +130,7 @@ public abstract class SchemaObject
 			return;
 		for (int i = 0; i < source.size(); i++) {
 			String comment = (String) source.elementAt(i);
-			writer.println("<!--" + comment + "-->");
+			writer.println("<!--" + comment + "-->"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 

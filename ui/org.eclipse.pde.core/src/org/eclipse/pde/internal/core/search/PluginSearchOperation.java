@@ -35,7 +35,7 @@ public class PluginSearchOperation {
 		IPluginModelBase[] entries = input.getSearchScope().getMatchingModels();
 		collector.searchStarted();
 		collector.setProgressMonitor(monitor);
-		monitor.beginTask("", entries.length);
+		monitor.beginTask("", entries.length); //$NON-NLS-1$
 
 		try {
 			for (int i = 0; i < entries.length; i++) {

@@ -82,31 +82,31 @@ public class Plugin extends PluginBase implements IPlugin {
 			writer.print(getSchemaVersion());
 			writer.println("\"?>");
 		}		
-		writer.print("<plugin");
+		writer.print("<plugin"); //$NON-NLS-1$
 		if (getId() != null) {
 			writer.println();
-			writer.print("   id=\"" + getId() + "\"");
+			writer.print("   id=\"" + getId() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (getName() != null) {
 			writer.println();
-			writer.print("   name=\"" + getWritableString(getName()) + "\"");
+			writer.print("   name=\"" + getWritableString(getName()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (getVersion() != null) {
 			writer.println();
-			writer.print("   version=\"" + getVersion() + "\"");
+			writer.print("   version=\"" + getVersion() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (getProviderName() != null) {
 			writer.println();
 			writer.print(
-				"   provider-name=\""
+				"   provider-name=\"" //$NON-NLS-1$
 					+ getWritableString(getProviderName())
-					+ "\"");
+					+ "\""); //$NON-NLS-1$
 		}
 		if (getClassName() != null) {
 			writer.println();
-			writer.print("   class=\"" + getClassName() + "\"");
+			writer.print("   class=\"" + getClassName() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		writer.println(">");
+		writer.println(">"); //$NON-NLS-1$
 		writer.println();
 
 		String firstIndent = "   "; //$NON-NLS-1$

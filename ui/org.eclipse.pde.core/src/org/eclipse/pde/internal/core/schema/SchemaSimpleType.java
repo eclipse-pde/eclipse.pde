@@ -19,7 +19,7 @@ public class SchemaSimpleType
 	extends SchemaType
 	implements ISchemaSimpleType, IWritable {
 	private ISchemaRestriction restriction;
-	public static final String P_RESTRICTION = "restriction";
+	public static final String P_RESTRICTION = "restriction"; //$NON-NLS-1$
 
 	public SchemaSimpleType(ISchema schema, String typeName) {
 		super(schema, typeName);
@@ -56,10 +56,10 @@ public class SchemaSimpleType
 			restriction);
 	}
 	public void write(String indent, PrintWriter writer) {
-		writer.println(indent + "<simpleType>");
+		writer.println(indent + "<simpleType>"); //$NON-NLS-1$
 		if (restriction != null) {
 			restriction.write(indent + Schema.INDENT, writer);
 		}
-		writer.println(indent + "</simpleType>");
+		writer.println(indent + "</simpleType>"); //$NON-NLS-1$
 	}
 }

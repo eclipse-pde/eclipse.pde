@@ -55,15 +55,15 @@ public class ExternalSchemaDescriptor extends DevelopmentSchemaDescriptor {
 	public URL getSchemaURL() {
 		try {
 			if (file!=null) {
-				return new URL("file:" + file.getPath());
+				return new URL("file:" + file.getPath()); //$NON-NLS-1$
 			}
 			File installFile = getInstallLocationFile();
 			if (installFile != null && installFile.exists()) {
-				return new URL("file:" + installFile.getPath());
+				return new URL("file:" + installFile.getPath()); //$NON-NLS-1$
 			}
 			File sourceLocationFile = getSourceLocationFile();
 			if (sourceLocationFile != null && sourceLocationFile.exists()) {
-				return new URL("file:" + sourceLocationFile.getPath());
+				return new URL("file:" + sourceLocationFile.getPath()); //$NON-NLS-1$
 			}
 		} catch (MalformedURLException e) {
 		}

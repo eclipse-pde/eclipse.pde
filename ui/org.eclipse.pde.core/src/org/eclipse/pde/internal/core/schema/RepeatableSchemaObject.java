@@ -13,8 +13,8 @@ package org.eclipse.pde.internal.core.schema;
 import org.eclipse.pde.internal.core.ischema.*;
 
 public abstract class RepeatableSchemaObject extends SchemaObject implements ISchemaRepeatable {
-	public static final String P_MIN_OCCURS="min_occurs";
-	public static final String P_MAX_OCCURS="max_occurs";
+	public static final String P_MIN_OCCURS="min_occurs"; //$NON-NLS-1$
+	public static final String P_MAX_OCCURS="max_occurs"; //$NON-NLS-1$
 	private int minOccurs = 1;
 	private int maxOccurs = 1;
 

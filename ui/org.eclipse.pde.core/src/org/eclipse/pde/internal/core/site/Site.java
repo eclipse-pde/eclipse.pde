@@ -27,7 +27,7 @@ import org.w3c.dom.*;
  * Window>Preferences>Java>Code Generation.
  */
 public class Site extends SiteObject implements ISite {
-	final static String INDENT = "   ";
+	final static String INDENT = "   "; //$NON-NLS-1$
 	private Vector features = new Vector();
 	private Vector archives = new Vector();
 	private Vector categoryDefs = new Vector();
@@ -200,8 +200,8 @@ public class Site extends SiteObject implements ISite {
 		url = null;
 	}
 	protected void parse(Node node, Hashtable lineTable) {
-		type = getNodeAttribute(node, "type");
-		url = getNodeAttribute(node, "url");
+		type = getNodeAttribute(node, "type"); //$NON-NLS-1$
+		url = getNodeAttribute(node, "url"); //$NON-NLS-1$
 		bindSourceLocation(node, lineTable);
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
@@ -214,23 +214,23 @@ public class Site extends SiteObject implements ISite {
 
 	protected void parseChild(Node child, Hashtable lineTable) {
 		String tag = child.getNodeName().toLowerCase();
-		if (tag.equals("feature")) {
+		if (tag.equals("feature")) { //$NON-NLS-1$
 			ISiteFeature feature = getModel().getFactory().createFeature();
 			((SiteFeature) feature).parse(child, lineTable);
 			((SiteFeature) feature).setInTheModel(true);
 			features.add(feature);
-		} else if (tag.equals("archive")) {
+		} else if (tag.equals("archive")) { //$NON-NLS-1$
 			ISiteArchive archive = getModel().getFactory().createArchive();
 			((SiteArchive) archive).parse(child, lineTable);
 			((SiteArchive) archive).setInTheModel(true);
 			archives.add(archive);
-		} else if (tag.equals("category-def")) {
+		} else if (tag.equals("category-def")) { //$NON-NLS-1$
 			ISiteCategoryDefinition def =
 				getModel().getFactory().createCategoryDefinition();
 			((SiteCategoryDefinition) def).parse(child, lineTable);
 			((SiteCategoryDefinition) def).setInTheModel(true);
 			categoryDefs.add(def);
-		} else if (tag.equals("description")) {
+		} else if (tag.equals("description")) { //$NON-NLS-1$
 			if (description != null)
 				return;
 			description = getModel().getFactory().createDescription(this);
@@ -252,12 +252,12 @@ public class Site extends SiteObject implements ISite {
 			super.restoreProperty(name, oldValue, newValue);
 	}
 	public void write(String indent, PrintWriter writer) {
-		writer.print(indent + "<site");
+		writer.print(indent + "<site"); //$NON-NLS-1$
 		String indent2 = indent + INDENT;
 		String indenta = indent + INDENT + INDENT;
-		writeIfDefined(indenta, writer, "type", getType());
-		writeIfDefined(indenta, writer, "url", getURL());
-		writer.println(">");
+		writeIfDefined(indenta, writer, "type", getType()); //$NON-NLS-1$
+		writeIfDefined(indenta, writer, "url", getURL()); //$NON-NLS-1$
+		writer.println(">"); //$NON-NLS-1$
 
 		if (description != null) {
 			writer.println();
@@ -266,7 +266,7 @@ public class Site extends SiteObject implements ISite {
 		writeChildren(indent2, features, writer);
 		writeChildren(indent2, archives, writer);
 		writeChildren(indent2, categoryDefs, writer);
-		writer.println(indent + "</site>");
+		writer.println(indent + "</site>"); //$NON-NLS-1$
 	}
 	
 	public boolean isValid() {
@@ -304,6 +304,6 @@ public class Site extends SiteObject implements ISite {
 		if (attValue == null)
 			return;
 		writer.println();
-		writer.print(indent + attName + "=\"" + attValue + "\"");
+		writer.print(indent + attName + "=\"" + attValue + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

@@ -23,8 +23,8 @@ import org.eclipse.pde.internal.core.ischema.*;
 
 public class SchemaRegistry
 	implements IModelProviderListener, IResourceChangeListener, IResourceDeltaVisitor {
-	public static final String PLUGIN_POINT = "schemaMap";
-	public static final String TAG_MAP = "map";
+	public static final String PLUGIN_POINT = "schemaMap"; //$NON-NLS-1$
+	public static final String TAG_MAP = "map"; //$NON-NLS-1$
 	private Hashtable workspaceDescriptors;
 	private Hashtable externalDescriptors;
 	private Vector dirtyWorkspaceModels;
@@ -399,7 +399,7 @@ public class SchemaRegistry
 		if (resource instanceof IFile) {
 			IFile file = (IFile) resource;
 			String fileName = file.getName().toLowerCase();
-			if (!(fileName.endsWith(".exsd") || fileName.endsWith(".mxsd")))
+			if (!(fileName.endsWith(".exsd") || fileName.endsWith(".mxsd"))) //$NON-NLS-1$ //$NON-NLS-2$
 				return true;
 			if (WorkspaceModelManager.isPluginProject(file.getProject())
 				== false)

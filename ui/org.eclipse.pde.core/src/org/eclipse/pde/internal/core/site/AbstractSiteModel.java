@@ -73,7 +73,7 @@ public abstract class AbstractSiteModel
 			InputSource source = new InputSource(stream);
 			URL dtdLocation = PDECore.getDefault().getDescriptor().getInstallURL();
 			source.setSystemId(dtdLocation.toString());
-			parser.setProperty("http://xml.org/sax/properties/lexical-handler", handler);
+			parser.setProperty("http://xml.org/sax/properties/lexical-handler", handler); //$NON-NLS-1$
 			parser.parse(source, handler);
 			processDocument(handler.getDocument(), handler.getLineTable());
 			loaded = true;

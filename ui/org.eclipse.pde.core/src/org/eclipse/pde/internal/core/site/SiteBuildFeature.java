@@ -65,8 +65,8 @@ public class SiteBuildFeature
 	}
 
 	protected void parse(Node node) {
-		id = getNodeAttribute(node, "id");
-		version = getNodeAttribute(node, "version");
+		id = getNodeAttribute(node, "id"); //$NON-NLS-1$
+		version = getNodeAttribute(node, "version"); //$NON-NLS-1$
 	}
 
 	public IFeature getReferencedFeature() {
@@ -117,18 +117,18 @@ public class SiteBuildFeature
 	 */
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent);
-		writer.print("<feature");
+		writer.print("<feature"); //$NON-NLS-1$
 		if (id != null)
-			writer.print(" id=\"" + id + "\"");
+			writer.print(" id=\"" + id + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (version != null)
-			writer.print(" version=\"" + version + "\"");
-		writer.println("/>");
+			writer.print(" version=\"" + version + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println("/>"); //$NON-NLS-1$
 	}
 	
 	public String getTargetURL() {
 		ISiteBuild siteBuild = getSiteBuild();
 		IPath featureLocation = siteBuild.getFeatureLocation();
-		String jar = id + "_"+version+".jar";
+		String jar = id + "_"+version+".jar"; //$NON-NLS-1$ //$NON-NLS-2$
 		return featureLocation.append(jar).toString();
 	}
 }

@@ -25,7 +25,7 @@ public class IdentifiableObject extends SiteObject implements IIdentifiable {
 
 	protected void parse(Node node, Hashtable lineTable) {
 		super.parse(node, lineTable);
-		id = getNodeAttribute(node, "id");
+		id = getNodeAttribute(node, "id"); //$NON-NLS-1$
 	}
 	
 	public boolean isValid() {

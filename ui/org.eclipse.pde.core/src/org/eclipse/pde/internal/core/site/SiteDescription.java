@@ -69,7 +69,7 @@ public class SiteDescription extends SiteObject implements ISiteDescription {
 	}
 
 	protected void parse(Node node, Hashtable lineTable) {
-		url = getNodeAttribute(node, "url");
+		url = getNodeAttribute(node, "url"); //$NON-NLS-1$
 		bindSourceLocation(node, lineTable);
 		NodeList children = node.getChildNodes();
 		for (int i=0; i<children.getLength(); i++) {
@@ -95,14 +95,14 @@ public class SiteDescription extends SiteObject implements ISiteDescription {
 	
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent);
-		writer.print("<description");
+		writer.print("<description"); //$NON-NLS-1$
 		if (url!=null)
-			writer.print(" url=\""+url+"\"");
-		writer.println(">");
+			writer.print(" url=\""+url+"\""); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println(">"); //$NON-NLS-1$
 		if (text!=null) {
 			writer.println(indent+Site.INDENT+ getNormalizedText(text));
 		}
-		writer.println(indent+"</description>");
+		writer.println(indent+"</description>"); //$NON-NLS-1$
 	}
 	public boolean isValid() {
 		return true;

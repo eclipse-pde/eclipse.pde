@@ -20,10 +20,10 @@ public class ChoiceRestriction
 	implements ISchemaRestriction {
 	private ISchemaSimpleType baseType;
 	private Vector children;
-	public static final String P_CHOICES = "choices";
+	public static final String P_CHOICES = "choices"; //$NON-NLS-1$
 
 	public ChoiceRestriction(ISchema schema) {
-		super(schema, "__choice__");
+		super(schema, "__choice__"); //$NON-NLS-1$
 
 	}
 	public ChoiceRestriction(ChoiceRestriction source) {
@@ -92,7 +92,7 @@ public class ChoiceRestriction
 	}
 	public String toString() {
 		if (children == null)
-			return "";
+			return ""; //$NON-NLS-1$
 		StringBuffer buffer = new StringBuffer();
 
 		for (int i = 0; i < children.size(); i++) {
@@ -100,7 +100,7 @@ public class ChoiceRestriction
 			if (child instanceof ISchemaEnumeration) {
 				ISchemaEnumeration enum = (ISchemaEnumeration) child;
 				if (i > 0)
-					buffer.append(", ");
+					buffer.append(", "); //$NON-NLS-1$
 				buffer.append(enum.getName());
 			}
 		}
@@ -109,7 +109,7 @@ public class ChoiceRestriction
 	public void write(String indent, PrintWriter writer) {
 		writeComments(writer);
 		writer.println(
-			indent + "<restriction base=\"" + baseType.getName() + "\">");
+			indent + "<restriction base=\"" + baseType.getName() + "\">"); //$NON-NLS-1$ //$NON-NLS-2$
 		for (int i = 0; i < children.size(); i++) {
 			Object child = children.get(i);
 			if (child instanceof ISchemaEnumeration) {
@@ -117,6 +117,6 @@ public class ChoiceRestriction
 				enum.write(indent + Schema.INDENT, writer);
 			}
 		}
-		writer.println(indent + "</restriction>");
+		writer.println(indent + "</restriction>"); //$NON-NLS-1$
 	}
 }

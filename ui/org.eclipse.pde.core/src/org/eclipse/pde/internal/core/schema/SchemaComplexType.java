@@ -19,7 +19,7 @@ import org.eclipse.pde.internal.core.ischema.*;
 public class SchemaComplexType
 	extends SchemaType
 	implements ISchemaComplexType {
-	public static final String P_COMPOSITOR = "compositorProperty";
+	public static final String P_COMPOSITOR = "compositorProperty"; //$NON-NLS-1$
 	private boolean mixed;
 	private ISchemaCompositor compositor;
 	private Vector attributes = new Vector();
@@ -28,7 +28,7 @@ public class SchemaComplexType
 		this(schema, null);
 	}
 	public SchemaComplexType(ISchema schema, String typeName) {
-		super(schema, typeName != null ? typeName : "__anonymous__");
+		super(schema, typeName != null ? typeName : "__anonymous__"); //$NON-NLS-1$
 	}
 	public void addAttribute(ISchemaAttribute attribute) {
 		addAttribute(attribute, null);
@@ -95,7 +95,7 @@ public class SchemaComplexType
 		mixed = newMixed;
 	}
 	public void write(String indent, PrintWriter writer) {
-		writer.println(indent + "<complexType>");
+		writer.println(indent + "<complexType>"); //$NON-NLS-1$
 		String indent2 = indent + Schema.INDENT;
 		SchemaCompositor compositor = (SchemaCompositor) getCompositor();
 		if (compositor != null) {
@@ -106,6 +106,6 @@ public class SchemaComplexType
 				(ISchemaAttribute) attributes.elementAt(i);
 			attribute.write(indent2, writer);
 		}
-		writer.println(indent + "</complexType>");
+		writer.println(indent + "</complexType>"); //$NON-NLS-1$
 	}
 }

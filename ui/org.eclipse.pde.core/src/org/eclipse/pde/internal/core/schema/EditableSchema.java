@@ -36,7 +36,7 @@ public boolean isEditable() {
 	return true;
 }
 public void save(PrintWriter writer) {
-	this.write("", writer);
+	this.write("", writer); //$NON-NLS-1$
 	dirty = false;
 }
 public void setDirty(boolean newDirty) {

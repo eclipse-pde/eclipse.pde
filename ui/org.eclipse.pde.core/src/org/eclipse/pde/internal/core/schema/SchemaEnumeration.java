@@ -21,18 +21,18 @@ public SchemaEnumeration(ISchemaObject parent, String name) {
 }
 public void write(String indent, PrintWriter writer) {
 	writeComments(writer);
-	writer.println(indent+"<enumeration value=\""+getName()+"\">");
+	writer.println(indent+"<enumeration value=\""+getName()+"\">"); //$NON-NLS-1$ //$NON-NLS-2$
 	String description = getDescription();
 	if (description!=null) description.trim();
 	if (description!=null && description.length()>0) {
 		String indent2 = indent + Schema.INDENT;
 		String indent3 = indent2 + Schema.INDENT;
-		writer.println(indent2+"<annotation>");
-		writer.println(indent3+"<documentation>");
+		writer.println(indent2+"<annotation>"); //$NON-NLS-1$
+		writer.println(indent3+"<documentation>"); //$NON-NLS-1$
 		writer.println(indent3+description);
-		writer.println(indent3+"</documentation>");
-		writer.println(indent2+"</annotation>");
+		writer.println(indent3+"</documentation>"); //$NON-NLS-1$
+		writer.println(indent2+"</annotation>"); //$NON-NLS-1$
 	}
-	writer.println(indent+"</enumeration>");
+	writer.println(indent+"</enumeration>"); //$NON-NLS-1$
 }
 }

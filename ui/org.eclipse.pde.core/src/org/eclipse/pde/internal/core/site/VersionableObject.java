@@ -27,7 +27,7 @@ public class VersionableObject
 
 	protected void parse(Node node, Hashtable lineTable) {
 		super.parse(node, lineTable);
-		version = getNodeAttribute(node, "version");
+		version = getNodeAttribute(node, "version"); //$NON-NLS-1$
 	}
 
 	public void setVersion(String version) throws CoreException {

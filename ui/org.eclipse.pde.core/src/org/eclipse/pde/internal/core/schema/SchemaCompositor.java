@@ -14,31 +14,32 @@ import java.io.*;
 import java.util.*;
 
 import org.eclipse.pde.core.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ischema.*;
 
 public class SchemaCompositor
 	extends RepeatableSchemaObject
 	implements ISchemaCompositor {
-	public static final String P_KIND = "p_kind";
+	public static final String P_KIND = "p_kind"; //$NON-NLS-1$
 
 	private int kind;
 	private Vector children = new Vector();
 
 	public SchemaCompositor(ISchemaObject parent, int kind) {
-		super(parent, "");
+		super(parent, ""); //$NON-NLS-1$
 		this.kind = kind;
 		switch (kind) {
 			case ALL :
-				name = "All";
+				name = PDECore.getResourceString("SchemaCompositor.all"); //$NON-NLS-1$
 				break;
 			case CHOICE :
-				name = "Choice";
+				name = PDECore.getResourceString("SchemaCompositor.choice"); //$NON-NLS-1$
 				break;
 			case GROUP :
-				name = "Group";
+				name = PDECore.getResourceString("SchemaCompositor.group"); //$NON-NLS-1$
 				break;
 			case SEQUENCE :
-				name = "Sequence";
+				name = PDECore.getResourceString("SchemaCompositor.sequence"); //$NON-NLS-1$
 				break;
 		}
 	}
@@ -88,16 +89,16 @@ public class SchemaCompositor
 			this.kind = kind;
 			switch (kind) {
 				case ALL :
-					name = "All";
+					name = PDECore.getResourceString("SchemaCompositor.all"); //$NON-NLS-1$
 					break;
 				case CHOICE :
-					name = "Choice";
+					name = PDECore.getResourceString("SchemaCompositor.choice"); //$NON-NLS-1$
 					break;
 				case GROUP :
-					name = "Group";
+					name = PDECore.getResourceString("SchemaCompositor.group"); //$NON-NLS-1$
 					break;
 				case SEQUENCE :
-					name = "Sequence";
+					name = PDECore.getResourceString("SchemaCompositor.sequence"); //$NON-NLS-1$
 					break;
 			}
 			getSchema().fireModelObjectChanged(
@@ -168,31 +169,31 @@ public class SchemaCompositor
 
 		switch (kind) {
 			case ALL :
-				tag = "all";
+				tag = "all"; //$NON-NLS-1$
 				break;
 			case CHOICE :
-				tag = "choice";
+				tag = "choice"; //$NON-NLS-1$
 				break;
 			case GROUP :
-				tag = "group";
+				tag = "group"; //$NON-NLS-1$
 				break;
 			case SEQUENCE :
-				tag = "sequence";
+				tag = "sequence"; //$NON-NLS-1$
 				break;
 		}
 		if (tag == null)
 			return;
-		writer.print(indent + "<" + tag);
+		writer.print(indent + "<" + tag); //$NON-NLS-1$
 		if (getMinOccurs() != 1 && getMaxOccurs() != 1) {
-			String min = "" + getMinOccurs();
+			String min = "" + getMinOccurs(); //$NON-NLS-1$
 			String max =
 				getMaxOccurs() == Integer.MAX_VALUE
-					? "unbounded"
-					: ("" + getMaxOccurs());
+					? "unbounded" //$NON-NLS-1$
+					: ("" + getMaxOccurs()); //$NON-NLS-1$
 			writer.print(
-				" minOccurs=\"" + min + "\" maxOccurs=\"" + max + "\"");
+				" minOccurs=\"" + min + "\" maxOccurs=\"" + max + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
-		writer.println(">");
+		writer.println(">"); //$NON-NLS-1$
 		String indent2 = indent + Schema.INDENT;
 		for (int i = 0; i < children.size(); i++) {
 			Object obj = children.elementAt(i);
@@ -200,6 +201,6 @@ public class SchemaCompositor
 				((IWritable) obj).write(indent2, writer);
 			}
 		}
-		writer.println(indent + "</" + tag + ">");
+		writer.println(indent + "</" + tag + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

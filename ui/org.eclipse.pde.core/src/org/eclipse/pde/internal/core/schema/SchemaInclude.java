@@ -61,7 +61,7 @@ public class SchemaInclude extends SchemaObject implements ISchemaInclude {
 	 */
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent);
-		writer.println("<include schemaLocation=\"" + location + "\"/>");
+		writer.println("<include schemaLocation=\"" + location + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public ISchema getIncludedSchema() {

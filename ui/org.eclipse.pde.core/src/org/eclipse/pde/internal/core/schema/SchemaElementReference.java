@@ -29,9 +29,9 @@ public class SchemaElementReference
 	transient private ISchemaElement element;
 	private ISchemaCompositor compositor;
 	private String referenceName;
-	public static final String P_MAX_OCCURS = "max_occurs";
-	public static final String P_MIN_OCCURS = "min_occurs";
-	public static final String P_REFERENCE_NAME = "reference_name";
+	public static final String P_MAX_OCCURS = "max_occurs"; //$NON-NLS-1$
+	public static final String P_MIN_OCCURS = "min_occurs"; //$NON-NLS-1$
+	public static final String P_REFERENCE_NAME = "reference_name"; //$NON-NLS-1$
 	private int minOccurs = 1;
 	private int maxOccurs = 1;
 	private Vector comments;
@@ -157,18 +157,18 @@ public class SchemaElementReference
 	}
 	public void write(String indent, PrintWriter writer) {
 		writeComments(writer);
-		writer.print(indent + "<element");
-		writer.print(" ref=\"" + getReferenceName() + "\"");
+		writer.print(indent + "<element"); //$NON-NLS-1$
+		writer.print(" ref=\"" + getReferenceName() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (getMinOccurs() != 1 || getMaxOccurs() != 1) {
-			String min = "" + getMinOccurs();
+			String min = "" + getMinOccurs(); //$NON-NLS-1$
 			String max =
 				getMaxOccurs() == Integer.MAX_VALUE
-					? "unbounded"
-					: ("" + getMaxOccurs());
+					? "unbounded" //$NON-NLS-1$
+					: ("" + getMaxOccurs()); //$NON-NLS-1$
 			writer.print(
-				" minOccurs=\"" + min + "\" maxOccurs=\"" + max + "\"");
+				" minOccurs=\"" + min + "\" maxOccurs=\"" + max + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
-		writer.println("/>");
+		writer.println("/>"); //$NON-NLS-1$
 	}
 
 	public void addComments(Node node) {
@@ -201,7 +201,7 @@ public class SchemaElementReference
 			return;
 		for (int i = 0; i < source.size(); i++) {
 			String comment = (String) source.elementAt(i);
-			writer.println("<!--" + comment + "-->");
+			writer.println("<!--" + comment + "-->"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 

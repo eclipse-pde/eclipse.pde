@@ -79,12 +79,12 @@ public class SiteCategoryDefinition
 	protected void parse(Node node, Hashtable lineTable) {
 		super.parse(node, lineTable);
 		bindSourceLocation(node, lineTable);
-		name = getNodeAttribute(node, "name");
+		name = getNodeAttribute(node, "name"); //$NON-NLS-1$
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = (Node) children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE
-				&& child.getNodeName().equalsIgnoreCase("description")) {
+				&& child.getNodeName().equalsIgnoreCase("description")) { //$NON-NLS-1$
 				description = getModel().getFactory().createDescription(this);
 				((SiteDescription) description).parse(child, lineTable);
 				((SiteDescription)description).setInTheModel(true);
@@ -105,16 +105,16 @@ public class SiteCategoryDefinition
 	}
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent);
-		writer.print("<category-def");
+		writer.print("<category-def"); //$NON-NLS-1$
 		if (name != null)
-			writer.print(" name=\"" + name + "\"");
+			writer.print(" name=\"" + name + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (label != null)
-			writer.print(" label=\"" + label + "\"");
+			writer.print(" label=\"" + label + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (description != null) {
-			writer.println(">");
+			writer.println(">"); //$NON-NLS-1$
 			description.write(indent + Site.INDENT, writer);
-			writer.println(indent + "</category-def>");
+			writer.println(indent + "</category-def>"); //$NON-NLS-1$
 		} else
-			writer.println("/>");
+			writer.println("/>"); //$NON-NLS-1$
 	}
 }

@@ -39,7 +39,7 @@ public class SiteCategory extends SiteObject implements ISiteCategory {
 	}
 	
 	protected void parse(Node node, Hashtable lineTable) {
-		name = getNodeAttribute(node, "name");
+		name = getNodeAttribute(node, "name"); //$NON-NLS-1$
 		bindSourceLocation(node, lineTable);
 	}
 	
@@ -58,10 +58,10 @@ public class SiteCategory extends SiteObject implements ISiteCategory {
 	}
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent);
-		writer.print("<category");
+		writer.print("<category"); //$NON-NLS-1$
 		if (name!=null)
-			writer.print(" name=\""+name+"\"");
-		writer.println("/>");
+			writer.print(" name=\""+name+"\""); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println("/>"); //$NON-NLS-1$
 	}
 	public void restoreProperty(String name, Object oldValue, Object newValue)
 		throws CoreException {

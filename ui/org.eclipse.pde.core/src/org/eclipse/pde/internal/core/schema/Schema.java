@@ -29,9 +29,9 @@ public class Schema extends PlatformObject implements ISchema {
 	private boolean loaded;
 	private Vector references;
 	private String description;
-	private String name = "";
+	private String name = ""; //$NON-NLS-1$
 	private boolean notificationEnabled;
-	public final static java.lang.String INDENT = "   ";
+	public final static java.lang.String INDENT = "   "; //$NON-NLS-1$
 	private boolean disposed = false;
 	private Hashtable lineTable;
 	private boolean valid;
@@ -249,7 +249,7 @@ public class Schema extends PlatformObject implements ISchema {
 	public String getQualifiedPointId() {
 		//return
 		// schemaDescriptor!=null?schemaDescriptor.getPointId():internalId;
-		return pluginId + "." + pointId;
+		return pluginId + "." + pointId; //$NON-NLS-1$
 	}
 	public String getPluginId() {
 		return pluginId;
@@ -293,7 +293,7 @@ public class Schema extends PlatformObject implements ISchema {
 		try {
 			SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
 			XMLDefaultHandler handler = new XMLDefaultHandler();
-			parser.setProperty("http://xml.org/sax/properties/lexical-handler",
+			parser.setProperty("http://xml.org/sax/properties/lexical-handler", //$NON-NLS-1$
 					handler);
 			parser.parse(stream, handler);
 			traverseDocumentTree(handler.getDocumentElement(), handler
@@ -306,10 +306,10 @@ public class Schema extends PlatformObject implements ISchema {
 	}
 	private ISchemaAttribute processAttribute(ISchemaElement element,
 			Node elementNode) {
-		String aname = getAttribute(elementNode, "name");
-		String atype = getAttribute(elementNode, "type");
-		String ause = getAttribute(elementNode, "use");
-		String avalue = getAttribute(elementNode, "value");
+		String aname = getAttribute(elementNode, "name"); //$NON-NLS-1$
+		String atype = getAttribute(elementNode, "type"); //$NON-NLS-1$
+		String ause = getAttribute(elementNode, "use"); //$NON-NLS-1$
+		String avalue = getAttribute(elementNode, "value"); //$NON-NLS-1$
 		ISchemaSimpleType type = null;
 		if (atype != null) {
 			type = (ISchemaSimpleType) resolveTypeReference(atype);
@@ -319,11 +319,11 @@ public class Schema extends PlatformObject implements ISchema {
 		attribute.addComments(elementNode);
 		if (ause != null) {
 			int use = ISchemaAttribute.OPTIONAL;
-			if (ause.equals("required"))
+			if (ause.equals("required")) //$NON-NLS-1$
 				use = ISchemaAttribute.REQUIRED;
-			else if (ause.equals("optional"))
+			else if (ause.equals("optional")) //$NON-NLS-1$
 				use = ISchemaAttribute.OPTIONAL;
-			else if (ause.equals("default"))
+			else if (ause.equals("default")) //$NON-NLS-1$
 				use = ISchemaAttribute.DEFAULT;
 			attribute.setUse(use);
 		}
@@ -334,9 +334,9 @@ public class Schema extends PlatformObject implements ISchema {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
 				String tag = child.getNodeName();
-				if (tag.equals("annotation")) {
+				if (tag.equals("annotation")) { //$NON-NLS-1$
 					processAttributeAnnotation(attribute, child);
-				} else if (tag.equals("simpleType")) {
+				} else if (tag.equals("simpleType")) { //$NON-NLS-1$
 					processAttributeSimpleType(attribute, child);
 				}
 			}
@@ -350,20 +350,20 @@ public class Schema extends PlatformObject implements ISchema {
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
-				if (child.getNodeName().equals("documentation")) {
+				if (child.getNodeName().equals("documentation")) { //$NON-NLS-1$
 					element.setDescription(getNormalizedText(child
 							.getFirstChild().getNodeValue()));
-				} else if (child.getNodeName().equals("appInfo")) {
+				} else if (child.getNodeName().equals("appInfo")) { //$NON-NLS-1$
 					NodeList infos = child.getChildNodes();
 					for (int j = 0; j < infos.getLength(); j++) {
 						Node meta = infos.item(j);
 						if (meta.getNodeType() == Node.ELEMENT_NODE) {
-							if (meta.getNodeName().equals("meta.attribute")) {
+							if (meta.getNodeName().equals("meta.attribute")) { //$NON-NLS-1$
 								element.setKind(processKind(getAttribute(meta,
-										"kind")));
+										"kind"))); //$NON-NLS-1$
 								element
 										.setBasedOn(getAttribute(meta,
-												"basedOn"));
+												"basedOn")); //$NON-NLS-1$
 							}
 						}
 					}
@@ -376,9 +376,9 @@ public class Schema extends PlatformObject implements ISchema {
 		NodeList children = node.getChildNodes();
 		if (children.getLength() == 0)
 			return null;
-		String baseName = getAttribute(node, "base");
-		if (baseName.equals("string") == false) {
-			return new SchemaSimpleType(attribute.getSchema(), "string");
+		String baseName = getAttribute(node, "base"); //$NON-NLS-1$
+		if (baseName.equals("string") == false) { //$NON-NLS-1$
+			return new SchemaSimpleType(attribute.getSchema(), "string"); //$NON-NLS-1$
 		}
 		SchemaSimpleType type = new SchemaSimpleType(attribute.getSchema(),
 				baseName);
@@ -386,7 +386,7 @@ public class Schema extends PlatformObject implements ISchema {
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
-				if (child.getNodeName().equals("enumeration")) {
+				if (child.getNodeName().equals("enumeration")) { //$NON-NLS-1$
 					ISchemaEnumeration enum = processEnumeration(attribute
 							.getSchema(), child);
 					if (enum != null)
@@ -408,7 +408,7 @@ public class Schema extends PlatformObject implements ISchema {
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
-				if (child.getNodeName().equals("restriction")) {
+				if (child.getNodeName().equals("restriction")) { //$NON-NLS-1$
 					type = processAttributeRestriction(attribute, child);
 				}
 			}
@@ -418,17 +418,17 @@ public class Schema extends PlatformObject implements ISchema {
 	}
 	private SchemaComplexType processComplexType(ISchemaElement owner,
 			Node typeNode) {
-		String aname = getAttribute(typeNode, "name");
-		String amixed = getAttribute(typeNode, "mixed");
+		String aname = getAttribute(typeNode, "name"); //$NON-NLS-1$
+		String amixed = getAttribute(typeNode, "mixed"); //$NON-NLS-1$
 		SchemaComplexType complexType = new SchemaComplexType(this, aname);
-		if (amixed != null && amixed.equals("true"))
+		if (amixed != null && amixed.equals("true")) //$NON-NLS-1$
 			complexType.setMixed(true);
 		NodeList children = typeNode.getChildNodes();
 		ISchemaCompositor compositor = null;
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
-				if (child.getNodeName().equals("attribute")) {
+				if (child.getNodeName().equals("attribute")) { //$NON-NLS-1$
 					complexType.addAttribute(processAttribute(owner, child));
 				} else {
 					ISchemaObject object = processCompositorChild(owner, child,
@@ -450,12 +450,12 @@ public class Schema extends PlatformObject implements ISchema {
 		NodeList children = node.getChildNodes();
 		int minOccurs = 1;
 		int maxOccurs = 1;
-		String aminOccurs = getAttribute(node, "minOccurs");
-		String amaxOccurs = getAttribute(node, "maxOccurs");
+		String aminOccurs = getAttribute(node, "minOccurs"); //$NON-NLS-1$
+		String amaxOccurs = getAttribute(node, "maxOccurs"); //$NON-NLS-1$
 		if (aminOccurs != null)
 			minOccurs = Integer.valueOf(aminOccurs).intValue();
 		if (amaxOccurs != null) {
-			if (amaxOccurs.equals("unbounded"))
+			if (amaxOccurs.equals("unbounded")) //$NON-NLS-1$
 				maxOccurs = Integer.MAX_VALUE;
 			else {
 				maxOccurs = Integer.valueOf(amaxOccurs).intValue();
@@ -475,41 +475,41 @@ public class Schema extends PlatformObject implements ISchema {
 	private ISchemaObject processCompositorChild(ISchemaObject parent,
 			Node child, int parentKind) {
 		String tag = child.getNodeName();
-		if (tag.equals("element")) {
+		if (tag.equals("element")) { //$NON-NLS-1$
 			return processElement(parent, child);
 		}
 		// sequence: element | group | choice | sequence
-		if (tag.equals("sequence") && parentKind != ISchemaCompositor.ALL) {
+		if (tag.equals("sequence") && parentKind != ISchemaCompositor.ALL) { //$NON-NLS-1$
 			return processCompositor(parent, child, ISchemaCompositor.SEQUENCE);
 		}
 		// choice: element | group | choice | sequence
-		if (tag.equals("choice") && parentKind != ISchemaCompositor.ALL) {
+		if (tag.equals("choice") && parentKind != ISchemaCompositor.ALL) { //$NON-NLS-1$
 			return processCompositor(parent, child, ISchemaCompositor.CHOICE);
 		}
 		// all: element
-		if (tag.equals("all")
+		if (tag.equals("all") //$NON-NLS-1$
 				&& (parentKind == ISchemaCompositor.ROOT || parentKind == ISchemaCompositor.GROUP)) {
 			return processCompositor(parent, child, ISchemaCompositor.ALL);
 		}
 		// group: all | choice | sequence
-		if (tag.equals("group")
+		if (tag.equals("group") //$NON-NLS-1$
 				&& (parentKind == ISchemaCompositor.CHOICE || parentKind == ISchemaCompositor.SEQUENCE)) {
 			return processCompositor(parent, child, ISchemaCompositor.GROUP);
 		}
 		return null;
 	}
 	private ISchemaElement processElement(ISchemaObject parent, Node elementNode) {
-		String aname = getAttribute(elementNode, "name");
-		String atype = getAttribute(elementNode, "type");
-		String aref = getAttribute(elementNode, "ref");
+		String aname = getAttribute(elementNode, "name"); //$NON-NLS-1$
+		String atype = getAttribute(elementNode, "type"); //$NON-NLS-1$
+		String aref = getAttribute(elementNode, "ref"); //$NON-NLS-1$
 		int minOccurs = 1;
 		int maxOccurs = 1;
-		String aminOccurs = getAttribute(elementNode, "minOccurs");
-		String amaxOccurs = getAttribute(elementNode, "maxOccurs");
+		String aminOccurs = getAttribute(elementNode, "minOccurs"); //$NON-NLS-1$
+		String amaxOccurs = getAttribute(elementNode, "maxOccurs"); //$NON-NLS-1$
 		if (aminOccurs != null)
 			minOccurs = Integer.valueOf(aminOccurs).intValue();
 		if (amaxOccurs != null) {
-			if (amaxOccurs.equals("unbounded"))
+			if (amaxOccurs.equals("unbounded")) //$NON-NLS-1$
 				maxOccurs = Integer.MAX_VALUE;
 			else {
 				maxOccurs = Integer.valueOf(amaxOccurs).intValue();
@@ -540,14 +540,14 @@ public class Schema extends PlatformObject implements ISchema {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
 				String tag = child.getNodeName();
-				if (type == null && tag.equals("complexType")) {
+				if (type == null && tag.equals("complexType")) { //$NON-NLS-1$
 					type = processComplexType(element, child);
 				}
 				/*
 				 * if (tag.equals("attribute")) { processAttribute(element,
 				 * child); } else
 				 */
-				if (tag.equals("annotation")) {
+				if (tag.equals("annotation")) { //$NON-NLS-1$
 					processElementAnnotation(element, child);
 				}
 			}
@@ -560,22 +560,22 @@ public class Schema extends PlatformObject implements ISchema {
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
-				if (child.getNodeName().equals("documentation")) {
+				if (child.getNodeName().equals("documentation")) { //$NON-NLS-1$
 					element.setDescription(getNormalizedText(child
 							.getFirstChild().getNodeValue()));
-				} else if (child.getNodeName().equals("appInfo")) {
+				} else if (child.getNodeName().equals("appInfo")) { //$NON-NLS-1$
 					NodeList infos = child.getChildNodes();
 					for (int j = 0; j < infos.getLength(); j++) {
 						Node meta = infos.item(j);
 						if (meta.getNodeType() == Node.ELEMENT_NODE) {
-							if (meta.getNodeName().equals("meta.element")) {
+							if (meta.getNodeName().equals("meta.element")) { //$NON-NLS-1$
 								element.setLabelProperty(getAttribute(meta,
-										"labelAttribute"));
+										"labelAttribute")); //$NON-NLS-1$
 								element.setIconProperty(getAttribute(meta,
-										"icon"));
+										"icon")); //$NON-NLS-1$
 								if (element.getIconProperty() == null)
 									element.setIconProperty(getAttribute(meta,
-											"iconName"));
+											"iconName")); //$NON-NLS-1$
 							}
 						}
 					}
@@ -584,7 +584,7 @@ public class Schema extends PlatformObject implements ISchema {
 		}
 	}
 	private ISchemaEnumeration processEnumeration(ISchema schema, Node node) {
-		String name = getAttribute(node, "value");
+		String name = getAttribute(node, "value"); //$NON-NLS-1$
 		SchemaEnumeration enum = new SchemaEnumeration(schema, name);
 		enum.bindSourceLocation(node, lineTable);
 		enum.addComments(node);
@@ -592,9 +592,9 @@ public class Schema extends PlatformObject implements ISchema {
 	}
 	private int processKind(String name) {
 		if (name != null) {
-			if (name.equals("java"))
+			if (name.equals("java")) //$NON-NLS-1$
 				return SchemaAttribute.JAVA;
-			if (name.equals("resource"))
+			if (name.equals("resource")) //$NON-NLS-1$
 				return SchemaAttribute.RESOURCE;
 		}
 		return SchemaAttribute.STRING;
@@ -619,16 +619,16 @@ public class Schema extends PlatformObject implements ISchema {
 	}
 	private void processSchemaAnnotation(Node node) {
 		NodeList children = node.getChildNodes();
-		String section = "overview";
-		String sectionName = "Overview";
+		String section = "overview"; //$NON-NLS-1$
+		String sectionName = "Overview"; //$NON-NLS-1$
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
-				if (child.getNodeName().equals("documentation")) {
+				if (child.getNodeName().equals("documentation")) { //$NON-NLS-1$
 					String text = getNormalizedText(child.getFirstChild()
 							.getNodeValue());
 					if (section != null) {
-						if (section.equals("overview")) {
+						if (section.equals("overview")) { //$NON-NLS-1$
 							setDescription(text);
 							setSourceLocation(child);
 						} else {
@@ -639,21 +639,21 @@ public class Schema extends PlatformObject implements ISchema {
 							docSections.addElement(sec);
 						}
 					}
-				} else if (child.getNodeName().equals("appInfo")) {
+				} else if (child.getNodeName().equals("appInfo")) { //$NON-NLS-1$
 					NodeList infos = child.getChildNodes();
 					for (int j = 0; j < infos.getLength(); j++) {
 						Node meta = infos.item(j);
 						if (meta.getNodeType() == Node.ELEMENT_NODE) {
-							if (meta.getNodeName().equals("meta.schema")) {
-								section = "overview";
-								setName(getAttribute(meta, "name"));
-								pluginId = getAttribute(meta, "plugin");
-								pointId = getAttribute(meta, "id");
+							if (meta.getNodeName().equals("meta.schema")) { //$NON-NLS-1$
+								section = "overview"; //$NON-NLS-1$
+								setName(getAttribute(meta, "name")); //$NON-NLS-1$
+								pluginId = getAttribute(meta, "plugin"); //$NON-NLS-1$
+								pointId = getAttribute(meta, "id"); //$NON-NLS-1$
 								valid = true;
 							} else if (meta.getNodeName()
-									.equals("meta.section")) {
-								section = getAttribute(meta, "type");
-								sectionName = getAttribute(meta, "name");
+									.equals("meta.section")) { //$NON-NLS-1$
+								section = getAttribute(meta, "type"); //$NON-NLS-1$
+								sectionName = getAttribute(meta, "name"); //$NON-NLS-1$
 								if (sectionName == null)
 									sectionName = section;
 							}
@@ -664,7 +664,7 @@ public class Schema extends PlatformObject implements ISchema {
 		}
 	}
 	private void processInclude(Node node) {
-		String location = getAttribute(node, "schemaLocation");
+		String location = getAttribute(node, "schemaLocation"); //$NON-NLS-1$
 		SchemaInclude include = new SchemaInclude(this, location);
 		if (includes == null)
 			includes = new Vector();
@@ -746,7 +746,7 @@ public class Schema extends PlatformObject implements ISchema {
 	}
 	public void setName(String newName) {
 		if (newName == null)
-			newName = "";
+			newName = ""; //$NON-NLS-1$
 		String oldValue = name;
 		name = newName;
 		fireModelObjectChanged(this, P_NAME, oldValue, name);
@@ -775,12 +775,12 @@ public class Schema extends PlatformObject implements ISchema {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
 				String nodeName = child.getNodeName().toLowerCase();
-				if (nodeName.equals("element")) {
+				if (nodeName.equals("element")) { //$NON-NLS-1$
 					ISchemaElement element = processElement(this, child);
 					elements.addElement(element);
-				} else if (nodeName.equals("annotation")) {
+				} else if (nodeName.equals("annotation")) { //$NON-NLS-1$
 					processSchemaAnnotation(child);
-				} else if (nodeName.equals("include")) {
+				} else if (nodeName.equals("include")) { //$NON-NLS-1$
 					processInclude(child);
 				}
 			}
@@ -811,27 +811,27 @@ public class Schema extends PlatformObject implements ISchema {
 	public void write(String indent, PrintWriter writer) {
 		String pointId = this.getQualifiedPointId();
 		int loc = pointId.lastIndexOf('.');
-		String pluginId = "";
+		String pluginId = ""; //$NON-NLS-1$
 		if (loc != -1) {
 			pluginId = pointId.substring(0, loc);
 			pointId = pointId.substring(loc + 1);
 		}
 		writer.println("<?xml version='1.0' encoding='UTF-8'?>");
-		writer.println("<!-- Schema file written by PDE -->");
-		writer.println("<schema targetNamespace=\"" + pluginId + "\">");
+		writer.println("<!-- Schema file written by PDE -->"); //$NON-NLS-1$
+		writer.println("<schema targetNamespace=\"" + pluginId + "\">"); //$NON-NLS-1$ //$NON-NLS-2$
 		String indent2 = INDENT + INDENT;
 		String indent3 = indent2 + INDENT;
-		writer.println(indent + "<annotation>");
-		writer.println(indent2 + "<appInfo>");
-		writer.print(indent3 + "<meta.schema plugin=\"" + pluginId + "\"");
-		writer.print(" id=\"" + pointId + "\"");
-		writer.println(" name=\"" + getName() + "\"/>");
-		writer.println(indent2 + "</appInfo>");
-		writer.println(indent2 + "<documentation>");
+		writer.println(indent + "<annotation>"); //$NON-NLS-1$
+		writer.println(indent2 + "<appInfo>"); //$NON-NLS-1$
+		writer.print(indent3 + "<meta.schema plugin=\"" + pluginId + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.print(" id=\"" + pointId + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println(" name=\"" + getName() + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println(indent2 + "</appInfo>"); //$NON-NLS-1$
+		writer.println(indent2 + "<documentation>"); //$NON-NLS-1$
 		writer.println(indent3
 				+ SchemaObject.getWritableDescription(getDescription()));
-		writer.println(indent2 + "</documentation>");
-		writer.println(INDENT + "</annotation>");
+		writer.println(indent2 + "</documentation>"); //$NON-NLS-1$
+		writer.println(INDENT + "</annotation>"); //$NON-NLS-1$
 		writer.println();
 		// add includes, if defined
 		if (includes != null) {
@@ -854,6 +854,6 @@ public class Schema extends PlatformObject implements ISchema {
 			section.write(INDENT, writer);
 			writer.println();
 		}
-		writer.println("</schema>");
+		writer.println("</schema>"); //$NON-NLS-1$
 	}
 }

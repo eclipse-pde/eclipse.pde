@@ -40,10 +40,10 @@ public class WorkspaceSiteModel
 		try {
 			IPath path = file.getLocation().removeLastSegments(1);
 			String installLocation = path.toOSString();
-			if (installLocation.startsWith("file:") == false)
-				installLocation = "file:" + installLocation;
-			URL url = new URL(installLocation + "/");
-			String name = "site";
+			if (installLocation.startsWith("file:") == false) //$NON-NLS-1$
+				installLocation = "file:" + installLocation; //$NON-NLS-1$
+			URL url = new URL(installLocation + "/"); //$NON-NLS-1$
+			String name = "site"; //$NON-NLS-1$
 			NLResourceHelper helper =
 				new NLResourceHelper(name, new URL[] { url });
 			return helper;
@@ -122,7 +122,7 @@ public class WorkspaceSiteModel
 		try {
 			String contents = getContents();
 			ByteArrayInputStream stream =
-				new ByteArrayInputStream(contents.getBytes("UTF8"));
+				new ByteArrayInputStream(contents.getBytes("UTF8")); //$NON-NLS-1$
 			if (file.exists()) {
 				file.setContents(stream, false, false, null);
 			} else {
@@ -138,7 +138,7 @@ public class WorkspaceSiteModel
 		if (isLoaded()) {
 			writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 			//writer.println("<!DOCTYPE site SYSTEM \"dtd/site.dtd\">");
-			site.write("", writer);
+			site.write("", writer); //$NON-NLS-1$
 		}
 		setDirty(false);
 	}

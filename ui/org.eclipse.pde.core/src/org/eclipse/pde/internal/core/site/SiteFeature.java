@@ -121,19 +121,19 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 	protected void parse(Node node, Hashtable lineTable) {
 		super.parse(node, lineTable);
 		bindSourceLocation(node, lineTable);
-		fType = getNodeAttribute(node, "type");
-		fUrl = getNodeAttribute(node, "url");
-		fOS = getNodeAttribute(node, "os");
-		fNL = getNodeAttribute(node, "nl");
-		fWS = getNodeAttribute(node, "ws");
-		fArch = getNodeAttribute(node, "arch");
-		String value = getNodeAttribute(node, "patch");
-		fIsPatch = value != null && value.equals("true");
+		fType = getNodeAttribute(node, "type"); //$NON-NLS-1$
+		fUrl = getNodeAttribute(node, "url"); //$NON-NLS-1$
+		fOS = getNodeAttribute(node, "os"); //$NON-NLS-1$
+		fNL = getNodeAttribute(node, "nl"); //$NON-NLS-1$
+		fWS = getNodeAttribute(node, "ws"); //$NON-NLS-1$
+		fArch = getNodeAttribute(node, "arch"); //$NON-NLS-1$
+		String value = getNodeAttribute(node, "patch"); //$NON-NLS-1$
+		fIsPatch = value != null && value.equals("true"); //$NON-NLS-1$
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE
-				&& child.getNodeName().equalsIgnoreCase("category")) {
+				&& child.getNodeName().equalsIgnoreCase("category")) { //$NON-NLS-1$
 				SiteCategory category =
 					(SiteCategory) getModel().getFactory().createCategory(this);
 				((SiteCategory) category).parse(child, lineTable);
@@ -181,37 +181,37 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 	 */
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent);
-		writer.print("<feature");
+		writer.print("<feature"); //$NON-NLS-1$
 		if (fType != null)
-			writer.print(" type=\"" + fType + "\"");
+			writer.print(" type=\"" + fType + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (fUrl != null)
-			writer.print(" url=\"" + fUrl + "\"");
+			writer.print(" url=\"" + fUrl + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (id != null)
-			writer.print(" id=\"" + getId() + "\"");
+			writer.print(" id=\"" + getId() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (version != null)
-			writer.print(" version=\"" + getVersion() + "\"");
+			writer.print(" version=\"" + getVersion() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (label != null)
-			writer.print(" label=\"" + getLabel() + "\"");
+			writer.print(" label=\"" + getLabel() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (fOS != null)
-			writer.print(" os=\"" + fOS + "\"");
+			writer.print(" os=\"" + fOS + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (fWS != null)
-			writer.print(" ws=\"" + fWS + "\"");
+			writer.print(" ws=\"" + fWS + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (fNL != null)
-			writer.print(" nl=\"" + fNL + "\"");
+			writer.print(" nl=\"" + fNL + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (fArch != null)
-			writer.print(" arch=\"" + fArch + "\"");
+			writer.print(" arch=\"" + fArch + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (fIsPatch)
-			writer.print(" patch=\"true\"");
+			writer.print(" patch=\"true\""); //$NON-NLS-1$
 		if (fCategories.size() > 0) {
-			writer.println(">");
-			String indent2 = indent + "   ";
+			writer.println(">"); //$NON-NLS-1$
+			String indent2 = indent + "   "; //$NON-NLS-1$
 			for (int i = 0; i < fCategories.size(); i++) {
 				ISiteCategory category = (ISiteCategory) fCategories.get(i);
 				category.write(indent2, writer);
 			}
-			writer.println(indent + "</feature>");
+			writer.println(indent + "</feature>"); //$NON-NLS-1$
 		} else
-			writer.println("/>");
+			writer.println("/>"); //$NON-NLS-1$
 	}
 	
 	public IFile getArchiveFile() {

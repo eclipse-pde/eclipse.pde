@@ -35,7 +35,7 @@ public String getPointId() {
 	String projectName = project.getName();
 	String fileName = file.getName();
 	int dotLoc = fileName.lastIndexOf('.');
-	return projectName + "."+fileName.substring(0, dotLoc);
+	return projectName + "."+fileName.substring(0, dotLoc); //$NON-NLS-1$
 }
 
 public URL getSchemaURL() {
@@ -46,7 +46,7 @@ public URL getSchemaURL() {
 				+ file.getProject().getLocation().removeLastSegments(1)
 				+ file.getFullPath().toString());
 */
-		return new URL("file:"+file.getLocation().toOSString());
+		return new URL("file:"+file.getLocation().toOSString()); //$NON-NLS-1$
 	} catch (MalformedURLException e) {
 	}
 	return null;

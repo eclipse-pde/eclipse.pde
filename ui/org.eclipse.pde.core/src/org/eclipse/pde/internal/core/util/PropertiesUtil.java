@@ -43,7 +43,7 @@ public class PropertiesUtil {
 		for (int i = 0; i < source.length(); i++) {
 			char c = source.charAt(i);
 			if (c == ' ') {
-				writableName.append("\\ ");
+				writableName.append("\\ "); //$NON-NLS-1$
 			} else
 				writableName.append(c);
 		}
@@ -82,14 +82,14 @@ public class PropertiesUtil {
 	
 	public static void writeKeyValuePair(String indent, String name, String value, PrintWriter writer) {
 		String writableName = createWritableName(name);
-		writer.print(writableName + " = ");
+		writer.print(writableName + " = "); //$NON-NLS-1$
 
 		writer.println(PropertiesUtil.createEscapedValue(value));
 	}
 
 	public static void writeKeyValuePair(String indent, String name, Enumeration tokens, PrintWriter writer) {
 		String writableName = createWritableName(name);
-		writer.print(writableName + " = ");
+		writer.print(writableName + " = "); //$NON-NLS-1$
 		if (!tokens.hasMoreElements()) {
 			writer.println();
 			return;
@@ -99,30 +99,30 @@ public class PropertiesUtil {
 			String token = tokens.nextElement().toString();
 			writer.print(PropertiesUtil.createEscapedValue(token));
 			if (tokens.hasMoreElements()) {
-				writer.println(",\\");
+				writer.println(",\\"); //$NON-NLS-1$
 				for (int j = 0; j < indentLength; j++) {
-					writer.print(" ");
+					writer.print(" "); //$NON-NLS-1$
 				}
 			} else
-				writer.println("");
+				writer.println(""); //$NON-NLS-1$
 		}
 	}
 	
 	public static String writeKeyValuePair(String name, String[] tokens) {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(createWritableName(name));
-		buffer.append(" = ");
+		buffer.append(" = "); //$NON-NLS-1$
 		int indentLength = name.length() + 3;
 		for (int i = 0; i < tokens.length; i++) {
 			buffer.append(createEscapedValue(tokens[i]));
 			if (i < tokens.length - 1) {
-				buffer.append(",\\" + System.getProperty("line.separator"));
+				buffer.append(",\\" + System.getProperty("line.separator")); //$NON-NLS-1$ //$NON-NLS-2$
 				for (int j = 0; j < indentLength; j++) {
-					buffer.append(" ");
+					buffer.append(" "); //$NON-NLS-1$
 				}
 			}
 		}	
-		buffer.append(System.getProperty("line.separator"));
+		buffer.append(System.getProperty("line.separator")); //$NON-NLS-1$
 		return buffer.toString();
 	}
 }

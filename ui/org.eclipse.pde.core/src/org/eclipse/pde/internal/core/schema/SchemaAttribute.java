@@ -21,12 +21,12 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 	private ISchemaSimpleType type;
 	private String basedOn;
 	private Object value;
-	public static final String P_USE = "useProperty";
-	public static final String P_VALUE_FILTER = "valueFilterProperty";
-	public static final String P_VALUE = "value";
-	public static final String P_KIND = "kindProperty";
-	public static final String P_TYPE = "typeProperty";
-	public static final String P_BASED_ON = "basedOnProperty";
+	public static final String P_USE = "useProperty"; //$NON-NLS-1$
+	public static final String P_VALUE_FILTER = "valueFilterProperty"; //$NON-NLS-1$
+	public static final String P_VALUE = "value"; //$NON-NLS-1$
+	public static final String P_KIND = "kindProperty"; //$NON-NLS-1$
+	public static final String P_TYPE = "typeProperty"; //$NON-NLS-1$
+	public static final String P_BASED_ON = "basedOnProperty"; //$NON-NLS-1$
 	private boolean verifying;
 
 public SchemaAttribute(ISchemaAttribute att, String newName) {
@@ -115,7 +115,7 @@ private void verifyProperties() {
 		// basedOn makes no sense
 		setBasedOn(null);
 	}
-	if (type!=null && type.getName().equals("boolean"))
+	if (type!=null && type.getName().equals("boolean")) //$NON-NLS-1$
 		// no restriction for boolean
 		ensureNoRestriction();
 	if (use != DEFAULT)
@@ -125,8 +125,8 @@ private void verifyProperties() {
 }
 
 private void ensureStringType() {
-	if (type==null || type.getName().equals("boolean")) 
-	   setType(new SchemaSimpleType(getSchema(), "string"));
+	if (type==null || type.getName().equals("boolean"))  //$NON-NLS-1$
+	   setType(new SchemaSimpleType(getSchema(), "string")); //$NON-NLS-1$
 }
 
 private void ensureNoRestriction() {
@@ -144,8 +144,8 @@ public void write(String indent, PrintWriter writer) {
 	ISchemaSimpleType type = (ISchemaSimpleType)getType();
 	String typeName = type.getName();
 	writer.print(indent);
-	writer.print("<attribute name=\""+getName()+"\"");
-	if (type.getRestriction()==null) writer.print(" type=\""+typeName+"\"");
+	writer.print("<attribute name=\""+getName()+"\""); //$NON-NLS-1$ //$NON-NLS-2$
+	if (type.getRestriction()==null) writer.print(" type=\""+typeName+"\""); //$NON-NLS-1$ //$NON-NLS-2$
 	String useString=null;
 	switch (getUse()) {
 		case OPTIONAL:
@@ -153,58 +153,58 @@ public void write(String indent, PrintWriter writer) {
 		//useString="optional";
 		break;
 		case DEFAULT:
-		useString="default";
+		useString="default"; //$NON-NLS-1$
 		break;
 		case REQUIRED:
-		useString="required";
+		useString="required"; //$NON-NLS-1$
 		break;
 	}
 	if (useString!=null) {
-		writer.print(" use=\""+useString+"\"");
+		writer.print(" use=\""+useString+"\""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	if (value!=null) {
-		writer.print(" value=\""+value+"\"");
+		writer.print(" value=\""+value+"\""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	String documentation = getWritableDescription();
 	if (documentation!=null || this.getBasedOn()!=null || getKind()!=STRING) {
 		// Add annotation
 		annotation = true;
-		writer.println(">");
+		writer.println(">"); //$NON-NLS-1$
 		String annIndent = indent + Schema.INDENT;
 		String indent2 = annIndent + Schema.INDENT;
 		String indent3 = indent2 + Schema.INDENT;
 		writer.print(annIndent);
-		writer.println("<annotation>");
+		writer.println("<annotation>"); //$NON-NLS-1$
 		if (documentation!=null) {
-			writer.println(indent2+"<documentation>");
+			writer.println(indent2+"<documentation>"); //$NON-NLS-1$
 			writer.println(indent3+documentation);
-			writer.println(indent2+"</documentation>");
+			writer.println(indent2+"</documentation>"); //$NON-NLS-1$
 		}
 		if (getBasedOn()!=null || getKind()!=STRING) {
-			writer.println(indent2+"<appInfo>");
-			writer.print(indent3+"<meta.attribute");
+			writer.println(indent2+"<appInfo>"); //$NON-NLS-1$
+			writer.print(indent3+"<meta.attribute"); //$NON-NLS-1$
 			String kindValue = null;
 			switch (getKind()) {
-				case JAVA: kindValue = "java";
+				case JAVA: kindValue = "java"; //$NON-NLS-1$
 				break;
-				case RESOURCE: kindValue = "resource";
+				case RESOURCE: kindValue = "resource"; //$NON-NLS-1$
 				break;
 			}
-			if (kindValue!=null) writer.print(" kind=\""+kindValue+"\"");
-			if (getBasedOn()!=null) writer.print(" basedOn=\""+getBasedOn()+"\"");
-			writer.println("/>");
-			writer.println(indent2+"</appInfo>");
+			if (kindValue!=null) writer.print(" kind=\""+kindValue+"\""); //$NON-NLS-1$ //$NON-NLS-2$
+			if (getBasedOn()!=null) writer.print(" basedOn=\""+getBasedOn()+"\""); //$NON-NLS-1$ //$NON-NLS-2$
+			writer.println("/>"); //$NON-NLS-1$
+			writer.println(indent2+"</appInfo>"); //$NON-NLS-1$
 		}
-		writer.println(annIndent+"</annotation>");
+		writer.println(annIndent+"</annotation>"); //$NON-NLS-1$
 	}
 	if (type.getRestriction()!=null) {
 		type.write(indent+Schema.INDENT, writer);
 	}
 	if (annotation || type.getRestriction()!=null) {
-		writer.println(indent+"</attribute>");
+		writer.println(indent+"</attribute>"); //$NON-NLS-1$
 	}
 	else {
-		writer.println("/>");
+		writer.println("/>"); //$NON-NLS-1$
 	}
 }
 }

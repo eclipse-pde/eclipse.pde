@@ -107,7 +107,7 @@ public class WorkspaceSiteBuildModel
 		try {
 			String contents = getContents();
 			ByteArrayInputStream stream =
-				new ByteArrayInputStream(contents.getBytes("UTF8"));
+				new ByteArrayInputStream(contents.getBytes("UTF8")); //$NON-NLS-1$
 			if (file.exists()) {
 				file.setContents(stream, false, false, null);
 			} else {
@@ -123,7 +123,7 @@ public class WorkspaceSiteBuildModel
 	public void save(PrintWriter writer) {
 		if (isLoaded()) {
 			writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-			siteBuild.write("", writer);
+			siteBuild.write("", writer); //$NON-NLS-1$
 		}
 		dirty = false;
 	}

@@ -27,7 +27,7 @@ import org.w3c.dom.*;
  * Window>Preferences>Java>Code Generation.
  */
 public class SiteBuild extends SiteBuildObject implements ISiteBuild {
-	final static String INDENT = "   ";
+	final static String INDENT = "   "; //$NON-NLS-1$
 	private Vector features = new Vector();
 	private IPath pluginLocation;
 	private IPath featureLocation;
@@ -147,15 +147,15 @@ public class SiteBuild extends SiteBuildObject implements ISiteBuild {
 	}
 	
 	protected void parse(Node node) {
-		String value = getNodeAttribute(node, "plugin-location");
+		String value = getNodeAttribute(node, "plugin-location"); //$NON-NLS-1$
 		if (value!=null) 
 			pluginLocation = new Path(value);
-		value = getNodeAttribute(node, "feature-location");
+		value = getNodeAttribute(node, "feature-location"); //$NON-NLS-1$
 		if (value!=null)
 			featureLocation = new Path(value);
-		autobuild = getBooleanAttribute(node, "autobuild");
-		scrubOutput = getBooleanAttribute(node, "scrub-output");
-		useConsole = getBooleanAttribute(node, "use-console");
+		autobuild = getBooleanAttribute(node, "autobuild"); //$NON-NLS-1$
+		scrubOutput = getBooleanAttribute(node, "scrub-output"); //$NON-NLS-1$
+		useConsole = getBooleanAttribute(node, "use-console"); //$NON-NLS-1$
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
@@ -167,7 +167,7 @@ public class SiteBuild extends SiteBuildObject implements ISiteBuild {
 
 	protected void parseChild(Node child) {
 		String tag = child.getNodeName().toLowerCase();
-		if (tag.equals("feature")) {
+		if (tag.equals("feature")) { //$NON-NLS-1$
 			ISiteBuildFeature feature = getModel().createFeature();
 			((SiteBuildFeature) feature).parse(child);
 			((SiteBuildFeature) feature).setInTheModel(true);
@@ -191,18 +191,18 @@ public class SiteBuild extends SiteBuildObject implements ISiteBuild {
 			super.restoreProperty(name, oldValue, newValue);
 	}
 	public void write(String indent, PrintWriter writer) {
-		writer.print(indent + "<site-build");
+		writer.print(indent + "<site-build"); //$NON-NLS-1$
 		String indent2 = indent + INDENT;
 		String indenta = indent + INDENT + INDENT;
-		writeIfDefined(indenta, writer, "feature-location", featureLocation!=null?featureLocation.toOSString():null);
-		writeIfDefined(indenta, writer, "plugin-location", pluginLocation!=null?pluginLocation.toOSString():null);
-		writeIfDefined(indenta, writer, "autobuild", autobuild?"true":"false");
-		writeIfDefined(indenta, writer, "scrub-output", scrubOutput?"true":"false");
-		writeIfDefined(indenta, writer, "use-console", useConsole?"true":"false");
-		writer.println(">");
+		writeIfDefined(indenta, writer, "feature-location", featureLocation!=null?featureLocation.toOSString():null); //$NON-NLS-1$
+		writeIfDefined(indenta, writer, "plugin-location", pluginLocation!=null?pluginLocation.toOSString():null); //$NON-NLS-1$
+		writeIfDefined(indenta, writer, "autobuild", autobuild?"true":"false"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		writeIfDefined(indenta, writer, "scrub-output", scrubOutput?"true":"false"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		writeIfDefined(indenta, writer, "use-console", useConsole?"true":"false"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		writer.println(">"); //$NON-NLS-1$
 
 		writeChildren(indent2, features, writer);
-		writer.println(indent + "</site-build>");
+		writer.println(indent + "</site-build>"); //$NON-NLS-1$
 	}
 	private void writeChildren(
 		String indent,
@@ -229,6 +229,6 @@ public class SiteBuild extends SiteBuildObject implements ISiteBuild {
 		if (attValue == null)
 			return;
 		writer.println();
-		writer.print(indent + attName + "=\"" + attValue + "\"");
+		writer.print(indent + attName + "=\"" + attValue + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

@@ -53,7 +53,7 @@ public class IncludedSchemaDescriptor extends AbstractSchemaDescriptor {
 	}
 	
 	public static URL computeURL(IPluginLocationProvider locationProvider, URL parentURL, String schemaLocation) throws MalformedURLException {
-		if (schemaLocation.startsWith("schema://")) {
+		if (schemaLocation.startsWith("schema://")) { //$NON-NLS-1$
 			// plugin-relative location
 			String rem = schemaLocation.substring(9);
 			// extract plug-in ID

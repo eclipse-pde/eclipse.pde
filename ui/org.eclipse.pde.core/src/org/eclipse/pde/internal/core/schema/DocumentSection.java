@@ -28,13 +28,13 @@ public void write(String indent, PrintWriter writer) {
 	writeComments(writer);
 	String indent2 = indent+Schema.INDENT;
 	String indent3 = indent2+Schema.INDENT;
-	writer.println(indent+"<annotation>");
-	writer.println(indent2+"<appInfo>");
-	writer.println(indent3+"<meta.section type=\""+sectionId+"\"/>");
-	writer.println(indent2+"</appInfo>");
-	writer.println(indent2+"<documentation>");
+	writer.println(indent+"<annotation>"); //$NON-NLS-1$
+	writer.println(indent2+"<appInfo>"); //$NON-NLS-1$
+	writer.println(indent3+"<meta.section type=\""+sectionId+"\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
+	writer.println(indent2+"</appInfo>"); //$NON-NLS-1$
+	writer.println(indent2+"<documentation>"); //$NON-NLS-1$
 	writer.println(indent3+getWritableDescription());
-	writer.println(indent2+"</documentation>");
-	writer.println(indent+"</annotation>");
+	writer.println(indent2+"</documentation>"); //$NON-NLS-1$
+	writer.println(indent+"</annotation>"); //$NON-NLS-1$
 }
 }

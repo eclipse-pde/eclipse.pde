@@ -58,18 +58,18 @@ public class SiteArchive extends SiteObject implements ISiteArchive {
 	}
 	protected void parse(Node node, Hashtable lineTable) {
 		super.parse(node, lineTable);
-		path = getNodeAttribute(node, "path");
-		url = getNodeAttribute(node, "url");
+		path = getNodeAttribute(node, "path"); //$NON-NLS-1$
+		url = getNodeAttribute(node, "url"); //$NON-NLS-1$
 		bindSourceLocation(node, lineTable);
 	}
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent);
-		writer.print("<archive");
+		writer.print("<archive"); //$NON-NLS-1$
 		if (path != null)
-			writer.print(" path=\"" + path + "\"");
+			writer.print(" path=\"" + path + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (url != null)
-			writer.print(" url=\"" + url + "\"");
-		writer.println("/>");
+			writer.print(" url=\"" + url + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println("/>"); //$NON-NLS-1$
 	}
 	public void restoreProperty(String name, Object oldValue, Object newValue)
 		throws CoreException {
