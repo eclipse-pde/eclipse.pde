@@ -3,15 +3,15 @@
       id="org.eclipse.pde"
       label="%featureName"
       version="3.0.0"
-      image="eclipse_update_120.jpg"
-      provider-name="%providerName">
+      provider-name="%providerName"
+      image="eclipse_update_120.jpg">
 
    <description>
       %description
    </description>
 
    <license url="%licenseURL">
-     %license
+      %license
    </license>
 
    <url>
@@ -27,49 +27,49 @@
          id="org.eclipse.pde"
          download-size="0"
          install-size="0"
-         version="0.0.0">
-   </plugin>
+         version="0.0.0"/>
 
    <plugin
          id="org.eclipse.pde.build"
          download-size="0"
          install-size="0"
-         version="0.0.0">
-   </plugin>
+         version="0.0.0"/>
 
    <plugin
          id="org.eclipse.pde.core"
          download-size="0"
          install-size="0"
-         version="0.0.0">
-   </plugin>
+         version="0.0.0"/>
 
+   <plugin
+         id="org.eclipse.pde.junit.runtime"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+         
    <plugin
          id="org.eclipse.pde.runtime"
          download-size="0"
          install-size="0"
-         version="0.0.0">
-   </plugin>
+         version="0.0.0"/>
 
    <plugin
          id="org.eclipse.pde.ui"
          download-size="0"
          install-size="0"
-         version="0.0.0">
-   </plugin>
+         version="0.0.0"/>
 
    <plugin
          id="org.eclipse.pde.doc.user"
          download-size="0"
          install-size="0"
-         version="0.0.0">
-   </plugin>
+         version="0.0.0"/>
 
    <plugin
          id="org.eclipse.pde.source"
          download-size="0"
          install-size="0"
-         version="0.0.0">
-   </plugin>
+         version="0.0.0"/>
+
 
 </feature>
