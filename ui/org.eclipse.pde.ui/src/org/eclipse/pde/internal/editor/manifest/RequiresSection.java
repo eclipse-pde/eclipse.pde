@@ -19,6 +19,7 @@ import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.wizards.*;
 import org.eclipse.pde.internal.editor.*;
 import org.eclipse.pde.internal.base.model.*;
+import org.eclipse.jface.resource.ImageDescriptor;
 
 public class RequiresSection extends PDEFormSection implements IHyperlinkListener, IModelChangedListener {
 	private Vector requires = new Vector();
@@ -28,6 +29,7 @@ public class RequiresSection extends PDEFormSection implements IHyperlinkListene
 	private boolean needsUpdate;
 	private TableViewer requiresList;
 	private Image pluginImage;
+	private Image errorImage;
 	public static final String SECTION_TITLE = "ManifestEditor.RequiresSection.title";
 	public static final String SECTION_DESC = "ManifestEditor.RequiresSection.desc";
 	public static final String SECTION_MORE = "ManifestEditor.RequiresSection.more";
@@ -44,10 +46,17 @@ private void addImportLink(IPluginImport importObject) {
 	String name = pluginId;
 	if (pluginInfo != null)
 		name = pluginInfo.getResourceString(pluginInfo.getName());
-	Label hyperlink = factory.createHyperlinkLabel(requiresParent, name, this);
-	hyperlink.setToolTipText(pluginId);
-	hyperlink.setData(pluginInfo);
-	imageLabel.setImage(pluginImage);
+	Label hyperlink = factory.createLabel(requiresParent, name);
+	if (pluginInfo!=null) {
+		factory.turnIntoHyperlink(hyperlink, this);
+		hyperlink.setToolTipText(pluginId);
+		hyperlink.setData(pluginInfo);
+		imageLabel.setImage(pluginImage);
+	}
+	else {
+		imageLabel.setImage(errorImage);
+	}
+
 }
 public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	this.factory = factory;
@@ -87,6 +96,7 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 }
 public void dispose() {
 	pluginImage.dispose();
+	errorImage.dispose();
 	IPluginModelBase model = (IPluginModelBase)getFormPage().getModel();
 	model.removeModelChangedListener(this);
 	super.dispose();
@@ -100,13 +110,20 @@ public void initialize(Object input) {
 }
 private void initializeImages() {
 	pluginImage = PDEPluginImages.DESC_REQ_PLUGIN_OBJ.createImage();
+	ImageDescriptor errorDesc = 
+		new OverlayIcon(PDEPluginImages.DESC_REQ_PLUGIN_OBJ, 
+		new ImageDescriptor[][] { { PDEPluginImages.DESC_ERROR_CO }
+	});
+	errorImage = errorDesc.createImage();
 }
 public void linkActivated(Control linkLabel) {
 	IPlugin pluginInfo = (IPlugin)linkLabel.getData();
+	if (pluginInfo==null) return;
 	((ManifestEditor)getFormPage().getEditor()).openPluginEditor(pluginInfo.getId());
 }
 public void linkEntered(Control linkLabel) {
 	IPlugin plugin = (IPlugin) linkLabel.getData();
+	if (plugin==null) return;
 	IPluginModelBase model = plugin.getModel();
 	String location = model.getInstallLocation();
 	if (location == null)

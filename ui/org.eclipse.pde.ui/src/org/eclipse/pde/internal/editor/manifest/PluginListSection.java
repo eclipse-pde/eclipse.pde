@@ -94,6 +94,7 @@ public boolean addExternalPlugins(IPluginModel model) {
 				plugin.getResourceString(plugin.getName()),
 				SWT.CHECK);
 		button.setData(plugin);
+		button.setToolTipText(plugin.getId());
 		button.setEnabled(model.isEditable());
 		if (matches(pluginObject.getImports(), plugin.getId()))
 			button.setSelection(true);
@@ -193,6 +194,7 @@ public boolean addWorkspacePlugins(IPluginModel model, boolean hasExternal) {
 				plugin.getResourceString(plugin.getName()),
 				SWT.CHECK);
 		button.setData(plugin);
+		button.setToolTipText(plugin.getId());
 		button.setEnabled(model.isEditable());
 		if (matches(pluginObject.getImports(), plugin.getId()))
 			button.setSelection(true);

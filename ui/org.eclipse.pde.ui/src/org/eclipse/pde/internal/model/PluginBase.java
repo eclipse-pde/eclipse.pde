@@ -212,8 +212,7 @@ public void swap(IPluginLibrary l1, IPluginLibrary l2) throws CoreException {
 	   throwCoreException("Libraries not in the model");
 	libraries.setElementAt(l1, index2);
 	libraries.setElementAt(l2, index1);
-	firePropertyChanged(l1, null);
-	firePropertyChanged(l2, null);
+	firePropertyChanged(this, P_LIBRARY_ORDER);
 }
 void writeChildren(String tag, Object[] children, PrintWriter writer) {
 	if (tag.equals("runtime")) 

@@ -23,6 +23,12 @@ public static final String P_PROVIDER = "provider";
  * that a version has changed.
  */
 public static final String P_VERSION = "version";
+
+/**
+ * A property that will be used to notify
+ * that library order in a plug-in has changed. 
+ */
+public static final String P_LIBRARY_ORDER = "library_order";
 /**
  * Adds a new extension to this plugin. This
  * method will throw a CoreException if

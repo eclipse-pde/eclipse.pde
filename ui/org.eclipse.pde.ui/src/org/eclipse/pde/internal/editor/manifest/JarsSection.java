@@ -206,12 +206,14 @@ public void doGlobalAction(String actionId) {
 private void fillContextMenu(IMenuManager manager) {
 	if (!(getFormPage().getModel() instanceof IEditable)) return;
 	ISelection selection = entryTable.getSelection();
-
-	manager.add(new Action(PDEPlugin.getResourceString(POPUP_NEW_FOLDER)) {
-		public void run() {
-			handleNew();
-		}
-	});
+	
+	if (currentLibrary!=null) {
+		manager.add(new Action(PDEPlugin.getResourceString(POPUP_NEW_FOLDER)) {
+			public void run() {
+				handleNew();
+			}
+		});
+	}
 
 	if (!selection.isEmpty()) {
 		manager.add(new Separator());

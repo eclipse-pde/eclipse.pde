@@ -193,6 +193,7 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 			handleUp();
 		}
 	});
+	upButton.setEnabled(false);
 	downButton = factory.createButton(buttonContainer, PDEPlugin.getResourceString(SECTION_DOWN), SWT.PUSH);
 	gd = new GridData(GridData.FILL_HORIZONTAL);
 	gd.verticalAlignment = GridData.BEGINNING;
@@ -202,6 +203,7 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 			handleDown();
 		}
 	});
+	downButton.setEnabled(false);
 	return container;
 }
 public void dispose() {
@@ -324,6 +326,9 @@ public void modelChanged(IModelChangedEvent event) {
 				libraryTable.update(changeObject, null);
 			}
 		}
+	}
+	else if (changeObject.equals(libraryTable.getInput())) {
+		libraryTable.refresh();
 	}
 }
 public void setFocus() {

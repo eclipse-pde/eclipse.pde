@@ -31,7 +31,7 @@ void load(PluginPrerequisiteModel importModel) {
 	this.id = importModel.getPlugin();
 	this.reexported = importModel.getExport();
 	this.version = importModel.getVersion();
-	if (importModel.getMatch())
+	if (importModel.getMatchByte()==importModel.PREREQ_MATCH_EQUIVALENT)
 		this.match = EXACT;
 }
 void load(Node node) {

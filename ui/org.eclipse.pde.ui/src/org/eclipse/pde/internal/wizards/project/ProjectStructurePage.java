@@ -117,6 +117,8 @@ private void createBuildProperties(IProject project, String library, String sour
 	WorkspaceBuildModel model = new WorkspaceBuildModel(file);
 	String libKey = IBuildEntry.JAR_PREFIX + library;
 	IBuildEntry entry = model.getFactory().createEntry(libKey);
+	if (!source.endsWith("/"))
+	   source = source + "/";
 	entry.addToken(source);
 	model.getBuild().add(entry);
 	model.save();
@@ -224,7 +226,8 @@ private void initialize() {
 	buildOutputText.setText("bin");
 	libraryText.setText(lastSegment+".jar");
 
-	sourceText.setText(createSourceFolderName(lastSegment));
+	//sourceText.setText(createSourceFolderName(lastSegment));
+	sourceText.setText("src");
 }
 public void setVisible(boolean visible) {
 	super.setVisible(visible);

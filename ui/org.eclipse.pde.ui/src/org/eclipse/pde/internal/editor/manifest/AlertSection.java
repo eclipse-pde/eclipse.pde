@@ -247,7 +247,13 @@ public void resourceChanged(IResourceChangeEvent event) {
 			  updateNeeded = true;
 			  if (getFormPage().isVisible()) {
 				  // need to update now!
-				  update();
+				  container.getDisplay().asyncExec(
+				    new Runnable() {
+				    	public void run() {
+				  		   update();
+				    	}
+				    }
+				  );
 			  }
 		   }
 		}

@@ -26,6 +26,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.preferences.*;
+import org.eclipse.core.boot.BootLoader;
 
 
 public class PluginPathUpdater {
@@ -103,7 +104,8 @@ private static void addToClasspathEntries(CheckedPlugin element, Vector result) 
 
 	for (int i = 0; i < libraries.length; i++) {
 		IPluginLibrary library = libraries[i];
-		IPath libraryPath = modelPath.append(library.getName());
+		String name = expandLibraryName(library.getName());
+		IPath libraryPath = modelPath.append(name);
 		IPath [] sourceAnnot = getSourceAnnotation(libraryPath, library);
 		if (!isEntryAdded(libraryPath, IClasspathEntry.CPE_VARIABLE, result)) {
 		   IClasspathEntry libraryEntry = JavaCore.newVariableEntry(libraryPath, sourceAnnot[0], sourceAnnot[1]);
@@ -279,6 +281,7 @@ private void updateLibrary(
 	IClasspathEntry[] entries,
 	Vector result) {
 	IPath basePath = new Path(PDEPlugin.ECLIPSE_HOME_VARIABLE).append(relativePath);
+	name = expandLibraryName(name);
 	IPath libraryPath = basePath.append(name);
 	// Search for this entry
 	IClasspathEntry libraryEntry = null;
@@ -311,6 +314,28 @@ private void updateLibrary(
 			result.addElement(libraryEntry);
 		}
 }
+
+private static String expandLibraryName(String source) {
+	if (source.charAt(0)!='$') return source;
+	IPath path = new Path(source);
+	String firstSegment = path.segment(0);
+	if (firstSegment.charAt(firstSegment.length()-1)!='$') return source;
+	String variable = firstSegment.substring(1, firstSegment.length()-1);
+	variable = variable.toLowerCase();
+	if (variable.equals("ws")) {
+		variable = BootLoader.getWS();
+		if (variable!=null) variable = "ws"+File.separator+variable;
+	}
+	else if (variable.equals("os")) {
+		variable = BootLoader.getOS();
+		if (variable!=null) variable = "os"+File.separator+variable;
+	}
+	else
+		variable = null;
+	if (variable != null) return variable;
+	return source;
+}
+
 private void updateLibrary(
 	IPlugin plugin,
 	String name,

@@ -98,6 +98,7 @@ public void mouseExit(MouseEvent e) {
 		(IHyperlinkListener) hyperlinkListeners.get(control);
 	if (action != null)
 		action.linkExited(control);
+	lastLink = null;
 }
 		public void mouseHover(MouseEvent e) {
 		}

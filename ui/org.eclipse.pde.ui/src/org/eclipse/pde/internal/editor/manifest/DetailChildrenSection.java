@@ -118,7 +118,7 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 			container,
 			"",
 			SWT.MULTI | SWT.WRAP | SWT.V_SCROLL | factory.BORDER_STYLE);
-	text.setEditable(true);
+	text.setEditable(false);
 	gd = new GridData(GridData.FILL_BOTH);
 	text.setLayoutData(gd);
 	text.addModifyListener(new ModifyListener() {
@@ -323,6 +323,7 @@ private void updateInput() {
   applyButton.setEnabled(false);
   resetButton.setEnabled(false);
   updateText(null);
+  text.setEditable(!isReadOnly() && currentElement != null);
 }
 private void updateText(IPluginElement element) {
    text.setText(element!=null && element.getText()!=null ? element.getText() : "");

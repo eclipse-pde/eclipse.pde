@@ -127,6 +127,7 @@ public DependencyGraph(Composite parent, int style) {
 	this.setMenu(menu);
 	menuManager.addMenuListener(new IMenuListener() {
 		public void menuAboutToShow(IMenuManager manager) {
+			manager.removeAll();
 			Control node = hyperlinkHandler.getLastLink();
 			if (node != null) {
 				selectedNode = (IDependencyGraphNode) node.getData();

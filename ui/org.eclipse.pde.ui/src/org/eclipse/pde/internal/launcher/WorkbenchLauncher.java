@@ -18,7 +18,6 @@ import java.io.File;
 import org.eclipse.pde.internal.preferences.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.jdt.core.*;
-import org.eclipse.jdt.internal.ui.launcher.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.debug.core.model.*;
 import org.eclipse.pde.internal.*;
@@ -253,24 +252,34 @@ protected boolean doLaunch(
 	}
 	return false;
 }
+
+private IProject getCorrespondingProject(Object runnable) throws CoreException {
+	if (runnable instanceof IFile) {
+		IFile file = (IFile) runnable;
+		return file.getProject();
+	}
+	if (runnable instanceof IJavaProject) {
+		return ((IJavaProject) runnable).getProject();
+	}
+	if (runnable instanceof IProject) {
+		return (IProject) runnable;
+	}
+	if (runnable instanceof MainTypeAdaptable) {
+		return ((MainTypeAdaptable) runnable).getProject();
+	}
+	if (runnable instanceof IJavaElement) {
+		IJavaElement je = (IJavaElement)runnable;
+		return je.getJavaProject().getProject();
+	}
+	return null;
+}
+
 public boolean findProjectToLaunch(Object[] objects) {
 	Object runnable = objects[0];
 
 	projectToLaunch = null;
-	if (runnable instanceof IFile) {
-		IFile file = (IFile) runnable;
-		projectToLaunch = file.getProject();
-	} else
-		if (runnable instanceof IJavaProject) {
-			projectToLaunch = ((IJavaProject) runnable).getProject();
-		} else
-			if (runnable instanceof IProject) {
-				projectToLaunch = (IProject) runnable;
-			} else
-				if (runnable instanceof MainTypeAdaptable) {
-					projectToLaunch = ((MainTypeAdaptable) runnable).getProject();
-				}
 	try {
+		projectToLaunch = getCorrespondingProject(runnable);
 		if (projectToLaunch == null
 			|| projectToLaunch.hasNature(PDEPlugin.PLUGIN_NATURE) == false) {
 			return false;
@@ -418,11 +427,23 @@ private void showNoLauncherDialog() {
 		PDEPlugin.getResourceString(NO_LAUNCHER_TITLE),
 		PDEPlugin.getResourceString(NO_LAUNCHER_MESSAGE));
 }
-public String getLaunchMemento(Object arg0) {
+
+public String getLaunchMemento(Object object) {
+	try {
+		IProject project = getCorrespondingProject(object);
+		if (project==null) return null;
+		return project.getName();
+	}
+	catch (CoreException e) {
+		PDEPlugin.logException(e);
 		return null;
+	}
 }
 
-public Object getLaunchObject(String arg0) {
+public Object getLaunchObject(String memento) {
+	if (memento == null) return null;
+	IProject project = PDEPlugin.getWorkspace().getRoot().getProject(memento);
+	if (project.exists()) return project;
 	return null;
 }
 
