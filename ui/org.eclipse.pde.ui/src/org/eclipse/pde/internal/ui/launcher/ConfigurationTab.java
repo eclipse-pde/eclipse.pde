@@ -136,13 +136,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 	
 	private void initializeDefaultPlugins() {
 		fPluginList.clear();
-		IPluginModelBase model = getPlugin("org.eclipse.osgi.services");
-		if (model != null)
-			fPluginList.add(new Entry(model, -1));
-		model = getPlugin("org.eclipse.osgi.util");
-		if (model != null)
-			fPluginList.add(new Entry(model, -1));
-		model = getPlugin("org.eclipse.core.runtime");
+		IPluginModelBase model = getPlugin("org.eclipse.core.runtime");
 		if (model != null)
 			fPluginList.add(new Entry(model, 2));
 		model = getPlugin("org.eclipse.update.configurator");
