@@ -49,9 +49,9 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	protected static final String FEATURE_DESTINATION = getPropertyFormat(PROPERTY_FEATURE_DESTINATION);
 	protected static final String FEATURE_FULL_NAME = getPropertyFormat(PROPERTY_FEATURE_FULL_NAME);
-	protected static final String FEATURE_FOLDER_NAME = "features/" + FEATURE_FULL_NAME;
+	protected static final String FEATURE_FOLDER_NAME = "features/" + FEATURE_FULL_NAME; //$NON-NLS-1$
 	protected static final String FEATURE_TEMP_FOLDER = getPropertyFormat(PROPERTY_FEATURE_TEMP_FOLDER);
-	protected static final String SOURCE_FEATURE_FULL_NAME = getPropertyFormat(PROPERTY_FEATURE) + ".source" + getPropertyFormat(PROPERTY_FEATURE_VERSION_SUFFIX);
+	protected static final String SOURCE_FEATURE_FULL_NAME = getPropertyFormat(PROPERTY_FEATURE) + ".source" + getPropertyFormat(PROPERTY_FEATURE_VERSION_SUFFIX); //$NON-NLS-1$
 
 /**
  * Returns a list of PluginModel objects representing the elements. The boolean
@@ -70,7 +70,7 @@ protected List computeElements(boolean fragments) throws CoreException {
 			else
 				model = getRegistry().getPlugin(identifier.getIdentifier(), identifier.getVersion().toString());
 			if (model == null)
-				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, Policy.bind("exception.missingPlugin", entry.getVersionedIdentifier().toString()), null));
+				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, Policy.bind("exception.missingPlugin", entry.getVersionedIdentifier().toString()), null)); //$NON-NLS-1$
 			else
 				result.add(model);
 		}
@@ -82,16 +82,16 @@ public void setGenerateChildrenScript(boolean generate) {
 }
 public void generate() throws CoreException {
 	if (featureID == null)
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, Policy.bind("error.missingFeatureId"), null));
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, Policy.bind("error.missingFeatureId"), null)); //$NON-NLS-1$
 	if (installLocation == null)
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_INSTALL_LOCATION_MISSING, Policy.bind("error.missingInstallLocation"), null));
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_INSTALL_LOCATION_MISSING, Policy.bind("error.missingInstallLocation"), null)); //$NON-NLS-1$
 
 	readFeature();
 	try {
 		// if the feature defines its own custom script, we do not generate a new one
 		// but we do try to update the version number
 		String custom = (String) getBuildProperties(feature).get(PROPERTY_CUSTOM);
-		if (custom != null && custom.equalsIgnoreCase("true")) {
+		if (custom != null && custom.equalsIgnoreCase("true")) { //$NON-NLS-1$
 			File buildFile = new File(getFeatureRootLocation(), buildScriptName);
 			updateVersion(buildFile, PROPERTY_FEATURE_VERSION_SUFFIX, feature.getFeatureVersion());
 			return;
@@ -109,7 +109,7 @@ public void generate() throws CoreException {
 			script.close();
 		}
 	} catch (IOException e) {
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_SCRIPT, Policy.bind("exception.writeScript"), e));
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_SCRIPT, Policy.bind("exception.writeScript"), e)); //$NON-NLS-1$
 	}
 }
 /**
@@ -155,7 +155,7 @@ protected void generateBuildZipsTarget(AntScript script) throws CoreException {
 	Map params = new HashMap(2);
 	params.put(PROPERTY_TARGET, TARGET_BUILD_ZIPS);
 	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, null, params);
-	script.printString(--tab, "</target>");
+	script.printString(--tab, "</target>"); //$NON-NLS-1$
 }
 /**
  * FIXME: add comments
@@ -164,23 +164,23 @@ protected void generateZipIndividualTarget(AntScript script, String zipName, Str
 	int tab = 1;
 	script.println();
 	script.printTargetDeclaration(tab++, zipName, TARGET_INIT, null, null, null);
-	script.printZipTask(tab, FEATURE_DESTINATION + "/" + zipName, BASEDIR + "/" + source, false, null);
-	script.printString(--tab, "</target>");
+	script.printZipTask(tab, FEATURE_DESTINATION + "/" + zipName, BASEDIR + "/" + source, false, null); //$NON-NLS-1$ //$NON-NLS-2$
+	script.printString(--tab, "</target>"); //$NON-NLS-1$
 }
 protected void generateCleanTarget(AntScript script) throws CoreException {
 	int tab = 1;
 	script.println();
 	IPath basedir = new Path(FEATURE_DESTINATION);
 	script.printTargetDeclaration(tab++, TARGET_CLEAN, TARGET_INIT, null, null, null);
-	script.printDeleteTask(tab, null, basedir.append(FEATURE_FULL_NAME + ".jar").toString(), null);
-	script.printDeleteTask(tab, null, basedir.append(FEATURE_FULL_NAME + ".bin.dist.zip").toString(), null);
-	script.printDeleteTask(tab, null, basedir.append(FEATURE_FULL_NAME + ".log.zip").toString(), null);
-	script.printDeleteTask(tab, null, basedir.append(FEATURE_FULL_NAME + ".src.zip").toString(), null);
+	script.printDeleteTask(tab, null, basedir.append(FEATURE_FULL_NAME + ".jar").toString(), null); //$NON-NLS-1$
+	script.printDeleteTask(tab, null, basedir.append(FEATURE_FULL_NAME + ".bin.dist.zip").toString(), null); //$NON-NLS-1$
+	script.printDeleteTask(tab, null, basedir.append(FEATURE_FULL_NAME + ".log.zip").toString(), null); //$NON-NLS-1$
+	script.printDeleteTask(tab, null, basedir.append(FEATURE_FULL_NAME + ".src.zip").toString(), null); //$NON-NLS-1$
 	script.printDeleteTask(tab, FEATURE_TEMP_FOLDER, null, null);
 	Map params = new HashMap(2);
 	params.put(PROPERTY_TARGET, TARGET_CLEAN);
 	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, null, params);
-	script.printString(--tab, "</target>");
+	script.printString(--tab, "</target>"); //$NON-NLS-1$
 }
 protected void generateZipLogsTarget(AntScript script) {
 	int tab = 1;
@@ -190,12 +190,12 @@ protected void generateZipLogsTarget(AntScript script) {
 	script.printMkdirTask(tab, FEATURE_TEMP_FOLDER);
 	Map params = new HashMap(1);
 	params.put(PROPERTY_TARGET, TARGET_GATHER_LOGS);
-	params.put(PROPERTY_DESTINATION_TEMP_FOLDER, new Path(FEATURE_TEMP_FOLDER).append("plugins").toString());
-	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, "false", params);
-	IPath destination = new Path(FEATURE_DESTINATION).append(FEATURE_FULL_NAME + ".log.zip");
+	params.put(PROPERTY_DESTINATION_TEMP_FOLDER, new Path(FEATURE_TEMP_FOLDER).append("plugins").toString()); //$NON-NLS-1$
+	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, "false", params); //$NON-NLS-1$
+	IPath destination = new Path(FEATURE_DESTINATION).append(FEATURE_FULL_NAME + ".log.zip"); //$NON-NLS-1$
 	script.printZipTask(tab, destination.toString(), FEATURE_TEMP_FOLDER, true, null);
 	script.printDeleteTask(tab, FEATURE_TEMP_FOLDER, null, null);
-	script.printString(--tab, "</target>");
+	script.printString(--tab, "</target>"); //$NON-NLS-1$
 }
 
 protected void generateZipSourcesTarget(AntScript script) {
@@ -206,11 +206,11 @@ protected void generateZipSourcesTarget(AntScript script) {
 	script.printMkdirTask(tab, FEATURE_TEMP_FOLDER);
 	Map params = new HashMap(1);
 	params.put(PROPERTY_TARGET, TARGET_GATHER_SOURCES);
-	params.put(PROPERTY_DESTINATION_TEMP_FOLDER, FEATURE_TEMP_FOLDER + "/" + "plugins" + "/" + SOURCE_FEATURE_FULL_NAME + "/" + "src");
+	params.put(PROPERTY_DESTINATION_TEMP_FOLDER, FEATURE_TEMP_FOLDER + "/" + "plugins" + "/" + SOURCE_FEATURE_FULL_NAME + "/" + "src"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, null, params);
-	script.printZipTask(tab, FEATURE_DESTINATION + "/" + FEATURE_FULL_NAME + ".src.zip", FEATURE_TEMP_FOLDER, true, null);
+	script.printZipTask(tab, FEATURE_DESTINATION + "/" + FEATURE_FULL_NAME + ".src.zip", FEATURE_TEMP_FOLDER, true, null); //$NON-NLS-1$ //$NON-NLS-2$
 	script.printDeleteTask(tab, FEATURE_TEMP_FOLDER, null, null);
-	script.printString(--tab, "</target>");
+	script.printString(--tab, "</target>"); //$NON-NLS-1$
 }
 protected void generateGatherBinPartsTarget(AntScript script) throws CoreException {
 	int tab = 1;
@@ -218,17 +218,17 @@ protected void generateGatherBinPartsTarget(AntScript script) throws CoreExcepti
 	script.printTargetDeclaration(tab++, TARGET_GATHER_BIN_PARTS, TARGET_INIT, PROPERTY_FEATURE_BASE, null, null);
 	Map params = new HashMap(1);
 	params.put(PROPERTY_TARGET, TARGET_GATHER_BIN_PARTS);
-	params.put(PROPERTY_DESTINATION_TEMP_FOLDER, new Path(getPropertyFormat(PROPERTY_FEATURE_BASE)).append("plugins").toString());
+	params.put(PROPERTY_DESTINATION_TEMP_FOLDER, new Path(getPropertyFormat(PROPERTY_FEATURE_BASE)).append("plugins").toString()); //$NON-NLS-1$
 	script.printAntCallTask(tab, TARGET_CHILDREN, null, params);
 	String include = (String) getBuildProperties(feature).get(PROPERTY_BIN_INCLUDES);
 	String exclude = (String) getBuildProperties(feature).get(PROPERTY_BIN_EXCLUDES);
-	String root = "${feature.base}/" + FEATURE_FOLDER_NAME;
+	String root = "${feature.base}/" + FEATURE_FOLDER_NAME; //$NON-NLS-1$
 	script.printMkdirTask(tab, root);
 	if (include != null || exclude != null) {
 		FileSet fileSet = new FileSet(BASEDIR, null, include, null, exclude, null, null);
 		script.printCopyTask(tab, null, root, new FileSet[]{ fileSet });
 	}	
-	script.printString(--tab, "</target>");
+	script.printString(--tab, "</target>"); //$NON-NLS-1$
 }
 protected void generateBuildUpdateJarTarget(AntScript script) {
 	int tab = 1;
@@ -244,10 +244,10 @@ protected void generateBuildUpdateJarTarget(AntScript script) {
 	params.put(PROPERTY_FEATURE_BASE, FEATURE_TEMP_FOLDER);
 	// Be sure to call the gather with children turned off.  The only way to do this is 
 	// to clear all inherited values.  Must remember to setup anything that is really expected.
-	script.printAntCallTask(tab, TARGET_GATHER_BIN_PARTS, "false", params);
-	script.printJarTask(tab, FEATURE_DESTINATION + "/" + FEATURE_FULL_NAME + ".jar", FEATURE_TEMP_FOLDER + "/" + FEATURE_FOLDER_NAME);
+	script.printAntCallTask(tab, TARGET_GATHER_BIN_PARTS, "false", params); //$NON-NLS-1$
+	script.printJarTask(tab, FEATURE_DESTINATION + "/" + FEATURE_FULL_NAME + ".jar", FEATURE_TEMP_FOLDER + "/" + FEATURE_FOLDER_NAME); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	script.printDeleteTask(tab, FEATURE_TEMP_FOLDER, null, null);
-	script.printString(--tab, "</target>");
+	script.printString(--tab, "</target>"); //$NON-NLS-1$
 }
 /**
  * Zip up the whole feature.
@@ -259,11 +259,11 @@ protected void generateZipDistributionWholeTarget(AntScript script) {
 	script.printDeleteTask(tab, FEATURE_TEMP_FOLDER, null, null);
 	script.printMkdirTask(tab, FEATURE_TEMP_FOLDER);
 	Map params = new HashMap(1);
-	params.put(PROPERTY_INCLUDE_CHILDREN, "true");
+	params.put(PROPERTY_INCLUDE_CHILDREN, "true"); //$NON-NLS-1$
 	script.printAntCallTask(tab, TARGET_GATHER_BIN_PARTS, null, params);
-	script.printZipTask(tab, FEATURE_DESTINATION + "/" + FEATURE_FULL_NAME + ".bin.dist.zip", FEATURE_TEMP_FOLDER, false, null);
+	script.printZipTask(tab, FEATURE_DESTINATION + "/" + FEATURE_FULL_NAME + ".bin.dist.zip", FEATURE_TEMP_FOLDER, false, null); //$NON-NLS-1$ //$NON-NLS-2$
 	script.printDeleteTask(tab, FEATURE_TEMP_FOLDER, null, null);
-	script.printString(--tab, "</target>");
+	script.printString(--tab, "</target>"); //$NON-NLS-1$
 }
 /**
  * Executes a given target in all children's script files.
@@ -271,14 +271,14 @@ protected void generateZipDistributionWholeTarget(AntScript script) {
 protected void generateAllChildrenTarget(AntScript script) {
 	StringBuffer depends = new StringBuffer();
 	depends.append(TARGET_INIT);
-	depends.append(",");
+	depends.append(","); //$NON-NLS-1$
 	depends.append(TARGET_ALL_PLUGINS);
-	depends.append(",");
+	depends.append(","); //$NON-NLS-1$
 	depends.append(TARGET_ALL_FRAGMENTS);
 	
 	script.println();
 	script.printTargetDeclaration(1, TARGET_ALL_CHILDREN, depends.toString(), null, null, null);
-	script.printString(1, "</target>");
+	script.printString(1, "</target>"); //$NON-NLS-1$
 }
 /**
  * Target responsible for delegating target calls to plug-in's build.xml scripts.
@@ -296,7 +296,7 @@ protected void generateAllPluginsTarget(AntScript script) throws CoreException {
 			script.printAntTask(tab, buildScriptName, location.toString(), getPropertyFormat(PROPERTY_TARGET), null, null, null);
 		}
 	}
-	script.printString(--tab, "</target>");
+	script.printString(--tab, "</target>"); //$NON-NLS-1$
 }
 /**
  * Target responsible for delegating target calls to fragments's build.xml scripts.
@@ -311,7 +311,7 @@ protected void generateAllFragmentsTarget(AntScript script) throws CoreException
 		IPath location = Utils.makeRelative(new Path(getLocation(fragment)), new Path(getFeatureRootLocation()));
 		script.printAntTask(tab, buildScriptName, location.toString(), getPropertyFormat(PROPERTY_TARGET), null, null, null);
 	}
-	script.printString(--tab, "</target>");
+	script.printString(--tab, "</target>"); //$NON-NLS-1$
 }
 
 
@@ -323,22 +323,22 @@ protected void generateAllFragmentsTarget(AntScript script) throws CoreException
  */
 protected void generateEpilogue(AntScript script) {
 	script.println();
-	script.printString(0, "</project>");
+	script.printString(0, "</project>"); //$NON-NLS-1$
 }
 /**
  * Defines, the XML declaration, Ant project and init target.
  */
 protected void generatePrologue(AntScript script) {
 	int tab = 1;
-	script.printProjectDeclaration(feature.getFeatureIdentifier(), TARGET_BUILD_UPDATE_JAR, ".");
+	script.printProjectDeclaration(feature.getFeatureIdentifier(), TARGET_BUILD_UPDATE_JAR, "."); //$NON-NLS-1$
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_INIT, null, null, null, null);
 	script.printProperty(tab, PROPERTY_FEATURE, feature.getFeatureIdentifier());
-	script.printProperty(tab, PROPERTY_FEATURE_VERSION_SUFFIX, "_" + feature.getFeatureVersion());
+	script.printProperty(tab, PROPERTY_FEATURE_VERSION_SUFFIX, "_" + feature.getFeatureVersion()); //$NON-NLS-1$
 	script.printProperty(tab, PROPERTY_FEATURE_FULL_NAME, getPropertyFormat(PROPERTY_FEATURE) + getPropertyFormat(PROPERTY_FEATURE_VERSION_SUFFIX));
-	script.printProperty(tab, PROPERTY_FEATURE_TEMP_FOLDER, BASEDIR + "/" + PROPERTY_FEATURE_TEMP_FOLDER);
+	script.printProperty(tab, PROPERTY_FEATURE_TEMP_FOLDER, BASEDIR + "/" + PROPERTY_FEATURE_TEMP_FOLDER); //$NON-NLS-1$
 	script.printProperty(tab, PROPERTY_FEATURE_DESTINATION, BASEDIR);
-	script.printString(--tab, "</target>");
+	script.printString(--tab, "</target>"); //$NON-NLS-1$
 }
 protected void generateChildrenScripts() throws CoreException {
 	generateModels(new PluginBuildScriptGenerator(), computeElements(false));
@@ -360,7 +360,7 @@ protected void generateModels(ModelBuildScriptGenerator generator, List models) 
 }
 public void setFeature(String featureID) throws CoreException {
 	if (featureID == null)
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, Policy.bind("error.missingFeatureId"), null));
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, Policy.bind("error.missingFeatureId"), null)); //$NON-NLS-1$
 	this.featureID = featureID;
 }
 /**
@@ -369,16 +369,16 @@ public void setFeature(String featureID) throws CoreException {
 protected void readFeature() throws CoreException {
 	String location = getFeatureRootLocation();
 	if (location == null)
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, Policy.bind("error.missingFeatureLocation"), null));
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, Policy.bind("error.missingFeatureLocation"), null)); //$NON-NLS-1$
 	
 	FeatureExecutableFactory factory = new FeatureExecutableFactory();
 	File file = new File(location);
 	try {
 		feature = (Feature) factory.createFeature(file.toURL(), null);
 		if (feature == null)
-			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, Policy.bind("error.creatingFeature", new String[] {featureID}), null));	
+			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, Policy.bind("error.creatingFeature", new String[] {featureID}), null));	 //$NON-NLS-1$
 	} catch (MalformedURLException e) {
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, Policy.bind("error.creatingFeature", new String[] {featureID}), e));
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, Policy.bind("error.creatingFeature", new String[] {featureID}), e)); //$NON-NLS-1$
 	}
 }
 /**
@@ -417,7 +417,7 @@ protected void generateChildrenTarget(AntScript script) {
 	script.println();
 	script.printTargetDeclaration(1, TARGET_CHILDREN, null, PROPERTY_INCLUDE_CHILDREN, null, null);
 	script.printAntCallTask(2, TARGET_ALL_CHILDREN, null, null);
-	script.printString(1, "</target>");
+	script.printString(1, "</target>"); //$NON-NLS-1$
 }
 
 protected void generateBuildJarsTarget(AntScript script) throws CoreException {
@@ -427,23 +427,23 @@ protected void generateBuildJarsTarget(AntScript script) throws CoreException {
 	Map params = new HashMap(1);
 	params.put(PROPERTY_TARGET, TARGET_BUILD_JARS);
 	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, null, params);
-	script.printEndTag(--tab, "target");
+	script.printEndTag(--tab, "target"); //$NON-NLS-1$
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_BUILD_SOURCES, TARGET_INIT, null, null, null);
 	params.clear();
 	params.put(PROPERTY_TARGET, TARGET_BUILD_SOURCES);
 	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, null, params);
-	script.printEndTag(--tab, "target");
+	script.printEndTag(--tab, "target"); //$NON-NLS-1$
 }
 
 protected void generateRefreshTarget(AntScript script) {
 	int tab = 1;
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_REFRESH, TARGET_INIT, PROPERTY_ECLIPSE_RUNNING, null, null);
-	script.printRefreshLocalTask(tab, getPropertyFormat(PROPERTY_FEATURE), "infinite");
+	script.printRefreshLocalTask(tab, getPropertyFormat(PROPERTY_FEATURE), "infinite"); //$NON-NLS-1$
 	Map params = new HashMap(2);
 	params.put(PROPERTY_TARGET, TARGET_REFRESH);
 	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, null, params);
-	script.printString(--tab, "</target>");
+	script.printString(--tab, "</target>"); //$NON-NLS-1$
 }
 }

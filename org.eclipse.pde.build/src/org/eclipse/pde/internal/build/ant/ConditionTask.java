@@ -21,12 +21,12 @@ public ConditionTask(String property, String value, Condition condition) {
 
 public void print(AntScript script, int tab) {
 	script.printTab(tab);
-	script.print("<condition");
-	script.printAttribute("property", property, true);
-	script.printAttribute("value", value, false);
-	script.println(">");
+	script.print("<condition"); //$NON-NLS-1$
+	script.printAttribute("property", property, true); //$NON-NLS-1$
+	script.printAttribute("value", value, false); //$NON-NLS-1$
+	script.println(">"); //$NON-NLS-1$
 	condition.print(script, ++tab);
 	script.printTab(--tab);
-	script.println("</condition>");
+	script.println("</condition>"); //$NON-NLS-1$
 }
 }

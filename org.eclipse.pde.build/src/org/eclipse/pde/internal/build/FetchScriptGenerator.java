@@ -80,7 +80,7 @@ public void generate() throws CoreException {
 			script.close();
 		}
 	} catch (IOException e) {
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_SCRIPT, Policy.bind("exception.writeScript"), e));
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_SCRIPT, Policy.bind("exception.writeScript"), e)); //$NON-NLS-1$
 	}
 }
 
@@ -101,13 +101,13 @@ protected void generateFetchTarget() throws CoreException {
 	tab++;
 	generateFetchEntry(tab, element);
 	tab--;
-	script.printString(tab, "</target>");
+	script.printString(tab, "</target>"); //$NON-NLS-1$
 }
 
 protected void generateFetchEntry(int tab, String entry) throws CoreException {
 	String cvsInfo = getCVSInfo(entry);
 	if (cvsInfo == null)
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ENTRY_MISSING, Policy.bind("error.missingDirectoryEntry", entry), null));
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ENTRY_MISSING, Policy.bind("error.missingDirectoryEntry", entry), null)); //$NON-NLS-1$
 
 	int index = entry.indexOf('@');
 	String type = entry.substring(0, index);
@@ -124,7 +124,7 @@ protected void generateFetchEntry(int tab, String entry) throws CoreException {
 	generateMkdirs(tab, location);
 	script.printCVSTask(tab, null, cvsRoot, location, element, tag, getPropertyFormat(PROPERTY_QUIET), cvsPassFileLocation);
 
-	if (fetchChildren && type.equals("feature")) {
+	if (fetchChildren && type.equals("feature")) { //$NON-NLS-1$
 		Feature feature = retrieveFeature(element, cvsRoot, tag, password);
 		generateChildrenFetchScript(tab, feature);
 	}
@@ -146,31 +146,31 @@ protected void generateChildrenFetchScript(int tab, Feature feature) throws Core
 	for (int i = 0; i < children.length; i++) {
 		String elementId = children[i].getVersionedIdentifier().getIdentifier();
 		if (children[i].isFragment())
-			generateFetchEntry(tab, "fragment@" + elementId);
+			generateFetchEntry(tab, "fragment@" + elementId); //$NON-NLS-1$
 		else
-			generateFetchEntry(tab, "plugin@" + elementId);
+			generateFetchEntry(tab, "plugin@" + elementId); //$NON-NLS-1$
 	}
 }
 
 protected Feature retrieveFeature(String element, String cvsRoot, String tag, String password) throws CoreException {
 	File root = new File(installLocation);
-	File target = new File(root, "retrieve.xml");
+	File target = new File(root, "retrieve.xml"); //$NON-NLS-1$
 	try {
 		AntScript retrieve = new AntScript(new FileOutputStream(target));
 		try {
-			retrieve.printProjectDeclaration("RetrieveFeature", "main", ".");
-			retrieve.printTargetDeclaration(0, "main", null, null, null, null);
-			IPath module = new Path(element).append("feature.xml");
+			retrieve.printProjectDeclaration("RetrieveFeature", "main", "."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			retrieve.printTargetDeclaration(0, "main", null, null, null, null); //$NON-NLS-1$
+			IPath module = new Path(element).append("feature.xml"); //$NON-NLS-1$
 			if (password != null)
 				retrieve.printCVSPassTask(0, cvsRoot, password, cvsPassFileLocation);
-			retrieve.printCVSTask(0, null, cvsRoot, null, module.toString(), tag, "true", cvsPassFileLocation);
-			retrieve.printString(0, "</target>");
-			retrieve.printString(0, "</project>");
+			retrieve.printCVSTask(0, null, cvsRoot, null, module.toString(), tag, "true", cvsPassFileLocation); //$NON-NLS-1$
+			retrieve.printString(0, "</target>"); //$NON-NLS-1$
+			retrieve.printString(0, "</project>"); //$NON-NLS-1$
 		} finally {
 			retrieve.close();
 		}
 	} catch (IOException e) {
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_SCRIPT, Policy.bind("exception.writeScript"), e));
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_SCRIPT, Policy.bind("exception.writeScript"), e)); //$NON-NLS-1$
 	}
 	try {
 		AntRunner runner = new AntRunner();
@@ -182,10 +182,10 @@ protected Feature retrieveFeature(String element, String cvsRoot, String tag, St
 		Feature feature = (Feature) factory.createFeature(featureFolder.toURL(), null);
 		clear(featureFolder);
 		if (feature == null)
-			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, Policy.bind("exception.missingFeature", new String[] {element}), null));
+			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, Policy.bind("exception.missingFeature", new String[] {element}), null)); //$NON-NLS-1$
 		return feature;
 	} catch (Exception e) {
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, Policy.bind("error.creatingFeature", new String[] {element}), e));
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, Policy.bind("error.creatingFeature", new String[] {element}), e)); //$NON-NLS-1$
 	}
 }
 
@@ -217,7 +217,7 @@ public static boolean clear(File root) {
 
 protected String getElementLocation(String type) {
 	IPath location = new Path(getPropertyFormat(PROPERTY_INSTALL));
-	if (type.equals("feature"))
+	if (type.equals("feature")) //$NON-NLS-1$
 		location = location.append(DEFAULT_FEATURE_LOCATION);
 	else
 		location = location.append(DEFAULT_PLUGIN_LOCATION);
@@ -247,7 +247,7 @@ protected void readDirectory() throws CoreException {
 			is.close();
 		}
 	} catch (IOException e) {
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READ_DIRECTORY, Policy.bind("error.readingDirectory"), e));
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READ_DIRECTORY, Policy.bind("error.readingDirectory"), e)); //$NON-NLS-1$
 	}
 }
 
@@ -257,10 +257,10 @@ protected void readDirectory() throws CoreException {
  */
 protected void generatePrologue() {
 	script.println();
-	script.printComment(0, "Fetch script for " + element);
+	script.printComment(0, "Fetch script for " + element); //$NON-NLS-1$
 	script.println();
-	script.printProjectDeclaration("FetchScript", TARGET_FETCH, ".");
-	script.printProperty(1,PROPERTY_QUIET, "true");
+	script.printProjectDeclaration("FetchScript", TARGET_FETCH, "."); //$NON-NLS-1$ //$NON-NLS-2$
+	script.printProperty(1,PROPERTY_QUIET, "true"); //$NON-NLS-1$
 }
 
 /**
@@ -268,7 +268,7 @@ protected void generatePrologue() {
  */
 protected void generateEpilogue() {
 	script.println();
-	script.printString(0, "</project>");
+	script.printString(0, "</project>"); //$NON-NLS-1$
 }
 
 	

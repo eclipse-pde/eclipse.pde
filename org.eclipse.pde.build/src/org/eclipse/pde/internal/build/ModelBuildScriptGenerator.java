@@ -33,21 +33,21 @@ public abstract class ModelBuildScriptGenerator extends AbstractBuildScriptGener
 	protected static final String FULL_NAME = getPropertyFormat(PROPERTY_FULL_NAME);
 	protected static final String TEMP_FOLDER = getPropertyFormat(PROPERTY_TEMP_FOLDER);
 	protected static final String PLUGIN_DESTINATION = getPropertyFormat(PROPERTY_PLUGIN_DESTINATION);
-	protected static final String PLUGIN_ZIP_DESTINATION = PLUGIN_DESTINATION + "/" + FULL_NAME + ".zip";
-	protected static final String PLUGIN_UPDATE_JAR_DESTINATION = PLUGIN_DESTINATION + "/" + FULL_NAME + ".jar";
+	protected static final String PLUGIN_ZIP_DESTINATION = PLUGIN_DESTINATION + "/" + FULL_NAME + ".zip"; //$NON-NLS-1$ //$NON-NLS-2$
+	protected static final String PLUGIN_UPDATE_JAR_DESTINATION = PLUGIN_DESTINATION + "/" + FULL_NAME + ".jar"; //$NON-NLS-1$ //$NON-NLS-2$
 
 /**
  * @see AbstractScriptGenerator#generate()
  */
 public void generate() throws CoreException {
 	if (model == null)
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ELEMENT_MISSING, Policy.bind("error.missingElement"), null));
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ELEMENT_MISSING, Policy.bind("error.missingElement"), null)); //$NON-NLS-1$
 
 	try {
 		// if the model defines its own custom script, we do not generate a new one
 		// but we do try to update the version number
 		String custom = (String) getBuildProperties(model).get(PROPERTY_CUSTOM);
-		if (custom != null && custom.equalsIgnoreCase("true")) {
+		if (custom != null && custom.equalsIgnoreCase("true")) { //$NON-NLS-1$
 			String root = getLocation(model);
 			File buildFile = new File(root, buildScriptName);
 			updateVersion(buildFile, PROPERTY_VERSION_SUFFIX, model.getVersion());
@@ -63,7 +63,7 @@ public void generate() throws CoreException {
 			script.close();
 		}
 	} catch (IOException e) {
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_SCRIPT, Policy.bind("exception.writeScript"), e));
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_SCRIPT, Policy.bind("exception.writeScript"), e)); //$NON-NLS-1$
 	}
 }
 
@@ -102,7 +102,7 @@ protected void generateCleanTarget(AntScript script) throws CoreException {
 	script.printDeleteTask(tab, null, basedir.append(FULL_NAME + DEFAULT_FILENAME_SRC).toString(), null);
 	script.printDeleteTask(tab, null, basedir.append(FULL_NAME + DEFAULT_FILENAME_LOG).toString(), null);
 	script.printDeleteTask(tab, TEMP_FOLDER, null, null);
-	script.printString(--tab, "</target>");
+	script.printString(--tab, "</target>"); //$NON-NLS-1$
 }
 
 protected void generateGatherLogTarget(AntScript script) throws CoreException {
@@ -121,7 +121,7 @@ protected void generateGatherLogTarget(AntScript script) throws CoreException {
 			script.printMkdirTask(tab, destination.toString());
 			destinations.add(destination);
 		}
-		script.printCopyTask(tab, name + ".bin.log", destination.toString(), null);
+		script.printCopyTask(tab, name + ".bin.log", destination.toString(), null); //$NON-NLS-1$
 	}
 	script.printEndTag(--tab, TARGET_TARGET);
 }
@@ -136,7 +136,7 @@ protected void generateZipIndividualTarget(AntScript script, String zipName, Str
 	script.printTargetDeclaration(tab++, zipName, TARGET_INIT, null, null, null);
 	IPath root = new Path(BASEDIR);
 	script.printZipTask(tab, root.append(zipName).toString(), root.append(source).toString(), false, null);
-	script.printString(--tab, "</target>");
+	script.printString(--tab, "</target>"); //$NON-NLS-1$
 }
 
 
@@ -164,7 +164,7 @@ protected void generateGatherSourcesTarget(AntScript script) throws CoreExceptio
 		FileSet fileSet = new FileSet(BASEDIR, null, include, null, exclude, null, null);
 		script.printCopyTask(tab, null, baseDestination.toString(), new FileSet[]{ fileSet });
 	}
-	script.printString(--tab, "</target>");
+	script.printString(--tab, "</target>"); //$NON-NLS-1$
 }
 
 
@@ -195,7 +195,7 @@ protected void generateGatherBinPartsTarget(AntScript script) throws CoreExcepti
 		FileSet fileSet = new FileSet(BASEDIR, null, include, null, exclude, null, null);
 		script.printCopyTask(tab, null, root, new FileSet[]{ fileSet });
 	}
-	script.printEndTag(--tab, "target");
+	script.printEndTag(--tab, "target"); //$NON-NLS-1$
 }
 
 protected void generateZipPluginTarget(AntScript script, PluginModel model) throws CoreException {
@@ -207,14 +207,14 @@ protected void generateZipPluginTarget(AntScript script, PluginModel model) thro
 	script.printAntCallTask(tab, TARGET_BUILD_JARS, null, null);
 	script.printAntCallTask(tab, TARGET_BUILD_SOURCES, null, null);
 	Map params = new HashMap(1);
-	params.put(PROPERTY_DESTINATION_TEMP_FOLDER, TEMP_FOLDER + "/");
+	params.put(PROPERTY_DESTINATION_TEMP_FOLDER, TEMP_FOLDER + "/"); //$NON-NLS-1$
 	script.printAntCallTask(tab, TARGET_GATHER_BIN_PARTS, null, params);
 	script.printAntCallTask(tab, TARGET_GATHER_SOURCES, null, params);
-	FileSet fileSet = new FileSet(TEMP_FOLDER, null, "**/*.bin.log", null, null, null, null);
+	FileSet fileSet = new FileSet(TEMP_FOLDER, null, "**/*.bin.log", null, null, null, null); //$NON-NLS-1$
 	script.printDeleteTask(tab, null, null, new FileSet[] {fileSet});
 	script.printZipTask(tab, PLUGIN_ZIP_DESTINATION, TEMP_FOLDER, false, null);
 	script.printDeleteTask(tab, TEMP_FOLDER, null, null);
-	script.printString(--tab, "</target>");
+	script.printString(--tab, "</target>"); //$NON-NLS-1$
 }
 
 
@@ -226,19 +226,19 @@ protected void generateBuildUpdateJarTarget(AntScript script) {
 	script.printMkdirTask(tab, TEMP_FOLDER);
 	script.printAntCallTask(tab, TARGET_BUILD_JARS, null, null);
 	Map params = new HashMap(1);
-	params.put(PROPERTY_DESTINATION_TEMP_FOLDER, TEMP_FOLDER + "/");
+	params.put(PROPERTY_DESTINATION_TEMP_FOLDER, TEMP_FOLDER + "/"); //$NON-NLS-1$
 	script.printAntCallTask(tab, TARGET_GATHER_BIN_PARTS, null, params);
-	script.printZipTask(tab, PLUGIN_UPDATE_JAR_DESTINATION, TEMP_FOLDER + "/" + FULL_NAME, false, null);
+	script.printZipTask(tab, PLUGIN_UPDATE_JAR_DESTINATION, TEMP_FOLDER + "/" + FULL_NAME, false, null); //$NON-NLS-1$
 	script.printDeleteTask(tab, TEMP_FOLDER, null, null);
-	script.printString(--tab, "</target>");
+	script.printString(--tab, "</target>"); //$NON-NLS-1$
 }
 
 protected void generateRefreshTarget(AntScript script) {
 	int tab = 1;
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_REFRESH, TARGET_INIT, PROPERTY_ECLIPSE_RUNNING, null, null);
-	script.printRefreshLocalTask(tab, getPropertyFormat(getModelTypeName()), "infinite");
-	script.printString(--tab, "</target>");
+	script.printRefreshLocalTask(tab, getPropertyFormat(getModelTypeName()), "infinite"); //$NON-NLS-1$
+	script.printString(--tab, "</target>"); //$NON-NLS-1$
 }
 
 /**
@@ -246,7 +246,7 @@ protected void generateRefreshTarget(AntScript script) {
  */
 protected void generateEpilogue(AntScript script) {
 	script.println();
-	script.printString(0, "</project>");
+	script.printString(0, "</project>"); //$NON-NLS-1$
 }
 
 
@@ -255,25 +255,25 @@ protected void generateEpilogue(AntScript script) {
  */
 protected void generatePrologue(AntScript script) {
 	int tab = 1;
-	script.printProjectDeclaration(model.getId(), TARGET_BUILD_JARS, ".");
+	script.printProjectDeclaration(model.getId(), TARGET_BUILD_JARS, "."); //$NON-NLS-1$
 	script.println();
-	script.printProperty(tab, PROPERTY_BOOTCLASSPATH, "");
+	script.printProperty(tab, PROPERTY_BOOTCLASSPATH, ""); //$NON-NLS-1$
 	script.printProperty(tab, PROPERTY_WS, BootLoader.getWS());
 	script.printProperty(tab, PROPERTY_OS, BootLoader.getOS());
 	script.printProperty(tab, PROPERTY_ARCH, BootLoader.getOSArch());
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_INIT, TARGET_PROPERTIES, null, null, null);
 	script.printProperty(tab, getModelTypeName(), model.getId());
-	script.printProperty(tab, PROPERTY_VERSION_SUFFIX, "_" + model.getVersion());
+	script.printProperty(tab, PROPERTY_VERSION_SUFFIX, "_" + model.getVersion()); //$NON-NLS-1$
 	script.printProperty(tab, PROPERTY_FULL_NAME, getPropertyFormat(getModelTypeName()) + getPropertyFormat(PROPERTY_VERSION_SUFFIX));
-	script.printProperty(tab, PROPERTY_TEMP_FOLDER, BASEDIR + "/" + PROPERTY_TEMP_FOLDER);
+	script.printProperty(tab, PROPERTY_TEMP_FOLDER, BASEDIR + "/" + PROPERTY_TEMP_FOLDER); //$NON-NLS-1$
 	script.printProperty(tab, PROPERTY_PLUGIN_DESTINATION, BASEDIR);
 	script.printProperty(tab, PROPERTY_BUILD_RESULT_FOLDER, BASEDIR);
-	script.printString(--tab, "</target>");
+	script.printString(--tab, "</target>"); //$NON-NLS-1$
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_PROPERTIES, null, PROPERTY_ECLIPSE_RUNNING, null, null);
 	script.printProperty(tab, PROPERTY_BUILD_COMPILER, JDT_COMPILER_ADAPTER);
-	script.printString(--tab, "</target>");
+	script.printString(--tab, "</target>"); //$NON-NLS-1$
 }
 
 protected abstract String getModelTypeName();
@@ -283,7 +283,7 @@ protected abstract String getModelTypeName();
  */
 public void setModel(PluginModel model) throws CoreException {
 	if (model == null)
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ELEMENT_MISSING, Policy.bind("error.missingElement"), null));
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ELEMENT_MISSING, Policy.bind("error.missingElement"), null)); //$NON-NLS-1$
 	this.model = model;
 }
 
@@ -293,7 +293,7 @@ public void setModel(PluginModel model) throws CoreException {
 public void setModelId(String modelId) throws CoreException {
 	PluginModel newModel = getModel(modelId);
 	if (newModel == null)
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ELEMENT_MISSING, Policy.bind("exception.missingElement", modelId), null));
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ELEMENT_MISSING, Policy.bind("exception.missingElement", modelId), null)); //$NON-NLS-1$
 	setModel(newModel);
 }
 
@@ -319,7 +319,7 @@ protected void generateBuildZipsTarget(AntScript script) throws CoreException {
 	script.println();
 	int tab = 1;
 	script.printTargetDeclaration(tab++, TARGET_BUILD_ZIPS, TARGET_INIT + zips.toString(), null, null, null);
-	script.printString(--tab, "</target>");
+	script.printString(--tab, "</target>"); //$NON-NLS-1$
 }
 
 }

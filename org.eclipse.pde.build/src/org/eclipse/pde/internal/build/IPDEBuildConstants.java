@@ -10,36 +10,36 @@ package org.eclipse.pde.internal.build;
 public interface IPDEBuildConstants {
 
 	/** PDE Core plug-in id */
-	public static final String PI_BOOT = "org.eclipse.core.boot";
-	public static final String PI_BOOT_JAR_NAME = "boot.jar";
-	public static final String PI_PDEBUILD = "org.eclipse.pde.build";
-	public static final String PI_RUNTIME = "org.eclipse.core.runtime";
-	public static final String PI_RUNTIME_JAR_NAME = "runtime.jar";
+	public static final String PI_BOOT = "org.eclipse.core.boot"; //$NON-NLS-1$
+	public static final String PI_BOOT_JAR_NAME = "boot.jar"; //$NON-NLS-1$
+	public static final String PI_PDEBUILD = "org.eclipse.pde.build"; //$NON-NLS-1$
+	public static final String PI_RUNTIME = "org.eclipse.core.runtime"; //$NON-NLS-1$
+	public static final String PI_RUNTIME_JAR_NAME = "runtime.jar"; //$NON-NLS-1$
 
 	/** file names */
-	public final static String PROPERTIES_FILE = "build.properties";
+	public final static String PROPERTIES_FILE = "build.properties"; //$NON-NLS-1$
 
 
 	// command line arguments
 
-	public static final String ARG_CVS_PASSFILE_LOCATION = "-cvspassfile";
-	public static final String ARG_DEV_ENTRIES = "-dev";
-	public static final String ARG_DIRECTORY_LOCATION = "-directory";
-	public static final String ARG_ELEMENTS = "-elements";
-	public static final String ARG_INSTALL_LOCATION = "-install";
-	public static final String ARG_NO_CHILDREN = "-nochildren";
-	public static final String ARG_PLUGIN_PATH = "-pluginpath";
-	public static final String ARG_SCRIPT_NAME = "-scriptname";
-	public static final String ARG_SOURCE_LOCATION = "-source";
+	public static final String ARG_CVS_PASSFILE_LOCATION = "-cvspassfile"; //$NON-NLS-1$
+	public static final String ARG_DEV_ENTRIES = "-dev"; //$NON-NLS-1$
+	public static final String ARG_DIRECTORY_LOCATION = "-directory"; //$NON-NLS-1$
+	public static final String ARG_ELEMENTS = "-elements"; //$NON-NLS-1$
+	public static final String ARG_INSTALL_LOCATION = "-install"; //$NON-NLS-1$
+	public static final String ARG_NO_CHILDREN = "-nochildren"; //$NON-NLS-1$
+	public static final String ARG_PLUGIN_PATH = "-pluginpath"; //$NON-NLS-1$
+	public static final String ARG_SCRIPT_NAME = "-scriptname"; //$NON-NLS-1$
+	public static final String ARG_SOURCE_LOCATION = "-source"; //$NON-NLS-1$
 	
 
 	// default values
-	public final static String DEFAULT_BUILD_SCRIPT_FILENAME = "build.xml";
-	public final static String DEFAULT_FEATURE_FILENAME_DESCRIPTOR = "feature.xml";
-	public final static String DEFAULT_FEATURE_LOCATION = "features";
-	public final static String DEFAULT_FETCH_SCRIPT_FILENAME = "fetch.xml";
-	public final static String DEFAULT_PLUGIN_LOCATION = "plugins";
-	public final static String DEFAULT_TEMPLATE_SCRIPT_FILENAME = "template.xml";
+	public final static String DEFAULT_BUILD_SCRIPT_FILENAME = "build.xml"; //$NON-NLS-1$
+	public final static String DEFAULT_FEATURE_FILENAME_DESCRIPTOR = "feature.xml"; //$NON-NLS-1$
+	public final static String DEFAULT_FEATURE_LOCATION = "features"; //$NON-NLS-1$
+	public final static String DEFAULT_FETCH_SCRIPT_FILENAME = "fetch.xml"; //$NON-NLS-1$
+	public final static String DEFAULT_PLUGIN_LOCATION = "plugins"; //$NON-NLS-1$
+	public final static String DEFAULT_TEMPLATE_SCRIPT_FILENAME = "template.xml"; //$NON-NLS-1$
 
 
 	// status constants	

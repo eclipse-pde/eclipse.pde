@@ -16,7 +16,7 @@ public class Condition {
 	/**
 	 * Types of conditions.
 	 */
-	public static final String TYPE_AND = "and";
+	public static final String TYPE_AND = "and"; //$NON-NLS-1$
 
 
 public Condition() {
@@ -44,13 +44,13 @@ protected void print(AntScript script, int tab) {
 
 public void addEquals(String arg1, String arg2) {
 	StringBuffer condition = new StringBuffer();
-	condition.append("<equals ");
-	condition.append("arg1=\"");
+	condition.append("<equals "); //$NON-NLS-1$
+	condition.append("arg1=\""); //$NON-NLS-1$
 	condition.append(arg1);
-	condition.append("\" ");
-	condition.append("arg2=\"");
+	condition.append("\" "); //$NON-NLS-1$
+	condition.append("arg2=\""); //$NON-NLS-1$
 	condition.append(arg2);
-	condition.append("\"/>");
+	condition.append("\"/>"); //$NON-NLS-1$
 	singleConditions.add(condition.toString());
 }
 

@@ -143,18 +143,18 @@ protected String getClasspath(PluginModel model, JAR jar) throws CoreException {
 	// add extra classpath if it exists
 	String extraClasspath = (String) getBuildProperties(model).get(PROPERTY_JAR_EXTRA_CLASSPATH);
 	if (extraClasspath != null) {
-		String[] extra = Utils.getArrayFromString(extraClasspath, ";,");
+		String[] extra = Utils.getArrayFromString(extraClasspath, ";,"); //$NON-NLS-1$
 		for (int i = 0; i < extra.length; i++)			
 			classpath.add(extra[i]);
 	}
-	return replaceVariables(Utils.getStringFromCollection(classpath, ";"));
+	return replaceVariables(Utils.getStringFromCollection(classpath, ";")); //$NON-NLS-1$
 }
 
 protected PluginModel getPlugin(String id, String version) throws CoreException {
 	PluginModel plugin = getRegistry().getPlugin(id, version);
 	if (plugin == null) {
-		String pluginName = (version == null) ? id : id + "_" + version;
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_PLUGIN_MISSING, Policy.bind("exception.missingPlugin", pluginName), null));
+		String pluginName = (version == null) ? id : id + "_" + version; //$NON-NLS-1$
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_PLUGIN_MISSING, Policy.bind("exception.missingPlugin", pluginName), null)); //$NON-NLS-1$
 	}
 	return plugin;
 }
@@ -172,7 +172,7 @@ protected String getLocation(PluginModel model) throws CoreException {
 	try {
 		return new URL(model.getLocation()).getFile();
 	} catch (MalformedURLException e) {
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_MALFORMED_URL, Policy.bind("exception.url"), e));
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_MALFORMED_URL, Policy.bind("exception.url"), e)); //$NON-NLS-1$
 	}
 }
 
@@ -258,7 +258,7 @@ protected Properties readBuildProperties(String rootLocation) throws CoreExcepti
 			input.close();
 		}
 	} catch (IOException e) {
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READING_FILE, Policy.bind("exception.readingFile"), e));
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READING_FILE, Policy.bind("exception.readingFile"), e)); //$NON-NLS-1$
 	}
 	return result;
 }
@@ -311,17 +311,17 @@ protected void generateBuildJarsTarget(AntScript script, PluginModel model) thro
 		srcNames.add(getSRCName(name));
 	}
 	script.println();
-	String depends = Utils.getStringFromCollection(jarNames, ",");
-	if (!depends.equals(""))
-		depends = TARGET_INIT + "," + depends;
+	String depends = Utils.getStringFromCollection(jarNames, ","); //$NON-NLS-1$
+	if (!depends.equals("")) //$NON-NLS-1$
+		depends = TARGET_INIT + "," + depends; //$NON-NLS-1$
 	script.printTargetDeclaration(1, TARGET_BUILD_JARS, depends, null, null, null);
-	script.printEndTag(1, "target");
+	script.printEndTag(1, "target"); //$NON-NLS-1$
 	script.println();
-	depends = Utils.getStringFromCollection(srcNames, ",");
-	if (!depends.equals(""))
-		depends = TARGET_INIT + "," + depends;
+	depends = Utils.getStringFromCollection(srcNames, ","); //$NON-NLS-1$
+	if (!depends.equals("")) //$NON-NLS-1$
+		depends = TARGET_INIT + "," + depends; //$NON-NLS-1$
 	script.printTargetDeclaration(1, TARGET_BUILD_SOURCES, depends, null, null, null);
-	script.printEndTag(1, "target");
+	script.printEndTag(1, "target"); //$NON-NLS-1$
 }
 
 protected void generateJARTarget(AntScript script, String classpath, JAR jar) throws CoreException {
@@ -330,30 +330,30 @@ protected void generateJARTarget(AntScript script, String classpath, JAR jar) th
 	String name = jar.getName();
 	script.printTargetDeclaration(tab++, name, TARGET_INIT, null, null, null);
 	String destdir = getTempJARFolderLocation(name);
-	script.printProperty(tab, "destdir", destdir);
+	script.printProperty(tab, "destdir", destdir); //$NON-NLS-1$
 	script.printDeleteTask(tab, destdir, null, null);
 	script.printMkdirTask(tab, destdir);
-	script.printComment(tab, "compile the source code");
+	script.printComment(tab, "compile the source code"); //$NON-NLS-1$
 	JavacTask javac = new JavacTask();
 	javac.setClasspath(classpath);
 	javac.setBootClasspath(getPropertyFormat(PROPERTY_BOOTCLASSPATH));
 	javac.setDestdir(destdir);
-	javac.setFailOnError("false");
-	javac.setDebug("on");
-	javac.setVerbose("true");
-	javac.setIncludeAntRuntime("no");
+	javac.setFailOnError("false"); //$NON-NLS-1$
+	javac.setDebug("on"); //$NON-NLS-1$
+	javac.setVerbose("true"); //$NON-NLS-1$
+	javac.setIncludeAntRuntime("no"); //$NON-NLS-1$
 	String[] sources = jar.getSource();
 	javac.setSrcdir(sources);
 	script.print(tab, javac);
-	script.printComment(tab, "copy necessary resources");
+	script.printComment(tab, "copy necessary resources"); //$NON-NLS-1$
 	FileSet[] fileSets = new FileSet[sources.length];
 	for (int i = 0; i < sources.length; i++) {
-		fileSets[i] = new FileSet(sources[i], null, null, null, "**/*.java", null, null);
+		fileSets[i] = new FileSet(sources[i], null, null, null, "**/*.java", null, null); //$NON-NLS-1$
 	}
 	script.printCopyTask(tab, null, destdir, fileSets);
 	script.printJarTask(tab, getJARLocation(name), destdir);
 	script.printDeleteTask(tab, destdir, null, null);
-	script.printEndTag(--tab, "target");
+	script.printEndTag(--tab, "target"); //$NON-NLS-1$
 }
 
 
@@ -365,18 +365,18 @@ protected void generateSRCTarget(AntScript script, JAR jar) throws CoreException
 	String[] sources = jar.getSource();
 	FileSet[] fileSets = new FileSet[sources.length];
 	for (int i = 0; i < sources.length; i++) {
-		fileSets[i] = new FileSet(sources[i], null, "**/*.java", null, null, null, null);
+		fileSets[i] = new FileSet(sources[i], null, "**/*.java", null, null, null, null); //$NON-NLS-1$
 	}
 	script.printZipTask(tab, getSRCLocation(name), null, false, fileSets);
-	script.printEndTag(--tab, "target");
+	script.printEndTag(--tab, "target"); //$NON-NLS-1$
 }
 
 protected String getSRCName(String jarName) {
-	return jarName.substring(0, jarName.length() - 4) + "src.zip";
+	return jarName.substring(0, jarName.length() - 4) + "src.zip"; //$NON-NLS-1$
 }
 
 protected String getLogLocation(String jarName) {
-	return getJARLocation(jarName) + ".bin.log";
+	return getJARLocation(jarName) + ".bin.log"; //$NON-NLS-1$
 }
 
 protected String getJARLocation(String jarName) {
@@ -391,7 +391,7 @@ protected String getSRCLocation(String jarName) {
 
 protected String getTempJARFolderLocation(String jarName) {
 	IPath destination = new Path(BASEDIR);
-	destination = destination.append(jarName + ".bin");
+	destination = destination.append(jarName + ".bin"); //$NON-NLS-1$
 	return destination.toString();
 }
 
@@ -403,11 +403,11 @@ protected String replaceVariables(String sourceString) {
 	int i = -1;
 	String result = sourceString;
 	while ((i = result.indexOf(DESCRIPTION_VARIABLE_WS)) >= 0)
-		result = result.substring(0, i) + "ws/" + getPropertyFormat(PROPERTY_WS) + result.substring(i + DESCRIPTION_VARIABLE_WS.length());
+		result = result.substring(0, i) + "ws/" + getPropertyFormat(PROPERTY_WS) + result.substring(i + DESCRIPTION_VARIABLE_WS.length()); //$NON-NLS-1$
 	while ((i = result.indexOf(DESCRIPTION_VARIABLE_OS)) >= 0)
-		result = result.substring(0, i) + "os/" + getPropertyFormat(PROPERTY_OS) + result.substring(i + DESCRIPTION_VARIABLE_OS.length());
+		result = result.substring(0, i) + "os/" + getPropertyFormat(PROPERTY_OS) + result.substring(i + DESCRIPTION_VARIABLE_OS.length()); //$NON-NLS-1$
 	while ((i = result.indexOf(DESCRIPTION_VARIABLE_NL)) >= 0)
-		result = result.substring(0, i) + "nl/" + getPropertyFormat(PROPERTY_NL) + result.substring(i + DESCRIPTION_VARIABLE_NL.length());
+		result = result.substring(0, i) + "nl/" + getPropertyFormat(PROPERTY_NL) + result.substring(i + DESCRIPTION_VARIABLE_NL.length()); //$NON-NLS-1$
 	return result;
 }
 
@@ -433,7 +433,7 @@ public void setInstallLocation(String location) {
 protected PluginRegistryModel getRegistry() throws CoreException {
 	if (registry == null) {
 		URL[] pluginPath = getPluginPath();
-		MultiStatus problems = new MultiStatus(PI_PDEBUILD, EXCEPTION_MODEL_PARSE, Policy.bind("exception.pluginParse"), null);
+		MultiStatus problems = new MultiStatus(PI_PDEBUILD, EXCEPTION_MODEL_PARSE, Policy.bind("exception.pluginParse"), null); //$NON-NLS-1$
 		Factory factory = new Factory(problems);
 		registry = Platform.parsePlugins(pluginPath, factory);
 		IStatus status = factory.getStatus();
@@ -452,11 +452,11 @@ protected URL[] getPluginPath() {
 	if (installLocation != null) {
 		try {
 			StringBuffer sb = new StringBuffer();
-			sb.append("file:");
+			sb.append("file:"); //$NON-NLS-1$
 			sb.append(installLocation);
-			sb.append("/");
+			sb.append("/"); //$NON-NLS-1$
 			sb.append(DEFAULT_PLUGIN_LOCATION);
-			sb.append("/");
+			sb.append("/"); //$NON-NLS-1$
 			return new URL[] { new URL(sb.toString()) };
 		} catch (MalformedURLException e) {
 			// Ignore because should never happen.
@@ -537,18 +537,18 @@ protected void updateVersion(File buildFile, String propertyName, String version
 	int pos = scan(buffer, 0, propertyName);
 	if (pos == -1)
 		return;
-	pos = scan(buffer, pos, "value");
+	pos = scan(buffer, pos, "value"); //$NON-NLS-1$
 	if (pos == -1)
 		return;
-	int begin = scan(buffer, pos, "\"");
+	int begin = scan(buffer, pos, "\""); //$NON-NLS-1$
 	if (begin == -1)
 		return;
 	begin++;
-	int end = scan(buffer, begin, "\"");
+	int end = scan(buffer, begin, "\""); //$NON-NLS-1$
 	if (end == -1)
 		return;
 	String currentVersion = buffer.substring(begin, end);
-	String newVersion = "_" + version;
+	String newVersion = "_" + version; //$NON-NLS-1$
 	if (currentVersion.equals(newVersion))
 		return;
 	buffer.replace(begin, end, newVersion);

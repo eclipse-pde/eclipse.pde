@@ -16,7 +16,7 @@ protected PluginModel getModel(String modelId) throws CoreException {
 }
 
 protected String getModelTypeName() {
-	return "fragment";
+	return "fragment"; //$NON-NLS-1$
 }
 
 }

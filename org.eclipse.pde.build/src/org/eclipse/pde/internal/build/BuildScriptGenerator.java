@@ -59,11 +59,11 @@ protected void sortElements(List features, List plugins, List fragments) {
 		int index = elements[i].indexOf('@');
 		String type = elements[i].substring(0, index);
 		String element = elements[i].substring(index + 1);
-		if (type.equals("plugin")) 
+		if (type.equals("plugin"))  //$NON-NLS-1$
 			plugins.add(element);
-		if (type.equals("fragment")) 
+		if (type.equals("fragment"))  //$NON-NLS-1$
 			fragments.add(element);
-		if (type.equals("feature")) 
+		if (type.equals("feature"))  //$NON-NLS-1$
 			features.add(element);
 	}
 }

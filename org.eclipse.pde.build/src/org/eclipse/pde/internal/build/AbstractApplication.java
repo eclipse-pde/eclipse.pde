@@ -59,7 +59,7 @@ protected String[] getArguments(List commands, String param) {
 	List args = new ArrayList(commands.size());
 	while (index < commands.size()) { // while not the last command
 		String command = (String) commands.get(index);
-		if (command.startsWith("-")) // is it a new parameter?
+		if (command.startsWith("-")) // is it a new parameter? //$NON-NLS-1$
 			break;
 		args.add(command);
 		commands.remove(index);

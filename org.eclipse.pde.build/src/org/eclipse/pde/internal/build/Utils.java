@@ -29,12 +29,12 @@ public final class Utils implements IPDEBuildConstants {
  * Convert a list of tokens into an array. The list separator has to be specified.
  */
 public static String[] getArrayFromString(String list, String separator) {
-	if (list == null || list.trim().equals(""))
+	if (list == null || list.trim().equals("")) //$NON-NLS-1$
 		return new String[0];
 	ArrayList result = new ArrayList();
 	for (StringTokenizer tokens = new StringTokenizer(list, separator); tokens.hasMoreTokens();) {
 		String token = tokens.nextToken().trim();
-		if (!token.equals(""))
+		if (!token.equals("")) //$NON-NLS-1$
 			result.add(token);
 	}
 	return (String[]) result.toArray(new String[result.size()]);
@@ -44,7 +44,7 @@ public static String[] getArrayFromString(String list, String separator) {
  * convert a list of comma-separated tokens into an array
  */
 public static String[] getArrayFromString(String list) {
-	return getArrayFromString(list, ",");
+	return getArrayFromString(list, ","); //$NON-NLS-1$
 }
 
 /**
@@ -149,7 +149,7 @@ public static String[][] computePrerequisiteOrder(PluginModel[] plugins) {
 		// of plugins to build, add prereq relations for them.  This is required since the 
 		// boot and runtime are implicitly added to a plugin's requires list by the platform runtime.
 		// Note that we should skip the xerces plugin as this would cause a circularity.
-		if (plugins[i].getId().equals("org.apache.xerces"))
+		if (plugins[i].getId().equals("org.apache.xerces")) //$NON-NLS-1$
 			continue;
 		if (!boot && pluginList.contains(BootLoader.PI_BOOT) && !plugins[i].getId().equals(BootLoader.PI_BOOT))
 			prereqs.add(new String[] { plugins[i].getId(), BootLoader.PI_BOOT});
@@ -249,9 +249,9 @@ public static IPath makeRelative(IPath location, IPath base) {
 	int baseCount = base.segmentCount();
 	int count = base.matchingFirstSegments(result);
 	if (count > 0) {
-		String temp = "";
+		String temp = ""; //$NON-NLS-1$
 		for (int j = 0; j < baseCount - count; j++)
-			temp += "../";
+			temp += "../"; //$NON-NLS-1$
 		result = new Path(temp).append(result.removeFirstSegments(count));
 	}
 	return result;

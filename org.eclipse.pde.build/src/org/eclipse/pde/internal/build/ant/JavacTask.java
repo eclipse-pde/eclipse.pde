@@ -30,24 +30,24 @@ public JavacTask() {
 
 public void print(AntScript script, int tab) {
 	script.printTab(tab);
-	script.print("<javac");
-	script.printAttribute("destdir", destdir, false);
-	script.printAttribute("failonerror", failonerror, false);
-	script.printAttribute("verbose", verbose, false);
-	script.printAttribute("fork", fork, false);
-	script.printAttribute("debug", debug, false);
-	script.printAttribute("includeAntRuntime", includeAntRuntime, false);
-	script.printAttribute("bootclasspath", bootclasspath, false);
-	script.printAttribute("classpath", classpath, false);
-	script.println(">");
+	script.print("<javac"); //$NON-NLS-1$
+	script.printAttribute("destdir", destdir, false); //$NON-NLS-1$
+	script.printAttribute("failonerror", failonerror, false); //$NON-NLS-1$
+	script.printAttribute("verbose", verbose, false); //$NON-NLS-1$
+	script.printAttribute("fork", fork, false); //$NON-NLS-1$
+	script.printAttribute("debug", debug, false); //$NON-NLS-1$
+	script.printAttribute("includeAntRuntime", includeAntRuntime, false); //$NON-NLS-1$
+	script.printAttribute("bootclasspath", bootclasspath, false); //$NON-NLS-1$
+	script.printAttribute("classpath", classpath, false); //$NON-NLS-1$
+	script.println(">"); //$NON-NLS-1$
 	tab++;
 	for (int i = 0; i < srcdir.length; i++) {
 		script.printTab(tab);
-		script.print("<src path=");
+		script.print("<src path="); //$NON-NLS-1$
 		script.printQuotes(srcdir[i]);
-		script.println("/>");
+		script.println("/>"); //$NON-NLS-1$
 	}
-	script.printEndTag(--tab, "javac");
+	script.printEndTag(--tab, "javac"); //$NON-NLS-1$
 }
 
 public void setClasspath(String classpath) {

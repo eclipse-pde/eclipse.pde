@@ -20,7 +20,7 @@ import java.util.*;
 public class AntScript {
 	
 	protected PrintWriter output;
-	protected final String XML_PROLOG = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+	protected final String XML_PROLOG = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"; //$NON-NLS-1$
 	
 public AntScript(OutputStream out) {
 	output = new PrintWriter(out);
@@ -34,13 +34,13 @@ public void close() {
 
 public void printAntCallTask(int tab, String target, String inheritAll, Map params) {
 	printTab(tab);
-	output.print("<antcall");
-	printAttribute("target", target, true);
-	printAttribute("inheritAll", inheritAll, false);
+	output.print("<antcall"); //$NON-NLS-1$
+	printAttribute("target", target, true); //$NON-NLS-1$
+	printAttribute("inheritAll", inheritAll, false); //$NON-NLS-1$
 	if (params == null)
-		output.println("/>");
+		output.println("/>"); //$NON-NLS-1$
 	else {
-		output.println(">");
+		output.println(">"); //$NON-NLS-1$
 		tab++;
 		Set entries = params.entrySet();
 		for (Iterator iter = entries.iterator(); iter.hasNext();) {
@@ -49,30 +49,30 @@ public void printAntCallTask(int tab, String target, String inheritAll, Map para
 		}
 		tab--;
 		printTab(tab);
-		output.println("</antcall>");
+		output.println("</antcall>"); //$NON-NLS-1$
 	}
 }
 
 public void printJarTask(int tab, String jarFile, String basedir) {
 	printTab(tab);
-	output.print("<jar");
-	printAttribute("jarfile", jarFile, true);
-	printAttribute("basedir", basedir, false);
-	output.println("/>");
+	output.print("<jar"); //$NON-NLS-1$
+	printAttribute("jarfile", jarFile, true); //$NON-NLS-1$
+	printAttribute("basedir", basedir, false); //$NON-NLS-1$
+	output.println("/>"); //$NON-NLS-1$
 }
 
 public void printAntTask(int tab, String antfile, String dir, String target, String outputParam, String inheritAll, Map properties) {
 	printTab(tab);
-	output.print("<ant");
-	printAttribute("antfile", antfile, false);
-	printAttribute("dir", dir, false);
-	printAttribute("target", target, false);
-	printAttribute("output", outputParam, false);
-	printAttribute("inheritAll", inheritAll, false);
+	output.print("<ant"); //$NON-NLS-1$
+	printAttribute("antfile", antfile, false); //$NON-NLS-1$
+	printAttribute("dir", dir, false); //$NON-NLS-1$
+	printAttribute("target", target, false); //$NON-NLS-1$
+	printAttribute("output", outputParam, false); //$NON-NLS-1$
+	printAttribute("inheritAll", inheritAll, false); //$NON-NLS-1$
 	if (properties == null)
-		output.println("/>");
+		output.println("/>"); //$NON-NLS-1$
 	else {
-		output.println(">");
+		output.println(">"); //$NON-NLS-1$
 		tab++;
 		Set entries = properties.entrySet();
 		for (Iterator iter = entries.iterator(); iter.hasNext();) {
@@ -81,34 +81,34 @@ public void printAntTask(int tab, String antfile, String dir, String target, Str
 		}
 		tab--;
 		printTab(tab);
-		output.println("</ant>");
+		output.println("</ant>"); //$NON-NLS-1$
 	}
 }
 
 public void printZipTask(int tab, String zipfile, String basedir, boolean filesOnly, FileSet[] fileSets) {
 	printTab(tab);
-	output.print("<zip");
-	printAttribute("zipfile", zipfile, true);
-	printAttribute("basedir", basedir, false);
-	printAttribute("filesonly", filesOnly ? "true" : "false", true);
+	output.print("<zip"); //$NON-NLS-1$
+	printAttribute("zipfile", zipfile, true); //$NON-NLS-1$
+	printAttribute("basedir", basedir, false); //$NON-NLS-1$
+	printAttribute("filesonly", filesOnly ? "true" : "false", true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	if (fileSets == null)
-		output.println("/>");
+		output.println("/>"); //$NON-NLS-1$
 	else {
-		output.println(">");
+		output.println(">"); //$NON-NLS-1$
 		tab++;
 		for (int i = 0; i < fileSets.length; i++)
 			fileSets[i].print(this, tab);
 		tab--;
 		printTab(tab);
-		output.println("</zip>");
+		output.println("</zip>"); //$NON-NLS-1$
 	}
 }
 
 protected void printArg(int tab, String line) {
 	printTab(tab);
-	output.print("<arg");
-	printAttribute("line", line, false);
-	output.println("/>");
+	output.print("<arg"); //$NON-NLS-1$
+	printAttribute("line", line, false); //$NON-NLS-1$
+	output.println("/>"); //$NON-NLS-1$
 }
 
 public void printString(int tab, String string) {
@@ -118,159 +118,159 @@ public void printString(int tab, String string) {
 
 public void printComment(int tab, String comment) {
 	printTab(tab);
-	output.print("<!-- ");
+	output.print("<!-- "); //$NON-NLS-1$
 	output.print(comment);
-	output.println(" -->");
+	output.println(" -->"); //$NON-NLS-1$
 }
 
 protected void printAttribute(String name, String value, boolean mandatory) {
 	if (mandatory && value == null)
-		value = "";
+		value = ""; //$NON-NLS-1$
 	if (value != null) {
-		output.print(" ");
+		output.print(" "); //$NON-NLS-1$
 		output.print(name);
-		output.print("=");
+		output.print("="); //$NON-NLS-1$
 		printQuotes(value);
 	}
 }
 
 public void printCopyTask(int tab, String file, String todir, FileSet[] fileSets) {
 	printTab(tab);
-	output.print("<copy");
-	printAttribute("file", file, false);
-	printAttribute("todir", todir, false);
+	output.print("<copy"); //$NON-NLS-1$
+	printAttribute("file", file, false); //$NON-NLS-1$
+	printAttribute("todir", todir, false); //$NON-NLS-1$
 	if (fileSets == null)
-		output.println("/>");
+		output.println("/>"); //$NON-NLS-1$
 	else {
-		output.println(">");
+		output.println(">"); //$NON-NLS-1$
 		tab++;
 		for (int i = 0; i < fileSets.length; i++)
 			fileSets[i].print(this, tab);
 		tab--;
 		printTab(tab);
-		output.println("</copy>");
+		output.println("</copy>"); //$NON-NLS-1$
 	}
 }
 
 public void printDeleteTask(int tab, String dir, String file, FileSet[] fileSets) {
 	printTab(tab);
-	output.print("<delete");
-	printAttribute("dir", dir, false);
-	printAttribute("file", file, false);
+	output.print("<delete"); //$NON-NLS-1$
+	printAttribute("dir", dir, false); //$NON-NLS-1$
+	printAttribute("file", file, false); //$NON-NLS-1$
 	if (fileSets == null)
-		output.println("/>");
+		output.println("/>"); //$NON-NLS-1$
 	else {
-		output.println(">");
+		output.println(">"); //$NON-NLS-1$
 		tab++;
 		for (int i = 0; i < fileSets.length; i++)
 			fileSets[i].print(this, tab);
 		tab--;
 		printTab(tab);
-		output.println("</delete>");
+		output.println("</delete>"); //$NON-NLS-1$
 	}
 }
 
 public void printExecTask(int tab, String executable, String dir, List lineArgs) {
 	printTab(tab);
-	output.print("<exec");
-	printAttribute("executable", executable, true);
-	printAttribute("dir", dir, false);
+	output.print("<exec"); //$NON-NLS-1$
+	printAttribute("executable", executable, true); //$NON-NLS-1$
+	printAttribute("dir", dir, false); //$NON-NLS-1$
 	if (lineArgs == null || lineArgs.size() == 0)
-		output.println("/>");
+		output.println("/>"); //$NON-NLS-1$
 	else {
-		output.println(">");
+		output.println(">"); //$NON-NLS-1$
 		tab++;
 		for (int i = 0; i < lineArgs.size(); i++)
 			printArg(tab, (String) lineArgs.get(i));
 		tab--;
 		printTab(tab);
-		output.println("</exec>");
+		output.println("</exec>"); //$NON-NLS-1$
 	}
 }
 
 public void printMkdirTask(int tab, String dir) {
 	printTab(tab);
-	output.print("<mkdir");
-	printAttribute("dir", dir, false);
-	output.println("/>");
+	output.print("<mkdir"); //$NON-NLS-1$
+	printAttribute("dir", dir, false); //$NON-NLS-1$
+	output.println("/>"); //$NON-NLS-1$
 }
 
 public void printEchoTask(int tab, String message) {
 	printTab(tab);
-	output.print("<echo");
-	printAttribute("message", message, true);
-	output.println("/>");
+	output.print("<echo"); //$NON-NLS-1$
+	printAttribute("message", message, true); //$NON-NLS-1$
+	output.println("/>"); //$NON-NLS-1$
 }
 
 public void printCVSTask(int tab, String command, String cvsRoot, String dest, String module, String tag, String quiet, String passFile) {
 	printTab(tab);
-	output.print("<cvs");
-	printAttribute("command", command, false);
-	printAttribute("cvsRoot", cvsRoot, false);
-	printAttribute("dest", dest, false);
-	printAttribute("package", module, false);
-	printAttribute("tag", tag, false);
-	printAttribute("quiet", quiet, false);
-	printAttribute("passfile", passFile, false);
-	output.println("/>");
+	output.print("<cvs"); //$NON-NLS-1$
+	printAttribute("command", command, false); //$NON-NLS-1$
+	printAttribute("cvsRoot", cvsRoot, false); //$NON-NLS-1$
+	printAttribute("dest", dest, false); //$NON-NLS-1$
+	printAttribute("package", module, false); //$NON-NLS-1$
+	printAttribute("tag", tag, false); //$NON-NLS-1$
+	printAttribute("quiet", quiet, false); //$NON-NLS-1$
+	printAttribute("passfile", passFile, false); //$NON-NLS-1$
+	output.println("/>"); //$NON-NLS-1$
 }
 
 public void printCVSPassTask(int tab, String cvsRoot, String password, String passFile) {
 	printTab(tab);
-	output.print("<cvspass");
-	printAttribute("cvsRoot", cvsRoot, true);
-	printAttribute("password", password, true);
-	printAttribute("passfile", passFile, false);
-	output.println("/>");
+	output.print("<cvspass"); //$NON-NLS-1$
+	printAttribute("cvsRoot", cvsRoot, true); //$NON-NLS-1$
+	printAttribute("password", password, true); //$NON-NLS-1$
+	printAttribute("passfile", passFile, false); //$NON-NLS-1$
+	output.println("/>"); //$NON-NLS-1$
 }
 
 protected void printParam(int tab, String name, String value) {
 	printTab(tab);
-	output.print("<param");
-	printAttribute("name", name, true);
-	printAttribute("value", value, true);
-	output.println("/>");
+	output.print("<param"); //$NON-NLS-1$
+	printAttribute("name", name, true); //$NON-NLS-1$
+	printAttribute("value", value, true); //$NON-NLS-1$
+	output.println("/>"); //$NON-NLS-1$
 }
 
 public void printProjectDeclaration(String name, String target, String basedir) {
-	output.print("<project");
-	printAttribute("name", name, false);
-	printAttribute("default", target, true);
-	printAttribute("basedir", basedir, false);
-	output.println(">");
+	output.print("<project"); //$NON-NLS-1$
+	printAttribute("name", name, false); //$NON-NLS-1$
+	printAttribute("default", target, true); //$NON-NLS-1$
+	printAttribute("basedir", basedir, false); //$NON-NLS-1$
+	output.println(">"); //$NON-NLS-1$
 }
 
 public void printProperty(int tab, String name, String value) {
 	printTab(tab);
-	output.print("<property");
-	printAttribute("name", name, true);
-	printAttribute("value", value, true);
-	output.println("/>");
+	output.print("<property"); //$NON-NLS-1$
+	printAttribute("name", name, true); //$NON-NLS-1$
+	printAttribute("value", value, true); //$NON-NLS-1$
+	output.println("/>"); //$NON-NLS-1$
 }
 
 protected void printQuotes(String str) {
-	output.print("\"");
+	output.print("\""); //$NON-NLS-1$
 	output.print(str);
-	output.print("\"");
+	output.print("\""); //$NON-NLS-1$
 }
 
 public void printStartTag(int tab, String tag) {
 	printTab(tab);
-	output.print("<");
+	output.print("<"); //$NON-NLS-1$
 	output.print(tag);
-	output.println(">");
+	output.println(">"); //$NON-NLS-1$
 }
 
 public void printEndTag(int tab, String tag) {
 	printTab(tab);
-	output.print("</");
+	output.print("</"); //$NON-NLS-1$
 	output.print(tag);
-	output.println(">");
+	output.println(">"); //$NON-NLS-1$
 }
 
 protected void printTab(int n) {
 	for (int i = 0; i < n; i++)
-		output.print("\t");
+		output.print("\t"); //$NON-NLS-1$
 }
 
 public void println(String s) {
@@ -291,21 +291,21 @@ public void print(int tab, ITask task) {
 
 public void printTargetDeclaration(int tab, String name, String depends, String ifClause, String unlessClause, String description) {
 	printTab(tab);
-	output.print("<target");
-	printAttribute("name", name, true);
-	printAttribute("depends", depends, false);
-	printAttribute("if", ifClause, false);
-	printAttribute("unless", unlessClause, false);
-	printAttribute("description", description, false);
-	output.println(">");
+	output.print("<target"); //$NON-NLS-1$
+	printAttribute("name", name, true); //$NON-NLS-1$
+	printAttribute("depends", depends, false); //$NON-NLS-1$
+	printAttribute("if", ifClause, false); //$NON-NLS-1$
+	printAttribute("unless", unlessClause, false); //$NON-NLS-1$
+	printAttribute("description", description, false); //$NON-NLS-1$
+	output.println(">"); //$NON-NLS-1$
 }
 
 public void printRefreshLocalTask(int tab, String resource, String depth) {
 	printTab(tab);
-	output.print("<eclipse.refreshLocal");
-	printAttribute("resource", resource, true);
-	printAttribute("depth", depth, false);
-	output.println("/>");
+	output.print("<eclipse.refreshLocal"); //$NON-NLS-1$
+	printAttribute("resource", resource, true); //$NON-NLS-1$
+	printAttribute("depth", depth, false); //$NON-NLS-1$
+	output.println("/>"); //$NON-NLS-1$
 }
 
 }

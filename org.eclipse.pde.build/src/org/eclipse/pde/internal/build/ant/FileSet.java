@@ -32,14 +32,14 @@ public FileSet(String dir, String defaultexcludes, String includes, String inclu
 
 protected void print(AntScript script, int tab) {
 	script.printTab(tab);
-	script.print("<fileset");
-	script.printAttribute("dir", dir, true);
-	script.printAttribute("defaultexcludes", defaultexcludes, false);
-	script.printAttribute("includes", includes, false);
-	script.printAttribute("includesfile", includesfile, false);
-	script.printAttribute("excludes", excludes, false);
-	script.printAttribute("excludesfile", excludesfile, false);
-	script.printAttribute("casesensitive", casesensitive, false);
-	script.println("/>");
+	script.print("<fileset"); //$NON-NLS-1$
+	script.printAttribute("dir", dir, true); //$NON-NLS-1$
+	script.printAttribute("defaultexcludes", defaultexcludes, false); //$NON-NLS-1$
+	script.printAttribute("includes", includes, false); //$NON-NLS-1$
+	script.printAttribute("includesfile", includesfile, false); //$NON-NLS-1$
+	script.printAttribute("excludes", excludes, false); //$NON-NLS-1$
+	script.printAttribute("excludesfile", excludesfile, false); //$NON-NLS-1$
+	script.printAttribute("casesensitive", casesensitive, false); //$NON-NLS-1$
+	script.println("/>"); //$NON-NLS-1$
 }
 }

@@ -32,7 +32,7 @@ public class BuildManifestTask extends Task implements IPDEBuildConstants, IXMLC
 public void execute() throws BuildException {
 	try {
 		if (this.elements == null)
-			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ELEMENT_MISSING, Policy.bind("error.missingElement"), null));
+			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ELEMENT_MISSING, Policy.bind("error.missingElement"), null)); //$NON-NLS-1$
 		readDirectory();
 		PrintWriter output = new PrintWriter(new FileOutputStream(destination));
 		try {
@@ -50,25 +50,25 @@ public void execute() throws BuildException {
 }
 
 protected void generatePrologue(PrintWriter output) {
-	output.print("# Build Manifest for ");
+	output.print("# Build Manifest for "); //$NON-NLS-1$
 	output.println(buildName);
 	output.println();
-	output.println("# The format of this file is:");
-	output.println("# <type>@<element>=<CVS tag>");
+	output.println("# The format of this file is:"); //$NON-NLS-1$
+	output.println("# <type>@<element>=<CVS tag>"); //$NON-NLS-1$
 	output.println();
 	String id = getBuildId();
 	if (id != null) {
-		output.print(PROPERTY_BUILD_ID + "=");
+		output.print(PROPERTY_BUILD_ID + "="); //$NON-NLS-1$
 		output.println(id);
 	}
 	String type = getBuildType();
 	if (type != null) {
-		output.print(PROPERTY_BUILD_TYPE + "=");
+		output.print(PROPERTY_BUILD_TYPE + "="); //$NON-NLS-1$
 		output.println(type);
 	}
 	String qualifier = getBuildQualifier();
 	if (qualifier != null) {
-		output.print(PROPERTY_BUILD_QUALIFIER + "=");
+		output.print(PROPERTY_BUILD_QUALIFIER + "="); //$NON-NLS-1$
 		output.println(qualifier);
 	}
 	output.println();
@@ -105,20 +105,20 @@ protected void generateEntries(PrintWriter output, List entries) throws CoreExce
 protected void collectEntries(List entries, String entry) throws CoreException {
 	String cvsInfo = directory.getProperty(entry);
 	if (cvsInfo == null)
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ENTRY_MISSING, Policy.bind("error.missingDirectoryEntry", entry), null));
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ENTRY_MISSING, Policy.bind("error.missingDirectoryEntry", entry), null)); //$NON-NLS-1$
 
 	int index = entry.indexOf('@');
 	String type = entry.substring(0, index);
 	String element = entry.substring(index + 1);
-	if (type.equals("plugin") || type.equals("fragment")) {
+	if (type.equals("plugin") || type.equals("fragment")) { //$NON-NLS-1$ //$NON-NLS-2$
 		String[] cvsFields = Utils.getArrayFromString(cvsInfo);
 		String tag = cvsFields[0];
 		StringBuffer sb = new StringBuffer();
 		sb.append(entry);
-		sb.append("=");
+		sb.append("="); //$NON-NLS-1$
 		sb.append(tag);
 		entries.add(sb.toString());
-	} else if (children && type.equals("feature")) {
+	} else if (children && type.equals("feature")) { //$NON-NLS-1$
 		Feature feature = readFeature(element);
 		collectChildrenEntries(entries, feature);
 	}
@@ -129,9 +129,9 @@ protected void collectChildrenEntries(List entries, Feature feature) throws Core
 	for (int i = 0; i < children.length; i++) {
 		String elementId = children[i].getVersionedIdentifier().getIdentifier();
 		if (children[i].isFragment())
-			collectEntries(entries, "fragment@" + elementId);
+			collectEntries(entries, "fragment@" + elementId); //$NON-NLS-1$
 		else
-			collectEntries(entries, "plugin@" + elementId);
+			collectEntries(entries, "plugin@" + elementId); //$NON-NLS-1$
 	}
 }
 
@@ -143,7 +143,7 @@ protected Feature readFeature(String element) throws CoreException {
 		FeatureExecutableFactory factory = new FeatureExecutableFactory();
 		return (Feature) factory.createFeature(root.toFile().toURL(), null);
 	} catch (Exception e) {
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, Policy.bind("error.creatingFeature", new String[] {element}), e));
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, Policy.bind("error.creatingFeature", new String[] {element}), e)); //$NON-NLS-1$
 	}	
 }
 
@@ -167,7 +167,7 @@ protected void readDirectory() throws CoreException {
 			is.close();
 		}
 	} catch (IOException e) {
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READ_DIRECTORY, Policy.bind("error.readingDirectory"), e));
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READ_DIRECTORY, Policy.bind("error.readingDirectory"), e)); //$NON-NLS-1$
 	}
 }
 
