@@ -25,7 +25,6 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
-import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.ide.*;
 import org.eclipse.ui.part.*;
 import org.eclipse.ui.wizards.newresource.*;
@@ -45,8 +44,7 @@ public class NewSiteProjectWizard
 	public static final String OVERWRITE_SITE = "NewFeatureWizard.overwriteSite"; //$NON-NLS-1$
 	public static final String DEF_PROJECT_NAME ="project-name"; //$NON-NLS-1$
 
-	private WizardNewProjectCreationPage mainPage;
-	private SiteHTMLPage htmlPage;
+	private NewSiteProjectCreationPage mainPage;
 	private IConfigurationElement config;
 	private boolean createdProject = false;
 	public static final String DEFAULT_PLUGIN_DIR = "plugins"; //$NON-NLS-1$
@@ -60,15 +58,13 @@ public class NewSiteProjectWizard
 		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
 	}
 	public void addPages() {
-		mainPage = new WizardNewProjectCreationPage("main"); //$NON-NLS-1$
+		mainPage = new NewSiteProjectCreationPage("main"); //$NON-NLS-1$
 		mainPage.setTitle(PDEPlugin.getResourceString(MAIN_PAGE_TITLE));
 		mainPage.setDescription(PDEPlugin.getResourceString(MAIN_PAGE_DESC));
 		String pname = getDefaultValue(DEF_PROJECT_NAME);
 		if (pname!=null)
 			mainPage.setInitialProjectName(pname);
 		addPage(mainPage);
-		htmlPage = new SiteHTMLPage(mainPage);
-		addPage(htmlPage);
 	}
 
 	private IFile createSiteManifest(
@@ -115,7 +111,7 @@ public class NewSiteProjectWizard
 		writer.println("<html>"); //$NON-NLS-1$
 		writer.println("<head>"); //$NON-NLS-1$
 		writer.println("<title>"+project.getName()+"</title>"); //$NON-NLS-1$ //$NON-NLS-2$
-		writer.println("<style>@import url(\""+htmlPage.getWebLocation()+"/site.css\");</style>"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println("<style>@import url(\""+mainPage.getWebLocation()+"/site.css\");</style>"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("<script type=\"text/javascript\">"); //$NON-NLS-1$
 		writer.println("	var returnval = 0;"); //$NON-NLS-1$
 		writer.println("	var stylesheet, xmlFile, cache, doc;"); //$NON-NLS-1$
@@ -127,7 +123,7 @@ public class NewSiteProjectWizard
 		writer.println("			stylesheet = document.implementation.createDocument(\"\", \"\", null);"); //$NON-NLS-1$
 		writer.println("			if (xmlFile.load){"); //$NON-NLS-1$
 		writer.println("				xmlFile.load(\"site.xml\");"); //$NON-NLS-1$
-		writer.println("				stylesheet.load(\""+htmlPage.getWebLocation()+"/site.xsl\");"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println("				stylesheet.load(\""+mainPage.getWebLocation()+"/site.xsl\");"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("			} else {"); //$NON-NLS-1$
 		writer.println("				alert(\"" + PDEPlugin.getResourceString("SiteHTML.loadError") + "\");"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		writer.println("			}"); //$NON-NLS-1$
@@ -141,7 +137,7 @@ public class NewSiteProjectWizard
 		writer.println("			xmlFile.load(\"site.xml\");"); //$NON-NLS-1$
 		writer.println("			stylesheet = new ActiveXObject(\"msxml2.FreeThreadedDOMDocument.3.0\");"); //$NON-NLS-1$
 		writer.println("			stylesheet.async = false;"); //$NON-NLS-1$
-		writer.println("			stylesheet.load(\""+htmlPage.getWebLocation()+"/site.xsl\");"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println("			stylesheet.load(\""+mainPage.getWebLocation()+"/site.xsl\");"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("			cache = new ActiveXObject(\"msxml2.XSLTemplate.3.0\");"); //$NON-NLS-1$
 		writer.println("			cache.stylesheet = stylesheet;"); //$NON-NLS-1$
 		writer.println("			transformData();"); //$NON-NLS-1$
@@ -188,7 +184,7 @@ public class NewSiteProjectWizard
 		
 	private void createCSSFile(IProject project){
 		try {
-		IFile file = project.getFile(htmlPage.getWebLocation() + "/site.css"); //$NON-NLS-1$
+		IFile file = project.getFile(mainPage.getWebLocation() + "/site.css"); //$NON-NLS-1$
 		StringWriter swrite = new StringWriter();
 		PrintWriter writer = new PrintWriter(swrite);
 		writer.println("<STYLE type=\"text/css\">"); //$NON-NLS-1$
@@ -220,7 +216,7 @@ public class NewSiteProjectWizard
 
 	private void createXSLFile(IProject project){
 		try {
-		IFile file = project.getFile(htmlPage.getWebLocation() + "/site.xsl"); //$NON-NLS-1$
+		IFile file = project.getFile(mainPage.getWebLocation() + "/site.xsl"); //$NON-NLS-1$
 		StringWriter swrite = new StringWriter();
 		PrintWriter writer = new PrintWriter(swrite);
 		writer.println("<xsl:stylesheet version = '1.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl=\"urn:schemas-microsoft-com:xslt\">"); //$NON-NLS-1$
@@ -231,7 +227,7 @@ public class NewSiteProjectWizard
 		writer.println("	<html>"); //$NON-NLS-1$
 		writer.println("	<head>"); //$NON-NLS-1$
 		writer.println("	<title>"+project.getName()+"</title>"); //$NON-NLS-1$ //$NON-NLS-2$
-		writer.println("	<style>@import url(\"" + htmlPage.getWebLocation() + "/site.css\");</style>"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println("	<style>@import url(\"" + mainPage.getWebLocation() + "/site.css\");</style>"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("	</head>"); //$NON-NLS-1$
 		writer.println("	<body>"); //$NON-NLS-1$
 		writer.println("	<h1 class=\"title\">" + project.getName() +"</h1>"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -492,7 +488,7 @@ public class NewSiteProjectWizard
 			monitor.worked(4);
 		}
 		// create site.xsl, site.css, and index.html
-		if (htmlPage.isCreateUpdateSiteHTML()){
+		if (mainPage.isCreateUpdateSiteHTML()){
 			createXSLFile(project);
 			createCSSFile(project);
 			createHTMLFile(project);
@@ -501,12 +497,12 @@ public class NewSiteProjectWizard
 	}
 	
 	private void createFolders(IProject project, IProgressMonitor monitor) throws CoreException {
-		String[] names = new String[]{htmlPage.getWebLocation(), DEFAULT_FEATURE_DIR, DEFAULT_PLUGIN_DIR};
+		String[] names = new String[]{mainPage.getWebLocation(), DEFAULT_FEATURE_DIR, DEFAULT_PLUGIN_DIR};
 		IFolder folder;
 		IPath path;
 		
 		for (int i =0 ; i<names.length; i++){
-			if (names[i].length() ==0 || (!htmlPage.isCreateUpdateSiteHTML() && i==0))
+			if (names[i].length() ==0 || (!mainPage.isCreateUpdateSiteHTML() && i==0))
 				continue;
 			folder = project.getFolder(names[i]);
 			path = folder.getProjectRelativePath();

@@ -8,13 +8,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.pde.internal.ui.wizards.site;
 
 import java.io.*;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
@@ -22,15 +20,15 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.*;
 
-
-public class SiteHTMLPage extends WizardPage {
+/**
+ * @author cgwong
+ */
+public class NewSiteProjectCreationPage extends WizardNewProjectCreationPage {
 	private boolean createSite = false;
 	
-	public static final String HTML_PAGE_TITLE = "SiteHTMLPage.HTMLPage.title"; //$NON-NLS-1$
-	public static final String HTML_PAGE_DESC = "SiteHTMLPage.HTMLPage.desc"; //$NON-NLS-1$
-	public static final String HTML_CHECK_LABEL = "SiteHTMLPage.HTMLPage.checkLabel"; //$NON-NLS-1$
-	public static final String HTML_WEB_LABEL = "SiteHTMLPage.HTMLPage.webLabel"; //$NON-NLS-1$
-	public static final String WEB_ERR = "SiteHTMLPage.HTMLPage.webError"; //$NON-NLS-1$
+	public static final String HTML_CHECK_LABEL = "SiteHTML.checkLabel"; //$NON-NLS-1$
+	public static final String HTML_WEB_LABEL = "SiteHTML.webLabel"; //$NON-NLS-1$
+	public static final String WEB_ERR = "SiteHTML.webError"; //$NON-NLS-1$
 	private static final int SIZING_TEXT_FIELD_WIDTH = 350;
 
 	protected Text webText;
@@ -42,13 +40,21 @@ public class SiteHTMLPage extends WizardPage {
 		}
 	};
 	
-	public SiteHTMLPage(WizardNewProjectCreationPage mainPage) {
-		super("htmlPage"); //$NON-NLS-1$
-		setTitle(PDEPlugin.getResourceString(HTML_PAGE_TITLE));
-		setDescription(PDEPlugin.getResourceString(HTML_PAGE_DESC));
+	/**
+	 * Creates a new project creation wizard page.
+	 *
+	 * @param pageName the name of this page
+	 */
+	public NewSiteProjectCreationPage(String pageName) {
+		super(pageName);
 	}
-	public void createControl(Composite parent){
-		Composite composite = new Composite(parent, SWT.NULL);
+	
+	/** (non-Javadoc)
+	 * Method declared on IDialogPage.
+	 */
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		Composite composite = new Composite((Composite)getControl(), SWT.NULL);
 		composite.setFont(parent.getFont());
 		
 		initializeDialogUnits(parent);
@@ -91,9 +97,8 @@ public class SiteHTMLPage extends WizardPage {
 		setPageComplete(validatePage());
 		setControl(composite);
 		Dialog.applyDialogFont(composite);
-		
 	}
-
+	
 	public String getStatusString(){
 		if (createSite && getWebLocation().equals("")) //$NON-NLS-1$
 			return PDEPlugin.getResourceString(WEB_ERR);
