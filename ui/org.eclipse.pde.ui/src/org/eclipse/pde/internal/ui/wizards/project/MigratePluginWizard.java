@@ -61,8 +61,7 @@ public class MigratePluginWizard extends Wizard {
 					if (doUpdateClasspath) {
 						UpdateClasspathAction.doUpdateClasspath(
 							new SubProgressMonitor(monitor, models.length),
-							models,
-							null);
+							models);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();

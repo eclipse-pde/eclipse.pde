@@ -17,7 +17,6 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -29,8 +28,6 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.osgi.bundle.WorkspaceBundleModel;
 import org.eclipse.pde.internal.core.plugin.WorkspaceExtensionsModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.util.SWTUtil;
-import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 
 public class PluginToBundleAction implements IWorkbenchWindowActionDelegate {
@@ -41,32 +38,6 @@ public class PluginToBundleAction implements IWorkbenchWindowActionDelegate {
 	private static final String KEY_UPDATE = "Actions.classpath.update"; //$NON-NLS-1$
 	private static final String KEY_SETTING = "Actions.classpath.setting"; //$NON-NLS-1$
 
-	private static class MissingPluginConfirmation implements IMissingPluginConfirmation {
-		private boolean useProjectReference = false;
-		private boolean alreadyAsked = false;
-		public boolean getUseProjectReference() {
-			if (!alreadyAsked) {
-				useProjectReference = syncAsk();
-				alreadyAsked = true;
-			}
-			return useProjectReference;
-		}
-		private boolean syncAsk() {
-			Display display = SWTUtil.getStandardDisplay();
-			final Shell shell = PDEPlugin.getActiveWorkbenchShell();
-			final boolean[] result = new boolean[1];
-			display.syncExec(new Runnable() {
-				public void run() {
-					result[0] =
-						MessageDialog.openQuestion(
-							shell,
-							PDEPlugin.getResourceString("UpdateClasspathAction.missingPlugin.title"), //$NON-NLS-1$
-							PDEPlugin.getResourceString("UpdateClasspathAction.missingPlugin.message")); //$NON-NLS-1$
-				}
-			});
-			return result[0];
-		}
-	}
 
 	/*
 	 * @see IActionDelegate#run(IAction)
@@ -159,14 +130,13 @@ public class PluginToBundleAction implements IWorkbenchWindowActionDelegate {
 		monitor.beginTask(
 			PDEPlugin.getResourceString(KEY_UPDATE),
 			models.length);
-		MissingPluginConfirmation confirmation = new MissingPluginConfirmation();
 		try {
 			for (int i = 0; i < models.length; i++) {
 				IPluginModelBase model = models[i];
 
 				IProgressMonitor subMonitor =
 					new SubProgressMonitor(monitor, 1);
-				convertPluginToBundle(model, confirmation, subMonitor);
+				convertPluginToBundle(model, subMonitor);
 				if (monitor.isCanceled())
 					break;
 			}
@@ -177,7 +147,6 @@ public class PluginToBundleAction implements IWorkbenchWindowActionDelegate {
 
 	private static void convertPluginToBundle(
 		IPluginModelBase model,
-		IMissingPluginConfirmation confirmation,
 		IProgressMonitor monitor)
 		throws CoreException {
 		IPluginBase pluginBase = model.getPluginBase();

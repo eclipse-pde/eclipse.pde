@@ -44,7 +44,7 @@ public class RequiredPluginsClasspathContainer implements IClasspathContainer {
 	public IClasspathEntry[] getClasspathEntries() {
 		if (model==null) return new IClasspathEntry[0];
 		if (entries == null) {
-			entries = ClasspathUtilCore.computePluginEntries(model, null);
+			entries = ClasspathUtilCore.computePluginEntries(model);
 			entries = verifyWithAttachmentManager(entries);
 		}
 		return entries;

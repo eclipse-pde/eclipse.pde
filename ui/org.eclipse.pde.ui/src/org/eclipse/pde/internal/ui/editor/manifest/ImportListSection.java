@@ -364,7 +364,7 @@ public class ImportListSection
 						getFormPage().getEditor().doSave(monitor);
 					}
 					boolean useContainers = PDEPlugin.getUseClasspathContainers();
-					ClasspathUtil.setClasspath(model, useContainers, null, monitor);
+					ClasspathUtil.setClasspath(model, useContainers, monitor);
 					monitor.worked(1);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);

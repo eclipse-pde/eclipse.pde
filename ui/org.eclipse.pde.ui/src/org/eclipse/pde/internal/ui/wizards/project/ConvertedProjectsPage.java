@@ -204,7 +204,7 @@ public class ConvertedProjectsPage extends WizardPage  {
 		if (!model.isLoaded())
 			return;
 			
-		ClasspathUtilCore.setClasspath(model, false, null, monitor); // error occurs here on initial
+		ClasspathUtilCore.setClasspath(model, false, monitor); // error occurs here on initial
 	
 	}
 

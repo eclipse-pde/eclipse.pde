@@ -27,7 +27,6 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.osgi.bundle.BundlePluginModelBase;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.codegen.JavaCodeGenerator;
-import org.eclipse.pde.internal.ui.editor.manifest.ManifestEditor;
 import org.eclipse.pde.internal.ui.osgi.wizards.project.BundleProjectStructurePage;
 import org.eclipse.pde.internal.ui.wizards.templates.*;
 import org.eclipse.pde.ui.*;
@@ -263,7 +262,7 @@ public abstract class AbstractNewBundleTemplateWizard
 
 	private void setJavaSettings(IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
 		boolean useContainers = PDEPlugin.getUseClasspathContainers();
-		ClasspathUtil.setClasspath(model, useContainers, null, monitor);
+		ClasspathUtil.setClasspath(model, useContainers, monitor);
 	}
 	
 	private void setPackages(BundlePluginModelBase model, ArrayList generatedPackages) {
@@ -445,10 +444,6 @@ public abstract class AbstractNewBundleTemplateWizard
 		}
 	}
 
-	private IEditorInput createEditorInput(IFile file) {
-		return new TemplateEditorInput(file, ManifestEditor.TEMPLATE_PAGE);
-	}
-
 	private void openFile(final IFile file, final String editorId, final boolean selectReveal) {
 		BasicNewProjectResourceWizard.updatePerspective(config);		
 		final IWorkbenchWindow ww = PDEPlugin.getActiveWorkbenchWindow();
@@ -468,8 +463,6 @@ public abstract class AbstractNewBundleTemplateWizard
 							selection);
 						}
 					}
-					IEditorInput input = createEditorInput(file);
-					//ww.getActivePage().openEditor(input, editorId);
 					IDE.openEditor(page, file, selectReveal);
 				} catch (PartInitException e) {
 					PDEPlugin.logException(e);

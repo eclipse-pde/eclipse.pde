@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.core;
 
 import java.io.File;
+import java.util.*;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
@@ -110,29 +111,35 @@ public class ModelEntry extends PlatformObject {
 	}
 	
 	public boolean shouldUpdateClasspathContainer(boolean force, boolean doCheckClasspath) throws CoreException  {
-		if (workspaceModel == null || (doCheckClasspath && !usesContainers()))
+		if (workspaceModel == null)
 			return false;
+		
+		IProject project = workspaceModel.getUnderlyingResource().getProject();
+		if (!project.hasNature(JavaCore.NATURE_ID))
+			return false;
+		
+		if (doCheckClasspath && (!workspaceModel.isLoaded() || !usesContainers(JavaCore.create(project))))
+			return false;
+		
+		
 		if (force)
 			classpathContainer = null;
 		RequiredPluginsClasspathContainer container = getClasspathContainer();
 		container.reset();
 		return true;	
 	}
-
-	private boolean usesContainers() throws CoreException {
-		IProject project = workspaceModel.getUnderlyingResource().getProject();
-		if (project.hasNature(JavaCore.NATURE_ID)) {
-			IClasspathEntry[] entries = JavaCore.create(project).getRawClasspath();
-			for (int i = 0; i < entries.length; i++) {
-				IClasspathEntry entry = entries[i];
-				if (entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER
-					&& entry.getPath().equals(new Path(PDECore.CLASSPATH_CONTAINER_ID)))
-					return true;
-			}
+	
+	private boolean usesContainers(IJavaProject jProject) throws CoreException {
+		IClasspathEntry[] entries = jProject.getRawClasspath();
+		for (int i = 0; i < entries.length; i++) {
+			IClasspathEntry entry = entries[i];
+			if (entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER
+				&& entry.getPath().equals(new Path(PDECore.CLASSPATH_CONTAINER_ID)))
+				return true;
 		}
 		return false;
 	}
-
+	
 	public static void updateUnknownClasspathContainer(IJavaProject javaProject)
 		throws CoreException {
 		if (javaProject == null)
@@ -147,7 +154,7 @@ public class ModelEntry extends PlatformObject {
 	}
 
 	public boolean isAffected(IPluginBase[] changedPlugins) {
-		if (workspaceModel == null)
+		if (workspaceModel == null || !workspaceModel.isLoaded())
 			return false;
 		IPluginBase plugin = workspaceModel.getPluginBase();
 		for (int i = 0; i < changedPlugins.length; i++) {
@@ -160,24 +167,43 @@ public class ModelEntry extends PlatformObject {
 		}
 		return false;
 	}
+	
 	private boolean isRequired(IPluginBase plugin, IPluginBase changedPlugin) {
-		/*String changedId = changedPlugin.getId();
-		if (changedId == null)
-			return false;
-			
-		if (changedId.equalsIgnoreCase("org.eclipse.core.boot")
-			|| changedId.equalsIgnoreCase("org.eclipse.core.runtime"))
-			return true;
-		IPluginImport[] imports = plugin.getImports();
-		if (changedPlugin instanceof IFragment) {
-			changedId = ((IFragment)changedPlugin).getPluginId();
-		}
-		for (int i = 0; i < imports.length; i++) {
-			IPluginImport iimport = imports[i];
-			if (iimport.getId().equals(changedId))
-				return true;
-		}
-		return false;*/
-		return true;
+		if (changedPlugin instanceof IFragment)
+			return false;		
+		return getRequiredIds(plugin).contains(changedPlugin.getId());
 	}
+	
+	private HashSet getRequiredIds(IPluginBase plugin) {
+		HashSet set = new HashSet();
+		IPluginImport[] imports = plugin.getImports();
+		for (int i = 0; i < imports.length; i++) {
+			addDependency(imports[i].getId(), set);				
+		}
+		String id = plugin.getId();
+		if (!manager.isOSGiRuntime()
+			&& !id.startsWith("org.eclipse.swt")
+			&& !id.equals("org.eclipse.core.boot")
+			&& !id.equals("org.apache.xerces"))
+			set.add("org.eclipse.core.boot");
+			set.add("org.eclipse.core.runtime");
+		return set;
+	}
+	
+	private void addDependency(String id, HashSet set) {
+		if (!set.add(id))
+			return;
+
+		ModelEntry entry = manager.findEntry(id);
+		if (entry != null) {
+			IPluginBase plugin = entry.getActiveModel().getPluginBase();
+			IPluginImport[] imports = plugin.getImports();
+			for (int i = 0; i < imports.length; i++) {
+				if (imports[i].isReexported()) {
+					addDependency(imports[i].getId(), set);
+				}
+			}
+		}
+	}
+	
 }

@@ -17,7 +17,6 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -25,10 +24,8 @@ import org.eclipse.pde.core.IWorkspaceModelManager;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.ui.ClasspathUtil;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 
 public class UpdateClasspathAction implements IViewActionDelegate {
@@ -36,35 +33,6 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 	private static final String KEY_TITLE = "Actions.classpath.title"; //$NON-NLS-1$
 	private static final String KEY_MESSAGE = "Actions.classpath.message"; //$NON-NLS-1$
 	private static final String KEY_UPDATE = "Actions.classpath.update"; //$NON-NLS-1$
-
-	public static class MissingPluginConfirmation implements IMissingPluginConfirmation {
-		private boolean useProjectReference = false;
-		private boolean alreadyAsked = false;
-		public boolean getUseProjectReference() {
-			if (!alreadyAsked) {
-				useProjectReference = syncAsk();
-				alreadyAsked = true;
-			}
-			return useProjectReference;
-		}
-		private boolean syncAsk() {
-			Display display = SWTUtil.getStandardDisplay();
-			final Shell shell = PDEPlugin.getActiveWorkbenchShell();
-			final boolean[] result = new boolean[1];
-			display.syncExec(new Runnable() {
-				public void run() {
-					result[0] =
-						MessageDialog.openQuestion(
-							shell,
-							PDEPlugin.getResourceString(
-								"UpdateClasspathAction.missingPlugin.title"),
-							PDEPlugin.getResourceString(
-								"UpdateClasspathAction.missingPlugin.message"));
-				}
-			});
-			return result[0];
-		}
-	}
 
 	/*
 	 * @see IActionDelegate#run(IAction)
@@ -131,7 +99,7 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 						IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 							public void run(IProgressMonitor monitor)
 								throws CoreException {
-								doUpdateClasspath(monitor, useContainers, models, null);
+								doUpdateClasspath(monitor, useContainers, models);
 							}
 						};
 						PDEPlugin.getWorkspace().run(runnable, monitor);
@@ -159,18 +127,16 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 	
 	public static void doUpdateClasspath(
 			IProgressMonitor monitor,
-			IPluginModelBase[] models,
-			MissingPluginConfirmation confirmation)
+			IPluginModelBase[] models)
 	throws CoreException {
 		boolean useContainers = PDEPlugin.getUseClasspathContainers();
-		doUpdateClasspath(monitor, useContainers, models, confirmation);
+		doUpdateClasspath(monitor, useContainers, models);
 	}
 
 	public static void doUpdateClasspath(
 		IProgressMonitor monitor,
 		boolean useContainers,
-		IPluginModelBase[] models,
-		MissingPluginConfirmation confirmation)
+		IPluginModelBase[] models)
 		throws CoreException {
 		monitor.beginTask(PDEPlugin.getResourceString(KEY_UPDATE), models.length);
 		try {
@@ -186,7 +152,6 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 				ClasspathUtil.setClasspath(
 					model,
 					useContainers,
-					confirmation,
 					new SubProgressMonitor(monitor, 1));
 				if (monitor.isCanceled())
 					break;

@@ -248,7 +248,7 @@ public abstract class AbstractNewPluginTemplateWizard
 
 	private void setJavaSettings(IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
 		boolean useContainers = PDEPlugin.getUseClasspathContainers();
-		ClasspathUtil.setClasspath(model, useContainers, null, monitor);
+		ClasspathUtil.setClasspath(model, useContainers, monitor);
 	}
 
 	public void setShowTemplatePages(boolean val){

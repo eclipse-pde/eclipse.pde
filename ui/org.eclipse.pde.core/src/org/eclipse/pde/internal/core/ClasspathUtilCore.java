@@ -24,7 +24,6 @@ public class ClasspathUtilCore {
 	public static void setClasspath(
 		IPluginModelBase model,
 		boolean useClasspathContainer,
-		IMissingPluginConfirmation confirmation,
 		IProgressMonitor monitor)
 		throws CoreException {
 
@@ -42,7 +41,7 @@ public class ClasspathUtilCore {
 			result.add(createContainerEntry());
 			monitor.worked(1);
 		} else {
-			computePluginEntries(model, true, result, confirmation, monitor);
+			computePluginEntries(model, true, result, monitor);
 		}
 
 		// add JRE
@@ -50,8 +49,7 @@ public class ClasspathUtilCore {
 		monitor.worked(1);
 
 		IClasspathEntry[] entries =
-			(IClasspathEntry[]) result.toArray(
-				new IClasspathEntry[result.size()]);
+			(IClasspathEntry[]) result.toArray(new IClasspathEntry[result.size()]);
 
 		IJavaProject javaProject =
 			JavaCore.create(model.getUnderlyingResource().getProject());
@@ -72,7 +70,6 @@ public class ClasspathUtilCore {
 		IPluginModelBase model,
 		boolean relative,
 		Vector result,
-		IMissingPluginConfirmation confirmation,
 		IProgressMonitor monitor) {
 		try {
 			HashSet alreadyAdded = new HashSet();
@@ -83,7 +80,7 @@ public class ClasspathUtilCore {
 					result,
 					alreadyAdded);
 			}
-			
+
 			// add dependencies
 			IPluginImport[] dependencies = model.getPluginBase().getImports();
 			for (int i = 0; i < dependencies.length; i++) {
@@ -100,18 +97,11 @@ public class ClasspathUtilCore {
 						relative,
 						result,
 						alreadyAdded);
-				} else if (
-					confirmation != null
-						&& confirmation.getUseProjectReference()) {
-					addMissingDependencyAsProject(
-						dependency.getId(),
-						dependency.isReexported(),
-						result);
 				}
 				if (monitor != null)
 					monitor.worked(1);
 			}
-			
+
 			addExtraClasspathEntries(model, result);
 
 			// add implicit dependencies
@@ -170,7 +160,8 @@ public class ClasspathUtilCore {
 						IJavaProject jProject = JavaCore.create(project);
 						IPackageFragmentRoot[] roots = jProject.getPackageFragmentRoots();
 						for (int j = 0; j < roots.length; j++) {
-							if (roots[j].getResource() != null && roots[j].getResource().equals(resource)) {
+							if (roots[j].getResource() != null
+								&& roots[j].getResource().equals(resource)) {
 								IPath attPath = roots[j].getSourceAttachmentPath();
 								if (attPath != null) {
 									newEntry =
@@ -190,24 +181,10 @@ public class ClasspathUtilCore {
 		}
 	}
 
-	public static IClasspathEntry[] computePluginEntries(
-		IPluginModelBase model,
-		IMissingPluginConfirmation confirmation) {
+	public static IClasspathEntry[] computePluginEntries(IPluginModelBase model) {
 		Vector result = new Vector();
-		computePluginEntries(model, false, result, confirmation, null);
-		return (IClasspathEntry[]) result.toArray(
-			new IClasspathEntry[result.size()]);
-	}
-
-	private static void addMissingDependencyAsProject(
-		String name,
-		boolean isExported,
-		Vector result) {
-		IProject project = PDECore.getWorkspace().getRoot().getProject(name);
-		IClasspathEntry entry =
-			JavaCore.newProjectEntry(project.getFullPath(), isExported);
-		if (!result.contains(entry))
-			result.add(entry);
+		computePluginEntries(model, false, result, null);
+		return (IClasspathEntry[]) result.toArray(new IClasspathEntry[result.size()]);
 	}
 
 	private static void addDependency(
@@ -264,7 +241,7 @@ public class ClasspathUtilCore {
 			}
 		}
 	}
-	
+
 	private static boolean isOSGiRuntime() {
 		return PDECore.getDefault().getModelManager().isOSGiRuntime();
 	}
@@ -280,7 +257,7 @@ public class ClasspathUtilCore {
 			|| id.equals("org.apache.xerces")
 			|| id.startsWith("org.eclipse.swt"))
 			return;
-		
+
 		IPlugin plugin = PDECore.getDefault().findPlugin("org.eclipse.core.boot");
 		if (plugin != null)
 			addDependency(plugin, false, relative, result, alreadyAdded);
@@ -305,10 +282,7 @@ public class ClasspathUtilCore {
 		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
 		for (int i = 0; i < libraries.length; i++) {
 			IClasspathEntry entry =
-				createLibraryEntry(
-					libraries[i],
-					unconditionallyExport,
-					relative);
+				createLibraryEntry(libraries[i], unconditionallyExport, relative);
 			if (entry != null && !result.contains(entry))
 				result.add(entry);
 		}
@@ -336,21 +310,14 @@ public class ClasspathUtilCore {
 							imports[i].getVersion(),
 							imports[i].getMatch());
 					if (plugin != null) {
-						addDependency(
-							plugin,
-							false,
-							relative,
-							result,
-							alreadyAdded);
+						addDependency(plugin, false, relative, result, alreadyAdded);
 					}
 				}
 			}
 		}
 	}
 
-	private static void addSourceAndLibraries(
-		IPluginModelBase model,
-		Vector result)
+	private static void addSourceAndLibraries(IPluginModelBase model, Vector result)
 		throws CoreException {
 
 		IProject project = model.getUnderlyingResource().getProject();
@@ -358,11 +325,12 @@ public class ClasspathUtilCore {
 
 		if (!WorkspaceModelManager.isBinaryPluginProject(project)) {
 			// keep existing source folders
-			IPackageFragmentRoot[] roots = 
+			IPackageFragmentRoot[] roots =
 				JavaCore.create(project).getPackageFragmentRoots();
 			for (int i = 0; i < roots.length; i++) {
 				IPackageFragmentRoot root = roots[i];
-				if (root.getKind() == IPackageFragmentRoot.K_SOURCE && root.getPath().segmentCount() > 1) {
+				if (root.getKind() == IPackageFragmentRoot.K_SOURCE
+					&& root.getPath().segmentCount() > 1) {
 					IClasspathEntry entry = JavaCore.newSourceEntry(root.getPath());
 					if (!result.contains(entry))
 						result.add(entry);
@@ -370,7 +338,7 @@ public class ClasspathUtilCore {
 			}
 		}
 
-		// add libraries			
+		// add libraries
 		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
 		for (int i = 0; i < libraries.length; i++) {
 			IPluginLibrary library = libraries[i];
@@ -379,10 +347,9 @@ public class ClasspathUtilCore {
 			boolean found = false;
 			for (int j = 0; j < buildEntries.length; j++) {
 				IBuildEntry buildEntry = buildEntries[j];
-				// add corresponding source folder instead of library, if one exists
-				if (buildEntry
-					.getName()
-					.equals("source." + library.getName())) {
+				// add corresponding source folder instead of library, if one
+				// exists
+				if (buildEntry.getName().equals("source." + library.getName())) {
 					String[] folders = buildEntry.getTokens();
 					for (int k = 0; k < folders.length; k++) {
 						IPath path = project.getFullPath().append(folders[k]);
@@ -409,10 +376,7 @@ public class ClasspathUtilCore {
 		}
 	}
 
-	protected static void addSourceFolder(
-		String name,
-		IProject project,
-		Vector result)
+	protected static void addSourceFolder(String name, IProject project, Vector result)
 		throws CoreException {
 		IPath path = project.getFullPath().append(name);
 		ensureFolderExists(project, path);
@@ -435,8 +399,9 @@ public class ClasspathUtilCore {
 	}
 
 	/**
-	 * Creates a new instance of the classpath container entry for
-	 * the given project.
+	 * Creates a new instance of the classpath container entry for the given
+	 * project.
+	 * 
 	 * @param project
 	 */
 
@@ -486,9 +451,15 @@ public class ClasspathUtilCore {
 		if (source == null || source.length() == 0)
 			return "";
 		if (source.indexOf("$ws$") != -1)
-			source = source.replaceAll("\\$ws\\$", "ws" + IPath.SEPARATOR + TargetPlatform.getWS());
+			source =
+				source.replaceAll(
+					"\\$ws\\$",
+					"ws" + IPath.SEPARATOR + TargetPlatform.getWS());
 		if (source.indexOf("$os$") != -1)
-			source = source.replaceAll("\\$os\\$", "os" + IPath.SEPARATOR + TargetPlatform.getOS());
+			source =
+				source.replaceAll(
+					"\\$os\\$",
+					"os" + IPath.SEPARATOR + TargetPlatform.getOS());
 		return source;
 	}
 
@@ -531,18 +502,18 @@ public class ClasspathUtilCore {
 				if (path != null) {
 					if (!relative
 						|| (resource != null
-							&& !resource.getProject().hasNature(
-								JavaCore.NATURE_ID))
+							&& !resource.getProject().hasNature(JavaCore.NATURE_ID))
 						|| (resource != null && resource.isLinked()))
 						path = JavaCore.getResolvedVariablePath(path);
 				}
 			} else {
 				if (relative)
-					path = EclipseHomeInitializer.createEclipseRelativeHome(path.toOSString());
+					path =
+						EclipseHomeInitializer.createEclipseRelativeHome(
+							path.toOSString());
 			}
 		}
-		
-		
+
 		return path;
 	}
 
@@ -569,14 +540,12 @@ public class ClasspathUtilCore {
 			if (jarFile != null)
 				return jarFile.getFullPath();
 		} else {
-			IPath path =
-				new Path(model.getInstallLocation()).append(libraryName);
+			IPath path = new Path(model.getInstallLocation()).append(libraryName);
 			if (path.toFile().exists()) {
 				return path;
 			}
 		}
 		return null;
-
 	}
 
 }
