@@ -134,14 +134,14 @@ public class ModelEntry extends PlatformObject {
 	}
 	
 	private boolean usesContainers(IJavaProject jProject) throws CoreException {
-		IClasspathEntry[] entries = jProject.getRawClasspath();
+		/*IClasspathEntry[] entries = jProject.getRawClasspath();
 		for (int i = 0; i < entries.length; i++) {
 			IClasspathEntry entry = entries[i];
 			if (entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER
 				&& entry.getPath().equals(new Path(PDECore.CLASSPATH_CONTAINER_ID)))
 				return true;
-		}
-		return false;
+		}*/
+		return true;
 	}
 	
 	public static void updateUnknownClasspathContainer(IJavaProject javaProject)
