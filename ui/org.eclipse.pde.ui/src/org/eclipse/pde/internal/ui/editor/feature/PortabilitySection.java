@@ -94,8 +94,8 @@ public class PortabilitySection extends PDEFormSection {
 				forceDirty();
 			}
 		});
-		GridData gd = (GridData) osText.getControl().getLayoutData();
-		gd.widthHint = 150;
+		limitTextWidth(osText);
+
 		String editLabel = PDEPlugin.getResourceString(SECTION_EDIT);
 		osButton = factory.createButton(container, editLabel, SWT.PUSH);
 		osButton.addSelectionListener(new SelectionAdapter() {
@@ -124,6 +124,7 @@ public class PortabilitySection extends PDEFormSection {
 				forceDirty();
 			}
 		});
+		limitTextWidth(wsText);
 		wsButton = factory.createButton(container, editLabel, SWT.PUSH);
 		wsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -150,6 +151,7 @@ public class PortabilitySection extends PDEFormSection {
 				forceDirty();
 			}
 		});
+		limitTextWidth(nlText);
 		nlButton = factory.createButton(container, editLabel, SWT.PUSH);
 		nlButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -177,6 +179,7 @@ public class PortabilitySection extends PDEFormSection {
 				forceDirty();
 			}
 		});
+		limitTextWidth(archText);
 		archButton = factory.createButton(container, editLabel, SWT.PUSH);
 		archButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -191,6 +194,11 @@ public class PortabilitySection extends PDEFormSection {
 
 		factory.paintBordersFor(container);
 		return container;
+	}
+	
+	private void limitTextWidth(FormEntry entry) {
+		GridData gd = (GridData) entry.getControl().getLayoutData();
+		gd.widthHint = 150;
 	}
 
 	private void openPortabilityChoiceDialog(FormEntry text, Choice[] choices) {
