@@ -58,8 +58,10 @@ public class FeatureEditorContributor extends PDEFormEditorContributor {
 
 	public void setActiveEditor(IEditorPart targetEditor) {
 		super.setActiveEditor(targetEditor);
-		fBuildAction.setActiveEditor((FeatureEditor) targetEditor);
-		fSynchronizeAction.setActiveEditor((FeatureEditor) targetEditor);
+		if (targetEditor instanceof FeatureEditor) {
+			fBuildAction.setActiveEditor((FeatureEditor) targetEditor);
+			fSynchronizeAction.setActiveEditor((FeatureEditor) targetEditor);
+		}
 	}
 
 	protected boolean hasKnownTypes(Clipboard clipboard) {
