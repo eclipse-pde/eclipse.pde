@@ -12,13 +12,14 @@ package org.eclipse.pde.ui.templates;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 /**
- * The base class for all the template option fields. Template option is a single
- * editable option that is exposed to the users in the wizard pages associated
- * with templates. Although the field is associated with the
- * template section, there is no 1/1 mapping between the field
- * and the substitution value that can be used in the template files.
- * In general, a subclass of this class can generate any SWT
- * control in the provided composite.
+ * The base class for all the template option fields. Template option is a
+ * single editable option that is exposed to the users in the wizard pages
+ * associated with templates. Although the field is associated with the template
+ * section, there is no 1/1 mapping between the field and the substitution value
+ * that can be used in the template files. In general, a subclass of this class
+ * can generate any SWT control in the provided composite.
+ * 
+ * @since 2.0
  */
 public abstract class TemplateField {
 	private BaseOptionTemplateSection section;

@@ -14,6 +14,8 @@ package org.eclipse.pde.ui.templates;
  * value that can be changed. The value of the option is automatically available
  * to the template files - can be accessed by substitution (e.g. $value_name$)
  * or as part of conditional code generation (e.g. if value_name).
+ * 
+ * @since 2.0
  */
 public abstract class TemplateOption extends TemplateField {
 	private String name;

@@ -16,6 +16,8 @@ import org.eclipse.swt.widgets.*;
 /**
  * This template option can be used to collect string option from the user in
  * the template section wizard page.
+ * 
+ * @since 2.0
  */
 public class StringOption extends TemplateOption {
 	private Text text;

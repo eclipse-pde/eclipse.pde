@@ -270,7 +270,7 @@ interface.
       </appInfo>
       <documentation>
          PDE provides a generic wizard that creates extension
-points based on the extension point schema information.
+points based on the extension point schema information. In addition, all templates registered using &lt;code&gt;org.eclipse.pde.ui.templates&lt;/code&gt; extension point in PDE UI are also hooked as individual extension wizards.
       </documentation>
    </annotation>
 

@@ -18,6 +18,8 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
  * <samp>org.eclipse.pde.ui.newExtension </samp> extension point and want to
  * register wizards for custom editing of the selected extensions and extension
  * elements in the plug-in manifest wizard.
+ * 
+ * @since 3.0
  */
 public interface IExtensionEditorWizard extends IBasePluginWizard {
 	/**
@@ -29,12 +31,11 @@ public interface IExtensionEditorWizard extends IBasePluginWizard {
 	 * indicating that the currently opened manifest file is modified and needs
 	 * to be saved.
 	 * <p>
-	 * The wizard is opened on a current selection in the extension tree.
-	 * It is supposed to modify the selected element and/or its children
-	 * using plug-in model APIs. The setters on the APIs will cause
-	 * the model to be dirty and make the editor dirty as well. 
-	 * Saving the editor will commit the changes made by the wizard
-	 * to the edited file.
+	 * The wizard is opened on a current selection in the extension tree. It is
+	 * supposed to modify the selected element and/or its children using plug-in
+	 * model APIs. The setters on the APIs will cause the model to be dirty and
+	 * make the editor dirty as well. Saving the editor will commit the changes
+	 * made by the wizard to the edited file.
 	 * 
 	 * @param project
 	 *            the plug-in project resource where the new code and resources

@@ -18,6 +18,8 @@ package org.eclipse.pde.ui.templates;
  * The list of templates is fixed. It must be known in advance so that the
  * required wizard pages can be created. Upon finish, the template sections are
  * executed in the order of creation.
+ * 
+ * @since 2.0
  */
 public abstract class NewPluginTemplateWizard
 		extends

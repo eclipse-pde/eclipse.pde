@@ -15,6 +15,8 @@ import org.eclipse.jface.wizard.IWizard;
 /**
  * This is a tagging interface that should be implemented by all wizards that
  * are plugged into one of PDE extension points.
+ * 
+ * @since 1.0
  */
 public interface IBasePluginWizard extends IWizard {
 }

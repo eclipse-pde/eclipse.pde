@@ -16,8 +16,10 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 /**
- * Implementation of the TemplateOption that allows users to
- * choose a value from the fixed set of options.
+ * Implementation of the TemplateOption that allows users to choose a value from
+ * the fixed set of options.
+ * 
+ * @since 2.0
  */
 public class ChoiceOption extends TemplateOption {
 	private String[][] choices;
@@ -27,19 +29,21 @@ public class ChoiceOption extends TemplateOption {
 
 	/**
 	 * Constructor for ChoiceOption.
-	 * @param section the parent section.
-	 * @param name the unique name
-	 * @param label the presentable label 
-	 * @param choices the list of choices from which the value
-	 * can be chosen. Each array entry should be an array of size 2,
-	 * where position 0 will be interpeted as the choice unique
-	 * name, and position 1 as the choice presentable label.
+	 * 
+	 * @param section
+	 *            the parent section.
+	 * @param name
+	 *            the unique name
+	 * @param label
+	 *            the presentable label
+	 * @param choices
+	 *            the list of choices from which the value can be chosen. Each
+	 *            array entry should be an array of size 2, where position 0
+	 *            will be interpeted as the choice unique name, and position 1
+	 *            as the choice presentable label.
 	 */
-	public ChoiceOption(
-		BaseOptionTemplateSection section,
-		String name,
-		String label,
-		String[][] choices) {
+	public ChoiceOption(BaseOptionTemplateSection section, String name,
+			String label, String[][] choices) {
 		super(section, name, label);
 		this.choices = choices;
 	}
@@ -83,16 +87,19 @@ public class ChoiceOption extends TemplateOption {
 	}
 	/**
 	 * Returns the string value of the current choice.
-	 * @return the current choice or <samp>null</samp> if not initialized.
+	 * 
+	 * @return the current choice or <samp>null </samp> if not initialized.
 	 */
 	public String getChoice() {
 		return getValue() != null ? getValue().toString() : null;
 	}
 
 	/**
-	 * Implements the superclass method by passing the new value
-	 * to the option's widget.
-	 * @param value the new value.
+	 * Implements the superclass method by passing the new value to the option's
+	 * widget.
+	 * 
+	 * @param value
+	 *            the new value.
 	 */
 	public void setValue(Object value) {
 		super.setValue(value);
@@ -101,8 +108,8 @@ public class ChoiceOption extends TemplateOption {
 		}
 	}
 	/**
-	 * Implements the superclass method by updating the
-	 * enable state of the option's widget.
+	 * Implements the superclass method by updating the enable state of the
+	 * option's widget.
 	 */
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);
@@ -113,7 +120,7 @@ public class ChoiceOption extends TemplateOption {
 			}
 		}
 	}
-	
+
 	private GridData fill(Control control, int span) {
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = span;

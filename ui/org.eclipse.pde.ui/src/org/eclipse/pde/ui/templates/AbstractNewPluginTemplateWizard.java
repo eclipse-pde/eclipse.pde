@@ -11,6 +11,7 @@
 package org.eclipse.pde.ui.templates;
 import java.io.*;
 import java.util.ArrayList;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.wizard.Wizard;
@@ -22,6 +23,8 @@ import org.eclipse.pde.ui.*;
  * implemented using PDE template support. The assumption is that one or more
  * templates will be used to generate plug-in content. Dependencies, new files
  * and wizard pages are all computed based on the templates.
+ * 
+ * @since 2.0
  */
 public abstract class AbstractNewPluginTemplateWizard extends Wizard
 		implements
@@ -93,7 +96,8 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard
 				sections[i].execute(project, model, new SubProgressMonitor(
 						monitor, 1));
 			}
-			saveTemplateFile(project, null);
+			//No reason to do this any more with the new editors
+			//saveTemplateFile(project, null);
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 			return false;
