@@ -7,6 +7,11 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginElement;
+import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginModel;
+import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.pde.internal.core.plugin.Plugin;
 
 /**
  * @author dejan
@@ -146,25 +151,6 @@ public class SourceLocationManager implements ICoreConstants {
 		}
 	}
 
-	private String encodeSourceLocations(ArrayList locations) {
-		StringBuffer buf = new StringBuffer();
-		for (int i = 0; i < locations.size(); i++) {
-			SourceLocation loc = (SourceLocation) locations.get(i);
-			if (i > 0)
-				buf.append(File.pathSeparatorChar);
-			buf.append(encodeSourceLocation(loc));
-		}
-		return buf.toString();
-	}
-
-	private String encodeSourceLocation(SourceLocation location) {
-		return location.getName()
-			+ "@"
-			+ location.getPath().toOSString()
-			+ ","
-			+ (location.isEnabled() ? "t" : "f");
-	}
-
 	private SourceLocation parseSourceLocation(String text) {
 		String name = "";
 		String path = "";
@@ -187,25 +173,38 @@ public class SourceLocationManager implements ICoreConstants {
 
 	private void initializeExtensionLocations() {
 		extensionLocations = new ArrayList();
-		String pref = PDECore.getDefault().getPluginPreferences().getString(P_EXT_LOCATIONS);
-		IPluginRegistry registry = Platform.getPluginRegistry();
-		IConfigurationElement[] elements =
-			registry.getConfigurationElementsFor(
-				PDECore.getPluginId(),
-				"source");
+		String pref =
+			PDECore.getDefault().getPluginPreferences().getString(
+				P_EXT_LOCATIONS);
 		SourceLocation[] storedLocations = getSavedSourceLocations(pref);
-		for (int i = 0; i < elements.length; i++) {
-			IConfigurationElement element = elements[i];
-			if (element.getName().equalsIgnoreCase("location")) {
-				SourceLocation location = new SourceLocation(element);
-				location.setEnabled(getSavedState(location.getName(), storedLocations));
-				extensionLocations.add(location);
+		IPluginExtension[] extensions = getRegisteredSourceExtensions();
+		for (int i = 0; i < extensions.length; i++) {
+			IPluginObject[] children = extensions[i].getChildren();
+			for (int j = 0; j < children.length; j++) {
+				if (children[j].getName().equals("location")) {
+					IPluginElement element = (IPluginElement) children[j];
+					String pathValue = element.getAttribute("path").getValue();
+					SourceLocation location =
+						new SourceLocation(
+							getComputedName(extensions[i], pathValue),
+							new Path(
+								extensions[i].getModel().getInstallLocation()
+									+ Path.SEPARATOR
+									+ pathValue),
+							true);
+					location.setEnabled(
+						getSavedState(location.getName(), storedLocations));
+					extensionLocations.add(location);
+				}
 			}
 		}
 		computeOrphanedLocations(storedLocations);
 	}
 
-
+	private String getComputedName(IPluginExtension extension, String pathValue) {
+		String name = ((Plugin)extension.getParent()).getId() + "_" + pathValue;
+		return name.replace('.','_').toUpperCase();
+	}
 
 	private void addOrphanedLocations(String[] variables, ArrayList tasks) {
 		if (orphanedExtensionLocations == null)
@@ -296,4 +295,25 @@ public class SourceLocationManager implements ICoreConstants {
 			}
 		}
 	}
+	private IPluginExtension[] getRegisteredSourceExtensions() {
+		Vector result = new Vector();
+		IPluginModel[] models = PDECore.getDefault().getExternalModelManager().getModels();
+		for (int i = 0; i < models.length; i++) {
+			IPluginExtension[] extensions = models[i].getPluginBase().getExtensions();
+			for (int j = 0; j < extensions.length; j++) {
+				IPluginExtension extension = extensions[j];
+				if (extension.getPoint().equals(PDECore.getPluginId() + ".source")) {
+					result.add(extension);
+				}
+			}
+		}
+		IPluginExtension[] extensions = new IPluginExtension[result.size()];
+		result.copyInto(extensions);
+		return extensions;
+	}
+	
+	public void updateSourceLocations() {
+		initializeExtensionLocations();
+	}
+
 }

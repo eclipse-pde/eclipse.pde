@@ -24,21 +24,6 @@ public class SourceLocation {
 		this.enabled = enabled;
 	}
 
-	public SourceLocation(IConfigurationElement config) {
-		initialize(config);
-		userDefined = false;
-		this.enabled = true;
-		this.name = computeName(config);
-	}
-	
-	private String computeName(IConfigurationElement config) {
-		String providedName = config.getAttribute("name");
-		if (providedName!=null) return providedName;
-		String computedName = config.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier();
-		computedName = computedName.replace('.', '_');
-		return "_"+computedName.toUpperCase();
-	}
-	
 	public String getName() {
 		return name;
 	}
@@ -63,21 +48,6 @@ public class SourceLocation {
 		return path.toOSString();
 	}
 	
-	private void initialize(IConfigurationElement config) {
-		String pathName = config.getAttribute("path");
-		if (pathName != null) {
-			IPluginDescriptor pd =
-				config.getDeclaringExtension().getDeclaringPluginDescriptor();
-			URL locationURL = pd.getInstallURL();
-			try {
-				URL url = InternalBootLoader.resolve(locationURL);
-				IPath fullPath = new Path(url.getFile());
-				fullPath = fullPath.append(pathName);
-				this.path = fullPath;
-			} catch (IOException e) {
-			}
-		}
-	}
 	/**
 	 * Gets the enabled.
 	 * @return Returns a boolean

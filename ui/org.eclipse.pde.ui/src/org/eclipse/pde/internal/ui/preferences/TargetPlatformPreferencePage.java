@@ -208,6 +208,7 @@ public class TargetPlatformPreferencePage
 			IRunnableWithProgress op = new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) {
 					ExternalModelManager.setEclipseHome(newEclipseHome, monitor);
+					PDECore.getDefault().getSourceLocationManager().updateSourceLocations();
 				}
 			};
 			ProgressMonitorDialog pm = new ProgressMonitorDialog(getControl().getShell());
