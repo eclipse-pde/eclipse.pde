@@ -51,7 +51,7 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 				} else if (name.equals("extension-point")) { //$NON-NLS-1$
 					validateExtensionPoint(child);
 				} else {
-					if (!name.equals("runtime") && !name.equals("requires")) {
+					if (!name.equals("runtime") && !name.equals("requires")) { //$NON-NLS-1$ //$NON-NLS-2$
 						severity = CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_ELEMENT);
 						if (severity != CompilerFlags.IGNORE)
 							reportIllegalElement(child, severity);
