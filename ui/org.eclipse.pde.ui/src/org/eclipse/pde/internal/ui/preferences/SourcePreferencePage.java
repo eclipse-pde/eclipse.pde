@@ -89,10 +89,10 @@ public class SourcePreferencePage
 					handleAdd();
 					break;
 				case 1 :
-					handleDelete();
+					handleEdit();
 					break;
 				case 2:
-					handleEdit();
+					handleDelete();
 					break;
 				case 4 :
 					selectAll(true);
@@ -144,8 +144,8 @@ public class SourcePreferencePage
 			new LocationPart(
 				new String[] {
 					PDEPlugin.getResourceString(KEY_ADD),
+					PDEPlugin.getResourceString("SourcePreferencePage.edit"),
 					PDEPlugin.getResourceString(KEY_DELETE),
-					"Edit...",
 					null,
 					PDEPlugin.getResourceString(KEY_SELECT_ALL),
 					PDEPlugin.getResourceString(KEY_DESELECT_ALL)
