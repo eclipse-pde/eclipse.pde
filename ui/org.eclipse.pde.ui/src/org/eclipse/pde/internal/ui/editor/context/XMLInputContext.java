@@ -12,7 +12,7 @@ package org.eclipse.pde.internal.ui.editor.context;
 import java.util.*;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.IDocumentPartitioner;
-import org.eclipse.jface.text.rules.DefaultPartitioner;
+import org.eclipse.jface.text.rules.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.text.XMLPartitionScanner;
@@ -33,7 +33,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 	}
 
 	protected IDocumentPartitioner createDocumentPartitioner() {
-		DefaultPartitioner partitioner = new DefaultPartitioner(
+		FastPartitioner partitioner = new FastPartitioner(
 				new XMLPartitionScanner(), new String[]{
 						XMLPartitionScanner.XML_TAG,
 						XMLPartitionScanner.XML_COMMENT});

@@ -128,4 +128,7 @@ public class PluginInputContext extends XMLInputContext {
 		AbstractEditingModel model = (AbstractEditingModel)getModel();
 		model.reconciled(model.getDocument());
 	}
+	protected String getPartitionName() {
+		return "___plugin_partition";
+	}
 }

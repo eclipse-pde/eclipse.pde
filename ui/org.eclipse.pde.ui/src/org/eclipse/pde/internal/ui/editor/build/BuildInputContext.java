@@ -128,5 +128,9 @@ public class BuildInputContext extends InputContext {
 		fOperationTable.clear();
 		AbstractEditingModel model = (AbstractEditingModel)getModel();
 		model.reconciled(model.getDocument());
+	}
+
+	protected String getPartitionName() {
+		return "___build_partition";
 	}	
 }

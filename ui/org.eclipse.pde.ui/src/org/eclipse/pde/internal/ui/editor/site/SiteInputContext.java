@@ -169,4 +169,8 @@ public class SiteInputContext extends XMLInputContext {
 	 */
 	protected void reorderInsertEdits(ArrayList ops) {
 	}
+
+	protected String getPartitionName() {
+		return "___site_partition";
+	}
 }

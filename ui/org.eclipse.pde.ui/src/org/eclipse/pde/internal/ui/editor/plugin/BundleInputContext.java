@@ -142,4 +142,7 @@ public class BundleInputContext extends UTF8InputContext {
 		AbstractEditingModel model = (AbstractEditingModel)getModel();
 		model.reconciled(model.getDocument());
 	}
+	protected String getPartitionName() {
+		return "___bundle_partition";
+	}
 }
