@@ -23,4 +23,7 @@ public class Catalog {
 	public static final String IMPORT_SOURCE_1 = "macro9.emc";
 	public static final String IMPORT_SOURCE_2 = "macro10.emc";
 	public static final String IMPORT_SOURCE_3 = "macro11.emc";
+	public static final String IMPORT_BINARY_FEATURE_1 = "macro12.emc";
+	public static final String IMPORT_BINARY_FEATURE_2 = "macro13.emc";
+	public static final String IMPORT_SOURCE_FEATURE = "macro14.emc";
 }
