@@ -10,5 +10,5 @@ import org.eclipse.swt.graphics.RGB;
 public interface IColorManager {
 
 	void dispose();
-	Color getColor(RGB rgb);
+	Color getColor(String key);
 }

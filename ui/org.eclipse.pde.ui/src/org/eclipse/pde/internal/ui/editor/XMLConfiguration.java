@@ -37,7 +37,7 @@ public class XMLConfiguration extends SourceViewerConfiguration {
 			pdeScanner = new PDEScanner(colorManager);
 			pdeScanner.setDefaultReturnToken(
 				new Token(
-					new TextAttribute(colorManager.getColor(IPDEColorConstants.DEFAULT))));
+					new TextAttribute(colorManager.getColor(IPDEColorConstants.P_DEFAULT))));
 		}
 		return pdeScanner;
 	}
@@ -45,7 +45,7 @@ public class XMLConfiguration extends SourceViewerConfiguration {
 		if (tagScanner == null) {
 			tagScanner = new PDETagScanner(colorManager);
 			tagScanner.setDefaultReturnToken(
-				new Token(new TextAttribute(colorManager.getColor(IPDEColorConstants.TAG))));
+				new Token(new TextAttribute(colorManager.getColor(IPDEColorConstants.P_TAG))));
 		}
 		return tagScanner;
 	}
@@ -62,7 +62,7 @@ public class XMLConfiguration extends SourceViewerConfiguration {
 
 		NonRuleBasedDamagerRepairer ndr =
 			new NonRuleBasedDamagerRepairer(
-				new TextAttribute(colorManager.getColor(IPDEColorConstants.XML_COMMENT)));
+				new TextAttribute(colorManager.getColor(IPDEColorConstants.P_XML_COMMENT)));
 		reconciler.setDamager(ndr, PDEPartitionScanner.XML_COMMENT);
 		reconciler.setRepairer(ndr, PDEPartitionScanner.XML_COMMENT);
 

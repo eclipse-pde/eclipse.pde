@@ -13,6 +13,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.IFeatureObject;
@@ -20,6 +21,7 @@ import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.ui.editor.feature.FeatureAdapterFactory;
 import org.eclipse.pde.internal.ui.editor.manifest.PluginAdapterFactory;
 import org.eclipse.pde.internal.ui.editor.schema.SchemaAdapterFactory;
+import org.eclipse.pde.internal.ui.editor.text.ColorManager;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.view.PluginsViewAdapterFactory;
 import org.eclipse.swt.widgets.*;
@@ -205,5 +207,9 @@ public class PDEPlugin extends AbstractUIPlugin {
 		if (labelProvider == null)
 			labelProvider = new PDELabelProvider();
 		return labelProvider;
+	}
+	
+	protected void initializeDefaultPreferences(IPreferenceStore store) {
+		ColorManager.initializeDefaults(store);
 	}
 }

@@ -11,7 +11,7 @@ public class PDECommentScanner extends RuleBasedScanner {
 
 public PDECommentScanner(IColorManager manager) {
 	IToken comment =
-		new Token(new Token(manager.getColor(IPDEColorConstants.XML_COMMENT)));
+		new Token(new Token(manager.getColor(IPDEColorConstants.P_XML_COMMENT)));
 
 	List rules = new ArrayList();
 

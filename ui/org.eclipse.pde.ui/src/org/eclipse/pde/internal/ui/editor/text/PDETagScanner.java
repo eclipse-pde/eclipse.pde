@@ -14,7 +14,7 @@ public class PDETagScanner extends RuleBasedScanner {
 
 public PDETagScanner(IColorManager manager) {
 	IToken string =
-		new Token(new TextAttribute(manager.getColor(IPDEColorConstants.STRING)));
+		new Token(new TextAttribute(manager.getColor(IPDEColorConstants.P_STRING)));
 
 	Vector rules = new Vector();
 

@@ -77,6 +77,12 @@
             class="org.eclipse.pde.internal.ui.preferences.BuildpathPreferencePage"
             id="org.eclipse.pde.ui.BuildpathPreferencePage">
       </page>
+      <page
+            name="%preferences.editor.name"
+            category="org.eclipse.pde.ui.MainPreferencePage"
+            class="org.eclipse.pde.internal.ui.preferences.EditorPreferencePage"
+            id="org.eclipse.pde.ui.EditorPreferencePage">
+      </page>
    </extension>
    <extension
          point="org.eclipse.ui.newWizards">

@@ -13,7 +13,7 @@ public class PDEScanner extends RuleBasedScanner {
 public PDEScanner(IColorManager manager) {
 	List rules = new ArrayList();
 	IToken procInstr =
-		new Token(new TextAttribute(manager.getColor(IPDEColorConstants.PROC_INSTR)));
+		new Token(new TextAttribute(manager.getColor(IPDEColorConstants.P_PROC_INSTR)));
 
 	//Add rule for processing instructions
 	rules.add(new SingleLineRule("<?", "?>", procInstr));
