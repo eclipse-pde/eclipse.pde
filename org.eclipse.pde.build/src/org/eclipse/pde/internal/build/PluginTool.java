@@ -8,7 +8,6 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformRunnable;
-import org.eclipse.core.internal.boot.update.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
 import java.io.*;
@@ -27,8 +26,7 @@ public abstract class PluginTool implements IPlatformRunnable, ScriptGeneratorCo
 	protected String os = BootLoader.getOS();
 	protected String ws = BootLoader.getWS();
 	protected String nl = BootLoader.getNL();
-	// FIXME: it should be moved to BootLoader as well
-	protected String arch = System.getProperty("os.arch");
+	protected String arch = BootLoader.getOSArch();
 	protected String stamp = "";
 	
 	public final static String PI_PDECORE = "org.eclipse.pde.core";	
