@@ -350,12 +350,6 @@ public class WorkspaceModelManager
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IWorkspaceModelManager#reset()
-	 */
-	public void reset() {
-		initializeWorkspaceModels();
-	}
-	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
 	 */
 	public void resourceChanged(IResourceChangeEvent event) {
@@ -440,9 +434,19 @@ public class WorkspaceModelManager
 		
 		IWorkspace workspace = PDECore.getWorkspace();
 		IProject[] projects = workspace.getRoot().getProjects();
+		
+		// must do plugins/fragments before features
 		for (int i = 0; i < projects.length; i++) {
 			IProject project = projects[i];
-			if (!project.isOpen())
+			if (!isPluginProject(project))
+				continue;
+			addWorkspaceModel(project, false);			
+		}
+		
+		// must do features after plugins/fragments
+		for (int i = 0; i < projects.length; i++) {
+			IProject project = projects[i];
+			if (!isFeatureProject(project))
 				continue;
 			addWorkspaceModel(project, false);			
 		}
@@ -451,7 +455,7 @@ public class WorkspaceModelManager
 		fModelsLocked = false;
 		fInitialized = true;
 	}
-
+	
 	/**
 	 * @param project
 	 * @return
