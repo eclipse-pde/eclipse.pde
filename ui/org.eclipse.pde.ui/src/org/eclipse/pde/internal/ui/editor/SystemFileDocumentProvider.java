@@ -35,7 +35,7 @@ public class SystemFileDocumentProvider extends StreamDocumentProvider {
 			SystemFileEditorInput input= (SystemFileEditorInput) element;
 			File file = (File)input.getAdapter(File.class);
 			if (file!=null) {
-				return new SystemFileMarkerAnnotationModel(file);
+				return new SystemFileMarkerAnnotationModel();
 			}
 		}
 		return super.createAnnotationModel(element);
