@@ -115,6 +115,7 @@ public class DescriptionSection extends PDEFormSection {
 		Control[] children = container.getChildren();
 		Control control = children[children.length - 1];
 		gd = new GridData(GridData.FILL_BOTH);
+		gd.widthHint = 200;
 		control.setLayoutData(gd);
 		styledText.setMenu(getFormPage().getEditor().getContextMenu());
 		styledText.addFocusListener(new FocusAdapter() {
