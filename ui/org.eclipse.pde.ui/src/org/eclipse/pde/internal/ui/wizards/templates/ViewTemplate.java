@@ -18,6 +18,28 @@ import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.ui.IPluginStructureData;
 
 public class ViewTemplate extends PDETemplateSection {
+	private static final String NL_TITLE0 = "ViewTemplate.title0";
+	private static final String NL_DESC0 = "ViewTemplate.desc0";
+	private static final String NL_TITLE1 = "ViewTemplate.title1";
+	private static final String NL_DESC1 = "ViewTemplate.desc1";
+	private static final String NL_PACKAGE_NAME = "ViewTemplate.packageName";
+	private static final String NL_CLASS_NAME = "ViewTemplate.className";
+	private static final String NL_NAME = "ViewTemplate.name";
+	private static final String NL_DEFAULT_NAME = "ViewTemplate.defaultName";
+	private static final String NL_CATEGORY_ID = "ViewTemplate.categoryId";
+	private static final String NL_CATEGORY_NAME = "ViewTemplate.categoryName";
+	private static final String NL_DEFAULT_CATEGORY_NAME = "ViewTemplate.defaultCategoryName";
+	private static final String NL_SELECT = "ViewTemplate.select";
+	private static final String NL_TABLE = "ViewTemplate.table";
+	private static final String NL_TREE = "ViewTemplate.tree";
+	private static final String NL_REACT = "ViewTemplate.react";
+	private static final String NL_DOUBLE_CLICK = "ViewTemplate.doubleClick";
+	private static final String NL_POPUP = "ViewTemplate.popup";
+	private static final String NL_TOOLBAR = "ViewTemplate.toolbar";
+	private static final String NL_PULLDOWN = "ViewTemplate.pulldown";
+	private static final String NL_SORTING = "ViewTemplate.sorting";
+	private static final String NL_FILTERING = "ViewTemplate.filtering";
+	private static final String NL_DRILLDOWN = "ViewTemplate.drilldown";
 	/**
 	 * Constructor for HelloWorldTemplate.
 	 */
@@ -36,25 +58,25 @@ public class ViewTemplate extends PDETemplateSection {
 	
 	private void createOptions() {
 		// first page	
-		addOption(KEY_PACKAGE_NAME, "&Java Package Name:", (String)null, 0);
-		addOption("className", "&View Class Name:", "SampleView", 0);
-		addOption("viewName", "View &Name:", "Sample View", 0);
-		addOption("viewCategoryId", "View &Category Id:", (String)null, 0);
-		addOption("viewCategoryName", "V&iew Category Name:", "Sample Category", 0);
-		addOption("viewType", "Select the viewer type that should be hosted in the view:", 
+		addOption(KEY_PACKAGE_NAME, PDEPlugin.getResourceString(NL_PACKAGE_NAME), (String)null, 0);
+		addOption("className", PDEPlugin.getResourceString(NL_CLASS_NAME), "SampleView", 0);
+		addOption("viewName", PDEPlugin.getResourceString(NL_NAME), PDEPlugin.getResourceString(NL_DEFAULT_NAME), 0);
+		addOption("viewCategoryId", PDEPlugin.getResourceString(NL_CATEGORY_ID), (String)null, 0);
+		addOption("viewCategoryName", PDEPlugin.getResourceString(NL_CATEGORY_NAME), PDEPlugin.getResourceString(NL_DEFAULT_CATEGORY_NAME), 0);
+		addOption("viewType", PDEPlugin.getResourceString(NL_SELECT), 
 					new String [][] {
-						{"tableViewer", "&Table viewer (can also be used for lists)"},
-						{"treeViewer", "T&ree viewer" }},
+						{"tableViewer", PDEPlugin.getResourceString(NL_TABLE)},
+						{"treeViewer", PDEPlugin.getResourceString(NL_TREE)}},
 						"tableViewer", 0);
 		// second page
-		addOption("react", "&View should react to selections in the workbench", true, 1);
-		addOption("doubleClick", "&Add a double-click support", true, 1);
-		addOption("popup", "A&dd actions to the pop-up menu", true, 1);
-		addOption("localToolbar", "Add a&ctions to the view's tool bar", true, 1);
-		addOption("localPulldown", "Add ac&tions to the view's pull-down menu", true, 1);
-		addOption("sorter", "Add &support for sorting", true, 1);
-		//addOption("filter", "Add support for filtering", true, lists[1]);
-		addOption("drillDown", "Add d&rill-down capability", true, 1);
+		addOption("react", PDEPlugin.getResourceString(NL_REACT), true, 1);
+		addOption("doubleClick", PDEPlugin.getResourceString(NL_DOUBLE_CLICK), true, 1);
+		addOption("popup", PDEPlugin.getResourceString(NL_POPUP), true, 1);
+		addOption("localToolbar", PDEPlugin.getResourceString(NL_TOOLBAR), true, 1);
+		addOption("localPulldown", PDEPlugin.getResourceString(NL_PULLDOWN), true, 1);
+		addOption("sorter", PDEPlugin.getResourceString(NL_SORTING), true, 1);
+		//addOption("filter", PDEPlugin.getResourceString(NL_FILTER), true, lists[1]);
+		addOption("drillDown", PDEPlugin.getResourceString(NL_DRILLDOWN), true, 1);
 		setOptionEnabled("drillDown", false);
 	}
 
@@ -81,13 +103,13 @@ public class ViewTemplate extends PDETemplateSection {
 		setPageCount(2);
 		createOptions();
 		WizardPage page0 = createPage(0);
-		page0.setTitle("Main View Settings");
-		page0.setDescription("Choose the way the new view will be added to the plug-in.");
+		page0.setTitle(PDEPlugin.getResourceString(NL_TITLE0));
+		page0.setDescription(PDEPlugin.getResourceString(NL_DESC0));
 		wizard.addPage(page0);
 		
 		WizardPage page1 = createPage(1);
-		page1.setTitle("View Features");
-		page1.setDescription("Choose the features that the new view should have.");
+		page1.setTitle(PDEPlugin.getResourceString(NL_TITLE1));
+		page1.setDescription(PDEPlugin.getResourceString(NL_DESC1));
 		wizard.addPage(page1);
 	}
 
