@@ -10,25 +10,20 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.internal.samples;
 import java.io.*;
-import java.io.InputStream;
 import java.util.Properties;
 
-import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.launcher.RuntimeWorkbenchShortcut;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.events.*;
-import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.EditorPart;
@@ -41,6 +36,34 @@ public class SampleEditor extends EditorPart {
 	private FormText descText;
 	private FormText instText;
 	private ILaunchShortcut defaultShortcut;
+	private InputFileListener inputFileListener;
+	
+	class InputFileListener implements IResourceChangeListener, IResourceDeltaVisitor {
+		public void resourceChanged(IResourceChangeEvent event) {
+			if (event.getType()==IResourceChangeEvent.POST_CHANGE) {
+				IResourceDelta delta = event.getDelta();
+				try {
+					delta.accept(this);
+				}
+				catch (CoreException e) {
+					PDEPlugin.logException(e);
+				}
+			}
+		}
+		public boolean visit(IResourceDelta delta) throws CoreException {
+			IResource resource = delta.getResource();
+			if (resource instanceof IFile) {
+				IFile file = (IFile)resource;
+				if (file.equals(((IFileEditorInput)getEditorInput()).getFile())) {
+					if (delta.getKind()==IResourceDelta.REMOVED ||
+							delta.getKind()==IResourceDelta.REPLACED)
+						close();
+					return false;
+				}
+			}
+			return true;
+		}
+	}
 	/**
 	 *  
 	 */
@@ -54,7 +77,6 @@ public class SampleEditor extends EditorPart {
 	public void createPartControl(Composite parent) {
 		toolkit = new FormToolkit(parent.getDisplay());
 		form = toolkit.createScrolledForm(parent);
-		form.setBackgroundImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_FORM_BANNER));
 		Properties properties = loadContent();
 		form.setText(properties.getProperty("name"));
 		TableWrapLayout layout = new TableWrapLayout();
@@ -148,6 +170,10 @@ public class SampleEditor extends EditorPart {
 	}
 	
 	public void dispose() {
+		if (inputFileListener!=null) {
+			PDEPlugin.getWorkspace().removeResourceChangeListener(inputFileListener);
+			inputFileListener = null;
+		}
 		toolkit.dispose();
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();		
@@ -187,5 +213,17 @@ public class SampleEditor extends EditorPart {
 			throws PartInitException {
 		setSite(site);
 		setInput(input);
+		inputFileListener = new InputFileListener();
+		PDEPlugin.getWorkspace().addResourceChangeListener(inputFileListener);
 	}
+	public void close() {
+		Display display = getSite().getShell().getDisplay();
+		display.asyncExec(new Runnable() {
+			public void run() {
+				if (toolkit != null) {
+					getSite().getPage().closeEditor(SampleEditor.this, false);
+				}
+			}
+		});
+	}	
 }
