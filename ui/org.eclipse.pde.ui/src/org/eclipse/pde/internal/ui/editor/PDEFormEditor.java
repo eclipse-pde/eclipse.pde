@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 import java.io.*;
+import java.util.ArrayList;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
@@ -270,7 +272,10 @@ public abstract class PDEFormEditor extends FormEditor
 		int lastPage = getCurrentPage();
 		if (lastPage == -1)
 			return;
-		String pageId = ((IFormPage) pages.get(lastPage)).getId();
+		Object page = pages.get(lastPage);
+		if (!(page instanceof IFormPage))
+			return;
+		String pageId = ((IFormPage) page).getId();
 		if (input instanceof IFileEditorInput) {
 			// load the setting from the resource
 			IFile file = ((IFileEditorInput) input).getFile();
@@ -467,7 +472,13 @@ public abstract class PDEFormEditor extends FormEditor
 			propertySheet.setDefaultPageActive();
 	}
 	/* package */IFormPage[] getPages() {
-		return (IFormPage[]) pages.toArray(new IFormPage[pages.size()]);
+		ArrayList formPages = new ArrayList();
+		for (int i=0; i<pages.size(); i++) {
+			Object page = pages.get(i);
+			if (page instanceof IFormPage)
+				formPages.add(page);
+		}
+		return (IFormPage[]) formPages.toArray(new IFormPage[formPages.size()]);
 	}
 	protected void performGlobalAction(String id) {
 		// preserve selection

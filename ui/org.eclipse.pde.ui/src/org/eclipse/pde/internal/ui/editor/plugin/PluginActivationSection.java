@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 import java.util.*;
 
@@ -34,15 +32,21 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.part.PageBook;
 import org.osgi.framework.*;
 
-public class PluginActivationSection extends TableSection implements IModelChangedListener {
+public class PluginActivationSection extends TableSection
+		implements
+			IModelChangedListener, IInputContextListener {
+	private PageBook topBook;
+	private Composite topContainer;
+	private Composite blankContainer;
 	private TableViewer fExceptionsTableViewer;
 	private Button fDoActivateButton;
 	private Button fDoNotActivateButton;
 	private Font fBoldFont;
 	private static final String ECLIPSE_AUTOSTART = "Eclipse-AutoStart";
-	
+
 	class TableContentProvider extends DefaultContentProvider
 			implements
 				IStructuredContentProvider {
@@ -72,7 +76,9 @@ public class PluginActivationSection extends TableSection implements IModelChang
 						PDEPlugin
 								.getResourceString("ManifestEditor.OSGiSection.remove")});
 		getSection().setText("Plug-in Activation (Eclipse 3.0 Platforms Only)");
-		getSection().setDescription("In order to improve performance, specify the conditions under which the plug-in should be activated.");
+		getSection()
+				.setDescription(
+						"In order to improve performance, specify the conditions under which the plug-in should be activated.");
 	}
 	private void update() {
 		fDoActivateButton.setEnabled(isEditable());
@@ -81,35 +87,36 @@ public class PluginActivationSection extends TableSection implements IModelChang
 		fDoNotActivateButton.setEnabled(isEditable());
 		enableButtons();
 	}
-	
+
 	private boolean isAutoStart() {
 		ManifestElement element = getManifestElement();
 		return (element == null) ? true : !"false".equals(element.getValue());
 	}
-	
+
 	private String[] getExceptions() {
 		ManifestElement element = getManifestElement();
 		if (element == null)
 			return new String[0];
-		
+
 		String exceptions = element.getAttribute("exceptions");
 		if (exceptions == null)
 			return new String[0];
-		
+
 		ArrayList tokens = new ArrayList();
 		StringTokenizer tok = new StringTokenizer(exceptions, ",");
 		while (tok.hasMoreTokens())
 			tokens.add(tok.nextToken().trim());
-		return (String[])tokens.toArray(new String[tokens.size()]);
+		return (String[]) tokens.toArray(new String[tokens.size()]);
 	}
-	
+
 	private ManifestElement getManifestElement() {
 		IBundleModel model = getBundleModel();
 		if (model != null) {
 			String value = model.getBundle().getHeader(ECLIPSE_AUTOSTART);
 			if (value != null) {
 				try {
-					ManifestElement[] elements = ManifestElement.parseHeader(ECLIPSE_AUTOSTART, value);
+					ManifestElement[] elements = ManifestElement.parseHeader(
+							ECLIPSE_AUTOSTART, value);
 					if (elements != null && elements.length > 0)
 						return elements[0];
 				} catch (BundleException e) {
@@ -118,12 +125,14 @@ public class PluginActivationSection extends TableSection implements IModelChang
 		}
 		return null;
 	}
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.internal.ui.neweditor.PDESection#isEditable()
 	 */
 	public boolean isEditable() {
 		return getPage().getModel().isEditable()
-			&& getContextId().equals(BundleInputContext.CONTEXT_ID);
+				&& getContextId().equals(BundleInputContext.CONTEXT_ID);
 	}
 	/*
 	 * (non-Javadoc)
@@ -131,13 +140,16 @@ public class PluginActivationSection extends TableSection implements IModelChang
 	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
 	 */
 	public void dispose() {
+		InputContextManager contextManager = getPage().getPDEEditor().getContextManager();
+		if (contextManager!=null)
+			contextManager.removeInputContextListener(this);		
 		IBundleModel model = getBundleModel();
 		if (model != null)
 			model.removeModelChangedListener(this);
 		fBoldFont.dispose();
 		super.dispose();
 	}
-	
+
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			handleRemove();
@@ -146,13 +158,14 @@ public class PluginActivationSection extends TableSection implements IModelChang
 		return false;
 	}
 
-	
 	protected void fillContextMenu(IMenuManager manager) {
 		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(
 				manager);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.core.IModelChangedListener#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
 	public void modelChanged(IModelChangedEvent event) {
@@ -164,8 +177,10 @@ public class PluginActivationSection extends TableSection implements IModelChang
 			refresh();
 		}
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
 	 */
 	public void refresh() {
@@ -175,10 +190,10 @@ public class PluginActivationSection extends TableSection implements IModelChang
 		super.refresh();
 	}
 
-	private void initializeFonts(){
+	private void initializeFonts() {
 		FontData[] fontData = getSection().getFont().getFontData();
 		FontData data;
-		if (fontData.length >0)
+		if (fontData.length > 0)
 			data = fontData[0];
 		else
 			data = new FontData();
@@ -193,43 +208,64 @@ public class PluginActivationSection extends TableSection implements IModelChang
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
 		initializeFonts();
-		
+
 		Composite mainContainer = toolkit.createComposite(section);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = layout.marginWidth = 0;
 		layout.verticalSpacing = 5;
 		mainContainer.setLayout(layout);
 		mainContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		/*
 		 * create new manifest part
 		 */
-		if (!getContextId().equals(BundleInputContext.CONTEXT_ID) && getPage().getPDEEditor().getAggregateModel().isEditable()) {
-			Composite topContainer = toolkit.createComposite(mainContainer);
+		if (getPage().getPDEEditor().getAggregateModel().isEditable()) {
+			topBook = new PageBook(mainContainer, SWT.NULL);
+			//create a blank container that will be used
+			// to hide the text and the link when not needed
+			blankContainer = toolkit.createComposite(topBook);
+			blankContainer.setLayout(new GridLayout());
+			Label label = toolkit.createLabel(blankContainer, null);
+			GridData gd = new GridData();
+			gd.heightHint = 1;
+			gd.widthHint = 1;
+			label.setLayoutData(gd);
+
+			topContainer = toolkit.createComposite(topBook);
 			layout = new GridLayout();
 			layout.marginHeight = layout.marginWidth = 2;
 			layout.numColumns = 2;
-			layout.makeColumnsEqualWidth= false;
+			layout.makeColumnsEqualWidth = false;
 			topContainer.setLayout(layout);
-			
-				toolkit.createLabel(topContainer, "To take advantage of this feature, the plug-in must contain a manifest.mf file.");
-				Hyperlink manifestLink = toolkit.createHyperlink(topContainer, "Create a manifest file",SWT.NULL);
-				manifestLink.addHyperlinkListener(new IHyperlinkListener(){
-					public void linkActivated(HyperlinkEvent e) {
-						try {
-							getPage().getEditor().doSave(null);
-							IPluginModelBase model = (IPluginModelBase)getPage().getPDEEditor().getAggregateModel();
-							PDEPluginConverter.convertToOSGIFormat(model.getUnderlyingResource().getProject(), model.isFragmentModel() ? "fragment.xml" : "plugin.xml", new NullProgressMonitor());
-						} catch (CoreException e1) {
-						}
+			//TODO translate all strings in this method
+			toolkit
+					.createLabel(
+							topContainer,
+							"To take advantage of this feature, the plug-in must contain a manifest.mf file.");
+			Hyperlink manifestLink = toolkit.createHyperlink(topContainer,
+					"Create a manifest file", SWT.NULL);
+			manifestLink.addHyperlinkListener(new IHyperlinkListener() {
+				public void linkActivated(HyperlinkEvent e) {
+					try {
+						getPage().getEditor().doSave(null);
+						IPluginModelBase model = (IPluginModelBase) getPage()
+								.getPDEEditor().getAggregateModel();
+						PDEPluginConverter.convertToOSGIFormat(model
+								.getUnderlyingResource().getProject(), model
+								.isFragmentModel()
+								? "fragment.xml"
+								: "plugin.xml", new NullProgressMonitor());
+					} catch (CoreException e1) {
 					}
-					public void linkExited(HyperlinkEvent e) {
-					}
-					public void linkEntered(HyperlinkEvent e) {
-					}
+				}
+				public void linkExited(HyperlinkEvent e) {
+				}
+				public void linkEntered(HyperlinkEvent e) {
+				}
 			});
+			bundleModeChanged(getContextId().equals(BundleInputContext.CONTEXT_ID));
 		}
-		
+
 		/*
 		 * Bottom parts (Activation Rule & Exceptions)
 		 */
@@ -247,17 +283,16 @@ public class PluginActivationSection extends TableSection implements IModelChang
 		layout = new GridLayout();
 		layout.marginHeight = layout.marginWidth = 2;
 		ruleContainer.setLayout(layout);
-		ruleContainer.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
-		
-		Label activateLabel = toolkit.createLabel(ruleContainer, "Activation Rule");
+		ruleContainer.setLayoutData(new GridData(
+				GridData.VERTICAL_ALIGN_BEGINNING));
+
+		Label activateLabel = toolkit.createLabel(ruleContainer,
+				"Activation Rule");
 		activateLabel.setFont(fBoldFont);
 
-		fDoActivateButton = toolkit
-				.createButton(
-						ruleContainer,
-						"Always activate this plug-in",
-						SWT.RADIO);
-		
+		fDoActivateButton = toolkit.createButton(ruleContainer,
+				"Always activate this plug-in", SWT.RADIO);
+
 		GridData gd = new GridData();
 		gd.horizontalIndent = 5;
 		fDoActivateButton.setLayoutData(gd);
@@ -267,13 +302,11 @@ public class PluginActivationSection extends TableSection implements IModelChang
 			}
 		});
 		/*
-		 * auto-activate should be set to true by default with empty exceptions package list
+		 * auto-activate should be set to true by default with empty exceptions
+		 * package list
 		 */
-		fDoNotActivateButton = toolkit
-				.createButton(
-						ruleContainer,
-						"Do not activate this plug-in",
-						SWT.RADIO);
+		fDoNotActivateButton = toolkit.createButton(ruleContainer,
+				"Do not activate this plug-in", SWT.RADIO);
 		gd = new GridData();
 		gd.horizontalIndent = 5;
 		fDoNotActivateButton.setLayoutData(gd);
@@ -285,29 +318,37 @@ public class PluginActivationSection extends TableSection implements IModelChang
 		/*
 		 * Exceptions part
 		 */
-		Composite exceptionsContainer = toolkit.createComposite(bottomContainer);
+		Composite exceptionsContainer = toolkit
+				.createComposite(bottomContainer);
 		layout = new GridLayout();
 		layout.marginWidth = layout.marginHeight = 2;
 		layout.verticalSpacing = 3;
 		exceptionsContainer.setLayout(layout);
 		exceptionsContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
-		Label exceptionLabel = toolkit.createLabel(exceptionsContainer, "Exceptions to the Rule");
+
+		Label exceptionLabel = toolkit.createLabel(exceptionsContainer,
+				"Exceptions to the Rule");
 		exceptionLabel.setFont(fBoldFont);
 		exceptionLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		Label label = toolkit.createLabel(exceptionsContainer, "Ignore the activation rule when loaded classes belong to the following subset of packages:", SWT.WRAP);
+		Label label = toolkit
+				.createLabel(
+						exceptionsContainer,
+						"Ignore the activation rule when loaded classes belong to the following subset of packages:",
+						SWT.WRAP);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 225;
 		label.setLayoutData(gd);
-		
-		Composite exceptionsPkgContainer = toolkit.createComposite(exceptionsContainer);
+
+		Composite exceptionsPkgContainer = toolkit
+				.createComposite(exceptionsContainer);
 		layout = new GridLayout();
 		layout.marginWidth = layout.marginHeight = 0;
 		layout.numColumns = 2;
 		exceptionsPkgContainer.setLayout(layout);
 		exceptionsPkgContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
-				
-		createViewerPartControl(exceptionsPkgContainer, SWT.FULL_SELECTION, 2, toolkit);
+
+		createViewerPartControl(exceptionsPkgContainer, SWT.FULL_SELECTION, 2,
+				toolkit);
 		fExceptionsTableViewer = getTablePart().getTableViewer();
 		fExceptionsTableViewer.setContentProvider(new TableContentProvider());
 		fExceptionsTableViewer.setLabelProvider(new TableLabelProvider());
@@ -318,9 +359,12 @@ public class PluginActivationSection extends TableSection implements IModelChang
 		IBundleModel model = getBundleModel();
 		if (model != null)
 			model.addModelChangedListener(this);
+		InputContextManager contextManager = getPage().getPDEEditor().getContextManager();	
+		if (contextManager!=null)
+			contextManager.addInputContextListener(this);
 		update();
 	}
-	protected void enableButtons(){
+	protected void enableButtons() {
 		getTablePart().setButtonEnabled(0, isEditable());
 		getTablePart().setButtonEnabled(1, false);
 	}
@@ -335,20 +379,22 @@ public class PluginActivationSection extends TableSection implements IModelChang
 		IProject project = model.getUnderlyingResource().getProject();
 		try {
 			if (project.hasNature(JavaCore.NATURE_ID)) {
-				TableItem[] existingPackages = fExceptionsTableViewer.getTable()
-						.getItems();
+				TableItem[] existingPackages = fExceptionsTableViewer
+						.getTable().getItems();
 				Vector existing = new Vector();
 				for (int i = 0; i < existingPackages.length; i++) {
 					existing.add(existingPackages[i].getText());
 				}
 				ILabelProvider labelProvider = new JavaElementLabelProvider();
 				PackageSelectionDialog dialog = new PackageSelectionDialog(
-						fExceptionsTableViewer.getTable().getShell(), labelProvider,
-						JavaCore.create(project), existing);
+						fExceptionsTableViewer.getTable().getShell(),
+						labelProvider, JavaCore.create(project), existing);
 				if (dialog.open() == PackageSelectionDialog.OK) {
 					Object[] elements = dialog.getResult();
 					for (int i = 0; i < elements.length; i++) {
-						fExceptionsTableViewer.add(((IPackageFragment) elements[i]).getElementName());
+						fExceptionsTableViewer
+								.add(((IPackageFragment) elements[i])
+										.getElementName());
 					}
 					writeHeader();
 				}
@@ -357,7 +403,7 @@ public class PluginActivationSection extends TableSection implements IModelChang
 		} catch (CoreException e) {
 		}
 	}
-	
+
 	private void writeHeader() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(fDoActivateButton.getSelection() ? "true" : "false");
@@ -369,12 +415,13 @@ public class PluginActivationSection extends TableSection implements IModelChang
 				buffer.append(" ");
 			buffer.append(items[i].getData().toString());
 			if (i < items.length - 1)
-				buffer.append("," + System.getProperty("line.separator"));		
+				buffer.append("," + System.getProperty("line.separator"));
 		}
 		buffer.append("\"");
-		getBundleModel().getBundle().setHeader(ECLIPSE_AUTOSTART, buffer.toString());
+		getBundleModel().getBundle().setHeader(ECLIPSE_AUTOSTART,
+				buffer.toString());
 	}
-	
+
 	private void handleRemove() {
 		IStructuredSelection ssel = (IStructuredSelection) fExceptionsTableViewer
 				.getSelection();
@@ -390,9 +437,10 @@ public class PluginActivationSection extends TableSection implements IModelChang
 	 * @see org.eclipse.pde.internal.ui.neweditor.TableSection#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	protected void selectionChanged(IStructuredSelection selection) {
-		getTablePart().setButtonEnabled(1, selection != null && !selection.isEmpty());
+		getTablePart().setButtonEnabled(1,
+				selection != null && !selection.isEmpty());
 	}
-	
+
 	public String getContextId() {
 		if (getPluginBase() instanceof IBundlePluginBase)
 			return BundleInputContext.CONTEXT_ID;
@@ -402,11 +450,55 @@ public class PluginActivationSection extends TableSection implements IModelChang
 		IBaseModel model = getPage().getPDEEditor().getAggregateModel();
 		return ((IPluginModelBase) model).getPluginBase();
 	}
-	
+
 	private IBundleModel getBundleModel() {
 		InputContext context = getPage().getPDEEditor().getContextManager()
 				.findContext(BundleInputContext.CONTEXT_ID);
 		return context != null ? (IBundleModel) context.getModel() : null;
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.context.IInputContextListener#contextAdded(org.eclipse.pde.internal.ui.editor.context.InputContext)
+	 */
+	public void contextAdded(InputContext context) {
+		if (!context.getId().equals(BundleInputContext.CONTEXT_ID))
+			return;
+		// bundle added - remove the text for manifest creation
+		// and enable controls
+		bundleModeChanged(true);
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.context.IInputContextListener#contextRemoved(org.eclipse.pde.internal.ui.editor.context.InputContext)
+	 */
+	public void contextRemoved(InputContext context) {
+		if (!context.getId().equals(BundleInputContext.CONTEXT_ID))
+			return;
+		// bundle removed - add the text for manifest creation
+		// and disable controls
+		bundleModeChanged(false);
+	}
+	private void bundleModeChanged(boolean added) {
+		if (added && getPage().getModel().isEditable()) {
+			topBook.showPage(blankContainer);
+		}
+		else {
+			topBook.showPage(topContainer);
+		}
+		if (fDoActivateButton!=null) {
+			update();
+			topBook.getParent().layout();
+			getManagedForm().reflow(true);
+		}
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.context.IInputContextListener#monitoredFileAdded(org.eclipse.core.resources.IFile)
+	 */
+	public void monitoredFileAdded(IFile monitoredFile) {
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.context.IInputContextListener#monitoredFileRemoved(org.eclipse.core.resources.IFile)
+	 */
+	public boolean monitoredFileRemoved(IFile monitoredFile) {
+		return false;
+	}
 }
