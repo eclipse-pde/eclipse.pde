@@ -22,6 +22,7 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.build.*;
+import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.pde.internal.ui.util.*;
@@ -106,9 +107,23 @@ public class LibrarySection extends TableSection implements IModelChangedListene
     
     private String getSectionDescription() {
         IPluginModelBase model = (IPluginModelBase)getPage().getPDEEditor().getAggregateModel();
+        if (isBundle()) {
+           return (model.isFragmentModel())
+               ? "Specify the libraries and folders that constitute the fragment runtime.  If unspecified, the classes and resources are assumed to be at the root of the fragment."
+               : "Specify the libraries and folders that constitute the plug-in runtime.  If unspecified, the classes and resources are assumed to be at the root of the plug-in.";
+        }      
         return (model.isFragmentModel())
                     ? PDEPlugin.getResourceString(SECTION_FDESC)
-                    : PDEPlugin.getResourceString(SECTION_DESC);   
+                    : PDEPlugin.getResourceString(SECTION_DESC);       
+    }
+    
+    protected boolean isBundle() {
+        return getBundleContext() != null;
+    }
+    
+    private BundleInputContext getBundleContext() {
+        InputContextManager manager = getPage().getPDEEditor().getContextManager();
+        return (BundleInputContext) manager.findContext(BundleInputContext.CONTEXT_ID);
     }
     
 	public void createClient(Section section, FormToolkit toolkit) {

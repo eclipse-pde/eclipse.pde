@@ -120,9 +120,12 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 				parent,
 				Section.DESCRIPTION,
 				new String[] {"Add...", "Remove", "Properties..."}); 
-		getSection().setText("Required Packages"); 
-		getSection().setDescription("You can specify packages this plug-in depends on without explicitly restricting what plug-ins they must come from."); 
 	}
+    
+    private boolean isFragment() {
+        IPluginModelBase model = (IPluginModelBase)getPage().getPDEEditor().getAggregateModel();
+        return model.isFragmentModel();
+    }
 
 	/*
 	 * (non-Javadoc)
@@ -131,7 +134,10 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 	 *      org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
-		Composite container = createClientContainer(section, 2, toolkit);
+        section.setText("Required Packages"); 
+        section.setDescription(PDEPlugin.getFormattedMessage("ImportPackageSection.desc", isFragment() ? "fragment" : "plug-in")); 
+
+        Composite container = createClientContainer(section, 2, toolkit);
 		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
 		TablePart tablePart = getTablePart();
 		fPackageViewer = tablePart.getTableViewer();

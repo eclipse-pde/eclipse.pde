@@ -117,10 +117,12 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 				parent,
 				Section.DESCRIPTION,
 				new String[] {"Add...", "Remove", "Properties..."}); 
-		getSection().setText("Exported Packages"); 
-		getSection()
-				.setDescription("Enumerate all the packages that this plug-in exposes to clients.  All other packages will be hidden from clients at all times."); 
 	}
+
+    private boolean isFragment() {
+        IPluginModelBase model = (IPluginModelBase)getPage().getPDEEditor().getAggregateModel();
+        return model.isFragmentModel();
+    }
 
 	/*
 	 * (non-Javadoc)
@@ -129,7 +131,10 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 	 *      org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
-		Composite container = createClientContainer(section, 2, toolkit);
+        section.setText("Exported Packages"); 
+        section.setDescription(PDEPlugin.getFormattedMessage("ExportPackageSection.desc", isFragment() ? "fragment" : "plug-in")); 
+
+        Composite container = createClientContainer(section, 2, toolkit);
 		createViewerPartControl(container, SWT.SINGLE, 2, toolkit);
 		TablePart tablePart = getTablePart();
 		fPackageViewer = tablePart.getTableViewer();
