@@ -23,17 +23,21 @@ public class ValidatingSAXParser {
 	private static SAXParserFactory fFactory;
 	
 	public static void parse(IFile file, XMLErrorReporter reporter) {
+		InputStream stream = null;
 		try {
-			parse(file.getContents(), reporter);
+			stream = file.getContents();
+			getParser().parse(stream, reporter);
 		} catch (CoreException e) {
+		} catch (SAXException e) {
+		} catch (IOException e) {
+		} catch (ParserConfigurationException e) {
+		} finally {
+			try {
+				if (stream != null)
+					stream.close();
+			} catch (IOException e1) {
+			}
 		}
-	}
-	
-	public static void parse(InputStream is, XMLErrorReporter reporter) {
-		try {
-			getParser().parse(is, reporter);
-		} catch (Exception e) {
-		} 
 	}
 	
 	private static SAXParser getParser()
