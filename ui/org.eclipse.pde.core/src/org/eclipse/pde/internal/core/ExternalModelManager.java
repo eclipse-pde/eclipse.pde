@@ -14,6 +14,7 @@ import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -220,9 +221,8 @@ public class ExternalModelManager {
 				pref.getString(ICoreConstants.PLATFORM_PATH));
 		EclipseHomeInitializer.resetEclipseHomeVariables();
 
-		if (pref
-			.getString(ICoreConstants.TARGET_MODE)
-			.equals(ICoreConstants.VALUE_USE_THIS))
+		if (pref.getString(ICoreConstants.TARGET_MODE).equals(ICoreConstants.VALUE_USE_THIS)
+			  && !Platform.isRunningOSGi())
 			RegistryLoader.reloadFromLive(models, fmodels, monitor);
 		else
 			RegistryLoader.reload(pluginPaths, models, fmodels, monitor);
