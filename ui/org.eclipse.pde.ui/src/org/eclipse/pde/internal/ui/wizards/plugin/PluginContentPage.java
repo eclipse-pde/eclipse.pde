@@ -285,7 +285,7 @@ public class PluginContentPage extends ContentPage {
 		String errorMessage = validateProperties();
 		if (errorMessage == null && !fData.isSimple()) {
 			if (fLibraryText.getText().trim().length() == 0) {
-				errorMessage = "Library name is not set";
+				errorMessage = PDEPlugin.getResourceString("PluginContentPage.noLibrary"); //$NON-NLS-1$
 			}	
 		}
 		if (errorMessage == null && fGenerateClass.isEnabled() && fGenerateClass.getSelection()) {

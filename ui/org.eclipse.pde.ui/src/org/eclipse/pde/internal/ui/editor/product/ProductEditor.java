@@ -56,7 +56,7 @@ public class ProductEditor extends PDEFormEditor {
 		File file = (File) input.getAdapter(File.class);
 		if (file != null) {
 			String name = file.getName();
-			if (name.endsWith(".prod")) { 
+			if (name.endsWith(".prod")) {  //$NON-NLS-1$
 				IEditorInput in = new SystemFileEditorInput(file);
 				manager.putContext(in, new ProductInputContext(this, in, true));
 			}

@@ -149,7 +149,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 		} else {
 			text = preventNull(obj.getId());
 		}
-		return version == null ? text : text + " (" + version + ")";
+		return version == null ? text : text + " (" + version + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	public String getObjectText(IPluginImport obj) {

@@ -26,8 +26,8 @@ public class ExportSection extends PDESection {
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
-		section.setText("Exporting");
-		section.setDescription("To package and export this product:");
+		section.setText(PDEPlugin.getResourceString("Product.ExportSection.title")); //$NON-NLS-1$
+		section.setDescription(PDEPlugin.getResourceString("Product.ExportSection.desc")); //$NON-NLS-1$
 		
 		Composite comp = toolkit.createComposite(section);
 		GridLayout layout = new GridLayout();
@@ -36,13 +36,13 @@ public class ExportSection extends PDESection {
 		comp.setLayout(layout);
 		
 		FormText text = toolkit.createFormText(comp, true);
-		text.setText(PDEPlugin.getResourceString("Product.overview.validate"), true, false);
+		text.setText(PDEPlugin.getResourceString("Product.overview.validate"), true, false); //$NON-NLS-1$
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 3;
 		text.setLayoutData(gd);
 				
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
-		fArchiveEntry = new FormEntry(comp, toolkit, null, "Browse...", false, 25);
+		fArchiveEntry = new FormEntry(comp, toolkit, null, PDEPlugin.getResourceString("Product.ExportSection.browse"), false, 25); //$NON-NLS-1$
 		fArchiveEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
 				getProduct().setExportDestination(entry.getValue().trim());
@@ -54,7 +54,7 @@ public class ExportSection extends PDESection {
 				FileDialog dialog = new FileDialog(getShell(), SWT.SAVE);
 				dialog.setFileName(fArchiveEntry.getValue());
 				String extension = Platform.getOS().equals("macosx") ? ".tar.gz" : ".zip"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				dialog.setFilterExtensions(new String[] {"*" + extension});
+				dialog.setFilterExtensions(new String[] {"*" + extension}); //$NON-NLS-1$
 				String res = dialog.open();
 				if (res != null) {
 					fArchiveEntry.getText().setText(res);
@@ -65,7 +65,7 @@ public class ExportSection extends PDESection {
 		fArchiveEntry.getText().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		text = toolkit.createFormText(comp, true);
-		text.setText(PDEPlugin.getResourceString("Product.overview.export"), true, false);
+		text.setText(PDEPlugin.getResourceString("Product.overview.export"), true, false); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 3;
 		text.setLayoutData(gd);

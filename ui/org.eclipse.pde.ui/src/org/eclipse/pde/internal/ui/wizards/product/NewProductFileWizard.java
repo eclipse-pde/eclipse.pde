@@ -18,8 +18,8 @@ public class NewProductFileWizard extends BasicNewResourceWizard {
 	 * @see org.eclipse.jface.wizard.Wizard#addPages()
 	 */
 	public void addPages() {
-		fMainPage = new ProductFileWizadPage("product", getSelection());
-		fMainPage.setTitle("Product Configuration File");
+		fMainPage = new ProductFileWizadPage("product", getSelection()); //$NON-NLS-1$
+		fMainPage.setTitle(PDEPlugin.getResourceString("NewProductFileWizard.title")); //$NON-NLS-1$
 		addPage(fMainPage);
 	}
 
@@ -53,7 +53,7 @@ public class NewProductFileWizard extends BasicNewResourceWizard {
 	 */
 	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
 		super.init(workbench, currentSelection);
-		setWindowTitle("New Product Configuration File");
+		setWindowTitle(PDEPlugin.getResourceString("NewProductFileWizard.windowTitle")); //$NON-NLS-1$
 		setNeedsProgressMonitor(true);
 	}
 	

@@ -26,21 +26,21 @@ public class SplashSection extends PDESection {
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
-		section.setText("Splash Screen");
-		section.setDescription("The splash screen appears when the product launches.  It must be named 'splash.bmp' and is typically located in the product's defining plug-in.");
+		section.setText(PDEPlugin.getResourceString("SplashSection.title")); //$NON-NLS-1$
+		section.setDescription(PDEPlugin.getResourceString("SplashSection.desc")); //$NON-NLS-1$
 
 		Composite client = toolkit.createComposite(section);
 		GridLayout layout = new GridLayout(3, false);
 		layout.marginTop = 5;
 		client.setLayout(layout);
 		
-		Label label = toolkit.createLabel(client, "Specify the plug-in in which the splash screen is located:");
+		Label label = toolkit.createLabel(client, PDEPlugin.getResourceString("SplashSection.label")); //$NON-NLS-1$
 		GridData gd = new GridData();
 		gd.horizontalSpan = 3;
 		label.setLayoutData(gd);
 		
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
-		fPluginEntry = new FormEntry(client, toolkit, "Plug-in:", "Browse...", false);
+		fPluginEntry = new FormEntry(client, toolkit, PDEPlugin.getResourceString("SplashSection.plugin"), PDEPlugin.getResourceString("SplashSection.browse"), false); //$NON-NLS-1$ //$NON-NLS-2$
 		fPluginEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
 				getSplashInfo().setLocation(entry.getValue());
@@ -92,8 +92,8 @@ public class SplashSection extends PDESection {
 		ElementListSelectionDialog dialog = new ElementListSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), PDEPlugin.getDefault().getLabelProvider());
 		dialog.setElements(PDECore.getDefault().getWorkspaceModelManager().getAllModels());
 		dialog.setMultipleSelection(false);
-		dialog.setTitle("Plug-in Selection");
-		dialog.setMessage("Select the plug-in where the splash screen is located:");
+		dialog.setTitle(PDEPlugin.getResourceString("SplashSection.selection")); //$NON-NLS-1$
+		dialog.setMessage(PDEPlugin.getResourceString("SplashSection.message")); //$NON-NLS-1$
 		if (dialog.open() == ElementListSelectionDialog.OK) {
 			IPluginModelBase model = (IPluginModelBase)dialog.getFirstResult();
 			fPluginEntry.setValue(model.getPluginBase().getId());

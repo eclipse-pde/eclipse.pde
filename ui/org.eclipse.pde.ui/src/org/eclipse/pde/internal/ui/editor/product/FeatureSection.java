@@ -26,7 +26,7 @@ public class FeatureSection extends TableSection implements IPluginModelListener
 	private TableViewer fFeatureTable;
 
 	public FeatureSection(PDEFormPage formPage, Composite parent) {
-		super(formPage, parent, Section.DESCRIPTION, new String[] {"Add..."});
+		super(formPage, parent, Section.DESCRIPTION, new String[] {PDEPlugin.getResourceString("Product.FeatureSection.add")}); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
@@ -48,8 +48,8 @@ public class FeatureSection extends TableSection implements IPluginModelListener
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.verticalSpan = 2;
 		section.setLayoutData(gd);
-		section.setText("Features");
-		section.setDescription("List the features that constitute the product.  Nested features need not be listed.");
+		section.setText(PDEPlugin.getResourceString("Product.FeatureSection.title")); //$NON-NLS-1$
+		section.setDescription(PDEPlugin.getResourceString("Product.FeatureSection.desc")); //$NON-NLS-1$
 		
 	}
 	

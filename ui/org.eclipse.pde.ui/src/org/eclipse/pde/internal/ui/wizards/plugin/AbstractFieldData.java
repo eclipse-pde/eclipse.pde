@@ -24,7 +24,7 @@ public abstract class AbstractFieldData implements IFieldData {
 	private String fOutputFolderName;
 	private boolean fHasBundleStructure;
 	private boolean fSimple;
-	private String fTargetVersion = "3.1";
+	private String fTargetVersion = "3.1"; //$NON-NLS-1$
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.IFieldData2#getId()

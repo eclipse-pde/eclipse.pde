@@ -48,14 +48,14 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 	
 	private static String[] getButtonLabels() {
 		String[] labels = new String[8];
-		labels[0] = "Add...";
-		labels[1] = "Add Working Set...";
-		labels[2] = "Add Required Plug-ins";
-		labels[3] = "Remove All";
+		labels[0] = PDEPlugin.getResourceString("Product.PluginSection.add"); //$NON-NLS-1$
+		labels[1] = PDEPlugin.getResourceString("Product.PluginSection.working"); //$NON-NLS-1$
+		labels[2] = PDEPlugin.getResourceString("Product.PluginSection.required"); //$NON-NLS-1$
+		labels[3] = PDEPlugin.getResourceString("Product.PluginSection.removeAll"); //$NON-NLS-1$
 		labels[4] = null;
 		labels[5] = null;
-		labels[6] = "New Plug-in...";
-		labels[7] = "New Fragment...";
+		labels[6] = PDEPlugin.getResourceString("Product.PluginSection.newPlugin"); //$NON-NLS-1$
+		labels[7] = PDEPlugin.getResourceString("Product.PluginSection.newFragment"); //$NON-NLS-1$
 		return labels;
 	}
 
@@ -80,7 +80,7 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		});
 		fPluginTable.setInput(PDECore.getDefault().getModelManager());
 		
-		fIncludeFragments = toolkit.createButton(container, "Include fragments when computing required plug-ins", SWT.CHECK);
+		fIncludeFragments = toolkit.createButton(container, PDEPlugin.getResourceString("Product.PluginSection.includeFragments"), SWT.CHECK); //$NON-NLS-1$
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		fIncludeFragments.setLayoutData(gd);
@@ -96,8 +96,8 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.verticalSpan = 2;
 		section.setLayoutData(gd);
-		section.setText("Plug-ins and Fragments");
-		section.setDescription("List all the plug-ins and fragments that constitute the product:");
+		section.setText(PDEPlugin.getResourceString("Product.PluginSection.title")); //$NON-NLS-1$
+		section.setDescription(PDEPlugin.getResourceString("Product.PluginSection.desc")); //$NON-NLS-1$
 
 		getProduct().getModel().addModelChangedListener(this);
 		PDECore.getDefault().getModelManager().addPluginModelListener(this);

@@ -25,7 +25,7 @@ import org.eclipse.ui.IStorageEditorInput;
 
 public class ProductInputContext extends UTF8InputContext {
 	
-	public static final String CONTEXT_ID = "product-context";
+	public static final String CONTEXT_ID = "product-context"; //$NON-NLS-1$
 
 	public ProductInputContext(PDEFormEditor editor, IEditorInput input,
 			boolean primary) {

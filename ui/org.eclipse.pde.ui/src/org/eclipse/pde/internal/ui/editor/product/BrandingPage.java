@@ -1,5 +1,6 @@
 package org.eclipse.pde.internal.ui.editor.product;
 
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -10,10 +11,10 @@ import org.eclipse.ui.forms.widgets.*;
 
 public class BrandingPage extends PDEFormPage {
 	
-	public static final String PAGE_ID = "branding";
+	public static final String PAGE_ID = "branding"; //$NON-NLS-1$
 
 	public BrandingPage(FormEditor editor) {
-		super(editor, PAGE_ID, "Branding");
+		super(editor, PAGE_ID, PDEPlugin.getResourceString("BrandingPage.title")); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
@@ -23,7 +24,7 @@ public class BrandingPage extends PDEFormPage {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
-		form.setText("Branding"); 
+		form.setText(PDEPlugin.getResourceString("BrandingPage.title"));  //$NON-NLS-1$
 		fillBody(managedForm, toolkit);
 		managedForm.refresh();
 	}

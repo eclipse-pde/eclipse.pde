@@ -64,9 +64,9 @@ public class PluginModelManager implements IAdaptable {
 		}
 		
 		//TODO temporary hack for backward compatibility with 3.1 milestones
-		Properties prop = TargetPlatform.getConfigIniProperties("configuration/config.ini");
+		Properties prop = TargetPlatform.getConfigIniProperties("configuration/config.ini"); //$NON-NLS-1$
 		if (prop != null) {
-			String property = prop.getProperty("eclipse.buildId");
+			String property = prop.getProperty("eclipse.buildId"); //$NON-NLS-1$
 			if (property != null) {
 				if (Integer.parseInt(property.substring(1, 9)) < 20050119)
 					return ICoreConstants.TARGET30;

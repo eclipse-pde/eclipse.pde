@@ -1,5 +1,6 @@
 package org.eclipse.pde.internal.ui.editor.product;
 
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -10,13 +11,13 @@ import org.eclipse.ui.forms.widgets.*;
 
 public class ConfigurationPage extends PDEFormPage {
 	
-	public static final String PLUGIN_ID = "plugin-configuration";
-	public static final String FEATURE_ID = "feature-configuration";
+	public static final String PLUGIN_ID = "plugin-configuration"; //$NON-NLS-1$
+	public static final String FEATURE_ID = "feature-configuration"; //$NON-NLS-1$
 
 	private boolean fUseFeatures;
 
 	public ConfigurationPage(FormEditor editor, boolean useFeatures) {
-		super(editor, useFeatures ? FEATURE_ID : PLUGIN_ID, "Configuration");
+		super(editor, useFeatures ? FEATURE_ID : PLUGIN_ID, PDEPlugin.getResourceString("Product.ConfigurationPage.title")); //$NON-NLS-1$
 		fUseFeatures = useFeatures;
 	}
 	
@@ -27,7 +28,7 @@ public class ConfigurationPage extends PDEFormPage {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
-		form.setText("Configuration"); 
+		form.setText(PDEPlugin.getResourceString("Product.ConfigurationPage.title"));  //$NON-NLS-1$
 		fillBody(managedForm, toolkit);
 		managedForm.refresh();
 	}

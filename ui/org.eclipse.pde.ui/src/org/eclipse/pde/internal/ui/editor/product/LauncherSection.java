@@ -3,6 +3,7 @@ package org.eclipse.pde.internal.ui.editor.product;
 import java.util.*;
 
 import org.eclipse.pde.internal.core.iproduct.*;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.swt.*;
@@ -22,7 +23,7 @@ public class LauncherSection extends PDESection {
 	class IconEntry extends FormEntry {
 		String fIconId;
 		public IconEntry(Composite parent, FormToolkit toolkit, String labelText, String iconId) {
-			super(parent, toolkit, labelText, "Browse...", isEditable(), 20);
+			super(parent, toolkit, labelText, PDEPlugin.getResourceString("LauncherSection.browse"), isEditable(), 20); //$NON-NLS-1$
 			fIconId = iconId;
 			addEntryFormListener();
 			setEditable(isEditable());
@@ -45,8 +46,8 @@ public class LauncherSection extends PDESection {
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
-		section.setText("Program Launcher");
-		section.setDescription("Customize the executable that is used to launch the product:");
+		section.setText(PDEPlugin.getResourceString("LauncherSection.title")); //$NON-NLS-1$
+		section.setDescription(PDEPlugin.getResourceString("LauncherSection.desc")); //$NON-NLS-1$
 
 		Composite client = toolkit.createComposite(section);
 		GridLayout layout = new GridLayout();
@@ -61,8 +62,8 @@ public class LauncherSection extends PDESection {
 		});
 		fNameEntry.setEditable(isEditable());
 		
-		createLabel(client, toolkit, "", 2);	
-		createLabel(client, toolkit, "Customizing the launcher icons varies per platform:", 2);
+		createLabel(client, toolkit, "", 2);	 //$NON-NLS-1$
+		createLabel(client, toolkit, PDEPlugin.getResourceString("LauncherSection.label"), 2); //$NON-NLS-1$
 		
 		addLinuxSection(client, toolkit);
 		addMacSection(client, toolkit);
@@ -77,26 +78,26 @@ public class LauncherSection extends PDESection {
 	}
 	
 	private void addWin32Section(Composite parent, FormToolkit toolkit) {
-		Composite comp = createComposite(parent, toolkit, "win32");
+		Composite comp = createComposite(parent, toolkit, "win32"); //$NON-NLS-1$
 		
-		Button button = toolkit.createButton(comp, "Use a single .ICO file", SWT.RADIO);
+		Button button = toolkit.createButton(comp, PDEPlugin.getResourceString("LauncherSection.ico"), SWT.RADIO); //$NON-NLS-1$
 		GridData gd = new GridData();
 		gd.horizontalSpan = 3;
 		button.setLayoutData(gd);
 		
-		fIconMap.put(ILauncherInfo.P_ICO_PATH, new IconEntry(comp, toolkit, "File:", ILauncherInfo.P_ICO_PATH));
+		fIconMap.put(ILauncherInfo.P_ICO_PATH, new IconEntry(comp, toolkit, PDEPlugin.getResourceString("LauncherSection.file"), ILauncherInfo.P_ICO_PATH)); //$NON-NLS-1$
 		
-		button = toolkit.createButton(comp, "Specify six BMP images for both low (16-color) and high (256-color) graphics", SWT.RADIO);
+		button = toolkit.createButton(comp, PDEPlugin.getResourceString("LauncherSection.bmpImages"), SWT.RADIO); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		button.setLayoutData(gd);
 
-		fIconMap.put(ILauncherInfo.WIN32_16_LOW, new IconEntry(comp, toolkit, "16x16 (Low):", ILauncherInfo.WIN32_16_LOW));
-		fIconMap.put(ILauncherInfo.WIN32_16_HIGH, new IconEntry(comp, toolkit, "16x16 (High):", ILauncherInfo.WIN32_16_HIGH));
-		fIconMap.put(ILauncherInfo.WIN32_32_LOW, new IconEntry(comp, toolkit, "32x32 (Low):", ILauncherInfo.WIN32_32_LOW));
-		fIconMap.put(ILauncherInfo.WIN32_32_HIGH, new IconEntry(comp, toolkit, "32x32 (High):", ILauncherInfo.WIN32_32_HIGH));
-		fIconMap.put(ILauncherInfo.WIN32_48_LOW, new IconEntry(comp, toolkit, "48x48 (Low):", ILauncherInfo.WIN32_48_LOW));
-		fIconMap.put(ILauncherInfo.WIN32_48_HIGH, new IconEntry(comp, toolkit, "48x48 (High):", ILauncherInfo.WIN32_48_HIGH));
+		fIconMap.put(ILauncherInfo.WIN32_16_LOW, new IconEntry(comp, toolkit, PDEPlugin.getResourceString("LauncherSection.Low16"), ILauncherInfo.WIN32_16_LOW)); //$NON-NLS-1$
+		fIconMap.put(ILauncherInfo.WIN32_16_HIGH, new IconEntry(comp, toolkit, PDEPlugin.getResourceString("LauncherSection.High16"), ILauncherInfo.WIN32_16_HIGH)); //$NON-NLS-1$
+		fIconMap.put(ILauncherInfo.WIN32_32_LOW, new IconEntry(comp, toolkit, PDEPlugin.getResourceString("LauncherSection.32Low"), ILauncherInfo.WIN32_32_LOW)); //$NON-NLS-1$
+		fIconMap.put(ILauncherInfo.WIN32_32_HIGH, new IconEntry(comp, toolkit, PDEPlugin.getResourceString("LauncherSection.32High"), ILauncherInfo.WIN32_32_HIGH)); //$NON-NLS-1$
+		fIconMap.put(ILauncherInfo.WIN32_48_LOW, new IconEntry(comp, toolkit, PDEPlugin.getResourceString("LauncherSection.48Low"), ILauncherInfo.WIN32_48_LOW)); //$NON-NLS-1$
+		fIconMap.put(ILauncherInfo.WIN32_48_HIGH, new IconEntry(comp, toolkit, PDEPlugin.getResourceString("LauncherSection.48High"), ILauncherInfo.WIN32_48_HIGH)); //$NON-NLS-1$
 
 		toolkit.paintBordersFor(comp);
 	}
@@ -109,28 +110,28 @@ public class LauncherSection extends PDESection {
 	}
 	
 	private void addLinuxSection(Composite parent, FormToolkit toolkit) {
-		Composite comp = createComposite(parent, toolkit, "linux");
-		createLabel(comp, toolkit, "A single XPM icon is required:", 3);	
-		fIconMap.put(ILauncherInfo.LINUX_ICON, new IconEntry(comp, toolkit, "Icon:", ILauncherInfo.LINUX_ICON));
+		Composite comp = createComposite(parent, toolkit, "linux"); //$NON-NLS-1$
+		createLabel(comp, toolkit, PDEPlugin.getResourceString("LauncherSection.linuxLabel"), 3);	 //$NON-NLS-1$
+		fIconMap.put(ILauncherInfo.LINUX_ICON, new IconEntry(comp, toolkit, PDEPlugin.getResourceString("LauncherSection.icon"), ILauncherInfo.LINUX_ICON)); //$NON-NLS-1$
 		toolkit.paintBordersFor(comp);
 	}
 
 	private void addSolarisSection(Composite parent, FormToolkit toolkit) {
-		Composite comp = createComposite(parent, toolkit, "solaris");
-		createLabel(comp, toolkit, "Four PM icons are required:", 3);
+		Composite comp = createComposite(parent, toolkit, "solaris"); //$NON-NLS-1$
+		createLabel(comp, toolkit, PDEPlugin.getResourceString("LauncherSection.solarisLabel"), 3); //$NON-NLS-1$
 
-		fIconMap.put(ILauncherInfo.SOLARIS_LARGE, new IconEntry(comp, toolkit, "Large:", ILauncherInfo.SOLARIS_LARGE));
-		fIconMap.put(ILauncherInfo.SOLARIS_MEDIUM, new IconEntry(comp, toolkit, "Medium:", ILauncherInfo.SOLARIS_MEDIUM));
-		fIconMap.put(ILauncherInfo.SOLARIS_SMALL, new IconEntry(comp, toolkit, "Small:", ILauncherInfo.SOLARIS_SMALL));
-		fIconMap.put(ILauncherInfo.SOLARIS_TINY, new IconEntry(comp, toolkit, "Tiny:", ILauncherInfo.SOLARIS_TINY));
+		fIconMap.put(ILauncherInfo.SOLARIS_LARGE, new IconEntry(comp, toolkit, PDEPlugin.getResourceString("LauncherSection.large"), ILauncherInfo.SOLARIS_LARGE)); //$NON-NLS-1$
+		fIconMap.put(ILauncherInfo.SOLARIS_MEDIUM, new IconEntry(comp, toolkit, PDEPlugin.getResourceString("LauncherSection.medium"), ILauncherInfo.SOLARIS_MEDIUM)); //$NON-NLS-1$
+		fIconMap.put(ILauncherInfo.SOLARIS_SMALL, new IconEntry(comp, toolkit, PDEPlugin.getResourceString("LauncherSection.small"), ILauncherInfo.SOLARIS_SMALL)); //$NON-NLS-1$
+		fIconMap.put(ILauncherInfo.SOLARIS_TINY, new IconEntry(comp, toolkit, PDEPlugin.getResourceString("LauncherSection.tiny"), ILauncherInfo.SOLARIS_TINY)); //$NON-NLS-1$
 		
 		toolkit.paintBordersFor(comp);
 	}
 	
 	private void addMacSection(Composite parent, FormToolkit toolkit) {
-		Composite comp = createComposite(parent, toolkit, "macosx");		
-		createLabel(comp, toolkit, "A single ICNS file must be specified:", 3);		
-		fIconMap.put(ILauncherInfo.MACOSX_ICON, new IconEntry(comp, toolkit, "File:", ILauncherInfo.MACOSX_ICON));
+		Composite comp = createComposite(parent, toolkit, "macosx");		 //$NON-NLS-1$
+		createLabel(comp, toolkit, PDEPlugin.getResourceString("LauncherSection.macLabel"), 3);		 //$NON-NLS-1$
+		fIconMap.put(ILauncherInfo.MACOSX_ICON, new IconEntry(comp, toolkit, PDEPlugin.getResourceString("LauncherSection.file"), ILauncherInfo.MACOSX_ICON)); //$NON-NLS-1$
 		toolkit.paintBordersFor(comp);
 	}
 	

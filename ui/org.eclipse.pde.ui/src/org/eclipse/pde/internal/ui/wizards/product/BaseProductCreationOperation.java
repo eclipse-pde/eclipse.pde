@@ -32,7 +32,7 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 	 */
 	protected void execute(IProgressMonitor monitor) throws CoreException,
 			InvocationTargetException, InterruptedException {
-		monitor.beginTask("Creating product configuration file...", 2);
+		monitor.beginTask(PDEPlugin.getResourceString("BaseProductCreationOperation.taskName"), 2); //$NON-NLS-1$
 		createContent();
 		monitor.worked(1);
         openFile();
@@ -50,7 +50,7 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 	protected void initializeProduct(IProduct product) {
 		IProductModelFactory factory = product.getModel().getFactory();
 		IConfigurationFileInfo info = factory.createConfigFileInfo();
-		info.setUse("default");
+		info.setUse("default"); //$NON-NLS-1$
 		product.setConfigurationFileInfo(info);
 	}
 	
@@ -59,13 +59,13 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 		IPluginObject[] children = element.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			IPluginElement child = (IPluginElement)children[i];
-			if (child.getName().equals("property")) {
+			if (child.getName().equals("property")) { //$NON-NLS-1$
 				String name = null;
 				String value = null;
-				IPluginAttribute attr = child.getAttribute("name");
+				IPluginAttribute attr = child.getAttribute("name"); //$NON-NLS-1$
 				if (attr != null)
 					name = attr.getValue();
-				attr = child.getAttribute("value");
+				attr = child.getAttribute("value"); //$NON-NLS-1$
 				if (attr != null)
 					value = attr.getValue();
 				if (name != null && value != null)
@@ -84,12 +84,12 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 		if (model != null) {
 			IPluginExtension[] extensions = model.getPluginBase().getExtensions();
 			for (int i = 0; i < extensions.length; i++) {
-				if ("org.eclipse.core.runtime.products".equals(extensions[i].getPoint()) 
+				if ("org.eclipse.core.runtime.products".equals(extensions[i].getPoint())  //$NON-NLS-1$
 						&& productId.substring(lastDot+1).equals(extensions[i].getId())) {
 					IPluginObject[] children = extensions[i].getChildren();
 					if (children.length > 0) {
 						IPluginElement object = (IPluginElement)children[0];
-						if (object.getName().equals("product"))
+						if (object.getName().equals("product")) //$NON-NLS-1$
 							return object;
 					}
 				}
@@ -102,10 +102,10 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 		product.setId(id);
 		IPluginElement element = getProductExtension(id);
 		if (element != null) {
-			IPluginAttribute attr = element.getAttribute("application");
+			IPluginAttribute attr = element.getAttribute("application"); //$NON-NLS-1$
 			if (attr != null)
 				product.setApplication(attr.getValue());
-			attr = element.getAttribute("name");
+			attr = element.getAttribute("name"); //$NON-NLS-1$
 			if (attr != null)
 				product.setName(attr.getValue());
 			Properties prop = getProductProperties(element);
@@ -118,13 +118,13 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 				product.setAboutInfo(info);
 			}
 			IWindowImages winImages = factory.createWindowImages();
-			String path = prop.getProperty("windowImage");
+			String path = prop.getProperty("windowImage"); //$NON-NLS-1$
 			if (path != null) {
 				winImages.setSmallImagePath(path);
 			}
 			path = prop.getProperty(IProductConstants.WINDOW_IMAGES);
 			if (path != null) {
-				StringTokenizer tokenizer = new StringTokenizer(path, ",");
+				StringTokenizer tokenizer = new StringTokenizer(path, ","); //$NON-NLS-1$
 				if (tokenizer.hasMoreTokens())
 					winImages.setSmallImagePath(tokenizer.nextToken());
 				if (tokenizer.hasMoreTokens())

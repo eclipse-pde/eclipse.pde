@@ -46,11 +46,11 @@ public class ProductFromConfigOperation extends BaseProductCreationOperation {
 			if (fLaunchConfiguration.getAttribute(ILauncherSettings.CONFIG_GENERATE_DEFAULT, true)) {
 				super.initializeProduct(product);
 			} else {
-				String path = fLaunchConfiguration.getAttribute(ILauncherSettings.CONFIG_TEMPLATE_LOCATION, "/");
+				String path = fLaunchConfiguration.getAttribute(ILauncherSettings.CONFIG_TEMPLATE_LOCATION, "/"); //$NON-NLS-1$
 				IContainer container = PDEPlugin.getWorkspace().getRoot().getContainerForLocation(new Path(path));
 				if (container != null) {
 					IConfigurationFileInfo info = factory.createConfigFileInfo();
-					info.setUse("custom");
+					info.setUse("custom"); //$NON-NLS-1$
 					info.setPath(container.getFullPath().toString());
 					product.setConfigurationFileInfo(info);	
 				} else {

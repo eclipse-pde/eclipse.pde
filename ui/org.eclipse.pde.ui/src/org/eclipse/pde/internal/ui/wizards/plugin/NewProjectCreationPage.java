@@ -101,9 +101,9 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		
 		Label label = new Label(group, SWT.NONE);
 		if (fIsFragment) {
-			label.setText(PDEPlugin.getResourceString("ProjectStructurePage.fTarget"));
+			label.setText(PDEPlugin.getResourceString("ProjectStructurePage.fTarget")); //$NON-NLS-1$
 		} else {
-			label.setText(PDEPlugin.getResourceString("ProjectStructurePage.pTarget"));
+			label.setText(PDEPlugin.getResourceString("ProjectStructurePage.pTarget")); //$NON-NLS-1$
 		}
 		fTargetCombo = new Combo(group, SWT.READ_ONLY|SWT.SINGLE);
 		fTargetCombo.setItems(new String[] {ICoreConstants.TARGET31, ICoreConstants.TARGET30, ICoreConstants.TARGET21});
@@ -169,7 +169,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		fData.setSourceFolderName(fSourceText.getText().trim());
 		fData.setOutputFolderName(fOutputText.getText().trim());
 		fData.setHasBundleStructure(fBundleCheck.isEnabled() && fBundleCheck.getSelection());
-		fData.setLegacy(fTargetCombo.getText().equals("2.1"));
+		fData.setLegacy(fTargetCombo.getText().equals("2.1")); //$NON-NLS-1$
 		fData.setTargetVersion(fTargetCombo.getText());
 	}
 	

@@ -46,7 +46,7 @@ public class ProductFromExtensionOperation extends BaseProductCreationOperation 
 		// add plugin declaring product application and its pre-reqs
 		IPluginElement element = getProductExtension(fId);
 		if (element != null) {
-			IPluginAttribute attr = element.getAttribute("application");
+			IPluginAttribute attr = element.getAttribute("application"); //$NON-NLS-1$
 			if (attr != null) {
 				String appId = attr.getValue();
 				lastDot = appId.lastIndexOf('.');

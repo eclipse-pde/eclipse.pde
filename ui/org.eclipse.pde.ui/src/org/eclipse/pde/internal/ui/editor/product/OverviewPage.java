@@ -20,10 +20,10 @@ import org.eclipse.ui.forms.widgets.Section;
 
 public class OverviewPage extends PDEFormPage {
 	
-	public static final String PAGE_ID = "overview";
+	public static final String PAGE_ID = "overview"; //$NON-NLS-1$
 
 	public OverviewPage(FormEditor editor) {
-		super(editor, PAGE_ID, "Overview");
+		super(editor, PAGE_ID, PDEPlugin.getResourceString("OverviewPage.title")); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
@@ -33,7 +33,7 @@ public class OverviewPage extends PDEFormPage {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
-		form.setText("Overview"); 
+		form.setText(PDEPlugin.getResourceString("OverviewPage.title"));  //$NON-NLS-1$
 		fillBody(managedForm, toolkit);
 		managedForm.refresh();
 	}
@@ -68,8 +68,8 @@ public class OverviewPage extends PDEFormPage {
 	private void createTestingSection(Composite parent, FormToolkit toolkit) {
 		Section section = toolkit.createSection(parent, Section.TITLE_BAR);
 		section.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
-		section.setText("Testing");
-		FormText text = createClient(section, PDEPlugin.getResourceString("Product.overview.testing"), toolkit);
+		section.setText(PDEPlugin.getResourceString("OverviewPage.testing")); //$NON-NLS-1$
+		FormText text = createClient(section, PDEPlugin.getResourceString("Product.overview.testing"), toolkit); //$NON-NLS-1$
 		text.setImage("run", getImage(PDEPluginImages.DESC_RUN_EXC)); //$NON-NLS-1$
 		text.setImage("debug", getImage(PDEPluginImages.DESC_DEBUG_EXC)); //$NON-NLS-1$
 		section.setClient(text);
@@ -82,7 +82,7 @@ public class OverviewPage extends PDEFormPage {
 		try {
 			text.setText(content, true, false);
 		} catch (SWTException e) {
-			text.setText("", false, false);
+			text.setText("", false, false); //$NON-NLS-1$
 		}
 		section.setClient(text);
 		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));

@@ -31,14 +31,14 @@ public class ConfigurationSection extends PDESection {
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
-		section.setText("Configuration File");
-		section.setDescription("An Eclipse product can be configured by setting properties in a config.ini file.  These properties are read by the runtime upon startup.");
+		section.setText(PDEPlugin.getResourceString("ConfigurationSection.title")); //$NON-NLS-1$
+		section.setDescription(PDEPlugin.getResourceString("ConfigurationSection.desc")); //$NON-NLS-1$
 		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		Composite client = toolkit.createComposite(section);
 		client.setLayout(new GridLayout(3, false));
 		
-		fDefault = toolkit.createButton(client, "Generate a default config.ini file", SWT.RADIO);
+		fDefault = toolkit.createButton(client, PDEPlugin.getResourceString("ConfigurationSection.default"), SWT.RADIO); //$NON-NLS-1$
 		GridData gd = new GridData();
 		gd.horizontalSpan = 3;
 		fDefault.setLayoutData(gd);
@@ -46,19 +46,19 @@ public class ConfigurationSection extends PDESection {
 		fDefault.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				boolean selected = fDefault.getSelection();
-				getConfigurationFileInfo().setUse(selected ? "default" : "custom");
+				getConfigurationFileInfo().setUse(selected ? "default" : "custom"); //$NON-NLS-1$ //$NON-NLS-2$
 				fCustomEntry.setEditable(!selected);
 			}
 		});
 		
-		fCustom = toolkit.createButton(client, "Use an existing config.ini file", SWT.RADIO);
+		fCustom = toolkit.createButton(client, PDEPlugin.getResourceString("ConfigurationSection.existing"), SWT.RADIO); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		fCustom.setLayoutData(gd);
 		fCustom.setEnabled(isEditable());
 		
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
-		fCustomEntry = new FormEntry(client, toolkit, "File:", "Browse...", true, 35);
+		fCustomEntry = new FormEntry(client, toolkit, PDEPlugin.getResourceString("ConfigurationSection.file"), PDEPlugin.getResourceString("ConfigurationSection.browse"), true, 35); //$NON-NLS-1$ //$NON-NLS-2$
 		fCustomEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
 				getConfigurationFileInfo().setPath(entry.getValue());
@@ -82,9 +82,9 @@ public class ConfigurationSection extends PDESection {
 				
 		dialog.setValidator(new FileValidator());
 		dialog.setAllowMultiple(false);
-		dialog.setTitle("File Selection"); //$NON-NLS-1$
-		dialog.setMessage("Select a config.ini file:"); //$NON-NLS-1$
-		dialog.addFilter(new FileNameFilter("config.ini"));
+		dialog.setTitle(PDEPlugin.getResourceString("ConfigurationSection.selection"));  //$NON-NLS-1$
+		dialog.setMessage(PDEPlugin.getResourceString("ConfigurationSection.message"));  //$NON-NLS-1$
+		dialog.addFilter(new FileNameFilter("config.ini")); //$NON-NLS-1$
 		dialog.setInput(PDEPlugin.getWorkspace().getRoot());
 
 		if (dialog.open() == ElementTreeSelectionDialog.OK) {
@@ -99,7 +99,7 @@ public class ConfigurationSection extends PDESection {
 			fDefault.setSelection(true);
 			fCustomEntry.setEditable(false);
 		} else {
-			boolean custom = "custom".equals(info.getUse());
+			boolean custom = "custom".equals(info.getUse()); //$NON-NLS-1$
 			fDefault.setSelection(!custom);
 			fCustom.setSelection(custom);
 			fCustomEntry.setValue(info.getPath(), true);

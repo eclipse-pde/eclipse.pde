@@ -28,7 +28,7 @@ public class ProductFileWizadPage extends WizardNewFileCreationPage {
 	
 	public ProductFileWizadPage(String pageName, IStructuredSelection selection) {
 		super(pageName, selection);
-		setDescription("Create a new product configuration file and initialize its content.\nThe file name must end with '.prod'.");
+		setDescription(PDEPlugin.getResourceString("ProductFileWizadPage.title")); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
@@ -36,12 +36,12 @@ public class ProductFileWizadPage extends WizardNewFileCreationPage {
 	 */
 	protected void createAdvancedControls(Composite parent) {
 		Group group = new Group(parent, SWT.NONE);
-		group.setText("Initialize the file content");
+		group.setText(PDEPlugin.getResourceString("ProductFileWizadPage.groupTitle")); //$NON-NLS-1$
 		group.setLayout(new GridLayout(2, false));
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		fProductButton = new Button(group, SWT.RADIO);
-		fProductButton.setText("Use an existing product:");
+		fProductButton.setText(PDEPlugin.getResourceString("ProductFileWizadPage.existingProduct")); //$NON-NLS-1$
 		fProductButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				fProductCombo.setEnabled(fProductButton.getSelection());
@@ -53,7 +53,7 @@ public class ProductFileWizadPage extends WizardNewFileCreationPage {
 		fProductCombo.setItems(TargetPlatform.getProductNames());
 		
 		fLaunchConfigButton = new Button(group, SWT.RADIO);
-		fLaunchConfigButton.setText("Use an existing launch configuration:");
+		fLaunchConfigButton.setText(PDEPlugin.getResourceString("ProductFileWizadPage.existingLaunchConfig")); //$NON-NLS-1$
 		fLaunchConfigButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				fLaunchConfigCombo.setEnabled(fLaunchConfigButton.getSelection());
@@ -68,7 +68,7 @@ public class ProductFileWizadPage extends WizardNewFileCreationPage {
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		fBasicButton.setLayoutData(gd);
-		fBasicButton.setText("Create a configuration file with basic settings");
+		fBasicButton.setText(PDEPlugin.getResourceString("ProductFileWizadPage.basic")); //$NON-NLS-1$
 		
 		initializeState();
 	}
@@ -95,8 +95,8 @@ public class ProductFileWizadPage extends WizardNewFileCreationPage {
 	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#validatePage()
 	 */
 	protected boolean validatePage() {
-		if (!getFileName().trim().endsWith(".prod")) {
-			setErrorMessage("The file name must end with '.prod'");
+		if (!getFileName().trim().endsWith(".prod")) { //$NON-NLS-1$
+			setErrorMessage(PDEPlugin.getResourceString("ProductFileWizadPage.error")); //$NON-NLS-1$
 			return false;
 		}
 		return super.validatePage();
@@ -106,7 +106,7 @@ public class ProductFileWizadPage extends WizardNewFileCreationPage {
 	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#validateLinkedResource()
 	 */
 	protected IStatus validateLinkedResource() {
-		return new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "", null);
+		return new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
@@ -119,7 +119,7 @@ public class ProductFileWizadPage extends WizardNewFileCreationPage {
 		ArrayList list = new ArrayList();
 		try {
 			ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
-			ILaunchConfigurationType type = manager.getLaunchConfigurationType("org.eclipse.pde.ui.RuntimeWorkbench");
+			ILaunchConfigurationType type = manager.getLaunchConfigurationType("org.eclipse.pde.ui.RuntimeWorkbench"); //$NON-NLS-1$
 			ILaunchConfiguration[] configs = manager.getLaunchConfigurations(type);
 			for (int i = 0; i < configs.length; i++) {
 				if (!DebugUITools.isPrivate(configs[i]))
@@ -137,7 +137,7 @@ public class ProductFileWizadPage extends WizardNewFileCreationPage {
 		String configName = fLaunchConfigCombo.getText();
 		try {
 			ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
-			ILaunchConfigurationType type = manager.getLaunchConfigurationType("org.eclipse.pde.ui.RuntimeWorkbench");
+			ILaunchConfigurationType type = manager.getLaunchConfigurationType("org.eclipse.pde.ui.RuntimeWorkbench"); //$NON-NLS-1$
 			ILaunchConfiguration[] configs = manager.getLaunchConfigurations(type);
 			for (int i = 0; i < configs.length; i++) {
 				if (configs[i].getName().equals(configName) && !DebugUITools.isPrivate(configs[i]))

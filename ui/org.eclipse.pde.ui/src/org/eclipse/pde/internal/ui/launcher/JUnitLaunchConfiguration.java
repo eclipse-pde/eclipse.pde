@@ -242,7 +242,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 			String token = tokenizer.nextToken();
 			// be forgiving if people have tracing turned on and forgot
 			// to remove the -debug from the program args field.
-			if (token.equals("-debug") && programArgs.contains("-debug"))
+			if (token.equals("-debug") && programArgs.contains("-debug")) //$NON-NLS-1$ //$NON-NLS-2$
 				continue;
 			programArgs.add(token);
 		}

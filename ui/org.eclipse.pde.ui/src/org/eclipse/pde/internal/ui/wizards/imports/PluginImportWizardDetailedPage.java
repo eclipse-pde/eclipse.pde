@@ -320,8 +320,8 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 			return;
 
 		String text = fFilterText.getText().trim();
-		if (!text.endsWith("*"))
-			text += "*";
+		if (!text.endsWith("*")) //$NON-NLS-1$
+			text += "*"; //$NON-NLS-1$
 		Pattern pattern = PatternConstructor.createPattern(text, true);
 		TableItem[] tableItems = fAvailableListViewer.getTable().getItems();
 		ArrayList results = new ArrayList();
