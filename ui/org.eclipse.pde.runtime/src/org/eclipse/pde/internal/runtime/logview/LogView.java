@@ -660,7 +660,7 @@ public class LogView extends ViewPart implements ILogListener {
 						if (activate && activateViewAction.isChecked()) {
 							IWorkbenchPage page = PDERuntimePlugin.getActivePage();
 							if (page != null)
-								page.activate(view);
+								page.bringToTop(view);
 						}
 					}
 					applyFonts();
