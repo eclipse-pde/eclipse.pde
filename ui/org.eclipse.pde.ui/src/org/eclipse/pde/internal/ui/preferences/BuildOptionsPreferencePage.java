@@ -26,9 +26,6 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.*;
 
-/**
- * @see PreferencePage
- */
 public class BuildOptionsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage, IPreferenceConstants {
 	private IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 	private Button fFailOnError;

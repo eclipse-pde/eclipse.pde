@@ -28,8 +28,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 
-/**
- */
 public class TargetPlatformPreferencePage
 	extends PreferencePage
 	implements IWorkbenchPreferencePage {

@@ -12,7 +12,7 @@ package org.eclipse.pde.internal.ui.preferences;
 
 import java.util.*;
 
-import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.PreferencePage;
@@ -24,8 +24,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 
-/**
- */
 public class TargetEnvironmentPreferencePage
 	extends PreferencePage
 	implements IWorkbenchPreferencePage, IEnvironmentVariables {
@@ -63,14 +61,14 @@ public class TargetEnvironmentPreferencePage
 		
 		os = new Combo(container, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
 		os.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		os.setItems(BootLoader.knownOSValues());
+		os.setItems(Platform.knownOSValues());
 		
 		label = new Label(container, SWT.NULL);
 		label.setText(PDEPlugin.getResourceString(KEY_WS));
 		
 		ws = new Combo(container, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
 		ws.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		ws.setItems(BootLoader.knownWSValues());
+		ws.setItems(Platform.knownWSValues());
 		
 		label = new Label(container, SWT.NULL);
 		label.setText(PDEPlugin.getResourceString(KEY_NL));
@@ -84,7 +82,7 @@ public class TargetEnvironmentPreferencePage
 		
 		arch = new Combo(container, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
 		arch.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		arch.setItems(BootLoader.knownOSArchValues());
+		arch.setItems(Platform.knownOSArchValues());
 		
 		Dialog.applyDialogFont(container);
 		

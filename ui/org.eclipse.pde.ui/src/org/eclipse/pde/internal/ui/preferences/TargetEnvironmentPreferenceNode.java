@@ -10,19 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.graphics.Image;
 
-/**
- * @author dejan
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
- */
 public class TargetEnvironmentPreferenceNode implements IPreferenceNode {
 	TargetEnvironmentPreferencePage page;
 
@@ -72,7 +65,7 @@ public class TargetEnvironmentPreferenceNode implements IPreferenceNode {
 	 * @see org.eclipse.jface.preference.IPreferenceNode#getLabelText()
 	 */
 	public String getLabelText() {
-		return PDEPlugin.getDefault().getDescriptor().getResourceString("%preferences.targetEnv.name"); //$NON-NLS-1$
+		return Platform.getResourceString(PDEPlugin.getDefault().getBundle(), "%preferences.targetEnv.name"); //$NON-NLS-1$
 	}
 
 	/**

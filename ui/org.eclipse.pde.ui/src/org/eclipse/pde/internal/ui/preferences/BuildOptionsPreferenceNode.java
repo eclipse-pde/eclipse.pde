@@ -8,24 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-/*
- * Created on Aug 23, 2003
- *
- * To change the template for this generated file go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
- */
 package org.eclipse.pde.internal.ui.preferences;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.preference.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.graphics.Image;
 
-/**
- * @author melhem
- *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
- */
 public class BuildOptionsPreferenceNode implements IPreferenceNode {
 
 	private BuildOptionsPreferencePage page;
@@ -76,7 +65,7 @@ public class BuildOptionsPreferenceNode implements IPreferenceNode {
 	 * @see org.eclipse.jface.preference.IPreferenceNode#getLabelText()
 	 */
 	public String getLabelText() {
-		return PDEPlugin.getDefault().getDescriptor().getResourceString("%preferences.buildOptions.name"); //$NON-NLS-1$
+		return Platform.getResourceString(PDEPlugin.getDefault().getBundle(), "%preferences.buildOptions.name"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

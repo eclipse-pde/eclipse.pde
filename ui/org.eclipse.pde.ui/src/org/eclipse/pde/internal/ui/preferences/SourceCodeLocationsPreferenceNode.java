@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -72,7 +73,7 @@ public class SourceCodeLocationsPreferenceNode implements IPreferenceNode {
 	 * @see org.eclipse.jface.preference.IPreferenceNode#getLabelText()
 	 */
 	public String getLabelText() {
-		return PDEPlugin.getDefault().getDescriptor().getResourceString("%preferences.source.name"); //$NON-NLS-1$
+		return Platform.getResourceString(PDEPlugin.getDefault().getBundle(), "%preferences.source.name"); //$NON-NLS-1$
 	}
 
 	/**
