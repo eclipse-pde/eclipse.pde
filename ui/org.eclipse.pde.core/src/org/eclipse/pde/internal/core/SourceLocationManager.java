@@ -16,10 +16,10 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.plugin.Plugin;
 
@@ -313,19 +313,18 @@ public class SourceLocationManager implements ICoreConstants {
 	}
 	private IPluginExtension[] getRegisteredSourceExtensions() {
 		Vector result = new Vector();
-		IPluginModel[] models = PDECore.getDefault().getExternalModelManager().getModels();
+		IPluginModelBase[] models = PDECore.getDefault().getExternalModelManager().getAllModels();
 		for (int i = 0; i < models.length; i++) {
 			IPluginExtension[] extensions = models[i].getPluginBase().getExtensions();
 			for (int j = 0; j < extensions.length; j++) {
 				IPluginExtension extension = extensions[j];
 				if (extension.getPoint().equals(PDECore.getPluginId() + ".source")) {
-					result.add(extension);
+					if (!result.contains(extension))
+						result.add(extension);
 				}
 			}
 		}
-		IPluginExtension[] extensions = new IPluginExtension[result.size()];
-		result.copyInto(extensions);
-		return extensions;
+		return (IPluginExtension[]) result.toArray(new IPluginExtension[result.size()]);
 	}
 	
 	public void reinitializeClasspathVariables(IProgressMonitor monitor) {
