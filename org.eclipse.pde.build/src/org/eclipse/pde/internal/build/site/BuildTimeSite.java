@@ -68,6 +68,19 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 		"org.eclipse.core.applicationrunner".equals(id) ||
 		"org.eclipse.update.configurator".equals(id))
 			return;
+		
+		
+		//Read the build.properties
+//		Properties buildProperties = new Properties();
+//		try {
+//			buildProperties.load(new URL(model.getLocation() + "/" + PROPERTIES_FILE).openStream()); //$NON-NLS-1$
+//		} catch (Exception e) {
+//			return;
+//		}
+//
+		String extraPrereqs = "org.eclipse.core.runtime.compatibility";
+//		if (extraPrereqs==null)
+//			return;
 
 		//Create the new prerequisite from the list
 		PluginPrerequisiteModel[] oldRequires = model.getRequires();
