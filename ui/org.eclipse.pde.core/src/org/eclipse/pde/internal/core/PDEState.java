@@ -449,7 +449,8 @@ public class PDEState {
 			fState.addBundle(descriptor);
 			return descriptor;
 		} catch (BundleException e) {
-		}
+		} catch (NumberFormatException e) {
+        }
 		return null;
 	}
 	
