@@ -7,11 +7,13 @@ package org.eclipse.pde.internal.schema;
 import java.io.*;
 import org.eclipse.pde.internal.base.schema.*;
 import org.eclipse.core.runtime.PlatformObject;
-import java.util.Vector;
+import java.util.*;
 import org.w3c.dom.Node;
 import org.w3c.dom.Comment;
+import org.eclipse.pde.internal.base.model.ISourceObject;
 
-public class SchemaElementReference extends PlatformObject implements ISchemaElement, IMetaElement, ISchemaObjectReference {
+
+public class SchemaElementReference extends PlatformObject implements ISchemaElement, IMetaElement, ISchemaObjectReference, ISourceObject {
 	private ISchemaElement element;
 	private ISchemaCompositor compositor;
 	private String referenceName;
@@ -21,6 +23,7 @@ public class SchemaElementReference extends PlatformObject implements ISchemaEle
 	private int minOccurs=1;
 	private int maxOccurs=1;
 	private Vector comments;
+	private int line, column;
 
 public SchemaElementReference(ISchemaCompositor compositor, String ref) {
 	referenceName = ref;
@@ -153,6 +156,21 @@ void writeComments(PrintWriter writer, Vector source) {
 	for (int i=0; i<source.size(); i++) {
 		String comment = (String)source.elementAt(i);
 		writer.println("<!--"+comment+"-->");
+	}
+}
+
+public int getStartLine() {
+	return line;
+}
+public int getStartColumn() {
+	return column;
+}
+void bindSourceLocation(Node node, Hashtable lineTable) {
+	if (lineTable==null) return;
+	int[] data = (int[]) lineTable.get(node);
+	if (data != null) {
+		line = data[0];
+		column = data[1];
 	}
 }
 }

@@ -15,6 +15,7 @@ import org.eclipse.pde.internal.base.model.plugin.*;
 public class PluginLibrary extends PluginObject implements IPluginLibrary {
 	private String[] contentFilters;
 	private boolean exported=false;
+	private String type;
 
 public PluginLibrary() {
 }
@@ -27,12 +28,17 @@ public boolean isExported() {
 public boolean isFullyExported() {
 	return exported && (contentFilters==null || contentFilters.length == 0);
 }
+
+public String getType() {
+	return type;
+}
+
 void load(LibraryModel libraryModel) {
 	this.name = libraryModel.getName();
 	this.contentFilters = libraryModel.getExports();
 	this.exported = libraryModel.isExported();
 }
-void load(Node node) {
+void load(Node node, Hashtable lineTable) {
 	this.name = getNodeAttribute(node, "name");
 	NodeList children = node.getChildNodes();
 	Vector exports = new Vector();
@@ -59,6 +65,7 @@ void load(Node node) {
 	}
 	exported = all || exports.size()>0;
 	addComments(node);
+	bindSourceLocation(node, lineTable);
 }
 public void setContentFilters(String[] filters) throws CoreException {
 	ensureModelEditable();
@@ -70,10 +77,19 @@ public void setExported(boolean value) throws CoreException {
 	this.exported = value;
 	firePropertyChanged(P_EXPORTED);
 }
+
+public void setType(String type) throws CoreException {
+	ensureModelEditable();
+	this.type = type;
+	firePropertyChanged(P_TYPE);
+}
+
 public void write(String indent, PrintWriter writer) {
 	writeComments(writer);
 	writer.print(indent);
 	writer.print("<library name=\"" + getName() + "\"");
+	if (type!=null)
+	   writer.print(" type=\""+type+"\"");
 	if (isExported() == false) {
 		writer.println("/>");
 	} else {
@@ -87,7 +103,6 @@ public void write(String indent, PrintWriter writer) {
 				writer.println(indent2+"<export name=\""+contentFilters[i]+"\"/>");
 			}
 		}
-	  
 		writer.println(indent + "</library>");
 	}
 }

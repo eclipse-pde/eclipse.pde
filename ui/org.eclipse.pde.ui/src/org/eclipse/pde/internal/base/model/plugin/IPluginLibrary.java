@@ -22,6 +22,19 @@ public interface IPluginLibrary extends IPluginObject {
  */
 	public static final String P_CONTENT_FILTERS = "contentFilters";
 /**
+ * A name of the property that will be used to
+ * notify about of the 'type' field.
+ */
+	public static final String P_TYPE = "type";
+/**
+ * A library type indicating the library contains code.
+ */
+	public static final String CODE = "code";
+/**
+ * A library type indicating the library contains resource files.
+ */
+	public static final String RESOURCE = "resource";
+/**
  * Returns optional context filters that
  * should be applied to calculate what classes
  * to export from this library.
@@ -44,6 +57,11 @@ boolean isExported();
  * in the library
  */
 boolean isFullyExported();
+
+/**
+ * Returns a type of this library (CODE or RESOURCE)
+ */
+public String getType();
 /**
  * Sets the optional content filters for
  * this library. This method may throw
@@ -62,4 +80,9 @@ void setContentFilters(String[] filters) throws CoreException;
  *
  */
 void setExported(boolean value) throws CoreException;
+/**
+ * Sets the library type. Must be either CODE or RESOURCE.
+ * @throws CoreException if the model is not editable.
+ */
+void setType(String type) throws CoreException;
 }

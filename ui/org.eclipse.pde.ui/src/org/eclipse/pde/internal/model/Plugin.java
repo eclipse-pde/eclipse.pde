@@ -17,84 +17,33 @@ import org.eclipse.core.runtime.PlatformObject;
 
 public class Plugin extends PluginBase implements IPlugin {
 	private String className;
-	private Vector imports=new Vector();
-	private Vector requiresComments;
+
 
 public Plugin() {
 }
-public void add(IPluginImport iimport) throws CoreException {
-	ensureModelEditable();
-	imports.addElement(iimport);
-	fireStructureChanged(iimport, IModelChangedEvent.INSERT);
-}
+
 public String getClassName() {
 	return className;
 }
-public IPluginImport[] getImports() {
-	IPluginImport [] result = new IPluginImport [ imports.size() ];
-	imports.copyInto(result);
-	return result;
-}
+
 public IPlugin getPlugin() {
 	return this;
 }
 void load(PluginModel pm) {
 	PluginDescriptorModel pd = (PluginDescriptorModel)pm;
 	this.className = pd.getPluginClass();
-
-	// add imports
-	loadImports(pd.getRequires());
 	super.load(pm);
 }
-void load(Node node) {
-	this.className = getNodeAttribute(node, "class");
-	super.load(node);
-}
-void loadImports(PluginPrerequisiteModel[] importModels) {
-	if (importModels == null)
-		return;
 
-	for (int i = 0; i < importModels.length; i++) {
-		PluginPrerequisiteModel importModel = importModels[i];
-		PluginImport importElement = new PluginImport();
-		importElement.setModel(getModel());
-		importElement.setParent(this);
-		imports.add(importElement);
-		importElement.load(importModel);
-	}
+void load(Node node, Hashtable lineTable) {
+	this.className = getNodeAttribute(node, "class");
+	super.load(node, lineTable);
 }
-void loadImports(Node node) {
-	NodeList children = node.getChildNodes();
-	for (int i = 0; i < children.getLength(); i++) {
-		Node child = children.item(i);
-		if (child.getNodeType() == Node.ELEMENT_NODE
-			&& child.getNodeName().toLowerCase().equals("import")) {
-			PluginImport importElement = new PluginImport();
-			importElement.setModel(getModel());
-			importElement.setParent(this);
-			imports.add(importElement);
-			importElement.load(child);
-		}
-	}
-}
-protected void processChild(Node child) {
-	String name = child.getNodeName().toLowerCase();
-	if (name.equals("requires")) {
-		loadImports(child);
-		requiresComments = addComments(child, requiresComments);
-	}
-	else
-		super.processChild(child);
-}
-public void remove(IPluginImport iimport) throws CoreException {
-	ensureModelEditable();
-	imports.removeElement(iimport);
-	fireStructureChanged(iimport, ModelChangedEvent.REMOVE);
-}
+
+
+
 public void reset() {
-	imports = new Vector();
 	className = null;
-	requiresComments = null;
 	super.reset();
 }
 public void setClassName(String newClassName) throws CoreException {
@@ -104,7 +53,7 @@ public void setClassName(String newClassName) throws CoreException {
 }
 public void write(String indent, PrintWriter writer) {
 	writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-	writer.println("<!-- File written by PDE 1.0 -->");
+	//writer.println("<!-- File written by PDE 1.0 -->");
 	writer.print("<plugin");
 	if (getId() != null) {
 		writer.println();
@@ -127,18 +76,10 @@ public void write(String indent, PrintWriter writer) {
 		writer.print("   class=\"" + getClassName() + "\"");
 	}
 	writer.println(">");
-	// add requires
-	Object [] children = getImports();
-	if (children.length>0) {
-		//writer.println("<!-- Required plugins -->");
-		//writer.println();
-		writeComments(writer, requiresComments);
-		writeChildren("requires", children, writer);
-	}
-	//writer.println("<!-- Runtime -->");
 	writer.println();
+
 	// add runtime
-	children = getLibraries();
+	Object [] children = getLibraries();
 	writeChildren("runtime", children, writer);
 
 	children = getExtensionPoints();

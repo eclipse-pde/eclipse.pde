@@ -10,6 +10,7 @@ import org.eclipse.core.runtime.CoreException;
 import java.io.*;
 import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.pde.internal.base.model.plugin.*;
+import java.util.Hashtable;
 
 public class PluginExtensionPoint extends IdentifiablePluginObject implements IPluginExtensionPoint {
 	private java.lang.String schema;
@@ -32,11 +33,12 @@ void load(ExtensionPointModel extensionPointModel) {
 	this.name = extensionPointModel.getName();
 	this.schema = extensionPointModel.getSchema();
 }
-void load(Node node) {
+void load(Node node, Hashtable lineTable) {
 	this.id = getNodeAttribute(node, "id");
 	this.name = getNodeAttribute(node, "name");
 	this.schema = getNodeAttribute(node, "schema");
 	addComments(node);
+	bindSourceLocation(node, lineTable);
 }
 public void setSchema(String newSchema) throws CoreException {
 	ensureModelEditable();

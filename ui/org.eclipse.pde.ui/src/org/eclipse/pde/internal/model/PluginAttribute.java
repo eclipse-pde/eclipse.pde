@@ -11,6 +11,7 @@ import java.io.*;
 import org.eclipse.pde.internal.base.schema.*;
 import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.pde.internal.base.model.plugin.*;
+import java.util.Hashtable;
 
 public class PluginAttribute extends PluginObject implements IPluginAttribute {
 	private String value;
@@ -51,9 +52,10 @@ void load(ConfigurationPropertyModel attributeModel) {
 	this.name = attributeModel.getName();
 	this.value = attributeModel.getValue();
 }
-void load(Node node) {
+void load(Node node, Hashtable lineTable) {
 	this.name = node.getNodeName();
 	this.value = node.getNodeValue();
+	bindSourceLocation(node, lineTable);
 }
 public void setAttributeInfo(ISchemaAttribute newAttributeInfo) {
 	attributeInfo = newAttributeInfo;

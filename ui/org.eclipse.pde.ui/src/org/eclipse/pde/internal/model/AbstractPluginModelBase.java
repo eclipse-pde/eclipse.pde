@@ -14,7 +14,7 @@ import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.pde.internal.base.model.plugin.*;
 import java.util.*;
 import org.eclipse.pde.internal.*;
-import org.apache.xerces.utils.QName;
+import org.eclipse.pde.internal.builders.SourceDOMParser;
 
 
 public abstract class AbstractPluginModelBase extends AbstractModel implements IPluginModelBase {
@@ -42,7 +42,7 @@ public boolean isFragmentModel() {
 }
 public void load(InputStream stream) throws CoreException {
 	XMLErrorHandler errorHandler = new XMLErrorHandler();
-	DOMParser parser = new DOMParser();
+	SourceDOMParser parser = new SourceDOMParser();
 	parser.setErrorHandler(errorHandler);
 	if (pluginBase == null) {
 		pluginBase = (PluginBase)createPluginBase();
@@ -56,7 +56,7 @@ public void load(InputStream stream) throws CoreException {
 			errorHandler.getFatalErrorCount()>0) {
 				throwParseErrorsException();
 		}
-		processDocument(parser.getDocument());
+		processDocument(parser.getDocument(), parser.getLineTable());
 		loaded=true;
 	} catch (SAXException e) {
 		throwParseErrorsException();
@@ -64,9 +64,9 @@ public void load(InputStream stream) throws CoreException {
 		throwParseErrorsException();
 	}
 }
-private void processDocument(Document doc) {
+private void processDocument(Document doc, Hashtable lineTable) {
 	Node pluginNode = doc.getDocumentElement();
-	pluginBase.load(pluginNode);
+	pluginBase.load(pluginNode, lineTable);
 }
 public void reload(InputStream stream) throws CoreException {
 /*

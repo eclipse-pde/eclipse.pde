@@ -14,6 +14,7 @@ import java.util.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.base.schema.*;
 import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.pde.internal.builders.SourceDOMParser;
 
 public class Schema extends PlatformObject implements ISchema {
 	private URL url;
@@ -29,6 +30,7 @@ public class Schema extends PlatformObject implements ISchema {
 	private boolean notificationEnabled;
 	public final static java.lang.String INDENT = "   ";
 	private boolean disposed=false;
+	private Hashtable lineTable;
 
 public Schema(String id, String name) {
 	internalId = id;
@@ -194,26 +196,23 @@ public boolean isNotificationEnabled() {
 	return notificationEnabled;
 }
 public void load() {
-	String urlName = getURL().toString();
 	try {
-		DOMParser p = new DOMParser();
 		InputStream source = getURL().openStream();
-		p.parse(new InputSource(source));
-		Document doc = p.getDocument();
-		Node root = (Node) doc.getDocumentElement();
-		traverseDocumentTree(root);
-	} catch (SAXException se) {
-	} catch (IOException e) {
+		load(source);
+		source.close();
+	}
+	catch (IOException e) {
 		PDEPlugin.logException(e);
 	}
 }
+
 public void load(InputStream source) {
 	try {
-		DOMParser p = new DOMParser();
+		SourceDOMParser p = new SourceDOMParser();
 		p.parse(new InputSource(source));
 		Document doc = p.getDocument();
 		Node root = (Node) doc.getDocumentElement();
-		traverseDocumentTree(root);
+		traverseDocumentTree(root, p.getLineTable());
 	} catch (SAXException se) {
 	} catch (IOException e) {
 		PDEPlugin.logException(e);
@@ -234,6 +233,7 @@ private ISchemaAttribute processAttribute(
 	}
 	
 	SchemaAttribute attribute = new SchemaAttribute(element, aname);
+	attribute.bindSourceLocation(elementNode, lineTable);
 	attribute.addComments(elementNode);
 	if (ause != null) {
 		int use = ISchemaAttribute.OPTIONAL;
@@ -444,6 +444,7 @@ private ISchemaElement processElement(ISchemaObject parent, Node elementNode) {
 		reference.setMinOccurs(minOccurs);
 		reference.setMaxOccurs(maxOccurs);
 		references.addElement(reference);
+		reference.bindSourceLocation(elementNode, lineTable);
 		return reference;
 	}
 
@@ -454,6 +455,7 @@ private ISchemaElement processElement(ISchemaObject parent, Node elementNode) {
 	}
 
 	SchemaElement element = new SchemaElement(parent, aname);
+	element.bindSourceLocation(elementNode, lineTable);
 	element.addComments(elementNode);
 	element.setMinOccurs(minOccurs);
 	element.setMaxOccurs(maxOccurs);
@@ -506,6 +508,7 @@ private void processElementAnnotation(SchemaElement element, Node node) {
 private ISchemaEnumeration processEnumeration(ISchema schema, Node node) {
 	String name = getAttribute(node, "value");
 	SchemaEnumeration enum = new SchemaEnumeration(schema, name);
+	enum.bindSourceLocation(node, lineTable);
 	enum.addComments(node);
 	return enum;
 }
@@ -532,6 +535,7 @@ private void processSchemaAnnotation(Node node) {
 						setDescription(text);
 					else {
 						DocumentSection sec = new DocumentSection(this, section, sectionName);
+						sec.bindSourceLocation(child, lineTable);
 						sec.setDescription(text);
 						docSections.addElement(sec);
 					}
@@ -594,6 +598,7 @@ public void removeModelChangedListener(IModelChangedListener listener) {
 	listeners.removeElement(listener);
 }
 private void reset() {
+	lineTable = null;
 	elements = new Vector();
 	docSections = new Vector();
 	internalId = null;
@@ -642,7 +647,8 @@ public void setNotificationEnabled(boolean newNotificationEnabled) {
 public String toString() {
 	return name;
 }
-public void traverseDocumentTree(Node root) {
+public void traverseDocumentTree(Node root, Hashtable lineTable) {
+	this.lineTable = lineTable;
 	NodeList children = root.getChildNodes();
 
 	references = new Vector();
@@ -662,6 +668,7 @@ public void traverseDocumentTree(Node root) {
 	if (references.size() > 0)
 		resolveReferences(references);
 	references = null;
+	this.lineTable = null;
 	loaded=true;
 }
 public void updateReferencesFor(ISchemaElement element) {

@@ -12,6 +12,7 @@ import org.xml.sax.*;
 import org.w3c.dom.*;
 import java.io.*;
 import org.eclipse.pde.internal.PDEPlugin;
+import org.eclipse.pde.internal.base.model.ISourceObject;
 
 public class SchemaTransformer implements ISchemaTransformer {
 	private static final String KEY_BOOLEAN_INVALID="Builders.Schema.Verifier.booleanInvalid";
@@ -78,13 +79,13 @@ private int calculateMaxAttributeWidth(ISchemaAttribute [] attributes) {
 	}
 	return width;
 }
-private Node createDOMTree(InputStream schema, PluginErrorReporter reporter) {
-	DOMParser parser = new DOMParser();
+private SourceDOMParser createDOMTree(InputStream schema, PluginErrorReporter reporter) {
+	SourceDOMParser parser = new SourceDOMParser();
 	parser.setErrorHandler(reporter);
 	try {
 		InputSource source = new InputSource(schema);
 		parser.parse(source);
-		return parser.getDocument().getDocumentElement();
+		return parser;
 	}
 	catch (SAXException e) {
 	}
@@ -106,10 +107,11 @@ private boolean isPreStart(String text, int loc) {
 	return false;
 }
 public void transform(InputStream is, StringBuffer out, PluginErrorReporter reporter) {
-	Node root = createDOMTree(is, reporter);
-	if (root==null) return;
+	SourceDOMParser parser = createDOMTree(is, reporter);
+	if (parser==null) return;
+	Node root = parser.getDocument().getDocumentElement();
 	Schema schema = new Schema((ISchemaDescriptor)null, null);
-	schema.traverseDocumentTree(root);
+	schema.traverseDocumentTree(root, parser.getLineTable());
 	if (verifySchema(schema, reporter))
 		transform(out, schema);
 }
@@ -134,20 +136,24 @@ private int verifyAttribute(ISchemaElement element, ISchemaAttribute attribute, 
 	ISchemaType type = attribute.getType();
 	String message;
 	String [] args = new String [] { element.getName(), attribute.getName() };
+	int line = -1;
+	if (attribute instanceof ISourceObject) {
+		line = ((ISourceObject)attribute).getStartLine();
+	}
 
 	if (attribute.getKind() != ISchemaAttribute.STRING) {
 		if (type!=null) {
 			if (type.getName().equals("boolean")) {
 				message=PDEPlugin.getFormattedMessage(KEY_BOOLEAN_INVALID, args);
 				// this kind cannot have boolean type
-				reporter.reportError(message);
+				reporter.reportError(message, line);
 				errors++;
 			}
 			if (type instanceof SchemaSimpleType && 
 				((SchemaSimpleType)type).getRestriction()!=null) {
 				// should not have restriction
 				message=PDEPlugin.getFormattedMessage(KEY_RESTRICTION_INVALID, args);
-				reporter.reportError(message);
+				reporter.reportError(message, line);
 				errors++;
 			}
 		}
@@ -156,7 +162,7 @@ private int verifyAttribute(ISchemaElement element, ISchemaAttribute attribute, 
 		if (attribute.getBasedOn()!=null) {
 			// basedOn makes no sense
 			message=PDEPlugin.getFormattedMessage(KEY_BASED_ON_INVALID, args);
-			reporter.reportError(message);
+			reporter.reportError(message, line);
 			errors++;
 		}
 	}
@@ -165,7 +171,7 @@ private int verifyAttribute(ISchemaElement element, ISchemaAttribute attribute, 
 			((SchemaSimpleType)type).getRestriction()!=null) {
 				// should not have restriction
 				message=PDEPlugin.getFormattedMessage(KEY_RESTRICTION_INVALID, args);
-				reporter.reportError(message);
+				reporter.reportError(message, line);
 				errors++;
 		}
 	}
@@ -173,7 +179,7 @@ private int verifyAttribute(ISchemaElement element, ISchemaAttribute attribute, 
 		if (attribute.getValue()!=null) {
 			// value makes no sense without 'default' use
 			message=PDEPlugin.getFormattedMessage(KEY_VALUE_WITHOUT_DEFAULT, args);
-			reporter.reportError(message);
+			reporter.reportError(message, line);
 			errors++;
 		}
 	}
@@ -181,7 +187,7 @@ private int verifyAttribute(ISchemaElement element, ISchemaAttribute attribute, 
 		if (attribute.getValue()==null) {
 			// there must be a value set for this use
 			message=PDEPlugin.getFormattedMessage(KEY_DEFAULT_WITHOUT_VALUE, args);
-			reporter.reportError(message);
+			reporter.reportError(message, line);
 			errors++;
 		}
 	}

@@ -8,12 +8,17 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.base.model.IIdentifiable;
 /**
  */
-public interface IPluginImport extends IPluginObject, IIdentifiable {
+public interface IPluginImport extends IPluginObject, IIdentifiable, IMatchRules {
 /**
  * A name of the property that will be used to notify
  * about changes in the "reexported" field.
  */
 	public static final String P_REEXPORTED = "reexported";
+/**
+ * A name of the property that will be used to notify
+ * about changes in the "optional" field.
+ */
+	public static final String P_OPTIONAL = "optional";
 /**
  * A name of the property that will be used to notify
  * about changes in the "match" field.
@@ -25,31 +30,9 @@ public interface IPluginImport extends IPluginObject, IIdentifiable {
  */
 	public static final String P_VERSION = "version";
 /**
- * No rule.
- */
-	int NONE = 0;
-/**
- * An perfect match.
- */
-	int PERFECT = 1;
-/**
- * A match that is equivalent to the required version.
- */
-	int EQUIVALENT = 2;
-/**
- * A match that is compatible with the required version.
- */
-	int COMPATIBLE = 3;
-/**
- * A match requires that a version is greater or equal to the
- * specified version.
- */
-	int GREATER_OR_EQUAL = 4;
-/**
  * Returns the required match for the imported plug-in. The
- * choices are: PERFECT, EQUIVALENT, COMPATIBLE and 
- * GREATER_OR_EQUAL.
- *
+ * choices are defined in IMatchRules interface.
+ * @see IMatchRules
  * @return the desired type of the import plug-in match
  */
 public int getMatch();
@@ -67,10 +50,17 @@ public String getVersion();
  */
 public boolean isReexported();
 /**
- * Sets the match type for the require plug-in (EXACT or COMPATIBLE).
+ * Tests whether this import is optional. Optional imports will
+ * not create an error condition when they cannot be resolved.
+ *
+ * @return true if this import is optional
+ */
+public boolean isOptional();
+/**
+ * Sets the match type for the require plug-in.
  * This method will throw a CoreException if the model
  * is not editable.
- *
+ * @see IMatchRules
  * @param match the desired match type
  */ 
 public void setMatch(int match) throws CoreException;
@@ -83,6 +73,13 @@ public void setMatch(int match) throws CoreException;
  * @param value true if reexporting is desired
  */ 
 public void setReexported(boolean value) throws CoreException;
+/**
+ * Sets whether this import is optional. Optional imports will
+ * not create an error condition when they cannot be resolved.
+ *
+ * @param value true if import is optional
+ */ 
+public void setOptional(boolean value) throws CoreException;
 /**
  * Sets the desired version of the required plug-in.
  * This method will throw a CoreException if

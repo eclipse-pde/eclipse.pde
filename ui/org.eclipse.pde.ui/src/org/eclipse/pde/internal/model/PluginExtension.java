@@ -53,7 +53,7 @@ void load(ExtensionModel extensionModel) {
 		}
 	}
 }
-void load(Node node) {
+void load(Node node, Hashtable lineTable) {
 	this.id = getNodeAttribute(node, "id");
 	this.name = getNodeAttribute(node, "name");
 	this.point = getNodeAttribute(node, "point");
@@ -65,10 +65,11 @@ void load(Node node) {
 			childElement.setModel(getModel());
 			childElement.setParent(this);
 			this.children.add(childElement);
-			childElement.load(child);
+			childElement.load(child, lineTable);
 		}
 	}
 	addComments(node);
+	bindSourceLocation(node, lineTable);
 }
 public void setPoint(String point) throws CoreException {
 	ensureModelEditable();

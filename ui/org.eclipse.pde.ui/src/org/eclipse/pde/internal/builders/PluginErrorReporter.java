@@ -58,11 +58,19 @@ private void removeFileMarkers() {
 	}
 }
 public void reportError(String message) {
-	addMarker(message, -1, IMarker.SEVERITY_ERROR, false);
+	reportError(message, -1);
+}
+
+public void reportError(String message, int line) {
+	addMarker(message, line, IMarker.SEVERITY_ERROR, false);
 }
 
 public void reportWarning(String message) {
-	addMarker(message, -1, IMarker.SEVERITY_WARNING, false);
+	reportWarning(message, -1);
+}
+
+public void reportWarning(String message, int line) {
+	addMarker(message, line, IMarker.SEVERITY_WARNING, false);
 }
 
 public void warning(SAXParseException exception) throws SAXException {

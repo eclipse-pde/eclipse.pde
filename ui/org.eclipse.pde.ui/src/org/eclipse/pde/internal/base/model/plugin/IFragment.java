@@ -21,6 +21,11 @@ public static final String P_PLUGIN_ID = "plugin-id";
  */
 public static final String P_PLUGIN_VERSION = "plugin-version";
 /**
+ * A property that will be used to notify
+ * that a plugin version match rule has changed.
+ */
+public static final String P_RULE = "rule";
+/**
  * Returns the id of the plug-in that is the target
  * of this fragment.
  * @return target plug-in id
@@ -33,6 +38,12 @@ String getPluginId();
  */
 String getPluginVersion();
 /**
+ * Returns an optional version match rule as defined in
+ * IMatchRule interface.
+ * @see IMatchRule
+ */
+int getRule();
+/**
  * Sets the id of the plug-in that will be the target of this fragment.
  * @exception org.eclipse.core.runtime.CoreException attempts to modify a read-only fragment will result in an exception
  */
@@ -42,4 +53,11 @@ void setPluginId(String id) throws CoreException;
  * @exception org.eclipse.core.runtime.CoreException attempts to modify a read-only fragment will result in an exception
  */
 void setPluginVersion(String version) throws CoreException;
+/**
+ * Sets the optional version match rule as defined in IMatchRules. This
+ * rule will be used when attempting to match the referenced plug-in
+ * version.
+ * @exception org.eclipse.core.runtime.CoreException attempts to modify a read-only fragment will result in an exception
+ */
+void setRule(int rule) throws CoreException;
 }

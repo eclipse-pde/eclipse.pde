@@ -24,6 +24,7 @@ import org.eclipse.jdt.ui.*;
 import org.eclipse.pde.internal.PDEPlugin;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.custom.CCombo;
 
 public class PluginSpecSection extends PDEFormSection {
 	public static final String SECTION_TITLE = "ManifestEditor.PluginSpecSection.title";
@@ -43,7 +44,12 @@ public class PluginSpecSection extends PDEFormSection {
 	public static final String KEY_CLASS_TOOLTIP = "ManifestEditor.PluginSpecSection.class.tooltip";
 	public static final String KEY_VERSION_FORMAT = "ManifestEditor.PluginSpecSection.versionFormat";
 	public static final String KEY_VERSION_TITLE = "ManifestEditor.PluginSpecSection.versionTitle";
-	
+	public static final String KEY_MATCH = "ManifestEditor.PluginSpecSection.versionMatch";
+	public static final String KEY_MATCH_PERFECT = "ManifestEditor.MatchSection.perfect";
+	public static final String KEY_MATCH_EQUIVALENT = "ManifestEditor.MatchSection.equivalent";
+	public static final String KEY_MATCH_COMPATIBLE = "ManifestEditor.MatchSection.compatible";
+	public static final String KEY_MATCH_GREATER = "ManifestEditor.MatchSection.greater";
+
 	private Text idText;
 	private FormEntry titleText;
 	private boolean updateNeeded;
@@ -53,6 +59,7 @@ public class PluginSpecSection extends PDEFormSection {
 	private FormEntry classText;
 	private FormEntry pluginIdText;
 	private FormEntry pluginVersionText;
+	private CCombo matchCombo;
 
 public PluginSpecSection(ManifestFormPage page) {
 	super(page);
@@ -197,6 +204,31 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 				forceDirty();
 			}
 		});
+		label = factory.createLabel(container, PDEPlugin.getResourceString(KEY_MATCH));
+		matchCombo = new CCombo(container, SWT.READ_ONLY|SWT.FLAT);
+		matchCombo.setBackground(factory.getBackgroundColor());
+		matchCombo.setForeground(factory.getForegroundColor());
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		matchCombo.setLayoutData(gd);
+		String [] items = new String [] {
+				"",
+				PDEPlugin.getResourceString(KEY_MATCH_EQUIVALENT),
+				PDEPlugin.getResourceString(KEY_MATCH_COMPATIBLE),
+				PDEPlugin.getResourceString(KEY_MATCH_PERFECT),
+				PDEPlugin.getResourceString(KEY_MATCH_GREATER) };
+				
+		matchCombo.setItems(items);
+		matchCombo.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent event) {
+				int match = matchCombo.getSelectionIndex();
+				try {
+					fragment.setRule(match);
+				}
+				catch (CoreException e) {
+					PDEPlugin.logException(e);
+				}
+			}
+		});
 	} else {
 		final IPlugin plugin = (IPlugin) pluginBase;
 		if (model.isEditable()) {
@@ -292,7 +324,7 @@ public void initialize(Object input) {
 		if (isFragment()) {
 			pluginVersionText.getControl().setEditable(false);
 			pluginIdText.getControl().setEditable(false);
-
+			matchCombo.setEnabled(false);
 		} else {
 			classText.getControl().setEditable(false);
 		}
@@ -351,6 +383,7 @@ public void update(Object input) {
 		IFragment fragment = (IFragment) pluginBase;
 		setIfDefined(pluginIdText, fragment.getPluginId());
 		setIfDefined(pluginVersionText, fragment.getPluginVersion());
+		matchCombo.select(fragment.getRule());
 	} else {
 		setIfDefined(classText, ((IPlugin) pluginBase).getClassName());
 	}
