@@ -213,7 +213,7 @@ public class InfoSection extends PDEFormSection {
 		Composite textContainer = factory.createComposite(parent);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = 1;
-		layout.marginHeight = 1;
+		layout.marginHeight = 2;
 		textContainer.setLayout(layout);
 		factory.paintBordersFor(textContainer);
 		urlText = factory.createText(textContainer, null);
