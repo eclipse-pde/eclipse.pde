@@ -105,6 +105,19 @@ public class ProductExportJob extends FeatureExportJob {
 			monitor.done();
 		}
 	}
+	
+	private File getCustomIniFile() {
+		IConfigurationFileInfo info = fProduct.getConfigurationFileInfo();
+		if (info != null  && info.getUse().equals("custom")) {
+			String path = getExpandedPath(info.getPath());
+			if (path != null) {
+				File file = new File(path);
+				if (file.exists() && file.isFile())
+					return file;
+			}
+		}
+		return null;
+	}
 
 	private void createFeature(String featureID, String featureLocation)
 			throws IOException {
@@ -192,22 +205,39 @@ public class ProductExportJob extends FeatureExportJob {
 	}
 	
 	private void createConfigIniFile() {
-		Properties properties = new Properties();
-		properties.put("osgi.framework", "platform:/base/plugins/org.eclipse.osgi");
-		String location = getSplashLocation();
-		if (location != null)
-			properties.put("osgi.splashPath", location);
-		properties.put("eclipse.product", fProduct.getId());
-		if (fProduct.useFeatures()) {
-			properties.put("osgi.bundles", "org.eclipse.core.runtime@2,org.eclipse.update.configurator@3");
-		} else {
-			properties.put("osgi.bundles", getPluginList());
-		}
-		properties.setProperty("osgi.bundles.defaultStartLevel", "4");
-		
 		File file = new File(fFeatureLocation, "configuration");
 		if (!file.exists())
 			file.mkdirs();
+
+		Properties properties = new Properties();
+		File custom = getCustomIniFile();
+		if (custom != null) {
+			String path = getExpandedPath(fProduct.getConfigurationFileInfo().getPath());
+			InputStream stream = null;
+			try {
+				stream = new FileInputStream(new File(path));
+				properties.load(stream);
+			} catch (IOException e) {
+			} finally {
+				try {
+					if (stream != null)
+						stream.close();
+				} catch (IOException e) {
+				}
+			}
+		} else {
+			properties.put("osgi.framework", "platform:/base/plugins/org.eclipse.osgi");
+			String location = getSplashLocation();
+			if (location != null)
+				properties.put("osgi.splashPath", location);
+			properties.put("eclipse.product", fProduct.getId());
+			if (fProduct.useFeatures()) {
+				properties.put("osgi.bundles", "org.eclipse.core.runtime@2,org.eclipse.update.configurator@3");
+			} else {
+				properties.put("osgi.bundles", getPluginList());
+			}
+			properties.setProperty("osgi.bundles.defaultStartLevel", "4");
+		}
 		save(new File(file, "config.ini"), properties, "Eclipse Runtime Configuration File");
 	}
 	
