@@ -30,6 +30,8 @@ public class NewMacroWizard extends Wizard {
 	class NewMacroPage extends WizardNewFileCreationPage {
 		public NewMacroPage(IStructuredSelection ssel) {
 			super("newFile", ssel);
+			setTitle("Macro script name");
+			setDescription("Select the target location and the name of the new script (extension *.emc).");
 		} 
 		public InputStream getInitialContents() {
 			InputStream is=null;
@@ -41,9 +43,10 @@ public class NewMacroWizard extends Wizard {
 			return is;
 		}
 	}
-	
+
 	public NewMacroWizard(String contents) {
 		this.contents = contents;
+		setWindowTitle("Macro Recorder");
 	}
 	
 	public void addPages() {

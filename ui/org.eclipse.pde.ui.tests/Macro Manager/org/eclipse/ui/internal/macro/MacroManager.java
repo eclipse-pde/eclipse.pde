@@ -23,6 +23,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.macro.MacroPlugin;
+import org.eclipse.ui.macro.IIndexHandler;
 import org.eclipse.ui.macro.IWidgetResolver;
 import org.w3c.dom.*;
 import org.w3c.dom.Document;
@@ -35,38 +36,47 @@ import org.xml.sax.SAXException;
  * Preferences - Java - Code Style - Code Templates
  */
 public class MacroManager {
+	public static final String IGNORE = "__macro_ignore__";
 	public static final int IDLE = 0;
+
 	public static final int RUNNING = 1;
+
 	public static final int DONE = 2;
-	
+
 	private Macro currentMacro;
+	
+	private IIndexHandler indexHandler;
 
 	class DisplayListener implements Listener {
 		public void handleEvent(Event event) {
 			onEvent(event);
 		}
 	}
-	
+
 	class JobListener extends JobChangeAdapter {
 		private int state = IDLE;
-		
+
 		public void running(IJobChangeEvent event) {
-			if (state==IDLE)
+			if (state == IDLE)
 				state = RUNNING;
 		}
+
 		public void done(IJobChangeEvent event) {
-			if (state==RUNNING)
+			if (state == RUNNING)
 				state = DONE;
 		}
+
 		public void reset() {
 			state = IDLE;
 		}
+
 		public int getState() {
 			return state;
 		}
 	}
-	
+
 	private DisplayListener listener;
+
 	private JobListener jobListener;
 
 	private Vector listeners;
@@ -83,6 +93,12 @@ public class MacroManager {
 		if (!listeners.contains(listener))
 			listeners.add(listener);
 	}
+	
+	public void addIndex(String indexId) {
+		if (currentMacro!=null) {
+			currentMacro.addIndex(indexId);
+		}
+	}
 
 	public void removeRecorderListener(IRecorderListener listener) {
 		if (listeners.contains(listener))
@@ -97,16 +113,23 @@ public class MacroManager {
 		Display display = PlatformUI.getWorkbench().getDisplay();
 		hookListeners(display);
 		currentMacro = new Macro();
-		currentMacro.initializeForRecording(display);		
+		currentMacro.initializeForRecording(display);
 		IRecorderListener[] array = (IRecorderListener[]) listeners
 				.toArray(new IRecorderListener[listeners.size()]);
 		for (int i = 0; i < array.length; i++) {
 			array[i].recordingStarted();
 		}
 	}
+	
+	public String [] getExistingIndices() {
+		if (currentMacro!=null) {
+			return currentMacro.getExistingIndices();
+		}
+		return new String [0];
+	}
 
 	public Macro stopRecording() {
-		Display display = PlatformUI.getWorkbench().getDisplay();		
+		Display display = PlatformUI.getWorkbench().getDisplay();
 		unhookListeners(display);
 		currentMacro.stopRecording();
 		Macro newMacro = currentMacro;
@@ -118,9 +141,9 @@ public class MacroManager {
 		}
 		return newMacro;
 	}
-	
+
 	public void hookListeners(Display display) {
-		//display.addFilter(SWT.KeyUp, listener);
+		display.addFilter(SWT.KeyDown, listener);
 		display.addFilter(SWT.Selection, listener);
 		display.addFilter(SWT.DefaultSelection, listener);
 		display.addFilter(SWT.Expand, listener);
@@ -132,9 +155,9 @@ public class MacroManager {
 		IJobManager jobManager = Platform.getJobManager();
 		jobManager.addJobChangeListener(jobListener);
 	}
-	
+
 	public void unhookListeners(Display display) {
-		//display.removeFilter(SWT.KeyUp, listener);
+		display.removeFilter(SWT.KeyDown, listener);
 		display.removeFilter(SWT.Selection, listener);
 		display.removeFilter(SWT.DefaultSelection, listener);
 		display.removeFilter(SWT.Expand, listener);
@@ -142,33 +165,35 @@ public class MacroManager {
 		display.removeFilter(SWT.Modify, listener);
 		display.removeFilter(SWT.Activate, listener);
 		display.removeFilter(SWT.Close, listener);
-		display.removeFilter(SWT.FocusIn, listener);	
+		display.removeFilter(SWT.FocusIn, listener);
 		IJobManager jobManager = Platform.getJobManager();
 		jobManager.removeJobChangeListener(jobListener);
 	}
 
 	public void shutdown() {
-		if (currentMacro!=null) {
-			Display display = PlatformUI.getWorkbench().getDisplay();			
+		if (currentMacro != null) {
+			Display display = PlatformUI.getWorkbench().getDisplay();
 			unhookListeners(display);
 			currentMacro.stopRecording();
 			currentMacro = null;
 		}
 	}
 
-/**
- * Plays a provided macro stream. The method will close the
- * input stream upon parsing.
- * @param is
- * @throws CoreException
- */
-	public boolean play(final Display display, IRunnableContext context, InputStream is) throws CoreException {
+	/**
+	 * Plays a provided macro stream. The method will close the input stream
+	 * upon parsing.
+	 * 
+	 * @param is
+	 * @throws CoreException
+	 */
+	public boolean play(final Display display, IRunnableContext context,
+			InputStream is) throws CoreException {
 		Document doc = createMacroDocument(is);
 		Node root = doc.getDocumentElement();
 		NodeList children = root.getChildNodes();
-		
+
 		final Macro macro = new Macro();
-		for (int i=0; i<children.getLength(); i++) {
+		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeName().equals("shell")) {
 				macro.addShell(child);
@@ -177,55 +202,49 @@ public class MacroManager {
 		// discard the DOM
 		doc = null;
 		
-		final boolean [] result = new boolean [1];
+		macro.setIndexHandler(getIndexHandler());
+
+		final boolean[] result = new boolean[1];
 
 		IRunnableWithProgress op = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException {
+			public void run(IProgressMonitor monitor)
+					throws InvocationTargetException {
 				try {
 					result[0] = macro.playback(display, null, monitor);
-				}
-				catch (CoreException e) {
+				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
-				}
-				finally {
+				} finally {
 					monitor.done();
 				}
 			}
 		};
 		try {
 			context.run(true, true, op);
-		}
-		catch (InterruptedException e) {
-		}
-		catch (InvocationTargetException e) {
+		} catch (InterruptedException e) {
+		} catch (InvocationTargetException e) {
 			MacroPlugin.logException(e);
 			return false;
 		}
 		return result[0];
 	}
-	
+
 	private Document createMacroDocument(InputStream is) throws CoreException {
 		try {
-		    DocumentBuilderFactory domFactory = 
-		    DocumentBuilderFactory.newInstance();
-		    DocumentBuilder builder = domFactory.newDocumentBuilder();
-		   		    
-		    return builder.parse(is);
-		}
-		catch (ParserConfigurationException e) {
+			DocumentBuilderFactory domFactory = DocumentBuilderFactory
+					.newInstance();
+			DocumentBuilder builder = domFactory.newDocumentBuilder();
+
+			return builder.parse(is);
+		} catch (ParserConfigurationException e) {
 			MacroUtil.throwCoreException("Error parsing the macro file", e);
-		}
-		catch (SAXException e) {
+		} catch (SAXException e) {
 			MacroUtil.throwCoreException("Error parsing the macro file", e);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			MacroUtil.throwCoreException("Error parsing the macro file", e);
-		}
-		finally {
+		} finally {
 			try {
 				is.close();
-			}
-			catch (IOException e) {
+			} catch (IOException e) {
 			}
 		}
 		return null;
@@ -233,18 +252,37 @@ public class MacroManager {
 
 	private void onEvent(Event event) {
 		try {
-		if ((event.type == SWT.Close || event.type == SWT.Activate)
-				&& !(event.widget instanceof Shell))
-			return;
-			if (jobListener.getState()==RUNNING || jobListener.getState()==DONE)
+			if (event.type==SWT.KeyDown) {
+				if ((event.stateMask & SWT.SHIFT)!=0 &&
+						(event.stateMask & SWT.CTRL)!=0) {	
+					int key = event.keyCode & SWT.KEY_MASK;
+					if (key==SWT.F11)
+						notifyInterrupt(IRecorderListener.STOP);
+					else if (key==SWT.F10)
+						notifyInterrupt(IRecorderListener.INDEX);
+				}
+				return;
+			}
+			if ((event.type == SWT.Close || event.type == SWT.Activate)
+					&& !(event.widget instanceof Shell))
+				return;
+			if (jobListener.getState() == RUNNING
+					|| jobListener.getState() == DONE)
 				currentMacro.addPause();
 			jobListener.reset();
 			currentMacro.addEvent(event);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			MacroPlugin.logException(e);
 			stopRecording();
 		}
+	}
+	
+	private void notifyInterrupt(int type) {
+		IRecorderListener[] array = (IRecorderListener[]) listeners
+		.toArray(new IRecorderListener[listeners.size()]);
+			for (int i = 0; i < array.length; i++) {
+				array[i].recordingInterrupted(type);
+			}
 	}
 
 	public String resolveWidget(Widget widget) {
@@ -276,4 +314,14 @@ public class MacroManager {
 			}
 		}
 	}
+
+	public IIndexHandler getIndexHandler() {
+		return indexHandler;
+	}
+	
+
+	public void setIndexHandler(IIndexHandler indexHandler) {
+		this.indexHandler = indexHandler;
+	}
+	
 }

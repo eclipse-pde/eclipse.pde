@@ -20,7 +20,7 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
  * @see IWorkbenchWindowActionDelegate
  */
 public class StopAction implements IWorkbenchWindowActionDelegate, IRecorderListener {
-	private IWorkbenchWindow window;
+	private RecordBlock recordBlock;
 	private IAction action;
 	/**
 	 * The constructor.
@@ -28,6 +28,7 @@ public class StopAction implements IWorkbenchWindowActionDelegate, IRecorderList
 	public StopAction() {
 		MacroManager recorder = MacroPlugin.getDefault().getMacroManager();
 		recorder.addRecorderListener(this);
+		recordBlock = new RecordBlock();
 	}
 
 	/**
@@ -43,22 +44,7 @@ public class StopAction implements IWorkbenchWindowActionDelegate, IRecorderList
 			action.setEnabled(false);
 			return;
 		}
-		Macro macro = recorder.stopRecording();
-		StringWriter swriter = new StringWriter();
-		PrintWriter pwriter = new PrintWriter(swriter);
-		macro.write("", pwriter);
-		pwriter.close();
-		try {
-			swriter.close();
-		}
-		catch (IOException e) {
-			System.out.println(e);
-		}
-		String contents = swriter.toString();
-		NewMacroWizard wizard = new NewMacroWizard(contents);
-		WizardDialog wd = new WizardDialog(window.getShell(), wizard);
-		wd.setMinimumPageSize(500, 500);
-		wd.open();
+		recordBlock.stopRecording();
 	}
 
 	/**
@@ -75,10 +61,13 @@ public class StopAction implements IWorkbenchWindowActionDelegate, IRecorderList
 		if (action!=null)
 			action.setEnabled(true);
 	}
-	
+
 	public void recordingStopped() {
 		if (action!=null)
 			action.setEnabled(false);
+	}
+
+	public void recordingInterrupted(int type) {
 	}
 
 	/**
@@ -97,6 +86,7 @@ public class StopAction implements IWorkbenchWindowActionDelegate, IRecorderList
 	 * @see IWorkbenchWindowActionDelegate#init
 	 */
 	public void init(IWorkbenchWindow window) {
-		this.window = window;
+		recordBlock.init(window);
+		recordBlock.dispose();
 	}
 }

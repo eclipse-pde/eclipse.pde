@@ -23,6 +23,7 @@ import org.eclipse.ui.commands.*;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.keys.*;
 import org.eclipse.ui.keys.SWTKeySupport;
+import org.eclipse.ui.macro.IIndexHandler;
 
 /**
  * @author dejan
@@ -42,6 +43,8 @@ public class MacroCommandShell implements IWritable, IPlayable {
 	private transient Display display;
 
 	private transient Shell shell;
+	
+	private transient IIndexHandler indexHandler;
 
 	private transient Window window;
 
@@ -155,6 +158,8 @@ public class MacroCommandShell implements IWritable, IPlayable {
 					processCommand(child);
 				else if (name.equals("shell"))
 					processShell(child);
+				else if (name.equals("index"))
+					processIndex(child);
 			}
 		}
 	}
@@ -197,6 +202,12 @@ public class MacroCommandShell implements IWritable, IPlayable {
 		MacroCommandShell shell = new MacroCommandShell();
 		shell.load(node);
 		commands.add(shell);
+	}
+	
+	private void processIndex(Node node) {
+		MacroIndex index = new MacroIndex();
+		index.load(node);
+		commands.add(index);
 	}
 
 	public void addCommandShell(MacroCommandShell cshell) {
@@ -246,6 +257,10 @@ public class MacroCommandShell implements IWritable, IPlayable {
 		MacroCommand lastCommand = getLastCommand();
 		if (lastCommand != null && lastCommand.getType() != WaitCommand.TYPE)
 			commands.add(command);
+	}
+	
+	public void addIndex(String id) {
+		commands.add(new MacroIndex(id));
 	}
 
 	public void extractExpectedReturnCode() {
@@ -403,9 +418,21 @@ public class MacroCommandShell implements IWritable, IPlayable {
 		monitor.beginTask("", commands.size());
 
 		for (int i = 0; i < commands.size(); i++) {
-			IPlayable playable = (IPlayable) commands.get(i);
+			Object c = commands.get(i);
+			if (c instanceof MacroIndex) {
+				String id = ((MacroIndex)c).getId();
+				if (id!=null && indexHandler!=null) {
+					IStatus status = indexHandler.processIndex(id);
+					if (status.getSeverity()==IStatus.OK)
+						continue;
+					throw new CoreException(status);
+				}
+				// ignore the index
+				continue;
+			}
+			IPlayable playable = (IPlayable)c;
 			if (i < commands.size() - 1) {
-				// check the next playable
+				// check the next command
 				IPlayable next = (IPlayable) commands.get(i + 1);
 				if (next instanceof MacroCommandShell) {
 					// this command will open a new shell
@@ -448,6 +475,18 @@ public class MacroCommandShell implements IWritable, IPlayable {
 		return true;
 	}
 
+	void addExistingIndices(ArrayList list) {
+		for (int i = 0; i < commands.size(); i++) {
+			Object c = commands.get(i);
+			if (c instanceof MacroIndex) {
+				list.add(((MacroIndex)c).getId());
+			}
+			else if (c instanceof MacroCommandShell) {
+				((MacroCommandShell)c).addExistingIndices(list);
+			}
+		}
+	}
+
 	private void playInGUIThread(final Display display,
 			final IPlayable playable, boolean last,
 			final IProgressMonitor monitor) throws CoreException {
@@ -486,4 +525,14 @@ public class MacroCommandShell implements IWritable, IPlayable {
 		if (ex[0] != null)
 			throw ex[0];
 	}
+
+	public IIndexHandler getIndexHandler() {
+		return indexHandler;
+	}
+	
+
+	public void setIndexHandler(IIndexHandler indexHandler) {
+		this.indexHandler = indexHandler;
+	}
+	
 }

@@ -15,12 +15,14 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
  * @see IWorkbenchWindowActionDelegate
  */
 public class RecordAction implements IWorkbenchWindowActionDelegate, IRecorderListener {
-	private IWorkbenchWindow window;
+	private RecordBlock recordBlock;
 	private IAction action;
+	
 	/**
 	 * The constructor.
 	 */
 	public RecordAction() {
+		recordBlock = new RecordBlock();
 		MacroManager recorder = MacroPlugin.getDefault().getMacroManager();
 		recorder.addRecorderListener(this);
 	}
@@ -38,7 +40,7 @@ public class RecordAction implements IWorkbenchWindowActionDelegate, IRecorderLi
 			action.setEnabled(false);
 			return;
 		}
-		recorder.startRecording();
+		recordBlock.startRecording();
 	}
 
 	/**
@@ -59,6 +61,7 @@ public class RecordAction implements IWorkbenchWindowActionDelegate, IRecorderLi
 	public void dispose() {
 		MacroManager recorder = MacroPlugin.getDefault().getMacroManager();
 		recorder.removeRecorderListener(this);
+		recordBlock.dispose();
 	}
 	
 	public void recordingStarted() {
@@ -69,12 +72,15 @@ public class RecordAction implements IWorkbenchWindowActionDelegate, IRecorderLi
 		this.action.setEnabled(true);
 	}
 
+	public void recordingInterrupted(int type) {
+	}
+
 	/**
 	 * We will cache window object in order to
 	 * be able to provide parent shell for the message dialog.
 	 * @see IWorkbenchWindowActionDelegate#init
 	 */
 	public void init(IWorkbenchWindow window) {
-		this.window = window;
+		recordBlock.init(window);
 	}
 }

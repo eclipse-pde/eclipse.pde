@@ -6,15 +6,21 @@
  */
 package org.eclipse.ui.internal.macro;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Stack;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.macro.IIndexHandler;
 import org.w3c.dom.Node;
 
 /**
@@ -26,6 +32,7 @@ import org.w3c.dom.Node;
 public class Macro implements IWritable, IPlayable {
 	private static final String SYNTAX_VERSION="0.1";
 	private transient Event lastEvent;
+	private transient IIndexHandler indexHandler;
 	ArrayList shells;
 	private Stack shellStack;
 	
@@ -66,6 +73,8 @@ public class Macro implements IWritable, IPlayable {
 	}
 	
 	public void addEvent(Event event) throws Exception {
+		if (isIgnorableEvent(event))
+			return;
 		try {
 			if (event.widget instanceof Shell) {
 				switch (event.type) {
@@ -77,7 +86,7 @@ public class Macro implements IWritable, IPlayable {
 						break;
 				}
 			}
-			else {
+			else if (getTopShell()!=null) {
 				getTopShell().addEvent(event);
 			}
 		}
@@ -85,8 +94,23 @@ public class Macro implements IWritable, IPlayable {
 			throw e;
 		}
 	}
+	
+	private boolean isIgnorableEvent(Event e) {
+		Shell shell = e.display.getActiveShell();
+		if (shell!=null) {
+			Boolean ivalue = (Boolean)shell.getData(MacroManager.IGNORE);
+			if (ivalue!=null && ivalue.equals(Boolean.TRUE))
+				return true;
+		}
+		return false;
+	}
+	
 	public void addPause() {
 		getTopShell().addPause();
+	}
+	
+	public void addIndex(String id) {
+		getTopShell().addIndex(id);
 	}
 	public MacroCommandShell getTopShell() {
 		if (shellStack.isEmpty())
@@ -96,9 +120,11 @@ public class Macro implements IWritable, IPlayable {
 	private void activateShell(Shell shell) {
 		Object data = shell.getData();
 		if (data instanceof Dialog) {
-			MacroCommandShell commandShell = createCommandShell(shell);
-			getTopShell().addCommandShell(commandShell);
-			shellStack.push(commandShell);
+			if (!isCurrent(shell)) {
+				MacroCommandShell commandShell = createCommandShell(shell);
+				getTopShell().addCommandShell(commandShell);
+				shellStack.push(commandShell);
+			}
 		}
 		else if (data instanceof Window) {
 			updateStack();
@@ -135,11 +161,21 @@ public class Macro implements IWritable, IPlayable {
 		}
 	}
 	
+	public String [] getExistingIndices() {
+		ArrayList list = new ArrayList();
+		for (int i=0; i<shells.size(); i++) {
+			MacroCommandShell shell = (MacroCommandShell)shells.get(i);
+			shell.addExistingIndices(list);
+		}
+		return (String[])list.toArray(new String[list.size()]);
+	}
+	
 	public boolean playback(Display display, Composite parent, IProgressMonitor monitor) throws CoreException {
 		reset();
 		monitor.beginTask("Executing macro...", shells.size());
 		for (int i=0; i<shells.size(); i++) {
 			MacroCommandShell shell = (MacroCommandShell)shells.get(i);
+			shell.setIndexHandler(getIndexHandler());
 			final Shell [] sh = new Shell[1];
 			display.syncExec(new Runnable() {
 				public void run() {
@@ -168,4 +204,14 @@ public class Macro implements IWritable, IPlayable {
 		}
 		writer.println("</macro>");
 	}
+
+	public IIndexHandler getIndexHandler() {
+		return indexHandler;
+	}
+	
+
+	public void setIndexHandler(IIndexHandler indexHandler) {
+		this.indexHandler = indexHandler;
+	}
+	
 }

@@ -31,27 +31,24 @@ public class MacroUtil {
 
 			if (onMenubar(menuItem)) {
 				return new WidgetIdentifier(new Path("menus"), new Path(getActionId(menuItem))); //$NON-NLS-1$
-			} else {
-				Control c = widget.getDisplay().getFocusControl();
-				WidgetIdentifier ci = getControlIdentifier(c);
-				if (ci==null)
-					return null;
-				return new WidgetIdentifier(new Path("popup").append(ci.getFullyQualifiedPath()), new Path(getActionId(menuItem))); //$NON-NLS-1$
 			}
+			Control c = widget.getDisplay().getFocusControl();
+			WidgetIdentifier ci = getControlIdentifier(c);
+			if (ci==null)
+				return null;
+			return new WidgetIdentifier(new Path("popup").append(ci.getFullyQualifiedPath()), new Path(getActionId(menuItem))); //$NON-NLS-1$
 		} else if (widget instanceof ToolItem) {
 			ToolItem toolItem = (ToolItem) widget;
 			
 			if (onToolbar(toolItem))
 				return new WidgetIdentifier(new Path("toolbar"), new Path(getActionId(toolItem))); //$NON-NLS-1$
-			else {
-				// local toolbar somewhere - locate the parent
-				// first
-				ToolBar toolBar = toolItem.getParent();
-				WidgetIdentifier controlId = getControlIdentifier(toolBar);
-				IPath localPath = controlId.getFullyQualifiedPath();
-				return new WidgetIdentifier(new Path("local-toolbar").append(localPath), 
-											new Path(getActionId(toolItem)));
-			}
+			// local toolbar somewhere - locate the parent
+			// first
+			ToolBar toolBar = toolItem.getParent();
+			WidgetIdentifier controlId = getControlIdentifier(toolBar);
+			IPath localPath = controlId.getFullyQualifiedPath();
+			return new WidgetIdentifier(new Path("local-toolbar").append(localPath), 
+										new Path(getActionId(toolItem)));
 		} else if (widget instanceof Shell) {
 			return new WidgetIdentifier(new Path("shell"), getShellId((Shell)widget));
 		} else if (widget instanceof Control) {
@@ -88,15 +85,12 @@ public class MacroUtil {
 				IPath path = new Path("wizard-page").append(page.getName());
 				return new WidgetIdentifier(path, new Path(relativePath));
 			}
-			else {
-				// check for wizard buttons
-				if (control instanceof Button) {
-					relativePath = computeRelativePath(shell, (Composite)pageControl, control);
-					return new WidgetIdentifier(new Path("wizard"), new Path(relativePath));
-				}
-				else
-					return null;
+			// check for wizard buttons
+			if (control instanceof Button) {
+				relativePath = computeRelativePath(shell, (Composite)pageControl, control);
+				return new WidgetIdentifier(new Path("wizard"), new Path(relativePath));
 			}
+			return null;
 		}
 		else if (data instanceof IWorkbenchWindow) {
 			IWorkbenchWindow window = (IWorkbenchWindow)data;
@@ -367,9 +361,8 @@ public class MacroUtil {
 			}
 
 			return "actionclass/" + action.getClass().getName(); //$NON-NLS-1$
-		} else {
-			return "contribclass/" + contrib.getClass().getName(); //$NON-NLS-1$
 		}
+		return "contribclass/" + contrib.getClass().getName(); //$NON-NLS-1$
 	}
 
 	/*
@@ -478,8 +471,6 @@ public class MacroUtil {
 
 	public static CommandTarget locateCommandTarget(Composite parent, WidgetIdentifier wid, ArrayList parents) throws CoreException {
 		Shell shell = (Shell)parent;
-		Control focusControl = shell.getDisplay().getFocusControl();
-		Object data = shell.getData();
 
 		String firstToken = wid.contextPath.segment(0);
 		IPath wpath = wid.widgetPath;
