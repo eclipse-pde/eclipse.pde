@@ -21,7 +21,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.build.builder.FeatureBuildScriptGenerator;
+import org.eclipse.pde.internal.build.FeatureBuildScriptGenerator;
 import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
@@ -150,10 +150,10 @@ public class FeatureExportWizard extends BaseExportWizard {
 	private void makeScript(IFeatureModel model) throws CoreException {
 		FeatureBuildScriptGenerator generator = new ExportFeatureBuildScriptGenerator();
 
-		//generator.setBuildScriptName(MainPreferencePage.getBuildScriptName());
-		//generator.setScriptTargetLocation(model.getInstallLocation());
+		generator.setBuildScriptName("build.xml");
+		generator.setScriptTargetLocation(model.getInstallLocation());
 		generator.setFeatureRootLocation(model.getInstallLocation());
-		generator.setWorkingDirectory(model.getInstallLocation());
+		generator.setInstallLocation(model.getInstallLocation());
 		
 		IProject project = model.getUnderlyingResource().getProject();
 		if (project.hasNature(JavaCore.NATURE_ID)) {
@@ -164,7 +164,7 @@ public class FeatureExportWizard extends BaseExportWizard {
 			generator.setDevEntries(new String[] { "bin" });
 		}
 
-		generator.setAnalyseChildren(true);
+		generator.setGenerateChildrenScript(true);
 		generator.setPluginPath(TargetPlatform.createPluginPath());
 
 		generator.setFeature(model.getFeature().getId());

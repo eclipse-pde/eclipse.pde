@@ -21,10 +21,9 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-
-import org.eclipse.pde.internal.build.builder.FragmentBuildScriptGenerator;
-import org.eclipse.pde.internal.build.builder.ModelBuildScriptGenerator;
-import org.eclipse.pde.internal.build.builder.PluginBuildScriptGenerator;
+import org.eclipse.pde.internal.build.FragmentBuildScriptGenerator;
+import org.eclipse.pde.internal.build.ModelBuildScriptGenerator;
+import org.eclipse.pde.internal.build.PluginBuildScriptGenerator;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.ui.*;
 
@@ -54,9 +53,6 @@ public class PluginExportWizard extends BaseExportWizard {
 		map.put("temp.folder", buildTempLocation + Path.SEPARATOR + "eclipse" + Path.SEPARATOR + "plugins");
 		map.put("destination.temp.folder", buildTempLocation + Path.SEPARATOR + "eclipse" + Path.SEPARATOR + "plugins");
 		map.put("plugin.destination", destination);
-		map.put("os", TargetPlatform.getOS());
-		map.put("ws", TargetPlatform.getWS());
-		map.put("arch", TargetPlatform.getOSArch());
 		return map;
 	}
 	
@@ -114,9 +110,9 @@ public class PluginExportWizard extends BaseExportWizard {
 		else
 			generator = new PluginBuildScriptGenerator();
 
-		//generator.setBuildScriptName(MainPreferencePage.getBuildScriptName());
-		//generator.setScriptTargetLocation(model.getInstallLocation());
-		generator.setWorkingDirectory(model.getInstallLocation());
+		generator.setBuildScriptName("build.xml");
+		generator.setScriptTargetLocation(model.getInstallLocation());
+		generator.setInstallLocation(model.getInstallLocation());
 
 		IProject project = model.getUnderlyingResource().getProject();
 		if (project.hasNature(JavaCore.NATURE_ID)) {
