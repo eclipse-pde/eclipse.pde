@@ -100,6 +100,12 @@
             class="org.eclipse.pde.internal.ui.preferences.BuildOptionsPreferencePage"
             id="org.eclipse.pde.ui.buildOptionsPreferencePage">
       </page>
+      <page
+            name="%preferences.inProgress.name"
+            category="org.eclipse.pde.ui.MainPreferencePage"
+            class="org.eclipse.pde.internal.ui.preferences.InProgressPreferencePage"
+            id="org.eclipse.pde.ui.inProgressPreferencePage">
+      </page>
    </extension>
    <extension
          point="org.eclipse.ui.newWizards">

@@ -157,7 +157,7 @@ public class BundlePluginModelBase extends AbstractModel implements IBundlePlugi
 	 */
 	public boolean isInSync() {
 		return ( (bundleModel==null||bundleModel.isInSync()) &&
-				extensionsModel==null || extensionsModel.isInSync() );
+				(extensionsModel==null || extensionsModel.isInSync()) );
 	}
 
 	/* (non-Javadoc)
@@ -165,7 +165,7 @@ public class BundlePluginModelBase extends AbstractModel implements IBundlePlugi
 	 */
 	public boolean isValid() {
 		return ( (bundleModel==null||bundleModel.isValid()) &&
-				extensionsModel==null || extensionsModel.isValid() );
+				(extensionsModel==null || extensionsModel.isValid()) );
 	}
 
 	/* (non-Javadoc)

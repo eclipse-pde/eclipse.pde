@@ -21,4 +21,5 @@ public interface ICoreConstants {
 	String VALUE_SAVED_SOME = "savedSome";
 	String P_SOURCE_LOCATIONS = "source_locations";
 	String P_EXT_LOCATIONS = "ext_locations";
+	String ENABLE_ALT_RUNTIME = "enable_alt_runtime";
 }

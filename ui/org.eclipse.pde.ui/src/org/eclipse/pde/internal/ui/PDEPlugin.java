@@ -267,8 +267,14 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants, IPre
 			runtime = null;
 			for (int i=0; i<runtimes.length; i++) {
 				String def = runtimes[i].getAttribute("default");
-				if (def!=null && def.equalsIgnoreCase("true"))
-					continue;
+				if (def!=null && def.equalsIgnoreCase("true")) {
+					if (PDECore.isAlternativeRuntimeSupportEnabled())
+						continue;
+					else {
+						runtime = runtimes[i];
+						break;
+					}
+				}
 				if (runtime==null) {
 					runtime = runtimes[i];
 					break;

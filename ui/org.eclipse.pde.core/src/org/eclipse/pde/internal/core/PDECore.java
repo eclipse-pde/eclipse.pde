@@ -21,7 +21,6 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 
-
 public class PDECore extends Plugin implements IEnvironmentVariables {
 	public static final String PLUGIN_ID = "org.eclipse.pde.core";
 	public static final String ARG_PDELAUNCH = "-pdelaunch";
@@ -267,11 +266,7 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		if (modelsLocked)
 			return null;
 		IWorkspaceModelManager manager = getWorkspaceModelManager();
-		return findFeature(
-			manager.getFeatureModels(),
-			id,
-			version,
-			match);
+		return findFeature(manager.getFeatureModels(), id, version, match);
 	}
 
 	public IFragment[] findFragmentsFor(String id, String version) {
@@ -379,16 +374,22 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 			preferences.setDefault(
 				ICoreConstants.PLATFORM_PATH,
 				ExternalModelManager.computeDefaultPlatformPath());
-				
+
 		// set defaults for the target environment variables.
 		preferences.setDefault(OS, BootLoader.getOS());
 		preferences.setDefault(WS, BootLoader.getWS());
 		preferences.setDefault(NL, Locale.getDefault().toString());
 		preferences.setDefault(ARCH, BootLoader.getOSArch());
 	}
+
+	public static boolean isAlternativeRuntimeSupportEnabled() {
+		Preferences pref = getDefault().getPluginPreferences();
+		return pref.getBoolean(ICoreConstants.ENABLE_ALT_RUNTIME);
+	}
+
 	private void initializeLaunchedInstanceFlag() {
-		String [] args = BootLoader.getCommandLineArgs();
-		for (int i=0; i<args.length; i++) {
+		String[] args = BootLoader.getCommandLineArgs();
+		for (int i = 0; i < args.length; i++) {
 			String arg = args[i];
 			if (arg.equals(ARG_PDELAUNCH)) {
 				launchedInstance = true;
@@ -401,16 +402,18 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		modelsLocked = true;
 		if (runtimeSupport == null)
 			loadRuntimeSupport();
-        IExternalModelManager exManager = runtimeSupport.getExternalModelManager();
-        IWorkspaceModelManager wsManager = runtimeSupport.getWorkspaceModelManager();
-        
+		IExternalModelManager exManager =
+			runtimeSupport.getExternalModelManager();
+		IWorkspaceModelManager wsManager =
+			runtimeSupport.getWorkspaceModelManager();
+
 		if (modelManager == null) {
 			modelManager = new PluginModelManager();
-			modelManager.connect(wsManager,  exManager);
+			modelManager.connect(wsManager, exManager);
 		}
 		modelsLocked = false;
 	}
-	
+
 	private boolean isLaunchedInstance() {
 		return launchedInstance;
 	}
@@ -427,31 +430,43 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 			tempFileManager.shutdown();
 		super.shutdown();
 	}
-	
+
 	private void loadRuntimeSupport() {
-		IConfigurationElement[] runtimes = Platform.getPluginRegistry().getConfigurationElementsFor(PDECore.PLUGIN_ID, "alternativeRuntimeSupport");
-		
-		if (runtimes.length==0) return;
+		IConfigurationElement[] runtimes =
+			Platform.getPluginRegistry().getConfigurationElementsFor(
+				PDECore.PLUGIN_ID,
+				"alternativeRuntimeSupport");
+
+		if (runtimes.length == 0)
+			return;
 		IConfigurationElement runtime = runtimes[0];
-		if (runtimes.length>1) {
+		if (runtimes.length > 1) {
 			// pick the first runtime support that is
 			// not the default
 			runtime = null;
-			for (int i=0; i<runtimes.length; i++) {
+			for (int i = 0; i < runtimes.length; i++) {
 				String def = runtimes[i].getAttribute("default");
-				if (def!=null && def.equalsIgnoreCase("true"))
-					continue;
-				if (runtime==null) {
+				if (def != null && def.equalsIgnoreCase("true")) {
+					if (isAlternativeRuntimeSupportEnabled())
+						continue;
+					else {
+						runtime = runtimes[i];
+						break;
+					}
+				}
+				if (runtime == null) {
 					runtime = runtimes[i];
 					break;
 				}
 			}
 		}
-		if (runtime==null) return;
+		if (runtime == null)
+			return;
 		try {
-			runtimeSupport = (IAlternativeRuntimeSupport)runtime.createExecutableExtension("class");
-		}
-		catch (CoreException e) {
+			runtimeSupport =
+				(IAlternativeRuntimeSupport) runtime.createExecutableExtension(
+					"class");
+		} catch (CoreException e) {
 			logException(e);
 		}
 	}
