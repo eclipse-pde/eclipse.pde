@@ -23,6 +23,10 @@ import org.eclipse.update.internal.core.FeatureExecutableFactory;
  * to retrieve plug-ins and features from the CVS repository.
  */
 public class FetchScriptGenerator extends AbstractScriptGenerator {
+	private static final String BUNDLE = "bundle"; //$NON-NLS-1$
+	private static final String FRAGMENT = "fragment"; //$NON-NLS-1$
+	private static final String PLUGIN = "plugin"; //$NON-NLS-1$
+	private static final String FEATURE = "feature"; //$NON-NLS-1$
 	private static final String ELEMENT = "element"; //$NON-NLS-1$
 	private static final String TYPE = "type"; //$NON-NLS-1$
 	private static final String PATH = "path"; //$NON-NLS-1$
@@ -96,7 +100,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			closeScript();
 		}
 
-		if (recursiveGeneration && mapInfos.get(TYPE).equals("feature")) //$NON-NLS-1$
+		if (recursiveGeneration && mapInfos.get(TYPE).equals(FEATURE)) //$NON-NLS-1$
 			generateFetchFilesForIncludedFeatures();
 
 		saveRepositoryVersions();
@@ -162,7 +166,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		generatePrologue();
 		generateFetchTarget();
 		generateFetchElementTarget();
-		if (mapInfos.get(TYPE).equals("feature")) { //$NON-NLS-1$ 	//$NON-NLS-2$
+		if (mapInfos.get(TYPE).equals(FEATURE)) { //$NON-NLS-1$ 	//$NON-NLS-2$
 			generateFetchPluginsTarget();
 			generateFetchRecusivelyTarget();
 		}
@@ -177,7 +181,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		script.println();
 		script.printTargetDeclaration(TARGET_FETCH, null, null, null, null);
 		script.printAntCallTask(TARGET_FETCH_ELEMENT, null, null);
-		if (mapInfos.get(TYPE).equals("feature")) { //$NON-NLS-1$ 	//$NON-NLS-2$
+		if (mapInfos.get(TYPE).equals(FEATURE)) { //$NON-NLS-1$ 	//$NON-NLS-2$
 			script.printAntCallTask(TARGET_FETCH_PLUGINS, null, null);
 			script.printAntCallTask(TARGET_FETCH_RECURSIVELY, null, null);
 		}
@@ -256,12 +260,12 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		script.printTargetEnd();
 	}
 
-	protected void generateFetchEntry(String entry, boolean xmlFileOnly) throws CoreException {
+	protected boolean generateFetchEntry(String entry, boolean manifestFileOnly) throws CoreException {
 		Map mapFileEntry = mapInfos;
 		if (!entry.equals(element)) {
 			mapFileEntry = processMapFileEntry(entry);
 			if (mapFileEntry == null)
-				return;
+				return false;
 		}
 
 		String password = (String) mapFileEntry.get(PASSWORD);
@@ -280,28 +284,33 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 
 		String cvsPackage = ((String) mapFileEntry.get(PATH) == null ? (String) mapFileEntry.get(ELEMENT) : (String) mapFileEntry.get(PATH)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		String fullLocation = null;
-		if (type.equals("feature")) { //$NON-NLS-1$
+		if (type.equals(FEATURE)) {
 			fullLocation = location + '/' + (String) mapFileEntry.get(ELEMENT) + '/' + DEFAULT_FEATURE_FILENAME_DESCRIPTOR; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			params.put("fileToCheck", fullLocation); //$NON-NLS-1$
-			cvsPackage += xmlFileOnly ? '/' + DEFAULT_FEATURE_FILENAME_DESCRIPTOR : ""; //$NON-NLS-1$ //$NON-NLS-2$
+			cvsPackage += manifestFileOnly ? '/' + DEFAULT_FEATURE_FILENAME_DESCRIPTOR : ""; //$NON-NLS-1$ //$NON-NLS-2$
 			repositoryFeatureVersions.put(mapFileEntry.get(ELEMENT), mapFileEntry.get(TAG));
-		} else if (type.equals("plugin")) { //$NON-NLS-1$
+		} else if (type.equals(PLUGIN)) {
 			fullLocation = location + '/' + (String) mapFileEntry.get(ELEMENT) + '/' + DEFAULT_PLUGIN_FILENAME_DESCRIPTOR; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			params.put("fileToCheck", fullLocation); //$NON-NLS-1$
-			cvsPackage += xmlFileOnly ? '/' + DEFAULT_PLUGIN_FILENAME_DESCRIPTOR : ""; //$NON-NLS-1$ //$NON-NLS-2$
+			cvsPackage += manifestFileOnly ? '/' + DEFAULT_PLUGIN_FILENAME_DESCRIPTOR : ""; //$NON-NLS-1$ //$NON-NLS-2$
 			repositoryPluginVersions.put(mapFileEntry.get(ELEMENT), mapFileEntry.get(TAG));
-		} else if (type.equals("fragment")) { //$NON-NLS-1$
+		} else if (type.equals(FRAGMENT)) {
 			fullLocation = location + '/' + (String) mapFileEntry.get(ELEMENT) + '/' + DEFAULT_FRAGMENT_FILENAME_DESCRIPTOR; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			params.put("fileToCheck", fullLocation); //$NON-NLS-1$
-			cvsPackage += xmlFileOnly ? '/' + DEFAULT_FRAGMENT_FILENAME_DESCRIPTOR : ""; //$NON-NLS-1$ //$NON-NLS-2$
+			cvsPackage += manifestFileOnly ? '/' + DEFAULT_FRAGMENT_FILENAME_DESCRIPTOR : ""; //$NON-NLS-1$ //$NON-NLS-2$
 			repositoryPluginVersions.put(mapFileEntry.get(ELEMENT), mapFileEntry.get(TAG));
+		} else if (type.equals(BUNDLE)) {
+			fullLocation = location + '/' + (String) mapFileEntry.get(ELEMENT) + '/' + DEFAULT_BUNDLE_FILENAME_DESCRIPTOR;
+			params.put("fileToCheck", fullLocation); //$NON-NLS-1$
+			cvsPackage += manifestFileOnly ? '/' + DEFAULT_BUNDLE_FILENAME_DESCRIPTOR : "";//$NON-NLS-1$ 
+			repositoryPluginVersions.put(mapFileEntry.get(ELEMENT), mapFileEntry.get(TAG));			
 		}
 		params.put("package", cvsPackage); //$NON-NLS-1$
 
 		// This call create a new property for every feature, plugins or fragments that we must check the existence of 
 		script.printAvailableTask(fullLocation, fullLocation);
-		script.printAntTask("../" + scriptName, getPropertyFormat(PROPERTY_BUILD_DIRECTORY) + '/' + (type.equals("feature") ? DEFAULT_FEATURE_LOCATION : DEFAULT_PLUGIN_LOCATION), TARGET_GET_FROM_CVS, null, null, params); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
+		script.printAntTask("../" + scriptName, getPropertyFormat(PROPERTY_BUILD_DIRECTORY) + '/' + (type.equals(FEATURE) ? DEFAULT_FEATURE_LOCATION : DEFAULT_PLUGIN_LOCATION), TARGET_GET_FROM_CVS, null, null, params); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		return true;
 	}
 
 	protected void generateGetFromCVSTarget() {
@@ -342,10 +351,13 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 				continue;
 			}
 
+			boolean generated = true;
 			if (allChildren[i].isFragment())
-				generateFetchEntry("fragment@" + elementId, !Utils.isIn(compiledChildren, allChildren[i])); //$NON-NLS-1$
+				generated = generateFetchEntry(FRAGMENT + '@' + elementId, !Utils.isIn(compiledChildren, allChildren[i])); //$NON-NLS-1$
 			else
-				generateFetchEntry("plugin@" + elementId, !Utils.isIn(compiledChildren, allChildren[i])); //$NON-NLS-1$
+				generated = generateFetchEntry(PLUGIN + '@' + elementId, !Utils.isIn(compiledChildren, allChildren[i])); //$NON-NLS-1$
+			if (generated == false)
+				generateFetchEntry(BUNDLE + '@' + elementId, !Utils.isIn(compiledChildren, allChildren[i])); //$NON-NLS-1$
 		}
 	}
 
@@ -460,7 +472,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	 */
 	protected String getElementLocation(String type) {
 		IPath location = new Path(getPropertyFormat(PROPERTY_BUILD_DIRECTORY));
-		if (type.equals("feature")) //$NON-NLS-1$
+		if (type.equals(FEATURE)) //$NON-NLS-1$
 			location = location.append(DEFAULT_FEATURE_LOCATION);
 		else
 			location = location.append(DEFAULT_PLUGIN_LOCATION);

@@ -47,6 +47,7 @@ public interface IPDEBuildConstants {
 	public final static String DEFAULT_BUILD_SCRIPT_FILENAME = "build.xml"; //$NON-NLS-1$
 	public final static String DEFAULT_FEATURE_FILENAME_DESCRIPTOR = "feature.xml"; //$NON-NLS-1$
 	public final static String DEFAULT_FRAGMENT_FILENAME_DESCRIPTOR = "fragment.xml"; //$NON-NLS-1$
+	public final static String DEFAULT_BUNDLE_FILENAME_DESCRIPTOR = "META-INF/MANIFEST.MF"; //$NON-NLS-1$
 	public final static String DEFAULT_PLUGIN_FILENAME_DESCRIPTOR = "plugin.xml"; //$NON-NLS-1$
 	public final static String DEFAULT_FEATURE_LOCATION = "features"; //$NON-NLS-1$
 	public final static String DEFAULT_FETCH_SCRIPT_FILENAME = "fetch.xml"; //$NON-NLS-1$
