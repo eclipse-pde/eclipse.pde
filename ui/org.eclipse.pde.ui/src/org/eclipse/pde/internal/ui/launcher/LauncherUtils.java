@@ -6,9 +6,7 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
-import org.eclipse.debug.core.model.*;
 import org.eclipse.jdt.core.*;
-import org.eclipse.jdt.debug.ui.*;
 import org.eclipse.jdt.launching.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.pde.core.plugin.*;
@@ -455,24 +453,30 @@ public class LauncherUtils {
 			null);
 	}
 
-	public static  void setDefaultSourceLocator(ILaunchConfiguration configuration, ILaunch launch) throws CoreException {
-		String id = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, (String)null);
-		if (id == null) {
-			IPersistableSourceLocator locator = DebugPlugin.getDefault().getLaunchManager().newSourceLocator(JavaUISourceLocator.ID_PROMPTING_JAVA_SOURCE_LOCATOR);
-			ILaunchConfigurationWorkingCopy wc = null;
-			if (configuration.isWorkingCopy()) {
-				wc = (ILaunchConfigurationWorkingCopy)configuration;
-			} else {
-				wc = configuration.getWorkingCopy();
-			}
-			wc.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, JavaUISourceLocator.ID_PROMPTING_JAVA_SOURCE_LOCATOR);
-			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, "org.eclipse.pde.ui.workbenchClasspathProvider");
-			locator.initializeDefaults(wc);
-			wc.doSave();
-			launch.setSourceLocator(locator);
-		}		
-	}
+	public static void setDefaultSourceLocator(
+			ILaunchConfiguration configuration, ILaunch launch)
+			throws CoreException {
+		ILaunchConfigurationWorkingCopy wc = null;
+		if (configuration.isWorkingCopy()) {
+			wc = (ILaunchConfigurationWorkingCopy) configuration;
+		} else {
+			wc = configuration.getWorkingCopy();
+		}
 		
+		// set any old source locators to null.  Source locator is now declared in the plugin.xml
+		String locator = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, (String) null);
+		if (locator != null)
+			wc.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID,(String) null);
+		
+		// set source path provider on pre-2.1 configurations
+		String id = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, (String) null);
+		if (id == null) 
+			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, "org.eclipse.pde.ui.workbenchClasspathProvider");
+		
+		if (locator != null || id == null)
+			wc.doSave();
+	}
+	
 	public static void clearWorkspace(ILaunchConfiguration configuration, String workspace) throws CoreException {
 		File workspaceFile = new Path(workspace).toFile();
 		if (configuration.getAttribute(ILauncherSettings.DOCLEAR, false) && workspaceFile.exists()) {
