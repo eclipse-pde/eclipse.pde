@@ -303,8 +303,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			
 			String libraryName = fData.getLibraryName();
             if (!fData.isSimple() && libraryName != null) {
-				if (!libraryName.equals(".")) //$NON-NLS-1$
-					binEntry.addToken(fData.getLibraryName());
+				binEntry.addToken(libraryName);
                 if (fContentWizard != null) {
                     String[] files = fContentWizard.getNewFiles();
                     for (int j = 0; j < files.length; j++) {

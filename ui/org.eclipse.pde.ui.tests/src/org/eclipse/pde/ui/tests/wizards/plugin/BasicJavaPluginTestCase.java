@@ -221,7 +221,7 @@ public class BasicJavaPluginTestCase extends NewProjectTest {
 		IBuildEntry entry = build.getEntry("bin.includes");
 		assertNotNull(entry);		
 		String[] tokens = entry.getTokens();
-		assertEquals(libraryName.equals(".")? 1 : 2, tokens.length);
+		assertEquals(2, tokens.length);
 		assertEquals(isBundle ? "META-INF/" : "plugin.xml", tokens[0]);
 		if (!libraryName.equals("."))
 			assertEquals(libraryName, tokens[1]);
