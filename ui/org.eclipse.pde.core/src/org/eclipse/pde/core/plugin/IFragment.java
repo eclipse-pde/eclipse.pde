@@ -46,7 +46,6 @@ public interface IFragment extends IPluginBase {
 	/**
 	 * Returns an optional version match rule as defined in
 	 * IMatchRule interface.
-	 * @see IMatchRule#getRule
 	 */
 	int getRule();
 	/**
