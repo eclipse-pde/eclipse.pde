@@ -528,7 +528,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		IJavaProject jProject = JavaCore.create(project);
 		Vector entries = new Vector();
 		if (new File(model.getInstallLocation()).isFile()) {
-			IClasspathEntry entry = JavaCore.newLibraryEntry(project.getFullPath(), project.getFullPath(), null);
+			IClasspathEntry entry = JavaCore.newLibraryEntry(project.getFullPath(), project.getFullPath(), null, true);
 			if (!entries.contains(entry))
 				entries.add(entry);
 		} else if (fImportType == IMPORT_BINARY_WITH_LINKS) {
