@@ -237,7 +237,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			
 			// BIN.INCLUDES
             IBuildEntry binEntry = factory.createEntry(IBuildEntry.BIN_INCLUDES);
-			if (!fData.hasBundleStructure() || fModel.getPluginBase().getExtensions().length > 0)
+			if (!fData.hasBundleStructure() || fContentWizard != null)
 				binEntry.addToken(fData instanceof IFragmentFieldData ? "fragment.xml" //$NON-NLS-1$
 									: "plugin.xml"); //$NON-NLS-1$
             if (fData.hasBundleStructure())
