@@ -78,7 +78,7 @@ public class PDESourcePage extends TextEditor implements IFormPage, IGotoMarker 
 	}
 	protected void firePropertyChange(int type) {
 		if (type == PROP_DIRTY) {
-			editor.fireSaveNeeded(getEditorInput());
+			editor.fireSaveNeeded(getEditorInput(), true);
 		} else
 			super.firePropertyChange(type);
 	}

@@ -8,8 +8,10 @@ package org.eclipse.pde.internal.ui.neweditor.plugin;
 import java.util.ArrayList;
 
 import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.internal.core.ischema.*;
-import org.eclipse.pde.internal.ui.neweditor.plugin.dummy.DummyExtensionElement;
+import org.eclipse.pde.internal.ui.neweditor.*;
+import org.eclipse.pde.internal.ui.neweditor.plugin.rows.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.*;
@@ -20,11 +22,11 @@ import org.eclipse.ui.forms.widgets.*;
  * To change the template for this generated type comment go to Window -
  * Preferences - Java - Code Generation - Code and Comments
  */
-public class ExtensionElementDetails implements IDetailsPage {
-	private DummyExtensionElement input;
+public class ExtensionElementDetails extends AbstractFormPart implements IDetailsPage, IContextPart {
+	private IPluginElement input;
 	private ISchemaElement schemaElement;
-	private IManagedForm managedForm;
 	private ArrayList rows;
+	private Section section;
 	/**
 	 *  
 	 */
@@ -32,13 +34,15 @@ public class ExtensionElementDetails implements IDetailsPage {
 		this.schemaElement = schemaElement;
 		rows = new ArrayList();
 	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.IDetailsPage#initialize(org.eclipse.ui.forms.IManagedForm)
-	 */
-	public void initialize(IManagedForm form) {
-		this.managedForm = form;
+	public String getContextId() {
+		return PluginInputContext.CONTEXT_ID;
+	}
+	public void fireSaveNeeded() {
+		markDirty();
+		getPage().getPDEEditor().fireSaveNeeded(getContextId(), false);
+	}
+	public PDEFormPage getPage() {
+		return (PDEFormPage)managedForm.getContainer();
 	}
 	/*
 	 * (non-Javadoc)
@@ -53,7 +57,7 @@ public class ExtensionElementDetails implements IDetailsPage {
 		layout.bottomMargin = 0;
 		parent.setLayout(layout);
 		FormToolkit toolkit = managedForm.getToolkit();
-		Section section = toolkit.createSection(parent, Section.DESCRIPTION);
+		section = toolkit.createSection(parent, Section.DESCRIPTION);
 		section.marginHeight = 5;
 		section.marginWidth = 5;
 		section.setText("Extension Details");
@@ -96,20 +100,20 @@ public class ExtensionElementDetails implements IDetailsPage {
 			Composite parent, FormToolkit toolkit, int span) {
 		ExtensionAttributeRow row;
 		if (att.getKind() == ISchemaAttribute.JAVA)
-			row = new ClassAttributeRow(att);
+			row = new ClassAttributeRow(this, att);
 		else
 		if (att.getKind() == ISchemaAttribute.RESOURCE)
-			row = new ResourceAttributeRow(att);
+			row = new ResourceAttributeRow(this, att);
 		else {
 			ISchemaSimpleType type = att.getType();
 			if (type.getName().equals("boolean"))
-				row = new BooleanAttributeRow(att);
+				row = new BooleanAttributeRow(this, att);
 			else {
 				ISchemaRestriction restriction = type.getRestriction();
 				if (restriction != null)
-					row = new ChoiceAttributeRow(att);
+					row = new ChoiceAttributeRow(this, att);
 				else
-					row = new TextAttributeRow(att);
+					row = new TextAttributeRow(this, att);
 			}
 		}
 		row.createContents(parent, toolkit, span);
@@ -129,16 +133,27 @@ public class ExtensionElementDetails implements IDetailsPage {
 	public void selectionChanged(IFormPart masterPart, ISelection selection) {
 		IStructuredSelection ssel = (IStructuredSelection)selection;
 		if (ssel.size() == 1) {
-			input = (DummyExtensionElement) ssel.getFirstElement();
+			input = (IPluginElement) ssel.getFirstElement();
 		} else
 			input = null;
 		update();
 	}
 	private void update() {
+		updateDescription();
 		for (int i = 0; i < rows.size(); i++) {
 			ExtensionAttributeRow row = (ExtensionAttributeRow) rows.get(i);
 			row.setInput(input);
 		}
+	}
+	private void updateDescription() {
+		if (input!=null) {
+			String iname = input.getName();
+			section.setDescription("Set the properties of '"+iname+"'.");
+		}
+		else {
+			section.setDescription("Set the properties of the selected element.");
+		}
+		section.layout();
 	}
 	/*
 	 * (non-Javadoc)
@@ -146,6 +161,11 @@ public class ExtensionElementDetails implements IDetailsPage {
 	 * @see org.eclipse.ui.forms.IDetailsPage#commit()
 	 */
 	public void commit(boolean onSave) {
+		for (int i=0; i<rows.size(); i++) {
+			ExtensionAttributeRow row = (ExtensionAttributeRow)rows.get(i);
+			row.commit();
+		}
+		super.commit(onSave);
 	}
 	/*
 	 * (non-Javadoc)
@@ -170,28 +190,10 @@ public class ExtensionElementDetails implements IDetailsPage {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.forms.IDetailsPage#isDirty()
-	 */
-	public boolean isDirty() {
-		for (int i = 0; i < rows.size(); i++) {
-			ExtensionAttributeRow row = (ExtensionAttributeRow) rows.get(i);
-			if (row.isDirty())
-				return true;
-		}
-		return false;
-	}
-	public boolean isStale() {
-		// TODO need to implement this
-		return false;
-	}
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.eclipse.ui.forms.IDetailsPage#refresh()
 	 */
 	public void refresh() {
 		update();
-	}
-	public void setFormInput(Object input) {
+		super.refresh();
 	}
 }

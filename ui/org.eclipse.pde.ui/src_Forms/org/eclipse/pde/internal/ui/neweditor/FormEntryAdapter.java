@@ -9,7 +9,6 @@ package org.eclipse.pde.internal.ui.neweditor;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.pde.internal.ui.newparts.*;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 
 /**
@@ -19,36 +18,21 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
 public class FormEntryAdapter implements IFormEntryListener {
-	protected PDESection section;
-	protected IManagedForm form;
+	private IContextPart contextPart;
 	protected IActionBars actionBars;
 
-	public FormEntryAdapter(IManagedForm form) {
-		this(form, null);
+	public FormEntryAdapter(IContextPart contextPart) {
+		this(contextPart, null);
 	}
-	public FormEntryAdapter(PDESection section) {
-		this(section.getForm(), null);
-		this.section = section;
-	}
-	public FormEntryAdapter(PDESection section, IActionBars actionBars) {
-		this(section.getForm(), actionBars);
-		this.section = section;
-	}
-	public FormEntryAdapter(IManagedForm form, IActionBars actionBars) {
-		this.form = form;
+	public FormEntryAdapter(IContextPart contextPart, IActionBars actionBars) {
+		this.contextPart = contextPart;
 		this.actionBars = actionBars;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.newparts.IFormEntryListener#textDirty(org.eclipse.pde.internal.ui.newparts.FormEntry)
 	 */
 	public void textDirty(FormEntry entry) {
-		if (section!=null) {
-			section.markDirty();
-			PDEFormEditor editor = section.getPage().getPDEEditor();
-			editor.fireSaveNeeded(section.getContextId());
-		}
-		else
-			form.dirtyStateChanged();
+		contextPart.fireSaveNeeded();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.newparts.IFormEntryListener#textValueChanged(org.eclipse.pde.internal.ui.newparts.FormEntry)

@@ -4,8 +4,9 @@
  * To change the template for this generated file go to
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
-package org.eclipse.pde.internal.ui.neweditor.plugin;
+package org.eclipse.pde.internal.ui.neweditor.plugin.rows;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
+import org.eclipse.pde.internal.ui.neweditor.IContextPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
@@ -22,8 +23,8 @@ public abstract class ReferenceAttributeRow extends TextAttributeRow {
 	/**
 	 * @param att
 	 */
-	public ReferenceAttributeRow(ISchemaAttribute att) {
-		super(att);
+	public ReferenceAttributeRow(IContextPart part, ISchemaAttribute att) {
+		super(part, att);
 	}
 	/*
 	 * (non-Javadoc)

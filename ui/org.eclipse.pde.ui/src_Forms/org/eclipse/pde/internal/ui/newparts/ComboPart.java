@@ -57,6 +57,12 @@ public class ComboPart {
 		else
 			((CCombo) combo).select(index);
 	}
+	public String getSelection() {
+		if (combo instanceof Combo)
+			return ((Combo) combo).getItem(getSelectionIndex());
+		else
+			return ((CCombo) combo).getItem(getSelectionIndex());
+	}
 	public void setText(String text) {
 		if (combo instanceof Combo)
 			((Combo) combo).setText(text);

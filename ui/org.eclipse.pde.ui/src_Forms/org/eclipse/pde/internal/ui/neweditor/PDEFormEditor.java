@@ -124,7 +124,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		if (pageToShow!=null)
 				setActivePage(pageToShow);
 	}
-	
+
 	protected void pageChange(int newPageIndex) {
 		super.pageChange(newPageIndex);
 		updateContentOutline(getActivePageInstance());
@@ -270,15 +270,15 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		return super.isDirty();
 	}
 
-	public void fireSaveNeeded(String contextId) {
+	public void fireSaveNeeded(String contextId, boolean notify) {
 		if (contextId==null) return;
 		InputContext context = inputContextManager.findContext(contextId);
 		if (context!=null)
-			fireSaveNeeded(context.getInput());
+			fireSaveNeeded(context.getInput(), notify);
 	}
 	
-	public void fireSaveNeeded(IEditorInput input) {
-		editorDirtyStateChanged();
+	public void fireSaveNeeded(IEditorInput input, boolean notify) {
+		if (notify) editorDirtyStateChanged();
 		validateEdit(input);
 	}
 	

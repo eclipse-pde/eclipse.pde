@@ -42,4 +42,9 @@ public abstract class PDESection extends SectionPart implements IModelChangedLis
 	public String getContextId() {
 		return null;
 	}
+	public void fireSaveNeeded() {
+		markDirty();
+		if (getContextId()!=null)
+			getPage().getPDEEditor().fireSaveNeeded(getContextId(), false);
+	}
 }

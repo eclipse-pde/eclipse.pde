@@ -97,7 +97,7 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 		}
 		versionText = new FormEntry(container, toolkit, PDEPlugin
 				.getResourceString(KEY_VERSION), null, false);
-		versionText.setFormEntryListener(new FormEntryAdapter(getForm(),
+		versionText.setFormEntryListener(new FormEntryAdapter(this,
 				getPage().getEditor().getEditorSite().getActionBars()) {
 			public void textValueChanged(FormEntry text) {
 				try {

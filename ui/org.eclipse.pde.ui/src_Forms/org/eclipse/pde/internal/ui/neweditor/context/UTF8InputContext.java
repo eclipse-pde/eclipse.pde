@@ -13,7 +13,6 @@ import org.eclipse.jface.text.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.neweditor.PDEFormEditor;
-import org.eclipse.pde.internal.ui.neweditor.context.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.ContainerGenerator;
 import org.eclipse.ui.editors.text.FileDocumentProvider;

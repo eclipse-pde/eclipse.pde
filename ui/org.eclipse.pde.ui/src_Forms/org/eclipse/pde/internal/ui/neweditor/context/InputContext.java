@@ -81,7 +81,7 @@ public abstract class InputContext {
 			modelListener = new IModelChangedListener() {
 				public void modelChanged(IModelChangedEvent e) {
 					if (e.getChangeType() != IModelChangedEvent.WORLD_CHANGED)
-						editor.fireSaveNeeded(input);
+						editor.fireSaveNeeded(input, true);
 				}
 			};
 			((IModelChangeProvider) model).addModelChangedListener(modelListener);

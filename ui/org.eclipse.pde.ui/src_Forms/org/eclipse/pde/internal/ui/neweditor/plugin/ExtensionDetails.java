@@ -6,11 +6,11 @@
  */
 package org.eclipse.pde.internal.ui.neweditor.plugin;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.neweditor.FormEntryAdapter;
-import org.eclipse.pde.internal.ui.neweditor.plugin.dummy.DummyExtension;
+import org.eclipse.pde.internal.ui.neweditor.*;
 import org.eclipse.pde.internal.ui.newparts.FormEntry;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -24,9 +24,8 @@ import org.eclipse.ui.forms.widgets.*;
  * To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
-public class ExtensionDetails implements IDetailsPage {
-	private DummyExtension input;
-	private IManagedForm managedForm;
+public class ExtensionDetails extends AbstractFormPart implements IDetailsPage, IContextPart {
+	private IPluginExtension input;
 	private FormEntry id;
 	private FormEntry name;
 	private FormEntry point;
@@ -41,12 +40,6 @@ public class ExtensionDetails implements IDetailsPage {
 	 * 
 	 */
 	public ExtensionDetails() {
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.IDetailsPage#initialize(org.eclipse.ui.forms.IManagedForm)
-	 */
-	public void initialize(IManagedForm form) {
-		this.managedForm = form;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.IDetailsPage#createContents(org.eclipse.swt.widgets.Composite)
@@ -79,26 +72,38 @@ public class ExtensionDetails implements IDetailsPage {
 		gd.horizontalSpan = 2;
 
 		id = new FormEntry(client, toolkit, "Id:", null, false);
-		id.setFormEntryListener(new FormEntryAdapter(managedForm) {
+		id.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
 				if (input!=null)
-					input.setProperty("id", id.getValue());
+					try {
+						input.setId(id.getValue());
+					} catch (CoreException e) {
+						PDEPlugin.logException(e);
+					}
 			}
 		});
 		
 		name = new FormEntry(client, toolkit, "Name:", null, false);
-		name.setFormEntryListener(new FormEntryAdapter(managedForm) {
+		name.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
 				if (input!=null)
-					input.setProperty("name", name.getValue());
+					try {
+						input.setName(name.getValue());
+					} catch (CoreException e) {
+						PDEPlugin.logException(e);
+					}
 			}
 		});
 		
 		point = new FormEntry(client, toolkit, "Point:", null, false);
-		point.setFormEntryListener(new FormEntryAdapter(managedForm) {
+		point.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
 				if (input!=null)
-					input.setProperty("point", point.getValue());
+					try {
+						input.setPoint(point.getValue());
+					} catch (CoreException e) {
+						PDEPlugin.logException(e);
+					}
 			}
 		});
 		
@@ -135,7 +140,7 @@ public class ExtensionDetails implements IDetailsPage {
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		IStructuredSelection ssel = (IStructuredSelection)selection;
 		if (ssel.size()==1) {
-			input = (DummyExtension)ssel.getFirstElement();
+			input = (IPluginExtension)ssel.getFirstElement();
 		}
 		else
 			input = null;
@@ -143,9 +148,9 @@ public class ExtensionDetails implements IDetailsPage {
 	}
 	
 	private void update() {
-		id.setValue(input!=null && input.getProperty("id")!=null?input.getProperty("id"):"", true);
-		name.setValue(input!=null && input.getProperty("name")!=null?input.getProperty("name"):"", true);
-		point.setValue(input!=null && input.getProperty("point")!=null?input.getProperty("point"):"", true);
+		id.setValue(input!=null?input.getId():null, true);
+		name.setValue(input!=null?input.getName():null, true);
+		point.setValue(input!=null?input.getPoint():null, true);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.IDetailsPage#commit()
@@ -154,6 +159,7 @@ public class ExtensionDetails implements IDetailsPage {
 		id.commit();
 		name.commit();
 		point.commit();
+		super.commit(onSave);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.IDetailsPage#setFocus()
@@ -162,28 +168,27 @@ public class ExtensionDetails implements IDetailsPage {
 		id.getText().setFocus();
 	}
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.IDetailsPage#dispose()
-	 */
-	public void dispose() {
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.IDetailsPage#isDirty()
-	 */
-	public boolean isDirty() {
-		return id.isDirty() || name.isDirty() || point.isDirty();
-	}
-	public boolean isStale() {
-		return false;
-	}
-	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.IDetailsPage#refresh()
 	 */
 	public void refresh() {
 		update();
+		super.refresh();
 	}
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.IFormPart#setFormInput(java.lang.Object)
+	 * @see org.eclipse.pde.internal.ui.neweditor.IContextPart#fireSaveNeeded()
 	 */
-	public void setFormInput(Object input) {
+	public void fireSaveNeeded() {
+		markDirty();
+		PDEFormPage page = (PDEFormPage)managedForm.getContainer();
+		page.getPDEEditor().fireSaveNeeded(getContextId(), false);
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.neweditor.IContextPart#getContextId()
+	 */
+	public String getContextId() {
+		return PluginInputContext.CONTEXT_ID;
+	}
+	public PDEFormPage getPage() {
+		return (PDEFormPage)managedForm.getContainer();
 	}
 }

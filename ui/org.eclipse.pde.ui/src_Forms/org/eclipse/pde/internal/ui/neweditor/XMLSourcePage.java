@@ -6,7 +6,6 @@
  */
 package org.eclipse.pde.internal.ui.neweditor;
 
-import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.ui.editor.XMLConfiguration;
 import org.eclipse.pde.internal.ui.editor.text.*;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;

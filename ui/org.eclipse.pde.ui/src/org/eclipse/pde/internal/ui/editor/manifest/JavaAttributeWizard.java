@@ -25,6 +25,10 @@ public class JavaAttributeWizard extends Wizard {
 	private IPluginModelBase model;
 
 	private static String STORE_SECTION = "JavaAttributeWizard";
+	
+	public JavaAttributeWizard(JavaAttributeValue value) {
+		this(value.getProject(), value.getModel(), value.getAttributeInfo(), value.getClassName());
+	}
 
 	public JavaAttributeWizard(
 		IProject project,
@@ -53,6 +57,9 @@ public class JavaAttributeWizard extends Wizard {
 	public void addPages() {
 		mainPage = new JavaAttributeWizardPage(project, model, attInfo, className);
 		addPage(mainPage);
+	}
+	public String getClassName() {
+		return className;
 	}
 	public Object getValue() {
 		return new JavaAttributeValue(project, model, attInfo, className);

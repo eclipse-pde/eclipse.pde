@@ -13,5 +13,7 @@ package org.eclipse.pde.internal.ui.neweditor;
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
 public interface IContextPart {
+	PDEFormPage getPage();
 	String getContextId();
+	void fireSaveNeeded();
 }

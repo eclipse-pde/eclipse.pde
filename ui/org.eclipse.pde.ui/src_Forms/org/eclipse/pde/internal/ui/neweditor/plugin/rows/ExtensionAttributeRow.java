@@ -4,10 +4,12 @@
  * To change the template for this generated file go to
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
-package org.eclipse.pde.internal.ui.neweditor.plugin;
+package org.eclipse.pde.internal.ui.neweditor.plugin.rows;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
-import org.eclipse.pde.internal.ui.neweditor.plugin.dummy.*;
+import org.eclipse.pde.internal.ui.neweditor.IContextPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.FormColors;
@@ -20,10 +22,14 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
 public abstract class ExtensionAttributeRow {
+	protected IContextPart part;
 	protected ISchemaAttribute att;
-	protected DummyExtensionElement input;
+	protected IPluginElement input;
+	protected boolean blockNotification;
+	protected boolean dirty;
 	
-	public ExtensionAttributeRow(ISchemaAttribute att) {
+	public ExtensionAttributeRow(IContextPart part, ISchemaAttribute att) {
+		this.part = part;
 		this.att = att;
 	}
 	
@@ -80,17 +86,29 @@ public abstract class ExtensionAttributeRow {
 	}
 	
 	public abstract void createContents(Composite parent, FormToolkit toolkit, int span);
+
 	protected abstract void update();	
+	public abstract void commit();
+
 	public abstract void setFocus();
-	public boolean isDirty() {
-		// TODO need to implement this
-		return false;
-	}
 	
+	public boolean isDirty() {
+		return dirty;
+	}
+
+	protected void markDirty() {
+		dirty=true;
+		part.fireSaveNeeded();
+	}
+
 	public void dispose() {
 	}
-	public void setInput(DummyExtensionElement input) {
+
+	public void setInput(IPluginElement input) {
 		this.input = input;
 		update();
+	}
+	protected IProject getProject() {
+		return part.getPage().getPDEEditor().getCommonProject();
 	}
 }

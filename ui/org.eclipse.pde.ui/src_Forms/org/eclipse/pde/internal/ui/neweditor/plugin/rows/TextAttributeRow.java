@@ -4,9 +4,14 @@
  * To change the template for this generated file go to
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
-package org.eclipse.pde.internal.ui.neweditor.plugin;
+package org.eclipse.pde.internal.ui.neweditor.plugin.rows;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.neweditor.IContextPart;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -21,13 +26,18 @@ public class TextAttributeRow extends ExtensionAttributeRow {
 	/**
 	 * @param att
 	 */
-	public TextAttributeRow(ISchemaAttribute att) {
-		super(att);
+	public TextAttributeRow(IContextPart part, ISchemaAttribute att) {
+		super(part, att);
 	}
 	public void createContents(Composite parent, FormToolkit toolkit, int span) {
 		createLabel(parent, toolkit);
 		text = toolkit.createText(parent, "", SWT.SINGLE);
 		text.setLayoutData(createGridData(span));
+		text.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				if (!blockNotification) markDirty();
+			}
+		});
 	}
 	protected GridData createGridData(int span) {
 		GridData gd = new GridData(span == 2
@@ -43,8 +53,27 @@ public class TextAttributeRow extends ExtensionAttributeRow {
 	 * @see org.eclipse.pde.internal.ui.neweditor.plugin.ExtensionElementEditor#update(org.eclipse.pde.internal.ui.neweditor.plugin.DummyExtensionElement)
 	 */
 	protected void update() {
-		String value = input != null ? input.getProperty(att.getName()) : null;
+		blockNotification = true;
+		String value = null;
+		if (input!=null) {
+			IPluginAttribute patt = input.getAttribute(att.getName());
+			if (patt!=null)
+				value = patt.getValue();
+		}
 		text.setText(value != null ? value : "");
+		blockNotification = false;
+	}
+	public void commit() {
+		if (dirty && input!=null) {
+			String value = text.getText();
+			if (value.length()==0) value=null;
+			try {
+				input.setAttribute(att.getName(), value);
+				dirty = false;
+			} catch (CoreException e) {
+				PDEPlugin.logException(e);
+			}
+		}
 	}
 	public void setFocus() {
 		text.setFocus();

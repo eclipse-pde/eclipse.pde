@@ -184,7 +184,7 @@ public class GeneralInfoSection extends PDESection {
 		} else {
 			classEntry = new FormEntry(client, toolkit, "Class:", "Browse...",
 					true);
-			classEntry.setFormEntryListener(new FormEntryAdapter(getForm(),
+			classEntry.setFormEntryListener(new FormEntryAdapter(this,
 					actionBars) {
 				public void textValueChanged(FormEntry entry) {
 				}

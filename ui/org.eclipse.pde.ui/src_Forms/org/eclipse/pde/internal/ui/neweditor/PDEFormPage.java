@@ -5,6 +5,7 @@
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
 package org.eclipse.pde.internal.ui.neweditor;
+import org.eclipse.pde.core.IModel;
 import org.eclipse.jface.action.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -57,5 +58,8 @@ public abstract class PDEFormPage extends FormPage {
 	}
 	protected String getHelpResource() {
 		return null;
+	}
+	public IModel getModel() {
+		return getPDEEditor().getAggregateModel();
 	}
 }

@@ -23,15 +23,14 @@ import org.eclipse.ui.forms.widgets.*;
  * To change the template for this generated type comment go to Window -
  * Preferences - Java - Code Generation - Code and Comments
  */
-public class ExtensionPointDetails implements IDetailsPage, IContextPart {
-	private IManagedForm mform;
+public class ExtensionPointDetails extends AbstractFormPart implements IDetailsPage, IContextPart {
 	private IPluginExtensionPoint input;
 	private FormEntry id;
 	private FormEntry name;
 	private FormEntry schema;
 	private FormText rtext;
 	private String rtextData;
-	private DetailsPart detailsPart;
+	
 	private static final String SCHEMA_RTEXT_DATA = "<form>"
 			+ "<p><img href=\"search\"/> <a href=\"search\">Find references</a></p>"
 			+ "<p><img href=\"schema\"/> <a href=\"schema\">Open extension point schema file</a></p>"
@@ -41,16 +40,15 @@ public class ExtensionPointDetails implements IDetailsPage, IContextPart {
 			+ "</form>";
 	public ExtensionPointDetails() {
 	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.IDetailsPage#initialize(org.eclipse.ui.forms.IManagedForm)
-	 */
-	public void initialize(IManagedForm mform) {
-		this.mform = mform;
-	}
 	public String getContextId() {
 		return PluginInputContext.CONTEXT_ID;
+	}
+	public void fireSaveNeeded() {
+		markDirty();
+		getPage().getPDEEditor().fireSaveNeeded(getContextId(), false);
+	}
+	public PDEFormPage getPage() {
+		return (PDEFormPage)managedForm.getContainer();
 	}
 	/*
 	 * (non-Javadoc)
@@ -64,7 +62,7 @@ public class ExtensionPointDetails implements IDetailsPage, IContextPart {
 		layout.rightMargin = 0;
 		layout.bottomMargin = 0;
 		parent.setLayout(layout);
-		FormToolkit toolkit = mform.getToolkit();
+		FormToolkit toolkit = getForm().getToolkit();
 		Section section = toolkit.createSection(parent, Section.DESCRIPTION);
 		section.marginHeight = 5;
 		section.marginWidth = 5;
@@ -84,7 +82,7 @@ public class ExtensionPointDetails implements IDetailsPage, IContextPart {
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		id = new FormEntry(client, toolkit, "Id:", null, false);
-		id.setFormEntryListener(new FormEntryAdapter(mform) {
+		id.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
 				if (input != null) {
 					try {
@@ -96,7 +94,7 @@ public class ExtensionPointDetails implements IDetailsPage, IContextPart {
 			}
 		});
 		name = new FormEntry(client, toolkit, "Name:", null, false);
-		name.setFormEntryListener(new FormEntryAdapter(mform) {
+		name.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
 				if (input != null)
 					try {
@@ -107,7 +105,7 @@ public class ExtensionPointDetails implements IDetailsPage, IContextPart {
 			}
 		});
 		schema = new FormEntry(client, toolkit, "Schema:", null, false);
-		schema.setFormEntryListener(new FormEntryAdapter(mform) {
+		schema.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
 				if (input != null) {
 					try {
@@ -163,7 +161,7 @@ public class ExtensionPointDetails implements IDetailsPage, IContextPart {
 			return;
 		rtextData = hasSchema ? SCHEMA_RTEXT_DATA : NO_SCHEMA_RTEXT_DATA;
 		rtext.setText(rtextData, true, false);
-		mform.getForm().reflow(true);
+		getForm().getForm().reflow(true);
 	}
 	/*
 	 * (non-Javadoc)
@@ -187,6 +185,7 @@ public class ExtensionPointDetails implements IDetailsPage, IContextPart {
 		id.commit();
 		name.commit();
 		schema.commit();
+		super.commit(onSave);
 	}
 	/*
 	 * (non-Javadoc)
@@ -199,34 +198,10 @@ public class ExtensionPointDetails implements IDetailsPage, IContextPart {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.forms.IDetailsPage#dispose()
-	 */
-	public void dispose() {
-	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.IDetailsPage#isDirty()
-	 */
-	public boolean isDirty() {
-		return id.isDirty() || name.isDirty() || schema.isDirty();
-	}
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.eclipse.ui.forms.IDetailsPage#refresh()
 	 */
 	public void refresh() {
 		update();
-	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.IDetailsPage#isStale()
-	 */
-	public boolean isStale() {
-		return false;
-	}
-	public void setFormInput(Object input) {
+		super.refresh();
 	}
 }

@@ -6,10 +6,11 @@
  */
 package org.eclipse.pde.internal.ui.neweditor.plugin;
 import org.eclipse.jface.action.Action;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+import org.eclipse.pde.internal.core.plugin.PluginElement;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.neweditor.*;
-import org.eclipse.pde.internal.ui.neweditor.plugin.dummy.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.editor.FormEditor;
@@ -36,16 +37,17 @@ public class ExtensionsPage extends PDEFormPage {
 		}
 		protected void registerPages(DetailsPart detailsPart) {
 			// register static page for the extensions
-			detailsPart.registerPage(DummyExtension.class, new ExtensionDetails());
+			detailsPart.registerPage(IPluginExtension.class, new ExtensionDetails());
 			// register a dynamic provider for elements
 			detailsPart.setPageProvider(this);
 		}
 		public Object getPageKey(Object object) {
-			if (object instanceof DummyExtension)
-				return DummyExtension.class;
-			if (object instanceof DummyExtensionElement) {
-				DummyExtensionElement e = (DummyExtensionElement)object;
-				return e.getSchemaElement();
+			if (object instanceof IPluginExtension)
+				return IPluginExtension.class;
+			if (object instanceof IPluginElement) {
+				// TODO this will burn us with source models
+				PluginElement e = (PluginElement)object;
+				return e.getElementInfo();
 			}
 			return object.getClass();
 		}
@@ -58,7 +60,7 @@ public class ExtensionsPage extends PDEFormPage {
 			final ScrolledForm form = managedForm.getForm();
 			Action collapseAction = new Action("col") {
 				public void run() {
-					section.collapseAll();
+					section.handleCollapseAll();
 				}
 			};
 			collapseAction.setToolTipText("Collapse All");
