@@ -107,7 +107,6 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, message, null));
 			} else {
 				result.add(model);
-				getCompiledElements().add(model.getSymbolicName());
 			}
 			collectElementToAssemble(pluginList[i]);
 			collectSourcePlugins(pluginList[i], model);

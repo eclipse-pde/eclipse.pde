@@ -96,6 +96,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	//This list is initialized by the generateBuildJarsTarget
 	private ArrayList compiledJarNames;
 	private boolean dotOnTheClasspath = false;
+	private boolean binaryPlugin = false;
 
 	/**
 	 * @see AbstractScriptGenerator#generate()
@@ -152,7 +153,8 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		pluginZipDestination = PLUGIN_DESTINATION + '/' + fullName + ".zip"; //$NON-NLS-1$ //$NON-NLS-2$
 		pluginUpdateJarDestination = PLUGIN_DESTINATION + '/' + fullName + ".jar"; //$NON-NLS-1$ //$NON-NLS-2$
 		String[] classpathInfo = getClasspathEntries(model);
-		specialDotProcessing(classpathInfo);
+		if (!binaryPlugin)
+			specialDotProcessing(classpathInfo);
 	}
 
 	protected static boolean findAndReplaceDot(String[] classpathInfo) {
@@ -212,7 +214,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		generatePrologue();
 		generateBuildUpdateJarTarget();
 
-		if (getBuildProperties().getProperty(SOURCE_PLUGIN, null) == null) { //$NON-NLS-1$
+		if (getBuildProperties().getProperty(SOURCE_PLUGIN, null) == null) {
 			generateBuildJarsTarget(model);
 		} else {
 			generateBuildJarsTargetForSourceGathering();
@@ -339,25 +341,27 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private void generateGatherSourcesTarget() throws CoreException {
 		script.println();
 		script.printTargetDeclaration(TARGET_GATHER_SOURCES, TARGET_INIT, PROPERTY_DESTINATION_TEMP_FOLDER, null, null);
-		IPath baseDestination = new Path(getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER));
-		baseDestination = baseDestination.append(fullName);
-		List destinations = new ArrayList(5);
-		Properties properties = getBuildProperties();
-		CompiledEntry[] availableJars = extractEntriesToCompile(properties);
-		for (int i = 0; i < availableJars.length; i++) {
-			String jar = availableJars[i].getName(true);
-			IPath destination = baseDestination.append(jar).removeLastSegments(1); // remove the jar name
-			if (!destinations.contains(destination)) {
-				script.printMkdirTask(destination.toString());
-				destinations.add(destination);
+		if (!binaryPlugin) {
+			IPath baseDestination = new Path(getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER));
+			baseDestination = baseDestination.append(fullName);
+			List destinations = new ArrayList(5);
+			Properties properties = getBuildProperties();
+			CompiledEntry[] availableJars = extractEntriesToCompile(properties);
+			for (int i = 0; i < availableJars.length; i++) {
+				String jar = availableJars[i].getName(true);
+				IPath destination = baseDestination.append(jar).removeLastSegments(1); // remove the jar name
+				if (!destinations.contains(destination)) {
+					script.printMkdirTask(destination.toString());
+					destinations.add(destination);
+				}
+				script.printCopyTask(getSRCLocation(jar), destination.toString(), null, false);
 			}
-			script.printCopyTask(getSRCLocation(jar), destination.toString(), null, false);
-		}
-		String include = (String) getBuildProperties().get(PROPERTY_SRC_INCLUDES);
-		String exclude = (String) getBuildProperties().get(PROPERTY_SRC_EXCLUDES);
-		if (include != null || exclude != null) {
-			FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BASEDIR), null, include, null, exclude, null, null);
-			script.printCopyTask(null, baseDestination.toString(), new FileSet[] {fileSet}, false);
+			String include = (String) getBuildProperties().get(PROPERTY_SRC_INCLUDES);
+			String exclude = (String) getBuildProperties().get(PROPERTY_SRC_EXCLUDES);
+			if (include != null || exclude != null) {
+				FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BASEDIR), null, include, null, exclude, null, null);
+				script.printCopyTask(null, baseDestination.toString(), new FileSet[] {fileSet}, false);
+			}
 		}
 		script.printTargetEnd();
 	}
@@ -387,28 +391,29 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		String include = (String) getBuildProperties().get(PROPERTY_BIN_INCLUDES);
 		String exclude = (String) getBuildProperties().get(PROPERTY_BIN_EXCLUDES);
 
-		//Copy only the jars that has been compiled and are listed in the includes
-		String[] splitIncludes = Utils.getArrayFromString(include);
-		boolean allJars = containsStarDotJar(splitIncludes);
-		String[] fileSetValues = new String[compiledJarNames.size()];
-		int count = 0;
-		for (Iterator iter = compiledJarNames.iterator(); iter.hasNext();) {
-			CompiledEntry entry = (CompiledEntry) iter.next();
-			String formatedName = entry.getName(false) + (entry.getType() == CompiledEntry.FOLDER ? "/" : ""); //$NON-NLS-1$//$NON-NLS-2$
-			if (allJars || Utils.isStringIn(splitIncludes, formatedName)) {
-				fileSetValues[count++] = formatedName;
-				continue;
+		if (!binaryPlugin) {
+			//Copy only the jars that has been compiled and are listed in the includes
+			String[] splitIncludes = Utils.getArrayFromString(include);
+			boolean allJars = containsStarDotJar(splitIncludes);
+			String[] fileSetValues = new String[compiledJarNames.size()];
+			int count = 0;
+			for (Iterator iter = compiledJarNames.iterator(); iter.hasNext();) {
+				CompiledEntry entry = (CompiledEntry) iter.next();
+				String formatedName = entry.getName(false) + (entry.getType() == CompiledEntry.FOLDER ? "/" : ""); //$NON-NLS-1$//$NON-NLS-2$
+				if (allJars || Utils.isStringIn(splitIncludes, formatedName)) {
+					fileSetValues[count++] = formatedName;
+					continue;
+				}
+			}
+			if (count != 0) {
+				FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER), null, Utils.getStringFromArray(fileSetValues, ","), null, replaceVariables(exclude, true), null, null); //$NON-NLS-1$
+				script.printCopyTask(null, root, new FileSet[] {fileSet}, true);
+			}
+			if (dotOnTheClasspath) {
+				FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + '/' + EXPANDED_DOT, null, "**", null, null, null, null); //$NON-NLS-1$
+				script.printCopyTask(null, root, new FileSet[] {fileSet}, true);
 			}
 		}
-		if (count != 0) {
-			FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER), null, Utils.getStringFromArray(fileSetValues, ","), null, replaceVariables(exclude, true), null, null); //$NON-NLS-1$
-			script.printCopyTask(null, root, new FileSet[] {fileSet}, true);
-		}
-		if (dotOnTheClasspath) {
-			FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + '/' + EXPANDED_DOT, null, "**", null, null, null, null); //$NON-NLS-1$
-			script.printCopyTask(null, root, new FileSet[] {fileSet}, true);
-		}
-
 		//General copy of the files listed in the includes
 		if (include != null || exclude != null) {
 			FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BASEDIR), null, replaceVariables(include, true), null, replaceVariables(exclude, true), null, null);
@@ -582,7 +587,13 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ELEMENT_MISSING, message, null));
 		}
 		this.model = model;
-		getCompiledElements().add(model.getSymbolicName());
+		if (getBuildProperties().size() != 0) {
+			getCompiledElements().add(model.getSymbolicName());
+		} else {
+			binaryPlugin = true;
+			buildProperties.put(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES, "**/**"); //$NON-NLS-1$
+			buildProperties.put(IBuildPropertiesConstants.PROPERTY_BIN_EXCLUDES, ".project, .classpath, build.xml"); //$NON-NLS-1$
+		}
 	}
 
 	/**
@@ -639,7 +650,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 */
 	private void generateBuildJarsTarget(BundleDescription pluginModel) throws CoreException {
 		Properties properties = getBuildProperties();
-		CompiledEntry[] availableJars = extractEntriesToCompile(properties);
+		CompiledEntry[] availableJars = binaryPlugin ? new CompiledEntry[0] : extractEntriesToCompile(properties);
 		compiledJarNames = new ArrayList(availableJars.length);
 		Map jars = new HashMap(availableJars.length);
 		for (int i = 0; i < availableJars.length; i++)

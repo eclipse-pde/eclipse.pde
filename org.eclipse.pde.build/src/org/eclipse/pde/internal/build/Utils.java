@@ -353,13 +353,8 @@ public final class Utils implements IPDEBuildConstants {
 		}
 	}
 
-	public static List extractPlugins(List initialList, List toExtract) { //TODO
-																		  // This
-																		  // algorithm
-																		  // needs
-																		  // to
-																		  // be
-																		  // improved
+	public static List extractPlugins(List initialList, List toExtract) { 
+		//TODO This algorithm needs to be  improved
 		if (initialList.size() == toExtract.size())
 			return initialList;
 		List result = new ArrayList(toExtract.size());
