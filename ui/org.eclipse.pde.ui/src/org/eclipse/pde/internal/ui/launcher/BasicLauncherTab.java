@@ -335,7 +335,7 @@ public class BasicLauncherTab
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		fJavawButton = new Button(composite, SWT.RADIO);
-		fJavawButton.setText("javaw " + PDEPlugin.getResourceString("BasicLauncherTab.javaExecDefault")); //$NON-NLS-1$ //$NON-NLS-2$
+		fJavawButton.setText(PDEPlugin.getResourceString("BasicLauncherTab.javaExecDefault")); //$NON-NLS-1$ 
 		fJavawButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
