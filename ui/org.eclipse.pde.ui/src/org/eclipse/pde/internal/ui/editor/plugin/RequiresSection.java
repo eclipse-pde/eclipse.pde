@@ -414,7 +414,9 @@ public class RequiresSection
 		};
 		
 		try {
-			PlatformUI.getWorkbench().getProgressService().run(false, false, op);
+			PlatformUI.getWorkbench().getProgressService().runInUI(
+					PDEPlugin.getActiveWorkbenchWindow(), op,
+					PDEPlugin.getWorkspace().getRoot());
 		} catch (InterruptedException e) {
 			PDEPlugin.logException(e);
 		} catch (InvocationTargetException e) {

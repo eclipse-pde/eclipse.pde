@@ -35,11 +35,14 @@ public class PluginExportAction extends Action {
 	private void ensureContentSaved() {
 		if (fEditor.isDirty()) {
 			try {
-				PlatformUI.getWorkbench().getProgressService().run(false, false, new IRunnableWithProgress() {
+				IRunnableWithProgress op = new IRunnableWithProgress() {
 					public void run(IProgressMonitor monitor) {
 						fEditor.doSave(monitor);
 					}
-				});
+				};
+				PlatformUI.getWorkbench().getProgressService().runInUI(
+						PDEPlugin.getActiveWorkbenchWindow(), op,
+						PDEPlugin.getWorkspace().getRoot());
 			} catch (InvocationTargetException e) {
 				PDEPlugin.logException(e);
 			} catch (InterruptedException e) {

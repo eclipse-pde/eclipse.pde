@@ -32,11 +32,15 @@ public class EditorBuildFeatureAction extends Action {
 	private void ensureContentSaved() {
 		if (activeEditor.isDirty()) {
 			try {
-				PlatformUI.getWorkbench().getProgressService().run(false, false, new IRunnableWithProgress() {
+				IRunnableWithProgress op = new IRunnableWithProgress() {
 					public void run(IProgressMonitor monitor) {
 						activeEditor.doSave(monitor);
 					}
-				});
+				};
+				PlatformUI.getWorkbench().getProgressService().runInUI(
+						PDEPlugin.getActiveWorkbenchWindow(), op,
+						PDEPlugin.getWorkspace().getRoot());
+
 			} catch (InvocationTargetException e) {
 				PDEPlugin.logException(e);
 			} catch (InterruptedException e) {
