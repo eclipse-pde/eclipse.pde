@@ -95,6 +95,7 @@ public class LogView extends ViewPart implements ILogListener {
 	private Action fCopyAction;
 	private Action fActivateViewAction;
 	private Action fOpenLogAction;
+	private Action fExportAction;
 
     public LogView() {
         fLogs = new ArrayList();
@@ -122,8 +123,8 @@ public class LogView extends ViewPart implements ILogListener {
         
         IToolBarManager toolBarManager = bars.getToolBarManager();
         
-        final Action exportAction = createExportAction();
-        toolBarManager.add(exportAction);
+        fExportAction = createExportAction();
+		toolBarManager.add(fExportAction);
         
         final Action importLogAction = createImportLogAction();
         toolBarManager.add(importLogAction);
@@ -163,7 +164,7 @@ public class LogView extends ViewPart implements ILogListener {
                 manager.add(fOpenLogAction);
                 manager.add(fReadLogAction);
                 manager.add(new Separator());
-                manager.add(exportAction);
+                manager.add(fExportAction);
                 manager.add(importLogAction);
                 manager.add(new Separator());
                 ((EventDetailsDialogAction) fPropertiesAction).setComparator(comparator);
@@ -232,6 +233,7 @@ public class LogView extends ViewPart implements ILogListener {
         action.setToolTipText(PDERuntimePlugin.getResourceString("LogView.export.tooltip")); //$NON-NLS-1$
         action.setImageDescriptor(PDERuntimePluginImages.DESC_EXPORT);
         action.setDisabledImageDescriptor(PDERuntimePluginImages.DESC_EXPORT_DISABLED);
+		action.setEnabled(fInputFile.exists());
     	return action;
     }
     
@@ -603,6 +605,7 @@ public class LogView extends ViewPart implements ILogListener {
                                 && fInputFile.equals(Platform.getLogFileLocation()
                                         .toFile()));
                         fOpenLogAction.setEnabled(fInputFile.exists());
+						fExportAction.setEnabled(fInputFile.exists());
                         if (activate && fActivateViewAction.isChecked()) {
                             IWorkbenchPage page = PDERuntimePlugin.getActivePage();
                             if (page != null)
