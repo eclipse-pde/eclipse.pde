@@ -12,7 +12,7 @@ import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
 import org.eclipse.pde.core.internal.ant.AntScript;
-import sun.awt.font.ScriptRun;
+
 
 /**
  * 
