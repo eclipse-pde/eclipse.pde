@@ -235,10 +235,19 @@
             name="%pluginContent.helloWorld.name"
             icon="icons/etool16/newexprj_wiz.gif"
             class="org.eclipse.pde.internal.ui.wizards.templates.HelloWorldNewWizard"
-            id="org.eclipse.pde.ui.pluginContent.helloWorld"
-            rcp="true">
+            id="org.eclipse.pde.ui.pluginContent.helloWorld">
          <description>
             %pluginContent.helloWorld.description
+         </description>
+      </wizard>
+      <wizard
+            name="%pluginContent.mail.name"
+            icon="icons/etool16/newexprj_wiz.gif"
+            class="org.eclipse.pde.internal.ui.wizards.templates.MailNewWizard"
+            id="org.eclipse.pde.ui.pluginContent.rcpmail"
+            rcp="true">
+         <description>
+            %pluginContent.mail.description
          </description>
       </wizard>
       <wizard

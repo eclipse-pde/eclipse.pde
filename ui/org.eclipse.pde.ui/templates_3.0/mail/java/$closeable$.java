@@ -1,0 +1,73 @@
+package $packageName$;
+
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.part.ViewPart;
+
+public class $closeable$ extends ViewPart {
+
+	public static final String ID = "$pluginId$.$closeable$";
+	
+	private Font boldFont;
+
+	public void createPartControl(Composite parent) {
+		Composite top = new Composite(parent, SWT.BORDER);
+		top.setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		top.setLayout(layout);
+		// top banner
+		Composite banner = new Composite(top, SWT.NONE);
+		banner.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL, GridData.VERTICAL_ALIGN_BEGINNING, true, false));
+		layout = new GridLayout();
+		layout.marginHeight = 5;
+		layout.marginWidth = 10;
+		layout.numColumns = 2;
+		banner.setLayout(layout);
+		// setup bold font
+		Font defaultFont = JFaceResources.getDefaultFont();
+		FontData[] data = defaultFont.getFontData();
+		for (int i = 0; i < data.length; i++) {
+			data[i].setStyle(SWT.BOLD);
+		}
+		boldFont = new Font(top.getDisplay(), data);
+		Label l = new Label(banner, SWT.WRAP);
+		l.setText("Subject:");
+		l.setFont(boldFont);
+		l = new Label(banner, SWT.WRAP);
+		l.setText("This is a message about the cool Eclipse RCP!");
+		
+		l = new Label(banner, SWT.WRAP);
+		l.setText("From:");
+		l.setFont(boldFont);
+		final Label link = new Label(banner, SWT.WRAP);
+		link.setText("nicoleper@hotmail.com");
+		link.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));
+		
+		l = new Label(banner, SWT.WRAP);
+		l.setText("Date:");
+		l.setFont(boldFont);
+		l = new Label(banner, SWT.WRAP);
+		l.setText("10:34 am");
+		// message contents
+		Text text = new Text(top, SWT.MULTI | SWT.WRAP);
+		text.setText("This RCP Application was generated from the PDE Plug-in Project wizard. This sample shows how to:\n"+
+						"- add a top-level menu and toolbar with actions\n"+
+						"- add keybindings to actions\n" +
+						"- create views that can't be closed and\n"+
+						"  multiple instances of the same view\n"+
+						"- perspectives with placeholders for new views\n"+
+						"- use the default about dialog\n"+
+						"- create a product definition\n");
+		text.setLayoutData(new GridData(GridData.FILL_BOTH));
+	}
+
+	public void setFocus() {
+	}
+}

@@ -52,9 +52,7 @@ public class TemplateListSelectionPage extends WizardListSelectionPage
 			//filter out ui wizards for non-ui plug-ins
 			if (uiFlag && (simple || (generate && !ui))) return false;
 			// filter out non-RCP wizard if RCP option is selected
-			if (data.isRCPApplicationPlugin() && !rcpFlag) return false;
-
-			return true;
+			return (data.isRCPApplicationPlugin() == rcpFlag);
 		}
 		private boolean getFlag(IConfigurationElement config, String name, boolean defaultValue) {
 			String value = config.getAttribute(name);

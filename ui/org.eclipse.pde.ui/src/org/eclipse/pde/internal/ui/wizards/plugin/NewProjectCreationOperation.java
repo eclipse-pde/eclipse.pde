@@ -80,7 +80,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 				generateTopLevelPluginClass(project, new SubProgressMonitor(monitor, 1));
 			}
 			// generate an application class if the RCP option is selected
-			if (data.isRCPApplicationPlugin()) {
+			if (data.isRCPApplicationPlugin() && (fContentWizard == null || !fContentWizard.hasPages()) ) {
 				generateApplicationClass(new SubProgressMonitor(monitor, 1));				
 			}
 		}
@@ -90,19 +90,6 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		createManifest(project);
 		monitor.worked(1);
 		
-		if (fData instanceof IPluginFieldData) {
-			IPluginFieldData data = (IPluginFieldData) fData;
-			
-			// generate top-level Java class if that option is selected
-			if (data.doGenerateClass()) {
-				generateTopLevelPluginClass(project, new SubProgressMonitor(monitor, 1));
-			}
-			// generate an application class if the RCP option is selected
-			if (data.isRCPApplicationPlugin()) {
-				generateApplicationClass(new SubProgressMonitor(monitor, 1));				
-			}
-		}
-
 		// generate the build.properties file
 		monitor.subTask(PDEPlugin
 						.getResourceString("NewProjectCreationOperation.buildPropertiesFile")); //$NON-NLS-1$
@@ -307,7 +294,8 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			// generate an applications section and Java class if the RCP option is selected
 			if (data.isRCPApplicationPlugin()) {
 				createApplicationExtension(data.getApplicationID(), data.getApplicationClassname());
-				createPerspectiveExtension();
+				if (fContentWizard == null || !fContentWizard.hasPages())
+					createPerspectiveExtension();
 			}
 		}
 

@@ -143,4 +143,11 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard
 		}
 		return (String[]) result.toArray(new String[result.size()]);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.ui.IPluginContentWizard#hasPages()
+	 */
+	public boolean hasPages() {
+		return getTemplateSections().length > 0;
+	}
 }
