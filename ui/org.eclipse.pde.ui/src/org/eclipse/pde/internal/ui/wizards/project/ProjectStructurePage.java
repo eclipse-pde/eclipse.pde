@@ -234,11 +234,6 @@ public class ProjectStructurePage extends WizardPage {
 		bottomContainer.setLayout(layout);		
 		bottomContainer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		Label buildOutputLabel = new Label(bottomContainer, SWT.NULL);
-		buildOutputLabel.setText(PDEPlugin.getResourceString(KEY_OUTPUT));
-		buildOutputText = new Text(bottomContainer, SWT.SINGLE | SWT.BORDER);
-		buildOutputText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
 		Label libraryLabel = new Label(bottomContainer, SWT.NULL);
 		libraryLabel.setText(PDEPlugin.getResourceString(fragment ? KEY_FLIBRARY : KEY_LIBRARY));
 		libraryText = new Text(bottomContainer, SWT.SINGLE | SWT.BORDER);
@@ -248,6 +243,11 @@ public class ProjectStructurePage extends WizardPage {
 		sourceLabel.setText(PDEPlugin.getResourceString(KEY_SOURCE));
 		sourceText = new Text(bottomContainer, SWT.SINGLE | SWT.BORDER);
 		sourceText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		Label buildOutputLabel = new Label(bottomContainer, SWT.NULL);
+		buildOutputLabel.setText(PDEPlugin.getResourceString(KEY_OUTPUT));
+		buildOutputText = new Text(bottomContainer, SWT.SINGLE | SWT.BORDER);
+		buildOutputText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	}
 	
 	public void createControl(Composite parent) {
