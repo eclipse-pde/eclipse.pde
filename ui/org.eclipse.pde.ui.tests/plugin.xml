@@ -1,33 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<plugin
-   id="org.eclipse.pde.ui.tests"
-   name="PDE JUnit Tests"
-   version="3.1.0"
-   provider-name="Eclipse.org"
-   class="org.eclipse.pde.internal.ui.tests.macro.MacroPlugin">
+<plugin>
    
-   <runtime>
-      <library name="tests.jar">
-         <export name="*"/>
-      </library>
-   </runtime>
-   <requires>
-      <import plugin="org.junit"/>
-      <import plugin="org.eclipse.pde.ui"/>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.jdt.core"/>
-      <import plugin="org.eclipse.test.performance"/>
-      <import plugin="org.eclipse.ui.ide"/>
-      <import plugin="org.eclipse.pde"/>
-      <import plugin="org.eclipse.team.core"/>
-      <import plugin="org.eclipse.jdt.ui"/>
-      <import plugin="org.eclipse.jdt.launching"/>
-   </requires>
-
-   <extension-point id="macroSupport" name="Macro Support" schema="schema/macroSupport.exsd"/>
+     <extension-point id="macroSupport" name="Macro Support" schema="schema/macroSupport.exsd"/>
    <extension
          point="org.eclipse.ui.actionSets">
       <actionSet
