@@ -95,6 +95,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_PLUGIN_MF_OBJ = create(PATH_OBJ, "plugin_mf_obj.gif");
 	public static final ImageDescriptor DESC_FRAGMENT_MF_OBJ = create(PATH_OBJ, "frgmt_mf_obj.gif");
 	public static final ImageDescriptor DESC_BUILD_VAR_OBJ = create(PATH_OBJ, "build_var_obj.gif");
+	public static final ImageDescriptor DESC_LOOP_OBJ = create(PATH_OBJ, "loop_obj.gif");
 	
 	public static final ImageDescriptor DESC_PLUGIN_OBJ   = create(PATH_OBJ, "plugin_obj.gif");
 	public static final ImageDescriptor DESC_FRAGMENT_OBJ   = create(PATH_OBJ, "frgmt_obj.gif");
@@ -117,6 +118,7 @@ public class PDEPluginImages {
 	 * OVR16
 	 */
 	public static final ImageDescriptor DESC_DOC_CO   = create(PATH_OVR, "doc_co.gif");
+	public static final ImageDescriptor DESC_WARNING_CO   = create(PATH_OVR, "warning_co.gif");
 	public static final ImageDescriptor DESC_ERROR_CO   = create(PATH_OVR, "error_co.gif");
 
 	/**

@@ -25,16 +25,30 @@ public interface IPluginImport extends IPluginObject, IIdentifiable {
  */
 	public static final String P_VERSION = "version";
 /**
- * An exact match.
+ * No rule.
  */
-	int EXACT = 1;
+	int NONE = 0;
+/**
+ * An perfect match.
+ */
+	int PERFECT = 1;
+/**
+ * A match that is equivalent to the required version.
+ */
+	int EQUIVALENT = 2;
 /**
  * A match that is compatible with the required version.
  */
-	int COMPATIBLE = 2;
+	int COMPATIBLE = 3;
 /**
- * Returns whether the match for the imported plug-in should
- * be EXACT or COMPATIBLE
+ * A match requires that a version is greater or equal to the
+ * specified version.
+ */
+	int GREATER_OR_EQUAL = 4;
+/**
+ * Returns the required match for the imported plug-in. The
+ * choices are: PERFECT, EQUIVALENT, COMPATIBLE and 
+ * GREATER_OR_EQUAL.
  *
  * @return the desired type of the import plug-in match
  */

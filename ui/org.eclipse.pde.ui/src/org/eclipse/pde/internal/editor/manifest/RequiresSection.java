@@ -46,14 +46,15 @@ private void addImportLink(IPluginImport importObject) {
 	String name = pluginId;
 	if (pluginInfo != null)
 		name = pluginInfo.getResourceString(pluginInfo.getName());
-	SelectableFormLabel hyperlink = factory.createSelectableLabel(requiresParent, name);
 	if (pluginInfo!=null) {
+		SelectableFormLabel hyperlink = factory.createSelectableLabel(requiresParent, name);
 		factory.turnIntoHyperlink(hyperlink, this);
 		hyperlink.setToolTipText(pluginId);
 		hyperlink.setData(pluginInfo);
 		imageLabel.setImage(pluginImage);
 	}
 	else {
+		Label label = factory.createLabel(requiresParent, name);
 		imageLabel.setImage(errorImage);
 	}
 
@@ -112,7 +113,7 @@ private void initializeImages() {
 	pluginImage = PDEPluginImages.DESC_REQ_PLUGIN_OBJ.createImage();
 	ImageDescriptor errorDesc = 
 		new OverlayIcon(PDEPluginImages.DESC_REQ_PLUGIN_OBJ, 
-		new ImageDescriptor[][] { { PDEPluginImages.DESC_ERROR_CO }
+		new ImageDescriptor[][] { {}, {}, { PDEPluginImages.DESC_ERROR_CO }
 	});
 	errorImage = errorDesc.createImage();
 }

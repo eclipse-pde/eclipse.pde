@@ -19,6 +19,8 @@ import org.eclipse.pde.internal.editor.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.pde.internal.builders.DependencyLoop;
+import org.eclipse.pde.internal.builders.DependencyLoopFinder;
 
 
 public class AlertSection
@@ -134,15 +136,14 @@ private boolean checkReferences(Composite parent, FormWidgetFactory factory) {
 
 	for (int i = 0; i < imports.length; i++) {
 		IPlugin refPlugin = PDEPlugin.getDefault().findPlugin(imports[i].getId());
-		if (refPlugin != null) {
-			if (ReqGraphSection.checkForCycles(plugin.getId(), refPlugin) == true) {
-				cycles = true;
-				break;
-			}
-		} else {
+		if (refPlugin == null) {
 			unresolvedReferences = true;
 			break;
 		}
+	}
+	if (!unresolvedReferences) {
+		DependencyLoop [] loops = DependencyLoopFinder.findLoops(plugin);
+		cycles = loops.length>0;
 	}
 	if (!unresolvedReferences && !cycles)
 		return false;

@@ -27,53 +27,63 @@ import org.eclipse.pde.internal.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.pde.internal.model.ImportObject;
+import org.eclipse.swt.custom.CCombo;
+import org.eclipse.pde.internal.builders.*;
 
-public class ImportListSection
+public class ImportStatusSection
 	extends PDEFormSection
 	implements IModelChangedListener {
-	private TreeViewer importTree;
+	private TreeViewer statusTree;
 	private FormWidgetFactory factory;
+	private Image pluginImage;
 	private Image importImage;
-	private Image errorImportImage;
-	public static final String SECTION_TITLE = "ManifestEditor.ImportListSection.title";
-	public static final String SECTION_DESC = "ManifestEditor.ImportListSection.desc";
-	public static final String SECTION_NEW = "ManifestEditor.ImportListSection.new";
-	public static final String POPUP_NEW = "Menus.new.label";
-	public static final String POPUP_DELETE = "Actions.delete.label";
-	private Button newButton;
-	private Vector imports;
+	private Image warningLoopImage;
+	private CCombo combo;
+	private Vector references;
+	private Object[] loops;
+
+	public static final String SECTION_TITLE = "ManifestEditor.ImportStatusSection.title";
+	public static final String SECTION_DESC = "ManifestEditor.ImportStatusSection.desc";
+	public static final String COMBO_LABEL = "ManifestEditor.ImportStatusSection.comboLabel";
+	public static final String COMBO_LOOPS = "ManifestEditor.ImportStatusSection.comboLoops";
+	public static final String COMBO_REFS = "ManifestEditor.ImportStatusSection.comboRefs";
+
+	private static final int LOOP_MODE = 0;
+	private static final int REFERENCE_MODE = 1;
+
+	private int mode = LOOP_MODE;
 	
-	class ImportContentProvider
+	class StatusContentProvider
 		extends DefaultContentProvider
 		implements ITreeContentProvider {
 
 		public Object[] getChildren(Object parent) {
+			if (parent instanceof DependencyLoop) {
+				DependencyLoop loop = (DependencyLoop)parent;
+				return loop.getMembers();
+			}
 			return new Object[0];
 		}
 		public boolean hasChildren(Object parent) {
+			if (parent instanceof DependencyLoop)
+			   return true;
 			return false;
 		}
 		public Object getParent(Object child) {
 			return null;
 		}
 		public Object[] getElements(Object parent) {
-			if (imports==null) {
-				createImportObjects();
+			if (mode==REFERENCE_MODE) {
+				return getReferences();
 			}
-			return imports.toArray();
-		}
-		private void createImportObjects() {
-			imports = new Vector();
-			IPluginModel model = (IPluginModel)getFormPage().getModel();
-			IPluginImport [] iimports = model.getPlugin().getImports();
-			for (int i=0; i<iimports.length; i++) {
-				IPluginImport iimport = iimports[i];
-				imports.add(new ImportObject(iimport));
+			if (mode==LOOP_MODE) {
+				return getLoops();
 			}
+			return new Object[0];
 		}
 	}
 
-	class ImportLabelProvider extends LabelProvider {
+	class StatusLabelProvider extends LabelProvider {
 		public String getText(Object obj) {
 			return resolveObjectName(obj);
 		}
@@ -82,7 +92,7 @@ public class ImportListSection
 		}
 	}
 
-public ImportListSection(ManifestDependenciesPage page) {
+public ImportStatusSection(ManifestDependenciesPage page) {
 	super(page);
 	setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
 	setDescription(PDEPlugin.getResourceString(SECTION_DESC));
@@ -96,6 +106,26 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	layout.numColumns = 2;
 
 	container.setLayout(layout);
+	
+	Label label = factory.createLabel(container, PDEPlugin.getResourceString(COMBO_LABEL));
+	int comboStyle = SWT.READ_ONLY;
+	if (SWT.getPlatform().equals("motif")==false)
+	   comboStyle |= SWT.FLAT;
+	else
+	   comboStyle |= SWT.BORDER;
+	combo = new CCombo(container, comboStyle);
+	combo.setBackground(factory.getBackgroundColor());
+	combo.setForeground(factory.getForegroundColor());
+	combo.add(PDEPlugin.getResourceString(COMBO_LOOPS));
+	combo.add(PDEPlugin.getResourceString(COMBO_REFS));
+	GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+	combo.setLayoutData(gd);
+	combo.addSelectionListener(new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			viewChanged();
+		}
+	});
+	
 	Tree tree = new Tree(container, factory.BORDER_STYLE);
 	factory.hookDeleteListener(tree);
 
@@ -110,14 +140,14 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	Menu menu = popupMenuManager.createContextMenu(tree);
 	tree.setMenu(menu);
 
-	//importTree = new TableTreeViewer(tree);
-	importTree = new TreeViewer(tree);
-	importTree.setAutoExpandLevel(TreeViewer.ALL_LEVELS);
-	importTree.setContentProvider(new ImportContentProvider());
-	importTree.setLabelProvider(new ImportLabelProvider());
+	//statusTree = new TableTreeViewer(tree);
+	statusTree = new TreeViewer(tree);
+	//statusTree.setAutoExpandLevel(TreeViewer.ALL_LEVELS);
+	statusTree.setContentProvider(new StatusContentProvider());
+	statusTree.setLabelProvider(new StatusLabelProvider());
 	factory.paintBordersFor(container);
 
-	importTree.addSelectionChangedListener(new ISelectionChangedListener() {
+	statusTree.addSelectionChangedListener(new ISelectionChangedListener() {
 		public void selectionChanged(SelectionChangedEvent event) {
 			Object item = ((IStructuredSelection)event.getSelection()).getFirstElement();
 			fireSelectionNotification(item);
@@ -125,31 +155,17 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 		}
 	});
 	
-	GridData gd = new GridData(GridData.FILL_BOTH);
+	gd = new GridData(GridData.FILL_BOTH);
+	gd.horizontalSpan = 2;
 	tree.setLayoutData(gd);
+	combo.select(0);
 
-	Composite buttonContainer = factory.createComposite(container);
-	gd = new GridData(GridData.FILL_VERTICAL);
-	buttonContainer.setLayoutData(gd);
-	layout = new GridLayout();
-	layout.marginHeight = 0;
-	buttonContainer.setLayout(layout);
-
-	newButton = factory.createButton(buttonContainer, PDEPlugin.getResourceString(SECTION_NEW), SWT.PUSH);
-	gd = new GridData(GridData.FILL_HORIZONTAL);
-	gd.verticalAlignment= GridData.BEGINNING;
-	newButton.setLayoutData(gd);
-	newButton.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent e) {
-			handleNew();
-			newButton.getShell().setDefaultButton(null);
-		}
-	});
 	return container;
 }
 public void dispose() {
 	importImage.dispose();
-	errorImportImage.dispose();
+	pluginImage.dispose();
+	warningLoopImage.dispose();
 	IPluginModelBase model = (IPluginModelBase)getFormPage().getModel();
 	model.removeModelChangedListener(this);
 	super.dispose();
@@ -160,15 +176,18 @@ public void doGlobalAction(String actionId) {
 	}
 }
 
+private void handleDelete() {
+}
+
 public void expandTo(Object object) {
 	if (object instanceof IPluginImport) {
 		ImportObject iobj = new ImportObject((IPluginImport)object);
-		importTree.setSelection(new StructuredSelection(iobj), true);
+		statusTree.setSelection(new StructuredSelection(iobj), true);
 	}
 }
 
 private void fillContextMenu(IMenuManager manager) {
-	ISelection selection = importTree.getSelection();
+	ISelection selection = statusTree.getSelection();
 	Object object = ((IStructuredSelection) selection).getFirstElement();
 	getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager);
 }
@@ -224,69 +243,28 @@ static void fillContextMenu(
 }
 */
 
-private void handleDelete() {
-/*
-	IPluginObject object =
-		(IPluginObject) ((IStructuredSelection) importTree.getSelection())
-			.getFirstElement();
-	if (object == null)
-		return;
-
-	try {
-		if (object instanceof IPluginElement) {
-			IPluginElement ee = (IPluginElement) object;
-			IPluginParent parent = (IPluginParent) ee.getParent();
-			parent.remove(ee);
-		} else
-			if (object instanceof IPluginExtension) {
-				IPluginExtension extension = (IPluginExtension) object;
-				IPluginBase plugin = extension.getPluginBase();
-				plugin.remove(extension);
-			}
-	} catch (CoreException e) {
-		PDEPlugin.logException(e);
-	}
-*/
-}
-
-private void handleNew() {
-/*
-	IFile file = ((IFileEditorInput)getFormPage().getEditor().getEditorInput()).getFile();
-	final IProject project = file.getProject();
-	BusyIndicator.showWhile(importTree.getTree().getDisplay(), new Runnable() {
-		public void run() {
-			NewExtensionWizard wizard =
-				new NewExtensionWizard(project, (IPluginModelBase) getFormPage().getModel());
-			WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
-			dialog.create();
-			dialog.getShell().setSize(500, 500);
-			dialog.open();
-		}
-	});
-*/
-}
-
 public void initialize(Object input) {
 	IPluginModelBase model = (IPluginModelBase)input;
-	importTree.setInput(model.getPluginBase());
+	statusTree.setInput(model.getPluginBase());
 	setReadOnly(!model.isEditable());
-	newButton.setEnabled(model.isEditable());
 	model.addModelChangedListener(this);
 }
 
 public void initializeImages() {
 	importImage = PDEPluginImages.DESC_REQ_PLUGIN_OBJ.createImage();
-	ImageDescriptor errorDesc = 
-		new OverlayIcon(PDEPluginImages.DESC_REQ_PLUGIN_OBJ, 
-		new ImageDescriptor[][] { {}, {}, { PDEPluginImages.DESC_ERROR_CO }
+	pluginImage = PDEPluginImages.DESC_PLUGIN_OBJ.createImage();
+	ImageDescriptor warningDesc = 
+		new OverlayIcon(PDEPluginImages.DESC_LOOP_OBJ, 
+		new ImageDescriptor[][] { {}, {}, { PDEPluginImages.DESC_WARNING_CO }
 	});
-	errorImportImage = errorDesc.createImage();	
+	warningLoopImage = warningDesc.createImage();
 }
 
 public void modelChanged(IModelChangedEvent event) {
 	if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
-		imports=null;
-		importTree.refresh();
+		references = null;
+		loops = null;
+		statusTree.refresh();
 		return;
 	}
 /*
@@ -300,67 +278,107 @@ public void modelChanged(IModelChangedEvent event) {
 			&& !(pobj.getParent() instanceof IPluginExtension))
 			return;
 		if (event.getChangeType() == event.INSERT) {
-			importTree.refresh();
-			importTree.setSelection(new StructuredSelection(changeObject), true);
-			importTree.getTree().setFocus();
+			statusTree.refresh();
+			statusTree.setSelection(new StructuredSelection(changeObject), true);
+			statusTree.getTree().setFocus();
 		} else
 			if (event.getChangeType() == event.REMOVE) {
-				importTree.refresh();
+				statusTree.refresh();
 			} else {
-				importTree.update(changeObject, null);
+				statusTree.update(changeObject, null);
 			}
 	}
 */
 }
 
+private void viewChanged() {
+	int index = combo.getSelectionIndex();
+	if (index==0) {
+		mode = LOOP_MODE;
+		statusTree.setAutoExpandLevel(0);
+	}
+	else {
+		mode = REFERENCE_MODE;
+		statusTree.setAutoExpandLevel(TreeViewer.ALL_LEVELS);
+	}
+	statusTree.refresh();
+}
+
+private Object[] getReferences() {
+	if (references==null) {
+		references = new Vector();
+		IPluginModelBase model = (IPluginModelBase)getFormPage().getModel();
+		IPluginBase plugin = model.getPluginBase();
+		String referenceId = plugin.getId();
+
+		ExternalModelManager registry = PDEPlugin.getDefault().getExternalModelManager();
+		WorkspaceModelManager manager =
+			(WorkspaceModelManager) PDEPlugin.getDefault().getWorkspaceModelManager();
+		
+		createReferences(references, manager.getWorkspacePluginModels(), referenceId);
+		if (registry.hasEnabledModels())
+			createReferences(references, registry.getModels(), referenceId);
+	}
+	return references.toArray();
+}
+
+private void createReferences(Vector result, IPluginModel [] candidates, String id) {
+	for (int i=0; i<candidates.length; i++) {
+		IPluginModel candidate = candidates[i];
+		if (isReferencing(candidate, id))
+		   result.add(candidate.getPlugin());
+	}
+}
+
+private boolean isReferencing(IPluginModel model, String id) {
+	IPlugin plugin = model.getPlugin();
+	IPluginImport [] imports = plugin.getImports();
+	for (int i=0; i<imports.length; i++) {
+		IPluginImport iimport = imports[i];
+		if (iimport.getId().equals(id)) {
+			return true;
+		}
+	}
+	return false;
+}
+
+private Object[] getLoops() {
+	if (loops==null) {
+		IPlugin plugin = ((IPluginModel)getFormPage().getModel()).getPlugin();
+		loops = DependencyLoopFinder.findLoops(plugin);
+	}
+	return loops;
+}
+
 private Image resolveObjectImage(Object obj) {
+	if (obj instanceof IPlugin) {
+		return pluginImage;
+	}
+	if (obj instanceof DependencyLoop) {
+		return warningLoopImage;
+	}
+	return null;
+/*
 	ImportObject importObject = (ImportObject)obj;
 	if (importObject.isResolved())
 	   return importImage;
 	return errorImportImage;
+*/
 }
 
 private String resolveObjectName(Object obj) {
+	if (mode==REFERENCE_MODE) {
+		if (obj instanceof IPlugin) {
+			IPlugin plugin = (IPlugin)obj;
+			return plugin.getTranslatedName();
+		}
+	}
 	return obj.toString();
 }
-
-/*
-public static String resolveObjectName(SchemaRegistry schemaRegistry, ExternalModelManager pluginInfoRegistry, Object obj) {
-	if (obj instanceof IPluginExtension) {
-		IPluginExtension extension = (IPluginExtension) obj;
-		ISchema schema = schemaRegistry.getSchema(extension.getPoint());
-
-		// try extension point schema definition
-		if (schema != null) {
-			// exists
-			return schema.getName();
-		}
-		// try extension point declaration
-		IPluginExtensionPoint pointInfo =
-			pluginInfoRegistry.findExtensionPoint(extension.getPoint());
-		if (pointInfo != null) {
-			return pointInfo.getResourceString(pointInfo.getName());
-		}
-	} else
-		if (obj instanceof IPluginElement) {
-			String name = obj.toString();
-			IPluginElement element = (IPluginElement) obj;
-			ISchemaElement elementInfo = element.getElementInfo();
-			if (elementInfo!=null && elementInfo.getLabelProperty() != null) {
-				IPluginAttribute att = element.getAttribute(elementInfo.getLabelProperty());
-				if (att != null && att.getValue() != null)
-					name = stripShortcuts(att.getValue());
-					name = element.getResourceString(name);
-			}
-			return name;
-		}
-	return obj.toString();
-}
-*/
 
 public void setFocus() {
-	if (importTree != null)
-		importTree.getTree().setFocus();
+	if (statusTree != null)
+		statusTree.getTree().setFocus();
 }
 
 }
