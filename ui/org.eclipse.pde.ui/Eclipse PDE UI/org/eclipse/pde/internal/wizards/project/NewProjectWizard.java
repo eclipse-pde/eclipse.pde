@@ -14,16 +14,17 @@ import org.eclipse.pde.internal.*;
 import org.eclipse.jdt.ui.wizards.*;
 import org.eclipse.pde.internal.wizards.*;
 import org.eclipse.core.runtime.*;
-import java.util.*;
+import org.eclipse.core.runtime.CoreException;import org.eclipse.core.runtime.IConfigurationElement;import java.util.*;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 
-public class NewProjectWizard extends NewWizard {
-
-
+public class NewProjectWizard extends NewWizard 
+	implements IExecutableExtension {
 
 	private WizardNewProjectCreationPage mainPage;
 	private ProjectStructurePage structurePage;
 	private ProjectCodeGeneratorsPage codegenPage;
+	private IConfigurationElement config;
 	
 	public static final String PLUGIN_POINT = "projectGenerators";
 	public static final String TAG_DESCRIPTION = "description";
@@ -135,9 +136,19 @@ public boolean isFragmentWizard() {
 public boolean performFinish() {
 	if (structurePage.finish()
 		&& codegenPage.finish()) {
+		BasicNewProjectResourceWizard.updatePerspective(config);
 		revealSelection(mainPage.getProjectHandle());
 		return true;
 	}
 	return false;
 }
+
+
+public void setInitializationData(
+	IConfigurationElement config,
+	String propertyName,
+	Object data) throws CoreException {
+		this.config = config;
+}
+
 }

@@ -22,9 +22,11 @@ import org.eclipse.ui.dialogs.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.jdt.ui.wizards.*;
 import org.eclipse.pde.internal.wizards.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.*;import org.eclipse.core.runtime.CoreException;import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;;
 
-public class NewComponentProjectWizard extends NewWizard {
+public class NewComponentProjectWizard extends NewWizard 
+	implements IExecutableExtension {
 	public static final String MAIN_PAGE_TITLE = "NewComponentWizard.MainPage.title";
 	public static final String CREATING_PROJECT = "NewComponentWizard.creatingProject";
 	public static final String CREATING_FOLDERS = "NewComponentWizard.creatingFolders";
@@ -34,6 +36,8 @@ public class NewComponentProjectWizard extends NewWizard {
 	private ComponentSpecPage specPage;
 	private PluginListPage pluginListPage;
 	private FragmentListPage fragmentListPage;
+	private IConfigurationElement config;
+	
 	public NewComponentProjectWizard() {
 		super();
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWPCOMP_WIZ);
@@ -213,6 +217,7 @@ public boolean performFinish() {
 	};
 	try {
 		getContainer().run(false, true, operation);
+		BasicNewProjectResourceWizard.updatePerspective(config);
 	} catch (InvocationTargetException e) {
 		PDEPlugin.logException(e);
 		return false;
@@ -221,4 +226,10 @@ public boolean performFinish() {
 	}
 	return true;
 }
+
+public void setInitializationData(IConfigurationElement config, String property,	Object data)
+										throws CoreException {
+	this.config = config;
+}
+
 }
