@@ -14,7 +14,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.core.feature.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.model.ifeature.*;
+import org.eclipse.pde.internal.core.ifeature.*;
 
 public abstract class FeaturePropertySource implements IPropertySource {
 	protected IFeatureObject object;

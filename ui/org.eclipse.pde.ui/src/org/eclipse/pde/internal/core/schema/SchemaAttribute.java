@@ -5,7 +5,7 @@ package org.eclipse.pde.internal.core.schema;
  */
 
 import java.io.*;
-import org.eclipse.pde.internal.ui.ischema.*;
+import org.eclipse.pde.internal.core.ischema.*;
 
 public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 	private int kind = STRING;

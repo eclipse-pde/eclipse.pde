@@ -6,7 +6,7 @@ package org.eclipse.pde.internal.ui.editor.feature;
 
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.text.*;
-import org.eclipse.pde.internal.ui.model.ifeature.*;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.*;

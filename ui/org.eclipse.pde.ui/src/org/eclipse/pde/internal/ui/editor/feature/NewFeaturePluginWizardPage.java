@@ -19,7 +19,7 @@ import org.eclipse.pde.internal.ui.*;
 import java.util.*;
 import org.eclipse.ui.views.properties.*;
 import org.eclipse.pde.internal.core.builders.*;
-import org.eclipse.pde.internal.ui.model.ifeature.*;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.feature.*;
 import org.eclipse.swt.events.*;

@@ -11,7 +11,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.AbstractModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.model.ifeature.*;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.w3c.dom.*;
 import org.xml.sax.*;
 

@@ -9,7 +9,7 @@ import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.FormOutlinePage.*;
-import org.eclipse.pde.internal.ui.ischema.*;
+import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.swt.graphics.Image;
 
 public class SchemaFormOutlinePage extends FormOutlinePage {

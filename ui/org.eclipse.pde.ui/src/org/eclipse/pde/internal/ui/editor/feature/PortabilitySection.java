@@ -8,7 +8,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.PDEFormSection;
-import org.eclipse.pde.internal.ui.model.ifeature.*;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.util.Choice;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;

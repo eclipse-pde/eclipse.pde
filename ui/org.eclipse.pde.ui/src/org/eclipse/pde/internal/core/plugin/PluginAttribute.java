@@ -11,7 +11,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.model.ConfigurationPropertyModel;
 import org.eclipse.pde.core.ISourceObject;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
-import org.eclipse.pde.internal.ui.ischema.*;
+import org.eclipse.pde.internal.core.ischema.*;
 import org.w3c.dom.Node;
 
 public class PluginAttribute extends PluginObject implements IPluginAttribute {

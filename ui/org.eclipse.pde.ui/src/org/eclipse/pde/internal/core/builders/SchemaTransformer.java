@@ -5,7 +5,7 @@ package org.eclipse.pde.internal.core.builders;
  */
 
 import org.apache.xerces.parsers.*;
-import org.eclipse.pde.internal.ui.ischema.*;
+import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.schema.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.ISourceObject;

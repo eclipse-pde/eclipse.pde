@@ -15,7 +15,7 @@ import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.IModelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.model.ifeature.*;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.ui.*;
 
 public class FeatureEditor extends PDEMultiPageXMLEditor {

@@ -8,7 +8,7 @@ import org.w3c.dom.Node;
 import java.io.*;
 import org.eclipse.core.runtime.*;
 import java.net.*;
-import org.eclipse.pde.internal.ui.model.ifeature.*;
+import org.eclipse.pde.internal.core.ifeature.*;
 
 public class FeatureURLElement extends FeatureObject implements IFeatureURLElement {
 	private int elementType;

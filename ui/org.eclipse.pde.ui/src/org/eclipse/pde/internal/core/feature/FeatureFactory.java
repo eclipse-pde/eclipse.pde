@@ -5,7 +5,7 @@ package org.eclipse.pde.internal.core.feature;
  */
 
 import java.net.URL;
-import org.eclipse.pde.internal.ui.model.ifeature.*;
+import org.eclipse.pde.internal.core.ifeature.*;
 
 public class FeatureFactory implements IFeatureModelFactory {
 	private IFeatureModel model;

@@ -12,7 +12,7 @@ import org.eclipse.pde.core.IEditable;
 import org.eclipse.pde.internal.core.schema.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.ischema.ISchema;
+import org.eclipse.pde.internal.core.ischema.ISchema;
 
 public class SchemaEditor extends PDEMultiPageXMLEditor {
 	public static final String DEFINITION_PAGE = "definition";

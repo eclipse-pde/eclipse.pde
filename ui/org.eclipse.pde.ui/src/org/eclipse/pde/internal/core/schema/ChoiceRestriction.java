@@ -6,7 +6,7 @@ package org.eclipse.pde.internal.core.schema;
 
 import java.util.Vector;
 import java.io.*;
-import org.eclipse.pde.internal.ui.ischema.*;
+import org.eclipse.pde.internal.core.ischema.*;
 import java.util.List;
 import java.util.Iterator;
 

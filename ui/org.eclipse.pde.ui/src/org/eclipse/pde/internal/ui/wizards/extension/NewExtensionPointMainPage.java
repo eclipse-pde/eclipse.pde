@@ -25,7 +25,7 @@ import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.*;
 import org.eclipse.jface.window.*;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.pde.internal.ui.ischema.*;
+import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.ui.editor.schema.*;
 import org.eclipse.pde.internal.ui.editor.*;
 

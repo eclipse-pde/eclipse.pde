@@ -10,7 +10,7 @@ import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.model.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.ui.ischema.*;
+import org.eclipse.pde.internal.core.ischema.*;
 import org.w3c.dom.*;
 
 public class PluginElement extends PluginParent implements IPluginElement {

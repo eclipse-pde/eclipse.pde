@@ -6,7 +6,7 @@ package org.eclipse.pde.internal.ui.editor.schema;
 
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.ui.editor.text.*;
-import org.eclipse.pde.internal.ui.ischema.ISchema;
+import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.*;

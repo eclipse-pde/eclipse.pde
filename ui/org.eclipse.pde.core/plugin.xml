@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+   id="org.eclipse.pde.core"
+   name="%name"
+   version="0.0.1"
+   provider-name="International Business Machines Corp."
+   class="org.eclipse.pde.internal.core.PDECore">
+
+   <runtime>
+      <library name="pdecore.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+   <requires>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.jdt.core"/>
+      <import plugin="org.apache.xerces"/>
+      <import plugin="org.eclipse.core.runtime"/>
+   </requires>
+
+
+</plugin>

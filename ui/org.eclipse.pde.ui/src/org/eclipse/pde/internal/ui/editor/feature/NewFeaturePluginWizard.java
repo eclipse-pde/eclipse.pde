@@ -13,7 +13,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.*;
 import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.internal.ui.model.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.*;
 
 public class NewFeaturePluginWizard extends Wizard {

@@ -24,7 +24,7 @@ import org.eclipse.pde.internal.ui.elements.*;
 import java.util.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.pde.internal.ui.ischema.*;
+import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.pde.internal.core.schema.*;
 import org.eclipse.pde.internal.ui.*;

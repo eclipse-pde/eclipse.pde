@@ -5,7 +5,7 @@ package org.eclipse.pde.internal.ui.editor.manifest;
  */
 
 import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.internal.ui.ischema.*;
+import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.*;

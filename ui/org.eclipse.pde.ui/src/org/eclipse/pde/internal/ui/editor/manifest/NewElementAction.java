@@ -9,7 +9,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IProject;
 import java.util.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.ui.ischema.*;
+import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.pde.internal.core.plugin.PluginElement;

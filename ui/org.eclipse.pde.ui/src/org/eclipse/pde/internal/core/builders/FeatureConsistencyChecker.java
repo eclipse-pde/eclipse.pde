@@ -5,7 +5,7 @@ package org.eclipse.pde.internal.core.builders;
  */
 
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.ui.model.ifeature.*;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.feature.*;
 import org.apache.xerces.parsers.*;
 import org.eclipse.core.runtime.*;

@@ -6,7 +6,7 @@ package org.eclipse.pde.internal.ui.editor.schema;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.pde.internal.core.schema.SchemaElementReference;
-import org.eclipse.pde.internal.ui.ischema.*;
+import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 public class SchemaAdapterFactory implements IAdapterFactory {

@@ -5,7 +5,7 @@ package org.eclipse.pde.internal.core.schema;
  */
 
 import java.io.*;
-import org.eclipse.pde.internal.ui.ischema.*;
+import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.ISourceObject;
 import org.eclipse.core.runtime.PlatformObject;
@@ -39,7 +39,7 @@ public int getAttributeCount() {
 public ISchemaAttribute[] getAttributes() {
 	return getReferencedElement().getAttributes();
 }
-public org.eclipse.pde.internal.ui.ischema.ISchemaCompositor getCompositor() {
+public org.eclipse.pde.internal.core.ischema.ISchemaCompositor getCompositor() {
 	return compositor;
 }
 public java.lang.String getDescription() {
@@ -92,7 +92,7 @@ public ISchemaType getType() {
 public boolean isLinked() {
 	return getReferencedObject()!=null;
 }
-public void setCompositor(org.eclipse.pde.internal.ui.ischema.ISchemaCompositor newCompositor) {
+public void setCompositor(org.eclipse.pde.internal.core.ischema.ISchemaCompositor newCompositor) {
 	compositor = newCompositor;
 }
 public void setMaxOccurs(int newMaxOccurs) {

@@ -9,7 +9,7 @@ import org.eclipse.ui.part.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.ui.model.ifeature.IFeatureData;
+import org.eclipse.pde.internal.core.ifeature.IFeatureData;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.ui.actions.*;
 

@@ -5,7 +5,7 @@ package org.eclipse.pde.internal.ui.editor.schema;
  */
 
 import org.eclipse.pde.internal.core.schema.*;
-import org.eclipse.pde.internal.ui.ischema.*;
+import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.jface.resource.*;

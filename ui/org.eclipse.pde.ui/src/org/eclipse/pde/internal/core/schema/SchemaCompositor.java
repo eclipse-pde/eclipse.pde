@@ -8,7 +8,7 @@ import java.io.PrintWriter;
 import java.util.Vector;
 
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.ui.ischema.*;
+import org.eclipse.pde.internal.core.ischema.*;
 
 public class SchemaCompositor
 	extends RepeatableSchemaObject

@@ -7,7 +7,7 @@ package org.eclipse.pde.internal.core.feature;
 import org.w3c.dom.Node;
 import java.io.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.ui.model.ifeature.*;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.core.IIdentifiable;
 
 public class IdentifiableObject extends FeatureObject implements IIdentifiable {

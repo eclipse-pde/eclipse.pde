@@ -16,7 +16,7 @@ import org.eclipse.pde.internal.core.feature.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.util.*;
-import org.eclipse.pde.internal.ui.model.ifeature.*;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.core.boot.BootLoader;
 
 public class ReferencePropertySource extends FeaturePropertySource {

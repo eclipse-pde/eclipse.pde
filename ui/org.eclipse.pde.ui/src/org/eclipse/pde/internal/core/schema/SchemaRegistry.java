@@ -12,7 +12,7 @@ import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.ischema.ISchema;
+import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.ui.util.PDEProblemFinder;
 
 

@@ -4,7 +4,7 @@
  */
 package org.eclipse.pde.internal.core.feature;
 
-import org.eclipse.pde.internal.ui.model.ifeature.*;
+import org.eclipse.pde.internal.core.ifeature.*;
 import java.net.*;
 import org.eclipse.core.runtime.CoreException;
 import org.w3c.dom.Node;

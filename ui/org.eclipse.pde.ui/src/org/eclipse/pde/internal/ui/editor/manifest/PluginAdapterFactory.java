@@ -9,7 +9,7 @@ import java.util.Hashtable;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.plugin.PluginElement;
-import org.eclipse.pde.internal.ui.ischema.ISchemaElement;
+import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 public class PluginAdapterFactory implements IAdapterFactory {

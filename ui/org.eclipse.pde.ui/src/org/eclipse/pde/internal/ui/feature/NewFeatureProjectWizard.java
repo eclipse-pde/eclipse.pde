@@ -8,7 +8,7 @@ import org.eclipse.jface.wizard.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.ui.part.*;
 import org.eclipse.ui.*;
-import org.eclipse.pde.internal.ui.model.ifeature.*;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.feature.*;
 import org.eclipse.ui.actions.*;
 

@@ -14,7 +14,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.core.feature.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.model.ifeature.*;
+import org.eclipse.pde.internal.core.ifeature.*;
 
 public class URLElementPropertySource extends FeaturePropertySource {
 	private Vector descriptors;
@@ -30,7 +30,7 @@ public class URLElementPropertySource extends FeaturePropertySource {
 public URLElementPropertySource(IFeatureURLElement element) {
 	super(element);
 }
-public org.eclipse.pde.internal.ui.model.ifeature.IFeatureURLElement getElement() {
+public org.eclipse.pde.internal.core.ifeature.IFeatureURLElement getElement() {
 	return (IFeatureURLElement)object;
 }
 public IPropertyDescriptor[] getPropertyDescriptors() {

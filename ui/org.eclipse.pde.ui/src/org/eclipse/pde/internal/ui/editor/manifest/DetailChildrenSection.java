@@ -5,7 +5,7 @@ package org.eclipse.pde.internal.ui.editor.manifest;
  */
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.internal.ui.ischema.*;
+import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;

@@ -6,7 +6,7 @@ package org.eclipse.pde.internal.ui.editor.schema;
 
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.PDEChildFormPage;
-import org.eclipse.pde.internal.ui.ischema.*;
+import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.update.ui.forms.internal.AbstractSectionForm;

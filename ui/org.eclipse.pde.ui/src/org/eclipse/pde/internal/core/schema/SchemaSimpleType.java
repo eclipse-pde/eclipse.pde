@@ -7,7 +7,7 @@ package org.eclipse.pde.internal.core.schema;
 import java.io.PrintWriter;
 
 import org.eclipse.pde.core.IWritable;
-import org.eclipse.pde.internal.ui.ischema.*;
+import org.eclipse.pde.internal.core.ischema.*;
 
 public class SchemaSimpleType extends SchemaType implements ISchemaSimpleType, IWritable {
 	private ISchemaRestriction restriction;

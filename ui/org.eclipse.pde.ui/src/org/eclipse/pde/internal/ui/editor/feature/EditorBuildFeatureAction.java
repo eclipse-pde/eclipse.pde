@@ -8,7 +8,7 @@ import java.lang.reflect.*;
 import org.eclipse.jface.operation.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.core.resources.*;
-import org.eclipse.pde.internal.ui.model.ifeature.*;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.feature.*;
 import org.eclipse.pde.internal.core.feature.*;
 import org.eclipse.jface.action.*;

@@ -9,7 +9,7 @@ import java.io.PrintWriter;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.model.ifeature.*;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.w3c.dom.Node;
 
 public abstract class FeatureObject

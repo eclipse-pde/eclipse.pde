@@ -7,7 +7,7 @@ package org.eclipse.pde.internal.core.schema;
 import org.eclipse.jface.resource.*;
 import java.net.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.ischema.*;
+import org.eclipse.pde.internal.core.ischema.*;
 
 public abstract class AbstractSchemaDescriptor implements ISchemaDescriptor {
 	private Schema schema;

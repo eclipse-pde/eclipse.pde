@@ -1,0 +1,173 @@
+package org.eclipse.pde.internal.core.ifeature;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+/**
+ * The top-level model object of the Eclipse feature model.
+ */
+public interface IFeature extends IFeatureObject, IVersonable {
+/**
+ * The name of the property that will be used to notify
+ * about changes in "description" field
+ */
+public static final String P_DESCRIPTION = "description";
+/**
+ * The name of the property that will be used to notify
+ * about changes in "copyright" field
+ */
+public static final String P_COPYRIGHT = "copyright";
+/**
+ * The name of the property that will be used to notify
+ * about changes in "license" field
+ */
+public static final String P_LICENSE = "license";
+/**
+ * The name of the property that will be used to notify
+ * about changes in "provider" field
+ */
+public static final String P_PROVIDER = "provider";
+/**
+ * The name of the property that will be used to notify
+ * about changes in "url" field
+ */
+public static final String P_URL = "url";
+
+public static final String P_INSTALL_HANDLER = "installHandler";
+
+public static final String P_OS = "os";
+public static final String P_WS = "ws";
+public static final String P_NL = "nl";
+public static final String P_ARCH = "arch";
+
+public static final String P_PRIMARY = "primary";
+
+public static final int INFO_DESCRIPTION = 0;
+public static final int INFO_COPYRIGHT = 1;
+public static final int INFO_LICENSE = 2;
+
+public static final String [] INFO_TAGS = { "description", "copyright", "license" };
+/**
+ * Adds a plug-in reference to this feature.
+ * This method may throw a CoreException if
+ * the model is not editable.
+ *
+ * @param reference a plug-in reference to add
+ */
+public void addPlugins(IFeaturePlugin [] plugins) throws CoreException;
+/**
+ * Adds a data reference to this feature.
+ * This method may throw a CoreException if
+ * the model is not editable.
+ *
+ * @param entries a data entries to add
+ */
+public void addData(IFeatureData [] entries) throws CoreException;
+
+/**
+ * Adds a required plug-in reference to this feature.
+ * This method may throw a CoreException if
+ * the model is not editable.
+ *
+ * @param reference a required plug-in reference to add
+ */
+public void addImport(IFeatureImport iimport) throws CoreException;
+/**
+ * Returns references to plug-ins in this feature
+ *
+ * @return an array of plug-in references in this feature
+ */
+public IFeaturePlugin [] getPlugins();
+/**
+ * Returns references to data in this feature
+ *
+ * @return an array of data references in this feature
+ */
+public IFeatureData [] getData();
+
+/**
+ * Returns references to required plug-ins in this feature
+ *
+ * @return an array of plug-in references in this feature
+ */
+public IFeatureImport [] getImports();
+/**
+ * Returns a feature provider name
+ *
+ * @return the feature provider name, or <samp>null</samp> if not set
+ */
+public String getProviderName();
+/**
+ *
+ */
+IPluginModelBase getReferencedModel(IFeaturePlugin reference);
+/**
+ * Returns a feature URL model object
+ *
+ * @return the feature URL model object, or <samp>null</samp> if not set
+ */
+public IFeatureURL getURL();
+
+public IFeatureInstallHandler getInstallHandler();
+public void setInstallHandler(IFeatureInstallHandler handler) throws CoreException;
+
+public IFeatureInfo getFeatureInfo(int index);
+
+public void setFeatureInfo(IFeatureInfo info, int index) throws CoreException;
+
+/**
+ * Removes a plug-in reference from this feature. This
+ * method may throw a CoreException if the model
+ * is not editable.
+ *
+ * @param plugin a plug-in reference to remove 
+ */
+public void removePlugins(IFeaturePlugin [] plugins) throws CoreException;
+/**
+ * Removes a data reference from this feature. This
+ * method may throw a CoreException if the model
+ * is not editable.
+ *
+ * @param entries data entries to remove 
+ */
+public void removeData(IFeatureData [] entries) throws CoreException;
+/**
+ * Removes a required plug-in reference from this feature.
+ * This method may throw a CoreException if
+ * the model is not editable.
+ *
+ * @param iimport a required plug-in reference to add
+ */
+public void removeImport(IFeatureImport iimport) throws CoreException;
+/**
+ * Sets the provider name of this feature. This method
+ * may throw a CoreException if the model is not editable.
+ *
+ * @param the new provider name
+ */
+public void setProviderName(String providerName) throws CoreException;
+/**
+ * Sets the URL model object of this feature.
+ *
+ *@param url The URL model object.
+ */
+public void setURL(IFeatureURL url) throws CoreException;
+
+public void computeImports() throws CoreException;
+
+public String getOS();
+public String getWS();
+public String getNL();
+public String getArch();
+
+public void setOS(String os) throws CoreException;
+public void setWS(String ws) throws CoreException;
+public void setNL(String nl) throws CoreException;
+public void setArch(String arch) throws CoreException;
+
+boolean isPrimary();
+public void setPrimary(boolean value) throws CoreException;
+}

@@ -12,7 +12,7 @@ import org.eclipse.core.runtime.model.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.ischema.ISchema;
+import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.w3c.dom.*;
 
 public class PluginExtension extends PluginParent implements IPluginExtension {

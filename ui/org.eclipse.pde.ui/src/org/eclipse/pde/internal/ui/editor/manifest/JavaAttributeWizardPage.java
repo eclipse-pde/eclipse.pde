@@ -23,7 +23,7 @@ import org.eclipse.swt.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.jdt.ui.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.ischema.*;
+import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.ui.codegen.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.pde.core.plugin.*;

@@ -4,7 +4,7 @@ package org.eclipse.pde.internal.core.schema;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.internal.ui.ischema.*;
+import org.eclipse.pde.internal.core.ischema.*;
 
 public abstract class RepeatableSchemaObject extends SchemaObject implements ISchemaRepeatable {
 	public static final String P_MIN_OCCURS="min_occurs";
