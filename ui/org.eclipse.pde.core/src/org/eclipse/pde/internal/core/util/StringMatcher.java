@@ -55,10 +55,15 @@ public class StringMatcher {
 	 * 		  (everything is taken literally).
 	 */
 	public StringMatcher(String pattern, boolean ignoreCase, boolean ignoreWildCards) {
-		if (pattern == null)
-			throw new IllegalArgumentException();
 		fIgnoreCase= ignoreCase;
 		fIgnoreWildCards= ignoreWildCards;
+		setPattern(pattern);
+	}
+	
+	public void setPattern(String pattern) {
+		if (pattern == null)
+			throw new IllegalArgumentException();
+
 		fPattern= pattern;
 		fLength= pattern.length();
 		
