@@ -71,6 +71,19 @@ public class BuildSourcePage extends PDESourcePage {
 	protected ILabelProvider createOutlineLabelProvider() {
 		return new BuildLabelProvider();
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.neweditor.PDESourcePage#createViewerSorter()
+	 */
+	protected ViewerSorter createViewerSorter() {
+		return new ViewerSorter() {
+			public int compare(Viewer viewer, Object e1, Object e2) {
+				IDocumentKey key1 = (IDocumentKey)e1;
+				IDocumentKey key2 = (IDocumentKey)e2;
+				return key1.getOffset() < key2.getOffset() ? -1 : 1;
+			}
+		};
+	}
 	protected ITreeContentProvider createOutlineContentProvider() {
 		return new BuildOutlineContentProvider();
 	}

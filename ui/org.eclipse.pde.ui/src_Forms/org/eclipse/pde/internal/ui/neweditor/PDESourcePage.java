@@ -55,11 +55,14 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	protected abstract ILabelProvider createOutlineLabelProvider();
 	protected abstract ITreeContentProvider createOutlineContentProvider();
 	protected abstract void outlineSelectionChanged(SelectionChangedEvent e);
-	
+	protected ViewerSorter createViewerSorter() {
+		return null;
+	}
 	protected IContentOutlinePage createOutlinePage() {
 		SourceOutlinePage outline = new SourceOutlinePage(
 				(IEditingModel) getInputContext().getModel(),
-				createOutlineLabelProvider(), createOutlineContentProvider());
+				createOutlineLabelProvider(), createOutlineContentProvider(),
+				createViewerSorter());
 		outline.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				outlineSelectionChanged(event);

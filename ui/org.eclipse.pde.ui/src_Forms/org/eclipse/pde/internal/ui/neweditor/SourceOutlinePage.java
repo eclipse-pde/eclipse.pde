@@ -26,15 +26,17 @@ public class SourceOutlinePage extends ContentOutlinePage implements IModelChang
 	private IEditingModel fModel;
 	private IBaseLabelProvider fLabelProvider;
 	private IContentProvider fContentProvider;
+	private ViewerSorter fViewerSorter;
 	
 	/**
 	 * Creates a new XMLContentOutlinePage.
 	 */
-	public SourceOutlinePage(IEditingModel model, IBaseLabelProvider lProvider, IContentProvider cProvider) {
+	public SourceOutlinePage(IEditingModel model, IBaseLabelProvider lProvider, IContentProvider cProvider, ViewerSorter sorter) {
 		super();
 		fModel = model;
 		fLabelProvider = lProvider;
 		fContentProvider = cProvider;
+		fViewerSorter = sorter;
 	}
 		
 	/**  
@@ -45,6 +47,7 @@ public class SourceOutlinePage extends ContentOutlinePage implements IModelChang
 		TreeViewer viewer= getTreeViewer();
 		viewer.setContentProvider(fContentProvider);
 		viewer.setLabelProvider(fLabelProvider);
+		viewer.setSorter(fViewerSorter);
 		viewer.setInput(fModel);
 		viewer.expandAll();
 	}
