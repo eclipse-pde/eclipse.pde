@@ -108,8 +108,7 @@ public class SampleWizard extends Wizard
 			String perspId = selection.getAttribute("perspectiveId");
 			IWorkbenchPage page = PDEPlugin.getActivePage();
 			if (perspId != null && switchPerspective) {
-				page = PDEPlugin.getActiveWorkbenchWindow().openPage(perspId,
-						null);
+				PlatformUI.getWorkbench().showPerspective(perspId, page.getWorkbenchWindow());
 			}
 			SampleOperation op = new SampleOperation(selection,
 					namesPage.getProjectNames(),
