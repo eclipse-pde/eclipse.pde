@@ -16,6 +16,7 @@ import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.ViewPart;
 
 public class LogView extends ViewPart implements ILogListener {
@@ -151,6 +152,8 @@ public class LogView extends ViewPart implements ILogListener {
 				}
 			}
 		});
+		
+		WorkbenchHelp.setHelp(tableTree,IHelpContextIds.LOG_VIEW);
 	}
 	public void dispose() {
 		Platform.removeLogListener(this);

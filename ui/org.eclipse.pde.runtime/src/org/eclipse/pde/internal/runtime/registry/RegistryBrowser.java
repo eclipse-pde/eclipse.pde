@@ -12,6 +12,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.*;
 
 public class RegistryBrowser extends ViewPart implements ISelectionListener {
@@ -70,6 +71,8 @@ public void createPartControl(Composite parent) {
 	mng.add(refreshAction);
 	treeViewer.setInput(new PluginObjectAdapter(Platform.getPluginRegistry()));
 	site.setSelectionProvider(treeViewer);
+	
+	WorkbenchHelp.setHelp(treeViewer.getControl(),IHelpContextIds.REGISTRY_VIEW);
 }
 public void fillContextMenu(IMenuManager manager) {
 	manager.add(refreshAction);
