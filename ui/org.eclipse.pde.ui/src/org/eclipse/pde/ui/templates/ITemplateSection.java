@@ -23,20 +23,12 @@ import org.eclipse.pde.core.plugin.*;
  * complex sections may span several pages. Also note
  * that in the very simple cases it may not contribute any
  * wizard pages.
- * </p>
  * <p>If a section generates extensions, it should be written 
  * in such a way to be used both in the 'New Extension' wizard
  * and as a part of a new plug-in project wizard. When used
  * as part of the new plug-in project wizard, it may appear
  * alongside other templates and therefore should not 
  * do anything that prevents it.
- * <p> 
- * <b>Note:</b> This method is part of an interim API that is still under development and expected to
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
- * </p>
- * </p>
  */
 
 public interface ITemplateSection {
@@ -50,24 +42,13 @@ public interface ITemplateSection {
 	 * Java I/O classes. If template files are stored in a ZIP 
 	 * or JAR archive, the name of the archive must
 	 * be part of the URL.
-	 * <p> 
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
+	 * 
 	 * @return a template location URL
 	 */
 	public URL getTemplateLocation();
 	/**
 	 * Returns a presentable label the section.
 	 * @return a template label
-	 * <p> 
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	public String getLabel();
 
@@ -76,12 +57,7 @@ public interface ITemplateSection {
 	 * should explain what extension will be used,
 	 * what classes will be generated and how to
 	 * test that the generated code works properly.
-	 * <p> 
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
+	 * 
 	 * @return a template description
 	 */
 	public String getDescription();
@@ -100,12 +76,6 @@ public interface ITemplateSection {
 	 * @param key the replacement key found in the template file
 	 * @return replacement string for the provided key, or
 	 * the key itself if not found. 
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	public String getReplacementString(String fileName, String key);
 	/**
@@ -113,38 +83,18 @@ public interface ITemplateSection {
 	 * implementation contributes one page, but complex sections
 	 * may span several pages. 
 	 * @param wizard the host wizard to add pages into
-	 * <p> 
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	public void addPages(Wizard wizard);
 
 	/**
 	 * Returns a wizard page at the provided index.
 	 * @return wizard page index.
-	 * <p> 
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
-
 	public WizardPage getPage(int pageIndex);
 	
 	/**
 	 * Returns number of pages that are contributed by this template.
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
-	
 	public int getPageCount();
 	
 	/**
@@ -153,12 +103,6 @@ public interface ITemplateSection {
 	 * has been called.
 	 * @return <samp>true</samp> if wizard pages have been
 	 * created by this template.
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	
 	public boolean getPagesAdded();
@@ -168,12 +112,8 @@ public interface ITemplateSection {
 	 * consume during the execution. This number is used to
 	 * calculate the total number of work units when initializing
 	 * the progress indicator.
-	 * <p> 
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
+	 * 
+	 * @return 
 	 */
 	public int getNumberOfWorkUnits();
 
@@ -184,16 +124,12 @@ public interface ITemplateSection {
 	 * By providing this list, a template enables the template
 	 * wizard to create the correct Java build path so that
 	 * these classes and interfaces are correctly resolved.
+	 * 
 	 * @param schemaVersion version of the target manifest, or 
 	 * <samp>null</samp> if older manifest (prior to 3.0) will
 	 * be created. Depending on the manifest version, the list
 	 * of dependencies may vary.
-	 * <p> 
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
+	 * @return
 	 */
 	public IPluginReference[] getDependencies(String schemaVersion);
 
@@ -203,12 +139,6 @@ public interface ITemplateSection {
 	 * @return extension point id if this section contributes
 	 * into an extension point or <samp>null</samp> if not
 	 * applicable.
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	public String getUsedExtensionPoint();
 
@@ -220,12 +150,6 @@ public interface ITemplateSection {
 	 * @param project the workspace project that contains the plug-in
 	 * @param model structured representation of the plug-in manifest
 	 * @param monitor progress monitor to indicate execution progress 
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	public void execute(
 		IProject project,
@@ -233,5 +157,9 @@ public interface ITemplateSection {
 		IProgressMonitor monitor)
 		throws CoreException;
 	
+	/**
+	 * TODO add javadoc
+	 * @return
+	 */
 	public String[] getFoldersToInclude();
 }

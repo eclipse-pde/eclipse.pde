@@ -17,24 +17,12 @@ import org.eclipse.core.runtime.*;
  * wizards to set it up. Master wizard is only responsible
  * for collecting this information - it is the content
  * wizard that needs to act upon it.
- * <p>
- * <b>Note:</b> This field is part of an interim API that is still under development and expected to
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
- * </p>
  */
 public interface IPluginStructureData {
 	/**
 	 * Returns the plug-in id as defined in the dialog
 	 * 
 	 * @return plug-in id
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	public String getPluginId();
 
@@ -42,12 +30,6 @@ public interface IPluginStructureData {
 	 * Returns the folder name for the Java build output.
 	 *
 	 * @return Java build output folder name
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	public String getJavaBuildFolderName();
 	/**
@@ -56,12 +38,6 @@ public interface IPluginStructureData {
 	 * selection. JRE library path must be added to the build path of
 	 * the plug-in project to allow Java builder to compile the project.
 	 * @return JRE default library path
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	IPath getJREPath();
 	/**
@@ -69,12 +45,6 @@ public interface IPluginStructureData {
 	 * information is required for being able to
 	 * step through the JRE source code in Java debugger. This
 	 * information is obtained from the Java plug-in.
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	IPath[] getJRESourceAnnotation();
 	/**
@@ -83,12 +53,6 @@ public interface IPluginStructureData {
 	 * entered by the user in the master plug-in project wizard.
 	 *
 	 * @return the initial JAR library name
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	public String getRuntimeLibraryName();
 	/**
@@ -100,24 +64,12 @@ public interface IPluginStructureData {
 	 * wizard.
 	 *
 	 * @return the initial source folder name
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	public String getSourceFolderName();
 	/**
 	 * Returns the release 3.0 compatibility flag.
 	 *
 	 * @return <samp>true</samp> if 3.0-compatible, <samp>false</samp> otherwise.
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	public boolean isR3Compatible();
 }

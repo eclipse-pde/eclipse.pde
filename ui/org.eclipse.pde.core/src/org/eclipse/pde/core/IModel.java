@@ -26,12 +26,6 @@ import org.eclipse.core.runtime.*;
  * If a model is not created from a workspace
  * resource file, its underlying resource will
  * be <samp>null</samp>.
- * <p>
- * <b>Note:</b> This interface is part of an interim API that is still under development and expected to
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
- * </p>
  */
 public interface IModel extends IBaseModel {
 	/**
@@ -42,12 +36,6 @@ public interface IModel extends IBaseModel {
 	 * @param key the name to use for bundle lookup
 	 * @return the string for the key in the resource bundle,
 	 * or the key itself if not found
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	String getResourceString(String key);
 	/**
@@ -68,23 +56,11 @@ public interface IModel extends IBaseModel {
 	 * that this model is associated with,
 	 * or <samp>null</samp> if the model
 	 * is not created from a resource.
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	public IResource getUnderlyingResource();
 	/**
 	 * Tests if this model is loaded and can be used.
-	 * @return true if the model has been loaded
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
+	 * @return <code>true</code> if the model has been loaded
 	 */
 	boolean isLoaded();
 
@@ -95,14 +71,8 @@ public interface IModel extends IBaseModel {
 	 * resources are in sync. Models loaded
 	 * from files on the file systems are in sync
 	 * if the time stamp matches the model time stamp.
-	 * @return true if the model is in sync
+	 * @return <code>true</code> if the model is in sync
 	 * with the file system.
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	boolean isInSync();
 	/**
@@ -111,12 +81,6 @@ public interface IModel extends IBaseModel {
 	 * It is 'borrowed' from the underlying physical
 	 * object.
 	 * @return the time stamp of the underlying physical object.
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	long getTimeStamp();
 	/**
@@ -125,15 +89,8 @@ public interface IModel extends IBaseModel {
 	 * this model has no underlying resource
 	 * or if there is a buffer stage between
 	 * the model and the resource.
-	 * <p>This method will throw a CoreException
-	 * if errors are encountered during
+	 * @throws CoreException if errors are encountered during
 	 * the loading.
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	public void load() throws CoreException;
 	/**
@@ -147,12 +104,8 @@ public interface IModel extends IBaseModel {
 	 * be parsed to load the model
 	 * @param outOfSync if true, time stamp will not be
 	 * updated to maintain out-of-sync state of the model.
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
+	 * @throws CoreException if errors are encountered during
+	 * the loading.
 	 */
 	public void load(InputStream source, boolean outOfSync) throws CoreException;
 	/**
@@ -177,12 +130,8 @@ public interface IModel extends IBaseModel {
 	 * be parsed to load the model.
 	 * @param outOfSync if true, time stamp will not be updated
 	 * to maintain out-of-sync state of the model.
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
+	 * @throws CoreException if errors are encountered during the
+	 * reloading.
 	 */
 	public void reload(InputStream source, boolean outOfSync) throws CoreException;
 	/**
@@ -190,7 +139,7 @@ public interface IModel extends IBaseModel {
 	 * in source and reconcile them. Only model instances
 	 * used in editors need to perform this task.
 	 * @return <code>true</code> if this is a reconciling
-	 * model, false otherwise.
+	 * model, <code>false</code> otherwise.
 	 */
 	public boolean isReconcilingModel();
 }

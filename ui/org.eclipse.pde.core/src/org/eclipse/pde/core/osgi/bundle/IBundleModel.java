@@ -22,24 +22,12 @@ import org.eclipse.pde.core.*;
  * true and the model instance will implement IEditable
  * interface. The model is capable of providing
  * change notification for the registered listeners.
- * <p>
- * <b>Note:</b> This interface is part of an interim API that is still under development and expected to
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
- * </p>
  */
 public interface IBundleModel extends IModel, IModelChangeProvider {
 	/**
 	 * Returns the top-level model object of this model.
 	 *
 	 * @return a dictionary containing the manifest headers
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	Dictionary getManifest();
 	/**
@@ -57,6 +45,10 @@ public interface IBundleModel extends IModel, IModelChangeProvider {
 	 * </p>
 	 */
 	public String getInstallLocation();
-	
+	/**
+	 * Tests whether this is a model of a fragment bundle.
+	 * @return <code>true</code> if this is a fragment model, <code>false</code>
+	 * otherwise.
+	 */
 	public boolean isFragmentModel();
 }

@@ -36,22 +36,10 @@ import org.eclipse.pde.core.build.*;
  * The model is capable of notifying listeners
  * about changes. An attempt to change a read-only
  * model will result in a CoreException.
- * <p>
- * <b>Note:</b> This interface is part of an interim API that is still under development and expected to
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
- * </p>
  */
 public interface IPluginModelBase extends ISharedPluginModel, IModelChangeProvider {
 	/**
 	 * @return org.eclipse.pde.ui.model.plugin.IPluginBase
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	IPluginBase createPluginBase();
 	/**
@@ -59,24 +47,12 @@ public interface IPluginModelBase extends ISharedPluginModel, IModelChangeProvid
 	 * that works in conjunction with this model.
 	 *
 	 * @return the matching plugin.jars model
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	IBuildModel getBuildModel();
 	/**
 	 * Returns a top-level model object. Equivalent to
 	 * calling <pre>getPluginBase(true)</pre>.
 	 * @return a top-level model object representing a plug-in or a fragment.
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	IPluginBase getPluginBase();
 	/**
@@ -84,46 +60,22 @@ public interface IPluginModelBase extends ISharedPluginModel, IModelChangeProvid
 	 * @param createIfMissing if true, root model object will
 	 * be created if not defined.
 	 * @return a top-level model object
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	IPluginBase getPluginBase(boolean createIfMissing);
 	/**
 	 * Returns </samp>true</samp> if this model is currently enabled.
 	 *
 	 *@return true if the model is enabled
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	public boolean isEnabled();
 	/**
 	 * @return boolean
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	boolean isFragmentModel();
 	/**
 	 * Sets the enable state of the model.
 	 *
 	 * @param enabled the new enable state
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	public void setEnabled(boolean enabled);
 	

@@ -18,12 +18,6 @@ import org.eclipse.core.runtime.*;
  * A model object that represents the content of a plug-in or
  * fragment manifest. This object contains data that is common
  * for bo plug-ins and fragments.
- * <p>
- * <b>Note:</b> This interface is part of an interim API that is still under development and expected to
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
- * </p>
  */
 public interface IExtensions extends IPluginObject, Serializable {
 	public static final String P_EXTENSION_ORDER = "extension_order";
@@ -33,45 +27,21 @@ public interface IExtensions extends IPluginObject, Serializable {
 	 * model is not editable.
 	 *
 	 * @param extension the extension object
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	void add(IPluginExtension extension) throws CoreException;
 	/**
 	 * @param extension org.eclipse.pde.ui.model.plugin.IPluginExtension
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	void add(IPluginExtensionPoint extension) throws CoreException;
 	/**
 	 * Returns extension points defined in this plug-in.
 	 * @return an array of extension point objects
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	IPluginExtensionPoint[] getExtensionPoints();
 	/**
 	 * Returns extensions defined in this plug-in.
 	 *
 	 * @return an array of extension objects
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	IPluginExtension[] getExtensions();
 	/**
@@ -80,12 +50,6 @@ public interface IExtensions extends IPluginObject, Serializable {
 	 * the model is not editable.
 	 *
 	 * @param extension the extension object
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	void remove(IPluginExtension extension) throws CoreException;
 	/**
@@ -94,12 +58,6 @@ public interface IExtensions extends IPluginObject, Serializable {
 	 * the model is not editable.
 	 *
 	 * @param extensionPoint the extension point object
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	void remove(IPluginExtensionPoint extensionPoint) throws CoreException;
 	/**
@@ -108,12 +66,6 @@ public interface IExtensions extends IPluginObject, Serializable {
 	 *
 	 * @param e1 the first extension object
 	 * @param e2 the second extension object
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	void swap(IPluginExtension e1, IPluginExtension e2) throws CoreException;
 	/**

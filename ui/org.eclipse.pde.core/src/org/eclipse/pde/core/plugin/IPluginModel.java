@@ -9,45 +9,26 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.core.plugin;
-
-
 /**
- * This type of model is created by parsing the plugin.xml file.
- * If the file is a workspace resource, it will be
- * available as the underlying resource of the model.
- * The model may be read-only or editable.
- * It will also make a reference to the plugin.jars
- * model when created. The reference will be of the
- * same type as the model itself: if the model is
- * editable, it will attempt to obtain an exclusive
- * editable copy of plugin.jars model.
+ * This type of model is created by parsing the plugin.xml file. If the file is
+ * a workspace resource, it will be available as the underlying resource of the
+ * model. The model may be read-only or editable. It will also make a reference
+ * to the plugin.jars model when created. The reference will be of the same type
+ * as the model itself: if the model is editable, it will attempt to obtain an
+ * exclusive editable copy of plugin.jars model.
  * <p>
- * The plug-in model can be disabled. Disabling the
- * model will not change its data. Users of the
- * model will have to decide if the disabled state
- * if of any importance to them or not.
+ * The plug-in model can be disabled. Disabling the model will not change its
+ * data. Users of the model will have to decide if the disabled state if of any
+ * importance to them or not.
  * <p>
- * The model is capable of notifying listeners
- * about changes. An attempt to change a read-only
- * model will result in a CoreException.
- * <p>
- * <b>Note:</b> This interface is part of an interim API that is still under development and expected to
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
- * </p>
+ * The model is capable of notifying listeners about changes. An attempt to
+ * change a read-only model will result in a CoreException.
  */
 public interface IPluginModel extends IPluginModelBase {
 	/**
 	 * Returns a top-level model object.
-	 *
+	 * 
 	 * @return a root model instance
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	public IPlugin getPlugin();
 }

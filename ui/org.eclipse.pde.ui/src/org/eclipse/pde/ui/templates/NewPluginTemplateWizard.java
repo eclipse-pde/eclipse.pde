@@ -25,12 +25,6 @@ package org.eclipse.pde.ui.templates;
  * the wizard will use the collected list of required
  * plug-ins to set up Java buildpath so that all the
  * generated Java classes can be resolved during the build.
- * <p> 
- * <b>Note:</b> This class is part of an interim API that is still under development and expected to
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
- * </p>
  */
 
 public abstract class NewPluginTemplateWizard
@@ -39,12 +33,6 @@ public abstract class NewPluginTemplateWizard
 
 	/**
 	 * Creates a new template wizard.
-	 * <p> 
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 
 	public NewPluginTemplateWizard() {
@@ -56,23 +44,12 @@ public abstract class NewPluginTemplateWizard
 	 * creating templates that will appear in this wizard.
 	 * @return an array of template sections that will appear
 	 * in this wizard.
-	 * <p> 
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	public abstract ITemplateSection[] createTemplateSections();
 
 	/**
 	 * Returns templates that appear in this section.
-	 * <p> 
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
+	 * @return
 	 */
 	public final ITemplateSection[] getTemplateSections() {
 		return sections;
@@ -81,12 +58,7 @@ public abstract class NewPluginTemplateWizard
 	/**
 	 * Implemented by asking templates in this wizard to contribute
 	 * pages.
-	 * <p> 
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
+	 * 
 	 */
 	protected final void addAdditionalPages() {
 		// add template pages

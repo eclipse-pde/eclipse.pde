@@ -14,34 +14,16 @@ import org.eclipse.core.runtime.*;
 /**
  * Objects that implement this interface represent references
  * to required plug-ins.
- * <p>
- * <b>Note:</b> This interface is part of an interim API that is still under development and expected to
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
- * </p>
  */
 public interface IPluginImport extends IPluginObject, IPluginReference {
 	/**
 	 * A name of the property that will be used to notify
 	 * about changes in the "reexported" field.
-	 * <p>
-	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	public static final String P_REEXPORTED = "export";
 	/**
 	 * A name of the property that will be used to notify
 	 * about changes in the "optional" field.
-	 * <p>
-	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	public static final String P_OPTIONAL = "optional";
 	/**
@@ -49,12 +31,6 @@ public interface IPluginImport extends IPluginObject, IPluginReference {
 	 * plug-ins that will use this plug-in.
 	 *
 	 * @return true if the required plug-in libraries are reexported
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	public boolean isReexported();
 	/**
@@ -62,12 +38,6 @@ public interface IPluginImport extends IPluginObject, IPluginReference {
 	 * not create an error condition when they cannot be resolved.
 	 *
 	 * @return true if this import is optional
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	public boolean isOptional();
 	/**
@@ -77,12 +47,6 @@ public interface IPluginImport extends IPluginObject, IPluginReference {
 	 * is not editable.
 	 *
 	 * @param value true if reexporting is desired
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	public void setReexported(boolean value) throws CoreException;
 	/**
@@ -90,12 +54,6 @@ public interface IPluginImport extends IPluginObject, IPluginReference {
 	 * not create an error condition when they cannot be resolved.
 	 *
 	 * @param value true if import is optional
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	public void setOptional(boolean value) throws CoreException;
 }

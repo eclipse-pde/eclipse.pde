@@ -17,12 +17,7 @@ import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 
 /**
- * <p> 
- * <b>Note:</b> This class is part of an interim API that is still under development and expected to
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
- * </p>
+ * TODO add javadoc
  */
 
 public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
@@ -30,7 +25,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 		"OptionTemplateSection.mustBeSet";
 	private ArrayList pages = new ArrayList();
 
-	class TemplatePage {
+	static class TemplatePage {
 		WizardPage page;
 		ArrayList options;
 		public TemplatePage() {
@@ -40,12 +35,6 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 
 	/**
 	 * Constructor for HelloWorldTemplate.
-	 * <p> 
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	public OptionTemplateSection() {
 	}
@@ -59,12 +48,6 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 * @see #getLabel()
 	 * @see #getDescription()
 	 * @see #getTemplateLocation()
-	 * <p> 
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	public abstract String getSectionId();
 
@@ -73,12 +56,6 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 * in the contributing plug-in. Default implementation is
 	 * "templates".
 	 * @return "templates"
-	 * <p> 
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	protected String getTemplateDirectory() {
 		String schemaVersion = model.getPluginBase().getSchemaVersion();
@@ -91,12 +68,6 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 * template. Implement it by accessing the top-level class of
 	 * your plug-in and calling 'getDescriptor().getInstallURL()'.
 	 * @return the install URL of the contributing plug-in
-	 * <p> 
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	protected abstract URL getInstallURL();
 
@@ -107,12 +78,6 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 * [install location]/[templateDirectory]/[sectionId]
 	 * @return the URL of the location where files to be emitted by
 	 * this template are located.
-	 * <p> 
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	public URL getTemplateLocation() {
 		URL url = getInstallURL();
@@ -130,12 +95,6 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 * @return the wizard page at the specified index or <samp>null</samp>
 	 * if invalid index.
 	 * @see #createPage(int)
-	 * <p> 
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	public WizardPage getPage(int pageIndex) {
 		if (pageIndex < 0 || pageIndex >= pages.size())
@@ -156,12 +115,6 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 * and again with index 1). 
 	 * @see #setPageCount(int)
 	 * @see BaseOptionTemplateSection#addOption
-	 * <p> 
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	public WizardPage createPage(int pageIndex) {
 		if (pageIndex < 0 || pageIndex >= pages.size())
@@ -185,12 +138,6 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 * of the info-pop displayed when F1 is pressed.
 	 * @see #setPageCount(int)
 	 * @see BaseOptionTemplateSection#addOption
-	 * <p> 
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	public WizardPage createPage(int pageIndex, String helpContextId) {
 		if (pageIndex < 0 || pageIndex >= pages.size())
@@ -204,12 +151,6 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 * to the wizard.
 	 * @return the number of pages
 	 * @see #setPageCount(int)
-	 * <p> 
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	public int getPageCount() {
 		return pages.size();
@@ -223,12 +164,6 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 * [0..count-1].
 	 * @param count number of pages that this template will contribute
 	 * to the template wizard
-	 * <p> 
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	public void setPageCount(int count) {
 		pages.clear();
@@ -240,13 +175,8 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	/**
 	 * Returns options that belong to the page with the given index.
 	 * @param pageIndex 0-based index of the template page
+	 * @return 
 	 * @see #setPageCount(int)
-	 * <p> 
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 
 	public TemplateOption[] getOptions(int pageIndex) {
@@ -261,12 +191,6 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 * Returns options that are added to the provided wizard page.
 	 * @param page wizard page that hosts required options
 	 * @return array of options added to the provided wizard page
-	 * <p> 
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 
 	public TemplateOption[] getOptions(WizardPage page) {
@@ -285,12 +209,6 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 * being requested
 	 * @return zero-based index of a page that hosts the option or -1
 	 * if none of the pages contain the option.
-	 * <p> 
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	public int getPageIndex(TemplateOption option) {
 		for (int i = 0; i < pages.size(); i++) {
@@ -308,12 +226,6 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 * used to locate the label in the plugin.properties file
 	 * of the plug-in that contributed this template.
 	 * @return the translated label of this template
-	 * <p> 
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	public String getLabel() {
 		String key = "template." + getSectionId() + ".name";
@@ -326,12 +238,6 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 * used to locate the label in the plugin.properties file
 	 * of the plug-in that contributed this template.
 	 * @return the translated description of this template
-	 * <p> 
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	public String getDescription() {
 		String key = "template." + getSectionId() + ".desc";
@@ -343,12 +249,6 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 * The flagging is done by setting the page incomplete and
 	 * setting the error message that uses option's message label.
 	 * @param option the option that is required and currently not set
-	 * <p> 
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	protected void flagMissingRequiredOption(TemplateOption option) {
 		WizardPage page = null;
@@ -374,12 +274,6 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 * Resets the current page state by clearing the error message
 	 * and making the page complete, thereby allowing users to flip
 	 * to the next page.
-	 * <p> 
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	protected void resetPageState() {
 		if (pages.size() == 0)
