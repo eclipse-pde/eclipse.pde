@@ -9,11 +9,13 @@ import java.io.*;
 import java.util.*;
 
 import org.eclipse.core.boot.*;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.internal.junit.launcher.JUnitBaseLaunchConfiguration;
 import org.eclipse.jdt.launching.*;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.IWorkspaceModelManager;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -156,7 +158,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		
 		// Specify the application to launch based on the list of plug-ins to run.
 		programArgs.add("-application");
-		programArgs.add(getApplicationName(pluginMap));
+		programArgs.add(getApplicationName(pluginMap, configuration));
 		
 		// Specify the application to test
 		String testApplication = configuration.getAttribute(APP_TO_TEST, (String)null);
@@ -321,10 +323,14 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		return LauncherUtils.getDefaultPath().append("junit-core-workspace").toOSString();				
 	}
 	
-	private String getApplicationName(TreeMap pluginMap) {
-		if (!pluginMap.containsKey("org.eclipse.swt"))
-			return CORE_APPLICATION;
-		
+	private String getApplicationName(TreeMap pluginMap, ILaunchConfiguration configuration) {
+		try {
+			String application = configuration.getAttribute(APPLICATION, (String)null);
+			if (CORE_APPLICATION.equals(application) || !requiresUI(configuration))
+				return CORE_APPLICATION;
+		} catch (CoreException e) {
+		}
+				
 		IPluginModelBase model = (IPluginModelBase)pluginMap.get("org.eclipse.ui");
 		if (model != null) {
 			IPluginExtension[] extensions = model.getPluginBase().getExtensions();
@@ -338,5 +344,36 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 			}
 		}
 		return UI_APPLICATION;
+	}
+	
+	public static String getPluginID(ILaunchConfiguration configuration) {
+		try {
+			String projectID = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, "");
+			if (projectID.length() > 0) {
+				IResource project = PDEPlugin.getWorkspace().getRoot().findMember(projectID);
+				if (project != null && project instanceof IProject) {
+					IModel model = PDECore.getDefault().getWorkspaceModelManager().getWorkspaceModel((IProject)project);
+					if (model != null && model instanceof IPluginModelBase) {
+						return ((IPluginModelBase)model).getPluginBase().getId();
+					}
+				}
+			}
+		} catch (CoreException e) {
+		}
+		return null;
+	}
+	
+	public static boolean requiresUI(ILaunchConfiguration configuration) {
+		String id = getPluginID(configuration);
+		if (id != null) {
+			IPluginModelBase[] models = LauncherUtils.getPluginAndPrereqs(id);
+			int i = 0;
+			for (; i < models.length; i++) {
+				if ("org.eclipse.swt".equals(models[i].getPluginBase().getId()))
+					return true;
+			}
+			return false;
+		}
+		return true;
 	}
 }

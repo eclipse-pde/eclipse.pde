@@ -263,7 +263,7 @@ public class LauncherUtils {
 		return list;
 	}
 	
-	private static IPluginModelBase[] getPluginAndPrereqs(String id) {
+	public static IPluginModelBase[] getPluginAndPrereqs(String id) {
 		TreeMap map = new TreeMap();
 		addPluginAndPrereqs(id, map);
 		if (PDECore.getDefault().getModelManager().isOSGiRuntime()) {

@@ -13,14 +13,11 @@ package org.eclipse.pde.internal.ui.launcher;
 import java.io.*;
 import java.util.*;
 
-import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.debug.ui.*;
-import org.eclipse.jdt.launching.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.plugin.*;
@@ -578,25 +575,10 @@ public class AdvancedLauncherTab
 		} else {
 			config.setAttribute(USECUSTOM, true);
 			config.setAttribute(USE_ONE_PLUGIN, false);
-			try {
-				String projectName= config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, "");
-				config.setAttribute(ONE_PLUGIN_ID, getPluginId(projectName));
-			} catch (CoreException e) {
-			}
+			config.setAttribute(ONE_PLUGIN_ID, JUnitLaunchConfiguration.getPluginID(config));
 		}
 	}
 	
-	private String getPluginId(String projectName) {
-		IResource project = PDEPlugin.getWorkspace().getRoot().findMember(projectName);
-		if (project != null && project instanceof IProject) {
-			IModel model = PDECore.getDefault().getWorkspaceModelManager().getWorkspaceModel((IProject)project);
-			if (model != null && model instanceof IPluginModelBase) {
-				return ((IPluginModelBase)model).getPluginBase().getId();
-			}
-		}
-		return "";
-	}
-
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(USECUSTOM, fUseDefaultRadio.getSelection());
 		if (fShowFeatures)

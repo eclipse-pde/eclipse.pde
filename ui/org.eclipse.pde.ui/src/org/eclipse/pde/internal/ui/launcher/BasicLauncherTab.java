@@ -188,7 +188,7 @@ public class BasicLauncherTab
 		});		
 	}
 	
-	private String[] getApplicationNames() {
+	protected String[] getApplicationNames() {
 		TreeSet result = new TreeSet();
 		IPluginModelBase[] plugins = PDECore.getDefault().getModelManager().getPlugins();
 		for (int i = 0; i < plugins.length; i++) {
