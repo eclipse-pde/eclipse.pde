@@ -316,7 +316,8 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 	
 	private void handleChangeTargetPlatform() {
 		IPreferenceNode targetNode = new TargetPlatformPreferenceNode();
-		showPreferencePage(targetNode);
+		if (showPreferencePage(targetNode))
+			dropLocation.setText(ExternalModelManager.getEclipseHome(null).toOSString());
 	}
 	
 	private void handleEnvChange() {

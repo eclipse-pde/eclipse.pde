@@ -131,22 +131,14 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 	}
 
 	private void initializeFields(IPath dropLocation) {
-		boolean oldLoadFromRegistry = loadFromRegistry;
-
 		loadFromRegistry = !firstPage.isOtherLocation();
 
-		if (loadFromRegistry) {
-			if (!oldLoadFromRegistry)
-				models = null;
-			this.dropLocation = null;
+		if (dropLocation != this.dropLocation) {
 			updateStatus(createStatus(IStatus.OK, ""));
-		} else {
-			if (!dropLocation.equals(this.dropLocation)) {
-				updateStatus(createStatus(IStatus.OK, ""));
-				this.dropLocation = dropLocation;
-				models = null;
-			}
+			this.dropLocation = dropLocation;
+			models = null;
 		}
+
 		if (models == null) {
 			getModels(); // force loading
 			IRunnableWithProgress op = new IRunnableWithProgress() {
