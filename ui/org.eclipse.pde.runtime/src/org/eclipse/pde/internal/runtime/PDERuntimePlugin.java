@@ -12,21 +12,21 @@ import org.eclipse.ui.plugin.*;
 import java.util.*;
 import org.eclipse.ui.*;
 
-
 public class PDERuntimePlugin extends AbstractUIPlugin {
 	private static PDERuntimePlugin inst;
 	private ResourceBundle resourceBundle;
 
-public PDERuntimePlugin(IPluginDescriptor descriptor) {
-	super(descriptor);
-	inst = this;
-	try {
-		resourceBundle =
-			ResourceBundle.getBundle("org.eclipse.pde.internal.runtime.pderuntimeresources");
-	} catch (MissingResourceException x) {
-		resourceBundle = null;
+	public PDERuntimePlugin(IPluginDescriptor descriptor) {
+		super(descriptor);
+		inst = this;
+		try {
+			resourceBundle =
+				ResourceBundle.getBundle(
+					"org.eclipse.pde.internal.runtime.pderuntimeresources");
+		} catch (MissingResourceException x) {
+			resourceBundle = null;
+		}
 	}
-}
 	public static IWorkbenchPage getActivePage() {
 		return getDefault().internalGetActivePage();
 	}
@@ -39,38 +39,39 @@ public PDERuntimePlugin(IPluginDescriptor descriptor) {
 	public static PDERuntimePlugin getDefault() {
 		return inst;
 	}
-/* package */
-static IPath getInstallLocation() {
-	return new Path(getDefault().getDescriptor().getInstallURL().getFile());
-}
-public static String getPluginId() {
-	return getDefault().getDescriptor().getUniqueIdentifier();
-}
-public java.util.ResourceBundle getResourceBundle() {
-	return resourceBundle;
-}
-public static String getResourceString(String key) {
-	ResourceBundle bundle = inst.getResourceBundle();
-	if (bundle != null) {
-		try {
-			String bundleString = bundle.getString(key);
-			//return "$"+bundleString;
-			return bundleString;
-		} catch (MissingResourceException e) {
-			// default actions is to return key, which is OK
-		}
+	/* package */
+	static IPath getInstallLocation() {
+		return new Path(getDefault().getDescriptor().getInstallURL().getFile());
 	}
-	return key;
-}
+	public static String getPluginId() {
+		return getDefault().getDescriptor().getUniqueIdentifier();
+	}
+	public java.util.ResourceBundle getResourceBundle() {
+		return resourceBundle;
+	}
+	public static String getResourceString(String key) {
+		ResourceBundle bundle = inst.getResourceBundle();
+		if (bundle != null) {
+			try {
+				String bundleString = bundle.getString(key);
+				//return "$"+bundleString;
+				return bundleString;
+			} catch (MissingResourceException e) {
+				// default actions is to return key, which is OK
+			}
+		}
+		return key;
+	}
 	public static IWorkspace getWorkspace() {
 		return ResourcesPlugin.getWorkspace();
 	}
 	private IWorkbenchPage internalGetActivePage() {
 		return getWorkbench().getActiveWorkbenchWindow().getActivePage();
 	}
-public void startup() throws CoreException {
-	IAdapterManager manager = Platform.getAdapterManager();
-	RegistryPropertySourceFactory factory = new RegistryPropertySourceFactory();
-	manager.registerAdapters(factory, PluginObjectAdapter.class);
-}
+	public void startup() throws CoreException {
+		IAdapterManager manager = Platform.getAdapterManager();
+		RegistryPropertySourceFactory factory =
+			new RegistryPropertySourceFactory();
+		manager.registerAdapters(factory, PluginObjectAdapter.class);
+	}
 }
