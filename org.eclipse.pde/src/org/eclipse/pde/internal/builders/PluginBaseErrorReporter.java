@@ -147,6 +147,8 @@ public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {
 	protected void validatePluginID(Element element, Attr attr) {
 		int severity = CompilerFlags
 				.getFlag(CompilerFlags.P_UNRESOLVED_IMPORTS);
+		if ("true".equals(element.getAttribute("optional")) && severity == CompilerFlags.ERROR)  //$NON-NLS-1$ //$NON-NLS-2$
+			severity = CompilerFlags.WARNING;
 		if (severity != CompilerFlags.IGNORE) {
 			IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(attr.getValue());
 			if (model == null || !model.isEnabled()) {
