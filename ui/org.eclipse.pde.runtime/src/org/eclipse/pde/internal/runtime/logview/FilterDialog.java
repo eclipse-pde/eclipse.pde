@@ -27,11 +27,7 @@ public class FilterDialog extends Dialog {
 	}
 	
 	protected Control createDialogArea(Composite parent) {
-		Composite container = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		container.setLayout(layout);
-		container.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+		Composite container = (Composite)super.createDialogArea(parent);		
 		createEventTypesGroup(container);
 		createLimitSection(container);
 		createSessionSection(container);
