@@ -35,7 +35,9 @@ public class TracingOptionsManager {
 			return;
 		for (Enumeration enum = modelOptions.keys(); enum.hasMoreElements();) {
 			String key = enum.nextElement().toString();
-			template.setProperty(key, modelOptions.getProperty(key));
+			String value = modelOptions.getProperty(key);
+			if (key != null && value != null)
+				template.setProperty(key, value);
 		}
 	}
 	private void createTemplate() {
