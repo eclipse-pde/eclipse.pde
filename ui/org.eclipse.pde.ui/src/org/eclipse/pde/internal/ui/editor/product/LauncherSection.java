@@ -1,27 +1,25 @@
 package org.eclipse.pde.internal.ui.editor.product;
 
-import java.util.*;
+import java.util.ArrayList;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.pde.internal.core.iproduct.*;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.parts.*;
+import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.pde.internal.ui.util.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.dnd.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.dialogs.*;
-import org.eclipse.ui.forms.events.*;
+import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.ide.*;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.model.*;
 
 
@@ -119,8 +117,8 @@ public class LauncherSection extends PDESection {
 		Composite comp = createComposite(parent, toolkit, "win32"); //$NON-NLS-1$
 		
 		fIcoButton = toolkit.createButton(comp, PDEPlugin.getResourceString("LauncherSection.ico"), SWT.RADIO); //$NON-NLS-1$
-		GridData gd = new GridData();
-		gd.horizontalSpan = 3;
+		TableWrapData gd = new TableWrapData();
+		gd.colspan = 3;
 		fIcoButton.setLayoutData(gd);
 		fIcoButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -134,29 +132,15 @@ public class LauncherSection extends PDESection {
 		fIcons.add(new IconEntry(comp, toolkit, PDEPlugin.getResourceString("LauncherSection.file"), ILauncherInfo.P_ICO_PATH)); //$NON-NLS-1$
 		
 		fBmpButton = toolkit.createButton(comp, PDEPlugin.getResourceString("LauncherSection.bmpImages"), SWT.RADIO); //$NON-NLS-1$
-		gd = new GridData();
-		gd.horizontalSpan = 3;
+		gd = new TableWrapData();
+		gd.colspan = 3;
 		fBmpButton.setLayoutData(gd);
 		fBmpButton.setEnabled(isEditable());
 		
 		final Label label = toolkit.createLabel(comp, PDEPlugin.getResourceString("LauncherSection.bmpImagesText"), SWT.WRAP); //$NON-NLS-1$
-		gd = new GridData();
-		gd.horizontalSpan = 3;
+		gd = new TableWrapData();
+		gd.colspan = 3;
 		label.setLayoutData(gd);
-		comp.addControlListener(new ControlAdapter() {
-			public void controlResized(ControlEvent e) {
-				// A hack to make the label wrap inside GridLayout
-				// This illustrates why TableWrapLayout is used
-				Composite c = (Composite)e.widget;
-				GridLayout layout = (GridLayout)c.getLayout();
-				Rectangle carea = c.getClientArea();
-				GridData gd = (GridData)label.getLayoutData();
-				gd.widthHint = carea.width - layout.marginWidth-layout.marginWidth;
-				Point lsize = label.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-				if (lsize.x< gd.widthHint)
-					gd.widthHint = SWT.DEFAULT;
-			}
-		});
 
 		fIcons.add(new IconEntry(comp, toolkit, PDEPlugin.getResourceString("LauncherSection.Low16"), ILauncherInfo.WIN32_16_LOW)); //$NON-NLS-1$
 		fIcons.add(new IconEntry(comp, toolkit, PDEPlugin.getResourceString("LauncherSection.High16"), ILauncherInfo.WIN32_16_HIGH)); //$NON-NLS-1$
@@ -217,8 +201,10 @@ public class LauncherSection extends PDESection {
 		gd.colspan = 2;
 		ec.setLayoutData(gd);
 		Composite comp = toolkit.createComposite(ec);
-		comp.setLayout(new GridLayout(3, false));
-		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+		TableWrapLayout layout = new TableWrapLayout();
+		layout.leftMargin = layout.rightMargin = 0;
+		layout.numColumns = 3;
+		comp.setLayout(layout);
 		ec.setClient(comp);
 		return comp;
 	}
