@@ -56,6 +56,7 @@ public abstract class PDEMultiPageEditor
 	protected IModelUndoManager undoManager;
 	protected Clipboard clipboard;
 	private boolean validated;
+	private int verificationCounter;
 
 	public PDEMultiPageEditor() {
 		formWorkbook = new CustomWorkbook();
@@ -140,7 +141,15 @@ public abstract class PDEMultiPageEditor
 					if (formPage.getSelection() != null)
 						setSelection(formPage.getSelection());
 				}
-				((IPDEEditorPage) page).setFocus();
+				IPDEEditorPage pdePage = (IPDEEditorPage)page;
+				pdePage.setFocus();
+				verificationCounter++;
+				if (verificationCounter==2) {
+					// Skip the first time the page is switched,
+					// ask the second time (user switch)
+					// and ignore afterwards.
+					verifyDefaultPage(pdePage.isSource());
+				}
 			}
 		});
 		MenuManager manager = new MenuManager();
@@ -164,7 +173,7 @@ public abstract class PDEMultiPageEditor
 			showPage(firstPageId);
 	}
 	public void dispose() {
-		verifyDefaultPage();
+		//verifyDefaultPage();
 		setSelection(new StructuredSelection());
 		for (int i = 0; i < pages.size(); i++) {
 			IWorkbenchPart part = (IWorkbenchPart) pages.elementAt(i);
@@ -184,11 +193,11 @@ public abstract class PDEMultiPageEditor
 		disposed = true;
 	}
 	
-	private void verifyDefaultPage() {
+	private void verifyDefaultPage(boolean usingSource) {
 		boolean askDefault = EditorPreferencePage.getAskDefaultPage();
 		boolean shouldUseSource = EditorPreferencePage.getUseSourcePage();
 		if (!askDefault) return;
-		boolean usingSource = getCurrentPage().isSource();
+
 		boolean ask=false;
 		String msg="";
 		if (usingSource && !shouldUseSource) {

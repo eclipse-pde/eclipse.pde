@@ -939,6 +939,7 @@
             label="%decorator.label"
             icon="icons/full/ovr16/binary_co.gif"
             state="false"
+            lightweight="true"
             id="org.eclipse.pde.ui.binaryProjectDecorator">
          <description>
             %decorator.desc
