@@ -305,7 +305,7 @@ public class GeneralInfoSection extends PDESection {
 				SelectionDialog dialog = JavaUI.createTypeDialog(shell,
 						new ProgressMonitorDialog(shell),
 						getSearchScope(project),
-						IJavaElementSearchConstants.CONSIDER_CLASSES, false);
+						IJavaElementSearchConstants.CONSIDER_CLASSES, false, "*");
 				dialog.setTitle("Select Type");
 				if (dialog.open() == SelectionDialog.OK) {
 					IType type = (IType) dialog.getResult()[0];
