@@ -9,10 +9,14 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.preference.IPreferenceNode;
+import org.eclipse.jface.preference.PreferenceDialog;
+import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.wizards.StatusWizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -35,6 +39,7 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 	private static final String KEY_OTHER_DESC = "ImportWizard.FirstPage.otherDesc";
 	private static final String KEY_OTHER_FOLDER =
 		"ImportWizard.FirstPage.otherFolder";
+	private static final String KEY_CHANGE = "ImportWizard.FirstPage.change";
 	private static final String KEY_BROWSE = "ImportWizard.FirstPage.browse";
 	private static final String KEY_IMPORT_CHECK =
 		"ImportWizard.FirstPage.importCheck";
@@ -65,6 +70,7 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 
 	private Label otherLocationLabel;
 	private Button runtimeLocationButton;
+	private Button changeButton;
 	private Button browseButton;
 	private Combo dropLocation;
 	private Button doImportCheck;
@@ -95,9 +101,17 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 		composite.setLayout(layout);
 
 		runtimeLocationButton = new Button(composite, SWT.CHECK);
-		fillHorizontal(runtimeLocationButton, 3, false);
+		fillHorizontal(runtimeLocationButton, 2, false);
 		runtimeLocationButton.setText(
 			PDEPlugin.getResourceString(KEY_RUNTIME_LOCATION));
+			
+		changeButton = new Button(composite, SWT.PUSH);
+		changeButton.setText(PDEPlugin.getResourceString(KEY_CHANGE));
+		changeButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleChangeTargetPlatform();
+			}
+		});
 
 		int wizardClientWidth = parent.getSize().x - 2 * layout.marginWidth;
 		otherLocationLabel = new Label(composite, SWT.NULL);
@@ -266,6 +280,20 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 		control.setLayoutData(gd);
 		return gd;
 	}
+	
+	private void handleChangeTargetPlatform() {
+		final IPreferenceNode targetNode = new TargetPlatformPreferenceNode();
+		PreferenceManager manager = new PreferenceManager();
+		manager.addToRoot(targetNode);
+		final PreferenceDialog dialog = new PreferenceDialog(getControl().getShell(), manager);
+		BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
+			public void run() {
+				dialog.create();
+				dialog.setMessage(targetNode.getLabelText());
+				dialog.open();
+			}
+		});
+	}
 
 	private void initializeFields(IDialogSettings initialSettings) {
 		String[] dropItems = new String[0];
@@ -306,6 +334,7 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 		otherLocationLabel.setEnabled(enabled);
 		dropLocation.setEnabled(enabled);
 		browseButton.setEnabled(enabled);
+		changeButton.setEnabled(!enabled);
 	}
 
 	public void storeSettings(boolean finishPressed) {
