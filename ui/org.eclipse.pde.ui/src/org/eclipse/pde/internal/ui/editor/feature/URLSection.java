@@ -192,7 +192,8 @@ public class URLSection extends PDESection {
 	}
 	public void dispose() {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
-		model.removeModelChangedListener(this);
+		if (model != null) 
+			model.removeModelChangedListener(this);
 		super.dispose();
 	}
 	public boolean doGlobalAction(String actionId) {
