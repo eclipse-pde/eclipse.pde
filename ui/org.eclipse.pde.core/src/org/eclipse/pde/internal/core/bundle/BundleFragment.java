@@ -15,7 +15,7 @@ public class BundleFragment extends BundlePluginBase implements IBundleFragment 
 	 * @see org.eclipse.pde.core.plugin.IFragment#getPluginVersion()
 	 */
 	public String getPluginVersion() {
-		return getAttribute(Constants.FRAGMENT_HOST, Constants.BUNDLE_VERSION);
+		return getAttribute(Constants.FRAGMENT_HOST, Constants.BUNDLE_VERSION_ATTRIBUTE);
 	}
 
 	/* (non-Javadoc)
@@ -60,9 +60,8 @@ public class BundleFragment extends BundlePluginBase implements IBundleFragment 
 		if (id != null)
 			buffer.append(id);
 		
-		if (version != null) {
-			buffer.append(";");
-			buffer.append("bundle-version=" + version);
+		if (version != null && version.trim().length() > 0) {
+			buffer.append(";" + Constants.BUNDLE_VERSION_ATTRIBUTE + "=\"" + version.trim() + "\"");
 		}
 		return buffer.toString();
 	}

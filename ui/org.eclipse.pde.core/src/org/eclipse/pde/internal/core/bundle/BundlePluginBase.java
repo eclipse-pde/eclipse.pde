@@ -144,6 +144,9 @@ public class BundlePluginBase
 					buffer.append(";" + Constants.OPTIONAL_ATTRIBUTE + "=true");
 				if (iimport.isReexported())
 					buffer.append(";" + Constants.REPROVIDE_ATTRIBUTE + "=true");
+				String version = iimport.getVersion();
+				if (version != null && version.trim().length() > 0)
+					buffer.append(";" + Constants.BUNDLE_VERSION_ATTRIBUTE + "=\"" + version.trim() + "\"");
 				if (i < imports.size() - 1) {
 					buffer.append("," + System.getProperty("line.separator") + " ");
 				}
@@ -489,7 +492,11 @@ public class BundlePluginBase
 		IBundle bundle = getBundle();
 		if (bundle != null) {
 			String old = getId();
-			bundle.setHeader(Constants.BUNDLE_SYMBOLICNAME, id + ";singleton=true");
+			StringBuffer buffer = new StringBuffer(id);
+			String singleton = getAttribute(Constants.BUNDLE_SYMBOLICNAME, Constants.SINGLETON_ATTRIBUTE);
+			if (singleton != null && singleton.trim().length() > 0) 
+				buffer.append(";" + Constants.SINGLETON_ATTRIBUTE + "=" + singleton.trim());
+			bundle.setHeader(Constants.BUNDLE_SYMBOLICNAME, buffer.toString());
 			model.fireModelObjectChanged(this, IPluginBase.P_ID, old, id);
 		}
 	}
