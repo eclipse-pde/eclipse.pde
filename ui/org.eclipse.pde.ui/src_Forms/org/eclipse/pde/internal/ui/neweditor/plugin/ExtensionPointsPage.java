@@ -6,7 +6,7 @@
  */
 package org.eclipse.pde.internal.ui.neweditor.plugin;
 import org.eclipse.pde.internal.ui.neweditor.*;
-import org.eclipse.pde.internal.ui.neweditor.plugin.dummy.*;
+import org.eclipse.pde.internal.ui.neweditor.plugin.dummy.DummyExtensionPoint;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.editor.FormEditor;
@@ -25,7 +25,7 @@ public class ExtensionPointsPage extends PDEFormPage {
 		public ExtensionPointsBlock() {
 			super(ExtensionPointsPage.this);
 		}
-		protected PDESection createMasterSection(ManagedForm managedForm,
+		protected PDESection createMasterSection(IManagedForm managedForm,
 				Composite parent) {
 			return new ExtensionPointsSection(getPage(), parent);
 		}
@@ -43,7 +43,7 @@ public class ExtensionPointsPage extends PDEFormPage {
 		super(editor, PAGE_ID, "Extension Points");
 		block = new ExtensionPointsBlock();
 	}
-	protected void createFormContent(ManagedForm managedForm) {
+	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();

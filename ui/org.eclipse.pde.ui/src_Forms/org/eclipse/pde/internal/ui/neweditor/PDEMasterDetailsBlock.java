@@ -30,9 +30,9 @@ public abstract class PDEMasterDetailsBlock extends MasterDetailsBlock {
 		return page;
 	}
 	
-	protected abstract PDESection createMasterSection(ManagedForm managedForm, Composite parent);
+	protected abstract PDESection createMasterSection(IManagedForm managedForm, Composite parent);
 
-	protected void createMasterPart(final ManagedForm managedForm,
+	protected void createMasterPart(final IManagedForm managedForm,
 			Composite parent) {
 		FormToolkit toolkit = managedForm.getToolkit();
 		PDESection section = createMasterSection(managedForm, parent);
@@ -40,7 +40,7 @@ public abstract class PDEMasterDetailsBlock extends MasterDetailsBlock {
 		sc.marginWidth = 5;
 		sc.marginHeight = 5;
 	}
-	protected void createToolBarActions(ManagedForm managedForm) {
+	protected void createToolBarActions(IManagedForm managedForm) {
 		final ScrolledForm form = managedForm.getForm();
 	
 		Action haction = new Action("hor", Action.AS_RADIO_BUTTON) {

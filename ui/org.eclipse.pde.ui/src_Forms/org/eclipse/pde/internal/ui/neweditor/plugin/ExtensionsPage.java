@@ -29,7 +29,7 @@ public class ExtensionsPage extends PDEFormPage {
 		public ExtensionsBlock() {
 			super(ExtensionsPage.this);
 		}
-		protected PDESection createMasterSection(ManagedForm managedForm,
+		protected PDESection createMasterSection(IManagedForm managedForm,
 				Composite parent) {
 			section = new ExtensionsSection(getPage(), parent);
 			return section;
@@ -54,7 +54,7 @@ public class ExtensionsPage extends PDEFormPage {
 				return new ExtensionElementDetails((ISchemaElement)object);
 			return null;
 		}
-		protected void createToolBarActions(ManagedForm managedForm) {
+		protected void createToolBarActions(IManagedForm managedForm) {
 			final ScrolledForm form = managedForm.getForm();
 			Action collapseAction = new Action("col") {
 				public void run() {
@@ -77,7 +77,7 @@ public class ExtensionsPage extends PDEFormPage {
 		super(editor, PAGE_ID, "Extensions");
 		block = new ExtensionsBlock();
 	}
-	protected void createFormContent(ManagedForm managedForm) {
+	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();

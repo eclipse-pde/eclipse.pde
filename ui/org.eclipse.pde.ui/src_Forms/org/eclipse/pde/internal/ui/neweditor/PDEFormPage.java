@@ -9,7 +9,7 @@ import org.eclipse.jface.action.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.*;
-import org.eclipse.ui.forms.ManagedForm;
+import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.*;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -28,7 +28,7 @@ public abstract class PDEFormPage extends FormPage {
 	public PDEFormPage(FormEditor editor, String id, String title) {
 		super(editor, id, title);
 	}
-	protected void createFormContent(ManagedForm managedForm) {
+	protected void createFormContent(IManagedForm managedForm) {
 		final ScrolledForm form = managedForm.getForm();
 		form.setBackgroundImage(PDEPlugin.getDefault().getLabelProvider().get(
 				PDEPluginImages.DESC_FORM_BANNER));

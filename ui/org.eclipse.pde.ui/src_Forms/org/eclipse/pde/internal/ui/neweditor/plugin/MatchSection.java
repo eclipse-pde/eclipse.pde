@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.neweditor.plugin;
 import java.util.Iterator;
-
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.*;
@@ -27,13 +26,11 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.widgets.*;
-
 /**
- * 
  * @author dejan
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * 
+ * To change the template for this generated type comment go to Window -
+ * Preferences - Java - Code Generation - Code and Comments
  */
 public class MatchSection extends PDESection implements IPartSelectionListener {
 	private FormEntry versionText;
@@ -58,13 +55,11 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 	public static final String KEY_GREATER = "ManifestEditor.MatchSection.greater";
 	public static final String KEY_VERSION_FORMAT = "ManifestEditor.PluginSpecSection.versionFormat";
 	public static final String KEY_VERSION_TITLE = "ManifestEditor.PluginSpecSection.versionTitle";
-
-/**
- * 
- * @param formPage
- * @param parent
- * @param addReexport
- */
+	/**
+	 * @param formPage
+	 * @param parent
+	 * @param addReexport
+	 */
 	public MatchSection(PDEFormPage formPage, Composite parent,
 			boolean addReexport) {
 		super(formPage, parent, Section.DESCRIPTION);
@@ -76,7 +71,7 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 	public MatchSection(PDEFormPage formPage, Composite parent) {
 		this(formPage, parent, true);
 	}
-	public void commitChanges(boolean onSave) {
+	public void commit(boolean onSave) {
 		/*
 		 * if (isDirty() == false) return; ignoreModelEvents = true; if
 		 * ((currentImport != null || multiSelection != null) &&
@@ -86,6 +81,7 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 		 * getMatch(); } applyMatch(match); } setDirty(false);
 		 * ignoreModelEvents = false;
 		 */
+		super.commit(onSave);
 	}
 	public void createClient(Section section, FormToolkit toolkit) {
 		toolkit.createCompositeSeparator(section);
@@ -101,8 +97,8 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 		}
 		versionText = new FormEntry(container, toolkit, PDEPlugin
 				.getResourceString(KEY_VERSION), null, false);
-		versionText.setFormEntryListener(new EditorEntryAdapter(getPage()
-				.getPDEEditor()) {
+		versionText.setFormEntryListener(new FormEntryAdapter(getForm(),
+				getPage().getEditor().getEditorSite().getActionBars()) {
 			public void textValueChanged(FormEntry text) {
 				try {
 					String value = text.getValue();
@@ -145,7 +141,8 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 		matchCombo.add(PDEPlugin.getResourceString(KEY_PERFECT));
 		matchCombo.add(PDEPlugin.getResourceString(KEY_GREATER));
 		//matchCombo.pack();
-		matchCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		matchCombo.getControl().setLayoutData(
+				new GridData(GridData.FILL_HORIZONTAL));
 		matchCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (!blockChanges) {

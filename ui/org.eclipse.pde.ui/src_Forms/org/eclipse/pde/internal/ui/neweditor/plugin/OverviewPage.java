@@ -7,16 +7,13 @@
 package org.eclipse.pde.internal.ui.neweditor.plugin;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.neweditor.PDEFormPage;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.*;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.forms.ManagedForm;
+import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.events.*;
-import org.eclipse.ui.forms.events.HyperlinkListener;
 import org.eclipse.ui.forms.widgets.*;
 /**
  * @author dejan
@@ -64,7 +61,7 @@ public class OverviewPage extends PDEFormPage implements HyperlinkListener {
 	protected String getHelpResource() {
 		return "/org.eclipse.pde.doc.user/guide/pde_manifest_overview.htm";
 	}
-	protected void createFormContent(ManagedForm managedForm) {
+	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
@@ -73,7 +70,7 @@ public class OverviewPage extends PDEFormPage implements HyperlinkListener {
 		managedForm.refresh();
 	}
 
-	private void fillBody(ManagedForm managedForm, FormToolkit toolkit) {
+	private void fillBody(IManagedForm managedForm, FormToolkit toolkit) {
 		Composite body = managedForm.getForm().getBody();
 		TableWrapLayout layout = new TableWrapLayout();
 		layout.bottomMargin = 10;
@@ -117,25 +114,25 @@ public class OverviewPage extends PDEFormPage implements HyperlinkListener {
 		createTestingSection(managedForm, right, toolkit);
 		createDeployingSection(managedForm, right, toolkit);
 	}
-	private void createAlertSection(ManagedForm managedForm, Composite parent, FormToolkit toolkit) {
+	private void createAlertSection(IManagedForm managedForm, Composite parent, FormToolkit toolkit) {
 		AlertSection section = new AlertSection(this, parent);
 		managedForm.addPart(section);
 		TableWrapData td = new TableWrapData(TableWrapData.FILL_GRAB);
 		td.colspan = 2;
 		section.getSection().setLayoutData(td);		
 	}
-	private void createGeneralInfoSection(ManagedForm managedForm, Composite parent, FormToolkit toolkit) {
+	private void createGeneralInfoSection(IManagedForm managedForm, Composite parent, FormToolkit toolkit) {
 		GeneralInfoSection section = new GeneralInfoSection(this, parent);
 		managedForm.addPart(section);
 	}
-	private void createContentSection(ManagedForm managedForm, Composite parent, FormToolkit toolkit) {
+	private void createContentSection(IManagedForm managedForm, Composite parent, FormToolkit toolkit) {
 		Section section = createStaticSection(parent, toolkit);
 		section.setText("Content");
 		FormText text = createClient(section, contentText, toolkit);
 		PDELabelProvider lp = PDEPlugin.getDefault().getLabelProvider();
 		text.setImage("page", lp.get(PDEPluginImages.DESC_PAGE_OBJ, PDELabelProvider.F_EDIT));		
 	}
-	private void createTestingSection(ManagedForm managedForm, Composite parent, FormToolkit toolkit) {
+	private void createTestingSection(IManagedForm managedForm, Composite parent, FormToolkit toolkit) {
 		Section section = createStaticSection(parent, toolkit);		
 		section.setText("Testing");		
 		FormText text = createClient(section, testingText, toolkit);
@@ -145,7 +142,7 @@ public class OverviewPage extends PDEFormPage implements HyperlinkListener {
 		text.setImage("workbench", lp.get(PDEPluginImages.DESC_WORKBENCH_LAUNCHER_WIZ));
 		text.setImage("tbs", PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_INFO_TSK));		
 	}
-	private void createDeployingSection(ManagedForm managedForm, Composite parent, FormToolkit toolkit) {
+	private void createDeployingSection(IManagedForm managedForm, Composite parent, FormToolkit toolkit) {
 		Section section = createStaticSection(parent, toolkit);		
 		section.setText("Deploying");
 		FormText text = createClient(section, deployingText, toolkit);

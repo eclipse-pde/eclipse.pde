@@ -352,7 +352,7 @@ public class RequiresSection
 		return null;
 	}
 
-	public void commitChanges(boolean onSave) {
+	public void commit(boolean onSave) {
 		/*
 		if (onSave) {
 			IResource resource =
@@ -371,6 +371,7 @@ public class RequiresSection
 		}
 		setDirty(false);
 		*/
+		super.commit(onSave);
 	}
 
 	private void updateBuildPath() {

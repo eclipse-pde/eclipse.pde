@@ -90,7 +90,7 @@ public class FormEntry {
 			int tspan = browse != null ? span - 2 : span - 1;
 			gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 			gd.horizontalSpan = tspan;
-			gd.grabExcessHorizontalSpace=(tspan==1);
+			gd.grabExcessHorizontalSpace = (tspan == 1);
 			gd.widthHint = 10;
 			text.setLayoutData(gd);
 			if (browse != null) {
@@ -106,7 +106,7 @@ public class FormEntry {
 			int tspan = browse != null ? span - 2 : span - 1;
 			td = new TableWrapData(TableWrapData.FILL);
 			td.colspan = tspan;
-			td.grabHorizontal = (tspan==1);
+			td.grabHorizontal = (tspan == 1);
 			text.setLayoutData(td);
 			if (browse != null) {
 				td = new TableWrapData();

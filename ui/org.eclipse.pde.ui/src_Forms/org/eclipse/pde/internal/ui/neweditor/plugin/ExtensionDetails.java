@@ -6,9 +6,10 @@
  */
 package org.eclipse.pde.internal.ui.neweditor.plugin;
 
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.neweditor.EditorEntryAdapter;
+import org.eclipse.pde.internal.ui.neweditor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.neweditor.plugin.dummy.DummyExtension;
 import org.eclipse.pde.internal.ui.newparts.FormEntry;
 import org.eclipse.swt.layout.*;
@@ -78,10 +79,7 @@ public class ExtensionDetails implements IDetailsPage {
 		gd.horizontalSpan = 2;
 
 		id = new FormEntry(client, toolkit, "Id:", null, false);
-		id.setFormEntryListener(new EditorEntryAdapter() {
-			public void textDirty(FormEntry entry) {
-				managedForm.markDirty();
-			}
+		id.setFormEntryListener(new FormEntryAdapter(managedForm) {
 			public void textValueChanged(FormEntry entry) {
 				if (input!=null)
 					input.setProperty("id", id.getValue());
@@ -89,10 +87,7 @@ public class ExtensionDetails implements IDetailsPage {
 		});
 		
 		name = new FormEntry(client, toolkit, "Name:", null, false);
-		name.setFormEntryListener(new EditorEntryAdapter() {
-			public void textDirty(FormEntry entry) {
-				managedForm.markDirty();
-			}
+		name.setFormEntryListener(new FormEntryAdapter(managedForm) {
 			public void textValueChanged(FormEntry entry) {
 				if (input!=null)
 					input.setProperty("name", name.getValue());
@@ -100,10 +95,7 @@ public class ExtensionDetails implements IDetailsPage {
 		});
 		
 		point = new FormEntry(client, toolkit, "Point:", null, false);
-		point.setFormEntryListener(new EditorEntryAdapter() {
-			public void textDirty(FormEntry entry) {
-				managedForm.markDirty();
-			}
+		point.setFormEntryListener(new FormEntryAdapter(managedForm) {
 			public void textValueChanged(FormEntry entry) {
 				if (input!=null)
 					input.setProperty("point", point.getValue());
@@ -140,9 +132,10 @@ public class ExtensionDetails implements IDetailsPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.IDetailsPage#inputChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
-	public void inputChanged(IStructuredSelection selection) {
-		if (selection.size()==1) {
-			input = (DummyExtension)selection.getFirstElement();
+	public void selectionChanged(IFormPart part, ISelection selection) {
+		IStructuredSelection ssel = (IStructuredSelection)selection;
+		if (ssel.size()==1) {
+			input = (DummyExtension)ssel.getFirstElement();
 		}
 		else
 			input = null;
@@ -157,7 +150,7 @@ public class ExtensionDetails implements IDetailsPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.IDetailsPage#commit()
 	 */
-	public void commit() {
+	public void commit(boolean onSave) {
 		id.commit();
 		name.commit();
 		point.commit();
@@ -187,5 +180,10 @@ public class ExtensionDetails implements IDetailsPage {
 	 */
 	public void refresh() {
 		update();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.IFormPart#setFormInput(java.lang.Object)
+	 */
+	public void setFormInput(Object input) {
 	}
 }

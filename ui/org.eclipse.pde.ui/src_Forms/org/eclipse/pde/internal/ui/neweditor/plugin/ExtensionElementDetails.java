@@ -7,9 +7,9 @@
 package org.eclipse.pde.internal.ui.neweditor.plugin;
 import java.util.ArrayList;
 
-import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.core.ischema.*;
-import org.eclipse.pde.internal.ui.neweditor.plugin.dummy.*;
+import org.eclipse.pde.internal.ui.neweditor.plugin.dummy.DummyExtensionElement;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.*;
@@ -126,9 +126,10 @@ public class ExtensionElementDetails implements IDetailsPage {
 	 * 
 	 * @see org.eclipse.ui.forms.IDetailsPage#inputChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
-	public void inputChanged(IStructuredSelection selection) {
-		if (selection.size() == 1) {
-			input = (DummyExtensionElement) selection.getFirstElement();
+	public void selectionChanged(IFormPart masterPart, ISelection selection) {
+		IStructuredSelection ssel = (IStructuredSelection)selection;
+		if (ssel.size() == 1) {
+			input = (DummyExtensionElement) ssel.getFirstElement();
 		} else
 			input = null;
 		update();
@@ -144,7 +145,7 @@ public class ExtensionElementDetails implements IDetailsPage {
 	 * 
 	 * @see org.eclipse.ui.forms.IDetailsPage#commit()
 	 */
-	public void commit() {
+	public void commit(boolean onSave) {
 	}
 	/*
 	 * (non-Javadoc)
@@ -190,5 +191,7 @@ public class ExtensionElementDetails implements IDetailsPage {
 	 */
 	public void refresh() {
 		update();
+	}
+	public void setFormInput(Object input) {
 	}
 }

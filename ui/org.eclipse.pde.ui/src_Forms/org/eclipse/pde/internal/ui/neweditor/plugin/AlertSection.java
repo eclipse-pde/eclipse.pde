@@ -44,6 +44,7 @@ public class AlertSection extends PDESection {
 	}
 	public void refresh() {
 		text.setText(getAlerts(), true, false);
+		super.refresh();
 	}
 	private String getAlerts() {
 		StringBuffer buf = new StringBuffer();

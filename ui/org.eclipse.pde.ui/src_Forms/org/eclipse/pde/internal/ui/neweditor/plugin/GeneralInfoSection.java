@@ -9,8 +9,10 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.neweditor.*;
 import org.eclipse.pde.internal.ui.newparts.FormEntry;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.forms.widgets.*;
 /**
  * @author dejan
@@ -55,33 +57,36 @@ public class GeneralInfoSection extends PDESection {
 		layout.numColumns = 3;
 		client.setLayout(layout);
 		section.setClient(client);
+		IActionBars actionBars = getPage().getPDEEditor().getEditorSite()
+				.getActionBars();
 		idEntry = new FormEntry(client, toolkit, "Id:", null, false);
-		idEntry.setFormEntryListener(new EditorEntryAdapter(getPage()
-				.getPDEEditor()) {
-			public void textValueChanged(FormEntry entry) {
-			}
-		});
+		idEntry
+				.setFormEntryListener(new FormEntryAdapter(getForm(),
+						actionBars) {
+					public void textValueChanged(FormEntry entry) {
+					}
+				});
 		versionEntry = new FormEntry(client, toolkit, "Version:", null, false);
-		versionEntry.setFormEntryListener(new EditorEntryAdapter(getPage()
-				.getPDEEditor()) {
+		versionEntry.setFormEntryListener(new FormEntryAdapter(getForm(),
+				actionBars) {
 			public void textValueChanged(FormEntry entry) {
 			}
 		});
 		nameEntry = new FormEntry(client, toolkit, "Name:", null, false);
-		nameEntry.setFormEntryListener(new EditorEntryAdapter(getPage()
-				.getPDEEditor()) {
+		nameEntry.setFormEntryListener(new FormEntryAdapter(getForm(),
+				actionBars) {
 			public void textValueChanged(FormEntry entry) {
 			}
 		});
 		providerEntry = new FormEntry(client, toolkit, "Provider:", null, false);
-		providerEntry.setFormEntryListener(new EditorEntryAdapter(getPage()
-				.getPDEEditor()) {
+		providerEntry.setFormEntryListener(new FormEntryAdapter(getForm(),
+				actionBars) {
 			public void textValueChanged(FormEntry entry) {
 			}
 		});
 		classEntry = new FormEntry(client, toolkit, "Class:", "Browse...", true);
-		classEntry.setFormEntryListener(new EditorEntryAdapter(getPage()
-				.getPDEEditor()) {
+		classEntry.setFormEntryListener(new FormEntryAdapter(getForm(),
+				actionBars) {
 			public void textValueChanged(FormEntry entry) {
 			}
 		});
@@ -97,6 +102,11 @@ public class GeneralInfoSection extends PDESection {
 												: PDEPlugin
 														.getResourceString("ManifestEditor.PluginSpecSection.plugin")),
 						SWT.CHECK);
+		olderVersions.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				markDirty();
+			}
+		});
 		GridData gd = new GridData();
 		gd.horizontalSpan = layout.numColumns;
 		olderVersions.setLayoutData(gd);
@@ -105,10 +115,23 @@ public class GeneralInfoSection extends PDESection {
 		//TODO replace this with a real code
 		return false;
 	}
+	public void commit(boolean onSave) {
+		idEntry.commit();
+		nameEntry.commit();
+		providerEntry.commit();
+		classEntry.commit();
+		//olderVersions.getSelection();
+		super.commit(onSave);
+	}
+	public boolean isDirty() {
+		return idEntry.isDirty() || nameEntry.isDirty()
+				|| providerEntry.isDirty() || classEntry.isDirty();
+	}
 	public void refresh() {
 		idEntry.setValue("com.example.xyz", true);
 		nameEntry.setValue("XYZ Plug-in", true);
 		providerEntry.setValue("XYZ Inc.", true);
 		classEntry.setValue("com.example.xyz.XYZPlugin", true);
+		super.refresh();
 	}
 }

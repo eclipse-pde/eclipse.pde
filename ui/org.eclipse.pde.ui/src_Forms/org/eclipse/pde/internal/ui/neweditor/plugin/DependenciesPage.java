@@ -10,7 +10,7 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.neweditor.PDEFormPage;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.forms.ManagedForm;
+import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
@@ -38,7 +38,7 @@ public class DependenciesPage extends PDEFormPage {
 		super(editor, PAGE_ID, "Dependencies");
 	}
 
-	protected void createFormContent(ManagedForm managedForm) {
+	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();

@@ -7,7 +7,7 @@
 package org.eclipse.pde.internal.ui.neweditor.plugin;
 
 import org.eclipse.pde.internal.ui.neweditor.PDEFormPage;
-import org.eclipse.ui.forms.ManagedForm;
+import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.widgets.*;
 
@@ -28,7 +28,7 @@ public class BuildPage extends PDEFormPage {
 		super(editor, PAGE_ID, "Build");
 	}
 	
-	protected void createFormContent(ManagedForm managedForm) {
+	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
