@@ -26,6 +26,7 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.help.*;
 
 public class MigratePluginWizardPage extends WizardPage {
 	private IPluginModelBase[] fSelected;
@@ -121,6 +122,7 @@ public class MigratePluginWizardPage extends WizardPage {
 
 		setControl(container);
 		Dialog.applyDialogFont(container);
+		WorkbenchHelp.setHelp(container, IHelpContextIds.MIGRATE_3_0);
 	}
 
 	public IPluginModelBase[] getSelected() {

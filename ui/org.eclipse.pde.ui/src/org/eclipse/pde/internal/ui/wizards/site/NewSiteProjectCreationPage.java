@@ -19,6 +19,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.*;
+import org.eclipse.ui.help.*;
 
 /**
  * @author cgwong
@@ -100,6 +101,7 @@ public class NewSiteProjectCreationPage extends WizardNewProjectCreationPage {
 		setPageComplete(validatePage());
 		setControl(webGroup);
 		Dialog.applyDialogFont(webGroup);
+		WorkbenchHelp.setHelp(control, IHelpContextIds.NEW_SITE_MAIN);
 	}
 
 	public boolean isCreateUpdateSiteHTML(){

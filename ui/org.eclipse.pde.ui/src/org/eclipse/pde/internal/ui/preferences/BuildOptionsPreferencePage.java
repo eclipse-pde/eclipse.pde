@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.preferences;
 
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.IPreferenceConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.SWT;
@@ -23,6 +24,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.help.*;
 
 /**
  * @see PreferencePage
@@ -81,6 +83,14 @@ public class BuildOptionsPreferencePage extends PreferencePage implements IWorkb
 		Dialog.applyDialogFont(composite);
 		
 		return composite;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.BUILD_OPTIONS_PREFERENCE_PAGE);
 	}
 	
 	/* (non-Javadoc)

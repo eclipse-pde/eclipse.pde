@@ -17,7 +17,9 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.*;
+import org.eclipse.ui.help.*;
 
 /**
  * @author cgwong
@@ -28,6 +30,14 @@ public class PatchSpecPage extends BaseFeatureSpecPage {
 		super(mainPage, true);
 		setTitle(PDEPlugin.getResourceString("PatchSpec.title")); //$NON-NLS-1$
 		setDescription(PDEPlugin.getResourceString("PatchSpec.desc")); //$NON-NLS-1$
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.wizards.feature.BaseFeatureSpecPage#createControl(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.NEW_PATCH_REQUIRED_DATA);
 	}
 
 	protected void initialize() {

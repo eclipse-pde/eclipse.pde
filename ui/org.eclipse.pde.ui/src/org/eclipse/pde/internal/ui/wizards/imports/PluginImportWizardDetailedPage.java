@@ -34,6 +34,7 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.*;
 
 /**
  * @author Wassim Melhem
@@ -83,7 +84,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		initialize();
 		setControl(container);
 		Dialog.applyDialogFont(container);
-		
+		WorkbenchHelp.setHelp(container, IHelpContextIds.PLUGIN_IMPORT_SECOND_PAGE);
 	}
 	
 	private void initialize(){

@@ -30,12 +30,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.*;
-import org.eclipse.ui.help.*;
 
-/**
- * @author cgwong
- *  
- */
 public abstract class BaseFeatureSpecPage extends WizardPage {
 	
 	private boolean isPatch;
@@ -135,7 +130,6 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 		
 		setControl(container);
 		Dialog.applyDialogFont(container);
-		WorkbenchHelp.setHelp(container, IHelpContextIds.NEW_FEATURE_DATA);
 	}
 	private void addCustomInstallHandlerSection(Composite parent, ModifyListener listener) {
 		Group customHandlerGroup = new Group(parent, SWT.NONE);

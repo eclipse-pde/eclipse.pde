@@ -19,6 +19,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.*;
+import org.eclipse.ui.help.*;
 
 
 /**
@@ -50,6 +51,9 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		createProjectTypeGroup(control);
 		createBundleStructureGroup(control);
 		Dialog.applyDialogFont(control);
+		WorkbenchHelp.setHelp(control,
+				fIsFragment ? IHelpContextIds.NEW_FRAGMENT_STRUCTURE_PAGE
+							: IHelpContextIds.NEW_PROJECT_STRUCTURE_PAGE);
 		setControl(control);
 	}
 	

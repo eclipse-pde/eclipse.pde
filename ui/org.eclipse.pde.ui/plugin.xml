@@ -613,6 +613,7 @@
          <action
                label="%MigrationAction.label"
                class="org.eclipse.pde.internal.ui.wizards.tools.MigrationAction"
+               helpContextId="org.eclipse.pde.doc.user.migrate_action"
                menubarPath="org.eclipse.pde.ui.plugin.tools/group1"
                enablesFor="+"
                id="org.eclipse.pde.ui.MigrationAction1">
@@ -709,6 +710,7 @@
          <action
                label="%MigrationAction.label"
                class="org.eclipse.pde.internal.ui.wizards.tools.MigrationAction"
+               helpContextId="org.eclipse.pde.doc.user.migrate_action"
                menubarPath="org.eclipse.pde.ui.fragment.tools/group1"
                enablesFor="+"
                id="org.eclipse.pde.ui.MigrationAction2">
@@ -735,6 +737,7 @@
          </menu>
          <action
                label="%popupMenus.buildSite.label"
+               helpContextId="org.eclipse.pde.doc.user.build_site"
                class="org.eclipse.pde.internal.ui.build.BuildSiteAction"
                menubarPath="org.eclipse.pde.ui.site.tools/group0"
                enablesFor="1"
@@ -778,6 +781,7 @@
          <action
                label="%MigrationAction.label"
                class="org.eclipse.pde.internal.ui.wizards.tools.MigrationAction"
+               helpContextId="org.eclipse.pde.doc.user.migrate_action"
                menubarPath="org.eclipse.pde.ui.project.tools/group1"
                enablesFor="+"
                id="org.eclipse.pde.ui.MigrationAction3">
@@ -796,7 +800,7 @@
          </menu>
          <action
                label="%PreviewReference.label"
-               helpContextId="org.eclipse.pde.doc.user.preview_reference"
+               helpContextId="org.eclipse.pde.doc.user.preview_schema"
                class="org.eclipse.pde.internal.ui.search.PreviewReferenceAction"
                menubarPath="org.eclipse.pde.ui.schema.mxsd.tools/group0"
                enablesFor="1"
@@ -816,7 +820,7 @@
          </menu>
          <action
                label="%PreviewReference.label"
-               helpContextId="org.eclipse.pde.doc.user.preview_reference"
+               helpContextId="org.eclipse.pde.doc.user.preview_schema"
                class="org.eclipse.pde.internal.ui.search.PreviewReferenceAction"
                menubarPath="org.eclipse.pde.ui.schema.exsd.tools/group0"
                enablesFor="1"

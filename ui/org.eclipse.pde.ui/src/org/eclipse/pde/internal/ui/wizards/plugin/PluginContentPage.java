@@ -17,6 +17,7 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.*;
 
 /**
  * @author cgwong
@@ -33,6 +34,14 @@ public class PluginContentPage extends ContentPage {
 	public PluginContentPage(String pageName, IProjectProvider provider,
 			NewProjectCreationPage page, AbstractFieldData data) {
 		super(pageName, provider, page, data, false);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#createControl(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.NEW_PROJECT_REQUIRED_DATA);
 	}
 	/*
 	 * (non-Javadoc)

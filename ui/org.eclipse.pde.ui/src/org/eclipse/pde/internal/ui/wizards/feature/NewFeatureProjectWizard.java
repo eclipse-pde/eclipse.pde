@@ -30,9 +30,11 @@ import org.eclipse.pde.internal.core.feature.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.wizards.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.dialogs.*;
+import org.eclipse.ui.help.*;
 import org.eclipse.ui.ide.*;
 import org.eclipse.ui.part.*;
 import org.eclipse.ui.wizards.newresource.*;
@@ -92,7 +94,13 @@ public class NewFeatureProjectWizard extends NewWizard
 	
 	public void addPages() {
 		provider = new FeatureProjectProvider();
-		mainPage = new WizardNewProjectCreationPage("main"); //$NON-NLS-1$
+		mainPage = new WizardNewProjectCreationPage("main") { //$NON-NLS-1$
+			public void createControl(Composite parent) {
+				super.createControl(parent);
+				WorkbenchHelp.setHelp(getControl(), IHelpContextIds.NEW_FEATURE_MAIN);
+			}
+		};
+		
 		mainPage.setTitle(PDEPlugin.getResourceString(MAIN_PAGE_TITLE));
 		mainPage.setDescription(PDEPlugin.getResourceString(MAIN_PAGE_DESC));
 		String pname = getDefaultValue(DEF_PROJECT_NAME);

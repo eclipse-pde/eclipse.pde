@@ -29,6 +29,7 @@ import org.eclipse.jface.preference.*;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.preferences.*;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
@@ -37,6 +38,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.*;
 
 /**
  * @author Wassim Melhem
@@ -85,6 +87,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		Dialog.applyDialogFont(container);
 		initialize();
 		setControl(container);
+		WorkbenchHelp.setHelp(container, IHelpContextIds.PLUGIN_IMPORT_FIRST_PAGE);		
 	}
 	
 	private void createImportChoicesGroup(Composite container) {
