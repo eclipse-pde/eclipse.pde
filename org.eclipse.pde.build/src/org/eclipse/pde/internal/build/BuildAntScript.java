@@ -50,10 +50,13 @@ public void printZipTask(int tab, String zipFile, String basedir) {
 		super.printZipTask(tab, zipFile, basedir);
 }
 
-public void printPluginLocationDeclaration(int tab, String plugin, String property) {
+public void printPluginLocationDeclaration(int tab, String entry, String property) {
 	printTab(tab);
 	output.print("<pluginLocation");
-	printAttribute("plugin", plugin, true);
+	int i = entry.indexOf("@") + 1;
+	String pluginId = entry.substring(i);
+	boolean fragment = entry.startsWith("fragment@");
+	printAttribute(fragment ? "fragment" : "plugin", pluginId, true);
 	printAttribute("property", property, true);
 	output.println("/>");
 }

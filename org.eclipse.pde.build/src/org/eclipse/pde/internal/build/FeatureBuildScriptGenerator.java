@@ -479,7 +479,7 @@ protected void generateAllPluginsTarget() throws CoreException {
 	for (int list = 0; list < 2; list++) {
 		for (int i = 0; i < sortedPlugins[list].length; i++) {
 			PluginModel plugin = getRegistry().getPlugin(sortedPlugins[list][i]);
-			String location = getPluginLocationProperty(plugin.getId());
+			String location = getPluginLocationProperty(plugin.getId(), false);
 			script.printAntTask(tab, buildScriptName, location, getPropertyFormat(PROPERTY_TARGET), null, null, null);
 		}
 	}
@@ -497,7 +497,7 @@ protected void generateAllFragmentsTarget() throws CoreException {
 	script.printTargetDeclaration(tab++, TARGET_ALL_FRAGMENTS, TARGET_INIT, null, null, null);
 	for (Iterator iterator = fragments.iterator(); iterator.hasNext();) {
 		PluginModel fragment = (PluginModel) iterator.next();
-		String location = getPluginLocationProperty(fragment.getId());
+		String location = getPluginLocationProperty(fragment.getId(), true);
 		script.printAntTask(tab, buildScriptName, location, getPropertyFormat(PROPERTY_TARGET), null, null, null);
 	}
 	script.printString(--tab, "</target>");

@@ -308,12 +308,12 @@ protected String computeCompilePathClause(String fullJar) throws CoreException {
 	if (runtime == null)
 		throw new CoreException(new Status(IStatus.WARNING, PI_PDECORE, EXCEPTION_PLUGIN_MISSING, Policy.bind("exception.missingPlugin", PI_RUNTIME), null));
 	else {
-		IPath runtimeLocation = new Path(getPluginLocationProperty(PI_RUNTIME));
+		IPath runtimeLocation = new Path(getPluginLocationProperty(PI_RUNTIME, false));
 		if (devEntries != null)
 			for (Iterator i = devEntries.iterator(); i.hasNext();) 
 				addEntry(jars, runtimeLocation.append((String) i.next()).toString());
 		addEntry(jars, runtimeLocation.append(PI_RUNTIME_JAR_NAME).toString());
-		IPath bootLocation = new Path(getPluginLocationProperty(PI_BOOT));
+		IPath bootLocation = new Path(getPluginLocationProperty(PI_BOOT, false));
 		if (devEntries != null)
 			for (Iterator i = devEntries.iterator(); i.hasNext();) 
 				addEntry(jars, bootLocation.append((String) i.next()).toString());
@@ -345,14 +345,16 @@ protected String computeCompilePathClause(String fullJar) throws CoreException {
 		resolvedFullJar += fullJar.substring(end + 1);
 		jars.remove(resolvedFullJar);
 	}
-	IPath pluginLocation = new Path(getPropertyFormat(getPluginLocationProperty(model.getId())));
+	IPath pluginLocation = new Path(getPropertyFormat(getPluginLocationProperty(model.getId(), getModelTypeName().equals("fragment"))));
 	if (devEntries != null)
 		for (Iterator i = devEntries.iterator(); i.hasNext();) 
 			jars.remove(pluginLocation.append((String) i.next()).toString());
 	
 	String jar = pluginLocation.append(new Path(fullJar).lastSegment()).toString();
 	jars.remove(jar);
-	pluginLocations.remove(model.getId());
+	// FIXME: hack - it should be either transparent or not necessary
+	String entry = (getModelTypeName().equals("fragment") ? "fragment@" : "plugin@") + model.getId();
+	pluginLocations.remove(entry);
 	
 	String result = getStringFromCollection(jars, "", "", ";");
 	result = replaceVariables(result);
@@ -399,7 +401,7 @@ protected List getJars(PluginModel descriptor) throws CoreException {
 	LibraryModel[] libs = descriptor.getRuntime();
 	
 	if (libs != null) {
-		IPath location = new Path(getPluginLocationProperty(descriptor.getId()));
+		IPath location = new Path(getPluginLocationProperty(descriptor.getId(), getModelTypeName().equals("fragment")));
 		if (devEntries != null)
 			for (Iterator i = devEntries.iterator(); i.hasNext();) 
 				addEntry(result, location.append((String) i.next()).toString());

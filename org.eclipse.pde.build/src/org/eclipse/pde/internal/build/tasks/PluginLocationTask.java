@@ -20,6 +20,7 @@ import org.eclipse.pde.internal.core.*;
 public class PluginLocationTask extends Task implements IPDECoreConstants, IXMLConstants {
 	
 	protected String pluginId;
+	protected String fragmentId;
 	protected String propertyName;
 	protected String[] pluginPath;
 	protected static final String REGISTRY_REFERENCE_ID = "pluginLocation.registry";
@@ -29,6 +30,13 @@ public class PluginLocationTask extends Task implements IPDECoreConstants, IXMLC
  */
 public void setPlugin(String pluginId) {
 	this.pluginId = pluginId;
+}
+
+/**
+ * Sets the fragmentId.
+ */
+public void setFragment(String fragmentId) {
+	this.fragmentId = fragmentId;
 }
 
 /**
