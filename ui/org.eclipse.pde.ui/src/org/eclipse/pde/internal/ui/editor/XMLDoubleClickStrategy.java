@@ -6,76 +6,80 @@ package org.eclipse.pde.internal.ui.editor;
 
 import org.eclipse.jface.text.*;
 
-
 public class XMLDoubleClickStrategy implements ITextDoubleClickStrategy {
 	protected ITextViewer fText;
-	protected int fPos;
-	protected int fStartPos;
-	protected int fEndPos;
-	protected static char[] fgBrackets = { '(', ')', '"', '"' };
 
 	public XMLDoubleClickStrategy() {
 		super();
 	}
-public void doubleClicked(ITextViewer part) {
-	fPos = part.getSelectedRange().x;
+	public void doubleClicked(ITextViewer part) {
+		int pos = part.getSelectedRange().x;
 
-	if (fPos < 0)
-		return;
+		if (pos < 0)
+			return;
 
-	fText = part;
+		fText = part;
 
-	if (!selectComment())
-		selectWord();
-}
-protected boolean matchComment() {
-	IDocument doc = fText.getDocument();
-
-	try {
-		int pos = fPos;
-		char c = ' ';
-
-		while (pos >= 0) {
-			c = doc.getChar(pos);
-			if (Character.isWhitespace(c) || c == '\"')
-				break;
-			--pos;
+		if (!selectComment(pos)) {
+			selectWord(pos);
 		}
-
-		if (c != '\"')
-			return false;
-
-		fStartPos = pos;
-
-		pos = fPos;
-		int length = doc.getLength();
-		c = ' ';
-
-		while (pos < length) {
-			c = doc.getChar(pos);
-			if (Character.isWhitespace(c) || c == '\"')
-				break;
-			++pos;
-		}
-		if (c != '\"')
-			return false;
-
-		fEndPos = pos;
-
-		return true;
-
-	} catch (BadLocationException x) {
 	}
+	protected boolean selectComment(int caretPos) {
+		IDocument doc = fText.getDocument();
+		int startPos, endPos;
 
-	return false;
-}
-	protected boolean matchWord() {
+		try {
+			int pos = caretPos;
+			char c = ' ';
+
+			while (pos >= 0) {
+				c = doc.getChar(pos);
+				if (c == '\\') {
+					pos -= 2;
+					continue;
+				}
+				if (c == Character.LINE_SEPARATOR || c == '\"')
+					break;
+				--pos;
+			}
+
+			if (c != '\"')
+				return false;
+
+			startPos = pos;
+
+			pos = caretPos;
+			int length = doc.getLength();
+			c = ' ';
+
+			while (pos < length) {
+				c = doc.getChar(pos);
+				if (c == Character.LINE_SEPARATOR || c == '\"')
+					break;
+				++pos;
+			}
+			if (c != '\"')
+				return false;
+
+			endPos = pos;
+			
+			int offset = startPos +1;
+			int len = endPos - offset;
+			fText.setSelectedRange(offset, len);
+			return true;
+		} catch (BadLocationException x) {
+		}
+
+		return false;
+	}
+	protected boolean selectWord(int caretPos) {
 
 		IDocument doc = fText.getDocument();
+		int startPos, endPos;
 
 		try {
 
-			int pos = fPos;
+			int pos = caretPos;
 			char c;
 
 			while (pos >= 0) {
@@ -85,9 +89,9 @@ protected boolean matchComment() {
 				--pos;
 			}
 
-			fStartPos = pos;
+			startPos = pos;
 
-			pos = fPos;
+			pos = caretPos;
 			int length = doc.getLength();
 
 			while (pos < length) {
@@ -97,8 +101,8 @@ protected boolean matchComment() {
 				++pos;
 			}
 
-			fEndPos = pos;
-
+			endPos = pos;
+			selectRange(startPos, endPos);
 			return true;
 
 		} catch (BadLocationException x) {
@@ -106,15 +110,10 @@ protected boolean matchComment() {
 
 		return false;
 	}
-	protected boolean selectComment() {
-		if (matchComment()) {
-			fText.setSelectedRange(fStartPos + 1, fEndPos);
-			return true;
-		}
-		return false;
-	}
-	protected void selectWord() {
-		if (matchWord())
-			fText.setSelectedRange(fStartPos + 1, fEndPos);
+	
+	private void selectRange(int startPos, int stopPos) {
+		int offset = startPos+1;
+		int length = stopPos - offset;
+		fText.setSelectedRange(offset, length);
 	}
 }

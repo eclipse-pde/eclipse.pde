@@ -29,11 +29,9 @@ public XMLConfiguration(IColorManager colorManager) {
 		};
 	}
 	public ITextDoubleClickStrategy getDoubleClickStrategy(ISourceViewer sourceViewer, String contentType) {
-		/*
-		if (doubleClickStrategy==null) doubleClickStrategy = new ManifestDoubleClickStrategy();
+		if (doubleClickStrategy==null) doubleClickStrategy = new XMLDoubleClickStrategy();
 		return doubleClickStrategy;
-		*/
-		return super.getDoubleClickStrategy(sourceViewer, contentType);
+		//return super.getDoubleClickStrategy(sourceViewer, contentType);
 	}
 protected PDECommentScanner getPDECommentScanner() {
 	if (commentScanner==null) {
