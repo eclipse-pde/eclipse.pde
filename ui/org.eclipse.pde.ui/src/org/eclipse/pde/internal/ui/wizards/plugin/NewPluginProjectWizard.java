@@ -134,7 +134,7 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 		WizardElement element = new WizardElement(config);
 		String imageName = config.getAttribute(WizardElement.ATT_ICON);
 		if (imageName != null) {
-			String pluginID = config.getDeclaringExtension().getNamespace();
+			String pluginID = config.getNamespace();
 			Image image =
 				PDEPlugin.getDefault().getLabelProvider().getImageFromPlugin(pluginID, imageName);
 			element.setImage(image);

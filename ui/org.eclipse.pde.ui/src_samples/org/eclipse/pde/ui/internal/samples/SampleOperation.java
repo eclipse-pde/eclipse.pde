@@ -155,7 +155,7 @@ public class SampleOperation implements IRunnableWithProgress {
 		}
 		project.create(new SubProgressMonitor(monitor, 1));
 		project.open(new NullProgressMonitor());
-		Bundle bundle = Platform.getBundle(sample.getDeclaringExtension().getNamespace());
+		Bundle bundle = Platform.getBundle(sample.getNamespace());
 		ZipFile zipFile = getZipFileFromPluginDir(path, bundle);
 		importFilesFromZip(zipFile, project.getFullPath(),
 				new SubProgressMonitor(monitor, 1));

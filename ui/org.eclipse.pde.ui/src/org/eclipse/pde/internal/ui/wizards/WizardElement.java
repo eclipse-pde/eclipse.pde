@@ -75,7 +75,7 @@ public class WizardElement extends NamedElement {
 			return source;
 
 		Bundle bundle = Platform.getBundle(configurationElement
-				.getDeclaringExtension().getNamespace());
+				.getNamespace());
 		if (bundle == null)
 			return source;
 
