@@ -50,7 +50,6 @@ public class WorkbenchLaunchConfigurationDelegate
 	private static final String KEY_DUPLICATE_PLUGINS =
 		"WorkbenchLauncherConfigurationDelegate.duplicatePlugins";
 
-	private static Vector duplicates = new Vector();
 	private static String bootPath=null;
 	private static boolean bootInSource=false;
 
@@ -363,7 +362,8 @@ public class WorkbenchLaunchConfigurationDelegate
 		TreeSet deselectedWSPlugins =
 			AdvancedLauncherTab.parseDeselectedWSIds(config);
 		for (int i = 0; i < wsmodels.length; i++) {
-			if (!deselectedWSPlugins.contains(wsmodels[i].getPluginBase().getId()))
+			String id = wsmodels[i].getPluginBase().getId();
+			if (id != null && !deselectedWSPlugins.contains(id))
 				result.add(wsmodels[i]);
 		}
 		return (IPluginModelBase[]) result.toArray(new IPluginModelBase[result.size()]);
@@ -382,7 +382,8 @@ public class WorkbenchLaunchConfigurationDelegate
 		IPluginModelBase[] exmodels =
 			PDECore.getDefault().getExternalModelManager().getAllModels();
 		for (int i = 0; i < exmodels.length; i++) {
-			if (selectedExModels.contains(exmodels[i].getPluginBase().getId()))
+			String id = exmodels[i].getPluginBase().getId();
+			if (id != null && selectedExModels.contains(id))
 				exList.add(exmodels[i]);
 		}
 		return (IPluginModelBase[])exList.toArray(new IPluginModelBase[exList.size()]);
@@ -412,7 +413,7 @@ public class WorkbenchLaunchConfigurationDelegate
 			}
 		}
 
-		duplicates = new Vector();
+		Vector duplicates = new Vector();
 		for (int i = 0; i < exmodels.length; i++) {
 			IStatus status = validateModel(exmodels[i]);
 			if (status == null) {
@@ -448,7 +449,7 @@ public class WorkbenchLaunchConfigurationDelegate
 		}
 
 		// alert user if there are duplicate plug-ins.
-		if (duplicates.size() > 0 && !continueRunning()) {
+		if (duplicates.size() > 0 && !continueRunning(duplicates)) {
 			monitor.setCanceled(true);
 			return null;
 		}
@@ -586,7 +587,7 @@ public class WorkbenchLaunchConfigurationDelegate
 			null);
 	}
 
-	private static boolean continueRunning() {
+	private static boolean continueRunning(final Vector duplicates) {
 		final boolean[] result = new boolean[1];
 		getDisplay().syncExec(new Runnable() {
 			public void run() {
