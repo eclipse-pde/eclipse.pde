@@ -66,15 +66,4 @@
    </antTask>
 </extension>
 
-
-<!-- Types -->
-
-<extension point="org.eclipse.ant.core.antTypes">
-   <antType
-      name="eclipse.stripMapper"
-      class="org.eclipse.pde.internal.build.types.StripMapper"
-      library="lib/pdebuild-ant.jar">
-   </antType>
-</extension>
-
 </plugin>
