@@ -13,8 +13,6 @@ package org.eclipse.pde.internal.ui.editor.manifest;
 
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.plugin.PluginDocumentNode;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.graphics.Image;
@@ -26,99 +24,49 @@ import org.w3c.dom.Node;
  */
 public class ManifestSourceOutlinePageLabelProvider extends LabelProvider {
 	
+	private PDELabelProvider fProvider;
+	
+	public ManifestSourceOutlinePageLabelProvider() {
+		fProvider = PDEPlugin.getDefault().getLabelProvider();
+		fProvider.connect(this);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.LabelProvider#dispose()
+	 */
+	public void dispose() {
+		fProvider.disconnect(this);
+	}
+	
 	public String getText(Object obj) {
-		String result = null;
-
 		if (obj instanceof PluginDocumentNode) {
 			IPluginObject pluginObject = ((PluginDocumentNode) obj).getPluginObjectNode();
-			if (pluginObject != null) {
-				result = getLabel(pluginObject);
-			}
-			if (result == null) {
-				Node domNode = ((PluginDocumentNode) obj).getDOMNode();
-				if (domNode != null) {
-					result = domNode.getNodeName().toLowerCase();
-				}
-			}
-		}
+			if (pluginObject != null)
+				return fProvider.getText(pluginObject);
+			Node domNode = ((PluginDocumentNode) obj).getDOMNode();
+			if (domNode != null)
+				return domNode.getNodeName().toLowerCase();
 
-		if (result == null) {
-			result = super.getText(obj);
 		}
-
-		if (result == null) {
-			result = "##unknown##";
-		}
-
-		return result;
-	}
-
-	private String getLabel(IPluginObject pluginObject) {
-		boolean fullNames = PDEPlugin.isFullNameModeEnabled();
-		if (pluginObject instanceof IPluginBase) {
-			IPluginBase pluginBase = (IPluginBase) pluginObject;
-			String pluginBaseName = pluginBase.getResourceString(pluginBase.getName());
-			if (!fullNames)
-				return pluginBaseName;
-			return pluginBase.getResourceString(pluginBaseName);
-		}
-		if (pluginObject instanceof IPluginImport) {
-			String pluginId = ((IPluginImport) pluginObject).getId();
-			if (!fullNames)
-				return pluginId;
-			IPlugin plugin = PDECore.getDefault().findPlugin(pluginId);
-			if (plugin != null)
-				return plugin.getResourceString(plugin.getName());
-			return pluginId;
-		}
-		if (pluginObject instanceof IPluginLibrary) {
-			return ((IPluginLibrary) pluginObject).getName();
-		}
-		
-		if (pluginObject instanceof IPluginExtension) {
-			IPluginExtension extension = (IPluginExtension) pluginObject;
-			if (!fullNames)
-				return extension.getPoint();
-			ISchema schema =
-				PDECore.getDefault().getSchemaRegistry().getSchema(extension.getPoint());
-		
-			// try extension point schema definition
-			if (schema != null) {
-				// exists
-				return schema.getName();
-			}
-			// try extension point declaration
-			IPluginExtensionPoint pointInfo =
-				PDECore.getDefault().getExternalModelManager().findExtensionPoint(
-					extension.getPoint());
-			if (pointInfo != null) {
-				return pointInfo.getResourceString(pointInfo.getName());
-			}
-		}
-		if (pluginObject instanceof IPluginExtensionPoint) {
-			IPluginExtensionPoint point = (IPluginExtensionPoint) pluginObject;
-			if (!fullNames)
-				return point.getId();
-			return point.getTranslatedName();
-		}
-		return null;
+		return "";
 	}
 
 	public Image getImage(Object obj) {
-		PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
 		Image image = null;
+		int flags = 0;
+		
 		if (obj instanceof PluginDocumentNode) {
-			IPluginObject pluginObject = ((PluginDocumentNode)obj).getPluginObjectNode();
+			PluginDocumentNode node = (PluginDocumentNode)obj;
+			flags = node.isErrorNode() ?  PDELabelProvider.F_ERROR : 0;
+			IPluginObject pluginObject = node.getPluginObjectNode();
 			if (pluginObject != null) {
-				image = provider.getImage(pluginObject);
-			} else if(((PluginDocumentNode)obj).getDOMNode().getNodeName().equals("XML")) {
-				image = provider.get(PDEPluginImages.DESC_PROCESSING_INST_OBJ);
-			}
+				image = fProvider.getImage( pluginObject );
+			} 
 		}
-		if (image != null)
-			return image;
+		if (image == null)
+			image = fProvider.get(PDEPluginImages.DESC_GENERIC_XML_OBJ);
 			
-		return provider.get(PDEPluginImages.DESC_GENERIC_XML_OBJ);
+		return (flags == 0) ? image : fProvider.get(image, flags);
 	}
 
 }
