@@ -149,7 +149,6 @@ public abstract class PDEMultiPageEditor
 		formWorkbook.createControl(parent);
 		formWorkbook.addFormSelectionListener(new IFormSelectionListener() {
 			public void formSelected(IFormPage page, boolean setFocus) {
-				updateSynchronizedViews((IPDEEditorPage) page);
 				getContributor().setActivePage((IPDEEditorPage) page);
 
 				if (page instanceof PDEFormPage) {
@@ -165,6 +164,7 @@ public abstract class PDEMultiPageEditor
 				IPDEEditorPage pdePage = (IPDEEditorPage)page;
 				if (setFocus) 
 					pdePage.setFocus();
+				updateSynchronizedViews((IPDEEditorPage) page);
 			}
 		});
 		MenuManager manager = new MenuManager();

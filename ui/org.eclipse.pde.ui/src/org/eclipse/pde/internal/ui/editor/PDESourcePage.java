@@ -96,6 +96,10 @@ public abstract class PDESourcePage
 		document.addDocumentListener(documentListener);
 		errorMode = !getEditor().isModelCorrect(getEditor().getModel());
 		unregisterGlobalActions();
+		// Important - must reset the provider to the multi-page
+		// editor.
+		// See 32622
+		getSite().setSelectionProvider(getEditor());
 	}
 	
 	private void unregisterGlobalActions() {
