@@ -18,13 +18,11 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.build.*;
 import org.eclipse.pde.internal.core.bundle.*;
 import org.eclipse.pde.internal.core.feature.*;
 import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.plugin.*;
-import org.eclipse.pde.internal.core.site.*;
 import org.eclipse.team.core.*;
 
 public class WorkspaceModelManager
@@ -671,36 +669,6 @@ public class WorkspaceModelManager
 		JavaCore.removePreProcessingResourceChangedListener(this);
 	}
 
-	public IModel getModel(IFile file) {
-		String name = file.getName().toLowerCase();
-		IProject project = file.getProject();
-		if (isPluginProject(project) && hasBundleManifest(project) && file.getProjectRelativePath().equals(new Path("META-INF/MANIFEST.MF"))) { //$NON-NLS-1$
-			return new WorkspaceBundleModel(file);
-		}
-		if (name.equals("plugin.xml")) { //$NON-NLS-1$
-			//TODO support this
-			//if (hasBundleManifest(project))
-				//return new WorkspaceExtensionsModel(file);
-			return new WorkspacePluginModel(file);
-		}
-		if (name.equals("fragment.xml")) { //$NON-NLS-1$
-			//TODO support this
-			//if (hasBundleManifest(project))
-				//return new WorkspaceExtensionsModel(file);
-			return new WorkspaceFragmentModel(file);
-		}
-		if (name.equals("build.properties")) { //$NON-NLS-1$
-			return new WorkspaceBuildModel(file);
-		}
-		if (name.equals("feature.xml")) { //$NON-NLS-1$
-			return new WorkspaceFeatureModel(file);
-		}
-		if (name.equals("site.xml")) { //$NON-NLS-1$
-			return new WorkspaceSiteModel(file);
-		}
-		return null;
-	}
-	
 	private void processModelChanges() {
 		if (fChangedModels == null)
 			return;

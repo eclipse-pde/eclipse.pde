@@ -22,6 +22,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.isite.*;
+import org.eclipse.pde.internal.core.site.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.progress.*;
@@ -84,9 +85,7 @@ public class BuildSiteAction implements IObjectActionDelegate,
 			Object obj = ((IStructuredSelection) selection).getFirstElement();
 			if (obj != null && obj instanceof IFile) {
 				fSiteXML = (IFile) obj;
-				WorkspaceModelManager manager = PDECore.getDefault()
-						.getWorkspaceModelManager();
-				fModel = (ISiteModel) manager.getModel(fSiteXML);
+				fModel = new WorkspaceSiteModel(fSiteXML);
 				try {
 					fModel.load();
 				} catch (CoreException e) {

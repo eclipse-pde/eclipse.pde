@@ -34,7 +34,6 @@ import org.eclipse.pde.internal.core.FeatureModelManager;
 import org.eclipse.pde.internal.core.IFeatureModelDelta;
 import org.eclipse.pde.internal.core.IFeatureModelListener;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureImport;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
@@ -42,6 +41,7 @@ import org.eclipse.pde.internal.core.isite.ISiteCategory;
 import org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition;
 import org.eclipse.pde.internal.core.isite.ISiteFeature;
 import org.eclipse.pde.internal.core.isite.ISiteModel;
+import org.eclipse.pde.internal.core.site.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.build.BuildSiteJob;
 import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
@@ -678,10 +678,7 @@ public class CategorySection extends TreeSection implements
 		if (models.length == 0)
 			return;
 		ensureContentSaved();
-		WorkspaceModelManager manager = PDECore.getDefault()
-				.getWorkspaceModelManager();
-		ISiteModel buildSiteModel = (ISiteModel) manager.getModel((IFile) fModel
-				.getUnderlyingResource());
+		ISiteModel buildSiteModel = new WorkspaceSiteModel((IFile) fModel.getUnderlyingResource());
 		try {
 			buildSiteModel.load();
 		} catch (CoreException e) {

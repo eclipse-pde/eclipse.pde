@@ -16,35 +16,41 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.ibundle.*;
 import org.w3c.dom.*;
 
 public class PluginLibrary extends PluginObject implements IPluginLibrary {
 
 	private static final long serialVersionUID = 1L;
-	private String[] contentFilters;
-	private String[] packages;
-	private boolean exported = false;
-	private String type;
-	private static final int GROUP_COUNT = Integer.MAX_VALUE;
+	private String[] fContentFilters;
+	private boolean fExported = false;
+	private String fType;
 
 	public PluginLibrary() {
 	}
 	
 	public boolean isValid() {
-		return name!=null;
+		return name != null;
 	}
+	
 	public String[] getContentFilters() {
 		IPluginModelBase model = (IPluginModelBase)getModel();
-		BundleDescription desc = model.getBundleDescription();
 		ArrayList list = new ArrayList();
-		if (desc != null) {
-			ExportPackageDescription[] exports = desc.getExportPackages();
-			for (int i = 0; i < exports.length; i++) {
-				list.add(exports[i].getName());
+		if (model.getUnderlyingResource() == null || model instanceof IBundlePluginModelBase) {
+			BundleDescription desc = model.getBundleDescription();
+			if (desc != null) {
+				ExportPackageDescription[] exports = desc.getExportPackages();
+				for (int i = 0; i < exports.length; i++) {
+					list.add(exports[i].getName());
+				}
 			}
+			return (String[])list.toArray(new String[list.size()]);
 		}
-		return (String[])list.toArray(new String[list.size()]);
+		if (!isExported())
+			return new String[0];
+		return isFullyExported() ? new String[] {"*"} : fContentFilters;
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginLibrary#addContentFilter(java.lang.String)
 	 */
@@ -56,33 +62,34 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 	 */
 	public void removeContentFilter(String filter) throws CoreException {
 	}
+	
 	public String[] getPackages() {
-		return packages;
+		return new String[0];
 	}
+	
 	public boolean isExported() {
-		return exported;
+		return fExported;
 	}
+	
 	public boolean isFullyExported() {
-		return exported
-			&& (contentFilters == null || contentFilters.length == 0);
+		return fExported
+			&& (fContentFilters == null || fContentFilters.length == 0);
 	}
 
 	public String getType() {
-		return type;
+		return fType;
 	}
 
 	
 	public void load(String name) {
 		this.name = name;
-		this.exported = true;
 	}
 	
 	void load(Node node, Hashtable lineTable) {
 		this.name = getNodeAttribute(node, "name"); //$NON-NLS-1$
-		this.type = getNodeAttribute(node, "type"); //$NON-NLS-1$
+		fType = getNodeAttribute(node, "type"); //$NON-NLS-1$
 		NodeList children = node.getChildNodes();
 		Vector exports = new Vector();
-		Vector prefixes = new Vector();
 		boolean all = false;
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
@@ -98,33 +105,20 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 							exports.add(ename);
 						}
 					}
-				} else if (tag.equals("packages")) { //$NON-NLS-1$
-					String ename = getNodeAttribute(child, "prefixes"); //$NON-NLS-1$
-					if (ename != null) {
-						ename = ename.trim();
-						StringTokenizer stok = new StringTokenizer(ename, ","); //$NON-NLS-1$
-						while (stok.hasMoreTokens()) {
-							prefixes.add(stok.nextToken());
-						}
-					}
-				}
+				} 
 			}
 		}
 		if (exports.size() > 0) {
-			contentFilters = new String[exports.size()];
-			exports.copyInto(contentFilters);
+			fContentFilters = new String[exports.size()];
+			exports.copyInto(fContentFilters);
 		}
-		if (prefixes.size() > 0) {
-			packages = new String[prefixes.size()];
-			prefixes.copyInto(packages);
-		}
-		exported = all || exports.size() > 0;
+		fExported = all || exports.size() > 0;
 		bindSourceLocation(node, lineTable);
 	}
 	public void setContentFilters(String[] filters) throws CoreException {
 		ensureModelEditable();
-		ArrayList oldValue = createArrayList(contentFilters);
-		contentFilters = filters;
+		ArrayList oldValue = createArrayList(fContentFilters);
+		fContentFilters = filters;
 		firePropertyChanged(
 			P_CONTENT_FILTERS,
 			oldValue,
@@ -132,23 +126,19 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 	}
 
 	public void setPackages(String[] packages) throws CoreException {
-		ensureModelEditable();
-		ArrayList oldValue = createArrayList(this.packages);
-		this.packages = packages;
-		firePropertyChanged(P_PACKAGES, oldValue, createArrayList(packages));
 	}
 
 	public void setExported(boolean value) throws CoreException {
 		ensureModelEditable();
-		Boolean oldValue = new Boolean(this.exported);
-		this.exported = value;
+		Boolean oldValue = new Boolean(fExported);
+		fExported = value;
 		firePropertyChanged(P_EXPORTED, oldValue, new Boolean(value));
 	}
 
 	public void setType(String type) throws CoreException {
 		ensureModelEditable();
-		String oldValue = this.type;
-		this.type = type;
+		String oldValue = fType;
+		fType = type;
 		firePropertyChanged(P_TYPE, oldValue, type);
 	}
 
@@ -161,14 +151,6 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 					(String[]) list.toArray(new String[list.size()]));
 			else
 				setContentFilters(null);
-			return;
-		}
-		if (name.equals(P_PACKAGES)) {
-			ArrayList list = (ArrayList) newValue;
-			if (list != null)
-				setPackages((String[]) list.toArray(new String[list.size()]));
-			else
-				setPackages(null);
 			return;
 		}
 		if (name.equals(P_EXPORTED)) {
@@ -195,9 +177,9 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent);
 		writer.print("<library name=\"" + getName() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		if (type != null)
-			writer.print(" type=\"" + type + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		if (isExported() == false && packages == null) {
+		if (fType != null)
+			writer.print(" type=\"" + fType + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		if (!isExported()) {
 			writer.println("/>"); //$NON-NLS-1$
 		} else {
 			writer.println(">"); //$NON-NLS-1$
@@ -206,48 +188,16 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 				if (isFullyExported()) {
 					writer.println(indent2 + "<export name=\"*\"/>"); //$NON-NLS-1$
 				} else {
-					for (int i = 0; i < contentFilters.length; i++) {
+					for (int i = 0; i < fContentFilters.length; i++) {
 						writer.println(
 							indent2
 								+ "<export name=\"" //$NON-NLS-1$
-								+ contentFilters[i]
+								+ fContentFilters[i]
 								+ "\"/>"); //$NON-NLS-1$
 					}
 				}
 			}
-			if (packages != null) {
-				ArrayList groups = computePackageGroups(packages);
-				for (int i = 0; i < groups.size(); i++) {
-					writer.println(
-						indent2
-							+ "<packages prefixes=\"" //$NON-NLS-1$
-							+ (String)groups.get(i)
-							+ "\"/>"); //$NON-NLS-1$
-				}
-			}
 			writer.println(indent + "</library>"); //$NON-NLS-1$
 		}
-	}
-	private ArrayList computePackageGroups(String [] packages) {
-		StringBuffer buff = new StringBuffer();
-		ArrayList list = new ArrayList();
-		int counter = 0;
-		
-		for (int i=0; i<packages.length; i++) {
-			counter++;
-			
-			if (counter>1)
-				buff.append(","); //$NON-NLS-1$
-			buff.append(packages[i]);
-			
-			if (counter==GROUP_COUNT) {
-				counter=0;
-				list.add(buff.toString());
-				buff.delete(0, buff.length());
-			}
-		}
-		if (counter>0)
-			list.add(buff.toString());
-		return list;
 	}
 }
