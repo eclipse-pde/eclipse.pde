@@ -219,8 +219,16 @@ public class PluginModelManager implements IAdaptable {
 
 					if (entry!=null) {
 						if (workspace && model!=entry.getWorkspaceModel()) {
-							//wrong slot - id changed
-							oldId=handleIdChange(id, model, entry, delta);
+							//Two possible cases:
+							// 1) wrong slot - id changed
+							// 2) correct slot but plugin->bundle change (e vice versa)
+							if (isBundlePluginSwap(model, entry)) {
+								if (entry.isInJavaSearch())
+									javaSearchAffected=true;
+								delta.addEntry(entry, PluginModelDelta.CHANGED);					
+							}
+							else
+								oldId=handleIdChange(id, model, entry, delta);
 						}
 						else {
 							if (workspace || entry.isInJavaSearch())
@@ -244,6 +252,20 @@ public class PluginModelManager implements IAdaptable {
 		if (javaSearchAffected)
 			searchablePluginsManager.updateClasspathContainer();
 		fireDelta(delta);
+	}
+	
+	private boolean isBundlePluginSwap(IPluginModelBase model, ModelEntry entry) {
+		IPluginModelBase workspaceModel = entry.getWorkspaceModel();
+		if (workspaceModel==null) return false;
+		boolean swap=false;
+		if (model instanceof IBundlePluginModelBase && !(workspaceModel instanceof IBundlePluginModelBase))
+			swap=true;
+		else
+			if (!(model instanceof IBundlePluginModelBase) && workspaceModel instanceof IBundlePluginModelBase)
+			swap=true;
+		if (swap)
+			entry.setWorkspaceModel(model);
+		return swap;
 	}
 	
 	private ModelEntry findOldEntry(IPluginModelBase model) {
