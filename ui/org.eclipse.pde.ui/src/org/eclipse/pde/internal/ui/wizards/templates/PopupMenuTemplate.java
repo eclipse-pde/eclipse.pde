@@ -111,14 +111,14 @@ public class PopupMenuTemplate extends PDETemplateSection {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
 		String pluginId = sdata.getPluginId();
-		initializeOption(KEY_PACKAGE_NAME, pluginId + ".actions");
+		initializeOption(KEY_PACKAGE_NAME, pluginId + ".popup.actions");
 	}
 
 	public void initializeFields(IPluginModelBase model) {
 		// In the new extension wizard, the model exists so 
 		// we can initialize directly from it
 		String pluginId = model.getPluginBase().getId();
-		initializeOption(KEY_PACKAGE_NAME, pluginId + ".actions");
+		initializeOption(KEY_PACKAGE_NAME, pluginId + ".popup.actions");
 	}
 
 	/**
