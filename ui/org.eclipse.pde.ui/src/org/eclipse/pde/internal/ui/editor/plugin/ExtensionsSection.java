@@ -372,7 +372,12 @@ public class ExtensionsSection extends TreeSection
 								project, (IPluginModelBase) getPage()
 										.getModel(), (ManifestEditor)getPage().getPDEEditor());
 						WizardDialog dialog = new WizardDialog(PDEPlugin
-								.getActiveWorkbenchShell(), wizard);
+								.getActiveWorkbenchShell(), wizard) {
+							protected void finishPressed() {
+								((ManifestEditor)getPage().getEditor()).ensurePluginContextPresence();
+								super.finishPressed();
+							}
+						};
 						dialog.create();
 						SWTUtil.setDialogSize(dialog, 500, 500);
 						dialog.open();

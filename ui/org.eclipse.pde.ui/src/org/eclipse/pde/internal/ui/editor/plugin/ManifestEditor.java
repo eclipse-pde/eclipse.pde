@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 import java.io.File;
 
 import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
@@ -119,7 +120,12 @@ public class ManifestEditor extends MultiSourceEditor {
 		IProject project = inputContextManager.getCommonProject();
 		IFile file = project.getFile("plugin.xml"); //$NON-NLS-1$
 		WorkspacePluginModel model = new WorkspacePluginModel(file);
-		model.getPluginBase(true);
+		IPluginBase pluginBase = model.getPluginBase(true);
+		try {
+			pluginBase.setSchemaVersion("3.0");
+		}
+		catch (CoreException e) {
+		}
 		model.save();
 		IEditorInput in = new FileEditorInput(file);
 		inputContextManager.putContext(in, new PluginInputContext(this, in, false, false));
