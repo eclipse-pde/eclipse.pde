@@ -46,6 +46,11 @@ public class RequiredPluginsClasspathContainer implements IClasspathContainer {
 		if (entries == null) {
 			entries = ClasspathUtilCore.computePluginEntries(model, null);
 			entries = verifyWithAttachmentManager(entries);
+			//TODO hack for background autobuilding
+			try {
+				model.getUnderlyingResource().getProject().touch(new NullProgressMonitor());
+			} catch (CoreException e) {
+			}
 		}
 		return entries;
 	}
