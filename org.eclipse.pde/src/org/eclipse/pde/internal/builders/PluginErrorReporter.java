@@ -22,11 +22,13 @@ public class PluginErrorReporter implements ErrorHandler {
 	}
 
 	public PluginErrorReporter(IFile file) {
-		this.file = file;
-		removeFileMarkers();
 		errorCount = 0;
-		defaultMarkerFactory = new DefaultMarkerFactory();
-		markerFactory = defaultMarkerFactory; 
+		this.file = file;
+		if (file!=null) {
+			removeFileMarkers(); 
+			defaultMarkerFactory = new DefaultMarkerFactory();
+			markerFactory = defaultMarkerFactory;
+		}
 	}
 	
 	public IFile getFile() {
@@ -60,11 +62,11 @@ public class PluginErrorReporter implements ErrorHandler {
 	}
 
 	public void error(SAXParseException exception) throws SAXException {
-		addMarker(exception, IMarker.SEVERITY_ERROR, false);
+		if (file!=null) addMarker(exception, IMarker.SEVERITY_ERROR, false);
 		errorCount++;
 	}
 	public void fatalError(SAXParseException exception) throws SAXException {
-		addMarker(exception, IMarker.SEVERITY_ERROR, true);
+		if (file!=null) addMarker(exception, IMarker.SEVERITY_ERROR, true);
 		errorCount++;
 	}
 	public int getErrorCount() {
@@ -90,7 +92,9 @@ public class PluginErrorReporter implements ErrorHandler {
 	}
 
 	public void reportError(String message, int line) {
-		addMarker(message, line, IMarker.SEVERITY_ERROR, false);
+		errorCount++;
+		if (file!=null)
+			addMarker(message, line, IMarker.SEVERITY_ERROR, false);
 	}
 
 	public void reportWarning(String message) {

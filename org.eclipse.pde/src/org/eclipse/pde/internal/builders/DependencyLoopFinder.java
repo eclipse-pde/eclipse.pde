@@ -64,6 +64,8 @@ public class DependencyLoopFinder {
 			for (int i=0; i<iimports.length; i++) {
 				IPluginImport iimport = iimports[i];
 				String id = iimport.getId();
+				//Be paranoid
+				if (id==null) continue;
 				//Commenting linear lookup - was very slow 
 				//when called from here. We will use
 				//model manager instead because it

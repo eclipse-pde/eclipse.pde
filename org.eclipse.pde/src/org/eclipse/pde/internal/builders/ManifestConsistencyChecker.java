@@ -29,7 +29,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		"Builders.versionFormat";
 
 	private boolean javaDelta = false;
-	private boolean fileCompiled=false;
+	private boolean fileCompiled = false;
 
 	class DeltaVisitor implements IResourceDeltaVisitor {
 		private IProgressMonitor monitor;
@@ -61,16 +61,16 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			return true;
 		}
 	}
-	
+
 	class ReferenceDeltaVisitor implements IResourceDeltaVisitor {
 		private boolean interestingChange;
 		public ReferenceDeltaVisitor() {
 		}
-		
+
 		public boolean isInterestingChange() {
 			return interestingChange;
 		}
-		
+
 		public boolean visit(IResourceDelta delta) {
 			IResource resource = delta.getResource();
 
@@ -83,7 +83,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 				// see if this is it
 				IFile candidate = (IFile) resource;
 				if (isManifestFile(candidate)) {
-					interestingChange=true;
+					interestingChange = true;
 					return false;
 				}
 			}
@@ -98,11 +98,12 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		throws CoreException {
 
 		IProject project = getProject();
-		fileCompiled=false;
-		javaDelta=false;
-		
+		fileCompiled = false;
+		javaDelta = false;
+
 		// Ignore binary plug-in projects
-		if (WorkspaceModelManager.isBinaryPluginProject(project)) return null;
+		if (WorkspaceModelManager.isBinaryPluginProject(project))
+			return null;
 
 		IResourceDelta delta = null;
 		if (kind != FULL_BUILD)
@@ -113,22 +114,29 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		} else {
 			processDelta(delta, monitor);
 		}
-		IProject [] interestingProjects = null;
+		IProject[] interestingProjects = null;
 
 		// Compute interesting projects
-		WorkspaceModelManager wmanager = PDECore.getDefault().getWorkspaceModelManager();
+		WorkspaceModelManager wmanager =
+			PDECore.getDefault().getWorkspaceModelManager();
 		IModel thisModel = wmanager.getWorkspaceModel(project);
-		if (thisModel!=null && thisModel instanceof IPluginModelBase)
-			interestingProjects = computeInterestingProjects((IPluginModelBase)thisModel);
+		if (thisModel != null && thisModel instanceof IPluginModelBase)
+			interestingProjects =
+				computeInterestingProjects((IPluginModelBase) thisModel);
 		// If not compiled already, see if there are interesting
 		// changes in referenced projects that may cause us
 		// to compile
-		if (!fileCompiled && kind!=FULL_BUILD && interestingProjects!=null) {
-			checkInterestingProjectDeltas(project, interestingProjects, monitor);
+		if (!fileCompiled
+			&& kind != FULL_BUILD
+			&& interestingProjects != null) {
+			checkInterestingProjectDeltas(
+				project,
+				interestingProjects,
+				monitor);
 		}
 		return interestingProjects;
 	}
-	
+
 	private void checkThisProject(IProject project, IProgressMonitor monitor) {
 		if (!PDE.hasPluginNature(project))
 			return;
@@ -146,16 +154,20 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			}
 		}
 	}
-	
-	private void checkInterestingProjectDeltas(IProject project, IProject [] interestingProjects, IProgressMonitor monitor) throws CoreException {
+
+	private void checkInterestingProjectDeltas(
+		IProject project,
+		IProject[] interestingProjects,
+		IProgressMonitor monitor)
+		throws CoreException {
 		// although we didn't have any changes we care about in this project,
 		// there may be changes in referenced projects that affect us
 		ReferenceDeltaVisitor rvisitor = new ReferenceDeltaVisitor();
-		
-		for (int i=0; i<interestingProjects.length; i++) {
+
+		for (int i = 0; i < interestingProjects.length; i++) {
 			IProject interestingProject = interestingProjects[i];
 			IResourceDelta delta = getDelta(interestingProject);
-			if (delta!=null) {
+			if (delta != null) {
 				// there is a delta here
 				delta.accept(rvisitor);
 				if (rvisitor.isInterestingChange())
@@ -168,7 +180,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			checkThisProject(project, monitor);
 		}
 	}
-	
+
 	private void processDelta(IResourceDelta delta, IProgressMonitor monitor)
 		throws CoreException {
 		javaDelta = false;
@@ -205,9 +217,9 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		}
 		monitor.subTask(PDE.getResourceString(BUILDERS_UPDATING));
 		monitor.done();
-		fileCompiled=true;
+		fileCompiled = true;
 	}
-	
+
 	private boolean isFragment(IFile file) {
 		String name = file.getName().toLowerCase();
 		return name.equals("fragment.xml");
@@ -238,12 +250,15 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 	private void validatePlugin(IFile file, PluginErrorReporter reporter) {
 		WorkspacePluginModel model = new WorkspacePluginModel(file);
 		model.load();
-		
+
 		if (model.isLoaded()) {
 			// Test the version
 			IPlugin plugin = model.getPlugin();
-			validateVersion(plugin, reporter);
-			validateValues(plugin, reporter);
+			validateRequiredAttributes(plugin, reporter);
+			if (reporter.getErrorCount() == 0) {
+				validateVersion(plugin, reporter);
+				validateValues(plugin, reporter);
+			}
 		}
 		model.dispose();
 	}
@@ -256,60 +271,86 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			// Test the version
 			// Test if plugin exists
 			IFragment fragment = model.getFragment();
-			validateVersion(fragment, reporter);
-			String pluginId = fragment.getPluginId();
-			String pluginVersion = fragment.getPluginVersion();
-			int match = fragment.getRule();
-			IPlugin plugin =
-				PDECore.getDefault().findPlugin(pluginId, pluginVersion, match);
-			if (plugin == null) {
-				// broken fragment link
-				String[] args = { pluginId, pluginVersion };
-				String message =
-					PDE.getFormattedMessage(
-						BUILDERS_FRAGMENT_BROKEN_LINK,
-						args);
-				int line = 1;
-				if (fragment instanceof ISourceObject)
-					line = ((ISourceObject) fragment).getStartLine();
-				reporter.reportError(message, line);
+			validateRequiredAttributes(fragment, reporter);
+			if (reporter.getErrorCount() == 0) {
+				validateVersion(fragment, reporter);
+				String pluginId = fragment.getPluginId();
+				String pluginVersion = fragment.getPluginVersion();
+				int match = fragment.getRule();
+				IPlugin plugin =
+					PDECore.getDefault().findPlugin(
+						pluginId,
+						pluginVersion,
+						match);
+				if (plugin == null) {
+					// broken fragment link
+					String[] args = { pluginId, pluginVersion };
+					String message =
+						PDE.getFormattedMessage(
+							BUILDERS_FRAGMENT_BROKEN_LINK,
+							args);
+					int line = 1;
+					if (fragment instanceof ISourceObject)
+						line = ((ISourceObject) fragment).getStartLine();
+					reporter.reportError(message, line);
+				}
+				validateValues(fragment, reporter);
 			}
-			validateValues(fragment, reporter);
 		}
 		model.dispose();
 	}
-	
-	private IProject [] computeInterestingProjects(IPluginModelBase model) {
+
+	private IProject[] computeInterestingProjects(IPluginModelBase model) {
 		IPluginBase plugin = model.getPluginBase();
-		if (plugin==null) return null;
-		PluginModelManager modelManager = PDECore.getDefault().getModelManager();
+		if (plugin == null)
+			return null;
+		PluginModelManager modelManager =
+			PDECore.getDefault().getModelManager();
 		ArrayList projects = new ArrayList();
 		// Add all projects for imported plug-ins that
 		// are in the workspace
-		IPluginImport [] iimports = plugin.getImports();
-		for (int i=0; i<iimports.length; i++) {
+		IPluginImport[] iimports = plugin.getImports();
+		for (int i = 0; i < iimports.length; i++) {
 			IPluginImport iimport = iimports[i];
-			IPluginModelBase importModel = modelManager.findPlugin(iimport.getId(), iimport.getVersion(), iimport.getMatch());
-			addInterestingProject(iimport.getId(), importModel, projects); 
+			if (iimport.getId() == null)
+				continue;
+			IPluginModelBase importModel =
+				modelManager.findPlugin(
+					iimport.getId(),
+					iimport.getVersion(),
+					iimport.getMatch());
+			addInterestingProject(iimport.getId(), importModel, projects);
 		}
 		// If fragment, also add the referenced plug-in
 		// if in the workspace 
 		if (model.isFragmentModel()) {
-			IFragment fragment = (IFragment)plugin;
-			IPluginModelBase refPlugin = modelManager.findPlugin(fragment.getPluginId(),
-			fragment.getPluginVersion(), fragment.getRule());
-			addInterestingProject(fragment.getPluginId(), refPlugin, projects);
+			IFragment fragment = (IFragment) plugin;
+			if (fragment.getPluginId() != null
+				&& fragment.getPluginVersion() != null) {
+				IPluginModelBase refPlugin =
+					modelManager.findPlugin(
+						fragment.getPluginId(),
+						fragment.getPluginVersion(),
+						fragment.getRule());
+				addInterestingProject(
+					fragment.getPluginId(),
+					refPlugin,
+					projects);
+			}
 		}
-		return (IProject[])projects.toArray(new IProject[projects.size()]);
+		return (IProject[]) projects.toArray(new IProject[projects.size()]);
 	}
-	
-	private void addInterestingProject(String id, IPluginModelBase model, ArrayList list) {
-		if (model!=null && model.isEnabled()) {
-			if (model.getUnderlyingResource()!=null)
+
+	private void addInterestingProject(
+		String id,
+		IPluginModelBase model,
+		ArrayList list) {
+		if (model != null && model.isEnabled()) {
+			if (model.getUnderlyingResource() != null)
 				list.add(model.getUnderlyingResource().getProject());
-		}
-		else {
-			IProject missingProject = PDECore.getWorkspace().getRoot().getProject(id);
+		} else {
+			IProject missingProject =
+				PDECore.getWorkspace().getRoot().getProject(id);
 			list.add(missingProject);
 		}
 	}
@@ -349,6 +390,108 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		validateExtensions(pluginBase, reporter);
 		// Validate extension points
 		validateExtensionPoints(pluginBase, reporter);
+	}
+
+	public static void validateRequiredAttributes(
+		IPluginBase pluginBase,
+		PluginErrorReporter reporter) {
+		// validate name, id, version
+		String rootName = "plugin";
+		if (pluginBase instanceof IFragment) {
+			IFragment fragment = (IFragment) pluginBase;
+			rootName = "fragment";
+			assertNotNull(
+				"plugin-id",
+				rootName,
+				getLine(fragment),
+				fragment.getPluginId(),
+				reporter);
+			assertNotNull(
+				"plugin-version",
+				rootName,
+				getLine(fragment),
+				fragment.getPluginVersion(),
+				reporter);
+		}
+
+		assertNotNull(
+			"name",
+			rootName,
+			getLine(pluginBase),
+			pluginBase.getName(),
+			reporter);
+		assertNotNull(
+			"id",
+			rootName,
+			getLine(pluginBase),
+			pluginBase.getId(),
+			reporter);
+		assertNotNull(
+			"version",
+			rootName,
+			getLine(pluginBase),
+			pluginBase.getVersion(),
+			reporter);
+
+		// validate libraries
+		IPluginLibrary[] libraries = pluginBase.getLibraries();
+		for (int i = 0; i < libraries.length; i++) {
+			IPluginLibrary library = libraries[i];
+			assertNotNull(
+				"name",
+				"library",
+				getLine(library),
+				library.getName(),
+				reporter);
+		}
+		// validate imports
+		IPluginImport[] iimports = pluginBase.getImports();
+		for (int i = 0; i < iimports.length; i++) {
+			IPluginImport iimport = iimports[i];
+			assertNotNull(
+				"plugin",
+				"import",
+				getLine(iimport),
+				iimport.getId(),
+				reporter);
+		}
+		// validate extensions
+		IPluginExtension[] extensions = pluginBase.getExtensions();
+		for (int i = 0; i < extensions.length; i++) {
+			IPluginExtension extension = extensions[i];
+			assertNotNull(
+				"point",
+				"extension",
+				getLine(extension),
+				extension.getPoint(),
+				reporter);
+		}
+		// validate extension points
+		IPluginExtensionPoint[] expoints = pluginBase.getExtensionPoints();
+		for (int i = 0; i < expoints.length; i++) {
+			IPluginExtensionPoint expoint = expoints[i];
+			assertNotNull(
+				"id",
+				"extension-point",
+				getLine(expoint),
+				expoint.getId(),
+				reporter);
+		}
+	}
+
+	private static void assertNotNull(
+		String att,
+		String el,
+		int line,
+		String value,
+		PluginErrorReporter reporter) {
+		if (value == null) {
+			String message =
+				PDE.getFormattedMessage(
+					"Builders.manifest.missingRequired",
+					new String[] { att, el });
+			reporter.reportError(message, line);
+		}
 	}
 
 	private void validateRequires(
@@ -461,7 +604,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		if (type instanceof ISchemaComplexType) {
 			ISchemaComplexType complexType = (ISchemaComplexType) type;
 			ISchemaCompositor compositor = complexType.getCompositor();
-			if (compositor!=null)
+			if (compositor != null)
 				computeAllowedElements(compositor, elementSet);
 		}
 	}
@@ -678,7 +821,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		PluginErrorReporter reporter) {
 	}
 
-	private int getLine(IPluginObject object) {
+	private static int getLine(IPluginObject object) {
 		int line = -1;
 		if (object instanceof ISourceObject) {
 			line = ((ISourceObject) object).getStartLine();
