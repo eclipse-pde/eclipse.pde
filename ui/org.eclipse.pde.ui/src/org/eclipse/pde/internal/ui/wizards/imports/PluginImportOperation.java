@@ -37,7 +37,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 	private IPluginModelBase[] fModels;
 	private int fImportType;
 	private IReplaceQuery fReplaceQuery;
-	private WorkspaceBuildModel buildModel;
+	private WorkspaceBuildModel fBuildModel;
 
 	public interface IReplaceQuery {
 		public static final int CANCEL = 0;
@@ -51,9 +51,9 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		IPluginModelBase[] models,
 		int importType,
 		IReplaceQuery replaceQuery) {
-		this.fModels = models;
-		this.fImportType = importType;
-		this.fReplaceQuery = replaceQuery;
+		fModels = models;
+		fImportType = importType;
+		fReplaceQuery = replaceQuery;
 	}
 
 	/*
@@ -101,7 +101,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			PDEPlugin.getFormattedMessage("ImportWizard.operation.creating2", id); //$NON-NLS-1$
 		monitor.beginTask(task, 6);
 		try {
-			buildModel = null;
+			fBuildModel = null;
 			
 			IProject project = findProject(model.getPluginBase().getId());
 
@@ -115,12 +115,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			
 			File file = new File(model.getInstallLocation());
 			if (file.isFile()) {
-				// Plugin-in-Jar format
-				extractZipFile(file, project.getFullPath(), new SubProgressMonitor(monitor, 4));
-				if (fImportType != IMPORT_WITH_SOURCE)
-					project.setPersistentProperty(
-							PDECore.EXTERNAL_PROJECT_PROPERTY,
-							PDECore.BINARY_PROJECT_VALUE);
+				importJARdPlugin(file, project, model, new SubProgressMonitor(monitor, 4));
 			} else {
 				switch (fImportType) {
 					case IMPORT_BINARY :
@@ -175,6 +170,36 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		if (!project.isOpen()) {
 			project.open(null);
 		}
+	}
+	
+	private void importJARdPlugin(File file, IProject project, IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
+		monitor.beginTask("", 2);
+		if (fImportType != IMPORT_WITH_SOURCE) {
+			extractZipFile(file, project.getFullPath(), new SubProgressMonitor(monitor, 1));
+			IPath srcPath = getJARdPluginSrcPath(project);
+			if (srcPath == null) {
+				IPath path = ClasspathUtilCore.getSourceAnnotation(model, ".");
+				if (path != null) {
+					importArchive(project, path.toFile(), new Path("src.zip"));
+					monitor.worked(1);
+				}
+			}
+			project.setPersistentProperty(
+					PDECore.EXTERNAL_PROJECT_PROPERTY,
+					PDECore.BINARY_PROJECT_VALUE);
+		} else {
+			
+		}
+	}
+	
+	private IPath getJARdPluginSrcPath(IProject project) {
+		IFolder folder = project.getFolder("src");
+		IPath srcPath = folder.exists() ? folder.getFullPath() : null;
+		if (srcPath == null) {
+			IFile file = project.getFile("src.zip");
+			srcPath = file.exists() ? file.getFullPath() : null;
+		}
+		return srcPath;
 	}
 	
 	private void importAsBinary(
@@ -240,7 +265,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		
 		importPluginContent(project, model, new SubProgressMonitor(monitor, 2));
 		
-		buildModel = configureBinIncludes(project, model);
+		fBuildModel = configureBinIncludes(project, model);
 		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
 		
 		for (int i = 0; i < libraries.length; i++) {
@@ -255,10 +280,10 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 					String jarName = libraryPath.removeFileExtension().lastSegment();
 					IFolder dest = jarFile.getProject().getFolder("src-" + jarName); //$NON-NLS-1$
 					IBuildEntry entry =
-					buildModel.getFactory().createEntry(
+					fBuildModel.getFactory().createEntry(
 							"source." + libraries[i].getName()); //$NON-NLS-1$
 					entry.addToken(dest.getName() + "/"); //$NON-NLS-1$
-					buildModel.getBuild().add(entry);
+					fBuildModel.getBuild().add(entry);
 					if (!dest.exists()) {
 						dest.create(true, true, null);
 					}
@@ -269,7 +294,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 				}
 			}
 		}
-		buildModel.save();
+		fBuildModel.save();
 		monitor.done();
 	}
 	
@@ -528,7 +553,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		IJavaProject jProject = JavaCore.create(project);
 		Vector entries = new Vector();
 		if (new File(model.getInstallLocation()).isFile()) {
-			IClasspathEntry entry = JavaCore.newLibraryEntry(project.getFullPath(), project.getFullPath(), null, true);
+			IClasspathEntry entry = JavaCore.newLibraryEntry(project.getFullPath(), getJARdPluginSrcPath(project), null, true);
 			if (!entries.contains(entry))
 				entries.add(entry);
 		} else if (fImportType == IMPORT_BINARY_WITH_LINKS) {
@@ -536,8 +561,8 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		} else {
 			IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
 			for (int i = 0; i < libraries.length; i++) {
-				if (buildModel != null) {
-					IBuildEntry buildEntry = buildModel.getBuild().getEntry("source." + libraries[i].getName()); //$NON-NLS-1$
+				if (fBuildModel != null) {
+					IBuildEntry buildEntry = fBuildModel.getBuild().getEntry("source." + libraries[i].getName()); //$NON-NLS-1$
 					if (buildEntry != null) {
 						IPath path = new Path(buildEntry.getTokens()[0]);
 						entries.add(JavaCore.newSourceEntry(project.getFullPath().append(path)));
