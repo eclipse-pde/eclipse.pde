@@ -34,6 +34,7 @@ import org.eclipse.ui.part.ViewPart;
 
 public class LogView extends ViewPart implements ILogListener {
 	private TableTreeViewer tableTreeViewer;
+	private DetailsForm detailsForm;
 	private ArrayList logs = new ArrayList();
 	
 	public static final String P_LOG_WARNING = "warning";
@@ -87,12 +88,12 @@ public class LogView extends ViewPart implements ILogListener {
 	
 	public void createPartControl(Composite parent) {
 		readLogFile();
-		/*SashForm container = new SashForm(parent, SWT.HORIZONTAL);
+		SashForm container = new SashForm(parent, SWT.HORIZONTAL);
 		container.setLayout(new GridLayout());
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		createTableSection(container);
-		createDetailsSection(container);*/
-		createTableSection(parent);		
+		createDetailsSection(container);
+		//createTableSection(parent);		
 	}
 	
 	private void createTableSection(Composite parent) {
@@ -133,14 +134,14 @@ public class LogView extends ViewPart implements ILogListener {
 		
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		createVerticalLine(container);
+		container.setBackground(container.getDisplay().getSystemColor(SWT.COLOR_GREEN));
 		
-		DetailsForm form = new DetailsForm((LogEntry)logs.get(0));
-		form.createControl(container);
-		form.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
-		form.initialize();
-		form.setScrollable(true);
-		form.update();
-		
+		detailsForm = new DetailsForm();
+		Control formControl = detailsForm.createControl(container);
+		formControl.setLayoutData(new GridData(GridData.FILL_BOTH));
+		detailsForm.initialize();
+		if (logs.size()>0)
+			detailsForm.openTo((LogEntry)logs.get(0));
 	}
 	
 	private void createVerticalLine(Composite parent) {
@@ -615,7 +616,13 @@ public class LogView extends ViewPart implements ILogListener {
 	private void handleSelectionChanged(ISelection selection) {
 		propertiesAction.setEnabled(!selection.isEmpty());
 		updateStatus(selection);
+		updatePreview(selection);
 		copyAction.setEnabled(!selection.isEmpty());
+	}
+	
+	private void updatePreview(ISelection selection) {
+		LogEntry entry = (LogEntry)((IStructuredSelection)selection).getFirstElement();
+		detailsForm.openTo(entry);
 	}
 	
 	private void updateStatus(ISelection selection) {

@@ -11,23 +11,13 @@ import org.eclipse.update.ui.forms.internal.ScrollableSectionForm;
 /**
  * @author Wassim Melhem
  */
-public class SessionDataSection extends BasePreviewSection {
+public class StackSection extends BasePreviewSection {
 	
-	public SessionDataSection(ScrollableSectionForm form) {
-		super(form, "Session Data");
-		setCollapsed(true);
+	public StackSection(ScrollableSectionForm form) {
+		super(form, "Exception Stack Trace");
 	}
-/*	
-	protected int getTextWidthHint() {
-		return 200;
-	}
-	
-	protected int getTextStyle() {
-		return SWT.WRAP;
-	}
-*/
 	
 	protected String getTextFromEntry() {
-		return getEntry().getSession().getSessionData();
+		return getEntry().getStack();
 	}
 }
