@@ -5,6 +5,9 @@
  * Java - Code Generation - Code and Comments
  */
 package org.eclipse.pde.ui.internal.samples;
+import java.io.*;
+import java.util.*;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.ILaunchShortcut;
@@ -20,6 +23,7 @@ import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.intro.internal.parts.IStandbyContentPart;
+import org.eclipse.ui.part.ISetSelectionTarget;
 /**
  * @author dejan
  * 
@@ -78,7 +82,8 @@ public class SampleStandbyContent implements IStandbyContentPart {
 		StringBuffer buf = new StringBuffer();
 		buf.append("<form>");
 		buf.append("<p><b>What you can do with the sample</b></p>");
-		buf.append("<li>Browse the source code in the workspace.</li>");
+		buf
+				.append("<li><a href=\"browse\">Browse the source code</a> in the workspace.</li>");
 		buf
 				.append("<li>When ready, <a href=\"run\">run the sample</a> and follow instructions in the <img href=\"help\"/><a href=\"help\">help document.</a></li>");
 		buf
@@ -94,6 +99,8 @@ public class SampleStandbyContent implements IStandbyContentPart {
 				Object href = e.getHref();
 				if (href.equals("help")) {
 					WorkbenchHelp.displayHelpResource(helpURL);
+				} else if (href.equals("browse")) {
+					doBrowse();
 				} else if (href.equals("run")) {
 					doRun(launcher, launchTarget, false);
 				} else if (href.equals("debug")) {
@@ -123,6 +130,68 @@ public class SampleStandbyContent implements IStandbyContentPart {
 						: ILaunchManager.RUN_MODE);
 			}
 		});
+	}
+	private void doBrowse() {
+		IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
+		IProject[] projects = root.getProjects();
+		ISetSelectionTarget target = findTarget();
+		if (target == null)
+			return;
+		String sid = sample.getAttribute("id");
+		if (sid == null)
+			return;
+		ArrayList items = new ArrayList();
+		for (int i = 0; i < projects.length; i++) {
+			IProject project = projects[i];
+			if (!project.exists() || !project.isOpen())
+				continue;
+			IFile pfile = project.getFile("sample.properties");
+			if (pfile.exists()) {
+				try {
+					InputStream is = pfile.getContents();
+					Properties prop = new Properties();
+					prop.load(is);
+					is.close();
+					String id = prop.getProperty("id");
+					if (id != null && id.equals(sid)) {
+						//match
+						IResource res = findSelectReveal(project, prop
+								.getProperty("projectName"));
+						if (res != null)
+							items.add(res);
+					}
+				} catch (IOException e) {
+					PDEPlugin.logException(e);
+				} catch (CoreException e) {
+					PDEPlugin.logException(e);
+				}
+			}
+		}
+		if (items.size() > 0)
+			target.selectReveal(new StructuredSelection(items));
+	}
+	private ISetSelectionTarget findTarget() {
+		String id = sample.getAttribute("targetViewId");
+		if (id == null)
+			return null;
+		IViewPart view = PDEPlugin.getActivePage().findView(id);
+		if (view == null || !(view instanceof ISetSelectionTarget))
+			return null;
+		return (ISetSelectionTarget) view;
+	}
+	private IResource findSelectReveal(IProject project, String originalName) {
+		IConfigurationElement[] projects = sample.getChildren("project");
+		for (int i = 0; i < projects.length; i++) {
+			if (originalName.equals(projects[i].getAttribute("name"))) {
+				String path = projects[i].getAttribute("selectReveal");
+				if (path == null)
+					continue;
+				IResource res = project.findMember(path);
+				if (res.exists())
+					return res;
+			}
+		}
+		return null;
 	}
 	/*
 	 * (non-Javadoc)

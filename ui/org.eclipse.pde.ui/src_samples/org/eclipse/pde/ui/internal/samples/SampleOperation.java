@@ -25,18 +25,24 @@ import org.eclipse.ui.wizards.datatransfer.*;
 public class SampleOperation implements IRunnableWithProgress {
 	private static final String SAMPLE_PROPERTIES = "sample.properties";
 	private IConfigurationElement sample;
+	private String [] projectNames;
 	private IFile sampleManifest;
 	private IOverwriteQuery query;
 	private boolean noToAll;
+	private IProject [] createdProjects;
 	/**
 	 *  
 	 */
-	public SampleOperation(IConfigurationElement sample, IOverwriteQuery query) {
+	public SampleOperation(IConfigurationElement sample, String [] projectNames, IOverwriteQuery query) {
 		this.sample = sample;
 		this.query = query;
+		this.projectNames = projectNames;
 	}
 	public IFile getSampleManifest() {
 		return sampleManifest;
+	}
+	public IProject[] getCreatedProjects() {
+		return createdProjects;
 	}
 	/*
 	 * (non-Javadoc)
@@ -48,11 +54,15 @@ public class SampleOperation implements IRunnableWithProgress {
 		try {
 			IConfigurationElement[] projects = sample.getChildren("project");
 			monitor.beginTask("Creating projects...", 4 * projects.length);
+			createdProjects = new IProject[projects.length];			
 			for (int i = 0; i < projects.length; i++) {
-				IFile file = importProject(projects[i], new SubProgressMonitor(
+				IFile file = importProject(projectNames[i], projects[i], new SubProgressMonitor(
 						monitor, 4));
 				if (file != null && sampleManifest == null)
 					sampleManifest = file;
+				if (file!=null) {
+					createdProjects[i] = file.getProject();
+				}
 			}
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
@@ -60,10 +70,9 @@ public class SampleOperation implements IRunnableWithProgress {
 			monitor.done();
 		}
 	}
-	private IFile importProject(IConfigurationElement config,
+	private IFile importProject(String name, IConfigurationElement config,
 			IProgressMonitor monitor) throws CoreException,
 			InvocationTargetException, InterruptedException {
-		String name = config.getAttribute("name");
 		String path = config.getAttribute("archive");
 		if (name == null || path == null)
 			return null;
@@ -84,8 +93,10 @@ public class SampleOperation implements IRunnableWithProgress {
 					skip = true;
 				}
 			}
-			if (!skip)
+			if (!skip) {
 				project.delete(true, true, new SubProgressMonitor(monitor, 1));
+				project = root.getProject(name);
+			}
 			else
 				monitor.worked(1);
 		}
@@ -111,7 +122,7 @@ public class SampleOperation implements IRunnableWithProgress {
 			try {
 				ByteArrayOutputStream out = new ByteArrayOutputStream();
 				Properties properties = new Properties();
-				createSampleManifestContent(properties);
+				createSampleManifestContent(config.getAttribute("name"), properties);
 				properties.store(out, "");
 				out.flush();
 				String contents = out.toString();
@@ -126,8 +137,10 @@ public class SampleOperation implements IRunnableWithProgress {
 		}
 		return file;
 	}
-	private void createSampleManifestContent(Properties properties) {
+	private void createSampleManifestContent(String projectName, Properties properties) {
+		writeProperty(properties, "id", sample.getAttribute("id"));
 		writeProperty(properties, "name", sample.getAttribute("name"));
+		writeProperty(properties, "projectName", projectName);
 		writeProperty(properties, "launcher", sample.getAttribute("launcher"));
 		IConfigurationElement desc[] = sample.getChildren("description");
 		if (desc.length == 1) {

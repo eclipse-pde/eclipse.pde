@@ -8,15 +8,24 @@ package org.eclipse.pde.ui.internal.samples;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 
-import org.eclipse.core.boot.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.boot.IPlatformConfiguration;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.intro.IIntroSite;
-import org.eclipse.ui.intro.internal.model.*;
+import org.eclipse.ui.intro.internal.model.IIntroAction;
+import org.eclipse.ui.intro.internal.model.IntroURL;
+import org.eclipse.ui.intro.internal.model.IntroURLParser;
 import org.eclipse.update.internal.standalone.InstallCommand;
 /**
  * @author dejan
@@ -52,19 +61,22 @@ public class ShowSampleAction extends Action implements IIntroAction {
 		try {
 			wizard.setInitializationData(null, "class", sampleId);
 			wizard.setSampleEditorNeeded(false);
+			wizard.setSwitchPerspective(false);
+			wizard.setSelectRevealEnabled(false);
+			wizard.setActivitiesEnabled(false);
 			WizardDialog dialog = new WizardDialog(PDEPlugin
 					.getActiveWorkbenchShell(), wizard);
 			dialog.create();
 			dialog.getShell().setText("Eclipse Samples");
 			dialog.getShell().setSize(400, 500);
 			if (dialog.open() == WizardDialog.OK) {
-				switchToSampleStandby();
+				switchToSampleStandby(wizard);
 			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
 	}
-	private void switchToSampleStandby() {
+	private void switchToSampleStandby(SampleWizard wizard) {
 		StringBuffer url = new StringBuffer();
 		url.append("http://org.eclipse.ui.intro/showStandby?");
 		url.append("pluginId=org.eclipse.pde.ui");
@@ -77,7 +89,25 @@ public class ShowSampleAction extends Action implements IIntroAction {
 		if (parser.hasIntroUrl()) {
 			IntroURL introURL = parser.getIntroURL();
 			introURL.execute();
+			ensureProperContext(wizard);
 		}
+	}
+	private void ensureProperContext(SampleWizard wizard) {
+		IConfigurationElement sample = wizard.getSelection();
+		String perspId = sample.getAttribute("perspectiveId");
+		if (perspId!=null) {
+			try {
+				wizard.enableActivities();
+				PlatformUI.getWorkbench().showPerspective(perspId, PDEPlugin.getActiveWorkbenchWindow());
+				wizard.selectReveal(PDEPlugin.getActiveWorkbenchShell());
+			}
+			catch (WorkbenchException e) {
+				PDEPlugin.logException(e);
+			}
+		}
+		enableActivities(sample);
+	}
+	private void enableActivities(IConfigurationElement sample) {
 	}
 	private boolean ensureSampleFeaturePresent() {
 		if (checkFeature())
