@@ -21,23 +21,20 @@ import org.eclipse.jdt.launching.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.*;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.internal.ui.IPreferenceConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
 
-/**
- * Insert the type's description here.
- * 
- * @see Wizard
- */
 public abstract class BaseExportWizard
 	extends Wizard
 	implements IExportWizard, IPreferenceConstants {
 
-	private IStructuredSelection selection;
-	protected BaseExportWizardPage page1;
+	private IStructuredSelection fSelection;
+	protected BaseExportWizardPage fPage1;
+	protected AdvancedPluginExportPage fPage2;
 
 	/**
 	 * The constructor.
@@ -51,19 +48,23 @@ public abstract class BaseExportWizard
 	}
 
 	public void addPages() {
-		page1 = createPage1();
-		addPage(page1);
+		fPage1 = createPage1();
+		fPage2 = createPage2();
+		addPage(fPage1);
+		addPage(fPage2);
 	}
 
 	protected abstract BaseExportWizardPage createPage1();
-
+	
+	protected abstract AdvancedPluginExportPage createPage2();
+	
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();
 	}
 
 	public IStructuredSelection getSelection() {
-		return selection;
+		return fSelection;
 	}
 
 	protected abstract IDialogSettings getSettingsSection(IDialogSettings masterSettings);
@@ -72,19 +73,25 @@ public abstract class BaseExportWizard
 	 * @see Wizard#init
 	 */
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		this.selection = selection;
+		this.fSelection = selection;
+	}
+	
+	public boolean canFinish() {
+		IWizardPage nextPage = fPage1.getNextPage();
+		return fPage1.isPageComplete() && (nextPage == null || nextPage.isPageComplete());
 	}
 
 	/**
 	 * @see Wizard#performFinish
 	 */
 	public boolean performFinish() {
-		page1.saveSettings();
-		if (page1.doGenerateAntFile()) {
-			generateAntBuildFile(page1.getAntBuildFileName());
+		fPage1.saveSettings();
+		fPage2.saveSettings();
+		if (fPage1.doGenerateAntFile()) {
+			generateAntBuildFile(fPage1.getAntBuildFileName());
 		}
-		if (page1.doExportAsZip()) {
-			File zipFile = new File(page1.getDestination(), page1.getFileName());
+		if (fPage1.doExportAsZip()) {
+			File zipFile = new File(fPage1.getDestination(), fPage1.getFileName());
 			if (zipFile.exists()) {
 				if (!MessageDialog.openQuestion(getContainer().getShell(),
 						PDEPlugin.getResourceString("BaseExportWizard.confirmReplace.title"),  //$NON-NLS-1$
@@ -150,7 +157,7 @@ public abstract class BaseExportWizard
 	protected abstract void scheduleExportJob();
 	
 	protected String getExportOperation() {
-		int exportType = page1.getExportType();
+		int exportType = fPage1.getExportType();
 		switch (exportType) {
 			case FeatureExportJob.EXPORT_AS_ZIP:
 				return "zip"; //$NON-NLS-1$

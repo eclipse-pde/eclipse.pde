@@ -123,8 +123,7 @@ public abstract class BaseExportWizardPage extends WizardPage {
 	 */
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
-		GridLayout layout = new GridLayout();
-		container.setLayout(layout);
+		container.setLayout(new GridLayout());
 		
 		createTableViewerSection(container);
 		createOptionsSection(container);
@@ -588,6 +587,12 @@ public abstract class BaseExportWizardPage extends WizardPage {
 	
 	public String getAntBuildFileName() {
 		return fAntCombo.getText().trim();
+	}
+	
+	public IWizardPage getNextPage() {
+		if (getExportType() == FeatureExportJob.EXPORT_AS_UPDATE_JARS)
+			return super.getNextPage();
+		return null;
 	}
 	
 }

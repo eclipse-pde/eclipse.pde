@@ -17,11 +17,6 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.ui.progress.*;
 
-/**
- * Insert the type's description here.
- * 
- * @see Wizard
- */
 public class PluginExportWizard extends BaseExportWizard {
 	private static final String KEY_WTITLE = "ExportWizard.Plugin.wtitle"; //$NON-NLS-1$
 	private static final String STORE_SECTION = "PluginExportWizard"; //$NON-NLS-1$
@@ -37,7 +32,7 @@ public class PluginExportWizard extends BaseExportWizard {
 	protected BaseExportWizardPage createPage1() {
 		return new PluginExportWizardPage(getSelection());
 	}
-
+	
 	public IDialogSettings getSettingsSection(IDialogSettings master) {
 		IDialogSettings setting = master.getSection(STORE_SECTION);
 		if (setting == null) {
@@ -47,13 +42,15 @@ public class PluginExportWizard extends BaseExportWizard {
 	}
 
 	protected void scheduleExportJob() {
+		String[] signingInfo = fPage1.getExportType() == FeatureExportJob.EXPORT_AS_UPDATE_JARS ? fPage2.getSigningInfo() : null;
 		PluginExportJob job =
 			new PluginExportJob(
-				page1.getExportType(),
-				page1.doExportSource(),
-				page1.getDestination(),
-				page1.getFileName(),
-				page1.getSelectedItems());
+				fPage1.getExportType(),
+				fPage1.doExportSource(),
+				fPage1.getDestination(),
+				fPage1.getFileName(),
+				fPage1.getSelectedItems(),
+				signingInfo);
 		job.setUser(true);
 		job.schedule();
 		job.setProperty(IProgressConstants.ICON_PROPERTY, PDEPluginImages.DESC_PLUGIN_OBJ);
@@ -67,19 +64,19 @@ public class PluginExportWizard extends BaseExportWizard {
 		writer.println("<project name=\"build\" default=\"plugin_export\">"); //$NON-NLS-1$
 		writer.println("\t<target name=\"plugin_export\">"); //$NON-NLS-1$
 		writer.print("\t\t<pde.exportPlugins plugins=\"" + getPluginIDs() //$NON-NLS-1$
-				+ "\" destination=\"" + page1.getDestination() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
-		String filename = page1.getFileName();
+				+ "\" destination=\"" + fPage1.getDestination() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
+		String filename = fPage1.getFileName();
 		if (filename != null)
 			writer.print("filename=\"" + filename + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.print("exportType=\"" + getExportOperation() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
-		writer.println("exportSource=\"" + (page1.doExportSource() ? "true" : "false") + "\"/>");  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		writer.println("exportSource=\"" + (fPage1.doExportSource() ? "true" : "false") + "\"/>");  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		writer.println("\t</target>"); //$NON-NLS-1$
 		writer.println("</project>"); //$NON-NLS-1$
 	}
 	
 	private String getPluginIDs() {
 		StringBuffer buffer = new StringBuffer();
-		Object[] objects = page1.getSelectedItems();
+		Object[] objects = fPage1.getSelectedItems();
 		for (int i = 0; i < objects.length; i++) {
 			Object object = objects[i];
 			if (object instanceof IPluginModelBase) {
@@ -89,6 +86,10 @@ public class PluginExportWizard extends BaseExportWizard {
 			}
 		}
 		return buffer.toString();
+	}
+
+	protected AdvancedPluginExportPage createPage2() {
+		return new AdvancedPluginExportPage("plugin-sign"); //$NON-NLS-1$
 	}
 
 }
