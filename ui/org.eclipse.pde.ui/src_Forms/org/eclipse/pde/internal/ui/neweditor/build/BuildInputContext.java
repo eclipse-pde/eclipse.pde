@@ -127,7 +127,7 @@ public class BuildInputContext extends InputContext {
 	
 	private int getLength(IDocumentKey key) throws BadLocationException {
 		IDocument doc = getDocumentProvider().getDocument(getInput());
-		int endline = doc.getLineOfOffset(key.getOffset()) + key.getLineSpan();
+		int endline = doc.getLineOfOffset(key.getOffset()) + key.getLineSpan() - 1;
 		return doc.getLineOffset(endline) + doc.getLineLength(endline) - key.getOffset();
 	}	
 

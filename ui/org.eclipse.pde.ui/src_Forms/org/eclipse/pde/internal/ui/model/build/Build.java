@@ -89,7 +89,7 @@ public class Build implements IBuild {
 				
 				if (currentKey != null) {
 					if (!line.endsWith("\\")) {
-						currentKey.setLineSpan(i - document.getLineOfOffset(currentKey.getOffset()));
+						currentKey.setLineSpan(i - document.getLineOfOffset(currentKey.getOffset()) + 1);
 						currentKey = null;
 					}
 				} else {

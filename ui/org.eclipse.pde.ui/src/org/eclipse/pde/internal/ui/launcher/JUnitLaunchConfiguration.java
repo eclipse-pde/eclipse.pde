@@ -56,6 +56,9 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 			IVMInstall launcher = LauncherUtils.createLauncher(configuration);
 			monitor.worked(1);
 
+			if (configuration.getAttribute(CONFIG_CLEAR, true))
+				LauncherUtils.clearConfigArea(getConfigDir(configuration));
+			
 			int port = SocketUtil.findFreePort();
 			VMRunnerConfiguration runnerConfig =
 				createVMRunner(configuration, testTypes, port, mode);
@@ -64,8 +67,6 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 				return;
 			} 
 			monitor.worked(1);
-			
-			launch.setAttribute(ILauncherSettings.CONFIG_LOCATION,fConfigDir.getPath());
 			
 			String workspace = configuration.getAttribute(LOCATION + "0", getDefaultWorkspace(configuration));
 			LauncherUtils.clearWorkspace(configuration,workspace);
@@ -174,20 +175,17 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		// Create the platform configuration for the runtime workbench
 		String primaryFeatureId = LauncherUtils.getPrimaryFeatureId();
 		
-		fConfigDir =
-			TargetPlatform.createPlatformConfigurationArea(
-				pluginMap,
-				configuration.getName(),
-				primaryFeatureId,
-				LauncherUtils.getAutoStartPlugins(configuration));
+		TargetPlatform.createPlatformConfigurationArea(
+			pluginMap,
+			getConfigDir(configuration),
+			primaryFeatureId,
+			LauncherUtils.getAutoStartPlugins(configuration));
 		programArgs.add("-configuration");
 		if (PDECore.getDefault().getModelManager().isOSGiRuntime())
-			programArgs.add("file:" + new Path(fConfigDir.getPath()).addTrailingSeparator().toString());
+			programArgs.add("file:" + new Path(getConfigDir(configuration).getPath()).addTrailingSeparator().toString());
 		else
-			programArgs.add("file:" + new Path(fConfigDir.getPath()).append("platform.cfg").toString());
+			programArgs.add("file:" + new Path(getConfigDir(configuration).getPath()).append("platform.cfg").toString());
 
-		if (configuration.getAttribute(CONFIG_CLEAR, true))
-			LauncherUtils.clearConfigArea(fConfigDir);
 		
 		if (!PDECore.getDefault().getModelManager().isOSGiRuntime()) {
 			if (primaryFeatureId != null) {
@@ -213,7 +211,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 				&& !TRACING_NONE.equals(configuration.getAttribute(
 						TRACING_CHECKED, (String) null))) {
 			programArgs.add("-debug");
-			String path = fConfigDir.getPath() + Path.SEPARATOR + ".options";
+			String path = getConfigDir(configuration).getPath() + Path.SEPARATOR + ".options";
 			programArgs.add(LauncherUtils.getTracingFileArgument(configuration, path));
 		}
 		
@@ -366,4 +364,12 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		}
 		return true;
 	}
+	
+	private File getConfigDir(ILaunchConfiguration config) {
+		if (fConfigDir == null) {
+			fConfigDir = LauncherUtils.createConfigArea(config.getName());
+		}
+		return fConfigDir;
+	}
+
 }

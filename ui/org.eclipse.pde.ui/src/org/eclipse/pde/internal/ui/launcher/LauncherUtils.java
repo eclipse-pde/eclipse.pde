@@ -522,19 +522,23 @@ public class LauncherUtils {
 		return result[0];
 	}
 	
+	public static File createConfigArea(String name) {
+		IPath statePath = PDECore.getDefault().getStateLocation();
+		File dir = new File(statePath.toOSString());
+		if (name.length() > 0) {
+			dir = new File(dir, name);
+			if (!dir.exists()) {
+				dir.mkdirs();
+			}
+		}
+		return dir;		
+	}
+
 	public static void clearConfigArea(File configDir) {
 		try {
 			File[] files = configDir.listFiles();
 			if (files != null) {
 				for (int i = 0; i < files.length; i++) {
-					if (!files[i].isDirectory()) {
-						String name = files[i].getName();
-						if (name.equals("config.ini") || name.equals("platform.xml") || name.equals("platform.cfg"))
-							continue;			
-					} else {
-						if (files[i].getName().equals("org.eclipse.update"))
-							continue;
-					}
 					deleteContent(files[i]);		
 				}
 			}

@@ -703,16 +703,18 @@ public class RuntimeInfoSection
 		return false;
 	}
 	
-	public void modelChanged(IModelChangedEvent event) {
-		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
-			fLibraryViewer.refresh();
-			fFolderViewer.refresh();
-			fLibraryViewer.setSelection(null);
-			fFolderViewer.setInput(null);
-			fFolderPart.setButtonEnabled(0,false);
-			jarIncludeButton.setVisible(false);
-			updateDirectionalButtons();
-		}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
+	 */
+	public void refresh() {
+		fLibraryViewer.refresh();
+		fFolderViewer.refresh();
+		fLibraryViewer.setSelection(null);
+		fFolderViewer.setInput(null);
+		fFolderPart.setButtonEnabled(0,false);
+		jarIncludeButton.setVisible(false);
+		updateDirectionalButtons();
+		super.refresh();
 	}
 
 	protected String[] getLibraryNames(){

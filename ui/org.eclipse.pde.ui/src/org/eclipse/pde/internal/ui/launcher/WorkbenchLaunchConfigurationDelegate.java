@@ -28,8 +28,8 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 		"WorkbenchLauncherConfigurationDelegate.badFeatureSetup";
 	private static final String KEY_NO_STARTUP =
 		"WorkbenchLauncherConfigurationDelegate.noStartup";
-
 	private File fConfigDir = null;
+	
 	/*
 	 * @see ILaunchConfigurationDelegate#launch(ILaunchConfiguration, String)
 	 */
@@ -45,6 +45,9 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 			IVMInstall launcher = LauncherUtils.createLauncher(configuration);
 			monitor.worked(1);
 			
+			if (configuration.getAttribute(CONFIG_CLEAR, true))
+				LauncherUtils.clearConfigArea(getConfigDir(configuration));
+			
 			VMRunnerConfiguration runnerConfig = createVMRunner(configuration);
 			if (runnerConfig == null) {
 				monitor.setCanceled(true);
@@ -52,13 +55,6 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 			} 
 			monitor.worked(1);
 			
-			if (fConfigDir == null) {
-				launch.setAttribute(ILauncherSettings.CONFIG_LOCATION, null);
-			} else {
-				launch.setAttribute(ILauncherSettings.CONFIG_LOCATION,
-						fConfigDir.toString());
-			}
-				
 			String workspace = configuration.getAttribute(LOCATION + "0", LauncherUtils.getDefaultPath().append("runtime-workbench-workspace").toOSString());
 			LauncherUtils.clearWorkspace(configuration, workspace);
 				
@@ -126,19 +122,16 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 				return null;
 				
 			String primaryFeatureId = LauncherUtils.getPrimaryFeatureId();
-			fConfigDir =
-				TargetPlatform.createPlatformConfigurationArea(
+			TargetPlatform.createPlatformConfigurationArea(
 					pluginMap,
-					configuration.getName(),
+					getConfigDir(configuration),
 					primaryFeatureId,
 					LauncherUtils.getAutoStartPlugins(configuration));
 			programArgs.add("-configuration");
 			if (isOSGI)
-				programArgs.add("file:" + new Path(fConfigDir.getPath()).addTrailingSeparator().toString());
+				programArgs.add("file:" + new Path(getConfigDir(configuration).getPath()).addTrailingSeparator().toString());
 			else
-				programArgs.add("file:" + new Path(fConfigDir.getPath()).append("platform.cfg").toString());
-			if (configuration.getAttribute(CONFIG_CLEAR, true))
-				LauncherUtils.clearConfigArea(fConfigDir);
+				programArgs.add("file:" + new Path(getConfigDir(configuration).getPath()).append("platform.cfg").toString());
 			
 			if (!isOSGI) {
 				if (primaryFeatureId != null) {
@@ -161,18 +154,12 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 
 		// add tracing, if turned on
 		if (configuration.getAttribute(TRACING, false)
-				&& !TRACING_NONE.equals(configuration.getAttribute(
-					TRACING_CHECKED, (String) null))) {
-			if (fConfigDir == null) {
-				fConfigDir =
-					TargetPlatform.createWorkingDirectory(configuration.getName());
-			}
-			String directoryName = fConfigDir.toString();
+				&& !TRACING_NONE.equals(configuration.getAttribute(TRACING_CHECKED, (String) null))) {
 			programArgs.add("-debug");
 			programArgs.add(
 				LauncherUtils.getTracingFileArgument(
 					configuration,
-					directoryName + Path.SEPARATOR + ".options"));
+					getConfigDir(configuration).toString() + Path.SEPARATOR + ".options"));
 		}
 
 		// add the program args specified by the user
@@ -234,23 +221,21 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 	}
 
 	private void ensureProductFilesExist(IPath productArea) {
-		File productDir = productArea.toFile();
-		
+		File productDir = productArea.toFile();		
 		File marker = new File(productDir, ".eclipseproduct");
 		IPath eclipsePath = ExternalModelManager.getEclipseHome();
 		if (!marker.exists()) 
 			copyFile(eclipsePath, ".eclipseproduct", marker);
 		
 		if (PDECore.getDefault().getModelManager().isOSGiRuntime()) {
-			fConfigDir = new File(productDir, "configuration");
-			if (!fConfigDir.exists())
-				fConfigDir.mkdirs();		
-			File ini = new File(fConfigDir, "config.ini");			
+			File configDir = new File(productDir, "configuration");
+			if (!configDir.exists())
+				configDir.mkdirs();		
+			File ini = new File(configDir, "config.ini");			
 			if (!ini.exists())
 				copyFile(eclipsePath.append("configuration"), "config.ini", ini);
 		} else {
 			File ini = new File(productDir, "install.ini");
-			fConfigDir = productDir;
 			if (!ini.exists()) 
 				copyFile(eclipsePath, "install.ini", ini);		
 		}
@@ -300,5 +285,12 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 			ILaunchConfiguration configuration, String mode)
 			throws CoreException {
 		return super.getProjectsForProblemSearch(configuration, mode);
+	}
+	
+	private File getConfigDir(ILaunchConfiguration config) {
+		if (fConfigDir == null) {
+			fConfigDir = LauncherUtils.createConfigArea(config.getName());
+		}
+		return fConfigDir;
 	}
 }

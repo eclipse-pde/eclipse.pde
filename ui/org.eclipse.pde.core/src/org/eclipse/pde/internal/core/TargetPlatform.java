@@ -155,14 +155,13 @@ public class TargetPlatform implements IEnvironmentVariables {
 		}
 	}
 
-	public static File createPlatformConfigurationArea(
+	public static void createPlatformConfigurationArea(
 		TreeMap pluginMap,
-		String configName,
+		File configDir,
 		String primaryFeatureId,
 		HashMap autoStartPlugins)
 		throws CoreException {
 		try {
-			File configDir = createWorkingDirectory(configName);
 			if (PDECore.getDefault().getModelManager().isOSGiRuntime()) {
 				createConfigIniFile(configDir, pluginMap, primaryFeatureId, autoStartPlugins);
 				if (autoStartPlugins.containsKey("org.eclipse.update.configurator")) { 
@@ -172,7 +171,6 @@ public class TargetPlatform implements IEnvironmentVariables {
 			} else {
 				savePlatformConfiguration(new PlatformConfiguration(null), new File(configDir, "platform.cfg"), pluginMap, primaryFeatureId);
 			} 			
-			return configDir;
 		} catch (CoreException e) {
 			// Rethrow
 			throw e;
@@ -266,18 +264,6 @@ public class TargetPlatform implements IEnvironmentVariables {
 		return "file:" + new Path(location).addTrailingSeparator().toString();
 	}
 	
-	public static File createWorkingDirectory(String name) {
-		IPath statePath = PDECore.getDefault().getStateLocation();
-		File dir = new File(statePath.toOSString());
-		if (name.length() > 0) {
-			dir = new File(dir, name);
-			if (!dir.exists()) {
-				dir.mkdir();
-			}
-		}
-		return dir;		
-	}
-
 	private static void savePlatformConfiguration(
 		IPlatformConfiguration platformConfiguration,
 		File configFile,
