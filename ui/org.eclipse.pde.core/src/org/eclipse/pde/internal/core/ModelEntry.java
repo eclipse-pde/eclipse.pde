@@ -144,14 +144,16 @@ public class ModelEntry extends PlatformObject {
 	}
 	private boolean isRequired(IPluginBase plugin, IPluginBase changedPlugin) {
 		String changedId = changedPlugin.getId();
-
+		if (changedId == null)
+			return false;
+			
 		if (changedId.equalsIgnoreCase("org.eclipse.core.boot")
 			|| changedId.equalsIgnoreCase("org.eclipse.core.runtime"))
 			return true;
 		IPluginImport[] imports = plugin.getImports();
 		for (int i = 0; i < imports.length; i++) {
 			IPluginImport iimport = imports[i];
-			if (iimport.getId().equals(changedPlugin.getId()))
+			if (iimport.getId().equals(changedId))
 				return true;
 		}
 		return false;
