@@ -4,7 +4,9 @@
  */
 package org.eclipse.pde.internal.ui.parts;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 /**
  * @version 	1.0
@@ -53,8 +55,23 @@ public class EditableTablePart extends TablePart {
 			tableViewer.setCellEditors(editors);
 			tableViewer.setCellModifier(new NameModifier());
 			tableViewer.setColumnProperties(properties);
+			table.addKeyListener(new KeyAdapter() {
+				public void keyPressed(KeyEvent e) {
+					if (e.keyCode==SWT.F2) {
+						activateEditMode();
+					}
+				}
+			});
 		}
 		return tableViewer;
+	}
+	
+	private void activateEditMode() {
+		TableViewer viewer = getTableViewer();
+		IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
+		if (selection.size()==1 && !viewer.isCellEditorActive()) {
+			viewer.editElement(selection.getFirstElement(), 0);
+		}
 	}
 
 	protected void entryModified(Object entry, String value) {
