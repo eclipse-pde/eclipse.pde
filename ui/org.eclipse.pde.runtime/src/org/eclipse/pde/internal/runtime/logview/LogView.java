@@ -331,8 +331,7 @@ public class LogView extends ViewPart implements ILogListener {
             public void doubleClick(DoubleClickEvent event) {
                 ((EventDetailsDialogAction) fPropertiesAction).setComparator(comparator);
                 fPropertiesAction.run();
-            }
-			
+            }		
         });
         fTreeViewer.setInput(this);
         addMouseListeners();
@@ -392,8 +391,6 @@ public class LogView extends ViewPart implements ILogListener {
                 ViewerSorter sorter = getViewerSorter(DATE);
                 fTreeViewer.setSorter(sorter);
                 collator = sorter.getCollator();
-                boolean isComparatorSet = ((EventDetailsDialogAction) fPropertiesAction)
-                        .resetSelection(DATE, DATE_ORDER);
                 setComparator(DATE);
 				((EventDetailsDialogAction) fPropertiesAction).setComparator(comparator);
                 fMemento.putInteger(P_ORDER_VALUE, DATE_ORDER);
