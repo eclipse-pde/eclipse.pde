@@ -385,13 +385,15 @@ public class WorkbenchLaunchConfigurationDelegate
 		for (int i = 0; i < wsmodels.length; i++) {
 			IStatus status = validateModel(wsmodels[i]);
 			if (status == null) {
-				result.add(wsmodels[i]);
-				if (wsmodels[i].getPluginBase().getId().equals("org.eclipse.core.boot"))
-					bootModel = wsmodels[i];
+				String id = wsmodels[i].getPluginBase().getId();
+				if (id != null) {
+					result.add(wsmodels[i]);
+					if (id.equals("org.eclipse.core.boot"))
+						bootModel = wsmodels[i];
+				}
 			} else {
 				statusEntries.add(status);
 			}
-
 		}
 
 		duplicates = new Vector();
@@ -399,19 +401,19 @@ public class WorkbenchLaunchConfigurationDelegate
 			IStatus status = validateModel(exmodels[i]);
 			if (status == null) {
 				boolean duplicate = false;
+				String id = exmodels[i].getPluginBase().getId();
+				if (id == null)
+					continue;
 				for (int j = 0; j < wsmodels.length; j++) {
 					if (isDuplicate(wsmodels[j], exmodels[i])) {
-						duplicates.add(exmodels[i].getPluginBase().getId());
+						duplicates.add(id);
 						duplicate = true;
 						break;
 					}
 				}
 				if (!duplicate) {
 					result.add(exmodels[i]);
-					if (exmodels[i]
-						.getPluginBase()
-						.getId()
-						.equals("org.eclipse.core.boot"))
+					if (id.equals("org.eclipse.core.boot"))
 						bootModel = exmodels[i];
 				}
 			} else {
@@ -474,7 +476,7 @@ public class WorkbenchLaunchConfigurationDelegate
 	private static boolean isDuplicate(
 		IPluginModelBase wsmodel,
 		IPluginModelBase exmodel) {
-		if (!wsmodel.isLoaded())
+		if (!wsmodel.isLoaded() || !exmodel.isLoaded())
 			return false;
 		return wsmodel.getPluginBase().getId().equalsIgnoreCase(
 			exmodel.getPluginBase().getId());
