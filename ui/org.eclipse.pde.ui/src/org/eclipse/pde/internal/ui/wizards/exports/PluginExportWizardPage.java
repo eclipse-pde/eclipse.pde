@@ -18,7 +18,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -43,7 +42,7 @@ public class PluginExportWizardPage extends BaseExportWizardPage {
 			if (!WorkspaceModelManager.isBinaryPluginProject(projects[i])
 				&& WorkspaceModelManager.isPluginProject(projects[i])) {
 				IModel model = manager.getWorkspaceModel(projects[i]);
-				if (model != null && hasBuildProperties((WorkspacePluginModelBase)model)) {
+				if (model != null && isValidModel(model) && hasBuildProperties((IPluginModelBase)model)) {
 					result.add(model);
 				}
 			}
@@ -55,7 +54,7 @@ public class PluginExportWizardPage extends BaseExportWizardPage {
 		WorkbenchHelp.setHelp(control, IHelpContextIds.PLUGIN_EXPORT_WIZARD);
 	}
 	
-	private boolean hasBuildProperties(WorkspacePluginModelBase model) {
+	private boolean hasBuildProperties(IPluginModelBase model) {
 		File file = new File(model.getInstallLocation(),"build.properties");
 		return file.exists();
 	}
