@@ -115,6 +115,7 @@ public class WorkbenchLaunchConfigurationDelegate
 		IVMRunner runner = launcher.getVMRunner(mode);
 		ExecutionArguments args = new ExecutionArguments(vmArgs, progArgs);
 		IPath path = new Path(data);
+		
 		doLaunch(
 			launch,
 			configuration,
@@ -303,7 +304,7 @@ public class WorkbenchLaunchConfigurationDelegate
 			String[] vmArgs = args.getVMArgumentsArray();
 			String[] progArgs = args.getProgramArgumentsArray();
 
-			int exCount = 10;
+			int exCount = 8;
 			if (tracing)
 				exCount += 2;
 			if (showSplash)
