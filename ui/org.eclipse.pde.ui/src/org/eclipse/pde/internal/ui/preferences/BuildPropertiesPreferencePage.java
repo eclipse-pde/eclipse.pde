@@ -11,6 +11,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -89,6 +90,8 @@ public class BuildPropertiesPreferencePage extends PreferencePage implements IWo
 		gd = new GridData();
 		gd.widthHint = 50;
 		javacTarget.setLayoutData(gd);
+		
+		Dialog.applyDialogFont(composite);
 		
 		return composite;
 	}
