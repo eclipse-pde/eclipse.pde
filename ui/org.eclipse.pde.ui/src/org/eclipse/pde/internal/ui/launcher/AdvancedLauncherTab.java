@@ -576,8 +576,8 @@ public class AdvancedLauncherTab
 			config.setAttribute(USE_ONE_PLUGIN, false);
 			config.setAttribute(ONE_PLUGIN_ID, "");
 		} else {
-			config.setAttribute(USECUSTOM, false);
-			config.setAttribute(USE_ONE_PLUGIN, true);
+			config.setAttribute(USECUSTOM, true);
+			config.setAttribute(USE_ONE_PLUGIN, false);
 			try {
 				String projectName= config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, "");
 				config.setAttribute(ONE_PLUGIN_ID, getPluginId(projectName));

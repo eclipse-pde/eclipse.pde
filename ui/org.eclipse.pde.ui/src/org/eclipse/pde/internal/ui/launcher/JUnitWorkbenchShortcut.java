@@ -35,8 +35,8 @@ public class JUnitWorkbenchShortcut extends JUnitLaunchShortcut {
 			wc.setAttribute(ILauncherSettings.LOCATION + "0", getDefaultWorkspaceLocation());
 			wc.setAttribute(ILauncherSettings.VMARGS, "");
 			wc.setAttribute(ILauncherSettings.PROGARGS, LauncherUtils.getDefaultProgramArguments());
-			wc.setAttribute(ILauncherSettings.USECUSTOM, false);
-			wc.setAttribute(ILauncherSettings.USE_ONE_PLUGIN, true);
+			wc.setAttribute(ILauncherSettings.USECUSTOM, true);
+			wc.setAttribute(ILauncherSettings.USE_ONE_PLUGIN, false);
 			wc.setAttribute(ILauncherSettings.ONE_PLUGIN_ID, getPluginId(project));
 			wc.setAttribute(ILauncherSettings.DOCLEAR, true);
 			wc.setAttribute(ILauncherSettings.ASKCLEAR, false);
