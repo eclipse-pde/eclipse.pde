@@ -46,21 +46,6 @@
       </view>
    </extension>
    <extension
-         point="org.eclipse.ui.propertyPages">
-      <page
-            objectClass="org.eclipse.pde.internal.runtime.logview.LogEntry"
-            name="%propertyPages.details.name"
-            class="org.eclipse.pde.internal.runtime.logview.LogEntryPropertyPage"
-            id="org.eclipse.pde.runtime.StatusDetails">
-      </page>
-      <page
-            objectClass="org.eclipse.pde.internal.runtime.logview.LogEntry"
-            name="%propertyPages.session.name"
-            class="org.eclipse.pde.internal.runtime.logview.LogSessionPropertyPage"
-            id="org.eclipse.pde.runtime.StatusSession">
-      </page>
-   </extension>
-   <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
             targetID="org.eclipse.ui.resourcePerspective">

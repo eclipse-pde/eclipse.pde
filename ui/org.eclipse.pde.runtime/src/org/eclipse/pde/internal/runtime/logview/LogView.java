@@ -11,17 +11,17 @@
 package org.eclipse.pde.internal.runtime.logview;
 
 import java.io.*;
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.*;
 import java.text.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.operation.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.runtime.*;
-import org.eclipse.swt.SWT;
+import org.eclipse.swt.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.*;
@@ -29,9 +29,8 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
-import org.eclipse.ui.dialogs.PropertyDialogAction;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.help.*;
+import org.eclipse.ui.part.*;
 
 public class LogView extends ViewPart implements ILogListener {
 	private TableTreeViewer tableTreeViewer;
@@ -58,6 +57,10 @@ public class LogView extends ViewPart implements ILogListener {
 	private int MESSAGE_ORDER = -1;
 	private int PLUGIN_ORDER = -1;
 	private int DATE_ORDER = -1;
+
+	public static byte MESSAGE = 0x0;
+	public static byte PLUGIN = 0x1;
+	public static byte DATE = 0x2;
 	
 	private static int ASCENDING = 1;
 	private static int DESCENDING = -1;
@@ -190,6 +193,8 @@ public class LogView extends ViewPart implements ILogListener {
 			.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent e) {
 				handleSelectionChanged(e.getSelection());
+				if (propertiesAction.isEnabled())
+					((EventPropertyDialogAction)propertiesAction).resetSelection();
 			}
 		});	
 		tableTreeViewer.addDoubleClickListener(new IDoubleClickListener() {
@@ -232,6 +237,7 @@ public class LogView extends ViewPart implements ILogListener {
 						return super.compare(viewer, entry1.getMessage(), entry2.getMessage()) * MESSAGE_ORDER;
 					}
 				});
+				((EventPropertyDialogAction)propertiesAction).resetSelection(MESSAGE, MESSAGE_ORDER);
 			}
 		});
 		
@@ -247,6 +253,7 @@ public class LogView extends ViewPart implements ILogListener {
 						return super.compare(viewer, entry1.getPluginId(), entry2.getPluginId()) * PLUGIN_ORDER;
 					}
 				});
+				((EventPropertyDialogAction)propertiesAction).resetSelection(PLUGIN, PLUGIN_ORDER);
 			}
 		});
 		
@@ -275,6 +282,7 @@ public class LogView extends ViewPart implements ILogListener {
 						return 0;
 					}
 				});
+				((EventPropertyDialogAction)propertiesAction).resetSelection(DATE, DATE_ORDER);
 			}
 		});
 		
@@ -289,7 +297,7 @@ public class LogView extends ViewPart implements ILogListener {
 	}
 	
 	private void makeActions(Table table) {
-		propertiesAction = new PropertyDialogAction(table.getShell(), tableTreeViewer);
+		propertiesAction = new EventPropertyDialogAction(table.getShell(), tableTreeViewer);
 		propertiesAction.setImageDescriptor(PDERuntimePluginImages.DESC_PROPERTIES);
 		propertiesAction.setDisabledImageDescriptor(
 			PDERuntimePluginImages.DESC_PROPERTIES_DISABLED);
@@ -748,7 +756,5 @@ public class LogView extends ViewPart implements ILogListener {
 			activateViewAction.isChecked() ? "true" : "false");
 		detailsForm.saveState();
 		memento.putMemento(this.memento);
-	}
-	
-	
+	}	
 }

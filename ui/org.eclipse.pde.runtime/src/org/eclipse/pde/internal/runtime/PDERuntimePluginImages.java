@@ -30,6 +30,8 @@ public class PDERuntimePluginImages {
 	private static final String PATH_LCL_HOVER = ICONS_PATH + "clcl16/";
 	private static final String PATH_LCL_DISABLED = ICONS_PATH + "dlcl16/";
 	private static final String PATH_OVR = ICONS_PATH + "ovr16/";
+	private static final String PATH_EVENTS = ICONS_PATH + "view16/";
+	private static final String PATH_EVENTS_DISABLED = ICONS_PATH + "dview16/";
 
 	public static final ImageDescriptor DESC_FORM_BANNER_SHORT  = create(PATH_FORMS, "form_banner.gif"); //$NON-NLS-1$
 
@@ -122,6 +124,18 @@ public class PDERuntimePluginImages {
 		create(PATH_LCL_HOVER, "import_log.gif");
 	public static final ImageDescriptor DESC_IMPORT_DISABLED =
 		create(PATH_LCL_DISABLED, "import_log.gif");
+	
+	/*
+	 * Event Properties
+	 */
+	public static final ImageDescriptor DESC_PREV_EVENT =
+		create(PATH_EVENTS, "event_prev.gif");
+	public static final ImageDescriptor DESC_NEXT_EVENT = 
+		create(PATH_EVENTS, "event_next.gif");
+	public static final ImageDescriptor DESC_PREV_EVENT_DISABLED = 
+		create(PATH_EVENTS_DISABLED, "event_prev.gif");
+	public static final ImageDescriptor DESC_NEXT_EVENT_DISABLED = 
+		create(PATH_EVENTS_DISABLED, "event_next.gif");
 	/*
 	 * Overlays
 	 */
