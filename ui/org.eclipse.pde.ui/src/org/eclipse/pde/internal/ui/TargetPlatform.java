@@ -4,19 +4,16 @@
  */
 package org.eclipse.pde.internal.ui;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.plugin.*;
-import java.util.Vector;
 import java.io.*;
-import org.eclipse.pde.internal.ui.util.*;
-import org.eclipse.pde.internal.ui.util.Choice;
-import org.eclipse.core.boot.BootLoader;
-import java.util.Locale;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.pde.internal.ui.preferences.TargetEnvironmentPreferencePage;
-import java.util.Properties;
 import java.net.*;
+import java.util.*;
+
+import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.ui.util.Choice;
 
 /**
  * @version 	1.0
@@ -162,7 +159,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 		store.setDefault(NL, BootLoader.getNL());
 		store.setDefault(ARCH, BootLoader.getOSArch());
 	}
-
+	
 	public static Choice[] getOSChoices() {
 		return new Choice[] {
 			new Choice(BootLoader.OS_WIN32, BootLoader.OS_WIN32),

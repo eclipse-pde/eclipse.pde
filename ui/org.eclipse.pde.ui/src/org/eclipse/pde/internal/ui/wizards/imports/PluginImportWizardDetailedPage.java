@@ -5,34 +5,23 @@
 package org.eclipse.pde.internal.ui.wizards.imports;
 
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
-import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.events.*;
-import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.IDialogConstants;
-
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ViewerSorter;
-import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
+import org.eclipse.pde.internal.ui.wizards.StatusWizardPage;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
 
 public class PluginImportWizardDetailedPage extends StatusWizardPage {
 	private static final String KEY_TITLE = "ImportWizard.DetailedPage.title";
@@ -48,7 +37,8 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 		"ImportWizard.DetailedPage.pluginList";
 	private static final String KEY_INVERT_SELECTION =
 		"ImportWizard.DetailedPage.invertSelection";
-	private static final String KEY_EXISTING = "ImportWizard.DetailedPage.existing";
+	private static final String KEY_EXISTING =
+		"ImportWizard.DetailedPage.existing";
 	private static final String KEY_EXISTING_BINARY =
 		"ImportWizard.DetailedPage.existingBinary";
 	private static final String KEY_EXISTING_EXTERNAL =
@@ -58,9 +48,11 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 
 	private static final String KEY_LOADING_RUNTIME =
 		"ImportWizard.messages.loadingRuntime";
+	private static final String KEY_UPDATING = "ImportWizard.messages.updating";
 	private static final String KEY_LOADING_FILE =
 		"ImportWizard.messages.loadingFile";
-	private static final String KEY_NO_PLUGINS = "ImportWizard.messages.noPlugins";
+	private static final String KEY_NO_PLUGINS =
+		"ImportWizard.messages.noPlugins";
 	private static final String KEY_NO_SELECTED =
 		"ImportWizard.errors.noPluginSelected";
 	private IPluginModelBase[] models;
@@ -104,18 +96,21 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 
 		String[] buttonLabels =
 			{
-				PDEPlugin.getResourceString(WizardCheckboxTablePart.KEY_SELECT_ALL),
-				PDEPlugin.getResourceString(WizardCheckboxTablePart.KEY_DESELECT_ALL),
+				PDEPlugin.getResourceString(
+					WizardCheckboxTablePart.KEY_SELECT_ALL),
+				PDEPlugin.getResourceString(
+					WizardCheckboxTablePart.KEY_DESELECT_ALL),
 				PDEPlugin.getResourceString(KEY_INVERT_SELECTION),
 				null,
 				PDEPlugin.getResourceString(KEY_EXISTING),
 				PDEPlugin.getResourceString(KEY_EXISTING_BINARY),
-				PDEPlugin.getResourceString(KEY_EXISTING_EXTERNAL),
-				null,
-				PDEPlugin.getResourceString(KEY_ADD_REQUIRED)};
+			//PDEPlugin.getResourceString(KEY_EXISTING_EXTERNAL),
+			null, PDEPlugin.getResourceString(KEY_ADD_REQUIRED)};
 
 		tablePart =
-			new TablePart(PDEPlugin.getResourceString(KEY_PLUGIN_LIST), buttonLabels);
+			new TablePart(
+				PDEPlugin.getResourceString(KEY_PLUGIN_LIST),
+				buttonLabels);
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 
@@ -123,21 +118,44 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 		boolean oldLoadFromRegistry = loadFromRegistry;
 
 		loadFromRegistry = !firstPage.isOtherLocation();
-		
+
 		if (loadFromRegistry) {
-			if (!oldLoadFromRegistry) models = null;
+			if (!oldLoadFromRegistry)
+				models = null;
 			this.dropLocation = null;
 			updateStatus(createStatus(IStatus.OK, ""));
-		}
-		else {
+		} else {
 			if (!dropLocation.equals(this.dropLocation)) {
 				updateStatus(createStatus(IStatus.OK, ""));
 				this.dropLocation = dropLocation;
 				models = null;
 			}
 		}
-		if (models==null) {
-			pluginListViewer.setInput(PDEPlugin.getDefault());
+		if (models == null) {
+			getModels(); // force loading
+			IRunnableWithProgress op = new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) {
+					monitor.beginTask(
+						PDEPlugin.getResourceString(KEY_UPDATING),
+						IProgressMonitor.UNKNOWN);
+					pluginListViewer
+						.getControl()
+						.getDisplay()
+						.asyncExec(new Runnable() {
+						public void run() {
+							pluginListViewer.setInput(PDEPlugin.getDefault());
+						}
+					});
+
+					monitor.done();
+				}
+			};
+			try {
+				getContainer().run(true, false, op);
+			} catch (InterruptedException e) {
+			} catch (InvocationTargetException e) {
+				PDEPlugin.logException(e);
+			}
 			tablePart.updateCounter(0);
 		}
 	}
@@ -171,7 +189,8 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 		tablePart.createControl(container);
 		pluginListViewer = tablePart.getTableViewer();
 		pluginListViewer.setContentProvider(new PluginContentProvider());
-		pluginListViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
+		pluginListViewer.setLabelProvider(
+			PDEPlugin.getDefault().getLabelProvider());
 		GridData gd = (GridData) tablePart.getControl().getLayoutData();
 		gd.heightHint = 300;
 		gd.widthHint = 300;
@@ -194,14 +213,15 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 					monitor.beginTask(
 						PDEPlugin.getResourceString(KEY_LOADING_RUNTIME),
 						IProgressMonitor.UNKNOWN);
-					int size = registry.getPluginCount()+registry.getFragmentCount();
+					int size =
+						registry.getPluginCount() + registry.getFragmentCount();
 					models = new IPluginModelBase[size];
-					for (int i=0; i<registry.getPluginCount(); i++) {
+					for (int i = 0; i < registry.getPluginCount(); i++) {
 						models[i] = registry.getPlugin(i).getModel();
 					}
 					int offset = registry.getPluginCount();
-					for (int i=0; i<registry.getFragmentCount(); i++) {
-						models[i+offset] = registry.getFragment(i).getModel();
+					for (int i = 0; i < registry.getFragmentCount(); i++) {
+						models[i + offset] = registry.getFragment(i).getModel();
 					}
 					monitor.done();
 				}
@@ -223,8 +243,14 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 						String[] paths = createPaths(dropLocation);
 
 						MultiStatus errors =
-							ExternalModelManager.processPluginDirectories(result, fresult, paths, false, monitor);
-						if (errors != null && errors.getChildren().length > 0) {
+							ExternalModelManager.processPluginDirectories(
+								result,
+								fresult,
+								paths,
+								false,
+								monitor);
+						if (errors != null
+							&& errors.getChildren().length > 0) {
 							PDEPlugin.log(errors);
 						}
 						monitor.done();
@@ -236,14 +262,14 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 					PDEPlugin.logException(e);
 				}
 			}
-			int size = result.size()+fresult.size();
+			int size = result.size() + fresult.size();
 			models = new IPluginModelBase[size];
-			for (int i=0; i<result.size(); i++) {
-				models[i] = (IPluginModelBase)result.get(i);
+			for (int i = 0; i < result.size(); i++) {
+				models[i] = (IPluginModelBase) result.get(i);
 			}
 			int offset = result.size();
-			for (int i=0; i<fresult.size(); i++) {
-				models[offset+i] = (IPluginModelBase)fresult.get(i);
+			for (int i = 0; i < fresult.size(); i++) {
+				models[offset + i] = (IPluginModelBase) fresult.get(i);
 			}
 		}
 		return models;
@@ -275,7 +301,9 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 	private IStatus validatePlugins() {
 		IPluginModelBase[] allModels = getModels();
 		if (allModels == null || allModels.length == 0) {
-			return createStatus(IStatus.ERROR, PDEPlugin.getResourceString(KEY_NO_PLUGINS));
+			return createStatus(
+				IStatus.ERROR,
+				PDEPlugin.getResourceString(KEY_NO_PLUGINS));
 		}
 		if (tablePart.getSelectionCount() == 0) {
 			return createStatus(
@@ -303,10 +331,13 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 			case 5 : // existing binary
 				checked = selectLibraryProjects();
 				break;
-			case 6 : // existing external
-				checked = selectExternalProjects();
-				break;
-			case 8 : // select dependent
+				/*
+						case 6 : // existing external
+							checked = selectExternalProjects();
+							break;
+						case 8 : // select dependent
+				*/
+			case 7 :
 				checked = selectDependentPlugins();
 				break;
 			default :
@@ -362,6 +393,8 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 		}
 		return selected;
 	}
+
+	/*
 	
 	private ArrayList selectExternalProjects() {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
@@ -377,6 +410,8 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 		}
 		return selected;
 	}
+	
+	*/
 
 	private boolean hasSourceFolder(IProject project) throws CoreException {
 		IClasspathEntry[] entries = JavaCore.create(project).getRawClasspath();
@@ -387,13 +422,16 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 		}
 		return false;
 	}
-	
+
 	private ArrayList selectDependentPlugins() {
 		HashSet checked = new HashSet();
 		Object[] selected = tablePart.getSelection();
 		if (selected.length > 0) {
 			if (selected.length > 1
-				|| !((IPluginModelBase) selected[0]).getPluginBase().getId().equals(
+				|| !((IPluginModelBase) selected[0])
+					.getPluginBase()
+					.getId()
+					.equals(
 					"org.eclipse.core.boot")) {
 				addImplicitDependencies(checked);
 			}
@@ -440,28 +478,34 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 		}
 		return null;
 	}
-	
-	private IFragmentModel [] findFragments(IPlugin plugin) {
+
+	private IFragmentModel[] findFragments(IPlugin plugin) {
 		String pluginId = plugin.getId();
 		ArrayList result = new ArrayList();
-		for (int i=0; i<models.length; i++) {
-			IPluginModelBase model = (IPluginModelBase)models[i];
+		for (int i = 0; i < models.length; i++) {
+			IPluginModelBase model = (IPluginModelBase) models[i];
 			if (model instanceof IFragmentModel) {
-				IFragment fragment = ((IFragmentModel)model).getFragment();
+				IFragment fragment = ((IFragmentModel) model).getFragment();
 				String refId = fragment.getPluginId();
 				if (pluginId.equalsIgnoreCase(refId)) {
 					result.add(model);
 				}
 			}
 		}
-		return (IFragmentModel[])result.toArray(new IFragmentModel [result.size()]);
+		return (IFragmentModel[]) result.toArray(
+			new IFragmentModel[result.size()]);
 	}
 
-	private void addPluginAndDependent(IPluginModelBase model, HashSet checked) {
+	private void addPluginAndDependent(
+		IPluginModelBase model,
+		HashSet checked) {
 		addPluginAndDependent(model, checked, true);
 	}
 
-	private void addPluginAndDependent(IPluginModelBase model, HashSet checked, boolean addFragmentPlugin) {
+	private void addPluginAndDependent(
+		IPluginModelBase model,
+		HashSet checked,
+		boolean addFragmentPlugin) {
 		if (checked.contains(model)) {
 			return;
 		}
@@ -478,8 +522,8 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 					}
 				}
 			}
-			IFragmentModel [] fragments = findFragments(plugin);
-			for (int i=0; i<fragments.length; i++) {
+			IFragmentModel[] fragments = findFragments(plugin);
+			for (int i = 0; i < fragments.length; i++) {
 				addPluginAndDependent(fragments[i], checked, false);
 			}
 		}

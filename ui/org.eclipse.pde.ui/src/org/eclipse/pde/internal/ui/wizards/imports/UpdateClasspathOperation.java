@@ -226,25 +226,16 @@ public class UpdateClasspathOperation implements IWorkspaceRunnable {
 	}
 
 	private static IPath getSourceAttachmentPath(IProject project, IPath jarPath) {
-		String libName = jarPath.lastSegment();
-		int idx = libName.lastIndexOf('.');
-		if (idx != -1) {
-			String srcName = libName.substring(0, idx) + "src.zip";
-			IPath path = jarPath.removeLastSegments(1).append(srcName);
-			IWorkspaceRoot root = project.getWorkspace().getRoot();
-			if (root.findMember(path) != null) {
-				return path;
-			}
+		IPath sourcePath = getSourcePath(jarPath);
+		if (sourcePath==null) return null;
+		IWorkspaceRoot root = project.getWorkspace().getRoot();
+		if (root.findMember(sourcePath) != null) {
+			return sourcePath;
 		}
 		return null;
 	}
-
-	private static IPath getLibraryPath(IProject project, IPluginLibrary curr) {
-		return getLibraryPath(project, curr.getName());
-	}
-
-	private static IPath getLibraryPath(IProject project, String libraryName) {
-		IPath path = new Path(libraryName);
+	
+	static IPath getExpandedPath(IPath path) {
 		String first = path.segment(0);
 		if (first != null) {
 			IPath rest = path.removeFirstSegments(1);
@@ -258,6 +249,28 @@ public class UpdateClasspathOperation implements IWorkspaceRunnable {
 				path = new Path("arch").append(TargetPlatform.getOSArch()).append(rest);
 			}
 		}
+		return path;
+	}
+	
+	static IPath getSourcePath(IPath jarPath) {
+		jarPath = getExpandedPath(jarPath);
+		String libName = jarPath.lastSegment();
+		int idx = libName.lastIndexOf('.');
+		if (idx != -1) {
+			String srcName = libName.substring(0, idx) + "src.zip";
+			IPath path = jarPath.removeLastSegments(1).append(srcName);
+			return path;
+		}
+		else return null;
+	}
+
+	private static IPath getLibraryPath(IProject project, IPluginLibrary curr) {
+		return getLibraryPath(project, curr.getName());
+	}
+
+	private static IPath getLibraryPath(IProject project, String libraryName) {
+		IPath path = new Path(libraryName);
+		path = getExpandedPath(path);
 		return project.getFullPath().append(path);
 	}
 
