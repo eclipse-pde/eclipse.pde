@@ -38,4 +38,8 @@ public abstract class PDESection extends SectionPart implements IModelChangedLis
 
 	public void modelChanged(IModelChangedEvent e) {
 	}
+	
+	public String getContextId() {
+		return null;
+	}
 }

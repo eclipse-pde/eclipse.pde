@@ -12,6 +12,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.ui.*;
 import org.eclipse.ui.IEditorInput;
@@ -61,6 +62,16 @@ public class InputContextManager implements IResourceChangeListener {
 				context.doSave(monitor);
 		}
 	}
+	public IProject getCommonProject() {
+		for (Enumeration enum = inputContexts.elements(); enum
+		.hasMoreElements();) {
+			InputContext context = (InputContext) enum.nextElement();
+			IEditorInput input = context.getInput();
+			if (input instanceof IFileEditorInput) 
+				return ((IFileEditorInput)input).getFile().getProject();
+		}
+		return null;
+	}
 	public boolean hasContext(String id) {
 		return findContext(id) != null;
 	}
@@ -71,6 +82,9 @@ public class InputContextManager implements IResourceChangeListener {
 			if (context.getId().equals(id))
 				return context;
 		}
+		return null;
+	}
+	public IModel getAggregateModel() {
 		return null;
 	}
 	public InputContext getContext(IEditorInput input) {
@@ -159,7 +173,7 @@ public class InputContextManager implements IResourceChangeListener {
 			}
 		}
 	}
-	private void fireStructureChange(IFile file, boolean added) {
+	protected void fireStructureChange(IFile file, boolean added) {
 		for (int i=0; i<listeners.size(); i++) {
 			IInputContextListener listener = (IInputContextListener)listeners.get(i);
 			if (added)
@@ -168,7 +182,7 @@ public class InputContextManager implements IResourceChangeListener {
 				listener.monitoredFileRemoved(file);
 		}
 	}
-	private void fireContextChange(InputContext context, boolean added) {
+	protected void fireContextChange(InputContext context, boolean added) {
 		for (int i=0; i<listeners.size(); i++) {
 			IInputContextListener listener = (IInputContextListener)listeners.get(i);
 			if (added)

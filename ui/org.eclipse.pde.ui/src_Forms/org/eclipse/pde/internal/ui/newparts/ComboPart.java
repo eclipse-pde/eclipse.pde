@@ -63,4 +63,10 @@ public class ComboPart {
 		else
 			((CCombo) combo).setText(text);
 	}
+	public void setItems(String [] items) {
+		if (combo instanceof Combo)
+			((Combo) combo).setItems(items);
+		else
+			((CCombo) combo).setItems(items);
+	}
 }

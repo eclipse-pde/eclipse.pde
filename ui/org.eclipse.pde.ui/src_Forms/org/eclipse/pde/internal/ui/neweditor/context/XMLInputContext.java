@@ -4,10 +4,11 @@
  * To change the template for this generated file go to
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
-package org.eclipse.pde.internal.ui.neweditor;
+package org.eclipse.pde.internal.ui.neweditor.context;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.rules.DefaultPartitioner;
 import org.eclipse.pde.internal.ui.editor.text.XMLPartitionScanner;
+import org.eclipse.pde.internal.ui.neweditor.PDEFormEditor;
 import org.eclipse.ui.IEditorInput;
 /**
  * @author dejan

@@ -12,11 +12,13 @@ package org.eclipse.pde.internal.ui.neweditor;
 
 import java.io.File;
 
+import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.neweditor.context.*;
@@ -42,8 +44,18 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	 */
 	public PDEFormEditor() {
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
-		inputContextManager = new InputContextManager();
-		inputContextManager.addInputContextListener(this);
+		inputContextManager = createInputContextManager();
+	}
+	
+	public IProject getCommonProject() {
+		return inputContextManager.getCommonProject();
+	}
+	public IModel getAggregateModel() {
+		return inputContextManager.getAggregateModel();
+	}
+	
+	protected InputContextManager createInputContextManager() {
+		return new InputContextManager();
 	}
 
 /**
@@ -104,8 +116,9 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		manager.addMenuListener(listener);
 		contextMenu = manager.createContextMenu(getContainer());
 		getContainer().setMenu(contextMenu);
+		createInputContexts(inputContextManager);
 		super.createPages();
-		createInputContexts(inputContextManager);			
+		inputContextManager.addInputContextListener(this);		
 		String pageToShow = computeInitialPageId();
 		if (pageToShow!=null)
 				setActivePage(pageToShow);
@@ -251,13 +264,21 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	}
 	
 	public boolean isDirty() {
-		return inputContextManager.isDirty();
+		IFormPage page = getActivePageInstance();
+		return (page!=null && page.isDirty()) || inputContextManager.isDirty();
 	}
 
+	public void fireSaveNeeded(String contextId) {
+		if (contextId==null) return;
+		InputContext context = inputContextManager.findContext(contextId);
+		if (context!=null)
+			fireSaveNeeded(context.getInput());
+	}
+	
 	public void fireSaveNeeded(IEditorInput input) {
 		fireDirtyStateChanged();
 		validateEdit(input);
-	}
+	}	
 
 	private void validateEdit(IEditorInput input) {
 		InputContext context = inputContextManager.getContext(input);

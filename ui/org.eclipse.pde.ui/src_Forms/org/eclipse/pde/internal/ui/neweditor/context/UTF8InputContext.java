@@ -4,7 +4,7 @@
  * To change the template for this generated file go to
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
-package org.eclipse.pde.internal.ui.neweditor;
+package org.eclipse.pde.internal.ui.neweditor.context;
 import java.io.*;
 
 import org.eclipse.core.resources.IFile;
@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.text.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.neweditor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.neweditor.context.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.ContainerGenerator;

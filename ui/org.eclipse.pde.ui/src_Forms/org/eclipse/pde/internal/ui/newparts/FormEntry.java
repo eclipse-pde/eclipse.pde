@@ -121,6 +121,12 @@ public class FormEntry {
 	 * @param listener
 	 */
 	public void setFormEntryListener(IFormEntryListener listener) {
+		if (label instanceof Hyperlink) {
+			if (this.listener!=null)
+				((Hyperlink)label).removeHyperlinkListener(this.listener);
+			if (listener!=null)
+				((Hyperlink)label).addHyperlinkListener(listener);
+		}
 		this.listener = listener;
 	}
 	private void addListeners() {
@@ -149,6 +155,8 @@ public class FormEntry {
 	public void commit() {
 		if (dirty) {
 			value = text.getText();
+			if (value.length()==0)
+				value = null;
 			//notify
 			if (listener != null)
 				listener.textValueChanged(this);

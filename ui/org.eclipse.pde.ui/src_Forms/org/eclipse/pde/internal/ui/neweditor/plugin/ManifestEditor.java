@@ -66,6 +66,10 @@ public class ManifestEditor extends MultiSourceEditor {
 		manager.monitorFile(buildFile);
 	}
 	
+	protected InputContextManager createInputContextManager() {
+		return new PluginInputContextManager();
+	}
+	
 	public void monitoredFileAdded(IFile file) {
 		String name = file.getName();
 		if (name.equalsIgnoreCase("MANIFEST.MF")) {
@@ -172,7 +176,7 @@ public class ManifestEditor extends MultiSourceEditor {
 	}
 	protected void contextMenuAboutToShow(IMenuManager manager) {
 	}
-	
+
 	protected void addPages() {
 		try {
 			addPage(new OverviewPage(this));
@@ -184,8 +188,9 @@ public class ManifestEditor extends MultiSourceEditor {
 		} catch (PartInitException e) {
 			PDEPlugin.logException(e);
 		}
-		// note that source pages will be added
-		// as a reaction to adding the input context (not here).
+		addSourcePage(BundleInputContext.CONTEXT_ID);
+		addSourcePage(PluginInputContext.CONTEXT_ID);
+		addSourcePage(BuildInputContext.CONTEXT_ID);
 	}
 
 

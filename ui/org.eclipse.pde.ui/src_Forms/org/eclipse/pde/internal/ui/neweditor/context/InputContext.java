@@ -50,12 +50,14 @@ public abstract class InputContext {
 		this.editor = editor;
 		this.input = input;
 		setPrimary(primary);
-		create();
 	}
 	public abstract String getId();
 
 	public IEditorInput getInput() {
 		return input;
+	}
+	public PDEFormEditor getEditor() {
+		return editor;
 	}
 	public IModel getModel() {
 		return model;
@@ -131,6 +133,8 @@ public abstract class InputContext {
 		}
 	}
 	public boolean mustSave() {
+		if (model instanceof IEditable && 
+				((IEditable)model).isDirty()) return true;
 		return documentProvider.mustSaveDocument(input);
 	}
 	public void dispose() {
@@ -144,6 +148,8 @@ public abstract class InputContext {
 			//if (undoManager != null)
 			//undoManager.disconnect((IModelChangeProvider) model);
 		}
+		if (model!=null)
+			model.dispose();
 	}
 	/**
 	 * @return Returns the primary.
