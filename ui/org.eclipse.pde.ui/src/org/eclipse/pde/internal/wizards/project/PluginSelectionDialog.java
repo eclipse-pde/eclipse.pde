@@ -34,7 +34,7 @@ public class PluginSelectionDialog extends SelectionDialog {
 				IPluginModel model = (IPluginModel) obj;
 				String name = model.getPlugin().getName();
 				name = model.getResourceString(name);
-				return name + " " + model.getPlugin().getVersion();
+				return name + " (" + model.getPlugin().getVersion()+")";
 			}
 			return obj.toString();
 		}

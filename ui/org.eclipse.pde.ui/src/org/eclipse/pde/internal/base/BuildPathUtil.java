@@ -107,11 +107,16 @@ public class BuildPathUtil {
 
 		// add own libraries, if present
 		addLibraries(project, model, result);
-		if (model instanceof IPluginModel) {
-			IPluginModel pluginModel = (IPluginModel) model;
-			addDependencies(project, pluginModel.getPlugin().getImports(), result);
+
+		// add dependencies
+		addDependencies(project, model.getPluginBase().getImports(), result);
+		
+		// if fragment, add referenced plug-in
+		if (model instanceof IFragmentModel) {
+			addFragmentPlugin((IFragmentModel)model, result);
 		}
-		// add implicit libraries
+		
+			// add implicit libraries
 		String id = model.getPluginBase().getId();
 		if (id.equals("org.eclipse.core.boot") == false
 			&& id.equals("org.eclipse.core.runtime") == false) {
@@ -187,7 +192,9 @@ public class BuildPathUtil {
 		for (int i = 0; i < imports.length; i++) {
 			IPluginImport iimport = imports[i];
 			String id = iimport.getId();
-			IPlugin ref = PDEPlugin.getDefault().findPlugin(id);
+			String version = iimport.getVersion();
+			int match = iimport.getMatch();
+			IPlugin ref = PDEPlugin.getDefault().findPlugin(id, version);//, match);
 			if (ref != null) {
 				checkedPlugins.add(new PluginPathUpdater.CheckedPlugin(ref, true));
 			}
@@ -196,7 +203,24 @@ public class BuildPathUtil {
 			new PluginPathUpdater(project, checkedPlugins.iterator());
 		ppu.addClasspathEntries(result);
 	}
+	
+	private static void addFragmentPlugin(IFragmentModel model, Vector result) {
+		IFragment fragment = model.getFragment();
+		String id = fragment.getPluginId();
+		String version = fragment.getPluginVersion();
+		int match = fragment.getRule();
 
+		IPlugin plugin = PDEPlugin.getDefault().findPlugin(id, version);
+		if (plugin!=null) {
+			IProject project = plugin.getModel().getUnderlyingResource().getProject();
+			Vector checkedPlugins=new Vector();
+			checkedPlugins.add(new PluginPathUpdater.CheckedPlugin(plugin, true));
+			PluginPathUpdater ppu = 
+				new PluginPathUpdater(project, checkedPlugins.iterator());
+			ppu.addClasspathEntries(result);
+		}
+	}
+	
 	private static void addJRE(Vector result) {
 		IPath jrePath = new Path("JRE_LIB");
 		IPath[] annot = new IPath[2];
