@@ -18,7 +18,10 @@ import org.eclipse.pde.internal.core.build.*;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.model.*;
+import org.eclipse.pde.internal.ui.model.plugin.*;
 import org.eclipse.pde.internal.ui.model.plugin.PluginObjectNode;
+import org.eclipse.pde.internal.ui.model.plugin.PluginAttribute;
 
 /**
  * @version 	1.0
@@ -36,11 +39,12 @@ public class PluginUndoManager extends ModelUndoManager {
 			return OverviewPage.PAGE_ID;
 		if (obj instanceof IPluginImport)
 			return DependenciesPage.PAGE_ID;
-		if (obj instanceof IPluginLibrary)
+		if (obj instanceof IPluginLibrary 
+			|| (obj instanceof IPluginElement  && ((IPluginElement)obj).getParent() instanceof IPluginLibrary))
 			return RuntimePage.PAGE_ID;
-		if (obj instanceof IPluginExtension ||
-			obj instanceof IPluginElement ||
-			obj instanceof IPluginAttribute)
+		if (obj instanceof IPluginExtension 
+			|| (obj instanceof IPluginElement  && ((IPluginElement)obj).getParent() instanceof IPluginParent)
+			|| obj instanceof IPluginAttribute)
 			return ExtensionsPage.PAGE_ID;
 		if (obj instanceof IPluginExtensionPoint)
 			return ExtensionPointsPage.PAGE_ID;
@@ -108,8 +112,12 @@ public class PluginUndoManager extends ModelUndoManager {
 					pluginBase.add((IPluginExtension) element);
 				} else if (element instanceof IPluginElement) {
 					IPluginElement e = (IPluginElement) element;
-					IPluginParent p = (IPluginParent) e.getParent();
-					p.add(e);
+					Object parent = e.getParent();
+					if (parent instanceof PluginLibraryNode && e instanceof PluginElementNode) {
+						((PluginLibraryNode)parent).addContentFilter((PluginElementNode)e);
+					} else if (parent instanceof IPluginParent) {
+						((IPluginParent)parent).add(e);
+					}
 				} else if (element instanceof IBuildEntry) {
 					IBuildEntry e = (IBuildEntry)element;
 					build.add(e);
@@ -142,8 +150,12 @@ public class PluginUndoManager extends ModelUndoManager {
 					pluginBase.remove((IPluginExtension) element);
 				} else if (element instanceof IPluginElement) {
 					IPluginElement e = (IPluginElement) element;
-					IPluginParent p = (IPluginParent) e.getParent();
-					p.remove(e);
+					Object parent = e.getParent();
+					if (parent instanceof PluginLibraryNode && e instanceof PluginElementNode) {
+						((PluginLibraryNode)parent).removeContentFilter((PluginElementNode)e);
+					} else if (parent instanceof IPluginParent) {
+						((IPluginParent)parent).remove(e);
+					}
 				} else if (element instanceof IBuildEntry) {
 					IBuildEntry e = (IBuildEntry)element;
 					build.remove(e);

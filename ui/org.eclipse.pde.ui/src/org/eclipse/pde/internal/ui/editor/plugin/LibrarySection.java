@@ -361,6 +361,7 @@ public class LibrarySection
 		model.addModelChangedListener(this);
 	}
 	public void refresh() {
+		libraryTable.setSelection(null);
 		libraryTable.refresh();
 		super.refresh();
 	}
@@ -382,6 +383,8 @@ public class LibrarySection
 			}
 		} else if (changeObject.equals(libraryTable.getInput())) {
 			markStale();
+		} else if (changeObject instanceof IPluginElement && ((IPluginElement)changeObject).getParent() instanceof IPluginLibrary) {
+			libraryTable.update(((IPluginElement)changeObject).getParent(), null);
 		}
 	}
 	public void setFocus() {

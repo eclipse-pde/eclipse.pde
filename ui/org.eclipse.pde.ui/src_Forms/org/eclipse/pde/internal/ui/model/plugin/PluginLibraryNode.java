@@ -87,9 +87,15 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 		node.setParentNode(this);
 		node.setModel(getModel());
 		node.setXMLAttribute(P_NAME, "*".equals(filter) || filter.endsWith(".*") ? filter : filter + ".*");
+		addContentFilter(node);
+	}
+	
+	public void addContentFilter(PluginElementNode node) throws CoreException {
 		addChildNode(node);
-		if (isInTheModel())
-			fireStructureChanged((IPluginElement)node, IModelChangedEvent.INSERT);
+		if (isInTheModel()) {
+			node.setInTheModel(true);
+			fireStructureChanged(node, IModelChangedEvent.INSERT);
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -102,10 +108,16 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 		for (int i = 0; i < children.length; i++) {
 			if (children[i].getXMLTagName().equals(P_EXPORTED)
 				   && filter.equals(children[i].getXMLAttributeValue(P_NAME))) {
-				removeChildNode(children[i]);
-				if (isInTheModel())
-					fireStructureChanged((IPluginElement)children[i], IModelChangedEvent.REMOVE);
+				removeContentFilter((PluginElementNode)children[i]);
 			}
+		}		
+	}
+	
+	public void removeContentFilter(PluginElementNode node) {
+		removeChildNode(node);
+		if (isInTheModel()) {
+			node.setInTheModel(false);
+			fireStructureChanged(node, IModelChangedEvent.REMOVE);
 		}		
 	}
 	
@@ -123,15 +135,11 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 		for (int i = 0; i < children.length; i++) {
 			if (children[i].getXMLTagName().equals(P_EXPORTED)) {
 				if (!"*".equals(children[i].getXMLAttributeValue(P_NAME))) {
-					removeChildNode(children[i]);
-					if (isInTheModel())
-						fireStructureChanged((IPluginElement)children[i], IModelChangedEvent.REMOVE);
+					removeContentFilter((PluginElementNode)children[i]);
 				} else {
 					alreadyExported = true;
 					if (!exported) {
-						removeChildNode(children[i]);
-						if (isInTheModel())
-							fireStructureChanged((IPluginElement)children[i], IModelChangedEvent.REMOVE);
+						removeContentFilter((PluginElementNode)children[i]);
 					}
 				}
 			}

@@ -32,7 +32,7 @@ import org.eclipse.ui.forms.widgets.*;
  * @author cgwong
  *  
  */
-public class OSGiSection extends TableSection implements IModelChangedListener {
+public class PluginActivationSection extends TableSection implements IModelChangedListener {
 	private TableViewer osgiTableViewer;
 	private Button autoActivateButton;
 	private Button nonAutoActivateButton;
@@ -60,7 +60,7 @@ public class OSGiSection extends TableSection implements IModelChangedListener {
 					ISharedImages.IMG_OBJS_PACKAGE);
 		}
 	}
-	public OSGiSection(PDEFormPage page, Composite parent) {
+	public PluginActivationSection(PDEFormPage page, Composite parent) {
 		super(
 				page,
 				parent,
@@ -70,7 +70,7 @@ public class OSGiSection extends TableSection implements IModelChangedListener {
 								.getResourceString("ManifestEditor.OSGiSection.add"),
 						PDEPlugin
 								.getResourceString("ManifestEditor.OSGiSection.remove")});
-		getSection().setText("Plug-in Activation (3.0 Eclipse Platforms Only)");
+		getSection().setText("Plug-in Activation (Eclipse 3.0 Platforms Only)");
 		getSection().setDescription("In order to improve performance, specify the conditions under which the plug-in should be activated.");
 	}
 	public void initialize() {

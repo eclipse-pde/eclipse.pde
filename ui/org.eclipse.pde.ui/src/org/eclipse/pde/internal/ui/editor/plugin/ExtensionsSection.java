@@ -544,7 +544,7 @@ public class ExtensionsSection extends TreeSection
 			return;
 		}
 		if (changeObject instanceof IPluginExtension
-				|| changeObject instanceof IPluginElement) {
+				|| (changeObject instanceof IPluginElement && ((IPluginElement)changeObject).getParent() instanceof IPluginParent)) {
 			IPluginObject pobj = (IPluginObject) changeObject;
 			IPluginObject parent = changeObject instanceof IPluginExtension
 					? ((IPluginModelBase) getPage().getModel()).getPluginBase()

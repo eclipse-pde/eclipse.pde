@@ -199,7 +199,10 @@ public class ExportSection extends TableSection
 		}
 		update(fCurrentLibrary);
 	}
+	
 	public void selectionChanged(IFormPart source, ISelection selection) {
+		if (selection == null || selection.isEmpty())
+			update(null);
 		IStructuredSelection ssel = (IStructuredSelection) selection;
 		if (ssel.getFirstElement() instanceof IPluginLibrary)
 			update((IPluginLibrary) ssel.getFirstElement());

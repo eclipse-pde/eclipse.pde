@@ -23,7 +23,7 @@ public class RuntimePage extends PDEFormPage {
 	public static final String PAGE_ID="runtime";
 	private LibrarySection librarySection;
 	private ExportSection exportSection;
-	private OSGiSection osgiSection;
+	private PluginActivationSection osgiSection;
 
 	public RuntimePage(FormEditor editor) {
 		super(editor, PAGE_ID, "Runtime");
@@ -48,7 +48,7 @@ public class RuntimePage extends PDEFormPage {
 		
 		boolean fragment = ((IPluginModelBase)getPDEEditor().getAggregateModel()).isFragmentModel();
 		if (!fragment){
-			osgiSection = new OSGiSection(this, form.getBody());
+			osgiSection = new PluginActivationSection(this, form.getBody());
 			GridData gd = new GridData(GridData.FILL_BOTH);
 			gd.horizontalSpan = 2;
 			osgiSection.getSection().setLayoutData(gd);
