@@ -32,8 +32,6 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 	private Text fSourceText;
 	private Label fOutputlabel;
 	private Text fOutputText;
-//	private IProjectProvider fProjectProvider;
-//	private boolean fFirstVisible = true;
 	private AbstractFieldData fData;
 	
 	public NewProjectCreationPage(String pageName, AbstractFieldData data, boolean isFragment){

@@ -320,8 +320,8 @@ public abstract class ContentPage extends WizardPage {
 		fData.setIsLegacy(fLegacyButton.isEnabled() && fLegacyButton.getSelection());
 		if (creationPage.isJavaProject()) {
 			String library = fLibraryText.getText().trim();
-			if (!library.endsWith(".jar")) //$NON-NLS-1$
-				library += ".jar"; //$NON-NLS-1$
+			if (!library.endsWith(".jar") &&!library.endsWith("/") && !library.equals(".")) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					library += "/"; //$NON-NLS-1$
 			fData.setLibraryName(library);
 		}
 	}

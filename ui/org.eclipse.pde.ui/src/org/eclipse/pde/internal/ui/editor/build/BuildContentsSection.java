@@ -289,6 +289,8 @@ public abstract class BuildContentsSection extends TableSection
 					} else if (resource.startsWith("*.")) { //$NON-NLS-1$
 						if (isIncluded)
 							fileExt.add(resource.substring(2));
+					} else if (resource.equals(".")){ //$NON-NLS-1$
+						//ignore - should be root directory
 					} else {
 						IFile file = fProject.getFile(resource);
 						fTreeViewer.setChecked(file, isIncluded);

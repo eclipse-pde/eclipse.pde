@@ -226,8 +226,11 @@ public class RuntimeInfoSection extends PDESection
 		IBuildEntry binIncl = model.getBuild().getEntry(
 				IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
 		IProject project = model.getUnderlyingResource().getProject();
-		IPath libPath = project.getFile(libName).getProjectRelativePath();
-
+		IPath libPath;
+		if (libName.equals(".")) //$NON-NLS-1$
+			libPath = null;
+		else
+			libPath = project.getFile(libName).getProjectRelativePath();
 		try {
 			if (binIncl == null && !isSelected)
 				return;
@@ -236,19 +239,20 @@ public class RuntimeInfoSection extends PDESection
 						IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
 				model.getBuild().add(binIncl);
 			}
-			if (!isSelected && libPath.segmentCount() == 1
-					&& binIncl.contains("*.jar")) { //$NON-NLS-1$
-				addAllJarsToBinIncludes(binIncl, project, model);
-			} else if (!isSelected && libPath.segmentCount() > 1){
-				IPath parent = libPath.removeLastSegments(1);
-				String parentPath = parent.toString() + Path.SEPARATOR;
-				if (binIncl.contains(parentPath) && !project.exists(parent)){
-					binIncl.removeToken(parentPath);
-				} else if (parent.segmentCount() > 1){
-					parent = parent.removeLastSegments(1);
-					parentPath = parent.toString() + Path.SEPARATOR;
-					if (binIncl.contains(parentPath) && !project.exists(parent))
+			if (libPath != null){
+				if (!isSelected && libPath.segmentCount() == 1	&& binIncl.contains("*.jar")) { //$NON-NLS-1$
+					addAllJarsToBinIncludes(binIncl, project, model);
+				} else if (!isSelected && libPath.segmentCount() > 1){
+					IPath parent = libPath.removeLastSegments(1);
+					String parentPath = parent.toString() + Path.SEPARATOR;
+					if (binIncl.contains(parentPath) && !project.exists(parent)){
 						binIncl.removeToken(parentPath);
+					} else if (parent.segmentCount() > 1){
+						parent = parent.removeLastSegments(1);
+						parentPath = parent.toString() + Path.SEPARATOR;
+						if (binIncl.contains(parentPath) && !project.exists(parent))
+							binIncl.removeToken(parentPath);
+					}
 				}
 			}
 			if (isSelected && !binIncl.contains(libName)) {
@@ -278,8 +282,7 @@ public class RuntimeInfoSection extends PDESection
 			if (libraries.length != 0) {
 				for (int j = 0; j < libraries.length; j++) {
 					String libraryName = libraries[j].getName().substring(7);
-					IPath path = project.getFile(libraryName)
-							.getProjectRelativePath();
+					IPath path = project.getFile(libraryName).getProjectRelativePath();
 					if (path.segmentCount() == 1
 							&& !binIncl.contains(libraryName))
 						binIncl.addToken(libraryName);
@@ -497,8 +500,8 @@ public class RuntimeInfoSection extends PDESection
 				return;
 			if (!newValue.startsWith(IBuildEntry.JAR_PREFIX))
 				newValue = IBuildEntry.JAR_PREFIX + newValue;
-			if (!newValue.endsWith(".jar")) //$NON-NLS-1$
-				newValue = newValue + ".jar"; //$NON-NLS-1$
+			if (!newValue.endsWith(".jar") && !newValue.endsWith("/") && !newValue.equals(".")) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				newValue +="/"; //$NON-NLS-1$
 
 			// jars.compile.order
 			IBuildEntry tempEntry = build
@@ -683,8 +686,11 @@ public class RuntimeInfoSection extends PDESection
 		if (item instanceof IBuildEntry) {
 			update((IBuildEntry) item);
 			updateDirectionalButtons();
-			fIncludeLibraryButton.setVisible(true);
 			String name = ((IBuildEntry) item).getName();
+			if (!name.endsWith(".")) //$NON-NLS-1$
+				fIncludeLibraryButton.setVisible(true);
+			else
+				fIncludeLibraryButton.setVisible(false);
 			if (name.startsWith(IBuildEntry.JAR_PREFIX))
 				name = name.substring(IBuildEntry.JAR_PREFIX.length());
 			fIncludeLibraryButton.setSelection(isJarIncluded(name));
@@ -705,14 +711,19 @@ public class RuntimeInfoSection extends PDESection
 	private boolean isJarIncluded(String libName) {
 		IBuildModel model = getBuildModel();
 		IProject project = model.getUnderlyingResource().getProject();
-		IPath libPath = project.getFile(libName).getProjectRelativePath();
+		IPath libPath;
+		if (libName.equals(".")) //$NON-NLS-1$
+			libPath = null;
+		else 
+			libPath = project.getFile(libName).getProjectRelativePath();
 		IBuildEntry binIncl = model.getBuild().getEntry(
 				IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
 		IBuildEntry binExcl = model.getBuild().getEntry(
 				IBuildPropertiesConstants.PROPERTY_BIN_EXCLUDES);
 		if (binIncl == null)
 			return false;
-
+		if (libPath == null)
+			return binIncl.contains(libName);
 		if (libPath.segmentCount() == 1) {
 			return binIncl.contains(libName) || binIncl.contains("*.jar"); //$NON-NLS-1$
 		} else if (binIncl.contains(libName)) {
@@ -785,16 +796,17 @@ public class RuntimeInfoSection extends PDESection
 
 								String name = dialog.getNewName();
 
-								if (!name.endsWith(".jar")) //$NON-NLS-1$
-									name = name + ".jar"; //$NON-NLS-1$
+								if (!name.endsWith(".jar") && !name.equals(".") && !name.endsWith("/")) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+									name += "/"; //$NON-NLS-1$
 
 								String keyName = name;
 								if (!keyName.startsWith(IBuildEntry.JAR_PREFIX))
 									keyName = IBuildEntry.JAR_PREFIX + name;
 								if (name.startsWith(IBuildEntry.JAR_PREFIX))
 									name = name.substring(7);
-
-								handleLibInBinBuild(true, name);
+								
+								if (!name.endsWith(".")) //$NON-NLS-1$
+									handleLibInBinBuild(true, name);
 
 								// add library to jars compile order
 								IBuildEntry jarOrderEntry = build

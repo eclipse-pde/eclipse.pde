@@ -107,6 +107,8 @@ public class BinSection extends BuildContentsSection
 					.equals(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES)) {
 				
 				if (event.getOldValue() == null && event.getNewValue() != null) {
+					if (event.getNewValue().equals(".")) //$NON-NLS-1$
+						return;
 					// adding token
 					IFile file = fProject.getFile(new Path(event.getNewValue()
 							.toString()));
@@ -116,6 +118,8 @@ public class BinSection extends BuildContentsSection
 					isChecked = true;
 				} else if (event.getOldValue() != null
 						&& event.getNewValue() == null) {
+					if (event.getOldValue().equals(".")) //$NON-NLS-1$
+						return;
 					// removing token
 					IFile file = fProject.getFile(new Path(event.getOldValue()
 							.toString()));

@@ -46,8 +46,8 @@ public class AddLibraryDialog extends SelectionStatusDialog {
 				"", //$NON-NLS-1$
 				null);
 			
-			if (!text.endsWith(".jar")) //$NON-NLS-1$
-				text = text + ".jar"; //$NON-NLS-1$
+			if (!text.endsWith(".jar") && !text.endsWith("/") && !text.equals("."))  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				text += "/"; //$NON-NLS-1$
 				
 			for (int i =0;i<libraries.length; i++){
 				if (libraries[i].equals(text))

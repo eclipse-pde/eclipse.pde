@@ -431,8 +431,8 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 		if (!customChoice.getSelection())
 			return null;
 		String library = libraryText.getText();
-		if (!library.endsWith(".jar")) //$NON-NLS-1$
-			library += ".jar"; //$NON-NLS-1$
+		if (!library.endsWith(".jar") && !library.endsWith("/") && !library.equals(".")) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			library += "/"; //$NON-NLS-1$
 		return library;
 	}
 }
