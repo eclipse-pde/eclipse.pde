@@ -448,11 +448,17 @@ public class LauncherUtils {
 			wc.doSave();
 	}
 	
-	public static void clearWorkspace(ILaunchConfiguration configuration, String workspace) throws CoreException {
+	public static boolean clearWorkspace(ILaunchConfiguration configuration, String workspace) throws CoreException {
 		File workspaceFile = new Path(workspace).toFile();
 		if (configuration.getAttribute(ILauncherSettings.DOCLEAR, false) && workspaceFile.exists()) {
-			if (!configuration.getAttribute(ILauncherSettings.ASKCLEAR, true)
-				|| confirmDeleteWorkspace(workspaceFile)) {
+			boolean doClear = !configuration.getAttribute(ILauncherSettings.ASKCLEAR, true);
+			if (!doClear) {
+				int result = confirmDeleteWorkspace(workspaceFile);
+				if (result == 2)
+					return false;
+				doClear = result == 0;
+			}
+			if (doClear) {
 				try {
 					deleteContent(workspaceFile);
 				} catch (IOException e) {
@@ -460,6 +466,7 @@ public class LauncherUtils {
 				}
 			}
 		}
+		return true;
 	}
 	
 	private static void showWarningDialog(final String message) {
@@ -474,8 +481,8 @@ public class LauncherUtils {
 		});
 	}
 	
-	private static boolean confirmDeleteWorkspace(final File workspaceFile) {
-		final boolean[] result = new boolean[1];
+	private static int confirmDeleteWorkspace(final File workspaceFile) {
+		final int[] result = new int[1];
 		getDisplay().syncExec(new Runnable() {
 			public void run() {
 				String title = PDEPlugin.getResourceString(KEY_TITLE);
@@ -483,11 +490,10 @@ public class LauncherUtils {
 					PDEPlugin.getFormattedMessage(
 						KEY_DELETE_WORKSPACE,
 						workspaceFile.getPath());
-				result[0] =
-					MessageDialog.openQuestion(
-						getDisplay().getActiveShell(),
-						title,
-						message);
+				MessageDialog dialog = new MessageDialog(getDisplay().getActiveShell(), title, null,
+						message, MessageDialog.QUESTION, new String[]{IDialogConstants.YES_LABEL,
+								IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL}, 0);
+				result[0] = dialog.open();
 			}
 		});
 		return result[0];
@@ -587,7 +593,4 @@ public class LauncherUtils {
 		}		
 		return null;
 	}
-
-
-
 }

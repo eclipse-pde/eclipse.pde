@@ -59,7 +59,10 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 			monitor.worked(1);
 			
 			String workspace = configuration.getAttribute(LOCATION + "0", LauncherUtils.getDefaultPath().append("runtime-workbench-workspace").toOSString()); //$NON-NLS-1$ //$NON-NLS-2$
-			LauncherUtils.clearWorkspace(configuration, workspace);
+			if (!LauncherUtils.clearWorkspace(configuration, workspace)) {
+				monitor.setCanceled(true);
+				return;
+			}
 				
 			LauncherUtils.setDefaultSourceLocator(configuration, launch);
 			PDEPlugin.getDefault().getLaunchesListener().manage(launch);

@@ -71,7 +71,10 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 			monitor.worked(1);
 			
 			String workspace = configuration.getAttribute(LOCATION + "0", getDefaultWorkspace(configuration)); //$NON-NLS-1$
-			LauncherUtils.clearWorkspace(configuration,workspace);
+			if (!LauncherUtils.clearWorkspace(configuration, workspace)) {
+				monitor.setCanceled(true);
+				return;
+			}
 
 			setDefaultSourceLocator(launch, configuration);
 			launch.setAttribute(PORT_ATTR, Integer.toString(port));
