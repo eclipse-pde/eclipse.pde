@@ -219,7 +219,7 @@ public class ExternalPluginsBlock {
 			} catch (InvocationTargetException e) {
 			} catch (InterruptedException e) {
 			}
-			pluginListViewer.refresh();
+			pluginListViewer.setInput(PDECore.getDefault().getExternalModelManager());
 			changed.clear();
 			handleSelectAll(true);
 			reloaded = true;
