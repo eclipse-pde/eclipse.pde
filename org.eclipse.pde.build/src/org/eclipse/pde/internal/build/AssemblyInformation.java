@@ -58,6 +58,14 @@ public class AssemblyInformation {
 		return ((AssemblyLevelConfigInfo) assembleInformation.get(config)).getFeatures();
 	}
 
+	public boolean copyRootFile(Config config) {
+		return ((AssemblyLevelConfigInfo) assembleInformation.get(config)).hasRootFile();
+	}
+	
+	public void setCopyRootFile(Config config) {
+		((AssemblyLevelConfigInfo) assembleInformation.get(config)).setHasRootFile(true);
+	}
+	
 	// All the information that will go into the assemble file for a specific info
 	private class AssemblyLevelConfigInfo {
 		// the plugins that are contained into this config
@@ -66,7 +74,15 @@ public class AssemblyInformation {
 		private Collection fragments = new HashSet(10);
 		// the features that are contained into this config
 		private Collection features = new HashSet(7);
-
+		// indicate whether root files needs to be copied
+		private boolean hasRootFile = false;
+		
+		public void setHasRootFile(boolean rootFile) {
+			hasRootFile = rootFile;
+		}
+		public boolean hasRootFile() {
+			return hasRootFile;
+		}
 		public Collection getFeatures() {
 			return features;
 		}
