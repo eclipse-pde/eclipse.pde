@@ -25,7 +25,6 @@ public class PluginModelManager implements IAdaptable {
 	private WorkspaceModelManager workspaceManager;
 	private SearchablePluginsManager searchablePluginsManager;
 	private ArrayList listeners;
-	private boolean osgiRuntime;
 
 	private TreeMap entries;
 
@@ -47,7 +46,31 @@ public class PluginModelManager implements IAdaptable {
 	public boolean isOSGiRuntime() {
 		if (entries == null)
 			initializeTable();
-		return osgiRuntime;
+		
+		try {
+			ModelEntry entry = findEntry("org.eclipse.platform");
+			if (entry != null) {
+				IPluginModelBase model = entry.getActiveModel();
+				IResource resource = model.getUnderlyingResource();
+				int version = new PluginVersionIdentifier(model.getPluginBase().getVersion()).getMajorComponent();
+				if (resource != null &&  version < 3) {
+					IProject project = resource.getProject();
+					if (project.hasNature(JavaCore.NATURE_ID)) {
+						IJavaProject jProject = JavaCore.create(project);
+						IPackageFragmentRoot[] roots = jProject.getPackageFragmentRoots();
+						for (int i = 0; i < roots.length; i++) {
+							if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE) {
+								return false;
+							}
+						}
+					}
+					if (project.getFile("startup.jar").exists())
+						return false;
+				}
+			}
+		} catch (Exception e) {
+		}
+		return findEntry(OSGI_RUNTIME) != null;
 	}
 
 	public Object getAdapter(Class key) {
@@ -203,9 +226,6 @@ public class PluginModelManager implements IAdaptable {
 		if (added && entry == null) {
 			entry = new ModelEntry(this, id);
 			entries.put(id, entry);
-			if (id.equals(OSGI_RUNTIME)) {
-				osgiRuntime=true;
-			}
 			kind = PluginModelDelta.ADDED;
 			try {
 				entry.updateClasspathContainer(false, true);
@@ -225,9 +245,6 @@ public class PluginModelManager implements IAdaptable {
 			if (entry.isEmpty()) {
 				entries.remove(id);
 				kind = PluginModelDelta.REMOVED;
-				if (id.equals(OSGI_RUNTIME)) {
-					osgiRuntime=false;
-				}
 			}
 		}
 		if (kind==0) kind = PluginModelDelta.CHANGED;
@@ -297,9 +314,6 @@ public class PluginModelManager implements IAdaptable {
 			entry.setWorkspaceModel(model);
 		else
 			entry.setExternalModel(model);
-		if (id.equals(OSGI_RUNTIME)) {
-			osgiRuntime=true;
-		}
 	}
 	
 	private void fireDelta(PluginModelDelta delta) {

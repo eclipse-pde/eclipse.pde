@@ -13,7 +13,6 @@ import org.eclipse.jdt.launching.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
@@ -122,7 +121,7 @@ public class LauncherUtils {
 	
 	public static String[] constructClasspath() throws CoreException {
 		IPlugin plugin = PDECore.getDefault().findPlugin("org.eclipse.platform");
-		if (plugin != null && plugin.getModel() instanceof WorkspacePluginModel) {
+		if (plugin != null && plugin.getModel().getUnderlyingResource() != null) {
 			IProject project = plugin.getModel().getUnderlyingResource().getProject();
 			if (project.hasNature(JavaCore.NATURE_ID)) {
 				IJavaProject jProject = JavaCore.create(project);
@@ -134,6 +133,8 @@ public class LauncherUtils {
 					}
 				}
 			}
+			if (project.getFile("startup.jar").exists())
+				return new String[] {project.getFile("startup.jar").getLocation().toOSString()};
 		}
 		File startupJar =
 			ExternalModelManager.getEclipseHome().append("startup.jar").toFile();
@@ -559,12 +560,27 @@ public class LauncherUtils {
 
 	public static String getDefaultApplicationName() {
 		Properties properties = getInstallProperties();
-		return (properties == null) ? null : properties.getProperty("feature.default.application");
+		String appName = (properties != null) ? properties
+				.getProperty("feature.default.application") : null;
+		if (appName == null) {
+			appName = PDECore.getDefault().getModelManager().isOSGiRuntime()
+					? "org.eclipse.ui.ide.workbench"
+					: "org.eclipse.ui.workbench";
+		}
+		return appName;
 	}
 	
 	public static Properties getInstallProperties() {
-		IPath eclipsePath = ExternalModelManager.getEclipseHome();
-		File iniFile = new File(eclipsePath.toFile(), "install.ini");
+		File iniFile = null;
+		ModelEntry entry = PDECore.getDefault().getModelManager().findEntry("org.eclipse.platform");
+		if (entry != null && entry.getActiveModel().getUnderlyingResource() != null) {
+			IProject project = entry.getActiveModel().getUnderlyingResource().getProject();
+			iniFile = new File(project.getFile("install.ini").getLocation().toOSString());
+		}
+		if (iniFile == null || !iniFile.exists()) {
+			IPath eclipsePath = ExternalModelManager.getEclipseHome();
+			iniFile = new File(eclipsePath.toFile(), "install.ini");
+		}
 		if (!iniFile.exists())
 			return null;
 		Properties pini = new Properties();
