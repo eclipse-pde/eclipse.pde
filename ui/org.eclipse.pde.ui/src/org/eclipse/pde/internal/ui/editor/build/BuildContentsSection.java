@@ -41,9 +41,13 @@ import org.eclipse.pde.internal.build.IXMLConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
@@ -146,7 +150,11 @@ public abstract class BuildContentsSection
 		FormWidgetFactory factory) {
 
 		Composite container = createClientContainer(parent, 2, factory);
-		treeViewer = new CheckboxTreeViewer(parent);
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = layout.marginWidth = 2;
+		container.setLayout(layout);
+		
+		treeViewer = new CheckboxTreeViewer(createTree(container, factory));
 		treeViewer.setContentProvider(new TreeContentProvider());
 		treeViewer.setLabelProvider(new WorkbenchLabelProvider());
 		treeViewer.setAutoExpandLevel(0);
@@ -166,11 +174,23 @@ public abstract class BuildContentsSection
 				});
 			}
 		});
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.heightHint=150;
+		gd.widthHint=100;
+		treeViewer.getTree().setLayoutData(gd);
 		initialize();
 		initializeCheckState();
 		factory.paintBordersFor(container);
 
-		return treeViewer.getTree();
+		return container;
+	}
+	
+	private Tree createTree(Composite parent, FormWidgetFactory factory) {
+		Tree tree = new Tree(parent, SWT.CHECK);
+		tree.setBackground(factory.getBackgroundColor());
+		tree.setForeground(factory.getForegroundColor());
+		factory.hookDeleteListener(tree);
+		return tree;
 	}
 
 	public void disableSection() {

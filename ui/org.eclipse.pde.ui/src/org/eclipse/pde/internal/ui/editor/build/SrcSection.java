@@ -109,6 +109,14 @@ public class SrcSection
 				if (excludes !=null && excludes.contains(resourceName))
 					excludes.removeToken(resourceName);
 			} else {
+				if(treeViewer.getChecked(resource.getParent())){
+					if (excludes == null){
+						excludes = buildModel.getFactory().createEntry(IXMLConstants.PROPERTY_SRC_EXCLUDES);
+						build.add(excludes);
+					}
+					if (!excludes.contains(resourceName) && (includes!=null ? !includes.contains(resourceName) : true))
+						excludes.addToken(resourceName);
+				}
 				if (includes !=null){
 					if (includes.contains(resourceName))
 						includes.removeToken(resourceName);
@@ -134,14 +142,7 @@ public class SrcSection
 						includes.removeToken("*." + resource.getFileExtension());
 					}
 				}
-				if(treeViewer.getChecked(resource.getParent())){
-					if (excludes == null){
-						excludes = buildModel.getFactory().createEntry(IXMLConstants.PROPERTY_SRC_EXCLUDES);
-						build.add(excludes);
-					}
-					if (!excludes.contains(resourceName))
-						excludes.addToken(resourceName);
-				}
+
 			}
 			deleteEmptyEntries();
 		} catch (CoreException e) {

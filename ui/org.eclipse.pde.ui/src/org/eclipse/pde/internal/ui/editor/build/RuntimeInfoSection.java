@@ -817,6 +817,7 @@ public class RuntimeInfoSection
 			foldersViewer.refresh();
 			libraryViewer.setSelection(null);
 			foldersViewer.setInput(null);
+			getJarsTablePart().setButtonEnabled(0,false);
 			jarIncludeButton.setVisible(false);
 			updateDirectionalButtons();
 		}
@@ -932,6 +933,7 @@ public class RuntimeInfoSection
 				if (selection!=null){
 					libraryViewer.setSelection(new StructuredSelection(selection));
 				}else{ 
+					getJarsTablePart().setButtonEnabled(0,false);
 					libraryViewer.setSelection(null);
 					foldersViewer.setInput(null);
 					jarIncludeButton.setVisible(false);

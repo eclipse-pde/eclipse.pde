@@ -120,9 +120,11 @@ public class BuildPropertiesEditor extends PDEMultiPageEditor {
 		if (model instanceof WorkspaceBuildModel) {
 			firstPageId = BUILD_PAGE;
 			formWorkbook.setFirstPageSelected(false);
+
 			BuildPage buildPage =
 				new BuildPage(this, PDEPlugin.getResourceString(BUILD_PAGE_TITLE));
 			addPage(BUILD_PAGE, buildPage, 0);
+			
 		}
 		super.createPartControl(parent);
 		if (model instanceof ExternalBuildModel) {

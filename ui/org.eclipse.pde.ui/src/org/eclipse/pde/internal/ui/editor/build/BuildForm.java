@@ -39,7 +39,6 @@ public class BuildForm extends ScrollableSectionForm {
 	private BuildContentsSection srcSection;
 	private BuildContentsSection binSection;
 	private RuntimeInfoSection runtimeSection;
-	private JavadocPackagesSection javadocSection;
 	
 	private Button customButton;
 	public BuildForm(BuildPage page) {
@@ -109,40 +108,28 @@ public class BuildForm extends ScrollableSectionForm {
 		binSection = new BinSection(page);
 		control = binSection.createControl(parent, factory);
 		gd = new GridData(GridData.FILL_BOTH);
-		gd.widthHint = 100;
-		gd.heightHint = 100;
 		control.setLayoutData(gd);
 		binSection.setSectionControl(control);
 
 		srcSection = new SrcSection(page);
 		control = srcSection.createControl(parent, factory);
 		gd = new GridData(GridData.FILL_BOTH);
-		gd.widthHint = 100;
-		gd.heightHint = 100;
 		control.setLayoutData(gd);
 		srcSection.setSectionControl(control);
 
 		classpathSection = new BuildClasspathSection(page);
 		control = classpathSection.createControl(parent, factory);
 		gd = new GridData(GridData.FILL_BOTH);
+		gd.horizontalSpan=2;
 		gd.widthHint = 100;
 		gd.heightHint = 100;
 		control.setLayoutData(gd);
 		classpathSection.setSectionControl(control);
-
-		javadocSection = new JavadocPackagesSection(page);
-		control = javadocSection.createControl(parent,factory);
-		gd = new GridData (GridData.FILL_BOTH);
-		gd.widthHint = 100;
-		gd.heightHint = 100;
-		control.setLayoutData(gd);
-		javadocSection.setSectionControl(control);
 		
 		registerSection(runtimeSection);
 		registerSection(srcSection);
 		registerSection(binSection);
 		registerSection(classpathSection);
-		registerSection(javadocSection);
 
 		if (isCustom)
 			disableAllSections();
@@ -150,14 +137,22 @@ public class BuildForm extends ScrollableSectionForm {
 	}
 
 	public void dispose() {
-		unregisterSection(runtimeSection);
-		unregisterSection(srcSection);
-		unregisterSection(binSection);
-		unregisterSection(classpathSection);
-		binSection.dispose();
-		srcSection.dispose();
-		runtimeSection.dispose();
-		classpathSection.dispose();
+		if (runtimeSection!=null){
+			unregisterSection(runtimeSection);
+			runtimeSection.dispose();
+		}
+		if (srcSection!=null){
+			unregisterSection(srcSection);
+			srcSection.dispose();
+		}
+		if (binSection!=null){
+			unregisterSection(binSection);
+			binSection.dispose();
+		}
+		if (classpathSection!=null){
+			unregisterSection(classpathSection);
+			classpathSection.dispose();
+		}
 	}
 
 
@@ -182,7 +177,6 @@ public class BuildForm extends ScrollableSectionForm {
 		binSection.disableSection();
 		srcSection.disableSection();
 		classpathSection.disableSection();
-		javadocSection.disableSection();
 	}
 	
 	public void enableAllSections(){
@@ -191,7 +185,6 @@ public class BuildForm extends ScrollableSectionForm {
 		binSection.enableSection();
 		srcSection.enableSection();
 		classpathSection.enableSection();
-		javadocSection.enableSection();
 	}
 
 	public void setFocus() {
