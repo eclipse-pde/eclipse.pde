@@ -257,27 +257,27 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 		IDocumentNode runtime = getEnclosingElement("runtime", false);
 		if (runtime != null) {
 			runtime.setLineIndent(getLineIndent() + 3);
-			buffer.append(runtime.write(true));
+			buffer.append(runtime.write(true) + newLine);
 		}
 		
 		IDocumentNode requires = getEnclosingElement("requires", false);
 		if (requires != null) {
 			requires.setLineIndent(getLineIndent() + 3);
-			buffer.append(requires.write(true));
+			buffer.append(requires.write(true) + newLine);
 		}
 		
 		IPluginExtensionPoint[] extPoints = getExtensionPoints();
 		for (int i = 0; i < extPoints.length; i++) {
 			IDocumentNode extPoint = (IDocumentNode)extPoints[i];
 			extPoint.setLineIndent(getLineIndent() + 3);
-			buffer.append(extPoint.write(true));
+			buffer.append(extPoint.write(true) + newLine);
 		}
 		
 		IPluginExtension[] extensions = getExtensions();
 		for (int i = 0; i < extensions.length; i++) {
 			IDocumentNode extension = (IDocumentNode)extensions[i];
 			extension.setLineIndent(getLineIndent() + 3);
-			buffer.append(extension.write(true));
+			buffer.append(extension.write(true) + newLine);
 		}
 		
 		buffer.append("</" + getXMLTagName() + ">");
