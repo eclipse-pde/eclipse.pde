@@ -229,7 +229,8 @@ public class PluginImportWizardFirstPage extends WizardPage {
 			}
 		});
 		SWTUtil.setButtonDimensionHint(sourceLocations);
-
+		sourceLocations.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+		
 		label = new Label(composite, SWT.WRAP);
 		label.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.variables"));
 		gd = new GridData();
@@ -245,7 +246,8 @@ public class PluginImportWizardFirstPage extends WizardPage {
 			}
 		});
 		SWTUtil.setButtonDimensionHint(envButton);
-
+		envButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+		
 	}
 	
 	
