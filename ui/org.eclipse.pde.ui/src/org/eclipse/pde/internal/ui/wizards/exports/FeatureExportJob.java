@@ -216,7 +216,12 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		generator.setDevEntries(getDevProperties());
 		generator.setElements(new String[] {"feature@" + featureID + (versionId == null ? "" : ":" + versionId)}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		generator.setPluginPath(getPaths());
-		BuildScriptGenerator.setOutputFormat(fExportType == EXPORT_AS_ZIP ? "antzip" : "folder"); //$NON-NLS-1$ //$NON-NLS-2$
+		String format;
+		if (fExportType == EXPORT_AS_ZIP)
+			format = Platform.getOS().equals("macosx") ? "tarGz" : "antZip"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		else
+			format = "folder"; //$NON-NLS-1$
+		BuildScriptGenerator.setOutputFormat(format);
 		BuildScriptGenerator.setForceUpdateJar(fExportType == EXPORT_AS_UPDATE_JARS);
 		BuildScriptGenerator.setEmbeddedSource(fExportSource && fExportType != EXPORT_AS_UPDATE_JARS);
 		BuildScriptGenerator.setConfigInfo(TargetPlatform.getOS() + "," + TargetPlatform.getWS() + "," + TargetPlatform.getOSArch()); //$NON-NLS-1$ //$NON-NLS-2$

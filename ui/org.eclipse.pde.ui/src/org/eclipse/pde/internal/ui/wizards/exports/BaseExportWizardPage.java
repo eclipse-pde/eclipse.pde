@@ -67,6 +67,7 @@ public abstract class BaseExportWizardPage extends WizardPage {
 	private Combo fAntCombo;
 	private Button fBrowseAnt;
 	private Button fSaveAsAntButton;
+	private String fZipExtension = Platform.getOS().equals("macosx") ? ".tar.gz" : ".zip"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 	
 	class ExportListProvider
@@ -207,11 +208,15 @@ public abstract class BaseExportWizardPage extends WizardPage {
 		
 		fExportFormats = new Combo(top, SWT.READ_ONLY);
 		fExportFormats.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fExportFormats.setItems(new String[]{
-				PDEPlugin.getResourceString("ExportWizard.zip"), //$NON-NLS-1$
-				PDEPlugin.getResourceString("ExportWizard.directory"), //$NON-NLS-1$
-				PDEPlugin.getResourceString("ExportWizard.updateJars")}); //$NON-NLS-1$
-		
+		String[] formats = new String[3];
+		if (Platform.getOS().equals("macosx")) //$NON-NLS-1$
+			formats[0] = PDEPlugin.getResourceString("ExportWizard.tar"); //$NON-NLS-1$
+		else 
+			formats[0] = PDEPlugin.getResourceString("ExportWizard.zip"); //$NON-NLS-1$
+		formats[1] = PDEPlugin.getResourceString("ExportWizard.directory"); //$NON-NLS-1$
+		formats[2] = PDEPlugin.getResourceString("ExportWizard.updateJars"); //$NON-NLS-1$
+		fExportFormats.setItems(formats);
+						
 		Composite bottom = new Composite(comp, SWT.NONE);
 		layout = new GridLayout();
 		layout.numColumns = 3;
@@ -309,7 +314,7 @@ public abstract class BaseExportWizardPage extends WizardPage {
 		
 		fBrowseFile.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				chooseFile(fZipFile, "*.zip"); //$NON-NLS-1$
+				chooseFile(fZipFile, "*" + fZipExtension); //$NON-NLS-1$
 			}
 		});
 		
@@ -569,8 +574,8 @@ public abstract class BaseExportWizardPage extends WizardPage {
 			String path = fZipFile.getText();
 			if (path != null && path.length() > 0) {
 				String fileName = new Path(path).lastSegment();
-				if (!fileName.endsWith(".zip")) { //$NON-NLS-1$
-					fileName += ".zip"; //$NON-NLS-1$
+				if (!fileName.endsWith(fZipExtension)) { 
+					fileName += fZipExtension;
 				}
 				return fileName;
 			}
