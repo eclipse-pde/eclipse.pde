@@ -123,10 +123,13 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 						importAsBinary(project, model, new SubProgressMonitor(monitor, 4));
 						break;
 					case IMPORT_BINARY_WITH_LINKS :
-						importAsBinaryWithLinks(
-							project,
-							model,
-							new SubProgressMonitor(monitor, 4));
+						if (new File(model.getInstallLocation()).isFile())
+							importAsBinary(project, model, new SubProgressMonitor(monitor, 4));
+						else
+							importAsBinaryWithLinks(
+								project,
+								model,
+								new SubProgressMonitor(monitor, 4));
 						break;
 					case IMPORT_WITH_SOURCE :
 						if (id.equals("org.apache.ant") || id.equals("org.eclipse.osgi.util") //$NON-NLS-1$ //$NON-NLS-2$
@@ -527,7 +530,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			IClasspathEntry entry = JavaCore.newLibraryEntry(project.getFullPath(), project.getFullPath(), null);
 			if (!entries.contains(entry))
 				entries.add(entry);
-		} if (fImportType == IMPORT_BINARY_WITH_LINKS) {
+		} else if (fImportType == IMPORT_BINARY_WITH_LINKS) {
 			getLinkedLibraries(project, model, entries);
 		} else {
 			IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
