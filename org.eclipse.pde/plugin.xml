@@ -20,6 +20,7 @@
       <import plugin="org.apache.ant"/>
       <import plugin="org.eclipse.ant.core"/>
       <import plugin="org.eclipse.text"/>
+      <import plugin="org.eclipse.core.runtime.compatibility"/>
    </requires>
 
 
