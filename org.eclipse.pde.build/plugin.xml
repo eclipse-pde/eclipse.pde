@@ -31,16 +31,6 @@
 </extension>
 
 
-<!-- Objects -->
-<extension point="org.eclipse.ant.core.antObjects">
-   <antObject
-      name="org.eclipse.pde.internal.core.JDTCompilerAdapter"
-      class="org.eclipse.pde.internal.core.JDTCompilerAdapter"
-      library="lib/pdebuild-ant.jar">
-   </antObject>
-</extension>
-
-
 <!-- Tasks -->
 
 <extension point="org.eclipse.ant.core.antTasks">
