@@ -171,28 +171,20 @@ public class LauncherUtils {
 		if (map == null)
 			map = validatePlugins(PDECore.getDefault().getModelManager().getPlugins(), statusEntries);
 
-		StringBuffer errorText = new StringBuffer();		
-		final String lineSeparator = System.getProperty("line.separator"); //$NON-NLS-1$
+		final String requiredPlugin;
+		if (PDECore.getDefault().getModelManager().isOSGiRuntime())
+			requiredPlugin = "org.eclipse.osgi"; //$NON-NLS-1$
+		else
+			requiredPlugin = "org.eclipse.core.boot"; //$NON-NLS-1$
 		
-		HashMap autoStart = getAutoStartPlugins(config);
-		Iterator iter = autoStart.keySet().iterator();
-		while (iter.hasNext()) {
-			String id = iter.next().toString();
-			if (!map.containsKey(id))
-				errorText.append(id + lineSeparator);
-		}
-		
-		if (errorText.length() > 0) {
-			final String text = errorText.toString();
+		if (!map.containsKey(requiredPlugin)) {
 			final Display display = getDisplay();
 			display.syncExec(new Runnable() {
 				public void run() {
 					MessageDialog.openError(
 							display.getActiveShell(),
 							PDEPlugin.getResourceString(KEY_TITLE),
-							PDEPlugin.getResourceString(KEY_MISSING_REQUIRED)
-							+ lineSeparator
-							+ text);
+							PDEPlugin.getFormattedMessage(KEY_MISSING_REQUIRED, requiredPlugin));
 				}
 			});
 			return null;
@@ -231,7 +223,6 @@ public class LauncherUtils {
 		if (!PDECore.getDefault().getModelManager().isOSGiRuntime()) {
 			list.put("org.eclipse.core.boot", new Integer(0)); //$NON-NLS-1$
 		} else {
-			list.put("org.eclipse.osgi", new Integer(0)); //$NON-NLS-1$
 			String bundles = null;
 			if (useDefault) {
 				Properties prop = getConfigIniProperties(ExternalModelManager.getEclipseHome().toOSString(), "configuration/config.ini"); //$NON-NLS-1$

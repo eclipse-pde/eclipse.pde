@@ -164,7 +164,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 		try {
 			if (PDECore.getDefault().getModelManager().isOSGiRuntime()) {
 				createConfigIniFile(configDir, pluginMap, primaryFeatureId, autoStartPlugins);
-				if (autoStartPlugins.containsKey("org.eclipse.update.configurator")) {  //$NON-NLS-1$
+				if (pluginMap.containsKey("org.eclipse.update.configurator")) {  //$NON-NLS-1$
 					savePlatformConfiguration(BootLoader.getPlatformConfiguration(null),configDir, pluginMap, primaryFeatureId);
 				}
 			} else {
@@ -218,7 +218,6 @@ public class TargetPlatform implements IEnvironmentVariables {
 			bWriter.write("osgi.framework=" + getBundleURL("org.eclipse.osgi", pluginMap)); //$NON-NLS-1$ //$NON-NLS-2$
 			bWriter.newLine();
 			
-			autoStartPlugins.remove("org.eclipse.osgi"); //$NON-NLS-1$
 			Iterator iter = autoStartPlugins.keySet().iterator();
 			StringBuffer buffer = new StringBuffer();
 			
@@ -235,7 +234,8 @@ public class TargetPlatform implements IEnvironmentVariables {
 					buffer.append(","); //$NON-NLS-1$
 			}
 			
-			if (!autoStartPlugins.containsKey("org.eclipse.update.configurator")) { //$NON-NLS-1$
+			if (!autoStartPlugins.containsKey("org.eclipse.update.configurator") || //$NON-NLS-1$
+					!pluginMap.containsKey("org.eclipse.update.configurator")) { //$NON-NLS-1$
 				iter = pluginMap.keySet().iterator();
 				while (iter.hasNext()) {
 					String id = iter.next().toString();
