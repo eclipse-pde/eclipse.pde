@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.core;
 
 import java.io.*;
 import java.net.*;
-import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.*;
@@ -26,32 +25,20 @@ public class TargetPlatformRegistryLoader {
 	
 	private static final String KEY_SCANNING_PROBLEMS =
 		"ExternalModelManager.scanningProblems"; //$NON-NLS-1$
-	private static String getFilesAndMode(URL[] urls, ArrayList fileList) {
+	private static String getMode(URL[] urls) {
 		String targetMode = "2.1"; //$NON-NLS-1$
 		for (int i = 0; i < urls.length; i++) {
-			File directory = new File(urls[i].getFile());
-			if (directory.exists() && directory.isDirectory()) {
-				File[] files = directory.listFiles();
-				if (files != null) {
-					for (int j = 0; j < files.length; j++) {
-						if (files[j].isDirectory()) {
-							fileList.add(files[j]);
-							if (files[j].getName().indexOf("org.eclipse.osgi") != -1) //$NON-NLS-1$
-								targetMode = null;
-						}
-					}
-				}
-			}
+			if (urls[i].getFile().indexOf("org.eclipse.osgi") != -1) //$NON-NLS-1$
+				targetMode = null;
 		}			
 		return targetMode;
 	}
 
 	public static void load(URL[] urls, PDEState state, IProgressMonitor monitor) {
-		ArrayList list = new ArrayList();
-		String targetMode = getFilesAndMode(urls, list);
+		String targetMode = getMode(urls);
 		state.setTargetMode(targetMode);
-		for (int i = 0; i < list.size(); i++) {
-			state.addBundle((File)list.get(i));
+		for (int i = 0; i < urls.length; i++) {
+			state.addBundle(new File(urls[i].getFile()));
 		}
 	}
 	
@@ -150,22 +137,6 @@ public class TargetPlatformRegistryLoader {
 		return loadModels(urls, resolve, state, monitor);
 	}
 	
-	public static IPluginModelBase[] loadModels(String[] paths, boolean resolve, PDEState state, IProgressMonitor monitor) {
-		URL[] urls = new URL[paths.length];
-		try {
-			for (int i = 0; i < paths.length; i++) {
-				urls[i] = new URL("file:" + paths[i].replace('\\', '/') + "/"); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-		} catch (MalformedURLException e) {
-		}
-		return loadModels(urls, resolve, state, monitor);
-	}
-	
-	public static IPluginModelBase[] loadModels(String[] paths, boolean resolve, IProgressMonitor monitor) {
-		PDEState state = new PDEState();
-		return loadModels(paths, resolve, state, monitor);
-	}
-
 	/**
 	 * @param description
 	 * @return

@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.preferences;
 
 import java.lang.reflect.InvocationTargetException;
+import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -49,9 +50,9 @@ public class ExternalPluginsBlock {
 	private final static boolean DEFAULT_STATE = true;
 	
 	class ReloadOperation implements IRunnableWithProgress {
-		private String[] pluginPaths;
+		private URL[] pluginPaths;
 		
-		public ReloadOperation(String[] pluginPaths) {
+		public ReloadOperation(URL[] pluginPaths) {
 			 this.pluginPaths = pluginPaths;
 		}
 			
@@ -225,7 +226,7 @@ public class ExternalPluginsBlock {
 	protected void handleReload() {
 		String platformPath = page.getPlatformPath();
 		if (platformPath != null && platformPath.length() > 0) {
-			String[] pluginPaths = PluginPathFinder.getPluginPaths(platformPath);
+			URL[] pluginPaths = PluginPathFinder.getPluginPaths(platformPath);
 			ReloadOperation op = new ReloadOperation(pluginPaths);
 			try {
 				PlatformUI.getWorkbench().getProgressService().run(true, false, op);

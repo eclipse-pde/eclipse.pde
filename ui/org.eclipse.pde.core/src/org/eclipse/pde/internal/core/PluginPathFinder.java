@@ -11,24 +11,15 @@
 package org.eclipse.pde.internal.core;
 
 import java.io.*;
+import java.net.*;
 import java.util.*;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.update.configurator.*;
 
 public class PluginPathFinder {
 	
-
-	public static File[] getLinkFiles(String platformHome) {
-		File file = new File(platformHome + Path.SEPARATOR + "links"); //$NON-NLS-1$
-		File[] linkFiles = null;
-		if (file.exists() && file.isDirectory()) {
-			linkFiles = file.listFiles();
-		}
-		return linkFiles;
-		
-	}
-	
-	public static String getPath(String platformHome, File file) {
+	private static String getPath(String platformHome, File file) {
 		String prefix = new Path(platformHome).removeLastSegments(1).toString();
 		Properties properties = new Properties();
 		try {
@@ -49,19 +40,48 @@ public class PluginPathFinder {
 		return null;
 	}
 	
-	public static String[] getPluginPaths(String platformHome) {
-		ArrayList result = new ArrayList();
-		result.add(new Path(platformHome).append("plugins").toOSString()); //$NON-NLS-1$
-		File[] linkFiles = getLinkFiles(platformHome);		
+	private static File[] getSites(String platformHome) {
+		ArrayList sites = new ArrayList();
+		sites.add(new File(platformHome, "plugins")); //$NON-NLS-1$
+		
+		File[] linkFiles = new File(platformHome + Path.SEPARATOR + "links").listFiles(); //$NON-NLS-1$	
 		if (linkFiles != null) {
 			for (int i = 0; i < linkFiles.length; i++) {
 				String path = getPath(platformHome, linkFiles[i]);
-				if (path != null)
-					result.add(path);
+				if (path != null) {
+					sites.add(new File(path));
+				}
 			}
-		}
-		return (String[]) result.toArray(new String[result.size()]);
+		}		
+		return (File[])sites.toArray(new File[sites.size()]);
 	}
 	
+	public static URL[] getPluginPaths(String platformHome) {
+		File file = new File(platformHome, "configuration/org.eclipse.update/platform.xml"); //$NON-NLS-1$
+		if (file.exists()) {
+			try {
+				return ConfiguratorUtils.getPlatformConfiguration(file.toURL()).getPluginPath();
+			} catch (MalformedURLException e) {
+			} catch (IOException e) {
+			}
+		}		
+		return scanLocations(getSites(platformHome));
+	}
+	
+	public static URL[] scanLocations(File[] sites) {
+		ArrayList result = new ArrayList();
+		for (int i = 0; i < sites.length; i++){
+			File[] children = sites[i].listFiles();
+			if (children != null) {
+				for (int j = 0; j < children.length; j++) {
+					try {
+						result.add(children[j].toURL());
+					} catch (MalformedURLException e) {
+					}
+				}
+			}
+		}
+		return (URL[]) result.toArray(new URL[result.size()]);	
+	}
 	
 }

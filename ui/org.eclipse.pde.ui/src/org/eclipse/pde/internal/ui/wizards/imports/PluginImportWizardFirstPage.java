@@ -7,6 +7,7 @@
 package org.eclipse.pde.internal.ui.wizards.imports;
 
 import java.io.File;
+import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.resources.*;
@@ -397,7 +398,11 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	private void resolveArbitraryLocation(final String location) {
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
-				models=TargetPlatformRegistryLoader.loadModels(createPaths(new Path(location)), false, monitor);
+				File[] files = new File[2];
+				files[0] = new File(location);
+				files[1] = new File(location, "plugins"); //$NON-NLS-1$
+				URL[] urls = PluginPathFinder.scanLocations(files);
+				models=TargetPlatformRegistryLoader.loadModels(urls, false, monitor);
 				monitor.done();
 			}
 		};
@@ -408,15 +413,6 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		}
 	}
 		
-	private String[] createPaths(IPath location) {
-		ArrayList paths = new ArrayList();
-		File pluginsDir = new File(location.toFile(), "plugins");		 //$NON-NLS-1$
-		if (pluginsDir.exists()) 
-			paths.add(pluginsDir.getAbsolutePath());
-		if (location.toFile().exists())
-			paths.add(location.toFile().getAbsolutePath());
-		return (String[]) paths.toArray(new String[paths.size()]);
-	}
 
 	public IPluginModelBase[] getModels() {
 		String dropLocation = getDropLocation();

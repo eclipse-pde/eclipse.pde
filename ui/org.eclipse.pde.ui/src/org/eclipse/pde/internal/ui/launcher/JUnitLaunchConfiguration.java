@@ -6,6 +6,7 @@ package org.eclipse.pde.internal.ui.launcher;
  */
 
 import java.io.*;
+import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.boot.*;
@@ -281,7 +282,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 			return model;
 
 		if (registryPlugins == null) {
-			String[] pluginPaths =
+			URL[] pluginPaths =
 				PluginPathFinder.getPluginPaths(BootLoader.getInstallURL().getFile());
 			registryPlugins = TargetPlatformRegistryLoader.loadModels(pluginPaths, false, new NullProgressMonitor());
 		}

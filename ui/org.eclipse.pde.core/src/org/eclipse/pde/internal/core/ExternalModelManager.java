@@ -128,7 +128,7 @@ public class ExternalModelManager {
 			return;
 		fState = new PDEState();
 		Preferences pref = PDECore.getDefault().getPluginPreferences();
-		String[] pluginPaths =
+		URL[] pluginPaths =
 			PluginPathFinder.getPluginPaths(
 				pref.getString(ICoreConstants.PLATFORM_PATH));
 		IPluginModelBase[] resolved = TargetPlatformRegistryLoader.loadModels(pluginPaths, true, fState, monitor);
