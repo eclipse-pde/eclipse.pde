@@ -24,8 +24,8 @@ import org.eclipse.update.core.IPluginEntry;
  * Generic class for generating scripts for plug-ins and fragments.
  */
 public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
-	private static final String EXPANDED_DOT = "@dot"; //$NON-NLS-1$
-	private static final String DOT = "."; //$NON-NLS-1$
+	public static final String EXPANDED_DOT = "@dot"; //$NON-NLS-1$
+	public static final String DOT = "."; //$NON-NLS-1$
 
 	/**
 	 * Represents a entry that must be compiled and which is listed in the build.properties file.
@@ -155,7 +155,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		specialDotProcessing(classpathInfo);
 	}
 
-	private boolean findAndReplaceDot(String[] classpathInfo) {
+	protected static boolean findAndReplaceDot(String[] classpathInfo) {
 		for (int i = 0; i < classpathInfo.length; i++) {
 			if (DOT.equals(classpathInfo[i])) {
 				classpathInfo[i] = EXPANDED_DOT;
@@ -167,8 +167,11 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	
 	private void specialDotProcessing(String[] classpathInfo) throws CoreException {
 		if (findAndReplaceDot(classpathInfo)) {			
-			getBuildProperties().setProperty(PROPERTY_SOURCE_PREFIX + EXPANDED_DOT, getBuildProperties().getProperty(PROPERTY_SOURCE_PREFIX + DOT));
-			getBuildProperties().remove(PROPERTY_SOURCE_PREFIX + DOT);
+			String sourceFolder = getBuildProperties().getProperty(PROPERTY_SOURCE_PREFIX + DOT);
+			if (sourceFolder != null) {
+				getBuildProperties().setProperty(PROPERTY_SOURCE_PREFIX + EXPANDED_DOT, sourceFolder);
+				getBuildProperties().remove(PROPERTY_SOURCE_PREFIX + DOT);
+			}
 			String outputValue = getBuildProperties().getProperty(PROPERTY_OUTPUT_PREFIX + DOT);
 			if (outputValue != null) {
 				getBuildProperties().setProperty(PROPERTY_OUTPUT_PREFIX + EXPANDED_DOT, outputValue);

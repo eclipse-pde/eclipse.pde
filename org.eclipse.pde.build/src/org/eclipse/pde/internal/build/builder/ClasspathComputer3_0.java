@@ -134,7 +134,19 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 
 	private Properties getBuildPropertiesFor(BundleDescription bundle) {
 		try {
-			return AbstractScriptGenerator.readProperties(generator.getLocation(bundle), PROPERTIES_FILE, IStatus.OK);
+			Properties bundleProperties = AbstractScriptGenerator.readProperties(generator.getLocation(bundle), PROPERTIES_FILE, IStatus.OK);
+			if (Utils.isStringIn(generator.getClasspathEntries(bundle), ModelBuildScriptGenerator.DOT)) {
+				String sourceFolder = bundleProperties.getProperty(PROPERTY_SOURCE_PREFIX + ModelBuildScriptGenerator.DOT);
+				if (sourceFolder != null) {
+					bundleProperties.setProperty(PROPERTY_SOURCE_PREFIX + ModelBuildScriptGenerator.EXPANDED_DOT, sourceFolder);
+					bundleProperties.remove(PROPERTY_SOURCE_PREFIX + ModelBuildScriptGenerator.DOT);
+				}
+				String outputValue = bundleProperties.getProperty(PROPERTY_OUTPUT_PREFIX + ModelBuildScriptGenerator.DOT);
+				if (outputValue != null) {
+					bundleProperties.setProperty(PROPERTY_OUTPUT_PREFIX + ModelBuildScriptGenerator.EXPANDED_DOT, outputValue);
+					bundleProperties.remove(PROPERTY_OUTPUT_PREFIX + ModelBuildScriptGenerator.DOT);
+				}
+			}
 		} catch (CoreException e) {
 			//ignore
 		}
@@ -148,7 +160,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		String path = basePath.append(libraryName).toString();
 		path = generator.replaceVariables(path, pluginId == null ? false : generator.getCompiledElements().contains(pluginId));
 		if (generator.getCompiledElements().contains(pluginId)) {
-			if (modelProperties == null || modelProperties.getProperty("source." + libraryName) != null) //$NON-NLS-1$
+			if (modelProperties == null || modelProperties.getProperty(IBuildPropertiesConstants.PROPERTY_SOURCE_PREFIX + libraryName) != null) //$NON-NLS-1$
 				path = generator.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + '/' + path;
 		}
 		if (!classpath.contains(path))
