@@ -769,6 +769,11 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		sourceFeatureFullName = computeSourceFeatureName(feature, false);
 		sourceFeatureFullNameVersionned = computeSourceFeatureName(feature, true);
 		featureTempFolder = getPropertyFormat(PROPERTY_FEATURE_TEMP_FOLDER);
+		
+		if (getBuildProperties().size() == 0) {
+			buildProperties.put(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES, "**/**"); //$NON-NLS-1$
+			buildProperties.put(IBuildPropertiesConstants.PROPERTY_BIN_EXCLUDES, ".project, .classpath, build.xml"); //$NON-NLS-1$			
+		}
 	}
 
 	private String computeSourceFeatureName(IFeature featureForName, boolean withNumber) throws CoreException {
