@@ -297,7 +297,7 @@ public class GrammarSection extends PDEFormSection {
 		String text = "";
 		if (object != null) {
 			ISchemaElement element = (ISchemaElement) object;
-			text = element.getDTDRepresentation();
+			text = element.getDTDRepresentation(false);
 		}
 		dtdLabel.setText(prefix + text);
 	}

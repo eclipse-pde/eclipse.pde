@@ -18,10 +18,13 @@ public interface ISchemaElement extends ISchemaObject, ISchemaRepeatable, ISchem
  * be accurate because XML schema is more powerful and
  * provides for grammar definitions that are not possible
  * with DTDs.
+ * 
+ * param addLinks if true, the representation will contain
+ * HTML tags for quick access to referenced elements.
  *
  *@return DTD approximation of this element's grammar
  */
-String getDTDRepresentation();
+String getDTDRepresentation(boolean addLinks);
 /**
  * Returns type object that represents the type defined in this element.
  * The type can be simple (defining an element that can only contain text)

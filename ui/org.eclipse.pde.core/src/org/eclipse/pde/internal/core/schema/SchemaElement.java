@@ -19,15 +19,19 @@ public class SchemaElement extends RepeatableSchemaObject implements ISchemaElem
 public SchemaElement(ISchemaObject parent, String name) {
 	super(parent, name);
 }
-private String calculateChildRepresentation(ISchemaObject object) {
+private String calculateChildRepresentation(ISchemaObject object, boolean addLinks) {
 	String child = "";
 	if (object instanceof ISchemaCompositor) {
-		child = calculateCompositorRepresentation((ISchemaCompositor) object);
+		child = calculateCompositorRepresentation((ISchemaCompositor) object, addLinks);
 		if (!child.equals("EMPTY") && child.length()>0) {
 			child = "("+child+")";
 		}
-	} else
+	} else {
 		child = object.getName();
+		if (addLinks) {
+			child = "<a href=\"#e."+child+"\">"+child+"</a>";
+		}
+	}
 	int minOccurs = 1;
 	int maxOccurs = 1;
 	if (object instanceof ISchemaRepeatable) {
@@ -46,14 +50,14 @@ private String calculateChildRepresentation(ISchemaObject object) {
 		}
 	return child;
 }
-private String calculateCompositorRepresentation(ISchemaCompositor compositor) {
+private String calculateCompositorRepresentation(ISchemaCompositor compositor, boolean addLinks) {
 	int kind = compositor.getKind();
 	ISchemaObject[] children = compositor.getChildren();
 	if (children.length==0) return "EMPTY";
 	String text = kind == ISchemaCompositor.GROUP ? "(" : "";
 	for (int i=0; i<children.length; i++) {
 		ISchemaObject object = (ISchemaObject) children[i];
-		String child = calculateChildRepresentation(object);
+		String child = calculateChildRepresentation(object, addLinks);
 
 		text += child;
 		if (i< children.length -1) {
@@ -86,7 +90,7 @@ public ISchemaAttribute[] getAttributes() {
 	}
 	return new ISchemaAttribute[0];
 }
-public String getDTDRepresentation() {
+public String getDTDRepresentation(boolean addLinks) {
 	String text = "";
 	if (type == null)
 		text += "EMPTY";
@@ -95,7 +99,7 @@ public String getDTDRepresentation() {
 			ISchemaComplexType complexType = (ISchemaComplexType) type;
 			ISchemaCompositor compositor = complexType.getCompositor();
 			if (compositor != null)
-				text += calculateChildRepresentation(compositor);
+				text += calculateChildRepresentation(compositor, addLinks);
 			else
 				text += "EMPTY";
 

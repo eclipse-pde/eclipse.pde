@@ -51,8 +51,8 @@ public class SchemaElementReference
 	public java.lang.String getDescription() {
 		return getReferencedElement().getDescription();
 	}
-	public String getDTDRepresentation() {
-		return getReferencedElement().getDTDRepresentation();
+	public String getDTDRepresentation(boolean addLinks) {
+		return getReferencedElement().getDTDRepresentation(addLinks);
 	}
 
 	public java.lang.String getIconProperty() {
