@@ -84,13 +84,14 @@ public class LauncherUtils {
 		String javaCommand = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, (String)null); 
 		map.put(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, javaCommand);
 		if (TargetPlatform.getOS().equals("macosx")) { //$NON-NLS-1$
-			IPluginModelBase model = PDECore.getDefault().getModelManager().findModel("org.eclipse.jdt.debug"); //$NON-NLS-1$
-			if (model != null) {
-				File file = new File(model.getInstallLocation(), "bin"); //$NON-NLS-1$
-				if (!file.exists())
-					file = new File(model.getInstallLocation(), "jdi.jar"); //$NON-NLS-1$
-				if (file.exists()) {
-					map.put(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH_PREPEND, new String[] {file.getAbsolutePath()});
+			ModelEntry entry = PDECore.getDefault().getModelManager().findEntry("org.eclipse.jdt.debug"); //$NON-NLS-1$
+			if (entry != null) {
+				IPluginModelBase model = entry.getExternalModel();
+				if (model != null) {
+					File file = new File(model.getInstallLocation(), "jdi.jar"); //$NON-NLS-1$
+					if (file.exists()) {
+						map.put(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH_PREPEND, new String[] {file.getAbsolutePath()});
+					}
 				}
 			}
 		}
