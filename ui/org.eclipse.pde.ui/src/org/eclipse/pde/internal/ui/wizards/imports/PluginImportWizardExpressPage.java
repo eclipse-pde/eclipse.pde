@@ -201,15 +201,20 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 	}
 	
 	private void removeCheckedModels(ArrayList result) {
-		HashSet set = new HashSet();
-		Object[] wModels = tablePart.getSelection();
-		for (int i = 0; i < wModels.length; i++) {
-			set.add(((IPluginModelBase)wModels[i]).getPluginBase().getId());
-		}
 		IPluginModelBase[] smodels = (IPluginModelBase[])result.toArray(new IPluginModelBase[result.size()]);
+		PluginModelManager manager = PDECore.getDefault().getModelManager();
 		for (int i = 0; i < smodels.length; i++) {
-			if (set.contains(smodels[i].getPluginBase().getId()))
-				result.remove(smodels[i]);
+			String id = smodels[i].getPluginBase().getId();
+			IPluginModelBase model = manager.findModel(id);
+			if (model != null) {
+				IResource resource = model.getUnderlyingResource();
+				if (resource != null) {
+					IProject project = resource.getProject();
+					if (!WorkspaceModelManager.isUnsharedPluginProject(project)) {
+						result.remove(smodels[i]);
+					}
+				}
+			}
 		}
 	}
 
