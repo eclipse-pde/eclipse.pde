@@ -286,8 +286,10 @@ public class PDEState {
 				Element element = doc.createElement("bundle");
 				element.setAttribute("bundleID", Long.toString(desc.getBundleId()));
 				PDEStateHelper.parseExtensions(desc, element);
-				root.appendChild(element);
-				fExtensions.put(Long.toString(desc.getBundleId()), element);
+				if (element.hasChildNodes()) {
+					root.appendChild(element);
+					fExtensions.put(Long.toString(desc.getBundleId()), element);
+				}
 			}	
 			doc.appendChild(root);
 			XMLPrintHandler.printNode(writer, doc, "UTF-8");

@@ -80,7 +80,8 @@ public class SearchResult extends AbstractTextSearchResult implements IEditorMat
 					Match[] matches = getMatches(object);
 					for (int j = 0; j < matches.length; j++) {
 						IDocument document = getDocument(editor, matches[j]);
-						list.add(ManifestEditorOpener.findExactMatch(document, matches[j]));
+						if (document != null)
+							list.add(ManifestEditorOpener.findExactMatch(document, matches[j]));
 					}
 				}
 			}
