@@ -60,7 +60,6 @@ public abstract class BaseExportWizardPage extends WizardPage {
 	
 	private Button fIncludeSource;
 	private Combo fExportFormats;
-	private Label fAntLabel;
 	private Combo fAntCombo;
 	private Button fBrowseAnt;
 	private Button fSaveAsAntButton;
@@ -227,15 +226,6 @@ public abstract class BaseExportWizardPage extends WizardPage {
 		
 		fSaveAsAntButton = new Button(group, SWT.CHECK);
 		fSaveAsAntButton.setText(PDEPlugin.getResourceString("ExportWizard.antCheck")); //$NON-NLS-1$
-		GridData gd = new GridData();
-		gd.horizontalSpan = 3;
-		fSaveAsAntButton.setLayoutData(gd);
-		
-		fAntLabel = new Label(group, SWT.NONE);
-		fAntLabel.setText(PDEPlugin.getResourceString("ExportWizard.antLabel")); //$NON-NLS-1$
-		gd = new GridData();
-		gd.horizontalIndent = 20;
-		fAntLabel.setLayoutData(gd);
 		
 		fAntCombo = new Combo(group, SWT.NONE);
 		fAntCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -250,7 +240,6 @@ public abstract class BaseExportWizardPage extends WizardPage {
 	private void hookListeners() {
 		fSaveAsAntButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				fAntLabel.setEnabled(fSaveAsAntButton.getSelection());
 				fAntCombo.setEnabled(fSaveAsAntButton.getSelection());
 				fBrowseAnt.setEnabled(fSaveAsAntButton.getSelection());
 				pageChanged();
@@ -459,7 +448,6 @@ public abstract class BaseExportWizardPage extends WizardPage {
 	private void initializeAntBuildSection(IDialogSettings settings) {
 		fSaveAsAntButton.setSelection(settings.getBoolean(S_SAVE_AS_ANT));
 		initializeCombo(settings, S_ANT_FILENAME, fAntCombo);
-		fAntLabel.setEnabled(fSaveAsAntButton.getSelection());
 		fAntCombo.setEnabled(fSaveAsAntButton.getSelection());
 		fBrowseAnt.setEnabled(fSaveAsAntButton.getSelection());
 	}
