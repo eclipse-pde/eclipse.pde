@@ -570,7 +570,7 @@ public class ClasspathUtilCore {
 		return (buildModel != null) ? buildModel.getBuild() : null;
 	}
 
-	private static IPath getSourceAnnotation(IPluginModelBase model, String libraryName)
+	public static IPath getSourceAnnotation(IPluginModelBase model, String libraryName)
 		throws CoreException {
 		IPath path = null;
 		int dot = libraryName.lastIndexOf('.');
