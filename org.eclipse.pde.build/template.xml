@@ -32,13 +32,15 @@
   </target>
 
   <target name="bin" depends="init">
-    <mkdir dir="${dest}" />
+    <delete dir="${dest}"/>
+    <mkdir dir="${dest}"/>
     <copy todir="${dest}">
       <fileset refid="file.id"/>
     </copy>
   </target>
 
   <target name="src" depends="init">
+    <delete dir="${dest}/src" />
     <mkdir dir="${dest}/src" />
     <copy todir="${dest}/src">
       <fileset refid="file.id"/>
@@ -49,6 +51,7 @@
   </target>
 
   <target name="log" depends="init">
+    <delete dir="${dest}"/>
     <mkdir dir="${dest}"/>
     <copy todir="${dest}">
       <fileset dir="." includes="*.log"/>
@@ -63,6 +66,7 @@
   </target>
 
   <target name="doc" depends="init">
+    <delete dir="${dest}/${plugin}/doc" />
     <mkdir dir="${dest}/${plugin}/doc" />
     <available property="doc-exists" file="doc"/>
     <antcall target="doc-copy"/>
