@@ -2,10 +2,11 @@
 <plugin
    id="org.eclipse.pde.core"
    name="%pluginName"
-   version="2.1.1"
+   version="2.1.2"
    provider-name="Object Technology International, Inc.">
 
 <requires>
+   <import plugin="org.apache.ant"/>
    <import plugin="org.apache.xerces"/>
    <import plugin="org.eclipse.ant.core"/>
    <import plugin="org.eclipse.jdt.core"/>
