@@ -130,7 +130,7 @@
   <extension point="org.eclipse.ui.intro.configExtension"> 
   	<configExtension configId="org.eclipse.platform.introConfig">  
   		<!-- Extension to the SDK Overview Page. -->
-  		<extensionContent path="overview" style="" alt-style="css/swt.properties">
+  		<extensionContent path="overview" style="css/overview.css" alt-style="css/swt.properties">
         	<link
 	        	url="http://org.eclipse.ui.intro/showHelpTopic?id=/org.eclipse.pde.doc.user/guide/pde.htm"
 	            label="%intro.pde.label"
@@ -144,7 +144,7 @@
      
      <!-- Extension to the SDK Tutorial Page. -->
      <configExtension configId="org.eclipse.platform.introConfig">  
-  		<extensionContent path="tutorials" style="" alt-style="css/swt.properties">
+  		<extensionContent path="tutorials" style="css/tutorials.css" alt-style="css/swt.properties">
         	<div label="%intro.div.pde.label"
 	            id="pde">
 	            <link
