@@ -503,7 +503,7 @@ public class PDEState {
 		Dictionary manifest =  loadManifest(bundleLocation);
 		if (manifest == null || manifest.get(Constants.BUNDLE_SYMBOLICNAME) == null) {
 			try {
-				if (!new File(bundleLocation, "plugin.xml").exists() &&  //$NON-NLS-1$
+				if (!bundleLocation.getName().endsWith(".jar") && !new File(bundleLocation, "plugin.xml").exists() && //$NON-NLS-1$ //$NON-NLS-2$
 						!new File(bundleLocation, "fragment.xml").exists()) //$NON-NLS-1$
 					return null;
 				PluginConverter converter = acquirePluginConverter();
