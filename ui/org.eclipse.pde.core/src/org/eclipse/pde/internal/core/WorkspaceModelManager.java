@@ -536,19 +536,7 @@ public class WorkspaceModelManager
 	}
 	
 	public static boolean isJavaPluginProjectWithSource(IProject project) {
-		if (!isJavaPluginProject(project))
-			return false;
-		try {
-			IJavaProject jProject = JavaCore.create(project);
-			IPackageFragmentRoot[] roots = jProject.getPackageFragmentRoots();
-
-			for (int i = 0; i < roots.length; i++) {
-				if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE)
-					return true;
-			}
-		} catch (JavaModelException e) {
-		}
-		return false;
+		return (isJavaPluginProject(project) && !isBinaryPluginProject(project));
 	}
 
 	public static boolean isBinaryPluginProject(IProject project) {
