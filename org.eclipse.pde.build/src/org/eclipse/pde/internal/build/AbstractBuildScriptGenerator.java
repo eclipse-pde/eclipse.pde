@@ -243,13 +243,12 @@ public void setPluginPath(URL[] pluginPath) {
 protected String getPluginLocationProperty(String pluginId, boolean fragment) {
 	String key = (fragment ? "fragment@" : "plugin@") + pluginId;
 	String location = (String) pluginLocations.get(key);
-	if (location != null)
-		return location;
+	if (location == null)
+		pluginLocations.put(key, "location." + pluginId);
 	StringBuffer sb = new StringBuffer();
 	sb.append("${location.");
 	sb.append(pluginId);
 	sb.append("}");
-	pluginLocations.put(key, "location." + pluginId);
 	return sb.toString();
 }
 
