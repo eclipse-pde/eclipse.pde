@@ -21,6 +21,7 @@ public class JavacTask implements ITask {
 	protected String[] srcdir;
 	protected String verbose;
 	protected String includeAntRuntime;
+	protected String fork;
 
 public JavacTask() {
 }
@@ -31,6 +32,7 @@ public void print(AntScript script, int tab) {
 	script.printAttribute("destdir", destdir, false);
 	script.printAttribute("failonerror", failonerror, false);
 	script.printAttribute("verbose", verbose, false);
+	script.printAttribute("fork", fork, false);
 	script.printAttribute("includeAntRuntime", includeAntRuntime, false);
 	script.printAttribute("classpath", classpath, false);
 	script.println(">");
@@ -68,4 +70,7 @@ public void setVerbose(String verbose) {
 	this.verbose = verbose;
 }
 
+public void setFork(String fork) {
+	this.fork = fork;
+}
 }
