@@ -129,7 +129,7 @@ public static final String KEY_DEPRECATED_TYPE =
 		Node root = parser.getDocument().getDocumentElement();
 		Schema schema = new Schema((ISchemaDescriptor) null, null);
 		schema.traverseDocumentTree(root, parser.getLineTable());
-		if (verifySchema(schema, reporter))
+		if (verifySchema(schema, reporter) && CompilerFlags.getBoolean(CompilerFlags.S_CREATE_DOCS))
 			transform(out, schema);
 	}
 

@@ -10,7 +10,7 @@ import java.util.Map;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.PDE;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.WorkspaceModelManager;
 
 public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 	public static final String BUILDERS_SCHEMA_COMPILING =
@@ -20,7 +20,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 	public static final String BUILDERS_UPDATING = "Builders.updating";
 	public static final String BUILDERS_SCHEMA_REMOVING =
 		"Builders.Schema.removing";
-	
+
 	private ISchemaTransformer transformer;
 
 	class DeltaVisitor implements IResourceDeltaVisitor {
@@ -88,17 +88,12 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 	}
 
 	private boolean isInterestingProject(IProject project) {
-		try {
-			if (!PDE.hasPluginNature(project))
-				return false;
-			if (project.getPersistentProperty(PDECore.EXTERNAL_PROJECT_PROPERTY) != null)
-				return false;
-			// This is it - a plug-in project that is not external or binary
-			return true;
-		} catch (CoreException e) {
-			PDECore.log(e);
+		if (!PDE.hasPluginNature(project))
 			return false;
-		}
+		if (WorkspaceModelManager.isBinaryPluginProject(project))
+			return false;
+		// This is it - a plug-in project that is not external or binary
+		return true;
 	}
 	private void compileFile(IFile file, IProgressMonitor monitor) {
 		String message =
@@ -107,7 +102,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 				file.getFullPath().toString());
 		monitor.subTask(message);
 		PluginErrorReporter reporter = new PluginErrorReporter(file);
-	
+
 		String outputFileName = getOutputFileName(file);
 		IWorkspace workspace = file.getWorkspace();
 		Path outputPath = new Path(outputFileName);
@@ -118,16 +113,14 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 			PrintWriter pwriter = new PrintWriter(stringWriter);
 			transform(source, pwriter, reporter);
 			stringWriter.close();
-			if (reporter.getErrorCount() == 0) {
-				IPath outputFolderPath =
-					file.getProject().getFullPath().append(getDocLocation());
-				if (!workspace.getRoot().exists(outputFolderPath)) {
-					IFolder folder = workspace.getRoot().getFolder(outputFolderPath);
-					folder.create(true, true, monitor);
-				}
+			if (reporter.getErrorCount() == 0
+				&& CompilerFlags.getBoolean(CompilerFlags.S_CREATE_DOCS)) {
+				String docLocation = getDocLocation();
+				ensureFoldersExist(file.getProject(), docLocation);
 				IFile outputFile = workspace.getRoot().getFile(outputPath);
 				ByteArrayInputStream target =
-					new ByteArrayInputStream(stringWriter.toString().getBytes("UTF8"));
+					new ByteArrayInputStream(
+						stringWriter.toString().getBytes("UTF8"));
 				if (!workspace.getRoot().exists(outputPath)) {
 					// the file does not exist - create it
 					outputFile.create(target, true, monitor);
@@ -139,17 +132,31 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 			PDE.logException(e);
 		} catch (CoreException e) {
 			PDE.logException(e);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			PDE.logException(e);
 		}
 		monitor.subTask(PDE.getResourceString(BUILDERS_UPDATING));
 		monitor.done();
 	}
 	
+	private void ensureFoldersExist(IProject project, String pathName) throws CoreException {
+		IPath path = new Path(pathName);
+		IContainer parent=project;
+		
+		for (int i=0; i<path.segmentCount(); i++){
+			String segment = path.segment(i);
+			IFolder folder = parent.getFolder(new Path(segment));
+			if (!folder.exists()) {
+				folder.create(true, true, null);
+			}
+			parent = folder;
+		}
+	}
+
 	private void compileSchemasIn(IFolder folder, IProgressMonitor monitor)
 		throws CoreException {
-		monitor.subTask(PDE.getResourceString(BUILDERS_SCHEMA_COMPILING_SCHEMAS));
+		monitor.subTask(
+			PDE.getResourceString(BUILDERS_SCHEMA_COMPILING_SCHEMAS));
 
 		IResource[] members = folder.members();
 
@@ -164,14 +171,15 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 		monitor.done();
 	}
 	public String getDocLocation() {
-		return "doc";
+		return CompilerFlags.getString(CompilerFlags.S_DOC_FOLDER);
 	}
 	private String getOutputFileName(IFile file) {
 		String fileName = file.getName();
 		int dot = fileName.lastIndexOf('.');
 		String pageName = fileName.substring(0, dot) + ".html";
 		IPath path =
-			file.getProject().getFullPath().append(getDocLocation()).append(pageName);
+			file.getProject().getFullPath().append(getDocLocation()).append(
+				pageName);
 		return path.toString();
 	}
 	public String getSchemaLocation() {

@@ -17,9 +17,14 @@ public class CompilerFlags {
 	public static final int WARNING = 1;
 	public static final int IGNORE = 2;
 
+	public static final int MARKER = 0;
+	public static final int BOOLEAN = 1;
+	public static final int STRING = 2;
+
 	public static final int PLUGIN_FLAGS = 0;
-	public static final int FEATURE_FLAGS = 1;
-	public static final int SITE_FLAGS = 2;
+	public static final int SCHEMA_FLAGS = 1;
+	public static final int FEATURE_FLAGS = 2;
+	public static final int SITE_FLAGS = 3;
 
 	// Manifest compiler flags
 	public static final String P_UNRESOLVED_IMPORTS =
@@ -38,6 +43,9 @@ public class CompilerFlags {
 	public static final String P_NO_REQUIRED_ATT =
 		"compilers.p.no-required-att";
 
+	public static final String S_CREATE_DOCS = "compilers.s.create-docs";
+	public static final String S_DOC_FOLDER = "compilers.s.doc-folder";
+
 	private static final String[][] flags =
 		{
 			{
@@ -50,13 +58,33 @@ public class CompilerFlags {
 				P_UNKNOWN_RESOURCE,
 				P_NO_REQUIRED_ATT },
 			{
+			S_CREATE_DOCS,
+			S_DOC_FOLDER }, {
 		}, {
 		}
 	};
 
+	public static int getFlagType(String flagId) {
+		if (flagId.equals(S_CREATE_DOCS))
+			return BOOLEAN;
+		if (flagId.equals(S_DOC_FOLDER))
+			return STRING;
+		return MARKER;
+	}
+
 	public static int getFlag(String flagId) {
 		Preferences pref = PDE.getDefault().getPluginPreferences();
 		return pref.getInt(flagId);
+	}
+	
+	public static boolean getBoolean(String flagId) {
+		Preferences pref = PDE.getDefault().getPluginPreferences();
+		return pref.getBoolean(flagId);
+	}
+	
+	public static String getString(String flagId) {
+		Preferences pref = PDE.getDefault().getPluginPreferences();
+		return pref.getString(flagId);
 	}
 	
 	public static int getDefaultFlag(String flagId) {
@@ -64,10 +92,30 @@ public class CompilerFlags {
 		return pref.getDefaultInt(flagId);
 	}
 	
+	public static String getDefaultString(String flagId) {
+		Preferences pref = PDE.getDefault().getPluginPreferences();
+		return pref.getDefaultString(flagId);
+	}
+	
+	public static boolean getDefaultBoolean(String flagId) {
+		Preferences pref = PDE.getDefault().getPluginPreferences();
+		return pref.getDefaultBoolean(flagId);
+	}
+
 	public static void setFlag(String flagId, int value) {
 		Preferences pref = PDE.getDefault().getPluginPreferences();
 		pref.setValue(flagId, value);
-	}	
+	}
+	
+	public static void setBoolean(String flagId, boolean value) {
+		Preferences pref = PDE.getDefault().getPluginPreferences();
+		pref.setValue(flagId, value);
+	}
+	
+	public static void setString(String flagId, String value) {
+		Preferences pref = PDE.getDefault().getPluginPreferences();
+		pref.setValue(flagId, value);
+	}
 
 	public static void initializeDefaults() {
 		Preferences pref = PDE.getDefault().getPluginPreferences();
@@ -79,37 +127,28 @@ public class CompilerFlags {
 		pref.setDefault(P_UNKNOWN_CLASS, IGNORE);
 		pref.setDefault(P_UNKNOWN_RESOURCE, IGNORE);
 		pref.setDefault(P_NO_REQUIRED_ATT, IGNORE);
+		
+		pref.setDefault(S_CREATE_DOCS, false);
+		pref.setDefault(S_DOC_FOLDER, "doc");
 	}
-	
+
 	public static boolean isGroupActive(int group) {
 		Preferences pref = PDE.getDefault().getPluginPreferences();
 		String[] flagIds = getFlags(group);
 
 		for (int i = 0; i < flagIds.length; i++) {
 			String flagId = flagIds[i];
-			if (pref.getInt(flagId)!=IGNORE)
+			if (pref.getInt(flagId) != IGNORE)
 				return true;
 		}
 		return false;
 	}
-	
+
 	public static String[] getFlags(int group) {
 		return flags[group];
 	}
-	
+
 	public static void save() {
 		PDE.getDefault().savePluginPreferences();
-	}	
-
-	private static void restoreDefaults(Preferences pref, int group) {
-		String[] flagIds = getFlags(group);
-		for (int i = 0; i < flagIds.length; i++) {
-			String flagId = flagIds[i];
-			pref.setValue(flagId, pref.getDefaultInt(flagId));
-		}
 	}
-
-
-
-
 }
