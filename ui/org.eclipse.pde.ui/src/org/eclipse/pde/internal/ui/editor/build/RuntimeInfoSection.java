@@ -516,17 +516,16 @@ public class RuntimeInfoSection
 			manager.add(newAction);
 		}
 
-		if (!selection.isEmpty()) {
-			manager.add(new Separator());
-			Action deleteAction =
-				new Action(PDEPlugin.getResourceString(POPUP_DELETE)) {
-				public void run() {
-					handleJarsDelete();
-				}
-			};
-			deleteAction.setEnabled(true);
-			manager.add(deleteAction);
-		}
+		manager.add(new Separator());
+		Action deleteAction =
+			new Action(PDEPlugin.getResourceString(POPUP_DELETE)) {
+			public void run() {
+				handleJarsDelete();
+			}
+		};
+		deleteAction.setEnabled(!selection.isEmpty());
+		manager.add(deleteAction);
+
 		manager.add(new Separator());
 		// defect 19550
 		getFormPage().getEditor().getContributor().contextMenuAboutToShow(
@@ -549,22 +548,21 @@ public class RuntimeInfoSection
 		newAction.setEnabled(true);
 		manager.add(newAction);
 
-		if (!selection.isEmpty()) {
-			manager.add(new Separator());
-			IAction renameAction = new RenameAction();
-			renameAction.setEnabled(true);
-			manager.add(renameAction);
+		manager.add(new Separator());
+		IAction renameAction = new RenameAction();
+		renameAction.setEnabled(!selection.isEmpty());
+		manager.add(renameAction);
 
-			Action deleteAction =
-				new Action(PDEPlugin.getResourceString(POPUP_DELETE)) {
-				public void run() {
-					handleDelete();
-				}
-			};
+		Action deleteAction =
+			new Action(PDEPlugin.getResourceString(POPUP_DELETE)) {
+			public void run() {
+				handleDelete();
+			}
+		};
 
-			deleteAction.setEnabled(true);
-			manager.add(deleteAction);
-		}
+		deleteAction.setEnabled(!selection.isEmpty());
+		manager.add(deleteAction);
+
 		getFormPage().getEditor().getContributor().contextMenuAboutToShow(
 			manager,
 			false);
@@ -851,11 +849,21 @@ public class RuntimeInfoSection
 
 				IBuildEntry library = model.getFactory().createEntry(name);
 				build.add(library);
-
 				libraryViewer.refresh();
 				libraryViewer.setSelection(new StructuredSelection(library));
 				jarIncludeButton.setSelection(true);
 				handleLibInBinBuild(true);
+				
+				if (libNames.length>0){
+					Vector libElements = new Vector();
+					int i =0;
+					while (libraryViewer.getElementAt(i)!=null){
+						libElements.add(libraryViewer.getElementAt(i));
+						i++;
+					}
+
+					updateJarsCompileOrder((IBuildEntry[])libElements.toArray(new IBuildEntry[libElements.size()]));
+				}
 			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
@@ -936,7 +944,7 @@ public class RuntimeInfoSection
 	private void handleJarsDelete() {
 
 		IBuildModel buildModel = (IBuildModel) getFormPage().getModel();
-
+		int index = foldersViewer.getTable().getSelectionIndex();
 		Object object =
 			((IStructuredSelection) foldersViewer.getSelection()).getFirstElement();
 		if (object != null && object instanceof String) {
@@ -946,6 +954,12 @@ public class RuntimeInfoSection
 				try {
 					entry.removeToken(object.toString());
 					foldersViewer.remove(object);
+					String[] tokens=entry.getTokens();
+					if (tokens.length >index){
+						foldersViewer.setSelection(new StructuredSelection(tokens[index]));
+					} else if (tokens.length!=0){
+						foldersViewer.setSelection(new StructuredSelection(tokens[index-1]));
+					}
 				} catch (CoreException e) {
 					PDEPlugin.logException(e);
 				}
