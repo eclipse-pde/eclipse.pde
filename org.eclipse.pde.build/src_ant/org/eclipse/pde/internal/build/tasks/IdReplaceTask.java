@@ -29,7 +29,8 @@ public class IdReplaceTask extends Task {
 	private static final String EMPTY = ""; //$NON-NLS-1$
 	private static final String PLUGIN = "plugin"; //$NON-NLS-1$
 	private static final String INCLUDES = "includes"; //$NON-NLS-1$
-
+	private static final String IMPORT = "import"; //$NON-NLS-1$
+	
 	//Path of the file where we are replacing the values
 	private String featureFilePath;
 	//Map of the plugin ids (key) and their version number (value)  
@@ -170,6 +171,12 @@ public class IdReplaceTask extends Task {
 				if (startPlugin < startInclude) {
 					foundElement = startPlugin;
 					isPlugin = true;
+					//Check that the plugin word that has been found is not preceded by an import statement
+					int importPosition = scan(buffer, startElement + 1, IMPORT); 
+					if (importPosition != -1 && importPosition < startPlugin) {
+						startElement = startPlugin;
+						continue;
+					}
 				} else {
 					foundElement = startInclude;
 					isPlugin = false;
