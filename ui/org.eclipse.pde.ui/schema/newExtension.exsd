@@ -71,6 +71,9 @@ as the code needed to implement those extensions. If a contributed wizard is spe
                   a translatable name that will be used in UI representation
 of this wizard.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="icon" type="string">
@@ -147,6 +150,9 @@ using &apos;/&apos; as a delimiter.
                   a translatable name that will be used in UI representation
 of this wizard.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="icon" type="string">
@@ -199,6 +205,9 @@ interface.
                   a translatable name that will be used for UI presentation
 of this category
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="parentCategory" type="string">
@@ -213,6 +222,9 @@ of this category
 
    <element name="description" type="string">
       <annotation>
+         <appInfo>
+            <meta.element translatable="true"/>
+         </appInfo>
          <documentation>
             A short description of this wizard.
          </documentation>

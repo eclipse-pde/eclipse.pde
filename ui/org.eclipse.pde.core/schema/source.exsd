@@ -36,6 +36,9 @@ For each plug-in or fragment, a directory in the form {id}_{version} should exis
                <documentation>
                   
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
