@@ -27,10 +27,6 @@ public class ProductInfoSection extends PDESection {
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText("Product Definition");
-		TableWrapData td = new TableWrapData(TableWrapData.FILL, TableWrapData.TOP);
-		td.grabHorizontal = true;
-		td.rowspan = 2;
-		section.setLayoutData(td);
 		section.setDescription("Define the product and the default application that will run when running the product:");
 		
 		Composite client = toolkit.createComposite(section);
@@ -47,6 +43,9 @@ public class ProductInfoSection extends PDESection {
 		
 		toolkit.paintBordersFor(client);
 		section.setClient(client);	
+		TableWrapData td = new TableWrapData(TableWrapData.FILL_GRAB, TableWrapData.TOP);
+		td.rowspan = 2;
+		section.setLayoutData(td);
 	}
 	
 	private void createNameEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {

@@ -23,7 +23,6 @@ public class ExportSection extends PDESection {
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText("Exporting");
-		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB, TableWrapData.TOP));
 		section.setDescription("To package and export this product:");
 		
 		Composite comp = toolkit.createComposite(section);
@@ -32,7 +31,6 @@ public class ExportSection extends PDESection {
 		layout.numColumns = 3;
 		layout.verticalSpacing = 10;
 		comp.setLayout(layout);
-		comp.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		
 		FormText text = toolkit.createFormText(comp, true);
 		text.setText(PDEPlugin.getResourceString("Product.overview.validate"), true, false);
@@ -58,6 +56,7 @@ public class ExportSection extends PDESection {
 		
 		toolkit.paintBordersFor(comp);
 		section.setClient(comp);
+		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 	}
 	
 	/* (non-Javadoc)
