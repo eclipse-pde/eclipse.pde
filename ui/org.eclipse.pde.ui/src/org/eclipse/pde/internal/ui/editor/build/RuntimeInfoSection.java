@@ -876,8 +876,8 @@ public class RuntimeInfoSection extends PDESection
 								tokens[index + 1]);
 					else
 						fCurrentSelection = null;
+					fCurrentLibrary = entry;
 					entry.removeToken((String) object);
-					update(entry);
 				} catch (CoreException e) {
 					PDEPlugin.logException(e);
 				}
@@ -1077,7 +1077,7 @@ public class RuntimeInfoSection extends PDESection
 				fLibraryViewer.update(entry, null);
 				return;
 			} else { // add/remove source folder
-				fFolderViewer.refresh();
+				refresh();
 				if (fCurrentSelection != null) {
 					fFolderViewer.setSelection(fCurrentSelection);
 					updateDirectionalButtons();
@@ -1087,6 +1087,8 @@ public class RuntimeInfoSection extends PDESection
 					fFolderViewer.setInput(null);
 					fIncludeLibraryButton.setVisible(false);
 				}
+				if (fCurrentLibrary != null)
+					update(fCurrentLibrary);
 			}
 		} else if (keyName!= null && keyName.equals(IBuildPropertiesConstants.PROPERTY_JAR_ORDER)){
 			// account for change in jars compile order
