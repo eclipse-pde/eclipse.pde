@@ -7,7 +7,9 @@ package org.eclipse.pde.internal.builders;
 
 import java.util.Vector;
 
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.pde.internal.PDE;
 import org.eclipse.pde.internal.core.PDECore;
 
 public class DependencyLoopFinder {
@@ -39,9 +41,9 @@ public class DependencyLoopFinder {
 				// our loop!!
 				DependencyLoop loop = new DependencyLoop();
 				loop.setMembers((IPlugin[])path.toArray(new IPlugin[path.size()]));
-				String pattern = PDECore.getResourceString(KEY_LOOP_NAME);
+				String pattern = PDE.getResourceString(KEY_LOOP_NAME);
 				int no = loops.size()+1;
-				loop.setName(PDECore.getFormattedMessage(pattern,(""+no)));
+				loop.setName(PDE.getFormattedMessage(pattern,(""+no)));
 				loops.add(loop);
 				return;
 			}

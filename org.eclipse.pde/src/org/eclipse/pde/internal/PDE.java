@@ -45,6 +45,7 @@ public class PDE extends Plugin {
 			resourceBundle =
 				ResourceBundle.getBundle("org.eclipse.pde.internal.pderesources");
 		} catch (MissingResourceException x) {
+			log(x);
 			resourceBundle = null;
 		}
 	}
@@ -72,20 +73,19 @@ public class PDE extends Plugin {
 		return java.text.MessageFormat.format(text, new Object[] { arg });
 	}
 	static IPath getInstallLocation() {
-		return new Path(inst.getDescriptor().getInstallURL().getFile());
+		return new Path(getDefault().getDescriptor().getInstallURL().getFile());
 	}
 	public static String getPluginId() {
-		return inst.getDescriptor().getUniqueIdentifier();
+		return getDefault().getDescriptor().getUniqueIdentifier();
 	}
 	public ResourceBundle getResourceBundle() {
 		return resourceBundle;
 	}
 	public static String getResourceString(String key) {
-		ResourceBundle bundle = inst.getResourceBundle();
+		ResourceBundle bundle = getDefault().getResourceBundle();
 		if (bundle != null) {
 			try {
 				String bundleString = bundle.getString(key);
-				//return "$"+bundleString;
 				return bundleString;
 			} catch (MissingResourceException e) {
 				// default actions is to return key, which is OK

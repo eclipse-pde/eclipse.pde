@@ -38,7 +38,7 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 				try {
 					return (project.hasNature(PDE.FEATURE_NATURE));
 				} catch (CoreException e) {
-					PDECore.logException(e);
+					PDE.logException(e);
 					return false;
 				}
 			}
@@ -83,7 +83,7 @@ protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
 }
 private void checkFile(IFile file, IProgressMonitor monitor) {
 	String message =
-		PDECore.getFormattedMessage(
+		PDE.getFormattedMessage(
 			BUILDERS_VERIFYING,
 			file.getFullPath().toString());
 	monitor.subTask(message);
@@ -99,10 +99,10 @@ private void checkFile(IFile file, IProgressMonitor monitor) {
 			testPluginReferences(file, reporter);
 		}
 	} catch (CoreException e) {
-		PDECore.logException(e);
+		PDE.logException(e);
 	} catch (SAXException e) {
 	} catch (IOException e) {
-		PDECore.logException(e);
+		PDE.logException(e);
 	} finally {
 		if (source != null) {
 			try {
@@ -111,7 +111,7 @@ private void checkFile(IFile file, IProgressMonitor monitor) {
 			}
 		}
 	}
-	monitor.subTask(PDECore.getResourceString(BUILDERS_UPDATING));
+	monitor.subTask(PDE.getResourceString(BUILDERS_UPDATING));
 	monitor.done();
 }
 private boolean isManifestFile(IFile file) {
@@ -145,7 +145,7 @@ private void testPluginReferences(IFile file, PluginErrorReporter reporter) {
 			IFeaturePlugin plugin = plugins[i];
 			if (isValidReference(plugin) == false) {
 				String message =
-					PDECore.getFormattedMessage(
+					PDE.getFormattedMessage(
 						BUILDERS_FEATURE_REFERENCE,
 						plugin.getLabel());
 				reporter.reportError(message);
@@ -158,7 +158,7 @@ private void testPluginReferences(IFile file, PluginErrorReporter reporter) {
 		String realName = folder.getName();
 		if (realName.equals(expectedFolderName)==false) {
 			String message =
-				PDECore.getFormattedMessage(
+				PDE.getFormattedMessage(
 					BUILDERS_FEATURE_FOLDER_SYNC,
 					realName);
 			reporter.reportError(message);

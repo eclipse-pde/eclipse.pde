@@ -88,7 +88,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 
 	private void checkFile(IFile file, IProgressMonitor monitor) {
 		String message =
-			PDECore.getFormattedMessage(BUILDERS_VERIFYING, file.getFullPath().toString());
+			PDE.getFormattedMessage(BUILDERS_VERIFYING, file.getFullPath().toString());
 		monitor.subTask(message);
 		PluginErrorReporter reporter = new PluginErrorReporter(file);
 		ManifestParser parser = new ManifestParser(reporter);
@@ -100,7 +100,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 				validatePlugin(file, reporter);
 			}
 		}
-		monitor.subTask(PDECore.getResourceString(BUILDERS_UPDATING));
+		monitor.subTask(PDE.getResourceString(BUILDERS_UPDATING));
 		monitor.done();
 	}
 	private boolean isFragment(IFile file) {
@@ -150,7 +150,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 				// broken fragment link
 				String[] args = { pluginId, pluginVersion };
 				String message =
-					PDECore.getFormattedMessage(BUILDERS_FRAGMENT_BROKEN_LINK, args);
+					PDE.getFormattedMessage(BUILDERS_FRAGMENT_BROKEN_LINK, args);
 				int line = 1;
 				if (fragment instanceof ISourceObject)
 					line = ((ISourceObject) fragment).getStartLine();
@@ -170,7 +170,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			PluginVersionIdentifier pvi = new PluginVersionIdentifier(version);
 			pvi.toString();
 		} catch (Throwable e) {
-			String message = PDECore.getFormattedMessage(BUILDERS_VERSION_FORMAT, version);
+			String message = PDE.getFormattedMessage(BUILDERS_VERSION_FORMAT, version);
 			int line = 1;
 			if (pluginBase instanceof ISourceObject)
 				line = ((ISourceObject) pluginBase).getStartLine();

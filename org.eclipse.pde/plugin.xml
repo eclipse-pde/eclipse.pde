@@ -3,7 +3,8 @@
    id="org.eclipse.pde"
    name="%name"
    version="1.0.0"
-   provider-name="International Business Machines Corp.">
+   provider-name="International Business Machines Corp."
+   class="org.eclipse.pde.internal.PDE">
 
    <runtime>
       <library name="pde.jar">
