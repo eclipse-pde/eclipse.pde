@@ -32,10 +32,13 @@
       <mapper refid="stripMapper.id"/>
     </copy>
     <delete file="${dest}"/>
-    <exec dir="${out}" executable="zip">
-		<arg line="-r ${dest} ."/>
-    </exec>
-    <copy file="${out}.log" todir="${basedir}"/>
+    <antcall target="runJar">
+      <param name="resultingFile" value="${dest}"/>
+      <param name="targetDir" value="${out}"/>
+    </antcall>
+    <copy todir="${basedir}">
+      <fileset dir="." includes="*.log" />
+    </copy>
     <delete dir="${out}"/>
   </target>
 
@@ -64,9 +67,10 @@
       <mapper refid="stripMapper.id"/>
     </copy>
     <delete file="${dest}"/>
-    <exec dir="${dest}.pdetemp" executable="zip">
-		<arg line="-r ${dest} ."/>
-    </exec>
+    <antcall target="runZip">
+      <param name="resultingFile" value="${dest}"/>
+      <param name="targetDir" value="${dest}.pdetemp"/>
+    </antcall>
     <delete dir="${dest}.pdetemp"/>
   </target>
 
@@ -104,5 +108,38 @@
     </delete>
     <delete dir="javadoc"/>
   </target>
-</project>
 
+  <!-- Delegates the zip call to either the default task or an external program. -->
+  <!-- In order to define which one to run, the user should set a property       -->
+  <!-- called useExternalZip.                                                    -->
+  <target name="runZip" depends="init">
+    <antcall target="externalZip"/>
+    <antcall target="antZip"/>
+  </target>
+
+  <!-- Executes an external zip program -->
+  <target name="externalZip" if="useExternalZip">
+    <exec dir="${targetDir}" executable="zip">
+		<arg line="-r ${resultingFile} ."/>
+    </exec>
+  </target>
+
+  <!-- Executes the default zip task defined by Ant -->
+  <target name="antZip" unless="useExternalZip">
+    <zip zipfile="${resultingFile}" basedir="${targetDir}"/>
+  </target>
+
+  <!-- Delegates the jar call to either the default task or an external program. -->
+  <!-- In order to define which one to run, the user should set a property       -->
+  <!-- called useExternalZip.                                                    -->
+  <target name="runJar" depends="init">
+    <antcall target="externalZip"/>
+    <antcall target="antJar"/>
+  </target>
+
+  <!-- Executes the default jar task defined by Ant -->
+  <target name="antJar" unless="useExternalZip">
+    <jar jarfile="${resultingFile}" basedir="${targetDir}"/>
+  </target>
+  
+</project>

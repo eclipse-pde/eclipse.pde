@@ -367,10 +367,11 @@ protected void generateModelDocTarget(PrintWriter output, PluginModel descriptor
 	output.println("      <param name =\"destroot\" value=\"${base}/" + getComponentDirectoryName() + "\"/>");
 	output.println("    </antcall>");
 	
-	// make system call to preserve permissions on linux
-	output.println("	<exec dir=\"${base}\" executable=\"zip\">");
-	output.println("	   <arg line=\"-r ${basedir}/" + getModelFileBase() + DEFAULT_FILENAME_DOC + " .\"/>");
-	output.println("	</exec>");
+	// call runZip on template.xml in case we want to use an external program
+	output.println("	<ant antfile=\"${template}\" target=\"runZip\">");
+	output.println("      <property name=\"resultingFile\" value=\"${basedir}/" + getModelFileBase() + DEFAULT_FILENAME_DOC + "\"/>");
+	output.println("      <property name=\"targetDir\" value=\"${base}\"/>");
+	output.println("	</ant>");
 	
 	//output.println("    <zip zipfile=\"" + getModelFileBase() + DEFAULT_FILENAME_DOC + "\" basedir=\"${base}\"/>");
 	output.println("    <delete dir=\"${base}\"/>");
@@ -386,12 +387,12 @@ protected void generateModelLogTarget(PrintWriter output, PluginModel descriptor
 	output.println("      <param name =\"destroot\" value=\"${base}/" + getComponentDirectoryName() + "\"/>");
 	output.println("    </antcall>");
 
+	// call runZip on template.xml in case we want to use an external program
+	output.println("	<ant antfile=\"${template}\" target=\"runZip\">");
+	output.println("      <property name=\"resultingFile\" value=\"${basedir}/" + getModelFileBase() + DEFAULT_FILENAME_LOG + "\"/>");
+	output.println("      <property name=\"targetDir\" value=\"${base}\"/>");
+	output.println("	</ant>");
 	
-	// make system call to preserve permissions on linux
-	output.println("	<exec dir=\"${base}\" executable=\"zip\">");
-	output.println("	   <arg line=\"-r ${basedir}/" + getModelFileBase() + DEFAULT_FILENAME_LOG + " .\"/>");
-	output.println("	</exec>");
-
 	//output.println("    <zip zipfile=\"" + getModelFileBase() + DEFAULT_FILENAME_LOG + "\" basedir=\"${base}\"/>");
 	output.println("    <delete dir=\"${base}\"/>");
 	output.println("  </target>");
@@ -405,14 +406,13 @@ protected void generateModelSrcTarget(PrintWriter output, PluginModel descriptor
 	output.println("    <antcall target=\"src\">");
 	output.println("      <param name =\"destroot\" value=\"${base}/" + getComponentDirectoryName() + "\"/>");
 	output.println("    </antcall>");
-	
-	
-	// make system call to preserve permissions on linux
-	output.println("	<exec dir=\"${base}\" executable=\"zip\">");
-	output.println("	   <arg line=\"-r ${basedir}/" + getModelFileBase() + DEFAULT_FILENAME_SRC + " .\"/>");
-	output.println("	</exec>");	
-	//output.println("    <zip zipfile=\"" + getModelFileBase() + DEFAULT_FILENAME_SRC + "\" basedir=\"${base}\"/>");
 
+	// call runZip on template.xml in case we want to use an external program
+	output.println("	<ant antfile=\"${template}\" target=\"runZip\">");
+	output.println("      <property name=\"resultingFile\" value=\"${basedir}/" + getModelFileBase() + DEFAULT_FILENAME_SRC + "\"/>");
+	output.println("      <property name=\"targetDir\" value=\"${base}\"/>");
+	output.println("	</ant>");
+	
 	output.println("    <delete dir=\"${base}\"/>");
 	output.println("  </target>");
 }
@@ -430,13 +430,18 @@ protected void generateModelTarget(PrintWriter output, PluginModel descriptor) {
 	output.println("      <param name =\"destroot\" value=\"${base}/" + getComponentDirectoryName() + "\"/>");
 	output.println("    </antcall>");
 
-	
-	// make system call to preserve permissions on linux
-	output.println("	<exec dir=\"${base}\" executable=\"zip\">");
-	output.println("	  <arg line=\"-r ${basedir}/" + getModelFileBase() + DEFAULT_FILENAME_BIN + " . -x *.bin.log \"/>");
-	output.println("	</exec>");
-	//output.println("    <zip zipfile=\"" + getModelFileBase() + DEFAULT_FILENAME_BIN + "\" basedir=\"${base}\" excludes=\"**/*.bin.log\"/>");
+	// delete *.bin.log
+	output.println("    <delete>");
+	output.println("      <fileset dir=\"${base}\" includes=\"**/*.bin.log\"/>");
+	output.println("    </delete>");
 
+	// call runZip on template.xml in case we want to use an external program
+	output.println("	<ant antfile=\"${template}\" target=\"runZip\">");
+	output.println("      <property name=\"resultingFile\" value=\"${basedir}/" + getModelFileBase() + DEFAULT_FILENAME_BIN + "\"/>");
+	output.println("      <property name=\"targetDir\" value=\"${base}\"/>");
+	output.println("	</ant>");
+	
+	//output.println("    <zip zipfile=\"" + getModelFileBase() + DEFAULT_FILENAME_BIN + "\" basedir=\"${base}\" excludes=\"**/*.bin.log\"/>");
 	output.println("    <delete dir=\"${base}\"/>");
 	output.println("  </target>");
 }

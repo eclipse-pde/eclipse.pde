@@ -117,10 +117,12 @@ protected void generateBinTarget(PrintWriter output) {
 	output.println("    <available file=\"${binSource}\" property=\"binSource.exists\"/>");
 	output.println("    <antcall target=\"bin-copy\"/>");
 	
-	// make system call to create jar to preserve permissions on linux.
-	output.println("	<exec dir=\"${basedir}/_temp___\" executable=\"zip\">");
-	output.println("	   <arg line=\"-r ../${configuration}${stamp}.jar .\"/>");
-	output.println("	</exec>");
+	// call runJar on template.xml in case we want to use an external program
+	output.println("	<ant antfile=\"${template}\" target=\"runJar\">");
+	output.println("      <property name=\"resultingFile\" value=\"../${configuration}${stamp}.jar\"/>");
+	output.println("      <property name=\"targetDir\" value=\"${basedir}/_temp___\"/>");
+	output.println("	</ant>");
+	
 	//output.println("    <jar jarfile=\"${configuration}_${configVersion}.jar\" basedir=\"${basedir}/_temp___\"/>");
 	output.println("    <delete dir=\"${basedir}/_temp___\"/>");
 	output.println("  </target>");

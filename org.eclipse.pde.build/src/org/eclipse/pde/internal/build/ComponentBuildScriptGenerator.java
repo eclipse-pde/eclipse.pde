@@ -133,10 +133,12 @@ protected void generateBinTarget(PrintWriter output) {
 	output.println("      <property name=\"excludes\" value=\"" + exclusions + "\"/>");
 	output.println("      <property name=\"dest\" value=\"${basedir}/_temp___/install/components/${component}_${compVersion}\"/>");
 	output.println("    </ant>");
-	// make system call to preserve permissions on linux
-	output.println("	<exec dir=\"${basedir}/_temp___\" executable=\"zip\">");
-	output.println("	   <arg line=\"-r ../${component}${stamp}.jar .\"/>");
-	output.println("	</exec>");
+	
+	// call runJar on template.xml in case we want to use an external program
+	output.println("	<ant antfile=\"${template}\" target=\"runJar\">");
+	output.println("      <property name=\"resultingFile\" value=\"../${component}${stamp}.jar\"/>");
+	output.println("      <property name=\"targetDir\" value=\"${basedir}/_temp___\"/>");
+	output.println("	</ant>");
 	
 	//output.println("    <jar jarfile=\"${component}_${compVersion}.jar\" basedir=\"${basedir}/_temp___\"/>");
 	output.println("    <delete dir=\"${basedir}/_temp___\"/>");
@@ -182,11 +184,12 @@ protected void generateDocTarget(PrintWriter output) {
 	output.println("	  <fileset dir=\".\" includes=\"${component}.doc*.zip\"/>");
 	output.println("	</delete>");
 	
-	// on linux make system call to preserve permissions.
-	output.println("	<exec dir=\"${basedir}/_temp___\" executable=\"zip\">");
-	output.println("	   <arg line=\"-r ../${component}.doc${stamp}.zip .\"/>");
-	output.println("	</exec>");
-	output.println("    <delete dir=\"${basedir}/_temp___\"/>");
+	// call runZip on template.xml in case we want to use an external program
+	output.println("	<ant antfile=\"${template}\" target=\"runZip\">");
+	output.println("      <property name=\"resultingFile\" value=\"../${component}.doc${stamp}.zip\"/>");
+	output.println("      <property name=\"targetDir\" value=\"${basedir}/_temp___\"/>");
+	output.println("	</ant>");
+
 	output.println("  </target>");
 }
 protected void generateEpilogue(PrintWriter output) {
@@ -216,11 +219,12 @@ protected void generateGatherTemplateCall(PrintWriter output, String targetName,
 protected void generateLogTarget(PrintWriter output) {
 	generateGatherTemplateCall(output,TARGET_LOG,false);
 	
-	// make system call to preserve permissions on linux
-	output.println("	<exec dir=\"${basedir}/_temp___\" executable=\"zip\">");
-	output.println("	   <arg line=\"-r ../${component}.log${stamp}.zip .\"/>");
-	output.println("	</exec>");
-	output.println("    <delete dir=\"${basedir}/_temp___\"/>");
+	// call runZip on template.xml in case we want to use an external program
+	output.println("	<ant antfile=\"${template}\" target=\"runZip\">");
+	output.println("      <property name=\"resultingFile\" value=\"../${component}.log${stamp}.zip\"/>");
+	output.println("      <property name=\"targetDir\" value=\"${basedir}/_temp___\"/>");
+	output.println("	</ant>");
+
 	output.println("  </target>");
 }
 protected void generatePrologue(PrintWriter output) {
@@ -244,11 +248,12 @@ protected void generatePrologue(PrintWriter output) {
 protected void generateSrcTarget(PrintWriter output) {
 	generateGatherTemplateCall(output,TARGET_SRC,false);
 	
-	// make system call to preserve permissions on linux
-	output.println("	<exec dir=\"${basedir}/_temp___\" executable=\"zip\">");
-	output.println("	   <arg line=\"-r ../${component}.src${stamp}.jar .\"/>");
-	output.println("	</exec>");
-
+	// call runJar on template.xml in case we want to use an external program
+	output.println("	<ant antfile=\"${template}\" target=\"runJar\">");
+	output.println("      <property name=\"resultingFile\" value=\"../${component}.src${stamp}.jar\"/>");
+	output.println("      <property name=\"targetDir\" value=\"${basedir}/_temp___\"/>");
+	output.println("	</ant>");
+	
 	//output.println("    <jar jarfile=\"" + DEFAULT_FILENAME_SRC + "\" basedir=\"${basedir}/_temp___/\"/>");
 	output.println("    <delete dir=\"${basedir}/_temp___\"/>");
 	output.println("  </target>");
