@@ -924,15 +924,32 @@
    <extension
          point="org.eclipse.ui.decorators">
       <decorator
-            objectClass="org.eclipse.core.resources.IResource"
+            quadrant="TOP_LEFT"
             adaptable="true"
             label="%decorator.label"
+            icon="icons/full/ovr16/binary_co.gif"
             state="false"
-            class="org.eclipse.pde.internal.ui.wizards.imports.BinaryProjectDecorator"
             id="org.eclipse.pde.ui.binaryProjectDecorator">
          <description>
             %decorator.desc
          </description>
+         <enablement>
+            <and>
+               <objectClass
+                     name="org.eclipse.core.resources.IProject">
+               </objectClass>
+               <objectState
+                     name="persistentProperty"
+                     value="org.eclipse.pde.core.imported = binary">
+               </objectState>
+               <not>
+                  <objectState
+                        name="sessionProperty"
+                        value="org.eclipse.team.core.repository">
+                  </objectState>
+               </not>
+            </and>
+         </enablement>
       </decorator>
    </extension>
    <extension
