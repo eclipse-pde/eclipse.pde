@@ -21,6 +21,7 @@ import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
+import org.osgi.framework.*;
 import org.w3c.dom.*;
 import org.xml.sax.*;
 
@@ -103,7 +104,9 @@ public abstract class PluginBase
 	void load(BundleDescription bundleDescription, PDEState state) {
 		this.id = bundleDescription.getUniqueId();
 		this.version = bundleDescription.getVersion().toString();
-		
+		Dictionary manifest = state.getManifest(bundleDescription.getBundleId());
+		this.name = (String)manifest.get(Constants.BUNDLE_NAME);
+		this.providerName = (String)manifest.get(Constants.BUNDLE_VENDOR);
 		loadRuntime(bundleDescription, state);
 		loadImports(bundleDescription);
 		
