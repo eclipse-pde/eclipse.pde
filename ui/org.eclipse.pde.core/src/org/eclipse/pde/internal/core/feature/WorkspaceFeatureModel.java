@@ -21,7 +21,7 @@ public WorkspaceFeatureModel() {
 	super();
 }
 public WorkspaceFeatureModel(IFile file) {
-	this.file = file;
+	setFile(file);
 }
 public void fireModelChanged(IModelChangedEvent event) {
 	dirty = true;

@@ -37,6 +37,7 @@ public class TemplateForm extends WebForm {
 	private ManifestTemplatePage page;
 	private Button dontShowCheck;
 	private boolean dontShow;
+	private FormEngine text;
 	/**
 	 * Constructor for TemplateForm.
 	 */
@@ -55,7 +56,6 @@ public class TemplateForm extends WebForm {
 
 		FormWidgetFactory factory = getFactory();
 
-		FormEngine text;
 		SharedLabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
 		Image pageImage = provider.get(PDEPluginImages.DESC_PAGE_OBJ);
 		Image runImage = provider.get(PDEPluginImages.DESC_RUN_EXC);
@@ -196,6 +196,10 @@ public class TemplateForm extends WebForm {
 			}
 		} catch (JavaModelException e) {
 		}
+	}
+	public void setFocus() {
+		if (text!=null)
+			text.setFocus();
 	}
 
 	private void openNewExtensionWizard() {
