@@ -10,6 +10,7 @@ import java.util.Map;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.ISourceObject;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.PDE;
@@ -28,7 +29,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		"Builders.versionFormat";
 
 	private boolean javaDelta = false;
-	private IProject [] interestingProjects;
+	private boolean fileCompiled=false;
 
 	class DeltaVisitor implements IResourceDeltaVisitor {
 		private IProgressMonitor monitor;
@@ -60,42 +61,112 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			return true;
 		}
 	}
+	
+	class ReferenceDeltaVisitor implements IResourceDeltaVisitor {
+		private boolean interestingChange;
+		public ReferenceDeltaVisitor() {
+		}
+		
+		public boolean isInterestingChange() {
+			return interestingChange;
+		}
+		
+		public boolean visit(IResourceDelta delta) {
+			IResource resource = delta.getResource();
+
+			if (resource instanceof IProject) {
+				// Only check projects with plugin nature
+				IProject project = (IProject) resource;
+				return (PDE.hasPluginNature(project));
+			}
+			if (resource instanceof IFile) {
+				// see if this is it
+				IFile candidate = (IFile) resource;
+				if (isManifestFile(candidate)) {
+					interestingChange=true;
+					return false;
+				}
+			}
+			return true;
+		}
+	}
 
 	public ManifestConsistencyChecker() {
 		super();
 	}
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
 		throws CoreException {
-			
-		interestingProjects = null;
 
 		IProject project = getProject();
+		fileCompiled=false;
+		javaDelta=false;
+		
+		// Ignore binary plug-in projects
+		if (WorkspaceModelManager.isBinaryPluginProject(project)) return null;
 
 		IResourceDelta delta = null;
 		if (kind != FULL_BUILD)
 			delta = getDelta(getProject());
 
 		if (delta == null || kind == FULL_BUILD) {
-			// Full build
-			if (!PDE.hasPluginNature(project))
-				return null;
-
-			IPath path = project.getFullPath().append("plugin.xml");
-			IWorkspace workspace = project.getWorkspace();
-			IFile file = workspace.getRoot().getFile(path);
-			if (file.exists()) {
-				checkFile(file, monitor);
-			} else {
-				path = project.getFullPath().append("fragment.xml");
-				file = workspace.getRoot().getFile(path);
-				if (file.exists()) {
-					checkFile(file, monitor);
-				}
-			}
+			checkThisProject(project, monitor);
 		} else {
 			processDelta(delta, monitor);
 		}
+		IProject [] interestingProjects = null;
+
+		// Compute interesting projects
+		WorkspaceModelManager wmanager = PDECore.getDefault().getWorkspaceModelManager();
+		IModel thisModel = wmanager.getWorkspaceModel(project);
+		if (thisModel!=null && thisModel instanceof IPluginModelBase)
+			interestingProjects = computeInterestingProjects((IPluginModelBase)thisModel);
+		// If not compiled already, see if there are interesting
+		// changes in referenced projects that may cause us
+		// to compile
+		if (!fileCompiled && kind!=FULL_BUILD && interestingProjects!=null) {
+			checkInterestingProjectDeltas(project, interestingProjects, monitor);
+		}
 		return interestingProjects;
+	}
+	
+	private void checkThisProject(IProject project, IProgressMonitor monitor) {
+		if (!PDE.hasPluginNature(project))
+			return;
+
+		IPath path = project.getFullPath().append("plugin.xml");
+		IWorkspace workspace = project.getWorkspace();
+		IFile file = workspace.getRoot().getFile(path);
+		if (file.exists()) {
+			checkFile(file, monitor);
+		} else {
+			path = project.getFullPath().append("fragment.xml");
+			file = workspace.getRoot().getFile(path);
+			if (file.exists()) {
+				checkFile(file, monitor);
+			}
+		}
+	}
+	
+	private void checkInterestingProjectDeltas(IProject project, IProject [] interestingProjects, IProgressMonitor monitor) throws CoreException {
+		// although we didn't have any changes we care about in this project,
+		// there may be changes in referenced projects that affect us
+		ReferenceDeltaVisitor rvisitor = new ReferenceDeltaVisitor();
+		
+		for (int i=0; i<interestingProjects.length; i++) {
+			IProject interestingProject = interestingProjects[i];
+			IResourceDelta delta = getDelta(interestingProject);
+			if (delta!=null) {
+				// there is a delta here
+				delta.accept(rvisitor);
+				if (rvisitor.isInterestingChange())
+					break;
+			}
+		}
+		if (rvisitor.isInterestingChange()) {
+			// At least one interesting project has a change
+			// Need to check the file.
+			checkThisProject(project, monitor);
+		}
 	}
 	
 	private void processDelta(IResourceDelta delta, IProgressMonitor monitor)
@@ -134,6 +205,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		}
 		monitor.subTask(PDE.getResourceString(BUILDERS_UPDATING));
 		monitor.done();
+		fileCompiled=true;
 	}
 	
 	private boolean isFragment(IFile file) {
@@ -172,7 +244,6 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			IPlugin plugin = model.getPlugin();
 			validateVersion(plugin, reporter);
 			validateValues(plugin, reporter);
-			computeInterestingProjects(model);
 		}
 		model.dispose();
 	}
@@ -204,14 +275,13 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 				reporter.reportError(message, line);
 			}
 			validateValues(fragment, reporter);
-			computeInterestingProjects(model);
 		}
 		model.dispose();
 	}
 	
-	private void computeInterestingProjects(IPluginModelBase model) {
+	private IProject [] computeInterestingProjects(IPluginModelBase model) {
 		IPluginBase plugin = model.getPluginBase();
-		if (plugin==null) return;
+		if (plugin==null) return null;
 		PluginModelManager modelManager = PDECore.getDefault().getModelManager();
 		ArrayList projects = new ArrayList();
 		// Add all projects for imported plug-ins that
@@ -220,8 +290,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		for (int i=0; i<iimports.length; i++) {
 			IPluginImport iimport = iimports[i];
 			IPluginModelBase importModel = modelManager.findPlugin(iimport.getId(), iimport.getVersion(), iimport.getMatch());
-			if (importModel!=null && importModel.getUnderlyingResource()!=null)
-				projects.add(importModel.getUnderlyingResource().getProject());
+			addInterestingProject(iimport.getId(), importModel, projects); 
 		}
 		// If fragment, also add the referenced plug-in
 		// if in the workspace 
@@ -229,10 +298,20 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			IFragment fragment = (IFragment)plugin;
 			IPluginModelBase refPlugin = modelManager.findPlugin(fragment.getPluginId(),
 			fragment.getPluginVersion(), fragment.getRule());
-			if (refPlugin!=null && refPlugin.getUnderlyingResource()!=null)
-				projects.add(refPlugin.getUnderlyingResource().getProject());
+			addInterestingProject(fragment.getPluginId(), refPlugin, projects);
 		}
-		interestingProjects = (IProject[])projects.toArray(new IProject[projects.size()]);
+		return (IProject[])projects.toArray(new IProject[projects.size()]);
+	}
+	
+	private void addInterestingProject(String id, IPluginModelBase model, ArrayList list) {
+		if (model!=null && model.isEnabled()) {
+			if (model.getUnderlyingResource()!=null)
+				list.add(model.getUnderlyingResource().getProject());
+		}
+		else {
+			IProject missingProject = PDECore.getWorkspace().getRoot().getProject(id);
+			list.add(missingProject);
+		}
 	}
 
 	private void validateVersion(
