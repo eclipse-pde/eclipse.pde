@@ -1,0 +1,207 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.pde">
+<annotation>
+   <appInfo>
+      <meta.schema plugin="org.eclipse.pde" id="newExtension" name="Extension Wizards"/>
+   </appInfo>
+   <documentation>
+      This extension point can be used to plug in wizards
+that will be used to create new extensions in 
+PDE plug-in manifest editor. Wizards can create on
+or more extensions at the same time, as well
+as the code needed to implement those extensions.
+&lt;p&gt;
+&lt;b&gt;Note: this extension point is internal and can
+only be used by PDE.
+&lt;/b&gt;
+   </documentation>
+</annotation>
+
+   <element name="extension">
+      <complexType>
+         <choice minOccurs="0" maxOccurs="unbounded">
+            <element ref="wizard"/>
+            <element ref="category"/>
+         </choice>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified identifier of the target extension point
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  an optional identifier of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  an optional name of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="wizard">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="description" minOccurs="0" maxOccurs="1"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a unique name that will be used to identify this wizard.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a translatable name that will be used in UI representation
+of this wizard.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  a relative path of an icon that will be used to visually 
+represent the wizard.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified name of a class which implements 
+&lt;samp&gt;org.eclipse.pde.internal.base.IExtensionWizard&lt;/samp&gt; 
+interface.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.pde.internal.base.IExtensionWizard"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="availableAsShortcut" type="boolean">
+            <annotation>
+               <documentation>
+                  If &lt;samp&gt;true&lt;/samp&gt;, this wizard will appear in the
+short cut menu on the menu bar and the tool bar.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="category" type="string">
+            <annotation>
+               <documentation>
+                  an optional id that makes this wizard a member of the
+previously defined category. If category is hierarchical,
+full path to the parent category should be specified
+using '/' as a delimiter.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="category">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a unique name that will be used to reference this category
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a translatable name that will be used for UI presentation
+of this category
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="parentCategory" type="string">
+            <annotation>
+               <documentation>
+                  an optional attribute that can be used to create
+category hierarchy
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="description" type="string">
+      <annotation>
+         <documentation>
+            A short description of this wizard
+         </documentation>
+      </annotation>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example of the extension:
+&lt;p&gt;
+&lt;pre&gt;
+&lt;extension
+      point="org.eclipse.pde.newExtension"&gt;
+   &lt;category
+         name="Custom Extensions"
+         id="custom"&gt;
+   &lt;/category&gt;
+   &lt;wizard
+         availableAsShortcut="true"
+         name="Simple Java Editor Extension"
+         icon="icons/java_edit.gif"
+         category="generic"
+         class="com.example.xyz.SimpleJavaEditorExtension"
+         id="com.example.xyz.simple"&gt;
+      &lt;description&gt;
+         This wizard creates a simple Java editor with
+         all the required classes and manifest markup.
+      &lt;/description&gt;
+   &lt;/wizard&gt;
+&lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         This extension point requires that a class that
+implements  
+&lt;samp&gt;org.eclipse.pde.internal.base.IExtensionWizard&lt;/samp&gt;
+ interface.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         PDE provides generic wizard that creates extension
+points based on the extension point schema information.
+      </documentation>
+   </annotation>
+
+</schema>

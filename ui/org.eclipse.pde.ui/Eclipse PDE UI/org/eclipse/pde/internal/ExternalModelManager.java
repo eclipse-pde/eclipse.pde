@@ -1,8 +1,4 @@
 package org.eclipse.pde.internal;
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.jdt.core.*;
 import org.eclipse.core.runtime.IStatus;
@@ -28,6 +24,9 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.resources.ResourcesPlugin;
 
 /**
+ * Insert the type's description here.
+ * Creation date: (12/8/2000 12:23:06 PM)
+ * @author: Dejan Glozic
  */
 public class ExternalModelManager {
 	private Vector models;
@@ -102,7 +101,7 @@ public IPath getEclipseHome() {
 			return null;
 		eclipseHome = new Path(newValue);
 		try {
-			JavaCore.setClasspathVariable(PDEPlugin.ECLIPSE_HOME_VARIABLE, eclipseHome);
+			JavaCore.setClasspathVariable(PDEPlugin.ECLIPSE_HOME_VARIABLE, eclipseHome, null);
 		} catch (JavaModelException e) {
 			PDEPlugin.logException(e);
 		}
@@ -247,7 +246,7 @@ public void setEclipseHome(String newValue) {
 	try {
 		JavaCore.setClasspathVariable(
 			PDEPlugin.ECLIPSE_HOME_VARIABLE,
-			new Path(newValue));
+			new Path(newValue), null);
 	} catch (JavaModelException e) {
 		PDEPlugin.logException(e);
 	}

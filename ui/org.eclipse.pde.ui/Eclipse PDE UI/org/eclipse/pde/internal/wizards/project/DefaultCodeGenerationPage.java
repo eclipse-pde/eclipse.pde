@@ -1,8 +1,4 @@
 package org.eclipse.pde.internal.wizards.project;
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.jdt.core.*;
 import org.eclipse.pde.internal.base.model.plugin.*;
@@ -39,6 +35,7 @@ public class DefaultCodeGenerationPage extends WizardPage {
 	private static final String KEY_TITLE = "DefaultCodeGenerationPage.title";
 	private static final String KEY_FTITLE = "DefaultCodeGenerationPage.ftitle";
 	private static final String KEY_ID_NOT_SET = "DefaultCodeGenerationPage.idNotSet";
+	private static final String KEY_INVALID_ID = "DefaultCodeGenerationPage.invalidId";
 	private static final String KEY_DESC = "DefaultCodeGenerationPage.desc";
 	private static final String KEY_FDESC = "DefaultCodeGenerationPage.fdesc";
 	private static final String KEY_FNAME = "DefaultCodeGenerationPage.fname";
@@ -510,8 +507,19 @@ private void verifyPluginFields() {
 		setErrorMessage(PDEPlugin.getResourceString(KEY_ID_NOT_SET));
 		setPageComplete(false);
 	} else {
-		setPageComplete(true);
-		setErrorMessage(null);
+		if (isPluginValid(pluginIdField.getText(),
+		                          pluginVersionField.getText())) {
+		   setPageComplete(true);
+		   setErrorMessage(null);
+		}
+		else {
+		   setPageComplete(false);
+		   setErrorMessage(PDEPlugin.getResourceString(KEY_INVALID_ID));
+		}
 	}
+}
+private boolean isPluginValid(String pluginId, String pluginVersion) {
+	IPlugin plugin = PDEPlugin.getDefault().findPlugin(pluginId, pluginVersion);
+	return plugin != null;
 }
 }

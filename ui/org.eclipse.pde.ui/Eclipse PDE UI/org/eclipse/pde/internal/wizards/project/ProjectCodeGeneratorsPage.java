@@ -1,8 +1,4 @@
 package org.eclipse.pde.internal.wizards.project;
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.lang.reflect.*;
 import org.eclipse.ui.actions.*;
@@ -189,8 +185,10 @@ private void setWizardListEnabled(boolean enabled) {
 	if (!enabled) {
 		wizardListEnableState = ControlEnableState.disable(wizardList);
 	}
-	else if (wizardListEnableState!=null) {
-		wizardListEnableState.restore();
+	else {
+		if (wizardListEnableState!=null)
+		   wizardListEnableState.restore();
+		wizardList.setFocus();
 	}
 }
 private void updateWizardButtons() {

@@ -1,8 +1,4 @@
 package org.eclipse.pde.internal.editor.manifest;
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.internal.preferences.*;
@@ -194,7 +190,9 @@ public boolean addWorkspacePlugins(IPluginModel model, boolean hasExternal) {
 }
 public void commitChanges(boolean onSave) {
 	if (onSave) {
-		updateBuildPath();
+		boolean shouldUpdate = ManifestPreferencePage.getUpdateBuildPath();
+		if (shouldUpdate)
+		   updateBuildPath();
 	}
 	setDirty(false);
 }
