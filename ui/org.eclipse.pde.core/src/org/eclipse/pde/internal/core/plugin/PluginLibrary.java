@@ -43,6 +43,7 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 		this.name = libraryModel.getName();
 		this.contentFilters = libraryModel.getExports();
 		this.exported = libraryModel.isExported();
+		this.packages = libraryModel.getPackagePrefixes();
 		range =
 			new int[] {
 				libraryModel.getStartLine(),
