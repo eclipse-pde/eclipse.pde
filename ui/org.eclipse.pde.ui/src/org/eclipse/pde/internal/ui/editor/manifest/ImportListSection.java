@@ -257,8 +257,9 @@ public class ImportListSection
 		deleteAction.setText(PDEPlugin.getResourceString(POPUP_DELETE));
 		buildpathAction = new Action() {
 			public void run() {
-				IPluginModel model = (IPluginModel) getFormPage().getModel();
-				computeBuildPath(model, true);
+				Object model = getFormPage().getModel();
+				if (model instanceof IPluginModel)
+					computeBuildPath((IPluginModel)model, true);
 			}
 		};
 		buildpathAction.setText(PDEPlugin.getResourceString(KEY_COMPUTE_BUILD_PATH));
