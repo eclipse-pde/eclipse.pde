@@ -51,10 +51,8 @@ public class ExternalPluginsBlock {
 		private Vector models = new Vector();
 		private Vector fmodels = new Vector();
 		private String[] pluginPaths;
-		private boolean useOther;
 		
-		public ReloadOperation(String[] pluginPaths, boolean useOther) {
-			 this.useOther = useOther;
+		public ReloadOperation(String[] pluginPaths) {
 			 this.pluginPaths = pluginPaths;
 		}
 			
@@ -202,17 +200,22 @@ public class ExternalPluginsBlock {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
-		layout.marginHeight = 0;
+		layout.marginHeight = 15;
 		layout.marginWidth = 0;
 		container.setLayout(layout);
 
+		Label label = new Label(container, SWT.NONE);
+		label.setText(PDEPlugin.getResourceString("ExternalPluginsBlock.title"));
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan = 2;
+		label.setLayoutData(gd);
 		tablePart.createControl(container);
 
 		pluginListViewer = tablePart.getTableViewer();
 		pluginListViewer.setContentProvider(new PluginContentProvider());
 		pluginListViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 
-		GridData gd = (GridData) tablePart.getControl().getLayoutData();
+		gd = (GridData) tablePart.getControl().getLayoutData();
 		gd.heightHint = 100;
 		return container;
 	}
@@ -251,7 +254,7 @@ public class ExternalPluginsBlock {
 		String platformPath = page.getPlatformPath();
 		if (platformPath != null && platformPath.length() > 0) {
 			String[] pluginPaths = PluginPathFinder.getPluginPaths(platformPath);
-			ReloadOperation op = new ReloadOperation(pluginPaths, page.getUseOther());
+			ReloadOperation op = new ReloadOperation(pluginPaths);
 			ProgressMonitorDialog pmd = new ProgressMonitorDialog(PDEPlugin.getActiveWorkbenchShell());
 			try {
 				pmd.run(true, false, op);
@@ -305,6 +308,10 @@ public class ExternalPluginsBlock {
 				: ICoreConstants.VALUE_USE_THIS;
 		preferences.setValue(ICoreConstants.TARGET_MODE, mode);
 		preferences.setValue(ICoreConstants.PLATFORM_PATH, page.getPlatformPath());
+		String[] locations = page.getPlatformLocations();
+		for (int i = 0; i < locations.length && i < 5; i++) {
+			preferences.setValue(ICoreConstants.SAVED_PLATFORM + i, locations[i]);
+		}
 		PDECore.getDefault().savePluginPreferences();
 	}
 	

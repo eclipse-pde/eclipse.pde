@@ -11,6 +11,8 @@
 package org.eclipse.pde.internal.ui.preferences;
 
 
+import java.util.*;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -32,168 +34,146 @@ public class TargetPlatformPreferencePage
 	extends PreferencePage
 	implements IWorkbenchPreferencePage {
 
-	public static final String KEY_PLATFORM_HOME =
-		"Preferences.TargetPlatformPage.PlatformHome";
-	public static final String KEY_PLATFORM_HOME_BUTTON =
-		"Preferences.TargetPlatformPage.PlatformHome.Button";
-	public static final String KEY_DESCRIPTION =
-		"Preferences.TargetPlatformPage.Description";
-
-	public static final String KEY_TARGET_MODE =
-		"Preferences.TargetPlatformPage.targetMode";
-	public static final String KEY_USE_THIS =
-		"Preferences.TargetPlatformPage.useThis";
-	public static final String KEY_USE_OTHER =
-		"Preferences.TargetPlatformPage.useOther";
-	private Button thisRadio;
-	private Button otherRadio;
-	private Label homeLabel;
-	private Text homeText;
-	private Button browseButton;
-	private ExternalPluginsBlock pluginsBlock;
-	private boolean useOther = false;
-	private Preferences preferences = null;
-	private boolean needsReload = false;
-	private String originalText;
+	private Button fUseThisPlatform;
+	private Label fHomeLabel;
+	private Combo fHomeText;
+	private Button fBrowseButton;
+	private ExternalPluginsBlock fPluginsBlock;
+	private Preferences fPreferences = null;
+	private boolean fNeedsReload = false;
+	private String fOriginalText;
 	
 	/**
 	 * MainPreferencePage constructor comment.
 	 */
 	public TargetPlatformPreferencePage() {
-		setDescription(PDEPlugin.getResourceString(KEY_DESCRIPTION));
-		preferences = PDECore.getDefault().getPluginPreferences();
-		pluginsBlock = new ExternalPluginsBlock(this);
+		setDescription(PDEPlugin.getResourceString("Preferences.TargetPlatformPage.Description"));
+		fPreferences = PDECore.getDefault().getPluginPreferences();
+		fPluginsBlock = new ExternalPluginsBlock(this);
 	}
 	
 	public void dispose() {
-		pluginsBlock.dispose();
+		fPluginsBlock.dispose();
 		super.dispose();
 	}
 
 	public Control createContents(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
-		layout.verticalSpacing = 9;
-		layout.marginWidth = layout.marginHeight = 0;
-		container.setLayout(layout);
-		container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		Group group = new Group(container, SWT.NULL);
-		group.setText(PDEPlugin.getResourceString(KEY_TARGET_MODE));
-		group.setLayout(new GridLayout());
-		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
-		thisRadio = new Button(group, SWT.RADIO);
-		thisRadio.setText(PDEPlugin.getResourceString(KEY_USE_THIS));
-
-		otherRadio = new Button(group, SWT.RADIO);
-		otherRadio.setText(PDEPlugin.getResourceString(KEY_USE_OTHER));
-		
-		if (PDECore.inLaunchedInstance())
-			thisRadio.setEnabled(false);
-		
-		SelectionListener listener = new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				modeChanged(otherRadio.getSelection());
-			}
-		};
-		thisRadio.addSelectionListener(listener);
-		otherRadio.addSelectionListener(listener);
-
-		Composite home = new Composite(group, SWT.NULL);
-		home.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		layout = new GridLayout();
 		layout.numColumns = 3;
-		layout.marginWidth = 0;
-		home.setLayout(layout);
-		homeLabel = new Label(home, SWT.NULL);
-		homeLabel.setText(PDEPlugin.getResourceString(KEY_PLATFORM_HOME));
-		homeText = new Text(home, SWT.BORDER);
-		homeText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		layout.marginHeight = layout.marginWidth = 0;
+		container.setLayout(layout);
 
-		browseButton = new Button(home, SWT.PUSH);
-		browseButton.setText(PDEPlugin.getResourceString(KEY_PLATFORM_HOME_BUTTON));
-		browseButton.setLayoutData(new GridData(GridData.END));
-		SWTUtil.setButtonDimensionHint(browseButton);
-		browseButton.addSelectionListener(new SelectionAdapter() {
+		fUseThisPlatform = new Button(container, SWT.CHECK);
+		fUseThisPlatform.setText(PDEPlugin.getResourceString("Preferences.TargetPlatformPage.useThis"));
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan = 3;
+		fUseThisPlatform.setLayoutData(gd);
+
+		if (PDECore.inLaunchedInstance())
+			fUseThisPlatform.setEnabled(false);
+		
+		fUseThisPlatform.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				boolean selected = fUseThisPlatform.getSelection();
+				updateEnableState(!selected);
+				if (selected) {
+					String newPath = ExternalModelManager.computeDefaultPlatformPath();
+					if (!newPath.equals(fHomeText.getText())) {
+						if (fHomeText.indexOf(newPath) == -1)
+							fHomeText.add(newPath, 0);
+						fHomeText.setText(newPath);
+						fPluginsBlock.handleReload();
+						fNeedsReload = false;
+					}
+				}
+			}
+		});
+
+		fHomeLabel = new Label(container, SWT.NULL);
+		fHomeLabel.setText(PDEPlugin.getResourceString("Preferences.TargetPlatformPage.PlatformHome"));
+		
+		fHomeText = new Combo(container, SWT.NONE);
+		fHomeText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		ArrayList locations = new ArrayList();
+		for (int i = 0; i < 5; i++) {
+			String value = fPreferences.getString(ICoreConstants.SAVED_PLATFORM + i);
+			if (value.equals("")) 
+				break;
+			locations.add(value);
+		}
+		String homeLocation = fPreferences.getString(ICoreConstants.PLATFORM_PATH);
+		if (!locations.contains(homeLocation))
+			locations.add(0, homeLocation);
+		fHomeText.setItems((String[])locations.toArray(new String[locations.size()]));
+		fHomeText.setText(homeLocation);
+		fOriginalText = fHomeText.getText();
+		fHomeText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				fNeedsReload = true;
+			}
+		});
+		fHomeText.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				fPluginsBlock.handleReload();
+				fNeedsReload = false;
+			}
+		});
+		
+		fBrowseButton = new Button(container, SWT.PUSH);
+		fBrowseButton.setText(PDEPlugin.getResourceString("Preferences.TargetPlatformPage.PlatformHome.Button"));
+		fBrowseButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+		SWTUtil.setButtonDimensionHint(fBrowseButton);
+		fBrowseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleBrowse();
 			}
 		});
 
-		Control block = pluginsBlock.createContents(container);
-		block.setLayoutData(new GridData(GridData.FILL_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL));
+		Control block = fPluginsBlock.createContents(container);
+		gd = new GridData(GridData.FILL_VERTICAL|GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan = 3;
+		block.setLayoutData(gd);	
 		load();
-		homeText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				needsReload = true;
-			}
-		});
-		originalText = homeText.getText();
+		
 		Dialog.applyDialogFont(container);
 		WorkbenchHelp.setHelp(container, IHelpContextIds.TARGET_PLATFORM_PREFERENCE_PAGE);
 		return container;
 	}
 
 	String getPlatformPath() {
-		if (useOther)
-			return homeText.getText();
-		else
-			return ExternalModelManager.computeDefaultPlatformPath();
+		return fHomeText.getText();
 	}
 
 	boolean getUseOther() {
-		return otherRadio.getSelection();
+		return !fUseThisPlatform.getSelection();
 	}
 
-	private void load() {
-		String mode = preferences.getString(ICoreConstants.TARGET_MODE);
+	private void load() {		
+		String mode = fPreferences.getString(ICoreConstants.TARGET_MODE);
 		boolean useOther = mode.equals(ICoreConstants.VALUE_USE_OTHER);
-		String path = preferences.getString(ICoreConstants.PLATFORM_PATH);
-		load(useOther, path);
-		pluginsBlock.initialize();
+		fUseThisPlatform.setSelection(!useOther);
+		updateEnableState(useOther);
+		fPluginsBlock.initialize();
 	}
 
-	private void load(boolean useOther, String path) {
-		this.useOther = useOther;
-		homeText.setText(path);
-		thisRadio.setSelection(!useOther);
-		otherRadio.setSelection(useOther);
-		updateEnableState(useOther);
-	}
-	
 	private void updateEnableState(boolean useOther) {
-		homeLabel.setEnabled(useOther);
-		homeText.setEnabled(useOther);
-		browseButton.setEnabled(useOther);
+		fHomeLabel.setEnabled(useOther);
+		fHomeText.setEnabled(useOther);
+		fBrowseButton.setEnabled(useOther);
 	}
 
-	private void modeChanged(boolean useOther) {
-		updateEnableState(useOther);
-		String oldPath = getPlatformPath();
-		this.useOther = useOther;
-		String newPath = getPlatformPath();
-		boolean reloadNeeded = false;
-		if (oldPath != null && newPath == null)
-			reloadNeeded = true;
-		if (oldPath == null && newPath != null)
-			reloadNeeded = true;
-		if (oldPath.equals(newPath) == false)
-			reloadNeeded = true;
-		if (reloadNeeded) {
-			pluginsBlock.handleReload();
-			needsReload = false;
-		}
-	}
-	
 	private void handleBrowse() {
 		DirectoryDialog dialog = new DirectoryDialog(getShell());
-		if (homeText.getText().length() > 0)
-			dialog.setFilterPath(homeText.getText());
+		if (fHomeText.getText().length() > 0)
+			dialog.setFilterPath(fHomeText.getText());
 		String newPath = dialog.open();
-		if (newPath != null && !homeText.getText().equals(newPath)) {
-			homeText.setText(newPath);
-			pluginsBlock.handleReload();
+		if (newPath != null && !new Path(fHomeText.getText()).equals(new Path(newPath))) {
+			if (fHomeText.indexOf(newPath) == -1)
+				fHomeText.add(newPath, 0);
+			fHomeText.setText(newPath);
+			fPluginsBlock.handleReload();
+			fNeedsReload = false;
 		}
 	}
 
@@ -201,12 +181,12 @@ public class TargetPlatformPreferencePage
 	}
 	
 	public void performDefaults() {
-		pluginsBlock.handleSelectAll(true);
+		fPluginsBlock.handleSelectAll(true);
 		super.performDefaults();
 	}
 
 	public boolean performOk() {
-		if (needsReload && getUseOther() && !originalText.equals(homeText.getText())) {
+		if (fNeedsReload && getUseOther() && !new Path(fOriginalText).equals(new Path(fHomeText.getText()))) {
 			MessageDialog dialog =
 				new MessageDialog(
 					getShell(),
@@ -220,13 +200,17 @@ public class TargetPlatformPreferencePage
 					1);
 			if (dialog.open() == 1)
 				return false;
-			pluginsBlock.handleReload();
+			fPluginsBlock.handleReload();
 		} 
-		pluginsBlock.save();
+		fPluginsBlock.save();
 		return super.performOk();
+	}
+	
+	public String[] getPlatformLocations() {
+		return fHomeText.getItems();
 	}
 	 
 	public void resetNeedsReload() {
-		needsReload = false;
+		fNeedsReload = false;
 	}
 }

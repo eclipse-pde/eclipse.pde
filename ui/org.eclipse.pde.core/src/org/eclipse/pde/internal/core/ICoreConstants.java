@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.core;
 
 public interface ICoreConstants {
 	String PLATFORM_PATH = "platform_path";
+	String SAVED_PLATFORM = "saved_platform";
 	String TARGET_MODE = "target_mode";
 	String VALUE_USE_THIS = "useThis";
 	String VALUE_USE_OTHER = "useOther";

@@ -30,11 +30,13 @@ import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.*;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ExternalModelManager;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.parts.*;
@@ -151,6 +153,20 @@ public class LauncherUtils {
 	}
 	
 	public static String[] constructClasspath() throws CoreException {
+		IPlugin plugin = PDECore.getDefault().findPlugin("org.eclipse.platform");
+		if (plugin != null && plugin.getModel() instanceof WorkspacePluginModel) {
+			IProject project = plugin.getModel().getUnderlyingResource().getProject();
+			if (project.hasNature(JavaCore.NATURE_ID)) {
+				IJavaProject jProject = JavaCore.create(project);
+				IPackageFragmentRoot[] roots = jProject.getPackageFragmentRoots();
+				for (int i = 0; i < roots.length; i++) {
+					if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE) {
+						IPath path = jProject.getOutputLocation().removeFirstSegments(1);
+						return new String[] {project.getLocation().append(path).toOSString()};
+					}
+				}
+			}
+		}
 		File startupJar =
 			ExternalModelManager.getEclipseHome(null).append("startup.jar").toFile();
 
