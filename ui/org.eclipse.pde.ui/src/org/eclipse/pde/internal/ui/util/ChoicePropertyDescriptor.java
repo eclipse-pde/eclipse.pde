@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.util;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.viewers.CellEditor;
@@ -42,7 +43,7 @@ public ChoicePropertyDescriptor(Object id, String displayName, String[] valuesAr
  * </p>
  */
 public CellEditor createPropertyEditor(Composite parent) {
-	CellEditor editor = new ComboBoxCellEditor(parent, values);
+	CellEditor editor = new ComboBoxCellEditor(parent, values, SWT.READ_ONLY);
 	if (getValidator() != null)
 		editor.setValidator(getValidator());
 	return editor;
