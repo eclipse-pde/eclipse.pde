@@ -30,6 +30,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
@@ -37,6 +38,8 @@ public class InstallSection extends PDESection {
 	public static final String SECTION_TITLE = "FeatureEditor.InstallSection.title"; //$NON-NLS-1$
 
 	public static final String SECTION_DESC = "FeatureEditor.InstallSection.desc"; //$NON-NLS-1$
+
+	public static final String SECTION_COLOCATION_DESC = "FeatureEditor.InstallSection.colocation.desc"; //$NON-NLS-1$
 
 	public static final String SECTION_EXCLUSIVE = "FeatureEditor.InstallSection.exclusive"; //$NON-NLS-1$
 
@@ -99,6 +102,12 @@ public class InstallSection extends PDESection {
 				}
 			}
 		});
+
+		Label colocationDescLabel = toolkit.createLabel(container,
+				PDEPlugin.getResourceString(SECTION_COLOCATION_DESC));
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan = 2;
+		colocationDescLabel.setLayoutData(gd);
 
 		fColocationText = new FormEntry(container, toolkit, PDEPlugin
 				.getResourceString(SECTION_COLOCATION), null, false);
