@@ -29,6 +29,9 @@ public abstract class ModelBuildScriptGenerator extends AbstractBuildScriptGener
 	 */
 	protected PluginModel model;
 
+	/** constants */
+	protected static final String FULL_NAME = getPropertyFormat(PROPERTY_FULL_NAME);
+
 /**
  * @see AbstractScriptGenerator#generate()
  */
@@ -92,10 +95,10 @@ protected void generateCleanTarget(AntScript script) throws CoreException {
 		script.printDeleteTask(tab, null, getSRCName(name), null);
 		script.printDeleteTask(tab, getTempJARFolderLocation(jarName), null, null);
 	}
-	script.printDeleteTask(tab, null, basedir.append(getModelFullName() + ".jar").toString(), null);
-	script.printDeleteTask(tab, null, basedir.append(getModelFullName() + ".zip").toString(), null);
-	script.printDeleteTask(tab, null, basedir.append(getModelFullName() + DEFAULT_FILENAME_SRC).toString(), null);
-	script.printDeleteTask(tab, null, basedir.append(getModelFullName() + DEFAULT_FILENAME_LOG).toString(), null);
+	script.printDeleteTask(tab, null, basedir.append(FULL_NAME + ".jar").toString(), null);
+	script.printDeleteTask(tab, null, basedir.append(FULL_NAME + ".zip").toString(), null);
+	script.printDeleteTask(tab, null, basedir.append(FULL_NAME + DEFAULT_FILENAME_SRC).toString(), null);
+	script.printDeleteTask(tab, null, basedir.append(FULL_NAME + DEFAULT_FILENAME_LOG).toString(), null);
 	script.printString(--tab, "</target>");
 }
 
@@ -104,7 +107,7 @@ protected void generateGatherLogTarget(AntScript script) throws CoreException {
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_GATHER_LOGS, TARGET_INIT, null, null, null);
 	IPath baseDestination = new Path(getPropertyFormat(PROPERTY_DESTINATION));
-	baseDestination = baseDestination.append(getModelFullName());
+	baseDestination = baseDestination.append(FULL_NAME);
 	List destinations = new ArrayList(5);
 	IPath baseSource = new Path(getPropertyFormat(PROPERTY_BASEDIR));
 	Properties properties = getBuildProperties(model);
@@ -142,7 +145,7 @@ protected void generateGatherSourcesTarget(AntScript script) throws CoreExceptio
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_GATHER_SOURCES, TARGET_INIT, PROPERTY_DESTINATION, null, null);
 	IPath baseDestination = new Path(getPropertyFormat(PROPERTY_DESTINATION));
-	baseDestination = baseDestination.append(getModelFullName());
+	baseDestination = baseDestination.append(FULL_NAME);
 	List destinations = new ArrayList(5);
 	IPath baseSource = new Path(getPropertyFormat(PROPERTY_BASEDIR));
 	Properties properties = getBuildProperties(model);
@@ -180,7 +183,7 @@ protected void generateGatherBinPartsTarget(AntScript script) throws CoreExcepti
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_GATHER_BIN_PARTS, TARGET_INIT, PROPERTY_DESTINATION, null, null);
 	IPath destination = new Path(getPropertyFormat(PROPERTY_DESTINATION));
-	destination = destination.append(getModelFullName());
+	destination = destination.append(FULL_NAME);
 	String root = destination.toString();
 	script.printMkdirTask(tab, root);
 	String include = (String) getBuildProperties(model).get(PROPERTY_BIN_INCLUDES);
@@ -209,7 +212,7 @@ protected void generateZipPluginTarget(AntScript script, PluginModel model) thro
 	script.printAntCallTask(tab, TARGET_GATHER_SOURCES, null, params);
 	FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BASE), null, "**/*.bin.log", null, null, null, null);
 	script.printDeleteTask(tab, null, null, new FileSet[] {fileSet});
-	script.printZipTask(tab, basedir.append(getModelFullName() + ".zip").toString(), destination.toString(), null);
+	script.printZipTask(tab, basedir.append(FULL_NAME + ".zip").toString(), destination.toString(), null);
 	script.printDeleteTask(tab, destination.toString(), null, null);
 	script.printString(--tab, "</target>");
 }
@@ -239,16 +242,12 @@ protected void generateBuildUpdateJarTarget(AntScript script) {
 	script.printAntCallTask(tab, TARGET_GATHER_BIN_PARTS, null, params);
 	FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BASE), null, "**/*.bin.log", null, null, null, null);
 	script.printDeleteTask(tab, null, null, new FileSet[] {fileSet});
-	script.printZipTask(tab, destination.append(getModelFullName() + ".jar").toString(), getPropertyFormat(PROPERTY_BASE) + "/" + getModelFullName(), null);
+	script.printZipTask(tab, destination.append(FULL_NAME + ".jar").toString(), getPropertyFormat(PROPERTY_BASE) + "/" + FULL_NAME, null);
 	script.printDeleteTask(tab, getPropertyFormat(PROPERTY_BASE), null, null);
 	tab--;
 	script.printString(tab, "</target>");
 }
 
-
-protected String getModelFullName() {
-	return getPropertyFormat(PROPERTY_FULL_NAME);
-}
 
 /**
  * Just ends the script.
