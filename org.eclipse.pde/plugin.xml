@@ -175,6 +175,46 @@
     		<parameter name="element" value="fragment"/>
 		</describer>
 	  </content-type>
+   	  <content-type 
+   	  		id="featureManifest" 
+   	  		name="%featureManifestName" 
+       		base-type="org.eclipse.core.runtime.xml"
+    		priority="high"				
+    		file-names="feature.xml">
+    	<describer class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber">
+    		<parameter name="element" value="feature"/>
+		</describer>
+	  </content-type>
+   	  <content-type 
+   	  		id="siteManifest" 
+   	  		name="%siteManifestName" 
+       		base-type="org.eclipse.core.runtime.xml"
+    		priority="high"				
+    		file-names="site.xml">
+    	<describer class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber">
+    		<parameter name="element" value="site"/>
+		</describer>
+	  </content-type>
+   	  <content-type 
+   	  		id="productFile" 
+   	  		name="%productConfiguration" 
+       		base-type="org.eclipse.core.runtime.xml"
+    		priority="high"				
+    		file-extensions="product">
+    	<describer class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber">
+    		<parameter name="element" value="product"/>
+		</describer>
+	  </content-type>
+   	  <content-type 
+   	  		id="schema" 
+   	  		name="%schemaFile" 
+       		base-type="org.eclipse.core.runtime.xml"
+    		priority="high"				
+    		file-extensions="exsd">
+    	<describer class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber">
+    		<parameter name="element" value="schema"/>
+		</describer>
+	  </content-type>
 	  <content-type 
 	  		id="pluginProperties" 
 	  		name="%pluginPropertiesName" 
