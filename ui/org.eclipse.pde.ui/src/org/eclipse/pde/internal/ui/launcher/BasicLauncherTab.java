@@ -54,6 +54,12 @@ public class BasicLauncherTab
 
 	private Text fBootstrap;
 
+	private Combo fProductCombo;
+
+	private Button fProductButton;
+
+	private Button fApplicationButton;
+
 	public BasicLauncherTab() {
 		fJreSelectionStatus = createStatus(IStatus.OK, ""); //$NON-NLS-1$
 		fWorkspaceSelectionStatus = createStatus(IStatus.OK, ""); //$NON-NLS-1$
@@ -71,6 +77,7 @@ public class BasicLauncherTab
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		createWorkspaceDataSection(composite);
+		createProgramSection(composite);
 		createCommandLineSettingsSection(composite);
 		createDefaultsButton(composite);
 		
@@ -79,6 +86,18 @@ public class BasicLauncherTab
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.LAUNCHER_BASIC);
 	}
 	
+	private void createProgramSection(Composite composite) {
+		Group group = new Group(composite, SWT.NONE);
+		group.setText(PDEPlugin.getResourceString("BasicLauncherTab.programToRun")); //$NON-NLS-1$
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		group.setLayout(layout);
+		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+				
+		createApplicationSection(group);
+		createProductSection(group);		
+	}
+
 	protected void createDefaultsButton(Composite parent) {
 		fDefaultsButton = new Button(parent, SWT.PUSH);
 		fDefaultsButton.setText(PDEPlugin.getResourceString("BasicLauncherTab.restore")); //$NON-NLS-1$
@@ -170,17 +189,38 @@ public class BasicLauncherTab
 		group.setLayout(layout);
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		createApplicationSection(group);
 		createJRESection(group);
 		createVMArgsSection(group);
 		createProgArgsSection(group);
 		createBootstrapEntriesSection(group);
 	}
 	
-	protected void createApplicationSection(Composite parent) {
-		Label label = new Label(parent, SWT.NONE);
-		label.setText(PDEPlugin.getResourceString("JUnitArgumentsTab.applicationName")); //$NON-NLS-1$
+	protected void createProductSection(Composite parent) {
+		fProductButton = new Button(parent, SWT.RADIO);
+		fProductButton.setText(PDEPlugin.getResourceString("BasicLauncherTab.runProduct")); //$NON-NLS-1$
+		fProductButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				boolean selected = fProductButton.getSelection();
+				fApplicationCombo.setEnabled(!selected);
+				fProductCombo.setEnabled(selected);
+				updateLaunchConfigurationDialog();
+			}
+		});
 		
+		fProductCombo = new Combo(parent, SWT.READ_ONLY|SWT.DROP_DOWN);
+		fProductCombo.setItems(getProductNames());
+		fProductCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fProductCombo.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateLaunchConfigurationDialog();
+			}
+		});		
+	}
+	
+	protected void createApplicationSection(Composite parent) {
+		fApplicationButton = new Button(parent, SWT.RADIO);
+		fApplicationButton.setText(PDEPlugin.getResourceString("BasicLauncherTab.runApplication")); //$NON-NLS-1$
+			
 		fApplicationCombo = new Combo(parent, SWT.READ_ONLY|SWT.DROP_DOWN);
 		fApplicationCombo.setItems(getApplicationNames());
 		fApplicationCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -199,16 +239,41 @@ public class BasicLauncherTab
 			for (int j = 0; j < extensions.length; j++) {
 				String point = extensions[j].getPoint();
 				if (point != null && point.equals("org.eclipse.core.runtime.applications")) { //$NON-NLS-1$
-					String id = extensions[j].getPluginBase().getId() + "." + extensions[j].getId(); //$NON-NLS-1$
-					if (id != null && !id.startsWith("org.eclipse.pde.junit.runtime")){ //$NON-NLS-1$
-						result.add(id);
-					}
+					String id = extensions[j].getPluginBase().getId();
+					if (id == null || id.trim().length() == 0 || id.startsWith("org.eclipse.pde.junit.runtime")) //$NON-NLS-1$
+						continue;
+					if (extensions[j].getId() != null)
+						result.add(id+ "." + extensions[j].getId());					 //$NON-NLS-1$
 				}
 			}
 		}
 		return (String[])result.toArray(new String[result.size()]);
 	}
-	
+
+	protected String[] getProductNames() {
+		TreeSet result = new TreeSet();
+		IPluginModelBase[] plugins = PDECore.getDefault().getModelManager().getPlugins();
+		for (int i = 0; i < plugins.length; i++) {
+			IPluginExtension[] extensions = plugins[i].getPluginBase().getExtensions();
+			for (int j = 0; j < extensions.length; j++) {
+				String point = extensions[j].getPoint();
+				if (point != null && point.equals("org.eclipse.core.runtime.products")) {//$NON-NLS-1$
+					IPluginObject[] children = extensions[j].getChildren();
+					if (children.length != 1)
+						continue;
+					if (!"product".equals(children[0].getName())) //$NON-NLS-1$
+						continue;
+					String id = extensions[j].getPluginBase().getId();
+					if (id == null || id.trim().length() == 0)
+						continue;
+					if (extensions[j].getId() != null)
+						result.add(id+ "." + extensions[j].getId());					 //$NON-NLS-1$
+				}
+			}
+		}
+		return (String[])result.toArray(new String[result.size()]);
+	}
+
 	protected String getApplicationAttribute() {
 		return APPLICATION;
 	}
@@ -317,11 +382,10 @@ public class BasicLauncherTab
 
 	public void initializeFrom(ILaunchConfiguration config) {
 		try {
-			fBlockChanges = true;
-			
+			fBlockChanges = true;			
 			initializeWorkspaceDataSection(config);
 			initializeJRESection(config);
-			initializeApplicationSection(config);
+			initializeProgramToRunSection(config);
 			initializeVMArgsSection(config);
 			initializeProgArgsSection(config);
 			initializeBootstrapEntriesSection(config);	
@@ -334,9 +398,34 @@ public class BasicLauncherTab
 			fBlockChanges = false;
 		}
 	}
+	
+	protected void initializeProgramToRunSection(ILaunchConfiguration config) throws CoreException {
+		initializeApplicationSection(config);
+		initializeProductSection(config);
+		
+		boolean useProduct = config.getAttribute(USE_PRODUCT, false)
+			&& PDECore.getDefault().getModelManager().isOSGiRuntime() 
+			&& fProductCombo.getItemCount() > 0;
+		fApplicationButton.setSelection(!useProduct);
+		fApplicationCombo.setEnabled(!useProduct);
+		fProductButton.setSelection(useProduct);
+		fProductButton.setEnabled(fProductCombo.getItemCount() > 0);
+		fProductCombo.setEnabled(useProduct);
+	}
+	
+	protected void initializeProductSection(ILaunchConfiguration config) throws CoreException {
+		if (fProductCombo.getItemCount() > 0) {
+			String productName = config.getAttribute(PRODUCT, (String)null);
+			int index = productName == null ? -1 : fProductCombo.indexOf(productName);
+			if (index == -1)
+				index = 0;
+			fProductCombo.setText(fProductCombo.getItem(index));
+		}
+	}
 
 	protected void initializeApplicationSection(ILaunchConfiguration config)
 		throws CoreException {
+		
 		String attribute = getApplicationAttribute();
 		
 		// first see if the application name has been set on the launch config
@@ -431,8 +520,14 @@ public class BasicLauncherTab
 		fClearWorkspaceCheck.setSelection(false);
 		fAskClearCheck.setSelection(true);
 		fAskClearCheck.setEnabled(false);
-		fJreCombo.setText(LauncherUtils.getDefaultVMInstallName());	
+		fJreCombo.setText(LauncherUtils.getDefaultVMInstallName());
+		fApplicationButton.setSelection(true);
 		fApplicationCombo.setText(LauncherUtils.getDefaultApplicationName());
+		fApplicationCombo.setEnabled(true);
+		fProductButton.setSelection(false);
+		fProductCombo.setEnabled(false);
+		fProductCombo.setEnabled(false);
+		updateLaunchConfigurationDialog();
 	}
 
 	private void updateStatus() {
@@ -444,6 +539,7 @@ public class BasicLauncherTab
 		try {
 			saveWorkspaceDataSection(config);
 			saveApplicationSection(config);
+			saveProductSection(config);
 			saveJRESection(config);
 			saveVMArgsSection(config);
 			saveProgArgsSection(config);
@@ -491,6 +587,11 @@ public class BasicLauncherTab
 	
 	protected void saveBootstrapEntriesSection(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(BOOTSTRAP_ENTRIES, fBootstrap.getText().trim());
+	}
+	
+	protected void saveProductSection(ILaunchConfigurationWorkingCopy config) {
+		config.setAttribute(USE_PRODUCT, fProductButton.getSelection());
+		config.setAttribute(PRODUCT, fProductCombo.getText());
 	}
 
 	protected void saveApplicationSection(ILaunchConfigurationWorkingCopy config) {

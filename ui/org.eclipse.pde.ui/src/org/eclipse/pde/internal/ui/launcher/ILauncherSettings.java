@@ -16,10 +16,14 @@ public interface ILauncherSettings {
 	String DOCLEAR = "clearws"; //$NON-NLS-1$
 	String ASKCLEAR = "askclear"; //$NON-NLS-1$
 	
+	// Program to run
+	String APPLICATION = "application"; //$NON-NLS-1$
+	String PRODUCT = "product"; //$NON-NLS-1$
+	String USE_PRODUCT = "useProduct"; //$NON-NLS-1$
+	String APP_TO_TEST = "testApplication"; //$NON-NLS-1$
+	
 	// Command line settings
 	String VMINSTALL = "vminstall"; //$NON-NLS-1$
-	String APPLICATION = "application"; //$NON-NLS-1$
-	String APP_TO_TEST = "testApplication"; //$NON-NLS-1$
 	String VMARGS = "vmargs"; //$NON-NLS-1$
 	String PROGARGS = "progargs"; //$NON-NLS-1$
 	String BOOTSTRAP_ENTRIES = "bootstrap"; //$NON-NLS-1$

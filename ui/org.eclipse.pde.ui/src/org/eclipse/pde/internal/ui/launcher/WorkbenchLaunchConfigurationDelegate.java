@@ -106,11 +106,17 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 	private String[] getProgramArguments(ILaunchConfiguration configuration) throws CoreException {
 		ArrayList programArgs = new ArrayList();
 		
-		// specify the application to launch, only if it is not the default.
-		String appName = configuration.getAttribute(APPLICATION, (String)null);
-		if (appName != null && appName.length() > 0) {
-			programArgs.add("-application"); //$NON-NLS-1$
-			programArgs.add(appName);
+		// If a product is specified, then add it to the program args
+		if (configuration.getAttribute(USE_PRODUCT, false)) {
+			programArgs.add("-product"); //$NON-NLS-1$
+			programArgs.add(configuration.getAttribute(PRODUCT, "")); //$NON-NLS-1$
+		} else {
+			// specify the application to launch, only if it is not the default.
+			String appName = configuration.getAttribute(APPLICATION, (String)null);
+			if (appName != null && appName.length() > 0) {
+				programArgs.add("-application"); //$NON-NLS-1$
+				programArgs.add(appName);
+			}
 		}
 		
 		// specify the workspace location for the runtime workbench

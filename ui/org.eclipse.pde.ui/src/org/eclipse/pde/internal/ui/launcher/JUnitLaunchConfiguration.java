@@ -163,11 +163,17 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		programArgs.add("-application"); //$NON-NLS-1$
 		programArgs.add(getApplicationName(pluginMap, configuration));
 		
-		// Specify the application to test
-		String testApplication = configuration.getAttribute(APP_TO_TEST, (String)null);
-		if (testApplication != null && testApplication.length() > 0) {
-			programArgs.add("-testApplication"); //$NON-NLS-1$
-			programArgs.add(testApplication);
+		// If a product is specified, then add it to the program args
+		if (configuration.getAttribute(USE_PRODUCT, false)) {
+			programArgs.add("-product"); //$NON-NLS-1$
+			programArgs.add(configuration.getAttribute(PRODUCT, "")); //$NON-NLS-1$
+		} else {
+			// Specify the application to test
+			String testApplication = configuration.getAttribute(APP_TO_TEST, (String)null);
+			if (testApplication != null && testApplication.length() > 0) {
+				programArgs.add("-testApplication"); //$NON-NLS-1$
+				programArgs.add(testApplication);
+			}
 		}
 		
 		// Specify the location of the runtime workbench
