@@ -121,8 +121,17 @@ public class PDECore extends Plugin {
 			return true;
 		if (version2 == null)
 			return false;
-		PluginVersionIdentifier pid1 = new PluginVersionIdentifier(version1);
-		PluginVersionIdentifier pid2 = new PluginVersionIdentifier(version2);
+		PluginVersionIdentifier pid1 = null;
+		PluginVersionIdentifier pid2 = null;
+		
+		try {
+			pid1 = new PluginVersionIdentifier(version1);
+			pid2 = new PluginVersionIdentifier(version2);
+		}
+		catch (RuntimeException e) {
+			// something is wrong with either - try direct comparison
+			return version2.equals(version1);
+		}
 
 		switch (match) {
 			case IMatchRules.NONE :
