@@ -423,12 +423,13 @@ public class PointSelectionPage
 				} else if (ssel.getFirstElement() instanceof WizardElement) {
 					WizardElement wizardSelection = (WizardElement)ssel.getFirstElement();
 					setSelectedNode(createWizardNode(wizardSelection));
-					setDescriptionText((String) wizardSelection.getDescription());
+					setDescriptionText(wizardSelection.getDescription());
 					setDescription(PDEPlugin.getFormattedMessage("NewExtensionWizard.PointSelectionPage.templateDescription",wizardSelection.getLabel()));
 					setPageComplete(false);
 				}
 			}
 			else {
+				setSelectedNode(null);
 				setPageComplete(false);
 			}
 		}
@@ -462,16 +463,15 @@ public class PointSelectionPage
 				return wizard;
 			}
 			protected IExtensionWizard createWizard(WizardElement element)
-				throws CoreException {
+			throws CoreException {
 				if (element.isTemplate()) {
 					IConfigurationElement template = element.getTemplateElement();
 					if (template==null) return null;
 					ITemplateSection section =
 						(ITemplateSection) template.createExecutableExtension("class");
 					return new NewExtensionTemplateWizard(section);
-				} else {
-					return (IExtensionWizard) element.createExecutableExtension();
-				}
+				} 
+				return (IExtensionWizard) element.createExecutableExtension();
 			}
 		};
 	}
