@@ -36,12 +36,12 @@ public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		if (PDECore.getDefault().getModelManager().isOSGiRuntime()) {
 			tabs = new ILaunchConfigurationTab[]{new BasicLauncherTab(),
 					new AdvancedLauncherTab(), new ConfigurationTab(),
-					new TracingLauncherTab(), new SourceLookupTab(),
-					new EnvironmentTab(), new CommonTab()};
+					new TracingLauncherTab(), new EnvironmentTab(),
+					new SourceLookupTab(), new CommonTab()};
 		} else {
 			tabs = new ILaunchConfigurationTab[]{new BasicLauncherTab(),
 					new AdvancedLauncherTab(), new TracingLauncherTab(),
-					new SourceLookupTab(), new EnvironmentTab(),
+					new EnvironmentTab(), new SourceLookupTab(), 
 					new CommonTab()};
 		}
 		setTabs(tabs);

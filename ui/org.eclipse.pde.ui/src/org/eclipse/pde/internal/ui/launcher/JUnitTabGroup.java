@@ -32,13 +32,13 @@ public class JUnitTabGroup extends AbstractLaunchConfigurationTabGroup {
 			tabs = new ILaunchConfigurationTab[]{new JUnitMainTab(),
 					new JUnitArgumentsTab(), new AdvancedLauncherTab(false),
 					 new ConfigurationTab(), new TracingLauncherTab(),
-					new SourceLookupTab(), new EnvironmentTab(),
+					new EnvironmentTab(), new SourceLookupTab(), 
 					new CommonTab()};
 		} else {
 			tabs = new ILaunchConfigurationTab[]{new JUnitMainTab(),
 					new JUnitArgumentsTab(), new AdvancedLauncherTab(false),
-					new TracingLauncherTab(), new SourceLookupTab(),
-					new EnvironmentTab(), new CommonTab()};
+					new TracingLauncherTab(), new EnvironmentTab(),
+					new SourceLookupTab(), new CommonTab()};
 		}
 		setTabs(tabs);
 	}
