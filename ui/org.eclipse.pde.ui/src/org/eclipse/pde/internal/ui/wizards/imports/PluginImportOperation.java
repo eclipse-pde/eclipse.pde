@@ -115,7 +115,10 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			
 			File file = new File(model.getInstallLocation());
 			if (file.isFile()) {
-				importJARdPlugin(file, project, model, new SubProgressMonitor(monitor, 4));
+				//if (fImportType != IMPORT_WITH_SOURCE)
+					importJARdPlugin(file, project, model, new SubProgressMonitor(monitor, 4));
+				//else
+					//importJARdPluginWithSource(file, project, model, new SubProgressMonitor(monitor, 4));
 			} else {
 				switch (fImportType) {
 					case IMPORT_BINARY :
@@ -173,8 +176,8 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 	}
 	
 	private void importJARdPlugin(File file, IProject project, IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
-		monitor.beginTask("", 2);
 		if (fImportType != IMPORT_WITH_SOURCE) {
+			monitor.beginTask("", 2);
 			extractZipFile(file, project.getFullPath(), new SubProgressMonitor(monitor, 1));
 			IPath srcPath = getJARdPluginSrcPath(project);
 			if (srcPath == null) {
@@ -188,10 +191,13 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 					PDECore.EXTERNAL_PROJECT_PROPERTY,
 					PDECore.BINARY_PROJECT_VALUE);
 		} else {
-			
+			importJARdPluginWithSource(file, project, model, monitor);
 		}
 	}
 	
+	private void importJARdPluginWithSource(File file, IProject project, IPluginModelBase model, IProgressMonitor monitor) {
+	}
+
 	private IPath getJARdPluginSrcPath(IProject project) {
 		IFolder folder = project.getFolder("src");
 		IPath srcPath = folder.exists() ? folder.getFullPath() : null;
