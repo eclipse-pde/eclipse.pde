@@ -113,7 +113,27 @@ public interface IMatchRules {
 	 * </p>
 	 */
 	String RULE_GREATER_OR_EQUAL = "greaterOrEqual";
-
+	/**
+	 * An id match requires that the specified id is a prefix of
+	 * a candidate id.
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
+	 */
+	int PREFIX = 5;
+	/**
+	 * Attribute value for the 'prefix' id rule
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
+	 */
+	String RULE_PREFIX = "prefix";
 	/**
 	 * Table of rule names that match rule values defined in this 
 	 * interface. It can be used directly against the rule values

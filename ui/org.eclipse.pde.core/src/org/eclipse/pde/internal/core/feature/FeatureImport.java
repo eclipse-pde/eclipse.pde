@@ -17,6 +17,7 @@ public class FeatureImport
 	extends VersionableObject
 	implements IFeatureImport {
 	private int match = NONE;
+	private int idMatch = PERFECT;
 	private IPlugin plugin;
 	private IFeature feature;
 	private int type = PLUGIN;
@@ -31,36 +32,41 @@ public class FeatureImport
 	public IPlugin getPlugin() {
 		return plugin;
 	}
-	
+
 	public IFeature getFeature() {
 		return feature;
+	}
+
+	public int getIdMatch() {
+		return idMatch;
 	}
 
 	public void setPlugin(IPlugin plugin) {
 		this.plugin = plugin;
 	}
-	
+
 	public void setFeature(IFeature feature) {
 		this.feature = feature;
 	}
-	
+
 	public String getOS() {
 		return os;
 	}
-	
+
 	public String getWS() {
 		return ws;
 	}
-	
+
 	public String getArch() {
 		return arch;
 	}
-	
+
 	protected void reset() {
 		super.reset();
 		patch = false;
 		type = PLUGIN;
 		match = NONE;
+		idMatch = PERFECT;
 		arch = null;
 		os = null;
 		ws = null;
@@ -88,13 +94,20 @@ public class FeatureImport
 				}
 			}
 		}
+		mvalue = getNodeAttribute(node, "id-match");
+
+		if (mvalue != null && mvalue.length() > 0) {
+			if (mvalue.equalsIgnoreCase(RULE_PREFIX))
+				idMatch = PREFIX;
+		}
 		patch = getBooleanAttribute(node, "patch");
-		if (type==PLUGIN)
+		if (type == PLUGIN)
 			setPlugin(PDECore.getDefault().findPlugin(id, getVersion(), match));
-		else 
-			setFeature(PDECore.getDefault().findFeature(id, getVersion(), match));
+		else
+			setFeature(
+				PDECore.getDefault().findFeature(id, getVersion(), match));
 	}
-	
+
 	public void loadFrom(IFeature feature) {
 		reset();
 		this.feature = feature;
@@ -112,6 +125,13 @@ public class FeatureImport
 		Integer oldValue = new Integer(this.match);
 		this.match = match;
 		firePropertyChanged(P_MATCH, oldValue, new Integer(match));
+	}
+
+	public void setIdMatch(int idMatch) throws CoreException {
+		ensureModelEditable();
+		Integer oldValue = new Integer(this.idMatch);
+		this.idMatch = idMatch;
+		firePropertyChanged(P_ID_MATCH, oldValue, new Integer(idMatch));
 	}
 
 	public int getType() {
@@ -135,21 +155,21 @@ public class FeatureImport
 		this.patch = patch;
 		firePropertyChanged(P_PATCH, oldValue, new Boolean(patch));
 	}
-	
+
 	public void setOS(String os) throws CoreException {
 		ensureModelEditable();
 		String oldValue = this.os;
 		this.os = os;
 		firePropertyChanged(P_OS, oldValue, os);
 	}
-	
+
 	public void setWS(String ws) throws CoreException {
 		ensureModelEditable();
 		String oldValue = this.ws;
 		this.ws = ws;
 		firePropertyChanged(P_WS, oldValue, ws);
 	}
-	
+
 	public void setArch(String arch) throws CoreException {
 		ensureModelEditable();
 		String oldValue = this.arch;
@@ -161,6 +181,8 @@ public class FeatureImport
 		throws CoreException {
 		if (name.equals(P_MATCH)) {
 			setMatch(newValue != null ? ((Integer) newValue).intValue() : 0);
+		} else if (name.equals(P_ID_MATCH)) {
+			setIdMatch(newValue != null ? ((Integer) newValue).intValue() : 0);
 		} else if (name.equals(P_TYPE)) {
 			setType(
 				newValue != null ? ((Integer) newValue).intValue() : PLUGIN);
@@ -168,32 +190,35 @@ public class FeatureImport
 			setPatch(
 				newValue != null ? ((Boolean) newValue).booleanValue() : false);
 		} else if (name.equals(P_OS)) {
-			setOS((String)newValue);
+			setOS((String) newValue);
 		} else if (name.equals(P_WS)) {
-			setWS((String)newValue);
+			setWS((String) newValue);
 		} else if (name.equals(P_ARCH)) {
-			setArch((String)newValue);
+			setArch((String) newValue);
 		} else
 			super.restoreProperty(name, oldValue, newValue);
 	}
 
 	public void write(String indent, PrintWriter writer) {
-		String typeAtt = type==FEATURE ? "feature":"plugin";
-		writer.print(indent + "<import "+typeAtt+"=\"" + getId() + "\"");
+		String typeAtt = type == FEATURE ? "feature" : "plugin";
+		writer.print(indent + "<import " + typeAtt + "=\"" + getId() + "\"");
 		if (getVersion() != null) {
 			writer.print(" version=\"" + getVersion() + "\"");
 		}
 		if (!patch && match != NONE) {
 			writer.print(" match=\"" + RULE_NAME_TABLE[match] + "\"");
 		}
-		if (os!=null) {
-			writer.print(" os=\""+getOS()+"\"");
+		if (idMatch == PREFIX) {
+			writer.print(" id-match=\"prefix\"");
 		}
-		if (ws!=null) {
-			writer.print(" ws=\""+getWS()+"\"");
+		if (os != null) {
+			writer.print(" os=\"" + getOS() + "\"");
 		}
-		if (arch!=null) {
-			writer.print(" arch=\""+getArch()+"\"");
+		if (ws != null) {
+			writer.print(" ws=\"" + getWS() + "\"");
+		}
+		if (arch != null) {
+			writer.print(" arch=\"" + getArch() + "\"");
 		}
 		if (patch) {
 			writer.print(" patch=\"true\"");

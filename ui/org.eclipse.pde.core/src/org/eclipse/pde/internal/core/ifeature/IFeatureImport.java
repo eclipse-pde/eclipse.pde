@@ -15,6 +15,7 @@ import org.eclipse.pde.core.plugin.IPluginReference;
 public interface IFeatureImport extends IFeatureObject, IPluginReference, IEnvironment {
 	String P_TYPE = "type";
 	String P_PATCH = "patch";
+	String P_ID_MATCH = "id-match";
 	
 	int PLUGIN = 0;
 	int FEATURE = 1;
@@ -25,4 +26,7 @@ public interface IFeatureImport extends IFeatureObject, IPluginReference, IEnvir
 	
 	boolean isPatch();
 	void setPatch(boolean patch) throws CoreException;
+	
+	int getIdMatch();
+	void setIdMatch(int idMatch) throws CoreException;
 }
