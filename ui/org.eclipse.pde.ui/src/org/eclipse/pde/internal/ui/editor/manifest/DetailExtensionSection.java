@@ -577,18 +577,9 @@ public class DetailExtensionSection
 		}
 		if (changeObject instanceof IPluginExtension
 			|| changeObject instanceof IPluginElement) {
-			// We do not need to react to changes in element whose
-			// parents are not extensions
 			IPluginObject pobj = (IPluginObject) changeObject;
 			IPluginObject parent = pobj.getParent();
 
-			/*
-						if (showAllChildrenButton.getSelection() == false) {
-							if (!(pobj instanceof IPluginExtension)
-								&& !(parent instanceof IPluginExtension))
-								return;
-						}
-			*/
 			if (event.getChangeType() == IModelChangedEvent.INSERT) {
 				extensionTree.add(parent, pobj);
 				extensionTree.setSelection(

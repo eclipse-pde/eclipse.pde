@@ -30,6 +30,7 @@ public abstract class PluginBase
 		ensureModelEditable();
 		extensions.addElement(extension);
 		((PluginExtension) extension).setInTheModel(true);
+		((PluginExtension) extension).setParent(this);
 		fireStructureChanged(extension, IModelChangedEvent.INSERT);
 	}
 	public void add(IPluginExtensionPoint extensionPoint)
@@ -37,17 +38,20 @@ public abstract class PluginBase
 		ensureModelEditable();
 		extensionPoints.addElement(extensionPoint);
 		((PluginExtensionPoint) extensionPoint).setInTheModel(true);
+		((PluginExtensionPoint) extensionPoint).setParent(this);
 		fireStructureChanged(extensionPoint, IModelChangedEvent.INSERT);
 	}
 	public void add(IPluginLibrary library) throws CoreException {
 		ensureModelEditable();
 		libraries.addElement(library);
 		((PluginLibrary) library).setInTheModel(true);
+		((PluginLibrary) library).setParent(this);
 		fireStructureChanged(library, IModelChangedEvent.INSERT);
 	}
 	public void add(IPluginImport iimport) throws CoreException {
 		ensureModelEditable();
 		((PluginImport) iimport).setInTheModel(true);
+		((PluginImport) iimport).setParent(this);
 		imports.addElement(iimport);
 		fireStructureChanged(iimport, IModelChangedEvent.INSERT);
 	}
