@@ -32,6 +32,9 @@ public class RegistryBrowserContentProvider
 		public int getFolderId() {
 			return id;
 		}
+		public Object getAdapter(Class key) {
+			return null;
+		}
 	}
 
 protected PluginObjectAdapter createAdapter(Object object, int id) {
@@ -50,6 +53,11 @@ protected Object[] createPluginFolders(IPluginDescriptor pd) {
 	return array;
 }
 public void dispose() {}
+
+public Object[] getElements(Object element) {
+	return getChildren(element);
+}
+
 public Object[] getChildren(Object element) {
 	if (element instanceof ExtensionAdapter) {
 		return ((ExtensionAdapter)element).getChildren();
@@ -62,6 +70,9 @@ public Object[] getChildren(Object element) {
 	}
 	if (element instanceof PluginObjectAdapter)
 		element = ((PluginObjectAdapter)element).getObject();
+	if (element.equals(Platform.getPluginRegistry())) {
+		return getPlugins(Platform.getPluginRegistry());
+	}
 	if (element instanceof IPluginDescriptor) {
 		IPluginDescriptor desc = (IPluginDescriptor) element;
 		Object [] folders = (Object[]) pluginMap.get(desc.getUniqueIdentifier());
@@ -77,8 +88,8 @@ public Object[] getChildren(Object element) {
 	}
 	return null;
 }
-public Object[] getElements(Object element) {
-	IPluginRegistry registry = Platform.getPluginRegistry();
+
+public Object[] getPlugins(IPluginRegistry registry) {
 	IPluginDescriptor [] descriptors = registry.getPluginDescriptors();
 	Object [] result = new Object[descriptors.length];
 

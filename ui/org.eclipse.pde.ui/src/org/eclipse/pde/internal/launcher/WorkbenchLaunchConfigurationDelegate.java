@@ -62,7 +62,7 @@ public class WorkbenchLaunchConfigurationDelegate
 		final IVMRunner runner = launcher.getVMRunner(mode);
 		final ExecutionArguments args = new ExecutionArguments(vmArgs, progArgs);
 
-		return doLaunch(
+		ILaunch launch =  doLaunch(
 			configuration,
 			mode,
 			runner,
@@ -73,6 +73,8 @@ public class WorkbenchLaunchConfigurationDelegate
 			appName,
 			tracing,
 			monitor);
+		PDEPlugin.getDefault().registerLaunch(launch);
+		return launch;
 	}
 
 	private IPluginModelBase[] getPluginsFromConfiguration(ILaunchConfiguration config)

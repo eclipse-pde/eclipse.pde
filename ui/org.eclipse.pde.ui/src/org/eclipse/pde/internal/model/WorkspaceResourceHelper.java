@@ -21,8 +21,8 @@ implements IResourceChangeListener {
 	/**
 	 * Constructor for WorkspaceResourceHelper
 	 */
-	public WorkspaceResourceHelper(String name, URL url) {
-		super(name, url);
+	public WorkspaceResourceHelper(String name, URL [] locations) {
+		super(name, locations);
 		PDEPlugin.getWorkspace().addResourceChangeListener(this);
 	}
 	
@@ -58,7 +58,7 @@ implements IResourceChangeListener {
 	private boolean visit(IResourceDelta delta) {
 		IResource resource = delta.getResource();
 		if (resource.equals(file)) {
-			fBundle = null;
+			bundle = null;
 			/*
 			if (changeProvider!=null) {
 				// fire 'world changed' in the model

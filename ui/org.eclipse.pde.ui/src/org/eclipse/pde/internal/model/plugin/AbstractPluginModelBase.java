@@ -17,92 +17,166 @@ import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.builders.SourceDOMParser;
 import org.eclipse.pde.internal.model.*;
 import org.eclipse.pde.model.*;
+import java.net.*;
 
-
-public abstract class AbstractPluginModelBase extends AbstractModel implements IPluginModelBase {
+public abstract class AbstractPluginModelBase
+	extends AbstractModel
+	implements IPluginModelBase {
 	public static final String KEY_ERROR = "AbstractPluginModelBase.error";
 	protected PluginBase pluginBase;
 	private PluginModelFactory factory;
 	private boolean enabled;
 
-public AbstractPluginModelBase() {
-	super();
-}
-public abstract IPluginBase createPluginBase();
-public IPluginModelFactory getFactory() {
-	if (factory == null) factory = new PluginModelFactory(this);
-	return factory;
-}
-public IPluginBase getPluginBase() {
-	return pluginBase;
-}
-public IPluginBase getPluginBase(boolean createIfMissing) {
-	if (pluginBase==null) {
-		pluginBase = (PluginBase)createPluginBase();
+	public AbstractPluginModelBase() {
+		super();
 	}
-	return pluginBase;
-}
-public boolean isEnabled() {
-	return enabled;
-}
-public boolean isFragmentModel() {
-	return false;
-}
-public void load(InputStream stream, boolean outOfSync) throws CoreException {
-	XMLErrorHandler errorHandler = new XMLErrorHandler();
-	SourceDOMParser parser = new SourceDOMParser();
-	parser.setErrorHandler(errorHandler);
-	if (pluginBase == null) {
-		pluginBase = (PluginBase)createPluginBase();
-		pluginBase.setModel(this);
+	public abstract IPluginBase createPluginBase();
+	public IPluginModelFactory getFactory() {
+		if (factory == null)
+			factory = new PluginModelFactory(this);
+		return factory;
 	}
-	pluginBase.reset();
-	try {
-		InputSource source = new InputSource(stream);
-		parser.parse(source);
-		if (errorHandler.getErrorCount()>0 ||
-			errorHandler.getFatalErrorCount()>0) {
-				throwParseErrorsException();
+	public IPluginBase getPluginBase() {
+		return pluginBase;
+	}
+	public IPluginBase getPluginBase(boolean createIfMissing) {
+		if (pluginBase == null) {
+			pluginBase = (PluginBase) createPluginBase();
 		}
-		processDocument(parser.getDocument(), parser.getLineTable());
-		loaded=true;
-		if (!outOfSync) updateTimeStamp();
-	} catch (SAXException e) {
-		throwParseErrorsException();
-	} catch (IOException e) {
-		throwParseErrorsException();
+		return pluginBase;
 	}
-}
-private void processDocument(Document doc, Hashtable lineTable) {
-	Node pluginNode = doc.getDocumentElement();
-	pluginBase.load(pluginNode, lineTable);
-}
-public void reload(InputStream stream, boolean outOfSync) throws CoreException {
-	load(stream, outOfSync);
-	fireModelChanged(
-		new ModelChangedEvent(
-			IModelChangedEvent.WORLD_CHANGED,
-			new Object[] { pluginBase },
-			null));
-}
-public void setEnabled(boolean newEnabled) {
-	enabled = newEnabled;
-}
-private void throwParseErrorsException() throws CoreException {
-	Status status =
-		new Status(
-			IStatus.ERROR,
-			PDEPlugin.getPluginId(),
-			IStatus.OK,
-			PDEPlugin.getResourceString(KEY_ERROR),
-			null);
-	throw new CoreException(status);
-}
-public String toString() {
-	IPluginBase pluginBase = getPluginBase();
-	if (pluginBase!=null) return pluginBase.getTranslatedName();
-	return super.toString();
-}
+	public boolean isEnabled() {
+		return enabled;
+	}
+	public boolean isFragmentModel() {
+		return false;
+	}
 
-protected abstract void updateTimeStamp();
+	public abstract URL getNLLookupLocation();
+
+	protected URL[] getNLLookupLocations() {
+		if (isFragmentModel()) {
+			return new URL[] { getNLLookupLocation()};
+		} else {
+			URL[] fragmentLocations = getFragmentLocations();
+			URL[] locations = new URL[1 + fragmentLocations.length];
+			locations[0] = getNLLookupLocation();
+			for (int i = 1; i < locations.length; i++) {
+				locations[i] = fragmentLocations[i - 1];
+			}
+			return locations;
+		}
+	}
+
+	protected URL[] getFragmentLocations() {
+		Vector result = new Vector();
+		if (pluginBase != null) {
+			String id = pluginBase.getId();
+			String version = pluginBase.getVersion();
+			// Add matching external fragments
+			ExternalModelManager emng = PDEPlugin.getDefault().getExternalModelManager();
+			if (emng.hasEnabledModels()) {
+				IFragmentModel[] models = emng.getFragmentModels(null);
+				addMatchingFragments(id, version, models, result);
+			}
+			// Add matching workspace fragments
+			WorkspaceModelManager wmng = PDEPlugin.getDefault().getWorkspaceModelManager();
+			IFragmentModel[] models = wmng.getWorkspaceFragmentModels();
+			addMatchingFragments(id, version, models, result);
+		}
+		URL[] locations = new URL[result.size()];
+		result.copyInto(locations);
+		return locations;
+	}
+
+	private void addMatchingFragments(
+		String id,
+		String version,
+		IFragmentModel[] models,
+		Vector result) {
+		for (int i = 0; i < models.length; i++) {
+			IFragmentModel model = models[i];
+			if (model.isEnabled() == false)
+				continue;
+			IFragment fragment = model.getFragment();
+			String refid = fragment.getPluginId();
+			String refversion = fragment.getPluginVersion();
+			int refmatch = fragment.getRule();
+			if (PDEPlugin.compare(id, version, refid, refversion, refmatch)) {
+				URL location = ((AbstractPluginModelBase)model).getNLLookupLocation();
+				result.add(location);
+				IPluginLibrary libraries[] = fragment.getLibraries();
+				for (int j=0; j<libraries.length; j++) {
+					IPluginLibrary library = libraries[i];
+					try {
+						URL libLocation = new URL(location, library.getName());
+						result.add(libLocation);
+					}
+					catch (MalformedURLException e) {
+					}
+				}
+			}
+		}
+	}
+
+	public void load(InputStream stream, boolean outOfSync) throws CoreException {
+		XMLErrorHandler errorHandler = new XMLErrorHandler();
+		SourceDOMParser parser = new SourceDOMParser();
+		parser.setErrorHandler(errorHandler);
+		if (pluginBase == null) {
+			pluginBase = (PluginBase) createPluginBase();
+			pluginBase.setModel(this);
+		}
+		pluginBase.reset();
+		try {
+			InputSource source = new InputSource(stream);
+			parser.parse(source);
+			if (errorHandler.getErrorCount() > 0
+				|| errorHandler.getFatalErrorCount() > 0) {
+				throwParseErrorsException();
+			}
+			processDocument(parser.getDocument(), parser.getLineTable());
+			loaded = true;
+			if (!outOfSync)
+				updateTimeStamp();
+		} catch (SAXException e) {
+			throwParseErrorsException();
+		} catch (IOException e) {
+			throwParseErrorsException();
+		}
+	}
+	private void processDocument(Document doc, Hashtable lineTable) {
+		Node pluginNode = doc.getDocumentElement();
+		pluginBase.load(pluginNode, lineTable);
+	}
+	public void reload(InputStream stream, boolean outOfSync)
+		throws CoreException {
+		load(stream, outOfSync);
+		fireModelChanged(
+			new ModelChangedEvent(
+				IModelChangedEvent.WORLD_CHANGED,
+				new Object[] { pluginBase },
+				null));
+	}
+	public void setEnabled(boolean newEnabled) {
+		enabled = newEnabled;
+	}
+	private void throwParseErrorsException() throws CoreException {
+		Status status =
+			new Status(
+				IStatus.ERROR,
+				PDEPlugin.getPluginId(),
+				IStatus.OK,
+				PDEPlugin.getResourceString(KEY_ERROR),
+				null);
+		throw new CoreException(status);
+	}
+	public String toString() {
+		IPluginBase pluginBase = getPluginBase();
+		if (pluginBase != null)
+			return pluginBase.getTranslatedName();
+		return super.toString();
+	}
+
+	protected abstract void updateTimeStamp();
 }

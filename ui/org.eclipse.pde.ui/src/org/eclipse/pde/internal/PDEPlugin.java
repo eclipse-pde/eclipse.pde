@@ -96,7 +96,7 @@ public class PDEPlugin extends AbstractUIPlugin {
 			if (obj instanceof IProcess) {
 				if ((e.getKind() & DebugEvent.TERMINATE) != 0) {
 					ILaunch launch = ((IProcess) obj).getLaunch();
-					if (launch.equals(currentLaunch) && currentLaunch.isTerminated()) {
+					if (launch!=null && launch.equals(currentLaunch) && currentLaunch.isTerminated()) {
 						currentLaunch = null;
 						fireCurrentLaunchChanged();
 					}
@@ -175,10 +175,7 @@ public class PDEPlugin extends AbstractUIPlugin {
 		String id,
 		String version,
 		int match) {
-		PluginVersionIdentifier vid = null;
 
-		if (version != null)
-			vid = new PluginVersionIdentifier(version);
 		for (int i = 0; i < models.length; i++) {
 			IPluginModel model = models[i];
 			if (model.isEnabled() == false)
@@ -186,36 +183,51 @@ public class PDEPlugin extends AbstractUIPlugin {
 			IPlugin plugin = model.getPlugin();
 			String pid = plugin.getId();
 			String pversion = plugin.getVersion();
-			if (pid != null && pid.equals(id)) {
-				if (version == null)
-					return plugin;
-				PluginVersionIdentifier pvid = new PluginVersionIdentifier(pversion);
-
-				switch (match) {
-					case IMatchRules.NONE :
-					case IMatchRules.COMPATIBLE :
-						if (pvid.isCompatibleWith(vid))
-							return plugin;
-						break;
-					case IMatchRules.EQUIVALENT :
-						if (pvid.isEquivalentTo(vid))
-							return plugin;
-						break;
-					case IMatchRules.PERFECT :
-						if (pvid.isPerfect(vid))
-							return plugin;
-						break;
-					case IMatchRules.GREATER_OR_EQUAL :
-						if (pvid.isGreaterOrEqualTo(vid))
-							return plugin;
-						break;
-				}
-			}
+			if (compare(id, version, pid, pversion, match))
+				return plugin;
 		}
 		return null;
 	}
+
+	public static boolean compare(
+		String id1,
+		String version1,
+		String id2,
+		String version2,
+		int match) {
+		if (!(id1.equals(id2)))
+			return false;
+		if (version1 == null)
+			return true;
+		if (version2 == null)
+			return false;
+		PluginVersionIdentifier pid1 = new PluginVersionIdentifier(version1);
+		PluginVersionIdentifier pid2 = new PluginVersionIdentifier(version2);
+
+		switch (match) {
+			case IMatchRules.NONE :
+			case IMatchRules.COMPATIBLE :
+				if (pid2.isCompatibleWith(pid1))
+					return true;
+				break;
+			case IMatchRules.EQUIVALENT :
+				if (pid2.isEquivalentTo(pid1))
+					return true;
+				break;
+			case IMatchRules.PERFECT :
+				if (pid2.isPerfect(pid1))
+					return true;
+				break;
+			case IMatchRules.GREATER_OR_EQUAL :
+				if (pid2.isGreaterOrEqualTo(pid1))
+					return true;
+				break;
+		}
+		return false;
+	}
+
 	public IPlugin findPlugin(String id) {
-		return findPlugin(id, null, 0);
+		return findPlugin(id, null, IMatchRules.NONE);
 	}
 	public IPlugin findPlugin(String id, String version, int match) {
 		WorkspaceModelManager manager = getWorkspaceModelManager();
@@ -224,10 +236,7 @@ public class PDEPlugin extends AbstractUIPlugin {
 		if (plugin != null)
 			return plugin;
 		ExternalModelManager exmanager = getExternalModelManager();
-		if (exmanager.hasEnabledModels()) {
-			return findPlugin(exmanager.getModels(), id, version, match);
-		}
-		return null;
+		return findPlugin(exmanager.getModels(), id, version, match);
 	}
 	public static IWorkbenchPage getActivePage() {
 		return getDefault().internalGetActivePage();

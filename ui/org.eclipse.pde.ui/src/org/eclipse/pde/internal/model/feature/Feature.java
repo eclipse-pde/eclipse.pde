@@ -232,37 +232,12 @@ public class Feature extends VersionableObject implements IFeature {
 		int match) {
 		PluginVersionIdentifier vid = null;
 
-		if (version != null)
-			vid = new PluginVersionIdentifier(version);
 		for (int i = 0; i < plugins.size(); i++) {
 			IFeaturePlugin fp = (IFeaturePlugin) plugins.get(i);
 			String pid = fp.getId();
 			String pversion = fp.getVersion();
-			if (pid != null && pid.equals(id)) {
-				if (version == null)
-					return fp;
-				PluginVersionIdentifier pvid = new PluginVersionIdentifier(pversion);
-
-				switch (match) {
-					case IMatchRules.NONE :
-					case IMatchRules.COMPATIBLE :
-						if (pvid.isCompatibleWith(vid))
-							return fp;
-						break;
-					case IMatchRules.EQUIVALENT :
-						if (pvid.isEquivalentTo(vid))
-							return fp;
-						break;
-					case IMatchRules.PERFECT :
-						if (pvid.isPerfect(vid))
-							return fp;
-						break;
-					case IMatchRules.GREATER_OR_EQUAL :
-						if (pvid.isGreaterOrEqualTo(vid))
-							return fp;
-						break;
-				}
-			}
+			if (PDEPlugin.compare(id, version, pid, pversion, match))
+				return fp;
 		}
 		return null;
 	}

@@ -278,7 +278,17 @@ public class WorkbenchLauncherWizardAdvancedPage
 	}
 
 	static IPluginModelBase[] getExternalPlugins() {
-		return PDEPlugin.getDefault().getExternalModelManager().getModels();
+		IPluginModelBase[] plugins = PDEPlugin.getDefault().getExternalModelManager().getModels();
+		IPluginModelBase[] fragments = PDEPlugin.getDefault().getExternalModelManager().getFragmentModels(null);
+		return getAllPlugins(plugins, fragments);
+	}
+	
+	static IPluginModelBase [] getAllPlugins(IPluginModelBase[] plugins, IPluginModelBase[] fragments) {
+		IPluginModelBase[] all =
+			new IPluginModelBase[plugins.length + fragments.length];
+		System.arraycopy(plugins, 0, all, 0, plugins.length);
+		System.arraycopy(fragments, 0, all, plugins.length, fragments.length);
+		return all;
 	}
 
 	static IPluginModelBase[] getWorkspacePlugins() {
@@ -286,11 +296,7 @@ public class WorkbenchLauncherWizardAdvancedPage
 			PDEPlugin.getDefault().getWorkspaceModelManager().getWorkspacePluginModels();
 		IPluginModelBase[] fragments =
 			PDEPlugin.getDefault().getWorkspaceModelManager().getWorkspaceFragmentModels();
-		IPluginModelBase[] all =
-			new IPluginModelBase[plugins.length + fragments.length];
-		System.arraycopy(plugins, 0, all, 0, plugins.length);
-		System.arraycopy(fragments, 0, all, plugins.length, fragments.length);
-		return all;
+		return getAllPlugins(plugins, fragments);
 	}
 
 	private void initializeFields() {

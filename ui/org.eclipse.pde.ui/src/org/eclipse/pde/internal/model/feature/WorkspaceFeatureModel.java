@@ -38,7 +38,7 @@ protected NLResourceHelper createNLResourceHelper() {
 		   installLocation = "file:"+installLocation;
 		URL url = new URL(installLocation+"/");
 		String name = "feature";
-		WorkspaceResourceHelper helper = new WorkspaceResourceHelper(name, url);
+		WorkspaceResourceHelper helper = new WorkspaceResourceHelper(name, new URL[] {url});
 		helper.setFile(file);
 		return helper;
 	} catch (MalformedURLException e) {

@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.runtime.*;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.ui.part.DrillDownAdapter;
 
 public class RegistryBrowser extends ViewPart implements ISelectionListener {
 	public static final String KEY_REFRESH_LABEL = "RegistryView.refresh.label";
@@ -21,6 +22,7 @@ public class RegistryBrowser extends ViewPart implements ISelectionListener {
 	private TreeViewer treeViewer;
 	private Action propertiesAction;
 	private Action refreshAction;
+	private DrillDownAdapter drillDownAdapter;
 
 public RegistryBrowser() {
 	super();
@@ -58,18 +60,25 @@ public void createPartControl(Composite parent) {
 	popupMenuManager.addMenuListener(listener);
 	Menu menu=popupMenuManager.createContextMenu(tree);
 	tree.setMenu(menu);
+	
+	drillDownAdapter = new DrillDownAdapter(treeViewer);
 
 	IViewSite site = getViewSite();
-	site.getActionBars().getToolBarManager().add(propertiesAction);
-	site.getActionBars().getToolBarManager().add(refreshAction);
-	treeViewer.setInput(Platform.getPluginRegistry());
+	IToolBarManager mng = site.getActionBars().getToolBarManager();
+	drillDownAdapter.addNavigationActions(mng);
+	mng.add(new Separator());
+	mng.add(propertiesAction);
+	mng.add(refreshAction);
+	treeViewer.setInput(new PluginObjectAdapter(Platform.getPluginRegistry()));
 	site.setSelectionProvider(treeViewer);
 }
 public void fillContextMenu(IMenuManager manager) {
 	manager.add(propertiesAction);
 	manager.add(refreshAction);
+	manager.add(new Separator());
+	drillDownAdapter.addNavigationActions(manager);
 }
-public org.eclipse.jface.viewers.TreeViewer getTreeViewer() {
+public TreeViewer getTreeViewer() {
 	return treeViewer;
 }
 private void initializeImages() {}

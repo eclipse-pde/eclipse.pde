@@ -8,48 +8,49 @@ import java.net.*;
 import java.util.*;
 
 public class NLResourceHelper {
-	protected ResourceBundle fBundle = null; // abc.properties
-	private Locale fLocale = null; // bundle locale
-	private String fName = null; // abc
-	private URL fLocation = null;
+	protected ResourceBundle bundle = null; // abc.properties
+	private Locale locale = null; // bundle locale
+	private String name = null; // abc
+	private URL [] locations = null;
 	private boolean notFound = false; // marker to prevent unnecessary lookups
 
 	public static final String KEY_PREFIX = "%";
 	public static final String KEY_DOUBLE_PREFIX = "%%";
 
-	public NLResourceHelper(String name, URL url) {
-		fName = name;
-		fLocation = url;
+	public NLResourceHelper(String name, URL [] locations) {
+		this.name = name;
+		this.locations = locations;
 	}
-	public java.util.ResourceBundle getResourceBundle()
+	public ResourceBundle getResourceBundle()
 		throws MissingResourceException {
 
 		return getResourceBundle(Locale.getDefault());
 	}
-	public java.util.ResourceBundle getResourceBundle(Locale locale)
+	public ResourceBundle getResourceBundle(Locale locale)
 		throws MissingResourceException {
 
 		// we cache the bundle for a single locale 
-		if (fBundle != null && fLocale.equals(locale))
-			return fBundle;
+		if (bundle != null && this.locale.equals(locale))
+			return bundle;
 
 		// check if we already tried and failed
 		if (notFound)
 			throw new MissingResourceException(
-				"resourceNotFound" + fName + "_" + locale,
-				fName + "_" + locale,
+				"resourceNotFound" + name + "_" + locale,
+				name + "_" + locale,
 				"");
 
-		// try to load bundle from this install directory
-		ClassLoader resourceLoader = new URLClassLoader(new URL[] { fLocation }, null);
-		ResourceBundle bundle = null;
+		ClassLoader resourceLoader = new URLClassLoader(locations);
 		try {
-			bundle = ResourceBundle.getBundle(fName, locale, resourceLoader);
+			this.bundle = ResourceBundle.getBundle(name, locale, resourceLoader);
+			this.locale = locale;
+			notFound = false;
 		} catch (MissingResourceException e) {
 			notFound = true;
+			this.bundle = null;
+			this.locale = null;
 			throw e;
 		}
-
 		return bundle;
 	}
 

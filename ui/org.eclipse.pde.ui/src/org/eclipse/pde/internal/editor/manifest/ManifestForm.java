@@ -107,14 +107,22 @@ public class ManifestForm extends ScrollableSectionForm {
 	public void initialize(Object modelObject) {
 		IPluginModelBase model = (IPluginModelBase) modelObject;
 		IPluginBase plugin = model.getPluginBase();
-		String name = plugin.getName();
+		String name = plugin.getTranslatedName();
 		if (model.isEditable() == false) {
 			name = PDEPlugin.getFormattedMessage(ManifestEditor.KEY_READ_ONLY, name);
 		}
-		setHeadingText(name);
-
 		super.initialize(model);
-		((Composite) getControl()).layout(true);
+		setHeadingText(name);
 	}
+	
+	public void setHeadingText(String text) {
+		super.setHeadingText(text);
+		Composite control = (Composite)getControl();
+		if (control!=null) {
+			control.layout(true);
+			control.redraw();
+		}
+	}
+		
 
 }

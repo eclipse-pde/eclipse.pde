@@ -8,7 +8,7 @@ import org.eclipse.core.runtime.*;
 import java.util.*;
 
 
-public interface IPluginFolder {
+public interface IPluginFolder extends IAdaptable {
 	public static final int F_EXTENSIONS = 1;
 	public static final int F_EXTENSION_POINTS = 2;
 	public static final int F_IMPORTS = 3;
