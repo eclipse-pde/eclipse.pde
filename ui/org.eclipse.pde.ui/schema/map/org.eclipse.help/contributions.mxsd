@@ -34,9 +34,9 @@ point and specify the navigation file(s).
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="topics" minOccurs="0" maxOccurs="1"/>
-            <element ref="actions" minOccurs="0" maxOccurs="1"/>
-            <element ref="infoset" minOccurs="0" maxOccurs="1"/>
+            <element ref="topics" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="actions" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="infoset" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>

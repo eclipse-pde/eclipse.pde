@@ -14,7 +14,7 @@ individual plug-in.
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="contexts" minOccurs="0" maxOccurs="1"/>
+            <element ref="contexts" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -47,6 +47,16 @@ individual plug-in.
                <documentation>
                   the name of the manifest file which contains the 
 context-sensitive help documentation for this plug-in.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="plugin" type="string">
+            <annotation>
+               <documentation>
+                  the id of a plugin for which this contexts file is defined. All
+the context id's contained in this contexts file will be fully qualified with the
+specified plugin. By default, when no plugin attribute is defined, the plugin id of 
+the current plugin will be used.
                </documentation>
             </annotation>
          </attribute>

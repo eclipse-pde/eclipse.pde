@@ -18,6 +18,7 @@ public class ExternalPluginsEditor extends FieldEditor {
 protected ExternalPluginsEditor(Composite parent) {
 	pluginsBlock = new ExternalPluginsBlock(this);
 	createControl(parent);
+	setPreferenceName("ExternalPlugins");
 }
 protected void adjustForNumColumns(int numColumns) {
 	Control control = pluginsBlock.getControl();
