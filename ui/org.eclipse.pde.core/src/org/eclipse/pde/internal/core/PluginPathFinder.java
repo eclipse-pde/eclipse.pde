@@ -15,6 +15,7 @@ import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.Path;
+import org.eclipse.update.configurator.*;
 
 public class PluginPathFinder {
 	
@@ -56,20 +57,51 @@ public class PluginPathFinder {
 	}
 	
 	public static URL[] getPluginPaths(String platformHome) {
-		/*File file = new File(platformHome, "configuration/org.eclipse.update/platform.xml"); //$NON-NLS-1$
+		File file = new File(platformHome, "configuration/org.eclipse.update/platform.xml"); //$NON-NLS-1$
 		if (file.exists()) {
 			try {
-				return ConfiguratorUtils.getPlatformConfiguration(file.toURL()).getPluginPath();
+				IPlatformConfiguration config = ConfiguratorUtils.getPlatformConfiguration(file.toURL());
+				return getConfiguredSites(platformHome, config);
 			} catch (MalformedURLException e) {
 			} catch (IOException e) {
 			}
-		}*/		
+		}		
 		return scanLocations(getSites(platformHome));
+	}
+	
+	private static URL[] getConfiguredSites(String platformHome, IPlatformConfiguration configuration) {
+		URL[] installPlugins = scanLocations(new File[]{new File(platformHome, "plugins")});
+		URL[] extensionPlugins = getExtensionURLs(configuration);
+		
+		URL[] all = new URL[installPlugins.length + extensionPlugins.length];
+		System.arraycopy(installPlugins, 0, all, 0, installPlugins.length);
+		System.arraycopy(extensionPlugins, 0, all, installPlugins.length, extensionPlugins.length);
+		return all;
+	}
+	
+	private static URL[] getExtensionURLs(IPlatformConfiguration config) {
+		ArrayList extensionPlugins = new ArrayList();
+		IPlatformConfiguration.ISiteEntry[] sites = config.getConfiguredSites();
+		for (int i = 0; i < sites.length; i++) {
+			URL url = sites[i].getURL();
+			if ("file".equalsIgnoreCase(url.getProtocol())) {
+				String[] plugins = sites[i].getPlugins();
+				for (int j = 0; j < plugins.length; j++) {
+					try {
+						extensionPlugins.add(new File(url.getFile(), plugins[j]).toURL());
+					} catch (MalformedURLException e) {
+					}
+				}
+			}			
+		}
+		return (URL[]) extensionPlugins.toArray(new URL[extensionPlugins.size()]);		
 	}
 	
 	public static URL[] scanLocations(File[] sites) {
 		ArrayList result = new ArrayList();
 		for (int i = 0; i < sites.length; i++){
+			if (!sites[i].exists())
+				continue;
 			File[] children = sites[i].listFiles();
 			if (children != null) {
 				for (int j = 0; j < children.length; j++) {
