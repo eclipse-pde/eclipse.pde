@@ -217,6 +217,7 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants, IPre
 		store.setDefault(PROP_PLUGIN_PROJECT_UPDATE, true);
 		store.setDefault(PROP_FRAGMENT_PROJECT_UPDATE, true);
 		store.setDefault(PROP_MANIFEST_UPDATE, true);
+		store.setDefault(PROP_LAUNCH_DUP_WARNING, true);
 		store.setDefault(PROP_CLASSPATH_CONTAINERS, false);
 		store.setDefault(P_USE_SOURCE_PAGE, false);
 		store.setDefault(PROP_SHOW_OBJECTS, VALUE_USE_IDS);
@@ -245,6 +246,11 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants, IPre
 	public static boolean isManifestUpdate() {
 		IPreferenceStore store = getDefault().getPreferenceStore();
 		return store.getBoolean(PROP_MANIFEST_UPDATE);
+	}
+	
+	public static boolean isDuplicateWarningNeeded() {
+		IPreferenceStore store = getDefault().getPreferenceStore();
+		return store.getBoolean(PROP_LAUNCH_DUP_WARNING);
 	}
 	
 	public static boolean isBuildPropertiesUpdate() {

@@ -23,6 +23,7 @@ public interface IPreferenceConstants {
 		"Preferences.BuildpathPage.buildPropertiesUpdate";		
 	public static final String PROP_CLASSPATH_CONTAINERS =
 		"Preferences.BuildpathPage.useClasspathContainers";
+	public static final String PROP_LAUNCH_DUP_WARNING = "Launcher.plugin.duplicates";
 
 	// editor preference page
 	public static final String P_USE_SOURCE_PAGE = "useSourcePage";

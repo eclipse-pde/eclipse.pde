@@ -29,12 +29,15 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ExternalModelManager;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 
@@ -270,7 +273,9 @@ public class LauncherUtils {
 		}
 
 		// alert user if there are duplicate plug-ins.
-		if (duplicates.size() > 0 && !continueRunning(duplicates)) {
+		if (duplicates.size() > 0
+			&& PDEPlugin.isDuplicateWarningNeeded()
+			&& !continueRunning(duplicates)) {
 			return null;
 		}
 
@@ -354,11 +359,17 @@ public class LauncherUtils {
 					for (int i = 0; i < duplicates.size(); i++)
 						message.append(duplicates.get(i) + lineSeparator);
 				}
-				result[0] =
-					MessageDialog.openConfirm(
+				MessageDialogWithToggle dialog =
+					MessageDialogWithToggle.openConfirm(
 						getDisplay().getActiveShell(),
 						PDEPlugin.getResourceString(KEY_TITLE),
-						message.toString());
+						message.toString(),
+						PDEPlugin.getResourceString("LauncherConfigurationDelegate.doNotShow"),
+						false);
+				result[0] = dialog.getReturnCode() == MessageDialogWithToggle.OK;
+				IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
+				store.setValue(IPreferenceConstants.PROP_LAUNCH_DUP_WARNING, !dialog.getToggleState());
+				PDEPlugin.getDefault().savePluginPreferences();
 			}
 		});
 		return result[0];
