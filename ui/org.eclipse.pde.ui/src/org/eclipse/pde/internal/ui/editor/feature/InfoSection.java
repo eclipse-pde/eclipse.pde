@@ -49,6 +49,7 @@ public class InfoSection extends PDEFormSection {
 	private Button applyButton;
 	private Button resetButton;
 	private Object element;
+	private int elementIndex;
 	private IColorManager colorManager;
 	private FormWidgetFactory factory;
 	private boolean ignoreChange;
@@ -266,13 +267,13 @@ public class InfoSection extends PDEFormSection {
 	}
 
 	private void handleApply() {
-		handleApply(null);
+		handleApply(null, sectionCombo.getSelectionIndex());
 	}
 
-	private void handleApply(IFeatureInfo info) {
+	private void handleApply(IFeatureInfo info, int index) {
 		String urlName = urlText.getText();
 		String text = document.get();
-		updateInfoText(info, urlName, text);
+		updateInfoText(info, urlName, text, index);
 		applyButton.setEnabled(false);
 		resetButton.setEnabled(false);
 	}
@@ -280,7 +281,8 @@ public class InfoSection extends PDEFormSection {
 	private void updateInfoText(
 		IFeatureInfo targetInfo,
 		String urlText,
-		String text) {
+		String text,
+		int index) {
 		String url = null;
 
 		if (urlText.length() > 0) {
@@ -290,7 +292,6 @@ public class InfoSection extends PDEFormSection {
 			IFeatureModel model = (IFeatureModel) getFormPage().getModel();
 			IFeature feature = model.getFeature();
 			IFeatureInfo info = targetInfo;
-			int index = sectionCombo.getSelectionIndex();
 
 			if (info == null) {
 				info = feature.getFeatureInfo(index);
@@ -357,6 +358,7 @@ public class InfoSection extends PDEFormSection {
 			IFeatureInfo info = model.getFeature().getFeatureInfo(index);
 			setDirty(false);
 			element = null;
+			elementIndex = -1;
 			updateEditorInput(info, false);
 		}
 	}
@@ -392,14 +394,14 @@ public class InfoSection extends PDEFormSection {
 
 	private void commitPrevious() {
 		IFeatureInfo previous = (IFeatureInfo) element;
-		handleApply(previous);
+		handleApply(previous, elementIndex);
 	}
 
 	public void updateEditorInput(Object input, boolean commitPrevious) {
 		if (isDirty()
-			&& commitPrevious
+			&& commitPrevious /*
 			&& element != null
-			&& element != input) {
+			&& element != input */) {
 			commitPrevious();
 		}
 		ignoreChange = true;
@@ -422,6 +424,7 @@ public class InfoSection extends PDEFormSection {
 		applyButton.setEnabled(false);
 		resetButton.setEnabled(false);
 		element = input;
+		elementIndex = sectionCombo.getSelectionIndex();
 		ignoreChange = false;
 	}
 
