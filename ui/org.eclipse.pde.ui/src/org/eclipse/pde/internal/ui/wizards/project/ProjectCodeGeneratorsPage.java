@@ -295,6 +295,7 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 			ClasspathUtil.setClasspath(
 				project,
 				structureData,
+				projectStructurePage.getSchemaVersion(),
 				new IClasspathEntry[0],
 				monitor);
 	}

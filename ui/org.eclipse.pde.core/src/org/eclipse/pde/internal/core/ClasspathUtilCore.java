@@ -107,6 +107,7 @@ public class ClasspathUtilCore {
 			// add implicit dependencies
 			addImplicitDependencies(
 				model.getPluginBase().getId(),
+				model.getPluginBase().getSchemaVersion(),
 				relative,
 				result,
 				alreadyAdded);
@@ -248,26 +249,61 @@ public class ClasspathUtilCore {
 
 	protected static void addImplicitDependencies(
 		String id,
+		String schemaVersion,
 		boolean relative,
 		Vector result,
 		HashSet alreadyAdded)
 		throws CoreException {
-		if (isOSGiRuntime() 
-		|| id.equals("org.eclipse.core.boot")
-		|| id.equals("org.apache.xerces")
-		|| id.startsWith("org.eclipse.swt"))
-			return;
 		
-		IPlugin plugin = PDECore.getDefault().findPlugin("org.eclipse.core.boot");
-		if (plugin != null)
-			addDependency(plugin, false, relative, result, alreadyAdded);
-		if (!id.equals("org.eclipse.core.runtime")) {
-			plugin = PDECore.getDefault().findPlugin("org.eclipse.core.runtime");
+		//TODO temporary hack until SDK teams convert
+		if (isOSGiRuntime() && schemaVersion != null && !isExemptPlugin(id)) {
+			IPlugin plugin =
+				PDECore.getDefault().findPlugin(
+				"org.eclipse.core.runtime.compatibility");
 			if (plugin != null)
 				addDependency(plugin, false, relative, result, alreadyAdded);
+			
+			return;
+		}
+		
+		
+		if ((isOSGiRuntime() && schemaVersion != null)
+			|| id.equals("org.eclipse.core.boot")
+			|| id.equals("org.apache.xerces")
+			|| id.startsWith("org.eclipse.swt"))
+			return;
+		
+		if (schemaVersion == null && isOSGiRuntime()) {
+			if (!id.equals("org.eclipse.core.runtime")) {
+				IPlugin plugin =
+					PDECore.getDefault().findPlugin(
+						"org.eclipse.core.runtime.compatibility");
+				if (plugin != null)
+					addDependency(plugin, false, relative, result, alreadyAdded);
+			}
+		} else {
+			IPlugin plugin = PDECore.getDefault().findPlugin("org.eclipse.core.boot");
+			if (plugin != null)
+				addDependency(plugin, false, relative, result, alreadyAdded);
+			if (!id.equals("org.eclipse.core.runtime")) {
+				plugin = PDECore.getDefault().findPlugin("org.eclipse.core.runtime");
+				if (plugin != null)
+					addDependency(plugin, false, relative, result, alreadyAdded);
+			}
 		}
 	}
-
+	
+	private static boolean isExemptPlugin(String id) {
+		return id.equals("org.eclipse.osgi")
+			|| id.equals("org.eclipse.osgi.services")
+			|| id.equals("org.eclipse.osgi.util")
+			|| id.equals("org.eclipse.core.runtime")
+			|| id.equals("org.eclipse.core.runtime.compatibility")
+			|| id.equals("org.eclipse.core.boot")
+			|| id.equals("org.eclipse.core.applicationrunner")
+			|| id.equals("org.eclipse.update.configurator");
+	}
+	
 	protected static void addJRE(Vector result) {
 		result.add(
 			JavaCore.newContainerEntry(

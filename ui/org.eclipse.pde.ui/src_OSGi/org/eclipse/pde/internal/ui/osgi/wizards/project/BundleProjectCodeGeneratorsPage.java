@@ -275,6 +275,7 @@ public class BundleProjectCodeGeneratorsPage extends WizardListSelectionPage {
 			ClasspathUtil.setClasspath(
 				project,
 				structureData,
+				"3.0",
 				new IClasspathEntry[0],
 				monitor);
 	}

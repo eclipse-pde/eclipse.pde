@@ -485,5 +485,9 @@ public class ProjectStructurePage extends WizardPage {
 			return null;
 		return super.getNextPage();
 	}
+	
+	public String getSchemaVersion() {
+		return r21Check.getSelection() ? null : "3.0";
+	}
 
 }

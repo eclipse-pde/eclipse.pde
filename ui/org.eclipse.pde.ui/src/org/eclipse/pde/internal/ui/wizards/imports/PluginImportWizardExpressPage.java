@@ -110,12 +110,6 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		gd.horizontalSpan = 2;
 		options.setLayoutData(gd);
 
-		implicitButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				pageChanged();
-			}
-		});
-		
 		addFragmentsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				pageChanged();
@@ -141,7 +135,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 					PDEPlugin.getResourceString(TablePart.KEY_SELECT_ALL),
 					PDEPlugin.getResourceString(TablePart.KEY_DESELECT_ALL)});
 		tablePart.createControl(container);
-		GridData gd = new GridData(GridData.FILL_VERTICAL);
+		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 200;
 		tablePart.getControl().setLayoutData(gd);
 		
@@ -157,7 +151,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 	private void createImportPart(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		container.setLayout(new GridLayout());
-		container.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		createImportList(container);
 		counterLabel = new Label(container, SWT.NONE);
@@ -199,11 +193,6 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		}
 		
 		if (wModels.length > 0) {
-			if (!(wModels.length == 1
-				&& ((IPluginModelBase) wModels[0]).getPluginBase().getId().equals(
-					"org.eclipse.core.boot"))
-				&& implicitButton.getSelection())
-				addImplicitDependencies(result, addFragmentsButton.getSelection());
 			removeCheckedModels(result);
 		}
 		

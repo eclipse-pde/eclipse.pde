@@ -28,13 +28,11 @@ import org.eclipse.swt.widgets.TableItem;
 
 public abstract class BaseImportWizardSecondPage extends WizardPage {
 	
-	protected static final String SETTINGS_IMPLICIT = "implicit";
 	protected static final String SETTINGS_ADD_FRAGMENTS = "addFragments";
 	
 	protected PluginImportWizardFirstPage page1;
 	protected IPluginModelBase[] models = new IPluginModelBase[0];
 	private String location;
-	protected Button implicitButton;
 	protected Button addFragmentsButton;
 	protected TableViewer importListViewer;
 
@@ -81,25 +79,10 @@ public abstract class BaseImportWizardSecondPage extends WizardPage {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout());
 		
-		Label label = new Label(composite, SWT.NONE);
-		label.setText(PDEPlugin.getResourceString("ImportWizard.SecondPage.optionsLabel"));
-		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
-		implicitButton = new Button(composite, SWT.CHECK);
-		implicitButton.setText(PDEPlugin.getResourceString("ImportWizard.SecondPage.implicit"));
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalIndent = 15;
-		implicitButton.setLayoutData(gd);
-		if (getDialogSettings().get(SETTINGS_IMPLICIT) != null)
-			implicitButton.setSelection(getDialogSettings().getBoolean(SETTINGS_IMPLICIT));
-		else 
-			implicitButton.setSelection(true);
 				
 		addFragmentsButton = new Button(composite, SWT.CHECK);
 		addFragmentsButton.setText(PDEPlugin.getResourceString("ImportWizard.SecondPage.addFragments"));
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalIndent = 15;
-		addFragmentsButton.setLayoutData(gd);
+		addFragmentsButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		if (getDialogSettings().get(SETTINGS_ADD_FRAGMENTS) != null)
 			addFragmentsButton.setSelection(getDialogSettings().getBoolean(SETTINGS_ADD_FRAGMENTS));
 		else 
@@ -205,15 +188,6 @@ public abstract class BaseImportWizardSecondPage extends WizardPage {
 
 	}
 	
-	protected void addImplicitDependencies(ArrayList selected, boolean addFragment) {
-		for (int i = 0; i < models.length; i++) {
-			String id = models[i].getPluginBase().getId();
-			if (id.equals("org.eclipse.core.boot") || id.equals("org.eclipse.core.runtime")) {
-				addPluginAndDependencies(models[i], selected, addFragment);
-			}			
-		}
-	}
-	
 	public IPluginModelBase[] getModelsToImport() {
 		TableItem[] items = importListViewer.getTable().getItems();
 		ArrayList result = new ArrayList();
@@ -225,7 +199,6 @@ public abstract class BaseImportWizardSecondPage extends WizardPage {
 	
 	public void storeSettings() {
 		IDialogSettings settings = getDialogSettings();
-		settings.put(SETTINGS_IMPLICIT, implicitButton.getSelection());
 		settings.put(SETTINGS_ADD_FRAGMENTS, addFragmentsButton.getSelection());
 	}
 

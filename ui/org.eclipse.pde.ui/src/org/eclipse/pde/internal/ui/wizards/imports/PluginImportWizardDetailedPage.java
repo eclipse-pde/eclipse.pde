@@ -387,10 +387,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		for (int i = 0; i < items.length; i++) {
 			addPluginAndDependencies((IPluginModelBase) items[i].getData(), result, addFragmentsButton.getSelection());
 		}
-		if (implicitButton.isVisible() && implicitButton.getSelection()) {
-			addImplicitDependencies(result, addFragmentsButton.getSelection());
-		}
-		
+
 		handleRemoveAll(false);
 		importListViewer.add(result.toArray());
 		availableListViewer.remove(result.toArray());
