@@ -38,7 +38,7 @@ class LogReader {
 		currentSession = null;
 		BufferedReader reader = null;
 		try {
-			reader = new BufferedReader(new FileReader(file));
+			reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
 			while(reader.ready()) {
 				String line = reader.readLine();
 				if (line == null)
@@ -90,6 +90,7 @@ class LogReader {
 					writer = new PrintWriter(swriter, true);
 					writerState = SESSION_STATE;
 					if (currentSession == null
+						|| !(currentSession.getDate() == null && session.getDate() == null)
 						|| (currentSession.getDate() == null && session.getDate() != null)
 						|| (currentSession.getDate() != null && session.getDate() == null)
 						|| session.getDate().after(currentSession.getDate())) {
