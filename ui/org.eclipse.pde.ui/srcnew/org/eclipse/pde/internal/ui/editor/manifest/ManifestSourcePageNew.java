@@ -4,24 +4,13 @@ package org.eclipse.pde.internal.ui.editor.manifest;
  * All Rights Reserved.
  */
 
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.DocumentEvent;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentListener;
+import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.pde.internal.core.plugin.AbstractPluginModelBase;
-import org.eclipse.pde.internal.core.plugin.IDocumentNode;
-import org.eclipse.pde.internal.core.plugin.ISourceRange;
-import org.eclipse.pde.internal.core.plugin.TicketManager;
-import org.eclipse.pde.internal.core.plugin.XMLCore;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.ui.IPartService;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.*;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.update.ui.forms.internal.IFormPage;
@@ -68,7 +57,7 @@ public class ManifestSourcePageNew extends ManifestSourcePage {
 			warnErrorsInSource();
 			return false;
 		}
-		getSite().setSelectionProvider(getEditor());
+		//getSite().setSelectionProvider(getEditor());
 		return true;
 	}
 	
@@ -79,7 +68,7 @@ public class ManifestSourcePageNew extends ManifestSourcePage {
 		if (oldPage instanceof PDEFormPage) {
 			selectObjectRange(((PDEFormPage)oldPage).getSelection());
 		}
-		getSite().setSelectionProvider(getSelectionProvider());
+		//getSite().setSelectionProvider(getSelectionProvider());
 	}
 	
 	public boolean containsError() {
@@ -186,4 +175,9 @@ public class ManifestSourcePageNew extends ManifestSourcePage {
 		}
 	}
 	
+	public void createPartControl(Composite parent) {
+		setModelNeedsUpdating(true);
+		super.createPartControl(parent);
+	}
+
 }

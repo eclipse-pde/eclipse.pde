@@ -64,7 +64,7 @@ public abstract class PDESourcePage
 			modelNeedsUpdating = false;
 			errorMode = false;
 		}
-		getSite().setSelectionProvider(getEditor());
+		//getSite().setSelectionProvider(getEditor());
 		return true;
 	}
 
@@ -73,7 +73,7 @@ public abstract class PDESourcePage
 		if (oldPage instanceof PDEFormPage) {
 			selectObjectRange(((PDEFormPage) oldPage).getSelection());
 		}
-		getSite().setSelectionProvider(getSelectionProvider());
+		//getSite().setSelectionProvider(getSelectionProvider());
 	}
 
 	public boolean contextMenuAboutToShow(IMenuManager manager) {

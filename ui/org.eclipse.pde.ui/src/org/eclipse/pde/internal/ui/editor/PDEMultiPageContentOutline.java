@@ -15,14 +15,14 @@ import org.eclipse.swt.*;
 public class PDEMultiPageContentOutline
 	implements IContentOutlinePage, ISelectionChangedListener {
 	private PageBook pagebook;
-	private SelectionProvider selectionProvider;
+	private PDEMultiSelectionProvider selectionProvider;
 	private PDEMultiPageEditor editor;
 	private IContentOutlinePage currentPage;
 	private boolean disposed;
 
 	public PDEMultiPageContentOutline(PDEMultiPageEditor editor) {
 		this.editor = editor;
-		selectionProvider = new SelectionProvider();
+		selectionProvider = new PDEMultiSelectionProvider();
 	}
 	public void addFocusListener(
 		org.eclipse.swt.events.FocusListener listener) {

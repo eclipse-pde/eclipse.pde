@@ -39,7 +39,7 @@ public abstract class PDEMultiPageEditor
 	public static final String TAG_PATH = "input_path";
 
 	protected IFormWorkbook formWorkbook;
-	private SelectionProvider selectionProvider = new SelectionProvider();
+	private PDEMultiSelectionProvider selectionProvider = new PDEMultiSelectionProvider();
 	protected Object model;
 	protected IModelChangedListener modelListener;
 	private Vector pages;
@@ -151,12 +151,18 @@ public abstract class PDEMultiPageEditor
 			public void formSelected(IFormPage page, boolean setFocus) {
 				updateSynchronizedViews((IPDEEditorPage) page);
 				getContributor().setActivePage((IPDEEditorPage) page);
+
 				if (page instanceof PDEFormPage) {
 					PDEFormPage formPage = (PDEFormPage) page;
 					if (formPage.getSelection() != null)
 						setSelection(formPage.getSelection());
 				}
-				IPDEEditorPage pdePage = (IPDEEditorPage) page;
+				if (page.isSource()) {
+					PDESourcePage sourcePage = (PDESourcePage)page;
+					selectionProvider.setSourcePage(sourcePage);
+					//setSelection(sourcePage.getSelectionProvider().getSelection());
+				}
+				IPDEEditorPage pdePage = (IPDEEditorPage)page;
 				if (setFocus) 
 					pdePage.setFocus();
 			}
