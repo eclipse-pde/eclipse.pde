@@ -24,16 +24,12 @@ public class PDERuntimePluginImages {
 
 	public final static String ICONS_PATH = "icons/";
 
-	private static final String PATH_FORMS = ICONS_PATH + "forms/";
 	private static final String PATH_OBJ = ICONS_PATH + "obj16/";
 	private static final String PATH_LCL = ICONS_PATH + "elcl16/";
-	private static final String PATH_LCL_HOVER = ICONS_PATH + "clcl16/";
 	private static final String PATH_LCL_DISABLED = ICONS_PATH + "dlcl16/";
 	private static final String PATH_OVR = ICONS_PATH + "ovr16/";
-	private static final String PATH_EVENTS = ICONS_PATH + "view16/";
-	private static final String PATH_EVENTS_DISABLED = ICONS_PATH + "dview16/";
+	private static final String PATH_EVENTS = ICONS_PATH + "eview16/";
 
-	public static final ImageDescriptor DESC_FORM_BANNER_SHORT  = create(PATH_FORMS, "form_banner.gif"); //$NON-NLS-1$
 
 	public static final ImageDescriptor DESC_ERROR_ST_OBJ =
 		create(PATH_OBJ, "error_st_obj.gif");
@@ -76,82 +72,52 @@ public class PDERuntimePluginImages {
 
 	public static final ImageDescriptor DESC_PROPERTIES =
 		create(PATH_LCL, "properties.gif");
-	public static final ImageDescriptor DESC_PROPERTIES_HOVER =
-		create(PATH_LCL_HOVER, "properties.gif");
 	public static final ImageDescriptor DESC_PROPERTIES_DISABLED =
 		create(PATH_LCL_DISABLED, "properties.gif");
 	public static final ImageDescriptor DESC_REFRESH =
 		create(PATH_LCL, "refresh.gif");
-	public static final ImageDescriptor DESC_REFRESH_HOVER =
-		create(PATH_LCL_HOVER, "refresh.gif");
 	public static final ImageDescriptor DESC_REFRESH_DISABLED =
 		create(PATH_LCL_DISABLED, "refresh.gif");
 	public static final ImageDescriptor DESC_CLEAR = create(PATH_LCL, "clear.gif");
-	public static final ImageDescriptor DESC_CLEAR_HOVER =
-		create(PATH_LCL_HOVER, "clear.gif");
 	public static final ImageDescriptor DESC_CLEAR_DISABLED =
 		create(PATH_LCL_DISABLED, "clear.gif");
 
 	public static final ImageDescriptor DESC_READ_LOG =
 		create(PATH_LCL, "restore_log.gif");
-	public static final ImageDescriptor DESC_READ_LOG_HOVER =
-		create(PATH_LCL_HOVER, "restore_log.gif");
 	public static final ImageDescriptor DESC_READ_LOG_DISABLED =
 		create(PATH_LCL_DISABLED, "restore_log.gif");
 		
 	public static final ImageDescriptor DESC_REMOVE_LOG =
 		create(PATH_LCL, "remove.gif");
-	public static final ImageDescriptor DESC_REMOVE_LOG_HOVER =
-		create(PATH_LCL_HOVER, "remove.gif");
 	public static final ImageDescriptor DESC_REMOVE_LOG_DISABLED =
 		create(PATH_LCL_DISABLED, "remove.gif");
 		
 	public static final ImageDescriptor DESC_FILTER =
 		create(PATH_LCL, "filter_ps.gif");
-	public static final ImageDescriptor DESC_FILTER_HOVER =
-		create(PATH_LCL_HOVER, "filter_ps.gif");
 	public static final ImageDescriptor DESC_FILTER_DISABLED =
 		create(PATH_LCL_DISABLED, "filter_ps.gif");
 
 	public static final ImageDescriptor DESC_EXPORT =
 		create(PATH_LCL, "export_log.gif");
-	public static final ImageDescriptor DESC_EXPORT_HOVER =
-		create(PATH_LCL_HOVER, "export_log.gif");
 	public static final ImageDescriptor DESC_EXPORT_DISABLED =
 		create(PATH_LCL_DISABLED, "export_log.gif");
 		
 	public static final ImageDescriptor DESC_IMPORT =
 		create(PATH_LCL, "import_log.gif");
-	public static final ImageDescriptor DESC_IMPORT_HOVER =
-		create(PATH_LCL_HOVER, "import_log.gif");
 	public static final ImageDescriptor DESC_IMPORT_DISABLED =
 		create(PATH_LCL_DISABLED, "import_log.gif");
 	
 	public static final ImageDescriptor DESC_COLLAPSE_ALL =
 		create(PATH_LCL, "collapseall.gif");
-	public static final ImageDescriptor DESC_COLLAPSE_ALL_HOVER =
-		create(PATH_LCL_HOVER, "collapseall.gif");
 	
 	public static final ImageDescriptor DESC_HORIZONTAL_VIEW =
-		create(PATH_LCL, "horizontal_view.gif");
-	public static final ImageDescriptor DESC_HORIZONTAL_VIEW_HOVER =
-		create(PATH_LCL_HOVER, "horizontal_view.gif");
-	public static final ImageDescriptor DESC_HORIZONTAL_VIEW_DISABLED = 
-		create(PATH_LCL_DISABLED, "horizontal_view.gif");
+		create(PATH_EVENTS, "horizontal_view.gif");
 	
 	public static final ImageDescriptor DESC_VERTICAL_VIEW =
-		create(PATH_LCL, "vertical_view.gif");
-	public static final ImageDescriptor DESC_VERTICAL_VIEW_HOVER =
-		create(PATH_LCL_HOVER, "vertical_view.gif");
-	public static final ImageDescriptor DESC_VERTICAL_VIEW_DISABLED = 
-		create(PATH_LCL_DISABLED, "vertical_view.gif");
+		create(PATH_EVENTS, "vertical_view.gif");
 	
 	public static final ImageDescriptor DESC_HIDE_PANE =
-		create(PATH_LCL, "hide_pane.gif");
-	public static final ImageDescriptor DESC_HIDE_PANE_HOVER =
-		create(PATH_LCL_HOVER, "hide_pane.gif");
-	public static final ImageDescriptor DESC_HIDE_PANE_DISABLED = 
-		create(PATH_LCL_DISABLED, "hide_pane.gif");
+		create(PATH_EVENTS, "hide_pane.gif");
 	
 	/*
 	 * Event Details
@@ -160,17 +126,11 @@ public class PDERuntimePluginImages {
 		create(PATH_EVENTS, "event_prev.gif");
 	public static final ImageDescriptor DESC_NEXT_EVENT = 
 		create(PATH_EVENTS, "event_next.gif");
-	public static final ImageDescriptor DESC_PREV_EVENT_DISABLED = 
-		create(PATH_EVENTS_DISABLED, "event_prev.gif");
-	public static final ImageDescriptor DESC_NEXT_EVENT_DISABLED = 
-		create(PATH_EVENTS_DISABLED, "event_next.gif");
 	/*
 	 * Overlays
 	 */
 	public static final ImageDescriptor DESC_RUN_CO =
 		create(PATH_OVR, "run_co.gif");
-	public static final ImageDescriptor DESC_WARNING_CO =
-		create(PATH_OVR, "warning_co.gif");
 
 	private static ImageDescriptor create(String prefix, String name) {
 		return ImageDescriptor.createFromURL(makeIconURL(prefix, name));

@@ -332,8 +332,6 @@ IRegistryChangeListener {
 		refreshAction.setImageDescriptor(PDERuntimePluginImages.DESC_REFRESH);
 		refreshAction
 		.setDisabledImageDescriptor(PDERuntimePluginImages.DESC_REFRESH_DISABLED);
-		refreshAction
-		.setHoverImageDescriptor(PDERuntimePluginImages.DESC_REFRESH_HOVER);
 		
 		showPluginsAction = new Action(PDERuntimePlugin.getResourceString(SHOW_RUNNING_PLUGINS)){
 			public void run(){
@@ -351,7 +349,6 @@ IRegistryChangeListener {
 		};
 		collapseAllAction.setText(PDERuntimePlugin.getResourceString(KEY_COLLAPSE_ALL_LABEL));
 		collapseAllAction.setImageDescriptor(PDERuntimePluginImages.DESC_COLLAPSE_ALL);
-		collapseAllAction.setHoverImageDescriptor(PDERuntimePluginImages.DESC_COLLAPSE_ALL_HOVER);
 		collapseAllAction.setToolTipText(PDERuntimePlugin.getResourceString(KEY_COLLAPSE_ALL_TOOLTIP));
 		
 		toggleViewAction = new TogglePropertiesAction[3];

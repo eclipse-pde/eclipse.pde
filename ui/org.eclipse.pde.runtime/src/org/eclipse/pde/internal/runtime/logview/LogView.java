@@ -328,8 +328,6 @@ public class LogView extends ViewPart implements ILogListener {
 		propertiesAction.setImageDescriptor(PDERuntimePluginImages.DESC_PROPERTIES);
 		propertiesAction.setDisabledImageDescriptor(
 			PDERuntimePluginImages.DESC_PROPERTIES_DISABLED);
-		propertiesAction.setHoverImageDescriptor(
-			PDERuntimePluginImages.DESC_PROPERTIES_HOVER);
 		propertiesAction.setToolTipText(
 			PDERuntimePlugin.getResourceString("LogView.properties.tooltip"));
 		propertiesAction.setEnabled(false);
@@ -342,7 +340,6 @@ public class LogView extends ViewPart implements ILogListener {
 		clearAction.setImageDescriptor(PDERuntimePluginImages.DESC_CLEAR);
 		clearAction.setDisabledImageDescriptor(
 			PDERuntimePluginImages.DESC_CLEAR_DISABLED);
-		clearAction.setHoverImageDescriptor(PDERuntimePluginImages.DESC_CLEAR_HOVER);
 		clearAction.setToolTipText(
 			PDERuntimePlugin.getResourceString("LogView.clear.tooltip"));
 		clearAction.setText(PDERuntimePlugin.getResourceString("LogView.clear"));
@@ -359,8 +356,6 @@ public class LogView extends ViewPart implements ILogListener {
 		readLogAction.setImageDescriptor(PDERuntimePluginImages.DESC_READ_LOG);
 		readLogAction.setDisabledImageDescriptor(
 			PDERuntimePluginImages.DESC_READ_LOG_DISABLED);
-		readLogAction.setHoverImageDescriptor(PDERuntimePluginImages.DESC_READ_LOG_HOVER);
-
 
 		deleteLogAction =
 			new Action(PDERuntimePlugin.getResourceString("LogView.delete")) {
@@ -373,8 +368,6 @@ public class LogView extends ViewPart implements ILogListener {
 		deleteLogAction.setImageDescriptor(PDERuntimePluginImages.DESC_REMOVE_LOG);
 		deleteLogAction.setDisabledImageDescriptor(
 			PDERuntimePluginImages.DESC_REMOVE_LOG_DISABLED);
-		deleteLogAction.setHoverImageDescriptor(
-			PDERuntimePluginImages.DESC_REMOVE_LOG_HOVER);
 		deleteLogAction.setEnabled(inputFile.exists() && inputFile.equals(Platform.getLogFileLocation().toFile()));
 
 		copyAction = new Action(PDERuntimePlugin.getResourceString("LogView.copy")) {
@@ -396,7 +389,6 @@ public class LogView extends ViewPart implements ILogListener {
 		filterAction.setImageDescriptor(PDERuntimePluginImages.DESC_FILTER);
 		filterAction.setDisabledImageDescriptor(
 			PDERuntimePluginImages.DESC_FILTER_DISABLED);
-		filterAction.setHoverImageDescriptor(PDERuntimePluginImages.DESC_FILTER_HOVER);
 
 		exportAction = new Action(PDERuntimePlugin.getResourceString("LogView.export")) {
 			public void run() {
@@ -408,7 +400,6 @@ public class LogView extends ViewPart implements ILogListener {
 		exportAction.setImageDescriptor(PDERuntimePluginImages.DESC_EXPORT);
 		exportAction.setDisabledImageDescriptor(
 			PDERuntimePluginImages.DESC_EXPORT_DISABLED);
-		exportAction.setHoverImageDescriptor(PDERuntimePluginImages.DESC_EXPORT_HOVER);
 
 		importAction = new Action(PDERuntimePlugin.getResourceString("LogView.import")) {
 			public void run() {
@@ -420,7 +411,6 @@ public class LogView extends ViewPart implements ILogListener {
 		importAction.setImageDescriptor(PDERuntimePluginImages.DESC_IMPORT);
 		importAction.setDisabledImageDescriptor(
 			PDERuntimePluginImages.DESC_IMPORT_DISABLED);
-		importAction.setHoverImageDescriptor(PDERuntimePluginImages.DESC_IMPORT_HOVER);
 		
 		activateViewAction = new Action(PDERuntimePlugin.getResourceString("LogView.activate")) {
 			public void run() {				

@@ -48,8 +48,8 @@ public class EventDetailsDialog extends Dialog {
 	private Button copyButton;
 	private Button backButton;
 	private Button nextButton;
-	private Image imgNextEnabled, imgNextDisabled;
-	private Image imgPrevEnabled, imgPrevDisabled;
+	private Image imgNextEnabled;
+	private Image imgPrevEnabled;
 	private Image imgCopyEnabled;
 	private SashForm sashForm;
 	
@@ -111,8 +111,8 @@ public class EventDetailsDialog extends Dialog {
 		imgCopyEnabled =
 			PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY).createImage(
 				true);
-		imgNextDisabled = PDERuntimePluginImages.DESC_NEXT_EVENT_DISABLED.createImage(true);
-		imgPrevDisabled = PDERuntimePluginImages.DESC_PREV_EVENT_DISABLED.createImage(true);
+		//imgNextDisabled. = PDERuntimePluginImages.DESC_NEXT_EVENT_DISABLED.createImage(true);
+		//imgPrevDisabled = PDERuntimePluginImages.DESC_PREV_EVENT_DISABLED.createImage(true);
 		imgPrevEnabled = PDERuntimePluginImages.DESC_PREV_EVENT.createImage(true);
 		imgNextEnabled = PDERuntimePluginImages.DESC_NEXT_EVENT.createImage(true);
 	}
@@ -143,9 +143,7 @@ public class EventDetailsDialog extends Dialog {
 		storeSettings();
 		isOpen = false;
 		imgCopyEnabled.dispose();
-		imgNextDisabled.dispose();
 		imgNextEnabled.dispose();
-		imgPrevDisabled.dispose();
 		imgPrevEnabled.dispose();
 		return super.close();
 	}
@@ -280,8 +278,6 @@ public class EventDetailsDialog extends Dialog {
 	public void resetButtons(){
 		backButton.setEnabled(false);
 		nextButton.setEnabled(false);
-		backButton.setImage(imgPrevDisabled);
-		nextButton.setImage(imgNextDisabled);
 	}
 	
 	private void setEntrySelectionInTable(){
@@ -317,13 +313,9 @@ public class EventDetailsDialog extends Dialog {
 	
 	private void updateButtons(){
 		if (isChild(entry)){
-			backButton.setImage(imgPrevEnabled);
-			nextButton.setImage((childIndex == entryChildren.length-1 && elementNum == totalElementCount - 1) ? imgNextDisabled : imgNextEnabled);
 			backButton.setEnabled(true);
 			nextButton.setEnabled(childIndex < entryChildren.length-1 || elementNum < totalElementCount - 1);
 		} else {
-			backButton.setImage(elementNum == 0 ? imgPrevDisabled : imgPrevEnabled);
-			nextButton.setImage(elementNum == totalElementCount - 1 ? imgNextDisabled : imgNextEnabled);
 			backButton.setEnabled(elementNum != 0);
 			nextButton.setEnabled(elementNum != totalElementCount - 1);
 		}
@@ -419,16 +411,16 @@ public class EventDetailsDialog extends Dialog {
 		gd.horizontalSpan = 3;
 		gd.verticalSpan = 1;
 		backButton.setLayoutData(gd);
-		backButton.setImage(elementNum == 0 ? imgPrevDisabled : imgPrevEnabled);
 		backButton.setToolTipText(PDERuntimePlugin.getResourceString(EVENT_PREVIOUS));
+		backButton.setImage(imgPrevEnabled);
 		
 		nextButton = createButton(container, IDialogConstants.NEXT_ID, "", false);
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		gd.verticalSpan = 1;
 		nextButton.setLayoutData(gd);
-		nextButton.setImage(elementNum == totalElementCount - 1 ? imgNextDisabled : imgNextEnabled);
 		nextButton.setToolTipText(PDERuntimePlugin.getResourceString(EVENT_NEXT));
+		nextButton.setImage(imgNextEnabled);
 		
 		copyButton = createButton(container, COPY_ID, "", false);
 		gd = new GridData();

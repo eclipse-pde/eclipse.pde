@@ -48,22 +48,16 @@ public class TogglePropertiesAction extends Action {
 			setToolTipText(PDERuntimePlugin.getResourceString(USE_VERTICAL_ORIENTATION_TOOLTIP));  //$NON-NLS-1$
 			setDescription(PDERuntimePlugin.getResourceString(USE_VERTICAL_ORIENTATION_DESC));  //$NON-NLS-1$
 			setImageDescriptor(PDERuntimePluginImages.DESC_VERTICAL_VIEW);
-			setDisabledImageDescriptor(PDERuntimePluginImages.DESC_VERTICAL_VIEW_DISABLED);
-			setHoverImageDescriptor(PDERuntimePluginImages.DESC_VERTICAL_VIEW_HOVER);
 		} else if (orientation == RegistryBrowser.HORIZONTAL_ORIENTATION) {
 			setText(PDERuntimePlugin.getResourceString(USE_HORIZONTAL_ORIENTATION));  //$NON-NLS-1$
 			setToolTipText(PDERuntimePlugin.getResourceString(USE_HORIZONTAL_ORIENTATION_TOOLTIP));  //$NON-NLS-1$
 			setDescription(PDERuntimePlugin.getResourceString(USE_HORIZONTAL_ORIENTATION_DESC));  //$NON-NLS-1$
 			setImageDescriptor(PDERuntimePluginImages.DESC_HORIZONTAL_VIEW);
-			setDisabledImageDescriptor(PDERuntimePluginImages.DESC_HORIZONTAL_VIEW_DISABLED);
-			setHoverImageDescriptor(PDERuntimePluginImages.DESC_HORIZONTAL_VIEW_HOVER);
 		} else {
 			setText(PDERuntimePlugin.getResourceString(SHOW_PROPERTIES_SHEET));
 			setToolTipText(PDERuntimePlugin.getResourceString(SHOW_PROPERTIES_SHEET_TOOLTIP));  //$NON-NLS-1$
 			setDescription(PDERuntimePlugin.getResourceString(SHOW_PROPERTIES_SHEET_DESC));  //$NON-NLS-1$
 			setImageDescriptor(PDERuntimePluginImages.DESC_HIDE_PANE);
-			setDisabledImageDescriptor(PDERuntimePluginImages.DESC_HIDE_PANE_DISABLED);
-			setHoverImageDescriptor(PDERuntimePluginImages.DESC_HIDE_PANE_HOVER);
 		} 		
 
 	}
