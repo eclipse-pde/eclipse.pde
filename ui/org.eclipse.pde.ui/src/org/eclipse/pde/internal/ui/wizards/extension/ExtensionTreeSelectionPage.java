@@ -53,9 +53,8 @@ public class ExtensionTreeSelectionPage extends WizardTreeSelectionPage {
 					ITemplateSection section =
 						(ITemplateSection) template.createExecutableExtension("class"); //$NON-NLS-1$
 					return new NewExtensionTemplateWizard(section);
-				} else {
-					return (IExtensionWizard) element.createExecutableExtension();
 				}
+				return (IExtensionWizard) element.createExecutableExtension();		
 			}
 		};
 	}

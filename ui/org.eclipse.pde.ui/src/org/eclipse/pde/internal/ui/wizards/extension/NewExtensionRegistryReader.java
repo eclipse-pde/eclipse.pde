@@ -130,8 +130,8 @@ public class NewExtensionRegistryReader {
 												 // to uncategorized
 				moveToOther = true;
 				break;
-			} else
-				currentCollectionElement = tempCollectionElement;
+			} 
+			currentCollectionElement = tempCollectionElement;
 		}
 
 		if (moveToOther)
@@ -171,8 +171,8 @@ public class NewExtensionRegistryReader {
 				if (tempElement == null) {
 					parent = null;
 					break;
-				} else
-					parent = tempElement;
+				}
+				parent = tempElement;
 			}
 		}
 
