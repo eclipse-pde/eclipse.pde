@@ -18,6 +18,7 @@ public BuildPluginWizard(IFile pluginBaseFile, boolean fragment) {
 	setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
 	setNeedsProgressMonitor(true);
 	this.pluginBaseFile = pluginBaseFile;
+	this.fragment = fragment;
 }
 public void addPages() {
 	mainPage = new BuildPluginWizardPage(pluginBaseFile, fragment);

@@ -78,6 +78,7 @@ public class BuildPluginWizardPage extends WizardPage {
 
 public BuildPluginWizardPage(IFile pluginBaseFile, boolean fragment) {
 	super("pluginJar");
+	this.fragment = fragment;
 	if (fragment) {
 		setTitle(PDEPlugin.getResourceString(WIZARD_FTITLE));
 		setDescription(PDEPlugin.getResourceString(WIZARD_FDESC));
@@ -87,7 +88,6 @@ public BuildPluginWizardPage(IFile pluginBaseFile, boolean fragment) {
 		setDescription(PDEPlugin.getResourceString(WIZARD_DESC));
 	}
 	this.pluginBaseFile = pluginBaseFile;
-	this.fragment = fragment;
 	if (fragment)
 	   model = new WorkspaceFragmentModel(pluginBaseFile);
 	else
@@ -265,6 +265,7 @@ private void makeScripts(IProgressMonitor monitor) throws CoreException {
 		if (fragment) {
 			FragmentBuildScriptGenerator generator = new FragmentBuildScriptGenerator();
 	   		generator = new FragmentBuildScriptGenerator();
+	   		generator.run(args.toArray(new String[args.size()]));
 		}
 		else {
 	   		PluginBuildScriptGenerator generator = new PluginBuildScriptGenerator();

@@ -254,8 +254,8 @@ public void startup() throws CoreException {
 	manager.registerAdapters(new PluginAdapterFactory(), IPluginObject.class);
 	manager.registerAdapters(new ComponentAdapterFactory(), IComponentObject.class);
 	// set eclipse home variable if not sets
-	getExternalModelManager().getEclipseHome();
 	if (isVAJ()==false) initializePlatformPath();
+	getExternalModelManager().getEclipseHome();
 	getWorkspaceModelManager().reset();
 }
 }

@@ -178,7 +178,7 @@
    </editor>
    <editor
          name="%editors.schema.name"
-         default="true"
+         default="false"
          icon="icons/full/obj16/schema_obj.gif"
          extensions="xsd,mxsd"
          contributorClass="org.eclipse.pde.internal.editor.schema.SchemaEditorContributor"

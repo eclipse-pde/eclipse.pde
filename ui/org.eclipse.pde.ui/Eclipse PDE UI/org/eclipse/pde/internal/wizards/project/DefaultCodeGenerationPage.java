@@ -496,8 +496,13 @@ private void presetFields() {
 		// as the vendor name
 		String provider = name.substring(loc + 1);
 		loc = provider.indexOf('.');
-		provider = provider.substring(0, loc);
-		providerField.setText(provider.toUpperCase());
+		if (loc != -1) {
+		   provider = provider.substring(0, loc);
+		   providerField.setText(provider.toUpperCase());
+		}
+		else {
+			provider = "";
+		}
 	}
 }
 private void setJavaSettings(

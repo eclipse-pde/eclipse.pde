@@ -20,16 +20,16 @@ public interface IPluginStructureData {
  */
 public String getJavaBuildFolderName();
 /**
- * Returns the path for the JDK runtime library.
- * @return JDK default library path
+ * Returns the path for the JRE runtime library.
+ * @return JRE default library path
  */
-IPath getJDKPath();
+IPath getJREPath();
 /**
- * Returns paths for JDK source annotation. This
+ * Returns paths for JRE source annotation. This
  * information is required for being able to
- * step through the JDK source code in Java debugger.
+ * step through the JRE source code in Java debugger.
  */
-IPath [] getJDKSourceAnnotation();
+IPath [] getJRESourceAnnotation();
 /**
  * Returns the JAR library name. A plug-in can contain
  * more than one JAR, so this one will be only the

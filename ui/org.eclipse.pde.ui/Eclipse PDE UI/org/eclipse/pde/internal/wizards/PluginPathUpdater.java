@@ -30,9 +30,9 @@ import org.eclipse.pde.internal.preferences.*;
 
 public class PluginPathUpdater {
 	public static final String KEY_UPDATING = "PluginPathUpdater.updating";
-	public static final String JDK_VAR= "JRE_LIB";
-	public static final String JDK_SRCVAR= "JRE_SRC";
-	public static final String JDK_SRCROOTVAR= "JRE_SRCROOT";
+	public static final String JRE_VAR= "JRE_LIB";
+	public static final String JRE_SRCVAR= "JRE_SRC";
+	public static final String JRE_SRCROOTVAR= "JRE_SRCROOT";
 	private IProject project;
 	private Iterator checkedPlugins;
 	private IJavaProject javaProject;
@@ -149,12 +149,12 @@ public IClasspathEntry [] getClasspathEntries() {
 	result.copyInto(finalEntries);
 	return finalEntries;
 }
-public static IPath getJDKPath() {
-	return JavaCore.getClasspathVariable(JDK_VAR);
+public static IPath getJREPath() {
+	return JavaCore.getClasspathVariable(JRE_VAR);
 }
-public static IPath [] getJDKSourceAnnotation() {
-	IPath source = JavaCore.getClasspathVariable(JDK_SRCVAR);
-	IPath prefix = JavaCore.getClasspathVariable(JDK_SRCROOTVAR);
+public static IPath [] getJRESourceAnnotation() {
+	IPath source = JavaCore.getClasspathVariable(JRE_SRCVAR);
+	IPath prefix = JavaCore.getClasspathVariable(JRE_SRCROOTVAR);
 	return new IPath [] { source, prefix };
 }
 public IRunnableWithProgress getOperation() {

@@ -143,7 +143,7 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	return container;
 }
 public void doGlobalAction(String actionId) {
-	PDEHackFinder.fixMe("Global operation mapping must be done better");
+	PDEProblemFinder.fixMe("Global operation mapping must be done better");
 	if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.CUT)) {
 		sourceViewer.doOperation(sourceViewer.CUT);
 	}

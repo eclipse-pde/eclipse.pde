@@ -30,6 +30,8 @@ public void setValue(Object value) {
 		String svalue = value.toString().toLowerCase();
 		if (svalue.equals("true"))
 			button.setSelection(true);
+		else
+			button.setSelection(false);
 	}
 }
 }

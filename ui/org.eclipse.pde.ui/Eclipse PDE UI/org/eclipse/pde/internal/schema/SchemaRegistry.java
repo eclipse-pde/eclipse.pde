@@ -153,7 +153,7 @@ private void processMapElement(IConfigurationElement element) {
 		String point = element.getAttribute(MappedSchemaDescriptor.ATT_POINT);
 		String schema = element.getAttribute(MappedSchemaDescriptor.ATT_SCHEMA);
 		if (point == null || schema == null) {
-			PDEHackFinder.fixMe("Hard-coded error message");
+			PDEProblemFinder.fixMe("Hard-coded error message");
 			System.out.println("Schema map: point or schema null");
 			return;
 		}

@@ -184,7 +184,7 @@ private void handleEnter() {
 private void handleRemoveAttribute() {
 	IPropertySheetEntry entry = getSelectedEntry();
 	if (entry==null) return;
-	PDEHackFinder.fixMe("Should not be using display name as an id");
+	PDEProblemFinder.fixMe("Should not be using display name as an id");
 	String attName = entry.getDisplayName();
 	((UnknownElementPropertySource)source).removeAttribute(attName);
 	refreshInput();

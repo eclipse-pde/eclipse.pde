@@ -152,7 +152,7 @@ private Vector getPluginPaths(String platformHome) {
 		return null;
 	}
 	Vector paths = new Vector();
-	PDEHackFinder.fixMe("loadPlugins: must include all valid plugin paths");
+	PDEProblemFinder.fixMe("loadPlugins: must include all valid plugin paths");
 	String defaultDir =
 		platformHome + /* File.separator + "eclipse" + */ File.separator + "plugins";
 	paths.addElement(defaultDir);

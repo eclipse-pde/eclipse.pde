@@ -31,7 +31,7 @@ public abstract class FormSection {
 public FormSection() {
 	// Description causes problems re word wrapping
 	// and causes bad layout in schema and
-	// component editors on Linux - turning off
+	// component editors when in Motif - turning off
 	if (SWT.getPlatform().equals("motif")) {
 		descriptionPainted = false;
 	}

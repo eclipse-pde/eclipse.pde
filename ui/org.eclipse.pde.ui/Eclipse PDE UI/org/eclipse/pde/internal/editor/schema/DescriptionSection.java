@@ -21,7 +21,7 @@ import org.eclipse.pde.internal.editor.text.*;
 import org.eclipse.jface.text.presentation.*;
 import org.eclipse.pde.internal.editor.*;
 import org.eclipse.jface.text.*;
-import org.eclipse.pde.internal.PDEHackFinder;
+import org.eclipse.pde.internal.PDEProblemFinder;
 import org.eclipse.pde.internal.PDEPlugin;
 
 public class DescriptionSection extends PDEFormSection {
@@ -124,7 +124,7 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	return container;
 }
 public void doGlobalAction(String actionId) {
-	PDEHackFinder.fixMe("Global operation mapping must be done better");
+	PDEProblemFinder.fixMe("Global operation mapping must be done better");
 	if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.CUT)) {
 		sourceViewer.doOperation(sourceViewer.CUT);
 	}

@@ -28,7 +28,6 @@ import org.eclipse.pde.internal.*;
 import org.eclipse.jdt.launching.*;
 
 public class ProjectStructurePage extends WizardPage {
-	public static final String PROP_JDK = "org.eclipse.jdt.ui.build.jdk.library";
 	private IProjectProvider provider;
 	private boolean fragment;
 	private Text buildOutputText;
@@ -52,14 +51,14 @@ public class ProjectStructurePage extends WizardPage {
 		String buildOutput;
 		String library;
 		String source;
-		IPath jdkPath;
-		IPath[] jdkSourceAnnotation;
+		IPath jrePath;
+		IPath[] jreSourceAnnotation;
 
-		public IPath getJDKPath() {
-			return jdkPath;
+		public IPath getJREPath() {
+			return jrePath;
 		}
-		public IPath[] getJDKSourceAnnotation() {
-			return jdkSourceAnnotation;
+		public IPath[] getJRESourceAnnotation() {
+			return jreSourceAnnotation;
 		}
 		public String getJavaBuildFolderName() {
 			return buildOutput;
@@ -198,19 +197,19 @@ public boolean finish() {
 	}
 	return true;
 }
-private IPath getJDKPath() {
-	return PluginPathUpdater.getJDKPath();
+private IPath getJREPath() {
+	return PluginPathUpdater.getJREPath();
 }
-private IPath [] getJDKSourceAnnotation() {
-	return PluginPathUpdater.getJDKSourceAnnotation();
+private IPath [] getJRESourceAnnotation() {
+	return PluginPathUpdater.getJRESourceAnnotation();
 }
 public IPluginStructureData getStructureData() {
 	StructureData data = new StructureData();
 	data.buildOutput = buildOutputText.getText();
 	data.library = libraryText.getText();
 	data.source = sourceText.getText();
-	data.jdkPath = getJDKPath();
-	data.jdkSourceAnnotation = getJDKSourceAnnotation();
+	data.jrePath = getJREPath();
+	data.jreSourceAnnotation = getJRESourceAnnotation();
 	return data;
 }
 private void initialize() {

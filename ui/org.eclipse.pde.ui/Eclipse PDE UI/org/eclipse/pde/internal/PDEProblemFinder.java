@@ -4,11 +4,11 @@ package org.eclipse.pde.internal;
  * All Rights Reserved.
  */
 
-public class PDEHackFinder {
+public class PDEProblemFinder {
 /**
  * PluginHackFinder constructor comment.
  */
-public PDEHackFinder() {
+public PDEProblemFinder() {
 	super();
 }
 /**

@@ -51,7 +51,7 @@ public void createPropertyDescriptors() {
 	descriptors = new Vector();
 	IPluginElement element = (IPluginElement)object;
 
-	PDEHackFinder.fixMe("Need 1G9NVYL to separate id and name");
+	PDEProblemFinder.fixMe("Need 1G9NVYL to separate id and name");
 	PropertyDescriptor nameDesc = createTextPropertyDescriptor(TAG_NAME, TAG_NAME);
 	descriptors.addElement(nameDesc);
 

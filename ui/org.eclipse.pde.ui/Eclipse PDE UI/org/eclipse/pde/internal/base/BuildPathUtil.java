@@ -73,8 +73,8 @@ public static void setBuildPath(
 	}
 	// add implicit libraries
 	PluginPathUpdater.addImplicitLibraries(result);
-	// JDK the last
-	addJDK(result);
+	// JRE the last
+	addJRE(result);
 	IClasspathEntry [] entries = new IClasspathEntry [ result.size() ];
 	result.copyInto(entries);
 	javaProject.setRawClasspath(entries, monitor);
@@ -98,7 +98,7 @@ public static void setBuildPath(IPluginModel model, IProgressMonitor monitor)
 	addDependencies(project, model.getPlugin().getImports(), result);
 	// add implicit libraries
 	PluginPathUpdater.addImplicitLibraries(result);
-	addJDK(result);
+	addJRE(result);
 	IClasspathEntry [] entries = new IClasspathEntry [ result.size() ];
 	result.copyInto(entries);
 	javaProject.setRawClasspath(entries, monitor);
@@ -141,14 +141,13 @@ private static void addDependencies(IProject project, IPluginImport[] imports, V
 	ppu.addClasspathEntries(result);
 }
 
-private static void addJDK(Vector result) {
-	// JDK the last
-	IPath jdkPath = new Path("JRE_LIB");
+private static void addJRE(Vector result) {
+	IPath jrePath = new Path("JRE_LIB");
 	IPath[] annot= new IPath[2];
 	annot[0] = new Path("JRE_SRC");
 	annot[1] = new Path("JRE_SRCROOT");
-	if (jdkPath!=null)
-	   result.add(JavaCore.newVariableEntry(jdkPath, annot[0], annot[1]));
+	if (jrePath!=null)
+	   result.add(JavaCore.newVariableEntry(jrePath, annot[0], annot[1]));
 }
 
 }
