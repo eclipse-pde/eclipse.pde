@@ -39,7 +39,7 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 	// Shared instance
 	private static PDEPlugin inst;
 	// Resource bundle
-	private ResourceBundle fResourceBundle;
+	private ResourceBundle resourceBundle;
 	
 	// Launches listener
 	private LaunchListener fLaunchListener;
@@ -53,15 +53,26 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 	private PDELabelProvider fLabelProvider;
 	private ILaunchConfigurationListener fLaunchConfigurationListener;
 
-	public PDEPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
+	public PDEPlugin() {
 		inst = this;
+	}
+	
+	public URL getInstallURL() {
 		try {
-			fResourceBundle =
-				ResourceBundle.getBundle("org.eclipse.pde.internal.ui.pderesources"); //$NON-NLS-1$
-		} catch (MissingResourceException x) {
-			fResourceBundle = null;
+			return Platform.resolve(getDefault().getBundle().getEntry("/")); //$NON-NLS-1$
+		} catch (IOException e) {
+			return null;
 		}
+	}
+	
+	public ResourceBundle getResourceBundle() {
+		try {
+			if (resourceBundle == null)
+				resourceBundle = ResourceBundle.getBundle("org.eclipse.pde.internal.ui.pderesources");
+		} catch (MissingResourceException x) {
+			resourceBundle = null;
+		}
+		return resourceBundle;
 	}
 
 	public static IWorkbenchPage getActivePage() {
@@ -93,31 +104,24 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 		String text = getResourceString(key);
 		return java.text.MessageFormat.format(text, new Object[] { arg });
 	}
-	static IPath getInstallLocation() {
-		return new Path(getDefault().getDescriptor().getInstallURL().getFile());
-	}
+
 	public static String getPluginId() {
-		return getDefault().getDescriptor().getUniqueIdentifier();
+		return getDefault().getBundle().getSymbolicName();
 	}
-	public ResourceBundle getResourceBundle() {
-		return fResourceBundle;
-	}
+	
 	public static String getResourceString(String key) {
-		ResourceBundle bundle = PDEPlugin.getDefault().getResourceBundle();
-		if (bundle != null) {
-			try {
-				String bundleString = bundle.getString(key);
-				//return "$"+bundleString;
-				return bundleString;
-			} catch (MissingResourceException e) {
-				// default actions is to return key, which is OK
-			}
+		ResourceBundle bundle = getDefault().getResourceBundle();
+		try {
+			return (bundle != null) ? bundle.getString(key) : key;
+		} catch (MissingResourceException e) {
+			return key;
 		}
-		return key;
 	}
+	
 	public static IWorkspace getWorkspace() {
 		return ResourcesPlugin.getWorkspace();
 	}
+	
 	private IWorkbenchPage internalGetActivePage() {
 		return getWorkbench().getActiveWorkbenchWindow().getActivePage();
 	}
@@ -181,9 +185,12 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 		return fFormColors;
 	}
 
-	public void startup() throws CoreException {
-		super.startup();
-
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.Plugin#start(org.osgi.framework.BundleContext)
+	 */
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
+		this.fBundleContext = context;
 		IAdapterManager manager = Platform.getAdapterManager();
 		SchemaAdapterFactory schemaFactory = new SchemaAdapterFactory();
 		manager.registerAdapters(schemaFactory, ISchemaObject.class);
@@ -197,19 +204,14 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 		DebugPlugin.getDefault().getLaunchManager().addLaunchConfigurationListener(fLaunchConfigurationListener);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugin#start(org.osgi.framework.BundleContext)
-	 */
-	public void start(BundleContext context) throws Exception {
-		super.start(context);
-		this.fBundleContext = context;
-	}
-	
 	public BundleContext getBundleContext() {
-		return this.fBundleContext;
+		return fBundleContext;
 	}
 	
-	public void shutdown() throws CoreException {
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
+	 */
+	public void stop(BundleContext context) throws Exception {
 		if (fLaunchListener!=null)
 			fLaunchListener.shutdown();
 		if (fFormColors!=null) {
@@ -224,18 +226,7 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 			DebugPlugin.getDefault().getLaunchManager().removeLaunchConfigurationListener(fLaunchConfigurationListener);
 			fLaunchConfigurationListener = null;
 		}
-		super.shutdown();
-	}
-
-	public static File getFileInPlugin(IPath path) {
-		try {
-			URL installURL =
-				new URL(getDefault().getDescriptor().getInstallURL(), path.toString());
-			URL localURL = Platform.asLocalURL(installURL);
-			return new File(localURL.getFile());
-		} catch (IOException e) {
-			return null;
-		}
+		super.stop(context);
 	}
 
 	public PDELabelProvider getLabelProvider() {

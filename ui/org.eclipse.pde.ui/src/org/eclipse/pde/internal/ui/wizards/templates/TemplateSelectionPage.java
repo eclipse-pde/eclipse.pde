@@ -109,7 +109,7 @@ public class TemplateSelectionPage extends WizardPage {
 
 	private void createCandidates() {
 		candidates = new ArrayList();
-		IPluginRegistry registry = Platform.getPluginRegistry();
+		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements =
 			registry.getConfigurationElementsFor(PDEPlugin.getPluginId(), "templates"); //$NON-NLS-1$
 		for (int i = 0; i < elements.length; i++) {
