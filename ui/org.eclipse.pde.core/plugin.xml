@@ -46,11 +46,5 @@
             id="org.eclipse.pde.core.requiredPlugins">
       </classpathContainerInitializer>
    </extension>
-   <extension
-         point="org.eclipse.ant.core.extraClasspathEntries">
-      <extraClasspathEntry
-            library="pdecore.jar">
-      </extraClasspathEntry>
-   </extension>
 
 </plugin>
