@@ -159,7 +159,7 @@ public class ExtensionsSection extends TreeSection
 		initialize((IPluginModelBase) getPage().getModel());
 	}
 	protected void selectionChanged(IStructuredSelection selection) {
-		//getFormPage().setSelection(selection);
+		getPage().getPDEEditor().setSelection(selection);
 		updateUpDownButtons(selection.getFirstElement());
 	}
 	protected void handleDoubleClick(IStructuredSelection selection) {
@@ -499,7 +499,6 @@ public class ExtensionsSection extends TreeSection
 		return elementImage;
 	}
 	static Image getCustomImage(IPluginElement element) {
-		// TODO this will break us with the source model
 		ISchemaElement elementInfo = getSchemaElement(element);
 		if (elementInfo != null && elementInfo.getIconProperty() != null) {
 			String iconProperty = elementInfo.getIconProperty();
@@ -643,6 +642,7 @@ public class ExtensionsSection extends TreeSection
 					((PluginParent) extension).reconnect();
 				} else if (obj instanceof IPluginElement
 						&& target instanceof IPluginParent) {
+					// TODO this will break with the XML model
 					PluginElement element = (PluginElement) obj;
 					element.setModel(model);
 					element.setParent((IPluginParent) target);
@@ -672,6 +672,7 @@ public class ExtensionsSection extends TreeSection
 			}
 		} else if (object instanceof IPluginExtension) {
 			IPluginExtension extension = (IPluginExtension) object;
+			//TODO illegal cast
 			PluginBase plugin = (PluginBase) extension.getPluginBase();
 			IPluginExtension[] extensions = plugin.getExtensions();
 			int index = plugin.getIndexOf(extension);

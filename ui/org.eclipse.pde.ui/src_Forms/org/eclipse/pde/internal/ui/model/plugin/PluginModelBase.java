@@ -126,7 +126,7 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 	 * @see org.eclipse.pde.core.plugin.ISharedPluginModel#getFactory()
 	 */
 	public IExtensionsModelFactory getFactory() {
-		return null;
+		return fFactory;
 	}
 
 	/* (non-Javadoc)

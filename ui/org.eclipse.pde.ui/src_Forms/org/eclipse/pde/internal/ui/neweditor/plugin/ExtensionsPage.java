@@ -10,6 +10,7 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.neweditor.*;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.editor.FormEditor;
@@ -82,6 +83,10 @@ public class ExtensionsPage extends PDEFormPage {
 		FormToolkit toolkit = managedForm.getToolkit();
 		form.setText("Extensions");
 		block.createContent(managedForm);
+		BodyTextSection bodyTextSection = new BodyTextSection(this, form.getBody());
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL|GridData.VERTICAL_ALIGN_BEGINNING);
+		bodyTextSection.getSection().setLayoutData(gd);
+		bodyTextSection.getSection().marginWidth = 5;
 		//refire selection
 		section.fireSelection();
 	}
