@@ -73,6 +73,9 @@ class LogReader {
 						current.setStack(swriter.toString());
 					} else if (writerState == SESSION_STATE && session != null) {
 						session.setSessionData(swriter.toString());
+					} else if (writerState == MESSAGE_STATE && current != null){
+						String message = current.getMessage() + swriter.toString();
+						current.setMessage(message);
 					}
 					writerState = UNKNOWN_STATE;
 					swriter = null;
@@ -109,11 +112,14 @@ class LogReader {
 					LogEntry parent = (LogEntry) parents.get(depth - 1);
 					parent.addChild(entry);
 				} else if (state == MESSAGE_STATE) {
+					swriter = new StringWriter();
+					writer = new PrintWriter(swriter, true);
 					String message = "";
 					if (line.length() > 8)
 						message = line.substring(9).trim();
 					if (current != null)
 						current.setMessage(message);
+					writerState = MESSAGE_STATE;
 				}
 			}
 		} catch (FileNotFoundException e) {
