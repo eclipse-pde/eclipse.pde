@@ -114,7 +114,7 @@ public class PluginPathUpdater {
 				else if (!(model instanceof IFragmentModel)) {
 					// cannot find this entry - try to locate it 
 					// in one of the fragments
-					libraryEntry = getFragmentEntry((IPluginModel)model, name);
+					libraryEntry = getFragmentEntry((IPluginModel)model, name, element.isExported());
 					if (libraryEntry!=null && !isEntryAdded(libraryEntry.getPath(), IClasspathEntry.CPE_VARIABLE, result)) {
 						result.addElement(libraryEntry);
 					}
@@ -137,7 +137,7 @@ public class PluginPathUpdater {
 		}
 	}
 	
-	private static IClasspathEntry getFragmentEntry(IPluginModel model, String name) {
+	private static IClasspathEntry getFragmentEntry(IPluginModel model, String name, boolean exported) {
 		IFragmentModel [] fragments = PDECore.getDefault().getExternalModelManager().getFragmentsFor(model);
 		for (int i=0; i<fragments.length; i++) {
 			IFragmentModel fmodel = fragments[i];
@@ -145,7 +145,7 @@ public class PluginPathUpdater {
 			IPath libraryPath = modelPath.append(name);
 			IPath[] sourceAnnot = getSourceAnnotation(fmodel.getFragment(), modelPath, name);
 			IClasspathEntry libraryEntry =
-					JavaCore.newVariableEntry(libraryPath, sourceAnnot[0], sourceAnnot[1]);
+					JavaCore.newVariableEntry(libraryPath, sourceAnnot[0], sourceAnnot[1], exported);
 			IClasspathEntry resolved = JavaCore.getResolvedClasspathEntry(libraryEntry);
 			if (resolved != null && resolved.getPath().toFile().exists()) {
 				// looks good - return it

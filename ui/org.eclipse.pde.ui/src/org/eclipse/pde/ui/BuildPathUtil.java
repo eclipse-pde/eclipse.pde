@@ -5,6 +5,7 @@ package org.eclipse.pde.ui;
  */
 
 import java.io.File;
+import java.util.*;
 import java.util.Vector;
 
 import org.eclipse.core.resources.*;
@@ -326,22 +327,29 @@ public class BuildPathUtil {
 		Vector result,
 		IProgressMonitor monitor) {
 		IPlugin plugin = model.getPlugin();
-		addFragmentLibraries(
-			plugin,
-			PDECore.getDefault().getWorkspaceModelManager().getWorkspaceFragmentModels(),
-			result);
-		addFragmentLibraries(
-			plugin,
-			PDECore.getDefault().getExternalModelManager().getFragmentModels(monitor),
-			result);
+		ArrayList fragments = new ArrayList();
+		createFragmentList(model, fragments, monitor);
+		for (int i = 0; i < fragments.size(); i++) {
+			IFragment fragment = (IFragment)fragments.get(i);
+			addLibraries(fragment.getModel(), true, result);
+		}
 	}
-	private static void addFragmentLibraries(
-		IPlugin plugin,
+	
+	private static void createFragmentList(IPluginModel model, ArrayList fragments, IProgressMonitor monitor) {
+		addFragments(model, PDECore.getDefault().getWorkspaceModelManager().getWorkspaceFragmentModels(),
+					fragments);
+		addFragments(model, PDECore.getDefault().getExternalModelManager().getFragmentModels(monitor),
+					fragments);
+		
+	}
+
+	private static void addFragments(
+		IPluginModel pluginModel,
 		IFragmentModel[] models,
-		Vector result) {
+		ArrayList result) {
+		IPlugin plugin = pluginModel.getPlugin();
 		for (int i = 0; i < models.length; i++) {
-			if (models[i].isEnabled() == false)
-				continue;
+			if (models[i].isEnabled()==false) continue;
 			IFragment fragment = models[i].getFragment();
 			if (PDECore
 				.compare(
@@ -350,9 +358,17 @@ public class BuildPathUtil {
 					plugin.getId(),
 					plugin.getVersion(),
 					fragment.getRule())) {
-				addLibraries(models[i], true, result);
+				addFragment(fragment, result);
 			}
+			
 		}
+	}
+	private static void addFragment(IFragment fragment, ArrayList result) {
+		for (int i=0; i<result.size(); i++) {
+			IFragment curr = (IFragment)result.get(i);
+			if (curr.getId().equals(fragment.getId())) return;
+		}
+		result.add(fragment);
 	}
 
 	private static void addJRE(Vector result) {
