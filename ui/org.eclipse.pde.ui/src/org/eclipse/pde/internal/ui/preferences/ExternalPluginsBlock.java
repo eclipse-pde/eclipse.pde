@@ -16,13 +16,12 @@ import java.util.*;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
@@ -30,7 +29,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 
 
 public class ExternalPluginsBlock {
@@ -227,12 +227,8 @@ public class ExternalPluginsBlock {
 		if (platformPath != null && platformPath.length() > 0) {
 			String[] pluginPaths = PluginPathFinder.getPluginPaths(platformPath);
 			ReloadOperation op = new ReloadOperation(pluginPaths);
-			ProgressMonitorDialog pmd = new ProgressMonitorDialog(PDEPlugin.getActiveWorkbenchShell());
 			try {
-				//TODO we should move to the new progress
-				// monitor but the porting document does not
-				// cover the 'true,false' combination of flags
-				pmd.run(true, false, op);
+				PlatformUI.getWorkbench().getProgressService().run(true, false, op);
 			} catch (InvocationTargetException e) {
 			} catch (InterruptedException e) {
 			}
