@@ -207,7 +207,11 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 	public void setActiveEditor(IEditorPart targetEditor) {
 		if (editor != null)
 			editor.updateUndo(null, null);
-		this.editor = (PDEMultiPageEditor) targetEditor;
+		if (targetEditor instanceof PDESourcePage) {
+			PDESourcePage page = (PDESourcePage)targetEditor;
+			targetEditor = page.getEditor();
+		}
+	    this.editor = (PDEMultiPageEditor) targetEditor;
 		editor.updateUndo(
 			getGlobalAction(ITextEditorActionConstants.UNDO),
 			getGlobalAction(ITextEditorActionConstants.REDO));
