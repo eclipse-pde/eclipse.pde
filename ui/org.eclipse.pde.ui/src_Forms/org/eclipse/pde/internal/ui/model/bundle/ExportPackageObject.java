@@ -20,7 +20,7 @@ import org.eclipse.pde.core.IModelChangedEvent;
 public class ExportPackageObject extends PackageObject {
     
     private static final String INTERNAL = "x-internal";
-    private static final String FRIEND = "x-friend";
+    private static final String FRIEND = "x-friends";
     
     private static final long serialVersionUID = 1L;
     
