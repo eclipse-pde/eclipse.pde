@@ -335,7 +335,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		
 		ArrayList paths = new ArrayList();		
 		if (location.indexOf("$nl$") != -1) { //$NON-NLS-1$
-			StringTokenizer tokenizer = new StringTokenizer(TargetPlatform.getNL(), "_");	
+			StringTokenizer tokenizer = new StringTokenizer(TargetPlatform.getNL(), "_");	 //$NON-NLS-1$
 			String language = tokenizer.hasMoreTokens() ? tokenizer.nextToken() : null;
 			String country = tokenizer.hasMoreTokens() ? tokenizer.nextToken() : null;
 			if (language != null && country != null)
