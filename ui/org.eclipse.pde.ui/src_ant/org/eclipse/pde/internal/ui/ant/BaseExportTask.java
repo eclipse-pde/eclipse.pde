@@ -31,7 +31,7 @@ public abstract class BaseExportTask extends Task {
 		if (fExportType == FeatureExportJob.EXPORT_AS_ZIP && fZipFilename == null)
 			throw new BuildException("No zip file is specified");
 		
-		getExportJob().schedule();
+		getExportJob().schedule(2000);
 	}
 	
 	public void setExportType(String type) {
