@@ -394,8 +394,8 @@ protected void addFragmentsLibraries(PluginModel plugin, List classpath, String 
 	for (int i = 0; i < fragments.length; i++) {
 		if (fragments[i]==currentModel)
 			continue;
-		addRuntimeLibraries(fragments[i], classpath, baseLocation);
 		addPluginLibrariesToFragmentLocations(plugin, fragments[i], classpath, baseLocation);
+		addRuntimeLibraries(fragments[i], classpath, baseLocation);
 	}
 }
 
@@ -411,9 +411,6 @@ protected void addFragmentsLibraries(PluginModel plugin, List classpath, String 
  * @throws CoreException
  */
 protected void addPluginLibrariesToFragmentLocations(PluginModel plugin, PluginFragmentModel fragment, List classpath, String baseLocation) throws CoreException {
-	if (fragment.getRuntime() != null)
-		return;
-
 	LibraryModel[] libraries = plugin.getRuntime();
 	if (libraries == null)
 		return;
