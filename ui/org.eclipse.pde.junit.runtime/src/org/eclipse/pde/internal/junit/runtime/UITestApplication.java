@@ -10,17 +10,20 @@ import org.eclipse.core.boot.IPlatformRunnable;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.*;
+import org.eclipse.ui.testing.ITestHarness;
+import org.eclipse.ui.testing.TestableObject;
 
 /**
  * A Workbench that runs a test suite specified in the
  * command line arguments.
  */ 
-public class UITestApplication implements IPlatformRunnable {
+public class UITestApplication implements IPlatformRunnable, ITestHarness {
 	
 	private static final String DEFAULT_APP_3_0 = "org.eclipse.ui.ide.workbench";
 	private static final String DEFAULT_APP_PRE_3_0 = "org.eclipse.ui.workbench";
 	
 	private boolean fInDeprecatedMode = false;
+	private TestableObject fTestableObject;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.boot.IPlatformRunnable#run(java.lang.Object)
@@ -31,13 +34,10 @@ public class UITestApplication implements IPlatformRunnable {
 		
 		Assert.assertNotNull(application);
 		
-		if (fInDeprecatedMode) {
-			runDeprecatedApplication(application, args);
-		} else {
-			runApplication(application, args);
-		}
+		if (fInDeprecatedMode)
+			return runDeprecatedApplication(application, args);
 		
-		return null;
+		return runApplication(application, args);
 	}
 	
 
@@ -102,7 +102,10 @@ public class UITestApplication implements IPlatformRunnable {
 	 * In 3.0 mode
 	 * 
 	 */
-	private void runApplication(IPlatformRunnable application, Object args) {
+	private Object runApplication(IPlatformRunnable application, Object args) throws Exception {
+		fTestableObject = PlatformUI.getTestableObject();
+		fTestableObject.setTestHarness(this);
+		return application.run(args);
 		
 	}
 	/*
@@ -112,12 +115,15 @@ public class UITestApplication implements IPlatformRunnable {
 	 * can start running the tests.
 	 * When the tests are done, we explicitly call close() on the workbench.
 	 */
-	private void runDeprecatedApplication(
+	private Object runDeprecatedApplication(
 			IPlatformRunnable object,
 			final Object args)
 			throws Exception {
+		
+			Assert.assertTrue(object instanceof IWorkbench);
+			
 			final IWorkbench workbench = (IWorkbench) object;
-			// this flag is used so that we only run tests when the window is opened
+			// the 'started' flag is used so that we only run tests when the window is opened
 			// for the first time only.
 			final boolean[] started = { false };
 			workbench.addWindowListener(new IWindowListener() {
@@ -139,8 +145,21 @@ public class UITestApplication implements IPlatformRunnable {
 				public void windowClosed(IWorkbenchWindow window) {
 				}
 			});
-			((IPlatformRunnable) workbench).run(args);
+			return ((IPlatformRunnable) workbench).run(args);
 		}
-	
+
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.testing.ITestHarness#runTests()
+	 */
+	public void runTests() {
+		fTestableObject.testingStarting();
+		fTestableObject.runTest(new Runnable() {
+			public void run() {
+				RemotePluginTestRunner.main(Platform.getCommandLineArgs());
+			}
+		});
+		fTestableObject.testingFinished();
+	}
 		
 }
