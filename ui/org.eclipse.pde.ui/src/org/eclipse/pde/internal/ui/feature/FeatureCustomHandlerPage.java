@@ -271,15 +271,8 @@ public class FeatureCustomHandlerPage extends WizardPage {
 		container.setLayout(layout);
 		container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-//		Label spacer = new Label(container, SWT.NULL);
-//		GridData gd = new GridData();
-//		gd.horizontalSpan = 2;
-//		spacer.setLayoutData(gd);
-
-		
 		customChoice = new Button(container, SWT.CHECK);
 		customChoice.setText(PDEPlugin.getResourceString(KEY_CUSTOM_INSTALL_HANDLER));
-		customChoice.setSelection(false);
 		customChoice.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				boolean isSelected = ((Button) e.widget).getSelection();
@@ -418,9 +411,13 @@ public class FeatureCustomHandlerPage extends WizardPage {
 		return data;
 	}
 
+	public boolean isInitialized(){
+		return isInitialized;
+	}
 	private void initialize() {
 		if (isInitialized)
 			return;
+		customChoice.setSelection(false);
 		if (buildOutputText.getText().equals(""))
 			buildOutputText.setText("bin");
 		if (libraryText.getText().equals("")
