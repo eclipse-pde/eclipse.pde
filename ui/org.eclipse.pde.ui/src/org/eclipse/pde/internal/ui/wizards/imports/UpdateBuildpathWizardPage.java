@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.ui.wizards.imports;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
@@ -37,10 +36,7 @@ public class UpdateBuildpathWizardPage extends StatusWizardPage {
 	private static final String KEY_TITLE = "UpdateBuildpathWizard.title";
 	private static final String KEY_DESC = "UpdateBuildpathWizard.desc";
 	private static final String KEY_PLUGIN_LIST =
-		"ImportWizard.DetailedPage.pluginList";
-	private static final String KEY_NO_PLUGINS = "ImportWizard.messages.noPlugins";
-	private static final String KEY_NO_SELECTED =
-		"ImportWizard.errors.noPluginSelected";
+		"UpdateBuildpathWizard.availablePlugins";
 	
 	private TablePart tablePart;
 
@@ -130,8 +126,7 @@ public class UpdateBuildpathWizardPage extends StatusWizardPage {
 	}
 
 	private void dialogChanged() {
-		IStatus genStatus = validatePlugins();
-		updateStatus(genStatus);
+		setPageComplete(tablePart.getSelectionCount() > 0);
 	}
 
 	private Object[] getModels() {
@@ -153,16 +148,4 @@ public class UpdateBuildpathWizardPage extends StatusWizardPage {
 		return result.toArray();
 	}
 
-	private IStatus validatePlugins() {
-		Object[] allModels = getModels();
-		if (allModels == null || allModels.length == 0) {
-			return createStatus(IStatus.ERROR, PDEPlugin.getResourceString(KEY_NO_PLUGINS));
-		}
-		if (tablePart.getSelectionCount() == 0) {
-			return createStatus(
-				IStatus.ERROR,
-				PDEPlugin.getResourceString(KEY_NO_SELECTED));
-		}
-		return createStatus(IStatus.OK, "");
-	}
 }
