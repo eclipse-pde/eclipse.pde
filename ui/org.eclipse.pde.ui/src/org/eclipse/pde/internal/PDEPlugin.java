@@ -24,6 +24,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.pde.internal.preferences.*;
 import org.eclipse.jface.dialogs.*;
 import java.net.URL;
+import org.eclipse.jdt.launching.JavaRuntime;
 
 public class PDEPlugin extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "org.eclipse.pde";
@@ -285,6 +286,17 @@ public class PDEPlugin extends AbstractUIPlugin {
 		super.shutdown();
 	}
 	public void startup() throws CoreException {
+		super.startup();
+		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				JavaRuntime.initializeJREVariables(monitor);
+			}
+		};
+		try {
+			getWorkspace().run(runnable, null);
+		} catch (CoreException e) {
+			log(e);
+		}
 		IAdapterManager manager = Platform.getAdapterManager();
 		manager.registerAdapters(new SchemaAdapterFactory(), ISchemaObject.class);
 		manager.registerAdapters(new PluginAdapterFactory(), IPluginObject.class);

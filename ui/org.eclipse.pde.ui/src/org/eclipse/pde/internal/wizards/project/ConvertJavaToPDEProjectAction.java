@@ -14,63 +14,56 @@ import org.eclipse.jface.action.*;
 import org.eclipse.ui.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.pde.internal.*;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jface.wizard.WizardDialog;
+import java.util.Iterator;
+import java.util.Vector;
 
 public class ConvertJavaToPDEProjectAction implements IObjectActionDelegate {
 	public static final String KEY_CONVERTING = "ConvertProjectAction.converting";
 	public static final String KEY_UPDATING = "ConvertProjectAction.updating";
 	private IWorkbenchPart targetPart;
-	private IProject project;
+	private Vector selected=new Vector();
 
-public void run(IAction action) {
-	if (project == null)
-		return;
-	if (project.isOpen()==false) 
-	    return;
-	ProgressMonitorDialog dialog =
-		new ProgressMonitorDialog(PDEPlugin.getActiveWorkbenchShell());
-	IRunnableWithProgress operation = new WorkspaceModifyOperation() {
-		public void execute(IProgressMonitor monitor) {
-			try {
-				monitor.beginTask(PDEPlugin.getResourceString(KEY_CONVERTING), 2);
-				monitor.worked(1);
-				ConvertedProjectsPage.convertProject(project, monitor);
-				monitor.subTask(PDEPlugin.getResourceString(KEY_UPDATING));
-				monitor.worked(1);
-				ConvertedProjectsPage.updateBuildPath(project, monitor);
-			} catch (CoreException e) {
-				PDEPlugin.logException(e);
-			} finally {
-				monitor.done();
-			}
-		}
-	};
-	try {
-		dialog.run(false, true, operation);
-	} catch (InvocationTargetException e) {
-		PDEPlugin.logException(e);
-	} catch (InterruptedException e) {
+	public void run(IAction action) {
+		ConvertedProjectWizard wizard = new ConvertedProjectWizard(selected);
+		wizard.init(PlatformUI.getWorkbench(), null);
+		WizardDialog wdialog =
+			new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
+		wdialog.open();
 	}
-}
-public void selectionChanged(IAction action, ISelection selection) {
-	boolean enable = false;
-	if (selection instanceof IStructuredSelection) {
-		Object object = ((IStructuredSelection) selection).getFirstElement();
-		if (object instanceof IProject) {
-			IProject project = (IProject) object;
-			try {
-				if (project.isOpen() && 
-				      project.hasNature(PDEPlugin.PLUGIN_NATURE) == false) {
-					this.project = project;
-					enable = true;
+
+	public void selectionChanged(IAction action, ISelection sel) {
+		selected.clear();
+		boolean enable = true;
+		if (sel instanceof IStructuredSelection) {
+			IStructuredSelection selection = (IStructuredSelection) sel;
+			for (Iterator iter = selection.iterator(); iter.hasNext();) {
+				Object object = iter.next();
+				if (object instanceof IJavaProject)
+					object = ((IJavaProject) object).getProject();
+				if (object instanceof IProject) {
+					IProject project = (IProject) object;
+					try {
+						if (!project.isOpen() || project.hasNature(PDEPlugin.PLUGIN_NATURE)) {
+							enable = false;
+							break;
+						}
+						else {
+							selected.add(project);
+						}
+					} catch (CoreException e) {
+						PDEPlugin.logException(e);
+					}
+				} else {
+					enable = false;
+					break;
 				}
-			} catch (CoreException e) {
-				PDEPlugin.logException(e);
 			}
+			action.setEnabled(enable);
 		}
 	}
-	action.setEnabled(enable);
-}
-public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-	this.targetPart = targetPart;
-}
+	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
+		this.targetPart = targetPart;
+	}
 }

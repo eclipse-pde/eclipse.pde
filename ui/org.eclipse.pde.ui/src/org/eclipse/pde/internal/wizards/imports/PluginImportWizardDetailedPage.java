@@ -26,6 +26,7 @@ import org.eclipse.pde.internal.elements.*;
 import org.eclipse.pde.internal.base.model.plugin.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.IDialogConstants;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -317,6 +318,12 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 		button.setText(text);
 		GridData gd =
 			new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
+		gd.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		gd.widthHint =
+			Math.max(
+				widthHint,
+				button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 		button.setLayoutData(gd);
 		button.addSelectionListener(listener);
 		return button;

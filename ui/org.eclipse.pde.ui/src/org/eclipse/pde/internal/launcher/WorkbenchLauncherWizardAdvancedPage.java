@@ -244,6 +244,7 @@ public class WorkbenchLauncherWizardAdvancedPage extends StatusWizardPage {
 			public void widgetSelected(SelectionEvent e) {
 				Vector checked = computeInitialCheckState();
 				pluginTreeViewer.setCheckedElements(checked.toArray());
+				updateStatus();
 			}
 		});
 	}
@@ -284,6 +285,7 @@ public class WorkbenchLauncherWizardAdvancedPage extends StatusWizardPage {
 				} else {
 					handleGroupStateChanged(element, event.getChecked());
 				}
+				updateStatus();
 			}
 		});
 		pluginTreeViewer.setSorter(new ViewerSorter() {
@@ -418,6 +420,7 @@ public class WorkbenchLauncherWizardAdvancedPage extends StatusWizardPage {
 		}
 		pluginTreeViewer.setCheckedElements(result.toArray());
 		adjustCustomControlEnableState(!useDefault);
+		updateStatus();
 	}
 
 	private Vector computeInitialCheckState() {

@@ -45,6 +45,8 @@ public class ConvertedProjectsPage extends WizardPage implements ICheckStateList
 	public static final String KEY_DESC = "ConvertedProjectWizard.desc";
 	private int selectedCount;
 	private Vector candidates;
+	private Vector selected;
+
 
 	public class CheckedProject {
 		IProject project;
@@ -87,10 +89,11 @@ public class ConvertedProjectsPage extends WizardPage implements ICheckStateList
 		}
 	}
 
-public ConvertedProjectsPage() {
+public ConvertedProjectsPage(Vector selected) {
 	super("convertedProjects");
 	setTitle(PDEPlugin.getResourceString(KEY_TITLE));
 	setDescription(PDEPlugin.getResourceString(KEY_DESC));
+	this.selected = selected;
 }
 public void checkStateChanged(CheckStateChangedEvent event) {
 	CheckedProject checkedProject = (CheckedProject)event.getElement();
@@ -212,21 +215,27 @@ public void createControl(Composite parent) {
 	updateBuildPathButton.setLayoutData(gd);
 	
 	projectViewer.setInput(PDEPlugin.getWorkspace());
-	projectViewer.setAllChecked(true);
-	projectViewer.addCheckStateListener(this);
+	projectViewer.setCheckedElements(getCheckedCandidates());
 	updateSelectedCount(1);
+	projectViewer.addCheckStateListener(this);
+
 	setControl(container);
 }
+
 private void createConversionCandidates() {
 	candidates = new Vector();
 	IProject[] projects = PDEPlugin.getWorkspace().getRoot().getProjects();
+
 	for (int i = 0; i < projects.length; i++) {
 		IProject project = projects[i];
 		try {
 			if (project.hasNature(JavaCore.NATURE_ID)
 				&& !project.hasNature(PDEPlugin.PLUGIN_NATURE)) {
 				CheckedProject checkedProject = new CheckedProject(project);
-				checkedProject.checked = true;
+				
+				if (selected==null || selected.contains(project)) { 
+				   checkedProject.checked = true;
+				}
 				candidates.add(checkedProject);
 			}
 		} catch (CoreException e) {
@@ -234,6 +243,16 @@ private void createConversionCandidates() {
 		}
 	}
 }
+
+private Object [] getCheckedCandidates() {
+	Vector result = new Vector();
+	for (int i=0; i<candidates.size(); i++) {
+		CheckedProject cp = (CheckedProject)candidates.get(i);
+		if (cp.checked) result.add(cp);
+	}
+	return result.toArray();
+}
+
 private static String createInitialName(String id) {
 	int loc = id.lastIndexOf('.');
 	if (loc == -1) return id;
