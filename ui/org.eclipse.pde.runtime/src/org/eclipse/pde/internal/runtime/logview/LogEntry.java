@@ -24,8 +24,17 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 	private String date;
 	private String message;
 	private String stack;
+	private LogSession session;
 
 	public LogEntry() {
+	}
+	
+	public LogSession getSession() {
+		return session;
+	}
+	
+	void setSession(LogSession session) {
+		this.session = session;
 	}
 
 	public LogEntry(IStatus status) {

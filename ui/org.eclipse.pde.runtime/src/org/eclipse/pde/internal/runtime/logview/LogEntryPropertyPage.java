@@ -13,10 +13,10 @@ import org.eclipse.swt.*;
 import org.eclipse.pde.internal.runtime.*;
 
 public class LogEntryPropertyPage extends PropertyPage {
+	public static final String KEY_DATE = "LogView.propertyPage.date";
 	public static final String KEY_SEVERITY = "LogView.propertyPage.severity";
 	public static final String KEY_MESSAGE = "LogView.propertyPage.message";
 	public static final String KEY_EXCEPTION = "LogView.propertyPage.exception";
-	private LogViewLabelProvider provider;
 	private LogViewLabelProvider labelProvider;
 
 public LogEntryPropertyPage() {
@@ -29,13 +29,22 @@ protected Control createContents(Composite parent) {
 	GridLayout layout = new GridLayout();
 	layout.numColumns = 3;
 	container.setLayout(layout);
+	
 	Label label = new Label(container, SWT.NULL);
+	label.setText(PDERuntimePlugin.getResourceString(KEY_DATE));
+	label = new Label(container, SWT.NULL);
+	label.setText(entry.getDate());
+	GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+	gd.horizontalSpan = 2;
+	label.setLayoutData(gd);
+
+	label = new Label(container, SWT.NULL);
 	label.setText(PDERuntimePlugin.getResourceString(KEY_SEVERITY));
 	label = new Label(container, SWT.NULL);
 	label.setImage(labelProvider.getColumnImage(entry, 1));
 
 	label = new Label(container, SWT.NULL);
-	GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+	gd = new GridData(GridData.FILL_HORIZONTAL);
 	label.setText(entry.getSeverityText());
 	label.setLayoutData(gd);
 

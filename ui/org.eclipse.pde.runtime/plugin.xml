@@ -20,8 +20,8 @@
    </requires>
 
 
-<!-- Extension points -->
 <!-- Extensions -->
+<!-- Extension points -->
    <extension
          point="org.eclipse.ui.views">
       <category
@@ -50,6 +50,12 @@
             name="%propertyPages.details.name"
             class="org.eclipse.pde.internal.runtime.logview.LogEntryPropertyPage"
             id="org.eclipse.pde.runtime.StatusDetails">
+      </page>
+      <page
+            objectClass="org.eclipse.pde.internal.runtime.logview.LogEntry"
+            name="%propertyPages.session.name"
+            class="org.eclipse.pde.internal.runtime.logview.LogSessionPropertyPage"
+            id="org.eclipse.pde.runtime.StatusSession">
       </page>
    </extension>
 

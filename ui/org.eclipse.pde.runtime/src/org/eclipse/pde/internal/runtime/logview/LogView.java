@@ -18,9 +18,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.part.ViewPart;
 
-public class LogView
-	extends ViewPart
-	implements ILogListener {
+public class LogView extends ViewPart implements ILogListener {
 	private TableTreeViewer tableTreeViewer;
 	private ArrayList logs = new ArrayList();
 	private static final String C_SEVERITY = "LogView.column.severity";
@@ -29,16 +27,20 @@ public class LogView
 	private static final String KEY_CLEAR_LABEL = "LogView.clear.label";
 	private static final String KEY_CLEAR_TOOLTIP = "LogView.clear.tooltip";
 	private static final String KEY_READ_LOG_LABEL = "LogView.readLog.label";
-	private static final String KEY_READ_LOG_TOOLTIP = "LogView.readLog.tooltip";
+	private static final String KEY_READ_LOG_TOOLTIP =
+		"LogView.readLog.tooltip";
 	private static final String C_MESSAGE = "LogView.column.message";
 	private static final String C_PLUGIN = "LogView.column.plugin";
 	private static final String C_DATE = "LogView.column.date";
 	private Action propertiesAction;
 	private Action clearAction;
 	private Action readLogAction;
+	private LogSession thisSession;
 
 	public LogView() {
 		logs = new ArrayList();
+		thisSession = new LogSession();
+		thisSession.createSessionData();
 	}
 	public void createPartControl(Composite parent) {
 		TableTree tableTree = new TableTree(parent, SWT.FULL_SELECTION);
@@ -71,7 +73,8 @@ public class LogView
 		tableTreeViewer = new TableTreeViewer(tableTree);
 		tableTreeViewer.setContentProvider(new LogViewContentProvider(this));
 		tableTreeViewer.setLabelProvider(new LogViewLabelProvider());
-		tableTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+		tableTreeViewer
+			.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent e) {
 				propertiesAction.setEnabled(!e.getSelection().isEmpty());
 			}
@@ -92,8 +95,10 @@ public class LogView
 
 		tableTreeViewer.setInput(Platform.class);
 		getSite().setSelectionProvider(tableTreeViewer);
-		propertiesAction = new PropertyDialogAction(table.getShell(), tableTreeViewer);
-		propertiesAction.setImageDescriptor(PDERuntimePluginImages.DESC_PROPERTIES);
+		propertiesAction =
+			new PropertyDialogAction(table.getShell(), tableTreeViewer);
+		propertiesAction.setImageDescriptor(
+			PDERuntimePluginImages.DESC_PROPERTIES);
 		propertiesAction.setDisabledImageDescriptor(
 			PDERuntimePluginImages.DESC_PROPERTIES_DISABLED);
 		propertiesAction.setHoverImageDescriptor(
@@ -102,7 +107,8 @@ public class LogView
 			PDERuntimePlugin.getResourceString(KEY_PROPERTIES_TOOLTIP));
 		propertiesAction.setEnabled(false);
 
-		clearAction = new Action(PDERuntimePlugin.getResourceString(KEY_CLEAR_LABEL)) {
+		clearAction =
+			new Action(PDERuntimePlugin.getResourceString(KEY_CLEAR_LABEL)) {
 			public void run() {
 				handleClear();
 			}
@@ -110,13 +116,16 @@ public class LogView
 		clearAction.setImageDescriptor(PDERuntimePluginImages.DESC_CLEAR);
 		clearAction.setDisabledImageDescriptor(
 			PDERuntimePluginImages.DESC_CLEAR_DISABLED);
-		clearAction.setHoverImageDescriptor(PDERuntimePluginImages.DESC_CLEAR_HOVER);
+		clearAction.setHoverImageDescriptor(
+			PDERuntimePluginImages.DESC_CLEAR_HOVER);
 		clearAction.setToolTipText(
 			PDERuntimePlugin.getResourceString(KEY_CLEAR_TOOLTIP));
-		clearAction.setText(PDERuntimePlugin.getResourceString(KEY_CLEAR_LABEL));
+		clearAction.setText(
+			PDERuntimePlugin.getResourceString(KEY_CLEAR_LABEL));
 
 		readLogAction =
-			new Action(PDERuntimePlugin.getResourceString(KEY_READ_LOG_LABEL)) {
+			new Action(
+				PDERuntimePlugin.getResourceString(KEY_READ_LOG_LABEL)) {
 			public void run() {
 				restoreFromFile();
 			}
@@ -129,8 +138,8 @@ public class LogView
 		readLogAction.setHoverImageDescriptor(
 			PDERuntimePluginImages.DESC_READ_LOG_HOVER);
 
-		
-		IToolBarManager toolBarManager = getViewSite().getActionBars().getToolBarManager();
+		IToolBarManager toolBarManager =
+			getViewSite().getActionBars().getToolBarManager();
 		toolBarManager.add(clearAction);
 		toolBarManager.add(readLogAction);
 		toolBarManager.add(new Separator());
@@ -154,14 +163,16 @@ public class LogView
 		manager.add(propertiesAction);
 	}
 	public LogEntry[] getLogs() {
-		return (LogEntry[])logs.toArray(new LogEntry[logs.size()]);
+		return (LogEntry[]) logs.toArray(new LogEntry[logs.size()]);
 	}
 	public TableTreeViewer getTableTreeViewer() {
 		return tableTreeViewer;
 	}
 	protected void handleClear() {
 		BusyIndicator
-			.showWhile(tableTreeViewer.getControl().getDisplay(), new Runnable() {
+			.showWhile(
+				tableTreeViewer.getControl().getDisplay(),
+				new Runnable() {
 			public void run() {
 				logs.clear();
 				tableTreeViewer.refresh();
@@ -170,7 +181,9 @@ public class LogView
 	}
 	protected void restoreFromFile() {
 		BusyIndicator
-			.showWhile(tableTreeViewer.getControl().getDisplay(), new Runnable() {
+			.showWhile(
+				tableTreeViewer.getControl().getDisplay(),
+				new Runnable() {
 			public void run() {
 				readLogFile();
 				tableTreeViewer.refresh();
@@ -180,15 +193,20 @@ public class LogView
 	private void readLogFile() {
 		logs.clear();
 		File logFile = Platform.getLogFileLocation().toFile();
-		if (!logFile.exists()) return;
+		if (!logFile.exists())
+			return;
 		LogReader.parseLogFile(logFile, logs);
 	}
 	public void logging(IStatus status) {
-		logs.set(0, new LogEntry(status));
-		tableTreeViewer.refresh();
+		pushStatus(status);
 	}
 	public void logging(IStatus status, String plugin) {
-		logs.set(0, new LogEntry(status));
+		pushStatus(status);
+	}
+	private void pushStatus(IStatus status) {
+		LogEntry entry = new LogEntry(status);
+		entry.setSession(thisSession);
+		logs.set(0, entry);
 		tableTreeViewer.refresh();
 	}
 	public void setFocus() {

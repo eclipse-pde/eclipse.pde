@@ -46,10 +46,13 @@ class LogReader {
 		ArrayList parents = new ArrayList();
 		StringBuffer buff = null;
 		LogEntry current = null;
+		LogSession session = null;
+		int writerState = UNKNOWN_STATE;
 		StringWriter swriter = null;
-		PrintWriter stackWriter = null;
+		PrintWriter writer = null;
 		int state = UNKNOWN_STATE;
 		int currentDepth = 0;
+
 		for (int i = 0; i < lines.size(); i++) {
 			String line = (String) lines.get(i);
 			line = line.trim();
@@ -70,28 +73,42 @@ class LogReader {
 			if (state == STACK_STATE) {
 				String sline = line.substring(7);
 				swriter = new StringWriter();
-				stackWriter = new PrintWriter(swriter, true);
-				stackWriter.println(sline);
+				writer = new PrintWriter(swriter, true);
+				writer.println(sline);
+				writerState = STACK_STATE;
+			} else if (state == SESSION_STATE) {
+				session = new LogSession();
+				swriter = new StringWriter();
+				writer = new PrintWriter(swriter, true);
+				writerState = SESSION_STATE;
 			} else if (state == TEXT_STATE) {
-				if (stackWriter != null)
-					stackWriter.println(line);
+				if (writer != null)
+					writer.println(line);
 			} else {
-				if (stackWriter != null && current != null) {
-					current.setStack(swriter.toString());
-					stackWriter.close();
+				if (writer != null) {
+					if (writerState == STACK_STATE && current != null) {
+						current.setStack(swriter.toString());
+					} else if (
+						writerState == SESSION_STATE && session != null) {
+						session.setSessionData(swriter.toString());
+					}
+					writerState = UNKNOWN_STATE;
+					writer.close();
 					swriter = null;
-					stackWriter.close();
-					stackWriter = null;
+					writer.close();
+					writer = null;
 				}
 			}
 			if (state == ENTRY_STATE) {
 				LogEntry entry = new LogEntry();
+				entry.setSession(session);
 				entry.processLogLine(line, true);
 				setNewParent(parents, entry, 0);
 				current = entry;
 				entries.add(0, entry);
 			} else if (state == SUBENTRY_STATE) {
 				LogEntry entry = new LogEntry();
+				entry.setSession(session);
 				int depth = entry.processLogLine(line, false);
 				setNewParent(parents, entry, depth);
 				current = entry;
