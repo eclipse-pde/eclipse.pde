@@ -393,14 +393,18 @@ public class PDELabelProvider extends SharedLabelProvider {
 			IPluginModelBase model = plugin.getPluginModel();
 			flags |= getModelFlags(model);
 		}
-		return get(PDEPluginImages.DESC_REQ_PLUGIN_OBJ, flags);
+		return get(getRequiredPluginImageDescriptor(iobj.getImport()), flags);
+	}
+	
+	protected ImageDescriptor getRequiredPluginImageDescriptor(IPluginImport iobj) {
+		return PDEPluginImages.DESC_REQ_PLUGIN_OBJ;
 	}
 
 	private Image getObjectImage(IPluginImport obj) {
 		int flags = 0;
 		if (obj.isReexported())
 			flags = F_EXPORT;
-		return get(PDEPluginImages.DESC_REQ_PLUGIN_OBJ, flags);
+		return get(getRequiredPluginImageDescriptor(obj), flags);
 	}
 
 	private Image getObjectImage(IPluginLibrary library) {

@@ -14,6 +14,8 @@ import java.io.*;
 import java.util.*;
 import java.util.jar.*;
 
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.osgi.bundle.*;
 import org.eclipse.pde.internal.core.*;
@@ -58,7 +60,9 @@ public abstract class BundleModel
 			if (!outOfSync)
 				updateTimeStamp();
 		} catch (IOException e) {
-			PDECore.logException(e);
+			String message = "Error while parsing bundle manifest in "+getInstallLocation();
+			IStatus status = new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.OK, message, e);    
+			PDECore.log(new CoreException(status));
 			return;
 		}
 		bundle = new Bundle();

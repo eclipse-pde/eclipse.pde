@@ -10,6 +10,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.pde.core.osgi.bundle.*;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.osgi.OSGiWorkspaceModelManager;
 import org.eclipse.pde.internal.ui.*;
@@ -30,6 +31,13 @@ public class OSGiLabelProvider extends PDELabelProvider {
 			return getObjectImage((IBundlePluginBase)((IBundlePluginModelBase) obj).getPluginBase());
 		}
 		return super.getImage(obj);
+	}
+
+	protected ImageDescriptor getRequiredPluginImageDescriptor(IPluginImport iobj) {
+		ISharedPluginModel model = iobj.getModel();
+		if (model instanceof IBundlePluginModel)
+			return PDEPluginImages.DESC_BUNDLE_OBJ;
+		return super.getRequiredPluginImageDescriptor(iobj);
 	}
 
 	public Image getObjectImage(IBundlePluginBase bundlePluginBase) {

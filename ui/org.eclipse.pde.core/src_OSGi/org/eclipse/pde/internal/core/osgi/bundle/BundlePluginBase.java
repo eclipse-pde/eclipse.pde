@@ -8,12 +8,15 @@ package org.eclipse.pde.internal.core.osgi.bundle;
 
 import java.io.PrintWriter;
 import java.util.*;
-import java.util.ArrayList;
 
+import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.core.search.*;
 import org.eclipse.pde.core.osgi.bundle.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.*;
 
 /**
  * @author dejan
@@ -21,7 +24,9 @@ import org.eclipse.pde.internal.core.PDECore;
  * To change the template for this generated type comment go to Window -
  * Preferences - Java - Code Generation - Code and Comments
  */
-public class BundlePluginBase extends PlatformObject implements IBundlePluginBase {
+public class BundlePluginBase
+	extends PlatformObject
+	implements IBundlePluginBase {
 	private IBundlePluginModelBase model;
 	private ArrayList libraries;
 	private ArrayList imports;
@@ -72,20 +77,21 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	 */
 	public void add(IPluginLibrary library) throws CoreException {
 		IBundle bundle = getBundle();
-		if (bundle==null) return;
+		if (bundle == null)
+			return;
 
-		if (libraries!=null) {
+		if (libraries != null) {
 			libraries.add(library);
 		}
 		String libName = library.getName();
 		String cp = bundle.getHeader(IBundle.KEY_CLASSPATH);
-		if (cp==null)
+		if (cp == null)
 			cp = libName;
 		else
-			cp = cp+", "+libName;
+			cp = cp + ", " + libName;
 		bundle.setHeader(IBundle.KEY_CLASSPATH, cp);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -102,17 +108,18 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	 */
 	public void add(IPluginImport pluginImport) throws CoreException {
 		IBundle bundle = getBundle();
-		if (bundle==null) return;
+		if (bundle == null)
+			return;
 
-		if (imports!=null) {
+		if (imports != null) {
 			imports.add(pluginImport);
 		}
 		String rname = pluginImport.getId();
 		String header = bundle.getHeader(IBundle.KEY_REQUIRE_BUNDLE);
-		if (header==null)
+		if (header == null)
 			header = rname;
 		else
-			header = header+", "+rname;
+			header = header + ", " + rname;
 		bundle.setHeader(IBundle.KEY_REQUIRE_BUNDLE, header);
 	}
 
@@ -162,23 +169,123 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	public IPluginImport[] getImports() {
 		if (imports == null) {
 			imports = new ArrayList();
-			StringTokenizer stok =
-				new StringTokenizer(
-					getSafeHeader(IBundle.KEY_REQUIRE_BUNDLE),
-					",");
-			while (stok.hasMoreTokens()) {
-				String token = stok.nextToken().trim();
-				try {
-					IPluginImport iimport = model.createImport();
-					iimport.setId(token);
-					imports.add(iimport);
-				} catch (CoreException e) {
-					PDECore.logException(e);
-				}
-			}
+			addImportsFromRequiredBundles(imports);
+			if (imports.size()==0)
+				addImportsFromImportedPackages(imports);
 		}
 		return (IPluginImport[]) imports.toArray(
 			new IPluginImport[imports.size()]);
+	}
+
+	private void addImportsFromRequiredBundles(ArrayList imports) {
+		StringTokenizer stok =
+			new StringTokenizer(getSafeHeader(IBundle.KEY_REQUIRE_BUNDLE), ",");
+		while (stok.hasMoreTokens()) {
+			String token = stok.nextToken().trim();
+			try {
+				IPluginImport iimport = model.createImport();
+				iimport.setId(token);
+				imports.add(iimport);
+			} catch (CoreException e) {
+				PDECore.logException(e);
+			}
+		}
+	}
+
+	private void addImportsFromImportedPackages(ArrayList imports) {
+		StringTokenizer stok =
+			new StringTokenizer(getSafeHeader(IBundle.KEY_IMPORT_PACKAGE), ",");
+		HashSet uniqueIds = new HashSet();
+		while (stok.hasMoreTokens()) {
+			String packageName = stok.nextToken().trim();
+			try {
+				String owningPluginId = findOwningPluginId(packageName);
+				if (owningPluginId != null) {
+					if (!uniqueIds.contains(owningPluginId)) {
+						uniqueIds.add(owningPluginId);
+						IPluginImport iimport = model.createImport();
+						iimport.setId(owningPluginId);
+						imports.add(iimport);
+					}
+				}
+			} catch (CoreException e) {
+				PDECore.logException(e);
+			}
+		}
+	}
+
+	/*
+	 * Finds a plug-in that owns the package with a given name. Returns plug-in
+	 * Id or null if not found.
+	 */
+	private String findOwningPluginId(final String packageName) {
+		ISearchPattern pattern =
+			SearchEngine.createSearchPattern(
+				packageName,
+				IJavaSearchConstants.PACKAGE,
+				IJavaSearchConstants.DECLARATIONS,
+				true);
+		if (pattern == null)
+			return null;
+		PluginModelManager mmng = PDECore.getDefault().getModelManager();
+		ModelEntry[] entries = mmng.getEntries();
+		ArrayList projects = new ArrayList();
+		for (int i = 0; i < entries.length; i++) {
+			ModelEntry entry = entries[i];
+			IPluginModelBase model = entry.getActiveModel();
+			IResource resource = model.getUnderlyingResource();
+			if (resource == null)
+				continue;
+			IJavaProject jproject = JavaCore.create(resource.getProject());
+			if (jproject == null)
+				continue;
+			projects.add(jproject);
+		}
+		if (projects.size() == 0)
+			return null;
+		IJavaSearchScope scope =
+			SearchEngine.createJavaSearchScope(
+				(IJavaElement[]) projects.toArray(
+					new IJavaProject[projects.size()]),
+				false);
+		final IProject [] result = new IProject[1];
+		result[0] = null;
+		IJavaSearchResultCollector collector = new IJavaSearchResultCollector() {
+			public void aboutToStart() {
+				System.out.println("Looking for package: "+packageName);
+			}
+
+			public void accept(
+				IResource resource,
+				int start,
+				int end,
+				IJavaElement enclosingElement,
+				int accuracy)
+				throws CoreException {
+				if (resource!=null && result[0]==null)
+					result[0] = resource.getProject();
+			}
+
+			public void done() {
+			}
+
+			public IProgressMonitor getProgressMonitor() {
+				return null;
+			}
+		};
+		SearchEngine searchEngine = new SearchEngine();
+		try {
+			searchEngine.search(PDECore.getWorkspace(), pattern, scope, collector);
+			if (result[0]!=null) {
+				ModelEntry entry = mmng.findEntry(result[0]);
+				if (entry!=null)
+					return entry.getId();
+			}
+		}
+		catch (JavaModelException e) {
+			PDECore.logException(e);
+		}
+		return null;
 	}
 
 	/*
