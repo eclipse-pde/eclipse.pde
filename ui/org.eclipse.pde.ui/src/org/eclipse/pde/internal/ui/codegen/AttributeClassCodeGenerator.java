@@ -66,7 +66,7 @@ private void addRequiredMethodsFor(IType type) throws JavaModelException {
 	if (type.isClass()) {
 		// Check the superclass
 		String superclassName = type.getSuperclassName();
-		if (!superclassName.equals("java.lang.Object"))
+		if (superclassName != null && !superclassName.equals("java.lang.Object"))
 			addRequiredMethodsFor(superclassName);
 	}
 
