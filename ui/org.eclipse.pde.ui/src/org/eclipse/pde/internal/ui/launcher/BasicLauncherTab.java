@@ -215,12 +215,9 @@ public class BasicLauncherTab
 	}
 
 	static String getDefaultWorkspace() {
-		IPath ppath =
-			new Path(
-				PDECore.getDefault().getPluginPreferences().getString(
-					ICoreConstants.PLATFORM_PATH));
-		IPath runtimeWorkspace = ppath.append(RT_WORKSPACE);
-		return runtimeWorkspace.toOSString();
+		IPath path =
+			PDEPlugin.getWorkspace().getRoot().getLocation().append(RT_WORKSPACE);
+		return path.toOSString();
 	}
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
