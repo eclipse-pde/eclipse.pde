@@ -1,6 +1,5 @@
 package $packageName$;
 
-import java.util.*;
 import org.eclipse.jface.text.rules.*;
 import org.eclipse.jface.text.*;
 

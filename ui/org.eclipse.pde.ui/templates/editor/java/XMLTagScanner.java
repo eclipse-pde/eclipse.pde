@@ -1,7 +1,6 @@
 package $packageName$;
 
 import org.eclipse.jface.text.*;
-import java.util.*;
 import org.eclipse.jface.text.rules.*;
 
 public class XMLTagScanner extends RuleBasedScanner {

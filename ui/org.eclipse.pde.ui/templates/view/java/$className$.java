@@ -10,8 +10,6 @@ import org.eclipse.ui.*;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.swt.SWT;
-import java.util.*;
-import org.eclipse.core.runtime.IAdaptable;
 
 /**
  * This sample class demonstrates how to plug-in a new

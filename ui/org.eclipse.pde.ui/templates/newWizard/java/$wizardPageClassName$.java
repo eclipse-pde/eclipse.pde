@@ -1,6 +1,5 @@
 package $packageName$;
 
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.*;

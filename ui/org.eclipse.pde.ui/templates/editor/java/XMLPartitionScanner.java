@@ -1,9 +1,5 @@
 package $packageName$;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.rules.*;
 
 public class XMLPartitionScanner extends RuleBasedPartitionScanner {
