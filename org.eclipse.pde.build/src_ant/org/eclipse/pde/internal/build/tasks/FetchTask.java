@@ -18,6 +18,13 @@ public class FetchTask extends Task implements IPDECoreConstants {
 	protected FetchScriptGeneratorApplication generator;
 
 /**
+ * Constructor for FetchTask.
+ */
+public FetchTask() {
+	generator = new FetchScriptGeneratorApplication();
+}
+
+/**
  * Sets the children.
  */
 public void setChildren(boolean children) {
