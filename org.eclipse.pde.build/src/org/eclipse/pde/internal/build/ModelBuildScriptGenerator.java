@@ -466,12 +466,14 @@ protected void generatePrologue(PrintWriter output, PluginModel descriptor) {
 	output.println("    <property name=\"stamp\" value=\"" + stampString + "\"/>");
 	// output the settings of the commandline supplied arguments before doing the ones from the 
 	// build.properties file.  This way you can override the values without changing the file.
-	if (os != null)
+	if (os != null && !os.equals("*"))
 		output.println("    <property name=\"os\" value=\"" + os + "\"/>");
-	if (ws != null)
+	if (ws != null && !ws.equals("*"))
 		output.println("    <property name=\"ws\" value=\"" + ws + "\"/>");
-	if (nl != null)
+	if (nl != null && !nl.equals("*"))
 		output.println("    <property name=\"nl\" value=\"" + nl + "\"/>");
+	if (arch != null && !arch.equals("*"))
+		output.println("    <property name=\"arch\" value=\"" + arch + "\"/>");
 
 	Map map = getPropertyAssignments(descriptor);
 	Iterator keys = map.keySet().iterator();

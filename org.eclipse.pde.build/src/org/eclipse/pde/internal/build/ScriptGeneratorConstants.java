@@ -59,4 +59,10 @@ interface ScriptGeneratorConstants {
 	
 	// flags
 	public static final String FLAG_CUSTOM = "custom";
+
+	// build specific variables
+	public static final String BUILD_VAR_OS = "os";
+	public static final String BUILD_VAR_WS = "ws";
+	public static final String BUILD_VAR_NL = "nl";
+	public static final String BUILD_VAR_ARCH = "arch";
 }

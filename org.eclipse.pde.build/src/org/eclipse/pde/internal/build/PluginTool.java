@@ -24,9 +24,11 @@ public abstract class PluginTool implements IPlatformRunnable, ScriptGeneratorCo
 	private List devEntries = null;
 	private Hashtable propertyValues = new Hashtable(9);
 	private MultiStatus problems = new MultiStatus(PI_PDECORE,IStatus.OK,Policy.bind("label.generationProblems"),null);
-	protected String os = null;
-	protected String ws = null;
-	protected String nl = null;
+	protected String os = BootLoader.getOS();
+	protected String ws = BootLoader.getWS();
+	protected String nl = BootLoader.getNL();
+	// FIXME: it should be moved to BootLoader as well
+	protected String arch = System.getProperty("os.arch");
 	protected String stamp = "";
 	
 	public final static String PI_PDECORE = "org.eclipse.pde.core";	
@@ -81,11 +83,17 @@ protected String extractPropertyName(String propertyString) {
 /**
  * convert a list of comma-separated tokens into an array
  */
-public static String[] getArrayFromString(String prop) {
-	if (prop == null || prop.trim().equals(""))
+public static String[] getArrayFromString(String list) {
+	return getArrayFromString(list, ",");
+}
+/**
+ * Convert a list of tokens into an array. The list separator has to be specified.
+ */
+public static String[] getArrayFromString(String list, String separator) {
+	if (list == null || list.trim().equals(""))
 		return new String[0];
 	ArrayList result = new ArrayList();
-	for (StringTokenizer tokens = new StringTokenizer(prop, ","); tokens.hasMoreTokens();) {
+	for (StringTokenizer tokens = new StringTokenizer(list, separator); tokens.hasMoreTokens();) {
 		String token = tokens.nextToken().trim();
 		if (!token.equals(""))
 			result.add(token);
@@ -174,8 +182,98 @@ protected Properties getProperties(PluginModel descriptor) {
 		return result;
 
 	result = readProperties(descriptor.getLocation());
+	result = filterProperties(result);
 	propertyValues.put(descriptor,result);
 	return result;
+}
+/**
+ * Filters and merges properties that are relative to the current
+ * build, based on the values of the build variables (os, ws, nl and arch).
+ */
+protected Properties filterProperties(Properties target) {
+	for(Enumeration keys = target.keys(); keys.hasMoreElements(); ) {
+		String key = (String) keys.nextElement();
+		if (!key.startsWith(PROPERTYASSIGNMENT_PREFIX))
+			continue;
+		if (matchesCurrentBuild(key)) {
+			String value = target.getProperty(key);
+			if (value != null) {
+				String realKey = extractRealKey(key);
+				String currentValue = target.getProperty(realKey);
+				if (currentValue != null) {
+					if (!contains(getArrayFromString(currentValue), value))
+						value = currentValue + "," + value;
+					else
+						value = currentValue;
+				}
+				target.put(realKey, value);
+			}
+		}
+		target.remove(key);
+	}
+	return target;
+}
+/**
+ * Checks if the given element is already present in the list.
+ * This method is case sensitive.
+ */
+protected boolean contains(String[] list, String element) {
+	for (int i = 0; i < list.length; i++) {
+		String string = list[i];
+		if (string.equals(element))
+			return true;
+	}
+	return false;
+}
+
+/**
+ * Removes build specific variables from this key.
+ * For example ${os/linux,ws/motif}.bin.includes
+ * becomes bin.includes
+ */
+protected String extractRealKey(String target) {
+	int index = target.indexOf(PROPERTYASSIGNMENT_SUFFIX);
+	String result = target.substring(index + PROPERTYASSIGNMENT_SUFFIX.length() + 1);
+	return result;
+}
+
+/**
+ * Checks if the given key should be included in the current
+ * build by looking into the build variables defined with it.
+ * For example ${os/linux,ws/motif}.bin.includes is targeted
+ * for a linux-motif build and should not be part of a
+ * Windows build.
+ */
+protected boolean matchesCurrentBuild(String key) {
+	int prefix = key.indexOf(PROPERTYASSIGNMENT_PREFIX);
+	int suffix = key.indexOf(PROPERTYASSIGNMENT_SUFFIX);
+	String[] variables = getArrayFromString(key.substring(prefix + PROPERTYASSIGNMENT_PREFIX.length(), suffix));
+	for (int i = 0; i < variables.length; i++) {
+		String[] var = getArrayFromString(variables[i], "/");
+		if (var[1].equals("*"))
+			continue;
+		if (var[0].equalsIgnoreCase(BUILD_VAR_OS)) {
+			if (!var[1].equalsIgnoreCase(os))
+				return false;
+			continue;
+		}
+		if (var[0].equalsIgnoreCase(BUILD_VAR_WS)) {
+			if (!var[1].equalsIgnoreCase(ws))
+				return false;
+			continue;
+		}
+		if (var[0].equalsIgnoreCase(BUILD_VAR_NL)) {
+			if (!var[1].equalsIgnoreCase(nl))
+				return false;
+			continue;
+		}
+		if (var[0].equalsIgnoreCase(BUILD_VAR_ARCH)) {
+			if (!var[1].equalsIgnoreCase(arch))
+				return false;
+			continue;
+		}
+	}
+	return true;
 }
 protected Map getPropertyAssignments(InstallModel descriptor) {
 	return getPropertyAssignments(getProperties(descriptor));
