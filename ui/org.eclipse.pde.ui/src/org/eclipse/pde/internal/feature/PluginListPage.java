@@ -15,117 +15,90 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.base.model.plugin.*;
 import org.eclipse.pde.internal.elements.*;
 import org.eclipse.pde.internal.wizards.*;
-
+import org.eclipse.pde.internal.parts.WizardCheckboxTablePart;
 
 public class PluginListPage extends WizardPage {
 	public static final String PAGE_TITLE = "NewFeatureWizard.PlugPage.title";
 	public static final String PAGE_DESC = "NewFeatureWizard.PlugPage.desc";
-	private CheckboxTableViewer pluginViewer;
+	private WizardCheckboxTablePart tablePart;
 	private Image pluginImage;
 	private Image fragmentImage;
-	private PluginReference [] references;
-	
-	public class PluginReference {
-		boolean checked;
-		IPluginModelBase model;
-		
-		public boolean isFragment() {
-			return model instanceof IFragmentModel;
-		}
-		public String toString() {
-			IPluginBase base = model.getPluginBase();
-			String label = model.getResourceString(base.getName());
-			return label + " ("+base.getVersion()+")";
+	private IPluginModelBase [] models;
+
+	class PluginContentProvider
+		extends DefaultContentProvider
+		implements IStructuredContentProvider {
+		public Object[] getElements(Object parent) {
+			return getPluginModels();
 		}
 	}
 
-	class PluginContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
-		public Object [] getElements(Object parent) {
-			return createPluginReferences();
-		}
-	}
-
-	class PluginLabelProvider extends LabelProvider implements ITableLabelProvider {
+	class PluginLabelProvider
+		extends LabelProvider
+		implements ITableLabelProvider {
 		public String getColumnText(Object obj, int index) {
-			if (index==0) {
-				return obj.toString();
+			if (index == 0) {
+				IPluginModelBase model = (IPluginModelBase) obj;
+				IPluginBase base = model.getPluginBase();
+				String label = model.getResourceString(base.getName());
+				return label + " (" + base.getVersion() + ")";
 			}
 			return "";
 		}
 		public Image getColumnImage(Object obj, int index) {
-			boolean fragment = ((PluginReference)obj).isFragment();
-			return fragment ? fragmentImage : pluginImage;
+			IPluginModelBase model = (IPluginModelBase) obj;
+			return model.isFragmentModel() ? fragmentImage : pluginImage;
 		}
 	}
 
-public PluginListPage() {
-	super("pluginListPage");
-	pluginImage = PDEPluginImages.get(PDEPluginImages.IMG_PLUGIN_OBJ);
-	fragmentImage = PDEPluginImages.get(PDEPluginImages.IMG_FRAGMENT_OBJ);
-	setTitle(PDEPlugin.getResourceString(PAGE_TITLE));
-	setDescription(PDEPlugin.getResourceString(PAGE_DESC));
-}
-public void createControl(Composite parent) {
-	Composite container = new Composite(parent, SWT.NULL);
-	GridLayout layout = new GridLayout();
-	layout.verticalSpacing = 9;
-	container.setLayout(layout);
-
-	pluginViewer = CheckboxTableViewer.newCheckList(container, SWT.BORDER);
-	pluginViewer.setContentProvider(new PluginContentProvider());
-	pluginViewer.setLabelProvider(new PluginLabelProvider());
-	pluginViewer.setSorter(ListUtil.NAME_SORTER);
-
-	pluginViewer.addCheckStateListener(new ICheckStateListener() {
-		public void checkStateChanged(CheckStateChangedEvent e) {
-			handlePluginChecked((PluginReference) e.getElement(), e.getChecked());
-		}
-	});
-	GridData gd = new GridData(GridData.FILL_BOTH);
-	gd.heightHint = 250;
-	pluginViewer.getTable().setLayoutData(gd);
-	pluginViewer.setInput(PDEPlugin.getDefault().getWorkspaceModelManager());
-	pluginViewer.getTable().setFocus();
-	setControl(container);
-}
-private Object[] createPluginReferences() {
-	if (references == null) {
-		WorkspaceModelManager manager = PDEPlugin.getDefault().getWorkspaceModelManager();
-		IPluginModel[] workspaceModels = manager.getWorkspacePluginModels();
-		IFragmentModel [] fragmentModels = manager.getWorkspaceFragmentModels();
-		references = new PluginReference[workspaceModels.length+fragmentModels.length];
-		for (int i = 0; i < workspaceModels.length; i++) {
-			IPluginModel model = workspaceModels[i];
-			PluginReference reference = new PluginReference();
-			reference.model = model;
-			references[i] = reference;
-		}
-		int offset = workspaceModels.length;
-		for (int i=0; i<fragmentModels.length; i++) {
-			IFragmentModel model = fragmentModels[i];
-			PluginReference reference = new PluginReference();
-			reference.model = model;
-			references[i+offset] = reference;
-		}
+	public PluginListPage() {
+		super("pluginListPage");
+		pluginImage = PDEPluginImages.get(PDEPluginImages.IMG_PLUGIN_OBJ);
+		fragmentImage = PDEPluginImages.get(PDEPluginImages.IMG_FRAGMENT_OBJ);
+		setTitle(PDEPlugin.getResourceString(PAGE_TITLE));
+		setDescription(PDEPlugin.getResourceString(PAGE_DESC));
+		tablePart = new WizardCheckboxTablePart(null);
 	}
-	return references;
-}
 
-public IPluginBase[] getSelectedPlugins() {
-	Vector result = new Vector();
-	if (references!=null && references.length>0) {
-		for (int i=0; i<references.length; i++) {
-			if (references[i].checked) {
-				IPluginBase plugin = references[i].model.getPluginBase();
-				result.add(plugin);
-			}
-		}
+	public void createControl(Composite parent) {
+		Composite container = new Composite(parent, SWT.NULL);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.verticalSpacing = 9;
+		container.setLayout(layout);
+
+		tablePart.createControl(container);
+		CheckboxTableViewer pluginViewer = tablePart.getTableViewer();
+		pluginViewer.setContentProvider(new PluginContentProvider());
+		pluginViewer.setLabelProvider(new PluginLabelProvider());
+		GridData gd = (GridData) tablePart.getControl().getLayoutData();
+		gd.heightHint = 250;
+		pluginViewer.setInput(PDEPlugin.getDefault().getWorkspaceModelManager());
+		pluginViewer.getTable().setFocus();
+		setControl(container);
 	}
-	IPluginBase [] plugins = new IPluginBase[result.size()];
-	result.copyInto(plugins);
-	return plugins;
-}
-private void handlePluginChecked(PluginReference reference, boolean checked) {
-	reference.checked = checked;
-}
+
+	private Object[] getPluginModels() {
+		if (models == null) {
+			WorkspaceModelManager manager =
+				PDEPlugin.getDefault().getWorkspaceModelManager();
+			IPluginModel[] workspaceModels = manager.getWorkspacePluginModels();
+			IFragmentModel[] fragmentModels = manager.getWorkspaceFragmentModels();
+			models =
+				new IPluginModelBase[workspaceModels.length + fragmentModels.length];
+			System.arraycopy(workspaceModels, 0, models, 0, workspaceModels.length);
+			System.arraycopy(fragmentModels, 0, models, workspaceModels.length, fragmentModels.length);
+		}
+		return models;
+	}
+
+	public IPluginBase[] getSelectedPlugins() {
+		Object[] result = tablePart.getSelection();
+		IPluginBase[] plugins = new IPluginBase[result.length];
+		for (int i=0; i<result.length; i++) {
+			IPluginModelBase model = (IPluginModelBase)result[i];
+			plugins[i] = model.getPluginBase();
+		}
+		return plugins;
+	}
 }

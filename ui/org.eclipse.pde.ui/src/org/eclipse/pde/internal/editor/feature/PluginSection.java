@@ -221,7 +221,6 @@ public class PluginSection
 				WizardDialog dialog =
 					new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 				dialog.create();
-				dialog.getShell().setSize(500, 500);
 				dialog.open();
 			}
 		});

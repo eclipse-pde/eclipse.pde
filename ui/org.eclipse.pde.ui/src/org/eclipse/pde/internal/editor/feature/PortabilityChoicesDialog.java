@@ -18,11 +18,12 @@ import org.eclipse.pde.internal.base.schema.*;
 import org.eclipse.pde.internal.*;
 import java.util.Hashtable;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.pde.internal.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.elements.DefaultTableProvider;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
 import java.util.StringTokenizer;
 import org.eclipse.pde.internal.wizards.ListUtil;
+import org.eclipse.pde.internal.parts.WizardCheckboxTablePart;
 
 public class PortabilityChoicesDialog extends Dialog {
 	private static final String KEY_CHOICES =
@@ -35,10 +36,9 @@ public class PortabilityChoicesDialog extends Dialog {
 	private String value;
 	private PortabilityChoice[] choices;
 	private CheckboxTableViewer choiceViewer;
+	private WizardCheckboxTablePart checkboxTablePart;
 
-	class ContentProvider
-		extends DefaultContentProvider
-		implements IStructuredContentProvider {
+	class ContentProvider extends DefaultTableProvider {
 		public Object[] getElements(Object parent) {
 			return choices;
 		}
@@ -63,6 +63,8 @@ public class PortabilityChoicesDialog extends Dialog {
 		super(shell);
 		this.value = value;
 		this.choices = choices;
+		
+		checkboxTablePart = new WizardCheckboxTablePart(PDEPlugin.getResourceString(KEY_CHOICES));
 	}
 
 	protected void createButtonsForButtonBar(Composite parent) {
@@ -84,48 +86,16 @@ public class PortabilityChoicesDialog extends Dialog {
 		container.setLayout(layout);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		container.setLayoutData(gd);
-
-		Label label = new Label(container, SWT.NULL);
-		label.setText(PDEPlugin.getResourceString(KEY_CHOICES));
-		gd = new GridData();
-		gd.horizontalSpan = 2;
-		label.setLayoutData(gd);
-
-		choiceViewer = CheckboxTableViewer.newCheckList(container, SWT.BORDER);
+		
+		checkboxTablePart.createControl(container);
+		choiceViewer = checkboxTablePart.getTableViewer();
 		choiceViewer.setContentProvider(new ContentProvider());
 		choiceViewer.setLabelProvider(new ChoiceLabelProvider());
-		choiceViewer.setSorter(ListUtil.NAME_SORTER);
-		gd = new GridData(GridData.FILL_BOTH);
+
+		gd = (GridData)checkboxTablePart.getControl().getLayoutData();
 		gd.widthHint = 300;
 		gd.heightHint = 350;
-		choiceViewer.getTable().setLayoutData(gd);
 
-		Composite buttonContainer = new Composite(container, SWT.NONE);
-		layout = new GridLayout();
-		layout.marginWidth = layout.marginHeight = 0;
-		gd = new GridData(GridData.FILL_VERTICAL);
-		buttonContainer.setLayoutData(gd);
-		buttonContainer.setLayout(layout);
-
-		Button button = new Button(buttonContainer, SWT.PUSH);
-		button.setText(PDEPlugin.getResourceString(KEY_SELECT_ALL));
-		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
-		button.setLayoutData(gd);
-		button.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleSelectAll(true);
-			}
-		});
-
-		button = new Button(buttonContainer, SWT.PUSH);
-		button.setText(PDEPlugin.getResourceString(KEY_DESELECT_ALL));
-		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
-		button.setLayoutData(gd);
-		button.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleSelectAll(false);
-			}
-		});
 		initialize();
 		return container;
 	}
@@ -145,7 +115,7 @@ public class PortabilityChoicesDialog extends Dialog {
 				if (choice != null)
 					selected.add(choice);
 			}
-			choiceViewer.setCheckedElements(selected.toArray());
+			checkboxTablePart.setSelection(selected.toArray());
 		}
 	}
 
@@ -163,12 +133,8 @@ public class PortabilityChoicesDialog extends Dialog {
 		super.okPressed();
 	}
 
-	private void handleSelectAll(boolean doSelect) {
-		choiceViewer.setAllChecked(doSelect);
-	}
-
 	private String computeNewValue() {
-		Object[] checked = choiceViewer.getCheckedElements();
+		Object[] checked = checkboxTablePart.getSelection();
 		if (checked.length == 0)
 			return "";
 		StringBuffer buf = new StringBuffer();

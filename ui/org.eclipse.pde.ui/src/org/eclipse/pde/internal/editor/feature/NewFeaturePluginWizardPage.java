@@ -25,26 +25,23 @@ import org.eclipse.pde.internal.model.feature.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import java.lang.reflect.InvocationTargetException;
+import org.eclipse.pde.internal.parts.*;
 
 public class NewFeaturePluginWizardPage extends WizardPage {
 	public static final String KEY_TITLE = "FeatureEditor.PluginSection.new.title";
 	public static final String KEY_DESC = "FeatureEditor.PluginSection.new.desc";
 	public static final String KEY_PLUGINS =
 		"FeatureEditor.PluginSection.new.label";
-	public static final String KEY_SELECT_ALL =
-		"FeatureEditor.PluginSection.new.selectAll";
-	public static final String KEY_DESELECT_ALL =
-		"FeatureEditor.PluginSection.new.deselectAll";
 	public static final String KEY_ADDING = "FeatureEditor.PluginSection.new.adding";
 	public static final String KEY_UPDATING =
 		"FeatureEditor.PluginSection.new.updating";
 	private IFeatureModel model;
+	private TablePart checkboxTablePart;
 	private CheckboxTableViewer pluginViewer;
 	private Image pluginImage;
 	private Image errorPluginImage;
 	private Image fragmentImage;
 	private Image errorFragmentImage;
-	private Vector candidates = new Vector();
 
 	class PluginLabelProvider
 		extends LabelProvider
@@ -77,6 +74,16 @@ public class NewFeaturePluginWizardPage extends WizardPage {
 			return getChoices();
 		}
 	}
+	
+	class TablePart extends WizardCheckboxTablePart {
+		public TablePart() {
+			super(PDEPlugin.getResourceString(KEY_PLUGINS));
+		}
+		public void updateCounterLabel() {
+			super.updateCounterLabel();
+			setPageComplete(getSelectionCount()>0);
+		}
+	}
 
 	public NewFeaturePluginWizardPage(IFeatureModel model) {
 		super("newFeaturePluginPage");
@@ -88,6 +95,9 @@ public class NewFeaturePluginWizardPage extends WizardPage {
 		setTitle(PDEPlugin.getResourceString(KEY_TITLE));
 		setDescription(PDEPlugin.getResourceString(KEY_DESC));
 		setPageComplete(false);
+		
+		checkboxTablePart = new TablePart();	
+	
 	}
 
 	public void createControl(Composite parent) {
@@ -95,48 +105,15 @@ public class NewFeaturePluginWizardPage extends WizardPage {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		container.setLayout(layout);
-
-		Label label = new Label(container, SWT.NULL);
-		label.setText(PDEPlugin.getResourceString(KEY_PLUGINS));
-		GridData gd = new GridData();
-		gd.horizontalSpan = 2;
-		label.setLayoutData(gd);
-
-		Control c = createPluginList(container);
-		gd = new GridData(GridData.FILL_BOTH);
-		c.setLayoutData(gd);
-
-		Composite buttonContainer = new Composite(container, SWT.NULL);
-		layout = new GridLayout();
-		layout.marginWidth = layout.marginHeight = 0;
-		buttonContainer.setLayout(layout);
-		gd = new GridData(GridData.FILL_VERTICAL);
-		buttonContainer.setLayoutData(gd);
-
-		Button button = new Button(buttonContainer, SWT.PUSH);
-		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
-		button.setLayoutData(gd);
-		button.setText(PDEPlugin.getResourceString(KEY_SELECT_ALL));
-		button.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleSelectAll(true);
-			}
-		});
-		button = new Button(buttonContainer, SWT.PUSH);
-		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
-		button.setLayoutData(gd);
-		button.setText(PDEPlugin.getResourceString(KEY_DESELECT_ALL));
-		button.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleSelectAll(false);
-			}
-		});
+		
+		createPluginList(container);
 		initialize();
 		setControl(container);
 	}
 
-	protected Control createPluginList(Composite parent) {
-		pluginViewer = CheckboxTableViewer.newCheckList(parent, SWT.BORDER);
+	protected void createPluginList(Composite parent) {
+		checkboxTablePart.createControl(parent);
+		pluginViewer = checkboxTablePart.getTableViewer();
 		pluginViewer.setContentProvider(new PluginContentProvider());
 		pluginViewer.setLabelProvider(new PluginLabelProvider());
 		pluginViewer.addFilter(new ViewerFilter() {
@@ -148,29 +125,8 @@ public class NewFeaturePluginWizardPage extends WizardPage {
 				return true;
 			}
 		});
-		pluginViewer.addCheckStateListener(new ICheckStateListener() {
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				Object element = event.getElement();
-				if (element instanceof IPluginModelBase) {
-					IPluginModelBase model = (IPluginModelBase) event.getElement();
-					handleCheckStateChanged(model, event.getChecked());
-				}
-			}
-		});
-		pluginViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent e) {
-				Object item = ((IStructuredSelection) e.getSelection()).getFirstElement();
-				if (item instanceof IPluginModel)
-					pluginSelected((IPluginModel) item);
-				else
-					pluginSelected(null);
-			}
-		});
-		return pluginViewer.getTable();
-	}
-
-	public void dispose() {
-		super.dispose();
+		GridData gd = (GridData)checkboxTablePart.getControl().getLayoutData();
+		gd.heightHint = 300;
 	}
 
 	private boolean isOnTheList(IPluginModelBase candidate) {
@@ -192,31 +148,6 @@ public class NewFeaturePluginWizardPage extends WizardPage {
 		pluginViewer.setInput(model.getFeature());
 	}
 
-	private void pluginSelected(IPluginModel model) {
-	}
-
-	private void handleCheckStateChanged(
-		IPluginModelBase candidate,
-		boolean checked) {
-		if (checked)
-			candidates.add(candidate);
-		else
-			candidates.remove(candidate);
-		setPageComplete(candidates.size() > 0);
-	}
-
-	private void handleSelectAll(boolean select) {
-		pluginViewer.setAllChecked(select);
-		if (!select) {
-			candidates.clear();
-		} else {
-			Object[] choices = getChoices();
-			for (int i = 0; i < choices.length; i++)
-				candidates.add(choices[i]);
-		}
-		setPageComplete(select);
-	}
-
 	private Object[] getChoices() {
 		WorkspaceModelManager mng = PDEPlugin.getDefault().getWorkspaceModelManager();
 		IPluginModel[] plugins = mng.getWorkspacePluginModels();
@@ -228,10 +159,11 @@ public class NewFeaturePluginWizardPage extends WizardPage {
 	}
 
 	public boolean finish() {
+		final Object [] candidates = checkboxTablePart.getSelection();
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				try {
-					doAdd(monitor);
+					doAdd(candidates, monitor);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
 				}
@@ -248,14 +180,14 @@ public class NewFeaturePluginWizardPage extends WizardPage {
 		return true;
 	}
 
-	private void doAdd(IProgressMonitor monitor) throws CoreException {
+	private void doAdd(Object [] candidates, IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask(
 			PDEPlugin.getResourceString(KEY_ADDING),
-			candidates.size() + 1);
+			candidates.length + 1);
 		IFeature feature = model.getFeature();
-		IFeaturePlugin[] added = new IFeaturePlugin[candidates.size()];
-		for (int i = 0; i < candidates.size(); i++) {
-			IPluginModelBase candidate = (IPluginModelBase) candidates.get(i);
+		IFeaturePlugin[] added = new IFeaturePlugin[candidates.length];
+		for (int i = 0; i < candidates.length; i++) {
+			IPluginModelBase candidate = (IPluginModelBase) candidates[i];
 			monitor.subTask(candidate.getPluginBase().getTranslatedName());
 			FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
 			fplugin.loadFrom(candidate.getPluginBase());
