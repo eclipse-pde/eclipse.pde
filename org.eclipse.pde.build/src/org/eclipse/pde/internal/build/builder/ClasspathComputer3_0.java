@@ -157,22 +157,29 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	}
 
 	// Add a path into the classpath for a given model
-	// path : The path to add
+	// pluginId the plugin we are adding to the classpath
+	// basePath : the relative path between the plugin from which we are adding the classpath and the plugin that is requiring this entry 
 	// classpath : The classpath in which we want to add this path 
 	private void addPathAndCheck(String pluginId, IPath basePath, String libraryName, Properties modelProperties, List classpath) {
 		String path = null;
-		if ("jar".equalsIgnoreCase(basePath.getFileExtension())) {
+		if ("jar".equalsIgnoreCase(basePath.getFileExtension())) { //$NON-NLS-1$
 			path = basePath.toOSString();
 		} else {
 			path = basePath.append(libraryName).toString();
 		}
 		path = generator.replaceVariables(path, pluginId == null ? false : generator.getCompiledElements().contains(pluginId));
+		String secondaryPath = null;
 		if (generator.getCompiledElements().contains(pluginId)) {
 			if (modelProperties == null || modelProperties.getProperty(IBuildPropertiesConstants.PROPERTY_SOURCE_PREFIX + libraryName) != null) //$NON-NLS-1$
 				path = generator.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + '/' + path;
+				secondaryPath = generator.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + "/../" + pluginId + '/' + libraryName; 
 		}
 		if (!classpath.contains(path))
 			classpath.add(path);
+		
+		if (secondaryPath != null && !classpath.contains(secondaryPath))
+			classpath.add(secondaryPath);
+		
 	}
 
 	private void addSelf(BundleDescription model, ModelBuildScriptGenerator.CompiledEntry jar, List classpath, String location, List pluginChain, Set addedPlugins) throws CoreException {
