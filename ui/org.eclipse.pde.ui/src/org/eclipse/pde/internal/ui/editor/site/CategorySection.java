@@ -115,12 +115,12 @@ public class CategorySection extends TreeSection {
 	}
 	public CategorySection(PDEFormPage formPage, Composite parent) {
 		super(formPage, parent, Section.DESCRIPTION,
-				new String[]{"New Category..."}); //$NON-NLS-1$
+				new String[]{PDEPlugin.getResourceString("CategorySection.new")});  //$NON-NLS-1$
 		//TODO text not translated
 		getSection().setText(PDEPlugin.getResourceString("CategorySection.title")); //$NON-NLS-1$
 		getSection()
 				.setDescription(
-						"Categorize the features to facilitate the browsing and searching of the update site.  A feature may appear in 0 or more categories. "); //$NON-NLS-1$
+						PDEPlugin.getResourceString("CategorySection.desc"));  //$NON-NLS-1$
 	}
 	/*
 	 * (non-Javadoc)

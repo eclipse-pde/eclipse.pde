@@ -35,7 +35,7 @@ public abstract class WizardTreeSelectionPage
 		WizardCollectionElement categories,
 		String baseCategory,
 		String message) {
-		super("NewExtension", message); //$NON-NLS-1$
+		super("NewExtension", message);  //$NON-NLS-1$
 		this.wizardCategories = categories;
 		this.baseCategory = baseCategory;
 	}
