@@ -39,7 +39,6 @@ public class WorkbenchLauncherWizardAdvancedPage
 	private static final String KEY_OUT_OF_SYNC = "PluginModelManager.outOfSync";
 
 	private Button useDefaultCheck;
-	private Button showNamesCheck;
 	private CheckboxTreeViewer pluginTreeViewer;
 	private Label visibleLabel;
 	private Label restoreLabel;
@@ -157,10 +156,6 @@ public class WorkbenchLauncherWizardAdvancedPage
 		label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		fillIntoGrid(label, 2, false);
 
-		showNamesCheck = new Button(composite, SWT.CHECK);
-		showNamesCheck.setText("Show full plug-in and fragment names");
-		fillIntoGrid(showNamesCheck, 2, false);
-
 		visibleLabel = new Label(composite, SWT.NULL);
 		visibleLabel.setText("Visible plug-ins and fragments:");
 		fillIntoGrid(visibleLabel, 2, false);
@@ -201,11 +196,6 @@ public class WorkbenchLauncherWizardAdvancedPage
 				useDefaultChanged();
 			}
 		});
-		showNamesCheck.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				pluginTreeViewer.refresh();
-			}
-		});
 		defaultsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				Vector checked = computeInitialCheckState();
@@ -223,7 +213,6 @@ public class WorkbenchLauncherWizardAdvancedPage
 
 	private void adjustCustomControlEnableState(boolean enable) {
 		visibleLabel.setEnabled(enable);
-		showNamesCheck.setEnabled(enable);
 		pluginTreeViewer.getTree().setEnabled(enable);
 		defaultsButton.setEnabled(enable);
 		restoreLabel.setEnabled(enable);
@@ -309,7 +298,6 @@ public class WorkbenchLauncherWizardAdvancedPage
 		}
 		// Need to set these before we refresh the viewer
 		useDefaultCheck.setSelection(useDefault);
-		showNamesCheck.setSelection(showNames);
 		pluginTreeViewer.setInput(PDEPlugin.getDefault());
 		Vector result = null;
 

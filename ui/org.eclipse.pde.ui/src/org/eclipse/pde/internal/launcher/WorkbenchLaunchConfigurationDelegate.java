@@ -49,7 +49,8 @@ public class WorkbenchLaunchConfigurationDelegate
 
 		IStatus running = PDEPlugin.getDefault().getCurrentLaunchStatus(new Path(data));
 		if (running != null) {
-			throw new CoreException(running);
+			showErrorDialog(running.getMessage(), null);
+			return null;
 		}
 
 		String vmInstallName = configuration.getAttribute(VMINSTALL, (String) null);
@@ -65,6 +66,12 @@ public class WorkbenchLaunchConfigurationDelegate
 			}
 		} else
 			launcher = vmInstallations[0];
+		if (launcher==null) {
+			String message = "Cannot locate JRE definition: \""+vmInstallName+"\". Launch aborted.";
+			showErrorDialog(message, null);
+			return null;
+			
+		}
 		IVMRunner runner = launcher.getVMRunner(mode);
 		ExecutionArguments args = new ExecutionArguments(vmArgs, progArgs);
 		IPath path = new Path(data);
