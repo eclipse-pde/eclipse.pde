@@ -166,7 +166,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			validateVersion(plugin, reporter);
 			validateValues(plugin, reporter);
 		}
-		model.release();
+		model.dispose();
 	}
 
 	private void validateFragment(IFile file, PluginErrorReporter reporter) {
@@ -196,7 +196,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			}
 			validateValues(fragment, reporter);
 		}
-		model.release();
+		model.dispose();
 	}
 
 	private void validateVersion(
