@@ -19,6 +19,7 @@ public class PluginDocumentHandler extends DefaultHandler {
 	private FindReplaceDocumentAdapter fFindReplaceAdapter;
 	private Locator fLocator;
 	private Stack fDocumentNodeStack = new Stack();
+	private int fHighestOffset = 0;
 	
 	
 	public PluginDocumentHandler(PluginModelBase model) {
@@ -31,6 +32,7 @@ public class PluginDocumentHandler extends DefaultHandler {
 	 */
 	public void startDocument() throws SAXException {
 		fDocumentNodeStack.clear();
+		fHighestOffset = 0;
 	}
 	
 	/* (non-Javadoc)
@@ -80,21 +82,41 @@ public class PluginDocumentHandler extends DefaultHandler {
 		fDocumentNodeStack.push(node);
 	}
 	
-	private int getStartOffset(String elementName) throws BadLocationException{
-		int lineNumber = fLocator.getLineNumber();
-		int colNumber = fLocator.getColumnNumber();
-		if (colNumber < 0)
-			colNumber = getLastCharColumn(lineNumber);
-		int offset = fModel.getDocument().getLineOffset(lineNumber - 1) + colNumber - 1;
-		IRegion region = fFindReplaceAdapter.search(offset, "<" + elementName, false, false, false, false);
-		return region.getOffset();
+	private int getStartOffset(String elementName) throws BadLocationException {
+		int line = fLocator.getLineNumber();
+		int col = fLocator.getColumnNumber();
+		IDocument doc = fModel.getDocument();
+		if (col < 0)
+			col = doc.getLineLength(line);
+		String text = doc.get(fHighestOffset + 1, doc.getLineOffset(line) - fHighestOffset - 1);
+		int index = text.indexOf("<" + elementName);
+		if (index > -1)
+			fHighestOffset += index + 1;
+		return fHighestOffset;
 	}
 	
-	private int getLastCharColumn(int line) throws BadLocationException {
-		IDocument document = fModel.getDocument();
-		String lineDelimiter = document.getLineDelimiter(line - 1);
-		int lineDelimiterLength = lineDelimiter != null ? lineDelimiter.length() : 0;
-		return document.getLineLength(line - 1) - lineDelimiterLength;
+	private int getElementLength(IDocumentNode node, int line, int column) throws BadLocationException {
+		int endIndex = node.getOffset();
+		IDocument doc = fModel.getDocument();
+		if (column <= 0) {
+			column = doc.getLineLength(line);
+			int start = Math.max(doc.getLineOffset(line), node.getOffset());
+			String lineText= doc.get(start, column - start + doc.getLineOffset(line));
+			
+			int index= lineText.indexOf("<" + node.getXMLTagName() + "/>");
+			if (index == -1) {
+				index= lineText.indexOf("/>"); //$NON-NLS-1$
+				if (index == -1 ) {
+					endIndex = column;
+				} else {
+					endIndex = index + 2;
+				}
+				endIndex += start - doc.getLineOffset(line);
+			} else {
+				endIndex = index + node.getXMLTagName().length() + 2;
+			}
+		}
+		return doc.getLineOffset(line) + endIndex - node.getOffset();
 	}
 	
 	private IRegion getAttributeRegion(String name, String value, int offset) throws BadLocationException{
@@ -108,9 +130,8 @@ public class PluginDocumentHandler extends DefaultHandler {
 	public void endElement(String uri, String localName, String qName)
 			throws SAXException {
 		IDocumentNode node = (IDocumentNode)fDocumentNodeStack.pop();
-		int line = fLocator.getLineNumber();
 		try {
-			node.setLength(fModel.getDocument().getLineOffset(line) - node.getOffset());
+			node.setLength(getElementLength(node, fLocator.getLineNumber() - 1, fLocator.getColumnNumber()));
 		} catch (BadLocationException e) {
 		}
 	}
