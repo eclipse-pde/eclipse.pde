@@ -101,7 +101,6 @@
             id="org.eclipse.pde.PDE">
       </category>
       <wizard
-            availableAsShortcut="true"
             name="%new.pluginProject.name"
             icon="icons/full/ctool16/newpprj_wiz.gif"
             category="org.eclipse.pde.PDE"
@@ -137,7 +136,6 @@
          </description>
       </wizard>
       <wizard
-            availableAsShortcut="false"
             name="%new.convert.name"
             icon="icons/full/ctool16/convjpprj_wiz.gif"
             category="org.eclipse.pde.PDE"
@@ -332,7 +330,6 @@
             id="generic">
       </category>
       <wizard
-            availableAsShortcut="true"
             name="%newExtension.generic.name"
             icon="icons/full/ctool16/newex_wiz.gif"
             category="generic"
@@ -343,7 +340,6 @@
          </description>
       </wizard>
       <wizard
-            availableAsShortcut="true"
             name="%newExtension.templates.hello.name"
             template="true"
             icon="icons/full/ctool16/newex_wiz.gif"
@@ -355,7 +351,6 @@
          </description>
       </wizard>
       <wizard
-            availableAsShortcut="true"
             name="%newExtension.templates.view.name"
             template="true"
             icon="icons/full/ctool16/newex_wiz.gif"
@@ -367,7 +362,6 @@
          </description>
       </wizard>
       <wizard
-            availableAsShortcut="true"
             name="%newExtension.templates.multiPageEditor.name"
             template="true"
             icon="icons/full/ctool16/newex_wiz.gif"
@@ -605,7 +599,6 @@
          <action
                label="%UpdateClasspathAction.label"
                helpContextId="org.eclipse.pde.doc.user.update_classpath"
-               tooltip="%UpdateClasspathAction.tooltip"
                class="org.eclipse.pde.internal.ui.wizards.imports.UpdateClasspathAction"
                menubarPath="additions"
                enablesFor="+"
@@ -614,7 +607,6 @@
          <action
                label="%OpenDependenciesAction.label"
                helpContextId="org.eclipse.pde.doc.user.open_dependencies"
-               tooltip="%UpdateClasspathAction.tooltip"
                class="org.eclipse.pde.internal.ui.view.OpenDependenciesAction"
                menubarPath="additions"
                enablesFor="+"
@@ -632,7 +624,6 @@
          <action
                label="%UpdateClasspathAction.label"
                helpContextId="org.eclipse.pde.doc.user.update_classpath"
-               tooltip="%UpdateClasspathAction.tooltip"
                class="org.eclipse.pde.internal.ui.wizards.imports.UpdateClasspathAction"
                menubarPath="additions"
                enablesFor="+"
@@ -641,7 +632,6 @@
          <action
                label="%OpenDependenciesAction.label"
                helpContextId="org.eclipse.pde.doc.user.open_dependencies"
-               tooltip="%UpdateClasspathAction.tooltip"
                class="org.eclipse.pde.internal.ui.view.OpenDependenciesAction"
                menubarPath="additions"
                enablesFor="+"
@@ -659,7 +649,6 @@
          <action
                label="%UpdateClasspathAction.label"
                helpContextId="org.eclipse.pde.doc.user.update_classpath"
-               tooltip="%UpdateClasspathAction.tooltip"
                class="org.eclipse.pde.internal.ui.wizards.imports.UpdateClasspathAction"
                menubarPath="additions"
                enablesFor="*"
@@ -668,7 +657,6 @@
          <action
                label="%OpenDependenciesAction.label"
                helpContextId="org.eclipse.pde.doc.user.open_dependencies"
-               tooltip="%UpdateClasspathAction.tooltip"
                class="org.eclipse.pde.internal.ui.view.OpenDependenciesAction"
                menubarPath="additions"
                enablesFor="+"
