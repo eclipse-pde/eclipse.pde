@@ -228,6 +228,8 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			PluginConverter converter = (PluginConverter) tracker.getService();
 			converter.convertManifest(inputFile, outputFile, false, null);
 			project.refreshLocal(IResource.DEPTH_INFINITE, null);
+			IFile file = project.getFile("META-INF/MANIFEST.MF");
+			file.setCharset("UTF-8");
 			tracker.close();
 		} catch (PluginConversionException e) {
 		} catch (CoreException e) {
