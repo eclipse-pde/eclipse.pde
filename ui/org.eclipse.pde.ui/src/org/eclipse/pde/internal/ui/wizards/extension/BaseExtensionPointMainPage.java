@@ -17,6 +17,7 @@ import org.eclipse.pde.internal.ui.util.*;
 import java.io.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.ui.actions.*;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.operation.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
@@ -33,22 +34,22 @@ import org.eclipse.pde.internal.ui.editor.schema.*;
 import org.eclipse.pde.internal.ui.editor.*;
 
 public abstract class BaseExtensionPointMainPage extends WizardPage {
-	public static final String KEY_PLUGIN_ID = "BaseExtensionPoint.pluginId";
-	public static final String KEY_ID = "BaseExtensionPoint.id";
-	public static final String KEY_NAME = "BaseExtensionPoint.name";
-	public static final String KEY_SCHEMA = "BaseExtensionPoint.schema";
-	public static final String KEY_EDIT = "BaseExtensionPoint.edit";
-	public static final String KEY_MISSING_ID = "BaseExtensionPoint.missingId";
+	public static final String KEY_PLUGIN_ID = "BaseExtensionPoint.pluginId"; //$NON-NLS-1$
+	public static final String KEY_ID = "BaseExtensionPoint.id"; //$NON-NLS-1$
+	public static final String KEY_NAME = "BaseExtensionPoint.name"; //$NON-NLS-1$
+	public static final String KEY_SCHEMA = "BaseExtensionPoint.schema"; //$NON-NLS-1$
+	public static final String KEY_EDIT = "BaseExtensionPoint.edit"; //$NON-NLS-1$
+	public static final String KEY_MISSING_ID = "BaseExtensionPoint.missingId"; //$NON-NLS-1$
 	public static final String KEY_SECTIONS_OVERVIEW =
-		"BaseExtensionPoint.sections.overview";
+		"BaseExtensionPoint.sections.overview"; //$NON-NLS-1$
 	public static final String KEY_SECTIONS_USAGE =
-		"BaseExtensionPoint.sections.usage";
-	public static final String KEY_GENERATING = "BaseExtensionPoint.generating";
-	public static final String KEY_SECTIONS_API = "BaseExtensionPoint.sections.api";
+		"BaseExtensionPoint.sections.usage"; //$NON-NLS-1$
+	public static final String KEY_GENERATING = "BaseExtensionPoint.generating"; //$NON-NLS-1$
+	public static final String KEY_SECTIONS_API = "BaseExtensionPoint.sections.api"; //$NON-NLS-1$
 	public static final String KEY_SECTIONS_SUPPLIED =
-		"BaseExtensionPoint.sections.supplied";
+		"BaseExtensionPoint.sections.supplied"; //$NON-NLS-1$
 	public static final String KEY_SECTIONS_COPYRIGHT =
-		"BaseExtensionPoint.sections.copyright";
+		"BaseExtensionPoint.sections.copyright"; //$NON-NLS-1$
 	private IContainer container;
 	protected Text idText;
 	protected Text pluginIdText;
@@ -57,7 +58,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 	protected Button openSchemaButton;
 
 	public BaseExtensionPointMainPage(IContainer container) {
-		super("newExtensionPoint");
+		super("newExtensionPoint"); //$NON-NLS-1$
 		this.container = container;
 	}
 	public void createControl(Composite parent) {
@@ -75,7 +76,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			pluginIdText.setLayoutData(gd);
 			pluginIdText.addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
-					verifyIdNotEmpty();
+					validatePage();
 				}
 			});
 		}
@@ -87,7 +88,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		idText.setLayoutData(gd);
 		idText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				verifyIdNotEmpty();
+				validatePage();
 			}
 		});
 
@@ -110,7 +111,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		openSchemaButton.setLayoutData(gd);
-		verifyIdNotEmpty();
+		validatePage();
 		if (isPluginIdNeeded())
 			pluginIdText.setFocus();
 		else
@@ -123,33 +124,33 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		schema.setDescription(PDEPlugin.getResourceString(KEY_SECTIONS_OVERVIEW));
 		DocumentSection section;
 
-		SchemaElement element = new SchemaElement(schema, "extension");
+		SchemaElement element = new SchemaElement(schema, "extension"); //$NON-NLS-1$
 		SchemaComplexType complexType = new SchemaComplexType(schema);
 		element.setType(complexType);
 		SchemaCompositor compositor =
 			new SchemaCompositor(element, ISchemaCompositor.SEQUENCE);
 		complexType.setCompositor(compositor);
 
-		SchemaAttribute attribute = new SchemaAttribute(element, "point");
-		attribute.setType(new SchemaSimpleType(schema, "string"));
+		SchemaAttribute attribute = new SchemaAttribute(element, "point"); //$NON-NLS-1$
+		attribute.setType(new SchemaSimpleType(schema, "string")); //$NON-NLS-1$
 		attribute.setUse(ISchemaAttribute.REQUIRED);
 		complexType.addAttribute(attribute);
 
-		attribute = new SchemaAttribute(element, "id");
-		attribute.setType(new SchemaSimpleType(schema, "string"));
+		attribute = new SchemaAttribute(element, "id"); //$NON-NLS-1$
+		attribute.setType(new SchemaSimpleType(schema, "string")); //$NON-NLS-1$
 		complexType.addAttribute(attribute);
 
-		attribute = new SchemaAttribute(element, "name");
-		attribute.setType(new SchemaSimpleType(schema, "string"));
+		attribute = new SchemaAttribute(element, "name"); //$NON-NLS-1$
+		attribute.setType(new SchemaSimpleType(schema, "string")); //$NON-NLS-1$
 		complexType.addAttribute(attribute);
 
 		schema.addElement(element);
 
-		section = new DocumentSection(schema, IDocumentSection.EXAMPLES, "Examples");
+		section = new DocumentSection(schema, IDocumentSection.EXAMPLES, "Examples"); //$NON-NLS-1$
 		section.setDescription(PDEPlugin.getResourceString(KEY_SECTIONS_USAGE));
 		schema.addDocumentSection(section);
 		section =
-			new DocumentSection(schema, IDocumentSection.API_INFO, "API Information");
+			new DocumentSection(schema, IDocumentSection.API_INFO, "API Information"); //$NON-NLS-1$
 		section.setDescription(PDEPlugin.getResourceString(KEY_SECTIONS_API));
 		schema.addDocumentSection(section);
 
@@ -157,10 +158,10 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			new DocumentSection(
 				schema,
 				IDocumentSection.IMPLEMENTATION,
-				"Supplied Implementation");
+				"Supplied Implementation"); //$NON-NLS-1$
 		section.setDescription(PDEPlugin.getResourceString(KEY_SECTIONS_SUPPLIED));
 		schema.addDocumentSection(section);
-		section = new DocumentSection(schema, IDocumentSection.COPYRIGHT, "Copyright");
+		section = new DocumentSection(schema, IDocumentSection.COPYRIGHT, "Copyright"); //$NON-NLS-1$
 		section.setDescription(PDEPlugin.getResourceString(KEY_SECTIONS_COPYRIGHT));
 		schema.addDocumentSection(section);
 
@@ -174,7 +175,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		}
 
 		try {
-			return new ByteArrayInputStream(swriter.toString().getBytes("UTF8"));
+			return new ByteArrayInputStream(swriter.toString().getBytes("UTF8")); //$NON-NLS-1$
 		} catch (UnsupportedEncodingException e) {
 			return new ByteArrayInputStream(new byte[0]);
 		}
@@ -196,7 +197,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			JavaCodeGenerator.ensureFoldersExist(
 				container.getProject(),
 				path.toString(),
-				"/");
+				"/"); //$NON-NLS-1$
 
 		InputStream source = createSchemaStream(pluginId, id, name);
 
@@ -241,7 +242,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		if (pluginIdText != null) {
 			return pluginIdText.getText();
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	public String getSchemaLocation() {
 		return null;
@@ -264,7 +265,8 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			}
 		});
 	}
-	private void verifyIdNotEmpty() {
+	private void validatePage() {
+		if (!validateContainer()) return;
 		String id = idText.getText();
 		boolean empty = id.length() == 0;
 		if (!empty && pluginIdText != null) {
@@ -275,10 +277,19 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		if (empty) {
 			message = PDEPlugin.getResourceString(KEY_MISSING_ID);
 		}
-		setErrorMessage(message);
+		setMessage(message, IMessageProvider.WARNING);
 		String location = getSchemaLocation();
-		String prefix = location != null ? location + "/" : "";
-		String schema = (!empty) ? (prefix + id + ".exsd") : "";
+		String prefix = location != null ? location + "/" : ""; //$NON-NLS-1$ //$NON-NLS-2$
+		String schema = (!empty) ? (prefix + id + ".exsd") : ""; //$NON-NLS-1$ //$NON-NLS-2$
 		schemaText.setText(schema);
+	}
+	private boolean validateContainer() {
+		boolean exists = container!=null && container.exists();
+		String message = null;
+		if (!exists) {
+			setErrorMessage(PDEPlugin.getResourceString("BaseExtensionPointMainPage.noContainer")); //$NON-NLS-1$
+			setPageComplete(false);
+		}
+		return exists;
 	}
 }
