@@ -178,8 +178,12 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 			if (fMonitor.isCanceled())
 				return;
 			Element include = (Element)list.item(i);
-			assertAttributeDefined(include, "id", CompilerFlags.ERROR); //$NON-NLS-1$
-			assertAttributeDefined(include, "version", CompilerFlags.ERROR); //$NON-NLS-1$
+			if (assertAttributeDefined(include, "id", CompilerFlags.ERROR) //$NON-NLS-1$
+					&& assertAttributeDefined(include, "version", //$NON-NLS-1$
+							CompilerFlags.ERROR)) {
+
+				validateFeatureID(include, include.getAttributeNode("id")); //$NON-NLS-1$
+			}
 			NamedNodeMap attributes = include.getAttributes();
 			for (int j = 0; j < attributes.getLength(); j++) {
 				Attr attr = (Attr)attributes.item(j);
