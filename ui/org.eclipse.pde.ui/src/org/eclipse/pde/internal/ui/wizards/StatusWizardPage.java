@@ -67,7 +67,7 @@ public abstract class StatusWizardPage extends WizardPage {
 			}
 		}
 		page.setErrorMessage(errorMessage);
-		page.setMessage(warningMessage);
+		page.setMessage(warningMessage,status.getSeverity());
 	}
 	
 	public static IStatus getMoreSevere(IStatus s1, IStatus s2) {

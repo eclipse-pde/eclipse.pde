@@ -53,6 +53,8 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 		"ImportWizard.FirstPage.importCheck";
 	private static final String KEY_EXTRACT_CHECK =
 		"ImportWizard.FirstPage.extractCheck";
+	private static final String KEY_SOURCE_REMINDER = 
+		"ImportWizard.FirstPage.sourceReminder";
 	private static final String KEY_TARGET_DESC =
 		"ImportWizard.FirstPage.targetDesc";
 	private static final String KEY_FOLDER_TITLE =
@@ -262,6 +264,7 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 */
 		doExtractCheck.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				updateStatus();
 				/*
 				if (doExtractCheck.getSelection()) {
 					if (!doImportCheck.getSelection()) {
@@ -287,6 +290,14 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 	private void updateStatus() {
 		validateDropLocation();
 		updateStatus(dropLocationStatus);
+		if (dropLocationStatus.getSeverity() == IStatus.OK
+			&& !runtimeLocationButton.getSelection()
+			&& doExtractCheck.getSelection()) {
+			updateStatus(
+				createStatus(
+					IStatus.INFO,
+					PDEPlugin.getResourceString(KEY_SOURCE_REMINDER)));
+		}
 	}
 
 	private GridData fillHorizontal(Control control, int span, boolean grab) {
