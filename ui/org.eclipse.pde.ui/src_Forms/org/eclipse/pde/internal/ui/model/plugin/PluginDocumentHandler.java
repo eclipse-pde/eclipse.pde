@@ -222,14 +222,6 @@ public class PluginDocumentHandler extends DefaultHandler {
 				textNode = new DocumentTextNode();
 				textNode.setEnclosingElement(parent);
 				parent.addTextNode(textNode);
-				
-				/*int offset = start;
-				for (; offset <= start + length; offset++) {
-					if (!Character.isWhitespace(ch[offset])) {
-						textNode.setOffset(offset);
-						break;
-					}
-				}*/
 				textNode.setText(buffer.toString().trim());
 			}
 		}
