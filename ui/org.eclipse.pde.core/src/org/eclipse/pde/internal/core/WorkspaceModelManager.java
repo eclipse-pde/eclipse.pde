@@ -361,8 +361,13 @@ public class WorkspaceModelManager
 		if (delta.getKind() == IResourceDelta.ADDED) {
 			// manifest added - add the model
 			IModel model = getWorkspaceModel(file);
-			if (model == null)
-				addWorkspaceModel(createWorkspacePluginModel(file));
+			if (model == null) {
+				if (file.getName().equalsIgnoreCase("feature.xml"))
+					model = createWorkspaceFeatureModel(file);
+				else
+					model = createWorkspacePluginModel(file);
+				addWorkspaceModel(model);
+			}
 			else if (model instanceof IFeatureModel)
 				reloadFeatureModel((IFeatureModel) model);
 			else
@@ -404,6 +409,9 @@ public class WorkspaceModelManager
 				ensureModelExists(project);
 				validateBinaryStatus(project);
 			}
+			else if (isFeatureProject(project)) {
+				ensureModelExists(project);
+			}
 		}
 	}
 
@@ -428,7 +436,7 @@ public class WorkspaceModelManager
 	}
 
 	private void handleProjectToBeDeleted(IProject project) {
-		if (isPluginProject(project) == false) {
+		if (!isPluginProject(project) && !isFeatureProject(project)) {
 			return;
 		}
 		IModel model = getWorkspaceModel(project);
@@ -773,7 +781,8 @@ public class WorkspaceModelManager
 			IResource resource = delta.getResource();
 			if (resource instanceof IProject) {
 				handleProjectDelta(delta);
-				return isPluginProject((IProject) resource);
+				IProject project = (IProject)resource;
+				return (isPluginProject(project) || isFeatureProject(project));
 			} else if (resource instanceof IFile) {
 				handleFileDelta(delta);
 			}
