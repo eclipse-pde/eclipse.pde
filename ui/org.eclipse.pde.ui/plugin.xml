@@ -550,6 +550,7 @@
             class="org.eclipse.pde.internal.ui.editor.manifest.ManifestEditor"
             id="org.eclipse.pde.ui.manifestEditor">
       </editor>
+      <!--
       <editor
             name="%editors.pluginManifest.name"
             icon="icons/obj16/plugin_mf_obj.gif"
@@ -558,6 +559,7 @@
             class="org.eclipse.pde.internal.ui.neweditor.plugin.ManifestEditor"
             id="org.eclipse.pde.ui.newManifestEditor">
       </editor>
+      -->
       <editor
             name="%editors.fragmentManifest.name"
             default="true"
@@ -571,7 +573,7 @@
             name="%editors.schema.name"
             default="false"
             icon="icons/obj16/schema_obj.gif"
-            extensions="exsd,mxsd,xsd"
+            extensions="exsd,mxsd"
             contributorClass="org.eclipse.pde.internal.ui.editor.schema.SchemaEditorContributor"
             class="org.eclipse.pde.internal.ui.editor.schema.SchemaEditor"
             id="org.eclipse.pde.ui.schemaEditor">
