@@ -40,7 +40,7 @@ public interface ISchemaAttribute extends ISchemaObject, IMetaAttribute {
 	 * Table of the 'use' clause choices.
 	 */
 	public static final String[] useTable = {
-			"optional", "required", "default", "deprecated" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			"optional", "required", "default", "deprecated" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
 	/**
 	 * Returns the type of this attribute. Attributes can only have simple

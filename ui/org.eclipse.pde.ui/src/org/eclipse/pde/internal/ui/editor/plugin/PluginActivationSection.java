@@ -383,13 +383,13 @@ public class PluginActivationSection extends TableSection
 			IDocument doc = context.getDocumentProvider().getDocument(context.getInput());
 			FindReplaceDocumentAdapter adapter = new FindReplaceDocumentAdapter(doc);
 			MultiTextEdit multiEdit = new MultiTextEdit();
-			TextEdit edit = editPluginElement(adapter, doc, 0);
+			TextEdit edit = editRootElement(model.isFragmentModel() ? "fragment" : "plugin", adapter, doc, 0); //$NON-NLS-1$ //$NON-NLS-2$
 			if (edit != null)
 				multiEdit.addChild(edit);
-			edit = removeElement("requires", adapter, doc, 0);
+			edit = removeElement("requires", adapter, doc, 0); //$NON-NLS-1$
 			if (edit != null)
 				multiEdit.addChild(edit);
-			edit = removeElement("runtime", adapter, doc, 0);
+			edit = removeElement("runtime", adapter, doc, 0); //$NON-NLS-1$
 			if (edit != null)
 				multiEdit.addChild(edit);
 			
@@ -425,7 +425,7 @@ public class PluginActivationSection extends TableSection
 			String[] filters = library.getContentFilters();
 			for (int i = 0; i < filters.length; i++) {
 				String filter = filters[i].trim();
-				if (filter.endsWith(".*")) {
+				if (filter.endsWith(".*")) { //$NON-NLS-1$
 					set.add(filter.substring(0, filter.length() - 2));
 				} else {
 					set.add(filter);
@@ -448,7 +448,7 @@ public class PluginActivationSection extends TableSection
 		InputContext context = getPage().getPDEEditor().getContextManager().findContext(BuildInputContext.CONTEXT_ID);
 		if (context != null) {
 			IBuildModel model = (IBuildModel)context.getModel();
-			IBuildEntry entry = model.getBuild().getEntry("source." + libraryName);
+			IBuildEntry entry = model.getBuild().getEntry("source." + libraryName); //$NON-NLS-1$
 			if (entry != null) {
 				String[] tokens = entry.getTokens();
 				ArrayList list = new ArrayList();
@@ -466,13 +466,13 @@ public class PluginActivationSection extends TableSection
 		return new IPackageFragmentRoot[0];
 	}
 	
-	private TextEdit editPluginElement(FindReplaceDocumentAdapter adapter, IDocument doc, int offset) {
+	private TextEdit editRootElement(String elementName, FindReplaceDocumentAdapter adapter, IDocument doc, int offset) {
 		try {
-			IRegion region = adapter.find(0, "<plugin[^>]*", true, true, false, true);
+			IRegion region = adapter.find(0, "<" + elementName + "[^>]*", true, true, false, true); //$NON-NLS-1$ //$NON-NLS-2$
 			if (region != null) {
-				String replacementString = "<plugin";
+				String replacementString = "<" + elementName; //$NON-NLS-1$
 				if (doc.getChar(region.getOffset() + region.getLength()) == '/')
-					replacementString += "/";
+					replacementString += "/"; //$NON-NLS-1$
 				return new ReplaceEdit(region.getOffset(), region.getLength(), replacementString);
 			}
 		} catch (BadLocationException e) {
@@ -481,11 +481,11 @@ public class PluginActivationSection extends TableSection
 	}
 	private TextEdit removeElement(String elementName, FindReplaceDocumentAdapter adapter, IDocument doc, int offset) {
 		try {
-			IRegion region = adapter.find(0, "<" + elementName + "[^>]*", true, true, false, true);
+			IRegion region = adapter.find(0, "<" + elementName + "[^>]*", true, true, false, true); //$NON-NLS-1$ //$NON-NLS-2$
 			if (region != null) {
 				if (doc.getChar(region.getOffset() + region.getLength()) == '/')
 					return new DeleteEdit(region.getOffset(), region.getLength() + 1);
-				IRegion endRegion = adapter.find(0, "</" + elementName +">", true, true, false, true);
+				IRegion endRegion = adapter.find(0, "</" + elementName +">", true, true, false, true); //$NON-NLS-1$ //$NON-NLS-2$
 				if (endRegion != null) {
 					int lastPos = endRegion.getOffset() + endRegion.getLength() + 1;
 					while (Character.isWhitespace(doc.getChar(lastPos))) {
