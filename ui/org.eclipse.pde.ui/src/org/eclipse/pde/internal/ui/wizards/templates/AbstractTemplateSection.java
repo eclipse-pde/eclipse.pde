@@ -156,6 +156,7 @@ public abstract class AbstractTemplateSection
 					}
 				}
 				if (dstContainer == null) {
+					if (isOkToCreateFolder(member)==false) return;
 					String folderName = getProcessedString(member.getName(), member.getName()); 
 					dstContainer = dst.getFolder(new Path(folderName));
 				}
@@ -163,9 +164,17 @@ public abstract class AbstractTemplateSection
 					 ((IFolder) dstContainer).create(true, true, monitor);
 				generateFiles(member, dstContainer, false, binary, monitor);
 			} else {
-				copyFile(member, dst, binary, monitor);
+				if (isOkToCreateFile(member))
+					copyFile(member, dst, binary, monitor);
 			}
 		}
+	}
+	
+	protected boolean isOkToCreateFolder(File sourceFolder) {
+		return true;
+	}
+	protected boolean isOkToCreateFile(File sourceFile) {
+		return true;
 	}
 
 	protected IFolder generateJavaSourceFolder(IProgressMonitor monitor)
@@ -295,13 +304,6 @@ public abstract class AbstractTemplateSection
 				if (preStack.getCurrentState() == false) {
 					continue;
 				}
-				/*
-
-				if (c=='\\') {
-					escape=true;
-					continue;
-				}
-				*/
 
 				if (c == '$') {
 					if (replacementMode) {
