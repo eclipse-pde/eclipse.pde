@@ -14,7 +14,7 @@ import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.neweditor.*;
 import org.eclipse.pde.internal.ui.neweditor.build.*;
 import org.eclipse.pde.internal.ui.neweditor.context.*;
-import org.eclipse.pde.internal.ui.neweditor.runtime.*;
+import org.eclipse.pde.internal.ui.neweditor.runtime.RuntimePage;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.part.FileEditorInput;
@@ -187,7 +187,8 @@ public class ManifestEditor extends MultiSourceEditor {
 			addPage(new RuntimePage(this));
 			addPage(new ExtensionsPage(this));
 			addPage(new ExtensionPointsPage(this));
-			addPage(new BuildPage(this));
+			if (inputContextManager.hasContext(BuildInputContext.CONTEXT_ID))
+				addPage(new BuildPage(this));
 		} catch (PartInitException e) {
 			PDEPlugin.logException(e);
 		}
