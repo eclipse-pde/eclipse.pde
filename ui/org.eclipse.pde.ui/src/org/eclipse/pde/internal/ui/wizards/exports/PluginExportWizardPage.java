@@ -47,7 +47,7 @@ public class PluginExportWizardPage extends BaseExportWizardPage {
 						
 						
 		label = new Label(container, SWT.NULL);
-		label.setText("File name:");
+		label.setText(PDEPlugin.getResourceString("ExportWizard.zipFile"));
 		GridData gd = new GridData();
 		gd.horizontalIndent = 25;
 		label.setLayoutData(gd);
@@ -77,7 +77,7 @@ public class PluginExportWizardPage extends BaseExportWizardPage {
 				PDEPlugin.getResourceString("ExportWizard.Plugin.updateJars"));
 
 		directoryLabel = new Label(container, SWT.NULL);
-		directoryLabel.setText("Directory:");
+		directoryLabel.setText(PDEPlugin.getResourceString("ExportWizard.destination"));
 		GridData gd = new GridData();
 		gd.horizontalIndent = 25;
 		directoryLabel.setLayoutData(gd);
@@ -138,7 +138,7 @@ public class PluginExportWizardPage extends BaseExportWizardPage {
 		FileDialog dialog = new FileDialog(getShell());
 		dialog.setFileName(zipFile.getText());
 		dialog.setFilterExtensions(new String[] {"*.zip"});
-		dialog.setText(PDEPlugin.getResourceString("Save As"));
+		dialog.setText(PDEPlugin.getResourceString("ExportWizard.filedialog.title"));
 		String res = dialog.open();
 		if (res != null) {
 			return new Path(res);
@@ -152,16 +152,16 @@ public class PluginExportWizardPage extends BaseExportWizardPage {
 		if (zipRadio != null && !zipRadio.isDisposed() && zipRadio.getSelection()) {
 			hasDestination = zipFile.getText().length() > 0;
 			if (!hasDestination)
-				message = "File name must be specified";
+				message = PDEPlugin.getResourceString("ExportWizard.status.nofile");
 		} else {
 			hasDestination = getDestination().length() > 0;
 			if (!hasDestination)
-				message = "Destination directory must be specified";
+				message = PDEPlugin.getResourceString("ExportWizard.status.nodirectory");
 		}
 		
 		boolean hasSel = exportPart.getSelectionCount() > 0;
 		if (!hasSel) {
-			message = "No items selected.";
+			message = PDEPlugin.getResourceString("ExportWizard.status.noselection");
 		}
 		setMessage(message);
 		setPageComplete(hasSel && hasDestination);

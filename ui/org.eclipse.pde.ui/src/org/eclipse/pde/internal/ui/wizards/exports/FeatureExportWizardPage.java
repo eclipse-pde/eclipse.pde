@@ -50,7 +50,7 @@ public class FeatureExportWizardPage extends BaseExportWizardPage {
 				PDEPlugin.getResourceString("ExportWizard.Plugin.updateJars"));
 
 		directoryLabel = new Label(container, SWT.NULL);
-		directoryLabel.setText("Directory:");
+		directoryLabel.setText(PDEPlugin.getResourceString("ExportWizard.destination"));
 		GridData gd = new GridData();
 		directoryLabel.setLayoutData(gd);
 
@@ -70,9 +70,9 @@ public class FeatureExportWizardPage extends BaseExportWizardPage {
 
 		String message = null;
 		if (!hasSel) {
-			message = "No items selected.";
+			message = PDEPlugin.getResourceString("ExportWizard.status.noselection");
 		} else if (!hasDest) {
-			message = "Destination directory must be defined";
+			message = PDEPlugin.getResourceString("ExportWizard.status.nodirectory");
 		}
 		setMessage(message);
 		setPageComplete(hasSel && hasDest);
