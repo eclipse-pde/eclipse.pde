@@ -40,6 +40,11 @@ public class PluginVersionReplaceTask extends Task {
 		newVersion = qualifier;
 	}
 
+	public void setInput(String input) {
+		if (input.equalsIgnoreCase("fragment.xml"))
+			plugin = false;
+	}
+	
 	public void execute() {
 		StringBuffer buffer = null;
 		try {
@@ -55,6 +60,9 @@ public class PluginVersionReplaceTask extends Task {
 		else
 			startPlugin = scan(buffer, 0, FRAGMENT);
 
+		if (startPlugin == -1)
+			return;
+		
 		int endPlugin = scan(buffer, startPlugin + 1, ">"); //$NON-NLS-1$
 
 		//Find the version tag in the plugin header

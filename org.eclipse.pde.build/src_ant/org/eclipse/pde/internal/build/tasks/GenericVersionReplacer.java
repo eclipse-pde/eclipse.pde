@@ -29,21 +29,22 @@ public class GenericVersionReplacer extends Task {
 
 		File foundFile = new File(root, PLUGIN);
 		if (foundFile.exists() && foundFile.isFile())
-			callPluginVersionModifier(foundFile.getAbsolutePath());
+			callPluginVersionModifier(foundFile.getAbsolutePath(), PLUGIN);
 		foundFile = new File(root, FRAGMENT);
 		if (foundFile.exists() && foundFile.isFile())
-			callPluginVersionModifier(foundFile.getAbsolutePath());
+			callPluginVersionModifier(foundFile.getAbsolutePath(), FRAGMENT);
 
 		foundFile = new File(root, MANIFEST);
 		if (foundFile.exists() && foundFile.isFile())
 			callManifestModifier(foundFile.getAbsolutePath());
 	}
 
-	private void callPluginVersionModifier(String path) {
+	private void callPluginVersionModifier(String path, String input) {
 		PluginVersionReplaceTask modifier = new PluginVersionReplaceTask();
 		modifier.setProject(getProject());
 		modifier.setPluginFilePath(path);
 		modifier.setVersionNumber(version);
+		modifier.setInput(input);
 		modifier.execute();
 	}
 
