@@ -502,7 +502,10 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			for (int i = 0; i < entries.length; i++) {
 				IClasspathEntry entry = entries[i];
 				IPath curr = entry.getPath();
-				String entryName = "source." + curr.lastSegment();
+				//Need to use full lib path: 34128
+				//String entryName = "source." + curr.lastSegment();
+				IPath entryPath = curr.removeFirstSegments(1).makeRelative();
+				String entryName = "source."+entryPath.toString();
 				IBuildEntry buildEntry = null;
 
 				IPath sourceAttach = entry.getSourceAttachmentPath();
