@@ -194,7 +194,7 @@ protected void generateSourceIndividualTarget(String relativeJar, String target)
 			exclusions = ""; // FIXME: why empty???
 		properties.put("excludes", exclusions);
 		properties.put("dest", destination.toString());
-		properties.put("basedir", basedir);
+		properties.put("srcdir", basedir);
 		script.printAntTask(tab, getPropertyFormat(PROPERTY_TEMPLATE), null, TARGET_SRC, null, null, properties);
 	}
 	script.printString(--tab, "</target>");
@@ -291,7 +291,7 @@ protected void generateJarIndividualTarget(String jarName) throws CoreException 
 		destination = destination.append(jarName);
 		properties.put("dest", destination.toString());
 		properties.put("compilePath", compilePath);
-		properties.put("basedir", basedir);
+		properties.put("srcdir", basedir);
 		script.printAntTask(tab, getPropertyFormat(PROPERTY_TEMPLATE), null, TARGET_JAR, null, null, properties);
 	}
 	script.printString(--tab, "</target>");
@@ -485,6 +485,7 @@ protected void generateGatherBinPartsTarget() {
 	IPath destination = new Path(getPropertyFormat(PROPERTY_DESTINATION));
 	destination = destination.append(getDirectoryName());
 	properties.put("dest", destination.toString());
+	properties.put("srcdir", getPropertyFormat(PROPERTY_BASEDIR));
 	script.printAntTask(tab, "${template}", null, "includesExcludesCopy", null, null, properties);
 	tab--;
 	script.printString(tab, "</target>");

@@ -233,7 +233,7 @@ protected void generateJarIndividualTarget(String jarName, String jarSource) thr
 	properties.put("includes", jarSource);
 	properties.put("excludes", ""); // FIXME: why empty??? should we bother leaving it here??
 	properties.put("dest", destination.toString());
-	properties.put("basedir", basedir);
+	properties.put("srcdir", basedir);
 	properties.put("compilePath", ""); // FIXME: why empty??? should we bother leaving it here??
 	script.printAntTask(tab, getPropertyFormat(PROPERTY_TEMPLATE), null, TARGET_JAR, null, null, properties);
 	script.printString(--tab, "</target>");
@@ -357,6 +357,7 @@ protected void generateGatherBinPartsTarget() {
 	params.clear(); // they are properties, not params, but we'll reuse the variable
 	params.put("includes", inclusions);
 	params.put("excludes", exclusions);
+	params.put("srcdir", getPropertyFormat(PROPERTY_BASEDIR));
 	params.put("dest", "${feature.base}/install/features/${feature}");
 	script.printAntTask(tab, getPropertyFormat(PROPERTY_TEMPLATE), null, "includesExcludesCopy", null, null, params);
 	script.printString(--tab, "</target>");
@@ -461,7 +462,7 @@ protected void generateSourceIndividualTarget(String name, String source) throws
 	properties.put("includes", source);
 	properties.put("excludes", ""); // FIXME: why empty??? should we bother leaving it here??
 	properties.put("dest", destination.toString());
-	properties.put("basedir", basedir);
+	properties.put("srcdir", basedir);
 	script.printAntTask(tab, getPropertyFormat(PROPERTY_TEMPLATE), null, TARGET_SRC, null, null, properties);
 	tab--;
 	script.printString(tab, "</target>");
