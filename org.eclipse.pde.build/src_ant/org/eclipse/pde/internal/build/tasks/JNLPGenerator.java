@@ -124,7 +124,7 @@ public class JNLPGenerator extends DefaultHandler {
 		String os = attributes.getValue("os"); //$NON-NLS-1$
 		String ws = attributes.getValue("ws"); //$NON-NLS-1$
 		writeResourcePrologue(os, ws);
-		out.println("\t\t<jar href=\"../plugins/" + id + "_" + version + ".jnlp\"/>");
+		out.println("\t\t<jar href=\"../plugins/" + id + "_" + version + ".jar\"/>");
 	}
 
 	private void writeResourceEpilogue() {
