@@ -107,7 +107,7 @@ public class PluginSearchResultCollector
 			null,
 			pageID,
 			new PluginSearchLabelProvider(),
-			new PluginSearchGoToAction(),
+			new SearchGoToAction(),
 			new GroupByKeyComputer(),
 			operation);
 	}

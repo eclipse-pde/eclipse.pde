@@ -6,15 +6,29 @@ import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.ui.editor.manifest.ManifestEditor;
 import org.eclipse.search.ui.ISearchResultView;
 import org.eclipse.search.ui.ISearchResultViewEntry;
 import org.eclipse.search.ui.SearchUI;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
 
+/**
+ * @author W Melhem
+ *
+ * To change this generated comment edit the template variable "typecomment":
+ * Window>Preferences>Java>Templates.
+ * To enable and disable the creation of type comments go to
+ * Window>Preferences>Java>Code Generation.
+ */
+public class SearchGoToAction extends Action {
+	
+	public SearchGoToAction() {
+		super();
+	}
 
-public class DependencyExtentGoToAction extends Action {
 	public void run() {
 		try {
 			ISearchResultView view = SearchUI.getSearchResultView();
@@ -26,17 +40,25 @@ public class DependencyExtentGoToAction extends Action {
 				ISearchResultViewEntry entry = (ISearchResultViewEntry) element;
 				element = entry.getGroupByKey();
 				if (element instanceof IJavaElement) {
-					JavaUI.openInEditor((IJavaElement) element);
+					IEditorPart editor =
+						JavaUI.openInEditor((IJavaElement) element);
+					editor.gotoMarker(entry.getSelectedMarker());
 				} else if (element instanceof IPluginObject) {
-					ManifestEditor.openPluginEditor(
-						((IPluginObject) element).getModel().getPluginBase(),
-						(IPluginObject) element,
-						entry.getSelectedMarker());
+					IPluginObject object = (IPluginObject) element;
+					if (object instanceof IPluginBase) {
+						ManifestEditor.openPluginEditor((IPluginBase) object);
+					} else {
+						ManifestEditor.openPluginEditor(
+							object.getPluginBase(),
+							object,
+							entry.getSelectedMarker());
+					}
 				}
 			}
 		} catch (PartInitException e) {
 		} catch (JavaModelException e) {
 		}
 	}
+
 
 }

@@ -6,15 +6,21 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.core.ISourceObject;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.search.ui.IActionGroupFactory;
 import org.eclipse.search.ui.IGroupByKeyComputer;
 import org.eclipse.search.ui.ISearchResultView;
+import org.eclipse.search.ui.ISearchResultViewEntry;
 import org.eclipse.search.ui.SearchUI;
+import org.eclipse.ui.actions.ActionContext;
+import org.eclipse.ui.actions.ActionGroup;
 
 
 public class DependencyExtentSearchResultCollector {
@@ -39,6 +45,27 @@ public class DependencyExtentSearchResultCollector {
 
 	}
 	
+	class SearchActionGroupFactory implements IActionGroupFactory {
+		public ActionGroup createActionGroup(ISearchResultView searchView) {
+			return new SearchActionGroup();
+		}
+	}
+	
+	class SearchActionGroup extends PluginSearchActionGroup {
+		public void fillContextMenu(IMenuManager menu) {
+			super.fillContextMenu(menu);
+			ActionContext context = getContext();
+			IStructuredSelection selection =
+				(IStructuredSelection) context.getSelection();
+			if (selection.size() == 1) {
+				ISearchResultViewEntry entry =
+					(ISearchResultViewEntry) selection.getFirstElement();
+				menu.add(new ReferencesInPluginAction(entry));
+			}
+		}
+	}
+	
+
 	public DependencyExtentSearchResultCollector(DependencyExtentSearchOperation op, IProgressMonitor monitor) {
 		this.operation = op;
 		this.monitor = monitor;
@@ -98,13 +125,13 @@ public class DependencyExtentSearchResultCollector {
 	public void searchStarted() {
 		resultView = SearchUI.getSearchResultView();
 		resultView.searchStarted(
-			new PluginSearchActionGroupFactory(),
+			new SearchActionGroupFactory(),
 			operation.getSingularLabel(),
 			operation.getPluralLabel(),
 			null,
 			PAGE_ID,
 			new DependencyExtentLabelProvider(),
-			new DependencyExtentGoToAction(),
+			new SearchGoToAction(),
 			new GroupByKeyComputer(),
 			operation);
 	}
