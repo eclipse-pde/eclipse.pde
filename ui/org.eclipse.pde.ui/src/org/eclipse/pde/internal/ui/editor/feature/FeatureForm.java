@@ -14,7 +14,6 @@ public class FeatureForm extends ScrollableSectionForm {
 	private URLSection urlSection;
 	private FeatureSpecSection specSection;
 	private PortabilitySection portabilitySection;
-	private HandlerSection handlerSection;
 
 public FeatureForm(FeatureFormPage page) {
 	this.page = page;
@@ -45,15 +44,9 @@ protected void createFormClient(Composite parent) {
 	gd = new GridData(GridData.FILL_BOTH);
 	control.setLayoutData(gd);
 	
-	handlerSection = new HandlerSection(page);
-	control = handlerSection.createControl(parent, factory);
-	gd = new GridData(GridData.FILL_BOTH);
-	control.setLayoutData(gd);
-
 	registerSection(specSection);
 	registerSection(urlSection);
 	registerSection(portabilitySection);
-	registerSection(handlerSection);
 }
 public void expandTo(Object object) {
 	urlSection.expandTo(object);

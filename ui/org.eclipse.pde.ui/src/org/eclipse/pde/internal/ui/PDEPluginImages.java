@@ -67,6 +67,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_CHOICE_SC_OBJ = create(PATH_OBJ, "choice_sc_obj.gif");
 	public static final ImageDescriptor DESC_FEATURE_JAR_OBJ  = create(PATH_OBJ, "ftr_jar_obj.gif");
 	public static final ImageDescriptor DESC_FEATURE_MF_OBJ   = create(PATH_OBJ, "ftr_mf_obj.gif");
+	public static final ImageDescriptor DESC_FEATURE_OBJ   = create(PATH_OBJ, "feature_obj.gif");
 	public static final ImageDescriptor DESC_ELREF_SC_OBJ  = create(PATH_OBJ, "elref_sc_obj.gif");
 	public static final ImageDescriptor DESC_EXTENSIONS_OBJ = create(PATH_OBJ, "extensions_obj.gif");
 	public static final ImageDescriptor DESC_EXTENSION_OBJ = create(PATH_OBJ, "extension_obj.gif");

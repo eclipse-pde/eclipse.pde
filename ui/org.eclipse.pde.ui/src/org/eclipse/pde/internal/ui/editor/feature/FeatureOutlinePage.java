@@ -86,6 +86,8 @@ public class FeatureOutlinePage extends FormOutlinePage {
 			return formPage.getEditor().getPage(FeatureEditor.REFERENCE_PAGE);
 		if (item instanceof IFeatureInfo)
 			return formPage.getEditor().getPage(FeatureEditor.INFO_PAGE);
+		if (item instanceof IFeatureData)
+			return formPage.getEditor().getPage(FeatureEditor.ADVANCED_PAGE);
 		return super.getParentPage(item);
 	}
 	private Object[] getInfos() {
@@ -152,6 +154,7 @@ public class FeatureOutlinePage extends FormOutlinePage {
 		if (object instanceof IFeatureImport
 			|| object instanceof IFeatureInfo
 			|| object instanceof IFeaturePlugin
+			|| object instanceof IFeatureData
 			|| object instanceof IFeatureURLElement) {
 			if (event.getChangeType() == IModelChangedEvent.CHANGE) {
 				treeViewer.update(object, null);

@@ -11,14 +11,14 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.*;
 
-public class ReferenceForm extends ScrollableSectionForm {
-	private static final String KEY_HEADING = "FeatureEditor.ReferencePage.heading";
-	private FeatureReferencePage page;
-	private PluginSection pluginSection;
-	private RequiresSection requiresSection;
-	private MatchSection matchSection;
+public class AdvancedForm extends ScrollableSectionForm {
+	private static final String KEY_HEADING = "FeatureEditor.AdvancedPage.heading";
+	private FeatureAdvancedPage page;
+	private IncludedFeaturesSection includedSection;
+	private DataSection dataSection;
+	private HandlerSection handlerSection;
 
-public ReferenceForm(FeatureReferencePage page) {
+public AdvancedForm(FeatureAdvancedPage page) {
 	this.page = page;
 	setVerticalFit(true);
 }
@@ -47,34 +47,33 @@ protected void createFormClient(Composite parent) {
 	gd = new GridData(GridData.FILL_BOTH);
 	right.setLayoutData(gd);
 
-	pluginSection = new PluginSection(page);
-	Control control = pluginSection.createControl(left, factory);
+	Control control;
+	
+	includedSection = new IncludedFeaturesSection(page);
+	control = includedSection.createControl(left, factory);
 	gd = new GridData(GridData.FILL_BOTH);
 	control.setLayoutData(gd);
 	
-	requiresSection = new RequiresSection(page);
-	control = requiresSection.createControl(right, factory);
+	dataSection = new DataSection(page);
+	control = dataSection.createControl(right, factory);
 	gd = new GridData(GridData.FILL_BOTH);
-	control.setLayoutData(gd);	
-
-	matchSection = new MatchSection(page, false);
-	control = matchSection.createControl(right, factory);
-	gd = new GridData(GridData.FILL_HORIZONTAL);
 	control.setLayoutData(gd);
-
-	SectionChangeManager manager = new SectionChangeManager();
-	manager.linkSections(requiresSection, matchSection);
-
-	registerSection(pluginSection);
-	registerSection(requiresSection);
-	registerSection(matchSection);
+	
+	handlerSection = new HandlerSection(page);
+	control = handlerSection.createControl(right, factory);
+	gd = new GridData(GridData.FILL_BOTH);
+	control.setLayoutData(gd);
+	
+	registerSection(includedSection);
+	registerSection(dataSection);
+	registerSection(handlerSection);
 }
 
 public void expandTo(Object object) {
-	if (object instanceof IFeaturePlugin)
-		pluginSection.expandTo(object);
-	if (object instanceof IFeatureImport)
-		requiresSection.expandTo(object);
+	if (object instanceof IFeatureChild)
+		includedSection.expandTo(object);
+	if (object instanceof IFeatureData)
+		dataSection.expandTo(object);
 }
 
 public void initialize(Object modelObject) {

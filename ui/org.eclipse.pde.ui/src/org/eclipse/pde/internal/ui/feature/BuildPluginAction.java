@@ -162,7 +162,7 @@ public class BuildPluginAction implements IObjectActionDelegate {
 		generator.setBuildScriptName(scriptName);
 
 		IProject project = pluginBaseFile.getProject();
-		IPluginModelBase model =
+		IPluginModelBase model = (IPluginModelBase)
 			PDECore.getDefault().getWorkspaceModelManager().getWorkspaceModel(project);
 		IPath platform =
 			Platform.getLocation().append(

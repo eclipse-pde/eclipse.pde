@@ -22,6 +22,7 @@ public class FeatureEditor extends PDEMultiPageXMLEditor {
 	public static final String FEATURE_PAGE = "ComponentPage";
 	public static final String INFO_PAGE = "InfoPage";
 	public static final String REFERENCE_PAGE = "ReferencePage";
+	public static final String ADVANCED_PAGE = "AdvancedPage";
 	public static final String SOURCE_PAGE = "SourcePage";
 	public static final String UNRESOLVED_TITLE = "FeatureEditor.Unresolved.title";
 	public static final String VERSION_TITLE = "FeatureEditor.Version.title";
@@ -33,36 +34,14 @@ public class FeatureEditor extends PDEMultiPageXMLEditor {
 		"FeatureEditor.FeaturePage.title";
 	public static final String REFERENCE_PAGE_TITLE =
 		"FeatureEditor.ReferencePage.title";
+	public static final String ADVANCED_PAGE_TITLE =
+		"FeatureEditor.AdvancedPage.title";
 	public static final String INFO_PAGE_TITLE = "FeatureEditor.InfoPage.title";
 
 	public FeatureEditor() {
 		super();
 	}
-	private void checkStaleReferences(IFeatureModel model) {
-		IFeature feature = model.getFeature();
-		Vector unresolved = new Vector();
 
-		IFeaturePlugin[] plugins = feature.getPlugins();
-		for (int i = 0; i < plugins.length; i++) {
-			IFeaturePlugin reference = plugins[i];
-			if (feature.getReferencedModel(reference) == null) {
-				unresolved.add(reference);
-			}
-		}
-		if (unresolved.size() > 0 && model.isEditable()) {
-			try {
-				IFeaturePlugin[] removed =
-					(IFeaturePlugin[]) unresolved.toArray(new IFeaturePlugin[unresolved.size()]);
-				feature.removePlugins(removed);
-			} catch (CoreException e) {
-				PDEPlugin.logException(e);
-			}
-			MessageDialog.openWarning(
-				PDEPlugin.getActiveWorkbenchShell(),
-				PDEPlugin.getResourceString(UNRESOLVED_TITLE),
-				PDEPlugin.getResourceString(UNRESOLVED_MESSAGE));
-		}
-	}
 	protected Object createModel(Object input) throws CoreException {
 		if (input instanceof IFile)
 			return createResourceModel((IFile) input);
@@ -79,9 +58,12 @@ public class FeatureEditor extends PDEMultiPageXMLEditor {
 				PDEPlugin.getResourceString(REFERENCE_PAGE_TITLE));
 		InfoFormPage infoPage =
 			new InfoFormPage(featurePage, PDEPlugin.getResourceString(INFO_PAGE_TITLE));
+		FeatureAdvancedPage advancedPage = 
+			new FeatureAdvancedPage(featurePage, PDEPlugin.getResourceString(ADVANCED_PAGE_TITLE));
 		addPage(FEATURE_PAGE, featurePage);
 		addPage(INFO_PAGE, infoPage);
 		addPage(REFERENCE_PAGE, referencePage);
+		addPage(ADVANCED_PAGE, advancedPage);
 		addPage(SOURCE_PAGE, new FeatureSourcePage(this));
 	}
 	private IFeatureModel createResourceModel(IFile file) throws CoreException {
@@ -110,27 +92,6 @@ public class FeatureEditor extends PDEMultiPageXMLEditor {
 		IModelProvider provider = PDECore.getDefault().getWorkspaceModelManager();
 		IModel model = (IModel) getModel();
 		provider.disconnect(model.getUnderlyingResource(), this);
-	}
-	public void doSave(IProgressMonitor monitor) {
-		super.doSave(monitor);
-		/*
-			IFeatureModel model = (IFeatureModel) getModel();
-			IFeature component = model.getFeature();
-			String version = component.getVersion();
-			String id = component.getId();
-			IFile file = (IFile) model.getUnderlyingResource();
-			IContainer parent = file.getParent();
-			if (parent instanceof IFolder) {
-				String name = parent.getName();
-				String expectedName = id + "_"+ version;
-				if (name.equals(expectedName)==false) {
-					MessageDialog.openInformation(
-						PDEPlugin.getActiveWorkbenchShell(),
-						PDEPlugin.getResourceString(VERSION_TITLE),
-						PDEPlugin.getFormattedMessage(VERSION_MESSAGE, name));
-				}
-			}
-		*/
 	}
 
 	public IPDEEditorPage getHomePage() {

@@ -112,7 +112,7 @@ public class UpdateClasspathAction implements IWorkbenchWindowActionDelegate {
 	private IPluginModelBase findModelFor(IProject project) {
 		WorkspaceModelManager manager =
 			PDECore.getDefault().getWorkspaceModelManager();
-		return manager.getWorkspaceModel(project);
+		return (IPluginModelBase)manager.getWorkspaceModel(project);
 	}
 
 	private static void doUpdateClasspath(

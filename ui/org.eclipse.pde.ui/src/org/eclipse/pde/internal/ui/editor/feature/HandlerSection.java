@@ -29,14 +29,14 @@ public class HandlerSection extends PDEFormSection {
 	private FormEntry handlerText;
 	private boolean updateNeeded;
 
-	public HandlerSection(FeatureFormPage page) {
+	public HandlerSection(FeatureAdvancedPage page) {
 		super(page);
 		setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
 		setDescription(PDEPlugin.getResourceString(SECTION_DESC));
-		setCollapsable(true);
+		//setCollapsable(true);
 		IFeatureModel model = (IFeatureModel)page.getModel();
 		IFeature feature = model.getFeature();
-		setCollapsed(feature.getInstallHandler()==null);
+		//setCollapsed(feature.getInstallHandler()==null);
 	}
 	public void commitChanges(boolean onSave) {
 		urlText.commit();

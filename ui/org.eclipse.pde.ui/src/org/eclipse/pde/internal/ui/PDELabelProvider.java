@@ -59,6 +59,12 @@ public class PDELabelProvider extends SharedLabelProvider {
 		if (obj instanceof FeatureImport) {
 			return getObjectText((FeatureImport) obj);
 		}
+		if (obj instanceof IFeatureModel) {
+			return getObjectText((IFeatureModel)obj);
+		}
+		if (obj instanceof FeatureChild) {
+			return getObjectText((FeatureChild) obj);
+		}
 		return super.getText(obj);
 	}
 
@@ -132,6 +138,16 @@ public class PDELabelProvider extends SharedLabelProvider {
 		}
 		return obj.getId();
 	}
+	
+	public String getObjectText(IFeatureModel obj) {
+		IFeature feature = obj.getFeature();
+		return feature.getId() + " (" + feature.getVersion() + ")";
+		
+	}
+
+	public String getObjectText(FeatureChild obj) {
+		return obj.getId() + " (" + obj.getVersion() + ")";
+	}
 
 	public Image getImage(Object obj) {
 		if (obj instanceof IPlugin) {
@@ -180,6 +196,12 @@ public class PDELabelProvider extends SharedLabelProvider {
 		if (obj instanceof IFeatureURLElement) {
 			return getObjectImage((IFeatureURLElement) obj);
 		}
+		if (obj instanceof IFeatureModel) {
+			return get(PDEPluginImages.DESC_FEATURE_OBJ);
+		}
+		if (obj instanceof IFeatureChild) {
+			return getObjectImage((IFeatureChild) obj);
+		}
 		if (obj instanceof IFeaturePlugin) {
 			return getObjectImage((IFeaturePlugin) obj);
 		}
@@ -204,12 +226,12 @@ public class PDELabelProvider extends SharedLabelProvider {
 	private Image getObjectImage(IPlugin plugin) {
 		return getObjectImage(plugin, false);
 	}
-	
+
 	public Image getObjectImage(IPlugin plugin, boolean checkEnabled) {
 		IPluginModelBase model = plugin.getModel();
 		int flags = getModelFlags(model);
 		ImageDescriptor desc = PDEPluginImages.DESC_PLUGIN_OBJ;
-		if (checkEnabled && model.isEnabled()==false) 
+		if (checkEnabled && model.isEnabled() == false)
 			desc = PDEPluginImages.DESC_EXT_PLUGIN_OBJ;
 		return get(desc, flags);
 	}
@@ -325,11 +347,19 @@ public class PDELabelProvider extends SharedLabelProvider {
 			return get(PDEPluginImages.DESC_PLUGIN_OBJ, flags);
 	}
 
+	private Image getObjectImage(IFeatureChild feature) {
+		int flags = 0;
+		if (((FeatureChild) feature).getReferencedFeature() == null)
+			flags = F_ERROR;
+		return get(PDEPluginImages.DESC_FEATURE_OBJ, flags);
+	}
+
 	private Image getObjectImage(IFeatureData data) {
 		int flags = 0;
 		if (!data.exists())
 			flags = F_ERROR;
-		ImageDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry().getImageDescriptor(data.getId());
+		ImageDescriptor desc =
+			PlatformUI.getWorkbench().getEditorRegistry().getImageDescriptor(data.getId());
 		return get(desc, flags);
 	}
 
