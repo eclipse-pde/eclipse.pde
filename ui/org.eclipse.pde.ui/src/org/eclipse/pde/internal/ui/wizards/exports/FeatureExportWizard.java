@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
+import java.io.*;
+
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 
@@ -47,11 +50,47 @@ public class FeatureExportWizard extends BaseExportWizard {
 		BaseExportJob job =
 			new FeatureExportJob(
 				page1.getExportType(),
-				page1.getExportSource(),
+				page1.doExportSource(),
 				page1.getDestination(),
 				page1.getFileName(),
 				page1.getSelectedItems());
 		job.schedule();
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.wizards.exports.BaseExportWizard#generateAntTask(java.io.PrintWriter)
+	 */
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.wizards.exports.BaseExportWizard#generateAntTask(java.io.PrintWriter)
+	 */
+	protected void generateAntTask(PrintWriter writer) {
+		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+		writer.println("<project name=\"build\" default=\"feature_export\">");
+		writer.println("\t<target name=\"feature_export\">");
+		writer.print("\t\t<pde.exportFeatures features=\"" + getFeatureIDs()
+				+ "\" destination=\"" + page1.getDestination() + "\" ");
+		String filename = page1.getFileName();
+		if (filename != null)
+			writer.print("filename =\"" + filename + "\" ");
+		writer.print("exportType=\"" + getExportOperation() + "\" ");
+		writer.println("exportSource=\"" + (page1.doExportSource() ? "true" : "false") + "\"/>"); 
+		writer.println("\t</target>");
+		writer.println("</project>");
+	}
+	
+	private String getFeatureIDs() {
+		StringBuffer buffer = new StringBuffer();
+		Object[] objects = page1.getSelectedItems();
+		for (int i = 0; i < objects.length; i++) {
+			Object object = objects[i];
+			if (object instanceof IFeatureModel) {
+				buffer.append(((IFeatureModel)object).getFeature().getId());
+				if (i < objects.length - 1)
+					buffer.append(",");					
+			}
+		}
+		return buffer.toString();
+	}
+
 
 }

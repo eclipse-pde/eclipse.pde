@@ -44,9 +44,10 @@ public abstract class BaseExportJob
 	extends Job
 	implements IPreferenceConstants {
 
+	public static final int EXPORT_AS_ZIP = 0;
 	public static final int EXPORT_AS_DIRECTORY = 1;
-	public static final int EXPORT_AS_ZIP = 2;
-	public static final int EXPORT_AS_UPDATE_JARS = 3;
+	public static final int EXPORT_AS_UPDATE_JARS = 2;
+	
 	private static final ISchedulingRule nonConcurentPDEExportRule =
 		new ISchedulingRule() {
 		public boolean contains(ISchedulingRule rule) {

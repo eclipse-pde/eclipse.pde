@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
+import java.io.*;
+
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
@@ -70,13 +73,46 @@ public abstract class BaseExportWizard
 	 * @see Wizard#performFinish
 	 */
 	public boolean performFinish() {
-		page1.saveSettings();
-
+		page1.saveSettings();		
+		if (page1.doGenerateAntFile()) {
+			generateAntBuildFile(page1.getAntBuildFileName());
+		}
 		scheduleExportJob();
-
 		return true;
 	}
 	
+	private void generateAntBuildFile(String filename) {
+		String parent = new Path(filename).removeLastSegments(1).toOSString();
+		String buildFilename = new Path(filename).lastSegment();
+		if (!buildFilename.endsWith(".xml"))
+			buildFilename += ".xml";
+		File dir = new File(new File(parent).getAbsolutePath());
+		if (!dir.exists())
+			dir.mkdirs();
+		
+		try {
+			PrintWriter writer = new PrintWriter(new FileWriter(new File(dir, buildFilename)));
+			generateAntTask(writer);
+			writer.close();
+		} catch (IOException e) {
+		}
+	}
+		
+	protected abstract void generateAntTask(PrintWriter writer);
+	
 	protected abstract void scheduleExportJob();
+	
+	protected String getExportOperation() {
+		int exportType = page1.getExportType();
+		switch (exportType) {
+			case BaseExportJob.EXPORT_AS_ZIP:
+				return "zip";
+			case BaseExportJob.EXPORT_AS_DIRECTORY:
+				return "directory";
+			case BaseExportJob.EXPORT_AS_UPDATE_JARS:
+				return "update";
+		}
+		return "zip";
+	}
 
 }

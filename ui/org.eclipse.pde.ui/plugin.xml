@@ -40,6 +40,7 @@
       <import plugin="org.eclipse.jdt.junit"/>
       <import plugin="org.eclipse.ui.forms"/>
       <import plugin="org.eclipse.ui.intro"/>
+      <import plugin="org.apache.ant"/>
    </requires>
 
 
@@ -1043,9 +1044,25 @@
       </sorter>
    </extension>
    <extension
+         point="org.eclipse.ant.core.antTasks">
+      <antTask
+            library="pdeuiant.jar"
+            name="pde.exportPlugins"
+            class="org.eclipse.pde.internal.ui.ant.PluginExportTask">
+      </antTask>
+      <antTask
+            library="pdeuiant.jar"
+            name="pde.exportFeatures"
+            class="org.eclipse.pde.internal.ui.ant.FeatureExportTask">
+      </antTask>
+   </extension>
+   <extension
          point="org.eclipse.ant.core.extraClasspathEntries">
       <extraClasspathEntry
             library="pdeuiant.jar">
+      </extraClasspathEntry>
+      <extraClasspathEntry
+            library="pdeui.jar">
       </extraClasspathEntry>
    </extension>
    <extension
