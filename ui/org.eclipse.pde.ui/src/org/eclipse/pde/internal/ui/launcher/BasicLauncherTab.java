@@ -220,7 +220,6 @@ public class BasicLauncherTab
 		config.setAttribute(APPLICATION,"org.eclipse.ui.workbench");
 		config.setAttribute(DOCLEAR, false);
 		config.setAttribute(PROGARGS, getDefaultProgramArguments());
-		config.setAttribute(VMINSTALL, getDefaultVMInstallName());
 		config.setAttribute(SHOW_SPLASH,true);
 		config.setAttribute(VMARGS,"");
 	}
