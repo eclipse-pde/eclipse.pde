@@ -304,11 +304,9 @@ public class PluginSection
 	 */
 	protected void doPaste() {
 		Clipboard clipboard = getFormPage().getEditor().getClipboard();
-		ModelDataTransfer modelTransfer = ModelDataTransfer.getInstance();
-		Object [] objects = (Object[])clipboard.getContents(modelTransfer);
-		if (objects != null) {
+		Object [] objects = (Object[])clipboard.getContents(ModelDataTransfer.getInstance());
+		if (objects != null && canPaste(null,objects))
 			doPaste(null, objects);
-		}
 	}
 	/**
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(Object, Object[])
@@ -319,13 +317,11 @@ public class PluginSection
 		FeaturePlugin[] fPlugins = new FeaturePlugin[objects.length];
 		try {
 			for (int i = 0; i < objects.length; i++) {
-				if (objects[i] instanceof FeaturePlugin) {
-					FeaturePlugin fPlugin = (FeaturePlugin) objects[i];
-					fPlugin.setModel(model);
-					fPlugin.setParent(feature);
-					fPlugin.hookWithWorkspace();
-					fPlugins[i] = fPlugin;
-				}
+				FeaturePlugin fPlugin = (FeaturePlugin) objects[i];
+				fPlugin.setModel(model);
+				fPlugin.setParent(feature);
+				fPlugin.hookWithWorkspace();
+				fPlugins[i] = fPlugin;
 			}
 			feature.addPlugins(fPlugins);
 		} catch (CoreException e) {

@@ -328,11 +328,9 @@ public class RequiresSection
 	 */
 	protected void doPaste() {
 		Clipboard clipboard = getFormPage().getEditor().getClipboard();
-		ModelDataTransfer modelTransfer = ModelDataTransfer.getInstance();
-		Object [] objects = (Object[])clipboard.getContents(modelTransfer);
-		if (objects != null) {
+		Object [] objects = (Object[])clipboard.getContents(ModelDataTransfer.getInstance());
+		if (objects != null && canPaste(null,objects))
 			doPaste(null, objects);
-		}
 	}
 	/**
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(Object, Object[])
@@ -342,13 +340,11 @@ public class RequiresSection
 		IFeature feature = model.getFeature();
 		try {
 			for (int i = 0; i < objects.length; i++) {
-				if (objects[i] instanceof FeatureImport) {
-					FeatureImport fImport = (FeatureImport) objects[i];
-					fImport.setModel(model);
-					fImport.setParent(feature);
-					setPluginModel(fImport);
-					feature.addImport(fImport);
-				}
+				FeatureImport fImport = (FeatureImport) objects[i];
+				fImport.setModel(model);
+				fImport.setParent(feature);
+				setPluginModel(fImport);
+				feature.addImport(fImport);
 			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
