@@ -63,7 +63,7 @@ public class ExportFeatureBuildScriptGenerator extends FeatureBuildScriptGenerat
 		List plugins = computeElements(false);
 		List fragments = computeElements(true);
 
-		String[] sortedPlugins = Utils.computePrerequisiteOrder((PluginModel[]) plugins.toArray(new PluginModel[plugins.size()]), (PluginModel[]) fragments.toArray(new PluginModel[fragments.size()]), getBuildingOSGi());
+		String[] sortedPlugins = Utils.computePrerequisiteOrder((PluginModel[]) plugins.toArray(new PluginModel[plugins.size()]), (PluginModel[]) fragments.toArray(new PluginModel[fragments.size()]), isBuildingOSGi());
 		script.println();
 		script.printTargetDeclaration(TARGET_ALL_PLUGINS, TARGET_INIT, null, null, null);
 		Set writtenCalls = new HashSet(plugins.size() + fragments.size());
