@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.forms.widgets.ScrolledPageBook;
 import org.eclipse.ui.help.WorkbenchHelp;
-public class NewTracingLauncherTab extends AbstractLauncherTab
+public class TracingLauncherTab extends AbstractLauncherTab
 		implements
 			ILauncherSettings {
 	private Button fTracingCheck;
@@ -42,7 +42,7 @@ public class NewTracingLauncherTab extends AbstractLauncherTab
 	private Image fImage;
 	private Button fSelectAllButton;
 	private Button fDeselectAllButton;
-	public NewTracingLauncherTab() {
+	public TracingLauncherTab() {
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		fImage = PDEPluginImages.DESC_DOC_SECTION_OBJ.createImage();
 	}
@@ -192,16 +192,16 @@ public class NewTracingLauncherTab extends AbstractLauncherTab
 		}
 		return fTraceableModels;
 	}
-	private NewTracingPropertySource getPropertySource(IPluginModelBase model) {
+	private TracingPropertySource getPropertySource(IPluginModelBase model) {
 		if (model == null)
 			return null;
-		NewTracingPropertySource source = (NewTracingPropertySource) fPropertySources
+		TracingPropertySource source = (TracingPropertySource) fPropertySources
 				.get(model);
 		if (source == null) {
 			String id = model.getPluginBase().getId();
 			Hashtable defaults = PDECore.getDefault()
 					.getTracingOptionsManager().getTemplateTable(id);
-			source = new NewTracingPropertySource(model, fMasterOptions,
+			source = new TracingPropertySource(model, fMasterOptions,
 					defaults, this);
 			fPropertySources.put(model, source);
 		}
@@ -217,7 +217,7 @@ public class NewTracingLauncherTab extends AbstractLauncherTab
 	private void disposePropertySources() {
 		for (Enumeration enum = fPropertySources.elements(); enum
 				.hasMoreElements();) {
-			NewTracingPropertySource source = (NewTracingPropertySource) enum
+			TracingPropertySource source = (TracingPropertySource) enum
 					.nextElement();
 			pageBook.removePage(source.getModel());
 		}
@@ -289,7 +289,7 @@ public class NewTracingLauncherTab extends AbstractLauncherTab
 			boolean changes = false;
 			for (Enumeration enum = fPropertySources.elements(); enum
 					.hasMoreElements();) {
-				NewTracingPropertySource source = (NewTracingPropertySource) enum
+				TracingPropertySource source = (TracingPropertySource) enum
 						.nextElement();
 				if (source.isModified()) {
 					changes = true;
@@ -328,7 +328,7 @@ public class NewTracingLauncherTab extends AbstractLauncherTab
 		fPropertyLabel.setText(text);
 	}
 	private void pluginSelected(IPluginModelBase model) {
-		NewTracingPropertySource source = getPropertySource(model);
+		TracingPropertySource source = getPropertySource(model);
 		if (source==null)
 			pageBook.showEmptyPage();
 		else {

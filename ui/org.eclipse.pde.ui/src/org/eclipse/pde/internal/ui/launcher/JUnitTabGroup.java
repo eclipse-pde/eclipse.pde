@@ -31,13 +31,13 @@ public class JUnitTabGroup extends AbstractLaunchConfigurationTabGroup {
 		if (PDECore.getDefault().getModelManager().isOSGiRuntime()) {
 			tabs = new ILaunchConfigurationTab[]{new JUnitMainTab(),
 					new JUnitArgumentsTab(), new AdvancedLauncherTab(false),
-					new NewTracingLauncherTab(), new ConfigurationTab(),
+					new TracingLauncherTab(), new ConfigurationTab(),
 					new SourceLookupTab(), new EnvironmentTab(),
 					new CommonTab()};
 		} else {
 			tabs = new ILaunchConfigurationTab[]{new JUnitMainTab(),
 					new JUnitArgumentsTab(), new AdvancedLauncherTab(false),
-					new NewTracingLauncherTab(), new SourceLookupTab(),
+					new TracingLauncherTab(), new SourceLookupTab(),
 					new EnvironmentTab(), new CommonTab()};
 		}
 		setTabs(tabs);

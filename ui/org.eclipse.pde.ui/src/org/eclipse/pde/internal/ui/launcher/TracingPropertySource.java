@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.widgets.*;
 /**
  */
-public class NewTracingPropertySource {
+public class TracingPropertySource {
 	private IPluginModelBase fModel;
 	private Vector fDescriptors;
 	private Hashtable fTemplate;
@@ -27,7 +27,7 @@ public class NewTracingPropertySource {
 	private static final String[] fBooleanChoices = {"false", "true"}; //$NON-NLS-1$ //$NON-NLS-2$
 	private Properties fMasterOptions;
 	private boolean fModified;
-	private NewTracingLauncherTab fTab;
+	private TracingLauncherTab fTab;
 	private abstract class PropertyEditor {
 		private String key;
 		private String label;
@@ -104,9 +104,9 @@ public class NewTracingPropertySource {
 			});
 		}
 	}
-	public NewTracingPropertySource(IPluginModelBase model,
+	public TracingPropertySource(IPluginModelBase model,
 			Properties masterOptions, Hashtable template,
-			NewTracingLauncherTab tab) {
+			TracingLauncherTab tab) {
 		this.fModel = model;
 		this.fMasterOptions = masterOptions;
 		this.fTemplate = template;
@@ -134,23 +134,10 @@ public class NewTracingPropertySource {
 	private int compareKeys(Object o1, Object o2) {
 		String s1 = (String) o1;
 		String s2 = (String) o2;
-		int sc1 = getNumberOfSlashes(s1);
-		int sc2 = getNumberOfSlashes(s2);
-		if (sc1 < sc2)
-			return -1;
-		if (sc1 > sc2)
-			return 1;
 		// equal
 		return s1.compareTo(s2);
 	}
-	private int getNumberOfSlashes(String s) {
-		int count = 0;
-		for (int i = 0; i < s.length(); i++) {
-			if (s.charAt(i) == '/')
-				count++;
-		}
-		return count;
-	}
+
 	public void createContents(Composite parent) {
 		fDescriptors = new Vector();
 		TableWrapLayout layout = new TableWrapLayout();
