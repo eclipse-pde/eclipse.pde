@@ -32,6 +32,8 @@ public class NewSiteProjectCreationPage extends WizardNewProjectCreationPage {
 	private static final int SIZING_TEXT_FIELD_WIDTH = 350;
 
 	protected Text webText;
+	private Button htmlButton;
+	private Label webLabel;
 		
 	private Listener textModifyListener = new Listener(){
 		public void handleEvent(Event e){
@@ -54,28 +56,28 @@ public class NewSiteProjectCreationPage extends WizardNewProjectCreationPage {
 	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		Composite composite = new Composite((Composite)getControl(), SWT.NULL);
-		composite.setFont(parent.getFont());
+		Group webGroup = new Group((Composite)getControl(), SWT.NULL);
+		webGroup.setText(PDEPlugin.getResourceString("NewSiteProjectCreationPage.webTitle")); //$NON-NLS-1$
+		webGroup.setFont(parent.getFont());
 		
 		initializeDialogUnits(parent);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
-		layout.marginWidth = 10;
 		layout.marginHeight = 15;
-		composite.setLayout(layout);
-		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		webGroup.setLayout(layout);
+		webGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		final Button htmlButton = new Button(composite, SWT.CHECK | SWT.RIGHT);
+		htmlButton = new Button(webGroup, SWT.CHECK | SWT.RIGHT);
 		htmlButton.setText(PDEPlugin.getResourceString(HTML_CHECK_LABEL));
 		GridData gd = new GridData();
 		gd.horizontalSpan=2;
 		htmlButton.setLayoutData(gd);
 		
-		final Label webLabel = new Label(composite, SWT.NULL);
+		webLabel = new Label(webGroup, SWT.NULL);
 		webLabel.setText(PDEPlugin.getResourceString(HTML_WEB_LABEL));
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		webLabel.setLayoutData(gd);
-		webText = new Text(composite, SWT.BORDER);
+		webText = new Text(webGroup, SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = SIZING_TEXT_FIELD_WIDTH;
 		webText.setLayoutData(gd);
@@ -95,14 +97,13 @@ public class NewSiteProjectCreationPage extends WizardNewProjectCreationPage {
 		});
 		
 		setPageComplete(validatePage());
-		setControl(composite);
-		Dialog.applyDialogFont(composite);
+		setControl(webGroup);
+		Dialog.applyDialogFont(webGroup);
 	}
 	
 	public String getStatusString(){
 		if (createSite && getWebLocation().equals("")) //$NON-NLS-1$
 			return PDEPlugin.getResourceString(WEB_ERR);
-		
 		return null;
 	}
 	public boolean isCreateUpdateSiteHTML(){

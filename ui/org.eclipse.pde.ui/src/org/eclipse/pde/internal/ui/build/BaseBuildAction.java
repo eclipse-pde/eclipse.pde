@@ -104,7 +104,7 @@ public abstract class BaseBuildAction
 		// Force the build if autobuild is off
 		IProject project = file.getProject();
 		if (!project.getWorkspace().isAutoBuilding()) {
-			String builderID = "feature.xml".equals(file.getName()) ? PDE.FEATURE_BUILDER_ID : PDE.MANIFEST_BUILDER_ID;
+			String builderID = "feature.xml".equals(file.getName()) ? PDE.FEATURE_BUILDER_ID : PDE.MANIFEST_BUILDER_ID; //$NON-NLS-1$
 			project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, builderID, null, monitor);
 		}
 

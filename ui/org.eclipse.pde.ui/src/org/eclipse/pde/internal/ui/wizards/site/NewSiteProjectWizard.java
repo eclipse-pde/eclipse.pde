@@ -67,9 +67,7 @@ public class NewSiteProjectWizard
 		addPage(mainPage);
 	}
 
-	private IFile createSiteManifest(
-		IProject project,
-		SiteData data)
+	private IFile createSiteManifest(IProject project)
 		throws CoreException {
 		IFile file = project.getFile("site.xml"); //$NON-NLS-1$
 		if (file.exists()) return file;
@@ -78,8 +76,6 @@ public class NewSiteProjectWizard
 		ISite site = model.getSite();
 		String name = project.getName();
 		site.setLabel(name);
-		site.setType(data.type);
-		site.setURL(data.url);
 
 		// Save the model
 		model.save();
@@ -452,7 +448,6 @@ public class NewSiteProjectWizard
 	private boolean createSiteProject(
 		IProject project,
 		IPath location,
-		SiteData data,
 		IProgressMonitor monitor)
 		throws CoreException {
 		monitor.beginTask(PDEPlugin.getResourceString(CREATING_PROJECT), 4);
@@ -472,7 +467,7 @@ public class NewSiteProjectWizard
 			monitor.worked(2);
 			monitor.subTask(PDEPlugin.getResourceString(CREATING_MANIFEST));
 			// create site.xml
-			IFile file = createSiteManifest(project, data);
+			IFile file = createSiteManifest(project);
 			createdProject = true;
 			monitor.worked(1);
 			// open manifest for editing
@@ -553,11 +548,10 @@ public class NewSiteProjectWizard
 	public boolean performFinish() {
 		final IProject project = mainPage.getProjectHandle();
 		final IPath location = mainPage.getLocationPath();
-		final SiteData data = new SiteData();
 		IRunnableWithProgress operation = new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor){
 				try {
-					createSiteProject(project, location, data, monitor);
+					createSiteProject(project, location, monitor);
 				} catch (CoreException e){
 					PDEPlugin.logException(e);
 				} finally {
