@@ -18,6 +18,7 @@ import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.text.edits.*;
+import org.eclipse.ui.branding.*;
 
 public class ProductDefinitionOperation implements IRunnableWithProgress {
 
@@ -92,7 +93,7 @@ public class ProductDefinitionOperation implements IRunnableWithProgress {
 			if (value != null && value.length() > 0) {
 				IPluginElement property = model.getFactory().createElement(element);
 				property.setName("property"); //$NON-NLS-1$
-				property.setAttribute("name", "aboutText"); //$NON-NLS-1$ //$NON-NLS-2$
+				property.setAttribute("name", IProductConstants.ABOUT_TEXT); //$NON-NLS-1$ //$NON-NLS-2$
 				property.setAttribute("value", value); //$NON-NLS-1$
 				element.add(property);
 			}
@@ -101,7 +102,7 @@ public class ProductDefinitionOperation implements IRunnableWithProgress {
 			if (image != null && image.length() > 0) {
 				IPluginElement property = model.getFactory().createElement(element);
 				property.setName("property"); //$NON-NLS-1$
-				property.setAttribute("name", "aboutImage"); //$NON-NLS-1$ //$NON-NLS-2$
+				property.setAttribute("name", IProductConstants.ABOUT_IMAGE); //$NON-NLS-1$ 
 				property.setAttribute("value", image); //$NON-NLS-1$ 
 				element.add(property);
 			}
@@ -124,7 +125,7 @@ public class ProductDefinitionOperation implements IRunnableWithProgress {
 			if (buffer.length() > 0) {
 				IPluginElement property = model.getFactory().createElement(element);
 				property.setName("property"); //$NON-NLS-1$
-				property.setAttribute("name", "windowImages"); //$NON-NLS-1$ //$NON-NLS-2$
+				property.setAttribute("name", IProductConstants.WINDOW_IMAGES); //$NON-NLS-1$ 
 				property.setAttribute("value", buffer.toString()); //$NON-NLS-1$ 
 				element.add(property);
 			}
