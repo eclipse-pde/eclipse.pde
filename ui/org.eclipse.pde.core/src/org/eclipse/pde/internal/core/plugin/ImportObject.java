@@ -2,6 +2,7 @@ package org.eclipse.pde.internal.core.plugin;
 
 import java.io.*;
 
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.IWritable;
 import org.eclipse.pde.core.plugin.*;
 
@@ -32,5 +33,12 @@ public class ImportObject extends PluginReference implements IWritable, Serializ
 	}
 	public void write(String indent, PrintWriter writer) {
 		iimport.write(indent, writer);
+	}
+	public Object getAdapter(Class key) {
+		if (key.equals(ISourceObject.class)) {
+			if (iimport instanceof ISourceObject)
+				return iimport;
+		}
+		return super.getAdapter(key);
 	}
 }

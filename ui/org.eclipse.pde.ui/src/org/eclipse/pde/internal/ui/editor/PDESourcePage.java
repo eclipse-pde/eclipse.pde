@@ -4,10 +4,15 @@ package org.eclipse.pde.internal.ui.editor;
  * All Rights Reserved.
  */
 
+import java.util.Iterator;
+
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.ISourceObject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.widgets.*;
@@ -55,10 +60,15 @@ public boolean becomesInvisible(IFormPage newPage) {
 	getSite().setSelectionProvider(getEditor());
 	return true;
 }
+
 public void becomesVisible(IFormPage oldPage) {
 	modelNeedsUpdating=false;
+	if (oldPage instanceof PDEFormPage) {
+    	selectObjectRange(((PDEFormPage)oldPage).getSelection());
+	}
 	getSite().setSelectionProvider(getSelectionProvider());
 }
+
 public boolean contextMenuAboutToShow(IMenuManager manager) {
 	return false;
 }
@@ -128,6 +138,47 @@ public boolean isVisible() {
 public void openTo(Object object) {
 	if (object instanceof IMarker) {
 		gotoMarker((IMarker)object);
+	}
+}
+
+private void selectObjectRange(ISelection selection) {
+	if (selection instanceof IStructuredSelection) {
+		IStructuredSelection ssel = (IStructuredSelection)selection;
+		int start = 0;
+		int stop = 0;
+		// Compute the entire range
+		for (Iterator iter=ssel.iterator(); iter.hasNext();) {
+			Object obj = iter.next();
+			ISourceObject sobj = null;
+			
+			if (obj instanceof ISourceObject)
+			   	sobj = (ISourceObject)obj;
+			if (obj instanceof IAdaptable) {
+				IAdaptable adaptable = (IAdaptable)obj;
+				sobj = (ISourceObject)adaptable.getAdapter(ISourceObject.class);
+			}
+			if (sobj != null) {
+				if (start==0) {
+					start = sobj.getStartLine()-1;
+				}
+				else {
+				   start = Math.min(start, sobj.getStartLine()-1);
+				}
+				stop = Math.max(stop, sobj.getStopLine()-1);
+			}
+		}
+		if (start>0) {
+			IDocument document = getDocumentProvider().getDocument(getEditorInput());
+			if (document==null) return;
+			try {
+				//int offset = editor.getRealStartOffset(document.getLineOffset(start-1));
+				int startOffset = document.getLineOffset(start);
+				int stopOffset = document.getLineOffset(stop) + document.getLineLength(stop);
+				selectAndReveal(startOffset, stopOffset-startOffset);
+			}
+			catch (BadLocationException e) {
+			}
+		}
 	}
 }
 

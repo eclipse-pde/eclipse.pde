@@ -163,4 +163,5 @@ public abstract class PDEMultiPageXMLEditor extends PDEMultiPageEditor {
 					"UTF8");
 		return documentProvider;
 	}
+
 }
