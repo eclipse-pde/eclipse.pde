@@ -142,14 +142,16 @@ public class Product extends ProductObject implements IProduct {
 		}
 		writer.println(indent + "   </plugins>"); //$NON-NLS-1$
 		
-		writer.println();
-		writer.println(indent + "   <features>"); //$NON-NLS-1$
-		iter = fFeatures.values().iterator();
-		while (iter.hasNext()) {
-			IProductFeature feature = (IProductFeature)iter.next();
-			feature.write(indent + "      ", writer); //$NON-NLS-1$
+		if (fFeatures.size() > 0) {
+			writer.println();
+			writer.println(indent + "   <features>"); //$NON-NLS-1$
+			iter = fFeatures.values().iterator();
+			while (iter.hasNext()) {
+				IProductFeature feature = (IProductFeature)iter.next();
+				feature.write(indent + "      ", writer); //$NON-NLS-1$
+			}
+			writer.println(indent + "   </features>"); //$NON-NLS-1$
 		}
-		writer.println(indent + "   </features>"); //$NON-NLS-1$
 		
 		writer.println();
 		writer.println("</product>"); //$NON-NLS-1$
