@@ -72,7 +72,7 @@ page tab
 &lt;samp&gt;org.eclipse.jface.dialogs.DialogPage&lt;/samp&gt;.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.jface.dialogs.DialogPage"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.jface.dialogs.DialogPage:org.eclipse.search.ui.ISearchPage"/>
                </appInfo>
             </annotation>
          </attribute>
