@@ -116,11 +116,6 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 				manifest.put(Constants.BUNDLE_CLASSPATH, findOSGiJars(bundleLocation));
 			}
 			
-			//Add dot on the classpath if none has been specified
-			String classpath = (String) manifest.get(Constants.BUNDLE_CLASSPATH);
-			if (classpath==null)
-			    manifest.put(Constants.BUNDLE_CLASSPATH, ".");	//$NON-NLS-1$
-			
 			hasQualifier(bundleLocation, manifest);
 		} catch (BundleException e) {
 			//should not happen since we know the header
@@ -215,7 +210,13 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		}
 		try {
 			Manifest m = new Manifest(manifestStream);
-			return manifestToProperties(m.getMainAttributes());
+			Properties properties = manifestToProperties(m.getMainAttributes());
+			//Add dot on the classpath if none has been specified
+			String classpath = (String) properties.get(Constants.BUNDLE_CLASSPATH);
+			if (classpath==null)
+			    properties.put(Constants.BUNDLE_CLASSPATH, ".");	//$NON-NLS-1$
+			return properties;
+			
 		} catch (IOException e) {
 			return null;
 		} finally {
