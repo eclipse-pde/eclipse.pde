@@ -19,13 +19,18 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.internal.ui.wizards.buildpaths.FolderSelectionDialog;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.model.WorkbenchContentProvider;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.core.resources.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.*;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.jdt.ui.*;
 import org.eclipse.pde.internal.ui.*;
@@ -38,8 +43,7 @@ public class JavaAttributeWizardPage extends WizardPage {
 	public static final String PAGE_TITLE = "JavaAttributeWizard.title";
 	public static final String DUPLICATION_TITLE =
 		"JavaAttributeWizard.duplication.title";
-	public static final String KEY_GENERATING =
-		"JavaAttributeWizard.generating";
+	public static final String KEY_GENERATING = "JavaAttributeWizard.generating";
 	public static final String KEY_FINISH = "JavaAttributeWizard.finish";
 	public static final String DUPLICATION_MESSAGE =
 		"JavaAttributeWizard.duplication.message";
@@ -50,8 +54,7 @@ public class JavaAttributeWizardPage extends WizardPage {
 		"JavaAttributeWizard.packageSelection";
 	public static final String KEY_MISSING_CONTAINER =
 		"JavaAttributeWizard.error.container";
-	public static final String NESTED_TITLE =
-		"JavaAttributeWizard.nested.title";
+	public static final String NESTED_TITLE = "JavaAttributeWizard.nested.title";
 	public static final String NESTED_DESC = "JavaAttributeWizard.nested.desc";
 
 	public static final String GENERATE = "JavaAttributeWizard.generate";
@@ -63,14 +66,12 @@ public class JavaAttributeWizardPage extends WizardPage {
 		"JavaAttributeWizard.generate.package";
 	public static final String GENERATE_PACKAGE_BROWSE =
 		"JavaAttributeWizard.generate.package.browse";
-	public static final String GENERATE_CLASS_NAME =
-		"JavaAttributeWizard.generate.class";
+	public static final String GENERATE_CLASS_NAME = "JavaAttributeWizard.generate.class";
 	public static final String GENERATE_OPEN_EDITOR =
 		"JavaAttributeWizard.generate.openEditor";
 
 	public static final String SEARCH = "JavaAttributeWizard.search";
-	public static final String SEARCH_CLASS_NAME =
-		"JavaAttributeWizard.search.className";
+	public static final String SEARCH_CLASS_NAME = "JavaAttributeWizard.search.className";
 	public static final String SEARCH_CLASS_BROWSE =
 		"JavaAttributeWizard.search.className.browse";
 
@@ -104,6 +105,19 @@ public class JavaAttributeWizardPage extends WizardPage {
 	private IPluginModelBase model;
 
 	private IPackageFragmentRoot[] sourceFolders;
+	
+	class ContentProvider extends WorkbenchContentProvider {
+		public boolean hasChildren(Object element) {
+			Object[] children = getChildren(element);
+			for (int i = 0; i < children.length; i++) {
+				if (children[i] instanceof IFolder) {
+					return true;
+				}
+			}
+			return false;
+		}
+		
+	}
 
 	public JavaAttributeWizardPage(
 		IProject project,
@@ -125,8 +139,6 @@ public class JavaAttributeWizardPage extends WizardPage {
 		//initialize
 		computeSourceFolders();
 	}
-	
-	
 
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
@@ -137,9 +149,8 @@ public class JavaAttributeWizardPage extends WizardPage {
 		layout.verticalSpacing = 9;
 		container.setLayout(layout);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		setPageComplete(false);
-		
 
 		createSearchSection(container);
 		createGenerateSection(container);
@@ -147,12 +158,10 @@ public class JavaAttributeWizardPage extends WizardPage {
 		enableGenerateSection(false);
 
 		setControl(container);
-		
+
 		Dialog.applyDialogFont(container);
 
-		WorkbenchHelp.setHelp(
-			container,
-			IHelpContextIds.JAVA_ATTRIBUTE_WIZARD_PAGE);
+		WorkbenchHelp.setHelp(container, IHelpContextIds.JAVA_ATTRIBUTE_WIZARD_PAGE);
 	}
 
 	private void enableGenerateSection(boolean enabled) {
@@ -230,30 +239,30 @@ public class JavaAttributeWizardPage extends WizardPage {
 				verifyComplete();
 			}
 		});
-		
+
 		GridData gd = new GridData();
 		gd.horizontalSpan = 3;
 		generateButton.setLayoutData(gd);
 
 		containerLabel = new Label(parent, SWT.NONE);
-		containerLabel.setText(
-			PDEPlugin.getResourceString(GENERATE_CONTAINER_NAME));
+		containerLabel.setText(PDEPlugin.getResourceString(GENERATE_CONTAINER_NAME));
 		gd = new GridData();
 		gd.horizontalIndent = 25;
 		containerLabel.setLayoutData(gd);
 
 		containerText = new Text(parent, SWT.BORDER);
-		containerText.setText((sourceFolders.length > 0) ? sourceFolders[0].getElementName() + Path.SEPARATOR : "");
+		containerText.setText(
+			(sourceFolders.length > 0)
+				? sourceFolders[0].getElementName() + Path.SEPARATOR
+				: "");
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = MAX_WIDTH;
 		containerText.setLayoutData(gd);
 		containerText.addModifyListener(modifyListener);
 
 		containerBrowse = new Button(parent, SWT.PUSH);
-		containerBrowse.setText(
-			PDEPlugin.getResourceString(GENERATE_CONTAINER_BROWSE));
-		containerBrowse.setLayoutData(
-			new GridData(GridData.HORIZONTAL_ALIGN_END));
+		containerBrowse.setText(PDEPlugin.getResourceString(GENERATE_CONTAINER_BROWSE));
+		containerBrowse.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		SWTUtil.setButtonDimensionHint(containerBrowse);
 		containerBrowse.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -262,8 +271,7 @@ public class JavaAttributeWizardPage extends WizardPage {
 		});
 
 		packageLabel = new Label(parent, SWT.NONE);
-		packageLabel.setText(
-			PDEPlugin.getResourceString(GENERATE_PACKAGE_NAME));
+		packageLabel.setText(PDEPlugin.getResourceString(GENERATE_PACKAGE_NAME));
 		gd = new GridData();
 		gd.horizontalIndent = 25;
 		packageLabel.setLayoutData(gd);
@@ -275,10 +283,8 @@ public class JavaAttributeWizardPage extends WizardPage {
 		packageText.addModifyListener(modifyListener);
 
 		packageBrowse = new Button(parent, SWT.PUSH);
-		packageBrowse.setText(
-			PDEPlugin.getResourceString(GENERATE_PACKAGE_BROWSE));
-		packageBrowse.setLayoutData(
-			new GridData(GridData.HORIZONTAL_ALIGN_END));
+		packageBrowse.setText(PDEPlugin.getResourceString(GENERATE_PACKAGE_BROWSE));
+		packageBrowse.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		SWTUtil.setButtonDimensionHint(packageBrowse);
 		packageBrowse.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -305,8 +311,7 @@ public class JavaAttributeWizardPage extends WizardPage {
 		}
 
 		openFileButton = new Button(parent, SWT.CHECK);
-		openFileButton.setText(
-			PDEPlugin.getResourceString(GENERATE_OPEN_EDITOR));
+		openFileButton.setText(PDEPlugin.getResourceString(GENERATE_OPEN_EDITOR));
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 3;
 		gd.horizontalIndent = 25;
@@ -325,12 +330,14 @@ public class JavaAttributeWizardPage extends WizardPage {
 					if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE) {
 						folders.add(roots[i]);
 					}
-				}				
+				}
 			}
 		} catch (JavaModelException e) {
 		} catch (CoreException e) {
 		}
-		sourceFolders = (IPackageFragmentRoot[])folders.toArray(new IPackageFragmentRoot[folders.size()]);
+		sourceFolders =
+			(IPackageFragmentRoot[]) folders.toArray(
+				new IPackageFragmentRoot[folders.size()]);
 	}
 
 	private IPackageFragmentRoot getSourceFolder(String folderName) {
@@ -384,9 +391,7 @@ public class JavaAttributeWizardPage extends WizardPage {
 				MessageDialog.openQuestion(
 					PDEPlugin.getActiveWorkbenchShell(),
 					PDEPlugin.getResourceString(DUPLICATION_TITLE),
-					PDEPlugin.getFormattedMessage(
-						DUPLICATION_MESSAGE,
-						className));
+					PDEPlugin.getFormattedMessage(DUPLICATION_MESSAGE, className));
 
 			if (!ok)
 				return false;
@@ -442,13 +447,8 @@ public class JavaAttributeWizardPage extends WizardPage {
 		IPath path = project.getFullPath().append(folderName);
 		IFolder folder = project.getWorkspace().getRoot().getFolder(path);
 		AttributeClassCodeGenerator generator =
-			new AttributeClassCodeGenerator(
-				javaProject,
-				folder,
-				className,
-				attInfo);
-		monitor.subTask(
-			PDEPlugin.getFormattedMessage(KEY_GENERATING, className));
+			new AttributeClassCodeGenerator(javaProject, folder, className, attInfo);
+		monitor.subTask(PDEPlugin.getFormattedMessage(KEY_GENERATING, className));
 
 		path = project.getFullPath().append(folderName);
 
@@ -459,16 +459,10 @@ public class JavaAttributeWizardPage extends WizardPage {
 				try {
 					IClasspathEntry newSrcEntry =
 						JavaCore.newSourceEntry(folder.getFullPath());
-					IClasspathEntry[] oldEntries =
-						javaProject.getRawClasspath();
+					IClasspathEntry[] oldEntries = javaProject.getRawClasspath();
 					IClasspathEntry[] newEntries =
 						new IClasspathEntry[oldEntries.length + 1];
-					System.arraycopy(
-						oldEntries,
-						0,
-						newEntries,
-						0,
-						oldEntries.length);
+					System.arraycopy(oldEntries, 0, newEntries, 0, oldEntries.length);
 					newEntries[oldEntries.length] = newSrcEntry;
 					javaProject.setRawClasspath(newEntries, monitor);
 
@@ -500,27 +494,34 @@ public class JavaAttributeWizardPage extends WizardPage {
 		return className;
 	}
 
-
 	private void handleFindContainer() {
-		ContainerSelectionDialog dialog =
-			new ContainerSelectionDialog(
-				containerText.getShell(),
-				project,
-				false,
-				PDEPlugin.getResourceString(KEY_CONTAINER_SELECTION));
+		FolderSelectionDialog dialog =
+			new FolderSelectionDialog(
+				PDEPlugin.getActiveWorkbenchShell(),
+				new WorkbenchLabelProvider(),
+				new ContentProvider() {
+		});
+		dialog.setInput(project);
+		dialog.addFilter(new ViewerFilter() {
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
+				return element instanceof IFolder;
+			}			
+		});
+		dialog.setAllowMultiple(false);
+		dialog.setTitle(PDEPlugin.getResourceString(KEY_CONTAINER_SELECTION));
 		int status = dialog.open();
-		if (status == ContainerSelectionDialog.OK) {
+		if (status == FolderSelectionDialog.OK) {
 			Object[] result = dialog.getResult();
-
+		
 			if (result.length == 1) {
-				IPath path = (IPath) result[0];
+				IFolder folder = (IFolder) result[0];
 				containerText.setText(
-					path
+					folder.getFullPath()
 						.removeFirstSegments(1)
 						.addTrailingSeparator()
 						.toString());
 				containerBrowse.setFocus();
-
+		
 			}
 		}
 	}
@@ -550,15 +551,14 @@ public class JavaAttributeWizardPage extends WizardPage {
 			if (status == SelectionDialog.OK) {
 				Object[] result = dialog.getResult();
 				IPackageFragment packageFragment = (IPackageFragment) result[0];
-				sourceFolder =
-					(IPackageFragmentRoot) packageFragment.getParent();
+				sourceFolder = (IPackageFragmentRoot) packageFragment.getParent();
 				if (sourceFolder != null) {
 					containerText.setText(
 						sourceFolder
 							.getPath()
 							.removeFirstSegments(1)
 							.addTrailingSeparator()
-							.toOSString());
+							.toString());
 				} else {
 					containerText.setText("");
 				}
@@ -616,8 +616,7 @@ public class JavaAttributeWizardPage extends WizardPage {
 			setPageComplete(status.getSeverity() != IStatus.ERROR);
 		} else {
 			status = JavaConventions.validatePackageName(packageText.getText());
-			IStatus second =
-				JavaConventions.validateJavaTypeName(classText.getText());
+			IStatus second = JavaConventions.validateJavaTypeName(classText.getText());
 
 			if (second.getSeverity() > status.getSeverity())
 				status = second;
