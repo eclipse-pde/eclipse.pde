@@ -250,11 +250,7 @@ public abstract class PDEFormEditor extends FormEditor
 		IFormPage[] pages = getPages();
 		for (int i = 0; i < pages.length; i++) {
 			if (pages[i] instanceof PDESourcePage) {
-				PDESourcePage page = (PDESourcePage) pages[i];
-			    InputContext context = inputContextManager.findContext(page.getId());
-			    //context.setBlocked(true);
-			    page.doRevertToSaved();
-			    //context.setBlocked(false);
+				((PDESourcePage) pages[i]).doRevertToSaved();
 			}
 		}
 		editorDirtyStateChanged();
