@@ -33,7 +33,7 @@ public class WorkspaceModelManager
 	private Vector workspaceFeatureModels = null;
 	private Vector modelChanges = null;
 	private boolean startup = true;
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 
 	class ModelChange {
 		IModel model;
