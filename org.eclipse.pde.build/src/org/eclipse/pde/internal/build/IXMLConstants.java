@@ -44,6 +44,7 @@ public interface IXMLConstants {
 	public static final String TARGET_INSTALL = "install";
 	public static final String TARGET_JAR = "jar";
 	public static final String TARGET_MAIN = "main";
+	public static final String TARGET_PROPERTIES = "properties";
 	public static final String TARGET_REFRESH = "refresh";
 	public static final String TARGET_SRC = "src";
 	public static final String TARGET_SRC_GATHER_WHOLE = "src.gather.whole";
@@ -72,6 +73,7 @@ public interface IXMLConstants {
 	public static final String PROPERTY_INSTALL = "install";
 	public static final String PROPERTY_INSTALL_LOCATION = "install.location";
 	public static final String PROPERTY_JAR_EXTERNAL = "jar.external";
+	public static final String PROPERTY_JAR_EXTRA_CLASSPATH = "jars.extra.classpath";
 	public static final String PROPERTY_JAR_ORDER = "jars.compile.order";
 	public static final String PROPERTY_NL = "nl";
 	public static final String PROPERTY_OS = "os";

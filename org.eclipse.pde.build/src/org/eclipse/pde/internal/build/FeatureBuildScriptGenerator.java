@@ -397,15 +397,18 @@ protected void generatePrologue() {
 	int tab = 1;
 	script.printProjectDeclaration(feature.getFeatureIdentifier(), TARGET_BUILD_JARS, ".");
 	script.println();
-	script.printProperty(tab, PROPERTY_BUILD_COMPILER, JDT_COMPILER_ADAPTER);
 	script.printProperty(tab, PROPERTY_BOOTCLASSPATH, "");
 	script.printProperty(tab, PROPERTY_WS, BootLoader.getWS());
 	script.printProperty(tab, PROPERTY_OS, BootLoader.getOS());
 	script.printProperty(tab, PROPERTY_ARCH, BootLoader.getOSArch());
 	script.println();
-	script.printTargetDeclaration(tab++, TARGET_INIT, null, null, null, null);
+	script.printTargetDeclaration(tab++, TARGET_INIT, TARGET_PROPERTIES, null, null, null);
 	script.printProperty(tab, PROPERTY_FEATURE, feature.getFeatureIdentifier());
 	script.printProperty(tab, PROPERTY_VERSION, feature.getFeatureVersion());
+	script.printString(--tab, "</target>");
+	script.println();
+	script.printTargetDeclaration(tab++, TARGET_PROPERTIES, null, PROPERTY_ECLIPSE_RUNNING, null, null);
+	script.printProperty(tab, PROPERTY_BUILD_COMPILER, JDT_COMPILER_ADAPTER);
 	script.printString(--tab, "</target>");
 }
 protected void generateChildrenScripts() throws CoreException {
