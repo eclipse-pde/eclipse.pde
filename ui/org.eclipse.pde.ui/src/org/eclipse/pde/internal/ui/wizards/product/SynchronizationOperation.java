@@ -5,9 +5,20 @@ import org.eclipse.swt.widgets.*;
 
 public class SynchronizationOperation extends ProductDefinitionOperation {
 
-	public SynchronizationOperation(IProduct product, String pluginId,
-			String productId, String application, Shell shell) {
-		super(product, null, product.getId(), product.getApplication(), shell);
+	public SynchronizationOperation(IProduct product, Shell shell) {
+		super(product, getPluginId(product), getProductId(product), product.getApplication(), shell);
+	}
+	
+	private static String getProductId(IProduct product) {
+		String full = product.getId();
+		int index = full.lastIndexOf('.');
+		return index != -1 ? full.substring(index + 1) : full;
+	}
+	
+	private static String getPluginId(IProduct product) {
+		String full = product.getId();
+		int index = full.lastIndexOf('.');
+		return index != -1 ? full.substring(0, index) : full;
 	}
 
 }
