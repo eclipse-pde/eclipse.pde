@@ -136,6 +136,8 @@ public class WorkbenchLaunchConfigurationDelegate
 				programArgs.add("file:" + new Path(fConfigDir.getPath()).addTrailingSeparator().toString());
 			else
 				programArgs.add("file:" + new Path(fConfigDir.getPath()).append("platform.cfg").toString());
+			if (configuration.getAttribute(CONFIG_CLEAR, true))
+				LauncherUtils.clearConfigArea(fConfigDir);
 			
 			if (!isOSGI) {
 				if (primaryFeatureId != null) {
@@ -239,14 +241,15 @@ public class WorkbenchLaunchConfigurationDelegate
 			copyFile(eclipsePath, ".eclipseproduct", marker);
 		
 		if (PDECore.getDefault().getModelManager().isOSGiRuntime()) {
-			File configDir = new File(productDir, "configuration");
-			if (!configDir.exists())
-				configDir.mkdirs();		
-			File ini = new File(configDir, "config.ini");			
+			fConfigDir = new File(productDir, "configuration");
+			if (!fConfigDir.exists())
+				fConfigDir.mkdirs();		
+			File ini = new File(fConfigDir, "config.ini");			
 			if (!ini.exists())
 				copyFile(eclipsePath.append("configuration"), "config.ini", ini);
 		} else {
 			File ini = new File(productDir, "install.ini");
+			fConfigDir = productDir;
 			if (!ini.exists()) 
 				copyFile(eclipsePath, "install.ini", ini);		
 		}

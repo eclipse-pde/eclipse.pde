@@ -518,6 +518,24 @@ public class LauncherUtils {
 		return result[0];
 	}
 	
+	public static void clearConfigArea(File configDir) {
+		try {
+			File[] files = configDir.listFiles();
+			if (files != null) {
+				for (int i = 0; i < files.length; i++) {
+					if (!files[i].isDirectory()) {
+						String name = files[i].getName();
+						if (name.equals("config.ini") || name.equals("platform.xml") || name.equals("platform.cfg"))
+							continue;			
+					}
+					deleteContent(files[i]);		
+				}
+			}
+		} catch (IOException e) {
+			showWarningDialog(PDEPlugin.getResourceString("LauncherUtils.problemsDeletingConfig"));
+		}
+	}
+	
 	private static void deleteContent(File curr) throws IOException {
 		if (curr.isDirectory()) {
 			File[] children = curr.listFiles();

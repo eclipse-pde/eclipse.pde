@@ -146,43 +146,46 @@ public class LaunchListener
 				Display.getDefault().asyncExec(new Runnable() {
 					public void run() {
 						try {
-							String workspace = launch.getLaunchConfiguration().getAttribute(ILauncherSettings.LOCATION + "0", "");
-							if (workspace.length() > 0) {
-								File file = new File(workspace, ".metadata/.log");
-								if (file.exists() && MessageDialog.openQuestion(
+							File log = getMostRecentLogFile(launch);
+							if (log != null && MessageDialog.openQuestion(
 								PDEPlugin.getActiveWorkbenchShell(),
 								PDEPlugin.getResourceString("Launcher.error.title"),
 								PDEPlugin.getResourceString("Launcher.error.code13"))) {
-									Program.launch(file.getAbsolutePath());
-								}
+									Program.launch(log.getAbsolutePath());
 							}
 						} catch (CoreException e) {
 						}
 					}
 				});
 			}
+		}
+	}
 
-			try {
-				String configDir = launch.getAttribute(ILauncherSettings.CONFIG_LOCATION);
-				if (configDir != null
-						&& launch.getLaunchConfiguration().getAttribute(ILauncherSettings.CONFIG_CLEAR, true)) {
-					deleteConfig(new File(configDir));
+	private File getMostRecentLogFile(ILaunch launch) throws CoreException {
+		File latest = null;
+		
+		String workspace = launch.getLaunchConfiguration().getAttribute(ILauncherSettings.LOCATION + "0", "");
+		if (workspace.length() > 0) {
+			latest = new File(workspace, ".metadata/.log");
+			if (!latest.exists())
+				latest = null;
+		}
+
+		String dir = launch.getAttribute(ILauncherSettings.CONFIG_LOCATION);
+		if (dir != null) {
+			File configDir = new File(dir);
+			File[] children = configDir.listFiles();
+			if (children != null) {
+				for (int i = 0; i < children.length; i++) {
+					if (!children[i].isDirectory() && children[i].getName().endsWith(".log")) {
+						if (latest == null || latest.lastModified() < children[i].lastModified())
+							latest = children[i];
+					}
 				}
-			} catch (CoreException e) {
 			}
 		}
+
+		return latest;
 	}
 	
-	private void deleteConfig(File file) {
-		if (!file.exists())
-			return;
-			
-		if (file.isDirectory()) {
-			File[] children = file.listFiles();
-			if (children != null)
-			for (int i = 0; i <children.length; i++)
-				deleteConfig(children[i]);
-		}
-		file.delete();
-	}
 }

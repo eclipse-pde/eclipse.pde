@@ -186,6 +186,9 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		else
 			programArgs.add("file:" + new Path(fConfigDir.getPath()).append("platform.cfg").toString());
 
+		if (configuration.getAttribute(CONFIG_CLEAR, true))
+			LauncherUtils.clearConfigArea(fConfigDir);
+		
 		if (!PDECore.getDefault().getModelManager().isOSGiRuntime()) {
 			if (primaryFeatureId != null) {
 				programArgs.add("-feature");
