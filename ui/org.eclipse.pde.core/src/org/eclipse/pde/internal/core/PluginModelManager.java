@@ -364,7 +364,8 @@ public class PluginModelManager implements IAdaptable {
 			return;
 		PDEState state = externalManager.getState();
 		state.removeBundleDescription(description);
-		state.addBundle(new File(model.getInstallLocation()));
+		BundleDescription newDesc = state.addBundle(new File(model.getInstallLocation()));
+		model.setBundleDescription(newDesc);
 		state.resolveState(true);
 	}
 	
