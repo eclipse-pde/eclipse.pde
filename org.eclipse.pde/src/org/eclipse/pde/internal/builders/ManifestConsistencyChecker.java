@@ -563,9 +563,6 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		ISchema schema,
 		PluginErrorReporter reporter) {
 
-		ISchemaElement extensionInfo = schema.findElement("extension");
-		if (extensionInfo != null)
-			validateContentModel(extension, extensionInfo, reporter);
 		IPluginObject[] elements = extension.getChildren();
 		for (int i = 0; i < elements.length; i++) {
 			IPluginElement element = (IPluginElement) elements[i];
