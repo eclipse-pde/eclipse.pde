@@ -82,7 +82,7 @@ public class FeatureSection extends TableSection {
 		section.setText(PDEPlugin.getResourceString("Product.FeatureSection.title")); //$NON-NLS-1$
 		section.setDescription(PDEPlugin.getResourceString("Product.FeatureSection.desc")); //$NON-NLS-1$		
 
-		getProduct().getModel().addModelChangedListener(this);	
+		getModel().addModelChangedListener(this);	
 	}
 	
 	/* (non-Javadoc)
@@ -143,7 +143,9 @@ public class FeatureSection extends TableSection {
 	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
 	 */
 	public void dispose() {
-		getProduct().getModel().removeModelChangedListener(this);
+		IProductModel model = getModel();
+		if (model != null)
+			model.removeModelChangedListener(this);
 		super.dispose();
 	}
 	
@@ -279,8 +281,11 @@ public class FeatureSection extends TableSection {
 
 	
 	private IProduct getProduct() {
-		IBaseModel model = getPage().getPDEEditor().getAggregateModel();
-		return ((IProductModel)model).getProduct();
+		return getModel().getProduct();
+	}
+	
+	private IProductModel getModel() {
+		return (IProductModel) getPage().getPDEEditor().getAggregateModel();	
 	}
 
 	/* (non-Javadoc)

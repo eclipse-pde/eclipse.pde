@@ -107,7 +107,7 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		section.setLayoutData(gd);
 		section.setText(PDEPlugin.getResourceString("Product.PluginSection.title")); //$NON-NLS-1$
 		section.setDescription(PDEPlugin.getResourceString("Product.PluginSection.desc")); //$NON-NLS-1$
-		getProduct().getModel().addModelChangedListener(this);
+		getModel().addModelChangedListener(this);
 	}
 	
 	/* (non-Javadoc)
@@ -169,7 +169,9 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
 	 */
 	public void dispose() {
-		getProduct().getModel().removeModelChangedListener(this);
+		IProductModel model = getModel();
+		if (model != null)
+			model.removeModelChangedListener(this);
 		super.dispose();
 	}
 	
@@ -379,8 +381,11 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 	}
 	
 	private IProduct getProduct() {
-		IBaseModel model = getPage().getPDEEditor().getAggregateModel();
-		return ((IProductModel)model).getProduct();
+		return getModel().getProduct();
+	}
+	
+	private IProductModel getModel() {
+		return (IProductModel) getPage().getPDEEditor().getAggregateModel();	
 	}
 
 	/* (non-Javadoc)
