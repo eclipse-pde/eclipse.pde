@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
+import java.util.ArrayList;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.*;
 import org.eclipse.debug.ui.*;
@@ -69,27 +71,32 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 	 * @return a re-useable config or <code>null</code> if none
 	 */
 	protected ILaunchConfiguration findLaunchConfiguration(String mode) {
-		ILaunchConfigurationType configType= getWorkbenchLaunchConfigType();
-		ILaunchConfiguration[] configs= new ILaunchConfiguration[0];
-		try {
-			configs= DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations(configType);
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
-		}
-		// if there is no config then create one
-		int candidateCount= configs.length;
-		if (candidateCount < 1) {
+		ILaunchConfiguration[] configs =
+			getLaunchConfigurations(getWorkbenchLaunchConfigType());
+			
+		if (configs.length == 0)
 			return createConfiguration();
-		} else if (candidateCount == 1) {
+
+		if (configs.length == 1)
 			return configs[0];
-		} else {
-			// Prompt the user to choose a config. 
-			ILaunchConfiguration config= chooseConfiguration(configs, mode);
-			if (config != null) {
-				return config;
+
+		// Prompt the user to choose a config. 
+		return chooseConfiguration(configs, mode);
+	}
+	
+	private ILaunchConfiguration[] getLaunchConfigurations(ILaunchConfigurationType configType) {
+		ArrayList result = new ArrayList();
+		try {
+			ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
+			ILaunchConfiguration[] configs = manager.getLaunchConfigurations(configType);
+			for (int i = 0; i < configs.length; i++) {
+				if (!DebugUITools.isPrivate(configs[i]))
+					result.add(configs[i]);
 			}
+		} catch (CoreException e) {
 		}
-		return null;
+		return (ILaunchConfiguration[]) result.toArray(
+			new ILaunchConfiguration[result.size()]);
 	}
 	
 	/**
