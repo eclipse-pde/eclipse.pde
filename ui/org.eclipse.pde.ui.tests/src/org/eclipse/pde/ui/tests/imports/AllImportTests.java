@@ -15,7 +15,7 @@ import junit.framework.*;
 public class AllImportTests {
 	
 	public static Test suite() {
-		TestSuite suite = new TestSuite("Test Suite to test the plug-in import wizard."); //$NON-NLS-1$
+		TestSuite suite = new TestSuite("Test Suite to test the plug-in and feature import wizards."); //$NON-NLS-1$
 		suite.addTest(ImportWithLinksTestCase.suite());
 		suite.addTest(ImportAsBinaryTestCase.suite());
 		suite.addTest(ImportAsSourceTestCase.suite());
