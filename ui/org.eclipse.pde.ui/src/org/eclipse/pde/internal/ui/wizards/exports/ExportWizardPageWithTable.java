@@ -173,6 +173,7 @@ public abstract class ExportWizardPageWithTable extends BaseExportWizardPage {
 			message = validateBottomSections();
 		}
 		setMessage(message);
+		setPageComplete(message == null);
 	}
 
 }
