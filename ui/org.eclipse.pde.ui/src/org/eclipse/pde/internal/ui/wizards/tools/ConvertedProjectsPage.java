@@ -157,6 +157,8 @@ public class ConvertedProjectsPage extends WizardPage  {
 		WorkspacePluginModel model = new WorkspacePluginModel(file);
 		model.load();
 		IPlugin plugin = model.getPlugin();
+		if (PDECore.getDefault().getModelManager().isOSGiRuntime())
+			plugin.setSchemaVersion("3.0"); //$NON-NLS-1$
 		plugin.setId(file.getProject().getName());
 		plugin.setName(createInitialName(plugin.getId()));
 		plugin.setVersion("1.0.0"); //$NON-NLS-1$
