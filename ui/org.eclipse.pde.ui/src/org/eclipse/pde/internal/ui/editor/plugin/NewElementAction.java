@@ -53,7 +53,7 @@ public String createDefaultClassName(ISchemaAttribute attInfo, int counter) {
 		int dotLoc = className.lastIndexOf('.');
 		if (dotLoc != -1)
 			className = className.substring(dotLoc + 1);
-		if (className.charAt(0) == 'I')
+		if (className.length() > 2 && className.charAt(0) == 'I' && Character.isUpperCase(className.charAt(1)))
 			className = className.substring(1);
 	}
 	className += counter;
