@@ -27,6 +27,7 @@ import org.eclipse.pde.internal.base.model.plugin.*;
 import org.eclipse.pde.internal.preferences.*;
 import org.eclipse.pde.internal.wizards.*;
 import org.eclipse.swt.custom.*;
+import java.lang.reflect.InvocationTargetException;
 
 
 public class ExternalPluginsBlock implements ICheckStateListener {
@@ -235,13 +236,22 @@ private void globalSelect(IPluginModel[] models, boolean selected) {
 private void handleReload() {
 	final String platformPath = editor.getPlatformPath();
 	if (platformPath != null && platformPath.length() > 0) {
-		BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
-			public void run() {
-				registry.reload(platformPath, null);
-				pluginListViewer.setInput(registry);
-				initializeDefault(false);
+		IRunnableWithProgress op = new IRunnableWithProgress () {
+			public void run(IProgressMonitor monitor) {
+				registry.reload(platformPath, monitor);
 			}
-		});
+		};
+		ProgressMonitorDialog pm = new ProgressMonitorDialog(control.getShell());
+		pluginListViewer.setInput(registry);
+		initializeDefault(false);
+		try {
+			pm.run(true, false, op);
+		}
+		catch (InterruptedException e) {
+		}
+		catch (InvocationTargetException e) {
+			PDEPlugin.logException(e);
+		}
 	} else {
 		registry.clear();
 		pluginListViewer.setInput(null);

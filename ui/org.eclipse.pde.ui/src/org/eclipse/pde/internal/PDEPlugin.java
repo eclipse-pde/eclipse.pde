@@ -291,9 +291,14 @@ public class PDEPlugin extends AbstractUIPlugin {
 	}
 	public void startup() throws CoreException {
 		super.startup();
+
+		if (isVAJ() == false)
+			initializePlatformPath();
+
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				JavaRuntime.initializeJREVariables(monitor);
+				getExternalModelManager().getEclipseHome(monitor);
 			}
 		};
 		try {
@@ -306,9 +311,7 @@ public class PDEPlugin extends AbstractUIPlugin {
 		manager.registerAdapters(new PluginAdapterFactory(), IPluginObject.class);
 		manager.registerAdapters(new ComponentAdapterFactory(), IComponentObject.class);
 		// set eclipse home variable if not sets
-		if (isVAJ() == false)
-			initializePlatformPath();
-		getExternalModelManager().getEclipseHome();
+
 		getWorkspaceModelManager().reset();
 	}
 

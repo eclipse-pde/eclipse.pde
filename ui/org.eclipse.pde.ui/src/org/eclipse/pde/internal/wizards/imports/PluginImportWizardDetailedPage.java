@@ -40,6 +40,7 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 	private CheckboxTableViewer pluginListViewer;
 	private Button deselectAllButton;
 	private Button selectAllButton;
+	private Button invertSelectionButton;
 	private Button existingButton;
 	private Button existingBinaryButton;
 	private Button existingExternalButton;
@@ -54,6 +55,8 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 		"ImportWizard.DetailedPage.selectAll";
 	private static final String KEY_DESELECT_ALL =
 		"ImportWizard.DetailedPage.deselectAll";
+	private static final String KEY_INVERT_SELECTION =
+		"ImportWizard.DetailedPage.invertSelection";
 	private static final String KEY_EXISTING = "ImportWizard.DetailedPage.existing";
 	private static final String KEY_EXISTING_BINARY =
 		"ImportWizard.DetailedPage.existingBinary";
@@ -268,6 +271,12 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 				buttons1,
 				PDEPlugin.getResourceString(KEY_DESELECT_ALL),
 				buttonListener);
+		invertSelectionButton =
+			createButton(
+				buttons1,
+				PDEPlugin.getResourceString(KEY_INVERT_SELECTION),
+				buttonListener);
+
 
 		existingButton =
 			createButton(
@@ -445,6 +454,10 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 			deselectAll();
 			return;
 		}
+		if (button.equals(invertSelectionButton)) {
+			invertSelection();
+			return;
+		}
 		ArrayList checked = null;
 		if (button.equals(existingButton))
 			checked = selectExistingProjects();
@@ -476,6 +489,21 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 			selected.add(models[i]);
 		}
 		counter = models.length;
+		dialogChanged();
+	}
+	
+	private void invertSelection() {
+		IPluginModelBase[] models = getModels();
+		selected.clear();
+
+		//pluginListViewer.setAllChecked(true);
+		for (int i = 0; i < models.length; i++) {
+			Object model = models[i];
+			if (!pluginListViewer.getChecked(model))
+			   selected.add(model);
+		}
+		counter = selected.size();
+		pluginListViewer.setCheckedElements(selected.toArray());
 		dialogChanged();
 	}
 

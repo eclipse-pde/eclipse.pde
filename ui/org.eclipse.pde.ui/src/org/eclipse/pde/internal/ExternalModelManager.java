@@ -60,9 +60,9 @@ public class ExternalModelManager {
 		models = null;
 	}
 
-	private static IPath createEclipseRelativeHome(String installLocation) {
+	private static IPath createEclipseRelativeHome(String installLocation, IProgressMonitor monitor) {
 		IPath fullPath = new Path(installLocation);
-		IPath eclipseHome = getEclipseHome();
+		IPath eclipseHome = getEclipseHome(monitor);
 		int nmatching = fullPath.matchingFirstSegments(eclipseHome);
 		return fullPath.removeFirstSegments(nmatching);
 	}
@@ -109,15 +109,16 @@ public class ExternalModelManager {
 		}
 	}
 
-	public static IPath getEclipseHome() {
+	public static IPath getEclipseHome(IProgressMonitor monitor) {
 		IPath eclipseHome =
 			JavaCore.getClasspathVariable(PDEPlugin.ECLIPSE_HOME_VARIABLE);
 		if (eclipseHome == null) {
 			IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-			String newValue = store.getString(TargetPlatformPreferencePage.PROP_PLATFORM_PATH);
+			String newValue =
+				store.getString(TargetPlatformPreferencePage.PROP_PLATFORM_PATH);
 			if (newValue == null || newValue.length() == 0)
 				return null;
-			setEclipseHome(newValue);
+			setEclipseHome(newValue, monitor);
 		}
 		return eclipseHome;
 	}
@@ -213,7 +214,7 @@ public class ExternalModelManager {
 
 	protected static void processPluginDescriptorModel(
 		Vector result,
-		PluginDescriptorModel descriptorModel) {
+		PluginDescriptorModel descriptorModel, IProgressMonitor monitor) {
 		ExternalPluginModel model = new ExternalPluginModel();
 		String location = descriptorModel.getLocation();
 		try {
@@ -222,7 +223,7 @@ public class ExternalModelManager {
 			IPath path = new Path(localLocation).removeTrailingSeparator();
 			model.setInstallLocation(path.toOSString());
 			model.setEclipseHomeRelativePath(
-				createEclipseRelativeHome(model.getInstallLocation()));
+				createEclipseRelativeHome(model.getInstallLocation(), monitor));
 		} catch (MalformedURLException e) {
 			model.setInstallLocation(location);
 		}
@@ -239,7 +240,8 @@ public class ExternalModelManager {
 		Vector result,
 		String[] pluginPaths,
 		IProgressMonitor monitor) {
-		MultiStatus errors = processPluginDirectories(result, pluginPaths, true, monitor);
+		MultiStatus errors =
+			processPluginDirectories(result, pluginPaths, true, monitor);
 		if (errors != null && errors.getChildren().length > 0) {
 			ResourcesPlugin.getPlugin().getLog().log(errors);
 		}
@@ -268,15 +270,17 @@ public class ExternalModelManager {
 			PluginRegistryModel registryModel =
 				Platform.parsePlugins(urls, new Factory(errors));
 			IStatus resolveStatus = null;
-			if (resolve) resolveStatus = registryModel.resolve(true, false);
+			if (resolve)
+				resolveStatus = registryModel.resolve(true, false);
 			PluginDescriptorModel[] pluginDescriptorModels = registryModel.getPlugins();
 			for (int i = 0; i < pluginDescriptorModels.length; i++) {
 				PluginDescriptorModel pluginDescriptorModel = pluginDescriptorModels[i];
 				monitor.subTask(pluginDescriptorModel.getId());
 				if (pluginDescriptorModel.getEnabled())
-					processPluginDescriptorModel(result, pluginDescriptorModels[i]);
+					processPluginDescriptorModel(result, pluginDescriptorModels[i], monitor);
 			}
-			if (resolve) errors.merge(resolveStatus);
+			if (resolve)
+				errors.merge(resolveStatus);
 			return errors;
 		} catch (MalformedURLException e) {
 			return null;
@@ -285,13 +289,14 @@ public class ExternalModelManager {
 
 	public boolean reload(String platformPath, IProgressMonitor monitor) {
 		models = new Vector();
+
+		if (monitor == null)
+			monitor = new NullProgressMonitor();
 		if (platformPath != null)
-			setEclipseHome(platformPath);
+			setEclipseHome(platformPath, monitor);
 		String[] paths = getPluginPaths(platformPath);
 		if (paths.length == 0)
 			return false;
-		if (monitor == null)
-			monitor = new NullProgressMonitor();
 
 		internalProcessPluginDirectories(models, paths, monitor);
 
@@ -302,31 +307,18 @@ public class ExternalModelManager {
 		listeners.remove(listener);
 	}
 
-	public static void setEclipseHome(final String newValue) {
-		IRunnableWithProgress op = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException {
-				try {
-					JavaCore.setClasspathVariable(
-						PDEPlugin.ECLIPSE_HOME_VARIABLE,
-						new Path(newValue),
-						monitor);
-
-				} catch (JavaModelException e) {
-					throw new InvocationTargetException(e);
-				}
-				finally {
-					monitor.done();
-				}
-			}
-		};
-		ProgressMonitorDialog pm =
-			new ProgressMonitorDialog(PDEPlugin.getActiveWorkbenchShell());
+	public static void setEclipseHome(
+		final String newValue,
+		IProgressMonitor monitor) {
 		try {
-			pm.run(true, false, op);
-		} catch (InvocationTargetException e) {
+			JavaCore.setClasspathVariable(
+				PDEPlugin.ECLIPSE_HOME_VARIABLE,
+				new Path(newValue),
+				monitor);
+		} catch (JavaModelException e) {
 			PDEPlugin.logException(e);
-		} catch (InterruptedException e) {
-			PDEPlugin.logException(e);
+		} finally {
+			monitor.done();
 		}
 	}
 }
