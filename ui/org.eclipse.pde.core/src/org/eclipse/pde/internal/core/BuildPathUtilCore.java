@@ -12,6 +12,7 @@ import org.eclipse.jdt.core.*;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
+import org.eclipse.pde.internal.core.plugin.WorkspaceFragmentModel;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
 
 /**
@@ -246,24 +247,26 @@ public class BuildPathUtilCore {
 		IPluginModelBase model,
 		IPluginLibrary library,
 		Vector result) {
+			
 		IPlugin plugin = (IPlugin) model.getPluginBase();
-		IResource resource = model.getUnderlyingResource();
-
-		IFragmentModel[] fmodels;
-
-		if (resource != null)
-			fmodels =
+		
+		IFragmentModel[] wfmodels =
 				PDECore
 					.getDefault()
 					.getWorkspaceModelManager()
 					.getWorkspaceFragmentModels();
-		else
-			fmodels =
+		IFragmentModel[]extfmodels =
 				PDECore
 					.getDefault()
 					.getExternalModelManager()
 					.getFragmentModels(
 					null);
+		IFragmentModel[] fmodels = new IFragmentModel[wfmodels.length + extfmodels.length];
+
+					
+		System.arraycopy(wfmodels,0,fmodels,0,wfmodels.length);
+		System.arraycopy(extfmodels,0,fmodels,wfmodels.length,extfmodels.length);
+		
 		for (int i = 0; i < fmodels.length; i++) {
 			IFragmentModel fmodel = fmodels[i];
 			if (fmodel.isEnabled() == false)
@@ -279,7 +282,8 @@ public class BuildPathUtilCore {
 					fragment.getRule())) {
 
 				IClasspathEntry entry =
-					PluginPathUpdater.createLibraryEntry(
+					PluginPathUpdater.createLibraryEntryFromFragment(
+						fmodel,
 						library,
 						getRootPath(fmodel),
 						false);
@@ -310,6 +314,9 @@ public class BuildPathUtilCore {
 		IProject project = resource != null ? resource.getProject() : null;
 		IPath path = entry.getPath();
 		if (project == null) {
+			IPath resolvedPath = JavaCore.getResolvedVariablePath(path);
+			if (resolvedPath != null)
+				path = resolvedPath;
 			return path.toFile().exists();
 		} else {
 			IWorkspaceRoot root = project.getWorkspace().getRoot();

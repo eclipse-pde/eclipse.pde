@@ -13,6 +13,7 @@ import org.eclipse.jdt.core.*;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.plugin.ExternalPluginModelBase;
+import org.eclipse.pde.internal.core.plugin.WorkspaceFragmentModel;
 
 public class PluginPathUpdater {
 	public static final String KEY_UPDATING = "PluginPathUpdater.updating";
@@ -234,6 +235,45 @@ public class PluginPathUpdater {
 				unconditionallyExport ? true : library.isFullyExported());
 	}
 
+	public static IClasspathEntry createLibraryEntryFromFragment(
+		IFragmentModel fragment,
+		IPluginLibrary library,
+		IPath rootPath,
+		boolean unconditionallyExport) {
+		String name = expandLibraryName(library.getName());
+		boolean variable = rootPath.segment(0).equals("ECLIPSE_HOME");
+		IPath libraryPath = rootPath.append(name);
+		IPath[] sourceAnnot =
+			getSourceAnnotation(fragment.getPluginBase(), rootPath, name);
+			
+		// to accomodate cases where the fragment does not contain any library
+		// entries, yet contains .jar files referenced by the parent plug-in.
+		// e.g. the SWT case.	
+		if (fragment instanceof WorkspaceFragmentModel
+			&& fragment.getPluginBase().getLibraries().length == 0) {
+			for (int i = 0; i < sourceAnnot.length; i++) {
+				if (sourceAnnot[i] != null) {
+					IPath resolvedPath = JavaCore.getResolvedVariablePath(sourceAnnot[i]);
+					if (resolvedPath != null)
+						sourceAnnot[i] = resolvedPath;
+				}
+			}
+		}
+		
+		if (variable)
+			return JavaCore.newVariableEntry(
+				libraryPath,
+				sourceAnnot[0],
+				sourceAnnot[1],
+				unconditionallyExport ? true : library.isFullyExported());
+				
+		return JavaCore.newLibraryEntry(
+				libraryPath,
+				sourceAnnot[0],
+				sourceAnnot[1],
+				unconditionallyExport ? true : library.isFullyExported());
+	}
+	
 	private static boolean isEntryAdded(IPath path, int kind, Vector entries) {
 		for (int i = 0; i < entries.size(); i++) {
 			IClasspathEntry entry = (IClasspathEntry) entries.elementAt(i);
