@@ -83,9 +83,9 @@ public class NewFeatureProjectWizard
 	
 	public boolean canFinish() {
 		IWizardPage page = getContainer().getCurrentPage();
-		if (page == structurePage && page.isPageComplete())
-			return true;
-		return super.canFinish();
+		return ((page == specPage && structurePage.isInitialized())
+			|| (page == structurePage && page.isPageComplete()) 
+			|| (page == pluginListPage && page.isPageComplete()));
 	}
 
 	private boolean hasInterestingProjects() {

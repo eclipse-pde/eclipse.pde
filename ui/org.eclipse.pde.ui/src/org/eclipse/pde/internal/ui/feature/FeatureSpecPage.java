@@ -127,9 +127,6 @@ public void setVisible(boolean visible) {
 	}
 }
 
-public boolean canFinish() {
-	return false;
-}
 public FeatureData getFeatureData() {
 	FeatureData data = new FeatureData();
 	data.id = idText.getText();
