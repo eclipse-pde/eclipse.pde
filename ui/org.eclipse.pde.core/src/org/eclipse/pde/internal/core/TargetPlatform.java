@@ -361,7 +361,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 		return (String[])result.toArray(new String[result.size()]);
 	}
 	
-	public static String[] getProductNames() {
+	public static TreeSet getProductNameSet() {
 		TreeSet result = new TreeSet();
 		IPluginModelBase[] plugins = PDECore.getDefault().getModelManager().getPlugins();
 		for (int i = 0; i < plugins.length; i++) {
@@ -382,6 +382,11 @@ public class TargetPlatform implements IEnvironmentVariables {
 				}
 			}
 		}
+		return result;
+	}
+	
+	public static String[] getProductNames() {
+		TreeSet result = getProductNameSet();
 		return (String[])result.toArray(new String[result.size()]);
 	}
 

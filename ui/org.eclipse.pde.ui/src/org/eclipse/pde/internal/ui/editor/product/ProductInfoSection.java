@@ -109,6 +109,13 @@ public class ProductInfoSection extends PDESection {
 		dialog.create();
 		SWTUtil.setDialogSize(dialog, 400, 500);
 		if (dialog.open() == WizardDialog.OK) {
+			String id = wizard.getProductId();
+			fProductCombo.add(id, 0);
+			fProductCombo.setText(id);
+			getProduct().setId(id);
+			String app = wizard.getApplication();
+			fAppCombo.setText(app);
+			getProduct().setApplication(app);
 		}
 	}
 
