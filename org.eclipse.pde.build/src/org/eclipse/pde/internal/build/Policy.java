@@ -5,10 +5,11 @@ package org.eclipse.pde.internal.core;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.*;
 import java.util.*;
 
-class Policy {
+import org.eclipse.core.runtime.*;
+
+public class Policy {
 	private static ResourceBundle bundle;
 	private static final String bundleName = "org.eclipse.pde.internal.core.messages";
 

@@ -3,79 +3,327 @@ package org.eclipse.pde.internal.core;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
+/**
+ * Generic class for generating scripts for plug-ins and fragments.
+ */
+public abstract class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
-abstract class ModelBuildScriptGenerator extends PluginTool {
+	/**
+	 * PluginModel to generate script from.
+	 */
+	protected PluginModel model;
+	
+	/**
+	 * FIXME: add comment
+	 */
+	protected Map devJars;
 
-	private Map jarsCache = new HashMap(9);
-	private List requiredJars = null;
-	private Hashtable devJars = null;
-	private Hashtable trimmedDevJars = null;
-	private ArrayList jarOrder = null;
-	private PluginModel modelsToGenerate[] = null;
-	private Vector commandLineModelNames = new Vector();
-	
-	// constant output filenames
-	private static final String DEFAULT_FILENAME_BIN = ".zip";
-	private static final String DEFAULT_FILENAME_SRC = ".src.zip";
-	private static final String DEFAULT_FILENAME_LOG = ".log.zip";
-	private static final String DEFAULT_FILENAME_DOC = ".doc.zip";
-	private static final String OUTPUT_FILENAME = "build.xml";
-	
-	private static final String JAVADOC_EXTENSION = ".javadoc";
-	private static final String PLUGIN_RUNTIME = "org.eclipse.core.runtime";
-	private static final String SOURCE_EXTENSION = "src.zip";
-	private static final String RUNTIME_FILENAME = "runtime.jar";
-	private static final String BOOT_FILENAME = "org.eclipse.core.boot/boot.jar";
-	private static final String SOURCE_PREFIX = "source.";
-	private static final String WS = "$ws$";
-	private static final String VARIABLE_WS = "${ws}";
-	private static final String OS = "$os$";
-	private static final String VARIABLE_OS = "${os}";
-	private static final String NL = "$nl$";
-	private static final String VARIABLE_NL = "${nl}";
-		
-public ModelBuildScriptGenerator() {
-	super();
+	/**
+	 * FIXME: add comment
+	 */
+	protected Map jarsCache;
+
+	/**
+	 * FIXME: add comment
+	 */
+	protected List requiredJars;
+
+	/**
+	 * FIXME: add comment
+	 */
+	protected Map trimmedDevJars;
+
+	/**
+	 * FIXME: add comment
+	 */
+	protected List jarOrder;
+
+
+/**
+ * @see AbstractScriptGenerator#generate()
+ */
+public void generate() throws CoreException {
+	if (model == null)
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_ELEMENT_MISSING, Policy.bind("error.missingElement"), null));
+
+	// if the model defines its own custom script, we just skip from generating it
+	String custom = getBuildProperty(PROPERTY_CUSTOM);
+	if (custom != null && custom.equalsIgnoreCase("true"))
+		return;
+
+	try {
+		File root = new File(getModelLocation(model));
+		File target = new File(root, DEFAULT_BUILD_SCRIPT_FILENAME);
+		PrintWriter output = new PrintWriter(new FileOutputStream(target));
+		try {
+			generateBuildScript(output);
+		} finally {
+			output.flush();
+			output.close();
+		}
+	} catch (IOException e) {
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_WRITING_SCRIPT, Policy.bind("exception.writeScript"), e));
+	}
 }
-public ModelBuildScriptGenerator(PluginModel modelsToGenerate[], PluginRegistryModel registry) {
-	this();
-	setModelsToGenerate(modelsToGenerate);
-	setRegistry(registry);
+
+/**
+ * Main call for generating the script.
+ */
+protected void generateBuildScript(PrintWriter output) throws CoreException {
+	generatePrologue(output);
+
+	generateUpdateJarTarget(output);
+	generateGatherBinPartsTarget(output);
+	generateBuildJarsTarget(output);
+
+	generateGatherSourcesTarget(output);
+	generateBuildSourcesTarget(output);
+
+	generateGatherLogTarget(output);
+
+	generateCleanTarget(output);
+	generateEpilogue(output);
 }
-protected void addEntry(List list, Object entry) {
-	for (Iterator i = list.iterator(); i.hasNext();) 
-		if (i.next().equals(entry))
-			return;
-	list.add(entry);
+
+protected void generateCleanTarget(PrintWriter output) {
+	int tab = 1;
+	output.println();
+	printTargetDeclaration(output, tab, TARGET_CLEAN, TARGET_INIT, null, null, null);
+	tab++;
+	ArrayList jars = new ArrayList(9);
+	ArrayList zips = new ArrayList(9);
+	for (Iterator i = jarOrder.iterator(); i.hasNext();) {
+		String jar = removeBraces((String) i.next());
+		jars.add(jar);
+		zips.add(jar.substring(0, jar.length() - 4) + "src.zip");
+	}
+	String compiledJars = getStringFromCollection(jars, "", "", ",");
+	String sourceZips = getStringFromCollection(zips, "", "", ",");
+	String basedir = getRelativeInstallLocation().toString();
+	List fileSet = new ArrayList(5);
+	if (compiledJars.length() > 0) {
+		fileSet.add(new FileSet(basedir, null, "*.bin", null, null, null, null));
+		fileSet.add(new FileSet(basedir, null, "**/*.log", null, null, null, null));
+		fileSet.add(new FileSet(basedir, null, compiledJars, null, null, null, null));
+		fileSet.add(new FileSet(basedir, null, sourceZips, null, null, null, null));
+	}
+	fileSet.add(new FileSet(basedir, null, "**/*.pdetemp", null, null, null, null));
+	printDeleteTask(output, tab, null, null, (FileSet[]) fileSet.toArray(new FileSet[fileSet.size()]));
+	printDeleteTask(output, tab, null, getModelFileBase() + ".jar", null);
+	printDeleteTask(output, tab, null, getModelFileBase() + DEFAULT_FILENAME_SRC, null);
+	printDeleteTask(output, tab, null, getModelFileBase() + DEFAULT_FILENAME_LOG, null);
+	tab--;
+	printString(output, tab, "</target>");
 }
-protected String computeCompilePathClause(PluginModel descriptor, String fullJar) {
+
+protected void generateGatherLogTarget(PrintWriter output) {
+	int tab = 1;
+	output.println();
+	printTargetDeclaration(output, tab, TARGET_GATHER_LOG, TARGET_INIT, null, null, null);
+	tab++;
+	IPath base = new Path(getPropertyFormat(PROPERTY_DESTINATION));
+	base = base.append(DEFAULT_PLUGIN_LOCATION);
+	base = base.append(getPropertyFormat(getModelTypeName()));
+	printProperty(output, tab, PROPERTY_BASE, base.toString());
+	printMkdirTask(output, tab, getPropertyFormat(PROPERTY_BASE));
+	FileSet fileSet = new FileSet(getRelativeInstallLocation().toString(), null, "*.log", null, null, null, null);
+	printCopyTask(output, tab, null, getPropertyFormat(PROPERTY_BASE), new FileSet[] {fileSet});
+	tab--;
+	printString(output, tab, "</target>");
+}
+
+
+protected void generateBuildSourcesTarget(PrintWriter output) throws CoreException {
+	StringBuffer jars = new StringBuffer();
+	for (Iterator i = jarOrder.iterator(); i.hasNext();) {
+		jars.append(",");
+		// zip name is jar name without the ".jar" but with "src.zip" appended
+		String jar = (String) i.next();
+		String zip = removeBraces(jar);
+		zip = zip.substring(0, zip.length() - 4) + "src.zip";
+		jars.append(zip);
+		generateSourceIndividualTarget(output, jar, zip);
+	}
+	output.println();
+	printTargetDeclaration(output, 1, TARGET_BUILD_SOURCES, TARGET_INIT + jars.toString(), null, null, null);
+	printString(output, 1, "</target>");
+}
+
+protected void generateSourceIndividualTarget(PrintWriter output, String relativeJar, String target) throws CoreException {
+	int tab = 1;
+	output.println();
+	printTargetDeclaration(output, tab, target, TARGET_INIT, null, null, null);
+	tab++;
+	String fullJar = null;
+	try {
+		fullJar = new URL(model.getLocation() + relativeJar).getFile();
+	} catch (MalformedURLException e) {
+		// should not happen
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_MALFORMED_URL, Policy.bind("exception.url") ,e));
+	}
+	Collection source = (Collection) getTrimmedDevJars().get(fullJar);
+	String mapping = ""; 
+	String src = ""; 
+	if (source != null && !source.isEmpty()) {
+		mapping = getStringFromCollection(source, "", "", ",");
+		source = trimSlashes(source);
+		src = getSourceList(source, "**/*.java");
+	}
+	if (src.length() != 0) {
+		Map properties = new HashMap(1);
+		properties.put("mapping", mapping);
+		String inclusions = getBuildProperty(PROPERTY_SRC_INCLUDES);
+		if (inclusions == null)
+			inclusions = src;
+		properties.put("includes", inclusions);
+		String exclusions = getBuildProperty(PROPERTY_SRC_EXCLUDES);
+		if (exclusions == null)
+			exclusions = ""; // FIXME: why empty???
+		properties.put("excludes", exclusions);
+		IPath destination = getRelativeInstallLocation();
+		destination = destination.append(target);
+		properties.put("dest", destination.toString());
+		printAntTask(output, tab, "${template}", null, TARGET_SRC, null, null, properties);
+	}
+	tab--;
+	printString(output, tab, "</target>");
+}
+
+/**
+ * FIXME: add comment
+ */
+protected String getSourceList (Collection source, String ending) {
+	ArrayList srcList = new ArrayList(source.size());
+	for (Iterator i = source.iterator(); i.hasNext();) {
+		String entry = (String)i.next();
+		srcList.add(entry.endsWith("/") ? entry + ending : entry);
+	}
+	return getStringFromCollection(srcList, "", "", ",");
+}
+
+protected void generateGatherSourcesTarget(PrintWriter output) {
+	int tab = 1;
+	output.println();
+	printTargetDeclaration(output, tab, TARGET_GATHER_SOURCES, TARGET_INIT, PROPERTY_DESTINATION, null, null);
+	tab++;
+	IPath destination = new Path(getPropertyFormat(PROPERTY_DESTINATION));
+	destination = destination.append(getDirectoryName());
+	String dest = destination.toString();
+	printMkdirTask(output, tab, dest);
+	for (Iterator i = jarOrder.iterator(); i.hasNext();) {
+		// zip name is jar name without the ".jar" but with "src.zip" appended
+		String jar = (String) i.next();
+		String zip = removeBraces(jar);
+		zip = zip.substring(0, zip.length() - 4) + "src.zip";
+		printCopyTask(output, tab, zip, dest, null);
+	}
+	tab--;
+	printString(output, tab, "</target>");
+}
+
+
+
+protected void generateBuildJarsTarget(PrintWriter output) throws CoreException {
+	StringBuffer jars = new StringBuffer();
+	for (Iterator i = jarOrder.iterator(); i.hasNext();) {
+		jars.append(',');
+		String currentJar = (String) i.next();
+		jars.append(removeBraces(currentJar));
+		generateJarIndividualTarget(output, currentJar);
+	}
+	output.println();
+	printTargetDeclaration(output, 1, TARGET_BUILD_JARS, TARGET_INIT + jars.toString(), null, null, null);
+	printString(output, 1, "</target>");
+}
+
+protected String removeBraces (String entry) {
+	int start = entry.indexOf('{');
+	if (start == -1)
+		return entry;
+	int end = entry.indexOf('}');
+	String result = entry.substring(0, start);
+	result += entry.substring(start + 1, end);
+	result += entry.substring(end + 1);
+	return result;
+}
+
+protected void generateJarIndividualTarget(PrintWriter output, String relativeJar) throws CoreException {
+	int tab = 1;
+	output.println();
+	String jarName = removeBraces(relativeJar);
+	printTargetDeclaration(output, tab, jarName, TARGET_INIT, null, null, null);
+	tab++;
+	String fullJar = null;
+	try {
+		fullJar = new URL(model.getLocation() + relativeJar).getFile();
+	} catch (MalformedURLException e) {
+		// should not happen
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_MALFORMED_URL, Policy.bind("exception.url") ,e));
+	}
+	Collection source = (Collection) getTrimmedDevJars().get(fullJar);
+	String mapping = ""; 
+	String src = ""; 
+	if (source != null && !source.isEmpty()) {
+		mapping = getStringFromCollection(source, "", "", ",");
+		source = trimSlashes(source);
+		src = getStringFromCollection(source, "", "", ",");
+	}
+	if (src.length() != 0) {
+		String compilePath = computeCompilePathClause(fullJar);
+		Map properties = new HashMap(1);
+		properties.put("mapping", mapping);
+		properties.put("includes", src);
+		properties.put("excludes", ""); // FIXME: why empty??? should we bother leaving it here??
+		IPath destination = getRelativeInstallLocation();
+		destination = destination.append(jarName);
+		properties.put("dest", destination.toString());
+		properties.put("compilePath", compilePath);
+		printAntTask(output, tab, "${template}", null, TARGET_JAR, null, null, properties);
+	}
+	tab--;
+	printString(output, tab, "</target>");
+}
+
+protected IPath getRelativeInstallLocation() {
+	IPath destination = new Path(getPropertyFormat(PROPERTY_INSTALL));
+	destination = destination.append(getDirectoryName());
+	return destination;
+}
+
+/**
+ * FIXME: 
+ *		+ add comments
+ * 		+ figure out if this is the best way of using dev entries
+ *			+ what if boot and runtime are not compiled?
+ */
+protected String computeCompilePathClause(String fullJar) throws CoreException {
 	List jars = new ArrayList(9);
-	List devEntries = getDevEntries();
-	PluginModel desc = getRegistry().getPlugin(PLUGIN_RUNTIME);
-	if (desc == null)
-		addProblem(new Status(IStatus.WARNING, PluginTool.PI_PDECORE, 13, "XXX missing runtime plugin", null));
+	PluginModel runtime = getRegistry().getPlugin(PI_RUNTIME);
+	if (runtime == null)
+		throw new CoreException(new Status(IStatus.WARNING, PI_PDECORE, EXCEPTION_PLUGIN_MISSING, Policy.bind("exception.missingPlugin", PI_RUNTIME), null));
 	else {
+		String runtimeLocation = getModelLocation(runtime);
 		if (devEntries != null)
 			for (Iterator i = devEntries.iterator(); i.hasNext();) 
-				addEntry(jars, getLocation(desc) + i.next());
-		addEntry(jars, getLocation(desc) + RUNTIME_FILENAME);
-		// The boot jar must be located relative to the runtime jar.  This reflects the actual
-		// runtime requirements.
-		String location = new Path(getLocation(desc)).removeLastSegments(1).toString();
+				addEntry(jars, runtimeLocation + i.next());
+		addEntry(jars, runtimeLocation + PI_RUNTIME_JAR_NAME);
+		// The boot jar must be located relative to the runtime jar.
+		// This reflects the actual runtime requirements.
+		String pluginsLocation = new Path(runtimeLocation).removeLastSegments(1).toString();
 		if (devEntries != null)
 			for (Iterator i = devEntries.iterator(); i.hasNext();) 
-				addEntry(jars, location + "org.eclipse.core.boot/" +  i.next());
-		addEntry(jars, location + BOOT_FILENAME);
+				addEntry(jars, pluginsLocation + PI_BOOT + "/" +  i.next());
+		addEntry(jars, pluginsLocation + PI_BOOT + "/" + PI_BOOT_JAR_NAME);
 	}
 
-	for (Iterator i = requiredJars.iterator(); i.hasNext();) 
+	for (Iterator i = getRequiredJars().iterator(); i.hasNext();) 
 		addEntry(jars, i.next());
 	// see if the relative jar is in variable form (e.g., {ws/win32})
 	String[] var = extractVars(fullJar);
@@ -102,54 +350,42 @@ protected String computeCompilePathClause(PluginModel descriptor, String fullJar
 	}
 	if (devEntries != null)
 		for (Iterator i = devEntries.iterator(); i.hasNext();) 
-			jars.remove(getLocation(descriptor) + i.next());
+			jars.remove(getModelLocation(model) + i.next());
 	
-	List relativeJars = makeRelative(jars, new Path(getLocation(descriptor)));
+	List relativeJars = makeRelative(jars, installLocation);
 	String result = getStringFromCollection(relativeJars, "", "", ";");
 	result = replaceVariables(result);
 	return result;
 }
-protected String computeCompleteSrc(PluginModel descriptor) {
-	Set jars = new HashSet(9);
-	for (Iterator i = devJars.values().iterator(); i.hasNext();)
-		jars.addAll((Collection)i.next());
-	return getStringFromCollection(jars, "", "", ",");
-}
+
 /**
- * Performs script generation for the configured plugins or fragments.
- * Returns an <code>IStatus</code> detailing errors that occurred during
- * generation.
- * 
- * @return the errors that occurred during generation
+ * Makes the list of jars relative to the base property.
  */
-public IStatus execute() {
-	if (modelsToGenerate == null)
-		retrieveCommandLineModels();
-		
-	for (int i = 0; i < modelsToGenerate.length; i++) {
-		
-		// do we need to generate build.xml?
-		Properties properties = getProperties(modelsToGenerate[i]);
-		String custom = properties.getProperty(FLAG_CUSTOM);
-		if (custom != null && custom.equals("true"))
-			continue;
-		
-		try {
-			PrintWriter output = openOutput(modelsToGenerate[i]);
-			try {
-				generateBuildScript(output,modelsToGenerate[i]);
-			} finally {
-				output.close();
-			}
-		} catch (IOException e) {
-			getPluginLog().log(new Status(IStatus.ERROR,PI_PDECORE,EXCEPTION_OUTPUT,Policy.bind("exception.output"),e));
-		}
-	}
-	
-	return getProblems();
+protected List makeRelative(List jars, String baseLocation) {
+	List result = new ArrayList(jars.size());
+	for (Iterator i = jars.iterator(); i.hasNext();)
+		addEntry(result, makeRelative(getPropertyFormat(PROPERTY_INSTALL), (String) i.next(), baseLocation));
+	return result;
 }
-private String[] extractVars(String entry) {
-		// see if the relative jar is in variable form (e.g., {ws/win32})
+
+/**
+ * Substitute the value of an element description variable (variables that
+ * are found in files like plugin.xml, e.g. $ws$) by an Ant property.
+ */
+protected String replaceVariables(String sourceString) {
+	int i = -1;
+	String result = sourceString;
+	while ((i = result.indexOf(DESCRIPTION_VARIABLE_WS)) >= 0)
+		result = result.substring(0, i) + "ws/" + getPropertyFormat(PROPERTY_WS) + result.substring(i + DESCRIPTION_VARIABLE_WS.length());
+	while ((i = result.indexOf(DESCRIPTION_VARIABLE_OS)) >= 0)
+		result = result.substring(0, i) + "os/" + getPropertyFormat(PROPERTY_OS) + result.substring(i + DESCRIPTION_VARIABLE_OS.length());
+	while ((i = result.indexOf(DESCRIPTION_VARIABLE_NL)) >= 0)
+		result = result.substring(0, i) + "nl/" + getPropertyFormat(PROPERTY_NL) + result.substring(i + DESCRIPTION_VARIABLE_NL.length());
+	return result;
+}
+
+protected String[] extractVars(String entry) {
+	// see if the relative jar is in variable form (e.g., {ws/win32})
 	String[] result = new String[2];
 	int start = entry.indexOf('{');
 	if (start > -1) {
@@ -159,410 +395,23 @@ private String[] extractVars(String entry) {
 	}
 	return result;
 }
-public void generateBuildScript(PrintWriter output, PluginModel descriptor) {
-	initializeFor(descriptor);
-	generatePrologue(output, descriptor);
-	generateModelSrcTarget(output, descriptor);
-	generateModelTarget(output, descriptor);
-	generateModelLogTarget(output, descriptor);
-	generateJarsTarget(output, descriptor);
-//	generateDocsTarget(output, descriptor);
-//	generateJavadocsTarget(output, descriptor);
-//	generateJavadocTargets(output, descriptor);
-	generateSrcTargets(output, descriptor);
-	generateBinTarget(output, descriptor);
-//	generateDocTarget(output, descriptor);
-	generateLogTarget(output, descriptor);
-	generateCleanTarget(output, descriptor);
-	generateEpilogue(output, descriptor);
-}
-protected void generateBinTarget(PrintWriter output, PluginModel descriptor) {
-	output.println();
-	output.println("  <target name=\"" + TARGET_BIN + "\" depends=\"init\">");
-	output.println("    <property name=\"destroot\" value=\"${basedir}\"/>");
-	output.println("    <ant antfile=\"${template}\" target=\"" + TARGET_BIN + "\">");
 
-	String inclusions = getSubstitution(descriptor,BIN_INCLUDES);
-	if (inclusions == null)
-		inclusions = "**";
-	else
-		if (inclusions.startsWith("${auto}"))
-			inclusions = "**" + inclusions.substring(7);
-	output.println("      <property name=\"includes\" value=\"" + inclusions + "\"/>");
-
-	String exclusions = getSubstitution(descriptor, BIN_EXCLUDES);
-	if (exclusions == null)
-		exclusions = computeCompleteSrc(descriptor);
-	else
-		if (exclusions.startsWith("${auto}"))
-			exclusions = computeCompleteSrc(descriptor) + exclusions.substring(7);
-	output.println("      <property name=\"excludes\" value=\"" + exclusions + "\"/>");
-		
-	output.println("      <property name=\"dest\" value=\"${destroot}\"/>");
-	output.println("    </ant>");
-	output.println("  </target>");
-}
-protected void generateCleanTarget(PrintWriter output, PluginModel descriptor) {
-	ArrayList jars = new ArrayList(9);
-	ArrayList zips = new ArrayList(9);
-	
-	for (Iterator i = jarOrder.iterator(); i.hasNext();) {
-		String jar = removeBraces((String) i.next());
-		jars.add(jar);
-		zips.add(jar.substring(0, jar.length() - 4) + SOURCE_EXTENSION);
-	}
-	
-	String compiledJars = getStringFromCollection(jars, "", "", ",");
-	String sourceZips = getStringFromCollection(zips, "", "", ",");
-	output.println();
-	output.println("  <target name=\"" + TARGET_CLEAN + "\" depends=\"init\">");
-	
-	if (compiledJars.length() > 0) {
-		output.println("    <ant antfile=\"${template}\" target=\"" + TARGET_CLEAN + "\">");
-		output.println("      <property name=\"" + TARGET_JAR + "\" value=\"" + compiledJars + "\"/>");
-		output.println("      <property name=\"srczips\" value=\"" + sourceZips + "\"/>");
-		output.println("    </ant>");
-	}
-	output.println("    <delete>");
-	output.println("      <fileset dir=\".\" includes=\"**/*.pdetemp\"/>");
-	output.println("    </delete>");
-	output.println("    <delete file=\"" + getModelFileBase() + DEFAULT_FILENAME_BIN + "\"/>");
-	output.println("    <delete file=\"" + getModelFileBase() + DEFAULT_FILENAME_SRC + "\"/>");
-	output.println("    <delete file=\"" + getModelFileBase() + DEFAULT_FILENAME_DOC + "\"/>");
-	output.println("    <delete file=\"" + getModelFileBase() + DEFAULT_FILENAME_LOG + "\"/>");
-	output.println("  </target>");
-}
-protected void generateCopyReference(PrintWriter output, PluginModel descriptor) {
-	for (Iterator i = devJars.keySet().iterator(); i.hasNext();) {
-		String fullJar = (String) i.next();
-		String jar = fullJar.substring(fullJar.lastIndexOf('/') + 1);
-		Collection sourceDirs = (Collection) trimmedDevJars.get(fullJar);
-		output.println();
-		output.println("  <patternset id=\"" + jar + ".ref\">");
-		if (sourceDirs != null) {
-			for (Iterator j = sourceDirs.iterator(); j.hasNext();) {
-				String dir = (String) j.next();
-				output.println("    <include name=\"" + dir + "/\"/>");
-			}
-		}
-		output.println("  </patternset>");
-	}
-}
-protected void generateDocsTarget(PrintWriter output, PluginModel descriptor) {
-	output.println();
-	output.println("  <target name=\"" + TARGET_DOC + "\" depends=\"init\">");
-	output.println("    <ant antfile=\"${template}\" target=\"" + TARGET_DOC + "\">");
-	output.println("      <property name=\"dest\" value=\"${destroot}/" + getComponentDirectoryName() + "\"/>");
-	output.println("    </ant>");
-	output.println("  </target>");
-}
-protected void generateEpilogue(PrintWriter output, PluginModel descriptor) {
-	output.println("</project>");
-}
-protected void generateJarsTarget(PrintWriter output, PluginModel descriptor) {
-	StringBuffer jars = new StringBuffer();
-	for (Iterator i = jarOrder.iterator(); i.hasNext();) {
-		jars.append(',');
-		String currentJar = (String)i.next();
-		jars.append(removeBraces(currentJar));
-		generateJarTarget(output, descriptor, currentJar);
-	}
-	output.println();
-	output.println("  <target name=\"" + TARGET_JAR + "\" depends=\"init" + jars.toString() + "\">");
-	output.println("  </target>");
-}
-protected void generateJarTarget(PrintWriter output, PluginModel descriptor, String relativeJar) {
-	String fullJar = null;
-	try { 
-		fullJar = new URL(descriptor.getLocation() + relativeJar).getFile();
-	} catch (MalformedURLException e) {
-		// should not happen
-		getPluginLog().log(new Status(IStatus.ERROR,PI_PDECORE,EXCEPTION_URL,Policy.bind("exception.url"),e));
-	}
-	
-	String jar = fullJar.substring(fullJar.lastIndexOf('/') + 1);
-	Collection source = (Collection) trimmedDevJars.get(fullJar);
-	String mapping = ""; 
-	String src = ""; 
-	if (source != null && !source.isEmpty()) {
-		mapping = getStringFromCollection(source, "", "", ",");
-		source = trimSlashes(source);
-		src = getStringFromCollection(source, "", "", ",");
-	}
-	String compilePath = computeCompilePathClause(descriptor, fullJar);
-	String jarName = removeBraces(relativeJar);
-	output.println();
-	output.println("  <target name=\"" + jarName + "\" depends=\"init\">");
-	if (src.length() != 0) {
-		output.println("    <ant antfile=\"${template}\" target=\"" + TARGET_JAR + "\">");
-		output.println("      <property name=\"mapping\" value=\"" + mapping + "\"/>");
-		output.println("      <property name=\"includes\" value=\"" + src + "\"/>");
-		output.println("      <property name=\"excludes\" value=\"\"/>");
-		output.println("      <property name=\"dest\" value=\"${basedir}/" + jarName + "\"/>");
-		output.println("      <property name=\"compilePath\" value=\"" + compilePath + "\"/>");
-		output.println("    </ant>");
-	}
-	output.println("  </target>");
-}
-protected void generateJavadocsTarget(PrintWriter output, PluginModel descriptor) {
-	output.println();
-	output.println("  <target name=\"" + TARGET_JAVADOC + "\" depends=\"init\">");
-	output.println("    <delete dir=\"javadoc\"/>");
-	output.println("    <mkdir dir=\"javadoc\"/>");
-	
-	for (Iterator i = jarOrder.iterator(); i.hasNext();) {
-		output.print("    <antcall target=\"");
-		// zip name is jar name without the ".jar" but with JAVADOC_EXTENSION appended
-		String jar = (String) i.next();
-		String zip = jar.substring(0, jar.length() - 4) + JAVADOC_EXTENSION;
-		output.println(zip + "\"/>");
-	}
-	
-	output.println("  </target>");
-}
-protected void generateJavadocTargets(PrintWriter output, PluginModel descriptor) {
-	for (Iterator i = devJars.keySet().iterator(); i.hasNext();) {
-		String fullJar = (String) i.next();
-		// zip name is jar name without the ".jar" but with JAVADOC_EXTENSION appended
-		String zip = fullJar.substring(fullJar.lastIndexOf('/') + 1, fullJar.length() - 4) + JAVADOC_EXTENSION;
-		Collection sourceDirs = (Collection) trimmedDevJars.get(fullJar);
-		String src = (sourceDirs == null || sourceDirs.isEmpty()) ? "" : getStringFromCollection(sourceDirs, "", "/", ";");
-		String compilePath = computeCompilePathClause(descriptor, fullJar);
-		output.println();
-		output.println("  <target name=\"" + zip + "\" depends=\"init\">");
-
-		if (src.length() != 0) {
-			output.println("    <property name=\"auto.packages\" value=\"*\"/>");
-			output.println("    <property name=\"auto.excludedpackages\" value=\"**.internal.*\"/>");
-			output.println("    <ant antfile=\"${template}\" target=\"" + TARGET_JAVADOC + "\">");
-			output.println("      <property name=\"sourcepath\" value=\"" + src + "\"/>");
-
-			String inclusions = getSubstitution(descriptor,JAVADOC_PACKAGES);
-			if (inclusions == null)
-				inclusions = "${auto.packages}";
-			output.println("      <property name=\"packages\" value=\"" + inclusions + "\"/>");
-				
-			String exclusions = getSubstitution(descriptor,JAVADOC_EXCLUDEDPACKAGES);
-			if (exclusions == null)
-				exclusions = "${auto.excludedpackages}";
-			output.println("      <property name=\"excludedpackages\" value=\"" + exclusions + "\"/>");
-			
-			output.println("      <property name=\"out\" value=\"javadoc\"/>");
-			output.println("      <property name=\"compilePath\" value=\"" + compilePath + "\"/>");
-			output.println("    </ant>");
-		}
-
-		output.println("  </target>");
-	}
-}
-protected void generateLogTarget(PrintWriter output, PluginModel descriptor) {
-	output.println();
-	output.println("  <target name=\"" + TARGET_LOG + "\" depends=\"init\">");
-	output.println("    <property name=\"destroot\" value=\"${basedir}\"/>");
-	output.println("    <ant antfile=\"${template}\" target=\"" + TARGET_LOG + "\">");
-	output.println("      <property name=\"dest\" value=\"${destroot}\"/>");
-	output.println("    </ant>");
-	output.println("  </target>");
-}
-protected void generateModelDocTarget(PrintWriter output, PluginModel descriptor) {
-	output.println();
-	output.println("  <target name=\"" + TARGET_DOC_ZIP + "\" depends=\"init\">");
-	output.println("    <property name=\"base\" value=\"${basedir}/doc.zip.pdetemp\"/>");
-	output.println("    <delete dir=\"${base}\"/>");
-	output.println("    <mkdir dir=\"${base}\"/>");
-	output.println("    <antcall target=\"doc\">");
-	output.println("      <param name =\"destroot\" value=\"${base}/" + getComponentDirectoryName() + "\"/>");
-	output.println("    </antcall>");
-	
-	// call runZip on template.xml in case we want to use an external program
-	output.println("	<ant antfile=\"${template}\" target=\"runZip\">");
-	output.println("      <property name=\"resultingFile\" value=\"${basedir}/" + getModelFileBase() + DEFAULT_FILENAME_DOC + "\"/>");
-	output.println("      <property name=\"targetDir\" value=\"${base}\"/>");
-	output.println("	</ant>");
-	
-	//output.println("    <zip zipfile=\"" + getModelFileBase() + DEFAULT_FILENAME_DOC + "\" basedir=\"${base}\"/>");
-	output.println("    <delete dir=\"${base}\"/>");
-	output.println("  </target>");
-}
-protected void generateModelLogTarget(PrintWriter output, PluginModel descriptor) {
-	output.println();
-	output.println("  <target name=\"" + TARGET_LOG_ZIP + "\" depends=\"init\">");
-	output.println("    <property name=\"base\" value=\"${basedir}/log.zip.pdetemp\"/>");
-	output.println("    <delete dir=\"${base}\"/>");
-	output.println("    <mkdir dir=\"${base}\"/>");
-	output.println("    <antcall target=\"log\">");
-	output.println("      <param name =\"destroot\" value=\"${base}/" + getComponentDirectoryName() + "\"/>");
-	output.println("    </antcall>");
-
-	// call runZip on template.xml in case we want to use an external program
-	output.println("	<ant antfile=\"${template}\" target=\"runZip\">");
-	output.println("      <property name=\"resultingFile\" value=\"${basedir}/" + getModelFileBase() + DEFAULT_FILENAME_LOG + "\"/>");
-	output.println("      <property name=\"targetDir\" value=\"${base}\"/>");
-	output.println("	</ant>");
-	
-	//output.println("    <zip zipfile=\"" + getModelFileBase() + DEFAULT_FILENAME_LOG + "\" basedir=\"${base}\"/>");
-	output.println("    <delete dir=\"${base}\"/>");
-	output.println("  </target>");
-}
-protected void generateModelSrcTarget(PrintWriter output, PluginModel descriptor) {
-	output.println();
-	output.println("  <target name=\"" + TARGET_SRC_ZIP + "\" depends=\"init\">");
-	output.println("    <property name=\"base\" value=\"${basedir}/src.zip.pdetemp\"/>");
-	output.println("    <delete dir=\"${base}\"/>");
-	output.println("    <mkdir dir=\"${base}\"/>");
-	output.println("    <antcall target=\"src\">");
-	output.println("      <param name =\"destroot\" value=\"${base}/" + getComponentDirectoryName() + "\"/>");
-	output.println("    </antcall>");
-
-	// call runZip on template.xml in case we want to use an external program
-	output.println("	<ant antfile=\"${template}\" target=\"runZip\">");
-	output.println("      <property name=\"resultingFile\" value=\"${basedir}/" + getModelFileBase() + DEFAULT_FILENAME_SRC + "\"/>");
-	output.println("      <property name=\"targetDir\" value=\"${base}\"/>");
-	output.println("	</ant>");
-	
-	output.println("    <delete dir=\"${base}\"/>");
-	output.println("  </target>");
-}
-protected void generateModelTarget(PrintWriter output, PluginModel descriptor) {
-	output.println();
-	output.println("  <target name=\"" + getModelTypeName() + ".zip" + "\" depends=\"" + TARGET_BIN_ZIP + "\"/>");
-	output.println("  <target name=\"" + TARGET_BIN_ZIP + "\" depends=\"init\">");
-	output.println("    <property name=\"base\" value=\"${basedir}/bin.zip.pdetemp\"/>");
-	output.println("    <delete dir=\"${base}\"/>");
-	output.println("    <mkdir dir=\"${base}\"/>");
-	output.println("    <antcall target=\"jar\">");
-	output.println("      <param name =\"destroot\" value=\"${base}/" + getComponentDirectoryName() + "\"/>");
-	output.println("    </antcall>");
-	output.println("    <antcall target=\"bin\">");
-	output.println("      <param name =\"destroot\" value=\"${base}/" + getComponentDirectoryName() + "\"/>");
-	output.println("    </antcall>");
-
-	// delete *.bin.log
-	output.println("    <delete>");
-	output.println("      <fileset dir=\"${base}\" includes=\"**/*.bin.log\"/>");
-	output.println("    </delete>");
-
-	// call runZip on template.xml in case we want to use an external program
-	output.println("	<ant antfile=\"${template}\" target=\"runZip\">");
-	output.println("      <property name=\"resultingFile\" value=\"${basedir}/" + getModelFileBase() + DEFAULT_FILENAME_BIN + "\"/>");
-	output.println("      <property name=\"targetDir\" value=\"${base}\"/>");
-	output.println("	</ant>");
-	
-	//output.println("    <zip zipfile=\"" + getModelFileBase() + DEFAULT_FILENAME_BIN + "\" basedir=\"${base}\" excludes=\"**/*.bin.log\"/>");
-	output.println("    <delete dir=\"${base}\"/>");
-	output.println("  </target>");
-}
-protected void generatePrologue(PrintWriter output, PluginModel descriptor) {
-	output.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-	output.println("<project name=\"" + descriptor.getId() + "\" default=\"" + getModelTypeName() + ".zip\" basedir=\".\">");
-//	output.println("  <stripMapper id=\"stripMapper.id\" to=\"1\"/>");
-	output.println("  <target name=\"initTemplate\" unless=\"template\">");
-	output.println("    <initTemplate/>");
-	output.println("  </target>");
-	output.println("  <target name=\"init\" depends=\"initTemplate\">");
-	output.println("    <property name=\"" + getModelTypeName() + "\" value=\"" + descriptor.getId() + "\"/>");
-	output.println("    <property name=\"version\" value=\"" + descriptor.getVersion() + "\"/>");
-	String stampString = stamp.length() == 0 ? stamp : "-" + stamp;
-	output.println("    <property name=\"stamp\" value=\"" + stampString + "\"/>");
-	// output the settings of the commandline supplied arguments before doing the ones from the 
-	// build.properties file.  This way you can override the values without changing the file.
-	if (os != null && !os.equals("*"))
-		output.println("    <property name=\"os\" value=\"" + os + "\"/>");
-	if (ws != null && !ws.equals("*"))
-		output.println("    <property name=\"ws\" value=\"" + ws + "\"/>");
-	if (nl != null && !nl.equals("*"))
-		output.println("    <property name=\"nl\" value=\"" + nl + "\"/>");
-	if (arch != null && !arch.equals("*"))
-		output.println("    <property name=\"arch\" value=\"" + arch + "\"/>");
-
-	Map map = getPropertyAssignments(descriptor);
-	Iterator keys = map.keySet().iterator();
-	while (keys.hasNext()) {
-		String key = (String)keys.next();
-		output.println("    <property name=\"" + key + "\" value=\"" + (String)map.get(key) + "\"/>");
-	}
-
-	output.println("  </target>");
-}
-protected void generateSrcTarget(PrintWriter output, PluginModel descriptor, String relativeJar, String target) {
-	String fullJar = null;
-	try { 
-		fullJar = new URL(descriptor.getLocation() + relativeJar).getFile();
-	} catch (MalformedURLException e) {
-		// should not happen
-		getPluginLog().log(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_URL, Policy.bind("exception.url"), e));
-	}
-	// zip name is jar name without the ".jar" but with SOURCE_EXTENSION appended		
-	String zip = fullJar.substring(fullJar.lastIndexOf('/') + 1, fullJar.length() - 4) + SOURCE_EXTENSION;
-	Collection source = (Collection) trimmedDevJars.get(fullJar);
-	String mapping = ""; 
-	String src = ""; 
-	if (source != null && !source.isEmpty()) {
-		mapping = getStringFromCollection(source, "", "", ",");
-		source = trimSlashes(source);
-		src = getSourceList(source, "**/*.java");
-	}
-	output.println();
-	output.println("  <target name=\"" + target + "\" depends=\"init\">");
-	output.println("    <property name=\"destroot\" value=\"${basedir}\"/>");
-
-	if (src.length() != 0) {
-		output.println("    <ant antfile=\"${template}\" target=\"" + TARGET_SRC + "\">");
-		output.println("      <property name=\"mapping\" value=\"" + mapping + "\"/>");
-
-		String inclusions = getSubstitution(descriptor, SRC_INCLUDES);
-		if (inclusions == null)
-			inclusions = src;
-		else
-			if (inclusions.startsWith("${auto}"))
-				inclusions = src + inclusions.substring(7);
-		output.println("      <property name=\"includes\" value=\"" + inclusions + "\"/>");
-				
-		String exclusions = getSubstitution(descriptor, SRC_EXCLUDES);
-		if (exclusions == null)
-			exclusions = "";
-		else
-			if (exclusions.startsWith("${auto}"))
-				exclusions = exclusions.substring(7);
-		output.println("      <property name=\"excludes\" value=\"" + exclusions + "\"/>");
-			
-		output.println("      <property name=\"dest\" value=\"${destroot}/" + target + "\"/>");
-		output.println("    </ant>");
-	}
-	output.println("  </target>");
-}
-protected void generateSrcTargets(PrintWriter output, PluginModel descriptor) {
-	StringBuffer jars = new StringBuffer();
-	for (Iterator i = jarOrder.iterator(); i.hasNext();) {
-		jars.append(",");
-		// zip name is jar name without the ".jar" but with SOURCE_EXTENSION appended
-		String jar = (String) i.next();
-		String zip = removeBraces(jar);
-		zip = zip.substring(0, zip.length() - 4) + SOURCE_EXTENSION;
-		jars.append(zip);
-		generateSrcTarget(output, descriptor, jar, zip);
-	}
-	output.println();
-	output.println("  <target name=\"" + TARGET_SRC + "\" depends=\"init" + jars.toString() + "\">");
-	output.println("  </target>");
-}
-
-protected abstract String getComponentDirectoryName();
-
-protected List getJars(PluginModel descriptor) {
+/**
+ * FIXME: add comments
+ */
+protected List getJars(PluginModel descriptor) throws CoreException {
 	List result = (List) jarsCache.get(descriptor.getId());
 	if (result != null)
 		return result;
 	result = new ArrayList(9);
 	LibraryModel[] libs = descriptor.getRuntime();
-	List devEntries = getDevEntries();
 	
 	if (libs != null) {
 		if (devEntries != null)
 			for (Iterator i = devEntries.iterator(); i.hasNext();) 
-				addEntry(result, getLocation(descriptor) + i.next());
+				addEntry(result, getModelLocation(descriptor) + i.next());
 		for (int i = 0; i < libs.length; i++)
-			addEntry(result, getLocation(descriptor) + libs[i].getName());
+			addEntry(result, getModelLocation(descriptor) + libs[i].getName());
 	}
 	
 	PluginPrerequisiteModel[] prereqs = descriptor.getRequires();
@@ -580,177 +429,38 @@ protected List getJars(PluginModel descriptor) {
 	jarsCache.put(descriptor.getId(), result);
 	return result;
 }
-protected List getListFromString(String prop) {
-	if (prop == null || prop.trim().equals(""))
-		return new ArrayList(0);
-	ArrayList result = new ArrayList();
-	for (StringTokenizer tokens = new StringTokenizer(prop, ","); tokens.hasMoreTokens();) {
-		String token = tokens.nextToken().trim();
-		if (!token.equals(""))
-			result.add(token);
-	}
-	return result;
-}
-protected String getLocation(PluginModel descriptor) {
-	try {
-		return new URL(descriptor.getLocation()).getFile();
-	} catch (MalformedURLException e) {
-		return "../" + descriptor.getId() + "/";
-	}
-}
-protected abstract String getModelTypeName();
-protected String getModelFileBase() {
-	return "${" + getModelTypeName() + "}" + SEPARATOR_VERSION + "${version}";
+
+protected void addEntry(List list, Object entry) {
+	if (list.contains(entry))
+		return;
+	list.add(entry);
 }
 
-protected String getSourceList (Collection source, String ending) {
-	ArrayList srcList = new ArrayList(source.size());
-	for (Iterator i = source.iterator(); i.hasNext();) {
+/**
+ * FIXME: add comment
+ */
+protected Collection trimSlashes(Collection original) {
+	ArrayList result = new ArrayList(original.size());
+	for (Iterator i = original.iterator(); i.hasNext();) {
 		String entry = (String)i.next();
-		srcList.add(entry.endsWith("/") ? entry + ending : entry);
+		if (entry.charAt(0) == '/')
+			entry = entry.substring(1);
+		result.add(entry);
 	}
-	return getStringFromCollection(srcList, "", "", ",");
-}
-protected void initializeFor(PluginModel descriptor) {
-	devJars = loadJarDefinitions(descriptor);
-	trimmedDevJars = trimDevJars(descriptor, devJars);
-	requiredJars = getJars(descriptor);
-}
-protected Hashtable loadJarDefinitions(PluginModel descriptor) {
-	jarOrder = new ArrayList();
-	Properties props = new Properties() {
-		public Object put(Object key, Object value) {
-			if (!((String)key).startsWith(SOURCE_PREFIX))
-				return value;
-			key = ((String)key).substring(SOURCE_PREFIX.length());
-			jarOrder.add(key);
-			return super.put(key, value);
-		}
-	};
-	
-	URL location = null;
-	try {
-		location = new URL(descriptor.getLocation() + FILENAME_PROPERTIES);
-		InputStream is = location.openStream();
-		try {
-			props.load(is);
-		} finally {
-			is.close();
-		}
-	} catch (IOException e) {
-		String message = Policy.bind("exception.missingFile",location.toString());
-		addProblem(new Status(IStatus.ERROR, PluginTool.PI_PDECORE, ScriptGeneratorConstants.EXCEPTION_FILE_MISSING, message, null));
-		return new Hashtable(1);
-	}
-	
-	String base = getLocation(descriptor);
-	Hashtable result = new Hashtable(props.size());
-	for (Iterator i = props.keySet().iterator(); i.hasNext();) {
-		String key = (String) i.next();
-		result.put(base + key, getListFromString(props.getProperty(key)));
-	}
-	
 	return result;
 }
-protected List makeRelative(List jars, IPath base) {
-	List result = new ArrayList(jars.size());
-	for (Iterator i = jars.iterator(); i.hasNext();) 
-		addEntry(result, makeRelative((String) i.next(), base));
-	return result;
-}
-protected PrintWriter openOutput(PluginModel descriptor) throws IOException {
-	try {
-		URL location = new URL(descriptor.getLocation());
-		String file = location.getFile() + OUTPUT_FILENAME;
-		return new PrintWriter(new FileOutputStream(new File(file).getAbsoluteFile()));
-	} catch (MalformedURLException e) {
-		getPluginLog().log(new Status(IStatus.ERROR,PI_PDECORE,EXCEPTION_URL,"URL exception",e));
-		return null;
-	}
-}
-protected String[] processCommandLine(String[] args) {
-	super.processCommandLine(args);
-	
-	Vector modelsToGenerate = new Vector();
-	for (int i = 0; i < args.length; i++) {
-		String currentArg = args[i];
-		
-		if (i == args.length - 1)
-			continue;
 
-		String previousArg = currentArg;
-		currentArg = args[++i];
-
-		// accumulate the list of models to generate
-		if (previousArg.substring(1).equalsIgnoreCase(getModelTypeName()))
-			commandLineModelNames.addElement(currentArg);
-		if (previousArg.equalsIgnoreCase("-elements"))
-			commandLineModelNames.addAll(getListFromString(currentArg));
-	}
-	
-	return new String[0];
-}
-protected String removeBraces (String entry) {
-	int start = entry.indexOf('{');
-	if (start == -1)
-		return entry;
-	int end = entry.indexOf('}');
-	String result = entry.substring(0, start);
-	result += entry.substring(start + 1, end);
-	result += entry.substring(end + 1);
-	return result;
-}
-protected String replaceVariables(String sourceString) {
-	int i = -1;
-	String result = sourceString;
-	while ((i = result.indexOf(WS)) >= 0)
-		result = result.substring(0, i) + "ws/" + VARIABLE_WS + result.substring(i + WS.length());
-	while ((i = result.indexOf(OS)) >= 0)
-		result = result.substring(0, i) + "os/" + VARIABLE_OS + result.substring(i + OS.length());
-	while ((i = result.indexOf(NL)) >= 0)
-		result = result.substring(0, i) + "nl/" + VARIABLE_NL + result.substring(i + NL.length());
-	return result;
-}			
-protected void retrieveCommandLineModels() {
-	Vector modelsToGenerate = new Vector();
-	
-	Enumeration models = commandLineModelNames.elements();
-	while (models.hasMoreElements()) {
-		String modelName = (String)models.nextElement();
-		PluginModel model = retrieveModelNamed(modelName);
-		if (model != null)
-			modelsToGenerate.addElement(model);
-		else {
-			addProblem(new Status(
-				IStatus.ERROR,
-				PluginTool.PI_PDECORE,
-				ScriptGeneratorConstants.EXCEPTION_PLUGIN_MISSING,
-				Policy.bind("exception.missingPlugin",modelName),
-				null));
-		}
-	}
-	
-	PluginModel result[] = new PluginModel[modelsToGenerate.size()];
-	modelsToGenerate.copyInto(result);
-	setModelsToGenerate(result);
-}
-protected abstract PluginModel retrieveModelNamed(String modelName);
-
-public Object run(Object args) throws Exception {
-	super.run(args);
-	return execute();
-}
-public void setModelsToGenerate(PluginModel models[]) {
-	modelsToGenerate = models;
-}
-protected Hashtable trimDevJars(PluginModel descriptor, Hashtable devJars) {
+/**
+ * FIXME: add comments
+ */
+protected Hashtable trimDevJars(Map devJars) throws CoreException {
 	Hashtable result = new Hashtable(9);
 	for (Iterator it = devJars.keySet().iterator(); it.hasNext();) {
 		String key = (String) it.next();
 		Collection list = (Collection) devJars.get(key);			// projects
 		File base = null;
 		try {
-			base = new File(new URL(descriptor.getLocation()).getFile());
+			base = new File(new URL(model.getLocation()).getFile());
 		} catch (MalformedURLException e) {
 			continue;
 		}
@@ -759,7 +469,7 @@ protected Hashtable trimDevJars(PluginModel descriptor, Hashtable devJars) {
 			String src = (String) i.next();
 			File entry = new File(base, src).getAbsoluteFile();
 			if (!entry.exists())
-				addProblem(new Status(IStatus.WARNING, PluginTool.PI_PDECORE, WARNING_MISSING_SOURCE, Policy.bind("warning.cannotLocateSource", entry.getPath()), null));
+				throw new CoreException(new Status(IStatus.WARNING, PI_PDECORE, WARNING_MISSING_SOURCE, Policy.bind("warning.cannotLocateSource", entry.getPath()), null));
 			else
 				found = true;;
 		}
@@ -768,13 +478,190 @@ protected Hashtable trimDevJars(PluginModel descriptor, Hashtable devJars) {
 	}
 	return result;
 }
-protected Collection trimSlashes(Collection original) {
-	ArrayList result = new ArrayList(original.size());
-	for (Iterator i = original.iterator(); i.hasNext();) {
-		String entry = (String)i.next();
-		if (entry.charAt(0) == '/')
-			entry = entry.substring(1);
-		result.add(entry);
+
+protected void generateGatherBinPartsTarget(PrintWriter output) {
+	int tab = 1;
+	output.println();
+	printTargetDeclaration(output, tab, TARGET_GATHER_BIN_PARTS, TARGET_INIT, PROPERTY_DESTINATION, null, null);
+	tab++;
+	Map properties = new HashMap(1);
+	String inclusions = getBuildProperty(PROPERTY_BIN_INCLUDES);
+	if (inclusions == null)
+		inclusions = "**";
+	properties.put("includes", inclusions);
+	String exclusions = getBuildProperty(PROPERTY_BIN_EXCLUDES);
+	if (exclusions == null)
+		exclusions = computeCompleteSrc();
+	properties.put("excludes", exclusions);
+	IPath destination = new Path(getPropertyFormat(PROPERTY_DESTINATION));
+	destination = destination.append(getDirectoryName());
+	properties.put("dest", destination.toString());
+	printAntTask(output, tab, "${template}", null, "includesExcludesCopy", null, null, properties);
+	tab--;
+	printString(output, tab, "</target>");
+}
+
+/**
+ * FIXME: add comment
+ */
+protected String computeCompleteSrc() {
+	Set jars = new HashSet(9);
+	for (Iterator i = getDevJars().values().iterator(); i.hasNext();)
+		jars.addAll((Collection)i.next());
+	return getStringFromCollection(jars, "", "", ",");
+}
+
+protected Map getDevJars() {
+	if (devJars == null)
+		devJars = computeJarDefinitions();
+	return devJars;
+}
+
+protected List getRequiredJars() throws CoreException {
+	if (requiredJars == null)
+		requiredJars = getJars(model);
+	return requiredJars;
+}
+
+protected Map getTrimmedDevJars() throws CoreException {
+	if (trimmedDevJars == null)
+		trimmedDevJars = trimDevJars(getDevJars());
+	return trimmedDevJars;
+}
+
+/**
+ * FIXME: add comment
+ */
+protected String getStringFromCollection(Collection list, String prefix, String suffix, String separator) {
+	StringBuffer result = new StringBuffer();
+	boolean first = true;
+	for (Iterator i = list.iterator(); i.hasNext();) {
+		if (!first)
+			result.append(separator);
+		first = false;
+		result.append(prefix);
+		result.append((String) i.next());
+		result.append(suffix);
+	}
+	return result.toString();
+}
+
+
+protected void generateUpdateJarTarget(PrintWriter output) {
+	int tab = 1;
+	output.println();
+	printTargetDeclaration(output, tab, TARGET_BUILD_UPDATE_JAR, TARGET_INIT, null, null, null);
+	tab++;
+	IPath destination = getRelativeInstallLocation();
+	printProperty(output, tab, PROPERTY_BASE, destination.append("bin.zip.pdetemp").toString());
+	printDeleteTask(output, tab, getPropertyFormat(PROPERTY_BASE), null, null);
+	printMkdirTask(output, tab, getPropertyFormat(PROPERTY_BASE));
+	printAntCallTask(output, tab, TARGET_BUILD_JARS, null, null);
+	Map params = new HashMap(1);
+	params.put(PROPERTY_DESTINATION, getPropertyFormat(PROPERTY_BASE) + "/");
+	printAntCallTask(output, tab, TARGET_GATHER_BIN_PARTS, null, params);
+	FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BASE), null, "**/*.bin.log", null, null, null, null);
+	printDeleteTask(output, tab, null, null, new FileSet[] {fileSet});
+	printZipTask(output, tab, destination.append(getModelFileBase() + ".jar").toString(), getPropertyFormat(PROPERTY_BASE) + "/" + getDirectoryName());
+	printDeleteTask(output, tab, getPropertyFormat(PROPERTY_BASE), null, null);
+	tab--;
+	printString(output, tab, "</target>");
+}
+
+protected abstract String getDirectoryName();
+
+/**
+ * FIXME: there has to be a better name for this method. What does it mean?
+ */
+protected String getModelFileBase() {
+	return "${" + getModelTypeName() + "}_${version}";
+}
+
+/**
+ * Just ends the script.
+ */
+protected void generateEpilogue(PrintWriter output) {
+	output.println();
+	output.println("</project>");
+}
+
+
+/**
+ * Defines, the XML declaration, Ant project and targets init and initTemplate.
+ */
+protected void generatePrologue(PrintWriter output) {
+	int tab = 1;
+	output.println(XML_PROLOG);
+	printProjectDeclaration(output, model.getId(), TARGET_INIT, ".");
+	output.println();
+	printTargetDeclaration(output, tab, "initTemplate", null, null, PROPERTY_TEMPLATE, null);
+	tab++;
+	printString(output, tab, "<initTemplate/>");
+	tab--;
+	printString(output, tab, "</target>");
+	output.println();
+	printTargetDeclaration(output, tab, TARGET_INIT, "initTemplate", null, null, null);
+	tab++;
+	printProperty(output, tab, getModelTypeName(), model.getId());
+	printProperty(output, tab, "version", model.getVersion());
+	tab--;
+	printString(output, tab, "</target>");
+}
+
+protected abstract String getModelTypeName();
+
+/**
+ * Sets the PluginModel to generate script from.
+ */
+public void setModel(PluginModel model) throws CoreException {
+	if (model == null)
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_ELEMENT_MISSING, Policy.bind("error.missingElement"), null));
+	this.model = model;
+	devJars = null;
+	jarOrder = null;
+	jarsCache = new HashMap(5);
+	trimmedDevJars = null;
+	requiredJars = null;
+	readProperties(getModelLocation(model));
+}
+
+/**
+ * Sets model to generate scripts from.
+ */
+public void setModelId(String modelId) throws CoreException {
+	PluginModel newModel = getModel(modelId);
+	if (newModel == null)
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_ELEMENT_MISSING, Policy.bind("exception.missingElement", modelId), null));
+	setModel(newModel);
+}
+
+protected abstract PluginModel getModel(String modelId) throws CoreException;
+
+protected Map computeJarDefinitions() {
+	jarOrder = new ArrayList();
+	Map result = new HashMap(5);
+	String base = getModelLocation(model);
+	int n = PROPERTY_SOURCE_PREFIX.length();
+	for (Iterator iterator = getBuildProperties().entrySet().iterator(); iterator.hasNext();) {
+		Map.Entry entry = (Map.Entry) iterator.next();
+		String key = (String) entry.getKey();
+		if (!key.startsWith(PROPERTY_SOURCE_PREFIX))
+			continue;
+		key = key.substring(n);
+		jarOrder.add(key);
+		result.put(base + key, getListFromString((String) entry.getValue()));
+	}
+	return result;
+}
+
+protected List getListFromString(String prop) {
+	if (prop == null || prop.trim().equals(""))
+		return new ArrayList(0);
+	ArrayList result = new ArrayList();
+	for (StringTokenizer tokens = new StringTokenizer(prop, ","); tokens.hasMoreTokens();) {
+		String token = tokens.nextToken().trim();
+		if (!token.equals(""))
+			result.add(token);
 	}
 	return result;
 }

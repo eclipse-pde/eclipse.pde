@@ -3,35 +3,23 @@ package org.eclipse.pde.internal.core;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.model.PluginModel;
 
-import java.io.PrintWriter;import org.eclipse.core.runtime.model.*;
-
+/**
+ * Generates build.xml script for features.
+ */
 public class PluginBuildScriptGenerator extends ModelBuildScriptGenerator {
 
-public PluginBuildScriptGenerator() {
-	super();
-}
-public PluginBuildScriptGenerator(PluginModel modelsToGenerate[],PluginRegistryModel registry) {
-	super(modelsToGenerate,registry);
+protected PluginModel getModel(String modelId) throws CoreException {
+	return getRegistry().getPlugin(modelId);
 }
 
-protected String getComponentDirectoryName() {
-	return "plugins/${plugin}_${version}";
-}
 protected String getModelTypeName() {
 	return "plugin";
 }
-public static void main(String[] args) throws Exception {
-	new PluginBuildScriptGenerator().run(args);
-}
-public static void main(String argString) throws Exception {
-	main(tokenizeArgs(argString));
-}
-protected void printUsage(PrintWriter out) {
-	out.println("\tjava PluginBuildScriptGenerator -install <targetDir> {-plugin <pluginId>}* [-dev <devEntries>]");
-}
-protected PluginModel retrieveModelNamed(String modelName) {
-	return getRegistry().getPlugin(modelName);
-}
 
+protected String getDirectoryName() {
+	return "plugins/${plugin}";
+}
 }

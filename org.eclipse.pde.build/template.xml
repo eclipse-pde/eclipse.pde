@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <project name="build template" default="dist">
-  <target name="init">
-    <property name="build.compiler" value="org.eclipse.pde.internal.core.JDTCompilerAdapter"/>
-    <property name="rt" value="" />
-  </target>
+
   <commapatternset id="pattern.id" includes="${includes}" excludes="${excludes}"/>
   <commapatternset id="copy.id" includes="${includes}" excludes="**/*.java"/>
   <commapatternset id="includes.id" includes="${includes}"/>
@@ -16,8 +12,9 @@
     <fileset refid="file.id"/>
   </path>
   <stripMapper id="stripMapper.id" from="${mapping}"/>
-  
-  <target name="jar" depends="init">
+ 
+  <target name="jar" depends="">
+    <property name="build.compiler" value="org.eclipse.pde.internal.core.JDTCompilerAdapter"/>
     <property name="out" value="${dest}.bin"/>
     <delete dir="${out}"/>
     <mkdir dir="${out}"/>
@@ -42,24 +39,22 @@
     <delete dir="${out}"/>
   </target>
 
-  <target name="javadoc" depends="init">
-    <javadoc 
-      sourcepath="${sourcepath}"
-      destdir="${out}"
-      packagenames="${packages}"
-      classpath="${compilePath}" 
-      excludepackagenames="${excludedpackages}">
-    </javadoc>
-  </target>
-
-  <target name="bin" depends="init">
+  <target name="includesExcludesCopy" depends="">
     <mkdir dir="${dest}"/>
     <copy todir="${dest}">
       <fileset refid="file.id"/>
     </copy>
   </target>
 
-  <target name="src" depends="init">
+  <target name="mapperCopy" depends="">
+    <mkdir dir="${dest}" />
+    <copy todir="${dest}">
+      <fileset refid="file.id"/>
+      <mapper refid="stripMapper.id"/>
+    </copy>
+  </target>
+
+  <target name="src">
     <delete dir="${dest}.pdetemp" />
     <mkdir dir="${dest}.pdetemp" />
     <copy todir="${dest}.pdetemp">
@@ -74,7 +69,7 @@
     <delete dir="${dest}.pdetemp"/>
   </target>
 
-  <target name="log" depends="init">
+  <target name="log">
     <delete dir="${dest}"/>
     <mkdir dir="${dest}"/>
     <copy todir="${dest}">
@@ -83,36 +78,10 @@
     </copy>
   </target>
 
-  <target name="doc-copy" depends="init" if="doc-exists">
-    <copy todir="${dest}/doc">
-      <fileset dir="doc" includes="*"/>
-    </copy>
-  </target>
-
-  <target name="doc" depends="init">
-    <delete dir="${dest}/${plugin}/doc" />
-    <mkdir dir="${dest}/${plugin}/doc" />
-    <available property="doc-exists" file="doc"/>
-    <antcall target="doc-copy"/>
-    <copy todir="${dest}/doc/javadoc">
-      <fileset dir="javadoc"/>
-    </copy>
-  </target>
-
-  <target name="clean" depends="init">
-    <delete>
-      <fileset dir="." includes="*.bin" />
-      <fileset dir="." includes="**/*.log" />
-      <fileset dir="." includes="${jar}" />
-      <fileset dir="." includes="${srczips}" />
-    </delete>
-    <delete dir="javadoc"/>
-  </target>
-
   <!-- Delegates the zip call to either the default task or an external program. -->
   <!-- In order to define which one to run, the user should set a property       -->
   <!-- called useExternalZip.                                                    -->
-  <target name="runZip" depends="init">
+  <target name="runZip" depends="">
     <antcall target="externalZip"/>
     <antcall target="antZip"/>
   </target>
@@ -120,7 +89,7 @@
   <!-- Executes an external zip program -->
   <target name="externalZip" if="useExternalZip">
     <exec dir="${targetDir}" executable="zip">
-		<arg line="-r ${resultingFile} ."/>
+      <arg line="-r ${resultingFile} ."/>
     </exec>
   </target>
 
@@ -132,7 +101,7 @@
   <!-- Delegates the jar call to either the default task or an external program. -->
   <!-- In order to define which one to run, the user should set a property       -->
   <!-- called useExternalZip.                                                    -->
-  <target name="runJar" depends="init">
+  <target name="runJar" depends="">
     <antcall target="externalZip"/>
     <antcall target="antJar"/>
   </target>
@@ -141,5 +110,5 @@
   <target name="antJar" unless="useExternalZip">
     <jar jarfile="${resultingFile}" basedir="${targetDir}"/>
   </target>
-  
+
 </project>

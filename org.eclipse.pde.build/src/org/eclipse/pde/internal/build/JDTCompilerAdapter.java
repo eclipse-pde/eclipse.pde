@@ -4,20 +4,18 @@ package org.eclipse.pde.internal.core;
  * All Rights Reserved.
  */
 
+import java.lang.reflect.Method;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
-import org.apache.tools.ant.taskdefs.LogOutputStream;
 import org.apache.tools.ant.taskdefs.compilers.DefaultCompilerAdapter;
 import org.apache.tools.ant.types.Commandline;
 import org.apache.tools.ant.types.Path;
-import java.io.*;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.util.Vector;
 /**
- * Compiler adapter for the JDT Compiler
+ * Compiler adapter for the JDT Compiler. 
+ * 
+ * FIXME: should remove this one and use the one provided by jdt.core
  */
-
 public class JDTCompilerAdapter extends DefaultCompilerAdapter {
 	private static String compilerClass = "org.eclipse.jdt.internal.compiler.batch.Main";
 /**

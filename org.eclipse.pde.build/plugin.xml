@@ -2,13 +2,14 @@
 <plugin
    id="org.eclipse.pde.core"
    name="%pluginName"
-   version="2.1.3"
+   version="2.1.1"
    provider-name="Object Technology International, Inc.">
 
 <requires>
+   <import plugin="org.apache.xerces"/>
    <import plugin="org.eclipse.ant.core"/>
    <import plugin="org.eclipse.jdt.core"/>
-   <import plugin="org.apache.xerces"/>
+   <import plugin="org.eclipse.update.core"/>
 </requires>
 
 <runtime>
@@ -17,79 +18,65 @@
    </library>
 </runtime>
 
-<extension point="org.eclipse.ant.core.antObjects">
-   <antObject
-         name="org.eclipse.pde.internal.core.JDTCompilerAdapter"
-         class="org.eclipse.pde.internal.core.JDTCompilerAdapter">
-   </antObject>
+<!-- Applications -->
+
+<extension id="buildScript" point="org.eclipse.core.runtime.applications">
+   <application>
+      <run class="org.eclipse.pde.internal.core.BuildScriptGeneratorApplication"/>
+   </application>
 </extension>
+<extension id="fetchScript" point="org.eclipse.core.runtime.applications">
+   <application>
+      <run class="org.eclipse.pde.internal.core.FetchScriptGeneratorApplication"/>
+   </application>
+</extension>
+
+
+<!-- Tasks -->
+
 <extension point="org.eclipse.ant.core.antTasks">
    <antTask
          name="initTemplate"
-         class="org.eclipse.pde.internal.core.InitTemplate">
-   </antTask>
-</extension>
-<extension point="org.eclipse.ant.core.antTasks">
-   <antTask
-         name="buildscript"
-         class="org.eclipse.pde.internal.core.ScriptBuilderTask">
+         class="org.eclipse.pde.internal.core.tasks.InitTemplate">
    </antTask>
 </extension>
 <extension point="org.eclipse.ant.core.antTasks">
    <antTask
          name="fetch"
-         class="org.eclipse.pde.internal.core.FetchTask">
+         class="org.eclipse.pde.internal.core.tasks.FetchTask">
    </antTask>
 </extension>
 <extension point="org.eclipse.ant.core.antTasks">
    <antTask
-         name="cvspass"
-         class="org.eclipse.pde.internal.core.CVSPass">
+         name="buildscript"
+         class="org.eclipse.pde.internal.core.tasks.BuildScriptGeneratorTask">
    </antTask>
 </extension>
 <extension point="org.eclipse.ant.core.antTasks">
    <antTask
          name="buildManifest"
-         class="org.eclipse.pde.internal.core.BuildManifestTask">
+         class="org.eclipse.pde.internal.core.tasks.BuildManifestTask">
    </antTask>
 </extension>
+
+
+<!-- Types -->
 
 <extension point="org.eclipse.ant.core.antTypes">
    <antType
          name="stripMapper"
-         class="org.eclipse.pde.internal.core.StripMapper">
+         class="org.eclipse.pde.internal.core.types.StripMapper">
    </antType>
 </extension>
 
-<extension id="plugin" point="org.eclipse.core.runtime.applications">
-   <application>
-      <run class="org.eclipse.pde.internal.core.PluginBuildScriptGenerator"/>
-   </application>
-</extension>
-<extension id="fragment" point="org.eclipse.core.runtime.applications">
-   <application>
-      <run class="org.eclipse.pde.internal.core.FragmentBuildScriptGenerator"/>
-   </application>
-</extension>
-<extension id="component" point="org.eclipse.core.runtime.applications">
-   <application>
-      <run class="org.eclipse.pde.internal.core.ComponentBuildScriptGenerator"/>
-   </application>
-</extension>
-<extension id="configuration" point="org.eclipse.core.runtime.applications">
-   <application>
-      <run class="org.eclipse.pde.internal.core.ConfigurationBuildScriptGenerator"/>
-   </application>
-</extension>
-<extension id="fetch" point="org.eclipse.core.runtime.applications">
-   <application>
-      <run class="org.eclipse.pde.internal.core.Fetch"/>
-   </application>
-</extension>
-<extension id="script" point="org.eclipse.core.runtime.applications">
-   <application>
-      <run class="org.eclipse.pde.internal.core.ScriptBuilder"/>
-   </application>
+
+<!-- Objects -->
+
+<extension point="org.eclipse.ant.core.antObjects">
+   <antObject
+         name="org.eclipse.pde.internal.core.JDTCompilerAdapter"
+         class="org.eclipse.pde.internal.core.JDTCompilerAdapter">
+   </antObject>
 </extension>
 
 </plugin>
