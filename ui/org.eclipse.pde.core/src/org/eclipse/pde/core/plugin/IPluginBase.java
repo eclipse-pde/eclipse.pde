@@ -60,6 +60,17 @@ public interface IPluginBase extends IExtensions, IIdentifiable {
 	 */
 	public static final String P_LIBRARY_ORDER = "library_order";
 	/**
+	 * A property that will be used to notify
+	 * that 3.0 release compatibility flag has been changed. 
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
+	 */
+	public static final String P_SCHEMA_VERSION = "schema-version";
+	/**
 	 * Adds a new library to this plugin.
 	 * This method will throw a CoreException if
 	 * model is not editable.
@@ -217,4 +228,26 @@ public interface IPluginBase extends IExtensions, IIdentifiable {
 	 * @param extensions
 	 */
 	void load(IBundle bundle, IExtensions extensions);
+	/**
+	 * Returns version of the manifest grammar
+	 * @return version of the manifest grammer, or <samp>null</samp>
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
+	 */
+	String getSchemaVersion();
+	/**
+	 * Sets the R3.0 compatibility flag
+	 * @param schemaVersion version of the manifest grammar
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
+	 */
+	void setSchemaVersion(String schemaVersion) throws CoreException;
 }

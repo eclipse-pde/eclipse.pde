@@ -66,7 +66,7 @@ public class Fragment extends PluginBase implements IFragment {
 		rule= ((Fragment)srcPluginBase).rule;
 		super.load(srcPluginBase);
 	}
-	void load(Node node, Hashtable lineTable) {
+	void load(Node node, String schemaVersion, Hashtable lineTable) {
 		this.pluginId = getNodeAttribute(node, "plugin-id");
 		this.pluginVersion = getNodeAttribute(node, "plugin-version");
 		String match = getNodeAttribute(node, "match");
@@ -79,7 +79,7 @@ public class Fragment extends PluginBase implements IFragment {
 				}
 			}
 		}
-		super.load(node, lineTable);
+		super.load(node, schemaVersion, lineTable);
 	}
 	public void reset() {
 		pluginId = "";
@@ -125,7 +125,11 @@ public class Fragment extends PluginBase implements IFragment {
 
 	public void write(String indent, PrintWriter writer) {
 		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-		//writer.println("<!-- File written by PDE 1.0 -->");
+		if (getSchemaVersion()!=null) {
+			writer.print("<?eclipse version=\"");
+			writer.print(getSchemaVersion());
+			writer.println("\"?>");
+		}
 		writer.print("<fragment");
 		if (getId() != null) {
 			writer.println();

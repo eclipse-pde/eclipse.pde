@@ -46,10 +46,10 @@ public class Plugin extends PluginBase implements IPlugin {
 		className = ((Plugin) srcPluginBase).className;
 		super.load(srcPluginBase);
 	}
-
-	void load(Node node, Hashtable lineTable) {
+	
+	void load(Node node, String schemaVersion, Hashtable lineTable) {
 		this.className = getNodeAttribute(node, "class");
-		super.load(node, lineTable);
+		super.load(node, schemaVersion, lineTable);
 	}
 
 	public void reset() {
@@ -74,6 +74,11 @@ public class Plugin extends PluginBase implements IPlugin {
 
 	public void write(String indent, PrintWriter writer) {
 		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+		if (getSchemaVersion()!=null) {
+			writer.print("<?eclipse version=\"");
+			writer.print(getSchemaVersion());
+			writer.println("\"?>");
+		}		
 		writer.print("<plugin");
 		if (getId() != null) {
 			writer.println();

@@ -35,6 +35,13 @@ public class BundlePluginBase
 		libraries = null;
 		imports = null;
 	}
+	
+	public String getSchemaVersion() {
+		return "3.0";
+	}
+	
+	public void setSchemaVersion(String value) throws CoreException {
+	}
 
 	public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == ModelChangedEvent.WORLD_CHANGED) {

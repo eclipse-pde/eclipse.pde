@@ -55,6 +55,7 @@ public class XMLDocumentModelBuilder extends DOMBuilderImpl {
 	private IDocumentModelFactory fModelFactory;
 	private Map fRecoveredAttributes;
 	private String fRecoveredRawname;
+	private String schemaVersion;
 	private Set fIds= new TreeSet();
 
 	
@@ -276,6 +277,7 @@ public class XMLDocumentModelBuilder extends DOMBuilderImpl {
 		fRecoveredAttributes= null;
 		fRecoveredRawname= null;
 		fIds.clear();
+		schemaVersion = null;
 	}
 
 	/*
@@ -341,6 +343,10 @@ public class XMLDocumentModelBuilder extends DOMBuilderImpl {
 			endRange(node);
 		}
 	}
+	
+	public String getSchemaVersion() {
+		return schemaVersion;
+	}
 
 	/**
 	 * @see org.apache.xerces.xni.XMLDocumentHandler#processingInstruction(java.lang.String, org.apache.xerces.xni.XMLString, org.apache.xerces.xni.Augmentations)
@@ -350,12 +356,31 @@ public class XMLDocumentModelBuilder extends DOMBuilderImpl {
 	public void processingInstruction(String target, XMLString data, Augmentations augmentations) throws XNIException {
 		super.processingInstruction(target, data, augmentations);
 		
+		if (target.equals("eclipse")) {
+			extractSchemaVersion(data.toString());
+		}
+		
 		if (fInDTDExternalSubset) {
 			Assert.isTrue(true);
 		} else {
 			Node node= fCurrentNode.getLastChild();
 			startRange(node);
 			endRange(node);
+		}
+	}
+	
+	private void extractSchemaVersion(String version) {
+		int loc = version.indexOf('=');
+		String key = version.substring(0, loc).trim();
+		String value = version.substring(loc+1).trim();
+		if (key.equals("version")) {
+			int start = 0;
+			int end = value.length()-1;
+			if (value.charAt(start)=='\"')
+				start++;
+			if (value.charAt(end)=='\"')
+				end--;
+			schemaVersion = value.substring(start, end+1);
 		}
 	}
 

@@ -29,9 +29,19 @@ public abstract class PluginBase
 	private String providerName;
 	private String id;
 	private String version;
+	private String schemaVersion;
 	private boolean valid;
 
 	public PluginBase() {
+	}
+	public String getSchemaVersion() {
+		return schemaVersion;
+	}
+	public void setSchemaVersion(String schemaVersion) throws CoreException {
+		ensureModelEditable();
+		String oldValue = this.schemaVersion;
+		this.schemaVersion = schemaVersion;
+		firePropertyChanged(P_SCHEMA_VERSION, oldValue, schemaVersion);
 	}
 	public void add(IPluginLibrary library) throws CoreException {
 		ensureModelEditable();
@@ -74,6 +84,10 @@ public abstract class PluginBase
 		this.name = pd.getName();
 		this.providerName = pd.getProviderName();
 		this.version = pd.getVersion();
+		// TODO load schema version from plug-in model
+		// when available
+		// this.schemaVersion = pd.getSchemaVersion();
+		//
 
 		// add libraries
 		loadRuntime(pd.getRuntime());
@@ -103,6 +117,10 @@ public abstract class PluginBase
 			swap((IPluginLibrary) oldValue, (IPluginLibrary) newValue);
 			return;
 		}
+		if (name.equals(P_SCHEMA_VERSION)) {
+			setSchemaVersion(newValue!=null? newValue.toString():null);
+			return;
+		}
 		super.restoreProperty(name, oldValue, newValue);
 	}
 
@@ -113,14 +131,19 @@ public abstract class PluginBase
 		name= base.name;
 		providerName= base.providerName;
 		version= base.version;
+		schemaVersion = base.schemaVersion;
 		super.load(srcPluginBase);
 		addArrayToVector(imports, srcPluginBase.getImports());
 		addArrayToVector(libraries, srcPluginBase.getLibraries());
 		valid = hasRequiredAttributes();
 	}
-
+	
 	void load(Node node, Hashtable lineTable) {
+	}
+
+	void load(Node node, String schemaVersion, Hashtable lineTable) {
 		bindSourceLocation(node, lineTable);
+		this.schemaVersion = schemaVersion;
 		this.id = getNodeAttribute(node, "id");
 		this.name = getNodeAttribute(node, "name");
 		this.providerName = getNodeAttribute(node, "provider-name");
@@ -223,6 +246,7 @@ public abstract class PluginBase
 		imports = new Vector();
 		requiresComments = null;
 		providerName = null;
+		schemaVersion = null;
 		version = "";
 		this.name = "";
 		this.id = "";

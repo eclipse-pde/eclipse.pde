@@ -193,10 +193,28 @@ public abstract class AbstractPluginModelBase
 			throwParseErrorsException();
 		}
 	}
+
 	private void processDocument(Document doc, Hashtable lineTable) {
+		String schemaVersion = processSchemaVersion(doc);
 		Node pluginNode = doc.getDocumentElement();
-		pluginBase.load(pluginNode, lineTable);
+		pluginBase.load(pluginNode, schemaVersion, lineTable);
 	}
+
+	private String processSchemaVersion(Document doc) {
+		NodeList children = doc.getChildNodes();
+		for (int i=0; i<children.getLength(); i++) {
+			Node node = children.item(i);
+			if (node.getNodeType()==Node.PROCESSING_INSTRUCTION_NODE) {
+				String name = node.getNodeName();
+				if (name.equals("eclipse")) {
+					Node vnode = node.getAttributes().getNamedItem("version");
+					if (vnode!=null) return vnode.getNodeValue();
+				}
+			}
+		}
+		return null;
+	}
+	
 	public void reload(InputStream stream, boolean outOfSync)
 		throws CoreException {
 		if (XMLCore.NEW_CODE_PATHS) {
