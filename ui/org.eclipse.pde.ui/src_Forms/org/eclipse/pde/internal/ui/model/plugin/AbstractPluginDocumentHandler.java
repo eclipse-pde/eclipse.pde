@@ -58,6 +58,13 @@ public abstract class AbstractPluginDocumentHandler extends DocumentHandler {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.model.DocumentHandler#startDocument()
+	 */
+	public void startDocument() throws SAXException {
+		super.startDocument();
+		fSchemaVersion = null;
+	}
 	protected PluginModelBase getModel() {
 		return fModel;
 	}
