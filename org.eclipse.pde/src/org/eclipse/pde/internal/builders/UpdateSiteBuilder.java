@@ -15,7 +15,10 @@ import java.util.Map;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.pde.core.ISourceObject;
 import org.eclipse.pde.internal.PDE;
+import org.eclipse.pde.internal.core.isite.*;
+import org.eclipse.pde.internal.core.site.WorkspaceSiteModel;
 import org.xml.sax.*;
 
 public class UpdateSiteBuilder extends IncrementalProjectBuilder {
@@ -92,7 +95,7 @@ public class UpdateSiteBuilder extends IncrementalProjectBuilder {
 			InputSource inputSource = new InputSource(source);
 			parser.parse(inputSource);
 			if (reporter.getErrorCount() == 0) {
-				//testPluginReferences(file, reporter);
+				validateFile(file, reporter);
 			}
 		} catch (CoreException e) {
 			PDE.logException(e);
@@ -111,6 +114,97 @@ public class UpdateSiteBuilder extends IncrementalProjectBuilder {
 		monitor.done();
 	}
 	private boolean isSiteFile(IFile file) {
-		return file.getName().toLowerCase().equals("site.xml");
+		return file.getParent().equals(file.getProject())
+			&& file.getName().toLowerCase().equals("site.xml");
+	}
+
+	private void validateFile(IFile file, PluginErrorReporter reporter) {
+		WorkspaceSiteModel model = new WorkspaceSiteModel(file);
+		model.load();
+		if (model.isLoaded()) {
+			ISite site = model.getSite();
+			if (site != null) {
+				validateRequiredAttributes(site, reporter);
+			}
+		}
+	}
+	private void validateRequiredAttributes(
+		ISite site,
+		PluginErrorReporter reporter) {
+		ISiteFeature[] features = site.getFeatures();
+		for (int i = 0; i < features.length; i++) {
+			ISiteFeature feature = features[i];
+			assertNotNull(
+				"url",
+				"feature",
+				getLine(feature),
+				feature.getURL(),
+				reporter);
+			ISiteCategory[] categories = feature.getCategories();
+			for (int j = 0; j < categories.length; j++) {
+				ISiteCategory category = categories[j];
+				assertNotNull(
+					"name",
+					"category",
+					getLine(category),
+					category.getName(),
+					reporter);
+			}
+		}
+		ISiteArchive[] archives = site.getArchives();
+		for (int i = 0; i < archives.length; i++) {
+			ISiteArchive archive = archives[i];
+			assertNotNull(
+				"path",
+				"archive",
+				getLine(archive),
+				archive.getPath(),
+				reporter);
+			assertNotNull(
+				"url",
+				"archive",
+				getLine(archive),
+				archive.getURL(),
+				reporter);
+		}
+		ISiteCategoryDefinition[] defs = site.getCategoryDefinitions();
+		for (int i = 0; i < defs.length; i++) {
+			ISiteCategoryDefinition def = defs[i];
+			assertNotNull(
+				"name",
+				"category-def",
+				getLine(def),
+				def.getName(),
+				reporter);
+			assertNotNull(
+				"label",
+				"category-def",
+				getLine(def),
+				def.getLabel(),
+				reporter);
+		}
+	}
+
+	private static int getLine(ISiteObject object) {
+		int line = -1;
+		if (object instanceof ISourceObject) {
+			line = ((ISourceObject) object).getStartLine();
+		}
+		return line;
+	}
+
+	private static void assertNotNull(
+		String att,
+		String el,
+		int line,
+		String value,
+		PluginErrorReporter reporter) {
+		if (value == null) {
+			String message =
+				PDE.getFormattedMessage(
+					"Builders.manifest.missingRequired",
+					new String[] { att, el });
+			reporter.reportError(message, line);
+		}
 	}
 }

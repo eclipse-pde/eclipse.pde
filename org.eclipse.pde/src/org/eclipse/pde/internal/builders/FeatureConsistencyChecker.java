@@ -15,6 +15,7 @@ import java.util.Map;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.ISourceObject;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.PDE;
@@ -28,6 +29,8 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 	public static final String BUILDERS_FEATURE_REFERENCE =
 		"Builders.Feature.reference";
 	public static final String BUILDERS_UPDATING = "Builders.updating";
+	
+	private boolean fileCompiled=false;
 
 	class DeltaVisitor implements IResourceDeltaVisitor {
 		private IProgressMonitor monitor;
@@ -61,6 +64,35 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 			return true;
 		}
 	}
+	
+	class ReferenceDeltaVisitor implements IResourceDeltaVisitor {
+		private boolean interestingChange;
+		public ReferenceDeltaVisitor() {
+		}
+
+		public boolean isInterestingChange() {
+			return interestingChange;
+		}
+
+		public boolean visit(IResourceDelta delta) {
+			IResource resource = delta.getResource();
+
+			if (resource instanceof IProject) {
+				// Only check projects with plugin nature
+				IProject project = (IProject) resource;
+				return (PDE.hasFeatureNature(project));
+			}
+			if (resource instanceof IFile) {
+				// see if this is it
+				IFile candidate = (IFile) resource;
+				if (isManifestFile(candidate)) {
+					interestingChange = true;
+					return false;
+				}
+			}
+			return true;
+		}
+	}
 
 	public FeatureConsistencyChecker() {
 		super();
@@ -69,21 +101,49 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 		throws CoreException {
 
 		IResourceDelta delta = null;
+		fileCompiled = false;
+		IProject project = getProject();
 		if (kind != FULL_BUILD)
-			delta = getDelta(getProject());
+			delta = getDelta(project);
 
 		if (delta == null || kind == FULL_BUILD) {
 			// Full build
-			IProject project = getProject();
-			IFile file = project.getFile("feature.xml");
-			if (file.exists()) {
-				checkFile(file, monitor);
-			}
+			checkProject(project, monitor);
 		} else {
 			delta.accept(new DeltaVisitor(monitor));
 		}
-		return null;
+		IProject[] interestingProjects = null;
+
+		// Compute interesting projects
+		WorkspaceModelManager wmanager =
+			PDECore.getDefault().getWorkspaceModelManager();
+		IModel thisModel = wmanager.getWorkspaceModel(project);
+		if (thisModel != null && thisModel instanceof IFeatureModel)
+			interestingProjects =
+				computeInterestingProjects((IFeatureModel) thisModel);
+		// If not compiled already, see if there are interesting
+		// changes in referenced projects that may cause us
+		// to compile
+		if (!fileCompiled
+			&& kind != FULL_BUILD
+			&& interestingProjects != null) {
+		/*
+			checkInterestingProjectDeltas(
+				project,
+				interestingProjects,
+				monitor);
+		*/
+		}
+		return interestingProjects;
 	}
+
+	private void checkProject(IProject project, IProgressMonitor monitor) {
+		IFile file = project.getFile("feature.xml");
+		if (file.exists()) {
+			checkFile(file, monitor);
+		}
+	}
+	
 	private void checkFile(IFile file, IProgressMonitor monitor) {
 		String message =
 			PDE.getFormattedMessage(
@@ -116,6 +176,7 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 		}
 		monitor.subTask(PDE.getResourceString(BUILDERS_UPDATING));
 		monitor.done();
+		fileCompiled=true;
 	}
 	private boolean isManifestFile(IFile file) {
 		return file.getParent().equals(file.getProject()) && file.getName().toLowerCase().equals("feature.xml");
@@ -256,5 +317,9 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 					new String[] { att, el });
 			reporter.reportError(message, line);
 		}
+	}
+	
+	private IProject[] computeInterestingProjects(IFeatureModel model) {
+		return new IProject[0];
 	}
 }

@@ -59,6 +59,16 @@ public class PDE extends Plugin {
 			return false;
 		}
 	}
+	
+	public static boolean hasFeatureNature(IProject project) {
+		// Be flexible with 1.0 IDs - check all combinations
+		try {
+			return project.hasNature(FEATURE_NATURE);
+		} catch (CoreException e) {
+			log(e);
+			return false;
+		}
+	}
 
 	public static PDE getDefault() {
 		return inst;
