@@ -164,7 +164,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 		TreeMap pluginMap,
 		IPath data,
 		String primaryFeatureId,
-		ArrayList autoStartPlugins)
+		HashMap autoStartPlugins)
 		throws CoreException {
 		try {
 			File configDir = createWorkingDirectory(data);
@@ -196,7 +196,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 		}
 	}
 	
-	private static void createConfigIniFile(File configDir, TreeMap pluginMap, String primaryFeatureId, ArrayList autoStartPlugins) {
+	private static void createConfigIniFile(File configDir, TreeMap pluginMap, String primaryFeatureId, HashMap autoStartPlugins) {
 		File file = new File(configDir, "config.ini");
 		try {
 			FileOutputStream stream = new FileOutputStream(file);
@@ -219,15 +219,24 @@ public class TargetPlatform implements IEnvironmentVariables {
 			bWriter.write("osgi.framework=" + getLocation("org.eclipse.osgi", pluginMap));
 			bWriter.newLine();
 			
-			if (autoStartPlugins.size() > 0) {
-				StringBuffer buffer = new StringBuffer();				
-				buffer.append(getOSGiLocation("org.eclipse.osgi.services", pluginMap) + ",");
-				buffer.append(getOSGiLocation("org.eclipse.osgi.util", pluginMap) + ",");
-				buffer.append(getOSGiLocation("org.eclipse.core.runtime", pluginMap) + "@2,");
-				buffer.append(getOSGiLocation("org.eclipse.update.configurator", pluginMap) + "@3");
+			autoStartPlugins.remove("org.eclipse.osgi");
+			Iterator iter = autoStartPlugins.keySet().iterator();
+			StringBuffer buffer = new StringBuffer();
+			
+			while (iter.hasNext()) {
+				String id = iter.next().toString();
+				buffer.append(getOSGiLocation(id, pluginMap));
+				Integer integer = (Integer)autoStartPlugins.get(id);
+				if (integer.intValue() > 0)
+					buffer.append("@" + integer.intValue());
+				if (iter.hasNext())
+					buffer.append(",");
+			}
+			
+			if (buffer.length() > 0) {
 				bWriter.write("osgi.bundles=" + buffer.toString());
 				bWriter.newLine();
-			}
+			}			
 			
 			bWriter.write("eof=eof");
 			bWriter.flush();

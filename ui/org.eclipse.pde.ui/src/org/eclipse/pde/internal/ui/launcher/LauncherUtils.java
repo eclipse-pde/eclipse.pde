@@ -195,14 +195,15 @@ public class LauncherUtils {
 		}
 		
 		if (map == null)
-			map = validatePlugins(PDECore.getDefault().getModelManager().getPlugins(),
-					statusEntries);
+			map = validatePlugins(PDECore.getDefault().getModelManager().getPlugins(), statusEntries);
 
 		StringBuffer errorText = new StringBuffer();		
 		final String lineSeparator = System.getProperty("line.separator");
-		ArrayList list = getAutoStartPlugins(config);
-		for (int i = 0; i < list.size(); i++) {
-			String id = list.get(i).toString();
+		
+		HashMap autoStart = getAutoStartPlugins(config);
+		Iterator iter = autoStart.keySet().iterator();
+		while (iter.hasNext()) {
+			String id = iter.next().toString();
 			if (!map.containsKey(id))
 				errorText.append(id + lineSeparator);
 		}
@@ -235,30 +236,34 @@ public class LauncherUtils {
 			if (!ignoreValidationErrors(multiStatus)) {
 				return null;
 			}
-		}		
+		}	
+		
 		return map;
 	}
 	
-	public static ArrayList getAutoStartPlugins(ILaunchConfiguration config) {
-		ArrayList list = new ArrayList();
+	public static HashMap getAutoStartPlugins(ILaunchConfiguration config) {
+		HashMap list = new HashMap();
 		if (!PDECore.getDefault().getModelManager().isOSGiRuntime()) {
-			list.add("org.eclipse.core.boot");
+			list.put("org.eclipse.core.boot", new Integer(0));
 		} else {
-			//try {
-				list.add("org.eclipse.osgi");
-				//if (config.getAttribute(ILauncherSettings.CONFIG_USE_DEFAULT, true)) {
-					list.add("org.eclipse.osgi.services");
-					list.add("org.eclipse.osgi.util");
-					list.add("org.eclipse.core.runtime");
-					list.add("org.eclipse.update.configurator");
-				/*} else {
+			try {
+				list.put("org.eclipse.osgi", new Integer(0));
+				if (config.getAttribute(ILauncherSettings.CONFIG_USE_DEFAULT, true)) {
+					list.put("org.eclipse.osgi.services", new Integer(-1));
+					list.put("org.eclipse.osgi.util", new Integer(-1));
+					list.put("org.eclipse.core.runtime", new Integer(2));
+					list.put("org.eclipse.update.configurator", new Integer(3));
+				} else {
 					String selected = config.getAttribute(ILauncherSettings.CONFIG_AUTO_START, "");
 					StringTokenizer tokenizer = new StringTokenizer(selected, ",");
-					while (tokenizer.hasMoreTokens())
-						list.add(tokenizer.nextToken());
+					while (tokenizer.hasMoreTokens()) {
+						String token = tokenizer.nextToken().trim();
+						Integer level = new Integer(token.substring(token.indexOf('@') + 1));
+						list.put(token.substring(0,token.indexOf('@')), level);
+					}		
 				}
 			} catch (CoreException e) {
-			}*/
+			}
 		}		
 		return list;
 	}
