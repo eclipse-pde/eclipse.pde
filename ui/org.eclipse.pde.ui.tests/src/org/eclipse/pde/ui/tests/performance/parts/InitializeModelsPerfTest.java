@@ -11,6 +11,7 @@
 package org.eclipse.pde.ui.tests.performance.parts;
 
 import java.io.File;
+import java.net.URL;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -20,6 +21,7 @@ import org.eclipse.pde.internal.core.ExternalModelManager;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEState;
 import org.eclipse.pde.internal.core.PluginPathFinder;
+import org.eclipse.pde.internal.core.TargetPlatformRegistryLoader;
 import org.eclipse.test.performance.Dimension;
 import org.eclipse.test.performance.PerformanceTestCase;
 
@@ -30,21 +32,26 @@ public class InitializeModelsPerfTest extends PerformanceTestCase {
 	}
 	
 	public void testModels() throws Exception {
-		tagAsGlobalSummary("Initialize Plug-ins (no caching)", Dimension.CPU_TIME);
+		tagAsSummary("Initialize Plug-ins (no caching)", Dimension.CPU_TIME);
 		String path = ExternalModelManager.getEclipseHome().toOSString();
 		startMeasuring();
-		new PDEState(PluginPathFinder.getPluginPaths(path), true, new NullProgressMonitor());
+		createState();
 		stopMeasuring();
 		commitMeasurements();
 		assertPerformance();
 	}
 	
+	private void createState() {
+		PDEState state = new PDEState();
+		URL[] pluginPaths = PluginPathFinder.getPluginPaths(ExternalModelManager.getEclipseHome().toOSString());
+		TargetPlatformRegistryLoader.loadModels(pluginPaths, true, state, new NullProgressMonitor());				
+	}
+	
 	public void testCachedModels() throws Exception {
 		tagAsGlobalSummary("Initialize Plug-ins (with caching)", Dimension.CPU_TIME);
 		String path = ExternalModelManager.getEclipseHome().toOSString();
-		new PDEState(PluginPathFinder.getPluginPaths(path), true, new NullProgressMonitor());
 		startMeasuring();
-		new PDEState(PluginPathFinder.getPluginPaths(path), true, new NullProgressMonitor());
+		createState();
 		stopMeasuring();
 		commitMeasurements();
 		assertPerformance();

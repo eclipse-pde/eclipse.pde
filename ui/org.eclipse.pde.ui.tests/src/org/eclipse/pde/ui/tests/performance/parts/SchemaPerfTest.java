@@ -25,9 +25,9 @@ public class SchemaPerfTest extends PerformanceTestCase {
 	}
 	
 	public void testLoadAllSchemas() throws Exception {
+		tagAsSummary("Loading all schemas", Dimension.USED_JAVA_HEAP);
 		ModelEntry[] entries = PDECore.getDefault().getModelManager().getEntries();
 		startMeasuring();
-		long start = System.currentTimeMillis();
 		for (int i = 0; i < entries.length; i++) {
 			IPluginModelBase model = entries[i].getActiveModel();
 			if (model == null)
@@ -37,7 +37,6 @@ public class SchemaPerfTest extends PerformanceTestCase {
 				PDECore.getDefault().getSchemaRegistry().getSchema(extPoints[j].getFullId());
 			}
 		}
-		System.out.println("Time elapsed: " + (System.currentTimeMillis() - start) + " ms");
 		stopMeasuring();
 		commitMeasurements();
 		assertPerformance();
