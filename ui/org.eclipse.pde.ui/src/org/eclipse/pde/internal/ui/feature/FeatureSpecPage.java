@@ -85,9 +85,24 @@ public void createControl(Composite parent) {
 
 private void initialize() {
 	String projectName = mainPage.getProjectName();
-	idText.setText(projectName);
+	idText.setText(setInitialId(projectName));
 	nameText.setText(projectName);
 	versionText.setText("1.0.0");	
+}
+
+private String setInitialId(String projectName) {
+	StringBuffer buffer = new StringBuffer();
+	StringTokenizer stok = new StringTokenizer(projectName,".");
+	while (stok.hasMoreTokens()) {
+		String token = stok.nextToken();
+		for (int i=0; i<token.length(); i++) {
+			if (Character.isLetterOrDigit(token.charAt(i)))
+			   buffer.append(token.charAt(i));
+		}
+		if (stok.hasMoreTokens() && buffer.charAt(buffer.length()-1) != '.')
+			buffer.append(".");
+	}
+	return buffer.toString();
 }
 
 public void setVisible(boolean visible) {
