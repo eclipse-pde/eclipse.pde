@@ -879,7 +879,7 @@
          point="org.eclipse.ui.decorators">
       <decorator
             lightweight="true"
-            quadrant="TOP_LEFT"
+            location="TOP_LEFT"
             adaptable="true"
             label="%decorator.label"
             icon="icons/ovr16/binary_co.gif"
