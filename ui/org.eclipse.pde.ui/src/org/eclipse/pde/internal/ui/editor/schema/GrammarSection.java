@@ -19,6 +19,7 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -30,6 +31,7 @@ import org.eclipse.ui.forms.widgets.*;
 public class GrammarSection extends PDESection implements IPartSelectionListener {
 	private TreeViewer treeViewer;
 	private Text dtdLabel;
+	private PropertiesAction propertiesAction;
 	public static final String SECTION_TITLE =
 		"SchemaEditor.GrammarSection.title"; //$NON-NLS-1$
 	public static final String SECTION_COMPOSITOR =
@@ -109,35 +111,53 @@ public class GrammarSection extends PDESection implements IPartSelectionListener
 		layout.marginWidth = layout.marginHeight = 2;
 		layout.verticalSpacing = toolkit.getBorderStyle()==SWT.BORDER?0:1;
 		container.setLayout(layout);
+		
+		SashForm sash = new SashForm(container, SWT.VERTICAL);
+		toolkit.adapt(sash, false, false);
+		GridData gd = new GridData(GridData.FILL_BOTH);		
+		sash.setLayoutData(gd);
 
-		Control tree = createTree(container, toolkit);
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		/*
-		if (SWT.getPlatform().equals("motif") == false)
-			gd.heightHint = 150;
-		//gd.widthHint = 200;
-		 */
-		tree.setLayoutData(gd);
-
+		Composite sashCell = sash;
+		if (toolkit.getBorderStyle()==SWT.NULL)
+			sashCell = createSashCell(sash, toolkit, 1);
+		Control tree = createTree(sashCell, toolkit);
+		
+		sashCell = sash;
+		if (toolkit.getBorderStyle()==SWT.NULL)
+			sashCell = createSashCell(sash, toolkit, 2);
 		dtdLabel =
 			toolkit.createText(
-				container,
+				sashCell,
 				"", //$NON-NLS-1$
 				SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
-		dtdLabel.setData(
-			FormToolkit.KEY_DRAW_BORDER,
-			FormToolkit.TREE_BORDER);
+		//dtdLabel.setData(
+			//FormToolkit.KEY_DRAW_BORDER,
+			//FormToolkit.TREE_BORDER);
 		dtdLabel.setEditable(false);
 		dtdLabel.setForeground(
 			toolkit.getColors().getColor(FormColors.TITLE));
-		gd = new GridData(GridData.FILL_BOTH);
-		dtdLabel.setLayoutData(gd);
+		//gd = new GridData(GridData.FILL_BOTH);
+		//dtdLabel.setLayoutData(gd);
 		updateDTDLabel(null);
+		
+		sash.setWeights(new int[] {3, 1});	
 
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
+		propertiesAction = new PropertiesAction(getPage().getPDEEditor());		
 		initialize();
 	}
+
+	private Composite createSashCell(Composite parent, FormToolkit toolkit, int marginHeight) {
+		Composite cell = toolkit.createComposite(parent);
+		FillLayout layout = new FillLayout();
+		layout.marginHeight = marginHeight;
+		layout.marginWidth = 1;
+		cell.setLayout(layout);
+		toolkit.paintBordersFor(cell);
+		return cell;
+	}
+	
 	private Control createTree(Composite parent, FormToolkit toolkit) {
 		Tree tree = toolkit.createTree(parent, SWT.SINGLE);
 
@@ -161,6 +181,11 @@ public class GrammarSection extends PDESection implements IPartSelectionListener
 		popupMenuManager.addMenuListener(listener);
 		Menu menu = popupMenuManager.createContextMenu(tree);
 		tree.setMenu(menu);
+		treeViewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				propertiesAction.run();
+			}
+		});
 		return tree;
 	}
 	public void dispose() {
@@ -251,7 +276,7 @@ public class GrammarSection extends PDESection implements IPartSelectionListener
 		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(
 			manager);
 		manager.add(new Separator());
-		manager.add(new PropertiesAction(getPage().getPDEEditor()));
+		manager.add(propertiesAction);
 	}
 	private void handleDelete(Object object) {
 		if (object instanceof SchemaCompositor) {
@@ -355,5 +380,8 @@ public class GrammarSection extends PDESection implements IPartSelectionListener
 			text = element.getDTDRepresentation(false);
 		}
 		dtdLabel.setText(prefix + text);
+	}
+	protected void handleDoubleClick(IStructuredSelection selection) {
+		propertiesAction.run();
 	}
 }
