@@ -11,6 +11,8 @@
 package org.eclipse.pde.internal.core;
 
 public interface ICoreConstants {
+	
+	// Target Platform
 	String PLATFORM_PATH = "platform_path"; //$NON-NLS-1$
 	String SAVED_PLATFORM = "saved_platform"; //$NON-NLS-1$
 	String TARGET_MODE = "target_mode"; //$NON-NLS-1$
@@ -23,4 +25,8 @@ public interface ICoreConstants {
 	String VALUE_SAVED_SOME = "savedSome"; //$NON-NLS-1$
 	String P_SOURCE_LOCATIONS = "source_locations"; //$NON-NLS-1$
 	String P_EXT_LOCATIONS = "ext_locations"; //$NON-NLS-1$
+	
+	// Target JRE
+	String USE_DEFAULT_JRE = "useDefaultJRE"; //$NON-NLS-1$
+	String TARGET_JRE = "targetJRE"; //$NON-NLS-1$
 }

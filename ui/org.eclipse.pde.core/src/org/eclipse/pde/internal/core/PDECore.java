@@ -380,6 +380,9 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		preferences.setDefault(WS, Platform.getWS());
 		preferences.setDefault(NL, Locale.getDefault().toString());
 		preferences.setDefault(ARCH, Platform.getOSArch());
+		
+		// set the defaults for the target JRE
+		preferences.setDefault(ICoreConstants.USE_DEFAULT_JRE, true);
 	}
 
 	private synchronized void initializeModels() {
