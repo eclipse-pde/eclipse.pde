@@ -72,9 +72,10 @@ public class JUnitArgumentsTab extends BasicLauncherTab {
 	 * @see org.eclipse.pde.internal.ui.launcher.BasicLauncherTab#saveApplicationSection(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	protected void saveApplicationSection(ILaunchConfigurationWorkingCopy config) {
-		if (fApplicationCombo.getSelectionIndex() == 0)
+		if (fApplicationCombo.getText().equals(PDEPlugin.getResourceString("JUnitArgumentsTab.headless"))) {
 			config.setAttribute(APPLICATION, JUnitLaunchConfiguration.CORE_APPLICATION);
-		else {
+			config.setAttribute(APP_TO_TEST, (String)null);
+		} else {
 			config.setAttribute(APPLICATION, (String)null);
 			super.saveApplicationSection(config);
 		}
