@@ -208,10 +208,12 @@ public class TargetPlatform implements IEnvironmentVariables {
 			bWriter.write("osgi.installLocation=file:" + ExternalModelManager.getEclipseHome(null).toString());
 			bWriter.newLine();
 			
-			String splashPath = getLocation(primaryFeatureId, pluginMap);
-			if (splashPath != null) {
-				bWriter.write("osgi.splashPath=" + splashPath);
-				bWriter.newLine();
+			if (primaryFeatureId != null) {
+				String splashPath = getLocation(primaryFeatureId, pluginMap);
+				if (splashPath != null) {
+					bWriter.write("osgi.splashPath=" + splashPath);
+					bWriter.newLine();
+				}
 			}
 				
 			bWriter.write("osgi.framework=" + getLocation("org.eclipse.osgi", pluginMap));
