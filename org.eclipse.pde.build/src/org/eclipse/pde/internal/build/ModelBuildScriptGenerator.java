@@ -109,7 +109,7 @@ protected String computeCompilePathClause(PluginModel descriptor, String fullJar
 protected String computeCompleteSrc(PluginModel descriptor) {
 	Set jars = new HashSet(9);
 	for (Iterator i = devJars.values().iterator(); i.hasNext();)
-		jars.addAll((Collection) i.next());
+		jars.addAll((Collection)i.next());
 	return getStringFromCollection(jars, "", "", ",");
 }
 /**
@@ -272,7 +272,13 @@ protected void generateJarTarget(PrintWriter output, PluginModel descriptor, Str
 	
 	String jar = fullJar.substring(fullJar.lastIndexOf('/') + 1);
 	Collection source = (Collection) trimmedDevJars.get(fullJar);
-	String src = (source == null || source.isEmpty()) ? "" : getStringFromCollection(source, "", "", ",");
+	String mapping = ""; 
+	String src = ""; 
+	if (source != null && !source.isEmpty()) {
+		mapping = getStringFromCollection(source, "", "", ",");
+		source = trimSlashes(source);
+		src = getStringFromCollection(source, "", "", ",");
+	}
 	String compilePath = computeCompilePathClause(descriptor, fullJar);
 	String jarName = removeBraces(relativeJar);
 	output.println();
@@ -280,6 +286,7 @@ protected void generateJarTarget(PrintWriter output, PluginModel descriptor, Str
 	output.println("    <property name=\"destroot\" value=\"${basedir}\"/>");
 	if (src.length() != 0) {
 		output.println("    <ant antfile=\"${template}\" target=\"" + TARGET_JAR + "\">");
+		output.println("      <property name=\"mapping\" value=\"" + mapping + "\"/>");
 		output.println("      <property name=\"includes\" value=\"" + src + "\"/>");
 		output.println("      <property name=\"excludes\" value=\"\"/>");
 		output.println("      <property name=\"dest\" value=\"${destroot}/" + jarName + "\"/>");
@@ -407,7 +414,7 @@ protected void generateModelTarget(PrintWriter output, PluginModel descriptor) {
 protected void generatePrologue(PrintWriter output, PluginModel descriptor) {
 	output.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 	output.println("<project name=\"" + descriptor.getId() + "\" default=\"" + getModelTypeName() + ".zip\" basedir=\".\">");
-	output.println("  <stripMapper id=\"stripMapper.id\" to=\"1\"/>");
+//	output.println("  <stripMapper id=\"stripMapper.id\" to=\"1\"/>");
 	output.println("  <target name=\"initTemplate\" unless=\"template\">");
 	output.println("    <initTemplate/>");
 	output.println("  </target>");
@@ -444,12 +451,14 @@ protected void generateSrcTarget(PrintWriter output, PluginModel descriptor, Str
 	String zip = fullJar.substring(fullJar.lastIndexOf('/') + 1, fullJar.length() - 4) + SOURCE_EXTENSION;
 	Collection source = (Collection) trimmedDevJars.get(fullJar);
 	String src = source == null || source.isEmpty() ? "" : getSourceList(source, "**/*.java");
+	String mapping = source == null || source.isEmpty() ? "" : getStringFromCollection(source, "", "", ",");
 	output.println();
 	output.println("  <target name=\"" + target + "\" depends=\"init\">");
 	output.println("    <property name=\"destroot\" value=\"${basedir}\"/>");
 
 	if (src.length() != 0) {
 		output.println("    <ant antfile=\"${template}\" target=\"" + TARGET_SRC + "\">");
+		output.println("      <property name=\"mapping\" value=\"" + mapping + "\"/>");
 
 		String inclusions = getSubstitution(descriptor, SRC_INCLUDES);
 		if (inclusions == null)
@@ -703,6 +712,16 @@ protected Hashtable trimDevJars(PluginModel descriptor, Hashtable devJars) {
 		}
 		if (!dirs.isEmpty())
 			result.put(key, dirs);
+	}
+	return result;
+}
+protected Collection trimSlashes(Collection original) {
+	ArrayList result = new ArrayList(original.size());
+	for (Iterator i = original.iterator(); i.hasNext();) {
+		String entry = (String)i.next();
+		if (entry.charAt(0) == '/')
+			entry = entry.substring(1);
+		result.add(entry);
 	}
 	return result;
 }
