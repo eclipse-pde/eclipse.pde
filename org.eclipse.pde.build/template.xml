@@ -2,7 +2,7 @@
 <project name="build template" default="dist">
 
   <commapatternset id="pattern.id" includes="${includes}" excludes="${excludes}"/>
-  <commapatternset id="copy.id" includes="${includes}" excludes="**/*.java"/>
+  <commapatternset id="copy.id" includes="${includes}" excludes="${excludes},**/*.java"/>
   <commapatternset id="includes.id" includes="${includes}"/>
   <commapatternset id="excludes.id" excludes="${excludes}"/>
   <fileset id="file.id" dir=".">
