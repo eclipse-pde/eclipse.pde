@@ -6,10 +6,23 @@
  */
 package org.eclipse.pde.internal.core.ifeature;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.IPluginReference;
 /**
  * @version 	1.0
  * @author
  */
 public interface IFeatureImport extends IFeatureObject, IPluginReference {
+	String P_TYPE = "type";
+	String P_PATCH = "patch";
+	
+	int PLUGIN = 0;
+	int FEATURE = 1;
+	
+	int getType();
+	
+	void setType(int type) throws CoreException;
+	
+	boolean isPatch();
+	void setPatch(boolean patch) throws CoreException;
 }

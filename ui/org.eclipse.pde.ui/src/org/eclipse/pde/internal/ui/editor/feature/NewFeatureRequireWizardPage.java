@@ -20,11 +20,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 public class NewFeatureRequireWizardPage extends ReferenceWizardPage {
-	public static final String KEY_TITLE = "FeatureEditor.RequiresSection.new.title";
-	public static final String KEY_DESC = "FeatureEditor.RequiresSection.new.desc";
-	public static final String KEY_ADDING = "FeatureEditor.RequiresSection.new.adding";
+	public static final String KEY_TITLE = "FeatureEditor.RequiresSection.newPlugin.title";
+	public static final String KEY_DESC = "FeatureEditor.RequiresSection.newPlugin.desc";
+	public static final String KEY_ADDING = "FeatureEditor.RequiresSection.newPlugin.adding";
 	public static final String KEY_UPDATING =
-		"FeatureEditor.RequiresSection.new.updating";
+		"FeatureEditor.RequiresSection.newPlugin.updating";
 
 	public NewFeatureRequireWizardPage(IFeatureModel model) {
 		super(model);
@@ -64,12 +64,12 @@ public class NewFeatureRequireWizardPage extends ReferenceWizardPage {
 			FeatureImport fimport = (FeatureImport) model.getFactory().createImport();
 			fimport.setPlugin((IPlugin)candidate.getPluginBase());
 			fimport.setId(pluginBase.getId());
-			feature.addImport(fimport);
 			added[i] = fimport;
 			monitor.worked(1);
 		}
 		monitor.subTask("");
 		monitor.setTaskName(PDEPlugin.getResourceString(KEY_UPDATING));
+		feature.addImports(added);
 		monitor.worked(1);
 	}
 	

@@ -31,6 +31,8 @@ import org.eclipse.pde.core.plugin.IMatchRules;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModel;
+import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 
 public class PDECore extends Plugin {
@@ -131,6 +133,24 @@ public class PDECore extends Plugin {
 		}
 		return null;
 	}
+	
+	private IFeature findFeature(
+		IFeatureModel[] models,
+		String id,
+		String version,
+		int match) {
+
+		for (int i = 0; i < models.length; i++) {
+			IFeatureModel model = models[i];
+
+			IFeature feature = model.getFeature();
+			String pid = feature.getId();
+			String pversion = feature.getVersion();
+			if (compare(id, version, pid, pversion, match))
+				return feature;
+		}
+		return null;
+	}
 
 	public static boolean compare(
 		String id1,
@@ -189,6 +209,16 @@ public class PDECore extends Plugin {
 		ExternalModelManager exmanager = getExternalModelManager();
 		return findPlugin(exmanager.getModels(), id, version, match);
 	}
+	
+	public IFeature findFeature(String id) {
+		return findFeature(id, null, IMatchRules.NONE);
+	}
+	
+	public IFeature findFeature(String id, String version, int match) {
+		WorkspaceModelManager manager = getWorkspaceModelManager();
+		return findFeature(manager.getWorkspaceFeatureModels(), id, version, match);
+	}
+	
 	public static PDECore getDefault() {
 		return inst;
 	}

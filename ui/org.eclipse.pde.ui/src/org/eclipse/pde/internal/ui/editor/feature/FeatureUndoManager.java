@@ -90,7 +90,7 @@ public class FeatureUndoManager extends ModelUndoManager {
 				} else if (element instanceof IFeatureData) {
 					feature.addData(new IFeatureData [] {(IFeatureData) element});
 				} else if (element instanceof IFeatureImport) {
-					feature.addImport((IFeatureImport) element);
+					feature.addImports(new IFeatureImport [] {(IFeatureImport) element});
 				} else if (element instanceof IFeatureChild) {
 					feature.addIncludedFeatures(new IFeatureChild [] {(IFeatureChild) element});
 				}
@@ -112,7 +112,7 @@ public class FeatureUndoManager extends ModelUndoManager {
 				} else if (element instanceof IFeatureData) {
 					feature.removeData(new IFeatureData [] {(IFeatureData) element});
 				} else if (element instanceof IFeatureImport) {
-					feature.removeImport((IFeatureImport) element);
+					feature.removeImports(new IFeatureImport [] {(IFeatureImport) element});
 				} else if (element instanceof IFeatureChild) {
 					feature.removeIncludedFeatures(new IFeatureChild [] {(IFeatureChild) element});
 				}

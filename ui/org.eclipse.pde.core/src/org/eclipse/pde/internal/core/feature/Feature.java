@@ -61,11 +61,13 @@ public class Feature extends VersionableObject implements IFeature {
 		fireStructureChanged(features, IModelChangedEvent.INSERT);
 	}
 
-	public void addImport(IFeatureImport iimport) throws CoreException {
+	public void addImports(IFeatureImport [] iimports) throws CoreException {
 		ensureModelEditable();
-		imports.add(iimport);
-		((FeatureImport) iimport).setInTheModel(true);
-		fireStructureChanged(iimport, IModelChangedEvent.INSERT);
+		for (int i=0; i<iimports.length; i++) {
+			imports.add(iimports[i]);
+			((FeatureImport)iimports[i]).setInTheModel(true);
+		}
+		fireStructureChanged(iimports, IModelChangedEvent.INSERT);
 	}
 
 	public IFeaturePlugin[] getPlugins() {
@@ -321,11 +323,13 @@ public class Feature extends VersionableObject implements IFeature {
 		}
 		fireStructureChanged(features, IModelChangedEvent.REMOVE);
 	}
-	public void removeImport(IFeatureImport iimport) throws CoreException {
+	public void removeImports(IFeatureImport [] iimports) throws CoreException {
 		ensureModelEditable();
-		imports.remove(iimport);
-		((FeatureImport) iimport).setInTheModel(false);
-		fireStructureChanged(iimport, IModelChangedEvent.REMOVE);
+		for (int i=0; i<iimports.length; i++) {
+			imports.remove(iimports[i]);
+			((FeatureImport)iimports[i]).setInTheModel(false);
+		}
+		fireStructureChanged(iimports, IModelChangedEvent.REMOVE);
 	}
 
 	public String getOS() {

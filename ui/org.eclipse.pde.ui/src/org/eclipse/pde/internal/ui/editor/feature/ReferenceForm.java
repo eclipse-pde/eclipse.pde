@@ -4,10 +4,8 @@ package org.eclipse.pde.internal.ui.editor.feature;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.editor.manifest.MatchSection;
 import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -18,7 +16,7 @@ public class ReferenceForm extends ScrollableSectionForm {
 	private FeatureReferencePage page;
 	private PluginSection pluginSection;
 	private RequiresSection requiresSection;
-	private MatchSection matchSection;
+	private FeatureMatchSection matchSection;
 
 public ReferenceForm(FeatureReferencePage page) {
 	this.page = page;
@@ -59,7 +57,7 @@ protected void createFormClient(Composite parent) {
 	gd = new GridData(GridData.FILL_BOTH);
 	control.setLayoutData(gd);	
 
-	matchSection = new MatchSection(page, false);
+	matchSection = new FeatureMatchSection(page);
 	control = matchSection.createControl(right, factory);
 	gd = new GridData(GridData.FILL_HORIZONTAL);
 	control.setLayoutData(gd);

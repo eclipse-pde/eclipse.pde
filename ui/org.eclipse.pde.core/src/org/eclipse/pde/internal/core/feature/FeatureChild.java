@@ -18,21 +18,45 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 	private IFeature feature;
 	private String name;
 	private boolean optional;
+	private int searchLocation = ROOT;
+	private int match = NONE;
 
 	protected void reset() {
 		super.reset();
 		version = null;
 		optional = false;
 		name = null;
+		searchLocation = ROOT;
+		match = NONE;
 	}
 	protected void parse(Node node) {
 		super.parse(node);
 		version = getNodeAttribute(node, "version");
 		name = getNodeAttribute(node, "name");
 		optional = getBooleanAttribute(node, "optional");
+		String matchName = getNodeAttribute(node, "match");
+		if (matchName != null) {
+			for (int i = 0; i < RULE_NAME_TABLE.length; i++) {
+				if (matchName.equals(RULE_NAME_TABLE[i])) {
+					match = i;
+					break;
+				}
+			}
+		}
+		String searchLocationName = getNodeAttribute(node, "search_location");
+		if (searchLocationName == null)
+			searchLocationName = getNodeAttribute(node, "search-location");
+		if (searchLocationName != null) {
+			if (searchLocationName.equals("root"))
+				searchLocation = ROOT;
+			else if (searchLocationName.equals("self"))
+				searchLocation = SELF;
+			else if (searchLocationName.equals("both"))
+				searchLocation = BOTH;
+		}
 		hookWithWorkspace();
 	}
-	
+
 	public void loadFrom(IFeature feature) {
 		id = feature.getId();
 		version = feature.getVersion();
@@ -46,28 +70,39 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 	public String getVersion() {
 		return version;
 	}
-	
+
 	public boolean isOptional() {
 		return optional;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
-	
+
+	public int getSearchLocation() {
+		return searchLocation;
+	}
+
+	public int getMatch() {
+		return match;
+	}
+
 	public IFeature getReferencedFeature() {
-		if (feature==null)
+		if (feature == null)
 			hookWithWorkspace();
 		return feature;
 	}
 
 	public void hookWithWorkspace() {
 		IFeatureModel[] models =
-			PDECore.getDefault().getWorkspaceModelManager().getWorkspaceFeatureModels();
+			PDECore
+				.getDefault()
+				.getWorkspaceModelManager()
+				.getWorkspaceFeatureModels();
 		for (int i = 0; i < models.length; i++) {
 			IFeature feature = models[i].getFeature();
-			
-			if (feature!=null && feature.getId().equals(getId())) {
+
+			if (feature != null && feature.getId().equals(getId())) {
 				if (version == null || feature.getVersion().equals(version)) {
 					this.feature = feature;
 					break;
@@ -86,32 +121,55 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 		firePropertyChanged(P_VERSION, oldValue, version);
 		hookWithWorkspace();
 	}
-	
+
 	public void setName(String name) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.name;
 		this.name = name;
 		firePropertyChanged(P_NAME, oldValue, name);
 	}
-	
+
+	public void setMatch(int match) throws CoreException {
+		ensureModelEditable();
+		Integer oldValue = new Integer(this.match);
+		this.match = match;
+		firePropertyChanged(P_MATCH, oldValue, new Integer(match));
+	}
+
+	public void setSearchLocation(int searchLocation) throws CoreException {
+		ensureModelEditable();
+		Integer oldValue = new Integer(this.searchLocation);
+		this.searchLocation = searchLocation;
+		firePropertyChanged(
+			P_SEARCH_LOCATION,
+			oldValue,
+			new Integer(searchLocation));
+	}
+
 	public void setOptional(boolean optional) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = new Boolean(this.optional);
 		this.optional = optional;
 		firePropertyChanged(P_NAME, oldValue, new Boolean(optional));
 	}
-		
-	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
+
+	public void restoreProperty(String name, Object oldValue, Object newValue)
+		throws CoreException {
 		if (name.equals(P_VERSION)) {
-			setVersion((String)newValue);
+			setVersion((String) newValue);
 		} else if (name.equals(P_OPTIONAL)) {
-			setOptional(((Boolean)newValue).booleanValue());
+			setOptional(((Boolean) newValue).booleanValue());
 		} else if (name.equals(P_NAME)) {
-			setName((String)newValue);
-		} else 
+			setName((String) newValue);
+		} else if (name.equals(P_MATCH)) {
+			setMatch(newValue != null ? ((Integer) newValue).intValue() : NONE);
+		} else if (name.equals(P_SEARCH_LOCATION)) {
+			setSearchLocation(
+				newValue != null ? ((Integer) newValue).intValue() : ROOT);
+		} else
 			super.restoreProperty(name, oldValue, newValue);
 	}
-	
+
 	public void setId(String id) throws CoreException {
 		super.setId(id);
 		hookWithWorkspace();
@@ -139,7 +197,15 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 			writer.println();
 			writer.print(indent2 + "optional=\"true\"");
 		}
+		if (match!=NONE) {
+			writer.println();
+			writer.print(indent2 + "match=\""+RULE_NAME_TABLE[match]+"\"");
+		}
+		if (searchLocation!=ROOT) {
+			writer.println();
+			String value=searchLocation==SELF?"self":"both";
+			writer.print(indent2 + "search_location=\""+value+"\"");
+		}
 		writer.println("/>");
-		//writer.println(indent + "</includes>");
 	}
 }

@@ -164,9 +164,17 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 
 	public String getObjectText(FeatureImport obj) {
-		IPlugin plugin = obj.getPlugin();
-		if (plugin != null && isFullNameModeEnabled()) {
-			return plugin.getTranslatedName();
+		int type = obj.getType();
+		if (type == IFeatureImport.PLUGIN) {
+			IPlugin plugin = obj.getPlugin();
+			if (plugin != null && isFullNameModeEnabled()) {
+				return plugin.getTranslatedName();
+			}
+		} else if (type == IFeatureImport.FEATURE) {
+			IFeature feature = obj.getFeature();
+			if (feature != null && isFullNameModeEnabled()) {
+				return feature.getLabel();
+			}
 		}
 		return obj.getId();
 	}
@@ -193,7 +201,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 	public String getObjectText(ISiteCategory obj) {
 		ISiteCategoryDefinition def = obj.getDefinition();
-		if (def!=null)
+		if (def != null)
 			return def.getLabel();
 		return obj.getName();
 	}
@@ -282,7 +290,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 			return getObjectImage((ISiteCategoryDefinition) obj);
 		}
 		if (obj instanceof ISiteCategory) {
-			return getObjectImage((ISiteCategory)obj);
+			return getObjectImage((ISiteCategory) obj);
 		}
 		if (obj instanceof ISiteBuildFeature) {
 			return getObjectImage((ISiteBuildFeature) obj);
@@ -461,11 +469,24 @@ public class PDELabelProvider extends SharedLabelProvider {
 
 	private Image getObjectImage(IFeatureImport obj) {
 		FeatureImport iimport = (FeatureImport) obj;
-		IPlugin plugin = iimport.getPlugin();
+		int type = iimport.getType();
+		ImageDescriptor base;
 		int flags = 0;
-		if (plugin == null)
-			flags = F_ERROR;
-		return get(PDEPluginImages.DESC_REQ_PLUGIN_OBJ, flags);
+		
+		if (type==IFeatureImport.FEATURE) {
+			base = PDEPluginImages.DESC_FEATURE_OBJ;
+			IFeature feature = iimport.getFeature();
+			if (feature == null)
+				flags = F_ERROR;
+		}
+		else {
+			base = PDEPluginImages.DESC_REQ_PLUGIN_OBJ;
+			IPlugin plugin = iimport.getPlugin();
+			if (plugin == null)
+				flags = F_ERROR;
+		}
+
+		return get(base, flags);
 	}
 	private Image getObjectImage(IFeatureInfo info) {
 		int flags = 0;
@@ -481,7 +502,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 
 	public Image getObjectImage(ISiteFeature obj) {
 		int flags = 0;
-		if (obj.getArchiveFile()!=null) {
+		if (obj.getArchiveFile() != null) {
 			flags = F_BINARY;
 		}
 		return get(PDEPluginImages.DESC_JAVA_LIB_OBJ, flags);
@@ -493,9 +514,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 	public Image getObjectImage(ISiteCategoryDefinition obj) {
 		return get(PDEPluginImages.DESC_CATEGORY_OBJ);
 	}
-	
+
 	public Image getObjectImage(ISiteCategory obj) {
-		int flags = obj.getDefinition()==null?F_ERROR:0;
+		int flags = obj.getDefinition() == null ? F_ERROR : 0;
 		return get(PDEPluginImages.DESC_CATEGORY_OBJ, flags);
 	}
 

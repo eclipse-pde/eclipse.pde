@@ -11,16 +11,13 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.plugin.IFragment;
-import org.eclipse.pde.core.plugin.IFragmentModel;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.feature.FeatureImport;
 import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.core.plugin.Fragment;
-import org.eclipse.pde.internal.core.plugin.Plugin;
+import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
-import org.eclipse.pde.internal.ui.editor.TableSection;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
@@ -35,18 +32,19 @@ import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 public class RequiresSection
 	extends TableSection
 	implements IModelProviderListener {
-		public static final int MULTI_SELECTION = 33;
+	public static final int MULTI_SELECTION = 33;
 	private static final String KEY_TITLE =
 		"FeatureEditor.RequiresSection.title";
 	private static final String KEY_DESC = "FeatureEditor.RequiresSection.desc";
-	private static final String KEY_NEW_BUTTON =
-		"FeatureEditor.RequiresSection.newButton";
+	private static final String KEY_NEW_PLUGIN_BUTTON =
+		"FeatureEditor.RequiresSection.newPluginButton";
+	private static final String KEY_NEW_FEATURE_BUTTON =
+		"FeatureEditor.RequiresSection.newFeatureButton";
 	private static final String KEY_SYNC_BUTTON =
 		"FeatureEditor.RequiresSection.syncButton";
 	private static final String KEY_COMPUTE =
 		"FeatureEditor.RequiresSection.compute";
-	private static final String KEY_DELETE = 
-		"Actions.delete.label";
+	private static final String KEY_DELETE = "Actions.delete.label";
 	private boolean updateNeeded;
 	private Button syncButton;
 	private TableViewer pluginViewer;
@@ -66,7 +64,9 @@ public class RequiresSection
 		super(
 			page,
 			new String[] {
-				PDEPlugin.getResourceString(KEY_NEW_BUTTON),
+				PDEPlugin.getResourceString(KEY_NEW_PLUGIN_BUTTON),
+				PDEPlugin.getResourceString(KEY_NEW_FEATURE_BUTTON),
+				null,
 				PDEPlugin.getResourceString(KEY_COMPUTE)});
 		setHeaderText(PDEPlugin.getResourceString(KEY_TITLE));
 		setDescription(PDEPlugin.getResourceString(KEY_DESC));
@@ -99,7 +99,7 @@ public class RequiresSection
 		pluginViewer.setSorter(ListUtil.NAME_SORTER);
 		pluginViewer.setLabelProvider(
 			PDEPlugin.getDefault().getLabelProvider());
-					
+
 		deleteAction = new Action() {
 			public void run() {
 				handleDelete();
@@ -111,13 +111,22 @@ public class RequiresSection
 	}
 
 	protected void buttonSelected(int index) {
-		if (index == 0)
-			handleNew();
-		else if (index == 1)
-			recomputeImports();
+		switch (index) {
+			case 0 :
+				handleNewPlugin();
+				break;
+			case 1 :
+				handleNewFeature();
+				break;
+			case 2 :
+				break;
+			case 3 :
+				recomputeImports();
+				break;
+		}
 	}
 
-	private void handleNew() {
+	private void handleNewPlugin() {
 		final IFeatureModel model = (IFeatureModel) getFormPage().getModel();
 		BusyIndicator
 			.showWhile(pluginViewer.getTable().getDisplay(), new Runnable() {
@@ -125,6 +134,23 @@ public class RequiresSection
 				NewFeatureRequireWizardPage page =
 					new NewFeatureRequireWizardPage(model);
 				ReferenceWizard wizard = new ReferenceWizard(model, page);
+				WizardDialog dialog =
+					new WizardDialog(
+						PDEPlugin.getActiveWorkbenchShell(),
+						wizard);
+				dialog.create();
+				dialog.open();
+			}
+		});
+	}
+
+	private void handleNewFeature() {
+		final IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+		BusyIndicator
+			.showWhile(pluginViewer.getTable().getDisplay(), new Runnable() {
+			public void run() {
+				RequiredFeaturesWizard wizard =
+					new RequiredFeaturesWizard(model);
 				WizardDialog dialog =
 					new WizardDialog(
 						PDEPlugin.getActiveWorkbenchShell(),
@@ -144,10 +170,13 @@ public class RequiresSection
 			return;
 
 		try {
+			IFeatureImport[] deleted = new IFeatureImport[selection.size()];
+			int i = 0;
 			for (Iterator iter = selection.iterator(); iter.hasNext();) {
 				IFeatureImport iimport = (IFeatureImport) iter.next();
-				feature.removeImport(iimport);
+				deleted[i++] = iimport;
 			}
+			feature.removeImports(deleted);
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
@@ -171,7 +200,10 @@ public class RequiresSection
 
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {
-			BusyIndicator.showWhile(pluginViewer.getTable().getDisplay(), new Runnable() {
+			BusyIndicator
+				.showWhile(
+					pluginViewer.getTable().getDisplay(),
+					new Runnable() {
 				public void run() {
 					handleDelete();
 				}
@@ -189,7 +221,10 @@ public class RequiresSection
 			return true;
 		}
 		if (actionId.equals(IWorkbenchActionConstants.SELECT_ALL)) {
-			BusyIndicator.showWhile(pluginViewer.getTable().getDisplay(), new Runnable() {
+			BusyIndicator
+				.showWhile(
+					pluginViewer.getTable().getDisplay(),
+					new Runnable() {
 				public void run() {
 					handleSelectAll();
 				}
@@ -211,7 +246,8 @@ public class RequiresSection
 		manager.add(propertiesAction);
 		manager.add(new Separator());
 		*/
-		IStructuredSelection selection = (StructuredSelection)pluginViewer.getSelection();
+		IStructuredSelection selection =
+			(StructuredSelection) pluginViewer.getSelection();
 		if (!selection.isEmpty()) {
 			manager.add(deleteAction);
 			manager.add(new Separator());
@@ -234,6 +270,8 @@ public class RequiresSection
 		update(input);
 		if (model.isEditable() == false) {
 			getTablePart().setButtonEnabled(0, false);
+			getTablePart().setButtonEnabled(1, false);
+			getTablePart().setButtonEnabled(3, false);
 			syncButton.setEnabled(false);
 		}
 		model.addModelChangedListener(this);
@@ -304,7 +342,8 @@ public class RequiresSection
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(Clipboard)
 	 */
 	public boolean canPaste(Clipboard clipboard) {
-		Object [] objects = (Object[])clipboard.getContents(ModelDataTransfer.getInstance());
+		Object[] objects =
+			(Object[]) clipboard.getContents(ModelDataTransfer.getInstance());
 		if (objects != null && objects.length > 0) {
 			return canPaste(null, objects);
 		}
@@ -325,8 +364,9 @@ public class RequiresSection
 	 */
 	protected void doPaste() {
 		Clipboard clipboard = getFormPage().getEditor().getClipboard();
-		Object [] objects = (Object[])clipboard.getContents(ModelDataTransfer.getInstance());
-		if (objects != null && canPaste(null,objects))
+		Object[] objects =
+			(Object[]) clipboard.getContents(ModelDataTransfer.getInstance());
+		if (objects != null && canPaste(null, objects))
 			doPaste(null, objects);
 	}
 	/**
@@ -335,37 +375,56 @@ public class RequiresSection
 	protected void doPaste(Object target, Object[] objects) {
 		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
 		IFeature feature = model.getFeature();
+
+		IFeatureImport[] imports = new IFeatureImport[objects.length];
 		try {
 			for (int i = 0; i < objects.length; i++) {
 				FeatureImport fImport = (FeatureImport) objects[i];
 				fImport.setModel(model);
 				fImport.setParent(feature);
-				setPluginModel(fImport);
-				feature.addImport(fImport);
+				reconnectReference(fImport);
+				imports[i] = fImport;
 			}
+			feature.addImports(imports);
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
 
 	}
-	
-	private void setPluginModel(FeatureImport fImport) {
-		Plugin plugin = (Plugin)fImport.getPlugin();
-		if (plugin.getPluginBase() instanceof Fragment) {
-			IFragmentModel[] fragments =
-				PDECore.getDefault().getWorkspaceModelManager().getWorkspaceFragmentModels();
-			for (int i = 0; i < fragments.length; i++) {
-				IFragment fragment = fragments[i].getFragment();
-				if (fragment.getId().equals(plugin.getId())) {
-					if (plugin.getVersion() == null || fragment.getVersion().equals(plugin.getVersion())) {
-						plugin.setModel(fragment.getModel());
-						return;
+
+	private void reconnectReference(FeatureImport fImport) {
+		if (fImport.getType() == IFeatureImport.FEATURE) {
+			fImport.setFeature(
+				PDECore
+					.getDefault()
+					.findFeature(fImport.getId(), fImport.getVersion(), fImport.getMatch()));
+		} else {
+			Plugin plugin = (Plugin) fImport.getPlugin();
+			if (plugin.getPluginBase() instanceof Fragment) {
+				IFragmentModel[] fragments =
+					PDECore
+						.getDefault()
+						.getWorkspaceModelManager()
+						.getWorkspaceFragmentModels();
+				for (int i = 0; i < fragments.length; i++) {
+					IFragment fragment = fragments[i].getFragment();
+					if (fragment.getId().equals(plugin.getId())) {
+						if (plugin.getVersion() == null
+							|| fragment.getVersion().equals(
+								plugin.getVersion())) {
+							plugin.setModel(fragment.getModel());
+							return;
+						}
 					}
 				}
+			} else {
+				plugin.setModel(
+					PDECore
+						.getDefault()
+						.findPlugin(plugin.getId(), plugin.getVersion(), 0)
+						.getModel());
 			}
-		} else {
-			plugin.setModel(PDECore.getDefault().findPlugin(plugin.getId(), plugin.getVersion(), 0).getModel());
 		}
 	}
-	
+
 }

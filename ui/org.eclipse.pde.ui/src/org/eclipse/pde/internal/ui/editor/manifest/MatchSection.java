@@ -28,8 +28,8 @@ public class MatchSection extends PDEFormSection {
 	private FormEntry versionText;
 	private Button reexportButton;
 	private CCombo matchCombo;
-	private IPluginReference currentImport;
-	private IStructuredSelection multiSelection;
+	protected IPluginReference currentImport;
+	protected IStructuredSelection multiSelection;
 	private boolean blockChanges = false;
 	private boolean ignoreModelEvents = false;
 	private boolean addReexport = true;
@@ -315,7 +315,7 @@ public class MatchSection extends PDEFormSection {
 		matchCombo.select(match);
 	}
 
-	private void update(IStructuredSelection selection) {
+	protected void update(IStructuredSelection selection) {
 		blockChanges = true;
 		currentImport = null;
 		int size = selection.size();
@@ -349,7 +349,7 @@ public class MatchSection extends PDEFormSection {
 		blockChanges = false;
 	}
 
-	private void update(IPluginReference iimport) {
+	protected void update(IPluginReference iimport) {
 		blockChanges = true;
 		if (iimport == null) {
 			if (addReexport) {

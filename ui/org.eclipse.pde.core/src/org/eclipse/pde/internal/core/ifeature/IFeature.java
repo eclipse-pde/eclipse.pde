@@ -100,7 +100,7 @@ public void removeIncludedFeatures(IFeatureChild [] features) throws CoreExcepti
  *
  * @param reference a required plug-in reference to add
  */
-public void addImport(IFeatureImport iimport) throws CoreException;
+public void addImports(IFeatureImport [] imports) throws CoreException;
 /**
  * Returns references to plug-ins in this feature
  *
@@ -181,7 +181,7 @@ public void removeData(IFeatureData [] entries) throws CoreException;
  *
  * @param iimport a required plug-in reference to add
  */
-public void removeImport(IFeatureImport iimport) throws CoreException;
+public void removeImports(IFeatureImport [] imports) throws CoreException;
 /**
  * Sets the provider name of this feature. This method
  * may throw a CoreException if the model is not editable.
