@@ -39,7 +39,7 @@ public class CoreTestApplication implements IPlatformRunnable {
 			boolean found = false;
 			// check for args without parameters (i.e., a flag arg)
 			// see if we should be logging deltas
-			if (args[i].equalsIgnoreCase("-deltas")) {
+			if (args[i].equalsIgnoreCase("-deltas")) { //$NON-NLS-1$
 				found = true;
 				deltas = true;
 			}
@@ -49,7 +49,7 @@ public class CoreTestApplication implements IPlatformRunnable {
 			}
 	
 			// check for args with parameters
-			if (i == args.length - 1 || args[i + 1].startsWith("-")) {
+			if (i == args.length - 1 || args[i + 1].startsWith("-")) { //$NON-NLS-1$
 				continue;
 			}
 			// done checking for args.  Remember where an arg was found 

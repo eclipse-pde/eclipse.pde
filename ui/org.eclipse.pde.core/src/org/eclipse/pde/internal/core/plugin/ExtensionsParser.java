@@ -68,7 +68,8 @@ public class ExtensionsParser extends DefaultHandler {
 			extension.setModel(fModel);
 			extension.setInTheModel(true);
 			fExtensions.add(extension);
-			if (extension.getPoint().equals("org.eclipse.pde.core.source")) //$NON-NLS-1$
+			String point = extension.getPoint();
+			if ("org.eclipse.pde.core.source".equals(point) || "org.eclipse.core.runtime.products".equals(point)) //$NON-NLS-1$ //$NON-NLS-2$
 				fOpenElements.push(extension);
 		}
 	}

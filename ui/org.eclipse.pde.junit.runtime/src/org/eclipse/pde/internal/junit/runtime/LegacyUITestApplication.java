@@ -12,7 +12,7 @@ import org.eclipse.ui.*;
  */
 public class LegacyUITestApplication implements IPlatformRunnable {
 
-	private static final String DEFAULT_APP_PRE_3_0 = "org.eclipse.ui.workbench";
+	private static final String DEFAULT_APP_PRE_3_0 = "org.eclipse.ui.workbench"; //$NON-NLS-1$
 
 	public Object run(final Object args) throws Exception {
 		IPlatformRunnable object = getApplication((String[]) args);
@@ -60,9 +60,9 @@ public class LegacyUITestApplication implements IPlatformRunnable {
 		// Otherwise, return the application object.
 		IConfigurationElement[] elements = extension.getConfigurationElements();
 		if (elements.length > 0) {
-			IConfigurationElement[] runs = elements[0].getChildren("run");
+			IConfigurationElement[] runs = elements[0].getChildren("run"); //$NON-NLS-1$
 			if (runs.length > 0) {
-				Object runnable = runs[0].createExecutableExtension("class");
+				Object runnable = runs[0].createExecutableExtension("class"); //$NON-NLS-1$
 				if (runnable instanceof IPlatformRunnable)
 					return (IPlatformRunnable) runnable;
 			}

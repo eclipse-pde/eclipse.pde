@@ -16,7 +16,7 @@ import org.eclipse.ui.testing.*;
  */ 
 public class UITestApplication implements IPlatformRunnable, ITestHarness {
 	
-	private static final String DEFAULT_APP_3_0 = "org.eclipse.ui.ide.workbench";
+	private static final String DEFAULT_APP_3_0 = "org.eclipse.ui.ide.workbench"; //$NON-NLS-1$
 	
 	private TestableObject fTestableObject;
 	
@@ -55,9 +55,9 @@ public class UITestApplication implements IPlatformRunnable, ITestHarness {
 		// Otherwise, return the application object.
 		IConfigurationElement[] elements = extension.getConfigurationElements();
 		if (elements.length > 0) {
-			IConfigurationElement[] runs = elements[0].getChildren("run");
+			IConfigurationElement[] runs = elements[0].getChildren("run"); //$NON-NLS-1$
 			if (runs.length > 0) {
-				Object runnable = runs[0].createExecutableExtension("class");
+				Object runnable = runs[0].createExecutableExtension("class"); //$NON-NLS-1$
 				if (runnable instanceof IPlatformRunnable)
 					return (IPlatformRunnable) runnable;
 			}
@@ -74,7 +74,9 @@ public class UITestApplication implements IPlatformRunnable, ITestHarness {
 	 */
 	private String getApplicationToRun(String[] args) {
 		for (int i = 0; i < args.length; i++) {
-			if (args[i].equals("-testApplication") && i < args.length -1)
+			if (args[i].equals("-product")) //$NON-NLS-1$
+				return Platform.getProduct().getApplication();
+			if (args[i].equals("-testApplication") && i < args.length -1) //$NON-NLS-1$
 				return args[i+1];
 		}
 		return DEFAULT_APP_3_0;

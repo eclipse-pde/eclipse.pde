@@ -19,7 +19,7 @@ public class PdeJUnitPlugin extends Plugin {
 		try {
 			resourceBundle =
 				ResourceBundle.getBundle(
-				"org.eclipse.pde.internal.junit.runtime.junitresources");
+				"org.eclipse.pde.internal.junit.runtime.junitresources"); //$NON-NLS-1$
 		} catch (MissingResourceException x) {
 			resourceBundle = null;
 		}
