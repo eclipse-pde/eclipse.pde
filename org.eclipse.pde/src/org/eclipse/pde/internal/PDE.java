@@ -20,8 +20,11 @@ public class PDE extends Plugin {
 		PLUGIN_ID + "." + "SchemaBuilder";
 	public static final String PLUGIN_NATURE = PLUGIN_ID + "." + "PluginNature";
 	public static final String FEATURE_NATURE = PLUGIN_ID + "." + "FeatureNature";
+	public static final String SITE_NATURE = PLUGIN_ID + "." + "UpdateSiteNature";
 	public static final String FEATURE_BUILDER_ID =
 		PLUGIN_ID + "." + "FeatureBuilder";
+	public static final String SITE_BUILDER_ID =
+		PLUGIN_ID + "." + "UpdateSiteBuilder";
 
 	// Shared instance
 	private static PDE inst;

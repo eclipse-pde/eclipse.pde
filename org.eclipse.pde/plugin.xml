@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin
-   name="%pluginName"
    id="org.eclipse.pde"
+   name="%pluginName"
    version="2.1.0"
    provider-name="%providerName"
    class="org.eclipse.pde.internal.PDE">
@@ -11,7 +11,6 @@
          <export name="*"/>
       </library>
    </runtime>
-
    <requires>
       <import plugin="org.eclipse.pde.core" export="true"/>
       <import plugin="org.eclipse.core.resources"/>
@@ -36,6 +35,16 @@
       <runtime>
          <run
                class="org.eclipse.pde.internal.FeatureProject">
+         </run>
+      </runtime>
+   </extension>
+   <extension
+         id="UpdateSiteNature"
+         name="%natures.siteNature.name"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="org.eclipse.pde.internal.SiteProject">
          </run>
       </runtime>
    </extension>
@@ -66,6 +75,16 @@
       <builder>
          <run
                class="org.eclipse.pde.internal.builders.FeatureConsistencyChecker">
+         </run>
+      </builder>
+   </extension>
+   <extension
+         id="UpdateSiteBuilder"
+         name="%builders.siteBuilder.name"
+         point="org.eclipse.core.resources.builders">
+      <builder>
+         <run
+               class="org.eclipse.pde.internal.builders.UpdateSiteBuilder">
          </run>
       </builder>
    </extension>
