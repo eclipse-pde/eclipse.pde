@@ -12,7 +12,7 @@ public interface IPDECoreConstants {
 	/** PDE Core plug-in id */
 	public static final String PI_BOOT = "org.eclipse.core.boot";
 	public static final String PI_BOOT_JAR_NAME = "boot.jar";
-	public static final String PI_PDECORE = "org.eclipse.pde.core";
+	public static final String PI_PDEBUILD = "org.eclipse.pde.build";
 	public static final String PI_RUNTIME = "org.eclipse.core.runtime";
 	public static final String PI_RUNTIME_JAR_NAME = "runtime.jar";
 

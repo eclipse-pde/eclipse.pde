@@ -178,7 +178,7 @@ public void setDevEntries(List entries) {
 protected PluginRegistryModel getRegistry() throws CoreException {
 	if (registry == null) {
 		URL[] pluginPath = getPluginPath();
-		MultiStatus problems = new MultiStatus(PI_PDECORE, EXCEPTION_MODEL_PARSE, Policy.bind("exception.pluginParse"), null);
+		MultiStatus problems = new MultiStatus(PI_PDEBUILD, EXCEPTION_MODEL_PARSE, Policy.bind("exception.pluginParse"), null);
 		Factory factory = new Factory(problems);
 		registry = Platform.parsePlugins(pluginPath, factory);
 		IStatus status = factory.getStatus();

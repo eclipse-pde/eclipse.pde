@@ -82,7 +82,7 @@ protected PluginRegistryModel getRegistry() throws CoreException, MalformedURLEx
 	PluginRegistryModel registry = (PluginRegistryModel) getProject().getReferences().get(REGISTRY_REFERENCE_ID);
 	if (registry == null) {
 		URL[] pluginPath = getPluginPath();
-		MultiStatus problems = new MultiStatus(PI_PDECORE, EXCEPTION_MODEL_PARSE, Policy.bind("exception.pluginParse"), null);
+		MultiStatus problems = new MultiStatus(PI_PDEBUILD, EXCEPTION_MODEL_PARSE, Policy.bind("exception.pluginParse"), null);
 		Factory factory = new Factory(problems);
 		registry = Platform.parsePlugins(pluginPath, factory);
 		IStatus status = factory.getStatus();

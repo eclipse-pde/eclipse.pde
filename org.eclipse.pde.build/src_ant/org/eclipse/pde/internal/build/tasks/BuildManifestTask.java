@@ -32,7 +32,7 @@ public class BuildManifestTask extends Task implements IPDECoreConstants, IXMLCo
 public void execute() throws BuildException {
 	try {
 		if (this.elements == null)
-			throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_ELEMENT_MISSING, Policy.bind("error.missingElement"), null));
+			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ELEMENT_MISSING, Policy.bind("error.missingElement"), null));
 		readDirectory();
 		PrintWriter output = new PrintWriter(new FileOutputStream(destination));
 		try {
@@ -105,7 +105,7 @@ protected void generateEntries(PrintWriter output, List entries) throws CoreExce
 protected void collectEntries(List entries, String entry) throws CoreException {
 	String cvsInfo = directory.getProperty(entry);
 	if (cvsInfo == null)
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_ENTRY_MISSING, Policy.bind("error.missingDirectoryEntry", entry), null));
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ENTRY_MISSING, Policy.bind("error.missingDirectoryEntry", entry), null));
 
 	int index = entry.indexOf('@');
 	String type = entry.substring(0, index);
@@ -143,7 +143,7 @@ protected Feature readFeature(String element) throws CoreException {
 		FeatureExecutableFactory factory = new FeatureExecutableFactory();
 		return (Feature) factory.createFeature(root.toFile().toURL(), null);
 	} catch (Exception e) {
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_FEATURE_MISSING, Policy.bind("error.creatingFeature", new String[] {element}), e));
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, Policy.bind("error.creatingFeature", new String[] {element}), e));
 	}	
 }
 
@@ -167,7 +167,7 @@ protected void readDirectory() throws CoreException {
 			is.close();
 		}
 	} catch (IOException e) {
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_READ_DIRECTORY, Policy.bind("error.readingDirectory"), e));
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READ_DIRECTORY, Policy.bind("error.readingDirectory"), e));
 	}
 }
 

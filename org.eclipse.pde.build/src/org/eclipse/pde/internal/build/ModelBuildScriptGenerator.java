@@ -52,7 +52,7 @@ public abstract class ModelBuildScriptGenerator extends AbstractBuildScriptGener
  */
 public void generate() throws CoreException {
 	if (model == null)
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_ELEMENT_MISSING, Policy.bind("error.missingElement"), null));
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ELEMENT_MISSING, Policy.bind("error.missingElement"), null));
 
 	// if the model defines its own custom script, we just skip from generating it
 	String custom = getBuildProperty(PROPERTY_CUSTOM);
@@ -72,7 +72,7 @@ public void generate() throws CoreException {
 			script.close();
 		}
 	} catch (IOException e) {
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_WRITING_SCRIPT, Policy.bind("exception.writeScript"), e));
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_SCRIPT, Policy.bind("exception.writeScript"), e));
 	}
 }
 
@@ -172,7 +172,7 @@ protected void generateSourceIndividualTarget(String relativeJar, String target)
 		fullJar = new URL(model.getLocation() + relativeJar).getFile();
 	} catch (MalformedURLException e) {
 		// should not happen
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_MALFORMED_URL, Policy.bind("exception.url") ,e));
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_MALFORMED_URL, Policy.bind("exception.url") ,e));
 	}
 	Collection source = (Collection) getTrimmedDevJars().get(fullJar);
 	String mapping = ""; 
@@ -270,7 +270,7 @@ protected void generateJarIndividualTarget(String jarName) throws CoreException 
 		fullJar = new URL(model.getLocation() + jarName).getFile();
 	} catch (MalformedURLException e) {
 		// should not happen
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_MALFORMED_URL, Policy.bind("exception.url") ,e));
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_MALFORMED_URL, Policy.bind("exception.url") ,e));
 	}
 	Collection source = (Collection) getTrimmedDevJars().get(fullJar);
 	String mapping = ""; 
@@ -306,7 +306,7 @@ protected String computeCompilePathClause(String fullJar) throws CoreException {
 	List jars = new ArrayList(9);
 	PluginModel runtime = getRegistry().getPlugin(PI_RUNTIME);
 	if (runtime == null)
-		throw new CoreException(new Status(IStatus.WARNING, PI_PDECORE, EXCEPTION_PLUGIN_MISSING, Policy.bind("exception.missingPlugin", PI_RUNTIME), null));
+		throw new CoreException(new Status(IStatus.WARNING, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, Policy.bind("exception.missingPlugin", PI_RUNTIME), null));
 	else {
 		IPath runtimeLocation = new Path(getPluginLocationProperty(PI_RUNTIME, false));
 		if (devEntries != null)
@@ -464,7 +464,7 @@ protected Hashtable trimDevJars(Map devJars) throws CoreException {
 			String src = (String) i.next();
 			File entry = new File(base, src).getAbsoluteFile();
 			if (!entry.exists())
-				throw new CoreException(new Status(IStatus.WARNING, PI_PDECORE, WARNING_MISSING_SOURCE, Policy.bind("warning.cannotLocateSource", entry.getPath()), null));
+				throw new CoreException(new Status(IStatus.WARNING, PI_PDEBUILD, WARNING_MISSING_SOURCE, Policy.bind("warning.cannotLocateSource", entry.getPath()), null));
 			else
 				found = true;;
 		}
@@ -663,7 +663,7 @@ protected abstract String getModelTypeName();
  */
 public void setModel(PluginModel model) throws CoreException {
 	if (model == null)
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_ELEMENT_MISSING, Policy.bind("error.missingElement"), null));
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ELEMENT_MISSING, Policy.bind("error.missingElement"), null));
 	this.model = model;
 	devJars = null;
 	jarOrder = null;
@@ -679,7 +679,7 @@ public void setModel(PluginModel model) throws CoreException {
 public void setModelId(String modelId) throws CoreException {
 	PluginModel newModel = getModel(modelId);
 	if (newModel == null)
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_ELEMENT_MISSING, Policy.bind("exception.missingElement", modelId), null));
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ELEMENT_MISSING, Policy.bind("exception.missingElement", modelId), null));
 	setModel(newModel);
 }
 

@@ -23,7 +23,7 @@ public InitTemplate() {
 }
 
 public void execute() throws BuildException {
-	IPluginDescriptor plugin = Platform.getPluginRegistry().getPluginDescriptor(PI_PDECORE);
+	IPluginDescriptor plugin = Platform.getPluginRegistry().getPluginDescriptor(PI_PDEBUILD);
 	if (plugin == null)
 		return;
 	try {

@@ -79,7 +79,7 @@ public static URL[] asURL(String[] target) throws CoreException {
 			result[i] = new URL(target[i]);
 		return result;
 	} catch (MalformedURLException e) {
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_MALFORMED_URL, e.getMessage(), e));
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_MALFORMED_URL, e.getMessage(), e));
 	}
 }
 }

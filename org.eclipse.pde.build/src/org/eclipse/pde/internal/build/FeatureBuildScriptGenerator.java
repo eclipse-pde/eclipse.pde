@@ -52,7 +52,7 @@ protected List computeElements(boolean fragments) throws CoreException {
 			else
 				model = getRegistry().getPlugin(identifier.getIdentifier(), identifier.getVersion().toString());
 			if (model == null)
-				throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_PLUGIN_MISSING, Policy.bind("exception.missingPlugin", entry.getVersionedIdentifier().toString()), null));
+				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, Policy.bind("exception.missingPlugin", entry.getVersionedIdentifier().toString()), null));
 			else
 				result.add(model);
 		}
@@ -64,9 +64,9 @@ public void setGenerateChildrenScript(boolean generate) {
 }
 public void generate() throws CoreException {
 	if (featureID == null)
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_FEATURE_MISSING, Policy.bind("error.missingFeatureId"), null));
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, Policy.bind("error.missingFeatureId"), null));
 	if (installLocation == null)
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_INSTALL_LOCATION_MISSING, Policy.bind("error.missingInstallLocation"), null));
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_INSTALL_LOCATION_MISSING, Policy.bind("error.missingInstallLocation"), null));
 
 	String custom = getBuildProperty(PROPERTY_CUSTOM);
 	if (custom != null && custom.equalsIgnoreCase("true"))
@@ -88,7 +88,7 @@ public void generate() throws CoreException {
 			script.close();
 		}
 	} catch (IOException e) {
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_WRITING_SCRIPT, Policy.bind("exception.writeScript"), e));
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_SCRIPT, Policy.bind("exception.writeScript"), e));
 	}
 }
 /**
@@ -632,7 +632,7 @@ protected void configurePersistentProperties(AbstractBuildScriptGenerator genera
 }
 public void setFeature(String featureID) throws CoreException {
 	if (featureID == null)
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_FEATURE_MISSING, Policy.bind("error.missingFeatureId"), null));
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, Policy.bind("error.missingFeatureId"), null));
 	this.featureID = featureID;
 	readProperties(getFeatureRootLocation());
 }
@@ -642,16 +642,16 @@ public void setFeature(String featureID) throws CoreException {
 protected void readFeature() throws CoreException {
 	String location = getFeatureRootLocation();
 	if (location == null)
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_FEATURE_MISSING, Policy.bind("error.missingFeatureLocation"), null));
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, Policy.bind("error.missingFeatureLocation"), null));
 	
 	FeatureExecutableFactory factory = new FeatureExecutableFactory();
 	File file = new File(location);
 	try {
 		feature = (Feature) factory.createFeature(file.toURL(), null);
 		if (feature == null)
-			throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_FEATURE_MISSING, Policy.bind("error.creatingFeature", new String[] {featureID}), null));	
+			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, Policy.bind("error.creatingFeature", new String[] {featureID}), null));	
 	} catch (MalformedURLException e) {
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_FEATURE_MISSING, Policy.bind("error.creatingFeature", new String[] {featureID}), e));
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, Policy.bind("error.creatingFeature", new String[] {featureID}), e));
 	}
 }
 /**

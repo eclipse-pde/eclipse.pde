@@ -80,7 +80,7 @@ public void generate() throws CoreException {
 			script.close();
 		}
 	} catch (IOException e) {
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_WRITING_SCRIPT, Policy.bind("exception.writeScript"), e));
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_SCRIPT, Policy.bind("exception.writeScript"), e));
 	}
 }
 
@@ -107,7 +107,7 @@ protected void generateFetchTarget() throws CoreException {
 protected void generateFetchEntry(int tab, String entry) throws CoreException {
 	String cvsInfo = getCVSInfo(entry);
 	if (cvsInfo == null)
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_ENTRY_MISSING, Policy.bind("error.missingDirectoryEntry", entry), null));
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ENTRY_MISSING, Policy.bind("error.missingDirectoryEntry", entry), null));
 
 	int index = entry.indexOf('@');
 	String type = entry.substring(0, index);
@@ -170,7 +170,7 @@ protected Feature retrieveFeature(String element, String cvsRoot, String tag, St
 			retrieve.close();
 		}
 	} catch (IOException e) {
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_WRITING_SCRIPT, Policy.bind("exception.writeScript"), e));
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_SCRIPT, Policy.bind("exception.writeScript"), e));
 	}
 	try {
 		AntRunner runner = new AntRunner();
@@ -182,10 +182,10 @@ protected Feature retrieveFeature(String element, String cvsRoot, String tag, St
 		Feature feature = (Feature) factory.createFeature(featureFolder.toURL(), null);
 		clear(featureFolder);
 		if (feature == null)
-			throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_FEATURE_MISSING, Policy.bind("exception.missingFeature", new String[] {element}), null));
+			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, Policy.bind("exception.missingFeature", new String[] {element}), null));
 		return feature;
 	} catch (Exception e) {
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_FEATURE_MISSING, Policy.bind("error.creatingFeature", new String[] {element}), e));
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, Policy.bind("error.creatingFeature", new String[] {element}), e));
 	}
 }
 
@@ -246,7 +246,7 @@ protected void readDirectory() throws CoreException {
 			is.close();
 		}
 	} catch (IOException e) {
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_READ_DIRECTORY, Policy.bind("error.readingDirectory"), e));
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READ_DIRECTORY, Policy.bind("error.readingDirectory"), e));
 	}
 }
 

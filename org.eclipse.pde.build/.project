@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>org.eclipse.pde.core</name>
+	<name>org.eclipse.pde.build</name>
 	<comment></comment>
 	<projects>
 		<project>org.eclipse.ant.core</project>

@@ -46,7 +46,7 @@ public FetchScriptGeneratorApplication() {
 
 public void run() throws CoreException {
 	if (this.elements == null)
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_ELEMENT_MISSING, Policy.bind("error.missingElement"), null));
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ELEMENT_MISSING, Policy.bind("error.missingElement"), null));
 	FetchScriptGenerator generator = new FetchScriptGenerator();
 	generator.setDirectoryLocation(directoryLocation);
 	generator.setInstallLocation(installLocation);
