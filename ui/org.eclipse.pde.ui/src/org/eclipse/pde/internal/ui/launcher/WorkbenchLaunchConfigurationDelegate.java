@@ -277,8 +277,8 @@ public class WorkbenchLaunchConfigurationDelegate
 		String vmInstallName =
 			configuration.getAttribute(
 				VMINSTALL,
-				BasicLauncherTab.getDefaultVMInstallName());
-		IVMInstall[] vmInstallations = BasicLauncherTab.getAllVMInstances();
+				LauncherUtils.getDefaultVMInstallName());
+		IVMInstall[] vmInstallations = LauncherUtils.getAllVMInstances();
 		IVMInstall launcher = null;
 
 		if (monitor == null)

@@ -53,8 +53,8 @@ public class WorkbenchSourcePathProvider extends StandardSourcePathProvider {
 		String vmInstallName =
 			configuration.getAttribute(
 				ILauncherSettings.VMINSTALL,
-				BasicLauncherTab.getDefaultVMInstallName());
-		IVMInstall[] vmInstallations = BasicLauncherTab.getAllVMInstances();
+				LauncherUtils.getDefaultVMInstallName());
+		IVMInstall[] vmInstallations = LauncherUtils.getAllVMInstances();
 		IVMInstall jre = null;
 
 		for (int i = 0; i < vmInstallations.length; i++) {

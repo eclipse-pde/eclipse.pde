@@ -413,7 +413,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 			new Path(
 				PDECore.getDefault().getPluginPreferences().getString(
 					ICoreConstants.PLATFORM_PATH));
-		IPath runtimeWorkspace = ppath.append(JUnitMainTab.RT_WORKSPACE);
+		IPath runtimeWorkspace = ppath.append("runtime-test-workspace");
 		return runtimeWorkspace.toOSString();
 
 
