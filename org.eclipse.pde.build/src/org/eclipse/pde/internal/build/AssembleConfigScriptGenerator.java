@@ -130,11 +130,23 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	private void generatePackagingTargets() {
+		String fileName = getPropertyFormat(PROPERTY_SOURCE) + '/' + getPropertyFormat(PROPERTY_ELEMENT_NAME);
+		String fileExists =  getPropertyFormat(PROPERTY_SOURCE) + '/' + getPropertyFormat(PROPERTY_ELEMENT_NAME) + "_exists"; //$NON-NLS-1$
+		
+		script.printComment("Beginning of the jarUp task"); //$NON-NLS-1$
 		script.printTargetDeclaration(TARGET_JARUP, null, null, null, Policy.bind("assemble.jarUp")); //$NON-NLS-1$
-		String prefix = getPropertyFormat(PROPERTY_SOURCE) + '/' + getPropertyFormat(PROPERTY_ELEMENT_NAME);
-		script.printZipTask(prefix + ".jar", prefix, false, false, null); //$NON-NLS-1$
-		script.printDeleteTask(prefix, null, null);
+		script.printAvailableTask(fileExists, fileName);
+		Map params = new HashMap(2);
+		params.put(PROPERTY_SOURCE, getPropertyFormat(PROPERTY_SOURCE));
+		params.put(PROPERTY_ELEMENT_NAME, getPropertyFormat(PROPERTY_ELEMENT_NAME));
+		script.printAntCallTask(TARGET_JARING, null, params);
 		script.printTargetEnd();
+		
+		script.printTargetDeclaration(TARGET_JARING, null, fileExists, null, null);
+		script.printZipTask(fileName + ".jar", fileName, false, false, null); //$NON-NLS-1$
+		script.printDeleteTask(fileName, null, null);
+		script.printTargetEnd();
+		script.printComment("End of the jarUp task"); //$NON-NLS-1$
 	}
 
 	private void generateGZipTarget() {
