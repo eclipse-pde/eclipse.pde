@@ -266,7 +266,7 @@ public class LauncherUtils {
 		bootPath = getBootPath(bootModel);
 		if (bootPath == null) {
 			MessageDialog.openError(
-				PDEPlugin.getActiveWorkbenchShell(),
+				getDisplay().getActiveShell(),
 				PDEPlugin.getResourceString(KEY_TITLE),
 				PDEPlugin.getResourceString(KEY_NO_BOOT));
 			return null;
