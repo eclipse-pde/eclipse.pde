@@ -44,7 +44,7 @@ public class PackagerBuildScriptGenerator extends FeatureBuildScriptGenerator {
 			generator.setBuildSiteFactory(siteFactory);
 			generator.setDevEntries(devEntries);
 			generator.setCompiledElements(getCompiledElements());
-			generator.setBuildingOSGi(getBuildingOSGi());
+			generator.setBuildingOSGi(isBuildingOSGi());
 			setFeature(featureList[i]);
 			generator.generate();
 		}
@@ -71,7 +71,7 @@ public class PackagerBuildScriptGenerator extends FeatureBuildScriptGenerator {
 			generator.setBuildSiteFactory(siteFactory);
 			generator.setDevEntries(devEntries);
 			generator.setCompiledElements(getCompiledElements());
-			generator.setBuildingOSGi(getBuildingOSGi());
+			generator.setBuildingOSGi(isBuildingOSGi());
 			try {
 				generator.generate();
 			} catch(CoreException exception) {

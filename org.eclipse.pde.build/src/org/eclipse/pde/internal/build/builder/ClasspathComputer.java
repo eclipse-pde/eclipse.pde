@@ -43,7 +43,7 @@ public class ClasspathComputer implements IPDEBuildConstants, IXMLConstants {
 		String location = generator.getLocation(model);
 
 		//PARENT
-		if (! generator.getBuildingOSGi())
+		if (! generator.isBuildingOSGi())
 			addPlugin(getPlugin(PI_BOOT, null), classpath, location);
 
 		//SELF
@@ -303,7 +303,7 @@ public class ClasspathComputer implements IPDEBuildConstants, IXMLConstants {
 	private void addPrerequisites(PluginModel target, List classpath, String baseLocation, List pluginChain) throws CoreException {
 
 		if (pluginChain.contains(target)) {
-			if (generator.getBuildingOSGi()) {
+			if (generator.isBuildingOSGi()) {
 				if (target == getPlugin(PI_RUNTIME, null) || target == getPlugin("org.eclipse.osgi", null) || target == getPlugin("org.eclipse.core.runtime.osgi", null))
 					return;
 			} else {
