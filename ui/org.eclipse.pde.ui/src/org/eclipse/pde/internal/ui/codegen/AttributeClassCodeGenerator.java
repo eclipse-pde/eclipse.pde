@@ -9,9 +9,10 @@ import java.io.*;
 import org.eclipse.core.runtime.*;
 import java.util.*;
 import org.eclipse.pde.internal.core.ischema.*;
-import org.eclipse.pde.internal.ui.codegen.*;
 import org.eclipse.pde.internal.ui.util.*;
 import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.internal.core.SourceType;
+
 import java.io.PrintWriter;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -60,14 +61,21 @@ private void addRequiredMethodsFor(IType type) throws JavaModelException {
 	// Check the super-interfaces
 	String[] interfaceNames = type.getSuperInterfaceNames();
 	for (int i = 0; i < interfaceNames.length; i++) {
+		if (type instanceof SourceType) {
+			interfaceNames[i] = getFullyQualifiedName((SourceType)type,interfaceNames[i]);
+		}
 		addRequiredMethodsFor(interfaceNames[i]);
 	}
 
 	if (type.isClass()) {
 		// Check the superclass
 		String superclassName = type.getSuperclassName();
-		if (superclassName != null && !superclassName.equals("java.lang.Object"))
-			addRequiredMethodsFor(superclassName);
+		if (superclassName != null) {
+			if (type instanceof SourceType)
+				superclassName = getFullyQualifiedName((SourceType)type,superclassName);
+			if (!superclassName.equals("java.lang.Object"))
+				addRequiredMethodsFor(superclassName);
+		}
 	}
 
 	IMethod[] methods = type.getMethods();
@@ -291,7 +299,7 @@ private void generateRequiredMethod(IMethod method, PrintWriter writer)
 	int flags = method.getFlags();
 	boolean isProtected = Flags.isProtected(flags);
 	String access = isProtected ? "protected" : "public";
-	String returnType = parseSignature(method.getReturnType());
+	String returnType = parseSignature(method, method.getReturnType());
 	writer.println("\t/**");
 	writer.println("\t * Insert the method's description here.");
 	writer.println(
@@ -307,7 +315,7 @@ private void generateRequiredMethod(IMethod method, PrintWriter writer)
 	for (int i = 0; i < method.getNumberOfParameters(); i++) {
 		if (i > 0)
 			writer.print(", ");
-		writer.print(parseSignature(parameterTypes[i]));
+		writer.print(parseSignature(method, parameterTypes[i]));
 		writer.print(" " + parameterNames[i]);
 	}
 
@@ -318,7 +326,7 @@ private void generateRequiredMethod(IMethod method, PrintWriter writer)
 			writer.print("throws ");
 		else
 			writer.print(", ");
-		writer.print(parseSignature(exceptionTypes[i]));
+		writer.print(parseSignature(method, exceptionTypes[i]));
 	}
 	writer.println(" {");
 	String returnValue = calculateReturnValue(method.getReturnType());
@@ -333,7 +341,7 @@ private String getSimpleName(String fullyQualifiedName) {
 	else
 		return fullyQualifiedName;
 }
-private String parseSignature(String signature) {
+private String parseSignature(IMethod method, String signature) {
 	int dimensions = 0;
 	StringBuffer buffer = new StringBuffer();
 	int nameLoc = 0;
@@ -344,6 +352,12 @@ private String parseSignature(String signature) {
 		if (inTypeName) {
 			if (c == Signature.C_NAME_END) {
 				String typeName = signature.substring(nameLoc, i);
+				if (method.getCompilationUnit() != null) {
+					try {
+						typeName = getFullyQualifiedName((SourceType)method.getCompilationUnit().getAllTypes()[0],typeName);
+					} catch (JavaModelException e) {
+					}
+				}
 				String shortTypeName = getSimpleName(typeName);
 				if (shortTypeName.length() < typeName.length()) {
 					// Ditching package prefix - must add import
@@ -408,5 +422,16 @@ private void removeImplementedMethod(IMethod method)
 	IMethod matchingMethod = findMatchingMethod(method);
 	if (matchingMethod != null)
 		requiredMethods.remove(matchingMethod);
+}
+
+private String getFullyQualifiedName(SourceType type, String name) {
+	try {
+		String[][] resolvedType = type.resolveType(name);
+		if (resolvedType != null)
+			name = resolvedType[0][0] + "." + resolvedType[0][1];
+	} catch (JavaModelException e) {
+	} finally {
+		return name;
+	}
 }
 }
