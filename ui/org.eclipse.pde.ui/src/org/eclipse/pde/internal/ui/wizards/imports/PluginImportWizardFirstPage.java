@@ -65,7 +65,6 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 
 	private Label otherLocationLabel;
 	private Button runtimeLocationButton;
-	//private Button otherLocationButton;
 	private Button browseButton;
 	private Combo dropLocation;
 	private Button doImportCheck;
@@ -101,23 +100,6 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 			PDEPlugin.getResourceString(KEY_RUNTIME_LOCATION));
 
 		int wizardClientWidth = parent.getSize().x - 2 * layout.marginWidth;
-/*
-		createMultiLineLabel(
-			composite,
-			wizardClientWidth,
-			PDEPlugin.getResourceString(KEY_RUNTIME_DESC),
-			3);
-*/
-/*
-		otherLocationButton = new Button(composite, SWT.RADIO);
-		fillHorizontal(otherLocationButton, 3, false);
-		otherLocationButton.setText(PDEPlugin.getResourceString(KEY_OTHER_LOCATION));
-		createMultiLineLabel(
-			composite,
-			wizardClientWidth,
-			PDEPlugin.getResourceString(KEY_OTHER_DESC),
-			3);
-*/
 		otherLocationLabel = new Label(composite, SWT.NULL);
 		otherLocationLabel.setText(PDEPlugin.getResourceString(KEY_OTHER_FOLDER));
 
@@ -138,10 +120,10 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 		gd = fillHorizontal(label, 3, false);
 		gd.heightHint = 20;
 
-//		doImportCheck = new Button(composite, SWT.CHECK);
-//		doImportCheck.setText(PDEPlugin.getResourceString(KEY_IMPORT_CHECK));
-//		doImportCheck.setEnabled(false);
-//		fillHorizontal(doImportCheck, 3, false);
+		doImportCheck = new Button(composite, SWT.CHECK);
+		doImportCheck.setText(PDEPlugin.getResourceString(KEY_IMPORT_CHECK));
+		doImportCheck.setEnabled(false);
+		fillHorizontal(doImportCheck, 3, false);
 
 		doExtractCheck = new Button(composite, SWT.CHECK);
 		doExtractCheck.setText(PDEPlugin.getResourceString(KEY_EXTRACT_CHECK));
@@ -234,31 +216,21 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 				}
 			}
 		});
-/*
-		otherLocationButton.addSelectionListener(new SelectionAdapter() {
+		doImportCheck.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if (otherLocationButton.getSelection()) {
-					setOtherEnabled(true);
-					updateStatus();
-				}
 			}
 		});
-*/
-//		doImportCheck.addSelectionListener(new SelectionAdapter() {
-//			public void widgetSelected(SelectionEvent e) {
-//			}
-//		});
 
 		doExtractCheck.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateStatus();
 
 				if (doExtractCheck.getSelection()) {
-					//if (!doImportCheck.getSelection()) {
-						//doImportCheck.setSelection(true);
-					//}
+					if (!doImportCheck.getSelection()) {
+						doImportCheck.setSelection(true);
+					}
 				}
-				//doImportCheck.setEnabled(!doExtractCheck.getSelection());
+				doImportCheck.setEnabled(!doExtractCheck.getSelection());
 			}
 		});
 		dropLocation.addSelectionListener(new SelectionAdapter() {
@@ -303,7 +275,7 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 
 		if (initialSettings != null) {
 			doOther = initialSettings.getBoolean(SETTINGS_DOOTHER);
-			//doImport = !initialSettings.getBoolean(SETTINGS_DOIMPORT);
+			doImport = !initialSettings.getBoolean(SETTINGS_DOIMPORT);
 			doExtract = initialSettings.getBoolean(SETTINGS_DOEXTRACT);
 
 			ArrayList items = new ArrayList();
@@ -317,14 +289,13 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 		}
 		dropLocation.setItems(dropItems);
 		runtimeLocationButton.setSelection(!doOther);
-		//otherLocationButton.setSelection(doOther);
 		setOtherEnabled(doOther);
 		if (doOther)
 			dropLocation.select(0);
 		else
 			dropLocation.setText(getTargetHome());
-		//doImportCheck.setSelection(doImport);
-		//doImportCheck.setEnabled(!doExtract);
+		doImportCheck.setSelection(doImport);
+		doImportCheck.setEnabled(!doExtract);
 		doExtractCheck.setSelection(doExtract);
 
 		validateDropLocation();
@@ -350,7 +321,7 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 		}
 		if (finishPressed) {
 			settings.put(SETTINGS_DOOTHER, other);
-			//settings.put(SETTINGS_DOIMPORT, !doImportCheck.getSelection());
+			settings.put(SETTINGS_DOIMPORT, !doImportCheck.getSelection());
 			settings.put(SETTINGS_DOEXTRACT, doExtractCheck.getSelection());
 		}
 	}
@@ -409,8 +380,7 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 	 * Returns the drop location.
 	 */
 	public boolean doImportToWorkspace() {
-		return true;
-		//return doImportCheck.getSelection();
+		return doImportCheck.getSelection();
 	}
 
 	/**

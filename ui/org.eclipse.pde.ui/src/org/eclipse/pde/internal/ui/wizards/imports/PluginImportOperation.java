@@ -113,6 +113,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 					IStatus.OK,
 					PDEPlugin.getResourceString(KEY_MULTI_PROBLEM),
 					null);
+			long start = System.currentTimeMillis();
 			for (int i = 0; i < models.length; i++) {
 				try {
 					createProject(
@@ -128,6 +129,8 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			if (!multiStatus.isOK()) {
 				throw new CoreException(multiStatus);
 			}
+			long stop = System.currentTimeMillis();
+			//System.out.println("Import time: "+(stop-start)+"ms");
 		} finally {
 			monitor.done();
 		}
@@ -145,12 +148,8 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 
 			if (project.exists()) {
 				if (queryReplace(project)) {
-					boolean deleteContent =
-						doImport
-							&& root.getLocation().isPrefixOf(
-								project.getLocation());
 					project.delete(
-						deleteContent,
+						true,
 						true,
 						new SubProgressMonitor(monitor, 1));
 					try {
@@ -177,17 +176,18 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 					FileSystemStructureProvider.INSTANCE,
 					null,
 					new SubProgressMonitor(monitor, 1));
-				importSource(
-					project,
-					model.getPluginBase(),
-					new Path(pluginDir.getPath()),
-					new SubProgressMonitor(monitor, 1));
 			} else {
 				linkContent(
 					pluginDir,
 					project,
-					new SubProgressMonitor(monitor, 2));
+					new SubProgressMonitor(monitor, 1));
+
 			}
+			importSource(
+				project,
+				model.getPluginBase(),
+				new Path(pluginDir.getPath()), doImport,
+				new SubProgressMonitor(monitor, 1));
 
 			boolean isJavaProject =
 				model.getPluginBase().getLibraries().length > 0;
@@ -270,6 +270,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		IProject project,
 		IPluginBase plugin,
 		IPath pluginPath,
+		boolean doImport,
 		IProgressMonitor monitor)
 		throws CoreException {
 		SourceLocationManager manager =
@@ -297,8 +298,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 				File srcFile = manager.findSourceFile(plugin, srcPath);
 				// cannot find it
 				if (srcFile != null) {
-					;
-					importSourceFile(project, srcFile, srcPath);
+					importSourceFile(project, srcFile, srcPath, doImport);
 					continue;
 				}
 				// if we are here, either root source path is null
@@ -313,7 +313,8 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 							manager,
 							(IPlugin) plugin,
 							srcPath,
-							fragment))
+							fragment,
+							doImport))
 							break;
 					}
 				}
@@ -325,16 +326,22 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 	private void importSourceFile(
 		IProject project,
 		File srcFile,
-		IPath srcPath)
+		IPath srcPath,
+		boolean doImport)
 		throws CoreException {
 		try {
-			FileInputStream fstream = new FileInputStream(srcFile);
 			IFile file = project.getFile(srcPath);
-			if (file.exists())
-				file.setContents(fstream, true, false, null);
-			else
-				file.create(fstream, true, null);
-			fstream.close();
+			if (doImport) {
+				FileInputStream fstream = new FileInputStream(srcFile);
+				if (file.exists())
+					file.setContents(fstream, true, false, null);
+				else
+					file.create(fstream, true, null);
+				fstream.close();
+			}
+			else {
+				file.createLink(new Path(srcFile.getPath()), IResource.NONE, null);
+			}
 
 		} catch (IOException e) {
 			IStatus status =
@@ -353,7 +360,8 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		SourceLocationManager manager,
 		IPlugin plugin,
 		IPath srcPath,
-		IFragment fragment) {
+		IFragment fragment,
+		boolean doImport) {
 		String id = fragment.getId();
 		IProject fragmentProject =
 			PDEPlugin.getWorkspace().getRoot().getProject(id);
@@ -369,7 +377,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		if (srcFile == null)
 			return false;
 		try {
-			importSourceFile(fragmentProject, srcFile, srcPath);
+			importSourceFile(fragmentProject, srcFile, srcPath, doImport);
 			return true;
 		} catch (CoreException e) {
 			return false;
