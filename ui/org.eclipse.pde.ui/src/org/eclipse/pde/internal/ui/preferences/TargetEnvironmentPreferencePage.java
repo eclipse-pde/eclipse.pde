@@ -4,6 +4,7 @@ package org.eclipse.pde.internal.ui.preferences;
  * All Rights Reserved.
  */
 
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.preference.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -27,6 +28,17 @@ public class TargetEnvironmentPreferencePage
 		setPreferenceStore(PDEPlugin.getDefault().getPreferenceStore());
 		setDescription(PDEPlugin.getResourceString(KEY_DESCRIPTION));
 		TargetPlatform.initializeDefaults();
+		initializeDefaults();
+
+	}
+	
+	private void initializeDefaults() {
+		IPreferenceStore store = getPreferenceStore();
+		Preferences corePrefs = PDECore.getDefault().getPluginPreferences();
+		store.setDefault(OS, corePrefs.getDefaultString(OS));
+		store.setDefault(WS, corePrefs.getDefaultString(WS));
+		store.setDefault(NL, corePrefs.getDefaultString(NL));
+		store.setDefault(ARCH, corePrefs.getDefaultString(ARCH));
 	}
 
 	/**
@@ -68,7 +80,18 @@ public class TargetEnvironmentPreferencePage
 	public boolean performOk() {
 		boolean value = super.performOk();
 		PDEPlugin.getDefault().savePluginPreferences();
+		transferSettings();
 		return value;
+	}
+	
+	private void transferSettings() {
+		Preferences corePrefs = PDECore.getDefault().getPluginPreferences();
+		IPreferenceStore store = getPreferenceStore();
+		corePrefs.setValue(OS, store.getString(OS));
+		corePrefs.setValue(WS, store.getString(WS));
+		corePrefs.setValue(NL, store.getString(NL));
+		corePrefs.setValue(ARCH, store.getString(ARCH));
+		PDECore.getDefault().savePluginPreferences();
 	}
 
 	/**
