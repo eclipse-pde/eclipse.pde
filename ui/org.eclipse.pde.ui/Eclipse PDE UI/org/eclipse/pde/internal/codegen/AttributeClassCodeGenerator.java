@@ -12,8 +12,12 @@ import org.eclipse.pde.internal.base.schema.*;
 import org.eclipse.jdt.core.*;
 import java.io.PrintWriter;
 import org.eclipse.pde.internal.PDEPlugin;
+import org.eclipse.jface.dialogs.MessageDialog;
 
 public class AttributeClassCodeGenerator extends JavaCodeGenerator {
+	private static final String KEY_MISSING_TITLE = "CodeGenerator.missing.title";
+	private static final String KEY_MISSING_TYPE = "CodeGenerator.missing.type";
+	private static final String KEY_MISSING_TYPES = "CodeGenerator.missing.types";
 	private ISchemaAttribute attInfo;
 	private IJavaProject javaProject;
 	private IType expectedType;
@@ -136,9 +140,17 @@ private void findRequiredMethods() {
 	}
 	try {
 		expectedType = findTypeForName(expectedTypeName);
-		if (expectedType==null) return;
-		if (expectedType.isClass() && expectedInterfaceName!=null) 
+		if (expectedType!=null && expectedType.isClass() && expectedInterfaceName!=null) 
 			expectedInterface = findTypeForName(expectedInterfaceName);
+		boolean missingType = expectedTypeName!=null && expectedType==null;
+		boolean missingInterface = expectedInterfaceName!=null 
+										&& expectedInterface==null;
+		if (missingType || missingInterface) {
+			String mtype = missingType?expectedTypeName:null;
+			String minter = missingInterface?expectedInterfaceName:null;
+			warnAboutMissingTypes(mtype, minter);
+		}
+		if (expectedType==null) return;
 		requiredMethods = new Vector();
 		if (expectedInterface!=null)
 		   addRequiredMethodsFor(expectedInterface);
@@ -147,6 +159,25 @@ private void findRequiredMethods() {
 		PDEPlugin.logException(e);
 	}
 }
+
+private void warnAboutMissingTypes(String typeName, String interfaceName) {
+	String message;
+	if (typeName==null) {
+		message = PDEPlugin.getFormattedMessage(KEY_MISSING_TYPE, interfaceName);
+	}
+	else if (interfaceName==null) {
+		message = PDEPlugin.getFormattedMessage(KEY_MISSING_TYPE, typeName);
+	}
+	else {
+		message = PDEPlugin.getFormattedMessage(KEY_MISSING_TYPES, new String [] {
+									typeName, interfaceName });
+	}
+	MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(),
+			PDEPlugin.getResourceString(KEY_MISSING_TITLE),
+			message);
+}
+
+
 private IType findTypeForName(String typeName) throws JavaModelException {
 	IType type = null;
 	String fileName = typeName.replace('.', '/') + ".java";

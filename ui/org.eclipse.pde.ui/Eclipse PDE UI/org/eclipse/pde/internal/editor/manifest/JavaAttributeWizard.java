@@ -19,27 +19,31 @@ import org.eclipse.swt.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.internal.*;
 import java.util.Hashtable;
+import org.eclipse.pde.internal.base.model.plugin.*;
 
 public class JavaAttributeWizard extends Wizard {
 	private String className;
 	private JavaAttributeWizardPage mainPage;
 	private IProject project;
 	private ISchemaAttribute attInfo;
+	private IPluginModelBase model;
 
-public JavaAttributeWizard(IProject project, ISchemaAttribute attInfo, String className) {
+public JavaAttributeWizard(IProject project, IPluginModelBase model, ISchemaAttribute attInfo, String className) {
 	this.className = className;
+	this.model = model;
 	this.project = project;
 	this.attInfo = attInfo;
 	setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWPPRJ_WIZ);
 	setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
 	setNeedsProgressMonitor(true);
 }
+
 public void addPages() {
-	mainPage = new JavaAttributeWizardPage(project, attInfo, className);
+	mainPage = new JavaAttributeWizardPage(project, model, attInfo, className);
 	addPage(mainPage);
 }
 public Object getValue() {
-	return new JavaAttributeValue(project, attInfo, className);
+	return new JavaAttributeValue(project, model, attInfo, className);
 }
 public boolean performFinish() {
 	boolean result = mainPage.finish();

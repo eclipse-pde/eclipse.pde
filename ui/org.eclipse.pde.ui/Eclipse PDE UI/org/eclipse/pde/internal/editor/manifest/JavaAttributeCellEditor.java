@@ -11,6 +11,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.core.resources.*;
+import org.eclipse.pde.internal.base.model.plugin.*;
 
 public class JavaAttributeCellEditor extends DialogCellEditor {
 	private Label label;
@@ -28,9 +29,10 @@ protected Control createContents(Composite cell) {
 protected Object openDialogBox(Control cellEditorWindow) {
 	JavaAttributeValue value = (JavaAttributeValue)getValue();
 	IProject project = value.getProject();
+	IPluginModelBase model = value.getModel();
 	ISchemaAttribute attInfo = value.getAttributeInfo();
 
-	JavaAttributeWizard wizard = new JavaAttributeWizard(project, attInfo, value.getClassName());
+	JavaAttributeWizard wizard = new JavaAttributeWizard(project, model, attInfo, value.getClassName());
 	WizardDialog dialog =
 		new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 	dialog.create();

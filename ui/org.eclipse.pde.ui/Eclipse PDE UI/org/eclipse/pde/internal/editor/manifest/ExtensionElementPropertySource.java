@@ -218,7 +218,8 @@ public Object getPropertyValue(Object name) {
 		// Make sure we still return special values
 		if (isEditable() && attInfo != null) {
 			if (attInfo.getKind() == ISchemaAttribute.JAVA) {
-				return new JavaAttributeValue(project, attInfo, "");
+				IPluginModelBase model = att.getModel();
+				return new JavaAttributeValue(project, model, attInfo, "");
 			} else
 				if (attInfo.getKind() == ISchemaAttribute.RESOURCE) {
 					return new ResourceAttributeValue(project, "");
@@ -232,7 +233,8 @@ public Object getPropertyValue(Object name) {
 		Object value = att.getValue();
 		if (attInfo != null) {
 			if (attInfo.getKind() == ISchemaAttribute.JAVA) {
-				return new JavaAttributeValue(project, attInfo, value.toString());
+				IPluginModelBase model = att.getModel();
+				return new JavaAttributeValue(project, model, attInfo, value.toString());
 			} else
 				if (attInfo.getKind() == ISchemaAttribute.RESOURCE) {
 					return new ResourceAttributeValue(project, value.toString());

@@ -26,6 +26,8 @@ import org.eclipse.jdt.ui.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.base.schema.*;
 import org.eclipse.jface.dialogs.*;
+import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.internal.base.model.build.*;
 
 public class JavaAttributeWizardPage extends WizardPage {
 	public static final String PAGE_TITLE = "JavaAttributeWizard.title";
@@ -67,10 +69,12 @@ public class JavaAttributeWizardPage extends WizardPage {
 	private Composite searchPage;
 	private Composite generatePage;
 	private ModifyListener modifyListener;
+	private IPluginModelBase model;
 
-public JavaAttributeWizardPage(IProject project, ISchemaAttribute attInfo, String className) {
+public JavaAttributeWizardPage(IProject project, IPluginModelBase model, ISchemaAttribute attInfo, String className) {
 	super("classPage");
 	this.project = project;
+	this.model = model;
 	this.attInfo = attInfo;
 	this.className = className;
 	setTitle(PDEPlugin.getResourceString(PAGE_TITLE));
@@ -136,6 +140,7 @@ private void createGeneratePage() {
 	containerText = new Text(page, SWT.BORDER);
 	GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 	containerText.setLayoutData(gd);
+	containerText.setText(computeSourceContainer());
 	containerText.addModifyListener(modifyListener);
 
 	Button button = new Button(page, SWT.PUSH);
@@ -185,6 +190,30 @@ private void createGeneratePage() {
 	openFileButton.setSelection(true);
 	generatePage = page;
 }
+
+private String computeSourceContainer() {
+	IBuildModel buildModel = model.getBuildModel();
+	if (buildModel==null || buildModel.isLoaded()==false) return "";
+	String candidate = null;
+	IBuildEntry [] entries = buildModel.getBuild().getBuildEntries();
+	for (int i=0; i<entries.length; i++) {
+		IBuildEntry entry = entries[i];
+		if (entry.getName().startsWith("source.")==false) continue;
+		if (candidate!=null) {
+			// more than one folder - abort
+			candidate = null;
+			break;
+		}
+		String [] tokens = entry.getTokens();
+		if (tokens.length >1) {
+			candidate = null;
+			break;
+		}
+		candidate = tokens[0];
+	}
+	return candidate!=null ? candidate: "";
+}
+
 private void createSearchPage() {
 	Composite page = new Composite(pageBook, SWT.NULL);
 	GridLayout layout = new GridLayout();

@@ -16,6 +16,7 @@ import org.eclipse.swt.*;
 import org.eclipse.pde.internal.wizards.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.*;
+import org.eclipse.jface.dialogs.MessageDialog;
 
 
 public class PointSelectionPage
@@ -34,6 +35,8 @@ public class PointSelectionPage
 	private final static String KEY_POINT_ID = "NewExtensionWizard.PointSelectionPage.pointId";
 	private final static String KEY_POINT_NAME = "NewExtensionWizard.PointSelectionPage.pointName";
 	private final static String KEY_DESC = "NewExtensionWizard.PointSelectionPage.desc";
+	private final static String KEY_MISSING_TITLE = "NewExtensionWizard.PointSelectionPage.missingTitle";
+	private final static String KEY_MISSING_IMPORT = "NewExtensionWizard.PointSelectionPage.missingImport";
 	private Image pointImage;
 	private IPluginExtension newExtension;
 
@@ -195,11 +198,55 @@ public boolean finish() {
 		if (id != null)
 			extension.setId(id);
 		pluginBase.add(extension);
+		ensureImportExists(pluginBase, currentPoint);
 	} catch (CoreException e) {
 		PDEPlugin.logException(e);
 	}
 	return true;
 }
+
+private void ensureImportExists(IPluginBase pluginBase, IPluginExtensionPoint point) throws CoreException {
+	IPlugin thisPlugin = getTargetPlugin(pluginBase);
+	IPlugin exPlugin = getTargetPlugin(point.getPluginBase());
+	if (thisPlugin==null || exPlugin==null) return;
+	
+	String exId = exPlugin.getId();
+	// Check if it is us
+	if (exId.equals(thisPlugin.getId())) return;
+	//Check if it is implicit
+	if (exId.equals("org.eclipse.core.boot") ||
+		exId.equals("org.eclipse.core.runtime")) return;
+	// We must have it
+	
+	IPluginImport [] iimports = thisPlugin.getImports();
+	for (int i=0; i<iimports.length; i++) {
+		IPluginImport iimport = iimports[i];
+		if (iimport.getId().equals(exId)) {
+			// found it
+			return;
+		}
+	}
+	// Don't have it - warn
+	String [] args = { point.getResourceString(point.getName()), 
+					   exPlugin.getResourceString(exPlugin.getName()) };
+	String message = PDEPlugin.getFormattedMessage(KEY_MISSING_IMPORT, 
+													args);
+	MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(),
+					PDEPlugin.getResourceString(KEY_MISSING_TITLE),
+					message);
+}
+
+private IPlugin getTargetPlugin(IPluginBase base) {
+	if (base instanceof IPlugin) return (IPlugin)base;
+	else {
+		IFragment fragment = (IFragment)base;
+		String targetId = fragment.getPluginId();
+		String targetVersion = fragment.getPluginVersion();
+		return PDEPlugin.getDefault().findPlugin(targetId, targetVersion);
+	}
+}
+
+
 public IPluginExtension getNewExtension() {
 	return newExtension;
 }
