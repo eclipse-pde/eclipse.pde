@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
@@ -27,7 +28,8 @@ public class SampleWizard extends Wizard
 			IExecutableExtension {
 	private IConfigurationElement[] samples;
 	private IConfigurationElement selection;
-	private LastPage lastPage;
+	private ReviewPage lastPage;
+	
 	private class ImportOverwriteQuery implements IOverwriteQuery {
 		public String queryOverwrite(String file) {
 			String[] returnCodes = {YES, NO, ALL, CANCEL};
@@ -59,16 +61,26 @@ public class SampleWizard extends Wizard
 	 *  
 	 */
 	public SampleWizard() {
+		PDEPlugin.getDefault().getLabelProvider().connect(this);
+		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWEXP_WIZ);
 		samples = Platform.getPluginRegistry().getConfigurationElementsFor(
 				"org.eclipse.pde.ui.samples");
-		lastPage = new LastPage();
+		lastPage = new ReviewPage(this);
+	}
+	public void dispose() {
+		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
+		super.dispose();
+	}
+	
+	public IConfigurationElement [] getSamples() {
+		return samples;
 	}
 	/**
 	 *  
 	 */
 	public void addPages() {
 		if (selection == null) {
-			// need to add selection page
+			addPage(new SelectionPage(this));
 		}
 		addPage(lastPage);
 	}
@@ -113,13 +125,24 @@ public class SampleWizard extends Wizard
 				IConfigurationElement element = samples[i];
 				String id = element.getAttribute("id");
 				if (id != null && id.equals(variable)) {
-					selection = element;
-					lastPage.setSelection(selection);
+					setSelection(element);
 					break;
 				}
 			}
 		}
 	}
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
+	}
+	/**
+	 * @return Returns the selection.
+	 */
+	public IConfigurationElement getSelection() {
+		return selection;
+	}
+	/**
+	 * @param selection The selection to set.
+	 */
+	public void setSelection(IConfigurationElement selection) {
+		this.selection = selection;
 	}
 }

@@ -6,7 +6,8 @@
          <meta.schema plugin="org.eclipse.ui.intro" id="samples" name="Samples"/>
       </appInfo>
       <documentation>
-         This extension point should be used to register Eclipse code samples. A sample is one or more Eclipse projects that are packaged in a way suitable for subsequent import into the workspace. 
+         &lt;p&gt;
+This extension point should be used to register Eclipse code samples. A sample is one or more Eclipse projects that are packaged in a way suitable for subsequent import into the workspace. 
 &lt;p&gt;
 Each sample has a name, one or more project elements and a final perspective. The sample wizard will create a project for each &lt;code&gt;project&lt;/code&gt; element, import the content from the archive, and open the final perspective if specified. Projects must be complete i.e. have correct nature and classpath (if Java or plug-in projects).
       </documentation>
@@ -20,21 +21,21 @@ Each sample has a name, one or more project elements and a final perspective. Th
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  extension point attribute - in this case &lt;code&gt;org.eclipse.pde.ui.samples&lt;/code&gt;.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  
+                  not used.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  
+                  not used.
                </documentation>
             </annotation>
          </attribute>
@@ -69,14 +70,14 @@ Each sample has a name, one or more project elements and a final perspective. Th
          <attribute name="perspectiveId" type="string">
             <annotation>
                <documentation>
-                  if specified, the sample wizard will switch to the perspective with the provided Id at the end of the operation.
+                  if specified, the sample wizard will switch to the perspective with the provided id at the end of the operation.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="launcher" type="string">
             <annotation>
                <documentation>
-                  an optional launch shortcut to be used to run the sample. If not specified, it will be assumed that a new Eclipse instance needs to be launched in order to see the sample. Otherwise, the name of the Java class that implements &lt;code&gt;org.eclipse.debug.ui.ILaunchShortcut&lt;/code&gt; is expected.
+                  an optional launch shortcut to be used to run the sample. If not specified, it will be assumed that a new Eclipse instance needs to be launched in order to see the sample. If specified, it needs to be the fully qualified name of the Java class that implements &lt;code&gt;org.eclipse.debug.ui.ILaunchShortcut&lt;/code&gt; interface.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.debug.ui.ILaunchShortcut"/>
@@ -104,6 +105,13 @@ Each sample has a name, one or more project elements and a final perspective. Th
             <annotation>
                <documentation>
                   relative path to the ZIP file containing the content of the project to import
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="shared" type="string">
+            <annotation>
+               <documentation>
+                  shared projects may be listed in more than one sample. When this attribute is &lt;code&gt;true&lt;/code&gt;, and the project with the same name already exists in the workspace, it will be silently skipped. Otherwise, users will be prompted for overwrite permition.
                </documentation>
             </annotation>
          </attribute>
@@ -141,7 +149,21 @@ Each sample has a name, one or more project elements and a final perspective. Th
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         [Enter extension point usage example here.]
+         &lt;p&gt;
+The following is an example of the extension point:
+&lt;pre&gt;
+   &lt;extension point=&quot;org.eclipse.pde.ui.samples&quot;&gt;
+      &lt;sample
+           id=&quot;com.example.xyz.sample&quot;
+           name=&quot;My Sample&quot;&gt;
+         &lt;description helpHref=&quot;/com.example.xyz.doc/samples/com.example.xyz.sample1/doc-html/doc.html&quot;&gt;
+             A short description of the sample.
+         &lt;/description&gt;
+         &lt;project name=&quot;com.example.xyz.sample1&quot;
+                  archive=&quot;samples/sample1.zip&quot;/&gt;
+      &lt;/sample&gt;
+   &lt;/extension&gt;
+&lt;/pre&gt;
       </documentation>
    </annotation>
 
@@ -150,7 +172,8 @@ Each sample has a name, one or more project elements and a final perspective. Th
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         
+         &lt;p&gt;
+If specified, the value of the attribute &lt;code&gt;launcher&lt;/code&gt; must represent a fully qualified name of the Java class that implements &lt;code&gt;org.eclipse.debug.ui.ILaunchShortcut&lt;/code&gt; interface.
       </documentation>
    </annotation>
 
@@ -159,7 +182,8 @@ Each sample has a name, one or more project elements and a final perspective. Th
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         &lt;p&gt;
+PDE UI supplies Runtime Workbench launcher for launching another instance of Eclipse.
       </documentation>
    </annotation>
 
@@ -168,7 +192,7 @@ Each sample has a name, one or more project elements and a final perspective. Th
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         
+         Copyright (c) 2000, 2004 IBM Corporation and others. All rights reserved. This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;.
       </documentation>
    </annotation>
 
