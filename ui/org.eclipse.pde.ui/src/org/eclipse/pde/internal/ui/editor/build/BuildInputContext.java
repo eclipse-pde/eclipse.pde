@@ -54,6 +54,8 @@ public class BuildInputContext extends InputContext {
 				File file = (File)((SystemFileEditorInput)input).getAdapter(File.class);
 				model.setInstallLocation(file.getParent());
 				model.setCharset(getDefaultCharset());
+			} else {
+				model.setCharset(getDefaultCharset());				
 			}
 			model.load();
 		}

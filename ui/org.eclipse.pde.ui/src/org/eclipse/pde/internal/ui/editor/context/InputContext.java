@@ -292,11 +292,10 @@ public abstract class InputContext {
 		if (otherEdit.getLength() == 0) {
 			int otherOffset= otherEdit.getOffset();
 			return thisOffset < otherOffset && otherOffset < thisEnd;
-		} else {
-			int otherOffset= otherEdit.getOffset();
-			int otherEnd= otherEdit.getExclusiveEnd();
-			return thisOffset <= otherOffset && otherEnd <= thisEnd;
 		}
+		int otherOffset= otherEdit.getOffset();
+		int otherEnd= otherEdit.getExclusiveEnd();
+		return thisOffset <= otherOffset && otherEnd <= thisEnd;
 	}		
 
 	public boolean mustSave() {
@@ -350,13 +349,11 @@ public abstract class InputContext {
 			mustSynchronize=true;
 			return true;
 		}
-		else {
-			// leaving source editing mode; if the document
-			// has been modified while in this mode,
-			// fire the 'world changed' event from the model
-			// to cause all the model listeners to become stale.
-			return synchronizeModelIfNeeded();
-		}
+		// leaving source editing mode; if the document
+		// has been modified while in this mode,
+		// fire the 'world changed' event from the model
+		// to cause all the model listeners to become stale.
+		return synchronizeModelIfNeeded();
 	}
 	
 	private boolean synchronizeModelIfNeeded() {
