@@ -124,23 +124,27 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard {
 		boolean exportChildren,
 		String destination,
 		Object[] items,
-		IProgressMonitor monitor) throws InvocationTargetException {
+		IProgressMonitor monitor)
+		throws InvocationTargetException {
 		File file = new File(destination);
 		if (!file.exists() || !file.isDirectory())
 			if (!file.mkdirs()) {
-				throw new InvocationTargetException(new Exception("Specified directory could not be created"));
+				throw new InvocationTargetException(
+					new Exception(PDEPlugin.getResourceString("ExportWizard.badDirectory")));
 			}
-			
-		monitor.beginTask(
-			PDEPlugin.getResourceString("ExportWizard.exporting"),
-			items.length);
+
+		monitor.beginTask("", items.length);
 		ArrayList statusEntries = new ArrayList();
 		for (int i = 0; i < items.length; i++) {
 			IModel model = (IModel) items[i];
-			doExport(exportZip, exportChildren, destination, model, new SubProgressMonitor(monitor, 1));
+			doExport(
+				exportZip,
+				exportChildren,
+				destination,
+				model,
+				new SubProgressMonitor(monitor, 1));
 		}
 	}
-	
 
 	public IStructuredSelection getSelection() {
 		return selection;
@@ -172,7 +176,7 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard {
 		};
 		try {
 			createLogWriter();
-			getContainer().run(true, true, op);
+			getContainer().run(true, false, op);
 		} catch (InterruptedException e) {
 			return false;
 		} catch (InvocationTargetException e) {

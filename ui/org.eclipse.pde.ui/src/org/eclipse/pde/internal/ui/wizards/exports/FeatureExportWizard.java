@@ -70,16 +70,20 @@ public class FeatureExportWizard extends BaseExportWizard {
 		IFeatureModel feature = (IFeatureModel) model;
 		String label = PDEPlugin.getDefault().getLabelProvider().getObjectText(feature);
 
-		monitor.beginTask("", 3);
-		monitor.subTask(label);
+		monitor.beginTask("", 10);
+		monitor.setTaskName(
+			PDEPlugin.getResourceString("ExportWizard.exporting") + " " + label);
 		try {
 			makeScript(feature, exportChildren);
 			monitor.worked(1);
-			runScript(feature, exportZip, destination, monitor);
-			monitor.worked(1);
+			runScript(
+				feature,
+				exportZip,
+				destination,
+				new SubProgressMonitor(monitor, 9));
 		} catch (Exception e) {
-			if (writer != null)
-				writer.write(e.getMessage());
+			if (writer != null && e.getMessage() != null)
+				writer.write(e.getMessage() + System.getProperty("line.separator"));
 		} finally {
 			try {
 				cleanup(feature, destination, exportChildren);
@@ -142,8 +146,8 @@ public class FeatureExportWizard extends BaseExportWizard {
 			model.getInstallLocation()
 				+ Path.SEPARATOR
 				+ MainPreferencePage.getBuildScriptName());
+		runner.setMessageOutputLevel(Project.MSG_ERR);
 		runner.run(monitor);
-
 	}
 
 }

@@ -54,14 +54,19 @@ public class PluginExportWizard extends BaseExportWizard {
 			String label =
 				PDEPlugin.getDefault().getLabelProvider().getObjectText(
 					modelBase.getPluginBase());
-			monitor.beginTask(label, 3);
+			monitor.setTaskName(
+				PDEPlugin.getResourceString("ExportWizard.exporting") + " " + label);
+			monitor.beginTask("", 10);
 			makeScript(modelBase);
 			monitor.worked(1);
-			runScript(modelBase, destination, exportZip, monitor);
-			monitor.worked(1);
+			runScript(
+				modelBase,
+				destination,
+				exportZip,
+				new SubProgressMonitor(monitor, 9));
 		} catch (Exception e) {
-			if (writer != null)
-				writer.write(e.getMessage());
+			if (writer != null && e.getMessage() != null)
+				writer.write(e.getMessage() + System.getProperty("line.separator"));
 		} finally {
 			try {
 				cleanup(model, destination);
@@ -126,6 +131,7 @@ public class PluginExportWizard extends BaseExportWizard {
 			model.getInstallLocation()
 				+ Path.SEPARATOR
 				+ MainPreferencePage.getBuildScriptName());
+		runner.setMessageOutputLevel(Project.MSG_ERR);
 		runner.run(monitor);
 	}
 

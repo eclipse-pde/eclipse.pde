@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildListener;
 import org.apache.tools.ant.Project;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.wizards.exports.BaseExportWizard;
 
 /**
@@ -60,9 +61,27 @@ public class ExportBuildListener implements BuildListener {
 	 * @see org.apache.tools.ant.BuildListener#messageLogged(org.apache.tools.ant.BuildEvent)
 	 */
 	public void messageLogged(BuildEvent event) {
-		if (event.getPriority() == Project.MSG_ERR) {
-			if (writer != null)
-				writer.println(event.getMessage());
+		if (writer != null && event.getPriority() == Project.MSG_ERR) {
+			if (event.getMessage() != null)
+				writer.println(
+					PDEPlugin.getResourceString("ExportWizard.build.error.error")
+						+ " "
+						+ event.getMessage());
+			if (event.getProject() != null && event.getProject().getName() != null)
+				writer.println(
+					"\t"
+						+ PDEPlugin.getResourceString("ExportWizard.build.error.project")
+						+ " "
+						+ event.getProject().getName());
+			if (event.getTarget() != null && event.getTarget().getName() != null)
+				writer.println(
+					"\t"
+						+ PDEPlugin.getResourceString("ExportWizard.build.error.target")
+						+ " "
+						+ event.getTarget().getName());
+			if (event.getException() != null
+				&& event.getException().getMessage() != null)
+				writer.println("\t" + event.getException().getMessage());
 		}
 	}
 
