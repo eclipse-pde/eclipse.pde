@@ -12,10 +12,12 @@ package org.eclipse.pde.internal.ui.osgi.wizards;
 
 import java.util.Vector;
 
+import org.eclipse.core.resources.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.osgi.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
@@ -23,12 +25,11 @@ import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
 public class PluginToBundleWizardPage extends StatusWizardPage {
-	private IPluginModelBase[] selected;
-	private CheckboxTableViewer pluginListViewer;
+	private IPluginModelBase[] fSelectedPlugins;
+	private CheckboxTableViewer fPluginListViewer;
 	private static final String KEY_TITLE = "PluginToBundleWizard.title";
 	private static final String KEY_DESC = "PluginToBundleWizard.desc";
 	private static final String KEY_PLUGIN_LIST =
@@ -69,7 +70,7 @@ public class PluginToBundleWizardPage extends StatusWizardPage {
 		setTitle(PDEPlugin.getResourceString(KEY_TITLE));
 		setDescription(PDEPlugin.getResourceString(KEY_DESC));
 
-		this.selected = selected;
+		this.fSelectedPlugins = selected;
 		tablePart = new TablePart(PDEPlugin.getResourceString(KEY_PLUGIN_LIST));
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
@@ -89,29 +90,21 @@ public class PluginToBundleWizardPage extends StatusWizardPage {
 
 		tablePart.createControl(container);
 
-		pluginListViewer = tablePart.getTableViewer();
-		pluginListViewer.setContentProvider(new PluginToBundleContentProvider());
-		pluginListViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
+		fPluginListViewer = tablePart.getTableViewer();
+		fPluginListViewer.setContentProvider(new PluginToBundleContentProvider());
+		fPluginListViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 
 		GridData gd = (GridData)tablePart.getControl().getLayoutData();
 		gd.heightHint = 300;
 		gd.widthHint = 300;
 		
-		pluginListViewer.setInput(PDEPlugin.getDefault());
-		tablePart.setSelection(selected);
+		fPluginListViewer.setInput(PDEPlugin.getDefault());
+		tablePart.setSelection(fSelectedPlugins);
 	
-		int counter = selected.length;
-		// do not count projects without libraries (these will not be displayed in the table)
-		for (int i = 0 ; i<selected.length; i++){
-			if (((IPluginModelBase)selected[i]).getPluginBase().getLibraries().length == 0){
-				counter --;
-			}
-		}
-		tablePart.updateCounter(counter);
+		tablePart.updateCounter(fSelectedPlugins.length);
 		
 		setControl(container);
 		Dialog.applyDialogFont(container);
-		WorkbenchHelp.setHelp(container, IHelpContextIds.UPDATE_CLASSPATH);
 	}
 
 	public void storeSettings() {
@@ -124,15 +117,25 @@ public class PluginToBundleWizardPage extends StatusWizardPage {
 	private void dialogChanged() {
 		setPageComplete(tablePart.getSelectionCount() > 0);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.WizardPage#isPageComplete()
+	 */
+	public boolean isPageComplete() {
+		return tablePart.getSelectionCount() > 0;
+	}
 
 	private Object[] getModels() {
 		Vector result = new Vector();
-		IPluginModelBase[] models =
-			PDECore.getDefault().getWorkspaceModelManager().getAllModels();
+		IPluginModelBase[] models = PDECore.getDefault()
+				.getWorkspaceModelManager().getAllModels();
 		for (int i = 0; i < models.length; i++) {
-			result.add(models[i]);
+			IProject project = models[i].getUnderlyingResource().getProject();
+			if (OSGiWorkspaceModelManager.isPluginProject(project)
+					&& !OSGiWorkspaceModelManager.isBundleProject(project)
+					&& !models[i].getUnderlyingResource().isLinked())
+				result.add(models[i]);
 		}
-		
 		return result.toArray();
 	}
 }

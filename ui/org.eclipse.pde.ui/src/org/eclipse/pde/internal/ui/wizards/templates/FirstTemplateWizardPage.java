@@ -610,7 +610,7 @@ public class FirstTemplateWizardPage extends WizardPage implements IFirstWizardP
 			dependencies.add(new PluginReference("org.eclipse.core.resources", null, 0));
 		if (structureData.isR3Compatible()) {
 			dependencies.add(
-					new PluginReference("org.eclipse.core.runtime.compatibility", null, 0));
+					new PluginReference("org.eclipse.core.runtime", null, 0));
 		}
 		return (IPluginReference[]) dependencies.toArray(
 			new IPluginReference[dependencies.size()]);

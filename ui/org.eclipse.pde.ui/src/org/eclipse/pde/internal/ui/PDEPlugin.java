@@ -35,6 +35,7 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.texteditor.ExtendedTextEditorPreferenceConstants;
+import org.osgi.framework.*;
 
 public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants, IPreferenceConstants {
 
@@ -46,6 +47,8 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants, IPre
 	private IAlternativeRuntimeUISupport runtimeUISupport;
 	// Launches listener
 	private LaunchListener launchListener;
+	
+	private BundleContext context;
 
 	private java.util.Hashtable counters;
 	
@@ -193,6 +196,18 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants, IPre
 		manager.registerAdapters(factory, ModelEntry.class);
 		manager.registerAdapters(factory, FileAdapter.class);
 		// set eclipse home variable if not sets
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.Plugin#start(org.osgi.framework.BundleContext)
+	 */
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
+		this.context = context;
+	}
+	
+	public BundleContext getBundleContext() {
+		return this.context;
 	}
 	
 	public void shutdown() throws CoreException {

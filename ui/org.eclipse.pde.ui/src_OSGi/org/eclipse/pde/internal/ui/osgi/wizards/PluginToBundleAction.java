@@ -9,36 +9,26 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.osgi.wizards;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-
+import java.io.*;
+import java.lang.reflect.*;
+import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jface.action.IAction;
+import org.eclipse.jdt.core.*;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.operation.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.pde.core.IWorkspaceModelManager;
-import org.eclipse.pde.core.osgi.bundle.*;
-import org.eclipse.pde.core.osgi.bundle.IBundle;
+import org.eclipse.jface.wizard.*;
+import org.eclipse.osgi.service.pluginconversion.*;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.osgi.bundle.WorkspaceBundleModel;
-import org.eclipse.pde.internal.core.plugin.WorkspaceExtensionsModel;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.core.osgi.*;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.ui.*;
-
+import org.osgi.util.tracker.*;
 public class PluginToBundleAction implements IWorkbenchWindowActionDelegate {
-
 	private ISelection fSelection;
-	private static final String KEY_TITLE = "Actions.classpath.title"; //$NON-NLS-1$
-	private static final String KEY_MESSAGE = "Actions.classpath.message"; //$NON-NLS-1$
-	private static final String KEY_UPDATE = "Actions.classpath.update"; //$NON-NLS-1$
-	private static final String KEY_SETTING = "Actions.classpath.setting"; //$NON-NLS-1$
-
-
 	/*
 	 * @see IActionDelegate#run(IAction)
 	 */
@@ -46,11 +36,9 @@ public class PluginToBundleAction implements IWorkbenchWindowActionDelegate {
 		if (fSelection instanceof IStructuredSelection) {
 			Object[] elems = ((IStructuredSelection) fSelection).toArray();
 			ArrayList models = new ArrayList(elems.length);
-
 			for (int i = 0; i < elems.length; i++) {
 				Object elem = elems[i];
 				IProject project = null;
-
 				if (elem instanceof IFile) {
 					IFile file = (IFile) elem;
 					project = file.getProject();
@@ -60,43 +48,34 @@ public class PluginToBundleAction implements IWorkbenchWindowActionDelegate {
 					project = ((IJavaProject) elem).getProject();
 				}
 				if (project != null
-					&& WorkspaceModelManager.isJavaPluginProject(project)) {
+						&& OSGiWorkspaceModelManager.isPluginProject(project)
+						&& !OSGiWorkspaceModelManager.isBundleProject(project)) {
 					IPluginModelBase model = findModelFor(project);
-					if (model != null && !(model instanceof IBundlePluginModelBase)) {
+					if (model != null && model.isLoaded()
+							&& !model.getUnderlyingResource().isLinked()
+							&& !models.contains(model)) {
 						models.add(model);
 					}
 				}
 			}
-
-			final IPluginModelBase[] modelArray =
-				(IPluginModelBase[]) models.toArray(
-					new IPluginModelBase[models.size()]);
-			/*
-			ProgressMonitorDialog pd =
-				new ProgressMonitorDialog(PDEPlugin.getActiveWorkbenchShell());
-			run(true, pd, modelArray);
-			*/
-			PluginToBundleWizard wizard =
-				new PluginToBundleWizard(modelArray);
-			WizardDialog dialog =
-				new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
+			IPluginModelBase[] modelArray = (IPluginModelBase[]) models
+					.toArray(new IPluginModelBase[models.size()]);
+			PluginToBundleWizard wizard = new PluginToBundleWizard(modelArray);
+			WizardDialog dialog = new WizardDialog(PDEPlugin
+					.getActiveWorkbenchShell(), wizard);
 			dialog.open();
 		}
 	}
-
-	public static void run(
-		boolean fork,
-		IRunnableContext context,
-		final IPluginModelBase[] models) {
+	public static void run(boolean fork, IRunnableContext context,
+			final IPluginModelBase[] models) {
 		try {
 			context.run(fork, true, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor)
-					throws InvocationTargetException, InterruptedException {
+						throws InvocationTargetException, InterruptedException {
 					try {
-						IWorkspaceRunnable runnable =
-							new IWorkspaceRunnable() {
+						IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 							public void run(IProgressMonitor monitor)
-								throws CoreException {
+									throws CoreException {
 								doConvertPluginsToBundles(monitor, models);
 							}
 						};
@@ -111,32 +90,30 @@ public class PluginToBundleAction implements IWorkbenchWindowActionDelegate {
 		} catch (InterruptedException e) {
 			return;
 		} catch (InvocationTargetException e) {
-			String title = PDEPlugin.getResourceString(KEY_TITLE);
-			String message = PDEPlugin.getResourceString(KEY_MESSAGE);
+			String title = PDEPlugin
+					.getResourceString("PluginToBundleWizard.wtitle");
+			String message = PDEPlugin
+					.getResourceString("PluginToBundleWizard.error");
 			PDEPlugin.logException(e, title, message);
 		}
 	}
-
 	private IPluginModelBase findModelFor(IProject project) {
-		IWorkspaceModelManager manager =
-			PDECore.getDefault().getWorkspaceModelManager();
+		IWorkspaceModelManager manager = PDECore.getDefault()
+				.getWorkspaceModelManager();
 		return (IPluginModelBase) manager.getWorkspaceModel(project);
 	}
-
-	public static void doConvertPluginsToBundles(
-		IProgressMonitor monitor,
-		IPluginModelBase[] models)
-		throws CoreException {
-		monitor.beginTask(
-			PDEPlugin.getResourceString(KEY_UPDATE),
-			models.length);
+	public static void doConvertPluginsToBundles(IProgressMonitor monitor,
+			IPluginModelBase[] models) throws CoreException {
+		monitor.beginTask(PDEPlugin
+				.getResourceString("PluginToBundleWizard.convert"),
+				models.length);
 		try {
 			for (int i = 0; i < models.length; i++) {
-				IPluginModelBase model = models[i];
-
-				IProgressMonitor subMonitor =
-					new SubProgressMonitor(monitor, 1);
-				convertPluginToBundle(model, subMonitor);
+				monitor.subTask(models[i].getPluginBase().getId());
+				IProject project = models[i].getUnderlyingResource().getProject();
+				createBundleManifest(project);
+				project.refreshLocal(IResource.DEPTH_INFINITE, null);
+				monitor.worked(1);
 				if (monitor.isCanceled())
 					break;
 			}
@@ -145,60 +122,34 @@ public class PluginToBundleAction implements IWorkbenchWindowActionDelegate {
 		}
 	}
 
-	private static void convertPluginToBundle(
-		IPluginModelBase model,
-		IProgressMonitor monitor)
-		throws CoreException {
-		IPluginBase pluginBase = model.getPluginBase();
-		String message =
-			PDEPlugin.getFormattedMessage(KEY_SETTING, pluginBase.getId());
-		monitor.beginTask(message, 2);
-		// create bundle manifest
-		createBundleManifest(model, new SubProgressMonitor(monitor, 1));
-		// create extensions.xml
-		createExtensions(model);
-		monitor.worked(1);
-		monitor.done();
+	private static void createBundleManifest(IProject project)
+			throws CoreException {
+		File outputFile = new File(project.getLocation().append(
+				"META-INF/MANIFEST.MF").toOSString());
+		File inputFile = new File(project.getLocation().append("plugin.xml")
+				.toOSString());
+		ServiceTracker tracker = new ServiceTracker(PDEPlugin.getDefault()
+				.getBundleContext(), PluginConverter.class.getName(), null);
+		tracker.open();
+		PluginConverter converter = (PluginConverter) tracker.getService();
+		converter.convertManifest(inputFile, outputFile);
 	}
-
-	private static void createBundleManifest(IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
-		IProject project = model.getUnderlyingResource().getProject();
-		IFile file = project.getFile("META-INF/MANIFEST.MF");
-		WorkspaceBundleModel bmodel = new WorkspaceBundleModel(file);
-		IBundle bundle = bmodel.getBundle(true);
-		monitor.beginTask("", 2);
-		bundle.load(model.getPluginBase(), new SubProgressMonitor(monitor, 1));
-		IFolder folder = (IFolder)file.getParent();
-		CoreUtility.createFolder(folder, true, true, new SubProgressMonitor(monitor, 1));
-		bmodel.save();
-	}
-	
-	private static void createExtensions(IPluginModelBase model) {
-		IProject project = model.getUnderlyingResource().getProject();
-		IFile file = project.getFile("extensions.xml");
-		WorkspaceExtensionsModel emodel = new WorkspaceExtensionsModel(file);
-		IExtensions ex = emodel.getExtensions(true);
-		ex.load(model.getPluginBase());
-		emodel.save();
-	}
-
-	/*
-	 * @see IWorkbenchWindowActionDelegate#dispose()
-	 */
-	public void dispose() {
-	}
-
 	/*
 	 * @see IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
 	 */
 	public void init(IWorkbenchWindow window) {
 	}
-
 	/*
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
 		fSelection = selection;
 	}
-
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
+	 */
+	public void dispose() {
+	}
 }

@@ -462,13 +462,15 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		}
 		return result;
 	}		
-/*	
+	
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		this.context = context;
 	}
-*/
-	
+
+	public BundleContext getBundleContext() {
+		return this.context;
+	}
 
 	public void shutdown() throws CoreException {
 		PDECore.getDefault().savePluginPreferences();

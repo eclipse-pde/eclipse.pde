@@ -51,4 +51,11 @@ public class PluginToBundleWizard extends Wizard {
 		page1 = new PluginToBundleWizardPage(selected);
 		addPage(page1);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.Wizard#canFinish()
+	 */
+	public boolean canFinish() {
+		return page1.isPageComplete();
+	}
 }
