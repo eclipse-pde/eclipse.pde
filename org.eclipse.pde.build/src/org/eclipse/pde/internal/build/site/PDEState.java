@@ -293,11 +293,22 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	}
 
 	public BundleDescription getResolvedBundle(String bundleId, String version) {
-		if (version == null)
+		if (version.equals(IPDEBuildConstants.GENERIC_VERSION_NUMBER)) {
 			return getResolvedBundle(bundleId);
+		}
 		BundleDescription description = getState().getBundle(bundleId, new Version(version));
 		if (description != null && description.isResolved())
 			return description;
+		
+		int qualifierIdx = -1;
+		if ((qualifierIdx = version.indexOf(".qualifier"))!= -1) {
+			BundleDescription[] bundles = getState().getBundles(bundleId);
+			Version versionToMatch = new Version(version.substring(0, qualifierIdx));
+			for (int i = 0; i < bundles.length; i++) {
+				if (bundles[i].getVersion().matchMinor(versionToMatch))
+					return bundles[i];
+			}
+		}
 		return null;
 	}
 

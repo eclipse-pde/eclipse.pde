@@ -69,7 +69,7 @@ public class PackagerBuildScriptGenerator extends FeatureBuildScriptGenerator {
 			return;
 		for (int i = 0; i < ignoredFeatures.length; i++) {
 			try {
-				toAssemble.removeFeature((Config) getConfigInfos().get(0), getSite(false).findFeature(ignoredFeatures[i], null));
+				toAssemble.removeFeature((Config) getConfigInfos().get(0), getSite(false).findFeature(ignoredFeatures[i], null, true));
 			} catch (CoreException e) {
 				//Ignore
 			}

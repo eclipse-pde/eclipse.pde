@@ -104,14 +104,27 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 		return constraint.getName() + '_' + versionSpec;
 	}
 
-	public IFeature findFeature(String featureId, String versionId) throws CoreException {
+	public IFeature findFeature(String featureId, String versionId, boolean throwsException) throws CoreException {
 		ISiteFeatureReference[] features = getFeatureReferences();
 		for (int i = 0; i < features.length; i++) {
 			if (features[i].getVersionedIdentifier().getIdentifier().equals(featureId))
 				if (versionId == null || features[i].getVersionedIdentifier().getVersion().toString().equals(versionId))
 					return features[i].getFeature(null);
 		}
-		return null;
+		int qualifierIdx = -1;
+		if ((qualifierIdx = versionId.indexOf(".qualifier"))!= -1) {
+			Version versionToMatch = new Version(versionId.substring(0, qualifierIdx));
+			for (int i = 0; i < features.length; i++) {
+				if (features[i].getVersionedIdentifier().getIdentifier().equals(featureId) && new Version(features[i].getVersionedIdentifier().getVersion().toString()).matchMinor(versionToMatch))
+					return features[i].getFeature(null);
+			}		
+		}
+		if (throwsException) {
+			String message = Policy.bind("exception.missingFeature", featureId); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, message, null));
+		} else { 
+			return null;
+		}
 	}
 
 	public void addFeatureReferenceModel(File featureXML) {

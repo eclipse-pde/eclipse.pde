@@ -96,9 +96,6 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 			// If we ask for 0.0.0, the call to the registry must have null as a parameter
 			String versionRequested = identifier.getVersion().toString();
-			if (versionRequested.equals(GENERIC_VERSION_NUMBER))
-				versionRequested = null;
-
 			model = getSite(false).getRegistry().getResolvedBundle(identifier.getIdentifier(), versionRequested);
 			if (model == null && getBuildProperties().containsKey(GENERATION_SOURCE_PLUGIN_PREFIX + identifier.getIdentifier())) {
 				generateEmbeddedSource(identifier.getIdentifier());
@@ -440,9 +437,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			IIncludedFeatureReference[] includedFeatures = feature.getRawIncludedFeatureReferences();
 			for (int i = 0; i < includedFeatures.length; i++) {
 				String versionId = includedFeatures[i].getVersionedIdentifier().getVersion().toString();
-				if (versionId.equals(GENERIC_VERSION_NUMBER))
-					versionId = null;
-				IFeature includedFeature = getSite(false).findFeature(includedFeatures[i].getVersionedIdentifier().getIdentifier(), versionId);
+				IFeature includedFeature = getSite(false).findFeature(includedFeatures[i].getVersionedIdentifier().getIdentifier(), versionId, true);
 				VersionedIdentifier includedFeatureVersionId = includedFeature.getVersionedIdentifier();
 				featureVersionInfo += (includedFeatureVersionId.getIdentifier() + ',' + includedFeatureVersionId.getVersion().toString() + ',');
 			}
@@ -454,8 +449,6 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				BundleDescription model;
 				// If we ask for 0.0.0, the call to the registry must have null as a parameter
 				String versionRequested = identifier.getVersion().toString();
-				if (versionRequested.equals(GENERIC_VERSION_NUMBER))
-					versionRequested = null;
 				String entryIdentifier = identifier.getIdentifier();
 				model = getSite(false).getRegistry().getResolvedBundle(entryIdentifier, versionRequested);
 				pluginVersionInfo += (entryIdentifier + ',' + model.getVersion() + ',');
@@ -679,14 +672,12 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			for (int i = 0; i < features.length; i++) {
 				String featureId = features[i].getVersionedIdentifier().getIdentifier();
 				String versionId = features[i].getVersionedIdentifier().getVersion().toString();
-				if (versionId.equals(GENERIC_VERSION_NUMBER))
-					versionId = null;
-				IPath location;
-				IFeature includedFeature = getSite(false).findFeature(featureId, versionId);
+				IFeature includedFeature = getSite(false).findFeature(featureId, versionId, false);
 				String includedFeatureDirectory = includedFeature.getURL().getPath();
 				int j = includedFeatureDirectory.lastIndexOf(DEFAULT_FEATURE_FILENAME_DESCRIPTOR);
 				if (j != -1)
 					includedFeatureDirectory = includedFeatureDirectory.substring(0, j);
+				IPath location;
 				location = Utils.makeRelative(new Path(includedFeatureDirectory), new Path(featureRootLocation));
 				script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, location.toString(), getPropertyFormat(PROPERTY_TARGET), null, null, null);
 			}
@@ -760,11 +751,8 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	}
 
 	private void initializeVariables() throws CoreException {
-		feature = getSite(false).findFeature(featureIdentifier, searchedVersion);
-		if (feature == null) {
-			String message = Policy.bind("exception.missingFeature", featureIdentifier); //$NON-NLS-1$
-			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, message, null));
-		}
+		feature = getSite(false).findFeature(featureIdentifier, searchedVersion, true);
+
 		if (featureRootLocation == null) {
 			featureRootLocation = feature.getURL().getPath();
 			int i = featureRootLocation.lastIndexOf(DEFAULT_FEATURE_FILENAME_DESCRIPTOR);
@@ -1143,9 +1131,6 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			return;
 		List correctConfigs = selectConfigs(entryToCollect);
 		String versionRequested = entryToCollect.getVersionedIdentifier().getVersion().toString();
-		if (versionRequested.equals(IPDEBuildConstants.GENERIC_VERSION_NUMBER)) {
-			versionRequested = null;
-		}
 		BundleDescription effectivePlugin = null;
 		effectivePlugin = getSite(false).getRegistry().getResolvedBundle(entryToCollect.getVersionedIdentifier().getIdentifier(), versionRequested);
 		for (Iterator iter = correctConfigs.iterator(); iter.hasNext();) {

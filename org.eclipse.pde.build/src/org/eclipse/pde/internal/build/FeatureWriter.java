@@ -137,7 +137,7 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 			parameters.clear();
 			try {
 				parameters.put("id", features[i].getVersionedIdentifier().getIdentifier()); //$NON-NLS-1$
-				IFeature tmpFeature = generator.getSite(false).findFeature(features[i].getVersionedIdentifier().getIdentifier(), null);
+				IFeature tmpFeature = generator.getSite(false).findFeature(features[i].getVersionedIdentifier().getIdentifier(), null, true);
 				parameters.put("version", tmpFeature.getVersionedIdentifier().getVersion().toString()); //$NON-NLS-1$
 			} catch (CoreException e) {
 				String message = Policy.bind("exception.missingFeature", features[i].getVersionedIdentifier().getIdentifier()); //$NON-NLS-1$
@@ -200,9 +200,6 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 			parameters.put("id", plugins[i].getVersionedIdentifier().getIdentifier()); //$NON-NLS-1$
 
 			String versionRequested = plugins[i].getVersionedIdentifier().getVersion().toString();
-			if (versionRequested.equals(IPDEBuildConstants.GENERIC_VERSION_NUMBER)) {
-				versionRequested = null;
-			}
 			BundleDescription effectivePlugin = null;
 			try {
 				effectivePlugin = generator.getSite(false).getRegistry().getResolvedBundle(plugins[i].getVersionedIdentifier().getIdentifier(), versionRequested);
