@@ -1121,11 +1121,11 @@
    </extension>
    <extension
          point="org.eclipse.ui.intro.configExtension">
-      <standbyPart
+      <standbyContentPart
             pluginId="org.eclipse.pde.ui"
             class="org.eclipse.pde.ui.internal.samples.SampleStandbyContent"
             id="org.eclipse.pde.ui.sampleStandbyPart">
-      </standbyPart>
+      </standbyContentPart>
    </extension>
 
 </plugin>
