@@ -75,7 +75,10 @@ public IFile generate(IProgressMonitor monitor) throws CoreException {
 	try {
 		swriter.close();
 		ByteArrayInputStream stream =
-			new ByteArrayInputStream(swriter.toString().getBytes("UTF8"));
+			//new ByteArrayInputStream(swriter.toString().getBytes("UTF8"));
+			// we must write Java code in Native encoding, not UTF8
+			// bug #320
+			new ByteArrayInputStream(swriter.toString().getBytes());
 		if (file.exists())
 			file.setContents(stream, false, true, monitor);
 		else

@@ -39,7 +39,7 @@ public Combo getComboControl() {
 }
 
 public Combo getComboControl(Composite parent) {
-	Combo control = new Combo(parent, SWT.BORDER | SWT.READ_ONLY);
+	Combo control = new Combo(parent, SWT.BORDER);
 	control.setItems(createItems());
 	return control;
 }
@@ -69,38 +69,45 @@ protected void doFillIntoGrid(Composite parent, int numColumns) {
 	 */
 	protected void doLoad() {
 		String value = getPreferenceStore().getString(getPreferenceName());
-		selectItem(value);
+		combo.setText(value);
 	}
 	
-	private void selectItem(String value) {
-		if (combo != null) {
-			for (int i=0; i<choices.length; i++) {
-				String item = choices[i].getValue();
-				if (item.equals(value)) {
-					combo.select(i);
-					break;
-				}
-			}
-		}
-	}
-
 	/*
 	 * @see FieldEditor#doLoadDefault()
 	 */
 	protected void doLoadDefault() {
 		String value = getPreferenceStore().getDefaultString(getPreferenceName());
-		selectItem(value);
+		combo.setText(value);
+	}
+	
+	private int getIndexOf(String value) {
+		for (int i=0; i<choices.length; i++) {
+			Choice choice = choices[i];
+			if (value.equals(choice.getValue())) {
+				return i;
+			}
+		}
+		return -1;
+	}
+	
+	private void selectItem(String value) {
+		int index = getIndexOf(value);
+		if (index!= -1) combo.select(index);
+		else
+			combo.setText(value);
 	}
 
 	/*
 	 * @see FieldEditor#doStore()
 	 */
 	protected void doStore() {
-		int index = combo.getSelectionIndex();
-		if (index!= -1) {
-			String newValue = choices[index].getValue();
-			getPreferenceStore().setValue(getPreferenceName(), newValue);
+		String newValue = combo.getText();
+		int index = getIndexOf(newValue);
+		if (index != -1) {
+			Choice choice = choices[index];
+			newValue = choice.getValue();
 		}
+		getPreferenceStore().setValue(getPreferenceName(), newValue);
 	}
 
 	/*
@@ -109,5 +116,4 @@ protected void doFillIntoGrid(Composite parent, int numColumns) {
 	public int getNumberOfControls() {
 		return 2;
 	}
-
 }

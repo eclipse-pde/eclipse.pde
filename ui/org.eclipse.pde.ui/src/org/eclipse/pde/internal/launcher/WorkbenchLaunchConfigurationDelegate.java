@@ -26,6 +26,7 @@ import org.eclipse.pde.internal.TracingOptionsManager;
 import java.lang.reflect.InvocationTargetException;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
 
 public class WorkbenchLaunchConfigurationDelegate
 	implements ILaunchConfigurationDelegate, ILauncherSettings {
@@ -356,6 +357,6 @@ public class WorkbenchLaunchConfigurationDelegate
 		}
 		IJavaProject[] projs =
 			(IJavaProject[]) javaProjects.toArray(new IJavaProject[javaProjects.size()]);
-		return new ProjectSourceLocator(projs, false);
+		return new JavaSourceLocator(projs, false);
 	}
 }

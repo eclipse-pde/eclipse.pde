@@ -32,6 +32,7 @@ import org.eclipse.debug.core.model.*;
 import org.eclipse.pde.model.plugin.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.core.runtime.IExecutableExtension;
+import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
 
 public class WorkbenchLauncherDelegate
 	implements ILauncherDelegate, IExecutableExtension {
@@ -299,7 +300,7 @@ public class WorkbenchLauncherDelegate
 		}
 		IJavaProject[] projs =
 			(IJavaProject[]) javaProjects.toArray(new IJavaProject[javaProjects.size()]);
-		return new ProjectSourceLocator(projs, false);
+		return new JavaSourceLocator(projs, false);
 	}
 	
 	/*

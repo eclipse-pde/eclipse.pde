@@ -26,7 +26,7 @@ The symbolic name it the id of the nature extension.
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="runtime" minOccurs="0" maxOccurs="1"/>
+            <element ref="runtume" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -52,7 +52,7 @@ The symbolic name it the id of the nature extension.
       </complexType>
    </element>
 
-   <element name="runtime">
+   <element name="run">
       <annotation>
          <appInfo>
             <meta.element labelAttribute="name"/>
@@ -92,6 +92,14 @@ The symbolic name it the id of the nature extension.
                </documentation>
             </annotation>
          </attribute>
+      </complexType>
+   </element>
+
+   <element name="runtume">
+      <complexType>
+         <sequence>
+            <element ref="run" minOccurs="0" maxOccurs="1"/>
+         </sequence>
       </complexType>
    </element>
 

@@ -21,6 +21,10 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 	public static final String ACTIONS_CUT = "EditorActions.cut";
 	public static final String ACTIONS_COPY = "EditorActions.copy";
 	public static final String ACTIONS_PASTE = "EditorActions.paste";
+	private SubMenuManager subMenuManager;
+	private SubStatusLineManager subStatusManager;
+	private SubToolBarManager subToolbarManager;
+
 	private PDEMultiPageEditor editor;
 	private IPDEEditorPage page;
 	private SaveAction saveAction;
@@ -29,6 +33,7 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 	private ClipboardAction pasteAction;
 	private Hashtable globalActions = new Hashtable();
 	private String menuName;
+	private BasicTextEditorActionContributor sourceContributor;
 
 	class GlobalAction extends Action implements IUpdate {
 		private String id;
@@ -123,6 +128,7 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 
 	public PDEEditorContributor(String menuName) {
 		this.menuName = menuName;
+		sourceContributor = new BasicTextEditorActionContributor();
 		makeActions();
 	}
 	private void addGlobalAction(String id) {
@@ -148,10 +154,16 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 		mng.add(saveAction);
 	}
 	public void contributeToMenu(IMenuManager mm) {
+		subMenuManager = new SubMenuManager(mm);
+		sourceContributor.contributeToMenu(subMenuManager);
 	}
 	public void contributeToStatusLine(IStatusLineManager slm) {
+		subStatusManager = new SubStatusLineManager(slm);
+		sourceContributor.contributeToStatusLine(subStatusManager);
 	}
 	public void contributeToToolBar(IToolBarManager tbm) {
+		subToolbarManager = new SubToolBarManager(tbm);
+		sourceContributor.contributeToToolBar(subToolbarManager);
 	}
 	public PDEMultiPageEditor getEditor() {
 		return editor;
@@ -210,6 +222,16 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 			return;
 
 		IActionBars bars = getActionBars();
+		PDESourcePage sourcePage = null;
+		
+		if (newPage instanceof PDESourcePage)
+			sourcePage = (PDESourcePage)newPage;
+		
+		subMenuManager.setVisible(sourcePage!=null);
+		subStatusManager.setVisible(sourcePage!=null);
+		subToolbarManager.setVisible(sourcePage!=null);
+
+		sourceContributor.setActiveEditor(sourcePage);
 		// update global actions
 		bars.setGlobalActionHandler(
 			IWorkbenchActionConstants.DELETE,

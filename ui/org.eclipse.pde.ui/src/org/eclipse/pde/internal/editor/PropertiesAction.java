@@ -25,9 +25,10 @@ public void run() {
 	try {
 		String viewId = IPageLayout.ID_PROP_SHEET;
 		IWorkbenchPage perspective = PDEPlugin.getActivePage();
-		perspective.showView(viewId);
+		IViewPart view = perspective.showView(viewId);
 		editor.updateSynchronizedViews(editor.getCurrentPage());
 		perspective.activate(editor);
+		perspective.bringToTop(view);
 	} catch (PartInitException e) {
 		PDEPlugin.logException(e);
 	}

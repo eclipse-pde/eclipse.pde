@@ -26,7 +26,8 @@ public void removeSelectionChangedListener(ISelectionChangedListener listener) {
 public synchronized void setSelection(ISelection selection) {
 	this.selection = selection;
 	SelectionChangedEvent event = new SelectionChangedEvent(this, selection);
-	for (Iterator iter = listeners.iterator(); iter.hasNext();) {
+
+	for (Iterator iter = ((Vector)listeners.clone()).iterator(); iter.hasNext();) {
 		ISelectionChangedListener listener = (ISelectionChangedListener)iter.next();
 		listener.selectionChanged(event);
 	}

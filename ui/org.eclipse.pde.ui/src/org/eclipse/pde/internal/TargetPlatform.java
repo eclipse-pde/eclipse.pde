@@ -166,6 +166,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 			Locale locale = locales[i];
 			choices[i] = new Choice(locale.toString(), locale.getDisplayName());
 		}
+		ArraySorter.INSTANCE.sortInPlace(choices);
 		return choices;
 	}
 	public static Choice[] getArchChoices() {
