@@ -36,7 +36,7 @@ public class PluginSearchResultPage extends AbstractSearchResultPage {
 			
 			if (object instanceof IPluginExtension) {
 				IPluginExtension extension = (IPluginExtension)object;
-				return extension.getPoint() + " - " + extension.getPluginBase().getId();
+				return extension.getPoint() + " - " + extension.getPluginBase().getId(); //$NON-NLS-1$
 			}
 			
 			if (object instanceof IPluginExtensionPoint)

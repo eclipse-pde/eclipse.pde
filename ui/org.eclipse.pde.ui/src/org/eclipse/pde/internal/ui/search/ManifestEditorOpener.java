@@ -34,19 +34,19 @@ public class ManifestEditorOpener {
 		String name = null;
 		String value = null;
 		if (element instanceof IPluginExtension) {
-			name = "point";
+			name = "point"; //$NON-NLS-1$
 			value = ((IPluginExtension)element).getPoint();
 		} else if (element instanceof IPluginExtensionPoint) {
-			name = "id";
+			name = "id"; //$NON-NLS-1$
 			value = ((IPluginExtensionPoint)element).getId();
 		} else if (element instanceof IPluginImport) {
-			name = "plugin";
+			name = "plugin"; //$NON-NLS-1$
 			value = ((IPluginImport)element).getId();
 		} else if (element instanceof IPlugin) {
-			name = "id";
+			name = "id"; //$NON-NLS-1$
 			value = ((IPlugin)element).getId();
 		} else if (element instanceof IFragment) {
-			name = "id";
+			name = "id"; //$NON-NLS-1$
 			value = ((IFragment)element).getId();
 		}
 		IRegion region = getAttributeRegion(document, name, value, match.getOffset());

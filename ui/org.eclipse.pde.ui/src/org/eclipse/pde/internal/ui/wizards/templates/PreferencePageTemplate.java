@@ -130,8 +130,8 @@ public class PreferencePageTemplate extends PDETemplateSection {
 		if (schemaVersion == null)
 			return super.getDependencies(schemaVersion);
 		PluginReference[] deps = new PluginReference[2];
-		deps[0] = new PluginReference("org.eclipse.core.runtime", null, 0);
-		deps[1] = new PluginReference("org.eclipse.ui", null, 0);		
+		deps[0] = new PluginReference("org.eclipse.core.runtime", null, 0); //$NON-NLS-1$
+		deps[1] = new PluginReference("org.eclipse.ui", null, 0);		 //$NON-NLS-1$
 		return deps;
 	}
 

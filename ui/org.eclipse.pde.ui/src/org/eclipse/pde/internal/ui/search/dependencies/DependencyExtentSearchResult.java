@@ -99,7 +99,7 @@ public class DependencyExtentSearchResult extends SearchResult implements IEdito
 	 */
 	public String getLabel() {
 		int count = getMatchCount();
-		return fQuery.getLabel() + " - " + count + (count == 1 ? " dependency" : " dependencies");
+		return fQuery.getLabel() + " - " + count + (count == 1 ? " dependency" : " dependencies"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

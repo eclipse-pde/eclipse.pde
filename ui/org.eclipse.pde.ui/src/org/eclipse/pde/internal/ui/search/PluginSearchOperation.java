@@ -33,7 +33,7 @@ public class PluginSearchOperation {
 	
 	public void execute(IProgressMonitor monitor) {
 		IPluginModelBase[] entries = input.getSearchScope().getMatchingModels();
-		monitor.beginTask("", entries.length);
+		monitor.beginTask("", entries.length); //$NON-NLS-1$
 
 		try {
 			for (int i = 0; i < entries.length; i++) {

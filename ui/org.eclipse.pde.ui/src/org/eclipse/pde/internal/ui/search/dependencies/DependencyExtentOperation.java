@@ -61,7 +61,7 @@ public class DependencyExtentOperation {
 	
 	public void execute(IProgressMonitor monitor) {
 		IPlugin[] plugins = PluginJavaSearchUtil.getPluginImports(fImportID);
-		monitor.beginTask("Searching for dependencies on " + fImportID + "...", 10);
+		monitor.beginTask("Searching for dependencies on " + fImportID + "...", 10); //$NON-NLS-2$
 		checkForJavaDependencies(plugins, new SubProgressMonitor(monitor, 9));
 		for (int i = 0; i < plugins.length; i++) {
 			checkForExtensionPointsUsed(plugins[i]);
@@ -97,7 +97,7 @@ public class DependencyExtentOperation {
 			
 			IJavaProject jProject = JavaCore.create(fProject);
 			IPackageFragment[] packageFragments = PluginJavaSearchUtil.collectPackageFragments(plugins, jProject);
-			monitor.beginTask("", packageFragments.length);
+			monitor.beginTask("", packageFragments.length); //$NON-NLS-1$
 			SearchEngine engine = new SearchEngine();
 			for (int i = 0; i < packageFragments.length; i++) {
 				if (monitor.isCanceled())

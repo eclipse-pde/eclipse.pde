@@ -33,7 +33,7 @@ public class SearchResult extends AbstractTextSearchResult implements IEditorMat
 	 */
 	public String getLabel() {
 		int numMatches = getMatchCount();	
-		return fQuery.getLabel() + " - " + numMatches + (numMatches == 1 ? " match" : " matches");
+		return fQuery.getLabel() + " - " + numMatches + (numMatches == 1 ? " match" : " matches"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -106,9 +106,9 @@ public class SearchResult extends AbstractTextSearchResult implements IEditorMat
 		if (file != null) {
 			IPath path = new Path(object.getModel().getInstallLocation());
 			IPath filePath = null;
-			if ("MANIFEST.MF".equals(file.getName()))
+			if ("MANIFEST.MF".equals(file.getName())) //$NON-NLS-1$
 				filePath = new Path(file.getParentFile().getParent());
-			else if (file.getName().endsWith("jar")) {
+			else if (file.getName().endsWith("jar")) { //$NON-NLS-1$
 				filePath = new Path(file.getPath());
 			} else {
 				filePath = new Path(file.getParent());

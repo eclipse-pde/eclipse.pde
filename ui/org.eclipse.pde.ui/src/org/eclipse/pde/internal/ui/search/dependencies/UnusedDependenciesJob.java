@@ -39,7 +39,7 @@ public class UnusedDependenciesJob extends Job {
 	protected IStatus run(IProgressMonitor monitor) {
 		IPluginImport[] imports = fModel.getPluginBase().getImports();
 		try {
-			monitor.beginTask("", imports.length);
+			monitor.beginTask("", imports.length); //$NON-NLS-1$
 			ArrayList list = new ArrayList();
 			for (int i = 0; i < imports.length; i++) {
 				if (monitor.isCanceled())
@@ -93,7 +93,7 @@ public class UnusedDependenciesJob extends Job {
 			IJavaProject jProject = JavaCore.create(project);
 			IPackageFragment[] packageFragments = PluginJavaSearchUtil.collectPackageFragments(plugins, jProject);
 			SearchEngine engine = new SearchEngine();
-			monitor.beginTask("", packageFragments.length);
+			monitor.beginTask("", packageFragments.length); //$NON-NLS-1$
 			for (int i = 0; i < packageFragments.length; i++) {
 				IPackageFragment pkgFragment = packageFragments[i];
 				if (pkgFragment.hasChildren()) {
