@@ -73,6 +73,7 @@ public class PluginErrorReporter implements ErrorHandler {
 	private void removeFileMarkers() {
 		try {
 			file.deleteMarkers(IMarker.PROBLEM, false, IResource.DEPTH_ZERO);
+			file.deleteMarkers(SchemaMarkerFactory.MARKER_ID, false, IResource.DEPTH_ZERO);
 		} catch (CoreException e) {
 			PDECore.logException(e);
 		}
