@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.ui.editor.manifest;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.builders.*;
@@ -23,7 +22,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.views.internal.markers.tasks.TaskView;
+import org.eclipse.ui.views.markers.MarkerViewUtil;
 import org.eclipse.update.ui.forms.internal.*;
 
 
@@ -109,17 +108,14 @@ private boolean checkMarkers(Composite parent, FormWidgetFactory factory) {
 		label.setToolTipText(PDEPlugin.getResourceString(KEY_MARKERS_TOOLTIP));
 		handler.registerHyperlink(label, new HyperlinkAdapter() {
 			public void linkActivated(Control link) {
-				try {
-					IViewPart view = PDEPlugin.getActivePage().showView(IPageLayout.ID_TASK_LIST);
-					final TaskView tasklist = (TaskView) view;
-					Display.getCurrent().asyncExec(new Runnable() {
-						public void run() {
-							tasklist.setSelection(new StructuredSelection(markers), true);
-						}
-					});
-				} catch (PartInitException e) {
-					PDEPlugin.logException(e);
-				}
+				Display.getCurrent().asyncExec(new Runnable() {
+					public void run() {
+						MarkerViewUtil.showMarker(
+							PDEPlugin.getActivePage(),
+							markers[0],
+							true);
+					}
+				});
 			}
 		});
 	} catch (CoreException e) {
