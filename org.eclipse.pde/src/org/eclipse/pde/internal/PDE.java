@@ -65,7 +65,7 @@ public class PDE extends Plugin {
 	public ResourceBundle getResourceBundle() {
 		try {
 			if (resourceBundle == null)
-				resourceBundle = ResourceBundle.getBundle("org.eclipse.pde.internal.pderesources");
+				resourceBundle = ResourceBundle.getBundle("org.eclipse.pde.internal.pderesources"); //$NON-NLS-1$
 		} catch (MissingResourceException x) {
 			resourceBundle = null;
 		}
