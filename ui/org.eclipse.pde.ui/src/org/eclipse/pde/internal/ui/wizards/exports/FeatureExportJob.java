@@ -618,11 +618,14 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
             return false;
         
         IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
+        if (libraries.length == 0 && PDECore.getDefault().getModelManager().isOSGiRuntime())
+            return false;
+        
         for (int i = 0; i < libraries.length; i++) {
-            if (!libraries[i].getName().equals("."))
-                return true;
+            if (libraries[i].getName().equals("."))
+                return false;
         }
-        return false;
+        return true;
     }
 
 
