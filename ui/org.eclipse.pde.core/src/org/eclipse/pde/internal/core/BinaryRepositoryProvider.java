@@ -204,4 +204,8 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 		return new Status(IStatus.OK, PDECore.PLUGIN_ID, IStatus.OK, "", //$NON-NLS-1$
 		null);
 	}
+	
+	public boolean canHandleLinkedResources() {
+		return true;
+	}
 }
