@@ -120,7 +120,7 @@ represent the template.
       &lt;template
             contributingId=&quot;org.eclipse.ui.actionSets&quot;
             name=&quot;XYZ Action Set Generator&quot;
-			class=&quot;com.example.xyz.XYZActionSetTemplate&quot;
+   class=&quot;com.example.xyz.XYZActionSetTemplate&quot;
             id=&quot;com.example.xyz.ActionSetTemplate&quot;&gt;
       &lt;/template&gt;
    &lt;/extension&gt;
@@ -151,7 +151,12 @@ represent the template.
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved. This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;.
+         Copyright (c) 2004 IBM Corporation and others.
+&lt;br&gt;
+All rights reserved. This program and the accompanying materials are made 
+available under the terms of the Common Public License v1.0 which 
+accompanies this distribution, and is available at 
+&lt;a href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;.
       </documentation>
    </annotation>
 
