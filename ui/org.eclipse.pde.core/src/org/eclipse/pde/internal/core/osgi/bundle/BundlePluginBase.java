@@ -182,23 +182,25 @@ public class BundlePluginBase
 		if (imports == null) {
 			imports = new ArrayList();
 			BundleDescription description = model.getBundleDescription();
-			BundleSpecification[] required = description.getRequiredBundles();
-			for (int i = 0; i < required.length; i++) {
-				PluginImport importElement = new PluginImport();
-				importElement.setModel(getModel());
-				importElement.setInTheModel(true);
-				importElement.setParent(this);
-				imports.add(importElement);
-				importElement.load(required[i]);
-			}
-			BundleDescription[] imported = PDEStateHelper.getImportedBundles(description);
-			for (int i = 0; i < imported.length; i++) {
-				PluginImport importElement = new PluginImport();
-				importElement.setModel(getModel());
-				importElement.setInTheModel(true);
-				importElement.setParent(this);
-				imports.add(importElement);
-				importElement.load(imported[i]);
+			if (description != null) {
+				BundleSpecification[] required = description.getRequiredBundles();
+				for (int i = 0; i < required.length; i++) {
+					PluginImport importElement = new PluginImport();
+					importElement.setModel(getModel());
+					importElement.setInTheModel(true);
+					importElement.setParent(this);
+					imports.add(importElement);
+					importElement.load(required[i]);
+				}
+				BundleDescription[] imported = PDEStateHelper.getImportedBundles(description);
+				for (int i = 0; i < imported.length; i++) {
+					PluginImport importElement = new PluginImport();
+					importElement.setModel(getModel());
+					importElement.setInTheModel(true);
+					importElement.setParent(this);
+					imports.add(importElement);
+					importElement.load(imported[i]);
+				}
 			}
 		}
 		return (IPluginImport[])imports.toArray(new IPluginImport[imports.size()]);
@@ -246,8 +248,13 @@ public class BundlePluginBase
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#getVersion()
 	 */
 	public String getVersion() {
-		Version version = model.getBundleDescription().getVersion();
-		return (version != null) ? version.toString() : null;
+		BundleDescription desc = model.getBundleDescription();
+		if (desc != null) {
+			Version version = desc.getVersion();
+			if (version != null)
+				return version.toString();
+		}
+		return null;
 	}
 
 	/*
@@ -399,7 +406,8 @@ public class BundlePluginBase
 	 * @see org.eclipse.pde.core.IIdentifiable#getId()
 	 */
 	public String getId() {
-		return model.getBundleDescription().getUniqueId();
+		BundleDescription desc = model.getBundleDescription();
+		return (desc == null) ? "" : desc.getUniqueId();
 	}
 
 	/*
