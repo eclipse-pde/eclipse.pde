@@ -119,20 +119,15 @@ public class UpdateBuildpathWizardPage extends StatusWizardPage {
 	private Object[] getModels() {
 		Vector result = new Vector();
 		try {
-			IPluginModelBase[] plugins =
-				PDECore.getDefault().getWorkspaceModelManager().getWorkspacePluginModels();
-			for (int i = 0; i < plugins.length; i++) {
-				if (plugins[i].getUnderlyingResource().getProject().hasNature(JavaCore.NATURE_ID))
-					result.add(plugins[i]);
+			IPluginModelBase[] models =
+				PDECore.getDefault().getWorkspaceModelManager().getAllModels();
+			for (int i = 0; i < models.length; i++) {
+				if (models[i].getPluginBase().getLibraries().length == 0)
+					continue;
+				if (models[i].getUnderlyingResource().getProject().hasNature(JavaCore.NATURE_ID))
+					result.add(models[i]);
 			}
 			
-			IPluginModelBase[] fragments =
-				PDECore.getDefault().getWorkspaceModelManager().getWorkspaceFragmentModels();
-				
-			for (int i = 0; i < fragments.length; i++) {
-				if (fragments[i].getUnderlyingResource().getProject().hasNature(JavaCore.NATURE_ID))
-					result.add(fragments[i]);
-			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
