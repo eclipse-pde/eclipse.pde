@@ -7,13 +7,12 @@
 package org.eclipse.pde.internal.ui.editor;
 import org.eclipse.jface.action.*;
 import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.*;
-import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.*;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -50,10 +49,9 @@ public abstract class PDEFormPage extends FormPage {
 					});
 				}
 			};
+			//TODO translate
 			helpAction.setToolTipText("Help");
-			helpAction.setImageDescriptor(PlatformUI.getWorkbench()
-					.getSharedImages().getImageDescriptor(
-							ISharedImages.IMG_OBJS_INFO_TSK));
+			helpAction.setImageDescriptor(PDEPluginImages.DESC_HELP);
 			manager.add(helpAction);
 			form.updateToolBar();
 		}
