@@ -1,20 +1,14 @@
 package org.eclipse.pde.ant;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
+import java.net.*;
 
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
+import org.apache.tools.ant.*;
 import org.eclipse.pde.internal.builders.SchemaTransformer;
 import org.eclipse.pde.internal.core.SourceDOMParser;
 import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
 import org.eclipse.pde.internal.core.schema.Schema;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
+import org.xml.sax.*;
 
 public class ConvertSchemaToHTML extends Task {
 	
@@ -37,7 +31,14 @@ public class ConvertSchemaToHTML extends Task {
 
 			is = new FileInputStream(schemaFile);
 			parser.parse(new InputSource(is));
-			Schema schema = new Schema((ISchemaDescriptor) null, null);
+			URL url = null;
+			
+			try {
+				url = new URL("file:"+schemaFile.getPath());
+			}
+			catch (MalformedURLException e) {
+			}
+			Schema schema = new Schema((ISchemaDescriptor) null, url);
 			schema.traverseDocumentTree(
 				parser.getDocument().getDocumentElement(),
 				parser.getLineTable());

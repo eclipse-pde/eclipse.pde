@@ -5,6 +5,7 @@ package org.eclipse.pde.internal.builders;
  */
 
 import java.io.*;
+import java.net.URL;
 
 import org.eclipse.pde.core.ISourceObject;
 import org.eclipse.pde.internal.PDE;
@@ -120,6 +121,7 @@ public static final String KEY_DEPRECATED_TYPE =
 		return false;
 	}
 	public void transform(
+		URL schemaURL,
 		InputStream is,
 		PrintWriter out,
 		PluginErrorReporter reporter) {
@@ -127,7 +129,7 @@ public static final String KEY_DEPRECATED_TYPE =
 		if (parser == null)
 			return;
 		Node root = parser.getDocument().getDocumentElement();
-		Schema schema = new Schema((ISchemaDescriptor) null, null);
+		Schema schema = new Schema((ISchemaDescriptor) null, schemaURL);
 		schema.traverseDocumentTree(root, parser.getLineTable());
 		if (verifySchema(schema, reporter) && CompilerFlags.getBoolean(CompilerFlags.S_CREATE_DOCS))
 			transform(out, schema);
@@ -294,7 +296,7 @@ public static final String KEY_DEPRECATED_TYPE =
 		out.println("</ul>");
 	}
 	private void transformMarkup(PrintWriter out, ISchema schema) {
-		ISchemaElement[] elements = schema.getElements();
+		ISchemaElement[] elements = schema.getResolvedElements();
 
 		for (int i = 0; i < elements.length; i++) {
 			ISchemaElement element = elements[i];

@@ -5,6 +5,7 @@ package org.eclipse.pde.internal.builders;
  */
 
 import java.io.*;
+import java.net.*;
 import java.util.Map;
 
 import org.eclipse.core.resources.*;
@@ -113,7 +114,14 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 			InputStream source = file.getContents(false);
 			StringWriter stringWriter = new StringWriter();
 			PrintWriter pwriter = new PrintWriter(stringWriter);
-			transform(source, pwriter, reporter);
+			URL url = null;
+			
+			try {
+				url = new URL("file:"+file.getLocation().toOSString());
+			}
+			catch (MalformedURLException e) {
+			}
+			transform(url, source, pwriter, reporter);
 			stringWriter.close();
 			if (reporter.getErrorCount() == 0
 				&& CompilerFlags.getBoolean(CompilerFlags.S_CREATE_DOCS)) {
@@ -234,9 +242,10 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 		super.startupOnInitialize();
 	}
 	private void transform(
+		URL schemaURL,
 		InputStream input,
 		PrintWriter output,
 		PluginErrorReporter reporter) {
-		transformer.transform(input, output, reporter);
+		transformer.transform(schemaURL, input, output, reporter);
 	}
 }
