@@ -43,7 +43,7 @@ public class ActionBuilder {
 	public void populateMenuBar(IActionBarConfigurer configurer) {
 		IMenuManager mgr = configurer.getMenuManager();
 		
-		MenuManager fileMenu = new MenuManager("&File", "file");
+		MenuManager fileMenu = new MenuManager("&File", IWorkbenchActionConstants.M_FILE);
 		MenuManager aboutMenu = new MenuManager("&About", "about");
 		
 		// Allow contributions to the top-level menu
