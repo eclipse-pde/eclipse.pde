@@ -352,5 +352,9 @@ public class ExternalPluginsBlock {
 		}
 		tablePart.setSelection(selected.toArray());
 	}
+	
+	public void handleSelectAll(boolean selected) {
+		tablePart.selectAll(selected);
+	}
 
 }

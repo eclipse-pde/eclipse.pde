@@ -195,17 +195,11 @@ public class TargetPlatformPreferencePage
 			homeText.setText(newPath);
 	}
 
-	private void loadDefaults() {
-		String mode = preferences.getDefaultString(ICoreConstants.TARGET_MODE);
-		String path = ExternalModelManager.computeDefaultPlatformPath();
-		load(mode.equals(ICoreConstants.VALUE_USE_OTHER), path);
-	}
-
 	public void init(IWorkbench workbench) {
 	}
 	
 	public void performDefaults() {
-		loadDefaults();
+		pluginsBlock.handleSelectAll(true);
 		super.performDefaults();
 	}
 
