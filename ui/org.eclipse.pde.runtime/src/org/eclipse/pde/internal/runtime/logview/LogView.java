@@ -25,6 +25,7 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -81,6 +82,7 @@ public class LogView extends ViewPart implements ILogListener {
 	private File inputFile;
 	private String directory;
 	
+	private TableColumn column0;
 	private TableColumn column1;
 	private TableColumn column2;
 	private TableColumn column3;
@@ -88,6 +90,11 @@ public class LogView extends ViewPart implements ILogListener {
 	
 	private Composite leftContainer;
 	private SashForm sashForm;
+	
+	// hover text
+	private boolean canOpenTextShell; 
+	private Text textLabel;
+	private Shell textShell;
 	
 	private boolean firstEvent = true;
 
@@ -202,6 +209,7 @@ public class LogView extends ViewPart implements ILogListener {
 				propertiesAction.run();
 			}
 		});
+		addMouseListeners();
 		tableTreeViewer.setInput(Platform.class);
 	}
 	
@@ -219,8 +227,8 @@ public class LogView extends ViewPart implements ILogListener {
 		
 	}
 	private void createColumns(Table table) {
-		TableColumn column = new TableColumn(table, SWT.NULL);
-		column.setText("");
+		column0 = new TableColumn(table, SWT.NULL);
+		column0.setText("");
 		
 		column1 = new TableColumn(table, SWT.NULL);
 		column1.setText(PDERuntimePlugin.getResourceString("LogView.column.severity"));
@@ -757,4 +765,122 @@ public class LogView extends ViewPart implements ILogListener {
 		detailsForm.saveState();
 		memento.putMemento(this.memento);
 	}	
+	
+	private void addMouseListeners(){
+		Listener tableListener = new Listener() {
+			public void handleEvent(Event e) {
+				switch (e.type) {
+				case SWT.MouseMove: onMouseMove(e); break;
+				case SWT.MouseHover: onMouseHover(e); break;
+				case SWT.MouseDown: onMouseDown(e); break;
+				}
+			}
+		};
+		int[] tableEvents = new int[]{SWT.MouseDown, 
+									   SWT.MouseMove,
+									   SWT.MouseHover};
+		for (int i = 0; i < tableEvents.length; i++) {
+			tableTreeViewer.getTableTree().getTable().addListener(tableEvents[i], tableListener);
+		}
+	}
+	
+
+	private void makeHoverShell(boolean isStack){
+		Control control= tableTreeViewer.getControl();
+
+		textShell= new Shell(control.getShell(), SWT.NO_FOCUS | SWT.ON_TOP);
+		Display display= textShell.getDisplay();	
+		textShell.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+		GridLayout layout= new GridLayout(1, false);
+		int border= ((control.getShell().getStyle() & SWT.NO_TRIM) == 0) ? 0: 1;
+		layout.marginHeight= border;
+		layout.marginWidth= border;
+		textShell.setLayout(layout);
+		GridData gd= new GridData(GridData.FILL_HORIZONTAL);
+		textShell.setLayoutData(gd);
+
+		Composite shellComposite = new Composite(textShell, SWT.NONE);
+		layout =new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		shellComposite.setLayout(layout);
+		shellComposite.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_BEGINNING));
+		
+		textLabel= new Text(shellComposite,  SWT.WRAP | SWT.MULTI );
+		gd= new GridData(GridData.FILL_BOTH);
+		gd.widthHint= 100;
+		gd.grabExcessHorizontalSpace = true;
+		textLabel.setLayoutData(gd);
+
+		Color c= control.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+		textLabel.setBackground(c);
+		c= control.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND);
+		textLabel.setForeground(c);
+		textLabel.setEditable(false);
+		
+		textShell.addDisposeListener(new DisposeListener(){
+			public void widgetDisposed(DisposeEvent e) {
+				onTextShellDispose(e);
+			} 
+		});
+
+		textShell.setSize(column2.getWidth() + column3.getWidth() + column4.getWidth(),isStack ? 50 : 25);
+	}
+
+	void onTextShellDispose(DisposeEvent e){
+		canOpenTextShell = true;
+		setFocus();
+	}
+	void onMouseDown(Event e){
+		if (textShell!=null && !textShell.isDisposed() && !textShell.isFocusControl()){
+			textShell.close();
+			canOpenTextShell = true;
+		}
+	}
+	void onMouseHover(Event e){
+		if (!canOpenTextShell)
+			return;
+
+		canOpenTextShell = false;
+		Point point = new Point (e.x, e.y);
+		TableTree table = tableTreeViewer.getTableTree();
+		TableTreeItem item = table.getItem(point);
+		if (item == null)
+			return;
+		
+		String message = "";
+		boolean isStack;
+		if (e.x < column1.getWidth()+column0.getWidth()){
+			message = ((LogEntry)item.getData()).getStack();
+			isStack = true;
+		} else{ 
+			message = ((LogEntry)item.getData()).getMessage();
+			isStack = false;
+		}
+
+		if (message == null)
+			return;
+
+		makeHoverShell(isStack);	
+		textLabel.setText(message);
+
+		int x = point.x + 5;
+		int y = point.y - (table.getItemHeight()*2);
+		if (isStack)
+			y -=20;
+		textShell.setLocation(table.toDisplay(x,y));
+		table.setToolTipText("");
+		textShell.open();
+		setFocus();
+	}
+
+	void onMouseMove(Event e){
+		if (textShell != null && !textShell.isDisposed()){
+			textShell.close();
+			canOpenTextShell = textShell.isDisposed() && e.x < (column0.getWidth() + column1.getWidth() + column2.getWidth());
+		} else {
+			canOpenTextShell = e.x < (column0.getWidth() + column1.getWidth() + column2.getWidth());
+		}
+	}
+
 }
