@@ -17,16 +17,16 @@ import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.swt.graphics.Image;
 
 public class NewExtensionRegistryReader {
-	public static final String TAG_WIZARD = "wizard";
-	public static final String TAG_EDITOR_WIZARD = "editorWizard";
-	public static final String ATT_CATEGORY = "category";
-	public static final String ATT_SHORTCUTTABLE = "availableAsShortcut";
-	public static final String CATEGORY_SEPARATOR = "/";
-	public static final String TAG_CATEGORY = "category";
-	public static final String TAG_DESCRIPTION = "description";
+	public static final String TAG_WIZARD = "wizard"; //$NON-NLS-1$
+	public static final String TAG_EDITOR_WIZARD = "editorWizard"; //$NON-NLS-1$
+	public static final String ATT_CATEGORY = "category"; //$NON-NLS-1$
+	public static final String ATT_SHORTCUTTABLE = "availableAsShortcut"; //$NON-NLS-1$
+	public static final String CATEGORY_SEPARATOR = "/"; //$NON-NLS-1$
+	public static final String TAG_CATEGORY = "category"; //$NON-NLS-1$
+	public static final String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
 
-	private final static String UNCATEGORIZED_WIZARD_CATEGORY = "org.eclipse.pde.ui.Other";
-	private final static String UNCATEGORIZED_WIZARD_CATEGORY_LABEL = "Other";
+	private final static String UNCATEGORIZED_WIZARD_CATEGORY = "org.eclipse.pde.ui.Other"; //$NON-NLS-1$
+	private final static String UNCATEGORIZED_WIZARD_CATEGORY_LABEL = "Other"; //$NON-NLS-1$
 	
 	private boolean editorWizardMode;
 	
@@ -154,7 +154,7 @@ public class NewExtensionRegistryReader {
 
 		category = new Category(config);
 		if (category.getID() == null || category.getLabel() == null) {
-			System.out.println("Cannot create category: id or name is missing");
+			System.out.println(PDEPlugin.getResourceString("NewExtensionRegistryReader.missingProperty")); //$NON-NLS-1$
 			return;
 		}
 
@@ -184,7 +184,7 @@ public class NewExtensionRegistryReader {
 			WizardElement wizard = createWizardElement(element);
 			if (shortcutsOnly) {
 				String shortcut = element.getAttribute(ATT_SHORTCUTTABLE);
-				if (shortcut != null && shortcut.toLowerCase().equals("true")) {
+				if (shortcut != null && shortcut.toLowerCase().equals("true")) { //$NON-NLS-1$
 					result.add(wizard);
 				}
 			} else
@@ -206,8 +206,8 @@ public class NewExtensionRegistryReader {
 	public ElementList readRegistry(String pluginId, String pluginPointId,
 			boolean shortcutsOnly) {
 		ElementList result = (shortcutsOnly)
-				? (new ElementList("shortcuts"))
-				: (new WizardCollectionElement("root", "root", null));
+				? (new ElementList("shortcuts")) //$NON-NLS-1$
+				: (new WizardCollectionElement("root", "root", null)); //$NON-NLS-1$ //$NON-NLS-2$
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IExtensionPoint point = registry.getExtensionPoint(pluginId,
 				pluginPointId);

@@ -20,7 +20,7 @@ public class NewExtensionPointWizard extends NewWizard {
 	private IPluginModelBase model;
 	private IProject project;
 	private IPluginExtensionPoint point;
-	private static final String KEY_WTITLE = "NewExtensionPointWizard.wtitle";
+	private static final String KEY_WTITLE = "NewExtensionPointWizard.wtitle"; //$NON-NLS-1$
 
 	public NewExtensionPointWizard(IProject project, IPluginModelBase model) {
 		this(project, model, null);

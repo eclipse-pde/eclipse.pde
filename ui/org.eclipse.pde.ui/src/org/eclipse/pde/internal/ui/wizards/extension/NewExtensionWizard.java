@@ -16,9 +16,9 @@ import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.pde.internal.ui.*;
 
 public class NewExtensionWizard extends NewWizard {
-	public static final String PLUGIN_POINT = "newExtension";
-	public static final String STATUS_MESSAGE = "NewExtensionWizard.statusMessage";
-	private static final String KEY_WTITLE = "NewExtensionWizard.wtitle";
+	public static final String PLUGIN_POINT = "newExtension"; //$NON-NLS-1$
+	public static final String STATUS_MESSAGE = "NewExtensionWizard.statusMessage"; //$NON-NLS-1$
+	private static final String KEY_WTITLE = "NewExtensionWizard.wtitle"; //$NON-NLS-1$
 
 	private PointSelectionPage pointPage;
 	private IPluginModelBase model;
@@ -49,7 +49,7 @@ public class NewExtensionWizard extends NewWizard {
 	}
 	
 	public WizardCollectionElement getTemplates() {
-		WizardCollectionElement templateCollection = new WizardCollectionElement("", "", null);
+		WizardCollectionElement templateCollection = new WizardCollectionElement("", "", null); //$NON-NLS-1$ //$NON-NLS-2$
 		collectTemplates(wizardCollection.getChildren(), templateCollection);
 		return templateCollection;
 	}

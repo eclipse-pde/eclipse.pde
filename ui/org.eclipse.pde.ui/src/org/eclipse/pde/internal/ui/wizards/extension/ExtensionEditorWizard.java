@@ -18,9 +18,9 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.ElementList;
 
 public class ExtensionEditorWizard extends Wizard {
-	public static final String PLUGIN_POINT = "newExtension";
-	public static final String STATUS_MESSAGE = "ExtensionEditorWizard.statusMessage";
-	private static final String KEY_WTITLE = "ExtensionEditorWizard.wtitle";
+	public static final String PLUGIN_POINT = "newExtension"; //$NON-NLS-1$
+	public static final String STATUS_MESSAGE = "ExtensionEditorWizard.statusMessage"; //$NON-NLS-1$
+	private static final String KEY_WTITLE = "ExtensionEditorWizard.wtitle"; //$NON-NLS-1$
 
 	private ExtensionEditorSelectionPage pointPage;
 	private IPluginModelBase model;

@@ -19,8 +19,8 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.widgets.*;
 
 public class NewSchemaFileMainPage extends BaseExtensionPointMainPage {
-	public static final String KEY_TITLE = "NewSchemaFileWizard.title";
-	public static final String KEY_DESC = "NewSchemaFileWizard.desc";
+	public static final String KEY_TITLE = "NewSchemaFileWizard.title"; //$NON-NLS-1$
+	public static final String KEY_DESC = "NewSchemaFileWizard.desc"; //$NON-NLS-1$
 	private IPluginExtensionPoint point;
 	private IContainer container;
 	private boolean isPluginIdFinal;
@@ -78,7 +78,7 @@ public class NewSchemaFileMainPage extends BaseExtensionPointMainPage {
 		if (container!=null){
 			pluginIdText.setText(container.getProject().getName());
 			if (!isPluginIdFinal())
-				schemaLocationText.setText(container.getProject().getName() + "/" + container.getProjectRelativePath().toString());
+				schemaLocationText.setText(container.getProject().getName() + "/" + container.getProjectRelativePath().toString()); //$NON-NLS-1$
 		}
 		if (point == null)
 			return;

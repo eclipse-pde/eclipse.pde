@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.IWizardNode;
 import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.ElementList;
 import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.pde.ui.*;
@@ -32,10 +33,10 @@ public class ExtensionEditorSelectionPage extends WizardListSelectionPage {
 	 * @param message
 	 */
 	public ExtensionEditorSelectionPage(ElementList wizards) {
-		super(wizards, "Ex&tension Editors:");
+		super(wizards, "Ex&tension Editors:"); //$NON-NLS-1$
 		//TODO translate strings
-		setTitle("Extension Editors");
-		setDescription("Choose one of the provided wizards to edit the selected extension");
+		setTitle(PDEPlugin.getResourceString("ExtensionEditorSelectionPage.title")); //$NON-NLS-1$
+		setDescription(PDEPlugin.getResourceString("ExtensionEditorSelectionPage.desc")); //$NON-NLS-1$
 	}
 	public void init(IProject project, IPluginBase pluginBase, IStructuredSelection selection) {
 		this.fProject = project;

@@ -54,9 +54,9 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 	public static final String KEY_SECTIONS_API = "BaseExtensionPoint.sections.api"; //$NON-NLS-1$
 	public static final String KEY_SECTIONS_SUPPLIED = "BaseExtensionPoint.sections.supplied"; //$NON-NLS-1$
 	public static final String KEY_SECTIONS_COPYRIGHT = "BaseExtensionPoint.sections.copyright"; //$NON-NLS-1$
-	public static final String SETTINGS_PLUGIN_ID = "BaseExtensionPoint.settings.pluginId";
-	public static final String SCHEMA_DIR = "schema";
-	public static final String KEY_BROWSE = "BaseExtensionPointMainPage.browse";
+	public static final String SETTINGS_PLUGIN_ID = "BaseExtensionPoint.settings.pluginId"; //$NON-NLS-1$
+	public static final String SCHEMA_DIR = "schema"; //$NON-NLS-1$
+	public static final String KEY_BROWSE = "BaseExtensionPointMainPage.browse"; //$NON-NLS-1$
 	private IContainer container;
 	private IProject project;
 	protected Text idText;
@@ -104,7 +104,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			gd.widthHint = 50;
 			pluginBrowseButton.setLayoutData(gd);
 			pluginBrowseButton.setText(PDEPlugin.getResourceString(KEY_BROWSE));
-			pluginBrowseButton.setToolTipText(PDEPlugin.getResourceString("BaseExtensionPointMainPage.pluginId.tooltip"));
+			pluginBrowseButton.setToolTipText(PDEPlugin.getResourceString("BaseExtensionPointMainPage.pluginId.tooltip")); //$NON-NLS-1$
 			pluginBrowseButton.addSelectionListener(new SelectionAdapter(){
 				public void widgetSelected(SelectionEvent e) {
 					handlePluginBrowse();
@@ -120,7 +120,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		idText.setLayoutData(gd);
 		idText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				schemaText.setText(getSchemaLocation() + "/" + idText.getText() + ".exsd");
+				schemaText.setText(getSchemaLocation() + "/" + idText.getText() + ".exsd"); //$NON-NLS-1$ //$NON-NLS-2$
 				validatePage(false);
 			}
 		});
@@ -153,7 +153,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			gd.widthHint = 50;
 			findLocationButton.setLayoutData(gd);
 			findLocationButton.setText(PDEPlugin.getResourceString(KEY_BROWSE));
-			findLocationButton.setToolTipText(PDEPlugin.getResourceString("BaseExtensionPointMainPage.schemaLocation.tooltip"));
+			findLocationButton.setToolTipText(PDEPlugin.getResourceString("BaseExtensionPointMainPage.schemaLocation.tooltip")); //$NON-NLS-1$
 			findLocationButton.addSelectionListener(new SelectionAdapter(){
 				public void widgetSelected(SelectionEvent e) {
 					handleSchemaLocation();
@@ -201,7 +201,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		schema.setDescription(PDEPlugin
 				.getResourceString(KEY_SECTIONS_OVERVIEW));
 		DocumentSection section;
-		section = new DocumentSection(schema, IDocumentSection.SINCE, "Since:");
+		section = new DocumentSection(schema, IDocumentSection.SINCE, PDEPlugin.getResourceString("BaseExtensionPointMainPage.since")); //$NON-NLS-1$
 		section.setDescription(PDEPlugin.getResourceString(KEY_SECTIONS_SINCE));
 		schema.addDocumentSection(section);
 		SchemaElement element;
@@ -291,8 +291,8 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 					public void execute(IProgressMonitor monitor) {
 						try {
 							String schemaName = schema;
-							if (!schema.endsWith(".exsd"))
-								schemaName = schema + ".exsd";
+							if (!schema.endsWith(".exsd")) //$NON-NLS-1$
+								schemaName = schema + ".exsd"; //$NON-NLS-1$
 							IFile file = generateSchemaFile(getPluginId(), id, name,
 									shared, schemaName, monitor);
 							if (file != null && openFile){
@@ -314,11 +314,11 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			String schema = schemaText.getText();
 			if (schema.length() == 0)
 				return SCHEMA_DIR;
-			int loc = schema.lastIndexOf("/");
+			int loc = schema.lastIndexOf("/"); //$NON-NLS-1$
 			if (loc!=-1)
 				return schema.substring(0,loc);
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	public String getPluginId() {
 		if (pluginIdText != null) {
@@ -382,7 +382,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
 			IPath workspacePath = root.getLocation();
 			if (newContainerName.startsWith(workspacePath.toString()))
-				newContainerName = newContainerName.replaceFirst(workspacePath.toString(), "");
+				newContainerName = newContainerName.replaceFirst(workspacePath.toString(), ""); //$NON-NLS-1$
 			if (newContainerName.length() == 0){
 				handleInvalidContainer();
 				return false;
@@ -426,8 +426,8 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 				getShell(),
 				new WorkbenchLabelProvider(),
 				new WorkbenchContentProvider());
-		dialog.setTitle(PDEPlugin.getResourceString("BaseExtensionPointMainPage.schemaLocation.title"));
-		dialog.setMessage(PDEPlugin.getResourceString("BaseExtensionPointMainPage.schemaLocation.desc"));
+		dialog.setTitle(PDEPlugin.getResourceString("BaseExtensionPointMainPage.schemaLocation.title")); //$NON-NLS-1$
+		dialog.setMessage(PDEPlugin.getResourceString("BaseExtensionPointMainPage.schemaLocation.desc")); //$NON-NLS-1$
 		dialog.setDoubleClickSelects(false);
 		dialog.setAllowMultiple(false);
 		dialog.addFilter(new ViewerFilter(){
@@ -448,14 +448,14 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			if (elements.length >0){
 				IResource elem = (IResource) elements[0];
 				String newPath = getWorkspaceRelativePath(elem.getLocation().toString());
-				schemaLocationText.setText(newPath + "/");
+				schemaLocationText.setText(newPath + "/"); //$NON-NLS-1$
 			}
 		}
 	}
 	private String getWorkspaceRelativePath(String path){
 		String workspacePath = PDECore.getWorkspace().getRoot().getLocation().toString();
 		if (path.startsWith(workspacePath))
-			path = path.replaceFirst(workspacePath, "");
+			path = path.replaceFirst(workspacePath, ""); //$NON-NLS-1$
 		return path;
 	}
 }

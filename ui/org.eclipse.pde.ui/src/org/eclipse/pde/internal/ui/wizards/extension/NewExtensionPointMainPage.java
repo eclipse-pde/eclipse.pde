@@ -20,8 +20,8 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.widgets.*;
 
 public class NewExtensionPointMainPage extends BaseExtensionPointMainPage {
-	public static final String KEY_TITLE = "NewExtensionPointWizard.title";
-	public static final String KEY_DESC = "NewExtensionPointWizard.desc";
+	public static final String KEY_TITLE = "NewExtensionPointWizard.title"; //$NON-NLS-1$
+	public static final String KEY_DESC = "NewExtensionPointWizard.desc"; //$NON-NLS-1$
 	private IPluginModelBase model;
 	private IPluginExtensionPoint point;
 	

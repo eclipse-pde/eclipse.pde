@@ -55,7 +55,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 	protected HashMap fBuildProperties;
 
 	public FeatureExportJob(int exportType, boolean exportSource, String destination, String zipFileName, Object[] items) {
-		super("PDE Export"); //$NON-NLS-1$
+		super(PDEPlugin.getResourceString("FeatureExportJob.name"));  //$NON-NLS-1$
 		fExportType = exportType;
 		fExportSource = exportSource;
 		fDestinationDirectory = destination;

@@ -24,7 +24,7 @@ public class NewSchemaFileWizard extends Wizard implements INewWizard {
 	private IContainer container;
 	private IPluginExtensionPoint point;
 	private boolean isPluginIdFinal;
-	public static final String KEY_WTITLE = "NewSchemaFileWizard.wtitle";
+	public static final String KEY_WTITLE = "NewSchemaFileWizard.wtitle"; //$NON-NLS-1$
 
 	public NewSchemaFileWizard() {
 		this(null, null, false);
@@ -48,9 +48,9 @@ public class NewSchemaFileWizard extends Wizard implements INewWizard {
 
 	private IDialogSettings getSettingsSection() {
 		IDialogSettings root = PDEPlugin.getDefault().getDialogSettings();
-		IDialogSettings section = root.getSection("newExtensionPointWizard");
+		IDialogSettings section = root.getSection("newExtensionPointWizard"); //$NON-NLS-1$
 		if (section == null)
-			section = root.addNewSection("newExtensionPointWizard");
+			section = root.addNewSection("newExtensionPointWizard"); //$NON-NLS-1$
 		return section;
 	}
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
