@@ -438,8 +438,8 @@ public class LogView extends ViewPart implements ILogListener {
 		BufferedReader reader = null;
 		BufferedWriter writer = null;
 		try {
-			reader = new BufferedReader(new FileReader(inputFile));
-			writer = new BufferedWriter(new FileWriter(outputFile));
+			reader = new BufferedReader(new InputStreamReader(new FileInputStream(inputFile), "UTF-8"));
+			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile), "UTF-8"));
 			while (reader.ready()) {
 				writer.write(reader.readLine());
 				writer.write(System.getProperty("line.separator"));
