@@ -130,7 +130,7 @@ public void save() {
 public void save(PrintWriter writer) {
 	if (isLoaded()) {
 		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-		//writer.println("<!DOCTYPE feature SYSTEM \"dtd/feature.dtd\">");
+		writer.println("<!DOCTYPE feature SYSTEM \"dtd/feature.dtd\">");
 		feature.write("", writer);
 	}
 	dirty = false;

@@ -58,7 +58,7 @@ public abstract class AbstractSiteModel
 		SourceDOMParser parser = new SourceDOMParser();
 		XMLErrorHandler errorHandler = new XMLErrorHandler();
 		parser.setErrorHandler(errorHandler);
-/*
+
 		try {
 			parser.setFeature("http://xml.org/sax/features/validation", true);
 			parser.setFeature(
@@ -66,7 +66,6 @@ public abstract class AbstractSiteModel
 				true);
 		} catch (SAXException e) {
 		}
-*/
 		try {
 			InputSource source = new InputSource(stream);
 			URL dtdLocation =

@@ -50,14 +50,14 @@ public abstract class AbstractFeatureModel
 		SourceDOMParser parser = new SourceDOMParser();
 		XMLErrorHandler errorHandler = new XMLErrorHandler();
 		parser.setErrorHandler(errorHandler);
-/*
+
 		try {
 			parser.setFeature("http://xml.org/sax/features/validation", true);
 			parser.setFeature("http://apache.org/xml/features/validation/dynamic", true);
 		}
 		catch (SAXException e) {
 		}
-*/
+
 		try {
 			InputSource source = new InputSource(stream);
 			URL dtdLocation = PDECore.getDefault().getDescriptor().getInstallURL();
