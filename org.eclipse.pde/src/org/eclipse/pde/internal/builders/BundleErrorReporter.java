@@ -443,10 +443,6 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		readBundleManifestVersion();
 		fHasFragment_Xml = fProject.getFile("fragment.xml").exists(); //$NON-NLS-1$
 
-		// sets fPluginId
-		if (!validateBundleSymbolicName()) {
-			return;
-		}
 		IPluginModelBase modelBase = PDECore.getDefault().getModelManager()
 				.findModel(fProject);
 		if (modelBase != null) {
@@ -454,6 +450,10 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 					|| modelBase.getPluginBase().getExtensions().length > 0;
 		}
 
+		// sets fPluginId
+		if (!validateBundleSymbolicName()) {
+			return;
+		}
 		validateBundleVersion();
 		// sets fExtensibleApi
 		validateExtensibleAPI();
