@@ -20,7 +20,7 @@ public class NewDependencyWizard extends Wizard {
 	private IPluginModelBase modelBase;
 	private NewDependencyWizardPage mainPage;
 
-public NewDependencyWizard(IPluginModelBase model) {
+public NewDependencyWizard(IPluginModelBase modelBase) {
 	this.modelBase = modelBase;
 	setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWPPRJ_WIZ);
 	setDialogSettings(PDEPlugin.getDefault().getDialogSettings());

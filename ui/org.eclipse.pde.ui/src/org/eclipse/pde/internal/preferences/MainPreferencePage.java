@@ -47,6 +47,9 @@ protected void createFieldEditors() {
 			PDEPlugin.getResourceString(KEY_NO_PDE_NATURE),
 			getFieldEditorParent());
 	addField(editor);
+	
+	Label space = new Label(getFieldEditorParent(), SWT.NULL);
+	
 	RadioGroupFieldEditor reditor =
 		new RadioGroupFieldEditor(
 			PROP_SHOW_OBJECTS,

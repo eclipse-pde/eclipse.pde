@@ -345,7 +345,7 @@ public class DetailExtensionSection
 					manager.add(new Separator());
 				}
 			}
-		} else {
+		} else if (ssel.size()>1) {
 			// multiple
 			Action delAction = new Action() {
 				public void run() {
@@ -358,6 +358,7 @@ public class DetailExtensionSection
 		}
 		if (newMenu == null) {
 			newMenu = new MenuManager(PDEPlugin.getResourceString(POPUP_NEW));
+			manager.add(newMenu);
 		}
 		if (!newMenu.isEmpty())
 			newMenu.add(new Separator());

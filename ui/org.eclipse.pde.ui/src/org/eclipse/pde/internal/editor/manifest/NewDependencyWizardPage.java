@@ -173,6 +173,13 @@ public void dispose() {
 
 private boolean isOnTheList(IPluginModel candidate) {
 	IPlugin plugin = candidate.getPlugin();
+
+	
+	if (!modelBase.isFragmentModel()) {
+		IPlugin thisPlugin = (IPlugin)modelBase.getPluginBase();
+		if (plugin.getId().equals(thisPlugin.getId())) return true;
+	}
+		
 	IPluginImport [] imports = modelBase.getPluginBase().getImports();
 	
 	for (int i=0; i<imports.length; i++) {

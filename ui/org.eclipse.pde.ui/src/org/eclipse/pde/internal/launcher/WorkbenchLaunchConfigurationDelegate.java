@@ -33,23 +33,10 @@ public class WorkbenchLaunchConfigurationDelegate
 	/*
 	 * @see ILaunchConfigurationDelegate#launch(ILaunchConfiguration, String)
 	 */
-	public ILaunch launch(ILaunchConfiguration configuration, String mode)
-		throws CoreException {
-		return verifyAndLaunch(configuration, mode, true);
-	}
-
-	/*
-	 * @see ILaunchConfigurationDelegate#verify(ILaunchConfiguration, String)
-	 */
-	public void verify(ILaunchConfiguration configuration, String mode)
-		throws CoreException {
-		verifyAndLaunch(configuration, mode, false);
-	}
-
-	private ILaunch verifyAndLaunch(
-		final ILaunchConfiguration configuration,
-		final String mode,
-		boolean performLaunch)
+	public ILaunch launch(
+		ILaunchConfiguration configuration,
+		String mode,
+		IProgressMonitor monitor)
 		throws CoreException {
 		final String vmArgs = configuration.getAttribute(VMARGS, "");
 		final String progArgs = configuration.getAttribute(PROGARGS, "");
@@ -75,44 +62,17 @@ public class WorkbenchLaunchConfigurationDelegate
 		final IVMRunner runner = launcher.getVMRunner(mode);
 		final ExecutionArguments args = new ExecutionArguments(vmArgs, progArgs);
 
-		if (!performLaunch)
-			return null;
-
-		ProgressMonitorDialog dialog =
-			new ProgressMonitorDialog(PDEPlugin.getActiveWorkbenchShell());
-
-		final ILaunch[] launch = new ILaunch[1];
-
-		try {
-			dialog.run(true, true, new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) throws InvocationTargetException {
-					try {
-						launch[0] =
-							doLaunch(
-								configuration,
-								mode,
-								runner,
-								new Path(data),
-								clearWorkspace,
-								args,
-								plugins,
-								appName,
-								tracing,
-								monitor);
-					} catch (CoreException e) {
-						throw new InvocationTargetException(e);
-					}
-				}
-			});
-		} catch (InterruptedException e) {
-			return null;
-		} catch (InvocationTargetException e) {
-			String title = "Launch Eclipse Workbench";
-			String message = "Launch failed. See log for details.";
-			PDEPlugin.logException(e, title, message);
-			return null; // exception handled
-		}
-		return launch[0];
+		return doLaunch(
+			configuration,
+			mode,
+			runner,
+			new Path(data),
+			clearWorkspace,
+			args,
+			plugins,
+			appName,
+			tracing,
+			monitor);
 	}
 
 	private IPluginModelBase[] getPluginsFromConfiguration(ILaunchConfiguration config)
@@ -252,9 +212,11 @@ public class WorkbenchLaunchConfigurationDelegate
 		TracingOptionsManager mng = PDEPlugin.getDefault().getTracingOptionsManager();
 		Map options;
 		try {
-			options = config.getAttribute(ILauncherSettings.TRACING_OPTIONS, mng.getTracingTemplateCopy());
-		}
-		catch (CoreException e) {
+			options =
+				config.getAttribute(
+					ILauncherSettings.TRACING_OPTIONS,
+					mng.getTracingTemplateCopy());
+		} catch (CoreException e) {
 			return "";
 		}
 		mng.save(options);
