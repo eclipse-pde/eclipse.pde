@@ -12,35 +12,29 @@ package org.eclipse.pde.internal.ui.wizards.project;
 
 import java.util.Vector;
 
-import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.pde.internal.ui.util.ArraySorter;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.dialogs.SelectionDialog;
+import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 
-public class PluginSelectionDialog extends SelectionDialog {
-	public static final String KEY_TITLE = "PluginSelectionDialog.title";
-	public static final String KEY_WORKSPACE_PLUGINS =
-		"PluginSelectionDialog.workspacePlugins";
-	public static final String KEY_EXTERNAL_PLUGINS =
-		"PluginSelectionDialog.externalPlugins";
+public class PluginSelectionDialog extends ElementTreeSelectionDialog {
 	private TreeViewer treeViewer;
-	private NamedElement workspacePlugins;
-	private NamedElement externalPlugins;
-	private Label messageLabel;
+	private static NamedElement workspacePlugins;
+	private static NamedElement externalPlugins;
 
-	class PluginContentProvider
+	private static class PluginContentProvider
 		extends DefaultContentProvider
 		implements ITreeContentProvider {
+
 		public boolean hasChildren(Object parent) {
 			if (parent instanceof IPluginModel)
 				return false;
@@ -48,17 +42,14 @@ public class PluginSelectionDialog extends SelectionDialog {
 		}
 		public Object[] getChildren(Object parent) {
 			if (parent == externalPlugins) {
-				ExternalModelManager manager = PDECore.getDefault().getExternalModelManager();
-				IPluginModel[] models = manager.getModels();
-				ArraySorter.INSTANCE.sortInPlace(models);
-				return models;
+				ExternalModelManager manager =
+					PDECore.getDefault().getExternalModelManager();
+				return manager.getModels();
 			}
 			if (parent == workspacePlugins) {
 				WorkspaceModelManager manager =
 					PDECore.getDefault().getWorkspaceModelManager();
-				IPluginModel[] models = manager.getWorkspacePluginModels();
-				ArraySorter.INSTANCE.sortInPlace(models);
-				return models;
+				return manager.getWorkspacePluginModels();
 			}
 			return new Object[0];
 		}
@@ -78,14 +69,20 @@ public class PluginSelectionDialog extends SelectionDialog {
 	}
 
 	public PluginSelectionDialog(Shell parentShell) {
-		super(parentShell);
-		setTitle(PDEPlugin.getResourceString(KEY_TITLE));
+		super(
+			parentShell,
+			PDEPlugin.getDefault().getLabelProvider(),
+			new PluginContentProvider());
+		setTitle(PDEPlugin.getResourceString("PluginSelectionDialog.title"));
+		setMessage(PDEPlugin.getResourceString("PluginSelectionDialog.message"));	
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
+	
 	public boolean close() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		return super.close();
 	}
+	
 	protected Control createDialogArea(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
@@ -93,42 +90,42 @@ public class PluginSelectionDialog extends SelectionDialog {
 		layout.marginHeight = 10;
 		container.setLayout(layout);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
-
+		
+		createMessageArea(container);
+		
+		initialize();
+		
+		Image pluginsImage =
+			PDEPlugin.getDefault().getLabelProvider().get(
+				PDEPluginImages.DESC_REQ_PLUGINS_OBJ);
+		workspacePlugins =
+			new NamedElement(
+				PDEPlugin.getResourceString("PluginSelectionDialog.workspacePlugins"),
+				pluginsImage);
+		externalPlugins =
+			new NamedElement(
+				PDEPlugin.getResourceString("PluginSelectionDialog.externalPlugins"),
+				pluginsImage);
+				
 		Control tree = createTree(container);
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		tree.setLayoutData(gd);
-		messageLabel = new Label(container, SWT.NULL);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		messageLabel.setLayoutData(gd);
-		updateMessageLabel();
+		tree.setLayoutData(new GridData(GridData.FILL_BOTH));
 		WorkbenchHelp.setHelp(container, IHelpContextIds.FRAGMENT_ADD_TARGET);
+		
+		
 		return container;
 	}
-	private Control createTree(Composite container) {
-		Tree tree = new Tree(container, SWT.SINGLE | SWT.BORDER);
-
-		treeViewer = new TreeViewer(tree);
-		treeViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
-		treeViewer.setContentProvider(new PluginContentProvider());
-		treeViewer.setAutoExpandLevel(999);
-		treeViewer.addFilter(new ViewerFilter() {
-			public boolean select(Viewer v, Object parent, Object object) {
-				if (object instanceof IPluginModel) {
-					return ((IPluginModel) object).isEnabled();
+	
+	private void initialize(){		
+		addFilter(new ViewerFilter() {
+				public boolean select(Viewer v, Object parent, Object object) {
+					if (object instanceof IPluginModel) {
+						return ((IPluginModel) object).isEnabled();
+					}
+					return true;
 				}
-				return true;
-			}
-		});
-		treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent e) {
-				Object item = ((IStructuredSelection) e.getSelection()).getFirstElement();
-				if (item instanceof IPluginModel)
-					pluginSelected((IPluginModel) item);
-				else
-					pluginSelected(null);
-			}
-		});
-		treeViewer.setSorter(new ListUtil.PluginSorter() {
+			});
+
+		setSorter(new ListUtil.PluginSorter() {
 			public int category(Object obj) {
 				if (obj == workspacePlugins)
 					return -1;
@@ -137,40 +134,62 @@ public class PluginSelectionDialog extends SelectionDialog {
 				return 0;
 			}
 		});
-		Image pluginsImage =
-			PDEPlugin.getDefault().getLabelProvider().get(
-				PDEPluginImages.DESC_REQ_PLUGINS_OBJ);
-		workspacePlugins =
-			new NamedElement(
-				PDEPlugin.getResourceString(KEY_WORKSPACE_PLUGINS),
-				pluginsImage);
-		externalPlugins =
-			new NamedElement(
-				PDEPlugin.getResourceString(KEY_EXTERNAL_PLUGINS),
-				pluginsImage);
-		treeViewer.setInput(PDEPlugin.getDefault());
-		return tree;
+	
+		setAllowMultiple(false);
+	
+
+		setValidator(new ISelectionStatusValidator() {
+			public IStatus validate(Object[] selection) {
+				if (selection != null
+					&& selection.length > 0
+					&& selection[0] instanceof IPluginModel)
+					return new Status(
+						IStatus.OK,
+						PDEPlugin.getPluginId(),
+						IStatus.OK,
+						((LabelProvider) treeViewer.getLabelProvider()).getText(selection[0]),
+						null);
+				else
+					return new Status(
+						IStatus.ERROR,
+						PDEPlugin.getPluginId(),
+						IStatus.ERROR,
+						"",
+						null);
+			}
+		});
 	}
+	
+	private Control createTree(Composite container) {
+		createTreeViewer(container);
+		treeViewer = getTreeViewer();
+		treeViewer.setAutoExpandLevel(2);
+		treeViewer
+			.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent e) {
+				Object item =
+					((IStructuredSelection) e.getSelection()).getFirstElement();
+				if (item instanceof IPluginModel)
+					pluginSelected((IPluginModel) item);
+				else
+					pluginSelected(null);
+			}
+		});
+		treeViewer.setInput(PDEPlugin.getDefault());
+		treeViewer.reveal(workspacePlugins);
+
+		return getTreeViewer().getTree();
+	}
+	
 	private void pluginSelected(IPluginModel model) {
 		if (model != null) {
 			Vector result = new Vector();
 			result.add(model);
 			setResult(result);
-			setMessage(((LabelProvider) treeViewer.getLabelProvider()).getText(model));
 		} else {
 			setResult(null);
-			setMessage("");
 		}
-		getButton(IDialogConstants.OK_ID).setEnabled(model!=null);
 	}
-	public void setMessage(String message) {
-		super.setMessage(message);
-		updateMessageLabel();
-	}
-	public void updateMessageLabel() {
-		if (getMessage() != null)
-			messageLabel.setText(getMessage());
-		else
-			messageLabel.setText("");
-	}
+	
+
 }

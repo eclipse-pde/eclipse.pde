@@ -81,6 +81,7 @@ public class FirstTemplateWizardPage extends WizardPage {
 		"DefaultCodeGenerationPage.options.bundle";
 	private static final String KEY_OPTIONS_WORKSPACE =
 		"DefaultCodeGenerationPage.options.workspace";
+	private static final String KEY_BROWSE_TITLE = "DefaultCodeGenerationPage.pluginId.browse.title";
 		
 	private IProjectProvider projectProvider;
 	private IPluginStructureData structureData;
@@ -134,7 +135,8 @@ public class FirstTemplateWizardPage extends WizardPage {
 				PluginSelectionDialog dialog =
 					new PluginSelectionDialog(pluginIdField.getShell());
 				dialog.create();
-				SWTUtil.setDialogSize(dialog, 350, 400);
+				SWTUtil.setDialogSize(dialog, 300, 400);
+				dialog.getShell().setText(PDEPlugin.getResourceString(KEY_BROWSE_TITLE));
 				if (dialog.open() == PluginSelectionDialog.OK) {
 					Object[] result = dialog.getResult();
 					if (result != null && result.length == 1) {
