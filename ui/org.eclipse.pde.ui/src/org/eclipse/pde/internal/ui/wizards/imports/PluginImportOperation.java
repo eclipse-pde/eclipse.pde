@@ -154,11 +154,9 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 	
 	private void deleteProject(IProject project, IProgressMonitor monitor)
 		throws CoreException {
-		project.delete(true, true, monitor);
-		try {
+		if (RepositoryProvider.getProvider(project) != null)
 			RepositoryProvider.unmap(project);
-		} catch (TeamException e) {
-		}
+		project.delete(true, true, monitor);
 	}
 	
 	private void createProject(IProject project, IProgressMonitor monitor)
