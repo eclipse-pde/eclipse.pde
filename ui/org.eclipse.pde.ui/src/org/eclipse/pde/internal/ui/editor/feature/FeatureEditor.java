@@ -38,6 +38,7 @@ public class FeatureEditor extends PDEMultiPageXMLEditor {
 	public static final String ADVANCED_PAGE_TITLE =
 		"FeatureEditor.AdvancedPage.title";
 	public static final String INFO_PAGE_TITLE = "FeatureEditor.InfoPage.title";
+	private boolean storageModel=false;
 
 	public FeatureEditor() {
 		super();
@@ -122,6 +123,7 @@ public class FeatureEditor extends PDEMultiPageXMLEditor {
 			stream.close();
 		} catch (IOException e) {
 		}
+		storageModel=true;
 		return model;
 	}
 	public void dispose() {
@@ -129,7 +131,10 @@ public class FeatureEditor extends PDEMultiPageXMLEditor {
 		IModelProvider provider =
 			PDECore.getDefault().getWorkspaceModelManager();
 		IModel model = (IModel) getModel();
-		provider.disconnect(model.getUnderlyingResource(), this);
+		if (storageModel)
+			model.dispose();
+		else
+			provider.disconnect(model.getUnderlyingResource(), this);
 	}
 
 	public IPDEEditorPage getHomePage() {

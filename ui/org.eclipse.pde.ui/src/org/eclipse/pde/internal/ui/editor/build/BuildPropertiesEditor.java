@@ -22,6 +22,7 @@ public class BuildPropertiesEditor extends PDEMultiPageEditor {
 	public static final String BUILD_PAGE_TITLE = "BuildEditor.BuildPage.title";
 	public static final String BUILD_PAGE = "BuildPage";
 	public static final String SOURCE_PAGE = "SourcePage";
+	private boolean storageModel=false;
 
 	public BuildPropertiesEditor() {
 		super();
@@ -76,6 +77,7 @@ public class BuildPropertiesEditor extends PDEMultiPageEditor {
 		} catch (IOException e) {
 			PDEPlugin.logException(e);
 		}
+		storageModel = true;
 		return model;
 	}
 
@@ -84,7 +86,10 @@ public class BuildPropertiesEditor extends PDEMultiPageEditor {
 		IModelProvider provider =
 			PDECore.getDefault().getWorkspaceModelManager();
 		IModel model = (IModel) getModel();
-		provider.disconnect(model.getUnderlyingResource(), this);
+		if (storageModel)
+			model.dispose();
+		else
+			provider.disconnect(model.getUnderlyingResource(), this);
 	}
 	public IPDEEditorPage getHomePage() {
 		return getPage(BUILD_PAGE);
