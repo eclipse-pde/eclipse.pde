@@ -13,12 +13,20 @@ import org.eclipse.pde.internal.core.search.IPluginSearchResultCollector;
 import org.eclipse.pde.internal.core.search.PluginSearchOperation;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.search.ui.IGroupByKeyComputer;
 import org.eclipse.search.ui.ISearchResultView;
 import org.eclipse.search.ui.SearchUI;
 
 
 public class PluginSearchResultCollector
 	implements IPluginSearchResultCollector {
+		
+	class GroupByKeyComputer implements IGroupByKeyComputer {
+		public Object computeGroupByKey(IMarker marker) {
+			return marker;
+		}
+
+	}
 		
 	private static final String KEY_MATCH = "Search.singleMatch";
 	private static final String KEY_MATCHES = "Search.multipleMatches";
@@ -32,9 +40,6 @@ public class PluginSearchResultCollector
 	private static final String pageID =
 		"org.eclipse.pde.internal.ui.search.SearchPage";
 
-	public static IPluginObject getCurrentMatch() {
-		return currentMatch;
-	}
 
 	public void setOperation(PluginSearchOperation operation) {
 		this.operation = (PluginSearchUIOperation) operation;
@@ -89,7 +94,8 @@ public class PluginSearchResultCollector
 	}
 
 	public void done() {
-		resultView.searchFinished();
+		if (resultView != null)	
+			resultView.searchFinished();
 	}
 
 	public void searchStarted() {
@@ -102,7 +108,7 @@ public class PluginSearchResultCollector
 			pageID,
 			new PluginSearchLabelProvider(),
 			new PluginSearchGoToAction(),
-			new PluginGroupByKeyComputer(),
+			new GroupByKeyComputer(),
 			operation);
 	}
 	

@@ -8,7 +8,7 @@ import java.util.Iterator;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jdt.internal.core.JavaProject;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.internal.core.search.PluginSearchInput;
@@ -170,8 +170,8 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 	}
 	
 	private IFile findManifestFile(Object item) {
-		if (item instanceof JavaProject)
-			item = ((JavaProject)item).getProject();
+		if (item instanceof IJavaProject)
+			item = ((IJavaProject)item).getProject();
 			
 		if (item instanceof IProject) {
 			IFile file = ((IProject) item).getFile("plugin.xml");

@@ -14,10 +14,8 @@
 <!-- Required plugins -->
    <requires>
       <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.jdt.ui"/>
       <import plugin="org.eclipse.jdt.core"/>
-      <import plugin="org.apache.xerces"/>
       <import plugin="org.eclipse.debug.core"/>
       <import plugin="org.eclipse.jdt.launching"/>
       <import plugin="org.eclipse.core.runtime"/>
@@ -30,6 +28,7 @@
       <import plugin="org.eclipse.jdt.debug.ui"/>
       <import plugin="org.eclipse.help.ui"/>
       <import plugin="org.eclipse.search"/>
+      <import plugin="org.eclipse.core.resources"/>
    </requires>
 
 
@@ -1081,6 +1080,16 @@
             class="org.eclipse.pde.internal.ui.search.PluginSearchPage"
             id="org.eclipse.pde.internal.ui.search.SearchPage">
       </page>
+   </extension>
+   <extension
+         point="org.eclipse.search.searchResultSorters">
+      <sorter
+            pageId="org.eclipse.pde.internal.ui.search.dependencyExtent"
+            label="%DependencyExtent.type"
+            icon="icons/full/clcl16/search_sortmatch.gif"
+            class="org.eclipse.pde.internal.ui.search.DependencyExtentViewerSorter"
+            id="org.eclipse.pde.ui.sorter1">
+      </sorter>
    </extension>
 
 </plugin>

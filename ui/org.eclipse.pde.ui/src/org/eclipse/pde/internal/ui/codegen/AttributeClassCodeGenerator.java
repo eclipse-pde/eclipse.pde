@@ -10,7 +10,6 @@ import org.eclipse.core.runtime.*;
 import java.util.*;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.jdt.core.*;
-import org.eclipse.jdt.internal.core.SourceType;
 
 import java.io.PrintWriter;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -60,8 +59,8 @@ private void addRequiredMethodsFor(IType type) throws JavaModelException {
 	// Check the super-interfaces
 	String[] interfaceNames = type.getSuperInterfaceNames();
 	for (int i = 0; i < interfaceNames.length; i++) {
-		if (type instanceof SourceType) {
-			interfaceNames[i] = getFullyQualifiedName((SourceType)type,interfaceNames[i]);
+		if (!type.isBinary()) {
+			interfaceNames[i] = getFullyQualifiedName(type,interfaceNames[i]);
 		}
 		addRequiredMethodsFor(interfaceNames[i]);
 	}
@@ -70,8 +69,8 @@ private void addRequiredMethodsFor(IType type) throws JavaModelException {
 		// Check the superclass
 		String superclassName = type.getSuperclassName();
 		if (superclassName != null) {
-			if (type instanceof SourceType)
-				superclassName = getFullyQualifiedName((SourceType)type,superclassName);
+			if (!type.isBinary())
+				superclassName = getFullyQualifiedName(type,superclassName);
 			if (!superclassName.equals("java.lang.Object"))
 				addRequiredMethodsFor(superclassName);
 		}
@@ -353,7 +352,7 @@ private String parseSignature(IMethod method, String signature) {
 				String typeName = signature.substring(nameLoc, i);
 				if (method.getCompilationUnit() != null) {
 					try {
-						typeName = getFullyQualifiedName((SourceType)method.getCompilationUnit().getAllTypes()[0],typeName);
+						typeName = getFullyQualifiedName(method.getCompilationUnit().getAllTypes()[0],typeName);
 					} catch (JavaModelException e) {
 					}
 				}
@@ -423,7 +422,7 @@ private void removeImplementedMethod(IMethod method)
 		requiredMethods.remove(matchingMethod);
 }
 
-private String getFullyQualifiedName(SourceType type, String name) {
+private String getFullyQualifiedName(IType type, String name) {
 	try {
 		String[][] resolvedType = type.resolveType(name);
 		if (resolvedType != null)
