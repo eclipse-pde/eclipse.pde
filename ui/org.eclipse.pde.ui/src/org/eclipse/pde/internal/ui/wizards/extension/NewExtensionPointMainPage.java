@@ -63,14 +63,16 @@ public boolean finish() {
 		PDEPlugin.logException(e);
 	}
 
-	IRunnableWithProgress operation = getOperation();
-	try {
-		getContainer().run(false, true, operation);
-	} catch (InvocationTargetException e) {
-		PDEPlugin.logException(e);
-		return false;
-	} catch (InterruptedException e) {
-		return false;
+	if (schema.length() > 0) {
+		IRunnableWithProgress operation = getOperation();
+		try {
+			getContainer().run(false, true, operation);
+		} catch (InvocationTargetException e) {
+			PDEPlugin.logException(e);
+			return false;
+		} catch (InterruptedException e) {
+			return false;
+		}
 	}
 	return true;
 }
