@@ -333,7 +333,7 @@ public class BundlePluginBase
 		IBundle bundle = getBundle();
 		if (bundle != null) {
 			String old = getVersion();
-			bundle.setHeader(Constants.BUNDLE_VERSION, getVersion());
+			bundle.setHeader(Constants.BUNDLE_VERSION, version);
 			model.fireModelObjectChanged(this, IPluginBase.P_VERSION, old, version);
 		}
 
