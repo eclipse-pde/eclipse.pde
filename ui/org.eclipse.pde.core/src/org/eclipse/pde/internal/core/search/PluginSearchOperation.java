@@ -115,11 +115,7 @@ public class PluginSearchOperation {
 		IPluginExtensionPoint[] extensionPoints =
 			model.getPluginBase().getExtensionPoints();
 		for (int i = 0; i < extensionPoints.length; i++) {
-			if (stringMatcher
-				.match(
-					model.getPluginBase().getId()
-						+ "."
-						+ extensionPoints[i].getId()))
+			if (stringMatcher.match(extensionPoints[i].getFullId()))
 				result.add(extensionPoints[i]);
 		}
 	}

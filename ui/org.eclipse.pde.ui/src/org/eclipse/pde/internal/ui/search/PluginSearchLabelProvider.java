@@ -62,9 +62,7 @@ public class PluginSearchLabelProvider extends LabelProvider {
 			}
 			
 			if (object instanceof IPluginExtensionPoint) {
-				return object.getModel().getPluginBase().getId()
-					+ "."
-					+ ((IPluginExtensionPoint)object).getId();
+				return ((IPluginExtensionPoint)object).getFullId();
 			}
 		}
 		
