@@ -44,6 +44,10 @@ public class SourceLocation {
 		return userDefined;
 	}
 
+	public void setUserDefined(boolean userDefined) {
+		this.userDefined = userDefined;
+	}
+	
 	public String toString() {
 		return path.toOSString();
 	}

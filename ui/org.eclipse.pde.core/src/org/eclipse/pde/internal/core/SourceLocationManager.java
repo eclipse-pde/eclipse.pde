@@ -194,6 +194,7 @@ public class SourceLocationManager implements ICoreConstants {
 							true);
 					location.setEnabled(
 						getSavedState(location.getName(), storedLocations));
+					location.setUserDefined(false);
 					extensionLocations.add(location);
 				}
 			}
