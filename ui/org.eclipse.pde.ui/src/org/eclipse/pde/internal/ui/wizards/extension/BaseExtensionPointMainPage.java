@@ -278,7 +278,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		setErrorMessage(message);
 		String location = getSchemaLocation();
 		String prefix = location != null ? location + "/" : "";
-		String schema = (!empty) ? (prefix + id + ".xsd") : "";
+		String schema = (!empty) ? (prefix + id + ".exsd") : "";
 		schemaText.setText(schema);
 	}
 }

@@ -13,15 +13,18 @@ import org.eclipse.pde.internal.core.schema.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.core.ischema.ISchema;
+import org.eclipse.jface.dialogs.MessageDialog;
 
 public class SchemaEditor extends PDEMultiPageXMLEditor {
 	public static final String DEFINITION_PAGE = "definition";
 	public static final String DOC_PAGE = "documentation";
 	public static final String SOURCE_PAGE = "source";
+	public static final String KEY_OLD_EXTENSION = "SchemaEditor.oldExtension";
 
 public SchemaEditor() {
 	super();
 }
+
 protected Object createModel(Object input) {
 	if (!(input instanceof IFile))
 		return null;
@@ -29,11 +32,27 @@ protected Object createModel(Object input) {
 	IFile file = (IFile) input;
 	FileSchemaDescriptor sd = new FileSchemaDescriptor(file);
 	ISchema schema=sd.getSchema();
+	if (schema.isValid()==false) return null;
+	warnIfOldExtension(file);
 	if (schema instanceof EditableSchema) {
 		((EditableSchema)schema).setNotificationEnabled(true);
 	}
 	return schema;
 }
+
+private void warnIfOldExtension(IFile file) {
+	String name = file.getName();
+	int dotLoc = name.lastIndexOf('.');
+	if (dotLoc!= -1) {
+		String ext = name.substring(dotLoc+1).toLowerCase();
+		if (ext.equals("xsd")) {
+			String title = getSite().getRegisteredName();
+			String message = PDEPlugin.getResourceString(KEY_OLD_EXTENSION);
+			MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), title, message);
+		}
+	}
+}
+
 protected void createPages() {
 	firstPageId = DEFINITION_PAGE;
 	SchemaFormPage form = new SchemaFormPage(this);
@@ -48,11 +67,17 @@ public IPDEEditorPage getHomePage() {
 protected String getSourcePageId() {
 	return SOURCE_PAGE;
 }
+protected boolean isModelCorrect(Object model) {
+	if (model==null) return false;
+	ISchema schema=(ISchema)model;
+	return schema.isValid();
+}
 protected boolean isModelDirty(Object model) {
 	return model instanceof IEditable && ((IEditable)model).isDirty();
 }
 protected boolean updateModel() {
 	Schema schema = (Schema)getModel();
+	if (schema==null) return false;
 	IDocument document = getDocumentProvider().getDocument(getEditorInput());
 	String text = document.get();
 	try {
@@ -65,6 +90,7 @@ protected boolean updateModel() {
 	}
 	catch (UnsupportedEncodingException e) {
 		PDEPlugin.logException(e);
+		return false;
 	}
 	return true;
 }

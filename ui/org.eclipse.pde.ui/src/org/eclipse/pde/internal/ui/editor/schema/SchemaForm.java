@@ -75,7 +75,7 @@ protected void createFormClient(Composite parent) {
 public void dispose() {
 	ISchema schema = (ISchema) page.getModel();
 	colorManager.dispose();
-	schema.removeModelChangedListener(this);
+	if (schema!=null) schema.removeModelChangedListener(this);
 	super.dispose();
 }
 public void expandTo(Object object) {

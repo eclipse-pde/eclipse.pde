@@ -312,7 +312,7 @@
             name="%editors.schema.name"
             default="false"
             icon="icons/full/obj16/schema_obj.gif"
-            extensions="xsd,mxsd"
+            extensions="exsd,mxsd,xsd"
             contributorClass="org.eclipse.pde.internal.ui.editor.schema.SchemaEditorContributor"
             class="org.eclipse.pde.internal.ui.editor.schema.SchemaEditor"
             id="org.eclipse.pde.ui.schemaEditor">

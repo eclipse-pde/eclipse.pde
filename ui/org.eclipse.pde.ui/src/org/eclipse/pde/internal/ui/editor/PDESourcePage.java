@@ -140,9 +140,10 @@ public String toString() {
 public void update() {}
 private void warnErrorsInSource() {
 	Display.getCurrent().beep();
+	String title = editor.getSite().getRegisteredName();
 	MessageDialog.openError(
 		PDEPlugin.getActiveWorkbenchShell(),
-		PDEPlugin.getResourceString(ERROR_TITLE),
+		title,
 		PDEPlugin.getResourceString(ERROR_MESSAGE));
 }
 
