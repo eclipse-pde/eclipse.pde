@@ -900,6 +900,10 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private void updateExistingScript() throws CoreException {
 		String root = getLocation(model);
 		File buildFile = new File(root, buildScriptFileName);
+		if (!buildFile.exists()) {
+			String message = NLS.bind(Messages.error_missingCustomBuildFile, buildFile);
+			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_SCRIPT, message, null));
+		}
 		try {
 			updateVersion(buildFile, PROPERTY_VERSION_SUFFIX, model.getVersion().toString());
 		} catch (IOException e) {

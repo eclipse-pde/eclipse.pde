@@ -179,6 +179,10 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		String custom = (String) getBuildProperties().get(PROPERTY_CUSTOM);
 		if (TRUE.equalsIgnoreCase(custom)) {
 			File buildFile = new File(featureRootLocation, DEFAULT_BUILD_SCRIPT_FILENAME);
+			if (!buildFile.exists()) {
+				message = NLS.bind(Messages.error_missingCustomBuildFile, buildFile);
+				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_SCRIPT, message, null));
+			}
 			try {
 				updateVersion(buildFile, PROPERTY_FEATURE_VERSION_SUFFIX, feature.getVersionedIdentifier().getVersion().toString());
 			} catch (IOException e) {
