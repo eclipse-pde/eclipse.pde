@@ -440,7 +440,8 @@ public abstract class AbstractTemplateSection
 			if (c == '$') {
 				if (replacementMode) {
 					String key = source.substring(loc, i);
-					String value = getReplacementString(fileName, key);
+					String value = key.length() == 0 ? "$" //$NON-NLS-1$
+							: getReplacementString(fileName, key);
 					buffer.append(value);
 					replacementMode = false;
 				} else {
@@ -518,7 +519,8 @@ public abstract class AbstractTemplateSection
 					if (replacementMode) {
 						replacementMode = false;
 						String key = keyBuffer.toString();
-						String value = getReplacementString(file.getName(), key);
+						String value = key.length() == 0 ? "$" //$NON-NLS-1$
+								: getReplacementString(file.getName(), key);
 						outBuffer.append(value);
 						keyBuffer.delete(0, keyBuffer.length());
 					} else {
