@@ -229,7 +229,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 				buffer.append("reference:" + url);
 				Integer integer = (Integer)autoStartPlugins.get(id);
 				if (integer.intValue() > 0)
-					buffer.append("@" + integer.intValue());
+					buffer.append("@" + integer.intValue() + ":start");
 				if (iter.hasNext())
 					buffer.append(",");
 			}

@@ -1,28 +1,25 @@
 package org.eclipse.pde.internal.ui.wizards.plugin;
-import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
+import java.lang.reflect.*;
+import java.util.*;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.osgi.service.pluginconversion.*;
-import org.eclipse.osgi.service.pluginconversion.PluginConverter;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.PDE;
+import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
+import org.eclipse.pde.internal.core.build.*;
 import org.eclipse.pde.internal.core.plugin.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.codegen.*;
 import org.eclipse.pde.internal.ui.editor.plugin.*;
 import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.pde.ui.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.ui.part.ISetSelectionTarget;
-import org.osgi.util.tracker.ServiceTracker;
+import org.eclipse.ui.actions.*;
+import org.eclipse.ui.part.*;
 /**
  * @author melhem
  *  
@@ -81,8 +78,8 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		fModel.save();
 		
 		if (fData.hasBundleStructure()) {
-			convertToOSGIFormat(project);
-			monitor.worked(1);
+			String filename = (fData instanceof IFragmentFieldData)? "fragment.xml" : "plugin.xml";
+			PDEPluginConverter.convertToOSGIFormat(project, filename, new SubProgressMonitor(monitor, 1));
 		}
 		monitor.worked(1);
 		openFile();
@@ -211,28 +208,6 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			}
 			model.getBuild().add(binEntry);
 			model.save();
-		}
-	}
-	
-	private void convertToOSGIFormat(IProject project) throws CoreException {
-		try {
-			String filename = (fData instanceof IFragmentFieldData)
-					? "fragment.xml"
-					: "plugin.xml";
-			File outputFile = new File(project.getLocation().append(
-					"META-INF/MANIFEST.MF").toOSString());
-			File inputFile = new File(project.getLocation().append(filename).toOSString());
-			ServiceTracker tracker = new ServiceTracker(PDEPlugin.getDefault()
-					.getBundleContext(), PluginConverter.class.getName(), null);
-			tracker.open();
-			PluginConverter converter = (PluginConverter) tracker.getService();
-			converter.convertManifest(inputFile, outputFile, false, null);
-			project.refreshLocal(IResource.DEPTH_INFINITE, null);
-			IFile file = project.getFile("META-INF/MANIFEST.MF");
-			file.setCharset("UTF-8");
-			tracker.close();
-		} catch (PluginConversionException e) {
-		} catch (CoreException e) {
 		}
 	}
 	

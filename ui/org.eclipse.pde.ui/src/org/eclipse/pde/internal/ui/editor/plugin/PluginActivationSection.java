@@ -20,6 +20,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.util.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
@@ -215,9 +216,12 @@ public class PluginActivationSection extends TableSection implements IModelChang
 				Hyperlink manifestLink = toolkit.createHyperlink(topContainer, "Create a manifest file",SWT.NULL);
 				manifestLink.addHyperlinkListener(new IHyperlinkListener(){
 					public void linkActivated(HyperlinkEvent e) {
-						/**
-						 * TODO: hook code to create manifest.mf here
-						 */
+						try {
+							getPage().getEditor().doSave(null);
+							IPluginModelBase model = (IPluginModelBase)getPage().getPDEEditor().getAggregateModel();
+							PDEPluginConverter.convertToOSGIFormat(model.getUnderlyingResource().getProject(), model.isFragmentModel() ? "fragment.xml" : "plugin.xml", new NullProgressMonitor());
+						} catch (CoreException e1) {
+						}
 					}
 					public void linkExited(HyperlinkEvent e) {
 					}
