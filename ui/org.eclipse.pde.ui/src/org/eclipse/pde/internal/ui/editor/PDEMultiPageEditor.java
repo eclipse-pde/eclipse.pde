@@ -110,6 +110,9 @@ public abstract class PDEMultiPageEditor
 		else if (input instanceof File) {
 			documentProvider = new SystemFileDocumentProvider(createDocumentPartitioner());
 		}
+		else if (input instanceof IStorage) {
+			documentProvider = new StorageDocumentProvider(createDocumentPartitioner());
+		}
 		return documentProvider;
 	}
 	protected abstract Object createModel(Object input) throws CoreException;

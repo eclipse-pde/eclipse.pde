@@ -27,6 +27,7 @@
       <import plugin="org.eclipse.pde"/>
       <import plugin="org.eclipse.update.core"/>
       <import plugin="org.eclipse.ui.externaltools"/>
+      <import plugin="org.eclipse.jdt.debug.ui"/>
    </requires>
 
 

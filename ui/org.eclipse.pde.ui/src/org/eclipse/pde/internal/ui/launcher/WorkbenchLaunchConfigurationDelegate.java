@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.debug.core.model.*;
 import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.debug.ui.JavaUISourceLocator;
 import org.eclipse.jdt.launching.*;
 import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
 import org.eclipse.jface.dialogs.*;
@@ -358,6 +359,6 @@ public class WorkbenchLaunchConfigurationDelegate
 		}
 		IJavaProject[] projs =
 			(IJavaProject[]) javaProjects.toArray(new IJavaProject[javaProjects.size()]);
-		return new JavaSourceLocator(projs, false);
+		return new JavaUISourceLocator(projs, false);
 	}
 }
