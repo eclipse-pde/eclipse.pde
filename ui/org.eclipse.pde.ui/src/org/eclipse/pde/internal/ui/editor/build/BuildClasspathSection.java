@@ -15,10 +15,22 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.internal.ui.wizards.TypedElementSelectionValidator;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
-import org.eclipse.pde.core.build.*;
+import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.internal.build.IXMLConstants;
@@ -28,9 +40,16 @@ import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.EditableTablePart;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -98,7 +117,12 @@ public class BuildClasspathSection
 		setDescription(PDEPlugin.getResourceString(SECTION_DESC));
 		setCollapsable(true);
 		setCollapsed(true);
+		initialize();
 
+	}
+
+	public void initialize(){
+		buildModel.addModelChangedListener(this);
 	}
 
 	private void initializeImages() {
@@ -186,9 +210,22 @@ public class BuildClasspathSection
 	}
 	
 	public void dispose() {
-		IBuildModel model = (IBuildModel) getFormPage().getModel();
-		model.removeModelChangedListener(this);
+		buildModel.removeModelChangedListener(this);
 		super.dispose();
+	}
+	
+	public void modelChanged(IModelChangedEvent event) {
+		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
+			entryTable.refresh();
+		}
+	}
+	
+	public boolean doGlobalAction(String actionId) {
+		if (actionId.equals(IWorkbenchActionConstants.DELETE)) {
+			handleDelete();
+			return true;
+		}
+		return false;
 	}
 	
 	public void enableSection(){
@@ -313,3 +350,4 @@ public class BuildClasspathSection
 	}
 
 }
+

@@ -83,7 +83,7 @@ public class BinSection
 		IResource resource,
 		boolean checked,
 		boolean wasTopParentChecked) {
-
+		boolean isParentGrayed = treeViewer.getGrayed(resource.getParent());
 		String resourceName = resource.getFullPath().removeFirstSegments(1).toString();
 		if (resource instanceof IFolder){
 			resourceName = resourceName + Path.SEPARATOR;
@@ -100,12 +100,12 @@ public class BinSection
 					includes = buildModel.getFactory().createEntry(IXMLConstants.PROPERTY_BIN_INCLUDES);
 					build.add(includes);
 				}
-				if (excludes !=null && excludes.contains(resourceName))
-					excludes.removeToken(resourceName);
 				if (!wasTopParentChecked && !includes.contains(resourceName) ||
-					excludes!=null && !excludes.contains(resourceName) && wasTopParentChecked){
+					isParentGrayed && wasTopParentChecked && (excludes!=null ? !excludes.contains(resourceName) : true)){
 					includes.addToken(resourceName);
 				}
+				if (excludes !=null && excludes.contains(resourceName))
+					excludes.removeToken(resourceName);
 			} else {
 				if (includes !=null){
 					if (includes.contains(resourceName))

@@ -14,6 +14,7 @@ package org.eclipse.pde.internal.ui.editor.build;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.core.build.IBuild;
@@ -83,7 +84,7 @@ public class SrcSection
 		IResource resource,
 		boolean checked,
 		boolean wasTopParentChecked) {
-		
+		boolean isParentGrayed = treeViewer.getGrayed(resource.getParent());
 		String resourceName = resource.getFullPath().removeFirstSegments(1).toString();
 		if (resource instanceof IFolder){
 			resourceName = resourceName + Path.SEPARATOR;
@@ -100,18 +101,37 @@ public class SrcSection
 					includes = buildModel.getFactory().createEntry(IXMLConstants.PROPERTY_SRC_INCLUDES);
 					build.add(includes);
 				}
-				if (excludes !=null && excludes.contains(resourceName))
-					excludes.removeToken(resourceName);
 				if (!wasTopParentChecked && !includes.contains(resourceName) ||
-					excludes!=null && !excludes.contains(resourceName) && wasTopParentChecked){
+					isParentGrayed && wasTopParentChecked  && (excludes!=null ? !excludes.contains(resourceName) : true)){
 					includes.addToken(resourceName);
 				}
+				if (excludes !=null && excludes.contains(resourceName))
+					excludes.removeToken(resourceName);
 			} else {
 				if (includes !=null){
 					if (includes.contains(resourceName))
 						includes.removeToken(resourceName);
-					if (includes.contains("*." + resource.getFileExtension())) 
+					if (includes.contains("*." + resource.getFileExtension())) {
+						IResource[] members = project.members();
+						for (int i = 0; i<members.length; i++){
+							if (!(members[i] instanceof IFolder) &&
+								!members[i].getName().equals(resource.getName())
+								&& (resource.getFileExtension().equals(members[i].getFileExtension()))) {
+									includes.addToken(members[i].getName());
+							}
+	
+							IBuildEntry[] libraries = BuildUtil.getBuildLibraries(buildModel.getBuild().getBuildEntries());
+							if (resource.getFileExtension().equals("jar") && libraries.length!=0){
+								for (int j=0; j<libraries.length; j++){
+									String libName = libraries[j].getName().substring(7);
+									IPath path = project.getFile(libName).getProjectRelativePath();
+									if (path.segmentCount()==1 && !includes.contains(libName) && !libName.equals(resource.getName()))
+										includes.addToken(libName);
+								}
+							}
+						}
 						includes.removeToken("*." + resource.getFileExtension());
+					}
 				}
 				if(treeViewer.getChecked(resource.getParent())){
 					if (excludes == null){

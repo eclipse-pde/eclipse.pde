@@ -10,31 +10,49 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.build;
 
-import java.io.*;
-import java.util.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Vector;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.IEditable;
 import org.eclipse.pde.core.IModel;
-import org.eclipse.pde.core.build.*;
-import org.eclipse.pde.internal.core.build.*;
+import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.internal.core.build.ExternalBuildModel;
+import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.IPDEEditorPage;
 import org.eclipse.pde.internal.ui.editor.PDEMultiPageEditor;
+import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.eclipse.pde.internal.ui.preferences.EditorPreferencePage;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IStorageEditorInput;
 
 public class BuildPropertiesEditor extends PDEMultiPageEditor {
 	public static final String BUILD_PAGE_TITLE = "BuildPropertiesEditor.BuildPage.title";
 	public static final String BUILD_PAGE = "BuildPage";
 	public static final String SOURCE_PAGE = "SourcePage";
-	public static final String OUTPUT_PREFIX = "output.";
 
 	public BuildPropertiesEditor() {
 		super();
@@ -202,7 +220,6 @@ public class BuildPropertiesEditor extends PDEMultiPageEditor {
 			}
 			if (list.size() > 0)
 				convertToSourceFolders(list, monitor);
-			refreshOutputKeys(sourceFolders);		
 		}
 	}
 	
@@ -221,77 +238,7 @@ public class BuildPropertiesEditor extends PDEMultiPageEditor {
 		return (String[]) folderNames.toArray(new String[folderNames.size()]);
 	}
 	
-	private void refreshOutputKeys(IPackageFragmentRoot[] sourceFolders) {
-		IBuildModel buildModel = (IBuildModel) getModel();
-		IBuild build = buildModel.getBuild();
-		IBuildEntry[] libraries = BuildUtil.getBuildLibraries(build.getBuildEntries());
 
-		String[] jarFolders;
-		IPackageFragmentRoot sourceFolder;
-		IClasspathEntry entry;
-		IPath outputPath;
-		Set outputFolders;
-		try {
-			for (int i = 0; i < libraries.length; i++) {
-				jarFolders = libraries[i].getTokens();
-				outputFolders = new HashSet();
-				for (int j = 0; j < jarFolders.length; j++) {
-					sourceFolder = getSourceFolder(jarFolders[j], sourceFolders);
-					if (sourceFolder != null) {
-						entry = sourceFolder.getRawClasspathEntry();
-						outputPath = entry.getOutputLocation();
-						if (outputPath == null) {
-							outputFolders.add("bin");
-						} else {
-							outputPath = outputPath.removeFirstSegments(1);
-							outputFolders.add(outputPath.toString());
-						}
-					}
-				}
-
-				createOutputKey(
-					libraries[i].getName().replaceFirst(IBuildEntry.JAR_PREFIX, ""),
-					outputFolders);
-			}
-		} catch (JavaModelException e) {
-			PDEPlugin.logException(e);
-		}
-
-	}
-	
-	private void createOutputKey(String libName, Set outputFolders){
-		if (outputFolders.size()==0)
-			return;
-		IBuildModel buildModel = (IBuildModel)getModel();
-		IBuild build = buildModel.getBuild();
-		String outputName = OUTPUT_PREFIX + libName;
-		IBuildEntry outputEntry = build.getEntry(outputName);
-		Iterator iter = outputFolders.iterator();
-		try {
-			if (outputEntry == null){		
-				outputEntry = buildModel.getFactory().createEntry(outputName);
-				build.add(outputEntry);
-			} else {
-				String[] tokens = outputEntry.getTokens();
-				for (int i = 0 ; i<tokens.length; i++ ){
-					outputEntry.removeToken(tokens[i]);
-				}
-			}
-			
-			
-			while(iter.hasNext()){
-				String outputFolder = iter.next().toString();
-				if (!outputFolder.endsWith(""+ Path.SEPARATOR))
-					outputFolder = outputFolder.concat(""+Path.SEPARATOR);
-				outputEntry.addToken(outputFolder.toString());
-			}
-			
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
-		}
-		
-	}	
-	
 	private void convertToSourceFolders(
 		ArrayList folders,
 		IProgressMonitor monitor) {
@@ -311,11 +258,11 @@ public class BuildPropertiesEditor extends PDEMultiPageEditor {
 			IClasspathEntry[] oldEntries = javaProject.getRawClasspath();
 			IClasspathEntry[] newEntries =
 				new IClasspathEntry[oldEntries.length + newSrcEntries.size()];
-			System.arraycopy(oldEntries, 0, newEntries, 0, oldEntries.length);
+			
 			for (int i = 0; i < newSrcEntries.size(); i++)
-				newEntries[oldEntries.length + i] =
+				newEntries[i] =
 					(IClasspathEntry) newSrcEntries.elementAt(i);
-
+			System.arraycopy(oldEntries, 0, newEntries, newSrcEntries.size(), oldEntries.length);
 			javaProject.setRawClasspath(newEntries, new SubProgressMonitor(monitor, 1));
 		} catch (JavaModelException e) {
 			PDEPlugin.logException(e);

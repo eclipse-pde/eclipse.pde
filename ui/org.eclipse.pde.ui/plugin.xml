@@ -169,7 +169,6 @@
             category="org.eclipse.pde.PDE"
             class="org.eclipse.pde.internal.ui.feature.NewSiteProjectWizard"
             project="true"
-            finalPerspective="org.eclipse.ui.resourcePerspective"
             id="org.eclipse.pde.ui.NewSiteProjectWizard">
          <description>
             %new.site.description
