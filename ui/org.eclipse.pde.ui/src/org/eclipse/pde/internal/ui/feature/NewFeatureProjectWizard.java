@@ -10,6 +10,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
@@ -150,11 +151,9 @@ public class NewFeatureProjectWizard
 				monitor);
 			JavaCore.create(project).setRawClasspath(
 				new IClasspathEntry[] {
-					 JavaCore.newVariableEntry(
-						new Path("JRE_LIB"),
-						new Path("JRE_SRC"),
-						new Path("JRE_SRCROOT")),
-					JavaCore.newSourceEntry(new Path(project.getFullPath().toOSString()))},
+					JavaCore.newContainerEntry(new Path(JavaRuntime.JRE_CONTAINER)),
+					JavaCore.newSourceEntry(
+						new Path(project.getFullPath().toOSString()))},
 				monitor);
 			monitor.subTask(PDEPlugin.getResourceString(CREATING_MANIFEST));
 			monitor.worked(1);
