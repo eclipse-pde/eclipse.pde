@@ -529,7 +529,7 @@ public class OSGiWorkspaceModelManager
 				if (isBundleManifestFile(file)) {
 					model = getBundleModel(file.getProject(), false);
 				}
-				if (fileName.equals("extensions.xml")) {
+				else if (fileName.equals("extensions.xml")) {
 					// find the model in the aggregate
 					model = getExtensionsModel(file.getProject(), false);
 				}
