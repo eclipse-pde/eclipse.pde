@@ -108,6 +108,8 @@ public class SchemaRegistry
 					parent,
 					parent.getSchemaURL(),
 					schemaLocation);
+			if (url == null)
+				return null;
 			String key = url.toString();
 			ISchemaDescriptor desc = (ISchemaDescriptor) descriptors.get(key);
 			if (desc == null) {
