@@ -97,8 +97,8 @@ public class ModelEntry extends PlatformObject {
 				new RequiredPluginsClasspathContainer(workspaceModel);
 		return classpathContainer;
 	}
-	public void updateClasspathContainer(boolean force) throws CoreException {
-		if (workspaceModel == null || !usesContainers())
+	public void updateClasspathContainer(boolean force, boolean doCheckClasspath) throws CoreException {
+		if (workspaceModel == null || (doCheckClasspath && !usesContainers()))
 			return;
 		if (force)
 			classpathContainer = null;

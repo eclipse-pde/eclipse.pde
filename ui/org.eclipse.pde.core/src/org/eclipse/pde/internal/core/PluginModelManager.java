@@ -179,7 +179,7 @@ public class PluginModelManager implements IAdaptable {
 			}
 			kind = PluginModelDelta.ADDED;
 			try {
-				entry.updateClasspathContainer(false);
+				entry.updateClasspathContainer(false, true);
 			}
 			catch (CoreException e) {
 			}
@@ -214,7 +214,7 @@ public class PluginModelManager implements IAdaptable {
 
 			if (entry.isAffected(changedPlugins)) {
 				try {
-					entry.updateClasspathContainer(true);
+					entry.updateClasspathContainer(true, true);
 				}
 				catch (CoreException e) {
 				}

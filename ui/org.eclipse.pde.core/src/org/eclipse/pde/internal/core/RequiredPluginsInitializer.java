@@ -37,7 +37,7 @@ public class RequiredPluginsInitializer extends ClasspathContainerInitializer {
 		if (entry == null) {
 			ModelEntry.updateUnknownClasspathContainer(javaProject);
 		} else {
-			entry.updateClasspathContainer(true);
+			entry.updateClasspathContainer(true, false);
 		}
 	}
 }
