@@ -192,16 +192,16 @@ protected boolean doLaunch(
 			return false;
 		}
 
-		String vmArgs = null;
-		String programArgs = null;
+		String [] vmArgs = null;
+		String [] programArgs = null;
 		if (args != null) {
-			vmArgs = args.getVMArguments();
-			programArgs = args.getProgramArguments();
+			vmArgs = args.getVMArgumentsArray();
+			programArgs = args.getProgramArgumentsArray();
 		}
 		final VMRunnerConfiguration config =
 			new VMRunnerConfiguration(mainType, classPath);
-		config.setVMArguments(JavaLaunchUtils.parseArguments(vmArgs));
-		config.setProgramArguments(JavaLaunchUtils.parseArguments(programArgs));
+		config.setVMArguments(vmArgs);
+		config.setProgramArguments(programArgs);
 
 		IRunnableWithProgress r = new IRunnableWithProgress() {
 			public void run(IProgressMonitor pm) throws InvocationTargetException {
