@@ -125,6 +125,25 @@ public class OSGiSection extends TableSection implements IModelChangedListener {
 		layout.makeColumnsEqualWidth= false;
 		topContainer.setLayout(layout);
 
+		/*
+		 * Note:  this code does NOT show the hyperlink.  Checked in for future use but debug first.
+		 */
+//		FormText formText = toolkit.createFormText(topContainer, true);
+//		formText.setLayoutData(new GridData());
+//		formText.setText("<form>" +
+//				"<p>To take advantage of this feature, the plug-in must contain a manifest.mf " +
+//				"file." +
+//				"<a href=\"create\">Create a manifest file</a>" +
+//				"</p></form>", true, false);
+//		formText.addHyperlinkListener(new HyperlinkAdapter(){
+//			public void linkActivated(HyperlinkEvent e) {
+//				if (e.getHref().toString().equals("create")){
+//				/**
+//				 * TODO: code to create manifest.mf here
+//				 */
+//				}
+//			}
+//		});
 		toolkit.createLabel(topContainer, "To take advantage of this feature, the plug-in must contain a manifest.mf file.");
 		Hyperlink manifestLink = toolkit.createHyperlink(topContainer, "Create a manifest file",SWT.NULL);
 		manifestLink.addHyperlinkListener(new IHyperlinkListener(){
@@ -177,6 +196,7 @@ public class OSGiSection extends TableSection implements IModelChangedListener {
 				 */
 			}
 		});
+		autoActivateButton.setEnabled(isEditable());
 		/*
 		 * auto-activate should be set to true by default with empty exceptions package list
 		 */
@@ -196,7 +216,7 @@ public class OSGiSection extends TableSection implements IModelChangedListener {
 				 */
 			}
 		});
-
+		nonAutoActivateButton.setEnabled(isEditable());
 		/*
 		 * Exceptions part
 		 */
@@ -229,9 +249,15 @@ public class OSGiSection extends TableSection implements IModelChangedListener {
 		osgiTableViewer = tablePart.getTableViewer();
 		osgiTableViewer.setContentProvider(new TableContentProvider());
 		osgiTableViewer.setLabelProvider(new TableLabelProvider());
+		tablePart.setEditable(isEditable());
+
 		toolkit.paintBordersFor(exceptionsContainer);
 		section.setClient(mainContainer);
 		initialize();
+	}
+	protected void enableButtons(){
+		getTablePart().setButtonEnabled(0, isEditable());
+		getTablePart().setButtonEnabled(1, false);
 	}
 	protected void buttonSelected(int index) {
 		if (index == 0)
