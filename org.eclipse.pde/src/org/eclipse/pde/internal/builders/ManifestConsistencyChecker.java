@@ -503,7 +503,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		IPluginImport[] imports = pluginBase.getImports();
 		for (int i = 0; i < imports.length; i++) {
 			IPluginImport iimport = imports[i];
-			if (PDECore
+			if (!imports[i].isOptional() && PDECore
 				.getDefault()
 				.findPlugin(
 					iimport.getId(),
