@@ -224,6 +224,7 @@ public class ConvertedProjectsPage extends WizardPage  {
 				IDE.setDefaultEditor(file, PDEPlugin.FRAGMENT_EDITOR_ID);
 			} else {
 				createManifestFile(file, monitor);				
+				IDE.setDefaultEditor(file, PDEPlugin.MANIFEST_EDITOR_ID);
 			}
 		}
 		

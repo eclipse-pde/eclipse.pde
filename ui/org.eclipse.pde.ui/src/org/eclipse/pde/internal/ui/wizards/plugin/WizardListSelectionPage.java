@@ -19,6 +19,7 @@ import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.pde.ui.*;
 import org.eclipse.pde.ui.templates.*;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
@@ -100,6 +101,7 @@ public class WizardListSelectionPage extends BaseWizardSelectionPage
 		
 		createDescriptionIn(container);
 		wizardSelectionViewer.setInput(wizardElements);
+		Dialog.applyDialogFont(container);
 		setControl(container);
 	}
 	
