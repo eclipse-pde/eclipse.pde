@@ -38,10 +38,13 @@ public class TargetEnvironmentPreferencePage
 	private Combo ws;
 	private Combo nl;
 	private Combo arch;
+	
+	private Preferences preferences;
 
 	public TargetEnvironmentPreferencePage() {
 		setDescription(PDEPlugin.getResourceString(KEY_DESCRIPTION));
 		TargetPlatform.initializeDefaults();
+		preferences = PDECore.getDefault().getPluginPreferences();
 	}
 
 	/**
@@ -52,8 +55,6 @@ public class TargetEnvironmentPreferencePage
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		container.setLayout(layout);
-		
-		Preferences preferences = PDECore.getDefault().getPluginPreferences();
 		
 		Label label = new Label(container, SWT.NULL);
 		label.setText(PDEPlugin.getResourceString(KEY_OS));
@@ -86,7 +87,7 @@ public class TargetEnvironmentPreferencePage
 		arch.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		arch.setItems(BootLoader.knownOSArchValues());
 		arch.select(arch.indexOf(preferences.getString(ARCH)));
-				
+
 		return container;
 	}
 	
@@ -94,15 +95,14 @@ public class TargetEnvironmentPreferencePage
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
-		os.select(os.indexOf(BootLoader.getOS()));
-		ws.select(ws.indexOf(BootLoader.getWS()));
-		nl.select(nl.indexOf(Locale.getDefault().toString() + " - " + Locale.getDefault().getDisplayName()));
-		arch.select(arch.indexOf(BootLoader.getOSArch()));	
+		os.select(os.indexOf(preferences.getDefaultString(OS)));
+		ws.select(ws.indexOf(preferences.getDefaultString(WS)));
+		nl.select(nl.indexOf(expandLocaleName(preferences.getDefaultString(NL))));
+		arch.select(arch.indexOf(preferences.getDefaultString(ARCH)));	
 	}
 
 
 	public boolean performOk() {
-	    Preferences preferences = PDECore.getDefault().getPluginPreferences();
 	    preferences.setValue(OS,os.getItem(os.getSelectionIndex()));
 	    preferences.setValue(WS,ws.getItem(ws.getSelectionIndex()));
 	    String locale = nl.getItem(nl.getSelectionIndex());
@@ -145,7 +145,6 @@ public class TargetEnvironmentPreferencePage
 			Locale locale = locales[i];
 			result[i] = locale.toString() + " - " + locale.getDisplayName();
 		}
-		CoreArraySorter.INSTANCE.sortInPlace(locales);
 		CoreArraySorter.INSTANCE.sortInPlace(result);
 		return result;
 	}
