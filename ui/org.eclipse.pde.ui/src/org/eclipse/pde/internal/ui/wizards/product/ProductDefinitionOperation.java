@@ -191,7 +191,7 @@ public class ProductDefinitionOperation implements IRunnableWithProgress {
 				String id = model.getPluginBase().getId();
 				if (fPluginId.equals(id))
 					return path.removeFirstSegments(1).toString();
-				return "platform:/base/plugins/" + id + "/" + path.removeFirstSegments(1); //$NON-NLS-1$ //$NON-NLS-2$
+				return "platform:/plugin/" + id + "/" + path.removeFirstSegments(1); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		return location;
