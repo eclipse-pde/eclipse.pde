@@ -7,6 +7,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IWorkspaceModelManager;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -42,7 +43,9 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 				if (projects[i].isOpen()
 					&& WorkspaceModelManager.isPluginProject(projects[i])
 					&& !WorkspaceModelManager.isBinaryPluginProject(projects[i])) {
-					result.add(manager.getWorkspaceModel(projects[i]));
+					IModel model = manager.getWorkspaceModel(projects[i]);
+					if (model != null)
+						result.add(model);
 				}
 			}
 			return result.toArray();
