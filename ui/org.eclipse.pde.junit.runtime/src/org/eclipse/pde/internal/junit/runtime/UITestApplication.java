@@ -43,7 +43,7 @@ public class UITestApplication implements IPlatformRunnable, ITestHarness {
 		// If no application is specified, the 3.0 default workbench application
 		// is returned.
 		IExtension extension =
-			Platform.getPluginRegistry().getExtension(
+			Platform.getExtensionRegistry().getExtension(
 				Platform.PI_RUNTIME,
 				Platform.PT_APPLICATIONS,
 				getApplicationToRun(args));
