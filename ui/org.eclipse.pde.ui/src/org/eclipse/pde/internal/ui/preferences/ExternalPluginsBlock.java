@@ -35,16 +35,9 @@ import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
 public class ExternalPluginsBlock {
 	private CheckboxTableViewer pluginListViewer;
 	private Control control;
-	private ExternalPluginsEditor editor;
-	public static final String SAVED_ALL = "[all]";
-	public static final String SAVED_NONE = "[none]";
+	private TargetPlatformPreferencePage page;
 	private static final String KEY_RELOAD = "ExternalPluginsBlock.reload";
 	private static final String KEY_WORKSPACE = "ExternalPluginsBlock.workspace";
-
-	private final static int SELECT_ALL = 1;
-	private final static int DESELECT_ALL = -1;
-	private final static int SELECT_SOME = 0;
-
 	private ExternalModelManager registry;
 	private IModel[] initialModels;
 	private boolean reloaded;
@@ -52,18 +45,11 @@ public class ExternalPluginsBlock {
 	private TablePart tablePart;
 	private final static boolean DEFAULT_STATE = false;
 
-	public static final String CHECKED_PLUGINS = "PluginPath.checkedPlugins";
-
 	public class PluginContentProvider
 		extends DefaultContentProvider
 		implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
-			if (editor == null || editor.getPlatformPath().length() > 0) {
-				Object[] models = registry.getModels();
-				return models;
-
-			} else
-				return new Object[0];
+			return registry.getModels();
 		}
 	}
 
@@ -95,9 +81,9 @@ public class ExternalPluginsBlock {
 		}
 	}
 
-	public ExternalPluginsBlock(ExternalPluginsEditor editor) {
+	public ExternalPluginsBlock(TargetPlatformPreferencePage page) {
 		registry = PDECore.getDefault().getExternalModelManager();
-		this.editor = editor;
+		this.page = page;
 		String[] buttonLabels =
 			{
 				PDEPlugin.getResourceString(KEY_RELOAD),
@@ -128,10 +114,6 @@ public class ExternalPluginsBlock {
 
 		GridData gd = (GridData) tablePart.getControl().getLayoutData();
 		gd.heightHint = 200;
-		if (editor == null) {
-			gd.heightHint = 300;
-			gd.widthHint = 300;
-		}
 		this.control = container;
 		return container;
 	}
@@ -158,14 +140,6 @@ public class ExternalPluginsBlock {
 		tablePart.setSelection(selected.toArray());
 	}
 
-	private static Vector createSavedList(String saved) {
-		Vector result = new Vector();
-		StringTokenizer stok = new StringTokenizer(saved);
-		while (stok.hasMoreTokens()) {
-			result.add(stok.nextToken());
-		}
-		return result;
-	}
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 	}
@@ -184,8 +158,8 @@ public class ExternalPluginsBlock {
 	}
 
 	void handleReload() {
-		final String platformPath = editor.getPlatformPath();
-		final boolean useOther = editor.getUseOther();
+		final String platformPath = page.getPlatformPath();
+		final boolean useOther = page.getUseOther();
 		if (platformPath != null && platformPath.length() > 0) {
 			IRunnableWithProgress op = new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) {
@@ -225,21 +199,17 @@ public class ExternalPluginsBlock {
 		}
 	}
 
-	public void initialize(IPreferenceStore store) {
-		String platformPath = null;
-		if (editor != null)
-			platformPath = editor.getPlatformPath();
+	public void initialize() {
+		String platformPath = page.getPlatformPath();
 		if (platformPath != null && platformPath.length() == 0)
 			return;
 
-		//store.setDefault(CHECKED_PLUGINS, SAVED_ALL);
-		store.setDefault(CHECKED_PLUGINS, SAVED_NONE);
-
 		pluginListViewer.setInput(registry);
-		String saved = store.getString(CHECKED_PLUGINS);
-		if (saved.length() == 0 || saved.equals(SAVED_NONE)) {
+		CoreSettings store = PDECore.getDefault().getSettings();
+		String saved = store.getString(ICoreConstants.CHECKED_PLUGINS);
+		if (saved.length() == 0 || saved.equals(ICoreConstants.VALUE_SAVED_NONE)) {
 			initializeDefault(false);
-		} else if (saved.equals(SAVED_ALL)) {
+		} else if (saved.equals(ICoreConstants.VALUE_SAVED_ALL)) {
 			initializeDefault(true);
 		} else {
 			Vector savedList = createSavedList(saved);
@@ -248,34 +218,12 @@ public class ExternalPluginsBlock {
 			Vector selection = new Vector();
 			for (int i = 0; i < models.length; i++) {
 				IPluginModel model = models[i];
-				String id = model.getPlugin().getId();
-				model.setEnabled(isChecked(id, savedList));
 				if (model.isEnabled())
 					selection.add(model);
 			}
 			tablePart.setSelection(selection.toArray());
 		}
 		initialModels = registry.getModels();
-	}
-	public static void initialize(
-		ExternalModelManager registry,
-		IPreferenceStore store) {
-		String saved = store.getString(CHECKED_PLUGINS);
-
-		if (saved.length() == 0 || saved.equals(SAVED_NONE)) {
-			initializeDefault(registry, false);
-		} else if (saved.equals(SAVED_ALL)) {
-			initializeDefault(registry, true);
-		} else {
-			Vector savedList = createSavedList(saved);
-
-			IPluginModel[] models = registry.getModels();
-			for (int i = 0; i < models.length; i++) {
-				IPluginModel model = models[i];
-				String id = model.getPlugin().getId();
-				model.setEnabled(isChecked(id, savedList));
-			}
-		}
 	}
 	private static void initializeDefault(
 		ExternalModelManager registry,
@@ -298,13 +246,13 @@ public class ExternalPluginsBlock {
 		}
 		return true;
 	}
-	public void save(IPreferenceStore store) {
+	public void save() {
 		String saved = "";
 		IPluginModel[] models = registry.getModels();
 		if (tablePart.getSelectionCount() == models.length) {
-			saved = SAVED_ALL;
+			saved = ICoreConstants.VALUE_SAVED_ALL;
 		} else if (tablePart.getSelectionCount() == 0) {
-			saved = SAVED_NONE;
+			saved = ICoreConstants.VALUE_SAVED_NONE;
 		} else {
 			for (int i = 0; i < models.length; i++) {
 				IPluginModel model = models[i];
@@ -315,17 +263,16 @@ public class ExternalPluginsBlock {
 				}
 			}
 		}
-		store.setValue(CHECKED_PLUGINS, saved);
+		PDECore.getDefault().getSettings().setValue(ICoreConstants.CHECKED_PLUGINS, saved);
 		computeDelta();
 	}
-
-	public static boolean hasEnabledModels(IPreferenceStore store) {
-		String saved = store.getString(CHECKED_PLUGINS);
-		if (saved != null && saved.equals(SAVED_NONE))
-			// we know for sure that nothing is enabled
-			return false;
-		// must load
-		return true;
+	private Vector createSavedList(String saved) {
+		Vector result = new Vector();
+		StringTokenizer stok = new StringTokenizer(saved);
+		while (stok.hasMoreTokens()) {
+			result.add(stok.nextToken());
+		}
+		return result;
 	}
 
 	void computeDelta() {

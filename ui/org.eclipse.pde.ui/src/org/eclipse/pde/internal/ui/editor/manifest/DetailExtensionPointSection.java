@@ -46,8 +46,6 @@ public class DetailExtensionPointSection
 	public static final String POPUP_DELETE = "Actions.delete.label";
 	private FormWidgetFactory factory;
 	private TableViewer pointTable;
-	private SchemaRegistry schemaRegistry;
-	private ExternalModelManager pluginInfoRegistry;
 
 	class TableContentProvider
 		extends DefaultContentProvider
@@ -64,8 +62,6 @@ public class DetailExtensionPointSection
 		super(page, new String [] { PDEPlugin.getResourceString(SECTION_NEW) });
 		this.setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
 		this.setDescription(PDEPlugin.getResourceString(SECTION_DESC));
-		schemaRegistry = PDECore.getDefault().getSchemaRegistry();
-		pluginInfoRegistry = PDECore.getDefault().getExternalModelManager();
 		getTablePart().setEditable(false);
 	}
 	public Composite createClient(Composite parent, FormWidgetFactory factory) {

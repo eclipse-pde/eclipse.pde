@@ -24,7 +24,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.debug.ui.*;
 import org.eclipse.debug.core.*;
-import org.eclipse.pde.internal.core.ExternalModelManager;
+import org.eclipse.pde.internal.core.*;
 
 public class BasicLauncherTab extends AbstractLauncherTab implements ILauncherSettings {
 	private static final String KEY_DESC = "";
@@ -162,9 +162,7 @@ public class BasicLauncherTab extends AbstractLauncherTab implements ILauncherSe
 		String[] workspaceSelectionItems = new String[0];
 		boolean doClear = false;
 
-		IPreferenceStore pstore = PDEPlugin.getDefault().getPreferenceStore();
-
-		String defaultWorkspace = getDefaultWorkspace(pstore);
+		String defaultWorkspace = getDefaultWorkspace();
 
 		try {
 			vmArgs = config.getAttribute(VMARGS, vmArgs);
@@ -210,10 +208,10 @@ public class BasicLauncherTab extends AbstractLauncherTab implements ILauncherSe
 		updateStatus();
 	}
 
-	static String getDefaultWorkspace(IPreferenceStore pstore) {
+	static String getDefaultWorkspace() {
 		ExternalModelManager.initializePlatformPath();
 		IPath ppath =
-			new Path(pstore.getString(TargetPlatformPreferencePage.PROP_PLATFORM_PATH));
+			new Path(PDECore.getDefault().getSettings().getString(ICoreConstants.PLATFORM_PATH));
 		IPath runtimeWorkspace = ppath.append(RT_WORKSPACE);
 		return runtimeWorkspace.toOSString();
 	}
@@ -225,7 +223,7 @@ public class BasicLauncherTab extends AbstractLauncherTab implements ILauncherSe
 		boolean tracing = false;
 
 		IPreferenceStore pstore = PDEPlugin.getDefault().getPreferenceStore();
-		String defaultWorkspace = getDefaultWorkspace(pstore);
+		String defaultWorkspace = getDefaultWorkspace();
 		config.setAttribute(VMARGS, vmArgs);
 		config.setAttribute(PROGARGS, progArgs);
 		config.setAttribute(APPLICATION, appName);
@@ -236,8 +234,7 @@ public class BasicLauncherTab extends AbstractLauncherTab implements ILauncherSe
 	}
 
 	private void doRestoreDefaults() {
-		IPreferenceStore pstore = PDEPlugin.getDefault().getPreferenceStore();
-		String defaultWorkspace = getDefaultWorkspace(pstore);
+		String defaultWorkspace = getDefaultWorkspace();
 		progArgsText.setText("");
 		vmArgsText.setText("");
 		applicationNameText.setText("org.eclipse.ui.workbench");

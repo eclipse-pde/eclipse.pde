@@ -439,7 +439,7 @@ public class ExternalModelManager {
 			useOther = true;
 		return useOther;
 	}
-	private static String computeDefaultPlatformPath() {
+	public static String computeDefaultPlatformPath() {
 		URL installURL = BootLoader.getInstallURL();
 		String file = installURL.getFile();
 		IPath ppath = new Path(file).removeTrailingSeparator();

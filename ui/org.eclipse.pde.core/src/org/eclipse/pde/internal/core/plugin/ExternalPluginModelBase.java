@@ -46,7 +46,7 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 		}
 		return buildModel;
 	}
-	public org.eclipse.core.runtime.IPath getEclipseHomeRelativePath() {
+	public IPath getEclipseHomeRelativePath() {
 		return eclipseHomeRelativePath;
 	}
 	public String getInstallLocation() {

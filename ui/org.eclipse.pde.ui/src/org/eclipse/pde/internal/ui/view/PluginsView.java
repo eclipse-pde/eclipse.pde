@@ -392,6 +392,8 @@ public class PluginsView extends ViewPart {
 		if (adapter == null)
 			return;
 		IWorkbenchPage page = PDEPlugin.getActivePage();
+		if (editorId == null && adapter.isManifest())
+			editorId = PDEPlugin.MANIFEST_EDITOR_ID;
 		try {
 			if (editorId == null || editorId.equals("@system"))
 				editorId = DEFAULT_EDITOR_ID;

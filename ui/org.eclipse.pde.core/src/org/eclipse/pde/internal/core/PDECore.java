@@ -314,16 +314,6 @@ public class PDECore extends Plugin {
 		super.shutdown();
 	}
 
-	public static File getFileInPlugin(IPath path) {
-		try {
-			URL installURL =
-				new URL(getDefault().getDescriptor().getInstallURL(), path.toString());
-			URL localURL = Platform.asLocalURL(installURL);
-			return new File(localURL.getFile());
-		} catch (IOException e) {
-			return null;
-		}
-	}
 	private void loadSettings() {
 		settings = new CoreSettings();
 		settings.load(getStateLocation());

@@ -30,7 +30,7 @@ import org.eclipse.debug.ui.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.*;
 
 public class AdvancedLauncherTab
 	extends AbstractLauncherTab
@@ -422,13 +422,13 @@ public class AdvancedLauncherTab
 			if (!masked && model.isEnabled())
 				checked.add(model);
 		}
-		IPreferenceStore pstore = PDEPlugin.getDefault().getPreferenceStore();
-		String exMode = pstore.getString(ExternalPluginsBlock.CHECKED_PLUGINS);
+		CoreSettings pstore = PDECore.getDefault().getSettings();
+		String exMode = pstore.getString(ICoreConstants.CHECKED_PLUGINS);
 		boolean externalMixed = false;
 		if (exMode.length() > 0) {
-			if (exMode.equals(ExternalPluginsBlock.SAVED_ALL)) {
+			if (exMode.equals(ICoreConstants.VALUE_SAVED_ALL)) {
 				checked.add(externalPlugins);
-			} else if (!exMode.equals(ExternalPluginsBlock.SAVED_NONE)) {
+			} else if (!exMode.equals(ICoreConstants.VALUE_SAVED_NONE)) {
 				checked.add(externalPlugins);
 				externalMixed = true;
 			}

@@ -18,5 +18,65 @@
       <import plugin="org.eclipse.core.runtime"/>
    </requires>
 
+   <extension-point id="schemaMap" name="%expoint.schemaMap.name" schema="schema/schemaMap.xsd"/>
+   <extension
+         id="PluginNature"
+         name="%natures.pluginNature.name"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="org.eclipse.pde.internal.core.PluginProject">
+         </run>
+      </runtime>
+   </extension>
+   <extension
+         id="FeatureNature"
+         name="%natures.featureBuilder.name"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="org.eclipse.pde.internal.core.FeatureProject">
+         </run>
+      </runtime>
+   </extension>
+   <extension
+         id="ManifestBuilder"
+         name="%builders.manifestBuilder.name"
+         point="org.eclipse.core.resources.builders">
+      <builder>
+         <run
+               class="org.eclipse.pde.internal.core.builders.ManifestConsistencyChecker">
+         </run>
+      </builder>
+   </extension>
+   <extension
+         id="SchemaBuilder"
+         name="%builders.schemaBuilder.name"
+         point="org.eclipse.core.resources.builders">
+      <builder>
+         <run
+               class="org.eclipse.pde.internal.core.builders.ExtensionPointSchemaBuilder">
+         </run>
+      </builder>
+   </extension>
+   <extension
+         id="FeatureBuilder"
+         name="%builders.featureBuilder.name"
+         point="org.eclipse.core.resources.builders">
+      <builder>
+         <run
+               class="org.eclipse.pde.internal.core.builders.FeatureConsistencyChecker">
+         </run>
+      </builder>
+   </extension>
+  
+<extension 
+      point="org.eclipse.jdt.core.classpathVariableInitializer"> 
+   <classpathVariableInitializer 
+         variable="ECLIPSE_HOME" 
+         class="org.eclipse.pde.internal.core.EclipseHomeInitializer"/> 
+</extension> 
+
+
 
 </plugin>

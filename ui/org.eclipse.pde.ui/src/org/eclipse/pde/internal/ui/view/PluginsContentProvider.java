@@ -29,6 +29,7 @@ public class PluginsContentProvider
 	}
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		this.viewer = (TreeViewer) viewer;
+		if (newInput==null) return;
 		view.updateTitle(newInput);
 	}
 

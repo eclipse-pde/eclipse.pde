@@ -33,7 +33,6 @@
 <!-- Extension points -->
    <extension-point id="projectGenerators" name="%expoint.projectGenerators.name" schema="schema/projectGenerators.xsd"/>
    <extension-point id="newExtension" name="%expoint.newExtension.name" schema="schema/newExtension.xsd"/>
-   <extension-point id="schemaMap" name="%expoint.schemaMap.name" schema="schema/schemaMap.xsd"/>
 
 <!-- Extensions -->
    <extension
@@ -350,56 +349,6 @@
       </editor>
    </extension>
    <extension
-         id="PluginNature"
-         name="%natures.pluginNature.name"
-         point="org.eclipse.core.resources.natures">
-      <runtime>
-         <run
-               class="org.eclipse.pde.internal.ui.PluginProject">
-         </run>
-      </runtime>
-   </extension>
-   <extension
-         id="FeatureNature"
-         name="%natures.featureBuilder.name"
-         point="org.eclipse.core.resources.natures">
-      <runtime>
-         <run
-               class="org.eclipse.pde.internal.ui.FeatureProject">
-         </run>
-      </runtime>
-   </extension>
-   <extension
-         id="ManifestBuilder"
-         name="%builders.manifestBuilder.name"
-         point="org.eclipse.core.resources.builders">
-      <builder>
-         <run
-               class="org.eclipse.pde.internal.core.builders.ManifestConsistencyChecker">
-         </run>
-      </builder>
-   </extension>
-   <extension
-         id="SchemaBuilder"
-         name="%builders.schemaBuilder.name"
-         point="org.eclipse.core.resources.builders">
-      <builder>
-         <run
-               class="org.eclipse.pde.internal.core.builders.ExtensionPointSchemaBuilder">
-         </run>
-      </builder>
-   </extension>
-   <extension
-         id="FeatureBuilder"
-         name="%builders.featureBuilder.name"
-         point="org.eclipse.core.resources.builders">
-      <builder>
-         <run
-               class="org.eclipse.pde.internal.core.builders.FeatureConsistencyChecker">
-         </run>
-      </builder>
-   </extension>
-   <extension
          point="org.eclipse.ui.views">
       <category
             name="%views.category.name"
@@ -576,7 +525,7 @@
       </launchConfigurationTabGroup>
    </extension>
    <extension
-         point="org.eclipse.pde.ui.schemaMap">
+         point="org.eclipse.pde.core.schemaMap">
       <map
             point="org.eclipse.ant.core.antObjects"
             schema="schema/map/org.eclipse.ant.core/antObjects.mxsd">

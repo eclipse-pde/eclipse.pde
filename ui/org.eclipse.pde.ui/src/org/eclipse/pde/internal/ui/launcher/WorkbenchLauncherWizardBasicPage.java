@@ -22,7 +22,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 
 import org.eclipse.pde.internal.ui.wizards.StatusWizardPage;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.core.ExternalModelManager;
+import org.eclipse.pde.internal.core.*;
 
 public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage 
 					implements ILauncherSettings {
@@ -190,7 +190,7 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage
 
 		IPreferenceStore pstore = PDEPlugin.getDefault().getPreferenceStore();
 
-		String defaultWorkspace = getDefaultWorkspace(pstore);
+		String defaultWorkspace = getDefaultWorkspace();
 
 		if (initialSettings != null) {
 			String value = initialSettings.get(VMARGS);
@@ -245,10 +245,10 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage
 		updateStatus();
 	}
 
-	private static String getDefaultWorkspace(IPreferenceStore pstore) {
+	private static String getDefaultWorkspace() {
 		ExternalModelManager.initializePlatformPath();
 		IPath ppath =
-			new Path(pstore.getString(TargetPlatformPreferencePage.PROP_PLATFORM_PATH));
+			new Path(PDECore.getDefault().getSettings().getString(ICoreConstants.PLATFORM_PATH));
 		IPath runtimeWorkspace = ppath.append(RT_WORKSPACE);
 		return runtimeWorkspace.toOSString();
 	}
@@ -267,7 +267,7 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage
 		boolean tracing = false;
 
 		IPreferenceStore pstore = PDEPlugin.getDefault().getPreferenceStore();
-		defaultWorkspace = getDefaultWorkspace(pstore);
+		defaultWorkspace = getDefaultWorkspace();
 
 		if (settings != null) {
 			String value = settings.get(VMARGS);
@@ -318,7 +318,7 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage
 	private void doRestoreDefaults() {
 		IPreferenceStore pstore = PDEPlugin.getDefault().getPreferenceStore();
 
-		String defaultWorkspace = getDefaultWorkspace(pstore);
+		String defaultWorkspace = getDefaultWorkspace();
 		progArgsText.setText("");
 		vmArgsText.setText("");
 		workspaceCombo.setText(defaultWorkspace);

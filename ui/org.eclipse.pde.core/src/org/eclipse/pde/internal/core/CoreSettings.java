@@ -62,6 +62,10 @@ public class CoreSettings extends Properties {
 	public void setDefault(String key, String value) {
 		defaults.setProperty(key, value);
 	}
+	
+	public String getDefaultString(String key) {
+		return defaults.getProperty(key);
+	}
 
 	public void store() {
 		File file = new File(path.toOSString());
