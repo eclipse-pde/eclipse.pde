@@ -15,7 +15,6 @@ import java.lang.reflect.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.*;
@@ -47,6 +46,7 @@ public class NewSiteProjectWizard
 	private WizardNewProjectCreationPage mainPage;
 	private SiteHTMLPage htmlPage;
 	private IConfigurationElement config;
+	private boolean createdProject = false;
 
 	public NewSiteProjectWizard() {
 		super();
@@ -88,8 +88,8 @@ public class NewSiteProjectWizard
 		buildModel.setFile(buildFile);
 		ISiteBuild siteBuild = buildModel.getSiteBuild();
 	 	siteBuild.setAutobuild(false);
-	 	siteBuild.setPluginLocation(new Path("plugins"));
-	 	siteBuild.setFeatureLocation(new Path("features"));
+	 	siteBuild.setPluginLocation(new Path(htmlPage.getPluginLocation()));
+	 	siteBuild.setFeatureLocation(new Path(htmlPage.getFeaturesLocation()));
 	 	siteBuild.setShowConsole(true);
 	 	buildModel.save();
 		buildModel.dispose();
@@ -126,7 +126,7 @@ public class NewSiteProjectWizard
 		writer.println("		var data = document.implementation.createDocument(\"\", \"\", null);");
 		writer.println("		var transformer = document.implementation.createDocument(\"\", \"\", null);");
 		writer.println("		data.load(\"site.xml\");");
-		writer.println("		transformer.load(\"site.xsl\");");
+		writer.println("		transformer.load(\"" + htmlPage.getWebLocation() + "/site.xsl\");");
 		writer.println("		data.addEventListener(\"load\", transform, false);");
 		writer.println("		transformer.addEventListener(\"load\", transform, false);");
 		writer.println("	}");
@@ -137,7 +137,7 @@ public class NewSiteProjectWizard
 		writer.println("		xml.load(\"site.xml\")");
 		writer.println("		var xsl = new ActiveXObject(\"MSXML2.DOMDocument.3.0\")");
 		writer.println("		xsl.async = false");
-		writer.println("		xsl.load(\"site.xsl\")");
+		writer.println("		xsl.load(\"" + htmlPage.getWebLocation() + "/site.xsl\")");
 		writer.println("		// Transform");
 		writer.println("		document.write(xml.transformNode(xsl))");
 		writer.println("	}");
@@ -159,23 +159,25 @@ public class NewSiteProjectWizard
 			PDEPlugin.logException(e);
 		}
 	}
-	
+		
 	private void createCSSFile(IProject project){
 		try {
-		IFile file = project.getFile("site.css");
+		IFile file = project.getFile(htmlPage.getWebLocation() + "/site.css");
 		StringWriter swrite = new StringWriter();
 		PrintWriter writer = new PrintWriter(swrite);
 		writer.println("<STYLE type=\"text/css\">");
-		writer.println(".css{}");
+		writer.println("td.spacer {padding-bottom: 10px; padding-top: 10px;}");
 		writer.println(".title { font-family: sans-serif; color: #99AACC;}");
 		writer.println(".bodyText { font-family: sans-serif; font-size: 9pt; color:#000000;  }");
 		writer.println(".sub-header { font-family: sans-serif; font-style: normal; font-weight: bold; font-size: 9pt; color: white;}");
-		writer.println(".log-text { font-family: sans-serif; font-style: normal; font-weight: lighter; font-size: 8pt; color:black;}");
+		writer.println(".log-text {font-family: sans-serif; font-style: normal; font-weight: lighter; font-size: 8pt; color:black;}");
 		writer.println(".big-header { font-family: sans-serif; font-style: normal; font-weight: bold; font-size: 9pt; color: white; border-top:10px solid white;}");
 		writer.println(".light-row {background:#FFFFFF}");
 		writer.println(".dark-row {background:#EEEEFF}");
 		writer.println(".header {background:#99AADD}");
+		writer.println("#indent {word-wrap : break-word;width :300px;text-indent:10px;}");
 		writer.println("</STYLE>");
+
 		writer.flush();
 		swrite.close();
 		ByteArrayInputStream stream = new ByteArrayInputStream(swrite.toString().getBytes("UTF8"));
@@ -192,102 +194,224 @@ public class NewSiteProjectWizard
 		
 	private void createXSLFile(IProject project){
 		try {
-		IFile file = project.getFile("site.xsl");
+		IFile file = project.getFile(htmlPage.getWebLocation() + "/site.xsl");
 		StringWriter swrite = new StringWriter();
 		PrintWriter writer = new PrintWriter(swrite);
-		writer.println("<xsl:stylesheet version = '1.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform'>");
+		writer.println("<xsl:stylesheet version = '1.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl=\"urn:schemas-microsoft-com:xslt\">");
 		writer.println("<xsl:output method=\"html\" encoding=\"ISO-8859-1\"/>");
 		writer.println("<xsl:key name=\"cat\" match=\"category\" use=\"@name\"/>");
 		writer.println("<xsl:template match=\"/\">");
 		writer.println("<xsl:for-each select=\"site\">");
 		writer.println("	<html>");
 		writer.println("	<head>");
-		writer.println("    <title>" + project.getName() + "</title>");
-		writer.println("	<style>@import url(\"site.css\");</style>");
+		writer.println("	<title>"+project.getName()+"</title>");
+		writer.println("	<style>@import url(\"" + htmlPage.getWebLocation() + "/site.css\");</style>");
 		writer.println("	</head>");
 		writer.println("	<body>");
-		writer.println("	<h1 class=\"title\">" + project.getName() + "</h1>");
+		writer.println("	<h1 class=\"title\">" + project.getName() +"</h1>");
 		writer.println("	<p class=\"bodyText\"><xsl:value-of select=\"description\"/></p>");
 		writer.println("	<table width=\"100%\" border=\"0\" cellspacing=\"1\" cellpadding=\"2\">");
-		writer.println("	<tr class=\"header\">");
-		writer.println("		<td colspan=\"3\" class=\"big-header\">");
-		writer.println("		Features Index:");
-		writer.println("		</td>");
-		writer.println("	</tr>");
-		writer.println("	<tr class=\"header\">");
-		writer.println("		<td class=\"sub-header\">");
-		writer.println("		Category");
-		writer.println("		</td>");
-		writer.println("		<td class=\"sub-header\">");
-		writer.println("		Description");
-		writer.println("		</td>");
-		writer.println("		<td class=\"sub-header\">");
-		writer.println("		Features");
-		writer.println("		</td>");
-		writer.println("	</tr>");
 		writer.println("	<xsl:for-each select=\"category-def\">");
-		writer.println("	<tr>");
-		writer.println("	<xsl:choose>");
-		writer.println("	<xsl:when test=\"(position() mod 2 = 1)\">");
-		writer.println("	<xsl:attribute name=\"class\">dark-row</xsl:attribute>");
-		writer.println("	</xsl:when>");
-		writer.println("	<xsl:otherwise>");
-		writer.println("	<xsl:attribute name=\"class\">light-row</xsl:attribute>");
-		writer.println("	</xsl:otherwise>");
-		writer.println("	</xsl:choose>");
-		writer.println("		<td class=\"log-text\">");
-		writer.println("			<xsl:value-of select=\"@name\"/>");
-		writer.println("		</td>");
-		writer.println("		<td class=\"log-text\">");
-		writer.println("			<xsl:value-of select=\"description\"/>");
-		writer.println("		</td>");
-		writer.println("		<td class=\"log-text\">");
+		writer.println("		<xsl:sort select=\"@label\" order=\"ascending\" case-order=\"upper-first\"/>");
+		writer.println("		<xsl:sort select=\"@name\" order=\"ascending\" case-order=\"upper-first\"/>");
+		writer.println("	<xsl:if test=\"count(key('cat',@name)) != 0\">");
+		writer.println("			<tr class=\"header\">");
+		writer.println("				<td class=\"sub-header\" width=\"30%\">");
+		writer.println("					<xsl:value-of select=\"@name\"/>");
+		writer.println("				</td>");
+		writer.println("				<td class=\"sub-header\" width=\"70%\">");
+		writer.println("					<xsl:value-of select=\"description\"/>");
+		writer.println("				</td>");
+		writer.println("			</tr>");
 		writer.println("			<xsl:for-each select=\"key('cat',@name)\">");
-		writer.println("				<xsl:sort select=\"ancestor::feature//@version\" order=\"ascending\"/>");
-		writer.println("				<xsl:sort select=\"ancestor::feature//@id\" order=\"ascending\" case-order=\"upper-first\"/>");
-		writer.println("				<a href=\"{ancestor::feature//@url}\"><xsl:value-of select=\"ancestor::feature//@id\"/> - <xsl:value-of select=\"ancestor::feature//@version\"/></a>");
+		writer.println("			<xsl:sort select=\"ancestor::feature//@version\" order=\"ascending\"/>");
+		writer.println("			<xsl:sort select=\"ancestor::feature//@id\" order=\"ascending\" case-order=\"upper-first\"/>");
+		writer.println("			<tr>");
 		writer.println("				<xsl:choose>");
-		writer.println("				<xsl:when test=\"ancestor::feature//@label\">");
-		writer.println("					(<xsl:value-of select=\"ancestor::feature//@label\"/>)");
+		writer.println("				<xsl:when test=\"(position() mod 2 = 1)\">");
+		writer.println("					<xsl:attribute name=\"class\">dark-row</xsl:attribute>");
 		writer.println("				</xsl:when>");
+		writer.println("				<xsl:otherwise>");
+		writer.println("					<xsl:attribute name=\"class\">light-row</xsl:attribute>");
+		writer.println("				</xsl:otherwise>");
 		writer.println("				</xsl:choose>");
-		writer.println("				<br />");
+		writer.println("				<td class=\"log-text\" id=\"indent\">");
+		writer.println("						<xsl:choose>");
+		writer.println("						<xsl:when test=\"ancestor::feature//@label\">");
+		writer.println("							<a href=\"{ancestor::feature//@url}\"><xsl:value-of select=\"ancestor::feature//@label\"/></a>");
+		writer.println("							<br/>");
+		writer.println("							<div id=\"indent\">");
+		writer.println("							(<xsl:value-of select=\"ancestor::feature//@id\"/> - <xsl:value-of select=\"ancestor::feature//@version\"/>)");
+		writer.println("							</div>");
+		writer.println("						</xsl:when>");
+		writer.println("						<xsl:otherwise>");
+		writer.println("						<a href=\"{ancestor::feature//@url}\"><xsl:value-of select=\"ancestor::feature//@id\"/> - <xsl:value-of select=\"ancestor::feature//@version\"/></a>");
+		writer.println("						</xsl:otherwise>");
+		writer.println("						</xsl:choose>");
+		writer.println("						<br />");
+		writer.println("				</td>");
+		writer.println("				<td>");
+		writer.println("					<table>");
+		writer.println("						<xsl:if test=\"ancestor::feature//@os\">");
+		writer.println("							<tr><td class=\"log-text\" id=\"indent\">Operating Systems:</td>");
+		writer.println("							<td class=\"log-text\" id=\"indent\"><xsl:value-of select=\"ancestor::feature//@os\"/></td>");
+		writer.println("							</tr>");
+		writer.println("						</xsl:if>");
+		writer.println("						<xsl:if test=\"ancestor::feature//@ws\">");
+		writer.println("							<tr><td class=\"log-text\" id=\"indent\">Windows Systems:</td>");
+		writer.println("							<td class=\"log-text\" id=\"indent\"><xsl:value-of select=\"ancestor::feature//@ws\"/></td>");
+		writer.println("							</tr>");
+		writer.println("						</xsl:if>");
+		writer.println("						<xsl:if test=\"ancestor::feature//@nl\">");
+		writer.println("							<tr><td class=\"log-text\" id=\"indent\">Languages:</td>");
+		writer.println("							<td class=\"log-text\" id=\"indent\"><xsl:value-of select=\"ancestor::feature//@nl\"/></td>");
+		writer.println("							</tr>");
+		writer.println("						</xsl:if>");
+		writer.println("						<xsl:if test=\"ancestor::feature//@arch\">");
+		writer.println("							<tr><td class=\"log-text\" id=\"indent\">Architecture:</td>");
+		writer.println("							<td class=\"log-text\" id=\"indent\"><xsl:value-of select=\"ancestor::feature//@arch\"/></td>");
+		writer.println("							</tr>");
+		writer.println("						</xsl:if>");
+		writer.println("					</table>");
+		writer.println("				</td>");
+		writer.println("			</tr>");
 		writer.println("			</xsl:for-each>");
+		writer.println("			<tr><td class=\"spacer\"><br/></td><td class=\"spacer\"><br/></td></tr>");
+		writer.println("		</xsl:if>");
+		writer.println("	</xsl:for-each>");
+		writer.println("	<xsl:if test=\"count(feature)  &gt; count(feature/category)\">");
+		writer.println("	<tr class=\"header\">");
+		writer.println("		<td class=\"sub-header\" colspan=\"2\">");
+		writer.println("		Uncategorized");
+		writer.println("		</td>");
+		writer.println("	</tr>");
+		writer.println("	</xsl:if>");
+		writer.println("	<xsl:choose>");
+		writer.println("	<xsl:when test=\"function-available('msxsl:node-set')\">");
+		writer.println("	   <xsl:variable name=\"rtf-nodes\">");
+		writer.println("		<xsl:for-each select=\"feature[not(category)]\">");
+		writer.println("			<xsl:sort select=\"@id\" order=\"ascending\" case-order=\"upper-first\"/>");
+		writer.println("			<xsl:sort select=\"@version\" order=\"ascending\" />");
+		writer.println("			<xsl:value-of select=\".\"/>");
+		writer.println("			<xsl:copy-of select=\".\" />");
+		writer.println("		</xsl:for-each>");
+		writer.println("	   </xsl:variable>");
+		writer.println("	   <xsl:variable name=\"myNodeSet\" select=\"msxsl:node-set($rtf-nodes)/*\"/>");
+		writer.println("	<xsl:for-each select=\"$myNodeSet\">");
+		writer.println("	<tr>");
+		writer.println("		<xsl:choose>");
+		writer.println("		<xsl:when test=\"position() mod 2 = 1\">");
+		writer.println("		<xsl:attribute name=\"class\">dark-row</xsl:attribute>");
+		writer.println("		</xsl:when>");
+		writer.println("		<xsl:otherwise>");
+		writer.println("		<xsl:attribute name=\"class\">light-row</xsl:attribute>");
+		writer.println("		</xsl:otherwise>");
+		writer.println("		</xsl:choose>");
+		writer.println("		<td class=\"log-text\" id=\"indent\">");
+		writer.println("			<xsl:choose>");
+		writer.println("			<xsl:when test=\"@label\">");
+		writer.println("				<a href=\"{@url}\"><xsl:value-of select=\"@label\"/></a>");
+		writer.println("				<br />");
+		writer.println("				<div id=\"indent\">");
+		writer.println("				(<xsl:value-of select=\"@id\"/> - <xsl:value-of select=\"@version\"/>)");
+		writer.println("				</div>");
+		writer.println("			</xsl:when>");
+		writer.println("			<xsl:otherwise>");
+		writer.println("				<a href=\"{@url}\"><xsl:value-of select=\"@id\"/> - <xsl:value-of select=\"@version\"/></a>");
+		writer.println("			</xsl:otherwise>");
+		writer.println("			</xsl:choose>");
+		writer.println("			<br /><br />");
+		writer.println("		</td>");
+		writer.println("		<td>");
+		writer.println("			<table>");
+		writer.println("				<xsl:if test=\"@os\">");
+		writer.println("					<tr><td class=\"log-text\" id=\"indent\">Operating Systems:</td>");
+		writer.println("					<td class=\"log-text\" id=\"indent\"><xsl:value-of select=\"@os\"/></td>");
+		writer.println("					</tr>");
+		writer.println("				</xsl:if>");
+		writer.println("				<xsl:if test=\"@ws\">");
+		writer.println("					<tr><td class=\"log-text\" id=\"indent\">Windows Systems:</td>");
+		writer.println("					<td class=\"log-text\" id=\"indent\"><xsl:value-of select=\"@ws\"/></td>");
+		writer.println("					</tr>");
+		writer.println("				</xsl:if>");
+		writer.println("				<xsl:if test=\"@nl\">");
+		writer.println("					<tr><td class=\"log-text\" id=\"indent\">Languages:</td>");
+		writer.println("					<td class=\"log-text\" id=\"indent\"><xsl:value-of select=\"@nl\"/></td>");
+		writer.println("					</tr>");
+		writer.println("				</xsl:if>");
+		writer.println("				<xsl:if test=\"@arch\">");
+		writer.println("					<tr><td class=\"log-text\" id=\"indent\">Architecture:</td>");
+		writer.println("					<td class=\"log-text\" id=\"indent\"><xsl:value-of select=\"@arch\"/></td>");
+		writer.println("					</tr>");
+		writer.println("				</xsl:if>");
+		writer.println("			</table>");
 		writer.println("		</td>");
 		writer.println("	</tr>");
 		writer.println("	</xsl:for-each>");
-		writer.println("	<tr>");
-		writer.println("	<xsl:choose>");
-		writer.println("	<xsl:when test=\"(count(ancestor::category-def) mod 2 = 1)\">");
-		writer.println("	<xsl:attribute name=\"class\">dark-row</xsl:attribute>");
 		writer.println("	</xsl:when>");
 		writer.println("	<xsl:otherwise>");
-		writer.println("	<xsl:attribute name=\"class\">light-row</xsl:attribute>");
+		writer.println("	<xsl:for-each select=\"feature[not(category)]\">");
+		writer.println("	<xsl:sort select=\"@id\" order=\"ascending\" case-order=\"upper-first\"/>");
+		writer.println("	<xsl:sort select=\"@version\" order=\"ascending\" />");
+		writer.println("	<tr>");
+		writer.println("		<xsl:choose>");
+		writer.println("		<xsl:when test=\"count(preceding-sibling::feature[not(category)]) mod 2 = 1\">");
+		writer.println("		<xsl:attribute name=\"class\">dark-row</xsl:attribute>");
+		writer.println("		</xsl:when>");
+		writer.println("		<xsl:otherwise>");
+		writer.println("		<xsl:attribute name=\"class\">light-row</xsl:attribute>");
+		writer.println("		</xsl:otherwise>");
+		writer.println("		</xsl:choose>");
+		writer.println("		<td class=\"log-text\" id=\"indent\">");
+		writer.println("			<xsl:choose>");
+		writer.println("			<xsl:when test=\"@label\">");
+		writer.println("				<a href=\"{@url}\"><xsl:value-of select=\"@label\"/></a>");
+		writer.println("				<br />");
+		writer.println("				<div id=\"indent\">");
+		writer.println("				(<xsl:value-of select=\"@id\"/> - <xsl:value-of select=\"@version\"/>)");
+		writer.println("				</div>");
+		writer.println("			</xsl:when>");
+		writer.println("			<xsl:otherwise>");
+		writer.println("				<a href=\"{@url}\"><xsl:value-of select=\"@id\"/> - <xsl:value-of select=\"@version\"/></a>");
+		writer.println("			</xsl:otherwise>");
+		writer.println("			</xsl:choose>");
+		writer.println("			<br /><br />");
+		writer.println("		</td>");
+		writer.println("		<td>");
+		writer.println("			<table>");
+		writer.println("				<xsl:if test=\"@os\">");
+		writer.println("					<tr><td class=\"log-text\" id=\"indent\">Operating Systems:</td>");
+		writer.println("					<td class=\"log-text\" id=\"indent\"><xsl:value-of select=\"@os\"/></td>");
+		writer.println("					</tr>");
+		writer.println("				</xsl:if>");
+		writer.println("				<xsl:if test=\"@ws\">");
+		writer.println("					<tr><td class=\"log-text\" id=\"indent\">Windows Systems:</td>");
+		writer.println("					<td class=\"log-text\" id=\"indent\"><xsl:value-of select=\"@ws\"/></td>");
+		writer.println("					</tr>");
+		writer.println("				</xsl:if>");
+		writer.println("				<xsl:if test=\"@nl\">");
+		writer.println("					<tr><td class=\"log-text\" id=\"indent\">Languages:</td>");
+		writer.println("					<td class=\"log-text\" id=\"indent\"><xsl:value-of select=\"@nl\"/></td>");
+		writer.println("					</tr>");
+		writer.println("				</xsl:if>");
+		writer.println("				<xsl:if test=\"@arch\">");
+		writer.println("					<tr><td class=\"log-text\" id=\"indent\">Architecture:</td>");
+		writer.println("					<td class=\"log-text\" id=\"indent\"><xsl:value-of select=\"@arch\"/></td>");
+		writer.println("					</tr>");
+		writer.println("				</xsl:if>");
+		writer.println("			</table>");
+		writer.println("		</td>");
+		writer.println("	</tr>");
+		writer.println("	</xsl:for-each>");
 		writer.println("	</xsl:otherwise>");
 		writer.println("	</xsl:choose>");
-		writer.println("	<td class=\"log-text\">N/A</td>");
-		writer.println("	<td class=\"log-text\">N/A</td>");
-		writer.println("	<td class=\"log-text\">");
-		writer.println("		<xsl:for-each select=\"feature\">");
-		writer.println("		<xsl:sort select=\"@id\" order=\"ascending\" case-order=\"upper-first\"/>");
-		writer.println("		<xsl:sort select=\"@version\" order=\"ascending\" />");
-		writer.println("		<xsl:if test=\"not(category)\">");
-		writer.println("			<a href=\"{@url}\"><xsl:value-of select=\"@id\"/> - <xsl:value-of select=\"@version\"/></a>");
-		writer.println("			<xsl:if test=\"@label\">");
-		writer.println("				(<xsl:value-of select=\"@label\"/>)");
-		writer.println("			</xsl:if>");
-		writer.println("			<br/>");
-		writer.println("		</xsl:if>");
-		writer.println("		</xsl:for-each>");
-		writer.println("	</td>");
-		writer.println("	</tr>");
 		writer.println("	</table>");
 		writer.println("	</body>");
 		writer.println("	</html>");
 		writer.println("</xsl:for-each>");
 		writer.println("</xsl:template>");
 		writer.println("</xsl:stylesheet>");
-	
+
 		writer.flush();
 		swrite.close();
 		ByteArrayInputStream stream = new ByteArrayInputStream(swrite.toString().getBytes("UTF8"));
@@ -297,62 +421,79 @@ public class NewSiteProjectWizard
 			file.create(stream, false, null);
 		}
 		stream.close();
+		
+
 		} catch (Exception e){
 			PDEPlugin.logException(e);
 		}
 	}
-	private void createSiteProject(
+	private boolean createSiteProject(
 		IProject project,
 		IPath location,
 		SiteData data,
-		boolean createSiteHTML,
 		IProgressMonitor monitor)
 		throws CoreException {
 		monitor.beginTask(PDEPlugin.getResourceString(CREATING_PROJECT), 4);
 
-		boolean overwrite = true;
-		if (location.append(project.getName()).toFile().exists()) {
-			overwrite =
-				MessageDialog.openQuestion(
-					PDEPlugin.getActiveWorkbenchShell(),
-					getWindowTitle(),
-					PDEPlugin.getResourceString(OVERWRITE_SITE));
-		}
-		if (overwrite) {
+		if (!location.append(project.getName()).toFile().exists()) {
 			CoreUtility.createProject(project, location, monitor);
 			project.open(monitor);
 			CoreUtility.addNatureToProject(
 				project,
 				PDE.SITE_NATURE,
 				monitor);
-			createFolders(project, monitor);
+		}
+		
+		createFolders(project, monitor);
+		
+		if (!createdProject){
 			monitor.worked(2);
 			monitor.subTask(PDEPlugin.getResourceString(CREATING_MANIFEST));
 			// create site.xml
 			IFile file = createSiteManifest(project, data);
+			createdProject = true;
 			monitor.worked(1);
 			// open manifest for editing
 			openSiteManifest(file);
 			monitor.worked(1);
+			
 		} else {
-			project.create(monitor);
-			project.open(monitor);
+			if (!project.isOpen())
+				project.open(monitor);
 			IFile siteFile = project.getFile("site.xml");
 			if (siteFile.exists())
 				openSiteManifest(siteFile);
 			monitor.worked(4);
 		}
 		// create site.xsl, site.css, and index.html
-		if (createSiteHTML){
+		if (htmlPage.isCreateUpdateSiteHTML()){
 			createXSLFile(project);
 			createCSSFile(project);
 			createHTMLFile(project);
 		}
+		return true;
 	}
 	
 	private void createFolders(IProject project, IProgressMonitor monitor) throws CoreException {
-		createFolder(project, "features", monitor);
-		createFolder(project, "plugins", monitor);
+		String[] names = new String[]{htmlPage.getWebLocation(), htmlPage.getFeaturesLocation(), htmlPage.getPluginLocation()};
+		IFolder folder;
+		IPath path;
+		
+		for (int i =0 ; i<names.length; i++){
+			if (names[i].length() ==0 || (!htmlPage.isCreateUpdateSiteHTML() && i==0))
+				continue;
+			folder = project.getFolder(names[i]);
+			path = folder.getProjectRelativePath();
+			if (path.segmentCount()>0){
+				for (int j = 1; j<=path.segmentCount(); j++){
+					folder = project.getFolder(path.uptoSegment(j).toOSString());
+					if (!folder.exists())
+						createFolder(project, path.uptoSegment(j).toOSString(), monitor );
+				}
+			}
+				
+		}
+
 		createFolder(project, PDECore.SITEBUILD_DIR, monitor);
 	}
 	
@@ -391,12 +532,10 @@ public class NewSiteProjectWizard
 		final IProject project = mainPage.getProjectHandle();
 		final IPath location = mainPage.getLocationPath();
 		final SiteData data = new SiteData();
-		final boolean createHTMLSite = htmlPage.isCreateUpdateSiteHTML();
-		
 		IRunnableWithProgress operation = new WorkspaceModifyOperation() {
-			public void execute(IProgressMonitor monitor) {
+			public void execute(IProgressMonitor monitor){
 				try {
-					createSiteProject(project, location, data, createHTMLSite, monitor);
+					createSiteProject(project, location, data, monitor);
 				} catch (CoreException e){
 					PDEPlugin.logException(e);
 				} finally {
