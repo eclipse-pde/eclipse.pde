@@ -502,6 +502,10 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		for (int i = 0; i < files.length; i++) {
 			String fromDir = getPropertyFormat(PROPERTY_BASEDIR) + '/'; //$NON-NLS-1$
 			String file = files[i];
+			if (file.startsWith("absolute:")) { //$NON-NLS-1$
+				file = file.substring(9);
+				fromDir = ""; //$NON-NLS-1$
+			}
 			if (file.startsWith("file:")) { //$NON-NLS-1$
 				IPath target = new Path(file.substring(5));
 				fileSet[i] = new FileSet(fromDir + target.removeLastSegments(1), null, target.lastSegment(), null, null, null, null);
