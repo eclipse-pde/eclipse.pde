@@ -138,10 +138,10 @@ public class TargetPlatformRegistryLoader {
 	}
 	
 	private static String toString(VersionConstraint constraint) {
-		Version versionSpec = constraint.getVersionSpecification();
-		if (versionSpec == null)
+		VersionRange versionRange = constraint.getVersionRange();
+		if (versionRange == null || versionRange.getMinimum() != null)
 			return constraint.getName();
-		return constraint.getName() + '_' + versionSpec;
+		return constraint.getName() + '_' + versionRange;
 	}
 
 	
