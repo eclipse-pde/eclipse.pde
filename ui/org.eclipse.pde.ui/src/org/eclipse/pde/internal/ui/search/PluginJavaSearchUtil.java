@@ -24,17 +24,20 @@ import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
 
 public class PluginJavaSearchUtil {
 
-	public static void collectAllPrerequisites(IPlugin plugin, HashSet set) {		
+	public static void collectAllPrerequisites(IPlugin plugin, HashSet set) {
 		if (!set.add(plugin))
 			return;
-		
+
 		if (plugin.getModel() instanceof WorkspacePluginModelBase) {
-			IFragment[] fragments = PDECore.getDefault().getWorkspaceModelManager().getFragmentsFor(plugin.getId(),plugin.getVersion());
+			IFragment[] fragments =
+				PDECore.getDefault().getWorkspaceModelManager().getFragmentsFor(
+					plugin.getId(),
+					plugin.getVersion());
 			for (int i = 0; i < fragments.length; i++) {
 				set.add(fragments[i]);
 			}
 		}
-			
+
 		IPluginImport[] imports = plugin.getImports();
 		for (int i = 0; i < imports.length; i++) {
 			if (imports[i].isReexported()) {
@@ -44,10 +47,11 @@ public class PluginJavaSearchUtil {
 			}
 		}
 	}
-	
 
-	
-	public static IPackageFragment[] collectPackageFragments(IPluginBase[] models, IProject parentProject) throws JavaModelException {
+	public static IPackageFragment[] collectPackageFragments(
+		IPluginBase[] models,
+		IProject parentProject)
+		throws JavaModelException {
 		ArrayList result = new ArrayList();
 		IPackageFragmentRoot[] roots =
 			JavaCore.create(parentProject).getAllPackageFragmentRoots();
@@ -58,8 +62,7 @@ public class PluginJavaSearchUtil {
 			if (resource == null) {
 				ArrayList libraryPaths = getLibraryPaths(preReq);
 				for (int j = 0; j < roots.length; j++) {
-					if (libraryPaths
-						.contains(new Path(roots[j].getElementName()))) {
+					if (libraryPaths.contains(roots[j].getPath())) {
 						extractFragments(roots[j], result);
 					}
 				}
@@ -73,13 +76,11 @@ public class PluginJavaSearchUtil {
 				}
 			}
 		}
-		return (IPackageFragment[])result.toArray(new IPackageFragment[result.size()]);
-		
+		return (IPackageFragment[]) result.toArray(new IPackageFragment[result.size()]);
+
 	}
-	
-	private static void extractFragments(
-		IPackageFragmentRoot root,
-		ArrayList result) {
+
+	private static void extractFragments(IPackageFragmentRoot root, ArrayList result) {
 		try {
 			IJavaElement[] children = root.getChildren();
 			for (int i = 0; i < children.length; i++) {
@@ -95,15 +96,15 @@ public class PluginJavaSearchUtil {
 		ArrayList libraryPaths = new ArrayList();
 		IFragment[] fragments =
 			PDECore.getDefault().getExternalModelManager().getFragmentsFor(
-				plugin.getId(), plugin.getVersion());
+				plugin.getId(),
+				plugin.getVersion());
 
 		IPluginLibrary[] libraries = plugin.getLibraries();
 		for (int i = 0; i < libraries.length; i++) {
-			String libraryName = ClasspathUtilCore.expandLibraryName(libraries[i].getName());
+			String libraryName =
+				ClasspathUtilCore.expandLibraryName(libraries[i].getName());
 			String path =
-				plugin.getModel().getInstallLocation()
-					+ Path.SEPARATOR
-					+ libraryName;
+				plugin.getModel().getInstallLocation() + Path.SEPARATOR + libraryName;
 			if (new File(path).exists()) {
 				libraryPaths.add(new Path(path));
 			} else {
@@ -113,15 +114,20 @@ public class PluginJavaSearchUtil {
 		return libraryPaths;
 	}
 
-	private static void findLibraryInFragments(IFragment[] fragments, String libraryName, ArrayList libraryPaths) {
+	private static void findLibraryInFragments(
+		IFragment[] fragments,
+		String libraryName,
+		ArrayList libraryPaths) {
 		for (int i = 0; i < fragments.length; i++) {
-			String path = fragments[i].getModel().getInstallLocation() + Path.SEPARATOR + libraryName;
+			String path =
+				fragments[i].getModel().getInstallLocation()
+					+ Path.SEPARATOR
+					+ libraryName;
 			if (new File(path).exists()) {
 				libraryPaths.add(new Path(path));
 				break;
-			} 
+			}
 		}
 	}
-	
 
 }
