@@ -661,7 +661,7 @@ public class LogView extends ViewPart implements ILogListener {
 			memento.putInteger(P_COLUMN_1, 20);
 		width = memento.getInteger(P_COLUMN_2);	
 		if (width == null || width.intValue() == 0)
-			memento.putInteger(P_COLUMN_2, 150);
+			memento.putInteger(P_COLUMN_2, 300);
 		width = memento.getInteger(P_COLUMN_3);
 		if (width == null || width.intValue() == 0)
 			memento.putInteger(P_COLUMN_3, 150);
