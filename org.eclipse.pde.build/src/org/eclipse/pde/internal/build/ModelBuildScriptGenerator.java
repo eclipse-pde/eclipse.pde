@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.model.*;
 abstract class ModelBuildScriptGenerator extends PluginTool {
 
 	private Map jarsCache = new HashMap(9);
-	private Set requiredJars = null;
+	private List requiredJars = null;
 	private Hashtable devJars = null;
 	private Hashtable trimmedDevJars = null;
 	private ArrayList jarOrder = null;
@@ -44,37 +44,64 @@ abstract class ModelBuildScriptGenerator extends PluginTool {
 public ModelBuildScriptGenerator() {
 	super();
 }
-public ModelBuildScriptGenerator(PluginModel modelsToGenerate[],PluginRegistryModel registry) {
+public ModelBuildScriptGenerator(PluginModel modelsToGenerate[], PluginRegistryModel registry) {
 	this();
 	setModelsToGenerate(modelsToGenerate);
 	setRegistry(registry);
 }
+protected void addEntry(List list, Object entry) {
+	for (Iterator i = list.iterator(); i.hasNext();) 
+		if (i.next().equals(entry))
+			return;
+	list.add(entry);
+}
 protected String computeCompilePathClause(PluginModel descriptor, String fullJar) {
-	Set jars = new HashSet(9);
+	List jars = new ArrayList(9);
 	List devEntries = getDevEntries();
 	PluginModel desc = getRegistry().getPlugin(PLUGIN_RUNTIME);
-	jars.add(getLocation(desc) + RUNTIME_FILENAME);
 	if (devEntries != null)
 		for (Iterator i = devEntries.iterator(); i.hasNext();) 
-			jars.add(getLocation(desc) + i.next());
+			addEntry(jars, getLocation(desc) + i.next());
+	addEntry(jars, getLocation(desc) + RUNTIME_FILENAME);
 	
 	// The boot jar must be located relative to the runtime jar.  This reflects the actual
 	// runtime requirements.
 	String location = new Path(getLocation(desc)).removeLastSegments(1).toString();
-	jars.add(location + BOOT_FILENAME);
 	if (devEntries != null)
 		for (Iterator i = devEntries.iterator(); i.hasNext();) 
-			jars.add(location + "org.eclipse.core.boot/" +  i.next());
-			
-	jars.addAll(requiredJars);
-	jars.addAll(devJars.keySet());
+			addEntry(jars, location + "org.eclipse.core.boot/" +  i.next());
+	addEntry(jars, location + BOOT_FILENAME);
+
+	for (Iterator i = requiredJars.iterator(); i.hasNext();) 
+		addEntry(jars, i.next());
+	// see if the relative jar is in variable form (e.g., {ws/win32})
+	String[] var = extractVars(fullJar);
+	// add the dev jars which match the ws of the relative jar
+	for (Iterator i = devJars.keySet().iterator(); i.hasNext();) {
+		String jar = (String)i.next();
+		String[] jarVar = extractVars(jar);
+		if (jarVar[0] != null && jarVar[0].equals(var[0]) && jarVar[1].equals(var[1]))
+			addEntry(jars, jar);
+	}
 	jars.remove(fullJar);
+	if (var[0] != null) {
+		int start = fullJar.indexOf('{');
+		int end = fullJar.indexOf('}');
+		String resolvedFullJar = fullJar; 
+		resolvedFullJar = fullJar.substring(0, start);
+		resolvedFullJar += fullJar.substring(start + 1, end);
+		resolvedFullJar += fullJar.substring(end + 1);
+		jars.remove(resolvedFullJar);
+		resolvedFullJar = fullJar.substring(0, start);
+		resolvedFullJar += "$" + var[0] + "$";
+		resolvedFullJar += fullJar.substring(end + 1);
+		jars.remove(resolvedFullJar);
+	}
 	if (devEntries != null)
 		for (Iterator i = devEntries.iterator(); i.hasNext();) 
 			jars.remove(getLocation(descriptor) + i.next());
 	
-	Set relativeJars = makeRelative(jars, new Path(getLocation(descriptor)));
-	
+	List relativeJars = makeRelative(jars, new Path(getLocation(descriptor)));
 	String result = getStringFromCollection(relativeJars, "", "", ";");
 	result = replaceVariables(result);
 	return result;
@@ -110,6 +137,17 @@ public IStatus execute() {
 	}
 	
 	return getProblems();
+}
+private String[] extractVars(String entry) {
+		// see if the relative jar is in variable form (e.g., {ws/win32})
+	String[] result = new String[2];
+	int start = entry.indexOf('{');
+	if (start > -1) {
+		result[0] = entry.substring(start + 1, start + 3);
+		int end = entry.indexOf('}', start);
+		result[1] = entry.substring(start + 4, end);
+	}
+	return result;
 }
 public void generateBuildScript(PrintWriter output, PluginModel descriptor) {
 	initializeFor(descriptor);
@@ -158,8 +196,8 @@ protected void generateCleanTarget(PrintWriter output, PluginModel descriptor) {
 	ArrayList jars = new ArrayList(9);
 	ArrayList zips = new ArrayList(9);
 	
-	for (Iterator i = trimmedDevJars.keySet().iterator(); i.hasNext();) {
-		String jar = new Path((String) i.next()).lastSegment();
+	for (Iterator i = jarOrder.iterator(); i.hasNext();) {
+		String jar = removeBraces((String) i.next());
 		jars.add(jar);
 		zips.add(jar.substring(0, jar.length() - 4) + SOURCE_EXTENSION);
 	}
@@ -216,14 +254,14 @@ protected void generateJarsTarget(PrintWriter output, PluginModel descriptor) {
 	for (Iterator i = jarOrder.iterator(); i.hasNext();) {
 		jars.append(',');
 		String currentJar = (String)i.next();
-		jars.append(currentJar);
-		generateJarTarget(output,descriptor,currentJar);
+		jars.append(removeBraces(currentJar));
+		generateJarTarget(output, descriptor, currentJar);
 	}
 	output.println();
 	output.println("  <target name=\"" + TARGET_JAR + "\" depends=\"init" + jars.toString() + "\">");
 	output.println("  </target>");
 }
-protected void generateJarTarget(PrintWriter output, PluginModel descriptor,String relativeJar) {
+protected void generateJarTarget(PrintWriter output, PluginModel descriptor, String relativeJar) {
 	String fullJar = null;
 	try { 
 		fullJar = new URL(descriptor.getLocation() + relativeJar).getFile();
@@ -236,14 +274,15 @@ protected void generateJarTarget(PrintWriter output, PluginModel descriptor,Stri
 	Collection source = (Collection) trimmedDevJars.get(fullJar);
 	String src = (source == null || source.isEmpty()) ? "" : getStringFromCollection(source, "", "", ",");
 	String compilePath = computeCompilePathClause(descriptor, fullJar);
+	String jarName = removeBraces(relativeJar);
 	output.println();
-	output.println("  <target name=\"" + relativeJar + "\" depends=\"init\">");
+	output.println("  <target name=\"" + jarName + "\" depends=\"init\">");
 	output.println("    <property name=\"destroot\" value=\"${basedir}\"/>");
 	if (src.length() != 0) {
 		output.println("    <ant antfile=\"${template}\" target=\"" + TARGET_JAR + "\">");
 		output.println("      <property name=\"includes\" value=\"" + src + "\"/>");
 		output.println("      <property name=\"excludes\" value=\"\"/>");
-		output.println("      <property name=\"dest\" value=\"${destroot}/" + relativeJar + "\"/>");
+		output.println("      <property name=\"dest\" value=\"${destroot}/" + jarName + "\"/>");
 		output.println("      <property name=\"compilePath\" value=\"" + compilePath + "\"/>");
 		output.println("    </ant>");
 	}
@@ -393,27 +432,13 @@ protected void generatePrologue(PrintWriter output, PluginModel descriptor) {
 
 	output.println("  </target>");
 }
-protected void generateSrcTargets(PrintWriter output, PluginModel descriptor) {
-	StringBuffer jars = new StringBuffer();
-	for (Iterator i = jarOrder.iterator(); i.hasNext();) {
-		jars.append(",");
-		// zip name is jar name without the ".jar" but with SOURCE_EXTENSION appended
-		String jar = (String) i.next();
-		String zip = jar.substring(0, jar.length() - 4) + SOURCE_EXTENSION;
-		jars.append(zip);
-		generateSrcTarget(output, descriptor, jar, zip);
-	}
-	output.println();
-	output.println("  <target name=\"" + TARGET_SRC + "\" depends=\"init" + jars.toString() + "\">");
-	output.println("  </target>");
-}
-protected void generateSrcTarget(PrintWriter output,PluginModel descriptor,String relativeJar,String target) {
+protected void generateSrcTarget(PrintWriter output, PluginModel descriptor, String relativeJar, String target) {
 	String fullJar = null;
 	try { 
 		fullJar = new URL(descriptor.getLocation() + relativeJar).getFile();
 	} catch (MalformedURLException e) {
 		// should not happen
-		getPluginLog().log(new Status(IStatus.ERROR,PI_PDECORE,EXCEPTION_URL,Policy.bind("exception.url"),e));
+		getPluginLog().log(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_URL, Policy.bind("exception.url"), e));
 	}
 	// zip name is jar name without the ".jar" but with SOURCE_EXTENSION appended		
 	String zip = fullJar.substring(fullJar.lastIndexOf('/') + 1, fullJar.length() - 4) + SOURCE_EXTENSION;
@@ -447,33 +472,49 @@ protected void generateSrcTarget(PrintWriter output,PluginModel descriptor,Strin
 	}
 	output.println("  </target>");
 }
+protected void generateSrcTargets(PrintWriter output, PluginModel descriptor) {
+	StringBuffer jars = new StringBuffer();
+	for (Iterator i = jarOrder.iterator(); i.hasNext();) {
+		jars.append(",");
+		// zip name is jar name without the ".jar" but with SOURCE_EXTENSION appended
+		String jar = (String) i.next();
+		String zip = removeBraces(jar);
+		zip = zip.substring(0, zip.length() - 4) + SOURCE_EXTENSION;
+		jars.append(zip);
+		generateSrcTarget(output, descriptor, jar, zip);
+	}
+	output.println();
+	output.println("  <target name=\"" + TARGET_SRC + "\" depends=\"init" + jars.toString() + "\">");
+	output.println("  </target>");
+}
 
 protected abstract String getComponentDirectoryName();
 
-protected Set getJars(PluginModel descriptor) {
-	Set result = (Set) jarsCache.get(descriptor.getId());
-	
+protected List getJars(PluginModel descriptor) {
+	List result = (List) jarsCache.get(descriptor.getId());
 	if (result != null)
 		return result;
-		
-	result = new HashSet(9);
+	result = new ArrayList(9);
 	LibraryModel[] libs = descriptor.getRuntime();
 	List devEntries = getDevEntries();
 	
 	if (libs != null) {
 		if (devEntries != null)
 			for (Iterator i = devEntries.iterator(); i.hasNext();) 
-				result.add(getLocation(descriptor) + i.next());
+				addEntry(result, getLocation(descriptor) + i.next());
 		for (int i = 0; i < libs.length; i++)
-			result.add(getLocation(descriptor) + libs[i].getName());
+			addEntry(result, getLocation(descriptor) + libs[i].getName());
 	}
 	
 	PluginPrerequisiteModel[] prereqs = descriptor.getRequires();
 	if (prereqs != null) {
 		for (int i = 0; i < prereqs.length; i++) {
 			PluginModel prereq = getRegistry().getPlugin(prereqs[i].getPlugin());
-			if (prereq != null)
-				result.addAll(getJars(prereq));
+			if (prereq != null) {
+				List prereqJars = getJars(prereq);
+				for (Iterator j = prereqJars.iterator(); j.hasNext();) 
+					addEntry(result, j.next());
+			}
 		}
 	}
 	
@@ -538,13 +579,8 @@ protected Hashtable loadJarDefinitions(PluginModel descriptor) {
 			is.close();
 		}
 	} catch (IOException e) {
-		addProblem(new Status(
-			IStatus.ERROR,
-			PluginTool.PI_PDECORE,
-			ScriptGeneratorConstants.EXCEPTION_FILE_MISSING,
-			Policy.bind("exception.missingFile",location.toString()),
-			null));
-				
+		String message = Policy.bind("exception.missingFile",location.toString());
+		addProblem(new Status(IStatus.ERROR, PluginTool.PI_PDECORE, ScriptGeneratorConstants.EXCEPTION_FILE_MISSING, message, null));
 		return new Hashtable(1);
 	}
 	
@@ -557,10 +593,10 @@ protected Hashtable loadJarDefinitions(PluginModel descriptor) {
 	
 	return result;
 }
-protected Set makeRelative(Set jars, IPath base) {
-	Set result = new HashSet(jars.size());
+protected List makeRelative(List jars, IPath base) {
+	List result = new ArrayList(jars.size());
 	for (Iterator i = jars.iterator(); i.hasNext();) 
-		result.add(makeRelative((String) i.next(), base));
+		addEntry(result, makeRelative((String) i.next(), base));
 	return result;
 }
 protected PrintWriter openOutput(PluginModel descriptor) throws IOException {
@@ -593,15 +629,25 @@ protected String[] processCommandLine(String[] args) {
 	
 	return new String[0];
 }
+protected String removeBraces (String entry) {
+	int start = entry.indexOf('{');
+	if (start == -1)
+		return entry;
+	int end = entry.indexOf('}');
+	String result = entry.substring(0, start);
+	result += entry.substring(start + 1, end);
+	result += entry.substring(end + 1);
+	return result;
+}
 protected String replaceVariables(String sourceString) {
 	int i = -1;
 	String result = sourceString;
 	while ((i = result.indexOf(WS)) >= 0)
-		result = result.substring(0, i) + VARIABLE_WS + result.substring(i + WS.length());
+		result = result.substring(0, i) + "ws/" + VARIABLE_WS + result.substring(i + WS.length());
 	while ((i = result.indexOf(OS)) >= 0)
-		result = result.substring(0, i) + VARIABLE_OS + result.substring(i + OS.length());
+		result = result.substring(0, i) + "os/" + VARIABLE_OS + result.substring(i + OS.length());
 	while ((i = result.indexOf(NL)) >= 0)
-		result = result.substring(0, i) + VARIABLE_NL + result.substring(i + NL.length());
+		result = result.substring(0, i) + "nl/" + VARIABLE_NL + result.substring(i + NL.length());
 	return result;
 }			
 protected void retrieveCommandLineModels() {
