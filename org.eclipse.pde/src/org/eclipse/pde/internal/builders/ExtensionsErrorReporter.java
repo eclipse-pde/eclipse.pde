@@ -209,7 +209,7 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 	}
 
 	private void validateExtensionAttribute(Element element, Attr attr, ISchemaAttribute attInfo) {
-		if (attInfo.getUse() == ISchemaAttribute.DEPRECATED) {
+		if (attInfo.isTranslatable()) {
 			report(PDE.getFormattedMessage("Builders.Manifest.deprecated-attribute", attr.getName()), //$NON-NLS-1$
 					getLine(element, attr.getName()), CompilerFlags.WARNING);
 		}
