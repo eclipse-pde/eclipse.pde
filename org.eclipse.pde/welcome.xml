@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<welcomePage 
+	title="Welcome to the Eclipse Plug-in Development Environment (PDE)">
+	<intro>This page will help familiarize you with the Eclipse Plug-in Development Environment.
+To get started, read the sections below and click on the related links. </intro>
+
+<item><b>Learn more </b>
+To learn more you can browse the 
+<topic id="/org.eclipse.pde.doc.user/toc.xml">Eclipse Plug-in Development Environment User Guide</topic>.</item>
+
+</welcomePage>
