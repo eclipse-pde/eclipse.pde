@@ -39,7 +39,7 @@ public class PDERuntimePlugin extends AbstractUIPlugin {
 		try {
 			resourceBundle =
 				ResourceBundle.getBundle(
-					"org.eclipse.pde.internal.runtime.pderuntimeresources");
+					"org.eclipse.pde.internal.runtime.pderuntimeresources"); //$NON-NLS-1$
 		} catch (MissingResourceException x) {
 			resourceBundle = null;
 		}

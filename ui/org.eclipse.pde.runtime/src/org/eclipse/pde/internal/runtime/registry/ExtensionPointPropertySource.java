@@ -18,10 +18,10 @@ import org.eclipse.ui.views.properties.*;
 
 public class ExtensionPointPropertySource extends RegistryPropertySource {
 	private IExtensionPoint extensionPoint;
-	public static final String P_NAME = "name";
-	public static final String KEY_ID = "RegistryView.extensionPointPR.id";
-	public static final String KEY_NAME = "RegistryView.extensionPointPR.name";
-	public static final String P_ID = "id";
+	public static final String P_NAME = "name"; //$NON-NLS-1$
+	public static final String KEY_ID = "RegistryView.extensionPointPR.id"; //$NON-NLS-1$
+	public static final String KEY_NAME = "RegistryView.extensionPointPR.name"; //$NON-NLS-1$
+	public static final String P_ID = "id"; //$NON-NLS-1$
 
 public ExtensionPointPropertySource(IExtensionPoint extensionPoint) {
 	this.extensionPoint = extensionPoint;

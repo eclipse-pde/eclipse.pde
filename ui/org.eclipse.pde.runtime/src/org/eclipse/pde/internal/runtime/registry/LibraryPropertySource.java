@@ -18,12 +18,12 @@ import org.eclipse.ui.views.properties.*;
 
 public class LibraryPropertySource extends RegistryPropertySource {
 	private ILibrary library;
-	public static final String P_PATH = "path";
-	public static final String KEY_PATH = "RegistryView.libraryPR.path";
-	public static final String KEY_EXPORTED = "RegistryView.libraryPR.exported";
-	public static final String KEY_FULLY_EXPORTED = "RegistryView.libraryPR.fullyExported";
-	public static final String P_EXPORTED = "exported";
-	public static final String P_FULLY_EXPORTED = "fully_exported";
+	public static final String P_PATH = "path"; //$NON-NLS-1$
+	public static final String KEY_PATH = "RegistryView.libraryPR.path"; //$NON-NLS-1$
+	public static final String KEY_EXPORTED = "RegistryView.libraryPR.exported"; //$NON-NLS-1$
+	public static final String KEY_FULLY_EXPORTED = "RegistryView.libraryPR.fullyExported"; //$NON-NLS-1$
+	public static final String P_EXPORTED = "exported"; //$NON-NLS-1$
+	public static final String P_FULLY_EXPORTED = "fully_exported"; //$NON-NLS-1$
 
 public LibraryPropertySource(ILibrary library) {
 	this.library = library;
@@ -40,9 +40,9 @@ public Object getPropertyValue(Object name) {
 	if (name.equals(P_PATH))
 		return library.getPath().toString();
 	if (name.equals(P_EXPORTED))
-		return library.isExported()?"true":"false";
+		return library.isExported()?"true":"false"; //$NON-NLS-1$ //$NON-NLS-2$
 	if (name.equals(P_FULLY_EXPORTED))
-		return library.isFullyExported()?"true":"false";
+		return library.isFullyExported()?"true":"false"; //$NON-NLS-1$ //$NON-NLS-2$
 	return null;
 }
 }

@@ -42,19 +42,19 @@ public class FilterDialog extends Dialog {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 275;
 		group.setLayoutData(gd);
-		group.setText(PDERuntimePlugin.getResourceString("LogView.FilterDialog.eventTypes"));
+		group.setText(PDERuntimePlugin.getResourceString("LogView.FilterDialog.eventTypes")); //$NON-NLS-1$
 		
 		infoButton = new Button(group, SWT.CHECK);
-		infoButton.setText(PDERuntimePlugin.getResourceString("LogView.FilterDialog.information"));
-		infoButton.setSelection(memento.getString(LogView.P_LOG_INFO).equals("true"));
+		infoButton.setText(PDERuntimePlugin.getResourceString("LogView.FilterDialog.information")); //$NON-NLS-1$
+		infoButton.setSelection(memento.getString(LogView.P_LOG_INFO).equals("true")); //$NON-NLS-1$
 		
 		warningButton = new Button(group, SWT.CHECK);
-		warningButton.setText(PDERuntimePlugin.getResourceString("LogView.FilterDialog.warning"));
-		warningButton.setSelection(memento.getString(LogView.P_LOG_WARNING).equals("true"));
+		warningButton.setText(PDERuntimePlugin.getResourceString("LogView.FilterDialog.warning")); //$NON-NLS-1$
+		warningButton.setSelection(memento.getString(LogView.P_LOG_WARNING).equals("true")); //$NON-NLS-1$
 		
 		errorButton = new Button(group, SWT.CHECK);
-		errorButton.setText(PDERuntimePlugin.getResourceString("LogView.FilterDialog.error"));
-		errorButton.setSelection(memento.getString(LogView.P_LOG_ERROR).equals("true"));		
+		errorButton.setText(PDERuntimePlugin.getResourceString("LogView.FilterDialog.error")); //$NON-NLS-1$
+		errorButton.setSelection(memento.getString(LogView.P_LOG_ERROR).equals("true"));		 //$NON-NLS-1$
 	}
 	
 	private void createLimitSection(Composite parent) {
@@ -65,8 +65,8 @@ public class FilterDialog extends Dialog {
 		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		limit = new Button(comp, SWT.CHECK);
-		limit.setText(PDERuntimePlugin.getResourceString("LogView.FilterDialog.limitTo"));
-		limit.setSelection(memento.getString(LogView.P_USE_LIMIT).equals("true"));
+		limit.setText(PDERuntimePlugin.getResourceString("LogView.FilterDialog.limitTo")); //$NON-NLS-1$
+		limit.setSelection(memento.getString(LogView.P_USE_LIMIT).equals("true")); //$NON-NLS-1$
 		limit.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			limitText.setEnabled(((Button)e.getSource()).getSelection());
@@ -96,21 +96,21 @@ public class FilterDialog extends Dialog {
 		container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		Label label = new Label(container, SWT.NONE);
-		label.setText(PDERuntimePlugin.getResourceString("LogView.FilterDialog.eventsLogged"));
+		label.setText(PDERuntimePlugin.getResourceString("LogView.FilterDialog.eventsLogged")); //$NON-NLS-1$
 		
 		showAllButton = new Button(container, SWT.RADIO);
-		showAllButton.setText(PDERuntimePlugin.getResourceString("LogView.FilterDialog.allSessions"));
+		showAllButton.setText(PDERuntimePlugin.getResourceString("LogView.FilterDialog.allSessions")); //$NON-NLS-1$
 		GridData gd = new GridData();
 		gd.horizontalIndent = 20;
 		showAllButton.setLayoutData(gd);
 		
 		Button button = new Button(container, SWT.RADIO);
-		button.setText(PDERuntimePlugin.getResourceString("LogView.FilterDialog.recentSession"));
+		button.setText(PDERuntimePlugin.getResourceString("LogView.FilterDialog.recentSession")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalIndent = 20;
 		button.setLayoutData(gd);
 		
-		if (memento.getString(LogView.P_SHOW_ALL_SESSIONS).equals("true")) {
+		if (memento.getString(LogView.P_SHOW_ALL_SESSIONS).equals("true")) { //$NON-NLS-1$
 			showAllButton.setSelection(true);
 		} else {
 			button.setSelection(true);
@@ -131,12 +131,12 @@ public class FilterDialog extends Dialog {
 	}
 	
 	protected void okPressed() {
-		memento.putString(LogView.P_LOG_INFO, infoButton.getSelection() ? "true" : "false");
-		memento.putString(LogView.P_LOG_WARNING, warningButton.getSelection() ? "true" : "false");
-		memento.putString(LogView.P_LOG_ERROR, errorButton.getSelection() ? "true" : "false");
+		memento.putString(LogView.P_LOG_INFO, infoButton.getSelection() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
+		memento.putString(LogView.P_LOG_WARNING, warningButton.getSelection() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
+		memento.putString(LogView.P_LOG_ERROR, errorButton.getSelection() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 		memento.putString(LogView.P_LOG_LIMIT, limitText.getText());
-		memento.putString(LogView.P_USE_LIMIT, limit.getSelection() ? "true" : "false");
-		memento.putString(LogView.P_SHOW_ALL_SESSIONS, showAllButton.getSelection() ? "true" : "false");
+		memento.putString(LogView.P_USE_LIMIT, limit.getSelection() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
+		memento.putString(LogView.P_SHOW_ALL_SESSIONS, showAllButton.getSelection() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 		super.okPressed();
 	}
 

@@ -23,17 +23,17 @@ import org.eclipse.pde.internal.runtime.*;
  * @since 3.0
  */
 public class TogglePropertiesAction extends Action {
-	public static final String SHOW_PROPERTIES_SHEET = "RegistryView.showPropertiesSheet.label";
-	public static final String SHOW_PROPERTIES_SHEET_TOOLTIP = "RegistryView.showPropertiesSheet.tooltip";
-	public static final String SHOW_PROPERTIES_SHEET_DESC = "RegistryView.showPropertiesSheet.desc";
+	public static final String SHOW_PROPERTIES_SHEET = "RegistryView.showPropertiesSheet.label"; //$NON-NLS-1$
+	public static final String SHOW_PROPERTIES_SHEET_TOOLTIP = "RegistryView.showPropertiesSheet.tooltip"; //$NON-NLS-1$
+	public static final String SHOW_PROPERTIES_SHEET_DESC = "RegistryView.showPropertiesSheet.desc"; //$NON-NLS-1$
 	
-	public static final String USE_VERTICAL_ORIENTATION = "RegistryView.verticalOrientation.label";
-	public static final String USE_VERTICAL_ORIENTATION_TOOLTIP = "RegistryView.verticalOrientation.tooltip";
-	public static final String USE_VERTICAL_ORIENTATION_DESC = "RegistryView.verticalOrientation.desc";
+	public static final String USE_VERTICAL_ORIENTATION = "RegistryView.verticalOrientation.label"; //$NON-NLS-1$
+	public static final String USE_VERTICAL_ORIENTATION_TOOLTIP = "RegistryView.verticalOrientation.tooltip"; //$NON-NLS-1$
+	public static final String USE_VERTICAL_ORIENTATION_DESC = "RegistryView.verticalOrientation.desc"; //$NON-NLS-1$
 	
-	public static final String USE_HORIZONTAL_ORIENTATION = "RegistryView.horizontalOrientation.label";
-	public static final String USE_HORIZONTAL_ORIENTATION_TOOLTIP = "RegistryView.horizontalOrientation.tooltip";
-	public static final String USE_HORIZONTAL_ORIENTATION_DESC = "RegistryView.horizontalOrientation.desc";
+	public static final String USE_HORIZONTAL_ORIENTATION = "RegistryView.horizontalOrientation.label"; //$NON-NLS-1$
+	public static final String USE_HORIZONTAL_ORIENTATION_TOOLTIP = "RegistryView.horizontalOrientation.tooltip"; //$NON-NLS-1$
+	public static final String USE_HORIZONTAL_ORIENTATION_DESC = "RegistryView.horizontalOrientation.desc"; //$NON-NLS-1$
 	
 	private RegistryBrowser fViewer;
 	private int fOrientation;

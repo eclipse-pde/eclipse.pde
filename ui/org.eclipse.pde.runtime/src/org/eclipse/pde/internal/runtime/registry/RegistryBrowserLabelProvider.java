@@ -33,11 +33,11 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 	private Image genericTagImage;
 	private Image extensionImage;
 	private Image extensionsImage;
-	private static final String KEY_IMPORTS = "RegistryView.folders.imports";
-	private static final String KEY_LIBRARIES = "RegistryView.folders.libraries";
+	private static final String KEY_IMPORTS = "RegistryView.folders.imports"; //$NON-NLS-1$
+	private static final String KEY_LIBRARIES = "RegistryView.folders.libraries"; //$NON-NLS-1$
 	private static final String KEY_EXPOINTS =
-		"RegistryView.folders.extensionPoints";
-	private static final String KEY_EXTENSIONS = "RegistryView.folders.extensions";
+		"RegistryView.folders.extensionPoints"; //$NON-NLS-1$
+	private static final String KEY_EXTENSIONS = "RegistryView.folders.extensions"; //$NON-NLS-1$
 	private Image extensionPointImage;
 	private Image extensionPointsImage;
 	private Image requiresImage;
@@ -139,7 +139,7 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 				return ((IExtension) element).getExtensionPointUniqueIdentifier();
 
 			IPluginDescriptor desc = ((IExtension) element).getDeclaringPluginDescriptor();
-			return "contributed by: "+ desc.getUniqueIdentifier();
+			return "contributed by: "+ desc.getUniqueIdentifier(); //$NON-NLS-1$
 			
 		}
 		if (element instanceof IExtensionPoint) {
@@ -157,12 +157,12 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 			return ((ManifestElement)element).getValue();
 		}
 		if (element instanceof IConfigurationElement) {
-			String label = ((IConfigurationElement) element).getAttribute("label");
+			String label = ((IConfigurationElement) element).getAttribute("label"); //$NON-NLS-1$
 			if (label == null){
-				label = ((IConfigurationElement) element).getAttribute("name");
+				label = ((IConfigurationElement) element).getAttribute("name"); //$NON-NLS-1$
 			}
-			if (label == null && ((IConfigurationElement) element).getAttribute("id") != null){
-				String[] labelSplit = ((IConfigurationElement) element).getAttribute("id").split("\\.");
+			if (label == null && ((IConfigurationElement) element).getAttribute("id") != null){ //$NON-NLS-1$
+				String[] labelSplit = ((IConfigurationElement) element).getAttribute("id").split("\\."); //$NON-NLS-1$ //$NON-NLS-2$
 				label = labelSplit.length == 0 ? null: labelSplit[labelSplit.length-1];
 			} 
 			if (label == null){

@@ -15,6 +15,7 @@ import java.util.*;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
 import org.eclipse.ui.IMemento;
 
 class LogReader {
@@ -39,7 +40,7 @@ class LogReader {
 		currentSession = null;
 		BufferedReader reader = null;
 		try {
-			reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
+			reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8")); //$NON-NLS-1$
 			while(reader.ready()) {
 				String line = reader.readLine();
 				if (line == null)
@@ -48,15 +49,15 @@ class LogReader {
 				if (line.length() == 0)
 					continue;
 
-				if (line.startsWith("!SESSION")) {
+				if (line.startsWith(PDERuntimePlugin.getResourceString("LogReader.session"))) { //$NON-NLS-1$
 					state = SESSION_STATE;
-				} else if (line.startsWith("!ENTRY")) {
+				} else if (line.startsWith(PDERuntimePlugin.getResourceString("LogReader.entry"))) { //$NON-NLS-1$
 					state = ENTRY_STATE;
-				} else if (line.startsWith("!SUBENTRY")) {
+				} else if (line.startsWith(PDERuntimePlugin.getResourceString("LogReader.subentry"))) { //$NON-NLS-1$
 					state = SUBENTRY_STATE;
-				} else if (line.startsWith("!MESSAGE")) {
+				} else if (line.startsWith(PDERuntimePlugin.getResourceString("LogReader.message"))) { //$NON-NLS-1$
 					state = MESSAGE_STATE;
-				} else if (line.startsWith("!STACK")) {
+				} else if (line.startsWith(PDERuntimePlugin.getResourceString("LogReader.stack"))) { //$NON-NLS-1$
 					state = STACK_STATE;
 				} else
 					state = TEXT_STATE;
@@ -95,7 +96,7 @@ class LogReader {
 					writer = new PrintWriter(swriter, true);
 					writerState = SESSION_STATE;
 					updateCurrentSession(session);
-					if (currentSession.equals(session) && !memento.getString(LogView.P_SHOW_ALL_SESSIONS).equals("true"))
+					if (currentSession.equals(session) && !memento.getString(LogView.P_SHOW_ALL_SESSIONS).equals("true")) //$NON-NLS-1$
 						entries.clear();
 				} else if (state == ENTRY_STATE) {
 					LogEntry entry = new LogEntry();
@@ -115,7 +116,7 @@ class LogReader {
 				} else if (state == MESSAGE_STATE) {
 					swriter = new StringWriter();
 					writer = new PrintWriter(swriter, true);
-					String message = "";
+					String message = ""; //$NON-NLS-1$
 					if (line.length() > 8)
 						message = line.substring(9).trim();
 					message = message.trim();
@@ -155,13 +156,13 @@ class LogReader {
 		boolean doAdd = true;
 		switch(severity) {
 			case IStatus.INFO:
-				doAdd = memento.getString(LogView.P_LOG_INFO).equals("true");
+				doAdd = memento.getString(LogView.P_LOG_INFO).equals("true"); //$NON-NLS-1$
 				break;
 			case IStatus.WARNING:
-				doAdd = memento.getString(LogView.P_LOG_WARNING).equals("true");
+				doAdd = memento.getString(LogView.P_LOG_WARNING).equals("true"); //$NON-NLS-1$
 				break;
 			case IStatus.ERROR:
-				doAdd = memento.getString(LogView.P_LOG_ERROR).equals("true");
+				doAdd = memento.getString(LogView.P_LOG_ERROR).equals("true"); //$NON-NLS-1$
 				break;
 		}
 		if (doAdd) {
@@ -169,7 +170,7 @@ class LogReader {
 				current.setSession(currentSession);
 			entries.add(0, current);
 			
-			if (memento.getString(LogView.P_USE_LIMIT).equals("true")
+			if (memento.getString(LogView.P_USE_LIMIT).equals("true") //$NON-NLS-1$
 				&& entries.size() > memento.getInteger(LogView.P_LOG_LIMIT).intValue())
 				entries.remove(entries.size() - 1);
 		}

@@ -61,6 +61,6 @@ public class LogViewLabelProvider
 			case 4 :
 				return entry.getDate();
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 }

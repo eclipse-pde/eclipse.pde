@@ -20,9 +20,9 @@ import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
-	private static final String KEY_ERROR = "LogView.severity.error";
-	private static final String KEY_WARNING = "LogView.severity.warning";
-	private static final String KEY_INFO = "LogView.severity.info";
+	private static final String KEY_ERROR = "LogView.severity.error"; //$NON-NLS-1$
+	private static final String KEY_WARNING = "LogView.severity.warning"; //$NON-NLS-1$
+	private static final String KEY_INFO = "LogView.severity.info"; //$NON-NLS-1$
 	private ArrayList children;
 	private LogEntry parent;
 	private String pluginId;
@@ -121,13 +121,13 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 			case IStatus.INFO :
 				return PDERuntimePlugin.getResourceString(KEY_INFO);
 		}
-		return "?";
+		return "?"; //$NON-NLS-1$
 	}
 
 	int processLogLine(String line, boolean root) {
 		//!ENTRY <pluginID> <severity> <code> <date>
 		//!SUBENTRY <depth> <pluginID> <severity> <code> <date>
-		StringTokenizer stok = new StringTokenizer(line, " ", true);
+		StringTokenizer stok = new StringTokenizer(line, " ", true); //$NON-NLS-1$
 		StringBuffer dateBuffer = new StringBuffer();
 
 		int dateCount = 5;
@@ -137,7 +137,7 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 			if (i >= dateCount) {
 				dateBuffer.append(token);
 				continue;
-			} else if (token.equals(" "))
+			} else if (token.equals(" ")) //$NON-NLS-1$
 				continue;
 			switch (i) {
 				case 0 : // entry or subentry
@@ -217,11 +217,11 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 	public void write(PrintWriter writer) {
 		writer.print(getSeverityText());
 		if (date != null) {
-			writer.print(" ");
+			writer.print(" "); //$NON-NLS-1$
 			writer.print(getDate());
 		}
 		if (message != null) {
-			writer.print(" ");
+			writer.print(" "); //$NON-NLS-1$
 			writer.print(getMessage());
 		}
 		writer.println();

@@ -35,7 +35,7 @@ public class EventDetailsDialogAction extends SelectionProviderAction{
 	 * the property dialog will describe
 	 */
 	public EventDetailsDialogAction(Shell shell, ISelectionProvider provider){
-		super(provider, WorkbenchMessages.getString("PropertyDialog.text"));
+		super(provider, WorkbenchMessages.getString("PropertyDialog.text")); //$NON-NLS-1$
 		Assert.isNotNull(shell);
 		this.shell = shell;
 		this.provider = provider;
@@ -75,7 +75,7 @@ public class EventDetailsDialogAction extends SelectionProviderAction{
 		
 		propertyDialog = new EventDetailsDialog(shell, element, provider);
 		propertyDialog.create();
-		propertyDialog.getShell().setText(PDERuntimePlugin.getResourceString("EventDetailsDialog.title"));
+		propertyDialog.getShell().setText(PDERuntimePlugin.getResourceString("EventDetailsDialog.title")); //$NON-NLS-1$
 		propertyDialog.open();
 	}
 }

@@ -64,10 +64,10 @@ public class EventDetailsDialog extends Dialog {
 	private int[] sashWeights;
 	
 	// externalize strings
-	private String EVENT_NO_STACK = "EventDetailsDialog.noStack";
-	private String EVENT_PREVIOUS = "EventDetailsDialog.previous";
-	private String EVENT_NEXT = "EventDetailsDialog.next";
-	private String EVENT_COPY = "EventDetailsDialog.copy";
+	private String EVENT_NO_STACK = "EventDetailsDialog.noStack"; //$NON-NLS-1$
+	private String EVENT_PREVIOUS = "EventDetailsDialog.previous"; //$NON-NLS-1$
+	private String EVENT_NEXT = "EventDetailsDialog.next"; //$NON-NLS-1$
+	private String EVENT_COPY = "EventDetailsDialog.copy"; //$NON-NLS-1$
 
 	/**
 	 * @param parentShell
@@ -412,7 +412,7 @@ public class EventDetailsDialog extends Dialog {
 		container.setLayout(layout);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		backButton = createButton(container, IDialogConstants.BACK_ID, "", false);
+		backButton = createButton(container, IDialogConstants.BACK_ID, "", false); //$NON-NLS-1$
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 3;
 		gd.verticalSpan = 1;
@@ -420,7 +420,7 @@ public class EventDetailsDialog extends Dialog {
 		backButton.setToolTipText(PDERuntimePlugin.getResourceString(EVENT_PREVIOUS));
 		backButton.setImage(imgPrevEnabled);
 		
-		nextButton = createButton(container, IDialogConstants.NEXT_ID, "", false);
+		nextButton = createButton(container, IDialogConstants.NEXT_ID, "", false); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		gd.verticalSpan = 1;
@@ -428,7 +428,7 @@ public class EventDetailsDialog extends Dialog {
 		nextButton.setToolTipText(PDERuntimePlugin.getResourceString(EVENT_NEXT));
 		nextButton.setImage(imgNextEnabled);
 		
-		copyButton = createButton(container, COPY_ID, "", false);
+		copyButton = createButton(container, COPY_ID, "", false); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		gd.verticalSpan = 1;
@@ -571,13 +571,13 @@ public class EventDetailsDialog extends Dialog {
 			int y= s.getInt("y"); //$NON-NLS-1$
 			dialogLocation= new Point(x, y);
 			
-			x = s.getInt("width");
-			y = s.getInt("height");
+			x = s.getInt("width"); //$NON-NLS-1$
+			y = s.getInt("height"); //$NON-NLS-1$
 			dialogSize = new Point(x,y);
 			
 			sashWeights = new int[2];
-			sashWeights[0] = s.getInt("sashWidth1");
-			sashWeights[1] = s.getInt("sashWidth2");
+			sashWeights[0] = s.getInt("sashWidth1"); //$NON-NLS-1$
+			sashWeights[1] = s.getInt("sashWidth2"); //$NON-NLS-1$
 			
 		} catch (NumberFormatException e) {
 			dialogLocation= null;
@@ -589,15 +589,15 @@ public class EventDetailsDialog extends Dialog {
 	private void writeConfiguration(){
 		IDialogSettings s = getDialogSettings();
 		Point location = getShell().getLocation();
-		s.put("x", location.x);
-		s.put("y", location.y);
+		s.put("x", location.x); //$NON-NLS-1$
+		s.put("y", location.y); //$NON-NLS-1$
 		
 		Point size = getShell().getSize();
-		s.put("width", size.x);
-		s.put("height", size.y);
+		s.put("width", size.x); //$NON-NLS-1$
+		s.put("height", size.y); //$NON-NLS-1$
 		
 		sashWeights = getSashForm().getWeights();
-		s.put("sashWidth1", sashWeights[0]);
-		s.put("sashWidth2", sashWeights[1]);
+		s.put("sashWidth1", sashWeights[0]); //$NON-NLS-1$
+		s.put("sashWidth2", sashWeights[1]); //$NON-NLS-1$
 	}
 }

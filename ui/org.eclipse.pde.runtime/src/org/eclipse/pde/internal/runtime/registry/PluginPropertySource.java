@@ -18,18 +18,18 @@ import org.eclipse.ui.views.properties.*;
 
 public class PluginPropertySource extends RegistryPropertySource {
 	private IPluginDescriptor pd;
-	public static final String P_INSTALL_URL="installURL";
-	public static final String P_NAME = "name";
-	public static final String P_ID = "id";
-	public static final String P_PROVIDER = "provider";
-	public static final String P_VERSION = "version";
-	public static final String P_ACTIVATED = "activated";
-	public static final String KEY_ACTIVATED = "RegistryView.pluginPR.activated";
-	public static final String KEY_INSTALL_URL = "RegistryView.pluginPR.installURL";
-	public static final String KEY_NAME = "RegistryView.pluginPR.name";
-	public static final String KEY_ID = "RegistryView.pluginPR.id";
-	public static final String KEY_PROVIDER_NAME = "RegistryView.pluginPR.providerName";
-	public static final String KEY_VERSION = "RegistryView.pluginPR.version";
+	public static final String P_INSTALL_URL="installURL"; //$NON-NLS-1$
+	public static final String P_NAME = "name"; //$NON-NLS-1$
+	public static final String P_ID = "id"; //$NON-NLS-1$
+	public static final String P_PROVIDER = "provider"; //$NON-NLS-1$
+	public static final String P_VERSION = "version"; //$NON-NLS-1$
+	public static final String P_ACTIVATED = "activated"; //$NON-NLS-1$
+	public static final String KEY_ACTIVATED = "RegistryView.pluginPR.activated"; //$NON-NLS-1$
+	public static final String KEY_INSTALL_URL = "RegistryView.pluginPR.installURL"; //$NON-NLS-1$
+	public static final String KEY_NAME = "RegistryView.pluginPR.name"; //$NON-NLS-1$
+	public static final String KEY_ID = "RegistryView.pluginPR.id"; //$NON-NLS-1$
+	public static final String KEY_PROVIDER_NAME = "RegistryView.pluginPR.providerName"; //$NON-NLS-1$
+	public static final String KEY_VERSION = "RegistryView.pluginPR.version"; //$NON-NLS-1$
 
 public PluginPropertySource(IPluginDescriptor pd) {
 	this.pd = pd;
@@ -57,7 +57,7 @@ public Object getPropertyValue(Object name) {
 	if (name.equals(P_VERSION))
 		return pd.getVersionIdentifier();
 	if (name.equals(P_ACTIVATED))
-		return pd.isPluginActivated() ? "true" : "false";
+		return pd.isPluginActivated() ? "true" : "false"; //$NON-NLS-1$ //$NON-NLS-2$
 	return null;
 }
 }

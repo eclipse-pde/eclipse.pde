@@ -38,19 +38,19 @@ public class LogView extends ViewPart implements ILogListener {
 	private TableTreeViewer tableTreeViewer;
 	private ArrayList logs = new ArrayList();
 	
-	public static final String P_LOG_WARNING = "warning";
-	public static final String P_LOG_ERROR = "error";
-	public static final String P_LOG_INFO = "info";
-	public static final String P_LOG_LIMIT = "limit";
-	public static final String P_USE_LIMIT = "useLimit";
-	public static final String P_SHOW_ALL_SESSIONS = "allSessions";
+	public static final String P_LOG_WARNING = "warning"; //$NON-NLS-1$
+	public static final String P_LOG_ERROR = "error"; //$NON-NLS-1$
+	public static final String P_LOG_INFO = "info"; //$NON-NLS-1$
+	public static final String P_LOG_LIMIT = "limit"; //$NON-NLS-1$
+	public static final String P_USE_LIMIT = "useLimit"; //$NON-NLS-1$
+	public static final String P_SHOW_ALL_SESSIONS = "allSessions"; //$NON-NLS-1$
 	
-	private static final String P_COLUMN_1 = "column1";
-	private static final String P_COLUMN_2 = "column2";
-	private static final String P_COLUMN_3 = "column3";
-	private static final String P_COLUMN_4 = "column4";
+	private static final String P_COLUMN_1 = "column1"; //$NON-NLS-1$
+	private static final String P_COLUMN_2 = "column2"; //$NON-NLS-1$
+	private static final String P_COLUMN_3 = "column3"; //$NON-NLS-1$
+	private static final String P_COLUMN_4 = "column4"; //$NON-NLS-1$
 	
-	public static final String P_ACTIVATE = "activate";
+	public static final String P_ACTIVATE = "activate"; //$NON-NLS-1$
 			
 	private int MESSAGE_ORDER = -1;
 	private int PLUGIN_ORDER = -1;
@@ -116,7 +116,7 @@ public class LogView extends ViewPart implements ILogListener {
 		clipboard = new Clipboard(tableTree.getDisplay());
 		
 		WorkbenchHelp.setHelp(tableTree,IHelpContextIds.LOG_VIEW);
-		tableTreeViewer.getTableTree().getTable().setToolTipText("");
+		tableTreeViewer.getTableTree().getTable().setToolTipText(""); //$NON-NLS-1$
 		initializeFonts();
 		applyFonts();
 	}
@@ -262,13 +262,13 @@ public class LogView extends ViewPart implements ILogListener {
 	}
 	private void createColumns(Table table) {
 		column0 = new TableColumn(table, SWT.NULL);
-		column0.setText("");
+		column0.setText(""); //$NON-NLS-1$
 		
 		column1 = new TableColumn(table, SWT.NULL);
-		column1.setText(PDERuntimePlugin.getResourceString("LogView.column.severity"));
+		column1.setText(PDERuntimePlugin.getResourceString("LogView.column.severity")); //$NON-NLS-1$
 
 		column2 = new TableColumn(table, SWT.NULL);
-		column2.setText(PDERuntimePlugin.getResourceString("LogView.column.message"));
+		column2.setText(PDERuntimePlugin.getResourceString("LogView.column.message")); //$NON-NLS-1$
 		column2.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				MESSAGE_ORDER *= -1;
@@ -282,7 +282,7 @@ public class LogView extends ViewPart implements ILogListener {
 		});
 		
 		column3 = new TableColumn(table, SWT.NULL);
-		column3.setText(PDERuntimePlugin.getResourceString("LogView.column.plugin"));
+		column3.setText(PDERuntimePlugin.getResourceString("LogView.column.plugin")); //$NON-NLS-1$
 		column3.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				PLUGIN_ORDER *= -1;
@@ -296,7 +296,7 @@ public class LogView extends ViewPart implements ILogListener {
 		});
 		
 		column4 = new TableColumn(table, SWT.NULL);
-		column4.setText(PDERuntimePlugin.getResourceString("LogView.column.date"));
+		column4.setText(PDERuntimePlugin.getResourceString("LogView.column.date")); //$NON-NLS-1$
 		column4.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (DATE_ORDER == ASCENDING) {
@@ -329,10 +329,10 @@ public class LogView extends ViewPart implements ILogListener {
 		propertiesAction.setDisabledImageDescriptor(
 			PDERuntimePluginImages.DESC_PROPERTIES_DISABLED);
 		propertiesAction.setToolTipText(
-			PDERuntimePlugin.getResourceString("LogView.properties.tooltip"));
+			PDERuntimePlugin.getResourceString("LogView.properties.tooltip")); //$NON-NLS-1$
 		propertiesAction.setEnabled(false);
 
-		clearAction = new Action(PDERuntimePlugin.getResourceString("LogView.clear")) {
+		clearAction = new Action(PDERuntimePlugin.getResourceString("LogView.clear")) { //$NON-NLS-1$
 			public void run() {
 				handleClear();
 			}
@@ -341,36 +341,36 @@ public class LogView extends ViewPart implements ILogListener {
 		clearAction.setDisabledImageDescriptor(
 			PDERuntimePluginImages.DESC_CLEAR_DISABLED);
 		clearAction.setToolTipText(
-			PDERuntimePlugin.getResourceString("LogView.clear.tooltip"));
-		clearAction.setText(PDERuntimePlugin.getResourceString("LogView.clear"));
+			PDERuntimePlugin.getResourceString("LogView.clear.tooltip")); //$NON-NLS-1$
+		clearAction.setText(PDERuntimePlugin.getResourceString("LogView.clear")); //$NON-NLS-1$
 
 		readLogAction =
-			new Action(PDERuntimePlugin.getResourceString("LogView.readLog.restore")) {
+			new Action(PDERuntimePlugin.getResourceString("LogView.readLog.restore")) { //$NON-NLS-1$
 			public void run() {
 				inputFile = Platform.getLogFileLocation().toFile();
 				reloadLog();
 			}
 		};
 		readLogAction.setToolTipText(
-			PDERuntimePlugin.getResourceString("LogView.readLog.restore.tooltip"));
+			PDERuntimePlugin.getResourceString("LogView.readLog.restore.tooltip")); //$NON-NLS-1$
 		readLogAction.setImageDescriptor(PDERuntimePluginImages.DESC_READ_LOG);
 		readLogAction.setDisabledImageDescriptor(
 			PDERuntimePluginImages.DESC_READ_LOG_DISABLED);
 
 		deleteLogAction =
-			new Action(PDERuntimePlugin.getResourceString("LogView.delete")) {
+			new Action(PDERuntimePlugin.getResourceString("LogView.delete")) { //$NON-NLS-1$
 			public void run() {
 				doDeleteLog();
 			}
 		};
 		deleteLogAction.setToolTipText(
-			PDERuntimePlugin.getResourceString("LogView.delete.tooltip"));
+			PDERuntimePlugin.getResourceString("LogView.delete.tooltip")); //$NON-NLS-1$
 		deleteLogAction.setImageDescriptor(PDERuntimePluginImages.DESC_REMOVE_LOG);
 		deleteLogAction.setDisabledImageDescriptor(
 			PDERuntimePluginImages.DESC_REMOVE_LOG_DISABLED);
 		deleteLogAction.setEnabled(inputFile.exists() && inputFile.equals(Platform.getLogFileLocation().toFile()));
 
-		copyAction = new Action(PDERuntimePlugin.getResourceString("LogView.copy")) {
+		copyAction = new Action(PDERuntimePlugin.getResourceString("LogView.copy")) { //$NON-NLS-1$
 			public void run() {
 				copyToClipboard(tableTreeViewer.getSelection());
 			}
@@ -380,52 +380,52 @@ public class LogView extends ViewPart implements ILogListener {
 				ISharedImages.IMG_TOOL_COPY));
 
 
-		filterAction = new Action(PDERuntimePlugin.getResourceString("LogView.filter")) {
+		filterAction = new Action(PDERuntimePlugin.getResourceString("LogView.filter")) { //$NON-NLS-1$
 			public void run() {
 				handleFilter();
 			}
 		};
-		filterAction.setToolTipText(PDERuntimePlugin.getResourceString("LogView.filter"));
+		filterAction.setToolTipText(PDERuntimePlugin.getResourceString("LogView.filter")); //$NON-NLS-1$
 		filterAction.setImageDescriptor(PDERuntimePluginImages.DESC_FILTER);
 		filterAction.setDisabledImageDescriptor(
 			PDERuntimePluginImages.DESC_FILTER_DISABLED);
 
-		exportAction = new Action(PDERuntimePlugin.getResourceString("LogView.export")) {
+		exportAction = new Action(PDERuntimePlugin.getResourceString("LogView.export")) { //$NON-NLS-1$
 			public void run() {
 				handleExport();
 			}
 		};
 		exportAction.setToolTipText(
-			PDERuntimePlugin.getResourceString("LogView.export.tooltip"));
+			PDERuntimePlugin.getResourceString("LogView.export.tooltip")); //$NON-NLS-1$
 		exportAction.setImageDescriptor(PDERuntimePluginImages.DESC_EXPORT);
 		exportAction.setDisabledImageDescriptor(
 			PDERuntimePluginImages.DESC_EXPORT_DISABLED);
 
-		importAction = new Action(PDERuntimePlugin.getResourceString("LogView.import")) {
+		importAction = new Action(PDERuntimePlugin.getResourceString("LogView.import")) { //$NON-NLS-1$
 			public void run() {
 				handleImport();
 			}
 		};
 		importAction.setToolTipText(
-			PDERuntimePlugin.getResourceString("LogView.import.tooltip"));
+			PDERuntimePlugin.getResourceString("LogView.import.tooltip")); //$NON-NLS-1$
 		importAction.setImageDescriptor(PDERuntimePluginImages.DESC_IMPORT);
 		importAction.setDisabledImageDescriptor(
 			PDERuntimePluginImages.DESC_IMPORT_DISABLED);
 		
-		activateViewAction = new Action(PDERuntimePlugin.getResourceString("LogView.activate")) {
+		activateViewAction = new Action(PDERuntimePlugin.getResourceString("LogView.activate")) { //$NON-NLS-1$
 			public void run() {				
 			}
 		};
-		activateViewAction.setChecked(memento.getString(P_ACTIVATE).equals("true"));
+		activateViewAction.setChecked(memento.getString(P_ACTIVATE).equals("true")); //$NON-NLS-1$
 		
-		viewLogAction = new Action(PDERuntimePlugin.getResourceString("LogView.view.currentLog")){
+		viewLogAction = new Action(PDERuntimePlugin.getResourceString("LogView.view.currentLog")){ //$NON-NLS-1$
 			public void run(){
 				
 				if (inputFile.exists())
-					if (SWT.getPlatform().equals("win32"))
+					if (SWT.getPlatform().equals("win32")) //$NON-NLS-1$
 						Program.launch(inputFile.getAbsolutePath());
 					else {
-						Program p = Program.findProgram (".txt");
+						Program p = Program.findProgram (".txt"); //$NON-NLS-1$
 						if (p != null) p.execute (inputFile.getAbsolutePath());
 					}
 			}
@@ -433,7 +433,7 @@ public class LogView extends ViewPart implements ILogListener {
 		viewLogAction.setImageDescriptor(PDERuntimePluginImages.DESC_OPEN_LOG);
 		viewLogAction.setDisabledImageDescriptor(PDERuntimePluginImages.DESC_OPEN_LOG_DISABLED);
 		viewLogAction.setEnabled(inputFile.exists());
-		viewLogAction.setToolTipText(PDERuntimePlugin.getResourceString("LogView.view.currentLog.tooltip"));
+		viewLogAction.setToolTipText(PDERuntimePlugin.getResourceString("LogView.view.currentLog.tooltip")); //$NON-NLS-1$
 	}
 	
 	public void dispose() {
@@ -446,7 +446,7 @@ public class LogView extends ViewPart implements ILogListener {
 	
 	private void handleImport() {
 		FileDialog dialog = new FileDialog(getViewSite().getShell());
-		dialog.setFilterExtensions(new String[] { "*.log" });
+		dialog.setFilterExtensions(new String[] { "*.log" }); //$NON-NLS-1$
 		if (directory != null)
 			dialog.setFilterPath(directory);
 		String path = dialog.open();
@@ -457,7 +457,7 @@ public class LogView extends ViewPart implements ILogListener {
 			IRunnableWithProgress op = new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor)
 					throws InvocationTargetException, InterruptedException {
-						monitor.beginTask(PDERuntimePlugin.getResourceString("LogView.operation.importing"), IProgressMonitor.UNKNOWN);
+						monitor.beginTask(PDERuntimePlugin.getResourceString("LogView.operation.importing"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 						readLogFile();
 				}
 			};
@@ -467,8 +467,8 @@ public class LogView extends ViewPart implements ILogListener {
 			} catch (InvocationTargetException e) {
 			} catch (InterruptedException e) {
 			} finally {
-				readLogAction.setText(PDERuntimePlugin.getResourceString("LogView.readLog.reload"));
-				readLogAction.setToolTipText(PDERuntimePlugin.getResourceString("LogView.readLog.reload"));
+				readLogAction.setText(PDERuntimePlugin.getResourceString("LogView.readLog.reload")); //$NON-NLS-1$
+				readLogAction.setToolTipText(PDERuntimePlugin.getResourceString("LogView.readLog.reload")); //$NON-NLS-1$
 				asyncRefresh(false);	
 				resetDialogButtons();
 			}
@@ -477,19 +477,19 @@ public class LogView extends ViewPart implements ILogListener {
 	
 	private void handleExport() {
 		FileDialog dialog = new FileDialog(getViewSite().getShell(), SWT.SAVE);
-		dialog.setFilterExtensions(new String[] { "*.log" });
+		dialog.setFilterExtensions(new String[] { "*.log" }); //$NON-NLS-1$
 		if (directory != null) 
 			dialog.setFilterPath(directory);
 		String path = dialog.open();
 		if (path != null) {
-			if (!path.endsWith(".log"))
-				path += ".log";
+			if (!path.endsWith(".log")) //$NON-NLS-1$
+				path += ".log"; //$NON-NLS-1$
 			File outputFile = new Path(path).toFile();
 			directory = outputFile.getParent();
 			if (outputFile.exists()) {
 				String message =
 					PDERuntimePlugin.getFormattedMessage(
-						"LogView.confirmOverwrite.message",
+						"LogView.confirmOverwrite.message", //$NON-NLS-1$
 						outputFile.toString());
 				if (!MessageDialog
 					.openQuestion(
@@ -506,11 +506,11 @@ public class LogView extends ViewPart implements ILogListener {
 		BufferedReader reader = null;
 		BufferedWriter writer = null;
 		try {
-			reader = new BufferedReader(new InputStreamReader(new FileInputStream(inputFile), "UTF-8"));
-			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile), "UTF-8"));
+			reader = new BufferedReader(new InputStreamReader(new FileInputStream(inputFile), "UTF-8")); //$NON-NLS-1$
+			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile), "UTF-8")); //$NON-NLS-1$
 			while (reader.ready()) {
 				writer.write(reader.readLine());
-				writer.write(System.getProperty("line.separator"));
+				writer.write(System.getProperty("line.separator")); //$NON-NLS-1$
 			}
 		} catch (IOException e) {
 		} finally {
@@ -528,16 +528,16 @@ public class LogView extends ViewPart implements ILogListener {
 		FilterDialog dialog =
 			new FilterDialog(PDERuntimePlugin.getActiveWorkbenchShell(), memento);
 		dialog.create();
-		dialog.getShell().setText(PDERuntimePlugin.getResourceString("LogView.FilterDialog.title"));
+		dialog.getShell().setText(PDERuntimePlugin.getResourceString("LogView.FilterDialog.title")); //$NON-NLS-1$
 		if (dialog.open() == FilterDialog.OK)
 			reloadLog();
 		
 	}
 	
 	private void doDeleteLog() {
-		String title = PDERuntimePlugin.getResourceString("LogView.confirmDelete.title");
+		String title = PDERuntimePlugin.getResourceString("LogView.confirmDelete.title"); //$NON-NLS-1$
 		String message =
-			PDERuntimePlugin.getResourceString("LogView.confirmDelete.message");
+			PDERuntimePlugin.getResourceString("LogView.confirmDelete.message"); //$NON-NLS-1$
 		if (!MessageDialog
 			.openConfirm(tableTreeViewer.getControl().getShell(), title, message))
 			return;
@@ -584,7 +584,7 @@ public class LogView extends ViewPart implements ILogListener {
 			public void run(IProgressMonitor monitor)
 				throws InvocationTargetException, InterruptedException {
 				monitor.beginTask(
-					PDERuntimePlugin.getResourceString("LogView.operation.reloading"),
+					PDERuntimePlugin.getResourceString("LogView.operation.reloading"), //$NON-NLS-1$
 					IProgressMonitor.UNKNOWN);
 				readLogFile();
 			}
@@ -596,9 +596,9 @@ public class LogView extends ViewPart implements ILogListener {
 		} catch (InterruptedException e) {
 		} finally {
 			readLogAction.setText(
-				PDERuntimePlugin.getResourceString("LogView.readLog.restore"));
+				PDERuntimePlugin.getResourceString("LogView.readLog.restore")); //$NON-NLS-1$
 			readLogAction.setToolTipText(
-				PDERuntimePlugin.getResourceString("LogView.readLog.restore"));
+				PDERuntimePlugin.getResourceString("LogView.readLog.restore")); //$NON-NLS-1$
 			asyncRefresh(false);	
 			resetDialogButtons();
 		}
@@ -709,7 +709,7 @@ public class LogView extends ViewPart implements ILogListener {
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
 		if (memento == null)
-			this.memento = XMLMemento.createWriteRoot("LOGVIEW");
+			this.memento = XMLMemento.createWriteRoot("LOGVIEW"); //$NON-NLS-1$
 		else 
 			this.memento = memento;
 		initializeMemento();		
@@ -717,17 +717,17 @@ public class LogView extends ViewPart implements ILogListener {
 	
 	private void initializeMemento() {
 		if (memento.getString(P_USE_LIMIT) == null)
-			memento.putString(P_USE_LIMIT, "true");
+			memento.putString(P_USE_LIMIT, "true"); //$NON-NLS-1$
 		if (memento.getInteger(P_LOG_LIMIT) == null)
 			memento.putInteger(P_LOG_LIMIT, 50);
 		if (memento.getString(P_LOG_INFO) == null)
-			memento.putString(P_LOG_INFO, "true");
+			memento.putString(P_LOG_INFO, "true"); //$NON-NLS-1$
 		if (memento.getString(P_LOG_WARNING) == null)
-			memento.putString(P_LOG_WARNING, "true");
+			memento.putString(P_LOG_WARNING, "true"); //$NON-NLS-1$
 		if (memento.getString(P_LOG_ERROR) == null)
-			memento.putString(P_LOG_ERROR, "true");
+			memento.putString(P_LOG_ERROR, "true"); //$NON-NLS-1$
 		if (memento.getString(P_SHOW_ALL_SESSIONS) == null)
-			memento.putString(P_SHOW_ALL_SESSIONS, "true");
+			memento.putString(P_SHOW_ALL_SESSIONS, "true"); //$NON-NLS-1$
 			
 		Integer width = memento.getInteger(P_COLUMN_1);
 		if (width == null || width.intValue() == 0)
@@ -743,7 +743,7 @@ public class LogView extends ViewPart implements ILogListener {
 			memento.putInteger(P_COLUMN_4, 150);
 			
 		if (memento.getString(P_ACTIVATE) == null)
-			memento.putString(P_ACTIVATE, "true");
+			memento.putString(P_ACTIVATE, "true"); //$NON-NLS-1$
 	}
 	
 	public void saveState(IMemento memento) {
@@ -755,7 +755,7 @@ public class LogView extends ViewPart implements ILogListener {
 		this.memento.putInteger(P_COLUMN_4, column4.getWidth());
 		this.memento.putString(
 			P_ACTIVATE,
-			activateViewAction.isChecked() ? "true" : "false");
+			activateViewAction.isChecked() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 		memento.putMemento(this.memento);
 	}	
 	

@@ -50,7 +50,7 @@ public class LogSession {
 			StringBuffer dateBuffer = new StringBuffer();
 			for (int i = 0; i < 4; i++) {
 				dateBuffer.append(tokenizer.nextToken());
-				dateBuffer.append(" ");
+				dateBuffer.append(" "); //$NON-NLS-1$
 			}
 			setDate(dateBuffer.toString().trim());
 		}

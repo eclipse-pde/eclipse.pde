@@ -26,12 +26,12 @@ public class RegistryBrowser extends ViewPart
 implements
 BundleListener,
 IRegistryChangeListener {
-	public static final String KEY_REFRESH_LABEL = "RegistryView.refresh.label";
-	public static final String KEY_REFRESH_TOOLTIP = "RegistryView.refresh.tooltip";
-	public static final String SHOW_RUNNING_PLUGINS = "RegistryView.showRunning.label";
-	public static final String REGISTRY_ORIENTATION = "RegistryView.orientation";
-	public static final String KEY_COLLAPSE_ALL_LABEL = "RegistryView.collapseAll.label";
-	public static final String KEY_COLLAPSE_ALL_TOOLTIP = "RegistryView.collapseAll.tooltip";
+	public static final String KEY_REFRESH_LABEL = "RegistryView.refresh.label"; //$NON-NLS-1$
+	public static final String KEY_REFRESH_TOOLTIP = "RegistryView.refresh.tooltip"; //$NON-NLS-1$
+	public static final String SHOW_RUNNING_PLUGINS = "RegistryView.showRunning.label"; //$NON-NLS-1$
+	public static final String REGISTRY_ORIENTATION = "RegistryView.orientation"; //$NON-NLS-1$
+	public static final String KEY_COLLAPSE_ALL_LABEL = "RegistryView.collapseAll.label"; //$NON-NLS-1$
+	public static final String KEY_COLLAPSE_ALL_TOOLTIP = "RegistryView.collapseAll.tooltip"; //$NON-NLS-1$
 	
 	public static final int VERTICAL_ORIENTATION = 1;
 	public static final int HORIZONTAL_ORIENTATION = 2;
@@ -65,7 +65,7 @@ IRegistryChangeListener {
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
 		if (memento == null)
-			this.memento = XMLMemento.createWriteRoot("REGISTRYVIEW");
+			this.memento = XMLMemento.createWriteRoot("REGISTRYVIEW"); //$NON-NLS-1$
 		else
 			this.memento = memento;
 		initializeMemento();
@@ -74,9 +74,9 @@ IRegistryChangeListener {
 	
 	private void initializeMemento() {
 		if (memento.getString(SHOW_RUNNING_PLUGINS) == null)
-			memento.putString(SHOW_RUNNING_PLUGINS, "true");
+			memento.putString(SHOW_RUNNING_PLUGINS, "true"); //$NON-NLS-1$
 		if (memento.getString(TogglePropertiesAction.SHOW_PROPERTIES_SHEET) == null)
-			memento.putString(TogglePropertiesAction.SHOW_PROPERTIES_SHEET, "true");
+			memento.putString(TogglePropertiesAction.SHOW_PROPERTIES_SHEET, "true"); //$NON-NLS-1$
 		if (memento.getInteger(REGISTRY_ORIENTATION) == null)
 			memento.putInteger(REGISTRY_ORIENTATION, HORIZONTAL_ORIENTATION);
 	}
@@ -107,7 +107,7 @@ IRegistryChangeListener {
 	private void createTreeViewer() {
 		Tree tree = new Tree(getSashForm(), SWT.FLAT);
 		treeViewer = new TreeViewer(tree);
-		boolean showRunning = memento.getString(SHOW_RUNNING_PLUGINS).equals("true") ? true : false;
+		boolean showRunning = memento.getString(SHOW_RUNNING_PLUGINS).equals("true") ? true : false; //$NON-NLS-1$
 		treeViewer.setContentProvider(new RegistryBrowserContentProvider(treeViewer, showRunning));
 		treeViewer
 		.setLabelProvider(new RegistryBrowserLabelProvider(treeViewer));
@@ -220,9 +220,9 @@ IRegistryChangeListener {
 		boolean showRunning = ((RegistryBrowserContentProvider) treeViewer
 				.getContentProvider()).isShowRunning();
 		if (showRunning)
-			this.memento.putString(SHOW_RUNNING_PLUGINS, "true");
+			this.memento.putString(SHOW_RUNNING_PLUGINS, "true"); //$NON-NLS-1$
 		else
-			this.memento.putString(SHOW_RUNNING_PLUGINS, "false");
+			this.memento.putString(SHOW_RUNNING_PLUGINS, "false"); //$NON-NLS-1$
 		this.memento.putInteger(REGISTRY_ORIENTATION, orientation);
 		memento.putMemento(this.memento);
 	}
@@ -317,7 +317,7 @@ IRegistryChangeListener {
 	 * toolbar and context menu actions
 	 */
 	public void makeActions() {
-		refreshAction = new Action("refresh") {
+		refreshAction = new Action("refresh") { //$NON-NLS-1$
 			public void run() {
 				BusyIndicator.showWhile(treeViewer.getTree().getDisplay(),
 						new Runnable() {
@@ -342,9 +342,9 @@ IRegistryChangeListener {
 				handleShowRunningPlugins(showPluginsAction.isChecked());
 			}
 		};
-		showPluginsAction.setChecked(memento.getString(SHOW_RUNNING_PLUGINS).equals("true"));
+		showPluginsAction.setChecked(memento.getString(SHOW_RUNNING_PLUGINS).equals("true")); //$NON-NLS-1$
 		
-		collapseAllAction = new Action("collapseAll"){
+		collapseAllAction = new Action("collapseAll"){ //$NON-NLS-1$
 			public void run(){
 				treeViewer.collapseAll();
 			}
