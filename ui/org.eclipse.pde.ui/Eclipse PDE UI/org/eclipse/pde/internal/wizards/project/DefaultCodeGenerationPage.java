@@ -382,8 +382,7 @@ private IFile generatePluginFile(
 			? PDEPlugin.getResourceString(KEY_CREATING_FRAGMENT)
 			: PDEPlugin.getResourceString(KEY_CREATING_PLUGIN);
 	monitor.subTask(message);
-
-	writer.println("<?xml version=\"1.0\"?>");
+	writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 	writer.println(fragment ? "<fragment" : "<plugin");
 	appendAttribute(writer, indent, "name", data.name);
 	appendAttribute(writer, indent, "id", project.getName());
