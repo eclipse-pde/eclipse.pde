@@ -35,9 +35,13 @@ public class BuildPathUtil {
 	private static void ensureFolderExists(IProject project, IPath folderPath)
 		throws CoreException {
 		IWorkspace workspace = project.getWorkspace();
-		if (!workspace.getRoot().exists(folderPath)) {
-			IFolder folder = workspace.getRoot().getFolder(folderPath);
-			folder.create(true, true, null);
+
+		for (int i=1;i<=folderPath.segmentCount(); i++) {
+			IPath partialPath = folderPath.uptoSegment(i);
+			if (!workspace.getRoot().exists(partialPath)) {
+				IFolder folder = workspace.getRoot().getFolder(partialPath);
+				folder.create(true, true, null);
+			}
 		}
 	}
 	/**
