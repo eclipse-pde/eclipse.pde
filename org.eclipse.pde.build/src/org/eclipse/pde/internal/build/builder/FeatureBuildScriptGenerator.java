@@ -1154,6 +1154,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		result.setCopyrightModel(featureExample.getCopyrightModel());
 		result.setLicenseModel(featureExample.getLicenseModel());
 		result.setUpdateSiteEntryModel(featureExample.getUpdateSiteEntryModel());
+		result.setDiscoverySiteEntryModels(featureExample.getDiscoverySiteEntryModels());
 		result.setOS(featureExample.getOS());
 		result.setArch(featureExample.getOSArch());
 		result.setWS(featureExample.getWS());
