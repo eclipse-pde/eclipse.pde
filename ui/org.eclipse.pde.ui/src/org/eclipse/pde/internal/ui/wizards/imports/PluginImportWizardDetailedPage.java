@@ -61,7 +61,6 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 	private static final String KEY_NO_SELECTED =
 		"ImportWizard.errors.noPluginSelected";
 	private IPluginModelBase[] models;
-	private boolean loadFromRegistry;
 	private boolean block;
 	private HashSet preSelectedModels;
 
@@ -153,9 +152,8 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 	}
 
 	private void initializeFields(IPath dropLocation) {
-		loadFromRegistry = !firstPage.isOtherLocation();
 
-		if (dropLocation != this.dropLocation) {
+		if (!dropLocation.equals(this.dropLocation)) {
 			updateStatus(createStatus(IStatus.OK, ""));
 			this.dropLocation = dropLocation;
 			models = null;
@@ -244,7 +242,11 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 	public IPluginModelBase[] getModels() {
 		if (models != null)
 			return models;
-		if (loadFromRegistry) {
+			
+		if (dropLocation == null)
+			return null;
+			
+		if (!dropLocation.equals(ExternalModelManager.getEclipseHome(null))) {
 			final ExternalModelManager registry =
 				PDECore.getDefault().getExternalModelManager();
 			IRunnableWithProgress op = new IRunnableWithProgress() {
