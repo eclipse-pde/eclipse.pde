@@ -459,21 +459,21 @@ public class BasicLauncherTab
 	 * Returns the selected VM arguments.
 	 */
 	public String getVMArguments() {
-		return vmArgsText.getText();
+		return vmArgsText.getText().trim();
 	}
 
 	/**
 	 * Returns the selected program arguments.
 	 */
 	public String getProgramArguments() {
-		return progArgsText.getText();
+		return progArgsText.getText().trim();
 	}
 
 	/**
 	 * Returns the selected workspace location. (data location)
 	 */
 	public IPath getWorkspaceLocation() {
-		return new Path(workspaceCombo.getText());
+		return new Path(workspaceCombo.getText().trim());
 	}
 
 	/**
@@ -500,7 +500,7 @@ public class BasicLauncherTab
 	 * Returns the selected VM arguments.
 	 */
 	public String getApplicationName() {
-		return applicationNameText.getText();
+		return applicationNameText.getText().trim();
 	}
 
 	static IVMInstall[] getAllVMInstances() {

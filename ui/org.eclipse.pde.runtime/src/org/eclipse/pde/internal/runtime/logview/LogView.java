@@ -22,6 +22,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.ViewPart;
@@ -86,6 +88,7 @@ public class LogView extends ViewPart implements ILogListener {
 			.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent e) {
 				propertiesAction.setEnabled(!e.getSelection().isEmpty());
+				updateStatus(e.getSelection());
 			}
 		});
 
@@ -167,8 +170,11 @@ public class LogView extends ViewPart implements ILogListener {
 		deleteLogAction.setDisabledImageDescriptor(PDERuntimePluginImages.DESC_REMOVE_LOG_DISABLED);
 		deleteLogAction.setHoverImageDescriptor(PDERuntimePluginImages.DESC_REMOVE_LOG_HOVER);
 		
-		IToolBarManager toolBarManager =
-			getViewSite().getActionBars().getToolBarManager();
+		IActionBars bars = getViewSite().getActionBars();
+		bars.setGlobalActionHandler(IWorkbenchActionConstants.PROPERTIES, propertiesAction);
+
+		IToolBarManager toolBarManager = bars.getToolBarManager();
+		
 		toolBarManager.add(deleteLogAction);
 		toolBarManager.add(new Separator());
 		toolBarManager.add(clearAction);
@@ -269,5 +275,16 @@ public class LogView extends ViewPart implements ILogListener {
 	}
 	public void setFocus() {
 		tableTreeViewer.getTableTree().getTable().setFocus();
+	}
+	
+	private void updateStatus(ISelection selection) {
+		IStatusLineManager status = getViewSite().getActionBars().getStatusLineManager();
+		if (selection.isEmpty())
+			status.setMessage(null);
+		else {
+			LogEntry entry = (LogEntry)((IStructuredSelection)selection).getFirstElement();
+			LogViewLabelProvider provider = (LogViewLabelProvider)getTableTreeViewer().getLabelProvider();
+			status.setMessage(provider.getColumnText(entry, 2));
+		}
 	}
 }
