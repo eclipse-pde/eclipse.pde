@@ -85,20 +85,28 @@ public class ManifestEditor extends MultiSourceEditor {
 	public void monitoredFileAdded(IFile file) {
 		String name = file.getName();
 		if (name.equalsIgnoreCase("MANIFEST.MF")) {
-			IEditorInput in = new FileEditorInput(file);
-			inputContextManager.putContext(in, new BundleInputContext(this, in, false));
+			if (!inputContextManager.hasContext(BundleInputContext.CONTEXT_ID)) {
+				IEditorInput in = new FileEditorInput(file);
+				inputContextManager.putContext(in, new BundleInputContext(this, in, false));
+			}
 		}
 		else if (name.equalsIgnoreCase("plugin.xml")) {
-			IEditorInput in = new FileEditorInput(file);
-			inputContextManager.putContext(in, new PluginInputContext(this, in, false, false));						
+			if (!inputContextManager.hasContext(PluginInputContext.CONTEXT_ID)) {
+				IEditorInput in = new FileEditorInput(file);
+				inputContextManager.putContext(in, new PluginInputContext(this, in, false, false));
+			}
 		}
 		else if (name.equalsIgnoreCase("fragment.xml")) {
-			IEditorInput in = new FileEditorInput(file);
-			inputContextManager.putContext(in, new PluginInputContext(this, in, false, true));
+			if (!inputContextManager.hasContext(PluginInputContext.CONTEXT_ID)) {			
+				IEditorInput in = new FileEditorInput(file);
+				inputContextManager.putContext(in, new PluginInputContext(this, in, false, true));
+			}
 		}
 		else if (name.equalsIgnoreCase("build.properties")) {
-			IEditorInput in = new FileEditorInput(file);
-			inputContextManager.putContext(in, new BuildInputContext(this, in, false));			
+			if (!inputContextManager.hasContext(BundleInputContext.CONTEXT_ID)) {			
+				IEditorInput in = new FileEditorInput(file);
+				inputContextManager.putContext(in, new BuildInputContext(this, in, false));
+			}
 		}
 	}
 
