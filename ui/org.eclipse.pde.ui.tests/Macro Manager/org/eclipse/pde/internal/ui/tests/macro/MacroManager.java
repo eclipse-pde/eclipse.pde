@@ -78,6 +78,7 @@ public class MacroManager {
 	private Vector listeners;
 
 	private ArrayList widgetResolvers;
+	private DocumentBuilder parser;
 
 	public MacroManager() {
 		listener = new DisplayListener();
@@ -225,14 +226,10 @@ public class MacroManager {
 	}
 
 	private Document createMacroDocument(InputStream is) throws CoreException {
+		Document doc =null;
 		try {
-			DocumentBuilderFactory domFactory = DocumentBuilderFactory
-					.newInstance();
-			DocumentBuilder builder = domFactory.newDocumentBuilder();
-
-			return builder.parse(is);
-		} catch (ParserConfigurationException e) {
-			MacroUtil.throwCoreException("Error parsing the macro file", e);
+			DocumentBuilder parser = getParser();
+			doc = parser.parse(is);
 		} catch (SAXException e) {
 			MacroUtil.throwCoreException("Error parsing the macro file", e);
 		} catch (IOException e) {
@@ -243,7 +240,20 @@ public class MacroManager {
 			} catch (IOException e) {
 			}
 		}
-		return null;
+		return doc;
+	}
+	
+	private DocumentBuilder getParser() throws CoreException {
+		if (parser==null) {
+			try {
+				DocumentBuilderFactory domFactory = DocumentBuilderFactory
+					.newInstance();
+				parser = domFactory.newDocumentBuilder();
+			} catch (ParserConfigurationException e) {
+				MacroUtil.throwCoreException("Error parsing the macro file", e);
+			}
+		}
+		return parser;
 	}
 
 	private void onEvent(Event event) {
