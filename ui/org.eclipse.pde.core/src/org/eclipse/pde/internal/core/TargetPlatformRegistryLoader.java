@@ -65,18 +65,6 @@ public class TargetPlatformRegistryLoader {
 		monitor.worked(1);
 		
 		BundleDescription[] bundleDescriptions = resolve ? state.getState().getResolvedBundles() : state.getState().getBundles();
-		BundleDescription[] all = state.getState().getBundles();
-		for (int i = 0; i < all.length; i++) {
-			if (!all[i].isResolved()) {
-				String message = "Bundle: " + all[i].getUniqueId() + '\n';
-				VersionConstraint[] unsatisfiedConstraint = all[i].getUnsatisfiedConstraints();
-                for (int j = 0; j < unsatisfiedConstraint.length; j++) {
-                        message += '\t' + unsatisfiedConstraint[j].toString() + '\n';
-                }
-                System.out.print(message);
-
-			}
-		}
 		IPluginModelBase[] models = new IPluginModelBase[bundleDescriptions.length];
 		for (int i = 0; i < bundleDescriptions.length; i++) {
 			monitor.subTask(bundleDescriptions[i].getUniqueId());
