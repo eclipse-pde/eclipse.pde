@@ -22,7 +22,6 @@ public abstract class ModelBuildScriptGenerator extends AbstractBuildScriptGener
 	 */
 	protected PluginModel model;
 
-
 /**
  * @see AbstractScriptGenerator#generate()
  */
@@ -38,10 +37,10 @@ public void generate() throws CoreException {
 	try {
 		File root = new File(getLocation(model));
 		File target = new File(root, buildScriptName);
-		script = new BuildAntScript(new FileOutputStream(target));
-		setUpAntBuildScript();
+		BuildAntScript script = new BuildAntScript(new FileOutputStream(target));
+		setUpAntBuildScript(script);
 		try {
-			generateBuildScript();
+			generateBuildScript(script);
 		} finally {
 			script.close();
 		}
@@ -53,21 +52,21 @@ public void generate() throws CoreException {
 /**
  * Main call for generating the script.
  */
-protected void generateBuildScript() throws CoreException {
-	generatePrologue();
-	generateBuildUpdateJarTarget();
-	generateGatherBinPartsTarget();
+protected void generateBuildScript(BuildAntScript script) throws CoreException {
+	generatePrologue(script);
+	generateBuildUpdateJarTarget(script);
+	generateGatherBinPartsTarget(script);
 	generateBuildJarsTarget(script, model);
-	generateBuildZipsTarget();
-	generateGatherSourcesTarget();
-	generateGatherLogTarget();
-	generateCleanTarget();
+	generateBuildZipsTarget(script);
+	generateGatherSourcesTarget(script);
+	generateGatherLogTarget(script);
+	generateCleanTarget(script);
 	generateRefreshTarget(script, getPropertyFormat(getModelTypeName()));
 	generateZipPluginTarget(script, model);
-	generateEpilogue();
+	generateEpilogue(script);
 }
 
-protected void generateCleanTarget() throws CoreException {
+protected void generateCleanTarget(BuildAntScript script) throws CoreException {
 	int tab = 1;
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_CLEAN, TARGET_INIT, null, null, null);
@@ -99,7 +98,7 @@ protected void generateCleanTarget() throws CoreException {
 	script.printString(tab, "</target>");
 }
 
-protected void generateGatherLogTarget() throws CoreException {
+protected void generateGatherLogTarget(BuildAntScript script) throws CoreException {
 	int tab = 1;
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_GATHER_LOGS, TARGET_INIT, null, null, null);
@@ -127,7 +126,7 @@ protected void generateGatherLogTarget() throws CoreException {
 /**
  * FIXME: add comments
  */
-protected void generateZipIndividualTarget(String zipName, String source) throws CoreException {
+protected void generateZipIndividualTarget(BuildAntScript script, String zipName, String source) throws CoreException {
 	int tab = 1;
 	script.println();
 	script.printTargetDeclaration(tab++, zipName, TARGET_INIT, null, null, null);
@@ -137,7 +136,7 @@ protected void generateZipIndividualTarget(String zipName, String source) throws
 }
 
 
-protected void generateGatherSourcesTarget() throws CoreException {
+protected void generateGatherSourcesTarget(BuildAntScript script) throws CoreException {
 	int tab = 1;
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_GATHER_SOURCES, TARGET_INIT, PROPERTY_DESTINATION, null, null);
@@ -175,7 +174,7 @@ protected void generateGatherSourcesTarget() throws CoreException {
 
 
 
-protected void generateGatherBinPartsTarget() throws CoreException {
+protected void generateGatherBinPartsTarget(BuildAntScript script) throws CoreException {
 	int tab = 1;
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_GATHER_BIN_PARTS, TARGET_INIT, PROPERTY_DESTINATION, null, null);
@@ -224,7 +223,7 @@ protected void generateZipPluginTarget(BuildAntScript script, PluginModel model)
 
 
 
-protected void generateBuildUpdateJarTarget() {
+protected void generateBuildUpdateJarTarget(BuildAntScript script) {
 	int tab = 1;
 	script.println();
 	script.printTargetDeclaration(tab, TARGET_BUILD_UPDATE_JAR, TARGET_INIT, null, null, null);
@@ -256,7 +255,7 @@ protected String getModelFileBase() {
 /**
  * Just ends the script.
  */
-protected void generateEpilogue() {
+protected void generateEpilogue(BuildAntScript script) {
 	script.println();
 	script.printString(0, "</project>");
 }
@@ -265,7 +264,7 @@ protected void generateEpilogue() {
 /**
  * Defines, the XML declaration, Ant project and targets init and initTemplate.
  */
-protected void generatePrologue() {
+protected void generatePrologue(BuildAntScript script) {
 	int tab = 1;
 	script.printProjectDeclaration(model.getId(), TARGET_BUILD_JARS, ".");
 	script.println();
@@ -311,7 +310,7 @@ protected abstract PluginModel getModel(String modelId) throws CoreException;
 /**
  * FIXME: add comments
  */
-protected void generateBuildZipsTarget() throws CoreException {
+protected void generateBuildZipsTarget(BuildAntScript script) throws CoreException {
 	StringBuffer zips = new StringBuffer();
 	Properties props = getBuildProperties(model);
 	for (Iterator iterator = props.entrySet().iterator(); iterator.hasNext();) {
@@ -321,7 +320,7 @@ protected void generateBuildZipsTarget() throws CoreException {
 			String zipName = key.substring(PROPERTY_SOURCE_PREFIX.length());
 			zips.append(',');
 			zips.append(zipName);
-			generateZipIndividualTarget(zipName, (String) entry.getValue());
+			generateZipIndividualTarget(script, zipName, (String) entry.getValue());
 		}
 	}
 	script.println();
@@ -336,7 +335,7 @@ protected void generateBuildZipsTarget() throws CoreException {
 /**
  * 
  */
-protected void setUpAntBuildScript() throws CoreException {
+protected void setUpAntBuildScript(BuildAntScript script) throws CoreException {
 	String external = (String) getBuildProperties(model).get(PROPERTY_ZIP_EXTERNAL);
 	if (external != null && external.equalsIgnoreCase("true"))
 		script.setZipExternal(true);

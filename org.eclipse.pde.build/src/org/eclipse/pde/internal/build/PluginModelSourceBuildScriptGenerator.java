@@ -11,23 +11,17 @@
 package org.eclipse.pde.internal.build;
 
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.model.*;
-import org.eclipse.pde.internal.build.AbstractBuildScriptGeneratorTemp.JAR;
+import org.eclipse.core.runtime.model.PluginModel;
 import org.eclipse.pde.internal.build.ant.AntScript;
 import org.eclipse.pde.internal.build.ant.FileSet;
 
 /**
  * Given a set of plug-ins and fragments, generate their build scripts.
  */
-public class PluginModelSourceBuildScriptGenerator extends AbstractBuildScriptGeneratorTemp {
-
-	protected PluginRegistryModel registry;
-	protected String sourceLocation;
+public class PluginModelSourceBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 public PluginModelSourceBuildScriptGenerator() {
 	super();
@@ -179,43 +173,16 @@ protected String getScriptLocation(PluginModel model) throws CoreException {
 	return file.getAbsolutePath();
 }
 
-protected PluginRegistryModel getRegistry() throws CoreException {
-	if (registry == null) {
-		URL[] pluginPath = getPluginPath();
-		MultiStatus problems = new MultiStatus(PI_PDEBUILD, EXCEPTION_MODEL_PARSE, Policy.bind("exception.pluginParse"), null);
-		Factory factory = new Factory(problems);
-		registry = Platform.parsePlugins(pluginPath, factory);
-		IStatus status = factory.getStatus();
-		if (Utils.contains(status, IStatus.ERROR))
-			throw new CoreException(status);
-	}
-	return registry;
-}
 
-protected URL[] getPluginPath() throws CoreException {
-	if (sourceLocation == null)
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_SOURCE_LOCATION_MISSING, Policy.bind("error.missingSourceLocation"), null));
-	try {
-		File file = new File(sourceLocation, "plugins/");
-		return new URL[] {
-			file.toURL()
-		};
-	} catch (MalformedURLException e) {
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_MALFORMED_URL, Policy.bind("exception.url"), null));
-	}
-}
 
 
 protected String getMainScriptLocation() throws CoreException {
-	if (sourceLocation == null)
+	if (installLocation == null)
 		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_SOURCE_LOCATION_MISSING, Policy.bind("error.missingSourceLocation"), null));
-	File file = new File(sourceLocation, buildScriptName);
+	File file = new File(installLocation, buildScriptName);
 	return file.getAbsolutePath();
 }
 	
-public void setSourceLocation(String location) {
-	this.sourceLocation = location;
-}
 
 protected void generateInstallTarget(AntScript script, PluginModel model) throws CoreException {
 	int tab = 1;

@@ -1,8 +1,15 @@
+/**********************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.pde.internal.build;
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+
 import java.io.*;
 import java.net.MalformedURLException;
 import java.util.*;
@@ -36,6 +43,8 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 * Target feature.
 	 */
 	protected Feature feature;
+
+
 /**
  * Returns a list of PluginModel objects representing the elements. The boolean
  * argument indicates whether the list should consist of plug-ins or fragments.
@@ -80,10 +89,10 @@ public void generate() throws CoreException {
 	try {
 		File root = new File(getFeatureRootLocation());
 		File target = new File(root, buildScriptName);
-		script = new BuildAntScript(new FileOutputStream(target));
-		setUpAntBuildScript();
+		BuildAntScript script = new BuildAntScript(new FileOutputStream(target));
+		setUpAntBuildScript(script);
 		try {
-			generateBuildScript();
+			generateBuildScript(script);
 		} finally {
 			script.close();
 		}
@@ -94,24 +103,24 @@ public void generate() throws CoreException {
 /**
  * Main call for generating the script.
  */
-protected void generateBuildScript() throws CoreException {
-	generatePrologue();
-	generateAllPluginsTarget();
-	generateAllFragmentsTarget();
-	generateAllChildrenTarget();
-	generateChildrenTarget();
+protected void generateBuildScript(BuildAntScript script) throws CoreException {
+	generatePrologue(script);
+	generateAllPluginsTarget(script);
+	generateAllFragmentsTarget(script);
+	generateAllChildrenTarget(script);
+	generateChildrenTarget(script);
 	generateBuildJarsTarget(script, feature);
-	generateBuildZipsTarget();
-	generateBuildUpdateJarTarget();
-	generateGatherBinPartsTarget();
-	generateZipDistributionWholeTarget();
-	generateZipSourcesTarget();
-	generateGatherSourcesTarget();
-	generateGatherLogTarget();
-	generateZipLogsTarget();
-	generateCleanTarget();
+	generateBuildZipsTarget(script);
+	generateBuildUpdateJarTarget(script);
+	generateGatherBinPartsTarget(script);
+	generateZipDistributionWholeTarget(script);
+	generateZipSourcesTarget(script);
+	generateGatherSourcesTarget(script);
+	generateGatherLogTarget(script);
+	generateZipLogsTarget(script);
+	generateCleanTarget(script);
 	generateRefreshTarget(script, getPropertyFormat(PROPERTY_FEATURE));
-	generateEpilogue();
+	generateEpilogue(script);
 }
 
 protected void generateBuildJarsTarget(AntScript script, Feature feature) throws CoreException {
@@ -145,7 +154,7 @@ protected void generateBuildJarsTarget(AntScript script, Feature feature) throws
 /**
  * FIXME: add comments
  */
-protected void generateBuildZipsTarget() throws CoreException {
+protected void generateBuildZipsTarget(BuildAntScript script) throws CoreException {
 	StringBuffer zips = new StringBuffer();
 	Properties props = getBuildProperties(feature);
 	for (Iterator iterator = props.entrySet().iterator(); iterator.hasNext();) {
@@ -155,7 +164,7 @@ protected void generateBuildZipsTarget() throws CoreException {
 			String zipName = key.substring(PROPERTY_SOURCE_PREFIX.length());
 			zips.append(',');
 			zips.append(zipName);
-			generateZipIndividualTarget(zipName, (String) entry.getValue());
+			generateZipIndividualTarget(script, zipName, (String) entry.getValue());
 		}
 	}
 	script.println();
@@ -169,7 +178,7 @@ protected void generateBuildZipsTarget() throws CoreException {
 /**
  * FIXME: add comments
  */
-protected void generateZipIndividualTarget(String zipName, String source) throws CoreException {
+protected void generateZipIndividualTarget(BuildAntScript script, String zipName, String source) throws CoreException {
 	int tab = 1;
 	script.println();
 	script.printTargetDeclaration(tab++, zipName, TARGET_INIT, null, null, null);
@@ -177,7 +186,7 @@ protected void generateZipIndividualTarget(String zipName, String source) throws
 	script.printZipTask(tab, root.append(zipName).toString(), root.append(source).toString());
 	script.printString(--tab, "</target>");
 }
-protected void generateCleanTarget() {
+protected void generateCleanTarget(BuildAntScript script) {
 	int tab = 1;
 	script.println();
 	script.printTargetDeclaration(tab, TARGET_CLEAN, TARGET_INIT, null, null, null);
@@ -193,7 +202,7 @@ protected void generateCleanTarget() {
 	tab--;
 	script.printString(tab, "</target>");
 }
-protected void generateZipLogsTarget() {
+protected void generateZipLogsTarget(BuildAntScript script) {
 	IPath base = new Path(getPropertyFormat(PROPERTY_BASEDIR));
 	base = base.append("_temp_");
 	int tab = 1;
@@ -207,12 +216,12 @@ protected void generateZipLogsTarget() {
 	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, "false", params);
 	params.put(PROPERTY_DESTINATION, baseProperty);
 	script.printAntCallTask(tab, TARGET_GATHER_LOGS, "false", params);
-	IPath destination = new Path(getPropertyFormat(PROPERTY_BASEDIR)).append("${feature}.log.zip");
+	IPath destination = new Path(getPropertyFormat(PROPERTY_BASEDIR)).append("${feature}_${" + PROPERTY_FEATURE_VERSION + "}.log.zip");
 	script.printZipTask(tab, destination.toString(), baseProperty);
 	script.printDeleteTask(tab, baseProperty, null, null);
 	script.printString(--tab, "</target>");
 }
-protected void generateGatherLogTarget() {
+protected void generateGatherLogTarget(BuildAntScript script) {
 	String source = new Path(getPropertyFormat(PROPERTY_BASEDIR)).toString();
 	String destination = new Path(getPropertyFormat(PROPERTY_DESTINATION)).append(getDirectoryName()).toString();
 	int tab = 1;
@@ -223,7 +232,7 @@ protected void generateGatherLogTarget() {
 	script.printCopyTask(tab, null, destination, new FileSet[] {fileSet});
 	script.printString(--tab, "</target>");
 }
-protected void generateGatherSourcesTarget() throws CoreException {
+protected void generateGatherSourcesTarget(BuildAntScript script) throws CoreException {
 	IPath source = new Path(getPropertyFormat(PROPERTY_BASEDIR));
 	IPath destination = new Path(getPropertyFormat(PROPERTY_DESTINATION));
 	destination = destination.append(getDirectoryName());
@@ -248,10 +257,10 @@ protected void generateGatherSourcesTarget() throws CoreException {
  * 
  */
 protected String getDirectoryName() {
-	return "features/${feature}_" + getPropertyFormat(PROPERTY_VERSION);
+	return "features/${feature}_" + getPropertyFormat(PROPERTY_FEATURE_VERSION);
 }
 
-protected void generateZipSourcesTarget() {
+protected void generateZipSourcesTarget(BuildAntScript script) {
 	String featurebase = getPropertyFormat(PROPERTY_FEATURE_BASE);
 	int tab = 1;
 	script.println();
@@ -267,12 +276,12 @@ protected void generateZipSourcesTarget() {
 	params.put(PROPERTY_TARGET, TARGET_GATHER_SOURCES);
 	params.put(PROPERTY_DESTINATION, new Path(featurebase).append("plugins").toString());
 	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, null, params);
-	script.printZipTask(tab, destination.append("${feature}_src_${version}.zip").toString(), "${feature.base}");
+	script.printZipTask(tab, destination.append("${feature}_${" + PROPERTY_FEATURE_VERSION + "}.src.zip").toString(), "${feature.base}");
 	script.printDeleteTask(tab, featurebase, null, null);
 	tab--;
 	script.printString(tab, "</target>");
 }
-protected void generateGatherBinPartsTarget() throws CoreException {
+protected void generateGatherBinPartsTarget(BuildAntScript script) throws CoreException {
 	int tab = 1;
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_GATHER_BIN_PARTS, TARGET_INIT, PROPERTY_FEATURE_BASE, null, null);
@@ -282,7 +291,7 @@ protected void generateGatherBinPartsTarget() throws CoreException {
 	script.printAntCallTask(tab, TARGET_CHILDREN, null, params);
 	String include = (String) getBuildProperties(feature).get(PROPERTY_BIN_INCLUDES);
 	String exclude = (String) getBuildProperties(feature).get(PROPERTY_BIN_EXCLUDES);
-	String root = "${feature.base}/features/${feature}_${version}";
+	String root = "${feature.base}/features/${feature}_${" + PROPERTY_FEATURE_VERSION + "}";
 	script.printMkdirTask(tab, root);
 	if (include != null || exclude != null) {
 		FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BASEDIR), null, include, null, exclude, null, null);
@@ -290,7 +299,7 @@ protected void generateGatherBinPartsTarget() throws CoreException {
 	}	
 	script.printString(--tab, "</target>");
 }
-protected void generateBuildUpdateJarTarget() {
+protected void generateBuildUpdateJarTarget(BuildAntScript script) {
 	int tab = 1;
 	script.println();
 	script.printTargetDeclaration(tab, TARGET_BUILD_UPDATE_JAR, TARGET_INIT, null, null, null);
@@ -308,7 +317,7 @@ protected void generateBuildUpdateJarTarget() {
 	params.clear();
 	params.put(PROPERTY_FEATURE_BASE, getPropertyFormat(PROPERTY_FEATURE_BASE));
 	script.printAntCallTask(tab, TARGET_GATHER_BIN_PARTS, "false", params);
-	script.printJarTask(tab, destination.append("${feature}_${version}.jar").toString(), "${feature.base}");
+	script.printJarTask(tab, destination.append("${feature}_${" + PROPERTY_FEATURE_VERSION + "}.jar").toString(), "${feature.base}");
 	script.printDeleteTask(tab, getPropertyFormat(PROPERTY_FEATURE_BASE), null, null);
 	tab--;
 	script.printString(tab, "</target>");
@@ -316,7 +325,7 @@ protected void generateBuildUpdateJarTarget() {
 /**
  * Zip up the whole feature.
  */
-protected void generateZipDistributionWholeTarget() {
+protected void generateZipDistributionWholeTarget(BuildAntScript script) {
 	int tab = 1;
 	script.println();
 	script.printTargetDeclaration(tab, TARGET_ZIP_DISTRIBUTION, TARGET_INIT, null, null, null);
@@ -328,7 +337,7 @@ protected void generateZipDistributionWholeTarget() {
 	Map params = new HashMap(1);
 	params.put(PROPERTY_INCLUDE_CHILDREN, "true");
 	script.printAntCallTask(tab, TARGET_GATHER_BIN_PARTS, null, params);
-	script.printZipTask(tab, destination.append("${feature}_${version}.bin.dist.zip").toString(), getPropertyFormat(PROPERTY_FEATURE_BASE));
+	script.printZipTask(tab, destination.append("${feature}_${" + PROPERTY_FEATURE_VERSION + "}.bin.dist.zip").toString(), getPropertyFormat(PROPERTY_FEATURE_BASE));
 	script.printDeleteTask(tab, getPropertyFormat(PROPERTY_FEATURE_BASE), null, null);
 	tab--;
 	script.printString(tab, "</target>");
@@ -336,7 +345,7 @@ protected void generateZipDistributionWholeTarget() {
 /**
  * Executes a given target in all children's script files.
  */
-protected void generateAllChildrenTarget() {
+protected void generateAllChildrenTarget(BuildAntScript script) {
 	StringBuffer depends = new StringBuffer();
 	depends.append(TARGET_INIT);
 	depends.append(",");
@@ -351,7 +360,7 @@ protected void generateAllChildrenTarget() {
 /**
  * Target responsible for delegating target calls to plug-in's build.xml scripts.
  */
-protected void generateAllPluginsTarget() throws CoreException {
+protected void generateAllPluginsTarget(BuildAntScript script) throws CoreException {
 	int tab = 1;
 	List plugins = computeElements(false);
 	String[][] sortedPlugins = Utils.computePrerequisiteOrder((PluginModel[]) plugins.toArray(new PluginModel[plugins.size()]));
@@ -369,7 +378,7 @@ protected void generateAllPluginsTarget() throws CoreException {
 /**
  * Target responsible for delegating target calls to fragments's build.xml scripts.
  */
-protected void generateAllFragmentsTarget() throws CoreException {
+protected void generateAllFragmentsTarget(BuildAntScript script) throws CoreException {
 	int tab = 1;
 	List fragments = computeElements(true);
 	script.println();
@@ -389,14 +398,14 @@ protected void generateAllFragmentsTarget() throws CoreException {
 /**
  * Just ends the script.
  */
-protected void generateEpilogue() {
+protected void generateEpilogue(BuildAntScript script) {
 	script.println();
 	script.printString(0, "</project>");
 }
 /**
  * Defines, the XML declaration, Ant project and init target.
  */
-protected void generatePrologue() {
+protected void generatePrologue(BuildAntScript script) {
 	int tab = 1;
 	script.printProjectDeclaration(feature.getFeatureIdentifier(), TARGET_BUILD_JARS, ".");
 	script.println();
@@ -407,7 +416,7 @@ protected void generatePrologue() {
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_INIT, TARGET_PROPERTIES, null, null, null);
 	script.printProperty(tab, PROPERTY_FEATURE, feature.getFeatureIdentifier());
-	script.printProperty(tab, PROPERTY_VERSION, feature.getFeatureVersion());
+	script.printProperty(tab, PROPERTY_FEATURE_VERSION, feature.getFeatureVersion());
 	script.printString(--tab, "</target>");
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_PROPERTIES, null, PROPERTY_ECLIPSE_RUNNING, null, null);
@@ -502,7 +511,7 @@ protected Properties getBuildProperties(Feature feature) throws CoreException {
  * Delegates some target call to all-template only if the property
  * includeChildren is set.
  */
-protected void generateChildrenTarget() {
+protected void generateChildrenTarget(BuildAntScript script) {
 	script.println();
 	script.printTargetDeclaration(1, TARGET_CHILDREN, null, PROPERTY_INCLUDE_CHILDREN, null, null);
 	script.printAntCallTask(2, TARGET_ALL_CHILDREN, null, null);
@@ -512,7 +521,7 @@ protected void generateChildrenTarget() {
 /**
  * 
  */
-protected void setUpAntBuildScript() throws CoreException {
+protected void setUpAntBuildScript(BuildAntScript script) throws CoreException {
 	String external = (String) getBuildProperties(feature).get(PROPERTY_ZIP_EXTERNAL);
 	if (external != null && external.equalsIgnoreCase("true"))
 		script.setZipExternal(true);

@@ -84,6 +84,7 @@ public interface IXMLConstants {
 	public static final String PROPERTY_SRC_INCLUDES = "src.includes";
 	public static final String PROPERTY_TARGET = "target";
 	public static final String PROPERTY_TEMPLATE = "template";
+	public static final String PROPERTY_FEATURE_VERSION = "feature.version";
 	public static final String PROPERTY_VERSION = "version";
 	public static final String PROPERTY_WS = "ws";
 	public static final String PROPERTY_ZIP_ARGUMENT = "zip.argument";

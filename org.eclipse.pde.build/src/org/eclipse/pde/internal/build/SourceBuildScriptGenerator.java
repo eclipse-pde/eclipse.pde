@@ -20,7 +20,7 @@ public class SourceBuildScriptGenerator {
 
 public void run() throws CoreException {
 	PluginModelSourceBuildScriptGenerator generator = new PluginModelSourceBuildScriptGenerator();
-	generator.setSourceLocation(sourceLocation);
+	generator.setInstallLocation(sourceLocation);
 	generator.generate();
 }
 
