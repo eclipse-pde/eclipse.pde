@@ -6,7 +6,11 @@
  */
 package org.eclipse.pde.internal.ui.wizards.imports;
 
+import java.util.Vector;
+
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
@@ -113,15 +117,27 @@ public class UpdateBuildpathWizardPage extends StatusWizardPage {
 	}
 
 	private Object[] getModels() {
-		IPluginModelBase[] plugins =
-			PDECore.getDefault().getWorkspaceModelManager().getWorkspacePluginModels();
-		IPluginModelBase[] fragments =
-			PDECore.getDefault().getWorkspaceModelManager().getWorkspaceFragmentModels();
-		IPluginModelBase[] all =
-			new IPluginModelBase[plugins.length + fragments.length];
-		System.arraycopy(plugins, 0, all, 0, plugins.length);
-		System.arraycopy(fragments, 0, all, plugins.length, fragments.length);
-		return all;
+		Vector result = new Vector();
+		try {
+			IPluginModelBase[] plugins =
+				PDECore.getDefault().getWorkspaceModelManager().getWorkspacePluginModels();
+			for (int i = 0; i < plugins.length; i++) {
+				if (plugins[i].getUnderlyingResource().getProject().hasNature(JavaCore.NATURE_ID))
+					result.add(plugins[i]);
+			}
+			
+			IPluginModelBase[] fragments =
+				PDECore.getDefault().getWorkspaceModelManager().getWorkspaceFragmentModels();
+				
+			for (int i = 0; i < fragments.length; i++) {
+				if (fragments[i].getUnderlyingResource().getProject().hasNature(JavaCore.NATURE_ID))
+					result.add(fragments[i]);
+			}
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}
+		
+		return result.toArray();
 	}
 
 	private IStatus validatePlugins() {
