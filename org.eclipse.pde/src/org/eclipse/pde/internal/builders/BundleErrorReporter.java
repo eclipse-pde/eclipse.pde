@@ -221,7 +221,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
                                                 .getPluginBase() }, JavaCore
                                                 .create(fProject));
                         for (int i = 0; i < packages.length; i++)
-                            fHostPackagesMap.put(packages[i].getElementName(),
+                            map.put(packages[i].getElementName(),
                                     packages[i]);
                     } catch (JavaModelException jme) {
                         PDE.log(jme);
