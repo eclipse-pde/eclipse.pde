@@ -7,6 +7,7 @@ import org.apache.tools.ant.*;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.PDE;
 import org.eclipse.pde.internal.builders.SchemaTransformer;
 import org.eclipse.pde.internal.core.SourceDOMParser;
 import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
@@ -24,15 +25,18 @@ public class ConvertSchemaToHTML extends Task {
 	private String destination;
 
 	public void execute() throws BuildException {
-		validateDestination();
-		IPluginModelBase model = readManifestFile();
+		if (!validateDestination())
+			return;
 
-		StringBuffer buildMessage = new StringBuffer();
+		IPluginModelBase model = readManifestFile();
+		if (model == null)
+			return;
+
 		IPluginExtensionPoint[] extPoints = model.getPluginBase().getExtensionPoints();
 		for (int i = 0; i < extPoints.length; i++) {
 			String schemaLocation = extPoints[i].getSchema();
 			FileInputStream is = null;
-			PrintWriter printWriter = null;
+			PrintWriter out = null;
 
 			if (schemaLocation == null || schemaLocation.equals(""))
 				continue;
@@ -57,33 +61,28 @@ public class ConvertSchemaToHTML extends Task {
 				File file = new File(destination);
 				if (!file.exists() || !file.isDirectory())
 					file.mkdirs();
-				printWriter =
-					new PrintWriter(
-						new FileWriter(
-							destination
-								+ Path.SEPARATOR
-								+ extPoints[i].getFullId().replace('.', '_')
-								+ ".html"),
-						true);
-				transformer.transform(printWriter, schema);
+					
+				String fileName =
+					destination
+						+ Path.SEPARATOR
+						+ extPoints[i].getFullId().replace('.', '_')
+						+ ".html";
+				out = new PrintWriter(new FileWriter(fileName), true);
+				transformer.transform(out, schema);
 			} catch (Exception e) {
 				if (e.getMessage() != null)
-					buildMessage.append(
-						e.getMessage() + System.getProperty("line.separator"));
+					System.out.println(e.getMessage());
 			} finally {
 				try {
 					if (is != null)
 						is.close();
 				} catch (IOException e) {
 				}
-				if (printWriter != null) {
-					printWriter.flush();
-					printWriter.close();
+				if (out != null) {
+					out.close();
 				}
 			}
 		}
-		if (buildMessage.length() > 0)
-			throw new BuildException(buildMessage.toString());
 	}
 
 	public void setManifest(String manifest) {
@@ -93,18 +92,25 @@ public class ConvertSchemaToHTML extends Task {
 	public void setDestination(String destination) {
 		this.destination = destination;
 	}
+	
 
-	private IPluginModelBase readManifestFile() throws BuildException {
-		if (manifest == null)
-			throw new BuildException("'manifest' attribute is not specified");
+	private IPluginModelBase readManifestFile() {
+		if (manifest == null) {
+			System.out.println(
+				PDE.getFormattedMessage("Builders.Convert.missingAttribute", "manifest"));
+			return null;
+		}
 
 		InputStream stream = null;
 		File file = new File(manifest);
 		try {
 			stream = new FileInputStream(manifest);
 		} catch (FileNotFoundException e) {
-			throw new BuildException(
-				"File:" + file.getAbsolutePath() + " does not exist.");
+			System.out.println(
+				PDE.getFormattedMessage(
+					"Builders.Convert.Manifest.missingFile",
+					file.getAbsolutePath()));
+			return null;
 		}
 
 		ExternalPluginModelBase model = null;
@@ -112,22 +118,36 @@ public class ConvertSchemaToHTML extends Task {
 			model = new ExternalFragmentModel();
 		else if (file.getName().toLowerCase().equals("plugin.xml"))
 			model = new ExternalPluginModel();
-		else
-			throw new BuildException("Illegal value for 'manifest' attribute");
+		else {
+			System.out.println(
+				PDE.getFormattedMessage("Builders.Convert.illegalValue", "manifest"));
+			return null;
+		}
 
 		String parentPath = file.getParentFile().getAbsolutePath();
 		model.setInstallLocation(parentPath);
 		try {
 			model.load(stream, false);
 			stream.close();
-		} catch (Exception e) {}
+		} catch (Exception e) {
+		}
 		return model;
 	}
 
-	private void validateDestination() throws BuildException {
-		if (destination == null)
-			throw new BuildException("'destination' attribute is not specified");
-		if (!new Path(destination).isValidPath(destination))
-			throw new BuildException("Illegal value for 'destination' attribute");
+	private boolean validateDestination() {
+		boolean valid = true;
+		if (destination == null) {
+			System.out.println(
+				PDE.getFormattedMessage(
+					"Builders.Convert.missingAttribute",
+					"destination"));
+			valid = false;
+		} else if (!new Path(destination).isValidPath(destination)) {
+			System.out.println(
+				PDE.getFormattedMessage("Builders.Convert.illegalValue", "destination"));
+			valid = false;
+		}
+		return valid;
 	}
+	
 }
