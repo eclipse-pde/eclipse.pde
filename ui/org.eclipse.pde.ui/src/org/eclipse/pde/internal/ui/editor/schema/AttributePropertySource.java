@@ -213,11 +213,4 @@ public class AttributePropertySource
 				att.setName(svalue);
 		}
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.schema.SchemaObjectPropertySource#setSourceObject(java.lang.Object)
-	 */
-	public void setSourceObject(Object newSourceObject) {
-	    descriptors = null;
-	    super.setSourceObject(newSourceObject);
-	}
 }
