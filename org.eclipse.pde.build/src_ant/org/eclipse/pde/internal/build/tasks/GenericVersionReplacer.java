@@ -47,10 +47,10 @@ public class GenericVersionReplacer extends Task {
 		modifier.execute();
 	}
 
-	private void callManifestModifier(String loc) {
+	private void callManifestModifier(String path) {
 		ManifestModifier modifier = new ManifestModifier();
 		modifier.setProject(getProject());
-		modifier.setManifestLocation(loc);
+		modifier.setManifestLocation(path);
 		modifier.setKeyValue("Bundle-Version|" + version); //$NON-NLS-1$
 		modifier.execute();
 	}
