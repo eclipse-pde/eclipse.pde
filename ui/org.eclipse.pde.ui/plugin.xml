@@ -290,7 +290,7 @@
       </wizard>
       <wizard
             name="%projectGenerators.helloWorldBundle.name"
-            icon="icons/full/ctool16/defcon_wiz.gif"
+            icon="icons/full/ctool16/newexprj_wiz.gif"
             category="bundle"
             class="org.eclipse.pde.internal.ui.osgi.templates.HelloWorldNewBundleWizard"
             id="org.eclipse.pde.ui.projectGenerators.helloWorldBundle">
@@ -300,7 +300,7 @@
       </wizard>
       <wizard
             name="%projectGenerators.helloWorld.name"
-            icon="icons/full/ctool16/defcon_wiz.gif"
+            icon="icons/full/ctool16/newexprj_wiz.gif"
             class="org.eclipse.pde.internal.ui.wizards.templates.HelloWorldNewWizard"
             id="org.eclipse.pde.ui.projectGenerators.helloWorld">
          <description>
@@ -309,7 +309,7 @@
       </wizard>
       <wizard
             name="%projectGenerators.view.name"
-            icon="icons/full/ctool16/defcon_wiz.gif"
+            icon="icons/full/ctool16/newexprj_wiz.gif"
             class="org.eclipse.pde.internal.ui.wizards.templates.ViewNewWizard"
             id="org.eclipse.pde.ui.projectGenerators.view">
          <description>
@@ -318,7 +318,7 @@
       </wizard>
       <wizard
             name="%projectGenerators.multiPageEditor.name"
-            icon="icons/full/ctool16/defcon_wiz.gif"
+            icon="icons/full/ctool16/newexprj_wiz.gif"
             class="org.eclipse.pde.internal.ui.wizards.templates.MultiPageEditorNewWizard"
             id="org.eclipse.pde.ui.projectGenerators.multiPageEditor">
          <description>
@@ -336,7 +336,7 @@
       </wizard>
       <wizard
             name="%projectGenerators.perspectiveExtensions.name"
-            icon="icons/full/ctool16/defcon_wiz.gif"
+            icon="icons/full/ctool16/newexprj_wiz.gif"
             class="org.eclipse.pde.internal.ui.wizards.templates.PerspectiveExtensionsNewWizard"
             id="org.eclipse.pde.ui.projectGenerators.perspectiveExtensions">
          <description>
@@ -345,7 +345,7 @@
       </wizard>
       <wizard
             name="%projectGenerators.propertyPages.name"
-            icon="icons/full/ctool16/defcon_wiz.gif"
+            icon="icons/full/ctool16/newexprj_wiz.gif"
             class="org.eclipse.pde.internal.ui.wizards.templates.PropertyPageNewWizard"
             id="org.eclipse.pde.ui.projectGenerators.propertyPages">
          <description>
@@ -354,7 +354,7 @@
       </wizard>
       <wizard
             name="%projectGenerators.popupMenus.name"
-            icon="icons/full/ctool16/defcon_wiz.gif"
+            icon="icons/full/ctool16/newexprj_wiz.gif"
             class="org.eclipse.pde.internal.ui.wizards.templates.PopupMenuNewWizard"
             id="org.eclipse.pde.ui.projectGenerators.popupMenus">
          <description>
@@ -363,7 +363,7 @@
       </wizard>
       <wizard
             name="%projectGenerators.editor.name"
-            icon="icons/full/ctool16/defcon_wiz.gif"
+            icon="icons/full/ctool16/newexprj_wiz.gif"
             class="org.eclipse.pde.internal.ui.wizards.templates.EditorNewWizard"
             id="org.eclipse.pde.ui.projectGenerators.editor">
          <description>

@@ -77,7 +77,7 @@ public abstract class AbstractNewPluginTemplateWizard
 	public AbstractNewPluginTemplateWizard() {
 		super();
 		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
-		setDefaultPageImageDescriptor(PDEPluginImages.DESC_DEFCON_WIZ);
+		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWEXPRJ_WIZ);
 		setNeedsProgressMonitor(true);
 	}
 

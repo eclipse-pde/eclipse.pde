@@ -135,8 +135,13 @@ public class UpdateBuildpathWizardPage extends StatusWizardPage {
 			IPluginModelBase[] models =
 				PDECore.getDefault().getWorkspaceModelManager().getAllModels();
 			for (int i = 0; i < models.length; i++) {
+				// We should only care about Java nature, not
+				// libraries. A plug-in may not have library but
+				// it may re-export plug-ins that do.
+				/* 
 				if (models[i].getPluginBase().getLibraries().length == 0)
 					continue;
+				*/
 				if (models[i].getUnderlyingResource().getProject().hasNature(JavaCore.NATURE_ID))
 					result.add(models[i]);
 			}

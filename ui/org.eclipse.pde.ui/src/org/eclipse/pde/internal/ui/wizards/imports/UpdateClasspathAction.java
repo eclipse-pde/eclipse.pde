@@ -15,6 +15,7 @@ import java.util.ArrayList;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -162,7 +163,9 @@ public class UpdateClasspathAction implements IWorkbenchWindowActionDelegate {
 		try {
 			for (int i = 0; i < models.length; i++) {
 				IPluginModelBase model = models[i];
-				if (model.getPluginBase().getLibraries().length == 0)
+				// no reason to compile classpath for a non-Java model
+				IProject project = model.getUnderlyingResource().getProject();
+				if (!project.hasNature(JavaCore.NATURE_ID))
 					continue;
 				IProgressMonitor subMonitor =
 					new SubProgressMonitor(monitor, 1);
