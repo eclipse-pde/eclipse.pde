@@ -35,6 +35,7 @@ public class JUnitPluginLaunchShortcut extends JUnitLaunchShortcut {
 			ILaunchConfigurationType configType= getJUnitLaunchConfigType();
 			ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, getLaunchManager().generateUniqueLaunchConfigurationNameFrom(name));
 			wc.setAttribute(ILauncherSettings.APPLICATION, JUnitLaunchConfiguration.fgDefaultApp);
+			wc.setAttribute(ILauncherSettings.LOCATION + "0", LauncherUtils.getJUnitTempWorkspace());
 			wc.setAttribute(ILauncherSettings.VMARGS, "");
 			wc.setAttribute(ILauncherSettings.PROGARGS, LauncherUtils.getDefaultProgramArguments());
 			wc.setAttribute(ILauncherSettings.USECUSTOM, true);
