@@ -258,6 +258,23 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	}
 
 	public void resolveState() {
+		List configs = AbstractScriptGenerator.getConfigInfos();
+		String[] os = new String[configs.size()];
+		String[] ws = new String[configs.size()];
+		String[] archs = new String[configs.size()];
+		int i = 0;
+		for (Iterator iter = configs.iterator(); iter.hasNext();) {
+			Config aConfig = (Config) iter.next();			
+			os[i] = aConfig.getOs();
+			ws[i] = aConfig.getWs();
+			archs[i] = aConfig.getArch();
+			i++;
+		}
+		Hashtable properties = new Hashtable(3);
+		properties.put("osgi.ws", ws); //$NON-NLS-1$
+		properties.put("osgi.os", os); //$NON-NLS-1$
+		properties.put("osgi.arch", archs); //$NON-NLS-1$
+		state.setPlatformProperties(properties);
 		state.resolve(false);
 	}
 
