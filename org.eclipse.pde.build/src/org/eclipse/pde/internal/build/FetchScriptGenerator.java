@@ -15,7 +15,7 @@ import org.eclipse.update.internal.core.FeatureExecutableFactory;
 /**
  * 
  */
-public class FetchScriptGenerator extends AbstractScriptGenerator implements IPDECoreConstants, IXMLConstants {
+public class FetchScriptGenerator extends AbstractScriptGenerator {
 
 	/**
 	 * 
