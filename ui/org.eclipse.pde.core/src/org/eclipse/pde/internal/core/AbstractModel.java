@@ -38,12 +38,15 @@ public abstract class AbstractModel
 		listeners.add(listener);
 	}
 	public void transferListenersTo(IModelChangeProviderExtension target, IModelChangedListenerFilter filter) {
+		ArrayList removed=new ArrayList();
 		for (int i=0; i<listeners.size(); i++) {
 			IModelChangedListener listener = (IModelChangedListener)listeners.get(i);
-			if (filter==null || filter.accept(listener))
-			target.addModelChangedListener(listener);
+			if (filter==null || filter.accept(listener)) {
+				target.addModelChangedListener(listener);
+				removed.add(listener);
+			}
 		}
-		listeners.clear();
+		listeners.removeAll(removed);
 	}
 
 	protected NLResourceHelper createNLResourceHelper() {
@@ -57,9 +60,9 @@ public abstract class AbstractModel
 		disposed = true;
 	}
 	public void fireModelChanged(IModelChangedEvent event) {
-		for (Iterator iter = listeners.iterator(); iter.hasNext();) {
-			IModelChangedListener listener =
-				(IModelChangedListener) iter.next();
+		IModelChangedListener [] list = (IModelChangedListener[])listeners.toArray(new IModelChangedListener[listeners.size()]);
+		for (int i=0; i<list.length; i++) {
+			IModelChangedListener listener = list[i];
 			listener.modelChanged(event);
 		}
 	}
