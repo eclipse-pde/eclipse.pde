@@ -30,12 +30,13 @@ public class ExportSection extends PDESection {
 		TableWrapLayout layout = new TableWrapLayout();
 		layout.leftMargin = layout.rightMargin = toolkit.getBorderStyle() != SWT.NULL ? 0 : 2;
 		layout.numColumns = 3;
+		layout.verticalSpacing = 10;
 		comp.setLayout(layout);
 		comp.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		
 		FormText text = toolkit.createFormText(comp, true);
 		text.setText(PDEPlugin.getResourceString("Product.overview.validate"), true, false);
-		TableWrapData td = new TableWrapData(TableWrapData.FILL);
+		TableWrapData td = new TableWrapData();
 		td.colspan = 3;
 		text.setLayoutData(td);
 				
@@ -51,9 +52,11 @@ public class ExportSection extends PDESection {
 		
 		text = toolkit.createFormText(comp, true);
 		text.setText(PDEPlugin.getResourceString("Product.overview.export"), true, false);
-		td = new TableWrapData(TableWrapData.FILL);
+		td = new TableWrapData();
 		td.colspan = 3;
 		text.setLayoutData(td);
+		
+		toolkit.paintBordersFor(comp);
 		section.setClient(comp);
 	}
 	

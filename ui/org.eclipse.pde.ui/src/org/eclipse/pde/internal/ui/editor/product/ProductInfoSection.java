@@ -39,14 +39,14 @@ public class ProductInfoSection extends PDESection {
 		layout.numColumns = 3;
 		client.setLayout(layout);
 
-		section.setClient(client);
-		
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
 		
 		createNameEntry(client, toolkit, actionBars);
 		createIdEntry(client, toolkit, actionBars);
 		createApplicationEntry(client, toolkit, actionBars);
+		
 		toolkit.paintBordersFor(client);
+		section.setClient(client);	
 	}
 	
 	private void createNameEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {

@@ -10,6 +10,7 @@ import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.swt.*;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.widgets.*;
 
@@ -23,10 +24,10 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 	}
 
 	private TableViewer fPluginTable;
+	private Button fIncludeFragments;
 
 	public PluginSection(PDEFormPage formPage, Composite parent) {
 		super(formPage, parent, Section.DESCRIPTION, getButtonLabels());
-		getSection().setText("Plug-ins");
 	}
 	
 	private static String[] getButtonLabels() {
@@ -43,15 +44,26 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 	protected void createClient(Section section, FormToolkit toolkit) {
 		Composite container = createClientContainer(section, 2, toolkit);
 		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
-		
+		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		TablePart tablePart = getTablePart();
 		fPluginTable = tablePart.getTableViewer();
 		fPluginTable.setContentProvider(new ContentProvider());
 		fPluginTable.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
+		
+		fIncludeFragments = toolkit.createButton(container, "Include fragments when computing required plug-ins", SWT.CHECK);
+		GridData gd = new GridData();
+		gd.horizontalSpan = 2;
+		fIncludeFragments.setLayoutData(gd);
+		
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
-		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
+		
+		gd = new GridData(GridData.FILL_BOTH);
+		gd.verticalSpan = 2;
+		section.setLayoutData(gd);
+		section.setText("Plug-ins and Fragments");
+		section.setDescription("List all the plug-ins and fragments that constitute the product:");
 		PDECore.getDefault().getModelManager().addPluginModelListener(this);
 	}
 	
