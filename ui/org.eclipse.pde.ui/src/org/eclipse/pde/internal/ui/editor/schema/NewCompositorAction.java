@@ -20,7 +20,7 @@ public NewCompositorAction(ISchemaElement source, Object object, int kind) {
 	this.source = source;
 	this.object = object;
 	this.kind = kind;
-	setText(ISchemaCompositor.kindTable[kind]);
+	setText("&"+ISchemaCompositor.kindTable[kind]);
 	setToolTipText(PDEPlugin.getFormattedMessage(KEY_TOOLTIP, ISchemaCompositor.kindTable[kind]));
 	ImageDescriptor desc = null;
 
