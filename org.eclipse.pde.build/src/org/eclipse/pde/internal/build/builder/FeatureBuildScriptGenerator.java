@@ -47,6 +47,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 * for.
 	 */
 	protected String featureIdentifier;
+	protected String searchedVersion;
 	/** Target feature. */
 	protected IFeature feature;
 	/** The featurename with its version number */
@@ -69,12 +70,13 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	/**
 	 * Constructor FeatureBuildScriptGenerator.
 	 */
-	public FeatureBuildScriptGenerator(String featureId, AssemblyInformation informationGathering) throws CoreException {
+	public FeatureBuildScriptGenerator(String featureId, String versionId, AssemblyInformation informationGathering) throws CoreException {
 		if (featureId == null) {
 			String message = Policy.bind("error.missingFeatureId"); //$NON-NLS-1$
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, message, null));
 		}
 		this.featureIdentifier = featureId;
+		this.searchedVersion = versionId;
 		assemblyData = informationGathering;
 	}
 
@@ -116,7 +118,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	}
 
 	private void generateEmbeddedSource(String pluginId) throws CoreException {
-		FeatureBuildScriptGenerator featureGenerator = new FeatureBuildScriptGenerator(Utils.getArrayFromString(getBuildProperties().getProperty(GENERATION_SOURCE_PLUGIN_PREFIX + pluginId))[0], assemblyData);
+		FeatureBuildScriptGenerator featureGenerator = new FeatureBuildScriptGenerator(Utils.getArrayFromString(getBuildProperties().getProperty(GENERATION_SOURCE_PLUGIN_PREFIX + pluginId))[0], null, assemblyData);
 		featureGenerator.setGenerateIncludedFeatures(false);
 		featureGenerator.setAnalyseChildren(analysePlugins);
 		featureGenerator.setSourceFeatureGeneration(true);
@@ -196,7 +198,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			writeSourceFeature();
 		}
 		if (!sourcePluginOnly)
-			collectElementToAssemble(getSite(false).findFeature(feature.getVersionedIdentifier().getIdentifier()));
+			collectElementToAssemble(feature);
 
 		// Do the recursive generation of build files for the features required by the current feature
 		if (analyseIncludedFeatures)
@@ -220,7 +222,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			//If the feature which is included is a source feature, then instead of calling the generation of the featureID we are
 			// calling the generation of the corresponding binary feature but without generating the  scripts (set binaryFeatureGeneration to false)
 			boolean doSourceFeatureGeneration = getBuildProperties().containsKey(GENERATION_SOURCE_FEATURE_PREFIX + featureId);
-			FeatureBuildScriptGenerator generator = new FeatureBuildScriptGenerator(doSourceFeatureGeneration == true ? Utils.getArrayFromString(getBuildProperties().getProperty(GENERATION_SOURCE_FEATURE_PREFIX + featureId))[0] : featureId, assemblyData);
+			FeatureBuildScriptGenerator generator = new FeatureBuildScriptGenerator(doSourceFeatureGeneration == true ? Utils.getArrayFromString(getBuildProperties().getProperty(GENERATION_SOURCE_FEATURE_PREFIX + featureId))[0] : featureId, null, assemblyData);
 			//If we are  generating a  source  feature we don't  want to go recursively
 			generator.setGenerateIncludedFeatures(doSourceFeatureGeneration ? false : true);
 			generator.setAnalyseChildren(analysePlugins);
@@ -437,7 +439,10 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			// Here we get all the included features (independently of the config being built so the version numbers in the feature can be replaced)
 			IIncludedFeatureReference[] includedFeatures = feature.getRawIncludedFeatureReferences();
 			for (int i = 0; i < includedFeatures.length; i++) {
-				IFeature includedFeature = getSite(false).findFeature(includedFeatures[i].getVersionedIdentifier().getIdentifier());
+				String versionId = includedFeatures[i].getVersionedIdentifier().getVersion().toString();
+				if (versionId.equals(GENERIC_VERSION_NUMBER))
+					versionId = null;
+				IFeature includedFeature = getSite(false).findFeature(includedFeatures[i].getVersionedIdentifier().getIdentifier(), versionId);
 				VersionedIdentifier includedFeatureVersionId = includedFeature.getVersionedIdentifier();
 				featureVersionInfo += (includedFeatureVersionId.getIdentifier() + ',' + includedFeatureVersionId.getVersion().toString() + ',');
 			}
@@ -669,8 +674,11 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			IIncludedFeatureReference[] features = feature.getIncludedFeatureReferences();
 			for (int i = 0; i < features.length; i++) {
 				String featureId = features[i].getVersionedIdentifier().getIdentifier();
+				String versionId = features[i].getVersionedIdentifier().getVersion().toString();
+				if (versionId.equals(GENERIC_VERSION_NUMBER))
+					versionId = null;
 				IPath location;
-				IFeature includedFeature = getSite(false).findFeature(featureId);
+				IFeature includedFeature = getSite(false).findFeature(featureId, versionId);
 				String includedFeatureDirectory = includedFeature.getURL().getPath();
 				int j = includedFeatureDirectory.lastIndexOf(DEFAULT_FEATURE_FILENAME_DESCRIPTOR);
 				if (j != -1)
@@ -748,7 +756,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	}
 
 	private void initializeVariables() throws CoreException {
-		feature = getSite(false).findFeature(featureIdentifier);
+		feature = getSite(false).findFeature(featureIdentifier, searchedVersion);
 		if (feature == null) {
 			String message = Policy.bind("exception.missingFeature", featureIdentifier); //$NON-NLS-1$
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, message, null));
@@ -906,7 +914,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	}
 
 	private void generateSourceFeatureScripts() throws CoreException {
-		FeatureBuildScriptGenerator sourceScriptGenerator = new FeatureBuildScriptGenerator(sourceFeatureFullName, assemblyData);
+		FeatureBuildScriptGenerator sourceScriptGenerator = new FeatureBuildScriptGenerator(sourceFeatureFullName, null, assemblyData);
 		sourceScriptGenerator.setGenerateIncludedFeatures(false);
 		sourceScriptGenerator.setAnalyseChildren(true);
 		sourceScriptGenerator.setSourceToGather(sourceToGather);

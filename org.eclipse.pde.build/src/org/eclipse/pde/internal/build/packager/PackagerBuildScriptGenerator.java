@@ -30,7 +30,7 @@ public class PackagerBuildScriptGenerator extends FeatureBuildScriptGenerator {
 	}
 
 	public PackagerBuildScriptGenerator(String featureId, AssemblyInformation assemblageInformation) throws CoreException {
-		super(featureId, assemblageInformation);
+		super(featureId, null, assemblageInformation);
 	}
 
 	public void run() throws CoreException {
@@ -69,7 +69,7 @@ public class PackagerBuildScriptGenerator extends FeatureBuildScriptGenerator {
 			return;
 		for (int i = 0; i < ignoredFeatures.length; i++) {
 			try {
-				toAssemble.removeFeature((Config) getConfigInfos().get(0), getSite(false).findFeature(ignoredFeatures[i]));
+				toAssemble.removeFeature((Config) getConfigInfos().get(0), getSite(false).findFeature(ignoredFeatures[i], null));
 			} catch (CoreException e) {
 				//Ignore
 			}

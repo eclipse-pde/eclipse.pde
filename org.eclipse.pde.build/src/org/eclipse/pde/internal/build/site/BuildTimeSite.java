@@ -104,11 +104,12 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 		return constraint.getName() + '_' + versionSpec;
 	}
 
-	public IFeature findFeature(String featureId) throws CoreException {
+	public IFeature findFeature(String featureId, String versionId) throws CoreException {
 		ISiteFeatureReference[] features = getFeatureReferences();
 		for (int i = 0; i < features.length; i++) {
 			if (features[i].getVersionedIdentifier().getIdentifier().equals(featureId))
-				return features[i].getFeature(null);
+				if (versionId == null || features[i].getVersionedIdentifier().getVersion().toString().equals(versionId))
+					return features[i].getFeature(null);
 		}
 		return null;
 	}

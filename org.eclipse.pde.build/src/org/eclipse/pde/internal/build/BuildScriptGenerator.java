@@ -99,7 +99,13 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 			assemblageInformation = new AssemblyInformation();
 
 			String featureId = (String) i.next();
-			FeatureBuildScriptGenerator generator = new FeatureBuildScriptGenerator(featureId, assemblageInformation);
+			String versionId = null;
+			int versionPosition = featureId.indexOf(":");
+			if(versionPosition != -1) {
+				versionId = featureId.substring(versionPosition+1);
+				featureId = featureId.substring(0, versionPosition);
+			}
+			FeatureBuildScriptGenerator generator = new FeatureBuildScriptGenerator(featureId, versionId, assemblageInformation);
 			generator.setGenerateIncludedFeatures(this.recursiveGeneration);
 			generator.setAnalyseChildren(this.children);
 			generator.setSourceFeatureGeneration(false);
