@@ -187,7 +187,7 @@
       <wizard
             name="%FeatureImportWizard.label"
             icon="icons/full/ctool16/newexprj_wiz.gif"
-            class="org.eclipse.pde.internal.ui.wizards.exports.PluginExportWizard"
+            class="org.eclipse.pde.internal.ui.wizards.imports.FeatureImportWizard"
             id="org.eclipse.pde.ui.FeatureImportWizard">
          <description>
             %FeatureImportWizard.description
@@ -214,16 +214,16 @@
          </selection>
       </wizard>
       <wizard
-            class="org.eclipse.pde.internal.ui.wizards.exports.FeatureExportWizard"
             name="%FeatureExportWizard.label"
-            id="org.eclipse.pde.ui.featureExportWizard"
-            icon="icons/full/ctool16/newexprj_wiz.gif">
+            icon="icons/full/ctool16/newexprj_wiz.gif"
+            class="org.eclipse.pde.internal.ui.wizards.exports.FeatureExportWizard"
+            id="org.eclipse.pde.ui.featureExportWizard">
          <description>
             %FeatureExportWizard.description
          </description>
          <selection
-               class="org.eclipse.core.resources.IFile"
-               name="feature.xml">
+               name="feature.xml"
+               class="org.eclipse.core.resources.IFile">
          </selection>
       </wizard>
    </extension>
