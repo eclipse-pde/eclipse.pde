@@ -8,7 +8,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.base.model.IIdentifiable;
 /**
  */
-public interface IPluginImport extends IPluginObject, IIdentifiable, IMatchRules {
+public interface IPluginImport extends IPluginObject, IPluginReference {
 /**
  * A name of the property that will be used to notify
  * about changes in the "reexported" field.
@@ -19,29 +19,6 @@ public interface IPluginImport extends IPluginObject, IIdentifiable, IMatchRules
  * about changes in the "optional" field.
  */
 	public static final String P_OPTIONAL = "optional";
-/**
- * A name of the property that will be used to notify
- * about changes in the "match" field.
- */
-	public static final String P_MATCH = "match";
-/**
- * A name of the property that will be used to notify
- * about changes in the "version" field.
- */
-	public static final String P_VERSION = "version";
-/**
- * Returns the required match for the imported plug-in. The
- * choices are defined in IMatchRules interface.
- * @see IMatchRules
- * @return the desired type of the import plug-in match
- */
-public int getMatch();
-/**
- * Returns the required version of the plug-in.
- *
- * @return required version or <samp>null</samp> if not set
- */
-public String getVersion();
 /**
  * Tests whether the imported plug-in is reexported for
  * plug-ins that will use this plug-in.
@@ -56,14 +33,6 @@ public boolean isReexported();
  * @return true if this import is optional
  */
 public boolean isOptional();
-/**
- * Sets the match type for the require plug-in.
- * This method will throw a CoreException if the model
- * is not editable.
- * @see IMatchRules
- * @param match the desired match type
- */ 
-public void setMatch(int match) throws CoreException;
 /**
  * Sets whether the libraries of the required plug-in will
  * be reexported.
@@ -80,12 +49,4 @@ public void setReexported(boolean value) throws CoreException;
  * @param value true if import is optional
  */ 
 public void setOptional(boolean value) throws CoreException;
-/**
- * Sets the desired version of the required plug-in.
- * This method will throw a CoreException if
- * the model is not editable.
- *
- * @param version the required import plug-in version
- */
-public void setVersion(String version) throws CoreException;
 }

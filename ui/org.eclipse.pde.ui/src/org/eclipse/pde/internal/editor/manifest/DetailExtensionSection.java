@@ -191,6 +191,12 @@ public class DetailExtensionSection
 				getFormPage().setSelection(event.getSelection());
 			}
 		});
+		extensionTree.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent e) {
+				PropertiesAction action = new PropertiesAction(getFormPage().getEditor());
+				action.run();
+			}
+		});
 
 		gd = new GridData(GridData.FILL_BOTH);
 		tree.setLayoutData(gd);

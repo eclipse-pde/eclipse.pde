@@ -29,7 +29,7 @@ public class MatchSection extends PDEFormSection {
 	private Button equivButton;
 	private Button compatibleButton;
 	private Button greaterButton;
-	private IPluginImport currentImport;
+	private IPluginReference currentImport;
 	private boolean blockChanges=false;
 	private boolean ignoreModelEvents =false;
 	public static final String SECTION_TITLE = "ManifestEditor.MatchSection.title";
@@ -44,7 +44,7 @@ public class MatchSection extends PDEFormSection {
 	public static final String KEY_VERSION_FORMAT = "ManifestEditor.PluginSpecSection.versionFormat";
 	public static final String KEY_VERSION_TITLE = "ManifestEditor.PluginSpecSection.versionTitle";
 
-public MatchSection(ManifestDependenciesPage formPage) {
+public MatchSection(PDEFormPage formPage) {
 	super(formPage);
 	setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
 	setDescription(PDEPlugin.getResourceString(SECTION_DESC));
@@ -86,10 +86,12 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	reexportButton.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			if (blockChanges) return;
+			if (!(currentImport instanceof IPluginImport)) return;
 			if (currentImport!=null) {
 				try {
+					IPluginImport iimport = (IPluginImport)currentImport;
 					ignoreModelEvents=true;
-					currentImport.setReexported(reexportButton.getSelection());
+					iimport.setReexported(reexportButton.getSelection());
 					ignoreModelEvents=false;
 				}
 				catch (CoreException ex) {
@@ -144,14 +146,6 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 		}
 	};
 
-/*	
-	Label label = factory.createLabel(container, PDEPlugin.getResourceString(KEY_RULE));
-	gd = new GridData();
-	gd.verticalAlignment = GridData.BEGINNING;
-	gd.verticalSpan = 4;
-	label.setLayoutData(gd);
-*/
-		
 	perfectButton = factory.createButton(container, PDEPlugin.getResourceString(KEY_PERFECT), SWT.RADIO);
 	gd = new GridData(GridData.FILL_HORIZONTAL);
 	gd.horizontalSpan = 2;
@@ -196,15 +190,15 @@ private void forceDirty() {
 }
 
 private int getMatch() {
-	int match = IPluginImport.NONE;
+	int match = IMatchRules.NONE;
 	if (perfectButton.getSelection()) 
-	   match = IPluginImport.PERFECT;
+	   match = IMatchRules.PERFECT;
 	if (equivButton.getSelection())
-	   match = IPluginImport.EQUIVALENT;
+	   match = IMatchRules.EQUIVALENT;
 	if (compatibleButton.getSelection())
-	   match = IPluginImport.COMPATIBLE;
+	   match = IMatchRules.COMPATIBLE;
 	if (greaterButton.getSelection())
-	   match = IPluginImport.GREATER_OR_EQUAL;
+	   match = IMatchRules.GREATER_OR_EQUAL;
 	return match;
 }
 
@@ -214,8 +208,9 @@ private void buttonChanged(Button radio) {
 }
 
 public void dispose() {
-	IPluginModelBase model = (IPluginModelBase)getFormPage().getModel();
-	model.removeModelChangedListener(this);
+	IModel model = (IModel)getFormPage().getModel();
+	if (model instanceof IModelChangeProvider)
+		((IModelChangeProvider)model).removeModelChangedListener(this);
 	super.dispose();
 }
 private void fillContextMenu(IMenuManager manager) {
@@ -224,9 +219,10 @@ private void fillContextMenu(IMenuManager manager) {
 }
 
 public void initialize(Object input) {
-	IPluginModelBase model = (IPluginModelBase) input;
+	IModel model = (IModel) input;
 	setReadOnly(!model.isEditable());
-	model.addModelChangedListener(this);
+	if (model instanceof IModelChangeProvider)
+		((IModelChangeProvider)model).addModelChangedListener(this);
 }
 public void modelChanged(IModelChangedEvent e) {
 	if (ignoreModelEvents) return;
@@ -254,7 +250,7 @@ public void sectionChanged(
 	update(input);
 }
 
-private void resetRadioButtons(IPluginImport iimport) {
+private void resetRadioButtons(IPluginReference iimport) {
 	String text = versionText.getControl().getText();
 	boolean enable = !isReadOnly() && text.length() > 0;
 	perfectButton.setEnabled(enable);
@@ -264,15 +260,15 @@ private void resetRadioButtons(IPluginImport iimport) {
 	setRadioButtons(iimport);
 }
 
-private void setRadioButtons(IPluginImport iimport) {
-	int match = iimport!=null?iimport.getMatch(): IPluginImport.NONE;
-	perfectButton.setSelection(match == IPluginImport.PERFECT);
-	equivButton.setSelection(match == IPluginImport.EQUIVALENT);
-	compatibleButton.setSelection(match == IPluginImport.COMPATIBLE);
-	greaterButton.setSelection(match == IPluginImport.GREATER_OR_EQUAL);
+private void setRadioButtons(IPluginReference iimport) {
+	int match = iimport!=null?iimport.getMatch(): IMatchRules.NONE;
+	perfectButton.setSelection(match == IMatchRules.PERFECT);
+	equivButton.setSelection(match == IMatchRules.EQUIVALENT);
+	compatibleButton.setSelection(match == IMatchRules.COMPATIBLE);
+	greaterButton.setSelection(match == IMatchRules.GREATER_OR_EQUAL);
 }
 
-private void update(IPluginImport iimport) {
+private void update(IPluginReference iimport) {
 	blockChanges = true;
 	if (iimport == null) {
 		reexportButton.setSelection(false);
@@ -295,8 +291,11 @@ private void update(IPluginImport iimport) {
 		commitChanges(false);
 	}
 	currentImport = iimport;
-	reexportButton.setEnabled(!isReadOnly());
-	reexportButton.setSelection(currentImport.isReexported());
+	if (currentImport instanceof IPluginImport) {
+		IPluginImport pimport = (IPluginImport)currentImport;
+		reexportButton.setEnabled(!isReadOnly());
+		reexportButton.setSelection(pimport.isReexported());
+	}
 	versionText.getControl().setEditable(!isReadOnly());
 	versionText.setValue(currentImport.getVersion());
 	resetRadioButtons(currentImport);

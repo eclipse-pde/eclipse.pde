@@ -1,4 +1,4 @@
-package org.eclipse.pde.internal.editor.schema;
+package org.eclipse.pde.internal.editor.feature;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -10,8 +10,6 @@ import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.elements.*;
-import org.eclipse.pde.internal.base.schema.*;
-import org.eclipse.pde.internal.schema.*;
 import org.eclipse.pde.internal.util.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -23,40 +21,34 @@ import org.eclipse.pde.internal.editor.text.*;
 import org.eclipse.jface.text.presentation.*;
 import org.eclipse.pde.internal.editor.*;
 import org.eclipse.jface.text.*;
+import org.eclipse.pde.internal.base.model.feature.*;
 
 import java.util.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.swt.graphics.*;
 
-public class DocSection extends PDEFormSection {
-	public static final String SECTION_TITLE = "SchemaEditor.InfoSection.title";
+public class InfoSection extends PDEFormSection {
+	public static final String SECTION_TITLE = "FeatureEditor.InfoSection.title";
 	public static final String KEY_APPLY = "Actions.apply.label";
 	public static final String KEY_RESET = "Actions.reset.label";
-	public static final String SECTION_DESC = "SchemaEditor.InfoSection.desc";
-	public static final String KEY_TOPIC_OVERVIEW = "SchemaEditor.topic.overview";
-	public static final String KEY_TOPIC_EXAMPLES = "SchemaEditor.topic.examples";
-	public static final String KEY_TOPIC_IMPLEMENTATION =
-		"SchemaEditor.topic.implementation";
-	public static final String KEY_TOPIC_API = "SchemaEditor.topic.api";
-	public static final String KEY_TOPIC_COPYRIGHT = "SchemaEditor.topic.copyright";
-	private SourceViewer editor;
+	public static final String SECTION_DESC = "FeatureEditor.InfoSection.desc";
+	public static final String KEY_INFO_DESCRIPTION = "SchemaEditor.info.description";
+	public static final String KEY_INFO_LICENSE = "SchemaEditor.info.license";
+	public static final String KEY_INFO_COPYRIGHT = "SchemaEditor.info.license";
 	private IDocument document;
 	private IDocumentPartitioner partitioner;
 	private boolean editable = true;
 	private SourceViewerConfiguration sourceConfiguration;
 	private SourceViewer sourceViewer;
 	private CCombo sectionCombo;
-	private ISchema schema;
 	private Button applyButton;
 	private Button resetButton;
 	private Object element;
 	private IColorManager colorManager;
-	//private TableTreeViewer topicTree;
 	private FormWidgetFactory factory;
 	private boolean ignoreChange;
 
-
-public DocSection(PDEFormPage page, IColorManager colorManager) {
+public InfoSection(PDEFormPage page, IColorManager colorManager) {
 	super(page);
 	setHeaderPainted(false);
 	setAddSeparator(false);
@@ -174,62 +166,35 @@ public boolean doGlobalAction(String actionId) {
 }
 public void expandTo(Object input) {
 	int index = -1;
-	if (input instanceof ISchema) {
-		index = 0;
-	} else
-		if (input instanceof IDocumentSection) {
-			IDocumentSection[] sections = schema.getDocumentSections();
-			for (int i = 0; i < sections.length; i++) {
-				IDocumentSection section = sections[i];
-				if (section.equals(input)) {
-					index = i + 1;
-					break;
-				}
-			}
-		}
 	if (index != -1)
 		sectionCombo.select(index);
 	updateEditorInput(input);
 }
-private String getTopicName(Object object) {
-	if (object instanceof ISchema) {
-		return PDEPlugin.getResourceString(KEY_TOPIC_OVERVIEW);
-	} else
-		if (object instanceof IDocumentSection) {
-			IDocumentSection section = (IDocumentSection) object;
-			String sectionId = section.getSectionId();
-			if (sectionId.equals(IDocumentSection.EXAMPLES))
-				return PDEPlugin.getResourceString(KEY_TOPIC_EXAMPLES);
-			if (sectionId.equals(IDocumentSection.IMPLEMENTATION))
-				return PDEPlugin.getResourceString(KEY_TOPIC_IMPLEMENTATION);
-			if (sectionId.equals(IDocumentSection.API_INFO))
-				return PDEPlugin.getResourceString(KEY_TOPIC_API);
-			if (sectionId.equals(IDocumentSection.COPYRIGHT))
-				return PDEPlugin.getResourceString(KEY_TOPIC_COPYRIGHT);
-		}
-	return "?";
-}
+
 private void handleApply() {
+	/*
 	if (element != null) {
 		if (element instanceof ISchema)
 			 ((Schema) element).setDescription(document.get());
 		else
 			 ((SchemaObject) element).setDescription(document.get());
 	}
+	*/
 	applyButton.setEnabled(false);
 	resetButton.setEnabled(false);
 }
 private void handleReset() {
 	updateEditorInput(element);
 }
+
 public void initialize(Object model) {
-	schema = (ISchema) model;
+	final IFeatureModel featureModel = (IFeatureModel)model;
 	initializeSectionCombo();
 	document.addDocumentListener(new IDocumentListener() {
 		public void documentChanged(DocumentEvent e) {
-			if (!ignoreChange && schema instanceof IEditable) {
+			if (!ignoreChange && featureModel instanceof IEditable) {
 				setDirty(true);
-				((IEditable) schema).setDirty(true);
+				((IEditable) featureModel).setDirty(true);
 				getFormPage().getEditor().fireSaveNeeded();
 			}
 			applyButton.setEnabled(true);
@@ -238,9 +203,11 @@ public void initialize(Object model) {
 		public void documentAboutToBeChanged(DocumentEvent e) {
 		}
 	});
-	updateEditorInput(schema);
+	updateEditorInput(featureModel);
 }
+
 private void initializeSectionCombo() {
+/*
 	IDocumentSection[] sections = schema.getDocumentSections();
 	sectionCombo.add(getTopicName(schema));
 	for (int i = 0; i < sections.length; i++) {
@@ -259,13 +226,14 @@ private void initializeSectionCombo() {
 			}
 		}
 	});
+*/
 }
 public boolean isEditable() {
 	return editable;
 }
 private String resolveObjectName(Object object) {
-	if (object instanceof ISchemaObject) {
-		return ((ISchemaObject)object).getName();
+	if (object instanceof IFeatureObject) {
+		return ((IFeatureObject)object).getLabel();
 	}
 	return object.toString();
 }
@@ -278,14 +246,14 @@ public void setFocus() {
 public void updateEditorInput(Object input) {
 	ignoreChange=true;
 	String text = "";
-	if (input instanceof ISchemaObject) {
-		text = ((ISchemaObject) input).getDescription();
+	if (input instanceof IFeatureInfo) {
+		IFeatureInfo info = (IFeatureInfo)input;
+		text = info.getDescription();
 	}
 	if (text == null)
 		text = "";
 	else
 		text = TextUtil.createMultiLine(text, 60, false);
-	//updateHeading(input);
 	document.set(text);
 	applyButton.setEnabled(false);
 	resetButton.setEnabled(false);

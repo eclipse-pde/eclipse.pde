@@ -129,15 +129,15 @@
       </description>
    </wizard>
    <wizard
-         name="%new.component.name"
+         name="%new.feature.name"
          icon="icons/full/ctool16/newpcomp_wiz.gif"
          category="org.eclipse.pde.PDE"
-         class="org.eclipse.pde.internal.component.NewComponentProjectWizard"
+         class="org.eclipse.pde.internal.feature.NewFeatureProjectWizard"
          project="true"
          finalPerspective="org.eclipse.pde.internal.PDEPerspective"
-         id="org.eclipse.pde.internal.component.NewComponentProjectWizard">
+         id="org.eclipse.pde.internal.feature.NewFeatureProjectWizard">
       <description>
-         %new.component.description
+         %new.feature.description
       </description>
    </wizard>
 </extension>
@@ -215,13 +215,13 @@
          id="org.eclipse.pde.buildEditor">
    </editor>
    <editor
-         name="%editors.componentManifest.name"
+         name="%editors.featureManifest.name"
          default="true"
          icon="icons/full/obj16/comp_mf_obj.gif"
-         filenames="install.xml"
-         contributorClass="org.eclipse.pde.internal.editor.component.ComponentEditorContributor"
-         class="org.eclipse.pde.internal.editor.component.ComponentEditor"
-         id="org.eclipse.pde.componentEditor">
+         filenames="feature.xml"
+         contributorClass="org.eclipse.pde.internal.editor.feature.FeatureEditorContributor"
+         class="org.eclipse.pde.internal.editor.feature.FeatureEditor"
+         id="org.eclipse.pde.featureEditor">
    </editor>
 </extension>
 <extension
@@ -235,12 +235,12 @@
    </runtime>
 </extension>
 <extension
-      id="ComponentNature"
-      name="%natures.componentBuilder.name"
+      id="FeatureNature"
+      name="%natures.featureBuilder.name"
       point="org.eclipse.core.resources.natures">
    <runtime>
       <run
-            class="org.eclipse.pde.internal.component.ComponentProject">
+            class="org.eclipse.pde.internal.feature.FeatureProject">
       </run>
    </runtime>
 </extension>
@@ -265,12 +265,12 @@
    </builder>
 </extension>
 <extension
-      id="ComponentBuilder"
-      name="%builders.componentBuilder.name"
+      id="FeatureBuilder"
+      name="%builders.featureBuilder.name"
       point="org.eclipse.core.resources.builders">
    <builder>
       <run
-            class="org.eclipse.pde.internal.builders.ComponentConsistencyChecker">
+            class="org.eclipse.pde.internal.builders.FeatureConsistencyChecker">
       </run>
    </builder>
 </extension>

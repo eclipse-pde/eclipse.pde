@@ -181,6 +181,12 @@ private Control createTree(Composite parent) {
 			updateText(currentElement);
 		}
 	});
+	treeViewer.addDoubleClickListener(new IDoubleClickListener() {
+		public void doubleClick(DoubleClickEvent e) {
+			PropertiesAction action = new PropertiesAction(getFormPage().getEditor());
+			action.run();
+		}
+	});
 	MenuManager popupMenuManager = new MenuManager();
 	IMenuListener listener = new IMenuListener () {
 		public void menuAboutToShow(IMenuManager mng) {

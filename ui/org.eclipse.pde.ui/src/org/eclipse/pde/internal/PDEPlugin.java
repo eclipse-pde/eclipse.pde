@@ -6,8 +6,8 @@ package org.eclipse.pde.internal;
 
 import java.lang.reflect.*;
 import java.io.*;
-import org.eclipse.pde.internal.base.model.component.*;
-import org.eclipse.pde.internal.editor.component.*;
+import org.eclipse.pde.internal.base.model.feature.*;
+import org.eclipse.pde.internal.editor.feature.*;
 import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.pde.internal.base.schema.*;
@@ -35,7 +35,7 @@ public class PDEPlugin extends AbstractUIPlugin {
 
 	public static final String MANIFEST_EDITOR_ID = PLUGIN_ID + ".manifestEditor";
 	public static final String FRAGMENT_EDITOR_ID = PLUGIN_ID + ".fragmentEditor";
-	public static final String COMPONENT_EDITOR_ID = PLUGIN_ID + ".componentEditor";
+	public static final String FEATURE_EDITOR_ID = PLUGIN_ID + ".featureEditor";
 	public static final String JARS_EDITOR_ID = PLUGIN_ID + ".jarsEditor";
 	public static final String BUILD_EDITOR_ID = PLUGIN_ID + ".buildEditor";
 	public static final String SCHEMA_EDITOR_ID = PLUGIN_ID + ".schemaEditor";
@@ -46,10 +46,10 @@ public class PDEPlugin extends AbstractUIPlugin {
 	public static final String SCHEMA_BUILDER_ID =
 		PLUGIN_ID + "." + "SchemaBuilder";
 	public static final String PLUGIN_NATURE = PLUGIN_ID + "." + "PluginNature";
-	public static final String COMPONENT_NATURE =
-		PLUGIN_ID + "." + "ComponentNature";
-	public static final String COMPONENT_BUILDER_ID =
-		PLUGIN_ID + "." + "ComponentBuilder";
+	public static final String FEATURE_NATURE =
+		PLUGIN_ID + "." + "FeatureNature";
+	public static final String FEATURE_BUILDER_ID =
+		PLUGIN_ID + "." + "FeatureBuilder";
 
 	public static final String RUN_LAUNCHER_ID =
 		PLUGIN_ID + "." + "WorkbenchRunLauncher";
@@ -395,7 +395,7 @@ public class PDEPlugin extends AbstractUIPlugin {
 		IAdapterManager manager = Platform.getAdapterManager();
 		manager.registerAdapters(new SchemaAdapterFactory(), ISchemaObject.class);
 		manager.registerAdapters(new PluginAdapterFactory(), IPluginObject.class);
-		manager.registerAdapters(new ComponentAdapterFactory(), IComponentObject.class);
+		manager.registerAdapters(new FeatureAdapterFactory(), IFeatureObject.class);
 		// set eclipse home variable if not sets
 
 		getWorkspaceModelManager().reset();

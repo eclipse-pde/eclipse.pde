@@ -7,7 +7,7 @@ package org.eclipse.pde.internal;
 import org.eclipse.pde.internal.model.build.*;
 import org.eclipse.ui.*;
 import org.eclipse.pde.internal.editor.*;
-import org.eclipse.pde.internal.model.component.*;
+import org.eclipse.pde.internal.model.feature.*;
 import java.io.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.model.*;
@@ -125,8 +125,8 @@ public class WorkspaceModelManager
 				model.setEditable(editable);
 				return model;
 			}
-			if (name.equals("install.xml")) {
-				WorkspaceComponentModel model = new WorkspaceComponentModel(file);
+			if (name.equals("feature.xml")) {
+				WorkspaceFeatureModel model = new WorkspaceFeatureModel(file);
 				model.setEditable(editable);
 				return model;
 			}
