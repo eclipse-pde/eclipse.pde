@@ -146,10 +146,10 @@ public class LogView extends ViewPart implements ILogListener {
 			if (entry == null)
 				return;
 			if (entry.hasChildren()){
-				getTableItem(tableIndex).setFont(boldFont);
+				tableTreeViewer.getTableTree().getItems()[index].setFont(boldFont);
 				tableIndex = applyChildFonts(entry, tableIndex);
 			} else {
-				getTableItem(tableIndex).setFont(tableTreeViewer.getTableTree().getFont());
+				tableTreeViewer.getTableTree().getItems()[index].setFont(tableTreeViewer.getTableTree().getFont());
 			}
 
 			index++;
@@ -448,6 +448,7 @@ public class LogView extends ViewPart implements ILogListener {
 		Platform.removeLogListener(this);
 		clipboard.dispose();
 		LogReader.reset();
+		boldFont.dispose();
 		super.dispose();
 	}
 	
