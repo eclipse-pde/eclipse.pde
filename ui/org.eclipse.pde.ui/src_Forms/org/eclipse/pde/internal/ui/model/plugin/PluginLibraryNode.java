@@ -170,7 +170,6 @@ public class PluginLibraryNode extends PluginObjectNode
 	 * @see org.eclipse.pde.internal.ui.model.plugin.PluginObjectNode#writeShallow(boolean)
 	 */
 	public String writeShallow(boolean terminate) {
-		String sep = System.getProperty("line.separator");
 		StringBuffer buffer = new StringBuffer("<" + getXMLTagName());
 
 		IDocumentAttribute[] attrs = getNodeAttributes();
