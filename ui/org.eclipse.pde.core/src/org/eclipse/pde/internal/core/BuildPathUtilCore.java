@@ -126,12 +126,13 @@ public class BuildPathUtilCore {
 		IClasspathEntry[] entries = new IClasspathEntry[result.size()];
 		result.copyInto(entries);
 
-		IStatus validation =
+		IJavaModelStatus validation =
 			JavaConventions.validateClasspath(
 				javaProject,
 				entries,
 				javaProject.getOutputLocation());
 		if (!validation.isOK()) {
+			PDECore.logErrorMessage(validation.getString());
 			throw new CoreException(validation);
 		}
 
