@@ -46,6 +46,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		}
 	}
 
+	private Label countLabel;
 	private TableViewer importListViewer;
 	private TableViewer availableListViewer;
 	
@@ -65,6 +66,9 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		createAvailableList(container).setLayoutData(new GridData(GridData.FILL_BOTH));
 		createButtonArea(container);
 		createImportList(container).setLayoutData(new GridData(GridData.FILL_BOTH));
+		updateCount();
+		
+
 		setPageComplete(false);
 		setControl(container);
 		Dialog.applyDialogFont(container);
@@ -124,14 +128,21 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 				return selected.contains(element);
 			}
 		});
+				
 		return container;
 	}
 	
 	private Composite createButtonArea(Composite parent) {
-		Composite container = new Composite(parent, SWT.NONE);
+		Composite comp = new Composite(parent, SWT.NONE);
+		comp.setLayout(new GridLayout());
+		comp.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+		
+		Composite container = new Composite(comp, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = 0;
+		layout.marginHeight = 30;
 		container.setLayout(layout);
+		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		Button button = new Button(container, SWT.PUSH);
 		button.setText(PDEPlugin.getResourceString("ImportWizard.DetailedPage.add"));
@@ -235,6 +246,8 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 			}
 		});
 		
+		countLabel = new Label(comp, SWT.NONE);
+		countLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));		
 		return container;
 	}
 	
@@ -251,7 +264,18 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	private void pageChanged() {
 		availableListViewer.refresh();
 		importListViewer.refresh();
+		updateCount();
 		setPageComplete(importListViewer.getTable().getItemCount() > 0);
+	}
+	
+	private void updateCount() {
+		countLabel.setText(
+			PDEPlugin.getFormattedMessage(
+				"ImportWizard.DetailedPage.count",
+				new String[] {
+					new Integer(importListViewer.getTable().getItemCount()).toString(),
+					new Integer(models.length).toString()}));
+		
 	}
 	
 
