@@ -33,6 +33,10 @@ public class AssemblyInformation {
 		entry.addFeature(feature);
 	}
 
+	public void removeFeature(Config config, IFeature feature) {
+		AssemblyLevelConfigInfo entry = (AssemblyLevelConfigInfo) assembleInformation.get(config);
+		entry.removeFeature(feature);		
+	}
 	public void addPlugin(Config config, BundleDescription plugin) {
 		AssemblyLevelConfigInfo entry = (AssemblyLevelConfigInfo) assembleInformation.get(config);
 		entry.addPlugin(plugin);
@@ -90,6 +94,16 @@ public class AssemblyInformation {
 
 		public void addPlugin(BundleDescription plugin) {
 			plugins.add(plugin);
+		}
+		
+		public void removeFeature(IFeature feature) {
+			for (Iterator iter = features.iterator(); iter.hasNext();) {
+				BuildTimeFeature featureDescriptor = (BuildTimeFeature) iter.next();
+				if (((BuildTimeFeature) feature).getFeatureIdentifier().equals(featureDescriptor.getFeatureIdentifier()) && ((BuildTimeFeature) feature).getFeatureVersion().equals(featureDescriptor.getFeatureVersion())) {
+					features.remove(featureDescriptor);
+					return;
+				}
+			}
 		}
 	}
 }

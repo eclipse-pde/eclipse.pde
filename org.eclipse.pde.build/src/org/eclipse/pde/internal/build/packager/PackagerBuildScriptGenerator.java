@@ -20,7 +20,11 @@ public class PackagerBuildScriptGenerator extends FeatureBuildScriptGenerator {
 	boolean zipWithEclipse = false;
 	private String packagingPropertiesLocation;
 	private String[] featureList;
-
+	private String[] rootFiles;
+	private String[] rootDirs;
+	private String outputFormat = "zip";
+	private String[] ignoredFeatures;
+	
 	public PackagerBuildScriptGenerator() {
 		super();
 	}
@@ -48,14 +52,29 @@ public class PackagerBuildScriptGenerator extends FeatureBuildScriptGenerator {
 			generator.generate();
 		}
 
+		removeIgnoredFeatures(assemblageInformation);
 		PackagingConfigScriptGenerator configAssembler = new PackagingConfigScriptGenerator();
 		Config config = (Config) getConfigInfos().get(0);
 		configAssembler.initialize(workingDirectory, DEFAULT_ASSEMBLE_FILENAME, "", config, assemblageInformation.getPlugins(config), assemblageInformation.getFeatures(config), true); //$NON-NLS-1$ //Here the last arg is true because we do not have the root info while packaging
 		configAssembler.setPackagingPropertiesLocation(packagingPropertiesLocation);
+		configAssembler.rootFiles(rootFiles);
+		configAssembler.rootDirs(rootDirs);
+		configAssembler.setOutput(outputFormat);
 		configAssembler.generate();
 
 	}
 
+	private void removeIgnoredFeatures(AssemblyInformation toAssemble) {
+		if (ignoredFeatures==null)
+			return;
+		for (int i = 0; i < ignoredFeatures.length; i++) {
+			try {
+				toAssemble.removeFeature((Config) getConfigInfos().get(0), getSite(false).findFeature(ignoredFeatures[i]));
+			} catch (CoreException e) {
+				//Ignore
+			}
+		}
+	}
 	protected void generateIncludedFeatureBuildFile() throws CoreException {
 		IIncludedFeatureReference[] referencedFeatures = feature.getIncludedFeatureReferences();
 		for (int i = 0; i < referencedFeatures.length; i++) {
@@ -87,5 +106,21 @@ public class PackagerBuildScriptGenerator extends FeatureBuildScriptGenerator {
 
 	public void setFeatureList(String features) {
 		featureList = Utils.getArrayFromString(features, ","); //$NON-NLS-1$
+	}
+	
+	public void setRootFiles(String[] rootFiles) {
+		this.rootFiles = rootFiles;
+	}
+	
+	public void setRootDirs(String[] rootDirs) {
+		this.rootDirs = rootDirs;
+	}
+	
+	public void setOutput(String format) {	//TODO To rename
+		this.outputFormat = format;
+	}
+	
+	public void setIgnoredFeatures(String[] features) {
+		ignoredFeatures = features;
 	}
 }

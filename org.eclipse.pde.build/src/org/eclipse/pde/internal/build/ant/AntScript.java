@@ -179,6 +179,25 @@ public class AntScript {
 		}
 	}
 
+	public void printTarTask(String zipfile, String basedir, boolean filesOnly, boolean update, FileSet[] fileSets) {
+		printTab();
+		output.print("<tar"); //$NON-NLS-1$
+		printAttribute("destfile", zipfile, true); //$NON-NLS-1$
+		printAttribute("basedir", basedir, false); //$NON-NLS-1$
+		printAttribute("compression", "gzip", true); //TODO Need to take parameter
+		if (fileSets == null)
+			output.println("/>"); //$NON-NLS-1$
+		else {
+			output.println(">"); //$NON-NLS-1$
+			indent++;
+			for (int i = 0; i < fileSets.length; i++)
+				if (fileSets[i] != null)
+					fileSets[i].print(this);
+			indent--;
+			printTab();
+			output.println("</tar>"); //$NON-NLS-1$
+		}
+	}
 	/**
 	 * Print an <code>arg</code> element to the Ant file.
 	 * 

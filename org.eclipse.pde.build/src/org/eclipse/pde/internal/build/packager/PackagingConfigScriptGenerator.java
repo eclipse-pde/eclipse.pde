@@ -14,9 +14,15 @@ import java.io.*;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.build.*;
+import org.eclipse.pde.internal.build.ant.*;
+import org.eclipse.pde.internal.build.ant.FileSet;
+import org.eclipse.pde.internal.build.ant.ZipFileSet;
 
 public class PackagingConfigScriptGenerator extends AssembleConfigScriptGenerator {
 	private Properties packagingProperties;
+	private String[] rootFiles;
+	private String[] rootDirs;
+	private String output;
 
 	public void generate() throws CoreException {
 		generatePrologue();
@@ -51,13 +57,21 @@ public class PackagingConfigScriptGenerator extends AssembleConfigScriptGenerato
 
 	private void generateAssembleTarget() throws CoreException {
 		script.printTargetDeclaration("assemble", null, null, null, null); //$NON-NLS-1$
-		generateZipRootFiles();
-		generateZip();
-		List args = new ArrayList(2);
-		args.add("-R"); //$NON-NLS-1$
-		args.add("700"); //$NON-NLS-1$
-		args.add("."); //$NON-NLS-1$
-		script.printExecTask("chmod", getPropertyFormat("tempDirectory") + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER), args, "Linux"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		if (output.equalsIgnoreCase("tarGz")) {
+			generateAntTarTarget();
+		} else if (output.equalsIgnoreCase("antZip")) {
+			generateAntZipTarget();
+		} else if (output.equalsIgnoreCase("folder")) {
+			generateFolderTarget();
+		} else {	//By default use zip.exe
+			generateZipRootFiles();
+			generateZip();
+			List args = new ArrayList(2);
+			args.add("-R"); //$NON-NLS-1$
+			args.add("700"); //$NON-NLS-1$
+			args.add("."); //$NON-NLS-1$
+			script.printExecTask("chmod", getPropertyFormat("tempDirectory") + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER), args, "Linux"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		}
 		script.printDeleteTask(getPropertyFormat("tempDirectory") + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER), "**/*", null); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		script.printTargetEnd();
 	}
@@ -85,7 +99,7 @@ public class PackagingConfigScriptGenerator extends AssembleConfigScriptGenerato
 		final int parameterSize = 15;
 		List parameters = new ArrayList(parameterSize + 1);
 		for (int i = 0; i < plugins.length; i++) {
-			parameters.add(getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + plugins[i].getUniqueId() + "_" + plugins[i].getVersion()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			parameters.add(getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + plugins[i].getSymbolicName() + "_" + plugins[i].getVersion()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			if (i % parameterSize == 0) {
 				createZipExecCommand(parameters);
 				parameters.clear();
@@ -146,4 +160,113 @@ public class PackagingConfigScriptGenerator extends AssembleConfigScriptGenerato
 		}
 	}
 
+	private boolean isFolder(Path pluginLocation) {
+		return pluginLocation.toFile().isDirectory();
+	}
+
+	private void generateAntTarTarget() {
+		int index = 0;
+		FileSet[] files = new FileSet[plugins.length + features.length + rootFiles.length + rootDirs.length];
+		for (int i = 0; i < plugins.length; i++) {
+			Path pluginLocation = new Path(plugins[i].getLocation());
+			boolean isFolder = isFolder(pluginLocation);
+			files[index++] = new TarFileSet(pluginLocation.toOSString(), !isFolder, null, null, null, null, null, getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + pluginLocation.lastSegment(), null);
+		}
+
+		for (int i = 0; i < features.length; i++) {
+			IPath featureLocation = new Path(features[i].getURL().getPath()); // Here we assume that all the features are local
+			featureLocation = featureLocation.removeLastSegments(1);
+			files[index++] = new TarFileSet(featureLocation.toOSString(), false, null, null, null, null, null, getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + DEFAULT_FEATURE_LOCATION + '/' + featureLocation.lastSegment(), null);
+		}
+
+		if (!copyRootFile) {
+			FileSet[] filesCorrectSize = new FileSet[plugins.length + features.length];
+			System.arraycopy(files, 0, filesCorrectSize, 0, plugins.length + features.length);
+			script.printTarTask(getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH), null, false, true, files);
+			return;
+		}
+
+		for (int i = 0; i < rootFiles.length; i++) {
+			IPath filePath = new Path(rootFiles[i]);
+			files[index++] = new TarFileSet(filePath.toOSString(), true, null, null, null, null, null, getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + filePath.lastSegment(), null);
+		}
+		for (int i = 0; i < rootDirs.length; i++) {
+			IPath dirPath = new Path(rootDirs[i]);
+			files[index++] = new TarFileSet(dirPath.toOSString(), false, null, null, null, null, null, getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + dirPath.lastSegment(), null);
+		}
+		script.printTarTask(getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH), null, false, true, files);
+	}
+
+	private void generateAntZipTarget() {
+		int index = 0;
+		FileSet[] files = new FileSet[plugins.length + features.length + rootFiles.length + rootDirs.length];
+		for (int i = 0; i < plugins.length; i++) {
+			Path pluginLocation = new Path(plugins[i].getLocation());
+			boolean isFolder = isFolder(pluginLocation);
+			files[index++] = new ZipFileSet(pluginLocation.toOSString(), !isFolder, null, null, null, null, null, getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + pluginLocation.lastSegment(), null);
+		}
+
+		for (int i = 0; i < features.length; i++) {
+			IPath featureLocation = new Path(features[i].getURL().getPath()); // Here we assume that all the features are local
+			featureLocation = featureLocation.removeLastSegments(1);
+			files[index++] = new ZipFileSet(featureLocation.toOSString(), false, null, null, null, null, null, getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + DEFAULT_FEATURE_LOCATION + '/' + featureLocation.lastSegment(), null);
+		}
+
+		if (!copyRootFile) {
+			FileSet[] filesCorrectSize = new FileSet[plugins.length + features.length];
+			System.arraycopy(files, 0, filesCorrectSize, 0, plugins.length + features.length);
+			script.printTarTask(getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH), null, false, true, files);
+			return;
+		}
+
+		for (int i = 0; i < rootFiles.length; i++) {
+			IPath filePath = new Path(rootFiles[i]);
+			files[index++] = new ZipFileSet(filePath.toOSString(), true, null, null, null, null, null, getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + filePath.lastSegment(), null);
+		}
+		for (int i = 0; i < rootDirs.length; i++) {
+			IPath dirPath = new Path(rootDirs[i]);
+			files[index++] = new ZipFileSet(dirPath.toOSString(), false, null, null, null, null, null, getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + dirPath.lastSegment(), null);
+		}
+		script.printZipTask(getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH), null, false, true, files);
+	}
+
+	private void generateFolderTarget() {
+		for (int i = 0; i < plugins.length; i++) {
+			Path pluginLocation = new Path(plugins[i].getLocation());
+			boolean isFolder = isFolder(pluginLocation);
+			if (isFolder) { 
+				script.printCopyTask(null, getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + pluginLocation.lastSegment(), new FileSet[] {new FileSet(pluginLocation.toOSString(), null, null, null, null, null, null)}, false);
+			} else {
+				script.printCopyTask(pluginLocation .toOSString(), getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + pluginLocation.lastSegment(), null, false);
+			}
+		}
+		
+		for (int i = 0; i < features.length; i++) {
+			IPath featureLocation = new Path(features[i].getURL().getPath()); // Here we assume that all the features are local
+			featureLocation = featureLocation.removeLastSegments(1);
+			script.printCopyTask(null, getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + featureLocation.lastSegment(), new FileSet[] {new FileSet(featureLocation.toOSString(), null, null, null, null, null, null)}, false);
+		}
+		
+		
+		for (int i = 0; i < rootFiles.length; i++) {
+			IPath filePath  = new Path(rootFiles[i]);
+			script.printCopyTask(filePath .toOSString(), getPropertyFormat(PROPERTY_ARCHIVE_PREFIX), null, false);
+		}
+		
+		for (int i = 0; i < rootDirs.length; i++) {
+			IPath dirPath  = new Path(rootDirs[i]);
+			script.printCopyTask(null, getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + dirPath.lastSegment(), new FileSet[] {new FileSet(dirPath .toOSString(), null, null, null, null, null, null)}, false);
+		}
+	}
+	public void rootFiles(String[] rootFiles) {
+		this.rootFiles = rootFiles;
+	}
+
+	public void rootDirs(String[] rootDirs) {
+		this.rootDirs = rootDirs;
+	}
+
+	public void setOutput(String outputFormat) {
+		this.output = outputFormat;
+	}
 }
