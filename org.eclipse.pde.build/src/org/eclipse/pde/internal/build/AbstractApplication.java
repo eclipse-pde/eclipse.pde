@@ -15,20 +15,6 @@ import org.eclipse.core.runtime.CoreException;
  */
 public abstract class AbstractApplication implements IPlatformRunnable, IPDEBuildConstants {
 
-	/**
-	 * Whether the application usage should be print to console.
-	 */
-	protected boolean usage = false;
-
-/**
- * Prints a simple description of how to use this application. The
- * guideline here for subclasses is to start listing the possible
- * arguments and only after that add some text.
- */
-protected void printUsage(PrintWriter out) {
-	out.println("-?\t\tprints this text");
-}
-	
 /**
  * Starting point for application logic.
  */
@@ -39,10 +25,6 @@ protected abstract void run() throws CoreException;
  */
 public Object run(Object args) throws Exception {
 	processCommandLine(Utils.getArrayList((String[]) args));
-	if (usage) {
-		printUsage(new PrintWriter(System.out));
-		return null;
-	}
 	try {
 		run();
 	} catch (CoreException e) {
@@ -57,9 +39,6 @@ public Object run(Object args) throws Exception {
  * Looks for interesting command line arguments.
  */
 protected void processCommandLine(List commands) {
-	// looks for flag-like commands
-	if (commands.remove(ARG_USAGE)) 
-		usage = true;
 }
 
 /**

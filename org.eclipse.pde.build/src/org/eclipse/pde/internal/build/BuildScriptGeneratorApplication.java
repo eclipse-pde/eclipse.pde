@@ -51,12 +51,5 @@ protected void processCommandLine(List commands) {
 	generator.setInstall(arguments[0]); // only consider one location
 }
 
-protected void printUsage(PrintWriter out) {
-	super.printUsage(out);
-	out.println(ARG_NO_CHILDREN);
-	out.print("\t\t bla bla bla");
-	out.println(ARG_INSTALL_LOCATION);
-	out.print("\t\t bla bla bla");
-}
 
 }

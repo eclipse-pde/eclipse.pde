@@ -31,7 +31,6 @@ public interface IPDEBuildConstants {
 	public static final String ARG_PLUGIN_PATH = "-pluginpath";
 	public static final String ARG_SCRIPT_NAME = "-scriptname";
 	public static final String ARG_SOURCE_LOCATION = "-source";
-	public static final String ARG_USAGE = "-?";
 	
 
 	// default values
