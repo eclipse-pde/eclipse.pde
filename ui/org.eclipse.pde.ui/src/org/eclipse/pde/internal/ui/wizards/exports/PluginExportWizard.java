@@ -1,8 +1,13 @@
 package org.eclipse.pde.internal.ui.wizards.exports;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
-import org.apache.tools.ant.Project;
 import org.eclipse.ant.core.AntRunner;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
@@ -33,24 +38,20 @@ public class PluginExportWizard extends BaseExportWizard {
 		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
 	}
 
-	private void cleanup(IModel model, String destination) throws CoreException {
-		deleteBuildScript(model);
-		deleteBuildFolders(destination);
-	}
-
 	protected BaseExportWizardPage createPage1() {
 		return new PluginExportWizardPage(getSelection());
 	}
 
 	protected void doExport(
 		boolean exportZip,
-		boolean exportChildren,
+		boolean exportSource,
 		String destination,
+		String zipFileName,
 		IModel model,
 		IProgressMonitor monitor) {
-		try {
-			IPluginModelBase modelBase = (IPluginModelBase) model;
 
+		IPluginModelBase modelBase = (IPluginModelBase) model;
+		try {
 			String label =
 				PDEPlugin.getDefault().getLabelProvider().getObjectText(
 					modelBase.getPluginBase());
@@ -63,18 +64,23 @@ public class PluginExportWizard extends BaseExportWizard {
 				modelBase,
 				destination,
 				exportZip,
+				exportSource,
 				new SubProgressMonitor(monitor, 9));
 		} catch (Exception e) {
 			if (writer != null && e.getMessage() != null)
 				writer.write(e.getMessage() + System.getProperty("line.separator"));
 		} finally {
-			try {
-				cleanup(model, destination);
-			} catch (CoreException e) {
-			}
+			deleteBuildFile(modelBase);
 			monitor.done();
 		}
 
+	}
+	
+	public void deleteBuildFile(IPluginModelBase model) {
+		String fileName = MainPreferencePage.getBuildScriptName();
+		File file = new File(model.getInstallLocation() + Path.SEPARATOR + fileName);
+		if (file.exists())
+			file.delete();
 	}
 
 	public IDialogSettings getSettingsSection(IDialogSettings master) {
@@ -115,24 +121,81 @@ public class PluginExportWizard extends BaseExportWizard {
 		IPluginModelBase model,
 		String destination,
 		boolean exportZip,
+		boolean exportSource,
 		IProgressMonitor monitor)
 		throws InvocationTargetException, CoreException {
 		AntRunner runner = new AntRunner();
-		if (exportZip) {
-			runner.setExecutionTargets(new String[] { "zip.plugin" });
-		} else {
-			runner.setExecutionTargets(new String[] { "build.update.jar" });
-		}
-		runner.setMessageOutputLevel(Project.MSG_ERR);
-		runner.addBuildListener("org.eclipse.pde.internal.ui.ant.ExportBuildListener");
 		runner.addUserProperties(createProperties(destination));
 		runner.setAntHome(model.getInstallLocation());
 		runner.setBuildFileLocation(
 			model.getInstallLocation()
 				+ Path.SEPARATOR
 				+ MainPreferencePage.getBuildScriptName());
-		runner.setMessageOutputLevel(Project.MSG_ERR);
+		runner.addBuildListener("org.eclipse.pde.internal.ui.ant.ExportBuildListener");
+		runner.setExecutionTargets(getExecutionTargets(exportZip, exportSource));
 		runner.run(monitor);
+	}
+	
+	private String[] getExecutionTargets(boolean exportZip, boolean exportSource) {
+		ArrayList targets = new ArrayList();
+		if (!exportZip) {
+			targets.add("build.update.jar");	
+		} else {
+			targets.add("build.jars");
+			targets.add("gather.bin.parts");
+			if (exportSource) {
+				targets.add("build.sources");
+				targets.add("gather.sources");
+			}
+		}
+		return (String[]) targets.toArray(new String[targets.size()]);
+	}
+	
+	protected void zipAll(
+		String filename,
+		HashMap properties,
+		IProgressMonitor monitor) {
+		try {
+			String path =
+				PDEPlugin
+					.getDefault()
+					.getStateLocation()
+					.addTrailingSeparator()
+					.toOSString();
+			File zip = new File(path + "zip.xml");
+			if (zip.exists()) {
+				zip.delete();
+				zip.createNewFile();
+			}
+			writer = new PrintWriter(new FileWriter(zip), true);
+			writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+			writer.println("<project name=\"temp\" default=\"clean\" basedir=\".\">");
+			writer.println("<target name=\"clean\">");
+			writer.println("<delete dir=\"${build.result.folder}\"/>");
+			writer.println("<delete dir=\"${temp.folder}\"/>");
+			writer.println("</target>");
+			if (filename != null) {
+				writer.println("<target name=\"zip.folder\">");
+				writer.println(
+					"<zip zipfile=\"${plugin.destination}/"
+						+ filename
+						+ "\" basedir=\"${temp.folder}\" filesonly=\"true\" update=\"no\" excludes=\"**/*.bin.log\"/>");
+				writer.println("</target>");
+			}
+			writer.println("</project>");
+			writer.close();
+
+			AntRunner runner = new AntRunner();
+			runner.addUserProperties(properties);
+			runner.setBuildFileLocation(zip.getAbsolutePath());
+			if (filename != null) {
+				runner.setExecutionTargets(new String[] { "zip.folder", "clean" });
+			}
+			runner.run(monitor);
+			zip.delete();
+		} catch (IOException e) {
+		} catch (CoreException e) {
+		}
 	}
 
 }

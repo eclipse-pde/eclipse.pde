@@ -8,8 +8,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -18,7 +16,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
 import org.eclipse.swt.program.Program;
 import org.eclipse.ui.*;
 
@@ -74,37 +71,13 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard {
 	protected abstract BaseExportWizardPage createPage1();
 
 	protected HashMap createProperties(String destination) {
-		HashMap map = new HashMap(4);
+		HashMap map = new HashMap(5);
 		map.put("build.result.folder", destination + Path.SEPARATOR + "build_result");
-		map.put("temp.folder", destination + Path.SEPARATOR + "temp.folder");
+		map.put("temp.folder", destination + Path.SEPARATOR + "temp");
+		map.put("destination.temp.folder", destination + Path.SEPARATOR + "temp");
 		map.put("plugin.destination", destination);
 		map.put("feature.destination", destination);
 		return map;
-	}
-
-	protected void deleteBuildFolders(String destination) {
-		String[] folders = { "build_result", "temp.folder" };
-		for (int i = 0; i < folders.length; i++) {
-			File resultFolder = new File(destination + Path.SEPARATOR + folders[i]);
-			if (resultFolder.exists() && resultFolder.isDirectory()) {
-				File[] files = resultFolder.listFiles();
-				if (files != null) {
-					for (int j = 0; j < files.length; j++) {
-						files[j].delete();
-					}
-				}
-				resultFolder.delete();
-			}
-		}
-	}
-
-	protected void deleteBuildScript(IModel model) throws CoreException {
-		IProject project = model.getUnderlyingResource().getProject();
-		project.refreshLocal(1, null);
-		IResource resource = project.findMember(MainPreferencePage.getBuildScriptName());
-		if (resource != null)
-			resource.delete(true, null);
-
 	}
 
 	public void dispose() {
@@ -114,15 +87,17 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard {
 
 	protected abstract void doExport(
 		boolean exportZip,
-		boolean exportChildren,
+		boolean exportSource,
 		String destination,
+		String zipFileName,
 		IModel model,
 		IProgressMonitor monitor);
 
 	protected void doPerformFinish(
 		boolean exportZip,
-		boolean exportChildren,
+		boolean exportSource,
 		String destination,
+		String zipFileName,
 		Object[] items,
 		IProgressMonitor monitor)
 		throws InvocationTargetException {
@@ -139,8 +114,9 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard {
 			IModel model = (IModel) items[i];
 			doExport(
 				exportZip,
-				exportChildren,
+				exportSource,
 				destination,
+				zipFileName,
 				model,
 				new SubProgressMonitor(monitor, 1));
 		}
@@ -165,13 +141,15 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard {
 	public boolean performFinish() {
 		page1.saveSettings();
 		final boolean exportZip = page1.getExportZip();
+		final boolean exportSource = page1.getExportSource();
 		final String destination = page1.getDestination();
+		final String zipFileName = page1.getFileName();
 		final Object[] items = page1.getSelectedItems();
-		final boolean exportChildren = page1.getExportChildren();
 		
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException{
-				doPerformFinish(exportZip, exportChildren, destination, items, monitor);
+				doPerformFinish(exportZip, exportSource, destination, zipFileName, items, monitor);
+				zipAll(zipFileName, createProperties(destination), monitor);
 			}
 		};
 		try {
@@ -199,5 +177,7 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard {
 
 		return true;
 	}
+	
+	protected abstract void zipAll(String filename, HashMap properties, IProgressMonitor monitor);
 
 }

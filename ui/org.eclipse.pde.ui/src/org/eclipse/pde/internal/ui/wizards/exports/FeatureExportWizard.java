@@ -1,22 +1,17 @@
 package org.eclipse.pde.internal.ui.wizards.exports;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 
-import org.apache.tools.ant.Project;
 import org.eclipse.ant.core.AntRunner;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.pde.core.IModel;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.build.FeatureBuildScriptGenerator;
-import org.eclipse.pde.internal.core.ModelEntry;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
 
@@ -36,26 +31,6 @@ public class FeatureExportWizard extends BaseExportWizard {
 		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
 	}
 
-	private void cleanup(IFeatureModel model, String destination, boolean exportChildren) throws CoreException {
-		deleteBuildFolders(destination);
-		deleteBuildScript(model);
-		if (exportChildren) {
-			IFeaturePlugin[] plugins = model.getFeature().getPlugins();
-			PluginModelManager manager = PDECore.getDefault().getModelManager();
-			for (int i = 0; i < plugins.length; i++) {
-				ModelEntry entry =
-					manager.findEntry(plugins[i].getId(), plugins[i].getVersion());
-				if (entry != null) {
-					IPluginModelBase modelBase = entry.getActiveModel();
-					if (modelBase.getUnderlyingResource() != null) {
-						deleteBuildScript(modelBase);
-					}
-
-				}
-
-			}
-		}
-	}
 
 	protected BaseExportWizardPage createPage1() {
 		return new FeatureExportWizardPage(getSelection());
@@ -63,8 +38,9 @@ public class FeatureExportWizard extends BaseExportWizard {
 
 	protected void doExport(
 		boolean exportZip,
-		boolean exportChildren,
+		boolean exportSource,
 		String destination,
+		String zipFileName,
 		IModel model,
 		IProgressMonitor monitor) {
 		IFeatureModel feature = (IFeatureModel) model;
@@ -74,7 +50,7 @@ public class FeatureExportWizard extends BaseExportWizard {
 		monitor.setTaskName(
 			PDEPlugin.getResourceString("ExportWizard.exporting") + " " + label);
 		try {
-			makeScript(feature, exportChildren);
+			makeScript(feature);
 			monitor.worked(1);
 			runScript(
 				feature,
@@ -85,11 +61,6 @@ public class FeatureExportWizard extends BaseExportWizard {
 			if (writer != null && e.getMessage() != null)
 				writer.write(e.getMessage() + System.getProperty("line.separator"));
 		} finally {
-			try {
-				cleanup(feature, destination, exportChildren);
-			} catch (CoreException e) {
-			}
-			monitor.done();
 		}
 	}
 
@@ -101,7 +72,7 @@ public class FeatureExportWizard extends BaseExportWizard {
 		return setting;
 	}
 
-	private void makeScript(IFeatureModel model, boolean exportChildren) throws CoreException {
+	private void makeScript(IFeatureModel model) throws CoreException {
 		FeatureBuildScriptGenerator generator = new FeatureBuildScriptGenerator();
 
 		generator.setBuildScriptName(MainPreferencePage.getBuildScriptName());
@@ -118,7 +89,7 @@ public class FeatureExportWizard extends BaseExportWizard {
 			generator.setDevEntries(new String[] { "bin" });
 		}
 
-		generator.setGenerateChildrenScript(exportChildren);
+		generator.setGenerateChildrenScript(true);
 		generator.setPluginPath(TargetPlatform.createPluginPath());
 
 		generator.setFeature(model.getFeature().getId());
@@ -138,7 +109,6 @@ public class FeatureExportWizard extends BaseExportWizard {
 		} else {
 			runner.setExecutionTargets(new String[] { "build.update.jar" });
 		}
-		runner.setMessageOutputLevel(Project.MSG_ERR);
 		runner.addBuildListener("org.eclipse.pde.internal.ui.ant.ExportBuildListener");
 		runner.addUserProperties(createProperties(destination));
 		runner.setAntHome(model.getInstallLocation());
@@ -146,8 +116,10 @@ public class FeatureExportWizard extends BaseExportWizard {
 			model.getInstallLocation()
 				+ Path.SEPARATOR
 				+ MainPreferencePage.getBuildScriptName());
-		runner.setMessageOutputLevel(Project.MSG_ERR);
 		runner.run(monitor);
+	}
+	
+	protected void zipAll(String filename, HashMap properties, IProgressMonitor monitor) {
 	}
 
 }

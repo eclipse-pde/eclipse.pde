@@ -5,7 +5,6 @@ import java.io.PrintWriter;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.pde.internal.ui.codegen.*;
 
 public class StructuredJavaCodeGenerator extends JavaCodeGenerator {
 

@@ -11,7 +11,6 @@ import java.util.*;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.jdt.core.*;
 
-import java.io.*;
 import java.io.PrintWriter;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;

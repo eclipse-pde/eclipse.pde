@@ -19,7 +19,6 @@ import java.util.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.layout.*;
-import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.wizards.*;
 
 import java.lang.reflect.InvocationTargetException;
