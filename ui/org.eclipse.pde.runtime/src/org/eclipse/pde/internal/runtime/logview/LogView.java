@@ -389,8 +389,7 @@ public class LogView extends ViewPart implements ILogListener {
 			} finally {
 				readLogAction.setText(PDERuntimePlugin.getResourceString("LogView.readLog.reload"));
 				readLogAction.setToolTipText(PDERuntimePlugin.getResourceString("LogView.readLog.reload"));
-				asyncRefresh(false);
-								
+				asyncRefresh(false);								
 			}
 		}	
 	}
