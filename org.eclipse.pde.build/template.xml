@@ -6,6 +6,7 @@
   </target>
   <commapatternset id="pattern.id" includes="${includes}" excludes="${excludes}"/>
   <commapatternset id="copy.id" includes="${includes}" excludes="**/*.java"/>
+  <commapatternset id="includes.id" includes="${includes}"/>
   <commapatternset id="excludes.id" excludes="${excludes}"/>
   <fileset id="file.id" dir=".">
     <patternset refid="pattern.id"/>
@@ -13,7 +14,8 @@
   <path id="path.id">
     <fileset refid="file.id"/>
   </path>
-
+  <stripMapper id="stripMapper.id" to="1"/>
+  
   <target name="jar" depends="init">
     <javac srcdir="${basedir}" destdir="${out}" verbose="yes" failonerror="no">
       <patternset refid="pattern.id"/>
@@ -32,7 +34,6 @@
   </target>
 
   <target name="bin" depends="init">
-    <delete dir="${dest}"/>
     <mkdir dir="${dest}"/>
     <copy todir="${dest}">
       <fileset refid="file.id"/>
@@ -40,14 +41,15 @@
   </target>
 
   <target name="src" depends="init">
-    <delete dir="${dest}/src" />
-    <mkdir dir="${dest}/src" />
-    <copy todir="${dest}/src">
+    <delete dir="${dest}.pdetemp" />
+    <mkdir dir="${dest}.pdetemp" />
+    <copy todir="${dest}.pdetemp">
       <fileset refid="file.id"/>
+      <mapper refid="stripMapper.id"/>
     </copy>
-    <delete file="${dest}/src.zip"/>
-    <zip zipfile="${dest}/src.zip" basedir="${dest}/src"/>
-    <delete dir="${dest}/src"/>
+    <delete file="${dest}"/>
+    <zip zipfile="${dest}" basedir="${dest}.pdetemp"/>
+    <delete dir="${dest}.pdetemp"/>
   </target>
 
   <target name="log" depends="init">

@@ -26,20 +26,25 @@
 
 
 <!-- Extensions -->
-<extension
-      point="org.eclipse.ant.core.antObjects">
+<extension point="org.eclipse.ant.core.antObjects">
    <antObject
          name="org.eclipse.pde.internal.core.JDTCompilerAdapter"
          class="org.eclipse.pde.internal.core.JDTCompilerAdapter">
    </antObject>
 </extension>
-<extension
-      point="org.eclipse.ant.core.antTasks">
+<extension point="org.eclipse.ant.core.antTasks">
    <antTask
          name="initTemplate"
          class="org.eclipse.pde.internal.core.InitTemplate">
    </antTask>
 </extension>
+<extension point="org.eclipse.ant.core.antTypes">
+   <antType
+         name="stripMapper"
+         class="org.eclipse.pde.internal.core.StripMapper">
+   </antType>
+</extension>
+
 <extension id="plugin" point="org.eclipse.core.runtime.applications">
    <application>
       <run class="org.eclipse.pde.internal.core.PluginBuildScriptGenerator"/>

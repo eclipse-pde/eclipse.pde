@@ -19,6 +19,10 @@ interface ScriptGeneratorConstants {
 	public static final String TARGET_JAR = "jar";
 	public static final String TARGET_JAVADOC = "javadoc";
 	public static final String TARGET_SRC = "src";
+	public static final String TARGET_BIN_ZIP = "bin.zip";
+	public static final String TARGET_SRC_ZIP = "src.zip";
+	public static final String TARGET_LOG_ZIP = "log.zip";
+	public static final String TARGET_DOC_ZIP = "doc.zip";
 
 	// switches
 	public static final String SWITCH_DELIMITER = "-";
