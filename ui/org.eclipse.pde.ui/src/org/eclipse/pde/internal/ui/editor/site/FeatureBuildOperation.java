@@ -2,18 +2,33 @@ package org.eclipse.pde.internal.ui.editor.site;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
 import org.apache.tools.ant.Project;
 import org.eclipse.ant.core.AntRunner;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.pde.internal.build.FeatureBuildScriptGenerator;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.core.isite.*;
+import org.eclipse.pde.internal.core.isite.ISiteBuild;
+import org.eclipse.pde.internal.core.isite.ISiteBuildFeature;
+import org.eclipse.pde.internal.core.isite.ISiteBuildModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 
 /**
@@ -62,7 +77,8 @@ public class FeatureBuildOperation implements IRunnableWithProgress {
 	public void run(IProgressMonitor monitor)
 		throws InvocationTargetException, InterruptedException {
 		try {
-			int count = fullBuild ? 2*features.size() + 1 : 2*features.size();
+			int count =
+				fullBuild ? 2 * features.size() + 1 : 2 * features.size();
 			monitor.beginTask("Building:", count);
 			if (fullBuild) {
 				monitor.setTaskName("Scrubbing output folders ...");
@@ -93,21 +109,24 @@ public class FeatureBuildOperation implements IRunnableWithProgress {
 
 	private void scrubOutput(
 		ISiteBuildFeature sbfeature,
-		IProgressMonitor monitor) throws CoreException {
+		IProgressMonitor monitor)
+		throws CoreException {
 		monitor.beginTask("", 2);
 		ISiteBuildModel model = sbfeature.getModel();
 		IProject project = model.getUnderlyingResource().getProject();
 		ISiteBuild siteBuild = model.getSiteBuild();
 		IFolder pluginFolder = project.getFolder(siteBuild.getPluginLocation());
-		IFolder featureFolder = project.getFolder(siteBuild.getFeatureLocation());
+		IFolder featureFolder =
+			project.getFolder(siteBuild.getFeatureLocation());
 		scrubFolder(pluginFolder, new SubProgressMonitor(monitor, 1));
 		scrubFolder(featureFolder, new SubProgressMonitor(monitor, 1));
 	}
-	
-	private void scrubFolder(IFolder folder, IProgressMonitor monitor) throws CoreException {
-		IResource [] members = folder.members();
-		monitor.beginTask("Scrubbing "+folder.getName(), members.length);
-		for (int i=0; i<members.length; i++) {
+
+	private void scrubFolder(IFolder folder, IProgressMonitor monitor)
+		throws CoreException {
+		IResource[] members = folder.members();
+		monitor.beginTask("Scrubbing " + folder.getName(), members.length);
+		for (int i = 0; i < members.length; i++) {
 			IResource member = members[i];
 			member.delete(true, new SubProgressMonitor(monitor, 1));
 		}
@@ -228,10 +247,23 @@ public class FeatureBuildOperation implements IRunnableWithProgress {
 		createLogFile(buildModel);
 		runner.setBuildFileLocation(scriptFile.getLocation().toOSString());
 		runner.setArguments(computeBuildArguments(buildModel));
+		//runner.setCustomClasspath(computeCustomClasspath());
 		runner.setExecutionTargets(computeTargets());
 		runner.setMessageOutputLevel(Project.MSG_ERR);
 		runner.addBuildListener(BUILD_LISTENER_CLASS);
 		runner.run(monitor);
+	}
+
+	private URL[] computeCustomClasspath() {
+		// Add this plug-in's space
+		URL installURL = PDEPlugin.getDefault().getDescriptor().getInstallURL();
+		try {
+			URL runtimeURL = new URL(installURL, "pdeui.jar");
+			URL selfhostingURL = new URL(installURL, "bin/");
+			return new URL[] { selfhostingURL, runtimeURL };
+		} catch (MalformedURLException e) {
+			return new URL[0];
+		}
 	}
 
 	private void createLogFile(ISiteBuildModel buildModel) {
