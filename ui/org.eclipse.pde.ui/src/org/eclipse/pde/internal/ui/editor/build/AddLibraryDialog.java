@@ -89,6 +89,7 @@ public class AddLibraryDialog extends SelectionStatusDialog {
 	
 	public AddLibraryDialog(Shell shell, String[] libraries, IPluginModelBase model) {
 		super(shell);
+		setShellStyle(getShellStyle() | SWT.RESIZE);
 		setLibraryNames(libraries);
 		setPluginModel(model);
 		initializeImages();
@@ -132,7 +133,9 @@ public class AddLibraryDialog extends SelectionStatusDialog {
 		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		Table table = new Table(container, SWT.FULL_SELECTION | SWT.BORDER);
-		table.setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.heightHint = 125;
+		table.setLayoutData(gd);
 		
 		libraryViewer = new TableViewer(table);
 		libraryViewer.setContentProvider(new TableContentProvider());
@@ -145,6 +148,7 @@ public class AddLibraryDialog extends SelectionStatusDialog {
 			}
 		});
 		libraryViewer.setInput(model);
+		applyDialogFont(container);
 		return container;
 	}
 	
