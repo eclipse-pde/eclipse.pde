@@ -170,7 +170,7 @@ public class SelfHostingPropertyPage extends PropertyPage {
 		try {
 			pref.flush();
 		} catch (BackingStoreException e) {
-			e.printStackTrace();
+			PDEPlugin.logException(e);
 		}
 		return super.performOk();
 	}
