@@ -71,8 +71,8 @@ public class PackagingConfigScriptGenerator extends AssembleConfigScriptGenerato
 			args.add("700"); //$NON-NLS-1$
 			args.add("."); //$NON-NLS-1$
 			script.printExecTask("chmod", getPropertyFormat("tempDirectory") + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER), args, "Linux"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			script.printDeleteTask(getPropertyFormat("tempDirectory") + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER), "**/*", null); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
-		script.printDeleteTask(getPropertyFormat("tempDirectory") + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER), "**/*", null); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		script.printTargetEnd();
 	}
 
@@ -235,27 +235,27 @@ public class PackagingConfigScriptGenerator extends AssembleConfigScriptGenerato
 			Path pluginLocation = new Path(plugins[i].getLocation());
 			boolean isFolder = isFolder(pluginLocation);
 			if (isFolder) { 
-				script.printCopyTask(null, getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + pluginLocation.lastSegment(), new FileSet[] {new FileSet(pluginLocation.toOSString(), null, null, null, null, null, null)}, false);
+				script.printCopyTask(null, getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + pluginLocation.lastSegment(), new FileSet[] {new FileSet(pluginLocation.toOSString(), null, null, null, null, null, null)}, false);
 			} else {
-				script.printCopyTask(pluginLocation .toOSString(), getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + pluginLocation.lastSegment(), null, false);
+				script.printCopyTask(pluginLocation .toOSString(), getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + pluginLocation.lastSegment(), null, false);
 			}
 		}
 		
 		for (int i = 0; i < features.length; i++) {
 			IPath featureLocation = new Path(features[i].getURL().getPath()); // Here we assume that all the features are local
 			featureLocation = featureLocation.removeLastSegments(1);
-			script.printCopyTask(null, getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + featureLocation.lastSegment(), new FileSet[] {new FileSet(featureLocation.toOSString(), null, null, null, null, null, null)}, false);
+			script.printCopyTask(null, getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + featureLocation.lastSegment(), new FileSet[] {new FileSet(featureLocation.toOSString(), null, null, null, null, null, null)}, false);
 		}
 		
 		
 		for (int i = 0; i < rootFiles.length; i++) {
 			IPath filePath  = new Path(rootFiles[i]);
-			script.printCopyTask(filePath .toOSString(), getPropertyFormat(PROPERTY_ARCHIVE_PREFIX), null, false);
+			script.printCopyTask(filePath .toOSString(), getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + getPropertyFormat(PROPERTY_ARCHIVE_PREFIX), null, false);
 		}
 		
 		for (int i = 0; i < rootDirs.length; i++) {
 			IPath dirPath  = new Path(rootDirs[i]);
-			script.printCopyTask(null, getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + dirPath.lastSegment(), new FileSet[] {new FileSet(dirPath .toOSString(), null, null, null, null, null, null)}, false);
+			script.printCopyTask(null, getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + dirPath.lastSegment(), new FileSet[] {new FileSet(dirPath .toOSString(), null, null, null, null, null, null)}, false);
 		}
 	}
 	public void rootFiles(String[] rootFiles) {
