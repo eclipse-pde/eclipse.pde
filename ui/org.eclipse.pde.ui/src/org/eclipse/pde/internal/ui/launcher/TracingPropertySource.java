@@ -83,7 +83,7 @@ public class TracingPropertySource implements IPropertySource, IAdaptable {
 			String key = (String) enum.nextElement();
 			IPath path = new Path(key);
 			path = path.removeFirstSegments(1);
-			String shortKey = path.toString().toLowerCase();
+			String shortKey = path.toString();
 			String value = (String) fTemplate.get(key);
 			String lvalue = null;
 			PropertyDescriptor desc;
