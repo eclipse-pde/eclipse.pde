@@ -52,9 +52,9 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 	protected void basicGenerateAssembleConfigFileTargetCall(Config aConfig, Collection binaryPlugins, Collection binaryFeatures, Collection allFeatures, Collection rootFiles) throws CoreException {
 		configScriptGenerator.initialize(directory, featureId, aConfig, binaryPlugins, binaryFeatures, allFeatures, rootFiles); 
 		((PackageConfigScriptGenerator) configScriptGenerator).setPackagingPropertiesLocation(packagingPropertiesLocation);
-		((PackageConfigScriptGenerator) configScriptGenerator).setOutputFormat(outputFormat);
-		configScriptGenerator.setForceUpdateJar(forceUpdateJarFormat);
-		configScriptGenerator.setBrandExecutable(false);
+		AbstractScriptGenerator.setOutputFormat(outputFormat);
+		AbstractScriptGenerator.setForceUpdateJar(forceUpdateJarFormat);
+		AbstractScriptGenerator.setBrandExecutable(false);
 		configScriptGenerator.generate();
 
 		Map params = new HashMap(1);
