@@ -552,7 +552,9 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		ClasspathUtilCore.addLibraries(model, true, entries);
 		for (int i = 0; i < entries.size(); i++) {
 			IPath path = new Path(model.getInstallLocation());
-			IClasspathEntry entry = (IClasspathEntry)entries.remove(i);			
+			IClasspathEntry entry = (IClasspathEntry)entries.get(i);	
+			if (PDEPlugin.getWorkspace().getRoot().findMember(entry.getPath()) != null)
+				continue;
 			if (entry.getPath().matchingFirstSegments(path) == path.segmentCount()) {
 				path = entry.getPath().removeFirstSegments(path.segmentCount());
 				path = project.getFullPath().append(path).setDevice(null);
@@ -572,7 +574,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			}
 			IPath srcAttachment = entry.getSourceAttachmentPath();
 			IPath srcAttRoot = entry.getSourceAttachmentRootPath();
-			entries.add(i, JavaCore.newLibraryEntry(path, srcAttachment, srcAttRoot, entry.isExported()));	
+			entries.setElementAt(JavaCore.newLibraryEntry(path, srcAttachment, srcAttRoot, entry.isExported()), i);	
 		}		
 	}
 	
