@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.core.plugin;
 
-import java.net.*;
-
 import org.eclipse.pde.core.*;
 /**
  * This type of model is created by parsing the manifest file.
@@ -52,18 +50,4 @@ public interface ISharedPluginModel extends IModel, IModelChangeProvider {
 	 */
 	String getInstallLocation();
 	
-	/**
-	 * Returns a URL for a resource in the plug-in.
-	 * The protocol of the URL will be <samp>file:</samp>
-	 * if the plug-in is in a directory structure.
-	 * If the plug-in is in a JAR format, the URL will have
-	 * a <samp>jar:file:</samp> protocol.
-	 *
-	 * @return the URL of a resource in a plug-in structure, or
-	 * <samp>null</samp> if the resource does not exist or
-	 * the plug-in's install location is null.
-	 * 
-	 * @since 3.1
-	 */
-	URL getResourceURL(String relativePath);
 }

@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.core.plugin;
 
 import java.io.*;
 import java.net.*;
-import java.util.zip.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -67,27 +66,6 @@ public class WorkspaceExtensionsModel
 		return fUnderlyingResource.getLocation().removeLastSegments(1).addTrailingSeparator().toOSString();
 	}
 	
-	public URL getResourceURL(String relativePath) {
-		String location = getInstallLocation();
-		if (location == null)
-			return null;
-		
-		File file = new File(location);
-		URL url = null;
-		try {
-			if (file.isFile() && file.getName().endsWith(".jar")) { //$NON-NLS-1$
-				ZipFile zip = new ZipFile(file);
-				if (zip.getEntry(relativePath) != null) {
-					url = new URL("jar:file:" + file.getAbsolutePath() + "!/" + relativePath); //$NON-NLS-1$ //$NON-NLS-2$
-				}
-			} else if (new File(file, relativePath).exists()){
-				url = new URL("file:" + file.getAbsolutePath() + Path.SEPARATOR + relativePath); //$NON-NLS-1$
-			}
-		} catch (IOException e) {
-		}
-		return url;
-	}
-
 	public IResource getUnderlyingResource() {
 		return fUnderlyingResource;
 	}

@@ -234,25 +234,33 @@ public class ManifestEditor extends MultiSourceEditor {
 			JarEntryEditorInput input) {
 		IStorage storage = input.getStorage();
 		ZipFile zip = (ZipFile)storage.getAdapter(ZipFile.class);
-		if (zip == null)
-			return;
-		
-		if (zip.getEntry("META-INF/MANIFEST.MF") != null) { //$NON-NLS-1$
-			input = new JarEntryEditorInput(new JarEntryFile(zip, "META-INF/MANIFEST.MF")); //$NON-NLS-1$
-			manager.putContext(input, new BundleInputContext(this, input, storage.getName().equals("MANIFEST.MF"))); //$NON-NLS-1$
-		}
-		
-		if (zip.getEntry("plugin.xml") != null) { //$NON-NLS-1$
-			input = new JarEntryEditorInput(new JarEntryFile(zip, "plugin.xml")); //$NON-NLS-1$
-			manager.putContext(input, new PluginInputContext(this, input, storage.getName().equals("plugin.xml"), false)); //$NON-NLS-1$
-		} else if (zip.getEntry("fragment.xml") != null) { //$NON-NLS-1$
-			input = new JarEntryEditorInput(new JarEntryFile(zip, "fragment.xml")); //$NON-NLS-1$
-			manager.putContext(input, new PluginInputContext(this, input, storage.getName().equals("fragment.xml"), true)); //$NON-NLS-1$
-		}
-		
-		if (zip.getEntry("build.properties") != null) { //$NON-NLS-1$
-			input = new JarEntryEditorInput(new JarEntryFile(zip, "build.properties")); //$NON-NLS-1$
-			manager.putContext(input, new BuildInputContext(this, input, storage.getName().equals("build.properties"))); //$NON-NLS-1$
+		try {
+			if (zip == null)
+				return;
+			
+			if (zip.getEntry("META-INF/MANIFEST.MF") != null) { //$NON-NLS-1$
+				input = new JarEntryEditorInput(new JarEntryFile(zip, "META-INF/MANIFEST.MF")); //$NON-NLS-1$
+				manager.putContext(input, new BundleInputContext(this, input, storage.getName().equals("MANIFEST.MF"))); //$NON-NLS-1$
+			}
+			
+			if (zip.getEntry("plugin.xml") != null) { //$NON-NLS-1$
+				input = new JarEntryEditorInput(new JarEntryFile(zip, "plugin.xml")); //$NON-NLS-1$
+				manager.putContext(input, new PluginInputContext(this, input, storage.getName().equals("plugin.xml"), false)); //$NON-NLS-1$
+			} else if (zip.getEntry("fragment.xml") != null) { //$NON-NLS-1$
+				input = new JarEntryEditorInput(new JarEntryFile(zip, "fragment.xml")); //$NON-NLS-1$
+				manager.putContext(input, new PluginInputContext(this, input, storage.getName().equals("fragment.xml"), true)); //$NON-NLS-1$
+			}
+			
+			if (zip.getEntry("build.properties") != null) { //$NON-NLS-1$
+				input = new JarEntryEditorInput(new JarEntryFile(zip, "build.properties")); //$NON-NLS-1$
+				manager.putContext(input, new BuildInputContext(this, input, storage.getName().equals("build.properties"))); //$NON-NLS-1$
+			}
+		} finally {
+			try {
+				if (zip != null)
+					zip.close();
+			} catch (IOException e) {
+			}
 		}
 	}
 	

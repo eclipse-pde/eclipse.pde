@@ -10,14 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.net.*;
-import java.util.*;
-
-import org.eclipse.pde.core.plugin.*;
 
 public class JavadocLocationManager {
 	
-	private static String JAVADOC_ID = "org.eclipse.pde.core.javadoc"; //$NON-NLS-1$
+	/*private static String JAVADOC_ID = "org.eclipse.pde.core.javadoc"; //$NON-NLS-1$
 	
 	private HashMap fLocations;
 	
@@ -41,7 +37,7 @@ public class JavadocLocationManager {
 			IPluginExtension extension = extensions[j];
 			if (JAVADOC_ID.equals(extension.getPoint())) {
 				int origLength = fLocations.size();
-				processExtension(extension);
+				//processExtension(extension);
 				if (fLocations.size() == origLength && model.getUnderlyingResource() != null) {
 					processExtensions(entry, true);					
 				}
@@ -49,7 +45,7 @@ public class JavadocLocationManager {
 		}		
 	}
 	
-	private void processExtension(IPluginExtension extension) {
+	/*private void processExtension(IPluginExtension extension) {
 		IPluginObject[] children = extension.getChildren();
 		for (int j = 0; j < children.length; j++) {
 			if (children[j].getName().equals("javadoc")) { //$NON-NLS-1$
@@ -87,6 +83,6 @@ public class JavadocLocationManager {
 		ModelEntry[] entries = PDECore.getDefault().getModelManager().getEntries();
 		for (int i = 0; i < entries.length; i++)
 			processExtensions(entries[i], false);
-	}
+	}*/
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,23 +10,17 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.util;
 
-import org.eclipse.jface.viewers.*;
-import java.util.*;
-
-import org.eclipse.swt.SWTException;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.core.runtime.*;
-import org.osgi.framework.*;
-
 import java.io.*;
-import java.net.*;
+import java.util.*;
+import java.util.zip.*;
 
-/**
- * @version 	1.0
- * @author
- */
+import org.eclipse.jface.resource.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.ui.plugin.*;
+
 public class SharedLabelProvider
 	extends LabelProvider
 	implements ITableLabelProvider {
@@ -173,40 +167,50 @@ public class SharedLabelProvider
 		return getImage(obj);
 	}
 
-	public Image getImageFromPlugin(String bundleID, String subdirectoryAndFilename) {
-		try {
-			Bundle bundle = Platform.getBundle(bundleID);
-			return getImageFromURL(Platform.resolve(bundle.getEntry(subdirectoryAndFilename)));
-		} catch (IOException e) {
-			return null;
-		}
-	}
-
-	public Image getImageFromURL(URL url) {
-		if (url == null)
-			return getBlankImage();
-		Image image = null;
-		try {
-			InputStream stream = null;
-			try {
-				stream = url.openStream();
-				stream.close();
-			} catch (IOException e1) {	
-				return getBlankImage();
-			}
-			
-			String key = url.toString();
-			image = (Image)images.get(key);
-			if (image == null) {
-				ImageDescriptor desc = ImageDescriptor.createFromURL(url);
-				image = desc.createImage();
-				images.put(key, image);
-			}
-		} catch (SWTException e) {
-		}
-		return image;
+	public Image getImageFromPlugin(String bundleID, String path) {
+		ImageDescriptor desc = AbstractUIPlugin.imageDescriptorFromPlugin(bundleID, path);	
+		return (desc != null) ? get(desc) : getBlankImage();
 	}
 	
+
+	public Image getImageFromPlugin(IPluginModelBase model, String relativePath) {
+		String location = model.getInstallLocation();
+		if (location == null)
+			return null;
+		
+		File pluginLocation = new File(location);
+		InputStream stream = null;
+		ZipFile jarFile = null;
+		try {
+			if (pluginLocation.isDirectory()) {
+				File file = new File(pluginLocation, relativePath);
+				if (file.exists()) 
+					stream = new FileInputStream(file);
+			} else {
+					jarFile = new ZipFile(pluginLocation, ZipFile.OPEN_READ);
+					ZipEntry manifestEntry = jarFile.getEntry(relativePath);
+					if (manifestEntry != null) {
+						stream = jarFile.getInputStream(manifestEntry);
+					}
+			}
+			if (stream != null) {
+				ImageDescriptor desc = ImageDescriptor.createFromImageData(new ImageData(stream));
+				return get(desc);
+			}
+		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
+		} finally {
+			try {
+				if (stream != null) 
+					stream.close();
+				if (jarFile != null)
+					jarFile.close();
+			} catch (IOException e) {
+			}
+		}
+		return getBlankImage();
+	}
+
 	public Image getBlankImage() {
 		if (fBlankImage == null)
 			fBlankImage = ImageDescriptor.getMissingImageDescriptor().createImage();

@@ -53,6 +53,10 @@ public class PluginInputContext extends XMLInputContext {
 				File file = (File)((SystemFileEditorInput)input).getAdapter(File.class);
 				model.setInstallLocation(file.getParent());
 				model.setCharset(getDefaultCharset());
+			} else if (input instanceof JarEntryEditorInput){
+				File file = (File)((JarEntryEditorInput)input).getAdapter(File.class);
+				model.setInstallLocation(file.toString());
+				model.setCharset(getDefaultCharset());
 			} else {
 				model.setCharset(getDefaultCharset());				
 			}

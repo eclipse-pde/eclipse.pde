@@ -67,6 +67,8 @@ public class JarEntryFile extends PlatformObject implements IStorage {
 	public Object getAdapter(Class adapter) {
 		if (adapter.equals(ZipFile.class))
 			return fZipFile;
+		if (adapter.equals(File.class))
+			return new File(fZipFile.getName());
 		return super.getAdapter(adapter);
 	}
 

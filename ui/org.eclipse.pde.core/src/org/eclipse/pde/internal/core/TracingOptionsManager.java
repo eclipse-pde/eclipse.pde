@@ -11,8 +11,8 @@
 package org.eclipse.pde.internal.core;
 
 import java.io.*;
-import java.net.*;
 import java.util.*;
+import java.util.zip.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.*;
@@ -42,27 +42,6 @@ public class TracingOptionsManager {
 			if (key != null && value != null)
 				template.setProperty(key, value);
 		}
-	}
-	
-	private Properties getOptions(IPluginModelBase model) {
-		InputStream stream = null;
-		try {
-			URL url = model.getResourceURL(".options"); //$NON-NLS-1$
-			if (url != null) {
-				stream = url.openStream();
-				Properties modelOptions = new Properties();
-				modelOptions.load(stream);
-				return modelOptions;
-			}
-		} catch (IOException e) {
-		} finally {
-			try {
-				if (stream != null)
-					stream.close();
-			} catch (IOException e) {
-			}
-		}
-		return null;
 	}
 	
 	public Hashtable getTemplateTable(String pluginId) {
@@ -107,7 +86,34 @@ public class TracingOptionsManager {
 	}
 
 	public static boolean isTraceable(IPluginModelBase model) {
-		return model.getResourceURL(".options") != null; //$NON-NLS-1$
+		String location = model.getInstallLocation();
+		if (location == null)
+			return false;
+		
+		File pluginLocation = new File(location);
+		InputStream stream = null;
+		ZipFile jarFile = null;
+		try {
+			if (pluginLocation.isDirectory())
+				return new File(pluginLocation, ".options").exists();
+			
+			jarFile = new ZipFile(pluginLocation, ZipFile.OPEN_READ);
+			ZipEntry manifestEntry = jarFile.getEntry(".options");
+			if (manifestEntry != null) {
+				stream = jarFile.getInputStream(manifestEntry);
+			}
+		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
+		} finally {
+			try {
+				if (stream != null) 
+					stream.close();
+				if (jarFile != null)
+					jarFile.close();
+			} catch (IOException e) {
+			}
+		}
+		return stream != null;
 	}
 	
 	public void reset() {
@@ -140,4 +146,44 @@ public class TracingOptionsManager {
 	public void save(String filename, Map map) {
 		save(filename, getTracingOptions(map));		
 	}
+	
+	private Properties getOptions(IPluginModelBase model) {
+		String location = model.getInstallLocation();
+		if (location == null)
+			return null;
+		
+		File pluginLocation = new File(location);
+		InputStream stream = null;
+		ZipFile jarFile = null;
+		try {
+			if (pluginLocation.isDirectory()) {
+				File file = new File(pluginLocation, ".options");
+				if (file.exists()) 
+					stream = new FileInputStream(file);
+			} else {
+					jarFile = new ZipFile(pluginLocation, ZipFile.OPEN_READ);
+					ZipEntry manifestEntry = jarFile.getEntry(".options");
+					if (manifestEntry != null) {
+						stream = jarFile.getInputStream(manifestEntry);
+					}
+			}
+			if (stream != null) {
+				Properties modelOptions = new Properties();
+				modelOptions.load(stream);
+				return modelOptions;
+			}
+		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
+		} finally {
+			try {
+				if (stream != null) 
+					stream.close();
+				if (jarFile != null)
+					jarFile.close();
+			} catch (IOException e) {
+			}
+		}
+		return null;
+	}
+
 }

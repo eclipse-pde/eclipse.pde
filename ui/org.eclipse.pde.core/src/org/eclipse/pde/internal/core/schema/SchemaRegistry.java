@@ -77,27 +77,28 @@ public class SchemaRegistry {
 		String schema = point.getSchema();
 		if (schema == null || schema.trim().length() == 0)
 			return null;
-		URL url = point.getModel().getResourceURL(schema);
-		
+		File file = new File(point.getModel().getInstallLocation(), schema);
 		// try in the external plugin, if we did not find anything in workspace
-		if (url == null && point.getModel().getUnderlyingResource() != null) {
+		if (!file.exists() && point.getModel().getUnderlyingResource() != null) {
 			String pluginID = point.getPluginBase().getId();
 			ModelEntry entry = PDECore.getDefault().getModelManager().findEntry(pluginID);
 			if (entry != null) {
 				IPluginModelBase model = entry.getExternalModel();
 				if (model != null) {
-					url = model.getResourceURL(schema);
+					 file = new File(model.getInstallLocation(), schema);
 				}
 			}
 		}
-		if (url == null) {
-			try {
-				SourceLocationManager mgr = PDECore.getDefault().getSourceLocationManager();
-				File file = mgr.findSourceFile(point.getPluginBase(), new Path(schema));
-				if (file != null && file.exists())
-					url = file.toURL();
-			} catch (MalformedURLException e) {
-			}
+		if (!file.exists()) {
+			SourceLocationManager mgr = PDECore.getDefault().getSourceLocationManager();
+			file = mgr.findSourceFile(point.getPluginBase(), new Path(schema));
+		}
+		
+		URL url = null;
+		try {
+			if (file != null && file.exists() && file.isFile())
+				url = file.toURL();
+		} catch (MalformedURLException e) {
 		}
 		return url;
 	}

@@ -10,23 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.bundle;
 import java.io.*;
-import java.io.InputStream;
-import java.io.PrintWriter;
 import java.net.*;
-import java.net.URL;
-import java.util.zip.*;
 
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.IEditable;
-import org.eclipse.pde.core.IEditableModel;
-import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.AbstractModel;
 import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.core.plugin.*;
 
@@ -192,27 +184,6 @@ public abstract class BundlePluginModelBase extends AbstractModel
 		if (fBundleModel != null)
 			return fBundleModel.getInstallLocation();
 		return null;
-	}
-	
-	public URL getResourceURL(String relativePath) {
-		String location = getInstallLocation();
-		if (location == null)
-			return null;
-		
-		File file = new File(location);
-		URL url = null;
-		try {
-			if (file.isFile() && file.getName().endsWith(".jar")) { //$NON-NLS-1$
-				ZipFile zip = new ZipFile(file);
-				if (zip.getEntry(relativePath) != null) {
-					url = new URL("jar:file:" + file.getAbsolutePath() + "!/" + relativePath); //$NON-NLS-1$ //$NON-NLS-2$
-				}
-			} else if (new File(file, relativePath).exists()){
-				url = new URL("file:" + file.getAbsolutePath() + Path.SEPARATOR + relativePath); //$NON-NLS-1$
-			}
-		} catch (IOException e) {
-		}
-		return url;
 	}
 	
 	protected NLResourceHelper createNLResourceHelper() {

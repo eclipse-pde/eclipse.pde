@@ -11,9 +11,7 @@
 package org.eclipse.pde.internal.ui.model;
 
 import java.io.*;
-import java.net.*;
 import java.util.*;
-import java.util.zip.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -259,27 +257,6 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 		if (fUnderlyingResource != null)
 			return fUnderlyingResource.getProject().getLocation().addTrailingSeparator().toString();
 		return fInstallLocation;
-	}
-	
-	public URL getResourceURL(String relativePath) {
-		String location = getInstallLocation();
-		if (location == null)
-			return null;
-		
-		File file = new File(location);
-		URL url = null;
-		try {
-			if (file.isFile() && file.getName().endsWith(".jar")) { //$NON-NLS-1$
-				ZipFile zip = new ZipFile(file);
-				if (zip.getEntry(relativePath) != null) {
-					url = new URL("jar:file:" + file.getAbsolutePath() + "!/" + relativePath); //$NON-NLS-1$ //$NON-NLS-2$
-				}
-			} else if (new File(file, relativePath).exists()){
-				url = new URL("file:" + file.getAbsolutePath() + Path.SEPARATOR + relativePath); //$NON-NLS-1$
-			}
-		} catch (IOException e) {
-		}
-		return url;
 	}
 	
 	public void setInstallLocation(String location) {
