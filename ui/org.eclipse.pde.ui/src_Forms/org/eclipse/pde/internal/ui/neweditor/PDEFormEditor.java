@@ -27,6 +27,7 @@ import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.editors.text.ILocationProvider;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.*;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -91,6 +92,12 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		}
 		else if (input instanceof IStorageEditorInput) {
 			createStorageContexts(contextManager, (IStorageEditorInput)input);
+		}
+		else if (input instanceof ILocationProvider) {
+			IPath path = ((ILocationProvider)input).getPath(input);
+			File file = path.toFile();
+			SystemFileEditorInput sinput = new SystemFileEditorInput(file);
+			createSystemFileContexts(contextManager, sinput);
 		}
 	}
 	

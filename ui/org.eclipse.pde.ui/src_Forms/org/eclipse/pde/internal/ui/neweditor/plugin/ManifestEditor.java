@@ -132,7 +132,7 @@ public class ManifestEditor extends MultiSourceEditor {
 			pluginFile = createPluginFile(dir);
 			manifestFile = new File(dir, "META-INF/MANIFEST.MF");
 		} else if (name.equals("plugin.xml") || name.equals("fragment.xml")) {
-			manifestFile = file;
+			pluginFile = file;
 			File dir = file.getParentFile();
 			buildFile = new File(dir, "build.properties");
 			manifestFile = new File(dir, "META-INF/MANIFEST.MF");
