@@ -200,14 +200,16 @@ public class TargetPlatform implements IEnvironmentVariables {
 			
 			bWriter.write("#Eclipse Runtime Configuration File");
 			bWriter.newLine();
+			bWriter.write("osgi.installLocation" + "=file:" + ExternalModelManager.getEclipseHome(null).toString());
+			bWriter.newLine();
 			bWriter.write("osgi.framework" + "=" + getLocation("org.eclipse.osgi", pluginMap));
 			bWriter.newLine();
 			
 			StringBuffer buffer = new StringBuffer();
-			buffer.append(getLocation("org.eclipse.osgi.services", pluginMap) + ",");
-			buffer.append(getLocation("org.eclipse.osgi.util", pluginMap) + ",");
-			buffer.append(getLocation("org.eclipse.core.runtime", pluginMap) + "@2,");
-			buffer.append(getLocation("org.eclipse.update.configurator", pluginMap) + "@3");
+			buffer.append(getOSGiLocation("org.eclipse.osgi.services", pluginMap) + ",");
+			buffer.append(getOSGiLocation("org.eclipse.osgi.util", pluginMap) + ",");
+			buffer.append(getOSGiLocation("org.eclipse.core.runtime", pluginMap) + "@2,");
+			buffer.append(getOSGiLocation("org.eclipse.update.configurator", pluginMap) + "@3");
 			bWriter.write("osgi.bundles" + "=" + buffer.toString());
 			bWriter.newLine();
 			
@@ -220,9 +222,20 @@ public class TargetPlatform implements IEnvironmentVariables {
 	}
 	
 	private static String getLocation(String id, TreeMap pluginMap) {
-		IPluginModelBase model = (IPluginModelBase)pluginMap.get(id);
-		IPath path = new Path(model.getInstallLocation()).addTrailingSeparator();
-		return "reference:file:" + path.toString();
+		IPluginModelBase model = (IPluginModelBase)pluginMap.get(id);	
+		IPath path = null;
+		IResource resource = model.getUnderlyingResource();
+		if (resource != null && resource.isLinked()) {
+			path = resource.getLocation().removeLastSegments(1).addTrailingSeparator();
+		} else {
+			path = new Path(model.getInstallLocation()).addTrailingSeparator();
+		}
+		
+		return "file:" + path.toString();
+	}
+	
+	private static String getOSGiLocation(String id, TreeMap pluginMap) {
+		return "reference:" + getLocation(id, pluginMap);
 	}
 	
 	public static File createWorkingDirectory(IPath data) {
