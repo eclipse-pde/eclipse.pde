@@ -92,14 +92,14 @@ public class FeatureInfo extends FeatureObject implements IFeatureInfo {
 
 	public void write(String indent, PrintWriter writer) {
 		String indent2 = indent + Feature.INDENT;
-		String desc = getWritableString(description.trim());
+		String desc = description!=null?getWritableString(description.trim()):null;
 		writer.println();
 		writer.print(indent + "<" + getTag());
 		if (url != null) {
 			writer.print(" url=\"" + url + "\"");
 		}
 		writer.println(">");
-		writer.println(indent2 + desc);
+		if (desc!=null) writer.println(indent2 + desc);
 		writer.println(indent + "</" + getTag() + ">");
 	}
 

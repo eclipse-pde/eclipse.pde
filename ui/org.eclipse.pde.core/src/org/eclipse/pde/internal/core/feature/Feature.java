@@ -143,6 +143,7 @@ public class Feature extends VersionableObject implements IFeature {
 		os = getNodeAttribute(node, "os");
 		ws = getNodeAttribute(node, "ws");
 		nl = getNodeAttribute(node, "nl");
+		arch = getNodeAttribute(node, "arch");
 		imageName = getNodeAttribute(node, "image");
 		colocationAffinity = getNodeAttribute(node, "colocation-affinity");
 		application = getNodeAttribute(node, "application");

@@ -88,7 +88,8 @@ public class PortabilitySection extends PDEFormSection {
 			setCollapsed(
 				feature.getOS() == null
 					&& feature.getWS() == null
-					&& feature.getNL() == null);
+					&& feature.getNL() == null
+					&& feature.getArch() == null);
 		}
 	}
 
@@ -250,7 +251,7 @@ public class PortabilitySection extends PDEFormSection {
 			public void widgetSelected(SelectionEvent e) {
 				BusyIndicator
 					.showWhile(
-						nlText.getControl().getDisplay(),
+						archText.getControl().getDisplay(),
 						new Runnable() {
 					public void run() {
 						Choice[] choices =
@@ -368,7 +369,8 @@ public class PortabilitySection extends PDEFormSection {
 			obj.setOS(value);
 		else if (property.equals(IFeature.P_WS))
 			obj.setWS(value);
-		else if (property.equals(IFeature.P_ARCH));
+		else if (property.equals(IFeature.P_ARCH))
+			obj.setArch(value);
 	}
 
 	private void setValue(IEnvironment obj, String property) {
