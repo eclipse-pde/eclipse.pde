@@ -10,6 +10,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.jface.preference.*;
 import org.eclipse.ui.*;
+import sun.security.action.GetBooleanAction;
 import org.eclipse.pde.internal.*;
 import org.eclipse.swt.*;
 import org.eclipse.core.boot.BootLoader;
@@ -17,6 +18,7 @@ import org.eclipse.jdt.core.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import java.lang.reflect.InvocationTargetException;
+import org.eclipse.jface.util.*;
 
 /**
  */
@@ -31,7 +33,20 @@ public class TargetPlatformPreferencePage
 	public static final String KEY_DESCRIPTION =
 		"Preferences.TargetPlatformPage.Description";
 
-	private DirectoryFieldEditor editor;
+	public static final String PROP_TARGET_MODE = "org.eclipse.pde.targetMode";
+	public static final String KEY_TARGET_MODE =
+		"Preferences.TargetPlatformPage.targetMode";
+	public static final String KEY_USE_THIS =
+		"Preferences.TargetPlatformPage.useThis";
+	public static final String KEY_USE_OTHER =
+		"Preferences.TargetPlatformPage.useOther";
+	public static final String VALUE_USE_THIS = "useThis";
+	public static final String VALUE_USE_OTHER = "useOther";
+
+	private ModifiedDirectoryFieldEditor targetPathEditor;
+	private RadioGroupFieldEditor modeEditor;
+	private ExternalPluginsEditor pluginsEditor;
+	private boolean useOther;
 
 	class ModifiedDirectoryFieldEditor extends DirectoryFieldEditor {
 		public ModifiedDirectoryFieldEditor(
@@ -46,15 +61,41 @@ public class TargetPlatformPreferencePage
 			super.adjustForNumColumns(ncolumns);
 			Text text = super.getTextControl();
 			GridData gd = (GridData) text.getLayoutData();
-			gd.horizontalAlignment = GridData.HORIZONTAL_ALIGN_FILL;
+			gd.horizontalAlignment = GridData.FILL;
 			gd.grabExcessHorizontalSpace = true;
-			Button button = super.getChangeControl(text.getParent());
-			button.setLayoutData(null);
 		}
 		// It is OK to specify directory that does not
 		// exist - the platform will create it
 		protected boolean doCheckState() {
 			return true;
+		}
+		void setEnabled(boolean enabled) {
+			Text text = getTextControl();
+			text.setEnabled(enabled);
+			super.getLabelControl().setEnabled(enabled);
+			super.getChangeControl(text.getParent()).setEnabled(enabled);
+		}
+	}
+
+	class ModifiedChoiceEditor extends RadioGroupFieldEditor {
+		ModifiedChoiceEditor(Composite parent) {
+			super(
+				PROP_TARGET_MODE,
+				PDEPlugin.getResourceString(KEY_TARGET_MODE),
+				1,
+				new String[][] {
+					{ PDEPlugin.getResourceString(KEY_USE_THIS), VALUE_USE_THIS },
+					{
+					PDEPlugin.getResourceString(KEY_USE_OTHER), VALUE_USE_OTHER }
+			}, parent);
+		}
+		protected void fireValueChanged(
+			String property,
+			Object oldValue,
+			Object newValue) {
+			super.fireValueChanged(property, oldValue, newValue);
+			if (oldValue.equals(newValue) == false)
+				modeChanged(newValue.equals(VALUE_USE_OTHER));
 		}
 	}
 
@@ -65,30 +106,49 @@ public class TargetPlatformPreferencePage
 		super(GRID);
 		setPreferenceStore(PDEPlugin.getDefault().getPreferenceStore());
 		setDescription(PDEPlugin.getResourceString(KEY_DESCRIPTION));
+		getPreferenceStore().setDefault(PROP_TARGET_MODE, VALUE_USE_THIS);
+		String value = getPreferenceStore().getString(PROP_TARGET_MODE);
+		useOther = value.equals(VALUE_USE_OTHER);
 	}
 	/**
 	 */
 	protected void createFieldEditors() {
-		editor =
+		modeEditor = new ModifiedChoiceEditor(getFieldEditorParent());
+		addField(modeEditor);
+		modeEditor.setPropertyChangeListener(new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent e) {
+				Object value = e.getNewValue();
+				modeChanged(value.equals(VALUE_USE_OTHER));
+			}
+		});
+
+		targetPathEditor =
 			new ModifiedDirectoryFieldEditor(
 				PROP_PLATFORM_PATH,
 				PDEPlugin.getResourceString(KEY_PLATFORM_HOME),
 				getFieldEditorParent(),
 				PDEPlugin.getResourceString(KEY_PLATFORM_HOME_BUTTON));
 
-		ExternalPluginsEditor plugins =
-			new ExternalPluginsEditor(getFieldEditorParent());
-		addField(editor);
-		addField(plugins);
+		pluginsEditor = new ExternalPluginsEditor(getFieldEditorParent());
+		addField(targetPathEditor);
+		addField(pluginsEditor);
+		modeChanged(useOther);
 	}
-	/**
-	 * @return java.lang.String
-	 */
-	public String getPlatformPath() {
-		String value = editor.getStringValue();
-		if (value != null)
-			value.trim();
-		return value;
+
+	private void modeChanged(boolean useOther) {
+		String oldPath = getPlatformPath();
+		targetPathEditor.setEnabled(useOther);
+		this.useOther = useOther;
+		String newPath = getPlatformPath();
+		boolean reloadNeeded = false;
+		if (oldPath != null && newPath == null)
+			reloadNeeded = true;
+		if (oldPath == null && newPath != null)
+			reloadNeeded = true;
+		if (oldPath.equals(newPath) == false)
+			reloadNeeded = true;
+		if (reloadNeeded)
+			pluginsEditor.reload();
 	}
 	/**
 	 * Initializes this preference page using the passed desktop.
@@ -102,15 +162,28 @@ public class TargetPlatformPreferencePage
 
 	public static void initializePlatformPath() {
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
+		boolean useThis = true;
+		String mode = store.getString(PROP_TARGET_MODE);
+
+		if (mode != null && mode.equals(VALUE_USE_OTHER))
+			useThis = false;
 		String path = store.getString(PROP_PLATFORM_PATH);
-		if (path == null || path.length() == 0) {
-			URL installURL = BootLoader.getInstallURL();
-			String file = installURL.getFile();
-			IPath ppath = new Path(file).removeTrailingSeparator();
-			path = getCorrectPath(ppath.toOSString());
+		String currentPath = computeDefaultPlatformPath();
+
+		if (path == null
+			|| path.length() == 0
+			|| (useThis && !currentPath.equals(path))) {
+			path = currentPath;
 			store.setDefault(PROP_PLATFORM_PATH, path);
 			store.setValue(PROP_PLATFORM_PATH, path);
 		}
+	}
+
+	private static String computeDefaultPlatformPath() {
+		URL installURL = BootLoader.getInstallURL();
+		String file = installURL.getFile();
+		IPath ppath = new Path(file).removeTrailingSeparator();
+		return getCorrectPath(ppath.toOSString());
 	}
 
 	private static String getCorrectPath(String path) {
@@ -135,13 +208,24 @@ public class TargetPlatformPreferencePage
 		return buf.toString();
 	}
 
+	String getPlatformPath() {
+		IPreferenceStore store = getPreferenceStore();
+		if (useOther) {
+			String value = targetPathEditor.getStringValue();
+			if (value != null)
+				value.trim();
+			return value;
+		} else
+			return computeDefaultPlatformPath();
+	}
+
 	/** 
 	 *
 	 */
 	public boolean performOk() {
 		IPreferenceStore store = getPreferenceStore();
 		String oldEclipseHome = store.getString(PROP_PLATFORM_PATH);
-		final String newEclipseHome = editor.getStringValue();
+		final String newEclipseHome = getPlatformPath();
 		if (!oldEclipseHome.equals(newEclipseHome)) {
 			// home changed -update Java variable
 			IRunnableWithProgress op = new IRunnableWithProgress() {

@@ -50,6 +50,7 @@ public class ExternalPluginsBlock {
 	private boolean reloaded;
 	private Vector changed;
 	private TablePart tablePart;
+	private final static boolean DEFAULT_STATE = false;
 
 	public static final String CHECKED_PLUGINS = "PluginPath.checkedPlugins";
 
@@ -87,7 +88,7 @@ public class ExternalPluginsBlock {
 		protected void buttonSelected(Button button, int index) {
 			if (index == 0)
 				handleReload();
-			else if (index == 4)
+			else if (index == 5)
 				selectNotInWorkspace();
 			else
 				super.buttonSelected(button, index);
@@ -102,8 +103,9 @@ public class ExternalPluginsBlock {
 				PDEPlugin.getResourceString(KEY_RELOAD),
 				null,
 				PDEPlugin.getResourceString(WizardCheckboxTablePart.KEY_SELECT_ALL),
-				PDEPlugin.getResourceString(WizardCheckboxTablePart.KEY_DESELECT_ALL)/*,
-				PDEPlugin.getResourceString(KEY_WORKSPACE)*/};
+				PDEPlugin.getResourceString(WizardCheckboxTablePart.KEY_DESELECT_ALL),
+				null,
+				PDEPlugin.getResourceString(KEY_WORKSPACE)};
 		tablePart = new TablePart(buttonLabels);
 		tablePart.setSelectAllIndex(2);
 		tablePart.setDeselectAllIndex(3);
@@ -115,7 +117,7 @@ public class ExternalPluginsBlock {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.marginHeight = 0;
-		layout.marginWidth = 5;
+		layout.marginWidth = 0;
 		container.setLayout(layout);
 
 		tablePart.createControl(container);
@@ -181,13 +183,13 @@ public class ExternalPluginsBlock {
 		}
 	}
 
-	private void handleReload() {
+	void handleReload() {
 		final String platformPath = editor.getPlatformPath();
 		if (platformPath != null && platformPath.length() > 0) {
 			IRunnableWithProgress op = new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) {
 						//monitor.beginTask("Reloading", IProgressMonitor.UNKNOWN);
-					registry.reload(platformPath, monitor);
+	registry.reload(platformPath, monitor);
 					monitor.done();
 				}
 			};
@@ -202,17 +204,21 @@ public class ExternalPluginsBlock {
 		} else {
 			registry.clear();
 		}
-		control.getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
-					public void run() {
-						pluginListViewer.refresh();
-						initializeDefault(true);
+		if (!control.isDisposed()) {
+			control.getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					if (!control.isDisposed()) {
+						BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
+							public void run() {
+								pluginListViewer.refresh();
+								initializeDefault(DEFAULT_STATE);
+							}
+						});
 					}
-				});
-			}
-		});
-		reloaded = true;
+				}
+			});
+			reloaded = true;
+		}
 	}
 
 	public void initialize(IPreferenceStore store) {
@@ -222,7 +228,8 @@ public class ExternalPluginsBlock {
 		if (platformPath != null && platformPath.length() == 0)
 			return;
 
-		store.setDefault(CHECKED_PLUGINS, SAVED_ALL);
+		//store.setDefault(CHECKED_PLUGINS, SAVED_ALL);
+		store.setDefault(CHECKED_PLUGINS, SAVED_NONE);
 
 		pluginListViewer.setInput(registry);
 		String saved = store.getString(CHECKED_PLUGINS);
@@ -310,13 +317,13 @@ public class ExternalPluginsBlock {
 
 	public static boolean hasEnabledModels(IPreferenceStore store) {
 		String saved = store.getString(CHECKED_PLUGINS);
-		if (saved!=null && saved.equals(SAVED_NONE))
+		if (saved != null && saved.equals(SAVED_NONE))
 			// we know for sure that nothing is enabled
 			return false;
 		// must load
 		return true;
 	}
-	
+
 	void computeDelta() {
 		int type = 0;
 		IModel[] addedArray = null;

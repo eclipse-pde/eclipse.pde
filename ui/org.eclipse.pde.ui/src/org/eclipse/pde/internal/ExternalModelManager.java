@@ -113,20 +113,6 @@ public class ExternalModelManager {
 		}
 	}
 
-	public static IPath getEclipseHome(IProgressMonitor monitor) {
-		IPath eclipseHome =
-			JavaCore.getClasspathVariable(PDEPlugin.ECLIPSE_HOME_VARIABLE);
-		if (eclipseHome == null) {
-			IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-			String newValue =
-				store.getString(TargetPlatformPreferencePage.PROP_PLATFORM_PATH);
-			if (newValue == null || newValue.length() == 0)
-				return null;
-			setEclipseHome(newValue, monitor);
-		}
-		return eclipseHome;
-	}
-
 	public IPluginModel[] getModels() {
 		return getModels(new NullProgressMonitor());
 	}
@@ -378,6 +364,21 @@ public class ExternalModelManager {
 
 	public void removeModelProviderListener(IModelProviderListener listener) {
 		listeners.remove(listener);
+	}
+
+	public static IPath getEclipseHome(IProgressMonitor monitor) {
+		IPath eclipseHome =
+			JavaCore.getClasspathVariable(PDEPlugin.ECLIPSE_HOME_VARIABLE);
+		TargetPlatformPreferencePage.initializePlatformPath();
+		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
+		String platformHome =
+			store.getString(TargetPlatformPreferencePage.PROP_PLATFORM_PATH);
+		IPath platformPath = new Path(platformHome);
+		if (eclipseHome == null || !eclipseHome.equals(platformPath)) {
+			setEclipseHome(platformHome, monitor);
+			eclipseHome = platformPath;
+		}
+		return eclipseHome;
 	}
 
 	public static void setEclipseHome(

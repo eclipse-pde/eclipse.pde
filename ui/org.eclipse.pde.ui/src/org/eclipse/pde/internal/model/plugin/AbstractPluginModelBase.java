@@ -108,7 +108,7 @@ public abstract class AbstractPluginModelBase
 				result.add(location);
 				IPluginLibrary libraries[] = fragment.getLibraries();
 				for (int j=0; j<libraries.length; j++) {
-					IPluginLibrary library = libraries[i];
+					IPluginLibrary library = libraries[j];
 					try {
 						URL libLocation = new URL(location, library.getName());
 						result.add(libLocation);

@@ -154,6 +154,8 @@ public class BuildFeatureAction implements IObjectActionDelegate {
 
 		String scriptName = MainPreferencePage.getBuildScriptName();
 		generator.setBuildScriptName(scriptName);
+		generator.setFeatureRootLocation(
+			getFeatureFile().getParent().getLocation().toOSString());
 
 		IPath platform =
 			Platform.getLocation().append(featureFile.getProject().getName());
@@ -164,7 +166,7 @@ public class BuildFeatureAction implements IObjectActionDelegate {
 		// feature's children. The default is true.
 		//	generator.setGenerateChildrenScript(children);
 
-		URL [] pluginPath = TargetPlatform.createPluginPath();
+		URL[] pluginPath = TargetPlatform.createPluginPath();
 		generator.setPluginPath(pluginPath);
 
 		try {
@@ -190,7 +192,8 @@ public class BuildFeatureAction implements IObjectActionDelegate {
 			}
 		}
 	}
-	private void refreshLocal(IFeatureModel model, IProgressMonitor monitor) throws CoreException {
+	private void refreshLocal(IFeatureModel model, IProgressMonitor monitor)
+		throws CoreException {
 		// refresh feature
 		featureFile.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
 		// refresh references
