@@ -565,7 +565,7 @@
       </keyBinding>      
       <command
             name="%JUnitApplicationShortcut.description.debug"
-            description="%EclipseApplicationShortcut.description.debug"
+            description="%JUnitApplicationShortcut.description.debug"
             categoryId="org.eclipse.debug.ui.category.run"
             id="org.eclipse.pde.ui.junitWorkbenchShortcut.debug">
       </command>
@@ -577,7 +577,7 @@
       </keyBinding>      
       <command
             name="%JUnitApplicationShortcut.description.run"
-            description="%EclipseApplicationShortcut.description.run"
+            description="%JUnitApplicationShortcut.description.run"
             categoryId="org.eclipse.debug.ui.category.run"
             id="org.eclipse.pde.ui.junitWorkbenchShortcut.run">
       </command>
@@ -585,6 +585,30 @@
             keySequence="M3+M2+X P"
             contextId="org.eclipse.ui.globalScope"
             commandId="org.eclipse.pde.ui.junitWorkbenchShortcut.run"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>      
+      <command
+            name="%SWTApplicationShortcut.description.debug"
+            description="%SWTApplicationShortcut.description.debug"
+            categoryId="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.pde.ui.swtLaunchShortcut.debug">
+      </command>
+      <keyBinding
+            keySequence="M3+M2+D S"
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.pde.ui.swtLaunchShortcut.debug"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>      
+      <command
+            name="%SWTApplicationShortcut.description.run"
+            description="%SWTApplicationShortcut.description.run"
+            categoryId="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.pde.ui.swtLaunchShortcut.run">
+      </command>
+      <keyBinding
+            keySequence="M3+M2+X S"
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.pde.ui.swtLaunchShortcut.run"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>      
    </extension>
@@ -1098,6 +1122,40 @@
          </perspective>
          <perspective
                id="org.eclipse.pde.PDEPerspective">
+         </perspective>
+      </shortcut>
+      <shortcut
+            label="%launcher.swt.name"
+            icon="icons/etool16/eclipse_launcher.gif"
+            modes="run, debug"
+            class="org.eclipse.pde.internal.ui.launcher.SWTApplicationLaunchShortcut"
+            id="org.eclipse.pde.ui.swtLaunchShortcut">
+         <contextualLaunch>
+           <enablement>
+             <with variable="selection">
+               <count value="1"/>
+               <iterate>
+                 <or>
+                   <test property="org.eclipse.debug.ui.matchesPattern" value="*.java"/>
+                   <test property="org.eclipse.debug.ui.matchesPattern" value="*.class"/>
+                   <instanceof value="org.eclipse.jdt.core.IJavaElement"/>
+                 </or>
+                 <test property="org.eclipse.jdt.debug.ui.hasMainType"/>
+               </iterate>
+             </with>
+           </enablement>
+  		 </contextualLaunch>
+         <perspective
+               id="org.eclipse.jdt.ui.JavaPerspective">
+         </perspective>
+         <perspective
+               id="org.eclipse.jdt.ui.JavaHierarchyPerspective">
+         </perspective>
+         <perspective
+               id="org.eclipse.jdt.ui.JavaBrowsingPerspective">
+         </perspective>
+         <perspective
+               id="org.eclipse.debug.ui.DebugPerspective">
          </perspective>
       </shortcut>
    </extension>
