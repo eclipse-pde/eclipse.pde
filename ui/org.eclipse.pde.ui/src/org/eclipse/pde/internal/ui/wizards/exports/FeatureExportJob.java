@@ -172,9 +172,9 @@ public class FeatureExportJob extends BaseExportJob {
 	}
 
 	private void setConfigInfo(IFeature feature) throws CoreException {
-		String os = feature.getOS() == null ? "*" : feature.getOS();
-		String ws = feature.getWS() == null ? "*" : feature.getWS();
-		String arch = feature.getArch() == null ? "*" : feature.getArch();
+		String os = feature.getOS() == null ? "*" : TargetPlatform.getOS();
+		String ws = feature.getWS() == null ? "*" : TargetPlatform.getWS();
+		String arch = feature.getArch() == null ? "*" : TargetPlatform.getOSArch();
 
 		FeatureBuildScriptGenerator.setConfigInfo(os + "," + ws + "," + arch);
 	}
