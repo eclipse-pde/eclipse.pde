@@ -35,6 +35,10 @@ abstract class ModelBuildScriptGenerator extends PluginTool {
 	private static final String SOURCE_PREFIX = "source.";
 	private static final String WS = "$ws$";
 	private static final String VARIABLE_WS = "${ws}";
+	private static final String OS = "$os$";
+	private static final String VARIABLE_OS = "${os}";
+	private static final String NL = "$nl$";
+	private static final String VARIABLE_NL = "${nl}";
 		
 public ModelBuildScriptGenerator() {
 	super();
@@ -71,7 +75,7 @@ protected String computeCompilePathClause(PluginModel descriptor, String fullJar
 	Set relativeJars = makeRelative(jars, new Path(getLocation(descriptor)));
 	
 	String result = getStringFromCollection(relativeJars, "", "", ";");
-	result = replaceWsWithVariable(result);
+	result = replaceVariables(result);
 	return result;
 }
 protected String computeCompleteSrc(PluginModel descriptor) {
@@ -332,10 +336,19 @@ protected void generateModelTarget(PrintWriter output, PluginModel descriptor) {
 protected void generatePrologue(PrintWriter output, PluginModel descriptor) {
 	output.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 	output.println("<project name=\"" + descriptor.getId() + "\" default=\"" + getModelTypeName() + ".zip\" basedir=\".\">");
-	output.println("  <target name=\"init\">");
+	output.println("  <target name=\"initTemplate\" unless=\"template\">");
 	output.println("    <initTemplate/>");
+	output.println("  <target name=\"init\" depends=\"initTemplate\">");
 	output.println("    <property name=\"" + getModelTypeName() + "\" value=\"" + descriptor.getId() + "\"/>");
 	output.println("    <property name=\"version\" value=\"" + descriptor.getVersion() + "\"/>");
+	// output the settings of the commandline supplied arguments before doing the ones from the 
+	// build.properties file.  This way you can override the values without changing the file.
+	if (os != null)
+		output.println("    <property name=\"os\" value=\"" + os + "\"/>");
+	if (ws != null)
+		output.println("    <property name=\"ws\" value=\"" + ws + "\"/>");
+	if (nl != null)
+		output.println("    <property name=\"nl\" value=\"" + nl + "\"/>");
 
 	Map map = getPropertyAssignments(descriptor);
 	Iterator keys = map.keySet().iterator();
@@ -531,15 +544,16 @@ protected String[] processCommandLine(String[] args) {
 	
 	return new String[0];
 }
-protected String replaceWsWithVariable(String sourceString) {
-	int replacementIndex = sourceString.indexOf(WS);
-	if (replacementIndex == -1)
-		return sourceString;
-		
-	return
-		sourceString.substring(0,replacementIndex) +
-		VARIABLE_WS +
-		sourceString.substring(replacementIndex + WS.length());
+protected String replaceVariables(String sourceString) {
+	int i = -1;
+	String result = sourceString;
+	while ((i = result.indexOf(WS)) >= 0)
+		result = result.substring(0, i) + VARIABLE_WS + result.substring(i + WS.length());
+	while ((i = result.indexOf(OS)) >= 0)
+		result = result.substring(0, i) + VARIABLE_OS + result.substring(i + OS.length());
+	while ((i = result.indexOf(NL)) >= 0)
+		result = result.substring(0, i) + VARIABLE_NL + result.substring(i + NL.length());
+	return result;
 }			
 protected void retrieveCommandLineModels() {
 	Vector modelsToGenerate = new Vector();

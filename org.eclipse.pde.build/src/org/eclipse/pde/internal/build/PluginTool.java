@@ -22,12 +22,18 @@ public abstract class PluginTool implements IPlatformRunnable, ScriptGeneratorCo
 	private List devEntries = null;
 	private Hashtable propertyValues = new Hashtable(9);
 	private MultiStatus problems = new MultiStatus(PI_PDECORE,IStatus.OK,Policy.bind("label.generationProblems"),null);
-
+	protected String os = null;
+	protected String ws = null;
+	protected String nl = null;
+	
 	public final static String PI_PDECORE = "org.eclipse.pde.core";	
 	private static final String USAGE = "-?";
 	private static final String PLUGINS = "-plugins";
 	private static final String INSTALL = "-install";
 	private static final String DEV_ENTRIES = "-dev";
+	private static final String OS_ARG = "-os";
+	private static final String WS_ARG = "-ws";
+	private static final String NL_ARG = "-nl";
 	private static final String PROPERTYASSIGNMENT_PREFIX = "${";
 	private static final String PROPERTYASSIGNMENT_SUFFIX = "}";
 
@@ -221,14 +227,12 @@ protected String[] processCommandLine(String[] args) {
 		// check for args without parameters (i.e., a flag arg)
 
 		// look for the usage flag
-		if (args[i].equals(USAGE)) {
+		if (args[i].equals(USAGE))
 			usage = true;
-		}
 
 		// check for args with parameters
-		if (i == args.length - 1 || args[i + 1].startsWith("-")) {
+		if (i == args.length - 1 || args[i + 1].startsWith("-")) 
 			continue;
-		}
 		String arg = args[++i];
 
 		// check for the plugin path arg
@@ -242,11 +246,23 @@ protected String[] processCommandLine(String[] args) {
 				}
 			}
 
+		// check for the OS arg
+		if (args[i - 1].equalsIgnoreCase(OS_ARG))
+			os = arg;
+			
+		// check for the WS arg
+		if (args[i - 1].equalsIgnoreCase(WS_ARG))
+			ws = arg;
+			
+		// check for the NL arg
+		if (args[i - 1].equalsIgnoreCase(NL_ARG))
+			nl = arg;
+			
 		// check for the install location arg
 		if (args[i - 1].equalsIgnoreCase(INSTALL))
 			install = arg;
 			
-					// set the additional development model class path entries
+		// set the additional development model class path entries
 		if (args[i - 1].equalsIgnoreCase(DEV_ENTRIES))
 			devEntries = getListFromString(arg);
 	}
