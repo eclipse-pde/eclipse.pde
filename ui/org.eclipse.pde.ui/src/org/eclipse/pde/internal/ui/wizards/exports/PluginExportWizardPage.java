@@ -26,14 +26,13 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 
-public class PluginExportWizardPage extends BaseExportWizardPage {
+public class PluginExportWizardPage extends ExportWizardPageWithTable {
 	
 	public PluginExportWizardPage(IStructuredSelection selection) {
 		super(
 			selection,
 			"pluginExport", //$NON-NLS-1$
-			PDEPlugin.getResourceString("ExportWizard.Plugin.pageBlock"), //$NON-NLS-1$
-			false);
+			PDEPlugin.getResourceString("ExportWizard.Plugin.pageBlock")); //$NON-NLS-1$
 		setTitle(PDEPlugin.getResourceString("ExportWizard.Plugin.pageTitle")); //$NON-NLS-1$
 	}
 
@@ -83,6 +82,10 @@ public class PluginExportWizardPage extends BaseExportWizardPage {
 			}
 		}
 		return null;
+	}
+	
+	protected String getJarButtonText() {
+		return PDEPlugin.getResourceString("BaseExportWizardPage.packageJARs");
 	}
 				
 }

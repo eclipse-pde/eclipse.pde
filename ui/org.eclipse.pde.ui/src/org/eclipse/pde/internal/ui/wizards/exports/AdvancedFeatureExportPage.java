@@ -34,6 +34,10 @@ public class AdvancedFeatureExportPage extends AdvancedPluginExportPage {
 		super(pageName);
 	}
 	
+	protected String getDescriptionText() {
+		return PDEPlugin.getResourceString("AdvancedFeatureExportPage.desc");
+	}
+	
 	protected void createJNLPSection(Composite parent) {
 		Group group = new Group(parent, SWT.NONE);
 		group.setText(PDEPlugin.getResourceString("AdvancedFeatureExportPage.jnlp")); //$NON-NLS-1$

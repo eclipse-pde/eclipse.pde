@@ -13,27 +13,22 @@ package org.eclipse.pde.internal.ui.wizards.exports;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
-import org.eclipse.jface.preference.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.preferences.*;
-import org.eclipse.swt.custom.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.help.*;
 
 
-public class FeatureExportWizardPage extends BaseExportWizardPage implements IHyperlinkListener {
+public class FeatureExportWizardPage extends ExportWizardPageWithTable {
 	
 	public FeatureExportWizardPage(IStructuredSelection selection) {
 		super(
 			selection,
 			"featureExport", //$NON-NLS-1$
-			PDEPlugin.getResourceString("ExportWizard.Feature.pageBlock"), //$NON-NLS-1$
-			true);
+			PDEPlugin.getResourceString("ExportWizard.Feature.pageBlock")); //$NON-NLS-1$
 		setTitle(PDEPlugin.getResourceString("ExportWizard.Feature.pageTitle")); //$NON-NLS-1$
 	}
 
@@ -63,29 +58,8 @@ public class FeatureExportWizardPage extends BaseExportWizardPage implements IHy
 			return PDECore.getDefault().getWorkspaceModelManager().getFeatureModel((IProject)object);
 		return null;
 	}
-
-	public void linkEntered(HyperlinkEvent e) {
-	}
-
-	public void linkExited(HyperlinkEvent e) {
-	}
-
-	public void linkActivated(HyperlinkEvent e) {
-		showPreferencePage(new TargetEnvironmentPreferenceNode());
-	}
 	
-	private void showPreferencePage(final IPreferenceNode targetNode) {
-		PreferenceManager manager = new PreferenceManager();
-		manager.addToRoot(targetNode);
-		final PreferenceDialog dialog = new PreferenceDialog(getControl()
-				.getShell(), manager);
-		BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
-			public void run() {
-				dialog.create();
-				dialog.setMessage(targetNode.getLabelText());
-				dialog.open();
-			}
-		});
+	protected String getJarButtonText() {
+		return PDEPlugin.getResourceString("BaseExportWizardPage.fPackageJARs");
 	}
-
 }
