@@ -158,6 +158,7 @@ public class Feature extends VersionableObject implements IFeature {
 		primary = getBooleanAttribute(node, "primary");
 		exclusive = getBooleanAttribute(node, "exclusive");
 		NodeList children = node.getChildNodes();
+		valid=true;
 
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
