@@ -338,7 +338,6 @@ public class AdvancedLauncherTab
 		Vector result = null;
 		{
 			result = new Vector();
-			boolean addWorkspace = false;
 			boolean addRoot = false;
 			boolean mixed = false;
 
@@ -361,17 +360,20 @@ public class AdvancedLauncherTab
 						IPluginModelBase desc = ws[i];
 						if (!deselected
 							.contains(desc.getPluginBase().getId())) {
-							if (!addWorkspace) {
+							if (!addRoot) {
 								addRoot = true;
 								result.add(workspacePlugins);
 							}
 							result.add(desc);
 						}
+						else mixed=true;
 					}
 				} else {
 					for (int i = 0; i < ws.length; i++) {
 						result.add(ws[i]);
 					}
+					result.add(workspacePlugins);
+					addRoot=true;
 				}
 				if (addRoot && mixed) {
 					pluginTreeViewer.setGrayed(workspacePlugins, true);

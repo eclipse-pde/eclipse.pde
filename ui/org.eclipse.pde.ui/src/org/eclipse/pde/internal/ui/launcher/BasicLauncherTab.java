@@ -223,10 +223,11 @@ public class BasicLauncherTab
 		config.setAttribute(PROGARGS, progArgs);
 		config.setAttribute(APPLICATION, appName);
 		config.setAttribute(TRACING, tracing);
-		config.setAttribute(VMINSTALL, JavaRuntime.getDefaultVMInstall().getName());
+		config.setAttribute(VMINSTALL, getDefaultVMInstallName());
 		config.setAttribute(LOCATION + "0", defaultWorkspace);
 		config.setAttribute(DOCLEAR, false);
 	}
+	
 
 	private void doRestoreDefaults() {
 		String defaultWorkspace = getDefaultWorkspace();
@@ -236,8 +237,14 @@ public class BasicLauncherTab
 		workspaceCombo.setText(defaultWorkspace);
 		clearWorkspaceCheck.setSelection(false);
 	}
+	
+	static String getDefaultVMInstallName() {
+		IVMInstall install = JavaRuntime.getDefaultVMInstall();
+		if (install!=null) return install.getName();
+		return null;
+	}
 
-	private String getDefaultProgramArguments() {
+	static String getDefaultProgramArguments() {
 		String os = TargetPlatform.getOS();
 		String ws = TargetPlatform.getWS();
 		String arch = TargetPlatform.getOSArch();

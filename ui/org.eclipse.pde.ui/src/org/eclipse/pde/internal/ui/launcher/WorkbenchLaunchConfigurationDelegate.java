@@ -61,7 +61,7 @@ public class WorkbenchLaunchConfigurationDelegate
 					break;
 				}
 			}
-		} else
+		} else if (vmInstallations.length>0)
 			launcher = vmInstallations[0];
 		if (launcher == null) {
 			String message = PDEPlugin.getFormattedMessage(KEY_NO_JRE, vmInstallName);
