@@ -34,8 +34,8 @@ public class PackagePrefixesSection extends TableSection {
 		"ManifestEditor.PackagePrefixesSection.desc";
 	public static final String KEY_ADD =
 		"ManifestEditor.PackagePrefixesSection.add";
-		public static final String KEY_REMOVE =
-			"ManifestEditor.PackagePrefixesSection.remove";
+	public static final String KEY_REMOVE =
+		"ManifestEditor.PackagePrefixesSection.remove";
 	public static final String POPUP_NEW = "Menus.new.label";
 	public static final String POPUP_DELETE = "Actions.delete.label";
 	private Vector packages;
@@ -203,11 +203,21 @@ public class PackagePrefixesSection extends TableSection {
 			IPluginModelBase model =
 				(IPluginModelBase) getFormPage().getModel();
 			IProject project = model.getUnderlyingResource().getProject();
-			SelectionDialog dialog =
-				JavaUI.createPackageDialog(
-					nameTableViewer.getControl().getShell(),
-					JavaCore.create(project),
-					0);
+			IJavaProject javaProject = JavaCore.create(project);
+			IPackageFragmentRoot fragmentRoot =
+				getPackageFragmentRoot(javaProject, currentLibrary);
+			SelectionDialog dialog;
+			if (fragmentRoot != null)
+				dialog =
+					JavaUI.createPackageDialog(
+						nameTableViewer.getControl().getShell(),
+						fragmentRoot);
+			else
+				dialog =
+					JavaUI.createPackageDialog(
+						nameTableViewer.getControl().getShell(),
+						JavaCore.create(project),
+						0);
 			dialog.setTitle(PDEPlugin.getResourceString("Java Packages"));
 			dialog.setMessage("");
 			int status = dialog.open();
@@ -229,6 +239,20 @@ public class PackagePrefixesSection extends TableSection {
 		} catch (JavaModelException e) {
 			PDEPlugin.logException(e);
 		}
+	}
+
+	private IPackageFragmentRoot getPackageFragmentRoot(
+		IJavaProject javaProject,
+		IPluginLibrary library)
+		throws JavaModelException {
+		IPackageFragmentRoot[] roots = javaProject.getPackageFragmentRoots();
+		for (int i = 0; i < roots.length; i++) {
+			IPackageFragmentRoot root = roots[i];
+			String name = root.getElementName();
+			if (name.equals(library.getName()))
+				return root;
+		}
+		return null;
 	}
 
 	private void handleDelete() {
