@@ -55,11 +55,15 @@ protected void setDocumentContent(IDocument document, File file) {
 		PDEPlugin.logException(e);
 	}
 }
-	public long getSynchronizationStamp(Object arg0) {
+	public long getSynchronizationStamp(Object element) {
 		return 0;
 	}
-	public long getModificationStamp(Object arg0) {
+	public long getModificationStamp(Object element) {
 		return 0;
+	}
+	
+	public boolean isDeleted(Object element) {
+		return false;
 	}
 
 }
