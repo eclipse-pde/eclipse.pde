@@ -51,6 +51,13 @@ public class Bundle extends BundleObject implements IBundle {
 		headers.clear();
 	}
 	
+	public boolean isValid() {
+		// must have an id and a name
+		return headers.containsValue(KEY_NAME) &&
+		headers.containsValue(KEY_DESC) &&
+		headers.containsValue(KEY_VERSION);
+	}
+	
 	public void load(IPluginBase plugin, IProgressMonitor monitor) {
 		reset();
 		monitor.beginTask("", 1);

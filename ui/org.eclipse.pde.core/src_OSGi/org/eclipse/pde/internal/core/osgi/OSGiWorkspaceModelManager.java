@@ -21,6 +21,7 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.core.osgi.bundle.WorkspaceBundleModel;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.core.site.*;
 import org.eclipse.team.core.RepositoryProvider;
@@ -107,12 +108,32 @@ public class OSGiWorkspaceModelManager
 	protected IModel createModel(Object element) {
 		return createModel(element, true);
 	}
+	private boolean isBundleManifestFile(IFile file) {
+		IPath path = file.getProjectRelativePath();
+		return (
+			path.segmentCount() == 2
+				&& path.segment(1).equals("META-INF")
+				&& path.segment(2).equals("MANIFEST.MF"));
+	}
 	protected IModel createModel(Object element, boolean editable) {
 		if (element instanceof IFile) {
 			IFile file = (IFile) element;
 			String name = file.getName().toLowerCase();
+
+			if (isBundleManifestFile(file)) {
+				WorkspaceBundleModel model = new WorkspaceBundleModel(file);
+				model.setEditable(editable && model.isEditable());
+				return model;
+			}
+
 			if (name.equals("plugin.xml")) {
 				WorkspacePluginModel model = new WorkspacePluginModel(file);
+				model.setEditable(editable && model.isEditable());
+				return model;
+			}
+			if (name.equals("extensions.xml")) {
+				WorkspaceExtensionsModel model =
+					new WorkspaceExtensionsModel(file);
 				model.setEditable(editable && model.isEditable());
 				return model;
 			}
@@ -137,7 +158,8 @@ public class OSGiWorkspaceModelManager
 				return model;
 			}
 			if (name.equals(PDECore.SITEBUILD_PROPERTIES)) {
-				WorkspaceSiteBuildModel model = new WorkspaceSiteBuildModel(file);
+				WorkspaceSiteBuildModel model =
+					new WorkspaceSiteBuildModel(file);
 				model.setEditable(editable && model.isEditable());
 				return model;
 			}
@@ -153,9 +175,20 @@ public class OSGiWorkspaceModelManager
 		loadWorkspaceModel(model);
 		return model;
 	}
+	private IFile getBundleFile(IProject project) {
+		IPath path = new Path("META-INF/MANIFEST.MF");
+		return project.getFile(path);
+	}
 	private IModel createWorkspacePluginModel(IProject project) {
-		IPath pluginPath = project.getFullPath().append("plugin.xml");
-		IFile pluginFile = project.getWorkspace().getRoot().getFile(pluginPath);
+		IPath pluginPath;
+		IFile pluginFile;
+		if (isBundleProject(project)) {
+			pluginFile = getBundleFile(project);
+		}
+		else {
+			pluginPath = project.getFullPath().append("plugin.xml");
+			pluginFile = project.getWorkspace().getRoot().getFile(pluginPath);
+		}
 		if (pluginFile.exists() == false) {
 			pluginPath = project.getFullPath().append("fragment.xml");
 			pluginFile = project.getWorkspace().getRoot().getFile(pluginPath);
@@ -234,7 +267,8 @@ public class OSGiWorkspaceModelManager
 			initializeWorkspacePluginModels();
 		validate(workspaceFragmentModels);
 		for (int i = 0; i < workspaceFragmentModels.size(); i++) {
-			IFragmentModel model = (IFragmentModel) workspaceFragmentModels.elementAt(i);
+			IFragmentModel model =
+				(IFragmentModel) workspaceFragmentModels.elementAt(i);
 			IFragment fragment = model.getFragment();
 			if (PDECore
 				.compare(
@@ -250,7 +284,7 @@ public class OSGiWorkspaceModelManager
 		result.copyInto(array);
 		return array;
 	}
-	
+
 	public IModel getModel(Object element, Object consumer) {
 		ModelInfo info = (ModelInfo) models.get(element);
 		if (info != null) {
@@ -282,17 +316,18 @@ public class OSGiWorkspaceModelManager
 		workspaceFeatureModels.copyInto(result);
 		return result;
 	}
-	
+
 	private IModel getWorkspaceModel(IFile file) {
 		return getWorkspaceModel(file, true);
 	}
-	
+
 	private IModel getWorkspaceModel(IFile file, boolean validate) {
 		String name = file.getName().toLowerCase();
 		Vector models = null;
-		if (validate) validate();
+		if (validate)
+			validate();
 
-		if (name.equals("plugin.xml"))
+		if (name.equals("plugin.xml") || isBundleManifestFile(file))
 			models = workspaceModels;
 		else if (name.equals("fragment.xml"))
 			models = workspaceFragmentModels;
@@ -302,6 +337,9 @@ public class OSGiWorkspaceModelManager
 	}
 	public IModel getWorkspaceModel(IProject project) {
 		validate();
+
+		if (isBundleProject(project))
+			return getWorkspaceModel(project, workspaceModels);
 		IPath filePath = project.getFullPath().append("plugin.xml");
 		IFile file = project.getWorkspace().getRoot().getFile(filePath);
 		if (file.exists()) {
@@ -335,9 +373,13 @@ public class OSGiWorkspaceModelManager
 			initializeWorkspacePluginModels();
 		}
 		validate(workspaceModels);
-		IPluginModel[] result = new IPluginModel[workspaceModels.size()];
-		workspaceModels.copyInto(result);
-		return result;
+		ArrayList pluginModels = new ArrayList();
+		for (int i=0; i<workspaceModels.size(); i++) {
+			IPluginModelBase model = (IPluginModelBase)workspaceModels.get(i);
+			if (model instanceof IPluginModel)
+				pluginModels.add(model);
+		}
+		return (IPluginModel[])pluginModels.toArray(new IPluginModel[pluginModels.size()]);
 	}
 
 	public IPluginModelBase[] getAllModels() {
@@ -370,8 +412,7 @@ public class OSGiWorkspaceModelManager
 				else
 					model = createWorkspacePluginModel(file);
 				addWorkspaceModel(model);
-			}
-			else if (model instanceof IFeatureModel)
+			} else if (model instanceof IFeatureModel)
 				reloadFeatureModel((IFeatureModel) model);
 			else
 				reloadWorkspaceModel((IPluginModelBase) model);
@@ -417,8 +458,7 @@ public class OSGiWorkspaceModelManager
 			if (isPluginProject(project)) {
 				ensureModelExists(project);
 				validateBinaryStatus(project);
-			}
-			else if (isFeatureProject(project)) {
+			} else if (isFeatureProject(project)) {
 				ensureModelExists(project);
 			}
 		}
@@ -426,9 +466,10 @@ public class OSGiWorkspaceModelManager
 
 	private void validateBinaryStatus(IProject project) {
 		boolean shared = false;
-		
+
 		RepositoryProvider provider = RepositoryProvider.getProvider(project);
-		if (provider!=null && !(provider instanceof BinaryRepositoryProvider))
+		if (provider != null
+			&& !(provider instanceof BinaryRepositoryProvider))
 			shared = true;
 		if (shared) {
 			try {
@@ -495,7 +536,9 @@ public class OSGiWorkspaceModelManager
 				| IResourceChangeEvent.PRE_AUTO_BUILD);
 		initialized = true;
 		long stop = System.currentTimeMillis();
-		if (DEBUG) System.out.println("Workspace plugins loaded in "+(stop-start)+"ms");
+		if (DEBUG)
+			System.out.println(
+				"Workspace plugins loaded in " + (stop - start) + "ms");
 	}
 
 	public static boolean isPluginProject(IProject project) {
@@ -504,15 +547,18 @@ public class OSGiWorkspaceModelManager
 		return project.exists(new Path("plugin.xml"))
 			|| project.exists(new Path("fragment.xml"));
 	}
+	public static boolean isBundleProject(IProject project) {
+		if (project.isOpen() == false)
+			return false;
+		return project.exists(new Path("META-INF/MANIFEST.MF"));
+	}
 	public static boolean isFeatureProject(IProject project) {
 		if (project.isOpen() == false)
 			return false;
 		return project.exists(new Path("feature.xml"));
 	}
-
-	public static boolean isJavaPluginProject(IProject project) {
-		if (!isPluginProject(project))
-			return false;
+	
+	private static boolean isJavaProject(IProject project) {
 		try {
 			if (!project.hasNature(JavaCore.NATURE_ID))
 				return false;
@@ -521,8 +567,20 @@ public class OSGiWorkspaceModelManager
 			return false;
 		}
 		return true;
+	}	
+
+	public static boolean isJavaPluginProject(IProject project) {
+		if (!isPluginProject(project))
+			return false;
+		return isJavaProject(project);
 	}
 	
+	public static boolean isJavaBundleProject(IProject project) {
+		if (!isBundleProject(project))
+			return false;
+		return isJavaProject(project);
+	}
+
 	public static boolean isJavaPluginProjectWithSource(IProject project) {
 		if (!isJavaPluginProject(project))
 			return false;
@@ -547,20 +605,22 @@ public class OSGiWorkspaceModelManager
 				project.getPersistentProperty(
 					PDECore.EXTERNAL_PROJECT_PROPERTY);
 			if (binary != null) {
-				RepositoryProvider provider = RepositoryProvider.getProvider(project);
-				return provider==null || provider instanceof BinaryRepositoryProvider;
+				RepositoryProvider provider =
+					RepositoryProvider.getProvider(project);
+				return provider == null
+					|| provider instanceof BinaryRepositoryProvider;
 			}
 		} catch (CoreException e) {
 			PDECore.logException(e);
 		}
 		return false;
 	}
-	
+
 	public static boolean isUnsharedPluginProject(IProject project) {
 		return RepositoryProvider.getProvider(project) == null
 			|| isBinaryPluginProject(project);
 	}
-	
+
 	public static boolean isBinaryFeatureProject(IProject project) {
 		if (!isFeatureProject(project))
 			return false;
@@ -569,8 +629,10 @@ public class OSGiWorkspaceModelManager
 				project.getPersistentProperty(
 					PDECore.EXTERNAL_PROJECT_PROPERTY);
 			if (binary != null) {
-				RepositoryProvider provider = RepositoryProvider.getProvider(project);
-				return provider==null || provider instanceof BinaryRepositoryProvider;
+				RepositoryProvider provider =
+					RepositoryProvider.getProvider(project);
+				return provider == null
+					|| provider instanceof BinaryRepositoryProvider;
 			}
 		} catch (CoreException e) {
 			PDECore.logException(e);
@@ -614,7 +676,7 @@ public class OSGiWorkspaceModelManager
 			try {
 				stream = file.getContents(true);
 			} catch (CoreException e) {
-				// cannot get file contents - something is 
+				// cannot get file contents - something is
 				// seriously wrong
 				IPluginBase base = model.getPluginBase(true);
 				try {
@@ -651,19 +713,15 @@ public class OSGiWorkspaceModelManager
 			try {
 				stream = file.getContents(true);
 			} catch (CoreException e) {
-				// cannot get file contents - something is 
+				// cannot get file contents - something is
 				// seriously wrong
 				/*
-				IFeature feature = model.getFeature(true);
-				try {
-					base.setId(file.getProject().getName());
-					base.setName(base.getId());
-					base.setVersion("0.0.0");
-					PDECore.log(e);
-				} catch (CoreException ex) {
-					PDECore.logException(ex);
-				}
-				*/
+				 * IFeature feature = model.getFeature(true); try {
+				 * base.setId(file.getProject().getName());
+				 * base.setName(base.getId()); base.setVersion("0.0.0");
+				 * PDECore.log(e); } catch (CoreException ex) {
+				 * PDECore.logException(ex); }
+				 */
 				return;
 			}
 		}
@@ -733,15 +791,12 @@ public class OSGiWorkspaceModelManager
 				handleProjectClosing((IProject) event.getResource());
 				processModelChanges();
 				break;
-			/*
-			case IResourceChangeEvent.PRE_DELETE :
-				// project about to be deleted
-				if (modelChanges == null)
-					modelChanges = new Vector();
-				handleProjectToBeDeleted((IProject) event.getResource());
-				processModelChanges();
-				break;
-			*/
+				/*
+				 * case IResourceChangeEvent.PRE_DELETE : // project about to
+				 * be deleted if (modelChanges == null) modelChanges = new
+				 * Vector(); handleProjectToBeDeleted((IProject)
+				 * event.getResource()); processModelChanges(); break;
+				 */
 		}
 	}
 
@@ -819,10 +874,11 @@ public class OSGiWorkspaceModelManager
 			IResource resource = delta.getResource();
 			if (resource instanceof IProject) {
 				handleProjectDelta(delta);
-				IProject project = (IProject)resource;
+				IProject project = (IProject) resource;
 				// If the project is removed, recurse into files
 				// to pick up manifest removal
-				if (delta.getKind()==IResourceDelta.REMOVED) return true;
+				if (delta.getKind() == IResourceDelta.REMOVED)
+					return true;
 				return (isPluginProject(project) || isFeatureProject(project));
 			} else if (resource instanceof IFile) {
 				handleFileDelta(delta);
@@ -838,9 +894,10 @@ public class OSGiWorkspaceModelManager
 		validate(workspaceFragmentModels);
 		validate(workspaceFeatureModels);
 	}
-	
+
 	private void validate(Vector models) {
-		if (models==null) return;
+		if (models == null)
+			return;
 		Object[] entries = models.toArray();
 		for (int i = 0; i < entries.length; i++) {
 			IModel model = (IModel) entries[i];
@@ -866,7 +923,7 @@ public class OSGiWorkspaceModelManager
 			return false;
 		return hasRootObject(model) && model.isValid();
 	}
-	
+
 	private boolean hasRootObject(IModel model) {
 		if (model instanceof IPluginModelBase)
 			return hasRootObject((IPluginModelBase) model);

@@ -74,4 +74,5 @@ public interface IBundle extends IWritable {
 	void setHeader(String headerKey, String headerValue) throws CoreException;
 	// load the bundle from the plug-in (migrate)
 	void load(IPluginBase plugin, IProgressMonitor monitor);
+	boolean isValid();
 }

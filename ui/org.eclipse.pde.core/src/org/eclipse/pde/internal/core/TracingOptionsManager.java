@@ -41,7 +41,7 @@ public class TracingOptionsManager {
 	private void createTemplate() {
 		template = new Properties();
 		addToTemplate(
-			PDECore.getDefault().getWorkspaceModelManager().getPluginModels());
+			PDECore.getDefault().getWorkspaceModelManager().getAllModels());
 		addToTemplate(PDECore.getDefault().getExternalModelManager().getPluginModels());
 	}
 	public void ensureTracingFileExists() {

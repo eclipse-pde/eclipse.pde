@@ -1,0 +1,22 @@
+/*
+ * Created on Oct 1, 2003
+ *
+ * To change the template for this generated file go to
+ * Window - Preferences - Java - Code Generation - Code and Comments
+ */
+package org.eclipse.pde.core.osgi.bundle;
+
+import org.eclipse.pde.core.plugin.*;
+
+/**
+ * @author dejan
+ *
+ * To change the template for this generated type comment go to
+ * Window - Preferences - Java - Code Generation - Code and Comments
+ */
+public interface IBundlePluginBase extends IPluginBase {
+	IBundle getBundle();
+	void setBundle(IBundle bundle);
+	IExtensions getExtensionsRoot();
+	void setExtensionsRoot(IExtensions extensions);
+}
