@@ -16,7 +16,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.internal.core.feature.FeatureChild;
 import org.eclipse.pde.internal.core.feature.FeaturePlugin;
+import org.eclipse.pde.internal.core.ifeature.IFeature;
+import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
 import org.eclipse.pde.internal.core.ifeature.IFeatureData;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.ui.IWorkbenchPage;
@@ -49,6 +52,16 @@ public void run() {
 			file = project.getFile(id);
 		}
 	}
+	else if (obj instanceof IFeatureChild) {
+			IFeatureChild included = (IFeatureChild) obj;
+			IFeature feature = ((FeatureChild) included).getReferencedFeature();
+			if (feature != null) {
+				IResource resource = feature.getModel().getUnderlyingResource();
+				if (resource != null) {
+					file = (IFile) resource;
+				}
+			}
+		}
 	if (file!=null && file.exists()) {
 		IWorkbenchPage page = PDEPlugin.getActivePage();
 		try {
