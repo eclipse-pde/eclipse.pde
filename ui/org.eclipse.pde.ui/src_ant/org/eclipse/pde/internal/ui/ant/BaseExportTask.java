@@ -18,7 +18,7 @@ public abstract class BaseExportTask extends Task {
 	 * 
 	 */
 	public BaseExportTask() {
-		fExportType = BaseExportJob.EXPORT_AS_ZIP;
+		fExportType = FeatureExportJob.EXPORT_AS_ZIP;
 	}
 	
 	/* (non-Javadoc)
@@ -28,7 +28,7 @@ public abstract class BaseExportTask extends Task {
 		if (fDestination == null)
 			throw new BuildException("No destination is specified");
 		
-		if (fExportType == BaseExportJob.EXPORT_AS_ZIP && fZipFilename == null)
+		if (fExportType == FeatureExportJob.EXPORT_AS_ZIP && fZipFilename == null)
 			throw new BuildException("No zip file is specified");
 		
 		getExportJob().schedule();
@@ -36,9 +36,9 @@ public abstract class BaseExportTask extends Task {
 	
 	public void setExportType(String type) {
 		if ("update".equals(type)) {
-			fExportType = BaseExportJob.EXPORT_AS_UPDATE_JARS;
+			fExportType = FeatureExportJob.EXPORT_AS_UPDATE_JARS;
 		} else if ("directory".equals(type)){
-			fExportType = BaseExportJob.EXPORT_AS_DIRECTORY;
+			fExportType = FeatureExportJob.EXPORT_AS_DIRECTORY;
 		}
 	}
 	

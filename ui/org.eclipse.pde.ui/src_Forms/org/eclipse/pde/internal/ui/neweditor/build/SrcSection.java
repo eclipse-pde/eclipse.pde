@@ -14,6 +14,7 @@ package org.eclipse.pde.internal.ui.neweditor.build;
 import org.eclipse.core.resources.*;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.core.build.*;
+import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.build.IXMLConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.widgets.Composite;
@@ -37,8 +38,8 @@ public class SrcSection
 	protected void initializeCheckState() {
 		super.initializeCheckState();
 		IBuild build = buildModel.getBuild();
-		IBuildEntry srcIncl = build.getEntry(IXMLConstants.PROPERTY_SRC_INCLUDES);
-		IBuildEntry srcExcl = build.getEntry(IXMLConstants.PROPERTY_SRC_EXCLUDES);
+		IBuildEntry srcIncl = build.getEntry(IBuildPropertiesConstants.PROPERTY_SRC_INCLUDES);
+		IBuildEntry srcExcl = build.getEntry(IBuildPropertiesConstants.PROPERTY_SRC_EXCLUDES);
 		
 		if (srcIncl == null)
 			return;
@@ -48,8 +49,8 @@ public class SrcSection
 
 	protected void deleteFolderChildrenFromEntries(IFolder folder) {
 		IBuild build = buildModel.getBuild();
-		IBuildEntry srcIncl = build.getEntry(IXMLConstants.PROPERTY_SRC_INCLUDES);
-		IBuildEntry srcExcl = build.getEntry(IXMLConstants.PROPERTY_SRC_EXCLUDES);
+		IBuildEntry srcIncl = build.getEntry(IBuildPropertiesConstants.PROPERTY_SRC_INCLUDES);
+		IBuildEntry srcExcl = build.getEntry(IBuildPropertiesConstants.PROPERTY_SRC_EXCLUDES);
 		String parentFolder = getResourceFolderName(folder.getProjectRelativePath().toString());
 		
 		removeChildren(srcIncl, parentFolder);
@@ -62,15 +63,15 @@ public class SrcSection
 		boolean wasTopParentChecked) {
 		String resourceName = resource.getFullPath().removeFirstSegments(1).toString();
 		IBuild build = buildModel.getBuild();
-		IBuildEntry includes = build.getEntry(IXMLConstants.PROPERTY_SRC_INCLUDES);
-		IBuildEntry excludes = build.getEntry(IXMLConstants.PROPERTY_SRC_EXCLUDES);		
+		IBuildEntry includes = build.getEntry(IBuildPropertiesConstants.PROPERTY_SRC_INCLUDES);
+		IBuildEntry excludes = build.getEntry(IBuildPropertiesConstants.PROPERTY_SRC_EXCLUDES);		
 		
 		resourceName = handleResourceFolder(resource, resourceName);
 	
 		if (checked)
-			handleCheck(includes, excludes, resourceName, resource, wasTopParentChecked, IXMLConstants.PROPERTY_SRC_INCLUDES);
+			handleCheck(includes, excludes, resourceName, resource, wasTopParentChecked, IBuildPropertiesConstants.PROPERTY_SRC_INCLUDES);
 		else
-			handleUncheck(includes, excludes, resourceName, resource, IXMLConstants.PROPERTY_SRC_EXCLUDES);
+			handleUncheck(includes, excludes, resourceName, resource, IBuildPropertiesConstants.PROPERTY_SRC_EXCLUDES);
 		
 		deleteEmptyEntries();
 	}

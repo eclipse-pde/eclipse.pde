@@ -47,7 +47,7 @@ public class PluginExportWizard extends BaseExportWizard {
 	}
 
 	protected void scheduleExportJob() {
-		BaseExportJob job =
+		PluginExportJob job =
 			new PluginExportJob(
 				page1.getExportType(),
 				page1.doExportSource(),

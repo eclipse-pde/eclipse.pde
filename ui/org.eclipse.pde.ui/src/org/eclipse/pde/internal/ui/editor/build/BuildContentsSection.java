@@ -18,13 +18,14 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.build.*;
-import org.eclipse.pde.internal.build.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.custom.*;
-import org.eclipse.swt.layout.*;
+import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.editor.TableSection;
+import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.model.*;
 import org.eclipse.update.ui.forms.internal.*;
@@ -450,10 +451,10 @@ public abstract class BuildContentsSection
 		IBuild build = buildModel.getBuild();
 		IBuildEntry[] entries =
 			{
-				build.getEntry(IXMLConstants.PROPERTY_BIN_EXCLUDES),
-				build.getEntry(IXMLConstants.PROPERTY_BIN_INCLUDES),
-				build.getEntry(IXMLConstants.PROPERTY_SRC_EXCLUDES),
-				build.getEntry(IXMLConstants.PROPERTY_SRC_INCLUDES)};
+				build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_EXCLUDES),
+				build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES),
+				build.getEntry(IBuildPropertiesConstants.PROPERTY_SRC_EXCLUDES),
+				build.getEntry(IBuildPropertiesConstants.PROPERTY_SRC_INCLUDES)};
 
 		try {
 			for (int i = 0; i < entries.length; i++) {

@@ -146,7 +146,7 @@ public class FeatureCustomHandlerPage extends WizardPage {
 				}
 				String output = structureData.getJavaBuildFolderName();
 				if (output!=null){
-					IBuildEntry entry = model.getFactory().createEntry(IXMLConstants.PROPERTY_OUTPUT_PREFIX + library);
+					IBuildEntry entry = model.getFactory().createEntry(IBuildPropertiesConstants.PROPERTY_OUTPUT_PREFIX + library);
 					if (!output.endsWith("/"))
 						output+="/";
 					entry.addToken(output);

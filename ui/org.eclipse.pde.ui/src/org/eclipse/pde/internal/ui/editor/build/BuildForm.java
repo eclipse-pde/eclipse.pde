@@ -14,14 +14,17 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.build.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.build.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
+import org.eclipse.pde.core.plugin.IPluginModel;
+import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.*;
 import org.eclipse.update.ui.forms.internal.*;
@@ -119,14 +122,14 @@ public class BuildForm extends ScrollableSectionForm {
 	private IBuildEntry getCustomBuildEntry(){
 		IBuildModel buildModel = (IBuildModel) page.getModel();
 		IBuildEntry customEntry =
-			buildModel.getBuild().getEntry(IXMLConstants.PROPERTY_CUSTOM);
+			buildModel.getBuild().getEntry(IBuildPropertiesConstants.PROPERTY_CUSTOM);
 			
 		if (customEntry!=null)
 			return customEntry;
 							
 		try {
 			customEntry =
-				buildModel.getFactory().createEntry(IXMLConstants.PROPERTY_CUSTOM);
+				buildModel.getFactory().createEntry(IBuildPropertiesConstants.PROPERTY_CUSTOM);
 			buildModel.getBuild().add(customEntry);
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
@@ -157,7 +160,7 @@ public class BuildForm extends ScrollableSectionForm {
 	private boolean getCustomSelection(){
 		IBuildModel model = (IBuildModel)page.getModel();
 		IBuild build = model.getBuild();
-		IBuildEntry customEntry = build.getEntry(IXMLConstants.PROPERTY_CUSTOM);
+		IBuildEntry customEntry = build.getEntry(IBuildPropertiesConstants.PROPERTY_CUSTOM);
 		if (customEntry ==null || customEntry.getTokens().length ==0)
 			return false;
 		return customEntry.getTokens()[0].equals("true"); 

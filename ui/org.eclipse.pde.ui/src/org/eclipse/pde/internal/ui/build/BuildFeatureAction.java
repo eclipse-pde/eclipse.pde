@@ -11,18 +11,14 @@
 package org.eclipse.pde.internal.ui.build;
 
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
-
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.build.builder.FeatureBuildScriptGenerator;
+import org.eclipse.pde.internal.build.builder.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.ui.*;
 
 public class BuildFeatureAction extends BaseBuildAction {
 	
@@ -30,50 +26,30 @@ public class BuildFeatureAction extends BaseBuildAction {
 
 	protected void makeScripts(IProgressMonitor monitor)
 		throws InvocationTargetException, CoreException {
-
-		FeatureBuildScriptGenerator generator = new FeatureBuildScriptGenerator();
-		String location = file.getProject().getLocation().toOSString();
-		generator.setWorkingDirectory(location);
-		generator.setFeatureRootLocation(location);
-		generator.setGenerateIncludedFeatures(true);
-		generator.setDevEntries(new String[] { "bin" }); // FIXME: look at bug #5747		
-
 		ArrayList paths = new ArrayList();
 		IFeatureModel[] models = PDECore.getDefault().getWorkspaceModelManager().getFeatureModels();
 		for (int i = 0; i < models.length; i++) {
-			try {
-				paths.add(new URL("file:" + models[i].getInstallLocation() + Path.SEPARATOR + "feature.xml"));
-			} catch (MalformedURLException e1) {
-			}
+			paths.add(models[i].getInstallLocation() + Path.SEPARATOR + "feature.xml");
 			if (models[i].getUnderlyingResource().equals(file))
 				model = models[i];
 		}
 		
-		URL[] plugins = TargetPlatform.createPluginPath();
-		URL[] features = (URL[]) paths.toArray(new URL[paths.size()]);
-		URL[] all = new URL[plugins.length + paths.size()];
+		String[] plugins = TargetPlatform.createPluginPath();
+		String[] features = (String[]) paths.toArray(new String[paths.size()]);
+		String[] all = new String[plugins.length + paths.size()];
 		System.arraycopy(plugins, 0, all, 0, plugins.length);
 		System.arraycopy(features, 0, all, plugins.length, features.length);
 		
+		FeatureBuildScriptGenerator generator = new FeatureBuildScriptGenerator();
+		generator.setWorkingDirectory(file.getProject().getLocation().toOSString());
+		generator.setBuildingOSGi(PDECore.getDefault().getModelManager().isOSGiRuntime());
+		generator.setAnalyseChildren(true);
+		generator.setFeature(model.getFeature().getId());
 		generator.setPluginPath(all);
-		setConfigInfo(model.getFeature());
-		
-		try {
-			generator.setFeature(model.getFeature().getId());
-			generator.generate();
-		} catch (Exception e) {
-			PDEPlugin.logException(e);
-		}
+		FeatureBuildScriptGenerator.setConfigInfo("*,*,*");
+		generator.generate();	
 	}
 	
-	private void setConfigInfo(IFeature feature) throws CoreException {
-		String os = feature.getOS() == null ? "*" : feature.getOS();
-		String ws = feature.getWS() == null ? "*" : feature.getWS();
-		String arch = feature.getArch() == null ? "*" : feature.getArch();
-		
-		FeatureBuildScriptGenerator.setConfigInfo(os + "," + ws + "," + arch);
-	}
-
 	private void refreshLocal(IFeature feature, IProgressMonitor monitor)
 		throws CoreException {
 		IFeaturePlugin[] references = feature.getPlugins();

@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.neweditor.build;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.build.*;
+import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.build.IXMLConstants;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.neweditor.PDEFormPage;
@@ -114,14 +115,14 @@ public class BuildPage extends PDEFormPage {
 	private IBuildEntry getCustomBuildEntry(){
 		IBuildModel buildModel = getBuildModel();
 		IBuildEntry customEntry =
-			buildModel.getBuild().getEntry(IXMLConstants.PROPERTY_CUSTOM);
+			buildModel.getBuild().getEntry(IBuildPropertiesConstants.PROPERTY_CUSTOM);
 			
 		if (customEntry!=null)
 			return customEntry;
 							
 		try {
 			customEntry =
-				buildModel.getFactory().createEntry(IXMLConstants.PROPERTY_CUSTOM);
+				buildModel.getFactory().createEntry(IBuildPropertiesConstants.PROPERTY_CUSTOM);
 			buildModel.getBuild().add(customEntry);
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
@@ -132,7 +133,7 @@ public class BuildPage extends PDEFormPage {
 	private boolean getCustomSelection(){
 		IBuildModel model = getBuildModel();
 		IBuild build = model.getBuild();
-		IBuildEntry customEntry = build.getEntry(IXMLConstants.PROPERTY_CUSTOM);
+		IBuildEntry customEntry = build.getEntry(IBuildPropertiesConstants.PROPERTY_CUSTOM);
 		if (customEntry ==null || customEntry.getTokens().length ==0)
 			return false;
 		return customEntry.getTokens()[0].equals("true"); 

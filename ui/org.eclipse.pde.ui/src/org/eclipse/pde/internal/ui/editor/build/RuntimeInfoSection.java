@@ -20,9 +20,9 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.build.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.build.*;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.elements.*;
@@ -130,7 +130,7 @@ public class RuntimeInfoSection
 			if (parent instanceof IBuildModel) {
 				IBuild build = ((IBuildModel) parent).getBuild();
 				IBuildEntry jarOrderEntry =
-					build.getEntry(IXMLConstants.PROPERTY_JAR_ORDER);
+					build.getEntry(IBuildPropertiesConstants.PROPERTY_JAR_ORDER);
 				IBuildEntry[] libraries =
 					BuildUtil.getBuildLibraries(build.getBuildEntries());
 				if (jarOrderEntry == null) {
@@ -222,7 +222,7 @@ public class RuntimeInfoSection
 	protected void handleLibInBinBuild(boolean isSelected){
 		String libName = currentLibrary.getName().substring(7);
 		IBuildModel model = (IBuildModel) getFormPage().getModel();
-		IBuildEntry binIncl = model.getBuild().getEntry(IXMLConstants.PROPERTY_BIN_INCLUDES);
+		IBuildEntry binIncl = model.getBuild().getEntry(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
 		IProject project = model.getUnderlyingResource().getProject();
 		IPath libPath = project.getFile(libName).getProjectRelativePath();
 		
@@ -230,7 +230,7 @@ public class RuntimeInfoSection
 			if (binIncl == null && !isSelected)
 				return;
 			if (binIncl == null){
-				binIncl = model.getFactory().createEntry(IXMLConstants.PROPERTY_BIN_INCLUDES);
+				binIncl = model.getFactory().createEntry(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
 				model.getBuild().add(binIncl);
 			}
 			if (!isSelected && libPath.segmentCount() == 1 && binIncl.contains("*.jar")){
@@ -279,7 +279,7 @@ public class RuntimeInfoSection
 	private IBuildEntry createOutputKey(String libName){
 		IBuildModel buildModel = (IBuildModel)getFormPage().getModel();
 		IBuild build = buildModel.getBuild();
-		String outputName = IXMLConstants.PROPERTY_OUTPUT_PREFIX + libName;
+		String outputName = IBuildPropertiesConstants.PROPERTY_OUTPUT_PREFIX + libName;
 		IBuildEntry outputEntry = build.getEntry(outputName);
 		
 		try {
@@ -545,23 +545,23 @@ public class RuntimeInfoSection
 
 			// jars.compile.order
 			IBuildEntry tempEntry =
-				build.getEntry(IXMLConstants.PROPERTY_JAR_ORDER);
+				build.getEntry(IBuildPropertiesConstants.PROPERTY_JAR_ORDER);
 			if (tempEntry !=null)
 				tempEntry.renameToken(oldName, newValue.substring(7));
 				
 			// output.{source folder}.jar				
-			tempEntry = build.getEntry(IXMLConstants.PROPERTY_OUTPUT_PREFIX + oldName);
+			tempEntry = build.getEntry(IBuildPropertiesConstants.PROPERTY_OUTPUT_PREFIX + oldName);
 			if (tempEntry!=null){
 				build.remove(tempEntry);
 				refreshOutputKeys();
 			}
 			// bin.includes
-			tempEntry = build.getEntry(IXMLConstants.PROPERTY_BIN_INCLUDES);
+			tempEntry = build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
 			if (tempEntry!=null && tempEntry.contains(oldName))
 				tempEntry.renameToken(oldName, newValue.substring(7));
 				
 			// bin.excludes
-			tempEntry = build.getEntry(IXMLConstants.PROPERTY_BIN_EXCLUDES);
+			tempEntry = build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_EXCLUDES);
 			if (tempEntry!=null && tempEntry.contains(oldName))
 				tempEntry.renameToken(oldName, newValue.substring(7));
 			
@@ -734,8 +734,8 @@ public class RuntimeInfoSection
 		IBuildModel model = (IBuildModel) getFormPage().getModel();
 		IProject project = model.getUnderlyingResource().getProject();
 		IPath libPath = project.getFile(libName).getProjectRelativePath();
-		IBuildEntry binIncl = model.getBuild().getEntry(IXMLConstants.PROPERTY_BIN_INCLUDES);
-		IBuildEntry binExcl = model.getBuild().getEntry(IXMLConstants.PROPERTY_BIN_EXCLUDES);
+		IBuildEntry binIncl = model.getBuild().getEntry(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
+		IBuildEntry binExcl = model.getBuild().getEntry(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
 		if (binIncl == null)
 			return false;
 			
@@ -852,22 +852,22 @@ public class RuntimeInfoSection
 			try {
 				// jars.compile.order
 				IBuildEntry entry =
-					build.getEntry(IXMLConstants.PROPERTY_JAR_ORDER);
+					build.getEntry(IBuildPropertiesConstants.PROPERTY_JAR_ORDER);
 				if (entry !=null)
 					entry.removeToken(libName);
 				
 				// output.{source folder}.jar				
-				entry = build.getEntry(IXMLConstants.PROPERTY_OUTPUT_PREFIX + libName);
+				entry = build.getEntry(IBuildPropertiesConstants.PROPERTY_OUTPUT_PREFIX + libName);
 				if (entry!=null)
 					build.remove(entry);
 					
 				// bin.includes
-				entry = build.getEntry(IXMLConstants.PROPERTY_BIN_INCLUDES);
+				entry = build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
 				if (entry!=null && entry.contains(libName))
 					entry.removeToken(libName);
 				
 				// bin.excludes
-				entry = build.getEntry(IXMLConstants.PROPERTY_BIN_EXCLUDES);
+				entry = build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_EXCLUDES);
 				if (entry!=null && entry.contains(libName))
 					entry.removeToken(libName);
  
@@ -1058,13 +1058,13 @@ public class RuntimeInfoSection
 		IBuildModel model = (IBuildModel) getFormPage().getModel();
 		IBuild build = model.getBuild();
 		IBuildEntry jarOrderEntry =
-			build.getEntry(IXMLConstants.PROPERTY_JAR_ORDER);
+			build.getEntry(IBuildPropertiesConstants.PROPERTY_JAR_ORDER);
 		try {
 			if (jarOrderEntry != null){
 				build.remove(jarOrderEntry);	
 			} 
 			jarOrderEntry =
-				model.getFactory().createEntry(IXMLConstants.PROPERTY_JAR_ORDER);
+				model.getFactory().createEntry(IBuildPropertiesConstants.PROPERTY_JAR_ORDER);
 
 			for (int i = 0; i < libraries.length; i++) {
 				jarOrderEntry.addToken(libraries[i].getName().substring(7));
@@ -1079,13 +1079,13 @@ public class RuntimeInfoSection
 		IBuildModel model = (IBuildModel) getFormPage().getModel();
 		IBuild build = model.getBuild();
 		IBuildEntry jarOrderEntry =
-			build.getEntry(IXMLConstants.PROPERTY_JAR_ORDER);
+			build.getEntry(IBuildPropertiesConstants.PROPERTY_JAR_ORDER);
 		try {
 			if (jarOrderEntry != null){
 				build.remove(jarOrderEntry);	
 			} 
 			jarOrderEntry =
-				model.getFactory().createEntry(IXMLConstants.PROPERTY_JAR_ORDER);
+				model.getFactory().createEntry(IBuildPropertiesConstants.PROPERTY_JAR_ORDER);
 
 			for (int i = 0; i < libraries.length; i++) {
 				jarOrderEntry.addToken(libraries[i].getText());

@@ -3,14 +3,14 @@
  */
 package org.eclipse.pde.internal.ui.build;
 
-import java.lang.reflect.*;
+import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.ui.*;
@@ -36,22 +36,26 @@ public class BuildSiteAction implements IObjectActionDelegate, IPreferenceConsta
 	public void run(IAction action) {
 		if (fBuildModel == null)
 			return;
-		ISiteBuildFeature[] sbFeatures = fBuildModel.getSiteBuild()
-				.getFeatures();
-		if (sbFeatures.length == 0)
-			return;
-		BuildSiteOperation op = new BuildSiteOperation(sbFeatures, fSiteXML
-				.getProject(), fBuildModel);
-		ProgressMonitorDialog pmd = new ProgressMonitorDialog(PDEPlugin
-				.getActiveWorkbenchShell());
-		try {
-			pmd.run(true, true, op);
-		} catch (InvocationTargetException e) {
-			MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(),
-				PDEPlugin.getResourceString("SiteBuild.errorDialog"),
-				PDEPlugin.getResourceString("SiteBuild.errorMessage"));
-		} catch (InterruptedException e) {
-		}
+		ISiteBuildFeature[] sbFeatures = fBuildModel.getSiteBuild().getFeatures();
+		IFeatureModel[] models = getFeatureModels(sbFeatures);
+		
+		if (models.length > 0) {
+			BuildSiteJob job = new BuildSiteJob(models, fSiteXML.getProject(), fBuildModel);
+			job.schedule();
+		}		
+	}
+	
+	private IFeatureModel[] getFeatureModels(ISiteBuildFeature[] sbFeatures) {
+		ArrayList list = new ArrayList();
+		for (int i = 0; i < sbFeatures.length; i++) {
+			IFeature feature = sbFeatures[i].getReferencedFeature();
+			if (feature == null)
+				continue;
+			IFeatureModel model = feature.getModel();
+			if (model != null && model.getUnderlyingResource() != null)
+				list.add(model);
+		}	
+		return (IFeatureModel[])list.toArray(new IFeatureModel[list.size()]);		
 	}
 		
 	public void selectionChanged(IAction action, ISelection selection) {

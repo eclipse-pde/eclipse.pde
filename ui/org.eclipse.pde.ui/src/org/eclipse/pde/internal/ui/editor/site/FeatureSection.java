@@ -2,12 +2,11 @@
  * Created on Sep 29, 2003
  */
 package org.eclipse.pde.internal.ui.editor.site;
-import java.lang.reflect.*;
+import java.util.*;
 import java.util.List;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.core.*;
@@ -268,17 +267,24 @@ public class FeatureSection extends TableSection {
 	private void handleBuild(ISiteBuildFeature[] sbFeatures) {
 		if (sbFeatures.length == 0)
 			return;
-		BuildSiteOperation op = new BuildSiteOperation(sbFeatures, fModel
+		IFeatureModel[] models = getFeatureModels(sbFeatures);
+		if (models.length == 0)
+			return;
+		BuildSiteJob job = new BuildSiteJob(models, fModel
 				.getUnderlyingResource().getProject(), fBuildModel);
-		ProgressMonitorDialog pmd = new ProgressMonitorDialog(PDEPlugin
-				.getActiveWorkbenchShell());
-		try {
-			pmd.run(true, true, op);
-		} catch (InvocationTargetException e) {
-			MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(),
-					PDEPlugin.getResourceString("SiteBuild.errorDialog"),
-					PDEPlugin.getResourceString("SiteBuild.errorMessage"));
-		} catch (InterruptedException e) {
-		}
+		job.schedule();
+	}
+	
+	private IFeatureModel[] getFeatureModels(ISiteBuildFeature[] sbFeatures) {
+		ArrayList list = new ArrayList();
+		for (int i = 0; i < sbFeatures.length; i++) {
+			IFeature feature = sbFeatures[i].getReferencedFeature();
+			if (feature == null)
+				continue;
+			IFeatureModel model = feature.getModel();
+			if (model != null && model.getUnderlyingResource() != null)
+				list.add(model);
+		}	
+		return (IFeatureModel[])list.toArray(new IFeatureModel[list.size()]);			
 	}
 }

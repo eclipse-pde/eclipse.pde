@@ -47,7 +47,7 @@ public class FeatureExportWizard extends BaseExportWizard {
 	}
 
 	protected void scheduleExportJob() {
-		BaseExportJob job =
+		FeatureExportJob job =
 			new FeatureExportJob(
 				page1.getExportType(),
 				page1.doExportSource(),

@@ -16,7 +16,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
-import org.eclipse.pde.internal.build.IXMLConstants;
+import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 
 public class BinSection
@@ -37,8 +37,8 @@ public class BinSection
 	protected void initializeCheckState() {
 		super.initializeCheckState();
 		IBuild build = buildModel.getBuild();
-		IBuildEntry binIncl = build.getEntry(IXMLConstants.PROPERTY_BIN_INCLUDES);
-		IBuildEntry binExcl = build.getEntry(IXMLConstants.PROPERTY_BIN_EXCLUDES);
+		IBuildEntry binIncl = build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
+		IBuildEntry binExcl = build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
 		
 		if (binIncl == null)
 			return;
@@ -48,8 +48,8 @@ public class BinSection
 
 	protected void deleteFolderChildrenFromEntries(IFolder folder) {
 		IBuild build = buildModel.getBuild();
-		IBuildEntry binIncl = build.getEntry(IXMLConstants.PROPERTY_BIN_INCLUDES);
-		IBuildEntry binExcl = build.getEntry(IXMLConstants.PROPERTY_BIN_EXCLUDES);
+		IBuildEntry binIncl = build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
+		IBuildEntry binExcl = build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
 		String parentFolder = getResourceFolderName(folder.getProjectRelativePath().toString());
 
 		removeChildren(binIncl, parentFolder);
@@ -62,15 +62,15 @@ public class BinSection
 		boolean wasTopParentChecked) {
 		String resourceName = resource.getFullPath().removeFirstSegments(1).toString();
 		IBuild build = buildModel.getBuild();
-		IBuildEntry includes = build.getEntry(IXMLConstants.PROPERTY_BIN_INCLUDES);
-		IBuildEntry excludes = build.getEntry(IXMLConstants.PROPERTY_BIN_EXCLUDES);
+		IBuildEntry includes = build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
+		IBuildEntry excludes = build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
 
 		resourceName = handleResourceFolder(resource, resourceName);
 
 		if (checked)
-			handleCheck(includes, excludes, resourceName, resource, wasTopParentChecked, IXMLConstants.PROPERTY_BIN_INCLUDES);
+			handleCheck(includes, excludes, resourceName, resource, wasTopParentChecked, IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
 		else
-			handleUncheck(includes, excludes, resourceName, resource, IXMLConstants.PROPERTY_BIN_EXCLUDES);
+			handleUncheck(includes, excludes, resourceName, resource, IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
 
 		deleteEmptyEntries();
 	}

@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.build.*;
+import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.build.IXMLConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
@@ -404,10 +405,10 @@ public abstract class BuildContentsSection extends TableSection
 	protected void deleteEmptyEntries() {
 		IBuild build = buildModel.getBuild();
 		IBuildEntry[] entries = {
-				build.getEntry(IXMLConstants.PROPERTY_BIN_EXCLUDES),
-				build.getEntry(IXMLConstants.PROPERTY_BIN_INCLUDES),
-				build.getEntry(IXMLConstants.PROPERTY_SRC_EXCLUDES),
-				build.getEntry(IXMLConstants.PROPERTY_SRC_INCLUDES)};
+				build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_EXCLUDES),
+				build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES),
+				build.getEntry(IBuildPropertiesConstants.PROPERTY_SRC_EXCLUDES),
+				build.getEntry(IBuildPropertiesConstants.PROPERTY_SRC_INCLUDES)};
 		try {
 			for (int i = 0; i < entries.length; i++) {
 				if (entries[i] != null && entries[i].getTokens().length == 0)

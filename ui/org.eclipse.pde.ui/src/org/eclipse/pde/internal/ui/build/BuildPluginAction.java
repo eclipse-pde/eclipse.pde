@@ -14,6 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
+
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.build.builder.*;
 import org.eclipse.pde.internal.core.*;
@@ -24,17 +25,12 @@ public class BuildPluginAction extends BaseBuildAction {
 		throws InvocationTargetException, CoreException {
 
 		ModelBuildScriptGenerator generator;
-		
-		if (file.getName().toLowerCase().equals("fragment.xml"))
-			generator = new FragmentBuildScriptGenerator();
-		else
-			generator = new PluginBuildScriptGenerator();
-		
+		generator = new ModelBuildScriptGenerator();
 		IProject project = file.getProject();
 		generator.setWorkingDirectory(project.getLocation().toOSString());
-		generator.setDevEntries(new String[] {"bin"}); // FIXME: look at bug #5747
+		generator.setDevEntries("bin"); // FIXME: look at bug #5747
 		generator.setPluginPath(TargetPlatform.createPluginPath());
-
+		generator.setBuildingOSGi(true);
 		try {
 			WorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
 			IPluginModelBase model = (IPluginModelBase) manager.getWorkspaceModel(project);

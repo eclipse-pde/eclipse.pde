@@ -23,6 +23,7 @@ import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.build.IXMLConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
@@ -151,7 +152,7 @@ public class BuildClasspathSection
 		public Object[] getElements(Object parent) {
 			if (parent instanceof IBuildModel) {
 				IBuild build = ((IBuildModel)parent).getBuild();
-				IBuildEntry entry = build.getEntry(IXMLConstants.PROPERTY_JAR_EXTRA_CLASSPATH);
+				IBuildEntry entry = build.getEntry(IBuildPropertiesConstants.PROPERTY_JAR_EXTRA_CLASSPATH);
 				if (entry != null) {
 					return entry.getTokens();
 				}
@@ -195,7 +196,7 @@ public class BuildClasspathSection
 
 	public void initialize(){
 		buildModel.addModelChangedListener(this);
-		IBuildEntry entry = buildModel.getBuild().getEntry(IXMLConstants.PROPERTY_JAR_EXTRA_CLASSPATH);
+		IBuildEntry entry = buildModel.getBuild().getEntry(IBuildPropertiesConstants.PROPERTY_JAR_EXTRA_CLASSPATH);
 		getSection().addExpansionListener(new ExpansionAdapter() {
 			public void expansionStateChanged(ExpansionEvent e) {
 				//getPage().getManagedForm().reflow(true);
@@ -326,7 +327,7 @@ public class BuildClasspathSection
 				.getFirstElement();
 		int index = entryTable.getTable().getSelectionIndex();
 		if (selection != null && selection instanceof String) {
-			IBuildEntry entry = buildModel.getBuild().getEntry(IXMLConstants.PROPERTY_JAR_EXTRA_CLASSPATH);
+			IBuildEntry entry = buildModel.getBuild().getEntry(IBuildPropertiesConstants.PROPERTY_JAR_EXTRA_CLASSPATH);
 			if (entry != null) {
 				try {
 					entry.removeToken(selection.toString());
@@ -385,10 +386,10 @@ public class BuildClasspathSection
 	}
 	
 	private void addClasspathToken(String tokenName){
-		IBuildEntry entry = buildModel.getBuild().getEntry(IXMLConstants.PROPERTY_JAR_EXTRA_CLASSPATH);
+		IBuildEntry entry = buildModel.getBuild().getEntry(IBuildPropertiesConstants.PROPERTY_JAR_EXTRA_CLASSPATH);
 		try {
 			if (entry==null){
-				entry = buildModel.getFactory().createEntry(IXMLConstants.PROPERTY_JAR_EXTRA_CLASSPATH);
+				entry = buildModel.getFactory().createEntry(IBuildPropertiesConstants.PROPERTY_JAR_EXTRA_CLASSPATH);
 				buildModel.getBuild().add(entry);
 			}
 			if (!entry.contains(tokenName))

@@ -16,7 +16,7 @@ import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildListener;
 import org.apache.tools.ant.Project;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.wizards.exports.BaseExportJob;
+import org.eclipse.pde.internal.ui.wizards.exports.*;
 
 /**
  * @author wassimm
@@ -34,7 +34,7 @@ public class ExportBuildListener implements BuildListener {
 	 * @see org.apache.tools.ant.BuildListener#buildStarted(org.apache.tools.ant.BuildEvent)
 	 */
 	public void buildStarted(BuildEvent event) {
-		writer = BaseExportJob.getWriter();
+		writer = FeatureExportJob.getWriter();
 	}
 
 	/* (non-Javadoc)

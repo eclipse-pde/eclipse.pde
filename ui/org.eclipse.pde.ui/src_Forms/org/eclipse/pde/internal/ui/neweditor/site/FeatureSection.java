@@ -2,38 +2,29 @@
  * Created on Sep 29, 2003
  */
 package org.eclipse.pde.internal.ui.neweditor.site;
-import java.lang.reflect.*;
+import java.util.*;
 import java.util.List;
-
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.internal.core.ifeature.IFeature;
+import org.eclipse.jface.wizard.*;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.isite.*;
-import org.eclipse.pde.internal.core.isite.ISiteModel;
-import org.eclipse.pde.internal.core.site.WorkspaceSiteBuildModel;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.build.BuildSiteOperation;
-import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
-import org.eclipse.pde.internal.ui.neweditor.*;
+import org.eclipse.pde.internal.core.site.*;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.build.*;
+import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.elements.*;
+import org.eclipse.pde.internal.ui.neweditor.PDEFormPage;
 import org.eclipse.pde.internal.ui.neweditor.TableSection;
-import org.eclipse.pde.internal.ui.newparts.TablePart;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.pde.internal.ui.newparts.*;
+import org.eclipse.swt.*;
+import org.eclipse.swt.custom.*;
 import org.eclipse.swt.dnd.*;
-import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.actions.*;
 import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.forms.widgets.Section;
 
 /**
  * @author melhem
@@ -271,17 +262,24 @@ public class FeatureSection extends TableSection {
 	private void handleBuild(ISiteBuildFeature[] sbFeatures) {
 		if (sbFeatures.length == 0)
 			return;
-		BuildSiteOperation op = new BuildSiteOperation(sbFeatures, fModel
+		IFeatureModel[] models = getFeatureModels(sbFeatures);
+		if (models.length == 0)
+			return;
+		BuildSiteJob job = new BuildSiteJob(models, fModel
 				.getUnderlyingResource().getProject(), fBuildModel);
-		ProgressMonitorDialog pmd = new ProgressMonitorDialog(PDEPlugin
-				.getActiveWorkbenchShell());
-		try {
-			pmd.run(true, true, op);
-		} catch (InvocationTargetException e) {
-			MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(),
-					PDEPlugin.getResourceString("SiteBuild.errorDialog"),
-					PDEPlugin.getResourceString("SiteBuild.errorMessage"));
-		} catch (InterruptedException e) {
-		}
+		job.schedule();
+	}
+	
+	private IFeatureModel[] getFeatureModels(ISiteBuildFeature[] sbFeatures) {
+		ArrayList list = new ArrayList();
+		for (int i = 0; i < sbFeatures.length; i++) {
+			IFeature feature = sbFeatures[i].getReferencedFeature();
+			if (feature == null)
+				continue;
+			IFeatureModel model = feature.getModel();
+			if (model != null && model.getUnderlyingResource() != null)
+				list.add(model);
+		}	
+		return (IFeatureModel[])list.toArray(new IFeatureModel[list.size()]);			
 	}
 }

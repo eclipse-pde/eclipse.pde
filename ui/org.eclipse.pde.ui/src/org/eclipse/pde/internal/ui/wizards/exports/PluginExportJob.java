@@ -10,27 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
-import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
+import java.io.*;
+import java.lang.reflect.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.pde.core.plugin.*;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.pde.core.IModel;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.build.builder.FragmentBuildScriptGenerator;
-import org.eclipse.pde.internal.build.builder.ModelBuildScriptGenerator;
-import org.eclipse.pde.internal.build.builder.PluginBuildScriptGenerator;
-import org.eclipse.pde.internal.core.TargetPlatform;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 
-public class PluginExportJob extends BaseExportJob {
+public class PluginExportJob extends FeatureExportJob {
+
+	private String fFeatureLocation;
 
 	public PluginExportJob(
 		int exportType,
@@ -41,111 +29,58 @@ public class PluginExportJob extends BaseExportJob {
 		super(exportType, exportSource, destination, zipFileName, items);
 	}
 
-	protected HashMap createProperties(
-		String destination,
-		IPluginBase model,
-		int exportType) {
-		HashMap map = new HashMap(4);
-		String location = buildTempLocation + "/build_result/" + model.getId();
-		File dir = new File(location);
-		if (!dir.exists() || !dir.isDirectory())
-			dir.mkdirs();
-		map.put("build.result.folder", location);
-		map.put(
-			"temp.folder",
-			buildTempLocation + "/temp.folder/" + model.getId());
-		if (exportType != BaseExportJob.EXPORT_AS_UPDATE_JARS)
-			map.put(
-				"destination.temp.folder",
-				buildTempLocation + "/destination/plugins");
-		else
-			map.put(
-				"destination.temp.folder",
-				buildTempLocation + "/temp.folder/" + model.getId());
-		map.put("plugin.destination", destination);
-		map.put("baseos", TargetPlatform.getOS());
-		map.put("basews", TargetPlatform.getWS());
-		map.put("basearch", TargetPlatform.getOSArch());
-		map.put("basenl", TargetPlatform.getNL());
-		map.put("eclipse.running", "true");
-
-		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-		map.put("javacFailOnError", "false");
-		map.put(
-			"javacDebugInfo",
-			store.getBoolean(PROP_JAVAC_DEBUG_INFO) ? "on" : "off");
-		map.put("javacVerbose", store.getString(PROP_JAVAC_VERBOSE));
-		map.put("javacSource", store.getString(PROP_JAVAC_SOURCE));
-		map.put("javacTarget", store.getString(PROP_JAVAC_TARGET));
-		return map;
-	}
-
-	protected void doExport(IModel model, IProgressMonitor monitor)
-		throws CoreException, InvocationTargetException {
-
-		IPluginModelBase modelBase = (IPluginModelBase) model;
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.wizards.exports.FeatureExportJob#doExports(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected void doExports(IProgressMonitor monitor)
+			throws InvocationTargetException, CoreException {
 		try {
-			String label =
-				PDEPlugin.getDefault().getLabelProvider().getObjectText(
-					modelBase.getPluginBase());
-			monitor.setTaskName(
-				PDEPlugin.getResourceString("ExportJob.exporting")
-					+ " "
-					+ label);
-			monitor.beginTask("", 10);
-			makeScript(modelBase);
-			monitor.worked(1);
-			runScript(
-				modelBase.getInstallLocation(),
-				destination,
-				exportType,
-				exportSource,
-				createProperties(
-					destination,
-					modelBase.getPluginBase(),
-					exportType),
-				new SubProgressMonitor(monitor, 9));
+			// create a feature to contain all plug-ins
+			String featureID = "org.eclipse.pde.container.feature";
+			fFeatureLocation = fBuildTempLocation + File.separator + featureID;
+			createFeature(featureID, fFeatureLocation);
+			doExport(featureID, fFeatureLocation, monitor);
+		} catch (IOException e) {
 		} finally {
-			deleteBuildFile(modelBase);
+			for (int i = 0; i < fItems.length; i++) {
+				if (fItems[i] instanceof IPluginModelBase)
+					deleteBuildFiles((IPluginModelBase)fItems[i]);
+			}
+			cleanup(new SubProgressMonitor(monitor, 1));
 			monitor.done();
 		}
-
 	}
-
-	public void deleteBuildFile(IPluginModelBase model) throws CoreException {
-		if (isCustomBuild(model))
-			return;
-		File file = new File(model.getInstallLocation(), "build.xml");
-		if (file.exists())
-			file.delete();
-	}
-
-	private void makeScript(IPluginModelBase model) throws CoreException {
-		ModelBuildScriptGenerator generator = null;
-		if (model.isFragmentModel())
-			generator = new FragmentBuildScriptGenerator();
-		else
-			generator = new PluginBuildScriptGenerator();
-
-		generator.setWorkingDirectory(model.getInstallLocation());
-
-		IProject project = model.getUnderlyingResource().getProject();
-		if (project.hasNature(JavaCore.NATURE_ID)) {
-			IPath path =
-				JavaCore
-					.create(project)
-					.getOutputLocation()
-					.removeFirstSegments(
-					1);
-			generator.setDevEntries(new String[] { path.toOSString()});
-		} else {
-			generator.setDevEntries(new String[] { "bin" });
+	
+	private void createFeature(String featureID, String featureLocation)
+			throws IOException {
+		File file = new File(featureLocation);
+		if (!file.exists() || !file.isDirectory())
+			file.mkdirs();
+		File featureXML = new File(file, "feature.xml");
+		PrintWriter writer = new PrintWriter(new FileWriter(featureXML), true);
+		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+		writer.println("<feature id=\"" + featureID + "\" version=\"1.0\">");
+		for (int i = 0; i < fItems.length; i++) {
+			if (fItems[i] instanceof IPluginModelBase) {
+				IPluginBase plugin = ((IPluginModelBase) fItems[i])
+						.getPluginBase();
+				writer.println("<plugin id=\"" + plugin.getId()
+						+ "\" version=\"" + plugin.getVersion() + "\"/>");
+			}
 		}
-
-		generator.setPluginPath(TargetPlatform.createPluginPath());
-
-		generator.setModelId(model.getPluginBase().getId());
-		generator.generate();
+		writer.println("</feature>");
+		writer.close();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.wizards.exports.FeatureExportJob#getPaths()
+	 */
+	protected String[] getPaths() throws CoreException {
+		String[] paths =  super.getPaths();
+		String[] all = new String[paths.length + 1];
+		all[0] = fFeatureLocation + File.separator + "feature.xml";
+		System.arraycopy(paths, 0, all, 1, paths.length);
+		return all;
 	}
 
 }

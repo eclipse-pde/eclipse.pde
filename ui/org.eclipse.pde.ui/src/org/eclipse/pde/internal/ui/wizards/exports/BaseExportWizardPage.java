@@ -463,11 +463,11 @@ public abstract class BaseExportWizardPage extends WizardPage {
 	private void initializeExportOptions(IDialogSettings settings) {
 		boolean exportUpdate = settings.getBoolean(S_EXPORT_UPDATE);
 		boolean exportDirectory = settings.getBoolean(S_EXPORT_DIRECTORY);			
-		int index = BaseExportJob.EXPORT_AS_ZIP;
+		int index = FeatureExportJob.EXPORT_AS_ZIP;
 		if (exportUpdate) {
-			index = BaseExportJob.EXPORT_AS_UPDATE_JARS;
+			index = FeatureExportJob.EXPORT_AS_UPDATE_JARS;
 		} else if (exportDirectory){
-			index = BaseExportJob.EXPORT_AS_DIRECTORY;
+			index = FeatureExportJob.EXPORT_AS_DIRECTORY;
 		} 
 		fExportFormats.setText(fExportFormats.getItem(index));
 		enableZipOption(!exportUpdate && !exportDirectory);
@@ -534,15 +534,15 @@ public abstract class BaseExportWizardPage extends WizardPage {
 	}
 
 	public boolean doExportAsZip() {
-		return fExportFormats.getSelectionIndex() == BaseExportJob.EXPORT_AS_ZIP;
+		return fExportFormats.getSelectionIndex() == FeatureExportJob.EXPORT_AS_ZIP;
 	}
 	
 	public boolean doExportAsUpdateJars() {
-		return fExportFormats.getSelectionIndex() == BaseExportJob.EXPORT_AS_UPDATE_JARS;
+		return fExportFormats.getSelectionIndex() == FeatureExportJob.EXPORT_AS_UPDATE_JARS;
 	}
 	
 	public boolean doExportAsDirectory() {
-		return fExportFormats.getSelectionIndex() == BaseExportJob.EXPORT_AS_DIRECTORY;
+		return fExportFormats.getSelectionIndex() == FeatureExportJob.EXPORT_AS_DIRECTORY;
 	}
 	
 	public boolean doExportSource() {

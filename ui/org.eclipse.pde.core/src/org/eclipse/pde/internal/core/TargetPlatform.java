@@ -76,24 +76,18 @@ public class TargetPlatform implements IEnvironmentVariables {
 		return createPropertiesFile(getVisibleModels(), null);
 	}
 
-	public static URL[] createPluginPath() throws CoreException {
+	public static String[] createPluginPath() throws CoreException {
 		return createPluginPath(getVisibleModels());
 	}
 
-	public static URL[] createPluginPath(IPluginModelBase[] models)
+	public static String[] createPluginPath(IPluginModelBase[] models)
 		throws CoreException {
-		URL urls[] = new URL[models.length];
-		for (int i = 0; i < urls.length; i++) {
+		String paths[] = new String[models.length];
+		for (int i = 0; i < models.length; i++) {
 			IPluginModelBase model = models[i];
-			String urlName = createURL(model);
-			try {
-				urls[i] = new URL(urlName);
-			} catch (MalformedURLException e) {
-				PDECore.logException(e);
-				return new URL[0];
-			}
+			paths[i] = createURL(model);
 		}
-		return urls;
+		return paths;
 	}
 
 	private static IPluginModelBase[] getVisibleModels() {
@@ -519,9 +513,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 	}
 
 	private static String createURL(IPluginModelBase model) {
-		String location = getPluginLocation(model).addTrailingSeparator().toString();
-		String prefix = "file:" + location; //$NON-NLS-1$
-		return prefix + ((model instanceof IPluginModel) ? "plugin.xml" : "fragment.xml");
+		return getPluginLocation(model).addTrailingSeparator().toString();
 	}
 
 	public static String getOS() {

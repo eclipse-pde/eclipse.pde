@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.wizards.exports;
 import java.io.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
@@ -73,9 +74,18 @@ public abstract class BaseExportWizard
 	 * @see Wizard#performFinish
 	 */
 	public boolean performFinish() {
-		page1.saveSettings();		
+		page1.saveSettings();
 		if (page1.doGenerateAntFile()) {
 			generateAntBuildFile(page1.getAntBuildFileName());
+		}
+		if (page1.doExportAsZip()) {
+			File zipFile = new File(page1.getDestination(), page1.getFileName());
+			if (zipFile.exists()) {
+				if (!MessageDialog.openQuestion(getContainer().getShell(),
+						"Confirm Replace", "The file \"" + page1.getDestination() + File.separator + page1.getFileName() +  "\" already exists.  Do you want to overwrite it?"))
+					return false;
+				zipFile.delete();
+			}
 		}
 		scheduleExportJob();
 		return true;
@@ -105,11 +115,11 @@ public abstract class BaseExportWizard
 	protected String getExportOperation() {
 		int exportType = page1.getExportType();
 		switch (exportType) {
-			case BaseExportJob.EXPORT_AS_ZIP:
+			case FeatureExportJob.EXPORT_AS_ZIP:
 				return "zip";
-			case BaseExportJob.EXPORT_AS_DIRECTORY:
+			case FeatureExportJob.EXPORT_AS_DIRECTORY:
 				return "directory";
-			case BaseExportJob.EXPORT_AS_UPDATE_JARS:
+			case FeatureExportJob.EXPORT_AS_UPDATE_JARS:
 				return "update";
 		}
 		return "zip";
