@@ -119,7 +119,7 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 					} else {
 						applyVersion(null);
 					}
-				} catch (Throwable e) {
+				} catch (RuntimeException e) {
 					text.setValue(currentImport.getVersion(), true);
 					String message = PDEPlugin
 							.getResourceString(KEY_VERSION_FORMAT);

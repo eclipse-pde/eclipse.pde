@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.wizards.feature;
 
 import java.util.StringTokenizer;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.window.Window;
@@ -325,13 +326,8 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 	protected String verifyVersion() {
 		String problemText = PDEPlugin.getResourceString(KEY_VERSION_FORMAT);
 		String value = featureVersionText.getText();
-		if (value.length() == 0)
+		if (PluginVersionIdentifier.validateVersion(value).getSeverity() != IStatus.OK)
 			return problemText;
-		try {
-			new PluginVersionIdentifier(value);
-		} catch (Throwable e) {
-			return problemText;
-		}
 		return null;
 	}
 	

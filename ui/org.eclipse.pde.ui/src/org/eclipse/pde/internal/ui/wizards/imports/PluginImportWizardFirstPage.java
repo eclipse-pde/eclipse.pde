@@ -17,6 +17,7 @@
 package org.eclipse.pde.internal.ui.wizards.imports;
 
 import java.io.File;
+import java.lang.reflect.*;
 import java.net.*;
 import java.util.*;
 
@@ -403,8 +404,9 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		};
 		try {
 			getContainer().run(true, false, op);
-		} catch (Throwable e) {
-			PDEPlugin.logException(e);
+		} catch (InvocationTargetException e) {
+			PDEPlugin.log(e);
+		} catch (InterruptedException e) {
 		}
 	}
 	
@@ -429,8 +431,9 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		};
 		try {
 			getContainer().run(true, false, op);
-		} catch (Throwable e) {
-			PDEPlugin.logException(e);
+		} catch (InvocationTargetException e) {
+			PDEPlugin.log(e);
+		} catch (InterruptedException e) {
 		}
 	}
 		
