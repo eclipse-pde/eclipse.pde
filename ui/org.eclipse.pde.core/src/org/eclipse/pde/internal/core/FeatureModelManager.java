@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelProviderEvent;
 import org.eclipse.pde.core.IModelProviderListener;
@@ -122,6 +123,26 @@ public class FeatureModelManager {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Finds active model with the given id and version. If feature is not
+	 * found, but a feature with qualifier set to qualifier exists it will be
+	 * returned.
+	 * 
+	 * @param id
+	 * @param version
+	 * @return IFeatureModel or null
+	 */
+	public IFeatureModel findFeatureModelRelaxed(String id, String version) {
+		IFeatureModel model = findFeatureModel(id, version);
+		if (model != null) {
+			return model;
+		}
+		PluginVersionIdentifier pvi = new PluginVersionIdentifier(version);
+		return findFeatureModel(id, pvi.getMajorComponent() + "." //$NON-NLS-1$
+				+ pvi.getMinorComponent() + "." //$NON-NLS-1$
+				+ pvi.getServiceComponent() + ".qualifier"); //$NON-NLS-1$
 	}
 
 	/**

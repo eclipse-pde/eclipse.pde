@@ -50,7 +50,7 @@ class SiteLabelProvider extends LabelProvider {
 		if (element instanceof ISiteCategoryDefinition)
 			return fCatDefImage;
 		if (element instanceof SiteFeatureAdapter) {
-			if (PDECore.getDefault().getFeatureModelManager().findFeatureModel(
+			if (PDECore.getDefault().getFeatureModelManager().findFeatureModelRelaxed(
 					((SiteFeatureAdapter) element).feature.getId(),
 					((SiteFeatureAdapter) element).feature.getVersion()) == null)
 				return fMissingSiteFeatureImage;

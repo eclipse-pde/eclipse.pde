@@ -32,6 +32,8 @@ public class BuildSiteAction implements IObjectActionDelegate,
 	private ISiteModel fModel;
 
 	private IFile fSiteXML;
+	
+	private IWorkbenchPart fTargetPart;
 
 	/*
 	 * (non-Javadoc)
@@ -40,6 +42,7 @@ public class BuildSiteAction implements IObjectActionDelegate,
 	 *      org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
+		fTargetPart = targetPart;
 	}
 
 	/*
@@ -55,7 +58,7 @@ public class BuildSiteAction implements IObjectActionDelegate,
 		IFeatureModel[] models = getFeatureModels(sbFeatures);
 
 		if (models.length > 0) {
-			BuildSiteJob job = new BuildSiteJob(models, fSiteXML.getProject());
+			BuildSiteJob job = new BuildSiteJob(fTargetPart.getSite().getShell().getDisplay(), models, fModel);
 			job.setUser(true);
 			job.schedule();
 			job.setProperty(IProgressConstants.ICON_PROPERTY,
@@ -68,7 +71,7 @@ public class BuildSiteAction implements IObjectActionDelegate,
 		for (int i = 0; i < sFeatures.length; i++) {
 			ISiteFeature siteFeature = sFeatures[i];
 			IFeatureModel model = PDECore.getDefault().getFeatureModelManager()
-					.findFeatureModel(siteFeature.getId(),
+					.findFeatureModelRelaxed(siteFeature.getId(),
 							siteFeature.getVersion());
 			if (model != null && model.getUnderlyingResource() != null)
 				list.add(model);

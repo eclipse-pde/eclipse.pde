@@ -10,14 +10,17 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.site;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -31,6 +34,7 @@ import org.eclipse.pde.internal.core.FeatureModelManager;
 import org.eclipse.pde.internal.core.IFeatureModelDelta;
 import org.eclipse.pde.internal.core.IFeatureModelListener;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureImport;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
@@ -61,6 +65,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -386,7 +391,7 @@ public class CategorySection extends TreeSection implements
 	protected void handleDoubleClick(IStructuredSelection ssel) {
 		Object selected = ssel.getFirstElement();
 		if (selected instanceof SiteFeatureAdapter) {
-			IFeature feature = getFeature(((SiteFeatureAdapter) selected).feature);
+			IFeature feature = findFeature(((SiteFeatureAdapter) selected).feature);
 			if (feature != null) {
 				IFile file = (IFile) feature.getModel().getUnderlyingResource();
 				if (file != null && file.exists()) {
@@ -551,7 +556,7 @@ public class CategorySection extends TreeSection implements
 							}
 						};
 				manager.add(buildAction);
-				buildAction.setEnabled(isEditable()&& getFeature(adapter.feature) != null );
+				buildAction.setEnabled(isEditable()&& findFeature(adapter.feature) != null );
 
 			}
 		}
@@ -588,7 +593,7 @@ public class CategorySection extends TreeSection implements
 		fCategoryTreePart.setButtonEnabled(BUTTON_BUILD_FEATURE,
 				!sel.isEmpty()
 						&& sel.getFirstElement() instanceof SiteFeatureAdapter
-						&& getFeature(((SiteFeatureAdapter) sel
+						&& findFeature(((SiteFeatureAdapter) sel
 								.getFirstElement()).feature) != null);
 		int featureCount = fModel.getSite().getFeatures().length;
 		fCategoryTreePart.setButtonEnabled(BUTTON_BUILD_ALL, featureCount > 0);
@@ -672,22 +677,35 @@ public class CategorySection extends TreeSection implements
 		IFeatureModel[] models = getFeatureModels(sFeatures);
 		if (models.length == 0)
 			return;
-		BuildSiteJob job = new BuildSiteJob(models, fModel
-				.getUnderlyingResource().getParent());
+		ensureContentSaved();
+		WorkspaceModelManager manager = PDECore.getDefault()
+				.getWorkspaceModelManager();
+		ISiteModel buildSiteModel = (ISiteModel) manager.getModel((IFile) fModel
+				.getUnderlyingResource());
+		try {
+			buildSiteModel.load();
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+			return;
+		}
+
+		BuildSiteJob job = new BuildSiteJob(fCategoryViewer.getTree().getDisplay(), models, buildSiteModel);
 		job.setUser(true);
 		job.schedule();
 	}
 
 	/**
+	 * Finds a feature with the same id and version as a site feature. If
+	 * feature is not found, but feature with a M.m.m.qualifier exists it will
+	 * be returned.
 	 * 
 	 * @param siteFeature
-	 * @return IFeatureModel or null
+	 * @return IFeature or null
 	 */
-	private IFeature getFeature(ISiteFeature siteFeature) {
-		IFeatureModel model = PDECore
-				.getDefault()
-				.getFeatureModelManager()
-				.findFeatureModel(siteFeature.getId(), siteFeature.getVersion());
+	public static IFeature findFeature(ISiteFeature siteFeature) {
+		IFeatureModel model = PDECore.getDefault().getFeatureModelManager()
+				.findFeatureModelRelaxed(siteFeature.getId(),
+						siteFeature.getVersion());
 		if (model != null)
 			return model.getFeature();
 		return null;
@@ -697,7 +715,7 @@ public class CategorySection extends TreeSection implements
 		ArrayList list = new ArrayList();
 		for (int i = 0; i < sFeatures.length; i++) {
 			IFeatureModel model = PDECore.getDefault().getFeatureModelManager()
-					.findFeatureModel(sFeatures[i].getId(),
+					.findFeatureModelRelaxed(sFeatures[i].getId(),
 							sFeatures[i].getVersion());
 			if (model != null && model.getUnderlyingResource() != null)
 				list.add(model);
@@ -841,6 +859,23 @@ public class CategorySection extends TreeSection implements
 		}
 	}
 
+	private void ensureContentSaved() {
+		if (getPage().getEditor().isDirty()) {
+			try {
+				IRunnableWithProgress op = new IRunnableWithProgress() {
+					public void run(IProgressMonitor monitor) {
+						getPage().getEditor().doSave(monitor);
+					}
+				};
+				PlatformUI.getWorkbench().getProgressService().runInUI(
+						PDEPlugin.getActiveWorkbenchWindow(), op,
+						PDEPlugin.getWorkspace().getRoot());
+			} catch (InvocationTargetException e) {
+				PDEPlugin.logException(e);
+			} catch (InterruptedException e) {
+			}
+		}
+	}
 	void fireSelection() {
 		fCategoryViewer.setSelection(fCategoryViewer.getSelection());
 	}
