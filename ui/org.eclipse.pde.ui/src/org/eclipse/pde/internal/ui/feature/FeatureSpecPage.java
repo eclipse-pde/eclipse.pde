@@ -10,18 +10,18 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.feature;
 
+import java.util.*;
+
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.wizard.*;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.swt.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
-import org.eclipse.ui.help.WorkbenchHelp;
-
-import java.util.StringTokenizer;
+import org.eclipse.ui.dialogs.*;
+import org.eclipse.ui.help.*;
 
 public class FeatureSpecPage extends WizardPage {
 	public static final String PAGE_TITLE = "NewFeatureWizard.SpecPage.title";
@@ -38,6 +38,7 @@ public class FeatureSpecPage extends WizardPage {
 	private Text nameText;
 	private Text versionText;
 	private Text providerText;
+	private boolean isInitialized = false;
 
 protected FeatureSpecPage(WizardNewProjectCreationPage mainPage) {
 	super("specPage");
@@ -94,6 +95,8 @@ public void createControl(Composite parent) {
 }
 
 private void initialize() {
+	if (isInitialized)
+		return;
 	String projectName = mainPage.getProjectName();
 	idText.setText(setInitialId(projectName));
 	nameText.setText(projectName);
@@ -119,12 +122,13 @@ public void setVisible(boolean visible) {
 	super.setVisible(visible);
 	if (visible) {
 		initialize();
+		isInitialized=true;
 		idText.setFocus();
 	}
 }
 
-public boolean finish() {
-	return true;
+public boolean canFinish() {
+	return false;
 }
 public FeatureData getFeatureData() {
 	FeatureData data = new FeatureData();
