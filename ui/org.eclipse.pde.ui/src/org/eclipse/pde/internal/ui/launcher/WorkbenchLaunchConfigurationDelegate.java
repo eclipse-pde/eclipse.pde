@@ -130,6 +130,10 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 			IPath installPath = PDEPlugin.getWorkspace().getRoot().getLocation();
 			programArgs.add("-install"); //$NON-NLS-1$
 			programArgs.add("file:" + installPath.removeLastSegments(1).addTrailingSeparator().toString()); //$NON-NLS-1$
+			if (isOSGI && !configuration.getAttribute(CONFIG_USE_DEFAULT_AREA, true)) {
+				programArgs.add("-configuration"); //$NON-NLS-1$
+				programArgs.add("file:" + new Path(getConfigDir(configuration).getPath()).addTrailingSeparator().toString()); //$NON-NLS-1$
+			}
 			programArgs.add("-update"); //$NON-NLS-1$
 		} else {
 			TreeMap pluginMap = LauncherUtils.getPluginsToRun(configuration);
