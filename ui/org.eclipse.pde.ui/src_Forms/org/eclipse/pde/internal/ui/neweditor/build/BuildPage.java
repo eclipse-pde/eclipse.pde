@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.ui.neweditor.build;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
-import org.eclipse.pde.internal.build.IXMLConstants;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.neweditor.PDEFormPage;
 import org.eclipse.pde.internal.ui.neweditor.context.InputContext;

@@ -11,42 +11,27 @@
 package org.eclipse.pde.internal.ui.neweditor.build;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.core.build.*;
-import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
-import org.eclipse.pde.internal.build.IXMLConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.neweditor.*;
-import org.eclipse.pde.internal.ui.neweditor.TableSection;
 import org.eclipse.pde.internal.ui.neweditor.context.InputContext;
 import org.eclipse.pde.internal.ui.newparts.EditableTablePart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.*;
-import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.*;
-import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 import org.eclipse.ui.forms.events.*;
-import org.eclipse.ui.forms.events.ExpansionAdapter;
 import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.model.*;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.views.navigator.ResourceSorter;
 
 public class BuildClasspathSection

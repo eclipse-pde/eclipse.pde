@@ -15,7 +15,6 @@ import org.eclipse.core.resources.*;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
-import org.eclipse.pde.internal.build.IXMLConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.widgets.Composite;
 
