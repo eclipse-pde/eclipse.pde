@@ -157,7 +157,7 @@ public void doSave(IProgressMonitor monitor) {
 			documentProvider.saveDocument(
 				monitor,
 				input,
-				documentProvider.getDocument(input));
+				documentProvider.getDocument(input), true);
 		}
 	};
 

@@ -35,7 +35,7 @@ protected IDocument createDocument(Object element) throws CoreException {
 	}
 	return null;
 }
-protected void doSaveDocument(IProgressMonitor monitor, Object element, IDocument document) throws CoreException {}
+protected void doSaveDocument(IProgressMonitor monitor, Object element, IDocument document, boolean force) throws CoreException {}
 protected void setDocumentContent(IDocument document, File file) {
 	try {
 		InputStream contentStream = new FileInputStream(file);
@@ -55,4 +55,11 @@ protected void setDocumentContent(IDocument document, File file) {
 		PDEPlugin.logException(e);
 	}
 }
+	public long getSynchronizationStamp(Object arg0) {
+		return 0;
+	}
+	public long getModificationStamp(Object arg0) {
+		return 0;
+	}
+
 }
