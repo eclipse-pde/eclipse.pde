@@ -27,6 +27,7 @@ public class ProductFromExtensionOperation extends BaseProductCreationOperation 
 		IProductModelFactory factory = product.getModel().getFactory();
 		initializeProductInfo(factory, product, fId);
 		addPlugins(factory, product, getPlugins());
+		super.initializeProduct(product);
 	}
 	
 	private IPluginModelBase[] getPlugins() {

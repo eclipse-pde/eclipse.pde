@@ -89,6 +89,11 @@ public class Product extends ProductObject implements IProduct {
 			fAboutInfo.write(indent + "   ", writer);
 		}
 		
+		if (fConfigIniInfo != null) {
+			writer.println();
+			fConfigIniInfo.write(indent + "   ", writer);
+		}
+		
 		if (fPlugins.size() > 0) {
 			writer.println();
 			writer.println(indent + "   <plugins>");

@@ -48,6 +48,10 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 	}
 	
 	protected void initializeProduct(IProduct product) {
+		IProductModelFactory factory = product.getModel().getFactory();
+		IConfigurationFileInfo info = factory.createConfigFileInfo();
+		info.setUse("default");
+		product.setConfigurationFileInfo(info);
 	}
 	
 	private Properties getProductProperties(IPluginElement element) {

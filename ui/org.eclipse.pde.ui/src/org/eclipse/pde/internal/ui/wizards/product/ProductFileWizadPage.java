@@ -36,7 +36,7 @@ public class ProductFileWizadPage extends WizardNewFileCreationPage {
 	 */
 	protected void createAdvancedControls(Composite parent) {
 		Group group = new Group(parent, SWT.NONE);
-		group.setText("Initialize the content of the file");
+		group.setText("Initialize the file content");
 		group.setLayout(new GridLayout(2, false));
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		

@@ -1,12 +1,18 @@
 package org.eclipse.pde.internal.ui.wizards.product;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.iproduct.*;
-import org.eclipse.pde.internal.ui.launcher.*;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo;
+import org.eclipse.pde.internal.core.iproduct.IProduct;
+import org.eclipse.pde.internal.core.iproduct.IProductModelFactory;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.launcher.ILauncherSettings;
+import org.eclipse.pde.internal.ui.launcher.LauncherUtils;
 
 
 public class ProductFromConfigOperation extends BaseProductCreationOperation {
@@ -37,6 +43,20 @@ public class ProductFromConfigOperation extends BaseProductCreationOperation {
 				product.setApplication(appName);
 			}
 			addPlugins(factory, product, getSelectedPlugins());
+			if (fLaunchConfiguration.getAttribute(ILauncherSettings.CONFIG_GENERATE_DEFAULT, true)) {
+				super.initializeProduct(product);
+			} else {
+				String path = fLaunchConfiguration.getAttribute(ILauncherSettings.CONFIG_TEMPLATE_LOCATION, "/");
+				IContainer container = PDEPlugin.getWorkspace().getRoot().getContainerForLocation(new Path(path));
+				if (container != null) {
+					IConfigurationFileInfo info = factory.createConfigFileInfo();
+					info.setUse("custom");
+					info.setPath(container.getFullPath().toString());
+					product.setConfigurationFileInfo(info);	
+				} else {
+					super.initializeProduct(product);
+				}
+			}
 		} catch (CoreException e) {
 		}	
 	}
