@@ -92,7 +92,7 @@ public class AntScript {
 	public void printJarTask(String jarFile, String basedir, String manifestAttribute) {
 		printTab();
 		output.print("<jar"); //$NON-NLS-1$
-		printAttribute("jarfile", jarFile, true); //$NON-NLS-1$
+		printAttribute("destfile", jarFile, true); //$NON-NLS-1$
 		printAttribute("basedir", basedir, false); //$NON-NLS-1$
 		printAttribute("manifest", manifestAttribute, false); //$NON-NLS-1$
 		output.println("/>"); //$NON-NLS-1$
@@ -161,7 +161,7 @@ public class AntScript {
 	public void printZipTask(String zipfile, String basedir, boolean filesOnly, boolean update, FileSet[] fileSets) {
 		printTab();
 		output.print("<zip"); //$NON-NLS-1$
-		printAttribute("zipfile", zipfile, true); //$NON-NLS-1$
+		printAttribute("destfile", zipfile, true); //$NON-NLS-1$
 		printAttribute("basedir", basedir, false); //$NON-NLS-1$
 		printAttribute("filesonly", filesOnly ? "true" : "false", true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		printAttribute("whenempty", "skip", true); //$NON-NLS-1$//$NON-NLS-2$
