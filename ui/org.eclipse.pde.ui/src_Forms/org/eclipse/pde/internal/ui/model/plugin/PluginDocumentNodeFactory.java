@@ -161,14 +161,20 @@ public class PluginDocumentNodeFactory implements IPluginModelFactory {
 	 * @see org.eclipse.pde.core.plugin.IExtensionsModelFactory#createElement(org.eclipse.pde.core.plugin.IPluginObject)
 	 */
 	public IPluginElement createElement(IPluginObject parent) {
-		return null;
+		PluginElementNode node = new PluginElementNode();
+		node.setModel(fModel);
+		node.setParentNode((IDocumentNode)parent);
+		return node;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IExtensionsModelFactory#createExtension()
 	 */
 	public IPluginExtension createExtension() {
-		return null;
+		PluginExtensionNode node = new PluginExtensionNode();
+		node.setModel(fModel);
+		node.setXMLTagName("extension");
+		return node;
 	}
 
 	/* (non-Javadoc)

@@ -18,7 +18,6 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.jface.action.*;
-import org.eclipse.pde.internal.core.plugin.PluginElement;
 
 public class NewElementAction extends Action {
 	public static final String UNKNOWN_ELEMENT_TAG = "Generic";
@@ -88,7 +87,7 @@ private void initializeRequiredAttribute(
 	element.setAttribute(attInfo.getName(), value);
 }
 private void initializeRequiredAttributes(IPluginElement element) throws CoreException {
-	ISchemaElement elementInfo = ((PluginElement)element).getElementInfo();
+	ISchemaElement elementInfo = ((IPluginElement)element).getElementInfo();
 	if (elementInfo==null) return;
 	String counterKey = getCounterKey(elementInfo);
 	Integer counter = (Integer)counters.get(counterKey);

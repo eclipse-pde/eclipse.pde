@@ -12,6 +12,7 @@ package org.eclipse.pde.core.plugin;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
+import org.eclipse.pde.internal.core.ischema.*;
 
 /**
  * Classes that implement this interface model the extension
@@ -46,6 +47,17 @@ public interface IPluginExtension extends IPluginParent, IIdentifiable {
 	 * </p>
 	 */
 	String getPoint();
+	/**
+	 * Returns the schema for the extension point that this extension
+	 * is plugged into or <samp>null</samp> if not found.
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
+	 */
+	ISchema getSchema();
 	/**
 	 * Sets the value of the extension point Id
 	 * This method will throw a CoreException if

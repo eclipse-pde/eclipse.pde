@@ -114,18 +114,9 @@ public class PluginObjectNode extends PluginDocumentNode implements IPluginObjec
 		} catch (CoreException e) {
 		}
 		if (fInTheModel)
-			firePropertyChanged(attr, oldValue, value);
+			firePropertyChanged(attr.getEnclosingElement(), attr.getAttributeName(), oldValue, value);
 	}
 		
-	protected void firePropertyChanged(IDocumentAttribute attr,
-			String oldValue, String newValue) {
-		if (fModel.isEditable() && fModel instanceof IModelChangeProvider) {
-			IModelChangeProvider provider = (IModelChangeProvider) fModel;
-			provider.fireModelObjectChanged(attr, attr.getAttributeName(), oldValue,
-					newValue);
-		}
-	}
-
 	protected void firePropertyChanged(IDocumentNode node, String property,
 			Object oldValue, Object newValue) {
 		if (fModel.isEditable() && fModel instanceof IModelChangeProvider) {

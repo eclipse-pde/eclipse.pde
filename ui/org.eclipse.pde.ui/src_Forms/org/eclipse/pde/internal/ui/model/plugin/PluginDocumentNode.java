@@ -70,6 +70,7 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 			child.setPreviousSibling((IDocumentNode)fChildren.get(position - 1));
 		if (fChildren.size() > 1 && position < fChildren.size() - 1)
 			((IDocumentNode)fChildren.get(position + 1)).setPreviousSibling(child);
+		child.setParentNode(this);
 	}
 	
 	/* (non-Javadoc)

@@ -2,6 +2,9 @@ package org.eclipse.pde.internal.ui.model.plugin;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.internal.core.schema.*;
 import org.eclipse.pde.internal.ui.model.*;
 
 /**
@@ -11,6 +14,8 @@ import org.eclipse.pde.internal.ui.model.*;
 public class PluginExtensionNode extends PluginParentNode
 		implements
 			IPluginExtension {
+	private transient ISchema fSchema;
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginExtension#getPoint()
 	 */
@@ -48,9 +53,9 @@ public class PluginExtensionNode extends PluginParentNode
 		IDocumentNode[] children = getChildNodes();
 		for (int i = 0; i < children.length; i++) {
 			children[i].setLineIndent(getLineIndent() + 3);
-			children[i].write(true);
+			buffer.append(children[i].write(true) + sep);
 		}
-		buffer.append(getIndent() + "</extension>" + sep);
+		buffer.append(getIndent() + "</extension>");
 		return buffer.toString();
 	}
 	
@@ -74,5 +79,18 @@ public class PluginExtensionNode extends PluginParentNode
 			buffer.append("/");
 		buffer.append(">" + sep);
 		return buffer.toString();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.plugin.IPluginExtension#getSchema()
+	 */
+	public ISchema getSchema() {
+		if (fSchema == null) {
+			SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
+			fSchema = registry.getSchema(getPoint());
+		} else if (fSchema.isDisposed()) {
+			fSchema = null;
+		}
+		return fSchema;
 	}
 }

@@ -35,24 +35,32 @@ public abstract class XMLInputContext extends UTF8InputContext {
 	 */
 	protected void addTextEditOperation(ArrayList ops, IModelChangedEvent event) {
 		Object[] objects = event.getChangedObjects();
-		if (objects != null ) {
+		if (objects != null) {
 			for (int i = 0; i < objects.length; i++) {
 				Object object = objects[i];
 				switch (event.getChangeType()) {
-					case IModelChangedEvent.REMOVE:
+					case IModelChangedEvent.REMOVE :
 						if (object instanceof IDocumentNode)
-							removeNode((IDocumentNode)object, ops);
+							removeNode((IDocumentNode) object, ops);
 						break;
-					case IModelChangedEvent.INSERT:
+					case IModelChangedEvent.INSERT :
 						if (object instanceof IDocumentNode)
-							insertNode((IDocumentNode)object, ops);
+							insertNode((IDocumentNode) object, ops);
 						break;
-					case IModelChangedEvent.CHANGE:
-						if (object instanceof IDocumentAttribute)
-							addAttributeOperation((IDocumentAttribute)object, ops, event);
-						else if (object instanceof IDocumentNode)
-							modifyNode((IDocumentNode)object, ops, event);
-				}		
+					case IModelChangedEvent.CHANGE :
+						if (object instanceof IDocumentNode) {
+							IDocumentNode node = (IDocumentNode) object;
+							IDocumentAttribute attr = node.getDocumentAttribute(event.getChangedProperty());
+							if (attr != null) {
+								addAttributeOperation(attr, ops, event);
+							} else {
+								// swapping of nodes
+								modifyNode(node, ops, event);
+							}
+						}
+					default:
+						break;
+				}
 			}
 		}
 	}

@@ -2,6 +2,7 @@ package org.eclipse.pde.internal.ui.model.plugin;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.ui.model.*;
 
 /**
@@ -12,6 +13,7 @@ public class PluginElementNode extends PluginParentNode
 		implements
 			IPluginElement {
 	private String fText;
+	private transient ISchemaElement elementInfo;
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginElement#createCopy()
 	 */
@@ -105,6 +107,35 @@ public class PluginElementNode extends PluginParentNode
 	 */
 	public String getName() {
 		return getXMLTagName();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.plugin.IPluginObject#setName(java.lang.String)
+	 */
+	public void setName(String name) throws CoreException {
+		setXMLTagName(name);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.plugin.IPluginElement#getElementInfo()
+	 */
+	public ISchemaElement getElementInfo() {
+		if (elementInfo == null) {
+			IDocumentNode node = getParentNode();
+			for (;;) {
+				if (node == null || node instanceof IPluginExtension)
+					break;
+				node = node.getParentNode();
+			}
+			if (node != null) {
+				IPluginExtension extension = (IPluginExtension) node;
+				ISchema schema = extension.getSchema();
+				if (schema != null) {
+					elementInfo = schema.findElement(getName());
+				}
+			}
+		}
+		return elementInfo;
 	}
 	
 }

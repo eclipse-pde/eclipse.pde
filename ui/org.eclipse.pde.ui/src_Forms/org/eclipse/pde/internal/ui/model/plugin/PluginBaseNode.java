@@ -24,7 +24,6 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 		if (library instanceof IDocumentNode) {
 			library.setInTheModel(true);
 			IDocumentNode node = (IDocumentNode)library;
-			node.setParentNode(parent);
 			parent.addChildNode(node);
 			library.setInTheModel(true);
 			fireStructureChanged(library, IModelChangedEvent.INSERT);
@@ -38,7 +37,6 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 		if (pluginImport instanceof IDocumentNode) {
 			pluginImport.setInTheModel(true);
 			IDocumentNode node = (IDocumentNode)pluginImport;
-			node.setParentNode(parent);
 			parent.addChildNode(node);
 			fireStructureChanged(pluginImport, IModelChangedEvent.INSERT);
 		}
@@ -179,6 +177,9 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	 * @see org.eclipse.pde.core.plugin.IExtensions#add(org.eclipse.pde.core.plugin.IPluginExtension)
 	 */
 	public void add(IPluginExtension extension) throws CoreException {
+		extension.setInTheModel(true);
+		addChildNode((IDocumentNode)extension);
+		fireStructureChanged(extension, IModelChangedEvent.INSERT);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IExtensions#add(org.eclipse.pde.core.plugin.IPluginExtensionPoint)
@@ -240,6 +241,11 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	 * @see org.eclipse.pde.core.plugin.IExtensions#remove(org.eclipse.pde.core.plugin.IPluginExtension)
 	 */
 	public void remove(IPluginExtension extension) throws CoreException {
+		if (extension instanceof IDocumentNode) {
+			removeChildNode((IDocumentNode)extension);
+			extension.setInTheModel(false);
+			fireStructureChanged(extension, IModelChangedEvent.REMOVE);
+		}
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IExtensions#remove(org.eclipse.pde.core.plugin.IPluginExtensionPoint)
@@ -257,6 +263,8 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	 */
 	public void swap(IPluginExtension e1, IPluginExtension e2)
 			throws CoreException {
+		swap((IDocumentNode)e1, (IDocumentNode)e2);
+		firePropertyChanged(this, P_EXTENSION_ORDER, e1, e2);
 	}
 	
 	/* (non-Javadoc)
