@@ -21,7 +21,7 @@ import org.eclipse.update.ui.forms.internal.*;
 public class GrammarSection extends PDEFormSection {
 	private FormWidgetFactory factory;
 	private TreeViewer treeViewer;
-	private Label dtdLabel;
+	private Text dtdLabel;
 	public static final String SECTION_TITLE = "SchemaEditor.GrammarSection.title";
 	public static final String SECTION_COMPOSITOR =
 		"SchemaEditor.GrammarSection.compositor";
@@ -88,6 +88,8 @@ public class GrammarSection extends PDEFormSection {
 		this.factory = factory;
 		Composite container = factory.createComposite(parent);
 		GridLayout layout = new GridLayout();
+		layout.marginWidth = layout.marginHeight = 2;
+		layout.verticalSpacing = 1;
 		container.setLayout(layout);
 
 		Control tree = createTree(container);
@@ -99,7 +101,9 @@ public class GrammarSection extends PDEFormSection {
 		 */
 		tree.setLayoutData(gd);
 
-		dtdLabel = factory.createLabel(container, "", SWT.WRAP);
+		dtdLabel = factory.createText(container, "", SWT.WRAP|SWT.V_SCROLL|SWT.MULTI);
+		dtdLabel.setData(FormWidgetFactory.KEY_DRAW_BORDER, "treeBorder");
+		dtdLabel.setEditable(false);
 		dtdLabel.setForeground(factory.getColor(FormWidgetFactory.DEFAULT_HEADER_COLOR));
 		gd = new GridData(GridData.FILL_BOTH);
 		dtdLabel.setLayoutData(gd);

@@ -85,6 +85,7 @@ public class DescriptionSection extends PDEFormSection {
 		Composite container = factory.createComposite(parent);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
+		layout.marginWidth = 2;
 		container.setLayout(layout);
 		GridData gd;
 		int styles =
