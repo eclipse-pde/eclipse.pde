@@ -36,6 +36,8 @@ public class WorkbenchLaunchConfigurationDelegate
 		"WorkbenchLauncherConfigurationDelegate.starting";
 	private static final String KEY_NO_BOOT =
 		"WorkbenchLauncherConfigurationDelegate.noBoot";
+	private static final String KEY_NO_STARTUP = 
+		"WorkbenchLauncherConfigurationDelegate.noStartup";
 	private static final String KEY_BROKEN_PLUGINS =
 		"WorkbenchLauncherConfigurationDelegate.brokenPlugins";
 	private static final String KEY_PROBLEMS_DELETING =
@@ -328,12 +330,21 @@ public class WorkbenchLaunchConfigurationDelegate
 		}
 		monitor.beginTask(PDEPlugin.getResourceString(KEY_STARTING), 3);
 		try {
+			String bootPath = getBootPath(plugins);			
+			if (bootPath == null) {
+				String message = PDEPlugin.getResourceString(KEY_NO_BOOT);
+				monitor.setCanceled(true);
+				throw new CoreException(createErrorStatus(message));
+			}
+			
 			String[] vmArgs = args.getVMArgumentsArray();
 			String[] progArgs = args.getProgramArgumentsArray();
 
 			boolean appSpecified = appname != null && appname.length() > 0;
 
 			int exCount = 6;
+			if (bootPath.startsWith("file:"))
+				exCount += 2;
 			if (appSpecified)
 				exCount += 2;
 			if (tracing)
@@ -343,9 +354,15 @@ public class WorkbenchLaunchConfigurationDelegate
 			if (useFeatures)
 				exCount += 1;
 
-			String[] fullProgArgs = new String[progArgs.length + exCount];
-			int i = 0;
 
+			String[] fullProgArgs = new String[progArgs.length + exCount];
+			
+			int i = 0;
+			if (bootPath.startsWith("file:")) {
+				fullProgArgs[i++] = "-boot";
+				fullProgArgs[i++] = bootPath;
+			}
+			
 			if (appSpecified) {
 				fullProgArgs[i++] = "-application";
 				fullProgArgs[i++] = appname;
@@ -380,6 +397,7 @@ public class WorkbenchLaunchConfigurationDelegate
 				fullProgArgs[i++] = "-debug";
 				fullProgArgs[i++] = getTracingFileArgument(config);
 			}
+			
 			System.arraycopy(
 				progArgs,
 				0,
@@ -387,9 +405,9 @@ public class WorkbenchLaunchConfigurationDelegate
 				exCount,
 				progArgs.length);
 
-			String[] classpath = constructClasspath(plugins);
+			String classpath = constructClasspath(plugins);
 			if (classpath == null) {
-				String message = PDEPlugin.getResourceString(KEY_NO_BOOT);
+				String message = PDEPlugin.getResourceString(KEY_NO_STARTUP);
 				monitor.setCanceled(true);
 				throw new CoreException(createErrorStatus(message));
 			}
@@ -397,7 +415,7 @@ public class WorkbenchLaunchConfigurationDelegate
 			VMRunnerConfiguration runnerConfig =
 				new VMRunnerConfiguration(
 					"org.eclipse.core.launcher.Main",
-					classpath);
+					new String[]{classpath});
 			runnerConfig.setVMArguments(vmArgs);
 			runnerConfig.setProgramArguments(fullProgArgs);
 
@@ -576,65 +594,53 @@ public class WorkbenchLaunchConfigurationDelegate
 	 * Constructs a classpath with the slimlauncher and the boot plugin (org.eclipse.core.boot)
 	 * If the boot project is in the workspace, the classpath used in the workspace is used.
 	 */
-	private String[] constructClasspath(IPluginModelBase[] plugins)
+	private String constructClasspath(IPluginModelBase[] plugins)
 		throws CoreException {
-		/*
-		File slimLauncher =
-			PDEPlugin.getFileInPlugin(new Path("launcher/slimlauncher.jar"));
-		*/
-		IPath eclipsePath = ExternalModelManager.getEclipseHome(null);
-		File slimLauncher = eclipsePath.append("startup.jar").toFile();
-
-		if (slimLauncher == null || !slimLauncher.exists()) {
+			
+		File startupJar = ExternalModelManager.getEclipseHome(null).append("startup.jar").toFile();
+	
+		if (!startupJar.exists()) {
 			PDEPlugin.logErrorMessage(
 				PDEPlugin.getResourceString(KEY_SLIMLAUNCHER));
 			return null;
 		}
-		IPluginModelBase model = findModel("org.eclipse.core.boot", plugins);
-		if (model != null) {
-			IResource resource = model.getUnderlyingResource();
+		return startupJar.getAbsolutePath();
+		}
+
+		
+		
+	private String getBootPath(IPluginModelBase[] models) {
+		IPluginModelBase bootModel = findModel("org.eclipse.core.boot", models);
+		if (bootModel == null)
+			return null;
+		try {
+			IResource resource = bootModel.getUnderlyingResource();
 			if (resource != null) {
-				// in workspace - use the java project
 				IProject project = resource.getProject();
-				IJavaProject jproject = JavaCore.create(project);
-				String[] bootClassPath =
-					JavaRuntime.computeDefaultRuntimeClassPath(jproject);
-				if (bootClassPath != null) {
-					String[] resClassPath =
-						new String[bootClassPath.length + 1];
-					resClassPath[0] = slimLauncher.getPath();
-					System.arraycopy(
-						bootClassPath,
-						0,
-						resClassPath,
-						1,
-						bootClassPath.length);
-					return resClassPath;
+				if (project.hasNature(JavaCore.NATURE_ID)) {
+					IPath path = JavaCore.create(project).getOutputLocation();
+					if (path.toFile().exists()) {
+						return path.toOSString();
+					}
+					resource = project.findMember("boot.jar");
+					if (resource != null)
+						return "file:" + resource.getFullPath().toOSString();
 				}
 			} else {
-				// outside - locate boot.jar
-				String installLocation = model.getInstallLocation();
-				if (installLocation.startsWith("file:"))
-					installLocation = installLocation.substring(5);
-				File bootJar = new File(installLocation, "boot.jar");
-				if (bootJar.exists()) {
-					return new String[] {
-						slimLauncher.getPath(),
-						bootJar.getPath()};
-				}
-				// Check PDE case (third instance) - it may be in the bin
-				File binDir = new File(installLocation, "bin/");
-				if (binDir.exists()) {
-					return new String[] {
-						slimLauncher.getPath(),
-						binDir.getPath()};
-				}
+				File binDir = new File(bootModel.getInstallLocation(), "bin/");
+				if (binDir.exists())
+					return binDir.getAbsolutePath();
+					
+				File bootJar = new File(bootModel.getInstallLocation(), "boot.jar");
+				if (bootJar.exists())
+					return "file:" + bootJar.getAbsolutePath();
+				
 			}
+		} catch (CoreException e) {
 		}
-		// failed to construct the class path: boot plugin not existing or boot.jar not found
+
 		return null;
 	}
-
 	private IPluginModelBase findModel(String id, IPluginModelBase[] models) {
 		if (models == null)
 			models =
