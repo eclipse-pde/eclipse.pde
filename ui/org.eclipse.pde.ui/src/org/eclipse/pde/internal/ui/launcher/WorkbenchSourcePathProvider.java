@@ -74,10 +74,7 @@ public class WorkbenchSourcePathProvider extends StandardSourcePathProvider {
 		boolean useFeatures = configuration.getAttribute(ILauncherSettings.USEFEATURES, false);		
 		boolean useDefault = configuration.getAttribute(ILauncherSettings.USECUSTOM, true);
 		
-		IPluginModelBase[] plugins =
-			useFeatures
-				? null
-				: WorkbenchLaunchConfigurationDelegate.getWorkspacePluginsToRun(configuration, useDefault);		
+		IPluginModelBase[] plugins = WorkbenchLaunchConfigurationDelegate.getWorkspacePluginsToRun(configuration, (useDefault || useFeatures));		
 		
 		if (plugins != null) {
 			IProject[] projects = getJavaProjects(plugins);
