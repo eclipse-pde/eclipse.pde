@@ -302,11 +302,13 @@ public class ExportSection extends TableSection
 		IBundle bundle = model.getBundle();
 		if (bundle == null)
 			return new String[0];
-		String value = bundle.getHeader(ICoreConstants.PROVIDE_PACKAGE);
+
+		String header = getExportedPackageHeader();
+		String value = bundle.getHeader(header);
 		if (value == null)
 			return new String[0];
 		try {
-			ManifestElement [] result = ManifestElement.parseHeader(ICoreConstants.PROVIDE_PACKAGE, value);
+			ManifestElement [] result = ManifestElement.parseHeader(header, value);
 			String [] names = new String[result.length];
 			for (int i=0; i<result.length; i++) {
 				names[i] = result[i].getValue();
@@ -316,6 +318,17 @@ public class ExportSection extends TableSection
 		}
 		return new String[0];				
 	}
+	
+	private String getExportedPackageHeader() {
+		IBundleModel model = getBundleModel();
+		IBundle bundle = model.getBundle();
+		if (bundle == null)
+			return null;
+		if (bundle.getHeader(Constants.BUNDLE_MANIFESTVERSION) == null)
+			return ICoreConstants.PROVIDE_PACKAGE;
+		return Constants.EXPORT_PACKAGE;
+	}
+	
 	private void addProvidedPackages(Object [] names) {
 		String [] current = getProvidedPackages();
 		Object [] newNames;
@@ -370,7 +383,7 @@ public class ExportSection extends TableSection
 		IBundleModel model = getBundleModel();
 		IBundle bundle = model.getBundle();
 		if (bundle == null) return;
-		bundle.setHeader(ICoreConstants.PROVIDE_PACKAGE, buf.toString());
+		bundle.setHeader(getExportedPackageHeader(), buf.toString());
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.context.IInputContextListener#contextAdded(org.eclipse.pde.internal.ui.editor.context.InputContext)
