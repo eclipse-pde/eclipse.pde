@@ -405,6 +405,8 @@ public class WorkbenchLaunchConfigurationDelegate
 				if (id == null)
 					continue;
 				for (int j = 0; j < wsmodels.length; j++) {
+					if (wsmodels[j].getPluginBase().getId() == null)
+						continue;
 					if (isDuplicate(wsmodels[j], exmodels[i])) {
 						duplicates.add(id);
 						duplicate = true;
