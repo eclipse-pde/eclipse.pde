@@ -211,19 +211,12 @@ public class LauncherSection extends PDESection {
 	}
 	
 	private Composite createComposite(Composite parent, FormToolkit toolkit, String text) {
-		ExpandableComposite ec = toolkit.createExpandableComposite(parent, ExpandableComposite.TWISTIE|ExpandableComposite.COMPACT);
+		ExpandableComposite ec = toolkit.createSection(parent, ExpandableComposite.TWISTIE|ExpandableComposite.COMPACT);
 		ec.setText(text);
-		ec.setToggleColor(toolkit.getColors().getColor(FormColors.TB_TOGGLE));
-		ec.setActiveToggleColor(toolkit.getHyperlinkGroup().getActiveForeground());
 		
 		TableWrapData gd = new TableWrapData(TableWrapData.FILL_GRAB);
 		gd.colspan = 2;
 		ec.setLayoutData(gd);
-		ec.addExpansionListener(new ExpansionAdapter() {
-			public void expansionStateChanged(ExpansionEvent e) {
-				getPage().getManagedForm().reflow(true);
-			}
-		});	
 		Composite comp = toolkit.createComposite(ec);
 		comp.setLayout(new GridLayout(3, false));
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
