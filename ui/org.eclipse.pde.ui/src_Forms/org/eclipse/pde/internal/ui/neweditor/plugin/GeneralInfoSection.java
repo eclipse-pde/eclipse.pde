@@ -26,6 +26,7 @@ import org.eclipse.pde.internal.ui.neweditor.*;
 import org.eclipse.pde.internal.ui.neweditor.manifest.JavaAttributeWizard;
 import org.eclipse.pde.internal.ui.newparts.*;
 import org.eclipse.pde.internal.ui.util.*;
+import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
@@ -47,7 +48,7 @@ public class GeneralInfoSection extends PDESection {
 	private FormEntry fNameEntry;
 	private FormEntry fProviderEntry;
 	private FormEntry fClassEntry;
-	private FormEntry fPluginIdEntry;
+	private Text fPluginIdText;
 	private FormEntry fPluginVersionEntry;
 	private ComboPart fMatchCombo;
 	/**
@@ -68,17 +69,27 @@ public class GeneralInfoSection extends PDESection {
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText(PDEPlugin
 				.getResourceString("ManifestEditor.PluginSpecSection.title"));
+		TableWrapData td = new TableWrapData(TableWrapData.FILL,
+				TableWrapData.TOP);
+		td.grabHorizontal = true;
+		section.setLayoutData(td);
 		if (isFragment())
-			section.setDescription(PDEPlugin
-					.getResourceString("ManifestEditor.PluginSpecSection.fdesc"));
-		else 
-			section.setDescription(PDEPlugin
-					.getResourceString("ManifestEditor.PluginSpecSection.desc"));
+			section
+					.setDescription(PDEPlugin
+							.getResourceString("ManifestEditor.PluginSpecSection.fdesc"));
+		else
+			section
+					.setDescription(PDEPlugin
+							.getResourceString("ManifestEditor.PluginSpecSection.desc"));
 		Composite client = toolkit.createComposite(section);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = toolkit.getBorderStyle() != SWT.NULL ? 0 : 2;
-		layout.numColumns = 3;
+		if (isFragment())
+			layout.numColumns = 2;
+		else
+			layout.numColumns = 3;
 		client.setLayout(layout);
+		
 		section.setClient(client);
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite()
 				.getActionBars();
@@ -212,8 +223,8 @@ public class GeneralInfoSection extends PDESection {
 		while (value.length() > 0 && !Character.isLetter(value.charAt(0)))
 			value = value.substring(1, value.length());
 		int loc = value.indexOf(":");
-		if (loc!=-1 && loc >0)
-			value = value.substring(0,loc);
+		if (loc != -1 && loc > 0)
+			value = value.substring(0, loc);
 		else if (loc == 0)
 			value = "";
 		return value;
@@ -243,24 +254,61 @@ public class GeneralInfoSection extends PDESection {
 		String value = fClassEntry.getValue();
 		return new JavaAttributeValue(project, model, null, value);
 	}
-	private void createPluginIDEntry(Composite client, FormToolkit toolkit,
+	private void createPluginIDEntry(Composite parent, FormToolkit toolkit,
 			IActionBars actionBars) {
-		boolean editable = getPage().getModel().isEditable();
-		fPluginIdEntry = new FormEntry(client, toolkit, "Plug-in Id:", null,
-				editable);
-		fPluginIdEntry.setFormEntryListener(new FormEntryAdapter(this,
-				actionBars) {
-			public void textValueChanged(FormEntry entry) {
-				try {
-					((IFragment) getPluginBase()).setPluginId(entry.getValue());
-				} catch (CoreException e) {
-					PDEPlugin.logException(e);
-				}
-			}
+
+		Hyperlink link = toolkit.createHyperlink(parent, "Plug-in Id:",
+				SWT.NULL);
+		link.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 			}
 		});
-		fPluginIdEntry.setEditable(isEditable());
+		Composite client = toolkit.createComposite(parent);
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = layout.marginHeight = 0;
+		layout.makeColumnsEqualWidth = false;
+		layout.numColumns = 2;
+		client.setLayout(layout);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 1;
+		client.setLayoutData(gd);
+		fPluginIdText = toolkit.createText(client, "", SWT.SINGLE);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.widthHint = 20;
+		fPluginIdText.setLayoutData(gd);
+
+		fPluginIdText.setEditable(isEditable());
+		fPluginIdText.addModifyListener(new ModifyListener(){
+			public void modifyText(ModifyEvent e) {
+				try {
+					if (!((IFragment)getPluginBase()).getPluginId().equals(fPluginIdText.getText()))
+						((IFragment)getPluginBase()).setPluginId(fPluginIdText.getText());
+				} catch (CoreException e1) {
+					PDEPlugin.logException(e1);
+				}
+			}
+		});
+		Button button = toolkit.createButton(client, "Browse...", SWT.PUSH);
+		button.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				PluginSelectionDialog dialog = new PluginSelectionDialog(
+						getSection().getShell(), false, false);
+				dialog.create();
+				if (dialog.open() == PluginSelectionDialog.OK) {
+					try {
+					IPluginModel model = (IPluginModel) dialog.getFirstResult();
+					IPlugin plugin = model.getPlugin();
+					fPluginIdText.setText(plugin.getId());
+					((IFragment)getPluginBase()).setPluginId(plugin.getId());
+					fPluginVersionEntry.setValue(plugin.getVersion(), true);
+					((IFragment)getPluginBase()).setPluginVersion(plugin.getVersion());
+					} catch (CoreException e1){
+						PDEPlugin.logException(e1);
+					}
+				}
+			}
+		});
+		button.setEnabled(isEditable());
 	}
 	private void createPluginVersionEntry(Composite client,
 			FormToolkit toolkit, IActionBars actionBars) {
@@ -270,8 +318,7 @@ public class GeneralInfoSection extends PDESection {
 				actionBars) {
 			public void textValueChanged(FormEntry entry) {
 				try {
-					((IFragment) getPluginBase()).setPluginVersion(entry
-							.getValue());
+					((IFragment) getPluginBase()).setPluginVersion(entry.getValue());
 				} catch (CoreException e) {
 					PDEPlugin.logException(e);
 				}
@@ -284,9 +331,10 @@ public class GeneralInfoSection extends PDESection {
 		toolkit.createLabel(client, PDEPlugin.getResourceString(KEY_MATCH));
 		fMatchCombo = new ComboPart();
 		fMatchCombo.createControl(client, toolkit, SWT.READ_ONLY);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
+		
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.widthHint = 20;
+		gd.grabExcessHorizontalSpace = true;
 		fMatchCombo.getControl().setLayoutData(gd);
 		String[] items = new String[]{"",
 				PDEPlugin.getResourceString(KEY_MATCH_EQUIVALENT),
@@ -306,17 +354,11 @@ public class GeneralInfoSection extends PDESection {
 		});
 		fMatchCombo.getControl().setEnabled(isEditable());
 	}
-	private boolean isFragment() {
-		IPluginModelBase model = (IPluginModelBase) getPage().getPDEEditor()
-				.getContextManager().getAggregateModel();
-		return model.isFragmentModel();
-	}
 	public void commit(boolean onSave) {
 		fIdEntry.commit();
 		fNameEntry.commit();
 		fProviderEntry.commit();
 		if (isFragment()) {
-			fPluginIdEntry.commit();
 			fPluginVersionEntry.commit();
 		} else {
 			fClassEntry.commit();
@@ -333,7 +375,7 @@ public class GeneralInfoSection extends PDESection {
 		fProviderEntry.setValue(pluginBase.getProviderName(), true);
 		if (isFragment()) {
 			IFragment fragment = (IFragment) pluginBase;
-			fPluginIdEntry.setValue(fragment.getPluginId(), true);
+			fPluginIdText.setText(fragment.getPluginId());
 			fPluginVersionEntry.setValue(fragment.getPluginVersion(), true);
 			fMatchCombo.select(fragment.getRule());
 		} else {
@@ -354,15 +396,15 @@ public class GeneralInfoSection extends PDESection {
 		IProject project = getPage().getPDEEditor().getCommonProject();
 		String path = name.replace('.', '/') + ".java";
 		try {
-			if (project.hasNature(JavaCore.NATURE_ID)){
+			if (project.hasNature(JavaCore.NATURE_ID)) {
 				IJavaProject javaProject = JavaCore.create(project);
 				IJavaElement result = javaProject.findElement(new Path(path));
 				JavaUI.openInEditor(result);
 			} else {
 				IResource resource = project.findMember(new Path(path));
-				if (resource!=null && resource instanceof IFile){
+				if (resource != null && resource instanceof IFile) {
 					IWorkbenchPage page = PDEPlugin.getActivePage();
-					IDE.openEditor(page, (IFile)resource, true);
+					IDE.openEditor(page, (IFile) resource, true);
 				}
 			}
 		} catch (PartInitException e) {
@@ -370,7 +412,7 @@ public class GeneralInfoSection extends PDESection {
 		} catch (JavaModelException e) {
 			// nothing
 			Display.getCurrent().beep();
-		} catch (CoreException e){
+		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
 	}
@@ -381,7 +423,7 @@ public class GeneralInfoSection extends PDESection {
 					.getUnderlyingResource();
 			IProject project = (resource == null) ? null : resource
 					.getProject();
-			if (project != null){
+			if (project != null) {
 				SelectionDialog dialog = JavaUI.createTypeDialog(shell,
 						new ProgressMonitorDialog(shell),
 						getSearchScope(project),
@@ -415,4 +457,10 @@ public class GeneralInfoSection extends PDESection {
 		return (IPackageFragmentRoot[]) result
 				.toArray(new IPackageFragmentRoot[result.size()]);
 	}
+	private boolean isFragment() {
+		IPluginModelBase model = (IPluginModelBase) getPage().getPDEEditor()
+				.getContextManager().getAggregateModel();
+		return model.isFragmentModel();
+	}
+
 }
