@@ -50,11 +50,11 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 					validateExtension(child);
 				} else if (name.equals("extension-point")) {
 					validateExtensionPoint(child);
-				} else {
+				} /*else {
 					severity = CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_ELEMENT);
 					if (severity != CompilerFlags.IGNORE)
 						reportIllegalElement(child, severity);
-				}
+				}*/
 			}
 		}
 	}
