@@ -11,6 +11,7 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
 import org.eclipse.pde.internal.ui.editor.PDEFormSection;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
@@ -48,6 +49,7 @@ public class URLSection extends PDEFormSection {
 	private TreeViewer urlTree;
 	private Image urlImage;
 	private Image urlFolderImage;
+	private PropertiesAction propertiesAction;
 	private URLFolder[] folders =
 		new URLFolder[] {
 			new URLFolder(IFeatureURLElement.UPDATE),
@@ -157,6 +159,11 @@ public class URLSection extends PDEFormSection {
 				getFormPage().setSelection(e.getSelection());
 			}
 		});
+		urlTree.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				propertiesAction.run();
+			}
+		});
 		MenuManager popupMenuManager = new MenuManager();
 		IMenuListener listener = new IMenuListener() {
 			public void menuAboutToShow(IMenuManager mng) {
@@ -172,6 +179,7 @@ public class URLSection extends PDEFormSection {
 		gd.heightHint = 100;
 		tree.setLayoutData(gd);
 		factory.paintBordersFor(container);
+		propertiesAction = new PropertiesAction(getFormPage().getEditor());
 		return container;
 	}
 	public void dispose() {
@@ -234,6 +242,8 @@ public class URLSection extends PDEFormSection {
 		}
 		manager.add(new Separator());
 		getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager);
+		manager.add(new Separator());
+		manager.add(propertiesAction);
 	}
 	private void handleDelete() {
 		Object object =
