@@ -10,28 +10,28 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.templates;
 
-import java.util.ArrayList;
+import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.JavaConventions;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.build.*;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.pde.internal.ui.util.*;
 import org.eclipse.pde.internal.ui.wizards.project.*;
 import org.eclipse.pde.ui.*;
-import org.eclipse.pde.ui.templates.IFieldData;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.pde.ui.templates.*;
+import org.eclipse.swt.*;
+import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.help.*;
 
 public class FirstTemplateWizardPage extends WizardPage implements IFirstWizardPage {
 	public static final String PAGE_ID = "FirstTemplateWizardPage";
@@ -279,6 +279,12 @@ public class FirstTemplateWizardPage extends WizardPage implements IFirstWizardP
 					checkGroup,
 					PDEPlugin.getResourceString(KEY_OPTIONS_WORKSPACE),
 					true);
+			thisCheck.addSelectionListener(new SelectionAdapter(){
+				public void widgetSelected(SelectionEvent e){
+					boolean value = thisCheck.getSelection();
+					bundleCheck.setEnabled(value);
+				}
+			});
 	}
 	
 	public void createControl(Composite parent) {
@@ -465,6 +471,23 @@ public class FirstTemplateWizardPage extends WizardPage implements IFirstWizardP
 		return buf.toString();
 	}
 
+	public IFieldData createFieldData(ITemplateSection[] activeSections){
+		FieldData data = (FieldData)createFieldData();
+		data.setHasPreference(false);
+		// only need to set this value to true if a preference page
+		// will be generated and there is no default instance access
+		if (thisCheck.getSelection())
+			return data;
+		
+		for (int i =0 ; i<activeSections.length; i++){
+			if (activeSections[i].getLabel().equals("Preference Page")){
+				data.setHasPreference(true);
+				continue;
+			}
+		}	
+		return data;
+	}
+	
 	public IFieldData createFieldData() {
 		FieldData data = new FieldData();
 		data.setName(nameField.getText());
@@ -487,7 +510,7 @@ public class FirstTemplateWizardPage extends WizardPage implements IFirstWizardP
 			data.setDoMain(generateMainClass.getSelection());
 			data.setClassName(classField.getText());
 			data.setThisCheck(thisCheck.getSelection());
-			data.setBundleCheck(bundleCheck.getSelection());
+			data.setBundleCheck(bundleCheck.getSelection() && bundleCheck.isEnabled());
 			data.setWorkspaceCheck(workspaceCheck.getSelection());
 		}
 		return data;
@@ -556,6 +579,8 @@ public class FirstTemplateWizardPage extends WizardPage implements IFirstWizardP
 			flags |= PluginClassCodeGenerator.F_WORKSPACE;
 		if (data.isBundleCheck())
 			flags |= PluginClassCodeGenerator.F_BUNDLES;
+		if (data.hasPreference())
+			flags |= PluginClassCodeGenerator.F_PREF;
 		String sourceFolder = structureData.getSourceFolderName();
 		IPath folderPath = project.getFullPath().append(sourceFolder);
 		IFolder folder = project.getWorkspace().getRoot().getFolder(folderPath);

@@ -20,6 +20,9 @@ import org.eclipse.jface.preference.IPreferenceStore;
  * be accessed directly via the preference store.
  */
 
+%Options in the template
+%hasDefault
+
 public class $pageClassName$
 	extends FieldEditorPreferencePage
 	implements IWorkbenchPreferencePage {
@@ -30,7 +33,11 @@ public class $pageClassName$
 
 	public $pageClassName$() {
 		super(GRID);
+%if hasDefault
 		setPreferenceStore($pluginClassName$.getDefault().getPreferenceStore());
+%else
+		setPreferenceStore($pluginClassName$.getDefaultPreferenceStore());
+%endif
 		setDescription("A demonstration of a preference page implementation");
 		initializeDefaults();
 	}

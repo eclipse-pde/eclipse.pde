@@ -10,14 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.templates;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.pde.ui.templates.*;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.ui.IPluginStructureData;
+import org.eclipse.pde.ui.*;
+import org.eclipse.pde.ui.templates.*;
 
 public class PreferencePageTemplate extends PDETemplateSection {
 	private static final String NL_TITLE = "PreferencePageTemplate.title";
@@ -29,7 +27,7 @@ public class PreferencePageTemplate extends PDETemplateSection {
 	private static final String NL_DEFAULT_PAGE_NAME =
 		"PreferencePageTemplate.defaultPageName";
 	private String mainClassName;
-
+	
 	public PreferencePageTemplate() {
 		setPageCount(1);
 		createOptions();
@@ -102,6 +100,14 @@ public class PreferencePageTemplate extends PDETemplateSection {
 		return true;
 	}
 
+	public void addDefaultOption(boolean val){
+		addOption(
+			"hasDefault",
+			null,
+			val,
+			0);
+	}
+	
 	public void addPages(Wizard wizard) {
 		WizardPage page = createPage(0, IHelpContextIds.TEMPLATE_PREFERENCE_PAGE);
 		page.setTitle(PDEPlugin.getResourceString(NL_TITLE));

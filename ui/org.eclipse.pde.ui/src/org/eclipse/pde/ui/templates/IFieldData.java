@@ -79,5 +79,6 @@ public interface IFieldData {
 	public boolean isThisCheck();
 	public boolean isBundleCheck();
 	public boolean isWorkspaceCheck();
+	public boolean hasPreference();
 	
 }

@@ -18,6 +18,7 @@ public class PluginClassCodeGenerator extends JavaCodeGenerator {
 	public static final int F_THIS = 0x1;
 	public static final int F_WORKSPACE = 0x2;
 	public static final int F_BUNDLES = 0x8;
+	public static final int F_PREF = 0x10;
 	private int flags;
 
 public PluginClassCodeGenerator(IFolder sourceFolder, String fullyQualifiedClassName, int flags) {
@@ -37,6 +38,9 @@ public void generateContents(
 	if ((flags & F_WORKSPACE) != 0) {
 		writer.println("import org.eclipse.core.resources.*;");
 	}
+	if ((flags & F_PREF) !=0){
+		writer.println("import org.eclipse.jface.preference.*;");
+	}
 	if ((flags & F_BUNDLES) != 0) {
 		writer.println("import java.util.*;");
 	}
@@ -53,6 +57,10 @@ public void generateContents(
 		writer.println("\t//Resource bundle.");
 		writer.println("\tprivate ResourceBundle resourceBundle;");
 	}
+	if ((flags & F_PREF) != 0){
+		writer.println("\t//Preference store.");
+		writer.println("\tprivate static IPreferenceStore preferenceStore;");
+	}
 	writer.println("\t");
 	writer.println("\t/**");
 	writer.println("\t * The constructor.");
@@ -61,6 +69,9 @@ public void generateContents(
 	writer.println("\t\tsuper(descriptor);");
 	if ((flags & F_THIS) != 0) {
 		writer.println("\t\tplugin = this;");
+	}
+	if ((flags & F_PREF) != 0){
+		writer.println("\t\tpreferenceStore = this.getPreferenceStore();");
 	}
 	if ((flags & F_BUNDLES) != 0) {
 		writer.println("\t\ttry {");
@@ -82,6 +93,15 @@ public void generateContents(
 		writer.println("\t */");
 		writer.println("\tpublic static " + className + " getDefault() {");
 		writer.println("\t\treturn plugin;");
+		writer.println("\t}");
+	}
+	if ((flags & F_PREF) != 0){
+		writer.println();
+		writer.println("\t/**");
+		writer.println("\t * Returns the shared preference store.");
+		writer.println("\t */");
+		writer.println("\tpublic static IPreferenceStore getDefaultPreferenceStore() {");
+		writer.println("\t\treturn preferenceStore;");
 		writer.println("\t}");
 	}
 	if ((flags & F_WORKSPACE) != 0) {

@@ -161,7 +161,14 @@ public abstract class AbstractNewBundleTemplateWizard
 	 */
 	public final boolean performFinish() {
 		activeSections = getTemplateSections();
-		final IFieldData data = firstPage.createFieldData();
+		final IFieldData data = firstPage.createFieldData(activeSections);
+		for (int i =0 ; i<activeSections.length; i++){
+			if (activeSections[i].getLabel().equals("Preference Page")){
+				((PreferencePageTemplate)activeSections[i]).addDefaultOption(data.isThisCheck());
+				continue;
+			}
+		}	
+		
 		IRunnableWithProgress operation = new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor)
 				throws InterruptedException {

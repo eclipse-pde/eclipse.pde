@@ -26,6 +26,7 @@ import org.eclipse.pde.ui.templates.IFieldData;
 		private boolean thisCheck;
 		private boolean bundleCheck;
 		private boolean workspaceCheck;
+		private boolean hasPreference;
 		
 		public boolean isFragment() {
 			return fragment;
@@ -49,7 +50,18 @@ import org.eclipse.pde.ui.templates.IFieldData;
 		public boolean isBundleCheck() {
 			return bundleCheck;
 		}
-
+		/**
+		 * @return Returns the preference page check
+		 */
+		public boolean hasPreference(){
+			return hasPreference;
+		}
+		/**
+		 * @param pref The preference page selection to set.
+		 */
+		public void setHasPreference(boolean pref){
+			hasPreference = pref;
+		}
 		/**
 		 * @param bundleCheck The bundleCheck to set.
 		 */
