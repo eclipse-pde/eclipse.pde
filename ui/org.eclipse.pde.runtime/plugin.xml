@@ -42,6 +42,33 @@
       </view>
    </extension>
    <extension
+         point="org.eclipse.ui.commands">
+      <command
+            name="%ViewCommand.registryBrowser.name"
+            description="%ViewCommand.registryBrowser.description"
+            category="org.eclipse.ui.category.views"
+            id="org.eclipse.pde.runtime.RegistryBrowser">
+      </command>
+      <keyBinding
+            string=""
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.pde.runtime.RegistryBrowser"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
+            name="%ViewCommand.logView.name"
+            description="%ViewCommand.logView.description"
+            category="org.eclipse.ui.category.views"
+            id="org.eclipse.pde.runtime.LogView">
+      </command>
+      <keyBinding
+            string=""
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.pde.runtime.LogView"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+   </extension>
+   <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
             targetID="org.eclipse.ui.resourcePerspective">
