@@ -452,6 +452,10 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 						} else {
 							monitor.worked(1);
 						}
+						
+						// defect 19351
+						if (dest.getFolder("META-INF").exists())
+							dest.getFolder("META-INF").delete(true, monitor);
 						// replace the entry
 						entries[i] =
 							JavaCore.newSourceEntry(dest.getFullPath());
