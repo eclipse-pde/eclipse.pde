@@ -93,10 +93,13 @@ protected void generateMainScript(AntScript script, PluginModel[] plugins, Plugi
 	int tab = 1;
 	script.printTargetDeclaration(tab++, TARGET_MAIN, null, null, null, null);
 	script.printProperty(tab, PROPERTY_TARGET, TARGET_BUILD_JARS);
+	script.printProperty(tab, PROPERTY_INSTALL_LOCATION, "${basedir}/../install");
+	script.println();
 	String target = getPropertyFormat(PROPERTY_TARGET);
 	PluginModel[] models = getCompileOrder(plugins, fragments);
 	for (int i = 0; i < models.length; i++) {
 		String location = getLocation(models[i]);
+		script.printEchoTask(tab, "===========  " + models[i].getId() + "  ===========");
 		script.printAntTask(tab, scriptName, location, target, null, null, null);
 	}
 	script.printEndTag(--tab, TARGET_TARGET);
@@ -245,9 +248,9 @@ protected void generateCleanTarget(AntScript script, PluginModel model) throws C
 	int tab = 1;
 	script.printTargetDeclaration(tab++, TARGET_CLEAN, null, null, null, null);
 	for (int i = 0; i < availableJars.length; i++) {
-		String name = availableJars[i].getName();
+		String name = getJARLocation(availableJars[i].getName());
 		script.printDeleteTask(tab, null, name, null);
-		script.printDeleteTask(tab, getTempJARFolder(name), null, null);
+		script.printDeleteTask(tab, getTempJARFolderLocation(name), null, null);
 	}
 	script.printEndTag(--tab, "target");
 }
@@ -273,16 +276,16 @@ protected void generateJARTarget(AntScript script, PluginModel model, JAR jar) t
 	script.println();
 	String name = jar.getName();
 	script.printTargetDeclaration(tab++, name, null, null, null, null);
-	String destdir = getTempJARFolder(name);
+	String destdir = getTempJARFolderLocation(name);
 	script.printProperty(tab, "destdir", destdir);
-	String destdirprop = getPropertyFormat("destdir");
-	script.printDeleteTask(tab, destdirprop, null, null);
-	script.printMkdirTask(tab, destdirprop);
+	script.printDeleteTask(tab, destdir, null, null);
+	script.printMkdirTask(tab, destdir);
 	script.printComment(tab, "compile the source code");
 	JavacTask javac = new JavacTask();
 	javac.setClasspath(getClasspath(model, jar));
 	javac.setDestdir(destdir);
 	javac.setFailOnError("no");
+	javac.setIncludeAntRuntime("no");
 	String[] sources = jar.getSource();
 	javac.setSrcdir(sources);
 	script.print(tab, javac);
@@ -291,24 +294,30 @@ protected void generateJARTarget(AntScript script, PluginModel model, JAR jar) t
 	for (int i = 0; i < sources.length; i++) {
 		fileSets[i] = new FileSet(sources[i], null, "", null, "**/*.java", null, null);
 	}
-	script.printCopyTask(tab, null, destdirprop, fileSets);
+	script.printCopyTask(tab, null, destdir, fileSets);
 
 // FIXME
 //    <copy todir="${basedir}">
 //      <fileset dir="." includes="*.log" />
 //    </copy>
 
-	script.printJarTask(tab, name, destdir);
-	script.printDeleteTask(tab, destdirprop, null, null);
+	script.printJarTask(tab, getJARLocation(name), destdir);
+	script.printDeleteTask(tab, destdir, null, null);
 	script.printEndTag(--tab, "target");
 }
 
-protected String getTempJARFolder(String jarName) {
+protected String getTempJARFolderLocation(String jarName) {
 	String basedir = getPropertyFormat(PROPERTY_BASEDIR);
 	IPath destination = new Path(basedir);
 	destination = destination.append(jarName + ".bin");
-	String destdir = destination.toString();
-	return destdir;
+	return destination.toString();
+}
+
+protected String getJARLocation(String jarName) {
+	String basedir = getPropertyFormat(PROPERTY_BASEDIR);
+	IPath destination = new Path(basedir);
+	destination = destination.append(jarName);
+	return destination.toString();
 }
 
 protected String getClasspath(PluginModel model, JAR jar) throws CoreException {

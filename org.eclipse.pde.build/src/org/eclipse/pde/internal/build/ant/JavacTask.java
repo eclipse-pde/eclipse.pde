@@ -20,6 +20,7 @@ public class JavacTask implements ITask {
 	protected String failonerror;
 	protected String[] srcdir;
 	protected String verbose;
+	protected String includeAntRuntime;
 
 public JavacTask() {
 }
@@ -30,6 +31,7 @@ public void print(AntScript script, int tab) {
 	script.printAttribute("destdir", destdir, false);
 	script.printAttribute("failonerror", failonerror, false);
 	script.printAttribute("verbose", verbose, false);
+	script.printAttribute("includeAntRuntime", includeAntRuntime, false);
 	script.printAttribute("classpath", classpath, false);
 	script.println(">");
 	tab++;
@@ -52,6 +54,10 @@ public void setDestdir(String destdir) {
 
 public void setFailOnError(String failonerror) {
 	this.failonerror = failonerror;
+}
+
+public void setIncludeAntRuntime(String include) {
+	this.includeAntRuntime = include;
 }
 
 public void setSrcdir(String[] srcdir) {
