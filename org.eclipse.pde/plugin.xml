@@ -127,62 +127,16 @@
             value="true">
       </persistent>
    </extension>
+   
    <extension
          point="org.eclipse.ui.intro.configExtension">
       <configExtension
-            configId="org.eclipse.platform.introConfig">
-<!-- Extension to the SDK Overview Page. -->
-         <extensionContent
-               alt-style="css/swt.properties"
-               style="css/overview.css"
-               path="overview/overview-links">
-            <link
-                  label="%intro.pde.label"
-                  url="http://org.eclipse.ui.intro/showHelpTopic?id=/org.eclipse.pde.doc.user/guide/pde.htm"
-                  id="pde">
-               <text>
-                  %intro.pde.text
-               </text>
-            </link>
-         </extensionContent>
-      </configExtension>
-<!-- Extension to the SDK Tutorial Page. -->
+            configId="org.eclipse.platform.introConfig" 
+            content="overviewExtensionContent.xml"/>  
+      
       <configExtension
-            configId="org.eclipse.platform.introConfig">
-         <extensionContent
-               alt-style="css/swt.properties"
-               style="css/tutorials.css"
-               path="tutorials">
-            <div
-                  label="%intro.div.pde.label"
-                  id="pde">
-               <link
-                     url="http://org.eclipse.ui.intro/showMessage?message=Action not implemented."
-                     label="%intro.rcp.label"
-                     id="rcp">
-                  <text>
-                     %intro.rcp.text
-                  </text>
-               </link>
-               <link
-                     url="http://org.eclipse.ui.intro/showStandby?partId=org.eclipse.ui.cheatsheets.standbyPart&amp;input=org.eclipse.pde.pde_1"
-                     label="%intro.hello.label"
-                     id="pde-hello-world">
-                  <text>
-                     %intro.hello.text
-                  </text>
-               </link>
-               <link
-                     url="http://org.eclipse.ui.intro/showMessage?message=Action not implemented."
-                     label="%intro.feature.label"
-                     id="features">
-                  <text>
-                     %intro.feature.text
-                  </text>
-               </link>
-            </div>
-         </extensionContent>
-      </configExtension>
+            configId="org.eclipse.platform.introConfig"
+            content="tutorialsExtensionContent.xml"/>
    </extension>
 
    <extension point="org.eclipse.ui.cheatsheets.cheatSheetContent">
