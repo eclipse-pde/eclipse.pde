@@ -509,13 +509,16 @@ public class PDEState {
 	}
 	
 	private Dictionary loadManifest(File bundleLocation) {
+		JarURLConnection connection = null;
 		InputStream manifestStream = null;
 		try {
 			URL manifestLocation = null;
 			String extension = new Path(bundleLocation.getName()).getFileExtension();
 			if (extension != null && extension.equals("jar") && bundleLocation.isFile()) { //$NON-NLS-1$
 				manifestLocation = new URL("jar:file:" + bundleLocation + "!/" + JarFile.MANIFEST_NAME); //$NON-NLS-1$ //$NON-NLS-2$
-				manifestStream = manifestLocation.openStream();
+				connection = (JarURLConnection) manifestLocation
+						.openConnection();
+				manifestStream = connection.getInputStream();
 			} else {
 				manifestStream = new FileInputStream(new File(bundleLocation, JarFile.MANIFEST_NAME));
 			}
@@ -531,8 +534,14 @@ public class PDEState {
 			return null;
 		} finally {
 			try {
-				manifestStream.close();
+				if (manifestStream != null)
+					manifestStream.close();
 			} catch (IOException e1) {
+			}
+			try {
+				if (connection != null)
+					connection.getJarFile().close();
+			} catch (IOException e2) {
 			}
 		}
 	}
