@@ -69,7 +69,7 @@ public class UnusedDependenciesJob extends Job {
 		} finally {
 			monitor.done();
 		}
-		return new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "View Results", null);
+		return new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, PDEPlugin.getResourceString("UnusedDependenciesJob.viewResults"), null); //$NON-NLS-1$
 	}
 	
 	private boolean isModal() {

@@ -359,17 +359,24 @@ public class Schema extends PlatformObject implements ISchema {
 						Node meta = infos.item(j);
 						if (meta.getNodeType() == Node.ELEMENT_NODE) {
 							if (meta.getNodeName().equals("meta.attribute")) { //$NON-NLS-1$
-								element.setKind(processKind(getAttribute(meta,
-										"kind"))); //$NON-NLS-1$
-								element
-										.setBasedOn(getAttribute(meta,
-												"basedOn")); //$NON-NLS-1$
+								element.setKind(processKind(getAttribute(meta,"kind"))); //$NON-NLS-1$
+								element.setBasedOn(getAttribute(meta,"basedOn")); //$NON-NLS-1$
+								element.setTranslatableProperty(processTranslatable(getAttribute(meta, "translatable"))); //$NON-NLS-1$
+								element.setDeprecatedProperty(processDeprecated(getAttribute(meta, "deprecated"))); //$NON-NLS-1$
 							}
 						}
 					}
 				}
 			}
 		}
+	}
+	
+	private boolean processTranslatable(String value) {
+		return (value != null && "true".equals(value)); //$NON-NLS-1$
+	}
+	
+	private boolean processDeprecated(String value) {
+		return value != null && "true".equals(value); //$NON-NLS-1$
 	}
 	private SchemaSimpleType processAttributeRestriction(
 			SchemaAttribute attribute, Node node) {
@@ -576,6 +583,8 @@ public class Schema extends PlatformObject implements ISchema {
 								if (element.getIconProperty() == null)
 									element.setIconProperty(getAttribute(meta,
 											"iconName")); //$NON-NLS-1$
+								element.setTranslatableProperty(processTranslatable(getAttribute(meta, "translatable"))); //$NON-NLS-1$
+								element.setDeprecatedProperty(processDeprecated(getAttribute(meta, "deprecated"))); //$NON-NLS-1$
 							}
 						}
 					}

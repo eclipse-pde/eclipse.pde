@@ -220,6 +220,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			complexType.addAttribute(attribute);
 			attribute = new SchemaAttribute(element, "name"); //$NON-NLS-1$
 			attribute.setType(new SchemaSimpleType(schema, "string")); //$NON-NLS-1$
+			attribute.setTranslatableProperty(true);
 			complexType.addAttribute(attribute);
 			schema.addElement(element);
 		}

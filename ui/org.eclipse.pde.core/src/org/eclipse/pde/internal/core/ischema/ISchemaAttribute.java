@@ -53,8 +53,4 @@ public interface ISchemaAttribute extends ISchemaObject, IMetaAttribute {
 	 */
 	public Object getValue();
 	
-	/**
-	 * Returns <samp>true</samp> if the attribute is translatable; <samp>false</samp> otherwise.
-	 */
-	public boolean isTranslatable();
 }

@@ -24,6 +24,9 @@ public class AttributePropertySource extends SchemaObjectPropertySource implemen
     public static final String P_VALUE = "value"; //$NON-NLS-1$
     public static final String P_BASED_ON = "basedOn"; //$NON-NLS-1$
     public static final String P_TYPE = "type"; //$NON-NLS-1$
+    public static final String P_TRANSLATABLE = "translatable"; //$NON-NLS-1$
+    public static final String P_DEPRECATED = "deprecated"; //$NON-NLS-1$
+    
     public static final String KEY_COPY_OF = "SchemaEditor.AttributePR.attributeCopy"; //$NON-NLS-1$
     public static final String KEY_USE = "SchemaEditor.AttributePR.use"; //$NON-NLS-1$
     public static final String KEY_KIND = "SchemaEditor.AttributePR.kind"; //$NON-NLS-1$
@@ -37,6 +40,8 @@ public class AttributePropertySource extends SchemaObjectPropertySource implemen
     private Vector descriptors;
     
     private static final String[] typeTable = { "string", "boolean" }; //$NON-NLS-1$ //$NON-NLS-2$
+    private static final String[] booleanTable = { "false", "true" }; //$NON-NLS-1$ //$NON-NLS-2$
+    
     class ValueValidator implements ICellEditorValidator {
         public String isValid(Object value) {
             String svalue = value.toString();
@@ -93,18 +98,33 @@ public class AttributePropertySource extends SchemaObjectPropertySource implemen
                 ((ComboBoxPropertyDescriptor) cdesc).setLabelProvider(new ComboProvider(
                         P_USE, ISchemaAttribute.useTable));
             descriptors.addElement(cdesc);
+            
             cdesc = createComboBoxPropertyDescriptor(P_KIND, PDEPlugin
                     .getResourceString(KEY_KIND), ISchemaAttribute.kindTable);
             if (cdesc instanceof ComboBoxPropertyDescriptor)
                 ((ComboBoxPropertyDescriptor) cdesc).setLabelProvider(new ComboProvider(
                         P_KIND, ISchemaAttribute.kindTable));
             descriptors.addElement(cdesc);
+            
             cdesc = createComboBoxPropertyDescriptor(P_TYPE, PDEPlugin
                     .getResourceString(KEY_TYPE), typeTable);
             if (cdesc instanceof ComboBoxPropertyDescriptor)
                 ((ComboBoxPropertyDescriptor) cdesc).setLabelProvider(new ComboProvider(
                         P_TYPE, typeTable));
             descriptors.addElement(cdesc);
+            
+            cdesc = createComboBoxPropertyDescriptor(P_TRANSLATABLE, PDEPlugin.getResourceString("AttributePropertySource.translatable"), booleanTable); //$NON-NLS-1$
+            if (cdesc instanceof ComboBoxPropertyDescriptor)
+                ((ComboBoxPropertyDescriptor) cdesc).setLabelProvider(new ComboProvider(
+                        P_TRANSLATABLE, booleanTable));
+            descriptors.addElement(cdesc);
+
+            cdesc = createComboBoxPropertyDescriptor(P_DEPRECATED, PDEPlugin.getResourceString("AttributePropertySource.deprecated"), booleanTable); //$NON-NLS-1$
+            if (cdesc instanceof ComboBoxPropertyDescriptor)
+                ((ComboBoxPropertyDescriptor) cdesc).setLabelProvider(new ComboProvider(
+                        P_DEPRECATED, booleanTable));
+            descriptors.addElement(cdesc);
+
             cdesc = new TypeRestrictionDescriptor(P_RESTRICTION, PDEPlugin
                     .getResourceString(KEY_RESTRICTION), !isEditable());
             descriptors.addElement(cdesc);
@@ -112,9 +132,11 @@ public class AttributePropertySource extends SchemaObjectPropertySource implemen
                     .getResourceString(KEY_VALUE));
             cdesc.setValidator(new ValueValidator());
             descriptors.addElement(cdesc);
+            
             PropertyDescriptor desc = createTextPropertyDescriptor(P_BASED_ON, PDEPlugin
                     .getResourceString(KEY_BASED_ON));
             descriptors.addElement(desc);
+            
             desc = createTextPropertyDescriptor(P_NAME, PDEPlugin
                     .getResourceString(KEY_NAME));
             descriptors.addElement(desc);
@@ -124,6 +146,12 @@ public class AttributePropertySource extends SchemaObjectPropertySource implemen
 
     public Object getPropertyValue(Object name) {
         ISchemaAttribute att = (ISchemaAttribute) getSourceObject();
+        if (name.equals(P_DEPRECATED))
+        	return att.isDeprecated() ? new Integer(1) : new Integer(0);
+        	
+        if (name.equals(P_TRANSLATABLE))
+        	return att.isTranslatable() ? new Integer(1) : new Integer(0);
+        	
         if (name.equals(P_RESTRICTION))
             return att.getType().getRestriction();
         if (name.equals(P_VALUE))
@@ -176,6 +204,10 @@ public class AttributePropertySource extends SchemaObjectPropertySource implemen
                 att.setType(new SchemaSimpleType(att.getSchema(), typeTable[index]));
                 if (att.getValue() != null)
                     att.setValue(null);
+            } else if (name.equals(P_TRANSLATABLE)) {
+            	att.setTranslatableProperty(index == 1);
+            } else if (name.equals(P_DEPRECATED)) {
+            	att.setDeprecatedProperty(index == 1);
             }
         } else if (name.equals(P_RESTRICTION)) {
             ISchemaRestriction restriction = (ISchemaRestriction) value;

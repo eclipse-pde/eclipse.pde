@@ -28,7 +28,7 @@ public class UnusedDependenciesAction extends Action {
 	}
 
 	public void run() {
-		Job job = new UnusedDependenciesJob("Find unused dependencies", fModel);
+		Job job = new UnusedDependenciesJob(PDEPlugin.getResourceString("UnusedDependenciesAction.jobName"), fModel); //$NON-NLS-1$
 		job.setUser(true);
 		job.setProperty(IProgressConstants.ICON_PROPERTY, PDEPluginImages.DESC_PSEARCH_OBJ.createImage());
 		job.schedule();
