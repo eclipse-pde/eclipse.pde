@@ -106,6 +106,7 @@ public class WorkspaceProductModel extends ProductModel implements IEditableMode
 	public void save(PrintWriter writer) {
 		if (isLoaded()) {
 			writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
+			writer.println("<?pde version=\"3.1\"?>"); //$NON-NLS-1$
 			writer.println();
 			getProduct().write("", writer); //$NON-NLS-1$
 		}
