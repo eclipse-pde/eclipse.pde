@@ -363,6 +363,7 @@ public class WorkspaceModelManager
 		IProject[] projects = workspace.getRoot().getProjects();
 		for (int i = 0; i < projects.length; i++) {
 			IProject project = projects[i];
+			if (!project.isOpen()) continue;
 			try {
 				if (project.hasNature(JavaCore.NATURE_ID)) {
 					IPluginModelBase model = createWorkspacePluginModel(project);
@@ -522,22 +523,26 @@ public class WorkspaceModelManager
 					modelChanges = new Vector();
 				// project about to close
 				handleProjectClosing((IProject) event.getResource());
+				processModelChanges();
 				break;
 			case IResourceChangeEvent.PRE_DELETE :
 				// project about to be deleted
 				if (modelChanges == null)
 					modelChanges = new Vector();
 				handleProjectToBeDeleted((IProject) event.getResource());
+				processModelChanges();
 				break;
 		}
 	}
 
 	private void processModelChanges() {
+		/*
 		if (startup) {
 			startup = false;
 			modelChanges = null;
 			return;
 		}
+		*/
 		if (modelChanges.size()==0) {
 			modelChanges = null;
 			return;

@@ -39,7 +39,7 @@ protected void doFillIntoGrid(Composite parent, int numColumns) {
 	label.setLayoutData(gd);
 	
 	Control control = pluginsBlock.createContents(parent);
-	gd = new GridData(GridData.FILL_BOTH);
+	gd = new GridData(GridData.FILL_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL);
 	gd.horizontalSpan = numColumns;
 	control.setLayoutData(gd);
 }

@@ -79,6 +79,13 @@ public class PDEPlugin extends AbstractUIPlugin {
 	private PDELabelProvider labelProvider;
 	// A flag that indicates if we are running inside VAJ or not.
 	private static boolean inVAJ;
+	private java.util.Hashtable counters;
+	private WorkspaceModelManager workspaceModelManager;
+	private ModelSynchronizer modelSynchronizer;
+	private Vector currentLaunchListeners = new Vector();
+	private IDebugEventListener debugListener;
+	private ILaunch currentLaunch = null;
+
 	static {
 		try {
 			Class.forName("com.ibm.uvm.lang.ProjectClassLoader");
@@ -96,7 +103,9 @@ public class PDEPlugin extends AbstractUIPlugin {
 			if (obj instanceof IProcess) {
 				if ((e.getKind() & DebugEvent.TERMINATE) != 0) {
 					ILaunch launch = ((IProcess) obj).getLaunch();
-					if (launch!=null && launch.equals(currentLaunch) && currentLaunch.isTerminated()) {
+					if (launch != null
+						&& launch.equals(currentLaunch)
+						&& currentLaunch.isTerminated()) {
 						currentLaunch = null;
 						fireCurrentLaunchChanged();
 					}
@@ -112,11 +121,6 @@ public class PDEPlugin extends AbstractUIPlugin {
 			}
 		}
 	}
-	private java.util.Hashtable counters;
-	private WorkspaceModelManager workspaceModelManager;
-	private Vector currentLaunchListeners = new Vector();
-	private IDebugEventListener debugListener;
-	private ILaunch currentLaunch = null;
 
 	public PDEPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
@@ -388,25 +392,20 @@ public class PDEPlugin extends AbstractUIPlugin {
 			PDEPlugin.logException(e);
 		}
 	}
-	public void shutdown() throws CoreException {
-		if (schemaRegistry != null)
-			schemaRegistry.shutdown();
-		if (workspaceModelManager != null)
-			workspaceModelManager.shutdown();
-		detachFromLaunchManager();
-		super.shutdown();
-	}
+
 	public void startup() throws CoreException {
 		super.startup();
+		workspaceModelManager = new WorkspaceModelManager();
+		externalModelManager = new ExternalModelManager();
 
 		if (isVAJ() == false)
 			initializePlatformPath();
 
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-					//This causes PDE to bomb - problem in Debug UI
-		//JavaRuntime.initializeJREVariables(monitor);
-	getExternalModelManager().getEclipseHome(monitor);
+				//This causes PDE to bomb - problem in Debug UI
+				//JavaRuntime.initializeJREVariables(monitor);
+				getExternalModelManager().getEclipseHome(monitor);
 			}
 		};
 		try {
@@ -421,7 +420,23 @@ public class PDEPlugin extends AbstractUIPlugin {
 		// set eclipse home variable if not sets
 
 		getWorkspaceModelManager().reset();
+		
+		modelSynchronizer = new ModelSynchronizer();
+		modelSynchronizer.register(externalModelManager);
+		modelSynchronizer.register(workspaceModelManager);		
+
 		attachToLaunchManager();
+	}
+	
+	public void shutdown() throws CoreException {
+		if (schemaRegistry != null)
+			schemaRegistry.shutdown();
+
+		detachFromLaunchManager();
+		modelSynchronizer.unregister(workspaceModelManager);
+		modelSynchronizer.unregister(externalModelManager);
+		workspaceModelManager.shutdown();
+		super.shutdown();
 	}
 
 	private void attachToLaunchManager() {

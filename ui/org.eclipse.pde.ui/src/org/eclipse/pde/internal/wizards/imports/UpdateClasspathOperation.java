@@ -99,7 +99,8 @@ public class UpdateClasspathOperation implements IWorkspaceRunnable {
 		for (int i=0; i<projects.length; i++) {
 			IProject project = projects[i];
 			if (project.exists() && project.isOpen()) {
-				resolveEntry(root, project, entry, entries);
+				if (resolveEntry(root, project, entry, entries))
+					break;
 			}
 		}
 	}

@@ -46,6 +46,7 @@ public class TargetPlatformPreferencePage
 			super.adjustForNumColumns(ncolumns);
 			Text text = super.getTextControl();
 			GridData gd = (GridData) text.getLayoutData();
+			gd.horizontalAlignment = GridData.HORIZONTAL_ALIGN_FILL;
 			gd.grabExcessHorizontalSpace = true;
 			Button button = super.getChangeControl(text.getParent());
 			button.setLayoutData(null);

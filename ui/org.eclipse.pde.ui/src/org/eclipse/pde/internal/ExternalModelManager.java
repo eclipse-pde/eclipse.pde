@@ -49,10 +49,10 @@ public class ExternalModelManager {
 	private static final String KEY_PROCESSING_PATH =
 		"ExternalModelManager.processingPath";
 	private Vector listeners = new Vector();
-
+	
 	public ExternalModelManager() {
 	}
-
+	
 	public void addModelProviderListener(IModelProviderListener listener) {
 		listeners.add(listener);
 	}
@@ -129,6 +129,10 @@ public class ExternalModelManager {
 
 	public IPluginModel[] getModels() {
 		return getModels(new NullProgressMonitor());
+	}
+	
+	public boolean isLoaded() {
+		return models != null;
 	}
 
 	public IPluginModel[] getModels(IProgressMonitor monitor) {
