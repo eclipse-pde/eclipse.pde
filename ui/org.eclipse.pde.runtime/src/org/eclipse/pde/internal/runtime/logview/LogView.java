@@ -207,7 +207,23 @@ public class LogView extends ViewPart implements ILogListener {
 		LogEntry entry = new LogEntry(status);
 		entry.setSession(thisSession);
 		logs.set(0, entry);
-		tableTreeViewer.refresh();
+		asyncRefresh();
+	}
+
+	private void asyncRefresh() {
+		final Control control = tableTreeViewer.getControl();
+		if (control.isDisposed())
+			return;
+
+		Display display = control.getDisplay();
+		if (display != null) {
+			display.asyncExec(new Runnable() {
+				public void run() {
+					if (!control.isDisposed())
+						tableTreeViewer.refresh();
+				}
+			});
+		}
 	}
 	public void setFocus() {
 		tableTreeViewer.getTableTree().getTable().setFocus();
