@@ -1,5 +1,6 @@
 package org.eclipse.pde.internal.core.search;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.core.plugin.IPluginObject;
 
 /**
@@ -12,14 +13,16 @@ import org.eclipse.pde.core.plugin.IPluginObject;
  */
 public interface IPluginSearchResultCollector {
 	
-	void setOperation(PluginSearchOperation operation);
-	
-	PluginSearchOperation getOperation();
-	
 	void accept(IPluginObject match);
-	
-	void searchStarted();
 	
 	void done();
 
+	PluginSearchOperation getOperation();
+	
+	void searchStarted();
+	
+	void setOperation(PluginSearchOperation operation);
+	
+	void setProgressMonitor(IProgressMonitor monitor);
+	
 }

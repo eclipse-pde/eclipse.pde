@@ -16,7 +16,6 @@ public class PluginSearchUIOperation
 	extends PluginSearchOperation
 	implements IRunnableWithProgress {
 
-	private static final String KEY_TASKNAME = "SearchMonitorDialog.taskName";
 	private static final String KEY_MATCH = "Search.singleMatch";
 	private static final String KEY_MATCHES = "Search.multipleMatches";
 	public PluginSearchUIOperation(
@@ -29,9 +28,7 @@ public class PluginSearchUIOperation
 		try {
 			IWorkspaceRunnable workspaceRunnable = new IWorkspaceRunnable() {
 				public void run(IProgressMonitor pm) throws CoreException {
-					String taskName = PDEPlugin.getResourceString(KEY_TASKNAME);
-					pm.setTaskName(taskName);
-					execute(pm, taskName);
+					execute(pm);
 				}
 			};
 			WorkbenchPlugin.getPluginWorkspace().run(

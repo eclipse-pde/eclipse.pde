@@ -29,10 +29,11 @@ public class PluginSearchOperation {
 		this.stringMatcher =new StringMatcher(input.getSearchString(),!input.isCaseSensitive(),false);
 	}
 	
-	public void execute(IProgressMonitor monitor,String taskName) {
+	public void execute(IProgressMonitor monitor) {
 		IPluginModelBase[] entries = input.getSearchScope().getMatchingModels();
 		collector.searchStarted();
-		monitor.beginTask(taskName, entries.length);
+		collector.setProgressMonitor(monitor);
+		monitor.beginTask("", entries.length);
 		
 		for (int i = 0; i < entries.length; i++) {
 			IPluginModelBase candidate = entries[i];
