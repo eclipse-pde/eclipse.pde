@@ -134,7 +134,7 @@ public class WorkbenchLaunchConfigurationDelegate
 					LauncherUtils.getAutoStartPlugins(configuration));
 			programArgs.add("-configuration");
 			if (isOSGI)
-				programArgs.add("file:" + fConfigDir.getPath());
+				programArgs.add("file:" + fConfigDir.getPath() + "/");
 			else
 				programArgs.add("file:" + fConfigDir.getPath() + "/platform.cfg");
 			
