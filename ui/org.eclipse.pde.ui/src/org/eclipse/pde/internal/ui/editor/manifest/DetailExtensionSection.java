@@ -637,18 +637,20 @@ public class DetailExtensionSection
 				return pointInfo.getResourceString(pointInfo.getName());
 			}
 		} else if (obj instanceof IPluginElement) {
-			String name = obj.toString();
+			String baseName = obj.toString();
 			PluginElement element = (PluginElement) obj;
-			if (!fullNames)
-				return name;
+			String fullName = null;
 			ISchemaElement elementInfo = element.getElementInfo();
 			if (elementInfo != null && elementInfo.getLabelProperty() != null) {
 				IPluginAttribute att = element.getAttribute(elementInfo.getLabelProperty());
 				if (att != null && att.getValue() != null)
-					name = stripShortcuts(att.getValue());
-				name = element.getResourceString(name);
+					fullName = stripShortcuts(att.getValue());
+				fullName = element.getResourceString(fullName);
 			}
-			return name;
+			if (fullNames)
+				return fullName!=null?fullName:baseName;
+			else
+				return fullName!=null?(fullName+" ("+baseName+")"):baseName;
 		}
 		return obj.toString();
 	}

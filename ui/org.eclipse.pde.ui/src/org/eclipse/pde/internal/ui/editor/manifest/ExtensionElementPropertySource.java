@@ -42,6 +42,7 @@ public class ExtensionElementPropertySource
 	public static final String KEY_FINISH =
 		"ManifestEditor.ExtensionElementPR.finish";
 	private Vector descriptors;
+	private static final String TAG_NAME = "Tag name";
 
 	class PropertyLabelProvider extends LabelProvider {
 		private Image image;
@@ -51,6 +52,7 @@ public class ExtensionElementPropertySource
 			this.name = name;
 		}
 		public String getText(Object obj) {
+			if (name.equals(TAG_NAME)) return getElement().getName();
 			IPluginAttribute att = getElement().getAttribute(name);
 			Object value = att != null ? att.getValue() : null;
 			return value != null ? value.toString() : "";
@@ -136,8 +138,13 @@ public void createPropertyDescriptors() {
 	Image reqImage = provider.get(PDEPluginImages.DESC_ATT_REQ_OBJ);
 	Image classImage = provider.get(PDEPluginImages.DESC_ATT_CLASS_OBJ);
 	Image resourceImage = provider.get(PDEPluginImages.DESC_ATT_FILE_OBJ);
+	Image elementImage = provider.get(PDEPluginImages.DESC_GENERIC_XML_OBJ);
 	ISchemaElement info = ((PluginElement)getElement()).getElementInfo();
 	ISchemaAttribute[] attributes = info.getAttributes();
+	
+	PropertyDescriptor nameDesc = new PropertyDescriptor(TAG_NAME, TAG_NAME);
+	nameDesc.setLabelProvider(new PropertyLabelProvider(TAG_NAME, elementImage));
+	descriptors.addElement(nameDesc);
 	for (int i = 0; i < attributes.length; i++) {
 		ISchemaAttribute att = attributes[i];
 		PropertyDescriptor desc;
@@ -209,6 +216,9 @@ public IPropertyDescriptor[] getPropertyDescriptors() {
 	return toDescriptorArray(descriptors);
 }
 public Object getPropertyValue(Object name) {
+	if (name.equals(TAG_NAME)) {
+		return getElement().getName();
+	}
 	IPluginAttribute att = getElement().getAttribute(name.toString());
 	ISchemaElement elementInfo = ((PluginElement)getElement()).getElementInfo();
 	ISchemaAttribute attInfo =
