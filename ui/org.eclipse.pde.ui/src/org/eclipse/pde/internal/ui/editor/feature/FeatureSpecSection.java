@@ -65,6 +65,7 @@ public class FeatureSpecSection extends PDESection {
 	private Button exclusiveButton;
 	private Button createJarButton;
 	private Button synchronizeButton;
+	private boolean blockNotification;
 
 	public FeatureSpecSection(FeatureFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION);
@@ -82,12 +83,16 @@ public class FeatureSpecSection extends PDESection {
 		idText.commit();
 		versionText.commit();
 		imageText.commit();
+		/*
+		 * Not needed - this is done directly in the
+		 * button selection listener.
 		try {
 			feature.setPrimary(primaryButton.getSelection());
 			feature.setExclusive(exclusiveButton.getSelection());
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
+		*/
 		super.commit(onSave);
 	}
 	
@@ -225,7 +230,8 @@ public class FeatureSpecSection extends PDESection {
 		primaryButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				try {
-					feature.setPrimary(primaryButton.getSelection());
+					if (!blockNotification)
+						feature.setPrimary(primaryButton.getSelection());
 				} catch (CoreException ex) {
 					PDEPlugin.logException(ex);
 				}
@@ -243,7 +249,8 @@ public class FeatureSpecSection extends PDESection {
 		exclusiveButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				try {
-					feature.setExclusive(exclusiveButton.getSelection());
+					if (!blockNotification)
+						feature.setExclusive(exclusiveButton.getSelection());
 				} catch (CoreException ex) {
 					PDEPlugin.logException(ex);
 				}
@@ -402,6 +409,7 @@ public class FeatureSpecSection extends PDESection {
 	}
 
 	public void refresh() {
+		blockNotification=true;
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		IFeature feature = model.getFeature();
 		setIfDefined(idText, feature.getId());
@@ -415,6 +423,7 @@ public class FeatureSpecSection extends PDESection {
 		primaryButton.setSelection(feature.isPrimary());
 		exclusiveButton.setSelection(feature.isExclusive());
 		super.refresh();
+		blockNotification=false;
 	}
 	/**
 	 * @see org.eclipse.update.ui.forms.internal.FormSection#canPaste(Clipboard)
