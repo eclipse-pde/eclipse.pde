@@ -1,9 +1,9 @@
 /**********************************************************************
- * Copyright (c) 2002 IBM Corporation and others.
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors: 
  * IBM - Initial API and implementation
@@ -11,9 +11,13 @@
 package org.eclipse.pde.internal.build.ant;
 
 /**
- *
+ * Interface for tasks.
  */
 public interface ITask {
 
+/**
+ * Print the information for this task to the given script. Use the given
+ * tab index for indenting.
+ *  * @param script the script to print to * @param tab the index for indenting */
 public void print(AntScript script, int tab);
 }

@@ -1,9 +1,9 @@
 /**********************************************************************
  * Copyright (c) 2000, 2002 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors: 
  * IBM - Initial API and implementation
@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.build;
 
 import java.util.List;
-
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -26,15 +25,14 @@ public class BuildScriptGeneratorApplication extends AbstractApplication {
 	protected BuildScriptGenerator generator;
 
 /**
- * 
+ * Default constructor for the class. 
  */
 public BuildScriptGeneratorApplication() {
 	generator = new BuildScriptGenerator();
 }
 
 /**
- * 
- */
+ *  * @see AbstractApplication#run() */
 public void run() throws CoreException {
 	generator.run();
 }
@@ -56,6 +54,4 @@ protected void processCommandLine(List commands) {
 	String[] arguments = getArguments(commands, ARG_INSTALL_LOCATION);
 	generator.setInstall(arguments[0]); // only consider one location
 }
-
-
 }

@@ -1,11 +1,17 @@
+/**********************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.pde.internal.build;
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+
 import java.io.*;
 import java.util.*;
-
 import org.eclipse.ant.core.AntRunner;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.build.ant.AntScript;
@@ -14,53 +20,31 @@ import org.eclipse.update.core.IPluginEntry;
 import org.eclipse.update.internal.core.FeatureExecutableFactory;
 
 /**
- * 
+ * Generates Ant scripts which will use the CVS "fetch" element
+ * to retrieve plug-ins and features from the CVS repository.
  */
-public class FetchScriptGenerator extends AbstractScriptGenerator {
+public class FetchScriptGenerator extends AbstractScriptGenerator implements IPDEBuildConstants {
 
-	/**
-	 * 
-	 */
+	// The resulting script that we are generating.
 	protected AntScript script;
 
-	/**
-	 * 
-	 */
 	protected boolean fetchChildren = true;
 
-	/**
-	 * 
-	 */
 	protected String element;
 
-	/**
-	 * 
-	 */
 	protected String installLocation;
 
-	/**
-	 * 
-	 */
 	protected String directoryLocation;
 
-	/**
-	 * 
-	 */
+	// The location of the CVS password file.
 	protected String cvsPassFileLocation;
 
-	/**
-	 * 
-	 */
+	// The default name for the fetch script
 	protected String scriptName = DEFAULT_FETCH_SCRIPT_FILENAME;
 
-	/**
-	 * 
-	 */
 	protected Properties directory;
 
-	/**
-	 * Variables to control is a mkdir to a specific folder was already.
-	 */
+	// Variables to control is a mkdir to a specific folder was already.
 	protected List mkdirLocations = new ArrayList(5);
 
 /**
@@ -86,24 +70,25 @@ public void generate() throws CoreException {
 
 /**
  * Main call for generating the script.
- */
+ *  * @throws CoreException */
 protected void generateFetchScript() throws CoreException {
 	generatePrologue();
 	generateFetchTarget();
 	generateEpilogue();
 }
 
-
+/**
+ *  * @throws CoreException */
 protected void generateFetchTarget() throws CoreException {
 	int tab = 1;
 	script.println();
 	script.printTargetDeclaration(tab, TARGET_FETCH, null, null, null, null);
-	tab++;
-	generateFetchEntry(tab, element);
-	tab--;
-	script.printString(tab, "</target>"); //$NON-NLS-1$
+	generateFetchEntry(++tab, element);
+	script.printTargetEnd(--tab);
 }
 
+/**
+ *  * @param tab * @param entry * @throws CoreException */
 protected void generateFetchEntry(int tab, String entry) throws CoreException {
 	String cvsInfo = getCVSInfo(entry);
 	if (cvsInfo == null)
@@ -136,7 +121,7 @@ protected void generateFetchEntry(int tab, String entry) throws CoreException {
 /**
  * Helper method to control for what locations a mkdir Ant task was already
  * generated so we can reduce replication.
- */
+ *  * @param tab * @param location */
 protected void generateMkdirs(int tab, String location) {
 	if (mkdirLocations.contains(location))
 		return;
@@ -144,6 +129,8 @@ protected void generateMkdirs(int tab, String location) {
 	script.printMkdirTask(tab, location);
 }
 
+/**
+ *  * @param tab * @param feature * @throws CoreException */
 protected void generateChildrenFetchScript(int tab, Feature feature) throws CoreException {
 	IPluginEntry[] children = feature.getPluginEntries();
 	for (int i = 0; i < children.length; i++) {
@@ -155,26 +142,37 @@ protected void generateChildrenFetchScript(int tab, Feature feature) throws Core
 	}
 }
 
+/**
+ * Return the feature object for the feature with the given info. Generate an Ant script
+ * which will retrieve the "feature.xml" file from CVS, and then call the feature object
+ * constructor from Update.
+ *  * @param element the feature to retrieve * @param cvsRoot the root in CVS * @param tag the CVS tag * @param password the CVS password * @return Feature * @throws CoreException */
 protected Feature retrieveFeature(String element, String cvsRoot, String tag, String password) throws CoreException {
+	
+	// Generate a temporary Ant script which retrieves the feature.xml for this
+	// feature from CVS
 	File root = new File(installLocation);
 	File target = new File(root, "retrieve.xml"); //$NON-NLS-1$
 	try {
 		AntScript retrieve = new AntScript(new FileOutputStream(target));
 		try {
 			retrieve.printProjectDeclaration("RetrieveFeature", "main", "."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			retrieve.printTargetDeclaration(0, "main", null, null, null, null); //$NON-NLS-1$
+			retrieve.printTargetDeclaration(0, TARGET_MAIN, null, null, null, null); //$NON-NLS-1$
 			IPath module = new Path(element).append("feature.xml"); //$NON-NLS-1$
 			if (password != null)
 				retrieve.printCVSPassTask(0, cvsRoot, password, cvsPassFileLocation);
 			retrieve.printCVSTask(0, null, cvsRoot, null, module.toString(), tag, "true", cvsPassFileLocation); //$NON-NLS-1$
-			retrieve.printString(0, "</target>"); //$NON-NLS-1$
-			retrieve.printString(0, "</project>"); //$NON-NLS-1$
+			retrieve.printTargetEnd(0);
+			retrieve.printProjectEnd();
 		} finally {
 			retrieve.close();
 		}
 	} catch (IOException e) {
 		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_SCRIPT, Policy.bind("exception.writeScript"), e)); //$NON-NLS-1$
 	}
+	
+	// Run the Ant script to go to CVS and retrieve the feature.xml. Call the Update
+	// code to construct the feature object to return.
 	try {
 		AntRunner runner = new AntRunner();
 		runner.setBuildFileLocation(target.getAbsolutePath());
@@ -197,7 +195,7 @@ protected Feature retrieveFeature(String element, String cvsRoot, String tag, St
  * Returns false if we could not delete some file or an exception occurred
  * at any point in the deletion.
  * Even if an exception occurs, a best effort is made to continue deleting.
- */
+ *  * @param root * @return boolean */
 public static boolean clear(File root) {
 	boolean result = true;
 	if (root.isDirectory()) {
@@ -218,6 +216,8 @@ public static boolean clear(File root) {
 	return result;
 }
 
+/**
+ *  * @param type * @return String */
 protected String getElementLocation(String type) {
 	IPath location = new Path(getPropertyFormat(PROPERTY_INSTALL));
 	if (type.equals("feature")) //$NON-NLS-1$
@@ -229,7 +229,7 @@ protected String getElementLocation(String type) {
 
 /**
  * Get information stored in the directory file.
- */
+ *  * @param element * @return String * @throws CoreException */
 protected String getCVSInfo(String element) throws CoreException {
 	if (directory == null)
 		readDirectory();
@@ -238,7 +238,7 @@ protected String getCVSInfo(String element) throws CoreException {
 
 /**
  * Reads directory file at the directoryLocation.
- */
+ *  * @throws CoreException if there is an IOException when reading the file */
 protected void readDirectory() throws CoreException {
 	try {
 		directory = new Properties();
@@ -253,7 +253,6 @@ protected void readDirectory() throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READ_DIRECTORY, Policy.bind("error.readingDirectory"), e)); //$NON-NLS-1$
 	}
 }
-
 
 /**
  * Defines, the XML declaration and Ant project.
@@ -271,53 +270,50 @@ protected void generatePrologue() {
  */
 protected void generateEpilogue() {
 	script.println();
-	script.printString(0, "</project>"); //$NON-NLS-1$
+	script.printProjectEnd();
 }
 
-	
 /**
- * Sets the directory location.
- */
+ * Set the directory location to be the given value.
+ *  * @param directoryLocation */
 public void setDirectoryLocation(String directoryLocation) {
 	this.directoryLocation = directoryLocation;
 }
 
-	
 /**
  * Sets the element to generate fetch script from.
- */
+ *  * @param element */
 public void setElement(String element) {
 	this.element = element;
 }
 
-	
 /**
- * Sets whether children of the current element should be fetch.
- */
+ * Sets whether children of the current element should be fetched.
+ *  * @param fetchChildren */
 public void setFetchChildren(boolean fetchChildren) {
 	this.fetchChildren = fetchChildren;
 }
 
-	
 /**
- * Sets the install location.
- */
+ * Sets the install location to be the given value.
+ *  * @param installLocation */
 public void setInstallLocation(String installLocation) {
 	this.installLocation = installLocation;
 }
 
-	
 /**
- * Sets the cvsPassFileLocation.
- */
+ * Sets the CVS password file location to be the given value.
+ *  * @param cvsPassFileLocation the CVS password file location */
 public void setCvsPassFileLocation(String cvsPassFileLocation) {
 	this.cvsPassFileLocation = cvsPassFileLocation;
 }
 
-	
 /**
- * Sets the scriptName.
- */
+ * Sets the script name to be the given value. If <code>null</code> is
+ * passed as the argument, then <code>IPDEBuildConstants.DEFAULT_FETCH_SCRIPT_FILENAME</code>
+ * is used.
+ *  * @param scriptName the name of the script or <code>null</code>
+ * @see IPDEBuildConstants.DEFAULT_FETCH_SCRIPT_FILENAME */
 public void setScriptName(String scriptName) {
 	if (scriptName == null)
 		this.scriptName = DEFAULT_FETCH_SCRIPT_FILENAME;

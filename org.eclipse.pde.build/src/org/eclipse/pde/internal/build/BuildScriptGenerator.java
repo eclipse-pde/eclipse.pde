@@ -1,9 +1,9 @@
 /**********************************************************************
- * Copyright (c) 2002 IBM Corporation and others.
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors: 
  * IBM - Initial API and implementation
@@ -11,9 +11,11 @@
 package org.eclipse.pde.internal.build;
 
 import java.util.*;
-
 import org.eclipse.core.runtime.CoreException;
 
+/**
+ * 
+ */
 public class BuildScriptGenerator {
 
 	/**
@@ -41,6 +43,8 @@ public class BuildScriptGenerator {
 	 */
 	protected String[] pluginPath;
 
+/**
+ *  * @throws CoreException */
 public void run() throws CoreException {
 	List plugins = new ArrayList(5);
 	List fragments = new ArrayList(5);
@@ -68,6 +72,8 @@ protected void sortElements(List features, List plugins, List fragments) {
 	}
 }
 
+/**
+ *  * @param generator * @param models * @throws CoreException */
 protected void generateModels(ModelBuildScriptGenerator generator, List models) throws CoreException {
 	if (models.isEmpty())
 		return;
@@ -81,6 +87,8 @@ protected void generateModels(ModelBuildScriptGenerator generator, List models) 
 	}
 }
 
+/**
+ *  * @param features * @throws CoreException */
 protected void generateFeatures(List features) throws CoreException {
 	if (features.isEmpty())
 		return;
@@ -96,43 +104,37 @@ protected void generateFeatures(List features) throws CoreException {
 }
 
 /**
- * Sets the children.
- */
+ *  * @param children */
 public void setChildren(boolean children) {
 	this.children = children;
 }
 
 /**
- * Sets the devEntries.
- */
+ *  * @param devEntries */
 public void setDevEntries(String[] devEntries) {
 	this.devEntries = devEntries;
 }
 
 /**
- * Sets the elements.
- */
+ *  * @param elements */
 public void setElements(String[] elements) {
 	this.elements = elements;
 }
 
 /**
- * Sets the pluginPath.
- */
+ *  * @param pluginPath */
 public void setPlugins(String[] pluginPath) {
 	this.pluginPath = pluginPath;
 }
 
 /**
- * Sets the installLocation.
- */
+ *  * @param installLocation */
 public void setInstall(String installLocation) {
 	this.installLocation = installLocation;
 }
 
 /**
- * Sets the pluginPath.
- */
+ *  * @param pluginPath */
 public void setPluginPath(String[] pluginPath) {
 	this.pluginPath = pluginPath;
 }

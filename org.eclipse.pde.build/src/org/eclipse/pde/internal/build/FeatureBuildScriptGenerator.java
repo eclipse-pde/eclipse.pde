@@ -1,9 +1,9 @@
 /**********************************************************************
  * Copyright (c) 2000, 2002 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors: 
  * IBM - Initial API and implementation
@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.build;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.util.*;
-
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.PluginModel;
 import org.eclipse.pde.internal.build.ant.AntScript;
@@ -32,7 +31,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	protected boolean generateChildrenScript = true;
 
 	/**
-	 * 
+	 * The identifier of the feature that the build script is being generated for.
 	 */
 	protected String featureID;
 
@@ -55,7 +54,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 /**
  * Returns a list of PluginModel objects representing the elements. The boolean
  * argument indicates whether the list should consist of plug-ins or fragments.
- */
+ *  * @param fragments * @return List * @throws CoreException */
 protected List computeElements(boolean fragments) throws CoreException {
 	List result = new ArrayList(5);
 	IPluginEntry[] pluginList = feature.getPluginEntries();
@@ -76,9 +75,17 @@ protected List computeElements(boolean fragments) throws CoreException {
 	}
 	return result;
 }
+
+/**
+ * Set the boolean for whether or not children scripts should be generated.
+ *  * @param generate <code>true</code> if the children scripts should be generated,
+ *     <code>false</code> otherwise */
 public void setGenerateChildrenScript(boolean generate) {
 	generateChildrenScript = generate;
 }
+
+/**
+ * @see AbstractScriptGenerator#generate() */
 public void generate() throws CoreException {
 	if (featureID == null)
 		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, Policy.bind("error.missingFeatureId"), null)); //$NON-NLS-1$
@@ -111,9 +118,10 @@ public void generate() throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_SCRIPT, Policy.bind("exception.writeScript"), e)); //$NON-NLS-1$
 	}
 }
+
 /**
  * Main call for generating the script.
- */
+ *  * @param script the script to add the Ant target to * @throws CoreException */
 protected void generateBuildScript(AntScript script) throws CoreException {
 	generatePrologue(script);
 	generateAllPluginsTarget(script);
@@ -132,6 +140,9 @@ protected void generateBuildScript(AntScript script) throws CoreException {
 	generateEpilogue(script);
 }
 
+/**
+ * Add the <code>build.zips</code> target to the given Ant script.
+ *  * @param script the script to add the target to * @throws CoreException */
 protected void generateBuildZipsTarget(AntScript script) throws CoreException {
 	StringBuffer zips = new StringBuffer();
 	Properties props = getBuildProperties(feature);
@@ -151,15 +162,23 @@ protected void generateBuildZipsTarget(AntScript script) throws CoreException {
 	Map params = new HashMap(2);
 	params.put(PROPERTY_TARGET, TARGET_BUILD_ZIPS);
 	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, null, params);
-	script.printString(--tab, "</target>"); //$NON-NLS-1$
+	script.printTargetEnd(--tab);
 }
+
+/**
+ * Add a <code>zip</code> target to the given Ant script.
+ *  * @param script the script to add the targets to * @param zipName the name of the zip file to create * @param source the directory name to read the files from * @throws CoreException */
 protected void generateZipIndividualTarget(AntScript script, String zipName, String source) throws CoreException {
 	int tab = 1;
 	script.println();
 	script.printTargetDeclaration(tab++, zipName, TARGET_INIT, null, null, null);
 	script.printZipTask(tab, FEATURE_DESTINATION + "/" + zipName, BASEDIR + "/" + source, false, null); //$NON-NLS-1$ //$NON-NLS-2$
-	script.printString(--tab, "</target>"); //$NON-NLS-1$
+	script.printTargetEnd(--tab);
 }
+
+/**
+ * Add the <code>clean</code> target to the given Ant script.
+ *  * @param script the script to add the target to * @throws CoreException */
 protected void generateCleanTarget(AntScript script) throws CoreException {
 	int tab = 1;
 	script.println();
@@ -173,8 +192,12 @@ protected void generateCleanTarget(AntScript script) throws CoreException {
 	Map params = new HashMap(2);
 	params.put(PROPERTY_TARGET, TARGET_CLEAN);
 	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, null, params);
-	script.printString(--tab, "</target>"); //$NON-NLS-1$
+	script.printTargetEnd(--tab);
 }
+
+/**
+ * Add the <code>zip.logs</code> target to the given Ant script.
+ *  * @param script the script to add the target to */
 protected void generateZipLogsTarget(AntScript script) {
 	int tab = 1;
 	script.println();
@@ -188,9 +211,12 @@ protected void generateZipLogsTarget(AntScript script) {
 	IPath destination = new Path(FEATURE_DESTINATION).append(FEATURE_FULL_NAME + ".log.zip"); //$NON-NLS-1$
 	script.printZipTask(tab, destination.toString(), FEATURE_TEMP_FOLDER, true, null);
 	script.printDeleteTask(tab, FEATURE_TEMP_FOLDER, null, null);
-	script.printString(--tab, "</target>"); //$NON-NLS-1$
+	script.printTargetEnd(--tab);
 }
 
+/**
+ * Add the <code>zip.sources</code> target to the given Ant script.
+ *  * @param script the script to add the target to */
 protected void generateZipSourcesTarget(AntScript script) {
 	int tab = 1;
 	script.println();
@@ -203,8 +229,12 @@ protected void generateZipSourcesTarget(AntScript script) {
 	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, null, params);
 	script.printZipTask(tab, FEATURE_DESTINATION + "/" + FEATURE_FULL_NAME + ".src.zip", FEATURE_TEMP_FOLDER, true, null); //$NON-NLS-1$ //$NON-NLS-2$
 	script.printDeleteTask(tab, FEATURE_TEMP_FOLDER, null, null);
-	script.printString(--tab, "</target>"); //$NON-NLS-1$
+	script.printTargetEnd(--tab);
 }
+
+/**
+ * Add the <code>gather.bin.parts</code> target to the given Ant script
+ *  * @param script the script to add the target to * @throws CoreException */
 protected void generateGatherBinPartsTarget(AntScript script) throws CoreException {
 	int tab = 1;
 	script.println();
@@ -221,8 +251,12 @@ protected void generateGatherBinPartsTarget(AntScript script) throws CoreExcepti
 		FileSet fileSet = new FileSet(BASEDIR, null, include, null, exclude, null, null);
 		script.printCopyTask(tab, null, root, new FileSet[]{ fileSet });
 	}	
-	script.printString(--tab, "</target>"); //$NON-NLS-1$
+	script.printTargetEnd(--tab);
 }
+
+/**
+ * Add the <code>build.update.jar</code> target to the given script.
+ *  * @param script the script to add the target to */
 protected void generateBuildUpdateJarTarget(AntScript script) {
 	int tab = 1;
 	script.println();
@@ -240,11 +274,13 @@ protected void generateBuildUpdateJarTarget(AntScript script) {
 	script.printAntCallTask(tab, TARGET_GATHER_BIN_PARTS, "false", params); //$NON-NLS-1$
 	script.printJarTask(tab, FEATURE_DESTINATION + "/" + FEATURE_FULL_NAME + ".jar", FEATURE_TEMP_FOLDER + "/" + FEATURE_FOLDER_NAME); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	script.printDeleteTask(tab, FEATURE_TEMP_FOLDER, null, null);
-	script.printString(--tab, "</target>"); //$NON-NLS-1$
+	script.printTargetEnd(--tab);
 }
+
 /**
- * Zip up the whole feature.
- */
+ * Add the <code>zip.distribution</code> target to the given Ant script. Zip 
+ * up the whole feature.
+ *  * @param script the script to add the target to */
 protected void generateZipDistributionWholeTarget(AntScript script) {
 	int tab = 1;
 	script.println();
@@ -257,11 +293,12 @@ protected void generateZipDistributionWholeTarget(AntScript script) {
 	script.printAntCallTask(tab, TARGET_GATHER_BIN_PARTS, null, params);
 	script.printZipTask(tab, FEATURE_DESTINATION + "/" + FEATURE_FULL_NAME + ".bin.dist.zip", FEATURE_TEMP_FOLDER, false, null); //$NON-NLS-1$ //$NON-NLS-2$
 	script.printDeleteTask(tab, FEATURE_TEMP_FOLDER, null, null);
-	script.printString(--tab, "</target>"); //$NON-NLS-1$
+	script.printTargetEnd(--tab);
 }
+
 /**
  * Executes a given target in all children's script files.
- */
+ *  * @param script the script to add the target to */
 protected void generateAllChildrenTarget(AntScript script) {
 	StringBuffer depends = new StringBuffer();
 	depends.append(TARGET_INIT);
@@ -272,11 +309,12 @@ protected void generateAllChildrenTarget(AntScript script) {
 	
 	script.println();
 	script.printTargetDeclaration(1, TARGET_ALL_CHILDREN, depends.toString(), null, null, null);
-	script.printString(1, "</target>"); //$NON-NLS-1$
+	script.printTargetEnd(1);
 }
+
 /**
  * Target responsible for delegating target calls to plug-in's build.xml scripts.
- */
+ *  * @param script the script to add the target to * @throws CoreException */
 protected void generateAllPluginsTarget(AntScript script) throws CoreException {
 	int tab = 1;
 	List plugins = computeElements(false);
@@ -290,11 +328,12 @@ protected void generateAllPluginsTarget(AntScript script) throws CoreException {
 			script.printAntTask(tab, buildScriptName, location.toString(), getPropertyFormat(PROPERTY_TARGET), null, null, null);
 		}
 	}
-	script.printString(--tab, "</target>"); //$NON-NLS-1$
+	script.printTargetEnd(--tab);
 }
+
 /**
  * Target responsible for delegating target calls to fragments's build.xml scripts.
- */
+ *  * @param script the script to add the target to * @throws CoreException */
 protected void generateAllFragmentsTarget(AntScript script) throws CoreException {
 	int tab = 1;
 	List fragments = computeElements(true);
@@ -305,23 +344,20 @@ protected void generateAllFragmentsTarget(AntScript script) throws CoreException
 		IPath location = Utils.makeRelative(new Path(getLocation(fragment)), new Path(getFeatureRootLocation()));
 		script.printAntTask(tab, buildScriptName, location.toString(), getPropertyFormat(PROPERTY_TARGET), null, null, null);
 	}
-	script.printString(--tab, "</target>"); //$NON-NLS-1$
+	script.printTargetEnd(--tab);
 }
-
-
-
-
 
 /**
  * Just ends the script.
- */
+ *  * @param script the script to end */
 protected void generateEpilogue(AntScript script) {
 	script.println();
-	script.printString(0, "</project>"); //$NON-NLS-1$
+	script.printProjectEnd();
 }
+
 /**
  * Defines, the XML declaration, Ant project and init target.
- */
+ *  * @param script the script to annotate */
 protected void generatePrologue(AntScript script) {
 	int tab = 1;
 	script.printProjectDeclaration(feature.getFeatureIdentifier(), TARGET_BUILD_UPDATE_JAR, "."); //$NON-NLS-1$
@@ -332,12 +368,18 @@ protected void generatePrologue(AntScript script) {
 	script.printProperty(tab, PROPERTY_FEATURE_FULL_NAME, getPropertyFormat(PROPERTY_FEATURE) + getPropertyFormat(PROPERTY_FEATURE_VERSION_SUFFIX));
 	script.printProperty(tab, PROPERTY_FEATURE_TEMP_FOLDER, BASEDIR + "/" + PROPERTY_FEATURE_TEMP_FOLDER); //$NON-NLS-1$
 	script.printProperty(tab, PROPERTY_FEATURE_DESTINATION, BASEDIR);
-	script.printString(--tab, "</target>"); //$NON-NLS-1$
+	script.printTargetEnd(--tab);
 }
+
+/**
+ *  * @throws CoreException */
 protected void generateChildrenScripts() throws CoreException {
 	generateModels(new PluginBuildScriptGenerator(), computeElements(false));
 	generateModels(new PluginBuildScriptGenerator(), computeElements(true));
 }
+
+/**
+ *  * @param generator * @param models * @throws CoreException */
 protected void generateModels(ModelBuildScriptGenerator generator, List models) throws CoreException {
 	if (models.isEmpty())
 		return;
@@ -352,14 +394,19 @@ protected void generateModels(ModelBuildScriptGenerator generator, List models) 
 		generator.generate();
 	}
 }
+
+/**
+ * Set this object's feature id to be the given value.
+ *  * @param featureID the feature id * @throws CoreException if the given feature id is <code>null</code> */
 public void setFeature(String featureID) throws CoreException {
 	if (featureID == null)
 		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, Policy.bind("error.missingFeatureId"), null)); //$NON-NLS-1$
 	this.featureID = featureID;
 }
+
 /**
- * Reads the target feature from the specified location.
- */
+ * Reads the target feature from the root location.
+ *  * @throws CoreException if the feature could not be read */
 protected void readFeature() throws CoreException {
 	String location = getFeatureRootLocation();
 	if (location == null)
@@ -375,9 +422,11 @@ protected void readFeature() throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, Policy.bind("error.creatingFeature", new String[] {featureID}), e)); //$NON-NLS-1$
 	}
 }
+
 /**
- * If the feature location was not specified, use a default one.
- */
+ * Return the root location for the feature. If the feature location 
+ * was not specified, use a default one.
+ *  * @return the feature root location */
 protected String getFeatureRootLocation() {
 	if (featureRootLocation == null) {
 		IPath location = new Path(installLocation);
@@ -387,13 +436,20 @@ protected String getFeatureRootLocation() {
 	}
 	return featureRootLocation;
 }
+
 /**
- *
- */
+ * Set the root of the feature to be the given location.
+ *  * @param location the feature root */
 public void setFeatureRootLocation(String location) {
 	this.featureRootLocation = location;
 }
 
+/**
+ * Return a properties object constructed from the build.properties file
+ * for the given feature. If no file exists, then an empty properties object
+ * is returned.
+ *  * @param feature the feature to retrieve the build.properties from * @return Properties the feature's build.properties * @throws CoreException
+ * @see Feature */
 protected Properties getBuildProperties(Feature feature) throws CoreException {
 	VersionedIdentifier identifier = feature.getVersionedIdentifier();
 	Properties result = (Properties) buildProperties.get(identifier);
@@ -403,17 +459,21 @@ protected Properties getBuildProperties(Feature feature) throws CoreException {
 	}
 	return result;
 }
+
 /**
- * Delegates some target call to all-template only if the property
- * includeChildren is set.
- */
+ * Add the <code>children</code> target to the given Ant script. Delegates 
+ * some target call to all-template only if the property includeChildren is set.
+ *  * @param script the script to add the target to */
 protected void generateChildrenTarget(AntScript script) {
 	script.println();
 	script.printTargetDeclaration(1, TARGET_CHILDREN, null, PROPERTY_INCLUDE_CHILDREN, null, null);
 	script.printAntCallTask(2, TARGET_ALL_CHILDREN, null, null);
-	script.printString(1, "</target>"); //$NON-NLS-1$
+	script.printTargetEnd(1);
 }
 
+/**
+ * Add the <code>build.jars</code> target to the given Ant script.
+ *  * @param script the script to add the target to * @throws CoreException */
 protected void generateBuildJarsTarget(AntScript script) throws CoreException {
 	int tab = 1;
 	script.println();
@@ -421,15 +481,18 @@ protected void generateBuildJarsTarget(AntScript script) throws CoreException {
 	Map params = new HashMap(1);
 	params.put(PROPERTY_TARGET, TARGET_BUILD_JARS);
 	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, null, params);
-	script.printEndTag(--tab, "target"); //$NON-NLS-1$
+	script.printTargetEnd(--tab);
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_BUILD_SOURCES, TARGET_INIT, null, null, null);
 	params.clear();
 	params.put(PROPERTY_TARGET, TARGET_BUILD_SOURCES);
 	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, null, params);
-	script.printEndTag(--tab, "target"); //$NON-NLS-1$
+	script.printTargetEnd(--tab);
 }
 
+/**
+ * Add the <code>refresh</code> target to the given Ant script.
+ *  * @param script the script to add the target to */
 protected void generateRefreshTarget(AntScript script) {
 	int tab = 1;
 	script.println();
@@ -438,6 +501,6 @@ protected void generateRefreshTarget(AntScript script) {
 	Map params = new HashMap(2);
 	params.put(PROPERTY_TARGET, TARGET_REFRESH);
 	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, null, params);
-	script.printString(--tab, "</target>"); //$NON-NLS-1$
+	script.printTargetEnd(--tab);
 }
 }

@@ -1,9 +1,9 @@
 /**********************************************************************
  * Copyright (c) 2000, 2002 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors: 
  * IBM - Initial API and implementation
@@ -12,12 +12,11 @@ package org.eclipse.pde.internal.build;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.eclipse.core.boot.IPlatformRunnable;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * Defines common behaviour for PDE Core applications.
+ * Defines common behaviour for PDE Build applications.
  */
 public abstract class AbstractApplication implements IPlatformRunnable, IPDEBuildConstants {
 
@@ -26,7 +25,7 @@ public abstract class AbstractApplication implements IPlatformRunnable, IPDEBuil
  */
 protected abstract void run() throws CoreException;
 
-/*
+/**
  * @see IPlatformRunnable#run(Object)
  */
 public Object run(Object args) throws Exception {
@@ -42,8 +41,6 @@ public Object run(Object args) throws Exception {
 	return null;
 }
 
-
-
 /**
  * Looks for interesting command line arguments.
  */
@@ -52,9 +49,9 @@ protected void processCommandLine(List commands) {
 
 /**
  * From a command line list, get the array of arguments of a given parameter.
- * The parameter and its arguments are removed from the list.
- * @return null if the parameter is not found or has no arguments
- */
+ * The parameter and its arguments are removed from the list. Return
+ * <code>null</code> if the parameter is not found or has no arguments.
+ *  * @param commands * @param param * @return String[] the arguments, or <code>null</code> */
 protected String[] getArguments(List commands, String param) {
 	int index = commands.indexOf(param);
 	if (index == -1)
@@ -74,8 +71,4 @@ protected String[] getArguments(List commands, String param) {
 		return null;
 	return (String[]) args.toArray(new String[args.size()]);
 }
-
-
-
-
 }

@@ -1,11 +1,17 @@
+/**********************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.pde.internal.build.tasks;
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+
 import java.io.*;
 import java.util.*;
-
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.*;
@@ -13,6 +19,7 @@ import org.eclipse.pde.internal.build.*;
 import org.eclipse.update.core.Feature;
 import org.eclipse.update.core.IPluginEntry;
 import org.eclipse.update.internal.core.FeatureExecutableFactory;
+
 /**
  * Used to create a build manifest file describing what plug-ins and versions
  * were included in a build. It has to be executed after a fetch task.
@@ -29,6 +36,8 @@ public class BuildManifestTask extends Task implements IPDEBuildConstants, IXMLC
 	protected String[] elements;
 	protected String installLocation;
 
+/**
+ * @see org.apache.tools.ant.Task#execute() */
 public void execute() throws BuildException {
 	try {
 		if (this.elements == null)
@@ -49,6 +58,8 @@ public void execute() throws BuildException {
 	}
 }
 
+/**
+ *  * @param output */
 protected void generatePrologue(PrintWriter output) {
 	output.print("# Build Manifest for "); //$NON-NLS-1$
 	output.println(buildName);
@@ -74,23 +85,32 @@ protected void generatePrologue(PrintWriter output) {
 	output.println();
 }
 
+/**
+ *  * @return String */
 protected String getBuildId() {
 	if (buildId == null)
 		buildId = getProject().getProperty(PROPERTY_BUILD_ID);
 	return buildId;
 }
 
+/**
+ *  * @return String */
 protected String getBuildQualifier() {
 	if (buildQualifier == null)
 		buildQualifier = getProject().getProperty(PROPERTY_BUILD_QUALIFIER);
 	return buildQualifier;
 }
 
+/**
+ *  * @return String */
 protected String getBuildType() {
 	if (buildType == null)
 		buildType = getProject().getProperty(PROPERTY_BUILD_TYPE);
 	return buildType;
 }
+
+/**
+ *  * @param output * @param entries * @throws CoreException */
 protected void generateEntries(PrintWriter output, List entries) throws CoreException {
 	Collections.sort(entries);
 	for (Iterator iterator = entries.iterator(); iterator.hasNext();) {
@@ -124,6 +144,8 @@ protected void collectEntries(List entries, String entry) throws CoreException {
 	}
 }
 
+/**
+ *  * @param entries * @param feature * @throws CoreException */
 protected void collectChildrenEntries(List entries, Feature feature) throws CoreException {
 	IPluginEntry[] children = feature.getPluginEntries();
 	for (int i = 0; i < children.length; i++) {
@@ -135,6 +157,8 @@ protected void collectChildrenEntries(List entries, Feature feature) throws Core
 	}
 }
 
+/**
+ *  * @param element * @return Feature * @throws CoreException */
 protected Feature readFeature(String element) throws CoreException {
 	IPath root = new Path(installLocation);
 	root = root.append(DEFAULT_FEATURE_LOCATION);
@@ -153,6 +177,7 @@ protected Feature readFeature(String element) throws CoreException {
 public void setInstall(String installLocation) {
 	this.installLocation = installLocation;
 }
+
 /**
  * Reads directory file at the directoryLocation.
  */
@@ -171,10 +196,14 @@ protected void readDirectory() throws CoreException {
 	}
 }
 
+/**
+ *  * @param directory */
 public void setDirectory(String directory) {
 	directoryLocation = directory;
 }
 
+/**
+ *  * @param value */
 public void setElements(String value) {
 	elements = Utils.getArrayFromString(value);
 }
@@ -193,6 +222,8 @@ public void setChildren(boolean children) {
 	this.children = children;
 }
 
+/**
+ *  * @param value */
 public void setBuildName(String value) {
 	buildName = value;
 }

@@ -1,14 +1,15 @@
 /**********************************************************************
- * Copyright (c) 2002 IBM Corporation and others.
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
 package org.eclipse.pde.internal.build;
+
 /**
  * XML template constants.
  */
@@ -44,12 +45,9 @@ public interface IXMLConstants {
 	public static final String TARGET_GATHER_LOGS = "gather.logs"; //$NON-NLS-1$
 	public static final String TARGET_GATHER_SOURCES = "gather.sources"; //$NON-NLS-1$
 	public static final String TARGET_INIT = "init"; //$NON-NLS-1$
-	public static final String TARGET_INSTALL = "install"; //$NON-NLS-1$
 	public static final String TARGET_MAIN = "main"; //$NON-NLS-1$
 	public static final String TARGET_PROPERTIES = "properties"; //$NON-NLS-1$
 	public static final String TARGET_REFRESH = "refresh"; //$NON-NLS-1$
-	public static final String TARGET_SRC_GATHER_WHOLE = "src.gather.whole"; //$NON-NLS-1$
-	public static final String TARGET_TARGET = "target"; //$NON-NLS-1$
 	public static final String TARGET_ZIP_DISTRIBUTION = "zip.distribution"; //$NON-NLS-1$
 	public static final String TARGET_ZIP_LOGS = "zip.logs"; //$NON-NLS-1$
 	public static final String TARGET_ZIP_PLUGIN = "zip.plugin"; //$NON-NLS-1$
@@ -78,7 +76,6 @@ public interface IXMLConstants {
 	public static final String PROPERTY_FULL_NAME = "full.name"; //$NON-NLS-1$
 	public static final String PROPERTY_INCLUDE_CHILDREN = "include.children"; //$NON-NLS-1$
 	public static final String PROPERTY_INSTALL = "install"; //$NON-NLS-1$
-	public static final String PROPERTY_INSTALL_LOCATION = "install.location"; //$NON-NLS-1$
 	public static final String PROPERTY_JAR_EXTRA_CLASSPATH = "jars.extra.classpath"; //$NON-NLS-1$
 	public static final String PROPERTY_JAR_ORDER = "jars.compile.order"; //$NON-NLS-1$
 	public static final String PROPERTY_NL = "nl"; //$NON-NLS-1$

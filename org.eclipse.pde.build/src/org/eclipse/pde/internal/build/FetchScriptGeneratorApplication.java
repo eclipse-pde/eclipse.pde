@@ -1,9 +1,9 @@
 /**********************************************************************
- * Copyright (c) 2002 IBM Corporation and others.
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors: 
  * IBM - Initial API and implementation
@@ -11,8 +11,8 @@
 package org.eclipse.pde.internal.build;
 
 import java.util.List;
-
 import org.eclipse.core.runtime.*;
+
 /**
  * 
  */
@@ -51,6 +51,7 @@ public class FetchScriptGeneratorApplication extends AbstractApplication {
 public FetchScriptGeneratorApplication() {
 }
 
+/** * @see AbstractApplication#run() */
 public void run() throws CoreException {
 	if (this.elements == null)
 		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ELEMENT_MISSING, Policy.bind("error.missingElement"), null)); //$NON-NLS-1$
@@ -91,43 +92,37 @@ protected void processCommandLine(List commands) {
 }
 
 /**
- * Sets the children.
- */
+ *  * @param children */
 public void setChildren(boolean children) {
 	this.children = children;
 }
 
 /**
- * Sets the cvsPassFileLocation.
- */
+ *  * @param cvsPassFileLocation */
 public void setCvsPassFile(String cvsPassFileLocation) {
 	this.cvsPassFileLocation = cvsPassFileLocation;
 }
 
 /**
- * Sets the directoryLocation.
- */
+ *  * @param directoryLocation */
 public void setDirectory(String directoryLocation) {
 	this.directoryLocation = directoryLocation;
 }
 
 /**
- * Sets the elements.
- */
+ *  * @param elements */
 public void setElements(String[] elements) {
 	this.elements = elements;
 }
 
 /**
- * Sets the installLocation.
- */
+ *  * @param installLocation */
 public void setInstall(String installLocation) {
 	this.installLocation = installLocation;
 }
 
 /**
- * Sets the scriptName.
- */
+ *  * @param scriptName */
 public void setScriptName(String scriptName) {
 	this.scriptName = scriptName;
 }

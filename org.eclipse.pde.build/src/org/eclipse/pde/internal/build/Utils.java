@@ -1,9 +1,9 @@
 /**********************************************************************
- * Copyright (c) 2002 IBM Corporation and others.
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors: 
  * IBM - Initial API and implementation
@@ -14,7 +14,6 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
-
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.PluginModel;
@@ -41,15 +40,16 @@ public static String[] getArrayFromString(String list, String separator) {
 }
 
 /**
- * convert a list of comma-separated tokens into an array
- */
+ * Convert the given list of comma-separated tokens into a string array and 
+ * return it.
+ *  * @param list the list to convert * @return String[] */
 public static String[] getArrayFromString(String list) {
 	return getArrayFromString(list, ","); //$NON-NLS-1$
 }
 
 /**
  * Substitutes a word in a sentence.
- */
+ *  * @param sentence * @param oldWord * @param newWord * @return String */
 public static String substituteWord(String sentence, String oldWord, String newWord) {
 	int index = sentence.indexOf(oldWord);
 	if (index == -1)
@@ -64,7 +64,7 @@ public static String substituteWord(String sentence, String oldWord, String newW
 /**
  * Finds out if an status has the given severity. In case of a multi status,
  * its children are also included.
- */
+ *  * @param status * @param severity * @return boolean */
 public static boolean contains(IStatus status, int severity) {
 	if (status.matches(severity))
 		return true;
@@ -79,7 +79,7 @@ public static boolean contains(IStatus status, int severity) {
 
 /**
  * Converts an array of strings into an array of URLs.
- */
+ *  * @param target * @return URL[] * @throws CoreException */
 public static URL[] asURL(String[] target) throws CoreException {
 	if (target == null)
 		return null;
@@ -93,6 +93,10 @@ public static URL[] asURL(String[] target) throws CoreException {
 	}
 }
 
+/**
+ * Return a string which is a concatination of each member of the given collection,
+ * separated by the given separator.
+ *  * @param collection the collection to concatinate * @param separator the separator to use * @return String */
 public static String getStringFromCollection(Collection collection, String separator) {
 	StringBuffer result = new StringBuffer();
 	boolean first = true;
@@ -105,6 +109,10 @@ public static String getStringFromCollection(Collection collection, String separ
 	return result.toString();
 }
 
+/**
+ * Return a string which is a concatination of each member of the given array,
+ * separated by the given separator.
+ *  * @param values the array to concatinate * @param separator the separator to use * @return String */
 public static String getStringFromArray(String[] values, String separator) {
 	StringBuffer result = new StringBuffer();
 	for (int i = 0; i < values.length; i++) {
@@ -116,8 +124,7 @@ public static String getStringFromArray(String[] values, String separator) {
 }
 
 /**
- * 
- */
+ *  * @param plugins * @return String[][] */
 public static String[][] computePrerequisiteOrder(PluginModel[] plugins) {
 	List prereqs = new ArrayList(9);
 	Set pluginList = new HashSet(plugins.length);
@@ -160,9 +167,9 @@ public static String[][] computePrerequisiteOrder(PluginModel[] plugins) {
 	String[][] prereqArray = (String[][]) prereqs.toArray(new String[prereqs.size()][]);
 	return computeNodeOrder(prereqArray);
 }
+
 /**
- * 
- */
+ *  * @param specs * @return String[][] */
 protected static String[][] computeNodeOrder(String[][] specs) {
 	HashMap counts = computeCounts(specs);
 	List nodes = new ArrayList(counts.size());
@@ -180,9 +187,9 @@ protected static String[][] computeNodeOrder(String[][] specs) {
 	result[1] = (String[]) counts.keySet().toArray(new String[counts.size()]);
 	return result;
 }
+
 /**
- * 
- */
+ *  * @param counts * @return List */
 protected static List findRootNodes(HashMap counts) {
 	List result = new ArrayList(5);
 	for (Iterator i = counts.keySet().iterator(); i.hasNext();) {
@@ -193,9 +200,9 @@ protected static List findRootNodes(HashMap counts) {
 	}
 	return result;
 }
+
 /**
- * 
- */
+ *  * @param mappings * @param roots * @param counts */
 protected static void removeArcs(String[][] mappings, List roots, HashMap counts) {
 	for (Iterator j = roots.iterator(); j.hasNext();) {
 		String root = (String) j.next();
@@ -209,9 +216,9 @@ protected static void removeArcs(String[][] mappings, List roots, HashMap counts
 		}
 	}
 }
+
 /**
- * 
- */
+ *  * @param mappings * @return HashMap */
 protected static HashMap computeCounts(String[][] mappings) {
 	HashMap counts = new HashMap(5);
 	for (int i = 0; i < mappings.length; i++) {
@@ -229,9 +236,10 @@ protected static HashMap computeCounts(String[][] mappings) {
 	}
 	return counts;
 }
+
 /**
  * Helper method to ensure an array is converted into an ArrayList.
- */
+ *  * @param args * @return ArrayList */
 public static ArrayList getArrayList(Object[] args) {
 	// We could be using Arrays.asList() here, but it does not specify
 	// what kind of list it will return. We do need a list that
@@ -242,6 +250,10 @@ public static ArrayList getArrayList(Object[] args) {
 	return result;
 }
 
+/**
+ * Return a path which is equivalent to the given location relative to the specified
+ * base path.
+ *  * @param location the location to convert * @param base the base path * @return IPath */
 public static IPath makeRelative(IPath location, IPath base) {
 	IPath result = location;
 	if (result.getDevice() != null && !result.getDevice().equalsIgnoreCase(base.getDevice()))
@@ -258,7 +270,7 @@ public static IPath makeRelative(IPath location, IPath base) {
 /**
  * Transfers all available bytes from the given input stream to the given output stream. 
  * Regardless of failure, this method closes both streams.
- */
+ *  * @param source * @param destination * @throws IOException */
 public static void transferStreams(InputStream source, OutputStream destination) throws IOException {
 	try {
 		byte[] buffer = new byte[8192];
