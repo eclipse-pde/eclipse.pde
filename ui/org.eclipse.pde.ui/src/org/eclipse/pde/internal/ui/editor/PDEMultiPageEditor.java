@@ -69,6 +69,7 @@ public abstract class PDEMultiPageEditor
 		public void elementDirtyStateChanged(Object element, boolean isDirty) {
 		}
 		public void elementMoved(Object originalElement, Object movedElement) {
+			close(true);
 		}
 	}
 
