@@ -224,11 +224,11 @@ public class ClasspathUtilCore {
 		}	
 	}
 	
-	public static void addLibraries(IPluginModelBase model, boolean isExported, Vector result) {
+	public static void addLibraries(IPluginModelBase model, boolean isExported, Vector result) throws CoreException {
 		String location = model.getInstallLocation();	
 		// handle Plugin-in-a-JAR
 		if (new File(location).isFile() && location.endsWith(".jar")) { //$NON-NLS-1$
-			addJARdPlugin(location, isExported, result);
+			addJARdPlugin(model, isExported, result);
 		} else {
 			addLibraryEntries(model.getPluginBase(), isExported, result);
 		}
@@ -248,11 +248,14 @@ public class ClasspathUtilCore {
 		}		
 	}
 	
-	private static void addJARdPlugin(String location, boolean isExported, Vector result) {
+	private static void addJARdPlugin(IPluginModelBase model, boolean isExported, Vector result) throws CoreException {
+		IPath sourcePath = getSourceAnnotation(model, ".");
+		if (sourcePath == null)
+			sourcePath = new Path(model.getInstallLocation());
 		IClasspathEntry entry =
 			JavaCore.newLibraryEntry(
-					new Path(location),
-					new Path(location),
+					new Path(model.getInstallLocation()),
+					sourcePath,
 					null,
 					isExported);
 		if (entry != null && !result.contains(entry)) {

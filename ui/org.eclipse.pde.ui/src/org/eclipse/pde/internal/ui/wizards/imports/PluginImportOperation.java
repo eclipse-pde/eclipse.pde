@@ -524,7 +524,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 	}
 	
 	private void setClasspath(IProject project, IPluginModelBase model)
-		throws JavaModelException {
+		throws CoreException {
 		IJavaProject jProject = JavaCore.create(project);
 		Vector entries = new Vector();
 		if (new File(model.getInstallLocation()).isFile()) {
@@ -556,7 +556,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 				.getOutputLocation(), null);
 	}
 	
-	private void getLinkedLibraries(IProject project, IPluginModelBase model, Vector entries) {
+	private void getLinkedLibraries(IProject project, IPluginModelBase model, Vector entries) throws CoreException {
 		ClasspathUtilCore.addLibraries(model, true, entries);
 		for (int i = 0; i < entries.size(); i++) {
 			IPath path = new Path(model.getInstallLocation());
