@@ -11,12 +11,12 @@
 package org.eclipse.pde.internal.ui.view;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jface.action.IAction;
+import org.eclipse.jdt.core.*;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.ui.*;
 
 public class OpenDependenciesAction implements IWorkbenchWindowActionDelegate {

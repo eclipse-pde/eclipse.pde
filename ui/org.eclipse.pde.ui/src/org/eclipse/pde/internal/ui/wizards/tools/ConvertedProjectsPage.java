@@ -10,32 +10,32 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.tools;
 
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.plugin.*;
-import org.eclipse.ui.*;
-
 import java.lang.reflect.*;
-import org.eclipse.ui.actions.*;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.ide.*;
+import java.util.*;
+
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.wizard.*;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.*;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.plugin.*;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.elements.*;
+import org.eclipse.pde.internal.ui.parts.*;
+import org.eclipse.swt.*;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.swt.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.core.resources.*;
-import java.util.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.jdt.core.*;
-import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.PDE;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.actions.*;
+import org.eclipse.ui.help.*;
+import org.eclipse.ui.ide.*;
 	
 public class ConvertedProjectsPage extends WizardPage  {
 	private Button updateBuildPathButton;
@@ -50,7 +50,7 @@ public class ConvertedProjectsPage extends WizardPage  {
 		"ConvertedProjectWizard.projectList"; //$NON-NLS-1$
 	private static final String UPDATE_SECTION = "ConvertedProjectsPageUpdate"; //$NON-NLS-1$
 	private TablePart tablePart;
-
+	private IProject[] selected;
 	
 	public class ProjectContentProvider
 		extends DefaultContentProvider
@@ -105,6 +105,7 @@ public class ConvertedProjectsPage extends WizardPage  {
 		setTitle(PDEPlugin.getResourceString(KEY_TITLE));
 		setDescription(PDEPlugin.getResourceString(KEY_DESC));
 		tablePart = new TablePart(PDEPlugin.getResourceString(KEY_PROJECT_LIST));
+		selected = (IProject[])initialSelection.toArray(new IProject[initialSelection.size()]);
 	}
 	
 	public void createControl(Composite parent) {
@@ -135,9 +136,9 @@ public class ConvertedProjectsPage extends WizardPage  {
 			getDialogSettings().getBoolean(UPDATE_SECTION));
 		updateBuildPathButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		updateBuildPathButton.setEnabled(false);
-		
-		tablePart.updateCounter(0);
-			
+		tablePart.setSelection(selected);
+		tablePart.updateCounter(selected.length);
+
 		setControl(container);
 		Dialog.applyDialogFont(container);
 		WorkbenchHelp.setHelp(container, IHelpContextIds.CONVERTED_PROJECTS);

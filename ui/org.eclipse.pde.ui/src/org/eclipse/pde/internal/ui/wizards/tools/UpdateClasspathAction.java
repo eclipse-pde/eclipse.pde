@@ -10,32 +10,46 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.tools;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
+import java.lang.reflect.*;
+import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
-import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.swt.custom.*;
 import org.eclipse.ui.*;
 
 public class UpdateClasspathAction implements IViewActionDelegate {
 	private ISelection fSelection;
+
 	private static final String KEY_TITLE = "Actions.classpath.title"; //$NON-NLS-1$
+
 	private static final String KEY_MESSAGE = "Actions.classpath.message"; //$NON-NLS-1$
+
 	private static final String KEY_UPDATE = "Actions.classpath.update"; //$NON-NLS-1$
 
 	/*
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
+		if (!hasModelsToUpdate()) {
+			MessageDialog dialog = new MessageDialog(
+					PDEPlugin.getActiveWorkbenchShell(),
+					PDEPlugin.getResourceString("UpdateClasspathAction.find"), //$NON-NLS-1$
+					null,
+					PDEPlugin.getResourceString("UpdateClasspathAction.none"), //$NON-NLS-1$
+					MessageDialog.INFORMATION, new String[] { IDialogConstants.OK_LABEL }, 0);
+			dialog.open();
+			return;
+		}
 		if (fSelection instanceof IStructuredSelection) {
 			Object[] elems = ((IStructuredSelection) fSelection).toArray();
 			ArrayList models = new ArrayList(elems.length);
@@ -53,7 +67,7 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 					project = ((IJavaProject) elem).getProject();
 				}
 				if (project != null
-				 && WorkspaceModelManager.isJavaPluginProject(project)) {
+						&& WorkspaceModelManager.isJavaPluginProject(project)) {
 					IPluginModelBase model = manager.findModel(project);
 					if (model != null) {
 						models.add(model);
@@ -61,18 +75,14 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 				}
 			}
 
-			final IPluginModelBase[] modelArray =
-				(IPluginModelBase[]) models.toArray(
-					new IPluginModelBase[models.size()]);
+			final IPluginModelBase[] modelArray = (IPluginModelBase[]) models
+					.toArray(new IPluginModelBase[models.size()]);
 
-			UpdateBuildpathWizard wizard =
-				new UpdateBuildpathWizard(modelArray);
-			final WizardDialog dialog =
-				new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
-			BusyIndicator
-				.showWhile(
-					PDEPlugin.getActiveWorkbenchShell().getDisplay(),
-					new Runnable() {
+			UpdateBuildpathWizard wizard = new UpdateBuildpathWizard(modelArray);
+			final WizardDialog dialog = new WizardDialog(PDEPlugin
+					.getActiveWorkbenchShell(), wizard);
+			BusyIndicator.showWhile(PDEPlugin.getActiveWorkbenchShell()
+					.getDisplay(), new Runnable() {
 				public void run() {
 					dialog.open();
 				}
@@ -80,18 +90,16 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 		}
 	}
 
-	public static void run(
-		boolean fork,
-		IRunnableContext context,
-		final IPluginModelBase[] models) {
+	public static void run(boolean fork, IRunnableContext context,
+			final IPluginModelBase[] models) {
 		try {
 			context.run(fork, true, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor)
-					throws InvocationTargetException, InterruptedException {
+						throws InvocationTargetException, InterruptedException {
 					try {
 						IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 							public void run(IProgressMonitor monitor)
-								throws CoreException {
+									throws CoreException {
 								doUpdateClasspath(monitor, models);
 							}
 						};
@@ -112,11 +120,10 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 		}
 	}
 
-	public static void doUpdateClasspath(
-		IProgressMonitor monitor,
-		IPluginModelBase[] models)
-		throws CoreException {
-		monitor.beginTask(PDEPlugin.getResourceString(KEY_UPDATE), models.length);
+	public static void doUpdateClasspath(IProgressMonitor monitor,
+			IPluginModelBase[] models) throws CoreException {
+		monitor.beginTask(PDEPlugin.getResourceString(KEY_UPDATE),
+				models.length);
 		try {
 			for (int i = 0; i < models.length; i++) {
 				IPluginModelBase model = models[i];
@@ -127,9 +134,8 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 					monitor.worked(1);
 					continue;
 				}
-				ClasspathUtilCore.setClasspath(
-					model,
-					new SubProgressMonitor(monitor, 1));
+				ClasspathUtilCore.setClasspath(model, new SubProgressMonitor(
+						monitor, 1));
 				if (monitor.isCanceled())
 					break;
 			}
@@ -150,5 +156,19 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 	public void selectionChanged(IAction action, ISelection selection) {
 		fSelection = selection;
 	}
-
+	
+	private boolean hasModelsToUpdate(){
+		IPluginModelBase[] models =
+			PDECore.getDefault().getWorkspaceModelManager().getAllModels();
+		try{
+			for (int i = 0; i < models.length; i++) {
+				if (models[i].getUnderlyingResource().getProject().hasNature(JavaCore.NATURE_ID))
+					return true;
+			}
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}
+		return false;
+	}
+	
 }

@@ -10,20 +10,22 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.tools;
 
-import org.eclipse.pde.internal.ui.wizards.*;
+import java.util.*;
+
 import org.eclipse.pde.internal.ui.*;
-import java.util.Vector;
+import org.eclipse.pde.internal.ui.wizards.*;
 
 public class ConvertedProjectWizard extends NewWizard {
 	private ConvertedProjectsPage mainPage;
 	private Vector selected;
 	private static final String KEY_WTITLE = "ConvertedProjectWizard.title"; //$NON-NLS-1$
 
-public ConvertedProjectWizard() {
+public ConvertedProjectWizard(Vector initialSelection) {
 	setDefaultPageImageDescriptor(PDEPluginImages.DESC_CONVJPPRJ_WIZ);
 	setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
 	setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
 	setNeedsProgressMonitor(true);
+	this.selected = initialSelection;
 }
 
 public void addPages() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,7 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.custom.*;
@@ -26,12 +26,11 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 
 /**
- * @author melhem
+ * @author cgwong
  */
-public class MigrationAction implements IObjectActionDelegate {
-	
-	private ISelection fSelection;
+public class ConvertProjectsAction implements IObjectActionDelegate {
 
+	private ISelection fSelection;
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
 	 */
@@ -42,17 +41,17 @@ public class MigrationAction implements IObjectActionDelegate {
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		if (!hasModelsToMigrate()){
-			MessageDialog dialog = new MessageDialog(this.getDisplay().getActiveShell(), PDEPlugin.getResourceString("MigrationAction.find"), //$NON-NLS-1$
-					null, PDEPlugin.getResourceString("MigrationAction.none"), //$NON-NLS-1$
+		if (!hasProjectsToConvert()){
+			MessageDialog dialog = new MessageDialog(this.getDisplay().getActiveShell(), PDEPlugin.getResourceString("ConvertProjectsAction.find"), //$NON-NLS-1$
+					null, PDEPlugin.getResourceString("ConvertProjectsAction.none"), //$NON-NLS-1$
 					MessageDialog.INFORMATION, new String[]{IDialogConstants.OK_LABEL}, 0);
 			dialog.open();
 			return;
 		}
-
+		
 		if (fSelection instanceof IStructuredSelection) {
 			Object[] elems = ((IStructuredSelection) fSelection).toArray();
-			ArrayList models = new ArrayList(elems.length);
+			Vector projects = new Vector(elems.length);
 
 			PluginModelManager manager = PDECore.getDefault().getModelManager();
 			for (int i = 0; i < elems.length; i++) {
@@ -67,27 +66,20 @@ public class MigrationAction implements IObjectActionDelegate {
 				} else if (elem instanceof IJavaProject) {
 					project = ((IJavaProject) elem).getProject();
 				}
-				if (project != null) {
-					IPluginModelBase model = manager.findModel(project);
-					if (model != null) {
-						models.add(model);
-					}
-				}
+				if (project != null)
+					projects.add(project);
 			}
-
-			final IPluginModelBase[] modelArray =
-			(IPluginModelBase[]) models.toArray(
-					new IPluginModelBase[models.size()]);
-
-			MigratePluginWizard wizard = new MigratePluginWizard(modelArray);
-			final Display display = getDisplay();
-			final WizardDialog dialog =
-				new WizardDialog(display.getActiveShell(), wizard);
-			BusyIndicator.showWhile(display, new Runnable() {
-				public void run() {
-					dialog.open();
-				}
-			});
+			
+		ConvertedProjectWizard wizard = new ConvertedProjectWizard(projects);
+		
+		final Display display = getDisplay();
+		final WizardDialog dialog =
+			new WizardDialog(display.getActiveShell(), wizard);
+		BusyIndicator.showWhile(display, new Runnable() {
+			public void run() {
+				dialog.open();
+			}
+		});
 		}
 	}
 	
@@ -98,26 +90,19 @@ public class MigrationAction implements IObjectActionDelegate {
 		fSelection = selection;
 	}
 	
-	private Display getDisplay() {
+	public Display getDisplay(){
 		Display display = Display.getCurrent();
-		if (display == null) {
+		if (display == null)
 			display = Display.getDefault();
-		}
 		return display;
 	}
 	
-	private boolean hasModelsToMigrate() {
-		Vector result = new Vector();
-		IPluginModelBase[] models =
-			PDECore.getDefault().getWorkspaceModelManager().getAllModels();
-		for (int i = 0; i < models.length; i++) {
-			if (!models[i].getUnderlyingResource().isLinked()
-				&& models[i].isLoaded()
-				&& models[i].getPluginBase().getSchemaVersion() == null) {
+	private boolean hasProjectsToConvert(){
+		IProject[] projects = PDEPlugin.getWorkspace().getRoot().getProjects();
+		for (int i = 0; i<projects.length; i++){
+			if (projects[i].isOpen() && !PDE.hasPluginNature(projects[i]))
 				return true;
-			}
 		}
 		return false;
 	}
-	
 }
