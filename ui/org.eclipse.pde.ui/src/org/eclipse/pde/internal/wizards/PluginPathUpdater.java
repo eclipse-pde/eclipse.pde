@@ -332,7 +332,10 @@ private static String expandLibraryName(String source) {
 	}
 	else
 		variable = null;
-	if (variable != null) return variable;
+	if (variable != null) {
+		path = path.removeFirstSegments(1);
+		return variable + path.SEPARATOR + path.toString();
+	}
 	return source;
 }
 
