@@ -51,8 +51,8 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 		public void selectionChanged(ISelection selection) {
 		}
 		public boolean isEditable() {
-			IModel model = (IModel)editor.getModel();
-			return model==null || model.isEditable();
+			IModel model = (IModel) editor.getModel();
+			return model == null || model.isEditable();
 		}
 	}
 
@@ -62,7 +62,7 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 			setText(PDEPlugin.getResourceString(ACTIONS_CUT));
 		}
 		public void selectionChanged(ISelection selection) {
-			setEnabled(isEditable() && selection!=null && !selection.isEmpty());
+			setEnabled(isEditable() && selection != null && !selection.isEmpty());
 		}
 	}
 
@@ -72,7 +72,7 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 			setText(PDEPlugin.getResourceString(ACTIONS_COPY));
 		}
 		public void selectionChanged(ISelection selection) {
-			setEnabled(selection!=null && !selection.isEmpty());
+			setEnabled(selection != null && !selection.isEmpty());
 		}
 	}
 
@@ -129,11 +129,19 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 	private void addGlobalAction(String id, Action action) {
 		globalActions.put(id, action);
 	}
-	public void contextMenuAboutToShow(IMenuManager mng) {
+	public void addClipboardActions(IMenuManager mng) {
 		mng.add(cutAction);
 		mng.add(copyAction);
 		mng.add(pasteAction);
-		mng.add(new Separator());
+	}
+	public void contextMenuAboutToShow(IMenuManager mng) {
+		contextMenuAboutToShow(mng, true);
+	}
+	public void contextMenuAboutToShow(IMenuManager mng, boolean addClipboard) {
+		if (addClipboard) {
+			addClipboardActions(mng);
+			mng.add(new Separator());
+		}
 		mng.add(saveAction);
 	}
 	public void contributeToMenu(IMenuManager mm) {

@@ -239,10 +239,10 @@ public class DetailChildrenSection
 		return false;
 	}
 	protected void fillContextMenu(IMenuManager manager) {
-		ISelection selection = treeViewer.getSelection();
+		IStructuredSelection selection = (IStructuredSelection)treeViewer.getSelection();
 		Object object = null;
 		if (!selection.isEmpty()) {
-			object = ((IStructuredSelection) selection).getFirstElement();
+			object = selection.getFirstElement();
 			if (object instanceof IPluginParent) {
 				DetailExtensionSection.fillContextMenu(
 					getFormPage(),
@@ -263,7 +263,13 @@ public class DetailChildrenSection
 					false);
 			}
 		}
-		getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager);
+		manager.add(new Separator());
+		getFormPage().getEditor().getContributor().addClipboardActions(manager);
+		manager.add(new Separator());
+		if (selection.size()==1) {
+			manager.add(new PropertiesAction(getFormPage().getEditor()));
+		}
+		getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager, false);
 	}
 	private void handleApply() {
 		try {

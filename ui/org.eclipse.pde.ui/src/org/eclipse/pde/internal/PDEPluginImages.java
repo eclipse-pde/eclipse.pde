@@ -141,6 +141,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_REMOVE_ATT = create(PATH_LCL, "remove_att.gif");
 	public static final ImageDescriptor DESC_MAXIMIZE = create(PATH_LCL, "maximize.gif");
 	public static final ImageDescriptor DESC_RESTORE = create(PATH_LCL, "restore.gif");
+	public static final ImageDescriptor DESC_FULL_HIERARCHY = create(PATH_LCL, "full_hierarchy.gif");
 
 	public static final ImageDescriptor DESC_ADD_ATT_HOVER = create(PATH_LCL_HOVER, "add_att.gif");
 	public static final ImageDescriptor DESC_CLONE_ATT_HOVER = create(PATH_LCL_HOVER, "clone_att.gif");

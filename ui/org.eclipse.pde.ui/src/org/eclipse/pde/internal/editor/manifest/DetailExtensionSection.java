@@ -38,7 +38,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.pde.internal.model.ModelDataTransfer;
 import org.eclipse.swt.dnd.Clipboard;
-
+import org.eclipse.jface.util.*;
 
 public class DetailExtensionSection
 	extends TreeSection
@@ -54,6 +54,9 @@ public class DetailExtensionSection
 	public static final String SECTION_SHOW_CHILDREN =
 		"ManifestEditor.DetailExtensionSection.showAllChildren";
 	public static final String POPUP_NEW = "Menus.new.label";
+	public static final String POPUP_NEW_EXTENSION =
+		"ManifestEditor.DetailExtensionSection.newExtension";
+	public static final String POPUP_GO_TO = "Menus.goTo.label";
 	public static final String POPUP_DELETE = "Actions.delete.label";
 	private static final String SETTING_SHOW_ALL =
 		"DetailExtensionSection.showAllChildren";
@@ -62,7 +65,7 @@ public class DetailExtensionSection
 	private SchemaRegistry schemaRegistry;
 	private ExternalModelManager pluginInfoRegistry;
 	private DrillDownAdapter drillDownAdapter;
-	private Action goIntoAction;
+	private Action newExtensionAction;
 
 	class ExtensionContentProvider
 		extends DefaultContentProvider
@@ -125,6 +128,77 @@ public class DetailExtensionSection
 		}
 	}
 
+	class LocalToolBar
+		extends NullToolBarManager
+		implements IPropertyChangeListener, SelectionListener {
+		private Composite container;
+		private Hashtable map = new Hashtable();
+
+		public Composite createControl(Composite parent, FormWidgetFactory factory) {
+			container = factory.createComposite(parent);
+			RowLayout rowLayout = new RowLayout();
+			rowLayout.wrap = false;
+			rowLayout.pack = false;
+			rowLayout.justify = false;
+			rowLayout.type = SWT.HORIZONTAL;
+			rowLayout.marginLeft = 0;
+			rowLayout.marginTop = 0;
+			rowLayout.marginRight = 0;
+			rowLayout.marginBottom = 0;
+			rowLayout.spacing = 5;
+			container.setLayout(rowLayout);
+			return container;
+		}
+
+		public void add(IContributionItem item) {
+			if (item instanceof Separator) {
+				getFormPage().getForm().getFactory().createLabel(container, null);
+			}
+		}
+
+		public void add(IAction action) {
+			Button button = factory.createButton(container, null, SWT.PUSH);
+			button.setToolTipText(action.getToolTipText());
+			/*
+			FormButton fbutton =
+				new FormButton(button, getFormPage().getForm().getFactory());
+			*/
+			PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
+			//			fbutton.setImage(provider.get(action.getImageDescriptor()));
+			//			ImageDescriptor desc = action.getHoverImageDescriptor();
+			//			if (desc != null)
+			//				fbutton.setHoverImage(provider.get(desc));
+			//			desc = action.getDisabledImageDescriptor();
+			//			if (desc != null)
+			//				fbutton.setDisabledImage(provider.get(desc));
+			button.setImage(provider.get(action.getImageDescriptor()));
+			button.setData(action);
+			button.setEnabled(action.isEnabled());
+			action.addPropertyChangeListener(this);
+			button.addSelectionListener(this);
+			map.put(action, button);
+		}
+		public void widgetSelected(SelectionEvent e) {
+			IAction action = (IAction) e.widget.getData();
+			action.run();
+		}
+		public void widgetDefaultSelected(SelectionEvent e) {
+		}
+		public void propertyChange(PropertyChangeEvent e) {
+			String propertyName = e.getProperty();
+			IAction action = (IAction) e.getSource();
+			boolean tooltipTextChanged =
+				propertyName == null || propertyName.equals(IAction.TOOL_TIP_TEXT);
+			boolean enableStateChanged =
+				propertyName == null || propertyName.equals(IAction.ENABLED);
+			Button button = (Button) map.get(action);
+			if (tooltipTextChanged)
+				button.setToolTipText(action.getToolTipText());
+			if (enableStateChanged)
+				button.setEnabled(action.isEnabled());
+		}
+	}
+
 	public DetailExtensionSection(ManifestExtensionsPage page) {
 		super(
 			page,
@@ -136,7 +210,7 @@ public class DetailExtensionSection
 		this.setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
 		schemaRegistry = PDEPlugin.getDefault().getSchemaRegistry();
 		pluginInfoRegistry = PDEPlugin.getDefault().getExternalModelManager();
-		handleDefaultButton=false;
+		handleDefaultButton = false;
 	}
 	private static void addItemsForExtensionWithSchema(
 		MenuManager menu,
@@ -160,14 +234,33 @@ public class DetailExtensionSection
 		initializeImages();
 		Composite container = createClientContainer(parent, 2, factory);
 
-		showAllChildrenButton =
-			factory.createButton(
-				container,
-				PDEPlugin.getResourceString(SECTION_SHOW_CHILDREN),
-				SWT.CHECK);
-		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan = 2;
-		showAllChildrenButton.setLayoutData(gd);
+//		LocalToolBar localToolBar = new LocalToolBar();
+//		Composite toolBar = localToolBar.createControl(container, factory);
+//		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+//		gd.horizontalSpan = 2;
+//		toolBar.setLayoutData(gd);
+
+		createAllChildrenButton(container, 2, factory);
+
+		TreePart treePart = getTreePart();
+
+		createViewerPartControl(container, SWT.MULTI, 2, factory);
+		extensionTree = treePart.getTreeViewer();
+		extensionTree.setAutoExpandLevel(TreeViewer.ALL_LEVELS);
+		extensionTree.setContentProvider(new ExtensionContentProvider());
+		extensionTree.setLabelProvider(new ExtensionLabelProvider());
+
+		drillDownAdapter = new DrillDownAdapter(extensionTree);
+		//drillDownAdapter.addNavigationActions(localToolBar);
+
+		factory.paintBordersFor(container);
+		return container;
+	}
+	
+	private void createAllChildrenButton(Composite container, int span, FormWidgetFactory factory ) {
+		showAllChildrenButton = factory.createButton(container, null, SWT.CHECK);
+		showAllChildrenButton.setText(
+			PDEPlugin.getResourceString(SECTION_SHOW_CHILDREN));
 		final IPreferenceStore pstore = PDEPlugin.getDefault().getPreferenceStore();
 		boolean showAll = pstore.getBoolean(SETTING_SHOW_ALL);
 		showAllChildrenButton.setSelection(showAll);
@@ -180,25 +273,10 @@ public class DetailExtensionSection
 					}
 				});
 			}
-		});
-
-		TreePart treePart = getTreePart();
-
-		createViewerPartControl(container, SWT.MULTI, 2, factory);
-		extensionTree = treePart.getTreeViewer();
-		extensionTree.setAutoExpandLevel(TreeViewer.ALL_LEVELS);
-		extensionTree.setContentProvider(new ExtensionContentProvider());
-		extensionTree.setLabelProvider(new ExtensionLabelProvider());
-		
-		drillDownAdapter = new DrillDownAdapter(extensionTree);
-		goIntoAction = new Action() {
-			public void run() {
-				drillDownAdapter.goInto();
-			}
-		};
-		goIntoAction.setText("Go Into");
-		factory.paintBordersFor(container);
-		return container;
+		});	
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan = span;
+		showAllChildrenButton.setLayoutData(gd);
 	}
 
 	protected void selectionChanged(IStructuredSelection selection) {
@@ -207,12 +285,12 @@ public class DetailExtensionSection
 		getFormPage().setSelection(selection);
 		updateUpDownButtons(item);
 	}
-	
+
 	protected void handleDoubleClick(IStructuredSelection selection) {
 		PropertiesAction action = new PropertiesAction(getFormPage().getEditor());
 		action.run();
 	}
-	
+
 	protected void buttonSelected(int index) {
 		switch (index) {
 			case 0 :
@@ -227,7 +305,7 @@ public class DetailExtensionSection
 				break;
 		}
 	}
-				
+
 	public void dispose() {
 		IPluginModelBase model = (IPluginModelBase) getFormPage().getModel();
 		model.removeModelChangedListener(this);
@@ -255,13 +333,15 @@ public class DetailExtensionSection
 	}
 	protected void fillContextMenu(IMenuManager manager) {
 		ISelection selection = extensionTree.getSelection();
-		IStructuredSelection ssel = (IStructuredSelection)selection;
+		IStructuredSelection ssel = (IStructuredSelection) selection;
+		IMenuManager newMenu = null;
+
 		if (ssel.size() == 1) {
 			Object object = ssel.getFirstElement();
 			if (object instanceof IPluginParent) {
 				IPluginParent parent = (IPluginParent) object;
 				if (parent.getModel().getUnderlyingResource() != null) {
-					fillContextMenu(getFormPage(), parent, manager);
+					newMenu = fillContextMenu(getFormPage(), parent, manager);
 					manager.add(new Separator());
 				}
 			}
@@ -276,28 +356,40 @@ public class DetailExtensionSection
 			manager.add(delAction);
 			manager.add(new Separator());
 		}
-		if (drillDownAdapter.canGoInto())
-			manager.add(goIntoAction);
-		MenuManager goToMenu = new MenuManager("Go To");
+		if (newMenu == null) {
+			newMenu = new MenuManager(PDEPlugin.getResourceString(POPUP_NEW));
+		}
+		if (!newMenu.isEmpty())
+			newMenu.add(new Separator());
+		newMenu.add(newExtensionAction);
+		MenuManager goToMenu =
+			new MenuManager(PDEPlugin.getResourceString(POPUP_GO_TO));
 		manager.add(goToMenu);
 		drillDownAdapter.addNavigationActions(goToMenu);
 		manager.add(new Separator());
-		getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager);
+		getFormPage().getEditor().getContributor().addClipboardActions(manager);
+		manager.add(new Separator());
+		if (ssel.size() == 1) {
+			manager.add(new PropertiesAction(getFormPage().getEditor()));
+		}
+		getFormPage().getEditor().getContributor().contextMenuAboutToShow(
+			manager,
+			false);
 	}
-	static void fillContextMenu(
+	static IMenuManager fillContextMenu(
 		PDEFormPage page,
 		final IPluginParent parent,
 		IMenuManager manager) {
-		fillContextMenu(page, parent, manager, false);
+		return fillContextMenu(page, parent, manager, false);
 	}
-	static void fillContextMenu(
+	static IMenuManager fillContextMenu(
 		PDEFormPage page,
 		final IPluginParent parent,
 		IMenuManager manager,
 		boolean addSiblingItems) {
-		fillContextMenu(page, parent, manager, addSiblingItems, true);
+		return fillContextMenu(page, parent, manager, addSiblingItems, true);
 	}
-	static void fillContextMenu(
+	static IMenuManager fillContextMenu(
 		PDEFormPage page,
 		final IPluginParent parent,
 		IMenuManager manager,
@@ -321,10 +413,10 @@ public class DetailExtensionSection
 				}
 			}
 		}
-		if (menu.isEmpty() == false) {
-			manager.add(menu);
-			manager.add(new Separator());
-		}
+		//if (menu.isEmpty() == false) {
+		manager.add(menu);
+		manager.add(new Separator());
+		//}
 		if (fullMenu) {
 			manager.add(new Action(PDEPlugin.getResourceString(POPUP_DELETE)) {
 				public void run() {
@@ -341,9 +433,8 @@ public class DetailExtensionSection
 					}
 				}
 			});
-			manager.add(new Separator());
-			manager.add(new PropertiesAction(page.getEditor()));
 		}
+		return menu;
 	}
 	static IPluginExtension getExtension(IPluginParent parent) {
 		while (parent != null && !(parent instanceof IPluginExtension)) {
@@ -356,7 +447,7 @@ public class DetailExtensionSection
 		if (sel.isEmpty())
 			return;
 		for (Iterator iter = sel.iterator(); iter.hasNext();) {
-			IPluginObject object = (IPluginObject)iter.next();
+			IPluginObject object = (IPluginObject) iter.next();
 			try {
 				if (object instanceof IPluginElement) {
 					IPluginElement ee = (IPluginElement) object;
@@ -398,6 +489,14 @@ public class DetailExtensionSection
 		treePart.setButtonEnabled(2, false);
 		treePart.setButtonEnabled(3, false);
 		model.addModelChangedListener(this);
+
+		newExtensionAction = new Action() {
+			public void run() {
+				handleNew();
+			}
+		};
+		newExtensionAction.setText(PDEPlugin.getResourceString(POPUP_NEW_EXTENSION));
+		newExtensionAction.setImageDescriptor(PDEPluginImages.DESC_EXTENSION_OBJ);
 	}
 	public void initializeImages() {
 		PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
@@ -541,7 +640,8 @@ public class DetailExtensionSection
 		} else if (obj instanceof IPluginElement) {
 			String name = obj.toString();
 			PluginElement element = (PluginElement) obj;
-			if (!fullNames) return name;
+			if (!fullNames)
+				return name;
 			ISchemaElement elementInfo = element.getElementInfo();
 			if (elementInfo != null && elementInfo.getLabelProperty() != null) {
 				IPluginAttribute att = element.getAttribute(elementInfo.getLabelProperty());
@@ -570,14 +670,17 @@ public class DetailExtensionSection
 		return output.toString();
 	}
 	public static final String SECTION_DOWN =
-		"ManifestEditor.DetailExtensionSection.down";	public static final String SECTION_UP =
-		"ManifestEditor.DetailExtensionSection.up";	protected boolean canPaste(Object target, Object[] objects) {
+		"ManifestEditor.DetailExtensionSection.down";
+	public static final String SECTION_UP =
+		"ManifestEditor.DetailExtensionSection.up";
+	protected boolean canPaste(Object target, Object[] objects) {
 		if (objects[0] instanceof IPluginExtension)
 			return true;
 		if (objects[0] instanceof IPluginElement && target instanceof IPluginParent)
 			return true;
 		return false;
-	}	protected void doPaste(Object target, Object[] objects) {
+	}
+	protected void doPaste(Object target, Object[] objects) {
 		IPluginModelBase model = (IPluginModelBase) getFormPage().getModel();
 		IPluginBase plugin = model.getPluginBase();
 
@@ -602,7 +705,8 @@ public class DetailExtensionSection
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
-	}	private void handleMove(boolean up) {
+	}
+	private void handleMove(boolean up) {
 		IStructuredSelection sel = (IStructuredSelection) extensionTree.getSelection();
 		IPluginObject object = (IPluginObject) sel.getFirstElement();
 		if (object instanceof IPluginElement) {
@@ -629,7 +733,8 @@ public class DetailExtensionSection
 				PDEPlugin.logException(e);
 			}
 		}
-	}	private void updateUpDownButtons(Object item) {
+	}
+	private void updateUpDownButtons(Object item) {
 		boolean upEnabled = false;
 		boolean downEnabled = false;
 		if (item != null) {
@@ -655,4 +760,5 @@ public class DetailExtensionSection
 		}
 		getTreePart().setButtonEnabled(2, upEnabled);
 		getTreePart().setButtonEnabled(3, downEnabled);
-	}}
+	}
+}
