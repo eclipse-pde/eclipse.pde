@@ -140,7 +140,7 @@ public class WorkspaceFeatureModel extends AbstractFeatureModel
 	}
 	public void save(PrintWriter writer) {
 		if (isLoaded()) {
-			writer.println(PDECore.getResourceString("Plugin.xmlHeader")); //$NON-NLS-1$
+			writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
 			//writer.println("<!DOCTYPE feature SYSTEM \"dtd/feature.dtd\">");
 			feature.write("", writer); //$NON-NLS-1$
 		}

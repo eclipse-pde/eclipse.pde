@@ -57,7 +57,7 @@ public class Extensions
 	}
 
 	public void write(String indent, PrintWriter writer) {
-		writer.println(PDECore.getResourceString("Plugin.xmlHeader")); //$NON-NLS-1$
+		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
 		writer.print(fIsFragment ? "<fragment>" : "<plugin>"); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		writer.println();
