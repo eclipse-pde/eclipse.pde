@@ -1,8 +1,9 @@
 package org.eclipse.pde.internal.core.bundle;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.plugin.IMatchRules;
+import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.internal.core.ibundle.*;
+import org.eclipse.pde.internal.core.plugin.*;
 import org.osgi.framework.*;
 
 public class BundleFragment extends BundlePluginBase implements IBundleFragment {
@@ -15,14 +16,21 @@ public class BundleFragment extends BundlePluginBase implements IBundleFragment 
 	 * @see org.eclipse.pde.core.plugin.IFragment#getPluginVersion()
 	 */
 	public String getPluginVersion() {
-		return getAttribute(Constants.FRAGMENT_HOST, Constants.BUNDLE_VERSION_ATTRIBUTE);
+		String version = getAttribute(Constants.FRAGMENT_HOST, Constants.BUNDLE_VERSION_ATTRIBUTE);
+		VersionRange versionRange = new VersionRange(version);
+		if (versionRange != null) {
+			return versionRange.getMinimum() != null ? versionRange.getMinimum().toString() : version;
+		}
+		return version;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IFragment#getRule()
 	 */
 	public int getRule() {
-		return IMatchRules.NONE;
+		String version = getAttribute(Constants.FRAGMENT_HOST, Constants.BUNDLE_VERSION_ATTRIBUTE);
+		VersionRange versionRange = new VersionRange(version);
+		return PluginBase.getMatchRule(versionRange);
 	}
 
 	/* (non-Javadoc)

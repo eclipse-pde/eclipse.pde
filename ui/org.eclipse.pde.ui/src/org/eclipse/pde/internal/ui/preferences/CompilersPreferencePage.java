@@ -290,6 +290,8 @@ public class CompilersPreferencePage
 					monitor.beginTask("", projects.length*2); //$NON-NLS-1$
 					for (int i = 0; i < projects.length; i++) {
 						IProject project = projects[i];
+						if (!project.isOpen())
+							continue;
 						if (project.hasNature(PDE.PLUGIN_NATURE)) {
 							if (fBuilders.contains(PDE.MANIFEST_BUILDER_ID))
 								project.build(IncrementalProjectBuilder.FULL_BUILD, PDE.MANIFEST_BUILDER_ID, null, new SubProgressMonitor(monitor,1));
