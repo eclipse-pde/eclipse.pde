@@ -29,7 +29,7 @@ public class QualifierReplacer implements IBuildPropertiesConstants {
 			if (newVersions.size() != 0) { //Skip the lookp in the file if there is no entries
 				newQualifier = (String) newVersions.get(id);
 				if (newQualifier == null)
-					newQualifier = newVersions.getProperty(CONTEXT_MATCH_ALL);
+					newQualifier = newVersions.getProperty(DEFAULT_MATCH_ALL);
 			}
 			if (newQualifier == null)
 				newQualifier = getDate();

@@ -42,8 +42,8 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	private static final byte BUNDLE = 0;
 	private static final byte FEATURE = 1;
 
-	private static final byte FOLDER = 0;
-	private static final byte FILE = 1;
+	private static final String FOLDER = "folder";
+	private static final String FILE = "file";
 	private String PROPERTY_ECLIPSE_PLUGINS = "eclipse.plugins"; //$NON-NLS-1$
 	private String PROPERTY_ECLIPSE_FEATURES = "eclipse.features"; //$NON-NLS-1$
 
@@ -232,17 +232,12 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 
 	//generate the appropriate postProcessingCall
 	private void generatePostProcessingSteps(String name, String version, byte type) {
-		String style = getPluginUnpackClause(name, version);
-		Properties currentProperties = type == BUNDLE ? pluginsPostProcessingSteps : featuresPostProcessingSteps;
-		String styleFromFile = currentProperties.getProperty(name);
-		if (styleFromFile != null) //The info from the file override the one from the feaature
-			style = styleFromFile;
+		String style = (String) getFinalShape(name, version, type)[1];
 
-		if (FLAT.equalsIgnoreCase(style)) {
-			//do nothing
+		if (FOLDER.equalsIgnoreCase(style)) {
 			return;
 		}
-		if (UPDATEJAR.equalsIgnoreCase(style)) {
+		if (FILE.equalsIgnoreCase(style)) {
 			generateJarUpCall(name, version, type);
 			return;
 		}
@@ -263,18 +258,20 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	private Object[] getFinalShape(String name, String version, byte type) {
 		String style = getPluginUnpackClause(name, version);
 		Properties currentProperties = type == BUNDLE ? pluginsPostProcessingSteps : featuresPostProcessingSteps;
-		String styleFromFile = currentProperties.getProperty(name);
-		if (styleFromFile != null)
+		if (currentProperties.size() != 0) {
+			String styleFromFile = currentProperties.getProperty(name);
+			if (styleFromFile == null)
+				styleFromFile = currentProperties.getProperty(DEFAULT_FINAL_SHAPE);
 			style = styleFromFile;
-
+		}
 		if (FLAT.equalsIgnoreCase(style)) {
 			//do nothing
-			return new Object[] {name + '_' + version, new Byte(FOLDER)};
+			return new Object[] {name + '_' + version, FOLDER};
 		}
 		if (UPDATEJAR.equalsIgnoreCase(style)) {
-			return new Object[] {name + '_' + version + ".jar", new Byte(FILE)}; //$NON-NLS-1$
+			return new Object[] {name + '_' + version + ".jar", FILE}; //$NON-NLS-1$
 		}
-		return new Object[] {name + '_' + version, new Byte(FOLDER)};
+		return new Object[] {name + '_' + version, FOLDER};
 	}
 
 	private void generateJarUpCall(String name, String version, byte type) {
@@ -375,7 +372,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		FileSet[] filesPlugins = new FileSet[plugins.length];
 		for (int i = 0; i < plugins.length; i++) {
 			Object[] shape = getFinalShape(plugins[i].getSymbolicName(), plugins[i].getVersion().toString(), BUNDLE);
-			filesPlugins[i] = new ZipFileSet(getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + (String) shape[0], shape[1].equals(new Byte(FILE)), null, null, null, null, null, getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + (String) shape[0], null);
+			filesPlugins[i] = new ZipFileSet(getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + (String) shape[0], shape[1] == FILE, null, null, null, null, null, getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + (String) shape[0], null);
 		}
 		if (plugins.length != 0)
 			script.printZipTask(getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH), null, false, true, filesPlugins);
@@ -383,7 +380,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		FileSet[] filesFeatures = new FileSet[features.length];
 		for (int i = 0; i < features.length; i++) {
 			Object[] shape = getFinalShape(features[i].getVersionedIdentifier().getIdentifier(), features[i].getVersionedIdentifier().getVersion().toString(), FEATURE);
-			filesFeatures[i] = new ZipFileSet(getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + DEFAULT_FEATURE_LOCATION + '/' + (String) shape[0], shape[1].equals(new Byte(FILE)), null, null, null, null, null, getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + DEFAULT_FEATURE_LOCATION + '/' + (String) shape[0], null);
+			filesFeatures[i] = new ZipFileSet(getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + DEFAULT_FEATURE_LOCATION + '/' + (String) shape[0], shape[1] == FILE, null, null, null, null, null, getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + DEFAULT_FEATURE_LOCATION + '/' + (String) shape[0], null);
 		}
 		if (features.length != 0)
 			script.printZipTask(getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH), null, false, true, filesFeatures);
