@@ -6,6 +6,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.core.plugin.IFragment;
 import org.eclipse.pde.core.plugin.IFragmentModel;
@@ -26,7 +27,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
-public abstract class BaseImportWizardSecondPage extends WizardPage {
+public abstract class BaseImportWizardSecondPage extends WizardPage implements IModelProviderListener {
 	
 	protected static final String SETTINGS_ADD_FRAGMENTS = "addFragments";
 	
@@ -35,6 +36,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage {
 	private String location;
 	protected Button addFragmentsButton;
 	protected TableViewer importListViewer;
+	private boolean fRefreshNeeded = true;
 
 	class ContentProvider
 		extends DefaultContentProvider
@@ -107,6 +109,10 @@ public abstract class BaseImportWizardSecondPage extends WizardPage {
 	protected abstract void refreshPage();
 
 	protected boolean isRefreshNeeded() {
+		if (fRefreshNeeded) {
+			fRefreshNeeded = false;
+			return true;	
+		}			
 		String currLocation = page1.getDropLocation();
 		if (location == null || !location.equals(currLocation)) {
 			location = page1.getDropLocation();
@@ -202,6 +208,13 @@ public abstract class BaseImportWizardSecondPage extends WizardPage {
 	public void storeSettings() {
 		IDialogSettings settings = getDialogSettings();
 		settings.put(SETTINGS_ADD_FRAGMENTS, addFragmentsButton.getSelection());
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.IModelProviderListener#modelsChanged(org.eclipse.pde.core.IModelProviderEvent)
+	 */
+	public void modelsChanged(IModelProviderEvent event) {
+		fRefreshNeeded = true;
 	}
 
 }
