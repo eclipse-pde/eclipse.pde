@@ -71,6 +71,18 @@ public class UITestApplication implements IPlatformRunnable, ITestHarness {
 		return null;
 	}
 	
+	private String getProductApplication(String productID) {
+		IExtension extension =
+			Platform.getExtensionRegistry().getExtension(
+				Platform.PI_RUNTIME,
+				Platform.PT_PRODUCT,
+				productID);
+		Assert.assertNotNull(extension);
+		
+		IConfigurationElement[] elements = extension.getConfigurationElements();
+		return elements.length > 0 ? elements[0].getAttribute("application") : null;
+	}
+	
 	/*
 	 * The -testApplication argument specifies the application to be run.
 	 * If the PDE JUnit launcher did not set this argument, then return
@@ -80,8 +92,8 @@ public class UITestApplication implements IPlatformRunnable, ITestHarness {
 	 */
 	private String getApplicationToRun(String[] args) {
 		for (int i = 0; i < args.length; i++) {
-			if (args[i].equals("-product")) //$NON-NLS-1$
-				return Platform.getProduct().getApplication();
+			if (args[i].equals("-testProduct")) //$NON-NLS-1$
+				return getProductApplication(args[i+1]);
 			if (args[i].equals("-testApplication") && i < args.length -1) //$NON-NLS-1$
 				return args[i+1];
 		}
