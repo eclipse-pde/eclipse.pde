@@ -16,8 +16,8 @@ import java.util.ArrayList;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.AbstractScriptGenerator;
-import org.eclipse.pde.internal.build.builder.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.ifeature.*;
@@ -42,19 +42,19 @@ public class BuildFeatureAction extends BaseBuildAction {
 		System.arraycopy(plugins, 0, all, 0, plugins.length);
 		System.arraycopy(features, 0, all, plugins.length, features.length);
 		
-		FeatureBuildScriptGenerator generator = new FeatureBuildScriptGenerator();
-		ModelBuildScriptGenerator.setOutputFormat(AbstractScriptGenerator.getDefaultOutputFormat());
-		ModelBuildScriptGenerator.setEmbeddedSource(AbstractScriptGenerator.getDefaultEmbeddedSource());
-		ModelBuildScriptGenerator.setForceUpdateJar(AbstractScriptGenerator.getForceUpdateJarFormat());
-		ModelBuildScriptGenerator.setConfigInfo(AbstractScriptGenerator.getDefaultConfigInfos());
-		
-		generator.setWorkingDirectory(file.getProject().getLocation().toOSString());
-		URL url = getDevEntriesProperties(file.getProject().getLocation().addTrailingSeparator().toString() + "dev.properties"); //$NON-NLS-1$
-		generator.setDevEntries(new DevClassPathHelper(url != null ? url.toString() : "bin")); //$NON-NLS-1$
+		BuildScriptGenerator generator = new BuildScriptGenerator();
 		generator.setBuildingOSGi(PDECore.getDefault().getModelManager().isOSGiRuntime());
-		generator.setAnalyseChildren(true);
-		generator.setFeature(model.getFeature().getId());
+		generator.setChildren(true);
+		BuildScriptGenerator.setEmbeddedSource(AbstractScriptGenerator.getDefaultEmbeddedSource());
+
+		URL url = getDevEntriesProperties(file.getProject().getLocation().addTrailingSeparator().toString() + "dev.properties");
+		generator.setDevEntries(url != null ? url.toString() : "bin");
+		generator.setWorkingDirectory(file.getProject().getLocation().toOSString());
+		BuildScriptGenerator.setOutputFormat(AbstractScriptGenerator.getDefaultOutputFormat());
+		BuildScriptGenerator.setConfigInfo(AbstractScriptGenerator.getDefaultConfigInfos());
+		generator.setElements(new String[] {"feature@" + model.getFeature().getId()});	
 		generator.setPluginPath(all);
+		generator.setGenerateAssembleScript(false);
 		generator.generate();	
 	}
 	
