@@ -28,15 +28,11 @@ public class ManifestSourcePage extends XMLSourcePage {
 		
 		public OutlineLabelProvider() {
 			fProvider = PDEPlugin.getDefault().getLabelProvider();
-			fProvider.connect(this);
 		}
 		
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.LabelProvider#dispose()
 		 */
-		public void dispose() {
-			fProvider.disconnect(this);
-		}
 		
 		public String getText(Object obj) {
 			if (obj == fLibraries)
@@ -142,7 +138,6 @@ public class ManifestSourcePage extends XMLSourcePage {
 	 */
 	public void dispose() {
 		super.dispose();
-		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 	}
 	
 	protected ILabelProvider createOutlineLabelProvider() {
