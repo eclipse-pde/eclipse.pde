@@ -104,6 +104,19 @@ public class PDERuntimePluginImages {
 	public static final ImageDescriptor DESC_FILTER_DISABLED =
 		create(PATH_LCL_DISABLED, "filter_ps.gif");
 
+	public static final ImageDescriptor DESC_EXPORT =
+		create(PATH_LCL, "export.gif");
+	public static final ImageDescriptor DESC_EXPORT_HOVER =
+		create(PATH_LCL_HOVER, "export.gif");
+	public static final ImageDescriptor DESC_EXPORT_DISABLED =
+		create(PATH_LCL_DISABLED, "export.gif");
+		
+	public static final ImageDescriptor DESC_IMPORT =
+		create(PATH_LCL, "import.gif");
+	public static final ImageDescriptor DESC_IMPORT_HOVER =
+		create(PATH_LCL_HOVER, "import.gif");
+	public static final ImageDescriptor DESC_IMPORT_DISABLED =
+		create(PATH_LCL_DISABLED, "import.gif");
 	/*
 	 * Overlays
 	 */

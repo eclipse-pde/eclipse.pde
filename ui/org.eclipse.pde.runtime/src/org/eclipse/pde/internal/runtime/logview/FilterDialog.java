@@ -39,7 +39,6 @@ public class FilterDialog extends Dialog {
 	protected Control createDialogArea(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
-		layout.verticalSpacing = 15;
 		container.setLayout(layout);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		

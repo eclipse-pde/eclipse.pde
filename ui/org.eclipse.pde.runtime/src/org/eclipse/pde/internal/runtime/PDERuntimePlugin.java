@@ -69,6 +69,11 @@ public class PDERuntimePlugin extends AbstractUIPlugin {
 		}
 		return key;
 	}
+	
+	public static String getFormattedMessage(String key, String arg) {
+		String text = getResourceString(key);
+		return java.text.MessageFormat.format(text, new Object[] { arg });
+	}
 	public static IWorkspace getWorkspace() {
 		return ResourcesPlugin.getWorkspace();
 	}

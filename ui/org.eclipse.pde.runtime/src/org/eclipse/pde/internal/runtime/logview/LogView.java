@@ -58,17 +58,19 @@ public class LogView extends ViewPart implements ILogListener {
 	private static int ASCENDING = 1;
 	private static int DESCENDING = -1;
 	
-	private static final String KEY_CLEAR_LABEL = "LogView.clear.label";
-	private static final String KEY_READ_LOG_LABEL = "LogView.readLog.label";
-
 	private Action propertiesAction;
 	private Action clearAction;
 	private Action copyAction;
 	private Action readLogAction; 
 	private Action deleteLogAction;
+	private Action exportAction;
+	private Action importAction;
+	
 	private Action filterAction;
 	private Clipboard clipboard;
 	private IMemento memento;
+	private File inputFile;
+	private String directory;
 	
 	private TableColumn column1;
 	private TableColumn column2;
@@ -79,16 +81,45 @@ public class LogView extends ViewPart implements ILogListener {
 
 	public LogView() {
 		logs = new ArrayList();
+		inputFile = Platform.getLogFileLocation().toFile();
 	}
+	
 	public void createPartControl(Composite parent) {
+		readLogFile();
+		
 		TableTree tableTree = new TableTree(parent, SWT.FULL_SELECTION);
 
-		Table table = tableTree.getTable();
+		createColumns(tableTree.getTable());		
+		createViewer(tableTree);
+		createPopupMenuManager(tableTree);
+		makeActions(tableTree.getTable());
+		fillToolBar();
 		
-		createColumns(table);
+		Platform.addLogListener(this);
+		getSite().setSelectionProvider(tableTreeViewer);
+		clipboard = new Clipboard(tableTree.getDisplay());
 		
-		table.setHeaderVisible(true);
+		WorkbenchHelp.setHelp(tableTree,IHelpContextIds.LOG_VIEW);
+	}
+	
+	private void fillToolBar() {
+		IActionBars bars = getViewSite().getActionBars();
+		bars.setGlobalActionHandler(IWorkbenchActionConstants.PROPERTIES, propertiesAction);
+		bars.setGlobalActionHandler(IWorkbenchActionConstants.COPY, copyAction);
 
+		IToolBarManager toolBarManager = bars.getToolBarManager();
+		toolBarManager.add(importAction);
+		toolBarManager.add(exportAction);
+		toolBarManager.add(new Separator());
+		toolBarManager.add(deleteLogAction);
+		toolBarManager.add(clearAction);
+		toolBarManager.add(readLogAction);
+		toolBarManager.add(new Separator());
+		toolBarManager.add(filterAction);
+		toolBarManager.add(propertiesAction);		
+		
+	}
+	private void createViewer(TableTree tableTree) {
 		tableTreeViewer = new TableTreeViewer(tableTree);
 		tableTreeViewer.setContentProvider(new LogViewContentProvider(this));
 		tableTreeViewer.setLabelProvider(new LogViewLabelProvider());
@@ -97,8 +128,11 @@ public class LogView extends ViewPart implements ILogListener {
 			public void selectionChanged(SelectionChangedEvent e) {
 				handleSelectionChanged(e.getSelection());
 			}
-		});
-
+		});		
+		tableTreeViewer.setInput(Platform.class);
+	}
+	
+	private void createPopupMenuManager(TableTree tableTree) {
 		MenuManager popupMenuManager = new MenuManager();
 		IMenuListener listener = new IMenuListener() {
 			public void menuAboutToShow(IMenuManager mng) {
@@ -109,117 +143,8 @@ public class LogView extends ViewPart implements ILogListener {
 		popupMenuManager.setRemoveAllWhenShown(true);
 		Menu menu = popupMenuManager.createContextMenu(tableTree);
 		tableTree.setMenu(menu);
-		readLogFile();
-		Platform.addLogListener(this);
-
-		tableTreeViewer.setInput(Platform.class);
-		getSite().setSelectionProvider(tableTreeViewer);
-		propertiesAction =
-			new PropertyDialogAction(table.getShell(), tableTreeViewer);
-		propertiesAction.setImageDescriptor(
-			PDERuntimePluginImages.DESC_PROPERTIES);
-		propertiesAction.setDisabledImageDescriptor(
-			PDERuntimePluginImages.DESC_PROPERTIES_DISABLED);
-		propertiesAction.setHoverImageDescriptor(
-			PDERuntimePluginImages.DESC_PROPERTIES_HOVER);
-		propertiesAction.setToolTipText(
-			PDERuntimePlugin.getResourceString("LogView.properties.tooltip"));
-		propertiesAction.setEnabled(false);
-
-		clearAction =
-			new Action(PDERuntimePlugin.getResourceString(KEY_CLEAR_LABEL)) {
-			public void run() {
-				handleClear();
-			}
-		};
-		clearAction.setImageDescriptor(PDERuntimePluginImages.DESC_CLEAR);
-		clearAction.setDisabledImageDescriptor(
-			PDERuntimePluginImages.DESC_CLEAR_DISABLED);
-		clearAction.setHoverImageDescriptor(
-			PDERuntimePluginImages.DESC_CLEAR_HOVER);
-		clearAction.setToolTipText(
-			PDERuntimePlugin.getResourceString("LogView.clear.tooltip"));
-		clearAction.setText(
-			PDERuntimePlugin.getResourceString(KEY_CLEAR_LABEL));
-
-		readLogAction =
-			new Action(
-				PDERuntimePlugin.getResourceString(KEY_READ_LOG_LABEL)) {
-			public void run() {
-				restoreFromFile();
-			}
-		};
-		readLogAction.setToolTipText(
-			PDERuntimePlugin.getResourceString("LogView.readLog.tooltip"));
-		readLogAction.setImageDescriptor(PDERuntimePluginImages.DESC_READ_LOG);
-		readLogAction.setDisabledImageDescriptor(
-			PDERuntimePluginImages.DESC_READ_LOG_DISABLED);
-		readLogAction.setHoverImageDescriptor(
-			PDERuntimePluginImages.DESC_READ_LOG_HOVER);
-
-		table.addSelectionListener(new SelectionAdapter() {
-			public void widgetDefaultSelected(SelectionEvent e) {
-				if (tableTreeViewer.getSelection().isEmpty() == false) {
-					propertiesAction.run();
-				}
-			}
-		});
 		
-		deleteLogAction =
-			new Action(PDERuntimePlugin.getResourceString("LogView.delete")) {
-			public void run() {
-				doDeleteLog();
-			}
-		};
-		deleteLogAction.setToolTipText(PDERuntimePlugin.getResourceString("LogView.delete.tooltip"));
-		copyAction = 
-			new Action(PDERuntimePlugin.getResourceString("LogView.copy")) {
-				public void run() {
-					copyToClipboard(tableTreeViewer.getSelection());
-				}
-			};
-		copyAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
-		copyAction.setDisabledImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
-		copyAction.setHoverImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY_HOVER));
-		
-		deleteLogAction.setImageDescriptor(PDERuntimePluginImages.DESC_REMOVE_LOG);
-		deleteLogAction.setDisabledImageDescriptor(PDERuntimePluginImages.DESC_REMOVE_LOG_DISABLED);
-		deleteLogAction.setHoverImageDescriptor(PDERuntimePluginImages.DESC_REMOVE_LOG_HOVER);
-		
-		filterAction = new Action(PDERuntimePlugin.getResourceString("LogView.filter")) {
-			public void run() {
-				FilterDialog dialog = new FilterDialog(PDERuntimePlugin.getActiveWorkbenchShell(), memento);
-				dialog.create();
-				dialog.getShell().setText("Log Filters");
-				if (dialog.open() == FilterDialog.OK)
-					restoreFromFile();
-			
-			}
-		};
-		filterAction.setToolTipText(PDERuntimePlugin.getResourceString("LogView.filter"));
-		filterAction.setImageDescriptor(PDERuntimePluginImages.DESC_FILTER);
-		filterAction.setDisabledImageDescriptor(PDERuntimePluginImages.DESC_FILTER_DISABLED);
-		filterAction.setHoverImageDescriptor(PDERuntimePluginImages.DESC_FILTER_HOVER);
-		
-		
-		IActionBars bars = getViewSite().getActionBars();
-		bars.setGlobalActionHandler(IWorkbenchActionConstants.PROPERTIES, propertiesAction);
-		bars.setGlobalActionHandler(IWorkbenchActionConstants.COPY, copyAction);
-
-		IToolBarManager toolBarManager = bars.getToolBarManager();
-		toolBarManager.add(filterAction);
-		toolBarManager.add(new Separator());
-		toolBarManager.add(deleteLogAction);
-		toolBarManager.add(new Separator());
-		toolBarManager.add(clearAction);
-		toolBarManager.add(readLogAction);
-		toolBarManager.add(new Separator());
-		toolBarManager.add(propertiesAction);		
-		
-		WorkbenchHelp.setHelp(tableTree,IHelpContextIds.LOG_VIEW);
-		clipboard = new Clipboard(tableTree.getDisplay());
 	}
-	
 	private void createColumns(Table table) {
 		TableColumn column = new TableColumn(table, SWT.NULL);
 		column.setText("");
@@ -286,12 +211,124 @@ public class LogView extends ViewPart implements ILogListener {
 		});
 		
 		TableLayout tlayout = new TableLayout();
-		tlayout.addColumnData(new ColumnPixelData(21));
+		tlayout.addColumnData(new ColumnPixelData(10));
 		tlayout.addColumnData(new ColumnPixelData(memento.getInteger(P_COLUMN_1).intValue()));
 		tlayout.addColumnData(new ColumnPixelData(memento.getInteger(P_COLUMN_2).intValue()));
 		tlayout.addColumnData(new ColumnPixelData(memento.getInteger(P_COLUMN_3).intValue()));
 		tlayout.addColumnData(new ColumnPixelData(memento.getInteger(P_COLUMN_4).intValue()));
 		table.setLayout(tlayout);
+		table.setHeaderVisible(true);
+	}
+	
+	private void makeActions(Table table) {
+		propertiesAction = new PropertyDialogAction(table.getShell(), tableTreeViewer);
+		propertiesAction.setImageDescriptor(PDERuntimePluginImages.DESC_PROPERTIES);
+		propertiesAction.setDisabledImageDescriptor(
+			PDERuntimePluginImages.DESC_PROPERTIES_DISABLED);
+		propertiesAction.setHoverImageDescriptor(
+			PDERuntimePluginImages.DESC_PROPERTIES_HOVER);
+		propertiesAction.setToolTipText(
+			PDERuntimePlugin.getResourceString("LogView.properties.tooltip"));
+		propertiesAction.setEnabled(false);
+
+		clearAction = new Action(PDERuntimePlugin.getResourceString("LogView.clear")) {
+			public void run() {
+				handleClear();
+			}
+		};
+		clearAction.setImageDescriptor(PDERuntimePluginImages.DESC_CLEAR);
+		clearAction.setDisabledImageDescriptor(
+			PDERuntimePluginImages.DESC_CLEAR_DISABLED);
+		clearAction.setHoverImageDescriptor(PDERuntimePluginImages.DESC_CLEAR_HOVER);
+		clearAction.setToolTipText(
+			PDERuntimePlugin.getResourceString("LogView.clear"));
+		clearAction.setText(PDERuntimePlugin.getResourceString("LogView.clear"));
+
+		readLogAction =
+			new Action(PDERuntimePlugin.getResourceString("LogView.readLog.restore")) {
+			public void run() {
+				loadWorkspaceLog();
+			}
+		};
+		readLogAction.setToolTipText(
+			PDERuntimePlugin.getResourceString("LogView.readLog.restore"));
+		readLogAction.setImageDescriptor(PDERuntimePluginImages.DESC_READ_LOG);
+		readLogAction.setDisabledImageDescriptor(
+			PDERuntimePluginImages.DESC_READ_LOG_DISABLED);
+		readLogAction.setHoverImageDescriptor(PDERuntimePluginImages.DESC_READ_LOG_HOVER);
+
+		table.addSelectionListener(new SelectionAdapter() {
+			public void widgetDefaultSelected(SelectionEvent e) {
+				if (tableTreeViewer.getSelection().isEmpty() == false) {
+					propertiesAction.run();
+				}
+			}
+		});
+
+		deleteLogAction =
+			new Action(PDERuntimePlugin.getResourceString("LogView.delete")) {
+			public void run() {
+				doDeleteLog();
+			}
+		};
+		deleteLogAction.setToolTipText(
+			PDERuntimePlugin.getResourceString("LogView.delete"));
+		deleteLogAction.setImageDescriptor(PDERuntimePluginImages.DESC_REMOVE_LOG);
+		deleteLogAction.setDisabledImageDescriptor(
+			PDERuntimePluginImages.DESC_REMOVE_LOG_DISABLED);
+		deleteLogAction.setHoverImageDescriptor(
+			PDERuntimePluginImages.DESC_REMOVE_LOG_HOVER);
+
+		copyAction = new Action(PDERuntimePlugin.getResourceString("LogView.copy")) {
+			public void run() {
+				copyToClipboard(tableTreeViewer.getSelection());
+			}
+		};
+		copyAction.setImageDescriptor(
+			PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(
+				ISharedImages.IMG_TOOL_COPY));
+		copyAction.setDisabledImageDescriptor(
+			PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(
+				ISharedImages.IMG_TOOL_COPY_DISABLED));
+		copyAction.setHoverImageDescriptor(
+			PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(
+				ISharedImages.IMG_TOOL_COPY_HOVER));
+
+
+		filterAction = new Action(PDERuntimePlugin.getResourceString("LogView.filter")) {
+			public void run() {
+				handleFilter();
+			}
+		};
+		filterAction.setToolTipText(PDERuntimePlugin.getResourceString("LogView.filter"));
+		filterAction.setImageDescriptor(PDERuntimePluginImages.DESC_FILTER);
+		filterAction.setDisabledImageDescriptor(
+			PDERuntimePluginImages.DESC_FILTER_DISABLED);
+		filterAction.setHoverImageDescriptor(PDERuntimePluginImages.DESC_FILTER_HOVER);
+
+		exportAction = new Action(PDERuntimePlugin.getResourceString("LogView.export")) {
+			public void run() {
+				handleExport();
+			}
+		};
+		exportAction.setToolTipText(
+			PDERuntimePlugin.getResourceString("LogView.export.tooltip"));
+		exportAction.setImageDescriptor(PDERuntimePluginImages.DESC_EXPORT);
+		exportAction.setDisabledImageDescriptor(
+			PDERuntimePluginImages.DESC_EXPORT_DISABLED);
+		exportAction.setHoverImageDescriptor(PDERuntimePluginImages.DESC_EXPORT_HOVER);
+
+		importAction = new Action(PDERuntimePlugin.getResourceString("LogView.import")) {
+			public void run() {
+				handleImport();
+			}
+		};
+		importAction.setToolTipText(
+			PDERuntimePlugin.getResourceString("LogView.import.tooltip"));
+		importAction.setImageDescriptor(PDERuntimePluginImages.DESC_IMPORT);
+		importAction.setDisabledImageDescriptor(
+			PDERuntimePluginImages.DESC_IMPORT_DISABLED);
+		importAction.setHoverImageDescriptor(PDERuntimePluginImages.DESC_IMPORT_HOVER);
 	}
 	
 	public void dispose() {
@@ -300,25 +337,108 @@ public class LogView extends ViewPart implements ILogListener {
 		super.dispose();
 	}
 	
+	private void handleImport() {
+		FileDialog dialog = new FileDialog(getViewSite().getShell());
+		dialog.setFilterExtensions(new String[] { "*.log" });
+		if (directory != null)
+			dialog.setFilterPath(directory);
+		String path = dialog.open();
+		if (path != null && new Path(path).toFile().exists()) {
+			inputFile = new Path(path).toFile();
+			directory = inputFile.getParent();
+			BusyIndicator
+				.showWhile(
+					tableTreeViewer.getControl().getDisplay(),
+					new Runnable() {
+				public void run() {
+					readLogFile();
+					readLogAction.setText(PDERuntimePlugin.getResourceString("LogView.readLog.reload"));
+					readLogAction.setToolTipText(PDERuntimePlugin.getResourceString("LogView.readLog.reload"));
+					tableTreeViewer.refresh();
+				}
+			});
+		}	
+	}
+	
+	private void handleExport() {
+		FileDialog dialog = new FileDialog(getViewSite().getShell());
+		dialog.setFilterExtensions(new String[] { "*.log" });
+		if (directory != null) 
+			dialog.setFilterPath(directory);
+		String path = dialog.open();
+		if (path != null) {
+			if (!path.endsWith(".log"))
+				path += ".log";
+			File outputFile = new Path(path).toFile();
+			directory = outputFile.getParent();
+			if (outputFile.exists()) {
+				String message =
+					PDERuntimePlugin.getFormattedMessage(
+						"LogView.confirmOverwrite.message",
+						outputFile.toString());
+				if (!MessageDialog
+					.openQuestion(
+						getViewSite().getShell(),
+						exportAction.getText(),
+						message))
+					return;
+			}
+			copy(inputFile, outputFile);
+		}
+	}
+	
+	private void copy(File inputFile, File outputFile) {
+		BufferedReader reader = null;
+		BufferedWriter writer = null;
+		try {
+			reader = new BufferedReader(new FileReader(inputFile));
+			writer = new BufferedWriter(new FileWriter(outputFile));
+			while (reader.ready()) {
+				writer.write(reader.readLine());
+				writer.write(System.getProperty("line.separator"));
+			}
+		} catch (IOException e) {
+		} finally {
+			try {
+				if (reader != null)
+					reader.close();
+				if (writer != null)
+					writer.close();
+			} catch (IOException e1) {
+			}
+		}
+
+	}
+	private void handleFilter() {
+		FilterDialog dialog =
+			new FilterDialog(PDERuntimePlugin.getActiveWorkbenchShell(), memento);
+		dialog.create();
+		dialog.getShell().setText(PDERuntimePlugin.getResourceString("LogView.FilterDialog.title"));
+		if (dialog.open() == FilterDialog.OK)
+			loadWorkspaceLog();
+		
+	}
 	private void doDeleteLog() {
-		File logFile = Platform.getLogFileLocation().toFile();
-		if (logFile.exists()) {
+		if (inputFile.exists()) {
 			String title = PDERuntimePlugin.getResourceString("LogView.confirmDelete.title");
 			String message = PDERuntimePlugin.getResourceString("LogView.confirmDelete.message");
 			if (!MessageDialog.openConfirm(tableTreeViewer.getControl().getShell(), title, message))
 				return;
-			logFile.delete();
+			inputFile.delete();
 			logs.clear();
 			tableTreeViewer.refresh();
 		}
 	}
 	
 	public void fillContextMenu(IMenuManager manager) {
-		manager.add(readLogAction);
-		manager.add(clearAction);
-		manager.add(new Separator());
 		manager.add(copyAction);
+		manager.add(new Separator());
+		manager.add(clearAction);
 		manager.add(deleteLogAction);
+		manager.add(readLogAction);
+		manager.add(new Separator());
+		manager.add(importAction);
+		manager.add(exportAction);
 		manager.add(new Separator());
 		manager.add(propertiesAction);
 	}
@@ -338,12 +458,15 @@ public class LogView extends ViewPart implements ILogListener {
 			}
 		});
 	}
-	protected void restoreFromFile() {
+	protected void loadWorkspaceLog() {
 		BusyIndicator
-			.showWhile(
-				tableTreeViewer.getControl().getDisplay(),
-				new Runnable() {
+			.showWhile(tableTreeViewer.getControl().getDisplay(), new Runnable() {
 			public void run() {
+				inputFile = Platform.getLogFileLocation().toFile();
+				readLogAction.setText(
+					PDERuntimePlugin.getResourceString("LogView.readLog.restore"));
+				readLogAction.setToolTipText(
+					PDERuntimePlugin.getResourceString("LogView.readLog.restore"));
 				readLogFile();
 				tableTreeViewer.refresh();
 			}
@@ -351,15 +474,17 @@ public class LogView extends ViewPart implements ILogListener {
 	}
 	private void readLogFile() {
 		logs.clear();
-		File logFile = Platform.getLogFileLocation().toFile();
-		if (!logFile.exists())
+		if (!inputFile.exists())
 			return;
-		LogReader.parseLogFile(logFile, logs, memento);
+		LogReader.parseLogFile(inputFile, logs, memento);
 	}
 	
 	public void logging(IStatus status, String plugin) {
+		if (!inputFile.equals(Platform.getLogFileLocation().toFile()))
+			return;
+			
 		if (firstEvent) {
-			restoreFromFile();
+			loadWorkspaceLog();
 			firstEvent = false;
 		} else {
 			pushStatus(status);
@@ -433,7 +558,10 @@ public class LogView extends ViewPart implements ILogListener {
 	
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
-		this.memento = memento;
+		if (memento == null)
+			this.memento = XMLMemento.createWriteRoot("LOGVIEW");
+		else 
+			this.memento = memento;
 		initializeMemento();		
 	}
 	
