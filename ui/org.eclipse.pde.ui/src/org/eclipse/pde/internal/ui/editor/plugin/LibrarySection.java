@@ -153,7 +153,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
     private void makeActions() {
         fNewAction = new Action(PDEPlugin.getResourceString(POPUP_NEW_LIBRARY)) {
             public void run() {
-                handleAdd();
+                handleNew();
             }
         };
         fNewAction.setEnabled(isEditable());
