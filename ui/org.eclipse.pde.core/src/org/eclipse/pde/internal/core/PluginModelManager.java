@@ -199,18 +199,78 @@ public class PluginModelManager implements IAdaptable {
 			for (int i = 0; i < changed.length; i++) {
 				if (!(changed[i] instanceof IPluginModelBase)) continue;
 				IPluginModelBase model = (IPluginModelBase) changed[i];
+				boolean workspace = model.getUnderlyingResource()!=null;
 				IPluginBase plugin = model.getPluginBase();
 				String id = plugin.getId();
 				if (id != null) {
 					ModelEntry entry = (ModelEntry)getEntryTable().get(plugin.getId());
-					delta.addEntry(entry, PluginModelDelta.CHANGED);
-					changedPlugins.add(plugin);
-					updateBundleDescription(model, entry);
+					if (entry!=null) {
+						if (workspace && model!=entry.getWorkspaceModel()) {
+							//wrong slot - id changed
+							handleIdChange(id, model, entry, delta);
+						}
+						else {
+							delta.addEntry(entry, PluginModelDelta.CHANGED);
+							changedPlugins.add(plugin);
+							updateBundleDescription(model);
+						}
+						changedPlugins.add(plugin);
+					}
+					else if (workspace) {
+						// model change, entry does not exist - must be
+						// id change
+						handleIdChange(id, model, null, delta);
+						changedPlugins.add(plugin);
+					}
 				}
 			}
 		}
 		updateAffectedEntries((IPluginBase[])changedPlugins.toArray(new IPluginBase[changedPlugins.size()]));
 		fireDelta(delta);
+	}
+	
+	private ModelEntry findOldEntry(IPluginModelBase model) {
+		Collection values = getEntryTable().values();
+
+		for (Iterator iter = values.iterator(); iter.hasNext();) {
+			ModelEntry entry = (ModelEntry) iter.next();
+			IPluginModelBase candidate = entry.getWorkspaceModel();
+			if (model == candidate)
+				return entry;
+		}
+		return null;
+	}
+
+	private void handleIdChange(String newId, IPluginModelBase model, ModelEntry newEntry, PluginModelDelta delta) {
+		ModelEntry oldEntry = findOldEntry(model);
+		// we must remove the model from the old entry
+		if (oldEntry!=null) {
+			oldEntry.setWorkspaceModel(null);
+			if (oldEntry.isEmpty()) {
+				// remove the old entry completely
+				fEntries.remove(oldEntry.getId());
+				delta.addEntry(oldEntry, PluginModelDelta.REMOVED);
+			}
+			else {
+				// just notify that the old entry has changed
+				delta.addEntry(oldEntry, PluginModelDelta.CHANGED);
+			}
+		}
+		// add the model to the new entry; if does not exist, create
+		if (newEntry!=null) {
+			// change the workspace model of the new entry
+			newEntry.setWorkspaceModel(model);
+			delta.addEntry(newEntry, PluginModelDelta.CHANGED);
+		}
+		else {
+			// create the new entry
+			newEntry = new ModelEntry(this, newId);
+			fEntries.put(newId, newEntry);
+			delta.addEntry(newEntry, PluginModelDelta.ADDED);
+		}
+		// make sure bundle description of this model is up to date
+		// if this is a bundle
+		updateBundleDescription(model);
 	}
 
 	private void updateTable(
@@ -376,7 +436,7 @@ public class PluginModelManager implements IAdaptable {
 		}
 	}
 	
-	private void updateBundleDescription(IPluginModelBase model, ModelEntry entry) {
+	private void updateBundleDescription(IPluginModelBase model) {
 		BundleDescription description = model.getBundleDescription();
 		if (description == null)
 			return;
