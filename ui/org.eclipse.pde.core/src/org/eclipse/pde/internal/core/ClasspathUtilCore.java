@@ -303,16 +303,6 @@ public class ClasspathUtilCore {
 
 		IProject project = model.getUnderlyingResource().getProject();
 
-		// keep existing source folders
-		IClasspathEntry[] entries = JavaCore.create(project).getRawClasspath();
-		for (int i = 0; i < entries.length; i++) {
-			IClasspathEntry entry = entries[i];
-			if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
-				if (!result.contains(entry))
-					result.add(entry);
-			}
-		}
-
 		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
 		IBuild build = getBuild(model);
 		for (int i = 0; i < libraries.length; i++) {
@@ -339,6 +329,27 @@ public class ClasspathUtilCore {
 					result.add(entry);
 			}
 		}
+		
+		// keep existing source folders if they don't nest with new folders
+		IClasspathEntry[] entries = JavaCore.create(project).getRawClasspath();
+		for (int i = 0; i < entries.length; i++) {
+			IClasspathEntry entry = entries[i];
+			if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
+				if (!result.contains(entry)) {
+					boolean doAdd = true;
+					for (int j = 0; j < result.size(); j++) {						
+						IPath path = ((IClasspathEntry)result.get(j)).getPath();
+						if (path.isPrefixOf(entry.getPath()) || entry.getPath().isPrefixOf(path)) {
+							doAdd = false;
+							break;
+						}
+					}
+					if (doAdd)
+						result.add(entry);
+				}
+			}
+		}
+
 	}
 
 	protected static void addSourceFolder(String name, IProject project, Vector result)

@@ -188,25 +188,27 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		throws CoreException {
 		
 		File[] items = new File(model.getInstallLocation()).listFiles();
-		monitor.beginTask(PDEPlugin.getResourceString("PluginImportOperation.linking"), items.length); //$NON-NLS-1$
-		for (int i = 0; i < items.length; i++) {
-			File sourceFile = items[i];
-			if (sourceFile.isDirectory()) {
-				IFolder folder = project.getFolder(sourceFile.getName());
-				folder.createLink(
-					new Path(sourceFile.getPath()),
-					IResource.NONE,
-					new SubProgressMonitor(monitor, 1));
-			} else {
-				String fileName = sourceFile.getName();
-				// Ignore .classpath and .project in the plug-in.
-				// These files will be created, so ignore the imported ones.
-				if (!fileName.equals(".classpath") && !fileName.equals(".project")) { //$NON-NLS-1$ //$NON-NLS-2$
-					IFile file = project.getFile(fileName);
-					file.createLink(
+		if (items != null) {
+			monitor.beginTask(PDEPlugin.getResourceString("PluginImportOperation.linking"), items.length); //$NON-NLS-1$
+			for (int i = 0; i < items.length; i++) {
+				File sourceFile = items[i];
+				if (sourceFile.isDirectory()) {
+					IFolder folder = project.getFolder(sourceFile.getName());
+					folder.createLink(
 						new Path(sourceFile.getPath()),
 						IResource.NONE,
 						new SubProgressMonitor(monitor, 1));
+				} else {
+					String fileName = sourceFile.getName();
+					// Ignore .classpath and .project in the plug-in.
+					// These files will be created, so ignore the imported ones.
+					if (!fileName.equals(".classpath") && !fileName.equals(".project")) { //$NON-NLS-1$ //$NON-NLS-2$
+						IFile file = project.getFile(fileName);
+						file.createLink(
+							new Path(sourceFile.getPath()),
+							IResource.NONE,
+							new SubProgressMonitor(monitor, 1));
+					}
 				}
 			}
 		}
