@@ -229,6 +229,8 @@ public class TargetPlatformPreferencePage
 			}
 		}
 		store();
-		return super.performOk();
+		boolean value = super.performOk();
+		PDEPlugin.getDefault().savePluginPreferences();
+		return value;
 	}
 }

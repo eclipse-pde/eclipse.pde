@@ -93,6 +93,12 @@ public static String getBuildScriptName() {
 	return store.getString(PROP_BUILD_SCRIPT_NAME);
 }
 
+public boolean performOk() {
+	boolean value = super.performOk();
+	PDEPlugin.getDefault().savePluginPreferences();
+	return value;
+}
+
 
 /**
  * Initializes this preference page using the passed desktop.
