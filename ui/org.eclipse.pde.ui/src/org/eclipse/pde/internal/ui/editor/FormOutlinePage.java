@@ -58,7 +58,7 @@ public void createControl(Composite parent) {
 	treeViewer.addSelectionChangedListener(this);
 	treeViewer.setContentProvider(createContentProvider());
 	treeViewer.setLabelProvider(createLabelProvider());
-	treeViewer.setAutoExpandLevel(999);
+	treeViewer.setAutoExpandLevel(TreeViewer.ALL_LEVELS);
 	treeViewer.setUseHashlookup(true);
 	treeViewer.setInput(formPage.getEditor());
 
