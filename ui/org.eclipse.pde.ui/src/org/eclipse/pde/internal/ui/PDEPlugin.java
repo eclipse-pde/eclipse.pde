@@ -27,23 +27,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
-public class PDEPlugin extends AbstractUIPlugin {
-	public static final String PLUGIN_ID = "org.eclipse.pde.ui";
-
-	public static final String MANIFEST_EDITOR_ID = PLUGIN_ID + ".manifestEditor";
-	public static final String FRAGMENT_EDITOR_ID = PLUGIN_ID + ".fragmentEditor";
-	public static final String FEATURE_EDITOR_ID = PLUGIN_ID + ".featureEditor";
-	public static final String JARS_EDITOR_ID = PLUGIN_ID + ".jarsEditor";
-	public static final String BUILD_EDITOR_ID = PLUGIN_ID + ".buildEditor";
-	public static final String SCHEMA_EDITOR_ID = PLUGIN_ID + ".schemaEditor";
-	public static final String PLUGINS_VIEW_ID = "org.eclipse.pde.ui.PluginsView";
-	public static final String DEPENDENCIES_VIEW_ID = "org.eclipse.pde.ui.DependenciesView";
-
-	public static final String RUN_LAUNCHER_ID =
-		PLUGIN_ID + "." + "WorkbenchRunLauncher";
-	public static final String DEBUG_LAUNCHER_ID =
-		PLUGIN_ID + "." + "WorkbenchDebugLauncher";
-
+public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 	private static final String KEY_RUNNING = "RunningEclipse.message";
 
 	// Shared instance

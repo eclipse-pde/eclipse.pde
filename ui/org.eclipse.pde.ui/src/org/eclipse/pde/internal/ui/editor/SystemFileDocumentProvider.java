@@ -6,6 +6,7 @@ package org.eclipse.pde.internal.ui.editor;
 
 import java.io.*;
 import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 
@@ -19,6 +20,19 @@ public class SystemFileDocumentProvider extends StreamDocumentProvider {
 		IDocumentPartitioner partitioner,
 		String encoding) {
 		super(partitioner, encoding);
+	}
+	/*
+	 * @see AbstractDocumentProvider#createAnnotationModel(Object)
+	 */
+	protected IAnnotationModel createAnnotationModel(Object element) throws CoreException {
+		if (element instanceof SystemFileEditorInput) {
+			SystemFileEditorInput input= (SystemFileEditorInput) element;
+			File file = (File)input.getAdapter(File.class);
+			if (file!=null) {
+				return new SystemFileMarkerAnnotationModel(file);
+			}
+		}
+		return super.createAnnotationModel(element);
 	}
 
 	protected IDocument createDocument(Object element) throws CoreException {

@@ -15,7 +15,7 @@ public class SystemFileEditorInput implements IStorageEditorInput, IPersistableE
 	private static final String FACTORY_ID = PDEPlugin.getPluginId()+".systemFileEditorInputFactory";
 
 	public SystemFileEditorInput(File file) {
-		storage = new SystemFileStorage(file);;
+		storage = new SystemFileStorage(file);
 	}
 	public boolean exists() {
 		return storage.getFile().exists();
