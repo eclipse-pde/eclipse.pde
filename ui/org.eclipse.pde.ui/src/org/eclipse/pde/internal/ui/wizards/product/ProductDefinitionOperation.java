@@ -16,6 +16,8 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.model.*;
+import org.eclipse.pde.internal.ui.model.plugin.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.text.edits.*;
 import org.eclipse.ui.branding.*;
@@ -27,6 +29,7 @@ public class ProductDefinitionOperation implements IRunnableWithProgress {
 	private String fApplication;
 	private Shell fShell;
 	private IProduct fProduct;
+	private IDocument fDocument;
 
 	public ProductDefinitionOperation(IProduct product, String pluginId, String productId, String application, Shell shell) {
 		fPluginId = pluginId;
@@ -68,7 +71,13 @@ public class ProductDefinitionOperation implements IRunnableWithProgress {
 			return new WorkspacePluginModel(file);
 		return new WorkspaceFragmentModel(file);
 	}
-	
+
+	private PluginModelBase getEditingModel(boolean isFragment) {
+		if (isFragment) 
+			return new FragmentModel(fDocument, false);
+		return new PluginModel(fDocument, false);
+	}
+
 	private void createNewFile(IFile file) throws CoreException {
 		WorkspacePluginModelBase model = (WorkspacePluginModelBase)getModel(file);
 		IPluginBase base = model.getPluginBase();
@@ -81,58 +90,101 @@ public class ProductDefinitionOperation implements IRunnableWithProgress {
 		IPluginExtension extension = model.getFactory().createExtension();
 		extension.setPoint("org.eclipse.core.runtime.products"); //$NON-NLS-1$
 		extension.setId(fProductId);
-		
-		IPluginElement element = model.getFactory().createElement(extension);
+		extension.add(createExtensionContent(extension));
+		return extension;
+	}
+	
+	private IPluginElement createExtensionContent(IPluginExtension extension) throws CoreException  {
+		IPluginElement element = extension.getModel().getFactory().createElement(extension);
 		element.setName("product"); //$NON-NLS-1$
 		element.setAttribute("name", fProduct.getName()); //$NON-NLS-1$
 		element.setAttribute("application", fApplication); //$NON-NLS-1$
 
+		IPluginElement child = createWindowImagesElement(element);
+		if (child != null)
+			element.add(child);
+		
+		child = createAboutTextElement(element);
+		if (child != null)
+			element.add(child);
+			
+		child = createAboutImageElement(element);
+		if (child != null)
+			element.add(child);		
+		
+		return element;
+	}
+	
+	private IPluginElement createAboutTextElement(IPluginElement parent) throws CoreException {
+		String value = getAboutText();
+		IPluginElement element = null;
+		if (value != null && value.length() > 0) {
+			element = parent.getModel().getFactory().createElement(parent);
+			element.setName("property"); //$NON-NLS-1$
+			element.setAttribute("name", IProductConstants.ABOUT_TEXT); //$NON-NLS-1$ 
+			element.setAttribute("value", value); //$NON-NLS-1$ 
+		}
+		return element;
+	}
+	
+	private IPluginElement createAboutImageElement(IPluginElement parent) throws CoreException {
+		String image = getAboutImage();
+		IPluginElement element = null;
+		if (image != null && image.length() > 0) {
+			element = parent.getModel().getFactory().createElement(parent);
+			element.setName("property"); //$NON-NLS-1$
+			element.setAttribute("name", IProductConstants.ABOUT_IMAGE); //$NON-NLS-1$ 
+			element.setAttribute("value", image); //$NON-NLS-1$ 
+		}
+		return element;
+	}
+	
+	private IPluginElement createWindowImagesElement(IPluginElement parent) throws CoreException {
+		IPluginElement element = null;
+		String value = getWindowImagesString();
+		if (value != null) {
+			element = parent.getModel().getFactory().createElement(parent);
+			element.setName("property"); //$NON-NLS-1$
+			element.setAttribute("name", IProductConstants.WINDOW_IMAGES); //$NON-NLS-1$ 
+			element.setAttribute("value", value); //$NON-NLS-1$ 
+		}
+		return element;
+	}
+	
+	private String getAboutText() {
 		IAboutInfo info = fProduct.getAboutInfo();
 		if (info != null) {
-			String value = info.getText();
-			if (value != null && value.length() > 0) {
-				IPluginElement property = model.getFactory().createElement(element);
-				property.setName("property"); //$NON-NLS-1$
-				property.setAttribute("name", IProductConstants.ABOUT_TEXT); //$NON-NLS-1$ //$NON-NLS-2$
-				property.setAttribute("value", value); //$NON-NLS-1$
-				element.add(property);
-			}
-		
-			String image = info.getImagePath();
-			if (image != null && image.length() > 0) {
-				IPluginElement property = model.getFactory().createElement(element);
-				property.setName("property"); //$NON-NLS-1$
-				property.setAttribute("name", IProductConstants.ABOUT_IMAGE); //$NON-NLS-1$ 
-				property.setAttribute("value", image); //$NON-NLS-1$ 
-				element.add(property);
-			}
+			String text = info.getText();
+			return text == null || text.length() == 0 ? null : text;
 		}
-		
+		return null;
+	}
+	
+	private String getAboutImage() {
+		IAboutInfo info = fProduct.getAboutInfo();
+		if (info != null) {
+			String image = info.getImagePath();
+			return image == null || image.length() == 0 ? null : image;
+		}
+		return null;
+	}
+	
+	private String getWindowImagesString() {
 		IWindowImages images = fProduct.getWindowImages();
+		StringBuffer buffer = new StringBuffer();
 		if (images != null) {
-			StringBuffer buffer = new StringBuffer();
-			
 			String image16 = images.getSmallImagePath();
 			if (image16 != null && image16.length() > 0)
 				buffer.append(image16);
-			
+
 			String image32 = images.getLargeImagePath();
 			if (image32 != null && image32.length() > 0) {
 				if (buffer.length() > 0)
 					buffer.append(","); //$NON-NLS-1$
 				buffer.append(image32);
 			}
-			if (buffer.length() > 0) {
-				IPluginElement property = model.getFactory().createElement(element);
-				property.setName("property"); //$NON-NLS-1$
-				property.setAttribute("name", IProductConstants.WINDOW_IMAGES); //$NON-NLS-1$ 
-				property.setAttribute("value", buffer.toString()); //$NON-NLS-1$ 
-				element.add(property);
-			}
 		}
-	
-		extension.add(element);
-		return extension;
+		return buffer.length() == 0 ? null : buffer.toString();
 	}
 	
 	private void modifyExistingFile(IFile file, IProgressMonitor monitor) throws CoreException, IOException, MalformedTreeException, BadLocationException {
@@ -147,7 +199,9 @@ public class ProductDefinitionOperation implements IRunnableWithProgress {
 			if (buffer.isDirty()) {
 				buffer.commit(monitor, true);
 			}
-			IPluginModelBase model = getModel(file);
+			
+			fDocument = buffer.getDocument();
+			PluginModelBase model = getEditingModel("fragment.xml".equals(file.getName())); //$NON-NLS-1$
 			try {
 				model.load();
 				if (!model.isLoaded())
@@ -155,56 +209,90 @@ public class ProductDefinitionOperation implements IRunnableWithProgress {
 			} catch (CoreException e) {
 				throw e;
 			}
-			IDocument document = buffer.getDocument();
-			int offset = getInsertOffset(document, model instanceof IFragmentModel ? "fragment" : "plugin"); //$NON-NLS-1$ //$NON-NLS-2$
-			if (offset != -1) {
-				InsertEdit edit = new InsertEdit(offset, getTextToBeInserted(model, TextUtilities.getDefaultLineDelimiter(document)));
-				edit.apply(document);
+			
+			IPluginExtension extension = findProductExtension(model);
+			TextEdit edit = null;
+			if (extension == null) {
+				edit = insertNewExtension(model);
+			} else {
+				edit = modifyExistingExtension(extension);
 			}
-			buffer.commit(monitor, true);
+			if (edit != null) {
+				edit.apply(fDocument);
+				buffer.commit(monitor, true);
+			}
 		} finally {
 			manager.disconnect(file.getFullPath(), monitor);
 		}	
 	}
 	
-	private String getTextToBeInserted(IPluginModelBase model, String separator) throws CoreException {
-		IPluginExtension extension = createExtension(model);
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("   <extension" + separator); //$NON-NLS-1$
-		buffer.append("         id=\"" + extension.getId() + "\"" + separator); //$NON-NLS-1$ //$NON-NLS-2$
-		buffer.append("         point=\"" + extension.getPoint() + "\">" + separator); //$NON-NLS-1$ //$NON-NLS-2$
-
-		IPluginObject[] children = extension.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			writeElement((IPluginElement)children[i], "      ", separator, buffer); //$NON-NLS-1$
+	private IPluginExtension findProductExtension(IPluginModelBase model) {
+		IPluginExtension[] extensions = model.getPluginBase().getExtensions();
+		for (int i = 0; i < extensions.length; i++) {
+			String point = extensions[i].getPoint();
+			String id = extensions[i].getId();
+			if (fProductId.equals(id) && "org.eclipse.core.runtime.products".equals(point)) { //$NON-NLS-1$
+				return extensions[i];
+			}
 		}
-		buffer.append("   </extension>" + separator); //$NON-NLS-1$
-		return buffer.toString();
+		return null;
 	}
 	
-	private void writeElement(IPluginElement element, String indent, String separator, StringBuffer buffer) {
-		buffer.append(indent + "<" + element.getName()); //$NON-NLS-1$
-		IPluginAttribute[] attrs = element.getAttributes();
-		for (int i = 0; i < attrs.length; i++) {
-			buffer.append(separator);
-			buffer.append(indent + "      " + attrs[i].getName() + "=\"" + CoreUtility.getWritableString(attrs[i].getValue()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		}
-		buffer.append(">"); //$NON-NLS-1$
-		buffer.append(separator);
+	private TextEdit insertNewExtension(IPluginModelBase model) throws BadLocationException, CoreException {
+		IPluginExtension extension = createExtension(model);
+		model.getPluginBase().add(extension);
+		return TextEditUtilities.getInsertOperation((IDocumentNode)extension, fDocument);
+	}
+	
+	private TextEdit modifyExistingExtension(IPluginExtension extension) throws CoreException, MalformedTreeException, BadLocationException {
+		if (extension.getChildCount() == 0) 
+			return insertNewProductElement(extension);
 		
+		PluginElementNode element = (PluginElementNode)extension.getChildren()[0];
+		
+		if (!"product".equals(element.getName())) //$NON-NLS-1$
+			return insertNewProductElement(extension);
+		
+		element.setAttribute("application", fApplication); //$NON-NLS-1$
+		element.setAttribute("name", fProduct.getName()); //$NON-NLS-1$
+		
+		synchronizeChild(element, IProductConstants.ABOUT_IMAGE, getAboutImage());
+		synchronizeChild(element, IProductConstants.ABOUT_TEXT, getAboutText());
+		synchronizeChild(element, IProductConstants.WINDOW_IMAGES, getWindowImagesString());
+		
+		return new ReplaceEdit(element.getOffset(), element.getLength(), element.write(false));
+	}
+	
+	private void synchronizeChild(IPluginElement element, String propertyName, String value) throws CoreException {
+		IPluginElement child = null;
 		IPluginObject[] children = element.getChildren();
 		for (int i = 0; i < children.length; i++) {
-			writeElement((IPluginElement)children[i], indent + "   ", separator, buffer); //$NON-NLS-1$
+			IPluginElement candidate = (IPluginElement)children[i];
+			if (candidate.getName().equals("property")) { //$NON-NLS-1$
+				IPluginAttribute attr = candidate.getAttribute("name"); //$NON-NLS-1$
+				if (attr != null && attr.getName().equals(propertyName)) {
+					child = candidate;
+					break;
+				}
+			}
 		}
-		buffer.append(indent + "</" + element.getName() + ">" + separator); //$NON-NLS-1$ //$NON-NLS-2$
+		if (child != null && value == null)
+			element.remove(child);
+		
+		if (value == null)
+			return;
+		
+		if (child == null) {
+			child = element.getModel().getFactory().createElement(element);
+			child.setAttribute("value", value); //$NON-NLS-1$
+			child.setAttribute("name", propertyName); //$NON-NLS-1$
+		}
 	}
 	
-	private int getInsertOffset(IDocument document, String tagName) throws BadLocationException {
-		FindReplaceDocumentAdapter adapter = new FindReplaceDocumentAdapter(document);
-		IRegion region = adapter.find(document.getLength() - 1, "</" + tagName + ">", false, true, false, false); //$NON-NLS-1$ //$NON-NLS-2$
-		if (region != null)
-			return region.getOffset();
-		return -1;
+	private TextEdit insertNewProductElement(IPluginExtension extension) throws CoreException {
+		IPluginElement element = createExtensionContent(extension);
+		extension.add(element);
+		return TextEditUtilities.getInsertOperation((IDocumentNode)element, fDocument);
 	}
 	
 }

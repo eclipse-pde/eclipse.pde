@@ -14,6 +14,7 @@ import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.rules.*;
 import org.eclipse.pde.core.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.text.XMLPartitionScanner;
 import org.eclipse.pde.internal.ui.model.*;
@@ -288,8 +289,6 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		fOperationTable.put(changedObject, op);		
 	}
 
-
-
 	private boolean shouldTerminateElement(IDocument doc, int offset) {
 		try {
 			return doc.get(offset-1, 1).toCharArray()[0] == '/';
@@ -357,10 +356,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		return new DeleteEdit(offset - indent, length + indent);
 		
 	}
-/**
-	 * @param node
-	 * @return
-	 */
+
 	private IDocumentNode getHighestNodeToBeWritten(IDocumentNode node) {
 		IDocumentNode parent = node.getParentNode();
 		if (parent == null)
@@ -428,31 +424,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 	
 	
 	public String getWritableString(String source) {
-		StringBuffer buf = new StringBuffer();
-		for (int i = 0; i < source.length(); i++) {
-			char c = source.charAt(i);
-			switch (c) {
-				case '&' :
-					buf.append("&amp;"); //$NON-NLS-1$
-					break;
-				case '<' :
-					buf.append("&lt;"); //$NON-NLS-1$
-					break;
-				case '>' :
-					buf.append("&gt;"); //$NON-NLS-1$
-					break;
-				case '\'' :
-					buf.append("&apos;"); //$NON-NLS-1$
-					break;
-				case '\"' :
-					buf.append("&quot;"); //$NON-NLS-1$
-					break;
-				default :
-					buf.append(c);
-					break;
-			}
-		}
-		return buf.toString();
+		return CoreUtility.getWritableString(source);
 	}
 	
 	protected HashMap getOperationTable() {

@@ -21,7 +21,7 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 	private boolean fIsErrorNode;
 	private int fLength = -1;
 	private int fOffset = -1;
-	protected HashMap fAttributes = new HashMap();
+	protected Map fAttributes = new TreeMap();
 	private String fTag;
 	private int fIndent = 0;
 	private IDocumentNode fPreviousSibling;
