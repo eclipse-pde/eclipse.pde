@@ -95,7 +95,7 @@ public class ProductFileWizadPage extends WizardNewFileCreationPage {
 	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#validatePage()
 	 */
 	protected boolean validatePage() {
-		if (!getFileName().trim().endsWith(".prod")) { //$NON-NLS-1$
+		if (!getFileName().trim().endsWith(".product")) { //$NON-NLS-1$
 			setErrorMessage(PDEPlugin.getResourceString("ProductFileWizadPage.error")); //$NON-NLS-1$
 			return false;
 		}

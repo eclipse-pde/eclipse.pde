@@ -489,7 +489,7 @@
             default="true"
             name="%product.editor"
             icon="icons/obj16/bundle_mf_obj.gif"
-            filenames="*.prod"
+            filenames="*.product"
             class="org.eclipse.pde.internal.ui.editor.product.ProductEditor"
             contributorClass="org.eclipse.pde.internal.ui.editor.product.ProductEditorContributor"
             id="org.eclipse.pde.ui.productEditor">

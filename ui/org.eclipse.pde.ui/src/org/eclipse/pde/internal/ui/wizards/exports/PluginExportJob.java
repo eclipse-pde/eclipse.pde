@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.wizards.exports;
 
 import java.io.*;
 import java.lang.reflect.*;
+import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.*;
@@ -89,11 +90,22 @@ public class PluginExportJob extends FeatureExportJob {
 		File file = new File(featureLocation);
 		if (!file.exists() || !file.isDirectory())
 			file.mkdirs();
-		File build = new File(file, "build.properties"); //$NON-NLS-1$
-		try {
-			build.createNewFile();
-		} catch (IOException e) {
-		}		
+		Properties prop = new Properties();
+		prop.put("pde", "marker");
+		save(new File(file, "build.properties"),prop, "Marker File"); 
 	}
+	
+	private void save(File file, Properties properties, String header) {
+		try {
+			FileOutputStream stream = new FileOutputStream(file);
+			properties.store(stream, header); 
+			stream.flush();
+			stream.close();
+		} catch (IOException e) {
+			PDECore.logException(e);
+		}
+	}
+	
+
 
 }
