@@ -325,7 +325,7 @@ public abstract class AbstractTemplateSection
 		monitor.setTaskName(PDEPlugin.getResourceString(KEY_GENERATING));
 
 		File templateDirectory = getTemplateDirectory();
-		if (!templateDirectory.exists())
+		if (templateDirectory==null || !templateDirectory.exists())
 			return;
 		generateFiles(templateDirectory, project, true, false, monitor);
 		monitor.subTask("");
@@ -448,11 +448,15 @@ public abstract class AbstractTemplateSection
 			if (location == null)
 				return null;
 			URL url = Platform.resolve(location);
-			String name = url.getFile();
-			return new File(name);
+			url = Platform.asLocalURL(url);
+			if (url!=null) {
+				String name = url.getFile();
+				return new File(name);
+			}
 		} catch (Exception e) {
 			return null;
 		}
+		return null;
 	}
 
 	private void generateFiles(
