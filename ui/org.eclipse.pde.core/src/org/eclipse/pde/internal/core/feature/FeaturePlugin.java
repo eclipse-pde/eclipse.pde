@@ -38,6 +38,9 @@ public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 	}
 
 	public IPluginBase getPluginBase() {
+		if (pluginBase == null && id != null) {
+			hookWithWorkspace();
+		}
 		return pluginBase;
 	}
 	public String getVersion() {
@@ -69,9 +72,6 @@ public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 		String f = getNodeAttribute(node, "fragment"); //$NON-NLS-1$
 		if (f != null && f.equalsIgnoreCase("true")) //$NON-NLS-1$
 			fragment = true;
-		if (id!=null && version!=null) {
-			hookWithWorkspace();
-		}
 	}
 	
 	public void hookWithWorkspace() {
