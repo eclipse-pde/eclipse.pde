@@ -216,7 +216,7 @@ public class FormEntry {
 	 * @return
 	 */
 	public String getValue() {
-		return value;
+		return value.trim();
 	}
 	/**
 	 * Returns true if the text has been modified.

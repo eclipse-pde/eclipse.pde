@@ -21,6 +21,9 @@ public class Product extends ProductObject implements IProduct {
 	private boolean fUseFeatures;
 	private String fExportDestination;
 	private boolean fIncludeFragments;
+	private IWindowImages fWindowImages;
+	private ISplashInfo fSplashInfo;
+	private ILauncherInfo fLauncherInfo;
 
 	public Product(IProductModel model) {
 		super(model);
@@ -71,6 +74,7 @@ public class Product extends ProductObject implements IProduct {
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#setAboutInfo(org.eclipse.pde.internal.core.iproduct.IAboutInfo)
 	 */
 	public void setAboutInfo(IAboutInfo info) {
+		info.setInTheModel(true);
 		fAboutInfo = info;
 	}
 
@@ -111,6 +115,21 @@ public class Product extends ProductObject implements IProduct {
 		if (fConfigIniInfo != null) {
 			writer.println();
 			fConfigIniInfo.write(indent + "   ", writer); //$NON-NLS-1$
+		}
+		
+		if (fWindowImages != null) {
+			writer.println();
+			fWindowImages.write(indent + "   ", writer);
+		}
+		
+		if (fSplashInfo != null) {
+			writer.println();
+			fSplashInfo.write(indent + "   ", writer);
+		}
+		
+		if (fLauncherInfo != null) {
+			writer.println();
+			fLauncherInfo.write(indent + "   ", writer);
 		}
 		
 		writer.println();
@@ -156,21 +175,31 @@ public class Product extends ProductObject implements IProduct {
 			fName = element.getAttribute(P_NAME); //$NON-NLS-1$
 			fUseFeatures = "true".equals(element.getAttribute(P_USEFEATURES));
 			NodeList children = node.getChildNodes();
+			IProductModelFactory factory = getModel().getFactory();
 			for (int i = 0; i < children.getLength(); i++) {
 				Node child = children.item(i);
 				if (child.getNodeType() == Node.ELEMENT_NODE) {
 					String name = child.getNodeName();
 					if (name.equals("aboutInfo")) { //$NON-NLS-1$
-						fAboutInfo = getModel().getFactory().createAboutInfo();
+						fAboutInfo = factory.createAboutInfo();
 						fAboutInfo.parse(child);
 					} else if (name.equals("plugins")) { //$NON-NLS-1$
 						fIncludeFragments = "true".equals(((Element)child).getAttribute(P_INCLUDE_FRAGMENTS));
 						parsePlugins(child.getChildNodes());
 					} else if (name.equals("configIni")) { //$NON-NLS-1$
-						fConfigIniInfo = getModel().getFactory().createConfigFileInfo();
+						fConfigIniInfo = factory.createConfigFileInfo();
 						fConfigIniInfo.parse(child);
 					} else if (name.equals("export")) {
 						fExportDestination = ((Element)child).getAttribute(P_DESTINATION);
+					} else if (name.equals("windowImages")) {
+						fWindowImages = factory.createWindowImages();
+						fWindowImages.parse(child);
+					} else if (name.equals("splash")) {
+						fSplashInfo = factory.createSplashInfo();
+						fSplashInfo.parse(child);
+					} else if (name.equals("launcher")) {
+						fLauncherInfo = factory.createLauncherInfo();
+						fLauncherInfo.parse(child);
 					}
 				}
 			}
@@ -232,6 +261,7 @@ public class Product extends ProductObject implements IProduct {
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#setConfigurationFileInfo(org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo)
 	 */
 	public void setConfigurationFileInfo(IConfigurationFileInfo info) {
+		info.setInTheModel(true);
 		fConfigIniInfo = info;
 	}
 
@@ -270,6 +300,33 @@ public class Product extends ProductObject implements IProduct {
 
 	public boolean containsPlugin(String id) {
 		return fPlugins.containsKey(id);
+	}
+
+	public IWindowImages getWindowImages() {
+		return fWindowImages;
+	}
+
+	public void setWindowImages(IWindowImages images) {
+		images.setInTheModel(true);
+		fWindowImages = images;
+	}
+
+	public ISplashInfo getSplashInfo() {
+		return fSplashInfo;
+	}
+
+	public void setSplashInfo(ISplashInfo info) {
+		info.setInTheModel(true);
+		fSplashInfo = info;
+	}
+
+	public ILauncherInfo getLauncherInfo() {
+		return fLauncherInfo;
+	}
+
+	public void setLauncherInfo(ILauncherInfo info) {
+		info.setInTheModel(true);
+		fLauncherInfo = info;
 	}
 
 }

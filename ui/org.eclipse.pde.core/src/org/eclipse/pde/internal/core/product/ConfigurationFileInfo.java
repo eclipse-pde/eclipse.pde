@@ -54,7 +54,7 @@ public class ConfigurationFileInfo extends ProductObject implements
 		writer.print(indent + "<configIni"); //$NON-NLS-1$
 		if (fUse != null)
 			writer.print(" " + P_USE + "=\"" + fUse + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		if (fPath != null)
+		if (fPath != null && fPath.trim().length() > 0)
 			writer.print(" " + P_PATH + "=\"" + getWritableString(fPath.trim()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("/>"); //$NON-NLS-1$
 	}

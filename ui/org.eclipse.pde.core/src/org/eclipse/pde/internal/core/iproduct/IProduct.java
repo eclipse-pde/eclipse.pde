@@ -26,6 +26,12 @@ public interface IProduct extends IProductObject {
 	
 	IConfigurationFileInfo getConfigurationFileInfo();
 	
+	IWindowImages getWindowImages();
+	
+	ISplashInfo getSplashInfo();
+	
+	ILauncherInfo getLauncherInfo();
+	
 	void addPlugin(IProductPlugin plugin);
 	
 	void removePlugin(IProductPlugin plugin);
@@ -41,6 +47,12 @@ public interface IProduct extends IProductObject {
 	void setApplication(String application);
 	
 	void setConfigurationFileInfo(IConfigurationFileInfo info);
+	
+	void setWindowImages(IWindowImages images);
+	
+	void setSplashInfo(ISplashInfo info);
+	
+	void setLauncherInfo(ILauncherInfo info);
 	
 	void setExportDestination(String destination);
 	

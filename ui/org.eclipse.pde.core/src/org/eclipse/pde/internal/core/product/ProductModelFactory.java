@@ -39,4 +39,16 @@ public class ProductModelFactory implements IProductModelFactory {
 		return new ConfigurationFileInfo(fModel);
 	}
 
+	public IWindowImages createWindowImages() {
+		return new WindowImages(fModel);
+	}
+
+	public ISplashInfo createSplashInfo() {
+		return new SplashInfo(fModel);
+	}
+
+	public ILauncherInfo createLauncherInfo() {
+		return new LauncherInfo(fModel);
+	}
+
 }

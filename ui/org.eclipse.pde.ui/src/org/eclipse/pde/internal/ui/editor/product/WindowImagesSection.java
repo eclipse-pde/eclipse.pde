@@ -1,11 +1,24 @@
 package org.eclipse.pde.internal.ui.editor.product;
 
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.iproduct.*;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.*;
+import org.eclipse.pde.internal.ui.util.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.dialogs.*;
+import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.ide.*;
+import org.eclipse.ui.model.*;
 
 
 public class WindowImagesSection extends PDESection {
@@ -23,7 +36,7 @@ public class WindowImagesSection extends PDESection {
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText("Window Images");
-		section.setDescription("Specify the images that will be associated with the application window.  These images must be located in the product's defining plug-in.");
+		section.setDescription("Specify the images that will be associated with the application window.  These GIF images are typically located in the product's defining plug-in.");
 
 		Composite client = toolkit.createComposite(section);
 		client.setLayout(new GridLayout(3, false));
@@ -32,8 +45,13 @@ public class WindowImagesSection extends PDESection {
 		fImage16 = new FormEntry(client, toolkit, "16x16 Image:", "Browse...", isEditable());
 		fImage16.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
+				getWindowImages().setSmallImagePath(entry.getValue());
 			}
-			public void browseButtonSelected(FormEntry entry) {				
+			public void browseButtonSelected(FormEntry entry) {
+				handleBrowse(entry);
+			}
+			public void linkActivated(HyperlinkEvent e) {
+				openImage(fImage16.getValue());
 			}
 		});
 		fImage16.setEditable(isEditable());
@@ -41,8 +59,13 @@ public class WindowImagesSection extends PDESection {
 		fImage32 = new FormEntry(client, toolkit, "32x32 Image:", "Browse...", isEditable());
 		fImage32.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
+				getWindowImages().setLargeImagePath(entry.getValue());
 			}
-			public void browseButtonSelected(FormEntry entry) {				
+			public void browseButtonSelected(FormEntry entry) {
+				handleBrowse(entry);
+			}
+			public void linkActivated(HyperlinkEvent e) {
+				openImage(fImage32.getValue());
 			}
 		});
 		fImage32.setEditable(isEditable());
@@ -51,5 +74,94 @@ public class WindowImagesSection extends PDESection {
 		section.setClient(client);
 		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL|GridData.VERTICAL_ALIGN_BEGINNING));
 	}
+	
+	public void refresh() {
+		IWindowImages images = getWindowImages();
+		fImage16.setValue(images.getSmallImagePath(), true);
+		fImage32.setValue(images.getLargeImagePath(), true);
+		super.refresh();
+	}
+
+	private IWindowImages getWindowImages() {
+		IWindowImages images = getProduct().getWindowImages();
+		if (images == null) {
+			images = getModel().getFactory().createWindowImages();
+			getProduct().setWindowImages(images);
+		}
+		return images;
+	}
+	
+	private IProduct getProduct() {
+		return getModel().getProduct();
+	}
+	
+	private IProductModel getModel() {
+		return (IProductModel)getPage().getPDEEditor().getAggregateModel();
+	}
+
+	public void commit(boolean onSave) {
+		fImage16.commit();
+		fImage32.commit();
+		super.commit(onSave);
+	}
+	
+	public void cancelEdit() {
+		fImage16.cancelEdit();
+		fImage32.cancelEdit();
+		super.cancelEdit();
+	}
+	
+	private void handleBrowse(FormEntry entry) {
+		ElementTreeSelectionDialog dialog =
+			new ElementTreeSelectionDialog(
+				getSection().getShell(),
+				new WorkbenchLabelProvider(),
+				new WorkbenchContentProvider());
+				
+		dialog.setValidator(new FileValidator());
+		dialog.setAllowMultiple(false);
+		dialog.setTitle("Image Selection"); //$NON-NLS-1$
+		dialog.setMessage("Select a GIF image:"); //$NON-NLS-1$
+		dialog.addFilter(new FileExtensionFilter("gif"));
+		dialog.setInput(PDEPlugin.getWorkspace().getRoot());
+
+		if (dialog.open() == ElementTreeSelectionDialog.OK) {
+			IFile file = (IFile)dialog.getFirstResult();
+			entry.setValue(file.getFullPath().toString());
+		}
+	}
+	
+	private void openImage(String value) {
+		IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
+		IPath path = new Path(value);
+		if (!path.isAbsolute()) {
+			path = getFullPath(path);
+		}
+		IResource resource = root.findMember(path);
+		try {
+			if (resource != null && resource instanceof IFile)
+				IDE.openEditor(PDEPlugin.getActivePage(), (IFile)resource, true);
+			else
+				MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), "Open Image", "Specified image could not be found");
+		} catch (PartInitException e) {
+		}		
+		
+	}
+	
+	private IPath getFullPath(IPath path) {
+		String productId = getProduct().getId();
+		int dot = productId.lastIndexOf('.');
+		String pluginId = (dot != -1) ? productId.substring(0, dot) : "";
+		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(pluginId);
+		if (model != null && model.getUnderlyingResource() != null) {
+			IPath newPath = new Path(model.getInstallLocation()).append(path);
+			IContainer container = PDEPlugin.getWorkspace().getRoot().getContainerForLocation(newPath);
+			if (container != null) {
+				return container.getFullPath();
+			}
+		}
+		return path;
+	}
+
 
 }

@@ -52,7 +52,7 @@ public class ExportSection extends PDESection {
 			}
 			private void handleBrowse() {
 				FileDialog dialog = new FileDialog(getShell(), SWT.SAVE);
-				dialog.setFileName(fArchiveEntry.getText().getText());
+				dialog.setFileName(fArchiveEntry.getValue());
 				String extension = Platform.getOS().equals("macosx") ? ".tar.gz" : ".zip"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				dialog.setFilterExtensions(new String[] {"*" + extension});
 				String res = dialog.open();

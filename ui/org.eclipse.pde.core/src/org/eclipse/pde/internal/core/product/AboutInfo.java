@@ -20,7 +20,10 @@ public class AboutInfo extends ProductObject implements IAboutInfo {
 	 * @see org.eclipse.pde.internal.core.iproduct.IAboutInfo#setText(java.lang.String)
 	 */
 	public void setText(String text) {
+		String old = fAboutText;
 		fAboutText = text;
+		if (isEditable())
+			firePropertyChanged(P_TEXT, old, fAboutText);
 	}
 
 	/* (non-Javadoc)
@@ -34,7 +37,10 @@ public class AboutInfo extends ProductObject implements IAboutInfo {
 	 * @see org.eclipse.pde.internal.core.iproduct.IAboutInfo#setImagePath(java.lang.String)
 	 */
 	public void setImagePath(String path) {
+		String old = fImagePath;
 		fImagePath = path;
+		if (isEditable())
+			firePropertyChanged(P_IMAGE, old, fImagePath);
 	}
 
 	/* (non-Javadoc)

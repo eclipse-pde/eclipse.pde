@@ -1,8 +1,6 @@
 package org.eclipse.pde.internal.ui.editor.product;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
@@ -24,27 +22,6 @@ public class ConfigurationSection extends PDESection {
 	private Button fCustom;
 	private FormEntry fCustomEntry;
 	
-	class FileValidator implements ISelectionStatusValidator {
-
-		public IStatus validate(Object[] selection) {
-			if (selection.length > 0 && selection[0] instanceof IFile) {
-				return new Status(
-					IStatus.OK,
-					PDEPlugin.getPluginId(),
-					IStatus.OK,
-					"", //$NON-NLS-1$
-					null);
-			}
-			return new Status(
-				IStatus.ERROR,
-				PDEPlugin.getPluginId(),
-				IStatus.ERROR,
-				"", //$NON-NLS-1$
-				null);
-		}
-		
-	}
-
 	public ConfigurationSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION);
 		createClient(getSection(), page.getEditor().getToolkit());
@@ -114,7 +91,6 @@ public class ConfigurationSection extends PDESection {
 			IFile file = (IFile)dialog.getFirstResult();
 			fCustomEntry.setValue(file.getFullPath().toString());
 		}
-
 	}
 	
 	public void refresh() {
@@ -135,7 +111,6 @@ public class ConfigurationSection extends PDESection {
 		IConfigurationFileInfo info = getProduct().getConfigurationFileInfo();
 		if (info == null) {
 			info = getModel().getFactory().createConfigFileInfo();
-			getProduct().setInTheModel(true);
 			getProduct().setConfigurationFileInfo(info);
 		}
 		return info;

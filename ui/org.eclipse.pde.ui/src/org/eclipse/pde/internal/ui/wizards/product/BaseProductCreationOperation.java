@@ -15,7 +15,7 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
-import org.eclipse.ui.editors.text.*;
+import org.eclipse.ui.branding.*;
 import org.eclipse.ui.part.*;
 
 
@@ -109,16 +109,29 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 			if (attr != null)
 				product.setName(attr.getValue());
 			Properties prop = getProductProperties(element);
-			String aboutText = prop.getProperty("aboutText");
-			String aboutImage = prop.getProperty("aboutImage");
+			String aboutText = prop.getProperty(IProductConstants.ABOUT_TEXT);
+			String aboutImage = prop.getProperty(IProductConstants.ABOUT_IMAGE);
 			if (aboutText != null || aboutImage != null) {
 				IAboutInfo info = factory.createAboutInfo();
 				info.setText(aboutText);
 				info.setImagePath(aboutImage);
 				product.setAboutInfo(info);
 			}
+			IWindowImages winImages = factory.createWindowImages();
+			String path = prop.getProperty("windowImage");
+			if (path != null) {
+				winImages.setSmallImagePath(path);
+			}
+			path = prop.getProperty(IProductConstants.WINDOW_IMAGES);
+			if (path != null) {
+				StringTokenizer tokenizer = new StringTokenizer(path, ",");
+				if (tokenizer.hasMoreTokens())
+					winImages.setSmallImagePath(tokenizer.nextToken());
+				if (tokenizer.hasMoreTokens())
+					winImages.setLargeImagePath(tokenizer.nextToken());
+			}
+			product.setWindowImages(winImages);
 		}
-
 	}
 	
 	protected void addPlugins(IProductModelFactory factory, IProduct product, IPluginModelBase[] plugins) {
@@ -148,7 +161,7 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 					((ISetSelectionTarget) focusPart).selectReveal(selection);
 				}
 				try {
-					page.openEditor(new FileEditorInput(fFile), EditorsUI.DEFAULT_TEXT_EDITOR_ID);
+					page.openEditor(new FileEditorInput(fFile), PDEPlugin.PRODUCT_EDITOR_ID);
 				} catch (PartInitException e) {
 				}
 			}

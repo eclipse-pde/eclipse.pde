@@ -1,10 +1,15 @@
 package org.eclipse.pde.internal.ui.editor.product;
 
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.iproduct.*;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.forms.widgets.*;
 
 
@@ -38,8 +43,10 @@ public class SplashSection extends PDESection {
 		fPluginEntry = new FormEntry(client, toolkit, "Plug-in:", "Browse...", false);
 		fPluginEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
+				getSplashInfo().setLocation(entry.getValue());
 			}
-			public void browseButtonSelected(FormEntry entry) {				
+			public void browseButtonSelected(FormEntry entry) {
+				handleBrowse();
 			}
 		});
 		fPluginEntry.setEditable(isEditable());
@@ -48,5 +55,50 @@ public class SplashSection extends PDESection {
 		section.setClient(client);
 		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL|GridData.VERTICAL_ALIGN_BEGINNING));
 	}
+	
+	public void refresh() {
+		fPluginEntry.setValue(getSplashInfo().getLocation());
+		super.refresh();
+	}
+	
+	public void commit(boolean onSave) {
+		fPluginEntry.commit();
+		super.commit(onSave);
+	}
+	
+	public void cancelEdit() {
+		fPluginEntry.cancelEdit();
+		super.cancelEdit();
+	}
+	
+	private ISplashInfo getSplashInfo() {
+		ISplashInfo info = getProduct().getSplashInfo();
+		if (info == null) {
+			info = getModel().getFactory().createSplashInfo();
+			getProduct().setSplashInfo(info);
+		}
+		return info;
+	}
+	
+	private IProduct getProduct() {
+		return getModel().getProduct();
+	}
+	
+	private IProductModel getModel() {
+		return (IProductModel)getPage().getPDEEditor().getAggregateModel();
+	}
+	
+	private void handleBrowse() {
+		ElementListSelectionDialog dialog = new ElementListSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), PDEPlugin.getDefault().getLabelProvider());
+		dialog.setElements(PDECore.getDefault().getWorkspaceModelManager().getAllModels());
+		dialog.setMultipleSelection(false);
+		dialog.setTitle("Plug-in Selection");
+		dialog.setMessage("Select the plug-in where the splash screen is located:");
+		if (dialog.open() == ElementListSelectionDialog.OK) {
+			IPluginModelBase model = (IPluginModelBase)dialog.getFirstResult();
+			fPluginEntry.setValue(model.getPluginBase().getId());
+		}
+	}
+
 
 }

@@ -170,7 +170,7 @@ public class LauncherSection extends PDESection {
 		comp.setLayout(new GridLayout(3, false));
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		Label label = toolkit.createLabel(comp, "A single icon named 'icon.xpm' is required:");
+		Label label = toolkit.createLabel(comp, "A single XPM icon is required:");
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		label.setLayoutData(gd);
@@ -203,7 +203,7 @@ public class LauncherSection extends PDESection {
 		comp.setLayout(new GridLayout(3, false));
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		Label label = toolkit.createLabel(comp, "Four icons with a '.pm' extension must be specified:");
+		Label label = toolkit.createLabel(comp, "Four PM icons are required:");
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		label.setLayoutData(gd);

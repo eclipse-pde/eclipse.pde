@@ -10,5 +10,11 @@ public interface IProductModelFactory {
 	IProductPlugin createPlugin();
 	
 	IConfigurationFileInfo createConfigFileInfo();
+	
+	IWindowImages createWindowImages();
+	
+	ISplashInfo createSplashInfo();
+	
+	ILauncherInfo createLauncherInfo();
 
 }
