@@ -365,6 +365,22 @@ public class AntScript {
 	}
 
 	/**
+	 * Print a <code>brand</code> task to the Ant script.
+	 * 
+	 * @param root the location of the launcher to brand.
+	 * @param icons the list of icons to use in the branding
+	 * @param name the name of the resultant launcher
+	 */
+	public void printBrandTask(String root, String icons, String name) {
+		printTab();
+		print("<eclipse.brand"); //$NON-NLS-1$
+		printAttribute("root", root, true); //$NON-NLS-1$
+		printAttribute("icons", icons, true); //$NON-NLS-1$
+		printAttribute("name", name, true); //$NON-NLS-1$
+		println("/>"); //$NON-NLS-1$
+	}
+
+	/**
 	 * Print an <code>echo</code> task to the Ant script.
 	 * 
 	 * @param message the message to echo to the output

@@ -6,6 +6,11 @@
          point="org.eclipse.ant.core.antTasks">
       <antTask
             library="lib/pdebuild-ant.jar"
+            name="eclipse.brand"
+            class="org.eclipse.pde.internal.build.tasks.BrandTask">
+      </antTask>
+      <antTask
+            library="lib/pdebuild-ant.jar"
             name="eclipse.fetch"
             class="org.eclipse.pde.internal.build.tasks.FetchTask">
       </antTask>

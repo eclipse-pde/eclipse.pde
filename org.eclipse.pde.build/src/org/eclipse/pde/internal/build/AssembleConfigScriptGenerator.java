@@ -93,8 +93,17 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		if (embeddedSource)
 			generateGatherSourceCalls();
 		generatePostProcessingSteps();
+		generateBrandingCalls();
 		generateArchivingSteps();
 		generateEpilogue();
+	}
+
+	/**
+	 * 
+	 */
+	private void generateBrandingCalls() {
+		String install = getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		script.printBrandTask(install, getPropertyFormat("launcher.icons"), getPropertyFormat("launcher.name")); //$NON-NLS-1$
 	}
 
 	private void generateArchivingSteps() {
@@ -378,7 +387,6 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		List parameters = new ArrayList(1);
 		parameters.add("-r -q ${zipargs} " + getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH) + " . "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		script.printExecTask("zip", getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING), parameters, null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-
 	}
 
 	private void createZipExecCommand(List parameters) {
