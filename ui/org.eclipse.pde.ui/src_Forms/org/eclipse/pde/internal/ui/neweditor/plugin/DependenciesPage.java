@@ -48,6 +48,7 @@ public class DependenciesPage extends PDEFormPage {
 		layout.verticalSpacing = 20;
 		layout.horizontalSpacing = 10;
 		body.setLayout(layout);
+		
 		// add requires
 		requiresSection = new RequiresSection(this, body);
 		GridData gd = new GridData(GridData.FILL_BOTH);
