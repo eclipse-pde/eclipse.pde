@@ -14,7 +14,7 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 
-public class NewCategoryDefinitionDialog extends BaseDialog {
+public class NewCategoryDefinitionDialog extends BaseNewDialog {
 	private static final String KEY_TITLE = "NewCategoryDefinitionDialog.title";	
 	private static final String KEY_NAME = "NewCategoryDefinitionDialog.name";
 	private static final String KEY_LABEL = "NewCategoryDefinitionDialog.label";

@@ -13,7 +13,7 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 
-public class NewArchiveDialog extends BaseDialog {
+public class NewArchiveDialog extends BaseNewDialog {
 	private static final String KEY_TITLE = "NewArchiveDialog.title"; //$NON-NLS-1$
 	private static final String KEY_PATH = "NewArchiveDialog.path"; //$NON-NLS-1$
 	private static final String KEY_URL = "NewArchiveDialog.url"; //$NON-NLS-1$

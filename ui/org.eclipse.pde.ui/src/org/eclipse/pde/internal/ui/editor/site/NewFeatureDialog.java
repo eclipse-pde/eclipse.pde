@@ -13,7 +13,7 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 
-public class NewFeatureDialog extends BaseDialog {
+public class NewFeatureDialog extends BaseNewDialog {
 	private static final String KEY_TITLE = "NewFeatureDialog.title"; //$NON-NLS-1$
 	private static final String KEY_URL = "NewFeatureDialog.url"; //$NON-NLS-1$
 	private static final String KEY_EMPTY = "NewFeatureDialog.empty"; //$NON-NLS-1$
