@@ -36,7 +36,7 @@ public abstract class AbstractModel
 	protected transient NLResourceHelper nlHelper;
 	protected boolean disposed;
 	private long timeStamp;
-	private static SAXParser fSaxParser;
+	private transient SAXParser fSaxParser;
 
 	public AbstractModel() {
 		super();
@@ -137,7 +137,7 @@ public abstract class AbstractModel
 		throw new CoreException(status);
 	}
 	
-	public static SAXParser getSaxParser() throws ParserConfigurationException, SAXException, FactoryConfigurationError  {
+	protected SAXParser getSaxParser() throws ParserConfigurationException, SAXException, FactoryConfigurationError  {
 		if (fSaxParser == null) {
 			fSaxParser = SAXParserFactory.newInstance().newSAXParser();
 		}

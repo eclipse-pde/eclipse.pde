@@ -123,7 +123,7 @@ public class DocumentModel implements IDocumentNode {
 			boolean success = true;
 			try {
 				if (fParser == null)
-					fParser = AbstractPluginModelBase.getSaxParser();
+					fParser = SAXParserFactory.newInstance().newSAXParser();
 				if (fHandler == null)
 					fHandler = new DocumentModelHandler(stream);
 				else

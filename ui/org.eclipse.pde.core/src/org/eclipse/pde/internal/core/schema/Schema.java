@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ischema.*;
-import org.eclipse.pde.internal.core.plugin.*;
 import org.w3c.dom.*;
 
 public class Schema extends PlatformObject implements ISchema {
@@ -42,6 +41,7 @@ public class Schema extends PlatformObject implements ISchema {
 	private Hashtable lineTable;
 	private boolean valid;
 	private int startLine, endLine;
+	private SAXParser fParser;
 	
 	public Schema(String pluginId, String pointId, String name) {
 		this.pluginId = pluginId;
@@ -337,10 +337,11 @@ public class Schema extends PlatformObject implements ISchema {
 
 	public void load(InputStream stream) {
 		try {
-			SAXParser parser = AbstractPluginModelBase.getSaxParser();
+			if (fParser == null)
+				fParser = SAXParserFactory.newInstance().newSAXParser();
 			XMLDefaultHandler handler = new XMLDefaultHandler();			
-			parser.setProperty("http://xml.org/sax/properties/lexical-handler", handler);
-			parser.parse(stream, handler);
+			fParser.setProperty("http://xml.org/sax/properties/lexical-handler", handler);
+			fParser.parse(stream, handler);
 			traverseDocumentTree(handler.getDocumentElement(), handler.getLineTable());
 		} catch (Exception e) {
 			PDECore.logException(e);
