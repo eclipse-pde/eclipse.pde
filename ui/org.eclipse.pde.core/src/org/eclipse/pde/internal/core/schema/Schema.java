@@ -816,7 +816,7 @@ public class Schema extends PlatformObject implements ISchema {
 			pluginId = pointId.substring(0, loc);
 			pointId = pointId.substring(loc + 1);
 		}
-		writer.println(PDECore.getResourceString("Schema.xmlHeader")); //$NON-NLS-1$
+		writer.println("<?xml version='1.0' encoding='UTF-8'?>"); //$NON-NLS-1$
 		writer.println("<!-- Schema file written by PDE -->"); //$NON-NLS-1$
 		writer.println("<schema targetNamespace=\"" + pluginId + "\">"); //$NON-NLS-1$ //$NON-NLS-2$
 		String indent2 = INDENT + INDENT;
