@@ -14,6 +14,7 @@ import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.StatusWizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -41,6 +42,7 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 		"ImportWizard.FirstPage.otherFolder";
 	private static final String KEY_CHANGE = "ImportWizard.FirstPage.change";
 	private static final String KEY_BROWSE = "ImportWizard.FirstPage.browse";
+	private static final String KEY_CHANGE_TARGET = "ImportWizard.FirstPage.changeTarget";
 	private static final String KEY_IMPORT_CHECK =
 		"ImportWizard.FirstPage.importCheck";
 	private static final String KEY_EXTRACT_CHECK =
@@ -75,6 +77,11 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 	private Combo dropLocation;
 	private Button doImportCheck;
 	private Button doExtractCheck;
+	private Button changeEnvButton;
+	private Label osLabel;
+	private Label wsLabel;
+	private Label archLabel;
+	private Label nlLabel;
 
 	private IStatus dropLocationStatus;
 
@@ -112,6 +119,8 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 				handleChangeTargetPlatform();
 			}
 		});
+		changeButton.setLayoutData(new GridData());
+		SWTUtil.setButtonDimensionHint(changeButton);
 
 		int wizardClientWidth = parent.getSize().x - 2 * layout.marginWidth;
 		otherLocationLabel = new Label(composite, SWT.NULL);
@@ -129,6 +138,8 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 					dropLocation.setText(chosen.toOSString());
 			}
 		});
+		browseButton.setLayoutData(new GridData());
+		SWTUtil.setButtonDimensionHint(browseButton);		
 
 		label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		gd = fillHorizontal(label, 3, false);
@@ -144,6 +155,16 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 		fillHorizontal(doExtractCheck, 3, false);
 
 		createTargetEnvironmentLabels(composite, wizardClientWidth, 3);
+		
+		changeEnvButton = new Button(composite, SWT.PUSH);
+		changeEnvButton.setText(PDEPlugin.getResourceString(KEY_CHANGE_TARGET));
+		changeEnvButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleEnvChange();
+			}
+		});
+		changeEnvButton.setLayoutData(new GridData());
+		SWTUtil.setButtonDimensionHint(changeEnvButton);
 
 		initializeFields(getDialogSettings());
 		hookListeners();
@@ -184,25 +205,34 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 			width,
 			PDEPlugin.getResourceString(KEY_TARGET_DESC),
 			2);
-		createTargetLine(
+		osLabel = createTargetLine(
 			container,
 			KEY_OS,
 			TargetPlatform.getOS());
-		createTargetLine(
+		wsLabel = createTargetLine(
 			container,
 			KEY_WS,
 			TargetPlatform.getWS());
-		createTargetLine(
+		nlLabel = createTargetLine(
 			container,
 			KEY_NL,
 			TargetPlatform.getNL());
-		createTargetLine(
+		archLabel = createTargetLine(
 			container,
 			KEY_ARCH,
 			TargetPlatform.getOSArch());
 	}
+	
+	private void updateTargetLabels() {
+		osLabel.setText(TargetPlatform.getOS());
+		wsLabel.setText(TargetPlatform.getWS());
+		nlLabel.setText(TargetPlatform.getNL());
+		archLabel.setText(TargetPlatform.getOSArch());
+		osLabel.getParent().layout(true);
+		osLabel.getParent().getParent().layout(true);
+	}
 
-	private void createTargetLine(Composite parent, String nameKey, String value) {
+	private Label createTargetLine(Composite parent, String nameKey, String value) {
 		GridData gd = new GridData();
 		Label label = new Label(parent, SWT.NULL);
 		label.setText(PDEPlugin.getResourceString(nameKey));
@@ -213,6 +243,7 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 		label.setText(value);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		label.setLayoutData(gd);
+		return label;
 	}
 	
 	private String getTargetHome() {
@@ -282,17 +313,30 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 	}
 	
 	private void handleChangeTargetPlatform() {
-		final IPreferenceNode targetNode = new TargetPlatformPreferenceNode();
+		IPreferenceNode targetNode = new TargetPlatformPreferenceNode();
+		showPreferencePage(targetNode);
+	}
+	
+	private void handleEnvChange() {
+		IPreferenceNode targetNode = new TargetEnvironmentPreferenceNode();
+		if (showPreferencePage(targetNode))
+			updateTargetLabels();
+	}
+	
+	private boolean  showPreferencePage(final IPreferenceNode targetNode) {
 		PreferenceManager manager = new PreferenceManager();
 		manager.addToRoot(targetNode);
 		final PreferenceDialog dialog = new PreferenceDialog(getControl().getShell(), manager);
+		final boolean [] result = new boolean[] { false };
 		BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
 			public void run() {
 				dialog.create();
 				dialog.setMessage(targetNode.getLabelText());
-				dialog.open();
+				if (dialog.open()==PreferenceDialog.OK)
+					result[0] = true;
 			}
 		});
+		return result[0];
 	}
 
 	private void initializeFields(IDialogSettings initialSettings) {
