@@ -34,6 +34,8 @@ public class FeatureSpecSection extends PDEFormSection {
 	public static final String SECTION_BROWSE = "FeatureEditor.SpecSection.browse";
 	public static final String SECTION_PRIMARY =
 		"FeatureEditor.SpecSection.primary";
+	public static final String SECTION_EXCLUSIVE =
+		"FeatureEditor.SpecSection.exclusive";
 	public static final String SECTION_CREATE_JAR =
 		"FeatureEditor.SpecSection.createJar";
 	public static final String SECTION_SYNCHRONIZE =
@@ -51,6 +53,7 @@ public class FeatureSpecSection extends PDEFormSection {
 	private Button browseImageButton;
 
 	private Button primaryButton;
+	private Button exclusiveButton;
 	private Button createJarButton;
 	private Button synchronizeButton;
 
@@ -71,6 +74,7 @@ public class FeatureSpecSection extends PDEFormSection {
 		imageText.commit();
 		try {
 			feature.setPrimary(primaryButton.getSelection());
+			feature.setExclusive(exclusiveButton.getSelection());
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
@@ -180,14 +184,24 @@ public class FeatureSpecSection extends PDEFormSection {
 
 		gd = (GridData) idText.getControl().getLayoutData();
 		gd.widthHint = 150;
+		
+		Composite checkContainer = factory.createComposite(container);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan = 3;
+		checkContainer.setLayoutData(gd);
+		GridLayout blayout = new GridLayout();
+		checkContainer.setLayout(blayout);
+		blayout.numColumns = 2;
+		blayout.marginWidth = 0;
+		blayout.marginHeight = 0;
 
 		primaryButton =
 			factory.createButton(
-				container,
+				checkContainer,
 				PDEPlugin.getResourceString(SECTION_PRIMARY),
 				SWT.CHECK);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan = 3;
+		//gd.horizontalSpan = 3;
 		primaryButton.setLayoutData(gd);
 		primaryButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -198,12 +212,30 @@ public class FeatureSpecSection extends PDEFormSection {
 				}
 			}
 		});
+		
+		exclusiveButton =
+			factory.createButton(
+				checkContainer,
+				PDEPlugin.getResourceString(SECTION_EXCLUSIVE),
+				SWT.CHECK);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		//gd.horizontalSpan = 3;
+		exclusiveButton.setLayoutData(gd);
+		exclusiveButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					feature.setExclusive(exclusiveButton.getSelection());
+				} catch (CoreException ex) {
+					PDEPlugin.logException(ex);
+				}
+			}
+		});	
 
 		Composite buttonContainer = factory.createComposite(container);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		gd.horizontalSpan = 3;
 		buttonContainer.setLayoutData(gd);
-		GridLayout blayout = new GridLayout();
+		blayout = new GridLayout();
 		buttonContainer.setLayout(blayout);
 		blayout.makeColumnsEqualWidth = true;
 		blayout.numColumns = 2;
@@ -321,6 +353,7 @@ public class FeatureSpecSection extends PDEFormSection {
 			providerText.getControl().setEditable(false);
 			imageText.getControl().setEditable(false);
 			primaryButton.setEnabled(false);
+			exclusiveButton.setEnabled(false);
 			createJarButton.setEnabled(false);
 			synchronizeButton.setEnabled(false);
 			browseImageButton.setEnabled(false);
@@ -376,6 +409,7 @@ public class FeatureSpecSection extends PDEFormSection {
 		setIfDefined(providerText, feature.getProviderName());
 		setIfDefined(imageText, feature.getImageName());
 		primaryButton.setSelection(feature.isPrimary());
+		exclusiveButton.setSelection(feature.isExclusive());
 		updateNeeded = false;
 	}
 	/**

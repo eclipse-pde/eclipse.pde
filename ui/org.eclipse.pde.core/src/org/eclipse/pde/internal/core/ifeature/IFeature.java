@@ -49,6 +49,7 @@ public static final String P_NL = "nl";
 public static final String P_ARCH = "arch";
 
 public static final String P_PRIMARY = "primary";
+public static final String P_EXCLUSIVE = "exclusive";
 
 public static final String P_COLLOCATION_AFFINITY = "colocation-affinity";
 public static final String P_APPLICATION = "application";
@@ -218,6 +219,9 @@ public void setArch(String arch) throws CoreException;
 
 boolean isPrimary();
 public void setPrimary(boolean value) throws CoreException;
+
+boolean isExclusive();
+public void setExclusive(boolean value) throws CoreException;
 
 String getColocationAffinity();
 void setColocationAffinity(String value) throws CoreException;

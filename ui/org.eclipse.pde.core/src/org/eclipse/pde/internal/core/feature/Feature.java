@@ -30,6 +30,7 @@ public class Feature extends VersionableObject implements IFeature {
 	private String imageName;
 	private IFeatureInstallHandler handler;
 	private boolean primary;
+	private boolean exclusive;
 	private String colocationAffinity;
 	private String application;
 
@@ -125,6 +126,10 @@ public class Feature extends VersionableObject implements IFeature {
 	public boolean isPrimary() {
 		return primary;
 	}
+	
+	public boolean isExclusive() {
+		return exclusive;
+	}	
 
 	protected void parse(Node node) {
 		super.parse(node);
@@ -136,6 +141,7 @@ public class Feature extends VersionableObject implements IFeature {
 		colocationAffinity = getNodeAttribute(node, "colocation-affinity");
 		application = getNodeAttribute(node, "application");
 		primary = getBooleanAttribute(node, "primary");
+		exclusive = getBooleanAttribute(node, "exclusive");
 		NodeList children = node.getChildNodes();
 
 		for (int i = 0; i < children.getLength(); i++) {
@@ -392,6 +398,18 @@ public class Feature extends VersionableObject implements IFeature {
 			oldValue,
 			newValue ? Boolean.TRUE : Boolean.FALSE);
 	}
+	
+	public void setExclusive(boolean newValue) throws CoreException {
+		if (this.exclusive == newValue)
+			return;
+		ensureModelEditable();
+		Boolean oldValue = this.exclusive ? Boolean.TRUE : Boolean.FALSE;
+		this.exclusive = newValue;
+		firePropertyChanged(
+			P_EXCLUSIVE,
+			oldValue,
+			newValue ? Boolean.TRUE : Boolean.FALSE);
+	}	
 		
 	public void setColocationAffinity(String newValue) throws CoreException {
 		ensureModelEditable();
@@ -484,6 +502,8 @@ public class Feature extends VersionableObject implements IFeature {
 			setApplication((String)newValue);
 		} else if (name.equals(P_PRIMARY)) {
 			setPrimary(newValue != null ? ((Boolean) newValue).booleanValue() : false);
+		} else if (name.equals(P_EXCLUSIVE)) {
+			setExclusive(newValue != null ? ((Boolean) newValue).booleanValue() : false);
 		} else if (name.equals(P_PROVIDER)) {
 			setProviderName((String) newValue);
 		} else if (name.equals(P_URL)) {
@@ -518,6 +538,7 @@ public class Feature extends VersionableObject implements IFeature {
 		infos[1] = null;
 		infos[2] = null;
 		primary = false;
+		exclusive = false;
 		colocationAffinity = null;
 		application = null;
 	}
@@ -542,6 +563,10 @@ public class Feature extends VersionableObject implements IFeature {
 		if (isPrimary()) {
 			writer.println();
 			writer.print(indenta + "primary=\"true\"");
+		}
+		if (isExclusive()) {
+			writer.println();
+			writer.print(indenta + "exclusive=\"true\"");
 		}
 		writeIfDefined(indenta, writer, "colocation-affinity", colocationAffinity);
 		writeIfDefined(indenta, writer, "application", application);

@@ -164,6 +164,7 @@
             icon="icons/full/ctool16/newftrprj_wiz.gif"
             category="org.eclipse.pde.PDE"
             class="org.eclipse.pde.internal.ui.feature.NewSiteProjectWizard"
+            finalPerspective="org.eclipse.ui.resourcePerspective"
             project="true"
             id="org.eclipse.pde.ui.NewSiteProjectWizard">
          <description>
