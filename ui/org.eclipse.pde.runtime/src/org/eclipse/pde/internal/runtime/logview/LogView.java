@@ -430,8 +430,14 @@ public class LogView extends ViewPart implements ILogListener {
 		
 		viewLogAction = new Action(PDERuntimePlugin.getResourceString("LogView.view.currentLog")){
 			public void run(){
+				
 				if (inputFile.exists())
-					Program.launch(inputFile.getAbsolutePath());
+					if (SWT.getPlatform().equals("win32"))
+						Program.launch(inputFile.getAbsolutePath());
+					else {
+						Program p = Program.findProgram (".txt");
+						if (p != null) p.execute (inputFile.getAbsolutePath());
+					}
 			}
 		};
 		viewLogAction.setImageDescriptor(PDERuntimePluginImages.DESC_PAGE_OBJ);
