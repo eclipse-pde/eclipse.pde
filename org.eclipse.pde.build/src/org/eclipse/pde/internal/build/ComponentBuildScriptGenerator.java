@@ -13,7 +13,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
 import org.xml.sax.InputSource;
 
-public class ComponentBuildScriptGenerator extends PluginTool implements ScriptGeneratorConstants {
+public class ComponentBuildScriptGenerator extends PluginTool {
 	private ComponentModel componentModel = null;
 	private String componentId = null;
 	private PluginModel plugins[] = null;
@@ -285,6 +285,10 @@ protected String getLocation(PluginModel descriptor) {
 }
 protected PrintWriter openMainOutput() throws IOException {
 	return new PrintWriter(new FileOutputStream(new File(componentModel.getLocation(),DEFAULT_FILENAME_MAIN).getAbsoluteFile()));
+}
+
+protected void printUsage(PrintWriter out) {
+	out.println("\tjava ComponentBuildScriptGenerator -install <targetDir> -component <componentId> [-nochildren] [-dev <devEntries>]");
 }
 protected String[] processCommandLine(String[] args) {
 	super.processCommandLine(args);

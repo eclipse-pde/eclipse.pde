@@ -4,7 +4,10 @@ package org.eclipse.pde.internal.core;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-public interface ScriptGeneratorConstants {
+interface ScriptGeneratorConstants {
+	
+	// constants
+	public final static String FILENAME_PROPERTIES = "build.properties";
 	
 	// targets
 	public static final String TARGET_ALL = "all";

@@ -13,7 +13,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
 import org.xml.sax.InputSource;
 
-public class ConfigurationBuildScriptGenerator extends PluginTool implements ScriptGeneratorConstants {
+public class ConfigurationBuildScriptGenerator extends PluginTool {
 	private ConfigurationModel configurationModel = null;
 	private String configurationId = null;
 	private boolean generateChildren = true;
@@ -208,6 +208,9 @@ protected String makeRelative(String location, IPath base) {
 protected PrintWriter openConfigurationOutput() throws IOException {
 	return new PrintWriter(new FileOutputStream(
 		new File(configurationModel.getLocation(),FILENAME_OUTPUT).getAbsoluteFile()));
+}
+protected void printUsage(PrintWriter out) {
+	out.println("\tjava ConfigurationBuildScriptGenerator -install <targetDir> -configuration <configurationId> [-nochildren] [-dev <devEntries>]");
 }
 protected String[] processCommandLine(String[] args) {
 	super.processCommandLine(args);

@@ -13,7 +13,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-public abstract class PluginTool implements IPlatformRunnable {
+public abstract class PluginTool implements IPlatformRunnable, ScriptGeneratorConstants {
 	protected boolean usage = false;
 	private PluginRegistryModel registry = null;
 	URL pluginPath = null;
@@ -24,7 +24,6 @@ public abstract class PluginTool implements IPlatformRunnable {
 	private MultiStatus problems = new MultiStatus(PI_PDECORE,IStatus.OK,Policy.bind("label.generationProblems"),null);
 	
 	public final static String PI_PDECORE = "org.eclipse.pde.core";
-	public final static String FILENAME_PROPERTIES = "build.properties";
 	private static final String SEPARATOR_VERSION = "_";
 	private static final String USAGE = "-?";
 	private static final String PLUGINS = "-plugins";
@@ -213,13 +212,7 @@ protected String makeRelative(String location, IPath base) {
 /**
  * Print the usage of this launcher on the system console
  */
-protected void printUsage(PrintWriter out) {
-//	out.println("The general form of using the VAJ Extractor is:");
-//	out.println("      java <launcher class> -application <name> [option list]");
-//	out.println("where the option list can be any number of the following:");
-//	out.println("      -? : print this message");
-//	out.flush();
-}
+protected abstract void printUsage(PrintWriter out);
 protected String[] processCommandLine(String[] args) {
 	for (int i = 0; i < args.length; i++) {
 		// check for args without parameters (i.e., a flag arg)
@@ -260,7 +253,7 @@ protected Properties readProperties(String modelDirectory) {
 	Properties result = new Properties();
 	
 	try {
-		URL propertiesFile = new URL(modelDirectory + FILENAME_PROPERTIES);
+		URL propertiesFile = new URL(modelDirectory + ScriptGeneratorConstants.FILENAME_PROPERTIES);
 		InputStream is = propertiesFile.openStream();
 		try {
 			result.load(is);

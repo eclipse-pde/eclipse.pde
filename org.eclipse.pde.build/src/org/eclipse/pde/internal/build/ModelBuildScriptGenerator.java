@@ -11,7 +11,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
 
-abstract class ModelBuildScriptGenerator extends PluginTool implements ScriptGeneratorConstants {
+abstract class ModelBuildScriptGenerator extends PluginTool {
 
 	private Map jarsCache = new HashMap(9);
 	private Set requiredJars = null;

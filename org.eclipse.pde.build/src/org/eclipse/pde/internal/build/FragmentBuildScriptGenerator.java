@@ -4,7 +4,7 @@ package org.eclipse.pde.internal.core;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.model.*;
+import java.io.PrintWriter;import org.eclipse.core.runtime.model.*;
 
 public class FragmentBuildScriptGenerator extends ModelBuildScriptGenerator {
 
@@ -27,6 +27,9 @@ public static void main(String[] args) throws Exception {
 }
 public static void main(String argString) throws Exception {
 	main(tokenizeArgs(argString));
+}
+protected void printUsage(PrintWriter out) {
+	out.println("\tjava FragmentBuildScriptGenerator -install <targetDir> {-fragment <fragmentId>}* [-dev <devEntries>]");
 }
 protected PluginModel retrieveModelNamed(String modelName) {
 	return getRegistry().getFragment(modelName);
