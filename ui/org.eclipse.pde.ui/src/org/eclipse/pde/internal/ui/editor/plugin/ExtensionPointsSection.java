@@ -14,7 +14,6 @@ import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.elements.*;
@@ -292,7 +291,7 @@ public class ExtensionPointsSection extends TableSection {
 		});
 	}
 	protected void doPaste(Object target, Object[] objects) {
-		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
+		/*IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		IPluginBase plugin = model.getPluginBase();
 		try {
 			for (int i = 0; i < objects.length; i++) {
@@ -306,7 +305,7 @@ public class ExtensionPointsSection extends TableSection {
 			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
-		}
+		}*/
 	}
 	protected boolean canPaste(Object target, Object[] objects) {
 		if (objects[0] instanceof IPluginExtensionPoint)

@@ -153,6 +153,12 @@ public class RequiresSection
 		}
 		return false;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste()
+	 */
+	protected void doPaste() {
+	}
 
 	public boolean setFormInput(Object object) {
 		if (object instanceof IPluginImport) {

@@ -21,7 +21,6 @@ import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ischema.*;
-import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.core.schema.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
@@ -740,7 +739,7 @@ public class ExtensionsSection extends TreeSection
 		return false;
 	}
 	protected void doPaste(Object target, Object[] objects) {
-		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
+		/*IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		IPluginBase plugin = model.getPluginBase();
 		try {
 			for (int i = 0; i < objects.length; i++) {
@@ -759,7 +758,7 @@ public class ExtensionsSection extends TreeSection
 			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
-		}
+		}*/
 	}
 	private void handleMove(boolean up) {
 		IStructuredSelection sel = (IStructuredSelection) extensionTree
