@@ -9,7 +9,8 @@
         path="ECLIPSE_HOME/plugins/org.eclipse.swt/swt.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.swt/swtsrc.zip"/>
     <classpathentry kind="var" path="ECLIPSE_HOME/plugins/org.eclipse.ant.core/ant.jar"/>
     <classpathentry kind="var" path="ECLIPSE_HOME/plugins/org.apache.xerces/xerces.jar"/>
-    <classpathentry kind="var" path="ECLIPSE_HOME/plugins/org.eclipse.ant.ui/antui.jar"/>
+    <classpathentry kind="var"
+        path="ECLIPSE_HOME/plugins/org.eclipse.ant.ui/antui.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.ant.ui/antuisrc.zip"/>
     <classpathentry kind="var" path="ECLIPSE_HOME/plugins/org.eclipse.ant.core/antsupport.jar"/>
     <classpathentry kind="var" path="ECLIPSE_HOME/plugins/org.eclipse.debug.core/dtcore.jar"/>
     <classpathentry kind="var" path="ECLIPSE_HOME/plugins/org.eclipse.debug.ui/dtui.jar"/>

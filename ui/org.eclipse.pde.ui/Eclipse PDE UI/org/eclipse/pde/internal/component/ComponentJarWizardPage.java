@@ -54,7 +54,7 @@ public class ComponentJarWizardPage extends WizardPage {
 	class JarsBuildListener extends UIBuildListener {
 		IProgressMonitor monitor;
 		public JarsBuildListener(AntRunner runner, IProgressMonitor monitor, IFile file) {
-			super(runner, monitor, file);
+			super(runner, monitor, file, null);
 			this.monitor = monitor;
 		}
 		public void messageLogged(BuildEvent event) {
