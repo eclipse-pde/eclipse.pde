@@ -10,256 +10,424 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.view;
 
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.util.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.plugin.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.plugin.*;
-import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
-import org.eclipse.pde.internal.ui.search.*;
-import org.eclipse.pde.internal.ui.search.dependencies.*;
-import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.pde.internal.ui.wizards.ListUtil;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.actions.ActionContext;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.part.*;
+import java.util.HashMap;
+import java.util.Map;
 
-public class DependenciesView extends ViewPart {
-	private TreeViewer treeViewer;
-	private DrillDownAdapter drillDownAdapter;
-	private Action openAction;
-	private FocusOnSelectionAction focusOnSelectionAction;
-	private Action focusOnAction;
-	private IPropertyChangeListener propertyListener;
-	
-	class FocusOnSelectionAction extends Action {
-		public void run() {
-			handleFocusOn(getSelectedObject());
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Preferences;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.IPreferenceConstants;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.part.IPage;
+import org.eclipse.ui.part.IPageBookViewPage;
+import org.eclipse.ui.part.PageBook;
+import org.eclipse.ui.part.PageBookView;
+
+public class DependenciesView extends PageBookView implements
+		IPreferenceConstants, IHelpContextIds {
+	static class DummyPart implements IWorkbenchPart {
+		public void addPropertyListener(IPropertyListener listener) {/* dummy */
 		}
-		public void update(Object object) {
-			setEnabled(object!=null);
-			String name = ((LabelProvider)treeViewer.getLabelProvider()).getText(object);
-			setText(PDEPlugin.getFormattedMessage("DependenciesView.focusOnSelection", name)); //$NON-NLS-1$
+
+		public void createPartControl(Composite parent) {/* dummy */
+		}
+
+		public void dispose() {/* dummy */
+		}
+
+		public Object getAdapter(Class adapter) {
+			return null;
+		}
+
+		public IWorkbenchPartSite getSite() {
+			return null;
+		}
+
+		public String getTitle() {
+			return null;
+		}
+
+		public Image getTitleImage() {
+			return null;
+		}
+
+		public String getTitleToolTip() {
+			return null;
+		}
+
+		public void removePropertyListener(IPropertyListener listener) {/* dummy */
+		}
+
+		public void setFocus() {/* dummy */
 		}
 	}
 
+	class ShowCalleesAction extends Action {
+
+		public ShowCalleesAction() {
+			super("", AS_RADIO_BUTTON); //$NON-NLS-1$
+			setText(PDEPlugin
+					.getResourceString("DependenciesView.ShowCalleesAction.label")); //$NON-NLS-1$
+			setDescription(PDEPlugin
+					.getResourceString("DependenciesView.ShowCalleesAction.description")); //$NON-NLS-1$
+			setToolTipText(PDEPlugin
+					.getResourceString("DependenciesView.ShowCalleesAction.tooltip")); //$NON-NLS-1$
+			setImageDescriptor(PDEPluginImages.DESC_CALLEES);
+			setDisabledImageDescriptor(PDEPluginImages.DESC_CALLEES_DISABLED);
+		}
+
+		/*
+		 * @see Action#actionPerformed
+		 */
+		public void run() {
+			if (isChecked()) {
+				fPreferences.setValue(DEPS_VIEW_SHOW_CALLERS, false);
+				setViewType(false);
+			}
+		}
+	}
+
+	class ShowCallersAction extends Action {
+		public ShowCallersAction() {
+			super("", AS_RADIO_BUTTON); //$NON-NLS-1$
+			setText(PDEPlugin
+					.getResourceString("DependenciesView.ShowCallersAction.label")); //$NON-NLS-1$
+			setDescription(PDEPlugin
+					.getResourceString("DependenciesView.ShowCallersAction.description")); //$NON-NLS-1$
+			setToolTipText(PDEPlugin
+					.getResourceString("DependenciesView.ShowCallersAction.tooltip")); //$NON-NLS-1$
+			setImageDescriptor(PDEPluginImages.DESC_CALLERS);
+			setDisabledImageDescriptor(PDEPluginImages.DESC_CALLERS_DISABLED);
+		}
+
+		/*
+		 * @see Action#actionPerformed
+		 */
+		public void run() {
+			if (isChecked()) {
+				fPreferences.setValue(DEPS_VIEW_SHOW_CALLERS, true);
+				setViewType(true);
+			}
+		}
+	}
+
+	class ShowListAction extends Action {
+		public ShowListAction() {
+			super("", AS_RADIO_BUTTON); //$NON-NLS-1$
+			setText(PDEPlugin
+					.getResourceString("DependenciesView.ShowListAction.label")); //$NON-NLS-1$
+			setDescription(PDEPlugin
+					.getResourceString("DependenciesView.ShowListAction.description")); //$NON-NLS-1$
+			setToolTipText(PDEPlugin
+					.getResourceString("DependenciesView.ShowListAction.tooltip")); //$NON-NLS-1$
+			setImageDescriptor(PDEPluginImages.DESC_FLAT_LAYOUT);
+			setDisabledImageDescriptor(PDEPluginImages.DESC_FLAT_LAYOUT_DISABLED);
+		}
+
+		/*
+		 * @see Action#actionPerformed
+		 */
+		public void run() {
+			if (isChecked()) {
+				fPreferences.setValue(DEPS_VIEW_SHOW_LIST, true);
+				setPresentation(true);
+			}
+		}
+	}
+
+	class ShowTreeAction extends Action {
+
+		public ShowTreeAction() {
+			super("", AS_RADIO_BUTTON); //$NON-NLS-1$
+			setText(PDEPlugin
+					.getResourceString("DependenciesView.ShowTreeAction.label")); //$NON-NLS-1$
+			setDescription(PDEPlugin
+					.getResourceString("DependenciesView.ShowTreeAction.description")); //$NON-NLS-1$
+			setToolTipText(PDEPlugin
+					.getResourceString("DependenciesView.ShowTreeAction.tooltip")); //$NON-NLS-1$
+			setImageDescriptor(PDEPluginImages.DESC_HIERARCHICAL_LAYOUT);
+			setDisabledImageDescriptor(PDEPluginImages.DESC_HIERARCHICAL_LAYOUT_DISABLED);
+		}
+
+		/*
+		 * @see Action#actionPerformed
+		 */
+		public void run() {
+			if (isChecked()) {
+				fPreferences.setValue(DEPS_VIEW_SHOW_LIST, false);
+				setPresentation(false);
+			}
+		}
+	}
+
+	protected static final IWorkbenchPart PART_CALLEES_LIST = new DummyPart();
+
+	protected static final IWorkbenchPart PART_CALLEES_TREE = new DummyPart();
+
+	protected static final IWorkbenchPart PART_CALLERS_LIST = new DummyPart();
+
+	protected static final IWorkbenchPart PART_CALLERS_TREE = new DummyPart();
+
+	public static final String TREE_ACTION_GROUP = "tree"; //$NON-NLS-1$
+
+	private Map fPagesToParts;
+
+	private Map fPartsToPages;
+
+	private Object fInput;
+
+	private Preferences fPreferences = PDEPlugin.getDefault().getPluginPreferences();
+
+	private ShowCalleesAction fShowCallees;
+
+	private ShowCallersAction fShowCallers;
+
+	private ShowListAction fShowList;
+
+	private ShowTreeAction fShowTree;
+
 	/**
-	 * Constructor for PluginsView.
+	 * 
 	 */
 	public DependenciesView() {
-		propertyListener = new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				String property = event.getProperty();
-				if (property.equals(MainPreferencePage.PROP_SHOW_OBJECTS)) {
-					treeViewer.refresh();
-				}
-			}
-		};
-	}
-
-	public void dispose() {
-		PDEPlugin
-			.getDefault()
-			.getPreferenceStore()
-			.removePropertyChangeListener(
-			propertyListener);
-		super.dispose();
-	}
-
-	/**
-	 * @see IWorkbenchPart#createPartControl(Composite)
-	 */
-	public void createPartControl(Composite parent) {
-		treeViewer =
-			new TreeViewer(parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
-		drillDownAdapter = new DrillDownAdapter(treeViewer);
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
-		treeViewer.setContentProvider(
-			new DependenciesContentProvider(this, manager));
-		treeViewer.setLabelProvider(new DependenciesLabelProvider());
-		treeViewer.setSorter(ListUtil.PLUGIN_SORTER);
-		treeViewer.setAutoExpandLevel(2);
-		makeActions();
-		IActionBars actionBars = getViewSite().getActionBars();
-		contributeToActionBars(actionBars);
-		hookContextMenu();
-		hookDoubleClickAction();
-		treeViewer
-			.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent e) {
-				handleSelectionChanged(e.getSelection());
-			}
-		});
-		PDEPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(
-			propertyListener);
-		getViewSite().setSelectionProvider(treeViewer);
-		
-		WorkbenchHelp.setHelp(treeViewer.getControl(),IHelpContextIds.DEPENDENCIES_VIEW);
+		super();
+		fPartsToPages = new HashMap(4);
+		fPagesToParts = new HashMap(4);
 	}
 
 	private void contributeToActionBars(IActionBars actionBars) {
 		contributeToLocalToolBar(actionBars.getToolBarManager());
-		contributeToDropDownMenu(actionBars.getMenuManager());
-	}
-
-	private void contributeToDropDownMenu(IMenuManager manager) {
+		actionBars.updateActionBars();
 	}
 
 	private void contributeToLocalToolBar(IToolBarManager manager) {
-		drillDownAdapter.addNavigationActions(manager);
-	}
-	private void makeActions() {
-		openAction = new Action() {
-			public void run() {
-				handleDoubleClick();
-			}
-			public void update(Object object) {
-			}
-		};
-		openAction.setText(PDEPlugin.getResourceString("DependenciesView.open")); //$NON-NLS-1$
-		
-		focusOnSelectionAction = new FocusOnSelectionAction();
-
-		focusOnAction = new Action() {
-			public void run() {
-				handleFocusOn();
-			}
-		};
-		focusOnAction.setText(PDEPlugin.getResourceString("DependenciesView.focusOn")); //$NON-NLS-1$
-	}
-	
-	private Object getSelectedObject() {
-		IStructuredSelection selection =
-			(IStructuredSelection) treeViewer.getSelection();
-		if (selection.isEmpty() || selection.size() != 1)
-			return null;
-		return selection.getFirstElement();
-	}
-	
-	private void fillContextMenu(IMenuManager manager) {
-		IStructuredSelection selection =
-			(IStructuredSelection) treeViewer.getSelection();
-
-		if (selection.size() == 1) {
-			manager.add(openAction);
-			manager.add(new Separator());
-		}
-		focusOnSelectionAction.update(getSelectedObject());
-		if (focusOnSelectionAction.isEnabled())
-			manager.add(focusOnSelectionAction);		
-		manager.add(focusOnAction);
-		if (selection.size() == 1) {
-			manager.add(new Separator());
-			PluginSearchActionGroup actionGroup = new PluginSearchActionGroup();
-			actionGroup.setContext(new ActionContext(selection));
-			actionGroup.fillContextMenu(manager);
-		}
-		if (treeViewer.getInput() instanceof WorkspacePluginModelBase) {
-			manager.add(new UnusedDependenciesAction((WorkspacePluginModelBase)treeViewer.getInput()));
-		}
-		manager.add(new Separator());
-		drillDownAdapter.addNavigationActions(manager);
-		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+		manager.add(new Separator(TREE_ACTION_GROUP));
+		manager.add(new Separator("type")); //$NON-NLS-1$
+		manager.appendToGroup("type", fShowCallees); //$NON-NLS-1$
+		manager.appendToGroup("type", fShowCallers); //$NON-NLS-1$
+		manager.add(new Separator("presentation")); //$NON-NLS-1$
+		manager.appendToGroup("presentation", fShowTree); //$NON-NLS-1$
+		manager.appendToGroup("presentation", fShowList); //$NON-NLS-1$
 	}
 
-	private void hookContextMenu() {
-		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
-		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-			public void menuAboutToShow(IMenuManager manager) {
-				DependenciesView.this.fillContextMenu(manager);
-			}
-		});
-		Menu menu = menuMgr.createContextMenu(treeViewer.getControl());
-		treeViewer.getControl().setMenu(menu);
-		getSite().registerContextMenu(menuMgr, treeViewer);
-	}
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.part.PageBookView#createDefaultPage(org.eclipse.ui.part.PageBook)
+	 */
+	protected IPage createDefaultPage(PageBook book) {
+		if (fPreferences.getBoolean(DEPS_VIEW_SHOW_CALLERS)) {
+			if (fPreferences.getBoolean(DEPS_VIEW_SHOW_LIST)) {
+				return createPage(PART_CALLERS_LIST);
 
-	private void handleDoubleClick() {
-		Object obj = getSelectedObject();
-		if (obj instanceof ImportObject) {
-			IPlugin plugin = ((ImportObject)obj).getPlugin();
-			if (plugin!=null) {
-				obj = plugin;
 			}
+			return createPage(PART_CALLERS_TREE);
 		}
-		if (obj instanceof IPluginBase)
-			ManifestEditor.openPluginEditor((IPluginBase)obj);
-	}
-	
-	private void handleFocusOn(Object newFocus) {
-		if (newFocus instanceof IPluginModelBase) {
-			openTo(newFocus);
-		}
-		if (newFocus instanceof IPluginBase) {
-			openTo(((IPluginBase)newFocus).getModel());
-		}
-		if (newFocus instanceof ImportObject) {
-			ImportObject iimport = (ImportObject)newFocus;
-			IPlugin plugin = iimport.getPlugin();
-			if (plugin != null) {
-				openTo(plugin.getModel());
-			}
-		}
-	}
-	
-	private void handleFocusOn() {
-		PluginSelectionDialog dialog = new PluginSelectionDialog(treeViewer.getControl().getShell(), true, false);
-		dialog.create();
-		if (dialog.open()==PluginSelectionDialog.OK) {
-			handleFocusOn(dialog.getFirstResult());
-		}
-	}
-	
-	private void handleSelectionChanged(ISelection selection) {
-		//String text = "";
-		//Object obj = getSelectedObject();
-		//getViewSite().getActionBars().getStatusLineManager().setMessage(text);
-	}
+		if (fPreferences.getBoolean(DEPS_VIEW_SHOW_LIST)) {
+			return createPage(PART_CALLEES_LIST);
 
-	private void hookDoubleClickAction() {
-		treeViewer.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event) {
-				handleDoubleClick();
-			}
-		});
+		}
+		return createPage(PART_CALLEES_TREE);
+
 	}
 
 	/**
-	 * @see IWorkbenchPart#setFocus()
+	 * part of the part constants
 	 */
-	public void setFocus() {
-		treeViewer.getTree().setFocus();
+	private DependenciesViewPage createPage(IWorkbenchPart part) {
+		DependenciesViewPage page;
+		if (part == PART_CALLEES_TREE) {
+			page = new DependenciesViewTreePage(this,
+					new CalleesTreeContentProvider(this));
+		} else if (part == PART_CALLEES_LIST) {
+			page = new DependenciesViewListPage(this,
+					new CalleesListContentProvider(this));
+		} else if (part == PART_CALLERS_TREE) {
+			page = new DependenciesViewTreePage(this,
+					new CallersTreeContentProvider(this));
+		} else {
+			page = new DependenciesViewListPage(this,
+					new CallersListContentProvider(this));
+		}
+
+		initPage(page);
+		page.createControl(getPageBook());
+		fPartsToPages.put(part, page);
+		fPagesToParts.put(page, part);
+		return page;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.part.PageBookView#createPartControl(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createPartControl(Composite parent) {
+		super.createPartControl(parent);
+		fShowCallees = new ShowCalleesAction();
+		fShowCallees.setChecked(!fPreferences.getBoolean(DEPS_VIEW_SHOW_CALLERS));
+		fShowCallers = new ShowCallersAction();
+		fShowCallers.setChecked(fPreferences.getBoolean(DEPS_VIEW_SHOW_CALLERS));
+
+		fShowTree = new ShowTreeAction();
+		fShowTree.setChecked(!fPreferences.getBoolean(DEPS_VIEW_SHOW_LIST));
+		fShowList = new ShowListAction();
+		fShowList.setChecked(fPreferences.getBoolean(DEPS_VIEW_SHOW_LIST));
+		IActionBars actionBars = getViewSite().getActionBars();
+		contributeToActionBars(actionBars);
+
+		WorkbenchHelp.setHelp(parent, IHelpContextIds.DEPENDENCIES_VIEW);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.part.PageBookView#doCreatePage(org.eclipse.ui.IWorkbenchPart)
+	 */
+	protected PageRec doCreatePage(IWorkbenchPart part) {
+		IPageBookViewPage page = (IPageBookViewPage) fPartsToPages.get(part);
+		if (page == null && !fPartsToPages.containsKey(part)) {
+			page = createPage(part);
+		}
+		if (page != null) {
+			return new PageRec(part, page);
+		}
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.part.PageBookView#doDestroyPage(org.eclipse.ui.IWorkbenchPart,
+	 *      org.eclipse.ui.part.PageBookView.PageRec)
+	 */
+	protected void doDestroyPage(IWorkbenchPart part, PageRec pageRecord) {
+		IPage page = pageRecord.page;
+		page.dispose();
+		pageRecord.dispose();
+
+		// empty cross-reference cache
+		fPartsToPages.remove(part);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.part.PageBookView#getBootstrapPart()
+	 */
+	protected IWorkbenchPart getBootstrapPart() {
+		return PART_CALLEES_TREE;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.part.PageBookView#init(org.eclipse.ui.IViewSite)
+	 */
+	public void init(IViewSite site) throws PartInitException {
+		super.init(site);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.part.PageBookView#isImportant(org.eclipse.ui.IWorkbenchPart)
+	 */
+	protected boolean isImportant(IWorkbenchPart part) {
+		return part instanceof DummyPart;
+	}
+
+	public void openTo(Object object) {
+		fInput = object;
+		((DependenciesViewPage) getCurrentPage()).setInput(object);
+	}
+
+	void setPresentation(boolean listNotTree) {
+		IWorkbenchPart currentPart = getCurrentContributingPart();
+		if (listNotTree) {
+			if (currentPart == PART_CALLEES_TREE) {
+				partActivated(PART_CALLEES_LIST);
+			} else if (currentPart == PART_CALLERS_TREE) {
+				partActivated(PART_CALLERS_LIST);
+			}
+
+		} else {
+			if (currentPart == PART_CALLEES_LIST) {
+				partActivated(PART_CALLEES_TREE);
+			} else if (currentPart == PART_CALLERS_LIST) {
+				partActivated(PART_CALLERS_TREE);
+			}
+
+		}
+	}
+
+	void setViewType(boolean callers) {
+		IWorkbenchPart currentPart = getCurrentContributingPart();
+		if (callers) {
+			if (currentPart == PART_CALLEES_TREE) {
+				partActivated(PART_CALLERS_TREE);
+			} else if (currentPart == PART_CALLEES_LIST) {
+				partActivated(PART_CALLERS_LIST);
+			}
+
+		} else {
+			if (currentPart == PART_CALLERS_TREE) {
+				partActivated(PART_CALLEES_TREE);
+			} else if (currentPart == PART_CALLERS_LIST) {
+				partActivated(PART_CALLEES_LIST);
+			}
+
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.part.PageBookView#showPageRec(org.eclipse.ui.part.PageBookView.PageRec)
+	 */
+	protected void showPageRec(PageRec pageRec) {
+		IPage p = pageRec.page;
+		((DependenciesViewPage) p).setInput(fInput);
+		super.showPageRec(pageRec);
+		updateTitle(fInput);
 	}
 
 	void updateTitle(Object newInput) {
-		IConfigurationElement config = getConfigurationElement();
-		if (config == null)
-			return;
-		String viewName = config.getAttribute("name"); //$NON-NLS-1$
 		if (newInput == null
-			|| newInput.equals(PDECore.getDefault().getModelManager())) {
-			// restore old
+				|| newInput.equals(PDECore.getDefault().getModelManager())) {
+			IConfigurationElement config = getConfigurationElement();
+			if (config == null)
+				return;
+			String viewName = config.getAttribute("name"); //$NON-NLS-1$
 			setContentDescription(viewName);
-			setTitleToolTip(getTitle());
 		} else {
-			String name =
-				((LabelProvider) treeViewer.getLabelProvider()).getText(
+			String name = PDEPlugin.getDefault().getLabelProvider().getText(
 					newInput);
-			setContentDescription(viewName + ": " + name); //$NON-NLS-1$
-			setTitleToolTip(getTitle());
-			//setTitleToolTip(getInputPath(newInput));
+			String title;
+			if (getCurrentContributingPart() == PART_CALLEES_TREE
+					|| getCurrentContributingPart() == PART_CALLEES_LIST) {
+				title = PDEPlugin.getFormattedMessage(
+						"DependenciesView.callees.title", name); //$NON-NLS-1$
+			} else {
+				title = PDEPlugin.getFormattedMessage(
+						"DependenciesView.callers.title", name); //$NON-NLS-1$
+			}
+			setContentDescription(title); //$NON-NLS-1$
 		}
-	}
-	
-	public void openTo(Object object) {
-		treeViewer.setInput(object);
+		setTitleToolTip(getTitle());
 	}
 }

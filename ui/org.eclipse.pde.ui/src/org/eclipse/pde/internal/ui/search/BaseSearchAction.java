@@ -15,7 +15,7 @@ public abstract class BaseSearchAction extends Action {
 	 */
 	public void run() {
 		NewSearchUI.activateSearchResultView();
-		NewSearchUI.runQuery(createSearchQuery());
+		NewSearchUI.runQueryInBackground(createSearchQuery());
 	}
 	
 	protected abstract ISearchQuery createSearchQuery();

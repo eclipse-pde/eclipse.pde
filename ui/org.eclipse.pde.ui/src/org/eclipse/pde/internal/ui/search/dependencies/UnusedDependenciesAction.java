@@ -22,13 +22,16 @@ public class UnusedDependenciesAction extends Action {
 
 	private IPluginModelBase fModel;
 
-	public UnusedDependenciesAction(IPluginModelBase model) {
+	private boolean fReadOnly;
+
+	public UnusedDependenciesAction(IPluginModelBase model, boolean readOnly) {
 		fModel = model;
 		setText(PDEPlugin.getResourceString(ACTION_NAME)); 
+		fReadOnly = readOnly;
 	}
 
 	public void run() {
-		Job job = new UnusedDependenciesJob(PDEPlugin.getResourceString("UnusedDependenciesAction.jobName"), fModel); //$NON-NLS-1$
+		Job job = new UnusedDependenciesJob(PDEPlugin.getResourceString("UnusedDependenciesAction.jobName"), fModel, fReadOnly); //$NON-NLS-1$
 		job.setUser(true);
 		job.setProperty(IProgressConstants.ICON_PROPERTY, PDEPluginImages.DESC_PSEARCH_OBJ.createImage());
 		job.schedule();

@@ -117,7 +117,7 @@ public class DependencyAnalysisSection extends PDESection implements IPartSelect
 	protected void doFindUnusedDependencies() {
 		IBaseModel model = getPage().getModel();
 		if (model instanceof IPluginModelBase) {
-			new UnusedDependenciesAction((IPluginModelBase)model).run();
+			new UnusedDependenciesAction((IPluginModelBase)model, false).run();
 		}		
 	}
 	

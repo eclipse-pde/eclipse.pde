@@ -189,7 +189,7 @@ public class RequiresSection
 		actionGroup.setContext(new ActionContext(selection));
 		actionGroup.fillContextMenu(manager);
 		if (((IModel)getPage().getModel()).getUnderlyingResource()!=null) {
-			manager.add(new UnusedDependenciesAction((IPluginModelBase) getPage().getModel()));
+			manager.add(new UnusedDependenciesAction((IPluginModelBase) getPage().getModel(), false));
 		}
 	}
 

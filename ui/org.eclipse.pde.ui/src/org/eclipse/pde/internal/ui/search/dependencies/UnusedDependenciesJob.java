@@ -27,10 +27,12 @@ public class UnusedDependenciesJob extends Job {
 	}
 
 	private IPluginModelBase fModel;
+	private boolean fReadOnly;
 
-	public UnusedDependenciesJob(String name, IPluginModelBase model) {
+	public UnusedDependenciesJob(String name, IPluginModelBase model, boolean readOnly) {
 		super(name);
 		fModel = model;
+		fReadOnly = readOnly;
 	}
 
 	/* (non-Javadoc)
@@ -119,7 +121,7 @@ public class UnusedDependenciesJob extends Job {
 	
 	
 	private Action getShowResultsAction(IPluginImport[] unused) {
-		return new ShowResultsAction(unused);
+		return new ShowResultsAction(unused, fReadOnly);
 	}
 	
     protected void showResults(final IPluginImport[] unused) {

@@ -32,7 +32,7 @@ public class DependencyExtentAction extends Action {
 		
 	public void run() {
 		NewSearchUI.activateSearchResultView();
-		NewSearchUI.runQuery(new DependencyExtentQuery(fProject, fImportID));
+		NewSearchUI.runQueryInBackground(new DependencyExtentQuery(fProject, fImportID));
 	}	
 	
 }
