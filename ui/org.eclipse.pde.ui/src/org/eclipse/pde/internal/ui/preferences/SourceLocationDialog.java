@@ -33,6 +33,7 @@ public class SourceLocationDialog extends Dialog {
 	private IPath path;
 	private Label statusLabel;
 	private SourceLocation location;
+	private static String previousPath = "";
 	/**
 	 * Constructor for SourceLocationDialog.
 	 * @param parentShell
@@ -62,6 +63,7 @@ public class SourceLocationDialog extends Dialog {
 		label.setText(PDEPlugin.getResourceString("SourceLocationDialog.locationPath")); //$NON-NLS-1$
 
 		pathText = new Text(container, SWT.SINGLE | SWT.BORDER);
+		pathText.setText(previousPath);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		pathText.setLayoutData(gd);
 
@@ -95,6 +97,7 @@ public class SourceLocationDialog extends Dialog {
 
 	private void handleBrowse() {
 		DirectoryDialog dd = new DirectoryDialog(getShell());
+		dd.setFilterPath(pathText.getText());
 		String path = dd.open();
 		if (path != null) {
 			pathText.setText(path);
@@ -141,6 +144,7 @@ public class SourceLocationDialog extends Dialog {
 
 	protected void okPressed() {
 		name = nameText.getText();
+		previousPath = pathText.getText();
 		path = new Path(pathText.getText());
 		if (location!=null) {
 			location.setName(name);
