@@ -95,6 +95,8 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			IPluginEntry entry = pluginList[i];
 			VersionedIdentifier identifier = entry.getVersionedIdentifier();
 			BundleDescription model;
+			if (selectConfigs(entry).size()==0)
+				continue;
 
 			String versionRequested = identifier.getVersion().toString();
 			model = getSite(false).getRegistry().getResolvedBundle(identifier.getIdentifier(), versionRequested);
