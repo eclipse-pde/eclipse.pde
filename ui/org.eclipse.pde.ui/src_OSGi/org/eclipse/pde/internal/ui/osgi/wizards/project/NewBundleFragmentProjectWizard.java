@@ -16,7 +16,7 @@ public class NewBundleFragmentProjectWizard extends NewBundleProjectWizard {
 private static final String KEY_TITLE = "NewBundleFragmentProjectWizard.title";
 
 public NewBundleFragmentProjectWizard() {
-	setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWFRAGPRJ_WIZ);
+	setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWBFPRJ_WIZ);
 	setWindowTitle(PDEPlugin.getResourceString(KEY_TITLE));
 }
 public boolean isFragmentWizard() {

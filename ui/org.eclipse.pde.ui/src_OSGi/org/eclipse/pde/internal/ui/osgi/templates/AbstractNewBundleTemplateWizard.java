@@ -81,7 +81,7 @@ public abstract class AbstractNewBundleTemplateWizard
 	public AbstractNewBundleTemplateWizard() {
 		super();
 		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
-		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWEXPRJ_WIZ);
+		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWBEXPRJ_WIZ);
 		setNeedsProgressMonitor(true);
 	}
 

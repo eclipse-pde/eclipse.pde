@@ -42,7 +42,7 @@ public class NewBundleProjectWizard
 	private static final String KEY_WTITLE = "NewBundleProjectWizard.title";
 
 	public NewBundleProjectWizard() {
-		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWPPRJ_WIZ);
+		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWBPRJ_WIZ);
 		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
 		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
 		setNeedsProgressMonitor(true);

@@ -27,7 +27,7 @@ public class PDEPluginImages {
 
 	private static ImageRegistry PLUGIN_REGISTRY;
 	
-	public final static String ICONS_PATH = "icons/full/";
+	public final static String ICONS_PATH = "icons/";
 
 	/**
 	 * Set of predefined Image Descriptors.
@@ -93,7 +93,7 @@ public class PDEPluginImages {
 	
 	public static final ImageDescriptor DESC_PLUGIN_OBJ   = create(PATH_OBJ, "plugin_obj.gif");
 	public static final ImageDescriptor DESC_BUNDLE_OBJ   = create(PATH_OBJ, "bundle_obj.gif");
-	public static final ImageDescriptor DESC_BUNDLE_FRAGMENT_OBJ   = create(PATH_OBJ, "bundle_fragment_obj.gif");
+	public static final ImageDescriptor DESC_BUNDLE_FRAGMENT_OBJ   = create(PATH_OBJ, "bundlef_obj.gif");
 	public static final ImageDescriptor DESC_PLUGIN_DIS_OBJ   = create(PATH_OBJ, "plugin_dis_obj.gif");
 	public static final ImageDescriptor DESC_PLUGIN_CONFIGS_OBJ   = create(PATH_OBJ, "plugin_configs_obj.gif");
 	public static final ImageDescriptor DESC_PLUGIN_CONFIG_OBJ   = create(PATH_OBJ, "plugin_config_obj.gif");
@@ -185,11 +185,14 @@ public class PDEPluginImages {
 	 * WIZ
 	 */
  	public static final ImageDescriptor DESC_NEWPPRJ_WIZ = create(PATH_WIZBAN, "newpprj_wiz.gif");
+ 	public static final ImageDescriptor DESC_NEWBPRJ_WIZ = create(PATH_WIZBAN, "newbprj_wiz.gif");
 	public static final ImageDescriptor DESC_NEWFRAGPRJ_WIZ = create(PATH_WIZBAN, "newfprj_wiz.gif");
+	public static final ImageDescriptor DESC_NEWBFPRJ_WIZ = create(PATH_WIZBAN, "newbfprj_wiz.gif");
 	public static final ImageDescriptor DESC_DEFCON_WIZ  = create(PATH_WIZBAN, "defcon_wiz.gif");
 	public static final ImageDescriptor DESC_NEWEX_WIZ   = create(PATH_WIZBAN, "newex_wiz.gif");
 	public static final ImageDescriptor DESC_NEWEXP_WIZ  = create(PATH_WIZBAN, "newexp_wiz.gif");
 	public static final ImageDescriptor DESC_NEWEXPRJ_WIZ   = create(PATH_WIZBAN, "newexprj_wiz.gif");
+	public static final ImageDescriptor DESC_NEWBEXPRJ_WIZ   = create(PATH_WIZBAN, "newbexprj_wiz.gif");
 	public static final ImageDescriptor DESC_NEWFTRPRJ_WIZ   = create(PATH_WIZBAN, "newftrprj_wiz.gif");
 	public static final ImageDescriptor DESC_NEWSITEPRJ_WIZ   = create(PATH_WIZBAN, "newsiteprj_wiz.gif");
 	public static final ImageDescriptor DESC_CONVJPPRJ_WIZ =create(PATH_WIZBAN, "convjpprj_wiz.gif");
