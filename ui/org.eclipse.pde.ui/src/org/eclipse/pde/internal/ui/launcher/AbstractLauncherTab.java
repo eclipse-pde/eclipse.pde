@@ -47,9 +47,6 @@ public abstract class AbstractLauncherTab extends AbstractLaunchConfigurationTab
 		label.setLayoutData(data);
 	}
 
-	public void launched(ILaunch launch) {
-	}
-
 	public boolean isValid(ILaunchConfiguration config) {
 		return valid;
 	}
