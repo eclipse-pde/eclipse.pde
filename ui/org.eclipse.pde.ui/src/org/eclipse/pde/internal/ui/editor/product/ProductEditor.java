@@ -15,7 +15,6 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.forms.editor.*;
 
 
 public class ProductEditor extends PDEFormEditor {
@@ -107,16 +106,14 @@ public class ProductEditor extends PDEFormEditor {
 	}
 	
 	public void updateConfigurationPage() {
-		IFormPage pagetoRemove = useFeatures() ? fPluginConfigurationPage : fFeatureConfigurationPage;
-		if (pagetoRemove != null)
-			removePage(pagetoRemove.getIndex());
-		removePage(fBrandingPage.getIndex());
 		try {
-			if (useFeatures())
-				addPage(fFeatureConfigurationPage);
-			else
-				addPage(fPluginConfigurationPage);
-			addPage(fBrandingPage);
+			if (useFeatures()) {
+				removePage(fPluginConfigurationPage.getIndex());
+				addPage(1, fFeatureConfigurationPage);
+			} else {
+				removePage(fFeatureConfigurationPage.getIndex());
+				addPage(1, fPluginConfigurationPage);
+			}
 		} catch (PartInitException e) {
 		}
 	}
