@@ -874,8 +874,10 @@ public class RuntimeInfoSection extends PDESection
 					if (tokens.length > index + 1)
 						fCurrentSelection = new StructuredSelection(
 								tokens[index + 1]);
+					else
+						fCurrentSelection = null;
 					entry.removeToken((String) object);
-
+					update(entry);
 				} catch (CoreException e) {
 					PDEPlugin.logException(e);
 				}
