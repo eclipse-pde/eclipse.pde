@@ -52,7 +52,14 @@ public class PDESourcePage extends TextEditor implements IFormPage, IGotoMarker 
 		}
 		super.dispose();
 	}
+	
+	protected IContentOutlinePage createOutlinePage() {
+		return null;
+	}
+
 	public IContentOutlinePage getContentOutline() {
+		if (outlinePage==null)
+			outlinePage = createOutlinePage();
 		return outlinePage;
 	}
 	/* (non-Javadoc)

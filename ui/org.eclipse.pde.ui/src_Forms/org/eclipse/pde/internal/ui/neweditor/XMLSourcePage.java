@@ -6,8 +6,10 @@
  */
 package org.eclipse.pde.internal.ui.neweditor;
 
+import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.ui.editor.XMLConfiguration;
 import org.eclipse.pde.internal.ui.editor.text.*;
+import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 /**
  * @author dejan
@@ -32,6 +34,18 @@ public class XMLSourcePage extends PDESourcePage {
 			colorManager.dispose();
 		colorManager = new ColorManager();
 		return new XMLConfiguration(colorManager);
+	}
+	
+	protected IContentOutlinePage createOutlinePage() {
+		/*
+		XMLOutlinePage outlinePage = new XMLOutlinePage(XMLCore.getDefault());
+		outlinePage.setContentProvider(new XMLOutlinePageContentProvider());
+		//outlinePage.setLabelProvider(new ManifestSourceOutlinePageLabelProvider());
+		//outlinePage.addSelectionChangedListener(selectionChangedListener);
+		outlinePage.setPageInput((IDocumentNode)getInputContext().getModel());
+		return outlinePage;
+		*/
+		return null;
 	}
 
 	public void dispose() {

@@ -26,10 +26,11 @@ public abstract class PDESection extends SectionPart implements IModelChangedLis
 	public PDESection(PDEFormPage page, Composite parent, int style) {
 		super(parent, page.getManagedForm().getToolkit(), style);
 		this.page = page;
-		createContents(getSection(), page.getManagedForm().getToolkit());
+		initialize(page.getManagedForm());
+		//createClient(getSection(), page.getManagedForm().getToolkit());
 	}
 	
-	protected abstract void createContents(Section section, FormToolkit toolkit);
+	protected abstract void createClient(Section section, FormToolkit toolkit);
 
 	public PDEFormPage getPage() {
 		return page;

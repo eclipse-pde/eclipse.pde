@@ -158,6 +158,8 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_MAXIMIZE = create(PATH_LCL, "maximize.gif");
 	public static final ImageDescriptor DESC_RESTORE = create(PATH_LCL, "restore.gif");
 	public static final ImageDescriptor DESC_FULL_HIERARCHY = create(PATH_LCL, "full_hierarchy.gif");
+	public static final ImageDescriptor DESC_HORIZONTAL = create(PATH_LCL, "th_horizontal.gif");
+	public static final ImageDescriptor DESC_VERTICAL = create(PATH_LCL, "th_vertical.gif");
 
 	public static final ImageDescriptor DESC_ADD_ATT_HOVER = create(PATH_LCL_HOVER, "add_att.gif");
 	public static final ImageDescriptor DESC_CLONE_ATT_HOVER = create(PATH_LCL_HOVER, "clone_att.gif");
@@ -167,6 +169,8 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_PROPERTIES_HOVER = create(PATH_LCL_HOVER, "properties.gif");
 	public static final ImageDescriptor DESC_REFRESH_HOVER = create(PATH_LCL_HOVER, "refresh.gif");
 	public static final ImageDescriptor DESC_REMOVE_ATT_HOVER = create(PATH_LCL_HOVER, "remove_att.gif");
+	public static final ImageDescriptor DESC_HORIZONTAL_HOVER = create(PATH_LCL_HOVER, "th_horizontal.gif");
+	public static final ImageDescriptor DESC_VERTICAL_HOVER = create(PATH_LCL_HOVER, "th_vertical.gif");	
 
 	public static final ImageDescriptor DESC_ADD_ATT_DISABLED = create(PATH_LCL_DISABLED, "add_att.gif");
 	public static final ImageDescriptor DESC_CLONE_ATT_DISABLED = create(PATH_LCL_DISABLED, "clone_att.gif");
@@ -176,6 +180,8 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_PROPERTIES_DISABLED = create(PATH_LCL_DISABLED, "properties.gif");
 	public static final ImageDescriptor DESC_REFRESH_DISABLED = create(PATH_LCL_DISABLED, "refresh.gif");
 	public static final ImageDescriptor DESC_REMOVE_ATT_DISABLED = create(PATH_LCL_DISABLED, "remove_att.gif");
+	public static final ImageDescriptor DESC_HORIZONTAL_DISABLED = create(PATH_LCL_DISABLED, "th_horizontal.gif");
+	public static final ImageDescriptor DESC_VERTICAL_DISABLED = create(PATH_LCL_DISABLED, "th_vertical.gif");
 
 	public static final ImageDescriptor DESC_RUN_EXC = create(PATH_OBJ, "run_exc.gif");
 	public static final ImageDescriptor DESC_DEBUG_EXC = create(PATH_OBJ, "debug_exc.gif");

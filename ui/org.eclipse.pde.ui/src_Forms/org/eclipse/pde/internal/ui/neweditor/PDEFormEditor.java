@@ -155,6 +155,15 @@ public abstract class PDEFormEditor extends FormEditor {
 		}
 		fireDirtyStateChanged();
 	}
+	public void doRevert() {
+		/*
+		PDESourcePage sourcePage = (PDESourcePage) getPage(getSourcePageId());
+		sourcePage.doRevertToSaved();
+		updateModel();
+		((IEditable)getModel()).setDirty(false);
+		fireSaveNeeded();
+		*/
+	}
 	
 	private void commitFormPages(boolean onSave) {
 
@@ -327,5 +336,7 @@ public abstract class PDEFormEditor extends FormEditor {
 	}
 	/* package */ IFormPage [] getPages() {
 		return (IFormPage[])pages.toArray(new IFormPage[pages.size()]);
+	}
+	/* package */ void performGlobalAction(String actionId) {
 	}
 }

@@ -53,6 +53,10 @@ public class DetailExtensionSection
 		"ManifestEditor.DetailExtensionSection.title";
 	public static final String SECTION_NEW =
 		"ManifestEditor.DetailExtensionSection.new";
+	public static final String SECTION_DOWN =
+		"ManifestEditor.DetailExtensionSection.down";
+	public static final String SECTION_UP =
+		"ManifestEditor.DetailExtensionSection.up";	
 	public static final String SECTION_SHOW_CHILDREN =
 		"ManifestEditor.DetailExtensionSection.showAllChildren";
 	public static final String POPUP_NEW = "Menus.new.label";
@@ -672,10 +676,7 @@ public class DetailExtensionSection
 		}
 		return output.toString();
 	}
-	public static final String SECTION_DOWN =
-		"ManifestEditor.DetailExtensionSection.down";
-	public static final String SECTION_UP =
-		"ManifestEditor.DetailExtensionSection.up";
+
 	protected boolean canPaste(Object target, Object[] objects) {
 		if (objects[0] instanceof IPluginExtension)
 			return true;
