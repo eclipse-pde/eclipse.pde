@@ -7,7 +7,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.pde.core.internal.ant.AntScript;
+import org.eclipse.pde.internal.core.ant.AntScript;
 /**
  * 
  */

@@ -7,7 +7,7 @@ import java.io.PrintWriter;
 import java.util.*;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.internal.ant.*;
+import org.eclipse.pde.internal.core.ant.*;
 
 /**
  * 

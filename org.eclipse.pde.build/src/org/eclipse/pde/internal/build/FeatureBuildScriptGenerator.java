@@ -11,7 +11,7 @@ import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.PluginModel;
 import org.eclipse.core.runtime.model.PluginPrerequisiteModel;
-import org.eclipse.pde.core.internal.ant.*;
+import org.eclipse.pde.internal.core.ant.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.FeatureExecutableFactory;
 

@@ -8,7 +8,7 @@ import java.util.*;
 
 import org.eclipse.ant.core.AntRunner;
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.internal.ant.AntScript;
+import org.eclipse.pde.internal.core.ant.AntScript;
 import org.eclipse.update.core.Feature;
 import org.eclipse.update.core.IPluginEntry;
 import org.eclipse.update.internal.core.FeatureExecutableFactory;

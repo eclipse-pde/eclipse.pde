@@ -10,7 +10,7 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
-import org.eclipse.pde.core.internal.ant.*;
+import org.eclipse.pde.internal.core.ant.*;
 /**
  * Generic class for generating scripts for plug-ins and fragments.
  */
