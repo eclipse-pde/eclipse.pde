@@ -36,7 +36,7 @@ public class NewBundleProjectWizard
 	public static final String KEY_DESC = "NewBundleProjectWizard.MainPage.desc";
 	public static final String KEY_FDESC = "NewBundleProjectWizard.MainPage.fdesc";
 	public static final String TAG_WIZARD = "wizard";
-	public static final String ATT_FRAGMENT = "fragmentWizard";
+	public static final String ATT_CATEGORY = "category";
 	public static final String KEY_CODEGEN_MESSAGE =
 		"NewBundleProjectWizard.ProjectCodeGeneratorsPage.message";
 	private static final String KEY_WTITLE = "NewBundleProjectWizard.title";
@@ -132,12 +132,15 @@ public class NewBundleProjectWizard
 					WizardElement element = createWizardElement(elements[j]);
 
 					if (element != null) {
-						String fragmentAtt =
+						String catAtt =
 							element.getConfigurationElement().getAttribute(
-								ATT_FRAGMENT);
-						boolean fragmentWizard =
-							fragmentAtt != null
-								&& fragmentAtt.toLowerCase().equals("true");
+								ATT_CATEGORY);
+						if (catAtt==null) continue;
+						boolean fragmentWizard=false;
+						if (!catAtt.equals("bundle") &&
+								!catAtt.equals("bundleFragment"))
+							continue;
+						fragmentWizard = catAtt.equals("bundleFragment");
 						if (fragmentWizard == isFragmentWizard()) {
 							wizards.add(element);
 						}

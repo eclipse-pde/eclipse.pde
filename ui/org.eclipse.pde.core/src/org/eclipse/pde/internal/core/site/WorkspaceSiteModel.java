@@ -20,7 +20,7 @@ import org.eclipse.pde.internal.core.*;
 
 public class WorkspaceSiteModel
 	extends AbstractSiteModel
-	implements IEditable {
+	implements IEditableModel {
 	private boolean dirty;
 	private IFile file;
 	private boolean editable = true;

@@ -21,7 +21,7 @@ import org.eclipse.pde.internal.core.*;
 
 public abstract class WorkspacePluginModelBase
 	extends AbstractPluginModelBase
-	implements IEditable {
+	implements IEditableModel {
 	private IFile file;
 	private boolean dirty;
 	private boolean editable = true;

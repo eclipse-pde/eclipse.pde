@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.PDECore;
 
-public class WorkspaceBuildModel extends BuildModel implements IEditable {
+public class WorkspaceBuildModel extends BuildModel implements IEditableModel {
 	private IFile file;
 	private boolean dirty;
 	private boolean editable = true;

@@ -71,7 +71,28 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#add(org.eclipse.pde.core.plugin.IPluginLibrary)
 	 */
 	public void add(IPluginLibrary library) throws CoreException {
-		throwException("Cannot add library to BundlePlugin");
+		IBundle bundle = getBundle();
+		if (bundle==null) return;
+
+		if (libraries!=null) {
+			libraries.add(library);
+		}
+		String libName = library.getName();
+		String cp = bundle.getHeader(IBundle.KEY_CLASSPATH);
+		if (cp==null)
+			cp = libName;
+		else
+			cp = cp+", "+libName;
+		bundle.setHeader(IBundle.KEY_CLASSPATH, cp);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.core.plugin.IPluginBase#remove(org.eclipse.pde.core.plugin.IPluginLibrary)
+	 */
+	public void remove(IPluginLibrary library) throws CoreException {
+		throwException("Cannot remove library from BundlePlugin");
 	}
 
 	/*
@@ -80,7 +101,19 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#add(org.eclipse.pde.core.plugin.IPluginImport)
 	 */
 	public void add(IPluginImport pluginImport) throws CoreException {
-		throwException("Cannot add import to BundlePlugin");
+		IBundle bundle = getBundle();
+		if (bundle==null) return;
+
+		if (imports!=null) {
+			imports.add(pluginImport);
+		}
+		String rname = pluginImport.getId();
+		String header = bundle.getHeader(IBundle.KEY_REQUIRE_BUNDLE);
+		if (header==null)
+			header = rname;
+		else
+			header = header+", "+rname;
+		bundle.setHeader(IBundle.KEY_REQUIRE_BUNDLE, header);
 	}
 
 	/*
@@ -170,15 +203,6 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 		if (bundle == null)
 			return null;
 		return bundle.getHeader(IBundle.KEY_VERSION);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.core.plugin.IPluginBase#remove(org.eclipse.pde.core.plugin.IPluginLibrary)
-	 */
-	public void remove(IPluginLibrary library) throws CoreException {
-		throwException("Cannot remove library from BundlePlugin");
 	}
 
 	/*

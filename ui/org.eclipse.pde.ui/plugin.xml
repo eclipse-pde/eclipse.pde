@@ -182,25 +182,25 @@
          </description>
       </wizard>
       <wizard
-            category="org.eclipse.pde.PDE"
-            finalPerspective="org.eclipse.pde.ui.PDEPerspective"
-            class="org.eclipse.pde.internal.ui.osgi.wizards.project.NewBundleProjectWizard"
+            name="%new.bundleProject.name"
             icon="icons/full/obj16/bundle_obj.gif"
-            id="org.eclipse.pde.ui.NewBundleProjectWizard"
+            category="org.eclipse.pde.PDE"
+            class="org.eclipse.pde.internal.ui.osgi.wizards.project.NewBundleProjectWizard"
             project="true"
-            name="%new.bundleProject.name">
+            finalPerspective="org.eclipse.pde.ui.PDEPerspective"
+            id="org.eclipse.pde.ui.NewBundleProjectWizard">
          <description>
             %new.bundleProject.description
          </description>
       </wizard>
       <wizard
-            category="org.eclipse.pde.PDE"
-            finalPerspective="org.eclipse.pde.ui.PDEPerspective"
-            class="org.eclipse.pde.internal.ui.osgi.wizards.project.NewBundleFragmentProjectWizard"
+            name="%new.bundleFragmentProject.name"
             icon="icons/full/obj16/bundle_fragment_obj.gif"
-            id="org.eclipse.pde.ui.NewBundleFragmentWizard"
+            category="org.eclipse.pde.PDE"
+            class="org.eclipse.pde.internal.ui.osgi.wizards.project.NewBundleFragmentProjectWizard"
             project="true"
-            name="%new.bundleFragmentProject.name">
+            finalPerspective="org.eclipse.pde.ui.PDEPerspective"
+            id="org.eclipse.pde.ui.NewBundleFragmentWizard">
          <description>
             %new.bundleFragmentProject.description
          </description>
@@ -279,13 +279,23 @@
          </description>
       </wizard>
       <wizard
-            fragmentWizard="true"
             name="%projectGenerators.defaultFragment.name"
             icon="icons/full/ctool16/defcon_wiz.gif"
+            category="fragment"
             class="org.eclipse.pde.internal.ui.wizards.templates.DefaultPluginTemplateWizard"
             id="org.eclipse.pde.ui.projectGenerators.defaultFragment">
          <description>
             %projectGenerators.defaultFragment.description
+         </description>
+      </wizard>
+      <wizard
+            name="%projectGenerators.helloWorldBundle.name"
+            icon="icons/full/ctool16/defcon_wiz.gif"
+            category="bundle"
+            class="org.eclipse.pde.internal.ui.osgi.templates.HelloWorldNewBundleWizard"
+            id="org.eclipse.pde.ui.projectGenerators.helloWorldBundle">
+         <description>
+            %projectGenerators.helloWorldBundle.description
          </description>
       </wizard>
       <wizard
@@ -358,6 +368,26 @@
             id="org.eclipse.pde.ui.projectGenerators.editor">
          <description>
             %projectGenerators.editor.description
+         </description>
+      </wizard>
+      <wizard
+            class="org.eclipse.pde.internal.ui.osgi.templates.DefaultBundleTemplateWizard"
+            category="bundle"
+            name="%projectGenerators.defaultBundle.name"
+            id="org.eclipse.pde.ui.projectGenerators.defaultBundle"
+            icon="icons/full/ctool16/defcon_wiz.gif">
+         <description>
+            %projectGenerators.defaultBundle.description
+         </description>
+      </wizard>
+      <wizard
+            class="org.eclipse.pde.internal.ui.osgi.templates.DefaultBundleTemplateWizard"
+            category="bundleFragment"
+            name="%projectGenerators.defaultBundleFragment.name"
+            id="org.eclipse.pde.ui.projectGenerators.defaultBundleFragment"
+            icon="icons/full/ctool16/defcon_wiz.gif">
+         <description>
+            %projectGenerators.defaultBundleFragment.description
          </description>
       </wizard>
    </extension>

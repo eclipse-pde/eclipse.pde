@@ -598,6 +598,8 @@ public class OSGiWorkspaceModelManager
 				validateBinaryStatus(project);
 			} else if (isFeatureProject(project)) {
 				ensureModelExists(project);
+			} else if (isBundleProject(project)) {
+				ensureModelExists(project);
 			}
 		}
 	}
@@ -1081,7 +1083,7 @@ public class OSGiWorkspaceModelManager
 				// to pick up manifest removal
 				if (delta.getKind() == IResourceDelta.REMOVED)
 					return true;
-				return (isPluginProject(project) || isFeatureProject(project));
+				return (isBundleProject(project) || isPluginProject(project) || isFeatureProject(project));
 			} else if (resource instanceof IFile) {
 				handleFileDelta(delta);
 			}

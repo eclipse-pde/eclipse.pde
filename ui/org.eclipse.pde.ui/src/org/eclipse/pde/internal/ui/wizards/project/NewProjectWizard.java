@@ -36,7 +36,7 @@ public class NewProjectWizard
 	public static final String KEY_DESC = "NewProjectWizard.MainPage.desc";
 	public static final String KEY_FDESC = "NewProjectWizard.MainPage.fdesc";
 	public static final String TAG_WIZARD = "wizard";
-	public static final String ATT_FRAGMENT = "fragmentWizard";
+	public static final String ATT_CATEGORY = "category";
 	public static final String KEY_CODEGEN_MESSAGE =
 		"NewProjectWizard.ProjectCodeGeneratorsPage.message";
 	private static final String KEY_WTITLE = "NewProjectWizard.title";
@@ -133,12 +133,10 @@ public class NewProjectWizard
 					WizardElement element = createWizardElement(elements[j]);
 
 					if (element != null) {
-						String fragmentAtt =
+						String categoryAtt =
 							element.getConfigurationElement().getAttribute(
-								ATT_FRAGMENT);
-						boolean fragmentWizard =
-							fragmentAtt != null
-								&& fragmentAtt.toLowerCase().equals("true");
+								ATT_CATEGORY);
+						boolean fragmentWizard = categoryAtt!=null && categoryAtt.equalsIgnoreCase("fragmentWizard");
 						if (fragmentWizard == isFragmentWizard()) {
 							wizards.add(element);
 						}

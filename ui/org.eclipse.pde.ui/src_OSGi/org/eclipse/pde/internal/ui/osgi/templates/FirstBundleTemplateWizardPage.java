@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.wizards.templates;
+package org.eclipse.pde.internal.ui.osgi.templates;
 
 import java.util.ArrayList;
 
@@ -17,13 +17,16 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.JavaConventions;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.pde.core.osgi.bundle.IBundle;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
+import org.eclipse.pde.internal.core.osgi.bundle.*;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.project.*;
+import org.eclipse.pde.internal.ui.wizards.templates.*;
 import org.eclipse.pde.ui.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -31,29 +34,30 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.pde.internal.ui.wizards.templates.PluginReference;
 
-public class FirstTemplateWizardPage extends WizardPage {
-	private static final String KEY_TITLE = "DefaultCodeGenerationPage.title";
-	private static final String KEY_FTITLE = "DefaultCodeGenerationPage.ftitle";
+public class FirstBundleTemplateWizardPage extends WizardPage {
+	private static final String KEY_TITLE = "DefaultBundleCodeGenerationPage.title";
+	private static final String KEY_FTITLE = "DefaultBundleCodeGenerationPage.ftitle";
 	private static final String KEY_ID_NOT_SET =
 		"DefaultCodeGenerationPage.idNotSet";
 	private static final String KEY_VERSION_FORMAT =
 		"DefaultCodeGenerationPage.versionFormat";
 	private static final String KEY_INVALID_ID =
 		"DefaultCodeGenerationPage.invalidId";
-	private static final String KEY_DESC = "DefaultCodeGenerationPage.desc";
-	private static final String KEY_FDESC = "DefaultCodeGenerationPage.fdesc";
-	private static final String KEY_FNAME = "DefaultCodeGenerationPage.fname";
-	private static final String KEY_NAME = "DefaultCodeGenerationPage.name";
-	private static final String KEY_VERSION = "DefaultCodeGenerationPage.version";
+	private static final String KEY_DESC = "DefaultBundleCodeGenerationPage.desc";
+	private static final String KEY_FDESC = "DefaultBundleCodeGenerationPage.fdesc";
+	private static final String KEY_FNAME = "DefaultBundleCodeGenerationPage.fname";
+	private static final String KEY_NAME = "DefaultBundleCodeGenerationPage.name";
+	private static final String KEY_VERSION = "DefaultBundleCodeGenerationPage.version";
 	private static final String KEY_PROVIDER =
-		"DefaultCodeGenerationPage.providerName";
+		"DefaultBundleCodeGenerationPage.providerName";
 	private static final String KEY_PLUGIN_ID =
-		"DefaultCodeGenerationPage.pluginId";
+		"DefaultBundleCodeGenerationPage.pluginId";
 	private static final String KEY_BROWSE =
-		"DefaultCodeGenerationPage.pluginId.browse";
+		"DefaultBundleCodeGenerationPage.pluginId.browse";
 	private static final String KEY_PLUGIN_VERSION =
-		"DefaultCodeGenerationPage.pluginVersion";
+		"DefaultBundleCodeGenerationPage.pluginVersion";
 
 	private static final String KEY_MATCH =
 		"ManifestEditor.PluginSpecSection.versionMatch";
@@ -66,21 +70,21 @@ public class FirstTemplateWizardPage extends WizardPage {
 	private static final String KEY_MATCH_GREATER =
 		"ManifestEditor.MatchSection.greater";
 
-	private static final String KEY_CLASS = "DefaultCodeGenerationPage.class";
-	private static final String KEY_GENERATE = "DefaultCodeGenerationPage.generate";
+	private static final String KEY_CLASS = "DefaultBundleCodeGenerationPage.class";
+	private static final String KEY_GENERATE = "DefaultBundleCodeGenerationPage.generate";
 	private static final String KEY_INITIAL_NAME =
-		"DefaultCodeGenerationPage.initialName";
+		"DefaultBundleCodeGenerationPage.initialName";
 	private static final String KEY_INITIAL_FNAME =
-		"DefaultCodeGenerationPage.initialFName";
-	private static final String KEY_CREATING = "DefaultCodeGenerationPage.creating";
-	private static final String KEY_OPTIONS = "DefaultCodeGenerationPage.options";
+		"DefaultBundleCodeGenerationPage.initialFName";
+	private static final String KEY_CREATING = "DefaultBundleCodeGenerationPage.creating";
+	private static final String KEY_OPTIONS = "DefaultBundleCodeGenerationPage.options";
 	private static final String KEY_OPTIONS_THIS =
-		"DefaultCodeGenerationPage.options.this";
+		"DefaultBundleCodeGenerationPage.options.this";
 	private static final String KEY_OPTIONS_BUNDLE =
-		"DefaultCodeGenerationPage.options.bundle";
+		"DefaultBundleCodeGenerationPage.options.bundle";
 	private static final String KEY_OPTIONS_WORKSPACE =
-		"DefaultCodeGenerationPage.options.workspace";
-	private static final String KEY_BROWSE_TITLE = "DefaultCodeGenerationPage.pluginId.browse.title";
+		"DefaultBundleCodeGenerationPage.options.workspace";
+	private static final String KEY_BROWSE_TITLE = "DefaultBundleCodeGenerationPage.pluginId.browse.title";
 		
 	private IProjectProvider projectProvider;
 	private IPluginStructureData structureData;
@@ -104,7 +108,7 @@ public class FirstTemplateWizardPage extends WizardPage {
 	private String versionError;
 	private String classError;
 
-	public FirstTemplateWizardPage(
+	public FirstBundleTemplateWizardPage(
 		IProjectProvider projectProvider,
 		IPluginStructureData structureData,
 		boolean fragment) {
@@ -491,12 +495,19 @@ public class FirstTemplateWizardPage extends WizardPage {
 		return data;
 	}	
 	
-	public WorkspacePluginModelBase createPluginManifest(IProject project, FieldData data, ArrayList dependencies, IProgressMonitor monitor) throws CoreException {
-		WorkspacePluginModelBase model;
-		IFile file = project.getFile(fragment?"fragment.xml":"plugin.xml");
+	public BundlePluginModelBase createPluginManifest(IProject project, FieldData data, ArrayList dependencies, IProgressMonitor monitor) throws CoreException {
+		BundlePluginModelBase model;
+		IFile file = project.getFile("META-INF/MANIFEST.MF");
+		WorkspaceBundleModel bmodel = new WorkspaceBundleModel(file);
+		IBundle bundle = bmodel.getBundle();
+		file = project.getFile("extensions.xml");
+		WorkspaceExtensionsModel emodel = new WorkspaceExtensionsModel(file);
+		emodel.load();
 		
-		if (fragment) model = new WorkspaceFragmentModel(file);
-		else model = new WorkspacePluginModel(file);
+		if (fragment) model = new BundleFragmentModel();
+		else model = new BundlePluginModel();
+		model.setBundleModel(bmodel);
+		model.setExtensionsModel(emodel);
 		IPluginBase plugin = model.getPluginBase(true);
 		plugin.setId(structureData.getPluginId());
 		plugin.setName(data.getName());

@@ -91,10 +91,10 @@ represent the wizard.
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="fragmentWizard" type="boolean">
+         <attribute name="category" type="string">
             <annotation>
                <documentation>
-                  
+                  an optional tag that can be used to associate content wizards with different target projects.
                </documentation>
             </annotation>
          </attribute>

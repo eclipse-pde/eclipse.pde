@@ -8,18 +8,26 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.osgi.wizards.project;
 
-import org.eclipse.pde.internal.ui.*;
+package org.eclipse.pde.internal.ui.osgi.templates;
 
-public class NewBundleFragmentProjectWizard extends NewBundleProjectWizard {
-private static final String KEY_TITLE = "NewBundleFragmentProjectWizard.title";
+import org.eclipse.pde.ui.templates.ITemplateSection;
 
-public NewBundleFragmentProjectWizard() {
-	setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWFRAGPRJ_WIZ);
-	setWindowTitle(PDEPlugin.getResourceString(KEY_TITLE));
-}
-public boolean isFragmentWizard() {
-	return true;
-}
+
+
+public class DefaultBundleTemplateWizard extends NewBundleTemplateWizard {
+
+	/**
+	 * Constructor for DefaultPluginTemplateWizard.
+	 */
+	public DefaultBundleTemplateWizard() {
+		super();
+	}
+
+	/*
+	 * @see NewExtensionTemplateWizard#createTemplateSections()
+	 */
+	public ITemplateSection[] createTemplateSections() {
+		return new ITemplateSection [0];
+	}
 }

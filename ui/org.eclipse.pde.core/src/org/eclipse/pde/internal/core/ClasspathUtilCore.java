@@ -310,6 +310,23 @@ public class ClasspathUtilCore {
 			}
 		}
 	}
+	//OSGi exception plugins - should never have
+	// boot or runtime added to the classpath
+	// We should eventually move this to
+	// alternative runtime support
+	private static boolean isImplicitException(String id) {
+		if (id.startsWith("org.eclipse.osgi"))
+			return true;
+		if (id.equals("org.eclipse.core.runtime.adaptor"))
+			return true;
+		if (id.equals("org.eclipse.core.runtime.compatibility"))
+			return true;
+		if (id.equals("org.eclipse.core.runtime.osgi"))
+			return true;
+		if (id.equals("org.eclipse.update.configurator"))
+			return true;
+		return false;
+	}
 
 	protected static void addImplicitDependencies(
 		String id,
@@ -317,6 +334,9 @@ public class ClasspathUtilCore {
 		Vector result,
 		HashSet alreadyAdded)
 		throws CoreException {
+		//TODO we should handle this using alternative runtime support
+		if (isImplicitException(id))
+			return;
 		if (!id.equals("org.eclipse.core.boot")
 			&& !id.equals("org.apache.xerces")) {
 			IPlugin plugin =
@@ -330,9 +350,6 @@ public class ClasspathUtilCore {
 					result,
 					alreadyAdded);
 			if (!id.equals("org.eclipse.core.runtime")) {
-				//plugin = PDECore.getDefault().findPlugin("org.apache.xerces");
-				//if (plugin != null)
-				//addDependency(plugin, false, relative, true, result, alreadyAdded);
 				plugin =
 					PDECore.getDefault().findPlugin("org.eclipse.core.runtime");
 				if (plugin != null)

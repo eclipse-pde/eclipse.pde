@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.*;
 
-public class WorkspaceFeatureModel extends AbstractFeatureModel implements IEditable {
+public class WorkspaceFeatureModel extends AbstractFeatureModel implements IEditableModel {
 	private boolean dirty;
 	private IFile file;
 	private boolean editable=true;

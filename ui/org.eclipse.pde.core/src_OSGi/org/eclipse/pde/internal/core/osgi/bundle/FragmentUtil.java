@@ -27,7 +27,8 @@ public class FragmentUtil {
 	}	
 
 	public FragmentUtil(String value) {
-		setHeader(value);
+		if (value!=null)
+			setHeader(value);
 	}
 	
 	public FragmentUtil(IFragment fragment) {
@@ -55,6 +56,7 @@ public class FragmentUtil {
 		this.match = match;
 	}
 	public String getHeader() {
+		if (pluginId==null) return null;
 		StringBuffer hostBundle = new StringBuffer();
 
 		hostBundle.append(pluginId);

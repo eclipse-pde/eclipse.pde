@@ -165,6 +165,7 @@ public class BundleProjectStructurePage extends WizardPage {
 			WorkspaceBuildModel model = new WorkspaceBuildModel(file);
 			IBuildEntry ientry = model.getFactory().createEntry("bin.includes");
 			ientry.addToken("META-INF/MANIFEST.MF");
+			ientry.addToken("extensions.xml");
 
 			if (library != null && source != null) {
 				IBuildEntry entry =

@@ -21,4 +21,5 @@ public interface IBundlePluginModelBase extends IPluginModelBase {
 	void setExtensionsModel(IExtensionsModel extensionsModel);
 	IPluginImport createImport();
 	IPluginLibrary createLibrary();
+	void save();
 }

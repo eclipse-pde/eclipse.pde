@@ -10,6 +10,7 @@ import java.io.InputStream;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.IEditableModel;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.osgi.bundle.*;
 import org.eclipse.pde.core.plugin.*;
@@ -61,6 +62,19 @@ public abstract class BundlePluginModelBase extends AbstractModel implements IBu
 		}
 		super.dispose();
 	}	
+	
+	public void save() {
+		if (bundleModel!=null && bundleModel instanceof IEditableModel) {
+			IEditableModel emodel = (IEditableModel)bundleModel;
+			if (emodel.isDirty())
+				emodel.save();
+		}
+		if (extensionsModel!=null && extensionsModel instanceof IEditableModel) {
+			IEditableModel emodel = (IEditableModel)extensionsModel;
+			if (emodel.isDirty())
+				emodel.save();
+		}
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.osgi.bundle.IBundlePluginModelBase#setBundleModel(org.eclipse.pde.core.osgi.bundle.IBundleModel)
@@ -86,6 +100,10 @@ public abstract class BundlePluginModelBase extends AbstractModel implements IBu
 	public IBuildModel getBuildModel() {
 		return buildModel;
 	}
+	
+	public void setBuildModel(IBuildModel buildModel) {
+		this.buildModel = buildModel;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getPluginBase()
@@ -109,7 +127,7 @@ public abstract class BundlePluginModelBase extends AbstractModel implements IBu
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getPluginFactory()
 	 */
 	public IPluginModelFactory getPluginFactory() {
-		return null;
+		return this;
 	}
 
 	/* (non-Javadoc)
