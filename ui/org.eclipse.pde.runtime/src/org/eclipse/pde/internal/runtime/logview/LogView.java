@@ -111,6 +111,7 @@ public class LogView extends ViewPart implements ILogListener {
 		clipboard = new Clipboard(tableTree.getDisplay());
 		
 		WorkbenchHelp.setHelp(tableTree,IHelpContextIds.LOG_VIEW);
+		tableTreeViewer.getTableTree().getTable().setToolTipText("");
 	}
 	
 	
@@ -688,7 +689,7 @@ public class LogView extends ViewPart implements ILogListener {
 	}
 	
 
-	private void makeHoverShell(boolean isStack){
+	private void makeHoverShell(){
 		Control control= tableTreeViewer.getControl();
 
 		textShell= new Shell(control.getShell(), SWT.NO_FOCUS | SWT.ON_TOP);
@@ -726,7 +727,7 @@ public class LogView extends ViewPart implements ILogListener {
 			} 
 		});
 
-		textShell.setSize(column2.getWidth() + column3.getWidth(), isStack ? 125 : 25);
+		textShell.setSize(column2.getWidth() + column3.getWidth(), 125);
 	}
 
 	void onTextShellDispose(DisposeEvent e){
@@ -749,29 +750,17 @@ public class LogView extends ViewPart implements ILogListener {
 		TableTreeItem item = table.getItem(point);
 		if (item == null)
 			return;
-		
-		String message = "";
-		boolean isStack;
-		if (e.x < column1.getWidth()+column0.getWidth()){
-			message = ((LogEntry)item.getData()).getStack();
-			isStack = true;
-		} else{ 
-			message = ((LogEntry)item.getData()).getMessage();
-			isStack = false;
-		}
 
+		String message = ((LogEntry)item.getData()).getStack();
 		if (message == null)
 			return;
 
-		makeHoverShell(isStack);	
+		makeHoverShell();	
 		textLabel.setText(message);
 
 		int x = point.x + 5;
-		int y = point.y - (table.getItemHeight()*2);
-		if (isStack)
-			y -=20;
+		int y = point.y - (table.getItemHeight()*2) - 20;
 		textShell.setLocation(table.toDisplay(x,y));
-		table.setToolTipText("");
 		textShell.open();
 		setFocus();
 	}
@@ -779,9 +768,9 @@ public class LogView extends ViewPart implements ILogListener {
 	void onMouseMove(Event e){
 		if (textShell != null && !textShell.isDisposed()){
 			textShell.close();
-			canOpenTextShell = textShell.isDisposed() && e.x < (column0.getWidth() + column1.getWidth() + column2.getWidth());
+			canOpenTextShell = textShell.isDisposed() && e.x < (column0.getWidth() + column1.getWidth());
 		} else {
-			canOpenTextShell = e.x < (column0.getWidth() + column1.getWidth() + column2.getWidth());
+			canOpenTextShell = e.x < (column0.getWidth() + column1.getWidth());
 		}
 	}
 
