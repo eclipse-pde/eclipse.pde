@@ -471,12 +471,14 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 *  
 	 */
 	private void generateRootFilesAndPermissions() throws CoreException {
+				
 		for (Iterator iter = getConfigInfos().iterator(); iter.hasNext();) {
 			Config aConfig = (Config) iter.next();
 			script.printTargetDeclaration(TARGET_ROOTFILES_PREFIX + aConfig.toString("_"), null, null, null, null); //$NON-NLS-1$ //$NON-NLS-2$
 			generateCopyRootFiles(aConfig);
 			generatePermissions(aConfig);
 			script.printTargetEnd();
+			assemblyData.addFeature(aConfig, feature);
 		}
 	}
 
