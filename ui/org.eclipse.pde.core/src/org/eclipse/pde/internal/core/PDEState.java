@@ -72,10 +72,17 @@ public class PDEState {
 	
 	
 	public BundleDescription addBundle(File bundleLocation) {
-		Dictionary manifest;
-		manifest = loadManifest(bundleLocation);
+		Dictionary manifest = loadManifest(bundleLocation);
 		if (manifest == null || manifest.get(Constants.BUNDLE_SYMBOLICNAME) == null) {
-			return null;
+			try {
+				PluginConverter converter = acquirePluginConverter();
+				manifest = converter.convertManifest(bundleLocation, false, getTargetMode(), false);
+				if (manifest == null || manifest.get(Constants.BUNDLE_SYMBOLICNAME) == null)
+					throw new Exception();
+			} catch (Exception e1) {
+				PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.ERROR, "Error parsing plugin manifest file at " + bundleLocation.toString(), null)); //$NON-NLS-1$
+				return null;
+			}
 		}
 		return addBundle(manifest, bundleLocation);
 	}
@@ -92,14 +99,8 @@ public class PDEState {
 			}
 		} catch (IOException e) {
 		}
-		if (manifestStream == null) {
-			try {
-				PluginConverter converter = acquirePluginConverter();
-				return converter.convertManifest(bundleLocation, false, getTargetMode(), false);
-			} catch (Exception e1) {
-				return null;
-			}
-		}
+		if (manifestStream == null) 
+			return null;
 		try {
 			Manifest m = new Manifest(manifestStream);
 			return manifestToProperties(m.getMainAttributes());
@@ -110,7 +111,6 @@ public class PDEState {
 			try {
 				manifestStream.close();
 			} catch (IOException e1) {
-				//Ignore
 			}
 		}
 	}
