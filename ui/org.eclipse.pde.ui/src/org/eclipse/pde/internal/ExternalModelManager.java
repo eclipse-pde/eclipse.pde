@@ -47,7 +47,7 @@ public void clear() {
 	models = null;
 }
 
-private IPath createEclipseRelativeHome(String installLocation) {
+private static IPath createEclipseRelativeHome(String installLocation) {
 	IPath fullPath = new Path(installLocation);
 	IPath eclipseHome = getEclipseHome();
 	int nmatching = fullPath.matchingFirstSegments(eclipseHome);
@@ -92,7 +92,7 @@ public void fireModelProviderEvent(IModelProviderEvent e) {
 	}
 }
 
-public IPath getEclipseHome() {
+public static IPath getEclipseHome() {
 	IPath eclipseHome =
 		JavaCore.getClasspathVariable(PDEPlugin.ECLIPSE_HOME_VARIABLE);
 	if (eclipseHome == null) {
@@ -191,7 +191,7 @@ private boolean loadModels() {
 	return result;
 }
 
-protected void processPluginDescriptorModel(PluginDescriptorModel descriptorModel) {
+protected static void processPluginDescriptorModel(Vector result, PluginDescriptorModel descriptorModel) {
 	ExternalPluginModel model = new ExternalPluginModel();
 	String location = descriptorModel.getLocation();
 	try {
@@ -206,14 +206,21 @@ protected void processPluginDescriptorModel(PluginDescriptorModel descriptorMode
 	}
 	model.load(descriptorModel);
 	if (model.isLoaded()) {
-		models.add(model);
+		result.add(model);
 		// force creation of the plugin object
 		Plugin plugin = (Plugin) model.getPlugin();
 		model.setEnabled(true);
 	}
 }
 
-private void processPluginDirectory(String pluginPath) {
+private void internalProcessPluginDirectory(Vector result, String pluginPath) {
+	MultiStatus errors = processPluginDirectory(result, pluginPath);
+	if (errors!=null && errors.getChildren().length > 0) {
+		ResourcesPlugin.getPlugin().getLog().log(errors);
+	}
+}
+
+public static MultiStatus processPluginDirectory(Vector result, String pluginPath) {
 	try {
 		URL url = new URL("file:" + pluginPath.replace('\\', '/')+"/");
 
@@ -230,13 +237,12 @@ private void processPluginDirectory(String pluginPath) {
 		for (int i = 0; i < pluginDescriptorModels.length; i++) {
 			PluginDescriptorModel pluginDescriptorModel = pluginDescriptorModels[i];
 			if (pluginDescriptorModel.getEnabled())
-				processPluginDescriptorModel(pluginDescriptorModels[i]);
+				processPluginDescriptorModel(result, pluginDescriptorModels[i]);
 		}
 		errors.merge(resolveStatus);
-		if (errors.getChildren().length > 0) {
-			ResourcesPlugin.getPlugin().getLog().log(errors);
-		}
+		return errors;
 	} catch (MalformedURLException e) {
+		return null;
 	}
 }
 
@@ -248,7 +254,7 @@ public boolean reload(String platformPath) {
 		return false;
 	for (int i = 0; i < ppaths.size(); i++) {
 		String pluginDir = (String) ppaths.elementAt(i);
-		processPluginDirectory(pluginDir);
+		internalProcessPluginDirectory(models, pluginDir);
 	}
 	return true;
 }

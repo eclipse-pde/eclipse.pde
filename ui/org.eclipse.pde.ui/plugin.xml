@@ -136,6 +136,18 @@
    </wizard>
 </extension>
 <extension
+      point="org.eclipse.ui.importWizards">
+   <wizard
+         name="%PluginImportWizard.label"
+         icon="icons/full/ctool16/newexprj_wiz.gif"
+         class="org.eclipse.pde.internal.wizards.imports.PluginImportWizard"
+         id="org.eclipse.pde.import.PluginImportWizard">
+      <description>
+         %PluginImportWizard.description
+      </description>
+   </wizard>
+</extension>
+<extension
       point="org.eclipse.pde.projectGenerators">
    <wizard
          name="%projectGenerators.defaultPlugin.name"
