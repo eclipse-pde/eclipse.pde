@@ -138,15 +138,25 @@ public class CategorySection extends TreeSection {
 		fCategoryViewer.setLabelProvider(new CategoryLabelProvider());
 		fCategoryViewer.setInput(fModel.getSite());
 		int ops = DND.DROP_COPY | DND.DROP_MOVE | DND.DROP_LINK
-				| DND.DROP_DEFAULT;
+		| DND.DROP_DEFAULT;
 		Transfer[] transfers = new Transfer[]{ModelDataTransfer.getInstance()};
 		fCategoryViewer.addDropSupport(ops, transfers, new ViewerDropAdapter(
 				fCategoryViewer) {
 			public void dragEnter(DropTargetEvent event) {
-				if ((event.operations & DND.DROP_LINK) != 0)
-					event.detail = DND.DROP_LINK;
-				else if (event.detail != DND.DROP_COPY)
-					event.detail = DND.DROP_MOVE;
+				if (event.detail == DND.DROP_DEFAULT) {
+					if ((event.operations & DND.DROP_LINK) != 0)
+						event.detail = DND.DROP_LINK;
+					else 
+						event.detail = DND.DROP_MOVE;
+				}
+			}
+			public void dragOperationChanged(DropTargetEvent event) {
+				if (event.detail == DND.DROP_DEFAULT) {
+					if ((event.operations & DND.DROP_LINK) != 0)
+						event.detail = DND.DROP_LINK;
+					else 
+						event.detail = DND.DROP_MOVE;
+				}
 			}
 			public boolean performDrop(Object data) {
 				if (!(data instanceof Object[]))
