@@ -351,9 +351,8 @@ public class ClasspathUtilCore {
 
 	protected static void addSourceFolder(String name, IProject project, Vector result)
 		throws CoreException {
-		IPath path = project.getFullPath().append(name);
-		CoreUtility.createFolder(project.getFolder(path), true, true, null);
-		IClasspathEntry entry = JavaCore.newSourceEntry(path);
+		CoreUtility.createFolder(project.getFolder(name), true, true, null);
+		IClasspathEntry entry = JavaCore.newSourceEntry(project.getFullPath().append(name));
 		if (!result.contains(entry))
 			result.add(entry);
 	}
