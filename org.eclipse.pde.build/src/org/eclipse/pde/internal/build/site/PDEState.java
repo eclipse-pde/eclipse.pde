@@ -106,8 +106,10 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		Dictionary manifest;
 		manifest = loadManifest(bundleLocation);
 		if (manifest == null) {
-			IStatus status = new Status(IStatus.INFO, PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_READING_FILE, Policy.bind("exception.missingFile"), null);	//$NON-NLS-1$
-			BundleHelper.getDefault().getLog().log(status);
+			if (! bundleLocation.getName().equals("feature.xml")) {
+				IStatus status = new Status(IStatus.INFO, PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_READING_FILE, Policy.bind("exception.missingFile", bundleLocation.getAbsolutePath()), null);	//$NON-NLS-1$
+				BundleHelper.getDefault().getLog().log(status);
+			}
 			return false;
 		}
 		try {
