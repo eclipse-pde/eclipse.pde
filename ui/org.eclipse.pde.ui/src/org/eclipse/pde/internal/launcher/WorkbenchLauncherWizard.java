@@ -20,6 +20,7 @@ import org.eclipse.jdt.launching.*;
 import org.eclipse.pde.internal.PDEPlugin;
 import org.eclipse.pde.internal.PDEPluginImages;
 import org.eclipse.pde.internal.base.model.plugin.IPluginModelBase;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 
 public class WorkbenchLauncherWizard extends Wizard implements ILaunchWizard {
 
@@ -53,7 +54,7 @@ public class WorkbenchLauncherWizard extends Wizard implements ILaunchWizard {
 		addPage(page2);
 	}
 
-	private IDialogSettings getSettingsSection() {
+	private static IDialogSettings getSettingsSection() {
 		IDialogSettings master = PDEPlugin.getDefault().getDialogSettings();
 		IDialogSettings setting = master.getSection(STORE_SECTION);
 		if (setting == null) {
@@ -69,10 +70,11 @@ public class WorkbenchLauncherWizard extends Wizard implements ILaunchWizard {
 		try {
 			page1.storeSettings(true);
 			page2.storeSettings();
+			final LauncherData data = createLauncherData();
 			getContainer().run(true, true, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException {
 					try {
-						delegateLaunch(monitor);
+						delegateLaunch(data, monitor);
 					} catch (CoreException e) {
 						throw new InvocationTargetException(e);
 					}
@@ -88,6 +90,20 @@ public class WorkbenchLauncherWizard extends Wizard implements ILaunchWizard {
 		}
 		return true;
 	}
+	
+	private LauncherData createLauncherData() {
+		LauncherData data = new LauncherData();
+		data.setWorkspaceLocation(page1.getWorkspaceLocation());
+		data.setClearWorkspace(page1.doClearWorkspace());
+		IVMInstall install = page1.getVMInstall();
+		data.setVmInstall(install);
+		data.setPlugins(page2.getPlugins());
+		data.setProgramArguments(page1.getProgramArguments());
+		data.setVmArguments(page1.getVMArguments());
+		data.setApplicationName(page1.getApplicationName());
+		data.setTracingEnabled(page1.isTracingEnabled());
+		return data;
+	}
 
 	/*
 	 * @see Wizard#performCancel()
@@ -97,19 +113,62 @@ public class WorkbenchLauncherWizard extends Wizard implements ILaunchWizard {
 		return super.performCancel();
 	}
 
-	private void delegateLaunch(IProgressMonitor monitor) throws CoreException {
-		IPath targetWorkbenchLocation= page1.getWorkspaceLocation();
-		boolean clearWorkspace= page1.doClearWorkspace();
-		IVMInstall install= page1.getVMInstall();
-		IVMRunner runner= install.getVMRunner(mode);
-		IPluginModelBase[] plugins= page2.getPlugins();
-		ExecutionArguments args= new ExecutionArguments(page1.getVMArguments(), page1.getProgramArguments());
-		String appname= page1.getApplicationName();
-		/*
-		NewWorkbenchLauncher delegate= (NewWorkbenchLauncher) launcher.getDelegate();
-		delegate.initialize(runner, targetWorkbenchLocation, clearWorkspace, args, plugins, appname);
-		delegate.launch(selection.toArray(), mode, launcher, monitor);
-		*/
+	private void delegateLaunch(LauncherData data, IProgressMonitor monitor) throws CoreException {
+		IPath targetWorkbenchLocation = data.getWorkspaceLocation();
+		boolean clearWorkspace = data.getClearWorkspace();
+		IVMInstall install = data.getVmInstall();
+		IVMRunner runner = install.getVMRunner(mode);
+		IPluginModelBase[] plugins = data.getPlugins();
+		ExecutionArguments args =
+			new ExecutionArguments(data.getVmArguments(), data.getProgramArguments());
+		String appname = data.getApplicationName();
+		boolean tracing = data.getTracingEnabled();
+
+		WorkbenchLauncherDelegate delegate =
+			(WorkbenchLauncherDelegate) launcher.getDelegate();
+		delegate.doLaunch(
+			launcher,
+			mode,
+			runner,
+			targetWorkbenchLocation,
+			clearWorkspace,
+			args,
+			plugins,
+			appname,
+			tracing,
+			monitor);
+	}
+
+	private static void delegateHeadlessLaunch(
+		ILauncher launcher,
+		String mode,
+		IStructuredSelection selection,
+		LauncherData data,
+		IProgressMonitor monitor)
+		throws CoreException {
+		IPath targetWorkbenchLocation = data.getWorkspaceLocation();
+		boolean clearWorkspace = data.getClearWorkspace();
+		IVMInstall install = data.getVmInstall();
+		IVMRunner runner = install.getVMRunner(mode);
+		IPluginModelBase[] plugins = data.getPlugins();
+		ExecutionArguments args =
+			new ExecutionArguments(data.getVmArguments(), data.getProgramArguments());
+		String appname = data.getApplicationName();
+		boolean tracing = data.getTracingEnabled();
+
+		WorkbenchLauncherDelegate delegate =
+			(WorkbenchLauncherDelegate) launcher.getDelegate();
+		delegate.doLaunch(
+			launcher,
+			mode,
+			runner,
+			targetWorkbenchLocation,
+			clearWorkspace,
+			args,
+			plugins,
+			appname,
+			tracing,
+			monitor);
 	}
 
 	/*
@@ -123,6 +182,38 @@ public class WorkbenchLauncherWizard extends Wizard implements ILaunchWizard {
 		this.launcher = launcher;
 		this.selection = selection;
 		initializeDefaultPageImageDescriptor();
+	}
+
+	public static boolean runHeadless(
+		final ILauncher launcher,
+		final String mode,
+		final IStructuredSelection selection) {
+		try {
+			IDialogSettings settings = getSettingsSection();
+			final LauncherData launcherData = new LauncherData();
+			// Collect stored launcher data from the dialog settings
+			WorkbenchLauncherWizardBasicPage.setLauncherData(settings, launcherData);
+			WorkbenchLauncherWizardAdvancedPage.setLauncherData(settings, launcherData);
+			ProgressMonitorDialog dialog = new ProgressMonitorDialog(PDEPlugin.getActiveWorkbenchShell());
+
+			dialog.run(true, true, new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) throws InvocationTargetException {
+					try {
+						delegateHeadlessLaunch(launcher, mode, selection, launcherData, monitor);
+					} catch (CoreException e) {
+						throw new InvocationTargetException(e);
+					}
+				}
+			});
+			return true;
+		} catch (InterruptedException e) {
+			return false;
+		} catch (InvocationTargetException e) {
+			String title = "Launch Eclipse Workbench";
+			String message = "Launch failed. See log for details.";
+			PDEPlugin.logException(e, title, message);
+			return true; // exception handled
+		}
 	}
 
 	/**

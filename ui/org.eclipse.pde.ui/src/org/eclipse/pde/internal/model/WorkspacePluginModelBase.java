@@ -68,8 +68,9 @@ public IFile getFile() {
 	return file;
 }
 public String getInstallLocation() {
-	return Platform.getLocation().toOSString();
+	return file.getParent().getLocation().toOSString();
 }
+
 public IResource getUnderlyingResource() {
 	return file;
 }

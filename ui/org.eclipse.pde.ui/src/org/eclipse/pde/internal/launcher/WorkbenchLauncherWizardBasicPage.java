@@ -32,6 +32,7 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage {
 	private static final String SETTINGS_VMINSTALL = "vminstall";
 	private static final String SETTINGS_APPLICATION = "application";
 	private static final String SETTINGS_DOCLEAR = "clearws";
+	private static final String SETTINGS_TRACING = "tracing";
 	private static final String DEFAULT_VALUE = "[-]";
 
 	private Combo workspaceCombo;
@@ -42,6 +43,7 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage {
 	private Text progArgsText;
 	private Text applicationNameText;
 	private Button defaultsButton;
+	private Button tracingCheck;
 
 	private IStatus jreSelectionStatus;
 	private IStatus workspaceSelectionStatus;
@@ -107,6 +109,10 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage {
 
 		applicationNameText = new Text(composite, SWT.SINGLE | SWT.BORDER);
 		fillIntoGrid(applicationNameText, 2, false);
+		
+		tracingCheck = new Button(composite, SWT.CHECK);
+		tracingCheck.setText("&Enable tracing");
+		fillIntoGrid(tracingCheck, 2, false);
 
 		label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		fillIntoGrid(label, 3, false);
@@ -150,6 +156,7 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage {
 		String appName = "org.eclipse.ui.workbench";
 		String[] workspaceSelectionItems = new String[0];
 		boolean doClear = false;
+		boolean tracing = false;
 
 		IPreferenceStore pstore = PDEPlugin.getDefault().getPreferenceStore();
 
@@ -172,6 +179,7 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage {
 			if (value != null) {
 				appName = value;
 			}
+			tracing = initialSettings.getBoolean(SETTINGS_TRACING);
 
 			ArrayList items = new ArrayList();
 			for (int i = 0; i < 6; i++) {
@@ -201,13 +209,79 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage {
 		workspaceCombo.setItems(workspaceSelectionItems);
 		workspaceCombo.select(0);
 		clearWorkspaceCheck.setSelection(doClear);
+		tracingCheck.setSelection(tracing);
 		//validate
 		workspaceSelectionStatus = validateWorkspaceSelection();
 		jreSelectionStatus = validateJRESelection();
 		updateStatus();
 	}
 
-	private boolean isDefault(String value) {
+/**
+ * Load the stored settings into the provided data object to be
+ * used by the headless launcher
+ */
+	static void setLauncherData(IDialogSettings settings, LauncherData data) {
+		IVMInstall launcher = null;
+		int jreSelectionIndex = 0;
+		String vmArgs = "";
+		String progArgs = "-dev bin";
+		String appName = "org.eclipse.ui.workbench";
+		String[] workspaceSelectionItems = new String[0];
+		boolean doClear = false;
+		String defaultWorkspace="";
+		boolean tracing = false;
+
+		IPreferenceStore pstore = PDEPlugin.getDefault().getPreferenceStore();
+
+		defaultWorkspace =
+			pstore.getString(PDEBasePreferencePage.PROP_PLATFORM_LOCATION);
+		progArgs = pstore.getString(PDEBasePreferencePage.PROP_PLATFORM_ARGS);
+		vmArgs = pstore.getString(PDEBasePreferencePage.PROP_VM_ARGS);
+
+		if (settings != null) {
+			String value = settings.get(SETTINGS_VMARGS);
+			if (value != null && !isDefault(value)) {
+				vmArgs = value;
+			}
+			value = settings.get(SETTINGS_PROGARGS);
+			if (value != null && !isDefault(value)) {
+				progArgs = value;
+			}
+			value = settings.get(SETTINGS_APPLICATION);
+			if (value != null && !isDefault(value)) {
+				appName = value;
+			}
+			value = settings.get(SETTINGS_LOCATION + "0");
+			if (value != null && !isDefault(value)) {
+				defaultWorkspace = value;
+			}
+			tracing = settings.getBoolean(SETTINGS_TRACING);
+
+			String vmInstallName = settings.get(SETTINGS_VMINSTALL);
+			IVMInstall[] vmInstallations = getAllVMInstances();
+			if (vmInstallName != null) {
+				for (int i = 0; i < vmInstallations.length; i++) {
+					if (vmInstallName.equals(vmInstallations[i].getName())) {
+						launcher = vmInstallations[i];
+						break;
+					}
+				}
+			}
+			else
+			   launcher = vmInstallations[0];
+			//doClear= initialSettings.getBoolean(SETTINGS_DOCLEAR);
+		}
+		// Initialize launcher data
+		data.setVmInstall(launcher);
+		data.setVmArguments(vmArgs);
+		data.setProgramArguments(progArgs);
+		data.setApplicationName(appName);
+		data.setClearWorkspace(doClear);
+		data.setWorkspaceLocation(new Path(defaultWorkspace));
+		data.setTracingEnabled(tracing);
+	}	
+
+	private static boolean isDefault(String value) {
 		return value.equals(DEFAULT_VALUE);
 	}
 
@@ -225,8 +299,9 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage {
 		settings.put(SETTINGS_PROGARGS, DEFAULT_VALUE);
 		settings.put(SETTINGS_LOCATION + "0", defaultWorkspace);
 		clearWorkspaceCheck.setSelection(false);
+		tracingCheck.setSelection(false);
 	}
-
+	
 	private void hookListeners() {
 		browseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -274,6 +349,7 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage {
 			initialSettings.put(SETTINGS_VMINSTALL, getVMInstall().getName());
 			initialSettings.put(SETTINGS_APPLICATION, getApplicationName());
 			initialSettings.put(SETTINGS_DOCLEAR, doClearWorkspace());
+			initialSettings.put(SETTINGS_TRACING, isTracingEnabled());
 		}
 
 		if (finishPressed || workspaceCombo.getText().length() > 0) {
@@ -376,8 +452,15 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage {
 	public String getApplicationName() {
 		return applicationNameText.getText();
 	}
+	
+	/**
+	 * Returns true if tracing is enabled
+	 */
+	public boolean isTracingEnabled() {
+		return tracingCheck.getSelection();
+	}
 
-	private IVMInstall[] getAllVMInstances() {
+	private static IVMInstall[] getAllVMInstances() {
 		ArrayList res = new ArrayList();
 		IVMInstallType[] types = JavaRuntime.getVMInstallTypes();
 		for (int i = 0; i < types.length; i++) {

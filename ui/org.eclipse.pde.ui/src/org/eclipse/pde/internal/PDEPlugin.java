@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.pde.internal.preferences.*;
 import org.eclipse.jface.dialogs.*;
+import java.net.URL;
 
 public class PDEPlugin extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "org.eclipse.pde";
@@ -34,28 +35,34 @@ public class PDEPlugin extends AbstractUIPlugin {
 	public static final String BUILD_EDITOR_ID = PLUGIN_ID + ".buildEditor";
 	public static final String SCHEMA_EDITOR_ID = PLUGIN_ID + ".schemaEditor";
 
-	public static final String MANIFEST_BUILDER_ID = PLUGIN_ID + "." + "ManifestBuilder";
-	public static final String SCHEMA_BUILDER_ID = PLUGIN_ID + "." + "SchemaBuilder";
+	public static final String MANIFEST_BUILDER_ID =
+		PLUGIN_ID + "." + "ManifestBuilder";
+	public static final String SCHEMA_BUILDER_ID =
+		PLUGIN_ID + "." + "SchemaBuilder";
 	public static final String PLUGIN_NATURE = PLUGIN_ID + "." + "PluginNature";
-	public static final String COMPONENT_NATURE = PLUGIN_ID + "." + "ComponentNature";
-	public static final String COMPONENT_BUILDER_ID = PLUGIN_ID + "." + "ComponentBuilder";
+	public static final String COMPONENT_NATURE =
+		PLUGIN_ID + "." + "ComponentNature";
+	public static final String COMPONENT_BUILDER_ID =
+		PLUGIN_ID + "." + "ComponentBuilder";
 
-	public static final String RUN_LAUNCHER_ID = PLUGIN_ID + "." + "WorkbenchRunLauncher";
-	public static final String DEBUG_LAUNCHER_ID = PLUGIN_ID + "." + "WorkbenchDebugLauncher";
+	public static final String RUN_LAUNCHER_ID =
+		PLUGIN_ID + "." + "WorkbenchRunLauncher";
+	public static final String DEBUG_LAUNCHER_ID =
+		PLUGIN_ID + "." + "WorkbenchDebugLauncher";
 
 	public static final String ECLIPSE_HOME_VARIABLE = "ECLIPSE_HOME";
 
-// Shared instance
+	// Shared instance
 	private static PDEPlugin inst;
-// Resource bundle
+	// Resource bundle
 	private ResourceBundle resourceBundle;
-// Plugin Info
+	// Plugin Info
 	private ExternalModelManager externalModelManager;
-// Plugin Info
+	// Plugin Info
 	private TracingOptionsManager tracingOptionsManager;
-// Plugin Info
+	// Plugin Info
 	private SchemaRegistry schemaRegistry;
-// A flag that indicates if we are running inside VAJ or not.
+	// A flag that indicates if we are running inside VAJ or not.
 	private static boolean inVAJ;
 	static {
 		try {
@@ -69,227 +76,249 @@ public class PDEPlugin extends AbstractUIPlugin {
 	private WorkspaceModelManager workspaceModelManager;
 	private Vector pluginListeners = new Vector();
 
-public PDEPlugin(IPluginDescriptor descriptor) {
-	super(descriptor);
-	inst = this;
-	try {
-		resourceBundle = ResourceBundle.getBundle("org.eclipse.pde.internal.pderesources");
-	} catch (MissingResourceException x) {
-		resourceBundle = null;
+	public PDEPlugin(IPluginDescriptor descriptor) {
+		super(descriptor);
+		inst = this;
+		try {
+			resourceBundle =
+				ResourceBundle.getBundle("org.eclipse.pde.internal.pderesources");
+		} catch (MissingResourceException x) {
+			resourceBundle = null;
+		}
 	}
-}
-public IPluginExtensionPoint findExtensionPoint(String fullID) {
-	if (fullID==null || fullID.length()==0) return null;
-	// separate plugin ID first
-	int lastDot = fullID.lastIndexOf('.');
-	if (lastDot == -1) return null;
-	String pluginID = fullID.substring(0, lastDot);
-	IPlugin plugin = findPlugin(pluginID);
-	if (plugin==null) return null;
-	String pointID = fullID.substring(lastDot+1);
-	IPluginExtensionPoint [] points = plugin.getExtensionPoints();
-	for (int i=0; i<points.length; i++) {
-		IPluginExtensionPoint point = points[i];
-		if (point.getId().equals(pointID)) return point;
+	public IPluginExtensionPoint findExtensionPoint(String fullID) {
+		if (fullID == null || fullID.length() == 0)
+			return null;
+		// separate plugin ID first
+		int lastDot = fullID.lastIndexOf('.');
+		if (lastDot == -1)
+			return null;
+		String pluginID = fullID.substring(0, lastDot);
+		IPlugin plugin = findPlugin(pluginID);
+		if (plugin == null)
+			return null;
+		String pointID = fullID.substring(lastDot + 1);
+		IPluginExtensionPoint[] points = plugin.getExtensionPoints();
+		for (int i = 0; i < points.length; i++) {
+			IPluginExtensionPoint point = points[i];
+			if (point.getId().equals(pointID))
+				return point;
+		}
+		return null;
 	}
-	return null;
-}
-private IPlugin findPlugin(IPluginModel[] models, String id) {
-	for (int i = 0; i < models.length; i++) {
-		IPluginModel model = models[i];
-		if (model.isEnabled()==false) continue;
-		IPlugin plugin = model.getPlugin();
-		if (plugin.getId().equals(id))
-			return plugin;
-	}
-	return null;
-}
-private IPlugin findPlugin(IPluginModel[] models, String id, String version) {
-	for (int i = 0; i < models.length; i++) {
-		IPluginModel model = models[i];
-		if (model.isEnabled() == false)
-			continue;
-		IPlugin plugin = model.getPlugin();
-		if (plugin.getId().equals(id)) {
-			if (version == null || plugin.getVersion().equals(version))
+	private IPlugin findPlugin(IPluginModel[] models, String id) {
+		for (int i = 0; i < models.length; i++) {
+			IPluginModel model = models[i];
+			if (model.isEnabled() == false)
+				continue;
+			IPlugin plugin = model.getPlugin();
+			if (plugin.getId().equals(id))
 				return plugin;
 		}
+		return null;
 	}
-	return null;
-}
-public IPlugin findPlugin(String id) {
-	return findPlugin(id, null);
-}
-public IPlugin findPlugin(String id, String version) {
-	WorkspaceModelManager manager = getWorkspaceModelManager();
-	IPlugin plugin = findPlugin(manager.getWorkspacePluginModels(), id, version);
-	if (plugin!=null) return plugin;
-	ExternalModelManager exmanager = getExternalModelManager();
-	if (exmanager.hasEnabledModels()) {
-		return findPlugin(exmanager.getModels(), id, version);
-	}
-	return null;
-}
-public static IWorkbenchPage getActivePage() {
-	return getDefault().internalGetActivePage();
-}
-public static Shell getActiveWorkbenchShell() {
-	return getActiveWorkbenchWindow().getShell();
-}
-public static IWorkbenchWindow getActiveWorkbenchWindow() {
-	return getDefault().getWorkbench().getActiveWorkbenchWindow();
-}
-public static PDEPlugin getDefault() {
-	return inst;
-}
-public Hashtable getDefaultNameCounters() {
-	if (counters==null) counters = new Hashtable();
-	return counters;
-}
-public ExternalModelManager getExternalModelManager() {
-	if (externalModelManager==null) externalModelManager = new ExternalModelManager();
-	return externalModelManager;
-}
-public static String getFormattedMessage(String key, String [] args) {
-	String text = getResourceString(key);
-	return java.text.MessageFormat.format(text, args);
-}
-public static String getFormattedMessage(String key, String arg) {
-	String text = getResourceString(key);
-	return java.text.MessageFormat.format(text, new Object [] { arg });
-}
-static IPath getInstallLocation() {
-	return new Path(getDefault().getDescriptor().getInstallURL().getFile());
-}
-public static String getPluginId() {
-	return getDefault().getDescriptor().getUniqueIdentifier();
-}
-public ResourceBundle getResourceBundle() {
-	return resourceBundle;
-}
-public static String getResourceString(String key) {
-	ResourceBundle bundle = PDEPlugin.getDefault().getResourceBundle();
-	if (bundle != null) {
-		try {
-			String bundleString = bundle.getString(key);
-			//return "$"+bundleString;
-			return bundleString;
-		} catch (MissingResourceException e) {
-			// default actions is to return key, which is OK
-		}
-	}
-	return key;
-}
-public SchemaRegistry getSchemaRegistry() {
-	if (schemaRegistry==null) schemaRegistry = new SchemaRegistry();
-	return schemaRegistry;
-}
-public TracingOptionsManager getTracingOptionsManager() {
-	if (tracingOptionsManager==null) tracingOptionsManager = new TracingOptionsManager();
-	return tracingOptionsManager;
-}
-public static IWorkspace getWorkspace() {
-	return ResourcesPlugin.getWorkspace();
-}
-public WorkspaceModelManager getWorkspaceModelManager() {
-	if (workspaceModelManager==null) workspaceModelManager = new WorkspaceModelManager();
-	return workspaceModelManager;
-}
-private void initializePlatformPath() {
-	PDEBasePreferencePage.initializePlatformPath();
-}
-private IWorkbenchPage internalGetActivePage() {
-	return getWorkbench().getActiveWorkbenchWindow().getActivePage();
-}
-public boolean isVAJ() {
-	return inVAJ;
-}
-public static void log(IStatus status) {
-	getDefault().getLog().log(status);
-}
-
-public static void logErrorMessage(String message) {
-	log(
-		new Status(
-			IStatus.ERROR,
-			getPluginId(),
-			IStatus.ERROR,
-			message,
-			null));
-}
-
-public static void logException(Throwable e, String title, String message) {
-	if (e instanceof InvocationTargetException) {
-		e = ((InvocationTargetException)e).getTargetException();
-	}
-	if (message==null)
-		message = e.getMessage();
-	if (message==null)
-	   message = e.toString();
-	Status status = new Status(IStatus.ERROR, getPluginId(), IStatus.OK, message, e);
-	ErrorDialog.openError(getActiveWorkbenchShell(), title, null, status);
-	ResourcesPlugin.getPlugin().getLog().log(status);
-}
-
-public static void logException(Throwable e) {
-	logException(e, null, null);
-}
-
-public static void log(Throwable e) {
-	if (e instanceof InvocationTargetException) 
-		e = ((InvocationTargetException)e).getTargetException();
-	Status status = new Status(IStatus.ERROR, getPluginId(), IStatus.OK, e.getMessage(), e);
-	log(status);
-}
-
-public static void registerPlatformLaunchers(IProject project) {
-	try {
-		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
-		ILauncher[] launchers = manager.getLaunchers();
-		for (int i = 0; i < launchers.length; i++) {
-			ILauncher launcher = launchers[i];
-			if (launcher.getIdentifier().equals(RUN_LAUNCHER_ID)) {
-				manager.setDefaultLauncher(project, launcher);
-				break;
+	private IPlugin findPlugin(IPluginModel[] models, String id, String version) {
+		for (int i = 0; i < models.length; i++) {
+			IPluginModel model = models[i];
+			if (model.isEnabled() == false)
+				continue;
+			IPlugin plugin = model.getPlugin();
+			if (plugin.getId().equals(id)) {
+				if (version == null || plugin.getVersion().equals(version))
+					return plugin;
 			}
 		}
-	} catch (CoreException e) {
-		PDEPlugin.logException(e);
+		return null;
 	}
-}
-public void shutdown() throws CoreException {
-	if (schemaRegistry != null)
-		schemaRegistry.shutdown();
-	if (workspaceModelManager != null)
-		workspaceModelManager.shutdown();
-	super.shutdown();
-}
-public void startup() throws CoreException {
-	IAdapterManager manager = Platform.getAdapterManager();
-	manager.registerAdapters(new SchemaAdapterFactory(), ISchemaObject.class);
-	manager.registerAdapters(new PluginAdapterFactory(), IPluginObject.class);
-	manager.registerAdapters(new ComponentAdapterFactory(), IComponentObject.class);
-	// set eclipse home variable if not sets
-	if (isVAJ()==false) initializePlatformPath();
-	getExternalModelManager().getEclipseHome();
-	getWorkspaceModelManager().reset();
-}
-
-public void addPluginListener(IPDEPluginListener listener) {
-	if (!pluginListeners.contains(listener))
-		pluginListeners.add(listener);
-}
-
-public void removePluginListener(IPDEPluginListener listener) {
-	if (pluginListeners.contains(listener))
-		pluginListeners.remove(listener);
-}
-
-public void firePluginEvent(PDEPluginEvent e) {
-	for (Iterator iter=pluginListeners.iterator();
-			iter.hasNext();) {
-		IPDEPluginListener listener = (IPDEPluginListener)iter.next();
-		listener.pluginChanged(e);
+	public IPlugin findPlugin(String id) {
+		return findPlugin(id, null);
 	}
-}
+	public IPlugin findPlugin(String id, String version) {
+		WorkspaceModelManager manager = getWorkspaceModelManager();
+		IPlugin plugin = findPlugin(manager.getWorkspacePluginModels(), id, version);
+		if (plugin != null)
+			return plugin;
+		ExternalModelManager exmanager = getExternalModelManager();
+		if (exmanager.hasEnabledModels()) {
+			return findPlugin(exmanager.getModels(), id, version);
+		}
+		return null;
+	}
+	public static IWorkbenchPage getActivePage() {
+		return getDefault().internalGetActivePage();
+	}
+	public static Shell getActiveWorkbenchShell() {
+		IWorkbenchWindow window= getActiveWorkbenchWindow();
+		if (window != null) {
+			return window.getShell();
+		}
+		return null;
+	}
+	public static IWorkbenchWindow getActiveWorkbenchWindow() {
+		return getDefault().getWorkbench().getActiveWorkbenchWindow();
+	}
+	public static PDEPlugin getDefault() {
+		return inst;
+	}
+	public Hashtable getDefaultNameCounters() {
+		if (counters == null)
+			counters = new Hashtable();
+		return counters;
+	}
+	public ExternalModelManager getExternalModelManager() {
+		if (externalModelManager == null)
+			externalModelManager = new ExternalModelManager();
+		return externalModelManager;
+	}
+	public static String getFormattedMessage(String key, String[] args) {
+		String text = getResourceString(key);
+		return java.text.MessageFormat.format(text, args);
+	}
+	public static String getFormattedMessage(String key, String arg) {
+		String text = getResourceString(key);
+		return java.text.MessageFormat.format(text, new Object[] { arg });
+	}
+	static IPath getInstallLocation() {
+		return new Path(getDefault().getDescriptor().getInstallURL().getFile());
+	}
+	public static String getPluginId() {
+		return getDefault().getDescriptor().getUniqueIdentifier();
+	}
+	public ResourceBundle getResourceBundle() {
+		return resourceBundle;
+	}
+	public static String getResourceString(String key) {
+		ResourceBundle bundle = PDEPlugin.getDefault().getResourceBundle();
+		if (bundle != null) {
+			try {
+				String bundleString = bundle.getString(key);
+				//return "$"+bundleString;
+				return bundleString;
+			} catch (MissingResourceException e) {
+				// default actions is to return key, which is OK
+			}
+		}
+		return key;
+	}
+	public SchemaRegistry getSchemaRegistry() {
+		if (schemaRegistry == null)
+			schemaRegistry = new SchemaRegistry();
+		return schemaRegistry;
+	}
+	public TracingOptionsManager getTracingOptionsManager() {
+		if (tracingOptionsManager == null)
+			tracingOptionsManager = new TracingOptionsManager();
+		return tracingOptionsManager;
+	}
+	public static IWorkspace getWorkspace() {
+		return ResourcesPlugin.getWorkspace();
+	}
+	public WorkspaceModelManager getWorkspaceModelManager() {
+		if (workspaceModelManager == null)
+			workspaceModelManager = new WorkspaceModelManager();
+		return workspaceModelManager;
+	}
+	private void initializePlatformPath() {
+		PDEBasePreferencePage.initializePlatformPath();
+	}
+	private IWorkbenchPage internalGetActivePage() {
+		return getWorkbench().getActiveWorkbenchWindow().getActivePage();
+	}
+	public boolean isVAJ() {
+		return inVAJ;
+	}
+	public static void log(IStatus status) {
+		getDefault().getLog().log(status);
+	}
+
+	public static void logErrorMessage(String message) {
+		log(new Status(IStatus.ERROR, getPluginId(), IStatus.ERROR, message, null));
+	}
+
+	public static void logException(Throwable e, String title, String message) {
+		if (e instanceof InvocationTargetException) {
+			e = ((InvocationTargetException) e).getTargetException();
+		}
+		if (message == null)
+			message = e.getMessage();
+		if (message == null)
+			message = e.toString();
+		Status status =
+			new Status(IStatus.ERROR, getPluginId(), IStatus.OK, message, e);
+		ErrorDialog.openError(getActiveWorkbenchShell(), title, null, status);
+		ResourcesPlugin.getPlugin().getLog().log(status);
+	}
+
+	public static void logException(Throwable e) {
+		logException(e, null, null);
+	}
+
+	public static void log(Throwable e) {
+		if (e instanceof InvocationTargetException)
+			e = ((InvocationTargetException) e).getTargetException();
+		Status status =
+			new Status(IStatus.ERROR, getPluginId(), IStatus.OK, e.getMessage(), e);
+		log(status);
+	}
+
+	public static void registerPlatformLaunchers(IProject project) {
+		try {
+			ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
+			ILauncher[] launchers = manager.getLaunchers();
+			for (int i = 0; i < launchers.length; i++) {
+				ILauncher launcher = launchers[i];
+				if (launcher.getIdentifier().equals(RUN_LAUNCHER_ID)) {
+					manager.setDefaultLauncher(project, launcher);
+					break;
+				}
+			}
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}
+	}
+	public void shutdown() throws CoreException {
+		if (schemaRegistry != null)
+			schemaRegistry.shutdown();
+		if (workspaceModelManager != null)
+			workspaceModelManager.shutdown();
+		super.shutdown();
+	}
+	public void startup() throws CoreException {
+		IAdapterManager manager = Platform.getAdapterManager();
+		manager.registerAdapters(new SchemaAdapterFactory(), ISchemaObject.class);
+		manager.registerAdapters(new PluginAdapterFactory(), IPluginObject.class);
+		manager.registerAdapters(new ComponentAdapterFactory(), IComponentObject.class);
+		// set eclipse home variable if not sets
+		if (isVAJ() == false)
+			initializePlatformPath();
+		getExternalModelManager().getEclipseHome();
+		getWorkspaceModelManager().reset();
+	}
+
+	public void addPluginListener(IPDEPluginListener listener) {
+		if (!pluginListeners.contains(listener))
+			pluginListeners.add(listener);
+	}
+
+	public void removePluginListener(IPDEPluginListener listener) {
+		if (pluginListeners.contains(listener))
+			pluginListeners.remove(listener);
+	}
+
+	public void firePluginEvent(PDEPluginEvent e) {
+		for (Iterator iter = pluginListeners.iterator(); iter.hasNext();) {
+			IPDEPluginListener listener = (IPDEPluginListener) iter.next();
+			listener.pluginChanged(e);
+		}
+	}
+
+	public static File getFileInPlugin(IPath path) {
+		try {
+			URL installURL = new URL(getDefault().getDescriptor().getInstallURL(), path.toString());
+			URL localURL = Platform.asLocalURL(installURL);
+			return new File(localURL.getFile());
+		} catch (IOException e) {
+			return null;
+		}
+	}
 }

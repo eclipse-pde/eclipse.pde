@@ -254,11 +254,11 @@ public class WorkbenchLauncherWizardAdvancedPage extends StatusWizardPage {
 		return pluginTreeViewer.getTree();
 	}
 
-	private IPluginModelBase[] getExternalPlugins() {
+	private static IPluginModelBase[] getExternalPlugins() {
 		return PDEPlugin.getDefault().getExternalModelManager().getModels();
 	}
 
-	private IPluginModelBase[] getWorkspacePlugins() {
+	private static IPluginModelBase[] getWorkspacePlugins() {
 		return PDEPlugin
 			.getDefault()
 			.getWorkspaceModelManager()
@@ -452,6 +452,30 @@ public class WorkbenchLauncherWizardAdvancedPage extends StatusWizardPage {
 		}
 		initialSettings.put(SETTINGS_EXTPLUGINS, buf.toString());
 		*/
+	}
+	
+	static void setLauncherData(IDialogSettings settings, LauncherData data) {
+		boolean useDefault = true;
+
+		if (settings != null) {
+			useDefault = !settings.getBoolean(SETTINGS_USECUSTOM);
+		}
+		ArrayList res = new ArrayList();
+
+		if (useDefault) {
+			IPluginModelBase[] models = getWorkspacePlugins();
+			for (int i = 0; i < models.length; i++) {
+				res.add(models[i]);
+			}
+			models = getExternalPlugins();
+			for (int i = 0; i < models.length; i++) {
+				if (models[i].isEnabled())
+					res.add(models[i]);
+			}
+		} else {
+		}
+		IPluginModelBase[] plugins = (IPluginModelBase[]) res.toArray(new IPluginModelBase[res.size()]);
+		data.setPlugins(plugins);
 	}
 
 	private void updateStatus() {
