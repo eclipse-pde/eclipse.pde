@@ -51,7 +51,8 @@ public class WorkbenchLaunchConfigurationDelegate
 		"WorkbenchLauncherConfigurationDelegate.duplicatePlugins";
 
 	private static Vector duplicates = new Vector();
-	private static String bootPath = null;
+	private static String bootPath=null;
+	private static boolean bootInSource=false;
 
 	/*
 	 * @see ILaunchConfigurationDelegate#launch(ILaunchConfiguration, String)
@@ -174,6 +175,8 @@ public class WorkbenchLaunchConfigurationDelegate
 		if (useFeatures) {
 			validateFeatures(monitor);
 		} else {
+			bootPath = null;
+			bootInSource = false;
 			plugins =
 				validatePlugins(
 					getWorkspacePluginsToRun(configuration, useDefault),
@@ -192,6 +195,11 @@ public class WorkbenchLaunchConfigurationDelegate
 		}
 
 		programArgs.add("-dev");
+		if (bootPath!=null && bootInSource) {
+			programArgs.add("-boot");
+			programArgs.add("file:"+bootPath);
+		}
+
 		programArgs.add(
 			getBuildOutputFolders(getWorkspacePluginsToRun(configuration, useDefault)));
 		if (useFeatures) {
@@ -329,9 +337,16 @@ public class WorkbenchLaunchConfigurationDelegate
 					PDEPlugin.getResourceString(KEY_BAD_FEATURE_SETUP)));
 		} else {
 			// Ensure important files are present
-			IPath productPath = installPath.removeLastSegments(1);
-			ensureProductFilesExist(productPath);
+			ensureProductFilesExist(getProductPath());
 		}
+	}
+	
+	private static IPath getInstallPath() {
+		return PDEPlugin.getWorkspace().getRoot().getLocation();
+	}
+	
+	private static IPath getProductPath() {
+		return getInstallPath().removeLastSegments(1);
 	}
 
 	protected static IPluginModelBase[] getWorkspacePluginsToRun(
@@ -492,7 +507,8 @@ public class WorkbenchLaunchConfigurationDelegate
 		HashSet set = new HashSet();
 		set.add(new Path("bin"));
 		for (int i = 0; i < wsmodels.length; i++) {
-			IProject project = wsmodels[i].getUnderlyingResource().getProject();
+			IPluginModelBase model = wsmodels[i];
+			IProject project = model.getUnderlyingResource().getProject();
 			try {
 				if (project.hasNature(JavaCore.NATURE_ID)) {
 					set.add(
@@ -660,7 +676,9 @@ public class WorkbenchLaunchConfigurationDelegate
 						return "file:" + resource.getLocation().toOSString();
 					IPath path = JavaCore.create(project).getOutputLocation();
 					if (path != null) {
-						return path.toOSString();
+						bootInSource=true;
+						IPath sourceBootPath = project.getParent().getLocation().append(path);
+						return sourceBootPath.addTrailingSeparator().toOSString();
 					}
 				}
 			} else {
@@ -700,10 +718,12 @@ public class WorkbenchLaunchConfigurationDelegate
 		File productDir = productArea.toFile();
 		File marker = new File(productDir, ".eclipseproduct");
 		File ini = new File(productDir, "install.ini");
-		//if (marker.exists() && ini.exists()) return;
+		if (marker.exists() && ini.exists()) return;
 		IPath eclipsePath = ExternalModelManager.getEclipseHome(null);
-		copyFile(eclipsePath, ".eclipseproduct", marker);
-		copyFile(eclipsePath, "install.ini", ini);
+		if (!marker.exists()) 
+			copyFile(eclipsePath, ".eclipseproduct", marker);
+		if (!ini.exists())
+			copyFile(eclipsePath, "install.ini", ini);
 	}
 
 	private static void copyFile(IPath eclipsePath, String name, File target) {
