@@ -174,6 +174,7 @@ public class PluginModelManager implements IAdaptable {
 		PluginModelDelta delta = new PluginModelDelta();
 		ArrayList changedPlugins = new ArrayList();
 		ArrayList oldIds=new ArrayList();
+		boolean javaSearchAffected=false;
 
 		if ((e.getEventTypes() & IModelProviderEvent.MODELS_REMOVED) != 0) {
 			IModel[] removed = e.getRemovedModels();
@@ -181,7 +182,9 @@ public class PluginModelManager implements IAdaptable {
 				if (!(removed[i] instanceof IPluginModelBase)) continue;
 				IPluginModelBase model = (IPluginModelBase) removed[i];
 				IPluginBase plugin = model.getPluginBase();
-				updateTable(plugin.getId(), model, false, delta);
+				ModelEntry entry = updateTable(plugin.getId(), model, false, delta);
+				if (entry!=null && entry.getWorkspaceModel()==null && entry.isInJavaSearch())
+					javaSearchAffected=true;
 				changedPlugins.add(plugin);
 			}
 		}
@@ -191,7 +194,9 @@ public class PluginModelManager implements IAdaptable {
 				if (!(added[i] instanceof IPluginModelBase)) continue;
 				IPluginModelBase model = (IPluginModelBase) added[i];
 				IPluginBase plugin = model.getPluginBase();
-				updateTable(plugin.getId(), model, true, delta);
+				ModelEntry entry = updateTable(plugin.getId(), model, true, delta);
+				if (entry!=null && entry.getWorkspaceModel()==null && entry.isInJavaSearch())
+					javaSearchAffected=true;				
 				changedPlugins.add(plugin);
 			}
 		}
@@ -207,12 +212,15 @@ public class PluginModelManager implements IAdaptable {
 				if (id != null) {
 					ModelEntry entry = (ModelEntry)getEntryTable().get(plugin.getId());
 					String oldId=null;
+
 					if (entry!=null) {
 						if (workspace && model!=entry.getWorkspaceModel()) {
 							//wrong slot - id changed
 							oldId=handleIdChange(id, model, entry, delta);
 						}
 						else {
+							if (entry.getWorkspaceModel()==null && entry.isInJavaSearch())
+								javaSearchAffected=true;
 							delta.addEntry(entry, PluginModelDelta.CHANGED);
 						}
 						changedPlugins.add(plugin);
@@ -229,6 +237,8 @@ public class PluginModelManager implements IAdaptable {
 			}
 		}
 		updateAffectedEntries((IPluginBase[])changedPlugins.toArray(new IPluginBase[changedPlugins.size()]), oldIds);
+		if (javaSearchAffected)
+			searchablePluginsManager.updateClasspathContainer();
 		fireDelta(delta);
 	}
 	
@@ -276,14 +286,14 @@ public class PluginModelManager implements IAdaptable {
 		return oldId;
 	}
 
-	private void updateTable(
+	private ModelEntry updateTable(
 		String id,
 		IPluginModelBase model,
 		boolean added,
 		PluginModelDelta delta) {
 		boolean workspace = model.getUnderlyingResource()!=null;
 		if (id == null)
-			return;
+			return null;
 		Map entries = getEntryTable();
 		ModelEntry entry = (ModelEntry) entries.get(id);
 		int kind = 0;
@@ -322,12 +332,14 @@ public class PluginModelManager implements IAdaptable {
 		}
 		if (kind==0) kind = PluginModelDelta.CHANGED;
 		delta.addEntry(entry, kind);
+		return entry;
 	}
 
 	private void updateAffectedEntries(IPluginBase [] changedPlugins, ArrayList oldIds) {
 		// Reset classpath containers for affected entries
 		ModelEntry [] entries = getEntries();
 		Map map = new HashMap();
+
 		for (int i=0; i<entries.length; i++) {
 			ModelEntry entry = entries[i];
 
@@ -526,6 +538,13 @@ public class PluginModelManager implements IAdaptable {
 	}
 	
 	public IFileAdapterFactory getFileAdapterFactory() {
+		return searchablePluginsManager;
+	}
+	/**
+	 * @return Returns the searchablePluginsManager.
+	 */
+	public SearchablePluginsManager getSearchablePluginsManager() {
+		initializeTable();
 		return searchablePluginsManager;
 	}
 }

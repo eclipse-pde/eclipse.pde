@@ -19,23 +19,21 @@ import org.eclipse.jdt.core.*;
 import org.eclipse.pde.core.plugin.*;
 
 /**
- * This class manages the ability of external plug-ins
- * in the model manager to take part in the Java search.
- * It manages a proxy Java projects and for each 
- * external plug-in added to Java search, it adds its
- * Java libraries as external JARs to the proxy project.
- * This makes the libraries visible to the Java model,
- * and they can take part in various Java searches.
+ * This class manages the ability of external plug-ins in the model manager to
+ * take part in the Java search. It manages a proxy Java projects and for each
+ * external plug-in added to Java search, it adds its Java libraries as external
+ * JARs to the proxy project. This makes the libraries visible to the Java
+ * model, and they can take part in various Java searches.
  */
 public class SearchablePluginsManager implements IFileAdapterFactory {
 	private IJavaProject proxyProject;
 	private PluginModelManager manager;
 	private static final String PROXY_FILE_NAME = ".searchable";
-	private static final String PROXY_PROJECT_NAME =
-		"External Plug-in Libraries";
+	private static final String PROXY_PROJECT_NAME = "External Plug-in Libraries";
 	private static final String KEY = "searchablePlugins";
 
 	private Listener elementListener;
+	private ExternalJavaSearchClasspathContainer classpathContainer;
 
 	class Listener implements IElementChangedListener {
 		public void elementChanged(ElementChangedEvent e) {
@@ -69,8 +67,8 @@ public class SearchablePluginsManager implements IFileAdapterFactory {
 	}
 
 	private void initializeProxyProject() {
-		IProject project =
-			PDECore.getWorkspace().getRoot().getProject(getProxyProjectName());
+		IProject project = PDECore.getWorkspace().getRoot().getProject(
+				getProxyProjectName());
 		if (project == null)
 			return;
 		proxyProject = JavaCore.create(project);
@@ -106,8 +104,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory {
 		}
 	}
 
-	public void persistStates(IProgressMonitor monitor)
-		throws CoreException {
+	public void persistStates(IProgressMonitor monitor) throws CoreException {
 		ModelEntry[] entries = manager.getEntries();
 		StringBuffer buffer = new StringBuffer();
 
@@ -128,23 +125,49 @@ public class SearchablePluginsManager implements IFileAdapterFactory {
 			return;
 		monitor.worked(1);
 		IFile file = proxyProject.getProject().getFile(PROXY_FILE_NAME);
-		persistStates(
-			file,
-			buffer.toString(),
-			new SubProgressMonitor(monitor, 1));
-		monitor.worked(1);
-		computeClasspath(
-			entries,
-			new SubProgressMonitor(monitor, 1));
-		monitor.worked(1);
+		persistStates(file, buffer.toString(), new SubProgressMonitor(monitor,
+				1));
+		updateClasspathContainer();
+	}
+	
+	public void updateClasspathContainer() {
+		if (proxyProject==null) return;
+		try {
+			updateClasspathContainer(proxyProject);
+		}
+		catch (CoreException e) {
+			PDECore.logException(e);
+		}
 	}
 
-	private void computeClasspath(
-		ModelEntry[] entries,
-		IProgressMonitor monitor)
-		throws CoreException {
+	public void updateClasspathContainer(IJavaProject project)
+			throws CoreException {
+		IJavaProject[] javaProjects = new IJavaProject[]{project};
+		IClasspathContainer[] containers = new IClasspathContainer[]{getClasspathContainer()};
+		IPath path = new Path(PDECore.JAVA_SEARCH_CONTAINER_ID);
+		try {
+			getClasspathContainer().reset();
+			JavaCore
+					.setClasspathContainer(path, javaProjects, containers, null);
+		} catch (OperationCanceledException e) {
+			getClasspathContainer().reset();
+			throw e;
+		}
+	}
+
+	public ExternalJavaSearchClasspathContainer getClasspathContainer() {
+		/*
+		if (classpathContainer == null)
+		*/
+		classpathContainer = new ExternalJavaSearchClasspathContainer(this);
+		return classpathContainer;
+	}
+
+	public IClasspathEntry[] computeContainerClasspathEntries()
+			throws CoreException {
 		Vector result = new Vector();
 
+		ModelEntry[] entries = manager.getEntries();
 		for (int i = 0; i < entries.length; i++) {
 			ModelEntry entry = entries[i];
 			if (entry.isInJavaSearch() == false)
@@ -155,46 +178,52 @@ public class SearchablePluginsManager implements IFileAdapterFactory {
 			if (model == null)
 				continue;
 			Vector modelResult = new Vector();
-			modelResult.add(ClasspathUtilCore.createJREEntry());
-			ClasspathUtilCore.addLibraries(
-				model,
-				false,
-				modelResult);
+			ClasspathUtilCore.addLibraries(model, false, modelResult);
 			addUniqueEntries(result, modelResult);
 		}
-		IClasspathEntry[] classpathEntries =
-			(IClasspathEntry[]) result.toArray(
-				new IClasspathEntry[result.size()]);
+		return (IClasspathEntry[]) result.toArray(new IClasspathEntry[result
+				.size()]);
+	}
+
+	private void computeClasspath(ModelEntry[] entries, IJavaProject project,
+			IProgressMonitor monitor) throws CoreException {
+		ArrayList list = new ArrayList();
+
+		//The project has the dynamic classpath container for
+		// searchable entries + JRE
+		list.add(JavaCore.newContainerEntry(new Path(
+				PDECore.JAVA_SEARCH_CONTAINER_ID)));
+		list.add(ClasspathUtilCore.createJREEntry());
 		try {
-			proxyProject.setRawClasspath(classpathEntries, monitor);
+			project.setRawClasspath((IClasspathEntry[]) list
+					.toArray(new IClasspathEntry[list.size()]), monitor);
 		} catch (JavaModelException e) {
 			throwCoreException(e);
 		}
 	}
-	
+
 	private void addUniqueEntries(Vector result, Vector localResult) {
-		Vector resultCopy = (Vector)result.clone();
-		for (int i=0; i<localResult.size(); i++) {
-			IClasspathEntry localEntry = (IClasspathEntry)localResult.get(i);
-			boolean duplicate=false;
-			for (int j=0; j<resultCopy.size(); j++) {
-				IClasspathEntry entry = (IClasspathEntry)resultCopy.get(j);
-				if (entry.getEntryKind()==localEntry.getEntryKind() &&
-				entry.getContentKind()==localEntry.getContentKind() &&
-				entry.getPath().equals(localEntry.getPath())) {
-					duplicate=true;
+		Vector resultCopy = (Vector) result.clone();
+		for (int i = 0; i < localResult.size(); i++) {
+			IClasspathEntry localEntry = (IClasspathEntry) localResult.get(i);
+			boolean duplicate = false;
+			for (int j = 0; j < resultCopy.size(); j++) {
+				IClasspathEntry entry = (IClasspathEntry) resultCopy.get(j);
+				if (entry.getEntryKind() == localEntry.getEntryKind()
+						&& entry.getContentKind() == localEntry
+								.getContentKind()
+						&& entry.getPath().equals(localEntry.getPath())) {
+					duplicate = true;
 					break;
 				}
 			}
-			if (!duplicate) result.add(localEntry);
+			if (!duplicate)
+				result.add(localEntry);
 		}
 	}
 
-	private void persistStates(
-		IFile file,
-		String value,
-		IProgressMonitor monitor)
-		throws CoreException {
+	private void persistStates(IFile file, String value,
+			IProgressMonitor monitor) throws CoreException {
 		Properties properties = new Properties();
 		properties.setProperty(KEY, value);
 		try {
@@ -202,8 +231,8 @@ public class SearchablePluginsManager implements IFileAdapterFactory {
 			properties.store(outStream, "");
 			outStream.flush();
 			outStream.close();
-			ByteArrayInputStream inStream =
-				new ByteArrayInputStream(outStream.toByteArray());
+			ByteArrayInputStream inStream = new ByteArrayInputStream(outStream
+					.toByteArray());
 			if (file.exists())
 				file.setContents(inStream, true, false, monitor);
 			else
@@ -215,27 +244,29 @@ public class SearchablePluginsManager implements IFileAdapterFactory {
 	}
 
 	private void throwCoreException(Throwable e) throws CoreException {
-		IStatus status =
-			new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.OK, e.getMessage(), e);
+		IStatus status = new Status(IStatus.ERROR, PDECore.PLUGIN_ID,
+				IStatus.OK, e.getMessage(), e);
 		throw new CoreException(status);
 	}
 
 	private void createProxyProject(IProgressMonitor monitor) {
-		IProject project =
-			PDECore.getWorkspace().getRoot().getProject(getProxyProjectName());
+		IProject project = PDECore.getWorkspace().getRoot().getProject(
+				getProxyProjectName());
 		if (project.exists())
 			return;
+		monitor.beginTask("", 5);
 
 		try {
-			project.create(monitor);
-			project.open(monitor);
+			project.create(new SubProgressMonitor(monitor, 1));
+			project.open(new SubProgressMonitor(monitor, 1));
 
-			CoreUtility.addNatureToProject(
-				project,
-				JavaCore.NATURE_ID,
-				monitor);
+			CoreUtility.addNatureToProject(project, JavaCore.NATURE_ID,
+					new SubProgressMonitor(monitor, 1));
 			proxyProject = JavaCore.create(project);
-			proxyProject.setOutputLocation(project.getFullPath(), monitor);
+			proxyProject.setOutputLocation(project.getFullPath(),
+					new SubProgressMonitor(monitor, 1));
+			computeClasspath(manager.getEntries(), proxyProject,
+					new SubProgressMonitor(monitor, 1));
 		} catch (CoreException e) {
 		}
 	}
@@ -254,7 +285,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory {
 			IJavaProject project = (IJavaProject) delta.getElement();
 
 			if (project.equals(proxyProject)
-				&& delta.getKind() == IJavaElementDelta.REMOVED) {
+					&& delta.getKind() == IJavaElementDelta.REMOVED) {
 				manager.searchablePluginsRemoved();
 				proxyProject = null;
 				return true;
@@ -267,8 +298,8 @@ public class SearchablePluginsManager implements IFileAdapterFactory {
 		if (file.isDirectory() == false) {
 			String name = file.getName().toLowerCase();
 			if (name.endsWith(".jar")) {
-				IPackageFragmentRoot root =
-					findPackageFragmentRoot(file.getAbsolutePath());
+				IPackageFragmentRoot root = findPackageFragmentRoot(file
+						.getAbsolutePath());
 				if (root != null)
 					return root;
 			}
@@ -281,8 +312,8 @@ public class SearchablePluginsManager implements IFileAdapterFactory {
 			return null;
 		IPath jarPath = new Path(absolutePath);
 		try {
-			IPackageFragmentRoot[] roots =
-				proxyProject.getAllPackageFragmentRoots();
+			IPackageFragmentRoot[] roots = proxyProject
+					.getAllPackageFragmentRoots();
 			for (int i = 0; i < roots.length; i++) {
 				IPackageFragmentRoot root = roots[i];
 				IPath path = root.getPath();

@@ -43,8 +43,10 @@
          point="org.eclipse.jdt.core.classpathContainerInitializer">
       <classpathContainerInitializer
             class="org.eclipse.pde.internal.core.RequiredPluginsInitializer"
-            id="org.eclipse.pde.core.requiredPlugins">
-      </classpathContainerInitializer>
+            id="org.eclipse.pde.core.requiredPlugins"/>
+     <classpathContainerInitializer
+            class="org.eclipse.pde.internal.core.ExternalJavaSearchInitializer"
+            id="org.eclipse.pde.core.externalJavaSearch"/>
    </extension>
 
 </plugin>

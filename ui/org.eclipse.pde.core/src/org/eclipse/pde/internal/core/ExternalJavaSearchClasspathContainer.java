@@ -10,34 +10,34 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 /**
- * @author dejan
  *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
  */
-public class RequiredPluginsClasspathContainer extends PDEClasspathContainer {
-	private IPluginModelBase model;
+public class ExternalJavaSearchClasspathContainer extends PDEClasspathContainer {
+	private SearchablePluginsManager manager;
 
 	/**
 	 * Constructor for RequiredPluginsClasspathContainer.
 	 */
-	public RequiredPluginsClasspathContainer(IPluginModelBase model) {
-		this.model = model;
+	public ExternalJavaSearchClasspathContainer(SearchablePluginsManager manager) {
+		this.manager = manager;
 	}
 
 	/**
 	 * @see org.eclipse.jdt.core.IClasspathContainer#getClasspathEntries()
 	 */
 	public IClasspathEntry[] getClasspathEntries() {
-		if (model==null) return new IClasspathEntry[0];
+		if (manager==null) return new IClasspathEntry[0];
 		if (entries == null) {
-			entries = ClasspathUtilCore.computePluginEntries(model);
+			try {
+				entries = manager.computeContainerClasspathEntries();
+			}
+			catch (CoreException e) {
+				PDECore.logException(e);
+			}
 			entries = verifyWithAttachmentManager(entries);
 		}
 		return entries;
@@ -47,6 +47,6 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer {
 	 * @see org.eclipse.jdt.core.IClasspathContainer#getDescription()
 	 */
 	public String getDescription() {
-		return PDECore.getResourceString("RequiredPluginsClasspathContainer.description"); //$NON-NLS-1$
+		return PDECore.getResourceString("ExternalJavaSearchClasspathContainer.description"); //$NON-NLS-1$
 	}
 }
