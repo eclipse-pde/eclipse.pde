@@ -168,6 +168,9 @@ public abstract class InputContext {
 	protected static void insert(TextEdit parent, TextEdit edit) {
 		if (!parent.hasChildren()) {
 			parent.addChild(edit);
+			if (edit instanceof MoveSourceEdit) {
+				parent.addChild(((MoveSourceEdit)edit).getTargetEdit());
+			}
 			return;
 		}
 		TextEdit[] children= parent.getChildren();
@@ -189,6 +192,9 @@ public abstract class InputContext {
 			}
 		}
 		parent.addChild(edit);
+		if (edit instanceof MoveSourceEdit) {
+			parent.addChild(((MoveSourceEdit)edit).getTargetEdit());
+		}
 	}
 	
 	protected static boolean covers(TextEdit thisEdit, TextEdit otherEdit) {

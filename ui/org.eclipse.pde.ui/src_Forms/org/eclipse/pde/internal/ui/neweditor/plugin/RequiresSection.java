@@ -237,26 +237,34 @@ public class RequiresSection
 	}
 	
 	private void handleUp() {
-		Table table = getTablePart().getTableViewer().getTable();
-		int index = table.getSelectionIndex();
+		int index = getTablePart().getTableViewer().getTable().getSelectionIndex();
 		if (index < 1)
 			return;
-
-		
-		IPluginImport dep = ((ImportObject)table.getItem(index).getData()).getImport();
-		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
-		IPluginBase pluginBase = model.getPluginBase();
-
-		try {
-			pluginBase.swap(dep, ((ImportObject)importTable.getTable().getItem(index - 1).getData()).getImport());
-			refresh();
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
-		}
+		swap(index, index - 1);
 	}
 	
 	private void handleDown() {
-		
+		Table table = getTablePart().getTableViewer().getTable();
+		int index = table.getSelectionIndex();
+		if (index == table.getItemCount() - 1)
+			return;
+		swap(index, index + 1);		
+	}
+	
+	public void swap(int index1, int index2) {
+		Table table = getTablePart().getTableViewer().getTable();
+		IPluginImport dep1 = ((ImportObject)table.getItem(index1).getData()).getImport();
+		IPluginImport dep2 = ((ImportObject)table.getItem(index2).getData()).getImport();
+
+		try {
+			IPluginModelBase model = (IPluginModelBase) getPage().getModel();
+			IPluginBase pluginBase = model.getPluginBase();
+			pluginBase.swap(dep1, dep2);
+			refresh();
+			updateDirectionalButtons();
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}		
 	}
 	
 	private IPluginModelBase[] getAvailablePlugins(IPluginModelBase model) {

@@ -12,6 +12,7 @@ import org.eclipse.ui.IEditorInput;
 
 public abstract class XMLInputContext extends UTF8InputContext {
 	private HashMap fOperationTable = new HashMap();
+	private HashMap fMoveOperations = new HashMap();
 
 	/**
 	 * @param editor
@@ -61,13 +62,17 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		TextEdit old = (TextEdit)fOperationTable.get(node);
 		if (old != null) {
 			ops.remove(old);
-			fOperationTable.remove(node);				
+			fOperationTable.remove(node);
+		}
+		old = (TextEdit)fMoveOperations.get(node);
+		if (old != null) {
+			ops.remove(old);
+			fMoveOperations.remove(node);
 		}
 		// if node has an offset, delete it
 		if (node.getOffset() > -1) {
 			// Create a delete op for this node
-			IRegion region = getNodeRegion(node);
-			TextEdit op = new DeleteEdit(region.getOffset(), region.getLength());
+			TextEdit op = getDeleteNodeOperation(node);
 			ops.add(op);
 			fOperationTable.put(node, op);			
 		} else if (old == null){
@@ -125,8 +130,11 @@ public abstract class XMLInputContext extends UTF8InputContext {
 	
 
 	private void modifyNode(IDocumentNode node, ArrayList ops, IModelChangedEvent event) {
-		IDocumentNode node1 = (IDocumentNode)event.getOldValue();
-		IDocumentNode node2 = (IDocumentNode)event.getNewValue();
+		IDocumentNode oldNode = (IDocumentNode)event.getOldValue();
+		IDocumentNode newNode = (IDocumentNode)event.getNewValue();
+		
+		IDocumentNode node1 = (oldNode.getPreviousSibling() == null || oldNode.equals(newNode.getPreviousSibling())) ? oldNode : newNode;
+		IDocumentNode node2 = node1.equals(oldNode) ? newNode : oldNode;
 		
 		if (node1.getOffset() < 0 && node2.getOffset() < 2) {
 			TextEdit op = (TextEdit)fOperationTable.get(node1);
@@ -141,16 +149,45 @@ public abstract class XMLInputContext extends UTF8InputContext {
 			}
 		} else if (node1.getOffset() > -1 && node2.getOffset() > -1) {
 			// both nodes have offsets, so create a move target/source combo operation
-			MoveSourceEdit source = new MoveSourceEdit(node1.getOffset(), node1.getLength());
-			MoveTargetEdit target = new MoveTargetEdit(node2.getOffset(), source);
-			ops.add(0, source);
-			fOperationTable.put(node1, source);
-			ops.add(0, target);
-			fOperationTable.put(node2, source);			
+			IRegion region = getMoveRegion(node1);
+			MoveSourceEdit source = new MoveSourceEdit(region.getOffset(), region.getLength());
+			region = getMoveRegion(node2);
+			source.setTargetEdit(new MoveTargetEdit(region.getOffset()));
+			MoveSourceEdit op = (MoveSourceEdit)fMoveOperations.get(node1);
+			if (op != null) {
+				ops.set(ops.indexOf(op), source);
+			} else {
+				op = (MoveSourceEdit)fMoveOperations.get(node2);
+				if (op != null && op.getTargetEdit().getOffset() == source.getOffset()) {
+					fMoveOperations.remove(node2);
+					ops.remove(op);
+					return;
+				} 
+				ops.add(source);
+			}			
+			fMoveOperations.put(node1, source);
 		} else {
 			// one node with offset, the other without offset.  Delete/reinsert the one without offset
 			insertNode((node1.getOffset() < 0) ? node1 : node2, ops);
 		}		
+	}
+	
+	private IRegion getMoveRegion(IDocumentNode node) {
+		int offset = node.getOffset();
+		int length = node.getLength();
+		int i = 1;
+		try {
+			IDocument doc = getDocumentProvider().getDocument(getInput());
+			for (;;i++) {
+				char ch = doc.get(offset - i, 1).toCharArray()[0];
+				if (!Character.isWhitespace(ch)) {
+					i -= 1;
+					break;
+				}
+			}
+		} catch (BadLocationException e) {
+		}
+		return new Region(offset - i, length + i);		
 	}
 
 	private void addAttributeOperation(IDocumentAttribute attr, ArrayList ops, IModelChangedEvent event) {
@@ -224,7 +261,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 	}
 	
 
-	private IRegion getNodeRegion(IDocumentNode node) {
+	private DeleteEdit getDeleteNodeOperation(IDocumentNode node) {
 		int offset = node.getOffset();
 		int length = node.getLength();
 		int indent = 0;
@@ -251,7 +288,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 			//System.out.println("\"" + getDocumentProvider().getDocument(getInput()).get(offset-indent, length + indent) + "\"");
 		} catch (BadLocationException e) {
 		}
-		return new Region(offset - indent, length + indent);
+		return new DeleteEdit(offset - indent, length + indent);
 		
 	}
 /**
@@ -293,6 +330,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		}
 		reorderInsertEdits(fEditOperations);
 		fOperationTable.clear();
+		fMoveOperations.clear();
 		super.flushModel(doc);
 	}
 	
