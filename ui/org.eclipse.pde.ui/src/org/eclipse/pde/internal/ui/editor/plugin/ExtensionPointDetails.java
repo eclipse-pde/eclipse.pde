@@ -39,7 +39,7 @@ public class ExtensionPointDetails extends PDEDetails {
 	private FormEntry fSchemaEntry;
 	private FormText fRichText;
 	private String fRichTextData;
-	
+	//TODO translate this text - load it with variable substitution from resources
 	private static final String SCHEMA_RTEXT_DATA = "<form>"
 			+ "<p><img href=\"search\"/> <a href=\"search\">Find references</a></p>"
 			+ "<p><img href=\"desc\"/> <a href=\"desc\">Open extension point description</a></p>"
