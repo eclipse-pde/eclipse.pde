@@ -274,7 +274,7 @@ protected void generateJARTarget(AntScript script, PluginModel model, JAR jar) t
 	script.printProperty(tab, "destdir", destdir);
 	script.printDeleteTask(tab, destdir, null, null);
 	script.printMkdirTask(tab, destdir);
-	script.printComment(tab, "compiles the source code");
+	script.printComment(tab, "compile the source code");
 	JavacTask javac = new JavacTask();
 	javac.setClasspath(getClasspath(model, jar));
 	javac.setDestdir(destdir);
@@ -282,12 +282,14 @@ protected void generateJARTarget(AntScript script, PluginModel model, JAR jar) t
 	String[] sources = jar.getSource();
 	javac.setSrcdir(sources);
 	script.print(tab, javac);
+	script.printComment(tab, "copy necessary resources");
 	FileSet[] fileSets = new FileSet[sources.length];
 	for (int i = 0; i < sources.length; i++) {
 		fileSets[i] = new FileSet(sources[i], null, "", null, "**/*.java", null, null);
 	}
 	script.printCopyTask(tab, null, destdir, fileSets);
 
+// FIXME
 //    <copy todir="${basedir}">
 //      <fileset dir="." includes="*.log" />
 //    </copy>
@@ -332,7 +334,8 @@ protected String getClasspath(PluginModel model, JAR jar) throws CoreException {
 				continue;
 			classpath.add(jars[i].getName());
 		}
-		// FIXME: optimize the following hack
+		// Add the plug-in libraries that were not declared in build.properties .
+		// It usually happens when the library is provided already built.
 		LibraryModel[] libraries = model.getRuntime();
 		for (int i = 0; i < libraries.length; i++) {
 			boolean found = false;
