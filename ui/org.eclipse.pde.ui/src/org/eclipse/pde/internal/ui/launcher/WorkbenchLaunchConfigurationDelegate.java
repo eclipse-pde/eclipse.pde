@@ -294,7 +294,19 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 	
 	private File getConfigDir(ILaunchConfiguration config) {
 		if (fConfigDir == null) {
-			fConfigDir = LauncherUtils.createConfigArea(config.getName());
+			try {
+				if (config.getAttribute(USEFEATURES, false)) {
+					String root = getProductPath().toString();
+					if (PDECore.getDefault().getModelManager().isOSGiRuntime())
+						root += "/configuration";
+					fConfigDir = new File(root);
+					fConfigDir.mkdirs();
+				} else {
+					fConfigDir = LauncherUtils.createConfigArea(config.getName());
+				}
+			} catch (CoreException e) {
+				fConfigDir = LauncherUtils.createConfigArea(config.getName());
+			}
 		}
 		return fConfigDir;
 	}
