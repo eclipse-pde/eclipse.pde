@@ -420,6 +420,8 @@ public class LogView extends ViewPart implements ILogListener {
 	public void dispose() {
 		Platform.removeLogListener(this);
 		clipboard.dispose();
+		detailsForm.dispose();
+		LogReader.currentSession = null;
 		super.dispose();
 	}
 	

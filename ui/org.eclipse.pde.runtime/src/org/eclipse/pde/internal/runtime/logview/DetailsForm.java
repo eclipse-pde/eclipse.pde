@@ -131,12 +131,12 @@ public class DetailsForm extends ScrollableSectionForm {
 		control.getParent().layout(true);
 		control.setRedraw(true);
 		control.getParent().setRedraw(true);
-
 	}
 	
 	public void dispose() {
 		super.dispose();
 		headingImage.dispose();
+		memento = null;
 		unregisterSection(sessionSection);
 		unregisterSection(stackSection);
 	}
