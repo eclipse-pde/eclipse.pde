@@ -595,8 +595,12 @@ public class AdvancedLauncherTab
 	private IPluginModelBase findModel(String id, IPluginModelBase[] models) {
 		for (int i = 0; i < models.length; i++) {
 			IPluginModelBase model = (IPluginModelBase) models[i];
-			if (model.getPluginBase().getId().equals(id))
+			IPluginBase pluginBase = model.getPluginBase();
+			if (pluginBase!=null) {
+				String pid = pluginBase.getId();
+				if (pid!=null && pid.equals(id))
 				return model;
+			}
 		}
 		return null;
 	}
