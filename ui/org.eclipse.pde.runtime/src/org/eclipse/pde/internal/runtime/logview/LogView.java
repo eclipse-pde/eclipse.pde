@@ -592,7 +592,8 @@ public class LogView extends ViewPart implements ILogListener {
 	}
 	
 	public void setFocus() {
-		tableTreeViewer.getTableTree().getTable().setFocus();
+		if (tableTreeViewer != null && !tableTreeViewer.getTableTree().isDisposed())
+			tableTreeViewer.getTableTree().getTable().setFocus();
 	}
 	
 	private void handleSelectionChanged(ISelection selection) {
