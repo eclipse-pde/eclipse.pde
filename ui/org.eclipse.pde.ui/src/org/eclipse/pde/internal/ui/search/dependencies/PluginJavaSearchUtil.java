@@ -127,7 +127,7 @@ public class PluginJavaSearchUtil {
 				}
 			}
 		}
-		if (plugin instanceof IPlugin && ((IPlugin)plugin).hasExtensibleAPI()) {
+		if (plugin instanceof IPlugin && ClasspathUtilCore.hasExtensibleAPI((IPlugin)plugin)) {
 			for (int i = 0; i < fragments.length; i++) {
 				addLibraryPaths((IPluginModelBase)fragments[i].getModel(), libraryPaths);
 			}

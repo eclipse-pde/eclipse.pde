@@ -10,16 +10,40 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Vector;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.*;
-import org.eclipse.osgi.service.resolver.*;
-import org.eclipse.pde.core.build.*;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IClasspathAttribute;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaModelStatus;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaConventions;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.ExportPackageDescription;
+import org.eclipse.pde.core.build.IBuild;
+import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.pde.core.plugin.IFragment;
+import org.eclipse.pde.core.plugin.IFragmentModel;
+import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.pde.core.plugin.IPluginLibrary;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
+import org.eclipse.pde.internal.core.bundle.BundlePlugin;
+import org.eclipse.pde.internal.core.plugin.Plugin;
 
 public class ClasspathUtilCore {
 	
@@ -177,7 +201,7 @@ public class ClasspathUtilCore {
 
 		boolean inWorkspace = addPlugin(plugin, isExported, true, result, alreadyAdded);
 		
-		if (plugin instanceof IPlugin && ((IPlugin)plugin).hasExtensibleAPI()) {
+		if (plugin instanceof IPlugin && hasExtensibleAPI((IPlugin)plugin)) {
 			String id  = plugin.getId();
 			String version = plugin.getVersion();
 			IFragment[] fragments = PDECore.getDefault().findFragmentsFor(id, version);
@@ -206,6 +230,14 @@ public class ClasspathUtilCore {
 			}
 		}
 	}
+    
+    public static boolean hasExtensibleAPI(IPlugin plugin) {
+        if (plugin instanceof Plugin) 
+            return ((Plugin)plugin).hasExtensibleAPI();
+        if (plugin instanceof BundlePlugin)
+            return ((BundlePlugin)plugin).hasExtensibleAPI();
+        return false;
+    }
 	
 	private static boolean addPlugin(IPluginBase plugin, boolean isExported, boolean useInclusionPatterns, Vector result, HashSet alreadyAdded) throws CoreException {
 		IPluginModelBase model = (IPluginModelBase)plugin.getModel();

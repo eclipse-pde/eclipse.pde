@@ -290,7 +290,7 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 				addDependencies(hostId, set);
 		} else {
 			boolean addFragments = fIncludeFragments.getSelection()
-					|| ((IPlugin)model.getPluginBase()).hasExtensibleAPI();
+					|| ClasspathUtilCore.hasExtensibleAPI((IPlugin)model.getPluginBase());
 			if (!addFragments) {
 				IPluginLibrary[] libs = model.getPluginBase().getLibraries();
 				for (int i = 0; i < libs.length; i++) {

@@ -432,7 +432,7 @@ public class ExternalPluginsBlock {
 		
 		if (model instanceof IPluginModel) {
 			boolean addFragments = fIncludeFragments.getSelection()
-							|| ((IPlugin)model.getPluginBase()).hasExtensibleAPI();
+							|| ClasspathUtilCore.hasExtensibleAPI((IPlugin)model.getPluginBase());
 			if (!addFragments) {
 				IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
 				for (int i = 0; i < libraries.length; i++) {

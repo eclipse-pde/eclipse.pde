@@ -355,7 +355,7 @@ public class AdvancedLauncherTab
 			addPluginAndDependencies(parent, map);
 		} else {
 			boolean addFragments = fIncludeFragmentsButton.getSelection()
-						|| ((IPlugin)model.getPluginBase()).hasExtensibleAPI();
+						|| ClasspathUtilCore.hasExtensibleAPI((IPlugin)model.getPluginBase());
 			if (!addFragments) {
 				IPluginLibrary[] libs = model.getPluginBase().getLibraries();
 				for (int i = 0; i < libs.length; i++) {

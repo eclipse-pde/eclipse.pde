@@ -37,11 +37,4 @@ public interface IPlugin extends IPluginBase {
 	 */
 	void setClassName(String className) throws CoreException;
 	
-	/**
-	 * @return <code>true</code> if API from this plug-in's fragments
-	 *         are to be exposed to clients, <code>false</code> otherwise.
-	 * 
-	 * @since 3.1
-	 */         
-	boolean hasExtensibleAPI();
 }
