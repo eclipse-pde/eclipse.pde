@@ -69,6 +69,7 @@ public interface IXMLConstants {
 	public static final String PROPERTY_BIN_INCLUDES = "bin.includes"; //$NON-NLS-1$
 	public static final String PROPERTY_BOOTCLASSPATH = "bootclasspath"; //$NON-NLS-1$
 	public static final String PROPERTY_BUILD_COMPILER = "build.compiler"; //$NON-NLS-1$
+	public static final String PROPERTY_BUILD_DIRECTORY = "buildDirectory"; //$NON-NLS-1$
 	public static final String PROPERTY_BUILD_ID = "build.id"; //$NON-NLS-1$
 	public static final String PROPERTY_BUILD_QUALIFIER = "build.qualifier"; //$NON-NLS-1$
 	public static final String PROPERTY_BUILD_RESULT_FOLDER = "build.result.folder"; //$NON-NLS-1$
@@ -109,6 +110,7 @@ public interface IXMLConstants {
 	public static final String PROPERTY_JAVAC_TARGET = "javacTarget"; //$NON-NLS-1$
 	public static final String PROPERTY_COLLECTING_PLACE = "collPlace"; //$NON-NLS-1$
 	public static final String PROPERTY_COLLECTING_BASE = "collBase"; //$NON-NLS-1$
+	public static final String PROPERTY_ARCHIVE_FULLPATH = "archiveFullPath";  //$NON-NLS-1$
 	public static final String PROPERTY_BUILD_ID_PARAM = "buildId"; //$NON-NLS-1$
 	public static final String PROPERTY_ZIP_ARGS = "zipargs"; //$NON-NLS-1$
 	public static final String PROPERTY_DOWNLOAD_DIRECTORY = "downloadDirectory"; //$NON-NLS-1$
