@@ -22,13 +22,13 @@ public class DependencyExtentViewerSorter extends ViewerSorter {
 				Object object = ((ISearchResultViewEntry)element).getGroupByKey();
 				if (object instanceof IType) {
 					if (((IType)object).isClass())
-						return 2;
-					return 1;
+						return 1;
+					return 0;
 				}
 			}
 		} catch (JavaModelException e) {
 		}
-		return 0;
+		return 2;
 	}
 
 
