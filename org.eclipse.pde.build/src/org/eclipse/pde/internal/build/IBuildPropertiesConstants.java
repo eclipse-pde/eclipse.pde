@@ -45,6 +45,8 @@ public interface IBuildPropertiesConstants {
 	public static final String PROPERTY_SRC_EXCLUDES = "src.excludes"; //$NON-NLS-1$
 	public static final String PROPERTY_SRC_INCLUDES = "src.includes"; //$NON-NLS-1$
 
+	public static final String CONTEXT_MATCH_ALL = "*"; //$NON-NLS-1$
+	
 	//Internal usage only
 	public static final String SOURCE_PLUGIN = "sourcePlugin"; //$NON-NLS-1$
 }

@@ -16,6 +16,7 @@ import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 
 public class QualifierReplacer implements IBuildPropertiesConstants {
 	private static final String DOT_QUALIFIER = '.' + PROPERTY_QUALIFIER;
+
 	public static String replaceQualifierInVersion(String version, String id, String replaceTag, Properties newVersions) {
 		if (replaceTag == null)
 			return null;
@@ -25,9 +26,15 @@ public class QualifierReplacer implements IBuildPropertiesConstants {
 
 		String newQualifier = null;
 		if (replaceTag.equalsIgnoreCase(PROPERTY_CONTEXT)) {
-			newQualifier = (String) newVersions.get(id);
+			if (newVersions.size() != 0) { //Skip the lookp in the file if there is no entries
+				newQualifier = (String) newVersions.get(id);
+				if (newQualifier == null)
+					newQualifier = newVersions.getProperty(CONTEXT_MATCH_ALL);
+			}
 			if (newQualifier == null)
-				newQualifier = '.' + getDate();
+				newQualifier = getDate();
+
+			newQualifier = '.' + newQualifier;
 		} else if (replaceTag.equalsIgnoreCase(PROPERTY_NONE)) {
 			newQualifier = ""; //$NON-NLS-1$
 		} else {
