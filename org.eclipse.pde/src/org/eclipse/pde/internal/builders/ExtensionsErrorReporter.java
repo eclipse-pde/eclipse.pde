@@ -187,9 +187,15 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 			Attr attr = (Attr)attrs.item(i);
 			ISchemaAttribute attInfo = schemaElement.getAttribute(attr.getName());
 			if (attInfo == null) {
-				int flag = CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_ATTRIBUTE);
-				if (flag != CompilerFlags.IGNORE)
-					reportUnknownAttribute(element, attr.getName(), flag);
+				HashSet allowedElements = new HashSet();
+				computeAllowedElements(schemaElement.getType(), allowedElements);
+				if (allowedElements.contains(attr.getName())) {
+					validateJavaAttribute(element, attr);
+				} else {
+					int flag = CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_ATTRIBUTE);
+					if (flag != CompilerFlags.IGNORE)
+						reportUnknownAttribute(element, attr.getName(), flag);
+				}
 			} else {
 				validateExtensionAttribute(element, attr, attInfo);
 			}
@@ -369,7 +375,7 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 	
 	protected void reportIllegalElement(Element element, int severity) {
 		Node parent = element.getParentNode();
-		if (parent instanceof Document) {
+		if (parent == null || parent instanceof Document) {
 			report(PDE.getResourceString("Builders.Manifest.illegalRoot"), getLine(element), severity); //$NON-NLS-1$
 		} else {
 			report(PDE.getFormattedMessage(
