@@ -186,7 +186,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 		store.setDefault(OS, BootLoader.getOS());
 		store.setDefault(WS, BootLoader.getWS());
-		store.setDefault(NL, BootLoader.getNL());
+		store.setDefault(NL, Locale.getDefault().toString() + " - " + Locale.getDefault().getDisplayName());
 		store.setDefault(ARCH, BootLoader.getOSArch());
 	}
 
@@ -211,7 +211,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 		Choice[] choices = new Choice[locales.length];
 		for (int i = 0; i < locales.length; i++) {
 			Locale locale = locales[i];
-			choices[i] = new Choice(locale.toString(), locale.getDisplayName());
+			choices[i] = new Choice(locale.toString(), locale.toString() + " - " + locale.getDisplayName());
 		}
 		CoreArraySorter.INSTANCE.sortInPlace(choices);
 		return choices;
