@@ -11,175 +11,94 @@
 package org.eclipse.pde.internal.ui.wizards.imports;
 
 import java.io.*;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
+import java.lang.reflect.*;
+import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.operation.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.core.feature.ExternalFeatureModel;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.jface.wizard.*;
+import org.eclipse.pde.internal.core.feature.*;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.pde.internal.ui.parts.*;
-import org.eclipse.pde.internal.ui.util.SWTUtil;
-import org.eclipse.pde.internal.ui.wizards.StatusWizardPage;
-import org.eclipse.swt.SWT;
+import org.eclipse.pde.internal.ui.wizards.*;
+import org.eclipse.swt.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
+import org.eclipse.ui.help.*;
+import org.eclipse.update.ui.forms.internal.*;
 
-public class FeatureImportWizardDetailedPage extends StatusWizardPage {
-	private static final String KEY_TITLE =
-		"FeatureImportWizard.DetailedPage.title"; //$NON-NLS-1$
-	private static final String KEY_DESC =
-		"FeatureImportWizard.DetailedPage.desc"; //$NON-NLS-1$
-	private FeatureImportWizardFirstPage firstPage;
-	private IPath dropLocation;
-	private CheckboxTreeViewer featureTreeViewer;
-	private TreePart treePart;
-	private static final String KEY_FEATURE_LIST =
-		"FeatureImportWizard.DetailedPage.featureList"; //$NON-NLS-1$
+public class FeatureImportWizardDetailedPage extends WizardPage {
 
-	private static final String KEY_UPDATING =
-		"FeatureImportWizard.messages.updating"; //$NON-NLS-1$
-	private static final String KEY_LOADING_FILE =
-		"FeatureImportWizard.messages.loadingFile"; //$NON-NLS-1$
-	private static final String KEY_NO_FEATURES =
-		"FeatureImportWizard.messages.noFeatures"; //$NON-NLS-1$
-	private static final String KEY_NO_SELECTED =
-		"FeatureImportWizard.errors.noFeatureSelected"; //$NON-NLS-1$
-	private IFeatureModel[] models;
+	private FeatureImportWizardFirstPage fFirstPage;
+	private IPath fDropLocation;
+	private CheckboxTableViewer fFeatureViewer;
+	private TablePart fTablePart;
+	private IFeatureModel[] fModels;
 
-	public class FeatureContentProvider
-		extends DefaultContentProvider
-		implements ITreeContentProvider {
+	public class ContentProvider
+	extends DefaultContentProvider
+	implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
-			Object[] result = getRoots();
-			return result != null ? result : new Object[0];
+			return getModels();
 		}
-		/**
-		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
-		 */
-		public Object[] getChildren(Object parentElement) {
-			return new Object[0];
-		}
-
-		/**
-		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
-		 */
-		public Object getParent(Object element) {
-			return null;
-		}
-
-		/**
-		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
-		 */
-		public boolean hasChildren(Object element) {
-			return getChildren(element).length > 0;
-		}
-
 	}
+	
+	class TablePart extends WizardCheckboxTablePart {
+		public TablePart(String mainLabel) {
+			super(mainLabel);
+		}
 
-	class FeatureTreePart extends TreePart {
-		public FeatureTreePart(String[] buttonLabels) {
-			super(buttonLabels);
+		public void updateCounter(int count) {
+			super.updateCounter(count);
+			dialogChanged();
 		}
 		protected StructuredViewer createStructuredViewer(
 			Composite parent,
 			int style,
 			FormWidgetFactory factory) {
-			style |= SWT.H_SCROLL | SWT.V_SCROLL;
-			if (factory == null) {
-				style |= SWT.BORDER;
-			} else {
-				style |= FormWidgetFactory.BORDER_STYLE;
-			}
-			CheckboxTreeViewer treeViewer =
-				new CheckboxTreeViewer(parent, style);
-			treeViewer
-				.addSelectionChangedListener(new ISelectionChangedListener() {
-				public void selectionChanged(SelectionChangedEvent e) {
-					FeatureTreePart.this.selectionChanged(
-						(IStructuredSelection) e.getSelection());
-				}
-			});
-			treeViewer.addDoubleClickListener(new IDoubleClickListener() {
-				public void doubleClick(DoubleClickEvent e) {
-					FeatureTreePart.this.handleDoubleClick(
-						(IStructuredSelection) e.getSelection());
-				}
-			});
-			treeViewer.addCheckStateListener(new ICheckStateListener() {
-				public void checkStateChanged(CheckStateChangedEvent e) {
-					featureChecked(
-						(IFeatureModel) e.getElement(),
-						e.getChecked());
-				}
-			});
-			return treeViewer;
-		}
-		protected void createMainLabel(Composite parent, int span, FormWidgetFactory factory) {
-			Label label = new Label(parent, SWT.NULL);
-			GridData gd= new GridData();
-			gd.horizontalSpan = span;
-			label.setText(PDEPlugin.getResourceString(KEY_FEATURE_LIST));
-			label.setLayoutData(gd);
-		}
-		protected Button createButton(Composite parent, String label, int index, FormWidgetFactory factory) {
-			Button button = super.createButton(parent, label, index, factory);
-			SWTUtil.setButtonDimensionHint(button);
-			return button;
-		}
-		public void buttonSelected(Button button, int index) {
-			FeatureImportWizardDetailedPage.this.buttonSelected(index);
+			StructuredViewer viewer =
+				super.createStructuredViewer(parent, style, factory);
+			viewer.setSorter(ListUtil.FEATURE_SORTER);
+			return viewer;
 		}
 	}
 
 	public FeatureImportWizardDetailedPage(FeatureImportWizardFirstPage firstPage) {
-		super("FeatureImportWizardDetailedPage", false); //$NON-NLS-1$
-		setTitle(PDEPlugin.getResourceString(KEY_TITLE));
-		setDescription(PDEPlugin.getResourceString(KEY_DESC));
+		super("FeatureImportWizardDetailedPage"); //$NON-NLS-1$
+		setTitle(PDEPlugin.getResourceString("FeatureImportWizard.DetailedPage.title"));
+		setDescription(PDEPlugin.getResourceString("FeatureImportWizard.DetailedPage.desc"));
 
-		this.firstPage = firstPage;
-		dropLocation = null;
-		updateStatus(createStatus(IStatus.ERROR, "")); //$NON-NLS-1$
-
-		String[] buttonLabels =
-			{
-				PDEPlugin.getResourceString(
-					WizardCheckboxTablePart.KEY_SELECT_ALL),
-				PDEPlugin.getResourceString(
-					WizardCheckboxTablePart.KEY_DESELECT_ALL),
-				};
-
-		treePart = new FeatureTreePart(buttonLabels);
+		fFirstPage = firstPage;
+		fDropLocation = null;
+		fTablePart = new TablePart(PDEPlugin.getResourceString("FeatureImportWizard.DetailedPage.featureList"));
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 
 	private void initializeFields(IPath dropLocation) {
-		if (!dropLocation.equals(this.dropLocation)) {
-			updateStatus(createStatus(IStatus.OK, "")); //$NON-NLS-1$
-			this.dropLocation = dropLocation;
-			models = null;
+		if (!dropLocation.equals(this.fDropLocation)) {
+			this.fDropLocation = dropLocation;
+			fModels = null;
 		}
-		if (models == null) {
+		if (fModels == null) {
 			getModels(); // force loading
 			IRunnableWithProgress op = new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) {
 					monitor.beginTask(
-						PDEPlugin.getResourceString(KEY_UPDATING),
+						PDEPlugin.getResourceString("FeatureImportWizard.messages.updating"),
 						IProgressMonitor.UNKNOWN);
-					featureTreeViewer
+					fFeatureViewer
 						.getControl()
 						.getDisplay()
 						.asyncExec(new Runnable() {
 						public void run() {
-							featureTreeViewer.setInput(PDEPlugin.getDefault());
-							if (getModels()!=null)
-								featureTreeViewer.setCheckedElements(getModels());
+							fFeatureViewer.setInput(PDEPlugin.getDefault());
+							if (getModels() != null)
+								fFeatureViewer.setCheckedElements(getModels());
+								fTablePart.updateCounter(getModels().length);
 						}
 					});
 					monitor.done();
@@ -190,15 +109,11 @@ public class FeatureImportWizardDetailedPage extends StatusWizardPage {
 			} catch (InterruptedException e) {
 			} catch (InvocationTargetException e) {
 				PDEPlugin.logException(e);
-			}
-			finally {
+			} finally {
 				dialogChanged();
 			}
 			//treePart.updateCounter(0);
 		}
-	}
-
-	public void storeSettings(boolean finishPressed) {
 	}
 
 	/*
@@ -207,7 +122,7 @@ public class FeatureImportWizardDetailedPage extends StatusWizardPage {
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible) {
-			initializeFields(firstPage.getDropLocation());
+			initializeFields(fFirstPage.getDropLocation());
 		}
 	}
 
@@ -224,19 +139,17 @@ public class FeatureImportWizardDetailedPage extends StatusWizardPage {
 		layout.marginWidth = 5;
 		container.setLayout(layout);
 
-		treePart.createControl(container, SWT.NULL, 2, null);
-		featureTreeViewer = (CheckboxTreeViewer) treePart.getTreeViewer();
-		featureTreeViewer.setContentProvider(new FeatureContentProvider());
-		featureTreeViewer.setLabelProvider(
-			PDEPlugin.getDefault().getLabelProvider());
-		GridData gd = (GridData) treePart.getControl().getLayoutData();
+		fTablePart.createControl(container);
+		fFeatureViewer = (CheckboxTableViewer) fTablePart.getTableViewer();
+		fFeatureViewer.setContentProvider(new ContentProvider());
+		fFeatureViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
+		GridData gd = (GridData) fTablePart.getControl().getLayoutData();
 		gd.heightHint = 300;
 		gd.widthHint = 300;
 		setControl(container);
+		dialogChanged();
 		Dialog.applyDialogFont(container);
-		WorkbenchHelp.setHelp(
-			container,
-			IHelpContextIds.FEATURE_IMPORT_SECOND_PAGE);
+		WorkbenchHelp.setHelp(container, IHelpContextIds.FEATURE_IMPORT_SECOND_PAGE);
 	}
 
 	public void dispose() {
@@ -245,27 +158,26 @@ public class FeatureImportWizardDetailedPage extends StatusWizardPage {
 	}
 
 	public IFeatureModel[] getModels() {
-		if (models != null)
-			return models;
+		if (fModels != null)
+			return fModels;
 
 		final ArrayList result = new ArrayList();
-		final IPath home = dropLocation;
+		final IPath home = fDropLocation;
 		if (home != null) {
 			IRunnableWithProgress op = new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor)
 					throws InvocationTargetException {
 					monitor.beginTask(
-						PDEPlugin.getResourceString(KEY_LOADING_FILE),
+						PDEPlugin.getResourceString("FeatureImportWizard.messages.loadingFile"),
 						IProgressMonitor.UNKNOWN);
 
 					try {
 						MultiStatus errors =
 							doLoadFeatures(result, createPath(home), monitor);
-						if (errors != null
-							&& errors.getChildren().length > 0) {
+						if (errors != null && errors.getChildren().length > 0) {
 							PDEPlugin.log(errors);
 						}
-						models =
+						fModels =
 							(IFeatureModel[]) result.toArray(
 								new IFeatureModel[result.size()]);
 
@@ -284,11 +196,7 @@ public class FeatureImportWizardDetailedPage extends StatusWizardPage {
 				PDEPlugin.logException(e);
 			}
 		}
-		return models;
-	}
-	
-	private Object[] getRoots() {
-		return getModels();
+		return fModels;
 	}
 
 	private File createPath(IPath dropLocation) {
@@ -303,7 +211,8 @@ public class FeatureImportWizardDetailedPage extends StatusWizardPage {
 		File path,
 		IProgressMonitor monitor)
 		throws CoreException {
-		if (path==null) return null;
+		if (path == null)
+			return null;
 		File[] dirs = path.listFiles();
 		if (dirs == null)
 			return null;
@@ -323,14 +232,14 @@ public class FeatureImportWizardDetailedPage extends StatusWizardPage {
 		}
 		if (resultStatus != null) {
 			IStatus[] children =
-				(IStatus[]) resultStatus.toArray(
-					new IStatus[resultStatus.size()]);
+				(IStatus[]) resultStatus.toArray(new IStatus[resultStatus.size()]);
 			MultiStatus multiStatus =
 				new MultiStatus(
 					PDEPlugin.PLUGIN_ID,
 					IStatus.OK,
 					children,
-					PDEPlugin.getResourceString("FeatureImportWizard.DetailedPage.problemsLoading"), //$NON-NLS-1$
+					PDEPlugin.getResourceString(
+						"FeatureImportWizard.DetailedPage.problemsLoading"),
 					null);
 			return multiStatus;
 		}
@@ -368,49 +277,27 @@ public class FeatureImportWizardDetailedPage extends StatusWizardPage {
 		return status;
 	}
 
-	public IFeatureModel[] getSelectedModels() {
-		Object[] selected = featureTreeViewer.getCheckedElements();
+	public IFeatureModel[] getSelectedModels() { 
+		Object[] selected = fFeatureViewer.getCheckedElements();
 		IFeatureModel[] result = new IFeatureModel[selected.length];
 		System.arraycopy(selected, 0, result, 0, selected.length);
 		return result;
 	}
 
 	private void dialogChanged() {
-		IStatus genStatus = validateFeatures();
-		updateStatus(genStatus);
-	}
-
-	private IStatus validateFeatures() {
-		IFeatureModel[] allModels = getModels();
-		if (allModels == null || allModels.length == 0) {
-			return createStatus(
-				IStatus.ERROR,
-				PDEPlugin.getResourceString(KEY_NO_FEATURES));
+		String message = null;
+		if (fFeatureViewer != null && fFeatureViewer.getTable().getItemCount() == 0) {
+			message = PDEPlugin.getResourceString("FeatureImportWizard.messages.noFeatures");
 		}
-		if (featureTreeViewer.getCheckedElements().length == 0) {
-			return createStatus(
-				IStatus.INFO,
-				PDEPlugin.getResourceString(KEY_NO_SELECTED));
-		}
-		return createStatus(IStatus.OK, ""); //$NON-NLS-1$
+		setMessage(message, WizardPage.INFORMATION);
+		setPageComplete(fTablePart.getSelectionCount() > 0);
 	}
 
-	private void featureChecked(IFeatureModel model, boolean checked) {
-		dialogChanged();
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.WizardPage#isPageComplete()
+	 */
+	public boolean isPageComplete() {
+		return fTablePart.getSelectionCount() > 0;
 	}
 
-	private void buttonSelected(int index) {
-		if (index == 0)
-			doSelectAll(true);
-		else
-			doSelectAll(false);
-	}
-
-	private void doSelectAll(boolean select) {
-		if (select)
-			featureTreeViewer.setCheckedElements(getModels());
-		else
-			featureTreeViewer.setCheckedElements(new Object[0]);
-		dialogChanged();
-	}
 }

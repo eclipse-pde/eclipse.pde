@@ -22,38 +22,21 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
-import org
-	.eclipse
-	.pde
-	.internal
-	.ui
-	.wizards
-	.imports
-	.FeatureImportOperation
-	.IReplaceQuery;
+import org.eclipse.pde.internal.ui.wizards.imports.FeatureImportOperation.IReplaceQuery;
 
 public class FeatureImportWizard extends Wizard implements IImportWizard {
 
 	private static final String STORE_SECTION = "FeatureImportWizard";
-	private static final String KEY_WTITLE = "FeatureImportWizard.title";
-	private static final String KEY_NO_TO_ALL_LABEL =
-		"FeatureImportWizard.noToAll";
-	private static final String KEY_MESSAGES_TITLE =
-		"FeatureImportWizard.messages.title";
-	private static final String KEY_MESSAGES_NO_FEATURES =
-		"FeatureImportWizard.messages.noFeatures";
-	private static final String KEY_MESSAGES_EXISTS =
-		"FeatureImportWizard.messages.exists";
+	private static final String KEY_MESSAGES_TITLE = "FeatureImportWizard.messages.title";
 
-	private FeatureImportWizardFirstPage page1;
-	private FeatureImportWizardDetailedPage page2;
+	private FeatureImportWizardFirstPage fPage1;
+	private FeatureImportWizardDetailedPage fPage2;
 
 	public FeatureImportWizard() {
-		IDialogSettings masterSettings =
-			PDEPlugin.getDefault().getDialogSettings();
+		IDialogSettings masterSettings = PDEPlugin.getDefault().getDialogSettings();
 		setDialogSettings(getSettingsSection(masterSettings));
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_FEATURE_IMPORT_WIZ);
-		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
+		setWindowTitle(PDEPlugin.getResourceString("FeatureImportWizard.title"));
 	}
 
 	/*
@@ -68,10 +51,10 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 	public void addPages() {
 		setNeedsProgressMonitor(true);
 
-		page1 = new FeatureImportWizardFirstPage();
-		addPage(page1);
-		page2 = new FeatureImportWizardDetailedPage(page1);
-		addPage(page2);
+		fPage1 = new FeatureImportWizardFirstPage();
+		addPage(fPage1);
+		fPage2 = new FeatureImportWizardDetailedPage(fPage1);
+		addPage(fPage2);
 	}
 
 	private IDialogSettings getSettingsSection(IDialogSettings master) {
@@ -86,23 +69,12 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 	 * @see Wizard#performFinish()
 	 */
 	public boolean performFinish() {
-		//long start;
 		try {
-			final IFeatureModel[] models = page2.getSelectedModels();
-			if (models.length == 0) {
-				MessageDialog.openInformation(
-					getShell(),
-					PDEPlugin.getResourceString(KEY_MESSAGES_TITLE),
-					PDEPlugin.getResourceString(KEY_MESSAGES_NO_FEATURES));
-				return false;
-			}
-
-			page1.storeSettings(true);
-			page2.storeSettings(true);
+			final IFeatureModel[] models = fPage2.getSelectedModels();
+			fPage1.storeSettings(true);
 			IPath targetPath = computeTargetPath();
 
 			IRunnableWithProgress op = getImportOperation(getShell(), models, targetPath);
-			//start = System.currentTimeMillis();
 			getContainer().run(true, true, op);
 
 		} catch (InterruptedException e) {
@@ -111,12 +83,9 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 			PDEPlugin.logException(e);
 			return true; // exception handled
 		}
-
-		//long stop = System.currentTimeMillis();
-		//System.out.println("Total time: "+(stop-start)+"ms");
 		return true;
 	}
-	
+
 	private IPath computeTargetPath() {
 		IPath pluginsLocation = PDEPlugin.getWorkspace().getRoot().getLocation();
 		return pluginsLocation.removeLastSegments(1).append("features");
@@ -133,9 +102,7 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 					IReplaceQuery query = new ReplaceQuery(shell);
 					FeatureImportOperation op =
 						new FeatureImportOperation(models, targetPath, query);
-					PDEPlugin.getWorkspace().run(
-						op,
-						monitor);
+					PDEPlugin.getWorkspace().run(op, monitor);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
 				} catch (OperationCanceledException e) {
@@ -145,15 +112,6 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 				}
 			}
 		};
-	}
-
-	/*
-	 * @see Wizard#performCancel()
-	 */
-	public boolean performCancel() {
-		page1.storeSettings(false);
-		page2.storeSettings(false);
-		return super.performCancel();
 	}
 
 	private static class ReplaceDialog extends MessageDialog {
@@ -168,7 +126,7 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 					IDialogConstants.YES_LABEL,
 					IDialogConstants.YES_TO_ALL_LABEL,
 					IDialogConstants.NO_LABEL,
-					PDEPlugin.getResourceString(KEY_NO_TO_ALL_LABEL),
+					PDEPlugin.getResourceString("FeatureImportWizard.noToAll"),
 					IDialogConstants.CANCEL_LABEL },
 				0);
 		}
@@ -196,7 +154,7 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 
 			final String message =
 				PDEPlugin.getFormattedMessage(
-					KEY_MESSAGES_EXISTS,
+					"FeatureImportWizard.messages.exists",
 					project.getName());
 			final int[] result = { IReplaceQuery.CANCEL };
 			shell.getDisplay().syncExec(new Runnable() {

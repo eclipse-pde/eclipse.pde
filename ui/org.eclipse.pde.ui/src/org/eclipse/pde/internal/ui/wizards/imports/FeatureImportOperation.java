@@ -17,7 +17,6 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
-import org.eclipse.jface.util.Assert;
 import org.eclipse.pde.internal.PDE;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
@@ -26,15 +25,7 @@ import org.eclipse.team.core.*;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.*;
 
-
 public class FeatureImportOperation implements IWorkspaceRunnable {
-	private static final String KEY_CREATING =
-		"FeatureImportWizard.operation.creating";
-	private static final String KEY_CREATING2 =
-		"FeatureImportWizard.operation.creating2";
-	private static final String KEY_MULTI_PROBLEM =
-		"FeatureImportWizard.operation.multiProblem";
-
 	public interface IReplaceQuery {
 
 		// return codes
@@ -48,23 +39,20 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 		int doQuery(IProject project);
 	}
 
-	private IFeatureModel[] models;
-	private IPath targetPath;
+	private IFeatureModel[] fModels;
+	private IPath fTargetPath;
 
-	private IWorkspaceRoot root;
-	private IReplaceQuery replaceQuery;
+	private IWorkspaceRoot fRoot;
+	private IReplaceQuery fReplaceQuery;
 
 	public FeatureImportOperation(
 		IFeatureModel[] models,
 		IPath targetPath,
 		IReplaceQuery replaceQuery) {
-		Assert.isNotNull(models);
-		Assert.isNotNull(replaceQuery);
-		this.models = models;
-		this.targetPath = targetPath;
-
-		root = ResourcesPlugin.getWorkspace().getRoot();
-		this.replaceQuery = replaceQuery;
+		fModels = models;
+		fTargetPath = targetPath;
+		fRoot = ResourcesPlugin.getWorkspace().getRoot();
+		fReplaceQuery = replaceQuery;
 	}
 
 	/*
@@ -76,21 +64,19 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 			monitor = new NullProgressMonitor();
 		}
 		monitor.beginTask(
-			PDEPlugin.getResourceString(KEY_CREATING),
-			models.length);
+			PDEPlugin.getResourceString("FeatureImportWizard.operation.creating"),
+			fModels.length);
 		try {
 			MultiStatus multiStatus =
 				new MultiStatus(
 					PDEPlugin.getPluginId(),
 					IStatus.OK,
-					PDEPlugin.getResourceString(KEY_MULTI_PROBLEM),
+					PDEPlugin.getResourceString(
+						"FeatureImportWizard.operation.multiProblem"),
 					null);
-			//long start = System.currentTimeMillis();
-			for (int i = 0; i < models.length; i++) {
+			for (int i = 0; i < fModels.length; i++) {
 				try {
-					createProject(
-						models[i],
-						new SubProgressMonitor(monitor, 1));
+					createProject(fModels[i], new SubProgressMonitor(monitor, 1));
 				} catch (CoreException e) {
 					multiStatus.merge(e.getStatus());
 				}
@@ -101,8 +87,6 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 			if (!multiStatus.isOK()) {
 				throw new CoreException(multiStatus);
 			}
-			//long stop = System.currentTimeMillis();
-			//System.out.println("Import time: "+(stop-start)+"ms");
 		} finally {
 			monitor.done();
 		}
@@ -111,17 +95,17 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 	private void createProject(IFeatureModel model, IProgressMonitor monitor)
 		throws CoreException {
 		String name = model.getFeature().getId() + "-feature";
-		String task = PDEPlugin.getFormattedMessage(KEY_CREATING2, name);
+		String task =
+			PDEPlugin.getFormattedMessage(
+				"FeatureImportWizard.operation.creating2",
+				name);
 		monitor.beginTask(task, 8);
 		try {
-			IProject project = root.getProject(name);
+			IProject project = fRoot.getProject(name);
 
 			if (project.exists()) {
 				if (queryReplace(project)) {
-					project.delete(
-						true,
-						true,
-						new SubProgressMonitor(monitor, 1));
+					project.delete(true, true, new SubProgressMonitor(monitor, 1));
 					try {
 						RepositoryProvider.unmap(project);
 					} catch (TeamException e) {
@@ -132,9 +116,10 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 			} else {
 				monitor.worked(1);
 			}
-			
-			IProjectDescription description = PDEPlugin.getWorkspace().newProjectDescription(name);
-			description.setLocation(targetPath.append(name));
+
+			IProjectDescription description =
+				PDEPlugin.getWorkspace().newProjectDescription(name);
+			description.setLocation(fTargetPath.append(name));
 
 			project.create(description, new SubProgressMonitor(monitor, 1));
 			if (!project.isOpen()) {
@@ -149,29 +134,17 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 				null,
 				new SubProgressMonitor(monitor, 1));
 
-			setProjectNatures(project, monitor);
-
 			//Mark this project so that we can show image overlay
 			// using the label decorator
 			project.setPersistentProperty(
-				PDECore.EXTERNAL_PROJECT_PROPERTY,
-				PDECore.BINARY_PROJECT_VALUE);
+					PDECore.EXTERNAL_PROJECT_PROPERTY,
+					PDECore.BINARY_PROJECT_VALUE);
+			
+				setProjectNatures(project, model, monitor);
 
-			IJavaProject jProject = JavaCore.create(project);
-			jProject.setRawClasspath(computeClasspath(), monitor);
 		} finally {
 			monitor.done();
 		}
-	}
-
-	private IClasspathEntry[] computeClasspath() {
-		IClasspathEntry[] entries = new IClasspathEntry[1];
-		IPath jrePath = new Path("JRE_LIB");
-		IPath[] annot = new IPath[2];
-		annot[0] = new Path("JRE_SRC");
-		annot[1] = new Path("JRE_SRCROOT");
-		entries[0] = JavaCore.newVariableEntry(jrePath, annot[0], annot[1]);
-		return entries;
 	}
 
 	private void importContent(
@@ -186,8 +159,7 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 				return ALL;
 			}
 		};
-		ImportOperation op =
-			new ImportOperation(destPath, source, provider, query);
+		ImportOperation op = new ImportOperation(destPath, source, provider, query);
 		op.setCreateContainerStructure(false);
 		if (filesToImport != null) {
 			op.setFilesToImport(filesToImport);
@@ -213,19 +185,8 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 		}
 	}
 
-	/*private String getFlatPath(IPath path) {
-		StringBuffer buf = new StringBuffer();
-		for (int i = 0; i < path.segmentCount(); i++) {
-			if (i > 0)
-				buf.append("_");
-			buf.append(path.segment(i));
-		}
-		return buf.toString();
-	}*/
-
-	private boolean queryReplace(IProject project)
-		throws OperationCanceledException {
-		switch (replaceQuery.doQuery(project)) {
+	private boolean queryReplace(IProject project) throws OperationCanceledException {
+		switch (fReplaceQuery.doQuery(project)) {
 			case IReplaceQuery.CANCEL :
 				throw new OperationCanceledException();
 			case IReplaceQuery.NO :
@@ -236,11 +197,21 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 
 	private void setProjectNatures(
 		IProject project,
+		IFeatureModel model,
 		IProgressMonitor monitor)
 		throws CoreException {
 		IProjectDescription desc = project.getDescription();
-		desc.setNatureIds(
-			new String[] { JavaCore.NATURE_ID, PDE.FEATURE_NATURE });
+		if (model.getFeature().getInstallHandler() != null) {
+			desc.setNatureIds(new String[] { JavaCore.NATURE_ID, PDE.FEATURE_NATURE });
+			IJavaProject jProject = JavaCore.create(project);
+			jProject.setRawClasspath(
+				new IClasspathEntry[] {
+					JavaCore.newContainerEntry(
+						new Path("org.eclipse.jdt.launching.JRE_CONTAINER"))},
+				monitor);
+		} else {
+			desc.setNatureIds(new String[] { PDE.FEATURE_NATURE });
+		}
 		project.setDescription(desc, new SubProgressMonitor(monitor, 1));
 	}
 
