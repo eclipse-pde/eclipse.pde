@@ -199,34 +199,30 @@ public class ProductExportJob extends FeatureExportJob {
 				}	
 			}		
 		}
-		// add config.ini
-		buffer.append("absolute:file:");
-		buffer.append(fFeatureLocation);
-		buffer.append("/configuration/config.ini");
+		// add content of temp folder (.eclipseproduct, configuration/config.ini)
+		buffer.append("/temp/");
 		buffer.append(",");
-
-		// add .eclipseproduct
-		buffer.append("absolute:file:");
-		buffer.append(fFeatureLocation);
-		buffer.append("/.eclipseproduct");
 
 		return buffer.toString();
 	}
 	
 	private void createEclipseProductFile() {
+		File dir = new File(fFeatureLocation, "temp");
+		if (!dir.exists() || !dir.isDirectory())
+			dir.mkdirs();
 		Properties properties = new Properties();
 		properties.put("name", fProduct.getName());
 		properties.put("id", fProduct.getId());		
 		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(getBrandingPlugin());
 		if (model != null)
 			properties.put("version", model.getPluginBase().getVersion());
-		save(new File(fFeatureLocation, ".eclipseproduct"), properties, "Eclipse Product File");
+		save(new File(fFeatureLocation, "temp/.eclipseproduct"), properties, "Eclipse Product File");
 	}
 	
 	private void createConfigIniFile() {
-		File file = new File(fFeatureLocation, "configuration");
-		if (!file.exists())
-			file.mkdirs();
+		File dir = new File(fFeatureLocation, "temp/configuration");
+		if (!dir.exists() || !dir.isDirectory())
+			dir.mkdirs();
 
 		Properties properties = new Properties();
 		File custom = getCustomIniFile();
@@ -245,7 +241,7 @@ public class ProductExportJob extends FeatureExportJob {
 				}
 			}
 		} else {
-			properties.put("osgi.framework", "platform:/base/plugins/org.eclipse.osgi");
+			//properties.put("osgi.framework", "platform:/base/plugins/org.eclipse.osgi");
 			String location = getSplashLocation();
 			if (location != null)
 				properties.put("osgi.splashPath", location);
@@ -257,7 +253,7 @@ public class ProductExportJob extends FeatureExportJob {
 			}
 			properties.setProperty("osgi.bundles.defaultStartLevel", "4");
 		}
-		save(new File(file, "config.ini"), properties, "Eclipse Runtime Configuration File");
+		save(new File(dir, "config.ini"), properties, "Eclipse Runtime Configuration File");
 	}
 	
 	private String getSplashLocation() {
