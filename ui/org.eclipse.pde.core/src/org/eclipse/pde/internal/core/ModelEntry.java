@@ -88,7 +88,7 @@ public class ModelEntry extends PlatformObject {
 		return classpathContainer;
 	}
 	public void updateClasspathContainer(boolean force) throws CoreException {
-		if (workspaceModel == null)
+		if (workspaceModel == null || !usesContainers())
 			return;
 		if (force)
 			classpathContainer = null;
@@ -101,6 +101,20 @@ public class ModelEntry extends PlatformObject {
 			new IClasspathContainer[] { container };
 		IPath path = new Path(PDECore.CLASSPATH_CONTAINER_ID);
 		JavaCore.setClasspathContainer(path, javaProjects, containers, null);
+	}
+
+	private boolean usesContainers() throws CoreException {
+		IProject project = workspaceModel.getUnderlyingResource().getProject();
+		if (project.hasNature(JavaCore.NATURE_ID)) {
+			IClasspathEntry[] entries = JavaCore.create(project).getRawClasspath();
+			for (int i = 0; i < entries.length; i++) {
+				IClasspathEntry entry = entries[i];
+				if (entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER
+					&& entry.getPath().equals(new Path(PDECore.CLASSPATH_CONTAINER_ID)))
+					return true;
+			}
+		}
+		return false;
 	}
 
 	public static void updateUnknownClasspathContainer(IJavaProject javaProject)

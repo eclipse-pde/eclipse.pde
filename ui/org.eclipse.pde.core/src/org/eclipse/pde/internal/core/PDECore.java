@@ -32,7 +32,7 @@ import org.eclipse.pde.core.plugin.IFragment;
 import org.eclipse.pde.core.plugin.IMatchRules;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
-import org.eclipse.pde.core.plugin.IPluginModel;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
@@ -102,36 +102,6 @@ public class PDECore extends Plugin {
 			IPluginExtensionPoint point = points[i];
 			if (point.getId().equals(pointID))
 				return point;
-		}
-		return null;
-	}
-	private IPlugin findPlugin(IPluginModel[] models, String id) {
-		for (int i = 0; i < models.length; i++) {
-			IPluginModel model = models[i];
-			if (model.isEnabled() == false)
-				continue;
-			IPlugin plugin = model.getPlugin();
-			String pid = plugin.getId();
-			if (pid != null && pid.equals(id))
-				return plugin;
-		}
-		return null;
-	}
-	private IPlugin findPlugin(
-		IPluginModel[] models,
-		String id,
-		String version,
-		int match) {
-
-		for (int i = 0; i < models.length; i++) {
-			IPluginModel model = models[i];
-			if (model.isEnabled() == false)
-				continue;
-			IPlugin plugin = model.getPlugin();
-			String pid = plugin.getId();
-			String pversion = plugin.getVersion();
-			if (compare(id, version, pid, pversion, match))
-				return plugin;
 		}
 		return null;
 	}
@@ -218,13 +188,10 @@ public class PDECore extends Plugin {
 		return findPlugin(id, null, IMatchRules.NONE);
 	}
 	public IPlugin findPlugin(String id, String version, int match) {
-		WorkspaceModelManager manager = getWorkspaceModelManager();
-		IPlugin plugin =
-			findPlugin(manager.getWorkspacePluginModels(), id, version, match);
-		if (plugin != null)
-			return plugin;
-		ExternalModelManager exmanager = getExternalModelManager();
-		return findPlugin(exmanager.getModels(), id, version, match);
+		IPluginModelBase model = modelManager.findPlugin(id, version, match);
+		if (model != null && model.isEnabled() && model.getPluginBase() instanceof IPlugin)
+			return (IPlugin)model.getPluginBase();
+		return null;
 	}
 	
 	public IFeature findFeature(String id) {
