@@ -36,6 +36,20 @@ public class SourceLocationManager {
 	private SourceLocation[] getLocations(ArrayList list) {
 		return (SourceLocation[]) list.toArray(new SourceLocation[list.size()]);
 	}
+	
+	public SourceLocation[] getAllLocations() {
+		initialize();
+		int size = userLocations.size() + extensionLocations.size();
+		SourceLocation[] array = new SourceLocation[size];
+		for (int i=0; i<extensionLocations.size(); i++) {
+			array[i] = (SourceLocation)extensionLocations.get(i);
+		}
+		int offset = extensionLocations.size();
+		for (int i=0; i<userLocations.size(); i++) {
+			array[i+offset] = (SourceLocation)userLocations.get(i);
+		}
+		return array;
+	}
 
 	public IPath findSourceArchive(IPath libraryPath) {
 		initialize();

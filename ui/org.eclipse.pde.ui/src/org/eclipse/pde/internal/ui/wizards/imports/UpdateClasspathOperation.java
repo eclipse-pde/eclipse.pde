@@ -168,7 +168,7 @@ public class UpdateClasspathOperation implements IWorkspaceRunnable {
 		} else {
 			// add fragment libraries
 			IPlugin plugin = ((IPluginModel) model).getPlugin();
-			addFragmentLibraries(plugin, entries);
+			//addFragmentLibraries(plugin, entries);
 		}
 		// add the prerequisites
 		IPluginBase plugin = ((IPluginModelBase) model).getPluginBase();

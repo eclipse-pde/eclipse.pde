@@ -65,17 +65,19 @@
             class="org.eclipse.pde.internal.ui.preferences.TargetEnvironmentPreferencePage"
             id="org.eclipse.pde.ui.TargetEnvironmentPreferencePage">
       </page>
-      <page
-            name="%preferences.buildpath.name"
-            category="org.eclipse.pde.ui.MainPreferencePage"
-            class="org.eclipse.pde.internal.ui.preferences.BuildpathPreferencePage"
-            id="org.eclipse.pde.ui.BuildpathPreferencePage">
-      </page>
+<!--
       <page
             name="%preferences.source.name"
             category="org.eclipse.pde.ui.MainPreferencePage"
             class="org.eclipse.pde.internal.ui.preferences.SourcePreferencePage"
             id="org.eclipse.pde.ui.SourcePreferencePage">
+      </page>
+-->
+      <page
+            name="%preferences.buildpath.name"
+            category="org.eclipse.pde.ui.MainPreferencePage"
+            class="org.eclipse.pde.internal.ui.preferences.BuildpathPreferencePage"
+            id="org.eclipse.pde.ui.BuildpathPreferencePage">
       </page>
    </extension>
    <extension
@@ -825,11 +827,6 @@
             class="org.eclipse.pde.internal.ui.wizards.templates.HelpTemplate"
             id="org.eclipse.pde.ui.templates.help">
       </template>
-   </extension>
-   
-   <extension point="org.eclipse.pde.ui.source">
-      <location path="xxx/src"/>
-      <location path="yyy/src"/>
    </extension>
 
 </plugin>
