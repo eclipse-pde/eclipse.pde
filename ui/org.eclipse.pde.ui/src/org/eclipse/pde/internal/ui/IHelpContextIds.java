@@ -14,16 +14,19 @@ package org.eclipse.pde.internal.ui;
  *
  */
 public interface IHelpContextIds {
-	public static final String PREFIX = "org.eclipse.pde.doc.user" + "."; //$NON-NLS-1$ //$NON-NLS-2$
+	public static final String PREFIX = "org.eclipse.pde.doc.user."; //$NON-NLS-1$
 	
 	// Preference pages
 	public static final String MAIN_PREFERENCE_PAGE = PREFIX + "main_preference_page"; //$NON-NLS-1$
-    public static final String BUILDPATH_PREFERENCE_PAGE = PREFIX + "buildpath_preference_page"; //$NON-NLS-1$
+    public static final String BUILD_OPTIONS_PREFERENCE_PAGE = PREFIX + "build_options_preference_page"; //$NON-NLS-1$
     public static final String EDITOR_PREFERENCE_PAGE = PREFIX + "editor_preference_page"; //$NON-NLS-1$
 	public static final String SOURCE_PREFERENCE_PAGE = PREFIX + "source_preference_page"; //$NON-NLS-1$
 	public static final String COMPILERS_PREFERENCE_PAGE = PREFIX + "compilers_preference_page"; //$NON-NLS-1$
 	public static final String TARGET_ENVIRONMENT_PREFERENCE_PAGE = PREFIX + "target_environment_preference_page"; //$NON-NLS-1$
  	public static final String TARGET_PLATFORM_PREFERENCE_PAGE = PREFIX + "target_platform_preference_page"; //$NON-NLS-1$
+ 	
+ 	// Property Pages
+ 	public static final String SELFHOSTING_PROPERTY_PAGE = PREFIX + "selfhosting_property_page"; //$NON-NLS-1$
  	
  	// Views
  	public static final String PLUGINS_VIEW = PREFIX + "plugins_view";	 //$NON-NLS-1$
@@ -31,20 +34,29 @@ public interface IHelpContextIds {
  	
  	// Wizard Pages
  	public static final String NEW_PROJECT_STRUCTURE_PAGE = PREFIX + "new_project_structure_page"; //$NON-NLS-1$
- 	public static final String NEW_FRAGMENT_STRUCTURE_PAGE = PREFIX + "new_fragment_structure_page"; //$NON-NLS-1$
- 	public static final String NEW_PROJECT_CODE_GEN_PAGE = PREFIX + "new_project_code_gen_page"; //$NON-NLS-1$
- 	public static final String NEW_FRAGMENT_CODE_GEN_PAGE = PREFIX + "new_fragment_code_gen_page"; //$NON-NLS-1$
  	public static final String NEW_PROJECT_REQUIRED_DATA = PREFIX + "new_project_required_data"; //$NON-NLS-1$
+ 	public static final String NEW_PROJECT_CODE_GEN_PAGE = PREFIX + "new_project_code_gen_page"; //$NON-NLS-1$
+
+ 	public static final String NEW_FRAGMENT_STRUCTURE_PAGE = PREFIX + "new_fragment_structure_page"; //$NON-NLS-1$
  	public static final String NEW_FRAGMENT_REQUIRED_DATA = PREFIX + "new_fragment_required_data"; //$NON-NLS-1$
  	
+ 	public static final String NEW_FEATURE_MAIN = PREFIX + "new_feature_main"; //$NON-NLS-1$
  	public static final String NEW_FEATURE_DATA = PREFIX + "new_feature_data"; //$NON-NLS-1$
  	public static final String NEW_FEATURE_REFERENCED_PLUGINS = PREFIX + "new_feature_referenced_plugins"; //$NON-NLS-1$
  	
+ 	public static final String NEW_PATCH_MAIN = PREFIX + "new_patch_main"; //$NON-NLS-1$
+ 	public static final String NEW_PATCH_REQUIRED_DATA = PREFIX + "new_patch_data"; //$NON-NLS-1$
+ 	public static final String NEW_PATCH_REFERENCED_PLUGINS = PREFIX + "new_patch_referenced_plugins"; //$NON-NLS-1$
+ 
+ 	public static final String NEW_SITE_MAIN = PREFIX + "new_site_main"; //$NON-NLS-1$
+ 	
+ 	public static final String MIGRATE_3_0 = PREFIX + "migrate_3_0"; //$NON-NLS-1$
  	public static final String CONVERTED_PROJECTS = PREFIX + "converted_projects"; //$NON-NLS-1$
  	public static final String NEW_SCHEMA = PREFIX + "new_schema"; //$NON-NLS-1$
  	
  	public static final String PLUGIN_IMPORT_FIRST_PAGE = PREFIX + "plugin_import_first_page"; //$NON-NLS-1$
  	public static final String PLUGIN_IMPORT_SECOND_PAGE = PREFIX + "plugin_import_second_page"; //$NON-NLS-1$
+ 	public static final String PLUGIN_IMPORT_EXPRESS_PAGE = PREFIX + "plugin_import_express_page"; //$NON-NLS-1$
  	
 	public static final String FEATURE_IMPORT_FIRST_PAGE = PREFIX + "feature_import_first_page"; //$NON-NLS-1$
 	public static final String FEATURE_IMPORT_SECOND_PAGE = PREFIX + "feature_import_second_page"; //$NON-NLS-1$
@@ -78,13 +90,12 @@ public interface IHelpContextIds {
 	
 	// dialogs
 	public static final String FRAGMENT_ADD_TARGET = PREFIX + "fragment_add_target"; //$NON-NLS-1$
-	public static final String BUILD_ADD_VARIABLE = PREFIX + "build_add_variable"; //$NON-NLS-1$
 	public static final String SCHEMA_TYPE_RESTRICTION = PREFIX + "schema_type_restriction"; //$NON-NLS-1$
 	public static final String SEARCH_PAGE = PREFIX + "search_page"; //$NON-NLS-1$
 	public static final String LAUNCHER_BASIC = PREFIX + "launcher_basic"; //$NON-NLS-1$
 	public static final String LAUNCHER_ADVANCED = PREFIX + "launcher_advanced"; //$NON-NLS-1$
 	public static final String LAUNCHER_TRACING = PREFIX + "launcher_tracing"; //$NON-NLS-1$
-	public static final String SOURCE_ATTACHMENT = PREFIX + "source_attachment"; //$NON-NLS-1$
+	public static final String LAUNCHER_CONFIGURATION = PREFIX + "launcher_configuration"; //$NON-NLS-1$
 	
 	// Generic source page
 	public static final String MANIFEST_SOURCE_PAGE = PREFIX + "manifest_source_page"; //$NON-NLS-1$

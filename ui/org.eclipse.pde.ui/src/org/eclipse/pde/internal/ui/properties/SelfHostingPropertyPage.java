@@ -27,6 +27,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.*;
+import org.eclipse.ui.help.*;
 import org.osgi.service.prefs.*;
 import org.osgi.service.prefs.Preferences;
 
@@ -116,6 +117,14 @@ public class SelfHostingPropertyPage extends PropertyPage {
 
 		Dialog.applyDialogFont(composite);
 		return composite;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.SELFHOSTING_PROPERTY_PAGE);
 	}
 	
 	private void initialize() {

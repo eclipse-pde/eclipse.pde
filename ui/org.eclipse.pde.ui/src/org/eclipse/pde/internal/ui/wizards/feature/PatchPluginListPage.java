@@ -12,7 +12,6 @@
 package org.eclipse.pde.internal.ui.wizards.feature;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.resource.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.*;
@@ -36,15 +35,6 @@ public class PatchPluginListPage extends BasePluginListPage {
 	private CheckboxTableViewer pluginViewer;
 
 	/**
-	 * @param pageName
-	 */
-	public PatchPluginListPage(String pageName) {
-		super(pageName);
-		setTitle(PDEPlugin.getResourceString(PAGE_TITLE));
-		setDescription(PDEPlugin.getResourceString(PAGE_DESC));
-	}
-
-	/**
 	 * @param provider
 	 */
 	public PatchPluginListPage(IProjectProvider provider) {
@@ -52,16 +42,6 @@ public class PatchPluginListPage extends BasePluginListPage {
 		this.provider = provider;
 		setTitle(PDEPlugin.getResourceString(PAGE_TITLE));
 		setDescription(PDEPlugin.getResourceString(PAGE_DESC));
-	}
-
-	/**
-	 * @param pageName
-	 * @param title
-	 * @param titleImage
-	 */
-	public PatchPluginListPage(String pageName, String title,
-			ImageDescriptor titleImage) {
-		super(pageName, title, titleImage);
 	}
 
 	class PluginContentProvider extends DefaultContentProvider
@@ -99,7 +79,7 @@ public class PatchPluginListPage extends BasePluginListPage {
 		setControl(container);
 		Dialog.applyDialogFont(container);
 		WorkbenchHelp.setHelp(container,
-				IHelpContextIds.NEW_FEATURE_REFERENCED_PLUGINS);
+				IHelpContextIds.NEW_PATCH_REFERENCED_PLUGINS);
 	}
 
 	private Object[] getPluginModels() {

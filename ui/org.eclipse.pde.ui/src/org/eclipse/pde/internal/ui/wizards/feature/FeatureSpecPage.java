@@ -13,7 +13,9 @@ package org.eclipse.pde.internal.ui.wizards.feature;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.*;
+import org.eclipse.ui.help.*;
 
 public class FeatureSpecPage extends BaseFeatureSpecPage {
 
@@ -24,6 +26,14 @@ public class FeatureSpecPage extends BaseFeatureSpecPage {
 		super(mainPage, false);
 		setTitle(PDEPlugin.getResourceString(PAGE_TITLE));
 		setDescription(PDEPlugin.getResourceString(PAGE_DESC));
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.wizards.feature.BaseFeatureSpecPage#createControl(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.NEW_FEATURE_DATA);
 	}
 
 	protected void initialize() {

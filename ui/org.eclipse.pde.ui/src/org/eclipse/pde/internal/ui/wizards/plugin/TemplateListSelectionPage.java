@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.wizards.plugin;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.IWizardNode;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.elements.ElementList;
 import org.eclipse.pde.internal.ui.wizards.*;
@@ -21,6 +22,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.*;
 
 
 public class TemplateListSelectionPage extends WizardListSelectionPage
@@ -62,6 +64,14 @@ public class TemplateListSelectionPage extends WizardListSelectionPage
 		fContentPage = page;
 		setTitle(PDEPlugin.getResourceString("WizardListSelectionPage.title")); //$NON-NLS-1$
 		setDescription(PDEPlugin.getResourceString("WizardListSelectionPage.desc")); //$NON-NLS-1$
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.wizards.WizardListSelectionPage#createControl(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.NEW_PROJECT_CODE_GEN_PAGE);
 	}
 	
 	public void createAbove(Composite container, int span) {

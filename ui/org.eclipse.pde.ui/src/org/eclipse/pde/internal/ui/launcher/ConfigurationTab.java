@@ -27,6 +27,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.*;
 
 /**
  * @author melhem
@@ -225,6 +226,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 		});
 		Dialog.applyDialogFont(container);
 		setControl(container);
+		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.LAUNCHER_CONFIGURATION);
 	}
 	
 	private void createViewer(Composite container) {
