@@ -56,6 +56,7 @@ public class PointUsageSection extends TableSection {
 			setDescription(PDEPlugin.getResourceString(SECTION_FDESC));
 		else
 			setDescription(PDEPlugin.getResourceString(SECTION_DESC));
+		getTablePart().setEditable(false);
 	}
 
 	private void addReferencingPlugins(

@@ -14,13 +14,15 @@ public class FormBrowser {
 	FormEngine engine;
 	String text;
 	FormWidgetFactory factory;
+	int style;
 	
-	public FormBrowser() {
+	public FormBrowser(int style) {
+		this.style = style;
 	}
 
 	public void createControl(Composite parent) {
 		factory = new FormWidgetFactory(parent.getDisplay());
-		scomp = new ScrolledComposite(parent, SWT.BORDER);
+		scomp = new ScrolledComposite(parent, style);
 		scomp.setBackground(factory.getBackgroundColor());
 		engine = factory.createFormEngine(scomp);
 		engine.setMarginWidth(2);
@@ -56,6 +58,10 @@ public class FormBrowser {
 	private void updateSize() {
 		Rectangle ssize = scomp.getClientArea();
 		int swidth = ssize.width;
+		ScrollBar vbar = scomp.getVerticalBar();
+		if (vbar!=null) {
+			swidth -= vbar.getSize().x;
+		}
 		Point size = engine.computeSize(swidth, SWT.DEFAULT, true);
 		engine.setSize(size);
 	}

@@ -162,7 +162,25 @@
    </extension>
    <extension
          point="org.eclipse.pde.projectGenerators">
-<!--
+      <wizard
+            name="%projectGenerators.defaultPlugin.name"
+            icon="icons/full/ctool16/defcon_wiz.gif"
+            class="org.eclipse.pde.internal.wizards.templates.PluginCodeGeneratorWizard"
+            id="org.eclipse.pde.projectGenerators.default">
+         <description>
+            %projectGenerators.defaultPlugin.description
+         </description>
+      </wizard>
+      <wizard
+            fragmentWizard="true"
+            name="%projectGenerators.defaultFragment.name"
+            icon="icons/full/ctool16/defcon_wiz.gif"
+            class="org.eclipse.pde.internal.wizards.templates.PluginCodeGeneratorWizard"
+            id="org.eclipse.pde.projectGenerators.defaultFragment">
+         <description>
+            %projectGenerators.defaultFragment.description
+         </description>
+      </wizard>
       <wizard
             name="Empty Template Wizard"
             icon="icons/full/ctool16/defcon_wiz.gif"
@@ -188,26 +206,6 @@
             id="org.eclipse.pde.projectGenerators.view">
          <description>
             %projectGenerators.view.description
-         </description>
-      </wizard>
--->
-      <wizard
-            name="%projectGenerators.defaultPlugin.name"
-            icon="icons/full/ctool16/defcon_wiz.gif"
-            class="org.eclipse.pde.internal.wizards.templates.PluginCodeGeneratorWizard"
-            id="org.eclipse.pde.projectGenerators.default">
-         <description>
-            %projectGenerators.defaultPlugin.description
-         </description>
-      </wizard>
-      <wizard
-            fragmentWizard="true"
-            name="%projectGenerators.defaultFragment.name"
-            icon="icons/full/ctool16/defcon_wiz.gif"
-            class="org.eclipse.pde.internal.wizards.templates.PluginCodeGeneratorWizard"
-            id="org.eclipse.pde.projectGenerators.defaultFragment">
-         <description>
-            %projectGenerators.defaultFragment.description
          </description>
       </wizard>
    </extension>

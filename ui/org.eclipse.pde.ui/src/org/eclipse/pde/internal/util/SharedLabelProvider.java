@@ -21,10 +21,12 @@ import java.net.*;
 public class SharedLabelProvider
 	extends LabelProvider
 	implements ITableLabelProvider {
-	public static final int F_ERROR = 0x1;
-	public static final int F_WARNING = 0x2;
-	public static final int F_EXPORT = 0x4;
-	public static final int F_EDIT = 0x8;
+	public static final int F_ERROR = 1;
+	public static final int F_WARNING = 2;
+	public static final int F_EXPORT = 4;
+	public static final int F_EDIT = 8;
+	public static final int F_BINARY = 16;
+	public static final int F_EXTERNAL = 32;
 	Hashtable images = new Hashtable();
 	ArrayList consumers = new ArrayList();
 
@@ -73,10 +75,12 @@ public class SharedLabelProvider
 		}
 		ImageDescriptor[] lowerLeft = getLowerLeftOverlays(flags);
 		ImageDescriptor[] upperRight = getUpperRightOverlays(flags);
+		ImageDescriptor[] lowerRight = getLowerRightOverlays(flags);
+		ImageDescriptor[] upperLeft = getUpperLeftOverlays(flags);
 		OverlayIcon compDesc =
 			new OverlayIcon(
 				baseDesc,
-				new ImageDescriptor[][] { upperRight, null, lowerLeft, null });
+				new ImageDescriptor[][] { upperRight, lowerRight, lowerLeft, upperLeft });
 		return compDesc.createImage();
 
 	}
@@ -94,6 +98,18 @@ public class SharedLabelProvider
 			return new ImageDescriptor[] { PDEPluginImages.DESC_EXPORT_CO };
 		if ((flags & F_EDIT) != 0)
 			return new ImageDescriptor[] { PDEPluginImages.DESC_DOC_CO };
+		return null;
+	}
+	
+	private ImageDescriptor[] getLowerRightOverlays(int flags) {
+		return null;
+	}
+	
+	private ImageDescriptor[] getUpperLeftOverlays(int flags) {
+		if ((flags & F_EXTERNAL) != 0)
+			return new ImageDescriptor[] { PDEPluginImages.DESC_EXTERNAL_CO };
+		if ((flags & F_BINARY) != 0)
+			return new ImageDescriptor[] { PDEPluginImages.DESC_BINARY_CO };
 		return null;
 	}
 

@@ -19,8 +19,8 @@ public abstract class WizardTreeSelectionPage extends BaseWizardSelectionPage im
 	private String baseCategory;
 	private TableViewer wizardSelectionViewer;
 
-	private final static int        SIZING_LISTS_HEIGHT = 200;
-	private final static int        SIZING_DESC_HEIGHT = 64;
+	private final static int        SIZING_LISTS_HEIGHT = 150;
+	private final static int        SIZING_DESC_HEIGHT = 100;
 	private final static int        SIZING_LISTS_WIDTH = 150;
 	private WizardCollectionElement wizardCategories;
 

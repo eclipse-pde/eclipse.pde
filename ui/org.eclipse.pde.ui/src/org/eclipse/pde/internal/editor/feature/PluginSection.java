@@ -69,6 +69,7 @@ public class PluginSection
 		super(page, new String[] { PDEPlugin.getResourceString(KEY_NEW)});
 		setHeaderText(PDEPlugin.getResourceString(PLUGIN_TITLE));
 		setDescription(PDEPlugin.getResourceString(PLUGIN_DESC));
+		getTablePart().setEditable(false);
 	}
 
 	public void commitChanges(boolean onSave) {

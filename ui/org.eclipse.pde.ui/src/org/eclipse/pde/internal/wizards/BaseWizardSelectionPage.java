@@ -21,7 +21,7 @@ public abstract class BaseWizardSelectionPage
 public BaseWizardSelectionPage(String name, String label) {
 	super(name);
 	this.label = label;
-	descriptionBrowser = new FormBrowser();
+	descriptionBrowser = new FormBrowser(SWT.BORDER | SWT.V_SCROLL);
 	descriptionBrowser.setText("");
 }
 public void createDescriptionIn(Composite composite) {

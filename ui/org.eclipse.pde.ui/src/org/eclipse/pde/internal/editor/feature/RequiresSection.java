@@ -60,6 +60,7 @@ public class RequiresSection
 		super(page, new String[] { PDEPlugin.getResourceString(KEY_COMPUTE)});
 		setHeaderText(PDEPlugin.getResourceString(KEY_TITLE));
 		setDescription(PDEPlugin.getResourceString(KEY_DESC));
+		getTablePart().setEditable(false);
 	}
 
 	public void commitChanges(boolean onSave) {
