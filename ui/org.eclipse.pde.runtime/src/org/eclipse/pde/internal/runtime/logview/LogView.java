@@ -625,8 +625,11 @@ public class LogView extends ViewPart implements ILogListener {
 						deleteLogAction.setEnabled(
 							inputFile.exists()
 								&& inputFile.equals(Platform.getLogFileLocation().toFile()));
-						if (activate && activateViewAction.isChecked())
-							PDERuntimePlugin.getActivePage().activate(view);
+						if (activate && activateViewAction.isChecked()) {
+							IWorkbenchPage page = PDERuntimePlugin.getActivePage();
+							if (page != null)
+								page.activate(view);
+						}
 					}
 				}
 			});
