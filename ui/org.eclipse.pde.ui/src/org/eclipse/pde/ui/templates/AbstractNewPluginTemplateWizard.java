@@ -27,7 +27,6 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard
 		implements
 			IPluginContentWizard {
 	private static final String KEY_WTITLE = "PluginCodeGeneratorWizard.title";
-	private boolean fragment;
 	private IFieldData data;
 	/**
 	 * Creates a new template wizard.
