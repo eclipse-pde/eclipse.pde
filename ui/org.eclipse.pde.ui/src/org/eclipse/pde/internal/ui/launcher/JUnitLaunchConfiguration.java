@@ -9,11 +9,13 @@ import java.io.*;
 import java.util.*;
 
 import org.eclipse.core.boot.*;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.internal.junit.launcher.JUnitBaseLaunchConfiguration;
 import org.eclipse.jdt.launching.*;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.IWorkspaceModelManager;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -371,5 +373,30 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		}
 		return UI_APPLICATION;
 	}
+	
+	public static String getApplicationName(IProject project) {
+		IModel model = PDECore.getDefault().getWorkspaceModelManager().getWorkspaceModel(project);
+		HashSet set = new HashSet();
+		if (model != null && model instanceof IPluginModelBase) {
+			addDependency(((IPluginModelBase)model).getPluginBase().getId(), set);
+		}
+		return set.contains("org.eclipse.swt") ? UI_APPLICATION : CORE_APPLICATION;
+			
+	}
+	
+	private static void addDependency(String id, HashSet set) {
+		if (!set.add(id))
+			return;
+		PluginModelManager manager = PDECore.getDefault().getModelManager();
+		ModelEntry entry = manager.findEntry(id);
+		if (entry != null) {
+			IPluginBase plugin = entry.getActiveModel().getPluginBase();
+			IPluginImport[] imports = plugin.getImports();
+			for (int i = 0; i < imports.length; i++) {
+				addDependency(imports[i].getId(), set);
+			}
+		}
+	}
+	
 
 }

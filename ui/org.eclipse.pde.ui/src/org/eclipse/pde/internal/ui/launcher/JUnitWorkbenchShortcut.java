@@ -33,7 +33,7 @@ public class JUnitWorkbenchShortcut extends JUnitLaunchShortcut {
 		try {
 			ILaunchConfigurationType configType= getJUnitLaunchConfigType();
 			ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, getLaunchManager().generateUniqueLaunchConfigurationNameFrom(name));
-			wc.setAttribute(ILauncherSettings.APPLICATION, getApplicationName());
+			wc.setAttribute(ILauncherSettings.APPLICATION, JUnitLaunchConfiguration.getApplicationName(project.getProject()));
 			wc.setAttribute(ILauncherSettings.LOCATION + "0", getDefaultWorkspaceLocation());
 			wc.setAttribute(ILauncherSettings.VMARGS, "");
 			wc.setAttribute(ILauncherSettings.PROGARGS, LauncherUtils.getDefaultProgramArguments());
@@ -55,10 +55,6 @@ public class JUnitWorkbenchShortcut extends JUnitLaunchShortcut {
 			PDEPlugin.log(ce);
 		}
 		return config;
-	}
-	
-	protected String getApplicationName() {
-		return "org.eclipse.pde.junit.runtime.uitestapplication";
 	}
 	
 	protected String getDefaultWorkspaceLocation() {
