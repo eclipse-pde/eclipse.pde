@@ -15,8 +15,6 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.ant.*;
-import org.eclipse.pde.internal.build.ant.FileSet;
-import org.eclipse.pde.internal.build.ant.ZipFileSet;
 
 public class PackagingConfigScriptGenerator extends AssembleConfigScriptGenerator {
 	private Properties packagingProperties;
@@ -40,13 +38,13 @@ public class PackagingConfigScriptGenerator extends AssembleConfigScriptGenerato
 		script.printTargetDeclaration(TARGET_MAIN, null, null, null, null);
 
 		if (BundleHelper.getDefault().isDebugging()) {
-			script.printEchoTask("baseDir: " + getPropertyFormat(PROPERTY_BASEDIR));
-			script.printEchoTask("tmpDir: " + getPropertyFormat("tempDirectory"));
-			script.printEchoTask("collectingFolder: " + getPropertyFormat(PROPERTY_COLLECTING_FOLDER));
-			script.printEchoTask("archivePrefix: " + getPropertyFormat(PROPERTY_ARCHIVE_PREFIX));
-			script.println("<echo message=\"eclipse.base: ${eclipse.base}\"/>");
-			script.println("<echo message=\"tmp_dir: ${assemblyTempDir}\"/>");
-			script.println("<echo message=\"destination.temp.folder ${destination.temp.folder}\"/>");
+			script.printEchoTask(PROPERTY_BASEDIR + ": " + getPropertyFormat(PROPERTY_BASEDIR)); //$NON-NLS-1$
+			script.printEchoTask("tmpDir: " + getPropertyFormat("tempDirectory")); //$NON-NLS-1$//$NON-NLS-2$
+			script.printEchoTask(PROPERTY_COLLECTING_FOLDER + ": " + getPropertyFormat(PROPERTY_COLLECTING_FOLDER)); //$NON-NLS-1$
+			script.printEchoTask(PROPERTY_ARCHIVE_PREFIX + ": " + getPropertyFormat(PROPERTY_ARCHIVE_PREFIX)); //$NON-NLS-1$
+			script.printEchoTask(PROPERTY_ECLIPSE_BASE + ": " + getPropertyFormat(PROPERTY_ECLIPSE_BASE)); //$NON-NLS-1$
+			script.printEchoTask(PROPERTY_ASSEMBLY_TMP + ": " + getPropertyFormat(PROPERTY_ASSEMBLY_TMP)); //$NON-NLS-1$
+			script.printEchoTask(PROPERTY_DESTINATION_TEMP_FOLDER + ": " + getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER)); //$NON-NLS-1$
 		}
 		Map parameters = new HashMap(1);
 		parameters.put("assembleScriptName", filename); //$NON-NLS-1$
@@ -57,13 +55,13 @@ public class PackagingConfigScriptGenerator extends AssembleConfigScriptGenerato
 
 	private void generateAssembleTarget() throws CoreException {
 		script.printTargetDeclaration("assemble", null, null, null, null); //$NON-NLS-1$
-		if (output.equalsIgnoreCase("tarGz")) {
+		if (output.equalsIgnoreCase("tarGz")) { //$NON-NLS-1$
 			generateAntTarTarget();
-		} else if (output.equalsIgnoreCase("antZip")) {
+		} else if (output.equalsIgnoreCase("antZip")) { //$NON-NLS-1$
 			generateAntZipTarget();
-		} else if (output.equalsIgnoreCase("folder")) {
+		} else if (output.equalsIgnoreCase("folder")) { //$NON-NLS-1$
 			generateFolderTarget();
-		} else {	//By default use zip.exe
+		} else { //By default use zip.exe
 			generateZipRootFiles();
 			generateZip();
 			List args = new ArrayList(2);
@@ -234,30 +232,30 @@ public class PackagingConfigScriptGenerator extends AssembleConfigScriptGenerato
 		for (int i = 0; i < plugins.length; i++) {
 			Path pluginLocation = new Path(plugins[i].getLocation());
 			boolean isFolder = isFolder(pluginLocation);
-			if (isFolder) { 
+			if (isFolder) {
 				script.printCopyTask(null, getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + pluginLocation.lastSegment(), new FileSet[] {new FileSet(pluginLocation.toOSString(), null, null, null, null, null, null)}, false);
 			} else {
-				script.printCopyTask(pluginLocation .toOSString(), getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + pluginLocation.lastSegment(), null, false);
+				script.printCopyTask(pluginLocation.toOSString(), getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + pluginLocation.lastSegment(), null, false);
 			}
 		}
-		
+
 		for (int i = 0; i < features.length; i++) {
 			IPath featureLocation = new Path(features[i].getURL().getPath()); // Here we assume that all the features are local
 			featureLocation = featureLocation.removeLastSegments(1);
 			script.printCopyTask(null, getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + featureLocation.lastSegment(), new FileSet[] {new FileSet(featureLocation.toOSString(), null, null, null, null, null, null)}, false);
 		}
-		
-		
+
 		for (int i = 0; i < rootFiles.length; i++) {
-			IPath filePath  = new Path(rootFiles[i]);
-			script.printCopyTask(filePath .toOSString(), getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + getPropertyFormat(PROPERTY_ARCHIVE_PREFIX), null, false);
+			IPath filePath = new Path(rootFiles[i]);
+			script.printCopyTask(filePath.toOSString(), getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + getPropertyFormat(PROPERTY_ARCHIVE_PREFIX), null, false);
 		}
-		
+
 		for (int i = 0; i < rootDirs.length; i++) {
-			IPath dirPath  = new Path(rootDirs[i]);
-			script.printCopyTask(null, getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + dirPath.lastSegment(), new FileSet[] {new FileSet(dirPath .toOSString(), null, null, null, null, null, null)}, false);
+			IPath dirPath = new Path(rootDirs[i]);
+			script.printCopyTask(null, getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + dirPath.lastSegment(), new FileSet[] {new FileSet(dirPath.toOSString(), null, null, null, null, null, null)}, false);
 		}
 	}
+
 	public void rootFiles(String[] rootFiles) {
 		this.rootFiles = rootFiles;
 	}

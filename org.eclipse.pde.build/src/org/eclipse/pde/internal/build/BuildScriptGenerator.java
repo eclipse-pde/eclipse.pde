@@ -124,7 +124,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 			generator.setBuildingOSGi(isBuildingOSGi());
 			generator.generate();
 
-			if (generateAssembleScript = true) {
+			if (generateAssembleScript == true) {
 				AssembleScriptGenerator assembler = new AssembleScriptGenerator(workingDirectory, assemblageInformation, featureId, null);
 				assembler.generate();
 			}

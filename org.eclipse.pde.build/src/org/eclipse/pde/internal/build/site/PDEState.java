@@ -85,7 +85,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 					result[i] = classpathEntries[i].getValue();
 				}
 			}
-		} catch(BundleException e) {
+		} catch (BundleException e) {
 			//Ignore
 		}
 		return result;
@@ -112,9 +112,9 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			return false;
 		try {
 			String symbolicHeader = (String) manifest.get(Constants.BUNDLE_SYMBOLICNAME);
-			if (symbolicHeader != null && ManifestElement.parseHeader(Constants.BUNDLE_SYMBOLICNAME, symbolicHeader)[0].getValue().equals("org.eclipse.osgi")) {
+			if (symbolicHeader != null && ManifestElement.parseHeader(Constants.BUNDLE_SYMBOLICNAME, symbolicHeader)[0].getValue().equals("org.eclipse.osgi")) { //$NON-NLS-1$
 				//TODO We need to handle the special case of the osgi bundle for whose bundle-classpath is specified in the eclipse.properties file in the osgi folder
-				manifest.put(Constants.BUNDLE_CLASSPATH, "core.jar, console.jar, osgi.jar, resolver.jar, defaultAdaptor.jar, eclipseAdaptor.jar");
+				manifest.put(Constants.BUNDLE_CLASSPATH, findOSGiJars(bundleLocation));
 			}
 			hasQualifier(bundleLocation, manifest);
 		} catch (BundleException e) {
@@ -123,16 +123,13 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		return addBundle(manifest, bundleLocation);
 	}
 
-	/*
-	 * TODO: method is not call locally
-	 */
 	private String findOSGiJars(File bundleLocation) {
 		String eclipseProperies = "eclipse.properties"; //$NON-NLS-1$
 		InputStream manifestStream = null;
 		try {
 			URL manifestLocation = null;
-			if (bundleLocation.getName().endsWith("jar")) {
-				manifestLocation = new URL("jar:file:" + bundleLocation + "!/" + eclipseProperies);
+			if (bundleLocation.getName().endsWith("jar")) { //$NON-NLS-1$
+				manifestLocation = new URL("jar:file:" + bundleLocation + "!/" + eclipseProperies); //$NON-NLS-1$//$NON-NLS-2$
 				manifestStream = manifestLocation.openStream();
 			} else {
 				manifestStream = new FileInputStream(new File(bundleLocation, eclipseProperies));
@@ -147,7 +144,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		} catch (IOException e1) {
 			//Ignore
 		}
-		String osgiPath = properties.getProperty("osgi.frameworkClassPath");
+		String osgiPath = properties.getProperty("osgi.frameworkClassPath"); //$NON-NLS-1$
 		if (osgiPath == null)
 			osgiPath = "core.jar, console.jar, osgi.jar, resolver.jar, defaultAdaptor.jar, eclipseAdaptor.jar"; //$NON-NLS-1$
 
@@ -159,7 +156,6 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		if (newVersion != null)
 			manifest.put(Constants.BUNDLE_VERSION, newVersion);
 	}
-	
 
 	/**
 	 * @param bundleLocation
@@ -186,8 +182,8 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		InputStream manifestStream = null;
 		try {
 			URL manifestLocation = null;
-			if (bundleLocation.getName().endsWith("jar")) {
-				manifestLocation = new URL("jar:file:" + bundleLocation + "!/" + JarFile.MANIFEST_NAME);
+			if (bundleLocation.getName().endsWith("jar")) { //$NON-NLS-1$
+				manifestLocation = new URL("jar:file:" + bundleLocation + "!/" + JarFile.MANIFEST_NAME); //$NON-NLS-1$//$NON-NLS-2$
 				manifestStream = manifestLocation.openStream();
 			} else {
 				manifestStream = new FileInputStream(new File(bundleLocation, JarFile.MANIFEST_NAME));

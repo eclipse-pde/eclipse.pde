@@ -184,7 +184,7 @@ public class AntScript {
 		output.print("<tar"); //$NON-NLS-1$
 		printAttribute("destfile", zipfile, true); //$NON-NLS-1$
 		printAttribute("basedir", basedir, false); //$NON-NLS-1$
-		printAttribute("compression", "gzip", true); //TODO Need to take parameter
+		printAttribute("compression", "gzip", true); //$NON-NLS-1$//$NON-NLS-2$
 		if (fileSets == null)
 			output.println("/>"); //$NON-NLS-1$
 		else {
@@ -198,6 +198,7 @@ public class AntScript {
 			output.println("</tar>"); //$NON-NLS-1$
 		}
 	}
+
 	/**
 	 * Print an <code>arg</code> element to the Ant file.
 	 * 

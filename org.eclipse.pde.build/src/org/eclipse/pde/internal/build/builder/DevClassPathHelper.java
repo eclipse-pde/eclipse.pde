@@ -32,7 +32,7 @@ public class DevClassPathHelper {
 				inDevelopmentMode = true;
 				URL location = new URL(osgiDev);
 				devProperties = load(location);
-				devDefaultClasspath = Utils.getArrayFromString(devProperties.getProperty("*"));
+				devDefaultClasspath = Utils.getArrayFromString(devProperties.getProperty("*")); //$NON-NLS-1$
 			} catch (MalformedURLException e) {
 				devDefaultClasspath = Utils.getArrayFromString(osgiDev);
 			}

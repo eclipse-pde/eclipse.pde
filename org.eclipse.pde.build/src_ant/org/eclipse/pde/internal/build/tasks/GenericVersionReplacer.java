@@ -14,24 +14,27 @@ import java.io.File;
 import org.apache.tools.ant.Task;
 
 public class GenericVersionReplacer extends Task {
+	private static final String FRAGMENT = "fragment.xml"; //$NON-NLS-1$
+	private static final String PLUGIN = "plugin.xml"; //$NON-NLS-1$
+	private static final String MANIFEST = "META-INF/MANIFEST.MF"; //$NON-NLS-1$
 	private String path;
 	private String version;
 
 	public void execute() {
 		File root = new File(path);
-		if (root.exists() && root.isFile() && root.getName().equals("META-INF/MANIFEST.MF")) {
+		if (root.exists() && root.isFile() && root.getName().equals(MANIFEST)) {
 			callManifestModifier(path);
 			return;
 		}
 
-		File foundFile = new File(root, "plugin.xml");
+		File foundFile = new File(root, PLUGIN);
 		if (foundFile.exists() && foundFile.isFile())
 			callPluginVersionModifier(foundFile.getAbsolutePath());
-		foundFile = new File(root, "fragment.xml");
+		foundFile = new File(root, FRAGMENT);
 		if (foundFile.exists() && foundFile.isFile())
 			callPluginVersionModifier(foundFile.getAbsolutePath());
 
-		foundFile = new File(root, "META-INF/MANIFEST.MF");
+		foundFile = new File(root, MANIFEST);
 		if (foundFile.exists() && foundFile.isFile())
 			callManifestModifier(foundFile.getAbsolutePath());
 	}
@@ -48,7 +51,7 @@ public class GenericVersionReplacer extends Task {
 		ManifestModifier modifier = new ManifestModifier();
 		modifier.setProject(getProject());
 		modifier.setManifestLocation(loc);
-		modifier.setKeyValue("Bundle-Version|" + version);
+		modifier.setKeyValue("Bundle-Version|" + version); //$NON-NLS-1$
 		modifier.execute();
 	}
 

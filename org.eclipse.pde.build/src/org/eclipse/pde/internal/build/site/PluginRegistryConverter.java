@@ -78,9 +78,9 @@ public class PluginRegistryConverter extends PDEState {
 		if (libs == null || libs.length == 0)
 			return null;
 
-		String result = "";
+		String result = ""; //$NON-NLS-1$
 		for (int i = 0; i < libs.length; i++) {
-			result += libs[i].getName() + (i == libs.length - 1 ? "" : ",");
+			result += libs[i].getName() + (i == libs.length - 1 ? "" : ","); //$NON-NLS-1$//$NON-NLS-2$
 		}
 		return result;
 	}
@@ -89,7 +89,7 @@ public class PluginRegistryConverter extends PDEState {
 		try {
 			getPluginRegistry(Utils.asURL(bundles));
 		} catch (CoreException e) {
-			IStatus status = new Status(IStatus.ERROR, IPDEBuildConstants.PI_PDEBUILD, EXCEPTION_STATE_PROBLEM, Policy.bind("exception.registryResolution"), e);
+			IStatus status = new Status(IStatus.ERROR, IPDEBuildConstants.PI_PDEBUILD, EXCEPTION_STATE_PROBLEM, Policy.bind("exception.registryResolution"), e); //$NON-NLS-1$
 			BundleHelper.getDefault().getLog().log(status);
 		}
 		for (Iterator iter = bundles.iterator(); iter.hasNext();) {

@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.Path;
 
 public class PluginPathFinder {
 	public static File[] getLinkFiles(String platformHome) {
-		File file = new File(platformHome + IPath.SEPARATOR + "links");
+		File file = new File(platformHome + IPath.SEPARATOR + "links"); //$NON-NLS-1$
 		File[] linkFiles = null;
 		if (file.exists() && file.isDirectory()) {
 			linkFiles = file.listFiles();
@@ -34,11 +34,11 @@ public class PluginPathFinder {
 			FileInputStream fis = new FileInputStream(file);
 			properties.load(fis);
 			fis.close();
-			String path = properties.getProperty("path");
+			String path = properties.getProperty("path"); //$NON-NLS-1$
 			if (path != null) {
 				if (!new Path(path).isAbsolute())
 					path = prefix + IPath.SEPARATOR + path;
-				path += IPath.SEPARATOR + "eclipse";
+				path += IPath.SEPARATOR + "eclipse"; //$NON-NLS-1$
 				if (new File(path).exists()) {
 					return path;
 				}

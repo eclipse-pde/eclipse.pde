@@ -22,9 +22,9 @@ public class PackagerBuildScriptGenerator extends FeatureBuildScriptGenerator {
 	private String[] featureList;
 	private String[] rootFiles;
 	private String[] rootDirs;
-	private String outputFormat = "zip";
+	private String outputFormat = "zip"; //$NON-NLS-1$
 	private String[] ignoredFeatures;
-	
+
 	public PackagerBuildScriptGenerator() {
 		super();
 	}
@@ -65,7 +65,7 @@ public class PackagerBuildScriptGenerator extends FeatureBuildScriptGenerator {
 	}
 
 	private void removeIgnoredFeatures(AssemblyInformation toAssemble) {
-		if (ignoredFeatures==null)
+		if (ignoredFeatures == null)
 			return;
 		for (int i = 0; i < ignoredFeatures.length; i++) {
 			try {
@@ -75,6 +75,7 @@ public class PackagerBuildScriptGenerator extends FeatureBuildScriptGenerator {
 			}
 		}
 	}
+
 	protected void generateIncludedFeatureBuildFile() throws CoreException {
 		IIncludedFeatureReference[] referencedFeatures = feature.getIncludedFeatureReferences();
 		for (int i = 0; i < referencedFeatures.length; i++) {
@@ -107,19 +108,19 @@ public class PackagerBuildScriptGenerator extends FeatureBuildScriptGenerator {
 	public void setFeatureList(String features) {
 		featureList = Utils.getArrayFromString(features, ","); //$NON-NLS-1$
 	}
-	
+
 	public void setRootFiles(String[] rootFiles) {
 		this.rootFiles = rootFiles;
 	}
-	
+
 	public void setRootDirs(String[] rootDirs) {
 		this.rootDirs = rootDirs;
 	}
-	
-	public void setOutput(String format) {	//TODO To rename
+
+	public void setOutput(String format) { //TODO To rename
 		this.outputFormat = format;
 	}
-	
+
 	public void setIgnoredFeatures(String[] features) {
 		ignoredFeatures = features;
 	}

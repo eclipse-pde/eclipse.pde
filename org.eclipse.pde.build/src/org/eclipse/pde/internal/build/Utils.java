@@ -25,7 +25,8 @@ import org.eclipse.update.core.IPluginEntry;
  */
 public final class Utils implements IPDEBuildConstants {
 	/**
-	 * Convert a list of tokens into an array. The list separator has to be specified.
+	 * Convert a list of tokens into an array. The list separator has to be
+	 * specified.
 	 */
 	public static String[] getArrayFromString(String list, String separator) {
 		if (list == null || list.trim().equals("")) //$NON-NLS-1$
@@ -42,9 +43,9 @@ public final class Utils implements IPDEBuildConstants {
 	/**
 	 * Convert a list of tokens into an array. The list separator has to be
 	 * specified. The spcecificity of this method is that it returns an empty
-	 * element when to same separators are following each others.
-	 * For example the string a,,b returns the following array [a, ,b]
-	 * 
+	 * element when to same separators are following each others. For example
+	 * the string a,,b returns the following array [a, ,b]
+	 *  
 	 */
 	public static String[] getArrayFromStringWithBlank(String list, String separator) {
 		if (list == null || list.trim().length() == 0)
@@ -66,9 +67,11 @@ public final class Utils implements IPDEBuildConstants {
 	}
 
 	/**
-	 * Return a string array constructed from the given list of comma-separated tokens. 
+	 * Return a string array constructed from the given list of comma-separated
+	 * tokens.
 	 * 
-	 * @param list the list to convert
+	 * @param list
+	 *            the list to convert
 	 * @return the array of strings
 	 */
 	public static String[] getArrayFromString(String list) {
@@ -111,11 +114,13 @@ public final class Utils implements IPDEBuildConstants {
 	}
 
 	/**
-	 * Return a string which is a concatination of each member of the given collection,
-	 * separated by the given separator.
+	 * Return a string which is a concatination of each member of the given
+	 * collection, separated by the given separator.
 	 * 
-	 * @param collection the collection to concatinate
-	 * @param separator the separator to use
+	 * @param collection
+	 *            the collection to concatinate
+	 * @param separator
+	 *            the separator to use
 	 * @return String
 	 */
 	public static String getStringFromCollection(Collection collection, String separator) {
@@ -132,11 +137,13 @@ public final class Utils implements IPDEBuildConstants {
 	}
 
 	/**
-	 * Return a string which is a concatination of each member of the given array,
-	 * separated by the given separator.
+	 * Return a string which is a concatination of each member of the given
+	 * array, separated by the given separator.
 	 * 
-	 * @param values the array to concatinate
-	 * @param separator the separator to use
+	 * @param values
+	 *            the array to concatinate
+	 * @param separator
+	 *            the separator to use
 	 * @return String
 	 */
 	public static String getStringFromArray(String[] values, String separator) {
@@ -182,11 +189,13 @@ public final class Utils implements IPDEBuildConstants {
 	}
 
 	/**
-	 * Return a path which is equivalent to the given location relative to the specified
-	 * base path.
+	 * Return a path which is equivalent to the given location relative to the
+	 * specified base path.
 	 * 
-	 * @param location the location to convert
-	 * @param base the base path
+	 * @param location
+	 *            the location to convert
+	 * @param base
+	 *            the base path
 	 * @return IPath
 	 */
 	public static IPath makeRelative(IPath location, IPath base) {
@@ -201,8 +210,8 @@ public final class Utils implements IPDEBuildConstants {
 	}
 
 	/**
-	 * Transfers all available bytes from the given input stream to the given output stream. 
-	 * Regardless of failure, this method closes both streams.
+	 * Transfers all available bytes from the given input stream to the given
+	 * output stream. Regardless of failure, this method closes both streams.
 	 * 
 	 * @param source
 	 * @param destination
@@ -251,7 +260,8 @@ public final class Utils implements IPDEBuildConstants {
 
 	// Return a collection of File, the result can be null
 	public static Collection findFiles(String from, String foldername, final String filename) {
-		// if from is a file which name match filename, then simply return the file
+		// if from is a file which name match filename, then simply return the
+		// file
 		File root = new File(from);
 		if (root.isFile() && root.getName().equals(filename)) {
 			Collection coll = new ArrayList(1);
@@ -339,11 +349,17 @@ public final class Utils implements IPDEBuildConstants {
 		}
 
 		public String toString() {
-			return from.toString() + "->" + (to == null ? "" : to.toString());
+			return from.toString() + "->" + (to == null ? "" : to.toString()); //$NON-NLS-1$//$NON-NLS-2$
 		}
 	}
 
-	public static List extractPlugins(List initialList, List toExtract) { //TODO This algorithm needs to be improved
+	public static List extractPlugins(List initialList, List toExtract) { //TODO
+																		  // This
+																		  // algorithm
+																		  // needs
+																		  // to
+																		  // be
+																		  // improved
 		if (initialList.size() == toExtract.size())
 			return initialList;
 		List result = new ArrayList(toExtract.size());
@@ -381,19 +397,20 @@ public final class Utils implements IPDEBuildConstants {
 			}
 
 			// if we didn't find any prereqs for this plugin, add a null prereq
-			// to ensure the value is in the output	
+			// to ensure the value is in the output
 			if (!found)
 				prereqs.add(new Relation(current, null));
 		}
 
-		//The fragments needs to added relatively to their host and to their own prerequisite (bug #43244) 
+		//The fragments needs to added relatively to their host and to their
+		// own prerequisite (bug #43244)
 		for (Iterator iter = fragments.iterator(); iter.hasNext();) {
 			BundleDescription current = (BundleDescription) iter.next();
 
 			if (plugins.contains(current.getHost().getBundle()))
 				prereqs.add(new Relation(current, current.getHost().getSupplier()));
 			else
-				System.out.println("Host not found for this fragment"); //This should not happen since we only build things that are resolved
+				BundleHelper.getDefault().getLog().log(new Status(IStatus.WARNING, IPDEBuildConstants.PI_PDEBUILD, EXCEPTION_GENERIC, Policy.bind("exception.hostNotFound", current.getSymbolicName()), null)); //$NON-NLS-1$
 
 			BundleDescription[] prereqList = PDEState.getDependentBundles(current);
 			for (int j = 0; j < prereqList.length; j++) {

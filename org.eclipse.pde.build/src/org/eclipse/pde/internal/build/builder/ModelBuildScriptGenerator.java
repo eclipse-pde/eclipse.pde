@@ -117,7 +117,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 		initializeVariables();
 		if (BundleHelper.getDefault().isDebugging())
-			System.out.println("Generating plugin " + model.getSymbolicName());
+			System.out.println("Generating plugin " + model.getSymbolicName()); //$NON-NLS-1$
 
 		String custom = (String) getBuildProperties().get(PROPERTY_CUSTOM);
 		if (custom != null && custom.equalsIgnoreCase("true")) { //$NON-NLS-1$
@@ -172,7 +172,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				for (int i = 0; i < order.length; i++)
 					if (order[i].equals(DOT))
 						order[i] = EXPANDED_DOT;
-				getBuildProperties().setProperty(PROPERTY_JAR_ORDER, Utils.getStringFromArray(order, ","));
+				getBuildProperties().setProperty(PROPERTY_JAR_ORDER, Utils.getStringFromArray(order, ",")); //$NON-NLS-1$
 			}
 
 			String includeString = getBuildProperties().getProperty(PROPERTY_BIN_INCLUDES);
@@ -181,7 +181,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				for (int i = 0; i < includes.length; i++)
 					if (includes[i].equals(DOT))
 						includes[i] = null;
-				getBuildProperties().setProperty(PROPERTY_BIN_INCLUDES, Utils.getStringFromArray(includes, ","));
+				getBuildProperties().setProperty(PROPERTY_BIN_INCLUDES, Utils.getStringFromArray(includes, ",")); //$NON-NLS-1$
 			}
 			dotOnTheClasspath = true;
 		}
@@ -348,7 +348,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	private boolean containsStarDotJar(String[] strings) {
 		for (int i = 0; i < strings.length; i++) {
-			if (strings[i].endsWith("*.jar"))
+			if (strings[i].endsWith("*.jar")) //$NON-NLS-1$
 				return true;
 		}
 		return false;
@@ -378,7 +378,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		int count = 0;
 		for (Iterator iter = compiledJarNames.iterator(); iter.hasNext();) {
 			CompiledEntry entry = (CompiledEntry) iter.next();
-			String formatedName = entry.getName(false) + (entry.getType() == CompiledEntry.FOLDER ? "/" : "");
+			String formatedName = entry.getName(false) + (entry.getType() == CompiledEntry.FOLDER ? "/" : ""); //$NON-NLS-1$//$NON-NLS-2$
 			if (allJars || Utils.isStringIn(splitIncludes, formatedName)) {
 				fileSetValues[count++] = formatedName;
 				continue;
@@ -407,7 +407,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		String qualifier = getBuildProperties().getProperty(PROPERTY_QUALIFIER);
 		if (qualifier == null || qualifier.equalsIgnoreCase(PROPERTY_NONE))
 			return;
-		script.print("<eclipse.versionReplacer path=\"" + location + "\" version=\"" + model.getVersion() + "\"/>");
+		script.print("<eclipse.versionReplacer path=\"" + location + "\" version=\"" + model.getVersion() + "\"/>"); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 	}
 
 	private void generatePermissionProperties(String directory) throws CoreException {
@@ -534,15 +534,16 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.println();
 		script.printTargetDeclaration(TARGET_INIT, TARGET_PROPERTIES, null, null, null);
 
-		script.println("<condition property=\"" + PROPERTY_PLUGIN_TEMP + "\" value=\"" + getPropertyFormat(PROPERTY_BUILD_TEMP) + '/' + DEFAULT_PLUGIN_LOCATION + "\">"); //$NON-NLS-1 //$NON-NLS-2 //$NON-NLS-3
-		script.println("\t<isset property=\"" + PROPERTY_BUILD_TEMP + "\"/>"); //$NON-NLS-1 //$NON-NLS-2 
-		script.println("</condition>"); //$NON-NLS-1
-		script.println("<property name=\"" + PROPERTY_PLUGIN_TEMP + "\" value=\"" + getPropertyFormat(PROPERTY_BASEDIR) + "\"/>"); //$NON-NLS-1 //$NON-NLS-2 //$NON-NLS-3
+		script.println("<condition property=\"" + PROPERTY_PLUGIN_TEMP + "\" value=\"" + getPropertyFormat(PROPERTY_BUILD_TEMP) + '/' + DEFAULT_PLUGIN_LOCATION + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		script.println("\t<isset property=\"" + PROPERTY_BUILD_TEMP + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
+		script.println("</condition>"); //$NON-NLS-1$
 
-		script.println("<condition property=\"" + PROPERTY_BUILD_RESULT_FOLDER + "\" value=\"" + getPropertyFormat(PROPERTY_PLUGIN_TEMP) + '/' + new Path(model.getLocation()).lastSegment() + "\">"); //$NON-NLS-1 //$NON-NLS-2 //$NON-NLS-3
-		script.println("\t<isset property=\"" + PROPERTY_BUILD_TEMP + "\"/>"); //$NON-NLS-1 //$NON-NLS-2
-		script.println("</condition>"); //$NON-NLS-1
-		script.println("<property name=\"" + PROPERTY_BUILD_RESULT_FOLDER + "\" value=\"" + getPropertyFormat(PROPERTY_BASEDIR) + "\"/>"); //$NON-NLS-1 //$NON-NLS-2 //$NON-NLS-3
+		script.printProperty(PROPERTY_PLUGIN_TEMP, getPropertyFormat(PROPERTY_BASEDIR));
+
+		script.println("<condition property=\"" + PROPERTY_BUILD_RESULT_FOLDER + "\" value=\"" + getPropertyFormat(PROPERTY_PLUGIN_TEMP) + '/' + new Path(model.getLocation()).lastSegment() + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		script.println("\t<isset property=\"" + PROPERTY_BUILD_TEMP + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
+		script.println("</condition>"); //$NON-NLS-1$
+		script.printProperty(PROPERTY_BUILD_RESULT_FOLDER, getPropertyFormat(PROPERTY_BASEDIR));
 
 		script.printProperty(PROPERTY_TEMP_FOLDER, getPropertyFormat(PROPERTY_BASEDIR) + '/' + PROPERTY_TEMP_FOLDER);
 		script.printProperty(PROPERTY_PLUGIN_DESTINATION, getPropertyFormat(PROPERTY_BASEDIR));
@@ -846,8 +847,8 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 * @return String
 	 */
 	protected String getSRCName(String jarName) {
-		if (jarName.endsWith(".jar")) {
-			return jarName.substring(0, jarName.length() - 4) + "src.zip";
+		if (jarName.endsWith(".jar")) { //$NON-NLS-1$
+			return jarName.substring(0, jarName.length() - 4) + "src.zip"; //$NON-NLS-1$
 		}
 		return jarName.replace('/', '.') + "src.zip"; //$NON-NLS-1$
 	}

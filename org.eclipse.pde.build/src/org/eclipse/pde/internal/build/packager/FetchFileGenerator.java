@@ -199,6 +199,6 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 	}
 
 	public void setComponentFilter(String componentFiler) {
-		this.componentFilter = Utils.getArrayFromStringWithBlank(componentFiler, ",");
+		this.componentFilter = Utils.getArrayFromStringWithBlank(componentFiler, ","); //$NON-NLS-1$
 	}
 }

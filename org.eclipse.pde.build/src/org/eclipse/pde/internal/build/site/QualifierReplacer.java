@@ -28,7 +28,7 @@ public class QualifierReplacer implements IBuildPropertiesConstants {
 			if (newQualifier == null)
 				newQualifier = getDate();
 		} else if (replaceTag.equalsIgnoreCase(PROPERTY_NONE)) {
-			newQualifier = "";
+			newQualifier = ""; //$NON-NLS-1$
 		} else {
 			newQualifier = replaceTag;
 		}
@@ -37,18 +37,18 @@ public class QualifierReplacer implements IBuildPropertiesConstants {
 	}
 
 	private static String getDate() {
-		final String empty = "";
+		final String empty = ""; //$NON-NLS-1$
 		int monthNbr = Calendar.getInstance().get(Calendar.MONTH) + 1;
-		String month = (monthNbr < 10 ? "0" : empty) + monthNbr;
+		String month = (monthNbr < 10 ? "0" : empty) + monthNbr; //$NON-NLS-1$
 
 		int dayNbr = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
-		String day = (monthNbr < 10 ? "0" : empty) + dayNbr;
+		String day = (monthNbr < 10 ? "0" : empty) + dayNbr; //$NON-NLS-1$
 
 		int hourNbr = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-		String hour = (hourNbr < 10 ? "0" : empty) + hourNbr;
+		String hour = (hourNbr < 10 ? "0" : empty) + hourNbr; //$NON-NLS-1$
 
 		int minuteNbr = Calendar.getInstance().get(Calendar.MINUTE);
-		String minute = (minuteNbr < 10 ? "0" : empty) + minuteNbr;
+		String minute = (minuteNbr < 10 ? "0" : empty) + minuteNbr; //$NON-NLS-1$
 
 		return empty + Calendar.getInstance().get(Calendar.YEAR) + month + day + hour + minute; //$NON-NLS-1$
 	}

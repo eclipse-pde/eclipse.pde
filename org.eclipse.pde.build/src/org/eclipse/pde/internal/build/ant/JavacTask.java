@@ -58,10 +58,10 @@ public class JavacTask implements ITask {
 		script.indent++;
 
 		if (compileArgs != null) {
-			script.println("<compilerarg line=\"" + compileArgs + "\"/>");
+			script.println("<compilerarg line=\"" + compileArgs + "\"/>"); //$NON-NLS-1$//$NON-NLS-2$
 		}
 
-		script.printStartTag("classpath");
+		script.printStartTag("classpath"); //$NON-NLS-1$
 		script.indent++;
 		for (Iterator iter = classpath.iterator(); iter.hasNext();) {
 			String path = (String) iter.next();
@@ -72,7 +72,7 @@ public class JavacTask implements ITask {
 			script.println();
 		}
 		script.indent--;
-		script.printEndTag("classpath");
+		script.printEndTag("classpath"); //$NON-NLS-1$
 
 		for (int i = 0; i < srcdir.length; i++) {
 			script.printTab();
