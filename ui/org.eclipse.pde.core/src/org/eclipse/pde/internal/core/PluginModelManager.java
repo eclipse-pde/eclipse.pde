@@ -53,6 +53,16 @@ public class PluginModelManager implements IAdaptable {
 		if (entry == null) 
 			return ICoreConstants.TARGET21;
 		
+		IPluginModelBase model = entry.getActiveModel();
+		String version = model.getPluginBase().getVersion();
+		if (PluginVersionIdentifier.validateVersion(version).getSeverity() == IStatus.OK) {
+			PluginVersionIdentifier id = new PluginVersionIdentifier(version);
+			int major = id.getMajorComponent();
+			int minor = id.getMinorComponent();
+			if (major == 3 && minor == 0)
+				return ICoreConstants.TARGET30;
+		}
+		
 		//TODO temporary hack for backward compatibility with 3.1 milestones
 		Properties prop = TargetPlatform.getConfigIniProperties("configuration/config.ini");
 		if (prop != null) {
@@ -63,12 +73,6 @@ public class PluginModelManager implements IAdaptable {
 			}
 		}
 		
-		/*IPluginModelBase model = entry.getActiveModel();
-		String version = model.getPluginBase().getVersion();
-		if (PluginVersionIdentifier.validateVersion(version).getSeverity() == IStatus.OK) {
-			PluginVersionIdentifier id = new PluginVersionIdentifier(version);
-			return Integer.toString(id.getMajorComponent()) + "." + Integer.toString(id.getMinorComponent());	 //$NON-NLS-1$
-		}*/	
 		return ICoreConstants.TARGET31;	
 	}
 
