@@ -185,7 +185,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		if (PDECore.getDefault().getModelManager().isOSGiRuntime())
 			programArgs.add("file:" + new Path(fConfigDir.getPath()).addTrailingSeparator().toOSString());
 		else
-			programArgs.add("file:" + fConfigDir.getPath() + "/platform.cfg");
+			programArgs.add("file:" + new Path(fConfigDir.getPath()).append("platform.cfg").toOSString());
 
 		if (!PDECore.getDefault().getModelManager().isOSGiRuntime()) {
 			if (primaryFeatureId != null) {

@@ -136,7 +136,7 @@ public class WorkbenchLaunchConfigurationDelegate
 			if (isOSGI)
 				programArgs.add("file:" + new Path(fConfigDir.getPath()).addTrailingSeparator().toOSString());
 			else
-				programArgs.add("file:" + fConfigDir.getPath() + "/platform.cfg");
+				programArgs.add("file:" + new Path(fConfigDir.getPath()).append("platform.cfg").toOSString());
 			
 			if (!isOSGI) {
 				if (primaryFeatureId != null) {
