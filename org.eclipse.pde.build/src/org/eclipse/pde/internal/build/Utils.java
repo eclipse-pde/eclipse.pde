@@ -194,7 +194,7 @@ public final class Utils implements IPDEBuildConstants {
 			// of plugins to build, add prereq relations for them.  This is required since the 
 			// boot and runtime are implicitly added to a plugin's requires list by the platform runtime.
 			// Note that we should skip the xerces plugin as this would cause a circularity.
-			if (plugins[i].getId().equals("org.apache.xerces") //$NON-NLS-1$
+			if (plugins[i].getId().equals("org.apache.xerces")) //$NON-NLS-1$
 				continue;
 			if (!boot && pluginList.contains(BootLoader.PI_BOOT) && !plugins[i].getId().equals(BootLoader.PI_BOOT))
 				prereqs.add(new String[] { plugins[i].getId(), BootLoader.PI_BOOT });
