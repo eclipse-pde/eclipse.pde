@@ -44,11 +44,11 @@ public interface ILauncherSettings {
 	String TRACING_NONE = "[NONE]"; //$NON-NLS-1$
 	
 	// Configuration tab
-	String CONFIG_USE_DEFAULT = "useDefaultConfig"; //$NON-NLS-1$
-	String CONFIG_AUTO_START = "autoStartList"; //$NON-NLS-1$
-	String CONFIG_CLEAR = "clearConfig"; //$NON-NLS-1$
-		
-	// config file location
+	String CONFIG_USE_DEFAULT_AREA = "useDefaultConfigArea"; //$NON-NLS-1$
 	String CONFIG_LOCATION = "configLocation"; //$NON-NLS-1$
+	String CONFIG_CLEAR_AREA = "clearConfig"; //$NON-NLS-1$
 	
+	String CONFIG_GENERATE_DEFAULT = "useDefaultConfig"; //$NON-NLS-1$
+	String CONFIG_TEMPLATE_LOCATION = "templateConfig";	 //$NON-NLS-1$
+			
 }

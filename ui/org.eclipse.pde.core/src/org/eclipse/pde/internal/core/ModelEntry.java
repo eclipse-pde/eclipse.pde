@@ -41,8 +41,8 @@ public class ModelEntry extends PlatformObject {
 			if (workspaceModel != null)
 				return workspaceModel;
 			return externalModel;
-		} else
-			return (mode == WORKSPACE) ? workspaceModel : externalModel;
+		}
+		return (mode == WORKSPACE) ? workspaceModel : externalModel;
 	}
 
 	public String getId() {

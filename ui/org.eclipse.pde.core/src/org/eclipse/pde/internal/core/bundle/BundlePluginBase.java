@@ -325,10 +325,7 @@ public class BundlePluginBase
 		BundleDescription desc = model.getBundleDescription();
 		if (desc != null) {
 			Version version = desc.getVersion();
-			if (version != null)
-				return version.toString();
-			else
-				return null;
+			return (version != null) ? version.toString() : null;
 		} 
 		return parseSingleValuedHeader(Constants.BUNDLE_VERSION);
 	}

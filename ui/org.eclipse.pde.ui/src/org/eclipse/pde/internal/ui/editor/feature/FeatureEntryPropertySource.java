@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.ui.editor.feature;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.ui.views.properties.*;
@@ -97,15 +96,14 @@ public class FeatureEntryPropertySource extends FeaturePropertySource {
 			long installSize = getEntry().getInstallSize();
 			if (installSize == -1)
 				return ""; //$NON-NLS-1$
-			else
-				return "" + installSize; //$NON-NLS-1$
+			return "" + installSize; //$NON-NLS-1$
 		}
+		
 		if (name.equals(P_DOWNLOAD_SIZE)) {
 			long downloadSize = getEntry().getDownloadSize();
 			if (downloadSize == -1)
 				return ""; //$NON-NLS-1$
-			else
-				return "" + downloadSize; //$NON-NLS-1$
+			return "" + downloadSize; //$NON-NLS-1$
 		}
 		if (name.equals(P_OS)) {
 			return getEntry().getOS();
@@ -160,18 +158,36 @@ public class FeatureEntryPropertySource extends FeaturePropertySource {
 	}
 
 	public static Choice[] getOSChoices() {
-		return TargetPlatform.getOSChoices();
+		return getKnownChoices(Platform.knownOSValues());
 	}
 
 	public static Choice[] getWSChoices() {
-		return TargetPlatform.getWSChoices();
+		return getKnownChoices(Platform.knownWSValues());
 	}
 
 	public static Choice[] getArchChoices() {
-		return TargetPlatform.getArchChoices();
+		return getKnownChoices(Platform.knownOSArchValues());
+	}
+
+	private static Choice[] getKnownChoices(String[] values) {
+		Choice[] choices = new Choice[values.length];
+		for (int i = 0; i < choices.length; i++) {
+			choices[i] = new Choice(values[i], values[i]);
+		}
+		return choices;
 	}
 
 	public static Choice[] getNLChoices() {
-		return TargetPlatform.getNLChoices();
+		Locale[] locales = Locale.getAvailableLocales();
+		Choice[] choices = new Choice[locales.length];
+		for (int i = 0; i < locales.length; i++) {
+			Locale locale = locales[i];
+			choices[i] =
+				new Choice(
+					locale.toString(),
+					locale.toString() + " - " + locale.getDisplayName()); //$NON-NLS-1$
+		}
+		return choices;
 	}
+
 }

@@ -18,14 +18,6 @@ import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.isite.*;
 import org.w3c.dom.*;
 
-/**
- * @author dejan
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
- */
 public class SiteBuild extends SiteBuildObject implements ISiteBuild {
 	final static String INDENT = "   "; //$NON-NLS-1$
 	private Vector features = new Vector();
@@ -129,7 +121,6 @@ public class SiteBuild extends SiteBuildObject implements ISiteBuild {
 	}
 	
 	protected void parse(Node node) {
-		String value = getNodeAttribute(node, "plugin-location"); //$NON-NLS-1$
 		autobuild = getBooleanAttribute(node, "autobuild"); //$NON-NLS-1$
 		scrubOutput = getBooleanAttribute(node, "scrub-output"); //$NON-NLS-1$
 		useConsole = getBooleanAttribute(node, "use-console"); //$NON-NLS-1$

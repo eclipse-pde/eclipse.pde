@@ -10,173 +10,49 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import java.util.*;
+import java.io.*;
 
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.pde.internal.ui.util.*;
-import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.help.*;
+import org.eclipse.ui.model.*;
 
-/**
- * @author melhem
- *
- */
 public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSettings {
-	private Image fImage;
-	private ArrayList fPluginList = new ArrayList();
-	private Button fAddButton;
-	private Button fRemoveButton;
-	private Button fUseDefault;
 	private Button fClearConfig;
-	private TableViewer fTableViewer;
+	private Image fImage;
 	
-	class SelectionDialog extends PluginSelectionDialog {
-		
-		private Text startLevelText;
-		private int startLevel = -1;
-		
-		public SelectionDialog(Shell parentShell, IPluginModelBase[] models, boolean multipleSelection) {
-			super(parentShell, models, multipleSelection);
-		}
+	private Button fUseDefaultLocationButton;
+	private Label fConfigAreaLabel;
+	private Text fConfigAreaText;
+	private Button fConfigAreaBrowse;
 	
-		protected Control createDialogArea(Composite parent) {			
-			Composite area = (Composite)super.createDialogArea(parent);
-			
-			Composite container = new Composite(area, SWT.NONE);
-			GridLayout layout = new GridLayout();
-			layout.numColumns = 2;
-			layout.marginHeight = layout.marginWidth = 0;
-			container.setLayout(layout);
-			container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			
-			Label label = new Label(container, SWT.NONE);
-			label.setText(PDEPlugin.getResourceString("ConfigurationTab.startLevel")); //$NON-NLS-1$
-			
-			startLevelText = new Text(container, SWT.SINGLE|SWT.BORDER);
-			startLevelText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));			
-			return area;		
-		}
-		
-		public int getStartLevel() {
-			return startLevel;
-		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.dialogs.SelectionStatusDialog#okPressed()
-		 */
-		protected void okPressed() {
-			String level = startLevelText.getText().trim();
-			if (level.length() > 0) {
-				try {
-					Integer integer = new Integer(level);
-					if (integer.intValue() > 0)
-						startLevel = integer.intValue();
-				} catch (NumberFormatException e) {
-				}
-			}
-			super.okPressed();
-		}
-
-	}
+	private Button fGenerateFileButton;
+	private Button fUseTemplateButton;
+	private Label fTemplateLocationLabel;
+	private Text fTemplateLocationText;
+	private Button fTemplateLocationBrowse;
 	
-	class Entry {
-		public IPluginModelBase model;
-		public Integer startLevel;
-		
-		public Entry(IPluginModelBase model, int level) {
-			this.model = model;
-			startLevel = new Integer(level);
-		}
-		
-		public boolean equals(Object obj) {
-			if (obj instanceof Entry)
-				return ((Entry)obj).model.getPluginBase().getId().equals(model.getPluginBase().getId());
-			return false;
-		}
-		
-
-	}
+	private String fLastEnteredConfigArea = "";
+	private String fConfigName;
+	private boolean fBlockChanges;
 	
-	class ContentProvider extends DefaultTableProvider {
-		public Object[] getElements(Object inputElement) {
-			return ((ArrayList)inputElement).toArray();
-		}		
-	}
-	
-	class ConfigurationLabelProvider extends LabelProvider implements ITableLabelProvider {
-		public Image getColumnImage(Object element, int columnIndex) {
-			if (columnIndex == 0 && element instanceof Entry) {
-				IPluginModelBase model = ((Entry)element).model;
-				return PDEPlugin.getDefault().getLabelProvider().getImage(model);
-			}
-			return null;
-		}
-
-		public String getColumnText(Object element, int columnIndex) {
-			if (element instanceof Entry) {
-				Entry entry = (Entry)element;
-				switch (columnIndex) {
-					case 0:
-						IPluginBase plugin = entry.model.getPluginBase();
-						return plugin.getId() + " (" + plugin.getVersion() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-					case 1:
-						int start = entry.startLevel.intValue();
-						return (start >= 0) ? entry.startLevel.toString() : PDEPlugin.getResourceString("ConfigurationTab.unspecified"); //$NON-NLS-1$
-				}
-			}
-			return null;
-		}		
-	}
 	
 	public ConfigurationTab() {
-		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		fImage = PDEPluginImages.DESC_PLUGIN_CONFIG_OBJ.createImage();
 	}
 	
-	private void initializeDefaultPlugins() {
-		fPluginList.clear();
-		HashMap map = LauncherUtils.getAutoStartPlugins(true, ""); //$NON-NLS-1$
-		Iterator iter = map.keySet().iterator();
-		while (iter.hasNext()) {
-			Object object = iter.next();
-			String id = (String)object.toString().trim();
-			IPluginModelBase model = getPlugin(id);
-			if (model != null) {
-				fPluginList.add(new Entry(model, ((Integer)map.get(object)).intValue()));
-			}
-		}
-	}
-	
-	private void initializePlugins(String selected) {
-		fPluginList.clear();
-		StringTokenizer tokenizer = new StringTokenizer(selected, ","); //$NON-NLS-1$
-		while (tokenizer.hasMoreTokens()) {
-			String token = tokenizer.nextToken().trim();
-			String id = token.substring(0,token.indexOf('@'));
-			Integer level = new Integer(token.substring(token.indexOf('@') + 1));
-			IPluginModelBase model = getPlugin(id);
-			if (model != null)
-				fPluginList.add(new Entry(model, level.intValue()));
-		}		
-	}
-	
-	private IPluginModelBase getPlugin(String id) {
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
-		ModelEntry entry = manager.findEntry(id);
-		return (entry == null) ? null : entry.getActiveModel();		
-	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
@@ -186,196 +62,257 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 		container.setLayout(layout);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
+		createConfigAreaGroup(container);
 		createStartingSpace(container, 1);
+		createConfigFileGroup(container);
 		
-		Label label = new Label(container, SWT.WRAP);
-		label.setText(PDEPlugin.getResourceString("ConfigurationTab.listLabel")); //$NON-NLS-1$
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.widthHint = 300;
-		label.setLayoutData(gd);
-		
-		Composite middle = new Composite(container, SWT.NONE);
-		layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.marginWidth = layout.marginHeight = 0;
-		middle.setLayout(layout);
-		middle.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
-		createViewer(middle);
-		createButtonContainer(middle);
-		
-		fUseDefault = new Button(container, SWT.CHECK);
-		fUseDefault.setText(PDEPlugin.getResourceString("ConfigurationTab.defaultList")); //$NON-NLS-1$
-		fUseDefault.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (fUseDefault.getSelection()) {
-					initializeDefaultPlugins();
-					fTableViewer.refresh();
-				}
-				enableButtons(!fUseDefault.getSelection());
-				updateLaunchConfigurationDialog();
-			}
-		});
-		
-		fClearConfig = new Button(container, SWT.CHECK);
-		fClearConfig.setText(PDEPlugin.getResourceString("ConfigurationTab.clearArea")); //$NON-NLS-1$
-		fClearConfig.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				updateLaunchConfigurationDialog();
-			}
-		});
 		Dialog.applyDialogFont(container);
 		setControl(container);
 		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.LAUNCHER_CONFIGURATION);
 	}
 	
-	private void createViewer(Composite container) {
-		Table table = new Table(container, SWT.BORDER|SWT.FULL_SELECTION|SWT.MULTI);
-		TableColumn column1 = new TableColumn(table, SWT.NONE);
-		column1.setText(PDEPlugin.getResourceString("ConfigurationTab.col1")); //$NON-NLS-1$
-		TableColumn column2 = new TableColumn(table, SWT.NONE);
-		column2.setText(PDEPlugin.getResourceString("ConfigurationTab.col2")); //$NON-NLS-1$
-		table.setHeaderVisible(true);
+	private void createConfigAreaGroup(Composite parent) {
+		Group group = new Group(parent, SWT.NONE);
+		group.setText("Configuration Area");
+		group.setLayout(new GridLayout(3, false));
+		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		TableLayout layout = new TableLayout();
-		layout.addColumnData(new ColumnWeightData(80));
-		layout.addColumnData(new ColumnWeightData(20));
-		table.setLayout(layout);
-		
-		fTableViewer = new TableViewer(table);
-		fTableViewer.setContentProvider(new ContentProvider());
-		fTableViewer.setLabelProvider(new ConfigurationLabelProvider());
-		fTableViewer.setSorter(new ViewerSorter() {
-			public int compare(Viewer viewer, Object e1, Object e2) {
-				String id1 = ((Entry)e1).model.getPluginBase().getId();
-				String id2 = ((Entry)e2).model.getPluginBase().getId();
-				return super.compare(viewer, id1, id2);
-		}});
-		fTableViewer.setInput(fPluginList);
-		fTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				enableButtons(!fUseDefault.getSelection());
-			}
-		});
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.heightHint = 100;
-		gd.widthHint = 300;
-		table.setLayoutData(gd);
-	}
-	
-	private void createButtonContainer(Composite parent) {
-		Composite container = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.marginWidth = layout.marginHeight = 0;
-		container.setLayout(layout);
-		container.setLayoutData(new GridData(GridData.FILL_VERTICAL));
-		
-		fAddButton = new Button(container, SWT.PUSH);
-		fAddButton.setText(PDEPlugin.getResourceString("ConfigurationTab.add")); //$NON-NLS-1$
-		fAddButton.setLayoutData(new GridData());
-		SWTUtil.setButtonDimensionHint(fAddButton);
-		fAddButton.addSelectionListener(new SelectionAdapter() {
+		fUseDefaultLocationButton = new Button(group, SWT.CHECK);
+		GridData gd = new GridData();
+		gd.horizontalSpan = 3;
+		fUseDefaultLocationButton.setLayoutData(gd);
+		fUseDefaultLocationButton.setText("Use default location");
+		fUseDefaultLocationButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				IPluginModelBase[] models = PDECore.getDefault().getModelManager().getPlugins();
-				ArrayList list = new ArrayList();
-				for (int i = 0; i < models.length; i++) {
-					if (!fPluginList.contains(new Entry(models[i], -1)))
-						list.add(models[i]);
-				}
-				SelectionDialog dialog = new SelectionDialog(getShell(), (IPluginModelBase[])list.toArray(new IPluginModelBase[list.size()]), true);
-				if (dialog.open() == PluginSelectionDialog.OK) {
-					Object[] selected = dialog.getResult();
-					for (int i = 0; i < selected.length; i++) {
-						fPluginList.add(new Entry((IPluginModelBase)selected[i], dialog.getStartLevel()));
-					}
-					fTableViewer.refresh();
-					updateLaunchConfigurationDialog();
-				}
+				boolean selected = fUseDefaultLocationButton.getSelection();
+				fConfigAreaLabel.setEnabled(!selected);
+				fConfigAreaText.setEnabled(!selected);
+				fConfigAreaBrowse.setEnabled(!selected);
+				if (!selected)
+					fConfigAreaText.setText(fLastEnteredConfigArea);
+				else
+					fConfigAreaText.setText(PDECore.getDefault().getStateLocation().append(fConfigName).toOSString());
+				updateStatus();
 			}
 		});
 		
-		fRemoveButton = new Button(container, SWT.PUSH);
-		fRemoveButton.setText(PDEPlugin.getResourceString("ConfigurationTab.remove")); //$NON-NLS-1$
-		fRemoveButton.setLayoutData(new GridData());
-		SWTUtil.setButtonDimensionHint(fRemoveButton);
-		fRemoveButton.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent e) {
-			int index = fTableViewer.getTable().getSelectionIndices()[0];
-			TableItem[] items = fTableViewer.getTable().getSelection();
-			for (int i = 0; i < items.length; i++) {
-				fPluginList.remove(items[i].getData());
+		fConfigAreaLabel = new Label(group, SWT.NONE);
+		fConfigAreaLabel.setText("Location:");
+		gd = new GridData();
+		gd.horizontalIndent = 20;
+		fConfigAreaLabel.setLayoutData(gd);
+		
+		fConfigAreaText = new Text(group, SWT.SINGLE|SWT.BORDER);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.widthHint = 300;
+		fConfigAreaText.setLayoutData(gd);
+		fConfigAreaText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				if (!fBlockChanges)
+					updateStatus();
 			}
-			fTableViewer.refresh();
-			
-			if (index > fPluginList.size() - 1)
-				index = fPluginList.size() - 1;
-			
-			if (index >= 0)
-				fTableViewer.setSelection(new StructuredSelection(fTableViewer.getElementAt(index)));
-			fRemoveButton.setEnabled(index >= 0);
-			updateLaunchConfigurationDialog();
-		}});
+		});
+		
+		fConfigAreaBrowse = new Button(group, SWT.PUSH);
+		fConfigAreaBrowse.setText("Browse...");
+		fConfigAreaBrowse.setLayoutData(new GridData());
+		SWTUtil.setButtonDimensionHint(fConfigAreaBrowse);
+		fConfigAreaBrowse.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleBrowseDirectory();
+			}
+		});
+
+		fClearConfig = new Button(group, SWT.CHECK);
+		fClearConfig.setText(PDEPlugin.getResourceString("ConfigurationTab.clearArea")); //$NON-NLS-1$
+		gd = new GridData();
+		gd.horizontalSpan = 3;
+		fClearConfig.setLayoutData(gd);
+		fClearConfig.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateLaunchConfigurationDialog();
+			}
+		});
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#dispose()
-	 */
-	public void dispose() {
-		fImage.dispose();
-		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
-		super.dispose();
+	protected void handleBrowseDirectory() {
+		DirectoryDialog dialog = new DirectoryDialog(getControl().getShell());
+		dialog.setFilterPath(fConfigAreaText.getText().trim());
+		dialog.setText("Configuration Location:");
+		dialog.setMessage("Select a configuration location:");
+		String res = dialog.open();
+		if (res != null)
+			fConfigAreaText.setText(res);
+	}
+
+	protected void updateStatus() {
+		if (!fUseDefaultLocationButton.getSelection() && fConfigAreaText.getText().trim().length() == 0) {
+			updateStatus(createStatus(IStatus.ERROR, "Configuration area location is not set"));
+			return;
+		}
+		
+		if (fUseTemplateButton.getSelection()) {
+			String location = fTemplateLocationText.getText().trim();
+			if (location.length() == 0) {
+				updateStatus(createStatus(IStatus.ERROR, "Template file location is not set"));
+				return;
+			}
+			File file = new File(location);
+			if (!file.exists() || !file.isFile()) {
+				updateStatus(createStatus(IStatus.ERROR, "Specified template file does not exist"));
+				return;
+			}
+		}
+		updateStatus(createStatus(IStatus.OK, ""));
+	}
+
+	private void createConfigFileGroup(Composite parent) {
+		Group group = new Group(parent, SWT.NONE);
+		group.setText("Configuration File");
+		group.setLayout(new GridLayout(3, false));
+		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		fGenerateFileButton = new Button(group, SWT.RADIO);
+		fGenerateFileButton.setText("Generate a config.ini file with default content");
+		GridData gd = new GridData();
+		gd.horizontalSpan = 3;
+		fGenerateFileButton.setLayoutData(gd);
+		fGenerateFileButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				boolean selected = fGenerateFileButton.getSelection();
+				fTemplateLocationLabel.setEnabled(!selected);
+				fTemplateLocationText.setEnabled(!selected);
+				fTemplateLocationBrowse.setEnabled(!selected);
+				updateStatus();
+			}
+		});
+		
+		fUseTemplateButton = new Button(group, SWT.RADIO);
+		fUseTemplateButton.setText("Use an existing config.ini file as a template");
+		gd = new GridData();
+		gd.horizontalSpan = 3;
+		fUseTemplateButton.setLayoutData(gd);
+		
+		fTemplateLocationLabel = new Label(group, SWT.NONE);
+		fTemplateLocationLabel.setText("Location:");
+		gd = new GridData();
+		gd.horizontalIndent = 20;
+		fTemplateLocationLabel.setLayoutData(gd);
+		
+		fTemplateLocationText = new Text(group, SWT.SINGLE|SWT.BORDER);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.widthHint = 300;
+		fTemplateLocationText.setLayoutData(gd);
+		fTemplateLocationText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				if (!fBlockChanges)
+					updateStatus();
+			}
+		});
+		
+		fTemplateLocationBrowse = new Button(group, SWT.PUSH);
+		fTemplateLocationBrowse.setText("Browse...");
+		fTemplateLocationBrowse.setLayoutData(new GridData());
+		SWTUtil.setButtonDimensionHint(fTemplateLocationBrowse);		
+		fTemplateLocationBrowse.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleBrowseWorkspaceFile();
+			}
+		});
 	}
 	
+	protected void handleBrowseWorkspaceFile() {
+		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(
+				getControl().getShell(), new WorkbenchLabelProvider(),
+				new WorkbenchContentProvider());
+		
+		IFile file = PDEPlugin.getWorkspace().getRoot().getFileForLocation(new Path(fTemplateLocationText.getText()));
+		if (file != null)
+			dialog.setInitialSelection(file);
+		dialog.setInput(PDEPlugin.getWorkspace().getRoot());
+		dialog.addFilter(new ViewerFilter() {
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
+				if (element instanceof IFile)
+					return ((IFile)element).getName().equals("config.ini");
+				return true;
+			}
+		});
+		dialog.setAllowMultiple(false);
+		dialog.setTitle("File Selection");
+		dialog.setMessage("Select a config.ini file:");
+		dialog.setValidator(new ISelectionStatusValidator() {
+			public IStatus validate(Object[] selection) {
+				if (selection != null && selection.length > 0
+						&& selection[0] instanceof IFile)
+					return new Status(IStatus.OK, PDEPlugin.getPluginId(),
+							IStatus.OK, "", null); //$NON-NLS-1$
+				
+				return new Status(IStatus.ERROR, PDEPlugin.getPluginId(),
+						IStatus.ERROR, "", null); //$NON-NLS-1$
+			}
+		});
+		if (dialog.open() == ElementTreeSelectionDialog.OK) {
+			file = (IFile) dialog.getFirstResult();
+			fTemplateLocationText.setText(file.getLocation().toOSString());
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
-		configuration.setAttribute(CONFIG_USE_DEFAULT, true);
-		configuration.setAttribute(CONFIG_CLEAR, false);
+		configuration.setAttribute(CONFIG_USE_DEFAULT_AREA, true);
+		configuration.setAttribute(CONFIG_LOCATION, "");
+		configuration.setAttribute(CONFIG_CLEAR_AREA, false);
+		configuration.setAttribute(CONFIG_GENERATE_DEFAULT, true);
+		configuration.setAttribute(CONFIG_TEMPLATE_LOCATION, "");
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
-			boolean useDefault = configuration.getAttribute(CONFIG_USE_DEFAULT, true);
-			if (useDefault)
-				initializeDefaultPlugins();
+			fBlockChanges = true;
+			boolean useDefaultArea = configuration.getAttribute(CONFIG_USE_DEFAULT_AREA, true);
+			fUseDefaultLocationButton.setSelection(useDefaultArea);
+			fConfigAreaLabel.setEnabled(!useDefaultArea);
+			fConfigAreaText.setEnabled(!useDefaultArea);
+			fConfigAreaBrowse.setEnabled(!useDefaultArea);
+			fClearConfig.setSelection(configuration.getAttribute(CONFIG_CLEAR_AREA, false));
+			fConfigName = configuration.getName();
+			fLastEnteredConfigArea = configuration.getAttribute(CONFIG_LOCATION, "");
+			if (useDefaultArea)
+				fConfigAreaText.setText(PDECore.getDefault().getStateLocation().append(configuration.getName()).toOSString());
 			else
-				initializePlugins(configuration.getAttribute(CONFIG_AUTO_START, "")); //$NON-NLS-1$
-			fUseDefault.setSelection(useDefault);
-			enableButtons(!useDefault);
-			fClearConfig.setSelection(configuration.getAttribute(CONFIG_CLEAR, false));
+				fConfigAreaText.setText(fLastEnteredConfigArea);
+			
+			boolean generateDefault = configuration.getAttribute(CONFIG_GENERATE_DEFAULT, true);
+			fGenerateFileButton.setSelection(generateDefault);
+			fUseTemplateButton.setSelection(!generateDefault);
+			fTemplateLocationLabel.setEnabled(!generateDefault);
+			fTemplateLocationText.setEnabled(!generateDefault);
+			fTemplateLocationBrowse.setEnabled(!generateDefault);
+			fTemplateLocationText.setText(configuration.getAttribute(CONFIG_TEMPLATE_LOCATION, ""));
 		} catch (CoreException e) {
+		} finally {
+			fBlockChanges = false;
 		}
-		fTableViewer.setInput(fPluginList);
+		updateStatus();
 	}
 	
-	private void enableButtons(boolean enabled) {
-		ISelection selection = fTableViewer.getSelection();
-		boolean selected = selection != null && !selection.isEmpty();
-		fAddButton.setEnabled(enabled);
-		fRemoveButton.setEnabled(selected && enabled);
-	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		configuration.setAttribute(CONFIG_CLEAR, fClearConfig.getSelection());
-		configuration.setAttribute(CONFIG_USE_DEFAULT, fUseDefault.getSelection());
-		if (!fUseDefault.getSelection()) {
-			StringBuffer buffer = new StringBuffer();
-			for (int i = 0; i < fPluginList.size(); i++) {
-				Entry entry = (Entry)fPluginList.get(i);
-				IPluginModelBase model = entry.model;
-				buffer.append(model.getPluginBase().getId() + "@" + entry.startLevel); //$NON-NLS-1$
-				if (i < fPluginList.size() - 1)
-					buffer.append(',');
-			}
-			configuration.setAttribute(CONFIG_AUTO_START, buffer.toString());
-		} else {
-			configuration.setAttribute(CONFIG_AUTO_START, (String)null);
+		configuration.setAttribute(CONFIG_USE_DEFAULT_AREA, fUseDefaultLocationButton.getSelection());
+		if (!fUseDefaultLocationButton.getSelection()) {
+			fLastEnteredConfigArea = fConfigAreaText.getText().trim();
+			configuration.setAttribute(CONFIG_LOCATION, fLastEnteredConfigArea);
 		}
+		configuration.setAttribute(CONFIG_CLEAR_AREA, fClearConfig.getSelection());
+		configuration.setAttribute(CONFIG_GENERATE_DEFAULT, fGenerateFileButton.getSelection());
+		if (!fGenerateFileButton.getSelection())
+			configuration.setAttribute(CONFIG_TEMPLATE_LOCATION, fTemplateLocationText.getText().trim());
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
@@ -389,5 +326,13 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 	 */
 	public Image getImage() {
 		return fImage;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#dispose()
+	 */
+	public void dispose() {
+		if (fImage != null)
+			fImage.dispose();
 	}
 }

@@ -48,8 +48,8 @@ public class ChoiceRestriction
 			return new String[0];
 		Vector result = new Vector();
 		for (int i = 0; i < children.size(); i++) {
-			ISchemaEnumeration enum = (ISchemaEnumeration) children.get(i);
-			result.addElement(enum.getName());
+			ISchemaEnumeration enumeration = (ISchemaEnumeration) children.get(i);
+			result.addElement(enumeration.getName());
 		}
 		String[] choices = new String[result.size()];
 		result.copyInto(choices);
@@ -66,8 +66,8 @@ public class ChoiceRestriction
 		String svalue = value.toString();
 
 		for (int i = 0; i < children.size(); i++) {
-			ISchemaEnumeration enum = (ISchemaEnumeration) children.get(i);
-			if (enum.getName().equals(svalue))
+			ISchemaEnumeration enumeration = (ISchemaEnumeration) children.get(i);
+			if (enumeration.getName().equals(svalue))
 				return true;
 		}
 		return false;
@@ -93,10 +93,10 @@ public class ChoiceRestriction
 		for (int i = 0; i < children.size(); i++) {
 			Object child = children.get(i);
 			if (child instanceof ISchemaEnumeration) {
-				ISchemaEnumeration enum = (ISchemaEnumeration) child;
+				ISchemaEnumeration enumeration = (ISchemaEnumeration) child;
 				if (i > 0)
 					buffer.append(", "); //$NON-NLS-1$
-				buffer.append(enum.getName());
+				buffer.append(enumeration.getName());
 			}
 		}
 		return buffer.toString();
@@ -108,8 +108,8 @@ public class ChoiceRestriction
 		for (int i = 0; i < children.size(); i++) {
 			Object child = children.get(i);
 			if (child instanceof ISchemaEnumeration) {
-				ISchemaEnumeration enum = (ISchemaEnumeration) child;
-				enum.write(indent + Schema.INDENT, writer);
+				ISchemaEnumeration enumeration = (ISchemaEnumeration) child;
+				enumeration.write(indent + Schema.INDENT, writer);
 			}
 		}
 		writer.println(indent + "</restriction>"); //$NON-NLS-1$

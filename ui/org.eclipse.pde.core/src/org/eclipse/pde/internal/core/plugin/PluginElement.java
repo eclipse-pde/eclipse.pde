@@ -114,8 +114,8 @@ public class PluginElement extends PluginParent implements IPluginElement {
 		reconnectAttributes();
 	}
 	private void reconnectAttributes() {
-		for (Enumeration enum=attributes.elements(); enum.hasMoreElements();) {
-			PluginAttribute att = (PluginAttribute)enum.nextElement();
+		for (Enumeration elements=attributes.elements(); elements.hasMoreElements();) {
+			PluginAttribute att = (PluginAttribute)elements.nextElement();
 			att.setModel(getModel());
 			att.setParent(this);
 			att.setInTheModel(true);
@@ -171,8 +171,8 @@ public class PluginElement extends PluginParent implements IPluginElement {
 
 	private void setAttributesInTheModel(Hashtable table, boolean value) {
 		if (table != null) {
-			for (Enumeration enum = table.elements(); enum.hasMoreElements();) {
-				PluginAttribute att = (PluginAttribute) enum.nextElement();
+			for (Enumeration elements = table.elements(); elements.hasMoreElements();) {
+				PluginAttribute att = (PluginAttribute) elements.nextElement();
 				att.setInTheModel(value);
 			}
 		}

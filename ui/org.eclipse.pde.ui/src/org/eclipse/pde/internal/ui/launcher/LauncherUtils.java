@@ -227,80 +227,6 @@ public class LauncherUtils {
 		return map;
 	}
 	
-	public static HashMap getAutoStartPlugins(ILaunchConfiguration config) {
-		boolean useDefault = true;
-		String customAutoStart = ""; //$NON-NLS-1$
-		try {
-			useDefault = config.getAttribute(ILauncherSettings.CONFIG_USE_DEFAULT, true);
-			customAutoStart = config.getAttribute(ILauncherSettings.CONFIG_AUTO_START, ""); //$NON-NLS-1$
-		} catch (CoreException e) {
-		}		
-		return getAutoStartPlugins(useDefault, customAutoStart);
-	}
-	
-	public static HashMap getAutoStartPlugins(boolean useDefault, String customAutoStart) {
-		HashMap list = new HashMap();
-		if (!PDECore.getDefault().getModelManager().isOSGiRuntime()) {
-			list.put("org.eclipse.core.boot", new Integer(0)); //$NON-NLS-1$
-		} else {
-			String bundles = null;
-			if (useDefault) {
-				Properties prop = getConfigIniProperties(ExternalModelManager.getEclipseHome().toOSString(), "configuration/config.ini"); //$NON-NLS-1$
-				if (prop != null)
-					bundles = prop.getProperty("osgi.bundles"); //$NON-NLS-1$
-				if (prop == null || bundles == null) {
-					String path = getOSGiPath();
-					if (path != null)
-						prop = getConfigIniProperties(path, "eclipse.properties"); //$NON-NLS-1$
-					if (prop != null)
-						bundles = prop.getProperty("osgi.bundles"); //$NON-NLS-1$
-				} 
-			} else {
-				bundles = customAutoStart;
-			}
-			if (bundles != null) {
-				StringTokenizer tokenizer = new StringTokenizer(bundles, ","); //$NON-NLS-1$
-				while (tokenizer.hasMoreTokens()) {
-					String token = tokenizer.nextToken().trim();
-					int index = token.indexOf('@');
-					if (index == -1 || index == token.length() - 1)
-						continue;
-					String start = token.substring(index + 1);
-					if (start.indexOf("start") != -1 || !useDefault) { //$NON-NLS-1$
-						Integer level = index != -1 ? getStartLevel(start) : new Integer(-1);
-						list.put(index != -1 ? token.substring(0,token.indexOf('@')) : token, level);
-					}
-				}	
-			}				
-		}		
-		return list;
-	}
-	
-	private static String getOSGiPath() {
-		ModelEntry entry = PDECore.getDefault().getModelManager().findEntry("org.eclipse.osgi"); //$NON-NLS-1$
-		if (entry != null) {
-			IPluginModelBase model = entry.getActiveModel();
-			if (model.getUnderlyingResource() != null) {
-				return model.getUnderlyingResource().getLocation().removeLastSegments(2).toOSString();
-			}
-			return model.getInstallLocation();
-		}
-		return null;	
-	}
-	
-	private static Integer getStartLevel(String text) {
-		StringTokenizer tok = new StringTokenizer(text, ":"); //$NON-NLS-1$
-		while (tok.hasMoreTokens()) {
-			String token = tok.nextToken().trim();
-			try {
-				return new Integer(token);
-			} catch (NumberFormatException e) {
-			}
-		}
-		return new Integer(-1);
-	}
-	
-	
 	private static IPluginModelBase[] getSelectedPlugins(ILaunchConfiguration config) throws CoreException {
 		TreeMap map = new TreeMap();
 		boolean automaticAdd = config.getAttribute(ILauncherSettings.AUTOMATIC_ADD, true);
@@ -535,15 +461,18 @@ public class LauncherUtils {
 		return result[0];
 	}
 	
-	public static File createConfigArea(String name) {
-		IPath statePath = PDECore.getDefault().getStateLocation();
-		File dir = new File(statePath.toOSString());
-		if (name.length() > 0) {
-			dir = new File(dir, name);
-			if (!dir.exists()) {
-				dir.mkdirs();
+	public static File createConfigArea(ILaunchConfiguration config) {
+		File dir = new File(PDECore.getDefault().getStateLocation().toOSString(), config.getName());
+		try {
+			if (!config.getAttribute(ILauncherSettings.CONFIG_USE_DEFAULT_AREA, true)) {
+				String userPath = config.getAttribute(ILauncherSettings.CONFIG_LOCATION, (String)null);
+				if (userPath != null)
+					dir = new File(userPath);
 			}
-		}
+		} catch (CoreException e) {
+		}		
+		if (!dir.exists()) 
+			dir.mkdirs();		
 		return dir;		
 	}
 
@@ -658,4 +587,128 @@ public class LauncherUtils {
 		}		
 		return null;
 	}
+	
+	public static void createConfigIniFile(ILaunchConfiguration configuration, String brandingID, Map map, File directory) throws CoreException {
+		Properties properties = new Properties();
+		if (configuration.getAttribute(ILauncherSettings.CONFIG_GENERATE_DEFAULT, true)) {
+			properties.setProperty("osgi.install.area", "file:" + ExternalModelManager.getEclipseHome().toOSString()); //$NON-NLS-1$ //$NON-NLS-2$
+			properties.setProperty("osgi.configuration.cascaded", "false"); //$NON-NLS-1$ //$NON-NLS-2$
+			properties.setProperty("osgi.framework", "org.eclipse.osgi"); //$NON-NLS-1$ //$NON-NLS-2$
+			properties.setProperty("osgi.splashPath", brandingID); //$NON-NLS-1$
+			if (map.containsKey("org.eclipse.update.configurator")) { //$NON-NLS-1$
+				properties.setProperty("osgi.bundles", "org.eclipse.core.runtime@2:start,org.eclipse.update.configurator@3:start"); //$NON-NLS-1$ //$NON-NLS-2$
+			} else {
+				StringBuffer buffer = new StringBuffer();
+				Iterator iter = map.keySet().iterator();
+				while (iter.hasNext()) {
+					String id = iter.next().toString();
+					buffer.append(id);
+					if ("org.eclipse.core.runtime".equals(id)) { //$NON-NLS-1$
+						buffer.append("@2:start"); //$NON-NLS-1$
+					}
+					if (iter.hasNext())
+						buffer.append(","); //$NON-NLS-1$
+				}
+				properties.setProperty("osgi.bundles", buffer.toString()); //$NON-NLS-1$
+			}
+			properties.setProperty("osgi.bundles.defaultStartLevel", "4"); //$NON-NLS-1$ //$NON-NLS-2$
+		} else {
+			String templateLoc = configuration.getAttribute(ILauncherSettings.CONFIG_TEMPLATE_LOCATION, (String)null);
+			if (templateLoc != null) {
+				File templateFile = new File(templateLoc);
+				if (templateFile.exists() && templateFile.isFile()) {
+					try {
+						properties.load(new FileInputStream(templateFile));
+					} catch (Exception e) {
+						String message = e.getMessage();
+						if (message != null)
+							throw new CoreException(
+								new Status(
+									IStatus.ERROR,
+									PDEPlugin.getPluginId(),
+									IStatus.ERROR,
+									message,
+									e));
+					}
+				}
+			}
+		}
+		setBundleLocations(map, properties);
+		save(new File(directory, "config.ini"), properties); //$NON-NLS-1$
+	}
+	
+	private static void setBundleLocations(Map map, Properties properties) {
+		String framework = properties.getProperty("osgi.framework"); //$NON-NLS-1$
+		if (framework != null) {
+			if (framework.startsWith("platform:/base/plugins/")) { //$NON-NLS-1$
+				framework.replaceFirst("platform:/base/plugins/", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			String url = TargetPlatform.getBundleURL(framework, map);
+			if (url != null)
+				properties.setProperty("osgi.framework", url); //$NON-NLS-1$
+		}
+		
+		String brandingID = properties.getProperty("osgi.splashPath"); //$NON-NLS-1$
+		if (brandingID != null) {
+			if (brandingID.startsWith("platform:/base/plugins/")) { //$NON-NLS-1$
+				brandingID.replaceFirst("platform:/base/plugins/", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			String splashPath = TargetPlatform.getBundleURL(brandingID, map);
+			if (splashPath == null) {
+				int index = brandingID.lastIndexOf('.');
+				if (index != -1) {
+					String id = brandingID.substring(0, index);
+					splashPath = TargetPlatform.getBundleURL(id, map);
+				}
+			}
+			if (splashPath != null) {
+				properties.setProperty("osgi.splashPath", splashPath); //$NON-NLS-1$
+			}
+		}
+
+		String bundles = properties.getProperty("osgi.bundles"); //$NON-NLS-1$
+		if (bundles != null) {
+			StringBuffer buffer = new StringBuffer();
+			StringTokenizer tokenizer = new StringTokenizer(bundles, ","); //$NON-NLS-1$
+			while (tokenizer.hasMoreTokens()) {
+				String token = tokenizer.nextToken().trim();
+				String url = TargetPlatform.getBundleURL(token, map);
+				int index = -1;
+				if (url == null) {
+					index = token.indexOf('@');
+					if (index != -1) {
+						url = TargetPlatform.getBundleURL(token.substring(0,index), map);
+					}
+					if (url == null) {
+						index = token.indexOf(':');
+						if (index != -1) {
+							url = TargetPlatform.getBundleURL(token.substring(0,index), map);
+						}
+					}
+				}
+				if (url == null) {
+					buffer.append(token);
+				} else {
+					buffer.append("reference:" + url); //$NON-NLS-1$
+					if (index != -1)
+						buffer.append(token.substring(index));
+				}
+				if (tokenizer.hasMoreTokens())
+					buffer.append(","); //$NON-NLS-1$
+			}
+			properties.setProperty("osgi.bundles", buffer.toString()); //$NON-NLS-1$
+		}
+	}
+	
+	private static void save(File file, Properties properties) {
+		try {
+			FileOutputStream stream = new FileOutputStream(file);
+			properties.store(stream, "Eclipse Runtime Configuration File"); //$NON-NLS-1$
+			stream.flush();
+			stream.close();
+		} catch (IOException e) {
+			PDECore.logException(e);
+		}
+	}
+
 }

@@ -23,10 +23,6 @@ import org.eclipse.pde.internal.core.feature.*;
 import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 
-/**
- * @version 	1.0
- * @author
- */
 public class TargetPlatform implements IEnvironmentVariables {
 
 	private static final String BOOT_ID = "org.eclipse.core.boot"; //$NON-NLS-1$
@@ -108,17 +104,15 @@ public class TargetPlatform implements IEnvironmentVariables {
 	public static void createPlatformConfigurationArea(
 		TreeMap pluginMap,
 		File configDir,
-		String primaryFeatureId,
-		HashMap autoStartPlugins)
+		String brandingPluginID)
 		throws CoreException {
 		try {
 			if (PDECore.getDefault().getModelManager().isOSGiRuntime()) {
-				createConfigIniFile(configDir, pluginMap, primaryFeatureId, autoStartPlugins);
 				if (pluginMap.containsKey("org.eclipse.update.configurator")) {  //$NON-NLS-1$
-					savePlatformConfiguration(BootLoader.getPlatformConfiguration(null),configDir, pluginMap, primaryFeatureId);
+					savePlatformConfiguration(BootLoader.getPlatformConfiguration(null),configDir, pluginMap, brandingPluginID);
 				}
 			} else {
-				savePlatformConfiguration(new PlatformConfiguration(null), new File(configDir, "platform.cfg"), pluginMap, primaryFeatureId); //$NON-NLS-1$
+				savePlatformConfiguration(new PlatformConfiguration(null), new File(configDir, "platform.cfg"), pluginMap, brandingPluginID); //$NON-NLS-1$
 			} 			
 		} catch (CoreException e) {
 			// Rethrow
@@ -138,90 +132,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 		}
 	}
 	
-	private static void createConfigIniFile(File configDir, TreeMap pluginMap, String primaryFeatureId, HashMap autoStartPlugins) {
-		if (!configDir.exists())
-			configDir.mkdirs();
-		File file = new File(configDir, "config.ini"); //$NON-NLS-1$
-		try {
-			FileOutputStream stream = new FileOutputStream(file);
-			OutputStreamWriter writer = new OutputStreamWriter(stream, "8859_1"); //$NON-NLS-1$
-			BufferedWriter bWriter = new BufferedWriter(writer);
-			
-			bWriter.write("#Eclipse Runtime Configuration File"); //$NON-NLS-1$
-			bWriter.newLine();
-			bWriter.write("osgi.install.area=file:" + ExternalModelManager.getEclipseHome().toString()); //$NON-NLS-1$
-			bWriter.newLine();
-			
-			if (primaryFeatureId != null) {
-				String splashPath = getBundleURL(primaryFeatureId, pluginMap);
-				if (splashPath == null) {
-					int index = primaryFeatureId.lastIndexOf('.');
-					if (index != -1) {
-						String id = primaryFeatureId.substring(0, index);
-						splashPath = getBundleURL(id, pluginMap);
-					}
-				}
-				if (splashPath != null) {
-					bWriter.write("osgi.splashPath=" + splashPath); //$NON-NLS-1$
-					bWriter.newLine();
-				}
-			}
-			
-			bWriter.write("osgi.configuration.cascaded=false"); //$NON-NLS-1$
-			bWriter.newLine();
-			
-			bWriter.write("osgi.framework=" + getBundleURL("org.eclipse.osgi", pluginMap)); //$NON-NLS-1$ //$NON-NLS-2$
-			bWriter.newLine();
-			
-			Iterator iter = autoStartPlugins.keySet().iterator();
-			StringBuffer buffer = new StringBuffer();
-			
-			while (iter.hasNext()) {
-				String id = iter.next().toString();
-				String url = getBundleURL(id, pluginMap);
-				if (url == null)
-					continue;
-				buffer.append("reference:" + url); //$NON-NLS-1$
-				Integer integer = (Integer)autoStartPlugins.get(id);
-				if (integer.intValue() > 0)
-					buffer.append("@" + integer.intValue() + ":start"); //$NON-NLS-1$ //$NON-NLS-2$
-				if (iter.hasNext())
-					buffer.append(","); //$NON-NLS-1$
-			}
-			
-			if (!autoStartPlugins.containsKey("org.eclipse.update.configurator") || //$NON-NLS-1$
-					!pluginMap.containsKey("org.eclipse.update.configurator")) { //$NON-NLS-1$
-				iter = pluginMap.keySet().iterator();
-				while (iter.hasNext()) {
-					String id = iter.next().toString();
-					if ("org.eclipse.osgi".equals(id) || autoStartPlugins.containsKey(id)) //$NON-NLS-1$
-						continue;
-					String url = getBundleURL(id, pluginMap);
-					if (url == null)
-						continue;
-					if (buffer.length() > 0)
-						buffer.append(","); //$NON-NLS-1$
-					buffer.append("reference:" + url); //$NON-NLS-1$					
-				}
-			}
-			
-			if (buffer.length() > 0) {
-				bWriter.write("osgi.bundles=" + buffer.toString()); //$NON-NLS-1$
-				bWriter.newLine();
-			}	
-			
-			bWriter.write("osgi.bundles.defaultStartLevel=4"); //$NON-NLS-1$
-			bWriter.newLine();
-			
-			bWriter.write("eof=eof"); //$NON-NLS-1$
-			bWriter.flush();
-			bWriter.close();
-		} catch (IOException e) {
-			PDECore.logException(e);
-		}
-	}
-	
-	private static String getBundleURL(String id, TreeMap pluginMap) {
+	public static String getBundleURL(String id, Map pluginMap) {
 		IPluginModelBase model = (IPluginModelBase)pluginMap.get(id);
 		if (model == null)
 			return null;
@@ -449,25 +360,6 @@ public class TargetPlatform implements IEnvironmentVariables {
 		return model;
 	}
 
-	private static String getKey(IPluginModelBase model) {
-		if (model.isLoaded()) {
-			return model.getPluginBase().getId();
-		}
-		IResource resource = model.getUnderlyingResource();
-		if (resource != null)
-			return resource.getProject().getName();
-		return model.getInstallLocation();
-	}
-
-	private static String createDataSuffix(IPath data) {
-		if (data == null)
-			return ""; //$NON-NLS-1$
-		String suffix = data.toOSString();
-		// replace file and device separators with underscores
-		suffix = suffix.replace(File.separatorChar, '_');
-		return suffix.replace(':', '_');
-	}
-
 	public static String createURL(IPluginModelBase model) {
 		return getPluginLocation(model).addTrailingSeparator().toString();
 	}
@@ -492,36 +384,4 @@ public class TargetPlatform implements IEnvironmentVariables {
 		return PDECore.getDefault().getPluginPreferences().getString(key);
 	}
 
-	private static Choice[] getKnownChoices(String[] values) {
-		Choice[] choices = new Choice[values.length];
-		for (int i = 0; i < choices.length; i++) {
-			choices[i] = new Choice(values[i], values[i]);
-		}
-		return choices;
-	}
-
-	public static Choice[] getOSChoices() {
-		return getKnownChoices(BootLoader.knownOSValues());
-	}
-
-	public static Choice[] getWSChoices() {
-		return getKnownChoices(BootLoader.knownWSValues());
-	}
-
-	public static Choice[] getNLChoices() {
-		Locale[] locales = Locale.getAvailableLocales();
-		Choice[] choices = new Choice[locales.length];
-		for (int i = 0; i < locales.length; i++) {
-			Locale locale = locales[i];
-			choices[i] =
-				new Choice(
-					locale.toString(),
-					locale.toString() + " - " + locale.getDisplayName()); //$NON-NLS-1$
-		}
-		return choices;
-	}
-
-	public static Choice[] getArchChoices() {
-		return getKnownChoices(BootLoader.knownOSArchValues());
-	}
 }

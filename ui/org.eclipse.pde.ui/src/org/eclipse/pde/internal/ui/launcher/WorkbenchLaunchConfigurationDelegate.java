@@ -52,7 +52,7 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 			}
 
 			// clear config area, if necessary
-			if (configuration.getAttribute(CONFIG_CLEAR, false))
+			if (configuration.getAttribute(CONFIG_CLEAR_AREA, false))
 				LauncherUtils.clearConfigArea(getConfigDir(configuration), new SubProgressMonitor(monitor, 1));
 			launch.setAttribute(ILauncherSettings.CONFIG_LOCATION, getConfigDir(configuration).toString());
 			
@@ -136,12 +136,15 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 			if (pluginMap == null) 
 				return null;
 				
-			String primaryFeatureId = LauncherUtils.getBrandingPluginID(configuration);
+			String brandingPlugin = LauncherUtils.getBrandingPluginID(configuration);
+			if (isOSGI) {
+				LauncherUtils.createConfigIniFile(configuration,
+						brandingPlugin, pluginMap, getConfigDir(configuration));
+			}
 			TargetPlatform.createPlatformConfigurationArea(
 					pluginMap,
 					getConfigDir(configuration),
-					primaryFeatureId,
-					LauncherUtils.getAutoStartPlugins(configuration));
+					brandingPlugin);
 			programArgs.add("-configuration"); //$NON-NLS-1$
 			if (isOSGI)
 				programArgs.add("file:" + new Path(getConfigDir(configuration).getPath()).addTrailingSeparator().toString()); //$NON-NLS-1$
@@ -149,9 +152,9 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 				programArgs.add("file:" + new Path(getConfigDir(configuration).getPath()).append("platform.cfg").toString()); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			if (!isOSGI) {
-				if (primaryFeatureId != null) {
+				if (brandingPlugin != null) {
 					programArgs.add("-feature"); //$NON-NLS-1$
-					programArgs.add(primaryFeatureId);					
+					programArgs.add(brandingPlugin);					
 				}
 				IPluginModelBase bootModel = (IPluginModelBase)pluginMap.get("org.eclipse.core.boot"); //$NON-NLS-1$
 				String bootPath = LauncherUtils.getBootPath(bootModel);
@@ -308,10 +311,10 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 						root += "/configuration"; //$NON-NLS-1$
 					fConfigDir = new File(root);
 				} else {
-					fConfigDir = LauncherUtils.createConfigArea(config.getName());
+					fConfigDir = LauncherUtils.createConfigArea(config);
 				}
 			} catch (CoreException e) {
-				fConfigDir = LauncherUtils.createConfigArea(config.getName());
+				fConfigDir = LauncherUtils.createConfigArea(config);
 			}
 		}
 		if (!fConfigDir.exists())

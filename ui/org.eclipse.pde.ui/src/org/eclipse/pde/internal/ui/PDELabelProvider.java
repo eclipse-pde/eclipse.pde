@@ -531,8 +531,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 		}
 		if (plugin.isFragment())
 			return get(PDEPluginImages.DESC_FRAGMENT_OBJ, flags);
-		else
-			return get(PDEPluginImages.DESC_PLUGIN_OBJ, flags);
+		return get(PDEPluginImages.DESC_PLUGIN_OBJ, flags);
 	}
 
 	private Image getObjectImage(IFeatureChild feature) {
@@ -613,8 +612,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 	public Image getObjectImage(ISiteBuildFeature obj) {
 		if (obj.getReferencedFeature() == null)
 			return get(PDEPluginImages.DESC_NOREF_FEATURE_OBJ);
-		else
-			return get(PDEPluginImages.DESC_FEATURE_OBJ);
+		return get(PDEPluginImages.DESC_FEATURE_OBJ);
 	}
 
 	public boolean isFullNameModeEnabled() {

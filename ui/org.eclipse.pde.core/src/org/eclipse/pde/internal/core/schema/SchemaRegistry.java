@@ -271,10 +271,10 @@ public class SchemaRegistry
 	}
 
 	private void removeExtensionPoint(IFile file) {
-		for (Enumeration enum = workspaceDescriptors.keys();
-			enum.hasMoreElements();
+		for (Enumeration keys = workspaceDescriptors.keys();
+			keys.hasMoreElements();
 			) {
-			String key = (String) enum.nextElement();
+			String key = (String) keys.nextElement();
 			Object desc = workspaceDescriptors.get(key);
 			if (desc instanceof FileSchemaDescriptor) {
 				FileSchemaDescriptor fd = (FileSchemaDescriptor) desc;
@@ -312,10 +312,10 @@ public class SchemaRegistry
 			}
 		}
 		// Also remove all included descriptors from the same project
-		for (Enumeration enum = workspaceDescriptors.keys();
-			enum.hasMoreElements();
+		for (Enumeration keys = workspaceDescriptors.keys();
+			keys.hasMoreElements();
 			) {
-			String key = (String) enum.nextElement();
+			String key = (String) keys.nextElement();
 			Object desc = workspaceDescriptors.get(key);
 			if (desc instanceof IncludedSchemaDescriptor) {
 				IncludedSchemaDescriptor id = (IncludedSchemaDescriptor) desc;

@@ -61,7 +61,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 				return;
 			}
 
-			if (configuration.getAttribute(CONFIG_CLEAR, false))
+			if (configuration.getAttribute(CONFIG_CLEAR_AREA, false))
 				LauncherUtils.clearConfigArea(getConfigDir(configuration), new SubProgressMonitor(monitor, 1));
 			launch.setAttribute(ILauncherSettings.CONFIG_LOCATION, getConfigDir(configuration).toString());
 			
@@ -187,25 +187,23 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		programArgs.add(targetWorkspace);
 		
 		// Create the platform configuration for the runtime workbench
-		String primaryFeatureId = LauncherUtils.getBrandingPluginID(configuration);
-		
+		String brandingPlugin = LauncherUtils.getBrandingPluginID(configuration);
+		if (PDECore.getDefault().getModelManager().isOSGiRuntime()) {
+			LauncherUtils.createConfigIniFile(configuration,
+					brandingPlugin, pluginMap, getConfigDir(configuration));
+		}
 		TargetPlatform.createPlatformConfigurationArea(
 			pluginMap,
 			getConfigDir(configuration),
-			primaryFeatureId,
-			LauncherUtils.getAutoStartPlugins(configuration));
+			brandingPlugin);
+		
 		programArgs.add("-configuration"); //$NON-NLS-1$
 		if (PDECore.getDefault().getModelManager().isOSGiRuntime())
 			programArgs.add("file:" + new Path(getConfigDir(configuration).getPath()).addTrailingSeparator().toString()); //$NON-NLS-1$
 		else
 			programArgs.add("file:" + new Path(getConfigDir(configuration).getPath()).append("platform.cfg").toString()); //$NON-NLS-1$ //$NON-NLS-2$
-
 		
 		if (!PDECore.getDefault().getModelManager().isOSGiRuntime()) {
-			if (primaryFeatureId != null) {
-				programArgs.add("-feature"); //$NON-NLS-1$
-				programArgs.add(primaryFeatureId);
-			}
 			// Pre-OSGi platforms need the location of org.eclipse.core.boot specified
 			IPluginModelBase bootModel = (IPluginModelBase)pluginMap.get("org.eclipse.core.boot"); //$NON-NLS-1$
 			String bootPath = LauncherUtils.getBootPath(bootModel);
@@ -374,8 +372,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		String id = getPluginID(configuration);
 		if (id != null) {
 			IPluginModelBase[] models = getPluginAndPrereqs(id);
-			int i = 0;
-			for (; i < models.length; i++) {
+			for (int i = 0; i < models.length; i++) {
 				if ("org.eclipse.swt".equals(models[i].getPluginBase().getId())) //$NON-NLS-1$
 					return true;
 			}
@@ -424,9 +421,9 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 
 	
 	private File getConfigDir(ILaunchConfiguration config) {
-		if (fConfigDir == null) {
-			fConfigDir = LauncherUtils.createConfigArea(config.getName());
-		}
+		if (fConfigDir == null)
+			fConfigDir = LauncherUtils.createConfigArea(config);
+	
 		if (!fConfigDir.exists())
 			fConfigDir.mkdirs();
 		return fConfigDir;

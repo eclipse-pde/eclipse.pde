@@ -389,10 +389,10 @@ public class Schema extends PlatformObject implements ISchema {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
 				if (child.getNodeName().equals("enumeration")) { //$NON-NLS-1$
-					ISchemaEnumeration enum = processEnumeration(attribute
+					ISchemaEnumeration enumeration = processEnumeration(attribute
 							.getSchema(), child);
-					if (enum != null)
-						items.addElement(enum);
+					if (enumeration != null)
+						items.addElement(enumeration);
 				}
 			}
 		}
@@ -587,10 +587,10 @@ public class Schema extends PlatformObject implements ISchema {
 	}
 	private ISchemaEnumeration processEnumeration(ISchema schema, Node node) {
 		String name = getAttribute(node, "value"); //$NON-NLS-1$
-		SchemaEnumeration enum = new SchemaEnumeration(schema, name);
-		enum.bindSourceLocation(node, lineTable);
-		enum.addComments(node);
-		return enum;
+		SchemaEnumeration enumeration = new SchemaEnumeration(schema, name);
+		enumeration.bindSourceLocation(node, lineTable);
+		enumeration.addComments(node);
+		return enumeration;
 	}
 	private int processKind(String name) {
 		if (name != null) {

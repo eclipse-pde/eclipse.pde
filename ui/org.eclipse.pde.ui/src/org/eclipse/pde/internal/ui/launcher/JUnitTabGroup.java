@@ -18,7 +18,6 @@ import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
 import org.eclipse.debug.ui.sourcelookup.SourceLookupTab;
 import org.eclipse.jdt.internal.junit.launcher.JUnitMainTab;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 
@@ -27,19 +26,11 @@ public class JUnitTabGroup extends AbstractLaunchConfigurationTabGroup {
 	 * @see ILaunchConfigurationTabGroup#createTabs(ILaunchConfigurationDialog, String)
 	 */
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
-		ILaunchConfigurationTab[] tabs = null;
-		if (PDECore.getDefault().getModelManager().isOSGiRuntime()) {
-			tabs = new ILaunchConfigurationTab[]{new JUnitMainTab(),
+		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[]{new JUnitMainTab(),
 					new JUnitArgumentsTab(), new AdvancedLauncherTab(false),
 					 new ConfigurationTab(), new TracingLauncherTab(),
 					new EnvironmentTab(), new SourceLookupTab(), 
 					new CommonTab()};
-		} else {
-			tabs = new ILaunchConfigurationTab[]{new JUnitMainTab(),
-					new JUnitArgumentsTab(), new AdvancedLauncherTab(false),
-					new TracingLauncherTab(), new EnvironmentTab(),
-					new SourceLookupTab(), new CommonTab()};
-		}
 		setTabs(tabs);
 	}
 
