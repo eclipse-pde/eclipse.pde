@@ -39,7 +39,7 @@ public class ExportSection extends PDESection {
 		text.setLayoutData(td);
 				
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
-		fArchiveEntry = new FormEntry(comp, toolkit, "Archive:", "Browse...", false, 45);
+		fArchiveEntry = new FormEntry(comp, toolkit, null, "Browse...", false, 25);
 		fArchiveEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
 			}
