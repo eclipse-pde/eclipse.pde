@@ -135,7 +135,8 @@
             content="$nl$/tutorialsExtensionContent.xml"/>
    </extension>
 
-   <extension point="org.eclipse.ui.cheatsheets.cheatSheetContent">
+   <extension 
+   		 point="org.eclipse.ui.cheatsheets.cheatSheetContent">
       <cheatsheet
             name="%cheatsheet.helloworld.name"
             contentFile="cheatsheets/helloworld.xml"
@@ -149,4 +150,29 @@
          <description>%cheatsheet.updates.desc</description>
       </cheatsheet>
    </extension>
+   
+   <extension 
+   		 point="org.eclipse.core.runtime.contentTypes">
+      <content-type 
+      		id="pluginManifest" 
+      		name="%pluginManifestName" 
+    		base-type="org.eclipse.core.runtime.xml"
+   			priority="high"				
+    		file-names="plugin.xml"
+			describer="org.eclipse.core.runtime.content.XMLRootElementContentDescriber:plugin"/>
+   	  <content-type 
+   	  		id="fragmentManifest" 
+   	  		name="%fragmentManifestName" 
+       		base-type="org.eclipse.core.runtime.xml"
+    		priority="high"				
+    		file-names="fragment.xml"
+			describer="org.eclipse.core.runtime.content.XMLRootElementContentDescriber:fragment"/>
+	  <content-type 
+	  		id="pluginProperties" 
+	  		name="%pluginPropertiesName" 
+    		base-type="org.eclipse.jdt.core.javaProperties"
+    		priority="high"				
+    		file-names="plugin.properties"/>
+   </extension>
+   
 </plugin>
