@@ -297,8 +297,9 @@ public class SchemaTransformer implements ISchemaTransformer {
 
 	private void transformElement(PrintWriter out, ISchemaElement element) {
 		String name = element.getName();
-		String dtd = element.getDTDRepresentation();
-		out.print("<p><samp><font color=\""+COLOR_DTD+"\">&nbsp;&nbsp; &lt;!ELEMENT " + name + " " + dtd);
+		String dtd = element.getDTDRepresentation(true);
+		String nameLink = "<a name=\"e."+name+"\">"+name+"</a>";
+		out.print("<p><samp><font color=\""+COLOR_DTD+"\">&nbsp;&nbsp; &lt;!ELEMENT " + nameLink + " " + dtd);
 		out.println("&gt;</font></samp>");
 
 		ISchemaAttribute[] attributes = element.getAttributes();
