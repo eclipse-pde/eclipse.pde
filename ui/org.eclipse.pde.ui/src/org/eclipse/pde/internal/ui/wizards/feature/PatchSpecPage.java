@@ -11,13 +11,14 @@
 
 package org.eclipse.pde.internal.ui.wizards.feature;
 
+import java.util.*;
+
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.ui.dialogs.*;
 
 /**
  * @author cgwong
- *
  */
 public class PatchSpecPage extends BaseFeatureSpecPage {
 
@@ -36,56 +37,98 @@ public class PatchSpecPage extends BaseFeatureSpecPage {
 		if (initialName == null)
 			patchNameText.setText(projectName);
 		setErrorMessage(null);
+		super.initialize();
 	}
 
 	protected void verifyComplete() {
-		boolean complete = featureIdText.getText().length() > 0
-				&& patchIdText.getText().length() > 0;
-		setPageComplete(complete);
-		if (complete) {
-			String message = verifyIdRules();
-			if (message != null) {
-				setPageComplete(false);
-				setErrorMessage(message);
-			} else {
-				setErrorMessage(null);
-				verifyVersion();
-			}
-		} else
-			setErrorMessage(PDEPlugin.getResourceString(KEY_MISSING));
-		
-		if (canFlipToNextPage()){
+		String message = verifyIdRules();
+		if (message != null) {
+			setPageComplete(false);
+			setErrorMessage(message);
+			return;
+		}
+		message = verifyVersion();
+		if (message != null) {
+			setPageComplete(false);
+			setErrorMessage(message);
+			return;
+		}
+		if (customChoice.getSelection() && libraryText.getText().length() == 0) {
+			setPageComplete(false);
+			setErrorMessage(PDEPlugin.getResourceString(KEY_LIBRARY_MISSING));
+			return;
+		}
+
+		if (canFlipToNextPage()) {
 
 			IFeatureModel[] featureModels = getAllFeatureModels();
 
 			for (int i = 0; i < featureModels.length; i++) {
 				IFeature feature = featureModels[i].getFeature();
-				if (feature.getId().equals(featureIdText.getText()) 
-						&& feature.getVersion().equals(featureVersionText.getText())){
+				if (feature.getId().equals(featureIdText.getText())
+						&& feature.getVersion().equals(featureVersionText.getText())) {
 					fFeatureToPatch = feature.getModel();
 					return;
 				}
 			}
 			fFeatureToPatch = null;
 		}
+
+		setPageComplete(true);
+		setErrorMessage(null);
+
 	}
 
-	public String getPatchId(){
+	private String getPatchId() {
 		if (patchIdText == null)
 			return ""; //$NON-NLS-1$
 		return patchIdText.getText();
 	}
-	
-	public String getPatchName(){
+
+	private String getPatchName() {
 		if (patchNameText == null)
 			return ""; //$NON-NLS-1$
 		return patchNameText.getText();
 	}
-	
-	public String getPatchProvider(){
+
+	private String getPatchProvider() {
 		if (patchProviderText == null)
 			return ""; //$NON-NLS-1$
 		return patchProviderText.getText();
 	}
+
+	public FeatureData getFeatureData() {
+		FeatureData data = new FeatureData();
+		data.id = getPatchId();
+		data.version = "1.0.0"; //$NON-NLS-1$
+		data.provider = getPatchProvider();
+		data.name = getPatchName();
+		data.library = getInstallHandlerLibrary();
+		return data;
+	}
+
+	protected String verifyIdRules() {
+		String problemText = PDEPlugin.getResourceString(KEY_INVALID_ID);
+		String name = patchIdText.getText();
+		if (name == null || name.length() == 0)
+			return PDEPlugin.getResourceString(KEY_PMISSING);
+		StringTokenizer stok = new StringTokenizer(name, "."); //$NON-NLS-1$
+		while (stok.hasMoreTokens()) {
+			String token = stok.nextToken();
+			for (int i = 0; i < token.length(); i++) {
+				if (Character.isLetterOrDigit(token.charAt(i)) == false)
+					return problemText;
+			}
+		}
+		return super.verifyIdRules();
+	}
 	
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+		if (visible) {
+			initialize();
+			isInitialized = true;
+			patchIdText.setFocus();
+		}
+	}
 }

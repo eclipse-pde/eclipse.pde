@@ -28,7 +28,6 @@ import org.eclipse.pde.internal.core.feature.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.pde.internal.ui.wizards.feature.FeatureCustomHandlerPage.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.dialogs.*;
@@ -54,7 +53,6 @@ public class NewFeatureProjectWizard extends NewWizard
 	private WizardNewProjectCreationPage mainPage;
 	private FeatureSpecPage specPage;
 	private PluginListPage pluginListPage;
-	private FeatureCustomHandlerPage structurePage;
 	private IConfigurationElement config;
 	private IProjectProvider provider;
 	public class FeatureProjectProvider implements IProjectProvider {
@@ -103,8 +101,6 @@ public class NewFeatureProjectWizard extends NewWizard
 		specPage.setInitialId(getDefaultValue(DEF_ID));
 		specPage.setInitialName(getDefaultValue(DEF_NAME));
 		addPage(specPage);
-		structurePage = new FeatureCustomHandlerPage(provider);
-		addPage(structurePage);
 		if (hasInterestingProjects()) {
 			pluginListPage = new PluginListPage();
 			addPage(pluginListPage);
@@ -113,9 +109,8 @@ public class NewFeatureProjectWizard extends NewWizard
 
 	public boolean canFinish() {
 		IWizardPage page = getContainer().getCurrentPage();
-		return ((page == specPage && structurePage.isInitialized())
-				|| (page == structurePage && page.isPageComplete()) || (page == pluginListPage && page
-				.isPageComplete()));
+		return ((page == specPage && page.isPageComplete()) 
+				|| (page == pluginListPage && page.isPageComplete()));
 	}
 
 	private boolean hasInterestingProjects() {
@@ -196,8 +191,7 @@ public class NewFeatureProjectWizard extends NewWizard
 		}
 
 	}
-	private void createBuildProperties(IProject project) throws CoreException {
-		StructureData structureData = structurePage.getStructureData();
+	private void createBuildProperties(IProject project, FeatureData data) throws CoreException {
 		String fileName = "build.properties"; //$NON-NLS-1$
 		IPath path = project.getFullPath().append(fileName);
 		IFile file = project.getWorkspace().getRoot().getFile(path);
@@ -205,9 +199,9 @@ public class NewFeatureProjectWizard extends NewWizard
 			WorkspaceBuildModel model = new WorkspaceBuildModel(file);
 			IBuildEntry ientry = model.getFactory().createEntry("bin.includes"); //$NON-NLS-1$
 			ientry.addToken("feature.xml"); //$NON-NLS-1$
-			String library = structureData.getRuntimeLibraryName();
+			String library = data.library;
 			if (library != null) {
-				String source = structureData.getSourceFolderName();
+				String source = data.getSourceFolderName();
 				if (source != null) {
 					IBuildEntry entry = model.getFactory().createEntry(
 							IBuildEntry.JAR_PREFIX + library);
@@ -217,7 +211,7 @@ public class NewFeatureProjectWizard extends NewWizard
 					ientry.addToken(library);
 					model.getBuild().add(entry);
 				}
-				String output = structureData.getJavaBuildFolderName();
+				String output = data.getJavaBuildFolderName();
 				if (output != null) {
 					IBuildEntry entry = model.getFactory().createEntry(
 							IBuildPropertiesConstants.PROPERTY_OUTPUT_PREFIX
@@ -263,8 +257,8 @@ public class NewFeatureProjectWizard extends NewWizard
 			handler = feature.getModel().getFactory().createInstallHandler();
 			feature.setInstallHandler(handler);
 		}
-		StructureData structureData = structurePage.getStructureData();
-		handler.setLibrary(structureData.getRuntimeLibraryName());
+		
+		handler.setLibrary(data.library);
 
 		IFeatureInfo info = model.getFactory().createInfo(IFeature.INFO_COPYRIGHT);
 		feature.setFeatureInfo(info, IFeature.INFO_COPYRIGHT);
@@ -296,7 +290,6 @@ public class NewFeatureProjectWizard extends NewWizard
 			throws CoreException {
 
 		monitor.beginTask(PDEPlugin.getResourceString(CREATING_PROJECT), 3);
-		StructureData structureData = structurePage.getStructureData();
 		boolean overwrite = true;
 		if (location.append(project.getName()).toFile().exists()) {
 			overwrite = MessageDialog.openQuestion(PDEPlugin
@@ -315,12 +308,12 @@ public class NewFeatureProjectWizard extends NewWizard
 						monitor);
 
 			if (!project.hasNature(JavaCore.NATURE_ID)
-					&& structureData.hasCustomHandler()) {
+					&& data.hasCustomHandler()) {
 				CoreUtility.addNatureToProject(project, JavaCore.NATURE_ID,
 						monitor);
 				JavaCore.create(project).setOutputLocation(
 						project.getFullPath().append(
-								structureData.getJavaBuildFolderName()),
+								data.getJavaBuildFolderName()),
 						monitor);
 				JavaCore
 						.create(project)
@@ -332,16 +325,16 @@ public class NewFeatureProjectWizard extends NewWizard
 												.newSourceEntry(project
 														.getFullPath()
 														.append(
-																structureData
+																data
 																		.getSourceFolderName()))},
 								monitor);
-				addSourceFolder(structureData.getSourceFolderName(), project,
+				addSourceFolder(data.getSourceFolderName(), project,
 						monitor);
 			}
 
 			monitor.subTask(PDEPlugin.getResourceString(CREATING_MANIFEST));
 			monitor.worked(1);
-			createBuildProperties(project);
+			createBuildProperties(project, data);
 			monitor.worked(1);
 			// create feature.xml
 			IFile file = createFeatureManifest(project, data, plugins);

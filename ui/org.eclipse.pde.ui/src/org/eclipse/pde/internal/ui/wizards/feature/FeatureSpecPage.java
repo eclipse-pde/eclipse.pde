@@ -29,42 +29,62 @@ public class FeatureSpecPage extends BaseFeatureSpecPage {
 			return;
 
 		String projectName = mainPage.getProjectName();
-		if (initialId == null){
+		if (initialId == null) {
 			featureIdText.setText(computeInitialId(projectName));
 		}
 		if (initialName == null)
 			featureNameText.setText(projectName);
 		featureVersionText.setText("1.0.0"); //$NON-NLS-1$
+
+		super.initialize();
 	}
 
 	public FeatureData getFeatureData() {
 		FeatureData data = new FeatureData();
 		data.id = featureIdText.getText();
 		try {
-			PluginVersionIdentifier pvi = new PluginVersionIdentifier(
-					featureVersionText.getText());
+			PluginVersionIdentifier pvi = new PluginVersionIdentifier(featureVersionText
+					.getText());
 			data.version = pvi.toString();
 		} catch (NumberFormatException e) {
 			data.version = featureVersionText.getText();
 		}
 		data.provider = featureProviderText.getText();
 		data.name = featureNameText.getText();
+		data.library = getInstallHandlerLibrary();
 		return data;
 	}
 
 	protected void verifyComplete() {
-		boolean complete = featureIdText.getText().length() > 0;
-		setPageComplete(complete);
-		if (complete) {
-			String message = verifyIdRules();
-			if (message != null) {
-				setPageComplete(false);
-				setErrorMessage(message);
-			} else {
-				setErrorMessage(null);
-				verifyVersion();
-			}
-		} else
-			setErrorMessage(PDEPlugin.getResourceString(KEY_MISSING));
+		String message = verifyIdRules();
+		if (message != null) {
+			setPageComplete(false);
+			setErrorMessage(message);
+			return;
+		}
+		message = verifyVersion();
+		if (message != null) {
+			setPageComplete(false);
+			setErrorMessage(message);
+			return;
+		}
+		if (customChoice.getSelection() && libraryText.getText().length() == 0) {
+			setPageComplete(false);
+			setErrorMessage(PDEPlugin.getResourceString(KEY_LIBRARY_MISSING));
+			return;
+		}
+		setPageComplete(true);
+		setErrorMessage(null);
+		return;
+
 	}
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+		if (visible) {
+			initialize();
+			isInitialized = true;
+			featureIdText.setFocus();
+		}
+	}
+	
 }

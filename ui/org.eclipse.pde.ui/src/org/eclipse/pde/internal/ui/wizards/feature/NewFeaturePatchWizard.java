@@ -30,7 +30,6 @@ import org.eclipse.pde.internal.core.feature.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.pde.internal.ui.wizards.feature.FeatureCustomHandlerPage.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.dialogs.*;
@@ -40,7 +39,7 @@ import org.eclipse.ui.wizards.newresource.*;
 
 /**
  * @author cgwong
- *
+ *  
  */
 public class NewFeaturePatchWizard extends NewWizard implements IExecutableExtension {
 
@@ -50,18 +49,14 @@ public class NewFeaturePatchWizard extends NewWizard implements IExecutableExten
 	public static final String DEF_PROJECT_NAME = "project-name"; //$NON-NLS-1$
 	public static final String DEF_FEATURE_ID = "feature-id"; //$NON-NLS-1$
 	public static final String DEF_FEATURE_NAME = "feature-name"; //$NON-NLS-1$
-	public static final String CREATING_PROJECT =
-		"NewFeatureWizard.creatingProject"; //$NON-NLS-1$
+	public static final String CREATING_PROJECT = "NewFeatureWizard.creatingProject"; //$NON-NLS-1$
 	public static final String OVERWRITE_FEATURE = "NewFeatureWizard.overwriteFeature"; //$NON-NLS-1$
-	public static final String CREATING_FOLDERS =
-		"NewFeatureWizard.creatingFolders"; //$NON-NLS-1$
-	public static final String CREATING_MANIFEST =
-		"NewFeatureWizard.creatingManifest"; //$NON-NLS-1$
+	public static final String CREATING_FOLDERS = "NewFeatureWizard.creatingFolders"; //$NON-NLS-1$
+	public static final String CREATING_MANIFEST = "NewFeatureWizard.creatingManifest"; //$NON-NLS-1$
 
 	private WizardNewProjectCreationPage mainPage;
 	private PatchSpecPage specPage;
 	private PatchPluginListPage pluginListPage;
-	private FeatureCustomHandlerPage structurePage;
 	private IConfigurationElement config;
 	private FeaturePatchProvider provider;
 
@@ -89,6 +84,10 @@ public class NewFeaturePatchWizard extends NewWizard implements IExecutableExten
 			return null;
 		}
 
+		public FeatureData getFeatureData() {
+			return specPage.getFeatureData();
+		}
+
 	}
 
 	public NewFeaturePatchWizard() {
@@ -113,31 +112,30 @@ public class NewFeaturePatchWizard extends NewWizard implements IExecutableExten
 		specPage.setInitialId(getDefaultValue(DEF_FEATURE_ID));
 		specPage.setInitialName(getDefaultValue(DEF_FEATURE_NAME));
 		addPage(specPage);
-		structurePage = new FeatureCustomHandlerPage(provider);
-		addPage(structurePage);
 		pluginListPage = new PatchPluginListPage(provider);
 		addPage(pluginListPage);
 	}
 
 	public boolean canFinish() {
 		IWizardPage page = getContainer().getCurrentPage();
-		return ((page == specPage && page.isPageComplete() && structurePage.isInitialized())
-				|| (page == structurePage && page.isPageComplete()) 
-				|| (page == pluginListPage && page.isPageComplete()));
+		return ((page == specPage && page.isPageComplete()) || (page == pluginListPage && page
+				.isPageComplete()));
 	}
 
 	public boolean performFinish() {
 		final IProject project = provider.getProject();
 		final IPath location = provider.getLocationPath();
 		final IFeaturePlugin[] plugins = pluginListPage.getSelectedPlugins() != null
-				? (IFeaturePlugin[])pluginListPage.getSelectedPlugins()
+				? (IFeaturePlugin[]) pluginListPage.getSelectedPlugins()
 				: (new IFeaturePlugin[0]);
 		final IFeatureModel featureModel = provider.getFeatureToPatch();
+		final FeatureData data = provider.getFeatureData();
 		IRunnableWithProgress operation = new WorkspaceModifyOperation() {
 
 			public void execute(IProgressMonitor monitor) {
 				try {
-					createFeatureProject(project, location, plugins, featureModel, monitor);
+					createFeatureProject(project, location, plugins, featureModel, data,
+							monitor);
 				} catch (CoreException e) {
 					PDEPlugin.logException(e);
 				} finally {
@@ -158,49 +156,53 @@ public class NewFeaturePatchWizard extends NewWizard implements IExecutableExten
 
 	}
 
-	public void setInitializationData(IConfigurationElement config, String property, Object data) throws CoreException {
+	public void setInitializationData(IConfigurationElement config, String property,
+			Object data) throws CoreException {
 		this.config = config;
 	}
 
 	/* finish methods */
 
-	private void createFeatureProject(IProject project, IPath location, 
-			IFeaturePlugin[] plugins, IFeatureModel featureModel, 
+	private void createFeatureProject(IProject project, IPath location,
+			IFeaturePlugin[] plugins, IFeatureModel featureModel, FeatureData data,
 			IProgressMonitor monitor) throws CoreException {
 
 		monitor.beginTask(PDEPlugin.getResourceString(CREATING_PROJECT), 3);
-		StructureData structureData = structurePage.getStructureData();
 		boolean overwrite = true;
 		if (location.append(project.getName()).toFile().exists()) {
-			overwrite = MessageDialog.openQuestion(PDEPlugin.getActiveWorkbenchShell(), PDEPlugin
-					.getResourceString(KEY_WTITLE), PDEPlugin.getResourceString(OVERWRITE_FEATURE));
+			overwrite = MessageDialog.openQuestion(PDEPlugin.getActiveWorkbenchShell(),
+					PDEPlugin.getResourceString(KEY_WTITLE), PDEPlugin
+							.getResourceString(OVERWRITE_FEATURE));
 		}
 		if (overwrite) {
 			CoreUtility.createProject(project, location, monitor);
 			project.open(monitor);
-			IProjectDescription desc = project.getWorkspace().newProjectDescription(project.getName());
+			IProjectDescription desc = project.getWorkspace().newProjectDescription(
+					project.getName());
 			desc.setLocation(provider.getLocationPath());
 			if (!project.hasNature(PDE.FEATURE_BUILDER_ID))
 				CoreUtility.addNatureToProject(project, PDE.FEATURE_NATURE, monitor);
 
-			if (!project.hasNature(JavaCore.NATURE_ID) && structureData.hasCustomHandler()) {
+			if (!project.hasNature(JavaCore.NATURE_ID) && data.hasCustomHandler()) {
 				CoreUtility.addNatureToProject(project, JavaCore.NATURE_ID, monitor);
 				JavaCore.create(project).setOutputLocation(
-						project.getFullPath().append(structureData.getJavaBuildFolderName()), monitor);
+						project.getFullPath().append(data.getJavaBuildFolderName()),
+						monitor);
 				JavaCore.create(project).setRawClasspath(
 						new IClasspathEntry[]{
-								JavaCore.newContainerEntry(new Path(JavaRuntime.JRE_CONTAINER)),
+								JavaCore.newContainerEntry(new Path(
+										JavaRuntime.JRE_CONTAINER)),
 								JavaCore.newSourceEntry(project.getFullPath().append(
-										structureData.getSourceFolderName()))}, monitor);
-				addSourceFolder(structureData.getSourceFolderName(), project, monitor);
+										data.getSourceFolderName()))}, monitor);
+				addSourceFolder(data.getSourceFolderName(), project, monitor);
 			}
 
 			monitor.subTask(PDEPlugin.getResourceString(CREATING_MANIFEST));
 			monitor.worked(1);
-			createBuildProperties(project);
+			createBuildProperties(project, data);
 			monitor.worked(1);
 			// create feature.xml
-			IFile file = createFeatureManifest(project, plugins, featureModel);
+			IFile file = createFeatureManifest(project, plugins, featureModel, data);
 			monitor.worked(1);
 			// open manifest for editing
 			openFeatureManifest(file);
@@ -214,31 +216,28 @@ public class NewFeaturePatchWizard extends NewWizard implements IExecutableExten
 		}
 
 	}
-	
-	protected static void addSourceFolder(String name, IProject project, IProgressMonitor monitor)
-	throws CoreException {
+
+	protected static void addSourceFolder(String name, IProject project,
+			IProgressMonitor monitor) throws CoreException {
 		IPath path = project.getFullPath().append(name);
 		ensureFolderExists(project, path, monitor);
 		monitor.worked(1);
 	}
-	
-	private void createBuildProperties(IProject project)
-	throws CoreException {
-		StructureData structureData = structurePage.getStructureData();
+
+	private void createBuildProperties(IProject project, FeatureData data)
+			throws CoreException {
 		String fileName = "build.properties"; //$NON-NLS-1$
 		IPath path = project.getFullPath().append(fileName);
 		IFile file = project.getWorkspace().getRoot().getFile(path);
 		if (!file.exists()) {
 			WorkspaceBuildModel model = new WorkspaceBuildModel(file);
-			IBuildEntry ientry =
-				model.getFactory().createEntry("bin.includes"); //$NON-NLS-1$
+			IBuildEntry ientry = model.getFactory().createEntry("bin.includes"); //$NON-NLS-1$
 			ientry.addToken("feature.xml"); //$NON-NLS-1$
-			String library = structureData.getRuntimeLibraryName();
-			if (library != null){
-				String source = structureData.getSourceFolderName();
+			String library = specPage.getInstallHandlerLibrary();
+			if (library != null) {
+				String source = data.getSourceFolderName();
 				if (source != null) {
-					IBuildEntry entry =
-						model.getFactory().createEntry(
+					IBuildEntry entry = model.getFactory().createEntry(
 							IBuildEntry.JAR_PREFIX + library);
 					if (!source.endsWith("/")) //$NON-NLS-1$
 						source += "/"; //$NON-NLS-1$
@@ -246,11 +245,12 @@ public class NewFeaturePatchWizard extends NewWizard implements IExecutableExten
 					ientry.addToken(library);
 					model.getBuild().add(entry);
 				}
-				String output = structureData.getJavaBuildFolderName();
-				if (output!=null){
-					IBuildEntry entry = model.getFactory().createEntry(IBuildPropertiesConstants.PROPERTY_OUTPUT_PREFIX + library);
+				String output = data.getJavaBuildFolderName();
+				if (output != null) {
+					IBuildEntry entry = model.getFactory().createEntry(
+							IBuildPropertiesConstants.PROPERTY_OUTPUT_PREFIX + library);
 					if (!output.endsWith("/")) //$NON-NLS-1$
-						output+="/"; //$NON-NLS-1$
+						output += "/"; //$NON-NLS-1$
 					entry.addToken(output);
 					model.getBuild().add(entry);
 				}
@@ -261,32 +261,29 @@ public class NewFeaturePatchWizard extends NewWizard implements IExecutableExten
 		}
 		IDE.setDefaultEditor(file, PDEPlugin.BUILD_EDITOR_ID);
 	}
-	
-	private IFile createFeatureManifest(
-			IProject project,
-			IFeaturePlugin[] plugins,
-			IFeatureModel featureModel)
-	throws CoreException {
+
+	private IFile createFeatureManifest(IProject project, IFeaturePlugin[] plugins,
+			IFeatureModel featureModel, FeatureData data) throws CoreException {
 		IFile file = project.getFile("feature.xml"); //$NON-NLS-1$
 		WorkspaceFeatureModel model = new WorkspaceFeatureModel();
 		model.setFile(file);
 		IFeature feature = model.getFeature();
-		feature.setLabel(specPage.getPatchName());
-		feature.setId(specPage.getPatchId());
+		feature.setLabel(data.name);
+		feature.setId(data.id);
 		feature.setVersion("1.0.0"); //$NON-NLS-1$
-		feature.setProviderName(specPage.getPatchProvider());
+		feature.setProviderName(data.provider);
 
 		IFeaturePlugin[] added = new IFeaturePlugin[plugins.length];
-		for (int i = 0; i<plugins.length; i++){
+		for (int i = 0; i < plugins.length; i++) {
 			added[i] = model.getFactory().createPlugin();
 			String name = feature.getId();
 			int loc = name.lastIndexOf("."); //$NON-NLS-1$
-			if (loc!=-1 && loc != name.length())
-				name = name.substring(loc+1, name.length());
+			if (loc != -1 && loc != name.length())
+				name = name.substring(loc + 1, name.length());
 			String[] versionSegments = plugins[i].getVersion().split("\\."); //$NON-NLS-1$
 			StringBuffer version = new StringBuffer();
-			for (int j = 0; j<versionSegments.length; j++){
-				if (j<3){
+			for (int j = 0; j < versionSegments.length; j++) {
+				if (j < 3) {
 					version.append(versionSegments[j]);
 					version.append("."); //$NON-NLS-1$
 				}
@@ -295,7 +292,7 @@ public class NewFeaturePatchWizard extends NewWizard implements IExecutableExten
 			IStatus status = PluginVersionIdentifier.validateVersion(version.toString());
 			if (status.isOK())
 				added[i].setVersion(version.toString());
-			else 
+			else
 				added[i].setVersion(plugins[i].getVersion());
 			added[i].setId(plugins[i].getId());
 			added[i].setDownloadSize(plugins[i].getDownloadSize());
@@ -308,41 +305,41 @@ public class NewFeaturePatchWizard extends NewWizard implements IExecutableExten
 		}
 		feature.addPlugins(added);
 
-		FeatureImport featureImport = (FeatureImport)model.getFactory().createImport();
+		FeatureImport featureImport = (FeatureImport) model.getFactory().createImport();
 		featureImport.loadFrom(featureModel.getFeature());
 		featureImport.setPatch(true);
 		featureImport.setVersion(featureModel.getFeature().getVersion());
 		featureImport.setId(featureModel.getFeature().getId());
-		
+
 		feature.addImports(new IFeatureImport[]{featureImport});
 		IFeatureInstallHandler handler = feature.getInstallHandler();
-		if (handler == null){
+		if (handler == null) {
 			handler = feature.getModel().getFactory().createInstallHandler();
 			feature.setInstallHandler(handler);
 		}
-		StructureData structureData = structurePage.getStructureData();
-		handler.setLibrary(structureData.getRuntimeLibraryName());
-			
+		handler.setLibrary(specPage.getInstallHandlerLibrary());
+
 		IFeatureInfo info = model.getFactory().createInfo(IFeature.INFO_COPYRIGHT);
 		feature.setFeatureInfo(info, IFeature.INFO_COPYRIGHT);
-		
+
 		info.setURL(PDEPlugin.getResourceString("NewFeatureWizard.sampleCopyrightURL")); //$NON-NLS-1$
-		info.setDescription(PDEPlugin.getResourceString("NewFeatureWizard.sampleCopyrightDesc")); //$NON-NLS-1$
-		
+		info.setDescription(PDEPlugin
+				.getResourceString("NewFeatureWizard.sampleCopyrightDesc")); //$NON-NLS-1$
+
 		info = model.getFactory().createInfo(IFeature.INFO_LICENSE);
 		feature.setFeatureInfo(info, IFeature.INFO_LICENSE);
-		
+
 		info.setURL(PDEPlugin.getResourceString("NewFeatureWizard.sampleLicenseURL")); //$NON-NLS-1$
-		info.setDescription(PDEPlugin.getResourceString("NewFeatureWizard.sampleLicenseDesc")); //$NON-NLS-1$
+		info.setDescription(PDEPlugin
+				.getResourceString("NewFeatureWizard.sampleLicenseDesc")); //$NON-NLS-1$
 
 		info = model.getFactory().createInfo(IFeature.INFO_DESCRIPTION);
 		feature.setFeatureInfo(info, IFeature.INFO_DESCRIPTION);
-		
-		info.setURL(PDEPlugin.getResourceString("NewFeatureWizard.sampleDescriptionURL")); //$NON-NLS-1$
-		info.setDescription(PDEPlugin.getResourceString("NewFeatureWizard.sampleDescriptionDesc")); //$NON-NLS-1$
 
-		
-		
+		info.setURL(PDEPlugin.getResourceString("NewFeatureWizard.sampleDescriptionURL")); //$NON-NLS-1$
+		info.setDescription(PDEPlugin
+				.getResourceString("NewFeatureWizard.sampleDescriptionDesc")); //$NON-NLS-1$
+
 		// Save the model
 		model.save();
 		model.dispose();
@@ -358,6 +355,7 @@ public class NewFeaturePatchWizard extends NewWizard implements IExecutableExten
 
 		if (activePart instanceof ISetSelectionTarget) {
 			getShell().getDisplay().asyncExec(new Runnable() {
+
 				public void run() {
 					((ISetSelectionTarget) activePart).selectReveal(selection);
 				}
@@ -373,9 +371,9 @@ public class NewFeaturePatchWizard extends NewWizard implements IExecutableExten
 			PDEPlugin.logException(e);
 		}
 	}
-	
-	private static void ensureFolderExists(IProject project, IPath folderPath, IProgressMonitor monitor)
-	throws CoreException {
+
+	private static void ensureFolderExists(IProject project, IPath folderPath,
+			IProgressMonitor monitor) throws CoreException {
 		IWorkspace workspace = project.getWorkspace();
 
 		for (int i = 1; i <= folderPath.segmentCount(); i++) {
@@ -386,6 +384,6 @@ public class NewFeaturePatchWizard extends NewWizard implements IExecutableExten
 			}
 			monitor.worked(1);
 		}
-		
+
 	}
 }
