@@ -121,7 +121,7 @@ public class SchemaRegistry
 		// Check external plug-ins
 		loadExternalDescriptors();
 		// Now read the registry and accept schema maps
-		loadMappedDescriptors();
+		//loadMappedDescriptors();
 		// Register for further changes
 		PDECore
 			.getDefault()
