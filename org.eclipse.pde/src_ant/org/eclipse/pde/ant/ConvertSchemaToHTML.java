@@ -60,7 +60,8 @@ public class ConvertSchemaToHTML extends Task {
 
 				File file = new File(destination);
 				if (!file.exists() || !file.isDirectory())
-					file.mkdirs();
+					if (!file.mkdirs())
+						return;
 					
 				String fileName =
 					destination
@@ -105,33 +106,34 @@ public class ConvertSchemaToHTML extends Task {
 		File file = new File(manifest);
 		try {
 			stream = new FileInputStream(manifest);
-		} catch (FileNotFoundException e) {
-			System.out.println(
-				PDE.getFormattedMessage(
-					"Builders.Convert.Manifest.missingFile",
-					file.getAbsolutePath()));
+		} catch (Exception e) {
+			if (e.getMessage() != null)
+				System.out.println(e.getMessage());
 			return null;
 		}
 
 		ExternalPluginModelBase model = null;
-		if (file.getName().toLowerCase().equals("fragment.xml"))
-			model = new ExternalFragmentModel();
-		else if (file.getName().toLowerCase().equals("plugin.xml"))
-			model = new ExternalPluginModel();
-		else {
-			System.out.println(
-				PDE.getFormattedMessage("Builders.Convert.illegalValue", "manifest"));
-			return null;
-		}
-
-		String parentPath = file.getParentFile().getAbsolutePath();
-		model.setInstallLocation(parentPath);
 		try {
+			if (file.getName().toLowerCase().equals("fragment.xml"))
+				model = new ExternalFragmentModel();
+			else if (file.getName().toLowerCase().equals("plugin.xml"))
+				model = new ExternalPluginModel();
+			else {
+				System.out.println(
+					PDE.getFormattedMessage("Builders.Convert.illegalValue", "manifest"));
+				return null;
+			}
+
+			String parentPath = file.getParentFile().getAbsolutePath();
+			model.setInstallLocation(parentPath);
 			model.load(stream, false);
 			stream.close();
 		} catch (Exception e) {
+			if (e.getMessage() != null)
+				System.out.println(e.getMessage());
+		} finally {
+			return model;
 		}
-		return model;
 	}
 
 	private boolean validateDestination() {
