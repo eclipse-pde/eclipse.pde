@@ -4,26 +4,30 @@
 	<extensionContent
                alt-style="css/swt.properties"
                style="css/tutorials.css"
-               path="tutorials">
+               path="tutorials/page-content">
             <div
                   label="Eclipse Plug-in Development"
-                  id="pde">
+                  id="pde"
+                  class-id="tutorials-group">
                <link
                      url="http://org.eclipse.ui.intro/showMessage?message=Action not implemented."
                      label="Build a Rich Client Platform application"
-                     id="rcp">
+                     id="rcp"
+                     class-id="tutorials-link">
                   <text>Create a full RCP application step by step</text>
                </link>
                <link
                      url="http://org.eclipse.ui.intro/showStandby?partId=org.eclipse.ui.cheatsheets.standbyPart&amp;input=org.eclipse.pde.pde_1"
                      label="Create a &quot;Hello, World&quot;  plug-in"
-                     id="pde-hello-world">
+                     id="pde-hello-world"
+                     class-id="tutorials-link">
                   <text>Create an Eclipse plug-in that will open a message box from the menu</text>
                </link>
                <link
                      url="http://org.eclipse.ui.intro/showMessage?message=Action not implemented."
                      label="Deploy a feature on an update site"
-                     id="features">
+                     id="features"
+                     class-id="tutorials-link">
                   <text>End-to-end tutorial in building and deploying features</text>
                </link>
             </div>
