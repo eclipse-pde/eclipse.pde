@@ -284,8 +284,8 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 	
 	private boolean resourceExists(String location) {
 		IPath path = new Path(location);
-		if ("platform:".equals(path.getDevice()) && path.segmentCount() > 2) {
-			if ("plugin".equals(path.segment(0))) {
+		if ("platform:".equals(path.getDevice()) && path.segmentCount() > 2) { //$NON-NLS-1$
+			if ("plugin".equals(path.segment(0))) { //$NON-NLS-1$
 				String id = path.segment(1);
 				IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(id);
 				if (model != null && model.isEnabled()) {
