@@ -200,7 +200,7 @@ protected boolean isPropertyAssignment(String key) {
 }
 protected String makeRelative(String location, IPath base) {
 	IPath path = new Path(location);
-	if (!path.getDevice().equalsIgnoreCase(base.getDevice()))
+	if (path.getDevice() != null && !path.getDevice().equalsIgnoreCase(base.getDevice()))
 		return location.toString();
 	int baseCount = base.segmentCount();
 	int count = base.matchingFirstSegments(path);
