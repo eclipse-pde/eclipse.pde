@@ -367,6 +367,10 @@ public class WorkspaceModelManager
 	private void handleFileDelta(IResourceDelta delta) {
 		IFile file = (IFile) delta.getResource();
 		checkTracing(file);
+		if (file.getName().equals("build.properties") && isPluginProject(file.getProject())) {
+			fireModelsChanged(new IModel[] {getWorkspaceModel(file.getProject())});
+			return;
+		}
 		if (isSupportedFile(file) == false)
 			return;
 
