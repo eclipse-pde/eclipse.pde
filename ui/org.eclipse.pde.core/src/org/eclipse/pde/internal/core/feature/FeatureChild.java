@@ -16,20 +16,28 @@ import org.w3c.dom.Node;
 public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 	private String version;
 	private IFeature feature;
+	private String name;
+	private boolean optional;
 
 	protected void reset() {
 		super.reset();
 		version = null;
+		optional = false;
+		name = null;
 	}
 	protected void parse(Node node) {
 		super.parse(node);
 		version = getNodeAttribute(node, "version");
+		name = getNodeAttribute(node, "name");
+		optional = getBooleanAttribute(node, "optional");
 		hookWithWorkspace();
 	}
 	
 	public void loadFrom(IFeature feature) {
 		id = feature.getId();
 		version = feature.getVersion();
+		optional = false;
+		name = feature.getLabel();
 		this.feature = feature;
 	}
 	/**
@@ -38,7 +46,15 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 	public String getVersion() {
 		return version;
 	}
-
+	
+	public boolean isOptional() {
+		return optional;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
 	public IFeature getReferencedFeature() {
 		if (feature==null)
 			hookWithWorkspace();
@@ -71,11 +87,29 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 		hookWithWorkspace();
 	}
 	
+	public void setName(String name) throws CoreException {
+		ensureModelEditable();
+		Object oldValue = this.name;
+		this.name = name;
+		firePropertyChanged(P_NAME, oldValue, name);
+	}
+	
+	public void setOptional(boolean optional) throws CoreException {
+		ensureModelEditable();
+		Object oldValue = new Boolean(this.optional);
+		this.optional = optional;
+		firePropertyChanged(P_NAME, oldValue, new Boolean(optional));
+	}
+		
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_VERSION)) {
 			setVersion((String)newValue);
-		}
-		else super.restoreProperty(name, oldValue, newValue);
+		} else if (name.equals(P_OPTIONAL)) {
+			setOptional(((Boolean)newValue).booleanValue());
+		} else if (name.equals(P_NAME)) {
+			setName((String)newValue);
+		} else 
+			super.restoreProperty(name, oldValue, newValue);
 	}
 	
 	public void setId(String id) throws CoreException {
@@ -96,6 +130,14 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 		if (getVersion() != null) {
 			writer.println();
 			writer.print(indent2 + "version=\"" + getVersion() + "\"");
+		}
+		if (getName() != null) {
+			writer.println();
+			writer.print(indent2 + "name=\"" + getName() + "\"");
+		}
+		if (isOptional()) {
+			writer.println();
+			writer.print(indent2 + "optional=\"true\"");
 		}
 		writer.println(">");
 		writer.println(indent + "</includes>");

@@ -503,6 +503,7 @@ public class Feature extends VersionableObject implements IFeature {
 		data.clear();
 		plugins.clear();
 		imports.clear();
+		children.clear();
 		url = null;
 		providerName = null;
 		os = null;
