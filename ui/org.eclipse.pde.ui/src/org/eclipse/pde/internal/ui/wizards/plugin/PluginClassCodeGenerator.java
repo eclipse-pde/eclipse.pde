@@ -122,6 +122,8 @@ public class PluginClassCodeGenerator {
 		writer.println("\t */"); //$NON-NLS-1$
 		writer.println("\tpublic void stop(BundleContext context) throws Exception {"); //$NON-NLS-1$
 		writer.println("\t\tsuper.stop(context);"); //$NON-NLS-1$
+		writer.println("\t\tplugin = null;");
+		writer.println("\t\tresourceBundle = null;");
 		writer.println("\t}"); //$NON-NLS-1$
 		writer.println();
 
