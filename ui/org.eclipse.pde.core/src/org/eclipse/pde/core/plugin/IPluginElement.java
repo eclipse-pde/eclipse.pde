@@ -20,18 +20,18 @@ public interface IPluginElement extends IPluginParent {
 	 * A property name that will be used to notify
 	 * about element body text change.
 	 */
-	String P_TEXT = "text";
+	String P_TEXT = "text"; //$NON-NLS-1$
 	/**
 	 * A property name that will be used to notify
 	 * about global replacement of the element's attributes.
 	 */
-	String P_ATTRIBUTES = "attributes";
+	String P_ATTRIBUTES = "attributes"; //$NON-NLS-1$
 
 	/**
 	 * A property name that will be used to notify individual
 	 * change in an element's attribute.
 	 */
-	String P_ATTRIBUTE = "attribute";
+	String P_ATTRIBUTE = "attribute"; //$NON-NLS-1$
 	/**
 	 * Creates an identical copy of this XML element.
 	 * The new element will share the same model and

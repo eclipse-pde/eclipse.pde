@@ -22,30 +22,30 @@ public interface IPluginBase extends IExtensions, IIdentifiable {
 	 * A property that will be used to notify that
 	 * the provider name has changed.
 	 */
-	String P_PROVIDER = "provider-name";
+	String P_PROVIDER = "provider-name"; //$NON-NLS-1$
 	/**
 	 * A property that will be used to notify
 	 * that a version has changed.
 	 */
-	String P_VERSION = "version";
+	String P_VERSION = "version"; //$NON-NLS-1$
 
 	/**
 	 * A property that will be used to notify
 	 * that library order in a plug-in has changed. 
 	 */
-	String P_LIBRARY_ORDER = "library_order";
+	String P_LIBRARY_ORDER = "library_order"; //$NON-NLS-1$
 	
 	/**
 	 * A property that will be used to notify
 	 * that import order in a plug-in has changed. 
 	 */
-	String P_IMPORT_ORDER = "import_order";
+	String P_IMPORT_ORDER = "import_order"; //$NON-NLS-1$
 	
 	/**
 	 * A property that will be used to notify
 	 * that 3.0 release compatibility flag has been changed. 
 	 */
-	String P_SCHEMA_VERSION = "schema-version";
+	String P_SCHEMA_VERSION = "schema-version"; //$NON-NLS-1$
 	/**
 	 * Adds a new library to this plugin.
 	 * This method will throw a CoreException if

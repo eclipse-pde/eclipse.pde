@@ -20,7 +20,7 @@ public interface IPluginParent extends IPluginObject {
 	 * A property that will be used when firing notification
 	 * of the sibling swap.
 	 */
-	String P_SIBLING_ORDER = "sibling_order";
+	String P_SIBLING_ORDER = "sibling_order"; //$NON-NLS-1$
 	/**
 	 * Adds a child object at the specified index.
 	 * This method may throw a CoreException if

@@ -22,12 +22,12 @@ public interface IPluginReference extends IIdentifiable, IMatchRules {
 	 * A name of the property that will be used to notify
 	 * about changes in the "match" field.
 	 */
-	String P_MATCH = "match";
+	String P_MATCH = "match"; //$NON-NLS-1$
 	/**
 	 * A name of the property that will be used to notify
 	 * about changes in the "version" field.
 	 */
-	String P_VERSION = "version";
+	String P_VERSION = "version"; //$NON-NLS-1$
 	/**
 	 * Returns the required match for the imported plug-in. The
 	 * choices are defined in IMatchRules interface.

@@ -19,7 +19,7 @@ public interface IPluginAttribute extends IPluginObject {
 	 * This property will be used to notify that the value
 	 * of the attribute has changed.
 	 */
-	String P_VALUE = "value";
+	String P_VALUE = "value"; //$NON-NLS-1$
 	/**
 	 * Returns the value of this attribute.
 	 *

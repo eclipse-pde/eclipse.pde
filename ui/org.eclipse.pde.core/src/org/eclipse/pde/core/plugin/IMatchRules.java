@@ -30,7 +30,7 @@ public interface IMatchRules {
 	/**
 	 * Attribute value for the 'equivalent' rule.
 	 */
-	String RULE_EQUIVALENT = "equivalent";
+	String RULE_EQUIVALENT = "equivalent"; //$NON-NLS-1$
 	/**
 	 * A match that is compatible with the required version.
 	 */
@@ -38,7 +38,7 @@ public interface IMatchRules {
 	/**
 	 * Attribute value for the 'compatible' rule.
 	 */
-	String RULE_COMPATIBLE = "compatible";
+	String RULE_COMPATIBLE = "compatible"; //$NON-NLS-1$
 	/**
 	 * An perfect match.
 	 */
@@ -47,7 +47,7 @@ public interface IMatchRules {
 	/**
 	 *  Attribute value for the 'perfect' rule.
 	 */
-	String RULE_PERFECT = "perfect";
+	String RULE_PERFECT = "perfect"; //$NON-NLS-1$
 	/**
 	 * A match requires that a version is greater or equal to the
 	 * specified version.
@@ -56,7 +56,7 @@ public interface IMatchRules {
 	/**
 	 * Attribute value for the 'greater or equal' rule
 	 */
-	String RULE_GREATER_OR_EQUAL = "greaterOrEqual";
+	String RULE_GREATER_OR_EQUAL = "greaterOrEqual"; //$NON-NLS-1$
 	/**
 	 * An id match requires that the specified id is a prefix of
 	 * a candidate id.
@@ -65,12 +65,12 @@ public interface IMatchRules {
 	/**
 	 * Attribute value for the 'prefix' id rule
 	 */
-	String RULE_PREFIX = "prefix";
+	String RULE_PREFIX = "prefix"; //$NON-NLS-1$
 	/**
 	 * Table of rule names that match rule values defined in this 
 	 * interface. It can be used directly against the rule values
 	 * used in plug-in models.
 	 */
 	String[] RULE_NAME_TABLE =
-		{ "", RULE_EQUIVALENT, RULE_COMPATIBLE, RULE_PERFECT, RULE_GREATER_OR_EQUAL };
+		{ "", RULE_EQUIVALENT, RULE_COMPATIBLE, RULE_PERFECT, RULE_GREATER_OR_EQUAL }; //$NON-NLS-1$
 }

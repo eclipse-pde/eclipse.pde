@@ -21,31 +21,31 @@ public interface IPluginLibrary extends IPluginObject {
 	 * A name of the property that will be used to
 	 * notify about changes of the "exported" field.
 	 */
-	String P_EXPORTED = "export";
+	String P_EXPORTED = "export"; //$NON-NLS-1$
 	/**
 	 * A name of the property that will be used to
 	 * notify about changes in the content filters.
 	 */
-	String P_PACKAGES = "packages";
+	String P_PACKAGES = "packages"; //$NON-NLS-1$
 	
 	/**
 	 * A name of the property that will be used to
 	 * notify about changes in the content filters.
 	 */
-	String P_CONTENT_FILTERS = "contentFilters";
+	String P_CONTENT_FILTERS = "contentFilters"; //$NON-NLS-1$
 	/**
 	 * A name of the property that will be used to
 	 * notify about of the 'type' field.
 	 */
-	String P_TYPE = "type";
+	String P_TYPE = "type"; //$NON-NLS-1$
 	/**
 	 * A library type indicating the library contains code.
 	 */
-	String CODE = "code";
+	String CODE = "code"; //$NON-NLS-1$
 	/**
 	 * A library type indicating the library contains resource files.
 	 */
-	String RESOURCE = "resource";
+	String RESOURCE = "resource"; //$NON-NLS-1$
 	/**
 	 * Returns optional context filters that
 	 * should be applied to calculate what classes

@@ -20,17 +20,17 @@ public interface IFragment extends IPluginBase {
 	 * A property that will be used to notify
 	 * that a plugin id has changed.
 	 */
-	String P_PLUGIN_ID = "plugin-id";
+	String P_PLUGIN_ID = "plugin-id"; //$NON-NLS-1$
 	/**
 	 * A property that will be used to notify
 	 * that a plugin version has changed.
 	 */
-	String P_PLUGIN_VERSION = "plugin-version";
+	String P_PLUGIN_VERSION = "plugin-version"; //$NON-NLS-1$
 	/**
 	 * A property that will be used to notify
 	 * that a plugin version match rule has changed.
 	 */
-	String P_RULE = "match";
+	String P_RULE = "match"; //$NON-NLS-1$
 	/**
 	 * Returns the id of the plug-in that is the target
 	 * of this fragment.

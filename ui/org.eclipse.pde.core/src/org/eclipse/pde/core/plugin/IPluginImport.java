@@ -20,12 +20,12 @@ public interface IPluginImport extends IPluginObject, IPluginReference {
 	 * A name of the property that will be used to notify
 	 * about changes in the "reexported" field.
 	 */
-	String P_REEXPORTED = "export";
+	String P_REEXPORTED = "export"; //$NON-NLS-1$
 	/**
 	 * A name of the property that will be used to notify
 	 * about changes in the "optional" field.
 	 */
-	String P_OPTIONAL = "optional";
+	String P_OPTIONAL = "optional"; //$NON-NLS-1$
 	/**
 	 * Tests whether the imported plug-in is reexported for
 	 * plug-ins that will use this plug-in.

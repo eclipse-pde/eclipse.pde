@@ -27,7 +27,7 @@ public interface IExtensions extends IPluginObject, Serializable {
 	 * A model property that will be used when order of extensions
 	 * changes in this object.
 	 */
-	String P_EXTENSION_ORDER = "extension_order";
+	String P_EXTENSION_ORDER = "extension_order"; //$NON-NLS-1$
 	/**
 	 * Adds a new extension to this object. This
 	 * method will throw a CoreException if

@@ -20,7 +20,7 @@ public interface IPluginObject extends IWritable, IAdaptable {
 	 * A property name that will be used to notify
 	 * that the "name" field has changed.
 	 */
-	String P_NAME = "name";
+	String P_NAME = "name"; //$NON-NLS-1$
 	/**
 	 * Returns the model that owns this object.
 	 * @return the model instance
