@@ -108,6 +108,7 @@ public class SWTUtil {
 			((GridData) gd).heightHint = getButtonHeigthHint(button);
 			((GridData) gd).widthHint = getButtonWidthHint(button);
 		}
+		Dialog.applyDialogFont(button);
 	}
 
 	public static void setDialogSize(Dialog dialog, int width, int height) {

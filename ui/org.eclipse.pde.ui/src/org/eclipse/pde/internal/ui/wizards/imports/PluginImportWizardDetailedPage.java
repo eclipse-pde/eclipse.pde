@@ -150,7 +150,6 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 				handleExistingProjects();
 			}
 		});
-		Dialog.applyDialogFont(button);
 		SWTUtil.setButtonDimensionHint(button);
 
 		button = new Button(container, SWT.PUSH);
@@ -161,7 +160,6 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 				handleExistingUnshared();
 			}
 		});
-		Dialog.applyDialogFont(button);
 		SWTUtil.setButtonDimensionHint(button);
 		
 		new Label(container, SWT.NONE);
@@ -175,7 +173,6 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 				handleAdd();
 			}
 		});
-		Dialog.applyDialogFont(button);
 		SWTUtil.setButtonDimensionHint(button);
 		
 		button = new Button(container, SWT.PUSH);
@@ -186,7 +183,6 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 				handleAddAll();
 			}
 		});
-		Dialog.applyDialogFont(button);
 		SWTUtil.setButtonDimensionHint(button);
 		
 		button = new Button(container, SWT.PUSH);
@@ -197,7 +193,6 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 				handleRemove();
 			}
 		});
-		Dialog.applyDialogFont(button);
 		SWTUtil.setButtonDimensionHint(button);
 		
 		button = new Button(container, SWT.PUSH);
@@ -208,7 +203,6 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 				handleRemoveAll();
 			}
 		});
-		Dialog.applyDialogFont(button);
 		SWTUtil.setButtonDimensionHint(button);
 		
 		button = new Button(container, SWT.PUSH);
@@ -219,7 +213,6 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 				handleSwap();
 			}
 		});
-		Dialog.applyDialogFont(button);
 		SWTUtil.setButtonDimensionHint(button);
 		
 		button = new Button(container, SWT.PUSH);
@@ -231,7 +224,6 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 			}
 
 		});
-		Dialog.applyDialogFont(button);
 		SWTUtil.setButtonDimensionHint(button);
 		
 		countLabel = new Label(comp, SWT.NONE);
