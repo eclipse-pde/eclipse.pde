@@ -1,5 +1,7 @@
 package org.eclipse.pde.ui.tests.imports;
 
+import java.util.ArrayList;
+
 import junit.framework.*;
 
 import org.eclipse.core.resources.*;
@@ -18,7 +20,7 @@ public class PluginImportTest extends TestCase {
 	
 	public void testImportBinary() {
 		try {
-			importPlugin("org.eclipse.jdt.ui", PluginImportOperation.IMPORT_BINARY); //$NON-NLS-1$
+			importPlugin("org.eclipse.jdt.ui", true, false); //$NON-NLS-1$
 		} catch (Exception e) {
 			fail("testImportBinary: " + e); //$NON-NLS-1$
 		} 	
@@ -26,7 +28,7 @@ public class PluginImportTest extends TestCase {
 	
 	public void testImportBinaryWithLinks() {
 		try {
-			importPlugin("org.eclipse.pde.core", PluginImportOperation.IMPORT_BINARY_WITH_LINKS); //$NON-NLS-1$
+			importPlugin("org.eclipse.pde.core", false, false); //$NON-NLS-1$
 		} catch (Exception e) {
 			fail("testImportBinaryWithLinks: " + e); //$NON-NLS-1$
 		} 			
@@ -34,22 +36,25 @@ public class PluginImportTest extends TestCase {
 	
 	public void testImportWithSource() {
 		try {
-			importPlugin("org.eclipse.team.core", PluginImportOperation.IMPORT_WITH_SOURCE); //$NON-NLS-1$
+			importPlugin("org.eclipse.team.core", true, true); //$NON-NLS-1$
 		} catch (Exception e) {
 			fail("testImportWithSource: " + e); //$NON-NLS-1$
 		} 			
 	}
-	private void importPlugin(String id, int importType) throws OperationCanceledException, CoreException  {
-		ModelEntry entry = PDECore.getDefault().getModelManager().findEntry(id);
+	private void importPlugin(String id, boolean doImport, boolean doExtractSource) throws OperationCanceledException, CoreException  {
+		ModelEntry entry = PDECore.getDefault().getModelManager().findEntry(id, "");
 		assertNotNull(entry);
 		
 		IPluginModelBase model = entry.getExternalModel();
 		assertNotNull(model);
-		
+		ArrayList ids = new ArrayList();
+		ids.add(model.getPluginBase().getId());
 		PluginImportOperation op =
 			new PluginImportOperation(
 				new IPluginModelBase[] {model},
-				importType,
+				ids,
+				doImport,
+				doExtractSource,
 				null);
 		op.run(null);
 			

@@ -2,7 +2,7 @@ package org.eclipse.pde.ui.tests.performance.parts;
 
 import junit.framework.*;
 
-import org.eclipse.pde.internal.ui.editor.plugin.*;
+import org.eclipse.pde.internal.ui.editor.manifest.ManifestEditor;
 import org.eclipse.test.performance.*;
 import org.eclipse.ui.*;
 
