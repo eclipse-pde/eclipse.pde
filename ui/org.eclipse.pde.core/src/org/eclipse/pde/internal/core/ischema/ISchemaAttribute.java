@@ -32,15 +32,10 @@ public interface ISchemaAttribute extends ISchemaObject, IMetaAttribute {
 	public static final int DEFAULT = 2;
 
 	/**
-	 * This attribute is deprecated and should not be used.
-	 */
-	public static final int DEPRECATED = 3;
-
-	/**
 	 * Table of the 'use' clause choices.
 	 */
 	public static final String[] useTable = {
-			"optional", "required", "default", "deprecated" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			"optional", "required", "default" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
 	/**
 	 * Returns the type of this attribute. Attributes can only have simple
