@@ -7,6 +7,7 @@ package org.eclipse.pde.internal.schema;
 import org.eclipse.jface.resource.*;
 import java.net.*;
 import org.eclipse.pde.model.plugin.*;
+import java.io.File;
 
 
 public class ExternalSchemaDescriptor extends AbstractSchemaDescriptor {
@@ -25,7 +26,7 @@ public String getPointId() {
 
 private URL getInstallURL() {
 	IPluginModelBase model = info.getModel();
-	String installLocation = model.getInstallLocation();
+	String installLocation = model.getInstallLocation()+File.separator;
 	try {
 		return new URL("file:" + installLocation);
 	} catch (MalformedURLException e) {

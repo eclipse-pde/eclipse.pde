@@ -18,16 +18,16 @@ public class ExtensionPointForm extends ScrollableSectionForm {
 	public static final String FORM_TITLE = "ManifestEditor.ExtensionPointForm.title";
 	private ManifestExtensionPointPage page;
 	private DetailExtensionPointSection extensionPointSection;
-	private PointGraphSection graphSection;
+	private PointUsageSection usageSection;
 
 public ExtensionPointForm(ManifestExtensionPointPage page) {
 	this.page = page;
-	setVerticalFit(true);
+	setScrollable(false);
 }
 protected void createFormClient(Composite parent) {
 	GridLayout layout = new GridLayout();
 	parent.setLayout(layout);
-	//layout.makeColumnsEqualWidth=true;
+	layout.makeColumnsEqualWidth=true;
 	layout.numColumns = 2;
 	layout.marginWidth = 10;
 	layout.horizontalSpacing=15;
@@ -38,17 +38,17 @@ protected void createFormClient(Composite parent) {
 	//gd.heightHint = 300;
 	control.setLayoutData(gd);
 
-	graphSection = new PointGraphSection(page);
-	control = graphSection.createControl(parent, getFactory());
-	gd = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
+	usageSection = new PointUsageSection(page);
+	control = usageSection.createControl(parent, getFactory());
+	gd = new GridData(GridData.FILL_BOTH);
 	control.setLayoutData(gd);
 
 	// Link
 	SectionChangeManager manager = new SectionChangeManager();
-	manager.linkSections(extensionPointSection, graphSection);
+	manager.linkSections(extensionPointSection, usageSection);
 
 	registerSection(extensionPointSection);
-	registerSection(graphSection);
+	registerSection(usageSection);
 }
 public void expandTo(Object object) {
    extensionPointSection.expandTo(object);

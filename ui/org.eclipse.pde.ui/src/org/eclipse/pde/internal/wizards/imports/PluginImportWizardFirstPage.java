@@ -91,7 +91,6 @@ public class PluginImportWizardFirstPage extends StatusWizardPage implements ICu
 
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
-		//layout.minimumWidth= convertWidthInCharsToPixels(60);
 		composite.setLayout(layout);
 
 		runtimeLocationButton = new Button(composite, SWT.RADIO);
@@ -103,7 +102,7 @@ public class PluginImportWizardFirstPage extends StatusWizardPage implements ICu
 		label.setText(PDEPlugin.getResourceString(KEY_RUNTIME_DESC));
 		GridData gd = new GridData();
 		gd.horizontalSpan = 3;
-		gd.widthHint = convertWidthInCharsToPixels(85);
+		gd.widthHint = parent.getSize().x - 2*layout.marginWidth;
 		label.setLayoutData(gd);
 
 		otherLocationButton = new Button(composite, SWT.RADIO);
@@ -113,7 +112,7 @@ public class PluginImportWizardFirstPage extends StatusWizardPage implements ICu
 		label = new Label(composite, SWT.WRAP);
 		label.setText(PDEPlugin.getResourceString(KEY_OTHER_DESC));
 		gd = new GridData();
-		gd.widthHint = convertWidthInCharsToPixels(85);
+		gd.widthHint = parent.getSize().x - 2*layout.marginWidth;
 		gd.horizontalSpan = 3;
 		label.setLayoutData(gd);
 
