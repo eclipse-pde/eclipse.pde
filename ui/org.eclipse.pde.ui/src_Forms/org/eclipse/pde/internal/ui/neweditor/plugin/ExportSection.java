@@ -220,10 +220,10 @@ public class ExportSection extends TableSection implements IPartSelectionListene
 		try {
 			if (project.hasNature(JavaCore.NATURE_ID)) {
 				ILabelProvider labelProvider = new JavaElementLabelProvider();
-				PackageSelectionDialog2 dialog = new PackageSelectionDialog2(
+				PackageSelectionDialog dialog = new PackageSelectionDialog(
 						nameTableViewer.getTable().getShell(), labelProvider,
 						JavaCore.create(project), new Vector());
-				if (dialog.open() == PackageSelectionDialog2.OK) {
+				if (dialog.open() == PackageSelectionDialog.OK) {
 					Object[] elements = dialog.getResult();
 					for (int i = 0; i < elements.length; i++) {
 						IPackageFragment fragment = (IPackageFragment)elements[i];
