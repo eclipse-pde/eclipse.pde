@@ -5,32 +5,32 @@
                alt-style="css/swt.properties"
                style="css/tutorials.css"
                path="tutorials/page-content">
-            <div
+            <group
                   label="Eclipse Plug-in Development"
                   id="pde"
-                  class-id="tutorials-group">
+                  style-id="tutorials-group">
                <link
                      url="http://org.eclipse.ui.intro/showMessage?message=Action not implemented."
                      label="Build a Rich Client Platform application"
                      id="rcp"
-                     class-id="tutorials-link">
+                     style-id="tutorials-link">
                   <text>Create a full RCP application step by step</text>
                </link>
                <link
                      url="http://org.eclipse.ui.intro/showStandby?partId=org.eclipse.platform.cheatsheet&amp;input=org.eclipse.pde.helloworld"
                      label="Create a &quot;Hello, World&quot; plug-in"
                      id="pde-hello-world"
-                     class-id="tutorials-link">
+                     style-id="tutorials-link">
                   <text>Create an Eclipse plug-in that will open a message box from the menu</text>
                </link>
                <link
                      url="http://org.eclipse.ui.intro/showStandby?partId=org.eclipse.platform.cheatsheet&amp;input=org.eclipse.pde.updates"
                      label="Deploy a feature on an update site"
                      id="features"
-                     class-id="tutorials-link">
+                     style-id="tutorials-link">
                   <text>End-to-end tutorial in building and deploying features</text>
                </link>
-            </div>
+            </group>
         </extensionContent>
 	
 </introContent>
