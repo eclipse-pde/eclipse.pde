@@ -241,7 +241,7 @@ public class BasicLauncherTab
 		return (String[])result.toArray(new String[result.size()]);
 	}
 
-	protected String[] getProductNames() {
+	public static String[] getProductNames() {
 		TreeSet result = new TreeSet();
 		IPluginModelBase[] plugins = PDECore.getDefault().getModelManager().getPlugins();
 		for (int i = 0; i < plugins.length; i++) {

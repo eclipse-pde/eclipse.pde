@@ -308,7 +308,7 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 		return LauncherUtils.getDefaultPath().append("runtime-" + uniqueName.replaceAll("\\s", "")).toOSString();		//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
-	private void addPluginAndDependencies(IPluginModelBase model, TreeMap map) {
+	public static void addPluginAndDependencies(IPluginModelBase model, TreeMap map) {
 		if (model == null)
 			return;
 
@@ -345,13 +345,13 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 		}	
 	}
 	
-	private IPluginModelBase findPlugin(String id) {
+	private static IPluginModelBase findPlugin(String id) {
 		PluginModelManager manager = PDECore.getDefault().getModelManager();
 		ModelEntry entry = manager.findEntry(id);
 		return (entry != null) ? entry.getActiveModel() : null;
 	}
 	
-	private IFragmentModel[] findFragments(IPluginBase plugin) {
+	private static IFragmentModel[] findFragments(IPluginBase plugin) {
 		ModelEntry[] entries = PDECore.getDefault().getModelManager().getEntries();
 		ArrayList result = new ArrayList();
 		for (int i = 0; i < entries.length; i++) {

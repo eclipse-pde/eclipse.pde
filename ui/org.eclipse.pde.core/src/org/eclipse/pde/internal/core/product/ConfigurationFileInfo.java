@@ -11,39 +11,14 @@ public class ConfigurationFileInfo extends ProductObject implements
 
 	private static final long serialVersionUID = 1L;
 	
-	private int fUse;
+	private String fUse;
 
 	private String fPath;
 
 	public ConfigurationFileInfo(IProductModel model) {
 		super(model);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo#setUse(int)
-	 */
-	public void setUse(int use) {
-		fUse = use;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo#getUse()
-	 */
-	public int getUse() {
-		return fUse;
-	}
 	
-	private String getUsage() {
-		switch (fUse) {
-			case USE_WORKSPACE:
-				return "workspace";
-			case USE_FILESYSTEM:
-				return "filesystem";
-			default:
-				return "default";
-		}
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo#setPath(java.lang.String)
 	 */
@@ -65,14 +40,7 @@ public class ConfigurationFileInfo extends ProductObject implements
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
 			Element element = (Element)node;
 			fPath = element.getAttribute("path");
-			String usage = element.getAttribute("use");
-			if ("workspace".equals(usage)) {
-				fUse = USE_WORKSPACE;
-			} else if ("filesystem".equals(usage)) {
-				fUse = USE_FILESYSTEM;
-			} else {
-				fUse = USE_DEFAULT;
-			}
+			fUse = element.getAttribute("use");
 		}
 	}
 
@@ -81,10 +49,27 @@ public class ConfigurationFileInfo extends ProductObject implements
 	 */
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent + "<configIni");
-		writer.print(" use=\"" + getUsage() + "\"");
-		if (fPath != null && getUse() != USE_DEFAULT)
+		if (fUse != null)
+			writer.print(" use=\"" + fUse + "\"");
+		if (fPath != null)
 			writer.print(" path=\"" + fPath.trim() + "\"");
 		writer.println("/>");
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo#setUse(java.lang.String)
+	 */
+	public void setUse(String use) {
+		fUse = use;
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo#getUse()
+	 */
+	public String getUse() {
+		return fUse;
 	}
 
 }
