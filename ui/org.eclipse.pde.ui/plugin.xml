@@ -1102,7 +1102,7 @@
    <extension
          point="org.eclipse.jdt.ui.classpathContainerPage">
       <classpathContainerPage
-            name="Required Plug-ins"
+            name="%Plugin.dependencies.container"
             class="org.eclipse.pde.internal.ui.wizards.RequiredPluginsContainerPage"
             id="org.eclipse.pde.core.requiredPlugins">
       </classpathContainerPage>
