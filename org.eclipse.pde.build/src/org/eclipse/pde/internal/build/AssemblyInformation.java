@@ -53,7 +53,7 @@ public class AssemblyInformation implements IPDEBuildConstants {
 		for (Iterator iter = allPlugins.iterator(); iter.hasNext();) {
 			BundleDescription bundle = (BundleDescription) iter.next();
 			Properties bundleProperties = ((Properties) bundle.getUserObject());
-			if (bundleProperties == null || Boolean.FALSE == bundleProperties.get(IS_COMPILED))
+			if (bundleProperties == null || bundleProperties.get(IS_COMPILED) == null || Boolean.FALSE == bundleProperties.get(IS_COMPILED))
 				result.add(bundle);
 		}
 		return result;
