@@ -14,23 +14,23 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.eclipse.core.runtime.*;
-import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.VersionConstraint;
+import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.update.core.*;
 
 /**
  * This site represent a site at build time. A build time site is made of code
  * to compile, and a potential installation of eclipse (or derived products)
- * against which the code must be compiled.
- * Moreover this site provide access to a pluginRegistry.
+ * against which the code must be compiled. Moreover this site provide access to
+ * a pluginRegistry.
  */
 public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IXMLConstants {
 	private PDEState state;
 
 	public PDEState getRegistry() throws CoreException {
 		if (state == null) {
-			// create the registry according to the site where the code to compile is, and a existing installation of eclipse 
+			// create the registry according to the site where the code to
+			// compile is, and a existing installation of eclipse
 			BuildTimeSiteContentProvider contentProvider = (BuildTimeSiteContentProvider) getSiteContentProvider();
 
 			if (AbstractScriptGenerator.isBuildingOSGi())
@@ -46,23 +46,43 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 			if (allBundles.length == resolvedBundles.length)
 				return state;
 
-			//display a report of the unresolved constraints
-			for (int i = 0; i < allBundles.length; i++) {
-				BundleHelper.getDefault().getLog();
-				if (!allBundles[i].isResolved()) {
-					String message = "Bundle: " + allBundles[i].getUniqueId() + '\n'; //$NON-NLS-1$
-					VersionConstraint[] unsatisfiedConstraint = allBundles[i].getUnsatisfiedConstraints();
-					for (int j = 0; j < unsatisfiedConstraint.length; j++) {
-						message += '\t' + unsatisfiedConstraint[j].toString() + '\n';
+			MultiStatus errors = new MultiStatus(IPDEBuildConstants.PI_PDEBUILD, 1, Policy.bind("exception.registryResolution"), null); //$NON-NLS-1$
+			BundleDescription[] all = state.getState().getBundles();
+			StateHelper helper = Platform.getPlatformAdmin().getStateHelper();
+			for (int i = 0; i < all.length; i++) {
+				if (!all[i].isResolved()) {
+					VersionConstraint[] unsatisfiedConstraints = helper.getUnsatisfiedConstraints(all[i]);
+					for (int j = 0; j < unsatisfiedConstraints.length; j++) {
+						String message = getResolutionFailureMessage(unsatisfiedConstraints[j]);
+						errors.add(new Status(IStatus.WARNING, all[i].getUniqueId(), IStatus.WARNING, message, null));
 					}
-					IStatus status = new Status(IStatus.WARNING, IPDEBuildConstants.PI_PDEBUILD, EXCEPTION_STATE_PROBLEM, Policy.bind("exception.registryResolution", message), null);//$NON-NLS-1$
-					BundleHelper.getDefault().getLog().log(status);
 				}
 			}
+			BundleHelper.getDefault().getLog().log(errors);
 		}
 		if (!state.getState().isResolved())
 			state.state.resolve(true);
 		return state;
+	}
+
+	public String getResolutionFailureMessage(VersionConstraint unsatisfied) {
+		if (unsatisfied.isResolved())
+			throw new IllegalArgumentException();
+		if (unsatisfied instanceof PackageSpecification)
+			return Policy.bind("unsatisfied.import", displayVersionConstraint(unsatisfied));//$NON-NLS-1$
+		if (unsatisfied instanceof BundleSpecification) {
+			if (((BundleSpecification) unsatisfied).isOptional())
+				return Policy.bind("unsatisfied.optionalBundle", displayVersionConstraint(unsatisfied));//$NON-NLS-1$
+			return Policy.bind("unsatisfied.required", displayVersionConstraint(unsatisfied));//$NON-NLS-1$
+		}
+		return Policy.bind("unsatisfied.host", displayVersionConstraint(unsatisfied));//$NON-NLS-1$
+	}
+
+	private String displayVersionConstraint(VersionConstraint constraint) {
+		Version versionSpec = constraint.getVersionSpecification();
+		if (versionSpec == null)
+			return constraint.getName();
+		return constraint.getName() + '_' + versionSpec;
 	}
 
 	public IFeature findFeature(String featureId) throws CoreException {
@@ -78,8 +98,11 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 		URL featureURL;
 		SiteFeatureReferenceModel featureRef;
 		if (featureXML.exists()) {
-			// Here we could not use toURL() on currentFeatureDir, because the URL has a slash after the colons (file:/c:/foo) whereas the plugins don't
-			// have it (file:d:/eclipse/plugins) and this causes problems later to compare URLs... and compute relative paths
+			// Here we could not use toURL() on currentFeatureDir, because the
+			// URL has a slash after the colons (file:/c:/foo) whereas the
+			// plugins don't
+			// have it (file:d:/eclipse/plugins) and this causes problems later
+			// to compare URLs... and compute relative paths
 			try {
 				featureURL = new URL("file:" + featureXML.getAbsolutePath() + '/'); //$NON-NLS-1$
 				featureRef = new SiteFeatureReference();
