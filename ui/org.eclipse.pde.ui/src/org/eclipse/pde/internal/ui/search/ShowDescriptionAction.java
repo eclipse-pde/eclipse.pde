@@ -104,7 +104,7 @@ public class ShowDescriptionAction extends Action {
 			SchemaTransformer transformer = new SchemaTransformer();
 			OutputStream os = new FileOutputStream(previewFile);
 			PrintWriter printWriter = new PrintWriter(os, true);
-			transformer.transform(printWriter, schema, cssURL);
+			transformer.transform(printWriter, schema, cssURL, true); 
 			os.flush();
 			os.close();
 			showURL(previewFile.getPath());
