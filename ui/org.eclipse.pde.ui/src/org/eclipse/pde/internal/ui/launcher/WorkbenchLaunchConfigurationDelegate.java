@@ -158,6 +158,10 @@ public class WorkbenchLaunchConfigurationDelegate
 			throw new CoreException(
 				createErrorStatus(
 					PDEPlugin.getResourceString(KEY_BAD_FEATURE_SETUP)));
+		} else {
+			// Ensure important files are present
+			IPath productPath = installPath.removeLastSegments(1);
+			ensureProductFilesExist(productPath);
 		}
 	}
 
@@ -359,7 +363,8 @@ public class WorkbenchLaunchConfigurationDelegate
 					PDEPlugin.getWorkspace().getRoot().getLocation();
 				File installDir = installPath.removeLastSegments(1).toFile();
 				fullProgArgs[i++] = "-install";
-				fullProgArgs[i++] = "file:" + installDir.getPath()+File.separator;
+				fullProgArgs[i++] =
+					"file:" + installDir.getPath() + File.separator;
 				fullProgArgs[i++] = "-update";
 			} else {
 				fullProgArgs[i++] = "-plugins";
@@ -688,5 +693,44 @@ public class WorkbenchLaunchConfigurationDelegate
 			(IJavaProject[]) javaProjects.toArray(
 				new IJavaProject[javaProjects.size()]);
 		return new JavaUISourceLocator(projs, false);
+	}
+
+	private void ensureProductFilesExist(IPath productArea) {
+		File productDir = productArea.toFile();
+		File marker = new File(productDir, ".eclipseproduct");
+		File ini = new File(productDir, "install.ini");
+		//if (marker.exists() && ini.exists()) return;
+		IPath eclipsePath = ExternalModelManager.getEclipseHome(null);
+		copyFile(eclipsePath, ".eclipseproduct", marker);
+		copyFile(eclipsePath, "install.ini", ini);
+	}
+
+	private void copyFile(IPath eclipsePath, String name, File target) {
+		File source = new File(eclipsePath.toFile(), name);
+		if (source.exists() == false)
+			return;
+		FileInputStream is = null;
+		FileOutputStream os = null;
+		try {
+			is = new FileInputStream(source);
+			os = new FileOutputStream(target);
+			byte[] buf = new byte[1024];
+			long currentLen = 0;
+			int len = is.read(buf);
+			while (len != -1) {
+				currentLen += len;
+				os.write(buf, 0, len);
+				len = is.read(buf);
+			}
+		} catch (IOException e) {
+		} finally {
+			try {
+				if (is != null)
+					is.close();
+				if (os != null)
+					os.close();
+			} catch (IOException e) {
+			}
+		}
 	}
 }
