@@ -16,6 +16,7 @@ import java.util.ArrayList;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
@@ -234,7 +235,8 @@ public abstract class AbstractNewPluginTemplateWizard
 		monitor.worked(1);
 
 		if (structureData.getRuntimeLibraryName() != null) {
-			setJavaSettings(model, new SubProgressMonitor(monitor, 1)); // one step
+			JavaCore.create(project).setRawClasspath(new IClasspathEntry[0], null);
+			ClasspathUtil.setClasspath(model, new SubProgressMonitor(monitor, 1)); // one step
 		}
 		executeTemplates(project, model, monitor); // nsteps
 		model.save();
@@ -246,9 +248,6 @@ public abstract class AbstractNewPluginTemplateWizard
 		openPluginFile(file);
 	}
 
-	private void setJavaSettings(IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
-		ClasspathUtil.setClasspath(model, monitor);
-	}
 
 	public void setShowTemplatePages(boolean val){
 		showTemplatePages = val;

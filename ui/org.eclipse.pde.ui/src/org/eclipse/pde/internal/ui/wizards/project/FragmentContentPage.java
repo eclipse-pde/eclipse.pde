@@ -14,6 +14,7 @@ import java.lang.reflect.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jface.operation.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.plugin.*;
@@ -50,7 +51,8 @@ public class FragmentContentPage extends FirstTemplateWizardPage implements IFir
 								result,
 								monitor);
 					if (structurePage.getStructureData().getRuntimeLibraryName() != null) {
-						setJavaSettings(model, new SubProgressMonitor(monitor, 1)); // one step
+						JavaCore.create(projectProvider.getProject()).setRawClasspath(new IClasspathEntry[0], null);
+						ClasspathUtil.setClasspath(model, new SubProgressMonitor(monitor, 1)); // one step
 					}
 					model.save();
 				} catch (CoreException e) {
@@ -69,10 +71,6 @@ public class FragmentContentPage extends FirstTemplateWizardPage implements IFir
 			return false;
 		}
 		return true;
-	}
-	
-	private void setJavaSettings(IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
-		ClasspathUtil.setClasspath(model, monitor);
 	}
 	
 	private void addDependencies(IPluginReference[] list, ArrayList result) {

@@ -16,6 +16,7 @@ import java.util.ArrayList;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
@@ -235,7 +236,8 @@ public abstract class AbstractNewBundleTemplateWizard
 		monitor.worked(1);
 
 		if (structureData.getRuntimeLibraryName() != null) {
-			setJavaSettings(model, new SubProgressMonitor(monitor, 1)); // one step
+			JavaCore.create(project).setRawClasspath(new IClasspathEntry[0], null);
+			ClasspathUtil.setClasspath(model, new SubProgressMonitor(monitor, 1)); // one step
 		}
 		ArrayList generatedPackages = new ArrayList();
 		if (data.getClassName()!=null)
@@ -260,10 +262,6 @@ public abstract class AbstractNewBundleTemplateWizard
 			openFile(manifestFile, meditorId.getId(), true);
 	}
 
-	private void setJavaSettings(IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
-		ClasspathUtil.setClasspath(model, monitor);
-	}
-	
 	private void setPackages(BundlePluginModelBase model, ArrayList generatedPackages) {
 		if (generatedPackages.size()==0) return;
 		StringBuffer provides = new StringBuffer();
