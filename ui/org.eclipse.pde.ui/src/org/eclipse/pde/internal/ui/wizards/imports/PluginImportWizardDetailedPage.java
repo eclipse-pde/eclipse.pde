@@ -25,12 +25,14 @@ import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
@@ -283,12 +285,15 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	}
 	
 	protected void pageChanged() {
-		availableListViewer.refresh();
-		importListViewer.refresh();
-		updateCount();
-		setPageComplete(importListViewer.getTable().getItemCount() > 0);
+		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
+			public void run() {
+				availableListViewer.refresh();
+				importListViewer.refresh();
+				updateCount();
+				setPageComplete(importListViewer.getTable().getItemCount() > 0);
+			}
+		});
 	}
-	
 	private void updateCount() {
 		countLabel.setText(
 			PDEPlugin.getFormattedMessage(
