@@ -36,9 +36,9 @@ class LogReader {
 		PrintWriter writer = null;
 		int state = UNKNOWN_STATE;
 		currentSession = null;
-
+		BufferedReader reader = null;
 		try {
-			BufferedReader reader = new BufferedReader(new FileReader(file));
+			reader = new BufferedReader(new FileReader(file));
 			while(reader.ready()) {
 				String line = reader.readLine().trim();
 
@@ -114,6 +114,12 @@ class LogReader {
 			}
 		} catch (FileNotFoundException e) {
 		} catch (IOException e) {
+		} finally {
+			try {
+				if (reader != null)
+					reader.close();
+			} catch (IOException e1) {
+			}
 		}
 	}	
 	

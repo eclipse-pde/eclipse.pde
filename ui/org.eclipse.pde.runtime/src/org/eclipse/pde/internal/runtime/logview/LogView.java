@@ -276,6 +276,7 @@ public class LogView extends ViewPart implements ILogListener {
 			PDERuntimePluginImages.DESC_REMOVE_LOG_DISABLED);
 		deleteLogAction.setHoverImageDescriptor(
 			PDERuntimePluginImages.DESC_REMOVE_LOG_HOVER);
+		deleteLogAction.setEnabled(inputFile.exists() && inputFile.equals(Platform.getLogFileLocation()));
 
 		copyAction = new Action(PDERuntimePlugin.getResourceString("LogView.copy")) {
 			public void run() {
@@ -348,7 +349,7 @@ public class LogView extends ViewPart implements ILogListener {
 			IRunnableWithProgress op = new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor)
 					throws InvocationTargetException, InterruptedException {
-						monitor.beginTask("Importing Log...", IProgressMonitor.UNKNOWN);
+						monitor.beginTask(PDERuntimePlugin.getResourceString("LogView.operation.importing"), IProgressMonitor.UNKNOWN);
 						readLogFile();
 				}
 			};
@@ -360,8 +361,8 @@ public class LogView extends ViewPart implements ILogListener {
 			} finally {
 				readLogAction.setText(PDERuntimePlugin.getResourceString("LogView.readLog.reload"));
 				readLogAction.setToolTipText(PDERuntimePlugin.getResourceString("LogView.readLog.reload"));
-				deleteLogAction.setEnabled(inputFile.equals(Platform.getLogFileLocation().toFile()));
-				asyncRefresh();				
+				asyncRefresh(false);
+								
 			}
 		}	
 	}
@@ -424,18 +425,17 @@ public class LogView extends ViewPart implements ILogListener {
 			reloadLog();
 		
 	}
+	
 	private void doDeleteLog() {
-		if (inputFile.exists() && inputFile.equals(Platform.getLogFileLocation().toFile())) {
-			String title = PDERuntimePlugin.getResourceString("LogView.confirmDelete.title");
-			String message = PDERuntimePlugin.getResourceString("LogView.confirmDelete.message");
-			if (!MessageDialog.openConfirm(tableTreeViewer.getControl().getShell(), title, message))
-				return;
-			if (inputFile.delete()) {
-				logs.clear();
-				tableTreeViewer.refresh();
-			} else {
-				MessageDialog.openError(getViewSite().getShell(), "Error", "Delete was not successful");
-			}
+		String title = PDERuntimePlugin.getResourceString("LogView.confirmDelete.title");
+		String message =
+			PDERuntimePlugin.getResourceString("LogView.confirmDelete.message");
+		if (!MessageDialog
+			.openConfirm(tableTreeViewer.getControl().getShell(), title, message))
+			return;
+		if (inputFile.delete()) {
+			logs.clear();
+			asyncRefresh(false);
 		}
 	}
 	
@@ -463,18 +463,33 @@ public class LogView extends ViewPart implements ILogListener {
 				new Runnable() {
 			public void run() {
 				logs.clear();
-				tableTreeViewer.refresh();
+				asyncRefresh(false);
 			}
 		});
 	}
 	
 	protected void reloadLog() {
-		readLogAction.setText(
-			PDERuntimePlugin.getResourceString("LogView.readLog.restore"));
-		readLogAction.setToolTipText(
-			PDERuntimePlugin.getResourceString("LogView.readLog.restore"));
-		readLogFile();
-		asyncRefresh();
+		IRunnableWithProgress op = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor)
+				throws InvocationTargetException, InterruptedException {
+				monitor.beginTask(
+					PDERuntimePlugin.getResourceString("LogView.operation.reloading"),
+					IProgressMonitor.UNKNOWN);
+				readLogFile();
+			}
+		};
+		ProgressMonitorDialog pmd = new ProgressMonitorDialog(getViewSite().getShell());
+		try {
+			pmd.run(true, true, op);
+		} catch (InvocationTargetException e) {
+		} catch (InterruptedException e) {
+		} finally {
+			readLogAction.setText(
+				PDERuntimePlugin.getResourceString("LogView.readLog.restore"));
+			readLogAction.setToolTipText(
+				PDERuntimePlugin.getResourceString("LogView.readLog.restore"));
+			asyncRefresh(false);				
+		}
 	}
 	
 	private void readLogFile() {
@@ -489,7 +504,8 @@ public class LogView extends ViewPart implements ILogListener {
 			return;
 			
 		if (firstEvent) {
-			reloadLog();
+			readLogFile();
+			asyncRefresh();
 			firstEvent = false;
 		} else {
 			pushStatus(status);
@@ -502,7 +518,12 @@ public class LogView extends ViewPart implements ILogListener {
 		asyncRefresh();
 	}
 
+
 	private void asyncRefresh() {
+		asyncRefresh(true);
+	}
+	
+	private void asyncRefresh(final boolean activate) {
 		final Control control = tableTreeViewer.getControl();
 		if (control.isDisposed())
 			return;
@@ -513,9 +534,14 @@ public class LogView extends ViewPart implements ILogListener {
 		if (display != null) {
 			display.asyncExec(new Runnable() {
 				public void run() {
-					if (!control.isDisposed())
+					if (!control.isDisposed()) {
 						tableTreeViewer.refresh();
-					PDERuntimePlugin.getActivePage().activate(view);
+						deleteLogAction.setEnabled(
+							inputFile.exists()
+								&& inputFile.equals(Platform.getLogFileLocation().toFile()));
+						if (activate)
+							PDERuntimePlugin.getActivePage().activate(view);
+					}
 				}
 			});
 		}
