@@ -215,12 +215,18 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 				getWorkspaceScope(),
 				getExternalScope(),
 				getSelectedResources());
-				
+
 		PluginSearchInput input = new PluginSearchInput();
-		input.setSearchElement(getSearchFor());
+		int searchFor = getSearchFor();
+		input.setSearchElement(searchFor);
 		input.setSearchLimit(getLimitTo());
 		input.setSearchScope(scope);
-		input.setSearchString(patternCombo.getText().trim());
+		String searchString = patternCombo.getText().trim();
+		if (searchFor == PluginSearchInput.ELEMENT_EXTENSION_POINT
+			&& searchString.indexOf('.') == -1) {
+			searchString = "*." + searchString;
+		}
+		input.setSearchString(searchString);
 		input.setCaseSensitive(caseSensitive.getSelection());
 		return input;
 	}
