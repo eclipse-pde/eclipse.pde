@@ -190,4 +190,12 @@
 			Verify that the 'XYZ Feature' exists.
 		</description>
 	</item>
+	<item
+		href="/org.eclipse.pde.doc.user/guide/pde_site_previewing.htm"
+		title="Publishing the update site">
+		<description>
+			Once the update site is verified in the local file system,
+			export the update site project and copy it to an HTTP server.
+		</description>
+	</item>	
 </cheatsheet>
