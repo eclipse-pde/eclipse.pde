@@ -62,6 +62,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 						model.isFragmentModel()
 							? "fragment.xml" //$NON-NLS-1$
 							: "plugin.xml"); //$NON-NLS-1$
+				// defect 37319
 				if (location.segmentCount() >= 3)
 					location = location.removeFirstSegments(location.segmentCount() - 3);
 				//31489 - entry must be relative
