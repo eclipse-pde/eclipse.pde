@@ -129,6 +129,8 @@ public class ModelEntry extends PlatformObject {
 
 	public static void updateUnknownClasspathContainer(IJavaProject javaProject)
 		throws CoreException {
+		if (javaProject == null)
+			return;
 		IPath path = new Path(PDECore.CLASSPATH_CONTAINER_ID);
 		JavaCore.setClasspathContainer(
 			path,
