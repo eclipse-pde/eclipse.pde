@@ -54,13 +54,13 @@ public class FeatureModelManager {
 	 * @return all features (workspace and external)
 	 */
 	public IFeatureModel[] getAllFeatures() {
-		IFeatureModel[] eModels = fExternalManager.getAllFeatureModels();
+		IFeatureModel[] wModels = fExternalManager.getAllFeatureModels();
 		ArrayList allModels = new ArrayList();
-		allModels.addAll(Arrays.asList(eModels));
-		IFeatureModel[] wModels = fWorkspaceManager.getFeatureModels();
-		for (int i = 0; i < wModels.length; i++) {
-			if (!isFeatureIncluded(allModels, wModels[i]))
-				allModels.add(wModels[i]);
+		allModels.addAll(Arrays.asList(wModels));
+		IFeatureModel[] eModels = fWorkspaceManager.getFeatureModels();
+		for (int i = 0; i < eModels.length; i++) {
+			if (!isFeatureIncluded(allModels, eModels[i]))
+				allModels.add(eModels[i]);
 		}
 		return (IFeatureModel[]) allModels.toArray(new IFeatureModel[allModels
 				.size()]);
