@@ -348,13 +348,12 @@ public class ClasspathUtilCore {
 
 		if (buildEntries.length == 0) {
 			// keep existing source folders
-			IClasspathEntry[] entries =
-				JavaCore.create(project).getRawClasspath();
-			for (int i = 0; i < entries.length; i++) {
-				IClasspathEntry entry = entries[i];
-				if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE
-					&& entry.getContentKind() == IPackageFragmentRoot.K_SOURCE) {
-					result.add(entry);
+			IPackageFragmentRoot[] roots = 
+				JavaCore.create(project).getPackageFragmentRoots();
+			for (int i = 0; i < roots.length; i++) {
+				IPackageFragmentRoot root = roots[i];
+				if (root.getKind() == IPackageFragmentRoot.K_SOURCE) {
+					result.add(JavaCore.newSourceEntry(root.getPath()));
 				}
 			}
 		}
