@@ -10,8 +10,12 @@
       %description
    </description>
 
+   <license url="%licenseURL">
+     %license
+   </license>
+
    <url>
-      <update label="eclipse.org update site" url="http://update.eclipse.org/updates"/>
+      <update label="%updateSiteName" url="http://update.eclipse.org/updates"/>
    </url>
 
    <requires>
