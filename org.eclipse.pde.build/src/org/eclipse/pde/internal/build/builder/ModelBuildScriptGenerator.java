@@ -225,7 +225,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 */
 	private void generateBuildJarsTargetForSourceGathering() throws CoreException {
 		script.printTargetDeclaration(TARGET_BUILD_JARS, null, null, null, null);
-
+		compiledJarNames = new ArrayList(0);
 		IPluginEntry entry = Utils.getPluginEntry(featureGenerator.feature, model.getSymbolicName(), false)[0];
 		Config configInfo;
 		if (entry.getOS() == null && entry.getWS() == null && entry.getOSArch() == null)
