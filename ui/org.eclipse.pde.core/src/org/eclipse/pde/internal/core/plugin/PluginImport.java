@@ -68,11 +68,14 @@ public class PluginImport
 			return false;
 		if (obj instanceof IPluginImport) {
 			IPluginImport target = (IPluginImport) obj;
+			// Objects from the same model must be
+			// binary equal
+			if (target.getModel().equals(getModel()))
+				return false;
+
 			if (target.getId().equals(getId())
 				&& target.isReexported() == isReexported()
-				&& (target.getVersion() == null
-					&& getVersion() == null
-					|| target.getVersion().equals(getVersion()))
+				&& stringEqualWithNull(target.getVersion(),getVersion())
 				&& target.getMatch() == getMatch()
 				&& target.isOptional() == isOptional())
 				return true;

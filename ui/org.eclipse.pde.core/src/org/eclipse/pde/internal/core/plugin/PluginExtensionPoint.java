@@ -45,9 +45,13 @@ public boolean equals(Object obj) {
 	if (obj==this) return true;
 	if (obj instanceof IPluginExtensionPoint) {
 		IPluginExtensionPoint target = (IPluginExtensionPoint)obj;
-		if (target.getId().equals(getId()) &&
-			target.getName().equals(getName()) &&
-			target.getSchema().equals(getSchema()))
+		// Objects from the same model must be
+		// binary equal
+		if (target.getModel().equals(getModel()))
+			return false;
+		if (stringEqualWithNull(target.getId(), getId()) &&
+			stringEqualWithNull(target.getName(), getName()) &&
+			stringEqualWithNull(target.getSchema(), getSchema()))
 			return true;
 	}
 	return false;

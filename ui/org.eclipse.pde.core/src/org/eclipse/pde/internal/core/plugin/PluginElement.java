@@ -34,6 +34,26 @@ public class PluginElement extends PluginParent implements IPluginElement {
 		this.text = element.getText();
 		this.elementInfo = element.getElementInfo();
 	}
+	
+	public boolean equals(Object obj) {
+		if (obj==this) return true;
+		if (obj==null) return false;
+		if (obj instanceof IPluginElement) {
+			IPluginElement target = (IPluginElement)obj;
+			if (target.getModel().equals(getModel()))
+				return false;
+			if (target.getAttributeCount()!=getAttributeCount())
+				return false;
+			IPluginAttribute tatts [] = target.getAttributes();
+			for (int i=0; i<tatts.length; i++) {
+				IPluginAttribute tatt = tatts[i];
+				if (tatt.equals(attributes.get(tatt.getName()))==false)
+					return false;
+			}
+			return super.equals(obj);
+		}	
+		return false;
+	}
 
 	public IPluginElement createCopy() {
 		return new PluginElement(this);

@@ -71,6 +71,28 @@ void load(Node node, Hashtable lineTable) {
 	addComments(node);
 	bindSourceLocation(node, lineTable);
 }
+
+public boolean equals(Object obj) {
+	if (obj==this) return true;
+	if (obj==null) return false;
+	if (obj instanceof IPluginExtension) {
+		IPluginExtension target = (IPluginExtension)obj;
+		// Objects from the same model must be
+		// binary equal
+		if (target.getModel().equals(getModel()))
+			return false;
+		if (!stringEqualWithNull(target.getId(), getId()))
+			return false;
+		if (!stringEqualWithNull(target.getName(), getName()))
+			return false;
+		if (!stringEqualWithNull(target.getPoint(), getPoint()))
+			return false;
+		// Children
+		return super.equals(obj);
+	}
+	return false;
+}
+
 public void setPoint(String point) throws CoreException {
 	ensureModelEditable();
 	String oldValue = this.point;

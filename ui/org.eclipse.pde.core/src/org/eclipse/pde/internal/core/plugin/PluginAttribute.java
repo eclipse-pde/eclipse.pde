@@ -30,6 +30,21 @@ PluginAttribute(IPluginAttribute attribute) {
 public Object clone() {
 	return new PluginAttribute(this);
 }
+
+public boolean equals(Object obj) {
+	if (obj==this) return true;
+	if (obj==null) return false;
+	if (obj instanceof IPluginAttribute) {
+		IPluginAttribute target = (IPluginAttribute)obj;
+		if (target.getModel().equals(getModel()))
+			return false;
+		if (stringEqualWithNull(getName(), target.getName()) &&
+			stringEqualWithNull(getValue(), getValue()))
+			return true;
+	}
+	return false;
+}
+
 public ISchemaAttribute getAttributeInfo() {
 	if (attributeInfo!=null) {
 		ISchema schema = attributeInfo.getSchema();

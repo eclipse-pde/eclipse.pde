@@ -21,7 +21,7 @@ public abstract class PluginObject
 	private transient IPluginObject parent;
 	private transient IPluginModelBase model;
 	private Vector comments;
-	protected int [] range;
+	protected int[] range;
 	private boolean inTheModel;
 
 	public PluginObject() {
@@ -31,22 +31,33 @@ public abstract class PluginObject
 			throwCoreException("Illegal attempt to change read-only plug-in manifest model");
 		}
 	}
-	
+
 	void setInTheModel(boolean value) {
 		inTheModel = value;
 	}
-	
+
 	public boolean isInTheModel() {
 		return inTheModel;
 	}
-	
-	protected void firePropertyChanged(String property, Object oldValue, Object newValue) {
+
+	protected void firePropertyChanged(
+		String property,
+		Object oldValue,
+		Object newValue) {
 		firePropertyChanged(this, property, oldValue, newValue);
 	}
-	protected void firePropertyChanged(IPluginObject object, String property, Object oldValue, Object newValue) {
+	protected void firePropertyChanged(
+		IPluginObject object,
+		String property,
+		Object oldValue,
+		Object newValue) {
 		if (model.isEditable() && model instanceof IModelChangeProvider) {
 			IModelChangeProvider provider = (IModelChangeProvider) model;
-			provider.fireModelObjectChanged(object, property, oldValue, newValue);
+			provider.fireModelObjectChanged(
+				object,
+				property,
+				oldValue,
+				newValue);
 		}
 	}
 	protected void fireStructureChanged(IPluginObject child, int changeType) {
@@ -110,12 +121,12 @@ public abstract class PluginObject
 	}
 	abstract void load(Node node, Hashtable lineTable);
 
-	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
+	public void restoreProperty(String name, Object oldValue, Object newValue)
+		throws CoreException {
 		if (name.equals(P_NAME)) {
-			setName(newValue!=null ? newValue.toString() : null);
+			setName(newValue != null ? newValue.toString() : null);
 		}
 	}
-
 
 	public void setModel(IPluginModelBase model) {
 		this.model = model;
@@ -132,7 +143,12 @@ public abstract class PluginObject
 	}
 	protected void throwCoreException(String message) throws CoreException {
 		Status status =
-			new Status(IStatus.ERROR, PDECore.getPluginId(), IStatus.OK, message, null);
+			new Status(
+				IStatus.ERROR,
+				PDECore.getPluginId(),
+				IStatus.OK,
+				message,
+				null);
 		throw new CoreException(status);
 	}
 	public String toString() {
@@ -175,6 +191,10 @@ public abstract class PluginObject
 		}
 	}
 
+	protected boolean stringEqualWithNull(String a, String b) {
+		return a == null && b == null || a != null && b != null && a.equals(b);
+	}
+
 	public String getWritableString(String source) {
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < source.length(); i++) {
@@ -204,7 +224,7 @@ public abstract class PluginObject
 	}
 
 	void bindSourceLocation(Node node, Hashtable lineTable) {
-		Integer [] lines = (Integer[]) lineTable.get(node);
+		Integer[] lines = (Integer[]) lineTable.get(node);
 		if (lines != null) {
 			range = new int[2];
 			range[0] = lines[0].intValue();
@@ -213,12 +233,12 @@ public abstract class PluginObject
 	}
 
 	public int getStartLine() {
-		if (range==null)
+		if (range == null)
 			return -1;
 		return range[0];
 	}
 	public int getStopLine() {
-		if (range==null)
+		if (range == null)
 			return -1;
 		return range[1];
 	}

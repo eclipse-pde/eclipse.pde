@@ -40,6 +40,24 @@ public int getChildCount() {
 	return children.size();
 }
 
+public boolean equals(Object obj) {
+	if (this==obj) return true;
+	if (obj==null) return false;
+	if (obj instanceof IPluginParent) {
+		IPluginParent target = (IPluginParent)obj;
+		if (target.getChildCount()!=getChildCount())
+			return false;
+		IPluginObject [] tchildren = target.getChildren();
+		for (int i=0; i<tchildren.length; i++) {
+			IPluginObject tchild = tchildren[i];
+			if (tchild.equals(children.get(i))==false)
+				return false;
+		}
+		return true;
+	}
+	return false;
+}
+
 public int getIndexOf(IPluginObject child) {
 	return children.indexOf(child);
 }
