@@ -6,7 +6,6 @@ package org.eclipse.pde.internal.junit.runtime;
 
 import junit.framework.*;
 
-import org.eclipse.core.boot.IPlatformRunnable;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.testing.*;
@@ -22,7 +21,7 @@ public class UITestApplication implements IPlatformRunnable, ITestHarness {
 	private TestableObject fTestableObject;
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.core.boot.IPlatformRunnable#run(java.lang.Object)
+	 * @see org.eclipse.core.runtime.IPlatformRunnable#run(java.lang.Object)
 	 */
 	public Object run(final Object args) throws Exception {
 		IPlatformRunnable application = getApplication((String[]) args);
