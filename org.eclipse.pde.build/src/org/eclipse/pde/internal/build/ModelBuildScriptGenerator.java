@@ -102,7 +102,7 @@ protected void generateCleanTarget() {
 	ArrayList jars = new ArrayList(9);
 	ArrayList zips = new ArrayList(9);
 	for (Iterator i = jarOrder.iterator(); i.hasNext();) {
-		String jar = removeBraces((String) i.next());
+		String jar = (String) i.next();
 		jars.add(jar);
 		zips.add(jar.substring(0, jar.length() - 4) + "src.zip");
 	}
@@ -128,17 +128,21 @@ protected void generateCleanTarget() {
 protected void generateGatherLogTarget() {
 	int tab = 1;
 	script.println();
-	script.printTargetDeclaration(tab, TARGET_GATHER_LOG, TARGET_INIT, null, null, null);
-	tab++;
-	IPath base = new Path(getPropertyFormat(PROPERTY_DESTINATION));
-	base = base.append(DEFAULT_PLUGIN_LOCATION);
-	base = base.append(getPropertyFormat(getModelTypeName()));
-	script.printProperty(tab, PROPERTY_BASE, base.toString());
-	script.printMkdirTask(tab, getPropertyFormat(PROPERTY_BASE));
-	FileSet fileSet = new FileSet(getRelativeInstallLocation().toString(), null, "*.log", null, null, null, null);
-	script.printCopyTask(tab, null, getPropertyFormat(PROPERTY_BASE), new FileSet[] {fileSet});
-	tab--;
-	script.printString(tab, "</target>");
+	script.printTargetDeclaration(tab++, TARGET_GATHER_LOG, TARGET_INIT, null, null, null);
+	IPath baseDestination = new Path(getPropertyFormat(PROPERTY_DESTINATION));
+	baseDestination = baseDestination.append(getDirectoryName());
+	List destinations = new ArrayList(5);
+	IPath baseSource = new Path(getPropertyFormat(PROPERTY_INSTALL));
+	for (Iterator i = jarOrder.iterator(); i.hasNext();) {
+		String jar = (String) i.next();
+		IPath destination = baseDestination.append(jar).removeLastSegments(1); // remove the jar name
+		if (!destinations.contains(destination)) {
+			script.printMkdirTask(tab, destination.toString());
+			destinations.add(destination);
+		}
+		script.printCopyTask(tab, baseSource.append(jar + ".bin.log").toString(), destination.toString(), null);
+	}
+	script.printEndTag(--tab, TARGET_TARGET);
 }
 
 
@@ -148,8 +152,7 @@ protected void generateBuildSourcesTarget() throws CoreException {
 		jars.append(",");
 		// zip name is jar name without the ".jar" but with "src.zip" appended
 		String jar = (String) i.next();
-		String zip = removeBraces(jar);
-		zip = zip.substring(0, zip.length() - 4) + "src.zip";
+		String zip = jar.substring(0, jar.length() - 4) + "src.zip";
 		jars.append(zip);
 		generateSourceIndividualTarget(jar, zip);
 	}
@@ -213,21 +216,22 @@ protected String getSourceList (Collection source, String ending) {
 protected void generateGatherSourcesTarget() {
 	int tab = 1;
 	script.println();
-	script.printTargetDeclaration(tab, TARGET_GATHER_SOURCES, TARGET_INIT, PROPERTY_DESTINATION, null, null);
-	tab++;
-	IPath destination = new Path(getPropertyFormat(PROPERTY_DESTINATION));
-	destination = destination.append(getDirectoryName());
-	String dest = destination.toString();
-	script.printMkdirTask(tab, dest);
+	script.printTargetDeclaration(tab++, TARGET_GATHER_SOURCES, TARGET_INIT, PROPERTY_DESTINATION, null, null);
+	IPath baseDestination = new Path(getPropertyFormat(PROPERTY_DESTINATION));
+	baseDestination = baseDestination.append(getDirectoryName());
+	List destinations = new ArrayList(5);
+	IPath baseSource = new Path(getPropertyFormat(PROPERTY_INSTALL));
 	for (Iterator i = jarOrder.iterator(); i.hasNext();) {
-		// zip name is jar name without the ".jar" but with "src.zip" appended
 		String jar = (String) i.next();
-		String zip = removeBraces(jar);
-		zip = zip.substring(0, zip.length() - 4) + "src.zip";
-		script.printCopyTask(tab, zip, dest, null);
+		String zip = jar.substring(0, jar.length() - 4) + "src.zip";
+		IPath destination = baseDestination.append(jar).removeLastSegments(1); // remove the jar name
+		if (!destinations.contains(destination)) {
+			script.printMkdirTask(tab, destination.toString());
+			destinations.add(destination);
+		}
+		script.printCopyTask(tab, baseSource.append(zip).toString(), destination.toString(), null);
 	}
-	tab--;
-	script.printString(tab, "</target>");
+	script.printString(--tab, "</target>");
 }
 
 
@@ -237,7 +241,7 @@ protected void generateBuildJarsTarget() throws CoreException {
 	for (Iterator i = jarOrder.iterator(); i.hasNext();) {
 		jars.append(',');
 		String currentJar = (String) i.next();
-		jars.append(removeBraces(currentJar));
+		jars.append(currentJar);
 		generateJarIndividualTarget(currentJar);
 	}
 	script.println();
@@ -245,26 +249,15 @@ protected void generateBuildJarsTarget() throws CoreException {
 	script.printString(1, "</target>");
 }
 
-protected String removeBraces (String entry) {
-	int start = entry.indexOf('{');
-	if (start == -1)
-		return entry;
-	int end = entry.indexOf('}');
-	String result = entry.substring(0, start);
-	result += entry.substring(start + 1, end);
-	result += entry.substring(end + 1);
-	return result;
-}
 
-protected void generateJarIndividualTarget(String relativeJar) throws CoreException {
+protected void generateJarIndividualTarget(String jarName) throws CoreException {
 	int tab = 1;
 	script.println();
-	String jarName = removeBraces(relativeJar);
 	script.printTargetDeclaration(tab, jarName, TARGET_INIT, null, null, null);
 	tab++;
 	String fullJar = null;
 	try {
-		fullJar = new URL(model.getLocation() + relativeJar).getFile();
+		fullJar = new URL(model.getLocation() + jarName).getFile();
 	} catch (MalformedURLException e) {
 		// should not happen
 		throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_MALFORMED_URL, Policy.bind("exception.url") ,e));
