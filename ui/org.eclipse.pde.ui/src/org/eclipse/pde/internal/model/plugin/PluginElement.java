@@ -1,4 +1,4 @@
-package org.eclipse.pde.internal.model;
+package org.eclipse.pde.internal.model.plugin;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -15,7 +15,7 @@ import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.pde.model.plugin.*;
 
 public class PluginElement extends PluginParent implements IPluginElement {
-	private ISchemaElement elementInfo;
+	private transient ISchemaElement elementInfo;
 	private String text;
 	static final String ATTRIBUTE_SHIFT = "      ";
 	static final String ELEMENT_SHIFT = "   ";

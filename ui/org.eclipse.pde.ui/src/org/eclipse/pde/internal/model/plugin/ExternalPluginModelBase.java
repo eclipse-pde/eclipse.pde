@@ -1,4 +1,4 @@
-package org.eclipse.pde.internal.model;
+package org.eclipse.pde.internal.model.plugin;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -9,6 +9,7 @@ import org.eclipse.core.runtime.model.*;
 import java.net.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.model.plugin.*;
+import org.eclipse.pde.internal.model.*;
 import org.eclipse.pde.internal.model.build.*;
 import java.io.File;
 

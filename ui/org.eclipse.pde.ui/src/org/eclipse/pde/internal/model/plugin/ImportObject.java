@@ -1,10 +1,12 @@
-package org.eclipse.pde.internal.model;
+package org.eclipse.pde.internal.model.plugin;
 
 import org.eclipse.pde.model.plugin.*;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.pde.internal.PDEPlugin;
+import org.eclipse.pde.model.IWritable;
+import java.io.*;
 
-public class ImportObject extends PluginReference {
+public class ImportObject extends PluginReference implements IWritable, Serializable {
 	private IPluginImport iimport;
 	
 	public ImportObject(IPluginImport iimport) {
@@ -25,5 +27,8 @@ public class ImportObject extends PluginReference {
 			   return true;
 		}
 		return false;
+	}
+	public void write(String indent, PrintWriter writer) {
+		iimport.write(indent, writer);
 	}
 }

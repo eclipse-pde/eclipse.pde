@@ -7,7 +7,7 @@ package org.eclipse.pde.internal.editor.manifest;
 import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.model.*;
+import org.eclipse.pde.internal.model.plugin.*;
 import java.io.*;
 import org.eclipse.pde.model.plugin.*;
 import org.eclipse.pde.internal.*;

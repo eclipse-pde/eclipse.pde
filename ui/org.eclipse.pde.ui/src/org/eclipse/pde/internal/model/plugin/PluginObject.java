@@ -1,4 +1,4 @@
-package org.eclipse.pde.internal.model;
+package org.eclipse.pde.internal.model.plugin;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -13,14 +13,15 @@ import org.eclipse.pde.model.*;
 import org.eclipse.pde.internal.*;
 import java.util.*;
 import java.io.PrintWriter;
+import java.io.Serializable;
 
 public abstract class PluginObject
 	extends PlatformObject
-	implements IPluginObject, ISourceObject {
+	implements IPluginObject, ISourceObject, Serializable {
 	protected String name;
 	private String translatedName;
-	private IPluginObject parent;
-	private IPluginModelBase model;
+	private transient IPluginObject parent;
+	private transient IPluginModelBase model;
 	private Vector comments;
 	protected int lineNumber;
 	private boolean inTheModel;
@@ -118,8 +119,9 @@ public abstract class PluginObject
 	}
 
 
-	void setModel(IPluginModelBase model) {
+	public void setModel(IPluginModelBase model) {
 		this.model = model;
+		translatedName = null;
 	}
 	public void setName(String name) throws CoreException {
 		ensureModelEditable();
@@ -127,7 +129,7 @@ public abstract class PluginObject
 		this.name = name;
 		firePropertyChanged(P_NAME, oldValue, name);
 	}
-	void setParent(IPluginObject parent) {
+	public void setParent(IPluginObject parent) {
 		this.parent = parent;
 	}
 	protected void throwCoreException(String message) throws CoreException {

@@ -2,7 +2,7 @@
  * (c) Copyright 2001 MyCorporation.
  * All Rights Reserved.
  */
-package org.eclipse.pde.internal.model;
+package org.eclipse.pde.internal.model.plugin;
 
 import org.eclipse.pde.model.*;
 import org.eclipse.pde.model.IModelChangedEvent;

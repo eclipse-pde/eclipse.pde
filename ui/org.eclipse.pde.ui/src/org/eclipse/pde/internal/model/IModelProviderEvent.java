@@ -1,4 +1,4 @@
-package org.eclipse.pde.internal.base.model;
+package org.eclipse.pde.internal.model;
 
 import org.eclipse.pde.model.*;
 /*

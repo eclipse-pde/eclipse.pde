@@ -28,6 +28,8 @@ import org.eclipse.pde.internal.wizards.*;
 import org.eclipse.pde.model.*;
 import org.eclipse.swt.custom.*;
 import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.pde.internal.model.*;
 import org.eclipse.pde.internal.parts.WizardCheckboxTablePart;
 
 public class ExternalPluginsBlock {

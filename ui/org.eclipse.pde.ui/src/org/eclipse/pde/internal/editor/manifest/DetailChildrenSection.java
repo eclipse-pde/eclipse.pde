@@ -23,7 +23,7 @@ import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.parts.TreePart;
 import org.eclipse.pde.internal.preferences.MainPreferencePage;
 import org.eclipse.pde.model.*;
-import org.eclipse.pde.internal.model.PluginElement;
+import org.eclipse.pde.internal.model.plugin.*;
 
 public class DetailChildrenSection
 	extends TreeSection
@@ -330,5 +330,23 @@ public class DetailChildrenSection
 			element != null && element.getText() != null ? element.getText() : "");
 		applyButton.setEnabled(false);
 		resetButton.setEnabled(false);
+	}
+	protected void doPaste(Object target, Object[] objects) {
+		if (target==null) target = currentElement;
+		try {
+			for (int i = 0; i < objects.length; i++) {
+				Object obj = objects[i];
+				if (obj instanceof IPluginElement && target instanceof IPluginParent) {
+					PluginElement element = (PluginElement) obj;
+					element.setModel((IPluginModelBase)getFormPage().getModel());
+					element.setParent((IPluginParent)target);
+					((IPluginParent) target).add(element);
+					if (element instanceof PluginParent)
+						((PluginParent)element).reconnect();
+				}
+			}
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}
 	}
 }

@@ -29,6 +29,7 @@ import org.eclipse.pde.model.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.editor.PropertiesAction;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.pde.internal.model.*;
 import org.eclipse.pde.internal.model.feature.FeaturePlugin;
 import java.util.*;
 import org.eclipse.jface.wizard.WizardDialog;

@@ -5,6 +5,7 @@
 package org.eclipse.pde.internal.builders;
 
 import org.eclipse.pde.internal.base.model.*;
+import org.eclipse.pde.internal.model.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.pde.model.plugin.*;
 import org.eclipse.pde.model.*;

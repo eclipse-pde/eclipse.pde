@@ -1,4 +1,4 @@
-package org.eclipse.pde.internal.model;
+package org.eclipse.pde.internal.model.plugin;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -19,16 +19,22 @@ public PluginParent() {
 public void add(int index, IPluginObject child) throws CoreException {
 	ensureModelEditable();
 	children.add(index, child);
+	postAdd(child);
+}
+
+public void add(IPluginObject child) throws CoreException {
+	ensureModelEditable();
+	children.add(child);
+	postAdd(child);
+}
+
+private void postAdd(IPluginObject child) {
 	((PluginObject)child).setInTheModel(true);
 	((PluginObject)child).setParent(this);
 	fireStructureChanged(child, IModelChangedEvent.INSERT);
 }
-public void add(IPluginObject child) throws CoreException {
-	ensureModelEditable();
-	children.add(child);
-	((PluginObject)child).setInTheModel(true);
-	fireStructureChanged(child, IModelChangedEvent.INSERT);
-}
+
+
 public int getChildCount() {
 	return children.size();
 }
@@ -58,5 +64,15 @@ public void remove(IPluginObject child) throws CoreException {
 	children.removeElement(child);
 	((PluginObject)child).setInTheModel(false);
 	fireStructureChanged(child, ModelChangedEvent.REMOVE);
+}
+public void reconnect() {
+	for (int i=0; i<children.size(); i++) {
+		PluginObject child = (PluginObject)children.get(i);
+		child.setModel(getModel());
+		child.setParent(this);
+		if (child instanceof PluginParent) {
+			((PluginParent)child).reconnect();
+		}
+	}
 }
 }

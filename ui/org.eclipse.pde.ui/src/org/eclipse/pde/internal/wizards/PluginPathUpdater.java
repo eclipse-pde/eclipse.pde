@@ -4,7 +4,7 @@ package org.eclipse.pde.internal.wizards;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.internal.model.*;
+import org.eclipse.pde.internal.model.plugin.*;
 import org.eclipse.jface.preference.*;
 import org.eclipse.ui.plugin.*;
 import org.eclipse.pde.model.plugin.*;

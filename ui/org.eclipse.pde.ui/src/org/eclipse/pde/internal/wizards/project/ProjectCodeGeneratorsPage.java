@@ -22,7 +22,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jdt.core.*;
-import org.eclipse.pde.internal.model.*;
+import org.eclipse.pde.internal.model.plugin.*;
 import org.eclipse.pde.model.plugin.*;
 import org.eclipse.core.resources.IProjectDescription;
 

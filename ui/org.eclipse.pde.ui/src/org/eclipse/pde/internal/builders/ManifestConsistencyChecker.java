@@ -5,7 +5,7 @@ package org.eclipse.pde.internal.builders;
  */
 
 import org.eclipse.pde.model.plugin.*;
-import org.eclipse.pde.internal.model.*;
+import org.eclipse.pde.internal.model.plugin.*;
 import org.eclipse.pde.model.*;
 import org.eclipse.pde.model.ISourceObject;
 import org.apache.xerces.parsers.*;

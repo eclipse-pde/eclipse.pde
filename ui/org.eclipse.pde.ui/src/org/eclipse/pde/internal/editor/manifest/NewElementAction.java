@@ -12,7 +12,7 @@ import org.eclipse.pde.model.plugin.*;
 import org.eclipse.pde.internal.base.schema.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.jface.action.*;
-import org.eclipse.pde.internal.model.PluginElement;
+import org.eclipse.pde.internal.model.plugin.PluginElement;
 
 public class NewElementAction extends Action {
 	public static final String UNKNOWN_ELEMENT_TAG = "Generic";

@@ -9,6 +9,9 @@ import org.eclipse.pde.internal.parts.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.dnd.*;
+import org.eclipse.pde.internal.model.ModelDataTransfer;
 
 /**
  * @version 	1.0
@@ -55,5 +58,22 @@ public abstract class StructuredViewerSection extends PDEFormSection {
 	}
 	
 	protected void buttonSelected(int index) {
+	}
+
+	protected void doPaste() {
+		ISelection selection = viewerPart.getViewer().getSelection();
+		IStructuredSelection ssel = (IStructuredSelection)selection;
+		if (ssel.size()>1) return;
+		
+		Object target = ssel.getFirstElement();
+		
+		Clipboard clipboard = getFormPage().getEditor().getClipboard();
+		ModelDataTransfer modelTransfer = ModelDataTransfer.getInstance();
+		Object [] objects = (Object[])clipboard.getContents(modelTransfer);
+		if (objects!=null) {
+			doPaste(target, objects);
+		}
+	}
+	protected void doPaste(Object target, Object[] objects) {
 	}
 }

@@ -11,7 +11,7 @@ import java.io.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.pde.model.plugin.*;
-import org.eclipse.pde.internal.model.*;
+import org.eclipse.pde.internal.model.plugin.*;
 import org.eclipse.pde.internal.*;
 
 public class BuildObject {

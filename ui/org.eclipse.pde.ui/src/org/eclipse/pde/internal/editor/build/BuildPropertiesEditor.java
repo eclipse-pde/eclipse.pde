@@ -6,6 +6,7 @@ package org.eclipse.pde.internal.editor.build;
 
 import org.eclipse.pde.model.build.*;
 import org.eclipse.pde.internal.model.*;
+import org.eclipse.pde.internal.model.plugin.*;
 import org.eclipse.pde.model.*;
 import org.eclipse.pde.model.plugin.*;
 import org.eclipse.pde.internal.editor.text.*;
@@ -19,7 +20,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.*;
 import org.eclipse.pde.internal.editor.*;
 import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.pde.internal.model.Plugin;
+import org.eclipse.pde.internal.model.plugin.Plugin;
 import org.eclipse.ui.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.jface.dialogs.*;

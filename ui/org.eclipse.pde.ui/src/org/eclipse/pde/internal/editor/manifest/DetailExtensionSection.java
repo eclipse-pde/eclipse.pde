@@ -33,8 +33,10 @@ import java.net.MalformedURLException;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.pde.internal.parts.TreePart;
 import org.eclipse.pde.internal.preferences.MainPreferencePage;
-import org.eclipse.pde.internal.model.*;
+import org.eclipse.pde.internal.model.plugin.*;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.pde.internal.model.ModelDataTransfer;
+import org.eclipse.swt.dnd.Clipboard;
 
 public class DetailExtensionSection
 	extends TreeSection
@@ -252,8 +254,12 @@ public class DetailExtensionSection
 		super.dispose();
 	}
 	public boolean doGlobalAction(String actionId) {
-		if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {
+		if (actionId.equals(IWorkbenchActionConstants.DELETE)) {
 			handleDelete();
+			return true;
+		}
+		if (actionId.equals(IWorkbenchActionConstants.PASTE)) {
+			doPaste();
 			return true;
 		}
 		return false;
@@ -429,10 +435,10 @@ public class DetailExtensionSection
 			return;
 		}
 		Object changeObject = event.getChangedObjects()[0];
-		if (changeObject instanceof IPluginBase &&
-			event.getChangeType()==event.CHANGE &&
-			event.getChangedProperty().equals(IPluginBase.P_EXTENSION_ORDER)) {
-								IStructuredSelection sel = (IStructuredSelection) extensionTree.getSelection();
+		if (changeObject instanceof IPluginBase
+			&& event.getChangeType() == event.CHANGE
+			&& event.getChangedProperty().equals(IPluginBase.P_EXTENSION_ORDER)) {
+			IStructuredSelection sel = (IStructuredSelection) extensionTree.getSelection();
 			IPluginExtension extension = (IPluginExtension) sel.getFirstElement();
 			extensionTree.refresh();
 			extensionTree.setSelection(new StructuredSelection(extension));
@@ -588,5 +594,31 @@ public class DetailExtensionSection
 			output.append(c);
 		}
 		return output.toString();
+	}
+	protected void doPaste(Object target, Object[] objects) {
+		IPluginModelBase model = (IPluginModelBase) getFormPage().getModel();
+		IPluginBase plugin = model.getPluginBase();
+
+		try {
+			for (int i = 0; i < objects.length; i++) {
+				Object obj = objects[i];
+				if (obj instanceof IPluginExtension) {
+					IPluginExtension extension = (IPluginExtension) obj;
+					((PluginExtension) extension).setModel(model);
+					((PluginExtension) extension).setParent(plugin);
+					plugin.add(extension);
+					((PluginParent)extension).reconnect();
+				} else if (obj instanceof IPluginElement && target instanceof IPluginParent) {
+					PluginElement element = (PluginElement) obj;
+					element.setModel(model);
+					element.setParent((IPluginParent)target);
+					((IPluginParent) target).add(element);
+					if (element instanceof PluginParent)
+						((PluginParent)element).reconnect();
+				}
+			}
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}
 	}
 }

@@ -1,4 +1,4 @@
-package org.eclipse.pde.internal.model;
+package org.eclipse.pde.internal.model.plugin;
 
 import org.eclipse.pde.model.plugin.*;
 import org.eclipse.core.runtime.PlatformObject;

@@ -12,7 +12,7 @@ import org.eclipse.pde.model.plugin.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.pde.internal.util.OverlayIcon;
 import org.eclipse.pde.internal.util.SharedLabelProvider;
-import org.eclipse.pde.internal.model.ImportObject;
+import org.eclipse.pde.internal.model.plugin.ImportObject;
 import org.eclipse.pde.internal.elements.NamedElement;
 import org.eclipse.pde.internal.base.schema.*;
 import org.eclipse.pde.internal.base.model.feature.*;

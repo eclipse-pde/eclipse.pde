@@ -8,6 +8,7 @@ import org.eclipse.pde.model.build.*;
 import org.eclipse.ui.part.*;
 import org.eclipse.jface.preference.*;
 import org.eclipse.pde.internal.model.*;
+import org.eclipse.pde.internal.model.plugin.*;
 import org.eclipse.pde.model.plugin.*;
 import org.eclipse.pde.internal.editor.text.*;
 import org.eclipse.jface.text.*;
@@ -20,7 +21,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.*;
 import org.eclipse.pde.internal.editor.*;
 import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.pde.internal.model.Plugin;
+import org.eclipse.pde.internal.model.plugin.Plugin;
 import org.eclipse.ui.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.preferences.*;
@@ -293,7 +294,8 @@ public class ManifestEditor
 			final IModelChangeProvider provider = (IModelChangeProvider) getModel();
 			final ModelChangedEvent e =
 				new ModelChangedEvent(IModelChangedEvent.WORLD_CHANGED, null, null);
-			BusyIndicator.showWhile(formWorkbook.getControl().getDisplay(), new Runnable() {
+			BusyIndicator
+				.showWhile(formWorkbook.getControl().getDisplay(), new Runnable() {
 				public void run() {
 					provider.fireModelChanged(e);
 				}

@@ -20,7 +20,7 @@ import org.eclipse.swt.graphics.*;
 import java.util.*;
 import org.eclipse.pde.internal.PDEPlugin;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.pde.internal.model.ImportObject;
+import org.eclipse.pde.internal.model.plugin.ImportObject;
 import org.eclipse.pde.model.*;
 
 public class MatchSection extends PDEFormSection {

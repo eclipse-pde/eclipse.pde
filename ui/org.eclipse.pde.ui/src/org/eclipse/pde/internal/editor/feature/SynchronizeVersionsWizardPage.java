@@ -4,7 +4,7 @@ package org.eclipse.pde.internal.editor.feature;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.internal.model.*;
+import org.eclipse.pde.internal.model.plugin.*;
 import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.ant.internal.ui.*;
 import org.eclipse.ant.core.*;
@@ -18,6 +18,7 @@ import org.eclipse.jface.operation.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.base.model.feature.*;
+import org.eclipse.pde.internal.model.*;
 import org.eclipse.pde.internal.model.feature.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.swt.layout.*;

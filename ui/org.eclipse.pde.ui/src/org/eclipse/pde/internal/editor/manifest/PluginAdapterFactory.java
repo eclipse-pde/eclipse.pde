@@ -10,7 +10,7 @@ import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.ui.views.properties.*;
 import org.eclipse.core.runtime.IAdapterFactory;
 import java.util.*;
-import org.eclipse.pde.internal.model.PluginElement;
+import org.eclipse.pde.internal.model.plugin.PluginElement;
 
 public class PluginAdapterFactory implements IAdapterFactory {
 	private ExtensionPropertySource extensionProperties;

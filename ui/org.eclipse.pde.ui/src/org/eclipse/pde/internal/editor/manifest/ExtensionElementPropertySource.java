@@ -33,8 +33,8 @@ import org.eclipse.pde.internal.editor.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.ui.*;
-import org.eclipse.pde.internal.model.PluginAttribute;
-import org.eclipse.pde.internal.model.PluginElement;
+import org.eclipse.pde.internal.model.plugin.PluginAttribute;
+import org.eclipse.pde.internal.model.plugin.PluginElement;
 
 public class ExtensionElementPropertySource
 	extends ManifestPropertySource

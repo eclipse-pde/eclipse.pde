@@ -29,7 +29,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.pde.internal.model.ImportObject;
+import org.eclipse.pde.internal.model.plugin.ImportObject;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.pde.internal.builders.*;
 

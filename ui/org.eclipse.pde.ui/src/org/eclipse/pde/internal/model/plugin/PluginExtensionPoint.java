@@ -1,4 +1,4 @@
-package org.eclipse.pde.internal.model;
+package org.eclipse.pde.internal.model.plugin;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -13,7 +13,7 @@ import org.eclipse.pde.model.plugin.*;
 import java.util.Hashtable;
 
 public class PluginExtensionPoint extends IdentifiablePluginObject implements IPluginExtensionPoint {
-	private java.lang.String schema;
+	private String schema;
 	static final String ID_SEPARATOR=".";
 
 public PluginExtensionPoint() {

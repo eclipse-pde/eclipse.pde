@@ -14,7 +14,6 @@ import org.eclipse.pde.model.IModel;
 import java.lang.reflect.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.ui.actions.*;
-import org.eclipse.pde.internal.base.model.*;
 import java.io.*;
 import org.eclipse.ui.views.contentoutline.*;
 import org.eclipse.jface.action.*;
@@ -34,6 +33,8 @@ import org.eclipse.pde.model.IModel;
 import org.eclipse.jface.viewers.*;
 import java.util.*;
 import org.eclipse.ui.texteditor.*;
+import org.eclipse.swt.dnd.*;
+import org.eclipse.pde.internal.model.*;
 
 public abstract class PDEMultiPageEditor
 	extends EditorPart
@@ -59,6 +60,7 @@ public abstract class PDEMultiPageEditor
 	private IDocumentProvider documentProvider;
 	private boolean disposed;
 	protected IModelUndoManager undoManager;
+	protected Clipboard clipboard;
 
 	public PDEMultiPageEditor() {
 		formWorkbook = new CustomWorkbook();
@@ -120,6 +122,7 @@ public abstract class PDEMultiPageEditor
 	}
 
 	public void createPartControl(Composite parent) {
+		clipboard = new Clipboard(parent.getDisplay());
 		formWorkbook.createControl(parent);
 		formWorkbook.addFormSelectionListener(new IFormSelectionListener() {
 			public void formSelected(IFormPage page) {
@@ -255,6 +258,10 @@ public abstract class PDEMultiPageEditor
 		}
 		return propertySheet;
 	}
+	
+	public Clipboard getClipboard() {
+		return clipboard;
+	}
 
 	public ISelection getSelection() {
 		return selectionProvider.getSelection();
@@ -291,8 +298,7 @@ public abstract class PDEMultiPageEditor
 		site.setSelectionProvider(this);
 		try {
 			initializeModels(inputObject);
-		}
-		catch (CoreException e) {
+		} catch (CoreException e) {
 			throw new PartInitException(e.getStatus());
 		}
 
@@ -366,6 +372,8 @@ public abstract class PDEMultiPageEditor
 	}
 	protected void performGlobalAction(String id) {
 		boolean handled = getCurrentPage().performGlobalAction(id);
+		// preserve selection
+		ISelection selection = getSelection();
 
 		if (!handled) {
 			IPDEEditorPage page = getCurrentPage();
@@ -376,6 +384,11 @@ public abstract class PDEMultiPageEditor
 				}
 				if (id.equals(ITextEditorActionConstants.REDO)) {
 					undoManager.redo();
+					return;
+				}
+				if (id.equals(ITextEditorActionConstants.CUT) ||
+					id.equals(ITextEditorActionConstants.COPY)) {
+					copyToClipboard(selection);
 					return;
 				}
 			}
@@ -397,6 +410,7 @@ public abstract class PDEMultiPageEditor
 	}
 	public void setSelection(ISelection selection) {
 		selectionProvider.setSelection(selection);
+		getContributor().updateSelectableActions(selection);
 	}
 	public IPDEEditorPage showPage(String id) {
 		return showPage(getPage(id));
@@ -465,5 +479,34 @@ public abstract class PDEMultiPageEditor
 			}
 		});
 	}
+	private void copyToClipboard(ISelection selection) {
+		IStructuredSelection ssel = (IStructuredSelection)selection;
+		Object [] objects = ssel.toArray();
+		StringWriter writer = new StringWriter();
+		PrintWriter pwriter = new PrintWriter(writer);
 
+		Class objClass = null;
+
+		for (int i = 0; i < objects.length; i++) {
+			Object obj = objects[i];
+			if (objClass == null)
+				objClass = obj.getClass();
+			else if (objClass.equals(obj.getClass()) == false)
+				return;
+			if (obj instanceof IWritable) {
+				((IWritable) obj).write("", pwriter);
+			}
+		}
+		pwriter.flush();
+		String textVersion = writer.toString();
+		try {
+			pwriter.close();
+			writer.close();
+		} catch (IOException e) {
+		}
+		// set the clipboard contents
+		clipboard.setContents(
+			new Object[] { objects, textVersion },
+			new Transfer[] { ModelDataTransfer.getInstance(), TextTransfer.getInstance()});
+	}
 }

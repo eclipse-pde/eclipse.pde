@@ -10,6 +10,7 @@ import java.net.URL;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.PDEPlugin;
 import org.eclipse.pde.internal.base.model.*;
+import org.eclipse.pde.internal.model.*;
 import org.eclipse.pde.model.*;
  
 public class WorkspaceResourceHelper extends NLResourceHelper
