@@ -8,6 +8,7 @@ import org.eclipse.pde.internal.model.*;
 import org.eclipse.jface.preference.*;
 import org.eclipse.ui.plugin.*;
 import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.internal.base.model.build.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.jface.operation.*;
 import org.eclipse.jface.viewers.*;
@@ -57,28 +58,30 @@ public PluginPathUpdater(IProject project, Iterator checkedPlugins) {
 }
 private void addFoldersToClasspathEntries(IPluginModelBase model, Vector result) {
 	IFile file = (IFile) model.getUnderlyingResource();
-	IPath jarsPath = file.getProject().getFullPath().append("plugin.jars");
-	IFile jarsFile = file.getWorkspace().getRoot().getFile(jarsPath);
-	if (!jarsFile.exists())
+	IPath buildPath = file.getProject().getFullPath().append("build.properties");
+	IFile buildFile = file.getWorkspace().getRoot().getFile(buildPath);
+	if (!buildFile.exists())
 		return;
 	WorkspaceModelManager manager = PDEPlugin.getDefault().getWorkspaceModelManager();
-	manager.connect(jarsFile, null, false);
-	IJarsModel jarsModel =
-		(IJarsModel) manager.getModel(jarsFile, null);
-	IJars jars = jarsModel.getJars();
-	IJarEntry[] entries = jars.getJarEntries();
+	manager.connect(buildFile, null, false);
+	IBuildModel buildModel =
+		(IBuildModel) manager.getModel(buildFile, null);
+	IBuild build = buildModel.getBuild();
+	IBuildEntry[] entries = build.getBuildEntries();
 	for (int i = 0; i < entries.length; i++) {
-		IJarEntry entry = entries[i];
-		String[] folderNames = entry.getFolderNames();
-		for (int j = 0; j < folderNames.length; j++) {
-			String folderName = folderNames[j];
+		IBuildEntry entry = entries[i];
+		if (!entry.getName().startsWith("source."))
+		   continue;
+		String[] tokens = entry.getTokens();
+		for (int j = 0; j < tokens.length; j++) {
+			String folderName = tokens[j];
 			IPath folderPath = file.getProject().getFullPath().append(folderName);
 			if (file.getWorkspace().getRoot().exists(folderPath)) {
 				result.add(JavaCore.newSourceEntry(folderPath));
 			}
 		}
 	}
-	manager.disconnect(jarsFile, null);
+	manager.disconnect(buildFile, null);
 }
 private void addToClasspathEntries(CheckedPlugin element, Vector result) {
 	IPlugin plugin = element.getPluginInfo();
@@ -117,18 +120,6 @@ public IClasspathEntry [] getClasspathEntries() {
 	IClasspathEntry[] finalEntries = new IClasspathEntry[result.size()];
 	result.copyInto(finalEntries);
 	return finalEntries;
-}
-private IJarsModel getJarsModel(IPlugin plugin) {
-	IFile file = (IFile)plugin.getModel().getUnderlyingResource();
-	IPath jarsPath = file.getProject().getFullPath().append("plugin.jars");
-	IFile jarsFile = file.getWorkspace().getRoot().getFile(jarsPath);
-	if (!jarsFile.exists())
-		return null;
-	WorkspaceModelManager manager = PDEPlugin.getDefault().getWorkspaceModelManager();
-	manager.connect(jarsFile, null, false);
-	IJarsModel jarsModel =
-		(IJarsModel) manager.getModel(jarsFile, null);
-	return jarsModel;
 }
 public static IPath getJDKPath() {
 	return JavaCore.getClasspathVariable(JDK_VAR);
