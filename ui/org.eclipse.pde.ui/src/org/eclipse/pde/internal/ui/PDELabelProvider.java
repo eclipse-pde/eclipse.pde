@@ -523,7 +523,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 	private Image getObjectImage(IFeaturePlugin plugin) {
 		int flags = 0;
 		if (((FeaturePlugin) plugin).getPluginBase() == null) {
-			int cflag = CompilerFlags.getFlag(CompilerFlags.F_UNRESOLVED_PLUGINS);
+			int cflag = CompilerFlags.getFlag(null, CompilerFlags.F_UNRESOLVED_PLUGINS);
 			if (cflag==CompilerFlags.ERROR)
 				flags = F_ERROR;
 			else if (cflag==CompilerFlags.WARNING)
@@ -537,7 +537,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 	private Image getObjectImage(IFeatureChild feature) {
 		int flags = 0;
 		if (((FeatureChild) feature).getReferencedFeature() == null) {
-			int cflag = CompilerFlags.getFlag(CompilerFlags.F_UNRESOLVED_FEATURES);
+			int cflag = CompilerFlags.getFlag(null, CompilerFlags.F_UNRESOLVED_FEATURES);
 			if (cflag==CompilerFlags.ERROR)
 				flags = F_ERROR;
 			else if (cflag==CompilerFlags.WARNING)

@@ -27,7 +27,8 @@ public interface IHelpContextIds {
  	
  	// Property Pages
  	public static final String SELFHOSTING_PROPERTY_PAGE = PREFIX + "selfhosting_property_page"; //$NON-NLS-1$
- 	
+	public static final String COMPILERS_PROPERTY_PAGE = PREFIX + "compilers_property_page"; //$NON-NLS-1$
+
  	// Views
  	public static final String PLUGINS_VIEW = PREFIX + "plugins_view";	 //$NON-NLS-1$
  	public static final String DEPENDENCIES_VIEW = PREFIX + "dependencies_view"; //$NON-NLS-1$

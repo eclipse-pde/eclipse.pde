@@ -1223,6 +1223,16 @@
                value="org.eclipse.pde.PluginNature">
          </filter>
       </page>      
+      <page
+            objectClass="org.eclipse.core.resources.IProject"
+            adaptable="true"
+            class="org.eclipse.pde.internal.ui.properties.CompilersPropertyPage"
+            name="%PropertyPage.compilers"
+            id="org.eclipse.pde.internal.ui.properties.compilersPropertyPage">
+         <filter
+               name="projectNature"
+               value="org.eclipse.pde.PluginNature"/>
+      </page>      
    </extension>
    <extension
          point="org.eclipse.ui.workingSets">
