@@ -22,8 +22,8 @@ public class PluginClassCodeGenerator {
 	private IProject fProject;
 	private String fQualifiedClassName;
 
-	public PluginClassCodeGenerator(IProject project,
-			String qualifiedClassName, IPluginFieldData data) {
+	public PluginClassCodeGenerator(IProject project, String qualifiedClassName,
+			IPluginFieldData data) {
 		this.fProject = project;
 		this.fQualifiedClassName = qualifiedClassName;
 		fPluginData = data;
@@ -52,8 +52,8 @@ public class PluginClassCodeGenerator {
 		writer.flush();
 		try {
 			swriter.close();
-			ByteArrayInputStream stream = new ByteArrayInputStream(swriter
-					.toString().getBytes(fProject.getDefaultCharset()));
+			ByteArrayInputStream stream = new ByteArrayInputStream(swriter.toString()
+					.getBytes(fProject.getDefaultCharset()));
 			if (file.exists())
 				file.setContents(stream, false, true, monitor);
 			else
@@ -82,8 +82,7 @@ public class PluginClassCodeGenerator {
 		writer.println(" * The main plugin class to be used in the desktop."); //$NON-NLS-1$
 		writer.println(" */"); //$NON-NLS-1$
 		if (fPluginData.isUIPlugin())
-			writer
-					.println("public class " + className + " extends AbstractUIPlugin {"); //$NON-NLS-1$ //$NON-NLS-2$
+			writer.println("public class " + className + " extends AbstractUIPlugin {"); //$NON-NLS-1$ //$NON-NLS-2$
 		else
 			writer.println("public class " + className + " extends Plugin {"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("\t//The shared instance."); //$NON-NLS-1$
@@ -109,18 +108,15 @@ public class PluginClassCodeGenerator {
 		writer.println("\t/**"); //$NON-NLS-1$
 		writer.println("\t * This method is called upon plug-in activation"); //$NON-NLS-1$
 		writer.println("\t */"); //$NON-NLS-1$
-		writer
-				.println("\tpublic void start(BundleContext context) throws Exception {"); //$NON-NLS-1$
+		writer.println("\tpublic void start(BundleContext context) throws Exception {"); //$NON-NLS-1$
 		writer.println("\t\tsuper.start(context);"); //$NON-NLS-1$
 		writer.println("\t}"); //$NON-NLS-1$
 		writer.println();
 
 		writer.println("\t/**"); //$NON-NLS-1$
-		writer
-				.println("\t * This method is called when the plug-in is stopped"); //$NON-NLS-1$
+		writer.println("\t * This method is called when the plug-in is stopped"); //$NON-NLS-1$
 		writer.println("\t */"); //$NON-NLS-1$
-		writer
-				.println("\tpublic void stop(BundleContext context) throws Exception {"); //$NON-NLS-1$
+		writer.println("\tpublic void stop(BundleContext context) throws Exception {"); //$NON-NLS-1$
 		writer.println("\t\tsuper.stop(context);"); //$NON-NLS-1$
 		writer.println("\t}"); //$NON-NLS-1$
 		writer.println();
@@ -133,17 +129,14 @@ public class PluginClassCodeGenerator {
 		writer.println("\t}"); //$NON-NLS-1$
 		writer.println();
 		writer.println("\t/**"); //$NON-NLS-1$
-		writer
-				.println("\t * Returns the string from the plugin's resource bundle,"); //$NON-NLS-1$
+		writer.println("\t * Returns the string from the plugin's resource bundle,"); //$NON-NLS-1$
 		writer.println("\t * or 'key' if not found."); //$NON-NLS-1$
 		writer.println("\t */"); //$NON-NLS-1$
-		writer
-				.println("\tpublic static String getResourceString(String key) {"); //$NON-NLS-1$
+		writer.println("\tpublic static String getResourceString(String key) {"); //$NON-NLS-1$
 		writer.println("\t\tResourceBundle bundle = " + className //$NON-NLS-1$
 				+ ".getDefault().getResourceBundle();"); //$NON-NLS-1$
 		writer.println("\t\ttry {"); //$NON-NLS-1$
-		writer
-				.println("\t\t\treturn (bundle != null) ? bundle.getString(key) : key;"); //$NON-NLS-1$
+		writer.println("\t\t\treturn (bundle != null) ? bundle.getString(key) : key;"); //$NON-NLS-1$
 		writer.println("\t\t} catch (MissingResourceException e) {"); //$NON-NLS-1$
 		writer.println("\t\t\treturn key;"); //$NON-NLS-1$
 		writer.println("\t\t}"); //$NON-NLS-1$
@@ -157,8 +150,8 @@ public class PluginClassCodeGenerator {
 		writer.println("\t}"); //$NON-NLS-1$
 		writer.println("}"); //$NON-NLS-1$
 	}
-	private void generateLegacyPluginClass(String packageName,
-			String className, PrintWriter writer) {
+	private void generateLegacyPluginClass(String packageName, String className,
+			PrintWriter writer) {
 		if (!packageName.equals("")) { //$NON-NLS-1$
 			writer.println("package " + packageName + ";"); //$NON-NLS-1$ //$NON-NLS-2$
 			writer.println();
@@ -172,8 +165,7 @@ public class PluginClassCodeGenerator {
 		writer.println(" * The main plugin class to be used in the desktop."); //$NON-NLS-1$
 		writer.println(" */"); //$NON-NLS-1$
 		if (fPluginData.isUIPlugin())
-			writer
-					.println("public class " + className + " extends AbstractUIPlugin {"); //$NON-NLS-1$ //$NON-NLS-2$
+			writer.println("public class " + className + " extends AbstractUIPlugin {"); //$NON-NLS-1$ //$NON-NLS-2$
 		else
 			writer.println("public class " + className + " extends Plugin {"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("\t//The shared instance."); //$NON-NLS-1$
@@ -204,17 +196,14 @@ public class PluginClassCodeGenerator {
 		writer.println("\t}"); //$NON-NLS-1$
 		writer.println();
 		writer.println("\t/**"); //$NON-NLS-1$
-		writer
-				.println("\t * Returns the string from the plugin's resource bundle,"); //$NON-NLS-1$
+		writer.println("\t * Returns the string from the plugin's resource bundle,"); //$NON-NLS-1$
 		writer.println("\t * or 'key' if not found."); //$NON-NLS-1$
 		writer.println("\t */"); //$NON-NLS-1$
-		writer
-				.println("\tpublic static String getResourceString(String key) {"); //$NON-NLS-1$
+		writer.println("\tpublic static String getResourceString(String key) {"); //$NON-NLS-1$
 		writer.println("\t\tResourceBundle bundle = " + className //$NON-NLS-1$
 				+ ".getDefault().getResourceBundle();"); //$NON-NLS-1$
 		writer.println("\t\ttry {"); //$NON-NLS-1$
-		writer
-				.println("\t\t\treturn (bundle != null) ? bundle.getString(key) : key;"); //$NON-NLS-1$
+		writer.println("\t\t\treturn (bundle != null) ? bundle.getString(key) : key;"); //$NON-NLS-1$
 		writer.println("\t\t} catch (MissingResourceException e) {"); //$NON-NLS-1$
 		writer.println("\t\t\treturn key;"); //$NON-NLS-1$
 		writer.println("\t\t}"); //$NON-NLS-1$
@@ -234,11 +223,8 @@ public class PluginClassCodeGenerator {
 		if (fPluginData.isUIPlugin())
 			result.add(new PluginReference("org.eclipse.ui", null, 0)); //$NON-NLS-1$
 		if (!fPluginData.isLegacy())
-			result
-					.add(new PluginReference(
-							"org.eclipse.core.runtime", null, 0)); //$NON-NLS-1$
-		return (IPluginReference[]) result.toArray(new IPluginReference[result
-				.size()]);
+			result.add(new PluginReference("org.eclipse.core.runtime", null, 0)); //$NON-NLS-1$
+		return (IPluginReference[]) result.toArray(new IPluginReference[result.size()]);
 	}
 
 }
