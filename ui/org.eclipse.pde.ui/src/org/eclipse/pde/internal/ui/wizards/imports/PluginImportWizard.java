@@ -11,6 +11,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -84,7 +85,6 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 	 */
 	public boolean performFinish() {
 		final ArrayList modelIds = new ArrayList();
-		//long start;
 		try {
 			final IPluginModelBase[] models = page2.getSelectedModels();
 			if (models.length == 0) {
@@ -116,8 +116,6 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 			return true; // exception handled
 		}
 		
-		//long stop = System.currentTimeMillis();
-		//System.out.println("Total time: "+(stop-start)+"ms");
 		return true;
 	}
 	
@@ -130,17 +128,17 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 		return new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor)
 				throws InvocationTargetException, InterruptedException {
-				boolean isAutoBuilding =
-					PDEPlugin.getWorkspace().isAutoBuilding();
+				boolean isAutoBuilding = PDEPlugin.getWorkspace().isAutoBuilding();
 				try {
-					monitor.beginTask("",3);
+					int numUnits = 2;
 					if (isAutoBuilding) {
 						IWorkspace workspace = PDEPlugin.getWorkspace();
-						IWorkspaceDescription description =
-							workspace.getDescription();
+						IWorkspaceDescription description = workspace.getDescription();
 						description.setAutoBuilding(false);
 						workspace.setDescription(description);
+						numUnits += 1;
 					}
+					monitor.beginTask("", numUnits);
 					IReplaceQuery query = new ReplaceQuery(shell);
 					PluginImportOperation op =
 						new PluginImportOperation(
@@ -149,22 +147,27 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 							doImport,
 							doExtract,
 							query);
-					PDEPlugin.getWorkspace().run(op, new SubProgressMonitor(monitor,2));
+					PDEPlugin.getWorkspace().run(op, new SubProgressMonitor(monitor, 1));
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
 				} catch (OperationCanceledException e) {
 					throw new InterruptedException(e.getMessage());
 				} finally {
 					try {
+						PDEPlugin.getWorkspace().run(
+							getUpdateClasspathOperation(modelIds),
+							new SubProgressMonitor(monitor, 1));
 						if (isAutoBuilding) {
 							IWorkspace workspace = PDEPlugin.getWorkspace();
 							IWorkspaceDescription description =
 								workspace.getDescription();
 							description.setAutoBuilding(true);
 							workspace.setDescription(description);
+							PDEPlugin.getWorkspace().build(
+								IncrementalProjectBuilder.INCREMENTAL_BUILD,
+								new SubProgressMonitor(monitor, 1));
 						}
 
-						PDEPlugin.getWorkspace().run(getUpdateClasspathOperation(modelIds),new SubProgressMonitor(monitor, 1));
 					} catch (CoreException e) {
 					}
 					monitor.done();
