@@ -11,13 +11,11 @@
 package org.eclipse.pde.internal.ui.parts;
 
 import org.eclipse.core.runtime.IStatus;
-//import org.eclipse.jdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.internal.MessageLine;
 import org.eclipse.jface.dialogs.Dialog;
 
 /**
