@@ -204,12 +204,17 @@ public class TargetPlatform implements IEnvironmentVariables {
 			
 			if (primaryFeatureId != null) {
 				String splashPath = getBundleURL(primaryFeatureId, pluginMap);
+				if (splashPath == null) {
+					int index = primaryFeatureId.lastIndexOf('.');
+					if (index != -1) {
+						String id = primaryFeatureId.substring(0, index);
+						splashPath = getBundleURL(id, pluginMap);
+					}
+				}
 				if (splashPath != null) {
 					bWriter.write("osgi.splashPath=" + splashPath); //$NON-NLS-1$
 					bWriter.newLine();
 				}
-				/*bWriter.write("eclipse.product=" + primaryFeatureId); //$NON-NLS-1$
-				bWriter.newLine();*/
 			}
 			
 			bWriter.write("osgi.configuration.cascaded=false"); //$NON-NLS-1$
