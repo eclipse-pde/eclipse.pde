@@ -26,10 +26,8 @@ public class SchemaForm extends ScrollableSectionForm implements IModelChangedLi
 
 public SchemaForm(SchemaFormPage page) {
 	this.page = page;
-	//setWidthHint(600);
 	colorManager = new ColorManager();
 	setVerticalFit(true);
-    //setScrollable(false);
 }
 protected void createFormClient(Composite parent) {
 	FormWidgetFactory factory = getFactory();
@@ -54,12 +52,13 @@ protected void createFormClient(Composite parent) {
 
 	descriptionSection = new DescriptionSection(page, colorManager);
 	control = descriptionSection.createControl(parent, factory);
-	if (SWT.getPlatform().equals("motif"))
+	//if (SWT.getPlatform().equals("motif"))
 	   gd = new GridData(GridData.FILL_HORIZONTAL
 	                            | GridData.VERTICAL_ALIGN_BEGINNING);
-	else 
-	   gd = new GridData(GridData.FILL_BOTH);
+	//else 
+	   //gd = new GridData(GridData.FILL_BOTH);
 	gd.horizontalSpan = 2;
+	gd.heightHint = 150;
 	control.setLayoutData(gd);
 
 	// wire sections

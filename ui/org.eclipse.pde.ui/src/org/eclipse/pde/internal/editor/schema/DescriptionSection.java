@@ -93,7 +93,6 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	Control [] children = container.getChildren();
 	Control control = children[children.length-1];
 	gd = new GridData(GridData.FILL_BOTH);
-    gd.heightHint = 64;
 	control.setLayoutData(gd);
 	
 	Composite buttonContainer = factory.createComposite(container);

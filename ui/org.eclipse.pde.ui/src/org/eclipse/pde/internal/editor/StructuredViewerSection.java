@@ -26,6 +26,7 @@ public abstract class StructuredViewerSection extends PDEFormSection {
 	public StructuredViewerSection(PDEFormPage formPage, String [] buttonLabels) {
 		super(formPage);
 		viewerPart = createViewerPart(buttonLabels);
+		viewerPart.setMinimumSize(50, 50);
 	}
 
 	protected void createViewerPartControl(Composite parent, int style, int span, FormWidgetFactory factory) {

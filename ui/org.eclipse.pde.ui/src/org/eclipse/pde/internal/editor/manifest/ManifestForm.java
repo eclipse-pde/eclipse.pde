@@ -34,13 +34,12 @@ public class ManifestForm extends ScrollableSectionForm {
 		layout.numColumns = 2;
 		layout.marginWidth = 10;
 		layout.horizontalSpacing = 15;
-		//layout.makeColumnsEqualWidth=true;
 		parent.setLayout(layout);
 
 		GridData gd;
 		Control control;
 		FormWidgetFactory factory = getFactory();
-		factory.setHyperlinkUnderlineMode(HyperlinkSettings.UNDERLINE_ROLLOVER);
+		//factory.setHyperlinkUnderlineMode(HyperlinkSettings.UNDERLINE_ROLLOVER);
 
 		alertSection = new AlertSection(page);
 		alertSection.setCollapsable(true);

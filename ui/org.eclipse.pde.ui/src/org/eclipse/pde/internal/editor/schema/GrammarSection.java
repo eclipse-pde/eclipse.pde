@@ -93,9 +93,11 @@ public class GrammarSection extends PDEFormSection {
 
 		Control tree = createTree(container);
 		GridData gd = new GridData(GridData.FILL_BOTH);
+		/*
 		if (SWT.getPlatform().equals("motif") == false)
 			gd.heightHint = 150;
 		//gd.widthHint = 200;
+		 */
 		tree.setLayoutData(gd);
 
 		dtdLabel = factory.createLabel(container, "", SWT.WRAP);
