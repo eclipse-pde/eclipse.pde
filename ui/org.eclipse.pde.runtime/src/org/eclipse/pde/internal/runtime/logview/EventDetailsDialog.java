@@ -99,7 +99,10 @@ public class EventDetailsDialog extends Dialog {
 	private void resetChildIndex(){
 		for (int i = 0; i<entryChildren.length; i++){
 			if (entryChildren[i].getMessage().equals(entry.getMessage())
-					&& entryChildren[i].getDate().equals(entry.getDate())){
+					&& entryChildren[i].getDate().equals(entry.getDate())
+					&& entryChildren[i].getPluginId().equals(entry.getPluginId())
+					&& entryChildren[i].getSeverity() == entry.getSeverity() 
+					&& entryChildren[i].getSeverityText().equals(entry.getSeverityText())){
 				childIndex = i;
 				break;
 			}
