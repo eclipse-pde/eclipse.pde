@@ -49,10 +49,10 @@ protected List computeElements(boolean fragments) throws CoreException {
 	for (int i = 0; i < pluginList.length; i++) {
 		IPluginEntry entry = pluginList[i];
 		if (fragments == entry.isFragment()) {
-			VersionedIdentifier identifier = entry.getVersionIdentifier();
+			VersionedIdentifier identifier = entry.getVersionedIdentifier();
 			PluginModel model = getRegistry().getPlugin(identifier.getIdentifier(), identifier.getVersion().toString());
 			if (model == null)
-				throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_PLUGIN_MISSING, Policy.bind("exception.missingPlugin", entry.getVersionIdentifier().toString()), null));
+				throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_PLUGIN_MISSING, Policy.bind("exception.missingPlugin", entry.getVersionedIdentifier().toString()), null));
 			else
 				result.add(model);
 		}
@@ -618,6 +618,10 @@ protected void generateModels(ModelBuildScriptGenerator generator, List models) 
 		return;
 	generator.setInstallLocation(installLocation);
 	generator.setDevEntries(devEntries);
+	generator.setBuildVariableARCH(buildVariableARCH);
+	generator.setBuildVariableNL(buildVariableNL);
+	generator.setBuildVariableOS(buildVariableOS);
+	generator.setBuildVariableWS(buildVariableWS);
 	for (Iterator iterator = models.iterator(); iterator.hasNext();) {
 		PluginModel model = (PluginModel) iterator.next();
 		// setModel has to be called before configurePersistentProperties

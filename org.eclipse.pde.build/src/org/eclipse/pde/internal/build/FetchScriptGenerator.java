@@ -139,7 +139,7 @@ protected void generateMkdirs(PrintWriter output, int tab, String location) {
 protected void generateChildrenFetchScript(PrintWriter output, int tab, Feature feature) throws CoreException {
 	IPluginEntry[] children = feature.getPluginEntries();
 	for (int i = 0; i < children.length; i++) {
-		String elementId = children[i].getVersionIdentifier().getIdentifier();
+		String elementId = children[i].getVersionedIdentifier().getIdentifier();
 		if (children[i].isFragment())
 			generateFetchEntry(output, tab, "fragment@" + elementId);
 		else

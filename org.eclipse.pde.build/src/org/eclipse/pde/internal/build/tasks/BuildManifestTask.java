@@ -127,7 +127,7 @@ protected void collectEntries(List entries, String entry) throws CoreException {
 protected void collectChildrenEntries(List entries, Feature feature) throws CoreException {
 	IPluginEntry[] children = feature.getPluginEntries();
 	for (int i = 0; i < children.length; i++) {
-		String elementId = children[i].getVersionIdentifier().getIdentifier();
+		String elementId = children[i].getVersionedIdentifier().getIdentifier();
 		if (children[i].isFragment())
 			collectEntries(entries, "fragment@" + elementId);
 		else

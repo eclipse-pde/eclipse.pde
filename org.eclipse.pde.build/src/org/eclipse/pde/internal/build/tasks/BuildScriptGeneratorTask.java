@@ -125,7 +125,7 @@ protected void generateFeatures(List features) throws CoreException {
 		// setFeature has to be called before configurePersistentProperties
 		// because it reads the model's properties
 		generator.setFeature((String) features.get(i));
-		configurePersistentProperties(generator);
+		setBuildVariables(generator);
 		generator.generate();
 	}
 }
@@ -135,20 +135,15 @@ protected void generateModels(ModelBuildScriptGenerator generator, List models) 
 		return;
 	generator.setInstallLocation(installLocation);
 	generator.setDevEntries(devEntries);
+	setBuildVariables(generator);
 	for (Iterator iterator = models.iterator(); iterator.hasNext();) {
 		String model = (String) iterator.next();
-		// setModelId has to be called before configurePersistentProperties
-		// because it reads the model's properties
 		generator.setModelId(model);
-		configurePersistentProperties(generator);
 		generator.generate();
 	}
 }
 
-/**
- * Propagates properties that should not be overwritten.
- */
-protected void configurePersistentProperties(AbstractBuildScriptGenerator generator) {
+protected void setBuildVariables(AbstractBuildScriptGenerator generator) {
 	boolean projectAvailable = getProject() != null;
 	if (buildVariableOS == null && projectAvailable)
 		buildVariableOS = getProject().getProperty(PROPERTY_OS);

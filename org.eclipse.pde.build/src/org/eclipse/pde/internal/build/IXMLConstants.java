@@ -79,7 +79,6 @@ public interface IXMLConstants {
 	 * value changed during a generate script batch.
 	 */
 	public static final String[] PERSISTENT_PROPERTIES = {
-		PROPERTY_ARCH, PROPERTY_NL, PROPERTY_OS, PROPERTY_WS,
 		PROPERTY_ZIP_ARGUMENT, PROPERTY_ZIP_EXTERNAL, PROPERTY_ZIP_PROGRAM,
 		PROPERTY_JAR_EXTERNAL
 	};

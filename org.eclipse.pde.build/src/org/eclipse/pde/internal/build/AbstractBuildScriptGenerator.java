@@ -41,7 +41,15 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 	 * Properties read from the build.properties file.
 	 */
 	private Properties buildProperties;
-
+	
+	/**
+	 * Build variables.
+	 */
+	protected String buildVariableARCH;
+	protected String buildVariableNL;
+	protected String buildVariableOS;
+	protected String buildVariableWS;
+	
 protected void printExternalZipTask(PrintWriter output, int tab, String zipFile, String basedir) {
 	String executable = getBuildProperty(PROPERTY_ZIP_PROGRAM);
 	List args = new ArrayList(1);
@@ -285,22 +293,22 @@ protected boolean propertyMatchesCurrentBuild(String property) {
 		if (value.equals("*"))
 			continue;
 		if (key.equalsIgnoreCase(PROPERTY_OS)) {
-			if (!value.equalsIgnoreCase(getBuildProperty(PROPERTY_OS)))
+			if (!value.equalsIgnoreCase(buildVariableOS))
 				return false;
 			continue;
 		}
 		if (key.equalsIgnoreCase(PROPERTY_WS)) {
-			if (!value.equalsIgnoreCase(getBuildProperty(PROPERTY_WS)))
+			if (!value.equalsIgnoreCase(buildVariableWS))
 				return false;
 			continue;
 		}
 		if (key.equalsIgnoreCase(PROPERTY_NL)) {
-			if (!value.equalsIgnoreCase(getBuildProperty(PROPERTY_NL)))
+			if (!value.equalsIgnoreCase(buildVariableNL))
 				return false;
 			continue;
 		}
 		if (key.equalsIgnoreCase(PROPERTY_ARCH)) {
-			if (!value.equalsIgnoreCase(getBuildProperty(PROPERTY_ARCH)))
+			if (!value.equalsIgnoreCase(buildVariableARCH))
 				return false;
 			continue;
 		}
@@ -312,28 +320,28 @@ protected boolean propertyMatchesCurrentBuild(String property) {
  * Sets the buildVariableARCH.
  */
 public void setBuildVariableARCH(String buildVariableARCH) {
-	setBuildProperty(PROPERTY_ARCH, buildVariableARCH);
+	this.buildVariableARCH = buildVariableARCH;
 }
 
 /**
  * Sets the buildVariableNL.
  */
 public void setBuildVariableNL(String buildVariableNL) {
-	setBuildProperty(PROPERTY_NL, buildVariableNL);
+	this.buildVariableNL = buildVariableNL;
 }
 
 /**
  * Sets the buildVariableOS.
  */
 public void setBuildVariableOS(String buildVariableOS) {
-	setBuildProperty(PROPERTY_OS, buildVariableOS);
+	this.buildVariableOS = buildVariableOS;
 }
 
 /**
  * Sets the buildVariableWS.
  */
 public void setBuildVariableWS(String buildVariableWS) {
-	setBuildProperty(PROPERTY_WS, buildVariableWS);
+	this.buildVariableWS = buildVariableWS;
 }
 
 }
