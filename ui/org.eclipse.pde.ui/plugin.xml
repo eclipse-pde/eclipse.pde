@@ -23,7 +23,6 @@
       <import plugin="org.eclipse.pde.build"/>
       <import plugin="org.eclipse.pde"/>
       <import plugin="org.eclipse.update.core"/>
-      <import plugin="org.eclipse.ui.externaltools"/>
       <import plugin="org.eclipse.jdt.debug.ui"/>
       <import plugin="org.eclipse.help.ui"/>
       <import plugin="org.eclipse.search"/>
