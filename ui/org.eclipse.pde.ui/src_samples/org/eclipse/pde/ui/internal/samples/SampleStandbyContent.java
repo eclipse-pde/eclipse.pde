@@ -272,4 +272,18 @@ public class SampleStandbyContent implements IStandbyContentPart {
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.intro.config.IStandbyContentPart#init(org.eclipse.ui.intro.IIntroPart, org.eclipse.ui.IMemento)
+	 */
+	public void init(IIntroPart introPart, IMemento memento) {
+		// TODO Load from the memento
+
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.intro.config.IStandbyContentPart#saveState(org.eclipse.ui.IMemento)
+	 */
+	public void saveState(IMemento memento) {
+		// TODO save into the memento
+
+	}
 }
