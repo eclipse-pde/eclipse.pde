@@ -1,7 +1,10 @@
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
 import java.util.StringTokenizer;
+
+import org.eclipse.jdt.ui.*;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.preference.*;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
@@ -89,11 +92,12 @@ public class ProjectStructurePage extends WizardPage {
 		
 		fSourceLabel = createLabel(group, PDEPlugin.getResourceString("ProjectStructurePage.source")); //$NON-NLS-1$
 		fSourceText = createText(group);
-		fSourceText.setText("src"); //$NON-NLS-1$
+		IPreferenceStore store = PreferenceConstants.getPreferenceStore();
+		fSourceText.setText(store.getString(PreferenceConstants.SRCBIN_SRCNAME));
 		
 		fOutputlabel = createLabel(group, PDEPlugin.getResourceString("ProjectStructurePage.output")); //$NON-NLS-1$
-		fOutputText = createText(group);
-		fOutputText.setText("bin");		 //$NON-NLS-1$
+		fOutputText = createText(group);		
+		fOutputText.setText(store.getString(PreferenceConstants.SRCBIN_BINNAME));
 	}
 	
 	private Label createLabel(Composite container, String text) {
@@ -164,9 +168,7 @@ public class ProjectStructurePage extends WizardPage {
 		if (fJavaButton.getSelection()) {
 			if (fLibraryText.getText().trim().length() == 0) {
 				errorMessage = PDEPlugin.getResourceString("ProjectStructurePage.noLibrary"); //$NON-NLS-1$
-			} else if (fOutputText.getText().trim().length() == 0) {
-				errorMessage = PDEPlugin.getResourceString("ProjectStructurePage.noOutput"); //$NON-NLS-1$
-			}
+			} 
 		}
 		setErrorMessage(errorMessage);
 		setPageComplete(errorMessage == null);

@@ -13,7 +13,6 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.build.*;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.codegen.*;
 import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.pde.ui.*;
 import org.eclipse.ui.*;
@@ -117,9 +116,8 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 	
 	private void generateTopLevelPluginClass(IProject project,
 			IProgressMonitor monitor) throws CoreException {
-		IFolder folder = project.getFolder(fData.getSourceFolderName());
 		IPluginFieldData data = (IPluginFieldData)fData;
-		fGenerator = new PluginClassCodeGenerator(folder, data.getClassname(), data);
+		fGenerator = new PluginClassCodeGenerator(project, data.getClassname(), data);
 		fGenerator.generate(monitor);
 		monitor.done();
 	}
@@ -149,7 +147,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			CoreUtility.addNatureToProject(project, PDE.PLUGIN_NATURE, null);
 		if (!fData.isSimple() && !project.hasNature(JavaCore.NATURE_ID))
 			CoreUtility.addNatureToProject(project, JavaCore.NATURE_ID, null);
-		if (!fData.isSimple()) {
+		if (!fData.isSimple() && fData.getSourceFolderName().trim().length() > 0) {
 			IFolder folder = project.getFolder(fData.getSourceFolderName());
 			if (!folder.exists())
 				CoreUtility.createFolder(folder, true, true, null);
@@ -224,11 +222,19 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 				}
 				
 				IBuildEntry entry = factory.createEntry(IBuildEntry.JAR_PREFIX + fData.getLibraryName());
-				entry.addToken(new Path(fData.getSourceFolderName()).addTrailingSeparator().toString());
+				String srcFolder = fData.getSourceFolderName().trim();
+				if (srcFolder.length() > 0)
+					entry.addToken(new Path(srcFolder).addTrailingSeparator().toString());
+				else
+					entry.addToken("."); //$NON-NLS-1$
 				model.getBuild().add(entry);
 				
 				entry = factory.createEntry(IBuildEntry.OUTPUT_PREFIX + fData.getLibraryName());
-				entry.addToken(new Path(fData.getOutputFolderName()).addTrailingSeparator().toString());
+				String outputFolder = fData.getOutputFolderName().trim();
+				if (outputFolder.length() > 0)
+					entry.addToken(new Path(outputFolder).addTrailingSeparator().toString());
+				else
+					entry.addToken("."); //$NON-NLS-1$
 				model.getBuild().add(entry);
 			}
 			model.getBuild().add(binEntry);

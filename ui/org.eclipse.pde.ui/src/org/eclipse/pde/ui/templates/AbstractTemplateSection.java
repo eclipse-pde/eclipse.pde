@@ -16,7 +16,6 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -35,9 +34,6 @@ public abstract class AbstractTemplateSection
 		implements
 			ITemplateSection,
 			IVariableProvider {
-
-	private static final String KEY_CODEGEN = "AbstractTemplateSection.codeGenTitle"; //$NON-NLS-1$
-	private static final String KEY_NOJAVA = "AbstractTemplateSection.noJavaClasses"; //$NON-NLS-1$
 
 	/**
 	 * The project handle.
@@ -211,7 +207,8 @@ public abstract class AbstractTemplateSection
 				IClasspathEntry entry = classpath[i];
 				if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
 					IPath path = entry.getPath().removeFirstSegments(1);
-					sourceFolder = project.getFolder(path);
+					if (path.segmentCount() > 0)
+						sourceFolder = project.getFolder(path);
 					break;
 				}
 			}
@@ -372,16 +369,7 @@ public abstract class AbstractTemplateSection
 					binary = false;
 					if (member.getName().equals("java")) { //$NON-NLS-1$
 						IFolder sourceFolder = getSourceFolder(monitor);
-						if (sourceFolder != null) {
-							dstContainer = generateJavaSourceFolder(
-									sourceFolder, monitor);
-						} else {
-							MessageDialog.openError(PDEPlugin
-									.getActiveWorkbenchShell(), PDEPlugin
-									.getResourceString(KEY_CODEGEN), PDEPlugin
-									.getResourceString(KEY_NOJAVA));
-							continue;
-						}
+						dstContainer = generateJavaSourceFolder(sourceFolder, monitor);
 					} else if (member.getName().equals("bin")) { //$NON-NLS-1$
 						binary = true;
 						dstContainer = dst;
@@ -409,17 +397,19 @@ public abstract class AbstractTemplateSection
 
 	private IFolder generateJavaSourceFolder(IFolder sourceFolder,
 			IProgressMonitor monitor) throws CoreException {
-		IPath path = sourceFolder.getProjectRelativePath();
 		Object packageValue = getValue(KEY_PACKAGE_NAME);
 		String packageName = packageValue != null
 				? packageValue.toString()
 				: null;
 		if (packageName == null)
 			packageName = model.getPluginBase().getId();
-		path = path.append(packageName.replace('.', File.separatorChar));
+		IPath path = new Path(packageName.replace('.', File.separatorChar));
+		if (sourceFolder != null)
+			path = sourceFolder.getProjectRelativePath().append(path);
+
 		for (int i = 1; i <= path.segmentCount(); i++) {
 			IPath subpath = path.uptoSegment(i);
-			IFolder subfolder = sourceFolder.getProject().getFolder(subpath);
+			IFolder subfolder = project.getFolder(subpath);
 			if (subfolder.exists() == false)
 				subfolder.create(true, true, monitor);
 		}
@@ -437,7 +427,7 @@ public abstract class AbstractTemplateSection
 		try {
 			InputStream stream = getProcessedStream(file, binary);
 			if (dstFile.exists()) {
-				dstFile.setContents(stream, true, false, monitor);
+				dstFile.setContents(stream, true, true, monitor);
 			} else {
 				dstFile.create(stream, true, monitor);
 			}
@@ -473,7 +463,7 @@ public abstract class AbstractTemplateSection
 	}
 
 	private InputStream getProcessedStream(File file, boolean binary)
-			throws IOException {
+			throws IOException, CoreException {
 		FileInputStream stream = new FileInputStream(file);
 		if (binary)
 			return stream;
@@ -556,7 +546,7 @@ public abstract class AbstractTemplateSection
 			}
 		}
 		stream.close();
-		return new ByteArrayInputStream(outBuffer.toString().getBytes());
+		return new ByteArrayInputStream(outBuffer.toString().getBytes(project.getDefaultCharset()));
 	}
 
 }

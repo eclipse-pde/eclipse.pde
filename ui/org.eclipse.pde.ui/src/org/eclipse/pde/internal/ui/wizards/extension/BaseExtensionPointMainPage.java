@@ -22,7 +22,6 @@ import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.core.schema.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.codegen.*;
 import org.eclipse.pde.internal.ui.util.*;
 import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.swt.*;
@@ -264,9 +263,10 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		IWorkspace workspace = container.getWorkspace();
 		IPath schemaPath = new Path(schema).removeLastSegments(1);
 		IPath newSchemaPath = container.getProjectRelativePath().append(schemaPath);
-		if (newSchemaPath.isEmpty() == false)
-			JavaCodeGenerator.ensureFoldersExist(container.getProject(), newSchemaPath
-					.toString(), "/"); //$NON-NLS-1$
+		if (newSchemaPath.isEmpty() == false) {
+			IFolder folder = container.getProject().getFolder(newSchemaPath);
+			CoreUtility.createFolder(folder, true, true, null);
+		}
 		InputStream source = createSchemaStream(pluginId, id, name, shared);
 		IPath filePath = container.getFullPath().append(schema);
 		schemaFile = workspace.getRoot().getFile(filePath);
