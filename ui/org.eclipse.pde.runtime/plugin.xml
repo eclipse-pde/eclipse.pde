@@ -14,19 +14,15 @@
       </library>
    </runtime>
    <requires>
-      <import plugin="org.eclipse.ui.ide" optional="true"/>
-      <import plugin="org.eclipse.ui.views" optional="true"/>
-      <import plugin="org.eclipse.jface.text" optional="true"/>
-      <import plugin="org.eclipse.ui.workbench.texteditor" optional="true"/>
-      <import plugin="org.eclipse.ui.editors" optional="true"/>
+      <import plugin="org.eclipse.ui.views"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.update.ui.forms"/>
    </requires>
 
 
-<!-- Extension points -->
 <!-- Extensions -->
+<!-- Extension points -->
    <extension
          point="org.eclipse.ui.views">
       <category
