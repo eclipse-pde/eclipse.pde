@@ -66,9 +66,6 @@ public class ClasspathUtilCore {
 		try {
 			HashSet alreadyAdded = new HashSet();
 			if (model.isFragmentModel()) {
-				// SO THAT FRAGMENTS DO NOT ADD THEMSELVES
-				// ON THE CLASSPATH
-				alreadyAdded.add(model.getPluginBase());
 				addParentPlugin(
 					(IFragment) model.getPluginBase(),
 					result,
@@ -166,7 +163,7 @@ public class ClasspathUtilCore {
 	}
 
 	private static void addDependency(
-		IPluginBase plugin,
+		IPlugin plugin,
 		boolean isExported,
 		Vector result,
 		HashSet alreadyAdded)
@@ -183,12 +180,6 @@ public class ClasspathUtilCore {
 					JavaCore.newProjectEntry(project.getFullPath(), isExported);
 				if (!result.contains(entry))
 					result.add(entry);
-			}
-			if (plugin instanceof IPlugin && ((IPlugin)plugin).hasExtensibleAPI()) {
-				IFragment[] fragments = PDECore.getDefault().findFragmentsFor(plugin.getId(), plugin.getVersion());
-				for (int i = 0; i < fragments.length; i++) {
-					addDependency(fragments[i], isExported, result, alreadyAdded);
-				}
 			}
 			return;
 		}
@@ -217,13 +208,6 @@ public class ClasspathUtilCore {
 				if (entry != null && !result.contains(entry)) {
 					result.add(entry);
 				}
-			}
-		}
-		
-		if (plugin instanceof IPlugin && ((IPlugin)plugin).hasExtensibleAPI()) {
-			IFragment[] fragments = PDECore.getDefault().findFragmentsFor(plugin.getId(), plugin.getVersion());
-			for (int i = 0; i < fragments.length; i++) {
-				addDependency(fragments[i], isExported, result, alreadyAdded);
 			}
 		}
 
@@ -393,6 +377,7 @@ public class ClasspathUtilCore {
 				}
 			}
 		}
+
 	}
 
 	protected static void addSourceFolder(String name, IProject project, Vector result)
@@ -402,6 +387,7 @@ public class ClasspathUtilCore {
 		if (!result.contains(entry))
 			result.add(entry);
 	}
+
 
 	/**
 	 * Creates a new instance of the classpath container entry for the given
