@@ -40,7 +40,12 @@ class LogReader {
 		try {
 			reader = new BufferedReader(new FileReader(file));
 			while(reader.ready()) {
-				String line = reader.readLine().trim();
+				String line = reader.readLine();
+				if (line == null)
+					continue;
+				line = line.trim();
+				if (line.length() == 0)
+					continue;
 
 				if (line.startsWith("!SESSION")) {
 					state = SESSION_STATE;
