@@ -76,9 +76,9 @@ public abstract class XMLInputContext extends UTF8InputContext {
 			ops.remove(old);
 			fOperationTable.remove(node);
 		}
-		old = (TextEdit)fMoveOperations.get(node);
-		if (old != null) {
-			ops.remove(old);
+		TextEdit oldMove= (TextEdit)fMoveOperations.get(node);
+		if (oldMove != null) {
+			ops.remove(oldMove);
 			fMoveOperations.remove(node);
 		}
 		// if node has an offset, delete it
@@ -87,7 +87,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 			TextEdit op = getDeleteNodeOperation(node);
 			ops.add(op);
 			fOperationTable.put(node, op);			
-		} else if (old == null){
+		} else if (old == null && oldMove == null){
 			// No previous op on this non-offset node, just rewrite highest ancestor with an offset
 			insertNode(node, ops);
 		}
