@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.junit.runtime;
 
+import java.io.*;
 import java.net.*;
 import java.util.*;
 
@@ -36,7 +37,7 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 		  protected URL findResource(String name) {
 		    return bundle.getResource(name);
 		  }
-		  protected Enumeration findResources(String name) {
+		  protected Enumeration findResources(String name) throws IOException {
 			   return bundle.getResources(name);
 		  }
 	}
