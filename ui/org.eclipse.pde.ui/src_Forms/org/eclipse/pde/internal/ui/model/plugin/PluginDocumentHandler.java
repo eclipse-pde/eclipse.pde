@@ -164,14 +164,17 @@ public class PluginDocumentHandler extends DefaultHandler {
 			node.setLength(getElementLength(node, fLocator.getLineNumber() - 1, fLocator.getColumnNumber()));
 			IDocumentTextNode textNode = node.getTextNode();
 			if (textNode != null) {
-				int length = textNode.getLength();
-				StringBuffer buffer = new StringBuffer(textNode.getText()).reverse();
-				for (int i = 0; i < buffer.length(); i++) {
-					if (!Character.isWhitespace(buffer.charAt(i)))
-						break;
-					length -= 1;
-				}
-				textNode.setLength(length);
+				IDocument doc = fModel.getDocument();
+				String text = doc.get(textNode.getOffset(), node.getLength() - textNode.getOffset() + node.getOffset());
+				int index = text.indexOf('<');
+                for (index -= 1; index >= 0; index--) {
+                	if (!Character.isWhitespace(text.charAt(index))) {
+                		index += 1;
+                		break;
+                	}
+                }
+                textNode.setLength(index);
+                textNode.setText(doc.get(textNode.getOffset(), index));
 			}
 		} catch (BadLocationException e) {
 		}
@@ -205,9 +208,6 @@ public class PluginDocumentHandler extends DefaultHandler {
 	 * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
 	 */
 	public void characters(char[] ch, int start, int length) throws SAXException {		
-		if (length == 0)
-			return;
-		
 		IDocumentNode parent = (IDocumentNode)fDocumentNodeStack.peek();
 		if (parent == null)
 			return;
@@ -225,39 +225,11 @@ public class PluginDocumentHandler extends DefaultHandler {
 				for (; offset <= start + length; offset++) {
 					if (!Character.isWhitespace(ch[offset])) {
 						textNode.setOffset(offset);
-						textNode.setTopOffset(start);
-						textNode.setFullLength(buffer.length());
-						textNode.setLength(buffer.length() - offset + start);
-						textNode.setText(buffer.substring(offset - start));
 						break;
 					}
 				}
 			}
-		} else {
-			textNode.setText(textNode.getText() + buffer.toString());
-			textNode.setLength(textNode.getLength() + buffer.length());
-			textNode.setFullLength(textNode.getFullLength() + buffer.length());
 		}
-		/*StringBuffer buffer = new StringBuffer();
-		buffer.append(ch, start, length);
-		String text = buffer.toString().trim();
-		if (text.length() > 0) {
-			DocumentTextNode textNode = new DocumentTextNode();
-			textNode.setText(text);
-			int offset = start;
-			for (;offset < start + length;offset += 1) {
-				if (!Character.isWhitespace(ch[offset])) {
-					textNode.setOffset(offset);
-					textNode.setTopOffset(start);
-					textNode.setLength(text.length());
-					textNode.setFullLength(buffer.length());
-					IDocumentNode parent = (IDocumentNode)fDocumentNodeStack.peek();
-					textNode.setEnclosingElement(parent);
-					parent.addTextNode(textNode);
-					break;
-				}
-			}
-		}*/
 	}
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#setDocumentLocator(org.xml.sax.Locator)

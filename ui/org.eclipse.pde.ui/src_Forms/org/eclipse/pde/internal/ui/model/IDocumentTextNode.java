@@ -11,13 +11,7 @@ public interface IDocumentTextNode {
 	void setOffset(int offset);
 	int getOffset();
 	
-	void setTopOffset(int offset);
-	int getTopOffset();
-	
 	void setLength(int length);
 	int getLength();
-	
-	void setFullLength(int length);
-	int getFullLength();
 	
 }

@@ -175,7 +175,7 @@ public class BodyTextSection
 		try {
 			if (currentElement!=null)
 				currentElement.setText(
-						text.getText().length() > 0 ? text.getText() : null);
+						text.getText().length() > 0 ? text.getText() : "");
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}

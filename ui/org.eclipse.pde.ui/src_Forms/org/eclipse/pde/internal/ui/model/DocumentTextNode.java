@@ -9,14 +9,7 @@ public class DocumentTextNode implements IDocumentTextNode {
 	private int fLength = 0;
 	private IDocumentNode fEnclosingElement;
 	private String fText;
-	private int fFullLength = 0;
-	private int fTopOffset = -1;
-	/**
-	 * 
-	 */
-	public DocumentTextNode() {
-		super();
-	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentTextNode#setEnclosingElement(org.eclipse.pde.internal.ui.model.IDocumentNode)
 	 */
@@ -68,31 +61,4 @@ public class DocumentTextNode implements IDocumentTextNode {
 		fLength = length;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.IDocumentTextNode#getFullLength()
-	 */
-	public int getFullLength() {
-		return fFullLength;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.IDocumentTextNode#setFullLength(int)
-	 */
-	public void setFullLength(int length) {
-		fFullLength = length;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.IDocumentTextNode#getTopOffset()
-	 */
-	public int getTopOffset() {
-		return fTopOffset;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.IDocumentTextNode#setTopOffset(int)
-	 */
-	public void setTopOffset(int offset) {
-		fTopOffset = offset;
-	}
 }
