@@ -22,6 +22,7 @@ public class TracingPropertySource implements IPropertySource, IAdaptable {
 	private static final String[] booleanChoices = { "false", "true" };
 	private Properties masterOptions;
 	private boolean modified;
+	private TracingLauncherTab tab;
 
 	class BooleanLabelProvider extends LabelProvider {
 		String id;
@@ -41,10 +42,11 @@ public class TracingPropertySource implements IPropertySource, IAdaptable {
 /**
  * @param model org.eclipse.pde.ui.model.plugin.IPluginModel
  */
-public TracingPropertySource(IPluginModel model, Properties masterOptions, Hashtable template) {
+public TracingPropertySource(IPluginModel model, Properties masterOptions, Hashtable template, TracingLauncherTab tab) {
 	this.model = model;
 	this.masterOptions = masterOptions;
 	this.template = template;
+	this.tab = tab;
 	values = new Hashtable();
 	dvalues = new Hashtable();
 }
@@ -149,6 +151,7 @@ public boolean isPropertySet(Object id) {
 public void reset() {
 	values = (Hashtable)dvalues.clone();
 	modified = true;
+	tab.updateLaunchConfigurationDialog();
 }
 /**
  * Resets the property with the given id to its default value if possible.
@@ -180,6 +183,7 @@ public void save() {
 public void setPropertyValue(Object id, Object value) {
 	values.put(id, value);
 	modified = true;
+	tab.updateLaunchConfigurationDialog();
 }
 
 public boolean isModified() {

@@ -57,13 +57,16 @@ public abstract class AbstractLauncherTab extends AbstractLaunchConfigurationTab
 	/**
 	 * Updates the status line and the ok button depending on the status
 	 */
-	protected void updateStatus(IStatus status) {
+	protected boolean updateStatus(IStatus status) {
 		IStatus oldStatus = currentStatus;
 		currentStatus = status;
 		setValid(!status.matches(IStatus.ERROR));
 		if (oldStatus.getSeverity() != currentStatus.getSeverity()
-			|| !oldStatus.getMessage().equals(currentStatus.getMessage()))
+			|| !oldStatus.getMessage().equals(currentStatus.getMessage())) {
 			applyToStatusLine(this, status);
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -95,5 +98,13 @@ public abstract class AbstractLauncherTab extends AbstractLaunchConfigurationTab
 	
 	public static IStatus createStatus(int severity, String message) {
 		return new Status(severity, PDEPlugin.getPluginId(), severity, message, null);
-	}		
+	}
+	/**
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#updateLaunchConfigurationDialog()
+	 */
+	protected void updateLaunchConfigurationDialog() {
+		setChanged(true);
+		super.updateLaunchConfigurationDialog();
+	}
+		
 }

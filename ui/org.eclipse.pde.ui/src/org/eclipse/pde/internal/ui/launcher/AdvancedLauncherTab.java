@@ -65,6 +65,7 @@ public class AdvancedLauncherTab
 	private int numExternalChecked = 0;
 	private int numWorkspaceChecked = 0;
 	private boolean firstReveal = true;
+	private boolean check;
 	
 	class PluginContentProvider
 		extends DefaultContentProvider
@@ -212,7 +213,7 @@ public class AdvancedLauncherTab
 			}
 		};
 		useDefaultRadio.addSelectionListener(adapter);
-		useListRadio.addSelectionListener(adapter);
+		//useListRadio.addSelectionListener(adapter);
 		defaultsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				BusyIndicator
@@ -238,8 +239,10 @@ public class AdvancedLauncherTab
 	private void useDefaultChanged() {
 		boolean useDefault = useDefaultRadio.getSelection();
 		adjustCustomControlEnableState(!useDefault);
-		updateStatus();
-		setChanged(true);
+		if (!updateStatus())
+			updateLaunchConfigurationDialog();
+		/*else 
+			setChanged(true);*/
 	}
 
 	private void adjustCustomControlEnableState(boolean enable) {
@@ -279,7 +282,11 @@ public class AdvancedLauncherTab
 								element,
 								event.getChecked());
 						}
-						updateStatus();
+						if (!updateStatus()) {
+							check = true;
+							updateLaunchConfigurationDialog();
+						}
+							
 					}
 				});
 
@@ -530,7 +537,19 @@ public class AdvancedLauncherTab
 	}
 
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		if (!isChanged())
+		if (isChanged()) {
+			if (!check)	{
+				configuration.setAttribute(USECUSTOM, useDefaultRadio.getSelection());
+				setChanged(false);
+			} else {
+				check = false;
+				configuration.setAttribute(EXTPLUGINS,"");
+			}
+		}	
+	}
+	
+	public void doPerformApply(ILaunchConfigurationWorkingCopy configuration) {
+		if (!configuration.isDirty())
 			return;
 
 		final ILaunchConfigurationWorkingCopy config = configuration;
@@ -538,9 +557,10 @@ public class AdvancedLauncherTab
 			public void run() {
 				config.setAttribute(USECUSTOM, useDefaultRadio.getSelection());
 				
-				if (useDefaultRadio.getSelection())
+				if (useDefaultRadio.getSelection()) {
+					setChanged(false);
 					return;
-
+				}
 				// store deselected projects
 				StringBuffer wbuf = new StringBuffer();
 
@@ -588,9 +608,8 @@ public class AdvancedLauncherTab
 		}
 	}
 
-	private void updateStatus() {
-		IStatus genStatus = validatePlugins();
-		updateStatus(genStatus);
+	private boolean updateStatus() {
+		return updateStatus(validatePlugins());
 	}
 
 	private IStatus validatePlugins() {

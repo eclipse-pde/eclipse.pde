@@ -58,7 +58,6 @@ public class BasicLauncherTab
 	private Text applicationNameText;
 	private Button defaultsButton;
 	private Image image;
-	private boolean workspaceChanged;
 
 	private IStatus jreSelectionStatus;
 	private IStatus workspaceSelectionStatus;
@@ -197,7 +196,6 @@ public class BasicLauncherTab
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
-		workspaceChanged = false;
 		blockChanges = false;
 	}
 
@@ -229,7 +227,6 @@ public class BasicLauncherTab
 						.getDefaultVMInstall()
 						.getVMInstallType()
 						.getName()));
-		workspaceChanged = true;
 	}
 	static String getDefaultVMInstallName() {
 		IVMInstall install = JavaRuntime.getDefaultVMInstall();
@@ -252,8 +249,8 @@ public class BasicLauncherTab
 				IPath chosen = chooseWorkspaceLocation();
 				if (chosen != null) {
 					workspaceCombo.setText(chosen.toOSString());
-					workspaceChanged = true;
-					updateStatus();
+					if (!updateStatus())
+						updateLaunchConfigurationDialog();
 				}
 			}
 		});
@@ -261,8 +258,8 @@ public class BasicLauncherTab
 			public void widgetSelected(SelectionEvent e) {
 				workspaceSelectionStatus = validateWorkspaceSelection();
 				if (!blockChanges) {
-					workspaceChanged = true;
-					updateStatus();
+					if (!updateStatus())
+						updateLaunchConfigurationDialog();
 				}
 			}
 		});
@@ -270,30 +267,63 @@ public class BasicLauncherTab
 			public void modifyText(ModifyEvent e) {
 				workspaceSelectionStatus = validateWorkspaceSelection();				
 				if (!blockChanges) {
-					workspaceChanged = true;
-					updateStatus();
+					if (!updateStatus())
+						updateLaunchConfigurationDialog();
 				}
 			}
 		});
+		
+		clearWorkspaceCheck.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateLaunchConfigurationDialog();
+			}
+		});
+
+		
+		vmArgsText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				if (!blockChanges)	
+					updateLaunchConfigurationDialog();
+			}
+		});
+		
+		progArgsText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				if (!blockChanges)
+					updateLaunchConfigurationDialog();
+			}
+		});
+		
+		applicationNameText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				if (!blockChanges)
+					updateLaunchConfigurationDialog();
+			}
+		});
+		
 		jreCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				jreSelectionStatus = validateJRESelection();
-				updateStatus();
+				if (!updateStatus())
+					updateLaunchConfigurationDialog();
 			}
 		});
 		defaultsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				doRestoreDefaults();
+				updateLaunchConfigurationDialog();
 			}
 		});
 	}
 
-	private void updateStatus() {
-		updateStatus(
+	private boolean updateStatus() {
+		return updateStatus(
 			getMoreSevere(workspaceSelectionStatus, jreSelectionStatus));
 	}
 
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
+		if (!isChanged())
+			return;
 		config.setAttribute(VMARGS, getVMArguments());
 		config.setAttribute(PROGARGS, getProgramArguments());
 		try {
@@ -316,17 +346,15 @@ public class BasicLauncherTab
 		config.setAttribute(APPLICATION, getApplicationName());
 		config.setAttribute(DOCLEAR, doClearWorkspace());
 
-		if (workspaceChanged) {
-			config.setAttribute(
-				LOCATION + String.valueOf(0),
-				workspaceCombo.getText());
-			String[] items = workspaceCombo.getItems();
-			int nEntries = Math.min(items.length, 5);
-			for (int i = 0; i < nEntries; i++) {
-				config.setAttribute(LOCATION + String.valueOf(i + 1), items[i]);
-			}
+		config.setAttribute(
+			LOCATION + String.valueOf(0),
+			workspaceCombo.getText());
+		String[] items = workspaceCombo.getItems();
+		int nEntries = Math.min(items.length, 5);
+		for (int i = 0; i < nEntries; i++) {
+			config.setAttribute(LOCATION + String.valueOf(i + 1), items[i]);
 		}
-		workspaceChanged = false;
+		setChanged(false);
 	}
 
 	/**

@@ -110,6 +110,7 @@ public class TracingLauncherTab
 		tracingCheck.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				masterCheckChanged(true);
+				updateLaunchConfigurationDialog();
 			}
 		});
 
@@ -303,7 +304,7 @@ public class TracingLauncherTab
 			String id = model.getPlugin().getId();
 			Hashtable defaults =
 				PDECore.getDefault().getTracingOptionsManager().getTemplateTable(id);
-			adaptable = new TracingPropertySource(model, masterOptions, defaults);
+			adaptable = new TracingPropertySource(model, masterOptions, defaults, this);
 			propertySources.put(model, adaptable);
 		}
 		return adaptable;
