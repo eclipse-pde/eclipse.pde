@@ -417,7 +417,14 @@ public class PluginImportWizardFirstPage extends WizardPage {
 				files[0] = new File(location);
 				files[1] = new File(location, "plugins"); //$NON-NLS-1$
 				URL[] urls = PluginPathFinder.scanLocations(files);
-				PDEState state = new PDEState(urls, false, monitor);
+				URL[] all = new URL[urls.length + 1];
+				try {
+					all[0] = new URL("file:" + files[0].getAbsolutePath()); //$NON-NLS-1$
+					System.arraycopy(urls, 0, all, 1, urls.length);
+				} catch (MalformedURLException e) {
+					all = urls; 
+				}
+				PDEState state = new PDEState(all, false, monitor);
 				models = state.getModels();
 				monitor.done();
 			}
