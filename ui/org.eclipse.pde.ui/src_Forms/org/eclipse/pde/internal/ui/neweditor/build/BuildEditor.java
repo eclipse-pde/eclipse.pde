@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.neweditor.build;
 
-import java.io.File;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.build.IBuildModel;
@@ -27,8 +26,6 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 
 public class BuildEditor extends MultiSourceEditor {
-	private boolean storageModel=false;
-
 	public BuildEditor() {
 	}
 	protected void createResourceContexts(InputContextManager manager,
@@ -70,9 +67,6 @@ public class BuildEditor extends MultiSourceEditor {
 
 	protected void createSystemFileContexts(InputContextManager manager,
 			SystemFileEditorInput input) {
-		File file = (File) input.getAdapter(File.class);
-		String name = file.getName().toLowerCase();
-		
 		manager.putContext(input, new BuildInputContext(this, input, true));
 	}
 
@@ -87,7 +81,8 @@ public class BuildEditor extends MultiSourceEditor {
 	
 	protected void addPages() {
 		try {
-			addPage(new BuildPage(this));			
+			if (getEditorInput() instanceof IFileEditorInput)
+				addPage(new BuildPage(this));			
 		} catch (PartInitException e) {
 			PDEPlugin.logException(e);
 		}
