@@ -304,6 +304,7 @@ public abstract class PDEFormEditor extends FormEditor
 		}
 		inputContextManager.dispose();
 		inputContextManager = null;
+		super.dispose();
 	}
 	public boolean isDirty() {
 		IFormPage page = getActivePageInstance();
