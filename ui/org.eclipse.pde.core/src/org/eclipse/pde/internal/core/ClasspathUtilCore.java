@@ -308,13 +308,10 @@ public class ClasspathUtilCore {
 
 		if (!WorkspaceModelManager.isBinaryPluginProject(project)) {
 			// keep existing source folders
-			IPackageFragmentRoot[] roots =
-				JavaCore.create(project).getPackageFragmentRoots();
-			for (int i = 0; i < roots.length; i++) {
-				IPackageFragmentRoot root = roots[i];
-				if (root.getKind() == IPackageFragmentRoot.K_SOURCE
-					&& root.getPath().segmentCount() > 1) {
-					IClasspathEntry entry = JavaCore.newSourceEntry(root.getPath());
+			IClasspathEntry[] entries = JavaCore.create(project).getRawClasspath();
+			for (int i = 0; i < entries.length; i++) {
+				IClasspathEntry entry = entries[i];
+				if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
 					if (!result.contains(entry))
 						result.add(entry);
 				}
@@ -333,7 +330,7 @@ public class ClasspathUtilCore {
 				String[] folders = buildEntry.getTokens();
 				for (int k = 0; k < folders.length; k++) {
 					IPath path = project.getFullPath().append(folders[k]);
-					if (path.toFile().exists()) {
+					if (project.findMember(folders[k]) != null) {
 						IClasspathEntry entry = JavaCore.newSourceEntry(path);
 						if (!result.contains(entry))
 							result.add(entry);
