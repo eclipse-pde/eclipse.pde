@@ -276,7 +276,7 @@ public class RequiredPluginsContainerPage
 		IJavaProject javaProject = getJavaProject();
 
 		if (entry == null) {
-			entry = BuildPathUtilCore.createContainerEntry();
+			entry = ClasspathUtilCore.createContainerEntry();
 			try {
 				ModelEntry.updateUnknownClasspathContainer(javaProject);
 				realEntries = new IClasspathEntry[0];

@@ -198,62 +198,19 @@ public class ConvertedProjectsPage extends WizardPage {
 		}
 		return result;
 	}
-	private static IClasspathEntry[] mergeEntriesWithoutDuplicates(
-		IClasspathEntry[] oldEntries,
-		IClasspathEntry[] newEntries) {
-		Vector uniqueEntries = new Vector();
-
-		for (int i = 0; i < newEntries.length; i++) {
-			IClasspathEntry entry = newEntries[i];
-			if (PluginPathUpdater.isAlreadyPresent(oldEntries, entry) == false)
-				uniqueEntries.add(entry);
-		}
-		if (uniqueEntries.size() == 0)
-			return oldEntries;
-		IClasspathEntry[] uniqueArray = new IClasspathEntry[uniqueEntries.size()];
-		uniqueEntries.copyInto(uniqueArray);
-		return mergeEntries(oldEntries, uniqueArray);
-	}
+	
 	public static void updateBuildPath(IProject project, IProgressMonitor monitor)
 		throws CoreException {
 		IPath manifestPath = project.getFullPath().append("plugin.xml");
 		IFile file = project.getWorkspace().getRoot().getFile(manifestPath);
 		if (!file.exists())
 			return;
-		IJavaProject javaProject = JavaCore.create(project);
 		WorkspacePluginModel model = new WorkspacePluginModel(file);
 		model.load();
 		if (!model.isLoaded())
 			return;
-		// Update the build path
-		Vector required = new Vector();
-		IPluginImport[] imports = model.getPlugin().getImports();
-
-		for (int i = 0; i < imports.length; i++) {
-			IPluginImport iimport = imports[i];
-			IPlugin plugin = PDECore.getDefault().findPlugin(iimport.getId());
-			if (plugin != null) {
-				required.add(new PluginPathUpdater.PluginEntry(plugin));
-			}
-		}
-		PluginPathUpdater updater = new PluginPathUpdater(required.iterator());
-		IClasspathEntry[] oldEntries = javaProject.getRawClasspath();
-		IClasspathEntry[] sourceEntries = updater.getSourceClasspathEntries(model);
-		IClasspathEntry[] entries = updater.getClasspathEntries();
-		IClasspathEntry[] newEntries = mergeEntries(sourceEntries, entries);
-		IClasspathEntry[] mergedEntries =
-			mergeEntriesWithoutDuplicates(newEntries, oldEntries);
-		/*
-			mergedEntries =
-				mergeEntriesWithoutDuplicates(
-					mergedEntries,
-					new IClasspathEntry[] { PluginPathUpdater.newStartupJarEntry()});
-		*/
-		try {
-			javaProject.setRawClasspath(mergedEntries, monitor);
-		} catch (JavaModelException e) {
-			PDEPlugin.logException(e);
-		}
+			
+		ClasspathUtilCore.setClasspath(model, false, monitor);
 	}
 
 	public static void convertProject(IProject project, IProgressMonitor monitor)

@@ -14,14 +14,12 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.pde.core.plugin.IFragment;
-import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
-import org.eclipse.pde.core.plugin.IPluginModel;
+import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PluginPathUpdater;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
 
 public class PluginJavaSearchUtil {
@@ -95,13 +93,13 @@ public class PluginJavaSearchUtil {
 
 	private static ArrayList getLibraryPaths(IPluginBase plugin) {
 		ArrayList libraryPaths = new ArrayList();
-		IFragmentModel[] fragments =
+		IFragment[] fragments =
 			PDECore.getDefault().getExternalModelManager().getFragmentsFor(
-				(IPluginModel) plugin.getModel());
+				plugin.getId(), plugin.getVersion());
 
 		IPluginLibrary[] libraries = plugin.getLibraries();
 		for (int i = 0; i < libraries.length; i++) {
-			String libraryName = PluginPathUpdater.expandLibraryName(libraries[i].getName());
+			String libraryName = ClasspathUtilCore.expandLibraryName(libraries[i].getName());
 			String path =
 				plugin.getModel().getInstallLocation()
 					+ Path.SEPARATOR
@@ -115,9 +113,9 @@ public class PluginJavaSearchUtil {
 		return libraryPaths;
 	}
 
-	private static void findLibraryInFragments(IFragmentModel[] fragments, String libraryName, ArrayList libraryPaths) {
+	private static void findLibraryInFragments(IFragment[] fragments, String libraryName, ArrayList libraryPaths) {
 		for (int i = 0; i < fragments.length; i++) {
-			String path = fragments[i].getInstallLocation() + Path.SEPARATOR + libraryName;
+			String path = fragments[i].getModel().getInstallLocation() + Path.SEPARATOR + libraryName;
 			if (new File(path).exists()) {
 				libraryPaths.add(new Path(path));
 				break;

@@ -9,6 +9,8 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.*;
@@ -233,11 +235,15 @@ public class WorkspaceModelManager
 			initializeWorkspacePluginModels();
 		validate();
 		for (int i = 0; i < workspaceFragmentModels.size(); i++) {
-			IFragmentModel model =
-				(IFragmentModel) workspaceFragmentModels.elementAt(i);
+			IFragmentModel model = (IFragmentModel) workspaceFragmentModels.elementAt(i);
 			IFragment fragment = model.getFragment();
-			if (fragment.getPluginId().equals(pluginId)
-				&& fragment.getPluginVersion().equals(version)) {
+			if (PDECore
+				.compare(
+					fragment.getPluginId(),
+					fragment.getPluginVersion(),
+					pluginId,
+					version,
+					fragment.getRule())) {
 				result.add(fragment);
 			}
 		}
@@ -245,6 +251,7 @@ public class WorkspaceModelManager
 		result.copyInto(array);
 		return array;
 	}
+	
 	public IModel getModel(Object element, Object consumer) {
 		ModelInfo info = (ModelInfo) models.get(element);
 		if (info != null) {
@@ -504,6 +511,23 @@ public class WorkspaceModelManager
 			return false;
 		}
 		return true;
+	}
+	
+	public static boolean isJavaPluginProjectWithSource(IProject project) {
+		if (!isJavaPluginProject(project))
+			return false;
+		try {
+			IClasspathEntry[] entries = JavaCore.create(project).getRawClasspath();
+
+			for (int i = 0; i < entries.length; i++) {
+				IClasspathEntry entry = entries[i];
+				if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE
+					&& entry.getContentKind() == IPackageFragmentRoot.K_SOURCE)
+					return true;
+			}
+		} finally {
+			return false;
+		}
 	}
 
 	public static boolean isBinaryPluginProject(IProject project) {

@@ -27,7 +27,7 @@ import org.eclipse.pde.internal.core.*;
  * (repeatedly) as the API evolves.
  * </p>
  */
-public class BuildPathUtil extends BuildPathUtilCore {
+public class ClasspathUtil extends ClasspathUtilCore {
 	/**
 	 * The default constructor.
 	 * <p>
@@ -37,7 +37,7 @@ public class BuildPathUtil extends BuildPathUtilCore {
 	 * (repeatedly) as the API evolves.
 	 * </p>
 	 */
-	public BuildPathUtil() {
+	public ClasspathUtil() {
 		super();
 	}
 
@@ -59,7 +59,7 @@ public class BuildPathUtil extends BuildPathUtilCore {
 	 * (repeatedly) as the API evolves.
 	 * </p>
 	 */
-	public static void setBuildPath(
+	public static void setClasspath(
 		IProject project,
 		IPluginStructureData data,
 		IClasspathEntry[] libraries,
@@ -80,12 +80,13 @@ public class BuildPathUtil extends BuildPathUtilCore {
 			result.add(libraries[i]);
 		}
 		// add implicit libraries
-		addImplicitLibraries(result, true, data.getPluginId());
+		addImplicitDependencies(data.getPluginId(),true, result, new HashSet());
 		// JRE the last
 		addJRE(result);
-		IClasspathEntry[] entries = new IClasspathEntry[result.size()];
-		result.copyInto(entries);
+		
+		IClasspathEntry[] entries = (IClasspathEntry[])result.toArray(new IClasspathEntry[result.size()]);
 		javaProject.setRawClasspath(entries, monitor);
 	}
+	
 
 }

@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.pde.core.plugin.IFragment;
 import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
@@ -128,17 +129,22 @@ public class ExternalModelManager {
 			new IFragmentModel[fmodels.size()]);
 	}
 
-	public IFragmentModel[] getFragmentsFor(IPluginModel model) {
-		String pluginID = model.getPlugin().getId();
+	public IFragment[] getFragmentsFor(String pluginID, String pluginVersion) {
 		ArrayList result = new ArrayList();
 
 		for (int i = 0; i < fmodels.size(); i++) {
-			IFragmentModel fmodel = (IFragmentModel) fmodels.get(i);
-			if (fmodel.getFragment().getPluginId().equals(pluginID))
-				result.add(fmodel);
+			IFragment fragment = ((IFragmentModel) fmodels.get(i)).getFragment();
+			if (PDECore
+				.compare(
+					fragment.getPluginId(),
+					fragment.getPluginVersion(),
+					pluginID,
+					pluginVersion,
+					fragment.getRule()))
+				result.add(fragment);
 		}
 
-		return (IFragmentModel[]) result.toArray(new IFragmentModel[result.size()]);
+		return (IFragment[]) result.toArray(new IFragment[result.size()]);
 	}
 
 	public IPluginModelBase[] getAllModels() {

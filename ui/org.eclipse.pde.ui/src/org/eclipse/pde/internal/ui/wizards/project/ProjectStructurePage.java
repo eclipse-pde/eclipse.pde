@@ -335,12 +335,11 @@ public class ProjectStructurePage extends WizardPage {
 		return true;
 	}
 	
-	private IPath getJREPath() {
-		return PluginPathUpdater.getJREPath();
-	}
 	
 	private IPath[] getJRESourceAnnotation() {
-		return PluginPathUpdater.getJRESourceAnnotation();
+		IPath source = JavaCore.getClasspathVariable("JRE_SRC");
+		IPath prefix = JavaCore.getClasspathVariable("JRE_SRCROOT");
+		return new IPath[] { source, prefix };
 	}
 	
 	public IPluginStructureData getStructureData() {
@@ -349,7 +348,7 @@ public class ProjectStructurePage extends WizardPage {
 		data.buildOutput = (simpleChoice.getSelection()) ? null : buildOutputText.getText();
 		data.library = (simpleChoice.getSelection()) ? null : libraryText.getText();
 		data.source = (simpleChoice.getSelection()) ? null : sourceText.getText();
-		data.jrePath = (simpleChoice.getSelection()) ? null : getJREPath();
+		data.jrePath = (simpleChoice.getSelection()) ? null : JavaCore.getClasspathVariable("JRE_SRC");
 		data.jreSourceAnnotation = (simpleChoice.getSelection()) ? null : getJRESourceAnnotation();
 		return data;
 	}

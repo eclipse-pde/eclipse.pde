@@ -26,7 +26,7 @@ import org.eclipse.pde.internal.ui.preferences.BuildpathPreferencePage;
 import org.eclipse.pde.internal.ui.search.PluginSearchActionGroup;
 import org.eclipse.pde.internal.ui.search.UnusedDependenciesAction;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
-import org.eclipse.pde.ui.BuildPathUtil;
+import org.eclipse.pde.ui.ClasspathUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.Clipboard;
@@ -361,10 +361,8 @@ public class ImportListSection
 						getFormPage().getEditor().doSave(monitor);
 					}
 					boolean useContainers = BuildpathPreferencePage.getUseClasspathContainers();
-					BuildPathUtil.setBuildPath(model, useContainers, monitor);
+					ClasspathUtil.setClasspath(model, useContainers, monitor);
 					monitor.worked(1);
-				} catch (CoreException e) {
-					PDEPlugin.logException(e);
 				} finally {
 					monitor.done();
 				}

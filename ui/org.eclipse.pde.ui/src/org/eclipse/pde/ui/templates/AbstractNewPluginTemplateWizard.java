@@ -6,7 +6,6 @@ import java.util.ArrayList;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
@@ -180,7 +179,6 @@ public abstract class AbstractNewPluginTemplateWizard
 
 	private void doFinish(FieldData data, IProgressMonitor monitor)
 		throws CoreException, InterruptedException {
-			
 		monitor.beginTask(
 			PDEPlugin.getResourceString(KEY_GENERATING),
 			computeTotalWork());
@@ -227,24 +225,9 @@ public abstract class AbstractNewPluginTemplateWizard
 		openPluginFile(file);
 	}
 
-	private void setJavaSettings(
-		IPluginModelBase model,
-		IProgressMonitor monitor)
-		throws CoreException {
-		try {
-			boolean useContainers = BuildpathPreferencePage.getUseClasspathContainers();
-			BuildPathUtil.setBuildPath(model, useContainers, monitor);
-		} catch (JavaModelException e) {
-			String message = e.getMessage();
-			IStatus status =
-				new Status(
-					IStatus.ERROR,
-					PDEPlugin.getPluginId(),
-					IStatus.OK,
-					message,
-					e);
-			throw new CoreException(status);
-		}
+	private void setJavaSettings(IPluginModelBase model, IProgressMonitor monitor) {
+		boolean useContainers = BuildpathPreferencePage.getUseClasspathContainers();
+		ClasspathUtil.setClasspath(model, useContainers, monitor);
 	}
 
 	private ArrayList getDependencies() {

@@ -231,7 +231,7 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 			CoreUtility.addNatureToProject(project, PDE.PLUGIN_NATURE, monitor);
 		JavaCore.create(project);
 		if (setBuildpath)
-			BuildPathUtil.setBuildPath(project, structureData, new IClasspathEntry[0], monitor);
+			ClasspathUtil.setClasspath(project, structureData, new IClasspathEntry[0], monitor);
 	}
 
 	private boolean createBlankManifest(

@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.pde.core.plugin.IFragment;
 import org.eclipse.pde.core.plugin.IMatchRules;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
@@ -197,6 +198,15 @@ public class PDECore extends Plugin {
 		return false;
 	}
 
+	public IFragment[] findFragmentsFor(String id, String version) {
+		IFragment[] wFragments = workspaceModelManager.getFragmentsFor(id, version);
+		IFragment[] extFragments = externalModelManager.getFragmentsFor(id, version);
+		IFragment[] merged = new IFragment[wFragments.length + extFragments.length];
+		System.arraycopy(wFragments, 0, merged, 0, wFragments.length);
+		System.arraycopy(extFragments, 0, merged, wFragments.length, extFragments.length);
+		return merged;
+	}
+	
 	public IPlugin findPlugin(String id) {
 		return findPlugin(id, null, IMatchRules.NONE);
 	}

@@ -19,7 +19,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.ui.BuildPathUtil;
+import org.eclipse.pde.ui.ClasspathUtil;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.pde.internal.ui.preferences.BuildpathPreferencePage;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -142,7 +142,7 @@ public class UpdateClasspathAction implements IWorkbenchWindowActionDelegate {
 		String message = PDEPlugin.getFormattedMessage(KEY_SETTING, pluginBase.getId());
 		monitor.beginTask(message, 1);
 		try {
-			BuildPathUtil.setBuildPath(model, useContainers, monitor);
+			ClasspathUtil.setClasspath(model, useContainers, monitor);
 			monitor.worked(1);
 		} finally {
 			monitor.done();

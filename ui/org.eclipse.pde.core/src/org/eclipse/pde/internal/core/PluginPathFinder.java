@@ -7,33 +7,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
 
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 public class PluginPathFinder {
 	
-	public static String createEclipseRelativeHome(String installLocation, HashMap eclipseHomeVariables) {
-		IPath fullPath = new Path(installLocation);
-
-		Object[] variables = eclipseHomeVariables.keySet().toArray();
-
-		String correctVariable = variables[0].toString();
-		int maxMatching =
-			fullPath.matchingFirstSegments(
-				new Path(eclipseHomeVariables.get(variables[0]).toString()));
-
-		for (int i = 1; i < variables.length; i++) {
-			IPath currentPath = new Path(eclipseHomeVariables.get(variables[i]).toString());
-			int currentMatch = fullPath.matchingFirstSegments(currentPath);
-			if (currentMatch > maxMatching) {
-				maxMatching = currentMatch;
-				correctVariable = variables[i].toString();
-			}
-		}
-		return new Path(correctVariable)
-			.append(fullPath.removeFirstSegments(maxMatching))
-			.toOSString();
-	}
 
 	private static String[] getLinks(
 		String platformHome,
