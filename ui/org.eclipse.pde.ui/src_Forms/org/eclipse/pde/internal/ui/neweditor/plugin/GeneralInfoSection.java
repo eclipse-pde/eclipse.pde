@@ -9,56 +9,32 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.neweditor.plugin;
-import java.util.ArrayList;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.search.IJavaSearchScope;
-import org.eclipse.jdt.core.search.SearchEngine;
-import org.eclipse.jdt.ui.IJavaElementSearchConstants;
-import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.pde.core.IBaseModel;
-import org.eclipse.pde.core.IModelChangeProvider;
-import org.eclipse.pde.core.osgi.bundle.IBundlePluginBase;
-import org.eclipse.pde.core.plugin.IFragment;
-import org.eclipse.pde.core.plugin.IPlugin;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.editor.manifest.JavaAttributeValue;
-import org.eclipse.pde.internal.ui.neweditor.FormEntryAdapter;
-import org.eclipse.pde.internal.ui.neweditor.PDEFormPage;
-import org.eclipse.pde.internal.ui.neweditor.PDESection;
+import java.util.*;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.core.search.*;
+import org.eclipse.jdt.ui.*;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.wizard.*;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.osgi.bundle.*;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.editor.manifest.*;
+import org.eclipse.pde.internal.ui.neweditor.*;
 import org.eclipse.pde.internal.ui.neweditor.manifest.JavaAttributeWizard;
-import org.eclipse.pde.internal.ui.newparts.ComboPart;
-import org.eclipse.pde.internal.ui.newparts.FormEntry;
-import org.eclipse.pde.internal.ui.util.SWTUtil;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.dialogs.SelectionDialog;
-import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.Section;
-import org.eclipse.ui.ide.IDE;
+import org.eclipse.pde.internal.ui.newparts.*;
+import org.eclipse.pde.internal.ui.util.*;
+import org.eclipse.swt.*;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.dialogs.*;
+import org.eclipse.ui.forms.events.*;
+import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.ide.*;
 
 public class GeneralInfoSection extends PDESection {
 	public static final String KEY_MATCH = "ManifestEditor.PluginSpecSection.versionMatch";
@@ -92,13 +68,12 @@ public class GeneralInfoSection extends PDESection {
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText(PDEPlugin
 				.getResourceString("ManifestEditor.PluginSpecSection.title"));
-		String fileName = ((ManifestEditor) getPage().getEditor()).getEditorInput().getName();
-		if (fileName.equals("plugin.xml"))
-			section.setDescription(PDEPlugin
-					.getResourceString("ManifestEditor.PluginSpecSection.desc"));
-		else if (fileName.equals("fragment.xml"))
+		if (isFragment())
 			section.setDescription(PDEPlugin
 					.getResourceString("ManifestEditor.PluginSpecSection.fdesc"));
+		else 
+			section.setDescription(PDEPlugin
+					.getResourceString("ManifestEditor.PluginSpecSection.desc"));
 		Composite client = toolkit.createComposite(section);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = toolkit.getBorderStyle() != SWT.NULL ? 0 : 2;
