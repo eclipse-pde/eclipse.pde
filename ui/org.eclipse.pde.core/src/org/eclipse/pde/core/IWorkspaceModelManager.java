@@ -18,6 +18,7 @@ public interface IWorkspaceModelManager	extends IModelManager, IModelProvider {
 	boolean getAllEditableModelsUnused(Class modelClass);
 	IModel getWorkspaceModel(IProject project);
 	IPluginModelBase[] getAllModels();
+	boolean isLocked();
 	void removeModelProviderListener(IModelProviderListener listener);
 	void reset();
 }

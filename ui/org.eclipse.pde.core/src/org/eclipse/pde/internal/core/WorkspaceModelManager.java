@@ -34,6 +34,7 @@ public class WorkspaceModelManager
 	private Vector workspaceFeatureModels = null;
 	private Vector modelChanges = null;
 	private static final boolean DEBUG = false;
+	private boolean modelsLocked=false;
 
 	class ModelChange {
 		IModel model;
@@ -60,6 +61,9 @@ public class WorkspaceModelManager
 	}
 	public boolean isInitialized() {
 		return initialized;
+	}
+	public boolean isLocked() {
+		return modelsLocked;
 	}
 	public void addModelProviderListener(IModelProviderListener listener) {
 		listeners.add(listener);
@@ -468,6 +472,7 @@ public class WorkspaceModelManager
 	}
 	private void initializeWorkspacePluginModels() {
 		long start = System.currentTimeMillis();
+		modelsLocked=true;
 		workspaceModels = new Vector();
 		workspaceFragmentModels = new Vector();
 		workspaceFeatureModels = new Vector();
@@ -498,6 +503,7 @@ public class WorkspaceModelManager
 		initialized = true;
 		long stop = System.currentTimeMillis();
 		if (DEBUG) System.out.println("Workspace plugins loaded in "+(stop-start)+"ms");
+		modelsLocked = false;
 	}
 
 	public static boolean isPluginProject(IProject project) {

@@ -38,6 +38,7 @@ public class OSGiWorkspaceModelManager
 	private Vector workspaceFeatureModels = null;
 	private Vector modelChanges = null;
 	private static final boolean DEBUG = false;
+	private boolean modelsLocked=false;
 
 	class ModelChange {
 		IModel model;
@@ -71,6 +72,10 @@ public class OSGiWorkspaceModelManager
 	
 	public boolean isInitialized() {
 		return initialized;
+	}
+	
+	public boolean isLocked() {
+		return modelsLocked;
 	}
 	public void addModelProviderListener(IModelProviderListener listener) {
 		listeners.add(listener);
@@ -624,6 +629,7 @@ public class OSGiWorkspaceModelManager
 	}
 	private void initializeWorkspacePluginModels() {
 		long start = System.currentTimeMillis();
+		modelsLocked=true;
 		workspaceModels = new Vector();
 		workspaceFragmentModels = new Vector();
 		workspaceFeatureModels = new Vector();
@@ -656,6 +662,7 @@ public class OSGiWorkspaceModelManager
 				| IResourceChangeEvent.PRE_DELETE
 				| IResourceChangeEvent.PRE_AUTO_BUILD);
 		initialized = true;
+		modelsLocked=false;
 		long stop = System.currentTimeMillis();
 		if (DEBUG)
 			System.out.println(

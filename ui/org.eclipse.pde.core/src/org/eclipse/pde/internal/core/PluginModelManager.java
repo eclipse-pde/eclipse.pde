@@ -54,12 +54,14 @@ public class PluginModelManager implements IAdaptable {
 	public boolean isEmpty() {
 		if (entries == null)
 			initializeTable();
+		if (entries==null) return true;
 		return entries.isEmpty();
 	}
 
 	public ModelEntry[] getEntries() {
 		if (entries == null)
 			initializeTable();
+		if (entries==null) return new ModelEntry[0];
 		Collection values = entries.values();
 		return (ModelEntry[]) values.toArray(new ModelEntry[values.size()]);
 	}
@@ -67,6 +69,7 @@ public class PluginModelManager implements IAdaptable {
 	public IPluginModelBase [] getPlugins() {
 		if (entries == null)
 			initializeTable();
+		if (entries==null) return new IPluginModelBase[0];
 		Collection values = entries.values();
 		IPluginModelBase [] plugins = new IPluginModelBase[values.size()];
 		int i=0;
@@ -79,6 +82,7 @@ public class PluginModelManager implements IAdaptable {
 	
 	public ModelEntry findEntry(IProject project) {
 		if (entries==null) initializeTable();
+		if (entries==null) return null;
 		IModel model = workspaceManager.getWorkspaceModel(project);
 		if (model==null) return null;
 		if (!(model instanceof IPluginModelBase))
@@ -90,11 +94,13 @@ public class PluginModelManager implements IAdaptable {
 	
 	public ModelEntry findEntry(String id, String version) {
 		if (entries == null) initializeTable();
+		if (entries==null) return null;
 		return (ModelEntry)entries.get(id);
 	}
 	
 	public ModelEntry findEntry(String id, String version, int match) {
 		if (entries == null) initializeTable();
+		if (entries==null) return null;
 		return (ModelEntry)entries.get(id);
 	}
 	
@@ -199,6 +205,7 @@ public class PluginModelManager implements IAdaptable {
 	}
 	
 	private void initializeTable() {
+		if (workspaceManager.isLocked()) return;
 		entries = new Hashtable();
 		IPluginModelBase[] models = workspaceManager.getAllModels();
 		addToTable(models, true);
