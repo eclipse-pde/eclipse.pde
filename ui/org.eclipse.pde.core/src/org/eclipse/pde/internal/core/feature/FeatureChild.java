@@ -29,6 +29,7 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 	private String fOs;
 	private String fWs;
 	private String fArch;
+	private String fNl;
 
 	protected void reset() {
 		super.reset();
@@ -40,6 +41,7 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 		fOs = null;
 		fWs = null;
 		fArch = null;
+		fNl = null;
 	}
 	protected void parse(Node node, Hashtable lineTable) {
 		super.parse(node, lineTable);
@@ -50,6 +52,7 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 		fOs = getNodeAttribute(node, "os"); //$NON-NLS-1$
 		fWs = getNodeAttribute(node, "ws"); //$NON-NLS-1$
 		fArch = getNodeAttribute(node, "arch"); //$NON-NLS-1$
+		fNl = getNodeAttribute(node, "nl"); //$NON-NLS-1$
 		String matchName = getNodeAttribute(node, "match"); //$NON-NLS-1$
 		if (matchName != null) {
 			for (int i = 0; i < RULE_NAME_TABLE.length; i++) {
@@ -113,6 +116,10 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 	
 	public String getArch() {
 		return fArch;
+	}
+
+	public String getNL() {
+		return fNl;
 	}
 
 	public IFeature getReferencedFeature() {
@@ -202,6 +209,13 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 		firePropertyChanged(P_ARCH, oldValue, arch);
 	}
 
+	public void setNL(String nl) throws CoreException {
+		ensureModelEditable();
+		Object oldValue = this.fNl;
+		this.fNl = nl;
+		firePropertyChanged(P_NL, oldValue, nl);
+	}
+
 	public void restoreProperty(String name, Object oldValue, Object newValue)
 		throws CoreException {
 		if (name.equals(P_VERSION)) {
@@ -218,6 +232,8 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 			setWS((String)newValue);
 		} else if (name.equals(P_ARCH)) {
 			setArch((String)newValue);
+		} else if (name.equals(P_NL)) {
+			setNL((String)newValue);
 		} else if (name.equals(P_SEARCH_LOCATION)) {
 			setSearchLocation(
 				newValue != null ? ((Integer) newValue).intValue() : ROOT);
@@ -267,6 +283,10 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 		if (getArch() != null) {
 			writer.println();
 			writer.print(indent2 + "arch=\""+getArch() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		if (getNL() != null) {
+			writer.println();
+			writer.print(indent2 + "nl=\""+getNL() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (fSearchLocation!=ROOT) {
 			writer.println();

@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.core.feature;
 
 import java.io.*;
-import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
@@ -22,39 +21,21 @@ public class FeatureInstallHandler
 	extends FeatureObject
 	implements IFeatureInstallHandler {
 	private static final long serialVersionUID = 1L;
-	private URL url;
-	private String library;
-	private String handlerName;
-
-	/*
-	 * @see IFeatureInstallHandler#getURL()
-	 */
-	public URL getURL() {
-		return url;
-	}
+	private String fLibrary;
+	private String fHandlerName;
 
 	/*
 	 * @see IFeatureInstallHandler#getLibrary()
 	 */
 	public String getLibrary() {
-		return library;
+		return fLibrary;
 	}
 
 	/*
 	 * @see IFeatureInstallHandler#getClassName()
 	 */
 	public String getHandlerName() {
-		return handlerName;
-	}
-
-	/*
-	 * @see IFeatureInstallHandler#setURL(URL)
-	 */
-	public void setURL(URL url) throws CoreException {
-		ensureModelEditable();
-		Object oldValue = this.url;
-		this.url = url;
-		firePropertyChanged(P_URL, oldValue, url);
+		return fHandlerName;
 	}
 
 	/*
@@ -62,8 +43,8 @@ public class FeatureInstallHandler
 	 */
 	public void setLibrary(String library) throws CoreException {
 		ensureModelEditable();
-		Object oldValue = this.library;
-		this.library = library;
+		Object oldValue = this.fLibrary;
+		this.fLibrary = library;
 		firePropertyChanged(P_LIBRARY, oldValue, library);
 	}
 
@@ -72,15 +53,13 @@ public class FeatureInstallHandler
 	 */
 	public void setHandlerName(String handlerName) throws CoreException {
 		ensureModelEditable();
-		Object oldValue = this.handlerName;
-		this.handlerName = handlerName;
+		Object oldValue = this.fHandlerName;
+		this.fHandlerName = handlerName;
 		firePropertyChanged(P_HANDLER_NAME, oldValue, handlerName);
 	}
 	public void restoreProperty(String name, Object oldValue, Object newValue)
 		throws CoreException {
-		if (name.equals(P_URL)) {
-			setURL((URL) newValue);
-		} else if (name.equals(P_LIBRARY)) {
+		if (name.equals(P_LIBRARY)) {
 			setLibrary((String) newValue);
 		} else if (name.equals(P_HANDLER_NAME)) {
 			setHandlerName((String) newValue);
@@ -89,26 +68,16 @@ public class FeatureInstallHandler
 	}
 	protected void parse(Node node, Hashtable lineTable) {
 		bindSourceLocation(node, lineTable);
-		String urlName = getNodeAttribute(node, "url"); //$NON-NLS-1$
-		if (urlName != null) {
-			try {
-				url = new URL(urlName);
-			} catch (MalformedURLException e) {
-			}
-		}
-		library = getNodeAttribute(node, "library"); //$NON-NLS-1$
-		handlerName = getNodeAttribute(node, "handler"); //$NON-NLS-1$
+		fLibrary = getNodeAttribute(node, "library"); //$NON-NLS-1$
+		fHandlerName = getNodeAttribute(node, "handler"); //$NON-NLS-1$
 	}
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent + "<install-handler"); //$NON-NLS-1$
-		if (url != null) {
-			writer.print(" url=\"" + url.toString() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		if (fLibrary != null) {
+			writer.print(" library=\"" + fLibrary + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		if (library != null) {
-			writer.print(" library=\"" + library + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		if (handlerName != null) {
-			writer.print(" handler=\"" + handlerName + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		if (fHandlerName != null) {
+			writer.print(" handler=\"" + fHandlerName + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		writer.println("/>"); //$NON-NLS-1$
 		//writer.println(indent + "</install-handler>");

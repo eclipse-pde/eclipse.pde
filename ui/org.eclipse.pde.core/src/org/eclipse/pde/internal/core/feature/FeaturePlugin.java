@@ -21,37 +21,48 @@ import org.w3c.dom.*;
 
 public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 	private static final long serialVersionUID = 1L;
-	private IPluginBase pluginBase;
-	private boolean fragment;
-	private String version;
+	private IPluginBase fPluginBase;
+	private boolean fFragment;
+	private String fVersion;
+	private boolean fUnpack = true;
 
 	public FeaturePlugin() {
 	}
 
 	protected void reset() {
 		super.reset();
-		version = null;
-		fragment = false;
+		fVersion = null;
+		fFragment = false;
 	}
 
 	public boolean isFragment() {
-		return fragment;
+		return fFragment;
 	}
 
 	public IPluginBase getPluginBase() {
-		if (pluginBase == null && id != null) {
+		if (fPluginBase == null && id != null) {
 			hookWithWorkspace();
 		}
-		return pluginBase;
+		return fPluginBase;
 	}
 	public String getVersion() {
-		return version;
+		return fVersion;
+	}
+	public boolean isUnpack() {
+		return fUnpack;
 	}
 	public void setVersion(String version) throws CoreException {
 		ensureModelEditable();
-		Object oldValue = this.version;
-		this.version = version;
+		Object oldValue = this.fVersion;
+		this.fVersion = version;
 		firePropertyChanged(this, P_VERSION, oldValue, version);
+	}
+
+	public void setUnpack(boolean unpack) throws CoreException {
+		ensureModelEditable();
+		boolean oldValue = fUnpack;
+		this.fUnpack = unpack;
+		firePropertyChanged(this, P_UNPACK, new Boolean(oldValue), new Boolean(unpack));
 	}
 
 	public void restoreProperty(String name, Object oldValue, Object newValue)
@@ -64,15 +75,18 @@ public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 
 	public void setFragment(boolean fragment) throws CoreException {
 		ensureModelEditable();
-		this.fragment = fragment;
+		this.fFragment = fragment;
 	}
 
 	protected void parse(Node node, Hashtable lineTable) {
 		super.parse(node, lineTable);
-		version = getNodeAttribute(node, "version"); //$NON-NLS-1$
+		fVersion = getNodeAttribute(node, "version"); //$NON-NLS-1$
 		String f = getNodeAttribute(node, "fragment"); //$NON-NLS-1$
 		if (f != null && f.equalsIgnoreCase("true")) //$NON-NLS-1$
-			fragment = true;
+			fFragment = true;
+		String unpack = getNodeAttribute(node, "unpack"); //$NON-NLS-1$
+		if (unpack != null && unpack.equalsIgnoreCase("false")) //$NON-NLS-1$
+			fUnpack = false;
 	}
 	
 	public void hookWithWorkspace() {
@@ -80,10 +94,10 @@ public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 		ModelEntry entry = manager.findEntry(id);
 		if (entry != null) {
 			IPluginModelBase model = entry.getActiveModel();
-			if (fragment && model instanceof IFragmentModel)
-				pluginBase = model.getPluginBase();
-			else if (!fragment && model instanceof IPluginModel)
-				pluginBase = model.getPluginBase();
+			if (fFragment && model instanceof IFragmentModel)
+				fPluginBase = model.getPluginBase();
+			else if (!fFragment && model instanceof IPluginModel)
+				fPluginBase = model.getPluginBase();
 		}		
 	}
 
@@ -91,9 +105,9 @@ public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 	public void loadFrom(IPluginBase plugin) {
 		id = plugin.getId();
 		label = plugin.getTranslatedName();
-		version = plugin.getVersion();
-		fragment = plugin instanceof IFragment;
-		this.pluginBase = plugin;
+		fVersion = plugin.getVersion();
+		fFragment = plugin instanceof IFragment;
+		this.fPluginBase = plugin;
 	}
 
 	public void write(String indent, PrintWriter writer) {
@@ -108,13 +122,17 @@ public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 			writer.println();
 			writer.print(indent2 + "fragment=\"true\""); //$NON-NLS-1$
 		}
+		if (!isUnpack()) {
+			writer.println();
+			writer.print(indent2 + "unpack=\"false\""); //$NON-NLS-1$
+		}
 		writer.println("/>"); //$NON-NLS-1$
 		//writer.println(indent + "</plugin>");
 	}
 
 	public String getLabel() {
-		if (pluginBase != null) {
-			return pluginBase.getTranslatedName();
+		if (fPluginBase != null) {
+			return fPluginBase.getTranslatedName();
 		}
 		String name = super.getLabel();
 		if (name == null)

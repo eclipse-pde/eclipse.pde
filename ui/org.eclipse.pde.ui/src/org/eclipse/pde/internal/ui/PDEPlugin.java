@@ -21,9 +21,7 @@ import org.eclipse.debug.core.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.preference.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.ischema.*;
-import org.eclipse.pde.internal.ui.editor.feature.*;
 import org.eclipse.pde.internal.ui.editor.schema.*;
 import org.eclipse.pde.internal.ui.launcher.*;
 import org.eclipse.pde.internal.ui.util.*;
@@ -37,16 +35,16 @@ import org.osgi.framework.*;
 public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 
 	// Shared instance
-	private static PDEPlugin inst;
+	private static PDEPlugin fInstance;
 	// Resource bundle
-	private ResourceBundle resourceBundle;
+	private ResourceBundle fResourceBundle;
 	
 	// Launches listener
 	private LaunchListener fLaunchListener;
 	
 	private BundleContext fBundleContext;
 
-	private java.util.Hashtable counters;
+	private java.util.Hashtable fCounters;
 	
 	// Shared colors for all forms
 	private FormColors fFormColors;
@@ -54,7 +52,7 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 	private ILaunchConfigurationListener fLaunchConfigurationListener;
 
 	public PDEPlugin() {
-		inst = this;
+		fInstance = this;
 	}
 	
 	public URL getInstallURL() {
@@ -67,12 +65,12 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 	
 	public ResourceBundle getResourceBundle() {
 		try {
-			if (resourceBundle == null)
-				resourceBundle = ResourceBundle.getBundle("org.eclipse.pde.internal.ui.pderesources"); //$NON-NLS-1$
+			if (fResourceBundle == null)
+				fResourceBundle = ResourceBundle.getBundle("org.eclipse.pde.internal.ui.pderesources"); //$NON-NLS-1$
 		} catch (MissingResourceException x) {
-			resourceBundle = null;
+			fResourceBundle = null;
 		}
-		return resourceBundle;
+		return fResourceBundle;
 	}
 
 	public static IWorkbenchPage getActivePage() {
@@ -89,12 +87,12 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 		return getDefault().getWorkbench().getActiveWorkbenchWindow();
 	}
 	public static PDEPlugin getDefault() {
-		return inst;
+		return fInstance;
 	}
 	public Hashtable getDefaultNameCounters() {
-		if (counters == null)
-			counters = new Hashtable();
-		return counters;
+		if (fCounters == null)
+			fCounters = new Hashtable();
+		return fCounters;
 	}
 	public static String getFormattedMessage(String key, String[] args) {
 		String text = getResourceString(key);
@@ -195,7 +193,6 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 		SchemaAdapterFactory schemaFactory = new SchemaAdapterFactory();
 		manager.registerAdapters(schemaFactory, ISchemaObject.class);
 		manager.registerAdapters(schemaFactory, ISchemaObjectReference.class);
-		manager.registerAdapters(new FeatureAdapterFactory(), IFeatureObject.class);
 		PluginsViewAdapterFactory factory = new PluginsViewAdapterFactory();
 		manager.registerAdapters(factory, ModelEntry.class);
 		manager.registerAdapters(factory, FileAdapter.class);

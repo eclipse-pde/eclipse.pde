@@ -79,6 +79,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 		if (obj instanceof FeatureChild) {
 			return getObjectText((FeatureChild) obj);
 		}
+		if (obj instanceof IProductFeature) {
+			return getObjectText((IProductFeature)obj);
+		}
 		if (obj instanceof ISiteFeature) {
 			return getObjectText((ISiteFeature) obj);
 		}
@@ -228,6 +231,10 @@ public class PDELabelProvider extends SharedLabelProvider {
 	public String getObjectText(FeatureChild obj) {
 		return preventNull(obj.getId()) + " (" + preventNull(obj.getVersion()) + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
+	
+	public String getObjectText(IProductFeature obj) {
+		return preventNull(obj.getId()) + " (" + preventNull(obj.getVersion()) + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+	}
 
 	public String getObjectText(ISiteFeature obj) {
 		return preventNull(obj.getURL());
@@ -308,6 +315,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 		}
 		if (obj instanceof IFeatureChild) {
 			return getObjectImage((IFeatureChild) obj);
+		}
+		if (obj instanceof IProductFeature) {
+			return getObjectImage((IProductFeature)obj);
 		}
 		if (obj instanceof IFeaturePlugin) {
 			return getObjectImage((IFeaturePlugin) obj);
@@ -562,6 +572,10 @@ public class PDELabelProvider extends SharedLabelProvider {
 				flags = F_WARNING;
 		}
 		return get(PDEPluginImages.DESC_FEATURE_OBJ, flags);
+	}
+	
+	private Image getObjectImage(IProductFeature feature) {
+		return get(PDEPluginImages.DESC_FEATURE_OBJ, 0);
 	}
 
 	private Image getObjectImage(IFeatureData data) {

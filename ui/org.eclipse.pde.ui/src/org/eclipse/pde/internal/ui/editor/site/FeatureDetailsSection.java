@@ -54,15 +54,16 @@ public class FeatureDetailsSection extends PDESection implements IFormPart,
 
 	private static final String SECTION_URL = "FeatureDetailsSection.url"; //$NON-NLS-1$
 
-	private ISiteFeature currentSiteFeature;
+	private ISiteFeature fCurrentSiteFeature;
 
-	private Button patchCheckBox;
+	private Button fPatchCheckBox;
 
-	private FormEntry urlText;
+	private FormEntry fUrlText;
 
 	public FeatureDetailsSection(PDEFormPage page, Composite parent) {
 		this(page, parent, PDEPlugin.getResourceString(SECTION_TITLE),
 				PDEPlugin.getResourceString(SECTION_DESC), SWT.NULL);
+		getSection().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	}
 
 	public FeatureDetailsSection(PDEFormPage page, Composite parent,
@@ -74,22 +75,22 @@ public class FeatureDetailsSection extends PDESection implements IFormPart,
 	}
 
 	private void applyIsPatch(boolean patch) throws CoreException {
-		if (currentSiteFeature == null)
+		if (fCurrentSiteFeature == null)
 			return;
-		currentSiteFeature.setIsPatch(patch);
+		fCurrentSiteFeature.setIsPatch(patch);
 	}
 
 	private void applyValue(String property, String value) throws CoreException {
-		if (currentSiteFeature == null)
+		if (fCurrentSiteFeature == null)
 			return;
 		if (property.equals(PROPERTY_URL))
-			currentSiteFeature.setURL(value);
+			fCurrentSiteFeature.setURL(value);
 		else if (property.equals(PROPERTY_TYPE))
-			currentSiteFeature.setType(value);
+			fCurrentSiteFeature.setType(value);
 	}
 
 	public void cancelEdit() {
-		urlText.cancelEdit();
+		fUrlText.cancelEdit();
 		super.cancelEdit();
 	}
 
@@ -108,17 +109,17 @@ public class FeatureDetailsSection extends PDESection implements IFormPart,
 
 	private void clearField(String property) {
 		if (property.equals(PROPERTY_URL))
-			urlText.setValue(null, true);
+			fUrlText.setValue(null, true);
 	}
 
 	private void clearFields() {
-		urlText.setValue(null, true);
-		patchCheckBox.setSelection(false);
+		fUrlText.setValue(null, true);
+		fPatchCheckBox.setSelection(false);
 	}
 
 	public void commit(boolean onSave) {
 		try {
-			applyIsPatch(patchCheckBox.getSelection());
+			applyIsPatch(fPatchCheckBox.getSelection());
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
@@ -134,9 +135,9 @@ public class FeatureDetailsSection extends PDESection implements IFormPart,
 		layout.horizontalSpacing = 6;
 		container.setLayout(layout);
 
-		urlText = new FormEntry(container, toolkit, PDEPlugin
+		fUrlText = new FormEntry(container, toolkit, PDEPlugin
 				.getResourceString(SECTION_URL), null, false);
-		urlText.setFormEntryListener(new FormEntryAdapter(this) {
+		fUrlText.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
 				try {
 					if (text.getValue().length() <= 0) {
@@ -157,8 +158,8 @@ public class FeatureDetailsSection extends PDESection implements IFormPart,
 				}
 			}
 		});
-		limitTextWidth(urlText);
-		urlText.getText().setEnabled(false);
+		limitTextWidth(fUrlText);
+		fUrlText.getText().setEnabled(false);
 		
 		createPatchButton(toolkit, container);
 
@@ -171,12 +172,12 @@ public class FeatureDetailsSection extends PDESection implements IFormPart,
 	}
 
 	private void createPatchButton(FormToolkit toolkit, Composite container) {
-		patchCheckBox = toolkit.createButton(container, PDEPlugin
+		fPatchCheckBox = toolkit.createButton(container, PDEPlugin
 				.getResourceString(SECTION_PATH), SWT.CHECK);
-		patchCheckBox.addSelectionListener(new SelectionAdapter() {
+		fPatchCheckBox.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				try {
-					applyIsPatch(patchCheckBox.getSelection());
+					applyIsPatch(fPatchCheckBox.getSelection());
 				} catch (CoreException ce) {
 					PDEPlugin.logException(ce);
 				}
@@ -184,8 +185,8 @@ public class FeatureDetailsSection extends PDESection implements IFormPart,
 		});
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
-		patchCheckBox.setLayoutData(gd);
-		patchCheckBox.setEnabled(isEditable());
+		fPatchCheckBox.setLayoutData(gd);
+		fPatchCheckBox.setEnabled(isEditable());
 	}
 
 	public void dispose() {
@@ -205,14 +206,14 @@ public class FeatureDetailsSection extends PDESection implements IFormPart,
 	}
 
 	public void refresh() {
-		if (currentSiteFeature == null) {
+		if (fCurrentSiteFeature == null) {
 			clearFields();
 			super.refresh();
 			return;
 		}
 		setValue(PROPERTY_URL);
 		setValue(PROPERTY_TYPE);
-		patchCheckBox.setSelection(currentSiteFeature.isPatch());
+		fPatchCheckBox.setSelection(fCurrentSiteFeature.isPatch());
 		super.refresh();
 	}
 
@@ -220,26 +221,26 @@ public class FeatureDetailsSection extends PDESection implements IFormPart,
 		if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
 			Object o = ((IStructuredSelection) selection).getFirstElement();
 			if (o instanceof SiteFeatureAdapter) {
-				currentSiteFeature = ((SiteFeatureAdapter) o).feature;
+				fCurrentSiteFeature = ((SiteFeatureAdapter) o).feature;
 			} else {
-				currentSiteFeature = null;
+				fCurrentSiteFeature = null;
 			}
 		} else
-			currentSiteFeature = null;
+			fCurrentSiteFeature = null;
 		refresh();
 	}
 
 	public void setFocus() {
-		if (urlText != null)
-			urlText.getText().setFocus();
+		if (fUrlText != null)
+			fUrlText.getText().setFocus();
 	}
 
 	private void setValue(String property) {
-		if (currentSiteFeature == null) {
+		if (fCurrentSiteFeature == null) {
 			clearField(property);
 		} else {
 			if (property.equals(PROPERTY_URL))
-				urlText.setValue(currentSiteFeature.getURL(), true);
+				fUrlText.setValue(fCurrentSiteFeature.getURL(), true);
 		}
 	}
 }

@@ -8,38 +8,22 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.editor.site;
+package org.eclipse.pde.internal.ui.editor;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.internal.ui.editor.PDEDetails;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IFormPart;
-import org.eclipse.ui.forms.IManagedForm;
 
-public class CategoryDetails extends PDEDetails {
-	private CategoryDetailsSection categoryDetailsSection;
+/**
+ * Wrapper for PDESections, implemens IDetailsPage for use in MasterDetailsBlock
+ */
+public abstract class PDEDetailsSections extends PDEDetails {
+	private PDESection sections[];
 
-	public CategoryDetails() {
-	}
-
-	public void cancelEdit() {
-		categoryDetailsSection.cancelEdit();
-		super.cancelEdit();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.IDetailsPage#commit()
-	 */
-	public void commit(boolean onSave) {
-		categoryDetailsSection.commit(onSave);
-		super.commit(onSave);
-	}
+	protected abstract PDESection[] createSections(PDEFormPage page,
+			Composite parent);
 
 	/*
 	 * (non-Javadoc)
@@ -47,18 +31,19 @@ public class CategoryDetails extends PDEDetails {
 	 * @see org.eclipse.ui.forms.IDetailsPage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createContents(Composite parent) {
+		sections = createSections(getPage(), parent);
 		GridLayout layout = new GridLayout();
+		layout.verticalSpacing = 30;
 		parent.setLayout(layout);
-		categoryDetailsSection = new CategoryDetailsSection(getPage(), parent);
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		categoryDetailsSection.getSection().setLayoutData(gd);
-		
-		getManagedForm().addPart(categoryDetailsSection);
+		for (int i = 0; i < sections.length; i++) {
+			getManagedForm().addPart(sections[i]);
+		}
 	}
 
 	public void dispose() {
-		categoryDetailsSection.dispose();
-		super.dispose();
+		for (int i = 0; i < sections.length; i++) {
+			sections[i].dispose();
+		}
 	}
 
 	public void fireSaveNeeded() {
@@ -66,9 +51,7 @@ public class CategoryDetails extends PDEDetails {
 		getPage().getPDEEditor().fireSaveNeeded(getContextId(), false);
 	}
 
-	public String getContextId() {
-		return SiteInputContext.CONTEXT_ID;
-	}
+	public abstract String getContextId();
 
 	public PDEFormPage getPage() {
 		return (PDEFormPage) getManagedForm().getContainer();
@@ -77,20 +60,13 @@ public class CategoryDetails extends PDEDetails {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.forms.AbstractFormPart#initialize(org.eclipse.ui.forms.IManagedForm)
-	 */
-	public void initialize(IManagedForm form) {
-		super.initialize(form);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.eclipse.ui.forms.AbstractFormPart#isDirty()
 	 */
 	public boolean isDirty() {
-		if (categoryDetailsSection.isDirty()) {
-			return true;
+		for (int i = 0; i < sections.length; i++) {
+			if (sections[i].isDirty()) {
+				return true;
+			}
 		}
 		return super.isDirty();
 	}
@@ -105,8 +81,11 @@ public class CategoryDetails extends PDEDetails {
 	 * @see org.eclipse.ui.forms.AbstractFormPart#isStale()
 	 */
 	public boolean isStale() {
-		if (categoryDetailsSection.isStale())
-			return true;
+		for (int i = 0; i < sections.length; i++) {
+			if (sections[i].isStale()) {
+				return true;
+			}
+		}
 		return super.isStale();
 	}
 
@@ -121,20 +100,9 @@ public class CategoryDetails extends PDEDetails {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.forms.IDetailsPage#refresh()
-	 */
-	public void refresh() {
-		categoryDetailsSection.refresh();
-		super.refresh();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.eclipse.ui.forms.IDetailsPage#inputChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	public void selectionChanged(IFormPart masterPart, ISelection selection) {
-		categoryDetailsSection.selectionChanged(masterPart, selection);
 	}
 
 	/*
@@ -143,6 +111,8 @@ public class CategoryDetails extends PDEDetails {
 	 * @see org.eclipse.ui.forms.IDetailsPage#setFocus()
 	 */
 	public void setFocus() {
-		categoryDetailsSection.setFocus();
+		if (sections.length > 0) {
+			sections[0].setFocus();
+		}
 	}
 }

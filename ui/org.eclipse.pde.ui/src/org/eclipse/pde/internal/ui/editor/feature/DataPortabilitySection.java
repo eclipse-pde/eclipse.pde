@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.editor.site;
+package org.eclipse.pde.internal.ui.editor.feature;
 
 import java.util.Locale;
 
@@ -19,14 +19,12 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.ifeature.IEnvironment;
-import org.eclipse.pde.internal.core.isite.ISiteFeature;
-import org.eclipse.pde.internal.core.isite.ISiteModel;
+import org.eclipse.pde.internal.core.ifeature.IFeatureData;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
-import org.eclipse.pde.internal.ui.editor.feature.Choice;
-import org.eclipse.pde.internal.ui.editor.feature.PortabilityChoicesDialog;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -41,16 +39,17 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.IPartSelectionListener;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
-public class PortabilitySection extends PDESection implements IFormPart,
+public class DataPortabilitySection extends PDESection implements IFormPart,
 		IPartSelectionListener {
 	private static final String DIALOG_TITLE = "SiteEditor.PortabilityChoicesDialog.title"; //$NON-NLS-1$
 
 	private static final String SECTION_ARCH = "SiteEditor.PortabilitySection.arch"; //$NON-NLS-1$
 
-	private static final String SECTION_DESC = "SiteEditor.PortabilitySection.desc"; //$NON-NLS-1$
+	private static final String SECTION_DESC = "FeatureEditor.DataDetailsSection.desc"; //$NON-NLS-1$
 
 	private static final String SECTION_EDIT = "SiteEditor.PortabilitySection.edit"; //$NON-NLS-1$
 
@@ -58,7 +57,7 @@ public class PortabilitySection extends PDESection implements IFormPart,
 
 	private static final String SECTION_OS = "SiteEditor.PortabilitySection.os"; //$NON-NLS-1$
 
-	private static final String SECTION_TITLE = "SiteEditor.PortabilitySection.title"; //$NON-NLS-1$
+	private static final String SECTION_TITLE = "FeatureEditor.DataDetailsSection.title"; //$NON-NLS-1$
 
 	private static final String SECTION_WS = "SiteEditor.PortabilitySection.ws"; //$NON-NLS-1$
 
@@ -95,7 +94,7 @@ public class PortabilitySection extends PDESection implements IFormPart,
 
 	private FormEntry fArchText;
 
-	private ISiteFeature fCurrentSiteFeature;
+	private IFeatureData fCurrentInput;
 
 	private FormEntry fNlText;
 
@@ -103,31 +102,31 @@ public class PortabilitySection extends PDESection implements IFormPart,
 
 	private FormEntry fWsText;
 
-	public PortabilitySection(PDEFormPage page, Composite parent) {
+	public DataPortabilitySection(PDEFormPage page, Composite parent) {
 		this(page, parent, PDEPlugin.getResourceString(SECTION_TITLE),
 				PDEPlugin.getResourceString(SECTION_DESC), SWT.NULL);
-		getSection().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	}
 
-	public PortabilitySection(PDEFormPage page, Composite parent, String title,
-			String desc, int toggleStyle) {
-		super(page, parent, Section.DESCRIPTION | toggleStyle);
-		getSection().setText(title);
+	public DataPortabilitySection(PDEFormPage page, Composite parent,
+			String title, String desc, int toggleStyle) {
+		super(page, parent, Section.DESCRIPTION | ExpandableComposite.NO_TITLE
+				| toggleStyle, false);
+		// getSection().setText(title);
 		getSection().setDescription(desc);
 		createClient(getSection(), page.getManagedForm().getToolkit());
 	}
 
 	private void applyValue(String property, String value) throws CoreException {
-		if (fCurrentSiteFeature == null)
+		if (fCurrentInput == null)
 			return;
 		if (property.equals(IEnvironment.P_NL))
-			fCurrentSiteFeature.setNL(value);
+			fCurrentInput.setNL(value);
 		else if (property.equals(IEnvironment.P_OS))
-			fCurrentSiteFeature.setOS(value);
+			fCurrentInput.setOS(value);
 		else if (property.equals(IEnvironment.P_WS))
-			fCurrentSiteFeature.setWS(value);
+			fCurrentInput.setWS(value);
 		else if (property.equals(IEnvironment.P_ARCH))
-			fCurrentSiteFeature.setArch(value);
+			fCurrentInput.setArch(value);
 	}
 
 	public void cancelEdit() {
@@ -158,21 +157,21 @@ public class PortabilitySection extends PDESection implements IFormPart,
 			fWsText.setValue(null, true);
 		else if (property.equals(IEnvironment.P_ARCH))
 			fArchText.setValue(null, true);
+		else if (property.equals(IEnvironment.P_NL))
+			fNlText.setValue(null, true);
 	}
 
 	private void clearFields() {
 		fOsText.setValue(null, true);
 		fWsText.setValue(null, true);
-		if (fNlText != null)
-			fNlText.setValue(null, true);
+		fNlText.setValue(null, true);
 		fArchText.setValue(null, true);
 	}
 
 	public void commit(boolean onSave) {
 		fOsText.commit();
 		fWsText.commit();
-		if (fNlText != null)
-			fNlText.commit();
+		fNlText.commit();
 		fArchText.commit();
 		super.commit(onSave);
 	}
@@ -181,7 +180,7 @@ public class PortabilitySection extends PDESection implements IFormPart,
 		Composite container = toolkit.createComposite(section);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
-		layout.verticalSpacing = 9;
+		layout.verticalSpacing = 5;
 		layout.horizontalSpacing = 6;
 		container.setLayout(layout);
 
@@ -298,7 +297,7 @@ public class PortabilitySection extends PDESection implements IFormPart,
 	}
 
 	public void dispose() {
-		ISiteModel model = (ISiteModel) getPage().getModel();
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		if (model != null)
 			model.removeModelChangedListener(this);
 		super.dispose();
@@ -310,7 +309,7 @@ public class PortabilitySection extends PDESection implements IFormPart,
 	 * @see org.eclipse.ui.forms.AbstractFormPart#initialize(org.eclipse.ui.forms.IManagedForm)
 	 */
 	public void initialize(IManagedForm form) {
-		ISiteModel model = (ISiteModel) getPage().getModel();
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		if (model != null)
 			model.addModelChangedListener(this);
 		super.initialize(form);
@@ -347,7 +346,7 @@ public class PortabilitySection extends PDESection implements IFormPart,
 	}
 
 	public void refresh() {
-		if (fCurrentSiteFeature == null) {
+		if (fCurrentInput == null) {
 			clearFields();
 			super.refresh();
 			return;
@@ -362,13 +361,13 @@ public class PortabilitySection extends PDESection implements IFormPart,
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
 			Object o = ((IStructuredSelection) selection).getFirstElement();
-			if (o instanceof SiteFeatureAdapter) {
-				fCurrentSiteFeature = ((SiteFeatureAdapter) o).feature;
+			if (o instanceof IFeatureData) {
+				fCurrentInput = (IFeatureData) o;
 			} else {
-				fCurrentSiteFeature = null;
+				fCurrentInput = null;
 			}
 		} else
-			fCurrentSiteFeature = null;
+			fCurrentInput = null;
 		refresh();
 	}
 
@@ -378,17 +377,17 @@ public class PortabilitySection extends PDESection implements IFormPart,
 	}
 
 	private void setValue(String property) {
-		if (fCurrentSiteFeature == null) {
+		if (fCurrentInput == null) {
 			clearField(property);
 		} else {
 			if (property.equals(IEnvironment.P_NL))
-				fNlText.setValue(fCurrentSiteFeature.getNL(), true);
+				fNlText.setValue(fCurrentInput.getNL(), true);
 			else if (property.equals(IEnvironment.P_OS))
-				fOsText.setValue(fCurrentSiteFeature.getOS(), true);
+				fOsText.setValue(fCurrentInput.getOS(), true);
 			else if (property.equals(IEnvironment.P_WS))
-				fWsText.setValue(fCurrentSiteFeature.getWS(), true);
+				fWsText.setValue(fCurrentInput.getWS(), true);
 			else if (property.equals(IEnvironment.P_ARCH))
-				fArchText.setValue(fCurrentSiteFeature.getArch(), true);
+				fArchText.setValue(fCurrentInput.getArch(), true);
 		}
 	}
 }

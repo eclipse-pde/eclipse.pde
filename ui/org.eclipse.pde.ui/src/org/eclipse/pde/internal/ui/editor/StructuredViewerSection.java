@@ -29,7 +29,15 @@ public abstract class StructuredViewerSection extends PDESection {
 	 * @param formPage
 	 */
 	public StructuredViewerSection(PDEFormPage formPage, Composite parent, int style, String [] buttonLabels) {
-		super(formPage, parent, style);
+		this(formPage, parent, style, true, buttonLabels);
+	}
+
+	/**
+	 * Constructor for StructuredViewerSection.
+	 * @param formPage
+	 */
+	public StructuredViewerSection(PDEFormPage formPage, Composite parent, int style, boolean titleBar, String [] buttonLabels) {
+		super(formPage, parent, style, titleBar);
 		viewerPart = createViewerPart(buttonLabels);
 		viewerPart.setMinimumSize(50, 50);
 		FormToolkit toolkit = formPage.getManagedForm().getToolkit();

@@ -10,81 +10,128 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import java.util.Iterator;
+import java.util.Locale;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.core.ifeature.IEnvironment;
+import org.eclipse.pde.internal.core.ifeature.IFeature;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.parts.*;
+import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
+import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.dnd.*;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.RTFTransfer;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.dnd.TransferData;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.forms.*;
-import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.forms.IManagedForm;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Section;
 
-public class PortabilitySection extends PDESection implements IPartSelectionListener {
-	public static final String KEY_DIALOG_TITLE =
-		"FeatureEditor.PortabilityChoicesDialog.title"; //$NON-NLS-1$
-	public static final String SECTION_TITLE =
-		"FeatureEditor.PortabilitySection.title"; //$NON-NLS-1$
-	public static final String SECTION_DESC =
-		"FeatureEditor.PortabilitySection.desc"; //$NON-NLS-1$
-	public static final String SECTION_OS =
-		"FeatureEditor.PortabilitySection.os"; //$NON-NLS-1$
-	public static final String SECTION_WS =
-		"FeatureEditor.PortabilitySection.ws"; //$NON-NLS-1$
-	public static final String SECTION_NL =
-		"FeatureEditor.PortabilitySection.nl"; //$NON-NLS-1$
-	public static final String SECTION_ARCH =
-		"FeatureEditor.PortabilitySection.arch"; //$NON-NLS-1$
-	public static final String SECTION_EDIT =
-		"FeatureEditor.PortabilitySection.edit"; //$NON-NLS-1$
+public class PortabilitySection extends PDESection {
+	private static final String DIALOG_TITLE = "FeatureEditor.PortabilityChoicesDialog.title"; //$NON-NLS-1$
 
-	private FormEntry osText;
-	private FormEntry wsText;
-	private FormEntry nlText;
-	private FormEntry archText;
-	private boolean reactToSelections;
-	private IStructuredSelection currentInput;
+	private static final String SECTION_ARCH = "FeatureEditor.PortabilitySection.arch"; //$NON-NLS-1$
 
-	public PortabilitySection(FeatureFormPage page, Composite parent) {
-		this(page, parent,
-			PDEPlugin.getResourceString(SECTION_TITLE),
-			PDEPlugin.getResourceString(SECTION_DESC),
-			Section.TWISTIE);
+	private static final String SECTION_DESC = "FeatureEditor.PortabilitySection.desc"; //$NON-NLS-1$
+
+	private static final String SECTION_EDIT = "FeatureEditor.PortabilitySection.edit"; //$NON-NLS-1$
+
+	private static final String SECTION_NL = "FeatureEditor.PortabilitySection.nl"; //$NON-NLS-1$
+
+	private static final String SECTION_OS = "FeatureEditor.PortabilitySection.os"; //$NON-NLS-1$
+
+	private static final String SECTION_TITLE = "FeatureEditor.PortabilitySection.title"; //$NON-NLS-1$
+
+	private static final String SECTION_WS = "FeatureEditor.PortabilitySection.ws"; //$NON-NLS-1$
+
+	public static Choice[] getArchChoices() {
+		return getKnownChoices(Platform.knownOSArchValues());
 	}
 
-	public PortabilitySection(
-		PDEFormPage page,
-		Composite parent,
-		String title,
-		String desc,
-		int toggleStyle) {
-		super(page, parent, Section.DESCRIPTION|toggleStyle);
-		this.reactToSelections = toggleStyle==SWT.NULL;
+	private static Choice[] getKnownChoices(String[] values) {
+		Choice[] choices = new Choice[values.length];
+		for (int i = 0; i < choices.length; i++) {
+			choices[i] = new Choice(values[i], values[i]);
+		}
+		return choices;
+	}
+
+	public static Choice[] getNLChoices() {
+		Locale[] locales = Locale.getAvailableLocales();
+		Choice[] choices = new Choice[locales.length];
+		for (int i = 0; i < locales.length; i++) {
+			Locale locale = locales[i];
+			choices[i] = new Choice(locale.toString(), locale.toString()
+					+ " - " + locale.getDisplayName()); //$NON-NLS-1$
+		}
+		return choices;
+	}
+
+	public static Choice[] getOSChoices() {
+		return getKnownChoices(Platform.knownOSValues());
+	}
+
+	public static Choice[] getWSChoices() {
+		return getKnownChoices(Platform.knownWSValues());
+	}
+
+	private FormEntry fArchText;
+
+	private FormEntry fNlText;
+
+	private FormEntry fOsText;
+
+	private FormEntry fWsText;
+
+	public PortabilitySection(FeatureFormPage page, Composite parent) {
+		this(page, parent, PDEPlugin.getResourceString(SECTION_TITLE),
+				PDEPlugin.getResourceString(SECTION_DESC), SWT.NULL);
+	}
+
+	public PortabilitySection(PDEFormPage page, Composite parent, String title,
+			String desc, int toggleStyle) {
+		super(page, parent, Section.DESCRIPTION | toggleStyle);
 		getSection().setText(title);
 		getSection().setDescription(desc);
-		if (!reactToSelections) {
-			IFeatureModel model = (IFeatureModel) page.getModel();
-			IFeature feature = model.getFeature();
-			getSection().setExpanded(
-				feature.getOS() != null
-					|| feature.getWS() != null
-					|| feature.getNL() != null
-					|| feature.getArch() != null);
-		}
 		createClient(getSection(), page.getManagedForm().getToolkit());
+	}
+
+	private void applyValue(String property, String value) throws CoreException {
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
+		IFeature feature = model.getFeature();
+		if (property.equals(IEnvironment.P_NL))
+			feature.setNL(value);
+		else if (property.equals(IEnvironment.P_OS))
+			feature.setOS(value);
+		else if (property.equals(IEnvironment.P_WS))
+			feature.setWS(value);
+		else if (property.equals(IEnvironment.P_ARCH))
+			feature.setArch(value);
+	}
+
+	public void cancelEdit() {
+		fOsText.cancelEdit();
+		fWsText.cancelEdit();
+		fNlText.cancelEdit();
+		fArchText.cancelEdit();
+		super.cancelEdit();
 	}
 
 	public boolean canPaste(Clipboard clipboard) {
 		TransferData[] types = clipboard.getAvailableTypes();
-		Transfer[] transfers =
-			new Transfer[] { TextTransfer.getInstance(), RTFTransfer.getInstance()};
+		Transfer[] transfers = new Transfer[] { TextTransfer.getInstance(),
+				RTFTransfer.getInstance() };
 		for (int i = 0; i < types.length; i++) {
 			for (int j = 0; j < transfers.length; j++) {
 				if (transfers[j].isSupportedType(types[i]))
@@ -93,34 +140,40 @@ public class PortabilitySection extends PDESection implements IPartSelectionList
 		}
 		return false;
 	}
+
 	public void commit(boolean onSave) {
-		osText.commit();
-		wsText.commit();
-		if (nlText != null)
-			nlText.commit();
-		archText.commit();
+		fOsText.commit();
+		fWsText.commit();
+		fNlText.commit();
+		fArchText.commit();
 		super.commit(onSave);
 	}
 
-	public void createClient(
-		Section section,
-		FormToolkit toolkit) {
+	public void createClient(Section section, FormToolkit toolkit) {
 		Composite container = toolkit.createComposite(section);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
-		layout.verticalSpacing = 9;
+		layout.verticalSpacing = 5;
 		layout.horizontalSpacing = 6;
 		container.setLayout(layout);
-		
+
 		String editLabel = PDEPlugin.getResourceString(SECTION_EDIT);
 
-		osText =
-			new FormEntry(container,
-					toolkit,
-					PDEPlugin.getResourceString(SECTION_OS),
-					editLabel, 
-					false);
-		osText.setFormEntryListener(new FormEntryAdapter(this) {
+		fOsText = new FormEntry(container, toolkit, PDEPlugin
+				.getResourceString(SECTION_OS), editLabel, false);
+		fOsText.setFormEntryListener(new FormEntryAdapter(this) {
+
+			public void browseButtonSelected(FormEntry entry) {
+				BusyIndicator.showWhile(fOsText.getText().getDisplay(),
+						new Runnable() {
+							public void run() {
+								Choice[] choices = getOSChoices();
+								openPortabilityChoiceDialog(IEnvironment.P_OS,
+										fOsText, choices);
+							}
+						});
+			}
+
 			public void textValueChanged(FormEntry text) {
 				try {
 					applyValue(IEnvironment.P_OS, text.getValue());
@@ -128,27 +181,25 @@ public class PortabilitySection extends PDESection implements IPartSelectionList
 					PDEPlugin.logException(e);
 				}
 			}
-			public void browseButtonSelected(FormEntry entry) {
-				BusyIndicator
-				.showWhile(
-					osText.getText().getDisplay(),
-					new Runnable() {
-				public void run() {
-					Choice[] choices =
-						ReferencePropertySource.getOSChoices();
-					openPortabilityChoiceDialog(osText, choices);
-				}
-			});
-			}
 		});
-		limitTextWidth(osText);
+		limitTextWidth(fOsText);
+		fOsText.setEditable(isEditable());
 
-		wsText =
-			new FormEntry(container, toolkit,
-					PDEPlugin.getResourceString(SECTION_WS),
-					editLabel, 
-					false);
-		wsText.setFormEntryListener(new FormEntryAdapter(this) {
+		fWsText = new FormEntry(container, toolkit, PDEPlugin
+				.getResourceString(SECTION_WS), editLabel, false);
+		fWsText.setFormEntryListener(new FormEntryAdapter(this) {
+
+			public void browseButtonSelected(FormEntry entry) {
+				BusyIndicator.showWhile(fWsText.getText().getDisplay(),
+						new Runnable() {
+							public void run() {
+								Choice[] choices = getWSChoices();
+								openPortabilityChoiceDialog(IEnvironment.P_WS,
+										fWsText, choices);
+							}
+						});
+			}
+
 			public void textValueChanged(FormEntry text) {
 				try {
 					applyValue(IEnvironment.P_WS, text.getValue());
@@ -156,60 +207,52 @@ public class PortabilitySection extends PDESection implements IPartSelectionList
 					PDEPlugin.logException(e);
 				}
 			}
-			public void browseButtonSelected(FormEntry entry) {
-				BusyIndicator
-				.showWhile(
-					wsText.getText().getDisplay(),
-					new Runnable() {
-						public void run() {
-							Choice[] choices =
-								ReferencePropertySource.getWSChoices();
-							openPortabilityChoiceDialog(wsText, choices);
-						}
-					});
-			}
 		});
-		limitTextWidth(wsText);
+		limitTextWidth(fWsText);
+		fWsText.setEditable(isEditable());
 
-		if (!reactToSelections) {
-			nlText =
-				new FormEntry(container,
-						toolkit,
-						PDEPlugin.getResourceString(SECTION_NL),
-						editLabel,
-						false);
+		fNlText = new FormEntry(container, toolkit, PDEPlugin
+				.getResourceString(SECTION_NL), editLabel, false);
 
-			nlText.setFormEntryListener(new FormEntryAdapter(this) {
-				public void textValueChanged(FormEntry text) {
-					try {
-						applyValue(IFeature.P_NL, text.getValue());
-					} catch (CoreException e) {
-						PDEPlugin.logException(e);
-					}
-				}
-				public void browseButtonSelected(FormEntry entry) {
-					BusyIndicator
-					.showWhile(
-						nlText.getText().getDisplay(),
+		fNlText.setFormEntryListener(new FormEntryAdapter(this) {
+
+			public void browseButtonSelected(FormEntry entry) {
+				BusyIndicator.showWhile(fNlText.getText().getDisplay(),
 						new Runnable() {
 							public void run() {
-								Choice[] choices =
-									ReferencePropertySource.getNLChoices();
-								openPortabilityChoiceDialog(nlText, choices);
+								Choice[] choices = getNLChoices();
+								openPortabilityChoiceDialog(IEnvironment.P_NL,
+										fNlText, choices);
 							}
 						});
-				}
-			});
-			limitTextWidth(nlText);
-		}
+			}
 
-		archText =
-			new FormEntry(container,
-					toolkit,
-					PDEPlugin.getResourceString(SECTION_ARCH),
-					editLabel,
-					false);
-		archText.setFormEntryListener(new FormEntryAdapter(this) {
+			public void textValueChanged(FormEntry text) {
+				try {
+					applyValue(IEnvironment.P_NL, text.getValue());
+				} catch (CoreException e) {
+					PDEPlugin.logException(e);
+				}
+			}
+		});
+		limitTextWidth(fNlText);
+		fNlText.setEditable(isEditable());
+
+		fArchText = new FormEntry(container, toolkit, PDEPlugin
+				.getResourceString(SECTION_ARCH), editLabel, false);
+		fArchText.setFormEntryListener(new FormEntryAdapter(this) {
+
+			public void browseButtonSelected(FormEntry entry) {
+				BusyIndicator.showWhile(fArchText.getText().getDisplay(),
+						new Runnable() {
+							public void run() {
+								Choice[] choices = getArchChoices();
+								openPortabilityChoiceDialog(
+										IEnvironment.P_ARCH, fArchText, choices);
+							}
+						});
+			}
+
 			public void textValueChanged(FormEntry text) {
 				try {
 					applyValue(IEnvironment.P_ARCH, text.getValue());
@@ -217,231 +260,87 @@ public class PortabilitySection extends PDESection implements IPartSelectionList
 					PDEPlugin.logException(e);
 				}
 			}
-			public void browseButtonSelected(FormEntry entry) {
-				BusyIndicator
-				.showWhile(
-					archText.getText().getDisplay(),
-					new Runnable() {
-						public void run() {
-							Choice[] choices =
-								ReferencePropertySource.getArchChoices();
-							openPortabilityChoiceDialog(archText, choices);
-						}
-				});
-			}
 
 		});
-		limitTextWidth(archText);
+		limitTextWidth(fArchText);
+		fArchText.setEditable(isEditable());
+
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
 	}
 
-	private void limitTextWidth(FormEntry entry) {
-		GridData gd = (GridData) entry.getText().getLayoutData();
-		if (reactToSelections) gd.widthHint = 30;
-		else gd.widthHint = 150;
-	}
-
-	private void openPortabilityChoiceDialog(
-		FormEntry text,
-		Choice[] choices) {
-		String value = text.getValue();
-
-		PortabilityChoicesDialog dialog =
-			new PortabilityChoicesDialog(
-				PDEPlugin.getActiveWorkbenchShell(),
-				choices,
-				value);
-		dialog.create();
-		dialog.getShell().setText(
-			PDEPlugin.getResourceString(KEY_DIALOG_TITLE));
-		//dialog.getShell().setSize(300, 400);
-		int result = dialog.open();
-		if (result == PortabilityChoicesDialog.OK) {
-			value = dialog.getValue();
-			text.setValue(value);
-		}
-	}
-
-	private IFeature getFeature() {
-		IFeatureModel model = (IFeatureModel) getPage().getModel();
-		return model.getFeature();
-	}
-
-	private void applyValue(String property, String value)
-		throws CoreException {
-		if (reactToSelections) {
-			if (currentInput == null)
-				return;
-			for (Iterator iter = currentInput.iterator(); iter.hasNext();) {
-				IEnvironment env = (IEnvironment) iter.next();
-				applyValue(env, property, value);
-			}
-		} else {
-			applyValue(getFeature(), property, value);
-		}
-	}
-
-	private void setValue(String property) {
-		if (reactToSelections) {
-			if (currentInput == null) {
-				clearField(property);
-			} else if (currentInput.size() == 1) {
-				setValue(
-					(IEnvironment) currentInput.getFirstElement(),
-					property);
-			} else {
-				IEnvironment leader = null;
-				String lvalue = null;
-				for (Iterator iter = currentInput.iterator();
-					iter.hasNext();
-					) {
-					IEnvironment next = (IEnvironment) iter.next();
-					if (leader == null) {
-						String nvalue = getValue(next, property);
-						if (nvalue == null)
-							break;
-						leader = next;
-						lvalue = nvalue;
-					} else {
-						String nvalue = getValue(next, property);
-						if (nvalue == null || !lvalue.equals(nvalue)) {
-							leader = null;
-							break;
-						}
-					}
-				}
-				if (leader == null) {
-					clearField(property);
-				} else
-					setValue(leader, property);
-			}
-		} else {
-			setValue(getFeature(), property);
-		}
-	}
-
-	private String getValue(IEnvironment obj, String property) {
-		if (property.equals(IEnvironment.P_OS))
-			return obj.getOS();
-		if (property.equals(IEnvironment.P_WS))
-			return obj.getWS();
-		if (property.equals(IEnvironment.P_ARCH))
-			return obj.getArch();
-		return null;
-	}
-
-	private void applyValue(IEnvironment obj, String property, String value)
-		throws CoreException {
-		if (property.equals(IFeature.P_NL))
-			 ((IFeature) obj).setNL(value);
-		else if (property.equals(IFeature.P_OS))
-			obj.setOS(value);
-		else if (property.equals(IFeature.P_WS))
-			obj.setWS(value);
-		else if (property.equals(IFeature.P_ARCH))
-			obj.setArch(value);
-	}
-
-	private void setValue(IEnvironment obj, String property) {
-		if (property.equals(IFeature.P_NL))
-			setIfDefined(nlText, ((IFeature) obj).getNL());
-		else if (property.equals(IFeature.P_OS))
-			setIfDefined(osText, obj.getOS());
-		else if (property.equals(IFeature.P_WS))
-			setIfDefined(wsText, obj.getWS());
-		else if (property.equals(IFeature.P_ARCH))
-			setIfDefined(archText, obj.getArch());
-	}
-
 	public void dispose() {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
-		if (model!=null)
+		if (model != null)
 			model.removeModelChangedListener(this);
 		super.dispose();
 	}
 
-	public void initialize() {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.forms.AbstractFormPart#initialize(org.eclipse.ui.forms.IManagedForm)
+	 */
+	public void initialize(IManagedForm form) {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
-		enableForInput(model.isEditable());
-		refresh();
-		model.addModelChangedListener(this);
+		if (model != null)
+			model.addModelChangedListener(this);
+		super.initialize(form);
+	}
+
+	private void limitTextWidth(FormEntry entry) {
+		GridData gd = (GridData) entry.getText().getLayoutData();
+		gd.widthHint = 30;
 	}
 
 	public void modelChanged(IModelChangedEvent e) {
-		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
-			markStale();
+		markStale();
+	}
+
+	private void openPortabilityChoiceDialog(String property, FormEntry text,
+			Choice[] choices) {
+		String value = text.getValue();
+
+		PortabilityChoicesDialog dialog = new PortabilityChoicesDialog(
+				PDEPlugin.getActiveWorkbenchShell(), choices, value);
+		dialog.create();
+		dialog.getShell().setText(PDEPlugin.getResourceString(DIALOG_TITLE));
+
+		int result = dialog.open();
+		if (result == Window.OK) {
+			value = dialog.getValue();
+			text.setValue(value);
+			try {
+				applyValue(property, value);
+			} catch (CoreException e) {
+				PDEPlugin.logException(e);
+			}
 		}
-	}
-	public void setFocus() {
-		if (osText != null)
-			osText.getText().setFocus();
-	}
-
-	private void setIfDefined(FormEntry formText, String value) {
-		formText.setValue(value, true);
-	}
-
-	private void enableForInput(boolean enable) {
-		osText.getText().setEditable(enable);
-		wsText.getText().setEditable(enable);
-		if (nlText != null)
-			nlText.getText().setEditable(enable);
-		archText.getText().setEditable(enable);
-		osText.getButton().setEnabled(enable);
-		wsText.getButton().setEnabled(enable);
-		if (nlText != null)
-			nlText.getButton().setEnabled(enable);
-		archText.getButton().setEnabled(enable);
-	}
-
-	private void clearFields() {
-		osText.setValue(null, true);
-		wsText.setValue(null, true);
-		if (nlText != null)
-			nlText.setValue(null, true);
-		archText.setValue(null, true);
-	}
-	
-	private void clearField(String property) {
-		if (property.equals(IEnvironment.P_OS))
-			osText.setValue(null, true);
-		else if (property.equals(IEnvironment.P_WS))
-			wsText.setValue(null, true);
-		else if (property.equals(IEnvironment.P_ARCH))
-			archText.setValue(null, true);
 	}
 
 	public void refresh() {
-		if (reactToSelections && currentInput == null) {
-			clearFields();
-			enableForInput(false);
-			super.refresh();
-			return;
-		}
-		enableForInput(true);
 		setValue(IEnvironment.P_OS);
 		setValue(IEnvironment.P_WS);
 		setValue(IEnvironment.P_ARCH);
-		if (nlText != null)
-			setValue(IFeature.P_NL);
+		setValue(IEnvironment.P_NL);
 		super.refresh();
 	}
 
-	public void selectionChanged(IFormPart part, ISelection selection) {
-		if (selection instanceof IStructuredSelection) {
-			currentInput = (IStructuredSelection) selection;
-			if (currentInput.isEmpty())
-				currentInput = null;
-		} else
-			currentInput = null;
-		refresh();
+	public void setFocus() {
+		if (fOsText != null)
+			fOsText.getText().setFocus();
 	}
-	public void cancelEdit() {
-		osText.cancelEdit();
-		wsText.cancelEdit();
-		nlText.cancelEdit();
-		archText.cancelEdit();
-		super.cancelEdit();
+
+	private void setValue(String property) {
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
+		IFeature feature = model.getFeature();
+		if (property.equals(IEnvironment.P_NL))
+			fNlText.setValue(feature.getNL(), true);
+		else if (property.equals(IEnvironment.P_OS))
+			fOsText.setValue(feature.getOS(), true);
+		else if (property.equals(IEnvironment.P_WS))
+			fWsText.setValue(feature.getWS(), true);
+		else if (property.equals(IEnvironment.P_ARCH))
+			fArchText.setValue(feature.getArch(), true);
 	}
 }

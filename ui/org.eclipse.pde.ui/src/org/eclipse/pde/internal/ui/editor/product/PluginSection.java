@@ -328,10 +328,17 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
 	public void modelChanged(IModelChangedEvent e) {
+		Object[] objects = e.getChangedObjects();
 		if (e.getChangeType() == IModelChangedEvent.INSERT) {
-			fPluginTable.add(e.getChangedObjects());
+			for (int i = 0; i < objects.length; i++) {
+				if (objects[i] instanceof IProductPlugin)
+					fPluginTable.add(objects[i]);
+			}
 		} else if (e.getChangeType() == IModelChangedEvent.REMOVE) {
-			fPluginTable.remove(e.getChangedObjects());
+			for (int i = 0; i < objects.length; i++) {
+				if (objects[i] instanceof IProductPlugin)
+					fPluginTable.remove(objects[i]);
+			}
 		}
 	}
 	

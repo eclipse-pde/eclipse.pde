@@ -2,6 +2,7 @@ package org.eclipse.pde.internal.ui.editor.product;
 
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.iproduct.*;
@@ -9,25 +10,38 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.pde.internal.ui.parts.*;
+import org.eclipse.pde.internal.ui.util.*;
+import org.eclipse.pde.internal.ui.wizards.feature.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.widgets.*;
 
 
-public class FeatureSection extends TableSection implements IPluginModelListener{
+public class FeatureSection extends TableSection {
 	
 	class ContentProvider extends DefaultTableProvider {
 		public Object[] getElements(Object parent) {
-			return getProduct().getPlugins();
+			return getProduct().getFeatures();
 		}
 	}
 
 	private TableViewer fFeatureTable;
 
 	public FeatureSection(PDEFormPage formPage, Composite parent) {
-		super(formPage, parent, Section.DESCRIPTION, new String[] {PDEPlugin.getResourceString("Product.FeatureSection.add")}); //$NON-NLS-1$
+		super(formPage, parent, Section.DESCRIPTION, getButtonLabels()); //$NON-NLS-1$
 	}
+	
+	private static String[] getButtonLabels() {
+		String[] labels = new String[5];
+		labels[0] = PDEPlugin.getResourceString("Product.FeatureSection.add"); //$NON-NLS-1$
+		labels[1] = PDEPlugin.getResourceString("Product.PluginSection.removeAll"); //$NON-NLS-1$
+		labels[2] = null;
+		labels[3] = null;
+		labels[4] = "New Feature...";
+		return labels;
+	}
+
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
@@ -41,6 +55,7 @@ public class FeatureSection extends TableSection implements IPluginModelListener
 		fFeatureTable = tablePart.getTableViewer();
 		fFeatureTable.setContentProvider(new ContentProvider());
 		fFeatureTable.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
+		fFeatureTable.setInput(PDECore.getDefault().getWorkspaceModelManager());
 		
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
@@ -49,17 +64,55 @@ public class FeatureSection extends TableSection implements IPluginModelListener
 		gd.verticalSpan = 2;
 		section.setLayoutData(gd);
 		section.setText(PDEPlugin.getResourceString("Product.FeatureSection.title")); //$NON-NLS-1$
-		section.setDescription(PDEPlugin.getResourceString("Product.FeatureSection.desc")); //$NON-NLS-1$
-		
+		section.setDescription(PDEPlugin.getResourceString("Product.FeatureSection.desc")); //$NON-NLS-1$		
+
+		getProduct().getModel().addModelChangedListener(this);	
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#buttonSelected(int)
 	 */
 	protected void buttonSelected(int index) {
-		handleAdd();
+		switch (index) {
+		case 0:
+			handleAdd();
+			break;
+		case 1: 
+			handleRemoveAll();
+			break;
+		case 4:
+			handleNewFeature();
+		}
 	}
 	
+	private void handleNewFeature() {
+		NewFeatureProjectWizard wizard = new NewFeatureProjectWizard();
+		WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
+		dialog.create();
+		SWTUtil.setDialogSize(dialog, 400, 500);
+		if (dialog.open() == WizardDialog.OK) {
+			addFeature(wizard.getFeatureId(), wizard.getFeatureVersion());
+		}
+	}
+	
+	private void addFeature(String id, String version) {
+		IProduct product = getProduct();
+		IProductModelFactory factory = product.getModel().getFactory();
+		IProductFeature feature = factory.createFeature();
+		feature.setId(id);
+		feature.setVersion(version);
+		product.addFeature(feature);
+	}
+	
+
+	private void handleRemoveAll() {
+		TableItem[] items = fFeatureTable.getTable().getItems();
+		IProduct product = getProduct();
+		for (int i = 0; i < items.length; i++) {
+			product.removeFeature((IProductFeature)items[i].getData());
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.TableSection#handleDoubleClick(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
@@ -71,6 +124,7 @@ public class FeatureSection extends TableSection implements IPluginModelListener
 	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
 	 */
 	public void dispose() {
+		getProduct().getModel().removeModelChangedListener(this);
 		super.dispose();
 	}
 	
@@ -103,7 +157,18 @@ public class FeatureSection extends TableSection implements IPluginModelListener
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
 	public void modelChanged(IModelChangedEvent e) {
-		super.modelChanged(e);
+		Object[] objects = e.getChangedObjects();
+		if (e.getChangeType() == IModelChangedEvent.INSERT) {
+			for (int i = 0; i < objects.length; i++) {
+				if (objects[i] instanceof IProductFeature)
+					fFeatureTable.add(objects[i]);
+			}
+		} else if (e.getChangeType() == IModelChangedEvent.REMOVE) {
+			for (int i = 0; i < objects.length; i++) {
+				if (objects[i] instanceof IProductFeature)
+					fFeatureTable.remove(objects[i]);
+			}
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -113,21 +178,5 @@ public class FeatureSection extends TableSection implements IPluginModelListener
 		fFeatureTable.refresh();
 		super.refresh();
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.IPluginModelListener#modelsChanged(org.eclipse.pde.internal.core.PluginModelDelta)
-	 */
-	public void modelsChanged(PluginModelDelta delta) {
-		final Control control = fFeatureTable.getControl();
-		if (!control.isDisposed()) {
-			control.getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					if (!control.isDisposed())
-						fFeatureTable.refresh();
-				}
-			});
-		}
-	}
-	
 
 }

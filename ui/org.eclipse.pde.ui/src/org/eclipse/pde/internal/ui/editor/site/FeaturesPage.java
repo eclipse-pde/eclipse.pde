@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.editor.site;
 import org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.editor.PDEDetailsSections;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDEMasterDetailsBlock;
@@ -27,16 +28,16 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
  */
 public class FeaturesPage extends PDEFormPage {
 	public static final String PAGE_ID = "features"; //$NON-NLS-1$
-	private CategorySection categorySection;
-	private SiteFeaturesBlock block;
+	private CategorySection fCategorySection;
+	private SiteFeaturesBlock fBlock;
 	public class SiteFeaturesBlock extends PDEMasterDetailsBlock {
 		public SiteFeaturesBlock() {
 			super(FeaturesPage.this);
 		}
 		protected PDESection createMasterSection(IManagedForm managedForm,
 				Composite parent) {
-			categorySection = new CategorySection(getPage(), parent);
-			return categorySection;
+			fCategorySection = new CategorySection(getPage(), parent);
+			return fCategorySection;
 		}
 		protected void registerPages(DetailsPart detailsPart) {
 			detailsPart.setPageProvider(new IDetailsPageProvider() {
@@ -49,9 +50,9 @@ public class FeaturesPage extends PDEFormPage {
 				}
 				public IDetailsPage getPage(Object key) {
 					if (key.equals(SiteFeatureAdapter.class))
-						return new FeatureDetails();
+						return createFeatureDetails();
 					if (key.equals(ISiteCategoryDefinition.class))
-						return new CategoryDetails();
+						return createCategoryDetails();
 					return null;
 				}
 			});
@@ -60,15 +61,50 @@ public class FeaturesPage extends PDEFormPage {
 	
 	public FeaturesPage(PDEFormEditor editor) {
 		super(editor, PAGE_ID, PDEPlugin.getResourceString("FeaturesPage.title")); //$NON-NLS-1$
-		block = new SiteFeaturesBlock();
+		fBlock = new SiteFeaturesBlock();
 	}
 	protected void createFormContent(IManagedForm managedForm) {
 		
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
 		form.setText(PDEPlugin.getResourceString("FeaturesPage.header")); //$NON-NLS-1$
-		block.createContent(managedForm);
-		categorySection.fireSelection();
+		fBlock.createContent(managedForm);
+		fCategorySection.fireSelection();
 
+	}
+	/**
+	 * @return
+	 */
+	private IDetailsPage createFeatureDetails() {
+		return new PDEDetailsSections() {
+			protected PDESection[] createSections(
+					PDEFormPage page, Composite parent) {
+				return new PDESection[] {
+						new FeatureDetailsSection(getPage(),
+								parent),
+						new PortabilitySection(getPage(),
+								parent) };
+			}
+
+			public String getContextId() {
+				return SiteInputContext.CONTEXT_ID;
+			}
+		};
+	}
+	/**
+	 * @return
+	 */
+	private IDetailsPage createCategoryDetails() {
+		return new PDEDetailsSections() {
+			protected PDESection[] createSections(
+					PDEFormPage page, Composite parent) {
+				return new PDESection[] { new CategoryDetailsSection(
+						getPage(), parent) };
+			}
+
+			public String getContextId() {
+				return SiteInputContext.CONTEXT_ID;
+			}
+		};
 	}
 }

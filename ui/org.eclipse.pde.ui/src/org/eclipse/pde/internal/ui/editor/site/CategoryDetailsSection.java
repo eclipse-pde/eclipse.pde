@@ -58,17 +58,19 @@ public class CategoryDetailsSection extends PDESection implements IFormPart,
 
 	public static final String SECTION_TITLE = "CategoryDetails.title"; //$NON-NLS-1$
 
-	private ISiteCategoryDefinition currentCategoryDefinition;
+	private ISiteCategoryDefinition fCurrentCategoryDefinition;
 
-	private FormEntry descriptionText;
+	private FormEntry fDescriptionText;
 
-	private FormEntry labelText;
+	private FormEntry fLabelText;
 
-	private FormEntry nameText;
+	private FormEntry fNameText;
 
 	public CategoryDetailsSection(PDEFormPage page, Composite parent) {
 		this(page, parent, PDEPlugin.getResourceString(SECTION_TITLE),
 				PDEPlugin.getResourceString(SECTION_SECT_DESC), SWT.NULL);
+		getSection().setLayoutData(new GridData(GridData.FILL_BOTH));
+
 	}
 
 	public CategoryDetailsSection(PDEFormPage page, Composite parent,
@@ -80,11 +82,11 @@ public class CategoryDetailsSection extends PDESection implements IFormPart,
 	}
 
 	private boolean alreadyExists(String name) {
-		ISiteCategoryDefinition[] defs = currentCategoryDefinition.getModel()
+		ISiteCategoryDefinition[] defs = fCurrentCategoryDefinition.getModel()
 				.getSite().getCategoryDefinitions();
 		for (int i = 0; i < defs.length; i++) {
 			ISiteCategoryDefinition def = defs[i];
-			if (def == currentCategoryDefinition)
+			if (def == fCurrentCategoryDefinition)
 				continue;
 			String dname = def.getName();
 			if (dname != null && dname.equals(name))
@@ -94,26 +96,26 @@ public class CategoryDetailsSection extends PDESection implements IFormPart,
 	}
 
 	private void applyValue(String property, String value) throws CoreException {
-		if (currentCategoryDefinition == null)
+		if (fCurrentCategoryDefinition == null)
 			return;
 		if (property.equals(PROPERTY_NAME)){
-			String oldName = currentCategoryDefinition.getName();
-			currentCategoryDefinition.setName(value);
+			String oldName = fCurrentCategoryDefinition.getName();
+			fCurrentCategoryDefinition.setName(value);
 			bringFeatures(oldName);
 		} else if (property.equals(PROPERTY_TYPE))
-			currentCategoryDefinition.setLabel(value);
+			fCurrentCategoryDefinition.setLabel(value);
 		else if (property.equals(PROPERTY_DESC)) {
 			if (value == null || value.length() == 0) {
-				currentCategoryDefinition.setDescription(null);
+				fCurrentCategoryDefinition.setDescription(null);
 			} else {
-				ISiteDescription siteDesc = currentCategoryDefinition
+				ISiteDescription siteDesc = fCurrentCategoryDefinition
 						.getDescription();
 				if (siteDesc == null) {
-					siteDesc = currentCategoryDefinition.getModel()
+					siteDesc = fCurrentCategoryDefinition.getModel()
 							.getFactory().createDescription(
-									currentCategoryDefinition);
+									fCurrentCategoryDefinition);
 					siteDesc.setText(value);
-					currentCategoryDefinition.setDescription(siteDesc);
+					fCurrentCategoryDefinition.setDescription(siteDesc);
 				} else {
 					siteDesc.setText(value);
 				}
@@ -122,9 +124,9 @@ public class CategoryDetailsSection extends PDESection implements IFormPart,
 	}
 
 	public void cancelEdit() {
-		nameText.cancelEdit();
-		labelText.cancelEdit();
-		descriptionText.cancelEdit();
+		fNameText.cancelEdit();
+		fLabelText.cancelEdit();
+		fDescriptionText.cancelEdit();
 		super.cancelEdit();
 	}
 
@@ -143,23 +145,23 @@ public class CategoryDetailsSection extends PDESection implements IFormPart,
 
 	private void clearField(String property) {
 		if (property.equals(PROPERTY_NAME))
-			nameText.setValue(null, true);
+			fNameText.setValue(null, true);
 		else if (property.equals(PROPERTY_TYPE))
-			labelText.setValue(null, true);
+			fLabelText.setValue(null, true);
 		else if (property.equals(PROPERTY_DESC))
-			descriptionText.setValue(null, true);
+			fDescriptionText.setValue(null, true);
 	}
 
 	private void clearFields() {
-		nameText.setValue(null, true);
-		labelText.setValue(null, true);
-		descriptionText.setValue(null, true);
+		fNameText.setValue(null, true);
+		fLabelText.setValue(null, true);
+		fDescriptionText.setValue(null, true);
 	}
 
 	public void commit(boolean onSave) {
-		nameText.commit();
-		labelText.commit();
-		descriptionText.commit();
+		fNameText.commit();
+		fLabelText.commit();
+		fDescriptionText.commit();
 
 		super.commit(onSave);
 	}
@@ -172,9 +174,9 @@ public class CategoryDetailsSection extends PDESection implements IFormPart,
 		layout.horizontalSpacing = 6;
 		container.setLayout(layout);
 		
-		nameText = new FormEntry(container, toolkit, PDEPlugin
+		fNameText = new FormEntry(container, toolkit, PDEPlugin
 				.getResourceString(SECTION_NAME), null, false);
-		nameText.setFormEntryListener(new FormEntryAdapter(this) {
+		fNameText.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
 				try {
 					if (text.getValue().length() <= 0
@@ -196,12 +198,12 @@ public class CategoryDetailsSection extends PDESection implements IFormPart,
 				}
 			}
 		});
-		limitTextWidth(nameText);
-		nameText.setEditable(isEditable());
+		limitTextWidth(fNameText);
+		fNameText.setEditable(isEditable());
 
-		labelText = new FormEntry(container, toolkit, PDEPlugin
+		fLabelText = new FormEntry(container, toolkit, PDEPlugin
 				.getResourceString(SECTION_LABEL), null, false);
-		labelText.setFormEntryListener(new FormEntryAdapter(this) {
+		fLabelText.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
 				try {
 					applyValue(PROPERTY_TYPE, text.getValue());
@@ -210,15 +212,15 @@ public class CategoryDetailsSection extends PDESection implements IFormPart,
 				}
 			}
 		});
-		limitTextWidth(labelText);
-		labelText.setEditable(isEditable());
+		limitTextWidth(fLabelText);
+		fLabelText.setEditable(isEditable());
 
-		descriptionText = new FormEntry(container, toolkit, PDEPlugin
+		fDescriptionText = new FormEntry(container, toolkit, PDEPlugin
 				.getResourceString(SECTION_DESC), SWT.WRAP | SWT.MULTI);
-		descriptionText.getText().setLayoutData(
+		fDescriptionText.getText().setLayoutData(
 				new GridData(GridData.FILL_BOTH));
 
-		descriptionText.setFormEntryListener(new FormEntryAdapter(this) {
+		fDescriptionText.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
 				try {
 					applyValue(PROPERTY_DESC, text.getValue());
@@ -227,8 +229,8 @@ public class CategoryDetailsSection extends PDESection implements IFormPart,
 				}
 			}
 		});
-		limitTextWidth(descriptionText);
-		descriptionText.setEditable(isEditable());
+		limitTextWidth(fDescriptionText);
+		fDescriptionText.setEditable(isEditable());
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
 
@@ -254,14 +256,14 @@ public class CategoryDetailsSection extends PDESection implements IFormPart,
 	}
 
 	private void bringFeatures(String oldCategory){
-		ISiteFeature[] siteFeatures = currentCategoryDefinition.getModel()
+		ISiteFeature[] siteFeatures = fCurrentCategoryDefinition.getModel()
 				.getSite().getFeatures();
 		for (int i = 0; i < siteFeatures.length; i++) {
 			ISiteCategory[] categories = siteFeatures[i].getCategories();
 			for (int c = 0; c < categories.length; c++) {
 				if (oldCategory.equals(categories[c].getName())) {
 					try {
-						categories[c].setName(currentCategoryDefinition
+						categories[c].setName(fCurrentCategoryDefinition
 								.getName());
 					} catch (CoreException ce) {
 					}
@@ -270,7 +272,7 @@ public class CategoryDetailsSection extends PDESection implements IFormPart,
 		}
 	}
 	public void refresh() {
-		if (currentCategoryDefinition == null) {
+		if (fCurrentCategoryDefinition == null) {
 			clearFields();
 			super.refresh();
 			return;
@@ -285,35 +287,35 @@ public class CategoryDetailsSection extends PDESection implements IFormPart,
 		if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
 			Object o = ((IStructuredSelection) selection).getFirstElement();
 			if (o instanceof ISiteCategoryDefinition) {
-				currentCategoryDefinition = (ISiteCategoryDefinition) o;
+				fCurrentCategoryDefinition = (ISiteCategoryDefinition) o;
 			} else {
-				currentCategoryDefinition = null;
+				fCurrentCategoryDefinition = null;
 			}
 		} else
-			currentCategoryDefinition = null;
+			fCurrentCategoryDefinition = null;
 		refresh();
 	}
 
 	public void setFocus() {
-		if (nameText != null)
-			nameText.getText().setFocus();
+		if (fNameText != null)
+			fNameText.getText().setFocus();
 	}
 
 	private void setValue(String property) {
-		if (currentCategoryDefinition == null) {
+		if (fCurrentCategoryDefinition == null) {
 			clearField(property);
 		} else {
 			if (property.equals(PROPERTY_NAME))
-				nameText.setValue(currentCategoryDefinition.getName(), true);
+				fNameText.setValue(fCurrentCategoryDefinition.getName(), true);
 			else if (property.equals(PROPERTY_TYPE))
-				labelText.setValue(currentCategoryDefinition.getLabel(), true);
+				fLabelText.setValue(fCurrentCategoryDefinition.getLabel(), true);
 			else if (property.equals(PROPERTY_DESC)) {
-				ISiteDescription siteDesc = currentCategoryDefinition
+				ISiteDescription siteDesc = fCurrentCategoryDefinition
 						.getDescription();
 				if (siteDesc == null) {
 					clearField(property);
 				} else {
-					descriptionText.setValue(siteDesc.getText(), true);
+					fDescriptionText.setValue(siteDesc.getText(), true);
 				}
 
 			}

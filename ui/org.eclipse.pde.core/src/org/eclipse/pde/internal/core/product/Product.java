@@ -75,7 +75,6 @@ public class Product extends ProductObject implements IProduct {
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#setAboutInfo(org.eclipse.pde.internal.core.iproduct.IAboutInfo)
 	 */
 	public void setAboutInfo(IAboutInfo info) {
-		info.setInTheModel(true);
 		fAboutInfo = info;
 	}
 
@@ -240,7 +239,7 @@ public class Product extends ProductObject implements IProduct {
 				if (child.getNodeName().equals("feature")) { //$NON-NLS-1$
 					IProductFeature feature = getModel().getFactory().createFeature();
 					feature.parse(child);
-					fPlugins.put(feature.getId(), feature);
+					fFeatures.put(feature.getId(), feature);
 				}
 			}
 		}
@@ -254,8 +253,8 @@ public class Product extends ProductObject implements IProduct {
 		if (fPlugins.containsKey(id))
 			return;
 		
+		plugin.setModel(getModel());
 		fPlugins.put(id, plugin);
-		plugin.setInTheModel(true);
 		if (isEditable())
 			fireStructureChanged(plugin, IModelChangedEvent.INSERT);
 	}
@@ -265,7 +264,6 @@ public class Product extends ProductObject implements IProduct {
 	 */
 	public void removePlugin(IProductPlugin plugin) {
 		fPlugins.remove(plugin.getId());
-		plugin.setInTheModel(false);
 		if (isEditable())
 			fireStructureChanged(plugin, IModelChangedEvent.REMOVE);
 	}
@@ -288,7 +286,6 @@ public class Product extends ProductObject implements IProduct {
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#setConfigurationFileInfo(org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo)
 	 */
 	public void setConfigurationFileInfo(IConfigurationFileInfo info) {
-		info.setInTheModel(true);
 		fConfigIniInfo = info;
 	}
 
@@ -334,7 +331,6 @@ public class Product extends ProductObject implements IProduct {
 	}
 
 	public void setWindowImages(IWindowImages images) {
-		images.setInTheModel(true);
 		fWindowImages = images;
 	}
 
@@ -343,7 +339,6 @@ public class Product extends ProductObject implements IProduct {
 	}
 
 	public void setSplashInfo(ISplashInfo info) {
-		info.setInTheModel(true);
 		fSplashInfo = info;
 	}
 
@@ -352,7 +347,6 @@ public class Product extends ProductObject implements IProduct {
 	}
 
 	public void setLauncherInfo(ILauncherInfo info) {
-		info.setInTheModel(true);
 		fLauncherInfo = info;
 	}
 
@@ -361,15 +355,14 @@ public class Product extends ProductObject implements IProduct {
 		if (fFeatures.containsKey(id))
 			return;
 		
-		fPlugins.put(id, feature);
-		feature.setInTheModel(true);
+		feature.setModel(getModel());
+		fFeatures.put(id, feature);
 		if (isEditable())
 			fireStructureChanged(feature, IModelChangedEvent.INSERT);
 	}
 
 	public void removeFeature(IProductFeature feature) {
 		fFeatures.remove(feature.getId());
-		feature.setInTheModel(false);
 		if (isEditable())
 			fireStructureChanged(feature, IModelChangedEvent.REMOVE);
 	}

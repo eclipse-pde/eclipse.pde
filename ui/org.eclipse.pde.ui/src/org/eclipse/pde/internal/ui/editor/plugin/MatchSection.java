@@ -74,7 +74,7 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 				&& versionText.getText().isEnabled()) {
 			versionText.commit();
 			String value = versionText.getValue();
-			int match = IPluginImport.NONE;
+			int match = IMatchRules.NONE;
 			if (value != null && value.length() > 0) {
 				applyVersion(value);
 				match = getMatch();

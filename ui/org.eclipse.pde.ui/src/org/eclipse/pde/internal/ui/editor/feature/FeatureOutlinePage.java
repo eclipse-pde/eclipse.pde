@@ -9,44 +9,74 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
-import java.util.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+
+import java.util.Vector;
+
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.pde.internal.core.ifeature.IFeature;
+import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
+import org.eclipse.pde.internal.core.ifeature.IFeatureData;
+import org.eclipse.pde.internal.core.ifeature.IFeatureImport;
+import org.eclipse.pde.internal.core.ifeature.IFeatureInfo;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
+import org.eclipse.pde.internal.core.ifeature.IFeatureURL;
+import org.eclipse.pde.internal.core.ifeature.IFeatureURLElement;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.editor.FormOutlinePage;
+import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
+import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.editor.build.BuildInputContext;
+import org.eclipse.pde.internal.ui.editor.build.BuildPage;
+import org.eclipse.pde.internal.ui.editor.context.InputContext;
+import org.eclipse.pde.internal.ui.elements.NamedElement;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.editor.IFormPage;
 
 public class FeatureOutlinePage extends FormOutlinePage {
-	private static final String KEY_REFERENCED_PLUGINS = "FeatureEditor.Outline.referencedPlugins"; //$NON-NLS-1$
-	private static final String KEY_REQUIRED_PLUGINS = "FeatureEditor.Outline.requiredPlugins"; //$NON-NLS-1$
-	private NamedElement referencedPlugins, requiredPlugins;
 	class ContentProvider extends BasicContentProvider {
 		public Object[] getChildren(Object parent) {
 			IFeatureModel model = (IFeatureModel) editor.getAggregateModel();
 			if (model.isValid()) {
 				if (parent instanceof FeatureFormPage) {
-					return getURLs();
+					return new Object[0];
 				}
 				if (parent instanceof InfoFormPage) {
 					return getInfos();
 				}
+				if (parent.equals(fDiscoveryUrls)) {
+					return getURLs();
+				}
 				if (parent instanceof FeatureReferencePage) {
-					return new Object[]{referencedPlugins, requiredPlugins};
-				}
-				if (parent.equals(requiredPlugins)) {
-					return getImports();
-				}
-				if (parent.equals(referencedPlugins)) {
 					return getReferences();
 				}
+				if (parent instanceof FeatureIncludesPage) {
+					return getIncludes();
+				}
+				if (parent instanceof FeatureDependenciesPage) {
+					return getImports();
+				}
+				if (parent instanceof FeatureAdvancedPage) {
+					return getData();
+				}
 			}
+			if (parent instanceof PDEFormPage) {
+				PDEFormPage page = (PDEFormPage) parent;
+				IBuildModel buildModel = getBuildModel();
+				if (buildModel != null && buildModel.isValid()) {
+					if (page.getId().equals(BuildPage.PAGE_ID))
+						return buildModel.getBuild().getBuildEntries();
+				}
+			}
+
 			return super.getChildren(parent);
 		}
+
 		public Object getParent(Object child) {
 			String pageId = getParentPageId(child);
 			if (pageId != null)
@@ -54,41 +84,51 @@ public class FeatureOutlinePage extends FormOutlinePage {
 			return super.getParent(child);
 		}
 	}
+
+	private NamedElement fDiscoveryUrls;
+
 	public FeatureOutlinePage(PDEFormEditor editor) {
 		super(editor);
-		Image folderImage = PlatformUI.getWorkbench().getSharedImages()
-				.getImage(ISharedImages.IMG_OBJ_FOLDER);
-		requiredPlugins = new NamedElement(PDEPlugin
-				.getResourceString(KEY_REQUIRED_PLUGINS), folderImage);
-		referencedPlugins = new NamedElement(PDEPlugin
-				.getResourceString(KEY_REFERENCED_PLUGINS), folderImage);
+		Image folderImage = PDEPlugin.getDefault().getLabelProvider().get(
+				PDEPluginImages.DESC_DOC_SECTION_OBJ);
+		fDiscoveryUrls = new NamedElement(PDEPlugin
+				.getResourceString("FeatureOutlinePage.discoverUrls"), //$NON-NLS-1$
+				folderImage);
 	}
+
 	protected ITreeContentProvider createContentProvider() {
 		return new ContentProvider();
 	}
+
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		IFeatureModel model = (IFeatureModel) editor.getAggregateModel();
 		model.addModelChangedListener(this);
 	}
+
 	public void dispose() {
 		super.dispose();
 		IFeatureModel model = (IFeatureModel) editor.getAggregateModel();
 		model.removeModelChangedListener(this);
 	}
+
 	public String getParentPageId(Object item) {
-		if (item instanceof IFeatureURLElement)
-			return FeatureFormPage.PAGE_ID;
-		if (item.equals(requiredPlugins) || item.equals(referencedPlugins)
-				|| item instanceof IFeaturePlugin
-				|| item instanceof IFeatureImport)
+		if (item instanceof IFeaturePlugin)
 			return FeatureReferencePage.PAGE_ID;
-		if (item instanceof IFeatureInfo)
+		if (item instanceof IFeatureChild)
+			return FeatureIncludesPage.PAGE_ID;
+		if (item instanceof IFeatureImport)
+			return FeatureDependenciesPage.PAGE_ID;
+		if (item instanceof IFeatureInfo || item.equals(fDiscoveryUrls)
+				|| item instanceof IFeatureURLElement)
 			return InfoFormPage.PAGE_ID;
 		if (item instanceof IFeatureData)
 			return FeatureAdvancedPage.PAGE_ID;
+		else if (item instanceof IBuildEntry)
+			return BuildPage.PAGE_ID;
 		return super.getParentPageId(item);
 	}
+
 	private Object[] getInfos() {
 		IFeatureModel model = (IFeatureModel) editor.getAggregateModel();
 		IFeature feature = model.getFeature();
@@ -98,40 +138,50 @@ public class FeatureOutlinePage extends FormOutlinePage {
 			if (info != null)
 				result.add(info);
 		}
+		result.add(fDiscoveryUrls);
 		return result.toArray();
 	}
+
 	private Object[] getReferences() {
 		IFeatureModel model = (IFeatureModel) editor.getAggregateModel();
 		IFeature feature = model.getFeature();
 		return feature.getPlugins();
 	}
+
 	private Object[] getImports() {
 		IFeatureModel model = (IFeatureModel) editor.getAggregateModel();
 		IFeature feature = model.getFeature();
 		return feature.getImports();
 	}
+
+	private Object[] getIncludes() {
+		IFeatureModel model = (IFeatureModel) editor.getAggregateModel();
+		IFeature feature = model.getFeature();
+		return feature.getIncludedFeatures();
+	}
+
+	private Object[] getData() {
+		IFeatureModel model = (IFeatureModel) editor.getAggregateModel();
+		IFeature feature = model.getFeature();
+		return feature.getData();
+	}
+
 	private Object[] getURLs() {
 		IFeatureModel model = (IFeatureModel) editor.getAggregateModel();
 		IFeature feature = model.getFeature();
 		IFeatureURL url = feature.getURL();
 		if (url == null)
 			return new Object[0];
-		IFeatureURLElement[] updates = url.getUpdates();
-		IFeatureURLElement[] discoveries = url.getDiscoveries();
-		int size = updates.length + discoveries.length;
-		Object[] result = new Object[size];
-		System.arraycopy(updates, 0, result, 0, updates.length);
-		System.arraycopy(discoveries, 0, result, updates.length,
-				discoveries.length);
-		return result;
+		return url.getDiscoveries();
 	}
+
 	public Object getParent(Object object) {
-		if (object instanceof IFeaturePlugin)
-			return referencedPlugins;
-		if (object instanceof IFeatureImport)
-			return requiredPlugins;
+		if (object instanceof IFeatureURLElement) {
+			return fDiscoveryUrls;
+		}
 		return editor.findPage(getParentPageId(object));
 	}
+
 	public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			treeViewer.refresh();
@@ -171,5 +221,13 @@ public class FeatureOutlinePage extends FormOutlinePage {
 				}
 			}
 		}
+	}
+
+	private IBuildModel getBuildModel() {
+		InputContext context = editor.getContextManager().findContext(
+				BuildInputContext.CONTEXT_ID);
+		if (context != null)
+			return (IBuildModel) context.getModel();
+		return null;
 	}
 }

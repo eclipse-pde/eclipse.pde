@@ -10,268 +10,152 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import java.net.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Iterator;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.feature.*;
-import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.feature.FeatureURLElement;
+import org.eclipse.pde.internal.core.ifeature.IFeature;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.ifeature.IFeatureURL;
+import org.eclipse.pde.internal.core.ifeature.IFeatureURLElement;
+import org.eclipse.pde.internal.ui.PDELabelProvider;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
-import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.dnd.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.actions.*;
-import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.editor.TableSection;
+import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.ui.parts.TablePart;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
-public class URLSection extends PDESection {
-	public static final String SECTION_TITLE = "FeatureEditor.URLSection.title"; //$NON-NLS-1$
-	public static final String POPUP_NEW = "Menus.new.label"; //$NON-NLS-1$
-	public static final String POPUP_DELETE = "Actions.delete.label"; //$NON-NLS-1$
-	public static final String POPUP_UPDATE_URL =
-		"FeatureEditor.URLSection.updateURL"; //$NON-NLS-1$
-	public static final String POPUP_DISCOVERY_URL =
-		"FeatureEditor.URLSection.discoveryURL"; //$NON-NLS-1$
-	public static final String SECTION_DESC = "FeatureEditor.URLSection.desc"; //$NON-NLS-1$
-	public static final String NEW_UPDATE_SITE =
-		"FeatureEditor.URLSection.newUpdateSite"; //$NON-NLS-1$
-	public static final String NEW_DISCOVERY_SITE =
-		"FeatureEditor.URLSection.newDiscoverySite"; //$NON-NLS-1$
-	public static final String KEY_UPDATE_URLS =
-		"FeatureEditor.URLSection.updateURLs"; //$NON-NLS-1$
-	public static final String KEY_DISCOVERY_URLS =
-		"FeatureEditor.URLSection.discoveryURLs"; //$NON-NLS-1$
-	public static final String NEW_URL = "FeatureEditor.URLSection.newURL"; //$NON-NLS-1$
+public class URLSection extends TableSection {
+	private static final String SECTION_DESC = "FeatureEditor.URLSection.desc"; //$NON-NLS-1$
 
-	private TreeViewer urlTree;
-	private Image urlImage;
-	private Image urlFolderImage;
-	private PropertiesAction propertiesAction;
-	private URLFolder[] folders =
-		new URLFolder[] {
-			new URLFolder(IFeatureURLElement.UPDATE),
-			new URLFolder(IFeatureURLElement.DISCOVERY)};
+	private static final String KEY_NEW = "FeatureEditor.URLSection.new"; //$NON-NLS-1$
 
-	class URLFolder {
-		int type;
+	private static final String POPUP_NEW = "Menus.new.label"; //$NON-NLS-1$
 
-		URLFolder(int type) {
-			this.type = type;
-		}
-		IFeatureURL getURL() {
-			IFeatureModel model = (IFeatureModel) getPage().getModel();
-			IFeature feature = model.getFeature();
-			return feature.getURL();
-		}
-	}
+	private static final String POPUP_DELETE = "Actions.delete.label"; //$NON-NLS-1$
 
-	class URLContentProvider
-		extends DefaultContentProvider
-		implements ITreeContentProvider {
-		public boolean hasChildren(Object parent) {
-			return getChildren(parent).length > 0;
-		}
+	private static final String NEW_DISCOVERY_SITE = "FeatureEditor.URLSection.newDiscoverySite"; //$NON-NLS-1$
 
-		public Object[] getChildren(Object parent) {
-			if (parent instanceof IFeatureURL) {
-				return folders;
-			}
-			if (parent instanceof URLFolder) {
-				URLFolder folder = (URLFolder) parent;
-				IFeatureURL url = folder.getURL();
-				if (url != null) {
-					if (folder.type == IFeatureURLElement.UPDATE)
-						return url.getUpdates();
-					if (folder.type == IFeatureURLElement.DISCOVERY)
-						return url.getDiscoveries();
-				}
+	private static final String NEW_URL = "FeatureEditor.URLSection.newURL"; //$NON-NLS-1$
+
+	private TableViewer fUrlViewer;
+
+	private Action fNewAction;
+
+	private Action fDeleteAction;
+
+	private Image fUrlImage;
+
+	class URLContentProvider extends DefaultContentProvider implements
+			IStructuredContentProvider {
+		public Object[] getElements(Object input) {
+			IFeature feature = (IFeature) input;
+			IFeatureURL featureUrl = feature.getURL();
+			if (featureUrl != null) {
+				return featureUrl.getDiscoveries();
 			}
 			return new Object[0];
-		}
-		public Object getParent(Object child) {
-			if (child instanceof URLFolder) {
-				return ((URLFolder) child).getURL();
-			}
-			if (child instanceof IFeatureURLElement) {
-				IFeatureURLElement element = (IFeatureURLElement) child;
-				if (element.getElementType() == IFeatureURLElement.UPDATE)
-					return folders[0];
-				return folders[1];
-			}
-			return null;
-		}
-		public Object[] getElements(Object parent) {
-			return folders;
 		}
 	}
 
 	class URLLabelProvider extends LabelProvider {
-		public String getText(Object obj) {
-			if (obj instanceof URLFolder) {
-				URLFolder folder = (URLFolder) obj;
-				if (folder.type == IFeatureURLElement.UPDATE) {
-					return PDEPlugin.getResourceString(KEY_UPDATE_URLS);
-				}
-				if (folder.type == IFeatureURLElement.DISCOVERY) {
-					return PDEPlugin.getResourceString(KEY_DISCOVERY_URLS);
-				}
-			}
-			return super.getText(obj);
-		}
 
 		public Image getImage(Object obj) {
-			if (obj instanceof URLFolder) {
-				return urlFolderImage;
-			}
 			if (obj instanceof IFeatureURLElement) {
-				return urlImage;
+				return fUrlImage;
 			}
 			return null;
 		}
 
 	}
 
-	public URLSection(FeatureFormPage page, Composite parent) {
-		super(page, parent, Section.DESCRIPTION);
-		getSection().setText(PDEPlugin.getResourceString(SECTION_TITLE));
-		getSection().setDescription(PDEPlugin.getResourceString(SECTION_DESC));
+	public URLSection(PDEFormPage page, Composite parent) {
+		super(page, parent, Section.DESCRIPTION | ExpandableComposite.NO_TITLE,
+				false, new String[] { PDEPlugin.getResourceString(KEY_NEW) });
 		PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
-		urlImage = provider.get(PDEPluginImages.DESC_LINK_OBJ);
-		urlFolderImage = provider.get(PDEPluginImages.DESC_LINKS_OBJ);
+		fUrlImage = provider.get(PDEPluginImages.DESC_LINK_OBJ);
 		createClient(getSection(), page.getManagedForm().getToolkit());
+
+		getSection().setDescription(PDEPlugin.getResourceString(SECTION_DESC));
 	}
+
 	public void commit(boolean onSave) {
 		super.commit(onSave);
 	}
-	public void createClient(Section section, FormToolkit toolkit) {
-		Composite container = toolkit.createComposite(section);
-		GridLayout layout = new GridLayout();
-		container.setLayout(layout);
-		Tree tree = toolkit.createTree(container, SWT.NULL);
-		urlTree = new TreeViewer(tree);
-		urlTree.setContentProvider(new URLContentProvider());
-		urlTree.setLabelProvider(new URLLabelProvider());
-		urlTree.setAutoExpandLevel(TreeViewer.ALL_LEVELS);
-		urlTree.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent e) {
-				getPage().getPDEEditor().setSelection(e.getSelection());
-			}
-		});
-		urlTree.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event) {
-				propertiesAction.run();
-			}
-		});
-		MenuManager popupMenuManager = new MenuManager();
-		IMenuListener listener = new IMenuListener() {
-			public void menuAboutToShow(IMenuManager mng) {
-				fillContextMenu(mng);
-			}
-		};
-		popupMenuManager.addMenuListener(listener);
-		popupMenuManager.setRemoveAllWhenShown(true);
-		Menu menu = popupMenuManager.createContextMenu(urlTree.getTree());
-		urlTree.getTree().setMenu(menu);
 
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.heightHint = 100;
-		tree.setLayoutData(gd);
+	public void createClient(Section section, FormToolkit toolkit) {
+		Composite container = createClientContainer(section, 2, toolkit);
+		GridLayout layout = (GridLayout) container.getLayout();
+		layout.verticalSpacing = 5;
+
+		createViewerPartControl(container, SWT.SINGLE, 2, toolkit);
+		TablePart tablePart = getTablePart();
+		fUrlViewer = tablePart.getTableViewer();
+		fUrlViewer.setContentProvider(new URLContentProvider());
+		fUrlViewer.setLabelProvider(new URLLabelProvider());
 		toolkit.paintBordersFor(container);
-		propertiesAction = new PropertiesAction(getPage().getPDEEditor());
+		makeActions();
 		section.setClient(container);
 		initialize();
 	}
+
+	protected void buttonSelected(int index) {
+		if (index == 0)
+			handleNew();
+	}
+
 	public void dispose() {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
-		if (model != null) 
+		if (model != null)
 			model.removeModelChangedListener(this);
 		super.dispose();
 	}
-	public boolean doGlobalAction(String actionId) {
-		if (actionId.equals(ActionFactory.DELETE.getId())) {
-			handleDelete();
-			return true;
-		}
-			if (actionId.equals(ActionFactory.CUT.getId())) {
-			// delete here and let the editor transfer
-			// the selection to the clipboard
-			handleDelete();
-			return false;
-		}
-		if (actionId.equals(ActionFactory.PASTE.getId())) {
-			doPaste();
-			return true;
-		}
-	return false;
-	}
-	public boolean setFormInput(Object object) {
-		urlTree.setSelection(new StructuredSelection(object), true);
-		return true;
-	}
-	private void fillContextMenu(IMenuManager manager) {
-		IModel model = (IModel)getPage().getModel();
-		ISelection selection = urlTree.getSelection();
+
+	protected void fillContextMenu(IMenuManager manager) {
+		IModel model = (IModel) getPage().getModel();
+		ISelection selection = fUrlViewer.getSelection();
 		Object object = ((IStructuredSelection) selection).getFirstElement();
 
-		MenuManager submenu = new MenuManager(PDEPlugin.getResourceString(POPUP_NEW));
-
-		Action updateUrl = new Action(PDEPlugin.getResourceString(POPUP_UPDATE_URL)) {
-			public void run() {
-				handleNewURL(IFeatureURLElement.UPDATE);
-			}
-		};
-		updateUrl.setEnabled(model.isEditable());
-		submenu.add(updateUrl);
-		Action discoveryUrl = new Action(PDEPlugin.getResourceString(POPUP_DISCOVERY_URL)) {
-			public void run() {
-				handleNewURL(IFeatureURLElement.DISCOVERY);
-			}
-		};
-		discoveryUrl.setEnabled(model.isEditable());
-		submenu.add(discoveryUrl);
-		manager.add(submenu);
+		manager.add(fNewAction);
+		fNewAction.setEnabled(model.isEditable());
 
 		if (object != null && object instanceof IFeatureURLElement) {
-			manager.add(new Separator());
-			Action deleteAction = new Action(PDEPlugin.getResourceString(POPUP_DELETE)) {
-				public void run() {
-					handleDelete();
-				}
-			};
-			deleteAction.setEnabled(model.isEditable());
-			manager.add(deleteAction);
+			manager.add(fDeleteAction);
+			fDeleteAction.setEnabled(model.isEditable());
 		}
+
 		manager.add(new Separator());
-		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
-		manager.add(new Separator());
-		manager.add(propertiesAction);
+		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(
+				manager);
 	}
-	private void handleDelete() {
-		Object object =
-			((IStructuredSelection) urlTree.getSelection()).getFirstElement();
-		if (object != null && object instanceof IFeatureURLElement) {
-			IFeatureURLElement urlElement = (IFeatureURLElement) object;
-			IFeature feature = urlElement.getFeature();
-			IFeatureURL url = feature.getURL();
-			try {
-				if (urlElement.getElementType() == IFeatureURLElement.UPDATE)
-					url.removeUpdate(urlElement);
-				else
-					url.removeDiscovery(urlElement);
-			} catch (CoreException e) {
-				PDEPlugin.logException(e);
-			}
-		}
-	}
-	private void handleNewURL(int type) {
+
+	private void handleNew() {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		IFeature feature = model.getFeature();
 		IFeatureURL url = feature.getURL();
@@ -285,17 +169,12 @@ public class URLSection extends PDESection {
 			}
 		}
 		try {
-			IFeatureURLElement element = model.getFactory().createURLElement(url, type);
-			String label =
-				type == IFeatureURLElement.UPDATE
-					? PDEPlugin.getResourceString(NEW_UPDATE_SITE)
-					: PDEPlugin.getResourceString(NEW_DISCOVERY_SITE);
-			element.setLabel(label);
+			IFeatureURLElement element = model.getFactory().createURLElement(
+					url, IFeatureURLElement.DISCOVERY);
+			element.setLabel(PDEPlugin.getResourceString(NEW_DISCOVERY_SITE));
 			element.setURL(new URL(PDEPlugin.getResourceString(NEW_URL)));
-			if (type == IFeatureURLElement.UPDATE)
-				url.addUpdate(element);
-			else
-				url.addDiscovery(element);
+			url.addDiscovery(element);
+			fUrlViewer.setSelection(new StructuredSelection(element));
 
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
@@ -303,107 +182,205 @@ public class URLSection extends PDESection {
 			PDEPlugin.logException(e);
 		}
 	}
+
+	private void handleSelectAll() {
+		IStructuredContentProvider provider = (IStructuredContentProvider) fUrlViewer
+				.getContentProvider();
+		Object[] elements = provider.getElements(fUrlViewer.getInput());
+		StructuredSelection ssel = new StructuredSelection(elements);
+		fUrlViewer.setSelection(ssel);
+	}
+
+	private void handleDelete() {
+		IStructuredSelection ssel = (IStructuredSelection) fUrlViewer
+				.getSelection();
+
+		if (ssel.isEmpty())
+			return;
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
+		if (!model.isEditable()) {
+			return;
+		}
+		IFeature feature = model.getFeature();
+
+		IFeatureURL url = feature.getURL();
+		if (url == null) {
+			return;
+		}
+		for (Iterator iter = ssel.iterator(); iter.hasNext();) {
+			IFeatureURLElement urlElement = (IFeatureURLElement) iter.next();
+			// IFeature feature = urlElement.getFeature();
+			try {
+				url.removeDiscovery(urlElement);
+			} catch (CoreException e) {
+				PDEPlugin.logException(e);
+			}
+		}
+	}
+
+	public boolean doGlobalAction(String actionId) {
+		if (actionId.equals(ActionFactory.DELETE.getId())) {
+			BusyIndicator.showWhile(fUrlViewer.getTable().getDisplay(),
+					new Runnable() {
+						public void run() {
+							handleDelete();
+						}
+					});
+			return true;
+		}
+		if (actionId.equals(ActionFactory.CUT.getId())) {
+			// delete here and let the editor transfer
+			// the selection to the clipboard
+			handleDelete();
+			return false;
+		}
+		if (actionId.equals(ActionFactory.PASTE.getId())) {
+			doPaste();
+			return true;
+		}
+		if (actionId.equals(ActionFactory.SELECT_ALL.getId())) {
+			BusyIndicator.showWhile(fUrlViewer.getTable().getDisplay(),
+					new Runnable() {
+						public void run() {
+							handleSelectAll();
+						}
+					});
+			return true;
+		}
+		return false;
+	}
+
+	protected void selectionChanged(IStructuredSelection selection) {
+		getPage().getPDEEditor().setSelection(selection);
+	}
+
 	public void initialize() {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		refresh();
+		getTablePart().setButtonEnabled(0, model.isEditable());
 		model.addModelChangedListener(this);
 	}
+
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			markStale();
 			return;
-		} 
+		}
 		Object obj = e.getChangedObjects()[0];
+		if (obj instanceof IFeatureURL) {
+			markStale();
+			return;
+		}
 		if (obj instanceof IFeatureURLElement) {
-			if (e.getChangeType() == IModelChangedEvent.INSERT) {
-				Object parent = null;
-				IFeatureURLElement element = (IFeatureURLElement) obj;
-				if (element.getElementType() == IFeatureURLElement.UPDATE) {
-					parent = folders[0];
-				} else
-					parent = folders[1];
-				urlTree.add(parent, element);
-				urlTree.setSelection(new StructuredSelection(element), true);
-			} else if (e.getChangeType() == IModelChangedEvent.REMOVE) {
-				urlTree.remove(obj);
-			} else {
-				urlTree.update(obj, null);
-			}
+			markStale();
+			return;
+			// IFeatureURLElement element = (IFeatureURLElement) obj;
+			// if (element.getElementType() == IFeatureURLElement.DISCOVERY) {
+			// if (e.getChangeType() == IModelChangedEvent.INSERT) {
+			// fUrlViewer.add(element);
+			// fUrlViewer
+			// .setSelection(new StructuredSelection(element),
+			// true);
+			// } else if (e.getChangeType() == IModelChangedEvent.REMOVE) {
+			// fUrlViewer.remove(obj);
+			// } else {
+			// fUrlViewer.update(obj, null);
+			// }
+			// }
 		}
 	}
+
+	private void makeActions() {
+		IModel model = (IModel) getPage().getModel();
+		fNewAction = new Action() {
+			public void run() {
+				handleNew();
+			}
+		};
+		fNewAction.setText(PDEPlugin.getResourceString(POPUP_NEW));
+		fNewAction.setEnabled(model.isEditable());
+
+		fDeleteAction = new Action() {
+			public void run() {
+				BusyIndicator.showWhile(fUrlViewer.getTable().getDisplay(),
+						new Runnable() {
+							public void run() {
+								handleDelete();
+							}
+						});
+			}
+		};
+		fDeleteAction.setText(PDEPlugin.getResourceString(POPUP_DELETE));
+		fDeleteAction.setEnabled(model.isEditable());
+	}
+
 	public void setFocus() {
+		if (fUrlViewer != null)
+			fUrlViewer.getTable().setFocus();
 	}
 
 	public void refresh() {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
-		urlTree.setInput(model);
+		IFeature feature = model.getFeature();
+		fUrlViewer.setInput(feature);
 		super.refresh();
 	}
-	/**
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(Clipboard)
-	 */
+
 	public boolean canPaste(Clipboard clipboard) {
-		IStructuredSelection ssel = (IStructuredSelection)urlTree.getSelection();
-		if (ssel.size() != 1) return false;
-		
-		Object target = ssel.getFirstElement();
-		if (target instanceof URLFolder) {
-			Object [] objects = (Object[])clipboard.getContents(ModelDataTransfer.getInstance());
-			if (objects != null && objects.length > 0) {
-				return canPaste((URLFolder)target, objects);
-			}
+		ModelDataTransfer modelTransfer = ModelDataTransfer.getInstance();
+		Object[] objects = (Object[]) clipboard.getContents(modelTransfer);
+		if (objects != null && objects.length > 0) {
+			return canPaste(null, objects);
 		}
 		return false;
 	}
+
 	/**
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(Object, Object[])
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(Object,
+	 *      Object[])
 	 */
-	protected boolean canPaste(URLFolder target, Object[] objects) {
+	protected boolean canPaste(Object target, Object[] objects) {
 		for (int i = 0; i < objects.length; i++) {
-			if (!(objects[i] instanceof FeatureURLElement) || 
-				((FeatureURLElement)objects[i]).getElementType() != target.type)
+			if (!(objects[i] instanceof FeatureURLElement))
 				return false;
 		}
 		return true;
 	}
-	/**
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste()
-	 */
+
 	protected void doPaste() {
-		IStructuredSelection ssel = (IStructuredSelection)urlTree.getSelection();
-		if (ssel.size() != 1) return;
-		
-		Object target = ssel.getFirstElement();
-		if (target instanceof URLFolder) {
-			Clipboard clipboard = getPage().getPDEEditor().getClipboard();
-			Object [] objects = (Object[])clipboard.getContents(ModelDataTransfer.getInstance());
-			if (objects != null) {
-				doPaste((URLFolder)target, objects);
-			}
+		Clipboard clipboard = getPage().getPDEEditor().getClipboard();
+		ModelDataTransfer modelTransfer = ModelDataTransfer.getInstance();
+		Object[] objects = (Object[]) clipboard.getContents(modelTransfer);
+		if (objects != null) {
+			doPaste(null, objects);
 		}
 	}
+
 	/**
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(Object, Object[])
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(Object,
+	 *      Object[])
 	 */
-	protected void doPaste(URLFolder target, Object[] objects) {
+	protected void doPaste(Object target, Object[] objects) {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
+		if (!model.isEditable()) {
+			return;
+		}
 		IFeature feature = model.getFeature();
 		for (int i = 0; i < objects.length; i++) {
 			if (objects[i] instanceof FeatureURLElement) {
-				FeatureURLElement element = (FeatureURLElement)objects[i];
-				if (element.getElementType() == target.type) {
-					element.setModel(model);
-					element.setParent(feature);
-					try {
-						if (target.type == IFeatureURLElement.UPDATE) 
-							feature.getURL().addUpdate(element);
-						else
-							feature.getURL().addDiscovery(element);
-					} catch (CoreException e) {
-						PDECore.logException(e);
-					}
+				FeatureURLElement element = (FeatureURLElement) objects[i];
+				element.setModel(model);
+				element.setParent(feature);
+				try {
+					feature.getURL().addDiscovery(element);
+				} catch (CoreException e) {
+					PDECore.logException(e);
 				}
 			}
 		}
+	}
+
+	void fireSelection() {
+		fUrlViewer.setSelection(fUrlViewer.getSelection());
 	}
 }

@@ -59,6 +59,7 @@ public class NewFeatureProjectWizard extends NewWizard
 	private PluginListPage pluginListPage;
 	private IConfigurationElement config;
 	private IProjectProvider provider;
+	private FeatureData fFeatureData;
 	public class FeatureProjectProvider implements IProjectProvider {
 		public FeatureProjectProvider() {
 			super();
@@ -140,7 +141,7 @@ public class NewFeatureProjectWizard extends NewWizard
 				.getProject();
 		final IPath location = ((FeatureProjectProvider) provider)
 				.getLocationPath();
-		final FeatureData data = ((FeatureProjectProvider) provider)
+		fFeatureData = ((FeatureProjectProvider) provider)
 				.getFeatureData();
 		final IPluginBase[] plugins = ((FeatureProjectProvider) provider)
 				.getPluginListSelection() != null
@@ -149,7 +150,7 @@ public class NewFeatureProjectWizard extends NewWizard
 		IRunnableWithProgress operation = new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) {
 				try {
-					createFeatureProject(project, location, data, plugins,
+					createFeatureProject(project, location, fFeatureData, plugins,
 							monitor);
 				} catch (CoreException e) {
 					PDEPlugin.logException(e);
@@ -384,6 +385,14 @@ public class NewFeatureProjectWizard extends NewWizard
 		} catch (PartInitException e) {
 			PDEPlugin.logException(e);
 		}
+	}
+	
+	public String getFeatureId() {
+		return fFeatureData.id;
+	}
+	
+	public String getFeatureVersion() {
+		return fFeatureData.version;	
 	}
 
 }

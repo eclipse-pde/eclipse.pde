@@ -9,38 +9,59 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
-import org.eclipse.jface.action.*;
-import org.eclipse.pde.internal.ui.editor.*;
+
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.pde.internal.ui.editor.PDEFormEditorContributor;
+import org.eclipse.pde.internal.ui.wizards.site.OpenProjectWizardAction;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.ui.IEditorPart;
+
 public class FeatureEditorContributor extends PDEFormEditorContributor {
-	private EditorBuildFeatureAction buildAction;
-	private SynchronizeVersionsAction synchronizeAction;
+	private EditorBuildFeatureAction fBuildAction;
+
+	private SynchronizeVersionsAction fSynchronizeAction;
+
+	private OpenProjectWizardAction fNewSiteAction;
+
 	public FeatureEditorContributor() {
 		super("&Feature"); //$NON-NLS-1$
 	}
+
 	public void contextMenuAboutToShow(IMenuManager mng) {
 		super.contextMenuAboutToShow(mng);
 		mng.add(new Separator());
-		mng.add(synchronizeAction);
-		mng.add(buildAction);
+		mng.add(fSynchronizeAction);
+		// mng.add(fNewSiteAction);
+		mng.add(fBuildAction);
 	}
+
 	public Action getBuildAction() {
-		return buildAction;
+		return fBuildAction;
 	}
+
 	public Action getSynchronizeAction() {
-		return synchronizeAction;
+		return fSynchronizeAction;
 	}
+
+	public Action getNewSiteAction() {
+		return fNewSiteAction;
+	}
+
 	protected void makeActions() {
 		super.makeActions();
-		buildAction = new EditorBuildFeatureAction();
-		synchronizeAction = new SynchronizeVersionsAction();
+		fBuildAction = new EditorBuildFeatureAction();
+		fSynchronizeAction = new SynchronizeVersionsAction();
+		fNewSiteAction = new OpenProjectWizardAction();
 	}
+
 	public void setActiveEditor(IEditorPart targetEditor) {
 		super.setActiveEditor(targetEditor);
-		buildAction.setActiveEditor((FeatureEditor) targetEditor);
-		synchronizeAction.setActiveEditor((FeatureEditor) targetEditor);
+		fBuildAction.setActiveEditor((FeatureEditor) targetEditor);
+		fSynchronizeAction.setActiveEditor((FeatureEditor) targetEditor);
 	}
+
 	protected boolean hasKnownTypes(Clipboard clipboard) {
 		return true;
 	}

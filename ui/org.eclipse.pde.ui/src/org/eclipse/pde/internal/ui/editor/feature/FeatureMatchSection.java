@@ -10,77 +10,46 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import java.util.Iterator;
-
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.core.plugin.IPluginReference;
 import org.eclipse.pde.internal.core.ifeature.IFeatureImport;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.editor.plugin.*;
+import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.editor.plugin.MatchSection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Section;
 
 public class FeatureMatchSection extends MatchSection {
-	private Button patchButton;
+	private Button fPatchButton;
 
 	/**
 	 * Constructor for FeatureMatchSection.
+	 * 
 	 * @param formPage
 	 */
 	public FeatureMatchSection(PDEFormPage formPage, Composite parent) {
 		super(formPage, parent, false);
 	}
 
-	public void createClient(
-		Section section,
-		FormToolkit toolkit) {
+	public void createClient(Section section, FormToolkit toolkit) {
 		super.createClient(section, toolkit);
-		Composite client = (Composite)section.getClient();
-		patchButton = toolkit.createButton(client, PDEPlugin.getResourceString("FeatureMatchSection.patch"), SWT.CHECK); //$NON-NLS-1$
+		Composite client = (Composite) section.getClient();
+		fPatchButton = toolkit.createButton(client, PDEPlugin
+				.getResourceString("FeatureMatchSection.patch"), SWT.CHECK); //$NON-NLS-1$
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
-		patchButton.setLayoutData(gd);
-		patchButton.setEnabled(false);
-		patchButton.setSelection(false);
-		patchButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handlePatchChange(patchButton.getSelection());
-			}
-		});
-	}
-
-	private void handlePatchChange(boolean patch) {
-		if (currentImport != null) {
-			IFeatureImport iimport = (IFeatureImport) currentImport;
-			if (iimport.getType() == IFeatureImport.FEATURE) {
-				try {
-					iimport.setPatch(patch);
-				} catch (CoreException e) {
-					PDEPlugin.logException(e);
-				}
-			}
-		}
-		if (multiSelection != null) {
-			for (Iterator iter = multiSelection.iterator(); iter.hasNext();) {
-				IFeatureImport iimport = (IFeatureImport) iter.next();
-				try {
-					iimport.setPatch(patch);
-				} catch (CoreException e) {
-					PDEPlugin.logException(e);
-					break;
-				}
-			}
-		}
+		fPatchButton.setLayoutData(gd);
+		fPatchButton.setEnabled(false);
+		fPatchButton.setSelection(false);
 	}
 
 	protected void update(IStructuredSelection selection) {
 		super.update(selection);
-		if (patchButton == null)
+		if (fPatchButton == null)
 			return;
 		if (selection.isEmpty()) {
 			update((IFeatureImport) null);
@@ -88,37 +57,22 @@ public class FeatureMatchSection extends MatchSection {
 		}
 		if (!(selection.getFirstElement() instanceof IFeatureImport))
 			return;
-		
+
 		if (selection.size() == 1) {
 			update((IFeatureImport) selection.getFirstElement());
 			return;
 		}
-		int ntrue = 0, nfalse = 0;
-
-		for (Iterator iter = selection.iterator(); iter.hasNext();) {
-			IFeatureImport iimport = (IFeatureImport) iter.next();
-			if (iimport.getType() == IFeatureImport.FEATURE) {
-				if (iimport.isPatch())
-					ntrue++;
-				else
-					nfalse++;
-			}
-		}
-		patchButton.setEnabled(isEditable() && (ntrue > 0 || nfalse > 0));
-		patchButton.setSelection(ntrue > 0);
 	}
 
 	protected void update(IPluginReference reference) {
 		super.update(reference);
-		if (patchButton == null)
+		if (fPatchButton == null)
 			return;
-		IFeatureImport fimport = (IFeatureImport)reference;
+		IFeatureImport fimport = (IFeatureImport) reference;
 		if (fimport == null || fimport.getType() == IFeatureImport.PLUGIN) {
-			patchButton.setSelection(false);
-			patchButton.setEnabled(false);
+			fPatchButton.setSelection(false);
 			return;
 		}
-		patchButton.setEnabled(getPage().getModel().isEditable());
-		patchButton.setSelection(fimport.isPatch());
+		fPatchButton.setSelection(fimport.isPatch());
 	}
 }

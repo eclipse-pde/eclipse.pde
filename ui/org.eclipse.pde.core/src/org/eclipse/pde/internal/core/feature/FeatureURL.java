@@ -20,30 +20,39 @@ import org.w3c.dom.*;
 
 public class FeatureURL extends FeatureObject implements IFeatureURL {
 	private static final long serialVersionUID = 1L;
-	private Vector updates = new Vector();
-	private Vector discoveries = new Vector();
+	private IFeatureURLElement fUpdate;
+	private Vector fDiscoveries = new Vector();
 
 	public void addDiscovery(IFeatureURLElement discovery) throws CoreException {
 		ensureModelEditable();
-		discoveries.add(discovery);
+		fDiscoveries.add(discovery);
 		((FeatureURLElement)discovery).setInTheModel(true);
 		fireStructureChanged(discovery, IModelChangedEvent.INSERT);
 	}
-	public void addUpdate(IFeatureURLElement update) throws CoreException {
+	public void setUpdate(IFeatureURLElement update) throws CoreException {
 		ensureModelEditable();
-		updates.add(update);
-		((FeatureURLElement)update).setInTheModel(true);
-		fireStructureChanged(update, IModelChangedEvent.INSERT);
+		if(fUpdate == update){
+			return;
+		}
+		if(fUpdate!=null){
+			((FeatureURLElement)fUpdate).setInTheModel(false);
+		}
+		IFeatureURLElement oldValue = fUpdate;
+		fUpdate = update;
+		if(oldValue!=null){
+			fireStructureChanged(oldValue, IModelChangedEvent.REMOVE);	
+		}
+		if(update!=null){
+			((FeatureURLElement)update).setInTheModel(true);
+			fireStructureChanged(update, IModelChangedEvent.INSERT);
+		}
 	}
 	public IFeatureURLElement[] getDiscoveries() {
-		IFeatureURLElement[] result = new IFeatureURLElement[discoveries.size()];
-		discoveries.copyInto(result);
-		return result;
+		return (IFeatureURLElement[]) fDiscoveries
+				.toArray(new IFeatureURLElement[fDiscoveries.size()]);
 	}
-	public IFeatureURLElement[] getUpdates() {
-		IFeatureURLElement[] result = new IFeatureURLElement[updates.size()];
-		updates.copyInto(result);
-		return result;
+	public IFeatureURLElement getUpdate() {
+		return fUpdate;
 	}
 	protected void parse(Node node, Hashtable lineTable) {
 		NodeList children = node.getChildNodes();
@@ -63,11 +72,11 @@ public class FeatureURL extends FeatureObject implements IFeatureURL {
 					((FeatureURLElement) element).parse(child, lineTable);
 					if (urlType == IFeatureURLElement.UPDATE) {
 						((FeatureURLElement)element).setInTheModel(true);
-						updates.add(element);
+						fUpdate = element;
 					}
 					else if (urlType == IFeatureURLElement.DISCOVERY) {
 						((FeatureURLElement)element).setInTheModel(true);			
-						discoveries.add(element);
+						fDiscoveries.add(element);
 					}
 				}
 			}
@@ -76,25 +85,22 @@ public class FeatureURL extends FeatureObject implements IFeatureURL {
 	public void removeDiscovery(IFeatureURLElement discovery)
 		throws CoreException {
 		ensureModelEditable();
-		discoveries.remove(discovery);
+		fDiscoveries.remove(discovery);
 		((FeatureURLElement)discovery).setInTheModel(false);
 		fireStructureChanged(discovery, IModelChangedEvent.REMOVE);
 	}
-	public void removeUpdate(IFeatureURLElement update) throws CoreException {
-		ensureModelEditable();
-		((FeatureURLElement)update).setInTheModel(false);
-		updates.remove(update);
-		fireStructureChanged(update, IModelChangedEvent.REMOVE);
-	}
 	public void write(String indent, PrintWriter writer) {
+		if(fUpdate == null && fDiscoveries.size() <=0){
+			return;
+		}
+		writer.println();
 		writer.println(indent + "<url>"); //$NON-NLS-1$
 		String indent2 = indent + Feature.INDENT;
-		for (int i = 0; i < updates.size(); i++) {
-			IFeatureURLElement element = (IFeatureURLElement) updates.elementAt(i);
-			element.write(indent2, writer);
+		if(fUpdate!=null) {
+			fUpdate.write(indent2, writer);
 		}
-		for (int i = 0; i < discoveries.size(); i++) {
-			IFeatureURLElement element = (IFeatureURLElement) discoveries.elementAt(i);
+		for (int i = 0; i < fDiscoveries.size(); i++) {
+			IFeatureURLElement element = (IFeatureURLElement) fDiscoveries.elementAt(i);
 			element.write(indent2, writer);
 		}
 		writer.println(indent + "</url>"); //$NON-NLS-1$

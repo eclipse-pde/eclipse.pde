@@ -10,73 +10,79 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.swt.layout.*;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
+import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IManagedForm;
-import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eclipse.ui.forms.widgets.TableWrapData;
+import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 public class FeatureAdvancedPage extends PDEFormPage {
 	public static final String PAGE_ID = "advanced"; //$NON-NLS-1$
+
 	private static final String KEY_HEADING = "FeatureEditor.AdvancedPage.heading"; //$NON-NLS-1$
-	private IncludedFeaturesSection includedSection;
-	private DataSection dataSection;
-	private HandlerSection handlerSection;
+
+	private InstallSection fInstallSection;
+
+	private HandlerSection fHandlerSection;
+
+	private DataSection fDataSection;
+
+	private DataDetailsSection fDataDetailsSection;
+
+	private DataPortabilitySection fDataPortabilitySection;
 
 	public FeatureAdvancedPage(PDEFormEditor editor, String title) {
 		super(editor, PAGE_ID, title);
 	}
+
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
-		FormToolkit toolkit = managedForm.getToolkit();
 
-		GridLayout layout = new GridLayout();
-		form.getBody().setLayout(layout);
+		Composite body = managedForm.getForm().getBody();
+		TableWrapLayout layout = new TableWrapLayout();
+		layout.bottomMargin = 10;
+		layout.topMargin = 5;
+		layout.leftMargin = 10;
+		layout.rightMargin = 10;
 		layout.numColumns = 2;
-		layout.makeColumnsEqualWidth=true;
-		layout.marginWidth = 10;
-		layout.horizontalSpacing=15;
-		layout.verticalSpacing=15;
-		GridData gd;
-		
-		Composite left = toolkit.createComposite(form.getBody());
-		layout = new GridLayout();
-		layout.marginWidth = layout.marginHeight = 0;
-		left.setLayout(layout);
-		gd = new GridData(GridData.FILL_BOTH);
-		left.setLayoutData(gd);
-		
-		Composite right = toolkit.createComposite(form.getBody());
-		layout = new GridLayout();
-		layout.marginWidth = layout.marginHeight = 0;
-		right.setLayout(layout);
-		gd = new GridData(GridData.FILL_BOTH);
-		right.setLayoutData(gd);
+		layout.makeColumnsEqualWidth = true;
+		layout.verticalSpacing = 15;
+		layout.horizontalSpacing = 15;
+		body.setLayout(layout);
 
-		includedSection = new IncludedFeaturesSection(this, left);
-		gd = new GridData(GridData.FILL_BOTH);
-		includedSection.getSection().setLayoutData(gd);
-		
-		dataSection = new DataSection(this, right);
-		gd = new GridData(GridData.FILL_BOTH);
-		dataSection.getSection().setLayoutData(gd);
-		
-		handlerSection = new HandlerSection(this, right);
-		gd = new GridData(GridData.FILL_BOTH);
-		handlerSection.getSection().setLayoutData(gd);
-		
-		managedForm.addPart(includedSection);
-		managedForm.addPart(dataSection);
-		managedForm.addPart(handlerSection);
-		
-		WorkbenchHelp.setHelp(form.getBody(), IHelpContextIds.MANIFEST_FEATURE_ADVANCED);
-		initialize();
-	}
-	
-	public void initialize() {
-		getManagedForm().getForm().setText(PDEPlugin.getResourceString(KEY_HEADING));
+		fInstallSection = new InstallSection(this, form.getBody());
+		fHandlerSection = new HandlerSection(this, form.getBody());
+		fDataSection = new DataSection(this, form.getBody());
+		TableWrapData twdata = new TableWrapData(TableWrapData.FILL_GRAB);
+		twdata.heightHint = 300;
+		twdata.grabVertical = true;
+		twdata.rowspan = 2;
+		fDataSection.getSection().setLayoutData(twdata);
+		fDataDetailsSection = new DataDetailsSection(this, form.getBody());
+		fDataDetailsSection.getSection().setLayoutData(
+				new TableWrapData(TableWrapData.FILL_GRAB));
+		fDataPortabilitySection = new DataPortabilitySection(this, form
+				.getBody());
+		twdata = new TableWrapData(TableWrapData.FILL_GRAB);
+		twdata.grabVertical = true;
+		fDataPortabilitySection.getSection().setLayoutData(twdata);
+
+		managedForm.addPart(fInstallSection);
+		managedForm.addPart(fHandlerSection);
+		managedForm.addPart(fDataSection);
+		managedForm.addPart(fDataDetailsSection);
+		managedForm.addPart(fDataPortabilitySection);
+
+		WorkbenchHelp.setHelp(form.getBody(),
+				IHelpContextIds.MANIFEST_FEATURE_OVERVIEW);
+
+		form.setText(PDEPlugin.getResourceString(KEY_HEADING));
+		fDataSection.fireSelection();
 	}
 }

@@ -13,36 +13,42 @@ package org.eclipse.pde.internal.ui.editor.feature;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
-import org.eclipse.pde.internal.core.ifeature.IFeatureInstallHandler;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.RTFTransfer;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
-public class HandlerSection extends PDESection {
-	public static final String SECTION_TITLE = "FeatureEditor.HandlerSection.title"; //$NON-NLS-1$
+public class InstallSection extends PDESection {
+	public static final String SECTION_TITLE = "FeatureEditor.InstallSection.title"; //$NON-NLS-1$
 
-	public static final String SECTION_DESC = "FeatureEditor.HandlerSection.desc"; //$NON-NLS-1$
+	public static final String SECTION_DESC = "FeatureEditor.InstallSection.desc"; //$NON-NLS-1$
 
-	public static final String SECTION_LIBRARY = "FeatureEditor.HandlerSection.library"; //$NON-NLS-1$
+	public static final String SECTION_EXCLUSIVE = "FeatureEditor.InstallSection.exclusive"; //$NON-NLS-1$
 
-	public static final String SECTION_HANDLER = "FeatureEditor.HandlerSection.handler"; //$NON-NLS-1$
+	public static final String SECTION_COLOCATION = "FeatureEditor.InstallSection.colocation"; //$NON-NLS-1$
 
-	private FormEntry fLibraryText;
+	private Button fExclusiveButton;
 
-	private FormEntry fHandlerText;
+	private FormEntry fColocationText;
 
-	public HandlerSection(FeatureAdvancedPage page, Composite parent) {
+	private boolean fBlockNotification;
+
+	public InstallSection(FeatureAdvancedPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION);
 		getSection().setText(PDEPlugin.getResourceString(SECTION_TITLE));
 		getSection().setDescription(PDEPlugin.getResourceString(SECTION_DESC));
@@ -63,8 +69,7 @@ public class HandlerSection extends PDESection {
 	}
 
 	public void commit(boolean onSave) {
-		fLibraryText.commit();
-		fHandlerText.commit();
+		fColocationText.commit();
 		super.commit(onSave);
 	}
 
@@ -79,23 +84,30 @@ public class HandlerSection extends PDESection {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		final IFeature feature = model.getFeature();
 
-		fLibraryText = new FormEntry(container, toolkit, PDEPlugin
-				.getResourceString(SECTION_LIBRARY), null, false);
-		fLibraryText.setFormEntryListener(new FormEntryAdapter(this) {
-			public void textValueChanged(FormEntry text) {
+		fExclusiveButton = toolkit.createButton(container, PDEPlugin
+				.getResourceString(SECTION_EXCLUSIVE), SWT.CHECK);
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan = 2;
+		fExclusiveButton.setLayoutData(gd);
+		fExclusiveButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
 				try {
-					setLibrary(feature, text.getValue());
-				} catch (CoreException e) {
-					PDEPlugin.logException(e);
+					if (!fBlockNotification)
+						feature.setExclusive(fExclusiveButton.getSelection());
+				} catch (CoreException ex) {
+					PDEPlugin.logException(ex);
 				}
 			}
 		});
-		fHandlerText = new FormEntry(container, toolkit, PDEPlugin
-				.getResourceString(SECTION_HANDLER), null, false);
-		fHandlerText.setFormEntryListener(new FormEntryAdapter(this) {
+
+		fColocationText = new FormEntry(container, toolkit, PDEPlugin
+				.getResourceString(SECTION_COLOCATION), null, false);
+		fColocationText.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
+				IFeatureModel model = (IFeatureModel) getPage().getModel();
+				IFeature feature = model.getFeature();
 				try {
-					setHandler(feature, text.getValue());
+					feature.setColocationAffinity(fColocationText.getValue());
 				} catch (CoreException e) {
 					PDEPlugin.logException(e);
 				}
@@ -105,28 +117,6 @@ public class HandlerSection extends PDESection {
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
 		initialize();
-	}
-
-	private void setLibrary(IFeature feature, String value)
-			throws CoreException {
-		IFeatureInstallHandler handler = getHandler(feature);
-		handler.setLibrary(value);
-	}
-
-	private void setHandler(IFeature feature, String value)
-			throws CoreException {
-		IFeatureInstallHandler handler = getHandler(feature);
-		handler.setHandlerName(value);
-	}
-
-	private IFeatureInstallHandler getHandler(IFeature feature)
-			throws CoreException {
-		IFeatureInstallHandler handler = feature.getInstallHandler();
-		if (handler == null) {
-			handler = feature.getModel().getFactory().createInstallHandler();
-			feature.setInstallHandler(handler);
-		}
-		return handler;
 	}
 
 	public void dispose() {
@@ -140,8 +130,8 @@ public class HandlerSection extends PDESection {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		refresh();
 		if (model.isEditable() == false) {
-			fLibraryText.getText().setEditable(false);
-			fHandlerText.getText().setEditable(false);
+			fColocationText.getText().setEditable(false);
+			fExclusiveButton.setEnabled(false);
 		}
 		model.addModelChangedListener(this);
 	}
@@ -153,31 +143,24 @@ public class HandlerSection extends PDESection {
 	}
 
 	public void setFocus() {
-		if (fLibraryText != null)
-			fLibraryText.getText().setFocus();
-	}
-
-	private void setIfDefined(FormEntry formText, Object value) {
-		if (value != null)
-			formText.setValue(value.toString(), true);
-		else
-			formText.setValue(null, true);
+		if (fExclusiveButton != null)
+			fExclusiveButton.setFocus();
 	}
 
 	public void refresh() {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		IFeature feature = model.getFeature();
-		IFeatureInstallHandler handler = feature.getInstallHandler();
-		if (handler != null) {
-			setIfDefined(fLibraryText, handler.getLibrary());
-			setIfDefined(fHandlerText, handler.getHandlerName());
-		}
+		fColocationText.setValue(
+				feature.getColocationAffinity() != null ? feature
+						.getColocationAffinity() : "", true); //$NON-NLS-1$
+		fBlockNotification = true;
+		fExclusiveButton.setSelection(feature.isExclusive());
+		fBlockNotification = false;
 		super.refresh();
 	}
 
 	public void cancelEdit() {
-		fLibraryText.cancelEdit();
-		fHandlerText.cancelEdit();
+		fColocationText.cancelEdit();
 		super.cancelEdit();
 	}
 }

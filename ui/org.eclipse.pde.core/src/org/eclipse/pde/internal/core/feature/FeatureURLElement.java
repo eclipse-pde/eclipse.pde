@@ -22,50 +22,51 @@ public class FeatureURLElement
 	extends FeatureObject
 	implements IFeatureURLElement {
 	private static final long serialVersionUID = 1L;
-	private int elementType;
-	private int siteType = UPDATE_SITE;
-	private URL url;
+	private int fElementType;
+	private int fSiteType = UPDATE_SITE;
+	private URL fUrl;
 
 	public FeatureURLElement(int elementType) {
-		this.elementType = elementType;
+		this.fElementType = elementType;
 	}
 	public FeatureURLElement(int elementType, URL url) {
-		this.elementType = elementType;
-		this.url = url;
+		this.fElementType = elementType;
+		this.fUrl = url;
 	}
 	public int getElementType() {
-		return elementType;
+		return fElementType;
 	}
 	public URL getURL() {
-		return url;
+		return fUrl;
 	}
 	public int getSiteType() {
-		return siteType;
+		return fSiteType;
 	}
 	protected void parse(Node node, Hashtable lineTable) {
 		super.parse(node, lineTable);
 		bindSourceLocation(node, lineTable);
 		String urlName = getNodeAttribute(node, "url"); //$NON-NLS-1$
 		try {
-			url = new URL(urlName);
+			if(urlName!=null)
+				fUrl = new URL(urlName);
 		} catch (MalformedURLException e) {
 		}
 		String typeName = getNodeAttribute(node, "type"); //$NON-NLS-1$
 		if (typeName != null && typeName.equals("web")) //$NON-NLS-1$
-			siteType = WEB_SITE;
+			fSiteType = WEB_SITE;
 	}
 
 	public void setURL(URL url) throws CoreException {
 		ensureModelEditable();
-		Object oldValue = this.url;
-		this.url = url;
+		Object oldValue = this.fUrl;
+		this.fUrl = url;
 		firePropertyChanged(this, P_URL, oldValue, url);
 	}
 
 	public void setSiteType(int type) throws CoreException {
 		ensureModelEditable();
-		Integer oldValue = new Integer(this.siteType);
-		this.siteType = type;
+		Integer oldValue = new Integer(this.fSiteType);
+		this.fSiteType = type;
 		firePropertyChanged(this, P_URL, oldValue, new Integer(type));
 	}
 
@@ -82,13 +83,13 @@ public class FeatureURLElement
 	public String toString() {
 		if (label != null)
 			return label;
-		if (url != null)
-			return url.toString();
+		if (fUrl != null)
+			return fUrl.toString();
 		return super.toString();
 	}
 	public void write(String indent, PrintWriter writer) {
 		String tag = null;
-		switch (elementType) {
+		switch (fElementType) {
 			case UPDATE :
 				tag = "update"; //$NON-NLS-1$
 				break;
@@ -99,13 +100,13 @@ public class FeatureURLElement
 		if (tag == null)
 			return;
 		writer.print(indent + "<" + tag); //$NON-NLS-1$
-		if (label != null) {
+		if (label != null && label.length()>0) {
 			writer.print(" label=\"" + getWritableString(label) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		if (url != null) {
-			writer.print(" url=\"" + getWritableString(url.toString()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		if (fUrl != null) {
+			writer.print(" url=\"" + getWritableString(fUrl.toString()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		if (siteType == WEB_SITE) {
+		if (fSiteType == WEB_SITE) {
 			writer.print(" type=\"web\""); //$NON-NLS-1$
 		}
 		writer.println("/>"); //$NON-NLS-1$

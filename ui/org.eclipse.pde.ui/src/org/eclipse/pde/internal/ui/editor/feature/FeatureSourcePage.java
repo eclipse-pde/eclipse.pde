@@ -10,31 +10,43 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
+import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
+import org.eclipse.pde.internal.ui.editor.XMLSourcePage;
 
 public class FeatureSourcePage extends XMLSourcePage {
 
 	public FeatureSourcePage(PDEFormEditor editor, String id, String title) {
 		super(editor, id, title);
 	}
+
 	protected ILabelProvider createOutlineLabelProvider() {
 		return null;
 	}
+
 	protected ITreeContentProvider createOutlineContentProvider() {
 		return null;
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#createOutlineSorter()
 	 */
 	protected ViewerSorter createOutlineSorter() {
 		return null;
 	}
+
 	protected void outlineSelectionChanged(SelectionChangedEvent e) {
 	}
+
 	protected ISortableContentOutlinePage createOutlinePage() {
-		//TODO remove this method when the above three stubs
+		// TODO remove this method when the above three stubs
 		// are implemented
-		return null;
+		return new FeatureOutlinePage((PDEFormEditor) getEditor());
 	}
 }

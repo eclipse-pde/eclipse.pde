@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
@@ -19,27 +20,26 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * 
  */
-public class FeatureReferencePage extends PDEFormPage {
-	public static final String PAGE_ID = "reference"; //$NON-NLS-1$
+public class FeatureDependenciesPage extends PDEFormPage {
+	public static final String PAGE_ID = "dependencies"; //$NON-NLS-1$
 
-	private static final String KEY_HEADING = "FeatureEditor.ReferencePage.heading"; //$NON-NLS-1$
+	private static final String KEY_HEADING = "FeatureEditor.DependenciesPage.heading"; //$NON-NLS-1$
 
-	private PluginSection fPluginSection;
+	private RequiresSection fRequiresSection;
 
-	private PluginDetailsSection fPluginDetailsSection;
-
-	private PluginPortabilitySection fPluginPortabilitySection;
+	private FeatureMatchSection fMatchSection;
 
 	/**
 	 * 
 	 * @param editor
 	 * @param title
 	 */
-	public FeatureReferencePage(PDEFormEditor editor, String title) {
+	public FeatureDependenciesPage(PDEFormEditor editor, String title) {
 		super(editor, PAGE_ID, title);
 	}
 
@@ -70,31 +70,23 @@ public class FeatureReferencePage extends PDEFormPage {
 		gd = new GridData(GridData.FILL_BOTH);
 		right.setLayoutData(gd);
 
-		fPluginSection = new PluginSection(this, left);
+		fRequiresSection = new RequiresSection(this, left);
 		gd = new GridData(GridData.FILL_BOTH);
-		fPluginSection.getSection().setLayoutData(gd);
+		fRequiresSection.getSection().setLayoutData(gd);
 
-		fPluginDetailsSection = new PluginDetailsSection(this, right);
-		gd = new GridData(GridData.FILL_HORIZONTAL
-				| GridData.VERTICAL_ALIGN_BEGINNING);
-		fPluginDetailsSection.getSection().setLayoutData(gd);
-
-		fPluginPortabilitySection = new PluginPortabilitySection(this, right);
-		gd = new GridData(GridData.FILL_HORIZONTAL
-				| GridData.VERTICAL_ALIGN_BEGINNING);
-		fPluginPortabilitySection.getSection().setLayoutData(gd);
-
-		managedForm.addPart(fPluginSection);
-		managedForm.addPart(fPluginDetailsSection);
-		managedForm.addPart(fPluginPortabilitySection);
-
-		form.setText(PDEPlugin.getResourceString(KEY_HEADING));
-		// WorkbenchHelp.setHelp(form.getBody(),
-		// IHelpContextIds.MANIFEST_FEATURE_CONTENT);
-		fPluginSection.fireSelection();
+		fMatchSection = new FeatureMatchSection(this, right);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		fMatchSection.getSection().setLayoutData(gd);
+		managedForm.addPart(fRequiresSection);
+		managedForm.addPart(fMatchSection);
+		WorkbenchHelp.setHelp(form.getBody(),
+				IHelpContextIds.MANIFEST_FEATURE_CONTENT);
+		initialize();
+		fRequiresSection.fireSelection();
 	}
 
-	public void setFocus() {
-		fPluginSection.setFocus();
+	public void initialize() {
+		getManagedForm().getForm().setText(
+				PDEPlugin.getResourceString(KEY_HEADING));
 	}
 }

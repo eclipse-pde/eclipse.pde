@@ -49,8 +49,6 @@ public interface IFeature extends IFeatureObject, IVersionable, IEnvironment {
 
 	public static final String P_INSTALL_HANDLER = "installHandler"; //$NON-NLS-1$
 
-	public static final String P_NL = "nl"; //$NON-NLS-1$
-
 	public static final String P_PRIMARY = "primary"; //$NON-NLS-1$
 	public static final String P_EXCLUSIVE = "exclusive"; //$NON-NLS-1$
 	public static final String P_PLUGIN = "plugin"; //$NON-NLS-1$
@@ -215,10 +213,6 @@ public interface IFeature extends IFeatureObject, IVersionable, IEnvironment {
 	public void setURL(IFeatureURL url) throws CoreException;
 
 	public void computeImports() throws CoreException;
-
-	public String getNL();
-
-	public void setNL(String nl) throws CoreException;
 
 	boolean isPrimary();
 	public void setPrimary(boolean value) throws CoreException;

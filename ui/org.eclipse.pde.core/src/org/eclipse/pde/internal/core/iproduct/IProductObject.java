@@ -10,11 +10,9 @@ public interface IProductObject extends IWritable, Serializable{
 	
 	IProductModel getModel();
 	
+	void setModel(IProductModel model);
+	
 	IProduct getProduct();
-	
-	boolean isInTheModel();
-	
-	void setInTheModel(boolean inTheModel);
 	
 	boolean isValid();
 	
