@@ -52,7 +52,8 @@ public abstract class BaseExportWizard
 		fPage1 = createPage1();
 		fPage2 = createPage2();
 		addPage(fPage1);
-		addPage(fPage2);
+        if (fPage2 != null)
+            addPage(fPage2);
 	}
 
 	protected abstract BaseExportWizardPage createPage1();
@@ -96,7 +97,8 @@ public abstract class BaseExportWizard
 	 */
 	public boolean performFinish() {
 		fPage1.saveSettings();
-		fPage2.saveSettings();
+        if (fPage2 != null)
+            fPage2.saveSettings();
 		
 		if (fPage1.doGenerateAntFile())
 			generateAntBuildFile(fPage1.getAntBuildFileName());

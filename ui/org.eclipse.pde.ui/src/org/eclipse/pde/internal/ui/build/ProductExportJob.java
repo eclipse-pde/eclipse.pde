@@ -28,7 +28,6 @@ import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.wizards.exports.*;
-import org.osgi.framework.*;
 
 public class ProductExportJob extends FeatureExportJob {
 	
@@ -38,12 +37,11 @@ public class ProductExportJob extends FeatureExportJob {
 
 	private String fRoot;
 
-	public ProductExportJob(IProductModel model, String productRoot, boolean toDirectory, boolean useJarFormat, boolean exportSource, String destination, String zipFileName) {
+	public ProductExportJob(IProductModel model, String productRoot, boolean toDirectory, boolean exportSource, String destination, String zipFileName) {
 		super(PDEPlugin.getResourceString("ProductExportJob.jobName")); //$NON-NLS-1$
 		fProduct = model.getProduct();
 		fExportToDirectory = toDirectory;
 		fExportSource = exportSource;
-		fUseJarFormat = useJarFormat;
 		fDestinationDirectory = destination;
 		fZipFilename = zipFileName;
 		fRoot = productRoot;
@@ -85,13 +83,11 @@ public class ProductExportJob extends FeatureExportJob {
 	protected void doExports(IProgressMonitor monitor)
 			throws InvocationTargetException, CoreException {
 		try {
-			// create a feature to contain all plug-ins
+			// create a feature to wrap all plug-ins and features
 			String featureID = "org.eclipse.pde.container.feature"; //$NON-NLS-1$
 			fFeatureLocation = fBuildTempLocation + File.separator + featureID;
 			createFeature(featureID, fFeatureLocation);
 			createBuildPropertiesFile(fFeatureLocation);
-			if (fUseJarFormat)
-				createPostProcessingFile(new File(fFeatureLocation, PLUGIN_POST_PROCESSING));
 			createConfigIniFile();
 			createEclipseProductFile();
 			createLauncherIniFile();
@@ -120,37 +116,6 @@ public class ProductExportJob extends FeatureExportJob {
 		return null;
 	}
 	
-	private void createFeature(String featureID, String featureLocation)
-			throws IOException {
-		File file = new File(featureLocation);
-		if (!file.exists() || !file.isDirectory())
-			file.mkdirs();
-		File featureXML = new File(file, "feature.xml"); //$NON-NLS-1$
-		PrintWriter writer = new PrintWriter(new OutputStreamWriter(
-				new FileOutputStream(featureXML), "UTF-8"), true); //$NON-NLS-1$
-		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
-		writer.println("<feature id=\"" + featureID + "\" version=\"1.0\">"); //$NON-NLS-1$ //$NON-NLS-2$
-
-		Dictionary environment = TargetPlatform.getTargetEnvironment();
-		BundleContext context = PDEPlugin.getDefault().getBundleContext();
-		for (int i = 0; i < fItems.length; i++) {
-			if (fItems[i] instanceof IPluginModelBase) {
-				IPluginModelBase model = (IPluginModelBase)fItems[i];
-				try {
-					String filterSpec = model.getBundleDescription().getPlatformFilter();
-					if (filterSpec == null || context.createFilter(filterSpec).match(environment))
-						writer.println("<plugin id=\"" + model.getPluginBase().getId() + "\" version=\"0.0.0\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
-				} catch (InvalidSyntaxException e) {
-				}				
-			} else if (fItems[i] instanceof IFeatureModel) {
-				IFeature feature = ((IFeatureModel)fItems[i]).getFeature();
-				writer.println("<includes id=\""+ feature.getId() + "\" version=\"" + feature.getVersion() + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			}
-		}
-		writer.println("</feature>"); //$NON-NLS-1$
-		writer.close();
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 

@@ -131,11 +131,6 @@ public class ProductExportWizardPage extends BaseExportWizardPage {
 		return PDEPlugin.getResourceString("BaseExportWizardPage.packageJARs"); //$NON-NLS-1$
 	}
 	
-	protected void initializeExportOptions(IDialogSettings settings) {
-		super.initializeExportOptions(settings);
-		fSaveAsAntButton.setEnabled(false);
-	}
-	
 	protected void hookListeners() {
 		super.hookListeners();
 		
@@ -220,5 +215,13 @@ public class ProductExportWizardPage extends BaseExportWizardPage {
 		IPath path = new Path(fProductCombo.getText().trim());
 		return PDEPlugin.getWorkspace().getRoot().getFile(path);
 	}
+    
+    protected boolean addAntSection() {
+        return false;
+    }
+    
+    protected boolean addJARFormatSection() {
+        return false;
+    }
 
 }

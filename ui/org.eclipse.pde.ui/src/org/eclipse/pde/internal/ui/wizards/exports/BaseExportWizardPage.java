@@ -47,9 +47,9 @@ public abstract class BaseExportWizardPage extends WizardPage {
 
 	private Combo fAntCombo;
 	private Button fBrowseAnt;
-	protected Button fSaveAsAntButton;
+	private Button fSaveAsAntButton;
 	private String fZipExtension = TargetPlatform.getOS().equals("win32") ? ".zip" : ".tar.gz"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	protected Button fJarButton;
+	private Button fJarButton;
 
 	
 	public BaseExportWizardPage(String name) {
@@ -125,18 +125,21 @@ public abstract class BaseExportWizardPage extends WizardPage {
 		gd.horizontalSpan = 3;
 		fIncludeSource.setLayoutData(gd);
 		
-		fJarButton = new Button(comp, SWT.CHECK);
-		fJarButton.setText(getJarButtonText());
-		gd = new GridData();
-		gd.horizontalSpan = 3;
-		fJarButton.setLayoutData(gd);
-		fJarButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				getContainer().updateButtons();
-			}
-		});
-		
-		createAntSection(comp);
+        if (addJARFormatSection()) {
+    		fJarButton = new Button(comp, SWT.CHECK);
+    		fJarButton.setText(getJarButtonText());
+    		gd = new GridData();
+    		gd.horizontalSpan = 3;
+    		fJarButton.setLayoutData(gd);
+    		fJarButton.addSelectionListener(new SelectionAdapter() {
+    			public void widgetSelected(SelectionEvent e) {
+    				getContainer().updateButtons();
+    			}
+    		});
+        }
+        
+		if (addAntSection())
+            createAntSection(comp);
 		return comp;
 	}
 	
@@ -173,16 +176,8 @@ public abstract class BaseExportWizardPage extends WizardPage {
 				pageChanged();
 			}}
 		);
-				
-		fSaveAsAntButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				fAntCombo.setEnabled(fSaveAsAntButton.getSelection());
-				fBrowseAnt.setEnabled(fSaveAsAntButton.getSelection());
-				pageChanged();
-			}}
-		);
-		
-		fBrowseFile.addSelectionListener(new SelectionAdapter() {
+			
+ 		fBrowseFile.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				chooseFile(fArchiveCombo, "*" + fZipExtension); //$NON-NLS-1$
 			}
@@ -218,23 +213,33 @@ public abstract class BaseExportWizardPage extends WizardPage {
 			}
 		});
 		
-		fBrowseAnt.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				chooseFile(fAntCombo, "*.xml"); //$NON-NLS-1$
-			}
-		});
-		
-		fAntCombo.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				pageChanged();
-			}
-		});
-		
-		fAntCombo.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				pageChanged();
-			}
-		});		
+        if (addAntSection()) {
+            fSaveAsAntButton.addSelectionListener(new SelectionAdapter() {
+                public void widgetSelected(SelectionEvent e) {
+                    fAntCombo.setEnabled(fSaveAsAntButton.getSelection());
+                    fBrowseAnt.setEnabled(fSaveAsAntButton.getSelection());
+                    pageChanged();
+                }}
+            );
+            
+     		fBrowseAnt.addSelectionListener(new SelectionAdapter() {
+    			public void widgetSelected(SelectionEvent e) {
+    				chooseFile(fAntCombo, "*.xml"); //$NON-NLS-1$
+    			}
+    		});
+    		
+    		fAntCombo.addSelectionListener(new SelectionAdapter() {
+    			public void widgetSelected(SelectionEvent e) {
+    				pageChanged();
+    			}
+    		});
+    		
+    		fAntCombo.addModifyListener(new ModifyListener() {
+    			public void modifyText(ModifyEvent e) {
+    				pageChanged();
+    			}
+    		});	
+        }
 	}
 
 	private void chooseFile(Combo combo, String filter) {
@@ -285,11 +290,14 @@ public abstract class BaseExportWizardPage extends WizardPage {
 
 	protected void initializeExportOptions(IDialogSettings settings) {		
 		fIncludeSource.setSelection(settings.getBoolean(S_EXPORT_SOURCE));
-		fJarButton.setSelection(settings.getBoolean(S_JAR_FORMAT));
-		fSaveAsAntButton.setSelection(settings.getBoolean(S_SAVE_AS_ANT));
-		initializeCombo(settings, S_ANT_FILENAME, fAntCombo);
-		fAntCombo.setEnabled(fSaveAsAntButton.getSelection());
-		fBrowseAnt.setEnabled(fSaveAsAntButton.getSelection());
+        if (fJarButton != null)
+            fJarButton.setSelection(settings.getBoolean(S_JAR_FORMAT));
+        if (addAntSection()) {
+    		fSaveAsAntButton.setSelection(settings.getBoolean(S_SAVE_AS_ANT));
+    		initializeCombo(settings, S_ANT_FILENAME, fAntCombo);
+    		fAntCombo.setEnabled(fSaveAsAntButton.getSelection());
+    		fBrowseAnt.setEnabled(fSaveAsAntButton.getSelection());
+        }
 	}
 	
 	private void initializeDestinationSection(IDialogSettings settings) {
@@ -317,14 +325,19 @@ public abstract class BaseExportWizardPage extends WizardPage {
 
 	public void saveSettings() {
 		IDialogSettings settings = getDialogSettings();	
-		settings.put(S_JAR_FORMAT, fJarButton.getSelection());
+        if (fJarButton != null)
+            settings.put(S_JAR_FORMAT, fJarButton.getSelection());
+        
 		settings.put(S_EXPORT_DIRECTORY, fDirectoryButton.getSelection());		
 		settings.put(S_EXPORT_SOURCE, fIncludeSource.getSelection());
-		settings.put(S_SAVE_AS_ANT, fSaveAsAntButton.getSelection());
+        
+        if (fSaveAsAntButton != null)
+            settings.put(S_SAVE_AS_ANT, fSaveAsAntButton.getSelection());
 		
 		saveCombo(settings, S_DESTINATION, fDirectoryCombo);
 		saveCombo(settings, S_ZIP_FILENAME, fArchiveCombo);
-		saveCombo(settings, S_ANT_FILENAME, fAntCombo);
+        if (fAntCombo != null)
+            saveCombo(settings, S_ANT_FILENAME, fAntCombo);
 	}
 	
 	protected void saveCombo(IDialogSettings settings, String key, Combo combo) {
@@ -347,7 +360,7 @@ public abstract class BaseExportWizardPage extends WizardPage {
 	}
 	
 	public boolean useJARFormat() {
-		return fJarButton.getSelection();
+		return fJarButton != null && fJarButton.getSelection();
 	}
 	
 	public String getFileName() {
@@ -384,15 +397,23 @@ public abstract class BaseExportWizardPage extends WizardPage {
 	protected abstract void hookHelpContext(Control control);
 		
 	public boolean doGenerateAntFile() {
-		return fSaveAsAntButton.getSelection();
+		return fSaveAsAntButton != null && fSaveAsAntButton.getSelection();
 	}
 	
 	public String getAntBuildFileName() {
-		return fAntCombo.getText().trim();
+		return fAntCombo != null ? fAntCombo.getText().trim() : "";
 	}
 	
 	public IWizardPage getNextPage() {
-		return (fJarButton.getSelection()) ? super.getNextPage() : null;
+		return (fJarButton != null && fJarButton.getSelection()) ? super.getNextPage() : null;
 	}
+    
+    protected boolean addAntSection() {
+        return true;
+    }
+    
+    protected boolean addJARFormatSection() {
+        return true;
+    }
 	
 }

@@ -14,6 +14,7 @@ import java.io.*;
 import java.lang.reflect.*;
 import java.net.*;
 import java.util.*;
+
 import org.eclipse.ant.core.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -31,6 +32,8 @@ import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.build.*;
 import org.eclipse.swt.widgets.*;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.InvalidSyntaxException;
 
 public class FeatureExportJob extends Job implements IPreferenceConstants {
 
@@ -569,4 +572,56 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 	protected String getLogFoundMessage() {
 		return PDEPlugin.getFormattedMessage("ExportJob.error.message", fDestinationDirectory + File.separator + "logs.zip"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
+    
+    protected void createFeature(String featureID, String featureLocation) throws IOException {
+        File file = new File(featureLocation);
+        if (!file.exists() || !file.isDirectory())
+            file.mkdirs();
+        
+        File featureXML = new File(file, "feature.xml"); //$NON-NLS-1$
+        PrintWriter writer = new PrintWriter(new OutputStreamWriter(
+                new FileOutputStream(featureXML), "UTF-8"), true); //$NON-NLS-1$
+        writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
+        writer.println("<feature id=\"" + featureID + "\" version=\"1.0\">"); //$NON-NLS-1$ //$NON-NLS-2$
+
+        Dictionary environment = TargetPlatform.getTargetEnvironment();
+        BundleContext context = PDEPlugin.getDefault().getBundleContext();
+        for (int i = 0; i < fItems.length; i++) {
+            if (fItems[i] instanceof IPluginModelBase) {
+                IPluginModelBase model = (IPluginModelBase) fItems[i];
+                try {
+                    String filterSpec = model.getBundleDescription().getPlatformFilter();
+                    if (filterSpec == null|| context.createFilter(filterSpec).match(environment)) {
+                        writer.print("<plugin id=\"");
+                        writer.print(model.getPluginBase().getId());
+                        writer.print("\" version=\"0.0.0\"");
+                        if (!fUseJarFormat) {
+                            writer.print(" unpack=\"");
+                            writer.print(Boolean.toString(doUnpack(model)));
+                            writer.print("\"");
+                        }
+                        writer.println("/>");
+                    }
+                } catch (InvalidSyntaxException e) {
+                }
+            } else if (fItems[i] instanceof IFeatureModel) {
+                IFeature feature = ((IFeatureModel) fItems[i]).getFeature();
+                writer.println("<includes id=\"" + feature.getId() + "\" version=\"" + feature.getVersion() + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            }
+        }
+        writer.println("</feature>"); //$NON-NLS-1$
+        writer.close();
+    }
+
+    private boolean doUnpack(IPluginModelBase model) {
+        IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
+        for (int i = 0; i < libraries.length; i++) {
+            if (!libraries[i].getName().equals("."))
+                return true;
+        }
+        return false;
+    }
+
+
+
 }

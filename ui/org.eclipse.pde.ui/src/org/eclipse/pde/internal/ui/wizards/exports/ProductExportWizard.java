@@ -44,7 +44,7 @@ public class ProductExportWizard extends BaseExportWizard {
 	}
 
 	protected AdvancedPluginExportPage createPage2() {
-		return new AdvancedFeatureExportPage();
+		return null;
 	}
 	
 	protected String getSettingsSectionName() {
@@ -60,7 +60,6 @@ public class ProductExportWizard extends BaseExportWizard {
 										fProductModel, 
 										page.getRootDirectory(), 
 										page.doExportToDirectory(),
-										page.useJARFormat(),
 										page.doExportSource(), 
 										page.getDestination(), 
 										page.getFileName());

@@ -68,26 +68,6 @@ public class PluginExportJob extends FeatureExportJob {
 		}
 	}
 	
-	private void createFeature(String featureID, String featureLocation)
-			throws IOException {
-		File file = new File(featureLocation);
-		if (!file.exists() || !file.isDirectory())
-			file.mkdirs();
-		File featureXML = new File(file, "feature.xml"); //$NON-NLS-1$
-		PrintWriter writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(featureXML), "UTF-8"), true); //$NON-NLS-1$
-		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
-		writer.println("<feature id=\"" + featureID+ "\" version=\"1.0\">"); //$NON-NLS-1$ //$NON-NLS-2$
-		for (int i = 0; i < fItems.length; i++) {
-			if (fItems[i] instanceof IPluginModelBase) {
-				IPluginBase plugin = ((IPluginModelBase) fItems[i])
-						.getPluginBase();
-				writer.println("<plugin id=\"" + plugin.getId()+ "\" version=\"0.0.0\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-		}
-		writer.println("</feature>"); //$NON-NLS-1$
-		writer.close();
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.exports.FeatureExportJob#getPaths()
 	 */
