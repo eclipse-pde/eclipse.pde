@@ -40,6 +40,7 @@
       <import plugin="org.eclipse.jdt.junit"/>
       <import plugin="org.eclipse.ui.forms"/>
       <import plugin="org.eclipse.ui.intro"/>
+      <import plugin="org.eclipse.ui.cheatsheets"/>
    </requires>
 
 
@@ -114,8 +115,8 @@
             icon="icons/etool16/newpprj_wiz.gif"
             category="org.eclipse.pde.PDE"
             class="org.eclipse.pde.internal.ui.wizards.plugin.NewPluginProjectWizard"
-            project="true"
             finalPerspective="org.eclipse.pde.ui.PDEPerspective"
+            project="true"
             id="org.eclipse.pde.ui.NewProjectWizard">
          <description>
             %new.pluginProject.description
@@ -126,8 +127,8 @@
             icon="icons/etool16/newfprj_wiz.gif"
             category="org.eclipse.pde.PDE"
             class="org.eclipse.pde.internal.ui.wizards.plugin.NewFragmentProjectWizard"
-            project="true"
             finalPerspective="org.eclipse.pde.ui.PDEPerspective"
+            project="true"
             id="org.eclipse.pde.ui.NewFragmentWizard">
          <description>
             %new.fragmentProject.description
@@ -159,8 +160,8 @@
             icon="icons/etool16/newftrprj_wiz.gif"
             category="org.eclipse.pde.PDE"
             class="org.eclipse.pde.internal.ui.wizards.feature.NewFeatureProjectWizard"
-            project="true"
             finalPerspective="org.eclipse.pde.ui.PDEPerspective"
+            project="true"
             id="org.eclipse.pde.ui.NewFeatureProjectWizard">
          <description>
             %new.feature.description
@@ -323,8 +324,8 @@
       <wizard
             contributingId="org.eclipse.ui.actionSets"
             name="%newExtension.templates.hello.name"
-            template="true"
             icon="icons/etool16/newex_wiz.gif"
+            template="true"
             category="templates"
             class="org.eclipse.pde.internal.ui.wizards.templates.HelloWorldTemplate"
             id="org.eclipse.pde.ui.newExtension.hello">
@@ -335,8 +336,8 @@
       <wizard
             contributingId="org.eclipse.ui.views"
             name="%newExtension.templates.view.name"
-            template="true"
             icon="icons/etool16/newex_wiz.gif"
+            template="true"
             category="templates"
             class="org.eclipse.pde.internal.ui.wizards.templates.ViewTemplate"
             id="org.eclipse.pde.ui.newExtension.view">
@@ -347,8 +348,8 @@
       <wizard
             contributingId="org.eclipse.ui.editors"
             name="%newExtension.templates.multiPageEditor.name"
-            template="true"
             icon="icons/etool16/newex_wiz.gif"
+            template="true"
             category="templates"
             class="org.eclipse.pde.internal.ui.wizards.templates.MultiPageEditorTemplate"
             id="org.eclipse.pde.ui.newExtension.multiPageEditor">
@@ -360,8 +361,8 @@
             contributingId="org.eclipse.ui.newWizards"
             availableAsShortcut="true"
             name="%newExtension.templates.newWizard.name"
-            template="true"
             icon="icons/etool16/newex_wiz.gif"
+            template="true"
             category="templates"
             class="org.eclipse.pde.internal.ui.wizards.templates.NewWizardTemplate"
             id="org.eclipse.pde.ui.newExtension.newWizard">
@@ -373,8 +374,8 @@
             contributingId="org.eclipse.ui.preferencePages"
             availableAsShortcut="true"
             name="%newExtension.templates.preferences.name"
-            template="true"
             icon="icons/etool16/newex_wiz.gif"
+            template="true"
             category="templates"
             class="org.eclipse.pde.internal.ui.wizards.templates.PreferencePageTemplate"
             id="org.eclipse.pde.ui.newExtension.preferences">
@@ -386,8 +387,8 @@
             contributingId="org.eclipse.ui.perspectiveExtensions"
             availableAsShortcut="true"
             name="%newExtension.templates.perspectiveExtensions.name"
-            template="true"
             icon="icons/etool16/newex_wiz.gif"
+            template="true"
             category="templates"
             class="org.eclipse.pde.internal.ui.wizards.templates.PerspectiveExtensionsTemplate"
             id="org.eclipse.pde.ui.newExtension.perspectiveExtensions">
@@ -399,8 +400,8 @@
             contributingId="org.eclipse.ui.propertyPages"
             availableAsShortcut="true"
             name="%newExtension.templates.propertyPages.name"
-            template="true"
             icon="icons/etool16/newex_wiz.gif"
+            template="true"
             category="templates"
             class="org.eclipse.pde.internal.ui.wizards.templates.PropertyPageTemplate"
             id="org.eclipse.pde.ui.newExtension.propertyPages">
@@ -412,8 +413,8 @@
             contributingId="org.eclipse.ui.popupMenus"
             availableAsShortcut="true"
             name="%newExtension.templates.popupMenus.name"
-            template="true"
             icon="icons/etool16/newex_wiz.gif"
+            template="true"
             category="templates"
             class="org.eclipse.pde.internal.ui.wizards.templates.PopupMenuTemplate"
             id="org.eclipse.pde.ui.newExtension.popupMenus">
@@ -425,8 +426,8 @@
             contributingId="org.eclipse.ui.editors"
             availableAsShortcut="true"
             name="%newExtension.templates.editor.name"
-            template="true"
             icon="icons/etool16/newex_wiz.gif"
+            template="true"
             category="templates"
             class="org.eclipse.pde.internal.ui.wizards.templates.EditorTemplate"
             id="org.eclipse.pde.ui.newExtension.editor">
@@ -438,8 +439,8 @@
             contributingId="org.eclipse.help.toc"
             availableAsShortcut="true"
             name="%newExtension.templates.help.name"
-            template="true"
             icon="icons/etool16/newex_wiz.gif"
+            template="true"
             category="templates"
             class="org.eclipse.pde.internal.ui.wizards.templates.HelpTemplate"
             id="org.eclipse.pde.ui.newExtension.help">
@@ -451,12 +452,12 @@
    <extension
          point="org.eclipse.ui.editors">
       <editor
-            name="%editors.pluginManifest.name"
             default="true"
+            name="%editors.pluginManifest.name"
             icon="icons/obj16/plugin_mf_obj.gif"
             filenames="plugin.xml"
-            contributorClass="org.eclipse.pde.internal.ui.editor.manifest.ManifestEditorContributor"
             class="org.eclipse.pde.internal.ui.editor.manifest.ManifestEditor"
+            contributorClass="org.eclipse.pde.internal.ui.editor.manifest.ManifestEditorContributor"
             id="org.eclipse.pde.ui.manifestEditor">
       </editor>
 <!--
@@ -470,21 +471,21 @@
       </editor>
 -->
       <editor
-            name="%editors.fragmentManifest.name"
             default="true"
+            name="%editors.fragmentManifest.name"
             icon="icons/obj16/frgmt_mf_obj.gif"
             filenames="fragment.xml"
-            contributorClass="org.eclipse.pde.internal.ui.editor.manifest.ManifestEditorContributor"
             class="org.eclipse.pde.internal.ui.editor.manifest.FragmentManifestEditor"
+            contributorClass="org.eclipse.pde.internal.ui.editor.manifest.ManifestEditorContributor"
             id="org.eclipse.pde.ui.fragmentEditor">
       </editor>
       <editor
-            name="%editors.schema.name"
             default="false"
-            icon="icons/obj16/schema_obj.gif"
+            name="%editors.schema.name"
             extensions="exsd,mxsd"
-            contributorClass="org.eclipse.pde.internal.ui.editor.schema.SchemaEditorContributor"
+            icon="icons/obj16/schema_obj.gif"
             class="org.eclipse.pde.internal.ui.editor.schema.SchemaEditor"
+            contributorClass="org.eclipse.pde.internal.ui.editor.schema.SchemaEditorContributor"
             id="org.eclipse.pde.ui.schemaEditor">
       </editor>
 <!--
@@ -499,21 +500,21 @@
       </editor>
 -->
       <editor
-            name="%editors.buildProperties.name"
             default="true"
+            name="%editors.buildProperties.name"
             icon="icons/obj16/build_exec.gif"
             filenames="build.properties, delta.properties"
-            contributorClass="org.eclipse.pde.internal.ui.editor.build.BuildEditorContributor"
             class="org.eclipse.pde.internal.ui.editor.build.BuildPropertiesEditor"
+            contributorClass="org.eclipse.pde.internal.ui.editor.build.BuildEditorContributor"
             id="org.eclipse.pde.ui.buildEditor">
       </editor>
       <editor
-            name="%editors.featureManifest.name"
             default="true"
+            name="%editors.featureManifest.name"
             icon="icons/obj16/ftr_xml_obj.gif"
             filenames="feature.xml"
-            contributorClass="org.eclipse.pde.internal.ui.editor.feature.FeatureEditorContributor"
             class="org.eclipse.pde.internal.ui.editor.feature.FeatureEditor"
+            contributorClass="org.eclipse.pde.internal.ui.editor.feature.FeatureEditorContributor"
             id="org.eclipse.pde.ui.featureEditor">
       </editor>
 <!--
@@ -527,12 +528,12 @@
       </editor>
 -->
       <editor
-            name="%editors.siteManifest.name"
             default="true"
+            name="%editors.siteManifest.name"
             icon="icons/obj16/site_xml_obj.gif"
             filenames="site.xml"
-            contributorClass="org.eclipse.pde.internal.ui.editor.site.SiteEditorContributor"
             class="org.eclipse.pde.internal.ui.editor.site.SiteEditor"
+            contributorClass="org.eclipse.pde.internal.ui.editor.site.SiteEditorContributor"
             id="org.eclipse.pde.ui.siteEditor">
       </editor>
 <!--
@@ -546,8 +547,8 @@
       </editor>
 -->
       <editor
-            name="%editors.sample.name"
             default="true"
+            name="%editors.sample.name"
             icon="icons/obj16/build_exec.gif"
             filenames="sample.properties"
             class="org.eclipse.pde.ui.internal.samples.SampleEditor"
@@ -727,8 +728,8 @@
          </action>
       </objectContribution>
       <objectContribution
-            objectClass="org.eclipse.core.resources.IProject"
             adaptable="true"
+            objectClass="org.eclipse.core.resources.IProject"
             id="org.eclipse.pde.ui.pluginProjectToolSet">
          <menu
                label="%org.eclipse.pde.ui.tools"
@@ -812,20 +813,20 @@
    <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
+            sourceLocatorId="org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector"
             name="%launchConfigurationType.name"
+            sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer"
             delegate="org.eclipse.pde.internal.ui.launcher.WorkbenchLaunchConfigurationDelegate"
             modes="run, debug"
-            id="org.eclipse.pde.ui.RuntimeWorkbench"
-            sourceLocatorId="org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector"
-            sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer">
+            id="org.eclipse.pde.ui.RuntimeWorkbench">
       </launchConfigurationType>
       <launchConfigurationType
+            sourceLocatorId="org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector"
             name="%launcher.junit.name"
+            sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer"
             delegate="org.eclipse.pde.internal.ui.launcher.JUnitLaunchConfiguration"
             modes="run, debug"
-            id="org.eclipse.pde.ui.JunitLaunchConfig"
-            sourceLocatorId="org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector"
-            sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer">
+            id="org.eclipse.pde.ui.JunitLaunchConfig">
          <fileExtension
                default="false"
                extension="java">
@@ -856,8 +857,8 @@
             class="org.eclipse.pde.internal.ui.launcher.WorkbenchLauncherTabGroup"
             id="org.eclipse.pde.ui.launcher.WorkbenchLauncherTabGroup">
          <launchMode
-               description="%workbenchLauncherTabGroup.description.debug"
                perspective="org.eclipse.debug.ui.DebugPerspective"
+               description="%workbenchLauncherTabGroup.description.debug"
                mode="debug">
          </launchMode>
          <launchMode
@@ -870,8 +871,8 @@
             class="org.eclipse.pde.internal.ui.launcher.JUnitTabGroup"
             id="org.eclipse.pde.ui.launcher.JUnitTabGroup">
          <launchMode
-               description="%jUnitTabGroup.description.debug"
                perspective="org.eclipse.debug.ui.DebugPerspective"
+               description="%jUnitTabGroup.description.debug"
                mode="debug">
          </launchMode>
          <launchMode
@@ -891,8 +892,8 @@
       <shortcut
             label="%launcher.junit.name"
             icon="icons/obj16/julaunchpgn.gif"
-            modes="run, debug"
             class="org.eclipse.pde.internal.ui.launcher.JUnitWorkbenchShortcut"
+            modes="run, debug"
             id="org.eclipse.pde.ui.junitWorkbenchShortcut">
          <perspective
                id="org.eclipse.jdt.ui.JavaPerspective">
@@ -913,8 +914,8 @@
       <shortcut
             label="%launcher.shortcut.label"
             icon="icons/etool16/eclipse_launcher_wiz.gif"
-            modes="run, debug"
             class="org.eclipse.pde.internal.ui.launcher.RuntimeWorkbenchShortcut"
+            modes="run, debug"
             id="org.eclipse.pde.ui.runtimeWorkbenchShortcut">
          <perspective
                id="org.eclipse.jdt.ui.JavaPerspective">
@@ -937,8 +938,8 @@
          point="org.eclipse.ui.decorators">
       <decorator
             lightweight="true"
-            quadrant="TOP_LEFT"
             adaptable="true"
+            quadrant="TOP_LEFT"
             label="%decorator.label"
             icon="icons/ovr16/binary_co.gif"
             state="false"
@@ -1036,17 +1037,17 @@
    <extension
          point="org.eclipse.jdt.ui.javaElementFilters">
       <filter
-            targetId="org.eclipse.jdt.ui.PackageExplorer"
-            name="%binaryFilter.name"
             enabled="false"
+            name="%binaryFilter.name"
+            targetId="org.eclipse.jdt.ui.PackageExplorer"
             description="%binaryFilter.desc"
             class="org.eclipse.pde.internal.ui.wizards.imports.BinaryProjectFilter"
             id="org.eclipse.pde.ui.BinaryProjectFilter1">
       </filter>
       <filter
-            targetId="org.eclipse.jdt.ui.ProjectsView"
-            name="%binaryFilter.name"
             enabled="false"
+            name="%binaryFilter.name"
+            targetId="org.eclipse.jdt.ui.ProjectsView"
             description="%binaryFilter.desc"
             class="org.eclipse.pde.internal.ui.wizards.imports.BinaryProjectFilter"
             id="org.eclipse.pde.ui.BinaryProjectFilter2">
@@ -1065,10 +1066,10 @@
       <page
             showScopeSection="true"
             canSearchEnclosingProjects="true"
-            label="%PluginSearchPage.label"
             enabled="true"
-            icon="icons/obj16/psearch_obj.gif"
+            label="%PluginSearchPage.label"
             extensions="xml:90"
+            icon="icons/obj16/psearch_obj.gif"
             class="org.eclipse.pde.internal.ui.search.PluginSearchPage"
             id="org.eclipse.pde.internal.ui.search.SearchPage">
       </page>
