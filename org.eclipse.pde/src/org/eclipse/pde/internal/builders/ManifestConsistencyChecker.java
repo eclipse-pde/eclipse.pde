@@ -318,6 +318,11 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			validateExistingAttributes(atts, schemaElement, reporter);
 			validateRequiredAttributes(element, schemaElement, reporter);
 		}
+		IPluginObject [] children = element.getChildren();
+		for (int i=0; i<children.length; i++) {
+			IPluginElement child = (IPluginElement)children[i];
+			validateElement(child, schema, reporter);
+		}
 	}
 
 	private void validateExistingAttributes(
