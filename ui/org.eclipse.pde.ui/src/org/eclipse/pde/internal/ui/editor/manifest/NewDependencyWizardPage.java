@@ -223,7 +223,7 @@ private void handleCheckStateChanged(IPluginModel candidate, boolean checked) {
 		if (modelBase instanceof IPluginModel) {
 			DependencyLoop [] loops = DependencyLoopFinder.findLoops((IPlugin)modelBase.getPluginBase(),  plugins, true);
 			if (loops.length>0) {
-				setMessage(PDEPlugin.getResourceString(KEY_LOOP_WARNING));
+				setMessage(PDEPlugin.getResourceString(KEY_LOOP_WARNING), WARNING);
 			}
 			else
 				setMessage(null);
