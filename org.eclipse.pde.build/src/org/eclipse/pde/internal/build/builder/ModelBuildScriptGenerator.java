@@ -822,7 +822,7 @@ public abstract class ModelBuildScriptGenerator extends AbstractBuildScriptGener
 	
 	public boolean hasManifest() {
 		try {
-			return new File(getLocation(model), "meta-inf/manifest.mf").exists(); //$NON-NLS-1$
+			return new File(getLocation(model), MANIFEST_FOLDER + "/" + MANIFEST ).exists(); //$NON-NLS-1$
 		} catch (CoreException e) {
 			// Ignore the exception and return false
 			return false;

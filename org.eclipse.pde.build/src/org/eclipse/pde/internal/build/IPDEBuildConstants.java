@@ -28,7 +28,9 @@ public interface IPDEBuildConstants {
 	public final static String ABOUT_HTML_FILE = "about.html"; //$NON-NLS-1$
 	public final static String FEATURE_PROPERTIES_FILE = "feature.properties"; //$NON-NLS-1$
 	public final static String SOURCE_PLUGIN_ATTRIBUTE = "sourcePlugin"; //$NON-NLS-1$
-
+	public final static String MANIFEST_FOLDER = "META-INF"; //$NON-NLS-1$
+	public final static String MANIFEST = "MANIFEST.MF"; //$NON-NLS-1$
+	
 	// command line arguments
 	public static final String ARG_CVS_PASSFILE_LOCATION = "-cvspassfile"; //$NON-NLS-1$
 	public static final String ARG_DEV_ENTRIES = "-dev"; //$NON-NLS-1$

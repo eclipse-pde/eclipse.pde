@@ -27,7 +27,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 
 	private static List configInfos;
 	protected static String workingDirectory;
-
+	protected static boolean buildingOSGi = false;
 	protected AntScript script;
 
 	static {
@@ -151,11 +151,11 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	public void closeScript() {
 		script.close();
 	}
-	protected boolean buildingOSGi = false;
+
 	public void setBuildingOSGi(boolean b) {
 		buildingOSGi = b;
 	}
-	public boolean isBuildingOSGi() {
+	public static boolean isBuildingOSGi() {
 		return buildingOSGi;
 	}
 }

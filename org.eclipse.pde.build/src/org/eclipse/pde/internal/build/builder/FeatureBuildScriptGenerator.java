@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.build.builder;
 
 import java.io.*;
+import java.net.URL;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.PluginModel;
@@ -1042,12 +1043,14 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		File sourcePluginDir = sourcePluginDirURL.toFile();
 		sourcePluginDir.mkdir();
 
-		// Create the plugin.xml
-		String genericTemplateLocation = Platform.getPlugin(PI_PDEBUILD).find(new Path("templates/plugin")).getFile(); //$NON-NLS-1$
-		String templatePluginXML = genericTemplateLocation + "/" + DEFAULT_PLUGIN_FILENAME_DESCRIPTOR; //$NON-NLS-1$
+		// Create the plugin.xml 
 		StringBuffer buffer;
+		String templatePluginXML = "templates/plugin/" + DEFAULT_PLUGIN_FILENAME_DESCRIPTOR; //$NON-NLS-1$
+		URL templatePluginURL = Platform.getPlugin(PI_PDEBUILD).find(new Path(templatePluginXML));
+		if (templatePluginURL == null)
+			return null; //TODO log an error or throws an exception
 		try {
-			buffer = readFile(new File(templatePluginXML));
+			buffer = readFile(templatePluginURL.openStream()); //$NON-NLS-1$
 		} catch (IOException e1) {
 			String message = Policy.bind("exception.readingFile", templatePluginXML); //$NON-NLS-1$
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READING_FILE, message, e1));
@@ -1102,8 +1105,10 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 		try {
 			// read the content of the template file
-			String templateLocation = Platform.getPlugin(PI_PDEBUILD).find(new Path("templates/fragment")).getFile(); //$NON-NLS-1$
-			StringBuffer buffer = readFile(new File(templateLocation + "/" + DEFAULT_FRAGMENT_FILENAME_DESCRIPTOR)); //$NON-NLS-1$
+			URL templateLocation = Platform.getPlugin(PI_PDEBUILD).find(new Path("templates/fragment/" + DEFAULT_FRAGMENT_FILENAME_DESCRIPTOR)); //$NON-NLS-1$
+			if (templateLocation == null) //TODO here we should log
+				return;
+			StringBuffer buffer = readFile(templateLocation.openStream()); //$NON-NLS-1$
 
 			//Set the Id of the fragment
 			int beginId = scan(buffer, 0, REPLACED_FRAGMENT_ID);

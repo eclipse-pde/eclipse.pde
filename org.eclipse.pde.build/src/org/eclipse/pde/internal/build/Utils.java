@@ -208,11 +208,11 @@ public final class Utils implements IPDEBuildConstants {
 			if (buildingOSGi && ( plugins[i].getId().startsWith("org.eclipse.osgi") || plugins[i].getId().equals("org.eclipse.core.runtime") || plugins[i].getId().equals("org.eclipse.core.runtime.osgi") || plugins[i].getId().equals("org.eclipse.core.runtime.compatibility") || plugins[i].getId().equals("org.eclipse.update.configurator") )) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 				continue;
 		
-			if (!buildingOSGi || buildingOSGi && !new File(plugins[i].getLocation(), "meta-inf/manifest.mf").exists()) { //$NON-NLS-1$
+			if (!buildingOSGi || buildingOSGi && !new File(plugins[i].getLocation(), MANIFEST_FOLDER + "/" + MANIFEST).exists()) { //$NON-NLS-1$
 				if (!boot && pluginList.contains(BootLoader.PI_BOOT) && !plugins[i].getId().equals(BootLoader.PI_BOOT))
 					prereqs.add(new String[] { plugins[i].getId(), BootLoader.PI_BOOT });
-				if (!runtime && pluginList.contains(Platform.PI_RUNTIME) && !plugins[i].getId().equals(Platform.PI_RUNTIME) && !plugins[i].getId().equals(BootLoader.PI_BOOT))
-					prereqs.add(new String[] { plugins[i].getId(), Platform.PI_RUNTIME });
+				if (!runtime && pluginList.contains(Platform.PI_RUNTIME) && !plugins[i].getId().equals(Platform.PI_RUNTIME) && !plugins[i].getId().equals(BootLoader.PI_BOOT) && !plugins[i].getId().equals("org.eclipse.core.runtime.compatibility"))
+					prereqs.add(new String[] { plugins[i].getId(), "org.eclipse.core.runtime.compatibility" });
 			}
 		}
 

@@ -144,7 +144,11 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 	 * @throws IOException
 	 */
 	protected StringBuffer readFile(File target) throws IOException {
-		InputStreamReader reader = new InputStreamReader(new FileInputStream(target));
+		return readFile(new FileInputStream(target));
+	}
+	
+	protected StringBuffer readFile(InputStream stream) throws IOException {
+		InputStreamReader reader = new InputStreamReader(new BufferedInputStream(stream));
 		StringBuffer result = new StringBuffer();
 		char[] buf = new char[4096];
 		int count;
