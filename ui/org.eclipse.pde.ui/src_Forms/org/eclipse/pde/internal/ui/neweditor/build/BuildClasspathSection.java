@@ -13,26 +13,25 @@ package org.eclipse.pde.internal.ui.neweditor.build;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.util.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.build.*;
-import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.build.*;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.pde.internal.ui.neweditor.*;
-import org.eclipse.pde.internal.ui.neweditor.context.InputContext;
-import org.eclipse.pde.internal.ui.newparts.EditableTablePart;
-import org.eclipse.swt.SWT;
+import org.eclipse.pde.internal.ui.neweditor.context.*;
+import org.eclipse.pde.internal.ui.newparts.*;
+import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.actions.*;
 import org.eclipse.ui.dialogs.*;
-import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.model.*;
-import org.eclipse.ui.views.navigator.ResourceSorter;
+import org.eclipse.ui.views.navigator.*;
 
 public class BuildClasspathSection
 	extends TableSection
@@ -50,9 +49,9 @@ public class BuildClasspathSection
 		"BuildPropertiesEditor.BuildClasspathSection.popupAdd";
 	private final static String POPUP_DELETE =
 		"BuildPropertiesEditor.BuildClasspathSection.popupDelete";			
-	private TableViewer entryTable;
-	private Image entryImage;
-	protected Control sectionControl;
+	private TableViewer fTableViewer;
+	private boolean fEnabled = true;
+
 	
 
 	/**
@@ -148,7 +147,8 @@ public class BuildClasspathSection
 			return obj.toString();
 		}
 		public Image getColumnImage(Object obj, int index) {
-			return entryImage;
+			ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
+			return sharedImages.getImage(ISharedImages.IMG_OBJ_FILE);
 		}
 	}
 	public BuildClasspathSection(PDEFormPage page, Composite parent) {
@@ -176,33 +176,22 @@ public class BuildClasspathSection
 	public void initialize(){
 		getBuildModel().addModelChangedListener(this);
 		IBuildEntry entry = getBuildModel().getBuild().getEntry(IBuildPropertiesConstants.PROPERTY_JAR_EXTRA_CLASSPATH);
-		getSection().addExpansionListener(new ExpansionAdapter() {
-			public void expansionStateChanged(ExpansionEvent e) {
-				//getPage().getManagedForm().reflow(true);
-			}
-		});
 		getSection().setExpanded(entry!=null && entry.getTokens().length>0);
-	}
-
-	private void initializeImages() {
-		ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
-		entryImage = sharedImages.getImage(ISharedImages.IMG_OBJ_FILE);
 	}
 
 	public void createClient(
 		Section section,
 		FormToolkit toolkit) {
-		initializeImages();
 		Composite container = createClientContainer(section, 2, toolkit);
 		createViewerPartControl(container, SWT.FULL_SELECTION, 2, toolkit);
 
 		EditableTablePart tablePart = getTablePart();
 		tablePart.setEditable(true);
-		entryTable = tablePart.getTableViewer();
+		fTableViewer = tablePart.getTableViewer();
 
-		entryTable.setContentProvider(new TableContentProvider());
-		entryTable.setLabelProvider(new TableLabelProvider());
-		entryTable.setInput(getBuildModel());
+		fTableViewer.setContentProvider(new TableContentProvider());
+		fTableViewer.setLabelProvider(new TableLabelProvider());
+		fTableViewer.setInput(getBuildModel());
 
 		toolkit.paintBordersFor(container);
 		enableSection();
@@ -210,14 +199,14 @@ public class BuildClasspathSection
 	}
 	
 	public void disableSection(){
+		fEnabled = false;
 		EditableTablePart tablePart  = getTablePart();
 		tablePart.setButtonEnabled(1, false);
 		tablePart.setButtonEnabled(0, false);
-		tablePart.getTableViewer().setSelection(null,false);
 	}
  
 	protected void fillContextMenu(IMenuManager manager) {
-		ISelection selection = entryTable.getSelection();
+		ISelection selection = fTableViewer.getSelection();
 
 		// add NEW action
 		Action action =
@@ -226,7 +215,7 @@ public class BuildClasspathSection
 					handleNew();
 				}
 			};
-		action.setEnabled(true);
+		action.setEnabled(fEnabled);
 		manager.add(action);
 
 		manager.add(new Separator());
@@ -238,7 +227,7 @@ public class BuildClasspathSection
 					handleDelete();
 				}
 			};
-		action.setEnabled(!selection.isEmpty());
+		action.setEnabled(!selection.isEmpty() && fEnabled);
 		manager.add(action);
 
 		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(
@@ -251,56 +240,52 @@ public class BuildClasspathSection
 	}
 	
 	public void refresh() {
-		entryTable.refresh();
+		fTableViewer.refresh();
 	}
 	
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
-			handleDelete();
+			if (fEnabled) {
+				handleDelete();
+			}
 			return true;
 		}
 		return false;
 	}
 	
 	public void enableSection(){
+		fEnabled = true;
 		EditableTablePart tablePart = getTablePart();
 		tablePart.setButtonEnabled(1, false);
 		tablePart.setButtonEnabled(0, true);
-		tablePart.getTableViewer().setSelection(null,false);
 	}
 
 	protected void selectionChanged(IStructuredSelection selection) {
-		if (selection.size() == 0)
-			return;
-		updateRemoveStatus();
-	}
-
-	public void updateRemoveStatus() {
-		Table table = entryTable.getTable();
-		getTablePart().setButtonEnabled(1, table.getSelection().length > 0);
+		getTablePart().setButtonEnabled(1, selection != null && selection.size() > 0 && fEnabled);
 	}
 
 	private void handleDelete() {
 		Object selection =
-			((IStructuredSelection) entryTable.getSelection())
+			((IStructuredSelection) fTableViewer.getSelection())
 				.getFirstElement();
-		int index = entryTable.getTable().getSelectionIndex();
+		int index = fTableViewer.getTable().getSelectionIndex();
 		if (selection != null && selection instanceof String) {
 			IBuild build = getBuildModel().getBuild();
 			IBuildEntry entry = build.getEntry(IBuildPropertiesConstants.PROPERTY_JAR_EXTRA_CLASSPATH);
 			if (entry != null) {
 				try {
 					entry.removeToken(selection.toString());
-					entryTable.remove(selection);
+					fTableViewer.remove(selection);
 					String[] tokens=entry.getTokens();
+					IStructuredSelection ssel = null;
 					if (tokens.length == 0) {
 						build.remove(entry);
 					} else if (tokens.length >index){
-						entryTable.setSelection(new StructuredSelection(tokens[index]));
+						ssel = new StructuredSelection(tokens[index]);
 					} else {
-						entryTable.setSelection(new StructuredSelection(tokens[index-1]));
+						ssel = new StructuredSelection(tokens[index-1]);
 					}
-					updateRemoveStatus();
+					fTableViewer.setSelection(ssel);
 
 				} catch (CoreException e) {
 					PDEPlugin.logException(e);
@@ -339,8 +324,8 @@ public class BuildClasspathSection
 				IResource elem = (IResource) elements[i];
 				String tokenName = getRelativePathTokenName(elem);
 				addClasspathToken(tokenName);
-				entryTable.refresh();
-				entryTable.setSelection(new StructuredSelection(tokenName));
+				fTableViewer.refresh();
+				fTableViewer.setSelection(new StructuredSelection(tokenName));
 			}
 		}
 	}
@@ -375,11 +360,11 @@ public class BuildClasspathSection
 		switch (index) {
 			case 0 :
 				handleNew();
-				entryTable.refresh();
+				fTableViewer.refresh();
 				break;
 			case 1 :
 				handleDelete();
-				entryTable.refresh();
+				fTableViewer.refresh();
 				break;
 			default :
 				break;

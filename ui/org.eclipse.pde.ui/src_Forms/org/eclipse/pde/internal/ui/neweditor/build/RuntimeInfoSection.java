@@ -34,6 +34,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.actions.*;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.model.*;
@@ -68,7 +69,7 @@ public class RuntimeInfoSection
 
 	protected StructuredViewerPart fLibraryPart;
 	protected StructuredViewerPart fFolderPart;
-	private IBuildEntry currentLibrary;
+	private IBuildEntry fCurrentLibrary;
 	private Button fIncludeLibraryButton;
 	private boolean fEnabled = true;
 
@@ -208,7 +209,7 @@ public class RuntimeInfoSection
 	}
 
 	protected void handleLibInBinBuild(boolean isSelected){
-		String libName = currentLibrary.getName().substring(7);
+		String libName = fCurrentLibrary.getName().substring(7);
 		IBuildModel model = getBuildModel();
 		IBuildEntry binIncl = model.getBuild().getEntry(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
 		IProject project = model.getUnderlyingResource().getProject();
@@ -416,7 +417,7 @@ public class RuntimeInfoSection
 
 	protected void fillFolderViewerContextMenu(IMenuManager manager) {
 		ISelection selection = fFolderViewer.getSelection();
-		if (currentLibrary != null) {
+		if (fCurrentLibrary != null) {
 			Action newAction =
 				new Action(PDEPlugin.getResourceString(POPUP_NEW_FOLDER)) {
 				public void run() {
@@ -551,17 +552,16 @@ public class RuntimeInfoSection
 	}
 
 	public boolean doGlobalAction(String actionId) {
-		/*
-		IStructuredSelection currentSelection = (IStructuredSelection)getFormPage().getSelection();
-		
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
-			if (currentSelection.getFirstElement().toString().startsWith(IBuildEntry.JAR_PREFIX))
-				handleDelete();
-			else
-				handleJarsDelete();
+			if (fEnabled) {
+				if (fLibraryViewer.getControl().isFocusControl()) {
+					handleDelete();
+				} else {
+					handleDeleteFolder();
+				}
+			}
 			return true;
 		}
-		*/
 		return false;
 	}
 	
@@ -591,7 +591,7 @@ public class RuntimeInfoSection
 			return;
 		IPackageFragmentRoot[] sourceFolders = computeSourceFolders();
 
-		String[] jarFolders = currentLibrary.getTokens();
+		String[] jarFolders = fCurrentLibrary.getTokens();
 		IPackageFragmentRoot sourceFolder;
 		IClasspathEntry entry;
 		IPath outputPath;
@@ -612,7 +612,7 @@ public class RuntimeInfoSection
 				}
 			}
 			if (outputFolders.size()!=0){
-				IBuildEntry outputEntry = createOutputKey(currentLibrary.getName().substring(7));
+				IBuildEntry outputEntry = createOutputKey(fCurrentLibrary.getName().substring(7));
 				setOutputEntryTokens(outputFolders, outputEntry);
 			}
 		} catch (JavaModelException e) {
@@ -639,8 +639,8 @@ public class RuntimeInfoSection
 	}
 
 	private void update(IBuildEntry variable) {
-		currentLibrary = variable;
-		fFolderViewer.setInput(currentLibrary);
+		fCurrentLibrary = variable;
+		fFolderViewer.setInput(fCurrentLibrary);
 		fFolderPart.setButtonEnabled(
 			0,
 			!isReadOnly() && fEnabled && variable != null);
@@ -845,7 +845,7 @@ public class RuntimeInfoSection
 		Object object =
 			((IStructuredSelection) fFolderViewer.getSelection()).getFirstElement();
 		if (object != null) {
-			String libKey = currentLibrary.getName();
+			String libKey = fCurrentLibrary.getName();
 			IBuildEntry entry = getBuildModel().getBuild().getEntry(libKey);
 			if (entry != null) {
 				try {
@@ -904,7 +904,7 @@ public class RuntimeInfoSection
 						"",
 						null);
 
-				String libKey = currentLibrary.getName();
+				String libKey = fCurrentLibrary.getName();
 
 				IBuildEntry entry = getBuildModel().getBuild().getEntry(libKey);
 
@@ -938,7 +938,7 @@ public class RuntimeInfoSection
 				String folderPath = folder.getProjectRelativePath()
 						.addTrailingSeparator().toString();
 				IBuildModel buildModel = getBuildModel();
-				String libKey = currentLibrary.getName();
+				String libKey = fCurrentLibrary.getName();
 				IBuildEntry entry = buildModel.getBuild().getEntry(libKey);
 				if (entry == null) {
 					entry = buildModel.getFactory().createEntry(libKey);
