@@ -1,0 +1,145 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.pde">
+<annotation>
+   <appInfo>
+      <meta.schema plugin="org.eclipse.pde" id="projectGenerators" name="Plug-in Content Wizards"/>
+   </appInfo>
+   <documentation>
+      This extension point provides for plugging in 
+wizards that create initial content of the PDE plug-in
+projects. These wizards can create plug-in manifest,
+key classes, initial folder structure and even
+generate some extensions and the required code for them.
+
+&lt;p&gt;&lt;b&gt;Note: this extension point is internal and
+is only used by PDE.&lt;/b&gt;
+&lt;/p&gt;
+   </documentation>
+</annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="wizard" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified identifier of the target extension point
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  an optional identifier of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  an optional name of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="wizard">
+      <annotation>
+         <documentation>
+            Short description of this wizard.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="description" minOccurs="0" maxOccurs="1"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a unique name that will be used to identify this wizard.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a translatable name that will be used in UI representation
+of this wizard.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a relative path of an icon that will be used to visually 
+represent the wizard.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.pde.internal.base.IPluginContentWizard"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string">
+            <annotation>
+               <documentation>
+                  a fully qualified name of a class which implements 
+&lt;samp&gt;org.eclipse.pde.internal.base.IPluginContentWizard&lt;/samp&gt;.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="description" type="string">
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example of this extension point:
+&lt;pre&gt;   
+   &lt;extension point="org.eclipse.pde.projectGenerators"&gt;
+      &lt;wizard
+         name="Default Plug-in Content Generator"
+         icon="icons/content_wizard.gif"
+         class="com.example.xyz.ContentGeneratorWizard"
+         id="com.example.xyz.DefaultContentGenerator"&gt;
+         &lt;description&gt;
+            Generates plugin.xml and plugin top-level class
+         &lt;/description&gt;
+      &lt;/wizard&gt;
+   &lt;/extension&gt;
+&lt;/pre&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         Wizards that plug into this extension point must
+implement  
+&lt;samp&gt;org.eclipse.pde.internal.base.IPluginContentWizard&lt;/samp&gt;
+ interface.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         PDE provides default implementation of this wizard
+that generates the manifest file and the top-level
+plug-in class.
+      </documentation>
+   </annotation>
+
+</schema>

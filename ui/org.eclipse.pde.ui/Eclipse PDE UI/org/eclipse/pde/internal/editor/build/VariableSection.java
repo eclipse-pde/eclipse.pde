@@ -24,6 +24,7 @@ import org.eclipse.pde.internal.schema.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.jface.window.*;
 import org.eclipse.swt.custom.*;
+import org.eclipse.pde.internal.wizards.*;
 
 
 public class VariableSection
@@ -74,7 +75,8 @@ public class VariableSection
 		implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
 			if (parent instanceof IBuildModel) {
-				return ((IBuildModel) parent).getBuild().getBuildEntries();
+				Object [] result=((IBuildModel) parent).getBuild().getBuildEntries();
+				return result;
 			}
 			return new Object[0];
 		}
@@ -153,6 +155,8 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 			getFormPage().setSelection(event.getSelection());
 		}
 	});
+	
+	variableTable.setSorter(ListUtil.NAME_SORTER);
 
 	GridData gd = new GridData(GridData.FILL_BOTH);
 	table.setLayoutData(gd);

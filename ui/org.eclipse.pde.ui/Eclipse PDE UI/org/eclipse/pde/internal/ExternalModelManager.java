@@ -101,7 +101,7 @@ public IPath getEclipseHome() {
 			return null;
 		eclipseHome = new Path(newValue);
 		try {
-			JavaCore.setClasspathVariable(PDEPlugin.ECLIPSE_HOME_VARIABLE, eclipseHome);
+			JavaCore.setClasspathVariable(PDEPlugin.ECLIPSE_HOME_VARIABLE, eclipseHome, null);
 		} catch (JavaModelException e) {
 			PDEPlugin.logException(e);
 		}
@@ -246,7 +246,7 @@ public void setEclipseHome(String newValue) {
 	try {
 		JavaCore.setClasspathVariable(
 			PDEPlugin.ECLIPSE_HOME_VARIABLE,
-			new Path(newValue));
+			new Path(newValue), null);
 	} catch (JavaModelException e) {
 		PDEPlugin.logException(e);
 	}

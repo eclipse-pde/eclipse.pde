@@ -34,10 +34,9 @@
 
 <!-- Extension points -->
 
-<extension-point id="projectGenerators" name="%expoint.projectGenerators.name"/>
-<extension-point id="newExtension" name="%expoint.newExtension.name"/>
-<extension-point id="newExtensionPoint" name="%expoint.newExtensionPoint.name"/>
-<extension-point id="schemaMap" name="%expoint.schemaMap.name"/>
+<extension-point id="projectGenerators" name="%expoint.projectGenerators.name" schema="schema/projectGenerators.xsd"/>
+<extension-point id="newExtension" name="%expoint.newExtension.name" schema="schema/newExtension.xsd"/>
+<extension-point id="schemaMap" name="%expoint.schemaMap.name" schema="schema/schemaMap.xsd"/>
 
 <!-- Extensions -->
 <extension
@@ -67,6 +66,12 @@
          category="org.eclipse.pde.MainPreferencePage"
          class="org.eclipse.pde.internal.preferences.AdvancedTracingPreferencePage"
          id="org.eclipse.pde.AdvancedTracingPage">
+   </page>
+   <page
+         name="%preferences.manifest.name"
+         category="org.eclipse.pde.MainPreferencePage"
+         class="org.eclipse.pde.internal.preferences.ManifestPreferencePage"
+         id="org.eclipse.pde.ManifestPreferencePage">
    </page>
 </extension>
 <extension
@@ -180,19 +185,10 @@
          name="%editors.schema.name"
          default="true"
          icon="icons/basic/obj16/schema_obj.gif"
-         extensions="xsd"
+         extensions="xsd,mxsd"
          contributorClass="org.eclipse.pde.internal.editor.schema.SchemaEditorContributor"
          class="org.eclipse.pde.internal.editor.schema.SchemaEditor"
          id="org.eclipse.pde.schemaEditor">
-   </editor>
-   <editor
-         name="%editors.pluginJars.name"
-         default="true"
-         icon="icons/basic/obj16/java_lib_obj.gif"
-         filenames="plugin.jars,fragment.jars"
-         contributorClass="org.eclipse.pde.internal.editor.jars.JarsEditorContributor"
-         class="org.eclipse.pde.internal.editor.jars.PluginJarsEditor"
-         id="org.eclipse.pde.jarsEditor">
    </editor>
    <editor
          name="%editors.buildProperties.name"
@@ -341,55 +337,55 @@
       point="org.eclipse.pde.schemaMap">
    <map
          point="org.eclipse.ui.editors"
-         schema="schema/map/org.eclipse.ui/editors.xsd">
+         schema="schema/map/org.eclipse.ui/editors.mxsd">
    </map>
    <map
          point="org.eclipse.ui.editorActions"
-         schema="schema/map/org.eclipse.ui/editorActions.xsd">
+         schema="schema/map/org.eclipse.ui/editorActions.mxsd">
    </map>
    <map
          point="org.eclipse.ui.exportWizards"
-         schema="schema/map/org.eclipse.ui/exportWizards.xsd">
+         schema="schema/map/org.eclipse.ui/exportWizards.mxsd">
    </map>
    <map
          point="org.eclipse.ui.importWizards"
-         schema="schema/map/org.eclipse.ui/importWizards.xsd">
+         schema="schema/map/org.eclipse.ui/importWizards.mxsd">
    </map>
    <map
          point="org.eclipse.ui.perspective"
-         schema="schema/map/org.eclipse.ui/perspective.xsd">
+         schema="schema/map/org.eclipse.ui/perspective.mxsd">
    </map>
    <map
          point="org.eclipse.ui.newWizards"
-         schema="schema/map/org.eclipse.ui/newWizards.xsd">
+         schema="schema/map/org.eclipse.ui/newWizards.mxsd">
    </map>
    <map
          point="org.eclipse.ui.popupMenus"
-         schema="schema/map/org.eclipse.ui/popupMenus.xsd">
+         schema="schema/map/org.eclipse.ui/popupMenus.mxsd">
    </map>
    <map
          point="org.eclipse.ui.preferencePages"
-         schema="schema/map/org.eclipse.ui/preferencePages.xsd">
+         schema="schema/map/org.eclipse.ui/preferencePages.mxsd">
    </map>
    <map
          point="org.eclipse.ui.propertyPages"
-         schema="schema/map/org.eclipse.ui/propertyPages.xsd">
+         schema="schema/map/org.eclipse.ui/propertyPages.mxsd">
    </map>
    <map
          point="org.eclipse.ui.viewActions"
-         schema="schema/map/org.eclipse.ui/viewActions.xsd">
+         schema="schema/map/org.eclipse.ui/viewActions.mxsd">
    </map>
    <map
          point="org.eclipse.ui.views"
-         schema="schema/map/org.eclipse.ui/views.xsd">
+         schema="schema/map/org.eclipse.ui/views.mxsd">
    </map>
    <map
          point="org.eclipse.ui.welcome"
-         schema="schema/map/org.eclipse.ui/welcome.xsd">
+         schema="schema/map/org.eclipse.ui/welcome.mxsd">
    </map>
    <map
          point="org.eclipse.ui.actionSets"
-         schema="schema/map/org.eclipse.ui/actionSets.xsd">
+         schema="schema/map/org.eclipse.ui/actionSets.mxsd">
    </map>
 </extension>
 </plugin>

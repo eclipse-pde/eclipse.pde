@@ -185,8 +185,10 @@ private void setWizardListEnabled(boolean enabled) {
 	if (!enabled) {
 		wizardListEnableState = ControlEnableState.disable(wizardList);
 	}
-	else if (wizardListEnableState!=null) {
-		wizardListEnableState.restore();
+	else {
+		if (wizardListEnableState!=null)
+		   wizardListEnableState.restore();
+		wizardList.setFocus();
 	}
 }
 private void updateWizardButtons() {

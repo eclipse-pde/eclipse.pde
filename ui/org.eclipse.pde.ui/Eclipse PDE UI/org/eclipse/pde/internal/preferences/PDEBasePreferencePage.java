@@ -108,7 +108,7 @@ public boolean performOk() {
 		try {
 			JavaCore.setClasspathVariable(
 				PDEPlugin.ECLIPSE_HOME_VARIABLE,
-				new Path(newEclipseHome));
+				new Path(newEclipseHome), null);
 		} catch (JavaModelException e) {
 			PDEPlugin.logException(e);
 		}
