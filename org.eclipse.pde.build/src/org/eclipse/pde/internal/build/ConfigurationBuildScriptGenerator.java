@@ -23,6 +23,7 @@ public class ConfigurationBuildScriptGenerator extends PluginTool implements Scr
 	
 	// targets
 	private static final String TARGET_COMPONENT_TEMPLATE = "component-template";
+	private static final String TARGET_BINCOPY = "bin-copy";
 
 protected ComponentModel[] determineComponents() {
 	if (components == null) {
@@ -101,13 +102,26 @@ protected void generateBinTarget(PrintWriter output) {
 
 	output.println("      <property name=\"dest\" value=\"${basedir}/temp/install/configurations/${configuration}_${configVersion}\"/>");
 	output.println("    </ant>");
-	
+
 	IPath base = new Path(configurationModel.getLocation());
 	String binLocation = makeRelative(new Path(getInstall()).append(DIRECTORY_BIN).toString(),base);
-	output.println("    <mkdir dir=\"${basedir}/temp/bin\"/>");
-	output.println("    <copydir src=\"" + binLocation + "\" dest=\"${basedir}/temp/bin\"/>");
+	
+	output.println("    <property name=\"binSource\" value=\"" + binLocation + "\"/>");
+	output.println("    <property name=\"binDest\" value=\"${basedir}/temp/bin\"/>");
+	output.println("    <available file=\"${binSource}\" property=\"binSource.exists\"/>");
+	output.println("    <antcall target=\"bin-copy\"/>");
+
 	output.println("    <jar jarfile=\"${configuration}_${configVersion}.jar\" basedir=\"${basedir}/temp\"/>");
 	output.println("    <delete dir=\"${basedir}/temp\"/>");
+	output.println("  </target>");
+	
+	generateBinCopyTarget(output);
+}
+protected void generateBinCopyTarget(PrintWriter output) {
+	output.println();
+	output.println("  <target name=\"" + TARGET_BINCOPY + "\" depends=\"init\" if=\"binSource.exists\">");
+	output.println("    <mkdir dir=\"${binDest}\"/>");
+	output.println("    <copydir src=\"${binSource}\" dest=\"${binDest}\"/>");
 	output.println("  </target>");
 }
 protected void generateBuildScript(PrintWriter output) {
