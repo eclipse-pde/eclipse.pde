@@ -124,7 +124,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 						new SubProgressMonitor(monitor, 4));
 					break;
 				case IMPORT_WITH_SOURCE :
-					if (model.getPluginBase().getId().equals("org.apache.ant")) {
+					if (id.equals("org.apache.ant") || id.startsWith("org.eclipse.osgi")) {
 						importAsBinary(project, model, new SubProgressMonitor(monitor, 4));
 					} else {
 						importWithSource(project, model, new SubProgressMonitor(monitor, 4));
