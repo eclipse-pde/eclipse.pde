@@ -242,7 +242,8 @@ public class ExtensionPointsSection extends TableSection {
 				NewExtensionPointWizard wizard =
 					new NewExtensionPointWizard(
 						project,
-						(IPluginModelBase) getPage().getModel());
+						(IPluginModelBase) getPage().getModel(), 
+						(ManifestEditor)getPage().getPDEEditor());
 				WizardDialog dialog =
 					new WizardDialog(
 						PDEPlugin.getActiveWorkbenchShell(),

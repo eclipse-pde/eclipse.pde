@@ -18,6 +18,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
+import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.build.*;
@@ -110,6 +111,18 @@ public class ManifestEditor extends MultiSourceEditor {
 				inputContextManager.putContext(in, new BuildInputContext(this, in, false));
 			}
 		}
+	}
+	
+	public void ensurePluginContextPresence() {
+		if (inputContextManager.hasContext(PluginInputContext.CONTEXT_ID))
+			return;
+		IProject project = inputContextManager.getCommonProject();
+		IFile file = project.getFile("plugin.xml");
+		WorkspacePluginModel model = new WorkspacePluginModel(file);
+		model.getPluginBase(true);
+		model.save();
+		IEditorInput in = new FileEditorInput(file);
+		inputContextManager.putContext(in, new PluginInputContext(this, in, false, false));
 	}
 
 	public boolean monitoredFileRemoved(IFile file) {

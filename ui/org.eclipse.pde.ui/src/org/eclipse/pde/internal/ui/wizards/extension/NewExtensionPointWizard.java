@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.wizards.extension;
 import org.eclipse.core.resources.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.wizards.*;
 
 public class NewExtensionPointWizard extends NewWizard {
@@ -20,12 +21,14 @@ public class NewExtensionPointWizard extends NewWizard {
 	private IPluginModelBase model;
 	private IProject project;
 	private IPluginExtensionPoint point;
+	private ManifestEditor editor;
 	private static final String KEY_WTITLE = "NewExtensionPointWizard.wtitle"; //$NON-NLS-1$
 
-	public NewExtensionPointWizard(IProject project, IPluginModelBase model) {
-		this(project, model, null);
+	public NewExtensionPointWizard(IProject project, IPluginModelBase model, ManifestEditor editor) {
+		this(project, model, (IPluginExtensionPoint)null);
+		this.editor = editor;
 	}
-	
+
 	public NewExtensionPointWizard(IProject project, IPluginModelBase model, IPluginExtensionPoint point){
 		initialize();
 		this.project = project;
@@ -46,6 +49,8 @@ public class NewExtensionPointWizard extends NewWizard {
 	}
 
 	public boolean performFinish() {
+		if (editor!=null)
+			editor.ensurePluginContextPresence();
 		return mainPage.finish();
 	}
 }

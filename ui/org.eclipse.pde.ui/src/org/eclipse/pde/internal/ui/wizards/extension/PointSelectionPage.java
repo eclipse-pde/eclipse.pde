@@ -348,7 +348,8 @@ public class PointSelectionPage
 
 	public boolean finish() {
 		String point = fCurrentPoint.getFullId();
-
+		
+		wizard.getEditor().ensurePluginContextPresence();
 		try {
 			IPluginExtension extension =
 				fPluginBase.getModel().getFactory().createExtension();

@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.wizards.extension;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.pde.internal.ui.*;
 
@@ -23,13 +24,15 @@ public class NewExtensionWizard extends NewWizard {
 	private PointSelectionPage pointPage;
 	private IPluginModelBase model;
 	private IProject project;
+	private ManifestEditor editor;
 	private WizardCollectionElement wizardCollection;
 	
-	public NewExtensionWizard(IProject project, IPluginModelBase model) {
+	public NewExtensionWizard(IProject project, IPluginModelBase model, ManifestEditor editor) {
 		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWEX_WIZ);
 		this.model = model;
 		this.project = project;
+		this.editor = editor;
 		setForcePreviousAndNextButtons(true);
 		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
@@ -72,6 +75,10 @@ public class NewExtensionWizard extends NewWizard {
 		if (pointPage.canFinish())
 			return pointPage.finish();
 		return true;
+	}
+	
+	public ManifestEditor getEditor() {
+		return editor;
 	}
 
 	public void dispose() {

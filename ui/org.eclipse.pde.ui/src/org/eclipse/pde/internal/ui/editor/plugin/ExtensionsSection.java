@@ -370,7 +370,7 @@ public class ExtensionsSection extends TreeSection
 					public void run() {
 						NewExtensionWizard wizard = new NewExtensionWizard(
 								project, (IPluginModelBase) getPage()
-										.getModel());
+										.getModel(), (ManifestEditor)getPage().getPDEEditor());
 						WizardDialog dialog = new WizardDialog(PDEPlugin
 								.getActiveWorkbenchShell(), wizard);
 						dialog.create();
