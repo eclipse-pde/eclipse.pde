@@ -9,20 +9,12 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry;
-import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.IPluginRegistry;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.osgi.util.ManifestElement;
-import org.osgi.framework.BundleException;
-import org.osgi.framework.Constants;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.osgi.util.*;
+import org.osgi.framework.*;
 public class RegistryBrowserContentProvider
 		implements
 			org.eclipse.jface.viewers.ITreeContentProvider {
@@ -207,12 +199,11 @@ public class RegistryBrowserContentProvider
 				array = pd.getRuntimeLibraries();
 				try {
 					if (array == null || array.length == 0){
-						Object classpath = pd.getPlugin().getBundle().getHeaders().get(Constants.BUNDLE_CLASSPATH);
+						Object classpath = Platform.getBundle(pd.getUniqueIdentifier()).getHeaders().get(Constants.BUNDLE_CLASSPATH);
 						return classpath == null ? null : ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, classpath.toString());
 					}
 				} catch (BundleException e) {
-				} catch (CoreException e) {
-				}
+				} 
 				break;
 		}
 		Object[] result = null;

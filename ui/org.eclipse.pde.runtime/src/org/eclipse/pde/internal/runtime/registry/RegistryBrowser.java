@@ -71,6 +71,7 @@ IRegistryChangeListener {
 		initializeMemento();
 		orientation = this.memento.getInteger(REGISTRY_ORIENTATION).intValue();
 	}
+	
 	private void initializeMemento() {
 		if (memento.getString(SHOW_RUNNING_PLUGINS) == null)
 			memento.putString(SHOW_RUNNING_PLUGINS, "true");
@@ -79,8 +80,6 @@ IRegistryChangeListener {
 		if (memento.getInteger(REGISTRY_ORIENTATION) == null)
 			memento.putInteger(REGISTRY_ORIENTATION, HORIZONTAL_ORIENTATION);
 	}
-	
-	
 	
 	public void dispose() {
 		Platform.getExtensionRegistry().removeRegistryChangeListener(this);
@@ -276,10 +275,9 @@ IRegistryChangeListener {
 						}
 					}
 				}
-				if (provider.isShowRunning() && descriptor.isPluginActivated())
-					treeViewer.add(treeViewer.getInput(), adapter);
-				else
-					treeViewer.add(treeViewer.getInput(), adapter);
+				if (provider.isShowRunning() && !descriptor.isPluginActivated())
+					return;
+				treeViewer.add(treeViewer.getInput(), adapter);
 			}
 		});
 	}
