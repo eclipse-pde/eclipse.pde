@@ -5,22 +5,23 @@
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
 package org.eclipse.pde.internal.ui.neweditor.plugin;
-
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.neweditor.*;
 import org.eclipse.pde.internal.ui.newparts.FormEntry;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.widgets.*;
-
 /**
  * @author dejan
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * 
+ * To change the template for this generated type comment go to Window -
+ * Preferences - Java - Code Generation - Code and Comments
  */
 public class GeneralInfoSection extends PDESection {
+	private Button olderVersions;
 	private FormEntry idEntry;
+	private FormEntry versionEntry;
 	private FormEntry nameEntry;
 	private FormEntry providerEntry;
 	private FormEntry classEntry;
@@ -30,16 +31,22 @@ public class GeneralInfoSection extends PDESection {
 	 * @param style
 	 */
 	public GeneralInfoSection(PDEFormPage page, Composite parent) {
-		super(page, parent, Section.DESCRIPTION|Section.EXPANDED|Section.TWISTIE);
+		super(page, parent, Section.DESCRIPTION | Section.EXPANDED
+				| Section.TWISTIE);
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.neweditor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ui.neweditor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section,
+	 *      org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
-		section.setText(PDEPlugin.getResourceString("ManifestEditor.PluginSpecSection.title"));
+		section.setText(PDEPlugin
+				.getResourceString("ManifestEditor.PluginSpecSection.title"));
 		toolkit.createCompositeSeparator(section);
-		section.setDescription(PDEPlugin.getResourceString("ManifestEditor.PluginSpecSection.desc"));
+		section.setDescription(PDEPlugin
+				.getResourceString("ManifestEditor.PluginSpecSection.desc"));
 		createEntries(section, toolkit);
 	}
 	private void createEntries(Section section, FormToolkit toolkit) {
@@ -48,27 +55,55 @@ public class GeneralInfoSection extends PDESection {
 		layout.numColumns = 3;
 		client.setLayout(layout);
 		section.setClient(client);
-		
 		idEntry = new FormEntry(client, toolkit, "Id:", null, false);
-		idEntry.setFormEntryListener(new EditorEntryAdapter(getPage().getPDEEditor()) {
+		idEntry.setFormEntryListener(new EditorEntryAdapter(getPage()
+				.getPDEEditor()) {
+			public void textValueChanged(FormEntry entry) {
+			}
+		});
+		versionEntry = new FormEntry(client, toolkit, "Version:", null, false);
+		versionEntry.setFormEntryListener(new EditorEntryAdapter(getPage()
+				.getPDEEditor()) {
 			public void textValueChanged(FormEntry entry) {
 			}
 		});
 		nameEntry = new FormEntry(client, toolkit, "Name:", null, false);
-		nameEntry.setFormEntryListener(new EditorEntryAdapter(getPage().getPDEEditor()) {
+		nameEntry.setFormEntryListener(new EditorEntryAdapter(getPage()
+				.getPDEEditor()) {
 			public void textValueChanged(FormEntry entry) {
 			}
-		});		
+		});
 		providerEntry = new FormEntry(client, toolkit, "Provider:", null, false);
-		providerEntry.setFormEntryListener(new EditorEntryAdapter(getPage().getPDEEditor()) {
+		providerEntry.setFormEntryListener(new EditorEntryAdapter(getPage()
+				.getPDEEditor()) {
 			public void textValueChanged(FormEntry entry) {
 			}
 		});
 		classEntry = new FormEntry(client, toolkit, "Class:", "Browse...", true);
-		classEntry.setFormEntryListener(new EditorEntryAdapter(getPage().getPDEEditor()) {
+		classEntry.setFormEntryListener(new EditorEntryAdapter(getPage()
+				.getPDEEditor()) {
 			public void textValueChanged(FormEntry entry) {
 			}
 		});
+		olderVersions = toolkit
+				.createButton(
+						client,
+						PDEPlugin
+								.getFormattedMessage(
+										"ManifestEditor.PluginSpecSection.isCompatible",
+										isFragment()
+												? PDEPlugin
+														.getResourceString("ManifestEditor.PluginSpecSection.fragment")
+												: PDEPlugin
+														.getResourceString("ManifestEditor.PluginSpecSection.plugin")),
+						SWT.CHECK);
+		GridData gd = new GridData();
+		gd.horizontalSpan = layout.numColumns;
+		olderVersions.setLayoutData(gd);
+	}
+	private boolean isFragment() {
+		//TODO replace this with a real code
+		return false;
 	}
 	public void refresh() {
 		idEntry.setValue("com.example.xyz", true);

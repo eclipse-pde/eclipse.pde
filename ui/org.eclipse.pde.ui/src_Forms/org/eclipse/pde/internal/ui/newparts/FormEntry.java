@@ -41,7 +41,6 @@ public class FormEntry {
 	 * @param parent
 	 * @param toolkit
 	 * @param labelText
-	 * @param span
 	 * @param browseText
 	 * @param linkLabel
 	 */

@@ -83,7 +83,7 @@ public class OverviewPage extends PDEFormPage implements HyperlinkListener {
 		layout.verticalSpacing = 10;
 		layout.horizontalSpacing = 10;
 		layout.numColumns = 2;
-		layout.makeColumnsEqualWidth = true;
+		//layout.makeColumnsEqualWidth = true;
 		layout.verticalSpacing = 20;
 		layout.horizontalSpacing = 10;
 		body.setLayout(layout);
