@@ -330,6 +330,7 @@ public class BasicLauncherTab
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.marginHeight = layout.marginWidth = 0;
+		layout.horizontalSpacing = 20;
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
