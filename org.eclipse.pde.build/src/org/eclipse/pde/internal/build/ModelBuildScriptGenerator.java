@@ -97,7 +97,7 @@ public IStatus execute() {
 			try {
 				generateBuildScript(output,modelsToGenerate[i]);
 			} finally {
-				output.flush();
+				output.close();
 			}
 		} catch (IOException e) {
 			getPluginLog().log(new Status(IStatus.ERROR,PI_PDECORE,EXCEPTION_OUTPUT,Policy.bind("exception.output"),e));
