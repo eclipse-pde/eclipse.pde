@@ -61,12 +61,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		return inputContextManager.getAggregateModel();
 	}
 	
-	protected InputContextManager createInputContextManager() {
-		return new InputContextManager();
-	}
-	protected IModelUndoManager createModelUndoManager() {
-		return new NullUndoManager();
-	}	
+	protected abstract InputContextManager createInputContextManager();
 
 /**
  * Tests whether this editor has a context with
@@ -324,6 +319,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	}
 	public void setSelection(ISelection selection) {
 		getSite().getSelectionProvider().setSelection(selection);
+		getContributor().updateSelectableActions(selection);
 	}
 	public ISelection getSelection() {
 		return getSite().getSelectionProvider().getSelection();
@@ -384,11 +380,11 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 			IFormPage page = getActivePageInstance();
 			if (page instanceof PDEFormPage) {
 				if (id.equals(ActionFactory.UNDO.getId())) {
-					//undoManager.undo();
+					inputContextManager.undo();
 					return;
 				}
 				if (id.equals(ActionFactory.REDO.getId())) {
-					//undoManager.redo();
+					inputContextManager.redo();
 					return;
 				}
 				if (id.equals(ActionFactory.CUT.getId())
@@ -455,6 +451,8 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		return false;
 	}
 	void updateUndo(IAction undoAction, IAction redoAction) {
-		//undoManager.setActions(undoAction, redoAction);
+		IModelUndoManager undoManager = inputContextManager.getUndoManager();
+		if (undoManager!=null)
+			undoManager.setActions(undoAction, redoAction);
 	}
 }

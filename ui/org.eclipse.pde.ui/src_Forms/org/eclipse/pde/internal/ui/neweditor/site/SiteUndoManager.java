@@ -24,9 +24,6 @@ import org.eclipse.pde.internal.ui.neweditor.ModelUndoManager;
  * @author
  */
 public class SiteUndoManager extends ModelUndoManager {
-	ISiteModel model;
-	ISiteBuildModel buildModel;
-
 	public SiteUndoManager(SiteEditor editor) {
 		super(editor);
 		setUndoLevelLimit(30);
@@ -37,15 +34,15 @@ public class SiteUndoManager extends ModelUndoManager {
 	 */
 
 	public void connect(IModelChangeProvider provider) {
-		model = (ISiteModel) provider;
-		buildModel = model.getBuildModel();
+		ISiteModel model = (ISiteModel) provider;
+		ISiteBuildModel buildModel = model.getBuildModel();
 		super.connect(provider);
 		super.connect(buildModel);
 	}
 	
 	public void disconnect(IModelChangeProvider provider) {
-		model = (ISiteModel)provider;
-		buildModel = model.getBuildModel();
+		ISiteModel model = (ISiteModel)provider;
+		ISiteBuildModel buildModel = model.getBuildModel();
 		super.disconnect(provider);
 		super.disconnect(buildModel);
 	}
@@ -55,6 +52,7 @@ public class SiteUndoManager extends ModelUndoManager {
 	}
 
 	protected void execute(IModelChangedEvent event, boolean undo) {
+		ISiteModel model = (ISiteModel)event.getChangeProvider();
 		Object[] elements = event.getChangedObjects();
 		int type = event.getChangeType();
 		String propertyName = event.getChangedProperty();
@@ -62,15 +60,15 @@ public class SiteUndoManager extends ModelUndoManager {
 		switch (type) {
 			case IModelChangedEvent.INSERT :
 				if (undo)
-					executeRemove(elements);
+					executeRemove(model, elements);
 				else
-					executeAdd(elements);
+					executeAdd(model, elements);
 				break;
 			case IModelChangedEvent.REMOVE :
 				if (undo)
-					executeAdd(elements);
+					executeAdd(model, elements);
 				else
-					executeRemove(elements);
+					executeRemove(model, elements);
 				break;
 			case IModelChangedEvent.CHANGE :
 				if (undo)
@@ -88,7 +86,7 @@ public class SiteUndoManager extends ModelUndoManager {
 		}
 	}
 
-	private void executeAdd(Object[] elements) {
+	private void executeAdd(ISiteModel model, Object[] elements) {
 		ISite site = model.getSite();
 		ISiteBuild siteBuild = model.getBuildModel().getSiteBuild();
 
@@ -115,7 +113,7 @@ public class SiteUndoManager extends ModelUndoManager {
 		}
 	}
 
-	private void executeRemove(Object[] elements) {
+	private void executeRemove(ISiteModel model, Object[] elements) {
 		ISite site = model.getSite();
 		ISiteBuild siteBuild = model.getBuildModel().getSiteBuild();
 

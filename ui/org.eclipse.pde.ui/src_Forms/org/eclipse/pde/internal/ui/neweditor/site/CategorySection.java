@@ -278,7 +278,7 @@ public class CategorySection extends TreeSection {
 				});
 	}
 	protected void selectionChanged(IStructuredSelection selection) {
-		//getFormPage().setSelection(selection);
+		getPage().getPDEEditor().setSelection(selection);
 	}
 	private void handleEditCategoryDefinition() {
 		IStructuredSelection ssel = (IStructuredSelection) fCategoryViewer

@@ -12,15 +12,18 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.neweditor.IModelUndoManager;
 import org.eclipse.ui.*;
 import org.eclipse.ui.IEditorInput;
 
-public class InputContextManager implements IResourceChangeListener {
+public abstract class InputContextManager implements IResourceChangeListener {
 	private Hashtable inputContexts;
 	private ArrayList monitoredFiles;
 	private ArrayList listeners;
+	private IModelUndoManager undoManager;
 	/**
 	 *  
 	 */
@@ -29,6 +32,7 @@ public class InputContextManager implements IResourceChangeListener {
 		listeners = new ArrayList();
 		PDEPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 	}
+
 	public void addInputContextListener(IInputContextListener listener) {
 		if (!listeners.contains(listener))
 			listeners.add(listener);
@@ -45,10 +49,12 @@ public class InputContextManager implements IResourceChangeListener {
 		for (Enumeration enum = inputContexts.elements(); enum
 				.hasMoreElements();) {
 			InputContext context = (InputContext) enum.nextElement();
+			unhookUndo(context);
 			context.dispose();
 		}
 		inputContexts.clear();
 		PDEPlugin.getWorkspace().removeResourceChangeListener(this);
+		undoManager = null;
 	}
 	/**
 	 * Saves dirty contexts.
@@ -190,5 +196,44 @@ public class InputContextManager implements IResourceChangeListener {
 			else
 				listener.contextRemoved(context);
 		}		
+		if (added)
+			hookUndo(context);
+		else
+			unhookUndo(context);
+	}
+	public void undo() {
+		if (undoManager!=null && undoManager.isUndoable())
+			undoManager.undo();
+	}
+	
+	public void redo() {
+		if (undoManager!=null && undoManager.isRedoable())
+			undoManager.redo();
+	}
+	
+	private void hookUndo(InputContext context) {
+		if (undoManager==null) return;
+		IModel model = context.getModel();
+		if (model instanceof IModelChangeProvider)
+		undoManager.connect((IModelChangeProvider)model);
+	}
+	
+	private void unhookUndo(InputContext context) {
+		if (undoManager==null) return;
+		IModel model = context.getModel();
+		if (model instanceof IModelChangeProvider)
+		undoManager.disconnect((IModelChangeProvider)model);
+	}
+	/**
+	 * @return Returns the undoManager.
+	 */
+	public IModelUndoManager getUndoManager() {
+		return undoManager;
+	}
+	/**
+	 * @param undoManager The undoManager to set.
+	 */
+	public void setUndoManager(IModelUndoManager undoManager) {
+		this.undoManager = undoManager;
 	}
 }

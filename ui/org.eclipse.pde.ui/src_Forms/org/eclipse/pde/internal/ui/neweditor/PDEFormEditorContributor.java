@@ -6,7 +6,6 @@
  */
 package org.eclipse.pde.internal.ui.neweditor;
 import java.util.*;
-import java.util.Hashtable;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.*;
@@ -42,7 +41,6 @@ public class PDEFormEditorContributor
 	private ClipboardAction pasteAction;
 	private Hashtable globalActions = new Hashtable();
 	private TextEditorActionContributor sourceContributor;
-	
 	class GlobalAction extends Action implements IUpdate {
 		private String id;
 		public GlobalAction(String id) {
@@ -78,7 +76,7 @@ public class PDEFormEditorContributor
 			setText(PDEPlugin.getResourceString(ACTIONS_CUT));
 		}
 		public void selectionChanged(ISelection selection) {
-			//setEnabled(isEditable() && editor.canCopy(selection));
+			setEnabled(isEditable() && editor.canCopy(selection));
 		}
 	}
 	class CopyAction extends ClipboardAction {
@@ -87,7 +85,7 @@ public class PDEFormEditorContributor
 			setText(PDEPlugin.getResourceString(ACTIONS_COPY));
 		}
 		public void selectionChanged(ISelection selection) {
-			//setEnabled(editor.canCopy(selection));
+			setEnabled(editor.canCopy(selection));
 		}
 	}
 	class PasteAction extends ClipboardAction {
@@ -97,7 +95,7 @@ public class PDEFormEditorContributor
 			//selectionChanged(null);
 		}
 		public void selectionChanged(ISelection selection) {
-			//setEnabled(isEditable()&& editor.canPasteFromClipboard());
+			setEnabled(isEditable() && editor.canPasteFromClipboard());
 		}
 	}
 	class SaveAction extends Action implements IUpdate {
@@ -175,7 +173,6 @@ public class PDEFormEditorContributor
 		sourceActionBars = new SubActionBars(bars);
 		sourceContributor.init(sourceActionBars);
 	}
-	
 	public PDEFormEditor getEditor() {
 		return editor;
 	}
@@ -230,10 +227,8 @@ public class PDEFormEditorContributor
 			this.editor = (PDEFormEditor) targetEditor;
 		else
 			return;
-		/*
-		 * editor.updateUndo( getGlobalAction(ActionFactory.UNDO.getId()),
-		 * getGlobalAction(ActionFactory.REDO.getId()));
-		 */
+		editor.updateUndo(getGlobalAction(ActionFactory.UNDO.getId()),
+				getGlobalAction(ActionFactory.REDO.getId()));
 		IEditorPart page = editor.getActiveEditor();
 		setActivePage(page);
 		updateSelectableActions(editor.getSelection());
@@ -255,12 +250,11 @@ public class PDEFormEditorContributor
 		PDESourcePage sourcePage = null;
 		if (newPage instanceof PDESourcePage)
 			sourcePage = (PDESourcePage) newPage;
-		if (sourcePage!=null && sourcePage.equals(oldPage))
+		if (sourcePage != null && sourcePage.equals(oldPage))
 			return;
 		sourceContributor.setActiveEditor(sourcePage);
 		setSourceActionBarsActive(sourcePage != null);
 	}
-	
 	private void setSourceActionBarsActive(boolean active) {
 		IActionBars rootBars = getActionBars();
 		rootBars.clearGlobalActionHandlers();
@@ -282,7 +276,6 @@ public class PDEFormEditorContributor
 		}
 		rootBars.updateActionBars();
 	}
-
 	private void registerGlobalActionHandlers() {
 		registerGlobalAction(ActionFactory.DELETE.getId());
 		registerGlobalAction(ActionFactory.UNDO.getId());

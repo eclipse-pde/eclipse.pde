@@ -16,7 +16,6 @@ import org.eclipse.pde.internal.ui.neweditor.*;
 import org.eclipse.pde.internal.ui.neweditor.context.*;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.dnd.*;
-import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.part.FileEditorInput;
@@ -46,7 +45,9 @@ public class SiteEditor extends MultiSourceEditor {
 	}
 	
 	protected InputContextManager createInputContextManager() {
-		return new SiteInputContextManager();
+		SiteInputContextManager contextManager = new SiteInputContextManager();
+		contextManager.setUndoManager(new SiteUndoManager(this));
+		return contextManager;
 	}
 	
 	public boolean canCopy(ISelection selection) {

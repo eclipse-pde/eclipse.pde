@@ -252,7 +252,7 @@ public class FeatureSection extends TableSection {
 	 * @see org.eclipse.pde.internal.ui.editor.TableSection#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	protected void selectionChanged(IStructuredSelection selection) {
-		//getFormPage().setSelection(selection);
+		getPage().getPDEEditor().setSelection(selection);
 	}
 	
 	/* (non-Javadoc)

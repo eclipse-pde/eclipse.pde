@@ -30,9 +30,7 @@ public abstract class PDEFormPage extends FormPage {
 	public PDEFormPage(FormEditor editor, String id, String title) {
 		super(editor, id, title);
 	}
-	public boolean performGlobalAction(String actionId) {
-		return false;
-	}
+
 	protected void createFormContent(IManagedForm managedForm) {
 		final ScrolledForm form = managedForm.getForm();
 		//form.setBackgroundImage(PDEPlugin.getDefault().getLabelProvider().get(
@@ -79,11 +77,25 @@ public abstract class PDEFormPage extends FormPage {
 			return null;
 		return focusControl;
 	}
+	public boolean performGlobalAction(String actionId) {
+		PDESection targetSection = getFocusSection();
+		if (targetSection!=null)
+			return targetSection.doGlobalAction(actionId);
+		return false;
+	}
 
 	public boolean canPaste(Clipboard clipboard) {
+		PDESection targetSection = getFocusSection();
+		if (targetSection != null) {
+			return targetSection.canPaste(clipboard);
+		}
+		return false;
+	}
+	
+	private PDESection getFocusSection() {
 		Control focusControl = getFocusControl();
 		if (focusControl == null)
-			return false;
+			return null;
 		Composite parent = focusControl.getParent();
 		PDESection targetSection = null;
 		while (parent != null) {
@@ -94,9 +106,6 @@ public abstract class PDEFormPage extends FormPage {
 			}
 			parent = parent.getParent();
 		}
-		if (targetSection != null) {
-			return targetSection.canPaste(clipboard);
-		}
-		return false;
+		return targetSection;
 	}
 }

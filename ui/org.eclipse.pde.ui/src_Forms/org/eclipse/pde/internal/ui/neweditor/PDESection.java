@@ -38,6 +38,10 @@ public abstract class PDESection extends SectionPart implements IModelChangedLis
 	public PDEFormPage getPage() {
 		return page;
 	}
+	
+	public boolean doGlobalAction(String actionId) {
+		return false;
+	}
 
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType()==IModelChangedEvent.WORLD_CHANGED)
