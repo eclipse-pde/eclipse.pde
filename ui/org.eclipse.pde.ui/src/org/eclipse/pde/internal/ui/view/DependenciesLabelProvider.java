@@ -46,13 +46,18 @@ public class DependenciesLabelProvider extends LabelProvider {
 	}
 
 	public Image getImage(Object obj) {
+		int flags = 0;
+		String id = null;
 		if (obj instanceof IPluginImport) {
 			IPluginImport iobj = (IPluginImport) obj;
-			String id = iobj.getId();
-			IPlugin plugin = PDECore.getDefault().findPlugin(id);
-			int flags = 0;
+			id = iobj.getId();
 			if (fShowReexport && iobj.isReexported())
 				flags = SharedLabelProvider.F_EXPORT;
+		} else if(obj instanceof String){
+			id = (String) obj;
+		}
+		if(id !=null){
+			IPlugin plugin = PDECore.getDefault().findPlugin(id);
 			if (plugin != null) {
 				IPluginModelBase model = plugin.getPluginModel();
 				if (model.getUnderlyingResource() == null)

@@ -99,9 +99,8 @@ public class RegistryBrowserContentProvider
 			if (plugins == null){
 				numPluginsTotal = 0;
 				return new Object[0];
-			} else {
-				numPluginsTotal = plugins.length;
 			}
+			numPluginsTotal = plugins.length;
 			
 			if (showRunning){
 				ArrayList resultList = new ArrayList();

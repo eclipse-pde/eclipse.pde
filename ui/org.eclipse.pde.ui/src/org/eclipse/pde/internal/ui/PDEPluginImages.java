@@ -167,6 +167,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_CALLERS = create(PATH_LCL, "ch_callers.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_FLAT_LAYOUT = create(PATH_LCL, "flatLayout.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_HIERARCHICAL_LAYOUT = create(PATH_LCL, "hierarchicalLayout.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_HISTORY_LIST = create(PATH_LCL, "history_list.gif"); //$NON-NLS-1$
 	
 	public static final ImageDescriptor DESC_ADD_ATT_DISABLED = create(PATH_LCL_DISABLED, "add_att.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_ALPHAB_SORT_CO_DISABLED = create(PATH_LCL_DISABLED, "alphab_sort_co.gif"); //$NON-NLS-1$
@@ -185,6 +186,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_CALLERS_DISABLED = create(PATH_LCL_DISABLED, "ch_callers.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_FLAT_LAYOUT_DISABLED = create(PATH_LCL_DISABLED, "flatLayout.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_HIERARCHICAL_LAYOUT_DISABLED = create(PATH_LCL_DISABLED, "hierarchicalLayout.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_HISTORY_LIST_DISABLED = create(PATH_LCL_DISABLED, "history_list.gif"); //$NON-NLS-1$
 
 	public static final ImageDescriptor DESC_RUN_EXC = create(PATH_OBJ, "run_exc.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_DEBUG_EXC = create(PATH_OBJ, "debug_exc.gif"); //$NON-NLS-1$

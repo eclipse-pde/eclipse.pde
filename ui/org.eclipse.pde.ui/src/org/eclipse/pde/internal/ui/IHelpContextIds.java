@@ -31,8 +31,12 @@ public interface IHelpContextIds {
 
  	// Views
  	public static final String PLUGINS_VIEW = PREFIX + "plugins_view";	 //$NON-NLS-1$
+
  	public static final String DEPENDENCIES_VIEW = PREFIX + "dependencies_view"; //$NON-NLS-1$
- 	
+	public static final String HISTORY_ACTION = PREFIX + "history_action"; //$NON-NLS-1$
+	public static final String HISTORY_LIST_ACTION = PREFIX + "history_list_action"; //$NON-NLS-1$
+	public static final String HISTORY_LIST_DIALOG = PREFIX + "history_list_dialog"; //$NON-NLS-1$
+	
  	// Wizard Pages
  	public static final String NEW_PROJECT_STRUCTURE_PAGE = PREFIX + "new_project_structure_page"; //$NON-NLS-1$
  	public static final String NEW_PROJECT_REQUIRED_DATA = PREFIX + "new_project_required_data"; //$NON-NLS-1$

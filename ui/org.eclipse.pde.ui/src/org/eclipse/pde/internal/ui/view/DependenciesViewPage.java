@@ -34,7 +34,6 @@ import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.ISharedPluginModel;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.plugin.PluginReference;
-import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
 import org.eclipse.pde.internal.ui.IPreferenceConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
@@ -153,7 +152,7 @@ public abstract class DependenciesViewPage extends Page {
 		}
 		if (model != null && model.getUnderlyingResource() != null) {
 			manager.add(new UnusedDependenciesAction(
-					(WorkspacePluginModelBase) model, true));
+					(IPluginModelBase) model, true));
 		}
 		//
 		manager.add(new Separator());

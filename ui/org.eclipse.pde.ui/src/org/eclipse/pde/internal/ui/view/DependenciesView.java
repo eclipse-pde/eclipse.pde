@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.view;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -206,6 +207,10 @@ public class DependenciesView extends PageBookView implements
 
 	private ShowTreeAction fShowTree;
 
+	// history of input elements (as Strings). No duplicates
+	private ArrayList fInputHistory;
+	
+	private HistoryDropDownAction fHistoryDropDownAction;
 	/**
 	 * 
 	 */
@@ -213,6 +218,7 @@ public class DependenciesView extends PageBookView implements
 		super();
 		fPartsToPages = new HashMap(4);
 		fPagesToParts = new HashMap(4);
+		fInputHistory= new ArrayList();
 	}
 
 	private void contributeToActionBars(IActionBars actionBars) {
@@ -228,6 +234,8 @@ public class DependenciesView extends PageBookView implements
 		manager.add(new Separator("presentation")); //$NON-NLS-1$
 		manager.appendToGroup("presentation", fShowTree); //$NON-NLS-1$
 		manager.appendToGroup("presentation", fShowList); //$NON-NLS-1$
+		manager.add(new Separator("history")); //$NON-NLS-1$
+		manager.add(fHistoryDropDownAction);
 	}
 
 	/*
@@ -294,6 +302,10 @@ public class DependenciesView extends PageBookView implements
 		fShowTree.setChecked(!fPreferences.getBoolean(DEPS_VIEW_SHOW_LIST));
 		fShowList = new ShowListAction();
 		fShowList.setChecked(fPreferences.getBoolean(DEPS_VIEW_SHOW_LIST));
+		
+		fHistoryDropDownAction= new HistoryDropDownAction(this);
+		fHistoryDropDownAction.setEnabled(false);
+		
 		IActionBars actionBars = getViewSite().getActionBars();
 		contributeToActionBars(actionBars);
 
@@ -380,6 +392,16 @@ public class DependenciesView extends PageBookView implements
 	}
 
 	public void openTo(Object object) {
+		if (object != null && !object.equals(fInput)) {
+			if(object instanceof IPluginModelBase){
+				String id =((IPluginModelBase)object).getPluginBase().getId();
+				addHistoryEntry(id);
+			}
+		}
+		updateInput(object);
+	}
+
+	private void updateInput(Object object) {
 		fInput = object;
 		((DependenciesViewPage) getCurrentPage()).setInput(object);
 	}
@@ -478,4 +500,67 @@ public class DependenciesView extends PageBookView implements
 		setTitleToolTip(getTitle());
 	}
 	
+	/**
+	 * Adds the entry if new. Inserted at the beginning of the history entries list.
+	 * @param entry The new entry
+	 */		
+	private void addHistoryEntry(String entry) {
+		if (fInputHistory.contains(entry)) {
+			fInputHistory.remove(entry);
+		}
+		fInputHistory.add(0, entry);
+		fHistoryDropDownAction.setEnabled(true);
+	}
+	
+	private void updateHistoryEntries() {
+		for (int i= fInputHistory.size() - 1; i >= 0; i--) {
+			String type= (String) fInputHistory.get(i);
+			if (PDECore.getDefault().getModelManager().findModel(type)==null) {
+				fInputHistory.remove(i);
+			}
+		}
+		fHistoryDropDownAction.setEnabled(!fInputHistory.isEmpty());
+	}
+	
+	/**
+	 * Goes to the selected entry, without updating the order of history entries.
+	 * @param entry The entry to open
+	 */	
+	public void gotoHistoryEntry(String entry) {
+		if (fInputHistory.contains(entry)) {	
+			updateInput(PDECore.getDefault().getModelManager().findModel(entry));
+		}
+	}	
+	
+	/**
+	 * Gets all history entries.
+	 * @return All history entries
+	 */
+	public String[] getHistoryEntries() {
+		if (fInputHistory.size() > 0) {
+			updateHistoryEntries();
+		}
+		return (String[]) fInputHistory.toArray(new String[fInputHistory.size()]);
+	}
+	
+	/**
+	 * Sets the history entries
+	 * @param elems The history elements to set
+	 */
+	public void setHistoryEntries(String[] elems) {
+		fInputHistory.clear();
+		for (int i= 0; i < elems.length; i++) {
+			fInputHistory.add(elems[i]);
+		}
+		updateHistoryEntries();
+	}
+	/**
+	 * @return Returns the fInput.
+	 */
+	public String getInput() {
+		if(fInput!=null){
+			return ((IPluginModelBase)fInput).getPluginBase().getId();
+		}
+		return null;
+	}
 }

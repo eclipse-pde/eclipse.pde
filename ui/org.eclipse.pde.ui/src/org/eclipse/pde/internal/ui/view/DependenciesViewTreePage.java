@@ -21,6 +21,8 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
 
 public class DependenciesViewTreePage extends DependenciesViewPage {
@@ -67,7 +69,14 @@ public class DependenciesViewTreePage extends DependenciesViewPage {
 		fTreeViewer = new TreeViewer(parent, SWT.MULTI | SWT.V_SCROLL
 				| SWT.H_SCROLL);
 		fTreeViewer.setContentProvider(fContentProvider);
-		fTreeViewer.setLabelProvider(new DependenciesLabelProvider(true));
+		final DependenciesLabelProvider labelProvider = new DependenciesLabelProvider(
+				true);
+		fTreeViewer.setLabelProvider(labelProvider);
+		fTreeViewer.getControl().addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				labelProvider.dispose();
+			}
+		});
 		fTreeViewer.setSorter(ListUtil.PLUGIN_SORTER);
 		fTreeViewer.setAutoExpandLevel(2);
 

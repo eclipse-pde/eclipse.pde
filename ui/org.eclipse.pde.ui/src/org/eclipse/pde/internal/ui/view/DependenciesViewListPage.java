@@ -15,6 +15,8 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 
@@ -40,7 +42,14 @@ public class DependenciesViewListPage extends DependenciesViewPage {
 
 		fViewer = new TableViewer(table);
 		fViewer.setContentProvider(fContentProvider);
-		fViewer.setLabelProvider(new DependenciesLabelProvider(false));
+		final DependenciesLabelProvider labelProvider = new DependenciesLabelProvider(
+				false);
+		fViewer.setLabelProvider(labelProvider);
+		fViewer.getControl().addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				labelProvider.dispose();
+			}
+		});
 		fViewer.setSorter(ListUtil.PLUGIN_SORTER);
 
 		return fViewer;
