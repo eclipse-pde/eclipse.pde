@@ -68,4 +68,9 @@ public class XMLConfiguration extends SourceViewerConfiguration {
 
 		return reconciler;
 	}
+	
+	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
+		return new AnnotationHover();
+	}
+
 }
