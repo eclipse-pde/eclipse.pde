@@ -221,8 +221,8 @@ public class JarsSection
 						if (entry.contains(folder)) {
 							String message =
 								PDEPlugin.getFormattedMessage(DUPLICATE_FOLDER_MESSAGE, folder);
-							throw new CoreException(
-								new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.OK, message, null));
+							MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(),"", message);
+							return;
 						}
 					}
 					entry.addToken(folder);
