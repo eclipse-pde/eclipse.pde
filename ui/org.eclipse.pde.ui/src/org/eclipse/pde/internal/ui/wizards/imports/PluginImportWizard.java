@@ -84,7 +84,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 
 	public boolean performFinish() {
 		page1.storeSettings();
-		page2.storeSettings();
+		((BaseImportWizardSecondPage)page1.getNextPage()).storeSettings();
 		
 		final ArrayList modelIds = new ArrayList();
 		try {

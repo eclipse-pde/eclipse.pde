@@ -243,13 +243,13 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		});
 
 		changeButton = new Button(composite, SWT.PUSH);
-		changeButton.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.change"));
+		changeButton.setText(PDEPlugin.getResourceString("Target Platform"));
 		changeButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleChangeTargetPlatform();
 			}
 		});
-		changeButton.setLayoutData(new GridData());
+		changeButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 		SWTUtil.setButtonDimensionHint(changeButton);
 
 		otherLocationLabel = new Label(composite, SWT.NULL);
@@ -272,7 +272,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 					dropLocation.setText(chosen.toOSString());
 			}
 		});
-		browseButton.setLayoutData(new GridData());
+		browseButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 		SWTUtil.setButtonDimensionHint(browseButton);
 	}
 	

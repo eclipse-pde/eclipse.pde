@@ -188,11 +188,13 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 			addDependencies(model, true);
 			addExtraPrerequisites(model);
 		}
-		if (implicitButton.isVisible() && implicitButton.getSelection())
-			addImplicitDependencies();
-		removeCheckedModels();
-		
+		if (wModels.length > 0) {
+			if (implicitButton.isVisible() && implicitButton.getSelection())
+				addImplicitDependencies();
+			removeCheckedModels();
+		}		
 	}
+	
 	private void removeCheckedModels() {
 		HashSet set = new HashSet();
 		Object[] wModels = tablePart.getSelection();
@@ -252,6 +254,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 			PDEPlugin.getFormattedMessage(
 				"ImportWizard.expressPage.total",
 				new Integer(selected.size()).toString()));
+		counterLabel.getParent().layout();
 	}
 
 

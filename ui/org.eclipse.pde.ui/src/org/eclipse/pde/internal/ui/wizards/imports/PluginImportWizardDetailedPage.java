@@ -274,7 +274,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		});
 		
 		countLabel = new Label(comp, SWT.NONE);
-		countLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));		
+		countLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER));		
 		return container;
 	}
 	
@@ -298,7 +298,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 				new String[] {
 					new Integer(importListViewer.getTable().getItemCount()).toString(),
 					new Integer(models.length).toString()}));
-		
+		countLabel.getParent().layout();
 	}
 	
 
