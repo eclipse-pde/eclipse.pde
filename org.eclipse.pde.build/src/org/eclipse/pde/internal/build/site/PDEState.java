@@ -15,8 +15,6 @@ import java.net.URL;
 import java.util.*;
 import java.util.jar.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.service.pluginconversion.PluginConverter;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.osgi.util.ManifestElement;

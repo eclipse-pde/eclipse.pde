@@ -14,9 +14,8 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
-
 import org.eclipse.core.runtime.*;
-import org.eclipse.osgi.service.resolver.*;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.internal.build.site.PDEState;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.core.IPluginEntry;

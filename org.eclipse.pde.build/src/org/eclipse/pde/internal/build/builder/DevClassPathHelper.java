@@ -14,12 +14,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.Properties;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.pde.internal.build.*;
-import org.eclipse.pde.internal.build.BundleHelper;
-import org.eclipse.pde.internal.build.IPDEBuildConstants;
 
 public class DevClassPathHelper {
 	protected boolean inDevelopmentMode = false;

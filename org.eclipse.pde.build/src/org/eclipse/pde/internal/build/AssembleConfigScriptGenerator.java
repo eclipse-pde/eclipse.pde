@@ -15,8 +15,6 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.internal.build.ant.*;
-import org.eclipse.pde.internal.build.ant.AntScript;
-import org.eclipse.pde.internal.build.ant.FileSet;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.core.IPluginEntry;
 

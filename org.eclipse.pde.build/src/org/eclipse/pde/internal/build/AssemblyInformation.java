@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.build;
 
 import java.util.*;
-
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.internal.build.site.BuildTimeFeature;
 import org.eclipse.update.core.IFeature;

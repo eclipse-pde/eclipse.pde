@@ -9,7 +9,7 @@
  * IBM - Initial API and implementation
  **********************************************************************/
 
-import org.eclipse.pde.internal.build.tasks.*;
+import org.eclipse.pde.internal.build.tasks.ManifestModifier;
 
 public class Test2 {
 	public static void main(String[] args) {

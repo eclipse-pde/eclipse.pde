@@ -13,14 +13,10 @@ package org.eclipse.pde.internal.build.site;
 import java.io.File;
 import java.net.URL;
 import java.util.*;
-import java.util.Collection;
-import java.util.Properties;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.internal.build.*;
-import org.eclipse.pde.internal.build.IPDEBuildConstants;
-import org.eclipse.pde.internal.build.Policy;
 import org.osgi.framework.Constants;
 
 public class PluginRegistryConverter extends PDEState {
