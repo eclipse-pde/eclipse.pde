@@ -31,15 +31,14 @@
             class="org.eclipse.pde.internal.core.EclipseHomeInitializer">
       </classpathVariableInitializer>
    </extension>
-   
+-->
    <extension
          point="org.eclipse.team.core.repository">
       <repository
-            id="org.eclipse.pde.core.BinaryRepositoryProvider"
-            class="org.eclipse.pde.internal.core.BinaryRepositoryProvider">
+            class="org.eclipse.pde.internal.core.BinaryRepositoryProvider"
+            id="org.eclipse.pde.core.BinaryRepositoryProvider">
       </repository>
    </extension>
--->
    <extension
          point="org.eclipse.jdt.core.classpathContainerInitializer">
       <classpathContainerInitializer

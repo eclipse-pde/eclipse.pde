@@ -25,8 +25,10 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 			IFile file,
 			int updateFlags,
 			IProgressMonitor monitor) {
-			if (isBinaryResource(file))
+			if (isBinaryResource(file, true))
 				tree.failed(createProblemStatus());
+			else
+				tree.standardDeleteFile(file, updateFlags, monitor);
 			return true;
 		}
 
@@ -38,8 +40,10 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 			IFolder folder,
 			int updateFlags,
 			IProgressMonitor monitor) {
-			if (isBinaryResource(folder))
+			if (isBinaryResource(folder, true))
 				tree.failed(createProblemStatus());
+			else
+				tree.standardDeleteFolder(folder, updateFlags, monitor);
 			return true;
 		}
 
@@ -63,8 +67,10 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 			IFile destination,
 			int updateFlags,
 			IProgressMonitor monitor) {
-			if (isBinaryResource(source))
+			if (isBinaryResource(source, false))
 				tree.failed(createProblemStatus());
+			else
+				tree.standardMoveFile(source, destination, updateFlags, monitor);
 			return true;
 		}
 
@@ -77,8 +83,10 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 			IFolder destination,
 			int updateFlags,
 			IProgressMonitor monitor) {
-			if (isBinaryResource(source))
+			if (isBinaryResource(source, false))
 				tree.failed(createProblemStatus());
+			else
+				tree.standardMoveFolder(source, destination, updateFlags, monitor);
 			return true;
 		}
 
@@ -102,7 +110,7 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 		 */
 		public IStatus validateEdit(IFile[] files, Object context) {
 			for (int i = 0; i < files.length; i++) {
-				if (isBinaryResource(files[i])) {
+				if (isBinaryResource(files[i], false)) {
 					return createProblemStatus();
 				}
 			}
@@ -113,7 +121,7 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 		 * @see org.eclipse.core.resources.IFileModificationValidator#validateSave(org.eclipse.core.resources.IFile)
 		 */
 		public IStatus validateSave(IFile file) {
-			if (isBinaryResource(file)) {
+			if (isBinaryResource(file, false)) {
 				return createProblemStatus();
 			}
 			return createOKStatus();
@@ -162,11 +170,16 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 		return moveDeleteHook;
 	}
 
-	private boolean isBinaryResource(IResource resource) {
-		if (resource.isLinked())
-			return true;
-
+	private boolean isBinaryResource(IResource resource, boolean excludeProjectChildren) {
 		IContainer parent = resource.getParent();
+		
+		// Test for resource links
+		if (!excludeProjectChildren || !(parent instanceof IProject)) {
+			if (resource.isLinked())
+			return true;
+		}
+		
+		// Test for resources that are in linked folders
 
 		while (parent instanceof IFolder) {
 			IFolder folder = (IFolder) parent;
