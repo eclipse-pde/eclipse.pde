@@ -82,7 +82,7 @@ public class LogView
 		popupMenuManager.setRemoveAllWhenShown(true);
 		Menu menu = popupMenuManager.createContextMenu(tableTree);
 		tableTree.setMenu(menu);
-		//readLogFile();
+		readLogFile();
 		Platform.addLogListener(this);
 
 		tableTreeViewer.setInput(Platform.class);
@@ -127,7 +127,7 @@ public class LogView
 		
 		IToolBarManager toolBarManager = getViewSite().getActionBars().getToolBarManager();
 		toolBarManager.add(clearAction);
-		//toolBarManager.add(readLogAction);
+		toolBarManager.add(readLogAction);
 		toolBarManager.add(new Separator());
 		toolBarManager.add(propertiesAction);
 		table.addSelectionListener(new SelectionAdapter() {
@@ -143,13 +143,13 @@ public class LogView
 		super.dispose();
 	}
 	public void fillContextMenu(IMenuManager manager) {
-		//manager.add(readLogAction);
+		manager.add(readLogAction);
 		manager.add(clearAction);
 		manager.add(new Separator());
 		manager.add(propertiesAction);
 	}
-	public StatusAdapter[] getLogs() {
-		StatusAdapter[] array = new StatusAdapter[logs.size()];
+	public LogEntry[] getLogs() {
+		LogEntry[] array = new LogEntry[logs.size()];
 		logs.copyInto(array);
 		return array;
 	}
@@ -180,11 +180,11 @@ public class LogView
 		if (!logFile.exists()) return;
 	}
 	public void logging(IStatus status) {
-		logs.insertElementAt(new StatusAdapter(status), 0);
+		logs.insertElementAt(new LogEntry(status), 0);
 		tableTreeViewer.refresh();
 	}
 	public void logging(IStatus status, String plugin) {
-		logs.insertElementAt(new StatusAdapter(status), 0);
+		logs.insertElementAt(new LogEntry(status), 0);
 		tableTreeViewer.refresh();
 	}
 	public void setFocus() {
