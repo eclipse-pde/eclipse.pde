@@ -55,14 +55,16 @@ public class PluginPathUpdater {
 		IPluginModelBase model,
 		Vector result) {
 		IFile file = (IFile) model.getUnderlyingResource();
-		IPath buildPath = file.getProject().getFullPath().append("build.properties");
+		IPath buildPath =
+			file.getProject().getFullPath().append("build.properties");
 		IFile buildFile = file.getWorkspace().getRoot().getFile(buildPath);
 		if (!buildFile.exists())
 			return;
 		WorkspaceModelManager manager =
 			PDECore.getDefault().getWorkspaceModelManager();
 		manager.connect(buildFile, null, false);
-		IBuildModel buildModel = (IBuildModel) manager.getModel(buildFile, null);
+		IBuildModel buildModel =
+			(IBuildModel) manager.getModel(buildFile, null);
 		IBuild build = buildModel.getBuild();
 		IBuildEntry[] entries = build.getBuildEntries();
 		for (int i = 0; i < entries.length; i++) {
@@ -72,7 +74,8 @@ public class PluginPathUpdater {
 			String[] tokens = entry.getTokens();
 			for (int j = 0; j < tokens.length; j++) {
 				String folderName = tokens[j];
-				IPath folderPath = file.getProject().getFullPath().append(folderName);
+				IPath folderPath =
+					file.getProject().getFullPath().append(folderName);
 				if (file.getWorkspace().getRoot().exists(folderPath)) {
 					result.add(JavaCore.newSourceEntry(folderPath));
 				}
@@ -88,9 +91,13 @@ public class PluginPathUpdater {
 		boolean internal = model.getUnderlyingResource() != null;
 
 		if (internal) {
-			IPath projectPath = model.getUnderlyingResource().getProject().getFullPath();
-			if (!isEntryAdded(projectPath, IClasspathEntry.CPE_PROJECT, result)) {
-				IClasspathEntry projectEntry = JavaCore.newProjectEntry(projectPath, element.isExported());
+			IPath projectPath =
+				model.getUnderlyingResource().getProject().getFullPath();
+			if (!isEntryAdded(projectPath,
+				IClasspathEntry.CPE_PROJECT,
+				result)) {
+				IClasspathEntry projectEntry =
+					JavaCore.newProjectEntry(projectPath, element.isExported());
 				result.addElement(projectEntry);
 			}
 			return;
@@ -105,17 +112,30 @@ public class PluginPathUpdater {
 			String name = expandLibraryName(library.getName());
 			IPath libraryPath = modelPath.append(name);
 			IPath[] sourceAnnot = getSourceAnnotation(plugin, modelPath, name);
-			if (!isEntryAdded(libraryPath, IClasspathEntry.CPE_VARIABLE, result)) {
+			if (!isEntryAdded(libraryPath,
+				IClasspathEntry.CPE_VARIABLE,
+				result)) {
 				IClasspathEntry libraryEntry =
-					JavaCore.newVariableEntry(libraryPath, sourceAnnot[0], sourceAnnot[1]);
-				IClasspathEntry resolved = JavaCore.getResolvedClasspathEntry(libraryEntry);
+					JavaCore.newVariableEntry(
+						libraryPath,
+						sourceAnnot[0],
+						sourceAnnot[1]);
+				IClasspathEntry resolved =
+					JavaCore.getResolvedClasspathEntry(libraryEntry);
 				if (resolved != null && resolved.getPath().toFile().exists())
 					result.addElement(libraryEntry);
 				else if (!(model instanceof IFragmentModel)) {
 					// cannot find this entry - try to locate it 
 					// in one of the fragments
-					libraryEntry = getFragmentEntry((IPluginModel)model, name, element.isExported());
-					if (libraryEntry!=null && !isEntryAdded(libraryEntry.getPath(), IClasspathEntry.CPE_VARIABLE, result)) {
+					libraryEntry =
+						getFragmentEntry(
+							(IPluginModel) model,
+							name,
+							element.isExported());
+					if (libraryEntry != null
+						&& !isEntryAdded(libraryEntry.getPath(),
+							IClasspathEntry.CPE_VARIABLE,
+							result)) {
 						result.addElement(libraryEntry);
 					}
 				}
@@ -136,17 +156,28 @@ public class PluginPathUpdater {
 			}
 		}
 	}
-	
-	private static IClasspathEntry getFragmentEntry(IPluginModel model, String name, boolean exported) {
-		IFragmentModel [] fragments = PDECore.getDefault().getExternalModelManager().getFragmentsFor(model);
-		for (int i=0; i<fragments.length; i++) {
+
+	private static IClasspathEntry getFragmentEntry(
+		IPluginModel model,
+		String name,
+		boolean exported) {
+		IFragmentModel[] fragments =
+			PDECore.getDefault().getExternalModelManager().getFragmentsFor(
+				model);
+		for (int i = 0; i < fragments.length; i++) {
 			IFragmentModel fmodel = fragments[i];
 			IPath modelPath = getExternalPath(fmodel);
 			IPath libraryPath = modelPath.append(name);
-			IPath[] sourceAnnot = getSourceAnnotation(fmodel.getFragment(), modelPath, name);
+			IPath[] sourceAnnot =
+				getSourceAnnotation(fmodel.getFragment(), modelPath, name);
 			IClasspathEntry libraryEntry =
-					JavaCore.newVariableEntry(libraryPath, sourceAnnot[0], sourceAnnot[1], exported);
-			IClasspathEntry resolved = JavaCore.getResolvedClasspathEntry(libraryEntry);
+				JavaCore.newVariableEntry(
+					libraryPath,
+					sourceAnnot[0],
+					sourceAnnot[1],
+					exported);
+			IClasspathEntry resolved =
+				JavaCore.getResolvedClasspathEntry(libraryEntry);
 			if (resolved != null && resolved.getPath().toFile().exists()) {
 				// looks good - return it
 				return libraryEntry;
@@ -154,7 +185,7 @@ public class PluginPathUpdater {
 		}
 		return null;
 	}
-	
+
 	public static IPath getExternalPath(IPluginModelBase model) {
 		IPath modelPath = new Path(PDECore.ECLIPSE_HOME_VARIABLE);
 		modelPath =
@@ -162,19 +193,28 @@ public class PluginPathUpdater {
 				((ExternalPluginModelBase) model).getEclipseHomeRelativePath());
 		return modelPath;
 	}
-	
+
 	public static IClasspathEntry createLibraryEntry(
 		IPluginLibrary library,
 		IPath rootPath,
 		boolean unconditionallyExport) {
 		String name = expandLibraryName(library.getName());
+		boolean variable = rootPath.segment(0).equals("ECLIPSE_HOME");
 		IPath libraryPath = rootPath.append(name);
-		IPath[] sourceAnnot = getSourceAnnotation(library.getPluginBase(), rootPath, name);
-		return JavaCore.newLibraryEntry(
-			libraryPath,
-			sourceAnnot[0],
-			sourceAnnot[1],
-			unconditionallyExport? true : library.isFullyExported());
+		IPath[] sourceAnnot =
+			getSourceAnnotation(library.getPluginBase(), rootPath, name);
+		if (variable)
+			return JavaCore.newVariableEntry(
+				libraryPath,
+				sourceAnnot[0],
+				sourceAnnot[1],
+				unconditionallyExport ? true : library.isFullyExported());
+		else
+			return JavaCore.newLibraryEntry(
+				libraryPath,
+				sourceAnnot[0],
+				sourceAnnot[1],
+				unconditionallyExport ? true : library.isFullyExported());
 	}
 
 	private static boolean isEntryAdded(IPath path, int kind, Vector entries) {
@@ -214,36 +254,42 @@ public class PluginPathUpdater {
 	}
 
 	private static IPath[] getSourceAnnotation(
-		IPluginBase pluginBase, IPath rootPath, String name) {
+		IPluginBase pluginBase,
+		IPath rootPath,
+		String name) {
 		IPath[] annot = new IPath[2];
 		int dot = name.lastIndexOf('.');
-		if (dot!= -1) {
-			String zipName = name.substring(0, dot)+"src.zip";
+		if (dot != -1) {
+			String zipName = name.substring(0, dot) + "src.zip";
 			// test the sibling location
 			if (exists(pluginBase, rootPath, zipName)) {
 				annot[0] = rootPath.append(zipName);
-			}
-			else {
+			} else {
 				// must look up source locations
 				annot[0] = findSourceZip(pluginBase, zipName);
 			}
 		}
 		return annot;
 	}
-	
-	private static IPath findSourceZip(IPluginBase pluginBase, String zipName) {
-		SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
+
+	private static IPath findSourceZip(
+		IPluginBase pluginBase,
+		String zipName) {
+		SourceLocationManager manager =
+			PDECore.getDefault().getSourceLocationManager();
 		return manager.findVariableRelativePath(pluginBase, new Path(zipName));
 	}
 
-	private static boolean exists(IPluginBase plugin, IPath rootPath, String zipName) {
+	private static boolean exists(
+		IPluginBase plugin,
+		IPath rootPath,
+		String zipName) {
 		IResource resource = plugin.getModel().getUnderlyingResource();
-		if (resource!=null) {
+		if (resource != null) {
 			IProject project = resource.getProject();
 			IFile file = project.getFile(zipName);
 			return file.exists();
-		}
-		else {
+		} else {
 			rootPath = getAbsolutePath(rootPath);
 			File file = rootPath.append(zipName).toFile();
 			return file.exists();
@@ -254,12 +300,12 @@ public class PluginPathUpdater {
 		String firstSegment = path.segment(0);
 		if (firstSegment.equals("ECLIPSE_HOME")) {
 			IPath root = JavaCore.getClasspathVariable(firstSegment);
-			if (root!=null)
+			if (root != null)
 				return root.append(path.removeFirstSegments(1));
 		}
 		return path;
 	}
-	
+
 	public IClasspathEntry[] getSourceClasspathEntries(IPluginModel model) {
 		Vector result = new Vector();
 
@@ -283,7 +329,9 @@ public class PluginPathUpdater {
 		return false;
 	}
 
-	public static void addImplicitLibraries(Vector result, boolean addRuntime) {
+	public static void addImplicitLibraries(
+		Vector result,
+		boolean addRuntime) {
 		String bootId = "org.eclipse.core.boot";
 		String runtimeId = "org.eclipse.core.runtime";
 		IPlugin bootPlugin = PDECore.getDefault().findPlugin(bootId);
@@ -291,15 +339,15 @@ public class PluginPathUpdater {
 		if (addRuntime) {
 			IPlugin runtimePlugin = PDECore.getDefault().findPlugin(runtimeId);
 			if (runtimePlugin != null) {
-				addToClasspathEntries(new CheckedPlugin(runtimePlugin, true), result);
+				addToClasspathEntries(
+					new CheckedPlugin(runtimePlugin, true),
+					result);
 			}
 		}
 		if (bootPlugin != null) {
 			addToClasspathEntries(new CheckedPlugin(bootPlugin, true), result);
 		}
 	}
-
-
 
 	private static String expandLibraryName(String source) {
 		if (source.charAt(0) != '$')
@@ -326,6 +374,5 @@ public class PluginPathUpdater {
 		}
 		return source;
 	}
-
 
 }
