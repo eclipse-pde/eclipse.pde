@@ -21,7 +21,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.build.FeatureBuildScriptGenerator;
+import org.eclipse.pde.internal.build.builder.FeatureBuildScriptGenerator;
 import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
@@ -29,7 +29,6 @@ import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
 
 /**
  * Insert the type's description here.
@@ -126,7 +125,7 @@ public class FeatureExportWizard extends BaseExportWizard {
 	}
 	
 	public void deleteBuildFile(IModel model) {
-		String scriptName = MainPreferencePage.getBuildScriptName();
+		String scriptName = "build.xml";
 		String filename = "";
 		if (model instanceof IFeatureModel) {
 			filename = ((IFeatureModel)model).getInstallLocation() + Path.SEPARATOR + scriptName; 
@@ -151,10 +150,10 @@ public class FeatureExportWizard extends BaseExportWizard {
 	private void makeScript(IFeatureModel model) throws CoreException {
 		FeatureBuildScriptGenerator generator = new ExportFeatureBuildScriptGenerator();
 
-		generator.setBuildScriptName(MainPreferencePage.getBuildScriptName());
-		generator.setScriptTargetLocation(model.getInstallLocation());
+		//generator.setBuildScriptName(MainPreferencePage.getBuildScriptName());
+		//generator.setScriptTargetLocation(model.getInstallLocation());
 		generator.setFeatureRootLocation(model.getInstallLocation());
-		generator.setInstallLocation(model.getInstallLocation());
+		generator.setWorkingDirectory(model.getInstallLocation());
 		
 		IProject project = model.getUnderlyingResource().getProject();
 		if (project.hasNature(JavaCore.NATURE_ID)) {
@@ -165,7 +164,7 @@ public class FeatureExportWizard extends BaseExportWizard {
 			generator.setDevEntries(new String[] { "bin" });
 		}
 
-		generator.setGenerateChildrenScript(true);
+		generator.setAnalyseChildren(true);
 		generator.setPluginPath(TargetPlatform.createPluginPath());
 
 		generator.setFeature(model.getFeature().getId());

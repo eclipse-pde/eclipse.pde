@@ -18,7 +18,6 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.core.resources.*;
 
 public class NewExtensionPointMainPage extends BaseExtensionPointMainPage {
-	private IProject project;
 	public static final String SCHEMA_DIR = "schema";
 	public static final String KEY_TITLE = "NewExtensionPointWizard.title";
 	public static final String KEY_DESC = "NewExtensionPointWizard.desc";
@@ -30,7 +29,6 @@ public class NewExtensionPointMainPage extends BaseExtensionPointMainPage {
 		super(project);
 		setTitle(PDEPlugin.getResourceString(KEY_TITLE));
 		setDescription(PDEPlugin.getResourceString(KEY_DESC));
-		this.project = project;
 		this.model = model;
 	}
 	public boolean finish() {

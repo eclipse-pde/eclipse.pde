@@ -35,7 +35,6 @@ import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
 
 public class ExternalPluginsBlock {
 	private CheckboxTableViewer pluginListViewer;
-	private Control control;
 	private TargetPlatformPreferencePage page;
 	private static final String KEY_RELOAD = "ExternalPluginsBlock.reload";
 	private static final String KEY_WORKSPACE = "ExternalPluginsBlock.workspace";
@@ -217,7 +216,6 @@ public class ExternalPluginsBlock {
 
 		GridData gd = (GridData) tablePart.getControl().getLayoutData();
 		gd.heightHint = 100;
-		this.control = container;
 		return container;
 	}
 

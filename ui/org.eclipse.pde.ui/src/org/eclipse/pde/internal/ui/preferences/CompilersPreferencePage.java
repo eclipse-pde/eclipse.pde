@@ -38,12 +38,10 @@ public class CompilersPreferencePage
 	extends PreferencePage
 	implements IWorkbenchPreferencePage, IEnvironmentVariables {
 	private ArrayList flagControls;
-	private Preferences preferences;
 	private HashSet changedControls = null;
 
 	public CompilersPreferencePage() {
 		setDescription(PDEPlugin.getResourceString("CompilersPreferencePage.desc")); //$NON-NLS-1$
-		preferences = PDECore.getDefault().getPluginPreferences();
 	}
 
 	/**

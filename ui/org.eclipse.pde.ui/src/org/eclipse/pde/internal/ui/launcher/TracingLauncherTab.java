@@ -56,7 +56,6 @@ public class TracingLauncherTab
 	private NamedElement externalPlugins;
 	private Properties masterOptions;
 	private Hashtable propertySources = new Hashtable();
-	private TracingPropertySource currentSource;
 	private Vector externalList;
 	private Vector workspaceList;
 	private PropertySheetPage propertySheet;
@@ -464,7 +463,6 @@ public class TracingLauncherTab
 				? new StructuredSelection(adaptable)
 				: new StructuredSelection();
 		propertySheet.selectionChanged(null, selection);
-		currentSource = (TracingPropertySource) adaptable;
 		updatePropertyLabel(model);
 	}
 	public String getName() {

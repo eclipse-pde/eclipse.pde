@@ -43,7 +43,6 @@ public class PluginSearchResultCollector
 
 	private PluginSearchUIOperation operation;
 	private ISearchResultView resultView;
-	private static IPluginObject currentMatch;
 	private IProgressMonitor monitor;
 	private int numMatches = 0;
 	
@@ -61,8 +60,6 @@ public class PluginSearchResultCollector
 
 	public void accept(IPluginObject match) {
 		try {
-			currentMatch = match;
-
 			IResource resource = match.getModel().getUnderlyingResource();
 			if (resource == null) {
 				resource = PDEPlugin.getWorkspace().getRoot();

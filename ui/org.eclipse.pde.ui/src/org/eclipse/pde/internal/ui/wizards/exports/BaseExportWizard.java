@@ -27,7 +27,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
 import org.eclipse.swt.program.Program;
 import org.eclipse.ui.*;
 
@@ -224,7 +223,7 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard {
 		runner.setBuildFileLocation(
 			location
 				+ Path.SEPARATOR
-				+ MainPreferencePage.getBuildScriptName());
+				+ "build.xml");
 		runner.addBuildListener("org.eclipse.pde.internal.ui.ant.ExportBuildListener");
 		runner.setExecutionTargets(getExecutionTargets(exportZip, exportSource));
 		runner.run(monitor);

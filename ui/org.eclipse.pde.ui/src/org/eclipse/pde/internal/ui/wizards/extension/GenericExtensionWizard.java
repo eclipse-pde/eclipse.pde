@@ -18,7 +18,6 @@ import org.eclipse.pde.internal.ui.*;
 
 public class GenericExtensionWizard extends Wizard implements IExtensionWizard {
 	private IPluginModelBase model;
-	private IProject project;
 	private PointSelectionPage pointSelectionPage;
 	private static final String KEY_WTITLE = "GenericExtensionWizard.wtitle";
 
@@ -34,7 +33,6 @@ public IPluginExtension getNewExtension() {
 	return pointSelectionPage.getNewExtension();
 }
 public void init(IProject project, IPluginModelBase pluginModelBase) {
-	this.project = project;
 	this.model = pluginModelBase;
 }
 public boolean performFinish() {
