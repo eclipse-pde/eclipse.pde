@@ -129,9 +129,9 @@ public class WorkbenchSourcePathProvider extends StandardSourcePathProvider {
 							if (path != null) {
 								rte.setSourceAttachmentPath(path);
 								rte.setSourceAttachmentRootPath(roots[j].getSourceAttachmentRootPath());
-								if (!all.contains(rte))
-									all.add(rte);
 							}
+							if (!all.contains(rte))
+								all.add(rte);							
 						}
 					}
 				}
