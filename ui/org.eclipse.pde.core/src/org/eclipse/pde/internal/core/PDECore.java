@@ -164,8 +164,10 @@ public class PDECore extends Plugin {
 	}
 
 	public ExternalModelManager getExternalModelManager() {
-		if (externalModelManager == null)
+		if (externalModelManager == null) {
 			externalModelManager = new ExternalModelManager();
+			modelManager.connect(workspaceModelManager,externalModelManager);
+		}
 		return externalModelManager;
 	}
 	public static String getFormattedMessage(String key, String[] args) {
@@ -212,11 +214,12 @@ public class PDECore extends Plugin {
 		return ResourcesPlugin.getWorkspace();
 	}
 	public WorkspaceModelManager getWorkspaceModelManager() {
-		if (workspaceModelManager == null)
-			workspaceModelManager = new WorkspaceModelManager();
 		return workspaceModelManager;
 	}
 	public PluginModelManager getModelManager() {
+		if (externalModelManager == null) {
+			getExternalModelManager();
+		}
 		return modelManager;
 	}
 	public SourceLocationManager getSourceLocationManager() {
@@ -224,9 +227,7 @@ public class PDECore extends Plugin {
 			sourceLocationManager = new SourceLocationManager();
 		return sourceLocationManager;
 	}
-	private void initializePlatformPath() {
-		ExternalModelManager.initializePlatformPath();
-	}
+
 	public static void log(IStatus status) {
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
@@ -292,33 +293,17 @@ public class PDECore extends Plugin {
 		super.startup();
 		loadSettings();
 		workspaceModelManager = new WorkspaceModelManager();
-		externalModelManager = new ExternalModelManager();
-
-		initializePlatformPath();
-
-		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
-				getExternalModelManager().getEclipseHome(monitor);
-			}
-		};
-		try {
-			getWorkspace().run(runnable, null);
-		} catch (CoreException e) {
-			log(e);
-		}
-		getWorkspaceModelManager().reset();
-
+		workspaceModelManager.reset();
 		modelManager = new PluginModelManager();
-		modelManager.connect(workspaceModelManager, externalModelManager);
 	}
 
 	public void shutdown() throws CoreException {
 		PDECore.getDefault().savePluginPreferences();
 		if (schemaRegistry != null)
 			schemaRegistry.shutdown();
-
 		modelManager.shutdown();
 		workspaceModelManager.shutdown();
+			
 		super.shutdown();
 	}
 
@@ -348,8 +333,12 @@ public class PDECore extends Plugin {
 	 */
 	protected void initializeDefaultPluginPreferences() {
 		Preferences preferences = PDECore.getDefault().getPluginPreferences();
-		preferences.setDefault(ICoreConstants.TARGET_MODE, ICoreConstants.VALUE_USE_THIS);
 		preferences.setDefault(ICoreConstants.CHECKED_PLUGINS, ICoreConstants.VALUE_SAVED_NONE);
+		preferences.setDefault(ICoreConstants.TARGET_MODE, ICoreConstants.VALUE_USE_THIS);
+		if (preferences.getString(ICoreConstants.TARGET_MODE).equals(ICoreConstants.VALUE_USE_THIS))
+			preferences.setValue(ICoreConstants.PLATFORM_PATH,ExternalModelManager.computeDefaultPlatformPath());
+		else 
+			preferences.setDefault(ICoreConstants.PLATFORM_PATH, ExternalModelManager.computeDefaultPlatformPath());
 	}
 
 
