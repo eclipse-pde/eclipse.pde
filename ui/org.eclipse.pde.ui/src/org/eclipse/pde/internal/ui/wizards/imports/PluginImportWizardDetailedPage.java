@@ -125,7 +125,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		Table table = new Table(container, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 180;
-		gd.heightHint = 300;
+		gd.heightHint = 310;
 		table.setLayoutData(gd);
 
 		availableListViewer = new TableViewer(table);
@@ -225,33 +225,18 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		SWTUtil.setButtonDimensionHint(button);
 		
 		button = new Button(container, SWT.PUSH);
-		button.setText(PDEPlugin.getResourceString("ImportWizard.DetailedPage.existing"));
+		button.setText(PDEPlugin.getResourceString("ImportWizard.DetailedPage.existingUnshared"));
 		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				selected.clear();
 				for (int i = 0; i < models.length; i++) {
 					String id = models[i].getPluginBase().getId();
-					IProject project = (IProject) PDEPlugin.getWorkspace().getRoot().findMember(id);
-					if (project != null && project.isOpen() && WorkspaceModelManager.isPluginProject(project)) {
-						selected.add(models[i]);
-					}
-				}
-				pageChanged();
-			}
-		});
-		SWTUtil.setButtonDimensionHint(button);
-		
-		button = new Button(container, SWT.PUSH);
-		button.setText(PDEPlugin.getResourceString("ImportWizard.DetailedPage.existingBinary"));
-		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		button.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				selected.clear();
-				for (int i = 0; i < models.length; i++) {
-					String id = models[i].getPluginBase().getId();
-					IProject project = (IProject) PDEPlugin.getWorkspace().getRoot().findMember(id);
-					if (project != null && project.isOpen() && WorkspaceModelManager.isBinaryPluginProject(project)) {
+					IProject project =
+						(IProject) PDEPlugin.getWorkspace().getRoot().findMember(id);
+					if (project != null
+						&& project.isOpen()
+						&& WorkspaceModelManager.isUnsharedPluginProject(project)) {
 						selected.add(models[i]);
 					}
 				}

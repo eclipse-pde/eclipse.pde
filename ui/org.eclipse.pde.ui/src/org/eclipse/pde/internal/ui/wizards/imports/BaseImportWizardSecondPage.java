@@ -65,7 +65,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage {
 		Table table = new Table(container, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 180;
-		gd.heightHint = 300;
+		gd.heightHint = 310;
 		table.setLayoutData(gd);
 
 		importListViewer = new TableViewer(table);

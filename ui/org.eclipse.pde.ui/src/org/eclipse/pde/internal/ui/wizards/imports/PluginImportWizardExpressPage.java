@@ -198,11 +198,16 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 			addDependencies(model, true);
 			addExtraPrerequisites(model);
 		}
+		
 		if (wModels.length > 0) {
-			if (implicitButton.isVisible() && implicitButton.getSelection())
+			if (!(wModels.length == 1
+				&& ((IPluginModelBase) wModels[0]).getPluginBase().getId().equals(
+					"org.eclipse.core.boot"))
+				&& implicitButton.isVisible()
+				&& implicitButton.getSelection())
 				addImplicitDependencies();
 			removeCheckedModels();
-		}		
+		}
 	}
 	
 	private void removeCheckedModels() {
@@ -211,11 +216,10 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		for (int i = 0; i < wModels.length; i++) {
 			set.add(((IPluginModelBase)wModels[i]).getPluginBase().getId());
 		}
-		
-		for (int i = 0; i < selected.size(); i++) {
-			IPluginModelBase model = (IPluginModelBase)selected.get(i);
-			if (set.contains(model.getPluginBase().getId()))
-				selected.remove(model);
+		IPluginModelBase[] smodels = (IPluginModelBase[])selected.toArray(new IPluginModelBase[selected.size()]);
+		for (int i = 0; i < smodels.length; i++) {
+			if (set.contains(smodels[i].getPluginBase().getId()))
+				selected.remove(smodels[i]);
 		}
 	}
 

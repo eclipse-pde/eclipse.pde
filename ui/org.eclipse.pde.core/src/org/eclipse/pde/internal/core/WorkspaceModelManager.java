@@ -559,6 +559,11 @@ public class WorkspaceModelManager
 		return false;
 	}
 	
+	public static boolean isUnsharedPluginProject(IProject project) {
+		return RepositoryProvider.getProvider(project) == null
+			|| isBinaryPluginProject(project);
+	}
+	
 	public static boolean isBinaryFeatureProject(IProject project) {
 		if (!isFeatureProject(project))
 			return false;
