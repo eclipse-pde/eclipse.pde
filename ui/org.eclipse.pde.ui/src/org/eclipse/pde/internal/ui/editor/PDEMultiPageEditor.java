@@ -607,7 +607,7 @@ public abstract class PDEMultiPageEditor
 			page.openTo(openToObject);
 	}
 	public void openTo(Object obj, IMarker marker) {
-		if (EditorPreferencePage.getUseSourcePage()) {
+		if (EditorPreferencePage.getUseSourcePage() || getEditorInput() instanceof SystemFileEditorInput) {
 			PDESourcePage sourcePage =
 				(PDESourcePage) showPage(getSourcePageId());
 			if (marker != null)
