@@ -17,6 +17,7 @@
       <import plugin="org.eclipse.jdt.core" export="true"/>
       <import plugin="org.apache.xerces"/>
       <import plugin="org.eclipse.team.core"/>
+      <import plugin="org.eclipse.ant.core"/>
    </requires>
 
 
@@ -45,6 +46,12 @@
             class="org.eclipse.pde.internal.core.RequiredPluginsInitializer"
             id="org.eclipse.pde.core.requiredPlugins">
       </classpathContainerInitializer>
+   </extension>
+   <extension
+         point="org.eclipse.ant.core.extraClasspathEntries">
+      <extraClasspathEntry
+            library="pdecore.jar">
+      </extraClasspathEntry>
    </extension>
 
 </plugin>
