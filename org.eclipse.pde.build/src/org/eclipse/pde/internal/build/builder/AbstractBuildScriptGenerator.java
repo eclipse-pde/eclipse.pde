@@ -222,27 +222,36 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 		if (element.getOS() != null && !element.getOS().equals(Config.ANY)) {
 			for (Iterator iter = result.iterator(); iter.hasNext();) {
 				Config config = (Config) iter.next();
-				if (! element.getOS().equalsIgnoreCase(config.getOs()) )
+				if (! isMatching(element.getOS(), config.getOs()) )
 					iter.remove();
 			}
 		}
 		if (element.getWS() != null && !element.getWS().equals(Config.ANY)) {
 			for (Iterator iter = result.iterator(); iter.hasNext();) {
 				Config config = (Config) iter.next();
-				if (! element.getWS().equalsIgnoreCase(config.getWs()) )
+				if (! isMatching(element.getWS(), config.getWs()) )
 					iter.remove();
 			}
 		}
 		if (element.getOSArch() != null && !element.getOSArch().equals(Config.ANY)) {
 			for (Iterator iter = result.iterator(); iter.hasNext();) {
 				Config config = (Config) iter.next();
-				if (! element.getOSArch().equalsIgnoreCase(config.getArch()) )
+				if (! isMatching(element.getOSArch(), config.getArch()))
 					iter.remove();
 			}
 		}
 		return result;
 	}
 
+	private boolean isMatching(String candidateValues, String configValue) {
+		StringTokenizer stok = new StringTokenizer(candidateValues, ","); //$NON-NLS-1$
+		while (stok.hasMoreTokens()) {
+			String token = stok.nextToken().toUpperCase();
+			if (configValue.equalsIgnoreCase(token)) return true;
+		}
+		return false;
+	}
+	
 	public Set getCompiledElements() {
 		if (compiledElements == null)
 			compiledElements = new HashSet();
