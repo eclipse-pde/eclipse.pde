@@ -45,18 +45,6 @@ public abstract class AbstractBuildScriptGenerator extends AbstractBuildScriptGe
 	private PluginRegistryModel registry;
 
 
-/**
- * Checks if the given element is already present in the list.
- * This method is case sensitive.
- */
-protected boolean contains(String[] list, String element) {
-	for (int i = 0; i < list.length; i++) {
-		String string = list[i];
-		if (string.equals(element))
-			return true;
-	}
-	return false;
-}
 
 
 
@@ -104,22 +92,9 @@ protected URL[] getPluginPath() {
 	return null;
 }
 
-public void setRegistry(PluginRegistryModel registry) {
-	this.registry = registry;
-}
 
 
 
-/**
- * 
- */
-protected String getModelLocation(PluginModel descriptor) {
-	try {
-		return new URL(descriptor.getLocation()).getFile();
-	} catch (MalformedURLException e) {
-		return "../" + descriptor.getId() + "/";
-	}
-}
 
 
 

@@ -8,6 +8,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
+import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
 import org.eclipse.pde.internal.build.ant.*;
@@ -44,9 +45,8 @@ public void generate() throws CoreException {
 	if (custom != null && custom.equalsIgnoreCase("true"))
 		return;
 
-	computeJarDefinitions(); // FIXME: this is a hack. It should be transparent. 
 	try {
-		File root = new File(getModelLocation(model));
+		File root = new File(getLocation(model));
 		File target = new File(root, buildScriptName);
 		script = new BuildAntScript(new FileOutputStream(target));
 		setUpAntBuildScript();
@@ -199,21 +199,7 @@ protected void generateGatherBinPartsTarget() throws CoreException {
 
 
 
-/**
- * FIXME: add comment
- */
-protected String computeCompleteSrc() throws CoreException {
-	Set jars = new HashSet(9);
-	for (Iterator i = getDevJars().values().iterator(); i.hasNext();)
-		jars.addAll((Collection)i.next());
-	return Utils.getStringFromCollection(jars, ",");
-}
 
-protected Map getDevJars() throws CoreException {
-	if (devJars == null)
-		devJars = computeJarDefinitions();
-	return devJars;
-}
 
 
 
@@ -266,6 +252,9 @@ protected void generatePrologue() {
 	script.printProjectDeclaration(model.getId(), TARGET_BUILD_JARS, ".");
 	script.println();
 	script.printProperty(tab, PROPERTY_BUILD_COMPILER, JDT_COMPILER_ADAPTER);
+	script.printProperty(tab, PROPERTY_WS, BootLoader.getWS());
+	script.printProperty(tab, PROPERTY_OS, BootLoader.getOS());
+	script.printProperty(tab, PROPERTY_ARCH, BootLoader.getOSArch());
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_INIT, null, null, null, null);
 	script.printProperty(tab, getModelTypeName(), model.getId());
@@ -298,22 +287,6 @@ public void setModelId(String modelId) throws CoreException {
 
 protected abstract PluginModel getModel(String modelId) throws CoreException;
 
-protected Map computeJarDefinitions() throws CoreException {
-	jarOrder = new ArrayList();
-	Map result = new HashMap(5);
-	String base = getModelLocation(model);
-	int n = PROPERTY_SOURCE_PREFIX.length();
-	for (Iterator iterator = getBuildProperties(model).entrySet().iterator(); iterator.hasNext();) {
-		Map.Entry entry = (Map.Entry) iterator.next();
-		String key = (String) entry.getKey();
-		if (!(key.startsWith(PROPERTY_SOURCE_PREFIX) && key.endsWith(PROPERTY_JAR_SUFFIX)))
-			continue;
-		key = key.substring(n);
-		jarOrder.add(key);
-		result.put(base + key, getListFromString((String) entry.getValue()));
-	}
-	return result;
-}
 
 /**
  * FIXME: add comments
@@ -337,17 +310,6 @@ protected void generateBuildZipsTarget() throws CoreException {
 	script.printString(--tab, "</target>");
 }
 
-protected List getListFromString(String prop) {
-	if (prop == null || prop.trim().equals(""))
-		return new ArrayList(0);
-	ArrayList result = new ArrayList();
-	for (StringTokenizer tokens = new StringTokenizer(prop, ","); tokens.hasMoreTokens();) {
-		String token = tokens.nextToken().trim();
-		if (!token.equals(""))
-			result.add(token);
-	}
-	return result;
-}
 
 
 
