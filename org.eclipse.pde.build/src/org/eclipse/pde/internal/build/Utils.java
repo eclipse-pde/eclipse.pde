@@ -1,8 +1,16 @@
+/**********************************************************************
+ * Copyright (c) 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.pde.internal.build;
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
@@ -247,5 +255,30 @@ public static IPath makeRelative(IPath location, IPath base) {
 		result = new Path(temp).append(result.removeFirstSegments(count));
 	}
 	return result;
+}
+
+/**
+ * Transfers all available bytes from the given input stream to the given output stream. 
+ * Regardless of failure, this method closes both streams.
+ */
+public static void transferStreams(InputStream source, OutputStream destination) throws IOException {
+	try {
+		byte[] buffer = new byte[8192];
+		while (true) {
+			int bytesRead = -1;
+			if ((bytesRead = source.read(buffer)) == -1)
+				break;
+			destination.write(buffer, 0, bytesRead);
+		}
+	} finally {
+		try {
+			source.close();
+		} catch (IOException e) {
+		}
+		try {
+			destination.close();
+		} catch (IOException e) {
+		}
+	}
 }
 }

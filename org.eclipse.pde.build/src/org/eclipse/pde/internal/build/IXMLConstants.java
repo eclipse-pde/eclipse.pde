@@ -1,9 +1,14 @@
+/**********************************************************************
+ * Copyright (c) 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.pde.internal.build;
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
-
 /**
  * XML template constants.
  */
@@ -42,11 +47,9 @@ public interface IXMLConstants {
 	public static final String TARGET_GATHER_SOURCES = "gather.sources";
 	public static final String TARGET_INIT = "init";
 	public static final String TARGET_INSTALL = "install";
-	public static final String TARGET_JAR = "jar";
 	public static final String TARGET_MAIN = "main";
 	public static final String TARGET_PROPERTIES = "properties";
 	public static final String TARGET_REFRESH = "refresh";
-	public static final String TARGET_SRC = "src";
 	public static final String TARGET_SRC_GATHER_WHOLE = "src.gather.whole";
 	public static final String TARGET_TARGET = "target";
 	public static final String TARGET_ZIP_DISTRIBUTION = "zip.distribution";
@@ -70,8 +73,10 @@ public interface IXMLConstants {
 	public static final String PROPERTY_ECLIPSE_RUNNING = "eclipse.running";
 	public static final String PROPERTY_FEATURE = "feature";
 	public static final String PROPERTY_FEATURE_BASE = "feature.base";
-	public static final String PROPERTY_FEATURE_VERSION = "feature.version";
-	public static final String PROPERTY_INCLUDE_CHILDREN = "includeChildren";
+	public static final String PROPERTY_FEATURE_FULL_NAME = "feature.full.name";
+	public static final String PROPERTY_FEATURE_VERSION_SUFFIX = "feature.version.suffix";
+	public static final String PROPERTY_FULL_NAME = "full.name";
+	public static final String PROPERTY_INCLUDE_CHILDREN = "include.children";
 	public static final String PROPERTY_INSTALL = "install";
 	public static final String PROPERTY_INSTALL_LOCATION = "install.location";
 	public static final String PROPERTY_JAR_EXTRA_CLASSPATH = "jars.extra.classpath";
@@ -82,7 +87,6 @@ public interface IXMLConstants {
 	public static final String PROPERTY_SRC_EXCLUDES = "src.excludes";
 	public static final String PROPERTY_SRC_INCLUDES = "src.includes";
 	public static final String PROPERTY_TARGET = "target";
-	public static final String PROPERTY_TEMPLATE = "template";
-	public static final String PROPERTY_VERSION = "version";
+	public static final String PROPERTY_VERSION_SUFFIX = "version.suffix";
 	public static final String PROPERTY_WS = "ws";
 }

@@ -36,12 +36,17 @@ public void generate() throws CoreException {
 	if (model == null)
 		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ELEMENT_MISSING, Policy.bind("error.missingElement"), null));
 
-	// if the model defines its own custom script, we just skip from generating it
-	String custom = (String) getBuildProperties(model).get(PROPERTY_CUSTOM);
-	if (custom != null && custom.equalsIgnoreCase("true"))
-		return;
-
 	try {
+		// if the model defines its own custom script, we do not generate a new one
+		// but we do try to update the version number
+		String custom = (String) getBuildProperties(model).get(PROPERTY_CUSTOM);
+		if (custom != null && custom.equalsIgnoreCase("true")) {
+			String root = getLocation(model);
+			File buildFile = new File(root, buildScriptName);
+			updateVersion(buildFile, PROPERTY_VERSION_SUFFIX, model.getVersion());
+			return;
+		}
+
 		File root = new File(getLocation(model));
 		File target = new File(root, buildScriptName);
 		AntScript script = new AntScript(new FileOutputStream(target));
@@ -87,10 +92,10 @@ protected void generateCleanTarget(AntScript script) throws CoreException {
 		script.printDeleteTask(tab, null, getSRCName(name), null);
 		script.printDeleteTask(tab, getTempJARFolderLocation(jarName), null, null);
 	}
-	script.printDeleteTask(tab, null, basedir.append(getModelFileBase() + ".jar").toString(), null);
-	script.printDeleteTask(tab, null, basedir.append(getModelFileBase() + ".zip").toString(), null);
-	script.printDeleteTask(tab, null, basedir.append(getModelFileBase() + DEFAULT_FILENAME_SRC).toString(), null);
-	script.printDeleteTask(tab, null, basedir.append(getModelFileBase() + DEFAULT_FILENAME_LOG).toString(), null);
+	script.printDeleteTask(tab, null, basedir.append(getModelFullName() + ".jar").toString(), null);
+	script.printDeleteTask(tab, null, basedir.append(getModelFullName() + ".zip").toString(), null);
+	script.printDeleteTask(tab, null, basedir.append(getModelFullName() + DEFAULT_FILENAME_SRC).toString(), null);
+	script.printDeleteTask(tab, null, basedir.append(getModelFullName() + DEFAULT_FILENAME_LOG).toString(), null);
 	script.printString(--tab, "</target>");
 }
 
@@ -99,7 +104,7 @@ protected void generateGatherLogTarget(AntScript script) throws CoreException {
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_GATHER_LOGS, TARGET_INIT, null, null, null);
 	IPath baseDestination = new Path(getPropertyFormat(PROPERTY_DESTINATION));
-	baseDestination = baseDestination.append(getModelFileBase());
+	baseDestination = baseDestination.append(getModelFullName());
 	List destinations = new ArrayList(5);
 	IPath baseSource = new Path(getPropertyFormat(PROPERTY_BASEDIR));
 	Properties properties = getBuildProperties(model);
@@ -137,7 +142,7 @@ protected void generateGatherSourcesTarget(AntScript script) throws CoreExceptio
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_GATHER_SOURCES, TARGET_INIT, PROPERTY_DESTINATION, null, null);
 	IPath baseDestination = new Path(getPropertyFormat(PROPERTY_DESTINATION));
-	baseDestination = baseDestination.append(getModelFileBase());
+	baseDestination = baseDestination.append(getModelFullName());
 	List destinations = new ArrayList(5);
 	IPath baseSource = new Path(getPropertyFormat(PROPERTY_BASEDIR));
 	Properties properties = getBuildProperties(model);
@@ -175,7 +180,7 @@ protected void generateGatherBinPartsTarget(AntScript script) throws CoreExcepti
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_GATHER_BIN_PARTS, TARGET_INIT, PROPERTY_DESTINATION, null, null);
 	IPath destination = new Path(getPropertyFormat(PROPERTY_DESTINATION));
-	destination = destination.append(getModelFileBase());
+	destination = destination.append(getModelFullName());
 	String root = destination.toString();
 	script.printMkdirTask(tab, root);
 	String include = (String) getBuildProperties(model).get(PROPERTY_BIN_INCLUDES);
@@ -204,7 +209,7 @@ protected void generateZipPluginTarget(AntScript script, PluginModel model) thro
 	script.printAntCallTask(tab, TARGET_GATHER_SOURCES, null, params);
 	FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BASE), null, "**/*.bin.log", null, null, null, null);
 	script.printDeleteTask(tab, null, null, new FileSet[] {fileSet});
-	script.printZipTask(tab, basedir.append(getModelFileBase() + ".zip").toString(), destination.toString(), null);
+	script.printZipTask(tab, basedir.append(getModelFullName() + ".zip").toString(), destination.toString(), null);
 	script.printDeleteTask(tab, destination.toString(), null, null);
 	script.printString(--tab, "</target>");
 }
@@ -234,18 +239,15 @@ protected void generateBuildUpdateJarTarget(AntScript script) {
 	script.printAntCallTask(tab, TARGET_GATHER_BIN_PARTS, null, params);
 	FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BASE), null, "**/*.bin.log", null, null, null, null);
 	script.printDeleteTask(tab, null, null, new FileSet[] {fileSet});
-	script.printZipTask(tab, destination.append(getModelFileBase() + ".jar").toString(), getPropertyFormat(PROPERTY_BASE) + "/" + getModelFileBase(), null);
+	script.printZipTask(tab, destination.append(getModelFullName() + ".jar").toString(), getPropertyFormat(PROPERTY_BASE) + "/" + getModelFullName(), null);
 	script.printDeleteTask(tab, getPropertyFormat(PROPERTY_BASE), null, null);
 	tab--;
 	script.printString(tab, "</target>");
 }
 
 
-/**
- * FIXME: there has to be a better name for this method. What does it mean?
- */
-protected String getModelFileBase() {
-	return "${" + getModelTypeName() + "}_${version}";
+protected String getModelFullName() {
+	return getPropertyFormat(PROPERTY_FULL_NAME);
 }
 
 /**
@@ -271,7 +273,8 @@ protected void generatePrologue(AntScript script) {
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_INIT, TARGET_PROPERTIES, null, null, null);
 	script.printProperty(tab, getModelTypeName(), model.getId());
-	script.printProperty(tab, PROPERTY_VERSION, model.getVersion());
+	script.printProperty(tab, PROPERTY_VERSION_SUFFIX, "_" + model.getVersion());
+	script.printProperty(tab, PROPERTY_FULL_NAME, getPropertyFormat(getModelTypeName()) + getPropertyFormat(PROPERTY_VERSION_SUFFIX));
 	script.printString(--tab, "</target>");
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_PROPERTIES, null, PROPERTY_ECLIPSE_RUNNING, null, null);

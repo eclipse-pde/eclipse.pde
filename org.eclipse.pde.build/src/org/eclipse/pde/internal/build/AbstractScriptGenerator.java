@@ -26,7 +26,7 @@ public abstract class AbstractScriptGenerator implements IPDEBuildConstants, IXM
  */
 public abstract void generate() throws CoreException;
 
-protected String getPropertyFormat(String propertyName) {
+protected static String getPropertyFormat(String propertyName) {
 	StringBuffer sb = new StringBuffer();
 	sb.append(PROPERTY_ASSIGNMENT_PREFIX);
 	sb.append(propertyName);

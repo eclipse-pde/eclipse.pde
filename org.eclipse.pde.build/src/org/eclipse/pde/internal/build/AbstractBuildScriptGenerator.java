@@ -473,5 +473,91 @@ public void setPluginPath(URL[] pluginPath) {
 	this.pluginPath = pluginPath;
 }
 
+/**
+ * FIXME: comments
+ */
+protected int scan(StringBuffer buf, int start, String target) {
+	return scan(buf, start, new String[] {target});
+}
+
+
+
+/**
+ * FIXME: comments
+ */
+protected int scan(StringBuffer buf, int start, String[] targets) {
+	for (int i=start; i<buf.length(); i++) {
+		for (int j=0; j<targets.length; j++) {
+			if (i<buf.length()-targets[j].length()) {		
+				String match = buf.substring(i, i+targets[j].length());
+				if (targets[j].equals(match))
+					return i;
+			}
+		}
+	}
+	return -1;
+}
+
+
+
+/**
+ * Simply reads some file contents into a StringBuffer
+ */
+protected StringBuffer readFile(File target) throws IOException {
+	FileInputStream fis = new FileInputStream(target);
+	InputStreamReader reader = new InputStreamReader(fis);
+	StringBuffer result = new StringBuffer();
+	char[] buf = new char[4096];
+	int count;
+	try {
+		count = reader.read(buf, 0, buf.length);
+		while (count != -1) {
+			result.append(buf, 0, count);
+			count = reader.read(buf, 0, buf.length);
+		}
+	} finally{
+		try {
+			fis.close();
+			reader.close();
+		} catch(IOException e) {
+			// ignore exceptions here
+		}
+	}
+	return result;
+}
+
+/**
+ * Custom build scripts should have their version number matching the
+ * version number defined by the feature/plugin/fragment descriptor.
+ * This is a best effort job so do not worry if the expected tags were
+ * not found and just return without modifying the file.
+ */
+protected void updateVersion(File buildFile, String propertyName, String version) throws CoreException, IOException {
+	StringBuffer buffer = readFile(buildFile);
+	int pos = scan(buffer, 0, propertyName);
+	if (pos == -1)
+		return;
+	pos = scan(buffer, pos, "value");
+	if (pos == -1)
+		return;
+	int begin = scan(buffer, pos, "\"");
+	if (begin == -1)
+		return;
+	begin++;
+	int end = scan(buffer, begin, "\"");
+	if (end == -1)
+		return;
+	String currentVersion = buffer.substring(begin, end);
+	String newVersion = "_" + version;
+	if (currentVersion.equals(newVersion))
+		return;
+	buffer.replace(begin, end, newVersion);
+	Utils.transferStreams(new ByteArrayInputStream(buffer.toString().getBytes()), new FileOutputStream(buildFile));
+}
+
+
+
+
+
 
 }

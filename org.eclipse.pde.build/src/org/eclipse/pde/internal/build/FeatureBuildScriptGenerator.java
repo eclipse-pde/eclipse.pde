@@ -44,6 +44,8 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 */
 	protected Feature feature;
 
+	protected static final String FEATURE_FULL_NAME = getPropertyFormat(PROPERTY_FEATURE_FULL_NAME);
+	protected static final String FEATURE_FOLDER_NAME = "features/" + FEATURE_FULL_NAME;
 
 /**
  * Returns a list of PluginModel objects representing the elements. The boolean
@@ -79,14 +81,19 @@ public void generate() throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_INSTALL_LOCATION_MISSING, Policy.bind("error.missingInstallLocation"), null));
 
 	readFeature();
-	String custom = (String) getBuildProperties(feature).get(PROPERTY_CUSTOM);
-	if (custom != null && custom.equalsIgnoreCase("true"))
-		return;
-
-	if (generateChildrenScript)
-		generateChildrenScripts();
-
 	try {
+		// if the feature defines its own custom script, we do not generate a new one
+		// but we do try to update the version number
+		String custom = (String) getBuildProperties(feature).get(PROPERTY_CUSTOM);
+		if (custom != null && custom.equalsIgnoreCase("true")) {
+			File buildFile = new File(getFeatureRootLocation(), buildScriptName);
+			updateVersion(buildFile, PROPERTY_FEATURE_VERSION_SUFFIX, feature.getFeatureVersion());
+			return;
+		}
+	
+		if (generateChildrenScript)
+			generateChildrenScripts();
+
 		File root = new File(getFeatureRootLocation());
 		File target = new File(root, buildScriptName);
 		AntScript script = new AntScript(new FileOutputStream(target));
@@ -206,10 +213,10 @@ protected void generateCleanTarget(AntScript script) throws CoreException {
 		script.printDeleteTask(tab, null, getSRCName(name), null);
 		script.printDeleteTask(tab, getTempJARFolderLocation(jarName), null, null);
 	}
-	script.printDeleteTask(tab, null, basedir.append("${feature}_${" + PROPERTY_FEATURE_VERSION + "}.jar").toString(), null);
-	script.printDeleteTask(tab, null, basedir.append("${feature}_${" + PROPERTY_FEATURE_VERSION + "}.bin.dist.zip").toString(), null);
-	script.printDeleteTask(tab, null, basedir.append("${feature}_${" + PROPERTY_FEATURE_VERSION + "}.log.zip").toString(), null);
-	script.printDeleteTask(tab, null, basedir.append("${feature}_${" + PROPERTY_FEATURE_VERSION + "}.src.zip").toString(), null);
+	script.printDeleteTask(tab, null, basedir.append(FEATURE_FULL_NAME + ".jar").toString(), null);
+	script.printDeleteTask(tab, null, basedir.append(FEATURE_FULL_NAME + ".bin.dist.zip").toString(), null);
+	script.printDeleteTask(tab, null, basedir.append(FEATURE_FULL_NAME + ".log.zip").toString(), null);
+	script.printDeleteTask(tab, null, basedir.append(FEATURE_FULL_NAME + ".src.zip").toString(), null);
 	script.printString(--tab, "</target>");
 }
 protected void generateZipLogsTarget(AntScript script) {
@@ -226,14 +233,14 @@ protected void generateZipLogsTarget(AntScript script) {
 	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, "false", params);
 	params.put(PROPERTY_DESTINATION, baseProperty);
 	script.printAntCallTask(tab, TARGET_GATHER_LOGS, "false", params);
-	IPath destination = new Path(getPropertyFormat(PROPERTY_BASEDIR)).append("${feature}_${" + PROPERTY_FEATURE_VERSION + "}.log.zip");
+	IPath destination = new Path(getPropertyFormat(PROPERTY_BASEDIR)).append(FEATURE_FULL_NAME + ".log.zip");
 	script.printZipTask(tab, destination.toString(), baseProperty, null);
 	script.printDeleteTask(tab, baseProperty, null, null);
 	script.printString(--tab, "</target>");
 }
 protected void generateGatherLogTarget(AntScript script) {
 	String source = new Path(getPropertyFormat(PROPERTY_BASEDIR)).toString();
-	String destination = new Path(getPropertyFormat(PROPERTY_DESTINATION)).append(getDirectoryName()).toString();
+	String destination = new Path(getPropertyFormat(PROPERTY_DESTINATION)).append(FEATURE_FOLDER_NAME).toString();
 	int tab = 1;
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_GATHER_LOGS, TARGET_INIT, null, null, null);
@@ -245,7 +252,7 @@ protected void generateGatherLogTarget(AntScript script) {
 protected void generateGatherSourcesTarget(AntScript script) throws CoreException {
 	IPath source = new Path(getPropertyFormat(PROPERTY_BASEDIR));
 	IPath destination = new Path(getPropertyFormat(PROPERTY_DESTINATION));
-	destination = destination.append(getDirectoryName());
+	destination = destination.append(FEATURE_FOLDER_NAME);
 	int tab = 1;
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_GATHER_SOURCES, TARGET_INIT, PROPERTY_DESTINATION, null, null);
@@ -262,12 +269,6 @@ protected void generateGatherSourcesTarget(AntScript script) throws CoreExceptio
 		}
 	}
 	script.printString(--tab, "</target>");
-}
-/**
- * 
- */
-protected String getDirectoryName() {
-	return "features/${feature}_" + getPropertyFormat(PROPERTY_FEATURE_VERSION);
 }
 
 protected void generateZipSourcesTarget(AntScript script) {
@@ -286,7 +287,7 @@ protected void generateZipSourcesTarget(AntScript script) {
 	params.put(PROPERTY_TARGET, TARGET_GATHER_SOURCES);
 	params.put(PROPERTY_DESTINATION, new Path(featurebase).append("plugins").toString());
 	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, null, params);
-	script.printZipTask(tab, destination.append("${feature}_${" + PROPERTY_FEATURE_VERSION + "}.src.zip").toString(), "${feature.base}", null);
+	script.printZipTask(tab, destination.append(FEATURE_FULL_NAME + ".src.zip").toString(), "${feature.base}", null);
 	script.printDeleteTask(tab, featurebase, null, null);
 	tab--;
 	script.printString(tab, "</target>");
@@ -301,7 +302,7 @@ protected void generateGatherBinPartsTarget(AntScript script) throws CoreExcepti
 	script.printAntCallTask(tab, TARGET_CHILDREN, null, params);
 	String include = (String) getBuildProperties(feature).get(PROPERTY_BIN_INCLUDES);
 	String exclude = (String) getBuildProperties(feature).get(PROPERTY_BIN_EXCLUDES);
-	String root = "${feature.base}/features/${feature}_${" + PROPERTY_FEATURE_VERSION + "}";
+	String root = "${feature.base}/" + FEATURE_FOLDER_NAME;
 	script.printMkdirTask(tab, root);
 	if (include != null || exclude != null) {
 		FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BASEDIR), null, include, null, exclude, null, null);
@@ -312,8 +313,7 @@ protected void generateGatherBinPartsTarget(AntScript script) throws CoreExcepti
 protected void generateBuildUpdateJarTarget(AntScript script) {
 	int tab = 1;
 	script.println();
-	script.printTargetDeclaration(tab, TARGET_BUILD_UPDATE_JAR, TARGET_INIT, null, null, null);
-	tab++;
+	script.printTargetDeclaration(tab++, TARGET_BUILD_UPDATE_JAR, TARGET_INIT, null, null, null);
 	Map params = new HashMap(1);
 	params.put(PROPERTY_TARGET, TARGET_BUILD_UPDATE_JAR);
 	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, null, params);
@@ -327,10 +327,9 @@ protected void generateBuildUpdateJarTarget(AntScript script) {
 	params.clear();
 	params.put(PROPERTY_FEATURE_BASE, getPropertyFormat(PROPERTY_FEATURE_BASE));
 	script.printAntCallTask(tab, TARGET_GATHER_BIN_PARTS, "false", params);
-	script.printJarTask(tab, destination.append("${feature}_${" + PROPERTY_FEATURE_VERSION + "}.jar").toString(), "${feature.base}");
+	script.printJarTask(tab, destination.append(FEATURE_FULL_NAME + ".jar").toString(), "${feature.base}");
 	script.printDeleteTask(tab, getPropertyFormat(PROPERTY_FEATURE_BASE), null, null);
-	tab--;
-	script.printString(tab, "</target>");
+	script.printString(--tab, "</target>");
 }
 /**
  * Zip up the whole feature.
@@ -347,7 +346,7 @@ protected void generateZipDistributionWholeTarget(AntScript script) {
 	Map params = new HashMap(1);
 	params.put(PROPERTY_INCLUDE_CHILDREN, "true");
 	script.printAntCallTask(tab, TARGET_GATHER_BIN_PARTS, null, params);
-	script.printZipTask(tab, destination.append("${feature}_${" + PROPERTY_FEATURE_VERSION + "}.bin.dist.zip").toString(), getPropertyFormat(PROPERTY_FEATURE_BASE), null);
+	script.printZipTask(tab, destination.append(FEATURE_FULL_NAME + ".bin.dist.zip").toString(), getPropertyFormat(PROPERTY_FEATURE_BASE), null);
 	script.printDeleteTask(tab, getPropertyFormat(PROPERTY_FEATURE_BASE), null, null);
 	tab--;
 	script.printString(tab, "</target>");
@@ -426,7 +425,8 @@ protected void generatePrologue(AntScript script) {
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_INIT, TARGET_PROPERTIES, null, null, null);
 	script.printProperty(tab, PROPERTY_FEATURE, feature.getFeatureIdentifier());
-	script.printProperty(tab, PROPERTY_FEATURE_VERSION, feature.getFeatureVersion());
+	script.printProperty(tab, PROPERTY_FEATURE_VERSION_SUFFIX, "_" + feature.getFeatureVersion());
+	script.printProperty(tab, PROPERTY_FEATURE_FULL_NAME, getPropertyFormat(PROPERTY_FEATURE) + getPropertyFormat(PROPERTY_FEATURE_VERSION_SUFFIX));
 	script.printString(--tab, "</target>");
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_PROPERTIES, null, PROPERTY_ECLIPSE_RUNNING, null, null);
