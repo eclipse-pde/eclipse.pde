@@ -16,19 +16,19 @@ public class FragmentErrorReporter extends PluginBaseErrorReporter {
 	protected void validateTopLevelAttributes(Element element) {
 		super.validateTopLevelAttributes(element);
 		
-		if (assertAttributeDefined(element, "plugin-id", CompilerFlags.ERROR))
-			validatePluginID(element, element.getAttributeNode("plugin-id"));
+		if (assertAttributeDefined(element, "plugin-id", CompilerFlags.ERROR)) //$NON-NLS-1$
+			validatePluginID(element, element.getAttributeNode("plugin-id")); //$NON-NLS-1$
 		
-		if (assertAttributeDefined(element, "plugin-version", CompilerFlags.ERROR))
-			validateVersionAttribute(element, element.getAttributeNode("plugin-version"));
+		if (assertAttributeDefined(element, "plugin-version", CompilerFlags.ERROR)) //$NON-NLS-1$
+			validateVersionAttribute(element, element.getAttributeNode("plugin-version")); //$NON-NLS-1$
 		
-		Attr attr = element.getAttributeNode("match");
+		Attr attr = element.getAttributeNode("match"); //$NON-NLS-1$
 		if (attr != null)
 			validateMatch(element, attr);
 	}
 	
 	protected String getRootElementName() {
-		return "fragment";
+		return "fragment"; //$NON-NLS-1$
 	}
 	
 }

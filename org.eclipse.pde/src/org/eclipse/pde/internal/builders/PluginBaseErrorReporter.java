@@ -30,13 +30,13 @@ public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {
 					break;
 				Element child = (Element)children.item(i);
 				String name = child.getNodeName();
-				if (name.equals("extension")) {
+				if (name.equals("extension")) { //$NON-NLS-1$
 					validateExtension(child);
-				} else if (name.equals("extension-point")) {
+				} else if (name.equals("extension-point")) { //$NON-NLS-1$
 					validateExtensionPoint(child);
-				} else if (name.equals("runtime")){
+				} else if (name.equals("runtime")){ //$NON-NLS-1$
 					validateRuntime(child);
-				} else if (name.equals("requires")) {
+				} else if (name.equals("requires")) { //$NON-NLS-1$
 					validateRequires(child);
 				} else {
 					int severity = CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_ELEMENT);
@@ -48,14 +48,14 @@ public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {
 	}
 	
 	protected void validateTopLevelAttributes(Element element) {
-		assertAttributeDefined(element, "id", CompilerFlags.ERROR);
-		if (assertAttributeDefined(element, "version", CompilerFlags.ERROR)) {
-			validateVersionAttribute(element, element.getAttributeNode("version"));
+		assertAttributeDefined(element, "id", CompilerFlags.ERROR); //$NON-NLS-1$
+		if (assertAttributeDefined(element, "version", CompilerFlags.ERROR)) { //$NON-NLS-1$
+			validateVersionAttribute(element, element.getAttributeNode("version")); //$NON-NLS-1$
 		}
-		if (assertAttributeDefined(element, "name", CompilerFlags.ERROR)) {
-			validateTranslatableString(element, element.getAttributeNode("name"));
+		if (assertAttributeDefined(element, "name", CompilerFlags.ERROR)) { //$NON-NLS-1$
+			validateTranslatableString(element, element.getAttributeNode("name")); //$NON-NLS-1$
 		}
-		Attr attr = element.getAttributeNode("provider-name");
+		Attr attr = element.getAttributeNode("provider-name"); //$NON-NLS-1$
 		if (attr != null)
 			validateTranslatableString(element, attr);	
 	}
@@ -73,8 +73,8 @@ public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {
 		int severity = CompilerFlags.getFlag(CompilerFlags.P_ILLEGAL_ATT_VALUE);
 		if (severity != CompilerFlags.IGNORE) {
 			String value = attr.getValue();
-			if (!"perfect".equals(value) && !"equivalent".equals(value)
-				&& !"greaterOrEqual".equals(value) && !"compatible".equals(value))
+			if (!"perfect".equals(value) && !"equivalent".equals(value) //$NON-NLS-1$ //$NON-NLS-2$
+				&& !"greaterOrEqual".equals(value) && !"compatible".equals(value)) //$NON-NLS-1$ //$NON-NLS-2$
 				reportIllegalAttributeValue(element, attr, severity);
 		}
 	}
@@ -86,7 +86,7 @@ public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {
 		NodeList children = element.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Element child = (Element)children.item(i);
-			if (child.getNodeName().equals("import")) {
+			if (child.getNodeName().equals("import")) { //$NON-NLS-1$
 				validateImport(child);
 			} else if (severity != CompilerFlags.IGNORE) {
 					reportIllegalElement(child, severity);			
@@ -95,22 +95,22 @@ public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {
 	}
 	
 	protected void validateImport(Element element) {
-		if (assertAttributeDefined(element, "plugin", CompilerFlags.ERROR)) {
-			validatePluginID(element, element.getAttributeNode("plugin"));
+		if (assertAttributeDefined(element, "plugin", CompilerFlags.ERROR)) { //$NON-NLS-1$
+			validatePluginID(element, element.getAttributeNode("plugin")); //$NON-NLS-1$
 		}
-		Attr attr = element.getAttributeNode("version");
+		Attr attr = element.getAttributeNode("version"); //$NON-NLS-1$
 		if (attr != null)
 			validateVersionAttribute(element, attr);
 		
-		attr = element.getAttributeNode("match");
+		attr = element.getAttributeNode("match"); //$NON-NLS-1$
 		if (attr != null)
 			validateMatch(element, attr);
 		
-		attr = element.getAttributeNode("export");
+		attr = element.getAttributeNode("export"); //$NON-NLS-1$
 		if (attr != null)
 			validateBoolean(element, attr);
 		
-		attr = element.getAttributeNode("optional");
+		attr = element.getAttributeNode("optional"); //$NON-NLS-1$
 		if (attr != null)
 			validateBoolean(element, attr);
 	}
@@ -120,7 +120,7 @@ public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {
 		NodeList children = element.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Element child = (Element)children.item(i);
-			if (child.getNodeName().equals("library")) {
+			if (child.getNodeName().equals("library")) { //$NON-NLS-1$
 				validateLibrary(child);
 			} else if (severity != CompilerFlags.IGNORE) {
 				reportIllegalElement(child, severity);			
@@ -130,14 +130,14 @@ public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {
 	}
 	
 	protected void validateLibrary(Element element) {
-		assertAttributeDefined(element, "name", CompilerFlags.ERROR);
+		assertAttributeDefined(element, "name", CompilerFlags.ERROR); //$NON-NLS-1$
 		
 		int severity = CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_ELEMENT);
 		NodeList children = element.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Element child = (Element)children.item(i);
-			if (child.getNodeName().equals("export")) {
-				assertAttributeDefined(child, "name", CompilerFlags.ERROR);
+			if (child.getNodeName().equals("export")) { //$NON-NLS-1$
+				assertAttributeDefined(child, "name", CompilerFlags.ERROR); //$NON-NLS-1$
 			} else if (severity != CompilerFlags.IGNORE) {
 				reportIllegalElement(child, severity);			
 			} 
@@ -150,7 +150,7 @@ public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {
 		if (severity != CompilerFlags.IGNORE) {
 			IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(attr.getValue());
 			if (model == null || !model.isEnabled()) {
-				report(PDE.getFormattedMessage("Builders.Manifest.dependency", attr.getValue()), 
+				report(PDE.getFormattedMessage("Builders.Manifest.dependency", attr.getValue()),  //$NON-NLS-1$
 						getLine(element, attr.getName()),
 						severity);
 			}

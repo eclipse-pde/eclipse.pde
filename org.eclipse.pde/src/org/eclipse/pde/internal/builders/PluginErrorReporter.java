@@ -15,13 +15,13 @@ public class PluginErrorReporter extends PluginBaseErrorReporter {
 	 */
 	protected void validateTopLevelAttributes(Element element) {
 		super.validateTopLevelAttributes(element);
-		Attr attr = element.getAttributeNode("class");
+		Attr attr = element.getAttributeNode("class"); //$NON-NLS-1$
 		if (attr != null)
 			validateJavaAttribute(element, attr);
 	}
 	
 	protected String getRootElementName() {
-		return "plugin";
+		return "plugin"; //$NON-NLS-1$
 	}
 
 }

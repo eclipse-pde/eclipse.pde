@@ -75,7 +75,7 @@ public class XMLErrorReporter extends DefaultHandler {
 	}
 
 	private void createTextDocument(InputStream stream) throws IOException {
-		BufferedReader in= new BufferedReader(new InputStreamReader(stream, "UTF-8"));
+		BufferedReader in= new BufferedReader(new InputStreamReader(stream, "UTF-8")); //$NON-NLS-1$
 		StringBuffer buffer= new StringBuffer();
 		char[] readBuffer= new char[2048];
 		int n = in.read(readBuffer);

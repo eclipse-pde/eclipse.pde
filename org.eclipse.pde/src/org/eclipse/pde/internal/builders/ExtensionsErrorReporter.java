@@ -29,7 +29,7 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 	public void validateContent(IProgressMonitor monitor) {
 		Element element = getDocumentRoot();
 		String elementName = element.getNodeName();
-		if (!"plugin".equals(elementName) && !"fragment".equals(elementName)) {
+		if (!"plugin".equals(elementName) && !"fragment".equals(elementName)) { //$NON-NLS-1$ //$NON-NLS-2$
 			reportIllegalElement(element, CompilerFlags.ERROR);
 		} else {
 			/*int severity = CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_ATTRIBUTE);
@@ -46,9 +46,9 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 					break;
 				Element child = (Element)children.item(i);
 				String name = child.getNodeName();
-				if (name.equals("extension")) {
+				if (name.equals("extension")) { //$NON-NLS-1$
 					validateExtension(child);
-				} else if (name.equals("extension-point")) {
+				} else if (name.equals("extension-point")) { //$NON-NLS-1$
 					validateExtensionPoint(child);
 				} /*else {
 					severity = CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_ELEMENT);
@@ -60,16 +60,16 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 	}
 
 	protected void validateExtension(Element element) {
-		if (!assertAttributeDefined(element, "point", CompilerFlags.ERROR))
+		if (!assertAttributeDefined(element, "point", CompilerFlags.ERROR)) //$NON-NLS-1$
 			return;
-		String pointID = element.getAttribute("point");
+		String pointID = element.getAttribute("point"); //$NON-NLS-1$
 		IPluginExtensionPoint point = PDECore.getDefault().findExtensionPoint(pointID);
 		if (point == null) {
 			int severity = CompilerFlags.getFlag(CompilerFlags.P_UNRESOLVED_EX_POINTS);
 			if (severity != CompilerFlags.IGNORE) {
 				report(PDE.getFormattedMessage(
 					"Builders.Manifest.ex-point", pointID), //$NON-NLS-1$
-					getLine(element, "point"), severity);
+					getLine(element, "point"), severity); //$NON-NLS-1$
 			}
 		} else {
 			SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
@@ -85,7 +85,7 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 		ISchemaElement schemaElement = schema.findElement(elementName);
 		
 		ISchemaElement parentSchema = null;
-		if (!"extension".equals(elementName)) {
+		if (!"extension".equals(elementName)) { //$NON-NLS-1$
 			Node parent = element.getParentNode();
 			parentSchema = schema.findElement(parent.getNodeName());
 		}
@@ -109,7 +109,7 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 		}
 		
 		if (executable) {
-			validateJavaAttribute(element, element.getAttributeNode("class"));
+			validateJavaAttribute(element, element.getAttributeNode("class")); //$NON-NLS-1$
 			return;
 		} 		
 		validateRequiredExtensionAttributes(element, schemaElement);
@@ -223,17 +223,17 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 	}
 
 	protected void validateExtensionPoint(Element element) {
-		assertAttributeDefined(element, "id", CompilerFlags.ERROR);
-		assertAttributeDefined(element, "name", CompilerFlags.ERROR);
+		assertAttributeDefined(element, "id", CompilerFlags.ERROR); //$NON-NLS-1$
+		assertAttributeDefined(element, "name", CompilerFlags.ERROR); //$NON-NLS-1$
 		
 		int severity = CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_ATTRIBUTE);
 		NamedNodeMap attrs = element.getAttributes();
 		for (int i = 0; i < attrs.getLength(); i++) {
 			Attr attr = (Attr)attrs.item(i);
 			String name = attr.getName();
-			if ("name".equals(name)) {
+			if ("name".equals(name)) { //$NON-NLS-1$
 				validateTranslatableString(element, attr);
-			} else if (!"id".equals(name) && !"schema".equals(name) && severity != CompilerFlags.IGNORE) {
+			} else if (!"id".equals(name) && !"schema".equals(name) && severity != CompilerFlags.IGNORE) { //$NON-NLS-1$ //$NON-NLS-2$
 				reportUnknownAttribute(element, name, severity);
 			}
 		}
@@ -260,7 +260,7 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 		if (severity == CompilerFlags.IGNORE)
 			return;
 		String value = attr.getValue();
-		if (!value.startsWith("%")) {
+		if (!value.startsWith("%")) { //$NON-NLS-1$
 			report("Attribute \'" + attr.getName() + "\' is not externalized", getLine(element, attr.getName()), severity);
 		}	
 	}
@@ -280,7 +280,7 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 		}
 		if (resource == null) {
 			report(PDE.getFormattedMessage(
-							"Builders.Manifest.resource", new String[] { attr.getValue(), attr.getName() }), 
+							"Builders.Manifest.resource", new String[] { attr.getValue(), attr.getName() }),  //$NON-NLS-1$
 							getLine(element,
 							attr.getName()), 
 							severity);
@@ -303,7 +303,7 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 
 			IType javaType = javaProject.findType(value);
 			if (javaType == null) {
-				report(PDE.getFormattedMessage("Builders.Manifest.class",
+				report(PDE.getFormattedMessage("Builders.Manifest.class", //$NON-NLS-1$
 						new String[] { value, attr.getName() }), getLine(
 						element, attr.getName()), severity);
 			} 
@@ -317,7 +317,7 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 			return;
 		
 		String value = attr.getValue();
-		if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) //$NON-NLS-1$
+		if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		
 		reportIllegalAttributeValue(element, attr, severity);
@@ -356,7 +356,7 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 	}
 
 	protected void reportUnknownAttribute(Element element, String attName, int severity) {
-		String message = PDE.getFormattedMessage("Builders.Manifest.attribute",
+		String message = PDE.getFormattedMessage("Builders.Manifest.attribute", //$NON-NLS-1$
 				attName);
 		report(message, getLine(element, attName), severity);
 	}

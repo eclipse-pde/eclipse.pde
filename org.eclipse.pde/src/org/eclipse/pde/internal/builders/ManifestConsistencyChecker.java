@@ -38,9 +38,9 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		
 	private void checkThisProject(IProgressMonitor monitor) {
 		IProject project = getProject();
-		IFile file = project.getFile("plugin.xml");
+		IFile file = project.getFile("plugin.xml"); //$NON-NLS-1$
 		if (!file.exists())
-			file = project.getFile("fragment.xml");
+			file = project.getFile("fragment.xml"); //$NON-NLS-1$
 		
 		if (file.exists())
 			checkFile(file, monitor);
@@ -52,13 +52,13 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		String message = PDE.getFormattedMessage(BUILDERS_VERIFYING, file.getFullPath().toString());
 		monitor.subTask(message);
 
-		IFile bundleManifest = file.getProject().getFile("META-INF/MANIFEST.MF");
+		IFile bundleManifest = file.getProject().getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
 		XMLErrorReporter reporter = null;
 		if (bundleManifest.exists()) {
 			reporter = new ExtensionsErrorReporter(file);
-		} else if (file.getName().equals("plugin.xml")) {
+		} else if (file.getName().equals("plugin.xml")) { //$NON-NLS-1$
 			reporter = new PluginErrorReporter(file);
-		} else if (file.getName().equals("fragment.xml")){
+		} else if (file.getName().equals("fragment.xml")){ //$NON-NLS-1$
 			reporter = new FragmentErrorReporter(file);
 		}
 		if (reporter != null) {
