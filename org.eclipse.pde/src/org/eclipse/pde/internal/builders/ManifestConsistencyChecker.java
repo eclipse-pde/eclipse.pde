@@ -709,15 +709,33 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		if (CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_RESOURCE) == CompilerFlags.IGNORE)
 			return;
 		
-		String path = att.getValue();
+		String[] resourcePaths = getResourcePaths(att.getValue());
 		IProject project = att.getModel().getUnderlyingResource().getProject();
-		IResource resource = project.findMember(new Path(path));
+		IResource resource = null;
+		for (int i = 0; i < resourcePaths.length; i++) {
+			resource = project.findMember(resourcePaths[i]);
+			if (resource != null)
+				break;
+		}
 		if (resource == null) {
 			reporter.report(PDE.getFormattedMessage(
-					"Builders.Manifest.resource", new String[]{path, //$NON-NLS-1$
+					"Builders.Manifest.resource", new String[]{att.getValue(), //$NON-NLS-1$
 							att.getName()}), getLine(att.getParent()),
 					CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_RESOURCE));
 		}
+	}
+	
+	private String[] getResourcePaths(String path) {
+		if (path.indexOf("$nl$") != -1) { //$NON-NLS-1$
+			String language = TargetPlatform.getNL().substring(0, 2);
+			String country = TargetPlatform.getNL().substring(3);
+			String[] paths = new String[3];
+			paths[0] = path.replaceAll("\\$nl\\$", "nl" + IPath.SEPARATOR + language + IPath.SEPARATOR + country); //$NON-NLS-1$ //$NON-NLS-2$
+			paths[1] = path.replaceAll("\\$nl\\$", "nl" + IPath.SEPARATOR + language); //$NON-NLS-1$ //$NON-NLS-2$
+			paths[2] = path.replaceAll("\\$nl\\$", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			return paths;
+		}
+		return new String[] {path};
 	}
 
 	private void validateRequiredAttributes(IPluginElement element,
