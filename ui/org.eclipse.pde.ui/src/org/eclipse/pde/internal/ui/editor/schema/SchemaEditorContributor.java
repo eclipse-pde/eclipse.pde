@@ -4,11 +4,16 @@ package org.eclipse.pde.internal.ui.editor.schema;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.PDEEditorContributor;
+import org.eclipse.swt.dnd.Clipboard;
 
 public class SchemaEditorContributor extends PDEEditorContributor {
 
-public SchemaEditorContributor() {
-	super("&Schema");
-}
+	public SchemaEditorContributor() {
+		super("&Schema");
+	}
+
+	protected boolean hasKnownTypes(Clipboard clipboard) {
+		return true;
+	}
 }

@@ -8,15 +8,16 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.rules.RuleBasedPartitioner;
 import org.eclipse.jface.text.source.*;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.schema.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.text.*;
-import org.eclipse.pde.internal.ui.util.PDEProblemFinder;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.*;
+import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -104,6 +105,11 @@ public class DocSection extends PDEFormSection {
 		sourceViewer = new SourceViewer(container, null, styles);
 		sourceViewer.configure(sourceConfiguration);
 		sourceViewer.setDocument(document);
+		sourceViewer.addSelectionChangedListener(new ISelectionChangedListener () {
+			public void selectionChanged(SelectionChangedEvent event) {
+				updateSelection(event.getSelection());
+			}
+		});
 		StyledText styledText = sourceViewer.getTextWidget();
 		styledText.setFont(JFaceResources.getTextFont());
 		if (SWT.getPlatform().equals("motif") == false)
@@ -154,7 +160,6 @@ public class DocSection extends PDEFormSection {
 		return container;
 	}
 	public boolean doGlobalAction(String actionId) {
-		PDEProblemFinder.fixMe("Global operation mapping must be done better");
 		if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.CUT)) {
 			sourceViewer.doOperation(sourceViewer.CUT);
 			return true;
@@ -282,7 +287,13 @@ public class DocSection extends PDEFormSection {
 	}
 	public void setFocus() {
 		sourceViewer.getTextWidget().setFocus();
+		updateSelection(sourceViewer.getSelection());
 	}
+	
+	private void updateSelection(ISelection selection) {
+		getFormPage().getEditor().setSelection(selection);
+	}
+	
 	public void updateEditorInput(Object input) {
 		ignoreChange = true;
 		String text = "";
@@ -317,5 +328,8 @@ public class DocSection extends PDEFormSection {
 			IDocumentSection[] sections = schema.getDocumentSections();
 			updateEditorInput(sections[index - 1]);
 		}
+	}
+	public boolean canPaste(Clipboard clipboard) {
+		return sourceViewer.canDoOperation(sourceViewer.PASTE);
 	}
 }

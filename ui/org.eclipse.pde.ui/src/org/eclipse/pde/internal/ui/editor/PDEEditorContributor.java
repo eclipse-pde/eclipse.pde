@@ -4,16 +4,16 @@ package org.eclipse.pde.internal.ui.editor;
  * All Rights Reserved.
  */
 
-import org.eclipse.swt.graphics.*;
+import java.util.Hashtable;
+
 import org.eclipse.jface.action.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.part.*;
-import org.eclipse.ui.actions.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.ui.texteditor.*;
-import java.util.*;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.IEditable;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.ui.*;
+import org.eclipse.ui.part.EditorActionBarContributor;
+import org.eclipse.ui.texteditor.*;
 
 public abstract class PDEEditorContributor extends EditorActionBarContributor {
 	public static final String ACTIONS_SAVE = "EditorActions.save";
@@ -92,15 +92,7 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 		public void selectionChanged(ISelection selection) {
 			boolean enabled = isEditable();
 			if (enabled) {
-				String[] typeNames = editor.getClipboard().getAvailableTypeNames();
-				boolean knownType = false;
-				for (int i = 0; i < typeNames.length; i++) {
-					String typeName = typeNames[i];
-					if (typeName.startsWith(ModelDataTransfer.TYPE_PREFIX)) {
-						knownType = true;
-						break;
-					}
-				}
+				boolean knownType = hasKnownTypes(editor.getClipboard());
 				enabled = knownType;
 				if (knownType) {
 					enabled = editor.canPasteFromClipboard();
@@ -142,6 +134,20 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 		mng.add(copyAction);
 		mng.add(pasteAction);
 	}
+	
+	protected boolean hasKnownTypes(Clipboard clipboard) {
+		String[] typeNames = clipboard.getAvailableTypeNames();
+		boolean knownType = false;
+		for (int i = 0; i < typeNames.length; i++) {
+			String typeName = typeNames[i];
+			if (typeName.startsWith(ModelDataTransfer.TYPE_PREFIX)) {
+				knownType = true;
+				break;
+			}
+		}
+		return knownType;
+	}
+	
 	public void contextMenuAboutToShow(IMenuManager mng) {
 		contextMenuAboutToShow(mng, true);
 	}
