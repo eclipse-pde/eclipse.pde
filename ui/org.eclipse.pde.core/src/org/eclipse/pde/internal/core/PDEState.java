@@ -439,7 +439,7 @@ public class PDEState {
 	
 	public BundleDescription addBundle(Dictionary manifest, File bundleLocation, boolean keepLibraries) {
 		try {
-			BundleDescription descriptor = stateObjectFactory.createBundleDescription(manifest, bundleLocation.getAbsolutePath(), getNextId());
+			BundleDescription descriptor = stateObjectFactory.createBundleDescription(fState, manifest, bundleLocation.getAbsolutePath(), getNextId());
 			if (keepLibraries)
 				createPluginInfo(descriptor, manifest);
 			fState.addBundle(descriptor);
