@@ -76,13 +76,11 @@ public class RequiredPluginsContainerPage
 			int kind = entry.getEntryKind();
 			if (kind == IClasspathEntry.CPE_PROJECT)
 				return entry.getPath().segment(0);
-			else {
-				IPath path = entry.getPath();
-				String name = path.lastSegment();
-				return name
-					+ " - " //$NON-NLS-1$
-					+ path.uptoSegment(path.segmentCount() - 1).toOSString();
-			}
+			IPath path = entry.getPath();
+			String name = path.lastSegment();
+			return name
+				+ " - " //$NON-NLS-1$
+				+ path.uptoSegment(path.segmentCount() - 1).toOSString();
 		}
 
 		public Image getImage(Object obj) {
@@ -225,10 +223,10 @@ public class RequiredPluginsContainerPage
 	private void processReplacedEntries() {
 		SourceAttachmentManager manager =
 			PDECore.getDefault().getSourceAttachmentManager();
-		for (Enumeration enum = replacedEntries.keys();
-			enum.hasMoreElements();
+		for (Enumeration keys = replacedEntries.keys();
+			keys.hasMoreElements();
 			) {
-			IClasspathEntry entry = (IClasspathEntry) enum.nextElement();
+			IClasspathEntry entry = (IClasspathEntry) keys.nextElement();
 			IClasspathEntry newEntry =
 				(IClasspathEntry) replacedEntries.get(entry);
 			manager.addEntry(

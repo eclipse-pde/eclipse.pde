@@ -15,7 +15,6 @@ import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.text.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.ui.forms.*;
-import org.eclipse.ui.forms.editor.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.help.*;
 

@@ -136,9 +136,7 @@ public class EnumerationRestrictionPage implements IRestrictionPage {
 		if (items.length > 0) {
 			Vector enums = new Vector();
 			for (int i = 0; i < items.length; i++) {
-				SchemaEnumeration enum =
-					new SchemaEnumeration(restriction, items[i]);
-				enums.addElement(enum);
+				enums.addElement(new SchemaEnumeration(restriction, items[i]));
 			}
 			restriction.setChildren(enums);
 		}

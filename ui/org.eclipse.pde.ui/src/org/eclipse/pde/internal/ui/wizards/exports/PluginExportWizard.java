@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.ui.wizards.exports;
 import java.io.*;
 
 import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.ui.progress.*;

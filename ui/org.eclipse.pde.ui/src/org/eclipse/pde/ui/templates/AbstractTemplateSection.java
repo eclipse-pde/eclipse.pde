@@ -20,7 +20,6 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.wizards.templates.*;
-import org.eclipse.pde.ui.IBasePluginWizard;
 
 /**
  * Common function for template sections. It is recommended to subclass this

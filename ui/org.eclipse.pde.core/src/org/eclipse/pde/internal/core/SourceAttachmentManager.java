@@ -96,8 +96,8 @@ public class SourceAttachmentManager {
 		// If the saved entries are for a different platform path,
 		// discard them.
 		if (oldPlatformPath.equals(currentPlatformPath)==false) return;
-		for (Enumeration enum = properties.keys(); enum.hasMoreElements();) {
-			String key = (String)enum.nextElement();
+		for (Enumeration keys = properties.keys(); keys.hasMoreElements();) {
+			String key = (String)keys.nextElement();
 			if (key.startsWith("entry.")) //$NON-NLS-1$
 				parseEntryProperty(properties.getProperty(key));
 		}
@@ -128,8 +128,8 @@ public class SourceAttachmentManager {
 		properties.setProperty(KEY_PLATFORM_PATH, platformPath.toOSString());
 		
 		int i=0;
-		for (Enumeration enum=entries.keys(); enum.hasMoreElements();) {
-			IPath entryPath = (IPath)enum.nextElement();
+		for (Enumeration keys=entries.keys(); keys.hasMoreElements();) {
+			IPath entryPath = (IPath)keys.nextElement();
 			SourceAttachmentEntry entry = (SourceAttachmentEntry)entries.get(entryPath);
 			String library = entry.getEntryPath().toOSString();
 			String value;
