@@ -419,7 +419,8 @@ public class WorkbenchLaunchConfigurationDelegate
 					File configFile =
 						TargetPlatform.createPlatformConfiguration(
 							plugins,
-							targetWorkspace);
+							targetWorkspace,
+							primaryFeatureId);
 					fullProgArgs[i++] = "file:" + configFile.getPath();
 					if (primaryFeatureId != null) {
 						fullProgArgs[i++] = "-feature";

@@ -15,6 +15,9 @@ import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.feature.ExternalFeatureModel;
+import org.eclipse.pde.internal.core.ifeature.IFeature;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 
 /**
  * @version 	1.0
@@ -49,9 +52,12 @@ public class TargetPlatform implements IEnvironmentVariables {
 			String[] list = new String[plugins.size()];
 			for (int i = 0; i < plugins.size(); i++) {
 				IPluginModelBase model = (IPluginModelBase) plugins.get(i);
-				IPath location = new Path(model.getInstallLocation());
-				location = location.append(
-					model.isFragmentModel() ? "fragment.xml" : "plugin.xml");
+				IPath location = getPluginLocation(model);
+				location =
+					location.append(
+						model.isFragmentModel()
+							? "fragment.xml"
+							: "plugin.xml");
 				IPath relative =
 					location.removeFirstSegments(location.segmentCount() - 3);
 				list[i] = relative.setDevice(null).toString();
@@ -151,7 +157,8 @@ public class TargetPlatform implements IEnvironmentVariables {
 
 	public static File createPlatformConfiguration(
 		IPluginModelBase[] plugins,
-		IPath data)
+		IPath data,
+		String primaryFeatureId)
 		throws CoreException {
 		try {
 			String dataSuffix = createDataSuffix(data);
@@ -166,7 +173,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 				}
 			}
 			File configFile = new File(dir, fileName);
-			savePlatformConfiguration(configFile, plugins);
+			savePlatformConfiguration(configFile, plugins, primaryFeatureId);
 			return configFile;
 		} catch (CoreException e) {
 			// Rethrow
@@ -185,10 +192,12 @@ public class TargetPlatform implements IEnvironmentVariables {
 
 	private static void savePlatformConfiguration(
 		File configFile,
-		IPluginModelBase[] models)
+		IPluginModelBase[] models,
+		String primaryFeatureId)
 		throws IOException, CoreException, MalformedURLException {
 		IPath workspaceLocation =
-			PDECore.getWorkspace().getRoot().getLocation().removeLastSegments(1);
+			PDECore.getWorkspace().getRoot().getLocation().removeLastSegments(
+				1);
 		ArrayList sites = new ArrayList();
 		IPluginModelBase bootModel = null;
 
@@ -204,7 +213,12 @@ public class TargetPlatform implements IEnvironmentVariables {
 			IResource resource = model.getUnderlyingResource();
 			if (resource != null) {
 				// workspace
-				addToSite(workspaceLocation, model, sites);
+				if (resource.isLinked()) {
+					// careful - linked file - redirect
+					IPath realPath = resource.getLocation();
+					addToSite(realPath.removeLastSegments(3), model, sites);
+				} else
+					addToSite(workspaceLocation, model, sites);
 			} else {
 				// external
 				IPath path = new Path(model.getInstallLocation());
@@ -217,6 +231,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 		IPlatformConfiguration platformConfiguration =
 			BootLoader.getPlatformConfiguration(null);
 		createConfigurationEntries(platformConfiguration, bootModel, sites);
+		createFeatureEntries(platformConfiguration, models, primaryFeatureId);
 		platformConfiguration.refresh();
 		platformConfiguration.save(configURL);
 	}
@@ -257,11 +272,129 @@ public class TargetPlatform implements IEnvironmentVariables {
 		}
 
 		// Set boot location
-		String location = bootModel.getInstallLocation();
-		IPath path = new Path(location).addTrailingSeparator();
-		URL bootURL = new URL("file:" + path.toOSString());
+		IPath bootPath = getPluginLocation(bootModel);
+		URL bootURL = new URL("file:" + bootPath.toOSString());
 
 		config.setBootstrapPluginLocation(BOOT_ID, bootURL);
+		config.isTransient(true);
+	}
+
+	private static IPath getPluginLocation(IPluginModelBase model) {
+		String location = model.getInstallLocation();
+		IResource resource = model.getUnderlyingResource();
+		if (resource != null && resource.isLinked()) {
+			// special case - linked resource
+			location =
+				resource
+					.getLocation()
+					.removeLastSegments(1)
+					.addTrailingSeparator()
+					.toString();
+		}
+		return new Path(location).addTrailingSeparator();
+	}
+
+	private static void createFeatureEntries(
+		IPlatformConfiguration config,
+		IPluginModelBase[] models,
+		String primaryFeatureId)
+		throws MalformedURLException {
+		IPath targetPath = ExternalModelManager.getEclipseHome(null);
+
+		if (primaryFeatureId == null)
+			return;
+		// We have primary feature Id.
+		IFeatureModel featureModel =
+			loadPrimaryFeatureModel(targetPath, primaryFeatureId);
+		if (featureModel == null)
+			return;
+		IFeature feature = featureModel.getFeature();
+		String featureVersion = feature.getVersion();
+		String pluginId = primaryFeatureId;
+		IPluginBase primaryPlugin = findPlugin(pluginId, models);
+		if (primaryPlugin == null)
+			return;
+		IPath pluginPath = getPluginLocation(primaryPlugin.getModel());
+		URL pluginURL = new URL("file:" + pluginPath.toString());
+		URL[] root = new URL[] { pluginURL };
+		IPlatformConfiguration.IFeatureEntry featureEntry =
+			config.createFeatureEntry(
+				primaryFeatureId,
+				featureVersion,
+				pluginId,
+				primaryPlugin.getVersion(),
+				true,
+				null,
+				root);
+		config.configureFeatureEntry(featureEntry);
+		featureModel.dispose();
+	}
+
+	private static IPluginBase findPlugin(
+		String id,
+		IPluginModelBase[] models) {
+		for (int i = 0; i < models.length; i++) {
+			IPluginModelBase model = models[i];
+			if (model.isFragmentModel())
+				continue;
+			IPluginBase plugin = model.getPluginBase();
+			if (plugin.getId().equals(id))
+				return plugin;
+		}
+		return null;
+	}
+
+	private static IFeatureModel loadPrimaryFeatureModel(
+		IPath targetPath,
+		String featureId) {
+		File mainFeatureDir = targetPath.append("features").toFile();
+		if (mainFeatureDir.exists() == false || !mainFeatureDir.isDirectory())
+			return null;
+		File[] featureDirs = mainFeatureDir.listFiles();
+
+		PluginVersionIdentifier bestVid = null;
+		File bestDir = null;
+
+		for (int i = 0; i < featureDirs.length; i++) {
+			File featureDir = featureDirs[i];
+			String name = featureDir.getName();
+			if (featureDir.isDirectory() && name.startsWith(featureId)) {
+				int loc = name.lastIndexOf("_");
+				if (loc == -1)
+					continue;
+				String version = name.substring(loc + 1);
+				PluginVersionIdentifier vid =
+					new PluginVersionIdentifier(version);
+				if (bestVid == null || vid.isGreaterThan(bestVid)) {
+					bestVid = vid;
+					bestDir = featureDir;
+				}
+			}
+		}
+		if (bestVid == null)
+			return null;
+		// We have a feature and know the version
+		File manifest = new File(bestDir, "feature.xml");
+		ExternalFeatureModel model = new ExternalFeatureModel();
+		model.setInstallLocation(bestDir.getAbsolutePath());
+
+		InputStream stream = null;
+		boolean error = false;
+		try {
+			stream = new FileInputStream(manifest);
+			model.load(stream, false);
+		} catch (Exception e) {
+			error = true;
+		}
+		if (stream != null) {
+			try {
+				stream.close();
+			} catch (IOException e) {
+			}
+		}
+		if (error || !model.isLoaded())
+			return null;
+		return model;
 	}
 
 	private static String getKey(IPluginModelBase model) {
