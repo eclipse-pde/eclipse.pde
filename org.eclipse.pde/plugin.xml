@@ -29,7 +29,7 @@
    </extension>
    <extension
          id="FeatureNature"
-         name="%natures.featureBuilder.name"
+         name="%natures.featureNature.name"
          point="org.eclipse.core.resources.natures">
       <runtime>
          <run
