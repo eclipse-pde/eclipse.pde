@@ -20,8 +20,8 @@ public class SrcSection extends BuildContentsSection
 		implements
 			IModelChangedListener {
 
-	private static String SECTION_TITLE = "BuildEditor.SrcSection.title";
-	private static String SECTION_DESC = "BuildEditor.SrcSection.desc";
+	private static String SECTION_TITLE = "BuildEditor.SrcSection.title"; //$NON-NLS-1$
+	private static String SECTION_DESC = "BuildEditor.SrcSection.desc"; //$NON-NLS-1$
 
 	public SrcSection(BuildPage page, Composite parent) {
 		super(page, parent);

@@ -21,8 +21,8 @@ public class BinSection extends BuildContentsSection
 		implements
 			IModelChangedListener {
 
-	private static String SECTION_TITLE = "BuildEditor.BinSection.title";
-	private static String SECTION_DESC = "BuildEditor.BinSection.desc";
+	private static String SECTION_TITLE = "BuildEditor.BinSection.title"; //$NON-NLS-1$
+	private static String SECTION_DESC = "BuildEditor.BinSection.desc"; //$NON-NLS-1$
 
 	public BinSection(BuildPage page, Composite parent) {
 		super(page, parent);

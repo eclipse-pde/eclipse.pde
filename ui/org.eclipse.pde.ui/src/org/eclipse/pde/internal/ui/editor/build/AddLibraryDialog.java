@@ -30,7 +30,7 @@ public class AddLibraryDialog extends SelectionStatusDialog {
 	private String newName;
 	private String[] libraries;
 	private IPluginModelBase model;
-	private static String init = "library.jar";
+	private static String init = "library.jar"; //$NON-NLS-1$
 	private Text text;
 	private Image libImage;
 	private TableViewer libraryViewer;
@@ -43,11 +43,11 @@ public class AddLibraryDialog extends SelectionStatusDialog {
 				IStatus.OK,
 				PDEPlugin.getPluginId(),
 				IStatus.OK,
-				"",
+				"", //$NON-NLS-1$
 				null);
 			
-			if (!text.endsWith(".jar"))
-				text = text + ".jar";
+			if (!text.endsWith(".jar")) //$NON-NLS-1$
+				text = text + ".jar"; //$NON-NLS-1$
 				
 			for (int i =0;i<libraries.length; i++){
 				if (libraries[i].equals(text))
@@ -63,7 +63,7 @@ public class AddLibraryDialog extends SelectionStatusDialog {
 				IStatus.OK,
 				PDEPlugin.getPluginId(),
 				IStatus.OK,
-				"",
+				"", //$NON-NLS-1$
 				null);
 
 		}
@@ -141,7 +141,7 @@ public class AddLibraryDialog extends SelectionStatusDialog {
 			public void selectionChanged(SelectionChangedEvent e){
 				ISelection sel = e.getSelection();
 				IPluginLibrary obj = (IPluginLibrary)((IStructuredSelection)sel).getFirstElement();
-				text.setText(obj!=null ? obj.getName() : "");
+				text.setText(obj!=null ? obj.getName() : ""); //$NON-NLS-1$
 			}
 		});
 		libraryViewer.setInput(model);

@@ -43,13 +43,13 @@ public class RuntimeInfoSection extends PDESection
 		implements
 			IModelChangedListener {
 
-	public static final String SECTION_TITLE = "BuildEditor.RuntimeInfoSection.title";
-	public static final String SECTION_DESC = "BuildEditor.RuntimeInfoSection.desc";
-	public static final String SECTION_NEW = "BuildEditor.RuntimeInfoSection.addLibrary";
-	public static final String SECTION_UP = "ManifestEditor.LibrarySection.up";
-	public static final String SECTION_DOWN = "ManifestEditor.LibrarySection.down";
+	public static final String SECTION_TITLE = "BuildEditor.RuntimeInfoSection.title"; //$NON-NLS-1$
+	public static final String SECTION_DESC = "BuildEditor.RuntimeInfoSection.desc"; //$NON-NLS-1$
+	public static final String SECTION_NEW = "BuildEditor.RuntimeInfoSection.addLibrary"; //$NON-NLS-1$
+	public static final String SECTION_UP = "ManifestEditor.LibrarySection.up"; //$NON-NLS-1$
+	public static final String SECTION_DOWN = "ManifestEditor.LibrarySection.down"; //$NON-NLS-1$
 	public static final String POPUP_NEW_LIBRARY = "BuildEditor.RuntimeInfoSection.popupAdd";
-	public static final String POPUP_DELETE = "Actions.delete.label";
+	public static final String POPUP_DELETE = "Actions.delete.label"; //$NON-NLS-1$
 	public static final String JSECTION_NEW = "BuildEditor.RuntimeInfoSection.addFolder";
 	public static final String POPUP_NEW_FOLDER = "BuildEditor.RuntimeInfoSection.popupFolder";
 	public static final String JAR_INCLUDE = "BuildEditor.RuntimeInfoSection.buildInclude";
@@ -235,7 +235,7 @@ public class RuntimeInfoSection extends PDESection
 				model.getBuild().add(binIncl);
 			}
 			if (!isSelected && libPath.segmentCount() == 1
-					&& binIncl.contains("*.jar")) {
+					&& binIncl.contains("*.jar")) { //$NON-NLS-1$
 				addAllJarsToBinIncludes(binIncl, project, model);
 			}
 			if (isSelected && !binIncl.contains(libName)) {
@@ -255,7 +255,7 @@ public class RuntimeInfoSection extends PDESection
 			IResource[] members = project.members();
 			for (int i = 0; i < members.length; i++) {
 				if (!(members[i] instanceof IFolder)
-						&& members[i].getFileExtension().equals("jar")) {
+						&& members[i].getFileExtension().equals("jar")) { //$NON-NLS-1$
 					binIncl.addToken(members[i].getName());
 				}
 			}
@@ -272,7 +272,7 @@ public class RuntimeInfoSection extends PDESection
 						binIncl.addToken(libraryName);
 				}
 			}
-			binIncl.removeToken("*.jar");
+			binIncl.removeToken("*.jar"); //$NON-NLS-1$
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
@@ -484,8 +484,8 @@ public class RuntimeInfoSection extends PDESection
 				return;
 			if (!newValue.startsWith(IBuildEntry.JAR_PREFIX))
 				newValue = IBuildEntry.JAR_PREFIX + newValue;
-			if (!newValue.endsWith(".jar"))
-				newValue = newValue + ".jar";
+			if (!newValue.endsWith(".jar")) //$NON-NLS-1$
+				newValue = newValue + ".jar"; //$NON-NLS-1$
 
 			// jars.compile.order
 			IBuildEntry tempEntry = build
@@ -608,7 +608,7 @@ public class RuntimeInfoSection extends PDESection
 					entry = sourceFolder.getRawClasspathEntry();
 					outputPath = entry.getOutputLocation();
 					if (outputPath == null) {
-						outputFolders.add("bin");
+						outputFolders.add("bin"); //$NON-NLS-1$
 					} else {
 						outputPath = outputPath.removeFirstSegments(1);
 						outputFolders.add(outputPath.toString());
@@ -701,7 +701,7 @@ public class RuntimeInfoSection extends PDESection
 			return false;
 
 		if (libPath.segmentCount() == 1) {
-			return binIncl.contains(libName) || binIncl.contains("*.jar");
+			return binIncl.contains(libName) || binIncl.contains("*.jar"); //$NON-NLS-1$
 		} else if (binIncl.contains(libName)) {
 			return true;
 		} else if (binExcl != null && binExcl.contains(libName)) {
@@ -772,8 +772,8 @@ public class RuntimeInfoSection extends PDESection
 
 								String name = dialog.getNewName();
 
-								if (!name.endsWith(".jar"))
-									name = name + ".jar";
+								if (!name.endsWith(".jar")) //$NON-NLS-1$
+									name = name + ".jar"; //$NON-NLS-1$
 
 								String keyName = name;
 								if (!keyName.startsWith(IBuildEntry.JAR_PREFIX))
@@ -907,9 +907,9 @@ public class RuntimeInfoSection extends PDESection
 		});
 		dialog.setAllowMultiple(false);
 		dialog.setTitle(PDEPlugin
-				.getResourceString("ManifestEditor.JarsSection.dialogTitle"));
+				.getResourceString("ManifestEditor.JarsSection.dialogTitle")); //$NON-NLS-1$
 		dialog.setMessage(PDEPlugin
-				.getResourceString("ManifestEditor.JarsSection.dialogMessage"));
+				.getResourceString("ManifestEditor.JarsSection.dialogMessage")); //$NON-NLS-1$
 
 		dialog.setValidator(new ISelectionStatusValidator() {
 

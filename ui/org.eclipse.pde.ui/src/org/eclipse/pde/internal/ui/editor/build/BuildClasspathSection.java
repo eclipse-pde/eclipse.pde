@@ -38,13 +38,13 @@ public class BuildClasspathSection
 	implements IModelChangedListener {
 
 	private final static String SECTION_ADD =
-		"BuildEditor.ClasspathSection.add";
+		"BuildEditor.ClasspathSection.add"; //$NON-NLS-1$
 	private final static String SECTION_REMOVE =
-		"BuildEditor.ClasspathSection.remove";
+		"BuildEditor.ClasspathSection.remove"; //$NON-NLS-1$
 	private final static String SECTION_TITLE =
-		"BuildEditor.ClasspathSection.title";
+		"BuildEditor.ClasspathSection.title"; //$NON-NLS-1$
 	private final static String SECTION_DESC =
-		"BuildEditor.ClasspathSection.desc";
+		"BuildEditor.ClasspathSection.desc"; //$NON-NLS-1$
 		
 	private TableViewer fTableViewer;
 	private boolean fEnabled = true;
@@ -84,14 +84,14 @@ public class BuildClasspathSection
 					IStatus.OK,
 					PDEPlugin.getPluginId(),
 					IStatus.OK,
-					"",
+					"", //$NON-NLS-1$
 					null);
 			}
 			return new Status(
 				IStatus.ERROR,
 				PDEPlugin.getPluginId(),
 				IStatus.ERROR,
-				"",
+				"", //$NON-NLS-1$
 				null);
 		}	
 
@@ -345,7 +345,7 @@ public class BuildClasspathSection
 		if (sameSegments > 0)
 			return path.removeFirstSegments(sameSegments).toString();
 		else
-			return ".."+path.toString();
+			return ".."+path.toString(); //$NON-NLS-1$
 	}
 
 	protected void buttonSelected(int index) {

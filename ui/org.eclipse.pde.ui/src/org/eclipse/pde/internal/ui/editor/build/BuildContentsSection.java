@@ -262,7 +262,7 @@ public abstract class BuildContentsSection extends TableSection
 							setParentsChecked(folder);
 							fTreeViewer.setGrayed(folder, false);
 						}
-					} else if (resource.startsWith("*.")) {
+					} else if (resource.startsWith("*.")) { //$NON-NLS-1$
 						if (isIncluded)
 							fileExt.add(resource.substring(2));
 					} else {
@@ -284,7 +284,7 @@ public abstract class BuildContentsSection extends TableSection
 								&& (fileExt.contains(members[i]
 										.getFileExtension()))) {
 							fTreeViewer.setChecked(members[i], includes
-									.contains("*."
+									.contains("*." //$NON-NLS-1$
 											+ members[i].getFileExtension()));
 						}
 					}
@@ -357,7 +357,7 @@ public abstract class BuildContentsSection extends TableSection
 			if (includes != null) {
 				if (includes.contains(resourceName))
 					includes.removeToken(resourceName);
-				if (includes.contains("*." + resource.getFileExtension())) {
+				if (includes.contains("*." + resource.getFileExtension())) { //$NON-NLS-1$
 					IResource[] members = fProject.members();
 					for (int i = 0; i < members.length; i++) {
 						if (!(members[i] instanceof IFolder)
@@ -370,7 +370,7 @@ public abstract class BuildContentsSection extends TableSection
 						IBuildEntry[] libraries = BuildUtil
 								.getBuildLibraries(fBuildModel.getBuild()
 										.getBuildEntries());
-						if (resource.getFileExtension().equals("jar")
+						if (resource.getFileExtension().equals("jar") //$NON-NLS-1$
 								&& libraries.length != 0) {
 							for (int j = 0; j < libraries.length; j++) {
 								String libName = libraries[j].getName()
@@ -384,7 +384,7 @@ public abstract class BuildContentsSection extends TableSection
 							}
 						}
 					}
-					includes.removeToken("*." + resource.getFileExtension());
+					includes.removeToken("*." + resource.getFileExtension()); //$NON-NLS-1$
 				}
 			}
 		} catch (CoreException e) {

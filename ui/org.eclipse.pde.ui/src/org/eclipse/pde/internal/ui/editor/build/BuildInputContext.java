@@ -24,7 +24,7 @@ import org.eclipse.text.edits.*;
 import org.eclipse.ui.*;
 
 public class BuildInputContext extends InputContext {
-	public static final String CONTEXT_ID = "build-context";
+	public static final String CONTEXT_ID = "build-context"; //$NON-NLS-1$
 	
 	private HashMap fOperationTable = new HashMap();
 
@@ -37,7 +37,7 @@ public class BuildInputContext extends InputContext {
 	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#getCharSet()
 	 */
 	protected String getDefaultCharset() {
-		return "ISO-8859-1";
+		return "ISO-8859-1"; //$NON-NLS-1$
 	}
 
 	protected IBaseModel createModel(IEditorInput input) throws CoreException {

@@ -26,8 +26,8 @@ import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.help.*;
 
 public class BuildPage extends PDEFormPage {
-	public static final String FORM_TITLE = "BuildEditor.BuildPage.title";
-	public static final String PAGE_ID = "build";
+	public static final String FORM_TITLE = "BuildEditor.BuildPage.title"; //$NON-NLS-1$
+	public static final String PAGE_ID = "build"; //$NON-NLS-1$
 	private BuildClasspathSection classpathSection;
 	private BuildContentsSection srcSection;
 	private BuildContentsSection binSection;
@@ -37,7 +37,7 @@ public class BuildPage extends PDEFormPage {
 	
 	public BuildPage(FormEditor editor) {
 		//TODO translate this string
-		super(editor, PAGE_ID, "Build");
+		super(editor, PAGE_ID, "Build"); //$NON-NLS-1$
 	}
 
 	protected void createFormContent(IManagedForm mform) {
@@ -136,7 +136,7 @@ public class BuildPage extends PDEFormPage {
 		IBuildEntry customEntry = build.getEntry(IBuildPropertiesConstants.PROPERTY_CUSTOM);
 		if (customEntry ==null || customEntry.getTokens().length ==0)
 			return false;
-		return customEntry.getTokens()[0].equals("true"); 
+		return customEntry.getTokens()[0].equals("true");  //$NON-NLS-1$
 	}
 	
 	private void handleCustomCheckState(boolean isCustom){
@@ -159,7 +159,7 @@ public class BuildPage extends PDEFormPage {
 					customEntry.removeToken(tokens[i]);
 			}
 			if (isCustom)
-				customEntry.addToken("true");
+				customEntry.addToken("true"); //$NON-NLS-1$
 			else
 				getBuildModel().getBuild().remove(customEntry);
 		} catch (CoreException e) {
