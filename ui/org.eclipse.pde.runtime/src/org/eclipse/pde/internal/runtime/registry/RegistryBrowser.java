@@ -30,6 +30,7 @@ IRegistryChangeListener {
 	public static final String KEY_REFRESH_TOOLTIP = "RegistryView.refresh.tooltip";
 	public static final String SHOW_RUNNING_PLUGINS = "RegistryView.showRunning.label";
 	public static final String KEY_COLLAPSE_ALL_LABEL = "RegistryView.collapseAll.label";
+	public static final String KEY_COLLAPSE_ALL_TOOLTIP = "RegistryView.collapseAll.tooltip";
 	private TreeViewer treeViewer;
 	private Action refreshAction;
 	private Action showPluginsAction;
@@ -86,6 +87,7 @@ IRegistryChangeListener {
 		collapseAllAction.setText(PDERuntimePlugin.getResourceString(KEY_COLLAPSE_ALL_LABEL));
 		collapseAllAction.setImageDescriptor(PDERuntimePluginImages.DESC_COLLAPSE_ALL);
 		collapseAllAction.setHoverImageDescriptor(PDERuntimePluginImages.DESC_COLLAPSE_ALL_HOVER);
+		collapseAllAction.setToolTipText(PDERuntimePlugin.getResourceString(KEY_COLLAPSE_ALL_TOOLTIP));
 	}
 	public void dispose() {
 		Platform.getExtensionRegistry().removeRegistryChangeListener(this);
