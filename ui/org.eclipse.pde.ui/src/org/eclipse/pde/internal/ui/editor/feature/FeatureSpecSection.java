@@ -29,30 +29,30 @@ import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.forms.widgets.Section;
 
 public class FeatureSpecSection extends PDESection {
-	public static final String SECTION_TITLE = "FeatureEditor.SpecSection.title";
-	public static final String SECTION_DESC = "FeatureEditor.SpecSection.desc";
-	public static final String SECTION_ID = "FeatureEditor.SpecSection.id";
-	public static final String SECTION_NAME = "FeatureEditor.SpecSection.name";
+	public static final String SECTION_TITLE = "FeatureEditor.SpecSection.title"; //$NON-NLS-1$
+	public static final String SECTION_DESC = "FeatureEditor.SpecSection.desc"; //$NON-NLS-1$
+	public static final String SECTION_ID = "FeatureEditor.SpecSection.id"; //$NON-NLS-1$
+	public static final String SECTION_NAME = "FeatureEditor.SpecSection.name"; //$NON-NLS-1$
 	public static final String SECTION_VERSION =
-		"FeatureEditor.SpecSection.version";
+		"FeatureEditor.SpecSection.version"; //$NON-NLS-1$
 	public static final String SECTION_PROVIDER =
-		"FeatureEditor.SpecSection.provider";
+		"FeatureEditor.SpecSection.provider"; //$NON-NLS-1$
 	public static final String SECTION_PLUGIN =
-		"FeatureEditor.SpecSection.plugin";
-	public static final String SECTION_IMAGE = "FeatureEditor.SpecSection.image";
-	public static final String SECTION_BROWSE = "FeatureEditor.SpecSection.browse";
+		"FeatureEditor.SpecSection.plugin"; //$NON-NLS-1$
+	public static final String SECTION_IMAGE = "FeatureEditor.SpecSection.image"; //$NON-NLS-1$
+	public static final String SECTION_BROWSE = "FeatureEditor.SpecSection.browse"; //$NON-NLS-1$
 	public static final String SECTION_PRIMARY =
-		"FeatureEditor.SpecSection.primary";
+		"FeatureEditor.SpecSection.primary"; //$NON-NLS-1$
 	public static final String SECTION_EXCLUSIVE =
-		"FeatureEditor.SpecSection.exclusive";
+		"FeatureEditor.SpecSection.exclusive"; //$NON-NLS-1$
 	public static final String SECTION_CREATE_JAR =
-		"FeatureEditor.SpecSection.createJar";
+		"FeatureEditor.SpecSection.createJar"; //$NON-NLS-1$
 	public static final String SECTION_SYNCHRONIZE =
-		"FeatureEditor.SpecSection.synchronize";
+		"FeatureEditor.SpecSection.synchronize"; //$NON-NLS-1$
 	public static final String KEY_BAD_VERSION_TITLE =
-		"FeatureEditor.SpecSection.badVersionTitle";
+		"FeatureEditor.SpecSection.badVersionTitle"; //$NON-NLS-1$
 	public static final String KEY_BAD_VERSION_MESSAGE =
-		"FeatureEditor.SpecSection.badVersionMessage";
+		"FeatureEditor.SpecSection.badVersionMessage"; //$NON-NLS-1$
 
 	private FormEntry idText;
 	private FormEntry titleText;
@@ -75,8 +75,6 @@ public class FeatureSpecSection extends PDESection {
 	}
 	
 	public void commit(boolean onSave) {
-		IFeatureModel model = (IFeatureModel) getPage().getModel();
-		IFeature feature = model.getFeature();
 		titleText.commit();
 		providerText.commit();
 		pluginText.commit();

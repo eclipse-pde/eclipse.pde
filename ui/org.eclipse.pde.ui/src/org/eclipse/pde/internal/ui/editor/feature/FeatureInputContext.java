@@ -28,7 +28,7 @@ import org.eclipse.ui.*;
  * 
  */
 public class FeatureInputContext extends XMLInputContext {
-	public static final String CONTEXT_ID="feature-context";
+	public static final String CONTEXT_ID="feature-context"; //$NON-NLS-1$
 	/**
 	 * @param editor
 	 * @param input
@@ -74,7 +74,7 @@ public class FeatureInputContext extends XMLInputContext {
 			return null;
 		}
 		ExternalFeatureModel model = new ExternalFeatureModel();
-		model.setInstallLocation("");
+		model.setInstallLocation(""); //$NON-NLS-1$
 		try {
 			model.load(stream, false);
 		} catch (CoreException e) {
@@ -124,7 +124,7 @@ public class FeatureInputContext extends XMLInputContext {
 		String text = doc.get();
 		try {
 			InputStream stream =
-				new ByteArrayInputStream(text.getBytes("UTF8"));
+				new ByteArrayInputStream(text.getBytes("UTF8")); //$NON-NLS-1$
 			try {
 				model.reload(stream, false);
 			} catch (CoreException e) {

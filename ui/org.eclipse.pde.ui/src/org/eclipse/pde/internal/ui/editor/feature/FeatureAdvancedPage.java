@@ -19,8 +19,8 @@ import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 public class FeatureAdvancedPage extends PDEFormPage {
-	public static final String PAGE_ID = "advanced";
-	private static final String KEY_HEADING = "FeatureEditor.AdvancedPage.heading";
+	public static final String PAGE_ID = "advanced"; //$NON-NLS-1$
+	private static final String KEY_HEADING = "FeatureEditor.AdvancedPage.heading"; //$NON-NLS-1$
 	private IncludedFeaturesSection includedSection;
 	private DataSection dataSection;
 	private HandlerSection handlerSection;

@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.*;
 
 public class PortabilityChoiceCellEditor extends DialogCellEditor {
 	private static final String KEY_TITLE =
-		"FeatureEditor.PortabilityChoicesDialog.title";
+		"FeatureEditor.PortabilityChoicesDialog.title"; //$NON-NLS-1$
 	private Label label;
 	private Choice[] choices;
 
@@ -55,6 +55,6 @@ public class PortabilityChoiceCellEditor extends DialogCellEditor {
 		if (value != null)
 			label.setText(value.toString());
 		else
-			label.setText("");
+			label.setText(""); //$NON-NLS-1$
 	}
 }

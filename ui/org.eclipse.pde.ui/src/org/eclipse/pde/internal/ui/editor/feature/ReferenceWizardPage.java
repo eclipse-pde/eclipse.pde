@@ -32,7 +32,7 @@ import org.eclipse.ui.forms.widgets.*;
 
 public abstract class ReferenceWizardPage extends WizardPage {
 	public static final String KEY_PLUGINS =
-		"FeatureEditor.PluginSection.new.label";
+		"FeatureEditor.PluginSection.new.label"; //$NON-NLS-1$
 	protected IFeatureModel model;
 	private TablePart checkboxTablePart;
 	private CheckboxTableViewer pluginViewer;
@@ -66,7 +66,7 @@ public abstract class ReferenceWizardPage extends WizardPage {
 	}
 
 	public ReferenceWizardPage(IFeatureModel model, boolean includeExternal) {
-		super("newFeaturePluginPage");
+		super("newFeaturePluginPage"); //$NON-NLS-1$
 		this.model = model;
 		setPageComplete(false);
 		checkboxTablePart = new TablePart();	

@@ -30,20 +30,20 @@ import org.eclipse.ui.views.properties.IPropertySheetPage;
 
 public class FeatureEditor extends MultiSourceEditor {
 	public static final String UNRESOLVED_TITLE =
-		"FeatureEditor.Unresolved.title";
-	public static final String VERSION_TITLE = "FeatureEditor.Version.title";
+		"FeatureEditor.Unresolved.title"; //$NON-NLS-1$
+	public static final String VERSION_TITLE = "FeatureEditor.Version.title"; //$NON-NLS-1$
 	public static final String VERSION_MESSAGE =
-		"FeatureEditor.Version.message";
-	public static final String VERSION_EXISTS = "FeatureEditor.Version.exists";
+		"FeatureEditor.Version.message"; //$NON-NLS-1$
+	public static final String VERSION_EXISTS = "FeatureEditor.Version.exists"; //$NON-NLS-1$
 	public static final String UNRESOLVED_MESSAGE =
-		"FeatureEditor.Unresolved.message";
+		"FeatureEditor.Unresolved.message"; //$NON-NLS-1$
 	public static final String FEATURE_PAGE_TITLE =
-		"FeatureEditor.FeaturePage.title";
+		"FeatureEditor.FeaturePage.title"; //$NON-NLS-1$
 	public static final String REFERENCE_PAGE_TITLE =
-		"FeatureEditor.ReferencePage.title";
+		"FeatureEditor.ReferencePage.title"; //$NON-NLS-1$
 	public static final String ADVANCED_PAGE_TITLE =
-		"FeatureEditor.AdvancedPage.title";
-	public static final String INFO_PAGE_TITLE = "FeatureEditor.InfoPage.title";
+		"FeatureEditor.AdvancedPage.title"; //$NON-NLS-1$
+	public static final String INFO_PAGE_TITLE = "FeatureEditor.InfoPage.title"; //$NON-NLS-1$
 
 	public FeatureEditor() {
 	}
@@ -55,10 +55,10 @@ public class FeatureEditor extends MultiSourceEditor {
 		IFile featureFile = null;
 
 		String name = file.getName().toLowerCase();
-		if (name.equals("feature.xml")) {
+		if (name.equals("feature.xml")) { //$NON-NLS-1$
 			featureFile = file;
-			buildFile = project.getFile("build.properties");
-		} else if (name.equals("build.properties")) {
+			buildFile = project.getFile("build.properties"); //$NON-NLS-1$
+		} else if (name.equals("build.properties")) { //$NON-NLS-1$
 			buildFile = file;
 			featureFile = createFeatureFile(project);
 		}
@@ -84,13 +84,13 @@ public class FeatureEditor extends MultiSourceEditor {
 	
 	public void monitoredFileAdded(IFile file) {
 		String name = file.getName();
-		 if (name.equalsIgnoreCase("feature.xml")) {
+		 if (name.equalsIgnoreCase("feature.xml")) { //$NON-NLS-1$
 		 	/*
 			IEditorInput in = new FileEditorInput(file);
 			inputContextManager.putContext(in, new FeatureInputContext(this, in, false));
 			*/						
 		}
-		else if (name.equalsIgnoreCase("build.properties")) {
+		else if (name.equalsIgnoreCase("build.properties")) { //$NON-NLS-1$
 			if (!inputContextManager.hasContext(BuildInputContext.CONTEXT_ID)) {
 				IEditorInput in = new FileEditorInput(file);
 				inputContextManager.putContext(in, new BuildInputContext(this, in, false));
@@ -123,11 +123,11 @@ public class FeatureEditor extends MultiSourceEditor {
 		File buildFile = null;
 		File featureFile = null;
 		String name = file.getName().toLowerCase();
-		if (name.equals("feature.xml")) {
+		if (name.equals("feature.xml")) { //$NON-NLS-1$
 			featureFile = file;
 			File dir = file.getParentFile();
-			buildFile = new File(dir, "build.properties");
-		} else if (name.equals("build.properties")) {
+			buildFile = new File(dir, "build.properties"); //$NON-NLS-1$
+		} else if (name.equals("build.properties")) { //$NON-NLS-1$
 			buildFile = file;
 			File dir = file.getParentFile();
 			featureFile = createFeatureFile(dir);
@@ -144,19 +144,19 @@ public class FeatureEditor extends MultiSourceEditor {
 		}
 	}
 	private File createFeatureFile(File dir) {
-		File pluginFile = new File(dir, "plugin.xml");
+		File pluginFile = new File(dir, "plugin.xml"); //$NON-NLS-1$
 		return pluginFile;
 	}
 	private IFile createFeatureFile(IProject project) {
-		IFile featureFile = project.getFile("feature.xml");
+		IFile featureFile = project.getFile("feature.xml"); //$NON-NLS-1$
 		return featureFile;
 	}
 	protected void createStorageContexts(InputContextManager manager,
 			IStorageEditorInput input) {
 		String name = input.getName().toLowerCase();
-		if (name.equals("build.properties")) {
+		if (name.equals("build.properties")) { //$NON-NLS-1$
 			manager.putContext(input, new BuildInputContext(this, input, true));
-		} else if (name.startsWith("feature.xml")) {
+		} else if (name.startsWith("feature.xml")) { //$NON-NLS-1$
 			manager.putContext(input, new FeatureInputContext(this, input, true));
 		}
 	}

@@ -32,13 +32,13 @@ import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.help.*;
 
 public class RequiredFeaturesWizardPage extends WizardPage {
-	public static final String KEY_TITLE = "FeatureEditor.RequiresSection.newFeature.title";
-	public static final String KEY_DESC = "FeatureEditor.RequiresSection.newFeature.desc";
+	public static final String KEY_TITLE = "FeatureEditor.RequiresSection.newFeature.title"; //$NON-NLS-1$
+	public static final String KEY_DESC = "FeatureEditor.RequiresSection.newFeature.desc"; //$NON-NLS-1$
 	public static final String KEY_FEATURES =
-		"FeatureEditor.RequiresSection.newFeature.label";
-	public static final String KEY_ADDING = "FeatureEditor.RequiresSection.newFeature.adding";
+		"FeatureEditor.RequiresSection.newFeature.label"; //$NON-NLS-1$
+	public static final String KEY_ADDING = "FeatureEditor.RequiresSection.newFeature.adding"; //$NON-NLS-1$
 	public static final String KEY_UPDATING =
-		"FeatureEditor.RequiresSection.newFeature.updating";
+		"FeatureEditor.RequiresSection.newFeature.updating"; //$NON-NLS-1$
 	private IFeatureModel model;
 	private TablePart checkboxTablePart;
 	private CheckboxTableViewer pluginViewer;
@@ -71,7 +71,7 @@ public class RequiredFeaturesWizardPage extends WizardPage {
 	}
 
 	public RequiredFeaturesWizardPage(IFeatureModel model) {
-		super("RequiredFeaturesPage");
+		super("RequiredFeaturesPage"); //$NON-NLS-1$
 		this.model = model;
 		setTitle(PDEPlugin.getResourceString(KEY_TITLE));
 		setDescription(PDEPlugin.getResourceString(KEY_DESC));
@@ -190,7 +190,7 @@ public class RequiredFeaturesWizardPage extends WizardPage {
 			added[i] = iimport;
 			monitor.worked(1);
 		}
-		monitor.subTask("");
+		monitor.subTask(""); //$NON-NLS-1$
 		monitor.setTaskName(PDEPlugin.getResourceString(KEY_UPDATING));
 		feature.addImports(added);
 		monitor.worked(1);

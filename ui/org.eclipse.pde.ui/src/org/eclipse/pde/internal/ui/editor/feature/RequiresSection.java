@@ -43,17 +43,17 @@ public class RequiresSection
 	implements IModelProviderListener {
 	public static final int MULTI_SELECTION = 33;
 	private static final String KEY_TITLE =
-		"FeatureEditor.RequiresSection.title";
-	private static final String KEY_DESC = "FeatureEditor.RequiresSection.desc";
+		"FeatureEditor.RequiresSection.title"; //$NON-NLS-1$
+	private static final String KEY_DESC = "FeatureEditor.RequiresSection.desc"; //$NON-NLS-1$
 	private static final String KEY_NEW_PLUGIN_BUTTON =
-		"FeatureEditor.RequiresSection.newPluginButton";
+		"FeatureEditor.RequiresSection.plugin"; //$NON-NLS-1$
 	private static final String KEY_NEW_FEATURE_BUTTON =
-		"FeatureEditor.RequiresSection.newFeatureButton";
+		"FeatureEditor.RequiresSection.feature"; //$NON-NLS-1$
 	private static final String KEY_SYNC_BUTTON =
-		"FeatureEditor.RequiresSection.syncButton";
+		"FeatureEditor.RequiresSection.sync"; //$NON-NLS-1$
 	private static final String KEY_COMPUTE =
-		"FeatureEditor.RequiresSection.compute";
-	private static final String KEY_DELETE = "Actions.delete.label";
+		"FeatureEditor.RequiresSection.compute"; //$NON-NLS-1$
+	private static final String KEY_DELETE = "Actions.delete.label"; //$NON-NLS-1$
 	private Button syncButton;
 	private TableViewer pluginViewer;
 	private Action deleteAction;

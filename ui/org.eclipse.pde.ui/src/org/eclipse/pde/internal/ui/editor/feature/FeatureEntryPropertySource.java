@@ -20,21 +20,21 @@ import org.eclipse.ui.views.properties.*;
 
 public class FeatureEntryPropertySource extends FeaturePropertySource {
 	protected Vector descriptors;
-	public final static String KEY_ID = "FeatureEditor.ReferenceProp.id";
+	public final static String KEY_ID = "FeatureEditor.ReferenceProp.id"; //$NON-NLS-1$
 	public final static String KEY_VERSION =
-		"FeatureEditor.ReferenceProp.version";
+		"FeatureEditor.ReferenceProp.version"; //$NON-NLS-1$
 	public final static String KEY_DOWNLOAD_SIZE =
-		"FeatureEditor.ReferenceProp.download-size";
+		"FeatureEditor.ReferenceProp.download-size"; //$NON-NLS-1$
 	public final static String KEY_INSTALL_SIZE =
-		"FeatureEditor.ReferenceProp.install-size";
+		"FeatureEditor.ReferenceProp.install-size"; //$NON-NLS-1$
 
-	private final static String P_ID = "id";
-	private final static String P_OS = "os";
-	private final static String P_WS = "ws";
-	private final static String P_NL = "nl";
-	private final static String P_ARCH = "arch";
-	private final static String P_INSTALL_SIZE = "install-size";
-	private final static String P_DOWNLOAD_SIZE = "download-size";
+	private final static String P_ID = "id"; //$NON-NLS-1$
+	private final static String P_OS = "os"; //$NON-NLS-1$
+	private final static String P_WS = "ws"; //$NON-NLS-1$
+	private final static String P_NL = "nl"; //$NON-NLS-1$
+	private final static String P_ARCH = "arch"; //$NON-NLS-1$
+	private final static String P_INSTALL_SIZE = "install-size"; //$NON-NLS-1$
+	private final static String P_DOWNLOAD_SIZE = "download-size"; //$NON-NLS-1$
 
 	public FeatureEntryPropertySource(IFeatureEntry entry) {
 		super(entry);
@@ -96,16 +96,16 @@ public class FeatureEntryPropertySource extends FeaturePropertySource {
 		if (name.equals(P_INSTALL_SIZE)) {
 			long installSize = getEntry().getInstallSize();
 			if (installSize == -1)
-				return "";
+				return ""; //$NON-NLS-1$
 			else
-				return "" + installSize;
+				return "" + installSize; //$NON-NLS-1$
 		}
 		if (name.equals(P_DOWNLOAD_SIZE)) {
 			long downloadSize = getEntry().getDownloadSize();
 			if (downloadSize == -1)
-				return "";
+				return ""; //$NON-NLS-1$
 			else
-				return "" + downloadSize;
+				return "" + downloadSize; //$NON-NLS-1$
 		}
 		if (name.equals(P_OS)) {
 			return getEntry().getOS();

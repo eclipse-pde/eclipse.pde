@@ -22,15 +22,15 @@ import org.eclipse.ui.views.properties.*;
 public class ReferencePropertySource extends FeatureEntryPropertySource {
 	private IPluginBase pluginBase;
 	private Image errorImage;
-	public final static String KEY_NAME = "FeatureEditor.ReferenceProp.name";
+	public final static String KEY_NAME = "FeatureEditor.ReferenceProp.name"; //$NON-NLS-1$
 	public final static String KEY_VERSION =
-		"FeatureEditor.ReferenceProp.version";
+		"FeatureEditor.ReferenceProp.version"; //$NON-NLS-1$
 	public final static String KEY_ORIGINAL_VERSION =
-		"FeatureEditor.ReferenceProp.originalVersion";
+		"FeatureEditor.ReferenceProp.originalVersion"; //$NON-NLS-1$
 
-	private final static String P_NAME = "name";
-	private final static String P_VERSION = "version";
-	private final static String P_REF_VERSION = "ref_version";
+	private final static String P_NAME = "name"; //$NON-NLS-1$
+	private final static String P_VERSION = "version"; //$NON-NLS-1$
+	private final static String P_REF_VERSION = "ref_version"; //$NON-NLS-1$
 
 	public class VersionProvider extends LabelProvider {
 		public Image getImage(Object obj) {
@@ -50,7 +50,7 @@ public class ReferencePropertySource extends FeatureEntryPropertySource {
 	private String getOriginalVersion() {
 		IPluginBase pluginBase = getPluginBase();
 		if (pluginBase == null)
-			return "";
+			return ""; //$NON-NLS-1$
 		return pluginBase.getVersion();
 	}
 	private IPluginBase getPluginBase() {

@@ -27,12 +27,12 @@ import org.eclipse.ui.forms.widgets.Section;
 
 public class HandlerSection extends PDESection {
 	public static final String SECTION_TITLE =
-		"FeatureEditor.HandlerSection.title";
+		"FeatureEditor.HandlerSection.title"; //$NON-NLS-1$
 	public static final String SECTION_DESC =
-		"FeatureEditor.HandlerSection.desc";
-	public static final String SECTION_URL = "FeatureEditor.HandlerSection.url";
-	public static final String SECTION_LIBRARY = "FeatureEditor.HandlerSection.library";
-	public static final String SECTION_HANDLER = "FeatureEditor.HandlerSection.handler";
+		"FeatureEditor.HandlerSection.desc"; //$NON-NLS-1$
+	public static final String SECTION_URL = "FeatureEditor.HandlerSection.url"; //$NON-NLS-1$
+	public static final String SECTION_LIBRARY = "FeatureEditor.HandlerSection.library"; //$NON-NLS-1$
+	public static final String SECTION_HANDLER = "FeatureEditor.HandlerSection.handler"; //$NON-NLS-1$
 
 	private FormEntry urlText;
 	private FormEntry libraryText;
@@ -134,8 +134,8 @@ public class HandlerSection extends PDESection {
 		catch (MalformedURLException e) {
 			//TODO translate messages
 			MessageDialog.openError(getPage().getEditor().getEditorSite().getShell(),
-					"Feature Editor",
-					"Invalid URL format: "+value);
+					"Feature Editor", //$NON-NLS-1$
+					PDEPlugin.getFormattedMessage("HandlerSection.invalid", value)); //$NON-NLS-1$
 			setIfDefined(urlText, handler.getURL());
 		}
 	}

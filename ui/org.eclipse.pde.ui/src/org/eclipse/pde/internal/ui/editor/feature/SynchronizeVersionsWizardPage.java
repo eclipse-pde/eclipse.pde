@@ -41,18 +41,18 @@ public class SynchronizeVersionsWizardPage extends WizardPage {
 	private Button useReferencesButton;
 
 	private static final String PREFIX =
-		PDEPlugin.getPluginId() + ".synchronizeVersions.";
-	private static final String PROP_SYNCHRO_MODE = PREFIX + "mode";
-	public static final String PAGE_TITLE = "VersionSyncWizard.title";
-	public static final String KEY_GROUP = "VersionSyncWizard.group";
-	public static final String KEY_USE_COMPONENT = "VersionSyncWizard.useComponent";
-	public static final String KEY_USE_PLUGINS = "VersionSyncWizard.usePlugins";
-	public static final String KEY_USE_REFERENCES = "VersionSyncWizard.useReferences";
-	public static final String KEY_SYNCHRONIZING = "VersionSyncWizard.synchronizing";
-	public static final String PAGE_DESC = "VersionSyncWizard.desc";
+		PDEPlugin.getPluginId() + ".synchronizeVersions."; //$NON-NLS-1$
+	private static final String PROP_SYNCHRO_MODE = PREFIX + "mode"; //$NON-NLS-1$
+	public static final String PAGE_TITLE = "VersionSyncWizard.title"; //$NON-NLS-1$
+	public static final String KEY_GROUP = "VersionSyncWizard.group"; //$NON-NLS-1$
+	public static final String KEY_USE_COMPONENT = "VersionSyncWizard.useComponent"; //$NON-NLS-1$
+	public static final String KEY_USE_PLUGINS = "VersionSyncWizard.usePlugins"; //$NON-NLS-1$
+	public static final String KEY_USE_REFERENCES = "VersionSyncWizard.useReferences"; //$NON-NLS-1$
+	public static final String KEY_SYNCHRONIZING = "VersionSyncWizard.synchronizing"; //$NON-NLS-1$
+	public static final String PAGE_DESC = "VersionSyncWizard.desc"; //$NON-NLS-1$
 
 public SynchronizeVersionsWizardPage(FeatureEditor featureEditor) {
-	super("featureJar");
+	super("featureJar"); //$NON-NLS-1$
 	setTitle(PDEPlugin.getResourceString(PAGE_TITLE));
 	setDescription(PDEPlugin.getResourceString(PAGE_DESC));
 	this.featureEditor = featureEditor;

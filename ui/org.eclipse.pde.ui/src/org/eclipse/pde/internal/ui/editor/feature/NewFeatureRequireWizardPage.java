@@ -20,11 +20,11 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.*;
 
 public class NewFeatureRequireWizardPage extends ReferenceWizardPage {
-	public static final String KEY_TITLE = "FeatureEditor.RequiresSection.newPlugin.title";
-	public static final String KEY_DESC = "FeatureEditor.RequiresSection.newPlugin.desc";
-	public static final String KEY_ADDING = "FeatureEditor.RequiresSection.newPlugin.adding";
+	public static final String KEY_TITLE = "FeatureEditor.RequiresSection.newPlugin.title"; //$NON-NLS-1$
+	public static final String KEY_DESC = "FeatureEditor.RequiresSection.newPlugin.desc"; //$NON-NLS-1$
+	public static final String KEY_ADDING = "FeatureEditor.RequiresSection.newPlugin.adding"; //$NON-NLS-1$
 	public static final String KEY_UPDATING =
-		"FeatureEditor.RequiresSection.newPlugin.updating";
+		"FeatureEditor.RequiresSection.newPlugin.updating"; //$NON-NLS-1$
 
 	public NewFeatureRequireWizardPage(IFeatureModel model) {
 		super(model, true);
@@ -69,7 +69,7 @@ public class NewFeatureRequireWizardPage extends ReferenceWizardPage {
 			added.add(fimport);
 			monitor.worked(1);
 		}
-		monitor.subTask("");
+		monitor.subTask(""); //$NON-NLS-1$
 		monitor.setTaskName(PDEPlugin.getResourceString(KEY_UPDATING));
 		feature.addImports((IFeatureImport[])added.toArray(new IFeatureImport[added.size()]));
 		monitor.worked(1);

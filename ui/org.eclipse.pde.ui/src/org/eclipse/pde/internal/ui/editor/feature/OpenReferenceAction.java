@@ -22,7 +22,7 @@ import org.eclipse.ui.actions.*;
 import org.eclipse.ui.ide.*;
 
 public class OpenReferenceAction extends SelectionProviderAction {
-	public static final String LABEL = "Actions.open.label";
+	public static final String LABEL = "Actions.open.label"; //$NON-NLS-1$
 
 public OpenReferenceAction(ISelectionProvider provider) {
 	super(provider, PDEPlugin.getResourceString(LABEL));

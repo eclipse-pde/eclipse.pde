@@ -20,7 +20,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * Feature page.
  */
 public class FeatureFormPage extends PDEFormPage {
-	public static final String PAGE_ID = "feature";
+	public static final String PAGE_ID = "feature"; //$NON-NLS-1$
 	private URLSection urlSection;
 	private FeatureSpecSection specSection;
 	private PortabilitySection portabilitySection;

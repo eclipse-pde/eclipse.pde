@@ -27,7 +27,7 @@ import org.eclipse.ui.help.*;
 
 public class PortabilityChoicesDialog extends Dialog {
 	private static final String KEY_CHOICES =
-		"FeatureEditor.PortabilityChoicesDialog.choices";
+		"FeatureEditor.PortabilityChoicesDialog.choices"; //$NON-NLS-1$
 	private String value;
 	private Choice[] choices;
 	private CheckboxTableViewer choiceViewer;
@@ -103,7 +103,7 @@ public class PortabilityChoicesDialog extends Dialog {
 
 		if (value != null) {
 			Vector selected = new Vector();
-			StringTokenizer stok = new StringTokenizer(value, ",");
+			StringTokenizer stok = new StringTokenizer(value, ","); //$NON-NLS-1$
 			while (stok.hasMoreElements()) {
 				String tok = stok.nextToken();
 				Choice choice = findChoice(tok);
@@ -133,12 +133,12 @@ public class PortabilityChoicesDialog extends Dialog {
 	private String computeNewValue() {
 		Object[] checked = checkboxTablePart.getSelection();
 		if (checked.length == 0)
-			return "";
+			return ""; //$NON-NLS-1$
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < checked.length; i++) {
 			Choice choice = (Choice) checked[i];
 			if (i > 0)
-				buf.append(",");
+				buf.append(","); //$NON-NLS-1$
 			buf.append(choice.getValue());
 		}
 		return buf.toString();

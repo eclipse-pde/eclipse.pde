@@ -48,7 +48,7 @@ public class FeatureMatchSection extends MatchSection {
 		FormToolkit toolkit) {
 		super.createClient(section, toolkit);
 		Composite client = (Composite)section.getClient();
-		patchButton = toolkit.createButton(client, "Patch", SWT.CHECK);
+		patchButton = toolkit.createButton(client, PDEPlugin.getResourceString("FeatureMatchSection.patch"), SWT.CHECK); //$NON-NLS-1$
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		patchButton.setLayoutData(gd);
@@ -116,7 +116,7 @@ public class FeatureMatchSection extends MatchSection {
 		super.update(iimport);
 		if (patchButton == null)
 			return;
-		IFeatureImport fimport = (IFeatureImport) iimport;
+		IFeatureImport fimport = iimport;
 		if (fimport == null || fimport.getType() == IFeatureImport.PLUGIN) {
 			patchButton.setSelection(false);
 			patchButton.setEnabled(false);

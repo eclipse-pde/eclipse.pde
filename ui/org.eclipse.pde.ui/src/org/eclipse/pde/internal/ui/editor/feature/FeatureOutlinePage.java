@@ -20,8 +20,8 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.forms.editor.IFormPage;
 
 public class FeatureOutlinePage extends FormOutlinePage {
-	private static final String KEY_REFERENCED_PLUGINS = "FeatureEditor.Outline.referencedPlugins";
-	private static final String KEY_REQUIRED_PLUGINS = "FeatureEditor.Outline.requiredPlugins";
+	private static final String KEY_REFERENCED_PLUGINS = "FeatureEditor.Outline.referencedPlugins"; //$NON-NLS-1$
+	private static final String KEY_REQUIRED_PLUGINS = "FeatureEditor.Outline.requiredPlugins"; //$NON-NLS-1$
 	private NamedElement referencedPlugins, requiredPlugins;
 	class ContentProvider extends BasicContentProvider {
 		public Object[] getChildren(Object parent) {

@@ -22,9 +22,9 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.ui.PlatformUI;
 public class SynchronizeVersionsAction extends Action {
-	public static final String LABEL = "Actions.synchronizeVersions.label";
-	public static final String DIALOG_TITLE = "FeatureEditor.modelsInUse.title";
-	public static final String DIALOG_MESSAGE = "FeatureEditor.modelsInUse.message";
+	public static final String LABEL = "Actions.synchronizeVersions.label"; //$NON-NLS-1$
+	public static final String DIALOG_TITLE = "FeatureEditor.modelsInUse.title"; //$NON-NLS-1$
+	public static final String DIALOG_MESSAGE = "FeatureEditor.modelsInUse.message"; //$NON-NLS-1$
 	private FeatureEditor activeEditor;
 	public SynchronizeVersionsAction() {
 		setText(PDEPlugin.getResourceString(LABEL));

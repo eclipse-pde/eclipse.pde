@@ -17,7 +17,7 @@ public class FeatureEditorContributor extends PDEFormEditorContributor {
 	private EditorBuildFeatureAction buildAction;
 	private SynchronizeVersionsAction synchronizeAction;
 	public FeatureEditorContributor() {
-		super("&Feature");
+		super("&Feature"); //$NON-NLS-1$
 	}
 	public void contextMenuAboutToShow(IMenuManager mng) {
 		super.contextMenuAboutToShow(mng);

@@ -33,23 +33,23 @@ import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.forms.widgets.Section;
 
 public class URLSection extends PDESection {
-	public static final String SECTION_TITLE = "FeatureEditor.URLSection.title";
-	public static final String POPUP_NEW = "Menus.new.label";
-	public static final String POPUP_DELETE = "Actions.delete.label";
+	public static final String SECTION_TITLE = "FeatureEditor.URLSection.title"; //$NON-NLS-1$
+	public static final String POPUP_NEW = "Menus.new.label"; //$NON-NLS-1$
+	public static final String POPUP_DELETE = "Actions.delete.label"; //$NON-NLS-1$
 	public static final String POPUP_UPDATE_URL =
-		"FeatureEditor.URLSection.updateURL";
+		"FeatureEditor.URLSection.updateURL"; //$NON-NLS-1$
 	public static final String POPUP_DISCOVERY_URL =
-		"FeatureEditor.URLSection.discoveryURL";
-	public static final String SECTION_DESC = "FeatureEditor.URLSection.desc";
+		"FeatureEditor.URLSection.discoveryURL"; //$NON-NLS-1$
+	public static final String SECTION_DESC = "FeatureEditor.URLSection.desc"; //$NON-NLS-1$
 	public static final String NEW_UPDATE_SITE =
-		"FeatureEditor.URLSection.newUpdateSite";
+		"FeatureEditor.URLSection.newUpdateSite"; //$NON-NLS-1$
 	public static final String NEW_DISCOVERY_SITE =
-		"FeatureEditor.URLSection.newDiscoverySite";
+		"FeatureEditor.URLSection.newDiscoverySite"; //$NON-NLS-1$
 	public static final String KEY_UPDATE_URLS =
-		"FeatureEditor.URLSection.updateURLs";
+		"FeatureEditor.URLSection.updateURLs"; //$NON-NLS-1$
 	public static final String KEY_DISCOVERY_URLS =
-		"FeatureEditor.URLSection.discoveryURLs";
-	public static final String NEW_URL = "FeatureEditor.URLSection.newURL";
+		"FeatureEditor.URLSection.discoveryURLs"; //$NON-NLS-1$
+	public static final String NEW_URL = "FeatureEditor.URLSection.newURL"; //$NON-NLS-1$
 
 	private TreeViewer urlTree;
 	private Image urlImage;

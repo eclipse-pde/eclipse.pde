@@ -20,22 +20,22 @@ import org.eclipse.ui.views.properties.*;
 
 public class URLElementPropertySource extends FeaturePropertySource {
 	private Vector descriptors;
-	private final static String P_URL = "url";
-	public final static String KEY_TYPE = "FeatureEditor.URLProp.type";
-	public final static String KEY_SITE_TYPE = "FeatureEditor.URLProp.siteType";
-	public final static String KEY_LABEL = "FeatureEditor.URLProp.label";
-	public final static String KEY_URL = "FeatureEditor.URLProp.URL";
-	private final static String P_TYPE = "type";
-	private final static String P_LABEL = "label";
-	private final static String P_SITE_TYPE = "siteType";
+	private final static String P_URL = "url"; //$NON-NLS-1$
+	public final static String KEY_TYPE = "FeatureEditor.URLProp.type"; //$NON-NLS-1$
+	public final static String KEY_SITE_TYPE = "FeatureEditor.URLProp.siteType"; //$NON-NLS-1$
+	public final static String KEY_LABEL = "FeatureEditor.URLProp.label"; //$NON-NLS-1$
+	public final static String KEY_URL = "FeatureEditor.URLProp.URL"; //$NON-NLS-1$
+	private final static String P_TYPE = "type"; //$NON-NLS-1$
+	private final static String P_LABEL = "label"; //$NON-NLS-1$
+	private final static String P_SITE_TYPE = "siteType"; //$NON-NLS-1$
 	private final static String[] elementTypes =
 		{
 			null,
-			PDEPlugin.getResourceString("FeatureEditor.URLProp.type.update"),
+			PDEPlugin.getResourceString("FeatureEditor.URLProp.type.update"), //$NON-NLS-1$
 			PDEPlugin.getResourceString(
-				"FeatureEditor.URLProp.type.discovery")};
+				"FeatureEditor.URLProp.type.discovery")}; //$NON-NLS-1$
 
-	private final static String[] siteTypes = { "update", "web" };
+	private final static String[] siteTypes = { "update", "web" }; //$NON-NLS-1$ //$NON-NLS-2$
 
 	public URLElementPropertySource(IFeatureURLElement element) {
 		super(element);

@@ -23,8 +23,8 @@ import org.eclipse.ui.help.WorkbenchHelp;
  *  
  */
 public class FeatureReferencePage extends PDEFormPage {
-	public static final String PAGE_ID = "reference";
-	private static final String KEY_HEADING = "FeatureEditor.ReferencePage.heading";
+	public static final String PAGE_ID = "reference"; //$NON-NLS-1$
+	private static final String KEY_HEADING = "FeatureEditor.ReferencePage.heading"; //$NON-NLS-1$
 	private PluginSection pluginSection;
 	private RequiresSection requiresSection;
 	private FeatureMatchSection matchSection;

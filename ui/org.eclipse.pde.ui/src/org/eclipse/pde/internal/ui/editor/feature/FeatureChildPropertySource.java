@@ -20,23 +20,23 @@ import org.eclipse.ui.views.properties.*;
 
 public class FeatureChildPropertySource extends FeaturePropertySource {
 	protected Vector descriptors;
-	public final static String KEY_ID = "FeatureEditor.ChildProp.id";
-	public final static String KEY_VERSION = "FeatureEditor.ChildProp.version";
+	public final static String KEY_ID = "FeatureEditor.ChildProp.id"; //$NON-NLS-1$
+	public final static String KEY_VERSION = "FeatureEditor.ChildProp.version"; //$NON-NLS-1$
 	public final static String KEY_OPTIONAL =
-		"FeatureEditor.ChildProp.optional";
-	public final static String KEY_MATCH = "FeatureEditor.ChildProp.match";
-	public final static String KEY_NAME = "FeatureEditor.ChildProp.name";
+		"FeatureEditor.ChildProp.optional"; //$NON-NLS-1$
+	public final static String KEY_MATCH = "FeatureEditor.ChildProp.match"; //$NON-NLS-1$
+	public final static String KEY_NAME = "FeatureEditor.ChildProp.name"; //$NON-NLS-1$
 	public final static String KEY_SEARCH_LOCATION =
-		"FeatureEditor.ChildProp.search-location";
-	private final static String P_ID = "id";
-	private final static String P_VERSION = "version";
-	private final static String P_OPTIONAL = "optional";
-	private final static String P_MATCH = "match";
-	private final static String P_NAME = "name";
-	private final static String P_SEARCH_LOCATION = "search-location";
-	private final static String P_OS = "os";
-	private final static String P_WS = "ws";
-	private final static String P_ARCH = "arch";
+		"FeatureEditor.ChildProp.search-location"; //$NON-NLS-1$
+	private final static String P_ID = "id"; //$NON-NLS-1$
+	private final static String P_VERSION = "version"; //$NON-NLS-1$
+	private final static String P_OPTIONAL = "optional"; //$NON-NLS-1$
+	private final static String P_MATCH = "match"; //$NON-NLS-1$
+	private final static String P_NAME = "name"; //$NON-NLS-1$
+	private final static String P_SEARCH_LOCATION = "search-location"; //$NON-NLS-1$
+	private final static String P_OS = "os"; //$NON-NLS-1$
+	private final static String P_WS = "ws"; //$NON-NLS-1$
+	private final static String P_ARCH = "arch"; //$NON-NLS-1$
 
 	public FeatureChildPropertySource(IFeatureChild child) {
 		super(child);
@@ -71,13 +71,13 @@ public class FeatureChildPropertySource extends FeaturePropertySource {
 			createChoicePropertyDescriptor(
 				P_OPTIONAL,
 				PDEPlugin.getResourceString(KEY_OPTIONAL),
-				new String[] { "false", "true" });
+				new String[] { "false", "true" }); //$NON-NLS-1$ //$NON-NLS-2$
 		descriptors.addElement(desc);
 		desc =
 			createChoicePropertyDescriptor(
 				P_SEARCH_LOCATION,
 				PDEPlugin.getResourceString(KEY_SEARCH_LOCATION),
-				new String[] { "root", "self", "both" });
+				new String[] { "root", "self", "both" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		descriptors.addElement(desc);
 		// Hiding this support for 2.1
 		/*
@@ -160,7 +160,7 @@ public class FeatureChildPropertySource extends FeaturePropertySource {
 	}
 
 	private String getNonzeroValue(Object obj) {
-		return obj != null ? obj.toString() : "";
+		return obj != null ? obj.toString() : ""; //$NON-NLS-1$
 	}
 
 	public void setElement(IFeatureEntry entry) {

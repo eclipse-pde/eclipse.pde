@@ -19,11 +19,11 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.*;
 
 public class NewFeaturePluginWizardPage extends ReferenceWizardPage {
-	public static final String KEY_TITLE = "FeatureEditor.PluginSection.new.title";
-	public static final String KEY_DESC = "FeatureEditor.PluginSection.new.desc";
-	public static final String KEY_ADDING = "FeatureEditor.PluginSection.new.adding";
+	public static final String KEY_TITLE = "FeatureEditor.PluginSection.new.title"; //$NON-NLS-1$
+	public static final String KEY_DESC = "FeatureEditor.PluginSection.new.desc"; //$NON-NLS-1$
+	public static final String KEY_ADDING = "FeatureEditor.PluginSection.new.adding"; //$NON-NLS-1$
 	public static final String KEY_UPDATING =
-		"FeatureEditor.PluginSection.new.updating";
+		"FeatureEditor.PluginSection.new.updating"; //$NON-NLS-1$
 
 	public NewFeaturePluginWizardPage(IFeatureModel model) {
 		super(model, false);
@@ -57,7 +57,7 @@ public class NewFeaturePluginWizardPage extends ReferenceWizardPage {
 			added[i] = fplugin;
 			monitor.worked(1);
 		}
-		monitor.subTask("");
+		monitor.subTask(""); //$NON-NLS-1$
 		monitor.setTaskName(PDEPlugin.getResourceString(KEY_UPDATING));
 		feature.addPlugins(added);
 		monitor.worked(1);

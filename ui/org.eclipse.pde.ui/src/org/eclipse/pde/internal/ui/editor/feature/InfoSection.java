@@ -36,16 +36,16 @@ import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.forms.widgets.Section;
 
 public class InfoSection extends PDESection {
-	private static final String KEY_APPLY = "Actions.apply.flabel";
-	private static final String KEY_RESET = "Actions.reset.flabel";
-	private static final String SECTION_DESC = "FeatureEditor.InfoSection.desc";
-	private static final String KEY_URL = "FeatureEditor.InfoSection.url";
-	private static final String KEY_TEXT = "FeatureEditor.InfoSection.text";
+	private static final String KEY_APPLY = "Actions.apply.flabel"; //$NON-NLS-1$
+	private static final String KEY_RESET = "Actions.reset.flabel"; //$NON-NLS-1$
+	private static final String SECTION_DESC = "FeatureEditor.InfoSection.desc"; //$NON-NLS-1$
+	private static final String KEY_URL = "FeatureEditor.InfoSection.url"; //$NON-NLS-1$
+	private static final String KEY_TEXT = "FeatureEditor.InfoSection.text"; //$NON-NLS-1$
 	private static final String KEY_INFO_DESCRIPTION =
-		"FeatureEditor.info.description";
-	private static final String KEY_INFO_LICENSE = "FeatureEditor.info.license";
+		"FeatureEditor.info.description"; //$NON-NLS-1$
+	private static final String KEY_INFO_LICENSE = "FeatureEditor.info.license"; //$NON-NLS-1$
 	private static final String KEY_INFO_COPYRIGHT =
-		"FeatureEditor.info.copyright";
+		"FeatureEditor.info.copyright"; //$NON-NLS-1$
 	private IDocument document;
 	private IDocumentPartitioner partitioner;
 	private SourceViewerConfiguration sourceConfiguration;
@@ -150,7 +150,7 @@ public class InfoSection extends PDESection {
 		styledText.setMenu(getPage().getPDEEditor().getContextMenu());
 		styledText.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
 
-		if (SWT.getPlatform().equals("motif") == false)
+		if (SWT.getPlatform().equals("motif") == false) //$NON-NLS-1$
 			toolkit.paintBordersFor(container);
 		Control[] children = container.getChildren();
 		Control control = children[children.length - 1];
@@ -399,7 +399,7 @@ public class InfoSection extends PDESection {
 			commitPrevious();
 		}
 		ignoreChange = true;
-		String text = "";
+		String text = ""; //$NON-NLS-1$
 		String url = null;
 		if (input instanceof IFeatureInfo) {
 			IFeatureInfo info = (IFeatureInfo) input;
@@ -407,12 +407,12 @@ public class InfoSection extends PDESection {
 			url = info.getURL();
 		}
 		if (text == null)
-			text = "";
+			text = ""; //$NON-NLS-1$
 		else
 			text = TextUtil.createMultiLine(text, 60, false);
 		document.set(text);
 		if (url == null)
-			urlText.setText("");
+			urlText.setText(""); //$NON-NLS-1$
 		else
 			urlText.setText(url.toString());
 		applyButton.setEnabled(false);

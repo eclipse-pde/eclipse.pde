@@ -30,21 +30,21 @@ import org.eclipse.ui.forms.widgets.*;
 
 public class PortabilitySection extends PDESection implements IPartSelectionListener {
 	public static final String KEY_DIALOG_TITLE =
-		"FeatureEditor.PortabilityChoicesDialog.title";
+		"FeatureEditor.PortabilityChoicesDialog.title"; //$NON-NLS-1$
 	public static final String SECTION_TITLE =
-		"FeatureEditor.PortabilitySection.title";
+		"FeatureEditor.PortabilitySection.title"; //$NON-NLS-1$
 	public static final String SECTION_DESC =
-		"FeatureEditor.PortabilitySection.desc";
+		"FeatureEditor.PortabilitySection.desc"; //$NON-NLS-1$
 	public static final String SECTION_OS =
-		"FeatureEditor.PortabilitySection.os";
+		"FeatureEditor.PortabilitySection.os"; //$NON-NLS-1$
 	public static final String SECTION_WS =
-		"FeatureEditor.PortabilitySection.ws";
+		"FeatureEditor.PortabilitySection.ws"; //$NON-NLS-1$
 	public static final String SECTION_NL =
-		"FeatureEditor.PortabilitySection.nl";
+		"FeatureEditor.PortabilitySection.nl"; //$NON-NLS-1$
 	public static final String SECTION_ARCH =
-		"FeatureEditor.PortabilitySection.arch";
+		"FeatureEditor.PortabilitySection.arch"; //$NON-NLS-1$
 	public static final String SECTION_EDIT =
-		"FeatureEditor.PortabilitySection.edit";
+		"FeatureEditor.PortabilitySection.edit"; //$NON-NLS-1$
 
 	private FormEntry osText;
 	private FormEntry wsText;

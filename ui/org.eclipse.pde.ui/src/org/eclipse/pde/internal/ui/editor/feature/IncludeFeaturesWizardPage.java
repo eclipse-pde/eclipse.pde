@@ -32,13 +32,13 @@ import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.help.*;
 
 public class IncludeFeaturesWizardPage extends WizardPage {
-	public static final String KEY_TITLE = "FeatureEditor.IncludedFeaturesSection.new.title";
-	public static final String KEY_DESC = "FeatureEditor.IncludedFeaturesSection.new.desc";
+	public static final String KEY_TITLE = "FeatureEditor.IncludedFeatures.newTitle"; //$NON-NLS-1$
+	public static final String KEY_DESC = "FeatureEditor.IncludedFeatures.newDesc"; //$NON-NLS-1$
 	public static final String KEY_FEATURES =
-		"FeatureEditor.IncludedFeaturesSection.new.label";
-	public static final String KEY_ADDING = "FeatureEditor.IncludedFeaturesSection.new.adding";
+		"FeatureEditor.IncludedFeatures.label"; //$NON-NLS-1$
+	public static final String KEY_ADDING = "FeatureEditor.IncludedFeatures.adding"; //$NON-NLS-1$
 	public static final String KEY_UPDATING =
-		"FeatureEditor.IncludedFeaturesSection.new.updating";
+		"FeatureEditor.IncludedFeatures.updating"; //$NON-NLS-1$
 	private IFeatureModel model;
 	private TablePart checkboxTablePart;
 	private CheckboxTableViewer pluginViewer;
@@ -71,7 +71,7 @@ public class IncludeFeaturesWizardPage extends WizardPage {
 	}
 
 	public IncludeFeaturesWizardPage(IFeatureModel model) {
-		super("IncludeFeaturesPage");
+		super("IncludeFeaturesPage"); //$NON-NLS-1$
 		this.model = model;
 		setTitle(PDEPlugin.getResourceString(KEY_TITLE));
 		setDescription(PDEPlugin.getResourceString(KEY_DESC));
@@ -188,7 +188,7 @@ public class IncludeFeaturesWizardPage extends WizardPage {
 			added[i] = child;
 			monitor.worked(1);
 		}
-		monitor.subTask("");
+		monitor.subTask(""); //$NON-NLS-1$
 		monitor.setTaskName(PDEPlugin.getResourceString(KEY_UPDATING));
 		feature.addIncludedFeatures(added);
 		monitor.worked(1);

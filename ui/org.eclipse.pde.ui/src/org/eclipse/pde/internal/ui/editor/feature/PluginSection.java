@@ -40,13 +40,13 @@ public class PluginSection
 	extends TableSection
 	implements IModelProviderListener {
 	private static final String PLUGIN_TITLE =
-		"FeatureEditor.PluginSection.pluginTitle";
+		"FeatureEditor.PluginSection.pluginTitle"; //$NON-NLS-1$
 	private static final String PLUGIN_DESC =
-		"FeatureEditor.PluginSection.pluginDesc";
-	private static final String KEY_NEW = "FeatureEditor.PluginSection.new";
-	public static final String POPUP_NEW = "Menus.new.label";
-	public static final String POPUP_OPEN = "Actions.open.label";
-	public static final String POPUP_DELETE = "Actions.delete.label";
+		"FeatureEditor.PluginSection.pluginDesc"; //$NON-NLS-1$
+	private static final String KEY_NEW = "FeatureEditor.PluginSection.new"; //$NON-NLS-1$
+	public static final String POPUP_NEW = "Menus.new.label"; //$NON-NLS-1$
+	public static final String POPUP_OPEN = "Actions.open.label"; //$NON-NLS-1$
+	public static final String POPUP_DELETE = "Actions.delete.label"; //$NON-NLS-1$
 	private OpenReferenceAction openAction;
 	private PropertiesAction propertiesAction;
 	private TableViewer pluginViewer;

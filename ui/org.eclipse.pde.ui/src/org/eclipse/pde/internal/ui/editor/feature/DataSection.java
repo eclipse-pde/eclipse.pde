@@ -38,11 +38,11 @@ import org.eclipse.ui.forms.widgets.Section;
 public class DataSection
 	extends TableSection
 	implements IModelProviderListener {
-	private static final String SECTION_TITLE = "FeatureEditor.DataSection.title";
-	private static final String SECTION_DESC = "FeatureEditor.DataSection.desc";
-	private static final String KEY_NEW = "FeatureEditor.DataSection.new";
-	private static final String POPUP_NEW = "Menus.new.label";
-	private static final String POPUP_DELETE = "Actions.delete.label";
+	private static final String SECTION_TITLE = "FeatureEditor.DataSection.title"; //$NON-NLS-1$
+	private static final String SECTION_DESC = "FeatureEditor.DataSection.desc"; //$NON-NLS-1$
+	private static final String KEY_NEW = "FeatureEditor.DataSection.new"; //$NON-NLS-1$
+	private static final String POPUP_NEW = "Menus.new.label"; //$NON-NLS-1$
+	private static final String POPUP_DELETE = "Actions.delete.label"; //$NON-NLS-1$
 	private PropertiesAction propertiesAction;
 	private TableViewer dataViewer;
 	private Action newAction;

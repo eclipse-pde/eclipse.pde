@@ -23,7 +23,7 @@ import org.eclipse.pde.internal.ui.wizards.ResizableWizardDialog;
 import org.eclipse.pde.internal.ui.wizards.exports.FeatureExportWizard;
 import org.eclipse.ui.PlatformUI;
 public class EditorBuildFeatureAction extends Action {
-	public static final String LABEL = "FeatureEditor.BuildAction.label";
+	public static final String LABEL = "FeatureEditor.BuildAction.label"; //$NON-NLS-1$
 	private FeatureEditor activeEditor;
 	private IFile featureFile;
 	public EditorBuildFeatureAction() {

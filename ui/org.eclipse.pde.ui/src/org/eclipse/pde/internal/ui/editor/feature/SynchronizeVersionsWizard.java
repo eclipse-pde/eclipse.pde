@@ -16,7 +16,7 @@ import org.eclipse.pde.internal.ui.*;
 public class SynchronizeVersionsWizard extends Wizard {
 	private FeatureEditor featureEditor;
 	private SynchronizeVersionsWizardPage mainPage;
-	private static final String KEY_WTITLE = "VersionSyncWizard.wtitle";
+	private static final String KEY_WTITLE = "VersionSyncWizard.wtitle"; //$NON-NLS-1$
 
 public SynchronizeVersionsWizard(FeatureEditor featureEditor) {
 	setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWFTRPRJ_WIZ);
