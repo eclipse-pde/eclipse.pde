@@ -84,11 +84,7 @@ public abstract class PluginBase
 		this.name = pd.getName();
 		this.providerName = pd.getProviderName();
 		this.version = pd.getVersion();
-		// TODO load schema version from plug-in model
-		// when available
-		// this.schemaVersion = pd.getSchemaVersion();
-		//
-
+		this.schemaVersion = pd.getSchemaVersion();
 		// add libraries
 		loadRuntime(pd.getRuntime());
 		// add extensions
