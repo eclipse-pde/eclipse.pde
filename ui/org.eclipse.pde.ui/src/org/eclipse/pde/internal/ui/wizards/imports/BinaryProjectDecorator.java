@@ -54,9 +54,9 @@ public class BinaryProjectDecorator
 		Image image = (Image) registry.get(key);
 		if (image == null) {
 			ImageDescriptor desc =
-				external
+				/*external
 					? PDEPluginImages.DESC_EXTERNAL_CO
-					: PDEPluginImages.DESC_BINARY_CO;
+					: */ PDEPluginImages.DESC_BINARY_CO;
 			ImageDescriptor overDesc =
 				new ImageOverlayIcon(srcImage, new ImageDescriptor[][] { {
 				}, {

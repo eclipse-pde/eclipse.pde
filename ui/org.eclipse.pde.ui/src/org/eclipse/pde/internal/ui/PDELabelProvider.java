@@ -266,9 +266,11 @@ public class PDELabelProvider extends SharedLabelProvider {
 						project.getPersistentProperty(
 							PDECore.EXTERNAL_PROJECT_PROPERTY);
 					if (property != null) {
+						/*
 						if (property.equals(PDECore.EXTERNAL_PROJECT_VALUE))
 							flags |= F_EXTERNAL;
 						else if (property.equals(PDECore.BINARY_PROJECT_VALUE))
+						*/
 							flags |= F_BINARY;
 					}
 				}
