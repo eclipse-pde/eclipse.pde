@@ -240,7 +240,7 @@ public abstract class AbstractNewPluginTemplateWizard
 		openPluginFile(file);
 	}
 
-	private void setJavaSettings(IPluginModelBase model, IProgressMonitor monitor) {
+	private void setJavaSettings(IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
 		boolean useContainers = BuildpathPreferencePage.getUseClasspathContainers();
 		ClasspathUtil.setClasspath(model, useContainers, null, monitor);
 	}

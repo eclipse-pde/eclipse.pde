@@ -362,7 +362,7 @@ public class ImportListSection
 		final IPluginModelBase model,
 		final boolean save) {
 		IRunnableWithProgress op = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				monitor.beginTask(PDEPlugin.getResourceString(KEY_UPDATING_BUILD_PATH), 1);
 				try {
 					if (save && getFormPage().getEditor().isDirty()) {
@@ -371,6 +371,8 @@ public class ImportListSection
 					boolean useContainers = BuildpathPreferencePage.getUseClasspathContainers();
 					ClasspathUtil.setClasspath(model, useContainers, null, monitor);
 					monitor.worked(1);
+				} catch (CoreException e) {
+					throw new InvocationTargetException(e);
 				} finally {
 					monitor.done();
 				}
