@@ -11,6 +11,7 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import java.util.*;
 import org.eclipse.ui.*;
+import org.eclipse.jface.resource.*;
 
 
 public class Form implements PaintListener {
@@ -58,7 +59,11 @@ public class Form implements PaintListener {
 public Form() {
 	//factory = new DialogWidgetFactory();
 	factory = new FormWidgetFactory();
-	titleFont = factory.getTitleFont();
+	if (SWT.getPlatform().equals("motif")) {
+	   titleFont = JFaceResources.getBannerFont();
+	}
+	else
+	   titleFont = factory.getTitleFont();
 }
 private boolean canPerformDirectly(String id, Control control) {
 	if (control instanceof Text) {
@@ -170,7 +175,7 @@ public String getTitle() {
 }
 private int getTitleHeight() {
 	int imageHeight = 0;
-	if (headingImage!=null) {
+	if (headingImage!=null && SWT.getPlatform().equals("motif")==false) {
 		imageHeight = headingImage.getBounds().height;
 	}
 	GC gc = new GC(control);
@@ -209,13 +214,9 @@ private void paint(Control form, GC gc) {
 			gc.setBackground(headingBackground);
 			gc.fillRectangle(0, 0, bounds.width, height);
 		}
-	    gc.drawImage(headingImage, x, y);
-	    if (SWT.getPlatform().equals("motif")) {
-	       gc.setForeground(form.getDisplay().getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
-	       gc.drawLine(x, imageBounds.height-2, bounds.width, imageBounds.height-2);
-	       gc.setForeground(form.getDisplay().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
-           gc.drawLine(x, imageBounds.height-1, bounds.width, imageBounds.height-1);
-	    }
+		if (SWT.getPlatform().equals("motif")==false) {
+	       gc.drawImage(headingImage, x, y);
+		}
 		if (headingForeground != null)
 			gc.setForeground(headingForeground);
 		else

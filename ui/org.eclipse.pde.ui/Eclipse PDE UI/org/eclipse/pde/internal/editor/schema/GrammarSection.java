@@ -123,7 +123,8 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 
 	Control tree = createTree(container);
 	GridData gd = new GridData(GridData.FILL_BOTH);
-	gd.heightHint = 150;
+	if (SWT.getPlatform().equals("motif")==false)
+	   gd.heightHint = 150;
 	//gd.widthHint = 200;
 	tree.setLayoutData(gd);
 

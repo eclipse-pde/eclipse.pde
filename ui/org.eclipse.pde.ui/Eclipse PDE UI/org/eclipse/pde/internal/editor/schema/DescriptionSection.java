@@ -87,11 +87,12 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	sourceViewer.setEditable(isEditable());
 	Control styledText= sourceViewer.getTextWidget();
 	styledText.setFont(JFaceResources.getFontRegistry().get(JFaceResources.TEXT_FONT));
-	factory.paintBordersFor(container);
+	if (SWT.getPlatform().equals("motif")==false)
+	   factory.paintBordersFor(container);
 	Control [] children = container.getChildren();
 	Control control = children[children.length-1];
 	gd = new GridData(GridData.FILL_BOTH);
-	gd.heightHint = 64;
+    gd.heightHint = 64;
 	control.setLayoutData(gd);
 	
 	Composite buttonContainer = factory.createComposite(container);

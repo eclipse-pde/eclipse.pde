@@ -55,6 +55,7 @@ public abstract class PDEMultiPageEditor extends EditorPart implements ISelectio
 
 public PDEMultiPageEditor() {
 	formWorkbook = new CustomWorkbook();
+	formWorkbook.setFirstPageSelected(false);
 	pages = new Vector();
 	createPages();
 }
@@ -128,8 +129,8 @@ public void createPartControl(Composite parent) {
 		IFormPage page = (IFormPage) iter.next();
 		formWorkbook.addPage(page);
 	}
-	if (firstPageId != null)
-		showPage(firstPageId);
+    if (firstPageId != null)
+	    showPage(firstPageId);
 }
 public void dispose() {
 	setSelection(new StructuredSelection());

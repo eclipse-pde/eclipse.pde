@@ -55,10 +55,6 @@ public class ElementSection
 				return "";
 			ISchemaObject sobj = (ISchemaObject) object;
 			String text = sobj.getName();
-			/*
-			if (sobj instanceof ISchemaAttribute)
-			   text = " - "+text;
-			*/
 			return text != null ? text : "";
 		}
 		public Image getImage(Object object) {
@@ -120,7 +116,6 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	layout.numColumns = 2;
 	container.setLayout(layout);
 
-	//Control control = createTableTree(container, factory);
 	Control control = createTree(container, factory);
 	GridData gd = new GridData(GridData.FILL_BOTH);
 	control.setLayoutData(gd);
@@ -267,7 +262,6 @@ private void handleNewElement() {
 public void initialize(Object input) {
 	initializeImages();
 	this.schema = (Schema)input;
-	//tableTreeViewer.setInput(input);
 	treeViewer.setInput(input);
 	schema.addModelChangedListener(this);
 }
@@ -313,7 +307,6 @@ public void selectionChanged(SelectionChangedEvent event) {
 	updateButtons();
 }
 public void setFocus() {
-	//tableTreeViewer.getTableTree().getTable().setFocus();
 	treeViewer.getTree().setFocus();
 	getFormPage().setSelection(treeViewer.getSelection());
 }

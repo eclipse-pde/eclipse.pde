@@ -156,7 +156,8 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 		}
 	});
 
-	factory.paintBordersFor(container);
+	if (SWT.getPlatform().equals("motif")==false)
+	   factory.paintBordersFor(container);
 	return container;
 }
 private Control createTree(Composite parent) {

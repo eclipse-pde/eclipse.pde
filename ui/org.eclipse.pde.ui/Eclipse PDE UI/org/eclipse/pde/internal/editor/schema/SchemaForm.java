@@ -27,7 +27,7 @@ public SchemaForm(SchemaFormPage page) {
 	this.page = page;
 	//setWidthHint(600);
 	colorManager = new ColorManager();
-	setScrollable(false);
+   setScrollable(false);
 }
 protected void createFormClient(Composite parent) {
 	FormWidgetFactory factory = getFactory();
@@ -35,8 +35,6 @@ protected void createFormClient(Composite parent) {
 	layout.numColumns = 2;
 	layout.marginWidth = 10;
 	layout.horizontalSpacing=15;
-	//layout.makeColumnsEqualWidth=true;
-	//layout.marginWidth = 15;
 	parent.setLayout(layout);
 
 	GridData gd;
@@ -47,7 +45,6 @@ protected void createFormClient(Composite parent) {
 	gd = new GridData(GridData.FILL_BOTH);
 	control.setLayoutData(gd);
 
-
 	grammarSection = new GrammarSection(page);
 	control = grammarSection.createControl(parent, factory);
 	gd = new GridData(GridData.FILL_BOTH);
@@ -55,10 +52,13 @@ protected void createFormClient(Composite parent) {
 
 	descriptionSection = new DescriptionSection(page, colorManager);
 	control = descriptionSection.createControl(parent, factory);
-	gd = new GridData(GridData.FILL_BOTH);
+	if (SWT.getPlatform().equals("motif"))
+	   gd = new GridData(GridData.FILL_HORIZONTAL
+	                            | GridData.VERTICAL_ALIGN_BEGINNING);
+	else 
+	   gd = new GridData(GridData.FILL_BOTH);
 	gd.horizontalSpan = 2;
 	control.setLayoutData(gd);
-
 
 	// wire sections
 	SectionChangeManager manager = new SectionChangeManager();

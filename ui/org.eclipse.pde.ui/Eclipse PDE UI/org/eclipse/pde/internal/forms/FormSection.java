@@ -29,6 +29,12 @@ public abstract class FormSection {
 	private int heightHint=SWT.DEFAULT;
 
 public FormSection() {
+	// Description causes problems re word wrapping
+	// and causes bad layout in schema and
+	// component editors on Linux - turning off
+	if (SWT.getPlatform().equals("motif")) {
+		descriptionPainted = false;
+	}
 }
 public void commitChanges(boolean onSave) {
 }

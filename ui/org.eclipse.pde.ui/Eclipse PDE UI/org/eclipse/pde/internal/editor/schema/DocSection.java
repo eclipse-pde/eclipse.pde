@@ -88,7 +88,12 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	container.setLayout(layout);
 	GridData gd;
 
-	sectionCombo = new CCombo(container, SWT.FLAT | SWT.READ_ONLY);
+	int comboStyle = SWT.READ_ONLY;
+	if (SWT.getPlatform().equals("motif")==false)
+	   comboStyle |= SWT.FLAT;
+	else
+	   comboStyle |= SWT.BORDER;
+	sectionCombo = new CCombo(container, comboStyle);
 	sectionCombo.setBackground(factory.getBackgroundColor());
 	gd = new GridData(GridData.FILL_HORIZONTAL);
 	sectionCombo.setLayoutData(gd);
@@ -101,7 +106,8 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	sourceViewer.setEditable(isEditable());
 	StyledText styledText= sourceViewer.getTextWidget();
 	styledText.setFont(JFaceResources.getTextFont());
-	factory.paintBordersFor(container);
+	if (SWT.getPlatform().equals("motif")==false)
+	   factory.paintBordersFor(container);
 	Control [] children = container.getChildren();
 	Control control = children[children.length-1];
 	gd = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
