@@ -16,14 +16,17 @@ import org.eclipse.core.runtime.IPath;
 public class SourceLocation {
 	private IPath path;
 	private boolean userDefined = true;
+	private boolean enabled;
 
-	public SourceLocation(IPath path) {
+	public SourceLocation(IPath path, boolean enabled) {
 		this.path = path;
+		this.enabled = enabled;
 	}
 
 	public SourceLocation(IConfigurationElement config) {
 		initialize(config);
 		userDefined = false;
+		this.enabled = true;
 	}
 
 	public IPath getPath() {
@@ -37,7 +40,7 @@ public class SourceLocation {
 	public String toString() {
 		return path.toOSString();
 	}
-
+	
 	private void initialize(IConfigurationElement config) {
 		String pathName = config.getAttribute("path");
 		if (pathName != null) {
@@ -53,4 +56,20 @@ public class SourceLocation {
 			}
 		}
 	}
+	/**
+	 * Gets the enabled.
+	 * @return Returns a boolean
+	 */
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	/**
+	 * Sets the enabled.
+	 * @param enabled The enabled to set
+	 */
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+
 }

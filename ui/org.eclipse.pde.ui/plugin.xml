@@ -66,14 +66,12 @@
             class="org.eclipse.pde.internal.ui.preferences.TargetEnvironmentPreferencePage"
             id="org.eclipse.pde.ui.TargetEnvironmentPreferencePage">
       </page>
-<!--
       <page
             name="%preferences.source.name"
             category="org.eclipse.pde.ui.MainPreferencePage"
             class="org.eclipse.pde.internal.ui.preferences.SourcePreferencePage"
             id="org.eclipse.pde.ui.SourcePreferencePage">
       </page>
--->
       <page
             name="%preferences.buildpath.name"
             category="org.eclipse.pde.ui.MainPreferencePage"
@@ -828,6 +826,23 @@
             class="org.eclipse.pde.internal.ui.wizards.templates.HelpTemplate"
             id="org.eclipse.pde.ui.templates.help">
       </template>
+   </extension>
+   <extension
+         point="org.eclipse.jdt.ui.javaElementFilters">
+      <filter
+            viewId="org.eclipse.jdt.ui.PackageExplorer"
+            name="%binaryFilter.name"
+            enabled="false"
+            class="org.eclipse.pde.internal.ui.wizards.imports.BinaryProjectFilter"
+            id="org.eclipse.pde.ui.BinaryProjectFilter1">
+      </filter>
+      <filter
+            viewId="org.eclipse.jdt.ui.ProjectsView"
+            name="%binaryFilter.name"
+            enabled="false"
+            class="org.eclipse.pde.internal.ui.wizards.imports.BinaryProjectFilter"
+            id="org.eclipse.pde.ui.BinaryProjectFilter2">
+      </filter>
    </extension>
 
 </plugin>

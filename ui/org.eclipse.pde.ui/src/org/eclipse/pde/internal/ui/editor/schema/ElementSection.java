@@ -134,7 +134,7 @@ protected void fillContextMenu(IMenuManager manager) {
 			manager.add(new Separator());
 			Action deleteAction = new Action() {
 				public void run() {
-					handleDelete(selection);
+					handleDelete((IStructuredSelection)selection);
 				}
 			};
 			deleteAction.setText(PDEPlugin.getResourceString(POPUP_DELETE));
@@ -192,6 +192,7 @@ public void initialize(Object input) {
 	this.schema = (Schema)input;
 	treeViewer.setInput(input);
 	schema.addModelChangedListener(this);
+	getTreePart().setButtonEnabled(1, false);
 }
 
 public void modelChanged(IModelChangedEvent e) {

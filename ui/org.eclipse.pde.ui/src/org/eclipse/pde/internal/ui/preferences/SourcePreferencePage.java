@@ -9,6 +9,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.pde.internal.ui.util.*;
 import org.eclipse.pde.internal.ui.util.OverlayIcon;
@@ -30,11 +31,14 @@ public class SourcePreferencePage
 	extends PreferencePage
 	implements IWorkbenchPreferencePage {
 	private static final String KEY_LABEL = "SourcePreferencePage.label";
+	public static final String KEY_SELECT_ALL = "WizardCheckboxTablePart.selectAll";
+	public static final String KEY_DESELECT_ALL =
+		"WizardCheckboxTablePart.deselectAll";
 	private static final String KEY_ADD = "SourcePreferencePage.add";
 	private static final String KEY_DELETE = "SourcePreferencePage.delete";
 	private static final String KEY_DESC = "SourcePreferencePage.desc";
-	private TablePart tablePart;
-	private TableViewer tableViewer;
+	private CheckboxTablePart tablePart;
+	private CheckboxTableViewer tableViewer;
 	private ArrayList userLocations;
 	private Image extensionImage;
 	private Image userImage;
@@ -63,15 +67,27 @@ public class SourcePreferencePage
 		}
 	}
 
-	class LocationPart extends TablePart {
+	class LocationPart extends CheckboxTablePart {
 		public LocationPart(String[] buttonLabels) {
 			super(buttonLabels);
 		}
 		protected void buttonSelected(Button button, int index) {
-			if (index == 0)
-				handleAdd();
-			else if (index == 1)
-				handleDelete();
+			switch (index) {
+				case 0:
+					selectAll(true);
+					break;
+				case 1:
+					selectAll(false);
+					break;
+				case 2: // nothing
+					break;
+				case 3:
+					handleAdd();
+					break;
+				case 4:
+					handleDelete();
+					break;
+			}
 		}
 		protected Button createButton(
 			Composite parent,
@@ -102,7 +118,7 @@ public class SourcePreferencePage
 					break;
 				}
 			}
-			tablePart.setButtonEnabled(1, enabled);
+			tablePart.setButtonEnabled(4, enabled);
 		}
 	}
 
@@ -110,6 +126,9 @@ public class SourcePreferencePage
 		tablePart =
 			new LocationPart(
 				new String[] {
+					PDEPlugin.getResourceString(KEY_SELECT_ALL),
+					PDEPlugin.getResourceString(KEY_DESELECT_ALL),
+					null,
 					PDEPlugin.getResourceString(KEY_ADD),
 					PDEPlugin.getResourceString(KEY_DELETE)});
 		extensionImage =
@@ -145,6 +164,7 @@ public class SourcePreferencePage
 	private void store() {
 		SourceLocationManager mng =
 			PDEPlugin.getDefault().getSourceLocationManager();
+		transferSelections();
 		mng.setUserLocations(userLocations);
 	}
 
@@ -160,6 +180,7 @@ public class SourcePreferencePage
 	public void performDefaults() {
 		load();
 		tableViewer.refresh();
+		initializeStates();
 		super.performDefaults();
 	}
 
@@ -184,15 +205,20 @@ public class SourcePreferencePage
 			userArray.length);
 		return merged;
 	}
+	
+	private void selectAll(boolean selected) {
+		tableViewer.setAllChecked(selected);
+	}
 
 	private void handleAdd() {
 		DirectoryDialog dd =
 			new DirectoryDialog(tableViewer.getControl().getShell());
 		String path = dd.open();
 		if (path != null) {
-			SourceLocation location = new SourceLocation(new Path(path));
+			SourceLocation location = new SourceLocation(new Path(path), true);
 			userLocations.add(location);
 			tableViewer.add(location);
+			tableViewer.setChecked(location, location.isEnabled());
 		}
 	}
 
@@ -217,13 +243,46 @@ public class SourcePreferencePage
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		container.setLayout(layout);
+		tablePart.setMinimumSize(150, 200);
 		tablePart.createControl(container, SWT.BORDER, 2, null);
 		tableViewer = tablePart.getTableViewer();
 		tableViewer.setContentProvider(new SourceProvider());
 		tableViewer.setLabelProvider(new SourceLabelProvider());
 		load();
 		tableViewer.setInput(this);
-		tablePart.setButtonEnabled(1, false);
+		initializeStates();
+		tablePart.setButtonEnabled(4, false);
 		return container;
+	}
+	
+	private void initializeStates() {
+		SourceLocationManager mng =
+			PDEPlugin.getDefault().getSourceLocationManager();
+		Object[] extensionLocations = mng.getExtensionLocations();
+		ArrayList selected = new ArrayList();
+		for (int i=0; i<extensionLocations.length; i++) {
+			SourceLocation loc = (SourceLocation)extensionLocations[i];
+			if (loc.isEnabled())
+				selected.add(loc);
+		}
+		for (int i=0; i<userLocations.size(); i++) {
+			SourceLocation loc = (SourceLocation)userLocations.get(i);
+			if (loc.isEnabled())
+				selected.add(loc);
+		}
+		tableViewer.setCheckedElements(selected.toArray());
+	}
+	private void transferSelections() {
+		SourceLocationManager mng =
+			PDEPlugin.getDefault().getSourceLocationManager();
+		Object[] extensionLocations = mng.getExtensionLocations();
+		for (int i=0; i<extensionLocations.length; i++) {
+			SourceLocation loc = (SourceLocation)extensionLocations[i];
+			loc.setEnabled(tableViewer.getChecked(loc));
+		}
+		for (int i=0; i<userLocations.size(); i++) {
+			SourceLocation loc = (SourceLocation)userLocations.get(i);
+			loc.setEnabled(tableViewer.getChecked(loc));
+		}
 	}
 }

@@ -33,6 +33,11 @@ public class CheckboxTablePart extends StructuredViewerPart {
 			style |= FormWidgetFactory.BORDER_STYLE;
 		}
 		CheckboxTableViewer	tableViewer = CheckboxTableViewer.newCheckList(parent, style);
+		tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent e) {
+				CheckboxTablePart.this.selectionChanged((IStructuredSelection)e.getSelection());
+			}
+		});
 		tableViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				elementChecked(event.getElement(), event.getChecked());
@@ -52,5 +57,7 @@ public class CheckboxTablePart extends StructuredViewerPart {
 	}
 	
 	protected void elementChecked(Object element, boolean checked) {
+	}
+	protected void selectionChanged(IStructuredSelection selection) {
 	}
 }
