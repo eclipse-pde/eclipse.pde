@@ -18,7 +18,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-public class JUnitPluginLaunchShortcut extends JUnitLaunchShortcut {	
+public class JUnitWorkbenchShortcut extends JUnitLaunchShortcut {	
 	
 	/**
 	 * Returns the local java launch config type
@@ -34,7 +34,7 @@ public class JUnitPluginLaunchShortcut extends JUnitLaunchShortcut {
 		try {
 			ILaunchConfigurationType configType= getJUnitLaunchConfigType();
 			ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, getLaunchManager().generateUniqueLaunchConfigurationNameFrom(name));
-			wc.setAttribute(ILauncherSettings.APPLICATION, JUnitLaunchConfiguration.fgDefaultApp);
+			wc.setAttribute(ILauncherSettings.APPLICATION, getApplicationName());
 			wc.setAttribute(ILauncherSettings.LOCATION + "0", LauncherUtils.getJUnitTempWorkspace());
 			wc.setAttribute(ILauncherSettings.VMARGS, "");
 			wc.setAttribute(ILauncherSettings.PROGARGS, LauncherUtils.getDefaultProgramArguments());
@@ -56,6 +56,10 @@ public class JUnitPluginLaunchShortcut extends JUnitLaunchShortcut {
 			PDEPlugin.log(ce);
 		}
 		return config;
+	}
+	
+	protected String getApplicationName() {
+		return "org.eclipse.pde.junit.runtime.uitestapplication";
 	}
 
 }
