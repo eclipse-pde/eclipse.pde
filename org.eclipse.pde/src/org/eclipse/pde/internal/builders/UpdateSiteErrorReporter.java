@@ -29,7 +29,7 @@ public class UpdateSiteErrorReporter extends ManifestErrorReporter {
 			for (int i = 0; i < attributes.getLength(); i++) {
 				Attr attr = (Attr)attributes.item(i);
 				String name = attr.getName();
-				if (!name.equals("type") && !name.equals("url")) { //$NON-NLS-1$ //$NON-NLS-2$
+				if (!name.equals("type") && !name.equals("url") && !name.equals("mirrorsURL")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					reportUnknownAttribute(root, name, CompilerFlags.ERROR);
 				}
 			}

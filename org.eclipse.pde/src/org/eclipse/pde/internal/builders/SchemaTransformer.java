@@ -55,12 +55,12 @@ public class SchemaTransformer {
 	}
 	
 	private String getCssURL() {
-		return (fCssURL != null) ? fCssURL.toString() : "../../" + PLATFORM_CSS;
+		return (fCssURL != null) ? fCssURL.toString() : "../../" + PLATFORM_CSS; //$NON-NLS-1$
 	}
 	
 	private String getSchemaCssURL() {
 		if (fCssPurpose == BUILD)
-			return "../../" +  SCHEMA_CSS;
+			return "../../" +  SCHEMA_CSS; //$NON-NLS-1$
 		return getResourceURL(PLATFORM_PLUGIN_DOC, SCHEMA_CSS).toString();
 	}
 	
