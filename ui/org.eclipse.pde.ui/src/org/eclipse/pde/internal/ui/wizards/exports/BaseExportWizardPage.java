@@ -192,35 +192,53 @@ public abstract class BaseExportWizardPage extends WizardPage {
 	private void createOptionsSection(Composite parent) {
 		Group comp = new Group(parent, SWT.NONE);
 		comp.setText(PDEPlugin.getResourceString("ExportWizard.options")); //$NON-NLS-1$
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 3;
-		comp.setLayout(layout);
+		comp.setLayout(new GridLayout());
 		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		Label label = new Label(comp, SWT.NONE);
+		Composite top = new Composite(comp, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.marginHeight = layout.marginWidth = 0;
+		top.setLayout(layout);
+		top.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		Label label = new Label(top, SWT.NONE);
 		label.setText(PDEPlugin.getResourceString("ExportWizard.format")); //$NON-NLS-1$
 		
-		fExportFormats = new Combo(comp, SWT.READ_ONLY);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		fExportFormats.setLayoutData(gd);
+		fExportFormats = new Combo(top, SWT.READ_ONLY);
+		fExportFormats.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fExportFormats.setItems(new String[]{
 				PDEPlugin.getResourceString("ExportWizard.zip"), //$NON-NLS-1$
 				PDEPlugin.getResourceString("ExportWizard.directory"), //$NON-NLS-1$
 				PDEPlugin.getResourceString("ExportWizard.updateJars")}); //$NON-NLS-1$
 		
-		fIncludeSource = new Button(comp, SWT.CHECK);
+		Composite bottom = new Composite(comp, SWT.NONE);
+		layout = new GridLayout();
+		layout.numColumns = 3;
+		layout.marginHeight = layout.marginWidth = 0;
+		bottom.setLayout(layout);
+		bottom.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		fIncludeSource = new Button(bottom, SWT.CHECK);
 		fIncludeSource.setText(PDEPlugin.getResourceString("ExportWizard.includeSource")); //$NON-NLS-1$
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		fIncludeSource.setLayoutData(gd);
+		fIncludeSource.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 				
-		Button button = new Button(comp, SWT.PUSH);
+		Button button = new Button(bottom, SWT.PUSH);
 		button.setText(PDEPlugin.getResourceString("ExportWizard.buildOptions.button")); //$NON-NLS-1$
-		button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+		button.setLayoutData(new GridData());
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				showPreferencePage(new BuildOptionsPreferenceNode());
+			}
+		});
+		SWTUtil.setButtonDimensionHint(button);	
+		
+		button = new Button(bottom, SWT.PUSH);
+		button.setText(PDEPlugin.getResourceString("ExportWizard.targetEnv.button")); //$NON-NLS-1$
+		button.setLayoutData(new GridData());
+		button.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				showPreferencePage(new TargetEnvironmentPreferenceNode());
 			}
 		});
 		SWTUtil.setButtonDimensionHint(button);		

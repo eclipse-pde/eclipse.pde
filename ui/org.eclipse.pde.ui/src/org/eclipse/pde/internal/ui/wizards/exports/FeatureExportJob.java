@@ -196,7 +196,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		BuildScriptGenerator.setOutputFormat(fExportType == EXPORT_AS_ZIP ? "antzip" : "folder"); //$NON-NLS-1$ //$NON-NLS-2$
 		BuildScriptGenerator.setForceUpdateJar(fExportType == EXPORT_AS_UPDATE_JARS);
 		BuildScriptGenerator.setEmbeddedSource(fExportSource && fExportType != EXPORT_AS_UPDATE_JARS);
-		BuildScriptGenerator.setConfigInfo("*,*,*"); //$NON-NLS-1$
+		BuildScriptGenerator.setConfigInfo(TargetPlatform.getOS() + "," + TargetPlatform.getWS() + "," + TargetPlatform.getOSArch()); //$NON-NLS-1$ //$NON-NLS-2$
 		generator.generate();	
 	}
 	
@@ -222,9 +222,11 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		return featureLocation + Path.SEPARATOR + "build.xml"; //$NON-NLS-1$
 	}
 	
-	private String getAssemblyScriptName(String featureID, String featureLocation) {
+	protected String getAssemblyScriptName(String featureID, String featureLocation) {
 		return featureLocation + Path.SEPARATOR + "assemble." //$NON-NLS-1$
-				+ featureID + ".xml"; //$NON-NLS-1$
+				+ featureID + "." + TargetPlatform.getOS() + "." //$NON-NLS-1$ //$NON-NLS-2$
+				+ TargetPlatform.getWS() + "." + TargetPlatform.getOSArch() //$NON-NLS-1$
+				+ ".xml"; //$NON-NLS-1$
 	}
 	
 	private String[] getBuildExecutionTargets() {
@@ -243,18 +245,18 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 				: ((IPluginModelBase) model).getInstallLocation();
 				
 		if (model.getUnderlyingResource() != null && !isCustomBuild(model)) {
-			File file = new File(directory, "build.xml"); //$NON-NLS-1$
-			if (file.exists() && !file.isDirectory()) {
-				file.delete();
-			}
-			if (model instanceof IFeatureModel) {
-				String id = ((IFeatureModel)model).getFeature().getId();
-				file = new File(directory, "assemble." + id + ".all.xml"); //$NON-NLS-1$ //$NON-NLS-2$
-				if (file.exists() && !file.isDirectory())
-					file.delete();
-				file = new File(directory, "assemble." + id + ".xml"); //$NON-NLS-1$ //$NON-NLS-2$
-				if (file.exists() && !file.isDirectory())
-					file.delete();
+			File dir = new File(directory);
+			File[] children = dir.listFiles();
+			if (children != null) {
+				for (int i = 0; i < children.length; i++) {
+					if (!children[i].isDirectory()) {
+						String filename = children[i].getName();
+						if (filename.equals("build.xml") ||
+								(filename.startsWith("assemble.") && filename.endsWith(".xml"))) {
+							children[i].delete();
+						}
+					}
+				}
 			}
 		}
 		
