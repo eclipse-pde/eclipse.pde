@@ -1,7 +1,6 @@
 package org.eclipse.pde.internal.builders;
 
 import java.net.*;
-import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -73,7 +72,7 @@ public class ManifestErrorReporter extends XMLErrorReporter {
 			reportIllegalAttributeValue(element, attr);
 	}
 
-	protected void validateElementWithContent(Element element, boolean hasContent, Set allowedAttributes) {
+	protected void validateElementWithContent(Element element, boolean hasContent) {
 		NodeList children = element.getChildNodes();
 		boolean textFound = false;
 		for (int i = 0; i < children.getLength(); i++) {

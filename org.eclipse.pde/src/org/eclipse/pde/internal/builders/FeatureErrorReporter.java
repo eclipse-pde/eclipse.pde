@@ -234,11 +234,17 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 			if (fMonitor.isCanceled())
 				return;
 			Element element = (Element)list.item(0);
-			HashSet set = new HashSet();
-			set.add("url"); //$NON-NLS-1$
-			validateElementWithContent((Element)list.item(0), true, set);
-			if (element.getAttributeNode("url") != null) //$NON-NLS-1$
-				validateURL(element, "url"); //$NON-NLS-1$
+			validateElementWithContent((Element)list.item(0), true);
+			NamedNodeMap attributes = element.getAttributes();
+			for (int i = 0; i < attributes.getLength(); i++) {
+				Attr attr = (Attr)attributes.item(i);
+				String name = attr.getName();
+				if (name.equals("url")) { //$NON-NLS-1$
+					validateURL(element, name);
+				} else {
+					reportUnknownAttribute(element, name, CompilerFlags.ERROR);
+				}
+			}
 			reportExtraneousElements(list, 1);
 		}
 	}
@@ -249,11 +255,17 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 			if (fMonitor.isCanceled())
 				return;
 			Element element = (Element)list.item(0);
-			HashSet set = new HashSet();
-			set.add("url"); //$NON-NLS-1$
-			validateElementWithContent((Element)list.item(0), true, set);
-			if (element.getAttributeNode("url") != null) //$NON-NLS-1$
-				validateURL(element, "url"); //$NON-NLS-1$
+			validateElementWithContent((Element)list.item(0), true);
+			NamedNodeMap attributes = element.getAttributes();
+			for (int i = 0; i < attributes.getLength(); i++) {
+				Attr attr = (Attr)attributes.item(i);
+				String name = attr.getName();
+				if (name.equals("url")) { //$NON-NLS-1$
+					validateURL(element, name);
+				} else {
+					reportUnknownAttribute(element, name, CompilerFlags.ERROR);
+				}
+			}
 			reportExtraneousElements(list, 1);
 		}
 	}
@@ -264,11 +276,17 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 			if (fMonitor.isCanceled())
 				return;
 			Element element = (Element)list.item(0);
-			HashSet set = new HashSet();
-			set.add("url"); //$NON-NLS-1$
-			validateElementWithContent((Element)list.item(0), true, set);
-			if (element.getAttributeNode("url") != null) //$NON-NLS-1$
-				validateURL(element, "url"); //$NON-NLS-1$
+			validateElementWithContent((Element)list.item(0), true);
+			NamedNodeMap attributes = element.getAttributes();
+			for (int i = 0; i < attributes.getLength(); i++) {
+				Attr attr = (Attr)attributes.item(i);
+				String name = attr.getName();
+				if (name.equals("url")) { //$NON-NLS-1$
+					validateURL(element, name);
+				} else {
+					reportUnknownAttribute(element, name, CompilerFlags.ERROR);
+				}
+			}
 			reportExtraneousElements(list, 1);
 		}
 	}
@@ -302,6 +320,8 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 				reportUnknownAttribute(element, name, CompilerFlags.ERROR);
 			} else if (name.equals("primary") || name.equals("exclusive")){ //$NON-NLS-1$ //$NON-NLS-2$
 				validateBoolean(element, (Attr)attributes.item(i));
+			} else if (name.equals("version")) { //$NON-NLS-1$
+				validateVersionAttribute(element, (Attr)attributes.item(i));
 			}
 		}
 	}
@@ -324,7 +344,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 	private void validateFeatureID(Element element, Attr attr) {
 		int severity = CompilerFlags.getFlag(project, CompilerFlags.F_UNRESOLVED_FEATURES);
 		if (severity != CompilerFlags.IGNORE) {
-			IFeature feature = PDECore.getDefault().findFeature(attr.getName());	
+			IFeature feature = PDECore.getDefault().findFeature(attr.getValue());	
 			if (feature == null) {
 				report(PDE.getFormattedMessage("Builders.Feature.freference", attr.getValue()),  //$NON-NLS-1$
 						getLine(element, attr.getName()),

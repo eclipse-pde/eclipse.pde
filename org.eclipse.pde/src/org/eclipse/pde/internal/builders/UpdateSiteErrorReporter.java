@@ -1,7 +1,5 @@
 package org.eclipse.pde.internal.builders;
 
-import java.util.*;
-
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.w3c.dom.*;
@@ -144,9 +142,7 @@ public class UpdateSiteErrorReporter extends ManifestErrorReporter {
 			if (fMonitor.isCanceled())
 				return;
 			Element element = (Element)list.item(0);
-			HashSet set = new HashSet();
-			set.add("url"); //$NON-NLS-1$
-			validateElementWithContent((Element)list.item(0), true, set);
+			validateElementWithContent((Element)list.item(0), true);
 			if (element.getAttributeNode("url") != null) //$NON-NLS-1$
 				validateURL(element, "url"); //$NON-NLS-1$
 			reportExtraneousElements(list, 1);
