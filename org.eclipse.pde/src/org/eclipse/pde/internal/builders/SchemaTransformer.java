@@ -27,7 +27,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 		"Builders.Schema.Verifier.valueWithoutDefault";
 	private static final String KEY_DEFAULT_WITHOUT_VALUE =
 		"Builders.Schema.Verifier.defaultWithoutValue";
-public static final String KEY_DEPRECATED_TYPE =
+	public static final String KEY_DEPRECATED_TYPE =
 		"Builders.Schema.deprecatedType";
 
 	private void appendAttlist(
@@ -48,7 +48,8 @@ public static final String KEY_DEPRECATED_TYPE =
 		ISchemaRestriction restriction = null;
 		if (type != null)
 			restriction = type.getRestriction();
-		String typeName = type != null ? type.getName().toLowerCase() : "string";
+		String typeName =
+			type != null ? type.getName().toLowerCase() : "string";
 		if (typeName.equals("boolean")) {
 			out.print("(true | false) \"false\"");
 		} else if (restriction != null) {
@@ -131,7 +132,8 @@ public static final String KEY_DEPRECATED_TYPE =
 		Node root = parser.getDocument().getDocumentElement();
 		Schema schema = new Schema((ISchemaDescriptor) null, schemaURL);
 		schema.traverseDocumentTree(root, parser.getLineTable());
-		if (verifySchema(schema, reporter) && CompilerFlags.getBoolean(CompilerFlags.S_CREATE_DOCS))
+		if (verifySchema(schema, reporter)
+			&& CompilerFlags.getBoolean(CompilerFlags.S_CREATE_DOCS))
 			transform(out, schema);
 	}
 
@@ -182,7 +184,8 @@ public static final String KEY_DEPRECATED_TYPE =
 		if (attribute.getKind() != ISchemaAttribute.STRING) {
 			if (type != null) {
 				if (type.getName().equals("boolean")) {
-					message = PDE.getFormattedMessage(KEY_BOOLEAN_INVALID, args);
+					message =
+						PDE.getFormattedMessage(KEY_BOOLEAN_INVALID, args);
 					// this kind cannot have boolean type
 					reporter.reportError(message, line);
 					errors++;
@@ -190,7 +193,8 @@ public static final String KEY_DEPRECATED_TYPE =
 				if (type instanceof SchemaSimpleType
 					&& ((SchemaSimpleType) type).getRestriction() != null) {
 					// should not have restriction
-					message = PDE.getFormattedMessage(KEY_RESTRICTION_INVALID, args);
+					message =
+						PDE.getFormattedMessage(KEY_RESTRICTION_INVALID, args);
 					reporter.reportError(message, line);
 					errors++;
 				}
@@ -208,7 +212,8 @@ public static final String KEY_DEPRECATED_TYPE =
 			if (type instanceof SchemaSimpleType
 				&& ((SchemaSimpleType) type).getRestriction() != null) {
 				// should not have restriction
-				message = PDE.getFormattedMessage(KEY_RESTRICTION_INVALID, args);
+				message =
+					PDE.getFormattedMessage(KEY_RESTRICTION_INVALID, args);
 				reporter.reportError(message, line);
 				errors++;
 			}
@@ -216,14 +221,16 @@ public static final String KEY_DEPRECATED_TYPE =
 		if (attribute.getUse() != ISchemaAttribute.DEFAULT) {
 			if (attribute.getValue() != null) {
 				// value makes no sense without 'default' use
-				message = PDE.getFormattedMessage(KEY_VALUE_WITHOUT_DEFAULT, args);
+				message =
+					PDE.getFormattedMessage(KEY_VALUE_WITHOUT_DEFAULT, args);
 				reporter.reportError(message, line);
 				errors++;
 			}
 		} else {
 			if (attribute.getValue() == null) {
 				// there must be a value set for this use
-				message = PDE.getFormattedMessage(KEY_DEFAULT_WITHOUT_VALUE, args);
+				message =
+					PDE.getFormattedMessage(KEY_DEFAULT_WITHOUT_VALUE, args);
 				reporter.reportError(message, line);
 				errors++;
 			}
@@ -249,27 +256,35 @@ public static final String KEY_DEPRECATED_TYPE =
 		out.println("<p><b><i>Configuration Markup:</i></b><p>");
 		transformMarkup(out, schema);
 		transformSection(out, schema, "Examples:", IDocumentSection.EXAMPLES);
-		transformSection(out, schema, "API Information:", IDocumentSection.API_INFO);
-		transformSection(out, schema, "Supplied Implementation:", IDocumentSection.IMPLEMENTATION);
+		transformSection(
+			out,
+			schema,
+			"API Information:",
+			IDocumentSection.API_INFO);
+		transformSection(
+			out,
+			schema,
+			"Supplied Implementation:",
+			IDocumentSection.IMPLEMENTATION);
 		transformSection(out, schema, IDocumentSection.COPYRIGHT);
 		out.println("</BODY>");
 		out.println("</HTML>");
 	}
-	
+
 	private void transformDescription(PrintWriter out, ISchema schema) {
 		out.print("<b><i>Description: </i></b>");
 		transformText(out, schema.getDescription());
-		ISchemaInclude [] includes = schema.getIncludes();
-		for (int i=0; i<includes.length; i++) {
+		ISchemaInclude[] includes = schema.getIncludes();
+		for (int i = 0; i < includes.length; i++) {
 
 			ISchema ischema = includes[i].getIncludedSchema();
-			if (ischema!=null) {
+			if (ischema != null) {
 				out.println("<p>");
 				transformText(out, ischema.getDescription());
 			}
 		}
 	}
-	
+
 	private void transformElement(PrintWriter out, ISchemaElement element) {
 		String name = element.getName();
 		String dtd = element.getDTDRepresentation();
@@ -279,18 +294,17 @@ public static final String KEY_DEPRECATED_TYPE =
 		ISchemaAttribute[] attributes = element.getAttributes();
 		String description = element.getDescription();
 
-		if (description!=null && description.trim().length()>0) {
+		if (description != null && description.trim().length() > 0) {
 			out.print("<p>");
 			out.print("&nbsp;&nbsp; ");
 			transformText(out, description);
 			out.println("</p>");
-			if (attributes.length>0)
+			if (attributes.length > 0)
 				out.println("<p></p>");
-		}		
-		else if (attributes.length>0) {
+		} else if (attributes.length > 0) {
 			out.print("<br><br>");
 		}
-		
+
 		if (attributes.length == 0)
 			return;
 
@@ -304,9 +318,15 @@ public static final String KEY_DEPRECATED_TYPE =
 		out.println("<ul>");
 		for (int i = 0; i < attributes.length; i++) {
 			ISchemaAttribute att = attributes[i];
+			if (name.equals("extension")) {
+				if (att.getDescription() == null
+					|| att.getDescription().trim().length() == 0) {
+					continue;
+				}
+			}
 			out.print("<li><b>" + att.getName() + "</b> - ");
 			transformText(out, att.getDescription());
-			out.print("</li>");
+			out.println("</li>");
 		}
 		out.println("</ul>");
 	}
@@ -318,8 +338,11 @@ public static final String KEY_DEPRECATED_TYPE =
 			transformElement(out, element);
 		}
 	}
-	
-	private void transformSection(PrintWriter out, ISchema schema, String sectionId) {
+
+	private void transformSection(
+		PrintWriter out,
+		ISchema schema,
+		String sectionId) {
 		transformSection(out, schema, null, sectionId);
 	}
 	private void transformSection(
@@ -338,9 +361,10 @@ public static final String KEY_DEPRECATED_TYPE =
 		if (section == null)
 			return;
 		String description = section.getDescription();
-		if (description==null || description.trim().length()==0)
+		if (description == null || description.trim().length() == 0)
 			return;
-		if (title!=null) out.print("<b><i>"+title+" </i></b>");
+		if (title != null)
+			out.print("<b><i>" + title + " </i></b>");
 		transformText(out, description);
 		out.println("<p>");
 	}
