@@ -84,7 +84,7 @@ public class FeatureExportWizard extends BaseExportWizard {
 		map.put("basenl", TargetPlatform.getNL());
 		
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-		map.put("javacFailOnError", store.getString(PROP_JAVAC_FAIL_ON_ERROR));
+		map.put("javacFailOnError", "false");
 		map.put("javacDebugInfo", store.getBoolean(PROP_JAVAC_DEBUG_INFO) ? "on" : "off");
 		map.put("javacVerbose", store.getString(PROP_JAVAC_VERBOSE));
 		map.put("javacSource", store.getString(PROP_JAVAC_SOURCE));
