@@ -113,6 +113,9 @@ public class IdReplaceTask extends Task {
 
 		//Skip feature declaration because it contains the word "plugin"
 		int startFeature = scan(buffer, 0, FEATURE);
+		if (startFeature==-1)
+			return;
+		
 		int endFeature = scan(buffer, startFeature + 1, ">"); //$NON-NLS-1$
 
 		if (selfVersion != null) {
