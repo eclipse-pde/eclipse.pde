@@ -31,6 +31,7 @@
       <import plugin="org.eclipse.update.core"/>
       <import plugin="org.eclipse.update.ui.forms"/>
       <import plugin="org.eclipse.ant.ui"/>
+      <import plugin="org.eclipse.jdt.junit"/>
    </requires>
 
 
@@ -709,6 +710,20 @@
             modes="run, debug"
             id="org.eclipse.pde.ui.RuntimeWorkbench">
       </launchConfigurationType>
+      <launchConfigurationType
+            name="%launcher.junit.name"
+            delegate="org.eclipse.pde.internal.ui.launcher.JUnitLaunchConfiguration"
+            modes="run, debug"
+            id="org.eclipse.pde.ui.JunitLaunchConfig">
+         <fileExtension
+               default="false"
+               extension="java">
+         </fileExtension>
+         <fileExtension
+               default="false"
+               extension="class">
+         </fileExtension>
+      </launchConfigurationType>
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
@@ -716,6 +731,11 @@
             icon="icons/full/ctool16/eclipse_launcher_wiz.gif"
             configTypeID="org.eclipse.pde.ui.RuntimeWorkbench"
             id="org.eclipse.pde.ui.runtimeWorkbenchLaunchImage">
+      </launchConfigurationTypeImage>
+      <launchConfigurationTypeImage
+            icon="icons/full/obj16/julaunchpgn.gif"
+            configTypeID="org.eclipse.pde.ui.JunitLaunchConfig"
+            id="org.eclipse.pde.ui.JunitLaunchImage">
       </launchConfigurationTypeImage>
    </extension>
    <extension
@@ -725,14 +745,63 @@
             class="org.eclipse.pde.internal.ui.launcher.WorkbenchLauncherTabGroup"
             id="org.eclipse.pde.ui.launcher.WorkbenchLauncherTabGroup">
       </launchConfigurationTabGroup>
+      <launchConfigurationTabGroup
+            type="org.eclipse.pde.ui.JunitLaunchConfig"
+            class="org.eclipse.pde.internal.ui.launcher.JUnitTabGroup"
+            id="org.eclipse.pde.ui.launcher.JUnitTabGroup">
+      </launchConfigurationTabGroup>
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchShortcuts">
       <shortcut
-            label="%launcher.shortcut.label"
-            icon="icons/full/ctool16/eclipse_launcher_wiz.gif"
+            label="%launcher.junit.core.shortcut"
+            icon="icons/full/obj16/julaunchpgn.gif"
             modes="run, debug"
+            class="org.eclipse.pde.internal.ui.launcher.JUnitCoreApplicationShortcut"
+            id="org.eclipse.pde.ui.junitCoreShortcut">
+         <perspective
+               id="org.eclipse.jdt.ui.JavaPerspective">
+         </perspective>
+         <perspective
+               id="org.eclipse.jdt.ui.JavaHierarchyPerspective">
+         </perspective>
+         <perspective
+               id="org.eclipse.jdt.ui.JavaBrowsingPerspective">
+         </perspective>
+         <perspective
+               id="org.eclipse.debug.ui.DebugPerspective">
+         </perspective>
+         <perspective
+               id="org.eclipse.pde.PDEPerspective">
+         </perspective>
+      </shortcut>
+      <shortcut
+            class="org.eclipse.pde.internal.ui.launcher.JUnitWorkbenchShortcut"
+            label="%launcher.junit.workbench.shortcut"
+            modes="run, debug"
+            icon="icons/full/obj16/julaunchpgn.gif"
+            id="org.eclipse.pde.ui.junitWorkbenchShortcut">
+         <perspective
+               id="org.eclipse.jdt.ui.JavaPerspective">
+         </perspective>
+         <perspective
+               id="org.eclipse.jdt.ui.JavaHierarchyPerspective">
+         </perspective>
+         <perspective
+               id="org.eclipse.jdt.ui.JavaBrowsingPerspective">
+         </perspective>
+         <perspective
+               id="org.eclipse.debug.ui.DebugPerspective">
+         </perspective>
+         <perspective
+               id="org.eclipse.pde.PDEPerspective">
+         </perspective>
+      </shortcut>
+      <shortcut
             class="org.eclipse.pde.internal.ui.launcher.RuntimeWorkbenchShortcut"
+            label="%launcher.shortcut.label"
+            modes="run, debug"
+            icon="icons/full/ctool16/eclipse_launcher_wiz.gif"
             id="org.eclipse.pde.ui.runtimeWorkbenchShortcut">
          <perspective
                id="org.eclipse.jdt.ui.JavaPerspective">

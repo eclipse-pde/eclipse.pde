@@ -112,6 +112,8 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_WARNING_ST_OBJ = create(PATH_OBJ, "warning_st_obj.gif");
 	public static final ImageDescriptor DESC_INFO_ST_OBJ = create(PATH_OBJ, "info_st_obj.gif");
 	public static final ImageDescriptor DESC_CATEGORY_OBJ = create(PATH_OBJ, "category_obj.gif");
+
+	public static final ImageDescriptor DESC_JUNIT_MAIN_TAB = create(PATH_OBJ, "test.gif");
 	
 	/**
 	 * OVR16
@@ -202,7 +204,6 @@ public class PDEPluginImages {
 	 * View
 	 */
 	public static final ImageDescriptor DESC_ARGUMENT_TAB  = create(PATH_VIEW, "variable_tab.gif");
-	
 	private static ImageDescriptor create(String prefix, String name) {
 		return ImageDescriptor.createFromURL(makeImageURL(prefix, name));
 	}

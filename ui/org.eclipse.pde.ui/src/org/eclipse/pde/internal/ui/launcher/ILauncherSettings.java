@@ -11,19 +11,29 @@
 package org.eclipse.pde.internal.ui.launcher;
 
 public interface ILauncherSettings {
-	String VMARGS = "vmargs";
-	String PROGARGS = "progargs";
+	// Workspace data settings
 	String LOCATION = "location";
-	String VMINSTALL = "vminstall";
 	String DOCLEAR = "clearws";
 	String ASKCLEAR = "askclear";
+	
+	// Command line settings
+	String VMINSTALL = "vminstall";
+	String APPLICATION = "application";
+	String VMARGS = "vmargs";
+	String PROGARGS = "progargs";
 	String CLASSPATH_ENTRIES = "classpath";
-	String TRACING = "tracing";
+	String SHOW_SPLASH = "showSplash";
+	
+	// Plug-ins and Fragments settings
 	String USECUSTOM = "default";
 	String USEFEATURES = "usefeatures";
 	String WSPROJECT = "wsproject";
 	String EXTPLUGINS = "extplugins";
+	
+	// Tracing settings
+	String TRACING = "tracing";
 	String TRACING_OPTIONS = "tracingOptions";
-	String SHOW_SPLASH = "showSplash";
-	String APPLICATION = "application";
+	
+	// config file location
+	String CONFIG_LOCATION = "configLocation";
 }

@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.*;
 import org.eclipse.debug.ui.*;
 import org.eclipse.jdt.debug.ui.JavaUISourceLocator;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.widgets.Shell;
@@ -124,13 +125,15 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 			ILaunchConfigurationType configType= getWorkbenchLaunchConfigType();
 			String computedName = getComputedName(configType.getName());
 			ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, computedName);  //$NON-NLS-1$
-			wc.setAttribute(ILauncherSettings.LOCATION + "0", BasicLauncherTab.getDefaultWorkspace()); //$NON-NLS-1$
+			wc.setAttribute(ILauncherSettings.LOCATION + "0", getDefaultWorkspaceLocation()); //$NON-NLS-1$
 			wc.setAttribute(ILauncherSettings.VMARGS, "");
-			wc.setAttribute(ILauncherSettings.PROGARGS, BasicLauncherTab.getDefaultProgramArguments());
-			wc.setAttribute(ILauncherSettings.VMINSTALL, BasicLauncherTab.getDefaultVMInstallName());
+			wc.setAttribute(ILauncherSettings.PROGARGS, LauncherUtils.getDefaultProgramArguments());
 			wc.setAttribute(ILauncherSettings.USECUSTOM, true);
 			wc.setAttribute(ILauncherSettings.USEFEATURES, false);
 			wc.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, JavaUISourceLocator.ID_PROMPTING_JAVA_SOURCE_LOCATOR);
+			wc.setAttribute(
+				IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER,
+				"org.eclipse.pde.ui.workbenchClasspathProvider");
 			wc.setAttribute(ILauncherSettings.DOCLEAR, false);
 			wc.setAttribute(ILauncherSettings.ASKCLEAR, true);
 			wc.setAttribute(ILauncherSettings.SHOW_SPLASH, true);
@@ -161,4 +164,9 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 	protected Shell getShell() {
 		return PDEPlugin.getActiveWorkbenchShell();
 	}
+	
+	private String getDefaultWorkspaceLocation() {
+		return LauncherUtils.getDefaultPath().append("runtime-workbench-workspace").toOSString();				
+	}
+	
 }

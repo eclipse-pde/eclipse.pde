@@ -10,12 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * @author dejan
@@ -119,8 +122,48 @@ public class LaunchListener
 	private void launchTerminated(ILaunch launch, int returnValue) {
 		if (managedLaunches.contains(launch)) {
 			update(launch, true);
-			if (returnValue == 23)
+			if (returnValue == 23) {
 				doRestart(launch);
+				return;
+			}
+			if (returnValue == 15) {
+				Display.getDefault().asyncExec(new Runnable() {
+					public void run() {
+						MessageDialog.openError(
+							PDEPlugin.getActiveWorkbenchShell(),
+							PDEPlugin.getResourceString("Launcher.error.title"),
+							PDEPlugin.getResourceString("Launcher.error.code15"));
+					}
+				});
+				return;
+			}
+			if (returnValue == 13) {
+				Display.getDefault().asyncExec(new Runnable() {
+					public void run() {
+						MessageDialog.openError(
+							PDEPlugin.getActiveWorkbenchShell(),
+							PDEPlugin.getResourceString("Launcher.error.title"),
+							PDEPlugin.getResourceString("Launcher.error.code13"));
+					}
+				});
+			}
+
+			String configDir = launch.getAttribute(ILauncherSettings.CONFIG_LOCATION);
+			if (configDir != null)
+				deleteConfig(new File(configDir));
 		}
+	}
+	
+	private void deleteConfig(File file) {
+		if (!file.exists())
+			return;
+			
+		if (file.isDirectory()) {
+			File[] children = file.listFiles();
+			if (children != null)
+			for (int i = 0; i <children.length; i++)
+				deleteConfig(children[i]);
+		}
+		file.delete();
 	}
 }

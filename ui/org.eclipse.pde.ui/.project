@@ -3,6 +3,7 @@
 	<name>org.eclipse.pde.ui</name>
 	<comment></comment>
 	<projects>
+		<project>org.apache.ant</project>
 		<project>org.apache.xerces</project>
 		<project>org.eclipse.ant.core</project>
 		<project>org.eclipse.ant.ui</project>
@@ -14,6 +15,7 @@
 		<project>org.eclipse.help</project>
 		<project>org.eclipse.jdt.core</project>
 		<project>org.eclipse.jdt.debug.ui</project>
+		<project>org.eclipse.jdt.junit</project>
 		<project>org.eclipse.jdt.launching</project>
 		<project>org.eclipse.jdt.ui</project>
 		<project>org.eclipse.pde</project>

@@ -1,40 +1,47 @@
-/*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
+
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+ 
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.ui.*;
+import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
+import org.eclipse.debug.ui.CommonTab;
+import org.eclipse.debug.ui.ILaunchConfigurationDialog;
+import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaSourceLookupTab;
+import org.eclipse.jdt.internal.junit.launcher.JUnitMainTab;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 
-public class WorkbenchLauncherTabGroup
-	extends AbstractLaunchConfigurationTabGroup {
-
+public class JUnitTabGroup extends AbstractLaunchConfigurationTabGroup {
 	/**
 	 * @see ILaunchConfigurationTabGroup#createTabs(ILaunchConfigurationDialog, String)
 	 */
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
-		ILaunchConfigurationTab[] tabs =
-			new ILaunchConfigurationTab[] {
-				new RuntimeWorkbenchArgumentsTab(),
-				new AdvancedLauncherTab(),
-				new TracingLauncherTab(),
-				new JavaSourceLookupTab(),
-				new CommonTab()};
+		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {
+			new JUnitMainTab(),
+			new JUnitArgumentsTab(),
+			new AdvancedLauncherTab(false),
+			new JavaSourceLookupTab(),
+			new CommonTab()
+		};
 		setTabs(tabs);
 	}
+
+	/**
+	 * @see ILaunchConfigurationTabGroup#setDefaults(ILaunchConfigurationWorkingCopy)
+	 */
+	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
+		super.setDefaults(config); 
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, "org.eclipse.pde.ui.workbenchClasspathProvider");
+	}
+	
 	/**
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup#initializeFrom(ILaunchConfiguration)
 	 */
@@ -68,14 +75,6 @@ public class WorkbenchLauncherTabGroup
 
 			}
 		});
-	}
-
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
-	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
-		super.setDefaults(configuration);
-		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, "org.eclipse.pde.ui.workbenchClasspathProvider");
 	}
 
 }

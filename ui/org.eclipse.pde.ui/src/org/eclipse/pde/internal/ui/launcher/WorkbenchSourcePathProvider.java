@@ -53,8 +53,8 @@ public class WorkbenchSourcePathProvider extends StandardSourcePathProvider {
 		String vmInstallName =
 			configuration.getAttribute(
 				ILauncherSettings.VMINSTALL,
-				BasicLauncherTab.getDefaultVMInstallName());
-		IVMInstall[] vmInstallations = BasicLauncherTab.getAllVMInstances();
+				LauncherUtils.getDefaultVMInstallName());
+		IVMInstall[] vmInstallations = LauncherUtils.getAllVMInstances();
 		IVMInstall jre = null;
 
 		for (int i = 0; i < vmInstallations.length; i++) {
@@ -77,7 +77,7 @@ public class WorkbenchSourcePathProvider extends StandardSourcePathProvider {
 		boolean useFeatures = configuration.getAttribute(ILauncherSettings.USEFEATURES, false);		
 		boolean useDefault = configuration.getAttribute(ILauncherSettings.USECUSTOM, true);
 		
-		IPluginModelBase[] plugins = WorkbenchLaunchConfigurationDelegate.getWorkspacePluginsToRun(configuration, (useDefault || useFeatures));		
+		IPluginModelBase[] plugins = LauncherUtils.getWorkspacePluginsToRun(configuration, (useDefault || useFeatures));		
 		
 		if (plugins != null) {
 			IProject[] projects = getJavaProjects(plugins);
