@@ -168,10 +168,13 @@ public class SiteUndoManager extends ModelUndoManager {
 
 	public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.CHANGE) {
-			ISiteObject obj = (ISiteObject) event.getChangedObjects()[0];
-			//Ignore events from objects that are not yet in the model.
-			if (!(obj instanceof ISite) && obj.isInTheModel() == false)
-				return;
+			Object object = event.getChangedObjects()[0];
+			if (object instanceof ISiteObject) {
+				ISiteObject obj = (ISiteObject) object;
+				//Ignore events from objects that are not yet in the model.
+				if (!(obj instanceof ISite) && !obj.isInTheModel())
+					return;
+			}
 		}
 		super.modelChanged(event);
 	}
