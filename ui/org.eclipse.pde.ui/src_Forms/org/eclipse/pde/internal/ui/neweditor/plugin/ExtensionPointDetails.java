@@ -77,6 +77,7 @@ public class ExtensionPointDetails extends AbstractFormPart implements IDetailsP
 		section.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
 		section.marginHeight = 5;
 		section.marginWidth = 5;
+		//TODO translate strings
 		section.setText("Extension Point Details");
 		section
 				.setDescription("Set the properties of the selected extension point.");
@@ -118,7 +119,8 @@ public class ExtensionPointDetails extends AbstractFormPart implements IDetailsP
 					}
 			}
 		});
-		fSchemaEntry = new FormEntry(client, toolkit, "Schema:", "Browse...", true);
+		boolean storage = ((IPluginModelBase)getPage().getModel()).getInstallLocation()==null;
+		fSchemaEntry = new FormEntry(client, toolkit, "Schema:", "Browse...", !storage);
 		fSchemaEntry.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
 				if (fInput != null) {

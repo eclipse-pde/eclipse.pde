@@ -168,8 +168,9 @@ public class GeneralInfoSection extends PDESection {
 	}
 	private void createClassEntry(Composite client, FormToolkit toolkit,
 			IActionBars actionBars) {
+		boolean editable = getPage().getModel().isEditable();
 		fClassEntry = new FormEntry(client, toolkit, "Class:", "Browse...",
-				true);
+				editable);
 		fClassEntry
 				.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 					public void textValueChanged(FormEntry entry) {
@@ -244,8 +245,9 @@ public class GeneralInfoSection extends PDESection {
 	}
 	private void createPluginIDEntry(Composite client, FormToolkit toolkit,
 			IActionBars actionBars) {
+		boolean editable = getPage().getModel().isEditable();
 		fPluginIdEntry = new FormEntry(client, toolkit, "Plug-in Id:", null,
-				true);
+				editable);
 		fPluginIdEntry.setFormEntryListener(new FormEntryAdapter(this,
 				actionBars) {
 			public void textValueChanged(FormEntry entry) {

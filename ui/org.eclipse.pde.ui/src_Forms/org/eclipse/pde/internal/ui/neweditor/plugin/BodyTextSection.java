@@ -41,6 +41,7 @@ public class BodyTextSection
 	private Button resetButton;
 	private IPluginElement currentElement;
 	private Text text;
+	private boolean blockNotification;
 
 	public BodyTextSection(ExtensionsPage page, Composite parent) {
 		super(page, parent, Section.TWISTIE);
@@ -82,6 +83,7 @@ public class BodyTextSection
 		text.setLayoutData(gd);
 		text.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
+				if (blockNotification) return;
 				markDirty();
 				applyButton.setEnabled(true);
 				resetButton.setEnabled(true);
@@ -229,10 +231,12 @@ public class BodyTextSection
 	private void updateText(IPluginElement element) {
 		String bodyText = element != null ? element.getText() : null;
 
+		blockNotification=true;
 		text.setText(bodyText != null ? bodyText : "");
 		applyButton.setEnabled(false);
 		resetButton.setEnabled(false);
 
 		updateTitle(bodyText != null);
+		blockNotification=false;
 	}
 }

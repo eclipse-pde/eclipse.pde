@@ -5,6 +5,7 @@
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
 package org.eclipse.pde.internal.ui.neweditor.plugin.rows;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.ui.neweditor.IContextPart;
 import org.eclipse.swt.SWT;
@@ -37,17 +38,24 @@ public abstract class ReferenceAttributeRow extends TextAttributeRow {
 				SWT.NULL);
 		link.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
-				openReference();
+				if (!isStorageModel())
+					openReference();
 			}
 		});
 		link.setToolTipText(getToolTipText());
 	}
+	private boolean isStorageModel() {
+		return ((IPluginModelBase) part.getPage().getModel())
+				.getInstallLocation() == null;
+	}
 	public void createContents(Composite parent, FormToolkit toolkit, int span) {
 		super.createContents(parent, toolkit, span);
+		//TODO translate 'Browse...'
 		Button button = toolkit.createButton(parent, "Browse...", SWT.PUSH);
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				browse();
+				if (!isStorageModel())
+					browse();
 			}
 		});
 		button.setEnabled(part.isEditable());
@@ -57,7 +65,6 @@ public abstract class ReferenceAttributeRow extends TextAttributeRow {
 		gd.widthHint = 20;
 		return gd;
 	}
-	
 	protected abstract void openReference();
 	protected abstract void browse();
 }

@@ -143,6 +143,7 @@ public class ClassAttributeRow extends ReferenceAttributeRow {
 						getSearchScope(project),
 						IJavaElementSearchConstants.CONSIDER_CLASSES, false,
 						"*");
+				//TODO translate title
 				dialog.setTitle("Select Type");
 				if (dialog.open() == SelectionDialog.OK) {
 					IType type = (IType) dialog.getResult()[0];

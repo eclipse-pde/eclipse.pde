@@ -502,6 +502,7 @@ public class ExtensionsSection extends TreeSection
 		return elementImage;
 	}
 	static Image getCustomImage(IPluginElement element) {
+		if (isStorageModel(element)) return null;
 		ISchemaElement elementInfo = getSchemaElement(element);
 		if (elementInfo != null && elementInfo.getIconProperty() != null) {
 			String iconProperty = elementInfo.getIconProperty();
@@ -517,6 +518,11 @@ public class ExtensionsSection extends TreeSection
 		}
 		return null;
 	}
+	private static boolean isStorageModel(IPluginObject object) {
+		IPluginModelBase modelBase = object.getPluginModel();
+		return modelBase.getInstallLocation()==null;
+	}
+	
 	private static Image getImageFromPlugin(IPluginElement element,
 			String iconPathName) {
 		IPluginModelBase model = element.getPluginModel();

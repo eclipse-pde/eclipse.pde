@@ -111,6 +111,7 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 	 */
 	public URL getNLLookupLocation() {
 		String installLocation = getInstallLocation();
+		if (installLocation==null) return null;
 		if (installLocation.startsWith("file:") == false)
 			installLocation = "file:" + installLocation;
 		try {
@@ -146,7 +147,9 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 	 */
 	protected NLResourceHelper createNLResourceHelper() {
 		String name = isFragmentModel() ? "fragment" : "plugin";
-		return new NLResourceHelper(name, new URL[] {getNLLookupLocation()});
+		URL lookupLocation = getNLLookupLocation();
+		if (lookupLocation==null) return null;
+		return new NLResourceHelper(name, new URL[] {lookupLocation});
 	}
 	
 	/* (non-Javadoc)

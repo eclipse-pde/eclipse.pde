@@ -12,6 +12,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.text.*;
 import org.eclipse.pde.core.*;
+import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.model.*;
 import org.eclipse.pde.internal.ui.model.plugin.*;
 import org.eclipse.pde.internal.ui.neweditor.*;
@@ -47,8 +48,9 @@ public class PluginInputContext extends XMLInputContext {
 			}
 			if (input instanceof IFileEditorInput) {
 				model.setUnderlyingResource(((IFileEditorInput)input).getFile());
-			} else {
-				model.setInstallLocation(((File)input.getAdapter(File.class)).getParent());
+			} else if (input instanceof SystemFileEditorInput){
+				File file = (File)((SystemFileEditorInput)input).getAdapter(File.class);
+				model.setInstallLocation(file.getParent());
 			}
 			model.load();
 		}

@@ -65,6 +65,7 @@ public class ExtensionElementDetails extends AbstractFormPart implements IDetail
 		section.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
 		section.marginHeight = 5;
 		section.marginWidth = 5;
+		//TODO translate strings
 		section.setText("Extension Element Details");
 		section.setDescription("Set the properties of the selected element.");
 		TableWrapData td = new TableWrapData(TableWrapData.FILL,

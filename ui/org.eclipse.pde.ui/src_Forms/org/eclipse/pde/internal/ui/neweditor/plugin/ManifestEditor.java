@@ -168,16 +168,16 @@ public class ManifestEditor extends MultiSourceEditor {
 	protected void createStorageContexts(InputContextManager manager,
 			IStorageEditorInput input) {
 		String name = input.getName().toLowerCase();
-		if (name.equals("manifest.mf")) {
+		if (name.startsWith("manifest.mf")) {
 			manager
 					.putContext(input,
 							new BundleInputContext(this, input, true));
-		} else if (name.equals("build.properties")) {
+		} else if (name.startsWith("build.properties")) {
 			manager.putContext(input, new BuildInputContext(this, input, true));
-		} else if (name.equals("plugin.xml")) {
+		} else if (name.startsWith("plugin.xml")) {
 			manager.putContext(input, new PluginInputContext(this, input, true,
 					false));
-		} else if (name.equals("fragment.xml")) {
+		} else if (name.startsWith("fragment.xml")) {
 			manager.putContext(input, new PluginInputContext(this, input, true,
 					true));
 		}
