@@ -223,21 +223,11 @@ public class ExternalModelManager {
 					if (name.endsWith(".cache")  //$NON-NLS-1$
 							&& name.length() != 6
 							&& !name.equals(Long.toString(fState.getTimestamp()) + ".cache")) { //$NON-NLS-1$
-						clearDirectory(child);
+						CoreUtility.deleteContent(child);
 					}
 				}
 			}
 		}
-	}
-
-	private void clearDirectory(File dir) {
-		File[] children = dir.listFiles();
-		if (children != null) {
-			for (int i = 0; i < children.length; i++) {
-				children[i].delete();
-			}
-		}
-		dir.delete();
 	}
 
 	public PDEState getState() {

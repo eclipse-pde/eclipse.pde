@@ -104,6 +104,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 				if (pluginMap.containsKey("org.eclipse.update.configurator")) {  //$NON-NLS-1$
 					savePlatformConfiguration(ConfiguratorUtils.getPlatformConfiguration(null),configDir, pluginMap, brandingPluginID);
 				}
+				checkPluginPropertiesConsistency(pluginMap, configDir);
 			} else {
 				savePlatformConfiguration(new PlatformConfiguration(null), new File(configDir, "platform.cfg"), pluginMap, brandingPluginID); //$NON-NLS-1$
 			} 			
@@ -125,6 +126,24 @@ public class TargetPlatform implements IEnvironmentVariables {
 		}
 	}
 	
+	private static void checkPluginPropertiesConsistency(Map map, File configDir) {
+		File runtimeDir = new File(configDir, "org.eclipse.core.runtime");
+		if (runtimeDir.exists() && runtimeDir.isDirectory()) {
+			long timestamp = runtimeDir.lastModified();
+			Iterator iter = map.values().iterator();
+			while (iter.hasNext()) {
+				IPluginModelBase model = (IPluginModelBase)iter.next();
+				if (model.getUnderlyingResource() != null) {
+					File properties = new File(model.getInstallLocation(), "plugin.properties");
+					if (properties.lastModified() > timestamp) {
+						CoreUtility.deleteContent(runtimeDir);
+						break;
+					}
+				}
+			}
+		}
+	}
+
 	public static String getBundleURL(String id, Map pluginMap) {
 		IPluginModelBase model = (IPluginModelBase)pluginMap.get(id);
 		if (model == null)

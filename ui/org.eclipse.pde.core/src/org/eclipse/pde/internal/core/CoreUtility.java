@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import java.io.*;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
@@ -85,6 +87,18 @@ public class CoreUtility {
 		
 		text = text.replaceAll("[\\r|\\n|\\f|\\t]", " "); //$NON-NLS-1$ //$NON-NLS-2$
 		return text.replaceAll("\\s+", " "); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	public static void deleteContent(File curr) {
+		if (curr.isDirectory()) {
+			File[] children = curr.listFiles();
+			if (children != null) {
+				for (int i = 0; i < children.length; i++) {
+					deleteContent(children[i]);
+				}
+			}
+		}
+		curr.delete();
 	}
 
 

@@ -205,7 +205,6 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 		}
 
 		if (!programArgs.contains("-nosplash") && showSplash) { //$NON-NLS-1$
-			// TODO temporary until the resolution of bug 84142
 			if (PDECore.getDefault().getTargetVersion().equals(ICoreConstants.TARGET31)) {
 				programArgs.add(0, "-launcher");  //$NON-NLS-1$
 				IPath path = ExternalModelManager.getEclipseHome().append("eclipse"); //$NON-NLS-1$
