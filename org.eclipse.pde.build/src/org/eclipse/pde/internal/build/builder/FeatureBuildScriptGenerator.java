@@ -932,6 +932,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			if (model == null) {
 				String message = Policy.bind("exception.missingPlugin", extraPlugins[i]); //$NON-NLS-1$
 				Platform.getPlugin(PI_PDEBUILD).getLog().log(new Status(IStatus.WARNING, extraPlugins[i], EXCEPTION_PLUGIN_MISSING, message, null));
+				continue;
 			}
 			PluginEntry entry = new PluginEntry();
 			entry.setPluginIdentifier(model.getUniqueId());
