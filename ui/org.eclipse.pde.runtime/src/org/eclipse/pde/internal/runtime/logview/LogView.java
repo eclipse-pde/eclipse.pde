@@ -269,7 +269,7 @@ public class LogView extends ViewPart implements ILogListener {
 			PDERuntimePluginImages.DESC_CLEAR_DISABLED);
 		clearAction.setHoverImageDescriptor(PDERuntimePluginImages.DESC_CLEAR_HOVER);
 		clearAction.setToolTipText(
-			PDERuntimePlugin.getResourceString("LogView.clear"));
+			PDERuntimePlugin.getResourceString("LogView.clear.tooltip"));
 		clearAction.setText(PDERuntimePlugin.getResourceString("LogView.clear"));
 
 		readLogAction =
@@ -280,7 +280,7 @@ public class LogView extends ViewPart implements ILogListener {
 			}
 		};
 		readLogAction.setToolTipText(
-			PDERuntimePlugin.getResourceString("LogView.readLog.restore"));
+			PDERuntimePlugin.getResourceString("LogView.readLog.restore.tooltip"));
 		readLogAction.setImageDescriptor(PDERuntimePluginImages.DESC_READ_LOG);
 		readLogAction.setDisabledImageDescriptor(
 			PDERuntimePluginImages.DESC_READ_LOG_DISABLED);
@@ -294,7 +294,7 @@ public class LogView extends ViewPart implements ILogListener {
 			}
 		};
 		deleteLogAction.setToolTipText(
-			PDERuntimePlugin.getResourceString("LogView.delete"));
+			PDERuntimePlugin.getResourceString("LogView.delete.tooltip"));
 		deleteLogAction.setImageDescriptor(PDERuntimePluginImages.DESC_REMOVE_LOG);
 		deleteLogAction.setDisabledImageDescriptor(
 			PDERuntimePluginImages.DESC_REMOVE_LOG_DISABLED);
