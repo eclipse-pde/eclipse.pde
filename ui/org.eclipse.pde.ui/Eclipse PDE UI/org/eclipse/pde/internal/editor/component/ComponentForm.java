@@ -19,7 +19,7 @@ public class ComponentForm extends ScrollableForm {
 
 public ComponentForm(ComponentFormPage page) {
 	this.page = page;
-	setScrollable(false);
+	//setScrollable(false);
 	//setVerticalFit(true);
 }
 protected void createFormClient(Composite parent) {

@@ -21,7 +21,7 @@ public class ReferenceForm extends ScrollableForm {
 
 public ReferenceForm(ComponentReferencePage page) {
 	this.page = page;
-	setScrollable(false);
+	//setScrollable(false);
 	//setVerticalFit(true);
 }
 protected void createFormClient(Composite parent) {

@@ -27,7 +27,7 @@ public SchemaForm(SchemaFormPage page) {
 	this.page = page;
 	//setWidthHint(600);
 	colorManager = new ColorManager();
-   setScrollable(false);
+    //setScrollable(false);
 }
 protected void createFormClient(Composite parent) {
 	FormWidgetFactory factory = getFactory();

@@ -21,7 +21,7 @@ public class BuildForm extends ScrollableForm {
 
 public BuildForm(BuildPage page) {
 	this.page = page;
-	setScrollable(false);
+	//setScrollable(false);
 }
 protected void createFormClient(Composite parent) {
 	FormWidgetFactory factory = getFactory();

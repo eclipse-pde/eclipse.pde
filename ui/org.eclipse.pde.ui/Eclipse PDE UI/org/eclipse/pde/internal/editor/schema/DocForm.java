@@ -25,7 +25,7 @@ public DocForm(SchemaDocPage page) {
 	this.page = page;
 	//setWidthHint(600);
 	this.setVerticalFit(true);
-	this.setScrollable(false);
+	//this.setScrollable(false);
 }
 protected void createFormClient(Composite parent) {
 	FormWidgetFactory factory = getFactory();
