@@ -39,6 +39,7 @@ public class SrcSection
 	}
 
 	protected void initializeCheckState() {
+		super.initializeCheckState();
 		IBuild build = buildModel.getBuild();
 		IBuildEntry srcIncl = build.getEntry(IXMLConstants.PROPERTY_SRC_INCLUDES);
 		IBuildEntry srcExcl = build.getEntry(IXMLConstants.PROPERTY_SRC_EXCLUDES);

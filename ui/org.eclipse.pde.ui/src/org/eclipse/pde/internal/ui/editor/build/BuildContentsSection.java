@@ -263,7 +263,9 @@ public abstract class BuildContentsSection
 
 	protected abstract void deleteFolderChildrenFromEntries(IFolder folder);
 
-	protected abstract void initializeCheckState();
+	protected void initializeCheckState(){
+		uncheckAll();
+	}
 
 	protected void initializeCheckState(
 		IBuildEntry includes,
@@ -294,8 +296,8 @@ public abstract class BuildContentsSection
 				== resource.length() - 1) {
 				IFolder folder = project.getFolder(resource);
 				treeViewer.setSubtreeChecked(folder, isIncluded);
-				treeViewer.setParentsGrayed(folder, isIncluded);
-				if (isIncluded) {
+				treeViewer.setParentsGrayed(folder, true);
+				if (isIncluded && folder.exists()) {
 					setParentsChecked(folder, true);
 					treeViewer.setGrayed(folder, false);
 				}
@@ -306,7 +308,7 @@ public abstract class BuildContentsSection
 				IFile file = project.getFile(resource);
 				treeViewer.setChecked(file, isIncluded);
 				treeViewer.setParentsGrayed(file, true);
-				if (isIncluded) {
+				if (isIncluded && file.exists()) {
 					treeViewer.setGrayed(file, false);
 					setParentsChecked(file, true);
 				}
@@ -402,7 +404,6 @@ public abstract class BuildContentsSection
 
 	public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
-			uncheckAll();
 			initializeCheckState();
 		}
 	}

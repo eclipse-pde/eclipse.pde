@@ -252,7 +252,8 @@ public class BuildPropertiesEditor extends PDEMultiPageEditor {
 			String folderName = folders.get(i).toString();
 			IPath path = project.getFullPath().append(folderName);
 			IFolder folder = project.getWorkspace().getRoot().getFolder(path);
-			newSrcEntries.add(JavaCore.newSourceEntry(folder.getFullPath()));
+			if (folder.exists())
+				newSrcEntries.add(JavaCore.newSourceEntry(folder.getFullPath()));
 		}
 
 		try {

@@ -38,6 +38,7 @@ public class BinSection
 	}
 
 	protected void initializeCheckState() {
+		super.initializeCheckState();
 		IBuild build = buildModel.getBuild();
 		IBuildEntry binIncl = build.getEntry(IXMLConstants.PROPERTY_BIN_INCLUDES);
 		IBuildEntry binExcl = build.getEntry(IXMLConstants.PROPERTY_BIN_EXCLUDES);
