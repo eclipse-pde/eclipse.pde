@@ -20,10 +20,8 @@ import org.xml.sax.*;
 
 public class ManifestParser {
 	private SAXParser parser;
-	private PluginErrorReporter reporter;
 
 public ManifestParser(PluginErrorReporter reporter) {
-	this.reporter = reporter;
 	parser = new SAXParser();
 	parser.setErrorHandler(reporter);
 }

@@ -10,17 +10,32 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.builders;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringReader;
 import java.net.URL;
+import java.util.StringTokenizer;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.pde.core.ISourceObject;
 import org.eclipse.pde.internal.PDE;
 import org.eclipse.pde.internal.core.SourceDOMParser;
-import org.eclipse.pde.internal.core.ischema.*;
-import org.eclipse.pde.internal.core.schema.*;
+import org.eclipse.pde.internal.core.ischema.IDocumentSection;
+import org.eclipse.pde.internal.core.ischema.ISchema;
+import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
+import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
+import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+import org.eclipse.pde.internal.core.ischema.ISchemaInclude;
+import org.eclipse.pde.internal.core.ischema.ISchemaRestriction;
+import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
+import org.eclipse.pde.internal.core.ischema.ISchemaType;
+import org.eclipse.pde.internal.core.schema.ChoiceRestriction;
+import org.eclipse.pde.internal.core.schema.Schema;
+import org.eclipse.pde.internal.core.schema.SchemaSimpleType;
 import org.w3c.dom.Node;
-import org.xml.sax.*;
-import org.eclipse.core.resources.IFile;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 public class SchemaTransformer implements ISchemaTransformer {
 	private static final String KEY_BOOLEAN_INVALID =
@@ -147,8 +162,11 @@ public class SchemaTransformer implements ISchemaTransformer {
 		Node root = parser.getDocument().getDocumentElement();
 		Schema schema = new Schema((ISchemaDescriptor) null, schemaURL);
 		schema.traverseDocumentTree(root, parser.getLineTable());
+
 		if (verifySchema(schema, reporter)
-			&& CompilerFlags.getBoolean(CompilerFlags.S_CREATE_DOCS))
+			&& verifySections(schema, reporter)
+			&& CompilerFlags.getBoolean(CompilerFlags.S_CREATE_DOCS)
+			&& CompilerFlags.getBoolean(CompilerFlags.S_OPEN_TAGS))
 			transform(out, schema);
 	}
 
@@ -395,19 +413,80 @@ public class SchemaTransformer implements ISchemaTransformer {
 		String sectionId) {
 		transformSection(out, schema, null, sectionId);
 	}
+
+	private IDocumentSection findSection(
+		IDocumentSection[] sections,
+		String sectionId) {
+		for (int i = 0; i < sections.length; i++) {
+			if (sections[i].getSectionId().equals(sectionId)) {
+				return sections[i];
+			}
+		}
+		return null;
+	}
+
+	private boolean verifySections(
+		ISchema schema,
+		PluginErrorReporter reporter) {
+		boolean hasError = false;
+
+		String sectionIds[] =
+			{	IDocumentSection.API_INFO,
+				IDocumentSection.EXAMPLES,
+				IDocumentSection.IMPLEMENTATION,
+				IDocumentSection.P_DESCRIPTION,
+				IDocumentSection.COPYRIGHT,
+				IDocumentSection.SINCE };
+		
+		for (int i = 0; i < sectionIds.length; i++) {
+			IDocumentSection section = findSection(schema.getDocumentSections(), sectionIds[i]);
+			
+			if (section != null) {
+				String desc = section.getDescription();
+				StringReader reader = new StringReader(desc.indexOf("<")==-1 ? "" : desc.substring(desc.indexOf("<")));
+				SourceDOMParser parser = new SourceDOMParser();
+				try {
+					InputSource source = new InputSource(reader);
+					parser.parse(source);
+					if (parser == null) {
+						return false;
+					}
+				} catch (Exception e) {
+					if (!e.getMessage().equals("Content is not allowed in prolog.")
+						&& !e.getMessage().equals("Premature end of file.")) {
+						StringTokenizer err = new StringTokenizer(e.getMessage());
+						String msg = "";
+						
+						while (err.countTokens()>0){
+							String token = err.nextToken();
+							if (token.equals("XML"))
+								msg = msg + "HTML ";
+							else
+								msg = msg + token + " " ;	
+						}
+						reporter.reportError(
+							schema.getName()
+								+ " "
+								+ sectionIds[i]
+								+ ": Unmatched tags in documentation ["
+								+ msg + "]");
+						hasError = true;
+					}
+				}
+			}
+		}
+
+		return !hasError;
+	}
+
 	private void transformSection(
 		PrintWriter out,
 		ISchema schema,
 		String title,
 		String sectionId) {
-		IDocumentSection[] sections = schema.getDocumentSections();
-		IDocumentSection section = null;
-		for (int i = 0; i < sections.length; i++) {
-			if (sections[i].getSectionId().equals(sectionId)) {
-				section = sections[i];
-				break;
-			}
-		}
+		IDocumentSection section =
+			findSection(schema.getDocumentSections(), sectionId);
+
 		if (section == null)
 			return;
 		String description = section.getDescription();

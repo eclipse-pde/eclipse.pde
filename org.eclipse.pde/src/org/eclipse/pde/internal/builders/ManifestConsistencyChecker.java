@@ -24,7 +24,6 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.plugin.*;
-import org.w3c.dom.Node;
 
 public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 	public static final String BUILDERS_VERIFYING = "Builders.verifying";
@@ -244,13 +243,6 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		return name.endsWith(".java");
 	}
 
-	private void reportValidationError(
-		Node errorNode,
-		PluginErrorReporter reporter) {
-		/*
-		int type = errorNode.getNodeType();
-		*/
-	}
 	protected void startupOnInitialize() {
 		super.startupOnInitialize();
 	}
