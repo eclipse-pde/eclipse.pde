@@ -39,8 +39,8 @@ private static void initializeDefaults() {
 	IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 	store.setDefault(PROP_PLUGIN_PROJECT_UPDATE, true);
 	store.setDefault(PROP_FRAGMENT_PROJECT_UPDATE, true);
-	store.setDefault(PROP_MANIFEST_UPDATE, false);
-	store.setDefault(PROP_CONVERSION_UPDATE, false);
+	store.setDefault(PROP_MANIFEST_UPDATE, true);
+	store.setDefault(PROP_CONVERSION_UPDATE, true);
 }
 
 protected void createFieldEditors() {

@@ -266,7 +266,7 @@ public class ExternalModelManager {
 			PluginRegistryModel registryModel =
 				Platform.parsePlugins(urls, new Factory(errors));
 			IStatus resolveStatus = null;
-			if (resolve) registryModel.resolve(true, false);
+			if (resolve) resolveStatus = registryModel.resolve(true, false);
 			PluginDescriptorModel[] pluginDescriptorModels = registryModel.getPlugins();
 			for (int i = 0; i < pluginDescriptorModels.length; i++) {
 				PluginDescriptorModel pluginDescriptorModel = pluginDescriptorModels[i];
