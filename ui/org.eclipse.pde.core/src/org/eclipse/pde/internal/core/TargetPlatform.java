@@ -199,9 +199,6 @@ public class TargetPlatform implements IEnvironmentVariables {
 		IPluginModelBase[] models,
 		String primaryFeatureId)
 		throws IOException, CoreException, MalformedURLException {
-		IPath workspaceLocation =
-			PDECore.getWorkspace().getRoot().getLocation().removeLastSegments(
-				1);
 		ArrayList sites = new ArrayList();
 		IPluginModelBase bootModel = null;
 
@@ -216,13 +213,8 @@ public class TargetPlatform implements IEnvironmentVariables {
 				bootModel = model;
 			IResource resource = model.getUnderlyingResource();
 			if (resource != null) {
-				// workspace
-				if (resource.isLinked()) {
-					// careful - linked file - redirect
-					IPath realPath = resource.getLocation();
-					addToSite(realPath.removeLastSegments(3), model, sites);
-				} else
-					addToSite(workspaceLocation, model, sites);
+				IPath realPath = resource.getLocation();
+				addToSite(realPath.removeLastSegments(3), model, sites);
 			} else {
 				// external
 				IPath path = new Path(model.getInstallLocation());
