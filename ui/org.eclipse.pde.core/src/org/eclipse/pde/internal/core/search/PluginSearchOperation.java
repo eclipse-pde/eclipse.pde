@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.core.plugin.IFragment;
+import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
@@ -14,13 +15,10 @@ import org.eclipse.pde.internal.core.util.StringMatcher;
 
 
 public class PluginSearchOperation {
-	private PluginSearchInput input;
+	protected PluginSearchInput input;
 	private IPluginSearchResultCollector collector;
 	private StringMatcher stringMatcher;
 	private String taskName;
-	private String singularLabel = "match";
-	private String pluralLabel = "matches";
-	private int numMatches = 0;
 	
 	public PluginSearchOperation(
 		PluginSearchInput input,
@@ -31,7 +29,7 @@ public class PluginSearchOperation {
 		this.stringMatcher =new StringMatcher(input.getSearchString(),!input.isCaseSensitive(),false);
 	}
 	
-	public void execute(IProgressMonitor monitor, String taskName) {
+	public void execute(IProgressMonitor monitor,String taskName) {
 		IPluginModelBase[] entries = input.getSearchScope().getMatchingModels();
 		collector.searchStarted();
 		monitor.beginTask(taskName, entries.length);
@@ -50,37 +48,46 @@ public class PluginSearchOperation {
 		for (int i = 0; i < matches.size(); i++) {
 			collector.accept((IPluginObject)matches.get(i));
 		}
-		numMatches += matches.size();
 	}
 	
 	private ArrayList findMatch(IPluginModelBase model) {
 		ArrayList result = new ArrayList();
 		int searchLimit = input.getSearchLimit();
-		switch(input.getSearchElement()) {
-			case PluginSearchInput.ELEMENT_PLUGIN:
+		switch (input.getSearchElement()) {
+			case PluginSearchInput.ELEMENT_PLUGIN :
 				if (searchLimit != PluginSearchInput.LIMIT_REFERENCES)
-					findPluginBaseDeclaration(model,result);
+					findPluginDeclaration(model, result);
 				if (searchLimit != PluginSearchInput.LIMIT_DECLARATIONS)
-					findPluginReferences(model,result);
+					findPluginReferences(model, result);
 				break;
-			case PluginSearchInput.ELEMENT_FRAGMENT:
-				findPluginBaseDeclaration(model,result);
+			case PluginSearchInput.ELEMENT_FRAGMENT :
+				findFragmentDeclaration(model, result);
 				break;
-			case PluginSearchInput.ELEMENT_EXTENSION_POINT:
+			case PluginSearchInput.ELEMENT_EXTENSION_POINT :
 				if (searchLimit != PluginSearchInput.LIMIT_REFERENCES)
-					findExtensionPointDeclarations(model,result);
+					findExtensionPointDeclarations(model, result);
 				if (searchLimit != PluginSearchInput.LIMIT_DECLARATIONS)
-					findExtensionPointReferences(model,result);
+					findExtensionPointReferences(model, result);
 				break;
-			default:
-			;
+			default :
+				;
 		}
 		return result;
 	}
 	
-	private void findPluginBaseDeclaration(IPluginModelBase model, ArrayList result) {
-		if (stringMatcher.match(model.getPluginBase().getId()))
-			result.add(model.getPluginBase());
+	private void findFragmentDeclaration(
+		IPluginModelBase model,
+		ArrayList result) {
+		IPluginBase pluginBase = model.getPluginBase();
+		if (pluginBase instanceof IFragment
+			&& stringMatcher.match(pluginBase.getId())) {
+			result.add(pluginBase); }
+	}
+				
+	private void findPluginDeclaration(IPluginModelBase model, ArrayList result) {
+		IPluginBase pluginBase = model.getPluginBase();
+		if (pluginBase instanceof IPlugin && stringMatcher.match(pluginBase.getId()))
+			result.add(pluginBase);
 	}
 	
 	private void findPluginReferences(
@@ -120,21 +127,5 @@ public class PluginSearchOperation {
 				result.add(extensions[i]);
 		}
 	}
-	
-	public String getPluralLabel() {
-		return input.getSearchString() + " - {0} " + pluralLabel;
-	}
-	
-	public String getSingularLabel() {
-		return input.getSearchString() + " - {0} " + singularLabel;
-	}
-	
-	public void setPluralLabel(String pluralLabel) {
-		this.pluralLabel = pluralLabel;
-	}
-	
-	public void setSingularLabel(String singularLabel) {
-		this.singularLabel = singularLabel;
-	}
-	
+		
 }

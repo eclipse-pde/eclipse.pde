@@ -46,39 +46,14 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 		
 		public boolean equals(Object obj) {
 			if (obj instanceof QueryData) {
-				QueryData object = (QueryData) obj;
-				if (!object.text.equals(text))
-					return false;
-				if (object.searchElement != searchElement)
-					return false;
-				if (object.limit != limit)
-					return false;
-				if (object.externalScope != externalScope)
-					return false;
-				if (object.workspaceScope != workspaceScope)
-					return false;
-				if (workingSets != null
-					&& object.workingSets != null) {
-					if(workingSets.length == object.workingSets.length) {
-						for (int i = 0; i < workingSets.length; i++) {
-							if (!workingSets[i].equals(object.workingSets[i]))
-								return false;
-						}
-						return true;
-					} else {
-						return false;
-					}
-				}
-				if (workingSets == null && object.workingSets == null)
+				if (((QueryData)obj).text.equals(text))
 					return true;
-
-				return false;
 			}
 			return false;
 		}
 		
 	}
-		
+	
 	private static final String KEY_SEARCH_STRING = "SearchPage.searchString";
 	private static final String KEY_CASE_SENSITIVE = "SearchPage.caseSensitive";
 	private static final String KEY_SEARCH_FOR = "SearchPage.searchFor";
@@ -219,8 +194,7 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 			new PluginSearchScope(
 				getWorkspaceScope(),
 				getExternalScope(),
-				getSelectedItems(),
-				"");
+				getSelectedResources());
 				
 		PluginSearchInput input = new PluginSearchInput();
 		input.setSearchElement(getSearchFor());
@@ -247,7 +221,7 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 		return PluginSearchInput.ELEMENT_EXTENSION_POINT;
 	}
 	
-	private IFile[] getSelectedItems() {
+	private HashSet getSelectedResources() {
 		HashSet result = new HashSet();
 		int scope = container.getSelectedScope();
 		if (scope == ISearchPageContainer.WORKSPACE_SCOPE)
@@ -274,7 +248,7 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 				}
 			}
 		}
-		return (IFile[]) result.toArray(new IFile[result.size()]);
+		return result;
 	}
 	
 	private int getWorkspaceScope() {
@@ -366,8 +340,10 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 		data.workspaceScope = container.getSelectedScope();
 		data.workingSets = container.getSelectedWorkingSets();
 		
-		if (!previousQueries.contains(data)) 
-			previousQueries.add(data);
+		if (previousQueries.contains(data))
+			previousQueries.remove(data);
+			
+		previousQueries.add(data);			
 		if (previousQueries.size() > 10)
 			previousQueries.remove(0);
 	}

@@ -1,12 +1,13 @@
 package org.eclipse.pde.internal.core.search;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
+import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
 
 /**
  * @author W Melhem
@@ -29,7 +30,7 @@ public class PluginSearchScope {
 	private String description;
 	private int workspaceScope;
 	private int externalScope;
-	private IFile[] selectedItems;
+	private HashSet selectedResources;
 	
 	/**
 	 * Create a scope object with the provided arguments.
@@ -37,16 +38,14 @@ public class PluginSearchScope {
 	 * SCOPE_WORKING_SETS
 	 * @param externalScope  one of EXTERNAL_SCOPE_NONE, EXTERNAL_SCOPE_ENABLED,
 	 * EXTERNAL_SCOPE_ALL
-	 * @param workingSets  goes with SCOPE_WORKING_SETS, otherwise null	 * @param description  an NL string that describes the entire scope	 */
+	 * @param workingSets  goes with SCOPE_WORKING_SETS, otherwise null	 */
 	public PluginSearchScope(
 		int workspaceScope,
 		int externalScope,
-		IFile[] selectedItems,
-		String description) {
+		HashSet selectedResources) {
 			this.workspaceScope = workspaceScope;
 			this.externalScope = externalScope;
-			this.selectedItems = selectedItems;
-			this.description = description;
+			this.selectedResources = selectedResources;
 	}
 	
 	
@@ -56,51 +55,38 @@ public class PluginSearchScope {
 	 * 'Workspace' and external scope being set to 'Only Enabled'
 	 */
 	public PluginSearchScope() {
-		this(SCOPE_WORKSPACE, EXTERNAL_SCOPE_ENABLED, null, "");
+		this(SCOPE_WORKSPACE, EXTERNAL_SCOPE_ENABLED, null);
 	}
 	
-	public String getDescription() {
-		return description;
+	private void addExternalModel(IPluginModelBase candidate, ArrayList result) {
+		if (externalScope == EXTERNAL_SCOPE_ALL)
+			result.add(candidate);
+		else if (externalScope == EXTERNAL_SCOPE_ENABLED && candidate.isEnabled())
+			result.add(candidate);
 	}
 	
-	private void addExternalModels(ArrayList result) {
-		if (externalScope != EXTERNAL_SCOPE_NONE) {
-			IPluginModelBase[] extModels =
-				PDECore.getDefault().getExternalModelManager().getModels();
-			for (int i = 0; i < extModels.length; i++) {
-				if (externalScope == EXTERNAL_SCOPE_ENABLED
-					&& !extModels[i].isEnabled())
-					continue;
-				result.add(extModels[i]);
-			}
+	private void addWorkspaceModel(IPluginModelBase candidate, ArrayList result) {
+		if (workspaceScope == SCOPE_WORKSPACE) {
+			result.add(candidate);
+		} else if (selectedResources.contains(candidate.getUnderlyingResource())) {
+				result.add(candidate);
 		}
 	}
-	
-	private void addWorkspaceModels(ArrayList result) {
-		if (workspaceScope != SCOPE_WORKSPACE) {
-			PluginModelManager modelManager =
-				PDECore.getDefault().getModelManager();
-			for (int i = 0; i < selectedItems.length; i++) {
-				IFile file = selectedItems[i];
-				ModelEntry entry = modelManager.findEntry(file.getProject());
-				if (entry != null) {
-					result.add(entry.getActiveModel());
-				}
-			}
-		} else {
-			IPluginModelBase[] wModels =
-				PDECore.getDefault().getWorkspaceModelManager().getAllModels();
-			for (int i = 0; i < wModels.length; i++) {
-				result.add(wModels[i]);
-			}
-		}
-	}
-	
+		
 	public IPluginModelBase[] getMatchingModels() {
 		ArrayList result = new ArrayList();
-		addWorkspaceModels(result);
-		addExternalModels(result);
-		return (IPluginModelBase[])result.toArray(new IPluginModelBase[result.size()]);
+		PluginModelManager modelManager =
+			PDECore.getDefault().getModelManager();
+		ModelEntry[] entries = modelManager.getEntries();
+		for (int i = 0; i < entries.length; i++) {
+			IPluginModelBase candidate = entries[i].getActiveModel();
+			if (candidate instanceof WorkspacePluginModelBase) {
+				addWorkspaceModel(candidate, result);
+			} else {
+				addExternalModel(candidate, result);
+			}
+		}		
+		return (IPluginModelBase[]) result.toArray(new IPluginModelBase[result.size()]);
 	}
 	
 }
