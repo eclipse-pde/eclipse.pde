@@ -63,6 +63,7 @@ public class WorkbenchLaunchConfigurationDelegate
 			launcher = vmInstallations[0];
 		if (launcher == null) {
 			String message = PDEPlugin.getFormattedMessage(KEY_NO_JRE, vmInstallName);
+			monitor.setCanceled(true);
 			throw new CoreException(createErrorStatus(message));
 		}
 		IVMRunner runner = launcher.getVMRunner(mode);
@@ -172,6 +173,7 @@ public class WorkbenchLaunchConfigurationDelegate
 			String[] classpath = constructClasspath(plugins);
 			if (classpath == null) {
 				String message = PDEPlugin.getResourceString(KEY_NO_BOOT);
+				monitor.setCanceled(true);
 				throw new CoreException(createErrorStatus(message));
 			}
 
