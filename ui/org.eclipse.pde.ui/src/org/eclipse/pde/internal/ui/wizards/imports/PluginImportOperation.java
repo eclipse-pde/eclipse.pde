@@ -226,18 +226,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 	throws CoreException {
 		
 		monitor.beginTask("", 3);
-		
 		importPluginContent(project, model, new SubProgressMonitor(monitor, 2));
-		
-		boolean isSWTPlugin = model.getPluginBase().getId().equals("org.eclipse.swt");
-		if (isSWTPlugin) {
-			IFragment swtFragment = getSWTFragment(model);
-			if (swtFragment != null) {
-				String libraryName = model.getPluginBase().getLibraries()[0].getName();
-				importSWTJar(project, swtFragment, libraryName);
-				importSWTSource(project, swtFragment, libraryName);
-			}
-		}
 		
 		WorkspaceBuildModel buildModel = configureBinIncludes(project, model);
 		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
@@ -312,7 +301,17 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 					project,
 					model.getPluginBase(),
 					new Path(model.getInstallLocation()),
-					new SubProgressMonitor(monitor, 1));		
+					new SubProgressMonitor(monitor, 1));
+		
+		boolean isSWTPlugin = model.getPluginBase().getId().equals("org.eclipse.swt");
+		if (isSWTPlugin) {
+			IFragment swtFragment = getSWTFragment(model);
+			if (swtFragment != null) {
+				String libraryName = model.getPluginBase().getLibraries()[0].getName();
+				importSWTJar(project, swtFragment, libraryName);
+				importSWTSource(project, swtFragment, libraryName);
+			}
+		}
 	}
 	
 	private void importContent(
@@ -538,13 +537,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		for (int i = 0; i < fModels.length; i++) {
 			if (fModels[i] instanceof IFragmentModel) {
 				IFragment fragment = ((IFragmentModel) fModels[i]).getFragment();
-				if (PDECore.compare(
-						model.getPluginBase().getId(),
-						model.getPluginBase().getVersion(),
-						fragment.getId(),
-						fragment.getVersion(),
-						fragment.getRule())
-					&& fragment.getLibraries().length == 0) {
+				if (fragment.getId().equals("org.eclipse.swt.win32")) {
 					return fragment;
 				}
 			}
