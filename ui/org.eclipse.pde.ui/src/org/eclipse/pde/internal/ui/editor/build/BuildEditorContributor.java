@@ -10,15 +10,20 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.build;
 
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.pde.internal.ui.editor.*;
 
 public class BuildEditorContributor extends PDEEditorContributor {
 
-
-public BuildEditorContributor() {
-	super("Plug-in Jars");
-}
-public BuildEditorContributor(String menuName) {
-	super(menuName);
-}
+	public BuildEditorContributor() {
+		super("Plug-in Jars");
+	}
+	public BuildEditorContributor(String menuName) {
+		super(menuName);
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEEditorContributor#contextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
+	 */
+	public void contextMenuAboutToShow(IMenuManager mng) {
+	}
 }
