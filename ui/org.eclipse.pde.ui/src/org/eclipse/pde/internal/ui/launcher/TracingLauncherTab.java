@@ -32,6 +32,7 @@ import org.eclipse.pde.internal.core.*;
 public class TracingLauncherTab
 	extends AbstractLauncherTab
 	implements ILauncherSettings {
+	public static final String KEY_NAME = "TracingLauncherTab.name";
 	public static final String KEY_DESC = "TracingLauncherTab.desc";
 	private static final String KEY_TRACING = "TracingLauncherTab.tracing";
 	public static final String KEY_PLUGINS = "TracingLauncherTab.plugins";
@@ -442,6 +443,6 @@ public class TracingLauncherTab
 		updatePropertyLabel(model);
 	}
 	public String getName() {
-		return "&Tracing";
+		return PDEPlugin.getResourceString(KEY_NAME);
 	}
 }
