@@ -78,8 +78,10 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 			general = new PluginGeneralInfoSection(this, body);
 		managedForm.addPart(general);
 		createContentSection(managedForm, body, toolkit);
-		createTestingSection(managedForm, body, toolkit);
-		createExportingSection(managedForm, body, toolkit);
+        if (isEditable()) {
+    		createTestingSection(managedForm, body, toolkit);
+    		createExportingSection(managedForm, body, toolkit);
+        }
 	}
 	
 	private void createContentSection(IManagedForm managedForm,

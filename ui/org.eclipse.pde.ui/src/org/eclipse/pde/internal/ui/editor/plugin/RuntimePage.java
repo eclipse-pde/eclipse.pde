@@ -21,47 +21,27 @@ import org.eclipse.ui.help.*;
 
 public class RuntimePage extends PDEFormPage {
 	public static final String PAGE_ID="runtime"; //$NON-NLS-1$
-	private LibrarySection librarySection;
-	private ExportSection exportSection;
-	private PluginActivationSection osgiSection;
 
-	public RuntimePage(FormEditor editor) {
+    public RuntimePage(FormEditor editor) {
 		super(editor, PAGE_ID, PDEPlugin.getResourceString("RuntimePage.tabName"));  //$NON-NLS-1$
 	}
+    
 	protected void createFormContent(IManagedForm mform) {
 		super.createFormContent(mform);
 		ScrolledForm form = mform.getForm();
 		form.setText(PDEPlugin.getResourceString("ManifestEditor.RuntimeForm.title")); //$NON-NLS-1$
 		GridLayout layout = new GridLayout();
-		form.getBody().setLayout(layout);
 		layout.numColumns = 2;
 		layout.marginWidth = 10;
 		layout.horizontalSpacing = 10;
 		layout.verticalSpacing = 20;
 		layout.makeColumnsEqualWidth = true;
+        form.getBody().setLayout(layout);
 		
-		librarySection = new LibrarySection(this, form.getBody());
-		librarySection.getSection().setLayoutData(new GridData(GridData.FILL_BOTH));
+		mform.addPart(new LibrarySection(this, form.getBody()));		
+		mform.addPart(new LibraryVisibilitySection(this, form.getBody()));
 		
-		exportSection = new ExportSection(this, form.getBody());
-		exportSection.getSection().setLayoutData( new GridData(GridData.FILL_BOTH));
-		
-		boolean fragment = ((IPluginModelBase)getPDEEditor().getAggregateModel()).isFragmentModel();
-		if (!fragment){
-			osgiSection = new PluginActivationSection(this, form.getBody());
-			GridData gd = new GridData(GridData.FILL_BOTH);
-			gd.horizontalSpan = 2;
-			osgiSection.getSection().setLayoutData(gd);
-		}
-		
-		mform.addPart(librarySection);
-		mform.addPart(exportSection);
-		if (!fragment)
-			mform.addPart(osgiSection);
-		
-		
-		
-		if (fragment)
+		if (((IPluginModelBase)getPDEEditor().getAggregateModel()).isFragmentModel())
 			WorkbenchHelp.setHelp(form, IHelpContextIds.MANIFEST_FRAGMENT_RUNTIME);
 		else
 			WorkbenchHelp.setHelp(form, IHelpContextIds.MANIFEST_PLUGIN_RUNTIME);

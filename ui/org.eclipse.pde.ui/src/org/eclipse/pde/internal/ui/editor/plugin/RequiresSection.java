@@ -39,10 +39,9 @@ public class RequiresSection
     
     private static final int ADD_INDEX = 0;
     private static final int REMOVE_INDEX = 1;
-    private static final int REMOVE_ALL_INDEX = 2;
-    private static final int UP_INDEX = 3;
-    private static final int DOWN_INDEX = 4;
-    private static final int PROPERTIES_INDEX = 5;
+    private static final int UP_INDEX = 2;
+    private static final int DOWN_INDEX = 3;
+    private static final int PROPERTIES_INDEX = 4;
     
 	private TableViewer fImportViewer;
 	private Vector fImports;
@@ -120,7 +119,6 @@ public class RequiresSection
 				&& table.getSelectionIndex() < table.getItemCount() - 1);
         if (isBundle())
             tablePart.setButtonEnabled(PROPERTIES_INDEX, hasSelection);
-        tablePart.setButtonEnabled(REMOVE_ALL_INDEX, isEditable() && table.getItemCount() > 0);
         tablePart.setButtonEnabled(REMOVE_INDEX, isEditable() && hasSelection);
 	}
 
@@ -136,10 +134,7 @@ public class RequiresSection
             case REMOVE_INDEX:
                 handleRemove();
                 break;
-            case REMOVE_ALL_INDEX:
-                handleRemoveAll();
-                break;
-			case UP_INDEX:
+ 			case UP_INDEX:
 				handleUp();
 				break;
 			case DOWN_INDEX:
@@ -156,7 +151,6 @@ public class RequiresSection
         IPluginImport importObject = ((ImportObject) changeObject).getImport();
 
         DependencyPropertiesDialog dialog = new DependencyPropertiesDialog(
-                                            PDEPlugin.getActiveWorkbenchShell(),
                                             isEditable(),
                                             importObject);
         dialog.create();
@@ -272,21 +266,6 @@ public class RequiresSection
         updateButtons();
 	}
     
-    private void handleRemoveAll() {
-        TableItem[] items = fImportViewer.getTable().getItems();
-        IPluginModelBase model = (IPluginModelBase) getPage().getModel();
-        IPluginBase pluginBase = model.getPluginBase();
-        try {
-            for (int i = 0; i < items.length; i++) {
-                ImportObject iobj = (ImportObject) items[i].getData();
-                pluginBase.remove(iobj.getImport());
-            }
-        } catch (CoreException e) {
-            PDEPlugin.logException(e);
-        }
-        updateButtons();
-    }
-
 	private void handleAdd() {
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		PluginSelectionDialog dialog =

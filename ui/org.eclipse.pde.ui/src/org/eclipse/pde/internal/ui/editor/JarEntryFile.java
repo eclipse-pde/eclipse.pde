@@ -79,7 +79,7 @@ public class JarEntryFile extends PlatformObject implements IStorage {
 	public boolean equals(Object obj) {
 		if (!(obj instanceof JarEntryFile))
 			return false;
-		return obj.toString().equals(obj.toString());
+		return toString().equals(obj.toString());
 	}
 
 }

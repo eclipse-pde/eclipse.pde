@@ -27,6 +27,7 @@ import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.pde.internal.ui.util.*;
 import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.swt.*;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.dialogs.*;
@@ -139,6 +140,7 @@ public class LibrarySection
 
 		tablePart.setButtonEnabled(2, false);
 		tablePart.setButtonEnabled(3, false);
+        section.setLayoutData(new GridData(GridData.FILL_BOTH));
 		section.setClient(container);
 		initialize();
 	}
@@ -163,25 +165,6 @@ public class LibrarySection
 			case 3 :
 				handleDown();
 				break;
-		}
-	}
-
-	protected void entryModified(Object entry, String newValue) {
-		Item item = (Item) entry;
-		final IPluginLibrary library = (IPluginLibrary) item.getData();
-		try {
-			if (newValue.equals(library.getName()))
-				return;
-			library.setName(newValue);
-			markDirty();
-			commit(false);
-			libraryTable.getTable().getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					libraryTable.update(library, null);
-				}
-			});
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
 		}
 	}
 
@@ -450,19 +433,8 @@ public class LibrarySection
 			SWTUtil.setDialogSize(dialog, 300,150);
 			
 			if (dialog.open()==Dialog.OK) {
-				entryModified(doFindItem(obj), dialog.getNewName());
 			}
 		}
 	}
 	
-	private Widget doFindItem(Object element) {
-		TableItem[] children = getTablePart().getTableViewer().getTable().getItems();
-		for (int i = 0; i < children.length; i++) {
-			TableItem item = children[i];
-			Object data = item.getData();
-			if (data != null && data.equals(element))
-				return item;
-		}
-		return null;
-	}
 }

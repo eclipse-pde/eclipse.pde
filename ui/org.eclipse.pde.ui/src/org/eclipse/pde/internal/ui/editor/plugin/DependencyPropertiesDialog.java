@@ -15,6 +15,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
@@ -32,14 +33,23 @@ public class DependencyPropertiesDialog extends StatusDialog {
     private String fVersion;
     private Text fVersionText;
 
-    public DependencyPropertiesDialog(Shell parent, boolean editable, IPluginImport plugin) {
-        super(parent);
-        fEditable = editable;
-        fShowReexport = true;
-        fExported = plugin.isReexported();
-        fOptional = plugin.isOptional();
-        fVersion = plugin.getVersion();
+    public DependencyPropertiesDialog(boolean editable, IPluginImport plugin) {
+        this (editable, true, plugin.isReexported(), plugin.isOptional(), plugin.getVersion());
     }
+    
+    public DependencyPropertiesDialog(boolean editable, ImportPackageObject object) {
+        this (editable, false, false, object.isOptional(), object.getVersion());
+    }
+    
+    public DependencyPropertiesDialog(boolean editable, boolean showReexport, boolean export, boolean optional, String version) {
+        super(PDEPlugin.getActiveWorkbenchShell());
+        fEditable = editable;
+        fShowReexport = showReexport;
+        fExported = export;
+        fOptional = optional;
+        fVersion = version;
+    }
+    
     
     protected void createButtonsForButtonBar(Composite parent) {
         super.createButtonsForButtonBar(parent);

@@ -33,81 +33,16 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.actions.*;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.osgi.framework.*;
 
 public class ImportPackageSection extends TableSection implements IModelChangedListener {
 
-    class PackageObject {
-        String name;
-        String version;
-        boolean optional;
-        ManifestElement element;
-        
-        public String toString() {
-            StringBuffer buffer = new StringBuffer(name);
-            if (version != null && version.length() > 0) {
-                buffer.append(" ");
-                boolean wrap = Character.isDigit(version.charAt(0));
-                if (wrap)
-                    buffer.append("(");
-                buffer.append(version);
-                if (wrap)
-                    buffer.append(")");
-            }
-            return buffer.toString();
-        }
-        
-        public String write() {
-            StringBuffer buffer = new StringBuffer();
-            buffer.append(name);
-            if (version != null && version.length() > 0) {
-                buffer.append(";");
-                buffer.append(getVersionAttribute());
-                buffer.append("=\"");
-                buffer.append(version.trim());
-                buffer.append("\"");
-            }
-            if (optional) {
-                buffer.append(";");
-                buffer.append(Constants.RESOLUTION_DIRECTIVE);
-                buffer.append(":=");
-                buffer.append(Constants.RESOLUTION_OPTIONAL);
-            }
-            if (element == null)
-                return buffer.toString();
-            
-            Enumeration attrs = element.getKeys();
-            if (attrs != null) {
-                while (attrs.hasMoreElements()) {
-                    String attr = attrs.nextElement().toString();
-                    if (attr.equals(getVersionAttribute()))
-                        continue;
-                    buffer.append(";");
-                    buffer.append(attr);
-                    buffer.append("=\"");
-                    buffer.append(element.getAttribute(attr));
-                    buffer.append("\"");
-                }
-            }
-            Enumeration directives = element.getDirectiveKeys();
-            if (directives != null) {
-                while (directives.hasMoreElements()) {
-                    String directive = directives.nextElement().toString();
-                    if (directive.equals(Constants.RESOLUTION_DIRECTIVE))
-                        continue;
-                    buffer.append(";");
-                    buffer.append(directive);
-                    buffer.append(":=");
-                    buffer.append("\"");
-                    buffer.append(element.getDirective(directive));
-                    buffer.append("\"");
-                }
-            }
-            return buffer.toString();
-        }
-    }
+    private static final int ADD_INDEX = 0;
+    private static final int REMOVE_INDEX = 1;
+    private static final int PROPERTIES_INDEX = 2;
     
 	class ImportPackageContentProvider extends DefaultTableProvider {
 		public Object[] getElements(Object parent) {
@@ -123,12 +58,8 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 				if (value != null) {
 					ManifestElement[] elements = ManifestElement.parseHeader(Constants.IMPORT_PACKAGE, value);
 					for (int i = 0; i < elements.length; i++) {
-						PackageObject p = new PackageObject();
-                        p.name = elements[i].getValue();
-                        p.version = elements[i].getAttribute(getVersionAttribute());
-                        p.optional = Constants.RESOLUTION_OPTIONAL.equals(elements[i].getDirective(Constants.RESOLUTION_DIRECTIVE));
-                        p.element = elements[i];
-                        fPackages.put(p.name, p);
+						ImportPackageObject p = new ImportPackageObject(elements[i], getVersionAttribute());
+                        fPackages.put(p.getName(), p);
 					}
 				}
 			} catch (BundleException e) {
@@ -168,13 +99,16 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
     private TableViewer fPackageViewer;
 
     private Map fPackages;
+    private Action fAddAction;
+    private Action fRemoveAction;
+    private Action fPropertiesAction;
 
 	public ImportPackageSection(PDEFormPage page, Composite parent) {
 		super(
 				page,
 				parent,
 				Section.DESCRIPTION,
-				new String[] {"Add...", "Remove"}); 
+				new String[] {"Add...", "Remove", "Properties..."}); 
 		getSection().setText("Required Packages"); 
 		getSection()
 				.setDescription("You can specify packages this plug-in depends on without explicitly restricting what plug-ins they must come from."); 
@@ -189,7 +123,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
 		Composite container = createClientContainer(section, 2, toolkit);
-		createViewerPartControl(container, SWT.SINGLE, 2, toolkit);
+		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
 		TablePart tablePart = getTablePart();
 		fPackageViewer = tablePart.getTableViewer();
 		fPackageViewer
@@ -209,32 +143,84 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
 		section.setLayoutData(new GridData(GridData.FILL_BOTH));
-		initialize();
+        makeActions();
+        
+        IBundleModel model = getBundleModel();
+        fPackageViewer.setInput(model);
+        model.addModelChangedListener(this);
+        updateButtons();
 	}
+    
+    public boolean doGlobalAction(String actionId) {
+        if (actionId.equals(ActionFactory.DELETE.getId())) {
+            handleRemove();
+            return true;
+        }
+        if (actionId.equals(ActionFactory.CUT.getId())) {
+            // delete here and let the editor transfer
+            // the selection to the clipboard
+            handleRemove();
+            return false;
+        }
+        if (actionId.equals(ActionFactory.PASTE.getId())) {
+            doPaste();
+            return true;
+        }
+        return false;
+    }
+    
+    protected void doPaste() {
+    }
 
 	protected void selectionChanged(IStructuredSelection sel) {
-		Object item = sel.getFirstElement();
-		getTablePart().setButtonEnabled(1, item != null);
-		getTablePart().setButtonEnabled(2, item != null);
+        getPage().getPDEEditor().setSelection(sel);
+        updateButtons();
 	}
 
-	protected void buttonSelected(int index) {
-		if (index == 0)
-			handleAdd();
-		else if (index == 1)
-			handleDelete();
+	private void updateButtons() {
+        int size = ((IStructuredSelection)fPackageViewer.getSelection()).size();
+        TablePart tablePart = getTablePart();
+        tablePart.setButtonEnabled(ADD_INDEX, isEditable());
+        tablePart.setButtonEnabled(REMOVE_INDEX, isEditable() && size > 0);
+        tablePart.setButtonEnabled(PROPERTIES_INDEX, size == 1);  
+    }
+    
+    protected void handleDoubleClick(IStructuredSelection selection) {
+        handleOpenProperties();
+    }
+
+    protected void buttonSelected(int index) {
+        switch (index) {
+        case ADD_INDEX:
+            handleAdd();
+            break;
+        case REMOVE_INDEX:
+            handleRemove();
+            break;
+        case PROPERTIES_INDEX:
+            handleOpenProperties();
+        }
 	}
 
-	/**
-	 * 
-	 */
-	protected void handleDelete() {
-		IStructuredSelection ssel = (IStructuredSelection) fPackageViewer
-				.getSelection();
+	private void handleOpenProperties() {
+        Object object = ((IStructuredSelection)fPackageViewer.getSelection()).getFirstElement();
+        ImportPackageObject importObject = (ImportPackageObject)object;
+
+        DependencyPropertiesDialog dialog = new DependencyPropertiesDialog(isEditable(),importObject);
+        dialog.create();
+        SWTUtil.setDialogSize(dialog, 400, -1);
+        dialog.setTitle(importObject.getName());
+        if (dialog.open() == DependencyPropertiesDialog.OK && isEditable()) {
+            importObject.setOptional(dialog.isOptional());
+            importObject.setVersion(dialog.getVersion());
+         }
+    }
+
+	private void handleRemove() {
+		IStructuredSelection ssel = (IStructuredSelection) fPackageViewer.getSelection();
 		Object[] items = ssel.toArray();
 		fPackageViewer.remove(items);
 		removeImportPackages(items);
-
 	}
 
 	/**
@@ -242,16 +228,13 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 	 */
 	private void removeImportPackages(Object[] removed) {
 		for (int k = 0; k < removed.length; k++) {
-			PackageObject p = (PackageObject) removed[k];
-			fPackages.remove(p.name);
+			ImportPackageObject p = (ImportPackageObject) removed[k];
+			fPackages.remove(p.getName());
 		}
 		writeImportPackages();
 	}
 
-	/**
-	 * 
-	 */
-	protected void handleAdd() {
+	private void handleAdd() {
        ElementListSelectionDialog dialog = new ElementListSelectionDialog(
                 PDEPlugin.getActiveWorkbenchShell(), 
                 new ImportPackageDialogLabelProvider());
@@ -265,23 +248,14 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 			Object[] selected = dialog.getResult();
 			for (int i = 0; i < selected.length; i++) {
 				ExportPackageDescription candidate = (ExportPackageDescription) selected[i];
-				PackageObject p = new PackageObject();
-				p.name = candidate.getName();
-                String version = candidate.getVersion().toString();
-                if (!version.equals(Version.emptyVersion.toString()))
-                    p.version = candidate.getVersion().toString();
-                p.optional = Constants.RESOLUTION_OPTIONAL.equals(candidate.getDirective(Constants.RESOLUTION_DIRECTIVE));
-			}
+				ImportPackageObject p = new ImportPackageObject(candidate, getVersionAttribute());
+                fPackages.put(p.getName(), p);
+                fPackageViewer.add(p);
+            }
 			if (selected.length > 0) {
 				writeImportPackages();
 			}
 		}
-	}
-
-	public void addImportPackage(PackageObject p) {
-		fPackages.put(p.name, p);
-		fPackageViewer.add(p);
-        writeImportPackages();
 	}
 
 	private void writeImportPackages() {
@@ -289,7 +263,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 		if (fPackages != null) {
             Iterator iter = fPackages.values().iterator();
 			while (iter.hasNext()) {
-				buffer.append(((PackageObject)iter.next()).write());
+				buffer.append(((ImportPackageObject)iter.next()).write());
 				if (iter.hasNext()) {
 					buffer.append("," + System.getProperty("line.separator") + " "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				}
@@ -300,28 +274,18 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 
 	private ExportPackageDescription[] getAvailablePackages() {
 		ArrayList result = new ArrayList();
-        String id = getId();
+        Set set = getForbiddenIds();
         
         //TODO add method to PluginModelManager
         PDEState state = PDECore.getDefault().getExternalModelManager().getState();
         ExportPackageDescription[] desc = state.getState().getExportedPackages();
         for (int i = 0; i < desc.length; i++) {
-			if (desc[i].getExporter().getSymbolicName().equals(id))
+			if (set.contains(desc[i].getExporter().getSymbolicName()))
                 continue;
 			if (fPackages != null && !fPackages.containsKey(desc[i].getName()))
 				result.add(desc[i]);			
 		}
 		return (ExportPackageDescription[])result.toArray(new ExportPackageDescription[result.size()]);
-	}
-
-	public void initialize() {
-		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
-		fPackageViewer.setInput(model.getPluginBase());
-
-		getBundleModel().addModelChangedListener(this);
-		getTablePart().setButtonEnabled(0, true);
-		getTablePart().setButtonEnabled(1, false);
-
 	}
 
 	public void modelChanged(IModelChangedEvent event) {
@@ -337,10 +301,37 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 		fPackageViewer.refresh();
 		super.refresh();
 	}
+    
+    private void makeActions() {
+        fAddAction = new Action(PDEPlugin.getResourceString("RequiresSection.add")) { //$NON-NLS-1$
+            public void run() {
+                handleAdd();
+            }
+        };
+        fAddAction.setEnabled(isEditable());
+        fRemoveAction = new Action(PDEPlugin.getResourceString("RequiresSection.delete")) { //$NON-NLS-1$
+            public void run() {
+                handleRemove();
+            }
+        };
+        fRemoveAction.setEnabled(isEditable());
+        
+        fPropertiesAction = new Action("Properties") { 
+            public void run() {
+                handleOpenProperties();
+            }
+        };
+    }
 
 	protected void fillContextMenu(IMenuManager manager) {
-		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(
-				manager);
+        manager.add(fAddAction);
+        manager.add(new Separator());
+        manager.add(fRemoveAction);
+		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
+        if (!fPackageViewer.getSelection().isEmpty()) {
+            manager.add(new Separator());
+            manager.add(fPropertiesAction);
+        }
 	}
 
     private BundleInputContext getBundleContext() {
@@ -364,15 +355,35 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
         return (manifestVersion < 2) ? Constants.PACKAGE_SPECIFICATION_VERSION : Constants.VERSION_ATTRIBUTE;
     }
     
-    private String getId() {
-        String value = getBundle().getHeader(Constants.BUNDLE_SYMBOLICNAME);
-        try {
-            ManifestElement[] elements = ManifestElement.parseHeader(Constants.BUNDLE_SYMBOLICNAME, value);
-            if (elements.length > 0)
-                return elements[0].getValue();
-        } catch (BundleException e) {
+    private Set getForbiddenIds() {
+        HashSet set = new HashSet();
+        IPluginModelBase model = (IPluginModelBase)getPage().getPDEEditor().getAggregateModel();
+        String id = model.getPluginBase().getId();
+        if (id != null)
+            set.add(id);
+        IPluginImport[] imports = model.getPluginBase().getImports();
+        PDEState state = PDECore.getDefault().getExternalModelManager().getState();
+        for (int i = 0; i < imports.length; i++) {
+            addDependency(state.getState(), imports[i].getId(), set);
         }
-        return null;
+        return set;
     }
+    
+    private void addDependency(State state, String bundleID, Set set) {
+        if (bundleID == null || !set.add(bundleID))
+            return;
+            
+        BundleDescription desc = state.getBundle(bundleID, null);
+        if (desc == null)
+            return;
+        
+        BundleSpecification[] specs = desc.getRequiredBundles();
+        for (int j = 0; j < specs.length; j++) {
+            if (specs[j].isResolved() && specs[j].isExported()) {
+                addDependency(state, specs[j].getName(), set);
+            }
+        }        
+    }
+    
 
 }

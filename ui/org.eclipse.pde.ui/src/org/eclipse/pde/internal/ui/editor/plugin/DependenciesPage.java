@@ -52,7 +52,6 @@ public class DependenciesPage extends PDEFormPage {
 		if (isBundle)
 			gd.horizontalSpan = 2;
 		section.getSection().setLayoutData(gd);
-		managedForm.addPart(section);
 	}
 	
 	private boolean isBundle() {
@@ -63,7 +62,6 @@ public class DependenciesPage extends PDEFormPage {
         ArrayList labels = new ArrayList();
         labels.add(PDEPlugin.getResourceString("RequiresSection.add"));
         labels.add(PDEPlugin.getResourceString("RequiresSection.delete"));
-        labels.add("Remove All");
         labels.add(PDEPlugin.getResourceString("RequiresSection.up"));
         labels.add(PDEPlugin.getResourceString("RequiresSection.down"));
         if (isBundle())

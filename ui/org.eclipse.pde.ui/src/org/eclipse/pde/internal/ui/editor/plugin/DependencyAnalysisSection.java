@@ -10,44 +10,27 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
-import org.eclipse.core.resources.*;
 import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.builders.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.search.*;
 import org.eclipse.pde.internal.ui.search.dependencies.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
 
-public class DependencyAnalysisSection extends PDESection implements IPartSelectionListener {
+public class DependencyAnalysisSection extends PDESection {
 	private FormText formText;
-	private ImportObject fSelectedDependency;
 
 	public DependencyAnalysisSection(PDEFormPage page, Composite parent, int style) {
 		super(page, parent, Section.TITLE_BAR|Section.TWISTIE|style);
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.IPartSelectionListener#selectionChanged(org.eclipse.ui.forms.IFormPart, org.eclipse.jface.viewers.ISelection)
-	 */
-	public void selectionChanged(IFormPart part, ISelection selection) {
-		if (selection == null || selection.isEmpty()) {
-			fSelectedDependency = null;
-		} else {
-			Object object = ((IStructuredSelection)selection).getFirstElement();
-			fSelectedDependency = (object instanceof ImportObject) ? (ImportObject)object : null;
-		}
-	}
-	
 	private String getFormText() {
 		boolean editable = getPage().getModel().isEditable();
 		if (getPage().getModel() instanceof IPluginModel) {
@@ -73,9 +56,7 @@ public class DependencyAnalysisSection extends PDESection implements IPartSelect
 		formText.setImage("search", lp.get(PDEPluginImages.DESC_PSEARCH_OBJ)); //$NON-NLS-1$
 		formText.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
-				if (e.getHref().equals("extent")) //$NON-NLS-1$
-					doFindPlugins();
-				else if (e.getHref().equals("unused")) //$NON-NLS-1$
+				if (e.getHref().equals("unused")) //$NON-NLS-1$
 					doFindUnusedDependencies();
 				else if (e.getHref().equals("loops")) //$NON-NLS-1$
 					doFindLoops();
@@ -101,17 +82,6 @@ public class DependencyAnalysisSection extends PDESection implements IPartSelect
 		}	
 	}
 
-	protected void doFindPlugins() {
-		if (fSelectedDependency != null) {
-			getPage().getPDEEditor().doSave(null);
-			IPluginImport dep = fSelectedDependency.getImport();
-			IResource resource = dep.getModel().getUnderlyingResource();
-			new DependencyExtentAction(resource.getProject(), dep.getId()).run();
-		} else {
-			MessageDialog.openInformation(getPage().getSite().getShell(), PDEPlugin.getResourceString("DependencyAnalysisSection.dialogtitle"), PDEPlugin.getResourceString("DependencyAnalysisSection.message")); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-	}
-	
 	protected void doFindUnusedDependencies() {
 		IBaseModel model = getPage().getModel();
 		if (model instanceof IPluginModelBase) {
