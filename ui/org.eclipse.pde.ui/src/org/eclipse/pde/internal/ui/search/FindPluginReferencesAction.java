@@ -72,21 +72,17 @@ public class FindPluginReferencesAction implements IObjectActionDelegate {
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
+		searchString = null;
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection sSelection = (IStructuredSelection) selection;
 			if (sSelection.size() == 1) {
-				IFile file =
-					(IFile) ((IStructuredSelection) selection)
-						.getFirstElement();
+				IFile file = (IFile) sSelection.getFirstElement();
 				ModelEntry entry =
-					PDECore.getDefault().getModelManager().findEntry(
-						file.getProject());
+					PDECore.getDefault().getModelManager().findEntry(file.getProject());
 				if (entry != null) {
 					IPluginModelBase model = entry.getActiveModel();
 					if (model != null)
 						searchString = model.getPluginBase().getId();
-				} else {
-					searchString = null;
 				}
 			}
 		}
