@@ -15,12 +15,14 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
 import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -68,6 +70,26 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 		implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
 			return getModels();
+		}
+	}
+	
+	class PluginLabelProvider extends LabelProvider {
+		PDELabelProvider provider;
+		
+		public PluginLabelProvider() {
+			provider = PDEPlugin.getDefault().getLabelProvider();
+		}
+		public String getText(Object obj) {
+			return provider.getText(obj);
+		}
+		public Image getImage(Object obj) {
+			Image image = provider.getImage(obj);
+			IPluginModelBase model = (IPluginModelBase)obj;
+			String id = model.getPluginBase().getId();
+			if (!PDEPlugin.getWorkspace().getRoot().exists(new Path(id)))
+				return image;
+			int flags = PDELabelProvider.F_PROJECT;
+			return provider.get(image, flags);
 		}
 	}
 
@@ -205,8 +227,7 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 		tablePart.createControl(container);
 		pluginListViewer = tablePart.getTableViewer();
 		pluginListViewer.setContentProvider(new PluginContentProvider());
-		pluginListViewer.setLabelProvider(
-			PDEPlugin.getDefault().getLabelProvider());
+		pluginListViewer.setLabelProvider(new PluginLabelProvider());
 		GridData gd = (GridData) tablePart.getControl().getLayoutData();
 		gd.heightHint = 300;
 		gd.widthHint = 300;
