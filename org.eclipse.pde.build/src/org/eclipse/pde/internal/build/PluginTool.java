@@ -81,7 +81,7 @@ protected String extractPropertyName(String propertyString) {
 /**
  * convert a list of comma-separated tokens into an array
  */
-protected String[] getArrayFromString(String prop) {
+public static String[] getArrayFromString(String prop) {
 	if (prop == null || prop.trim().equals(""))
 		return new String[0];
 	ArrayList result = new ArrayList();

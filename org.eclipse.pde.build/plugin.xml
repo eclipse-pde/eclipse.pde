@@ -2,7 +2,7 @@
 <plugin
    id="org.eclipse.pde.core"
    name="%pluginName"
-   version="2.0.0"
+   version="2.0.1"
    provider-name="Object Technology International, Inc.">
 
 <requires>
@@ -45,6 +45,12 @@
    <antTask
          name="cvspass"
          class="org.eclipse.pde.internal.core.CVSPass">
+   </antTask>
+</extension>
+<extension point="org.eclipse.ant.core.antTasks">
+   <antTask
+         name="buildManifest"
+         class="org.eclipse.pde.internal.core.BuildManifestTask">
    </antTask>
 </extension>
 
