@@ -182,7 +182,6 @@ public final class Utils implements IPDEBuildConstants {
 						found = true;
 						prereqs.add(new String[] { plugins[i].getId(), prereq });
 					}
-					System.out.println(prereqIndex);
 					// If the prereq is a plugin, then add a dependency between the given plugin and the fragments of the prereq 
 //					if (prereqIndex != -1 && prereqIndex < plugins.length) {
 //						PluginFragmentModel[] prereqsFragments = ((PluginDescriptorModel) plugins[prereqIndex]).getFragments();
@@ -206,12 +205,10 @@ public final class Utils implements IPDEBuildConstants {
 			// Note that we should skip the xerces plugin as this would cause a circularity.
 			if (plugins[i].getId().equals("org.apache.xerces")) //$NON-NLS-1$
 				continue;
-			if (buildingOSGi && plugins[i].getId().equals("org.eclipse.osgi")) //$NON-NLS-1$
+			if (buildingOSGi && ( plugins[i].getId().startsWith("org.eclipse.osgi") || plugins[i].getId().equals("org.eclipse.core.runtime") || plugins[i].getId().equals("org.eclipse.core.runtime.osgi") || plugins[i].getId().equals("org.eclipse.core.runtime.compatibility") || plugins[i].getId().equals("org.eclipse.update.configurator") )) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 				continue;
-			if (buildingOSGi && plugins[i].getId().equals("org.eclipse.core.runtime.osgi")) //$NON-NLS-1$
-				continue;
-			
-			if (!buildingOSGi) {
+		
+			if (!buildingOSGi || buildingOSGi && !new File(plugins[i].getLocation(), "meta-inf/manifest.mf").exists()) { //$NON-NLS-1$
 				if (!boot && pluginList.contains(BootLoader.PI_BOOT) && !plugins[i].getId().equals(BootLoader.PI_BOOT))
 					prereqs.add(new String[] { plugins[i].getId(), BootLoader.PI_BOOT });
 				if (!runtime && pluginList.contains(Platform.PI_RUNTIME) && !plugins[i].getId().equals(Platform.PI_RUNTIME) && !plugins[i].getId().equals(BootLoader.PI_BOOT))

@@ -819,4 +819,13 @@ public abstract class ModelBuildScriptGenerator extends AbstractBuildScriptGener
 	public void setBuildScriptFileName(String buildScriptFileName) {
 		this.buildScriptFileName = buildScriptFileName;
 	}
+	
+	public boolean hasManifest() {
+		try {
+			return new File(getLocation(model), "meta-inf/manifest.mf").exists(); //$NON-NLS-1$
+		} catch (CoreException e) {
+			// Ignore the exception and return false
+			return false;
+		} 
+	}
 }

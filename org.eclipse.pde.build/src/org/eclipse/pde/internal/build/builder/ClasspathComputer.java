@@ -43,7 +43,7 @@ public class ClasspathComputer implements IPDEBuildConstants, IXMLConstants {
 		String location = generator.getLocation(model);
 
 		//PARENT
-		if (! generator.isBuildingOSGi())
+		if (! generator.isBuildingOSGi() || (generator.isBuildingOSGi() && !generator.hasManifest()) )
 			addPlugin(getPlugin(PI_BOOT, null), classpath, location);
 
 		//SELF
@@ -304,7 +304,7 @@ public class ClasspathComputer implements IPDEBuildConstants, IXMLConstants {
 
 		if (pluginChain.contains(target)) {
 			if (generator.isBuildingOSGi()) {
-				if (target == getPlugin(PI_RUNTIME, null) || target == getPlugin("org.eclipse.osgi", null) || target == getPlugin("org.eclipse.core.runtime.osgi", null))
+				if (target == getPlugin(PI_RUNTIME, null) || target == getPlugin("org.eclipse.osgi", null) || target == getPlugin("org.eclipse.core.runtime.osgi", null)) //$NON-NLS-1$ //$NON-NLS-2$
 					return;
 			} else {
 				if (target == getPlugin(PI_RUNTIME, null))
@@ -315,8 +315,8 @@ public class ClasspathComputer implements IPDEBuildConstants, IXMLConstants {
 			throw new CoreException(new Status(IStatus.ERROR, IPDEBuildConstants.PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_CLASSPATH_CYCLE, message, null));
 		}
 
-		//	The first prerequisite is ALWAYS runtime, if we are not building for OSGi
-		if (!generator.isBuildingOSGi() && target != getPlugin(PI_RUNTIME, null))
+		//	The first prerequisite is ALWAYS runtime unless we are building pure osgi bundle (osgi flag but no manifest)
+		if ( (!generator.isBuildingOSGi() || (generator.isBuildingOSGi() && !generator.hasManifest() )) && (target != getPlugin(PI_RUNTIME, null) && target != getPlugin("org.eclipse.core.runtime.osgi", null) && target != getPlugin("org.eclipse.osgi", null) && target != getPlugin("org.eclipse.core.runtime.compatibility", null)) ) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			addPluginAndPrerequisites(getPlugin(PI_RUNTIME, null), classpath, baseLocation, pluginChain);
 
 		// add libraries from pre-requisite plug-ins.  Don't worry about the export flag
