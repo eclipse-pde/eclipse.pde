@@ -219,7 +219,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 	}
 	
 	private void createViewer(Composite container) {
-		Table table = new Table(container, SWT.BORDER|SWT.FULL_SELECTION);
+		Table table = new Table(container, SWT.BORDER|SWT.FULL_SELECTION|SWT.MULTI);
 		TableColumn column1 = new TableColumn(table, SWT.NONE);
 		column1.setText(PDEPlugin.getResourceString("ConfigurationTab.col1")); //$NON-NLS-1$
 		TableColumn column2 = new TableColumn(table, SWT.NONE);
@@ -289,13 +289,19 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 		SWTUtil.setButtonDimensionHint(fRemoveButton);
 		fRemoveButton.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
-			int index = fTableViewer.getTable().getSelectionIndex();
-			fPluginList.remove(index);
+			int index = fTableViewer.getTable().getSelectionIndices()[0];
+			TableItem[] items = fTableViewer.getTable().getSelection();
+			for (int i = 0; i < items.length; i++) {
+				fPluginList.remove(items[i].getData());
+			}
 			fTableViewer.refresh();
+			
 			if (index > fPluginList.size() - 1)
 				index = fPluginList.size() - 1;
-			if (index > -1)
-				fTableViewer.setSelection(new StructuredSelection(fPluginList.get(index)));
+			
+			if (index >= 0)
+				fTableViewer.setSelection(new StructuredSelection(fTableViewer.getElementAt(index)));
+			fRemoveButton.setEnabled(index >= 0);
 			updateLaunchConfigurationDialog();
 		}});
 	}
