@@ -219,9 +219,9 @@ public class ClasspathUtilCore {
 			if (plugin != null)
 				addDependency(plugin, false, relative, true, result, alreadyAdded);
 			if (!id.equals("org.eclipse.core.runtime")) {
-				plugin = PDECore.getDefault().findPlugin("org.apache.xerces");
-				if (plugin != null)
-					addDependency(plugin, false, relative, true, result, alreadyAdded);
+				//plugin = PDECore.getDefault().findPlugin("org.apache.xerces");
+				//if (plugin != null)
+					//addDependency(plugin, false, relative, true, result, alreadyAdded);
 				plugin = PDECore.getDefault().findPlugin("org.eclipse.core.runtime");
 				if (plugin != null)
 					addDependency(plugin, false, relative, true, result, alreadyAdded);
