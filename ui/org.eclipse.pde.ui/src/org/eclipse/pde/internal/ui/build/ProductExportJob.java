@@ -176,7 +176,7 @@ public class ProductExportJob extends FeatureExportJob {
 				// TODO for now copy everything except .eclipseproduct
 				// Once the branded executable is generated, we should not copy
 				// eclipse.exe nor icon.xpm
-				if (files[i].isFile() && !".eclipseproduct".equals(files[i].getName()) && !files[i].getName().startsWith("eclipse")) {
+				if (files[i].isFile() && !".eclipseproduct".equals(files[i].getName())) {
 					buffer.append("absolute:file:");
 					buffer.append(files[i].getAbsolutePath());
 					buffer.append(",");
