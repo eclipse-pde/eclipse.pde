@@ -235,7 +235,9 @@ public class BasicLauncherTab
 		label.setText(PDEPlugin.getResourceString("BasicLauncherTab.vmArgs"));
 		
 		fVmArgsText = new Text(parent, SWT.BORDER);
-		fVmArgsText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));		
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.widthHint = 300;
+		fVmArgsText.setLayoutData(gd);		
 		fVmArgsText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				if (!fBlockChanges)	
@@ -249,7 +251,9 @@ public class BasicLauncherTab
 		label.setText(PDEPlugin.getResourceString("BasicLauncherTab.programArgs"));
 
 		fProgArgsText = new Text(parent, SWT.BORDER);
-		fProgArgsText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.widthHint = 300;
+		fProgArgsText.setLayoutData(gd);
 		fProgArgsText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				if (!fBlockChanges)
@@ -263,7 +267,9 @@ public class BasicLauncherTab
 		label.setText(PDEPlugin.getResourceString("BasicLauncherTab.classpath"));
 		
 		fClasspathText = new Text(parent, SWT.BORDER);
-		fClasspathText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.widthHint = 300;
+		fClasspathText.setLayoutData(gd);
 		fClasspathText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				if (!fBlockChanges)	
