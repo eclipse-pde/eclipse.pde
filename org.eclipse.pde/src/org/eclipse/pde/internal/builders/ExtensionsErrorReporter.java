@@ -117,7 +117,7 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 			ISchemaAttribute attr = parentSchema.getAttribute(elementName);
 			if (attr != null && attr.getKind() == ISchemaAttribute.JAVA) {
 				if (attr.isDeprecated())
-					reportDeprecatedAttribute(element, element.getAttributeNode("class"));
+					reportDeprecatedAttribute(element, element.getAttributeNode("class")); //$NON-NLS-1$
 				validateJavaAttribute(element, element.getAttributeNode("class")); //$NON-NLS-1$				
 			}
 		} else {		
@@ -282,7 +282,7 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 		} else if (fModel != null && fModel instanceof AbstractModel) {
 			NLResourceHelper helper = ((AbstractModel)fModel).getNLResourceHelper();
 			if (helper == null || !helper.resourceExists(value)) {
-				report(PDE.getFormattedMessage("Builders.Manifest.key-not-found", value.substring(1)), getLine(element, attr.getName()), severity);
+				report(PDE.getFormattedMessage("Builders.Manifest.key-not-found", value.substring(1)), getLine(element, attr.getName()), severity); //$NON-NLS-1$
 			}
 		}
 	}
@@ -448,7 +448,7 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 	protected void reportDeprecatedAttribute(Element element, Attr attr) {
 		int severity = CompilerFlags.getFlag(project, CompilerFlags.P_DEPRECATED);
 		if (severity != CompilerFlags.IGNORE) {
-			report(PDE.getFormattedMessage("Builders.Manifest.deprecated-attribute",
+			report(PDE.getFormattedMessage("Builders.Manifest.deprecated-attribute", //$NON-NLS-1$
 					attr.getName()), getLine(element, attr.getName()), severity);
 		}	
 	}
@@ -456,7 +456,7 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 	protected void reportDeprecatedElement(Element element) {
 		int severity = CompilerFlags.getFlag(project, CompilerFlags.P_DEPRECATED);
 		if (severity != CompilerFlags.IGNORE) {
-			report(PDE.getFormattedMessage("Builders.Manifest.deprecated-element",
+			report(PDE.getFormattedMessage("Builders.Manifest.deprecated-element", //$NON-NLS-1$
 					element.getNodeName()), getLine(element), severity);
 		}	
 	}

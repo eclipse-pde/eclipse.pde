@@ -58,7 +58,7 @@ public class CompilerFlags {
 	public static final String P_NOT_EXTERNALIZED = 
 		"compilers.p.not-externalized-att"; //$NON-NLS-1$
 	public static final String P_DEPRECATED = 
-		"compilers.p.deprecated";
+		"compilers.p.deprecated"; //$NON-NLS-1$
 	public static final String P_NOT_USED = 
 		"compilers.p.unused-element-or-attribute"; //$NON-NLS-1$
 
@@ -260,7 +260,7 @@ public class CompilerFlags {
 		pref.setDefault(P_UNKNOWN_CLASS, IGNORE);
 		pref.setDefault(P_UNKNOWN_RESOURCE, IGNORE);
 		pref.setDefault(P_NOT_EXTERNALIZED, IGNORE);
-		pref.setDefault(P_DEPRECATED, WARNING);
+		pref.setDefault(P_DEPRECATED, IGNORE);
 		pref.setDefault(P_NOT_USED, WARNING);
 
 		pref.setDefault(S_CREATE_DOCS, false);
