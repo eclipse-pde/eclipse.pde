@@ -205,8 +205,10 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				selected.clear();
-				pageChanged();
+				if (selected.size() > 0) {
+					selected.clear();
+					pageChanged();
+				}
 			}
 		});
 		SWTUtil.setButtonDimensionHint(button);
@@ -252,15 +254,17 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				selected.clear();
 				TableItem[] items = importListViewer.getTable().getItems();
+				if (items.length == 0)
+					return;
 				if (items.length == 1) {
 					IPluginModelBase model = (IPluginModelBase) items[0].getData();
 					if (model.getPluginBase().getId().equals("org.eclipse.core.boot")) {
-						selected.add(model);
 						return;
 					}
 				}
+				
+				selected.clear();
 				for (int i = 0; i < items.length; i++) {
 					addPluginAndDependencies((IPluginModelBase) items[i].getData());
 				}
