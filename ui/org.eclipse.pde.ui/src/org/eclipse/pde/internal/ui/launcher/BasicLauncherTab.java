@@ -30,6 +30,7 @@ public class BasicLauncherTab
 	private static final String KEY_WORKSPACE = "BasicLauncherTab.workspace";
 	private static final String KEY_BROWSE = "BasicLauncherTab.browse";
 	private static final String KEY_CLEAR = "BasicLauncherTab.clear";
+	private static final String KEY_ASK_CLEAR = "BasicLauncherTab.askClear";
 	private static final String KEY_JRE = "BasicLauncherTab.jre";
 	private static final String KEY_VMARGS = "BasicLauncherTab.vmArgs";
 	private static final String KEY_PARGS = "BasicLauncherTab.programArgs";
@@ -53,6 +54,7 @@ public class BasicLauncherTab
 	private Combo workspaceCombo;
 	private Button browseButton;
 	private Button clearWorkspaceCheck;
+	private Button askClearCheck;
 	private Combo jreCombo;
 	private Text vmArgsText;
 	private Text progArgsText;
@@ -102,6 +104,10 @@ public class BasicLauncherTab
 		clearWorkspaceCheck = new Button(composite, SWT.CHECK);
 		clearWorkspaceCheck.setText(PDEPlugin.getResourceString(KEY_CLEAR));
 		fillIntoGrid(clearWorkspaceCheck, 3, false);
+		
+		askClearCheck = new Button(composite, SWT.CHECK);
+		askClearCheck.setText(PDEPlugin.getResourceString(KEY_ASK_CLEAR));
+		fillIntoGrid(askClearCheck, 3, false);
 
 		label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		fillIntoGrid(label, 3, false);
@@ -167,7 +173,9 @@ public class BasicLauncherTab
 			progArgsText.setText(config.getAttribute(PROGARGS, getDefaultProgramArguments()));
 			applicationNameText.setText(config.getAttribute(APPLICATION, ""));
 			clearWorkspaceCheck.setSelection(config.getAttribute(DOCLEAR, false));
+			askClearCheck.setSelection(config.getAttribute(ASKCLEAR, true));
 			showSplashCheck.setSelection(config.getAttribute(SHOW_SPLASH, true));
+			askClearCheck.setEnabled(clearWorkspaceCheck.getSelection());
 			
 			jreCombo.setItems(getVMInstallNames(vmInstallations));
 			String vmInstallName =
@@ -221,6 +229,7 @@ public class BasicLauncherTab
 		config.setAttribute(DOCLEAR, false);
 		config.setAttribute(PROGARGS, getDefaultProgramArguments());
 		config.setAttribute(SHOW_SPLASH,true);
+		config.setAttribute(ASKCLEAR, true);
 		config.setAttribute(VMARGS,"");
 	}
 
@@ -231,6 +240,8 @@ public class BasicLauncherTab
 		workspaceCombo.setText(getDefaultWorkspace());
 		clearWorkspaceCheck.setSelection(false);
 		showSplashCheck.setSelection(true);
+		askClearCheck.setSelection(true);
+		askClearCheck.setEnabled(false);
 		jreCombo.select(
 			jreCombo.indexOf(
 				JavaRuntime.getDefaultVMInstall().getName()
@@ -283,6 +294,13 @@ public class BasicLauncherTab
 		});
 		
 		clearWorkspaceCheck.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				askClearCheck.setEnabled(clearWorkspaceCheck.getSelection());
+				updateLaunchConfigurationDialog();
+			}
+		});
+		
+		askClearCheck.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
 			}
@@ -359,6 +377,7 @@ public class BasicLauncherTab
 		}
 		config.setAttribute(APPLICATION, getApplicationName());
 		config.setAttribute(DOCLEAR, doClearWorkspace());
+		config.setAttribute(ASKCLEAR, doAskClear());
 		config.setAttribute(SHOW_SPLASH, doShowSplash());
 
 		config.setAttribute(
@@ -458,6 +477,15 @@ public class BasicLauncherTab
 	 */
 	public boolean doClearWorkspace() {
 		return clearWorkspaceCheck.getSelection();
+	}
+	
+	/**
+	 * Returns true if users should confirm the workspace
+	 * clearing.
+	 * @return boolean
+	 */
+	public boolean doAskClear() {
+		return askClearCheck.getSelection();
 	}
 	
 	public boolean doShowSplash() {

@@ -13,6 +13,7 @@ public interface ILauncherSettings {
 	String VMINSTALL = "vminstall";
 	String APPLICATION = "application";
 	String DOCLEAR = "clearws";
+	String ASKCLEAR = "askclear";
 	String TRACING = "tracing";
 	String USECUSTOM = "default";
 	String USEFEATURES = "usefeatures";

@@ -83,7 +83,8 @@ public class WorkbenchLaunchConfigurationDelegate
 				
 		File workspaceFile = new Path(targetWorkspace).toFile();
 		if (configuration.getAttribute(DOCLEAR, false) && workspaceFile.exists()) {
-			if (confirmDeleteWorkspace(workspaceFile)) {
+			boolean askClear = configuration.getAttribute(ASKCLEAR, true);
+			if (!askClear || confirmDeleteWorkspace(workspaceFile)) {
 				try {
 					deleteContent(workspaceFile);
 				} catch (IOException e) {

@@ -130,6 +130,7 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 			wc.setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, IDebugUIConstants.PERSPECTIVE_NONE);
 			wc.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, JavaUISourceLocator.ID_PROMPTING_JAVA_SOURCE_LOCATOR);
 			wc.setAttribute(ILauncherSettings.DOCLEAR, false);
+			wc.setAttribute(ILauncherSettings.ASKCLEAR, true);
 			wc.setAttribute(ILauncherSettings.SHOW_SPLASH, true);
 			config= wc.doSave();		
 		} catch (CoreException ce) {
