@@ -13,6 +13,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.feature.FeatureChild;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
@@ -21,6 +22,7 @@ import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -171,6 +173,16 @@ public class IncludedFeaturesSection
 			});
 			return true;
 		}
+		if (actionId.equals(IWorkbenchActionConstants.CUT)) {
+			// delete here and let the editor transfer
+			// the selection to the clipboard
+			handleDelete();
+			return false;
+		}
+		if (actionId.equals(IWorkbenchActionConstants.PASTE)) {
+			doPaste();
+			return true;
+		}
 		return false;
 	}
 	protected void selectionChanged(IStructuredSelection selection) {
@@ -250,5 +262,59 @@ public class IncludedFeaturesSection
 		IFeature feature = model.getFeature();
 		includesViewer.setInput(feature);
 		updateNeeded = false;
+	}
+	/**
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(Clipboard)
+	 */
+	public boolean canPaste(Clipboard clipboard) {
+		Object [] objects = (Object[])clipboard.getContents(ModelDataTransfer.getInstance());
+		if (objects != null && objects.length > 0) {
+			return canPaste(null, objects);
+		}
+		return false;
+	}
+	/**
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(Object, Object[])
+	 */
+	protected boolean canPaste(Object target, Object[] objects) {
+		for (int i = 0; i < objects.length; i++) {
+			if (!(objects[i] instanceof FeatureChild))
+				return false;
+		}
+		return true;
+	}
+	/**
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste()
+	 */
+	protected void doPaste() {
+		Clipboard clipboard = getFormPage().getEditor().getClipboard();
+		ModelDataTransfer modelTransfer = ModelDataTransfer.getInstance();
+		Object [] objects = (Object[])clipboard.getContents(modelTransfer);
+		if (objects != null) {
+			doPaste(null, objects);
+		}
+	}
+	/**
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(Object, Object[])
+	 */
+	protected void doPaste(Object target, Object[] objects) {
+		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+		IFeature feature = model.getFeature();
+
+		FeatureChild[] fChildren = new FeatureChild[objects.length];
+		try {
+			for (int i = 0; i < objects.length; i++) {
+				if (objects[i] instanceof FeatureChild) {
+					FeatureChild fChild = (FeatureChild) objects[i];
+					fChild.setModel(model);
+					fChild.setParent(feature);
+					fChild.hookWithWorkspace();
+					fChildren[i] = fChild;
+				}
+			}
+			feature.addIncludedFeatures(fChildren);
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}
 	}
 }

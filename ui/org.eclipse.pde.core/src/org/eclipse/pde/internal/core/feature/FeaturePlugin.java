@@ -67,7 +67,7 @@ public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 		hookWithWorkspace();
 	}
 
-	private void hookWithWorkspace() {
+	public void hookWithWorkspace() {
 		if (fragment) {
 			IFragmentModel[] fragments =
 				PDECore.getDefault().getWorkspaceModelManager().getWorkspaceFragmentModels();

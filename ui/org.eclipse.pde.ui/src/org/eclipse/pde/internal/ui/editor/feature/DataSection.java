@@ -25,16 +25,21 @@ import org.eclipse.pde.internal.core.IModelProviderEvent;
 import org.eclipse.pde.internal.core.IModelProviderListener;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
+import org.eclipse.pde.internal.core.feature.FeatureData;
+import org.eclipse.pde.internal.core.feature.FeaturePlugin;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureData;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
 import org.eclipse.pde.internal.ui.editor.PropertiesAction;
 import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -219,6 +224,16 @@ public class DataSection
 			});
 			return true;
 		}
+		if (actionId.equals(IWorkbenchActionConstants.CUT)) {
+			// delete here and let the editor transfer
+			// the selection to the clipboard
+			handleDelete();
+			return false;
+		}
+		if (actionId.equals(IWorkbenchActionConstants.PASTE)) {
+			doPaste();
+			return true;
+		}
 		return false;
 	}
 	protected void selectionChanged(IStructuredSelection selection) {
@@ -241,7 +256,7 @@ public class DataSection
 			}
 		} else {
 			Object obj = e.getChangedObjects()[0];
-			if (obj instanceof IFeatureData) {
+			if (obj instanceof IFeatureData && !(obj instanceof IFeaturePlugin)) {
 				if (e.getChangeType() == IModelChangedEvent.CHANGE) {
 					dataViewer.update(obj, null);
 				} else if (e.getChangeType() == IModelChangedEvent.INSERT) {
@@ -298,5 +313,47 @@ public class DataSection
 		IFeature feature = model.getFeature();
 		dataViewer.setInput(feature);
 		updateNeeded = false;
+	}
+	/**
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(Object, Object[])
+	 */
+	protected boolean canPaste(Object target, Object[] objects) {
+		for (int i = 0; i < objects.length; i++) {
+			if (objects[i] instanceof FeaturePlugin || !(objects[i] instanceof FeatureData))
+				return false;
+		}
+		return true;
+	}
+	/**
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste()
+	 */
+	protected void doPaste() {
+		Clipboard clipboard = getFormPage().getEditor().getClipboard();
+		ModelDataTransfer modelTransfer = ModelDataTransfer.getInstance();
+		Object [] objects = (Object[])clipboard.getContents(modelTransfer);
+		if (objects != null) {
+			doPaste(null, objects);
+		}
+	}
+	/**
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(Object, Object[])
+	 */
+	protected void doPaste(Object target, Object[] objects) {
+		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+		IFeature feature = model.getFeature();
+		FeatureData[] fData = new FeatureData[objects.length];
+		try {
+			for (int i = 0; i < objects.length; i++) {
+				if (objects[i] instanceof FeatureData && !(objects[i] instanceof FeaturePlugin)) {
+					FeatureData fd = (FeatureData) objects[i];
+					fd.setModel(model);
+					fd.setParent(feature);
+					fData[i] = fd;
+				}
+			}
+			feature.addData(fData);
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}
 	}
 }

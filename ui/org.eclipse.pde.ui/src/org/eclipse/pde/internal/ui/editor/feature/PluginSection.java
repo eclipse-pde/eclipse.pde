@@ -17,9 +17,6 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginModel;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.IModelProviderEvent;
 import org.eclipse.pde.internal.core.IModelProviderListener;
 import org.eclipse.pde.internal.core.PDECore;
@@ -29,7 +26,6 @@ import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.eclipse.pde.internal.core.plugin.Plugin;
-import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
 import org.eclipse.pde.internal.ui.editor.PropertiesAction;
@@ -321,24 +317,13 @@ public class PluginSection
 		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
 		IFeature feature = model.getFeature();
 		FeaturePlugin[] fPlugins = new FeaturePlugin[objects.length];
-		IPluginModel[] workspacePluginModels =
-			PDECore
-				.getDefault()
-				.getWorkspaceModelManager()
-				.getWorkspacePluginModels();
 		try {
 			for (int i = 0; i < objects.length; i++) {
 				if (objects[i] instanceof FeaturePlugin) {
 					FeaturePlugin fPlugin = (FeaturePlugin) objects[i];
 					fPlugin.setModel(model);
 					fPlugin.setParent(feature);
-					for (int j = 0; j < workspacePluginModels.length; j++) {
-						IPluginBase currentPlugin = workspacePluginModels[j].getPluginBase();
-						if (fPlugin.getPluginBase().getId().equals(currentPlugin.getId())) {
-							((Plugin) fPlugin.getPluginBase()).setModel(currentPlugin.getModel());
-							break;
-						}
-					}
+					fPlugin.hookWithWorkspace();
 					fPlugins[i] = fPlugin;
 				}
 			}

@@ -11,15 +11,15 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.plugin.IPluginModel;
+import org.eclipse.pde.core.plugin.IFragment;
+import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.feature.FeatureImport;
 import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.core.plugin.Fragment;
 import org.eclipse.pde.internal.core.plugin.Plugin;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
-import org.eclipse.pde.internal.ui.editor.PDEChildFormPage;
-import org.eclipse.pde.internal.ui.editor.PDEEditorContributor;
 import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
@@ -357,19 +357,21 @@ public class RequiresSection
 	}
 	
 	private void setPluginModel(FeatureImport fImport) {
-		IPluginModel[] workspacePluginModels = PDECore.getDefault().getWorkspaceModelManager().getWorkspacePluginModels();
-		for (int j = 0; j < workspacePluginModels.length; j++) {
-			if (fImport.getPlugin().getId().equals(workspacePluginModels[j].getPluginBase().getId())) {
-				((Plugin)fImport.getPlugin()).setModel(workspacePluginModels[j].getPluginBase().getModel());
-				return;
+		Plugin plugin = (Plugin)fImport.getPlugin();
+		if (plugin.getPluginBase() instanceof Fragment) {
+			IFragmentModel[] fragments =
+				PDECore.getDefault().getWorkspaceModelManager().getWorkspaceFragmentModels();
+			for (int i = 0; i < fragments.length; i++) {
+				IFragment fragment = fragments[i].getFragment();
+				if (fragment.getId().equals(plugin.getId())) {
+					if (plugin.getVersion() == null || fragment.getVersion().equals(plugin.getVersion())) {
+						plugin.setModel(fragment.getModel());
+						return;
+					}
+				}
 			}
-		}
-		IPluginModel[] externalPluginModels = PDECore.getDefault().getExternalModelManager().getModels();
-		for (int j = 0; j < externalPluginModels.length; j++) {
-			if (fImport.getPlugin().getId().equals(externalPluginModels[j].getPluginBase().getId())) {
-				((Plugin)fImport.getPlugin()).setModel(externalPluginModels[j].getPluginBase().getModel());
-				return;
-			}
+		} else {
+			plugin.setModel(PDECore.getDefault().findPlugin(plugin.getId(), plugin.getVersion(), 0).getModel());
 		}
 	}
 	
