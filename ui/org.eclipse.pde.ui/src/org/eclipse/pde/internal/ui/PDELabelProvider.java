@@ -232,6 +232,12 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 
 	public Image getImage(Object obj) {
+		if (obj instanceof IBundlePluginBase) {
+			return getObjectImage((IBundlePluginBase) obj);
+		}
+		if (obj instanceof IBundlePluginModelBase) {
+			return getObjectImage((IBundlePluginBase)((IBundlePluginModelBase) obj).getPluginBase());
+		}
 		if (obj instanceof IPlugin) {
 			return getObjectImage((IPlugin) obj);
 		}
@@ -316,12 +322,6 @@ public class PDELabelProvider extends SharedLabelProvider {
 		}
 		if (obj instanceof ISiteBuildFeature) {
 			return getObjectImage((ISiteBuildFeature) obj);
-		}
-		if (obj instanceof IBundlePluginBase) {
-			return getObjectImage((IBundlePluginBase) obj);
-		}
-		if (obj instanceof IBundlePluginModelBase) {
-			return getObjectImage((IBundlePluginBase)((IBundlePluginModelBase) obj).getPluginBase());
 		}
 		return super.getImage(obj);
 	}
