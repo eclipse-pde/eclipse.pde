@@ -19,27 +19,17 @@ import org.eclipse.core.runtime.*;
  * Window>Preferences>Java>Templates.
  */
 public class SourceLocation {
-	private String name;
 	private IPath path;
 	private boolean userDefined = true;
 	private boolean enabled;
 
-	public SourceLocation(String name, IPath path, boolean enabled) {
-		this.name = name;
+	public SourceLocation(IPath path, boolean enabled) {
 		this.path = path;
 		this.enabled = enabled;
 	}
 
-	public String getName() {
-		return name;
-	}
-
 	public IPath getPath() {
 		return path;
-	}
-	
-	public void setName(String name) {
-		this.name = name;
 	}
 	
 	public void setPath(IPath path) {
@@ -77,7 +67,7 @@ public class SourceLocation {
 	public boolean equals(Object obj) {
 		if (obj instanceof SourceLocation) {
 			SourceLocation object = (SourceLocation)obj;
-			return object.getPath().equals(path) && object.getName().equals(name);
+			return object.getPath().equals(path);
 		}
 		return false;
 	}

@@ -79,11 +79,7 @@ public class ExternalPluginsBlock {
 			}
 			updateModels();
 			computeDelta();
-			if (reloaded) {
-				PDECore.getDefault().getSourceLocationManager().reinitializeClasspathVariables(null);
-			}
 		}
-
 	}
 
 	public class PluginContentProvider

@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.preferences;
 import java.io.File;
 import java.util.*;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.PreferencePage;
@@ -40,6 +41,7 @@ import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 public class SourcePreferencePage
 	extends PreferencePage
 	implements IWorkbenchPreferencePage {
+	private static DirectoryDialog dialog;
 	private static final String KEY_LABEL = "SourcePreferencePage.label"; //$NON-NLS-1$
 	public static final String KEY_SELECT_ALL =
 		"WizardCheckboxTablePart.selectAll"; //$NON-NLS-1$
@@ -68,7 +70,7 @@ public class SourcePreferencePage
 		
 		public String getText(Object obj) {
 			SourceLocation location = (SourceLocation) obj;
-			return location.getName() + " - " + location.getPath().toOSString();
+			return location.getPath().toOSString();
 		}
 
 		public Image getImage(Object obj) {
@@ -89,10 +91,13 @@ public class SourcePreferencePage
 				case 1 :
 					handleDelete();
 					break;
-				case 3 :
-					selectAll(true);
+				case 2:
+					handleEdit();
 					break;
 				case 4 :
+					selectAll(true);
+					break;
+				case 5 :
 					selectAll(false);
 					break;
 			}
@@ -117,16 +122,13 @@ public class SourcePreferencePage
 			label.setLayoutData(gd);
 		}
 		protected void selectionChanged(IStructuredSelection selection) {
-			boolean enabled = true;
-			for (Iterator iter = selection.iterator(); iter.hasNext();) {
-				Object obj = iter.next();
-				SourceLocation location = (SourceLocation) obj;
-				if (location.isUserDefined() == false) {
-					enabled = false;
-					break;
-				}
+			boolean enabled = false;
+			if (!selection.isEmpty())  {
+				SourceLocation loc = (SourceLocation)selection.getFirstElement();
+				enabled = loc.isUserDefined();
 			}
 			tablePart.setButtonEnabled(1, enabled);
+			tablePart.setButtonEnabled(2, enabled);
 		}
 		/**
 		 * @see org.eclipse.pde.internal.ui.parts.CheckboxTablePart#elementChecked(Object, boolean)
@@ -143,6 +145,7 @@ public class SourcePreferencePage
 				new String[] {
 					PDEPlugin.getResourceString(KEY_ADD),
 					PDEPlugin.getResourceString(KEY_DELETE),
+					"Edit...",
 					null,
 					PDEPlugin.getResourceString(KEY_SELECT_ALL),
 					PDEPlugin.getResourceString(KEY_DESELECT_ALL)
@@ -184,11 +187,7 @@ public class SourcePreferencePage
 	}
 
 	private String encodeSourceLocation(SourceLocation location) {
-		return location.getName()
-			+ "@"
-			+ location.getPath().toOSString()
-			+ ","
-			+ (location.isEnabled() ? "t" : "f");
+		return location.getPath().toOSString() + "," + (location.isEnabled() ? "t" : "f");
 	}
 	
 	public void dispose() {
@@ -209,7 +208,6 @@ public class SourcePreferencePage
 		preferences.setValue(ICoreConstants.P_EXT_LOCATIONS, encodeSourceLocations(extensionLocations));
 		preferences.setValue(ICoreConstants.P_SOURCE_LOCATIONS, encodeSourceLocations(userLocations.toArray()));
 		PDECore.getDefault().savePluginPreferences();
-		PDECore.getDefault().getSourceLocationManager().initializeClasspathVariables(null);
 		return super.performOk();
 	}
 
@@ -229,14 +227,8 @@ public class SourcePreferencePage
 	}
 
 	private Object[] getLocations() {
-		Object[] merged =
-			new Object[extensionLocations.length + userLocations.size()];
-		System.arraycopy(
-			extensionLocations,
-			0,
-			merged,
-			0,
-			extensionLocations.length);
+		Object[] merged = new Object[extensionLocations.length + userLocations.size()];
+		System.arraycopy(extensionLocations, 0, merged, 0, extensionLocations.length);
 		System.arraycopy(
 			userLocations.toArray(),
 			0,
@@ -257,33 +249,42 @@ public class SourcePreferencePage
 	}
 
 	private void handleAdd() {
-		SourceLocationDialog dialog =
-			new SourceLocationDialog(getShell(), null);
-		dialog.create();
-		dialog.setInvalidNames(getAllLocationNames());
-		dialog.getShell().setText(PDEPlugin.getResourceString("SourcePreferencePage.new.title")); //$NON-NLS-1$
-		SWTUtil.setDialogSize(dialog, 400, 200);
-		if (dialog.open() == SourceLocationDialog.OK) {
-			SourceLocation location =
-				new SourceLocation(dialog.getName(), dialog.getPath(), true);
+		String path = getDirectoryDialog(null).open();
+		if (path != null) {
+			SourceLocation location = new SourceLocation(new Path(path), true);
 			userLocations.add(location);
 			tableViewer.add(location);
 			tableViewer.setChecked(location, location.isEnabled());
 		}
 	}
+	
+	private void handleEdit() {
+		IStructuredSelection ssel = (IStructuredSelection)tableViewer.getSelection();
+		SourceLocation loc = (SourceLocation)ssel.getFirstElement();
+		String path = getDirectoryDialog(loc.getPath().toOSString()).open();
+		if (path != null) {
+			loc.setPath(new Path(path));
+			tableViewer.refresh();
+		}
+		
+		
+	}
+	
+	private DirectoryDialog getDirectoryDialog(String filterPath) {
+		if (dialog == null)
+			dialog = new DirectoryDialog(getShell());
+		dialog.setMessage("Choose a source code location:");
+		if (filterPath != null)
+			dialog.setFilterPath(filterPath);
+		return dialog;
+	}
 
 	private void handleDelete() {
 		IStructuredSelection selection =
 			(IStructuredSelection) tableViewer.getSelection();
-		for (Iterator iter = selection.iterator(); iter.hasNext();) {
-			Object obj = iter.next();
-			SourceLocation location = (SourceLocation) obj;
-			if (location.isUserDefined()) {
-				userLocations.remove(location);
-				tableViewer.remove(location);
-			}
-		}
-		tablePart.setButtonEnabled(4,false);
+		SourceLocation location = (SourceLocation) selection.getFirstElement();
+		userLocations.remove(location);
+		tableViewer.remove(location);
 	}
 
 	/**
@@ -301,6 +302,8 @@ public class SourcePreferencePage
 		tableViewer.setLabelProvider(new SourceLabelProvider());
 		tableViewer.setInput(this);
 		initializeStates();
+		tablePart.setButtonEnabled(1, false);
+		tablePart.setButtonEnabled(2, false);
 		Dialog.applyDialogFont(parent);
 		WorkbenchHelp.setHelp(parent, IHelpContextIds.SOURCE_PREFERENCE_PAGE);
 		return container;
@@ -315,17 +318,5 @@ public class SourcePreferencePage
 			SourceLocation loc = (SourceLocation) userLocations.get(i);
 			tableViewer.setChecked(loc, loc.isEnabled());
 		}
-	}
-	
-	
-	private HashSet getAllLocationNames() {
-		HashSet set = new HashSet();
-		for (int i = 0; i < extensionLocations.length; i++) {
-			set.add(extensionLocations[i].getName());
-		}
-		for (int i = 0; i < userLocations.size(); i++) {
-			set.add(((SourceLocation)userLocations.get(i)).getName());
-		}
-		return set;
-	}
+	}	
 }

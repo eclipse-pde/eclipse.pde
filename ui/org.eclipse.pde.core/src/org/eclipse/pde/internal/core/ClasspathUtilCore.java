@@ -454,12 +454,9 @@ public class ClasspathUtilCore {
 				SourceLocationManager manager =
 					PDECore.getDefault().getSourceLocationManager();
 				path =
-					manager.findVariableRelativePath(
+					manager.findPath(
 						model.getPluginBase(),
 						new Path(zipName));
-				if (path != null) {
-					path = JavaCore.getResolvedVariablePath(path);
-				}
 			}
 		}
 		return path;
