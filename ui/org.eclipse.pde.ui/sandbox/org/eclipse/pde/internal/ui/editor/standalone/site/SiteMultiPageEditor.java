@@ -79,7 +79,8 @@ public class SiteMultiPageEditor extends MultiPageEditorPart {
 	 */
 	public void gotoMarker(IMarker marker) {
 		setActivePage(1);
-		fSourcePage.gotoMarker(marker);
+		//TODO fix this
+		//fSourcePage.gotoMarker(marker);
 	}
 	
 	/* (non-Javadoc)
