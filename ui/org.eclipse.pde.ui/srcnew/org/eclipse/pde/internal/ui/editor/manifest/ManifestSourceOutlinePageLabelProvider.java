@@ -21,8 +21,6 @@ import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.ISchema;
-import org.eclipse.pde.internal.core.plugin.DocumentModel;
-import org.eclipse.pde.internal.core.plugin.IDocumentNode;
 import org.eclipse.pde.internal.core.plugin.PluginDocumentNode;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -38,8 +36,8 @@ import org.w3c.dom.Node;
 public class ManifestSourceOutlinePageLabelProvider extends LabelProvider {
 	
 	public String getText(Object obj) {
-		String result= null;
-		
+		String result = null;
+
 		if (obj instanceof PluginDocumentNode) {
 			IPluginObject pluginObject = ((PluginDocumentNode) obj).getPluginObjectNode();
 			if (pluginObject != null) {
@@ -48,34 +46,25 @@ public class ManifestSourceOutlinePageLabelProvider extends LabelProvider {
 			if (result == null) {
 				Node domNode = ((PluginDocumentNode) obj).getDOMNode();
 				if (domNode != null) {
-					if (domNode.getParentNode() == null) {
-						IDocumentNode node = ((PluginDocumentNode) obj).getParent();
-						if (node instanceof DocumentModel) {
-							result =
-								((DocumentModel) node).getModel().isFragmentModel()
-									? "fragment.xml"
-									: "plugin.xml";
-						}
-					} else {
-						result = domNode.getNodeName();
-						if (result.length() > 0) {
-							result =
-								result.substring(0, 1).toUpperCase()
-									+ result.substring(1).toLowerCase();
-						}
+					result = domNode.getNodeName();
+					if (result.length() > 0) {
+						if (result.equals("XML"))
+							result = "<?xml?>";
+						else 
+							result = "<" + result + "/>";
 					}
 				}
 			}
 		}
-		
+
 		if (result == null) {
-			result= super.getText(obj);
+			result = super.getText(obj);
 		}
-		
+
 		if (result == null) {
-			result= "##unknown##";
+			result = "##unknown##";
 		}
-		
+
 		return result;
 	}
 
@@ -139,7 +128,7 @@ public class ManifestSourceOutlinePageLabelProvider extends LabelProvider {
 		Image image = provider.getImage(obj);
 		if (image != null)
 			return image;
-		return provider.get(PDEPluginImages.DESC_PAGE_OBJ);
+		return provider.get(PDEPluginImages.DESC_GENERIC_XML_OBJ);
 	}
 
 }

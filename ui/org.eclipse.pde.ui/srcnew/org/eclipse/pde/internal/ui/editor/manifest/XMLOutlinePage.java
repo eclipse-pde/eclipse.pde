@@ -128,7 +128,7 @@ public class XMLOutlinePage extends ContentOutlinePage {
 		viewer.setLabelProvider(fLabelProvider);
 		
 		if (fModel != null)
-			setViewerInput(fModel);
+			setViewerInput(fModel.getChildren()[0]);
 	}
 	
 	/**
