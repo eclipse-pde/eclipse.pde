@@ -7,8 +7,7 @@
 package org.eclipse.pde.internal.ui.neweditor;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.*;
@@ -43,6 +42,7 @@ public abstract class PDEMasterDetailsBlock extends MasterDetailsBlock {
 	}
 	protected void createToolBarActions(ManagedForm managedForm) {
 		final Form form = managedForm.getForm();
+	
 		Action haction = new Action("hor", Action.AS_RADIO_BUTTON) {
 			public void run() {
 				sashForm.setOrientation(SWT.HORIZONTAL);
@@ -68,6 +68,5 @@ public abstract class PDEMasterDetailsBlock extends MasterDetailsBlock {
 		vaction.setDisabledImageDescriptor(PDEPluginImages.DESC_VERTICAL_DISABLED);
 		form.getToolBarManager().add(haction);
 		form.getToolBarManager().add(vaction);
-		form.getToolBarManager().update(false);
 	}
 }

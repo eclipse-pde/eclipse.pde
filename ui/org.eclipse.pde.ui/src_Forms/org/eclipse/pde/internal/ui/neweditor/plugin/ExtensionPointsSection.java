@@ -13,8 +13,6 @@ import org.eclipse.pde.internal.ui.newparts.TablePart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.*;
-
-import com.sun.corba.se.connection.GetEndPointInfoAgainException;
 /**
  * @author dejan
  * 
