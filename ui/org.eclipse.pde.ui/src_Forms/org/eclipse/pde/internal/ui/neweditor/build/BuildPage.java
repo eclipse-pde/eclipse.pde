@@ -36,7 +36,7 @@ public class BuildPage extends PDEFormPage {
 	private Button customButton;
 	
 	public BuildPage(FormEditor editor) {
-		super(editor, PAGE_ID, "Build");
+		super(editor, PAGE_ID, "Build Configuration");
 	}
 
 	protected void createFormContent(IManagedForm mform) {

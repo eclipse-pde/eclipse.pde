@@ -47,12 +47,13 @@ public class AlertSection extends PDESection {
 		super.refresh();
 	}
 	private String getAlerts() {
-		StringBuffer buf = new StringBuffer();
+		/*StringBuffer buf = new StringBuffer();
 		buf.append("<form>");
 		buf.append("<li style=\"image\" value=\"warning\"><a>This plug-in has a version that is not compatible with the target platform.</a></li>");
 		buf.append("<li style=\"image\" value=\"warning\"><a>This plug-in does not have build.properties file and cannot be deployed properly.</a></li>");
 		buf.append("<li style=\"image\" value=\"error\"><a>You realize, of course, that coding in this plug-in is pretty pathetic, don't you?</a></li>");		
 		buf.append("</form>");
-		return buf.toString();
+		return buf.toString();*/
+		return noItemsText;
 	}
 }

@@ -7,12 +7,14 @@
 package org.eclipse.pde.internal.ui.neweditor.plugin;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.launcher.*;
+import org.eclipse.pde.internal.ui.neweditor.*;
 import org.eclipse.pde.internal.ui.neweditor.PDEFormPage;
 import org.eclipse.pde.internal.ui.neweditor.build.*;
 import org.eclipse.pde.internal.ui.neweditor.runtime.*;
+import org.eclipse.swt.*;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.*;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.events.*;
@@ -27,30 +29,28 @@ public class OverviewPage extends PDEFormPage implements HyperlinkListener {
 	public static final String PAGE_ID = "overview";
 	
 	private static final String contentText = 
-		"<form><p>You can do the following things with this plug-in:</p>"+
-		"<li style=\"image\" value=\"page\" bindent=\"5\">Make a dependency on other plug-ins in <a href=\"dependencies\">Dependencies</a></li>" +
-		"<li style=\"image\" value=\"page\" bindent=\"5\">Change the run-time information in <a href=\"runtime\">Runtime</a></li>"+
-		"<li style=\"image\" value=\"page\" bindent=\"5\">Extend other plug-ins in <a href=\"extensions\">Extensions</a></li>"+
-		"<li style=\"image\" value=\"page\" bindent=\"5\">Create extension points in <a href=\"ex-points\">Extension Points</a></li>"+
+		"<form><p>The content of the plug-in is made up of four sections:</p>"+
+		"<li style=\"image\" value=\"page\" bindent=\"5\"><a href=\"dependencies\">Dependencies</a>: lists all the plug-ins required on this plug-in's classpath to compile and run.</li>" +
+		"<li style=\"image\" value=\"page\" bindent=\"5\"><a href=\"runtime\">Runtime</a>: lists the libraries that make up this plug-in's runtime.</li>"+
+		"<li style=\"image\" value=\"page\" bindent=\"5\"><a href=\"extensions\">Extensions</a>: declares contributions this plug-in makes to the platform.</li>"+
+		"<li style=\"image\" value=\"page\" bindent=\"5\"><a href=\"ex-points\">Extension Points</a>: declares new function points this plug-in adds to the platform.</li>"+
 		"</form>";
 
 	private static final String testingText =
 		"<form>" +
-		"<p>You can test the plug-in in two ways:</p>"+
-		"<li style=\"image\" value=\"run\" bindent=\"5\">By creating a new <a href=\"run-config\">Run configuration</a></li>"+
-		"<li style=\"image\" value=\"run\" bindent=\"5\">Through the <img href=\"workbench\"/> <a href=\"run\">Run-time Workbench</a> shortcut</li>"+
-		"<p>If your plug-in contains Java code, you can debug it in a similar way:</p>"+
-		"<li style=\"image\" value=\"debug\" bindent=\"5\">By creating a new <a href=\"debug-config\">Debug configuration</a></li>"+
-		"<li style=\"image\" value=\"debug\" bindent=\"5\">Through the <img href=\"workbench\"/> <a href=\"debug\">Run-time Workbench</a> shortcut</li>"+
-		"<p><img href=\"tbs\"/> <a href=\"tbs-testing\">Troubleshooting</a></p>"+
+		"<p>You can test the plug-in by launching a second (runtime) instance of the workbench:</p>"+
+		"<li style=\"image\" value=\"run\" bindent=\"5\"><a href=\"action.run\">Launch a runtime workbench</a></li>"+
+		"<li style=\"image\" value=\"debug\" bindent=\"5\"><a href=\"action.debug\">Launch a runtime workbench in Debug mode</a></li>"+
 		"</form>";
 
 	private static final String deployingText = 
 		"<form><p>To deploy the plug-in:</p>"+
-		"<li style=\"text\" value=\"1.\" bindent=\"5\">Configure build properties in <a href=\"build\">Build</a></li>" +
-		"<li style=\"text\" value=\"2.\" bindent=\"5\">Export the plug-in using <a href=\"export\">Export wizard</a></li>"+
-		"<p><img href=\"tbs\"/> <a href=\"tbs-deploying\">Troubleshooting</a></p>"+
+		"<li style=\"text\" value=\"1.\" bindent=\"5\">Specify what needs to be packaged in the deployable plug-in on the <a href=\"build\">Build Configuration</a> page</li>" +
+		"<li style=\"text\" value=\"2.\" bindent=\"5\">Export the plug-in in a format suitable for deployment using the <a href=\"export\">Export Wizard</a></li>"+
 		"</form>";
+
+	private RuntimeWorkbenchShortcut fLaunchShortcut;
+	private PluginExportAction fExportAction;
 
 	/**
 	 * @param editor
@@ -82,39 +82,17 @@ public class OverviewPage extends PDEFormPage implements HyperlinkListener {
 		layout.verticalSpacing = 10;
 		layout.horizontalSpacing = 10;
 		layout.numColumns = 2;
-		//layout.makeColumnsEqualWidth = true;
 		layout.verticalSpacing = 20;
 		layout.horizontalSpacing = 10;
 		body.setLayout(layout);
 		
 		// alerts
 		createAlertSection(managedForm, body, toolkit);
-		// left column
-		Composite left = toolkit.createComposite(body);
-		TableWrapLayout ll = new TableWrapLayout();
-		ll.topMargin = 0;
-		ll.bottomMargin = 0;
-		ll.leftMargin = 0;
-		ll.rightMargin = 0;
-		ll.verticalSpacing = 20;
-		left.setLayout(ll);
-		left.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
-		
-		// right column
-		Composite right = toolkit.createComposite(body);
-		TableWrapLayout rl = new TableWrapLayout();
-		rl.topMargin = 0;
-		rl.bottomMargin = 0;
-		rl.leftMargin = 0;
-		rl.rightMargin = 0;
-		rl.verticalSpacing = 20;
-		right.setLayout(rl);
-		right.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		// sections
-		createGeneralInfoSection(managedForm, left, toolkit);
-		createContentSection(managedForm, left, toolkit);
-		createTestingSection(managedForm, right, toolkit);
-		createDeployingSection(managedForm, right, toolkit);
+		createGeneralInfoSection(managedForm, body, toolkit);
+		createContentSection(managedForm, body, toolkit);
+		createTestingSection(managedForm, body, toolkit);
+		createDeployingSection(managedForm, body, toolkit);
 	}
 	private void createAlertSection(IManagedForm managedForm, Composite parent, FormToolkit toolkit) {
 		AlertSection section = new AlertSection(this, parent);
@@ -124,12 +102,11 @@ public class OverviewPage extends PDEFormPage implements HyperlinkListener {
 		section.getSection().setLayoutData(td);		
 	}
 	private void createGeneralInfoSection(IManagedForm managedForm, Composite parent, FormToolkit toolkit) {
-		GeneralInfoSection section = new GeneralInfoSection(this, parent);
-		managedForm.addPart(section);
+		managedForm.addPart(new GeneralInfoSection(this, parent));
 	}
 	private void createContentSection(IManagedForm managedForm, Composite parent, FormToolkit toolkit) {
 		Section section = createStaticSection(parent, toolkit);
-		section.setText("Content");
+		section.setText("Plug-in Content");
 		FormText text = createClient(section, contentText, toolkit);
 		PDELabelProvider lp = PDEPlugin.getDefault().getLabelProvider();
 		text.setImage("page", lp.get(PDEPluginImages.DESC_PAGE_OBJ, PDELabelProvider.F_EDIT));		
@@ -142,16 +119,14 @@ public class OverviewPage extends PDEFormPage implements HyperlinkListener {
 		text.setImage("run", lp.get(PDEPluginImages.DESC_RUN_EXC));
 		text.setImage("debug", lp.get(PDEPluginImages.DESC_DEBUG_EXC));
 		text.setImage("workbench", lp.get(PDEPluginImages.DESC_WORKBENCH_LAUNCHER_WIZ));
-		text.setImage("tbs", PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_INFO_TSK));		
 	}
 	private void createDeployingSection(IManagedForm managedForm, Composite parent, FormToolkit toolkit) {
 		Section section = createStaticSection(parent, toolkit);		
 		section.setText("Deploying");
-		FormText text = createClient(section, deployingText, toolkit);
-		text.setImage("tbs", PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_INFO_TSK));		
+		createClient(section, deployingText, toolkit);
 	}
 	private Section createStaticSection(Composite parent, FormToolkit toolkit) {
-		Section section = toolkit.createSection(parent, Section.EXPANDED|Section.TWISTIE);		
+		Section section = toolkit.createSection(parent, SWT.NONE);		
 		toolkit.createCompositeSeparator(section);
 		return section;
 	}
@@ -164,8 +139,7 @@ public class OverviewPage extends PDEFormPage implements HyperlinkListener {
 			text.setText(e.getMessage(), false, false);
 		}
 		section.setClient(text);
-		TableWrapData td = new TableWrapData(TableWrapData.FILL_GRAB);
-		section.setLayoutData(td);
+		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		text.addHyperlinkListener(this);
 		return text;
 	}
@@ -185,13 +159,14 @@ public class OverviewPage extends PDEFormPage implements HyperlinkListener {
 			getEditor().setActivePage(ExtensionPointsPage.PAGE_ID);
 		else if (href.equals("build"))
 			getEditor().setActivePage(BuildPage.PAGE_ID);
-		// try running
-		// try troubleshooting
-		else if (href.equals("tbs-test")) {
-		}
-		else if (href.equals("tbs-deploy")) {
-		}
+		else if (href.equals("action.run"))
+			getLaunchShortcut().run();
+		else if (href.equals("action.debug"))
+			getLaunchShortcut().debug();
+		else if (href.equals("export"))
+			getExportAction().run();
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.events.HyperlinkListener#linkEntered(org.eclipse.ui.forms.events.HyperlinkEvent)
 	 */
@@ -205,5 +180,17 @@ public class OverviewPage extends PDEFormPage implements HyperlinkListener {
 	public void linkExited(HyperlinkEvent e) {
 		IStatusLineManager mng = getEditor().getEditorSite().getActionBars().getStatusLineManager();
 		mng.setMessage(null);		
+	}
+	
+	private RuntimeWorkbenchShortcut getLaunchShortcut() {
+		if (fLaunchShortcut == null)
+			fLaunchShortcut = new RuntimeWorkbenchShortcut();
+		return fLaunchShortcut;
+	}
+	
+	private PluginExportAction getExportAction() {
+		if (fExportAction == null)
+			fExportAction = new PluginExportAction((PDEFormEditor)getEditor());
+		return fExportAction;
 	}
 }
