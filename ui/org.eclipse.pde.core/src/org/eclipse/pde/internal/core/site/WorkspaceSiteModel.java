@@ -131,7 +131,7 @@ public class WorkspaceSiteModel
 	public void save(PrintWriter writer) {
 		if (isLoaded()) {
 			writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-			writer.println("<!DOCTYPE site SYSTEM \"dtd/site.dtd\">");
+			//writer.println("<!DOCTYPE site SYSTEM \"dtd/site.dtd\">");
 			site.write("", writer);
 		}
 		dirty = false;
