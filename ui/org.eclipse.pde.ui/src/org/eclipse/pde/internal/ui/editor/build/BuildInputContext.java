@@ -105,7 +105,7 @@ public class BuildInputContext extends InputContext {
 	}
 	
 	private void deleteKey(IDocumentKey key, ArrayList ops) {
-		if (key.getOffset() > 0) {
+		if (key.getOffset() >= 0) {
 			TextEdit op = new DeleteEdit(key.getOffset(), key.getLength());
 			fOperationTable.put(key, op);
 			ops.add(op);
