@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.pde">
+<schema targetNamespace="org.eclipse.pde.ui">
 <annotation>
    <appInfo>
-      <meta.schema plugin="org.eclipse.pde" id="newExtension" name="Extension Wizards"/>
+      <meta.schema plugin="org.eclipse.pde.ui" id="newExtension" name="Extension Wizards"/>
    </appInfo>
    <documentation>
       This extension point should be used to contribute wizards
@@ -81,7 +81,7 @@ represent the wizard.
             <annotation>
                <documentation>
                   a fully qualified name of a class which implements 
-&lt;samp&gt;org.eclipse.pde.internal.base.IExtensionWizard&lt;/samp&gt; 
+&lt;samp&gt;org.eclipse.pde.ui.IExtensionWizard&lt;/samp&gt; 
 interface.
                </documentation>
                <appInfo>
@@ -165,10 +165,11 @@ category hierarchy
       </appInfo>
       <documentation>
          The following is an example of the extension:
+
 &lt;p&gt;
 &lt;pre&gt;
 &lt;extension
-      point="org.eclipse.pde.newExtension"&gt;
+      point="org.eclipse.pde.ui.newExtension"&gt;
    &lt;category
          name="Custom Extensions"
          id="custom"&gt;
@@ -198,7 +199,7 @@ category hierarchy
       <documentation>
          This extension point requires that a class that
 implements  
-&lt;samp&gt;org.eclipse.pde.IExtensionWizard&lt;/samp&gt;
+&lt;samp&gt;org.eclipse.pde.ui.IExtensionWizard&lt;/samp&gt;
 interface.
       </documentation>
    </annotation>

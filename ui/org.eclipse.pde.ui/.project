@@ -14,7 +14,7 @@
 		<project>org.eclipse.jdt.core</project>
 		<project>org.eclipse.jdt.launching</project>
 		<project>org.eclipse.jdt.ui</project>
-		<project>org.eclipse.pde.core</project>
+		<project>org.eclipse.pde.build</project>
 		<project>org.eclipse.ui</project>
 		<project>org.eclipse.update.ui.forms</project>
 	</projects>

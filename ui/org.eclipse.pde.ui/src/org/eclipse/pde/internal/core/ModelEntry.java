@@ -1,9 +1,9 @@
 package org.eclipse.pde.internal.core;
 
-import org.eclipse.pde.model.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.core.resources.IResource;
 import java.io.*;
 

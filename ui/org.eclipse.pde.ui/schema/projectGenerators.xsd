@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.pde">
+<schema targetNamespace="org.eclipse.pde.ui">
 <annotation>
    <appInfo>
-      <meta.schema plugin="org.eclipse.pde" id="projectGenerators" name="Plug-in Content Wizards"/>
+      <meta.schema plugin="org.eclipse.pde.ui" id="projectGenerators" name="Plug-in Content Wizards"/>
    </appInfo>
    <documentation>
       This extension point provides for plugging in 
@@ -83,7 +83,7 @@ represent the wizard.
             <annotation>
                <documentation>
                   a fully qualified name of a class which implements 
-&lt;samp&gt;org.eclipse.pde.IPluginContentWizard&lt;/samp&gt;.
+&lt;samp&gt;org.eclipse.pde.ui.IPluginContentWizard&lt;/samp&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.pde.IPluginContentWizard"/>
@@ -115,7 +115,7 @@ represent the wizard.
       <documentation>
          The following is an example of this extension point:
 &lt;pre&gt;   
-   &lt;extension point="org.eclipse.pde.projectGenerators"&gt;
+   &lt;extension point="org.eclipse.pde.ui.projectGenerators"&gt;
       &lt;wizard
          name="Default Plug-in Content Generator"
          icon="icons/content_wizard.gif"
@@ -136,7 +136,7 @@ represent the wizard.
       </appInfo>
       <documentation>
          Wizards that plug into this extension point must
-implement &lt;samp&gt;org.eclipse.pde.IPluginContentWizard&lt;/samp&gt;
+implement &lt;samp&gt;org.eclipse.pde.ui.IPluginContentWizard&lt;/samp&gt;
 interface.
       </documentation>
    </annotation>

@@ -6,7 +6,7 @@
 <BODY>
 <H1><CENTER>Extension Wizards</CENTER></H1>
 <H2>Identifier</H2>
-org.eclipse.pde.newExtension<H2>Description</H2>
+org.eclipse.pde.ui.newExtension<H2>Description</H2>
 This extension point should be used to contribute wizards
 that will be used to create new extensions in 
 PDE plug-in manifest editor. Wizards can create on
@@ -34,7 +34,7 @@ as the code needed to implement those extensions.<H2>Markup</H2>
 <li><b>id</b> - a unique name that will be used to identify this wizard.</li><li><b>name</b> - a translatable name that will be used in UI representation
 of this wizard.</li><li><b>icon</b> - a relative path of an icon that will be used to visually 
 represent the wizard.</li><li><b>class</b> - a fully qualified name of a class which implements 
-<samp>org.eclipse.pde.internal.base.IExtensionWizard</samp> 
+<samp>org.eclipse.pde.ui.IExtensionWizard</samp> 
 interface.</li><li><b>availableAsShortcut</b> - If <samp>true</samp>, this wizard will appear in the
 short cut menu on the menu bar and the tool bar.</li><li><b>category</b> - an optional id that makes this wizard a member of the
 previously defined category. If category is hierarchical,
@@ -54,10 +54,11 @@ category hierarchy</li></ul>
 <p><samp>&nbsp;&nbsp; &lt;!ELEMENT description (#CDATA)&gt;</samp>
 <H2>Example</H2>
 The following is an example of the extension:
+
 <p>
 <pre>
 &lt;extension
-      point="org.eclipse.pde.newExtension"&gt;
+      point="org.eclipse.pde.ui.newExtension"&gt;
    &lt;category
          name="Custom Extensions"
          id="custom"&gt;
@@ -79,7 +80,7 @@ The following is an example of the extension:
 </p><H2>API Information</H2>
 This extension point requires that a class that
 implements  
-<samp>org.eclipse.pde.IExtensionWizard</samp>
+<samp>org.eclipse.pde.ui.IExtensionWizard</samp>
 interface.<H2>Supplied Implementation</H2>
 PDE provides a generic wizard that creates extension
 points based on the extension point schema information.<p>

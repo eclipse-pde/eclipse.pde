@@ -1,11 +1,11 @@
 package org.eclipse.pde.internal.core;
 
-import org.eclipse.pde.internal.model.*;
-import org.eclipse.pde.model.IModel;
-import org.eclipse.pde.model.plugin.*;
+import org.eclipse.pde.internal.ui.model.*;
+import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.core.plugin.*;
 import java.util.*;
-import org.eclipse.pde.internal.WorkspaceModelManager;
-import org.eclipse.pde.internal.ExternalModelManager;
+import org.eclipse.pde.internal.ui.WorkspaceModelManager;
+import org.eclipse.pde.internal.ui.ExternalModelManager;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IAdaptable;
 

@@ -2,9 +2,9 @@ package org.eclipse.pde.internal.core;
 
 import org.eclipse.core.runtime.*;
 import java.io.*;
-import org.eclipse.pde.model.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.PDEPlugin;
-import org.eclipse.pde.internal.view.*;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.view.*;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 public class FileAdapter extends PlatformObject {

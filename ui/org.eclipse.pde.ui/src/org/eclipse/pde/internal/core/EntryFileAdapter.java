@@ -2,7 +2,7 @@ package org.eclipse.pde.internal.core;
 
 import java.io.File;
 
-import org.eclipse.pde.internal.view.*;
+import org.eclipse.pde.internal.ui.view.*;
 
 public class EntryFileAdapter extends FileAdapter {
 	private ModelEntry entry;

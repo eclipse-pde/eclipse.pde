@@ -6,7 +6,7 @@
 <BODY>
 <H1><CENTER>Plug-in Content Wizards</CENTER></H1>
 <H2>Identifier</H2>
-org.eclipse.pde.projectGenerators<H2>Description</H2>
+org.eclipse.pde.ui.projectGenerators<H2>Description</H2>
 This extension point provides for plugging in 
 wizards that create initial content of the PDE plug-in
 projects. These wizards can create plug-in manifest,
@@ -32,12 +32,12 @@ generate some extensions and the required code for them.<H2>Markup</H2>
 <li><b>id</b> - a unique name that will be used to identify this wizard.</li><li><b>name</b> - a translatable name that will be used in UI representation
 of this wizard.</li><li><b>icon</b> - a relative path of an icon that will be used to visually 
 represent the wizard.</li><li><b>class</b> - a fully qualified name of a class which implements 
-<samp>org.eclipse.pde.IPluginContentWizard</samp>.</li><li><b>fragmentWizard</b> - </li></ul>
+<samp>org.eclipse.pde.ui.IPluginContentWizard</samp>.</li><li><b>fragmentWizard</b> - </li></ul>
 <p><samp>&nbsp;&nbsp; &lt;!ELEMENT description (#CDATA)&gt;</samp>
 <H2>Example</H2>
 The following is an example of this extension point:
 <pre>   
-   &lt;extension point="org.eclipse.pde.projectGenerators"&gt;
+   &lt;extension point="org.eclipse.pde.ui.projectGenerators"&gt;
       &lt;wizard
          name="Default Plug-in Content Generator"
          icon="icons/content_wizard.gif"
@@ -50,7 +50,7 @@ The following is an example of this extension point:
    &lt;/extension&gt;
 </pre><H2>API Information</H2>
 Wizards that plug into this extension point must
-implement <samp>org.eclipse.pde.IPluginContentWizard</samp>
+implement <samp>org.eclipse.pde.ui.IPluginContentWizard</samp>
 interface.<H2>Supplied Implementation</H2>
 PDE provides default implementation of this wizard
 that generates the manifest file and the top-level

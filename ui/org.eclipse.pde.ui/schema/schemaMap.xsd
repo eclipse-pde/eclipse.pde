@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.pde">
+<schema targetNamespace="org.eclipse.pde.ui">
 <annotation>
    <appInfo>
-      <meta.schema plugin="org.eclipse.pde" id="schemaMap" name="Schema Mappings"/>
+      <meta.schema plugin="org.eclipse.pde.ui" id="schemaMap" name="Schema Mappings"/>
    </appInfo>
    <documentation>
       This extension point allows to associate extension
@@ -81,9 +81,10 @@ to the extension point
       </appInfo>
       <documentation>
          The following is an example of the extension point usage:
+
 &lt;p&gt;
 &lt;pre&gt;
-   &lt;extension point="org.eclipse.pde.schemaMap"&gt;
+   &lt;extension point="org.eclipse.pde.ui.schemaMap"&gt;
       &lt;map
          point="org.eclipse.ui.views"
          schema="schema/map/org.eclipse.ui/views.mxsd"&gt;
@@ -120,7 +121,8 @@ of the platform extension points.
       <documentation>
          &lt;p&gt;
 &lt;a href="hglegal.htm"&gt;
-&lt;img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2001. All Rights Reserved."
+&lt;img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2002.
+All Rights Reserved."
 BORDER=0 height=12 width=195&gt;&lt;/a&gt;
       </documentation>
    </annotation>
