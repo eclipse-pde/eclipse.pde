@@ -20,18 +20,16 @@ import org.eclipse.pde.internal.schema.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.editor.*;
+import org.eclipse.pde.internal.parts.TreePart;
 
 
 public class ElementSection
-	extends PDEFormSection
-	implements ISelectionChangedListener {
+	extends TreeSection {
 	private TreeViewer treeViewer;
 	private Schema schema;
 	private NewElementAction newElementAction = new NewElementAction();
 	private NewAttributeAction newAttributeAction = new NewAttributeAction();
 	private ElementList elements;
-	private Button newAttributeButton;
-	private Button newElementButton;
 	private Image globalElementImage;
 	public static final String SECTION_TITLE = "SchemaEditor.ElementSection.title";
 	public static final String SECTION_DESC = "SchemaEditor.ElementSection.desc";
@@ -101,76 +99,39 @@ public class ElementSection
 	}
 
 public ElementSection(PDEFormPage page) {
-	super(page);
+	super(page, new String [] { PDEPlugin.getResourceString(SECTION_NEW_ELEMENT), 
+					PDEPlugin.getResourceString(SECTION_NEW_ATTRIBUTE) });
 	setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
 	setDescription(PDEPlugin.getResourceString(SECTION_DESC));
 }
 public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	this.factory = factory;
-	Composite container = factory.createComposite(parent);
-	GridLayout layout = new GridLayout();
-	layout.numColumns = 2;
-	container.setLayout(layout);
-
-	Control control = createTree(container, factory);
-	GridData gd = new GridData(GridData.FILL_BOTH);
-	control.setLayoutData(gd);
-
-	Composite buttonContainer = factory.createComposite(container);
-	layout = new GridLayout();
-	layout.marginHeight = 0;
-	buttonContainer.setLayout(layout);
-	gd = new GridData(GridData.FILL_VERTICAL);
-	buttonContainer.setLayoutData(gd);
-
-	newElementButton =
-		factory.createButton(buttonContainer, PDEPlugin.getResourceString(SECTION_NEW_ELEMENT), SWT.PUSH);
-	gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
-	newElementButton.setLayoutData(gd);
-	newElementButton.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent e) {
-			handleNewElement();
-		}
-	});
-	newAttributeButton =
-		factory.createButton(buttonContainer, PDEPlugin.getResourceString(SECTION_NEW_ATTRIBUTE), SWT.PUSH);
-	gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
-	newAttributeButton.setLayoutData(gd);
-	newAttributeButton.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent e) {
-			handleNewAttribute();
-		}
-	});
-
+	Composite container = createClientContainer(parent, 2, factory);
+	createTree(container, factory);
 	factory.paintBordersFor(container);
 	return container;
 }
-private Tree createTree(Composite container, FormWidgetFactory factory) {
-	Tree tree = factory.createTree(container, SWT.NULL);
 
-	MenuManager popupMenuManager = new MenuManager();
-	IMenuListener listener = new IMenuListener () {
-		public void menuAboutToShow(IMenuManager mng) {
-			fillContextMenu(mng);
-		}
-	};
-	popupMenuManager.setRemoveAllWhenShown(true);
-	popupMenuManager.addMenuListener(listener);
-	Menu menu=popupMenuManager.createContextMenu(tree);
-	tree.setMenu(menu);
-
-	treeViewer = new TreeViewer(tree);
+private void createTree(Composite container, FormWidgetFactory factory) {
+	TreePart treePart = getTreePart();
+	createViewerPartControl(container, SWT.MULTI, 2, factory);
+	treeViewer = treePart.getTreeViewer();
 	treeViewer.setAutoExpandLevel(TreeViewer.ALL_LEVELS);
 	treeViewer.setContentProvider(new ContentProvider()); 
 	treeViewer.setLabelProvider(new ElementLabelProvider());
-	treeViewer.addSelectionChangedListener(this);
-	return tree;
 }
+
+protected void buttonSelected(int index) {
+	if (index==0) handleNewElement();
+	else if (index==1) handleNewAttribute();
+}
+
 public void dispose() {
 	schema.removeModelChangedListener(this);
 	globalElementImage.dispose();
 	super.dispose();
 }
+
 public boolean doGlobalAction(String actionId) {
 	if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {
 		ISelection sel = treeViewer.getSelection();
@@ -187,7 +148,7 @@ public void expandTo(Object object) {
 	}
 }
 protected void fillContextMenu(IMenuManager manager) {
-	ISelection selection = treeViewer.getSelection();
+	final ISelection selection = treeViewer.getSelection();
 	final Object object = ((IStructuredSelection) selection).getFirstElement();
 
 	MenuManager submenu = new MenuManager(PDEPlugin.getResourceString(POPUP_NEW));
@@ -207,13 +168,13 @@ protected void fillContextMenu(IMenuManager manager) {
 		}
 	}
 	manager.add(submenu);
-	if (object != null) {
+	if (!selection.isEmpty()) {
 		if (!(object instanceof SchemaElement)
 			|| ((SchemaElement) object).getName().equals("extension")==false) {
 			manager.add(new Separator());
 			Action deleteAction = new Action() {
 				public void run() {
-					handleDelete(object);
+					handleDelete(selection);
 				}
 			};
 			deleteAction.setText(PDEPlugin.getResourceString(POPUP_DELETE));
@@ -224,6 +185,13 @@ protected void fillContextMenu(IMenuManager manager) {
 	manager.add(new Separator());
 	manager.add(new PropertiesAction(getFormPage().getEditor()));
 }
+
+private void handleDelete(IStructuredSelection selection) {
+	for (Iterator iter=selection.iterator(); iter.hasNext();) {
+		handleDelete(iter.next());
+	}
+}
+
 private void handleDelete(Object object) {
 	ISchemaObject sobject = (ISchemaObject)object;
 	ISchemaObject parent = sobject.getParent();
@@ -238,6 +206,7 @@ private void handleDelete(Object object) {
 		type.removeAttribute((ISchemaAttribute)sobject);
 	}
 }
+
 private void handleNewAttribute() {
 	Object object =
 		((IStructuredSelection) treeViewer.getSelection()).getFirstElement();
@@ -254,6 +223,7 @@ private void handleNewAttribute() {
 		}
 	}
 }
+
 private void handleNewElement() {
 	newElementAction.setSchema(schema);
 	newElementAction.run();
@@ -293,18 +263,13 @@ public void modelChanged(IModelChangedEvent e) {
 		}
 	}
 }
-public void selectionChanged(SelectionChangedEvent event) {
-	Object object = null;
-	if (!event.getSelection().isEmpty()) {
-		ISelection selection = event.getSelection();
-		if (selection instanceof IStructuredSelection) {
-			object = ((IStructuredSelection)selection).getFirstElement();
-		}
-	}
+protected void selectionChanged(IStructuredSelection selection) {
+	Object object = selection.getFirstElement();
 	fireSelectionNotification(object);
-	getFormPage().setSelection(event.getSelection());
+	getFormPage().setSelection(selection);
 	updateButtons();
 }
+
 public void setFocus() {
 	treeViewer.getTree().setFocus();
 	getFormPage().setSelection(treeViewer.getSelection());
@@ -327,6 +292,6 @@ private void updateButtons() {
 					canAddAttribute = true;
 			}
 	}
-	newAttributeButton.setEnabled(canAddAttribute);
+	getTreePart().setButtonEnabled(1, canAddAttribute);
 }
 }

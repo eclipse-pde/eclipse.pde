@@ -30,9 +30,10 @@ import org.eclipse.swt.custom.*;
 import java.net.URL;
 import java.net.MalformedURLException;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.pde.internal.parts.TreePart;
 
 public class DetailExtensionSection
-	extends PDEFormSection
+	extends TreeSection
 	implements IModelChangedListener {
 	//private TableTreeViewer extensionTree;
 	private TreeViewer extensionTree;
@@ -47,8 +48,6 @@ public class DetailExtensionSection
 	public static final String POPUP_NEW = "Menus.new.label";
 	public static final String POPUP_DELETE = "Actions.delete.label";
 	private Image genericElementImage;
-	private Button newButton;
-	private Button newElementButton;
 	private Button showAllChildrenButton;
 	private SchemaRegistry schemaRegistry;
 	private ExternalModelManager pluginInfoRegistry;
@@ -115,7 +114,7 @@ public class DetailExtensionSection
 	}
 
 	public DetailExtensionSection(ManifestExtensionsPage page) {
-		super(page);
+		super(page, new String[] { PDEPlugin.getResourceString(SECTION_NEW)});
 		this.setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
 		schemaRegistry = PDEPlugin.getDefault().getSchemaRegistry();
 		pluginInfoRegistry = PDEPlugin.getDefault().getExternalModelManager();
@@ -140,12 +139,8 @@ public class DetailExtensionSection
 	public Composite createClient(Composite parent, FormWidgetFactory factory) {
 		this.factory = factory;
 		initializeImages();
-		Composite container = factory.createComposite(parent);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
+		Composite container = createClientContainer(parent, 2, factory);
 
-		container.setLayout(layout);
-		
 		showAllChildrenButton =
 			factory.createButton(
 				container,
@@ -162,69 +157,34 @@ public class DetailExtensionSection
 					}
 				});
 			}
-		});		
-		
-		Tree tree = new Tree(container, factory.BORDER_STYLE);
-		factory.hookDeleteListener(tree);
+		});
 
-		MenuManager popupMenuManager = new MenuManager();
-		IMenuListener listener = new IMenuListener() {
-			public void menuAboutToShow(IMenuManager mng) {
-				fillContextMenu(mng);
-			}
-		};
-		popupMenuManager.setRemoveAllWhenShown(true);
-		popupMenuManager.addMenuListener(listener);
-		Menu menu = popupMenuManager.createContextMenu(tree);
-		tree.setMenu(menu);
+		TreePart treePart = getTreePart();
 
-		extensionTree = new TreeViewer(tree);
+		createViewerPartControl(container, SWT.MULTI, 2, factory);
+		extensionTree = treePart.getTreeViewer();
 		extensionTree.setAutoExpandLevel(TreeViewer.ALL_LEVELS);
 		extensionTree.setContentProvider(new ExtensionContentProvider());
 		extensionTree.setLabelProvider(new ExtensionLabelProvider());
 		factory.paintBordersFor(container);
-
-		extensionTree.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				Object item = ((IStructuredSelection) event.getSelection()).getFirstElement();
-				fireSelectionNotification(item);
-				getFormPage().setSelection(event.getSelection());
-			}
-		});
-		extensionTree.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent e) {
-				PropertiesAction action = new PropertiesAction(getFormPage().getEditor());
-				action.run();
-			}
-		});
-
-		gd = new GridData(GridData.FILL_BOTH);
-		tree.setLayoutData(gd);
-
-		Composite buttonContainer = factory.createComposite(container);
-		gd = new GridData(GridData.FILL_VERTICAL);
-		buttonContainer.setLayoutData(gd);
-		layout = new GridLayout();
-		layout.marginHeight = 0;
-		buttonContainer.setLayout(layout);
-
-		newButton =
-			factory.createButton(
-				buttonContainer,
-				PDEPlugin.getResourceString(SECTION_NEW),
-				SWT.PUSH);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.verticalAlignment = GridData.BEGINNING;
-		newButton.setLayoutData(gd);
-		newButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleNew();
-				newButton.getShell().setDefaultButton(null);
-			}
-		});
-
 		return container;
 	}
+
+	protected void selectionChanged(IStructuredSelection selection) {
+		Object item = selection.getFirstElement();
+		fireSelectionNotification(item);
+		getFormPage().setSelection(selection);
+	}
+	
+	protected void handleDoubleClick(IStructuredSelection selection) {
+		PropertiesAction action = new PropertiesAction(getFormPage().getEditor());
+		action.run();
+	}
+	
+	protected void buttonSelected(int index) {
+		if (index==0) handleNew();
+	}
+				
 	public void dispose() {
 		extensionImage.dispose();
 		genericElementImage.dispose();
@@ -242,7 +202,7 @@ public class DetailExtensionSection
 	public void expandTo(Object object) {
 		extensionTree.setSelection(new StructuredSelection(object), true);
 	}
-	private void fillContextMenu(IMenuManager manager) {
+	protected void fillContextMenu(IMenuManager manager) {
 		ISelection selection = extensionTree.getSelection();
 		Object object = ((IStructuredSelection) selection).getFirstElement();
 		if (object instanceof IPluginParent) {
@@ -322,24 +282,23 @@ public class DetailExtensionSection
 		return (IPluginExtension) parent;
 	}
 	private void handleDelete() {
-		IPluginObject object =
-			(IPluginObject) ((IStructuredSelection) extensionTree.getSelection())
-				.getFirstElement();
-		if (object == null)
-			return;
-
-		try {
-			if (object instanceof IPluginElement) {
-				IPluginElement ee = (IPluginElement) object;
-				IPluginParent parent = (IPluginParent) ee.getParent();
-				parent.remove(ee);
-			} else if (object instanceof IPluginExtension) {
-				IPluginExtension extension = (IPluginExtension) object;
-				IPluginBase plugin = extension.getPluginBase();
-				plugin.remove(extension);
+		IStructuredSelection sel = (IStructuredSelection)extensionTree.getSelection();
+		if (sel.isEmpty()) return;
+		for (Iterator iter = sel.iterator(); iter.hasNext();) {
+			IPluginObject object = (IPluginObject)iter.next();
+			try {
+				if (object instanceof IPluginElement) {
+					IPluginElement ee = (IPluginElement) object;
+					IPluginParent parent = (IPluginParent) ee.getParent();
+					parent.remove(ee);
+				} else if (object instanceof IPluginExtension) {
+					IPluginExtension extension = (IPluginExtension) object;
+					IPluginBase plugin = extension.getPluginBase();
+					plugin.remove(extension);
+				}
+			} catch (CoreException e) {
+				PDEPlugin.logException(e);
 			}
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
 		}
 	}
 	private void handleNew() {
@@ -362,7 +321,7 @@ public class DetailExtensionSection
 		IPluginModelBase model = (IPluginModelBase) input;
 		extensionTree.setInput(model.getPluginBase());
 		setReadOnly(!model.isEditable());
-		newButton.setEnabled(model.isEditable());
+		getTreePart().setButtonEnabled(0, model.isEditable());
 		model.addModelChangedListener(this);
 	}
 	public void initializeImages() {
@@ -380,15 +339,21 @@ public class DetailExtensionSection
 			// We do not need to react to changes in element whose
 			// parents are not extensions
 			IPluginObject pobj = (IPluginObject) changeObject;
+			IPluginObject parent = pobj.getParent();
+			
+			if (showAllChildrenButton.getSelection()==false) {
 			if (!(pobj instanceof IPluginExtension)
-				&& !(pobj.getParent() instanceof IPluginExtension))
+				&& !(parent instanceof IPluginExtension))
 				return;
+			}
 			if (event.getChangeType() == event.INSERT) {
-				extensionTree.refresh();
+				//extensionTree.refresh();
+				extensionTree.add(parent, pobj);
 				extensionTree.setSelection(new StructuredSelection(changeObject), true);
 				extensionTree.getTree().setFocus();
 			} else if (event.getChangeType() == event.REMOVE) {
-				extensionTree.refresh();
+				//extensionTree.refresh();
+				extensionTree.remove(pobj);
 			} else {
 				extensionTree.update(changeObject, null);
 				if (extensionTree.getTree().isFocusControl()) {

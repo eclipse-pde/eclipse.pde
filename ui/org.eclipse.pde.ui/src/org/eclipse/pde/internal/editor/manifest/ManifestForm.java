@@ -40,10 +40,12 @@ protected void createFormClient(Composite parent) {
 	FormSection section;
 	GridData gd;
 	Control control;
+	FormWidgetFactory factory = getFactory();
+	factory.setHyperlinkUnderlineMode(HyperlinkSettings.UNDERLINE_ROLLOVER);
 
 	alertSection = new AlertSection(page);
 	alertSection.setCollapsable(true);
-	control = alertSection.createControl(parent, getFactory());
+	control = alertSection.createControl(parent, factory);
 	gd = new GridData(GridData.FILL_HORIZONTAL);
 	gd.horizontalSpan = 2;
 	control.setLayoutData(gd);
@@ -66,19 +68,19 @@ protected void createFormClient(Composite parent) {
 
 	pluginSection = new PluginSpecSection(page);
 	pluginSection.setCollapsable(true);
-	control = pluginSection.createControl(leftColumn, getFactory());
+	control = pluginSection.createControl(leftColumn, factory);
 	gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 	control.setLayoutData(gd);
 
 	extensionSection = new ExtensionSection(page);
 	extensionSection.setCollapsable(true);
-	control = extensionSection.createControl(leftColumn, getFactory());
+	control = extensionSection.createControl(leftColumn, factory);
 	gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 	control.setLayoutData(gd);
 
 	runtimeSection = new RuntimeSection(page);
 	runtimeSection.setCollapsable(true);
-	control = runtimeSection.createControl(rightColumn, getFactory());
+	control = runtimeSection.createControl(rightColumn, factory);
 	gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 	control.setLayoutData(gd);
 
@@ -87,14 +89,14 @@ protected void createFormClient(Composite parent) {
 	if (!fragment) {
 		requiresSection = new RequiresSection(page);
 		requiresSection.setCollapsable(true);
-		control = requiresSection.createControl(rightColumn, getFactory());
+		control = requiresSection.createControl(rightColumn, factory);
 		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 		control.setLayoutData(gd);
 	}
 
 	extensionPointSection = new ExtensionPointSection(page);
 	extensionPointSection.setCollapsable(true);
-	control = extensionPointSection.createControl(rightColumn, getFactory());
+	control = extensionPointSection.createControl(rightColumn, factory);
 	gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 	gd.grabExcessVerticalSpace = true;
 	control.setLayoutData(gd);

@@ -8,6 +8,7 @@ import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 import org.eclipse.pde.internal.parts.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.layout.GridLayout;
 
 /**
  * @version 	1.0
@@ -37,6 +38,15 @@ public abstract class StructuredViewerSection extends PDEFormSection {
 		Control control = viewerPart.getControl();
 		Menu menu = popupMenuManager.createContextMenu(control);
 		control.setMenu(menu);
+	}
+	
+	protected Composite createClientContainer(Composite parent, int span, FormWidgetFactory factory) {
+		Composite container = factory.createComposite(parent);
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = layout.marginHeight = 2;
+		layout.numColumns = span;
+		container.setLayout(layout);
+		return container;
 	}
 	
 	protected abstract StructuredViewerPart createViewerPart(String [] buttonLabels);

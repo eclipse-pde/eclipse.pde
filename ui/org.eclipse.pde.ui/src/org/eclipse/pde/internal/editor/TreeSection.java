@@ -15,22 +15,19 @@ import org.eclipse.swt.layout.GridLayout;
  * @version 	1.0
  * @author
  */
-public abstract class TableSection extends StructuredViewerSection {
-	class PartAdapter extends EditableTablePart {
-		public PartAdapter(String [] buttonLabels) {
+public abstract class TreeSection extends StructuredViewerSection {
+	class PartAdapter extends TreePart {
+		public PartAdapter(String[] buttonLabels) {
 			super(buttonLabels);
 		}
-		public void entryModified(Object entry, String value) {
-			TableSection.this.entryModified(entry, value);
-		}
 		public void selectionChanged(IStructuredSelection selection) {
-			TableSection.this.selectionChanged(selection);
+			TreeSection.this.selectionChanged(selection);
 		}
 		public void handleDoubleClick(IStructuredSelection selection) {
-			TableSection.this.handleDoubleClick(selection);
+			TreeSection.this.handleDoubleClick(selection);
 		}
 		public void buttonSelected(Button button, int index) {
-			TableSection.this.buttonSelected(index);
+			TreeSection.this.buttonSelected(index);
 			button.getShell().setDefaultButton(null);
 		}
 	}
@@ -38,25 +35,18 @@ public abstract class TableSection extends StructuredViewerSection {
 	 * Constructor for TableSection.
 	 * @param formPage
 	 */
-	public TableSection(PDEFormPage formPage, String [] buttonLabels) {
+	public TreeSection(PDEFormPage formPage, String[] buttonLabels) {
 		super(formPage, buttonLabels);
 	}
 
-	protected StructuredViewerPart createViewerPart(String [] buttonLabels) {
-		IModel model = (IModel)getFormPage().getModel();
-		EditableTablePart tablePart;
-		tablePart = new PartAdapter(buttonLabels);
-		tablePart.setEditable(model.isEditable());
-		return tablePart;
+	protected StructuredViewerPart createViewerPart(String[] buttonLabels) {
+		return new PartAdapter(buttonLabels);
 	}
-	
-	protected EditableTablePart getTablePart() {
-		return (EditableTablePart)viewerPart;
+
+	protected TreePart getTreePart() {
+		return (TreePart) viewerPart;
 	}
-	
-	protected void entryModified(Object entry, String value) {
-	}
-	
+
 	protected void selectionChanged(IStructuredSelection selection) {
 	}
 	protected void handleDoubleClick(IStructuredSelection selection) {
