@@ -38,6 +38,9 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 	private boolean includePlatformIndependent = true;
 
 	private boolean reportResolutionErrors;
+
+	/** flag indicating whether or not the missing properties file should be logged */ 
+	private boolean ignoreMissingPropertiesFile = false;
 	
 	abstract protected Properties getBuildProperties() throws CoreException;
 
@@ -273,6 +276,20 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 	public void setReportResolutionErrors(boolean value) {
 		reportResolutionErrors = value;
 	}
+
+	/**
+	 * @return Returns the ignoreMissingPropertiesFile.
+	 */
+	public boolean isIgnoreMissingPropertiesFile() {
+		return ignoreMissingPropertiesFile;
+	}
 	
+
+	/**
+	 * @param value The ignoreMissingPropertiesFile to set.
+	 */
+	public void setIgnoreMissingPropertiesFile(boolean value) {
+		ignoreMissingPropertiesFile = value;
+	}
 
 }

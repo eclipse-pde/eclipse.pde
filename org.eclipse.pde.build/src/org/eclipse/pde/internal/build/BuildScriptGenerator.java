@@ -53,6 +53,9 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	 */
 	private boolean reportResolutionErrors = true;
 	
+	/** flag indicating if missing properties file should be logged */
+	private boolean ignoreMissingPropertiesFile = false;
+	
 	/**
 	 * 
 	 * @throws CoreException
@@ -92,6 +95,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		for (Iterator iterator = models.iterator(); iterator.hasNext();) {
 			ModelBuildScriptGenerator generator = new ModelBuildScriptGenerator();
 			generator.setReportResolutionErrors(reportResolutionErrors);
+			generator.setIgnoreMissingPropertiesFile(ignoreMissingPropertiesFile);
 			//Filtering is not required here, since we are only generating the
 			// build for a plugin or a fragment
 			String model = (String) iterator.next();
@@ -131,6 +135,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 			generator.setBuildingOSGi(isBuildingOSGi());
 			generator.includePlatformIndependent(true);
 			generator.setReportResolutionErrors(reportResolutionErrors);
+			generator.setIgnoreMissingPropertiesFile(ignoreMissingPropertiesFile);
 			generator.generate();
 			
 			if (generateAssembleScript == true) {
@@ -192,10 +197,18 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	/**
-	 * @param reportResolutionErrors The reportResolutionErrors to set.
+	 * @param value The reportResolutionErrors to set.
 	 */
 	public void setReportResolutionErrors(boolean value) {
 		this.reportResolutionErrors = value;
 	}
+
+	/**
+	 * @param value The ignoreMissingPropertiesFile to set.
+	 */
+	public void setIgnoreMissingPropertiesFile(boolean value) {
+		ignoreMissingPropertiesFile = value;
+	}
+	
 	
 }

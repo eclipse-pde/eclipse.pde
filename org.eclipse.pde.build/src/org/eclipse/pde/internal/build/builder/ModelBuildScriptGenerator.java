@@ -864,7 +864,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	protected Properties getBuildProperties() throws CoreException {
 		if (buildProperties == null)
-			return buildProperties = readProperties(model.getLocation(), propertiesFileName, IStatus.WARNING);
+			return buildProperties = readProperties(model.getLocation(), propertiesFileName, isIgnoreMissingPropertiesFile() ? IStatus.OK : IStatus.WARNING);
 
 		return buildProperties;
 	}

@@ -42,11 +42,9 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	protected boolean binaryFeature = true;
 	/** Indicates if the build scripts files should be produced or not */
 	private boolean scriptGeneration = true;
+	
 	//FEATURE RELATED INFORMATION
-	/**
-	 * The identifier of the feature that the build script is being generated
-	 * for.
-	 */
+	/** The identifier of the feature that the build script is being generated for. */
 	protected String featureIdentifier;
 	protected String searchedVersion;
 	/** Target feature. */
@@ -128,6 +126,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		featureGenerator.setSourcePluginOnly(true);
 		featureGenerator.setBuildingOSGi(isBuildingOSGi());
 		featureGenerator.includePlatformIndependent(isPlatformIndependentIncluded());
+		featureGenerator.setIgnoreMissingPropertiesFile(isIgnoreMissingPropertiesFile());
 		featureGenerator.generate();
 	}
 
@@ -235,6 +234,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			generator.setSourceToGather(new SourceFeatureInformation());
 			generator.setBuildingOSGi(isBuildingOSGi());
 			generator.includePlatformIndependent(isPlatformIndependentIncluded());
+			generator.setIgnoreMissingPropertiesFile(isIgnoreMissingPropertiesFile());
 			generator.generate();
 		}
 	}
@@ -730,6 +730,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			ModelBuildScriptGenerator generator = new ModelBuildScriptGenerator();
 			generator.setBuildSiteFactory(siteFactory);
 			generator.setCompiledElements(getCompiledElements());
+			generator.setIgnoreMissingPropertiesFile(isIgnoreMissingPropertiesFile());
 			generator.setModel(model); // setModel has to be called before configurePersistentProperties because it reads the model's properties
 			generator.setFeatureGenerator(this);
 			generator.setPluginPath(getPluginPath());
@@ -788,10 +789,10 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 */
 	protected Properties getBuildProperties() throws CoreException {
 		if (buildProperties == null)
-			buildProperties = readProperties(featureRootLocation, PROPERTIES_FILE, IStatus.WARNING);
+			buildProperties = readProperties(featureRootLocation, PROPERTIES_FILE, isIgnoreMissingPropertiesFile() ? IStatus.OK : IStatus.WARNING);
 		return buildProperties;
 	}
-
+	
 	/**
 	 * Add the <code>children</code> target to the given Ant script.
 	 * Delegates some target call to all-template only if the property
@@ -922,6 +923,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		sourceScriptGenerator.setSourcePluginOnly(sourcePluginOnly);
 		sourceScriptGenerator.setBuildingOSGi(isBuildingOSGi());
 		sourceScriptGenerator.includePlatformIndependent(isPlatformIndependentIncluded());
+		sourceScriptGenerator.setIgnoreMissingPropertiesFile(isIgnoreMissingPropertiesFile());
 		sourceScriptGenerator.generate();
 	}
 

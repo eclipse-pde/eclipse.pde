@@ -33,6 +33,8 @@ public class AssemblerTask extends Task {
 		generator.setSourceFeatureGeneration(false);
 		generator.setBinaryFeatureGeneration(true);
 		generator.setScriptGeneration(false);
+		generator.setReportResolutionErrors(true);
+		generator.setIgnoreMissingPropertiesFile(true);
 	}
 
 	/**

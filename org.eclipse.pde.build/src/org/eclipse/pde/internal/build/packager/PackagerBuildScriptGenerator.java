@@ -57,6 +57,7 @@ public class PackagerBuildScriptGenerator extends FeatureBuildScriptGenerator {
 			generator.setCompiledElements(getCompiledElements());
 			generator.setBuildingOSGi(isBuildingOSGi());
 			generator.includePlatformIndependent(isPlatformIndependentIncluded());
+			generator.setIgnoreMissingPropertiesFile(isIgnoreMissingPropertiesFile());
 			setFeature(featureList[i]);
 			generator.generate();
 		}
@@ -99,6 +100,7 @@ public class PackagerBuildScriptGenerator extends FeatureBuildScriptGenerator {
 			generator.setCompiledElements(getCompiledElements());
 			generator.setBuildingOSGi(isBuildingOSGi());
 			generator.includePlatformIndependent(isPlatformIndependentIncluded());
+			generator.setIgnoreMissingPropertiesFile(isIgnoreMissingPropertiesFile());
 			try {
 				generator.generate();
 			} catch (CoreException exception) {
