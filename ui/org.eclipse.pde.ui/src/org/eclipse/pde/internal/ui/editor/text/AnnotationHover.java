@@ -15,17 +15,15 @@ import org.eclipse.ui.texteditor.MarkerAnnotation;
 public class AnnotationHover implements IAnnotationHover {
 
 	public String getHoverInfo(ISourceViewer sourceViewer, int lineNumber) {
-		 return format(getMessagesForLine(sourceViewer, lineNumber));
-	}
+		String[] messages = getMessagesForLine(sourceViewer, lineNumber);
 
-	private String format(String[] messages) {
 		if (messages.length == 0)
 			return null;
-			
-		StringBuffer buffer= new StringBuffer();
+
+		StringBuffer buffer = new StringBuffer();
 		for (int i = 0; i < messages.length; i++) {
 			buffer.append(messages[i]);
-			if (i < messages.length - 1) 
+			if (i < messages.length - 1)
 				buffer.append(System.getProperty("line.separator"));
 		}
 		return buffer.toString();
@@ -45,8 +43,12 @@ public class AnnotationHover implements IAnnotationHover {
 			Object object = iter.next();
 			if (object instanceof MarkerAnnotation) {
 				MarkerAnnotation annotation = (MarkerAnnotation) object;
-				if  (compareRulerLine(model.getPosition(annotation), document, line)) {
-					String message = annotation.getMarker().getAttribute(IMarker.MESSAGE, (String)null);
+				if (compareRulerLine(model.getPosition(annotation),
+					document,
+					line)) {
+					IMarker marker = annotation.getMarker();
+					String message =
+						marker.getAttribute(IMarker.MESSAGE, (String) null);
 					if (message != null && message.trim().length() > 0)
 						messages.add(message);
 				}
