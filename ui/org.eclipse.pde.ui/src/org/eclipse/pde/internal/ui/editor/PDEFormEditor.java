@@ -19,6 +19,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.context.*;
+import org.eclipse.pde.internal.ui.editor.plugin.*;
 import org.eclipse.pde.internal.ui.preferences.EditorPreferencePage;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.*;
@@ -347,7 +348,12 @@ public abstract class PDEFormEditor extends FormEditor
 		IDE.gotoMarker(page, marker);
 	}
 	public void openTo(Object obj, IMarker marker) {
-		if (EditorPreferencePage.getUseSourcePage()
+		//TODO hack until the move to the new search
+		PDESourcePage sourcePage = (PDESourcePage)setActivePage(PluginInputContext.CONTEXT_ID);
+		if (sourcePage != null)
+			sourcePage.selectReveal(marker);
+		
+		/*if (EditorPreferencePage.getUseSourcePage()
 				|| getEditorInput() instanceof SystemFileEditorInput) {
 			if (marker != null) {
 				IResource resource = marker.getResource();
@@ -361,7 +367,7 @@ public abstract class PDEFormEditor extends FormEditor
 			}
 		} else {
 			selectReveal(obj);
-		}
+		}*/
 	}
 	public void setSelection(ISelection selection) {
 		getSite().getSelectionProvider().setSelection(selection);
