@@ -172,7 +172,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		if (generator.getCompiledElements().contains(pluginId)) {
 			if (modelProperties == null || modelProperties.getProperty(IBuildPropertiesConstants.PROPERTY_SOURCE_PREFIX + libraryName) != null) //$NON-NLS-1$
 				path = generator.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + '/' + path;
-				secondaryPath = generator.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + "/../" + pluginId + '/' + libraryName; 
+				secondaryPath = generator.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + "/../" + pluginId + '/' + libraryName;  //$NON-NLS-1$
 		}
 		if (!classpath.contains(path))
 			classpath.add(path);
