@@ -224,7 +224,7 @@ private void handleDelete() {
 		return;
 	Object object =
 		((IStructuredSelection) entryTable.getSelection()).getFirstElement();
-	if (object != null && object instanceof String) {
+	if (object != null && object instanceof Token) {
 		IBuildEntry entry = currentVariable;
 		if (entry != null) {
 			try {
