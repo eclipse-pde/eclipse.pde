@@ -30,6 +30,7 @@ public class WorkbenchLaunchConfigurationDelegate
 	private static final String KEY_PROBLEMS_DELETING = "WorkbenchLauncherConfigurationDelegate.problemsDeleting";
 	private static final String KEY_TITLE = "WorkbenchLauncherConfigurationDelegate.title";
 	private static final String KEY_SLIMLAUNCHER = "WorkbenchLauncherConfigurationDelegate.slimlauncher";
+	private static final String KEY_DELETE_WORKSPACE = "WorkbenchLauncherConfigurationDelegate.confirmDeleteWorkspace";
 
 	/*
 	 * @see ILaunchConfigurationDelegate#launch(ILaunchConfiguration, String)
@@ -183,11 +184,13 @@ public class WorkbenchLaunchConfigurationDelegate
 			runnerConfig.setProgramArguments(fullProgArgs);
 
 			if (clearWorkspace && targetWorkbenchLocation.toFile().exists()) {
+				if (confirmDeleteWorkspace()) {
 				try {
 					deleteContent(targetWorkbenchLocation.toFile());
 				} catch (IOException e) {
 					String message = PDEPlugin.getResourceString(KEY_PROBLEMS_DELETING);
 					showWarningDialog(message);
+				}
 				}
 			}
 			monitor.worked(1);
@@ -250,6 +253,19 @@ public class WorkbenchLaunchConfigurationDelegate
 			IStatus.OK,
 			message,
 			null);
+	}
+	
+	private boolean  confirmDeleteWorkspace() {
+		Display display = getDisplay();
+		final boolean [] result = new boolean[1];
+		display.syncExec(new Runnable() {
+			public void run() {
+				String title = PDEPlugin.getResourceString(KEY_TITLE);
+				String message = PDEPlugin.getResourceString(KEY_DELETE_WORKSPACE);
+				result[0] = MessageDialog.openQuestion(PDEPlugin.getActiveWorkbenchShell(), title,message);
+			}
+		});
+		return result[0];
 	}
 
 	private void showWarningDialog(final String message) {
