@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.builders.CompilerFlags;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.feature.*;
 import org.eclipse.pde.internal.core.ifeature.*;
@@ -460,8 +461,13 @@ public class PDELabelProvider extends SharedLabelProvider {
 
 	private Image getObjectImage(IFeaturePlugin plugin) {
 		int flags = 0;
-		if (((FeaturePlugin) plugin).getPluginBase() == null)
-			flags = F_ERROR;
+		if (((FeaturePlugin) plugin).getPluginBase() == null) {
+			int cflag = CompilerFlags.getFlag(CompilerFlags.F_UNRESOLVED_PLUGINS);
+			if (cflag==CompilerFlags.ERROR)
+				flags = F_ERROR;
+			else if (cflag==CompilerFlags.WARNING)
+				flags = F_WARNING;
+		}
 		if (plugin.isFragment())
 			return get(PDEPluginImages.DESC_FRAGMENT_OBJ, flags);
 		else
@@ -470,8 +476,13 @@ public class PDELabelProvider extends SharedLabelProvider {
 
 	private Image getObjectImage(IFeatureChild feature) {
 		int flags = 0;
-		if (((FeatureChild) feature).getReferencedFeature() == null)
-			flags = F_ERROR;
+		if (((FeatureChild) feature).getReferencedFeature() == null) {
+			int cflag = CompilerFlags.getFlag(CompilerFlags.F_UNRESOLVED_FEATURES);
+			if (cflag==CompilerFlags.ERROR)
+				flags = F_ERROR;
+			else if (cflag==CompilerFlags.WARNING)
+				flags = F_WARNING;
+		}
 		return get(PDEPluginImages.DESC_FEATURE_OBJ, flags);
 	}
 

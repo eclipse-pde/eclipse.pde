@@ -79,7 +79,7 @@ public class CompilersPreferencePage
 
 		createPage(folder, PDEPlugin.getResourceString("CompilersPreferencePage.plugins"), CompilerFlags.PLUGIN_FLAGS, choices); //$NON-NLS-1$
 		createPage(folder, PDEPlugin.getResourceString("CompilersPreferencePage.schemas"), CompilerFlags.SCHEMA_FLAGS, choices); //$NON-NLS-1$
-		//createPage(folder, PDEPlugin.getResourceString("CompilersPreferencePage.features"), CompilerFlags.FEATURE_FLAGS, choices); //$NON-NLS-1$
+		createPage(folder, PDEPlugin.getResourceString("CompilersPreferencePage.features"), CompilerFlags.FEATURE_FLAGS, choices); //$NON-NLS-1$
 		//createPage(folder, PDEPlugin.getResourceString("CompilersPreferencePage.sites"), CompilerFlags.SITE_FLAGS, choices); //$NON-NLS-1$
 
 		for (int i = 0; i < flagControls.size(); i++) {
