@@ -10,11 +10,8 @@ import java.io.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.rules.DefaultPartitioner;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.editor.text.PDEPartitionScanner;
-import org.eclipse.pde.internal.ui.neweditor.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.ContainerGenerator;
 import org.eclipse.ui.editors.text.FileDocumentProvider;
@@ -113,8 +110,8 @@ public abstract class UTF8InputContext extends InputContext {
 	 * @param editor
 	 * @param input
 	 */
-	public UTF8InputContext(PDEFormEditor editor, IEditorInput input) {
-		super(editor, input);
+	public UTF8InputContext(PDEFormEditor editor, IEditorInput input, boolean primary) {
+		super(editor, input, primary);
 	}
 	/*
 	 * (non-Javadoc)

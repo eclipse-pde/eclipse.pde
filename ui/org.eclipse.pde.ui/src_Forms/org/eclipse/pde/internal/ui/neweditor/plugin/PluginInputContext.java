@@ -24,8 +24,8 @@ public class PluginInputContext extends XMLInputContext {
 	 * @param editor
 	 * @param input
 	 */
-	public PluginInputContext(PDEFormEditor editor, IEditorInput input, boolean fragment) {
-		super(editor, input);
+	public PluginInputContext(PDEFormEditor editor, IEditorInput input, boolean primary, boolean fragment) {
+		super(editor, input, primary);
 		this.fragment = fragment;
 	}
 	/* (non-Javadoc)

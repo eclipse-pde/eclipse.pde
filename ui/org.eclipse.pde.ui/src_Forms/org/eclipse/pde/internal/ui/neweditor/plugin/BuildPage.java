@@ -6,9 +6,9 @@
  */
 package org.eclipse.pde.internal.ui.neweditor.plugin;
 
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.neweditor.PDEFormPage;
 import org.eclipse.ui.forms.ManagedForm;
-import org.eclipse.ui.forms.editor.*;
+import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.widgets.*;
 
 /**
@@ -17,20 +17,21 @@ import org.eclipse.ui.forms.widgets.*;
  * To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
-public class BuildPage extends FormPage {
+public class BuildPage extends PDEFormPage {
+	public static final String PAGE_ID = "build";
 	/**
 	 * @param editor
 	 * @param id
 	 * @param title
 	 */
 	public BuildPage(FormEditor editor) {
-		super(editor, "build", "Build");
+		super(editor, PAGE_ID, "Build");
 	}
 	
 	protected void createFormContent(ManagedForm managedForm) {
+		super.createFormContent(managedForm);
 		Form form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
 		form.setText("Build properties");
-		form.setBackgroundImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_FORM_BANNER));
 	}
 }

@@ -10,25 +10,32 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.text;
 
+import org.eclipse.jface.text.*;
 import java.util.*;
 import org.eclipse.jface.text.rules.*;
-import org.eclipse.jface.text.*;
 
-public class PDEScanner extends RuleBasedScanner {
 
-public PDEScanner(IColorManager manager) {
-	List rules = new ArrayList();
-	IToken procInstr =
-		new Token(new TextAttribute(manager.getColor(IPDEColorConstants.P_PROC_INSTR)));
 
-	//Add rule for processing instructions
-	rules.add(new SingleLineRule("<?", "?>", procInstr));
+public class XMLTagScanner extends RuleBasedScanner {
+
+public XMLTagScanner(IColorManager manager) {
+	IToken string =
+		new Token(new TextAttribute(manager.getColor(IPDEColorConstants.P_STRING)));
+
+	Vector rules = new Vector();
+
+	// Add rule for single and double quotes
+	rules.add(new SingleLineRule("\"", "\"", string, '\\'));
+	rules.add(new SingleLineRule("'", "'", string, '\\'));
 
 	// Add generic whitespace rule.
-	rules.add(new WhitespaceRule(new PDEWhitespaceDetector()));
+	rules.add(new WhitespaceRule(new XMLWhitespaceDetector()));
 
 	IRule[] result = new IRule[rules.size()];
-	rules.toArray(result);
+	rules.copyInto(result);
 	setRules(result);
 }
+	public IToken nextToken() {
+		return super.nextToken();
+	}
 }

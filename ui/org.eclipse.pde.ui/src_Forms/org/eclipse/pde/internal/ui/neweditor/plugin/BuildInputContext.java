@@ -28,8 +28,8 @@ public class BuildInputContext extends InputContext {
 	 * @param editor
 	 * @param input
 	 */
-	public BuildInputContext(PDEFormEditor editor, IEditorInput input) {
-		super(editor, input);
+	public BuildInputContext(PDEFormEditor editor, IEditorInput input, boolean primary) {
+		super(editor, input, primary);
 	}
 
 	protected IDocumentProvider createDocumentProvider(IEditorInput input) {

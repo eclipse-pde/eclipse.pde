@@ -28,6 +28,7 @@ public abstract class InputContext {
 	private IDocumentProvider documentProvider;
 	private IElementStateListener elementListener;
 	private boolean validated;
+	private boolean primary;
 
 	class ElementListener implements IElementStateListener {
 		public void elementContentAboutToBeReplaced(Object element) {
@@ -44,9 +45,10 @@ public abstract class InputContext {
 			editor.close(true);
 		}
 	}
-	public InputContext(PDEFormEditor editor, IEditorInput input) {
+	public InputContext(PDEFormEditor editor, IEditorInput input, boolean primary) {
 		this.editor = editor;
 		this.input = input;
+		setPrimary(primary);
 		create();
 	}
 	public abstract String getId();
@@ -141,5 +143,17 @@ public abstract class InputContext {
 			//if (undoManager != null)
 			//undoManager.disconnect((IModelChangeProvider) model);
 		}
+	}
+	/**
+	 * @return Returns the primary.
+	 */
+	public boolean isPrimary() {
+		return primary;
+	}
+	/**
+	 * @param primary The primary to set.
+	 */
+	public void setPrimary(boolean primary) {
+		this.primary = primary;
 	}
 }

@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.swt.dnd.Clipboard;
@@ -35,6 +36,7 @@ public abstract class PDEFormEditor extends FormEditor {
 	private Menu contextMenu;
 	protected Hashtable inputContexts;
 	private IContentOutlinePage formOutline;
+	private PDEMultiPageContentOutline contentOutline;
 	/**
 	 *  
 	 */
@@ -106,14 +108,23 @@ public abstract class PDEFormEditor extends FormEditor {
 		getContainer().setMenu(contextMenu);
 		createInputContexts(inputContexts);		
 		super.createPages();
-		String pageToShow = getPageToShow();
+		String pageToShow = computeInitialPageId();
 		if (pageToShow!=null)
 				setActivePage(pageToShow);
 	}
 	
+	protected void pageChange(int newPageIndex) {
+		super.pageChange(newPageIndex);
+		updateContentOutline(getActivePageInstance());
+	}
+	
+	public Clipboard getClipboard() {
+		return clipboard;
+	}
+	
 	protected abstract void contextMenuAboutToShow(IMenuManager manager);
 
-	protected String getPageToShow() {
+	protected String computeInitialPageId() {
 		String firstPageId=null;
 		String storedFirstPageId = loadDefaultPage();
 		if (storedFirstPageId != null)
@@ -177,7 +188,7 @@ public abstract class PDEFormEditor extends FormEditor {
 				//set the settings on the resouce
 				try {
 					file.setPersistentProperty(
-						IPDEUIConstants.DEFAULT_EDITOR_PAGE_KEY,
+						IPDEUIConstants.DEFAULT_EDITOR_PAGE_KEY_NEW,
 						pageId);
 				} catch (CoreException e) {
 				}
@@ -201,7 +212,7 @@ public abstract class PDEFormEditor extends FormEditor {
 			IFile file = ((IFileEditorInput) input).getFile();
 			try {
 				return file.getPersistentProperty(
-					IPDEUIConstants.DEFAULT_EDITOR_PAGE_KEY);
+					IPDEUIConstants.DEFAULT_EDITOR_PAGE_KEY_NEW);
 			} catch (CoreException e) {
 				return null;
 			}
@@ -220,20 +231,6 @@ public abstract class PDEFormEditor extends FormEditor {
 	public void dispose() {
 		storeDefaultPage();
 		//setSelection(new StructuredSelection());
-		IEditorInput input = getEditorInput();
-		/*
-		IAnnotationModel amodel = documentProvider.getAnnotationModel(input);
-		if (amodel != null)
-			amodel.disconnect(documentProvider.getDocument(input));
-		documentProvider.disconnect(input);
-		*/
-		/*
-		if (modelListener != null && model instanceof IModelChangeProvider) {
-			((IModelChangeProvider) model).removeModelChangedListener(
-				modelListener);
-			if (undoManager != null)
-				undoManager.disconnect((IModelChangeProvider) model);
-				*/
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		if (clipboard!=null) {
 			clipboard.dispose();
@@ -244,7 +241,7 @@ public abstract class PDEFormEditor extends FormEditor {
 			InputContext context = (InputContext)enum.nextElement();
 			context.dispose();
 		}
-		inputContexts.clear();
+		inputContexts = null;
 	}
 	
 	public void fireDirtyStateChanged() {
@@ -281,28 +278,54 @@ public abstract class PDEFormEditor extends FormEditor {
 			section = root.addNewSection("multi-page-editor");
 		return section;
 	}
-/*
+	public void setSelection(ISelection selection) {
+		getSite().getSelectionProvider().setSelection(selection);
+	}
+	public ISelection getSelection() {
+		return getSite().getSelectionProvider().getSelection();
+	}
+
 	public Object getAdapter(Class key) {
 		if (key.equals(IContentOutlinePage.class)) {
 			return getContentOutline();
 		}
+		/*
 		if (key.equals(IPropertySheetPage.class)) {
 			return getPropertySheet();
 		}
 		if (key.equals(IGotoMarker.class)) {
 			return this;
 		}
+		*/
 		return super.getAdapter(key);
+	}
+	
+	public PDEMultiPageContentOutline getContentOutline() {
+		if (contentOutline == null || contentOutline.isDisposed()) {
+			contentOutline = new PDEMultiPageContentOutline();
+			updateContentOutline(getActivePageInstance());
+		}
+		return contentOutline;
+	}
+
+	protected IContentOutlinePage getFormOutline() {
+		if (formOutline==null) {
+			formOutline = new FormOutlinePage(this);
+		}
+		return formOutline;
 	}
 
 	private void updateContentOutline(IFormPage page) {
-		IContentOutlinePage page = null;
+		if (contentOutline==null) return;
+		IContentOutlinePage outline = null;
 		if (page instanceof PDESourcePage) {
+			outline = ((PDESourcePage)page).getContentOutline();
 		}
-		IContentOutlinePage outlinePage = page.getContentOutlinePage();
-		if (outlinePage != null) {
-			contentOutline.setPageActive(outlinePage);
-		}
+		else
+			outline = getFormOutline();
+		contentOutline.setPageActive(outline);
 	}
-*/
+	/* package */ IFormPage [] getPages() {
+		return (IFormPage[])pages.toArray(new IFormPage[pages.size()]);
+	}
 }

@@ -6,7 +6,6 @@
  */
 package org.eclipse.pde.internal.ui.neweditor;
 
-import org.eclipse.jface.text.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.editors.text.TextEditor;
@@ -52,6 +51,9 @@ public class PDESourcePage extends TextEditor implements IFormPage, IGotoMarker 
 			outlinePage = null;
 		}
 		super.dispose();
+	}
+	public IContentOutlinePage getContentOutline() {
+		return outlinePage;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.IFormPage#getEditor()
@@ -140,5 +142,11 @@ public class PDESourcePage extends TextEditor implements IFormPage, IGotoMarker 
 	public void setInputContext(InputContext inputContext) {
 		this.inputContext = inputContext;
 		setDocumentProvider(inputContext.getDocumentProvider());
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.editor.IFormPage#focusOn(java.lang.Object)
+	 */
+	public void focusOn(Object object) {
+		// TODO Auto-generated method stub
 	}
 }

@@ -6,9 +6,9 @@
  */
 package org.eclipse.pde.internal.ui.neweditor.plugin;
 
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.neweditor.PDEFormPage;
 import org.eclipse.ui.forms.ManagedForm;
-import org.eclipse.ui.forms.editor.*;
+import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.widgets.*;
 
 /**
@@ -17,7 +17,7 @@ import org.eclipse.ui.forms.widgets.*;
  * To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
-public class RuntimePage extends FormPage {
+public class RuntimePage extends PDEFormPage {
 	/**
 	 * @param editor
 	 * @param id
@@ -28,9 +28,9 @@ public class RuntimePage extends FormPage {
 	}
 	
 	protected void createFormContent(ManagedForm managedForm) {
+		super.createFormContent(managedForm);
 		Form form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
 		form.setText("Runtime");
-		form.setBackgroundImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_FORM_BANNER));
 	}
 }

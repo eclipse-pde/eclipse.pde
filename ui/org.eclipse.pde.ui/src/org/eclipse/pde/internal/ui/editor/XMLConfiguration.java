@@ -18,8 +18,8 @@ import org.eclipse.pde.internal.ui.editor.text.*;
 
 public class XMLConfiguration extends SourceViewerConfiguration {
 	private XMLDoubleClickStrategy doubleClickStrategy;
-	private PDETagScanner tagScanner;
-	private PDEScanner pdeScanner;
+	private XMLTagScanner tagScanner;
+	private XMLScanner pdeScanner;
 	private IColorManager colorManager;
 
 	public XMLConfiguration(IColorManager colorManager) {
@@ -33,8 +33,8 @@ public class XMLConfiguration extends SourceViewerConfiguration {
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
 		return new String[] {
 			IDocument.DEFAULT_CONTENT_TYPE,
-			PDEPartitionScanner.XML_COMMENT,
-			PDEPartitionScanner.XML_TAG };
+			XMLPartitionScanner.XML_COMMENT,
+			XMLPartitionScanner.XML_TAG };
 	}
 	public ITextDoubleClickStrategy getDoubleClickStrategy(
 		ISourceViewer sourceViewer,
@@ -43,18 +43,18 @@ public class XMLConfiguration extends SourceViewerConfiguration {
 			doubleClickStrategy = new XMLDoubleClickStrategy();
 		return doubleClickStrategy;
 	}
-	protected PDEScanner getPDEScanner() {
+	protected XMLScanner getPDEScanner() {
 		if (pdeScanner == null) {
-			pdeScanner = new PDEScanner(colorManager);
+			pdeScanner = new XMLScanner(colorManager);
 			pdeScanner.setDefaultReturnToken(
 				new Token(
 					new TextAttribute(colorManager.getColor(IPDEColorConstants.P_DEFAULT))));
 		}
 		return pdeScanner;
 	}
-	protected PDETagScanner getPDETagScanner() {
+	protected XMLTagScanner getPDETagScanner() {
 		if (tagScanner == null) {
-			tagScanner = new PDETagScanner(colorManager);
+			tagScanner = new XMLTagScanner(colorManager);
 			tagScanner.setDefaultReturnToken(
 				new Token(new TextAttribute(colorManager.getColor(IPDEColorConstants.P_TAG))));
 		}
@@ -68,14 +68,14 @@ public class XMLConfiguration extends SourceViewerConfiguration {
 		reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
 
 		dr = new DefaultDamagerRepairer(getPDETagScanner());
-		reconciler.setDamager(dr, PDEPartitionScanner.XML_TAG);
-		reconciler.setRepairer(dr, PDEPartitionScanner.XML_TAG);
+		reconciler.setDamager(dr, XMLPartitionScanner.XML_TAG);
+		reconciler.setRepairer(dr, XMLPartitionScanner.XML_TAG);
 
 		NonRuleBasedDamagerRepairer ndr =
 			new NonRuleBasedDamagerRepairer(
 				new TextAttribute(colorManager.getColor(IPDEColorConstants.P_XML_COMMENT)));
-		reconciler.setDamager(ndr, PDEPartitionScanner.XML_COMMENT);
-		reconciler.setRepairer(ndr, PDEPartitionScanner.XML_COMMENT);
+		reconciler.setDamager(ndr, XMLPartitionScanner.XML_COMMENT);
+		reconciler.setRepairer(ndr, XMLPartitionScanner.XML_COMMENT);
 
 		return reconciler;
 	}

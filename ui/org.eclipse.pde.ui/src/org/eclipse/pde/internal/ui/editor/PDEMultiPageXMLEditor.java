@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.rules.DefaultPartitioner;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.editor.text.PDEPartitionScanner;
+import org.eclipse.pde.internal.ui.editor.text.XMLPartitionScanner;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.dialogs.ContainerGenerator;
 import org.eclipse.ui.editors.text.FileDocumentProvider;
@@ -146,10 +146,10 @@ public abstract class PDEMultiPageXMLEditor extends PDEMultiPageEditor {
 	protected IDocumentPartitioner createDocumentPartitioner() {
 		DefaultPartitioner partitioner =
 			new DefaultPartitioner(
-				new PDEPartitionScanner(),
+				new XMLPartitionScanner(),
 				new String[] {
-					PDEPartitionScanner.XML_TAG,
-					PDEPartitionScanner.XML_COMMENT });
+					XMLPartitionScanner.XML_TAG,
+					XMLPartitionScanner.XML_COMMENT });
 		return partitioner;
 	}
 

@@ -10,33 +10,22 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.text;
 
+import java.util.*;
 import org.eclipse.jface.text.rules.*;
 
-public class TagRule extends MultiLineRule {
+public class XMLCommentScanner extends RuleBasedScanner {
 
-public TagRule(IToken token) {
-	super("<", ">", token);
-}
-protected boolean sequenceDetected(
-	ICharacterScanner scanner,
-	char[] sequence,
-	boolean eofAllowed) {
-	int c = scanner.read();
-	if (sequence[0] == '<') {
-		if (c == '?') {
-			// processing instruction - abort
-			scanner.unread();
-			return false;
-		}
-		if (c == '!') {
-			scanner.unread();
-			// comment - abort
-			return false;
-		}
-	} else if (sequence[0] == '>') {
-		scanner.unread();
-	}
+public XMLCommentScanner(IColorManager manager) {
+	IToken comment =
+		new Token(new Token(manager.getColor(IPDEColorConstants.P_XML_COMMENT)));
 
-	return super.sequenceDetected(scanner, sequence, eofAllowed);
+	List rules = new ArrayList();
+
+	// Add rule for comments.
+	rules.add(new MultiLineRule("<!--", "-->", comment));
+
+	IRule[] result = new IRule[rules.size()];
+	rules.toArray(result);
+	setRules(result);
 }
 }

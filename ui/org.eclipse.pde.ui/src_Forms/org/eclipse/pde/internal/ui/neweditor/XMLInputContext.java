@@ -7,7 +7,7 @@
 package org.eclipse.pde.internal.ui.neweditor;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.rules.DefaultPartitioner;
-import org.eclipse.pde.internal.ui.editor.text.PDEPartitionScanner;
+import org.eclipse.pde.internal.ui.editor.text.XMLPartitionScanner;
 import org.eclipse.ui.IEditorInput;
 /**
  * @author dejan
@@ -20,15 +20,15 @@ public abstract class XMLInputContext extends UTF8InputContext {
 	 * @param editor
 	 * @param input
 	 */
-	public XMLInputContext(PDEFormEditor editor, IEditorInput input) {
-		super(editor, input);
+	public XMLInputContext(PDEFormEditor editor, IEditorInput input, boolean primary) {
+		super(editor, input, primary);
 	}
 
 	protected IDocumentPartitioner createDocumentPartitioner() {
 		DefaultPartitioner partitioner = new DefaultPartitioner(
-				new PDEPartitionScanner(), new String[]{
-						PDEPartitionScanner.XML_TAG,
-						PDEPartitionScanner.XML_COMMENT});
+				new XMLPartitionScanner(), new String[]{
+						XMLPartitionScanner.XML_TAG,
+						XMLPartitionScanner.XML_COMMENT});
 		return partitioner;
 	}
 }

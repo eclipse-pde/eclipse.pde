@@ -39,4 +39,6 @@ public interface IPDEUIConstants {
 
 	QualifiedName DEFAULT_EDITOR_PAGE_KEY =
 		new QualifiedName(PLUGIN_ID, "default-editor-page");	
+	QualifiedName DEFAULT_EDITOR_PAGE_KEY_NEW =
+		new QualifiedName(PLUGIN_ID, "default-editor-page-new");	
 }

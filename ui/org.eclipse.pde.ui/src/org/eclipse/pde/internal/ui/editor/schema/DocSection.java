@@ -68,10 +68,10 @@ public class DocSection extends PDEFormSection {
 		document = new Document();
 		partitioner =
 			new DefaultPartitioner(
-				new PDEPartitionScanner(),
+				new XMLPartitionScanner(),
 				new String[] {
-					PDEPartitionScanner.XML_TAG,
-					PDEPartitionScanner.XML_COMMENT });
+					XMLPartitionScanner.XML_TAG,
+					XMLPartitionScanner.XML_COMMENT });
 		partitioner.connect(document);
 		document.setDocumentPartitioner(partitioner);
 	}

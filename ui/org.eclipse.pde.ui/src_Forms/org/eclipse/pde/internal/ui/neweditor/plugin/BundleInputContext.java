@@ -22,8 +22,8 @@ public class BundleInputContext extends UTF8InputContext {
 	 * @param editor
 	 * @param input
 	 */
-	public BundleInputContext(PDEFormEditor editor, IEditorInput input) {
-		super(editor, input);
+	public BundleInputContext(PDEFormEditor editor, IEditorInput input, boolean primary) {
+		super(editor, input, primary);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.InputContext#createModel(org.eclipse.ui.IEditorInput)
