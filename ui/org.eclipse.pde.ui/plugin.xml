@@ -40,7 +40,6 @@
       <import plugin="org.eclipse.jdt.junit"/>
       <import plugin="org.eclipse.ui.forms"/>
       <import plugin="org.eclipse.ui.intro"/>
-      <import plugin="org.apache.ant"/>
    </requires>
 
 
