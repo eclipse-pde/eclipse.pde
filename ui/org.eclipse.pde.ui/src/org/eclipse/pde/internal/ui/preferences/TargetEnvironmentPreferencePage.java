@@ -35,16 +35,53 @@ public class TargetEnvironmentPreferencePage
 	public static final String KEY_ARCH =
 		"Preferences.TargetEnvironmentPage.arch"; //$NON-NLS-1$
 		
-	private Combo os;
-	private Combo ws;
-	private Combo nl;
-	private Combo arch;
+	private Combo fOSCombo;
+	private Combo fWSCombo;
+	private Combo fNLCombo;
+	private Combo fArchCombo;
 	
 	private Preferences preferences;
+	private TreeSet fNLChoices;
+	private TreeSet fOSChoices;
+	private TreeSet fWSChoices;
+	private TreeSet fArchChoices;
 
 	public TargetEnvironmentPreferencePage() {
 		setDescription(PDEPlugin.getResourceString(KEY_DESCRIPTION));
 		preferences = PDECore.getDefault().getPluginPreferences();
+	}
+	
+	private void initializeChoices() {
+		fOSChoices = new TreeSet();
+		String[] os = Platform.knownOSValues();
+		for (int i = 0; i < os.length; i++)
+			fOSChoices.add(os[i]);
+		addExtraChoices(fOSChoices, preferences.getString(OS_EXTRA));
+		
+		fWSChoices = new TreeSet();
+		String[] ws = Platform.knownWSValues();
+		for (int i = 0; i < ws.length; i++)
+			fWSChoices.add(ws[i]);
+		addExtraChoices(fWSChoices, preferences.getString(WS_EXTRA));
+		
+		fArchChoices = new TreeSet();
+		String[] arch = Platform.knownOSArchValues();
+		for (int i = 0; i < arch.length; i++)
+			fArchChoices.add(arch[i]);
+		addExtraChoices(fArchChoices, preferences.getString(ARCH_EXTRA));
+		
+		fNLChoices = new TreeSet();
+		String[] nl = getLocales();
+		for (int i = 0; i < nl.length; i++)
+			fNLChoices.add(nl[i]);
+		addExtraChoices(fNLChoices, preferences.getString(NL_EXTRA));
+	}
+	
+	private void addExtraChoices(Set set, String preference) {
+		StringTokenizer tokenizer = new StringTokenizer(preference);
+		while (tokenizer.hasMoreTokens()) {
+			set.add(tokenizer.nextToken().trim());
+		}
 	}
 
 	/**
@@ -56,40 +93,42 @@ public class TargetEnvironmentPreferencePage
 		layout.numColumns = 2;
 		container.setLayout(layout);
 		
+		initializeChoices();
+		
 		Label label = new Label(container, SWT.NULL);
 		label.setText(PDEPlugin.getResourceString(KEY_OS));
 		
-		os = new Combo(container, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
-		os.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		os.setItems(Platform.knownOSValues());
+		fOSCombo = new Combo(container, SWT.SINGLE | SWT.BORDER);
+		fOSCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fOSCombo.setItems((String[])fOSChoices.toArray(new String[fOSChoices.size()]));
 		
 		label = new Label(container, SWT.NULL);
 		label.setText(PDEPlugin.getResourceString(KEY_WS));
 		
-		ws = new Combo(container, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
-		ws.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		ws.setItems(Platform.knownWSValues());
+		fWSCombo = new Combo(container, SWT.SINGLE | SWT.BORDER);
+		fWSCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fWSCombo.setItems((String[])fWSChoices.toArray(new String[fWSChoices.size()]));
+		
+		label = new Label(container, SWT.NULL);
+		label.setText(PDEPlugin.getResourceString(KEY_ARCH));
+		
+		fArchCombo = new Combo(container, SWT.SINGLE | SWT.BORDER);
+		fArchCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fArchCombo.setItems((String[])fArchChoices.toArray(new String[fArchChoices.size()]));
 		
 		label = new Label(container, SWT.NULL);
 		label.setText(PDEPlugin.getResourceString(KEY_NL));
 		
-		nl = new Combo(container, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
-		nl.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		nl.setItems(getLocales());
+		fNLCombo = new Combo(container, SWT.SINGLE | SWT.BORDER);
+		fNLCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fNLCombo.setItems((String[])fNLChoices.toArray(new String[fNLChoices.size()]));
 				
-		label = new Label(container, SWT.NULL);
-		label.setText(PDEPlugin.getResourceString(KEY_ARCH));
-		
-		arch = new Combo(container, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
-		arch.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		arch.setItems(Platform.knownOSArchValues());
-		
 		Dialog.applyDialogFont(container);
 		
-		os.setText(preferences.getString(OS));
-		ws.setText(preferences.getString(WS));
-		nl.setText(expandLocaleName(preferences.getString(NL)));
-		arch.setText(preferences.getString(ARCH));
+		fOSCombo.setText(preferences.getString(OS));
+		fWSCombo.setText(preferences.getString(WS));
+		fNLCombo.setText(expandLocaleName(preferences.getString(NL)));
+		fArchCombo.setText(preferences.getString(ARCH));
 			
 		WorkbenchHelp.setHelp(container, IHelpContextIds.TARGET_ENVIRONMENT_PREFERENCE_PAGE);
 
@@ -100,28 +139,62 @@ public class TargetEnvironmentPreferencePage
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
-		os.setText(preferences.getDefaultString(OS));
-		ws.setText(preferences.getDefaultString(WS));
-		nl.setText(expandLocaleName(preferences.getDefaultString(NL)));
-		arch.setText(preferences.getDefaultString(ARCH));	
+		fOSCombo.setText(preferences.getDefaultString(OS));
+		fWSCombo.setText(preferences.getDefaultString(WS));
+		fNLCombo.setText(expandLocaleName(preferences.getDefaultString(NL)));
+		fArchCombo.setText(preferences.getDefaultString(ARCH));	
 	}
 
 
 	public boolean performOk() {
-		preferences.setValue(OS, os.getText().trim());
-		preferences.setValue(WS, ws.getText().trim());
-		String locale = nl.getText().trim();
-		int dash = locale.indexOf("-"); //$NON-NLS-1$
-		if (dash != -1)
-			locale = locale.substring(0, dash);
-		locale = locale.trim();
-		preferences.setValue(NL, locale);
-		preferences.setValue(ARCH, arch.getText().trim());
-
+		String os = fOSCombo.getText().trim();
+		if (os.length() > 0) {
+			if (!fOSChoices.contains(os)) {
+				String value = preferences.getString(OS_EXTRA);
+				value = (value.length() > 0) ? value + "," + os : os; //$NON-NLS-1$
+				preferences.setValue(OS_EXTRA, value);
+			}
+			preferences.setValue(OS, os);
+		}
+		
+		String ws = fWSCombo.getText().trim();
+		if (ws.length() > 0) {
+			if (!fWSChoices.contains(ws)) {
+				String value = preferences.getString(WS_EXTRA);
+				value = (value.length() > 0) ? value + "," + ws : ws; //$NON-NLS-1$
+				preferences.setValue(WS_EXTRA, value);
+			}
+			preferences.setValue(WS, ws);
+		}
+		
+		String arch = fArchCombo.getText().trim();
+		if (arch.length() > 0) {
+			if (!fArchChoices.contains(arch)) {
+				String value = preferences.getString(ARCH_EXTRA);
+				value = (value.length() > 0) ? value + "," + arch : arch; //$NON-NLS-1$
+				preferences.setValue(ARCH_EXTRA, value);
+			}
+			preferences.setValue(ARCH, arch);
+		}
+		
+		String locale = fNLCombo.getText().trim();
+		if (locale.length() > 0) {
+			if (!fNLChoices.contains(locale)) {
+				String value = preferences.getString(NL_EXTRA);
+				value = (value.length() > 0) ? value + "," + locale : locale; //$NON-NLS-1$
+				preferences.setValue(NL_EXTRA, value);
+			}			
+			int dash = locale.indexOf("-"); //$NON-NLS-1$
+			if (dash != -1)
+				locale = locale.substring(0, dash);
+			locale = locale.trim();
+			preferences.setValue(NL, locale);
+		}
+			
 		PDEPlugin.getDefault().savePluginPreferences();
 		return super.performOk();
 	}
-	
+		
 	/**
 	 * Initializes this preference page using the passed desktop.
 	 *
