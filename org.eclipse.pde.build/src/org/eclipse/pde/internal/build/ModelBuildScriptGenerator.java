@@ -452,8 +452,13 @@ protected void generateSrcTarget(PrintWriter output, PluginModel descriptor, Str
 	// zip name is jar name without the ".jar" but with SOURCE_EXTENSION appended		
 	String zip = fullJar.substring(fullJar.lastIndexOf('/') + 1, fullJar.length() - 4) + SOURCE_EXTENSION;
 	Collection source = (Collection) trimmedDevJars.get(fullJar);
-	String src = source == null || source.isEmpty() ? "" : getSourceList(source, "**/*.java");
-	String mapping = source == null || source.isEmpty() ? "" : getStringFromCollection(source, "", "", ",");
+	String mapping = ""; 
+	String src = ""; 
+	if (source != null && !source.isEmpty()) {
+		mapping = getStringFromCollection(source, "", "", ",");
+		source = trimSlashes(source);
+		src = getSourceList(source, "**/*.java");
+	}
 	output.println();
 	output.println("  <target name=\"" + target + "\" depends=\"init\">");
 	output.println("    <property name=\"destroot\" value=\"${basedir}\"/>");
