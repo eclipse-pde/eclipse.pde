@@ -19,6 +19,7 @@ import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.wizards.exports.*;
+import org.osgi.framework.*;
 
 public class ProductExportJob extends FeatureExportJob {
 	
@@ -121,6 +122,15 @@ public class ProductExportJob extends FeatureExportJob {
 		}
 		return null;
 	}
+	
+	private Dictionary getTargetEnvironment() {
+		Dictionary result = new Hashtable(4);
+		result.put ("osgi.os", TargetPlatform.getOS()); //$NON-NLS-1$
+		result.put ("osgi.ws", TargetPlatform.getWS()); //$NON-NLS-1$
+		result.put ("osgi.nl", TargetPlatform.getNL()); //$NON-NLS-1$
+		result.put ("osgi.arch", TargetPlatform.getOSArch()); //$NON-NLS-1$
+		return result;
+	}
 
 	private void createFeature(String featureID, String featureLocation)
 			throws IOException {
@@ -132,11 +142,18 @@ public class ProductExportJob extends FeatureExportJob {
 				new FileOutputStream(featureXML), "UTF-8"), true); //$NON-NLS-1$
 		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
 		writer.println("<feature id=\"" + featureID + "\" version=\"1.0\">"); //$NON-NLS-1$ //$NON-NLS-2$
+
+		Dictionary environment = getTargetEnvironment();
+		BundleContext context = PDEPlugin.getDefault().getBundleContext();
 		for (int i = 0; i < fItems.length; i++) {
 			if (fItems[i] instanceof IPluginModelBase) {
-				IPluginBase plugin = ((IPluginModelBase) fItems[i])
-						.getPluginBase();
-				writer.println("<plugin id=\"" + plugin.getId() + "\" version=\"0.0.0\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
+				IPluginModelBase model = (IPluginModelBase)fItems[i];
+				try {
+					String filterSpec = model.getBundleDescription().getPlatformFilter();
+					if (filterSpec == null || context.createFilter(filterSpec).match(environment))
+						writer.println("<plugin id=\"" + model.getPluginBase().getId() + "\" version=\"0.0.0\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
+				} catch (InvalidSyntaxException e) {
+				}				
 			} else if (fItems[i] instanceof IFeatureModel) {
 				IFeature feature = ((IFeatureModel)fItems[i]).getFeature();
 				writer.println("<includes id=\""+ feature.getId() + "\" version=\"" + feature.getVersion() + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

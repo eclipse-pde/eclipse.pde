@@ -466,8 +466,6 @@ public class PluginModelManager implements IAdaptable {
 	}
 	
 	private void addWorkspaceBundleToState(IPluginModelBase model, PDEState state) {
-		if (!(model instanceof IBundlePluginModelBase))
-			return;
 		String id = model.getPluginBase().getId();
 		if (id == null)
 			return;
@@ -483,7 +481,8 @@ public class PluginModelManager implements IAdaptable {
 			state.removeBundleDescription(model.getBundleDescription());
 		}
 		IResource file = model.getUnderlyingResource();
-		model.setBundleDescription(state.addBundle(new File(file.getLocation().removeLastSegments(2).toString())));		
+		int segments = file.getName().equals("MANIFEST.MF") ? 2 : 1; //$NON-NLS-1$
+		model.setBundleDescription(state.addBundle(new File(file.getLocation().removeLastSegments(segments).toString())));		
 	}
 	
 	private void removeWorkspaceBundleFromState(IPluginModelBase model, PDEState state) {
