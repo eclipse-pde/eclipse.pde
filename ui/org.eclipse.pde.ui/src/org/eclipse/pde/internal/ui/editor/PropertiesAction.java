@@ -22,7 +22,6 @@ public PropertiesAction(PDEMultiPageEditor editor) {
 	this.editor = editor;
 	setText(PDEPlugin.getResourceString(LABEL));
 	setImageDescriptor(PDEPluginImages.DESC_PROPERTIES);
-	setHoverImageDescriptor(PDEPluginImages.DESC_PROPERTIES_HOVER);
 	setDisabledImageDescriptor(PDEPluginImages.DESC_PROPERTIES_DISABLED);
 }
 public void run() {

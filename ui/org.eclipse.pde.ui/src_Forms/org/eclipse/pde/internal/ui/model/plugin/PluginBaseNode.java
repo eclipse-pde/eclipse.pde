@@ -134,6 +134,12 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#remove(org.eclipse.pde.core.plugin.IPluginLibrary)
 	 */
 	public void remove(IPluginLibrary library) throws CoreException {
+		IDocumentNode parent = getEnclosingElement("runtime", false);
+		if (parent != null) {
+			parent.removeChildNode((IDocumentNode)library);
+			library.setInTheModel(false);
+			fireStructureChanged(library, IModelChangedEvent.REMOVE);
+		}	
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#setProviderName(java.lang.String)
@@ -151,6 +157,11 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#swap(org.eclipse.pde.core.plugin.IPluginLibrary, org.eclipse.pde.core.plugin.IPluginLibrary)
 	 */
 	public void swap(IPluginLibrary l1, IPluginLibrary l2) throws CoreException {
+		IDocumentNode node = getEnclosingElement("runtime", false);
+		if (node != null) {
+			node.swap((IDocumentNode)l1, (IDocumentNode)l2);
+			firePropertyChanged(node, P_LIBRARY_ORDER, l1, l2);
+		}
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#getSchemaVersion()

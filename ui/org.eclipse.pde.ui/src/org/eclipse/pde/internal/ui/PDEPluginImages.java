@@ -36,11 +36,8 @@ public class PDEPluginImages {
 	private static final String PATH_OBJ= ICONS_PATH+"obj16/";
 	private static final String PATH_VIEW = ICONS_PATH+"view16/";
 	private static final String PATH_LCL= ICONS_PATH+"elcl16/";
-	private static final String PATH_LCL_HOVER= ICONS_PATH+"clcl16/";
 	private static final String PATH_LCL_DISABLED= ICONS_PATH+"dlcl16/";
 	private static final String PATH_TOOL = ICONS_PATH + "etool16/";
-	private static final String PATH_TOOL_HOVER = ICONS_PATH + "ctool16/";
-	//private static final String PATH_TOOL_DISABLED = ICONS_PATH + "dtool16/";
 	private static final String PATH_OVR = ICONS_PATH + "ovr16/";
 	private static final String PATH_WIZBAN = ICONS_PATH + "wizban/";
 
@@ -163,18 +160,6 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_VERTICAL = create(PATH_LCL, "th_vertical.gif");
 	public static final ImageDescriptor DESC_COLLAPSE_ALL = create(PATH_LCL, "collapseall.gif");
 
-	public static final ImageDescriptor DESC_ADD_ATT_HOVER = create(PATH_LCL_HOVER, "add_att.gif");
-	public static final ImageDescriptor DESC_CLONE_ATT_HOVER = create(PATH_LCL_HOVER, "clone_att.gif");
-	public static final ImageDescriptor DESC_CLONE_EL_HOVER = create(PATH_LCL_HOVER, "clone_el.gif");
-	public static final ImageDescriptor DESC_GENERATE_CLASS_HOVER = create(PATH_LCL_HOVER, "generate_class.gif");
-	public static final ImageDescriptor DESC_GOTOOBJ_HOVER = create(PATH_LCL_HOVER, "goto_obj.gif");
-	public static final ImageDescriptor DESC_PROPERTIES_HOVER = create(PATH_LCL_HOVER, "properties.gif");
-	public static final ImageDescriptor DESC_REFRESH_HOVER = create(PATH_LCL_HOVER, "refresh.gif");
-	public static final ImageDescriptor DESC_REMOVE_ATT_HOVER = create(PATH_LCL_HOVER, "remove_att.gif");
-	public static final ImageDescriptor DESC_HORIZONTAL_HOVER = create(PATH_LCL_HOVER, "th_horizontal.gif");
-	public static final ImageDescriptor DESC_VERTICAL_HOVER = create(PATH_LCL_HOVER, "th_vertical.gif");
-	public static final ImageDescriptor DESC_COLLAPSE_ALL_HOVER = create(PATH_LCL_HOVER, "collapseall.gif");	
-
 	public static final ImageDescriptor DESC_ADD_ATT_DISABLED = create(PATH_LCL_DISABLED, "add_att.gif");
 	public static final ImageDescriptor DESC_CLONE_ATT_DISABLED = create(PATH_LCL_DISABLED, "clone_att.gif");
 	public static final ImageDescriptor DESC_CLONE_EL_DISABLED = create(PATH_LCL_DISABLED, "clone_el.gif");
@@ -188,8 +173,8 @@ public class PDEPluginImages {
 
 	public static final ImageDescriptor DESC_RUN_EXC = create(PATH_OBJ, "run_exc.gif");
 	public static final ImageDescriptor DESC_DEBUG_EXC = create(PATH_OBJ, "debug_exc.gif");
-	public static final ImageDescriptor DESC_WORKBENCH_LAUNCHER_WIZ = create(PATH_TOOL_HOVER, "eclipse_launcher_wiz.gif");
-	public static final ImageDescriptor DESC_NEWEXP_WIZ_TOOL = create(PATH_TOOL_HOVER, "newexp_wiz.gif");
+	public static final ImageDescriptor DESC_WORKBENCH_LAUNCHER_WIZ = create(PATH_TOOL, "eclipse_launcher_wiz.gif");
+	public static final ImageDescriptor DESC_NEWEXP_WIZ_TOOL = create(PATH_TOOL, "newexp_wiz.gif");
 
 	/**
 	 * WIZ

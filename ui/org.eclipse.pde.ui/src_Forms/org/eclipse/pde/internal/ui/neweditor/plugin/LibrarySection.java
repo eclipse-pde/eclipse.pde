@@ -260,20 +260,36 @@ public class LibrarySection
 		}
 	}
 	private void handleDown() {
-		/*int index = libraryTable.getTable().getSelectionIndex();
-		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
-		IPluginBase plugin = model.getPluginBase();
-		IPluginLibrary[] libraries = plugin.getLibraries();
-		IPluginLibrary l1 = libraries[index];
-		IPluginLibrary l2 = libraries[index + 1];
+		Table table = getTablePart().getTableViewer().getTable();
+		int index = table.getSelectionIndex();
+		if (index == table.getItemCount() - 1)
+			return;
+		swap(index, index + 1);		
+	}
+	
+	private void handleUp() {
+		int index = getTablePart().getTableViewer().getTable().getSelectionIndex();
+		if (index < 1)
+			return;
+		swap(index, index - 1);
+	}
+	
+	public void swap(int index1, int index2) {
+		Table table = getTablePart().getTableViewer().getTable();
+		IPluginLibrary l1 = (IPluginLibrary)table.getItem(index1).getData();
+		IPluginLibrary l2 = (IPluginLibrary)table.getItem(index1).getData();
 
 		try {
-		plugin.swap(l1, l2);
+			IPluginModelBase model = (IPluginModelBase) getPage().getModel();
+			IPluginBase pluginBase = model.getPluginBase();
+			pluginBase.swap(l1, l2);
+			refresh();
+			updateDirectionalButtons();
 		} catch (CoreException e) {
-		PDEPlugin.logException(e);
-		}
-		updateDirectionalButtons();*/
+			PDEPlugin.logException(e);
+		}		
 	}
+	
 	private void handleNew(){
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		NewRuntimeLibraryDialog dialog = new NewRuntimeLibraryDialog(getPage().getSite().getShell(), 
@@ -334,21 +350,7 @@ public class LibrarySection
 			}
 		}	
 	}
-	private void handleUp() {
-		/*int index = libraryTable.getTable().getSelectionIndex();
-		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
-		IPluginBase plugin = model.getPluginBase();
-		IPluginLibrary[] libraries = plugin.getLibraries();
-		IPluginLibrary l1 = libraries[index];
-		IPluginLibrary l2 = libraries[index - 1];
 
-		try {
-			plugin.swap(l1, l2);
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
-		}
-		updateDirectionalButtons();*/
-	}
 	public void initialize() {
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		libraryTable.setInput(model.getPluginBase());

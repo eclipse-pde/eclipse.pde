@@ -54,7 +54,7 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             name="%perspective.name"
-            icon="icons/view16/plugin_persp.gif"
+            icon="icons/eview16/plugins.gif"
             class="org.eclipse.pde.internal.ui.PDEPerspective"
             id="org.eclipse.pde.ui.PDEPerspective">
       </perspective>
@@ -111,7 +111,7 @@
       </category>
       <wizard
             name="%new.pluginProject.name"
-            icon="icons/ctool16/newpprj_wiz.gif"
+            icon="icons/etool16/newpprj_wiz.gif"
             category="org.eclipse.pde.PDE"
             class="org.eclipse.pde.internal.ui.wizards.plugin.NewPluginProjectWizard"
             project="true"
@@ -123,7 +123,7 @@
       </wizard>
       <wizard
             name="%new.fragmentProject.name"
-            icon="icons/ctool16/newfprj_wiz.gif"
+            icon="icons/etool16/newfprj_wiz.gif"
             category="org.eclipse.pde.PDE"
             class="org.eclipse.pde.internal.ui.wizards.plugin.NewFragmentProjectWizard"
             project="true"
@@ -146,7 +146,7 @@
       </wizard>
       <wizard
             name="%new.convert.name"
-            icon="icons/ctool16/convjpprj_wiz.gif"
+            icon="icons/etool16/convjpprj_wiz.gif"
             category="org.eclipse.pde.PDE"
             class="org.eclipse.pde.internal.ui.wizards.tools.ConvertedProjectWizard"
             id="org.eclipse.pde.ui.ConvertedProjectWizard">
@@ -156,7 +156,7 @@
       </wizard>
       <wizard
             name="%new.feature.name"
-            icon="icons/ctool16/newftrprj_wiz.gif"
+            icon="icons/etool16/newftrprj_wiz.gif"
             category="org.eclipse.pde.PDE"
             class="org.eclipse.pde.internal.ui.wizards.feature.NewFeatureProjectWizard"
             project="true"
@@ -168,7 +168,7 @@
       </wizard>
       <wizard
             name="%new.site.name"
-            icon="icons/ctool16/newsiteprj_wiz.gif"
+            icon="icons/etool16/newsiteprj_wiz.gif"
             category="org.eclipse.pde.PDE"
             class="org.eclipse.pde.internal.ui.wizards.site.NewSiteProjectWizard"
             project="true"
@@ -183,7 +183,7 @@
          point="org.eclipse.ui.importWizards">
       <wizard
             name="%PluginImportWizard.label"
-            icon="icons/ctool16/imp_extplug.gif"
+            icon="icons/etool16/imp_extplug.gif"
             class="org.eclipse.pde.internal.ui.wizards.imports.PluginImportWizard"
             id="org.eclipse.pde.ui.PluginImportWizard">
          <description>
@@ -192,7 +192,7 @@
       </wizard>
       <wizard
             name="%FeatureImportWizard.label"
-            icon="icons/ctool16/imp_extfeat.gif"
+            icon="icons/etool16/imp_extfeat.gif"
             class="org.eclipse.pde.internal.ui.wizards.imports.FeatureImportWizard"
             id="org.eclipse.pde.ui.FeatureImportWizard">
          <description>
@@ -204,7 +204,7 @@
          point="org.eclipse.ui.exportWizards">
       <wizard
             name="%PluginExportWizard.label"
-            icon="icons/ctool16/exp_deployplug.gif"
+            icon="icons/etool16/exp_deployplug.gif"
             class="org.eclipse.pde.internal.ui.wizards.exports.PluginExportWizard"
             id="org.eclipse.pde.ui.pluginExportWizard">
          <description>
@@ -224,7 +224,7 @@
       </wizard>
       <wizard
             name="%FeatureExportWizard.label"
-            icon="icons/ctool16/exp_deployfeat.gif"
+            icon="icons/etool16/exp_deployfeat.gif"
             class="org.eclipse.pde.internal.ui.wizards.exports.FeatureExportWizard"
             id="org.eclipse.pde.ui.featureExportWizard">
          <description>
@@ -243,7 +243,7 @@
          point="org.eclipse.pde.ui.projectGenerators">
       <wizard
             name="%projectGenerators.helloWorld.name"
-            icon="icons/ctool16/newexprj_wiz.gif"
+            icon="icons/etool16/newexprj_wiz.gif"
             class="org.eclipse.pde.internal.ui.wizards.templates.HelloWorldNewWizard"
             id="org.eclipse.pde.ui.projectGenerators.helloWorld">
          <description>
@@ -252,7 +252,7 @@
       </wizard>
       <wizard
             name="%projectGenerators.view.name"
-            icon="icons/ctool16/newexprj_wiz.gif"
+            icon="icons/etool16/newexprj_wiz.gif"
             class="org.eclipse.pde.internal.ui.wizards.templates.ViewNewWizard"
             id="org.eclipse.pde.ui.projectGenerators.view">
          <description>
@@ -261,7 +261,7 @@
       </wizard>
       <wizard
             name="%projectGenerators.multiPageEditor.name"
-            icon="icons/ctool16/newexprj_wiz.gif"
+            icon="icons/etool16/newexprj_wiz.gif"
             class="org.eclipse.pde.internal.ui.wizards.templates.MultiPageEditorNewWizard"
             id="org.eclipse.pde.ui.projectGenerators.multiPageEditor">
          <description>
@@ -270,7 +270,7 @@
       </wizard>
       <wizard
             name="%projectGenerators.choice.name"
-            icon="icons/ctool16/script_wiz.gif"
+            icon="icons/etool16/script_wiz.gif"
             class="org.eclipse.pde.internal.ui.wizards.templates.NewPluginTemplateChoiceWizard"
             id="org.eclipse.pde.ui.projectGenerators.choice">
          <description>
@@ -279,7 +279,7 @@
       </wizard>
       <wizard
             name="%projectGenerators.perspectiveExtensions.name"
-            icon="icons/ctool16/newexprj_wiz.gif"
+            icon="icons/etool16/newexprj_wiz.gif"
             class="org.eclipse.pde.internal.ui.wizards.templates.PerspectiveExtensionsNewWizard"
             id="org.eclipse.pde.ui.projectGenerators.perspectiveExtensions">
          <description>
@@ -288,7 +288,7 @@
       </wizard>
       <wizard
             name="%projectGenerators.propertyPages.name"
-            icon="icons/ctool16/newexprj_wiz.gif"
+            icon="icons/etool16/newexprj_wiz.gif"
             class="org.eclipse.pde.internal.ui.wizards.templates.PropertyPageNewWizard"
             id="org.eclipse.pde.ui.projectGenerators.propertyPages">
          <description>
@@ -297,7 +297,7 @@
       </wizard>
       <wizard
             name="%projectGenerators.popupMenus.name"
-            icon="icons/ctool16/newexprj_wiz.gif"
+            icon="icons/etool16/newexprj_wiz.gif"
             class="org.eclipse.pde.internal.ui.wizards.templates.PopupMenuNewWizard"
             id="org.eclipse.pde.ui.projectGenerators.popupMenus">
          <description>
@@ -306,7 +306,7 @@
       </wizard>
       <wizard
             name="%projectGenerators.editor.name"
-            icon="icons/ctool16/newexprj_wiz.gif"
+            icon="icons/etool16/newexprj_wiz.gif"
             class="org.eclipse.pde.internal.ui.wizards.templates.EditorNewWizard"
             id="org.eclipse.pde.ui.projectGenerators.editor">
          <description>
@@ -324,7 +324,7 @@
             contributingId="org.eclipse.ui.actionSets"
             name="%newExtension.templates.hello.name"
             template="true"
-            icon="icons/ctool16/newex_wiz.gif"
+            icon="icons/etool16/newex_wiz.gif"
             category="templates"
             class="org.eclipse.pde.internal.ui.wizards.templates.HelloWorldTemplate"
             id="org.eclipse.pde.ui.newExtension.hello">
@@ -336,7 +336,7 @@
             contributingId="org.eclipse.ui.views"
             name="%newExtension.templates.view.name"
             template="true"
-            icon="icons/ctool16/newex_wiz.gif"
+            icon="icons/etool16/newex_wiz.gif"
             category="templates"
             class="org.eclipse.pde.internal.ui.wizards.templates.ViewTemplate"
             id="org.eclipse.pde.ui.newExtension.view">
@@ -348,7 +348,7 @@
             contributingId="org.eclipse.ui.editors"
             name="%newExtension.templates.multiPageEditor.name"
             template="true"
-            icon="icons/ctool16/newex_wiz.gif"
+            icon="icons/etool16/newex_wiz.gif"
             category="templates"
             class="org.eclipse.pde.internal.ui.wizards.templates.MultiPageEditorTemplate"
             id="org.eclipse.pde.ui.newExtension.multiPageEditor">
@@ -361,7 +361,7 @@
             availableAsShortcut="true"
             name="%newExtension.templates.newWizard.name"
             template="true"
-            icon="icons/ctool16/newex_wiz.gif"
+            icon="icons/etool16/newex_wiz.gif"
             category="templates"
             class="org.eclipse.pde.internal.ui.wizards.templates.NewWizardTemplate"
             id="org.eclipse.pde.ui.newExtension.newWizard">
@@ -374,7 +374,7 @@
             availableAsShortcut="true"
             name="%newExtension.templates.preferences.name"
             template="true"
-            icon="icons/ctool16/newex_wiz.gif"
+            icon="icons/etool16/newex_wiz.gif"
             category="templates"
             class="org.eclipse.pde.internal.ui.wizards.templates.PreferencePageTemplate"
             id="org.eclipse.pde.ui.newExtension.preferences">
@@ -387,7 +387,7 @@
             availableAsShortcut="true"
             name="%newExtension.templates.perspectiveExtensions.name"
             template="true"
-            icon="icons/ctool16/newex_wiz.gif"
+            icon="icons/etool16/newex_wiz.gif"
             category="templates"
             class="org.eclipse.pde.internal.ui.wizards.templates.PerspectiveExtensionsTemplate"
             id="org.eclipse.pde.ui.newExtension.perspectiveExtensions">
@@ -400,7 +400,7 @@
             availableAsShortcut="true"
             name="%newExtension.templates.propertyPages.name"
             template="true"
-            icon="icons/ctool16/newex_wiz.gif"
+            icon="icons/etool16/newex_wiz.gif"
             category="templates"
             class="org.eclipse.pde.internal.ui.wizards.templates.PropertyPageTemplate"
             id="org.eclipse.pde.ui.newExtension.propertyPages">
@@ -413,7 +413,7 @@
             availableAsShortcut="true"
             name="%newExtension.templates.popupMenus.name"
             template="true"
-            icon="icons/ctool16/newex_wiz.gif"
+            icon="icons/etool16/newex_wiz.gif"
             category="templates"
             class="org.eclipse.pde.internal.ui.wizards.templates.PopupMenuTemplate"
             id="org.eclipse.pde.ui.newExtension.popupMenus">
@@ -426,7 +426,7 @@
             availableAsShortcut="true"
             name="%newExtension.templates.editor.name"
             template="true"
-            icon="icons/ctool16/newex_wiz.gif"
+            icon="icons/etool16/newex_wiz.gif"
             category="templates"
             class="org.eclipse.pde.internal.ui.wizards.templates.EditorTemplate"
             id="org.eclipse.pde.ui.newExtension.editor">
@@ -439,7 +439,7 @@
             availableAsShortcut="true"
             name="%newExtension.templates.help.name"
             template="true"
-            icon="icons/ctool16/newex_wiz.gif"
+            icon="icons/etool16/newex_wiz.gif"
             category="templates"
             class="org.eclipse.pde.internal.ui.wizards.templates.HelpTemplate"
             id="org.eclipse.pde.ui.newExtension.help">
@@ -562,7 +562,7 @@
       </category>
       <view
             name="%views.plugins.name"
-            icon="icons/cview16/plugin_depend.gif"
+            icon="icons/eview16/plugin_depend.gif"
             category="org.eclipse.pde.ui"
             class="org.eclipse.pde.internal.ui.view.PluginsView"
             id="org.eclipse.pde.ui.PluginsView">
@@ -835,7 +835,7 @@
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <launchConfigurationTypeImage
-            icon="icons/ctool16/eclipse_launcher_wiz.gif"
+            icon="icons/etool16/eclipse_launcher_wiz.gif"
             configTypeID="org.eclipse.pde.ui.RuntimeWorkbench"
             id="org.eclipse.pde.ui.runtimeWorkbenchLaunchImage">
       </launchConfigurationTypeImage>
@@ -902,7 +902,7 @@
       </shortcut>
       <shortcut
             label="%launcher.shortcut.label"
-            icon="icons/ctool16/eclipse_launcher_wiz.gif"
+            icon="icons/etool16/eclipse_launcher_wiz.gif"
             modes="run, debug"
             class="org.eclipse.pde.internal.ui.launcher.RuntimeWorkbenchShortcut"
             id="org.eclipse.pde.ui.runtimeWorkbenchShortcut">

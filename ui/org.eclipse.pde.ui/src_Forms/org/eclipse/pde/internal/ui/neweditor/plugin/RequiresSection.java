@@ -352,6 +352,8 @@ public class RequiresSection
 					}
 				}
 			}
+		} else {
+			importTable.update(((IStructuredSelection)importTable.getSelection()).toArray(), null);
 		}
 	}
 

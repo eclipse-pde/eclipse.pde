@@ -52,7 +52,6 @@ public abstract class PDEMasterDetailsBlock extends MasterDetailsBlock {
 		haction.setChecked(true);
 		haction.setToolTipText("Horizontal orientation");
 		haction.setImageDescriptor(PDEPluginImages.DESC_HORIZONTAL);
-		haction.setHoverImageDescriptor(PDEPluginImages.DESC_HORIZONTAL_HOVER);
 		haction.setDisabledImageDescriptor(PDEPluginImages.DESC_HORIZONTAL_DISABLED);
 
 		Action vaction = new Action("ver", Action.AS_RADIO_BUTTON) {
@@ -64,7 +63,6 @@ public abstract class PDEMasterDetailsBlock extends MasterDetailsBlock {
 		vaction.setChecked(false);
 		vaction.setToolTipText("Vertical orientation");
 		vaction.setImageDescriptor(PDEPluginImages.DESC_VERTICAL);
-		vaction.setHoverImageDescriptor(PDEPluginImages.DESC_VERTICAL_HOVER);
 		vaction.setDisabledImageDescriptor(PDEPluginImages.DESC_VERTICAL_DISABLED);
 		form.getToolBarManager().add(haction);
 		form.getToolBarManager().add(vaction);

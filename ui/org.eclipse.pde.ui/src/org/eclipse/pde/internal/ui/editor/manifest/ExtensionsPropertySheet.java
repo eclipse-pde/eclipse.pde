@@ -217,7 +217,6 @@ public class ExtensionsPropertySheet extends ManifestPropertySheet {
 			}
 		};
 		addAttAction.setImageDescriptor(PDEPluginImages.DESC_ADD_ATT);
-		addAttAction.setHoverImageDescriptor(PDEPluginImages.DESC_ADD_ATT_HOVER);
 		addAttAction.setDisabledImageDescriptor(PDEPluginImages.DESC_ADD_ATT_DISABLED);
 		addAttAction.setText(PDEPlugin.getResourceString(ADD_ATT_LABEL));
 		addAttAction.setToolTipText(PDEPlugin.getResourceString(ADD_ATT_TOOLTIP));
@@ -229,7 +228,6 @@ public class ExtensionsPropertySheet extends ManifestPropertySheet {
 			}
 		};
 		removeAttAction.setImageDescriptor(PDEPluginImages.DESC_REMOVE_ATT);
-		removeAttAction.setHoverImageDescriptor(PDEPluginImages.DESC_REMOVE_ATT_HOVER);
 		removeAttAction.setDisabledImageDescriptor(
 			PDEPluginImages.DESC_REMOVE_ATT_DISABLED);
 		removeAttAction.setText(PDEPlugin.getResourceString(REMOVE_ATT_LABEL));
@@ -242,7 +240,6 @@ public class ExtensionsPropertySheet extends ManifestPropertySheet {
 			}
 		};
 		cloneAction.setImageDescriptor(PDEPluginImages.DESC_CLONE_EL);
-		cloneAction.setHoverImageDescriptor(PDEPluginImages.DESC_CLONE_EL_HOVER);
 		cloneAction.setDisabledImageDescriptor(PDEPluginImages.DESC_CLONE_EL_DISABLED);
 		cloneAction.setText(PDEPlugin.getResourceString(CLONE_LABEL));
 		cloneAction.setToolTipText(PDEPlugin.getResourceString(CLONE_TOOLTIP));

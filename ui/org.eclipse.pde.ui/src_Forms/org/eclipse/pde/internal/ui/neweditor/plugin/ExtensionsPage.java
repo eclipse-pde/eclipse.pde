@@ -63,7 +63,6 @@ public class ExtensionsPage extends PDEFormPage {
 			};
 			collapseAction.setToolTipText("Collapse All");
 			collapseAction.setImageDescriptor(PDEPluginImages.DESC_COLLAPSE_ALL);
-			collapseAction.setHoverImageDescriptor(PDEPluginImages.DESC_COLLAPSE_ALL_HOVER);
 			form.getToolBarManager().add(collapseAction);
 			super.createToolBarActions(managedForm);
 		}

@@ -125,7 +125,6 @@ protected void makeActions() {
 		}
 	};
 	gotoAction.setImageDescriptor(PDEPluginImages.DESC_GOTOOBJ);
-	gotoAction.setHoverImageDescriptor(PDEPluginImages.DESC_GOTOOBJ_HOVER);
 	gotoAction.setDisabledImageDescriptor(PDEPluginImages.DESC_GOTOOBJ_DISABLED);
 	gotoAction.setText(PDEPlugin.getResourceString(GOTO_ACTION_LABEL));
 	gotoAction.setToolTipText(PDEPlugin.getResourceString(GOTO_ACTION_TOOLTIP));

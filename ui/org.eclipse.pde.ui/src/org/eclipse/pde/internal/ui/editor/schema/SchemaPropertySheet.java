@@ -89,7 +89,6 @@ protected void makeSchemaActions() {
 		}
 	};
 	cloneAction.setImageDescriptor(PDEPluginImages.DESC_CLONE_ATT);
-	cloneAction.setHoverImageDescriptor(PDEPluginImages.DESC_CLONE_ATT_HOVER);
 	cloneAction.setDisabledImageDescriptor(PDEPluginImages.DESC_CLONE_ATT_DISABLED);
 	cloneAction.setToolTipText(PDEPlugin.getResourceString(CLONE_TOOLTIP));
 	cloneAction.setEnabled(false);
