@@ -103,12 +103,9 @@ public class BuildInputContext extends InputContext {
 	
 	private void deleteKey(IDocumentKey key, ArrayList ops) {
 		if (key.getOffset() > 0) {
-			try {
-				TextEdit op = new DeleteEdit(key.getOffset(), getLength(key));
-				fOperationTable.put(key, op);
-				ops.add(op);
-			} catch (BadLocationException e) {
-			}
+			TextEdit op = new DeleteEdit(key.getOffset(), key.getLength());
+			fOperationTable.put(key, op);
+			ops.add(op);
 		}
 	}
 	
@@ -116,19 +113,10 @@ public class BuildInputContext extends InputContext {
 		if (key.getOffset() == -1) {
 			insertKey(key, ops);
 		} else {
-			try {
-				TextEdit op = new ReplaceEdit(key.getOffset(), getLength(key), key.write());
-				fOperationTable.put(key, op);
-				ops.add(op);
-			} catch (BadLocationException e) {			
-			}
+			TextEdit op = new ReplaceEdit(key.getOffset(), key.getLength(), key.write());
+			fOperationTable.put(key, op);
+			ops.add(op);
 		}	
 	}
 	
-	private int getLength(IDocumentKey key) throws BadLocationException {
-		IDocument doc = getDocumentProvider().getDocument(getInput());
-		int endline = doc.getLineOfOffset(key.getOffset()) + key.getLineSpan() - 1;
-		return doc.getLineOffset(endline) + doc.getLineLength(endline) - key.getOffset();
-	}	
-
 }

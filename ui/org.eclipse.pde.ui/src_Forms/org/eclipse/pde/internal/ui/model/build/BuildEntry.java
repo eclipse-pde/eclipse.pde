@@ -10,7 +10,7 @@ import org.eclipse.pde.internal.ui.model.*;
 
 public class BuildEntry implements IBuildEntry, IDocumentKey {
 
-	private int fLineSpan = -1;
+	private int fLength = -1;
 	private int fOffset = -1;
 	private IBuildModel fModel;
 	private String fName;
@@ -89,17 +89,19 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 	public void setOffset(int offset) {
 		fOffset = offset;
 	}
+	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#setLineSpan(int)
+	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#getLength()
 	 */
-	public void setLineSpan(int span) {
-		fLineSpan = span;
+	public int getLength() {
+		return fLength;
 	}
+	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#getLineSpan()
+	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#setLength(int)
 	 */
-	public int getLineSpan() {
-		return fLineSpan;
+	public void setLength(int length) {
+		fLength = length;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String, java.io.PrintWriter)

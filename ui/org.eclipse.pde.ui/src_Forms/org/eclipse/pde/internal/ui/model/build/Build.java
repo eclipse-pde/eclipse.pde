@@ -77,7 +77,7 @@ public class Build implements IBuild {
 				String line = document.get(offset, length);
 				if (line.startsWith("#") | line.startsWith("!")) {
 					if (currentKey != null) {
-						currentKey.setLineSpan(i - document.getLineOfOffset(currentKey.getOffset()));
+						currentKey.setLength(offset - 1 - currentKey.getOffset());
 						currentKey = null;
 					}
 					continue;
@@ -89,22 +89,23 @@ public class Build implements IBuild {
 				
 				if (currentKey != null) {
 					if (!line.endsWith("\\")) {
-						currentKey.setLineSpan(i - document.getLineOfOffset(currentKey.getOffset()) + 1);
+						currentKey.setLength(offset + document.getLineLength(i) - currentKey.getOffset());
 						currentKey = null;
 					}
 				} else {
 					int index = line.indexOf('=');
 					if (index == -1) 
 						index = line.indexOf(':');
-					if (index != -1) {
-						String name = line.substring(0, index).trim();
-						currentKey = (IDocumentKey)getEntry(name);
-						if (currentKey != null) {
-							currentKey.setOffset(document.getLineOffset(i));
-							if (!line.endsWith("\\")) {
-								currentKey.setLineSpan(1);
-								currentKey = null;
-							}
+					String name = (index != -1) ? line.substring(0, index).trim() : line;
+					currentKey = (IDocumentKey)getEntry(name);
+					if (currentKey != null) {
+						while (Character.isSpaceChar(document.getChar(offset))) {
+							offset += 1;
+						}
+						currentKey.setOffset(offset);
+						if (!line.endsWith("\\")) {
+							currentKey.setLength(document.getLineOffset(i) + document.getLineLength(i) - currentKey.getOffset());
+							currentKey = null;
 						}
 					}
 				}

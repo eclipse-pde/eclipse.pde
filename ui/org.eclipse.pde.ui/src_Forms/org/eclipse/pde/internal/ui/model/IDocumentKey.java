@@ -9,8 +9,8 @@ public interface IDocumentKey extends IWritable {
 	void setOffset(int offset);
 	int getOffset();
 	
-	void setLineSpan(int span);
-	int getLineSpan();
+	void setLength(int length);
+	int getLength();
 	
 	String write();
 	

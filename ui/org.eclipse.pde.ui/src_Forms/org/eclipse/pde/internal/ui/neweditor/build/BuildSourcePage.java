@@ -1,4 +1,5 @@
 package org.eclipse.pde.internal.ui.neweditor.build;
+import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.reconciler.*;
 import org.eclipse.jface.text.source.*;
 import org.eclipse.jface.viewers.*;
@@ -7,6 +8,7 @@ import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.ui.model.*;
 import org.eclipse.pde.internal.ui.neweditor.*;
 import org.eclipse.pde.internal.ui.neweditor.text.*;
 import org.eclipse.swt.graphics.Image;
@@ -72,6 +74,31 @@ public class BuildSourcePage extends PDESourcePage {
 	protected ITreeContentProvider createOutlineContentProvider() {
 		return new BuildOutlineContentProvider();
 	}
-	protected void outlineSelectionChanged(SelectionChangedEvent e) {
+	protected void outlineSelectionChanged(SelectionChangedEvent event) {
+		ISelection selection= event.getSelection();
+		if (selection instanceof IStructuredSelection) {
+			IStructuredSelection structuredSelection= (IStructuredSelection) selection;
+			Object first= structuredSelection.getFirstElement();
+			if (first instanceof IDocumentKey) {
+				setHighlightRange((IDocumentKey)first);				
+			} else {
+				resetHighlightRange();
+			}
+		}
+	}
+	
+	public void setHighlightRange(IDocumentKey key) {
+		ISourceViewer sourceViewer = getSourceViewer();
+		if (sourceViewer == null)
+			return;
+
+		IDocument document = sourceViewer.getDocument();
+		if (document == null)
+			return;
+
+		int offset = key.getOffset();
+		int length = key.getLength();
+		setHighlightRange(offset, length, true);
+		sourceViewer.setSelectedRange(offset, key.getName().length());
 	}
 }
