@@ -37,7 +37,7 @@ public class LegacyUITestApplication implements IPlatformRunnable {
 				w.getShell().getDisplay().asyncExec(new Runnable() {
 					public void run() {
 						started[0] = true;
-						RemotePluginTestRunner.main((String[]) args);
+						LegacyRemotePluginTestRunner.main((String[]) args);
 						workbench.close();
 					}
 				});

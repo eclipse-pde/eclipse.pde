@@ -23,7 +23,7 @@ public class LegacyCoreTestApplication implements IPlatformRunnable {
 	 * @see IPlatformRunnable
 	 */
 	public Object run(Object arguments) throws Exception {
-		RemotePluginTestRunner.main((String[])arguments);
+		LegacyRemotePluginTestRunner.main((String[])arguments);
 		return null;
 	}
 }

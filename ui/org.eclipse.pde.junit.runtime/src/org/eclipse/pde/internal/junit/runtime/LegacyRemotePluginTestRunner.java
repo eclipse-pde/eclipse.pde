@@ -10,36 +10,16 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.junit.runtime;
 
-import java.net.*;
-import java.util.*;
-
 import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.jdt.internal.junit.runner.RemoteTestRunner;
-import org.osgi.framework.*;
 
 /**
  * Runs JUnit tests contained inside a plugin.
  */
-public class RemotePluginTestRunner extends RemoteTestRunner {
+public class LegacyRemotePluginTestRunner extends RemoteTestRunner {
 
 	private String fTestPluginName;
-	
-	class BundleClassLoader extends ClassLoader {
-		  private Bundle bundle;
-		  public BundleClassLoader(Bundle target) {
-		    this.bundle = target;
-		  }
-		  protected Class findClass(String name) throws ClassNotFoundException {
-		    return bundle.loadClass(name);
-		  }
-		  protected URL findResource(String name) {
-		    return bundle.getResource(name);
-		  }
-		  protected Enumeration findResources(String name) {
-			   return bundle.getResources(name);
-		  }
-	}
 	
 	/** 
 	 * The main entry point. Supported arguments in addition
@@ -51,7 +31,7 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
      */
 
 	public static void main(String[] args) {
-		RemotePluginTestRunner testRunner= new RemotePluginTestRunner();
+		LegacyRemotePluginTestRunner testRunner= new LegacyRemotePluginTestRunner();
 		testRunner.init(args);
 		testRunner.run();
 	}
@@ -61,10 +41,12 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 	 * @see RemotePluginTestRunner#getClassLoader()
 	 */
 	protected ClassLoader getClassLoader() {
-		Bundle bundle = Platform.getBundle(fTestPluginName);
-		if (bundle == null)
-			throw new IllegalArgumentException("No Classloader found for plug-in " + fTestPluginName); //$NON-NLS-1$
-		return new BundleClassLoader(bundle);
+		if (Platform.getPluginRegistry().getPluginDescriptor(fTestPluginName) != null)
+			return Platform
+				.getPluginRegistry()
+				.getPluginDescriptor(fTestPluginName)
+				.getPluginClassLoader();
+		throw new IllegalArgumentException("No Classloader found for plug-in " + fTestPluginName); //$NON-NLS-1$
 	}
 
 	protected void init(String[] args) {
