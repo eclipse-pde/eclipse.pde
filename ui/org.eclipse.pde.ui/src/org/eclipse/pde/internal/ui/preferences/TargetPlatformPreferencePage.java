@@ -102,6 +102,7 @@ public class TargetPlatformPreferencePage
 
 		browseButton = new Button(home, SWT.PUSH);
 		browseButton.setText(PDEPlugin.getResourceString(KEY_PLATFORM_HOME_BUTTON));
+		browseButton.setLayoutData(new GridData(GridData.END));
 		SWTUtil.setButtonDimensionHint(browseButton);
 		browseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
