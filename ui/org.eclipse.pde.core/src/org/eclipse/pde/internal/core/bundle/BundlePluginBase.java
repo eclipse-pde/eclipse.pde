@@ -179,14 +179,20 @@ public class BundlePluginBase
 			return new IPluginLibrary[0];
 		if (libraries == null) {
 			libraries = new ArrayList();
-			String[] libNames = parseMultiValuedHeader(Constants.BUNDLE_CLASSPATH);
-			for (int i = 0; i < libNames.length; i++) {
-				PluginLibrary library = new PluginLibrary();
-				library.setModel(getModel());
-				library.setInTheModel(true);
-				library.setParent(this);
-				library.load(libNames[i]);
-				libraries.add(library);
+			String value = bundle.getHeader(Constants.BUNDLE_CLASSPATH);
+			if (value != null) {
+				try {
+					ManifestElement[] elements = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, value);
+					for (int i = 0; i < elements.length; i++) {
+						PluginLibrary library = new PluginLibrary();
+						library.setModel(getModel());
+						library.setInTheModel(true);
+						library.setParent(this);
+						library.load(elements[i].getValue());
+						libraries.add(library);
+					}
+				} catch (BundleException e) {
+				}
 			}
 		}
 		return (IPluginLibrary[]) libraries.toArray(new IPluginLibrary[libraries.size()]);
@@ -254,26 +260,21 @@ public class BundlePluginBase
 	}
 	
 	protected String parseSingleValuedHeader(String header) {
-		String[] values = parseMultiValuedHeader(header);
-		return (values.length > 0) ? values[values.length - 1] : null;
-	}
-	
-	protected String[] parseMultiValuedHeader(String header) {
 		IBundle bundle = getBundle();
 		if (bundle == null)
-			return new String[0];
+			return null;
 		String value = bundle.getHeader(header);
 		if (value == null)
-			return new String[0];
+			return null;
 		try {
 			ManifestElement[] elements = ManifestElement.parseHeader(header, value);
 			if (elements.length > 0)
-				return elements[0].getValueComponents();
+				return elements[0].getValue();
 		} catch (BundleException e) {
 		}
-		return new String[0];				
+		return null;				
 	}
-	
+		
 	protected String getAttribute(String header, String attribute) {
 		IBundle bundle = getBundle();
 		if (bundle == null)
