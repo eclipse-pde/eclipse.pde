@@ -11,12 +11,12 @@ import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.internal.build.*;
-import org.eclipse.pde.internal.build.IPDECoreConstants;
+import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.build.Policy;
 /**
  * Set's a property defining the location of the template.xml file.
  */
-public class InitTemplate extends Task implements IPDECoreConstants, IXMLConstants {
+public class InitTemplate extends Task implements IPDEBuildConstants, IXMLConstants {
 
 public InitTemplate() {
 	super();

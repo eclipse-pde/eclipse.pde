@@ -7,7 +7,7 @@ import java.io.PrintWriter;
 /**
  * Represents an Ant condition.
  */
-public class ConditionTask {
+public class ConditionTask implements ITask {
 
 	protected String property;
 	protected String value;
@@ -19,7 +19,7 @@ public ConditionTask(String property, String value, Condition condition) {
 	this.condition = condition;
 }
 
-protected void print(AntScript script, int tab) {
+public void print(AntScript script, int tab) {
 	script.printTab(tab);
 	script.print("<condition");
 	script.printAttribute("property", property, true);

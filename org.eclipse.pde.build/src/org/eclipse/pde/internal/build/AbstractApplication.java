@@ -13,7 +13,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Defines common behaviour for PDE Core applications.
  */
-public abstract class AbstractApplication implements IPlatformRunnable, IPDECoreConstants {
+public abstract class AbstractApplication implements IPlatformRunnable, IPDEBuildConstants {
 
 	/**
 	 * Whether the application usage should be print to console.

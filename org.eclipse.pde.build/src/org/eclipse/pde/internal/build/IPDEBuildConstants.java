@@ -7,7 +7,7 @@ package org.eclipse.pde.internal.build;
 /**
  * Generic constants for this plug-in classes.
  */
-public interface IPDECoreConstants {
+public interface IPDEBuildConstants {
 
 	/** PDE Core plug-in id */
 	public static final String PI_BOOT = "org.eclipse.core.boot";
@@ -16,8 +16,9 @@ public interface IPDECoreConstants {
 	public static final String PI_RUNTIME = "org.eclipse.core.runtime";
 	public static final String PI_RUNTIME_JAR_NAME = "runtime.jar";
 
-	/** properties file name */
+	/** file names */
 	public final static String PROPERTIES_FILE = "build.properties";
+	public final static String LIBRARY_FILE = "library.xml";
 
 
 	// command line arguments
@@ -30,6 +31,7 @@ public interface IPDECoreConstants {
 	public static final String ARG_NO_CHILDREN = "-nochildren";
 	public static final String ARG_PLUGIN_PATH = "-pluginpath";
 	public static final String ARG_SCRIPT_NAME = "-scriptname";
+	public static final String ARG_SOURCE_LOCATION = "-source";
 	public static final String ARG_USAGE = "-?";
 	
 
@@ -52,5 +54,8 @@ public interface IPDECoreConstants {
 	public final static int EXCEPTION_WRITING_SCRIPT = 7;
 	public final static int EXCEPTION_ELEMENT_MISSING = 8;
 	public final static int EXCEPTION_ENTRY_MISSING = 9;
+	public final static int EXCEPTION_READING_FILE = 10;
+	public final static int EXCEPTION_SOURCE_LOCATION_MISSING = 11;
+	public final static int EXCEPTION_WRITING_FILE = 12;
 	public final static int WARNING_MISSING_SOURCE = 20;
 }

@@ -14,7 +14,7 @@ import org.eclipse.pde.internal.build.*;
 /**
  * 
  */
-public class BuildScriptGeneratorTask extends Task implements IXMLConstants, IPDECoreConstants {
+public class BuildScriptGeneratorTask extends Task implements IXMLConstants, IPDEBuildConstants {
 
 	/**
 	 * 

@@ -12,33 +12,7 @@ import org.eclipse.pde.internal.build.ant.*;
 /**
  * 
  */
-public abstract class AbstractScriptGenerator implements IPDECoreConstants, IXMLConstants {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+public abstract class AbstractScriptGenerator implements IPDEBuildConstants, IXMLConstants {
 
 /**
  * Starting point for script generation.
@@ -52,6 +26,5 @@ protected String getPropertyFormat(String propertyName) {
 	sb.append(PROPERTY_ASSIGNMENT_SUFFIX);
 	return sb.toString();
 }
-
 
 }

@@ -24,7 +24,7 @@ import org.eclipse.pde.internal.build.*;
 /**
  * Sets a property with the location of a given plugin.
  */
-public class PluginLocationTask extends Task implements IPDECoreConstants, IXMLConstants {
+public class PluginLocationTask extends Task implements IPDEBuildConstants, IXMLConstants {
 
 	protected String pluginId;
 	protected String fragmentId;

@@ -267,7 +267,7 @@ public void println() {
 	output.println();
 }
 
-public void print(int tab, ConditionTask task) {
+public void print(int tab, ITask task) {
 	task.print(this, tab);
 }
 

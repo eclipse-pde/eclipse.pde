@@ -10,7 +10,7 @@ import org.eclipse.pde.internal.build.*;
 /**
  * 
  */
-public class FetchTask extends Task implements IPDECoreConstants {
+public class FetchTask extends Task implements IPDEBuildConstants {
 
 	/**
 	 * 

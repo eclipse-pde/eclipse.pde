@@ -17,7 +17,7 @@ import org.eclipse.update.internal.core.FeatureExecutableFactory;
  * Used to create a build manifest file describing what plug-ins and versions
  * were included in a build. It has to be executed after a fetch task.
  */
-public class BuildManifestTask extends Task implements IPDECoreConstants, IXMLConstants {
+public class BuildManifestTask extends Task implements IPDEBuildConstants, IXMLConstants {
 	private String buildId;
 	protected String buildName;
 	private String buildQualifier;
