@@ -5,9 +5,12 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.internal.ui.wizards.IStatusChangeListener;
 import org.eclipse.jdt.internal.ui.wizards.buildpaths.SourceAttachmentBlock;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.parts.StatusDialog;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 	/**
 	 * A dialog to attach source to a jar file.
@@ -22,8 +25,9 @@ import org.eclipse.swt.widgets.*;
 		public SourceAttachmentDialog(Shell parent, IClasspathEntry entry) {
 			super(parent);
 			this.oldEntry = entry;
-
-			//setTitle(JavaEditorMessages.getFormattedString("SourceAttachmentDialog.title", entry.getPath().toString())); //$NON-NLS-1$
+			
+			String title = PDEPlugin.getFormattedMessage("SourceAttachmentDialog.title", entry.getPath().toString());
+			setTitle(title);
 			fSourceAttachmentBlock= new SourceAttachmentBlock(ResourcesPlugin.getWorkspace().getRoot(), this, entry);
 		}
 		
@@ -32,7 +36,7 @@ import org.eclipse.swt.widgets.*;
 		 */
 		protected void configureShell(Shell newShell) {
 			super.configureShell(newShell);
-			//WorkbenchHelp.setHelp(newShell, IJavaHelpContextIds.SOURCE_ATTACHMENT_DIALOG);
+			WorkbenchHelp.setHelp(newShell, IHelpContextIds.SOURCE_ATTACHMENT);
 		}		
 				
 		protected Control createDialogArea(Composite parent) {

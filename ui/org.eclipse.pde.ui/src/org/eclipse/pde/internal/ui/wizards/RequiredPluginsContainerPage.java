@@ -7,7 +7,7 @@ import org.eclipse.jdt.ui.wizards.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
@@ -16,6 +16,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Insert the type's description here.
@@ -84,9 +85,9 @@ public class RequiredPluginsContainerPage
 	 * The constructor.
 	 */
 	public RequiredPluginsContainerPage() {
-		super("requiredPluginsContainerPage");
-		setTitle("Required Plug-in Entries");
-		setDescription("This container dynamically manages entries for the required plug-ins.");
+		super("requiredPluginsContainerPage"); //$NON-NLS-1$
+		setTitle(PDEPlugin.getResourceString("RequiredPluginsContainerPage.title")); //$NON-NLS-1$
+		setDescription(PDEPlugin.getResourceString("RequiredPluginsContainerPage.desc")); //$NON-NLS-1$
 		projectImage =
 			PlatformUI.getWorkbench().getSharedImages().getImage(
 				ISharedImages.IMG_OBJ_PROJECT);
@@ -110,7 +111,7 @@ public class RequiredPluginsContainerPage
 		layout.numColumns = 2;
 		container.setLayout(layout);
 		Label label = new Label(container, SWT.NULL);
-		label.setText("&Resolved entries:");
+		label.setText(PDEPlugin.getResourceString("RequiredPluginsContainerPage.label")); //$NON-NLS-1$
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -137,7 +138,7 @@ public class RequiredPluginsContainerPage
 		gd.heightHint = 300;
 		viewer.getTable().setLayoutData(gd);
 		attachSourceButton = new Button(container, SWT.PUSH);
-		attachSourceButton.setText("Attach &Source...");
+		attachSourceButton.setText(PDEPlugin.getResourceString("RequiredPluginsContainerPage.attachSource")); //$NON-NLS-1$
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		attachSourceButton.setLayoutData(gd);
 		SWTUtil.setButtonDimensionHint(attachSourceButton);
@@ -147,6 +148,7 @@ public class RequiredPluginsContainerPage
 			}
 		});
 		attachSourceButton.setEnabled(false);
+		WorkbenchHelp.setHelp(container, IHelpContextIds.PLUGINS_CONTAINER_PAGE);
 		setControl(container);
 		if (realEntries != null)
 			initializeView();

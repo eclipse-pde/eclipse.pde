@@ -56,6 +56,8 @@ public interface IHelpContextIds {
 	public static final String FEATURE_ADD_PACKAGED_WIZARD = PREFIX + "feature_add_packaged_wizard";
 	public static final String FEATURE_INCLUDED_FEATURES_WIZARD = PREFIX + "feature_included_features_wizard";
 	public static final String FEATURE_PORTABILITY_WIZARD = PREFIX + "feature_portability_wizard";
+
+	public static final String PLUGINS_CONTAINER_PAGE = PREFIX + "plugins_container_page";
 	
 	// dialogs
 	public static final String FRAGMENT_ADD_TARGET = PREFIX + "fragment_add_target";
@@ -65,6 +67,7 @@ public interface IHelpContextIds {
 	public static final String LAUNCHER_BASIC = PREFIX + "launcher_basic";
 	public static final String LAUNCHER_ADVANCED = PREFIX + "launcher_advanced";
 	public static final String LAUNCHER_TRACING = PREFIX + "launcher_tracing";
+	public static final String SOURCE_ATTACHMENT = PREFIX + "source_attachment";
 	
 	
  	// Manifest Editor
