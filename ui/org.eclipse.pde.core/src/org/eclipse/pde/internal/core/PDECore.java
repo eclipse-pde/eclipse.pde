@@ -187,10 +187,13 @@ public class PDECore extends Plugin {
 	public IPlugin findPlugin(String id) {
 		return findPlugin(id, null, IMatchRules.NONE);
 	}
+	
 	public IPlugin findPlugin(String id, String version, int match) {
-		IPluginModelBase model = modelManager.findPlugin(id, version, match);
-		if (model != null && model.isEnabled() && model.getPluginBase() instanceof IPlugin)
-			return (IPlugin)model.getPluginBase();
+		IPluginModelBase model = getModelManager().findPlugin(id, version, match);
+		if (model != null
+			&& model.isEnabled()
+			&& model.getPluginBase() instanceof IPlugin)
+			return (IPlugin) model.getPluginBase();
 		return null;
 	}
 	
