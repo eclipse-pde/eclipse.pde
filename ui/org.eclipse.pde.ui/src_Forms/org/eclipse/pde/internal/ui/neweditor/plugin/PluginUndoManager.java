@@ -12,11 +12,12 @@ package org.eclipse.pde.internal.ui.neweditor.plugin;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.build.*;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.neweditor.*;
-import org.eclipse.pde.internal.ui.neweditor.ModelUndoManager;
 
 /**
  * @version 	1.0
@@ -49,7 +50,7 @@ public class PluginUndoManager extends ModelUndoManager {
 		Object[] elements = event.getChangedObjects();
 		int type = event.getChangeType();
 		String propertyName = event.getChangedProperty();
-		IPluginModelBase model = (IPluginModelBase)event.getChangeProvider();
+		IModelChangeProvider model = (IModelChangeProvider)event.getChangeProvider();
 
 		switch (type) {
 			case IModelChangedEvent.INSERT :
@@ -84,9 +85,14 @@ public class PluginUndoManager extends ModelUndoManager {
 		}
 	}
 
-	private void executeAdd(IPluginModelBase model, Object[] elements) {
-		IPluginBase pluginBase = model.getPluginBase();
-
+	private void executeAdd(IModelChangeProvider model, Object[] elements) {
+		IPluginBase pluginBase=null;
+		IBuild build=null;
+		if (model instanceof IPluginModelBase)
+			pluginBase = ((IPluginModelBase)model).getPluginBase();
+		if (model instanceof IBuildModel)
+			build = ((IBuildModel)model).getBuild();
+		
 		try {
 			for (int i = 0; i < elements.length; i++) {
 				Object element = elements[i];
@@ -103,6 +109,9 @@ public class PluginUndoManager extends ModelUndoManager {
 					IPluginElement e = (IPluginElement) element;
 					IPluginParent p = (IPluginParent) e.getParent();
 					p.add(e);
+				} else if (element instanceof IBuildEntry) {
+					IBuildEntry e = (IBuildEntry)element;
+					build.add(e);
 				}
 			}
 		} catch (CoreException e) {
@@ -110,8 +119,13 @@ public class PluginUndoManager extends ModelUndoManager {
 		}
 	}
 	
-	private void executeRemove(IPluginModelBase model, Object[] elements) {
-		IPluginBase pluginBase = model.getPluginBase();
+	private void executeRemove(IModelChangeProvider model, Object[] elements) {
+		IPluginBase pluginBase=null;
+		IBuild build=null;
+		if (model instanceof IPluginModelBase)
+			pluginBase = ((IPluginModelBase)model).getPluginBase();
+		if (model instanceof IBuildModel)
+			build = ((IBuildModel)model).getBuild();
 
 		try {
 			for (int i = 0; i < elements.length; i++) {
@@ -129,6 +143,9 @@ public class PluginUndoManager extends ModelUndoManager {
 					IPluginElement e = (IPluginElement) element;
 					IPluginParent p = (IPluginParent) e.getParent();
 					p.remove(e);
+				} else if (element instanceof IBuildEntry) {
+					IBuildEntry e = (IBuildEntry)element;
+					build.remove(e);
 				}
 			}
 		} catch (CoreException e) {
@@ -164,6 +181,15 @@ public class PluginUndoManager extends ModelUndoManager {
 				PDEPlugin.logException(e);
 			}
 		}
+		else if (element instanceof BuildObject) {
+			BuildObject bobj = (BuildObject) element;
+			try {
+				bobj.restoreProperty(propertyName, oldValue, newValue);
+			} catch (CoreException e) {
+				PDEPlugin.logException(e);
+			}
+			
+		}
 	}
 
 	public void modelChanged(IModelChangedEvent event) {
@@ -173,6 +199,12 @@ public class PluginUndoManager extends ModelUndoManager {
 				IPluginObject obj = (IPluginObject) event.getChangedObjects()[0];
 				//Ignore events from objects that are not yet in the model.
 				if (!(obj instanceof IPluginBase) && obj.isInTheModel() == false)
+					return;
+			}
+			if (changedObject instanceof IBuildObject) {
+				IBuildObject obj = (IBuildObject) event.getChangedObjects()[0];
+				//Ignore events from objects that are not yet in the model.
+				if (obj.isInTheModel() == false)
 					return;
 			}
 		}
