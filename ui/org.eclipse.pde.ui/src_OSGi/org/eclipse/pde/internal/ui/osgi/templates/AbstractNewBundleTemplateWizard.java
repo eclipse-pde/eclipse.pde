@@ -252,12 +252,13 @@ public abstract class AbstractNewBundleTemplateWizard
 		IFile extensionsFile = (IFile)model.getExtensionsModel().getUnderlyingResource();
 		IEditorRegistry ereg = workbench.getEditorRegistry();
 		IEditorDescriptor meditorId = IDE.getDefaultEditor(manifestFile);
-		if (meditorId==null) meditorId = ereg.getDefaultEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
+		if (meditorId==null) meditorId = ereg.findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
 		IEditorDescriptor exeditorId = IDE.getDefaultEditor(extensionsFile);
-		if (exeditorId==null) exeditorId = ereg.getDefaultEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
-		if (extensionsFile.exists())
+		if (exeditorId==null) exeditorId = ereg.findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
+		if (exeditorId!=null && extensionsFile.exists())
 			openFile(extensionsFile, exeditorId.getId(), false);
-		openFile(manifestFile, meditorId.getId(), true);
+		if (meditorId!=null)
+			openFile(manifestFile, meditorId.getId(), true);
 	}
 
 	private void setJavaSettings(IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
@@ -468,7 +469,8 @@ public abstract class AbstractNewBundleTemplateWizard
 						}
 					}
 					IEditorInput input = createEditorInput(file);
-					ww.getActivePage().openEditor(input, editorId);
+					//ww.getActivePage().openEditor(input, editorId);
+					IDE.openEditor(page, file, selectReveal);
 				} catch (PartInitException e) {
 					PDEPlugin.logException(e);
 				}
