@@ -28,6 +28,7 @@ import org.eclipse.pde.internal.ui.wizards.templates.PluginReference;
 import org.eclipse.pde.ui.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
+import org.eclipse.ui.ide.*;
 import org.eclipse.ui.part.*;
 
 public class NewProjectCreationOperation extends WorkspaceModifyOperation {
@@ -405,8 +406,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
                     ((ISetSelectionTarget) focusPart).selectReveal(selection);
                 }
                 try {
-                    page.openEditor(new FileEditorInput(file),
-                            PDEPlugin.MANIFEST_EDITOR_ID);
+                   IDE.openEditor(page, file, true);
                 } catch (PartInitException e) {
                 }
             }
