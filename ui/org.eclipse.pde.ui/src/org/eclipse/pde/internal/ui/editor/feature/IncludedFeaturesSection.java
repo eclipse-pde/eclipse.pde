@@ -212,16 +212,15 @@ public class IncludedFeaturesSection
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			markStale();
 			return;
-		} else {
-			Object obj = e.getChangedObjects()[0];
-			if (obj instanceof IFeatureChild) {
-				if (e.getChangeType() == IModelChangedEvent.CHANGE) {
-					includesViewer.update(obj, null);
-				} else if (e.getChangeType() == IModelChangedEvent.INSERT) {
-					includesViewer.add(e.getChangedObjects());
-				} else if (e.getChangeType() == IModelChangedEvent.REMOVE) {
-					includesViewer.remove(e.getChangedObjects());
-				}
+		} 
+		Object obj = e.getChangedObjects()[0];
+		if (obj instanceof IFeatureChild) {
+			if (e.getChangeType() == IModelChangedEvent.CHANGE) {
+				includesViewer.update(obj, null);
+			} else if (e.getChangeType() == IModelChangedEvent.INSERT) {
+				includesViewer.add(e.getChangedObjects());
+			} else if (e.getChangeType() == IModelChangedEvent.REMOVE) {
+				includesViewer.remove(e.getChangedObjects());
 			}
 		}
 	}

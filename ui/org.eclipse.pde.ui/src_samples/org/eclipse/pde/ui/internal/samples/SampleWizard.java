@@ -11,7 +11,6 @@
 package org.eclipse.pde.ui.internal.samples;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import java.util.ArrayList;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -24,13 +23,7 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.part.ISetSelectionTarget;
-/**
- * @author dejan
- * 
- * To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Generation - Code and Comments
- */
+
 public class SampleWizard extends Wizard
 		implements
 			INewWizard,
@@ -45,7 +38,6 @@ public class SampleWizard extends Wizard
 	private boolean selectRevealEnabled=true;
 	private boolean activitiesEnabled=true;
 	
-	private IProject [] createdProjects;
 	private class ImportOverwriteQuery implements IOverwriteQuery {
 		public String queryOverwrite(String file) {
 			String[] returnCodes = {YES, NO, ALL, CANCEL};
@@ -115,7 +107,6 @@ public class SampleWizard extends Wizard
 					new ImportOverwriteQuery());
 			getContainer().run(true, true, op);
 			IFile sampleManifest = op.getSampleManifest();
-			this.createdProjects = op.getCreatedProjects();
 			if (selectRevealEnabled) {
 				selectReveal(getShell());
 			}
@@ -148,7 +139,7 @@ public class SampleWizard extends Wizard
 		*/
 	}
 
-	private void doSelectReveal() {
+	/*private void doSelectReveal() {
 		if (selection == null || createdProjects==null)
 			return;
 		String viewId = selection.getAttribute("targetViewId"); //$NON-NLS-1$
@@ -179,6 +170,7 @@ public class SampleWizard extends Wizard
 		if (items.size() > 0)
 			target.selectReveal(new StructuredSelection(items));
 	}
+	*/
 	public void enableActivities() {
 		IConfigurationElement [] elements = selection.getChildren("activity"); //$NON-NLS-1$
 		HashSet activitiesToEnable=new HashSet();

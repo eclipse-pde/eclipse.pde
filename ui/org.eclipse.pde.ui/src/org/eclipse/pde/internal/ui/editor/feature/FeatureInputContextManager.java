@@ -20,12 +20,6 @@ import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.context.*;
 
-/**
- * @author dejan
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
 public class FeatureInputContextManager extends InputContextManager {
 	/**
 	 * 
@@ -40,9 +34,6 @@ public class FeatureInputContextManager extends InputContextManager {
 
 	private IBaseModel findFeatureModel() {
 		InputContext fcontext = findContext(FeatureInputContext.CONTEXT_ID);
-		if (fcontext!=null)
-			return fcontext.getModel();
-		else
-			return null;
+		return (fcontext != null) ? fcontext.getModel() : null;
 	}
 }

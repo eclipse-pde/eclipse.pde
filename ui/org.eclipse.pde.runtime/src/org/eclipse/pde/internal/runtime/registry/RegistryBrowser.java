@@ -449,10 +449,9 @@ IRegistryChangeListener {
 			if (horizontalSashWeight == null) 
 				horizontalSashWeight = DEFAULT_SASH_WEIGHTS;
 			return horizontalSashWeight;
-		} else {
-			if (verticalSashWeight == null)
-				verticalSashWeight = DEFAULT_SASH_WEIGHTS;
-			return verticalSashWeight;
-		}
+		} 
+		if (verticalSashWeight == null)
+			verticalSashWeight = DEFAULT_SASH_WEIGHTS;
+		return verticalSashWeight;
 	}
 }

@@ -215,16 +215,15 @@ public class PluginSection
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			markStale();
 			return;
-		} else {
-			Object obj = e.getChangedObjects()[0];
-			if (obj instanceof IFeaturePlugin) {
-				if (e.getChangeType() == IModelChangedEvent.CHANGE) {
-					pluginViewer.update(obj, null);
-				} else if (e.getChangeType() == IModelChangedEvent.INSERT) {
-					pluginViewer.add(e.getChangedObjects());
-				} else if (e.getChangeType() == IModelChangedEvent.REMOVE) {
-					pluginViewer.remove(e.getChangedObjects());
-				}
+		}
+		Object obj = e.getChangedObjects()[0];
+		if (obj instanceof IFeaturePlugin) {
+			if (e.getChangeType() == IModelChangedEvent.CHANGE) {
+				pluginViewer.update(obj, null);
+			} else if (e.getChangeType() == IModelChangedEvent.INSERT) {
+				pluginViewer.add(e.getChangedObjects());
+			} else if (e.getChangeType() == IModelChangedEvent.REMOVE) {
+				pluginViewer.remove(e.getChangedObjects());
 			}
 		}
 	}

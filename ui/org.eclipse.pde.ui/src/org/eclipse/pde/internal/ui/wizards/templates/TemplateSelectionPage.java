@@ -71,15 +71,13 @@ public class TemplateSelectionPage extends WizardPage {
 			ITemplateSection section = (ITemplateSection) obj;
 			if (index == 0)
 				return section.getLabel();
-			else
-				return section.getUsedExtensionPoint();
+			return section.getUsedExtensionPoint();
 		}
 		public Image getColumnImage(Object obj, int index) {
 			if (index == 0)
 				return PDEPlugin.getDefault().getLabelProvider().get(
 					PDEPluginImages.DESC_EXTENSION_OBJ);
-			else
-				return PDEPlugin.getDefault().getLabelProvider().get(
+			return PDEPlugin.getDefault().getLabelProvider().get(
 					PDEPluginImages.DESC_EXT_POINT_OBJ);
 		}
 	}
@@ -225,12 +223,10 @@ public class TemplateSelectionPage extends WizardPage {
 	public IWizardPage getNextVisiblePage(IWizardPage page) {
 		if (page == this)
 			return page.getNextPage();
-		else {
-			int index = visiblePages.indexOf(page);
-			if (index >= 0 && index < visiblePages.size() - 1)
-				return (IWizardPage) visiblePages.get(index + 1);
-			return null;
-		}
+		int index = visiblePages.indexOf(page);
+		if (index >= 0 && index < visiblePages.size() - 1)
+			return (IWizardPage) visiblePages.get(index + 1);
+		return null;
 	}
 
 }

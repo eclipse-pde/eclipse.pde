@@ -43,15 +43,13 @@ public abstract class SchemaObjectPropertySource implements IPropertySource {
             String[] choices) {
         if (isEditable())
             return new ComboBoxPropertyDescriptor(id, name, choices);
-        else
-            return new PropertyDescriptor(id, name);
+        return new PropertyDescriptor(id, name);
     }
 
     protected PropertyDescriptor createTextPropertyDescriptor(String id, String name) {
         if (isEditable())
             return new ModifiedTextPropertyDescriptor(id, name);
-        else
-            return new PropertyDescriptor(id, name);
+        return new PropertyDescriptor(id, name);
     }
 
     protected Object getNonzeroValue(Object value) {

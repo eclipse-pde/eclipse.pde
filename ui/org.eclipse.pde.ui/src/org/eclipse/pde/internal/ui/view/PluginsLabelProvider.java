@@ -135,11 +135,10 @@ public class PluginsLabelProvider extends LabelProvider {
 				(IPlugin) model.getPluginBase(),
 				true,
 				entry.isInJavaSearch());
-		else
-			return sharedProvider.getObjectImage(
-				(IFragment) model.getPluginBase(),
-				true,
-				entry.isInJavaSearch());
+		return sharedProvider.getObjectImage(
+			(IFragment) model.getPluginBase(),
+			true,
+			entry.isInJavaSearch());
 	}
 
 	private Image getImage(FileAdapter fileAdapter) {

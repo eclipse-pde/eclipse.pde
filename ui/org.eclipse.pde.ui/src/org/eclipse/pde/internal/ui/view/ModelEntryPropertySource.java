@@ -73,8 +73,7 @@ public class ModelEntryPropertySource implements IPropertySource {
 		if (key.equals("path")) { //$NON-NLS-1$
 			if (resource!=null)
 				return resource.getLocation().toOSString();
-			else
-				return model.getInstallLocation();
+			return model.getInstallLocation();
 		}
 		if (key.equals("id")) //$NON-NLS-1$
 			return model.getPluginBase().getId();

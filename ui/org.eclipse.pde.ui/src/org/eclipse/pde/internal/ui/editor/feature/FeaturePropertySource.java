@@ -28,8 +28,7 @@ public abstract class FeaturePropertySource implements IPropertySource {
 		String displayName) {
 		if (isEditable())
 			return new ModifiedTextPropertyDescriptor(name, displayName);
-		else
-			return new PropertyDescriptor(name, displayName);
+		return new PropertyDescriptor(name, displayName);
 	}
 
 	protected PropertyDescriptor createChoicePropertyDescriptor(
@@ -45,8 +44,8 @@ public abstract class FeaturePropertySource implements IPropertySource {
 				}
 			});
 			return desc;
-		} else
-			return new PropertyDescriptor(name, displayName);
+		} 
+		return new PropertyDescriptor(name, displayName);
 	}
 	public Object getEditableValue() {
 		return null;

@@ -245,16 +245,15 @@ public class DataSection
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			markStale();
 			return;
-		} else {
-			Object obj = e.getChangedObjects()[0];
-			if (obj instanceof IFeatureData && !(obj instanceof IFeaturePlugin)) {
-				if (e.getChangeType() == IModelChangedEvent.CHANGE) {
-					dataViewer.update(obj, null);
-				} else if (e.getChangeType() == IModelChangedEvent.INSERT) {
-					dataViewer.add(e.getChangedObjects());
-				} else if (e.getChangeType() == IModelChangedEvent.REMOVE) {
-					dataViewer.remove(e.getChangedObjects());
-				}
+		}
+		Object obj = e.getChangedObjects()[0];
+		if (obj instanceof IFeatureData && !(obj instanceof IFeaturePlugin)) {
+			if (e.getChangeType() == IModelChangedEvent.CHANGE) {
+				dataViewer.update(obj, null);
+			} else if (e.getChangeType() == IModelChangedEvent.INSERT) {
+				dataViewer.add(e.getChangedObjects());
+			} else if (e.getChangeType() == IModelChangedEvent.REMOVE) {
+				dataViewer.remove(e.getChangedObjects());
 			}
 		}
 	}

@@ -104,8 +104,7 @@ public class URLSection extends PDESection {
 				IFeatureURLElement element = (IFeatureURLElement) child;
 				if (element.getElementType() == IFeatureURLElement.UPDATE)
 					return folders[0];
-				else
-					return folders[1];
+				return folders[1];
 			}
 			return null;
 		}
@@ -313,23 +312,22 @@ public class URLSection extends PDESection {
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			markStale();
 			return;
-		} else {
-			Object obj = e.getChangedObjects()[0];
-			if (obj instanceof IFeatureURLElement) {
-				if (e.getChangeType() == IModelChangedEvent.INSERT) {
-					Object parent = null;
-					IFeatureURLElement element = (IFeatureURLElement) obj;
-					if (element.getElementType() == IFeatureURLElement.UPDATE) {
-						parent = folders[0];
-					} else
-						parent = folders[1];
-					urlTree.add(parent, element);
-					urlTree.setSelection(new StructuredSelection(element), true);
-				} else if (e.getChangeType() == IModelChangedEvent.REMOVE) {
-					urlTree.remove(obj);
-				} else {
-					urlTree.update(obj, null);
-				}
+		} 
+		Object obj = e.getChangedObjects()[0];
+		if (obj instanceof IFeatureURLElement) {
+			if (e.getChangeType() == IModelChangedEvent.INSERT) {
+				Object parent = null;
+				IFeatureURLElement element = (IFeatureURLElement) obj;
+				if (element.getElementType() == IFeatureURLElement.UPDATE) {
+					parent = folders[0];
+				} else
+					parent = folders[1];
+				urlTree.add(parent, element);
+				urlTree.setSelection(new StructuredSelection(element), true);
+			} else if (e.getChangeType() == IModelChangedEvent.REMOVE) {
+				urlTree.remove(obj);
+			} else {
+				urlTree.update(obj, null);
 			}
 		}
 	}

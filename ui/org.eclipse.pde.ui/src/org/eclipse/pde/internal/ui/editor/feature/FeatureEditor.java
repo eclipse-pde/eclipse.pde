@@ -226,8 +226,7 @@ public class FeatureEditor extends MultiSourceEditor {
 		String pref = store.getString(IPreferenceConstants.PROP_SHOW_OBJECTS);
 		if (pref!=null && pref.equals(IPreferenceConstants.VALUE_USE_NAMES))
 			return IFeature.P_LABEL;
-		else
-			return IFeature.P_ID;
+		return IFeature.P_ID;
 	}
 	
 	private String getTitleText(IFeature feature) {
@@ -235,8 +234,7 @@ public class FeatureEditor extends MultiSourceEditor {
 		String pref = store.getString(IPreferenceConstants.PROP_SHOW_OBJECTS);
 		if (pref!=null && pref.equals(IPreferenceConstants.VALUE_USE_NAMES))
 			return feature.getLabel();
-		else
-			return feature.getId();
+		return feature.getId();
 	}	
 
 	protected boolean isModelCorrect(Object model) {

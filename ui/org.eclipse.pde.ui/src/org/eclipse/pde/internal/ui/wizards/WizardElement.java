@@ -72,21 +72,20 @@ public class WizardElement extends NamedElement {
 					i++;
 					buf.append('%');
 					continue;
-				} else {
-					if (keyMode) {
-						keyMode = false;
-						String key = source.substring(keyStartIndex, i);
-						String value = key;
-						try {
-							value = bundle.getString(key);
-						} catch (MissingResourceException e) {
-						}
-						buf.append(value);
-					} else {
-						keyStartIndex = i + 1;
-						keyMode = true;
+				} 
+				if (keyMode) {
+					keyMode = false;
+					String key = source.substring(keyStartIndex, i);
+					String value = key;
+					try {
+						value = bundle.getString(key);
+					} catch (MissingResourceException e) {
 					}
-				}
+					buf.append(value);
+				} else {
+					keyStartIndex = i + 1;
+					keyMode = true;
+				}				
 			} else if (!keyMode) {
 				buf.append(c);
 			}

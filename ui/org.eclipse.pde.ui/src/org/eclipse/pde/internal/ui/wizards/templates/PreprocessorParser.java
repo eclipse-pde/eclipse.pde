@@ -57,8 +57,7 @@ public class PreprocessorParser {
 		public String toString() {
 			if (value != null)
 				return "leaf[" + value.toString() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
-			else
-				return "leaf[null]"; //$NON-NLS-1$
+			return "leaf[null]"; //$NON-NLS-1$
 		}
 	}
 
@@ -332,11 +331,10 @@ public class PreprocessorParser {
 					tvalue = line.substring(vloc, loc - 1);
 					string = false;
 					return T_STRING;
-				} else {
-					vloc = loc;
-					string = true;
-					continue;
-				}
+				} 
+				vloc = loc;
+				string = true;
+				continue;				
 			} else if (string)
 				continue;
 
@@ -355,8 +353,8 @@ public class PreprocessorParser {
 					if (tvalue.equalsIgnoreCase("true")) //$NON-NLS-1$
 						return T_TRUE;
 					return T_VAR;
-				} else
-					continue;
+				} 
+				continue;
 			}
 
 			if (testDoubleToken(c, "!=")) //$NON-NLS-1$

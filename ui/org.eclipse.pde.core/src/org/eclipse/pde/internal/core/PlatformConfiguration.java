@@ -39,37 +39,24 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private RandomAccessFile cfgLockFileRAF;
 	private BootDescriptor runtimeDescriptor;
 
-	private static String cmdConfiguration = null;
 	private static String cmdFeature = null;
 	private static String cmdApplication = null;
-	private static URL cmdPlugins = null;
 	private static boolean cmdInitialize = false;
 	private static boolean cmdFirstUse = false;
 	private static boolean cmdUpdate = false;
 	private static boolean cmdNoUpdate = false;
-	private static boolean cmdDev = false;
 
 	static boolean DEBUG = false;
 
 	private static final String RUNTIME_PLUGIN_ID = "org.eclipse.core.runtime"; //$NON-NLS-1$
 
-	private static final String ECLIPSE = "eclipse"; //$NON-NLS-1$
 	private static final String PLUGINS = "plugins"; //$NON-NLS-1$
 	private static final String FEATURES = "features"; //$NON-NLS-1$
-	private static final String CONFIG_DIR = ".config"; //$NON-NLS-1$
-	private static final String CONFIG_FILE = CONFIG_DIR + "/platform.cfg"; //$NON-NLS-1$
-	private static final String CONFIG_FILE_INIT = "install.ini"; //$NON-NLS-1$
-	private static final String CONFIG_FILE_LOCK_SUFFIX = ".lock"; //$NON-NLS-1$
 	private static final String CONFIG_FILE_TEMP_SUFFIX = ".tmp"; //$NON-NLS-1$
 	private static final String CONFIG_FILE_BAK_SUFFIX = ".bak"; //$NON-NLS-1$
-	private static final String CHANGES_MARKER = ".newupdates"; //$NON-NLS-1$
-	private static final String LINKS = "links"; //$NON-NLS-1$
 	private static final String PLUGIN_XML = "plugin.xml"; //$NON-NLS-1$
 	private static final String FRAGMENT_XML = "fragment.xml"; //$NON-NLS-1$
 	private static final String FEATURE_XML = "feature.xml"; //$NON-NLS-1$
-	private static final String PRODUCT_SITE_MARKER = ".eclipseproduct"; //$NON-NLS-1$
-	private static final String PRODUCT_SITE_ID = "id"; //$NON-NLS-1$
-	private static final String PRODUCT_SITE_VERSION = "version"; //$NON-NLS-1$
 
 	private static final String[] BOOTSTRAP_PLUGINS = { "org.eclipse.core.boot" }; //$NON-NLS-1$
 	private static final String CFG_BOOT_PLUGIN = "bootstrap"; //$NON-NLS-1$
@@ -94,9 +81,6 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private static final String CFG_FEATURE_ENTRY_APPLICATION = "application"; //$NON-NLS-1$
 	private static final String CFG_FEATURE_ENTRY_ROOT = "root"; //$NON-NLS-1$
 
-	private static final String INIT_DEFAULT_FEATURE_ID = "feature.default.id"; //$NON-NLS-1$
-	private static final String INIT_DEFAULT_PLUGIN_ID = "feature.default.plugin.id"; //$NON-NLS-1$
-	private static final String INIT_DEFAULT_FEATURE_APPLICATION = "feature.default.application"; //$NON-NLS-1$
 	private static final String DEFAULT_FEATURE_ID = "org.eclipse.platform"; //$NON-NLS-1$
 	private static final String DEFAULT_FEATURE_APPLICATION = "org.eclipse.ui.workbench"; //$NON-NLS-1$
 
@@ -109,20 +93,6 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private static final int DEFAULT_POLICY_TYPE = ISitePolicy.USER_EXCLUDE;
 	private static final String[] DEFAULT_POLICY_LIST = new String[0];
 
-	private static final String LINK_PATH = "path"; //$NON-NLS-1$
-	private static final String LINK_READ = "r"; //$NON-NLS-1$
-	private static final String LINK_READ_WRITE = "rw"; //$NON-NLS-1$
-
-	private static final String CMD_CONFIGURATION = "-configuration"; //$NON-NLS-1$
-	private static final String CMD_FEATURE = "-feature"; //$NON-NLS-1$
-	private static final String CMD_APPLICATION = "-application"; //$NON-NLS-1$
-	private static final String CMD_PLUGINS = "-plugins"; //$NON-NLS-1$
-	private static final String CMD_UPDATE = "-update"; //$NON-NLS-1$
-	private static final String CMD_INITIALIZE = "-initialize"; //$NON-NLS-1$
-	private static final String CMD_FIRSTUSE = "-firstuse"; //$NON-NLS-1$
-	private static final String CMD_NO_UPDATE = "-noupdate"; //$NON-NLS-1$
-	private static final String CMD_NEW_UPDATES = "-newUpdates"; //$NON-NLS-1$
-	private static final String CMD_DEV = "-dev"; // triggers -noupdate //$NON-NLS-1$
 
 	protected static final String RECONCILER_APP = "org.eclipse.update.core.reconciler"; //$NON-NLS-1$
 
@@ -345,15 +315,13 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		private synchronized String[] getDetectedFeatures() {
 			if (features == null)
 				return detectFeatures();
-			else
-				return (String[]) features.toArray(new String[0]);
+			return (String[]) features.toArray(new String[0]);
 		}
 
 		private synchronized String[] getDetectedPlugins() {
 			if (plugins == null)
 				return detectPlugins();
-			else
-				return (String[]) plugins.toArray(new String[0]);
+			return (String[]) plugins.toArray(new String[0]);
 		}
 
 		private URL getResolvedURL() {
@@ -748,48 +716,6 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		}
 	}
 
-	private PlatformConfiguration(String configArg, String metaPath, URL pluginPath) throws IOException {
-		this.sites = new HashMap();
-		this.externalLinkSites = new HashMap();
-		this.cfgdFeatures = new HashMap();
-		this.bootPlugins = new HashMap();
-
-		// Determine configuration URL to use (based on command line argument)
-		URL configURL = null;
-		if (configArg != null && !configArg.trim().equals("")) { //$NON-NLS-1$
-			configURL = new URL(configArg);
-		}
-
-		// initialize configuration
-		boolean createRootSite = (pluginPath == null);
-		initializeCurrent(configURL, metaPath, createRootSite);
-
-		// merge in any plugin-path entries (converted to site(s))
-		if (pluginPath != null) {
-			updateConfigurationFromPlugins(pluginPath);
-		}
-
-		// pick up any first-time default settings (relative to install location)
-		loadInitializationAttributes();
-
-		// Detect external links. These are "soft link" to additional sites. The link
-		// files are usually provided by external installation programs. They are located
-		// relative to this configuration URL.
-		configureExternalLinks();
-
-		// Validate sites in the configuration. Causes any sites that do not exist to
-		// be removed from the configuration
-		validateSites();
-
-		// compute differences between configuration and actual content of the sites
-		// (base sites and link sites)
-		computeChangeStamp();
-
-		// determine which plugins we will use to start the rest of the "kernel"
-		// (need to get core.runtime matching the executing core.boot and
-		// xerces matching the selected core.runtime)
-		//		locateDefaultPlugins();
-	}
 
 	PlatformConfiguration(URL url) throws IOException {
 		this.sites = new HashMap();
@@ -1004,19 +930,17 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 
 		if (cmdApplication != null) // application was specified
 			return cmdApplication;
-		else {
-			// if -feature was not specified use the default feature
-			String feature = cmdFeature;
-			if (feature == null)
-				feature = defaultFeature;
+		// if -feature was not specified use the default feature
+		String feature = cmdFeature;
+		if (feature == null)
+			feature = defaultFeature;
 
-			// lookup application for feature (specified or defaulted)
-			if (feature != null) {
-				IFeatureEntry fe = findConfiguredFeatureEntry(feature);
-				if (fe != null) {
-					if (fe.getFeatureApplication() != null)
-						return fe.getFeatureApplication();
-				}
+		// lookup application for feature (specified or defaulted)
+		if (feature != null) {
+			IFeatureEntry fe = findConfiguredFeatureEntry(feature);
+			if (fe != null) {
+				if (fe.getFeatureApplication() != null)
+					return fe.getFeatureApplication();
 			}
 		}
 
@@ -1035,8 +959,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		// feature was not specified on command line
 		if (defaultFeature != null)
 			return defaultFeature; // return customized default if set
-		else
-			return DEFAULT_FEATURE_ID; // return hardcoded default
+		return DEFAULT_FEATURE_ID; // return hardcoded default
 	}
 
 	/*
@@ -1217,51 +1140,11 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 
 		if (RUNTIME_PLUGIN_ID.equals(id))
 			return runtimeDescriptor;
-		else
-			return null;
+		return null;
 	}
 
 	static PlatformConfiguration getCurrent() {
 		return currentPlatformConfiguration;
-	}
-
-	/**
-	 * Create and initialize the current platform configuration
-	 * @param cmdArgs command line arguments (startup and boot arguments are
-	 * already consumed)
-	 * @param r10plugins plugin-path URL as passed on the BootLoader.run(...)
-	 * or BootLoader.startup(...) method. Supported for R1.0 compatibility
-	 * @param r10apps application identifies as passed on the BootLoader.run(...)
-	 * method. Supported for R1.0 compatibility.
-	 * @param metaPath path to the platform metadata area
-	 */
-	static synchronized String[] startup(String[] cmdArgs, URL r10plugins, String r10app, String metaPath, URL installURL) throws Exception {
-		PlatformConfiguration.installURL = installURL;
-
-		// if BootLoader was invoked directly (rather than via Main), it is possible
-		// to have the plugin-path and application set in 2 ways: (1) via an explicit
-		// argument on the invocation method, or (2) via a command line argument (passed
-		// into this method as the argument String[]). If specified, the explicit
-		// values are used even if the command line arguments were specified as well.
-		cmdPlugins = r10plugins; // R1.0 compatibility
-		cmdApplication = r10app; // R1.0 compatibility
-
-		// process command line arguments
-		String[] passthruArgs = processCommandLine(cmdArgs);
-		if (cmdDev)
-			cmdNoUpdate = true; // force -noupdate when in dev mode (eg. PDE)
-
-		// create current configuration
-		if (currentPlatformConfiguration == null)
-			currentPlatformConfiguration = new PlatformConfiguration(cmdConfiguration, metaPath, cmdPlugins);
-
-		// check if we will be forcing reconciliation
-		passthruArgs = checkForFeatureChanges(passthruArgs, currentPlatformConfiguration);
-
-		// check if we should indicate new changes
-		passthruArgs = checkForNewUpdates(currentPlatformConfiguration, passthruArgs);
-
-		return passthruArgs;
 	}
 
 	static synchronized void shutdown() throws IOException {
@@ -1277,125 +1160,6 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 				// will recover on next startup
 			}
 			config.clearConfigurationLock();
-		}
-	}
-
-	private synchronized void initializeCurrent(URL url, String metaPath, boolean createRootSite) throws IOException {
-		// FIXME: commented out for now. Remove if not needed.
-		//boolean concurrentUse = false;
-
-		if (cmdInitialize) {
-			// we are running post-install initialization (-install command
-			// line argument). Ignore any configuration URL passed in.
-			// Force the configuration to be saved in the install location.
-			// Allow an existing configuration to be re-initialized.
-			url = new URL(getInstallURL(), CONFIG_FILE); // if we fail here, return exception
-			// FIXME: commented out for now. Remove if not needed. 
-			// I left the call to #getConfigurationLock in just in case
-			// calling it has useful side effect. If not, then it can be removed too.
-			//concurrentUse = getConfigurationLock(url);
-			getConfigurationLock(url);
-
-			resetInitializationConfiguration(url); // [20111]
-			if (createRootSite)
-				configureSite(getRootSite());
-			if (DEBUG)
-				debug("Initializing configuration " + url.toString()); //$NON-NLS-1$
-			configLocation = url;
-			verifyPath(configLocation);
-			return;
-		}
-
-		if (url != null) {
-			// configuration URL was specified. Use it (if exists), or create one
-			// in specified location
-
-			// check concurrent use lock
-			// FIXME: might not need this method call.
-			getConfigurationLock(url);
-
-			// try loading the configuration
-			try {
-				load(url);
-				if (DEBUG)
-					debug("Using configuration " + url.toString()); //$NON-NLS-1$
-			} catch (IOException e) {
-				cmdFirstUse = true;
-				if (createRootSite)
-					configureSite(getRootSite());
-				if (DEBUG)
-					debug("Creating configuration " + url.toString()); //$NON-NLS-1$
-			}
-			configLocation = url;
-			verifyPath(configLocation);
-			return;
-
-		} else {
-			// configuration URL was not specified. Default behavior is to look
-			// for configuration in the workspace meta area. If not found, look
-			// for pre-initialized configuration in the installation location.
-			// If it is found it is used as the initial configuration. Otherwise
-			// a new configuration is created. In either case the resulting
-			// configuration is written into the default state area.
-			// The default state area is computed as follows:
-			// 1) We store the config state relative to the 'eclipse' directory if possible
-			// 2) If this directory is read-only OR 
-			//    if shared install is desired (using command line argument -shared), 
-			//    we store the state in <user.home>/.eclipse/<application-id>_<version> where <user.home> 
-			//    is unique for each local user, and <application-id> is the one 
-			//    defined in .eclipseproduct marker file. If .eclipseproduct does not
-			//    exist, use "eclipse" as the application-id.
-
-			//	if we fail here, return exception
-			URL defaultStateURL = getDefaultStateLocation();
-			URL cfigURL = new URL(defaultStateURL, CONFIG_FILE);
-
-			// check concurrent use lock
-			// FIXME: might not need this method call
-			getConfigurationLock(cfigURL);
-
-			// if we can load it, use it
-			try {
-				load(cfigURL);
-				configLocation = cfigURL;
-				verifyPath(configLocation);
-				if (DEBUG)
-					debug("Using configuration " + configLocation.toString()); //$NON-NLS-1$
-				return;
-			} catch (IOException e) {
-				cmdFirstUse = true; // we are creating new configuration
-			}
-
-			// failed to load, see if we can find pre-initialized configuration.
-			// Don't attempt this initialization when self-hosting (is unpredictable)
-			if (createRootSite) {
-				try {
-					url = new URL(getInstallURL(), CONFIG_FILE);
-					load(url);
-					// pre-initialized config loaded OK ... copy any remaining update metadata
-					// Only copy if the default config location is not the install location
-					if (getInstallURL() != defaultStateURL)
-						copyInitializedState(getInstallURL(), defaultStateURL.getFile(), CONFIG_DIR);
-					configLocation = cfigURL; // config in default location is the right URL
-					verifyPath(configLocation);
-					if (DEBUG) {
-						debug("Using configuration " + configLocation.toString()); //$NON-NLS-1$
-						debug("Initialized from    " + url.toString()); //$NON-NLS-1$
-					}
-					return;
-				} catch (IOException e) {
-					// continue ...
-				}
-			}
-
-			// if load failed, initialize with default site info
-			if (createRootSite)
-				configureSite(getRootSite());
-			configLocation = cfigURL;
-			verifyPath(configLocation);
-			if (DEBUG)
-				debug("Creating configuration " + configLocation.toString()); //$NON-NLS-1$
-			return;
 		}
 	}
 
@@ -1425,16 +1189,6 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		return defaultSite;
 	}
 
-	private void resetInitializationConfiguration(URL url) throws IOException {
-		// [20111]
-		if (!supportsDetection(url))
-			return; // can't do ...
-
-		URL resolved = resolvePlatformURL(url);
-		File initCfg = new File(resolved.getFile().replace('/', File.separatorChar));
-		File initDir = initCfg.getParentFile();
-		resetInitializationLocation(initDir);
-	}
 
 	private void resetInitializationLocation(File dir) {
 		// [20111]
@@ -1448,32 +1202,6 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		}
 	}
 
-	private boolean getConfigurationLock(URL url) {
-		if (configurationInWorkspace(url))
-			return false;
-
-		if (!url.getProtocol().equals("file")) //$NON-NLS-1$
-			return false;
-
-		verifyPath(url);
-		String cfgName = url.getFile().replace('/', File.separatorChar);
-		String lockName = cfgName + CONFIG_FILE_LOCK_SUFFIX;
-		cfgLockFile = new File(lockName);
-
-		//if the lock file already exists, try to delete,
-		//assume failure means another eclipse has it open
-		if (cfgLockFile.exists())
-			cfgLockFile.delete();
-
-		// OK so far ... open the lock file so other instances will fail
-		try {
-			cfgLockFileRAF = new RandomAccessFile(cfgLockFile, "rw"); //$NON-NLS-1$
-			cfgLockFileRAF.writeByte(0);
-		} catch (IOException e) {
-		}
-
-		return false;
-	}
 
 	private void clearConfigurationLock() {
 		try {
@@ -1488,11 +1216,6 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			cfgLockFile.delete();
 			cfgLockFile = null;
 		}
-	}
-
-	private boolean configurationInWorkspace(URL url) {
-		// the configuration file is now in the workspace, so return true
-		return true;
 	}
 
 	private void computeChangeStamp() {
@@ -1527,280 +1250,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		pluginsChangeStamp = result;
 		pluginsChangeStampIsValid = true;
 	}
-
-	private void configureExternalLinks() {
-		URL linkURL = getInstallURL();
-		if (!supportsDetection(linkURL))
-			return;
-
-		try {
-			linkURL = new URL(linkURL, LINKS + "/"); //$NON-NLS-1$
-		} catch (MalformedURLException e) {
-			// skip bad links ...
-			if (DEBUG)
-				debug("Unable to obtain link URL"); //$NON-NLS-1$
-			return;
-		}
-
-		File linkDir = new File(linkURL.getFile());
-		File[] links = linkDir.listFiles();
-		if (links == null || links.length == 0) {
-			if (DEBUG)
-				debug("No links detected in " + linkURL.toExternalForm()); //$NON-NLS-1$
-			return;
-		}
-
-		for (int i = 0; i < links.length; i++) {
-			if (links[i].isDirectory())
-				continue;
-			if (DEBUG)
-				debug("Link file " + links[i].getAbsolutePath()); //$NON-NLS-1$
-			Properties props = new Properties();
-			FileInputStream is = null;
-			try {
-				is = new FileInputStream(links[i]);
-				props.load(is);
-				configureExternalLinkSites(links[i], props);
-			} catch (IOException e) {
-				// skip bad links ...
-				if (DEBUG)
-					debug("   unable to load link file " + e); //$NON-NLS-1$
-				continue;
-			} finally {
-				if (is != null) {
-					try {
-						is.close();
-					} catch (IOException e) {
-						// ignore ...
-					}
-				}
-			}
-		}
-	}
-
-	private void configureExternalLinkSites(File linkFile, Properties props) {
-		String path = props.getProperty(LINK_PATH);
-		if (path == null) {
-			if (DEBUG)
-				debug("   no path definition"); //$NON-NLS-1$
-			return;
-		}
-
-		String link;
-		boolean updateable = true;
-		URL siteURL;
-		SiteEntry linkSite;
-		ISitePolicy linkSitePolicy = createSitePolicy(DEFAULT_POLICY_TYPE, DEFAULT_POLICY_LIST);
-
-		// parse out link information
-		if (path.startsWith(LINK_READ + " ")) { //$NON-NLS-1$
-			updateable = false;
-			link = path.substring(2).trim();
-		} else if (path.startsWith(LINK_READ_WRITE + " ")) { //$NON-NLS-1$
-			link = path.substring(3).trim();
-		} else {
-			link = path;
-		}
-
-		// 	make sure we have a valid link specification
-		try {
-			if (!link.endsWith(File.separator))
-				link += File.separator;
-			File target = new File(link + ECLIPSE);
-			link = "file:" + target.getAbsolutePath().replace(File.separatorChar, '/'); //$NON-NLS-1$
-			if (!link.endsWith("/")) //$NON-NLS-1$
-				link += "/"; // sites must be directories //$NON-NLS-1$
-			siteURL = new URL(link);
-		} catch (MalformedURLException e) {
-			// ignore bad links ...
-			if (DEBUG)
-				debug("  bad URL " + e); //$NON-NLS-1$
-			return;
-		}
-
-		// process the link
-		linkSite = (SiteEntry) externalLinkSites.get(siteURL);
-		if (linkSite != null) {
-			// we already have a site for this link target, update it if needed
-			linkSite.updateable = updateable;
-			linkSite.linkFileName = linkFile.getAbsolutePath();
-		} else {
-			// this is a link to a new target so create site for it
-			linkSite = (SiteEntry) createSiteEntry(siteURL, linkSitePolicy);
-			linkSite.updateable = updateable;
-			linkSite.linkFileName = linkFile.getAbsolutePath();
-		}
-
-		// configure the new site
-		// NOTE: duplicates are not replaced (first one in wins)
-		configureSite(linkSite);
-		if (DEBUG)
-			debug("   " + (updateable ? "R/W -> " : "R/O -> ") + siteURL.toString()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	}
-
-	/*
-	 * compute site(s) from plugin-path and merge into specified configuration
-	 */
-	private void updateConfigurationFromPlugins(URL file) throws IOException {
-
-		// get the actual plugin path
-		URL[] pluginPath = PlatformConfigurationUtils.getPluginPath(file);
-		if (pluginPath == null || pluginPath.length == 0)
-			return;
-
-		// create a temp configuration and populate it based on plugin path
-		PlatformConfiguration tempConfig = new PlatformConfiguration((URL) null);
-		for (int i = 0; i < pluginPath.length; i++) {
-			String entry = pluginPath[i].toExternalForm();
-			String sitePortion;
-			String pluginPortion;
-			int ix;
-			if (entry.endsWith("/")) { //$NON-NLS-1$
-				// assume directory path in the form <site>/plugins/
-				// look for -------------------------------^
-				ix = findEntrySeparator(entry, 2); // second from end
-				sitePortion = entry.substring(0, ix + 1);
-				pluginPortion = entry.substring(ix + 1);
-				if (!pluginPortion.equals("plugins/")) //$NON-NLS-1$
-					continue; // unsupported entry ... skip it ("fragments/" are handled)
-				pluginPortion = null;
-			} else {
-				// assume full path in the form <site>/<pluginsDir>/<some.plugin>/plugin.xml
-				// look for --------------------------^
-				ix = findEntrySeparator(entry, 3); // third from end
-				sitePortion = entry.substring(0, ix + 1);
-				pluginPortion = entry.substring(ix + 1);
-			}
-			if (ix == -1)
-				continue; // bad entry ... skip it
-
-			URL siteURL = null;
-			try {
-				siteURL = new URL(sitePortion);
-				if (siteURL.getProtocol().equals("file")) { //$NON-NLS-1$
-					File sf = new File(siteURL.getFile());
-					String sfn = sf.getAbsolutePath().replace(File.separatorChar, '/');
-					if (!sfn.endsWith("/")) //$NON-NLS-1$
-						sfn += "/"; //$NON-NLS-1$
-					siteURL = new URL("file:" + sfn); //$NON-NLS-1$
-				}
-			} catch (MalformedURLException e) {
-				continue; // bad entry ... skip it
-			}
-
-			// configure existing site or create a new one for the entry
-			ISiteEntry site = tempConfig.findConfiguredSite(siteURL);
-			ISitePolicy policy;
-			if (site == null) {
-				// new site
-				if (pluginPortion == null)
-					policy = tempConfig.createSitePolicy(ISitePolicy.USER_EXCLUDE, null);
-				else
-					policy = tempConfig.createSitePolicy(ISitePolicy.USER_INCLUDE, new String[] { pluginPortion });
-				site = tempConfig.createSiteEntry(siteURL, policy);
-				tempConfig.configureSite(site);
-			} else {
-				// existing site
-				policy = site.getSitePolicy();
-				if (policy.getType() == ISitePolicy.USER_EXCLUDE)
-					continue; // redundant entry ... skip it
-				if (pluginPortion == null) {
-					// directory entry ... change policy to exclusion (with empty list)
-					policy = tempConfig.createSitePolicy(ISitePolicy.USER_EXCLUDE, null);
-				} else {
-					// explicit entry ... add it to the inclusion list
-					ArrayList list = new ArrayList(Arrays.asList(policy.getList()));
-					list.add(pluginPortion);
-					policy = tempConfig.createSitePolicy(ISitePolicy.USER_INCLUDE, (String[]) list.toArray(new String[0]));
-				}
-				site.setSitePolicy(policy);
-			}
-		}
-
-		// merge resulting site(s) into the specified configuration
-		ISiteEntry[] tempSites = tempConfig.getConfiguredSites();
-		for (int i = 0; i < tempSites.length; i++) {
-			configureSite(tempSites[i], true /*replace*/
-			);
-		}
-	}
-
-	private void validateSites() {
-
-		// check to see if all sites are valid. Remove any sites that do not exist.
-		SiteEntry[] list = (SiteEntry[]) sites.values().toArray(new SiteEntry[0]);
-		for (int i = 0; i < list.length; i++) {
-			URL siteURL = list[i].getResolvedURL();
-			if (!supportsDetection(siteURL))
-				continue;
-
-			File siteRoot = new File(siteURL.getFile().replace('/', File.separatorChar));
-			if (!siteRoot.exists()) {
-				unconfigureSite(list[i]);
-				if (DEBUG)
-					debug("Site " + siteURL + " does not exist ... removing from configuration"); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-		}
-	}
-
-	private void copyInitializedState(URL source, String target, String dir) {
-		try {
-			if (!source.getProtocol().equals("file")) //$NON-NLS-1$
-				return; // need to be able to do "dir"
-
-			copy(new File(source.getFile()), new File(target), dir);
-
-		} catch (IOException e) {
-			// this is an optimistic copy. If we fail, the state will be reconciled
-			// when the update manager is triggered.
-		}
-	}
-
-	private void copy(File srcDir, File tgtDir, String extraPath) throws IOException {
-		File src = new File(srcDir, extraPath);
-		File tgt = new File(tgtDir, extraPath);
-
-		if (src.isDirectory()) {
-			// copy content of directories
-			tgt.mkdir();
-			String[] list = src.list();
-			if (list == null)
-				return;
-			for (int i = 0; i < list.length; i++) {
-				copy(srcDir, tgtDir, extraPath + File.separator + list[i]);
-			}
-		} else {
-			// copy individual files
-			FileInputStream is = null;
-			FileOutputStream os = null;
-			try {
-				is = new FileInputStream(src);
-				os = new FileOutputStream(tgt);
-				byte[] buff = new byte[1024];
-				int count = is.read(buff);
-				while (count != -1) {
-					os.write(buff, 0, count);
-					count = is.read(buff);
-				}
-			} catch (IOException e) {
-				// continue ... update reconciler will have to reconstruct state
-			} finally {
-				if (is != null)
-					try {
-						is.close();
-					} catch (IOException e) {
-						// ignore ...
-					}
-				if (os != null)
-					try {
-						os.close();
-					} catch (IOException e) {
-						// ignore ...
-					}
-			}
-		}
-	}
-
+	
 	private void load(URL url) throws IOException {
 
 		if (url == null)
@@ -2058,64 +1508,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		String prop = props.getProperty(name);
 		if (prop == null)
 			return dflt;
-		else
-			return prop.trim();
-	}
-
-	private void loadInitializationAttributes() {
-
-		// look for the product initialization file relative to the install location
-		URL url = getInstallURL();
-
-		// load any initialization attributes. These are the default settings for
-		// key attributes (eg. default primary feature) supplied by the packaging team.
-		// They are always reloaded on startup to pick up any changes due to
-		// "native" updates.
-		Properties initProps = new Properties();
-		InputStream is = null;
-		try {
-			URL initURL = new URL(url, CONFIG_FILE_INIT);
-			is = initURL.openStream();
-			initProps.load(is);
-			if (DEBUG)
-				debug("Defaults from " + initURL.toExternalForm()); //$NON-NLS-1$
-		} catch (IOException e) {
-			return; // could not load default settings
-		} finally {
-			if (is != null) {
-				try {
-					is.close();
-				} catch (IOException e) {
-					// ignore ...
-				}
-			}
-		}
-
-		// use default settings if supplied
-		String initId = loadAttribute(initProps, INIT_DEFAULT_FEATURE_ID, null);
-		if (initId != null) {
-			String application = loadAttribute(initProps, INIT_DEFAULT_FEATURE_APPLICATION, null);
-			String initPluginId = loadAttribute(initProps, INIT_DEFAULT_PLUGIN_ID, null);
-			if (initPluginId == null)
-				initPluginId = initId;
-			IFeatureEntry fe = findConfiguredFeatureEntry(initId);
-
-			if (fe == null) {
-				// bug 26896 : setup optimistic reconciliation if the primary feature has changed or is new
-				cmdFirstUse = true;
-				// create entry if not exists
-				fe = createFeatureEntry(initId, null, initPluginId, null, true, application, null);
-			} else
-				// update existing entry with new info
-				fe = createFeatureEntry(initId, fe.getFeatureVersion(), fe.getFeaturePluginIdentifier(), fe.getFeaturePluginVersion(), fe.canBePrimary(), application, fe.getFeatureRootURLs());
-			configureFeatureEntry(fe);
-			defaultFeature = initId;
-			if (DEBUG) {
-				debug("    Default primary feature: " + defaultFeature); //$NON-NLS-1$
-				if (application != null)
-					debug("    Default application    : " + application); //$NON-NLS-1$
-			}
-		}
+		return prop.trim();
 	}
 
 
@@ -2260,174 +1653,8 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		return buf.toString();
 	}
 
-	private static String[] checkForFeatureChanges(String[] args, PlatformConfiguration cfg) {
-		String original = cfg.getApplicationIdentifierInternal();
-		String actual = cfg.getApplicationIdentifier();
 
-		if (original.equals(actual))
-			// base startup of specified application
-			return args;
-		else {
-			// Will run reconciler.
-			// Re-insert -application argument with original app and optionally
-			// force "first use" processing
-			int newArgCnt = cmdFirstUse ? 3 : 2;
-			String[] newArgs = new String[args.length + newArgCnt];
-			newArgs[0] = CMD_APPLICATION;
-			newArgs[1] = original;
-			if (cmdFirstUse)
-				newArgs[2] = CMD_FIRSTUSE;
-			System.arraycopy(args, 0, newArgs, newArgCnt, args.length);
-			if (DEBUG)
-				debug("triggering reconciliation ..."); //$NON-NLS-1$
-			return newArgs;
-		}
-	}
 
-	private static String[] checkForNewUpdates(IPlatformConfiguration cfg, String[] args) {
-		try {
-			URL markerURL = new URL(cfg.getConfigurationLocation(), CHANGES_MARKER);
-			File marker = new File(markerURL.getFile());
-			if (!marker.exists())
-				return args;
-
-			// indicate -newUpdates
-			marker.delete();
-			String[] newArgs = new String[args.length + 1];
-			newArgs[0] = CMD_NEW_UPDATES;
-			System.arraycopy(args, 0, newArgs, 1, args.length);
-			return newArgs;
-		} catch (MalformedURLException e) {
-			return args;
-		}
-	}
-
-	private static String[] processCommandLine(String[] args) throws Exception {
-		int[] configArgs = new int[100];
-		configArgs[0] = -1; // need to initialize the first element to something that could not be an index.
-		int configArgIndex = 0;
-		for (int i = 0; i < args.length; i++) {
-			boolean found = false;
-
-			// check for args without parameters (i.e., a flag arg)
-
-			// look for forced "first use" processing (triggered by stale
-			// bootstrap information)
-			if (args[i].equalsIgnoreCase(CMD_FIRSTUSE)) {
-				cmdFirstUse = true;
-				found = true;
-			}
-
-			// look for the update flag
-			if (args[i].equalsIgnoreCase(CMD_UPDATE)) {
-				cmdUpdate = true;
-				found = true;
-			}
-
-			// look for the no-update flag
-			if (args[i].equalsIgnoreCase(CMD_NO_UPDATE)) {
-				cmdNoUpdate = true;
-				found = true;
-			}
-
-			// look for the initialization flag
-			if (args[i].equalsIgnoreCase(CMD_INITIALIZE)) {
-				cmdInitialize = true;
-				continue; // do not remove from command line
-			}
-
-			// look for the development mode flag ... triggers no-update
-			if (args[i].equalsIgnoreCase(CMD_DEV)) {
-				cmdDev = true;
-				continue; // do not remove from command line
-			}
-
-			if (found) {
-				configArgs[configArgIndex++] = i;
-				continue;
-			}
-
-			// check for args with parameters. If we are at the last argument or if the next one
-			// has a '-' as the first character, then we can't have an arg with a parm so continue.
-
-			if (i == args.length - 1 || args[i + 1].startsWith("-")) { //$NON-NLS-1$
-				continue;
-			}
-
-			String arg = args[++i];
-
-			// look for the platform configuration to use.
-			if (args[i - 1].equalsIgnoreCase(CMD_CONFIGURATION)) {
-				found = true;
-				cmdConfiguration = arg;
-			}
-
-			// look for the feature to use for customization.
-			if (args[i - 1].equalsIgnoreCase(CMD_FEATURE)) {
-				found = true;
-				cmdFeature = arg;
-			}
-
-			// look for the application to run.  Only use the value from the
-			// command line if the application identifier was not explicitly
-			// passed on BootLoader.run(...) invocation.
-			if (args[i - 1].equalsIgnoreCase(CMD_APPLICATION)) {
-				found = true;
-				if (cmdApplication == null)
-					cmdApplication = arg;
-			}
-
-			// R1.0 compatibility
-			// look for the plugins location to use.  Only use the value from the
-			// command line if the plugins location was not explicitly passed on
-			// BootLoader.run(...) or BootLoader.startup(...) invocation.
-			if (args[i - 1].equalsIgnoreCase(CMD_PLUGINS)) {
-				found = true;
-				// if the arg can be made into a URL use it. Otherwise assume that
-				// it is a file path so make a file URL.
-				try {
-					if (cmdPlugins == null)
-						cmdPlugins = new URL(arg);
-				} catch (MalformedURLException e) {
-					try {
-						cmdPlugins = new URL("file:" + arg.replace(File.separatorChar, '/')); //$NON-NLS-1$
-					} catch (MalformedURLException e2) {
-						throw e; // rethrow original exception
-					}
-				}
-			}
-
-			// done checking for args.  Remember where an arg was found
-			if (found) {
-				configArgs[configArgIndex++] = i - 1;
-				configArgs[configArgIndex++] = i;
-			}
-		}
-
-		// remove all the arguments consumed by this argument parsing
-		if (configArgIndex == 0)
-			return args;
-		String[] passThruArgs = new String[args.length - configArgIndex];
-		configArgIndex = 0;
-		int j = 0;
-		for (int i = 0; i < args.length; i++) {
-			if (i == configArgs[configArgIndex])
-				configArgIndex++;
-			else
-				passThruArgs[j++] = args[i];
-		}
-		return passThruArgs;
-	}
-
-	private static int findEntrySeparator(String pathEntry, int cnt) {
-		for (int i = pathEntry.length() - 1; i >= 0; i--) {
-			if (pathEntry.charAt(i) == '/') {
-				if (--cnt == 0)
-					return i;
-			}
-		}
-		return -1;
-	}
 
 	private static boolean supportsDetection(URL url) {
 		String protocol = url.getProtocol();
@@ -2443,29 +1670,6 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			return resolved.getProtocol().equals("file"); //$NON-NLS-1$
 		} else
 			return false;
-	}
-
-	private static void verifyPath(URL url) {
-		String protocol = url.getProtocol();
-		String path = null;
-		if (protocol.equals("file")) //$NON-NLS-1$
-			path = url.getFile();
-		else if (protocol.equals(PlatformURLHandler.PROTOCOL)) {
-			URL resolved = null;
-			try {
-				resolved = resolvePlatformURL(url); // 19536
-				if (resolved.getProtocol().equals("file")) //$NON-NLS-1$
-					path = resolved.getFile();
-			} catch (IOException e) {
-				// continue ...
-			}
-		}
-
-		if (path != null) {
-			File dir = new File(path).getParentFile();
-			if (dir != null)
-				dir.mkdirs();
-		}
 	}
 
 	private static URL resolvePlatformURL(URL url) throws IOException {
@@ -2517,42 +1721,5 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		return installURL;
 	}
 
-	private URL getDefaultStateLocation() throws IOException {
-		// 1) We store the config state relative to the 'eclipse' directory if possible
-		// 2) If this directory is read-only 
-		//    we store the state in <user.home>/.eclipse/<application-id>_<version> where <user.home> 
-		//    is unique for each local user, and <application-id> is the one 
-		//    defined in .eclipseproduct marker file. If .eclipseproduct does not
-		//    exist, use "eclipse" as the application-id.
 
-		URL installURL = getInstallURL();
-		File installDir = new File(installURL.getFile());
-
-		if ("file".equals(installURL.getProtocol()) && installDir.canWrite()) { //$NON-NLS-1$
-			if (DEBUG)
-				debug("Using the installation directory."); //$NON-NLS-1$
-			return installURL;
-		} else {
-			if (DEBUG)
-				debug("Using the user.home location."); //$NON-NLS-1$
-			String appName = "." + ECLIPSE; //$NON-NLS-1$
-			File eclipseProduct = new File(installDir, PRODUCT_SITE_MARKER);
-			if (eclipseProduct.exists()) {
-				Properties props = new Properties();
-				props.load(new FileInputStream(eclipseProduct));
-				String appId = props.getProperty(PRODUCT_SITE_ID);
-				if (appId == null || appId.trim().length() == 0)
-					appId = ECLIPSE;
-				String appVersion = props.getProperty(PRODUCT_SITE_VERSION);
-				if (appVersion == null || appVersion.trim().length() == 0)
-					appVersion = ""; //$NON-NLS-1$
-				appName += File.separator + appId + "_" + appVersion; //$NON-NLS-1$
-			}
-
-			String userHome = System.getProperty("user.home"); //$NON-NLS-1$
-			File configDir = new File(userHome, appName);
-			configDir.mkdirs();
-			return configDir.toURL();
-		}
-	}
 }

@@ -53,10 +53,7 @@ public class ElementSectionDropAdapter extends ViewerDropAdapter {
 
 	private boolean validateTarget() {
 		Object target = getCurrentTarget();
-		if (target == null || target instanceof ISchemaObject)
-			return true;
-		else
-			return false;
+		return (target == null || target instanceof ISchemaObject);
 	}
 
 }
