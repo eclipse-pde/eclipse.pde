@@ -50,7 +50,6 @@ public class PDEState {
 			fState.addBundle(descriptor);
 			return descriptor;
 		} catch (BundleException e) {
-			e.printStackTrace();
 		}
 		return null;
 	}
