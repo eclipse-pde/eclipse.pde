@@ -28,6 +28,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.actions.*;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.ViewPart;
@@ -163,7 +164,7 @@ public class LogView extends ViewPart implements ILogListener {
 	
 	private void fillToolBar() {
 		IActionBars bars = getViewSite().getActionBars();
-		bars.setGlobalActionHandler(IWorkbenchActionConstants.COPY, copyAction);
+		bars.setGlobalActionHandler(ActionFactory.COPY.getId(), copyAction);
 
 		IToolBarManager toolBarManager = bars.getToolBarManager();
 		toolBarManager.add(exportAction);
@@ -344,7 +345,7 @@ public class LogView extends ViewPart implements ILogListener {
 		copyAction = new Action(PDERuntimePlugin.getResourceString("LogView.copy")) {
 			public void run() {
 				if (detailsForm.hasFocus()) {
-					detailsForm.doGlobalAction(IWorkbenchActionConstants.COPY);
+					detailsForm.doGlobalAction(ActionFactory.COPY.getId());
 				} else {
 					copyToClipboard(tableTreeViewer.getSelection());
 				}
