@@ -63,7 +63,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		updateVersionNumber(enhancedManifest);
 		try {
 			BundleDescription descriptor;
-			descriptor = factory.createBundleDescription(enhancedManifest, bundleLocation.getAbsolutePath(), getNextId());
+			descriptor = factory.createBundleDescription(state, enhancedManifest, bundleLocation.getAbsolutePath(), getNextId());
 			bundleClasspaths.put(new Long(descriptor.getBundleId()), getClasspath(enhancedManifest));
 			state.addBundle(descriptor);
 		} catch (BundleException e) {
