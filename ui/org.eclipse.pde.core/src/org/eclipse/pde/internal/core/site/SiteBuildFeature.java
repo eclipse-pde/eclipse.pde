@@ -71,7 +71,7 @@ public class SiteBuildFeature
 
 	public IFeature getReferencedFeature() {
 		if (feature == null) {
-			NewWorkspaceModelManager manager =
+			WorkspaceModelManager manager =
 				PDECore.getDefault().getWorkspaceModelManager();
 			IFeatureModel[] models = manager.getFeatureModels();
 			for (int i = 0; i < models.length; i++) {

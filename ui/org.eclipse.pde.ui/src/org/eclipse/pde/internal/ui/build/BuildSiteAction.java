@@ -61,7 +61,7 @@ public class BuildSiteAction implements IObjectActionDelegate, IPreferenceConsta
 			if (obj != null && obj instanceof IFile) {
 				fSiteXML = (IFile)obj;
 				IProject project = fSiteXML.getProject();
-				NewWorkspaceModelManager manager =
+				WorkspaceModelManager manager =
 					PDECore.getDefault().getWorkspaceModelManager();
 				IResource buildFile =
 					project.findMember(

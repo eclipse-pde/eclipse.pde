@@ -100,7 +100,7 @@ public class DependenciesForm extends ScrollableSectionForm {
 		IResource resource =
 			((IPluginModelBase) page.getModel()).getUnderlyingResource();
 		if (resource != null
-			&& NewWorkspaceModelManager.isJavaPluginProject(resource.getProject())) {
+			&& WorkspaceModelManager.isJavaPluginProject(resource.getProject())) {
 			manager.add(importListSection.getBuildpathAction());
 			manager.add(new Separator());
 		}

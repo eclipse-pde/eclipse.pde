@@ -75,7 +75,7 @@ public class PluginListPage extends WizardPage {
 
 	private Object[] getPluginModels() {
 		if (models == null) {
-			NewWorkspaceModelManager manager =
+			WorkspaceModelManager manager =
 				PDECore.getDefault().getWorkspaceModelManager();
 			IPluginModel[] workspaceModels = manager.getPluginModels();
 			IFragmentModel[] fragmentModels = manager.getFragmentModels();

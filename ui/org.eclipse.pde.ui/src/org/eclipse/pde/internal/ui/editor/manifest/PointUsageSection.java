@@ -106,7 +106,7 @@ public class PointUsageSection extends TableSection {
 			result.add(thisPluginBase);
 		}
 
-		NewWorkspaceModelManager manager =
+		WorkspaceModelManager manager =
 			PDECore.getDefault().getWorkspaceModelManager();
 		addReferencingPlugins(
 			thisPluginBase.getId(),

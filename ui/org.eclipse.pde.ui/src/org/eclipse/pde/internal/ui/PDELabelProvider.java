@@ -354,7 +354,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 		} else {
 			IProject project = resource.getProject();
 			try {
-				if (NewWorkspaceModelManager.isBinaryPluginProject(project)) {
+				if (WorkspaceModelManager.isBinaryPluginProject(project)) {
 					String property =
 						project.getPersistentProperty(
 							PDECore.EXTERNAL_PROJECT_PROPERTY);
@@ -396,7 +396,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 		} else {
 			IProject project = resource.getProject();
 			try {
-				if (NewWorkspaceModelManager.isBinaryPluginProject(project)) {
+				if (WorkspaceModelManager.isBinaryPluginProject(project)) {
 					String property =
 						project.getPersistentProperty(
 							PDECore.EXTERNAL_PROJECT_PROPERTY);

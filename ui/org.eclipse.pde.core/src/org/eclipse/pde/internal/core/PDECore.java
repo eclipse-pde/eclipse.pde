@@ -206,7 +206,7 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 	private BundleContext context;
 	private ServiceTracker tracker;
 	private ExternalModelManager externalModelManager;
-	private NewWorkspaceModelManager workspaceModelManager;
+	private WorkspaceModelManager workspaceModelManager;
 
 	public PDECore(IPluginDescriptor descriptor) {
 		super(descriptor);
@@ -269,7 +269,7 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 	public IFeature findFeature(String id, String version, int match) {
 		if (modelsLocked)
 			return null;
-		NewWorkspaceModelManager manager = getWorkspaceModelManager();
+		WorkspaceModelManager manager = getWorkspaceModelManager();
 		return findFeature(manager.getFeatureModels(), id, version, match);
 	}
 
@@ -350,9 +350,9 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 			tracingOptionsManager = new TracingOptionsManager();
 		return tracingOptionsManager;
 	}
-	public NewWorkspaceModelManager getWorkspaceModelManager() {
+	public WorkspaceModelManager getWorkspaceModelManager() {
 		if (workspaceModelManager==null)
-			workspaceModelManager = new NewWorkspaceModelManager();
+			workspaceModelManager = new WorkspaceModelManager();
 		return workspaceModelManager;
 	}
 

@@ -340,7 +340,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 				(IProject) PDEPlugin.getWorkspace().getRoot().findMember(id);
 			if (project != null
 				&& project.isOpen()
-				&& NewWorkspaceModelManager.isPluginProject(project)) {
+				&& WorkspaceModelManager.isPluginProject(project)) {
 				result.add(models[i]);
 			}
 		}
@@ -360,7 +360,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 				(IProject) PDEPlugin.getWorkspace().getRoot().findMember(id);
 			if (project != null
 				&& project.isOpen()
-				&& NewWorkspaceModelManager.isUnsharedPluginProject(project)) {
+				&& WorkspaceModelManager.isUnsharedPluginProject(project)) {
 				result.add(models[i]);
 			}
 		}

@@ -147,7 +147,7 @@ public boolean finish() {
 private void forceVersion(String targetVersion, IPluginModelBase modelBase)
 	throws CoreException {
 	IFile file = (IFile) modelBase.getUnderlyingResource();
-	NewWorkspaceModelManager modelProvider =
+	WorkspaceModelManager modelProvider =
 		PDECore.getDefault().getWorkspaceModelManager();
 	WorkspacePluginModelBase model =
 		(WorkspacePluginModelBase) modelProvider.getModel(file);

@@ -10,16 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.site;
 
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.*;
-import java.util.Map;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.isite.*;
 import org.w3c.dom.*;
-import org.w3c.dom.Node;
 
 public abstract class SiteObject
 	extends PlatformObject

@@ -22,7 +22,7 @@ public class PluginModelManager implements IAdaptable {
 	private static final String OSGI_RUNTIME ="org.eclipse.osgi";
 	private IModelProviderListener providerListener;
 	private IExternalModelManager externalManager;
-	private NewWorkspaceModelManager workspaceManager;
+	private WorkspaceModelManager workspaceManager;
 	private SearchablePluginsManager searchablePluginsManager;
 	private ArrayList listeners;
 	private boolean osgiRuntime;
@@ -306,7 +306,7 @@ public class PluginModelManager implements IAdaptable {
 		}
 	}
 
-	public void connect(NewWorkspaceModelManager wm, IExternalModelManager em) {
+	public void connect(WorkspaceModelManager wm, IExternalModelManager em) {
 		externalManager = em;
 		workspaceManager = wm;
 		externalManager.addModelProviderListener(providerListener);

@@ -36,7 +36,7 @@ public class BuildPluginAction extends BaseBuildAction {
 		generator.setPluginPath(TargetPlatform.createPluginPath());
 
 		try {
-			NewWorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
+			WorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
 			IPluginModelBase model = (IPluginModelBase) manager.getWorkspaceModel(project);
 			if (model != null) {
 				generator.setModelId(model.getPluginBase().getId());

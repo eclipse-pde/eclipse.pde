@@ -199,7 +199,7 @@ public class RequiresSection
 	public void dispose() {
 		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
 		model.removeModelChangedListener(this);
-		NewWorkspaceModelManager mng =
+		WorkspaceModelManager mng =
 			PDECore.getDefault().getWorkspaceModelManager();
 		mng.removeModelProviderListener(this);
 		super.dispose();
@@ -282,7 +282,7 @@ public class RequiresSection
 			syncButton.setEnabled(false);
 		}
 		model.addModelChangedListener(this);
-		NewWorkspaceModelManager mng =
+		WorkspaceModelManager mng =
 			PDECore.getDefault().getWorkspaceModelManager();
 		mng.addModelProviderListener(this);
 	}

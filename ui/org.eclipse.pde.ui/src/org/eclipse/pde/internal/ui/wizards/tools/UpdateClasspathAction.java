@@ -53,7 +53,7 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 					project = ((IJavaProject) elem).getProject();
 				}
 				if (project != null
-				 && NewWorkspaceModelManager.isJavaPluginProject(project)) {
+				 && WorkspaceModelManager.isJavaPluginProject(project)) {
 					IPluginModelBase model = findModelFor(project);
 					if (model != null) {
 						models.add(model);
@@ -117,7 +117,7 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 	}
 
 	private IPluginModelBase findModelFor(IProject project) {
-		NewWorkspaceModelManager manager =
+		WorkspaceModelManager manager =
 			PDECore.getDefault().getWorkspaceModelManager();
 		return (IPluginModelBase) manager.getWorkspaceModel(project);
 	}

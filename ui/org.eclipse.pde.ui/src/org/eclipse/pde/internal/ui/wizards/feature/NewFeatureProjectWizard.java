@@ -94,7 +94,7 @@ public class NewFeatureProjectWizard
 		IProject[] projects = root.getProjects();
 		for (int i = 0; i < projects.length; i++) {
 			IProject project = projects[i];
-			if (NewWorkspaceModelManager.isPluginProject(project))
+			if (WorkspaceModelManager.isPluginProject(project))
 				return true;
 		}
 		return false;

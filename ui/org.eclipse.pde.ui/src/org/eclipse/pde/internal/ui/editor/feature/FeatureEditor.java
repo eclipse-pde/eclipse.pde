@@ -97,7 +97,7 @@ public class FeatureEditor extends PDEMultiPageXMLEditor {
 		InputStream stream = null;
 		stream = file.getContents(false);
 
-		NewWorkspaceModelManager provider =
+		WorkspaceModelManager provider =
 			PDECore.getDefault().getWorkspaceModelManager();
 		IFeatureModel model = (IFeatureModel) provider.getModel(file);
 		//boolean cleanModel = true;

@@ -132,7 +132,7 @@ public class BuiltFeaturesWizardPage extends WizardPage {
 	}
 
 	private Object[] getChoices() {
-		NewWorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
+		WorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
 		return mng.getFeatureModels();
 	}
 

@@ -101,7 +101,7 @@ public class IncludedFeaturesSection
 	public void dispose() {
 		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
 		model.removeModelChangedListener(this);
-		NewWorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
+		WorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
 		mng.removeModelProviderListener(this);
 		super.dispose();
 	}
@@ -196,7 +196,7 @@ public class IncludedFeaturesSection
 		update(input);
 		getTablePart().setButtonEnabled(0, model.isEditable());
 		model.addModelChangedListener(this);
-		NewWorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
+		WorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
 		mng.addModelProviderListener(this);
 	}
 

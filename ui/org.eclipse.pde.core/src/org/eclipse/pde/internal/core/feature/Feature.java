@@ -110,7 +110,7 @@ public class Feature extends VersionableObject implements IFeature {
 	}
 
 	public IPluginModelBase getReferencedModel(IFeaturePlugin reference) {
-		NewWorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
+		WorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
 		IPluginModelBase[] models = null;
 		if (reference.isFragment())
 			models = mng.getFragmentModels();

@@ -21,7 +21,7 @@ import org.eclipse.team.core.*;
  * @author melhem
  *
  */
-public class NewWorkspaceModelManager
+public class WorkspaceModelManager
 		implements
 			IResourceChangeListener,
 			IResourceDeltaVisitor {
@@ -112,7 +112,7 @@ public class NewWorkspaceModelManager
 	/**
 	 * 
 	 */
-	public NewWorkspaceModelManager() {
+	public WorkspaceModelManager() {
 		super();
 	}
 	/* (non-Javadoc)

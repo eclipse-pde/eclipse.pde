@@ -207,7 +207,7 @@ public class ManifestEditor
 
 		stream = file.getContents(false);
 
-		NewWorkspaceModelManager modelProvider =
+		WorkspaceModelManager modelProvider =
 			PDECore.getDefault().getWorkspaceModelManager();
 		WorkspacePluginModelBase model =
 			(WorkspacePluginModelBase) modelProvider.getModel(file);

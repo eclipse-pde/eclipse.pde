@@ -60,7 +60,7 @@ public class SiteEditor extends PDEMultiPageXMLEditor {
 		InputStream stream = null;
 		stream = file.getContents(false);
 
-		NewWorkspaceModelManager provider =
+		WorkspaceModelManager provider =
 			PDECore.getDefault().getWorkspaceModelManager();
 		ISiteModel model = (ISiteModel) provider.getModel(file);
 		//boolean cleanModel = true;

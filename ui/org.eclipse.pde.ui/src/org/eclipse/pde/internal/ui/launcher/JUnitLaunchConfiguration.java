@@ -118,7 +118,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 	protected String getTestPluginId(ILaunchConfiguration configuration)
 		throws CoreException {
 		IJavaProject javaProject = getJavaProject(configuration);
-		NewWorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
+		WorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
 		IPluginModelBase model =
 			(IPluginModelBase) manager.getWorkspaceModel(javaProject.getProject());
 		if (model == null)

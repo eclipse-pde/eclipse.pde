@@ -37,11 +37,11 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		public Object[] getElements(Object parent) {
 			IProject[] projects = PDEPlugin.getWorkspace().getRoot().getProjects();
 			ArrayList result = new ArrayList();
-			NewWorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
+			WorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
 			for (int i = 0; i < projects.length; i++) {
 				if (projects[i].isOpen()
-					&& NewWorkspaceModelManager.isPluginProject(projects[i])
-					&& !NewWorkspaceModelManager.isBinaryPluginProject(projects[i])) {
+					&& WorkspaceModelManager.isPluginProject(projects[i])
+					&& !WorkspaceModelManager.isBinaryPluginProject(projects[i])) {
 					IModel model = manager.getWorkspaceModel(projects[i]);
 					if (model != null)
 						result.add(model);
@@ -161,7 +161,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 	private void initialize() {
 		Object[] items = initialSelection.toArray();
 		ArrayList list = new ArrayList();
-		NewWorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
+		WorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
 		
 		for (int i = 0; i < items.length; i++) {
 			Object item = items[i];
@@ -171,8 +171,8 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 			if (item instanceof IProject) {
 				IProject project = (IProject) item;
 				if (project.isOpen()
-					&& NewWorkspaceModelManager.isPluginProject(project)
-					&& !NewWorkspaceModelManager.isBinaryPluginProject(project)) {
+					&& WorkspaceModelManager.isPluginProject(project)
+					&& !WorkspaceModelManager.isBinaryPluginProject(project)) {
 					list.add(manager.getWorkspaceModel(project));
 				}
 			}

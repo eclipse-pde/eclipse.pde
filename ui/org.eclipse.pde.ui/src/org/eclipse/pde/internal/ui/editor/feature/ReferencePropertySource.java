@@ -59,7 +59,7 @@ public class ReferencePropertySource extends FeatureEntryPropertySource {
 			if (reference.getModel().getUnderlyingResource() == null)
 				return null;
 			String id = reference.getId();
-			NewWorkspaceModelManager manager =
+			WorkspaceModelManager manager =
 				PDECore.getDefault().getWorkspaceModelManager();
 			IPluginModelBase[] models = null;
 			if (reference.isFragment()) {

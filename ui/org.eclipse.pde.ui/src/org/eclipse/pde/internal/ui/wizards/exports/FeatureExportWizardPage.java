@@ -32,7 +32,7 @@ public class FeatureExportWizardPage extends BaseExportWizardPage {
 	}
 
 	public Object[] getListElements() {
-		NewWorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
+		WorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
 		return manager.getFeatureModels();
 	}
 	

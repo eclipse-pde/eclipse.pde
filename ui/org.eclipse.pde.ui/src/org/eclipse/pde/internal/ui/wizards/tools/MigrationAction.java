@@ -71,7 +71,7 @@ public class MigrationAction implements IObjectActionDelegate {
 	}
 	
 	private IPluginModelBase findModelFor(IProject project) {
-		NewWorkspaceModelManager manager =
+		WorkspaceModelManager manager =
 		PDECore.getDefault().getWorkspaceModelManager();
 		return (IPluginModelBase) manager.getWorkspaceModel(project);
 	}

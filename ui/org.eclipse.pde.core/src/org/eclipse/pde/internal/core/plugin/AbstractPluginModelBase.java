@@ -102,7 +102,7 @@ public abstract class AbstractPluginModelBase
 				addMatchingFragments(id, version, models, result);
 			}
 			// Add matching workspace fragments
-			NewWorkspaceModelManager wmng =
+			WorkspaceModelManager wmng =
 				PDECore.getDefault().getWorkspaceModelManager();
 			IFragmentModel[] models = wmng.getFragmentModels();
 			addMatchingFragments(id, version, models, result);

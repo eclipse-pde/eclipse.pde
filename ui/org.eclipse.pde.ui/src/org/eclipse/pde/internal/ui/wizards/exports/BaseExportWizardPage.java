@@ -411,7 +411,7 @@ public abstract class BaseExportWizardPage extends WizardPage {
 	}
 
 	private IModel findModelFor(IProject project) {
-		NewWorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
+		WorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
 		return manager.getWorkspaceModel(project);
 	}
 
@@ -563,7 +563,7 @@ public abstract class BaseExportWizardPage extends WizardPage {
 		IWorkingSetSelectionDialog dialog = manager.createWorkingSetSelectionDialog(getShell(), true);
 		if (dialog.open() == Window.OK) {
 			ArrayList models = new ArrayList();
-			NewWorkspaceModelManager wManager = PDECore.getDefault().getWorkspaceModelManager();
+			WorkspaceModelManager wManager = PDECore.getDefault().getWorkspaceModelManager();
 			IWorkingSet[] workingSets = dialog.getSelection();
 			for (int i = 0; i < workingSets.length; i++) {
 				IAdaptable[] elements = workingSets[i].getElements();

@@ -127,7 +127,7 @@ public abstract class ReferenceWizardPage extends WizardPage {
 
 	private Object[] getChoices() {
 		if (includeExternal) return getAllChoices();
-		NewWorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
+		WorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
 		IPluginModel[] plugins = mng.getPluginModels();
 		IFragmentModel[] fragments = mng.getFragmentModels();
 

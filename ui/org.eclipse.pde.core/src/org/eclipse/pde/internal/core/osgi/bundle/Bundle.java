@@ -144,7 +144,7 @@ public class Bundle extends BundleObject implements IBundle {
 	}
 
 	private static void loadExports(Dictionary d, IProject project) {
-		if (!NewWorkspaceModelManager.isJavaPluginProject(project))
+		if (!WorkspaceModelManager.isJavaPluginProject(project))
 			return;
 		IJavaProject javaProject = JavaCore.create(project);
 		StringBuffer provides = new StringBuffer();
