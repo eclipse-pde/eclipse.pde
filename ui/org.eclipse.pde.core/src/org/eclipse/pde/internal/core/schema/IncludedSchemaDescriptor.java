@@ -50,7 +50,7 @@ public class IncludedSchemaDescriptor implements ISchemaDescriptor {
 			return null;
 		
 		URL url = model.getResourceURL(path.toString());
-		if (url == null && model.getUnderlyingResource() == null) {
+		if (url == null) {
 			try {
 				SourceLocationManager mgr = PDECore.getDefault().getSourceLocationManager();
 				File file = mgr.findSourceFile(model.getPluginBase(), path);
