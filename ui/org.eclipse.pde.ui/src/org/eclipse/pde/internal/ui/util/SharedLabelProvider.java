@@ -53,11 +53,13 @@ public class SharedLabelProvider
 		}
 	}
 	public void dispose() {
-		for (Enumeration enum = images.elements(); enum.hasMoreElements();) {
-			Image image = (Image) enum.nextElement();
-			image.dispose();
+		if (consumers.size() == 0) {
+			for (Enumeration enum = images.elements(); enum.hasMoreElements();) {
+				Image image = (Image) enum.nextElement();
+				image.dispose();
+			}
+			images.clear();
 		}
-		images.clear();
 	}
 	
 	public Image get(ImageDescriptor desc) {
