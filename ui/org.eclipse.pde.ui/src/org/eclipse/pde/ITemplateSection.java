@@ -33,6 +33,8 @@ public interface ITemplateSection {
 	 */
 	public URL getTemplateLocation();
 	
+	public String getDescription();
+	
 	/**
 	 * Returns a replacement string for the provided key. 
 	 * When a token is found in the template file with a form

@@ -23,7 +23,8 @@ import org.eclipse.ui.part.*;
 
 public class TemplateForm extends WebForm {
 	private static final String KEY_HEADING = "ManifestEditor.templatePage.heading";
-	private static final String KEY_TEXT = "ManifestEditor.TemplatePage.text";
+	private static final String KEY_INTRO = "ManifestEditor.TemplatePage.intro";
+	private static final String KEY_COMMON = "ManifestEditor.TemplatePage.common";
 	private IFormPage page;
 	/**
 	 * Constructor for TemplateForm.
@@ -81,9 +82,14 @@ public class TemplateForm extends WebForm {
 				openNewExtensionWizard();
 			}
 		};
+		String introMarkup = PDEPlugin.getResourceString(KEY_INTRO);
+		String sectionsMarkup = ""; //getSectionMarkup();
+		String commonMarkup = PDEPlugin.getResourceString(KEY_COMMON);
+		String totalMarkup = "<form>"+introMarkup+sectionsMarkup+commonMarkup+"</form>";
+		
 		text = factory.createFormEngine(parent);
 		text.setHyperlinkSettings(factory.getHyperlinkHandler());
-		text.load(PDEPlugin.getResourceString(KEY_TEXT), true, false);
+		text.load(totalMarkup, true, false);
 
 		// register hyperlink actions
 		text.registerTextObject("ExtensionsPage", pageAction);

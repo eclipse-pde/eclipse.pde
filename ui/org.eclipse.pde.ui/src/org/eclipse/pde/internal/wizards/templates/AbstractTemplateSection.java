@@ -30,6 +30,10 @@ public abstract class AbstractTemplateSection implements ITemplateSection {
 	public URL getTemplateLocation() {
 		return null;
 	}
+	
+	public String getDescription() {
+		return "";
+	}
 
 	/*
 	 * @see ITemplateSection#addPages(IBasePluginWizard)
@@ -114,7 +118,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection {
 					if (member.getName().equals("java")) {
 						dstContainer = generateJavaSourceFolder(monitor);
 					}
-					else if (member.getName().equals("binary")) {
+					else if (member.getName().equals("bin")) {
 						binary = true;
 						dstContainer = dst;
 					}

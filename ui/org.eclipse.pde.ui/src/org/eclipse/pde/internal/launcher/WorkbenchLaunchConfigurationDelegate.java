@@ -171,7 +171,7 @@ public class WorkbenchLaunchConfigurationDelegate
 			}
 
 			VMRunnerConfiguration runnerConfig =
-				new VMRunnerConfiguration("SlimLauncher", classpath);
+				new VMRunnerConfiguration("EclipseRuntimeLauncher", classpath);
 			runnerConfig.setVMArguments(vmArgs);
 			runnerConfig.setProgramArguments(fullProgArgs);
 

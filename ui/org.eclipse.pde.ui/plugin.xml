@@ -197,7 +197,6 @@
             id="org.eclipse.pde.projectGenerators.helloWorld">
          <description>
             Creates a plug-in with a menu, action and a tool bar button that opens a &apos;Hello, World&apos; message dialog.
-
          </description>
       </wizard>
    </extension>
