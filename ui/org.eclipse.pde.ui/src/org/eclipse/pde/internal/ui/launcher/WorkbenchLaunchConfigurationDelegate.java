@@ -197,12 +197,14 @@ public class WorkbenchLaunchConfigurationDelegate
 			programArgs.add(appName);
 		}
 
-		programArgs.add("-dev");
+		//35296
+		programArgs.add(PDECore.ARG_PDELAUNCH);	
+			
 		if (bootPath!=null && bootInSource) {
 			programArgs.add("-boot");
 			programArgs.add("file:"+bootPath);
 		}
-
+		programArgs.add("-dev");
 		programArgs.add(
 			getBuildOutputFolders(getWorkspacePluginsToRun(configuration, useDefault)));
 		if (useFeatures) {

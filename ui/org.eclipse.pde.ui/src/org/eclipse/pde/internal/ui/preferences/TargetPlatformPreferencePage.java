@@ -91,7 +91,7 @@ public class TargetPlatformPreferencePage
 		otherRadio = new Button(group, SWT.RADIO);
 		otherRadio.setText(PDEPlugin.getResourceString(KEY_USE_OTHER));
 		
-		if (PDECore.isDevInstance())
+		if (PDECore.inLaunchedInstance())
 			thisRadio.setEnabled(false);
 		
 		SelectionListener listener = new SelectionAdapter() {

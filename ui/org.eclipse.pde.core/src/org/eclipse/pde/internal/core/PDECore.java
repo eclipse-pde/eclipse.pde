@@ -64,6 +64,7 @@ public class PDECore extends Plugin {
 	public static final String SITEBUILD_PROPERTIES = "sitebuild.xml";
 	public static final String SITEBUILD_FILE =
 		SITEBUILD_DIR + "/" + SITEBUILD_PROPERTIES;
+	public static final String ARG_PDELAUNCH = "-pdelaunch";
 
 	// Shared instance
 	private static PDECore inst;
@@ -83,6 +84,7 @@ public class PDECore extends Plugin {
 	private SourceLocationManager sourceLocationManager;
 	private TempFileManager tempFileManager;
 	private boolean modelsLocked = false;
+	private boolean launchedInstance = false;
 
 	public PDECore(IPluginDescriptor descriptor) {
 		super(descriptor);
@@ -94,6 +96,7 @@ public class PDECore extends Plugin {
 		} catch (MissingResourceException x) {
 			resourceBundle = null;
 		}
+		initializeLaunchedInstanceFlag();
 	}
 
 	public IPluginExtensionPoint findExtensionPoint(String fullID) {
@@ -434,7 +437,7 @@ public class PDECore extends Plugin {
 		Preferences preferences = PDECore.getDefault().getPluginPreferences();
 		preferences.setDefault(
 			ICoreConstants.TARGET_MODE,
-			isDevInstance()
+			inLaunchedInstance()
 				? ICoreConstants.VALUE_USE_OTHER
 				: ICoreConstants.VALUE_USE_THIS);
 		preferences.setDefault(
@@ -459,8 +462,21 @@ public class PDECore extends Plugin {
 		}
 	}
 
-	public static boolean isDevInstance() {
-		return BootLoader.inDevelopmentMode();
+	public static boolean inLaunchedInstance() {
+		return getDefault().isLaunchedInstance();
 	}
-
+	
+	private boolean isLaunchedInstance() {
+		return launchedInstance;
+	}
+	private void initializeLaunchedInstanceFlag() {
+		String [] args = BootLoader.getCommandLineArgs();
+		for (int i=0; i<args.length; i++) {
+			String arg = args[i];
+			if (arg.equals(ARG_PDELAUNCH)) {
+				launchedInstance = true;
+				break;
+			}
+		}
+	}
 }
