@@ -13,6 +13,7 @@ import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.neweditor.*;
 import org.eclipse.pde.internal.ui.newparts.TablePart;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.*;
 /**
@@ -54,9 +55,21 @@ public class ExtensionPointsSection extends TableSection {
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
 		pointTable.setInput(getPage());
+		selectFirstExtensionPoint();
 		IModel model = getPage().getModel();
 		if (model instanceof IModelChangeProvider)
 			((IModelChangeProvider)model).addModelChangedListener(this);
+	}
+	private void selectFirstExtensionPoint() {
+		Table table = pointTable.getTable();
+		TableItem [] items = table.getItems();
+		if (items.length==0) return;
+		TableItem firstItem = items[0];
+		Object obj = firstItem.getData();
+		pointTable.setSelection(new StructuredSelection(obj));
+	}
+	void fireSelection() {
+		pointTable.setSelection(pointTable.getSelection());
 	}
 	public void dispose() {
 		IModel model = getPage().getModel();

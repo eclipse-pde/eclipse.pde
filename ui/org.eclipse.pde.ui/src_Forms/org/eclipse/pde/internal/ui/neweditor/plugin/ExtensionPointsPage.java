@@ -19,7 +19,7 @@ import org.eclipse.ui.forms.widgets.*;
  */
 public class ExtensionPointsPage extends PDEFormPage {
 	public static final String PAGE_ID = "ex-points";
-	
+	private ExtensionPointsSection extensionPointsSection;
 	private ExtensionPointsBlock block;
 	public class ExtensionPointsBlock extends PDEMasterDetailsBlock {
 		public ExtensionPointsBlock() {
@@ -27,7 +27,8 @@ public class ExtensionPointsPage extends PDEFormPage {
 		}
 		protected PDESection createMasterSection(IManagedForm managedForm,
 				Composite parent) {
-			return new ExtensionPointsSection(getPage(), parent);
+			extensionPointsSection = new ExtensionPointsSection(getPage(), parent);
+			return extensionPointsSection;
 		}
 		protected void registerPages(DetailsPart detailsPart) {
 			detailsPart.setPageProvider(new IDetailsPageProvider() {
@@ -59,5 +60,6 @@ public class ExtensionPointsPage extends PDEFormPage {
 		FormToolkit toolkit = managedForm.getToolkit();
 		form.setText("Extension Points");
 		block.createContent(managedForm);
+		extensionPointsSection.fireSelection();
 	}
 }

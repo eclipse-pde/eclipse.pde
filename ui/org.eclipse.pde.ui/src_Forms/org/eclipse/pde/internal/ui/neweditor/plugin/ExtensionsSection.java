@@ -36,6 +36,7 @@ import org.eclipse.pde.internal.ui.wizards.extension.NewExtensionWizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.forms.widgets.*;
@@ -368,6 +369,7 @@ public class ExtensionsSection extends TreeSection
 	}
 	public void initialize(IPluginModelBase model) {
 		extensionTree.setInput(model.getPluginBase());
+		selectFirstExtension();
 		boolean editable = model.isEditable();
 		TreePart treePart = getTreePart();
 		treePart.setButtonEnabled(0, editable);
@@ -391,6 +393,17 @@ public class ExtensionsSection extends TreeSection
 		};
 		collapseAllAction.setText(PDEPlugin
 				.getResourceString(POPUP_COLLAPSE_ALL));
+	}
+	private void selectFirstExtension() {
+		Tree tree = extensionTree.getTree();
+		TreeItem [] items = tree.getItems();
+		if (items.length==0) return;
+		TreeItem firstItem = items[0];
+		Object obj = firstItem.getData();
+		extensionTree.setSelection(new StructuredSelection(obj));
+	}
+	void fireSelection() {
+		extensionTree.setSelection(extensionTree.getSelection());
 	}
 	public void initializeImages() {
 		PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();

@@ -82,5 +82,7 @@ public class ExtensionsPage extends PDEFormPage {
 		FormToolkit toolkit = managedForm.getToolkit();
 		form.setText("Extensions");
 		block.createContent(managedForm);
+		//refire selection
+		section.fireSelection();
 	}
 }
