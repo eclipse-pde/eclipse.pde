@@ -64,6 +64,8 @@ public class BasicLauncherTab
 	private IStatus workspaceSelectionStatus;
 
 	private IVMInstall[] vmInstallations;
+	
+	private boolean blockChanges = false;
 
 	public BasicLauncherTab() {
 		jreSelectionStatus = createStatus(IStatus.OK, "");
@@ -155,6 +157,7 @@ public class BasicLauncherTab
 
 	public void initializeFrom(ILaunchConfiguration config) {
 		try {
+			blockChanges = true;
 			vmArgsText.setText(config.getAttribute(VMARGS, ""));
 			progArgsText.setText(config.getAttribute(PROGARGS, getDefaultProgramArguments()));
 			applicationNameText.setText(config.getAttribute(APPLICATION, "org.eclipse.ui.workbench"));
@@ -195,6 +198,7 @@ public class BasicLauncherTab
 			PDEPlugin.logException(e);
 		}
 		workspaceChanged = false;
+		blockChanges = false;
 	}
 
 	static String getDefaultWorkspace() {
@@ -256,15 +260,19 @@ public class BasicLauncherTab
 		workspaceCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				workspaceSelectionStatus = validateWorkspaceSelection();
-				workspaceChanged = true;
-				updateStatus();
+				if (!blockChanges) {
+					workspaceChanged = true;
+					updateStatus();
+				}
 			}
 		});
 		workspaceCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				workspaceSelectionStatus = validateWorkspaceSelection();				
-				workspaceChanged = true;
-				updateStatus();
+				if (!blockChanges) {
+					workspaceChanged = true;
+					updateStatus();
+				}
 			}
 		});
 		jreCombo.addSelectionListener(new SelectionAdapter() {
