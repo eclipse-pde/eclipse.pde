@@ -692,10 +692,19 @@ public abstract class ModelBuildScriptGenerator extends AbstractBuildScriptGener
 	}
 
 	private void filterNonExistingSourceFolders(String[] sources) {
-		File pluginRoot = new File(model.getLocation());
+		File pluginRoot;
+		try {
+			pluginRoot = new File(getLocation(model));
+		} catch (CoreException e) {
+			Platform.getPlugin(PI_PDEBUILD).getLog().log(e.getStatus());
+			return;
+		}
 		for (int i = 0; i < sources.length; i++) {
-			if (! new File(pluginRoot, sources[i]).exists())
+			if (! new File(pluginRoot, sources[i]).exists()) {
 				sources[i] = null;
+				IStatus status = new Status(IStatus.WARNING, PI_PDEBUILD, EXCEPTION_SOURCE_LOCATION_MISSING, Policy.bind("warning.cannotLocateSource", new File(pluginRoot, sources[i]).getAbsolutePath()), null); //$NON-NLS-1$
+				Platform.getPlugin(PI_PDEBUILD).getLog().log(status);
+			}
 		}
 	}
 
