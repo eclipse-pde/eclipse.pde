@@ -4,6 +4,7 @@ import java.util.*;
 
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.*;
@@ -14,6 +15,7 @@ import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.pde.internal.ui.util.*;
+import org.eclipse.pde.internal.ui.wizards.FeatureSelectionDialog;
 import org.eclipse.pde.internal.ui.wizards.feature.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.layout.*;
@@ -169,9 +171,9 @@ public class FeatureSection extends TableSection {
 	}
 
 	private void handleAdd() {
-		FeatureSelectionDialog dialog = new FeatureSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), getAvailableChoices());
-		dialog.setMultipleSelection(true);
-		if (dialog.open() == FeatureSelectionDialog.OK) {
+		FeatureSelectionDialog dialog = new FeatureSelectionDialog(PDEPlugin
+				.getActiveWorkbenchShell(), getAvailableChoices(), true);
+		if (dialog.open() == Window.OK) {
 			Object[] models = dialog.getResult();
 			for (int i = 0; i < models.length; i++) {
 				IFeature feature = ((IFeatureModel)models[i]).getFeature();

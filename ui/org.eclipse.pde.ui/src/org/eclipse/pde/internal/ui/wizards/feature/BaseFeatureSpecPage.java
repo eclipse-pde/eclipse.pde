@@ -21,6 +21,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.pde.internal.ui.wizards.FeatureSelectionDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -251,7 +252,10 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 			browseButton.addSelectionListener(new SelectionAdapter() {
 				
 				public void widgetSelected(SelectionEvent e) {
-					FeatureSelectionDialog dialog = new FeatureSelectionDialog(getShell(), PDECore.getDefault().getFeatureModelManager().getAllFeatures());
+					FeatureSelectionDialog dialog = new FeatureSelectionDialog(
+							getShell(), PDECore.getDefault()
+									.getFeatureModelManager().getAllFeatures(),
+							false);
 					dialog.create();
 					if (dialog.open() == Window.OK) {
 						Object[] result = dialog.getResult();
