@@ -189,6 +189,8 @@ public class TargetPlatform implements IEnvironmentVariables {
 	}
 	
 	private static void createConfigIniFile(File configDir, TreeMap pluginMap, String primaryFeatureId, HashMap autoStartPlugins) {
+		if (!configDir.exists())
+			configDir.mkdirs();
 		File file = new File(configDir, "config.ini"); //$NON-NLS-1$
 		try {
 			FileOutputStream stream = new FileOutputStream(file);
