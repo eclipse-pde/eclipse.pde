@@ -361,6 +361,8 @@ public class LibrarySection
 		model.addModelChangedListener(this);
 	}
 	public void refresh() {
+		if (libraryTable.getControl().isDisposed())
+			return;
 		libraryTable.setSelection(null);
 		libraryTable.refresh();
 		super.refresh();
