@@ -109,13 +109,10 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	}
 
 	static public class MissingProperties extends Properties {
-//		private static final long serialVersionUID = 3546924667060303927L;
+		private static final long serialVersionUID = 3546924667060303927L;
 		private static MissingProperties singleton;
 		private MissingProperties(){
 			//nothing to do;
-		}
-		public synchronized int size() {
-			return -1;
 		}
 		public static MissingProperties getInstance() {
 			if (singleton == null)
