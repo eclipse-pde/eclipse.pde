@@ -41,8 +41,6 @@ public class PDEMultiPageContentOutline
 	}
 	public void createControl(Composite parent) {
 		pagebook = new PageBook(parent, SWT.NONE);
-		if (currentPage != null)
-			setPageActive(currentPage);
 	}
 
 	public void dispose() {
@@ -85,6 +83,8 @@ public class PDEMultiPageContentOutline
 
 	public void setActionBars(IActionBars actionBars) {
 		this.actionBars = actionBars;
+		if (currentPage != null)
+			setPageActive(currentPage);
 	}
 	public IActionBars getActionBars() {
 		return actionBars;
