@@ -4,26 +4,48 @@ package org.eclipse.pde.internal.ui.feature;
  * All Rights Reserved.
  */
 
-import java.net.URL;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.build.*;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.build.FragmentBuildScriptGenerator;
+import org.eclipse.pde.internal.build.ModelBuildScriptGenerator;
+import org.eclipse.pde.internal.build.PluginBuildScriptGenerator;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.*;
-import org.eclipse.ui.externaltools.internal.ui.AntAction;
+import org.eclipse.ui.IObjectActionDelegate;
+import org.eclipse.ui.IWorkbenchPart;
+import org
+	.eclipse
+	.ui
+	.externaltools
+	.internal
+	.ant
+	.launchConfigurations
+	.AntLaunchShortcut;
 
 public class BuildPluginAction implements IObjectActionDelegate {
 	public static final String KEY_ERRORS_TITLE = "GeneratePluginJars.errorsTitle";
@@ -225,7 +247,7 @@ public class BuildPluginAction implements IObjectActionDelegate {
 			// should probably warn the user
 			return;
 		}
-		AntAction action = new AntAction(file, PDEPlugin.getActiveWorkbenchWindow());
-		action.run();
+		AntLaunchShortcut launch = new AntLaunchShortcut();
+		launch.launch(new StructuredSelection(file), ILaunchManager.RUN_MODE);
 	}
 }
