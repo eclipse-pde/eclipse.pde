@@ -11,9 +11,11 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.internal.PDE;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
+import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.feature.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.*;
@@ -62,6 +64,24 @@ public class NewFeatureProjectWizard
 		}
 	}
 
+	private void createBuildProperties(IProject project)
+		throws CoreException {
+		String fileName = "build.properties";
+		IPath path = project.getFullPath().append(fileName);
+		IFile file = project.getWorkspace().getRoot().getFile(path);
+		if (!file.exists()) {
+			WorkspaceBuildModel model = new WorkspaceBuildModel(file);
+			IBuildEntry entry =
+				model.getFactory().createEntry("bin.includes");
+			entry.addToken("feature.xml");
+			model.getBuild().add(entry);
+			model.save();
+		}
+		PlatformUI.getWorkbench().getEditorRegistry().setDefaultEditor(
+			file,
+			PDEPlugin.BUILD_EDITOR_ID);
+	}
+	
 	private IFile createFeatureManifest(
 		IProject project,
 		FeatureData data,
@@ -109,6 +129,7 @@ public class NewFeatureProjectWizard
 		CoreUtility.addNatureToProject(project, JavaCore.NATURE_ID, monitor);
 		CoreUtility.addNatureToProject(project, PDE.FEATURE_NATURE, monitor);
 		monitor.subTask(PDEPlugin.getResourceString(CREATING_MANIFEST));
+		createBuildProperties(project);
 		// create install.xml
 		IFile file = createFeatureManifest(project, data, plugins);
 		// open manifest for editing
