@@ -8,19 +8,28 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.build.ant;
+package org.eclipse.pde.internal.build;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.model.PluginModel;
 
 /**
- * Interface for tasks.
+ * Generates build.xml script for plug-ins.
  */
-public interface ITask {
+public class PluginBuildScriptGenerator extends ModelBuildScriptGenerator {
 
 /**
- * Print the information for this task to the given script. Use the given
- * tab index for indenting.
- * 
- * @param script the script to print to
- * @param tab the index for indenting
+ * @see ModelBuildScriptGenerator#getModel(String)
  */
-public void print(AntScript script, int tab);
+protected PluginModel getModel(String modelId) throws CoreException {
+	return getRegistry().getPlugin(modelId);
+}
+
+/**
+ * @see ModelBuildScriptGenerator#getModelTypeName()
+ */
+protected String getModelTypeName() {
+	return "plugin"; //$NON-NLS-1$
+}
+
 }
