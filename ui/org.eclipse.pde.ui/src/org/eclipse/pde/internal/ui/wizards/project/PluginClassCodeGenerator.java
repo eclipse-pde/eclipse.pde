@@ -28,8 +28,10 @@ public void generateContents(
 	String packageName, 
 	String className, 
 	PrintWriter writer) {
-	writer.println("package " + packageName + ";");
-	writer.println();
+	if (!packageName.equals("")){
+		writer.println("package " + packageName + ";");
+		writer.println();
+	}
 	writer.println("import org.eclipse.ui.plugin.*;");
 	writer.println("import org.eclipse.core.runtime.*;");
 	if ((flags & F_WORKSPACE) != 0) {

@@ -64,7 +64,11 @@ public static void ensureFoldersExist(IProject project, String name, String deli
 }
 public IFile generate(IProgressMonitor monitor) throws CoreException {
 	int nameloc = qualifiedClassName.lastIndexOf('.');
-	String packageName = qualifiedClassName.substring(0, nameloc);
+	String packageName;
+	if (nameloc==-1)
+		packageName="";
+	else
+		packageName = qualifiedClassName.substring(0, nameloc);
 	String className = qualifiedClassName.substring(nameloc + 1);
 
 	String javaFileName = className + ".java";

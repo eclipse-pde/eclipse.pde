@@ -96,6 +96,13 @@ public class FirstTemplateWizardPage extends WizardPage {
 	private Text providerField;
 	private Text classField;
 	private Button generateMainClass;
+	
+	private boolean pluginFieldsStatus;
+	private boolean versionStatus;
+	private boolean classStatus;
+	
+	private String versionError;
+	private String classError;
 
 	public FirstTemplateWizardPage(
 		IProjectProvider projectProvider,
@@ -112,6 +119,9 @@ public class FirstTemplateWizardPage extends WizardPage {
 		}
 		this.projectProvider = projectProvider;
 		this.structureData = structureData;
+		pluginFieldsStatus=true;
+		versionStatus=true;
+		classStatus=true;
 	}
 
 	public void becomesVisible(int event) {
@@ -159,14 +169,15 @@ public class FirstTemplateWizardPage extends WizardPage {
 		versionField.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				if (!isVersionValid(versionField.getText())) {
-					setPageComplete(false);
-					setErrorMessage(
-						PDEPlugin.getResourceString(KEY_VERSION_FORMAT));
+					versionStatus=false;
+					setPageComplete(versionStatus);
+					setVersionError(PDEPlugin.getResourceString(KEY_VERSION_FORMAT));
 				} else if (fragment) {
 					verifyPluginFields();
 				} else {
-					setPageComplete(true);
-					setErrorMessage(null);
+					versionStatus=true;
+					evalPageComplete();
+					setVersionError(null);
 				}
 			}
 		});
@@ -204,12 +215,30 @@ public class FirstTemplateWizardPage extends WizardPage {
 			classField.addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent arg0) {
 					IStatus status = JavaConventions.validateJavaTypeName(classField.getText());
-					if (status.getSeverity() == IStatus.ERROR) {
-						setErrorMessage(status.getMessage());
-						setPageComplete(false);
+					if (classField.getText().equals("")){
+						generateMainClass.setEnabled(false);
+						thisCheck.setEnabled(false);
+						bundleCheck.setEnabled(false);
+						workspaceCheck.setEnabled(false);	
+						setClassError(null);
+						classStatus=true;
+						evalPageComplete();
+					} else if (status.getSeverity() == IStatus.ERROR) {
+						generateMainClass.setEnabled(true);
+						thisCheck.setEnabled(generateMainClass.getSelection());
+						bundleCheck.setEnabled(generateMainClass.getSelection());
+						workspaceCheck.setEnabled(generateMainClass.getSelection());	
+						setClassError(status.getMessage());
+						classStatus=false;
+						setPageComplete(classStatus);
 					} else {
-						setErrorMessage(null);
-						setPageComplete(true);
+						generateMainClass.setEnabled(true);
+						thisCheck.setEnabled(generateMainClass.getSelection());
+						bundleCheck.setEnabled(generateMainClass.getSelection());
+						workspaceCheck.setEnabled(generateMainClass.getSelection());	
+						setClassError(null);
+						classStatus=true;
+						evalPageComplete();
 					}
 				}
 			});
@@ -218,6 +247,7 @@ public class FirstTemplateWizardPage extends WizardPage {
 			generateMainClass = new Button(parent, SWT.CHECK);
 			generateMainClass.setText(PDEPlugin.getResourceString(KEY_GENERATE));
 			generateMainClass.setSelection(true);
+			generateMainClass.setEnabled(true);
 			GridData gd = new GridData();
 			gd.horizontalSpan = 2;
 			generateMainClass.setLayoutData(gd);
@@ -276,22 +306,26 @@ public class FirstTemplateWizardPage extends WizardPage {
 	private void verifyPluginFields() {
 		if (pluginIdField.getText().length() == 0) {
 			setErrorMessage(PDEPlugin.getResourceString(KEY_ID_NOT_SET));
-			setPageComplete(false);
+			pluginFieldsStatus=false;
+			setPageComplete(pluginFieldsStatus);
 		} else {
 			String id = pluginIdField.getText();
 			String version = pluginVersionField.getText();
 
 			if (version.length() == 0 || !isVersionValid(version)) {
-				setPageComplete(false);
+				pluginFieldsStatus=false;
+				setPageComplete(pluginFieldsStatus);
 				setErrorMessage(PDEPlugin.getResourceString(KEY_VERSION_FORMAT));
 				return;
 			}
 			int match = matchCombo.getSelectionIndex();
 			if (isPluginValid(id, version, match)) {
-				setPageComplete(true);
+				pluginFieldsStatus=true;
+				evalPageComplete();
 				setErrorMessage(null);
 			} else {
-				setPageComplete(false);
+				pluginFieldsStatus=false;
+				setPageComplete(pluginFieldsStatus);
 				setErrorMessage(PDEPlugin.getResourceString(KEY_INVALID_ID));
 			}
 		}
@@ -544,4 +578,28 @@ public class FirstTemplateWizardPage extends WizardPage {
 		return structureData;
 	}
 
+	public void evalPageComplete(){
+		setPageComplete(pluginFieldsStatus && versionStatus && classStatus);
+		
+	}
+	
+	protected void setClassError(String err){
+		classError = err;
+		evalErrorMsg();
+	}
+	
+	protected void setVersionError(String err){
+		versionError = err;
+		evalErrorMsg();
+	}
+	
+	protected void evalErrorMsg(){
+		if (versionError!=null)
+			setErrorMessage(versionError);
+		else if (classError!=null)
+			setErrorMessage(classError);
+		else
+			setErrorMessage(null);
+	}
+	
 }
