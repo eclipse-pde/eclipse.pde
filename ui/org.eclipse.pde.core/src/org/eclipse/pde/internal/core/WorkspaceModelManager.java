@@ -618,7 +618,7 @@ public class WorkspaceModelManager
 	 * @see org.eclipse.pde.core.IModelManager#shutdown()
 	 */
 	public void shutdown() {
-		//PDECore.getWorkspace().removeResourceChangeListener(this);
+		PDECore.getWorkspace().removeResourceChangeListener(this);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModelManager#isInitialized()
