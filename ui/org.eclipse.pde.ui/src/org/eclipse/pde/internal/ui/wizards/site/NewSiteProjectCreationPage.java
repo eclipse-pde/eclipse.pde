@@ -38,7 +38,6 @@ public class NewSiteProjectCreationPage extends WizardNewProjectCreationPage {
 	private Listener textModifyListener = new Listener(){
 		public void handleEvent(Event e){
 			setPageComplete(validatePage());
-			setErrorMessage(getStatusString());
 		}
 	};
 	
@@ -63,7 +62,6 @@ public class NewSiteProjectCreationPage extends WizardNewProjectCreationPage {
 		
 		Group webGroup = new Group(control, SWT.NULL);
 		webGroup.setText(PDEPlugin.getResourceString("NewSiteProjectCreationPage.webTitle")); //$NON-NLS-1$
-		webGroup.setFont(parent.getFont());
 		
 		initializeDialogUnits(parent);
 		layout = new GridLayout();
@@ -76,7 +74,7 @@ public class NewSiteProjectCreationPage extends WizardNewProjectCreationPage {
 		GridData gd = new GridData();
 		gd.horizontalSpan=2;
 		htmlButton.setLayoutData(gd);
-		
+
 		webLabel = new Label(webGroup, SWT.NULL);
 		webLabel.setText(PDEPlugin.getResourceString(HTML_WEB_LABEL));
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -96,7 +94,6 @@ public class NewSiteProjectCreationPage extends WizardNewProjectCreationPage {
 				webLabel.setEnabled(createSite);
 				webText.setEnabled(createSite);
 				setPageComplete(validatePage());
-				setErrorMessage(getStatusString());
 			}
 		});
 		
@@ -105,10 +102,12 @@ public class NewSiteProjectCreationPage extends WizardNewProjectCreationPage {
 		Dialog.applyDialogFont(webGroup);
 	}
 	
-	public String getStatusString(){
-		if (createSite && getWebLocation().equals("")) //$NON-NLS-1$
-			return PDEPlugin.getResourceString(WEB_ERR);
-		return null;
+	public String getErrorMessage(){
+		String errMsg = super.getErrorMessage();
+		if (errMsg == null || errMsg.length()==0)
+			if (createSite && getWebLocation().equals("")) //$NON-NLS-1$
+				return PDEPlugin.getResourceString(WEB_ERR);
+		return errMsg;
 	}
 	public boolean isCreateUpdateSiteHTML(){
 		return createSite;
@@ -124,6 +123,6 @@ public class NewSiteProjectCreationPage extends WizardNewProjectCreationPage {
 	}
 
 	protected boolean validatePage() {
-		return !(createSite && getWebLocation().equals("")); //$NON-NLS-1$
+		return super.validatePage() && !(createSite && getWebLocation().equals("")); //$NON-NLS-1$
 	}
 }
