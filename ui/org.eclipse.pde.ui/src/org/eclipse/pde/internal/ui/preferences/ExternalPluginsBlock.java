@@ -23,7 +23,6 @@ import org.eclipse.jface.window.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.pde.internal.ui.parts.*;
@@ -49,29 +48,21 @@ public class ExternalPluginsBlock {
 	private HashSet changed = new HashSet();
 	private IPluginModelBase[] initialModels;
 	private IPluginModelBase[] fModels;
-	private IFeatureModel[] fFeatureModels;
 	private PDEState fCurrentState;
 	private Button fIncludeFragments;
 
 	
 	class ReloadOperation implements IRunnableWithProgress {
-		private String platformPath;
+		private URL[] pluginPaths;
 		
-		public ReloadOperation(String platformPath) {
-			 this.platformPath = platformPath;
+		public ReloadOperation(URL[] pluginPaths) {
+			 this.pluginPaths = pluginPaths;
 		}
 			
 		public void run(IProgressMonitor monitor)
-				throws InvocationTargetException, InterruptedException {
-			monitor.beginTask("", 100); //$NON-NLS-1$
-			URL[] pluginPaths = PluginPathFinder.getPluginPaths(platformPath);
-			fCurrentState = new PDEState(pluginPaths, true,
-					new SubProgressMonitor(monitor, 85));
-			fModels = fCurrentState.getModels();
-
-			fFeatureModels = ExternalFeatureLoader.loadFeatureModels(
-					new SubProgressMonitor(monitor, 15), platformPath);
-			monitor.done();
+			throws InvocationTargetException, InterruptedException {	
+			fCurrentState = new PDEState(pluginPaths, true, monitor);
+			fModels = fCurrentState.getModels();		
 		}
 		
 	}
@@ -243,7 +234,8 @@ public class ExternalPluginsBlock {
 	protected void handleReload() {
 		String platformPath = page.getPlatformPath();
 		if (platformPath != null && platformPath.length() > 0) {
-			ReloadOperation op = new ReloadOperation(platformPath);
+			URL[] pluginPaths = PluginPathFinder.getPluginPaths(platformPath);
+			ReloadOperation op = new ReloadOperation(pluginPaths);
 			try {
 				PlatformUI.getWorkbench().getProgressService().run(true, false, op);
 			} catch (InvocationTargetException e) {
@@ -313,7 +305,7 @@ public class ExternalPluginsBlock {
 		}
 
 		if (reloaded) {
-			PDECore.getDefault().getExternalModelManager().reset(fCurrentState, fModels, fFeatureModels);
+			PDECore.getDefault().getExternalModelManager().reset(fCurrentState, fModels);
 		}
 	}
 	

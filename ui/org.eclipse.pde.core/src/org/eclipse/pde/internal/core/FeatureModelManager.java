@@ -40,7 +40,7 @@ public class FeatureModelManager {
 	 */
 	private FeatureTable fInactiveModels;
 
-	private ExternalModelManager fExternalManager;
+	private ExternalFeatureModelManager fExternalManager;
 
 	private WorkspaceModelManager fWorkspaceManager;
 
@@ -51,35 +51,33 @@ public class FeatureModelManager {
 	 */
 	private ArrayList fListeners;
 
-	public FeatureModelManager() {
-		fProviderListener = new IModelProviderListener() {
-			public void modelsChanged(IModelProviderEvent e) {
-				handleModelsChanged(e);
-			}
-		};
+	public FeatureModelManager(WorkspaceModelManager wm) {
+		fWorkspaceManager = wm;
 		fListeners = new ArrayList();
 	}
 
-	public void connect(WorkspaceModelManager wm, ExternalModelManager em) {
-		fExternalManager = em;
-		fWorkspaceManager = wm;
-		fExternalManager.addModelProviderListener(fProviderListener);
-		fWorkspaceManager.addModelProviderListener(fProviderListener);
-
-	}
-
-	public void shutdown() {
+	public synchronized void shutdown() {
 		if (fWorkspaceManager != null)
 			fWorkspaceManager.removeModelProviderListener(fProviderListener);
-		if (fExternalManager != null)
+		if (fExternalManager != null){
 			fExternalManager.removeModelProviderListener(fProviderListener);
+			fExternalManager.shutdown();
+		}
 	}
 
 	private synchronized void init() {
 		if (fActiveModels != null)
 			return;
+		
 		fActiveModels = new FeatureTable();
 		fInactiveModels = new FeatureTable();
+		
+		fProviderListener = new IModelProviderListener() {
+			public void modelsChanged(IModelProviderEvent e) {
+				handleModelsChanged(e);
+			}
+		};
+		fWorkspaceManager.addModelProviderListener(fProviderListener);
 
 		IFeatureModel[] models = fWorkspaceManager.getFeatureModels();
 		for (int i = 0; i < models.length; i++) {
@@ -88,23 +86,9 @@ public class FeatureModelManager {
 			fActiveModels.add(models[i]);
 		}
 
-		models = fExternalManager.getAllFeatureModels();
-		for (int i = 0; i < models.length; i++) {
-			if (!models[i].isValid()) {
-				// ignore invalid external models
-				continue;
-			}
-			String id = models[i].getFeature().getId();
-			String version = models[i].getFeature().getVersion();
-			if (fActiveModels.get(id, version).length <= 0) {
-				fActiveModels.add(models[i]);
-			} else if (fInactiveModels.get(id, version).length <= 0) {
-				fInactiveModels.add(models[i]);
-			} else {
-				// ignore duplicate external models
-			}
-		}
-
+		fExternalManager = new ExternalFeatureModelManager();
+		fExternalManager.addModelProviderListener(fProviderListener);
+		fExternalManager.startup();
 	}
 
 	/*
@@ -267,7 +251,7 @@ public class FeatureModelManager {
 			}
 		}
 		/* 2. Move features between active and inactive tables if necessary */
-		adjustExterrnalVisibility(delta, affectedIdVers);
+		adjustExternalVisibility(delta, affectedIdVers);
 		/*
 		 * 3. Changed models that do result in FeatureModelDelta.ADDED or
 		 * FeatureModelDelta.Removed fire FeatureModelDelta.CHANGED
@@ -292,7 +276,7 @@ public class FeatureModelManager {
 	 * @param delta
 	 * @param affectedIdVers
 	 */
-	private void adjustExterrnalVisibility(FeatureModelDelta delta,
+	private void adjustExternalVisibility(FeatureModelDelta delta,
 			Set affectedIdVers) {
 		if (affectedIdVers != null) {
 			for (Iterator it = affectedIdVers.iterator(); it.hasNext();) {
