@@ -36,7 +36,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public class SourcePreferencePage
 	extends PreferencePage
 	implements IWorkbenchPreferencePage {
-	private static DirectoryDialog dialog;
 	private static final String KEY_LABEL = "SourcePreferencePage.label"; //$NON-NLS-1$
 	public static final String KEY_SELECT_ALL =
 		"WizardCheckboxTablePart.selectAll"; //$NON-NLS-1$
@@ -266,8 +265,7 @@ public class SourcePreferencePage
 	}
 	
 	private DirectoryDialog getDirectoryDialog(String filterPath) {
-		if (dialog == null)
-			dialog = new DirectoryDialog(getShell());
+		DirectoryDialog dialog = new DirectoryDialog(getShell());
 		dialog.setMessage(PDEPlugin.getResourceString("SourcePreferencePage.dialogMessage")); //$NON-NLS-1$
 		if (filterPath != null)
 			dialog.setFilterPath(filterPath);
