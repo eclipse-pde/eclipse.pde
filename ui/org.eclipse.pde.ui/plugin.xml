@@ -659,10 +659,6 @@
             objectClass="org.eclipse.core.resources.IFile"
             nameFilter="plugin.xml"
             id="org.eclipse.pde.ui.search.PluginReferences">
-         <filter
-               name="projectNature"
-               value="org.eclipse.pde.PluginNature">
-         </filter>
          <action
                label="%PluginSearch.references"
                helpContextId="org.eclipse.pde.doc.user.find_references"
