@@ -711,18 +711,24 @@ public class LogView extends ViewPart implements ILogListener {
 			memento.putString(P_LOG_ERROR, "true");
 		if (memento.getString(P_SHOW_ALL_SESSIONS) == null)
 			memento.putString(P_SHOW_ALL_SESSIONS, "true");
-		if (memento.getInteger(P_COLUMN_1) == null)
+			
+		Integer width = memento.getInteger(P_COLUMN_1);
+		if (width == null || width.intValue() == 0)
 			memento.putInteger(P_COLUMN_1, 20);
-		if (memento.getInteger(P_COLUMN_2) == null)
+		width = memento.getInteger(P_COLUMN_2);	
+		if (width == null || width.intValue() == 0)
 			memento.putInteger(P_COLUMN_2, 150);
-		if (memento.getInteger(P_COLUMN_3) == null)
+		width = memento.getInteger(P_COLUMN_3);
+		if (width == null || width.intValue() == 0)
 			memento.putInteger(P_COLUMN_3, 150);
-		if (memento.getInteger(P_COLUMN_4) == null)
+		width = memento.getInteger(P_COLUMN_4);
+		if (width == null || width.intValue() == 0)
 			memento.putInteger(P_COLUMN_4, 150);
+			
 		if (memento.getString(P_ACTIVATE) == null)
 			memento.putString(P_ACTIVATE, "true");
 		if (memento.getString(P_SHOW_DETAILS) == null)
-			memento.putString(P_SHOW_DETAILS, "true");
+			memento.putString(P_SHOW_DETAILS, "false");
 		if (memento.getString(P_COLLAPSE_SESSION) == null)
 			memento.putString(P_COLLAPSE_SESSION, "true");
 		if (memento.getString(P_COLLAPSE_STACK) == null)
