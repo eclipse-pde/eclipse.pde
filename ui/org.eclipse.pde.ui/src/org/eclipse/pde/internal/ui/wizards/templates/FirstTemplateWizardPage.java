@@ -253,9 +253,7 @@ public class FirstTemplateWizardPage extends WizardPage {
 			String id = pluginIdField.getText();
 			String version = pluginVersionField.getText();
 
-			if (version.length() == 0)
-				version = null;
-			else if (!isVersionValid(version)) {
+			if (version.length() == 0 || !isVersionValid(version)) {
 				setPageComplete(false);
 				setErrorMessage(PDEPlugin.getResourceString(KEY_VERSION_FORMAT));
 				return;
