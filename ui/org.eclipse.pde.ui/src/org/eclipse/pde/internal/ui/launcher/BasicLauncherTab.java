@@ -60,7 +60,6 @@ public class BasicLauncherTab
 	private Combo jreCombo;
 	private Text vmArgsText;
 	private Text progArgsText;
-	private Text applicationNameText;
 	private Button showSplashCheck;
 	private Button defaultsButton;
 	private Image image;
@@ -98,10 +97,13 @@ public class BasicLauncherTab
 		label.setText(PDEPlugin.getResourceString(KEY_WORKSPACE));
 
 		workspaceCombo = new Combo(composite, SWT.DROP_DOWN);
-		fillIntoGrid(workspaceCombo, 1, true);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		workspaceCombo.setLayoutData(gd);
 
 		browseButton = new Button(composite, SWT.PUSH);
 		browseButton.setText(PDEPlugin.getResourceString(KEY_BROWSE));
+		browseButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+		SWTUtil.setButtonDimensionHint(browseButton);
 
 		clearWorkspaceCheck = new Button(composite, SWT.CHECK);
 		clearWorkspaceCheck.setText(PDEPlugin.getResourceString(KEY_CLEAR));
@@ -110,6 +112,11 @@ public class BasicLauncherTab
 		askClearCheck = new Button(composite, SWT.CHECK);
 		askClearCheck.setText(PDEPlugin.getResourceString(KEY_ASK_CLEAR));
 		fillIntoGrid(askClearCheck, 3, false);
+		
+		showSplashCheck = new Button(composite, SWT.CHECK);
+		showSplashCheck.setText(PDEPlugin.getResourceString(KEY_SHOW_SPLASH));
+		fillIntoGrid(showSplashCheck, 3, false);
+
 
 		label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		fillIntoGrid(label, 3, false);
@@ -132,23 +139,13 @@ public class BasicLauncherTab
 		progArgsText = new Text(composite, SWT.SINGLE | SWT.BORDER);
 		fillIntoGrid(progArgsText, 2, false);
 
-		label = new Label(composite, SWT.NULL);
-		label.setText(PDEPlugin.getResourceString(KEY_APPNAME));
-
-		applicationNameText = new Text(composite, SWT.SINGLE | SWT.BORDER);
-		fillIntoGrid(applicationNameText, 2, false);
-		
-		showSplashCheck = new Button(composite, SWT.CHECK);
-		showSplashCheck.setText(PDEPlugin.getResourceString(KEY_SHOW_SPLASH));
-		fillIntoGrid(showSplashCheck, 3, false);
-
-		label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
-		fillIntoGrid(label, 3, false);
-
 		defaultsButton = new Button(composite, SWT.PUSH);
 		defaultsButton.setText(PDEPlugin.getResourceString(KEY_RESTORE));
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		defaultsButton.setLayoutData(data);
+		gd =
+			new GridData(GridData.HORIZONTAL_ALIGN_END
+					| GridData.VERTICAL_ALIGN_END);
+		gd.horizontalSpan = 3;
+		defaultsButton.setLayoutData(gd);
 		SWTUtil.setButtonDimensionHint(defaultsButton);
 
 		hookListeners();
@@ -173,7 +170,6 @@ public class BasicLauncherTab
 			blockChanges = true;
 			vmArgsText.setText(config.getAttribute(VMARGS, ""));
 			progArgsText.setText(config.getAttribute(PROGARGS, getDefaultProgramArguments()));
-			applicationNameText.setText(config.getAttribute(APPLICATION, ""));
 			clearWorkspaceCheck.setSelection(config.getAttribute(DOCLEAR, false));
 			askClearCheck.setSelection(config.getAttribute(ASKCLEAR, true));
 			showSplashCheck.setSelection(config.getAttribute(SHOW_SPLASH, true));
@@ -225,7 +221,6 @@ public class BasicLauncherTab
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(LOCATION + "0", getDefaultWorkspace());
-		config.setAttribute(APPLICATION,"");
 		config.setAttribute(DOCLEAR, false);
 		config.setAttribute(PROGARGS, getDefaultProgramArguments());
 		config.setAttribute(SHOW_SPLASH,true);
@@ -236,7 +231,6 @@ public class BasicLauncherTab
 	private void doRestoreDefaults() {
 		progArgsText.setText(getDefaultProgramArguments());
 		vmArgsText.setText("");
-		applicationNameText.setText("");
 		workspaceCombo.setText(getDefaultWorkspace());
 		clearWorkspaceCheck.setSelection(false);
 		showSplashCheck.setSelection(true);
@@ -327,13 +321,6 @@ public class BasicLauncherTab
 			}
 		});
 		
-		applicationNameText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				if (!blockChanges)
-					updateLaunchConfigurationDialog();
-			}
-		});
-		
 		jreCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				jreSelectionStatus = validateJRESelection();
@@ -375,7 +362,6 @@ public class BasicLauncherTab
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
-		config.setAttribute(APPLICATION, getApplicationName());
 		config.setAttribute(DOCLEAR, doClearWorkspace());
 		config.setAttribute(ASKCLEAR, doAskClear());
 		config.setAttribute(SHOW_SPLASH, doShowSplash());
@@ -492,12 +478,6 @@ public class BasicLauncherTab
 		return showSplashCheck.getSelection();
 	}
 
-	/**
-	 * Returns the selected VM arguments.
-	 */
-	public String getApplicationName() {
-		return applicationNameText.getText().trim();
-	}
 
 	static IVMInstall[] getAllVMInstances() {
 		ArrayList res = new ArrayList();

@@ -178,18 +178,18 @@ public class AdvancedLauncherTab
 		layout.horizontalSpacing = 10;
 		buttonContainer.setLayout(layout);
 
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		buttonContainer.setLayoutData(gd);
-
-		pluginPathButton = new Button(buttonContainer, SWT.PUSH);
-		pluginPathButton.setText(PDEPlugin.getResourceString(KEY_PLUGIN_PATH));
-		pluginPathButton.setLayoutData(new GridData());
-		SWTUtil.setButtonDimensionHint(pluginPathButton);
 
 		defaultsButton = new Button(buttonContainer, SWT.PUSH);
 		defaultsButton.setText(PDEPlugin.getResourceString(KEY_DEFAULTS));
 		defaultsButton.setLayoutData(new GridData());
 		SWTUtil.setButtonDimensionHint(defaultsButton);
+
+		pluginPathButton = new Button(buttonContainer, SWT.PUSH);
+		pluginPathButton.setText(PDEPlugin.getResourceString(KEY_PLUGIN_PATH));
+		pluginPathButton.setLayoutData(new GridData());
+		SWTUtil.setButtonDimensionHint(pluginPathButton);
 
 		hookListeners();
 		setControl(composite);

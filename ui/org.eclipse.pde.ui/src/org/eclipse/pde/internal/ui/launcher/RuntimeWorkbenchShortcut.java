@@ -128,8 +128,6 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 			wc.setAttribute(ILauncherSettings.VMARGS, "");
 			wc.setAttribute(ILauncherSettings.PROGARGS, BasicLauncherTab.getDefaultProgramArguments());
 			wc.setAttribute(ILauncherSettings.VMINSTALL, BasicLauncherTab.getDefaultVMInstallName());
-			String appName = "org.eclipse.ui.workbench"; //$NON-NLS-1$
-			wc.setAttribute(ILauncherSettings.APPLICATION, appName);
 			wc.setAttribute(ILauncherSettings.USECUSTOM, true);
 			wc.setAttribute(ILauncherSettings.USEFEATURES, false);
 			wc.setAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, IDebugUIConstants.PERSPECTIVE_DEFAULT);

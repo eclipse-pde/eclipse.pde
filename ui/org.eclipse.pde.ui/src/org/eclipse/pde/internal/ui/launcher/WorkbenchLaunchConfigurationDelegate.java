@@ -65,7 +65,6 @@ public class WorkbenchLaunchConfigurationDelegate
 		IProgressMonitor monitor)
 		throws CoreException {
 		monitor.beginTask("",3);
-		String appName = configuration.getAttribute(APPLICATION, (String) null);
 		String targetWorkspace =
 			configuration.getAttribute(LOCATION + "0", (String) null);
 
@@ -76,7 +75,7 @@ public class WorkbenchLaunchConfigurationDelegate
 			createWorkspaceRunnerConfiguration(
 				configuration,
 				targetWorkspace,
-				appName,
+				null,
 				monitor);
 		if (monitor.isCanceled())
 			return;

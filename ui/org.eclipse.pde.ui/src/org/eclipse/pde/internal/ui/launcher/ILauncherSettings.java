@@ -15,7 +15,6 @@ public interface ILauncherSettings {
 	String PROGARGS = "progargs";
 	String LOCATION = "location";
 	String VMINSTALL = "vminstall";
-	String APPLICATION = "application";
 	String DOCLEAR = "clearws";
 	String ASKCLEAR = "askclear";
 	String TRACING = "tracing";
