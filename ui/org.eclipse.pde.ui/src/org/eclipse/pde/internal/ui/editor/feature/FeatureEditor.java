@@ -95,12 +95,12 @@ public class FeatureEditor extends PDEMultiPageXMLEditor {
 			PDECore.getDefault().getWorkspaceModelManager();
 		provider.connect(file, this);
 		IFeatureModel model = (IFeatureModel) provider.getModel(file, this);
-		boolean cleanModel = true;
+		//boolean cleanModel = true;
 		try {
 			model.load(stream, false);
 			//checkStaleReferences(model);
 		} catch (CoreException e) {
-			cleanModel = false;
+			//cleanModel = false;
 		}
 		try {
 			stream.close();

@@ -8,7 +8,6 @@ package org.eclipse.pde.internal.ui.editor;
 
 import org.eclipse.swt.widgets.*;
 import org.eclipse.pde.internal.ui.parts.*;
-import org.eclipse.pde.core.IModel;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 /**
@@ -44,10 +43,10 @@ public abstract class CheckboxTableSection extends StructuredViewerSection {
 	}
 
 	protected StructuredViewerPart createViewerPart(String [] buttonLabels) {
-		IModel model = (IModel)getFormPage().getModel();
-		CheckboxTablePart tablePart;
-		tablePart = new PartAdapter(buttonLabels);
-		return tablePart;
+		//IModel model = (IModel)getFormPage().getModel();
+		//CheckboxTablePart tablePart;
+		//tablePart = new PartAdapter(buttonLabels);
+		return new PartAdapter(buttonLabels);
 	}
 	
 	protected CheckboxTablePart getTablePart() {

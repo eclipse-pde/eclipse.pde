@@ -88,11 +88,11 @@ public class SiteEditor extends PDEMultiPageXMLEditor {
 			PDECore.getDefault().getWorkspaceModelManager();
 		provider.connect(file, this);
 		ISiteModel model = (ISiteModel) provider.getModel(file, this);
-		boolean cleanModel = true;
+		//boolean cleanModel = true;
 		try {
 			model.load(stream, false);
 		} catch (CoreException e) {
-			cleanModel = false;
+			//cleanModel = false;
 		}
 		String buildName = ".sitebuild";
 		IPath buildPath = file.getProject().getFullPath().append(buildName);

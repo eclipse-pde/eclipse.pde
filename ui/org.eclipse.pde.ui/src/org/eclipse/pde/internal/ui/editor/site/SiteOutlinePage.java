@@ -10,9 +10,7 @@ import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.elements.NamedElement;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.*;
 
 public class SiteOutlinePage extends FormOutlinePage {
 	private static final String KEY_REFERENCED_PLUGINS =
@@ -44,9 +42,9 @@ public class SiteOutlinePage extends FormOutlinePage {
 
 	public SiteOutlinePage(PDEFormPage formPage) {
 		super(formPage);
-		Image folderImage =
+		/*Image folderImage =
 			PlatformUI.getWorkbench().getSharedImages().getImage(
-				ISharedImages.IMG_OBJ_FOLDER);
+				ISharedImages.IMG_OBJ_FOLDER);*/
 	}
 	protected ITreeContentProvider createContentProvider() {
 		return new ContentProvider();

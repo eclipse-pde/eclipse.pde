@@ -218,8 +218,8 @@ public class PropertySection extends PDEFormSection {
 		}
 	}
 	public void update(Object input) {
-		ISiteModel model = (ISiteModel) input;
-		ISite site = model.getSite();
+		//ISiteModel model = (ISiteModel) input;
+		//ISite site = model.getSite();
 
 		inputChanged(currentInput);
 	}

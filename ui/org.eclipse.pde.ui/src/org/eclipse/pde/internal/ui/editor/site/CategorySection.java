@@ -102,7 +102,7 @@ public class CategorySection extends CheckboxObjectListSection {
 		if (currentInput != null) {
 			ISiteCategoryDefinition[] defs =
 				currentInput.getSite().getCategoryDefinitions();
-			ISiteCategory[] categories = currentInput.getCategories();
+			//ISiteCategory[] categories = currentInput.getCategories();
 
 			for (int i = 0; i < defs.length; i++) {
 				ISiteCategoryDefinition def = defs[i];
