@@ -38,78 +38,78 @@ public void generateContents(
 	writer.println(" */");
 	writer.println("public class " + className + " extends AbstractUIPlugin {");
 	if ((flags & F_THIS) != 0) {
-		writer.println("   //The shared instance.");
-		writer.println("   private static " + className + " plugin;");
+		writer.println("\t//The shared instance.");
+		writer.println("\tprivate static " + className + " plugin;");
 	}
 	if ((flags & F_BUNDLES) != 0) {
-		writer.println("   //Resource bundle.");
-		writer.println("   private ResourceBundle resourceBundle;");
+		writer.println("\t//Resource bundle.");
+		writer.println("\tprivate ResourceBundle resourceBundle;");
 	}
-	writer.println("   ");
-	writer.println("  /**");
-	writer.println("   * The constructor.");
-	writer.println("   */");
-	writer.println("   public " + className + "(IPluginDescriptor descriptor) {");
-	writer.println("      super(descriptor);");
+	writer.println("\t");
+	writer.println("\t/**");
+	writer.println("\t * The constructor.");
+	writer.println("\t */");
+	writer.println("\tpublic " + className + "(IPluginDescriptor descriptor) {");
+	writer.println("\t\tsuper(descriptor);");
 	if ((flags & F_THIS) != 0) {
-		writer.println("      plugin = this;");
+		writer.println("\t\tplugin = this;");
 	}
 	if ((flags & F_BUNDLES) != 0) {
-		writer.println("      try {");
+		writer.println("\t\ttry {");
 		writer.println(
-			"         resourceBundle= ResourceBundle.getBundle(\""
+			"\t\t\tresourceBundle= ResourceBundle.getBundle(\""
 				+ packageName
 				+ "."
 				+ className
 				+ "Resources\");"); 
-		writer.println("      } catch (MissingResourceException x) {");
-		writer.println("         resourceBundle = null;");
-		writer.println("      }");
+		writer.println("\t\t} catch (MissingResourceException x) {");
+		writer.println("\t\t\tresourceBundle = null;");
+		writer.println("\t\t}");
 	}
-	writer.println("   }");
+	writer.println("\t}");
 	if ((flags & F_THIS) != 0) {
 		writer.println();
-		writer.println("  /**");
-		writer.println("   * Returns the shared instance.");
-		writer.println("   */");
-		writer.println("   public static " + className + " getDefault() {");
-		writer.println("      return plugin;");
-		writer.println("   }");
+		writer.println("\t/**");
+		writer.println("\t * Returns the shared instance.");
+		writer.println("\t */");
+		writer.println("\tpublic static " + className + " getDefault() {");
+		writer.println("\t\treturn plugin;");
+		writer.println("\t}");
 	}
 	if ((flags & F_WORKSPACE) != 0) {
 		writer.println();
-		writer.println("  /**");
-		writer.println("   * Returns the workspace instance.");
-		writer.println("   */");
-		writer.println("   public static IWorkspace getWorkspace() {");
+		writer.println("\t/**");
+		writer.println("\t * Returns the workspace instance.");
+		writer.println("\t */");
+		writer.println("\tpublic static IWorkspace getWorkspace() {");
 		writer.println(
-			"      return ResourcesPlugin.getWorkspace();"); 
-		writer.println("   }");
+			"\t\treturn ResourcesPlugin.getWorkspace();"); 
+		writer.println("\t}");
 	}
 	if ((flags & F_BUNDLES) != 0) {
 		writer.println();
-		writer.println("  /**");
-		writer.println("   * Returns the string from the plugin's resource bundle,");
-		writer.println("   * or 'key' if not found.");
-		writer.println("   */");
-		writer.println("   public static String getResourceString(String key) {");
+		writer.println("\t/**");
+		writer.println("\t * Returns the string from the plugin's resource bundle,");
+		writer.println("\t * or 'key' if not found.");
+		writer.println("\t */");
+		writer.println("\tpublic static String getResourceString(String key) {");
 		writer.println(
-			"      ResourceBundle bundle= "
+			"\t\tResourceBundle bundle= "
 				+ className
 				+ ".getDefault().getResourceBundle();"); 
-		writer.println("      try {");
-		writer.println("         return bundle.getString(key);");
-		writer.println("      } catch (MissingResourceException e) {");
-		writer.println("         return key;");
-		writer.println("      }");
-		writer.println("   }");
+		writer.println("\t\ttry {");
+		writer.println("\t\t\treturn bundle.getString(key);");
+		writer.println("\t\t} catch (MissingResourceException e) {");
+		writer.println("\t\t\treturn key;");
+		writer.println("\t\t}");
+		writer.println("\t}");
 		writer.println();
-		writer.println("  /**");
-		writer.println("   * Returns the plugin's resource bundle,");
-		writer.println("   */");
-		writer.println("   public ResourceBundle getResourceBundle() {");
-		writer.println("      return resourceBundle;");
-		writer.println("   }");
+		writer.println("\t/**");
+		writer.println("\t * Returns the plugin's resource bundle,");
+		writer.println("\t */");
+		writer.println("\tpublic ResourceBundle getResourceBundle() {");
+		writer.println("\t\treturn resourceBundle;");
+		writer.println("\t}");
 	}
 	writer.println("}");
 }

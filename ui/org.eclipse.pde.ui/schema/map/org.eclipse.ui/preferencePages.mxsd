@@ -81,7 +81,7 @@ the root level.
 &lt;samp&gt;org.eclipse.ui.IWorkbenchPreferencePage&lt;/samp&gt;.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.ui.IWorkbenchPreferencePage"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.jface.preference.PreferencePage:org.eclipse.ui.IWorkbenchPreferencePage"/>
                </appInfo>
             </annotation>
          </attribute>

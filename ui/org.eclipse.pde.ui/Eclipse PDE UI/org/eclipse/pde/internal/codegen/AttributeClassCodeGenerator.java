@@ -17,6 +17,7 @@ public class AttributeClassCodeGenerator extends JavaCodeGenerator {
 	private ISchemaAttribute attInfo;
 	private IJavaProject javaProject;
 	private IType expectedType;
+	private IType expectedInterface;
 	private Vector requiredMethods;
 	private Vector requiredImports;
 
@@ -42,11 +43,13 @@ private void addImports(PrintWriter writer) {
 	}
 	writer.println();
 }
+
 private void addRequiredMethodsFor(String typeName) throws JavaModelException {
 	IType type = findTypeForName(typeName);
 	if (type != null)
 		addRequiredMethodsFor(type);
 }
+
 private void addRequiredMethodsFor(IType type) throws JavaModelException {
 	// Check the super-interfaces
 	String[] interfaceNames = type.getSuperInterfaceNames();
@@ -121,10 +124,24 @@ private IMethod findMatchingMethod(IMethod method)
 }
 private void findRequiredMethods() {
 	String expectedTypeName = attInfo.getBasedOn();
+	String expectedClassName = null;
+	String expectedInterfaceName = null;
+	if (expectedTypeName==null) return;
+	int del = expectedTypeName.indexOf(':');
+	if (del!= -1) {
+		// class and interface
+		expectedClassName = expectedTypeName.substring(0, del);
+		expectedInterfaceName = expectedTypeName.substring(del+1);
+		expectedTypeName = expectedClassName;
+	}
 	try {
 		expectedType = findTypeForName(expectedTypeName);
 		if (expectedType==null) return;
+		if (expectedType.isClass() && expectedInterfaceName!=null) 
+			expectedInterface = findTypeForName(expectedInterfaceName);
 		requiredMethods = new Vector();
+		if (expectedInterface!=null)
+		   addRequiredMethodsFor(expectedInterface);
 		addRequiredMethodsFor(expectedType);
 	} catch (JavaModelException e) {
 		PDEPlugin.logException(e);
@@ -146,6 +163,7 @@ private IType findTypeForName(String typeName) throws JavaModelException {
 		}
 	return type;
 }
+
 public void generateContents(
 	String packageName,
 	String className,
@@ -161,8 +179,15 @@ public void generateContents(
 			methodsBuffer = generateMethods();
 		}
 		String extending = expectedType.isInterface() ? " implements " : " extends ";
+		String interfaceExtending = "";
+		if (expectedInterface!=null) {
+			interfaceExtending = " implements "+
+			getSimpleName(expectedInterface.getFullyQualifiedName());
+		}
 
-		requiredImports.addElement(expectedType.getFullyQualifiedName());
+		requiredImports.add(expectedType.getFullyQualifiedName());
+		if (expectedInterface!=null)
+		   requiredImports.add(expectedInterface.getFullyQualifiedName());
 
 		writer.println("package " + packageName + ";");
 		writer.println();
@@ -176,12 +201,13 @@ public void generateContents(
 				+ className
 				+ extending
 				+ getSimpleName(expectedType.getFullyQualifiedName())
+				+ interfaceExtending
 				+ " {");
-		writer.println("  /**");
-		writer.println("   * The constructor.");
-		writer.println("   */");
-		writer.println("   public " + className + "() {");
-		writer.println("   }");
+		writer.println("\t/**");
+		writer.println("\t * The constructor.");
+		writer.println("\t */");
+		writer.println("\tpublic " + className + "() {");
+		writer.println("\t}");
 		if (methodsBuffer != null) {
 			writer.println();
 			writer.print(methodsBuffer);
@@ -206,11 +232,11 @@ public void generateUnknownContents(
 		"public class "
 			+ className
 			+ " {");
-	writer.println("  /**");
-	writer.println("   * The constructor.");
-	writer.println("   */");
-	writer.println("   public " + className + "() {");
-	writer.println("   }");
+	writer.println("\t/**");
+	writer.println("\t * The constructor.");
+	writer.println("\t */");
+	writer.println("\tpublic " + className + "() {");
+	writer.println("\t}");
 	writer.println("}");
 }
 
@@ -233,16 +259,16 @@ private void generateRequiredMethod(IMethod method, PrintWriter writer)
 	boolean isProtected = Flags.isProtected(flags);
 	String access = isProtected ? "protected" : "public";
 	String returnType = parseSignature(method.getReturnType());
-	writer.println("  /**");
-	writer.println("   * Insert the method's description here.");
+	writer.println("\t/**");
+	writer.println("\t * Insert the method's description here.");
 	writer.println(
-		"   * @see "
+		"\t * @see "
 			+ getSimpleName(expectedType.getElementName())
 			+ "#"
 			+ method.getElementName());
-	writer.println("   */");
+	writer.println("\t */");
 	writer.print(
-		"   " + access + " " + returnType + " " + method.getElementName() + "("); 
+		"\t" + access + " " + returnType + " " + method.getElementName() + "("); 
 	String[] parameterNames = method.getParameterNames();
 	String[] parameterTypes = method.getParameterTypes();
 	for (int i = 0; i < method.getNumberOfParameters(); i++) {
@@ -264,8 +290,8 @@ private void generateRequiredMethod(IMethod method, PrintWriter writer)
 	writer.println(" {");
 	String returnValue = calculateReturnValue(method.getReturnType());
 	if (returnValue != null)
-		writer.println("      return " + returnValue + ";");
-	writer.println("   }");
+		writer.println("\t\treturn " + returnValue + ";");
+	writer.println("\t}");
 }
 private String getSimpleName(String fullyQualifiedName) {
 	int dot = fullyQualifiedName.lastIndexOf('.');

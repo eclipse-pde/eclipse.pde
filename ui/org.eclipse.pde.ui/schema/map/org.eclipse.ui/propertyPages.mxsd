@@ -65,6 +65,9 @@ property pages only for specific object types.
          </appInfo>
       </annotation>
       <complexType>
+         <sequence>
+            <element ref="filter" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
@@ -106,7 +109,7 @@ property pages only for specific object types.
 interface.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.ui.IWorkbenchPropertyPage"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.dialogs.PropertyPage:org.eclipse.ui.IWorkbenchPropertyPage"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -115,6 +118,27 @@ interface.
                <documentation>
                   an optional attribute that allows registration conditional on
 wild card match applied to the target object name.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="filter">
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the name of an object attribute.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="value" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the value of an object attribute.  In combination with
+the name attribute, the name value pair is used to 
+define the target object for a property page.
                </documentation>
             </annotation>
          </attribute>

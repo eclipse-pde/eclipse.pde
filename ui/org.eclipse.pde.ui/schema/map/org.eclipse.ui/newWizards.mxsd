@@ -135,7 +135,7 @@ added to the "Other" category.
                   a fully qualified name of the Java class implementing &lt;samp&gt;org.eclipse.ui.INewWizard&lt;/samp&gt;.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.ui.INewWizard"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.jface.wizard.Wizard:org.eclipse.ui.INewWizard"/>
                </appInfo>
             </annotation>
          </attribute>

@@ -413,7 +413,7 @@
    </map>
    <map
          point="org.eclipse.core.target.targets"
-         schema="schema/map/org.eclipse.target/targets.mxsd">
+         schema="schema/map/org.eclipse.core.target/targets.mxsd">
    </map>
    <map
          point="org.eclipse.debug.core.launchers"

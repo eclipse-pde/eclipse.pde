@@ -50,6 +50,11 @@ by invoking the "Switch To" submenu of the Perspective menu.
    </element>
 
    <element name="layout">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="description" minOccurs="0" maxOccurs="1"/>

@@ -125,7 +125,7 @@ This attribute may  be left undefined if this is an  external
 editor.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.ui.EditorPart"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.part.EditorPart"/>
                </appInfo>
             </annotation>
          </attribute>

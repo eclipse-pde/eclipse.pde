@@ -131,6 +131,11 @@ No contribution will take place if there is no match.
    </element>
 
    <element name="menu">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="label"/>
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="separator" minOccurs="1" maxOccurs="unbounded"/>
@@ -174,6 +179,11 @@ Therefore, separators serve as named groups into which actions can be added.
    </element>
 
    <element name="action">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="label"/>
+         </appInfo>
+      </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -261,6 +271,11 @@ within its &lt;samp&gt;selectionChanged&lt;/samp&gt; method.
    </element>
 
    <element name="filter">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
+      </annotation>
       <complexType>
          <attribute name="name" type="string" use="required">
             <annotation>

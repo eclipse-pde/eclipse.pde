@@ -95,7 +95,7 @@ may contribute a wizard that allows users to configure
 and launch specific attributes.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.debug.ui.ILaunchWizard"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.jface.wizard.Wizard:org.eclipse.debug.ui.ILaunchWizard"/>
                </appInfo>
             </annotation>
          </attribute>

@@ -86,7 +86,7 @@ an import wizard can be made available only for objects of type
                &lt;tt&gt;org.eclipse.ui.IImportWizard&lt;/tt&gt; interface
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.ui.IImportWizard"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.jface.wizard.Wizard:org.eclipse.ui.IImportWizard"/>
                </appInfo>
             </annotation>
          </attribute>
