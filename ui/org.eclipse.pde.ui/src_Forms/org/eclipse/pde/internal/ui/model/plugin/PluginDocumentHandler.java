@@ -165,7 +165,9 @@ public class PluginDocumentHandler extends DefaultHandler {
 			IDocumentTextNode textNode = node.getTextNode();
 			if (textNode != null) {
 				IDocument doc = fModel.getDocument();
-				String text = doc.get(textNode.getOffset(), node.getLength() - textNode.getOffset() + node.getOffset());
+				String text = doc.get(node.getOffset(), node.getLength());
+				textNode.setOffset(node.getOffset() + text.indexOf(textNode.getText()));
+				text = doc.get(textNode.getOffset(), node.getLength() - textNode.getOffset() + node.getOffset());
 				int index = text.indexOf('<');
                 for (index -= 1; index >= 0; index--) {
                 	if (!Character.isWhitespace(text.charAt(index))) {
@@ -221,13 +223,14 @@ public class PluginDocumentHandler extends DefaultHandler {
 				textNode.setEnclosingElement(parent);
 				parent.addTextNode(textNode);
 				
-				int offset = start;
+				/*int offset = start;
 				for (; offset <= start + length; offset++) {
 					if (!Character.isWhitespace(ch[offset])) {
 						textNode.setOffset(offset);
 						break;
 					}
-				}
+				}*/
+				textNode.setText(buffer.toString().trim());
 			}
 		}
 	}
