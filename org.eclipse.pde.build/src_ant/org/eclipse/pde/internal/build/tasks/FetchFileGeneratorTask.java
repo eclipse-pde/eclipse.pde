@@ -31,6 +31,10 @@ public class FetchFileGeneratorTask extends Task {
 		fileFetcher.setContentFilter(filter);
 	}
 
+	public void setComponentFilter(String components) {
+		fileFetcher.setComponentFilter(components);
+	}
+	
 	public void setMap(String mapLocation) {
 		fileFetcher.setMapLocation(mapLocation);
 	}

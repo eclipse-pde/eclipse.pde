@@ -32,10 +32,21 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 	private Properties mapContent;
 	private Properties selectedFiles;
 
+	private void displayDebugInfo() {
+		if (!BundleHelper.getDefault().isDebugging())
+			return;
+		
+		System.out.println("Configuration: " + config.toString());	//$NON-NLS-1$
+		System.out.println("Filters: " + (filters!=null ? Utils.getStringFromArray(filters, ", ") : "NONE"));	//$NON-NLS-1$ 	//$NON-NLS-2$ 	//$NON-NLS-3$
+		System.out.println("Component filter: " + (componentFilter!=null ? Utils.getStringFromArray(componentFilter, ", ") : "NONE"));	//$NON-NLS-1$ 	//$NON-NLS-2$ 	//$NON-NLS-3$
+		System.out.println("Map location: " + mapLocation);	//$NON-NLS-1$
+	}
+	
 	public void generate() throws CoreException {
 		config = (Config) getConfigInfos().get(0);
 		collectedFiles = ""; //$NON-NLS-1$
-
+		displayDebugInfo();
+		
 		openScript(workingDirectory, DEFAULT_FETCH_SCRIPT_FILENAME);
 		generatePrologue();
 		try {
@@ -133,8 +144,10 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 				generateFetchFileFor(fileName, fileDescription[URL], userInfos);
 				collectedFiles += fileName + ", " + (fileDescription[DIRECTORY].equals("") ? "." : fileDescription[DIRECTORY]) + " & "; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$				
 			} else {
-				IStatus status = new Status(IStatus.INFO, PI_PDEBUILD, WARNING_ELEMENT_NOT_FETCHED, Policy.bind("error.fetchingFailed", fileDescription[DIRECTORY]), null); //$NON-NLS-1$
-				BundleHelper.getDefault().getLog().log(status);
+				if (BundleHelper.getDefault().isDebugging()) {
+					IStatus status = new Status(IStatus.INFO, PI_PDEBUILD, WARNING_ELEMENT_NOT_FETCHED, Policy.bind("error.fetchingFailed", fileDescription[DIRECTORY]), null); //$NON-NLS-1$
+					BundleHelper.getDefault().getLog().log(status);
+				}
 			} 
 		}
 	}
@@ -173,18 +186,19 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 		return false;
 	}
 	
+	//Return true if the componentName is listed in the component filter, or if no filter is specified
 	private boolean filterByComponentName(String componentName) {
-		if (componentName.equals(UNKNOWN))
+		if (componentName.equals(UNKNOWN) || componentFilter == null)
 			return true;
 		
 		for (int i = 0; i < componentFilter.length; i++) {
-			if (componentFilter[i].equalsIgnoreCase(componentName))
+			if (componentFilter[i].equalsIgnoreCase(componentName) || componentFilter[i].equalsIgnoreCase(UNKNOWN))
 				return true;
 		}
 		return false;
 	}
 	
 	public void setComponentFilter(String componentFiler) {
-		this.componentFilter = Utils.getArrayFromStringWithBlank(componentFiler, FILTER_SEPARATOR);
+		this.componentFilter = Utils.getArrayFromStringWithBlank(componentFiler, ",");
 	}
 }

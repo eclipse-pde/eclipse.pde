@@ -19,7 +19,8 @@
 		<eclipse.fetchFilesGenerator map="${workingDirectory}/all.maps"
 									workingDirectory="${workingDirectory}"
 									configInfo="${config}"
-									contentFilter="${contentFilter}"/>
+									contentFilter="${contentFilter}"
+									componentFilter="${componentFilter}"/>
 		<ant antfile="fetch.xml" dir="${workingDirectory}" />
 	</target>
 	
