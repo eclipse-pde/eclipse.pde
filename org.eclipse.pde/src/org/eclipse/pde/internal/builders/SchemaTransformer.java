@@ -30,6 +30,10 @@ public class SchemaTransformer implements ISchemaTransformer {
 	public static final String KEY_DEPRECATED_TYPE =
 		"Builders.Schema.deprecatedType";
 
+	private static final String COLOR_TAG = "#000080";
+	private static final String COLOR_CSTRING = "#008000";
+	private static final String COLOR_DTD="#800000";
+
 	private void appendAttlist(
 		PrintWriter out,
 		ISchemaAttribute att,
@@ -46,24 +50,27 @@ public class SchemaTransformer implements ISchemaTransformer {
 		// add data type
 		ISchemaSimpleType type = att.getType();
 		ISchemaRestriction restriction = null;
+		boolean choices = false;
 		if (type != null)
 			restriction = type.getRestriction();
 		String typeName =
 			type != null ? type.getName().toLowerCase() : "string";
 		if (typeName.equals("boolean")) {
 			out.print("(true | false) \"false\"");
+			choices = true;
 		} else if (restriction != null) {
 			appendRestriction(restriction, out);
+			choices=true;
 		} else {
 			out.print("CDATA ");
 		}
 
 		// add use
-		if (att.getUse() == ISchemaAttribute.REQUIRED)
-			out.print("#REQUIRED");
-		else if (att.getUse() == ISchemaAttribute.DEFAULT) {
+		if (att.getUse() == ISchemaAttribute.REQUIRED) {
+			if (!choices) out.print("#REQUIRED");
+		} else if (att.getUse() == ISchemaAttribute.DEFAULT) {
 			out.print("\"" + att.getValue() + "\"");
-		} else
+		} else if (!choices)
 			out.print("#IMPLIED");
 		out.println("</samp>");
 	}
@@ -288,8 +295,8 @@ public class SchemaTransformer implements ISchemaTransformer {
 	private void transformElement(PrintWriter out, ISchemaElement element) {
 		String name = element.getName();
 		String dtd = element.getDTDRepresentation();
-		out.print("<p><samp>&nbsp;&nbsp; &lt;!ELEMENT " + name + " " + dtd);
-		out.println("&gt;</samp>");
+		out.print("<p><samp><font color=\""+COLOR_DTD+"\">&nbsp;&nbsp; &lt;!ELEMENT " + name + " " + dtd);
+		out.println("&gt;</font></samp>");
 
 		ISchemaAttribute[] attributes = element.getAttributes();
 		String description = element.getDescription();
@@ -308,12 +315,12 @@ public class SchemaTransformer implements ISchemaTransformer {
 		if (attributes.length == 0)
 			return;
 
-		out.println("<samp>&nbsp;&nbsp; &lt;!ATTLIST " + name + "</samp>");
+		out.println("<samp><font color=\""+COLOR_DTD+"\">&nbsp;&nbsp; &lt;!ATTLIST " + name + "</samp>");
 		int maxWidth = calculateMaxAttributeWidth(element.getAttributes());
 		for (int i = 0; i < attributes.length; i++) {
 			appendAttlist(out, attributes[i], maxWidth);
 		}
-		out.println("<br><samp>&nbsp;&nbsp; &gt;</samp>");
+		out.println("<br><samp>&nbsp;&nbsp; &gt;</font></samp>");
 
 		out.println("<ul>");
 		for (int i = 0; i < attributes.length; i++) {
@@ -337,10 +344,10 @@ public class SchemaTransformer implements ISchemaTransformer {
 			ISchemaElement element = elements[i];
 			transformElement(out, element);
 		}
-		if (elements.length>0) {
-			ISchemaElement lastElement = elements[elements.length-1];
-			if (lastElement.getAttributeCount()==0 &&
-				lastElement.getDescription()==null) {
+		if (elements.length > 0) {
+			ISchemaElement lastElement = elements[elements.length - 1];
+			if (lastElement.getAttributeCount() == 0
+				&& lastElement.getDescription() == null) {
 				out.print("<br><br>");
 			}
 		}
@@ -376,8 +383,12 @@ public class SchemaTransformer implements ISchemaTransformer {
 		out.println("<p>");
 	}
 	private void transformText(PrintWriter out, String text) {
-		if (text==null) return;
+		if (text == null)
+			return;
 		boolean preformatted = false;
+		boolean inTag = false;
+		boolean inCstring = false;
+
 		for (int i = 0; i < text.length(); i++) {
 			char c = text.charAt(i);
 			if (c == '<') {
@@ -391,16 +402,23 @@ public class SchemaTransformer implements ISchemaTransformer {
 					out.print("</pre>");
 					i += 5;
 					preformatted = false;
+					inTag = false;
+					inCstring = false;
 					continue;
 				}
 			}
 			if (preformatted) {
 				switch (c) {
 					case '<' :
+						inTag = true;
+						out.print("<font color=\"" + COLOR_TAG + "\">");
 						out.print("&lt;");
 						break;
 					case '>' :
 						out.print("&gt;");
+						out.print("</font>");
+						inTag = false;
+						inCstring = false;
 						break;
 					case '&' :
 						out.print("&amp;");
@@ -409,7 +427,18 @@ public class SchemaTransformer implements ISchemaTransformer {
 						out.print("&apos;");
 						break;
 					case '\"' :
-						out.print("&quot;");
+						if (inTag) {
+							if (inCstring) {
+								out.print("&quot;");
+								out.print("</font>");
+								inCstring = false;
+							} else {
+								inCstring = true;
+								out.print(
+									"<font color=\"" + COLOR_CSTRING + "\">");
+								out.print("&quot;");
+							}
+						}
 						break;
 					default :
 						out.print(c);
