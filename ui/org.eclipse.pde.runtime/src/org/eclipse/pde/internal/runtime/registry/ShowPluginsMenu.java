@@ -65,7 +65,7 @@ public class ShowPluginsMenu extends ContributionItem {
 	}
 	private void handleShowPlugins(byte type) {
 		((RegistryBrowserContentProvider) treeViewer.getContentProvider())
-				.setShowPlugins(type);
+				.setShowType(type);
 		treeViewer.refresh();
 	}
 }

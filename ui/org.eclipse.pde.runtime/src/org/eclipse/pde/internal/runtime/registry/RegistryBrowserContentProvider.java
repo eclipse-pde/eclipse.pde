@@ -17,10 +17,10 @@ public class RegistryBrowserContentProvider
 		implements
 			org.eclipse.jface.viewers.ITreeContentProvider {
 	private Hashtable pluginMap = new Hashtable();
-	private String searchText="";
-	private byte searchType, showType;
+	private byte showType;
 	public boolean isInExtensionSet;
 	private TreeViewer viewer;
+
 	
 	class PluginFolder implements IPluginFolder {
 		private int id;
@@ -49,8 +49,7 @@ public class RegistryBrowserContentProvider
 	public RegistryBrowserContentProvider(TreeViewer viewer){
 		super();
 		this.viewer = viewer;
-		searchType = RegistrySearchMenu.NO_SEARCH;
-		showType = ShowPluginsMenu.SHOW_ALL_PLUGINS;
+		showType = ShowPluginsMenu.SHOW_RUNNING_PLUGINS;
 	}
 	protected PluginObjectAdapter createAdapter(Object object, int id) {
 		if (id == IPluginFolder.F_EXTENSIONS)
@@ -75,7 +74,7 @@ public class RegistryBrowserContentProvider
 	public Object[] getChildren(Object element) {
 		
 		if (element instanceof ExtensionAdapter) {
-			return null;
+			return ((ExtensionAdapter) element).getChildren();
 		}
 		isInExtensionSet = false;
 		if (element instanceof ExtensionPointAdapter) {
@@ -92,8 +91,8 @@ public class RegistryBrowserContentProvider
 			if (plugins == null)
 				return new Object[0];
 			
-			if (showType != ShowPluginsMenu.SHOW_ALL_PLUGINS || searchType != RegistrySearchMenu.NO_SEARCH){
-				boolean matchesShowCriteria = true, matchesSearchCriteria = true;
+			if (showType != ShowPluginsMenu.SHOW_ALL_PLUGINS){ //|| searchType != RegistrySearchMenu.NO_SEARCH){
+				boolean matchesShowCriteria = true;
 				ArrayList resultList = new ArrayList();
 				for (int i = 0; i < plugins.length; i++) {
 					if (plugins[i] instanceof PluginObjectAdapter) {
@@ -106,31 +105,11 @@ public class RegistryBrowserContentProvider
 							if (showType != ShowPluginsMenu.SHOW_ALL_PLUGINS)
 								matchesShowCriteria = (showType == ShowPluginsMenu.SHOW_RUNNING_PLUGINS && desc.isPluginActivated()) ||
 										(showType == ShowPluginsMenu.SHOW_NON_RUNNING_PLUGINS && !desc.isPluginActivated());
-							else
-								matchesShowCriteria = true;
-							
-							// handle search criteria
-							if (searchType != RegistrySearchMenu.NO_SEARCH && searchText!=null) {
-								String compareText;
-								if (searchType == RegistrySearchMenu.ID_SEARCH)
-									compareText = desc.getUniqueIdentifier().toLowerCase();
-								else if (searchType == RegistrySearchMenu.NAME_SEARCH)
-									compareText = desc.getLabel().toLowerCase();
-								else {
-									compareText = desc.getVersionIdentifier().getMajorComponent() + "." +
-									desc.getVersionIdentifier().getMinorComponent() + "." +
-									desc.getVersionIdentifier().getServiceComponent();
-								}
-								
-								matchesSearchCriteria = compareText.indexOf(searchText.toLowerCase()) != -1;
-							} else 
-								matchesSearchCriteria = true;
 						}
 					}
-					if (matchesShowCriteria && matchesSearchCriteria)
+					if (matchesShowCriteria)
 						resultList.add(plugins[i]);
 				}
-				searchType = RegistrySearchMenu.NO_SEARCH; 
 				return resultList.toArray(new Object[resultList.size()]);
 			}
 			return plugins;
@@ -145,9 +124,7 @@ public class RegistryBrowserContentProvider
 			} else {
 				ArrayList folderList = new ArrayList();
 				for (int i = 0; i<folders.length; i++){
-					if (((IPluginFolder)folders[i]).getFolderId() != 4 && ((IPluginFolder)folders[i]).getFolderId() != 3)
-						folderList.add(folders[i]);
-					else if (folders[i] != null && ((IPluginFolder)folders[i]).getChildren() != null)
+					if (folders[i] != null && ((IPluginFolder)folders[i]).getChildren() != null)
 						folderList.add(folders[i]);
 				}
 				folders = folderList.toArray(new Object[folderList.size()]);
@@ -246,31 +223,7 @@ public class RegistryBrowserContentProvider
 	public boolean isDeleted(Object element) {
 		return false;
 	}
-	public void setUniqueIdSearch(String id) {
-		if (id == null || id.length() == 0) {
-			searchType = RegistrySearchMenu.NO_SEARCH;
-			return;
-		}
-		searchText = id;
-		searchType = RegistrySearchMenu.ID_SEARCH;
-	}
-	public void setNameSearch(String name) {
-		if (name == null || name.length() == 0) {
-			searchType = RegistrySearchMenu.NO_SEARCH;
-			return;
-		}
-		searchText = name;
-		searchType = RegistrySearchMenu.NAME_SEARCH;
-	}
-	public void setVersionSearch(String version) {
-		if (version == null || version.length() == 0) {
-			searchType = RegistrySearchMenu.NO_SEARCH;
-			return;
-		}
-		searchText = version;
-		searchType = RegistrySearchMenu.VERSION_SEARCH;
-	}
-	public void setShowPlugins(byte type){
+	public void setShowType(byte type){
 		this.showType = type;
 	}
 	public byte getShowType(){

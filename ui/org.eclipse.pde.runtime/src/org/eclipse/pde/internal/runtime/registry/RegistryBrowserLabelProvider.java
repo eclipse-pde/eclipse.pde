@@ -130,22 +130,9 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 			if (((RegistryBrowserContentProvider)viewer.getContentProvider()).isInExtensionSet)
 				return ((IExtension) element).getExtensionPointUniqueIdentifier();
 
-			IConfigurationElement[] configElements = ((IExtension) element).getConfigurationElements();
-			String project = configElements[0].getAttributeAsIs("class");
-			if (project == null){
-				String[] attrNames = configElements[0].getAttributeNames();
-				for (int i = 0; i<attrNames.length; i++){
-					if (attrNames[i].toLowerCase().indexOf("id") != -1){
-						project =  configElements[0].getAttribute(attrNames[i]);
-						break;
-					}
-				}
-				if (project == null)
-					return "";
-			} 
+			IPluginDescriptor desc = ((IExtension) element).getDeclaringPluginDescriptor();
+			return "from "+ desc.getUniqueIdentifier();
 			
-			int classNameLoc = project.lastIndexOf(".");
-			return classNameLoc != -1 ? project.substring(0,classNameLoc) : project;
 		}
 		if (element instanceof IExtensionPoint) {
 			return ((IExtensionPoint) element).getUniqueIdentifier();
