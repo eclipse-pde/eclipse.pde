@@ -139,6 +139,7 @@ public abstract class PDEMultiPageEditor
 					if (formPage.getSelection() != null)
 						setSelection(formPage.getSelection());
 				}
+				((IPDEEditorPage)page).setFocus();
 			}
 		});
 		MenuManager manager = new MenuManager();
@@ -412,7 +413,7 @@ public abstract class PDEMultiPageEditor
 		selectionProvider.removeSelectionChangedListener(listener);
 	}
 	public void setFocus() {
-		//getCurrentPage().setFocus();
+		getCurrentPage().setFocus();
 	}
 	public void setSelection(ISelection selection) {
 		selectionProvider.setSelection(selection);

@@ -16,6 +16,7 @@ import org.eclipse.ui.texteditor.*;
 import org.eclipse.ui.dialogs.ContainerGenerator;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
+import org.eclipse.pde.internal.PDEPlugin;
 
 public abstract class PDEMultiPageXMLEditor extends PDEMultiPageEditor {
 	
@@ -49,8 +50,7 @@ class UTF8FileDocumentProvider extends FileDocumentProvider {
 			document.set(buffer.toString());
 		
 		} catch (IOException x) {
-			IStatus s= new Status(IStatus.ERROR, null, IStatus.OK, x.getMessage(), x);
-			throw new CoreException(s);
+			PDEPlugin.logException(x);
 		} finally {
 			if (in != null) {
 				try {

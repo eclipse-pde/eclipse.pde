@@ -192,6 +192,9 @@ public void sectionChanged(
 		element = schema;
 	updateDocument();
 }
+public void setFocus() {
+	sourceViewer.getTextWidget().setFocus();
+}
 public void setEditable(boolean newEditable) {
 	editable = newEditable;
 }

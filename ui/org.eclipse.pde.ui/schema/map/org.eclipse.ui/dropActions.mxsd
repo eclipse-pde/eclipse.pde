@@ -15,10 +15,10 @@ and nature of other views. This can make drag and
 drop operations between plugins difficult. 
 For example, one may wish to provide Java 
 refactoring support whereby the user drags a 
-method from the Java editor’s content outliner 
+method from the Java editorò³ £ontent outliner 
 into another java file in the resource navigator. 
-Since the resource navigator doesn’t know anything 
-about Java content, it doesn’t know how to behave 
+Since the resource navigator doesnò´ «now anything 
+about Java content, it doesnò´ «now how to behave 
 when java methods are dropped onto it.  
 Similarly, an ISV may want to drop some of 
 their content into one of the Java viewers. 

@@ -34,7 +34,7 @@ and potentially may be presented to users.
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="transient" minOccurs="0" maxOccurs="1"/>
+            <element ref="persistent" minOccurs="0" maxOccurs="1"/>
             <element ref="super" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="attribute" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
@@ -74,12 +74,14 @@ and potentially may be presented to users.
       </complexType>
    </element>
 
-   <element name="transient">
+   <element name="persistent">
       <complexType>
          <attribute name="value" type="boolean" use="required">
             <annotation>
                <documentation>
-                  "true" or "false" indicating whether or not markers of this type should be persisted by the workspace.  If the transient characteristic is not specified, the marker type is not persisted.
+                  "true" or "false" indicating whether or not markers of this type
+should be persisted by the workspace.  If the transient characteristic
+is not specified, the marker type is &lt;b&gt;not&lt;/b&gt; persisted.
                </documentation>
             </annotation>
          </attribute>
@@ -109,10 +111,11 @@ and potentially may be presented to users.
       </appInfo>
       <documentation>
          Following is an example of a builder configuration: 
+
 &lt;p&gt;
 &lt;pre&gt;
    &lt;extension id="com.xyz.coolMarker" point="org.eclipse.core.resources.markers" name="Cool Marker"&gt; 
-      &lt;transient value="false"/&gt; 
+      &lt;persistent value="true"/&gt; 
       &lt;super type="org.eclipse.core.resources.problemmarker"/&gt; 
       &lt;super type="org.eclipse.core.resources.textmarker"/&gt; 
       &lt;attribute name="owner"/&gt; 

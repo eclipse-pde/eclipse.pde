@@ -94,4 +94,7 @@ public abstract class StructuredViewerSection extends PDEFormSection {
 	protected boolean canPaste(Object target, Object [] objects) {
 		return false;
 	}
+	public void setFocus() {
+		viewerPart.getControl().setFocus();
+	}
 }
