@@ -8,20 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-/**
- * Created on Apr 10, 2002
- *
- * To change this generated comment edit the template variable "filecomment":
- * Workbench>Preferences>Java>Templates.
- */
 package org.eclipse.pde.internal.core;
 
-/**
- * @author dejan
- *
- * To change this generated comment edit the template variable "typecomment":
- * Workbench>Preferences>Java>Templates.
- */
 public interface ICoreConstants {
 	String PLATFORM_PATH = "platform_path";
 	String TARGET_MODE = "target_mode";

@@ -8,12 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-/**
- * Created on Apr 10, 2002
- *
- * To change this generated comment edit the template variable "filecomment":
- * Workbench>Preferences>Java>Templates.
- */
 package org.eclipse.pde.internal.core;
 
 
@@ -29,9 +23,6 @@ import org.eclipse.jdt.core.ClasspathVariableInitializer;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
-/**
- *
- */
 public class EclipseHomeInitializer extends ClasspathVariableInitializer {
 
 	static class SetEclipseVariablesOperation implements IWorkspaceRunnable {
