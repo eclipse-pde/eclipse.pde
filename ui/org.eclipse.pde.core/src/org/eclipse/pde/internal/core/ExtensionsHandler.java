@@ -65,21 +65,21 @@ public class ExtensionsHandler extends DefaultHandler {
 	 * @param attributes
 	 */
 	private void createExtension(Attributes attributes) {
-		Element extension = fParent.getOwnerDocument().createElement("extension");
-		String point = attributes.getValue("point");
+		Element extension = fParent.getOwnerDocument().createElement("extension"); //$NON-NLS-1$
+		String point = attributes.getValue("point"); //$NON-NLS-1$
 		if (point == null)
 			return;
 		extension.setAttribute("point", point); //$NON-NLS-1$
 		
-		String id = attributes.getValue("id");
+		String id = attributes.getValue("id"); //$NON-NLS-1$
 		if (id != null)
 			extension.setAttribute("id", id); //$NON-NLS-1$
 		
-		String name = attributes.getValue("name");
+		String name = attributes.getValue("name"); //$NON-NLS-1$
 		if (name != null)
-			extension.setAttribute("name", name);
+			extension.setAttribute("name", name); //$NON-NLS-1$
 		
-		extension.setAttribute("line", Integer.toString(fLocator.getLineNumber()));
+		extension.setAttribute("line", Integer.toString(fLocator.getLineNumber())); //$NON-NLS-1$
 
 		fParent.appendChild(extension);
 		
@@ -91,23 +91,23 @@ public class ExtensionsHandler extends DefaultHandler {
 	 * @param attributes
 	 */
 	private void createExtensionPoint(Attributes attributes) {
-		Element extPoint = fParent.getOwnerDocument().createElement("extension-point");
+		Element extPoint = fParent.getOwnerDocument().createElement("extension-point"); //$NON-NLS-1$
 
-		String id = attributes.getValue("id");
+		String id = attributes.getValue("id"); //$NON-NLS-1$
 		if (id == null)
 			return;
 		extPoint.setAttribute("id", id); //$NON-NLS-1$
 		
-		String name = attributes.getValue("name");
+		String name = attributes.getValue("name"); //$NON-NLS-1$
 		if (name == null)
 			return;
-		extPoint.setAttribute("name", name);
+		extPoint.setAttribute("name", name); //$NON-NLS-1$
 		
-		String schema = attributes.getValue("schema");
+		String schema = attributes.getValue("schema"); //$NON-NLS-1$
 		if (schema != null)
-			extPoint.setAttribute("schema", schema);
+			extPoint.setAttribute("schema", schema); //$NON-NLS-1$
 		
-		extPoint.setAttribute("line", Integer.toString(fLocator.getLineNumber()));
+		extPoint.setAttribute("line", Integer.toString(fLocator.getLineNumber())); //$NON-NLS-1$
 
 		fParent.appendChild(extPoint);
 	}

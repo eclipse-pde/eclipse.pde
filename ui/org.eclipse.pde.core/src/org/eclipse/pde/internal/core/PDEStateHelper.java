@@ -137,7 +137,7 @@ public class PDEStateHelper {
 			String path = desc.getLocation();
 
 			File file = new File(path);
-			if (file.isFile() && file.getName().endsWith(".jar")) {
+			if (file.isFile() && file.getName().endsWith(".jar")) { //$NON-NLS-1$
 				URL url = new URL("jar:file:" + path + "!/" + filename); //$NON-NLS-1$ //$NON-NLS-2$
 				stream = url.openStream();			
 			} else if (file.isDirectory()) {

@@ -92,7 +92,7 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 	 * @return IPath or null
 	 */private IPath computeTargetPath() {
 		IPath pluginsLocation = PDEPlugin.getWorkspace().getRoot().getLocation();
-		if("plugins".equals(pluginsLocation.lastSegment()))
+		if("plugins".equals(pluginsLocation.lastSegment())) //$NON-NLS-1$
 			return pluginsLocation.removeLastSegments(1).append("features"); //$NON-NLS-1$
 		return null;
 	}

@@ -53,8 +53,8 @@ public class PDEState {
 	
 	static {
 		DEBUG  = PDECore.getDefault().isDebugging() 
-					&& "true".equals(Platform.getDebugOption("org.eclipse.pde.core/cache"));
-		DIR = DIR = PDECore.getDefault().getStateLocation().append(".cache").toOSString();
+					&& "true".equals(Platform.getDebugOption("org.eclipse.pde.core/cache")); //$NON-NLS-1$ //$NON-NLS-2$
+		DIR = DIR = PDECore.getDefault().getStateLocation().append(".cache").toOSString(); //$NON-NLS-1$
 		stateObjectFactory = Platform.getPlatformAdmin().getFactory();
 	}
 	
@@ -95,11 +95,11 @@ public class PDEState {
 		
 		long end = System.currentTimeMillis();
 		if (DEBUG)
-			System.out.println("Total time elapsed to initialize models: " + (end - start) + " ms");
+			System.out.println("Total time elapsed to initialize models: " + (end - start) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	private boolean reachPluginInfoCache(long timestamp) {
-		File file = new File(DIR, Long.toString(timestamp) + ".pluginInfo");
+		File file = new File(DIR, Long.toString(timestamp) + ".pluginInfo"); //$NON-NLS-1$
 		if (file.exists() && file.isFile()) {
 			long start = System.currentTimeMillis();
 			try {
@@ -107,7 +107,7 @@ public class PDEState {
 				Document doc = factory.newDocumentBuilder().parse(file);
 				Element root = doc.getDocumentElement();
 				if (root != null) {
-					NodeList bundles = root.getElementsByTagName("bundle");
+					NodeList bundles = root.getElementsByTagName("bundle"); //$NON-NLS-1$
 					for (int i = 0; i < bundles.getLength(); i++) {
 						createPluginInfo((Element)bundles.item(i));
 					}
@@ -122,7 +122,7 @@ public class PDEState {
 			} finally {
 				long end = System.currentTimeMillis();
 				if (DEBUG)
-					System.out.println("########Time to read plugin info from cache: " + (end - start) + "ms");
+					System.out.println("########Time to read plugin info from cache: " + (end - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		} 
 		return false;
@@ -130,7 +130,7 @@ public class PDEState {
 
 	private boolean readExtensionsCache(long timestamp) {
 		fExtensions = new HashMap();
-		File file = new File(DIR, Long.toString(timestamp) + ".extensions");
+		File file = new File(DIR, Long.toString(timestamp) + ".extensions"); //$NON-NLS-1$
 		if (file.exists() && file.isFile()) {
 			long start = System.currentTimeMillis();
 			try {
@@ -138,10 +138,10 @@ public class PDEState {
 				Document doc = factory.newDocumentBuilder().parse(file);
 				Element root = doc.getDocumentElement();
 				if (root != null) {
-					NodeList bundles = root.getElementsByTagName("bundle");
+					NodeList bundles = root.getElementsByTagName("bundle"); //$NON-NLS-1$
 					for (int i = 0; i < bundles.getLength(); i++) {
 						Element bundle = (Element)bundles.item(i); 
-						String id = bundle.getAttribute("bundleID");
+						String id = bundle.getAttribute("bundleID"); //$NON-NLS-1$
 						fExtensions.put(id, bundle.getChildNodes());
 					}
 				}
@@ -155,14 +155,14 @@ public class PDEState {
 			} finally {
 				long end = System.currentTimeMillis();
 				if (DEBUG)
-					System.out.println("########Time to read extensions from cache: " + (end - start) + "ms");
+					System.out.println("########Time to read extensions from cache: " + (end - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		} 
 		return false;
 	}
 	
 	private boolean readStateCache(long timestamp) {
-		File file = new File(DIR, Long.toString(timestamp) + ".state");
+		File file = new File(DIR, Long.toString(timestamp) + ".state"); //$NON-NLS-1$
 		if (file.exists() && file.isFile()) {
 			long start = System.currentTimeMillis();
 			InputStream stream = null;
@@ -184,7 +184,7 @@ public class PDEState {
 				}
 				long end = System.currentTimeMillis();
 				if (DEBUG)
-					System.out.println("########Time to read state from cache: " + (end - start) + "ms");
+					System.out.println("########Time to read state from cache: " + (end - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		} 
 		return false;
@@ -198,12 +198,12 @@ public class PDEState {
 		long end = System.currentTimeMillis();
 		
 		if (DEBUG)
-			System.out.println("########Time to create state from scratch: " + (end - start) + "ms");
+			System.out.println("########Time to create state from scratch: " + (end - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	private void saveState(long timestamp) {
 		long start = System.currentTimeMillis();
-		File file = createFile(timestamp, "state");
+		File file = createFile(timestamp, "state"); //$NON-NLS-1$
 		OutputStream stream = null;
 		try {
 			stream = new FileOutputStream(file);
@@ -221,42 +221,42 @@ public class PDEState {
 		}
 		long end = System.currentTimeMillis();
 		if (DEBUG)
-			System.out.println("########Time to save new state: " + (end - start) + "ms");
+			System.out.println("########Time to save new state: " + (end - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	private void savePluginInfo(long timestamp) {
 		long start = System.currentTimeMillis();
-		File file = createFile(timestamp, "pluginInfo");
+		File file = createFile(timestamp, "pluginInfo"); //$NON-NLS-1$
 		FileWriter writer = null;
 		try {
 			writer = new FileWriter(file);
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			Document doc = factory.newDocumentBuilder().newDocument();
-			Element root = doc.createElement("map");
+			Element root = doc.createElement("map"); //$NON-NLS-1$
 			
 			Iterator iter = fPluginInfos.keySet().iterator();
 			while (iter.hasNext()) {
 				String key = iter.next().toString();
-				Element element = doc.createElement("bundle");
-				element.setAttribute("bundleID", key);
+				Element element = doc.createElement("bundle"); //$NON-NLS-1$
+				element.setAttribute("bundleID", key); //$NON-NLS-1$
 				PluginInfo info = (PluginInfo)fPluginInfos.get(key);
 				if (info.className != null)
-					element.setAttribute("class", info.className);
+					element.setAttribute("class", info.className); //$NON-NLS-1$
 				if (info.providerName != null)
-					element.setAttribute("provider", info.providerName);
+					element.setAttribute("provider", info.providerName); //$NON-NLS-1$
 				if (info.name != null)
-					element.setAttribute("name", info.name);
+					element.setAttribute("name", info.name); //$NON-NLS-1$
 				if (info.libraries != null) {
 					for (int i = 0; i < info.libraries.length; i++) {
-						Element lib = doc.createElement("library");
-						lib.setAttribute("name", info.libraries[i]);
+						Element lib = doc.createElement("library"); //$NON-NLS-1$
+						lib.setAttribute("name", info.libraries[i]); //$NON-NLS-1$
 						element.appendChild(lib);
 					}
 				}
 				root.appendChild(element);
 			}
 			doc.appendChild(root);
-			XMLPrintHandler.printNode(writer, doc, "UTF-8");
+			XMLPrintHandler.printNode(writer, doc, "UTF-8"); //$NON-NLS-1$
 		} catch (Exception e) {
 			PDECore.log(e);
 		} finally {
@@ -268,25 +268,25 @@ public class PDEState {
 		}
 		long end = System.currentTimeMillis();
 		if (DEBUG)
-			System.out.println("########Time to save new aux plugin info: " + (end - start) + "ms");
+			System.out.println("########Time to save new aux plugin info: " + (end - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	private void saveExtensions(long timestamp) {
 		fExtensions = new HashMap();
 		long start = System.currentTimeMillis();
-		File file = createFile(timestamp, "extensions");
+		File file = createFile(timestamp, "extensions"); //$NON-NLS-1$
 		FileWriter writer = null;
 		try {
 			writer = new FileWriter(file);
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			Document doc = factory.newDocumentBuilder().newDocument();
-			Element root = doc.createElement("extensions");
+			Element root = doc.createElement("extensions"); //$NON-NLS-1$
 			
 			BundleDescription[] bundles = fState.getBundles();
 			for (int i = 0; i < bundles.length; i++) {
 				BundleDescription desc = bundles[i];
-				Element element = doc.createElement("bundle");
-				element.setAttribute("bundleID", Long.toString(desc.getBundleId()));
+				Element element = doc.createElement("bundle"); //$NON-NLS-1$
+				element.setAttribute("bundleID", Long.toString(desc.getBundleId())); //$NON-NLS-1$
 				PDEStateHelper.parseExtensions(desc, element);
 				if (element.hasChildNodes()) {
 					root.appendChild(element);
@@ -294,7 +294,7 @@ public class PDEState {
 				}
 			}	
 			doc.appendChild(root);
-			XMLPrintHandler.printNode(writer, doc, "UTF-8");
+			XMLPrintHandler.printNode(writer, doc, "UTF-8"); //$NON-NLS-1$
 		} catch (Exception e) {
 			PDECore.log(e);
 		} finally {
@@ -306,7 +306,7 @@ public class PDEState {
 		}
 		long end = System.currentTimeMillis();
 		if (DEBUG)
-			System.out.println("########Time to parse and save extensions: " + (end - start) + "ms");
+			System.out.println("########Time to parse and save extensions: " + (end - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private File createFile(long timestamp, String extension) {
@@ -318,12 +318,12 @@ public class PDEState {
 			if (files != null) {
 				for (int i = 0; i < files.length; i++) {
 					File file = files[i];
-					if (file.isFile() && file.getName().endsWith("." + extension))
+					if (file.isFile() && file.getName().endsWith("." + extension)) //$NON-NLS-1$
 						file.delete();
 				}
 			}
 		}	
-		return new File(dir, Long.toString(timestamp) + "." + extension);
+		return new File(dir, Long.toString(timestamp) + "." + extension); //$NON-NLS-1$
 	}
 
 	private long getNextId() {
@@ -348,7 +348,7 @@ public class PDEState {
 			new MultiStatus(
 				PDECore.getPluginId(),
 				1,
-				PDECore.getResourceString("ExternalModelManager.scanningProblems"),
+				PDECore.getResourceString("ExternalModelManager.scanningProblems"), //$NON-NLS-1$
 				null);
 		
 		StateHelper helper = acquireStateHelper();
@@ -416,13 +416,13 @@ public class PDEState {
 				if (file.isFile()) {
 					timestamp ^= file.lastModified();
 				} else {
-					File manifest = new File(file, "META-INF/MANIFEST.MF");
+					File manifest = new File(file, "META-INF/MANIFEST.MF"); //$NON-NLS-1$
 					if (manifest.exists())
 						timestamp ^= manifest.lastModified();
-					manifest = new File(file, "plugin.xml");
+					manifest = new File(file, "plugin.xml"); //$NON-NLS-1$
 					if (manifest.exists())
 						timestamp ^= manifest.lastModified();
-					manifest = new File(file, "fragment.xml");
+					manifest = new File(file, "fragment.xml"); //$NON-NLS-1$
 					if (manifest.exists())
 						timestamp ^= manifest.lastModified();
 				}
@@ -463,7 +463,7 @@ public class PDEState {
 		info.name = (String)manifest.get(Constants.BUNDLE_NAME);
 		info.providerName = (String)manifest.get(Constants.BUNDLE_VENDOR);
 		
-		String className = (String)manifest.get("Plugin-Class");
+		String className = (String)manifest.get("Plugin-Class"); //$NON-NLS-1$
 		info.className	= className != null ? className : (String)manifest.get(Constants.BUNDLE_ACTIVATOR);	
 		info.libraries = PDEStateHelper.getClasspath(manifest);
 		
@@ -472,17 +472,17 @@ public class PDEState {
 	
 	private void createPluginInfo(Element element) {
 		PluginInfo info = new PluginInfo();
-		info.name = element.getAttribute("name");
-		info.providerName = element.getAttribute("provider");
-		info.className	= element.getAttribute("class");
+		info.name = element.getAttribute("name"); //$NON-NLS-1$
+		info.providerName = element.getAttribute("provider"); //$NON-NLS-1$
+		info.className	= element.getAttribute("class"); //$NON-NLS-1$
 		
-		NodeList libs = element.getElementsByTagName("library");
+		NodeList libs = element.getElementsByTagName("library"); //$NON-NLS-1$
 		info.libraries = new String[libs.getLength()];
 		for (int i = 0; i < libs.getLength(); i++) {
 			Element lib = (Element)libs.item(i);
-			info.libraries[i] = lib.getAttribute("name");
+			info.libraries[i] = lib.getAttribute("name"); //$NON-NLS-1$
 		}
-		fPluginInfos.put(element.getAttribute("bundleID"), info);
+		fPluginInfos.put(element.getAttribute("bundleID"), info); //$NON-NLS-1$
 	}
 	public BundleDescription addBundle(File bundleLocation) {
 		return addBundle(bundleLocation, false, false);
@@ -595,7 +595,7 @@ public class PDEState {
 		long end = System.currentTimeMillis();
 		
 		if (DEBUG) {
-			System.out.println("########Time to populate models: " + (end - start) + " ms");
+			System.out.println("########Time to populate models: " + (end - start) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (fExtensions != null)
 			fExtensions.clear();
@@ -628,11 +628,11 @@ public class PDEState {
 	}
 	
 	public NodeList getExtensions(long bundleID) {
-		return getChildren(bundleID, "extension");
+		return getChildren(bundleID, "extension"); //$NON-NLS-1$
 	}
 	
 	public NodeList getExtensionPoints(long bundleID) {
-		return getChildren(bundleID, "extension-point");
+		return getChildren(bundleID, "extension-point"); //$NON-NLS-1$
 	}
 	
 	private NodeList getChildren(long bundleID, String tagName) {

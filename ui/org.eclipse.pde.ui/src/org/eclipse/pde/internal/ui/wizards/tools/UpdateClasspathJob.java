@@ -89,7 +89,7 @@ public class UpdateClasspathJob extends Job {
 			UpdateClasspathWorkspaceRunnable runnable = new UpdateClasspathWorkspaceRunnable();
 			PDEPlugin.getWorkspace().run(runnable, monitor);
 			if(runnable.isCanceled()){
-				return new Status(IStatus.CANCEL, IPDEUIConstants.PLUGIN_ID, IStatus.CANCEL, "",null);
+				return new Status(IStatus.CANCEL, IPDEUIConstants.PLUGIN_ID, IStatus.CANCEL, "",null); //$NON-NLS-1$
 			}
 
 		} catch (CoreException e) {
@@ -98,7 +98,7 @@ public class UpdateClasspathJob extends Job {
 			PDEPlugin.logException(e, title, message);
 			return new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, IStatus.OK, message, e);
 		}
-		return new Status(IStatus.OK, IPDEUIConstants.PLUGIN_ID, IStatus.OK, "",null);
+		return new Status(IStatus.OK, IPDEUIConstants.PLUGIN_ID, IStatus.OK, "",null); //$NON-NLS-1$
 	}
 
 }

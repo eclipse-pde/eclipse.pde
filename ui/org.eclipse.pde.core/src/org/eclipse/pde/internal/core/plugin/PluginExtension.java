@@ -62,7 +62,7 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 				childElement.load((Element)child);
 			}
 		}
-		int line = Integer.parseInt(getNodeAttribute(node, "line"));
+		int line = Integer.parseInt(getNodeAttribute(node, "line")); //$NON-NLS-1$
 		this.range = new int[] {line, line};		
 	}
 	

@@ -52,7 +52,7 @@ public class PluginExtensionPoint
 		this.id = getNodeAttribute(node, "id"); //$NON-NLS-1$
 		this.name = getNodeAttribute(node, "name"); //$NON-NLS-1$
 		this.schema = getNodeAttribute(node, "schema"); //$NON-NLS-1$
-		int line = Integer.parseInt(getNodeAttribute(node, "line"));
+		int line = Integer.parseInt(getNodeAttribute(node, "line")); //$NON-NLS-1$
 		this.range = new int[] {line, line};
 	}
 
