@@ -7,11 +7,13 @@ package org.eclipse.pde.internal.ui.launcher;
 import java.io.File;
 import java.util.ArrayList;
 
+import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.jdt.launching.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
@@ -142,7 +144,7 @@ public class BasicLauncherTab
 	public void initializeFrom(ILaunchConfiguration config) {
 		int jreSelectionIndex = 0;
 		String vmArgs = "";
-		String progArgs = "";
+		String progArgs = getDefaultProgramArguments();
 		String appName = "org.eclipse.ui.workbench";
 		String[] workspaceSelectionItems = new String[0];
 		boolean doClear = false;
@@ -203,7 +205,7 @@ public class BasicLauncherTab
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		String vmArgs = "";
-		String progArgs = "";
+		String progArgs = getDefaultProgramArguments();
 		String appName = "org.eclipse.ui.workbench";
 		boolean tracing = false;
 
@@ -220,11 +222,18 @@ public class BasicLauncherTab
 
 	private void doRestoreDefaults() {
 		String defaultWorkspace = getDefaultWorkspace();
-		progArgsText.setText("");
+		progArgsText.setText(getDefaultProgramArguments());
 		vmArgsText.setText("");
 		applicationNameText.setText("org.eclipse.ui.workbench");
 		workspaceCombo.setText(defaultWorkspace);
 		clearWorkspaceCheck.setSelection(false);
+	}
+
+	private String getDefaultProgramArguments() {
+		String os = TargetPlatform.getOS();
+		String ws = TargetPlatform.getWS();
+		String arch = TargetPlatform.getOSArch();
+		return "-os "+os+" -ws "+ws+" -arch "+arch;
 	}
 
 	private void hookListeners() {

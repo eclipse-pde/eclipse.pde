@@ -24,10 +24,6 @@ public abstract class AbstractLauncherTab extends AbstractLaunchConfigurationTab
 		currentStatus= createStatus(IStatus.OK, "");
 	}
 
-	public boolean okToLeave() {
-		return isValid();
-	}
-
 	protected void refreshStatus() {
 		getLaunchConfigurationDialog().updateButtons();
 		getLaunchConfigurationDialog().updateMessage();
@@ -44,7 +40,7 @@ public abstract class AbstractLauncherTab extends AbstractLaunchConfigurationTab
 	public void launched(ILaunch launch) {
 	}
 
-	public boolean isValid() {
+	public boolean isValid(ILaunchConfiguration config) {
 		return valid;
 	}
 	
