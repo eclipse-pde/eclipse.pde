@@ -40,6 +40,9 @@ public class ViewTemplate extends PDETemplateSection {
 	private static final String NL_SORTING = "ViewTemplate.sorting";
 	private static final String NL_FILTERING = "ViewTemplate.filtering";
 	private static final String NL_DRILLDOWN = "ViewTemplate.drilldown";
+	private static final String NL_ADD_TO_PERSPECTIVE = "ViewTemplate.addToPerspective";
+	
+	private BooleanOption addToPerspective;
 	/**
 	 * Constructor for HelloWorldTemplate.
 	 */
@@ -68,6 +71,7 @@ public class ViewTemplate extends PDETemplateSection {
 						{"tableViewer", PDEPlugin.getResourceString(NL_TABLE)},
 						{"treeViewer", PDEPlugin.getResourceString(NL_TREE)}},
 						"tableViewer", 0);
+		addToPerspective = (BooleanOption)addOption("addToPerspective",PDEPlugin.getResourceString(NL_ADD_TO_PERSPECTIVE),true,0);
 		// second page
 		addOption("react", PDEPlugin.getResourceString(NL_REACT), true, 1);
 		addOption("doubleClick", PDEPlugin.getResourceString(NL_DOUBLE_CLICK), true, 1);
@@ -147,6 +151,29 @@ public class ViewTemplate extends PDETemplateSection {
 		extension.add(viewElement);
 		if (!extension.isInTheModel())
 			plugin.add(extension);
+			
+		if (addToPerspective.isSelected()) {
+			IPluginExtension perspectiveExtension =
+				createExtension("org.eclipse.ui.perspectiveExtensions", true);
+
+			IPluginElement perspectiveElement = factory.createElement(perspectiveExtension);
+			perspectiveElement.setName("perspectiveExtension");
+			perspectiveElement.setAttribute(
+				"targetID",
+				"org.eclipse.ui.resourcePerspective");
+
+			IPluginElement view = factory.createElement(perspectiveElement);
+			view.setName("view");
+			view.setAttribute("id", fullClassName);
+			view.setAttribute("relative", "org.eclipse.ui.views.TaskList");
+			view.setAttribute("relationship","right");
+			view.setAttribute("ratio", "0.5");
+			perspectiveElement.add(view);
+
+			perspectiveExtension.add(perspectiveElement);
+			if (!perspectiveExtension.isInTheModel())
+				plugin.add(perspectiveExtension);
+		}	
 	}
 
 	private void createCategory(IPluginExtension extension, String id) throws CoreException {

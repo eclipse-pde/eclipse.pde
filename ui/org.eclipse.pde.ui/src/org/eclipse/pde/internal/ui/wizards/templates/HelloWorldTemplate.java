@@ -19,6 +19,7 @@ import org.eclipse.pde.ui.IPluginStructureData;
 public class HelloWorldTemplate extends PDETemplateSection {
 	public static final String KEY_CLASS_NAME = "className";
 	public static final String KEY_MESSAGE = "message";
+	public static final String KEY_ADD_TO_PERSPECTIVE = "addToPerspective";
 	public static final String CLASS_NAME = "SampleAction";
 
 	private static final String KEY_TITLE = "HelloWorldTemplate.title";
@@ -32,6 +33,9 @@ public class HelloWorldTemplate extends PDETemplateSection {
 	private static final String KEY_SAMPLE_ACTION_SET = "HelloWorldTemplate.sampleActionSet";		
 	private static final String KEY_SAMPLE_MENU = "HelloWorldTemplate.sampleMenu";
 	private static final String KEY_SAMPLE_ACTION = "HelloWorldTemplate.sampleAction";
+	private static final String NL_ADD_TO_PERSPECTIVE = "HelloWorldTemplate.addToPerspective";
+	
+	private BooleanOption addToPerspective;
 	/**
 	 * Constructor for HelloWorldTemplate.
 	 */
@@ -67,7 +71,12 @@ public class HelloWorldTemplate extends PDETemplateSection {
 			PDEPlugin.getResourceString(KEY_TEXT_LABEL),
 			PDEPlugin.getResourceString(KEY_DEFAULT_MESSAGE),
 			0);
-
+		addToPerspective = (BooleanOption) addOption(
+			KEY_ADD_TO_PERSPECTIVE,
+			PDEPlugin.getResourceString(NL_ADD_TO_PERSPECTIVE),
+			true,
+			0);
+			
 		WizardPage page = createPage(0);
 		page.setTitle(PDEPlugin.getResourceString(KEY_TITLE));
 		page.setDescription(PDEPlugin.getResourceString(KEY_DESC));
@@ -138,6 +147,26 @@ public class HelloWorldTemplate extends PDETemplateSection {
 		actionElement.setAttribute("class", fullClassName);
 		setElement.add(actionElement);
 		extension.add(setElement);
-		plugin.add(extension);
+		if (!extension.isInTheModel())
+			plugin.add(extension);
+		
+		if (addToPerspective.isSelected()) {
+			IPluginExtension perspectiveExtension = createExtension("org.eclipse.ui.perspectiveExtensions",true);
+			IPluginElement perspectiveElement = factory.createElement(perspectiveExtension);
+			perspectiveElement.setName("perspectiveExtension");
+			perspectiveElement.setAttribute(
+				"targetID",
+				"org.eclipse.ui.resourcePerspective");
+
+			IPluginElement actionSetElement = factory.createElement(perspectiveElement);
+			actionSetElement.setName("actionSet");
+			actionSetElement.setAttribute("id", plugin.getId() + ".actionSet");
+			perspectiveElement.add(actionSetElement);
+			
+			perspectiveExtension.add(perspectiveElement);
+			if (!perspectiveExtension.isInTheModel())
+				plugin.add(perspectiveExtension);
+		}		
+			
 	}
 }
