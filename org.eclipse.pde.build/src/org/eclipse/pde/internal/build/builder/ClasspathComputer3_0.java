@@ -359,33 +359,60 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 
 	private boolean matchFilter(BundleDescription target) {
 		String filter = target.getPlatformFilter();
-		if (filter == null)
+		if (filter == null) //Target is platform independent, add it 
 			return true;
+		
+		IPluginEntry associatedEntry = generator.getAssociatedEntry(); 
+		if (associatedEntry == null)
+			return true;
+		
+		String os = associatedEntry.getOS();
+		String ws = associatedEntry.getWS();
+		String arch = associatedEntry.getOSArch();
+		String nl = associatedEntry.getNL();
+		if (os==null && ws == null && arch == null && nl == null) //I'm a platform independent plugin
+			return true;
+		
+		//The plugin for which we are generating the classpath and target are not platform independent
 		Filter f = BundleHelper.getDefault().createFilter(filter);
 		if (f == null)
 			return true;
 		
 		Dictionary properties = new Hashtable(3);
-		IPluginEntry associatedEntry = generator.getAssociatedEntry(); 
-		if (associatedEntry == null)
-			return true;
-
-		String os = associatedEntry.getOS();
-		String ws = associatedEntry.getWS();
-		String arch = associatedEntry.getOSArch();
-		if (os==null && ws == null && arch == null)
-			return true;
-		
-		if (os != null)
-			properties.put("osgi.os", os);
+		if (os != null) {
+			properties.put(OSGI_OS, os);
+		} else {
+			properties.put(OSGI_OS, CatchAllValue.singleton);
+		}
 		if (ws != null)
-			properties.put("osgi.ws",ws);
+			properties.put(OSGI_WS,ws);
+		else
+			properties.put(OSGI_WS,CatchAllValue.singleton);
 		
 		if (arch != null)
-			properties.put("osgi.arch", arch);
+			properties.put(OSGI_ARCH, arch);
+		else
+			properties.put(OSGI_ARCH,CatchAllValue.singleton);
+		
+		if (arch != null)
+			properties.put(OSGI_NL, arch);
+		else
+			properties.put(OSGI_NL,CatchAllValue.singleton);
 		
 		return f.match(properties);
 	}
+	
+	public static class CatchAllValue {
+		public static CatchAllValue singleton = new CatchAllValue("*"); //$NON-NLS-1$
+		public CatchAllValue(String s) {
+			//do nothing
+		}
+		
+		public boolean equals(Object obj) {
+			return true;
+		}
+	}
+	
 	/**
 	 * 
 	 * @param model

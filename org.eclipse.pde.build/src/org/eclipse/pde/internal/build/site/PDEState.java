@@ -271,9 +271,9 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			i++;
 		}
 		Hashtable properties = new Hashtable(3);
-		properties.put("osgi.ws", ws); //$NON-NLS-1$
-		properties.put("osgi.os", os); //$NON-NLS-1$
-		properties.put("osgi.arch", archs); //$NON-NLS-1$
+		properties.put(OSGI_WS, ws);
+		properties.put(OSGI_OS, os);
+		properties.put(OSGI_ARCH, archs);
 		state.setPlatformProperties(properties);
 		state.resolve(false);
 	}
