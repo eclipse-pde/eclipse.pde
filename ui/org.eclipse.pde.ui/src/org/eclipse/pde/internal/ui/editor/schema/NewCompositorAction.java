@@ -40,6 +40,7 @@ public NewCompositorAction(ISchemaElement source, Object object, int kind) {
 
 	}
 	setImageDescriptor(desc);
+	setEnabled(source.getSchema().isEditable());
 }
 public void run() {
 	SchemaCompositor compositor = new SchemaCompositor(source, kind);

@@ -26,6 +26,7 @@ public NewReferenceAction(
 	setText(referencedElement.getName());
 	ImageDescriptor desc = PDEPluginImages.DESC_ELREF_SC_OBJ;
 	setImageDescriptor(desc);
+	setEnabled(source.getSchema().isEditable());
 }
 public void run() {
 	if (object != null && object instanceof SchemaCompositor) {

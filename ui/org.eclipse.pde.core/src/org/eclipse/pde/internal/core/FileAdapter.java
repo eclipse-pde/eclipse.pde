@@ -24,6 +24,11 @@ public class FileAdapter extends PlatformObject {
 		String fileName = file.getName();
 		return (fileName.equals("plugin.xml") || fileName.equals("fragment.xml"));
 	}
+	public boolean isSchema() {
+		String fileName = file.getName().toLowerCase();
+		return fileName.endsWith(".mxsd") || fileName.endsWith(".exsd");
+	}
+			
 	public FileAdapter getParent() {
 		return parent;
 	}

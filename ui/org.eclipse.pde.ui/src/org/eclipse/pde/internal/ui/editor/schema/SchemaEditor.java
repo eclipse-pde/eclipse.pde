@@ -29,6 +29,9 @@ public class SchemaEditor extends PDEMultiPageXMLEditor {
 	}
 
 	protected Object createModel(Object input) {
+		if (input instanceof File)
+			return createExternalModel((File)input);
+			
 		if (!(input instanceof IFile))
 			return null;
 
@@ -43,9 +46,29 @@ public class SchemaEditor extends PDEMultiPageXMLEditor {
 		}
 		return schema;
 	}
+	
+	private Object createExternalModel(File file) {
+		ExternalSchemaDescriptor sd = new ExternalSchemaDescriptor(file, "", false);
+
+		ISchema schema = sd.getSchema();
+		if (schema.isValid() == false)
+			return null;
+		warnIfOldExtension(file);
+		if (schema instanceof EditableSchema) {
+			((EditableSchema) schema).setNotificationEnabled(true);
+		}
+		return schema;
+	}
 
 	private void warnIfOldExtension(IFile file) {
-		String name = file.getName();
+		warnIfOldExtension(file.getName());
+	}
+	
+	private void warnIfOldExtension(File file) {
+		warnIfOldExtension(file.getName());
+	}
+	
+	private void warnIfOldExtension(String name) {
 		int dotLoc = name.lastIndexOf('.');
 		if (dotLoc != -1) {
 			String ext = name.substring(dotLoc + 1).toLowerCase();

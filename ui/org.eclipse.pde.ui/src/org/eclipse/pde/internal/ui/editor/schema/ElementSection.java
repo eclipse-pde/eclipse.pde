@@ -114,6 +114,7 @@ protected void fillContextMenu(IMenuManager manager) {
 	MenuManager submenu = new MenuManager(PDEPlugin.getResourceString(POPUP_NEW));
 	if (object == null || object instanceof SchemaElement) {
 		newElementAction.setSchema(schema);
+		newElementAction.setEnabled(schema.isEditable());
 		submenu.add(newElementAction);
 	}
 	if (object != null) {
@@ -124,6 +125,7 @@ protected void fillContextMenu(IMenuManager manager) {
 			element = (SchemaElement) ((SchemaAttribute) object).getParent();
 		if (element.getName().equals("extension") == false) {
 			newAttributeAction.setElement(element);
+			newAttributeAction.setEnabled(schema.isEditable());
 			submenu.add(newAttributeAction);
 		}
 	}
@@ -138,6 +140,7 @@ protected void fillContextMenu(IMenuManager manager) {
 				}
 			};
 			deleteAction.setText(PDEPlugin.getResourceString(POPUP_DELETE));
+			deleteAction.setEnabled(schema.isEditable());
 			manager.add(deleteAction);
 		}
 	}
@@ -192,6 +195,7 @@ public void initialize(Object input) {
 	this.schema = (Schema)input;
 	treeViewer.setInput(input);
 	schema.addModelChangedListener(this);
+	getTreePart().setButtonEnabled(0, schema.isEditable());
 	getTreePart().setButtonEnabled(1, false);
 }
 
@@ -233,6 +237,7 @@ public void setFocus() {
 	getFormPage().setSelection(treeViewer.getSelection());
 }
 private void updateButtons() {
+	if (schema.isEditable()==false) return;
 	Object object =
 		((IStructuredSelection) treeViewer.getSelection()).getFirstElement();
 	ISchemaObject sobject = (ISchemaObject) object;

@@ -193,6 +193,7 @@ public class GrammarSection extends PDEFormSection {
 				}
 			};
 			deleteAction.setText(PDEPlugin.getResourceString(POPUP_DELETE));
+			deleteAction.setEnabled(schema.isEditable());
 			manager.add(deleteAction);
 		}
 		getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager);

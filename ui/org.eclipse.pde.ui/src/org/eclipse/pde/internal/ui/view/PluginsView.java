@@ -47,6 +47,7 @@ public class PluginsView extends ViewPart {
 	private Action disabledFilterAction;
 	private Action workspaceFilterAction;
 	private Action openManifestAction;
+	private Action openSchemaAction;
 	private Action openSystemEditorAction;
 	private Action openClassFileAction;
 	private Action openDependenciesAdapter;
@@ -259,6 +260,13 @@ public class PluginsView extends ViewPart {
 			}
 		};
 		openManifestAction.setText(PDEPlugin.getResourceString("PluginsView.manifestEditor")); //$NON-NLS-1$
+		
+		openSchemaAction = new Action() {
+			public void run() {
+				handleOpenSchemaEditor(getSelectedFile());
+			}
+		};
+		openSchemaAction.setText(PDEPlugin.getResourceString("PluginsView.schemaEditor")); //$NON-NLS-1$
 
 		copyAction = new CopyToClipboardAction(clipboard);
 		copyAction.setText(PDEPlugin.getResourceString("PluginsView.copy")); //$NON-NLS-1$
@@ -415,17 +423,26 @@ public class PluginsView extends ViewPart {
 		String editorId = adapter.getEditorId();
 
 		String fileName = adapter.getFile().getName();
+		String lcFileName = fileName.toLowerCase();
 		ImageDescriptor desc =
 			PlatformUI.getWorkbench().getEditorRegistry().getImageDescriptor(
 				fileName);
-		if (fileName.equalsIgnoreCase("plugin.xml") //$NON-NLS-1$
-		|| fileName.equalsIgnoreCase("fragment.xml")) { //$NON-NLS-1$
+		if (lcFileName.equals("plugin.xml") //$NON-NLS-1$
+		|| lcFileName.equals("fragment.xml")) { //$NON-NLS-1$
 			openManifestAction.setImageDescriptor(desc);
 			manager.add(openManifestAction);
 			manager.add(new Separator());
 			openManifestAction.setChecked(
 				editorId != null
 					&& editorId.equals(PDEPlugin.MANIFEST_EDITOR_ID));
+		}
+		if (lcFileName.endsWith(".mxsd") || lcFileName.endsWith(".exsd")) {
+			openSchemaAction.setImageDescriptor(desc);
+			manager.add(openSchemaAction);
+			manager.add(new Separator());
+			openSchemaAction.setChecked(
+				editorId != null 
+					&& editorId.equals(PDEPlugin.SCHEMA_EDITOR_ID));
 		}
 		manager.add(openTextEditorAction);
 		openTextEditorAction.setChecked(
@@ -712,8 +729,12 @@ public class PluginsView extends ViewPart {
 		if (adapter == null)
 			return;
 		IWorkbenchPage page = PDEPlugin.getActivePage();
-		if (editorId == null && adapter.isManifest())
-			editorId = PDEPlugin.MANIFEST_EDITOR_ID;
+		if (editorId == null) {
+			if (adapter.isManifest())
+				editorId = PDEPlugin.MANIFEST_EDITOR_ID;
+			else if (adapter.isSchema())
+				editorId = PDEPlugin.SCHEMA_EDITOR_ID;
+		}
 		try {
 			if (editorId == null || editorId.equals("@system")) //$NON-NLS-1$
 				editorId = DEFAULT_EDITOR_ID;
@@ -728,6 +749,10 @@ public class PluginsView extends ViewPart {
 
 	private void handleOpenManifestEditor(FileAdapter adapter) {
 		handleOpenTextEditor(adapter, PDEPlugin.MANIFEST_EDITOR_ID);
+	}
+	
+	private void handleOpenSchemaEditor(FileAdapter adapter) {
+		handleOpenTextEditor(adapter, PDEPlugin.SCHEMA_EDITOR_ID);
 	}
 
 	private void handleOpenSystemEditor(FileAdapter adapter) {
