@@ -128,7 +128,6 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 			wc.setAttribute(ILauncherSettings.LOCATION + "0", LauncherUtils.getDefaultWorkspace()); //$NON-NLS-1$
 			wc.setAttribute(ILauncherSettings.VMARGS, "");
 			wc.setAttribute(ILauncherSettings.PROGARGS, LauncherUtils.getDefaultProgramArguments());
-			wc.setAttribute(ILauncherSettings.VMINSTALL, LauncherUtils.getDefaultVMInstallName());
 			wc.setAttribute(ILauncherSettings.USECUSTOM, true);
 			wc.setAttribute(ILauncherSettings.USEFEATURES, false);
 			wc.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, JavaUISourceLocator.ID_PROMPTING_JAVA_SOURCE_LOCATOR);

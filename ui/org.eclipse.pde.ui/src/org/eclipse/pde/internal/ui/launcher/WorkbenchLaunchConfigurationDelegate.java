@@ -16,31 +16,18 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.debug.core.model.*;
-import org.eclipse.jdt.debug.ui.JavaUISourceLocator;
 import org.eclipse.jdt.launching.*;
-import org.eclipse.jface.dialogs.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.pde.internal.core.*;
 
 public class WorkbenchLaunchConfigurationDelegate
 	implements ILaunchConfigurationDelegate, ILauncherSettings {
-	private static final String KEY_NO_JRE =
-		"WorkbenchLauncherConfigurationDelegate.noJRE";
-	private static final String KEY_JRE_PATH_NOT_FOUND =
-		"WorkbenchLauncherConfigurationDelegate.jrePathNotFound";
 	private static final String KEY_BAD_FEATURE_SETUP =
 		"WorkbenchLauncherConfigurationDelegate.badFeatureSetup";
 	private static final String KEY_NO_STARTUP =
 		"WorkbenchLauncherConfigurationDelegate.noStartup";
-	private static final String KEY_PROBLEMS_DELETING =
-		"WorkbenchLauncherConfigurationDelegate.problemsDeleting";
-	private static final String KEY_TITLE =
-		"WorkbenchLauncherConfigurationDelegate.title";
-	private static final String KEY_DELETE_WORKSPACE =
-		"WorkbenchLauncherConfigurationDelegate.confirmDeleteWorkspace";
 
 	/*
 	 * @see ILaunchConfigurationDelegate#launch(ILaunchConfiguration, String)
@@ -54,7 +41,7 @@ public class WorkbenchLaunchConfigurationDelegate
 		try {
 			monitor.beginTask("", 3);
 			
-			IVMInstall launcher = createLauncher(configuration, monitor);
+			IVMInstall launcher = LauncherUtils.createLauncher(configuration);
 			monitor.worked(1);
 			
 			VMRunnerConfiguration runnerConfig = createVMRunner(configuration);
@@ -63,21 +50,10 @@ public class WorkbenchLaunchConfigurationDelegate
 				return;
 			} 
 			monitor.worked(1);
-					
-			String targetWorkspace =
-				configuration.getAttribute(LOCATION + "0", LauncherUtils.getTempWorkspace());
-			File workspaceFile = new Path(targetWorkspace).toFile();
-			if (configuration.getAttribute(DOCLEAR, false) && workspaceFile.exists()) {
-				if (!configuration.getAttribute(ASKCLEAR, true) || confirmDeleteWorkspace(workspaceFile)) {
-					try {
-						deleteContent(workspaceFile);
-					} catch (IOException e) {
-						showWarningDialog(PDEPlugin.getResourceString(KEY_PROBLEMS_DELETING));
-					}
-				}
-			}
-			// create a default source locator if required, and migrate configuration
-			setDefaultSourceLocator(configuration, launch);
+			
+			String workspace = configuration.getAttribute(LOCATION + "0", LauncherUtils.getTempWorkspace());
+			LauncherUtils.clearWorkspace(configuration, workspace);
+			LauncherUtils.setDefaultSourceLocator(configuration, launch);
 			PDEPlugin.getDefault().getLaunchesListener().manage(launch);
 			launcher.getVMRunner(mode).run(runnerConfig, launch, monitor);		
 			monitor.worked(1);
@@ -86,31 +62,13 @@ public class WorkbenchLaunchConfigurationDelegate
 			throw e;
 		}
 	}
-	
-	private void setDefaultSourceLocator(ILaunchConfiguration configuration, ILaunch launch) throws CoreException {
-		String id = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, (String)null);
-		if (id == null) {
-			IPersistableSourceLocator locator = DebugPlugin.getDefault().getLaunchManager().newSourceLocator(JavaUISourceLocator.ID_PROMPTING_JAVA_SOURCE_LOCATOR);
-			ILaunchConfigurationWorkingCopy wc = null;
-			if (configuration.isWorkingCopy()) {
-				wc = (ILaunchConfigurationWorkingCopy)configuration;
-			} else {
-				wc = configuration.getWorkingCopy();
-			}
-			wc.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, JavaUISourceLocator.ID_PROMPTING_JAVA_SOURCE_LOCATOR);
-			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, "org.eclipse.pde.ui.workbenchClasspathProvider");
-			locator.initializeDefaults(wc);
-			wc.doSave();
-			launch.setSourceLocator(locator);
-		}		
-	}
 
 	private VMRunnerConfiguration createVMRunner(ILaunchConfiguration configuration)
 		throws CoreException {
 		String[] classpath = LauncherUtils.constructClasspath();
 		if (classpath == null) {
 			String message = PDEPlugin.getResourceString(KEY_NO_STARTUP);
-			throw new CoreException(createErrorStatus(message));
+			throw new CoreException(LauncherUtils.createErrorStatus(message));
 		}
 
 		VMRunnerConfiguration runnerConfig =
@@ -132,14 +90,11 @@ public class WorkbenchLaunchConfigurationDelegate
 			programArgs.add(appName);
 		}
 		
-
-
 		String targetWorkspace = configuration.getAttribute(LOCATION + "0", LauncherUtils.getTempWorkspace());
 		programArgs.add("-data");
 		programArgs.add(targetWorkspace);
 		
-		boolean useDefault = true;
-			useDefault = configuration.getAttribute(USECUSTOM, true);
+		boolean useDefault = configuration.getAttribute(USECUSTOM, true);
 		if (configuration.getAttribute(USEFEATURES, false)) {
 			validateFeatures();
 			IPath installPath = PDEPlugin.getWorkspace().getRoot().getLocation();
@@ -204,25 +159,7 @@ public class WorkbenchLaunchConfigurationDelegate
 	private String[] getVMArguments(ILaunchConfiguration configuration) throws CoreException {
 		return new ExecutionArguments(configuration.getAttribute(VMARGS,""),"").getVMArgumentsArray();
 	}
-	
- 	private IVMInstall createLauncher(
-		ILaunchConfiguration configuration,
-		IProgressMonitor monitor)
-		throws CoreException {
-		String vm = configuration.getAttribute(VMINSTALL, (String) null);
-		IVMInstall launcher = LauncherUtils.getVMInstall(vm);
-
-		if (launcher == null) 
-			throw new CoreException(
-				createErrorStatus(PDEPlugin.getFormattedMessage(KEY_NO_JRE, vm)));
-		
-		if (!launcher.getInstallLocation().exists()) 
-			throw new CoreException(
-				createErrorStatus(PDEPlugin.getResourceString(KEY_JRE_PATH_NOT_FOUND)));
-		
-		return launcher;
-	}
-		
+			
 	private void validateFeatures()
 		throws CoreException {
 		IPath installPath = PDEPlugin.getWorkspace().getRoot().getLocation();
@@ -238,7 +175,7 @@ public class WorkbenchLaunchConfigurationDelegate
 		}
 		if (badStructure) {
 			throw new CoreException(
-				createErrorStatus(
+				LauncherUtils.createErrorStatus(
 					PDEPlugin.getResourceString(KEY_BAD_FEATURE_SETUP)));
 		} else {
 			// Ensure important files are present
@@ -253,7 +190,6 @@ public class WorkbenchLaunchConfigurationDelegate
 	private IPath getProductPath() {
 		return getInstallPath().removeLastSegments(1);
 	}
-
 
 	private IPluginModelBase[] getExternalPluginsToRun(
 		ILaunchConfiguration config,
@@ -274,8 +210,6 @@ public class WorkbenchLaunchConfigurationDelegate
 		}
 		return (IPluginModelBase[])exList.toArray(new IPluginModelBase[exList.size()]);
 	}
-
-
 	
 	private String computeShowsplashArgument() {
 		IPath eclipseHome = ExternalModelManager.getEclipseHome(null);
@@ -307,67 +241,6 @@ public class WorkbenchLaunchConfigurationDelegate
 			tracingArg = "\"file:" + optionsFileName + "\"";
 		return tracingArg;
 	}
-
-	private void deleteContent(File curr) throws IOException {
-		if (curr.isDirectory()) {
-			File[] children = curr.listFiles();
-			for (int i = 0; i < children.length; i++) {
-				deleteContent(children[i]);
-			}
-		}
-		curr.delete();
-	}
-
-	private Display getDisplay() {
-		Display display = Display.getCurrent();
-		if (display == null) {
-			display = Display.getDefault();
-		}
-		return display;
-	}
-
-	private IStatus createErrorStatus(String message) {
-		return new Status(
-			IStatus.ERROR,
-			PDEPlugin.getPluginId(),
-			IStatus.OK,
-			message,
-			null);
-	}
-
-
-	private boolean confirmDeleteWorkspace(final File workspaceFile) {
-		final boolean[] result = new boolean[1];
-		getDisplay().syncExec(new Runnable() {
-			public void run() {
-				String title = PDEPlugin.getResourceString(KEY_TITLE);
-				String message =
-					PDEPlugin.getFormattedMessage(
-						KEY_DELETE_WORKSPACE,
-						workspaceFile.getPath());
-				result[0] =
-					MessageDialog.openQuestion(
-						PDEPlugin.getActiveWorkbenchShell(),
-						title,
-						message);
-			}
-		});
-		return result[0];
-	}
-
-	private void showWarningDialog(final String message) {
-		getDisplay().syncExec(new Runnable() {
-			public void run() {
-				String title = PDEPlugin.getResourceString(KEY_TITLE);
-				MessageDialog.openWarning(
-					PDEPlugin.getActiveWorkbenchShell(),
-					title,
-					message);
-			}
-		});
-	}
-
-
 
 	private String getPrimaryFeatureId() {
 		IPath eclipsePath = ExternalModelManager.getEclipseHome(null);

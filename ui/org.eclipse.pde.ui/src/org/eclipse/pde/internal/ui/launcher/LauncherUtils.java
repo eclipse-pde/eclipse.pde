@@ -1,6 +1,7 @@
 package org.eclipse.pde.internal.ui.launcher;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
@@ -14,8 +15,14 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.debug.ui.JavaUISourceLocator;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -28,8 +35,6 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.widgets.Display;
 
 public class LauncherUtils {
-	private static final String KEY_TITLE =
-		"WorkbenchLauncherConfigurationDelegate.title";
 	private static final String KEY_DUPLICATES =
 		"WorkbenchLauncherConfigurationDelegate.duplicates";
 	private static final String KEY_DUPLICATE_PLUGINS =
@@ -38,6 +43,16 @@ public class LauncherUtils {
 		"WorkbenchLauncherConfigurationDelegate.noBoot";
 	private static final String KEY_BROKEN_PLUGINS =
 		"WorkbenchLauncherConfigurationDelegate.brokenPlugins";
+	private static final String KEY_NO_JRE =
+		"WorkbenchLauncherConfigurationDelegate.noJRE";
+	private static final String KEY_JRE_PATH_NOT_FOUND =
+		"WorkbenchLauncherConfigurationDelegate.jrePathNotFound";
+	private static final String KEY_PROBLEMS_DELETING =
+		"WorkbenchLauncherConfigurationDelegate.problemsDeleting";
+	private static final String KEY_TITLE =
+		"WorkbenchLauncherConfigurationDelegate.title";
+	private static final String KEY_DELETE_WORKSPACE =
+		"WorkbenchLauncherConfigurationDelegate.confirmDeleteWorkspace";
 
 	private static String bootPath = null;
 	private static boolean bootInSource = false;
@@ -101,8 +116,12 @@ public class LauncherUtils {
 		return path.append("runtime-test-workspace").toOSString();
 	}
 	
-	public static String getTempWorkspace() {
+	public static String getJUnitTempWorkspace() {
 		return System.getProperty("java.io.tmpdir") + File.separator + "org.eclipse.pde.junit.workspace";				
+	}
+	
+	public static String getTempWorkspace() {
+		return System.getProperty("java.io.tmpdir") + File.separator + "org.eclipse.pde.workspace";				
 	}
 
 	public static TreeSet parseDeselectedWSIds(ILaunchConfiguration config)
@@ -374,6 +393,104 @@ public class LauncherUtils {
 	public static String getBootPath() {
 		return bootPath;
 	}
+	
+	public static IVMInstall createLauncher(
+		ILaunchConfiguration configuration)
+		throws CoreException {
+		String vm = configuration.getAttribute(ILauncherSettings.VMINSTALL, (String) null);
+		IVMInstall launcher = LauncherUtils.getVMInstall(vm);
 
+		if (launcher == null) 
+			throw new CoreException(
+				createErrorStatus(PDEPlugin.getFormattedMessage(KEY_NO_JRE, vm)));
+		
+		if (!launcher.getInstallLocation().exists()) 
+			throw new CoreException(
+				createErrorStatus(PDEPlugin.getResourceString(KEY_JRE_PATH_NOT_FOUND)));
+		
+		return launcher;
+	}
+
+	public static IStatus createErrorStatus(String message) {
+		return new Status(
+			IStatus.ERROR,
+			PDEPlugin.getPluginId(),
+			IStatus.OK,
+			message,
+			null);
+	}
+
+	public static  void setDefaultSourceLocator(ILaunchConfiguration configuration, ILaunch launch) throws CoreException {
+		String id = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, (String)null);
+		if (id == null) {
+			IPersistableSourceLocator locator = DebugPlugin.getDefault().getLaunchManager().newSourceLocator(JavaUISourceLocator.ID_PROMPTING_JAVA_SOURCE_LOCATOR);
+			ILaunchConfigurationWorkingCopy wc = null;
+			if (configuration.isWorkingCopy()) {
+				wc = (ILaunchConfigurationWorkingCopy)configuration;
+			} else {
+				wc = configuration.getWorkingCopy();
+			}
+			wc.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, JavaUISourceLocator.ID_PROMPTING_JAVA_SOURCE_LOCATOR);
+			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, "org.eclipse.pde.ui.workbenchClasspathProvider");
+			locator.initializeDefaults(wc);
+			wc.doSave();
+			launch.setSourceLocator(locator);
+		}		
+	}
+		
+	public static void clearWorkspace(ILaunchConfiguration configuration, String workspace) throws CoreException {
+		File workspaceFile = new Path(workspace).toFile();
+		if (configuration.getAttribute(ILauncherSettings.DOCLEAR, false) && workspaceFile.exists()) {
+			if (!configuration.getAttribute(ILauncherSettings.ASKCLEAR, true)
+				|| confirmDeleteWorkspace(workspaceFile)) {
+				try {
+					deleteContent(workspaceFile);
+				} catch (IOException e) {
+					showWarningDialog(PDEPlugin.getResourceString(KEY_PROBLEMS_DELETING));
+				}
+			}
+		}
+	}
+	
+	private static void showWarningDialog(final String message) {
+		getDisplay().syncExec(new Runnable() {
+			public void run() {
+				String title = PDEPlugin.getResourceString(KEY_TITLE);
+				MessageDialog.openWarning(
+					PDEPlugin.getActiveWorkbenchShell(),
+					title,
+					message);
+			}
+		});
+	}
+	
+	private static boolean confirmDeleteWorkspace(final File workspaceFile) {
+		final boolean[] result = new boolean[1];
+		getDisplay().syncExec(new Runnable() {
+			public void run() {
+				String title = PDEPlugin.getResourceString(KEY_TITLE);
+				String message =
+					PDEPlugin.getFormattedMessage(
+						KEY_DELETE_WORKSPACE,
+						workspaceFile.getPath());
+				result[0] =
+					MessageDialog.openQuestion(
+						PDEPlugin.getActiveWorkbenchShell(),
+						title,
+						message);
+			}
+		});
+		return result[0];
+	}
+	
+	private static void deleteContent(File curr) throws IOException {
+		if (curr.isDirectory()) {
+			File[] children = curr.listFiles();
+			for (int i = 0; i < children.length; i++) {
+				deleteContent(children[i]);
+			}
+		}
+		curr.delete();
+	}
 
 }

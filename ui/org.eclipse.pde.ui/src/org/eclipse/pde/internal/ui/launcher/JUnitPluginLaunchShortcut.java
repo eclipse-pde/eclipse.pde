@@ -25,7 +25,7 @@ public class JUnitPluginLaunchShortcut extends JUnitLaunchShortcut {
 	 */
 	protected ILaunchConfigurationType getJUnitLaunchConfigType() {
 		ILaunchManager lm= DebugPlugin.getDefault().getLaunchManager();
-		return lm.getLaunchConfigurationType(JUnitLaunchConfiguration.ID_PLUGIN_JUNIT);		
+		return lm.getLaunchConfigurationType("org.eclipse.pde.ui.JunitLaunchConfig");		
 	}	
 	
 	protected ILaunchConfiguration createConfiguration(
@@ -34,11 +34,18 @@ public class JUnitPluginLaunchShortcut extends JUnitLaunchShortcut {
 		try {
 			ILaunchConfigurationType configType= getJUnitLaunchConfigType();
 			ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, getLaunchManager().generateUniqueLaunchConfigurationNameFrom(name));
+			wc.setAttribute(ILauncherSettings.APPLICATION, JUnitLaunchConfiguration.fgDefaultApp);
+			wc.setAttribute(ILauncherSettings.VMARGS, "");
+			wc.setAttribute(ILauncherSettings.PROGARGS, LauncherUtils.getDefaultProgramArguments());
+			wc.setAttribute(ILauncherSettings.USECUSTOM, true);
+			wc.setAttribute(ILauncherSettings.DOCLEAR, false);
+			wc.setAttribute(ILauncherSettings.ASKCLEAR, true);
+			wc.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, JavaUISourceLocator.ID_PROMPTING_JAVA_SOURCE_LOCATOR);
+			wc.setAttribute(
+				IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER,
+				"org.eclipse.pde.ui.workbenchClasspathProvider");
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, project.getElementName());
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, mainType);
-			wc.setAttribute(ILauncherSettings.APPLICATION, JUnitLaunchConfiguration.fgDefaultApp);
-			wc.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, JavaUISourceLocator.ID_PROMPTING_JAVA_SOURCE_LOCATOR);
-			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, LauncherUtils.getDefaultProgramArguments());
 			wc.setAttribute(JUnitBaseLaunchConfiguration.ATTR_KEEPRUNNING, false);
 			wc.setAttribute(JUnitBaseLaunchConfiguration.LAUNCH_CONTAINER_ATTR, container);
 			if (testName.length() > 0)
