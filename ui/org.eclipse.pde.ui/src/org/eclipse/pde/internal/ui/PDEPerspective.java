@@ -57,7 +57,6 @@ public void createInitialLayout(IPageLayout factory) {
 	factory.addActionSet(IDebugUIConstants.DEBUG_ACTION_SET);
 	factory.addActionSet(JavaUI.ID_ACTION_SET);
 	factory.addActionSet(JavaUI.ID_ELEMENT_CREATION_ACTION_SET);
-;
 	
 	// new actions 
 	factory.addNewWizardShortcut("org.eclipse.pde.internal.ui.wizards.project.NewProjectWizard");

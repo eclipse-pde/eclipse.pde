@@ -45,7 +45,7 @@ public class SystemFileMarkerAnnotationModel
 				PDEPlugin.logException(x);
 			}
 		}
-	};
+	}
 
 	/**
 	 * Internal resource delta visitor.
@@ -61,7 +61,7 @@ public class SystemFileMarkerAnnotationModel
 			}
 			return true;
 		}
-	};
+	}
 
 	/** The workspace */
 	private IWorkspace fWorkspace;

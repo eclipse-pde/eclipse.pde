@@ -82,8 +82,6 @@ public class PluginSearchOperation {
 				if (searchLimit != PluginSearchInput.LIMIT_DECLARATIONS)
 					findExtensionPointReferences(model, result);
 				break;
-			default :
-				;
 		}
 		return result;
 	}

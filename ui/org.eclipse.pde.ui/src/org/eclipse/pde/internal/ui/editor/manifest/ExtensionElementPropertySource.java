@@ -315,7 +315,7 @@ public void openInEditor(IPropertySheetEntry entry) {
 	} else
 		if (info.getKind() == ISchemaAttribute.RESOURCE) {
 			openResourceFile(value);
-		};
+		}
 }
 private void openJavaFile(String name) {
 	IJavaProject jproject = getJavaProject();

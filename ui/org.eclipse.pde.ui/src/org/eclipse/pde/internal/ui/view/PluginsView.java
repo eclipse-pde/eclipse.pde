@@ -153,7 +153,6 @@ public class PluginsView extends ViewPart {
 			new PluginsContentProvider(this, manager));
 		treeViewer.setLabelProvider(new PluginsLabelProvider());
 		treeViewer.setSorter(ListUtil.PLUGIN_SORTER);
-		;
 		initDragAndDrop();
 		makeActions();
 		initFilters();

@@ -31,7 +31,7 @@ public class ManifestSourcePageNew extends ManifestSourcePage implements IPDECol
 		public void selectionChanged(SelectionChangedEvent event) {
 			doSelectionChanged(event);
 		}
-	};
+	}
 
 	private Object modelNeedsUpdatingLock;
 	private Object dynamicReconcilingLock;
