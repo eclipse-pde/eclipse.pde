@@ -166,7 +166,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 					if (!value.equals("root") && !value.equals("self") && !value.equals("both")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 						reportIllegalAttributeValue(include, attr);
 					}
-				} else if (!name.equals("id") && !name.equals("name") && !name.equals("os") && !name.equals("ws") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				} else if (!name.equals("id") && !name.equals("name") && !name.equals("os") && !name.equals("ws") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 						&& !name.equals("nl") && !name.equals("arch")) { //$NON-NLS-1$ //$NON-NLS-2$
 					reportUnknownAttribute(include, name, CompilerFlags.ERROR);
 				}

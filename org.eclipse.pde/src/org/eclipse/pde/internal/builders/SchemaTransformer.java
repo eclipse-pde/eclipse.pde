@@ -211,6 +211,8 @@ public class SchemaTransformer {
 								fWriter.print("<p class=code id=cstring>"); //$NON-NLS-1$
 								fWriter.print("&quot;"); //$NON-NLS-1$
 							}
+						} else {
+							fWriter.print("\""); //$NON-NLS-1$						
 						}
 						break;
 					default :
