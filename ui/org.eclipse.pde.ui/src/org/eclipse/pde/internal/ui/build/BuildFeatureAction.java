@@ -28,10 +28,11 @@ public class BuildFeatureAction extends BaseBuildAction {
 	protected void makeScripts(IProgressMonitor monitor)
 		throws InvocationTargetException, CoreException {
 		ArrayList paths = new ArrayList();
-		IFeatureModel[] models = PDECore.getDefault().getWorkspaceModelManager().getFeatureModels();
+		IFeatureModel[] models = PDECore.getDefault().getFeatureModelManager().getAllFeatures();
 		for (int i = 0; i < models.length; i++) {
-			paths.add(models[i].getInstallLocation() + Path.SEPARATOR + "feature.xml"); //$NON-NLS-1$
-			if (models[i].getUnderlyingResource().equals(fManifestFile))
+			paths.add(models[i].getInstallLocation() + IPath.SEPARATOR + "feature.xml"); //$NON-NLS-1$
+			if (models[i].getUnderlyingResource() != null
+					&& models[i].getUnderlyingResource().equals(fManifestFile))
 				model = models[i];
 		}
 		
@@ -44,13 +45,13 @@ public class BuildFeatureAction extends BaseBuildAction {
 		BuildScriptGenerator generator = new BuildScriptGenerator();
 		generator.setBuildingOSGi(PDECore.getDefault().getModelManager().isOSGiRuntime());
 		generator.setChildren(true);
-		BuildScriptGenerator.setEmbeddedSource(AbstractScriptGenerator.getDefaultEmbeddedSource());
+		AbstractScriptGenerator.setEmbeddedSource(AbstractScriptGenerator.getDefaultEmbeddedSource());
 
 		String url = ClasspathHelper.getDevEntriesProperties(fManifestFile.getProject().getLocation().addTrailingSeparator().toString() + "dev.properties", false); //$NON-NLS-1$
 		generator.setDevEntries(url);
 		generator.setWorkingDirectory(fManifestFile.getProject().getLocation().toOSString());
-		BuildScriptGenerator.setOutputFormat(AbstractScriptGenerator.getDefaultOutputFormat());
-		BuildScriptGenerator.setConfigInfo(AbstractScriptGenerator.getDefaultConfigInfos());
+		AbstractScriptGenerator.setOutputFormat(AbstractScriptGenerator.getDefaultOutputFormat());
+		AbstractScriptGenerator.setConfigInfo(AbstractScriptGenerator.getDefaultConfigInfos());
 		generator.setElements(new String[] {"feature@" + model.getFeature().getId()});	 //$NON-NLS-1$
 		generator.setPluginPath(all);
 		generator.setGenerateAssembleScript(false);
