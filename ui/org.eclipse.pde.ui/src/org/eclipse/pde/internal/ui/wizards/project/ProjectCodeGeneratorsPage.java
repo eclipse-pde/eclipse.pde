@@ -35,6 +35,7 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 	private ControlEnableState wizardListEnableState;
 	private boolean fragment;
 	private IProjectProvider provider;
+	private boolean firstTime=true;
 	private static final String KEY_TITLE =
 		"NewProjectWizard.ProjectCodeGeneratorsPage.title";
 	private static final String KEY_BLANK_LABEL =
@@ -66,6 +67,7 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 		boolean fragment) {
 		super(wizardElements, message);
 		this.fragment = fragment;
+
 
 		if (fragment) {
 			setTitle(PDEPlugin.getResourceString(KEY_FTITLE));
@@ -111,9 +113,8 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 
 		SelectionListener listener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				setWizardListEnabled(templateRadio.getSelection());
+				setWizardListEnabled(!blankPageRadio.getSelection());
 				updateWizardButtons();
-
 			}
 		};
 		blankPageRadio.addSelectionListener(listener);
@@ -129,8 +130,10 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
-		if (visible) {
+		
+		if (visible && firstTime) {
 			blankPageRadio.setFocus();
+			firstTime=false;
 		}
 	}
 
@@ -151,6 +154,9 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 			runJavaSettingsOperation();
 		}
 		return true;
+	}
+	public boolean canFlipToNextPage() {
+		return !blankPageRadio.getSelection();
 	}
 	public IWizardPage getNextPage() {
 		if (blankPageRadio.getSelection())

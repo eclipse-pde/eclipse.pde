@@ -187,7 +187,7 @@ public class TemplateSelectionPage extends WizardPage {
 	
 	IWizardPage getPreviousVisiblePage(IWizardPage page) {
 		if (page instanceof FirstTemplateWizardPage) return null;
-		if (page == this) return page.getPreviousPage();
+		if (page == this) return super.getPreviousPage();
 		else {
 			int index = visiblePages.indexOf(page);
 			if (index >0 && index < visiblePages.size())

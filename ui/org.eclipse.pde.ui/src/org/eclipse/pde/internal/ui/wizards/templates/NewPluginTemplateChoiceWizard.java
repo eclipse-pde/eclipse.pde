@@ -1,5 +1,7 @@
 package org.eclipse.pde.internal.ui.wizards.templates;
 
+import org.eclipse.jface.wizard.IWizardPage;
+
 public class NewPluginTemplateChoiceWizard
 	extends AbstractNewPluginTemplateWizard {
 	private TemplateSelectionPage selectionPage;
@@ -14,5 +16,12 @@ public class NewPluginTemplateChoiceWizard
 	public void addAdditionalPages() {
 		selectionPage = new TemplateSelectionPage();
 		addPage(selectionPage);
+	}
+	
+	public IWizardPage getNextPage(IWizardPage page) {
+		return selectionPage.getNextVisiblePage(page);
+	}
+	public IWizardPage getPreviousPage(IWizardPage page) {
+		return selectionPage.getPreviousVisiblePage(page);
 	}
 }
