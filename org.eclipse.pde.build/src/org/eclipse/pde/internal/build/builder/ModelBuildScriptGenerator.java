@@ -421,7 +421,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			script.printCopyTask(null, root, new FileSet[] {fileSet}, true);
 		}
 		if (dotOnTheClasspath && compiledJarNames.size() != 0) {
-			FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + '/' + EXPANDED_DOT, null, "**", null, null, null, null); //$NON-NLS-1$
+			FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + '/' + EXPANDED_DOT, null, "**", null, replaceVariables(exclude, true), null, null); //$NON-NLS-1$
 			script.printCopyTask(null, root, new FileSet[] {fileSet}, true);
 		}
 		//General copy of the files listed in the includes
