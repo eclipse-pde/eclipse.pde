@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.runtime.logview;
 
 import java.io.*;
+import java.util.*;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IStatus;
@@ -89,13 +90,7 @@ class LogReader {
 					swriter = new StringWriter();
 					writer = new PrintWriter(swriter, true);
 					writerState = SESSION_STATE;
-					if (currentSession == null
-						|| !(currentSession.getDate() == null && session.getDate() == null)
-						|| (currentSession.getDate() == null && session.getDate() != null)
-						|| (currentSession.getDate() != null && session.getDate() == null)
-						|| session.getDate().after(currentSession.getDate())) {
-						currentSession = session;
-					}
+					updateCurrentSession(session);
 					if (currentSession.equals(session) && !memento.getString(LogView.P_SHOW_ALL_SESSIONS).equals("true"))
 						entries.clear();
 				} else if (state == ENTRY_STATE) {
@@ -130,7 +125,22 @@ class LogReader {
 			} catch (IOException e1) {
 			}
 		}
-	}	
+	}
+	
+	private static void updateCurrentSession(LogSession session) {
+		if (currentSession == null) {
+			currentSession = session;
+			return;
+		}		
+		Date currentDate = currentSession.getDate();
+		Date sessionDate = session.getDate();		
+		if (currentDate == null && sessionDate != null)
+			currentSession = session;
+		else if (currentDate != null && sessionDate == null)
+			currentSession = session;
+		else if (currentDate != null && sessionDate != null && sessionDate.after(currentDate))
+			currentSession = session;	
+	}
 	
 	public static void addEntry(LogEntry current, ArrayList entries, IMemento memento, boolean useCurrentSession) {
 		int severity = current.getSeverity();
