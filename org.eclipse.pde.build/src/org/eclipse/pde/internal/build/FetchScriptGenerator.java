@@ -102,6 +102,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			generator.setFetchChildren(fetchChildren);
 			generator.setCvsPassFileLocation(cvsPassFileLocation);
 			generator.setRecursiveGeneration(recursiveGeneration);
+			generator.setFetchTag(fetchTag);
 			generator.generate();
 		}
 	}
