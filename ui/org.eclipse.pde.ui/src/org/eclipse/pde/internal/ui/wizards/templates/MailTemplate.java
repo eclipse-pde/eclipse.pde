@@ -180,17 +180,25 @@ public class MailTemplate extends PDETemplateSection {
 		IPluginExtension extension = createExtension("org.eclipse.ui.commands", true); //$NON-NLS-1$
 
 		IPluginElement element = model.getPluginFactory().createElement(extension);
-		element.setName("command"); //$NON-NLS-1$
-		element.setAttribute("description", "Opens a mailbox"); //$NON-NLS-1$ //$NON-NLS-2$
-		element.setAttribute("name", "Open Mailbox"); //$NON-NLS-1$ //$NON-NLS-2$
-		element.setAttribute("id", id + ".open"); //$NON-NLS-1$ //$NON-NLS-2$
-		extension.add(element);
+        element.setName("category"); //$NON-NLS-1$
+        element.setAttribute("id", id + ".category"); //$NON-NLS-1$ //$NON-NLS-2$
+        element.setAttribute("name", "Mail"); //$NON-NLS-1$ //$NON-NLS-2$
+        extension.add(element);
+
+        element = model.getPluginFactory().createElement(extension);
+        element.setName("command"); //$NON-NLS-1$
+        element.setAttribute("description", "Opens a mailbox"); //$NON-NLS-1$ //$NON-NLS-2$
+        element.setAttribute("name", "Open Mailbox"); //$NON-NLS-1$ //$NON-NLS-2$
+        element.setAttribute("id", id + ".open"); //$NON-NLS-1$ //$NON-NLS-2$
+        element.setAttribute("categoryId", id + ".category"); //$NON-NLS-1$ //$NON-NLS-2$
+        extension.add(element);
 		
 		element = model.getPluginFactory().createElement(extension);
 		element.setName("command"); //$NON-NLS-1$
 		element.setAttribute("description", "Open a message dialog"); //$NON-NLS-1$ //$NON-NLS-2$
 		element.setAttribute("name", "Open Message Dialog"); //$NON-NLS-1$ //$NON-NLS-2$
 		element.setAttribute("id", id + ".openMessage");	 //$NON-NLS-1$ //$NON-NLS-2$
+        element.setAttribute("categoryId", id + ".category"); //$NON-NLS-1$ //$NON-NLS-2$
 		extension.add(element);
 		
 		element = model.getPluginFactory().createElement(extension);
