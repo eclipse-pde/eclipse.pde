@@ -33,4 +33,9 @@ public void init(IProject project, IPluginModelBase pluginModelBase) {
 public boolean performFinish() {
 	return pointSelectionPage.finish();
 }
+
+public boolean canFinish() {
+	if (pointSelectionPage.canFinish()==false) return false;
+	return super.canFinish();
+}
 }

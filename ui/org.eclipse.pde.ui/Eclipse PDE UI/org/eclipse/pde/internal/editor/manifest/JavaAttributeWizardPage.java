@@ -35,6 +35,7 @@ public class JavaAttributeWizardPage extends WizardPage {
 	public static final String DUPLICATION_MESSAGE = "JavaAttributeWizard.duplication.message";
 	public static final String PAGE_DESC = "JavaAttributeWizard.desc";
 	public static final String KEY_CONTAINER_SELECTION = "JavaAttributeWizard.containerSelection";
+	public static final String KEY_PACKAGE_SELECTION = "JavaAttributeWizard.packageSelection";
 	public static final String KEY_MISSING_CLASS = "JavaAttributeWizard.error.class";
 	public static final String KEY_MISSING_CONTAINER = "JavaAttributeWizard.error.container";
 	public static final String KEY_MISSING_PACKAGE = "JavaAttributeWizard.error.package";
@@ -316,6 +317,7 @@ private void handleFindPackage(Text target) {
 	try {
 		SelectionDialog dialog =
 			JavaUI.createPackageDialog(PDEPlugin.getActiveWorkbenchShell(), JavaCore.create(project), 0);
+		dialog.setTitle(PDEPlugin.getResourceString(KEY_PACKAGE_SELECTION));
 		int status = dialog.open();
 		if (status == SelectionDialog.OK) {
 			Object[] result = dialog.getResult();

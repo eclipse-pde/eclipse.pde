@@ -154,6 +154,18 @@ public void createControl(Composite parent) {
 	initialize();
 	setControl(outerContainer);
 }
+
+public boolean canFinish() {
+	if (pointListViewer!=null) {
+		ISelection selection = pointListViewer.getSelection();
+		if (selection instanceof IStructuredSelection) {
+			IStructuredSelection ssel = (IStructuredSelection)selection;
+			if (ssel.isEmpty()==false) return true;
+		}
+	}
+	return false;
+}
+
 public void createDescriptionIn(Composite composite) {
 	description = new Label(composite, SWT.NONE);
 	GridData gd =
@@ -215,6 +227,7 @@ public void selectionChanged(SelectionChangedEvent event) {
 	String description = "";
 	if (currentPoint!=null) description = currentPoint.getFullId();
 	setDescriptionText(description);
+	getContainer().updateButtons();
 }
 public void setDescriptionText(String text) {
 	description.setText(text);
