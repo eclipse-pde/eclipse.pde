@@ -136,6 +136,13 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 				programArgs.add("file:" + new Path(getConfigDir(configuration).getPath()).addTrailingSeparator().toString()); //$NON-NLS-1$
 			}
 			programArgs.add("-update"); //$NON-NLS-1$
+            // add the output folder names
+            programArgs.add("-dev"); //$NON-NLS-1$
+            if (PDECore.getDefault().getModelManager().isOSGiRuntime())
+                programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigDir(configuration).toString() + "/dev.properties", true)); //$NON-NLS-1$
+            else
+                programArgs.add(ClasspathHelper.getDevEntries(true));
+            
 		} else {
 			TreeMap pluginMap = LauncherUtils.getPluginsToRun(configuration);
 			if (pluginMap == null) 
@@ -169,14 +176,13 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 					programArgs.add("file:" + bootPath); //$NON-NLS-1$
 				}
 			}
+            // add the output folder names
+            programArgs.add("-dev"); //$NON-NLS-1$
+            if (PDECore.getDefault().getModelManager().isOSGiRuntime())
+                programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigDir(configuration).toString() + "/dev.properties", pluginMap)); //$NON-NLS-1$
+            else
+                programArgs.add(ClasspathHelper.getDevEntries(true));            
 		}
-		
-		// add the output folder names
-		programArgs.add("-dev"); //$NON-NLS-1$
-		if (PDECore.getDefault().getModelManager().isOSGiRuntime())
-			programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigDir(configuration).toString() + "/dev.properties", true)); //$NON-NLS-1$
-		else
-			programArgs.add(ClasspathHelper.getDevEntries(true));
 		
 		// necessary for PDE to know how to load plugins when target platform = host platform
 		// see PluginPathFinder.getPluginPaths()

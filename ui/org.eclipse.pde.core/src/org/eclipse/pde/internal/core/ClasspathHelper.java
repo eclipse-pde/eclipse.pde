@@ -60,7 +60,45 @@ public class ClasspathHelper {
 		}
 		return getDevEntries(checkExcluded);
 	}
-	
+
+    public static String getDevEntriesProperties(String fileName, Map map) {
+        File file = new File(fileName);
+        if (!file.exists()) {
+            File directory = file.getParentFile();
+            if (directory != null && (!directory.exists() || directory.isFile())) {
+                directory.mkdirs();
+            }
+        }
+        Properties properties = new Properties();
+        Iterator iter = map.values().iterator();
+        while (iter.hasNext()) {
+            IPluginModelBase model = (IPluginModelBase)iter.next();
+            if (model.getUnderlyingResource() != null) {
+                String entry = writeEntry(getOutputFolders(model, true));
+                if (entry.length() > 0)
+                    properties.put(model.getPluginBase().getId(), entry);                
+            }
+        }
+        properties.put("@ignoredot@", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+        
+        FileOutputStream stream = null;
+        try {
+            stream = new FileOutputStream(fileName);
+            properties.store(stream, ""); //$NON-NLS-1$
+            stream.flush();
+            return new URL("file:" + fileName).toString(); //$NON-NLS-1$
+        } catch (IOException e) {
+            PDECore.logException(e);
+        } finally {
+            try {
+                if (stream != null)
+                    stream.close();
+            } catch (IOException e) {
+            }           
+        }
+        return getDevEntries(true);
+    }
+
 	public static String getDevEntries(boolean checkExcluded) {
 		WorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
 		IPluginModelBase[] models = manager.getAllModels();

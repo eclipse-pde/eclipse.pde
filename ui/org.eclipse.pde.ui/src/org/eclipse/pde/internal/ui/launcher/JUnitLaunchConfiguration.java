@@ -217,7 +217,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		// Specify the output folder names
 		programArgs.add("-dev"); //$NON-NLS-1$
 		if (PDECore.getDefault().getModelManager().isOSGiRuntime())
-			programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigDir(configuration).toString() + "/dev.properties", true)); //$NON-NLS-1$
+			programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigDir(configuration).toString() + "/dev.properties", pluginMap)); //$NON-NLS-1$
 		else
 			programArgs.add(ClasspathHelper.getDevEntries(true));
 		
