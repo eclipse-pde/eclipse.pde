@@ -17,6 +17,8 @@ public class FeatureImport
 	implements IFeatureImport {
 	private int match = NONE;
 	private IPlugin plugin;
+	private int kind = KIND_PLUGIN;
+	private boolean patch = false;
 
 	public FeatureImport() {
 	}
@@ -32,6 +34,12 @@ public class FeatureImport
 	protected void parse(Node node) {
 		super.parse(node);
 		this.id = getNodeAttribute(node, "plugin");
+		if (this.id == null) {
+			this.id = getNodeAttribute(node, "feature");
+			if (this.id != null) {
+				kind = KIND_FEATURE;
+			}
+		}
 		String mvalue = getNodeAttribute(node, "match");
 		if (mvalue != null && mvalue.length() > 0) {
 			String[] choices = RULE_NAME_TABLE;
@@ -42,11 +50,22 @@ public class FeatureImport
 				}
 			}
 		}
-		setPlugin(PDECore.getDefault().findPlugin(id, getVersion(), match));
+		patch = getBooleanAttribute(node, "patch");
+
+		if (kind == KIND_PLUGIN)
+			setPlugin(PDECore.getDefault().findPlugin(id, getVersion(), match));
 	}
 
 	public int getMatch() {
 		return match;
+	}
+
+	public boolean isPatch() {
+		return patch;
+	}
+
+	public int getKind() {
+		return kind;
 	}
 
 	public void setMatch(int match) throws CoreException {
@@ -56,21 +75,48 @@ public class FeatureImport
 		firePropertyChanged(P_MATCH, oldValue, new Integer(match));
 	}
 
+	public void setPatch(boolean value) throws CoreException {
+		ensureModelEditable();
+		Boolean oldValue = new Boolean(this.patch);
+		this.patch = value;
+		firePropertyChanged(P_PATCH, oldValue, new Boolean(value));
+	}
+	
+	public void setKind(int kind) throws CoreException {
+		ensureModelEditable();
+		Integer oldValue = new Integer(this.kind);
+		this.kind = kind;
+		firePropertyChanged(P_KIND, oldValue, new Integer(kind));
+	}
+
 	public void restoreProperty(String name, Object oldValue, Object newValue)
 		throws CoreException {
-		if (name.equals(P_MATCH)) {
+		if (name.equals(P_MATCH))
 			setMatch(newValue != null ? ((Integer) newValue).intValue() : 0);
-		} else
+		else if (name.equals(P_PATCH))
+			setPatch(
+				newValue != null ? ((Boolean) newValue).booleanValue() : false);
+		else if (name.equals(P_KIND))
+			setKind(
+				newValue != null
+					? ((Integer) newValue).intValue()
+					: KIND_PLUGIN);
+		else
 			super.restoreProperty(name, oldValue, newValue);
 	}
 
 	public void write(String indent, PrintWriter writer) {
-		writer.print(indent + "<import plugin=\"" + getId() + "\"");
+		String target = "plugin";
+		if (kind==KIND_FEATURE) target = "feature";
+		writer.print(indent + "<import "+target+"=\"" + getId() + "\"");
 		if (getVersion() != null) {
 			writer.print(" version=\"" + getVersion() + "\"");
 		}
 		if (match != NONE) {
 			writer.print(" match=\"" + RULE_NAME_TABLE[match] + "\"");
+		}
+		if (patch) {
+			writer.print(" patch=\"true\"");
 		}
 		writer.println("/>");
 	}
