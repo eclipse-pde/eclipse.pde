@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.internal.core.search.PluginSearchInput;
@@ -105,7 +106,7 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 		hookListeners();	
 		
 		setControl(result);
-		
+		Dialog.applyDialogFont(result);
 		WorkbenchHelp.setHelp(result, IHelpContextIds.SEARCH_PAGE);
 	}
 		
