@@ -1006,5 +1006,17 @@
             id="org.eclipse.pde.core.requiredPlugins">
       </classpathContainerPage>
    </extension>
+   <extension
+         point="org.eclipse.search.searchPages">
+      <page
+            showScopeSection="true"
+            enabled="true"
+            label="%PluginSearchPage.label"
+            icon="icons/full/obj16/psearch_obj.gif"
+            extensions="xml:90"
+            class="org.eclipse.pde.internal.ui.search.PluginSearchPage"
+            id="org.eclipse.pde.internal.ui.search.SearchPage">
+      </page>
+   </extension>
 
 </plugin>

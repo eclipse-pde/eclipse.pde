@@ -63,7 +63,7 @@ public class PluginSearchLabelProvider extends LabelProvider {
 			} 
 			
 			if (object instanceof IPluginExtension) {
-				return ((IPluginExtension)object).getId()
+				return PDEPlugin.getDefault().getLabelProvider().getText(object)
 					+ " - "
 					+ object.getModel().getPluginBase().getId();
 			}
