@@ -8,6 +8,15 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 
+/**
+ * 
+ * <p> 
+ * <b>Note:</b> This class is part of an interim API that is still under development and expected to
+ * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+ * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+ * (repeatedly) as the API evolves.
+ * </p>
+ */
 public class StringOption extends TemplateOption {
 	private Text text;
 	private Label labelControl;
@@ -18,6 +27,12 @@ public class StringOption extends TemplateOption {
 	 * @param section the parent section
 	 * @param name the unique option name
 	 * @param label the translatable label of the option
+	 * <p> 
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public StringOption(BaseOptionTemplateSection section, String name, String label) {
 		super(section, name, label);
@@ -27,6 +42,12 @@ public class StringOption extends TemplateOption {
 	 * A utility version of the <samp>getValue()</samp> method that
 	 * converts the current value into the String object.
 	 * @return the string version of the current value.
+	 * <p> 
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public String getText() {
 		if (getValue() != null)
@@ -38,6 +59,12 @@ public class StringOption extends TemplateOption {
 	 * accepts String objects.
 	 * @param newText the new text value of the option
 	 * @see #setValue(Object)
+	 * <p> 
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public void setText(String newText) {
 		setValue(newText);
@@ -48,6 +75,12 @@ public class StringOption extends TemplateOption {
 	 * Implements the superclass method by passing the
 	 * string value of the new value to the widget
 	 * @param value the new option value
+	 * <p> 
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public void setValue(Object value) {
 		super.setValue(value);
@@ -62,6 +95,12 @@ public class StringOption extends TemplateOption {
 	 * Creates the string option control.
 	 * @param parent parent composite of the string option widget
 	 * @param span the number of columns that the widget should span
+	 * <p> 
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public void createControl(Composite parent, int span) {
 		labelControl = createLabel(parent, 1);
@@ -85,6 +124,12 @@ public class StringOption extends TemplateOption {
 	/**
 	 * A string option is empty if its text field contains no text.
 	 * @return true if there is no text in the text field.
+	 * <p> 
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public boolean isEmpty() {
 		return getValue() == null || getValue().toString().length() == 0;
@@ -92,6 +137,12 @@ public class StringOption extends TemplateOption {
 	/**
 	 * Implements the superclass method by passing the enabled state
 	 * to the option's widget.
+	 * <p> 
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);

@@ -18,6 +18,12 @@ import org.eclipse.core.runtime.*;
  * can use the project name to construct default
  * values for other name properties before
  * the project resource is being created.
+ * <p>
+ * <b>Note:</b> This interface is part of an interim API that is still under development and expected to
+ * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+ * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+ * (repeatedly) as the API evolves.
+ * </p>
  */
 public interface IProjectProvider {
 	/**
@@ -26,6 +32,12 @@ public interface IProjectProvider {
 	 * already.
 	 *
 	 * @return the handle of the new plug-in project
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	IProject getProject();
 	/**
@@ -34,6 +46,12 @@ public interface IProjectProvider {
 	 * at any time without forcing the project resource creation.
 	 *
 	 * @return new project name
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	String getProjectName();
 
@@ -44,6 +62,12 @@ public interface IProjectProvider {
 	 * resource creation.
 	 * 
 	 * @return absolute project location path
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	IPath getLocationPath();
 }

@@ -25,6 +25,15 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.part.ISetSelectionTarget;
 
+/**
+ * <p>
+ * <b>Note:</b> This class is part of an interim API that is still under development and expected to
+ * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+ * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+ * (repeatedly) as the API evolves.
+ * </p>
+ */
+
 public abstract class AbstractNewPluginTemplateWizard
 	extends Wizard
 	implements IPluginContentWizard {
@@ -46,6 +55,12 @@ public abstract class AbstractNewPluginTemplateWizard
 
 	/**
 	 * Creates a new template wizard.
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 
 	public AbstractNewPluginTemplateWizard() {
@@ -58,6 +73,12 @@ public abstract class AbstractNewPluginTemplateWizard
 	/*
 	 * 
 	 * @see IPluginContentWizard#init(IProjectProvider, IPluginStructureData, boolean)
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public void init(
 		IProjectProvider provider,
@@ -75,16 +96,34 @@ public abstract class AbstractNewPluginTemplateWizard
 	 * of templates that will contribute pages to this wizard.
 	 * @return an array of template sections that will contribute
 	 * pages to this wizard.
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	protected abstract ITemplateSection[] getTemplateSections();
 	/**
 	 * This wizard adds a mandatory first page. Subclasses implement
 	 * this method to add additional pages to the wizard.
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	protected abstract void addAdditionalPages();
 
 	/**
 	 * Implements wizard method. Subclasses cannot override it.
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public final void addPages() {
 		// add the mandatory first page
@@ -95,6 +134,12 @@ public abstract class AbstractNewPluginTemplateWizard
 	}
 	/**
 	 * Implements required wizard method. Subclasses cannot override it.
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public final boolean performFinish() {
 		activeSections = getTemplateSections();

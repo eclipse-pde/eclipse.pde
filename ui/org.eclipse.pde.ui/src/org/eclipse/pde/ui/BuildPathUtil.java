@@ -24,10 +24,22 @@ import org.eclipse.pde.internal.ui.wizards.PluginPathUpdater;
  * generate and the plug-ins they need to reference.
  * This class is typically used from within
  * a plug-in content wizard.
+ * <p>
+ * <b>Note:</b> This class is part of an interim API that is still under development and expected to
+ * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+ * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+ * (repeatedly) as the API evolves.
+ * </p>
  */
 public class BuildPathUtil {
 	/**
 	 * The default constructor.
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public BuildPathUtil() {
 		super();
@@ -56,6 +68,12 @@ public class BuildPathUtil {
 	 * @param data structure data passed in by the master wizard
 	 * @param libraries an array of the library entries to be set
 	 * @param monitor for reporting progress
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public static void setBuildPath(
 		IProject project,
@@ -93,6 +111,12 @@ public class BuildPathUtil {
 	 * 
 	 * @param model the plug-in project handle
 	 * @param monitor for reporting progress
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 
 	public static void setBuildPath(

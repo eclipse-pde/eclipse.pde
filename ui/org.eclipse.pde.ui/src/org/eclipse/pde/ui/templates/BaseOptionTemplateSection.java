@@ -22,6 +22,12 @@ import org.eclipse.pde.ui.IPluginStructureData;
  * <samp>OptionTemplateWizardPage</samp>. The later is capable
  * of creating UI based on the list of options it was given,
  * thus simplifying new template section creation.
+ * <p>
+ * <b>Note:</b> This class is part of an interim API that is still under development and expected to
+ * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+ * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+ * (repeatedly) as the API evolves.
+ * </p>
  */
 
 public abstract class BaseOptionTemplateSection
@@ -36,6 +42,12 @@ public abstract class BaseOptionTemplateSection
 	 * @param value initial value of the option
 	 * @param pageIndex a zero-based index of a page where this option should appear
 	 * @return the newly created option
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	protected TemplateOption addOption(
 		String name,
@@ -55,6 +67,12 @@ public abstract class BaseOptionTemplateSection
 	 * @param value initial value of the option
 	 * @param pageIndex a zero-based index of a page where this option should appear
 	 * @return the newly created option
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	protected TemplateOption addOption(
 		String name,
@@ -78,6 +96,12 @@ public abstract class BaseOptionTemplateSection
 	 * @param value initial value (choice) of the option
 	 * @param pageIndex a zero-based index of a page where this option should appear
 	 * @return the newly created option
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	protected TemplateOption addOption(
 		String name,
@@ -95,6 +119,12 @@ public abstract class BaseOptionTemplateSection
 	 * has not yet been initialized.
 	 * @param name option unique name
 	 * @param value the initial value of the option 
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	protected void initializeOption(String name, Object value) {
 		TemplateOption option = getOption(name);
@@ -111,6 +141,12 @@ public abstract class BaseOptionTemplateSection
 	 * @param name the unique name of the option
 	 * @return the string value of the option with a given name or <samp>null</samp>
 	 * if not found.
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public String getStringOption(String name) {
 		TemplateOption option = (TemplateOption) options.get(name);
@@ -126,6 +162,12 @@ public abstract class BaseOptionTemplateSection
 	 * @param name the unique name of the option
 	 * @return the boolean value of the option with a given name or <samp>null</samp>
 	 * if not found.
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public boolean getBooleanOption(String key) {
 		TemplateOption option = (TemplateOption) options.get(key);
@@ -142,6 +184,12 @@ public abstract class BaseOptionTemplateSection
 	 * if the option with a given name is not found.
 	 * @param name the unique name of the option
 	 * @param enabled the enable state that the option should have
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public void setOptionEnabled(String name, boolean enabled) {
 		TemplateOption option = (TemplateOption) options.get(name);
@@ -154,6 +202,12 @@ public abstract class BaseOptionTemplateSection
 	 * @param name the name of the option
 	 * @return the current value of the option with a specified name
 	 * or <samp>null</samp> if not found or not applicable.
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public Object getValue(String name) {
 		TemplateOption option = (TemplateOption) options.get(name);
@@ -161,22 +215,28 @@ public abstract class BaseOptionTemplateSection
 			return option.getValue();
 		return super.getValue(name);
 	}
-/**
- * Returns true if this template depends on values set on the
- * first (mandatory) wizard page. Values set on this page include
- * plug-in name, plug-in class name, plug-in provider etc.
- * If the template does depend on these values, <samp>initializeFields</samp>
- * will be called when the page is made visible in the forward direction
- * (going from the first page to the pages owned by this template).
- * If the page is never shown (Finish is pressed before the page is
- * made visible at least once), <samp>initializeFields</samp> will be
- * called with the model object instead during template execution.
- * The same method will also be called when the template is created
- * within the context of the plug-in manifest editor, because plug-in
- * model already exists at that time.
- * @return true if this template depends on the data set in 
- * the first wizard page, false otherwise.
- */
+	/**
+	 * Returns true if this template depends on values set on the
+	 * first (mandatory) wizard page. Values set on this page include
+	 * plug-in name, plug-in class name, plug-in provider etc.
+	 * If the template does depend on these values, <samp>initializeFields</samp>
+	 * will be called when the page is made visible in the forward direction
+	 * (going from the first page to the pages owned by this template).
+	 * If the page is never shown (Finish is pressed before the page is
+	 * made visible at least once), <samp>initializeFields</samp> will be
+	 * called with the model object instead during template execution.
+	 * The same method will also be called when the template is created
+	 * within the context of the plug-in manifest editor, because plug-in
+	 * model already exists at that time.
+	 * @return true if this template depends on the data set in 
+	 * the first wizard page, false otherwise.
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
+	 */
 	public boolean isDependentOnFirstPage() {
 		return false;
 	}
@@ -194,8 +254,16 @@ public abstract class BaseOptionTemplateSection
 	 * wizard pages
 	 * @param data initial plug-in data as defined in the mandatory first
 	 * wizard page (e.g. plug-in Id, plug-in name, provider etc.).
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
-	protected void initializeFields(IPluginStructureData sdata, IFieldData data) {
+	protected void initializeFields(
+		IPluginStructureData sdata,
+		IFieldData data) {
 	}
 	/**
 	 * Initializes options in the wizard page using the data provided
@@ -210,6 +278,12 @@ public abstract class BaseOptionTemplateSection
 	 * the model have been fully set and the model can be used
 	 * to initialize options that cannot be initialized independently.
 	 * @param model the model of the plug-in manifest file.
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public void initializeFields(IPluginModelBase model) {
 	}
@@ -219,12 +293,24 @@ public abstract class BaseOptionTemplateSection
 	 * can elect to validate the option on its own, or to also check
 	 * validity of other options in relation to the new value of this one.
 	 * @parem changed the option whose value has been changed by the user
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public abstract void validateOptions(TemplateOption changed);
 	/**
 	 * Expands variable substitution to include all string options
 	 * defined in this template.
 	 * @see AbstractTemplateSection#getReplacementString(String, String)
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public String getReplacementString(String fileName, String key) {
 		String value = getStringOption(key);
@@ -238,6 +324,12 @@ public abstract class BaseOptionTemplateSection
 	 * is important because some options may not be initialized
 	 * and users may choose to press 'Finish' before the wizard
 	 * page where the options are were shown for the first time.
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public void execute(
 		IProject project,

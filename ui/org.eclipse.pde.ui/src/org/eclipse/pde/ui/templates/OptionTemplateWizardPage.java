@@ -19,6 +19,12 @@ import org.eclipse.swt.widgets.Composite;
  * added to the list. When the page is made visible,
  * options that require late initialization will be
  * given a chance to initialize.
+ * <p> 
+ * <b>Note:</b> This class is part of an interim API that is still under development and expected to
+ * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+ * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+ * (repeatedly) as the API evolves.
+ * </p>
  */
 
 public class OptionTemplateWizardPage extends WizardPage {
@@ -29,6 +35,12 @@ public class OptionTemplateWizardPage extends WizardPage {
 	 * The constructor. 
 	 * @param section the section that is contributing this page
 	 * @param option a list of options that should be shown in this page.
+	 * <p> 
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public OptionTemplateWizardPage(
 		BaseOptionTemplateSection section,
@@ -40,6 +52,12 @@ public class OptionTemplateWizardPage extends WizardPage {
 	/**
 	 * Creates the page control by creating individual options in the
 	 * order subject to their position in the list.
+	 * <p> 
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public void createControl(Composite composite) {
 		Composite container = new Composite(composite, SWT.NULL);
@@ -57,6 +75,12 @@ public class OptionTemplateWizardPage extends WizardPage {
 	/**
 	 * Initializes the options that require late initialization when
 	 * the page is made visible.
+	 * <p> 
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public void setVisible(boolean visible) {
 		if (visible && section.isDependentOnFirstPage()) {

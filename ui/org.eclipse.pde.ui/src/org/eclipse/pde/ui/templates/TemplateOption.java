@@ -7,6 +7,12 @@ package org.eclipse.pde.ui.templates;
 /**
  * The base class of all the template options. Options have
  * unique name and a value that can be changed.
+ * <p> 
+ * <b>Note:</b> This class is part of an interim API that is still under development and expected to
+ * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+ * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+ * (repeatedly) as the API evolves.
+ * </p>
  */
 public abstract class TemplateOption extends TemplateField {
 	private String name;
@@ -18,6 +24,12 @@ public abstract class TemplateOption extends TemplateField {
 	 * @param section the parent template section
 	 * @param name the unique name of this option
 	 * @param the presentable label of this option
+	 * <p> 
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public TemplateOption(
 		BaseOptionTemplateSection section,
@@ -29,6 +41,12 @@ public abstract class TemplateOption extends TemplateField {
 	/**
 	 * Returns the unique name of this option
 	 * @return option name
+	 * <p> 
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public String getName() {
 		return name;
@@ -36,6 +54,12 @@ public abstract class TemplateOption extends TemplateField {
 	/**
 	 * Changes the unique name of this option
 	 * @param name the new option name
+	 * <p> 
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -44,6 +68,12 @@ public abstract class TemplateOption extends TemplateField {
 	/**
 	 * Returns the value of this option.
 	 * @return the current value
+	 * <p> 
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public Object getValue() {
 		return value;
@@ -52,6 +82,12 @@ public abstract class TemplateOption extends TemplateField {
 	 * Returns whether this option is currently empty. The actual
 	 * semantics of the result depends on the implementing option.
 	 * @return <samp>true</samp> if option is empty, </samp> false otherwise.
+	 * <p> 
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public boolean isEmpty() {
 		return false;
@@ -62,6 +98,12 @@ public abstract class TemplateOption extends TemplateField {
 	 * required will be flagged as an error in the wizard.
 	 * @param required the new value of the property
 	 * @see #isEmpty
+	 * <p> 
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public void setRequired(boolean required) {
 		this.required = required;
@@ -70,6 +112,12 @@ public abstract class TemplateOption extends TemplateField {
 	 * Returns whether this option is required (cannot be empty)
 	 * @return <samp>true</samp> if this option is required, 
 	 * <samp>false</samp> otherwise.
+	 * <p> 
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public boolean isRequired() {
 		return required;
@@ -78,6 +126,12 @@ public abstract class TemplateOption extends TemplateField {
 	/**
 	 * Sets the new value of this option.
 	 * @param value the new value
+	 * <p> 
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public void setValue(Object value) {
 		this.value = value;
@@ -87,6 +141,12 @@ public abstract class TemplateOption extends TemplateField {
 	 * of enabled state depends on the implementing option.
 	 * @return <samp>true</samp> if option is enabled and can
 	 * be modified.
+	 * <p> 
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public boolean isEnabled() {
 		return enabled;
@@ -95,6 +155,12 @@ public abstract class TemplateOption extends TemplateField {
 	 * Sets the enabled state of this option. The action presentation
 	 * of the enabled state depends on the implementing option.
 	 * @param enabled the new enabled state
+	 * <p> 
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
@@ -104,6 +170,12 @@ public abstract class TemplateOption extends TemplateField {
 	 * in the messages to the user. The default implementation
 	 * trims the 'label' property from mnemonics and from the trailing
 	 * column.
+	 * <p> 
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public String getMessageLabel() {
 		String label = getLabel();

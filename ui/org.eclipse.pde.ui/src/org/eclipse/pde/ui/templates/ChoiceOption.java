@@ -8,6 +8,12 @@ import org.eclipse.swt.widgets.*;
 /**
  * Implementation of the TemplateOption that allows users to
  * choose a value from the fixed set of options.
+ * <p>
+ * <b>Note:</b> This class is part of an interim API that is still under development and expected to
+ * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+ * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+ * (repeatedly) as the API evolves.
+ * </p>
  */
 public class ChoiceOption extends TemplateOption {
 	private String[][] choices;
@@ -24,6 +30,12 @@ public class ChoiceOption extends TemplateOption {
 	 * can be chosen. Each array entry should be an array of size 2,
 	 * where position 0 will be interpeted as the choice unique
 	 * name, and position 1 as the choice presentable label.
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public ChoiceOption(
 		BaseOptionTemplateSection section,
@@ -36,6 +48,12 @@ public class ChoiceOption extends TemplateOption {
 
 	/**
 	 * @see TemplateField#createControl(Composite, int, FormWidgetFactory)
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public void createControl(Composite parent, int span) {
 		Composite container = createComposite(parent, span);
@@ -74,6 +92,12 @@ public class ChoiceOption extends TemplateOption {
 	/**
 	 * Returns the string value of the current choice.
 	 * @return the current choice or <samp>null</samp> if not initialized.
+	 * <p> 
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public String getChoice() {
 		return getValue() != null ? getValue().toString() : null;
@@ -83,6 +107,12 @@ public class ChoiceOption extends TemplateOption {
 	 * Implements the superclass method by passing the new value
 	 * to the option's widget.
 	 * @param value the new value.
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public void setValue(Object value) {
 		super.setValue(value);
@@ -93,6 +123,12 @@ public class ChoiceOption extends TemplateOption {
 	/**
 	 * Implements the superclass method by updating the
 	 * enable state of the option's widget.
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);

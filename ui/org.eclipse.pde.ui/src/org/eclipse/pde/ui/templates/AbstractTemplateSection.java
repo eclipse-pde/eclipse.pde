@@ -20,36 +20,78 @@ import org.eclipse.pde.internal.ui.wizards.templates.ControlStack;
  * Common function for template sections. It is recommended
  * to subclass this class rather than implementing ITemplateSection
  * directly when providing extension templates.
+ * <p>
+ * <b>Note:</b> This class is part of an interim API that is still under development and expected to
+ * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+ * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+ * (repeatedly) as the API evolves.
+ * </p>
  */
 
 public abstract class AbstractTemplateSection
 	implements ITemplateSection, IVariableProvider {
 	/**
 	 * The project handle.
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	protected IProject project;
 	/**
 	 * The plug-in model.
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	protected IPluginModelBase model;
 	/**
 	 * The key for the main plug-in class of the plug-in that
 	 * the template is used for (value="pluginClass");
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public static final String KEY_PLUGIN_CLASS = "pluginClass";
 	/**
 	 * The key for the plug-in id of the plug-in that
 	 * the template is used for (value="pluginId").
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public static final String KEY_PLUGIN_ID = "pluginId";
 	/**
 	 * The key for the plug-in name of the plug-in that
 	 * the template is used for (value="pluginName").
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public static final String KEY_PLUGIN_NAME = "pluginName";
 	/**
 	 * The key for the package name that will be created by
 	 * this teamplate (value="packageName").
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public static final String KEY_PACKAGE_NAME = "packageName";
 
@@ -61,6 +103,12 @@ public abstract class AbstractTemplateSection
 	 * values of the following keys: <samp>pluginClass</samp>,
 	 * <samp>pluginId</samp> and <samp>pluginName</samp>.
 	 * @see ITemplateSection#getReplacementString(String)
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public String getReplacementString(String fileName, String key) {
 		if (key.equals(KEY_PLUGIN_CLASS) && model != null) {
@@ -82,6 +130,12 @@ public abstract class AbstractTemplateSection
 
 	/**
 	 *@see IVariableProvider#getValue(String)
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 
 	public Object getValue(String key) {
@@ -89,12 +143,24 @@ public abstract class AbstractTemplateSection
 	}
 	/**
 	 * @see ITemplateSection#getTemplateLocation()
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public URL getTemplateLocation() {
 		return null;
 	}
 	/**
 	 * @see ITemplateSection#getDescription()
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public String getDescription() {
 		return "";
@@ -105,6 +171,12 @@ public abstract class AbstractTemplateSection
 	 * @param key the key of the required resource string
 	 * @return the translated version of the required resource string
 	 * @see #getPluginResourceBundle()
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public String getPluginResourceString(String key) {
 		ResourceBundle bundle = getPluginResourceBundle();
@@ -140,6 +212,12 @@ public abstract class AbstractTemplateSection
 	 * Marks that pages have been added to the wizard by this template.
 	 * Call this method in 'addPages'.
 	 * @see #addPages(Wizard)
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	protected void markPagesAdded() {
 		pagesAdded = true;
@@ -149,6 +227,12 @@ public abstract class AbstractTemplateSection
 	 * The default implementation of the interface method. The
 	 * returned value is 1.
 	 * @see ITemplateSection#getNumberOfWorkUnits()
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public int getNumberOfWorkUnits() {
 		return 1;
@@ -156,6 +240,12 @@ public abstract class AbstractTemplateSection
 
 	/*
 	 * @see ITemplateSection#getDependencies()
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public IPluginReference[] getDependencies() {
 		return new IPluginReference[0];
@@ -169,6 +259,12 @@ public abstract class AbstractTemplateSection
 	 * @param monitor progress monitor to use
 	 * @return source folder that will be used to generate Java files
 	 * or <samp>null</samp> if none found.
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 
 	protected IFolder getSourceFolder(IProgressMonitor monitor)
@@ -207,6 +303,12 @@ public abstract class AbstractTemplateSection
 	 * target folder with the conditional generation and variable replacement
 	 * for files. Variable replacement also includes file names.
 	 * @param monitor progress monitor to use to indicate generation progress
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	protected void generateFiles(IProgressMonitor monitor) throws CoreException {
 		monitor.setTaskName(PDEPlugin.getResourceString(KEY_GENERATING));
@@ -229,6 +331,12 @@ public abstract class AbstractTemplateSection
 	 * in the project, or <samp>false</samp> to skip it, including all
 	 * subfolders and files it may contain. The default implementation
 	 * is <samp>true</samp>.
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	protected boolean isOkToCreateFolder(File sourceFolder) {
 		return true;
@@ -244,6 +352,12 @@ public abstract class AbstractTemplateSection
 	 * @return <samp>true</samp> if the specified file should be
 	 * created in the project or <samp>false</samp> to skip it. The
 	 * default implementation is <samp>true</samp>.
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	protected boolean isOkToCreateFile(File sourceFile) {
 		return true;
@@ -253,6 +367,12 @@ public abstract class AbstractTemplateSection
 	 * Subclass must implement this method to add the required entries
 	 * in the plug-in model.
 	 * @param monitor the progress monitor to be used
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	protected abstract void updateModel(IProgressMonitor monitor)
 		throws CoreException;
@@ -263,6 +383,12 @@ public abstract class AbstractTemplateSection
 	 * then call <samp>updateModel</samp> to add the required
 	 * manifest entires.
 	 * @see ITemplateSection#execute(IProject, IPluginModelBase, IProgressMonitor)
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public void execute(
 		IProject project,
@@ -282,6 +408,12 @@ public abstract class AbstractTemplateSection
 	 * if an extension with the same Id does not exist.
 	 * @return an existing extension (if exists and <samp>reuse</samp> is <samp>true</samp>),
 	 * or a new extension object otherwise.
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	protected IPluginExtension createExtension(String pointId, boolean reuse)
 		throws CoreException {

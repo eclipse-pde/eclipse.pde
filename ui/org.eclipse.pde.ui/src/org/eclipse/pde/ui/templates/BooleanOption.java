@@ -14,6 +14,12 @@ import org.eclipse.swt.widgets.*;
  * Option provides the appropriate visual presentation
  * that allows users to set the boolean value of the
  * option.
+ * <p>
+ * <b>Note:</b> This class is part of an interim API that is still under development and expected to
+ * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+ * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+ * (repeatedly) as the API evolves.
+ * </p>
  */
 public class BooleanOption extends TemplateOption {
 	private Button button;
@@ -22,6 +28,12 @@ public class BooleanOption extends TemplateOption {
 	 * @param section the parent section
 	 * @param name the unique name 
 	 * @param label the presentable label of the option
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public BooleanOption(
 		BaseOptionTemplateSection section,
@@ -32,6 +44,12 @@ public class BooleanOption extends TemplateOption {
 	/**
 	 * Returns the current state of the option.
 	 * @return true of the option is selected, false otherwise.
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public boolean isSelected() {
 		return getValue() != null && getValue().equals(Boolean.TRUE);
@@ -39,6 +57,12 @@ public class BooleanOption extends TemplateOption {
 	/**
 	 * Changes the current state of the option to the provided state.
 	 * @param selected the new state of the option
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public void setSelected(boolean selected) {
 		setValue(selected ? Boolean.TRUE : Boolean.FALSE);
@@ -47,6 +71,12 @@ public class BooleanOption extends TemplateOption {
 	 * Implementation of the superclass method that updates the
 	 * option's widget with the new value.
 	 * @param value the new option value
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public void setValue(Object value) {
 		super.setValue(value);
@@ -59,6 +89,12 @@ public class BooleanOption extends TemplateOption {
 	 * can modify its boolean state.
 	 * @param parent the parent composite of the option widget
 	 * @param span the number of columns that the widget should span
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public void createControl(Composite parent, int span) {
 		button = new Button(parent, SWT.CHECK);
@@ -80,6 +116,12 @@ public class BooleanOption extends TemplateOption {
 	 * Implementatin of the superclass method that updates the
 	 * option widget with the new enabled state.
 	 * @param enabled the new enabled state.
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);
