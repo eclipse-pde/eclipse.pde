@@ -233,36 +233,7 @@ public class PluginObjectNode extends PluginDocumentNode
 	public String write(boolean indent) {
 		return ""; //$NON-NLS-1$
 	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	public boolean equals(Object obj) {
-		if (!(obj instanceof PluginObjectNode))
-			return false;
 
-		PluginObjectNode node = (PluginObjectNode) obj;
-		if (!node.getXMLTagName().equals(getXMLTagName()))
-			return false;
-
-		if (node.getChildNodes().length != getChildNodes().length)
-			return false;
-
-		for (int i = 0; i < node.getChildNodes().length; i++) {
-			if (!node.getChildAt(i).equals(getChildAt(i)))
-				return false;
-		}
-
-		if (node.getNodeAttributes().length != getNodeAttributes().length)
-			return false;
-		for (int i = 0; i < node.getNodeAttributes().length; i++) {
-			if (!node.getNodeAttributes()[i].equals(getNodeAttributes()[i]))
-				return false;
-		}
-
-		return true;
-	}
 	protected void appendAttribute(StringBuffer buffer, String attrName) {
 		appendAttribute(buffer, attrName, ""); //$NON-NLS-1$
 	}
