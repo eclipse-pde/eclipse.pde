@@ -53,7 +53,7 @@ public class CompilerFlags {
 	public static final String P_NO_REQUIRED_ATT =
 		"compilers.p.no-required-att"; //$NON-NLS-1$
 	public static final String P_NOT_EXTERNALIZED = 
-		"compilers.p.not-externalized-att";
+		"compilers.p.not-externalized-att"; //$NON-NLS-1$
 
 	public static final String S_CREATE_DOCS = "compilers.s.create-docs"; //$NON-NLS-1$
 	public static final String S_DOC_FOLDER = "compilers.s.doc-folder"; //$NON-NLS-1$

@@ -32,13 +32,13 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 		if (!"plugin".equals(elementName) && !"fragment".equals(elementName)) {
 			reportIllegalElement(element, CompilerFlags.ERROR);
 		} else {
-			int severity = CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_ATTRIBUTE);
+			/*int severity = CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_ATTRIBUTE);
 			if (severity != CompilerFlags.IGNORE) {
 				NamedNodeMap attrs = element.getAttributes();
 				for (int i = 0; i < attrs.getLength(); i++) {
 					reportUnknownAttribute(element, attrs.item(i).getNodeName(), severity);
 				}
-			}
+			}*/
 			
 			NodeList children = element.getChildNodes();
 			for (int i = 0; i < children.getLength(); i++) {
