@@ -10,13 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime;
 
-import org.eclipse.pde.internal.runtime.registry.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.ui.plugin.*;
 import java.util.*;
+
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.pde.internal.runtime.registry.*;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class PDERuntimePlugin extends AbstractUIPlugin {
 	

@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry;
 
+import java.util.Vector;
+
+import org.eclipse.core.runtime.ILibrary;
+import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
 import org.eclipse.ui.views.properties.*;
-import java.util.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.runtime.*;
 
 public class LibraryPropertySource extends RegistryPropertySource {
 	private ILibrary library;

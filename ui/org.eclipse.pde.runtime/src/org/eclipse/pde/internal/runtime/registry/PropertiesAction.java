@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry;
 
-import org.eclipse.ui.views.properties.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.ui.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.pde.internal.runtime.*;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.*;
+import org.eclipse.ui.views.properties.PropertySheet;
 
 
 public class PropertiesAction extends Action {

@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry;
 
+import java.util.Hashtable;
+
 import org.eclipse.core.runtime.*;
-import java.util.*;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.Viewer;
 
 public class RegistryBrowserContentProvider
 	implements org.eclipse.jface.viewers.ITreeContentProvider {

@@ -14,7 +14,6 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.PropertyPage;

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.PlatformObject;
 
 public class PluginObjectAdapter extends PlatformObject {
 	private Object object;

@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.logview;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.pde.internal.runtime.*;
+import org.eclipse.pde.internal.runtime.PDERuntimePluginImages;
+import org.eclipse.swt.graphics.Image;
 
 public class LogViewLabelProvider
 	extends LabelProvider

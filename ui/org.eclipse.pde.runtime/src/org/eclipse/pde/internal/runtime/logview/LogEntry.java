@@ -11,8 +11,7 @@
 package org.eclipse.pde.internal.runtime.logview;
 
 import java.io.*;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.text.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;

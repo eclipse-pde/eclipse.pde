@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry;
 
+import java.util.Vector;
+
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.views.properties.*;
-import java.util.*;
-import org.eclipse.core.runtime.*;
 
 public class ConfigurationElementPropertySource extends RegistryPropertySource {
 	private IConfigurationElement config;

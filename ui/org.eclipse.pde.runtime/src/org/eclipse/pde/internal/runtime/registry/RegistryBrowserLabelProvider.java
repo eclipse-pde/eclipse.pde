@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry;
 
-import org.eclipse.jface.resource.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.pde.internal.runtime.*;
+import org.eclipse.swt.graphics.Image;
 
 public class RegistryBrowserLabelProvider extends LabelProvider {
 	private Image pluginImage;

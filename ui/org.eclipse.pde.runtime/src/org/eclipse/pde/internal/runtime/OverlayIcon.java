@@ -10,11 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime;
 
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.Point;
-
-import org.eclipse.jface.resource.CompositeImageDescriptor;
-import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.*;
+import org.eclipse.swt.graphics.*;
 
 
 public class OverlayIcon extends CompositeImageDescriptor {

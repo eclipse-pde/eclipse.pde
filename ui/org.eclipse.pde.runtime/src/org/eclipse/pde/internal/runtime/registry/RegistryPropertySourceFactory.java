@@ -11,7 +11,7 @@
 package org.eclipse.pde.internal.runtime.registry;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.views.properties.*;
+import org.eclipse.ui.views.properties.IPropertySource;
 
 public class RegistryPropertySourceFactory implements IAdapterFactory {
 

@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry;
 
-import java.util.*;
+import java.util.Vector;
+
 import org.eclipse.ui.views.properties.*;
 
 public abstract class RegistryPropertySource implements IPropertySource {

@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry;
 
+import java.util.Vector;
+
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
 import org.eclipse.ui.views.properties.*;
-import java.util.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.runtime.*;
 
 public class PluginPropertySource extends RegistryPropertySource {
 	private IPluginDescriptor pd;

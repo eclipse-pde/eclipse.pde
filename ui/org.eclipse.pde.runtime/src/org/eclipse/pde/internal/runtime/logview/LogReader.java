@@ -11,7 +11,7 @@
 package org.eclipse.pde.internal.runtime.logview;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.IMemento;

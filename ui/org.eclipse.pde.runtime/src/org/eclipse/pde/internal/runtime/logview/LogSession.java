@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.logview;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.StringTokenizer;
+import java.text.*;
+import java.util.*;
 
 public class LogSession {
 	private String sessionData;
