@@ -69,7 +69,6 @@ public class ConvertSchemaToHTML extends Task {
 				URL url =  schemaFile.toURL(); //$NON-NLS-1$
 				SchemaDescriptor desc = new SchemaDescriptor(extPoints[i].getFullId(), url);
 				schema = (Schema)desc.getSchema(false);
-				schema.traverseDocumentTree(handler.getDocumentElement());
 					
 				File directory =
 					new Path(destination).isAbsolute()
