@@ -185,13 +185,33 @@
          </description>
       </wizard>
       <wizard
-            class="org.eclipse.pde.internal.ui.wizards.imports.FeatureImportWizard"
             name="%FeatureImportWizard.label"
-            icon="icons/full/ctool16/newftrprj_wiz.gif"
+            icon="icons/full/ctool16/newexprj_wiz.gif"
+            class="org.eclipse.pde.internal.ui.wizards.exports.PluginExportWizard"
             id="org.eclipse.pde.ui.FeatureImportWizard">
          <description>
             %FeatureImportWizard.description
          </description>
+      </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.ui.exportWizards">
+      <wizard
+            name="%PluginExportWizard.label"
+            icon="icons/full/ctool16/newexprj_wiz.gif"
+            class="org.eclipse.pde.internal.ui.wizards.exports.PluginExportWizard"
+            id="org.eclipse.pde.ui.pluginExportWizard">
+         <description>
+            %PluginExportWizard.description
+         </description>
+         <selection
+               name="plugin.xml"
+               class="org.eclipse.core.resources.IFile">
+         </selection>
+         <selection
+               name="fragment.xml"
+               class="org.eclipse.core.resources.IFile">
+         </selection>
       </wizard>
    </extension>
    <extension

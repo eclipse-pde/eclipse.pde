@@ -9,7 +9,6 @@ import java.net.URL;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -22,17 +21,8 @@ import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
-import org
-	.eclipse
-	.ui
-	.externaltools
-	.internal
-	.ant
-	.launchConfigurations
-	.AntLaunchShortcut;
 
 public class BuildFeatureAction implements IObjectActionDelegate {
 	public static final String KEY_ERRORS_TITLE = "GenerateFeatureJars.errorsTitle";
@@ -77,17 +67,17 @@ public class BuildFeatureAction implements IObjectActionDelegate {
 		try {
 			errors = false;
 			pmd.run(false, false, op);
-			if (errors) return;
-			final Display display = PDEPlugin.getActiveWorkbenchShell().getDisplay();
-			display.asyncExec(new Runnable() {
-				public void run() {
-					BusyIndicator.showWhile(display, new Runnable() {
-						public void run() {
-							runAnt();
-						}
-					});
-				}
-			});
+//			if (errors) return;
+//			final Display display = PDEPlugin.getActiveWorkbenchShell().getDisplay();
+//			display.asyncExec(new Runnable() {
+//				public void run() {
+//					BusyIndicator.showWhile(display, new Runnable() {
+//						public void run() {
+//							runAnt();
+//						}
+//					});
+//				}
+//			});
 		} catch (InterruptedException e) {
 		} catch (InvocationTargetException e) {
 			PDEPlugin.logException(e);
@@ -237,14 +227,14 @@ public class BuildFeatureAction implements IObjectActionDelegate {
 		refreshLocal(feature, monitor);
 	}
 
-	private void runAnt() {
-		String scriptName = MainPreferencePage.getBuildScriptName();
-		IFile file = featureFile.getProject().getFile(scriptName);
-		if (!file.exists()) {
-			// should probably warn the user
-			return;
-		}
-		AntLaunchShortcut launch = new AntLaunchShortcut();
-		launch.launch(new StructuredSelection(file), ILaunchManager.RUN_MODE);
-	}
+//	private void runAnt() {
+//		String scriptName = MainPreferencePage.getBuildScriptName();
+//		IFile file = featureFile.getProject().getFile(scriptName);
+//		if (!file.exists()) {
+//			// should probably warn the user
+//			return;
+//		}
+//		AntLaunchShortcut launch = new AntLaunchShortcut();
+//		launch.launch(new StructuredSelection(file), ILaunchManager.RUN_MODE);
+//	}
 }
