@@ -77,6 +77,8 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_GEL_SC_OBJ    = create(PATH_OBJ, "gel_sc_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_GENERIC_XML_OBJ = create(PATH_OBJ, "generic_xml_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_GROUP_SC_OBJ   = create(PATH_OBJ, "group_sc_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_JAR_OBJ   = create(PATH_OBJ, "jar_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_JAR_LIB_OBJ   = create(PATH_OBJ, "jar_l_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_JAVA_LIB_OBJ   = create(PATH_OBJ, "java_lib_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OVERVIEW_OBJ  = create(PATH_OBJ, "overview_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_PAGE_OBJ   = create(PATH_OBJ, "page_obj.gif"); //$NON-NLS-1$

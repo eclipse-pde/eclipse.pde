@@ -50,6 +50,9 @@ public class LibraryPluginJarsPage extends WizardPage {
 
 	protected LibraryPluginFieldData fData;
 
+	/**
+	 * List of IFile and File of workspace and external Jars.
+	 */
 	protected ArrayList fJarPaths = new ArrayList();
 
 	protected Button fRemove;
@@ -64,20 +67,6 @@ public class LibraryPluginJarsPage extends WizardPage {
 				.getResourceString("LibraryPluginJarsPage.desc")); //$NON-NLS-1$
 	}
 
-	private void addJarPath(String jarPath) {
-		String jarFileName = new File(jarPath).getName();
-		for (int i = 0; i < fJarPaths.size(); i++) {
-			String jarFile = (String) fJarPaths.get(i);
-			String fileName = new File(jarFile).getName();
-			if (fileName.equals(jarFileName)) {
-				fJarPaths.remove(jarFile);
-				fTableViewer.remove(jarFile);
-			}
-		}
-		fJarPaths.add(jarPath);
-		fTableViewer.add(jarPath);
-	}
-
 	private void chooseFile() {
 		FileDialog dialog = new FileDialog(getShell(), SWT.OPEN | SWT.MULTI);
 		dialog.setFilterExtensions(new String[] { "*.jar" }); //$NON-NLS-1$
@@ -86,8 +75,10 @@ public class LibraryPluginJarsPage extends WizardPage {
 			String path = new File(res).getParent();
 			String[] fileNames = dialog.getFileNames();
 			for (int i = 0; i < fileNames.length; i++) {
-				String jarPath = path + File.separator + fileNames[i];
-				addJarPath(jarPath);
+				File newJarFile = new File(path, fileNames[i]);
+				removeJar(fileNames[i]);
+				fJarPaths.add(newJarFile);
+				fTableViewer.add(newJarFile);
 			}
 			fRemove.setEnabled(fJarPaths.size() > 0);
 			setPageComplete(fJarPaths.size() > 0);
@@ -101,17 +92,22 @@ public class LibraryPluginJarsPage extends WizardPage {
 
 		dialog.setValidator(new FileValidator());
 		dialog.setAllowMultiple(true);
-		dialog.setTitle(PDEPlugin.getResourceString("LibraryPluginJarsPage.SelectionDialog.title")); //$NON-NLS-1$
-		dialog.setMessage(PDEPlugin.getResourceString("LibraryPluginJarsPage.SelectionDialog.message")); //$NON-NLS-1$
+		dialog
+				.setTitle(PDEPlugin
+						.getResourceString("LibraryPluginJarsPage.SelectionDialog.title")); //$NON-NLS-1$
+		dialog
+				.setMessage(PDEPlugin
+						.getResourceString("LibraryPluginJarsPage.SelectionDialog.message")); //$NON-NLS-1$
 		dialog.addFilter(new FileExtensionFilter("jar")); //$NON-NLS-1$
 		dialog.setInput(PDEPlugin.getWorkspace().getRoot());
 
 		if (dialog.open() == Window.OK) {
 			Object[] files = dialog.getResult();
 			for (int i = 0; i < files.length; i++) {
-				IFile file = (IFile) files[i];
-				String path = file.getLocation().toString();
-				addJarPath(path);
+				IFile newJarFile = (IFile) files[i];
+				removeJar(newJarFile.getName());
+				fJarPaths.add(newJarFile);
+				fTableViewer.add(newJarFile);
 			}
 			fRemove.setEnabled(fJarPaths.size() > 0);
 			setPageComplete(fJarPaths.size() > 0);
@@ -137,9 +133,30 @@ public class LibraryPluginJarsPage extends WizardPage {
 			}
 		});
 		fTableViewer.setLabelProvider(new LabelProvider() {
+			public String getText(Object obj) {
+				String name;
+				String location;
+				if (obj instanceof IFile) {
+					IFile jarFile = (IFile) obj;
+					name = jarFile.getName();
+					location = jarFile.getParent().getFullPath().toString()
+							.substring(1);
+				} else {
+					File jarFile = (File) obj;
+					name = jarFile.getName();
+					location = jarFile.getParent();
+				}
+				return name + " - " + location; //$NON-NLS-1$
+
+			}
+
 			public Image getImage(Object obj) {
+				if (obj instanceof IFile) {
+					return PDEPlugin.getDefault().getLabelProvider().get(
+							PDEPluginImages.DESC_JAR_OBJ);
+				}
 				return PDEPlugin.getDefault().getLabelProvider().get(
-						PDEPluginImages.DESC_JAVA_LIB_OBJ);
+						PDEPluginImages.DESC_JAR_LIB_OBJ);
 			}
 		});
 		fTableViewer.setSorter(new ViewerSorter());
@@ -211,9 +228,9 @@ public class LibraryPluginJarsPage extends WizardPage {
 				.getSelection();
 		if (!selection.isEmpty()) {
 			for (Iterator it = selection.iterator(); it.hasNext();) {
-				String s = (String) it.next();
-				fJarPaths.remove(s);
-				fTableViewer.remove(s);
+				Object file = it.next();
+				fJarPaths.remove(file);
+				fTableViewer.remove(file);
 			}
 			fRemove.setEnabled(fJarPaths.size() > 0);
 			setPageComplete(fJarPaths.size() > 0);
@@ -224,8 +241,36 @@ public class LibraryPluginJarsPage extends WizardPage {
 		return fJarPaths.size() > 0;
 	}
 
+	private void removeJar(String fileName) {
+		for (int i = 0; i < fJarPaths.size(); i++) {
+			String name;
+			if (fJarPaths.get(i) instanceof IFile) {
+				IFile jarFile = (IFile) fJarPaths.get(i);
+				name = jarFile.getName();
+			} else {
+				File jarFile = (File) fJarPaths.get(i);
+				name = jarFile.getName();
+			}
+			if (name.equals(fileName)) {
+				Object jarPath = fJarPaths.get(i);
+				fJarPaths.remove(jarPath);
+				fTableViewer.remove(jarPath);
+			}
+		}
+	}
+
 	public void updateData() {
-		fData.setLibraryPaths((String[]) fJarPaths.toArray(new String[fJarPaths
-				.size()]));
+		String[] jarPaths = new String[fJarPaths.size()];
+		for (int i = 0; i < fJarPaths.size(); i++) {
+			if (fJarPaths.get(i) instanceof IFile) {
+				IFile jarFile = (IFile) fJarPaths.get(i);
+				jarPaths[i] = jarFile.getLocation().toString();
+			} else {
+				File jarFile = (File) fJarPaths.get(i);
+				jarPaths[i] = jarFile.toString();
+
+			}
+		}
+		fData.setLibraryPaths(jarPaths);
 	}
 }
