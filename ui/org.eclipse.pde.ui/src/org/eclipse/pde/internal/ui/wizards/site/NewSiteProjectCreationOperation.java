@@ -10,6 +10,7 @@ import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.site.*;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.ide.*;
@@ -17,12 +18,13 @@ import org.eclipse.ui.part.*;
 
 
 public class NewSiteProjectCreationOperation extends WorkspaceModifyOperation {
-	
+	private Display fDisplay;
 	private IProject fProject;
 	private IPath fPath;
 	private String fWebLocation;
 	
-	public NewSiteProjectCreationOperation(IProject project, IPath path, String webLocation) {
+	public NewSiteProjectCreationOperation(Display display, IProject project, IPath path, String webLocation) {
+		fDisplay = display;
 		fProject = project;
 		fPath = path;
 		fWebLocation = webLocation;
@@ -75,24 +77,28 @@ public class NewSiteProjectCreationOperation extends WorkspaceModifyOperation {
 	}
 	
     private void openFile(final IFile file) {
-        final IWorkbenchWindow ww = PDEPlugin.getActiveWorkbenchWindow();
-        final IWorkbenchPage page = ww.getActivePage();
-        if (page == null)
-            return;
-        final IWorkbenchPart focusPart = page.getActivePart();
-        ww.getShell().getDisplay().asyncExec(new Runnable() {
-            public void run() {
-                if (focusPart instanceof ISetSelectionTarget) {
-                    ISelection selection = new StructuredSelection(file);
-                    ((ISetSelectionTarget) focusPart).selectReveal(selection);
-                }
-                try {
-                    page.openEditor(new FileEditorInput(file), IPDEUIConstants.SITE_EDITOR_ID);
-                } catch (PartInitException e) {
-                }
-            }
-        });
-    }
+		fDisplay.asyncExec(new Runnable() {
+			public void run() {
+				IWorkbenchWindow ww = PDEPlugin.getActiveWorkbenchWindow();
+				if (ww == null) {
+					return;
+				}
+				IWorkbenchPage page = ww.getActivePage();
+				if (page == null || !file.exists())
+					return;
+				IWorkbenchPart focusPart = page.getActivePart();
+				if (focusPart instanceof ISetSelectionTarget) {
+					ISelection selection = new StructuredSelection(file);
+					((ISetSelectionTarget) focusPart).selectReveal(selection);
+				}
+				try {
+					page.openEditor(new FileEditorInput(file),
+							IPDEUIConstants.SITE_EDITOR_ID);
+				} catch (PartInitException e) {
+				}
+			}
+		});
+	}
 
 	private void createHTMLFile(){
 		StringWriter swriter = new StringWriter();

@@ -51,7 +51,7 @@ public class NewSiteProjectWizard extends NewWizard implements IExecutableExtens
 			final IProject project = fMainPage.getProjectHandle();
 			final IPath location = fMainPage.getLocationPath();
 			final String webLocation = fMainPage.getWebLocation();
-			IRunnableWithProgress op = new NewSiteProjectCreationOperation(project, location, webLocation);
+			IRunnableWithProgress op = new NewSiteProjectCreationOperation(getShell().getDisplay(), project, location, webLocation);
 			getContainer().run(false, true, op);
 		} catch (InvocationTargetException e) {
 			PDEPlugin.logException(e);
