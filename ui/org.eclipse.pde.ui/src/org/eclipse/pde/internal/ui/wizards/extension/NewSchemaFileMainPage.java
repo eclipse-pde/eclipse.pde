@@ -41,8 +41,8 @@ public class NewSchemaFileMainPage extends BaseExtensionPointMainPage {
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		initializeValues();
-		pluginIdText.setEnabled(!isPluginIdFinal);
-		pluginBrowseButton.setEnabled(!isPluginIdFinal);
+		fPluginIdText.setEnabled(!isPluginIdFinal);
+		fPluginBrowseButton.setEnabled(!isPluginIdFinal);
 		setMessage(null);
 	}
 	public boolean finish() {
@@ -50,9 +50,9 @@ public class NewSchemaFileMainPage extends BaseExtensionPointMainPage {
 		try {
 			getContainer().run(false, true, operation);
 			if (point != null){
-				point.setId(idText.getText());
-				point.setName(nameText.getText());
-				point.setSchema(schemaText.getText());
+				point.setId(fIdText.getText());
+				point.setName(fNameText.getText());
+				point.setSchema(fSchemaText.getText());
 			}
 				
 		} catch (InvocationTargetException e) {
@@ -76,18 +76,18 @@ public class NewSchemaFileMainPage extends BaseExtensionPointMainPage {
 	}
 	public void initializeValues(){
 		if (container!=null){
-			pluginIdText.setText(container.getProject().getName());
+			fPluginIdText.setText(container.getProject().getName());
 			if (!isPluginIdFinal())
-				schemaLocationText.setText(container.getProject().getName() + "/" + container.getProjectRelativePath().toString()); //$NON-NLS-1$
+				fSchemaLocationText.setText(container.getProject().getName() + "/" + container.getProjectRelativePath().toString()); //$NON-NLS-1$
 		}
 		if (point == null)
 			return;
-		if (idText!=null && point.getId()!=null)
-			idText.setText(point.getId());
-		if (nameText !=null && point.getName() != null)
-			nameText.setText(point.getName());
-		if (schemaText!= null && point.getSchema()!=null)
-			schemaText.setText(point.getSchema());
+		if (fIdText!=null && point.getId()!=null)
+			fIdText.setText(point.getId());
+		if (fNameText !=null && point.getName() != null)
+			fNameText.setText(point.getName());
+		if (fSchemaText!= null && point.getSchema()!=null)
+			fSchemaText.setText(point.getSchema());
 		
 	}
 }

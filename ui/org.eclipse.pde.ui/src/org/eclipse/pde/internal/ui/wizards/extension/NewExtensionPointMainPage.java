@@ -51,9 +51,9 @@ public class NewExtensionPointMainPage extends BaseExtensionPointMainPage {
 		return true;
 	}
 	public boolean finish() {
-		final String id = idText.getText();
-		final String name = nameText.getText();
-		final String schema = schemaText.getText();
+		final String id = fIdText.getText();
+		final String name = fNameText.getText();
+		final String schema = fSchemaText.getText();
 		
 		IPluginBase plugin = model.getPluginBase();
 		
@@ -89,11 +89,11 @@ public class NewExtensionPointMainPage extends BaseExtensionPointMainPage {
 	public void initializeValues(){
 		if (point == null)
 			return;
-		if (idText!=null && point.getId()!=null)
-			idText.setText(point.getId());
-		if (nameText !=null && point.getName() != null)
-			nameText.setText(point.getName());
-		if (schemaText!= null && point.getSchema()!=null)
-			schemaText.setText(point.getSchema());
+		if (fIdText!=null && point.getId()!=null)
+			fIdText.setText(point.getId());
+		if (fNameText !=null && point.getName() != null)
+			fNameText.setText(point.getName());
+		if (fSchemaText!= null && point.getSchema()!=null)
+			fSchemaText.setText(point.getSchema());
 	}
 }

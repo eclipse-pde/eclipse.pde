@@ -16,6 +16,7 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ischema.*;
@@ -56,24 +57,24 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 	public static final String SETTINGS_PLUGIN_ID = "BaseExtensionPoint.settings.pluginId"; //$NON-NLS-1$
 	public static final String SCHEMA_DIR = "schema"; //$NON-NLS-1$
 
-	private IContainer container;
-	private IProject project;
-	protected Text idText;
-	protected Text pluginIdText;
-	protected Text nameText;
-	protected Text schemaText;
-	protected Text schemaLocationText;
-	protected Button openSchemaButton;
-	protected Button sharedSchemaButton;
-	protected Button pluginBrowseButton;
-	protected Button findLocationButton;
+	private IContainer fContainer;
+	private IProject fProject;
+	protected Text fIdText;
+	protected Text fPluginIdText;
+	protected Text fNameText;
+	protected Text fSchemaText;
+	protected Text fSchemaLocationText;
+	protected Button fOpenSchemaButton;
+	protected Button fSharedSchemaButton;
+	protected Button fPluginBrowseButton;
+	protected Button fFindLocationButton;
 	public BaseExtensionPointMainPage(IContainer container) {
 		super("newExtensionPoint"); //$NON-NLS-1$
-		this.container = container;
+		this.fContainer = container;
 		if (container != null)
-			this.project = container.getProject();
+			this.fProject = container.getProject();
 		else
-			this.project = null;
+			this.fProject = null;
 	}
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
@@ -87,49 +88,51 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		if (isPluginIdNeeded()) {
 			label = new Label(container, SWT.NONE);
 			label.setText(PDEPlugin.getResourceString(KEY_PLUGIN_ID));
-			pluginIdText = new Text(container, SWT.SINGLE | SWT.BORDER);
+			fPluginIdText = new Text(container, SWT.SINGLE | SWT.BORDER);
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan=1;
 			gd.widthHint = 275;
-			pluginIdText.setLayoutData(gd);
-			pluginIdText.addModifyListener(new ModifyListener() {
+			fPluginIdText.setLayoutData(gd);
+			fPluginIdText.addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
 					validatePage(true);
 				}
 			});
-			pluginBrowseButton = new Button(container, SWT.PUSH);
+			fPluginBrowseButton = new Button(container, SWT.PUSH);
 			gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 			gd.horizontalSpan =1;
 			gd.widthHint = 50;
-			pluginBrowseButton.setLayoutData(gd);
-			pluginBrowseButton.setText(PDEPlugin.getResourceString("BaseExtensionPointMainPage.pluginBrowse")); //$NON-NLS-1$
-			pluginBrowseButton.setToolTipText(PDEPlugin.getResourceString("BaseExtensionPointMainPage.pluginId.tooltip")); //$NON-NLS-1$
-			pluginBrowseButton.addSelectionListener(new SelectionAdapter(){
+			fPluginBrowseButton.setLayoutData(gd);
+			fPluginBrowseButton.setText(PDEPlugin.getResourceString("BaseExtensionPointMainPage.pluginBrowse")); //$NON-NLS-1$
+			fPluginBrowseButton.setToolTipText(PDEPlugin.getResourceString("BaseExtensionPointMainPage.pluginId.tooltip")); //$NON-NLS-1$
+			fPluginBrowseButton.addSelectionListener(new SelectionAdapter(){
 				public void widgetSelected(SelectionEvent e) {
 					handlePluginBrowse();
 				}
 			});
-			SWTUtil.setButtonDimensionHint(pluginBrowseButton);
+			SWTUtil.setButtonDimensionHint(fPluginBrowseButton);
 		}
 		label = new Label(container, SWT.NONE);
 		label.setText(PDEPlugin.getResourceString(KEY_ID));
-		idText = new Text(container, SWT.SINGLE | SWT.BORDER);
+		fIdText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
-		idText.setLayoutData(gd);
-		idText.addModifyListener(new ModifyListener() {
+		fIdText.setLayoutData(gd);
+		fIdText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				schemaText.setText(getSchemaLocation() + "/" + idText.getText() + ".exsd"); //$NON-NLS-1$ //$NON-NLS-2$
+				fSchemaText
+						.setText(getSchemaLocation()
+								+ (getSchemaLocation().length() > 0 ? "/" : "") + fIdText.getText() + ".exsd"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				validatePage(false);
 			}
 		});
 		label = new Label(container, SWT.NONE);
 		label.setText(PDEPlugin.getResourceString(KEY_NAME));
-		nameText = new Text(container, SWT.SINGLE | SWT.BORDER);
+		fNameText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
-		nameText.setLayoutData(gd);
-		nameText.addModifyListener(new ModifyListener() {
+		fNameText.setLayoutData(gd);
+		fNameText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				validatePage(false);
 			}
@@ -137,57 +140,57 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		if (isPluginIdNeeded() && !isPluginIdFinal()){
 			label = new Label(container, SWT.NONE);
 			label.setText(PDEPlugin.getResourceString(KEY_SCHEMA_LOCATION));
-			schemaLocationText = new Text(container, SWT.SINGLE | SWT.BORDER);
+			fSchemaLocationText = new Text(container, SWT.SINGLE | SWT.BORDER);
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.widthHint = 150;
 			gd.grabExcessHorizontalSpace = true;
-			schemaLocationText.setLayoutData(gd);
-			schemaLocationText.addModifyListener(new ModifyListener(){
+			fSchemaLocationText.setLayoutData(gd);
+			fSchemaLocationText.addModifyListener(new ModifyListener(){
 				public void modifyText(ModifyEvent e){
 					validatePage(true);
 				}
 			});
-			findLocationButton = new Button(container, SWT.PUSH);
+			fFindLocationButton = new Button(container, SWT.PUSH);
 			gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 			gd.widthHint = 50;
-			findLocationButton.setLayoutData(gd);
-			findLocationButton.setText(PDEPlugin.getResourceString("BaseExtensionPointMainPage.findBrowse")); //$NON-NLS-1$
-			findLocationButton.setToolTipText(PDEPlugin.getResourceString("BaseExtensionPointMainPage.schemaLocation.tooltip")); //$NON-NLS-1$
-			findLocationButton.addSelectionListener(new SelectionAdapter(){
+			fFindLocationButton.setLayoutData(gd);
+			fFindLocationButton.setText(PDEPlugin.getResourceString("BaseExtensionPointMainPage.findBrowse")); //$NON-NLS-1$
+			fFindLocationButton.setToolTipText(PDEPlugin.getResourceString("BaseExtensionPointMainPage.schemaLocation.tooltip")); //$NON-NLS-1$
+			fFindLocationButton.addSelectionListener(new SelectionAdapter(){
 				public void widgetSelected(SelectionEvent e) {
 					handleSchemaLocation();
 				}
 			});
-			SWTUtil.setButtonDimensionHint(findLocationButton);
+			SWTUtil.setButtonDimensionHint(fFindLocationButton);
 		}
 		label = new Label(container, SWT.NONE);
 		label.setText(PDEPlugin.getResourceString(KEY_SCHEMA));
-		schemaText = new Text(container, SWT.SINGLE | SWT.BORDER);
+		fSchemaText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
-		schemaText.setLayoutData(gd);
-		schemaText.addModifyListener(new ModifyListener(){
+		fSchemaText.setLayoutData(gd);
+		fSchemaText.addModifyListener(new ModifyListener(){
 			public void modifyText(ModifyEvent e){
 				validatePage(false);
 			}
 		});
 		if (isSharedSchemaSwitchNeeded()) {
-			sharedSchemaButton = new Button(container, SWT.CHECK);
-			sharedSchemaButton.setText(PDEPlugin.getResourceString(KEY_SHARED));
+			fSharedSchemaButton = new Button(container, SWT.CHECK);
+			fSharedSchemaButton.setText(PDEPlugin.getResourceString(KEY_SHARED));
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 2;
-			sharedSchemaButton.setLayoutData(gd);
+			fSharedSchemaButton.setLayoutData(gd);
 		}
-		openSchemaButton = new Button(container, SWT.CHECK);
-		openSchemaButton.setText(PDEPlugin.getResourceString(KEY_EDIT));
-		openSchemaButton.setSelection(true);
+		fOpenSchemaButton = new Button(container, SWT.CHECK);
+		fOpenSchemaButton.setText(PDEPlugin.getResourceString(KEY_EDIT));
+		fOpenSchemaButton.setSelection(true);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
-		openSchemaButton.setLayoutData(gd);
+		fOpenSchemaButton.setLayoutData(gd);
 		if (isPluginIdNeeded())
-			pluginIdText.setFocus();
+			fPluginIdText.setFocus();
 		else
-			idText.setFocus();
+			fIdText.setFocus();
 		setControl(container);
 		Dialog.applyDialogFont(container);
 		WorkbenchHelp.setHelp(container, IHelpContextIds.NEW_SCHEMA);
@@ -261,16 +264,16 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 	throws CoreException {
 		IFile schemaFile = null;
 		
-		IWorkspace workspace = container.getWorkspace();
+		IWorkspace workspace = fContainer.getWorkspace();
 		IPath schemaPath = new Path(schema).removeLastSegments(1);
-		IPath newSchemaPath = container.getProjectRelativePath().append(schemaPath);
+		IPath newSchemaPath = fContainer.getProjectRelativePath().append(schemaPath);
 		monitor.subTask(PDEPlugin.getResourceString(KEY_GENERATING));
 		if (newSchemaPath.isEmpty() == false) {
-			IFolder folder = container.getProject().getFolder(newSchemaPath);
+			IFolder folder = fContainer.getProject().getFolder(newSchemaPath);
 			CoreUtility.createFolder(folder, true, true, null);
 		}
 		InputStream source = createSchemaStream(pluginId, id, name, shared);
-		IPath filePath = container.getFullPath().append(schema);
+		IPath filePath = fContainer.getFullPath().append(schema);
 		schemaFile = workspace.getRoot().getFile(filePath);
 		if (!schemaFile.exists()) {
 			// create for the first time
@@ -279,15 +282,15 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			schemaFile.setContents(source, true, false, monitor);
 		}
 		monitor.done();
-		IDE.setDefaultEditor(schemaFile, PDEPlugin.SCHEMA_EDITOR_ID);
+		IDE.setDefaultEditor(schemaFile, IPDEUIConstants.SCHEMA_EDITOR_ID);
 		return schemaFile;
 	}
 	public IRunnableWithProgress getOperation() {
-		final boolean openFile = openSchemaButton.getSelection();
-		final String id = idText.getText();
-		final String name = nameText.getText();
-		final String schema = schemaText.getText();
-		final boolean shared = sharedSchemaButton != null ? sharedSchemaButton
+		final boolean openFile = fOpenSchemaButton.getSelection();
+		final String id = fIdText.getText();
+		final String name = fNameText.getText();
+		final String schema = fSchemaText.getText();
+		final boolean shared = fSharedSchemaButton != null ? fSharedSchemaButton
 				.getSelection() : false;
 				IRunnableWithProgress operation = new WorkspaceModifyOperation() {
 					public void execute(IProgressMonitor monitor) {
@@ -296,14 +299,14 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 							if (!schema.endsWith(".exsd")) //$NON-NLS-1$
 								schemaName = schema + ".exsd"; //$NON-NLS-1$
 							
-							IFile file = project.getFile(schema);
+							IFile file = fContainer.getFile(new Path(schema));
 							// do not overwrite if schema already exists
 							if (!file.exists())
 								file = generateSchemaFile(getPluginId(), id, name,
 									shared, schemaName, monitor);
 							
 							if (file != null && openFile){
-								schemaText.setText(file.getProjectRelativePath().toString());
+								fSchemaText.setText(file.getProjectRelativePath().toString());
 								openSchemaFile(file);
 							}
 							
@@ -317,10 +320,17 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 				return operation;
 	}
 	public String getSchemaLocation() {
-		if (schemaText!=null){
-			String schema = schemaText.getText();
-			if (schema.length() == 0)
+		if (fSchemaText!=null){
+			String schema = fSchemaText.getText();
+			if (schema.length() == 0) {
+				if (fSchemaLocationText != null
+						&& SCHEMA_DIR.equals(new Path(fSchemaLocationText
+								.getText()).lastSegment())) {
+					return ""; //$NON-NLS-1$
+				}
 				return SCHEMA_DIR;
+			}
+			
 			int loc = schema.lastIndexOf("/"); //$NON-NLS-1$
 			if (loc!=-1)
 				return schema.substring(0,loc);
@@ -328,8 +338,8 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		return ""; //$NON-NLS-1$
 	}
 	public String getPluginId() {
-		if (pluginIdText != null) {
-			return pluginIdText.getText();
+		if (fPluginIdText != null) {
+			return fPluginIdText.getText();
 		}
 		return ""; //$NON-NLS-1$
 	}
@@ -349,7 +359,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		d.asyncExec(new Runnable() {
 			public void run() {
 				try {
-					String editorId = PDEPlugin.SCHEMA_EDITOR_ID;
+					String editorId = IPDEUIConstants.SCHEMA_EDITOR_ID;
 					ww.getActivePage().openEditor(new FileEditorInput(file),
 							editorId);
 				} catch (PartInitException e) {
@@ -360,12 +370,12 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 	}
 	public boolean checkFieldsFilled() {
 		
-		boolean empty = idText.getText().length() == 0 || nameText.getText().length() == 0;
+		boolean empty = fIdText.getText().length() == 0 || fNameText.getText().length() == 0;
 		if (!empty && isPluginIdNeeded()) {
-			empty = getPluginId().length() == 0 || schemaText.getText().length() == 0 ;
+			empty = getPluginId().length() == 0 || fSchemaText.getText().length() == 0 ;
 		}
 		if (!empty && !isPluginIdFinal())
-			empty = schemaLocationText.getText().length() == 0;
+			empty = fSchemaLocationText.getText().length() == 0;
 		return !empty;
 	}
 
@@ -386,7 +396,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 	}
 	private boolean validateContainer() {
 		if (isPluginIdNeeded() && !isPluginIdFinal()){
-			String newContainerName = schemaLocationText.getText();
+			String newContainerName = fSchemaLocationText.getText();
 			IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
 			IPath workspacePath = root.getLocation();
 			if (newContainerName.startsWith(workspacePath.toString()))
@@ -396,9 +406,9 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 				return false;
 			}
 			if (root.exists(new Path(newContainerName)))
-				container = root.getContainerForLocation(workspacePath.append(newContainerName));
-			else if (project != null && project.exists(new Path(newContainerName)))
-				container = root.getContainerForLocation(project.getLocation().append(newContainerName));
+				fContainer = root.getContainerForLocation(workspacePath.append(newContainerName));
+			else if (fProject != null && fProject.exists(new Path(newContainerName)))
+				fContainer = root.getContainerForLocation(fProject.getLocation().append(newContainerName));
 			else{
 				handleInvalidContainer();
 				return false;
@@ -407,7 +417,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			return true;
 		}
 		
-		boolean exists = container != null && container.exists();
+		boolean exists = fContainer != null && fContainer.exists();
 		if (!exists)
 			handleInvalidContainer();
 		return exists;
@@ -423,9 +433,9 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 	private void handlePluginBrowse(){
 		PluginSelectionDialog dialog = new PluginSelectionDialog(getShell(), PDECore.getDefault().getWorkspaceModelManager().getAllModels(), false);
 		dialog.create();
-		if (dialog.open() == Dialog.OK){
+		if (dialog.open() == Window.OK){
 			WorkspacePluginModelBase workspaceModelBase = (WorkspacePluginModelBase)dialog.getFirstResult();
-			pluginIdText.setText(workspaceModelBase.getPluginBase().getId());
+			fPluginIdText.setText(workspaceModelBase.getPluginBase().getId());
 		}
 	}
 	private void handleSchemaLocation(){
@@ -443,20 +453,20 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 				if (element instanceof IFile)
 					return false;
 				else if (isPluginIdFinal())
-					return ((IResource)element).getProject().equals(project);
+					return ((IResource)element).getProject().equals(fProject);
 				return true;
 			}
 		});
 		
 		dialog.setInput(PDEPlugin.getWorkspace().getRoot());
 		dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));
-		dialog.setInitialSelection(project);
-		if (dialog.open() == ElementTreeSelectionDialog.OK) {
+		dialog.setInitialSelection(fProject);
+		if (dialog.open() == Window.OK) {
 			Object[] elements = dialog.getResult();
 			if (elements.length >0){
 				IResource elem = (IResource) elements[0];
 				String newPath = getWorkspaceRelativePath(elem.getLocation().toString());
-				schemaLocationText.setText(newPath + "/"); //$NON-NLS-1$
+				fSchemaLocationText.setText(newPath + "/"); //$NON-NLS-1$
 			}
 		}
 	}
