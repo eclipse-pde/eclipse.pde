@@ -6,7 +6,7 @@ package org.eclipse.pde.internal.junit.runtime;
 
 import junit.framework.*;
 
-import org.eclipse.core.boot.*;
+import org.eclipse.core.boot.IPlatformRunnable;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.testing.*;
