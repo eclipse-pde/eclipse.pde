@@ -121,5 +121,10 @@ public class BuildInputContext extends InputContext {
 			ops.add(op);
 		}	
 	}
-	
+	public void doRevert() {
+		fEditOperations.clear();
+		fOperationTable.clear();
+		AbstractEditingModel model = (AbstractEditingModel)getModel();
+		model.reconciled(model.getDocument());
+	}	
 }
