@@ -31,6 +31,7 @@
       <import plugin="org.eclipse.update.core"/>
       <import plugin="org.eclipse.update.ui.forms"/>
       <import plugin="org.eclipse.ant.ui"/>
+      <import plugin="org.eclipse.jdt.junit"/>
    </requires>
 
 
@@ -709,6 +710,20 @@
             modes="run, debug"
             id="org.eclipse.pde.ui.RuntimeWorkbench">
       </launchConfigurationType>
+      <launchConfigurationType
+            name="%launcher.junit.name"
+            delegate="org.eclipse.pde.internal.ui.launcher.JUnitLaunchConfiguration"
+            modes="run, debug"
+            id="org.eclipse.pde.ui.JunitLaunchConfig">
+         <fileExtension
+               default="false"
+               extension="java">
+         </fileExtension>
+         <fileExtension
+               default="false"
+               extension="class">
+         </fileExtension>
+      </launchConfigurationType>
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
@@ -717,6 +732,11 @@
             configTypeID="org.eclipse.pde.ui.RuntimeWorkbench"
             id="org.eclipse.pde.ui.runtimeWorkbenchLaunchImage">
       </launchConfigurationTypeImage>
+      <launchConfigurationTypeImage
+            icon="icons/full/obj16/julaunchpgn.gif"
+            configTypeID="org.eclipse.pde.ui.JunitLaunchConfig"
+            id="org.eclipse.pde.ui.JunitLaunchImage">
+      </launchConfigurationTypeImage>
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
@@ -724,6 +744,11 @@
             type="org.eclipse.pde.ui.RuntimeWorkbench"
             class="org.eclipse.pde.internal.ui.launcher.WorkbenchLauncherTabGroup"
             id="org.eclipse.pde.ui.launcher.WorkbenchLauncherTabGroup">
+      </launchConfigurationTabGroup>
+      <launchConfigurationTabGroup
+            type="org.eclipse.pde.ui.JunitLaunchConfig"
+            class="org.eclipse.pde.internal.ui.launcher.JUnitTabGroup"
+            id="org.eclipse.pde.ui.launcher.JUnitTabGroup">
       </launchConfigurationTabGroup>
    </extension>
    <extension
@@ -734,6 +759,28 @@
             modes="run, debug"
             class="org.eclipse.pde.internal.ui.launcher.RuntimeWorkbenchShortcut"
             id="org.eclipse.pde.ui.runtimeWorkbenchShortcut">
+         <perspective
+               id="org.eclipse.jdt.ui.JavaPerspective">
+         </perspective>
+         <perspective
+               id="org.eclipse.jdt.ui.JavaHierarchyPerspective">
+         </perspective>
+         <perspective
+               id="org.eclipse.jdt.ui.JavaBrowsingPerspective">
+         </perspective>
+         <perspective
+               id="org.eclipse.debug.ui.DebugPerspective">
+         </perspective>
+         <perspective
+               id="org.eclipse.pde.PDEPerspective">
+         </perspective>
+      </shortcut>
+      <shortcut
+            label="%launcher.junit.shortcut.label"
+            icon="icons/full/obj16/julaunchpgn.gif"
+            modes="run, debug"
+            class="org.eclipse.pde.internal.ui.launcher.JUnitPluginLaunchShortcut"
+            id="org.eclipse.pde.ui.junitPluginShortcut">
          <perspective
                id="org.eclipse.jdt.ui.JavaPerspective">
          </perspective>
