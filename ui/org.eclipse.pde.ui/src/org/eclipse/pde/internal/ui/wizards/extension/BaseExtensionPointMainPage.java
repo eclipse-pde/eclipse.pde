@@ -259,10 +259,11 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			boolean shared, String schema, IProgressMonitor monitor)
 	throws CoreException {
 		IFile schemaFile = null;
-		monitor.subTask(PDEPlugin.getResourceString(KEY_GENERATING));
+		
 		IWorkspace workspace = container.getWorkspace();
 		IPath schemaPath = new Path(schema).removeLastSegments(1);
 		IPath newSchemaPath = container.getProjectRelativePath().append(schemaPath);
+		monitor.subTask(PDEPlugin.getResourceString(KEY_GENERATING));
 		if (newSchemaPath.isEmpty() == false) {
 			IFolder folder = container.getProject().getFolder(newSchemaPath);
 			CoreUtility.createFolder(folder, true, true, null);
@@ -293,8 +294,13 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 							String schemaName = schema;
 							if (!schema.endsWith(".exsd")) //$NON-NLS-1$
 								schemaName = schema + ".exsd"; //$NON-NLS-1$
-							IFile file = generateSchemaFile(getPluginId(), id, name,
+							
+							IFile file = project.getFile(schema);
+							// do not overwrite if schema already exists
+							if (!file.exists())
+								file = generateSchemaFile(getPluginId(), id, name,
 									shared, schemaName, monitor);
+							
 							if (file != null && openFile){
 								schemaText.setText(file.getProjectRelativePath().toString());
 								openSchemaFile(file);
@@ -366,7 +372,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		if (hasContainerChanged && !validateContainer())
 			return;
 		boolean isComplete = checkFieldsFilled();
-		setPageComplete(isComplete);
+		
 		String message = null;
 		if (!isComplete) {
 			if (isPluginIdNeeded())
@@ -374,6 +380,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			else
 				message = PDEPlugin.getResourceString(KEY_NO_PLUGIN_MISSING_ID);
 		}
+		setPageComplete(isComplete);
 		setMessage(message, IMessageProvider.WARNING);
 	}
 	private boolean validateContainer() {

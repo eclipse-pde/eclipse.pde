@@ -165,7 +165,7 @@ public class GrammarSection extends PDESection implements IPartSelectionListener
 	}
 	public void dispose() {
 		ISchema schema = (ISchema) getPage().getModel();
-		schema.removeModelChangedListener(this);
+		if (schema!= null) schema.removeModelChangedListener(this);
 		super.dispose();
 	}
 	
