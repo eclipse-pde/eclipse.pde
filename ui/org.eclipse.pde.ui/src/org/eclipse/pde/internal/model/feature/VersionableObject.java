@@ -10,8 +10,8 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.base.model.feature.*;
 
 public class VersionableObject extends FeatureObject implements IVersonable {
-	private String id;
-	private String version;
+	protected String id;
+	protected String version;
 
 public String getId() {
 	return id;

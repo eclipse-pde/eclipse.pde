@@ -107,6 +107,7 @@ private IFile createFeatureManifest(
 		cplugin.setVersion(plugin.getVersion());
 		feature.addPlugin(cplugin);
 	}
+	feature.computeImports();
 	// Save the model
 	model.save();
 	model.dispose();

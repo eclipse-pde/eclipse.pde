@@ -4,23 +4,35 @@
  */
 package org.eclipse.pde.internal.model.feature;
 
-import org.eclipse.pde.internal.base.model.feature.IFeatureInfo;
+import org.eclipse.pde.internal.base.model.feature.*;
 import java.net.*;
 import org.eclipse.core.runtime.CoreException;
 import org.w3c.dom.Node;
 import java.io.PrintWriter;
+import org.eclipse.pde.internal.PDEPlugin;
 
 /**
  * @version 	1.0
  * @author
  */
 public class FeatureInfo extends FeatureObject implements IFeatureInfo {
+	private static final String KEY_INFO_DESCRIPTION ="SchemaEditor.info.description";
+	private static final String KEY_INFO_LICENSE = "SchemaEditor.info.license";
+	private static final String KEY_INFO_COPYRIGHT = "SchemaEditor.info.copyright";
 	private URL url;
 	private String description;
-	private String tag;
+	private int index;
 	
-	public FeatureInfo(String tag) {
-		this.tag = tag;
+	public FeatureInfo(int index) {
+		this.index = index;
+	}
+	
+	public int getIndex() {
+		return index;
+	}
+	
+	private String getTag() {
+		return IFeature.INFO_TAGS[index];
 	}
 
 	/*
@@ -70,12 +82,31 @@ public class FeatureInfo extends FeatureObject implements IFeatureInfo {
 		String indent2 = indent+Feature.INDENT;
 		String desc = getWritableString(description.trim());
 		writer.println();
-		writer.print(indent+"<"+tag);
+		writer.print(indent+"<"+getTag());
 		if (url!=null) {
-			writer.print("url=\""+url.toString()+"\"");
+			writer.print(" url=\""+url.toString()+"\"");
 		}
 		writer.println(">");
-		writer.println(indent2+description);
-		writer.println(indent+"</"+tag+">");
+		writer.println(indent2+desc);
+		writer.println(indent+"</"+getTag()+">");
+	}
+	
+	public boolean isEmpty() {
+		if (url!=null) return false;
+		String desc = description!=null ? description.trim() : null;
+		if (desc!=null && desc.length()>0) return false;
+		return true;
+	}
+	
+	public String toString() {
+		switch (index) {
+			case IFeature.INFO_DESCRIPTION:
+				return PDEPlugin.getResourceString(KEY_INFO_DESCRIPTION);
+			case IFeature.INFO_LICENSE:
+				return PDEPlugin.getResourceString(KEY_INFO_LICENSE);
+			case IFeature.INFO_COPYRIGHT:
+				return PDEPlugin.getResourceString(KEY_INFO_COPYRIGHT);
+		}
+		return super.toString();
 	}
 }

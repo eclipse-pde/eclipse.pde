@@ -13,8 +13,10 @@ import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.pde.internal.editor.manifest.MatchSection;
 
 public class ReferenceForm extends ScrollableSectionForm {
+	private static final String KEY_HEADING = "FeatureEditor.ReferencePage.heading";
 	private FeatureReferencePage page;
 	private PluginSection pluginSection;
+	private RequiresSection requiresSection;
 	private MatchSection matchSection;
 
 public ReferenceForm(FeatureReferencePage page) {
@@ -27,7 +29,7 @@ protected void createFormClient(Composite parent) {
 	GridLayout layout = new GridLayout();
 	parent.setLayout(layout);
 	layout.numColumns = 2;
-	//layout.makeColumnsEqualWidth=true;
+	layout.makeColumnsEqualWidth=true;
 	layout.marginWidth = 10;
 	layout.horizontalSpacing=15;
 	layout.verticalSpacing=15;
@@ -35,24 +37,33 @@ protected void createFormClient(Composite parent) {
 
 	pluginSection = new PluginSection(page);
 	Control control = pluginSection.createControl(parent, getFactory());
-	gd = new GridData(GridData.FILL_BOTH);
+	gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_FILL);
+	gd.verticalSpan = 2;
 	control.setLayoutData(gd);
+	
+	requiresSection = new RequiresSection(page);
+	control = requiresSection.createControl(parent, getFactory());
+	gd = new GridData(GridData.FILL_BOTH);
+	control.setLayoutData(gd);	
 
-	matchSection = new MatchSection(page);
+	matchSection = new MatchSection(page, false);
 	control = matchSection.createControl(parent, getFactory());
-	gd = new GridData(GridData.FILL_BOTH);
+	gd = new GridData(GridData.FILL_HORIZONTAL);
 	control.setLayoutData(gd);
 
-	//SectionChangeManager manager = new SectionChangeManager();
-	//manager.linkSections(pluginSection, matchSection);
+	SectionChangeManager manager = new SectionChangeManager();
+	manager.linkSections(requiresSection, matchSection);
 
 	registerSection(pluginSection);
+	registerSection(requiresSection);
 	registerSection(matchSection);
 }
 
 public void expandTo(Object object) {
 	if (object instanceof IFeaturePlugin)
 		pluginSection.expandTo(object);
+	if (object instanceof IFeatureImport)
+		requiresSection.expandTo(object);
 }
 
 public void initialize(Object modelObject) {

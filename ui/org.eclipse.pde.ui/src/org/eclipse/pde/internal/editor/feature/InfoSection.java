@@ -22,25 +22,32 @@ import org.eclipse.jface.text.presentation.*;
 import org.eclipse.pde.internal.editor.*;
 import org.eclipse.jface.text.*;
 import org.eclipse.pde.internal.base.model.feature.*;
+import java.net.*;
+import org.eclipse.core.runtime.CoreException;
 
 import java.util.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.swt.graphics.*;
 
 public class InfoSection extends PDEFormSection {
-	public static final String SECTION_TITLE = "FeatureEditor.InfoSection.title";
-	public static final String KEY_APPLY = "Actions.apply.label";
-	public static final String KEY_RESET = "Actions.reset.label";
-	public static final String SECTION_DESC = "FeatureEditor.InfoSection.desc";
-	public static final String KEY_INFO_DESCRIPTION = "SchemaEditor.info.description";
-	public static final String KEY_INFO_LICENSE = "SchemaEditor.info.license";
-	public static final String KEY_INFO_COPYRIGHT = "SchemaEditor.info.license";
+	private static final String SECTION_TITLE = "FeatureEditor.InfoSection.title";
+	private static final String KEY_APPLY = "Actions.apply.label";
+	private static final String KEY_RESET = "Actions.reset.label";
+	private static final String SECTION_DESC = "FeatureEditor.InfoSection.desc";
+	private static final String KEY_INFO = "FeatureEditor.InfoSection.info";
+	private static final String KEY_URL = "FeatureEditor.InfoSection.url";
+	private static final String KEY_TEXT = "FeatureEditor.InfoSection.text";
+	private static final String KEY_INFO_DESCRIPTION =
+		"SchemaEditor.info.description";
+	private static final String KEY_INFO_LICENSE = "SchemaEditor.info.license";
+	private static final String KEY_INFO_COPYRIGHT = "SchemaEditor.info.copyright";
 	private IDocument document;
 	private IDocumentPartitioner partitioner;
 	private boolean editable = true;
 	private SourceViewerConfiguration sourceConfiguration;
 	private SourceViewer sourceViewer;
 	private CCombo sectionCombo;
+	private Text urlText;
 	private Button applyButton;
 	private Button resetButton;
 	private Object element;
@@ -48,216 +55,297 @@ public class InfoSection extends PDEFormSection {
 	private FormWidgetFactory factory;
 	private boolean ignoreChange;
 
-public InfoSection(PDEFormPage page, IColorManager colorManager) {
-	super(page);
-	setHeaderPainted(false);
-	setAddSeparator(false);
-	String description = PDEPlugin.getResourceString(SECTION_DESC);
-	setDescription(TextUtil.createMultiLine(description, 80));
-	this.colorManager = colorManager;
-	sourceConfiguration = new XMLConfiguration(colorManager);
-	document = new Document();
-	partitioner =
-		new RuleBasedPartitioner(
-			new PDEPartitionScanner(),
-			new String[] { PDEPartitionScanner.XML_TAG, PDEPartitionScanner.XML_COMMENT });
-	partitioner.connect(document);
-	document.setDocumentPartitioner(partitioner);
-}
-public void commitChanges(boolean onSave) {
-	handleApply();
-	if (onSave) {
-		setDirty(false);
+	public InfoSection(PDEFormPage page, IColorManager colorManager) {
+		super(page);
+		setHeaderPainted(false);
+		setAddSeparator(false);
+		String description = PDEPlugin.getResourceString(SECTION_DESC);
+		setDescription(TextUtil.createMultiLine(description, 80));
+		this.colorManager = colorManager;
+		sourceConfiguration = new XMLConfiguration(colorManager);
+		document = new Document();
+		partitioner =
+			new RuleBasedPartitioner(
+				new PDEPartitionScanner(),
+				new String[] { PDEPartitionScanner.XML_TAG, PDEPartitionScanner.XML_COMMENT });
+		partitioner.connect(document);
+		document.setDocumentPartitioner(partitioner);
+	}
+
+	public void commitChanges(boolean onSave) {
+		handleApply();
+
+		if (onSave) {
+			setDirty(false);
+			resetButton.setEnabled(false);
+		}
+	}
+	public Composite createClient(Composite parent, FormWidgetFactory factory) {
+		this.factory = factory;
+		Composite container = factory.createComposite(parent);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 3;
+		layout.marginWidth = factory.BORDER_STYLE == SWT.NULL ? 2 : 0;
+		layout.marginHeight = factory.BORDER_STYLE == SWT.NULL ? 2 : 0;
+		layout.verticalSpacing = 9;
+		container.setLayout(layout);
+		GridData gd;
+
+		factory.createLabel(container, PDEPlugin.getResourceString(KEY_INFO));
+
+		int comboStyle = SWT.READ_ONLY;
+		if (SWT.getPlatform().equals("motif") == false)
+			comboStyle |= SWT.FLAT;
+		else
+			comboStyle |= SWT.BORDER;
+		sectionCombo = new CCombo(container, comboStyle);
+		sectionCombo.setBackground(factory.getBackgroundColor());
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		sectionCombo.setLayoutData(gd);
+		factory.createLabel(container, null);
+
+		factory.createLabel(container, PDEPlugin.getResourceString(KEY_URL));
+
+		urlText = factory.createText(container, null);
+		urlText.setEditable(isEditable());
+		urlText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				infoModified();
+			}
+		});
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		urlText.setLayoutData(gd);
+		factory.createLabel(container, null);
+
+		Label label =
+			factory.createLabel(container, PDEPlugin.getResourceString(KEY_TEXT));
+		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
+		label.setLayoutData(gd);
+
+		int styles = SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL /*| SWT.WRAP */
+		| factory.BORDER_STYLE;
+		sourceViewer = new SourceViewer(container, null, styles);
+		sourceViewer.configure(sourceConfiguration);
+		sourceViewer.setDocument(document);
+		sourceViewer.setEditable(isEditable());
+		StyledText styledText = sourceViewer.getTextWidget();
+		styledText.setFont(JFaceResources.getTextFont());
+		if (SWT.getPlatform().equals("motif") == false)
+			factory.paintBordersFor(container);
+		Control[] children = container.getChildren();
+		Control control = children[children.length - 1];
+		gd =
+			new GridData(
+				GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
+		//gd.widthHint = 600;
+		//gd.heightHint = 600;
+		control.setLayoutData(gd);
+		Composite buttonContainer = factory.createComposite(container);
+		layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		buttonContainer.setLayout(layout);
+		gd = new GridData(GridData.FILL_VERTICAL);
+		buttonContainer.setLayoutData(gd);
+
+		applyButton =
+			factory.createButton(
+				buttonContainer,
+				PDEPlugin.getResourceString(KEY_APPLY),
+				SWT.PUSH);
+		applyButton.setEnabled(false);
+		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
+		applyButton.setLayoutData(gd);
+		applyButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleApply();
+			}
+		});
+
+		resetButton =
+			factory.createButton(
+				buttonContainer,
+				PDEPlugin.getResourceString(KEY_RESET),
+				SWT.PUSH);
+		resetButton.setEnabled(false);
+		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
+		resetButton.setLayoutData(gd);
+		resetButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleReset();
+			}
+		});
+		return container;
+	}
+	public boolean doGlobalAction(String actionId) {
+		if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.CUT)) {
+			sourceViewer.doOperation(sourceViewer.CUT);
+			return true;
+		} else if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.COPY)) {
+			sourceViewer.doOperation(sourceViewer.COPY);
+			return true;
+		} else if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.PASTE)) {
+			sourceViewer.doOperation(sourceViewer.PASTE);
+			return true;
+		} else if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {
+			sourceViewer.doOperation(sourceViewer.DELETE);
+			return true;
+		} else if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.UNDO)) {
+			sourceViewer.doOperation(sourceViewer.UNDO);
+			return true;
+		} else if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.REDO)) {
+			sourceViewer.doOperation(sourceViewer.REDO);
+			return true;
+		}
+		return false;
+	}
+	public void expandTo(Object input) {
+		if (input instanceof IFeatureInfo) {
+			IFeatureInfo info = (IFeatureInfo) input;
+			int index = info.getIndex();
+			sectionCombo.select(index);
+			updateEditorInput(info, true);
+		}
+	}
+
+	private void handleApply() {
+		handleApply(null);
+	}
+
+	private void handleApply(IFeatureInfo info) {
+		String urlName = urlText.getText();
+		String text = document.get();
+		updateInfoText(info, urlName, text);
+		applyButton.setEnabled(false);
 		resetButton.setEnabled(false);
 	}
-}
-public Composite createClient(Composite parent, FormWidgetFactory factory) {
-	this.factory =factory;
-	Composite container = factory.createComposite(parent);
-	GridLayout layout = new GridLayout();
-	layout.numColumns = 2;
-	layout.marginWidth = factory.BORDER_STYLE==SWT.NULL? 2 : 0;
-	layout.marginHeight = factory.BORDER_STYLE==SWT.NULL? 2 : 0;
-	layout.verticalSpacing = 6;
-	container.setLayout(layout);
-	GridData gd;
 
-	int comboStyle = SWT.READ_ONLY;
-	if (SWT.getPlatform().equals("motif")==false)
-	   comboStyle |= SWT.FLAT;
-	else
-	   comboStyle |= SWT.BORDER;
-	sectionCombo = new CCombo(container, comboStyle);
-	sectionCombo.setBackground(factory.getBackgroundColor());
-	gd = new GridData(GridData.FILL_HORIZONTAL);
-	sectionCombo.setLayoutData(gd);
-	factory.createLabel(container, null);
-	
-	int styles = SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL /*| SWT.WRAP */ | factory.BORDER_STYLE;
-	sourceViewer = new SourceViewer(container, null, styles);
-	sourceViewer.configure(sourceConfiguration);
-	sourceViewer.setDocument(document);
-	sourceViewer.setEditable(isEditable());
-	StyledText styledText= sourceViewer.getTextWidget();
-	styledText.setFont(JFaceResources.getTextFont());
-	if (SWT.getPlatform().equals("motif")==false)
-	   factory.paintBordersFor(container);
-	Control [] children = container.getChildren();
-	Control control = children[children.length-1];
-	gd = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
-	//gd.widthHint = 600;
-	//gd.heightHint = 600;
-	control.setLayoutData(gd);
-	Composite buttonContainer = factory.createComposite(container);
-	layout = new GridLayout();
-	layout.marginHeight=0;
-	buttonContainer.setLayout(layout);
-	gd = new GridData(GridData.FILL_VERTICAL);
-	buttonContainer.setLayoutData(gd);
-	
-	applyButton = factory.createButton(buttonContainer, PDEPlugin.getResourceString(KEY_APPLY), SWT.PUSH);
-	applyButton.setEnabled(false);
-	gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
-	applyButton.setLayoutData(gd);
-	applyButton.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent e) {
-			handleApply();
-		}
-	});
+	private void updateInfoText(
+		IFeatureInfo targetInfo,
+		String urlText,
+		String text) {
+		URL url = null;
 
-	resetButton = factory.createButton(buttonContainer, PDEPlugin.getResourceString(KEY_RESET), SWT.PUSH);
-	resetButton.setEnabled(false);
-	gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
-	resetButton.setLayoutData(gd);
-	resetButton.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent e) {
-			handleReset();
-		}
-	});
-	return container;
-}
-public boolean doGlobalAction(String actionId) {
-	PDEProblemFinder.fixMe("Global operation mapping must be done better");
-	if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.CUT)) {
-		sourceViewer.doOperation(sourceViewer.CUT);
-		return true;
-	}
-	else if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.COPY)) {
-		sourceViewer.doOperation(sourceViewer.COPY);
-		return true;
-	}
-	else if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.PASTE)) {
-		sourceViewer.doOperation(sourceViewer.PASTE);
-		return true;
-	}
-	else if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {
-		sourceViewer.doOperation(sourceViewer.DELETE);
-		return true;
-	}
-	else if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.UNDO)) {
-		sourceViewer.doOperation(sourceViewer.UNDO);
-		return true;
-	}
-	else if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.REDO)) {
-		sourceViewer.doOperation(sourceViewer.REDO);
-		return true;
-	}
-	return false;
-}
-public void expandTo(Object input) {
-	int index = -1;
-	if (index != -1)
-		sectionCombo.select(index);
-	updateEditorInput(input);
-}
-
-private void handleApply() {
-	/*
-	if (element != null) {
-		if (element instanceof ISchema)
-			 ((Schema) element).setDescription(document.get());
-		else
-			 ((SchemaObject) element).setDescription(document.get());
-	}
-	*/
-	applyButton.setEnabled(false);
-	resetButton.setEnabled(false);
-}
-private void handleReset() {
-	updateEditorInput(element);
-}
-
-public void initialize(Object model) {
-	final IFeatureModel featureModel = (IFeatureModel)model;
-	initializeSectionCombo();
-	document.addDocumentListener(new IDocumentListener() {
-		public void documentChanged(DocumentEvent e) {
-			if (!ignoreChange && featureModel instanceof IEditable) {
-				setDirty(true);
-				((IEditable) featureModel).setDirty(true);
-				getFormPage().getEditor().fireSaveNeeded();
+		try {
+			if (urlText.length() > 0) {
+				url = new URL(urlText);
 			}
-			applyButton.setEnabled(true);
-			resetButton.setEnabled(true);
+		} catch (MalformedURLException e) {
 		}
-		public void documentAboutToBeChanged(DocumentEvent e) {
-		}
-	});
-	updateEditorInput(featureModel);
-}
-
-private void initializeSectionCombo() {
-/*
-	IDocumentSection[] sections = schema.getDocumentSections();
-	sectionCombo.add(getTopicName(schema));
-	for (int i = 0; i < sections.length; i++) {
-		IDocumentSection section = sections[i];
-		sectionCombo.add(getTopicName(section));
-	}
-	sectionCombo.select(0);
-	sectionCombo.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent e) {
+		try {
+			IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+			IFeature feature = model.getFeature();
+			IFeatureInfo info = targetInfo;
 			int index = sectionCombo.getSelectionIndex();
-			if (index == 0)
-				updateEditorInput(schema);
-			else {
-				IDocumentSection[] sections = schema.getDocumentSections();
-				updateEditorInput(sections[index - 1]);
+
+			if (info == null) {
+				info = feature.getFeatureInfo(index);
 			}
+
+			if (targetInfo == null && info == null) {
+				info = model.getFactory().createInfo(index);
+				feature.setFeatureInfo(info, index);
+			}
+			info.setURL(url);
+			info.setDescription(text);
+		} catch (CoreException e) {
 		}
-	});
-*/
-}
-public boolean isEditable() {
-	return editable;
-}
-private String resolveObjectName(Object object) {
-	if (object instanceof IFeatureObject) {
-		return ((IFeatureObject)object).getLabel();
 	}
-	return object.toString();
-}
-public void setEditable(boolean newEditable) {
-	editable = newEditable;
-}
-public void setFocus() {
-	sourceViewer.getTextWidget().setFocus();
-}
-public void updateEditorInput(Object input) {
-	ignoreChange=true;
-	String text = "";
-	if (input instanceof IFeatureInfo) {
-		IFeatureInfo info = (IFeatureInfo)input;
-		text = info.getDescription();
+
+	private void updateInfoURL(URL url) {
 	}
-	if (text == null)
-		text = "";
-	else
-		text = TextUtil.createMultiLine(text, 60, false);
-	document.set(text);
-	applyButton.setEnabled(false);
-	resetButton.setEnabled(false);
-	element = input;
-	ignoreChange=false;
-}
+
+	private void handleReset() {
+		updateEditorInput(element, false);
+	}
+
+	public void initialize(Object model) {
+		IFeatureModel featureModel = (IFeatureModel) model;
+		initializeSectionCombo();
+		document.addDocumentListener(new IDocumentListener() {
+			public void documentChanged(DocumentEvent e) {
+				infoModified();
+			}
+			public void documentAboutToBeChanged(DocumentEvent e) {
+			}
+		});
+		updateEditorInput(featureModel.getFeature().getFeatureInfo(0), false);
+	}
+
+	private void infoModified() {
+		IFeatureModel featureModel = (IFeatureModel) getFormPage().getModel();
+		if (!ignoreChange && featureModel instanceof IEditable) {
+			setDirty(true);
+			((IEditable) featureModel).setDirty(true);
+			getFormPage().getEditor().fireSaveNeeded();
+		}
+		applyButton.setEnabled(true);
+		resetButton.setEnabled(true);
+	}
+
+	private void initializeSectionCombo() {
+		sectionCombo.setItems(
+			new String[] {
+				PDEPlugin.getResourceString(KEY_INFO_DESCRIPTION),
+				PDEPlugin.getResourceString(KEY_INFO_LICENSE),
+				PDEPlugin.getResourceString(KEY_INFO_COPYRIGHT)});
+
+		sectionCombo.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+				IFeature feature = model.getFeature();
+				int index = sectionCombo.getSelectionIndex();
+				IFeatureInfo info = feature.getFeatureInfo(index);
+				updateEditorInput(info, true);
+			}
+		});
+		sectionCombo.select(0);
+	}
+	public boolean isEditable() {
+		return editable;
+	}
+	private String resolveObjectName(Object object) {
+		if (object instanceof IFeatureObject) {
+			return ((IFeatureObject) object).getLabel();
+		}
+		return object.toString();
+	}
+	public void setEditable(boolean newEditable) {
+		editable = newEditable;
+	}
+	public void setFocus() {
+		sourceViewer.getTextWidget().setFocus();
+	}
+
+	private void commitPrevious() {
+		IFeatureInfo previous = (IFeatureInfo) element;
+		handleApply(previous);
+	}
+
+	public void updateEditorInput(Object input, boolean commitPrevious) {
+		if (isDirty() && commitPrevious && element != null && element != input) {
+			commitPrevious();
+		}
+		ignoreChange = true;
+		String text = "";
+		URL url = null;
+		if (input instanceof IFeatureInfo) {
+			IFeatureInfo info = (IFeatureInfo) input;
+			text = info.getDescription();
+			url = info.getURL();
+		}
+		if (text == null)
+			text = "";
+		else
+			text = TextUtil.createMultiLine(text, 60, false);
+		document.set(text);
+		if (url == null)
+			urlText.setText("");
+		else
+			urlText.setText(url.toString());
+		applyButton.setEnabled(false);
+		resetButton.setEnabled(false);
+		element = input;
+		ignoreChange = false;
+	}
 }

@@ -36,20 +36,46 @@ public static final String P_PROVIDER = "provider";
  * about changes in "url" field
  */
 public static final String P_URL = "url";
+
+
+public static final int INFO_DESCRIPTION = 0;
+public static final int INFO_LICENSE = 1;
+public static final int INFO_COPYRIGHT = 2;
+public static final String [] INFO_TAGS = { "description", "license", "copyright" };
 /**
- * Adds a plug-in reference to this component.
+ * Adds a plug-in reference to this feature.
  * This method may throw a CoreException if
  * the model is not editable.
  *
- * @param reference a fragment reference to add
+ * @param reference a plug-in reference to add
  */
 public void addPlugin(IFeaturePlugin plugin) throws CoreException;
+
 /**
- * Returns references to plug-ins in this component
+ * Adds a required plug-in reference to this feature.
+ * This method may throw a CoreException if
+ * the model is not editable.
  *
- * @return an array of plug-in references in this component
+ * @param reference a required plug-in reference to add
+ */
+public void addImport(IFeatureImport iimport) throws CoreException;
+/**
+ * Returns references to plug-ins in this feature
+ *
+ * @return an array of plug-in references in this feature
  */
 public IFeaturePlugin [] getPlugins();
+
+/**
+ * 
+ */
+public void setPlugins(IFeaturePlugin [] plugins) throws CoreException;
+/**
+ * Returns references to required plug-ins in this feature
+ *
+ * @return an array of plug-in references in this feature
+ */
+public IFeatureImport [] getImports();
 /**
  * Returns a feature provider name
  *
@@ -67,40 +93,26 @@ IPluginModelBase getReferencedModel(IFeaturePlugin reference);
  */
 public IFeatureURL getURL();
 
-/**
- * 
- */
-public IFeatureInfo getDescription();
+public IFeatureInfo getFeatureInfo(int index);
 
-/**
- * 
- */
-public void setDescription(IFeatureInfo info) throws CoreException;
-/**
- * 
- */
-public IFeatureInfo getLicense();
-/**
- * 
- */
-public void setLicense(IFeatureInfo license) throws CoreException;
-/**
- * 
- */
-public IFeatureInfo getCopyright();
-/**
- * 
- */
-public void setCopyright(IFeatureInfo copyright) throws CoreException;
+public void setFeatureInfo(IFeatureInfo info, int index) throws CoreException;
 
 /**
  * Removes a plug-in reference from this feature. This
  * method may throw a CoreException if the model
  * is not editable.
  *
- * @param a plug-in reference to remove 
+ * @param plugin a plug-in reference to remove 
  */
 public void removePlugin(IFeaturePlugin plugin) throws CoreException;
+/**
+ * Removes a required plug-in reference from this feature.
+ * This method may throw a CoreException if
+ * the model is not editable.
+ *
+ * @param iimport a required plug-in reference to add
+ */
+public void removeImport(IFeatureImport iimport) throws CoreException;
 /**
  * Sets the provider name of this feature. This method
  * may throw a CoreException if the model is not editable.
@@ -114,4 +126,6 @@ public void setProviderName(String providerName) throws CoreException;
  *@param url The URL model object.
  */
 public void setURL(IFeatureURL url) throws CoreException;
+
+public void computeImports() throws CoreException;
 }

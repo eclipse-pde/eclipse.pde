@@ -27,18 +27,24 @@ import org.eclipse.pde.internal.util.*;
 import org.eclipse.pde.internal.wizards.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.editor.PropertiesAction;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.pde.internal.model.feature.FeaturePlugin;
+import java.util.Vector;
 
 public class PluginSection
 	extends PDEFormSection
 	implements IModelProviderListener {
-	public static final String PLUGIN_TITLE =
+	private static final String PLUGIN_TITLE =
 		"FeatureEditor.PluginSection.pluginTitle";
-	public static final String FRAGMENT_TITLE =
+	private static final String FRAGMENT_TITLE =
 		"FeatureEditor.PluginSection.fragmentTitle";
-	public static final String FRAGMENT_DESC =
+	private static final String FRAGMENT_DESC =
 		"FeatureEditor.PluginSection.fragmentDesc";
-	public static final String PLUGIN_DESC =
+	private static final String PLUGIN_DESC =
 		"FeatureEditor.PluginSection.pluginDesc";
+	private static final String KEY_SELECT_ALL = "ExternalPluginsBlock.selectAll";
+	private static final String KEY_DESELECT_ALL =
+		"ExternalPluginsBlock.deselectAll";
 	private boolean updateNeeded;
 	private Object[] references;
 	private OpenReferenceAction openAction;
@@ -90,6 +96,7 @@ public class PluginSection
 	public Composite createClient(Composite parent, FormWidgetFactory factory) {
 		Composite container = factory.createComposite(parent);
 		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
 		layout.verticalSpacing = 9;
 		container.setLayout(layout);
 
@@ -99,8 +106,12 @@ public class PluginSection
 		pluginViewer.setSorter(ListUtil.NAME_SORTER);
 
 		pluginViewer.addCheckStateListener(new ICheckStateListener() {
-			public void checkStateChanged(CheckStateChangedEvent e) {
-				handlePluginChecked((PluginReference) e.getElement(), e.getChecked());
+			public void checkStateChanged(final CheckStateChangedEvent e) {
+				BusyIndicator.showWhile(pluginViewer.getTable().getDisplay(), new Runnable() {
+					public void run() {
+						handlePluginChecked((PluginReference) e.getElement(), e.getChecked());
+					}
+				});
 			}
 		});
 		pluginViewer.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -126,6 +137,34 @@ public class PluginSection
 		table.setMenu(menu);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		table.setLayoutData(gd);
+
+		Composite buttonContainer = factory.createComposite(container);
+		layout = new GridLayout();
+		layout.marginWidth = layout.marginHeight = 0;
+		buttonContainer.setLayout(layout);
+		gd = new GridData(GridData.FILL_VERTICAL);
+		buttonContainer.setLayoutData(gd);
+		Button button =
+			factory.createButton(
+				buttonContainer,
+				PDEPlugin.getResourceString(KEY_SELECT_ALL),
+				SWT.PUSH);
+		button.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleSelectAll(true);
+			}
+		});
+		button =
+			factory.createButton(
+				buttonContainer,
+				PDEPlugin.getResourceString(KEY_DESELECT_ALL),
+				SWT.PUSH);
+		button.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleSelectAll(false);
+			}
+		});
+
 		factory.paintBordersFor(container);
 		openAction = new OpenReferenceAction(pluginViewer);
 		propertiesAction = new PropertiesAction(getFormPage().getEditor());
@@ -145,6 +184,12 @@ public class PluginSection
 				PluginReference reference = new PluginReference(cref, model);
 				reference.setFragment(true);
 				references[i] = reference;
+				if (cref != null) {
+					try {
+						cref.setLabel(model.getFragment().getTranslatedName());
+					} catch (CoreException e) {
+					}
+				}
 			}
 			int offset = workspaceFragmentModels.length;
 
@@ -153,6 +198,12 @@ public class PluginSection
 				IFeaturePlugin cref = findFeaturePlugin(model.getPlugin().getId());
 				PluginReference reference = new PluginReference(cref, model);
 				references[offset + i] = reference;
+				if (cref != null) {
+					try {
+						cref.setLabel(model.getPlugin().getTranslatedName());
+					} catch (CoreException e) {
+					}
+				}
 			}
 		}
 		return references;
@@ -162,7 +213,10 @@ public class PluginSection
 		ImageDescriptor baseDescriptor,
 		ImageDescriptor overlayDescriptor) {
 		ImageDescriptor desc =
-			new OverlayIcon(baseDescriptor, new ImageDescriptor[][] { { overlayDescriptor }
+			new OverlayIcon(baseDescriptor, new ImageDescriptor[][] { {
+			}, {
+			}, {
+				overlayDescriptor }
 		});
 		return desc.createImage();
 	}
@@ -238,10 +292,7 @@ public class PluginSection
 				IPluginBase plugin = model.getPluginBase();
 				IFeaturePlugin fref = null;
 				fref = fmodel.getFactory().createPlugin();
-				fref.setId(plugin.getId());
-				fref.setLabel(plugin.getName());
-				fref.setVersion(plugin.getVersion());
-				fref.setFragment(model.isFragmentModel());
+				((FeaturePlugin) fref).loadFrom(plugin);
 				feature.addPlugin(fref);
 				reference.setReference(fref);
 			} else {
@@ -250,6 +301,32 @@ public class PluginSection
 					reference.setReference(null);
 				}
 			}
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}
+	}
+	private void handleSelectAll(boolean select) {
+		pluginViewer.setAllChecked(select);
+		IFeaturePlugin[] plugins = null;
+		IFeatureModel fmodel = (IFeatureModel) getFormPage().getModel();
+		IFeature feature = fmodel.getFeature();
+		if (select) {
+			Object[] refs = createPluginReferences();
+			Vector frefs = new Vector();
+			for (int i = 0; i < refs.length; i++) {
+				PluginReference ref = (PluginReference) refs[i];
+				IPluginModelBase model = ref.getModel();
+				IPluginBase plugin = model.getPluginBase();
+				IFeaturePlugin fref = null;
+				fref = fmodel.getFactory().createPlugin();
+				((FeaturePlugin) fref).loadFrom(plugin);
+				ref.setReference(fref);
+				frefs.add(fref);
+			}
+			plugins = (IFeaturePlugin[]) frefs.toArray(new IFeaturePlugin[frefs.size()]);
+		}
+		try {
+			feature.setPlugins(plugins);
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
@@ -296,7 +373,7 @@ public class PluginSection
 		} else if (e.getChangeType() == IModelChangedEvent.CHANGE) {
 			Object obj = e.getChangedObjects()[0];
 			if (obj instanceof IFeaturePlugin)
-				pluginViewer.refresh();
+				pluginViewer.update(obj, null);
 		}
 	}
 

@@ -31,14 +31,17 @@ protected void firePropertyChanged(IFeatureObject object, String property, Objec
 	}
 }
 protected void fireStructureChanged(IFeatureObject child, int changeType) {
+	fireStructureChanged(new IFeatureObject[] {child}, changeType);
+}
+protected void fireStructureChanged(IFeatureObject [] children, int changeType) {
 	IFeatureModel model = getModel();
 	if (model.isEditable() && model instanceof IModelChangeProvider) {
 		IModelChangeProvider provider = (IModelChangeProvider) model;
 		provider.fireModelChanged(
-			new ModelChangedEvent(changeType, new Object[] { child }, null));
+			new ModelChangedEvent(changeType, children, null));
 	}
 }
-public IFeature getComponent() {
+public IFeature getFeature() {
 	return model.getFeature();
 }
 public String getLabel() {

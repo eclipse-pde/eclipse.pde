@@ -20,4 +20,7 @@ public interface IFeatureInfo extends IFeatureObject {
 	
 	public void setURL(URL url) throws CoreException;
 	public void setDescription(String desc) throws CoreException;
+	
+	public boolean isEmpty();
+	public int getIndex();
 }

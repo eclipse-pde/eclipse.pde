@@ -25,6 +25,7 @@ import org.eclipse.jface.dialogs.*;
 
 public class FeatureEditor extends PDEMultiPageXMLEditor {
 	public static final String FEATURE_PAGE = "ComponentPage";
+	public static final String INFO_PAGE = "InfoPage";
 	public static final String REFERENCE_PAGE = "ReferencePage";
 	public static final String SOURCE_PAGE = "SourcePage";
 	public static final String UNRESOLVED_TITLE = "FeatureEditor.Unresolved.title";
@@ -34,6 +35,7 @@ public class FeatureEditor extends PDEMultiPageXMLEditor {
 	public static final String UNRESOLVED_MESSAGE = "FeatureEditor.Unresolved.message";
 	public static final String FEATURE_PAGE_TITLE = "FeatureEditor.FeaturePage.title";
 	public static final String REFERENCE_PAGE_TITLE = "FeatureEditor.ReferencePage.title";
+	public static final String INFO_PAGE_TITLE = "FeatureEditor.InfoPage.title";
 
 
 public FeatureEditor() {
@@ -78,7 +80,11 @@ protected void createPages() {
 		new FeatureReferencePage(
 			componentPage,
 			PDEPlugin.getResourceString(REFERENCE_PAGE_TITLE));
+	InfoFormPage infoPage = 
+		new InfoFormPage(componentPage,
+			PDEPlugin.getResourceString(INFO_PAGE_TITLE));
 	addPage(FEATURE_PAGE, componentPage);
+	addPage(INFO_PAGE, infoPage);
 	addPage(REFERENCE_PAGE, referencePage);
 	addPage(SOURCE_PAGE, new FeatureSourcePage(this));
 }

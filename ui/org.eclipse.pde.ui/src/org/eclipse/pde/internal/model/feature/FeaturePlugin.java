@@ -42,6 +42,13 @@ public class FeaturePlugin extends VersionableObject implements IFeaturePlugin {
 		downloadSize = getIntegerAttribute(node, "download-size");
 		installSize = getIntegerAttribute(node, "install-size");
 	}
+	
+	public void loadFrom(IPluginBase plugin) {
+		id = plugin.getId();
+		label = plugin.getTranslatedName();
+		version = plugin.getVersion();
+		fragment = plugin instanceof IFragment;
+	}
 
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent + "<plugin");
@@ -50,17 +57,13 @@ public class FeaturePlugin extends VersionableObject implements IFeaturePlugin {
 			writer.println();
 			writer.print(indent2 + "id=\"" + getId() + "\"");
 		}
-		if (getLabel() != null) {
+		if (getVersion() != null) {
 			writer.println();
-			writer.print(indent2 + "label=\"" + getWritableString(getLabel()) + "\"");
+			writer.print(indent2 + "version=\"" + getVersion() + "\"");
 		}
 		if (isFragment()) {
 			writer.println();
 			writer.print(indent2+"fragment=\"true\"");
-		}
-		if (getVersion() != null) {
-			writer.println();
-			writer.print(indent2 + "version=\"" + getVersion() + "\"");
 		}
 		if (getOS() != null) {
 			writer.println();
@@ -176,5 +179,9 @@ public class FeaturePlugin extends VersionableObject implements IFeaturePlugin {
 		this.installSize = installSize;
 		firePropertyChanged(P_DOWNLOAD_SIZE, oldValue, new Integer(installSize));
 	}
-
+	
+	public void setLabel(String newLabel) throws CoreException {
+		ensureModelEditable();
+		label = newLabel;
+	}
 }

@@ -12,8 +12,10 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.pde.internal.editor.manifest.MatchSection;
 import org.eclipse.pde.internal.editor.text.*;
+import org.eclipse.pde.internal.PDEPlugin;
 
 public class InfoForm extends ScrollableSectionForm {
+	private static final String KEY_TITLE = "FeatureEditor.InfoPage.heading";
 	private InfoFormPage page;
 	private IColorManager colorManager = new ColorManager();
 	private InfoSection infoSection;
@@ -27,20 +29,13 @@ protected void createFormClient(Composite parent) {
 	FormWidgetFactory factory = getFactory();
 	GridLayout layout = new GridLayout();
 	parent.setLayout(layout);
-	layout.numColumns = 2;
-	//layout.makeColumnsEqualWidth=true;
 	layout.marginWidth = 10;
-	layout.horizontalSpacing=15;
-	layout.verticalSpacing=15;
 	GridData gd;
 	
 	infoSection = new InfoSection(page, colorManager);
 	Control control = infoSection.createControl(parent, getFactory());
 	gd = new GridData(GridData.FILL_BOTH);
 	control.setLayoutData(gd);
-
-	//SectionChangeManager manager = new SectionChangeManager();
-	//manager.linkSections(pluginSection, matchSection);
 	registerSection(infoSection);
 }
 
@@ -50,17 +45,14 @@ public void dispose() {
 }
 
 public void expandTo(Object object) {
-/*
-	if (object instanceof IFeaturePlugin)
-		pluginSection.expandTo(object);
-*/
+	if (object instanceof IFeatureInfo)
+		infoSection.expandTo(object);
 }
 
 public void initialize(Object modelObject) {
 	IFeatureModel model = (IFeatureModel) modelObject;
 	super.initialize(model);
-	IFeature component = model.getFeature();
-	setHeadingText(component.getLabel());
+	setHeadingText(PDEPlugin.getResourceString(KEY_TITLE));
 	((Composite)getControl()).layout(true);
 }
 }

@@ -320,18 +320,18 @@
    </objectContribution>
    <objectContribution
          objectClass="org.eclipse.core.resources.IFile"
-         nameFilter="install.xml"
-         id="org.eclipse.pde.componentJar">
+         nameFilter="feature.xml"
+         id="org.eclipse.pde.featureJar">
       <filter
             name="projectNature"
             value="org.eclipse.pde.ComponentNature">
       </filter>
       <action
             label="%popupMenus.createJar.label"
-            class="org.eclipse.pde.internal.component.BuildComponentJarAction"
+            class="org.eclipse.pde.internal.editor.feature.BuildFeatureAction"
             menubarPath="additions"
             enablesFor="1"
-            id="org.eclipse.pde.BuildComponentJar">
+            id="org.eclipse.pde.BuildFeatureJar">
       </action>
    </objectContribution>
    <objectContribution

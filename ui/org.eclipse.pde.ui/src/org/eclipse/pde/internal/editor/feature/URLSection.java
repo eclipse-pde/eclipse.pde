@@ -219,7 +219,7 @@ private void handleDelete() {
 		((IStructuredSelection) urlTree.getSelection()).getFirstElement();
 	if (object != null && object instanceof IFeatureURLElement) {
 		IFeatureURLElement urlElement = (IFeatureURLElement) object;
-		IFeature component = urlElement.getComponent();
+		IFeature component = urlElement.getFeature();
 		IFeatureURL url = component.getURL();
 		try {
 			if (urlElement.getElementType() == IFeatureURLElement.UPDATE)

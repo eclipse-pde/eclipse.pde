@@ -21,7 +21,7 @@ String P_LABEL = "label";
  * Returns the top-level component model object.
  * @return root feature object
  */
-public IFeature getComponent();
+public IFeature getFeature();
 /**
  * Returns the label of this feature model object'
  * @return feature object label

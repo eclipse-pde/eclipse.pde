@@ -20,6 +20,12 @@ public IFeaturePlugin createPlugin() {
 	plugin.parent = model.getFeature();
 	return plugin;
 }
+public IFeatureImport createImport() {
+	FeatureImport iimport = new FeatureImport();
+	iimport.model = model;
+	iimport.parent = model.getFeature();
+	return iimport;
+}
 public IFeatureURL createURL() {
 	FeatureURL url = new FeatureURL();
 	url.model = model;
@@ -27,8 +33,8 @@ public IFeatureURL createURL() {
 	return url;
 }
 
-public IFeatureInfo createInfo(String tag) {
-	FeatureInfo info = new FeatureInfo(tag);
+public IFeatureInfo createInfo(int index) {
+	FeatureInfo info = new FeatureInfo(index);
 	info.model = model;
 	info.parent = model.getFeature();
 	return info;
