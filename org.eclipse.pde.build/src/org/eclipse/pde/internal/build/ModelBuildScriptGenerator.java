@@ -29,6 +29,8 @@ abstract class ModelBuildScriptGenerator extends PluginTool implements ScriptGen
 	private static final String RUNTIME_FILENAME = "runtime.jar";
 	private static final String BOOT_FILENAME = "org.eclipse.core.boot/boot.jar";
 	private static final String SOURCE_PREFIX = "source.";
+	private static final String WS = "$ws$";
+	private static final String VARIABLE_WS = "${ws}";
 		
 public ModelBuildScriptGenerator() {
 	super();
@@ -64,7 +66,9 @@ protected String computeCompilePathClause(PluginModel descriptor, String fullJar
 	
 	Set relativeJars = makeRelative(jars, new Path(getLocation(descriptor)));
 	
-	return getStringFromCollection(relativeJars, "", "", ";");
+	String result = getStringFromCollection(relativeJars, "", "", ";");
+	result = replaceWsWithVariable(result);
+	return result;
 }
 protected String computeCompleteSrc(PluginModel descriptor) {
 	Set jars = new HashSet(9);
@@ -306,6 +310,14 @@ protected void generatePrologue(PrintWriter output, PluginModel descriptor) {
 	output.println("    <initTemplate/>");
 	output.println("    <property name=\"" + getModelTypeName() + "\" value=\"" + descriptor.getId() + "\"/>");
 	output.println("    <property name=\"version\" value=\"" + descriptor.getVersion() + "\"/>");
+
+	Map map = getPropertyAssignments(descriptor);
+	Iterator keys = map.keySet().iterator();
+	while (keys.hasNext()) {
+		String key = (String)keys.next();
+		output.println("    <property name=\"" + key + "\" value=\"" + (String)map.get(key) + "\"/>");
+	}
+
 	output.println("  </target>");
 }
 protected void generateSrcTarget(PrintWriter output, PluginModel descriptor) {
@@ -481,6 +493,16 @@ protected String[] processCommandLine(String[] args) {
 	
 	return new String[0];
 }
+protected String replaceWsWithVariable(String sourceString) {
+	int replacementIndex = sourceString.indexOf(WS);
+	if (replacementIndex == -1)
+		return sourceString;
+		
+	return
+		sourceString.substring(0,replacementIndex) +
+		VARIABLE_WS +
+		sourceString.substring(replacementIndex + WS.length());
+}			
 protected void retrieveCommandLineModels() {
 	Vector modelsToGenerate = new Vector();
 	

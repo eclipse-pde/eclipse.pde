@@ -24,6 +24,8 @@ public abstract class PluginTool implements IPlatformRunnable {
 	private static final String PLUGINS = "-plugins";
 	private static final String INSTALL = "-install";
 	private static final String DEV_ENTRIES = "-dev";
+	private static final String PROPERTYASSIGNMENT_PREFIX = "${";
+	private static final String PROPERTYASSIGNMENT_SUFFIX = "}";
 /**
  * Deletes all the files and directories from the given root down (inclusive).
  * Returns false if we could not delete some file or an exception occurred
@@ -47,6 +49,10 @@ public static boolean clear(java.io.File root) {
 		result = false;
 	}
 	return result;
+}
+protected String extractPropertyName(String propertyString) {
+	String prefixRemoved = propertyString.substring(PROPERTYASSIGNMENT_PREFIX.length());
+	return prefixRemoved.substring(0,prefixRemoved.length() - PROPERTYASSIGNMENT_SUFFIX.length());
 }
 /**
  * convert a list of comma-separated tokens into an array
@@ -144,6 +150,23 @@ protected Properties getProperties(PluginModel descriptor) {
 	propertyValues.put(descriptor,result);
 	return result;
 }
+protected Map getPropertyAssignments(InstallModel descriptor) {
+	return getPropertyAssignments(getProperties(descriptor));
+}
+protected Map getPropertyAssignments(PluginModel descriptor) {
+	return getPropertyAssignments(getProperties(descriptor));
+}
+protected Map getPropertyAssignments(Properties properties) {
+	HashMap result = new HashMap(9);	
+	Iterator propertiesEnum = properties.keySet().iterator();
+	while (propertiesEnum.hasNext()) {
+		String current = (String)propertiesEnum.next();
+		if (isPropertyAssignment(current))
+			result.put(extractPropertyName(current),properties.get(current));
+	}
+	
+	return result;
+}
 protected PluginRegistryModel getRegistry() {
 	return registry;
 }
@@ -152,6 +175,11 @@ protected String getSubstitution(PluginModel descriptor,String propertyName) {
 }
 protected String getSubstitution(InstallModel descriptor,String propertyName) {
 	return (String)getProperties(descriptor).get(propertyName);
+}
+protected boolean isPropertyAssignment(String key) {
+	return
+		key.startsWith(PROPERTYASSIGNMENT_PREFIX) &&
+		key.endsWith(PROPERTYASSIGNMENT_SUFFIX);
 }
 protected String makeRelative(String location, IPath base) {
 	IPath path = new Path(location);

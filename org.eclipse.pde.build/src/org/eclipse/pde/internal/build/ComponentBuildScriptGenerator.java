@@ -237,6 +237,14 @@ protected void generatePrologue(PrintWriter output) {
 	output.println("    <initTemplate/>");
 	output.println("    <property name=\"component\" value=\"" + componentModel.getId() + "\"/>");
 	output.println("    <property name=\"compVersion\" value=\"" + componentModel.getVersion() + "\"/>");
+	
+	Map map = getPropertyAssignments(componentModel);
+	Iterator keys = map.keySet().iterator();
+	while (keys.hasNext()) {
+		String key = (String)keys.next();
+		output.println("    <property name=\"" + key + "\" value=\"" + (String)map.get(key) + "\"/>");
+	}
+
 	output.println("  </target>");
 }
 protected void generateSrcTarget(PrintWriter output) {

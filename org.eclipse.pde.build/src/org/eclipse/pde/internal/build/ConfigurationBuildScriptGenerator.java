@@ -154,6 +154,14 @@ protected void generatePrologue(PrintWriter output) {
 	output.println("    <initTemplate/>");
 	output.println("    <property name=\"configuration\" value=\"" + configurationModel.getId() + "\"/>");
 	output.println("    <property name=\"configVersion\" value=\"" + configurationModel.getVersion() + "\"/>");
+	
+	Map map = getPropertyAssignments(configurationModel);
+	Iterator keys = map.keySet().iterator();
+	while (keys.hasNext()) {
+		String key = (String)keys.next();
+		output.println("    <property name=\"" + key + "\" value=\"" + (String)map.get(key) + "\"/>");
+	}
+
 	output.println("  </target>");
 }
 protected void generateTemplateTargetCall(PrintWriter output, String target) {
