@@ -249,7 +249,7 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 							RegistryLoader.loadFromDirectories(
 								result,
 								fresult,
-								createPath(dropLocation),
+								createPaths(dropLocation),
 								false,
 								false,
 								monitor);
@@ -283,11 +283,14 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 		return models;
 	}
 
-	private String[] createPath(IPath dropLocation) {
-		File pluginsDir = new File(dropLocation.toFile(), "plugins");
+	private String[] createPaths(IPath dropLocation) {
+		ArrayList paths = new ArrayList();
+		File pluginsDir = new File(dropLocation.toFile(), "plugins");		
 		if (pluginsDir.exists()) 
-			return new String[] {pluginsDir.getAbsolutePath()};
-		return new String[0];
+			paths.add(pluginsDir.getAbsolutePath());
+		if (dropLocation.toFile().exists())
+			paths.add(dropLocation.toFile().getAbsolutePath());
+		return (String[]) paths.toArray(new String[paths.size()]);
 	}
 
 	public IPluginModelBase[] getSelectedModels() {
