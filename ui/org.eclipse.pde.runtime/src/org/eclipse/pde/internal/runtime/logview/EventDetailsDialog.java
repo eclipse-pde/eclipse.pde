@@ -58,7 +58,6 @@ public class EventDetailsDialog extends Dialog {
 	private Collator collator;
 	
 	// location configuration
-	private IDialogSettings dialogSettings;
 	private Point dialogLocation;
 	private Point dialogSize;
 	private int[] sashWeights;
@@ -557,9 +556,9 @@ public class EventDetailsDialog extends Dialog {
 	 */
 	private IDialogSettings getDialogSettings() {
 		IDialogSettings settings= PDERuntimePlugin.getDefault().getDialogSettings();
-		dialogSettings= settings.getSection(getClass().getName());
+		IDialogSettings dialogSettings = settings.getSection(getClass().getName());
 		if (dialogSettings == null)
-			dialogSettings= settings.addNewSection(getClass().getName());
+			dialogSettings = settings.addNewSection(getClass().getName());
 		return dialogSettings;
 	}
 

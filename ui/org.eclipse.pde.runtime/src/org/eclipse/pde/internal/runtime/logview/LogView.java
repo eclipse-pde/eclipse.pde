@@ -48,12 +48,14 @@ public class LogView extends ViewPart implements ILogListener {
     private static final String P_COLUMN_3 = "column3"; //$NON-NLS-1$
     private static final String P_COLUMN_4 = "column4"; //$NON-NLS-1$
     public static final String P_ACTIVATE = "activate"; //$NON-NLS-1$
-    private int MESSAGE_ORDER = -1;
-    private int PLUGIN_ORDER = -1;
-    private int DATE_ORDER = -1;
-    public static byte MESSAGE = 0x0;
-    public static byte PLUGIN = 0x1;
-    public static byte DATE = 0x2;
+    public static final String P_ORDER_TYPE = "orderType"; //$NON-NLS-1$
+    public static final String P_ORDER_VALUE = "orderValue"; //$NON-NLS-1$
+    private int MESSAGE_ORDER;
+    private int PLUGIN_ORDER;
+    private int DATE_ORDER;
+    public final static byte MESSAGE = 0x0;
+    public final static byte PLUGIN = 0x1;
+    public final static byte DATE = 0x2;
     private static int ASCENDING = 1;
     private static int DESCENDING = -1;
     private Action clearAction;
@@ -104,6 +106,7 @@ public class LogView extends ViewPart implements ILogListener {
         WorkbenchHelp.setHelp(tableTree, IHelpContextIds.LOG_VIEW);
         tableTreeViewer.getTableTree().getTable().setToolTipText(""); //$NON-NLS-1$
         initializeFonts();
+        initializeViewerSorter();
         applyFonts();
     }
 
@@ -248,6 +251,15 @@ public class LogView extends ViewPart implements ILogListener {
         column0.setText(""); //$NON-NLS-1$
         column1 = new TableColumn(table, SWT.NULL);
         column1.setText(PDERuntimePlugin.getResourceString("LogView.column.severity")); //$NON-NLS-1$
+        column1.addControlListener(new ControlListener(){
+			public void controlMoved(ControlEvent e) {
+			}
+
+			public void controlResized(ControlEvent e) {
+				memento.putInteger(P_COLUMN_1, column1.getWidth());
+			}
+        	
+        });
         column2 = new TableColumn(table, SWT.NULL);
         column2.setText(PDERuntimePlugin.getResourceString("LogView.column.message")); //$NON-NLS-1$
         column2.addSelectionListener(new SelectionAdapter() {
@@ -263,7 +275,17 @@ public class LogView extends ViewPart implements ILogListener {
                     ((EventDetailsDialogAction) propertiesAction)
                             .setComparator(comparator);
                 applyFonts();
+                memento.putInteger(P_ORDER_VALUE, MESSAGE_ORDER);
+                memento.putInteger(P_ORDER_TYPE, MESSAGE);
             }
+        });
+        column2.addControlListener(new ControlListener(){
+			public void controlMoved(ControlEvent e) {
+			}
+
+			public void controlResized(ControlEvent e) {
+				memento.putInteger(P_COLUMN_2, column2.getWidth());
+			}
         });
         column3 = new TableColumn(table, SWT.NULL);
         column3.setText(PDERuntimePlugin.getResourceString("LogView.column.plugin")); //$NON-NLS-1$
@@ -280,7 +302,17 @@ public class LogView extends ViewPart implements ILogListener {
                     ((EventDetailsDialogAction) propertiesAction)
                             .setComparator(comparator);
                 applyFonts();
+                memento.putInteger(P_ORDER_VALUE, PLUGIN_ORDER);
+                memento.putInteger(P_ORDER_TYPE, PLUGIN);
             }
+        });
+        column3.addControlListener(new ControlListener(){
+        	public void controlMoved(ControlEvent e){
+        	}
+        	
+        	public void controlResized(ControlEvent e){
+        		memento.putInteger(P_COLUMN_3, column3.getWidth());
+        	}
         });
         column4 = new TableColumn(table, SWT.NULL);
         column4.setText(PDERuntimePlugin.getResourceString("LogView.column.date")); //$NON-NLS-1$
@@ -301,8 +333,18 @@ public class LogView extends ViewPart implements ILogListener {
                     ((EventDetailsDialogAction) propertiesAction)
                             .setComparator(comparator);
                 applyFonts();
+                memento.putInteger(P_ORDER_VALUE, DATE_ORDER);
+                memento.putInteger(P_ORDER_TYPE, DATE);
             }
         });
+        column4.addControlListener(new ControlListener(){
+        	public void controlMoved(ControlEvent e){
+        	}
+        	public void controlResized(ControlEvent e){
+        		memento.putInteger(P_COLUMN_4, column4.getWidth());
+        	}
+        });
+        
         TableLayout tlayout = new TableLayout();
         tlayout.addColumnData(new ColumnPixelData(21));
         tlayout.addColumnData(new ColumnPixelData(memento.getInteger(P_COLUMN_1)
@@ -317,7 +359,12 @@ public class LogView extends ViewPart implements ILogListener {
         table.setHeaderVisible(true);
     }
 
-    private void makeActions(Table table) {
+	private void initializeViewerSorter() {
+        ViewerSorter sorter = getViewerSorter(memento.getInteger(P_ORDER_TYPE).byteValue());
+        tableTreeViewer.setSorter(sorter);
+	}
+
+	private void makeActions(Table table) {
         propertiesAction = new EventDetailsDialogAction(table.getShell(), tableTreeViewer);
         propertiesAction.setImageDescriptor(PDERuntimePluginImages.DESC_PROPERTIES);
         propertiesAction
@@ -399,6 +446,7 @@ public class LogView extends ViewPart implements ILogListener {
         activateViewAction = new Action(PDERuntimePlugin
                 .getResourceString("LogView.activate")) { //$NON-NLS-1$
             public void run() {
+            	memento.putString(P_ACTIVATE, activateViewAction.isChecked()?"true": "false"); //$NON-NLS-1$ //$NON-NLS-2$
             }
         };
         activateViewAction.setChecked(memento.getString(P_ACTIVATE).equals("true")); //$NON-NLS-1$
@@ -437,6 +485,7 @@ public class LogView extends ViewPart implements ILogListener {
     }
 
     public void dispose() {
+        writeSettings();
         Platform.removeLogListener(this);
         clipboard.dispose();
         LogReader.reset();
@@ -526,26 +575,26 @@ public class LogView extends ViewPart implements ILogListener {
             }
         }
     }
-
+    
     private void handleFilter() {
-        FilterDialog dialog = new FilterDialog(
-                PDERuntimePlugin.getActiveWorkbenchShell(), memento);
-        dialog.create();
-        dialog.getShell().setText(
-                PDERuntimePlugin.getResourceString("LogView.FilterDialog.title")); //$NON-NLS-1$
-        if (dialog.open() == FilterDialog.OK)
-            reloadLog();
+    	FilterDialog dialog = new FilterDialog(
+    			PDERuntimePlugin.getActiveWorkbenchShell(), memento);
+    	dialog.create();
+    	dialog.getShell().setText(
+    			PDERuntimePlugin.getResourceString("LogView.FilterDialog.title")); //$NON-NLS-1$
+    	if (dialog.open() == FilterDialog.OK)
+    		reloadLog();
     }
-
+    
     private void doDeleteLog() {
-        String title = PDERuntimePlugin.getResourceString("LogView.confirmDelete.title"); //$NON-NLS-1$
-        String message = PDERuntimePlugin
-                .getResourceString("LogView.confirmDelete.message"); //$NON-NLS-1$
-        if (!MessageDialog.openConfirm(tableTreeViewer.getControl().getShell(), title,
-                message))
-            return;
-        if (inputFile.delete()) {
-            logs.clear();
+    	String title = PDERuntimePlugin.getResourceString("LogView.confirmDelete.title"); //$NON-NLS-1$
+    	String message = PDERuntimePlugin
+    	.getResourceString("LogView.confirmDelete.message"); //$NON-NLS-1$
+    	if (!MessageDialog.openConfirm(tableTreeViewer.getControl().getShell(), title,
+    			message))
+    		return;
+    	if (inputFile.delete()) {
+    		logs.clear();
             asyncRefresh(false);
             resetDialogButtons();
         }
@@ -715,7 +764,27 @@ public class LogView extends ViewPart implements ILogListener {
             this.memento = XMLMemento.createWriteRoot("LOGVIEW"); //$NON-NLS-1$
         else
             this.memento = memento;
-        initializeMemento();
+        readSettings();
+        
+        // initialize column ordering 
+        final byte type = this.memento.getInteger(P_ORDER_TYPE).byteValue();
+        switch (type){
+        case DATE:
+        	DATE_ORDER = this.memento.getInteger(P_ORDER_VALUE).intValue();
+        	MESSAGE_ORDER = -1;
+        	PLUGIN_ORDER = -1;
+        	break;
+        case MESSAGE:
+        	MESSAGE_ORDER = this.memento.getInteger(P_ORDER_VALUE).intValue();
+        	DATE_ORDER = -1;
+        	PLUGIN_ORDER = -1;
+        	break;
+        case PLUGIN:
+        	PLUGIN_ORDER = this.memento.getInteger(P_ORDER_VALUE).intValue();
+        	MESSAGE_ORDER = -1;
+        	DATE_ORDER = -1;
+        	break;
+        }
     }
 
     private void initializeMemento() {
@@ -745,6 +814,9 @@ public class LogView extends ViewPart implements ILogListener {
             memento.putInteger(P_COLUMN_4, 150);
         if (memento.getString(P_ACTIVATE) == null)
             memento.putString(P_ACTIVATE, "true"); //$NON-NLS-1$
+        
+       	memento.putInteger(P_ORDER_VALUE, -1);
+        memento.putInteger(P_ORDER_TYPE, MESSAGE);
     }
 
     public void saveState(IMemento memento) {
@@ -757,6 +829,7 @@ public class LogView extends ViewPart implements ILogListener {
         this.memento.putString(P_ACTIVATE,
                 activateViewAction.isChecked() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
         memento.putMemento(this.memento);
+        writeSettings();
     }
 
     private void addMouseListeners() {
@@ -929,8 +1002,11 @@ public class LogView extends ViewPart implements ILogListener {
             return new ViewerSorter() {
                 public int compare(Viewer viewer, Object e1, Object e2) {
                     try {
-                        SimpleDateFormat formatter = new SimpleDateFormat(
-                                "MMM dd, yyyy HH:mm:ss.SS"); //$NON-NLS-1$
+//                    	previous date format for error log
+//                        SimpleDateFormat formatter = new SimpleDateFormat(
+//                                "MMM dd, yyyy HH:mm:ss.SS"); //$NON-NLS-1$
+                    	SimpleDateFormat formatter = new SimpleDateFormat(
+                    	"yyyy-MM-dd HH:mm:ss.SSS"); //$NON-NLS-1$
                         Date date1 = formatter.parse(((LogEntry) e1).getDate());
                         Date date2 = formatter.parse(((LogEntry) e2).getDate());
                         if (DATE_ORDER == ASCENDING)
@@ -946,5 +1022,78 @@ public class LogView extends ViewPart implements ILogListener {
 
     private void resetDialogButtons() {
         ((EventDetailsDialogAction) propertiesAction).resetDialogButtons();
+    }
+    
+    /**
+     * Returns the log view settings object used to maintain
+     * state of view and filter dialog.
+     * @return the dialog settings to be used
+     */
+    private IDialogSettings getLogSettings() {
+        IDialogSettings settings= PDERuntimePlugin.getDefault().getDialogSettings();
+        return settings.getSection(getClass().getName());
+    }
+
+    private void readSettings(){
+        IDialogSettings s = getLogSettings();
+        if (s == null){
+            initializeMemento();
+            return;
+        }
+        try {
+			memento.putString(P_USE_LIMIT, s.getBoolean(P_USE_LIMIT) ? "true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
+			memento.putInteger(P_LOG_LIMIT, s.getInt(P_LOG_LIMIT));
+			memento.putString(P_LOG_INFO, s.getBoolean(P_LOG_INFO) ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
+			memento.putString(P_LOG_WARNING, s.getBoolean(P_LOG_WARNING) ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
+			memento.putString(P_LOG_ERROR, s.getBoolean(P_LOG_ERROR) ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
+			memento.putString(P_SHOW_ALL_SESSIONS, s.getBoolean(P_SHOW_ALL_SESSIONS) ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
+			memento.putInteger(P_COLUMN_1, s.getInt(P_COLUMN_1));
+			memento.putInteger(P_COLUMN_2, s.getInt(P_COLUMN_2));
+			memento.putInteger(P_COLUMN_3, s.getInt(P_COLUMN_3));
+			memento.putInteger(P_COLUMN_4, s.getInt(P_COLUMN_4));
+			memento.putString(P_ACTIVATE, s.getBoolean(P_ACTIVATE) ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
+			int order = s.getInt(P_ORDER_VALUE);
+			memento.putInteger(P_ORDER_VALUE, order == 0 ? -1 : order);
+			memento.putString(P_ORDER_TYPE, s.get(P_ORDER_TYPE));
+		} catch (NumberFormatException e) {
+			memento.putInteger(P_LOG_LIMIT, 50);
+			memento.putInteger(P_COLUMN_1, 20);
+			memento.putInteger(P_COLUMN_2, 300);
+			memento.putInteger(P_COLUMN_3, 150);
+			memento.putInteger(P_COLUMN_4, 150);
+			memento.putInteger(P_ORDER_TYPE, MESSAGE);
+			memento.putInteger(P_ORDER_VALUE, -1);
+		}
+    }
+    
+    private void writeSettings(){
+        writeViewSettings();
+        writeFilterSettings();
+    }
+    
+    private void writeFilterSettings(){
+        IDialogSettings settings = getLogSettings();
+        if (settings == null)
+            settings = PDERuntimePlugin.getDefault().getDialogSettings().addNewSection(getClass().getName());
+        settings.put(P_USE_LIMIT, memento.getString(P_USE_LIMIT).equals("true")); //$NON-NLS-1$
+        settings.put(P_LOG_LIMIT, memento.getInteger(P_LOG_LIMIT).intValue());
+        settings.put(P_LOG_INFO, memento.getString(P_LOG_INFO).equals("true")); //$NON-NLS-1$
+        settings.put(P_LOG_WARNING, memento.getString(P_LOG_WARNING).equals("true")); //$NON-NLS-1$
+        settings.put(P_LOG_ERROR, memento.getString(P_LOG_ERROR).equals("true")); //$NON-NLS-1$
+        settings.put(P_SHOW_ALL_SESSIONS, memento.getString(P_SHOW_ALL_SESSIONS).equals("true")); //$NON-NLS-1$
+    }
+    
+    private void writeViewSettings(){
+        IDialogSettings settings = getLogSettings();
+        if (settings == null)
+            settings = PDERuntimePlugin.getDefault().getDialogSettings().addNewSection(getClass().getName());
+        settings.put(P_COLUMN_1, memento.getInteger(P_COLUMN_1).intValue());
+        settings.put(P_COLUMN_2, memento.getInteger(P_COLUMN_2).intValue());
+        settings.put(P_COLUMN_3, memento.getInteger(P_COLUMN_3).intValue());
+        settings.put(P_COLUMN_4, memento.getInteger(P_COLUMN_4).intValue());
+        settings.put(P_ACTIVATE, memento.getString(P_ACTIVATE).equals("true")); //$NON-NLS-1$
+        int order = memento.getInteger(P_ORDER_VALUE).intValue();
+        settings.put(P_ORDER_VALUE, order == 0 ? -1 : order);
+        settings.put(P_ORDER_TYPE, memento.getString(P_ORDER_TYPE));
     }
 }
