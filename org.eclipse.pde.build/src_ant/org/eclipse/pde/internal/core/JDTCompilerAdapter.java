@@ -24,6 +24,8 @@ public class JDTCompilerAdapter extends DefaultCompilerAdapter {
  */
 public boolean execute() throws BuildException {
 	attributes.log(Policy.bind("info.usingJdtCompiler"), Project.MSG_VERBOSE);
+	attributes.log("WARNING: This compiler adapter has been deprecated and will be removed soon.", Project.MSG_WARN);
+	attributes.log("WARNING: A new compiler adapter will be provided by JDT Core to replace this one.", Project.MSG_WARN);
 	Commandline cmd = setupJavacCommand();
 
 	try {
