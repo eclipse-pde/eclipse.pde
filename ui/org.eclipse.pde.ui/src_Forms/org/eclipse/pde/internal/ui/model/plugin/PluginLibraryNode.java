@@ -182,7 +182,7 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 	 * @see org.eclipse.pde.internal.ui.model.plugin.PluginObjectNode#write()
 	 */
 	public String write(boolean indent) {
-		String sep = System.getProperty("line.separator"); //$NON-NLS-1$
+		String sep = getLineDelimiter();
 		StringBuffer buffer = new StringBuffer();
 		if (indent)
 			buffer.append(getIndent());

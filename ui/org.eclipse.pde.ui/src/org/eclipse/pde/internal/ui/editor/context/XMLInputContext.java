@@ -30,7 +30,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 	 */
 	public XMLInputContext(PDEFormEditor editor, IEditorInput input, boolean primary) {
 		super(editor, input, primary);
-	}
+	}	
 
 	protected IDocumentPartitioner createDocumentPartitioner() {
 		FastPartitioner partitioner = new FastPartitioner(
@@ -136,7 +136,8 @@ public abstract class XMLInputContext extends UTF8InputContext {
 				break;
 			if (sibling.getOffset() > -1) {
 				node.setLineIndent(sibling.getLineIndent());
-				return new InsertEdit(sibling.getOffset() + sibling.getLength(), System.getProperty("line.separator") + node.write(true)); //$NON-NLS-1$
+				String sep = TextUtilities.getDefaultLineDelimiter(getDocumentProvider().getDocument(getInput()));
+				return new InsertEdit(sibling.getOffset() + sibling.getLength(), sep + node.write(true)); //$NON-NLS-1$
 			}
 			sibling = sibling.getPreviousSibling();
 		}
@@ -147,7 +148,8 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		int offset = node.getParentNode().getOffset();
 		int length = getNextPosition(getDocumentProvider().getDocument(getInput()), offset, '>');
 		node.setLineIndent(node.getParentNode().getLineIndent() + 3);
-		return new InsertEdit(offset+ length + 1, System.getProperty("line.separator") + node.write(true));	 //$NON-NLS-1$
+		String sep = TextUtilities.getDefaultLineDelimiter(getDocumentProvider().getDocument(getInput()));
+		return new InsertEdit(offset+ length + 1, sep + node.write(true));	 //$NON-NLS-1$
 	}
 	
 
@@ -266,7 +268,8 @@ public abstract class XMLInputContext extends UTF8InputContext {
 				}
 				// add text as first child
 				changedObject = parent;
-				StringBuffer buffer = new StringBuffer(System.getProperty("line.separator")); //$NON-NLS-1$
+				String sep = TextUtilities.getDefaultLineDelimiter(getDocumentProvider().getDocument(getInput()));
+				StringBuffer buffer = new StringBuffer(sep); //$NON-NLS-1$
 				for (int i = 0; i < parent.getLineIndent(); i++) 
 					buffer.append(" "); //$NON-NLS-1$
 				buffer.append("   " + getWritableString(textNode.getText())); //$NON-NLS-1$

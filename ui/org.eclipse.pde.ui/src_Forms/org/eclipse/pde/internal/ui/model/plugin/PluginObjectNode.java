@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.model.plugin;
 import java.io.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.text.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
@@ -221,5 +222,11 @@ public class PluginObjectNode extends PluginDocumentNode
 				buffer.append(" " + attr.write()); //$NON-NLS-1$
 		}
 	}
+	
+	public String getLineDelimiter() {
+		return TextUtilities.getDefaultLineDelimiter(((IEditingModel)getModel()).getDocument());
+	}
+	
+
 
 }

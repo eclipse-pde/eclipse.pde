@@ -323,7 +323,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	 * @see org.eclipse.pde.internal.ui.model.plugin.PluginObjectNode#write()
 	 */
 	public String write(boolean indent) {
-		String newLine = System.getProperty("line.separator"); //$NON-NLS-1$
+		String newLine = getLineDelimiter();
 		
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + newLine); //$NON-NLS-1$

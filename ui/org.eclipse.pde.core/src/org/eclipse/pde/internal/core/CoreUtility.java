@@ -50,6 +50,8 @@ public class CoreUtility {
 	}
 	
 	public static String getWritableString(String source) {
+		if (source == null)
+			return "";
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < source.length(); i++) {
 			char c = source.charAt(i);

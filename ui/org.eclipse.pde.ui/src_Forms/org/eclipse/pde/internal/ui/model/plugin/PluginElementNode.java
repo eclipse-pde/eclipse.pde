@@ -77,7 +77,7 @@ public class PluginElementNode extends PluginParentNode
 	 * @see org.eclipse.pde.internal.ui.model.plugin.PluginObjectNode#write()
 	 */
 	public String write(boolean indent) {
-		String sep = System.getProperty("line.separator"); //$NON-NLS-1$
+		String sep = getLineDelimiter();
 		StringBuffer buffer = new StringBuffer();
 		if (indent)
 			buffer.append(getIndent());
@@ -104,7 +104,7 @@ public class PluginElementNode extends PluginParentNode
 	 * @see org.eclipse.pde.internal.ui.model.plugin.PluginObjectNode#writeShallow(boolean)
 	 */
 	public String writeShallow(boolean terminate) {
-		String sep = System.getProperty("line.separator"); //$NON-NLS-1$
+		String sep = getLineDelimiter();
 		StringBuffer buffer = new StringBuffer("<" + getXMLTagName()); //$NON-NLS-1$
 
 		IDocumentAttribute[] attrs = getNodeAttributes();
