@@ -20,6 +20,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.runtime.*;
 import org.eclipse.swt.*;
+import org.eclipse.swt.custom.*;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
@@ -50,6 +51,7 @@ public class EventDetailsDialog extends Dialog {
 	private Image imgNextEnabled, imgNextDisabled;
 	private Image imgPrevEnabled, imgPrevDisabled;
 	private Image imgCopyEnabled;
+	private SashForm sashForm;
 	
 	// sorting
 	private static int ASCENDING = 1;
@@ -60,6 +62,7 @@ public class EventDetailsDialog extends Dialog {
 	private IDialogSettings dialogSettings;
 	private Point dialogLocation;
 	private Point dialogSize;
+	private int[] sashWeights;
 	
 	// externalize strings
 	private String EVENT_NO_STACK = "EventDetailsDialog.noStack";
@@ -124,6 +127,15 @@ public class EventDetailsDialog extends Dialog {
 
 	public int open(){
 		isOpen = true;
+		if (sashWeights == null){
+			int width = getSashForm().getClientArea().width;
+			if (width - 100 > 0)
+				width -= 100;
+			else
+				width = width/2;
+			sashWeights = new int[]{width, getSashForm().getClientArea().width-width};
+		}
+		getSashForm().setWeights(sashWeights);
 		return super.open();
 	}
 	
@@ -339,6 +351,9 @@ public class EventDetailsDialog extends Dialog {
 			return entry;
 		return getRootEntry((LogEntry)entry.getParent(entry));
 	}
+	public SashForm getSashForm(){
+		return sashForm;
+	}
 	private int getVisibleChildrenCount(){
 		Object[] elements = provider.getVisibleExpandedElements();
 		LogEntry[] expandedElements = new LogEntry[elements.length];
@@ -359,14 +374,22 @@ public class EventDetailsDialog extends Dialog {
 		container.setLayoutData(gd);
 
 		createDetailsSection(container);
-		createStackSection(container);
-		createSessionSection(container);
+		createSashForm(container);
+		createStackSection(getSashForm());
+		createSessionSection(getSashForm());
 
 		updateProperties();
 		Dialog.applyDialogFont(container);
 		return container;
 	}
 
+	private void createSashForm(Composite parent){
+		sashForm = new SashForm(parent, SWT.VERTICAL);
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = layout.marginWidth = 0;
+		sashForm.setLayout(layout);
+		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
+	}
 	private void createToolbarButtonBar(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -535,6 +558,11 @@ public class EventDetailsDialog extends Dialog {
 			x = s.getInt("width");
 			y = s.getInt("height");
 			dialogSize = new Point(x,y);
+			
+			sashWeights = new int[2];
+			sashWeights[0] = s.getInt("sashWidth1");
+			sashWeights[1] = s.getInt("sashWidth2");
+			
 		} catch (NumberFormatException e) {
 			dialogLocation= null;
 			dialogSize = null;
@@ -550,5 +578,9 @@ public class EventDetailsDialog extends Dialog {
 		Point size = getShell().getSize();
 		s.put("width", size.x);
 		s.put("height", size.y);
+		
+		sashWeights = getSashForm().getWeights();
+		s.put("sashWidth1", sashWeights[0]);
+		s.put("sashWidth2", sashWeights[1]);
 	}
 }
