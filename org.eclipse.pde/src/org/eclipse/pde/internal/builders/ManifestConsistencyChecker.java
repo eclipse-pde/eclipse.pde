@@ -13,6 +13,7 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.core.search.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.PDE;
@@ -29,6 +30,22 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 	private boolean javaDelta = false;
 	private boolean fileCompiled = false;
 	private boolean ignoreJavaChanges = false;
+	private SearchEngine fSearchEngine;
+	
+	class TypeNameRequestor implements ITypeNameRequestor {
+		private boolean fEmpty = true;
+		public void acceptClass(char[] packageName, char[] simpleTypeName, char[][] enclosingTypeNames, String path) {
+			fEmpty = false;
+		}
+
+		public void acceptInterface(char[] packageName, char[] simpleTypeName, char[][] enclosingTypeNames, String path) {
+			fEmpty = false;
+		}
+		
+		public boolean isEmpty() {
+			return fEmpty;
+		}
+	}
 
 	class DeltaVisitor implements IResourceDeltaVisitor {
 		private IProgressMonitor monitor;
@@ -655,45 +672,48 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 
 	private void validateJava(IPluginAttribute att, ISchemaAttribute attInfo,
 			PluginErrorReporter reporter) {
-		String value = att.getValue();
-		String basedOn = attInfo.getBasedOn();
+		String qName = att.getValue();
 		IProject project = att.getModel().getUnderlyingResource().getProject();
 		IJavaProject javaProject = JavaCore.create(project);
 		try {
-			int index = value.indexOf(":");
+			// be careful: people have the option to use the format:
+			// fullqualifiedName:staticMethod
+			int index = qName.indexOf(":");
 			if (index != -1)
-				value = value.substring(0, index);
-			IType element = javaProject.findType(value);
-			if (element == null) {
+				qName = qName.substring(0, index);
+			
+			int dot = qName.lastIndexOf('.');
+			String packageName = (dot != -1) ? qName.substring(0, dot).trim() : "";
+			String className = qName.substring(dot+1).trim();
+
+			TypeNameRequestor requestor = new TypeNameRequestor();
+			getSearchEngine().searchAllTypeNames(
+							packageName.toCharArray(),
+							className.toCharArray(),
+							SearchPattern.R_EXACT_MATCH | SearchPattern.R_CASE_SENSITIVE,
+							IJavaSearchConstants.TYPE,
+							SearchEngine.createJavaSearchScope(new IJavaElement[]{javaProject}),
+							requestor,
+							IJavaSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,
+							null);
+			
+			if (requestor.isEmpty()) {
 				reporter.report(PDE.getFormattedMessage(
-						"Builders.Manifest.class", new String[]{value,
+						"Builders.Manifest.class", new String[]{qName,
 								att.getName()}), getLine(att.getParent()),
 						CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_CLASS));
-			} else if (basedOn != null) {
-				// Test the type conditions
-				String baseType;
-				String baseInterface = null;
-				int sep = basedOn.indexOf(":");
-				if (sep != -1) {
-					baseType = basedOn.substring(0, sep);
-					baseInterface = basedOn.substring(sep + 1);
-				} else {
-					baseType = basedOn;
-				}
-				IType baseTypeElement = javaProject.findType(baseType);
-				if (baseTypeElement != null) {
-				}
-				if (baseInterface != null) {
-					IJavaElement baseInterfaceElement = javaProject
-							.findType(baseInterface);
-					if (baseInterfaceElement != null) {
-					}
-				}
 			}
 		} catch (JavaModelException e) {
 		}
 	}
-
+	
+	private SearchEngine getSearchEngine() {
+		if (fSearchEngine == null) {
+			fSearchEngine = new SearchEngine();
+		}
+		return fSearchEngine;
+	}
+	
 	private void validateResource(IPluginAttribute att,
 			ISchemaAttribute attInfo, PluginErrorReporter reporter) {
 		String path = att.getValue();
