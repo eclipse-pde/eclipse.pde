@@ -219,34 +219,6 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		return fHostPackagesMap;
 	}
 
-	// /**
-	// * @return the import packages from this bundle
-	// */
-	// private Vector getImportPackages(IBundle bundle) {
-	// if (fIimportPkgs == null) {
-	// fIimportPkgs = new Vector();
-	// if (bundle != null) {
-	// String importPackage = bundle
-	// .getHeader(Constants.IMPORT_PACKAGE);
-	// if (importPackage != null) {
-	// try {
-	// ManifestElement[] importPackageElements;
-	// importPackageElements = ManifestElement.parseHeader(
-	// Constants.IMPORT_PACKAGE, importPackage);
-	//
-	// for (int i = 0; i < importPackageElements.length; i++) {
-	// fIimportPkgs.add(importPackageElements[i]
-	// .getValue());
-	// }
-	// } catch (BundleException e) {
-	// // PDECore.logException(e);
-	// }
-	// }
-	// }
-	// }
-	// return fIimportPkgs;
-	// }
-
 	private int getPackageLine(IHeader header, String packageName) {
 		// first check for this exact package on the last line
 		try {
