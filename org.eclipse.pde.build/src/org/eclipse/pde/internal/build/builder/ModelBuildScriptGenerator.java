@@ -78,6 +78,9 @@ public abstract class ModelBuildScriptGenerator extends AbstractBuildScriptGener
 
 	private Properties permissionProperties;
 
+	private String propertiesFileName = PROPERTIES_FILE;
+	private String buildScriptFileName = DEFAULT_BUILD_SCRIPT_FILENAME;
+
 	/**
 	 * @see AbstractScriptGenerator#generate()
 	 */
@@ -102,7 +105,7 @@ public abstract class ModelBuildScriptGenerator extends AbstractBuildScriptGener
 			return;
 		}
 
-		openScript(getLocation(model), DEFAULT_BUILD_SCRIPT_FILENAME);
+		openScript(getLocation(model), buildScriptFileName);
 		try {
 			generateBuildScript();
 		} finally {
@@ -186,10 +189,10 @@ public abstract class ModelBuildScriptGenerator extends AbstractBuildScriptGener
 	
 				// The two steps are required, because some plugins (xerces, junit, ...) don't build their source: the source already comes zipped
 				IPath location = Utils.makeRelative(new Path(getLocation(plugin)), new Path(getLocation(model)));
-				script.printAntTask(location.append(DEFAULT_BUILD_SCRIPT_FILENAME).toString(), location.toOSString(), TARGET_BUILD_SOURCES, null, null, null);
+				script.printAntTask(location.append(buildScriptFileName).toString(), location.toOSString(), TARGET_BUILD_SOURCES, null, null, null);
 				HashMap params = new HashMap(1);
 				params.put(PROPERTY_DESTINATION_TEMP_FOLDER, getPropertyFormat(PROPERTY_BASEDIR) + "/src"); //$NON-NLS-1$
-				script.printAntTask(location.append(DEFAULT_BUILD_SCRIPT_FILENAME).toString(), location.toOSString(), TARGET_GATHER_SOURCES, null, null, params);
+				script.printAntTask(location.append(buildScriptFileName).toString(), location.toOSString(), TARGET_GATHER_SOURCES, null, null, params);
 			}
 		}
 		script.printTargetEnd();
@@ -732,7 +735,7 @@ public abstract class ModelBuildScriptGenerator extends AbstractBuildScriptGener
 
 	protected Properties getBuildProperties() throws CoreException {
 		if (buildProperties == null)
-			buildProperties = readProperties(getLocation(model), PROPERTIES_FILE);
+			buildProperties = readProperties(getLocation(model), propertiesFileName);
 
 		return buildProperties;
 	}
@@ -753,7 +756,7 @@ public abstract class ModelBuildScriptGenerator extends AbstractBuildScriptGener
 	 */
 	private void updateExistingScript() throws CoreException {
 		String root = getLocation(model);
-		File buildFile = new File(root, DEFAULT_BUILD_SCRIPT_FILENAME);
+		File buildFile = new File(root, buildScriptFileName);
 		try {
 			updateVersion(buildFile, PROPERTY_VERSION_SUFFIX, model.getVersion());
 		} catch (IOException e) {
@@ -789,5 +792,21 @@ public abstract class ModelBuildScriptGenerator extends AbstractBuildScriptGener
 	
 	public PluginModel getModel() {
 		return model;
+	}
+	
+	public String getPropertiesFileName() {
+		return propertiesFileName;
+	}
+
+	public void setPropertiesFileName(String propertyFileName) {
+		this.propertiesFileName = propertyFileName;
+	}
+
+	public String getBuildScriptFileName() {
+		return buildScriptFileName;
+	}
+
+	public void setBuildScriptFileName(String buildScriptFileName) {
+		this.buildScriptFileName = buildScriptFileName;
 	}
 }

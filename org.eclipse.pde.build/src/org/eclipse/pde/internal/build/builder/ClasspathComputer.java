@@ -266,7 +266,7 @@ public class ClasspathComputer implements IPDEBuildConstants, IXMLConstants {
 				modelLocation = generator.getLocation(generator.getSite(false).getPluginRegistry().getFragment(urlfragments[2]));
 
 			if (urlfragments[1].equalsIgnoreCase("resource")) { //$NON-NLS-1$
-				String message = Policy.bind("exception.url", PROPERTIES_FILE + "::" + url); //$NON-NLS-1$  //$NON-NLS-2$
+				String message = Policy.bind("exception.url", generator.getPropertiesFileName() + "::" + url); //$NON-NLS-1$  //$NON-NLS-2$
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_MALFORMED_URL, message, null));
 			}
 			if (modelLocation != null) {
@@ -286,7 +286,7 @@ public class ClasspathComputer implements IPDEBuildConstants, IXMLConstants {
 			try {
 				relativePath = Utils.makeRelative(new Path(Platform.resolve(extraURL).getFile()), new Path(location)).toOSString();
 			} catch (IOException e) {
-				String message = Policy.bind("exception.url", PROPERTIES_FILE + "::" + url); //$NON-NLS-1$  //$NON-NLS-2$
+				String message = Policy.bind("exception.url", generator.getPropertiesFileName() + "::" + url); //$NON-NLS-1$  //$NON-NLS-2$
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_MALFORMED_URL, message, e));
 			}
 		} catch (MalformedURLException e) {
