@@ -33,8 +33,11 @@ import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.widgets.*;
 
 public class LibraryVisibilitySection extends TableSection
-		implements
-			IPartSelectionListener {
+		implements IPartSelectionListener {
+    
+    private static int ADD_INDEX = 0;
+    private static int REMOVE_INDEX = 1;
+    
 	private static final String SECTION_TITLE = "ManifestEditor.ExportSection.title"; //$NON-NLS-1$
 	private static final String SECTION_DESC = "ManifestEditor.ExportSection.desc"; //$NON-NLS-1$
 	private static final String KEY_FULL_EXPORT = "ManifestEditor.ExportSection.fullExport"; //$NON-NLS-1$
@@ -47,10 +50,11 @@ public class LibraryVisibilitySection extends TableSection
 	private IPluginLibrary fCurrentLibrary;
 	private Composite fPackageExportContainer;
 	private TableViewer fPackageExportViewer;
+    private Action fAddAction;
+    private Action fRemoveAction;
 	
 	class TableContentProvider extends DefaultContentProvider
-			implements
-				IStructuredContentProvider {
+			implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
             if (parent instanceof IPluginLibrary) {
 				String[] filters = ((IPluginLibrary) parent).getContentFilters();
@@ -103,9 +107,9 @@ public class LibraryVisibilitySection extends TableSection
 		fSelectedExportButton = toolkit.createButton(container, label, SWT.RADIO);
 		fSelectedExportButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        createPackageViewer(container, toolkit);
-        
+        createPackageViewer(container, toolkit);       
 		update(null);
+        makeActions();
         
         IPluginModelBase model = (IPluginModelBase) getPage().getModel();
         model.addModelChangedListener(this);
@@ -114,7 +118,23 @@ public class LibraryVisibilitySection extends TableSection
 		section.setClient(container);
 	}
     
-	private void createPackageViewer(Composite parent, FormToolkit toolkit) {
+	private void makeActions() {
+        fAddAction = new Action(PDEPlugin.getResourceString(KEY_ADD)) {
+            public void run() {
+                handleAdd();
+            }
+        };
+        fAddAction.setEnabled(isEditable());
+        
+        fRemoveAction = new Action(PDEPlugin.getResourceString(KEY_REMOVE)) {
+            public void run() {
+                handleRemove();
+            }
+        }; 
+        fRemoveAction.setEnabled(isEditable());
+    }
+
+    private void createPackageViewer(Composite parent, FormToolkit toolkit) {
         fPackageExportContainer = toolkit.createComposite(parent);
         fPackageExportContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
         GridLayout layout = new GridLayout();
@@ -140,9 +160,9 @@ public class LibraryVisibilitySection extends TableSection
 	}
     
 	protected void buttonSelected(int index) {
-		if (index == 0)
+		if (index == ADD_INDEX)
 			handleAdd();
-		else if (index == 1)
+		else if (index == REMOVE_INDEX)
 			handleRemove();
 	}
     
@@ -162,8 +182,14 @@ public class LibraryVisibilitySection extends TableSection
 	}
     
 	protected void fillContextMenu(IMenuManager manager) {
-		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(
-				manager);
+        if (fSelectedExportButton.isEnabled() && fSelectedExportButton.getSelection()) {
+            manager.add(fAddAction);
+            manager.add(new Separator());
+        }
+        if (!fPackageExportViewer.getSelection().isEmpty()) {
+            manager.add(fRemoveAction);
+        }
+		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
 	}
     
 	private void handleAdd() {
@@ -238,16 +264,16 @@ public class LibraryVisibilitySection extends TableSection
 			fSelectedExportButton.setEnabled(false);
 			fSelectedExportButton.setSelection(false);
 			fPackageExportViewer.setInput(new Object[0]);
-			getTablePart().setButtonEnabled(0, false);
-			getTablePart().setButtonEnabled(1, false);
+			getTablePart().setButtonEnabled(ADD_INDEX, false);
+			getTablePart().setButtonEnabled(REMOVE_INDEX, false);
 		} else {
     		fFullExportButton.setEnabled(isEditable());
     		fSelectedExportButton.setEnabled(isEditable());
     		fFullExportButton.setSelection(library.isFullyExported());
     		fSelectedExportButton.setSelection(!library.isFullyExported());
     		fPackageExportViewer.setInput(library);
-    		getTablePart().setButtonEnabled(1, false);
-    		getTablePart().setButtonEnabled(0, fSelectedExportButton.getSelection());
+    		getTablePart().setButtonEnabled(REMOVE_INDEX, false);
+    		getTablePart().setButtonEnabled(ADD_INDEX, isEditable() && fSelectedExportButton.getSelection());
         }
     }
 	
