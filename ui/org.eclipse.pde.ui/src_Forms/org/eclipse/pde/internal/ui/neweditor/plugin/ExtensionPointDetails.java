@@ -45,7 +45,6 @@ public class ExtensionPointDetails extends AbstractFormPart implements IDetailsP
 	
 	private static final String SCHEMA_RTEXT_DATA = "<form>"
 			+ "<p><img href=\"search\"/> <a href=\"search\">Find references</a></p>"
-			+ "<p><img href=\"schema\"/> <a href=\"schema\">Open extension point schema file</a></p>"
 			+ "<p><img href=\"desc\"/> <a href=\"desc\">Open extension point description</a></p>"
 			+ "</form>";
 	private static final String NO_SCHEMA_RTEXT_DATA = "<form><p><img href=\"search\"/> <a href=\"search\">Find references</a></p>"
@@ -122,7 +121,7 @@ public class ExtensionPointDetails extends AbstractFormPart implements IDetailsP
 					}
 			}
 		});
-		schema = new FormEntry(client, toolkit, "Schema:", null, false);
+		schema = new FormEntry(client, toolkit, "Schema:", null, true);
 		schema.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
 				if (input != null) {
@@ -133,6 +132,15 @@ public class ExtensionPointDetails extends AbstractFormPart implements IDetailsP
 					}
 					updateRichText();
 				}
+			}
+
+			public void linkActivated(HyperlinkEvent e) {
+				IProject project = getPage().getPDEEditor().getCommonProject();
+				IFile file = project.getFile(schema.getValue());
+				if (file.exists())
+					openSchemaFile(file);
+				else
+					generateSchema();
 			}
 		});
 		createSpacer(toolkit, client, 2);
@@ -152,14 +160,6 @@ public class ExtensionPointDetails extends AbstractFormPart implements IDetailsP
 				if (e.getHref().equals("search")) {
 					FindReferencesAction pluginReferencesAction = new FindReferencesAction(input);
 					pluginReferencesAction.run();
-				} else if (e.getHref().equals("schema")){
-					IProject project = getPage().getPDEEditor().getCommonProject();
-					IFile file = project.getFile(schema.getValue());
-					if (file.exists())
-						openSchemaFile(file);
-					else
-						generateSchema();
-					
 				} else {
 					ShowDescriptionAction showDescAction = new ShowDescriptionAction(input);
 					showDescAction.run();

@@ -6,13 +6,16 @@
  */
 package org.eclipse.pde.internal.ui.neweditor.plugin;
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.neweditor.*;
-import org.eclipse.pde.internal.ui.newparts.FormEntry;
-import org.eclipse.swt.SWT;
+import org.eclipse.pde.internal.ui.newparts.*;
+import org.eclipse.pde.internal.ui.search.*;
+import org.eclipse.swt.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.*;
@@ -123,7 +126,20 @@ public class ExtensionDetails extends AbstractFormPart implements IDetailsPage, 
 		rtext.setImage("search", PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PSEARCH_OBJ));		
 		rtext.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
-				System.out.println("Link active: "+e.getHref());
+				if (e.getHref().equals("search")){
+					FindDeclarationsAction findDeclarationsAction = new FindDeclarationsAction(input);
+					findDeclarationsAction.run();
+				} else {
+					if (input == null || input.getPoint() == null)
+						return;
+					IPluginExtensionPoint point = PDECore.getDefault().findExtensionPoint(input.getPoint());
+					if (point != null){
+						ShowDescriptionAction showDescAction = new ShowDescriptionAction(point);
+						showDescAction.run();
+					} else {
+						showNoExtensionPointMessage();
+					}
+				}
 			}
 		});
 		rtext.setText(RTEXT_DATA, true, false);
@@ -201,5 +217,11 @@ public class ExtensionDetails extends AbstractFormPart implements IDetailsPage, 
 	}
 	public boolean isEditable() {
 		return getPage().getPDEEditor().getAggregateModel().isEditable();
+	}
+	private void showNoExtensionPointMessage() {
+		String title = "Extension Point Description";
+		String message = "Description for extension point \""+input.getPoint()+"\" cannot be found.";
+		
+		MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), title, message);
 	}
 }
