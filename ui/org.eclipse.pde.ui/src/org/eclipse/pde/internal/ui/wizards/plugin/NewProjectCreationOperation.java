@@ -27,6 +27,7 @@ import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.pde.ui.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.*;
 
 public class NewProjectCreationOperation extends WorkspaceModifyOperation {
@@ -301,7 +302,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 							.selectReveal(selection);
 				}			
 				try {
-					page.openEditor(new FileEditorInput(file), PDEPlugin.MANIFEST_EDITOR_ID);
+					IDE.openEditor(page, file, true);
 				} catch (PartInitException e) {
 				}
 			}
