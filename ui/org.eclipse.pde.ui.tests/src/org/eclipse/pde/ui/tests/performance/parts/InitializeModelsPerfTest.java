@@ -35,7 +35,7 @@ public class InitializeModelsPerfTest extends PerformanceTestCase {
 	}
 	
 	public void testModels() throws Exception {
-		tagAsGlobalSummary("Initialize Plug-ins (no caching)", Dimension.CPU_TIME);
+		tagAsSummary("Initialize Plug-ins (no caching)", Dimension.CPU_TIME);
 		String path = ExternalModelManager.getEclipseHome().toOSString();
 		startMeasuring();
 		new PDEState(PluginPathFinder.getPluginPaths(path), true, new NullProgressMonitor());
