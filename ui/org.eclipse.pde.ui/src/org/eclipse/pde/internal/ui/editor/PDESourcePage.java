@@ -32,7 +32,7 @@ import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.update.ui.forms.internal.IFormPage;
 
 public abstract class PDESourcePage
-	extends AbstractTextEditor
+	extends ExtendedTextEditor
 	implements IPDEEditorPage {
 	public static final String PAGE_TITLE = "SourcePage.title";
 	public static final String ERROR_MESSAGE = "SourcePage.errorMessage";
@@ -126,6 +126,7 @@ public abstract class PDESourcePage
 		service.unregisterAction(getAction(ActionFactory.PASTE.getId()));
 		service.unregisterAction(getAction(ActionFactory.SELECT_ALL.getId()));
 		service.unregisterAction(getAction(ActionFactory.FIND.getId()));
+		service.unregisterAction(getAction(IDEActionFactory.BOOKMARK.getId()));
 	}
 
 	public void dispose() {
