@@ -219,8 +219,22 @@ public class CategorySection extends TreeSection {
 		if (adapter.category == null) {
 			moveFeature(adapter, target);
 		} else if (target instanceof ISiteCategoryDefinition) {
-			addCategory(adapter.feature, true, (ISiteCategoryDefinition) target);
+			if (findRealFeature(adapter.feature) != null)
+				addCategory(adapter.feature, true, (ISiteCategoryDefinition) target);
+			linkFeature(findBuildFeature(adapter.feature), (ISiteCategoryDefinition)target);
+		} else if (target == null)
+			linkFeature(findBuildFeature(adapter.feature), null);
+	}
+
+	private ISiteBuildFeature findBuildFeature(ISiteFeature feature) {
+		if (feature == null)
+			return null;
+		ISiteBuildFeature[] buildFeatures = fModel.getBuildModel().getSiteBuild().getFeatures();
+		for (int i = 0; i<buildFeatures.length; i++){
+			if (buildFeatures[i].getTargetURL().equals(feature.getURL()))
+				return buildFeatures[i];
 		}
+		return null;
 	}
 	private void addCategory(ISiteFeature aFeature, boolean isCopy,
 			ISiteCategoryDefinition target) {
@@ -250,6 +264,8 @@ public class CategorySection extends TreeSection {
 			removeCategory(adapter.feature, true, adapter.category);
 		if (target instanceof ISiteCategoryDefinition)
 			addCategory(adapter.feature, true, (ISiteCategoryDefinition) target);
+		else if (target == null)
+			linkFeature(findBuildFeature(adapter.feature), null);
 	}
 	protected void buttonSelected(int index) {
 		switch (index) {
