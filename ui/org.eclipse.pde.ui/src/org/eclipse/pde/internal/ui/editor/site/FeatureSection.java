@@ -137,7 +137,11 @@ public class FeatureSection extends TableSection {
 				}
 			});
 		}
-		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
+		manager.add(getPage().getPDEEditor().getContributor().getGlobalAction(ActionFactory.COPY.getId()));
+		manager.add(getPage().getPDEEditor().getContributor().getGlobalAction(ActionFactory.PASTE.getId()));
+		manager.add(new Separator());
+		manager.add(getPage().getPDEEditor().getContributor().getRevertAction());
+		manager.add(getPage().getPDEEditor().getContributor().getSaveAction());
 	}
 
 	public void refresh() {

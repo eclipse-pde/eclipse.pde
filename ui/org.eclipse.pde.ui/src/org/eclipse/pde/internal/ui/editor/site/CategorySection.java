@@ -1,5 +1,6 @@
 package org.eclipse.pde.internal.ui.editor.site;
 import java.util.*;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
@@ -152,6 +153,7 @@ public class CategorySection extends TreeSection {
 				if (!(data instanceof Object[]))
 					return false;
 				Object target = getCurrentTarget();
+				
 				int op = getCurrentOperation();
 				Object[] objects = (Object[]) data;
 				if (op == DND.DROP_LINK) {
@@ -461,9 +463,19 @@ public class CategorySection extends TreeSection {
 		if (target == null || target instanceof ISiteCategoryDefinition) {
 			for (int i = 0; i < objects.length; i++) {
 				if (objects[i] instanceof ISiteBuildFeature
-						|| objects[i] instanceof SiteFeatureAdapter
-						|| objects[i] instanceof ISiteCategoryDefinition)
+						|| objects[i] instanceof SiteFeatureAdapter)
 					return true;
+				if (objects[i] instanceof ISiteCategoryDefinition){
+					String name = ((ISiteCategoryDefinition)objects[i]).getName();
+					ISiteCategoryDefinition [] defs = fModel.getSite().getCategoryDefinitions();
+					for (int j=0; j<defs.length; j++) {
+						ISiteCategoryDefinition def = defs[j];
+						String dname = def.getName();
+						if (dname!=null && dname.equals(name))
+							return false;
+					}
+					return true;
+				}
 			}
 		}
 		return false;
