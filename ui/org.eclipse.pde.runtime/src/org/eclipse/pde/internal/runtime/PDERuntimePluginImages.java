@@ -111,10 +111,16 @@ public class PDERuntimePluginImages {
 		create(PATH_LCL, "collapseall.gif");
 	
 	public static final ImageDescriptor DESC_HORIZONTAL_VIEW =
-		create(PATH_EVENTS, "horizontal_view.gif");
+		create(PATH_LCL, "th_horizontal.gif");
+	
+	public static final ImageDescriptor DESC_HORIZONTAL_VIEW_DISABLED = 
+		create(PATH_LCL_DISABLED, "th_horizontal.gif");
 	
 	public static final ImageDescriptor DESC_VERTICAL_VIEW =
-		create(PATH_EVENTS, "vertical_view.gif");
+		create(PATH_LCL, "th_vertical.gif");
+	
+	public static final ImageDescriptor DESC_VERTICAL_VIEW_DISABLED = 
+		create(PATH_LCL_DISABLED, "th_vertical.gif");
 	
 	public static final ImageDescriptor DESC_HIDE_PANE =
 		create(PATH_EVENTS, "hide_pane.gif");
