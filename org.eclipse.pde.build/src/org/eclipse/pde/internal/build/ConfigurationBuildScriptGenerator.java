@@ -130,7 +130,9 @@ protected void generateBinTarget(PrintWriter output) {
 protected void generateBinCopyTarget(PrintWriter output) {
 	output.println();
 	output.println("  <target name=\"" + TARGET_BINCOPY + "\" depends=\"init\" if=\"binSource.exists\">");
-	output.println("    <copydir src=\"${binSource}\" dest=\"${binDest}\"/>");
+	output.println("    <copy todir=\"${binDest}\">");
+	output.println("      <fileset dir=\"${binSource}\"/>");
+	output.println("    </copy>");
 	output.println("  </target>");
 }
 protected void generateBuildScript(PrintWriter output) {
