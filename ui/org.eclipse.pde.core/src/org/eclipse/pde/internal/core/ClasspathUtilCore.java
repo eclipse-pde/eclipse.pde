@@ -69,7 +69,7 @@ public class ClasspathUtilCore {
 					entries,
 					javaProject.getOutputLocation());
 			if (!validation.isOK()) {
-				PDECore.logErrorMessage(validation.getString());
+				PDECore.logErrorMessage(validation.getMessage());
 				throw new CoreException(validation);
 			}
 			javaProject.setRawClasspath(entries, monitor);
