@@ -214,7 +214,13 @@ protected boolean doLaunch(
 				}
 				pm.beginTask(PDEPlugin.getResourceString(KEY_STARTING), 
 				                  IProgressMonitor.UNKNOWN);
-				VMRunnerResult result = launcher.run(config);
+				VMRunnerResult result=null;
+				try {
+				   result = launcher.run(config);
+				}
+				catch (CoreException e) {
+					throw new InvocationTargetException(e);
+				}
 				if (result != null) {
 					Launch newLaunch =
 						new Launch(
