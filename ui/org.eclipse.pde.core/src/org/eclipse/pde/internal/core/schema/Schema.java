@@ -229,7 +229,7 @@ public class Schema extends PlatformObject implements ISchema {
 		return (ISchemaInclude[]) includes.toArray(
 			new ISchemaInclude[includes.size()]);
 	}
-	public java.lang.String getName() {
+	public String getName() {
 		return name;
 	}
 	private String getNormalizedText(String source) {
@@ -835,11 +835,11 @@ public class Schema extends PlatformObject implements ISchema {
 				}
 			}
 		}
+		loaded = true;
 		if (references.size() > 0)
 			resolveReferences(references);
 		references = null;
 		this.lineTable = null;
-		loaded = true;
 	}
 
 	public void updateReferencesFor(ISchemaElement element) {
