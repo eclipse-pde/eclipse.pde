@@ -150,6 +150,8 @@ public class PDEMultiPagePropertySheet implements IPropertySheetPage {
 		actionBars.clearGlobalActionHandlers();
 
 		// Set new actions.
+		if (recMap == null || currentPage == null)
+			return;
 		PageRec activeRec = (PageRec) recMap.get(currentPage);
 		Map newActionHandlers = activeRec.bars.getGlobalActionHandlers();
 		if (newActionHandlers != null) {
