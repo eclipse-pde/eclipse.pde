@@ -3,8 +3,8 @@
       id="org.eclipse.pde"
       label="%featureName"
       version="2.0.0"
-      provider-name="%providerName"
-      image="desktop32_prod.gif">
+      image="eclipse_update_120.jpg"
+      provider-name="%providerName">
 
    <description>
       %description
