@@ -21,10 +21,10 @@ public class EclipseHomeInitializer extends ClasspathVariableInitializer {
 	 * @see ClasspathVariableInitializer#initialize(String)
 	 */
 	public void initialize(String variable) {
-		resetEclipseHomeVariables();
+		resetEclipseHomeVariable();
 	}
 
-	public static void resetEclipseHomeVariables() {
+	public static void resetEclipseHomeVariable() {
 		try {
 			Preferences pref = PDECore.getDefault().getPluginPreferences();
 			String platformHome = pref.getString(ICoreConstants.PLATFORM_PATH);

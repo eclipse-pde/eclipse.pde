@@ -15,7 +15,6 @@ import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.Path;
-import org.eclipse.update.configurator.*;
 
 public class PluginPathFinder {
 	
@@ -57,14 +56,14 @@ public class PluginPathFinder {
 	}
 	
 	public static URL[] getPluginPaths(String platformHome) {
-		File file = new File(platformHome, "configuration/org.eclipse.update/platform.xml"); //$NON-NLS-1$
+		/*File file = new File(platformHome, "configuration/org.eclipse.update/platform.xml"); //$NON-NLS-1$
 		if (file.exists()) {
 			try {
 				return ConfiguratorUtils.getPlatformConfiguration(file.toURL()).getPluginPath();
 			} catch (MalformedURLException e) {
 			} catch (IOException e) {
 			}
-		}		
+		}*/		
 		return scanLocations(getSites(platformHome));
 	}
 	

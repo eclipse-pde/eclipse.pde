@@ -10,28 +10,26 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.*;
 import java.net.*;
 import java.util.*;
 
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.operation.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
-import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
-import org.eclipse.pde.internal.ui.wizards.ListUtil;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.elements.*;
+import org.eclipse.pde.internal.ui.parts.*;
+import org.eclipse.pde.internal.ui.wizards.*;
+import org.eclipse.swt.*;
+import org.eclipse.swt.custom.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.*;
+import org.eclipse.ui.forms.widgets.*;
 
 
 public class ExternalPluginsBlock {
@@ -47,7 +45,6 @@ public class ExternalPluginsBlock {
 	private IPluginModelBase[] fModels;
 	private PDEState fCurrentState;
 
-	private final static boolean DEFAULT_STATE = true;
 	
 	class ReloadOperation implements IRunnableWithProgress {
 		private URL[] pluginPaths;
@@ -64,17 +61,6 @@ public class ExternalPluginsBlock {
 		
 	}
 	
-	class SaveOperation implements IWorkspaceRunnable {
-		public void run(IProgressMonitor monitor) {
-			savePreferences();
-			if (reloaded) {
-				EclipseHomeInitializer.resetEclipseHomeVariables();
-			}
-			updateModels();
-			computeDelta();
-		}
-	}
-
 	public class PluginContentProvider
 		extends DefaultContentProvider
 		implements IStructuredContentProvider {
@@ -165,12 +151,11 @@ public class ExternalPluginsBlock {
 					| IModelProviderEvent.MODELS_ADDED;
 			removedArray = initialModels;
 			addedArray = getAllModels();
-		}
-		if (changed.size() > 0) {
+		} else if (changed.size() > 0) {
 			type |= IModelProviderEvent.MODELS_CHANGED;
 			changedArray = (IModel[]) changed.toArray(new IModel[changed.size()]);
-			changed.clear();
 		}
+		changed.clear();
 		if (type != 0) {
 			ExternalModelManager registry =
 				PDECore.getDefault().getExternalModelManager();
@@ -235,8 +220,8 @@ public class ExternalPluginsBlock {
 			} catch (InterruptedException e) {
 			}
 			pluginListViewer.refresh();
-			
-			tablePart.selectAll(DEFAULT_STATE);
+			changed.clear();
+			handleSelectAll(true);
 			reloaded = true;
 		}
 		page.resetNeedsReload();
@@ -263,10 +248,11 @@ public class ExternalPluginsBlock {
 	public void save() {
 		BusyIndicator.showWhile(page.getShell().getDisplay(), new Runnable() {
 			public void run() {
-				try {
-					JavaCore.run(new SaveOperation(), null);
-				} catch (CoreException e) {
-				}
+				savePreferences();
+				if (reloaded)
+					EclipseHomeInitializer.resetEclipseHomeVariable();
+				updateModels();
+				computeDelta();
 			}
 		});
 	}
