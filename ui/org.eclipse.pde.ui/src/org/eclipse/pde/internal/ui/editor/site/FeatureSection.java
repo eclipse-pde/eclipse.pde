@@ -274,6 +274,7 @@ public class FeatureSection extends TableSection {
 			return;
 		BuildSiteJob job = new BuildSiteJob(models, fModel
 				.getUnderlyingResource().getProject(), fBuildModel);
+		job.setUser(true);
 		job.schedule();
 	}
 	

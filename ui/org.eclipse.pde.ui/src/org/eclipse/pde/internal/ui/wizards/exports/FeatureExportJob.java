@@ -55,7 +55,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 	protected HashMap fBuildProperties;
 
 	public FeatureExportJob(int exportType, boolean exportSource, String destination, String zipFileName, Object[] items) {
-		super("Building Plug-ins");
+		super("PDE Export");
 		fExportType = exportType;
 		fExportSource = exportSource;
 		fDestinationDirectory = destination;
@@ -139,7 +139,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 	protected void doExport(String featureID, String featureLocation, IProgressMonitor monitor)
 		throws CoreException, InvocationTargetException {
 		monitor.beginTask("", 5);
-		monitor.setTaskName(PDEPlugin.getResourceString("ExportJob.exporting") + " " + featureID);
+		monitor.setTaskName("Building Plug-ins...");
 		try {
 			HashMap properties = createBuildProperties();
 			makeScript(featureID, featureLocation);
@@ -173,7 +173,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 			fBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_TARGET, store.getString(PROP_JAVAC_TARGET));
 			
 			// for the assembler...
-			fBuildProperties.put(IXMLConstants.PROPERTY_BUILD_DIRECTORY,  fBuildTempLocation + "/assemblyLocation");	//TODO this should be set to the folder location
+			fBuildProperties.put(IXMLConstants.PROPERTY_BUILD_DIRECTORY,  fBuildTempLocation + "/assemblyLocation");
 			fBuildProperties.put(IXMLConstants.PROPERTY_BUILD_LABEL, ".");
 			fBuildProperties.put(IXMLConstants.PROPERTY_COLLECTING_FOLDER, ".");
 			fBuildProperties.put(IXMLConstants.PROPERTY_ARCHIVE_PREFIX, ".");

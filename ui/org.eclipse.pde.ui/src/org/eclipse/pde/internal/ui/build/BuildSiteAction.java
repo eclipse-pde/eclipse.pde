@@ -41,6 +41,7 @@ public class BuildSiteAction implements IObjectActionDelegate, IPreferenceConsta
 		
 		if (models.length > 0) {
 			BuildSiteJob job = new BuildSiteJob(models, fSiteXML.getProject(), fBuildModel);
+			job.setUser(true);
 			job.schedule();
 		}		
 	}

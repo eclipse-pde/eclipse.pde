@@ -12,10 +12,10 @@ package org.eclipse.pde.internal.ui.wizards.exports;
 
 import java.io.*;
 
-import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.*;
 
 /**
  * Insert the type's description here.
@@ -54,6 +54,7 @@ public class PluginExportWizard extends BaseExportWizard {
 				page1.getDestination(),
 				page1.getFileName(),
 				page1.getSelectedItems());
+		job.setUser(true);
 		job.schedule();
 	}
 

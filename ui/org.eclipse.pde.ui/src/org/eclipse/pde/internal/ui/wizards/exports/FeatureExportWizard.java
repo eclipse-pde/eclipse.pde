@@ -54,6 +54,7 @@ public class FeatureExportWizard extends BaseExportWizard {
 				page1.getDestination(),
 				page1.getFileName(),
 				page1.getSelectedItems());
+		job.setUser(true);
 		job.schedule();
 	}
 	
