@@ -156,6 +156,7 @@ public class FeatureSection extends TableSection {
 				&& ((WorkspaceSiteBuildModel) fBuildModel).isDirty()) {
 			((WorkspaceSiteBuildModel) fBuildModel).save();
 		}
+		
 		super.commit(onSave);
 	}
 	
@@ -284,4 +285,13 @@ public class FeatureSection extends TableSection {
 		}	
 		return (IFeatureModel[])list.toArray(new IFeatureModel[list.size()]);			
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.AbstractFormPart#isDirty()
+	 */
+	public boolean isDirty() {
+		if (fBuildModel!=null && ((WorkspaceSiteBuildModel) fBuildModel).isDirty())
+			return true;
+		return super.isDirty();
+	}
+	
 }
