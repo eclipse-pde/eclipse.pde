@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.ui.wizards;
 
 import java.util.*;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.ui.*;
