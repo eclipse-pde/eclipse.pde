@@ -75,11 +75,15 @@ public class PluginImportTest extends TestCase {
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#tearDown()
 	 */
-	protected void tearDown() throws Exception {
+	protected void tearDown() {
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		IProject[] projects = workspaceRoot.getProjects();
-		for (int i = 0; i < projects.length; i++) {
-			projects[i].delete(true, new NullProgressMonitor());
+		try {
+			for (int i = 0; i < projects.length; i++) {
+				projects[i].delete(true, new NullProgressMonitor());
+			}
+		} catch (CoreException e) {
+			// do nothing if deletion fails.  No need to fail the test.
 		}
 	}
 }
