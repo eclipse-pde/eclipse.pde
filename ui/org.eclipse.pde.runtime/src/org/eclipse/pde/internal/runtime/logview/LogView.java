@@ -107,7 +107,6 @@ public class LogView extends ViewPart implements ILogListener {
 		tableTree.setLayoutData(new GridData(GridData.FILL_BOTH));
 		createColumns(tableTree.getTable());		
 		createViewer(tableTree);
-		applyFonts();
 		createPopupMenuManager(tableTree);
 		makeActions(tableTree.getTable());
 		fillToolBar();
