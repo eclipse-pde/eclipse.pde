@@ -262,7 +262,7 @@ public class ExternalPluginsBlock {
 		IPath newPath = new Path(page.getPlatformPath());
 		IPath defaultPath = new Path(ExternalModelManager.computeDefaultPlatformPath());
 		String mode =
-			newPath.equals(defaultPath)
+			arePathsEqual(newPath, defaultPath)
 				? ICoreConstants.VALUE_USE_THIS
 				: ICoreConstants.VALUE_USE_OTHER;
 		preferences.setValue(ICoreConstants.TARGET_MODE, mode);
@@ -284,6 +284,18 @@ public class ExternalPluginsBlock {
 		if (reloaded) {
 			PDECore.getDefault().getExternalModelManager().reset(fCurrentState, fModels);
 		}
+	}
+	
+	public static boolean arePathsEqual(IPath path1, IPath path2) {
+		String device = path1.getDevice();
+		if (device != null)
+			path1 = path1.setDevice(device.toUpperCase());
+		
+		device = path2.getDevice();
+		if (device != null)
+			path2 = path2.setDevice(device.toUpperCase());
+		
+		return path1.equals(path2);
 	}
 
 
