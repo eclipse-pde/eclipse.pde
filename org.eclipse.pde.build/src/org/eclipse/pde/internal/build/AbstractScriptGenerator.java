@@ -25,6 +25,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	protected static String outputFormat = "zip"; //$NON-NLS-1$
 	protected static boolean embeddedSource = false;
 	protected static boolean forceUpdateJarFormat = false;
+	protected static boolean brandExecutable = false;
 	private static List configInfos;
 	protected static String workingDirectory;
 	protected static boolean buildingOSGi = true;
@@ -183,6 +184,10 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		embeddedSource = embed;
 	}
 
+	public static void setBrandExecutable(boolean brand) {
+		brandExecutable = brand;
+	}
+	
 	public static boolean getForceUpdateJarFormat() {
 		return false;
 	}

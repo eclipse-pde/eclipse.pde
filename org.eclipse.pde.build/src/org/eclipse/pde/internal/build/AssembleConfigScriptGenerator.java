@@ -93,7 +93,8 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		if (embeddedSource)
 			generateGatherSourceCalls();
 		generatePostProcessingSteps();
-		generateBrandingCalls();
+		if (brandExecutable)
+			generateBrandingCalls();
 		generateArchivingSteps();
 		generateEpilogue();
 	}
