@@ -13,10 +13,10 @@ package org.eclipse.pde.core.osgi.bundle;
 import org.eclipse.pde.core.plugin.IFragmentModel;
 
 /**
- * @author dejan
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * An extension of the bundle plug-in model base that
+ * is used specifically for fragment models with OSGi manifests.
+ * 
+ * @since 3.0
  */
 public interface IBundleFragmentModel
 	extends IBundlePluginModelBase, IFragmentModel {

@@ -13,10 +13,11 @@ package org.eclipse.pde.core.osgi.bundle;
 import org.eclipse.pde.core.plugin.IPlugin;
 
 /**
- * @author dejan
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * An extension of bundle plug-in base that is used 
+ * specifically for root model objects of plug-ins with
+ * OSGi manifest. The goal is to continue to preserve
+ * pre-3.0 compatibility for all the clients that
+ * depend on IPlugin interface.
  */
 public interface IBundlePlugin extends IBundlePluginBase, IPlugin {
 

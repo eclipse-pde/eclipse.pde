@@ -9,46 +9,37 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.core.osgi.bundle;
-
-import java.util.*;
-
+import java.util.Dictionary;
 import org.eclipse.pde.core.*;
 /**
- * This model is created from the "plugin.jars" file
- * that defines what source folders in the plug-in are
- * to be used to build require plug-in Jars.
+ * This model is created from the "META-INF/MANIFEST.MF" file that represents
+ * the plug-in manifest in Eclipse 3.0 OSGi format.
  * <p>
- * If this model is editable, isEditable() will return
- * true and the model instance will implement IEditable
- * interface. The model is capable of providing
- * change notification for the registered listeners.
+ * If this model is editable, isEditable() will return true and the model
+ * instance will implement IEditable interface. The model is capable of
+ * providing change notification for the registered listeners.
+ * 
+ * @since 3.0
  */
 public interface IBundleModel extends IModel, IModelChangeProvider {
 	/**
 	 * Returns the top-level model object of this model.
-	 *
+	 * 
 	 * @return a dictionary containing the manifest headers
 	 */
 	Dictionary getManifest();
 	/**
-	 * Returns the location of the file
-	 * used to create the model.
-	 *
-	 * @return the location of the build.properties file
-	 * or <samp>null</samp> if the file
-	 * is in a workspace.
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
+	 * Returns the location of the file used to create the model.
+	 * 
+	 * @return the location of the manifest file or <samp>null </samp> if the
+	 *         file is in a workspace.
 	 */
 	public String getInstallLocation();
 	/**
 	 * Tests whether this is a model of a fragment bundle.
-	 * @return <code>true</code> if this is a fragment model, <code>false</code>
-	 * otherwise.
+	 * 
+	 * @return <code>true</code> if this is a fragment model,
+	 *         <code>false</code> otherwise.
 	 */
 	public boolean isFragmentModel();
 }

@@ -42,5 +42,5 @@ public interface IBuildModel extends IModel, IModelChangeProvider {
 	 * or <samp>null</samp> if the file
 	 * is in a workspace.
 	 */
-	public String getInstallLocation();
+	String getInstallLocation();
 }

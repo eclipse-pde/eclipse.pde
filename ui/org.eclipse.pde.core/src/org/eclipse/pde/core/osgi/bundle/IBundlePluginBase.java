@@ -14,10 +14,12 @@ import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.core.plugin.IPluginBase;
 
 /**
- * @author dejan
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * This interface represents an adapter that merges the notion of
+ * a plug-in base (either plug-in or fragment) and OSGi bundle.
+ * The goal is to maintain the expected plug-in interface
+ * to the rest of the framework for both classic plug-ins
+ * (with plugin.xml/fragment.xml) and new style (OSGi)
+ * plug-ins with META-INF/MANIFEST.MF file.
  */
 public interface IBundlePluginBase extends IPluginBase, IModelChangedListener {
 }
