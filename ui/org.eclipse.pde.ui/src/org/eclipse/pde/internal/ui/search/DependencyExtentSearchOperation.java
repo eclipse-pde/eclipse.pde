@@ -10,15 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search;
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jdt.core.IClassFile;
@@ -33,6 +31,7 @@ import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.core.search.IJavaSearchResultCollector;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
+import org.eclipse.jface.operation.*;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
@@ -41,7 +40,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 
 
-public class DependencyExtentSearchOperation extends WorkspaceModifyOperation {
+public class DependencyExtentSearchOperation implements IWorkspaceRunnable, IRunnableWithProgress {
 	
 	private static final String KEY_DEPENDENCY = "DependencyExtent.singular";
 	private static final String KEY_DEPENDENCIES = "DependencyExtent.plural";
@@ -95,8 +94,7 @@ public class DependencyExtentSearchOperation extends WorkspaceModifyOperation {
 		parentProject = object.getModel().getUnderlyingResource().getProject();
 	}
 
-	protected void execute(IProgressMonitor monitor)
-		throws CoreException, InvocationTargetException, InterruptedException {
+	public void run (IProgressMonitor monitor) {
 		resultCollector =
 			new DependencyExtentSearchResultCollector(this, monitor);
 
@@ -119,7 +117,7 @@ public class DependencyExtentSearchOperation extends WorkspaceModifyOperation {
 			if (packageFragments.length > 0)
 				doJavaSearch(monitor);
 
-		} catch (JavaModelException e) {
+		} catch (CoreException e) {
 			PDEPlugin.log(e.getStatus());
 		
 		} finally {

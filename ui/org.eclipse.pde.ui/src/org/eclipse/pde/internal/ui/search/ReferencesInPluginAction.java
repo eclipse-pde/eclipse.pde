@@ -10,15 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 
+import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.internal.core.search.PluginSearchInput;
 import org.eclipse.pde.internal.core.search.PluginSearchScope;
@@ -49,7 +48,7 @@ public class ReferencesInPluginAction extends Action {
 	public void run() {
 		try {
 			SearchUI.activateSearchResultView();
-			IRunnableWithProgress operation = null;
+			IWorkspaceRunnable operation = null;
 			Object object = entry.getGroupByKey();
 			if (object instanceof IJavaElement) {
 				operation = new JavaSearchOperation((IJavaElement)object, (IProject)entry.getResource());
@@ -59,11 +58,8 @@ public class ReferencesInPluginAction extends Action {
 						getPluginSearchInput((IPluginExtensionPoint) object),
 						new PluginSearchResultCollector());
 			}
-			ProgressMonitorDialog pmd =
-				new ProgressMonitorDialog(PDEPlugin.getActiveWorkbenchShell());
-			pmd.run(true, true, operation);
-		} catch (InvocationTargetException e) {
-		} catch (InterruptedException e) {
+			PDEPlugin.getWorkspace().run(operation, null, IWorkspace.AVOID_UPDATE, new NullProgressMonitor());
+		} catch (CoreException e) {
 		}
 	}
 	

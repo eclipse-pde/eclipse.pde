@@ -15,7 +15,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.operation.*;
 import org.eclipse.pde.internal.core.search.IPluginSearchResultCollector;
 import org.eclipse.pde.internal.core.search.PluginSearchInput;
 import org.eclipse.pde.internal.core.search.PluginSearchOperation;
@@ -24,7 +24,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 
 public class PluginSearchUIOperation
 	extends PluginSearchOperation
-	implements IRunnableWithProgress {
+	implements IWorkspaceRunnable, IRunnableWithProgress {
 
 	private static final String KEY_MATCH = "Search.singleMatch";
 	private static final String KEY_MATCHES = "Search.multipleMatches";

@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search;
 
-import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.search.ui.SearchUI;
@@ -33,11 +33,12 @@ public class DependencyExtentAction extends Action {
 	public void run() {
 		try {
 			SearchUI.activateSearchResultView();
-			ProgressMonitorDialog pmd =
-				new ProgressMonitorDialog(PDEPlugin.getActiveWorkbenchShell());
-			pmd.run(true, true, op);
-		} catch (InvocationTargetException e) {
-		} catch (InterruptedException e) {
+			PDEPlugin.getWorkspace().run(
+				op,
+				null,
+				IWorkspace.AVOID_UPDATE,
+				new NullProgressMonitor());
+		} catch (CoreException e) {
 		}
 	}
 	

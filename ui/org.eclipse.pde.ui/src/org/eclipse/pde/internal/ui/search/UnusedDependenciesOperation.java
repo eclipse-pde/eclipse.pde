@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -31,7 +31,6 @@ import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.core.search.IJavaSearchResultCollector;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
@@ -40,7 +39,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 
-public class UnusedDependenciesOperation implements IRunnableWithProgress {
+public class UnusedDependenciesOperation implements IWorkspaceRunnable {
 	private IPluginModelBase model;
 	private IProject parentProject;
 	HashSet unused = new HashSet();
@@ -78,8 +77,7 @@ public class UnusedDependenciesOperation implements IRunnableWithProgress {
 		this.parentProject = model.getUnderlyingResource().getProject();
 	}
 
-	public void run(IProgressMonitor monitor)
-		throws InvocationTargetException, InterruptedException {
+	public void run(IProgressMonitor monitor) throws CoreException {
 		try {
 			IPluginImport[] imports = model.getPluginBase().getImports();
 			if (imports.length == 0)

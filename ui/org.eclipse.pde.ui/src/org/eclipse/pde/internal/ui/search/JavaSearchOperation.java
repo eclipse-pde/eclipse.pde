@@ -9,11 +9,10 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
+import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -22,11 +21,11 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
+import org.eclipse.jface.operation.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 
-class JavaSearchOperation extends WorkspaceModifyOperation {
+class JavaSearchOperation implements IWorkspaceRunnable, IRunnableWithProgress {
 	IJavaElement element;
 	IProject parentProject;
 	private static final String KEY_MATCH = "Search.singleMatch";
@@ -37,11 +36,10 @@ class JavaSearchOperation extends WorkspaceModifyOperation {
 		this.parentProject = parentProject;
 	}
 
-	protected void execute(IProgressMonitor monitor)
-		throws CoreException, InvocationTargetException, InterruptedException {
+	public void run(IProgressMonitor monitor) {
 		doJavaSearch(monitor);
-
 	}
+	
 	private void doJavaSearch(IProgressMonitor monitor) {
 		try {
 			SearchEngine searchEngine = new SearchEngine();

@@ -10,11 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search;
 
-import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -31,9 +32,8 @@ public class UnusedDependenciesAction extends Action {
 	public void run() {
 		try {
 			UnusedDependenciesOperation op = new UnusedDependenciesOperation(model);
-			ProgressMonitorDialog pmd =
-				new ProgressMonitorDialog(PDEPlugin.getActiveWorkbenchShell());
-			pmd.run(true, true, op);
+			PDEPlugin.getWorkspace().run(op, (ISchedulingRule)null, IWorkspace.AVOID_UPDATE, new NullProgressMonitor());
+
 			IPluginImport[] unused = op.getUnusedDependencies();
 			if (unused.length == 0)
 				MessageDialog.openInformation(
@@ -63,8 +63,7 @@ public class UnusedDependenciesAction extends Action {
 					PDEPlugin.getResourceString("UnusedDependencies.title"),
 					buffer.toString());
 			}
-		} catch (InvocationTargetException e) {
-		} catch (InterruptedException e) {
+		} catch (CoreException e) {
 		}
 	}
 	
