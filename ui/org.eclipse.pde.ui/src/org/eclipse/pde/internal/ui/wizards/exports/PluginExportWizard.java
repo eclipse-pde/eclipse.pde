@@ -18,12 +18,14 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.build.FragmentBuildScriptGenerator;
-import org.eclipse.pde.internal.build.ModelBuildScriptGenerator;
-import org.eclipse.pde.internal.build.PluginBuildScriptGenerator;
+
+import org.eclipse.pde.internal.build.builder.FragmentBuildScriptGenerator;
+import org.eclipse.pde.internal.build.builder.ModelBuildScriptGenerator;
+import org.eclipse.pde.internal.build.builder.PluginBuildScriptGenerator;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.ui.*;
 
@@ -49,10 +51,21 @@ public class PluginExportWizard extends BaseExportWizard {
 
 	protected HashMap createProperties(String destination, IPluginBase model) {
 		HashMap map = new HashMap(4);
-		map.put("build.result.folder", buildTempLocation + Path.SEPARATOR + "build_result" + Path.SEPARATOR + model.getId());
-		map.put("temp.folder", buildTempLocation + Path.SEPARATOR + "eclipse" + Path.SEPARATOR + "plugins");
-		map.put("destination.temp.folder", buildTempLocation + Path.SEPARATOR + "eclipse" + Path.SEPARATOR + "plugins");
+		map.put("build.result.folder", buildTempLocation + "/build_result/" + model.getId());
+		map.put("temp.folder", buildTempLocation + "/plugins");
+		map.put("destination.temp.folder", buildTempLocation + "/plugins");
 		map.put("plugin.destination", destination);
+		map.put("baseos", TargetPlatform.getOS());
+		map.put("basews", TargetPlatform.getWS());
+		map.put("basearch", TargetPlatform.getOSArch());
+		map.put("basenl", TargetPlatform.getNL());
+		
+		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
+		map.put("javacFailOnError", store.getString(PROP_JAVAC_FAIL_ON_ERROR));
+		map.put("javacDebugInfo", store.getBoolean(PROP_JAVAC_DEBUG_INFO) ? "on" : "off");
+		map.put("javacVerbose", store.getString(PROP_JAVAC_VERBOSE));
+		map.put("javacSource", store.getString(PROP_JAVAC_SOURCE));
+		map.put("javacTarget", store.getString(PROP_JAVAC_TARGET));
 		return map;
 	}
 	
@@ -88,11 +101,10 @@ public class PluginExportWizard extends BaseExportWizard {
 
 	}
 	
-	public void deleteBuildFile(IPluginModelBase model) throws CoreException{
+	public void deleteBuildFile(IPluginModelBase model) throws CoreException {
 		if (isCustomBuild(model))
 			return;
-		String fileName = "build.xml";
-		File file = new File(model.getInstallLocation() + Path.SEPARATOR + fileName);
+		File file = new File(model.getInstallLocation(), "build.xml");
 		if (file.exists())
 			file.delete();
 	}
@@ -112,9 +124,7 @@ public class PluginExportWizard extends BaseExportWizard {
 		else
 			generator = new PluginBuildScriptGenerator();
 
-		generator.setBuildScriptName("build.xml");
-		generator.setScriptTargetLocation(model.getInstallLocation());
-		generator.setInstallLocation(model.getInstallLocation());
+		generator.setWorkingDirectory(model.getInstallLocation());
 
 		IProject project = model.getUnderlyingResource().getProject();
 		if (project.hasNature(JavaCore.NATURE_ID)) {
@@ -130,5 +140,5 @@ public class PluginExportWizard extends BaseExportWizard {
 		generator.setModelId(model.getPluginBase().getId());
 		generator.generate();
 	}
-		
+	
 }

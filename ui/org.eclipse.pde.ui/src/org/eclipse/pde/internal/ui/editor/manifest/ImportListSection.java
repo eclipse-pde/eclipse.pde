@@ -28,7 +28,6 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
-import org.eclipse.pde.internal.ui.preferences.BuildpathPreferencePage;
 import org.eclipse.pde.internal.ui.search.PluginSearchActionGroup;
 import org.eclipse.pde.internal.ui.search.UnusedDependenciesAction;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
@@ -335,12 +334,10 @@ public class ImportListSection
 			if (resource != null) {
 				IProject project = resource.getProject();
 				if (WorkspaceModelManager.isJavaPluginProject(project)) {
-					boolean shouldUpdate =
-						BuildpathPreferencePage.isManifestUpdate();
 					PDESourcePage sourcePage =
 						(PDESourcePage) getFormPage().getEditor().getPage(
 							ManifestEditor.SOURCE_PAGE);
-					if (shouldUpdate && !sourcePage.containsError())
+					if (PDEPlugin.isManifestUpdate() && !sourcePage.containsError())
 						updateBuildPath();
 				}
 			}
@@ -366,7 +363,7 @@ public class ImportListSection
 					if (save && getFormPage().getEditor().isDirty()) {
 						getFormPage().getEditor().doSave(monitor);
 					}
-					boolean useContainers = BuildpathPreferencePage.getUseClasspathContainers();
+					boolean useContainers = PDEPlugin.getUseClasspathContainers();
 					ClasspathUtil.setClasspath(model, useContainers, null, monitor);
 					monitor.worked(1);
 				} catch (CoreException e) {

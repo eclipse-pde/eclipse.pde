@@ -17,7 +17,6 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -58,7 +57,7 @@ public class RequiresSection
 
 		if (refPlugin != null) {
 			String translatedName = refPlugin.getTranslatedName();
-			if (MainPreferencePage.isFullNameModeEnabled())
+			if (PDEPlugin.isFullNameModeEnabled())
 				name = translatedName;
 			else
 				tooltip = translatedName;

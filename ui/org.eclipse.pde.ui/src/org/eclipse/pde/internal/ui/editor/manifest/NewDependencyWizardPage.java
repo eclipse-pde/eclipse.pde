@@ -22,7 +22,6 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.util.StringMatcher;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -187,7 +186,7 @@ public class NewDependencyWizardPage extends WizardPage {
 						String prefix = filterText.getText();
 						if (prefix.length() > 0) {
 							String name;
-							if (MainPreferencePage.isFullNameModeEnabled())
+							if (PDEPlugin.isFullNameModeEnabled())
 								name = model.getPlugin().getName();
 							else
 								name = model.getPlugin().getId();

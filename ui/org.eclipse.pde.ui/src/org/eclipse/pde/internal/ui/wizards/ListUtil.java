@@ -14,8 +14,8 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.elements.ElementLabelProvider;
-import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
 import org.eclipse.swt.graphics.Image;
 
 
@@ -61,7 +61,7 @@ public class ListUtil {
 		}
 
 		private String getPluginName(IPluginBase pluginBase) {
-			return MainPreferencePage.isFullNameModeEnabled()
+			return PDEPlugin.isFullNameModeEnabled()
 				? pluginBase.getTranslatedName()
 				: pluginBase.getId();
 		}

@@ -30,7 +30,6 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.TreePart;
-import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
 import org.eclipse.pde.internal.ui.search.PluginSearchActionGroup;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.extension.NewExtensionWizard;
@@ -591,7 +590,7 @@ public class DetailExtensionSection
 		SchemaRegistry schemaRegistry,
 		ExternalModelManager pluginInfoRegistry,
 		Object obj) {
-		boolean fullNames = MainPreferencePage.isFullNameModeEnabled();
+		boolean fullNames = PDEPlugin.isFullNameModeEnabled();
 		if (obj instanceof IPluginExtension) {
 			IPluginExtension extension = (IPluginExtension) obj;
 			if (!fullNames) {

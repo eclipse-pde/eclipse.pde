@@ -19,7 +19,7 @@ import org.eclipse.ant.core.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.pde.internal.build.FeatureBuildScriptGenerator;
+import org.eclipse.pde.internal.build.builder.FeatureBuildScriptGenerator;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.isite.*;
@@ -233,13 +233,14 @@ public class FeatureBuildOperation implements IRunnableWithProgress {
 			new FeatureBuildScriptGenerator();
 		IFile featureFile = (IFile) featureModel.getUnderlyingResource();
 		String scriptName = "build.xml";
-		generator.setBuildScriptName(scriptName);
+		//generator.setBuildScriptName(scriptName);
 		generator.setFeatureRootLocation(
 			featureFile.getParent().getLocation().toOSString());
-		generator.setGenerateChildrenScript(true);
+		generator.setGenerateIncludedFeatures(true);
+		generator.setAnalyseChildren(true);
 		IPath platform =
 			Platform.getLocation().append(featureFile.getProject().getName());
-		generator.setInstallLocation(platform.toOSString());
+		generator.setWorkingDirectory(platform.toOSString());
 		generator.setDevEntries(new String[] { "bin" });
 		URL[] pluginPath = TargetPlatform.createPluginPath();
 		generator.setPluginPath(pluginPath);

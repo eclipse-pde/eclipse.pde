@@ -12,6 +12,8 @@ package org.eclipse.pde.internal.ui.wizards.exports;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -19,13 +21,15 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.build.FeatureBuildScriptGenerator;
+import org.eclipse.pde.internal.build.builder.FeatureBuildScriptGenerator;
 import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.eclipse.pde.internal.ui.*;
@@ -53,8 +57,8 @@ public class FeatureExportWizard extends BaseExportWizard {
 
 	protected HashMap createProperties(String destination, boolean exportZip) {		
 		HashMap map = new HashMap(5);
-		map.put("temp.folder", buildTempLocation + Path.SEPARATOR + "eclipse");
-		map.put("feature.temp.folder", buildTempLocation + Path.SEPARATOR + "eclipse");
+		map.put("temp.folder", buildTempLocation);
+		map.put("feature.temp.folder", buildTempLocation);
 		if (exportZip) {
 			map.put("plugin.destination", destination);
 			map.put("feature.destination", destination);
@@ -75,6 +79,17 @@ public class FeatureExportWizard extends BaseExportWizard {
 			}
 			map.put("feature.destination", dest);
 		}
+		map.put("baseos", TargetPlatform.getOS());
+		map.put("basews", TargetPlatform.getWS());
+		map.put("basearch", TargetPlatform.getOSArch());
+		map.put("basenl", TargetPlatform.getNL());
+		
+		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
+		map.put("javacFailOnError", store.getString(PROP_JAVAC_FAIL_ON_ERROR));
+		map.put("javacDebugInfo", store.getBoolean(PROP_JAVAC_DEBUG_INFO) ? "on" : "off");
+		map.put("javacVerbose", store.getString(PROP_JAVAC_VERBOSE));
+		map.put("javacSource", store.getString(PROP_JAVAC_SOURCE));
+		map.put("javacTarget", store.getString(PROP_JAVAC_TARGET));
 		return map;
 	}
 	
@@ -125,16 +140,14 @@ public class FeatureExportWizard extends BaseExportWizard {
 	}
 	
 	public void deleteBuildFile(IModel model) throws CoreException {
-		String scriptName = "build.xml";
-		String filename = "";
 		if (isCustomBuild(model))
 			return;
-		if (model instanceof IFeatureModel) {
-			filename = ((IFeatureModel)model).getInstallLocation() + Path.SEPARATOR + scriptName; 
-		} else {
-			filename = ((IPluginModelBase)model).getInstallLocation() + Path.SEPARATOR + scriptName;
-		}
-		File file = new File(filename);
+		String directory =
+			(model instanceof IFeatureModel)
+				? ((IFeatureModel) model).getInstallLocation()
+				: ((IPluginModelBase) model).getInstallLocation();
+				
+		File file = new File(directory, "build.xml");
 		if (file.exists()) {
 			file.delete();
 		}
@@ -150,12 +163,10 @@ public class FeatureExportWizard extends BaseExportWizard {
 	}
 
 	private void makeScript(IFeatureModel model) throws CoreException {
-		FeatureBuildScriptGenerator generator = new ExportFeatureBuildScriptGenerator();
+		ExportFeatureBuildScriptGenerator generator = new ExportFeatureBuildScriptGenerator();
 
-		generator.setBuildScriptName("build.xml");
-		generator.setScriptTargetLocation(model.getInstallLocation());
 		generator.setFeatureRootLocation(model.getInstallLocation());
-		generator.setInstallLocation(model.getInstallLocation());
+		generator.setWorkingDirectory(model.getInstallLocation());
 		
 		IProject project = model.getUnderlyingResource().getProject();
 		if (project.hasNature(JavaCore.NATURE_ID)) {
@@ -166,11 +177,36 @@ public class FeatureExportWizard extends BaseExportWizard {
 			generator.setDevEntries(new String[] { "bin" });
 		}
 
-		generator.setGenerateChildrenScript(true);
-		generator.setPluginPath(TargetPlatform.createPluginPath());
-
+		generator.setAnalyseChildren(true);
+		generator.setPluginPath(getPaths());
+		setConfigInfo(model.getFeature());
 		generator.setFeature(model.getFeature().getId());
 		generator.generate();
+	}
+	
+	private void setConfigInfo(IFeature feature) throws CoreException {
+		String os = feature.getOS() == null ? "*" : feature.getOS();
+		String ws = feature.getWS() == null ? "*" : feature.getWS();
+		String arch = feature.getArch() == null ? "*" : feature.getArch();
+		
+		FeatureBuildScriptGenerator.setConfigInfo(os + "," + ws + "," + arch);
+	}
+
+	private URL[] getPaths() throws CoreException {
+		ArrayList paths = new ArrayList();
+		IFeatureModel[] models = PDECore.getDefault().getWorkspaceModelManager().getWorkspaceFeatureModels();
+		for (int i = 0; i < models.length; i++) {
+			try {
+				paths.add(new URL("file:" + models[i].getInstallLocation() + Path.SEPARATOR + "feature.xml"));
+			} catch (MalformedURLException e1) {
+			}
+		}		
+		URL[] plugins = TargetPlatform.createPluginPath();
+		URL[] features = (URL[]) paths.toArray(new URL[paths.size()]);
+		URL[] all = new URL[plugins.length + paths.size()];
+		System.arraycopy(plugins, 0, all, 0, plugins.length);
+		System.arraycopy(features, 0, all, plugins.length, features.length);
+		return all;		
 	}
 	
 	protected String[] getExecutionTargets(boolean exportZip, boolean exportSource) {

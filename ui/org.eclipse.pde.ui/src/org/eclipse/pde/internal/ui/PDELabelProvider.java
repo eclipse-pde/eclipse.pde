@@ -24,7 +24,6 @@ import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
 import org.eclipse.pde.internal.ui.editor.IPDEEditorPage;
 import org.eclipse.pde.internal.ui.elements.NamedElement;
-import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PlatformUI;
@@ -557,6 +556,6 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 
 	public boolean isFullNameModeEnabled() {
-		return MainPreferencePage.isFullNameModeEnabled();
+		return PDEPlugin.isFullNameModeEnabled();
 	}
 }

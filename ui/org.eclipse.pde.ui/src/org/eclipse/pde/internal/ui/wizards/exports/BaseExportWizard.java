@@ -30,6 +30,7 @@ import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
+import org.eclipse.pde.internal.ui.IPreferenceConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.program.Program;
 import org.eclipse.ui.*;
@@ -38,7 +39,7 @@ import org.eclipse.ui.*;
  * Insert the type's description here.
  * @see Wizard
  */
-public abstract class BaseExportWizard extends Wizard implements IExportWizard {
+public abstract class BaseExportWizard extends Wizard implements IExportWizard, IPreferenceConstants {
 	private IStructuredSelection selection;
 	private BaseExportWizardPage page1;
 	protected static PrintWriter writer;

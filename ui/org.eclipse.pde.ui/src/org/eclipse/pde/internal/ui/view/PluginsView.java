@@ -642,7 +642,7 @@ public class PluginsView extends ViewPart {
 					PDECore.getDefault().getModelManager();
 				try {
 					boolean useContainers =
-						BuildpathPreferencePage.getUseClasspathContainers();
+						PDEPlugin.getUseClasspathContainers();
 					manager.setInJavaSearch(array, add, useContainers, monitor);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);

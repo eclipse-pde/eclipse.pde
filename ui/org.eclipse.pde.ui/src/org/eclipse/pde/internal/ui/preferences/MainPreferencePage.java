@@ -74,11 +74,6 @@ public class MainPreferencePage
 		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.MAIN_PREFERENCE_PAGE);
 	}	
 
-	public static boolean isFullNameModeEnabled() {
-		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-		return store.getString(PROP_SHOW_OBJECTS).equals(VALUE_USE_NAMES);
-	}
-
 	public boolean performOk() {
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 		if (useID.getSelection()) {

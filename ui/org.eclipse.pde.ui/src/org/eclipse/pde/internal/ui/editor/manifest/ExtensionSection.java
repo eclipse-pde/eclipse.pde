@@ -25,7 +25,6 @@ import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.editor.IPDEEditorPage;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDEFormSection;
-import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -77,13 +76,13 @@ public class ExtensionSection
 
 		if (extension.getName() != null) {
 			String extensionName = extension.getTranslatedName();
-			if (MainPreferencePage.isFullNameModeEnabled())
+			if (PDEPlugin.isFullNameModeEnabled())
 				name = extensionName;
 			else
 				tooltip = extensionName;
 		} else if (pointInfo != null) {
 			String translatedName = pointInfo.getTranslatedName();
-			if (MainPreferencePage.isFullNameModeEnabled())
+			if (PDEPlugin.isFullNameModeEnabled())
 				name = translatedName;
 			else
 				tooltip = translatedName;

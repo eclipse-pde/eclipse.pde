@@ -24,7 +24,6 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
 import org.eclipse.pde.internal.ui.search.PluginSearchActionGroup;
 import org.eclipse.pde.internal.ui.search.UnusedDependenciesAction;
 import org.eclipse.pde.core.*;
@@ -134,7 +133,7 @@ public class ManifestFormOutlinePage extends FormOutlinePage {
 	}
 
 	String getObjectLabel(Object obj) {
-		boolean fullNames = MainPreferencePage.isFullNameModeEnabled();
+		boolean fullNames = PDEPlugin.isFullNameModeEnabled();
 		if (obj instanceof IPluginImport) {
 			String pluginId = ((IPluginImport) obj).getId();
 			if (!fullNames || pluginId==null)

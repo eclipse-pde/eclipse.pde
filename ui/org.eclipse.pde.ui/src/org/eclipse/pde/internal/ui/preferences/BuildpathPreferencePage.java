@@ -73,26 +73,6 @@ public class BuildpathPreferencePage
 		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.BUILDPATH_PREFERENCE_PAGE);
 	}
 
-	public static boolean isPluginProjectUpdate() {
-		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-		return store.getBoolean(PROP_PLUGIN_PROJECT_UPDATE);
-	}
-
-	public static boolean isFragmentProjectUpdate() {
-		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-		return store.getBoolean(PROP_FRAGMENT_PROJECT_UPDATE);
-	}
-
-	public static boolean isManifestUpdate() {
-		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-		return store.getBoolean(PROP_MANIFEST_UPDATE);
-	}
-	
-	public static boolean getUseClasspathContainers() {
-		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-		return store.getBoolean(PROP_CLASSPATH_CONTAINERS);
-	}
-
 	/**
 	 * Initializes this preference page using the passed desktop.
 	 *

@@ -20,7 +20,6 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
 import org.eclipse.pde.core.*;
 
 public class ExtensionPointSection
@@ -53,7 +52,7 @@ public class ExtensionPointSection
 		String name = point.getId();
 		String tooltip = name;
 
-		if (MainPreferencePage.isFullNameModeEnabled())
+		if (PDEPlugin.isFullNameModeEnabled())
 			name = point.getTranslatedName();
 		else
 			tooltip = point.getTranslatedName();

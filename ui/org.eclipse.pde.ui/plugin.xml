@@ -30,6 +30,7 @@
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.update.core"/>
       <import plugin="org.eclipse.update.ui.forms"/>
+      <import plugin="org.eclipse.ant.ui"/>
    </requires>
 
 
@@ -90,6 +91,12 @@
             category="org.eclipse.pde.ui.MainPreferencePage"
             class="org.eclipse.pde.internal.ui.preferences.CompilersPreferencePage"
             id="org.eclipse.pde.ui.CompilersPreferencePage">
+      </page>
+      <page
+            name="%preferences.buildproperties.name"
+            category="org.eclipse.pde.ui.MainPreferencePage"
+            class="org.eclipse.pde.internal.ui.preferences.BuildPropertiesPreferencePage"
+            id="org.eclipse.pde.ui.buildPropertiesPreferencePage">
       </page>
    </extension>
    <extension

@@ -25,7 +25,6 @@ import org.eclipse.pde.internal.core.plugin.PluginDocumentNode;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
 import org.eclipse.swt.graphics.Image;
 import org.w3c.dom.Node;
 
@@ -63,7 +62,7 @@ public class ManifestSourceOutlinePageLabelProvider extends LabelProvider {
 	}
 
 	private String getLabel(IPluginObject pluginObject) {
-		boolean fullNames = MainPreferencePage.isFullNameModeEnabled();
+		boolean fullNames = PDEPlugin.isFullNameModeEnabled();
 		if (pluginObject instanceof IPluginBase) {
 			IPluginBase pluginBase = (IPluginBase) pluginObject;
 			String pluginBaseName = pluginBase.getName();

@@ -25,7 +25,6 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.manifest.ManifestEditor;
-import org.eclipse.pde.internal.ui.preferences.BuildpathPreferencePage;
 import org.eclipse.pde.internal.ui.wizards.project.ProjectStructurePage;
 import org.eclipse.pde.internal.ui.wizards.templates.*;
 import org.eclipse.pde.ui.*;
@@ -241,7 +240,7 @@ public abstract class AbstractNewPluginTemplateWizard
 	}
 
 	private void setJavaSettings(IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
-		boolean useContainers = BuildpathPreferencePage.getUseClasspathContainers();
+		boolean useContainers = PDEPlugin.getUseClasspathContainers();
 		ClasspathUtil.setClasspath(model, useContainers, null, monitor);
 	}
 

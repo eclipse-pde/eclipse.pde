@@ -19,8 +19,6 @@ public interface IPreferenceConstants {
 		"Preferences.BuildpathPage.fragmentProjectUpdate";
 	public static final String PROP_MANIFEST_UPDATE =
 		"Preferences.BuildpathPage.manifestUpdate";
-	public static final String PROP_CONVERSION_UPDATE =
-		"Preferences.BuildpathPage.conversionUpdate";		
 	public static final String PROP_CLASSPATH_CONTAINERS =
 		"Preferences.BuildpathPage.useClasspathContainers";
 
@@ -32,9 +30,13 @@ public interface IPreferenceConstants {
 		"Preferences.MainPage.showObjects";
 	public static final String VALUE_USE_IDS = "useIds";
 	public static final String VALUE_USE_NAMES = "useNames";
-	public static final String PROP_BUILD_SCRIPT_NAME =
-		"Preferences.MainPage.buildScriptName";
-	public static final String PROP_ADD_TODO = 
-		"Preferences.MainPage.addTodo";
+	
+	// build.properties preference page
+	public static final String PROP_JAVAC_FAIL_ON_ERROR = "javacFailOnError";
+	public static final String PROP_JAVAC_DEBUG_INFO = "javacDebugInfo";
+	public static final String PROP_JAVAC_VERBOSE = "javacVerbose";
+	public static final String PROP_JAVAC_SOURCE = "javacSource";
+	public static final String PROP_JAVAC_TARGET = "javacTarget";
+	
 
 }

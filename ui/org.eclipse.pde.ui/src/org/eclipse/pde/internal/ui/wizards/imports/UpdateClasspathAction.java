@@ -30,7 +30,6 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.ui.ClasspathUtil;
 import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.pde.internal.ui.preferences.BuildpathPreferencePage;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.internal.core.*;
@@ -164,7 +163,7 @@ public class UpdateClasspathAction implements IWorkbenchWindowActionDelegate {
 			PDEPlugin.getResourceString(KEY_UPDATE),
 			models.length);
 		boolean useContainers =
-			BuildpathPreferencePage.getUseClasspathContainers();
+			PDEPlugin.getUseClasspathContainers();
 		MissingPluginConfirmation confirmation = new MissingPluginConfirmation();
 		try {
 			for (int i = 0; i < models.length; i++) {
