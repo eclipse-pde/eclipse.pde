@@ -63,7 +63,7 @@ public class DocSection extends PDESection {
 	private boolean ignoreChange;
 
 	public DocSection(PDEFormPage page, Composite parent, IColorManager colorManager) {
-		super(page, parent, Section.DESCRIPTION, false);
+		super(page, parent, Section.DESCRIPTION|Section.NO_TITLE, false);
 		String description = PDEPlugin.getResourceString(SECTION_DESC);
 		getSection().setDescription(description);
 		sourceConfiguration = new XMLConfiguration(colorManager);
@@ -91,9 +91,8 @@ public class DocSection extends PDESection {
 		Composite container = toolkit.createComposite(section);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
-		layout.marginWidth = toolkit.getBorderStyle()==SWT.NULL ? 2 : 0;
-		layout.marginHeight =
-			toolkit.getBorderStyle()== SWT.NULL ? 2 : 0;
+		layout.marginWidth = 2;
+		layout.marginHeight = 2;
 		layout.verticalSpacing = 6;
 		container.setLayout(layout);
 		GridData gd;
@@ -124,8 +123,7 @@ public class DocSection extends PDESection {
 		});
 
 		int styles =
-			SWT.MULTI | SWT.WRAP | SWT.V_SCROLL | SWT.H_SCROLL /*| SWT.WRAP */
-		| toolkit.getBorderStyle();
+			SWT.MULTI | SWT.WRAP | SWT.V_SCROLL | SWT.H_SCROLL;
 		sourceViewer = new SourceViewer(container, null, styles);
 		sourceViewer.configure(sourceConfiguration);
 		sourceViewer.setDocument(document);
@@ -138,6 +136,7 @@ public class DocSection extends PDESection {
 		StyledText styledText = sourceViewer.getTextWidget();
 		styledText.setFont(JFaceResources.getTextFont());
 		styledText.setMenu(getPage().getPDEEditor().getContextMenu());
+		styledText.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
 
 		if (SWT.getPlatform().equals("motif") == false)
 			toolkit.paintBordersFor(container);

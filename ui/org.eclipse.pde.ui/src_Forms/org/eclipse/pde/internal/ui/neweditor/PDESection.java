@@ -20,7 +20,7 @@ import org.eclipse.ui.forms.widgets.Section;
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
 public abstract class PDESection extends SectionPart implements IModelChangedListener, IContextPart {
-	public static final int CLIENT_VSPACING = 8;
+	public static final int CLIENT_VSPACING = 6;
 	private PDEFormPage page;
 	public PDESection(PDEFormPage page, Composite parent, int style) {
 		this(page, parent, style, true);

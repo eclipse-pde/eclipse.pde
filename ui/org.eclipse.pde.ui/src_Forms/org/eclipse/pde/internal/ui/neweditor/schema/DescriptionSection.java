@@ -103,8 +103,7 @@ public class DescriptionSection extends PDESection implements IPartSelectionList
 			SWT.MULTI
 				| SWT.WRAP
 				| SWT.V_SCROLL
-				| SWT.H_SCROLL
-				| toolkit.getBorderStyle();
+				| SWT.H_SCROLL;
 		sourceViewer = new SourceViewer(container, null, styles);
 		sourceViewer.configure(sourceConfiguration);
 		sourceViewer.setDocument(document);
@@ -120,6 +119,7 @@ public class DescriptionSection extends PDESection implements IPartSelectionList
 			JFaceResources.getFontRegistry().get(JFaceResources.TEXT_FONT));
 		if (SWT.getPlatform().equals("motif") == false)
 			toolkit.paintBordersFor(container);
+		styledText.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
 		Control[] children = container.getChildren();
 		Control control = children[children.length - 1];
 		gd = new GridData(GridData.FILL_BOTH);
