@@ -118,9 +118,11 @@ public static void initializePlatformPath() {
 		store.setDefault(PROP_PLATFORM_PATH, path);
 		store.setValue(PROP_PLATFORM_PATH, path);
 		IPath runtimeWorkspace = ppath.append(RT_WORKSPACE);
+		boolean locationSet = store.contains(PROP_PLATFORM_LOCATION);
 		path = runtimeWorkspace.toOSString();
 		store.setDefault(PROP_PLATFORM_LOCATION, path);
-		store.setValue(PROP_PLATFORM_LOCATION, path);
+		if (!locationSet)
+			store.setValue(PROP_PLATFORM_LOCATION, path);
 	}
 }
 /** 
