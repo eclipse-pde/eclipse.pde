@@ -322,7 +322,12 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 					break;
 				}
 			}
-			if (addFragments) {
+            if (!addFragments) {
+                IPlugin plugin = ((IPluginModel)model).getPlugin();
+                addFragments = ClasspathUtilCore.hasExtensibleAPI(plugin);
+            }
+            
+ 			if (addFragments) {
 				IFragmentModel[] fragments = findFragments(model.getPluginBase());
 				for (int i = 0; i < fragments.length; i++) {
 					addPluginAndDependencies(fragments[i], map);
