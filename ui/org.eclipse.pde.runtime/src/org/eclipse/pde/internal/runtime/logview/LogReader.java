@@ -75,6 +75,7 @@ class LogReader {
 						session.setSessionData(swriter.toString());
 					} else if (writerState == MESSAGE_STATE && current != null){
 						String message = current.getMessage() + swriter.toString();
+						message = message.trim();
 						current.setMessage(message);
 					}
 					writerState = UNKNOWN_STATE;
@@ -117,6 +118,7 @@ class LogReader {
 					String message = "";
 					if (line.length() > 8)
 						message = line.substring(9).trim();
+					message = message.trim();
 					if (current != null)
 						current.setMessage(message);
 					writerState = MESSAGE_STATE;
