@@ -250,7 +250,7 @@ public class LauncherUtils {
 					if (index == -1 || index == token.length() - 1)
 						continue;
 					String start = token.substring(index + 1);
-					if (start.indexOf("start") != -1 || !useDefault) {
+					if (start.indexOf("start") != -1 || !useDefault) { //$NON-NLS-1$
 						Integer level = index != -1 ? getStartLevel(start) : new Integer(-1);
 						list.put(index != -1 ? token.substring(0,token.indexOf('@')) : token, level);
 					}

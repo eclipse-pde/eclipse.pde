@@ -136,8 +136,8 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 	
 	private void initializeDefaultPlugins() {
 		fPluginList.clear();
-		HashMap map = LauncherUtils.getAutoStartPlugins(true, "");
-		map.remove("org.eclipse.osgi");
+		HashMap map = LauncherUtils.getAutoStartPlugins(true, ""); //$NON-NLS-1$
+		map.remove("org.eclipse.osgi"); //$NON-NLS-1$
 		Iterator iter = map.keySet().iterator();
 		while (iter.hasNext()) {
 			Object object = iter.next();

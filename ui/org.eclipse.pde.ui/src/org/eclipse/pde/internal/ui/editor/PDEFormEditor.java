@@ -228,7 +228,7 @@ public abstract class PDEFormEditor extends FormEditor
 	}
 
 	public String getTitleProperty() {
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	/*
