@@ -32,7 +32,7 @@ public class ResourceAttributeRow extends ReferenceAttributeRow {
 	 * @see org.eclipse.pde.internal.ui.neweditor.plugin.ReferenceAttributeRow#openReference()
 	 */
 	protected boolean isReferenceModel() {
-		return part.getPage().getModel().isEditable();
+		return !part.getPage().getModel().isEditable();
 	}	
 	protected void openReference() {
 		IFile file = getFile();

@@ -32,7 +32,7 @@ public class ClassAttributeRow extends ReferenceAttributeRow {
 		super(part, att);
 	}
 	protected boolean isReferenceModel() {
-		return part.getPage().getModel().isEditable();
+		return !part.getPage().getModel().isEditable();
 	}
 	/*
 	 * (non-Javadoc)
