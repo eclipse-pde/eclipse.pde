@@ -63,10 +63,18 @@ public class XMLErrorReporter extends DefaultHandler {
 	public XMLErrorReporter(IFile file) {
 		fFile = file;
 		project = file.getProject();
+		InputStream stream = null;
 		try {
-			createTextDocument(file.getContents(true));
+			stream = file.getContents(true);
+			createTextDocument(stream);
 		} catch (Exception e) {
 			PDE.logException(e);
+		} finally {
+			try {
+				if (stream != null)
+					stream.close();
+			} catch (IOException e) {
+			}
 		}
 		fOffsetTable = new HashMap();
 		fElementStack = new Stack();
