@@ -494,10 +494,7 @@ public class LogView extends ViewPart implements ILogListener {
 		LogEntry entry = new LogEntry(status);
 		LogReader.addEntry(entry, logs, memento, true);
 		asyncRefresh();
-		try {
-			PDERuntimePlugin.getActivePage().showView(PDERuntimePlugin.getPluginId() + ".LogView");
-		} catch (PartInitException e) {
-		}
+		PDERuntimePlugin.getActivePage().activate(this);
 	}
 
 	private void asyncRefresh() {
