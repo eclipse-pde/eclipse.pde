@@ -132,6 +132,10 @@ public abstract class PDESourcePage
 			getDocumentProvider().getDocument(getEditorInput());
 		if (document != null)
 			document.removeDocumentListener(documentListener);
+		if (outlinePage != null) {
+			outlinePage.dispose();
+			outlinePage = null;
+		}
 		super.dispose();
 	}
 	protected void firePropertyChange(int type) {
