@@ -453,16 +453,13 @@ public class RuntimeInfoSection
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager manager) {
-				fillContextMenu(manager);
+				fillLibContextMenu(manager);
 			}
 		});
-
 		libraryViewer.getControl().setMenu(
 			menuMgr.createContextMenu(libraryViewer.getControl()));
 	}
 	
-	protected void fillContextMenu(IMenuManager manager) {		
-	}
 
 	private void createRightSection(Composite parent, FormWidgetFactory factory) {
 		Composite container = factory.createComposite(parent);
@@ -482,49 +479,18 @@ public class RuntimeInfoSection
 		foldersViewer.setContentProvider(new JarsTableContentProvider());
 		foldersViewer.setLabelProvider(new JarsTableLabelProvider());
 		factory.paintBordersFor(container);		
+
+		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
+		menuMgr.setRemoveAllWhenShown(true);
+		menuMgr.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager manager) {
+				fillJarsContextMenu(manager);
+			}
+		});
+		foldersViewer.getControl().setMenu(
+			menuMgr.createContextMenu(foldersViewer.getControl()));
 	}
 	
-	protected void createViewerPartControl(
-		Composite parent,
-		int style,
-		int span,
-		FormWidgetFactory factory) {
-		/*GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.widthHint=200;
-		libraryPart.createControl(parent, style, span, factory);
-		MenuManager libPopupMenuManager = new MenuManager();
-		IMenuListener libListener = new IMenuListener() {
-			public void menuAboutToShow(IMenuManager mng) {
-				fillLibContextMenu(mng);
-			}
-		};
-		libPopupMenuManager.addMenuListener(libListener);
-		libPopupMenuManager.setRemoveAllWhenShown(true);
-		Control control = libraryPart.getControl();
-		Menu menu = libPopupMenuManager.createContextMenu(control);
-		control.setLayoutData(gd);
-		control.setMenu(menu);
-
-
-		gd = new GridData(GridData.FILL_BOTH);
-		gd.widthHint = 200;
-		foldersPart.createControl(parent, style, span, factory);
-		MenuManager jarsPopupMenuManager = new MenuManager();
-		IMenuListener jarsListener = new IMenuListener() {
-			public void menuAboutToShow(IMenuManager mng) {
-				fillJarsContextMenu(mng);
-			}
-		};
-		
-		getM
-		jarsPopupMenuManager.addMenuListener(jarsListener);
-		jarsPopupMenuManager.setRemoveAllWhenShown(true);
-		control = foldersPart.getControl();
-		menu = jarsPopupMenuManager.createContextMenu(control);
-		control.setMenu(menu);
-		control.setLayoutData(gd);*/
-	}
-
 	protected EditableTablePart getLibTablePart() {
 		return (EditableTablePart) libraryPart;
 	}
@@ -604,7 +570,7 @@ public class RuntimeInfoSection
 			manager,
 			false);
 	}
-
+	
 	protected void entryModified(Object object, String newValue) {
 		Item item = (Item) object;
 		final IBuildEntry entry = (IBuildEntry) item.getData();
@@ -658,7 +624,6 @@ public class RuntimeInfoSection
 	}
 
 	public void handleDoubleClick(IStructuredSelection selection) {
-		
 	}
 
 	public void disableSection() {
