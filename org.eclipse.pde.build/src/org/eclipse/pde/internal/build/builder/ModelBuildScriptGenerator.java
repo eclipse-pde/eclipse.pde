@@ -428,7 +428,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	private void genarateIdReplacementCall(String location) throws CoreException {
 		String qualifier = getBuildProperties().getProperty(PROPERTY_QUALIFIER);
-		if (qualifier == null || qualifier.equalsIgnoreCase(PROPERTY_NONE))
+		if (qualifier == null)
 			return;
 		script.print("<eclipse.versionReplacer path=\"" + location + "\" version=\"" + model.getVersion() + "\"/>"); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 	}
