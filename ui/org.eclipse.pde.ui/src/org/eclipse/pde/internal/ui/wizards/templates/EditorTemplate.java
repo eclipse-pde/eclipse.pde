@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.wizards.templates;
 
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.pde.ui.IFieldData;
 import org.eclipse.pde.ui.templates.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -99,9 +100,10 @@ public class EditorTemplate extends BaseEditorTemplate {
 		return super.getNumberOfWorkUnits() + 1;
 	}
 
-	protected void initializeFields(String id) {
+	protected void initializeFields(IFieldData data) {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
+		String id = data.getId();
 		initializeOption(KEY_PACKAGE_NAME, id + ".editors");
 	}
 	public void initializeFields(IPluginModelBase model) {

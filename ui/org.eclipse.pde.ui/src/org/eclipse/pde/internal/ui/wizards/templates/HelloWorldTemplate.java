@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.wizards.templates;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.pde.ui.IFieldData;
 import org.eclipse.pde.ui.templates.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.core.runtime.CoreException;
@@ -105,9 +106,10 @@ public class HelloWorldTemplate extends PDETemplateSection {
 		return true;
 	}
 
-	protected void initializeFields(String id) {
+	protected void initializeFields(IFieldData data) {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
+		String id = data.getId();
 		initializeOption(KEY_PACKAGE_NAME, id + ".actions");
 	}
 	public void initializeFields(IPluginModelBase model) {

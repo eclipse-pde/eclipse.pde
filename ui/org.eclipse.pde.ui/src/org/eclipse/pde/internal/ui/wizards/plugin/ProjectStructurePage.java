@@ -28,8 +28,9 @@ public class ProjectStructurePage extends WizardPage {
 	private Button fBundleCheck;
 	private IProjectProvider fProjectProvider;
 	private boolean fFirstVisible = true;
+	private AbstractFieldData fData;
 
-	public ProjectStructurePage(String pageName, IProjectProvider provider, boolean isFragment) {
+	public ProjectStructurePage(String pageName, IProjectProvider provider, AbstractFieldData data, boolean isFragment) {
 		super(pageName);
 		if (isFragment) {
 			setTitle(PDEPlugin.getResourceString("ProjectStructurePage.ftitle"));
@@ -39,6 +40,7 @@ public class ProjectStructurePage extends WizardPage {
 		setDescription(PDEPlugin.getResourceString("ProjectStructurePage.desc"));
 		fIsFragment = isFragment;
 		fProjectProvider = provider;
+		fData = data;
 	}
 
 	/* (non-Javadoc)
@@ -153,6 +155,7 @@ public class ProjectStructurePage extends WizardPage {
 					fLibraryText.setText(token + ".jar");
 			}
 		}
+		if (!visible) updateData();
 		super.setVisible(visible);
 	}
 	
@@ -169,13 +172,13 @@ public class ProjectStructurePage extends WizardPage {
 		setPageComplete(errorMessage == null);
 	}
 	
-	public void finish(AbstractFieldData data) {		
-		data.setIsSimple(fSimpleButton.getSelection());
-		data.setHasBundleStructure(fBundleCheck.getSelection());
+	public void updateData() {		
+		fData.setIsSimple(fSimpleButton.getSelection());
+		fData.setHasBundleStructure(fBundleCheck.getSelection());
 		if (fJavaButton.getSelection()) {
-			data.setLibraryName(fLibraryText.getText().trim());
-			data.setSourceFolderName(fSourceText.getText().trim());
-			data.setOutputFolderName(fOutputText.getText().trim());
+			fData.setLibraryName(fLibraryText.getText().trim());
+			fData.setSourceFolderName(fSourceText.getText().trim());
+			fData.setOutputFolderName(fOutputText.getText().trim());
 		}
 	}
 	

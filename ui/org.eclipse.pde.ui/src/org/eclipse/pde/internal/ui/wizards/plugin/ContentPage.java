@@ -11,6 +11,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.*;
+import org.eclipse.pde.ui.IFieldData;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.*;
@@ -33,6 +34,7 @@ public class ContentPage extends WizardPage {
 	private Text fPluginVersion;
 	private Combo fMatchCombo;
 	private Button fLegacyButton;
+	private AbstractFieldData fData;
 	private IProjectProvider fProjectProvider;
 	
 	private static final String KEY_MATCH_PERFECT =
@@ -49,11 +51,12 @@ public class ContentPage extends WizardPage {
 	private Label fClassLabel;
 	private ProjectStructurePage fStructurePage;
 
-	public ContentPage(String pageName, IProjectProvider provider, ProjectStructurePage page1, boolean isFragment) {
+	public ContentPage(String pageName, IProjectProvider provider, ProjectStructurePage page1, AbstractFieldData data, boolean isFragment) {
 		super(pageName);
 		fIsFragment = isFragment;
 		fProjectProvider = provider;
 		fStructurePage = page1;
+		fData = data;
 		if (isFragment) {
 			setTitle(PDEPlugin.getResourceString("ContentPage.ftitle"));
 			setDescription(PDEPlugin.getResourceString("ContentPage.fdesc"));
@@ -287,7 +290,7 @@ public class ContentPage extends WizardPage {
 	 * @see org.eclipse.jface.dialogs.IDialogPage#setVisible(boolean)
 	 */
 	public void setVisible(boolean visible) {
-		String id = getID();			
+		String id = computeId();			
 		fIdText.setText(id);
 		if (visible) {
 			if (fStructurePage.hasBundleStructure()) {
@@ -317,10 +320,12 @@ public class ContentPage extends WizardPage {
 				presetClassField();
 		}
 		validatePage();		
+		if (!visible) 
+			updateData();
 		super.setVisible(visible);
 	}
 	
-	private String getID() {
+	private String computeId() {
 		String fullName = fProjectProvider.getProjectName();
 		StringBuffer buffer = new StringBuffer();
 		for (int i = 0; i < fullName.length(); i++) {
@@ -372,21 +377,25 @@ public class ContentPage extends WizardPage {
 		fClassText.setText(buffer.toString());
 	}
 
-	public void finish(AbstractFieldData data) {
-		data.setId(fIdText.getText().trim());
-		data.setVersion(fVersionText.getText().trim());
-		data.setName(fNameText.getText().trim());
-		data.setProvider(fProviderText.getText().trim());
-		data.setIsLegacy(fLegacyButton.getSelection());
+	public void updateData() {
+		fData.setId(fIdText.getText().trim());
+		fData.setVersion(fVersionText.getText().trim());
+		fData.setName(fNameText.getText().trim());
+		fData.setProvider(fProviderText.getText().trim());
+		fData.setIsLegacy(fLegacyButton.getSelection());
 		if (fIsFragment) {
-			((FragmentFieldData)data).setPluginId(fPluginIdText.getText().trim());
-			((FragmentFieldData)data).setPluginVersion(fPluginVersion.getText().trim());
-			((FragmentFieldData)data).setMatch(fMatchCombo.getSelectionIndex());
+			((FragmentFieldData)fData).setPluginId(fPluginIdText.getText().trim());
+			((FragmentFieldData)fData).setPluginVersion(fPluginVersion.getText().trim());
+			((FragmentFieldData)fData).setMatch(fMatchCombo.getSelectionIndex());
 		} else {
-			((PluginFieldData)data).setClassname(fClassText.getText().trim());
-			((PluginFieldData)data).setIsUIPlugin(fUIPlugin.getSelection());
-			((PluginFieldData)data).setDoGenerateClass(fGenerateClass.getSelection());
+			((PluginFieldData)fData).setClassname(fClassText.getText().trim());
+			((PluginFieldData)fData).setIsUIPlugin(fUIPlugin.getSelection());
+			((PluginFieldData)fData).setDoGenerateClass(fGenerateClass.getSelection());
 		}
+	}
+	
+	public IFieldData getData() {
+		return fData;
 	}
 	
 	public String getId() {

@@ -13,6 +13,7 @@ package org.eclipse.pde.ui.templates;
 import java.util.ArrayList;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.wizard.*;
+import org.eclipse.pde.ui.IFieldData;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -77,7 +78,7 @@ public class OptionTemplateWizardPage extends WizardPage {
 			IWizard wizard = getWizard();
 			if (wizard instanceof AbstractNewPluginTemplateWizard) {
 				AbstractNewPluginTemplateWizard templateWizard = (AbstractNewPluginTemplateWizard)wizard;
-				section.initializeFields(templateWizard.getData());
+				section.initializeFields((IFieldData)templateWizard.getData());
 			}
 		}
 		super.setVisible(visible);

@@ -11,15 +11,11 @@
 package org.eclipse.pde.ui.templates;
 
 import java.io.*;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.wizard.*;
+import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.core.plugin.IPluginReference;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.ui.*;
 
@@ -31,7 +27,7 @@ public abstract class AbstractNewPluginTemplateWizard
 	extends Wizard implements IPluginContentWizard {
 	private static final String KEY_WTITLE = "PluginCodeGeneratorWizard.title";
 	private boolean fragment;
-	private IPluginFieldData data;
+	private IFieldData data;
 
 	/**
 	 * Creates a new template wizard.
@@ -46,7 +42,7 @@ public abstract class AbstractNewPluginTemplateWizard
 /**
  * TODO add javadoc.
  */
-	public void init(IPluginFieldData data) {
+	public void init(IFieldData data) {
 		this.data = data;
 		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
 	}
@@ -56,7 +52,7 @@ public abstract class AbstractNewPluginTemplateWizard
 	 * the initialization.
 	 * @return the parent wizard field data
 	 */
-	public IPluginFieldData getData() {
+	public IFieldData getData() {
 		return data;
 	}
 

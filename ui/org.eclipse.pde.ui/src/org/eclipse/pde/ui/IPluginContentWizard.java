@@ -46,7 +46,7 @@ public interface IPluginContentWizard extends IBasePluginWizard {
 	 * @param data all the information collected in the parent
 	 * wizard that can be used in configuring the generated content
 	 */	
-	void init(IPluginFieldData data);
+	void init(IFieldData data);
 	/**
 	 * Returns new dependencies that are required by this wizard.
 	 * If the wizard adds extensions or code to the plug-in that

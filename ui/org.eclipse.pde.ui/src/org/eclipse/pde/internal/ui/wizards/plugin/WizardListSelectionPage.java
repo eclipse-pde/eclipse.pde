@@ -163,7 +163,7 @@ public class WizardListSelectionPage extends BaseWizardSelectionPage
 			public IBasePluginWizard createWizard() throws CoreException {
 				IPluginContentWizard wizard =
 					(IPluginContentWizard) wizardElement.createExecutableExtension();
-				//wizard.init(fContentPage.getId());
+				wizard.init(fContentPage.getData());
 				return wizard;
 			}
 		};
@@ -172,9 +172,6 @@ public class WizardListSelectionPage extends BaseWizardSelectionPage
 	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
 	 */
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
-	}
-	
-	public void finish(PluginFieldData data) {
 	}
 	
 	public IPluginContentWizard getSelectedWizard() {

@@ -57,8 +57,8 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 			}
 		};
 		
-		fStructurePage = new ProjectStructurePage("page1", fProjectProvider, false);
-		fContentPage = new ContentPage("page2", fProjectProvider, fStructurePage, false);
+		fStructurePage = new ProjectStructurePage("page1", fProjectProvider, fPluginData, false);
+		fContentPage = new ContentPage("page2", fProjectProvider, fStructurePage, fPluginData, false);
 		fWizardListPage = new WizardListSelectionPage(getAvailableCodegenWizards(), fContentPage, PDEPlugin.getResourceString("WizardListSelectionPage.templates"));
 		addPage(fStructurePage);
 		addPage(fContentPage);
@@ -71,10 +71,9 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 	 * @see org.eclipse.pde.internal.ui.wizards.NewWizard#performFinish()
 	 */
 	public boolean performFinish() {
-		fStructurePage.finish(fPluginData);
-		fContentPage.finish(fPluginData);
-		fWizardListPage.finish(fPluginData);
 		try {
+			fStructurePage.updateData();
+			fContentPage.updateData();
 			BasicNewProjectResourceWizard.updatePerspective(fConfig);
 			IPluginContentWizard contentWizard = fWizardListPage.getSelectedWizard();
 			if (contentWizard!=null)

@@ -56,8 +56,8 @@ public class NewFragmentProjectWizard extends NewWizard implements IExecutableEx
 			}
 		};
 		
-		fStructurePage = new ProjectStructurePage("page1", fProjectProvider, true);
-		fContentPage = new ContentPage("page2", fProjectProvider, fStructurePage, true);
+		fStructurePage = new ProjectStructurePage("page1", fProjectProvider, fFragmentData, true);
+		fContentPage = new ContentPage("page2", fProjectProvider, fStructurePage, fFragmentData, true);
 		addPage(fStructurePage);
 		addPage(fContentPage);
 	}
@@ -68,8 +68,6 @@ public class NewFragmentProjectWizard extends NewWizard implements IExecutableEx
 	 * @see org.eclipse.pde.internal.ui.wizards.NewWizard#performFinish()
 	 */
 	public boolean performFinish() {
-		fStructurePage.finish(fFragmentData);
-		fContentPage.finish(fFragmentData);
 		try {
 			BasicNewProjectResourceWizard.updatePerspective(fConfig);
 			getContainer().run(false, true,

@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.ui.IFieldData;
 import org.eclipse.pde.ui.templates.*;
 
 public class PropertyPageTemplate extends PDETemplateSection {
@@ -91,9 +92,10 @@ public class PropertyPageTemplate extends PDETemplateSection {
 	}
 	
 
-	protected void initializeFields(String id) {
+	protected void initializeFields(IFieldData data) {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
+		String id = data.getId();
 		initializeOption(KEY_PACKAGE_NAME, id + ".properties");
 	}
 
