@@ -175,7 +175,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		AssembleScriptGenerator assembler = new AssembleScriptGenerator(workingDirectory, assemblageInformation, featureInfo[0]);
 		assembler.setSignJars(signJars);
 		assembler.setGenerateJnlp(generateJnlp);
-		AbstractScriptGenerator.setOutputFormat(outputFormat);
+		setOutputFormat(outputFormat); //TODO Need to change that
 		assembler.generate();
 	}
 

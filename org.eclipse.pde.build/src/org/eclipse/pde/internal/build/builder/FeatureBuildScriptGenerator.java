@@ -612,7 +612,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		if (generateJnlp)
 			script.println("<eclipse.jnlpGenerator feature=\"" + jar + "\"  codebase=\"" + getPropertyFormat("jnlp.codebase") + "\" j2se=\"" + getPropertyFormat("jnlp.j2se") + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ 
 		if (signJars)
-			script.println("<signjar jar=\"" + jar + "\" alias=\"" + getPropertyFormat("sign.alias") + "\" keystore=\"" + getPropertyFormat("sign.keystore") + "\" storepass=\"" + getPropertyFormat("sign.storepass") + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ 
+			script.println("<signjar jar=\"" + jar + "\" alias=\"" + getPropertyFormat("sign.alias") + "\" keystore=\"" + getPropertyFormat("sign.keystore") + "\" storepass=\"" + getPropertyFormat("sign.storepass") + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ 
 		script.printTargetEnd();
 	}
 
@@ -672,7 +672,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			BundleDescription current = (BundleDescription) iter.next();
 			//If it is not a compiled element, then we don't generate a call
 			Properties bundleProperties = (Properties) current.getUserObject();
-			if (bundleProperties == null || bundleProperties.get(IS_COMPILED) == Boolean.FALSE)	//TODO Need to check what is going on when packaging
+			if (bundleProperties == null || bundleProperties.get(IS_COMPILED) == Boolean.FALSE)
 				continue;
 			// Get the os / ws / arch to pass as a parameter to the plugin
 			if (writtenCalls.contains(current))

@@ -52,13 +52,13 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 	protected void basicGenerateAssembleConfigFileTargetCall(Config aConfig, Collection binaryPlugins, Collection binaryFeatures, Collection allFeatures, Collection rootFiles) throws CoreException {
 		configScriptGenerator.initialize(directory, featureId, aConfig, binaryPlugins, binaryFeatures, allFeatures, rootFiles); 
 		((PackageConfigScriptGenerator) configScriptGenerator).setPackagingPropertiesLocation(packagingPropertiesLocation);
-		AbstractScriptGenerator.setOutputFormat(outputFormat);
-		AbstractScriptGenerator.setForceUpdateJar(forceUpdateJarFormat);
-		AbstractScriptGenerator.setBrandExecutable(false);
+		setOutputFormat(outputFormat);
+		setForceUpdateJar(forceUpdateJarFormat);
+		setBrandExecutable(false);
 		configScriptGenerator.generate();
 
 		Map params = new HashMap(1);
-		params.put("assembleScriptName", configScriptGenerator.getTargetName() + ".xml"); //$NON-NLS-1$
+		params.put("assembleScriptName", configScriptGenerator.getTargetName() + ".xml");
 		script.printAntTask(getPropertyFormat(DEFAULT_CUSTOM_TARGETS), null, computeBackwardCompatibleName(aConfig), null, null, params);
 	}
 	

@@ -132,7 +132,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		FileSet[] rootFiles = new FileSet[1];
 		rootFiles[0] = new FileSet(getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER), null, "**/**", null, null, null, null); //$NON-NLS-1$//$NON-NLS-2$	
 		script.printMoveTask(getPropertyFormat(PROPERTY_ECLIPSE_BASE), rootFiles,false);
-		script.printDeleteTask(getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING), null, null);
+		script.printDeleteTask(getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING), null, null); //$NON-NLS-1$
 	}
 	
 	protected void generateGatherSourceCalls() {
@@ -173,7 +173,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		script.printZipTask(fileName + ".jar", fileName, false, false, null); //$NON-NLS-1$
 		script.printDeleteTask(fileName, null, null);
 		if (signJars)
-			script.println("<signjar jar=\"" + fileName + ".jar" + "\" alias=\"" + getPropertyFormat("sign.alias") + "\" keystore=\"" + getPropertyFormat("sign.keystore") + "\" storepass=\"" + getPropertyFormat("sign.storepass") + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ 
+			script.println("<signjar jar=\"" + fileName + ".jar" + "\" alias=\"" + getPropertyFormat("sign.alias") + "\" keystore=\"" + getPropertyFormat("sign.keystore") + "\" storepass=\"" + getPropertyFormat("sign.storepass") + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ 
 
 		script.printTargetEnd();
 		script.printComment("End of the jarUp task"); //$NON-NLS-1$
