@@ -1,19 +1,8 @@
 package org.eclipse.pde.internal.ui.view;
 
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
-import java.io.*;
-import org.eclipse.ui.*;
-import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.core.*;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.internal.core.index.IEntryResult;
-import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.Image;
 
 public class DependenciesLabelProvider extends LabelProvider {
 	private PDELabelProvider sharedProvider;
