@@ -142,7 +142,7 @@ public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {
 			String elementName = child.getNodeName();
 			if ("export".equals(elementName)) { //$NON-NLS-1$
 				assertAttributeDefined(child, "name", CompilerFlags.ERROR); //$NON-NLS-1$
-			} else if ("packages".equals(elementName)) {
+			} else if ("packages".equals(elementName)) { //$NON-NLS-1$
 				if (deprecatedSev != CompilerFlags.IGNORE) {
 					reportDeprecatedElement(child, deprecatedSev);
 				}
@@ -168,7 +168,7 @@ public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {
 	}
 	
 	private void reportDeprecatedElement(Element element, int severity) {
-		report(PDE.getFormattedMessage("Builders.Manifest.deprecated-3.0",
+		report(PDE.getFormattedMessage("Builders.Manifest.deprecated-3.0", //$NON-NLS-1$
 				element.getNodeName()), getLine(element), severity);
 	}
 
