@@ -42,7 +42,7 @@ import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.core.plugin.*;
 
 public class JavaAttributeWizardPage extends WizardPage {
-	
+	private static final String DEFAULT = "<default>";
 	private static final String ADD_TODO = "JavaAttributeWizard.AddToDo";
 	private static final String OPEN_FILE = "JavaAttributeWizard.openFile";
 	private static final int MAX_WIDTH = 250;
@@ -352,7 +352,10 @@ public class JavaAttributeWizardPage extends WizardPage {
 		if (searchButton.getSelection()) {
 			className = searchText.getText();
 		} else {
-			className = packageText.getText() + "." + classText.getText();
+			if (packageText.getText().equals(DEFAULT))
+				className = classText.getText();
+			else
+				className = packageText.getText() + "." + classText.getText();
 			return generateClass();
 		}
 		return true;
@@ -532,19 +535,23 @@ public class JavaAttributeWizardPage extends WizardPage {
 			int status = dialog.open();
 			if (status == SelectionDialog.OK) {
 				Object[] result = dialog.getResult();
-				IPackageFragment packageFragment = (IPackageFragment) result[0];
-				sourceFolder = (IPackageFragmentRoot) packageFragment.getParent();
-				if (sourceFolder != null) {
-					containerText.setText(
-						sourceFolder
-							.getPath()
-							.removeFirstSegments(1)
-							.addTrailingSeparator()
-							.toString());
+				if (result[0].toString().startsWith(DEFAULT)){
+					packageText.setText(DEFAULT);
 				} else {
-					containerText.setText("");
+					IPackageFragment packageFragment = (IPackageFragment) result[0];
+					sourceFolder = (IPackageFragmentRoot) packageFragment.getParent();
+					if (sourceFolder != null) {
+						containerText.setText(
+							sourceFolder
+								.getPath()
+								.removeFirstSegments(1)
+								.addTrailingSeparator()
+								.toString());
+					} else {
+						containerText.setText("");
+					}
+					packageText.setText(packageFragment.getElementName());
 				}
-				packageText.setText(packageFragment.getElementName());
 				packageBrowse.setFocus();
 			}
 		} catch (JavaModelException e) {
@@ -597,10 +604,11 @@ public class JavaAttributeWizardPage extends WizardPage {
 			status = JavaConventions.validateJavaTypeName(searchText.getText());
 			setPageComplete(status.getSeverity() != IStatus.ERROR);
 		} else {
-			status = JavaConventions.validatePackageName(packageText.getText());
+			if (!(packageText.getText().equals(DEFAULT)))
+				status = JavaConventions.validatePackageName(packageText.getText());
 			IStatus second = JavaConventions.validateJavaTypeName(classText.getText());
 
-			if (second.getSeverity() > status.getSeverity())
+			if (status == null || second.getSeverity() > status.getSeverity())
 				status = second;
 
 			setPageComplete(

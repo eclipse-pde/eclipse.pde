@@ -10,16 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.codegen;
 
-import org.eclipse.core.resources.*;
 import java.io.*;
-import org.eclipse.core.runtime.*;
 import java.util.*;
-import org.eclipse.pde.internal.core.ischema.*;
-import org.eclipse.jdt.core.*;
 
-import java.io.PrintWriter;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.internal.ui.*;
 
 public class AttributeClassCodeGenerator extends JavaCodeGenerator {
 	private static final String KEY_MISSING_TITLE =
@@ -255,8 +254,10 @@ public class AttributeClassCodeGenerator extends JavaCodeGenerator {
 			if (expectedInterface != null)
 				requiredImports.add(expectedInterface.getFullyQualifiedName());
 
-			writer.println("package " + packageName + ";");
-			writer.println();
+			if (!(packageName.equals(""))){
+				writer.println("package " + packageName + ";");
+				writer.println();
+			}
 			addImports(writer);
 			writer.println("/**");
 			if (addToDo)
@@ -295,8 +296,10 @@ public class AttributeClassCodeGenerator extends JavaCodeGenerator {
 		String packageName,
 		String className,
 		PrintWriter writer) {
-		writer.println("package " + packageName + ";");
-		writer.println();
+		if (!(packageName.equals(""))){
+			writer.println("package " + packageName + ";");
+			writer.println();
+		}
 		writer.println("/**");
 		if (addToDo)
 			writer.println(
