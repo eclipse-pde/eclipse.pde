@@ -80,7 +80,7 @@ public class LauncherSection extends PDESection {
 		client.setLayout(layout);
 		
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
-		fNameEntry = new FormEntry(client, toolkit, "Launcher Name:", null, false);
+		fNameEntry = new FormEntry(client, toolkit, PDEPlugin.getResourceString("LauncherSection.launcherName"), null, false); //$NON-NLS-1$
 		fNameEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
 				getLauncherInfo().setLauncherName(entry.getValue());
@@ -89,8 +89,8 @@ public class LauncherSection extends PDESection {
 		fNameEntry.setEditable(isEditable());
 		
 		createLabel(client, toolkit, "", 2);	 //$NON-NLS-1$
-		createLabel(client, toolkit, "Specify the product's root directory.  If unspecifed, the default is 'eclipse'.", 2); //$NON-NLS-1$
-		fDirEntry = new FormEntry(client, toolkit, "Root Directory:", null, false); //$NON-NLS-1$
+		createLabel(client, toolkit, PDEPlugin.getResourceString("LauncherSection.rootLabel"), 2);  //$NON-NLS-1$
+		fDirEntry = new FormEntry(client, toolkit, PDEPlugin.getResourceString("LauncherSection.root"), null, false); //$NON-NLS-1$
 		fDirEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
 				getLauncherInfo().setRootDirectory(entry.getValue());

@@ -116,7 +116,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		String href = (String) e.getHref();
 		if (href.equals("action.debug")) { //$NON-NLS-1$
 			new LaunchAction(getProduct(), getFilePath(), ILaunchManager.DEBUG_MODE).run();
-		} else if (href.equals("action.run")) {
+		} else if (href.equals("action.run")) { //$NON-NLS-1$
 			new LaunchAction(getProduct(), getFilePath(), ILaunchManager.RUN_MODE).run();
 		} else if (href.equals("action.synchronize")) { //$NON-NLS-1$
 			handleSynchronize();
@@ -138,7 +138,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 			IProgressService service = PlatformUI.getWorkbench().getProgressService();
 			SynchronizationOperation op = new SynchronizationOperation(getProduct(), getSite().getShell());
 			service.runInUI(service, op, PDEPlugin.getWorkspace().getRoot());
-			MessageDialog.openInformation(getSite().getShell(), "Synchronize", "The product's defining plug-in has been synchronized successfully.");
+			MessageDialog.openInformation(getSite().getShell(), PDEPlugin.getResourceString("OverviewPage.sync"), PDEPlugin.getResourceString("OverviewPage.successfulSync")); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (InterruptedException e) {
 		} catch (InvocationTargetException e) {		
 			MessageDialog.openError(getSite().getShell(), "Synchronize", e.getTargetException().getMessage()); //$NON-NLS-1$

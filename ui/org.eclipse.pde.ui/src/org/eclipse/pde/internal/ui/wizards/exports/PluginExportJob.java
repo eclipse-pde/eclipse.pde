@@ -91,8 +91,8 @@ public class PluginExportJob extends FeatureExportJob {
 		if (!file.exists() || !file.isDirectory())
 			file.mkdirs();
 		Properties prop = new Properties();
-		prop.put("pde", "marker");
-		save(new File(file, "build.properties"),prop, "Marker File"); 
+		prop.put("pde", "marker"); //$NON-NLS-1$ //$NON-NLS-2$
+		save(new File(file, "build.properties"),prop, "Marker File");  //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	private void save(File file, Properties properties, String header) {

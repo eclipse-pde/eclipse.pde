@@ -9,6 +9,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.iproduct.*;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.widgets.*;
 
 
@@ -33,12 +34,12 @@ public class SynchronizationOperation extends ProductDefinitionOperation {
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(fPluginId);
 		if (model == null) {
-			String message = "The product's defining plug-in could not be found.";
+			String message = PDEPlugin.getResourceString("SynchronizationOperation.noDefiningPlugin"); //$NON-NLS-1$
 			throw new InvocationTargetException(createCoreException(message));
 		}
 		
 		if (model.getUnderlyingResource() == null) {
-			String message = "The product's defining plug-in is not in the workspace and it cannot me modified.  Please import it into your workspace and retry.";
+			String message = PDEPlugin.getResourceString("SynchronizationOperation.externalPlugin"); //$NON-NLS-1$
 			throw new InvocationTargetException(createCoreException(message));
 		}
 		
@@ -46,7 +47,7 @@ public class SynchronizationOperation extends ProductDefinitionOperation {
 	}
 	
 	private CoreException createCoreException(String message) {
-		IStatus status = new Status(IStatus.ERROR, "org.eclipse.pde.ui", IStatus.ERROR, message, null);
+		IStatus status = new Status(IStatus.ERROR, "org.eclipse.pde.ui", IStatus.ERROR, message, null); //$NON-NLS-1$
 		return new CoreException(status);
 	}
 

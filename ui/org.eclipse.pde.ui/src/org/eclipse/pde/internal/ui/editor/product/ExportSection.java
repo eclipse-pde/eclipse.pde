@@ -172,7 +172,7 @@ public class ExportSection extends PDESection implements IHyperlinkListener{
 			IProgressService service = PlatformUI.getWorkbench().getProgressService();
 			SynchronizationOperation op = new SynchronizationOperation(getProduct(), getPage().getSite().getShell());
 			service.runInUI(service, op, PDEPlugin.getWorkspace().getRoot());
-			MessageDialog.openInformation(getPage().getSite().getShell(), "Synchronize", "The product's defining plug-in has been synchronized successfully.");
+			MessageDialog.openInformation(getPage().getSite().getShell(), PDEPlugin.getResourceString("ExportSection.sync"), PDEPlugin.getResourceString("ExportSection.successfulSync")); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (InterruptedException e) {
 		} catch (InvocationTargetException e) {		
 			MessageDialog.openError(getPage().getSite().getShell(), "Synchronize", e.getTargetException().getMessage()); //$NON-NLS-1$

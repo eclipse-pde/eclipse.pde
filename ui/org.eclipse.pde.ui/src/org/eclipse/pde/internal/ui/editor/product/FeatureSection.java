@@ -184,7 +184,7 @@ public class FeatureSection extends TableSection {
 					if (resource != null) 
 						input = new FileEditorInput((IFile)resource);
 					else
-						input = new SystemFileEditorInput(new File(model.getInstallLocation(), "feature.xml"));			
+						input = new SystemFileEditorInput(new File(model.getInstallLocation(), "feature.xml"));			 //$NON-NLS-1$
 					IDE.openEditor(PDEPlugin.getActivePage(), input, PDEPlugin.FEATURE_EDITOR_ID, true);
 				} catch (PartInitException e) {
 				}

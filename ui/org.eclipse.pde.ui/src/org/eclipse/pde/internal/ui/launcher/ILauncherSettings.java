@@ -53,6 +53,6 @@ public interface ILauncherSettings {
 	String CONFIG_TEMPLATE_LOCATION = "templateConfig";	 //$NON-NLS-1$
 	
 	// .product-specific marker
-	String PRODUCT_FILE = "productFile";
+	String PRODUCT_FILE = "productFile"; //$NON-NLS-1$
 			
 }

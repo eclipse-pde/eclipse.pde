@@ -181,7 +181,7 @@ public class ProductDefinitionOperation implements IRunnableWithProgress {
 				String id = model.getPluginBase().getId();
 				if (fPluginId.equals(id))
 					return path.removeFirstSegments(1).toString();
-				return "platform:/base/plugins/" + id + "/" + path.removeFirstSegments(1);
+				return "platform:/base/plugins/" + id + "/" + path.removeFirstSegments(1); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		return location;
@@ -299,7 +299,7 @@ public class ProductDefinitionOperation implements IRunnableWithProgress {
 		
 		if (child == null) {
 			child = element.getModel().getFactory().createElement(element);
-			child.setName("property");
+			child.setName("property"); //$NON-NLS-1$
 			element.add(child);
 		}
 		child.setAttribute("value", value); //$NON-NLS-1$

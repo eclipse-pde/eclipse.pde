@@ -923,6 +923,14 @@
       </launchConfigurationType>
       <launchConfigurationType
             sourceLocatorId="org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector"
+            name="%launcher.swt.name"
+            sourcePathComputerId="org.eclipse.pde.ui.swtSourcePathComputer"
+            delegate="org.eclipse.pde.internal.ui.launcher.SWTLaunchConfiguration"
+            modes="run, debug"
+            id="org.eclipse.pde.ui.swtLaunchConfig">
+      </launchConfigurationType>
+      <launchConfigurationType
+            sourceLocatorId="org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector"
             name="%launcher.junit.name"
             sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer"
             delegate="org.eclipse.pde.internal.ui.launcher.JUnitLaunchConfiguration"
@@ -946,6 +954,11 @@
             id="org.eclipse.pde.ui.runtimeWorkbenchLaunchImage">
       </launchConfigurationTypeImage>
       <launchConfigurationTypeImage
+            icon="icons/etool16/eclipse_launcher.gif"
+            configTypeID="org.eclipse.pde.ui.swtLaunchConfig"
+            id="org.eclipse.pde.ui.swtLaunchImage">
+      </launchConfigurationTypeImage>
+      <launchConfigurationTypeImage
             icon="icons/obj16/julaunchpgn.gif"
             configTypeID="org.eclipse.pde.ui.JunitLaunchConfig"
             id="org.eclipse.pde.ui.JunitLaunchImage">
@@ -964,6 +977,20 @@
          </launchMode>
          <launchMode
                description="%workbenchLauncherTabGroup.description.run"
+               mode="run">
+         </launchMode>
+      </launchConfigurationTabGroup>
+      <launchConfigurationTabGroup
+            type="org.eclipse.pde.ui.swtLaunchConfig"
+            class="org.eclipse.pde.internal.ui.launcher.SWTLauncherTabGroup"
+            id="org.eclipse.pde.ui.launcher.swtLauncherTabGroup">
+         <launchMode
+               description="%swtLauncherTabGroup.description.debug"
+               perspective="org.eclipse.debug.ui.DebugPerspective"
+               mode="debug">
+         </launchMode>
+         <launchMode
+               description="%swtLauncherTabGroup.description.run"
                mode="run">
          </launchMode>
       </launchConfigurationTabGroup>
@@ -1254,6 +1281,12 @@
             class="org.eclipse.pde.internal.ui.launcher.WorkbenchSourcePathProvider"
             id="org.eclipse.pde.ui.workbenchClasspathProvider">
       </classpathProvider>
+   </extension>
+   <extension point="org.eclipse.debug.core.sourcePathComputers">
+   		<sourcePathComputer
+   			id="org.eclipse.pde.ui.swtSourcePathComputer"
+   			class="org.eclipse.pde.internal.ui.launcher.SWTSourcePathComputer">
+   		</sourcePathComputer>
    </extension>
    <extension
          point="org.eclipse.ui.intro.configExtension">

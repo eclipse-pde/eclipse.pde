@@ -144,7 +144,7 @@ public class LaunchAction extends Action {
 	
 	private String getTemplateConfigIni() {
 		IConfigurationFileInfo info = fProduct.getConfigurationFileInfo();
-		if (info != null  && info.getUse().equals("custom")) {
+		if (info != null  && info.getUse().equals("custom")) { //$NON-NLS-1$
 			String path = getExpandedPath(info.getPath());
 			if (path != null) {
 				File file = new File(path);
@@ -216,7 +216,7 @@ public class LaunchAction extends Action {
 		ILaunchConfiguration[] configs = manager.getLaunchConfigurations(type);
 		for (int i = 0; i < configs.length; i++) {
 			if (!DebugUITools.isPrivate(configs[i])) {
-				String path = configs[i].getAttribute(ILauncherSettings.PRODUCT_FILE, "");
+				String path = configs[i].getAttribute(ILauncherSettings.PRODUCT_FILE, ""); //$NON-NLS-1$
 				if (new Path(fPath).equals(new Path(path))) {
 					result.add(configs[i]);
 				}
