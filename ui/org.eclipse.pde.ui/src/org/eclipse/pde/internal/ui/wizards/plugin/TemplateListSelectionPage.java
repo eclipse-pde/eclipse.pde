@@ -33,7 +33,7 @@ public class TemplateListSelectionPage extends WizardListSelectionPage
 	class WizardFilter extends ViewerFilter {
 		public boolean select(Viewer viewer, Object parentElement,
 				Object element) {
-			IPluginFieldData data = (IPluginFieldData) fContentPage.getData();
+			PluginFieldData data = (PluginFieldData) fContentPage.getData();
 			boolean simple = data.isSimple();
 			boolean generate = false;
 			boolean ui = false;
@@ -131,7 +131,7 @@ public class TemplateListSelectionPage extends WizardListSelectionPage
 	}
 	
 	public boolean isPageComplete() {
-		IPluginFieldData data = (IPluginFieldData)fContentPage.getData();
+		PluginFieldData data = (PluginFieldData)fContentPage.getData();
 		boolean rcp = data.isRCPApplicationPlugin();
 		
 		return !rcp || (fUseTemplate.getSelection() && rcp && getSelectedNode() != null);

@@ -24,7 +24,6 @@ import org.eclipse.pde.internal.core.build.*;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.pde.internal.ui.wizards.templates.PluginReference;
 import org.eclipse.pde.ui.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
@@ -162,8 +161,6 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
             IPluginFieldData data = (IPluginFieldData) fData;
             if (data.doGenerateClass())
                 numUnits++;
-            if (data.isRCPApplicationPlugin())
-            	numUnits++;
             if (fContentWizard != null)
                 numUnits++;
         }
@@ -299,15 +296,6 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
             for (int i = 0; i < refs.length; i++) {
                 result.add(refs[i]);
             }
-        }
-        
-        if (fData instanceof IPluginFieldData && ((IPluginFieldData)fData).isRCPApplicationPlugin()) {
-        	IPluginReference ref = new PluginReference("org.eclipse.core.runtime", null, 0); //$NON-NLS-1$
-        	if (!result.contains(ref))
-        		result.add(ref);
-        	ref = new PluginReference("org.eclipse.ui", null, 0); //$NON-NLS-1$
-        	if (!result.contains(ref))
-        		result.add(ref);
         }
         
         if (fContentWizard != null) {
