@@ -32,7 +32,7 @@ public class FileAdapter extends PlatformObject {
 
 	public boolean isManifest() {
 		String fileName = file.getName();
-		return (fileName.equals("plugin.xml") || fileName.equals("fragment.xml")); //$NON-NLS-1$ //$NON-NLS-2$
+		return (fileName.equals("plugin.xml") || fileName.equals("fragment.xml") || fileName.equalsIgnoreCase("manifest.mf")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	public boolean isSchema() {
 		String fileName = file.getName().toLowerCase();

@@ -437,7 +437,8 @@ public class PluginsView extends ViewPart {
 			PlatformUI.getWorkbench().getEditorRegistry().getImageDescriptor(
 				fileName);
 		if (lcFileName.equals("plugin.xml") //$NON-NLS-1$
-		|| lcFileName.equals("fragment.xml")) { //$NON-NLS-1$
+		|| lcFileName.equals("fragment.xml") //$NON-NLS-1$
+		|| lcFileName.equals("manifest.mf")) { //$NON-NLS-1$
 			openManifestAction.setImageDescriptor(desc);
 			manager.add(openManifestAction);
 			manager.add(new Separator());
