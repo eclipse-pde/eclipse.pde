@@ -1106,5 +1106,41 @@
             id="org.eclipse.pde.ui.sorter1">
       </sorter>
    </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.pde.ui.PDEPerspective">
+         <viewShortcut
+               id="org.eclipse.jdt.ui.PackagesView">
+         </viewShortcut>
+         <viewShortcut
+               id="org.eclipse.jdt.ui.TypeHierarchy">
+         </viewShortcut>
+         <viewShortcut
+               id="org.eclipse.pde.ui.PluginsView">
+         </viewShortcut>
+         <viewShortcut
+               id="org.eclipse.pde.ui.DependenciesView">
+         </viewShortcut>
+         <viewShortcut
+               id="org.eclipse.pde.runtime.LogView">
+         </viewShortcut>
+         <viewShortcut
+               id="org.eclipse.pde.runtime.RegistryBrowser">
+         </viewShortcut>
+         <viewShortcut
+               id="org.eclipse.ui.views.ResourceNavigator">
+         </viewShortcut>
+         <viewShortcut
+               id="org.eclipse.ui.views.ContentOutline">
+         </viewShortcut>
+         <viewShortcut
+               id="org.eclipse.ui.views.PropertySheet">
+         </viewShortcut>
+         <viewShortcut
+               id="org.eclipse.ui.views.TaskLists">
+         </viewShortcut>
+      </perspectiveExtension>
+   </extension>
 
 </plugin>
