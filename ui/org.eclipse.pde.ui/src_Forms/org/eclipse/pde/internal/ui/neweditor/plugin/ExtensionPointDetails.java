@@ -12,6 +12,7 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.neweditor.*;
 import org.eclipse.pde.internal.ui.neweditor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.newparts.FormEntry;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.*;
@@ -50,6 +51,9 @@ public class ExtensionPointDetails extends AbstractFormPart implements IDetailsP
 	public PDEFormPage getPage() {
 		return (PDEFormPage)managedForm.getContainer();
 	}
+	public boolean isEditable() {
+		return getPage().getPDEEditor().getAggregateModel().isEditable();
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -76,8 +80,10 @@ public class ExtensionPointDetails extends AbstractFormPart implements IDetailsP
 		toolkit.createCompositeSeparator(section);
 		Composite client = toolkit.createComposite(section);
 		GridLayout glayout = new GridLayout();
-		glayout.marginWidth = glayout.marginHeight = 0;
+		boolean paintedBorder = toolkit.getBorderStyle()!=SWT.BORDER;
+		glayout.marginWidth = glayout.marginHeight = paintedBorder?2:0;
 		glayout.numColumns = 2;
+		if (paintedBorder) glayout.verticalSpacing = 7;
 		client.setLayout(glayout);
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
@@ -134,7 +140,11 @@ public class ExtensionPointDetails extends AbstractFormPart implements IDetailsP
 				System.out.println("Link active: " + e.getHref());
 			}
 		});
-		toolkit.paintBordersFor(section);
+		
+		id.setEditable(isEditable());
+		name.setEditable(isEditable());
+		schema.setEditable(isEditable());
+		toolkit.paintBordersFor(client);
 		section.setClient(client);
 	}
 	private void createSpacer(FormToolkit toolkit, Composite parent, int span) {

@@ -47,4 +47,7 @@ public abstract class PDESection extends SectionPart implements IModelChangedLis
 		if (getContextId()!=null)
 			getPage().getPDEEditor().fireSaveNeeded(getContextId(), false);
 	}
+	public boolean isEditable() {
+		return getPage().getPDEEditor().getAggregateModel().isEditable();
+	}
 }

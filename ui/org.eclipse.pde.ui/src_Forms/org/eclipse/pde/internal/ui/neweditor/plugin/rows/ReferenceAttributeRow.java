@@ -50,6 +50,7 @@ public abstract class ReferenceAttributeRow extends TextAttributeRow {
 				browse();
 			}
 		});
+		button.setEnabled(part.isEditable());
 	}
 	protected GridData createGridData(int span) {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);

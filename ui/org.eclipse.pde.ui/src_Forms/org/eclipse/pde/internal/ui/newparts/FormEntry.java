@@ -80,6 +80,11 @@ public class FormEntry {
 		}
 		fillIntoGrid(parent);
 	}
+	public void setEditable(boolean editable) {
+		text.setEditable(editable);
+		if (browse!=null) 
+			browse.setEnabled(editable);
+	}
 	private void fillIntoGrid(Composite parent) {
 		Layout layout = parent.getLayout();
 		if (layout instanceof GridLayout) {

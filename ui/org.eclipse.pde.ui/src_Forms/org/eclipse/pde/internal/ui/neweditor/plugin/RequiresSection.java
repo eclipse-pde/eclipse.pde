@@ -10,22 +10,47 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.neweditor.plugin;
 
-import java.util.*;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Vector;
 
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.IModelChangedListener;
+import org.eclipse.pde.core.IModelProviderEvent;
+import org.eclipse.pde.core.IModelProviderListener;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.pde.core.plugin.IPluginModel;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.neweditor.TableSection;
 import org.eclipse.pde.internal.ui.newparts.TablePart;
-import org.eclipse.pde.internal.ui.wizards.*;
+import org.eclipse.pde.internal.ui.wizards.ListUtil;
+import org.eclipse.pde.internal.ui.wizards.PluginSelectionDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Section;
 
 public class RequiresSection
 	extends TableSection
@@ -59,29 +84,23 @@ public class RequiresSection
 		}
 		private void createImportObjects() {
 			imports = new Vector();
-			/*
-			IPluginModelBase model = (IPluginModelBase) getFormPage().getModel();
+			IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 			IPluginImport[] iimports = model.getPluginBase().getImports();
 			for (int i = 0; i < iimports.length; i++) {
 				IPluginImport iimport = iimports[i];
 				imports.add(new ImportObject(iimport));
 			}
-			*/
 		}
 	}
 
 	public RequiresSection(DependenciesPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION, new String[] { PDEPlugin.getResourceString(SECTION_NEW)});
 		getSection().setText(PDEPlugin.getResourceString(SECTION_TITLE));
-		/*
-		boolean fragment =
-			((ManifestEditor) getFormPage().getEditor()).isFragmentEditor();
+		boolean fragment = ((IPluginModelBase)getPage().getModel()).isFragmentModel();
 		if (fragment)
-			setDescription(PDEPlugin.getResourceString(SECTION_FDESC));
+			getSection().setDescription(PDEPlugin.getResourceString(SECTION_FDESC));
 		else
-			setDescription(PDEPlugin.getResourceString(SECTION_DESC));
-		*/
-		getSection().setDescription(PDEPlugin.getResourceString(SECTION_DESC));
+			getSection().setDescription(PDEPlugin.getResourceString(SECTION_DESC));
 		getTablePart().setEditable(false);
 	}
 
@@ -97,6 +116,7 @@ public class RequiresSection
 		toolkit.paintBordersFor(container);
 		makeActions();
 		section.setClient(container);
+		initialize();
 	}
 
 	protected void selectionChanged(IStructuredSelection sel) {
@@ -115,10 +135,8 @@ public class RequiresSection
 	}
 
 	public void dispose() {
-		/*
-		IPluginModelBase model = (IPluginModelBase) getFormPage().getModel();
+		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		model.removeModelChangedListener(this);
-		*/
 		PDECore.getDefault().getWorkspaceModelManager().removeModelProviderListener(
 			this);
 		PDECore.getDefault().getExternalModelManager().removeModelProviderListener(
@@ -153,19 +171,19 @@ public class RequiresSection
 	}
 
 	protected void fillContextMenu(IMenuManager manager) {
-		/*
 		ISelection selection = importTable.getSelection();
 		manager.add(newAction);
 		if (!selection.isEmpty()) {
 			manager.add(openAction);
 		}
 		manager.add(new Separator());
+		/*
 		
-		((DependenciesForm) getFormPage().getForm()).fillContextMenu(manager);
+		//((DependenciesForm) getFormPage().getForm()).fillContextMenu(manager);
 		
 		if (!selection.isEmpty())
 			manager.add(deleteAction);
-		getFormPage().getEditor().getContributor().contextMenuAboutToShow(
+		getPage().getEditor().getContributor().contextMenuAboutToShow(
 			manager);
 		manager.add(new Separator());
 		
@@ -179,12 +197,11 @@ public class RequiresSection
 	}
 
 	private void handleDelete() {
-		/*
 		IStructuredSelection ssel = (IStructuredSelection) importTable.getSelection();
 
 		if (ssel.isEmpty())
 			return;
-		IPluginModelBase model = (IPluginModelBase) getFormPage().getModel();
+		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		IPluginBase pluginBase = model.getPluginBase();
 
 		try {
@@ -195,12 +212,10 @@ public class RequiresSection
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
-		*/
 	}
 
 	private void handleNew() {
-		/*
-		IPluginModelBase model = (IPluginModelBase) getFormPage().getModel();
+		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		PluginSelectionDialog dialog =
 			new PluginSelectionDialog(
 				PDEPlugin.getActiveWorkbenchShell(),
@@ -219,7 +234,6 @@ public class RequiresSection
 				}
 			}
 		}
-		*/
 	}
 	
 	private IPluginModelBase[] getAvailablePlugins(IPluginModelBase model) {
@@ -253,10 +267,9 @@ public class RequiresSection
 		*/
 	}
 
-	public void initialize(Object input) {
-		IPluginModelBase model = (IPluginModelBase) input;
+	public void initialize() {
+		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		importTable.setInput(model.getPluginBase());
-		//setReadOnly(!model.isEditable());
 		getTablePart().setButtonEnabled(0, model.isEditable());
 		model.addModelChangedListener(this);
 		PDECore.getDefault().getWorkspaceModelManager().addModelProviderListener(
@@ -288,16 +301,14 @@ public class RequiresSection
 			}
 		};
 		deleteAction.setText(PDEPlugin.getResourceString(POPUP_DELETE));
-		/*
 		buildpathAction = new Action() {
 			public void run() {
-				Object model = getFormPage().getModel();
-				if (model instanceof IPluginModel)
-					computeBuildPath((IPluginModel)model, true);
+				Object model = getPage().getModel();
+				if (model instanceof IPluginModelBase)
+					computeBuildPath((IPluginModelBase)model, true);
 			}
 		};
 		buildpathAction.setText(PDEPlugin.getResourceString(KEY_COMPUTE_BUILD_PATH));
-		*/
 	}
 
 	public void modelChanged(IModelChangedEvent event) {
@@ -353,29 +364,28 @@ public class RequiresSection
 	}
 
 	public void commit(boolean onSave) {
-		/*
 		if (onSave) {
 			IResource resource =
-				((IPluginModelBase) getFormPage().getModel())
+				((IPluginModelBase) getPage().getModel())
 					.getUnderlyingResource();
 			if (resource != null) {
 				IProject project = resource.getProject();
 				if (WorkspaceModelManager.isJavaPluginProject(project)) {
+					/*
 					PDESourcePage sourcePage =
 						(PDESourcePage) getFormPage().getEditor().getPage(
 							ManifestEditor.SOURCE_PAGE);
 					if (!sourcePage.containsError())
 						updateBuildPath();
+						*/
 				}
 			}
 		}
-		setDirty(false);
-		*/
 		super.commit(onSave);
 	}
 
 	private void updateBuildPath() {
-		//computeBuildPath((IPluginModelBase) getFormPage().getModel(), false);
+		computeBuildPath((IPluginModelBase) getPage().getModel(), false);
 	}
 
 	Action getBuildpathAction() {
@@ -385,13 +395,12 @@ public class RequiresSection
 	private void computeBuildPath(
 		final IPluginModelBase model,
 		final boolean save) {
-		/*
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				monitor.beginTask(PDEPlugin.getResourceString(KEY_UPDATING_BUILD_PATH), 1);
 				try {
-					if (save && getFormPage().getEditor().isDirty()) {
-						getFormPage().getEditor().doSave(monitor);
+					if (save && getPage().getEditor().isDirty()) {
+						getPage().getEditor().doSave(monitor);
 					}
 					ClasspathUtilCore.setClasspath(model, monitor);
 					monitor.worked(1);
@@ -413,7 +422,6 @@ public class RequiresSection
 		} catch (InvocationTargetException e) {
 			PDEPlugin.logException(e.getTargetException());
 		}
-		*/
 	}
 
 	public void setFocus() {

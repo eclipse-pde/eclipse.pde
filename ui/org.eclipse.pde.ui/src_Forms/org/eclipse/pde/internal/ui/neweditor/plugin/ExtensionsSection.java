@@ -266,7 +266,7 @@ public class ExtensionsSection
 			delAction.setText(PDEPlugin.getResourceString(POPUP_DELETE));
 			manager.add(delAction);
 			manager.add(new Separator());
-			//delAction.setEnabled(!isReadOnly());
+			delAction.setEnabled(isEditable());
 		}
 		if (newMenu == null) {
 			newMenu = new MenuManager(PDEPlugin.getResourceString(POPUP_NEW));

@@ -10,22 +10,40 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.neweditor.plugin;
 import java.util.Iterator;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.core.IModelChangeProvider;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IMatchRules;
+import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.pde.core.plugin.IPluginReference;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.neweditor.*;
-import org.eclipse.pde.internal.ui.newparts.*;
+import org.eclipse.pde.internal.ui.neweditor.FormEntryAdapter;
+import org.eclipse.pde.internal.ui.neweditor.PDEFormPage;
+import org.eclipse.pde.internal.ui.neweditor.PDESection;
+import org.eclipse.pde.internal.ui.newparts.ComboPart;
+import org.eclipse.pde.internal.ui.newparts.FormEntry;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.forms.*;
-import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.RTFTransfer;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.dnd.TransferData;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.forms.IFormPart;
+import org.eclipse.ui.forms.IPartSelectionListener;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Section;
 /**
  * @author dejan
  * 
@@ -72,15 +90,21 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 		this(formPage, parent, true);
 	}
 	public void commit(boolean onSave) {
-		/*
-		 * if (isDirty() == false) return; ignoreModelEvents = true; if
-		 * ((currentImport != null || multiSelection != null) &&
-		 * versionText.getControl().isEnabled()) { versionText.commit(); String
-		 * value = versionText.getValue(); int match = IPluginImport.NONE; if
-		 * (value != null && value.length() > 0) { applyVersion(value); match =
-		 * getMatch(); } applyMatch(match); } setDirty(false);
-		 * ignoreModelEvents = false;
-		 */
+		if (isDirty() == false)
+			return;
+		ignoreModelEvents = true;
+		if ((currentImport != null || multiSelection != null)
+				&& versionText.getText().isEnabled()) {
+			versionText.commit();
+			String value = versionText.getValue();
+			int match = IPluginImport.NONE;
+			if (value != null && value.length() > 0) {
+				applyVersion(value);
+				match = getMatch();
+			}
+			applyMatch(match);
+		}
+		ignoreModelEvents = false;
 		super.commit(onSave);
 	}
 	public void createClient(Section section, FormToolkit toolkit) {
@@ -97,8 +121,8 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 		}
 		versionText = new FormEntry(container, toolkit, PDEPlugin
 				.getResourceString(KEY_VERSION), null, false);
-		versionText.setFormEntryListener(new FormEntryAdapter(this,
-				getPage().getEditor().getEditorSite().getActionBars()) {
+		versionText.setFormEntryListener(new FormEntryAdapter(this, getPage()
+				.getEditor().getEditorSite().getActionBars()) {
 			public void textValueChanged(FormEntry text) {
 				try {
 					String value = text.getValue();
@@ -126,7 +150,7 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 			public void textDirty(FormEntry text) {
 				if (blockChanges)
 					return;
-				forceDirty();
+				markDirty();
 				blockChanges = true;
 				resetMatchCombo(currentImport);
 				blockChanges = false;
@@ -232,14 +256,6 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 			PDEPlugin.logException(ex);
 		}
 	}
-	private void forceDirty() {
-		/*
-		 * setDirty(true); IModel model = (IModel) getFormPage().getModel(); if
-		 * (model instanceof IEditable) { IEditable editable = (IEditable)
-		 * model; editable.setDirty(true);
-		 * getFormPage().getEditor().fireSaveNeeded(); }
-		 */
-	}
 	private int getMatch() {
 		return matchCombo.getSelectionIndex();
 	}
@@ -256,19 +272,15 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 		return false;
 	}
 	public void dispose() {
-		/*
-		 * IModel model = (IModel) getFormPage().getModel(); if (model
-		 * instanceof IModelChangeProvider) ((IModelChangeProvider)
-		 * model).removeModelChangedListener(this);
-		 */
+		IModel model = (IModel) getPage().getModel();
+		if (model instanceof IModelChangeProvider)
+			((IModelChangeProvider) model).removeModelChangedListener(this);
 		super.dispose();
 	}
-	public void initialize(Object input) {
-		/*
-		 * IModel model = (IModel) input; setReadOnly(!model.isEditable()); if
-		 * (model instanceof IModelChangeProvider) ((IModelChangeProvider)
-		 * model).addModelChangedListener(this);
-		 */
+	public void initialize() {
+		IModel model = getPage().getModel();
+		if (model instanceof IModelChangeProvider)
+			((IModelChangeProvider) model).addModelChangedListener(this);
 	}
 	public void modelChanged(IModelChangedEvent e) {
 		if (ignoreModelEvents)
@@ -301,8 +313,7 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 	}
 	private void resetMatchCombo(IPluginReference iimport) {
 		String text = versionText.getText().getText();
-		//boolean enable = !isReadOnly() && text.length() > 0;
-		boolean enable = true;
+		boolean enable = isEditable() && text.length() > 0;
 		matchCombo.getControl().setEnabled(enable);
 		setMatchCombo(iimport);
 	}
@@ -323,12 +334,12 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 			blockChanges = false;
 			return;
 		}
-		/*
-		 * if (multiSelection != null && !multiSelection.equals(selection) &&
-		 * !isReadOnly()) { commitChanges(false); }
-		 */
+		if (multiSelection != null && !multiSelection.equals(selection)
+				&& isEditable()) {
+			commit(false);
+		}
 		multiSelection = selection;
-		//versionText.getControl().setEditable(!isReadOnly());
+		versionText.getText().setEditable(isEditable());
 		if (size == 1) {
 			IPluginReference ref = (IPluginReference) selection
 					.getFirstElement();
@@ -359,21 +370,21 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 			blockChanges = false;
 			return;
 		}
-		/*
-		 * if (currentImport != null && !iimport.equals(currentImport) &&
-		 * !isReadOnly()) { commitChanges(false); }
-		 */
+		if (currentImport != null && !iimport.equals(currentImport)
+				&& isEditable()) {
+			commit(false);
+		}
 		currentImport = iimport;
-		/*
-		 * if (currentImport instanceof IPluginImport) { IPluginImport pimport =
-		 * (IPluginImport) currentImport;
-		 * optionalButton.setEnabled(!isReadOnly());
-		 * optionalButton.setSelection(pimport.isOptional());
-		 * reexportButton.setEnabled(!isReadOnly());
-		 * reexportButton.setSelection(pimport.isReexported()); }
-		 * versionText.getControl().setEditable(!isReadOnly());
-		 * versionText.setValue(currentImport.getVersion());
-		 * resetMatchCombo(currentImport); blockChanges = false;
-		 */
+		if (currentImport instanceof IPluginImport) {
+			IPluginImport pimport = (IPluginImport) currentImport;
+			optionalButton.setEnabled(isEditable());
+			optionalButton.setSelection(pimport.isOptional());
+			reexportButton.setEnabled(isEditable());
+			reexportButton.setSelection(pimport.isReexported());
+		}
+		versionText.getText().setEditable(isEditable());
+		versionText.setValue(currentImport.getVersion());
+		resetMatchCombo(currentImport);
+		blockChanges = false;
 	}
 }

@@ -97,6 +97,7 @@ public class GeneralInfoSection extends PDESection {
 				}
 			}
 		});
+		idEntry.setEditable(isEditable());
 		versionEntry = new FormEntry(client, toolkit, "Version:", null, false);
 		versionEntry
 				.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
@@ -108,6 +109,7 @@ public class GeneralInfoSection extends PDESection {
 						}
 					}
 				});
+		versionEntry.setEditable(isEditable());
 		nameEntry = new FormEntry(client, toolkit, "Name:", null, false);
 		nameEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
@@ -118,6 +120,7 @@ public class GeneralInfoSection extends PDESection {
 				}
 			}
 		});
+		nameEntry.setEditable(isEditable());
 		providerEntry = new FormEntry(client, toolkit, "Provider:", null, false);
 		providerEntry.setFormEntryListener(new FormEntryAdapter(this,
 				actionBars) {
@@ -129,6 +132,7 @@ public class GeneralInfoSection extends PDESection {
 				}
 			}
 		});
+		providerEntry.setEditable(isEditable());
 		if (isFragment()) {
 			pluginIdEntry = new FormEntry(client, toolkit, "Plug-in Id:", null,
 					true);
@@ -145,6 +149,7 @@ public class GeneralInfoSection extends PDESection {
 				public void linkActivated(HyperlinkEvent e) {
 				}
 			});
+			pluginIdEntry.setEditable(isEditable());
 			pluginVersionEntry = new FormEntry(client, toolkit,
 					"Plug-in Version:", null, false);
 			pluginVersionEntry.setFormEntryListener(new FormEntryAdapter(this,
@@ -158,6 +163,7 @@ public class GeneralInfoSection extends PDESection {
 					}
 				}
 			});
+			pluginVersionEntry.setEditable(isEditable());
 			toolkit.createLabel(client, PDEPlugin.getResourceString(KEY_MATCH));
 			matchCombo = new ComboPart();
 			matchCombo.createControl(client, toolkit, SWT.READ_ONLY);
@@ -181,6 +187,7 @@ public class GeneralInfoSection extends PDESection {
 					}
 				}
 			});
+			matchCombo.getControl().setEnabled(isEditable());
 		} else {
 			classEntry = new FormEntry(client, toolkit, "Class:", "Browse...",
 					true);
@@ -192,6 +199,7 @@ public class GeneralInfoSection extends PDESection {
 					doOpenClass();
 				}
 			});
+			classEntry.setEditable(isEditable());
 		}
 		olderVersions = toolkit
 				.createButton(
@@ -212,6 +220,7 @@ public class GeneralInfoSection extends PDESection {
 		GridData gd = new GridData();
 		gd.horizontalSpan = layout.numColumns;
 		olderVersions.setLayoutData(gd);
+		toolkit.paintBordersFor(client);
 	}
 	private boolean isFragment() {
 		IPluginModelBase model = (IPluginModelBase) getPage().getPDEEditor()

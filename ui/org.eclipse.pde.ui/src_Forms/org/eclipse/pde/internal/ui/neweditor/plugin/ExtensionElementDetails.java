@@ -12,6 +12,7 @@ import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.ui.neweditor.*;
 import org.eclipse.pde.internal.ui.neweditor.plugin.rows.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.*;
@@ -44,6 +45,9 @@ public class ExtensionElementDetails extends AbstractFormPart implements IDetail
 	public PDEFormPage getPage() {
 		return (PDEFormPage)managedForm.getContainer();
 	}
+	public boolean isEditable() {
+		return getPage().getPDEEditor().getAggregateModel().isEditable();
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -69,7 +73,10 @@ public class ExtensionElementDetails extends AbstractFormPart implements IDetail
 		toolkit.createCompositeSeparator(section);
 		Composite client = toolkit.createComposite(section);
 		GridLayout glayout = new GridLayout();
-		glayout.marginWidth = glayout.marginHeight = 0;
+		boolean paintedBorder = toolkit.getBorderStyle()!=SWT.BORDER;
+		glayout.marginWidth = glayout.marginHeight = paintedBorder?2:0;
+		if (paintedBorder)
+			glayout.verticalSpacing = 7;
 		client.setLayout(glayout);
 		ISchemaAttribute atts[] = schemaElement.getAttributes();
 		int span = 2;
@@ -93,7 +100,7 @@ public class ExtensionElementDetails extends AbstractFormPart implements IDetail
 				rows.add(createAttributeRow(atts[i], client, toolkit, span));
 		}
 		createSpacer(toolkit, client, span);
-		toolkit.paintBordersFor(section);
+		toolkit.paintBordersFor(client);
 		section.setClient(client);
 	}
 	private ExtensionAttributeRow createAttributeRow(ISchemaAttribute att,

@@ -48,6 +48,7 @@ public class BooleanAttributeRow extends ExtensionAttributeRow {
 				if (!blockNotification) markDirty();
 			}
 		});
+		button.setEnabled(part.isEditable());
 	}
 	/*
 	 * (non-Javadoc)

@@ -12,6 +12,7 @@ import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.neweditor.*;
 import org.eclipse.pde.internal.ui.newparts.FormEntry;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.*;
@@ -46,13 +47,15 @@ public class ExtensionDetails extends AbstractFormPart implements IDetailsPage, 
 	 */
 	public void createContents(Composite parent) {
 		TableWrapLayout layout = new TableWrapLayout();
+		FormToolkit toolkit = managedForm.getToolkit();
+		boolean paintedBorder = toolkit.getBorderStyle()!=SWT.BORDER;
 		layout.topMargin = 0;
 		layout.leftMargin = 5;
 		layout.rightMargin = 0;
 		layout.bottomMargin = 0;
 		parent.setLayout(layout);
 
-		FormToolkit toolkit = managedForm.getToolkit();
+
 		Section section = toolkit.createSection(parent, Section.DESCRIPTION);
 		section.marginHeight = 5;		
 		section.marginWidth = 5;
@@ -64,8 +67,9 @@ public class ExtensionDetails extends AbstractFormPart implements IDetailsPage, 
 		toolkit.createCompositeSeparator(section);
 		Composite client = toolkit.createComposite(section);
 		GridLayout glayout = new GridLayout();
-		glayout.marginWidth = glayout.marginHeight = 0;
+		glayout.marginWidth = glayout.marginHeight = paintedBorder?2:0;
 		glayout.numColumns = 2;
+		if (paintedBorder) glayout.verticalSpacing = 7;
 		client.setLayout(glayout);
 		
 		GridData gd = new GridData();
@@ -122,8 +126,11 @@ public class ExtensionDetails extends AbstractFormPart implements IDetailsPage, 
 			}
 		});
 		rtext.setText(RTEXT_DATA, true, false);
+		id.setEditable(isEditable());
+		name.setEditable(isEditable());
+		point.setEditable(isEditable());
 		
-		toolkit.paintBordersFor(section);
+		toolkit.paintBordersFor(client);
 		section.setClient(client);
 	}
 	
@@ -190,5 +197,8 @@ public class ExtensionDetails extends AbstractFormPart implements IDetailsPage, 
 	}
 	public PDEFormPage getPage() {
 		return (PDEFormPage)managedForm.getContainer();
+	}
+	public boolean isEditable() {
+		return getPage().getPDEEditor().getAggregateModel().isEditable();
 	}
 }

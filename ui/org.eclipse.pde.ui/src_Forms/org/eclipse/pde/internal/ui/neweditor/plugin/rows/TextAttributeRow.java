@@ -38,6 +38,7 @@ public class TextAttributeRow extends ExtensionAttributeRow {
 				if (!blockNotification) markDirty();
 			}
 		});
+		text.setEditable(part.isEditable());
 	}
 	protected GridData createGridData(int span) {
 		GridData gd = new GridData(span == 2
