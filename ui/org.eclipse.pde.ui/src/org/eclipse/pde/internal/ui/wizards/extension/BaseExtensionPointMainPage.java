@@ -182,10 +182,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		openSchemaButton.setLayoutData(gd);
-		if (isPluginIdNeeded())
-			pluginIdText.setFocus();
-		else
-			idText.setFocus();
+		schemaLocationText.setFocus();
 		setControl(container);
 		Dialog.applyDialogFont(container);
 		WorkbenchHelp.setHelp(container, IHelpContextIds.NEW_SCHEMA);
