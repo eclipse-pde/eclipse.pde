@@ -12,7 +12,7 @@ import org.eclipse.core.runtime.model.PluginModel;
 public class FragmentBuildScriptGenerator extends ModelBuildScriptGenerator {
 
 protected PluginModel getModel(String modelId) throws CoreException {
-	return getRegistry().getPlugin(modelId);
+	return getRegistry().getFragment(modelId);
 }
 
 protected String getModelTypeName() {
