@@ -187,6 +187,16 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		SWTUtil.setButtonDimensionHint(button);
 		
 		button = new Button(container, SWT.PUSH);
+		button.setText(PDEPlugin.getResourceString("ImportWizard.DetailedPage.existing"));
+		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		button.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleExistingProjects();
+			}
+		});
+		SWTUtil.setButtonDimensionHint(button);
+		
+		button = new Button(container, SWT.PUSH);
 		button.setText(PDEPlugin.getResourceString("ImportWizard.DetailedPage.existingUnshared"));
 		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		button.addSelectionListener(new SelectionAdapter() {
@@ -306,6 +316,26 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		if (data.size() > 0) {
 			importListViewer.add(data.toArray());
 			availableListViewer.remove(data.toArray());
+		}
+		pageChanged();		
+	}
+	
+	private void handleExistingProjects() {
+		handleRemoveAll(false);
+		ArrayList result = new ArrayList();
+		for (int i = 0; i < models.length; i++) {
+			String id = models[i].getPluginBase().getId();
+			IProject project =
+				(IProject) PDEPlugin.getWorkspace().getRoot().findMember(id);
+			if (project != null
+				&& project.isOpen()
+				&& WorkspaceModelManager.isPluginProject(project)) {
+				result.add(models[i]);
+			}
+		}
+		if (result.size() > 0) {
+			importListViewer.add(result.toArray());
+			availableListViewer.remove(result.toArray());
 		}
 		pageChanged();		
 	}
