@@ -22,8 +22,8 @@ public class XMLTagScanner extends RuleBasedScanner {
 		
 		IRule[] rules = new IRule[3];
 		// Add rule for single and double quotes
-		rules[0] = new SingleLineRule("\"", "\"", string, '\\');
-		rules[1] = new SingleLineRule("'", "'", string, '\\');
+		rules[0] = new SingleLineRule("\"", "\"", string, '\\'); //$NON-NLS-1$ //$NON-NLS-2$
+		rules[1] = new SingleLineRule("'", "'", string, '\\'); //$NON-NLS-1$ //$NON-NLS-2$
 		// Add generic whitespace rule.
 		rules[2] = new WhitespaceRule(new XMLWhitespaceDetector());
 		setRules(rules);

@@ -20,9 +20,9 @@ public interface IPDEColorConstants {
 	RGB TAG=                new RGB(  0,   0, 128);
 	
 	
-	String P_XML_COMMENT = "editor.color.xml_comment";
-	String P_PROC_INSTR = "editor.color.instr";
-	String P_STRING = "editor.color.string";
-	String P_DEFAULT = "editor.color.default";
-	String P_TAG = "editor.color.tag";
+	String P_XML_COMMENT = "editor.color.xml_comment"; //$NON-NLS-1$
+	String P_PROC_INSTR = "editor.color.instr"; //$NON-NLS-1$
+	String P_STRING = "editor.color.string"; //$NON-NLS-1$
+	String P_DEFAULT = "editor.color.default"; //$NON-NLS-1$
+	String P_TAG = "editor.color.tag"; //$NON-NLS-1$
 }

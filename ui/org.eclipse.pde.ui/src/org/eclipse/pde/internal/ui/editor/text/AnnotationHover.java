@@ -34,7 +34,7 @@ public class AnnotationHover implements IAnnotationHover {
 		for (int i = 0; i < messages.length; i++) {
 			buffer.append(messages[i]);
 			if (i < messages.length - 1)
-				buffer.append(System.getProperty("line.separator"));
+				buffer.append(System.getProperty("line.separator")); //$NON-NLS-1$
 		}
 		return buffer.toString();
 	}

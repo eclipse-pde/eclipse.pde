@@ -15,7 +15,7 @@ import org.eclipse.jface.text.rules.*;
 public class XMLTagRule extends MultiLineRule {
 
 public XMLTagRule(IToken token) {
-	super("<", ">", token);
+	super("<", ">", token); //$NON-NLS-1$ //$NON-NLS-2$
 }
 protected boolean sequenceDetected(
 	ICharacterScanner scanner,

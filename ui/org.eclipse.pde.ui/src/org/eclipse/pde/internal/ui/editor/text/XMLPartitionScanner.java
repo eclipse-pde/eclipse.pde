@@ -13,13 +13,13 @@ package org.eclipse.pde.internal.ui.editor.text;
 import org.eclipse.jface.text.rules.*;
 
 public class XMLPartitionScanner extends RuleBasedPartitionScanner {
-	public final static String XML_DEFAULT = "__xml_default";
-	public final static String XML_COMMENT = "__xml_comment";
-	public final static String XML_TAG = "__xml_tag";
+	public final static String XML_DEFAULT = "__xml_default"; //$NON-NLS-1$
+	public final static String XML_COMMENT = "__xml_comment"; //$NON-NLS-1$
+	public final static String XML_TAG = "__xml_tag"; //$NON-NLS-1$
 
 	public XMLPartitionScanner() {
 		IPredicateRule[] rules = new IPredicateRule[2];
-		rules[0] = new MultiLineRule("<!--", "-->", new Token(XML_COMMENT));
+		rules[0] = new MultiLineRule("<!--", "-->", new Token(XML_COMMENT)); //$NON-NLS-1$ //$NON-NLS-2$
 		rules[1] = new XMLTagRule(new Token(XML_TAG));
 		setPredicateRules(rules);
 	}
