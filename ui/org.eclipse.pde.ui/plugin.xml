@@ -144,16 +144,6 @@
          </description>
       </wizard>
       <wizard
-            name="%new.convert.name"
-            icon="icons/etool16/convjpprj_wiz.gif"
-            category="org.eclipse.pde.PDE"
-            class="org.eclipse.pde.internal.ui.wizards.tools.ConvertedProjectWizard"
-            id="org.eclipse.pde.ui.ConvertedProjectWizard">
-         <description>
-            %new.convert.description
-         </description>
-      </wizard>
-      <wizard
             name="%new.feature.name"
             icon="icons/etool16/newftrprj_wiz.gif"
             category="org.eclipse.pde.PDE"
@@ -752,6 +742,32 @@
                label="%org.eclipse.pde.ui.tools"
                id="org.eclipse.pde.ui.project.tools">
             <separator
+               name="group0">
+            </separator>
+         </menu>
+       	 <visibility>
+        	<not>
+            <objectState 
+	            name="projectNature" 
+	            value="org.eclipse.pde.PluginNature"/>
+            </not>
+       	 </visibility>
+         <action
+            label="%new.convert.name"
+            class="org.eclipse.pde.internal.ui.wizards.tools.ConvertProjectsAction"
+            menubarPath="org.eclipse.pde.ui.project.tools/group0"
+            enablesFor="+"
+            id="org.eclipse.pde.ui.ConvertedProjectWizard">
+      	</action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IProject"
+            adaptable="true"
+            id="org.eclipse.pde.ui.pluginProjectToolSet">
+         <menu
+               label="%org.eclipse.pde.ui.tools"
+               id="org.eclipse.pde.ui.project.tools">
+            <separator
                   name="group0">
             </separator>
             <separator
@@ -760,7 +776,7 @@
          </menu>
          <filter
                name="projectNature"
-               value="org.eclipse.pde.PluginNature">
+		       value="org.eclipse.pde.PluginNature">
          </filter>
          <action
                label="%OpenDependenciesAction.label"
