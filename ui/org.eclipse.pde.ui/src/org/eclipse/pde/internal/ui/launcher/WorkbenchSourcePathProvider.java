@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
@@ -147,12 +146,13 @@ public class WorkbenchSourcePathProvider extends StandardSourcePathProvider {
 	
 	private boolean isJRELibrary(IPackageFragmentRoot root) {
 		try {
-			IClasspathEntry entry = root.getRawClasspathEntry();
-			if (entry.getPath().equals(new Path(JavaRuntime.JRE_CONTAINER))) {
+			IPath path = root.getRawClasspathEntry().getPath();
+			if (path.equals(new Path(JavaRuntime.JRE_CONTAINER))
+				|| path.equals(new Path(JavaRuntime.JRELIB_VARIABLE))) {
 				return true;
 			}
 		} catch (JavaModelException e) {
-		}		
+		}
 		return false;
 	}
 
