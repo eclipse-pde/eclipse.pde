@@ -535,10 +535,6 @@ public class WorkspaceModelManager
 		return true;
 	}
 	
-	public static boolean isJavaPluginProjectWithSource(IProject project) {
-		return (isJavaPluginProject(project) && !isBinaryPluginProject(project));
-	}
-
 	public static boolean isBinaryPluginProject(IProject project) {
 		if (!isPluginProject(project))
 			return false;
