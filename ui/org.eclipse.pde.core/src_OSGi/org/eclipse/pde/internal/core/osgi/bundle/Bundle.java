@@ -145,12 +145,10 @@ public class Bundle extends BundleObject implements IBundle {
 			IPackageFragmentRoot[] roots = javaProject.getPackageFragmentRoots();
 			for (int i=0; i<roots.length; i++) {
 				IPackageFragmentRoot root = roots[i];
-				if (binary) {
-				}
-				else {
-					if (root.getKind()!=IPackageFragmentRoot.K_SOURCE)
-						continue;
-				}
+				
+				if (root.isArchive() && root.isExternal())
+					continue;
+
 				IJavaElement [] children = root.getChildren();
 				for (int j=0; j<children.length; j++) {
 					IJavaElement child = children[j];
