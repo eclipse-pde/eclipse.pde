@@ -37,9 +37,7 @@ public class HelloWorldTemplate extends PDETemplateSection {
 	private static final String KEY_SAMPLE_ACTION_SET = "HelloWorldTemplate.sampleActionSet";		
 	private static final String KEY_SAMPLE_MENU = "HelloWorldTemplate.sampleMenu";
 	private static final String KEY_SAMPLE_ACTION = "HelloWorldTemplate.sampleAction";
-	private static final String NL_ADD_TO_PERSPECTIVE = "HelloWorldTemplate.addToPerspective";
 	
-	private BooleanOption addToPerspective;
 	/**
 	 * Constructor for HelloWorldTemplate.
 	 */
@@ -73,11 +71,6 @@ public class HelloWorldTemplate extends PDETemplateSection {
 			KEY_MESSAGE,
 			PDEPlugin.getResourceString(KEY_TEXT_LABEL),
 			PDEPlugin.getResourceString(KEY_DEFAULT_MESSAGE),
-			0);
-		addToPerspective = (BooleanOption) addOption(
-			KEY_ADD_TO_PERSPECTIVE,
-			PDEPlugin.getResourceString(NL_ADD_TO_PERSPECTIVE),
-			true,
 			0);
 	}
 
@@ -170,23 +163,6 @@ public class HelloWorldTemplate extends PDETemplateSection {
 		if (!extension.isInTheModel())
 			plugin.add(extension);
 		
-		if (addToPerspective.isSelected()) {
-			IPluginExtension perspectiveExtension = createExtension("org.eclipse.ui.perspectiveExtensions",true);
-			IPluginElement perspectiveElement = factory.createElement(perspectiveExtension);
-			perspectiveElement.setName("perspectiveExtension");
-			perspectiveElement.setAttribute(
-				"targetID",
-				"org.eclipse.ui.resourcePerspective");
-
-			IPluginElement actionSetElement = factory.createElement(perspectiveElement);
-			actionSetElement.setName("actionSet");
-			actionSetElement.setAttribute("id", plugin.getId() + ".actionSet");
-			perspectiveElement.add(actionSetElement);
-			
-			perspectiveExtension.add(perspectiveElement);
-			if (!perspectiveExtension.isInTheModel())
-				plugin.add(perspectiveExtension);
-		}		
 			
 	}
 }
