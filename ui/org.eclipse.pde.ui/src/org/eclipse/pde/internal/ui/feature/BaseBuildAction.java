@@ -70,7 +70,7 @@ public abstract class BaseBuildAction implements IObjectActionDelegate, IPrefere
 	private void doBuild(IProgressMonitor monitor)
 		throws CoreException, InvocationTargetException {
 			monitor.beginTask(PDEPlugin.getResourceString("BuildAction.Validate"), 4);
-			if (!ensureValid(monitor)) {
+			if (!ensureValid(file, monitor)) {
 				monitor.done();
 				return;
 			}
@@ -89,7 +89,7 @@ public abstract class BaseBuildAction implements IObjectActionDelegate, IPrefere
 	protected abstract void makeScripts(IProgressMonitor monitor)
 		throws InvocationTargetException, CoreException;
 
-	private boolean ensureValid(IProgressMonitor monitor) throws CoreException {
+	public static boolean ensureValid(IFile file, IProgressMonitor monitor) throws CoreException {
 		// Force the build if autobuild is off
 		IProject project = file.getProject();
 		if (!project.getWorkspace().isAutoBuilding()) {
@@ -107,7 +107,7 @@ public abstract class BaseBuildAction implements IObjectActionDelegate, IPrefere
 		return true;
 	}
 	
-	private boolean hasErrors(IFile file) throws CoreException {
+	public static  boolean hasErrors(IFile file) throws CoreException {
 		IMarker[] markers = file.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
 		for (int i = 0; i < markers.length; i++) {
 			Object att = markers[i].getAttribute(IMarker.SEVERITY);

@@ -49,17 +49,7 @@ public class SiteUndoManager extends ModelUndoManager {
 	}
 
 	protected String getPageId(Object obj) {
-		if (obj instanceof ISiteBuildFeature)
-			return SiteEditor.BUILD_PAGE;
-		if (obj instanceof ISiteFeature)
-			return SiteEditor.FEATURE_PAGE;
-		if (obj instanceof ISiteArchive)
-			return SiteEditor.ARCHIVE_PAGE;
-		if (obj instanceof ISiteCategory)
-			return SiteEditor.FEATURE_PAGE;
-		if (obj instanceof ISiteCategoryDefinition)
-			return SiteEditor.SITE_PAGE;
-		return null;
+		return SiteEditor.SITE_PAGE;
 	}
 
 	protected void execute(IModelChangedEvent event, boolean undo) {

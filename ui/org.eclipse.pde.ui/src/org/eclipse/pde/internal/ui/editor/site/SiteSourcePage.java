@@ -19,9 +19,6 @@ public class SiteSourcePage extends XMLSourcePage {
 		super(editor);
 	}
 	public IContentOutlinePage createContentOutlinePage() {
-		return new SiteSourceOutlinePage(
-			getEditor().getEditorInput(),
-			getDocumentProvider(),
-			this);
+		return null;
 	}
 }

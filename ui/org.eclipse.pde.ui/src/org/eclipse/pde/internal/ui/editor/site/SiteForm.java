@@ -20,8 +20,9 @@ import org.eclipse.update.ui.forms.internal.*;
 
 public class SiteForm extends ScrollableSectionForm {
 	private SitePage page;
-	private SiteDescriptionSection descriptionSection;
-	private CategoryDefinitionSection categorySection;
+	private DescriptionSection descriptionSection;
+	private FeatureSection featureSection;
+	private ArchiveSection archiveSection;
 
 	public SiteForm(SitePage page) {
 		this.page = page;
@@ -32,33 +33,41 @@ public class SiteForm extends ScrollableSectionForm {
 		FormWidgetFactory factory = getFactory();
 		GridLayout layout = new GridLayout();
 		parent.setLayout(layout);
-		layout.numColumns = 2;
+		layout.numColumns = 1;
 		layout.makeColumnsEqualWidth=true;
 		layout.marginWidth = 10;
 		layout.horizontalSpacing = 15;
 		layout.verticalSpacing = 15;
-		GridData gd;
 
-		descriptionSection = new SiteDescriptionSection(page);
+		descriptionSection = new DescriptionSection(page);
 		Control control = descriptionSection.createControl(parent, factory);
-		gd =
-			new GridData(
-				GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
-		control.setLayoutData(gd);
-
-		categorySection = new CategoryDefinitionSection(page);
-		control = categorySection.createControl(parent, factory);
-		gd = new GridData(GridData.FILL_BOTH);
-		control.setLayoutData(gd);
+		control.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		featureSection = new FeatureSection(page);
+		control = featureSection.createControl(parent, factory);
+		control.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
+		archiveSection = new ArchiveSection(page);
+		control = archiveSection.createControl(parent, factory);
+		control.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		registerSection(descriptionSection);
-		registerSection(categorySection);
+		registerSection(featureSection);
+		registerSection(archiveSection);
 	
 		WorkbenchHelp.setHelp(parent, IHelpContextIds.MANIFEST_SITE_OVERVIEW);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.update.ui.forms.internal.AbstractSectionForm#dispose()
+	 */
+	public void dispose() {
+		unregisterSection(descriptionSection);
+		unregisterSection(featureSection);
+		super.dispose();
+	}
+	
 	public void expandTo(Object object) {
-		categorySection.expandTo(object);
 	}
 	
 	public void initialize(Object modelObject) {

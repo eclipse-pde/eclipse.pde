@@ -20,7 +20,7 @@ public SitePage(PDEMultiPageEditor editor, String title) {
 	super(editor, title);
 }
 public IContentOutlinePage createContentOutlinePage() {
-	return new SiteOutlinePage(this);
+	return null;
 }
 protected AbstractSectionForm createForm() {
 	return new SiteForm(this);

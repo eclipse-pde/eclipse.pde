@@ -649,6 +649,7 @@ public abstract class PDEMultiPageEditor
 		PDESourcePage sourcePage = (PDESourcePage) getPage(getSourcePageId());
 		sourcePage.doRevertToSaved();
 		updateModel();
+		((IEditable)getModel()).setDirty(false);
 		fireSaveNeeded();
 	}
 
@@ -697,6 +698,8 @@ public abstract class PDEMultiPageEditor
 	}
 	private void copyToClipboard(ISelection selection) {
 		IStructuredSelection ssel = (IStructuredSelection) selection;
+		if (ssel == null || ssel.size() == 0)
+			return;
 		Object[] objects = ssel.toArray();
 		StringWriter writer = new StringWriter();
 		PrintWriter pwriter = new PrintWriter(writer);

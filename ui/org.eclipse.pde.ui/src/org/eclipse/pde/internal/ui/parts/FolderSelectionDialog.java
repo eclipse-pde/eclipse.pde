@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.editor.build;
+package org.eclipse.pde.internal.ui.parts;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -24,12 +24,12 @@ import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.NewFolderDialog;
 import org.eclipse.ui.views.navigator.ResourceSorter;
 
-public class SourceFolderSelectionDialog extends ElementTreeSelectionDialog implements ISelectionChangedListener {
+public class FolderSelectionDialog extends ElementTreeSelectionDialog implements ISelectionChangedListener {
 
 	private Button fNewFolderButton;
 	private IContainer fSelectedContainer;
 
-	public SourceFolderSelectionDialog(Shell parent, ILabelProvider labelProvider, ITreeContentProvider contentProvider) {
+	public FolderSelectionDialog(Shell parent, ILabelProvider labelProvider, ITreeContentProvider contentProvider) {
 		super(parent, labelProvider, contentProvider);
 		setSorter(new ResourceSorter(ResourceSorter.NAME));
 	}

@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.ui.editor.site;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -26,10 +25,6 @@ public class NewCategoryDefinitionDialog extends BaseNewDialog {
 	private static final String KEY_LABEL = "NewCategoryDefinitionDialog.label"; //$NON-NLS-1$
 	private static final String KEY_DESC = "NewCategoryDefinitionDialog.desc"; //$NON-NLS-1$
 	private static final String KEY_EMPTY = "NewCategoryDefinitionDialog.empty"; //$NON-NLS-1$
-	private static final String SETTINGS_SECTION = "NewCategoryDefinitionDialog"; //$NON-NLS-1$
-	private static final String S_NAME = "name"; //$NON-NLS-1$
-	private static final String S_LABEL = "label"; //$NON-NLS-1$
-	private static final String S_DESC = "desc"; //$NON-NLS-1$
 	private Text nameText;
 	private Text labelText;
 	private Text descText;
@@ -61,7 +56,8 @@ public class NewCategoryDefinitionDialog extends BaseNewDialog {
 		label.setLayoutData(gd);
 		descText = new Text(container, SWT.MULTI | SWT.WRAP | SWT.BORDER);
 		gd = new GridData(GridData.FILL_BOTH);
-		gd.heightHint = 150;
+		gd.heightHint = 100;
+		gd.widthHint = 225;
 		descText.setLayoutData(gd);
 		if (getCategoryDefinition()==null) {
 			presetFields();
@@ -69,10 +65,6 @@ public class NewCategoryDefinitionDialog extends BaseNewDialog {
 	}
 	
 	private void presetFields() {
-		IDialogSettings settings = getDialogSettings(SETTINGS_SECTION);
-		setIfDefined(nameText, settings.get(S_NAME));
-		setIfDefined(labelText, settings.get(S_LABEL));
-		setIfDefined(descText, settings.get(S_DESC));
 	}
 	
 	private ISiteCategoryDefinition getCategoryDefinition() {
@@ -161,10 +153,6 @@ public class NewCategoryDefinitionDialog extends BaseNewDialog {
 			if (add) {
 				siteModel.getSite().addCategoryDefinitions(
 					new ISiteCategoryDefinition[] { categoryDef });
-				IDialogSettings settings = getDialogSettings(SETTINGS_SECTION);
-				settings.put(S_NAME, categoryDef.getName());
-				settings.put(S_LABEL, categoryDef.getLabel());
-				settings.put(S_DESC, desc);
 			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);

@@ -30,22 +30,8 @@ import org.eclipse.ui.*;
 
 public class SiteEditor extends PDEMultiPageXMLEditor {
 	public static final String SITE_PAGE = "SitePage";
-	public static final String BUILD_PAGE = "BuildPage";
-	public static final String FEATURE_PAGE = "FeaturePage";
-	public static final String ARCHIVE_PAGE = "ArchivePage";
 	public static final String SOURCE_PAGE = "SourcePage";
-	public static final String SITE_PAGE_TITLE =
-		"MultiPageSiteEditor.SitePage.title";
-	public static final String BUILD_PAGE_TITLE =
-		"MultiPageSiteEditor.BuildPage.title";
-	public static final String FEATURE_PAGE_TITLE =
-		"MultiPageSiteEditor.FeaturePage.title";
-	public static final String ARCHIVE_PAGE_TITLE =
-		"MultiPageSiteEditor.ArchivePage.title";
-	public static final String SOURCE_PAGE_TITLE =
-		"MultiPageSiteEditor.SourcePage.title";
 	private boolean storageModel = false;
-	private StateListener stateListener;
 
 	public SiteEditor() {
 		super();
@@ -61,31 +47,14 @@ public class SiteEditor extends PDEMultiPageXMLEditor {
 	protected Object createModel(Object input) throws CoreException {
 		if (input instanceof IFile)
 			return createResourceModel((IFile) input);
-		if (input instanceof IStorage)
-			return createStorageModel((IStorage) input);
 		return null;
 	}
 	protected void createPages() {
 		firstPageId = SITE_PAGE;
 		formWorkbook.setFirstPageSelected(false);
 		SitePage sitePage =
-			new SitePage(this, PDEPlugin.getResourceString(SITE_PAGE_TITLE));
-		BuildPage buildPage =
-			new BuildPage(
-				sitePage,
-				PDEPlugin.getResourceString(BUILD_PAGE_TITLE));
-		FeaturePage featurePage =
-			new FeaturePage(
-				sitePage,
-				PDEPlugin.getResourceString(FEATURE_PAGE_TITLE));
-		ArchivePage archivePage =
-			new ArchivePage(
-				sitePage,
-				PDEPlugin.getResourceString(ARCHIVE_PAGE_TITLE));
+			new SitePage(this, PDEPlugin.getResourceString("SiteEditor.page1"));
 		addPage(SITE_PAGE, sitePage);
-		addPage(BUILD_PAGE, buildPage);
-		addPage(FEATURE_PAGE, featurePage);
-		addPage(ARCHIVE_PAGE, archivePage);
 		addPage(SOURCE_PAGE, new SiteSourcePage(this));
 	}
 	private ISiteModel createResourceModel(IFile file) throws CoreException {
@@ -120,40 +89,9 @@ public class SiteEditor extends PDEMultiPageXMLEditor {
 		} catch (IOException e) {
 			PDEPlugin.logException(e);
 		}
-		stateListener = new StateListener(model);
 		return model;
 	}
 	
-	private ISiteModel createStorageModel(IStorage storage) {
-		/*
-		InputStream stream = null;
-		try {
-			stream = storage.getContents();
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
-			return null;
-		}
-		ExternalSiteModel model = new ExternalSiteModel();
-		model.setInstallLocation("");
-		try {
-			model.load(stream, false);
-		} catch (CoreException e) {
-			// Errors in the file
-			return null;
-		}
-		try {
-			stream.close();
-		} catch (IOException e) {
-		}
-		storageModel=true;
-		return model;
-		*/
-		return null;
-	}
-	
-	public StateListener getStateListener() {
-		return stateListener;
-	}
 	
 	public void dispose() {
 		super.dispose();
@@ -170,8 +108,6 @@ public class SiteEditor extends PDEMultiPageXMLEditor {
 			if (buildModel != null)
 				provider.disconnect(buildModel.getUnderlyingResource(), this);
 		}
-		if (stateListener!=null)
-			stateListener.dispose();
 	}
 
 	public IPDEEditorPage getHomePage() {
@@ -251,5 +187,16 @@ public class SiteEditor extends PDEMultiPageXMLEditor {
 	}
 	public void updateTitle() {
 		firePropertyChange(IWorkbenchPart.PROP_TITLE);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEMultiPageEditor#doRevert()
+	 */
+	public void doRevert() {
+		try {
+			((ISiteModel)getModel()).getBuildModel().load();
+			super.doRevert();
+		} catch (CoreException e) {
+		}
 	}
 }

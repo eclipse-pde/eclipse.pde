@@ -334,7 +334,7 @@ public class RequiresSection
 
 	public void update() {
 		if (updateNeeded) {
-			Display.getCurrent().asyncExec(new Runnable() {
+			pluginViewer.getControl().getDisplay().asyncExec(new Runnable() {
 				public void run() {
 					update(getFormPage().getModel());
 				}

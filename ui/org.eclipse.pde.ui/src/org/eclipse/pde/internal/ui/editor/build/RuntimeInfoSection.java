@@ -954,8 +954,8 @@ public class RuntimeInfoSection
 		IFile file = (IFile) model.getUnderlyingResource();
 		final IProject project = file.getProject();
 
-		SourceFolderSelectionDialog dialog =
-			new SourceFolderSelectionDialog(
+		FolderSelectionDialog dialog =
+			new FolderSelectionDialog(
 				PDEPlugin.getActiveWorkbenchShell(),
 				new WorkbenchLabelProvider(),
 				new JarsNewContentProvider() {
@@ -1022,7 +1022,7 @@ public class RuntimeInfoSection
 			}
 		});
 
-		if (dialog.open() == SourceFolderSelectionDialog.OK) {
+		if (dialog.open() == FolderSelectionDialog.OK) {
 			try {
 				IFolder folder = (IFolder) dialog.getFirstResult();
 				String folderPath =

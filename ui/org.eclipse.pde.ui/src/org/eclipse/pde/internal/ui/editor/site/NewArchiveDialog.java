@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.ui.editor.site;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
@@ -20,46 +19,36 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 
 public class NewArchiveDialog extends BaseNewDialog {
-	private static final String KEY_TITLE = "NewArchiveDialog.title"; //$NON-NLS-1$
-	private static final String KEY_PATH = "NewArchiveDialog.path"; //$NON-NLS-1$
-	private static final String KEY_URL = "NewArchiveDialog.url"; //$NON-NLS-1$
-	private static final String KEY_EMPTY = "NewArchiveDialog.empty"; //$NON-NLS-1$
-	private static final String SETTINGS_SECTION = "NewArchiveDialog"; //$NON-NLS-1$
-	private static final String S_URL = "url"; //$NON-NLS-1$
-	private static final String S_PATH = "path"; //$NON-NLS-1$
 	private Text pathText;
 	private Text urlText;
 
-	public NewArchiveDialog(Shell shell, ISiteModel siteModel) {
-		super(shell, siteModel, null);
+	public NewArchiveDialog(Shell shell, ISiteModel siteModel, ISiteArchive archive) {
+		super(shell, siteModel, archive);
 	}
 
 	protected void createEntries(Composite container) {
 		GridData gd;
 		Label label = new Label(container, SWT.NULL);
-		label.setText(PDEPlugin.getResourceString(KEY_PATH));
+		label.setText(PDEPlugin.getResourceString("SiteEditor.NewArchiveDialog.path")); //$NON-NLS-1$
 		pathText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		pathText.setLayoutData(gd);
 
 		label = new Label(container, SWT.NULL);
-		label.setText(PDEPlugin.getResourceString(KEY_URL));
+		label.setText(PDEPlugin.getResourceString(PDEPlugin.getResourceString("SiteEditor.NewArchiveDialog.url"))); //$NON-NLS-1$
 		urlText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		urlText.setLayoutData(gd);
-		presetEntries();
-	}
-
-	private void presetEntries() {
-		IDialogSettings settings = getDialogSettings(SETTINGS_SECTION);
-		String initialURL = settings.get(S_URL);
-		String initialPath = settings.get(S_PATH);
-		setIfDefined(urlText, initialURL);
-		setIfDefined(pathText, initialPath);
+		
+		ISiteArchive archive = (ISiteArchive)getSiteObject();
+		if (archive != null) {
+			setIfDefined(urlText, archive.getURL());
+			setIfDefined(pathText, archive.getPath());
+		}
 	}
 
 	protected String getDialogTitle() {
-		return PDEPlugin.getResourceString(KEY_TITLE);
+		return PDEPlugin.getResourceString(PDEPlugin.getResourceString("SiteEditor.NewArchiveDialog.title")); //$NON-NLS-1$
 	}
 
 	protected String getHelpId() {
@@ -67,7 +56,7 @@ public class NewArchiveDialog extends BaseNewDialog {
 	}
 
 	protected String getEmptyErrorMessage() {
-		return PDEPlugin.getResourceString(KEY_EMPTY);
+		return PDEPlugin.getResourceString(PDEPlugin.getResourceString("SiteEditor.NewArchiveDialog.error")); //$NON-NLS-1$
 	}
 
 	protected void hookListeners(ModifyListener modifyListener) {
@@ -102,18 +91,23 @@ public class NewArchiveDialog extends BaseNewDialog {
 		}
 		return false;
 	}
+	
+	private ISiteArchive getArchive() {
+		return (ISiteArchive)getSiteObject();
+	}
 
 	protected void execute() {
 		ISiteModel siteModel = getSiteModel();
-		ISiteArchive archive = siteModel.getFactory().createArchive();
+		ISiteArchive archive = getArchive();
+		boolean add = (archive == null);
+		if (archive == null)
+			archive = siteModel.getFactory().createArchive();
 
 		try {
 			archive.setURL(urlText.getText());
 			archive.setPath(pathText.getText());
-			siteModel.getSite().addArchives(new ISiteArchive[] { archive });
-			IDialogSettings settings = getDialogSettings(SETTINGS_SECTION);
-			settings.put(S_PATH, archive.getPath());
-			settings.put(S_URL, archive.getURL());
+			if (add)
+				siteModel.getSite().addArchives(new ISiteArchive[] { archive });
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}

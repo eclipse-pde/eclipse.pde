@@ -34,13 +34,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
 public class BuiltFeaturesWizardPage extends WizardPage {
-	public static final String KEY_TITLE = "SiteEditor.FeatureProjectSection.new.title";
-	public static final String KEY_DESC = "SiteEditor.FeatureProjectSection.new.desc";
-	public static final String KEY_FEATURES =
-		"SiteEditor.FeatureProjectSection.new.label";
-	public static final String KEY_ADDING = "SiteEditor.FeatureProjectSection.new.adding";
-	public static final String KEY_UPDATING =
-		"SiteEditor.FeatureProjectSection.new.updating";
 	private ISiteBuildModel model;
 	private TablePart checkboxTablePart;
 	private CheckboxTableViewer featureViewer;
@@ -55,7 +48,7 @@ public class BuiltFeaturesWizardPage extends WizardPage {
 	
 	class TablePart extends WizardCheckboxTablePart {
 		public TablePart() {
-			super(PDEPlugin.getResourceString(KEY_FEATURES));
+			super(PDEPlugin.getResourceString("BuildFeatureWizardPage.label"));
 		}
 		public void updateCounter(int count) {
 			super.updateCounter(count);
@@ -75,8 +68,8 @@ public class BuiltFeaturesWizardPage extends WizardPage {
 	public BuiltFeaturesWizardPage(ISiteBuildModel model) {
 		super("BuiltFeaturesWizardPage");
 		this.model = model;
-		setTitle(PDEPlugin.getResourceString(KEY_TITLE));
-		setDescription(PDEPlugin.getResourceString(KEY_DESC));
+		setTitle(PDEPlugin.getResourceString("BuildFeatureWizardPage.title"));
+		setDescription(PDEPlugin.getResourceString("BuildFeatureWizardPage.desc"));
 		setPageComplete(false);
 		
 		checkboxTablePart = new TablePart();	
@@ -168,7 +161,7 @@ public class BuiltFeaturesWizardPage extends WizardPage {
 
 	private void doAdd(Object [] candidates, IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask(
-			PDEPlugin.getResourceString(KEY_ADDING),
+			PDEPlugin.getResourceString("BuildFeatureWizardPage.adding"),
 			candidates.length + 1);
 		ISiteBuild siteBuild = model.getSiteBuild();
 		ISiteBuildFeature[] added = new ISiteBuildFeature[candidates.length];
@@ -182,7 +175,7 @@ public class BuiltFeaturesWizardPage extends WizardPage {
 			monitor.worked(1);
 		}
 		monitor.subTask("");
-		monitor.setTaskName(PDEPlugin.getResourceString(KEY_UPDATING));
+		monitor.setTaskName(PDEPlugin.getResourceString("BuildFeatureWizardPage.updating"));
 		siteBuild.addFeatures(added);
 		monitor.worked(1);
 	}

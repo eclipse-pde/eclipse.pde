@@ -186,6 +186,11 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 	public IAction getSaveAction() {
 		return saveAction;
 	}
+	
+	public IAction getRevertAction() {
+		return revertAction;
+	}
+	
 	public IStatusLineManager getStatusLineManager() {
 		return getActionBars().getStatusLineManager();
 	}

@@ -20,7 +20,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
-import org.eclipse.jdt.internal.ui.wizards.buildpaths.FolderSelectionDialog;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchContentProvider;
@@ -37,6 +36,7 @@ import org.eclipse.jdt.ui.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.ui.codegen.*;
+import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.core.plugin.*;
 
