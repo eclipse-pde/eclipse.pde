@@ -17,7 +17,7 @@ import java.util.Vector;
 public class ConvertedProjectWizard extends NewWizard {
 	private ConvertedProjectsPage mainPage;
 	private Vector selected;
-	private static final String KEY_WTITLE = "ConvertedProjectWizard.title";
+	private static final String KEY_WTITLE = "ConvertedProjectWizard.title"; //$NON-NLS-1$
 
 public ConvertedProjectWizard() {
 	setDefaultPageImageDescriptor(PDEPluginImages.DESC_CONVJPPRJ_WIZ);

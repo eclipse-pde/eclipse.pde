@@ -29,7 +29,7 @@ import org.eclipse.pde.ui.*;
 public abstract class AbstractNewPluginTemplateWizard extends Wizard
 		implements
 			IPluginContentWizard {
-	private static final String KEY_WTITLE = "PluginCodeGeneratorWizard.title";
+	private static final String KEY_WTITLE = "PluginCodeGeneratorWizard.title"; //$NON-NLS-1$
 	private IFieldData data;
 	/**
 	 * Creates a new template wizard.
@@ -91,7 +91,7 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard
 			IProgressMonitor monitor) {
 		try {
 			ITemplateSection[] sections = getTemplateSections();
-			monitor.beginTask("", sections.length);
+			monitor.beginTask("", sections.length); //$NON-NLS-1$
 			for (int i = 0; i < sections.length; i++) {
 				sections[i].execute(project, model, new SubProgressMonitor(
 						monitor, 1));
@@ -154,10 +154,10 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard
 		} catch (IOException e) {
 		}
 		String contents = swriter.toString();
-		IFile file = project.getFile(".template");
+		IFile file = project.getFile(".template"); //$NON-NLS-1$
 		try {
 			ByteArrayInputStream stream = new ByteArrayInputStream(contents
-					.getBytes("UTF8"));
+					.getBytes("UTF8")); //$NON-NLS-1$
 			if (file.exists()) {
 				file.setContents(stream, false, false, null);
 			} else {
@@ -170,7 +170,7 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard
 		}
 	}
 	private void writeTemplateFile(PrintWriter writer) {
-		String indent = "   ";
+		String indent = "   "; //$NON-NLS-1$
 		// open
 		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		writer.println("<form>");
@@ -180,7 +180,7 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard
 			writer
 					.println(indent
 							+ PDEPlugin
-									.getResourceString("ManifestEditor.TemplatePage.intro"));
+									.getResourceString("ManifestEditor.TemplatePage.intro")); //$NON-NLS-1$
 			// add template section descriptions
 			for (int i = 0; i < templateSections.length; i++) {
 				ITemplateSection section = templateSections[i];
@@ -193,7 +193,7 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard
 		writer
 				.println(indent
 						+ PDEPlugin
-								.getResourceString("ManifestEditor.TemplatePage.common"));
+								.getResourceString("ManifestEditor.TemplatePage.common")); //$NON-NLS-1$
 		// close
 		writer.println("</form>");
 	}

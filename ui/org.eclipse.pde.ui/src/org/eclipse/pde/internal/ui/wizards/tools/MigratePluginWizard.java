@@ -27,13 +27,13 @@ import org.eclipse.pde.internal.ui.*;
 public class MigratePluginWizard extends Wizard {
 	private MigratePluginWizardPage page1;
 	private IPluginModelBase [] selected;
-	private static final String STORE_SECTION = "MigrationWizard";
+	private static final String STORE_SECTION = "MigrationWizard"; //$NON-NLS-1$
 	
 	public MigratePluginWizard(IPluginModelBase[] selected) {
 		IDialogSettings masterSettings = PDEPlugin.getDefault().getDialogSettings();
 		setDialogSettings(getSettingsSection(masterSettings));
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_MIGRATE_30_WIZ);
-		setWindowTitle(PDEPlugin.getResourceString("MigrationWizard.title"));
+		setWindowTitle(PDEPlugin.getResourceString("MigrationWizard.title")); //$NON-NLS-1$
 		setNeedsProgressMonitor(true);
 		this.selected = selected;
 	}
@@ -47,7 +47,7 @@ public class MigratePluginWizard extends Wizard {
 			public void run(IProgressMonitor monitor)
 				throws InvocationTargetException, InterruptedException {
 				int numUnits = doUpdateClasspath ? models.length * 2 : models.length;
-				monitor.beginTask(PDEPlugin.getResourceString("MigrationWizard.progress"), numUnits);
+				monitor.beginTask(PDEPlugin.getResourceString("MigrationWizard.progress"), numUnits); //$NON-NLS-1$
 				try {
 					for (int i = 0; i < models.length; i++) {
 						monitor.subTask(models[i].getPluginBase().getId());
@@ -123,13 +123,13 @@ public class MigratePluginWizard extends Wizard {
 		IDocument document,
 		FindReplaceDocumentAdapter adapter) {
 		try {
-			IRegion region = adapter.find(-1, "<\\?xml.*\\?>", true, true, false, true);
+			IRegion region = adapter.find(-1, "<\\?xml.*\\?>", true, true, false, true); //$NON-NLS-1$
 			if (region != null) {
 				String text = document.get(region.getOffset(), region.getLength());
 				adapter.replace(
 					text
-						+ System.getProperty("line.separator")
-						+ "<?eclipse version=\"3.0\"?>",
+						+ System.getProperty("line.separator") //$NON-NLS-1$
+						+ "<?eclipse version=\"3.0\"?>", //$NON-NLS-1$
 					false);
 			}
 		} catch (BadLocationException e) {
@@ -166,7 +166,7 @@ public class MigratePluginWizard extends Wizard {
 			IRegion region =
 			adapter.find(
 					parentRegion.getOffset(),
-					"\\s+point\\s*=\\s*\"",
+					"\\s+point\\s*=\\s*\"", //$NON-NLS-1$
 					true,
 					true,
 					false,
@@ -177,7 +177,7 @@ public class MigratePluginWizard extends Wizard {
 				region =
 				adapter.find(
 						region.getOffset() + region.getLength(),
-						"[^\"]*",
+						"[^\"]*", //$NON-NLS-1$
 						true,
 						true,
 						false,
@@ -198,10 +198,10 @@ public class MigratePluginWizard extends Wizard {
 		int length = -1;
 		try {
 			IRegion region =
-			adapter.find(start, "<extension\\s+", true, true, false, true);
+			adapter.find(start, "<extension\\s+", true, true, false, true); //$NON-NLS-1$
 			if (region != null) {
 				offset = region.getOffset();
-				region = adapter.find(offset, ">", true, true, false, false);
+				region = adapter.find(offset, ">", true, true, false, false); //$NON-NLS-1$
 				if (region != null) {
 					length = region.getOffset() - offset + 1;
 				}
@@ -215,15 +215,15 @@ public class MigratePluginWizard extends Wizard {
 		ArrayList result = new ArrayList();
 		//TODO do no just add.  If core.runtime exists, replace it.
 		//if (findImport(model, "org.eclipse.core.runtime") == null)
-		result.add("<import plugin=\"org.eclipse.core.runtime.compatibility\"/>");
-		IPluginImport uiImport = findImport(model, "org.eclipse.ui");
+		result.add("<import plugin=\"org.eclipse.core.runtime.compatibility\"/>"); //$NON-NLS-1$
+		IPluginImport uiImport = findImport(model, "org.eclipse.ui"); //$NON-NLS-1$
 		if (uiImport != null) {
 			ArrayList list = new ArrayList();
-			list.add("org.eclipse.ui.ide");
-			list.add("org.eclipse.ui.views");
-			list.add("org.eclipse.jface.text");
-			list.add("org.eclipse.ui.workbench.texteditor");
-			list.add("org.eclipse.ui.editors");
+			list.add("org.eclipse.ui.ide"); //$NON-NLS-1$
+			list.add("org.eclipse.ui.views"); //$NON-NLS-1$
+			list.add("org.eclipse.jface.text"); //$NON-NLS-1$
+			list.add("org.eclipse.ui.workbench.texteditor"); //$NON-NLS-1$
+			list.add("org.eclipse.ui.editors"); //$NON-NLS-1$
 			IPluginImport[] imports = model.getPluginBase().getImports();
 			for (int i = 0; i < imports.length; i++) {
 				if (list.contains(imports[i].getId())) {
@@ -231,20 +231,20 @@ public class MigratePluginWizard extends Wizard {
 				}
 			}
 			for (int i = 0; i < list.size(); i++) {
-				StringBuffer buffer = new StringBuffer("<import plugin=\"");
-				buffer.append(list.get(i) + "\"");
+				StringBuffer buffer = new StringBuffer("<import plugin=\""); //$NON-NLS-1$
+				buffer.append(list.get(i) + "\""); //$NON-NLS-1$
 				if (uiImport.isReexported())
-					buffer.append(" export=\"true\"");
+					buffer.append(" export=\"true\""); //$NON-NLS-1$
 				if (uiImport.isOptional())
-					buffer.append(" optional=\"true\"");
-				buffer.append("/>");
+					buffer.append(" optional=\"true\""); //$NON-NLS-1$
+				buffer.append("/>"); //$NON-NLS-1$
 				result.add(buffer.toString());
 			}
 		} else if (needsAdditionalUIImport(model)) {
-			result.add("<import plugin=\"org.eclipse.ui\"/>");
+			result.add("<import plugin=\"org.eclipse.ui\"/>"); //$NON-NLS-1$
 		}
 		if (needsHelpBaseImport(model))
-			result.add("<import plugin=\"org.eclipse.help.base\"/>");
+			result.add("<import plugin=\"org.eclipse.help.base\"/>"); //$NON-NLS-1$
 		
 		return (String[]) result.toArray(new String[result.size()]);
 	}
@@ -254,10 +254,10 @@ public class MigratePluginWizard extends Wizard {
 			if (imports.length == 0)
 				return;
 			
-			String space = "";
-			IRegion requiresRegion = adapter.find(0, "<requires>", true, false, false, false);
+			String space = ""; //$NON-NLS-1$
+			IRegion requiresRegion = adapter.find(0, "<requires>", true, false, false, false); //$NON-NLS-1$
 			if (requiresRegion != null) {
-				IRegion spacerRegion = adapter.find(requiresRegion.getOffset() + requiresRegion.getLength(), "\\s*", true, true, false, true);
+				IRegion spacerRegion = adapter.find(requiresRegion.getOffset() + requiresRegion.getLength(), "\\s*", true, true, false, true); //$NON-NLS-1$
 				if (spacerRegion != null) {
 					space = document.get(spacerRegion.getOffset(), spacerRegion.getLength());
 				}
@@ -276,7 +276,7 @@ public class MigratePluginWizard extends Wizard {
 		IPluginExtension[] extensions = model.getPluginBase().getExtensions();
 		for (int i = 0; i < extensions.length; i++) {
 			if (ExtensionPointMappings.hasMovedFromHelpToUI(extensions[i].getPoint())
-				&& findImport(model, "org.eclipse.ui") == null)
+				&& findImport(model, "org.eclipse.ui") == null) //$NON-NLS-1$
 				return true;
 		}
 		return false;
@@ -286,7 +286,7 @@ public class MigratePluginWizard extends Wizard {
 		IPluginExtension[] extensions = model.getPluginBase().getExtensions();
 		for (int i = 0; i < extensions.length; i++) {
 			if (ExtensionPointMappings.hasMovedFromHelpToBase(extensions[i].getPoint())
-				&& findImport(model, "org.eclipse.help.base") == null) {
+				&& findImport(model, "org.eclipse.help.base") == null) { //$NON-NLS-1$
 				return true;
 			}
 		}

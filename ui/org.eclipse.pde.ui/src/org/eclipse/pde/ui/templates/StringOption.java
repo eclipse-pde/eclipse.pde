@@ -72,7 +72,7 @@ public class StringOption extends TemplateOption {
 		if (text != null) {
 			ignoreListener = true;
 			String textValue = getText();
-			text.setText(textValue != null ? textValue : "");
+			text.setText(textValue != null ? textValue : ""); //$NON-NLS-1$
 			ignoreListener = false;
 		}
 	}

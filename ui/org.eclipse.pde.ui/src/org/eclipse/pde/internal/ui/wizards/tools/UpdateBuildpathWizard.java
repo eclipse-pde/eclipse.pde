@@ -18,8 +18,8 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 public class UpdateBuildpathWizard extends Wizard {
 	private UpdateBuildpathWizardPage page1;
 	private IPluginModelBase [] selected;
-	private static final String STORE_SECTION = "UpdateBuildpathWizard";
-	private static final String KEY_WTITLE = "UpdateBuildpathWizard.wtitle";
+	private static final String STORE_SECTION = "UpdateBuildpathWizard"; //$NON-NLS-1$
+	private static final String KEY_WTITLE = "UpdateBuildpathWizard.wtitle"; //$NON-NLS-1$
 
 	public UpdateBuildpathWizard(IPluginModelBase[] selected) {
 		IDialogSettings masterSettings = PDEPlugin.getDefault().getDialogSettings();

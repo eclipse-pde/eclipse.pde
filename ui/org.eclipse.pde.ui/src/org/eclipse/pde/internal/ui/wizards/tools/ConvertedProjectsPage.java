@@ -40,15 +40,15 @@ import org.eclipse.jface.dialogs.*;
 public class ConvertedProjectsPage extends WizardPage  {
 	private Button updateBuildPathButton;
 	private CheckboxTableViewer projectViewer;
-	public static final String KEY_TITLE = "ConvertedProjectWizard.title";
+	public static final String KEY_TITLE = "ConvertedProjectWizard.title"; //$NON-NLS-1$
 	public static final String KEY_UPDATE_BUILD_PATH =
-		"ConvertedProjectWizard.updateBuildPath";
-	public static final String KEY_CONVERTING = "ConvertedProjectWizard.converting";
-	public static final String KEY_UPDATING = "ConvertedProjectWizard.updating";
-	public static final String KEY_DESC = "ConvertedProjectWizard.desc";
+		"ConvertedProjectWizard.updateBuildPath"; //$NON-NLS-1$
+	public static final String KEY_CONVERTING = "ConvertedProjectWizard.converting"; //$NON-NLS-1$
+	public static final String KEY_UPDATING = "ConvertedProjectWizard.updating"; //$NON-NLS-1$
+	public static final String KEY_DESC = "ConvertedProjectWizard.desc"; //$NON-NLS-1$
 	public static final String KEY_PROJECT_LIST =
-		"ConvertedProjectWizard.projectList";
-	private static final String UPDATE_SECTION = "ConvertedProjectsPageUpdate";
+		"ConvertedProjectWizard.projectList"; //$NON-NLS-1$
+	private static final String UPDATE_SECTION = "ConvertedProjectsPageUpdate"; //$NON-NLS-1$
 	private TablePart tablePart;
 
 	
@@ -67,7 +67,7 @@ public class ConvertedProjectsPage extends WizardPage  {
 		public String getColumnText(Object obj, int index) {
 			if (index == 0) 
 				return ((IProject) obj).getName();
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 		public Image getColumnImage(Object obj, int index) {
 			return PlatformUI.getWorkbench().getSharedImages().getImage(IDE.SharedImages.IMG_OBJ_PROJECT);
@@ -101,7 +101,7 @@ public class ConvertedProjectsPage extends WizardPage  {
 	}
 
 	public ConvertedProjectsPage(Vector initialSelection) {
-		super("convertedProjects");
+		super("convertedProjects"); //$NON-NLS-1$
 		setTitle(PDEPlugin.getResourceString(KEY_TITLE));
 		setDescription(PDEPlugin.getResourceString(KEY_DESC));
 		tablePart = new TablePart(PDEPlugin.getResourceString(KEY_PROJECT_LIST));
@@ -159,7 +159,7 @@ public class ConvertedProjectsPage extends WizardPage  {
 		IPlugin plugin = model.getPlugin();
 		plugin.setId(file.getProject().getName());
 		plugin.setName(createInitialName(plugin.getId()));
-		plugin.setVersion("1.0.0");
+		plugin.setVersion("1.0.0"); //$NON-NLS-1$
 		model.save();
 	}
 	
@@ -195,7 +195,7 @@ public class ConvertedProjectsPage extends WizardPage  {
 	
 	public static void updateBuildPath(IProject project, IProgressMonitor monitor)
 		throws CoreException {
-		IPath manifestPath = project.getFullPath().append("plugin.xml");
+		IPath manifestPath = project.getFullPath().append("plugin.xml"); //$NON-NLS-1$
 		IFile file = project.getWorkspace().getRoot().getFile(manifestPath);
 		if (!file.exists())
 			return;
@@ -213,12 +213,12 @@ public class ConvertedProjectsPage extends WizardPage  {
 		IProgressMonitor monitor)
 		throws CoreException {
 		CoreUtility.addNatureToProject(project, PDE.PLUGIN_NATURE, monitor);
-		IPath manifestPath = project.getFullPath().append("plugin.xml");
+		IPath manifestPath = project.getFullPath().append("plugin.xml"); //$NON-NLS-1$
 		IFile file = project.getWorkspace().getRoot().getFile(manifestPath);
 		if (file.exists()) {
 			IDE.setDefaultEditor(file, PDEPlugin.MANIFEST_EDITOR_ID);
 		} else {
-			manifestPath = project.getFullPath().append("fragment.xml");
+			manifestPath = project.getFullPath().append("fragment.xml"); //$NON-NLS-1$
 			IFile fragmentFile = project.getWorkspace().getRoot().getFile(manifestPath);
 			if (!fragmentFile.exists()) {
 				createManifestFile(file, monitor);				
@@ -226,7 +226,7 @@ public class ConvertedProjectsPage extends WizardPage  {
 			IDE.setDefaultEditor(file, PDEPlugin.MANIFEST_EDITOR_ID);
 		}
 		
-		IPath buildPath = project.getFullPath().append("build.properties");
+		IPath buildPath = project.getFullPath().append("build.properties"); //$NON-NLS-1$
 		IFile buildFile = project.getWorkspace().getRoot().getFile(buildPath);
 		if (buildFile.exists()) {
 			IDE.setDefaultEditor(buildFile, PDEPlugin.BUILD_EDITOR_ID);

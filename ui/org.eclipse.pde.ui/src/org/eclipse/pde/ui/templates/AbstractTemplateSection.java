@@ -36,8 +36,8 @@ public abstract class AbstractTemplateSection
 			ITemplateSection,
 			IVariableProvider {
 
-	private static final String KEY_CODEGEN = "AbstractTemplateSection.codeGenTitle";
-	private static final String KEY_NOJAVA = "AbstractTemplateSection.noJavaClasses";
+	private static final String KEY_CODEGEN = "AbstractTemplateSection.codeGenTitle"; //$NON-NLS-1$
+	private static final String KEY_NOJAVA = "AbstractTemplateSection.noJavaClasses"; //$NON-NLS-1$
 
 	/**
 	 * The project handle.
@@ -51,24 +51,24 @@ public abstract class AbstractTemplateSection
 	 * The key for the main plug-in class of the plug-in that the template is
 	 * used for (value="pluginClass");
 	 */
-	public static final String KEY_PLUGIN_CLASS = "pluginClass";
+	public static final String KEY_PLUGIN_CLASS = "pluginClass"; //$NON-NLS-1$
 	/**
 	 * The key for the plug-in id of the plug-in that the template is used for
 	 * (value="pluginId").
 	 */
-	public static final String KEY_PLUGIN_ID = "pluginId";
+	public static final String KEY_PLUGIN_ID = "pluginId"; //$NON-NLS-1$
 	/**
 	 * The key for the plug-in name of the plug-in that the template is used for
 	 * (value="pluginName").
 	 */
-	public static final String KEY_PLUGIN_NAME = "pluginName";
+	public static final String KEY_PLUGIN_NAME = "pluginName"; //$NON-NLS-1$
 	/**
 	 * The key for the package name that will be created by this teamplate
 	 * (value="packageName").
 	 */
-	public static final String KEY_PACKAGE_NAME = "packageName";
+	public static final String KEY_PACKAGE_NAME = "packageName"; //$NON-NLS-1$
 
-	private static final String KEY_GENERATING = "AbstractTemplateSection.generating";
+	private static final String KEY_GENERATING = "AbstractTemplateSection.generating"; //$NON-NLS-1$
 
 	private boolean pagesAdded = false;
 	/**
@@ -113,7 +113,7 @@ public abstract class AbstractTemplateSection
 	 * @see ITemplateSection#getDescription()
 	 */
 	public String getDescription() {
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	/**
 	 * Returns the translated version of the resource string represented by the
@@ -184,7 +184,7 @@ public abstract class AbstractTemplateSection
 	 * @see ITemplateSection#getDependencies()
 	 */
 	public IPluginReference[] getDependencies(String schemaVersion) {
-		return new IPluginReference[]{new PluginReference("org.eclipse.ui",
+		return new IPluginReference[]{new PluginReference("org.eclipse.ui", //$NON-NLS-1$
 				null, 0)};
 	}
 
@@ -246,7 +246,7 @@ public abstract class AbstractTemplateSection
 		if (templateDirectory == null || !templateDirectory.exists())
 			return;
 		generateFiles(templateDirectory, project, true, false, monitor);
-		monitor.subTask("");
+		monitor.subTask(""); //$NON-NLS-1$
 		monitor.worked(1);
 	}
 	/**
@@ -370,7 +370,7 @@ public abstract class AbstractTemplateSection
 
 				if (firstLevel) {
 					binary = false;
-					if (member.getName().equals("java")) {
+					if (member.getName().equals("java")) { //$NON-NLS-1$
 						IFolder sourceFolder = getSourceFolder(monitor);
 						if (sourceFolder != null) {
 							dstContainer = generateJavaSourceFolder(
@@ -382,7 +382,7 @@ public abstract class AbstractTemplateSection
 									.getResourceString(KEY_NOJAVA));
 							continue;
 						}
-					} else if (member.getName().equals("bin")) {
+					} else if (member.getName().equals("bin")) { //$NON-NLS-1$
 						binary = true;
 						dstContainer = dst;
 					}

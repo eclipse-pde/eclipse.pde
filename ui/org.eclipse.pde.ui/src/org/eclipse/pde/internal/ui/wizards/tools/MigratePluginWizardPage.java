@@ -32,7 +32,7 @@ public class MigratePluginWizardPage extends WizardPage {
 	private CheckboxTableViewer fPluginListViewer;	
 	private TablePart fTablePart;
 	private Button fUpdateClasspathButton;
-	private String S_UPDATE_CLASSATH = "updateClasspath";
+	private String S_UPDATE_CLASSATH = "updateClasspath"; //$NON-NLS-1$
 
 	public class ContentProvider
 		extends DefaultContentProvider
@@ -63,12 +63,12 @@ public class MigratePluginWizardPage extends WizardPage {
 	}
 
 	public MigratePluginWizardPage(IPluginModelBase[] selected) {
-		super("MigrateWizardPage");
-		setTitle(PDEPlugin.getResourceString("MigrationWizard.title"));
-		setDescription(PDEPlugin.getResourceString("MigrationWizardPage.desc"));
+		super("MigrateWizardPage"); //$NON-NLS-1$
+		setTitle(PDEPlugin.getResourceString("MigrationWizard.title")); //$NON-NLS-1$
+		setDescription(PDEPlugin.getResourceString("MigrationWizardPage.desc")); //$NON-NLS-1$
 
 		this.fSelected = selected;
-		fTablePart = new TablePart(PDEPlugin.getResourceString("MigrationWizardPage.label"));
+		fTablePart = new TablePart(PDEPlugin.getResourceString("MigrationWizardPage.label")); //$NON-NLS-1$
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 	
@@ -100,7 +100,7 @@ public class MigratePluginWizardPage extends WizardPage {
 		fTablePart.setSelection(fSelected);
 		
 		fUpdateClasspathButton = new Button(container, SWT.CHECK);
-		fUpdateClasspathButton.setText(PDEPlugin.getResourceString("MigrationWizard.update"));
+		fUpdateClasspathButton.setText(PDEPlugin.getResourceString("MigrationWizard.update")); //$NON-NLS-1$
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = 2;
 		fUpdateClasspathButton.setLayoutData(gd);

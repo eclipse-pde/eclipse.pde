@@ -32,10 +32,10 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public class UpdateBuildpathWizardPage extends WizardPage {
 	private IPluginModelBase[] selected;
 	private CheckboxTableViewer pluginListViewer;
-	private static final String KEY_TITLE = "UpdateBuildpathWizard.title";
-	private static final String KEY_DESC = "UpdateBuildpathWizard.desc";
+	private static final String KEY_TITLE = "UpdateBuildpathWizard.title"; //$NON-NLS-1$
+	private static final String KEY_DESC = "UpdateBuildpathWizard.desc"; //$NON-NLS-1$
 	private static final String KEY_PLUGIN_LIST =
-		"UpdateBuildpathWizard.availablePlugins";
+		"UpdateBuildpathWizard.availablePlugins"; //$NON-NLS-1$
 	
 	private TablePart tablePart;
 
@@ -68,7 +68,7 @@ public class UpdateBuildpathWizardPage extends WizardPage {
 	}
 
 	public UpdateBuildpathWizardPage(IPluginModelBase[] selected) {
-		super("UpdateBuildpathWizardPage");
+		super("UpdateBuildpathWizardPage"); //$NON-NLS-1$
 		setTitle(PDEPlugin.getResourceString(KEY_TITLE));
 		setDescription(PDEPlugin.getResourceString(KEY_DESC));
 

@@ -39,7 +39,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
  */
 
 public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
-	private static final String KEY_MUST_BE_SET = "OptionTemplateSection.mustBeSet";
+	private static final String KEY_MUST_BE_SET = "OptionTemplateSection.mustBeSet"; //$NON-NLS-1$
 	private ArrayList pages = new ArrayList();
 
 	private static class TemplatePage {
@@ -78,8 +78,8 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	protected String getTemplateDirectory() {
 		String schemaVersion = model.getPluginBase().getSchemaVersion();
 		if (schemaVersion != null)
-			return "templates_" + schemaVersion;
-		return "templates";
+			return "templates_" + schemaVersion; //$NON-NLS-1$
+		return "templates"; //$NON-NLS-1$
 	}
 	/**
 	 * Returns the install URL of the plug-in that contributes this template.
@@ -255,7 +255,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 * @return the translated label of this template
 	 */
 	public String getLabel() {
-		String key = "template." + getSectionId() + ".name";
+		String key = "template." + getSectionId() + ".name"; //$NON-NLS-1$ //$NON-NLS-2$
 		return getPluginResourceString(key);
 	}
 	/**
@@ -268,7 +268,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 * @return the translated description of this template
 	 */
 	public String getDescription() {
-		String key = "template." + getSectionId() + ".desc";
+		String key = "template." + getSectionId() + ".desc"; //$NON-NLS-1$ //$NON-NLS-2$
 		return getPluginResourceString(key);
 	}
 	/**

@@ -43,7 +43,7 @@ public class OptionTemplateWizardPage extends WizardPage {
 	 */
 	public OptionTemplateWizardPage(BaseOptionTemplateSection section,
 			ArrayList options, String helpContextId) {
-		super("");
+		super(""); //$NON-NLS-1$
 		this.section = section;
 		this.options = options;
 		this.helpContextId = helpContextId;

@@ -10,19 +10,19 @@ public class ExtensionPointMappings {
 	private static HashMap fMap = new HashMap();
 	
 	private static void initialize() {
-		fMap.put("org.eclipse.ui.markerImageProvider", "org.eclipse.ui.ide.markerImageProvider");
-		fMap.put("org.eclipse.ui.markerHelp", "org.eclipse.ui.ide.markerHelp");
-		fMap.put("org.eclipse.ui.markerImageProviders", "org.eclipse.ui.ide.markerImageProviders");
-		fMap.put("org.eclipse.ui.markerResolution", "org.eclipse.ui.ide.markerResolution");
-		fMap.put("org.eclipse.ui.projectNatureImages", "org.eclipse.ui.ide.projectNatureImages");
-		fMap.put("org.eclipse.ui.resourceFilters", "org.eclipse.ui.ide.resourceFilters");
-		fMap.put("org.eclipse.ui.markerUpdaters", "org.eclipse.ui.editors.markerUpdaters");
-		fMap.put("org.eclipse.ui.documentProviders", "org.eclipse.ui.editors.documentProviders");
-		fMap.put("org.eclipse.ui.workbench.texteditor.markerAnnotationSpecification", "org.eclipse.ui.editors.markerAnnotationSpecification");
-		fMap.put("org.eclipse.help.browser", "org.eclipse.help.base.browser");
-		fMap.put("org.eclipse.help.luceneAnalyzer", "org.eclipse.help.base.luceneAnalyzer");
-		fMap.put("org.eclipse.help.webapp", "org.eclipse.help.base.webapp");
-		fMap.put("org.eclipse.help.support", "org.eclipse.ui.helpSupport");
+		fMap.put("org.eclipse.ui.markerImageProvider", "org.eclipse.ui.ide.markerImageProvider"); //$NON-NLS-1$ //$NON-NLS-2$
+		fMap.put("org.eclipse.ui.markerHelp", "org.eclipse.ui.ide.markerHelp"); //$NON-NLS-1$ //$NON-NLS-2$
+		fMap.put("org.eclipse.ui.markerImageProviders", "org.eclipse.ui.ide.markerImageProviders"); //$NON-NLS-1$ //$NON-NLS-2$
+		fMap.put("org.eclipse.ui.markerResolution", "org.eclipse.ui.ide.markerResolution"); //$NON-NLS-1$ //$NON-NLS-2$
+		fMap.put("org.eclipse.ui.projectNatureImages", "org.eclipse.ui.ide.projectNatureImages"); //$NON-NLS-1$ //$NON-NLS-2$
+		fMap.put("org.eclipse.ui.resourceFilters", "org.eclipse.ui.ide.resourceFilters"); //$NON-NLS-1$ //$NON-NLS-2$
+		fMap.put("org.eclipse.ui.markerUpdaters", "org.eclipse.ui.editors.markerUpdaters"); //$NON-NLS-1$ //$NON-NLS-2$
+		fMap.put("org.eclipse.ui.documentProviders", "org.eclipse.ui.editors.documentProviders"); //$NON-NLS-1$ //$NON-NLS-2$
+		fMap.put("org.eclipse.ui.workbench.texteditor.markerAnnotationSpecification", "org.eclipse.ui.editors.markerAnnotationSpecification"); //$NON-NLS-1$ //$NON-NLS-2$
+		fMap.put("org.eclipse.help.browser", "org.eclipse.help.base.browser"); //$NON-NLS-1$ //$NON-NLS-2$
+		fMap.put("org.eclipse.help.luceneAnalyzer", "org.eclipse.help.base.luceneAnalyzer"); //$NON-NLS-1$ //$NON-NLS-2$
+		fMap.put("org.eclipse.help.webapp", "org.eclipse.help.base.webapp"); //$NON-NLS-1$ //$NON-NLS-2$
+		fMap.put("org.eclipse.help.support", "org.eclipse.ui.helpSupport"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	public static boolean isDeprecated(String id) {
@@ -32,13 +32,13 @@ public class ExtensionPointMappings {
 	}
 	
 	public static boolean hasMovedFromHelpToBase(String key) {
-		return key.equals("org.eclipse.help.browser")
-			|| key.equals("org.eclipse.help.luceneAnalyzer")
-			|| key.equals("org.eclipse.help.webapp");
+		return key.equals("org.eclipse.help.browser") //$NON-NLS-1$
+			|| key.equals("org.eclipse.help.luceneAnalyzer") //$NON-NLS-1$
+			|| key.equals("org.eclipse.help.webapp"); //$NON-NLS-1$
 	}
 	
 	public static boolean hasMovedFromHelpToUI(String key) {
-		return key.equals("org.eclipse.help.support");
+		return key.equals("org.eclipse.help.support"); //$NON-NLS-1$
 	}
 	
 	public static String getNewId(String oldId) {
