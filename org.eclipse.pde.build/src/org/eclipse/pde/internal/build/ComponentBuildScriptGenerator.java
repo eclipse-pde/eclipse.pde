@@ -118,7 +118,7 @@ protected void generateBinTarget(PrintWriter output) {
 	output.println("  <target name=\"" + TARGET_BIN + "\" depends=\"init\">");
 	output.println("    <antcall target=\"" + TARGET_ALL_TEMPLATE + "\">");
 	output.println("      <param name=\"target\" value=\"" + TARGET_BIN + "\"/>");
-	output.println("      <param name=\"destroot\" value=\"${basedir}/temp/\"/>");
+	output.println("      <param name=\"destroot\" value=\"${basedir}/_temp___/\"/>");
 	output.println("    </antcall>");
 
 	output.println("    <property name=\"auto.includes\" value=\"install.xml\"/>");
@@ -135,11 +135,11 @@ protected void generateBinTarget(PrintWriter output) {
 		exclusions = "${auto.excludes}";
 	output.println("      <property name=\"excludes\" value=\"" + exclusions + "\"/>");
 
-	output.println("      <property name=\"dest\" value=\"${basedir}/temp/install/components/${component}_${compVersion}\"/>");
+	output.println("      <property name=\"dest\" value=\"${basedir}/_temp___/install/components/${component}_${compVersion}\"/>");
 	output.println("    </ant>");
 
-	output.println("    <jar jarfile=\"${component}_${compVersion}.jar\" basedir=\"${basedir}/temp\"/>");
-	output.println("    <delete dir=\"${basedir}/temp\"/>");
+	output.println("    <jar jarfile=\"${component}_${compVersion}.jar\" basedir=\"${basedir}/_temp___\"/>");
+	output.println("    <delete dir=\"${basedir}/_temp___\"/>");
 	output.println("  </target>");
 }
 protected void generateBuildScript(PrintWriter output) {
@@ -211,7 +211,7 @@ protected void generateGatherTemplateCall(PrintWriter output, String targetName,
 	output.println("  <target name=\"" + targetName + "\" depends=\"init\">");
 	output.println("    <antcall target=\"" + TARGET_ALL_TEMPLATE + "\">");
 	output.println("      <param name=\"target\" value=\"" + targetName + "\"/>");
-	output.println("      <param name=\"destroot\" value=\"${basedir}/temp/\"/>");
+	output.println("      <param name=\"destroot\" value=\"${basedir}/_temp___/\"/>");
 	output.println("    </antcall>");
 	
 	if (outputTerminatingTag)
@@ -219,8 +219,8 @@ protected void generateGatherTemplateCall(PrintWriter output, String targetName,
 }
 protected void generateLogTarget(PrintWriter output) {
 	generateGatherTemplateCall(output,TARGET_LOG,false);
-	output.println("    <zip zipfile=\"" + DEFAULT_FILENAME_LOG + "\" basedir=\"${basedir}/temp/\"/>");
-	output.println("    <delete dir=\"${basedir}/temp\"/>");
+	output.println("    <zip zipfile=\"" + DEFAULT_FILENAME_LOG + "\" basedir=\"${basedir}/_temp___/\"/>");
+	output.println("    <delete dir=\"${basedir}/_temp___\"/>");
 	output.println("  </target>");
 }
 protected void generatePrologue(PrintWriter output) {
@@ -243,8 +243,8 @@ protected void generatePrologue(PrintWriter output) {
 }
 protected void generateSrcTarget(PrintWriter output) {
 	generateGatherTemplateCall(output,TARGET_SRC,false);
-	output.println("    <jar jarfile=\"" + DEFAULT_FILENAME_SRC + "\" basedir=\"${basedir}/temp/\"/>");
-	output.println("    <delete dir=\"${basedir}/temp\"/>");
+	output.println("    <jar jarfile=\"" + DEFAULT_FILENAME_SRC + "\" basedir=\"${basedir}/_temp___/\"/>");
+	output.println("    <delete dir=\"${basedir}/_temp___\"/>");
 	output.println("  </target>");
 }
 protected void generatePluginTemplateTarget(PrintWriter output) {
@@ -267,7 +267,7 @@ protected void generateTemplateTargetCall(PrintWriter output, String target) {
 	output.println("  <target name=\"" + target + "\" depends=\"init\">");
 	output.println("    <antcall target=\"" + TARGET_ALL_TEMPLATE + "\">");
 	output.println("      <param name=\"target\" value=\"" + target + "\"/>");
-	output.println("      <param name=\"destroot\" value=\"${basedir}/temp/\"/>");
+	output.println("      <param name=\"destroot\" value=\"${basedir}/_temp___/\"/>");
 	output.println("    </antcall>");
 	output.println("  </target>");
 }
