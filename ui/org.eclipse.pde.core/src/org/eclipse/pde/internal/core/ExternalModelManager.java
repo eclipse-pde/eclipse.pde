@@ -358,25 +358,16 @@ public class ExternalModelManager {
 		boolean resolve,
 		IProgressMonitor monitor) {
 		try {
-			MultiStatus errors =
-				new MultiStatus(
-					PDECore.getPluginId(),
-					1,
-					PDECore.getResourceString(KEY_SCANNING_PROBLEMS),
-					null);
 			URL[] urls = new URL[pluginPaths.length];
 			for (int i = 0; i < pluginPaths.length; i++) {
 				urls[i] = new URL("file:" + pluginPaths[i].replace('\\', '/') + "/");
 			}
-			PluginRegistryModel registryModel =
-				Platform.parsePlugins(urls, new Factory(errors));
-			IStatus resolveStatus = null;
-			if (resolve)
-				resolveStatus = registryModel.resolve(true, false);
-			
+			TargetPlatformRegistryLoader loader = new TargetPlatformRegistryLoader();
+			MultiStatus errors = loader.load(urls, resolve);
+			PluginRegistryModel registryModel = loader.getRegistry();
+
 			PluginDescriptorModel[] pluginDescriptorModels = registryModel.getPlugins();
 			PluginFragmentModel[] fragmentModels = registryModel.getFragments();
-			
 			for (int i = 0; i < pluginDescriptorModels.length; i++) {
 				PluginDescriptorModel pluginDescriptorModel = pluginDescriptorModels[i];
 				monitor.subTask(pluginDescriptorModel.getId());
@@ -387,8 +378,6 @@ public class ExternalModelManager {
 				PluginFragmentModel fragmentModel = fragmentModels[i];
 				processFragmentModel(fresult, fragmentModel, monitor);
 			}
-			if (resolve)
-				errors.merge(resolveStatus);
 			return errors;
 		} catch (MalformedURLException e) {
 			return null;
