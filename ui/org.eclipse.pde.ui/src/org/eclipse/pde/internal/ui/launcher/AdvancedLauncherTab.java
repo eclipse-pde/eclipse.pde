@@ -63,6 +63,7 @@ public class AdvancedLauncherTab
 	private Button pluginPathButton;
 	private int numExternalChecked = 0;
 	private int numWorkspaceChecked = 0;
+	private boolean firstReveal = true;
 	
 	class PluginContentProvider
 		extends DefaultContentProvider
@@ -194,13 +195,16 @@ public class AdvancedLauncherTab
 		SWTUtil.setButtonDimensionHint(defaultsButton);
 
 		hookListeners();
-		pluginTreeViewer.reveal(workspacePlugins);
 		setControl(composite);
 	}
 
 	private void hookListeners() {
 		SelectionAdapter adapter = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				if (firstReveal) {
+					pluginTreeViewer.reveal(workspacePlugins);
+					firstReveal = false;
+				}
 				useDefaultChanged();
 			}
 		};
