@@ -150,6 +150,18 @@ public class TracingOptionsManager {
 		}
 	}
 
+	public void save(String filename, Map map, HashSet selected) {
+		Properties properties = getTracingOptions(map);
+		for (Enumeration enum = properties.keys(); enum.hasMoreElements();) {
+			String key = enum.nextElement().toString();
+			Path path = new Path(key);
+			if (path.segmentCount() < 1 || !selected.contains(path.segment(0).toString())) {
+				properties.remove(key);
+			}
+		}
+		save(filename, properties);
+	}
+
 	public void save(String filename, Map map) {
 		save(filename, getTracingOptions(map));		
 	}

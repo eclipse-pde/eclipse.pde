@@ -203,11 +203,11 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		programArgs.add(configuration.getAttribute(CLASSPATH_ENTRIES, devEntry));
 
 		// Create the .options file if tracing is turned on
-		if (configuration.getAttribute(TRACING, false)) {
+		if (configuration.getAttribute(TRACING, false)
+				&& !TRACING_NONE.equals(configuration.getAttribute(
+						TRACING_CHECKED, (String) null))) {
 			programArgs.add("-debug");
-			programArgs.add(
-				LauncherUtils.getTracingFileArgument(
-					configuration,
+			programArgs.add(LauncherUtils.getTracingFileArgument(configuration,
 					configFile.getParent() + Path.SEPARATOR + ".options"));
 		}
 		

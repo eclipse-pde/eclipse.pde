@@ -36,8 +36,11 @@ public interface ILauncherSettings {
 	String TRACING = "tracing";
 	String TRACING_OPTIONS = "tracingOptions";
 	String TRACING_SELECTED_PLUGIN = "selectedPlugin";
+	String TRACING_CHECKED = "checked";
+	String TRACING_NONE = "[NONE]";
 	
 	
 	// config file location
 	String CONFIG_LOCATION = "configLocation";
+	
 }

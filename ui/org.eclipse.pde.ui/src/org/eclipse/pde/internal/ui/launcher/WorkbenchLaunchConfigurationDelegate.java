@@ -157,7 +157,9 @@ public class WorkbenchLaunchConfigurationDelegate
 		programArgs.add(configuration.getAttribute(CLASSPATH_ENTRIES, devEntry));
 
 		// add tracing, if turned on
-		if (configuration.getAttribute(TRACING, false)) {
+		if (configuration.getAttribute(TRACING, false)
+				&& !TRACING_NONE.equals(configuration.getAttribute(
+					TRACING_CHECKED, (String) null))) {
 			if (configFile == null) {
 				configFile =
 					TargetPlatform.createWorkingDirectory(new Path(targetWorkspace));

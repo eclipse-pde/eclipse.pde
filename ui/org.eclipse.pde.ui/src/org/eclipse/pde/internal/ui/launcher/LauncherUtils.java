@@ -508,7 +508,17 @@ public class LauncherUtils {
 			TracingOptionsManager mng = PDECore.getDefault().getTracingOptionsManager();
 			Map options =
 				config.getAttribute(ILauncherSettings.TRACING_OPTIONS, (Map) null);
-			mng.save(optionsFileName, options);
+			String selected = config.getAttribute(ILauncherSettings.TRACING_CHECKED, (String)null);
+			if (selected == null) {
+				mng.save(optionsFileName, options);
+			} else if (!selected.equals(ILauncherSettings.TRACING_NONE)) {
+				HashSet result = new HashSet();
+				StringTokenizer tokenizer = new StringTokenizer(selected, ",");
+				while (tokenizer.hasMoreTokens()) {
+					result.add(tokenizer.nextToken());
+				}
+				mng.save(optionsFileName, options, result);
+			}
 		} catch (CoreException e) {
 			return "";
 		}

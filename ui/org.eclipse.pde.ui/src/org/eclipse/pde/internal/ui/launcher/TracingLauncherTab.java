@@ -20,6 +20,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.util.*;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.*;
@@ -35,13 +36,15 @@ public class TracingLauncherTab
 	implements ILauncherSettings {
 
 	private Button fTracingCheck;
-	private TableViewer fPluginViewer;
+	private CheckboxTableViewer fPluginViewer;
 	private IPluginModelBase[] fTraceableModels;
 	private Properties fMasterOptions = new Properties();
 	private Hashtable fPropertySources = new Hashtable();
 	private PropertySheetPage fPropertySheet;
 	private Label fPropertyLabel;
 	private Image fImage;
+	private Button fSelectAllButton;
+	private Button fDeselectAllButton;
 	
 	public TracingLauncherTab() {
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
@@ -57,8 +60,38 @@ public class TracingLauncherTab
 		Label separator = new Label(container, SWT.SEPARATOR | SWT.HORIZONTAL);
 		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		createSashSection(container);
+		createButtonSection(container);
 		setControl(container);		
 		WorkbenchHelp.setHelp(container, IHelpContextIds.LAUNCHER_TRACING);
+	}
+	
+	private void createButtonSection(Composite parent) {
+		Composite container = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		container.setLayout(layout);
+		
+		fSelectAllButton = new Button(container, SWT.PUSH);
+		fSelectAllButton.setText(PDEPlugin.getResourceString("TracingLauncherTab.selectAll"));
+		fSelectAllButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
+		SWTUtil.setButtonDimensionHint(fSelectAllButton);
+		fSelectAllButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				fPluginViewer.setAllChecked(true);
+				updateLaunchConfigurationDialog();
+			}
+		});
+		
+		fDeselectAllButton = new Button(container, SWT.PUSH);
+		fDeselectAllButton.setText(PDEPlugin.getResourceString("TracinglauncherTab.deselectAll"));
+		fDeselectAllButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
+		SWTUtil.setButtonDimensionHint(fDeselectAllButton);
+		fDeselectAllButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				fPluginViewer.setAllChecked(false);
+				updateLaunchConfigurationDialog();
+			}
+		});
 	}
 	
 	private void createEnableTracingButton(Composite container) {
@@ -89,13 +122,18 @@ public class TracingLauncherTab
 		Label label = new Label(composite, SWT.NULL);
 		label.setText(PDEPlugin.getResourceString("TracingLauncherTab.plugins"));
 
-		fPluginViewer = new TableViewer(composite, SWT.BORDER);
+		fPluginViewer = CheckboxTableViewer.newCheckList(composite, SWT.BORDER);
 		fPluginViewer.setContentProvider(new ArrayContentProvider());
 		fPluginViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		fPluginViewer.setSorter(new ListUtil.PluginSorter());
 		fPluginViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent e) {
 				pluginSelected(getSelectedModel());
+			}
+		});
+		fPluginViewer.addCheckStateListener(new ICheckStateListener() {
+			public void checkStateChanged(CheckStateChangedEvent event) {
+				updateLaunchConfigurationDialog();
 			}
 		});
 		GridData gd = new GridData(GridData.FILL_BOTH);
@@ -174,6 +212,8 @@ public class TracingLauncherTab
 		boolean enabled = fTracingCheck.getSelection();
 		fPluginViewer.getTable().setEnabled(enabled);
 		fPropertySheet.getControl().setEnabled(enabled);
+		fSelectAllButton.setEnabled(enabled);
+		fDeselectAllButton.setEnabled(enabled);	
 	}
 
 	public void initializeFrom(ILaunchConfiguration config) {
@@ -195,6 +235,24 @@ public class TracingLauncherTab
 			} else {
 				pluginSelected(null);
 			}
+			String checked = config.getAttribute(TRACING_CHECKED, (String)null);
+			if (checked == null) {
+				fPluginViewer.setAllChecked(true);
+			} else if (checked.equals(TRACING_NONE)) {
+				fPluginViewer.setAllChecked(false);
+			} else {
+				StringTokenizer tokenizer = new StringTokenizer(checked, ",");
+				ArrayList list = new ArrayList();
+				PluginModelManager manager = PDECore.getDefault().getModelManager();
+				while (tokenizer.hasMoreTokens()) {
+					String id = tokenizer.nextToken();
+					ModelEntry entry = manager.findEntry(id);
+					if (entry != null) {
+						list.add(entry.getActiveModel());
+					}					
+				}
+				fPluginViewer.setCheckedElements(list.toArray());
+			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
@@ -203,10 +261,8 @@ public class TracingLauncherTab
 	private IPluginModelBase getLastSelectedPlugin(ILaunchConfiguration config) throws CoreException {
 		String pluginID = config.getAttribute(TRACING_SELECTED_PLUGIN, (String)null);
 		if (pluginID != null) {
-			for (int i = 0; i < fTraceableModels.length; i++) {
-				if (fTraceableModels[i].getPluginBase().getId().equals(pluginID))
-					return fTraceableModels[i];
-			}
+			ModelEntry entry = PDECore.getDefault().getModelManager().findEntry(pluginID);
+			return (entry == null) ? null : entry.getActiveModel();
 		}
 		return null;
 	}
@@ -235,10 +291,26 @@ public class TracingLauncherTab
 		} else {
 			config.setAttribute(TRACING_SELECTED_PLUGIN, (String)null);
 		}
+		Object[] checked = fPluginViewer.getCheckedElements();
+		if (checked.length == fPluginViewer.getTable().getItemCount()) {
+			config.setAttribute(TRACING_CHECKED, (String)null);
+		} else if (checked.length == 0) {
+			config.setAttribute(TRACING_CHECKED, TRACING_NONE);
+		} else {
+			StringBuffer buffer = new StringBuffer();
+			for (int i = 0; i < checked.length; i++) {
+				IPluginModelBase model = (IPluginModelBase)checked[i];
+				buffer.append(model.getPluginBase().getId());
+				if (i < checked.length - 1)
+					buffer.append(',');
+			}
+			config.setAttribute(TRACING_CHECKED, buffer.toString());
+		}
 	}
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(TRACING, false);
+		config.setAttribute(TRACING_CHECKED, TRACING_NONE);
 	}
 
 	private void updatePropertyLabel(IPluginModelBase model) {
