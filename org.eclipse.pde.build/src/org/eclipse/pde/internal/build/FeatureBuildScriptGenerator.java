@@ -259,6 +259,7 @@ protected void generateZipDistributionWholeTarget(AntScript script) {
 	script.printDeleteTask(tab, FEATURE_TEMP_FOLDER, null, null);
 	script.printMkdirTask(tab, FEATURE_TEMP_FOLDER);
 	Map params = new HashMap(1);
+	params.put(PROPERTY_FEATURE_BASE, FEATURE_TEMP_FOLDER);
 	params.put(PROPERTY_INCLUDE_CHILDREN, "true"); //$NON-NLS-1$
 	script.printAntCallTask(tab, TARGET_GATHER_BIN_PARTS, null, params);
 	script.printZipTask(tab, FEATURE_DESTINATION + "/" + FEATURE_FULL_NAME + ".bin.dist.zip", FEATURE_TEMP_FOLDER, false, null); //$NON-NLS-1$ //$NON-NLS-2$
