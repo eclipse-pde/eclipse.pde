@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- File written by PDE 1.0 -->
+<plugin
+   id="org.eclipse.pde"
+   name="%name"
+   version="0.110.2"
+   provider-name="IBM"
+   class="org.eclipse.pde.internal.PDEPlugin">
+
+<!-- Required plugins -->
+
+<requires>
+   <import plugin="org.eclipse.ui"/>
+   <import plugin="org.eclipse.core.resources"/>
+   <import plugin="org.eclipse.jdt.ui"/>
+   <import plugin="org.eclipse.jdt.core"/>
+   <import plugin="org.apache.xerces"/>
+   <import plugin="org.eclipse.debug.core"/>
+   <import plugin="org.eclipse.jdt.launching"/>
+   <import plugin="org.eclipse.pde.core"/>
+   <import plugin="org.eclipse.ant.core"/>
+   <import plugin="org.eclipse.ant.ui"/>
+   <import plugin="org.eclipse.core.runtime"/>
+   <import plugin="org.eclipse.debug.ui"/>
+</requires>
+
+<!-- Runtime -->
+
+<runtime>
+   <library name="pde.jar">
+      <export name="*"/>
+   </library>
+</runtime>
+
+<!-- Extension points -->
+
+<extension-point id="projectGenerators" name="%expoint.projectGenerators.name"/>
+<extension-point id="newExtension" name="%expoint.newExtension.name"/>
+<extension-point id="newExtensionPoint" name="%expoint.newExtensionPoint.name"/>
+<extension-point id="schemaMap" name="%expoint.schemaMap.name"/>
+
+<!-- Extensions -->
+<extension
+      point="org.eclipse.ui.perspectives">
+   <perspective
+         name="%perspective.name"
+         icon="icons/basic/view16/plugin_persp.gif"
+         class="org.eclipse.pde.internal.PDEPerspective"
+         id="org.eclipse.pde.PDEPerspective">
+   </perspective>
+</extension>
+<extension
+      point="org.eclipse.ui.preferencePages">
+   <page
+         name="%preferences.main.name"
+         class="org.eclipse.pde.internal.preferences.PDEBasePreferencePage"
+         id="org.eclipse.pde.MainPreferencePage">
+   </page>
+   <page
+         name="%preferences.runtimeTracing.name"
+         category="org.eclipse.pde.MainPreferencePage"
+         class="org.eclipse.pde.internal.preferences.RuntimeTracingPreferencePage"
+         id="org.eclipse.pde.RuntimeTracingPage">
+   </page>
+   <page
+         name="%preferences.advancedTracing.name"
+         category="org.eclipse.pde.MainPreferencePage"
+         class="org.eclipse.pde.internal.preferences.AdvancedTracingPreferencePage"
+         id="org.eclipse.pde.AdvancedTracingPage">
+   </page>
+</extension>
+<extension
+      point="org.eclipse.ui.newWizards">
+   <category
+         name="%new.category.name"
+         id="org.eclipse.pde.PDE">
+   </category>
+   <wizard
+         availableAsShortcut="true"
+         name="%new.pluginProject.name"
+         icon="icons/basic/ctool16/newpprj_wiz.gif"
+         category="org.eclipse.pde.PDE"
+         class="org.eclipse.pde.internal.wizards.project.NewProjectWizard"
+         project="true"
+         finalPerspective="org.eclipse.pde.internal.PDEPerspective"
+         id="org.eclipse.pde.internal.wizards.project.NewProjectWizard">
+      <description>
+         Create a Plug-in Project
+      </description>
+   </wizard>
+   <wizard
+         name="%new.fragmentProject.name"
+         icon="icons/basic/ctool16/newfprj_wiz.gif"
+         category="org.eclipse.pde.PDE"
+         class="org.eclipse.pde.internal.wizards.project.NewFragmentProjectWizard"
+         project="true"
+         finalPerspective="org.eclipse.pde.internal.PDEPerspective"
+         id="org.eclipse.pde.internal.wizards.project.NewFragmentWizard">
+      <description>
+         Create a Plug-in Fragment Project
+      </description>
+   </wizard>
+   <wizard
+         name="%new.schemaFile.name"
+         icon="icons/basic/obj16/schema_obj.gif"
+         category="org.eclipse.pde.PDE"
+         class="org.eclipse.pde.internal.wizards.extension.NewSchemaFileWizard"
+         id="org.eclipse.pde.internal.wizards.extension.NewSchemaFileWizard">
+      <description>
+         Create an Extension Point Schema File
+      </description>
+   </wizard>
+   <wizard
+         availableAsShortcut="false"
+         name="%new.convert.name"
+         icon="icons/basic/ctool16/convjpprj_wiz.gif"
+         category="org.eclipse.pde.PDE"
+         class="org.eclipse.pde.internal.wizards.project.ConvertedProjectWizard"
+         id="org.eclipse.pde.internal.wizards.project.ConvertedProjectWizard">
+      <description>
+         Create a Plug-in project by converting an existing Java project.
+      </description>
+   </wizard>
+   <wizard
+         name="%new.component.name"
+         icon="icons/basic/ctool16/newpcomp_wiz.gif"
+         category="org.eclipse.pde.PDE"
+         class="org.eclipse.pde.internal.component.NewComponentProjectWizard"
+         project="true"
+         finalPerspective="org.eclipse.pde.internal.PDEPerspective"
+         id="org.eclipse.pde.internal.component.NewComponentProjectWizard">
+      <description>
+         Create a Plug-in Component project
+      </description>
+   </wizard>
+</extension>
+<extension
+      point="org.eclipse.pde.projectGenerators">
+   <wizard
+         name="%projectGenerators.defaultPlugin.name"
+         icon="icons/basic/ctool16/defcon_wiz.gif"
+         class="org.eclipse.pde.internal.wizards.project.PluginCodeGeneratorWizard"
+         id="org.eclipse.pde.projectGenerators.default">
+      <description>
+         Generates plugin.xml and plugin top-level class
+      </description>
+   </wizard>
+   <wizard
+         fragmentWizard="true"
+         name="%projectGenerators.defaultFragment.name"
+         icon="icons/basic/ctool16/defcon_wiz.gif"
+         class="org.eclipse.pde.internal.wizards.project.PluginCodeGeneratorWizard"
+         id="org.eclipse.pde.projectGenerators.defaultFragment">
+      <description>
+         Generates fragment.xml and initial structure
+      </description>
+   </wizard>
+</extension>
+<extension
+      point="org.eclipse.ui.editors">
+   <editor
+         name="%editors.pluginManifest.name"
+         default="true"
+         icon="icons/basic/obj16/plugin_mf_obj.gif"
+         filenames="plugin.xml"
+         contributorClass="org.eclipse.pde.internal.editor.manifest.ManifestEditorContributor"
+         class="org.eclipse.pde.internal.editor.manifest.ManifestEditor"
+         id="org.eclipse.pde.manifestEditor">
+   </editor>
+   <editor
+         name="%editors.fragmentManifest.name"
+         default="true"
+         icon="icons/basic/obj16/frgmt_mf_obj.gif"
+         filenames="fragment.xml"
+         contributorClass="org.eclipse.pde.internal.editor.manifest.ManifestEditorContributor"
+         class="org.eclipse.pde.internal.editor.manifest.FragmentManifestEditor"
+         id="org.eclipse.pde.fragmentEditor">
+   </editor>
+   <editor
+         name="%editors.schema.name"
+         default="true"
+         icon="icons/basic/obj16/schema_obj.gif"
+         extensions="xsd"
+         contributorClass="org.eclipse.pde.internal.editor.schema.SchemaEditorContributor"
+         class="org.eclipse.pde.internal.editor.schema.SchemaEditor"
+         id="org.eclipse.pde.schemaEditor">
+   </editor>
+   <editor
+         name="%editors.pluginJars.name"
+         default="true"
+         icon="icons/basic/obj16/java_lib_obj.gif"
+         filenames="plugin.jars,fragment.jars"
+         contributorClass="org.eclipse.pde.internal.editor.jars.JarsEditorContributor"
+         class="org.eclipse.pde.internal.editor.jars.PluginJarsEditor"
+         id="org.eclipse.pde.jarsEditor">
+   </editor>
+   <editor
+         name="%editors.buildProperties.name"
+         default="true"
+         icon="icons/basic/obj16/build_exec.gif"
+         filenames="build.properties"
+         contributorClass="org.eclipse.pde.internal.editor.build.BuildEditorContributor"
+         class="org.eclipse.pde.internal.editor.build.BuildPropertiesEditor"
+         id="org.eclipse.pde.buildEditor">
+   </editor>
+   <editor
+         name="%editors.componentManifest.name"
+         default="true"
+         icon="icons/basic/obj16/comp_mf_obj.gif"
+         filenames="install.xml"
+         contributorClass="org.eclipse.pde.internal.editor.component.ComponentEditorContributor"
+         class="org.eclipse.pde.internal.editor.component.ComponentEditor"
+         id="org.eclipse.pde.componentEditor">
+   </editor>
+</extension>
+<extension
+      id="PluginNature"
+      name="%natures.pluginNature.name"
+      point="org.eclipse.core.resources.natures">
+   <runtime>
+      <run
+            class="org.eclipse.pde.internal.PluginProject">
+      </run>
+   </runtime>
+</extension>
+<extension
+      id="ComponentNature"
+      name="%natures.componentBuilder.name"
+      point="org.eclipse.core.resources.natures">
+   <runtime>
+      <run
+            class="org.eclipse.pde.internal.component.ComponentProject">
+      </run>
+   </runtime>
+</extension>
+<extension
+      id="ManifestBuilder"
+      name="%builders.manifestBuilder.name"
+      point="org.eclipse.core.resources.builders">
+   <builder>
+      <run
+            class="org.eclipse.pde.internal.builders.ManifestConsistencyChecker">
+      </run>
+   </builder>
+</extension>
+<extension
+      id="SchemaBuilder"
+      name="%builders.schemaBuilder.name"
+      point="org.eclipse.core.resources.builders">
+   <builder>
+      <run
+            class="org.eclipse.pde.internal.builders.ExtensionPointSchemaBuilder">
+      </run>
+   </builder>
+</extension>
+<extension
+      id="ComponentBuilder"
+      name="%builders.componentBuilder.name"
+      point="org.eclipse.core.resources.builders">
+   <builder>
+      <run
+            class="org.eclipse.pde.internal.builders.ComponentConsistencyChecker">
+      </run>
+   </builder>
+</extension>
+<extension
+      point="org.eclipse.pde.newExtension">
+   <category
+         name="%newExtension.custom"
+         id="custom">
+   </category>
+   <category
+         name="%newExtension.custom.workbench"
+         parentCategory="custom"
+         id="workbench">
+   </category>
+   <category
+         name="%newExtension.generic"
+         id="generic">
+   </category>
+   <wizard
+         availableAsShortcut="true"
+         name="%newExtension.generic.name"
+         icon="icons/basic/ctool16/newex_wiz.gif"
+         category="generic"
+         class="org.eclipse.pde.internal.wizards.extension.GenericExtensionWizard"
+         id="com.ibm.etools.plugins.generic">
+      <description>
+         %newExtension.generic.desc
+      </description>
+   </wizard>
+</extension>
+<extension
+      point="org.eclipse.ui.popupMenus">
+   <objectContribution
+         objectClass="org.eclipse.core.resources.IProject"
+         id="org.eclipse.pde.popupMenus">
+      <filter
+            name="projectNature"
+            value="org.eclipse.jdt.core.javanature">
+      </filter>
+      <action
+            label="%popupMenus.convert.label"
+            class="org.eclipse.pde.internal.wizards.project.ConvertJavaToPDEProjectAction"
+            id="org.eclipse.pde.ConvertJavaToPDEProject">
+      </action>
+   </objectContribution>
+   <objectContribution
+         objectClass="org.eclipse.core.resources.IFile"
+         nameFilter="*install.xml"
+         id="org.eclipse.pde.componentJar">
+      <filter
+            name="projectNature"
+            value="org.eclipse.pde.ComponentNature">
+      </filter>
+      <action
+            label="%popupMenus.createJar.label"
+            class="org.eclipse.pde.internal.component.BuildComponentJarAction"
+            menubarPath="additions"
+            enablesFor="1"
+            id="org.eclipse.pde.BuildComponentJar">
+      </action>
+   </objectContribution>
+</extension>
+<extension
+      point="org.eclipse.debug.core.launchers">
+   <launcher
+         label="%launcher.regular.label"
+         modes="run, debug"
+         class="org.eclipse.pde.internal.launcher.WorkbenchLauncher"
+         id="org.eclipse.pde.WorkbenchRunLauncher">
+   </launcher>
+   <launcher
+         label="%launcher.tracing.label"
+         modes="run, debug"
+         class="org.eclipse.pde.internal.launcher.WorkbenchLauncher:tracingEnabled"
+         id="org.eclipse.pde.TracingWorkbenchRunLauncher">
+   </launcher>
+</extension>
+<extension
+      point="org.eclipse.pde.schemaMap">
+   <map
+         point="org.eclipse.ui.editors"
+         schema="schema/map/org.eclipse.ui/editors.xsd">
+   </map>
+   <map
+         point="org.eclipse.ui.editorActions"
+         schema="schema/map/org.eclipse.ui/editorActions.xsd">
+   </map>
+   <map
+         point="org.eclipse.ui.exportWizards"
+         schema="schema/map/org.eclipse.ui/exportWizards.xsd">
+   </map>
+   <map
+         point="org.eclipse.ui.importWizards"
+         schema="schema/map/org.eclipse.ui/importWizards.xsd">
+   </map>
+   <map
+         point="org.eclipse.ui.perspective"
+         schema="schema/map/org.eclipse.ui/perspective.xsd">
+   </map>
+   <map
+         point="org.eclipse.ui.newWizards"
+         schema="schema/map/org.eclipse.ui/newWizards.xsd">
+   </map>
+   <map
+         point="org.eclipse.ui.popupMenus"
+         schema="schema/map/org.eclipse.ui/popupMenus.xsd">
+   </map>
+   <map
+         point="org.eclipse.ui.preferencePages"
+         schema="schema/map/org.eclipse.ui/preferencePages.xsd">
+   </map>
+   <map
+         point="org.eclipse.ui.propertyPages"
+         schema="schema/map/org.eclipse.ui/propertyPages.xsd">
+   </map>
+   <map
+         point="org.eclipse.ui.viewActions"
+         schema="schema/map/org.eclipse.ui/viewActions.xsd">
+   </map>
+   <map
+         point="org.eclipse.ui.views"
+         schema="schema/map/org.eclipse.ui/views.xsd">
+   </map>
+   <map
+         point="org.eclipse.ui.welcome"
+         schema="schema/map/org.eclipse.ui/welcome.xsd">
+   </map>
+   <map
+         point="org.eclipse.ui.actionSets"
+         schema="schema/map/org.eclipse.ui/actionSets.xsd">
+   </map>
+</extension>
+</plugin>

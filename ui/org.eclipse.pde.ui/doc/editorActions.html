@@ -1,0 +1,159 @@
+<HTML>
+<BODY>
+<H1><CENTER>Editor Menus, Toolbars and Actions</CENTER></H1>
+<H2>Identifier</H2>
+org.eclipse.ui.editorActions<H2>Description</H2>
+This extension point allows tools to add menus, menu items and toolbar buttons to the window 
+menu bar and toolbar when a resource editor is active. The difference between adding 
+as an editor contribution and as a workbench window contribution
+is in visibility. Workbench window menus and toolbars are visible all the time. 
+In contrast, editor menus and toolbars appear only
+when the editor in question is opened and activated. 
+<p>
+The initial editor contribution set is defined in another extension point 
+(<samp>org.eclipse.ui.editors</samp>). Only one set is created for all
+instances of the same editor type. Additional actions contributed for that editor 
+type from this extension point follow the same
+mechanism. In order to pass the editor instance to each action delegate the delegate must implement
+<samp>com.ibm.itp.ui.api.actions.IEditorActionDelegate</samp>. This interface extends 
+<samp>IActionDelegate</samp> by adding method
+<samp>editorChanged</samp> for connecting with the currently active editor.<H2>Markup</H2>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT extension (viewContribution*)&gt;</samp>
+<br><samp>&nbsp;&nbsp; &lt;!ATTLIST extension</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;point&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>point</b> - a unique extension point identifier</li><li><b>id</b> - an optional extension identifier</li><li><b>name</b> - an optional extension name</li></ul>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT viewContribution (menu | action)*&gt;</samp>
+<br><samp>&nbsp;&nbsp; &lt;!ATTLIST viewContribution</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;targetID&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>id</b> - a unique identifier that can be used to reference this contribution</li><li><b>targetID</b> - an ID of a previously registered editor that is the target of this contribution</li></ul>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT menu (separator+)&gt;</samp>
+<br><samp>&nbsp;&nbsp; &lt;!ATTLIST menu</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;label&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;path&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>id</b> - a unique identifier that can be used to reference this menu</li><li><b>label</b> - the text label of the new menu. The label should include mnemonic information.</li><li><b>path</b> - the location of the menu starting from the root of the menu bar. If omitted, the menu 
+will be added into the slot <samp>additions</samp> on the menu bar. Each token in 
+the path must refer to an existing menu in the workbench, except the last one,
+which represents a named group in the last menu in the path.</li></ul>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT action (selection*)&gt;</samp>
+<br><samp>&nbsp;&nbsp; &lt;!ATTLIST action</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;label&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;menubarPath&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;toolbarPath&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;icon&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tooltip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;state&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) "false"#IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enablesFor&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>id</b> - a unique identifier that can be used as a reference for this action.</li><li><b>label</b> - a translatable name that is used in various ways, depending on the context. In menus, it is used 
+as the menu text. In toolbars, it is used as the button label. The label can contain JFace-encoded 
+mnemonic and accelerator information (see example).</li><li><b>menubarPath</b> - a slash-delimited path ('/') that is used to specify the location of the action in the menu bar. 
+<b>The path may only point to menus that belong to the target editor.</b> The last token 
+represents the named separator group into which the action will be added. If the path is 
+omitted, the action will not appear in menu bar.</li><li><b>toolbarPath</b> - a slash-delimited path ('/') that is used to specify the location of the action in the toolbar. The first token
+represents the toolbar ID (with "Normal" being the default toolbar), while the second token is
+the named group within the toolbar. If the group does not exist in the toolbar, it will be created. 
+If toolbarPath is omitted, the action will not appear.</li><li><b>icon</b> - a relative path of an icon that will be used to visually represent the action in its context. 
+If it is omitted and the action should appear in the toolbar, the workbench will use a place 
+holder icon. The path is relative to the location of the plugin.xml file of the contributing plug-in.</li><li><b>tooltip</b> - used if the action is to appear in the tool bar. Otherwise, it is ignored.</li><li><b>state</b> - an optional attribute indicating that the action should be of a toggle type. When added to a menu, 
+it will manifest itself as a check box item. When added to a tool bar, it will become a toggle 
+button. If defined, attribute value will be used as initial state (either <samp>true</samp>
+or <samp>false</samp>)</li><li><b>class</b> - the name of the fully qualified class that implements 
+<samp>com.ibm.itp.ui.api.actions.IEditorActionDelegate</samp></li><li><b>enablesFor</b> - a value indicating the selection count which must be met to enable the action. 
+If this attribute is specified and the condition is met the action is enabled.  
+If the condition is not met the action is disabled.  If no attribute is specified the
+action is enabled for any number of items selected.  
+The following attribute formats are supported: 
+<ul>            
+          <br><b>!</b> - 0 items selected 
+          <br><b>?</b> - 0 or 1 items selected 
+          <br><b>+</b> - 1 or more items selected 
+          <br><b>multiple, 2+</b> - 2 or more items selected 
+          <br><b>n</b> - a precise number of items selected.  Example: 4. 
+          <br><b>*</b> - any number of items selected
+</ul></li></ul>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT separator (EMPTY)&gt;</samp>
+<br><samp>&nbsp;&nbsp; &lt;!ATTLIST separator</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>name</b> - name of the separator that can later be referenced as the last
+token in the action path. Therefore, separators serve as
+named groups into which actions can be added.</li></ul>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT selection (EMPTY)&gt;</samp>
+<br><samp>&nbsp;&nbsp; &lt;!ATTLIST selection</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>class</b> - a fully qualified name of the class or interface that each object in the selection 
+must subclass or implement in order to enable the action.</li><li><b>name</b> - a wild card filter that can optionally be applied to objects in the selection. If this filter
+is specified and the match fails, the action will be disabled.</li></ul>
+<H2>Example</H2>
+The following is an example of a view actions extension point
+(note the subelements and the way attributes are used):     
+
+<p>
+<pre>
+   &lt;extension point="org.eclipse.ui.viewActions"&gt; 
+      &lt;viewContribution 
+         id="com.xyz.xyzViewC1" 
+         targetID="com.ibm.itp.ui.views.ResourceNavigator"&gt; 
+         &lt;menu id="com.xyz.xyzMenu" path="additions"&gt; 
+            &lt;separator name="group1"/&gt; 
+         &lt;/menu&gt; 
+         &lt;action id="com.xyz.runXYZ" 
+              label="&amp;amp;Run XYZ Tool"
+              menubarPath="com.xyz.xyzMenu/group1" 
+              toolbarPath="Normal/XYZ" 
+              icon="icons/runXYZ.gif" 
+              tooltip="Run XYZ Tool" 
+              class="com.xyz.actions.RunXYZ" 
+              enablesFor="1"/&gt; 
+              &lt;selection class="com.ibm.itp.core.api.resources.IFile" name="*.java"/&gt;
+         &lt;/action&gt; 
+   &lt;/extension&gt;
+</pre>   
+<p>
+In the example above, the specified action will only enable for
+a single selection (<samp>enablesFor</samp> attribute). In addition,
+each object in this selection must implement the specified interface
+(<samp>IFile</samp>) and must be a Java file. Multiple selection
+elements can be specified, meaning 'one of'.<H2>API Information</H2>
+The value of the class attribute must be a fully qualified name of a Java class that implements
+<samp>com.ibm.itp.ui.api.actions.IEditorActionDelegate</samp>. This interface is 
+loaded as late as possible to avoid loading the
+entire plug-in before it is really needed. The method <samp>editorChanged</samp> 
+will be called each time an editor of the specified type is
+activated. Only one set of actions and menus will be created for all instances 
+of the specified editor type, regardless of the number of
+editor instances currently opened in the workbench. 
+<p>
+This extension point can be used to contribute actions into menus previously 
+created by the target editor. In addition, menus and
+actions can be contributed to the workbench window.  The identifiers for actions 
+and major groups within the workbench window
+are defined in <samp>org.eclipse.ui.IWorkbenchActionConstants</samp>. 
+<p>
+Top level menus are created by using the following values for the path attribute: 
+<ul>
+     <li>additions - represents a group to the right of the Perspective menu.</li>
+</ul>
+Actions and menus added into these paths will be shown only while the 
+associated editor is active. When the editor is closed, menus
+and actions will be removed.<H2>Supplied Implementation</H2>
+The workbench does not provide built-in content editors. Plug-ins
+can contribute into editors provided by other plug-ins.</BODY>
+</HTML>

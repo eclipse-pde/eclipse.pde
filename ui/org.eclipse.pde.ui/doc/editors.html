@@ -1,0 +1,119 @@
+<HTML>
+<BODY>
+<H1><CENTER>Resource Content Editors</CENTER></H1>
+<H2>Identifier</H2>
+org.eclipse.ui.editors<H2>Description</H2>
+This extension point allows tools to register editors for resources.
+When the Open action is performed on a resource in theNavigator,
+the workbench registry is consulted to locate the registered
+editor for its type. The actual activation depends on the type
+of the editor. Embedded editors are tightly integrated into the
+workbench. In contrast, external editors are launched in a separate
+frame window with various level of integration with the workbench.
+
+<p>
+An embedded editor is in fact a combination of a number of framework
+class implementations, some required, some optional. Collectively,
+these make up "the tool" that is activated when the appropriate
+resource is selected and the appropriate action is triggered.
+Embedded editors can be implemented in Java or by using ActiveX
+components. In the case of Java, tight integration is achieved
+by using the same classes as the workbench itself. In the case
+of ActiveX, integration is achieved by providing an ActiveX container
+for the component and by allowing the component to merge into
+the menu bar and toolbar using OLE merging algorithms. 
+
+<p>
+Internal editors written in Java are allowed to contribute to
+workbench menu bar, toolbar and status line. This contribution
+is achieved by registering a contributor class. Only one instance
+of this class is created per editor type, regardless of the number
+of editor instances in the workbench. The currently active editor
+instance is passed to the contributor using the specific API.<H2>Markup</H2>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT extension (editor*)&gt;</samp>
+<br><samp>&nbsp;&nbsp; &lt;!ATTLIST extension</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;point&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>point</b> - a unique extension point identifier</li><li><b>id</b> - an optional extension identifier</li><li><b>name</b> - an optional extension name</li></ul>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT editor (EMPTY)&gt;</samp>
+<br><samp>&nbsp;&nbsp; &lt;!ATTLIST editor</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;icon&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;extensions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;extendedType&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;command&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;contributorClass&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;default&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) "false""false"</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>id</b> - a unique name that will be used to identify this editor</li><li><b>name</b> - a translatable name that will be used in the UI for this editor</li><li><b>icon</b> - a relative name of the icon that will be used for all resources that match the specified extensions. 
+An icon is not required if you specify a command rather than a class. In that case, the workbench 
+will use the icon provided by the operating system.</li><li><b>extensions</b> - one or more tokens that will be used to recognize the type in
+the resource name. A resource type consists of its extension
+and an optional extended type. This allows definition of several
+types that have the same extension, but different extended 
+types (for example, registering different editors for different
+classes of XML files while still keeping the familiar *.xml extension).
+By specifying multiple extensions, it is possible to account
+for variations that can be found in the real world (for example,
+both "htm" and "html" are valid for hypertext documents).</li><li><b>extendedType</b> - an optional attribute that can be used to assign different editors
+for files of the same extension (for example, XML files that
+should be edited using different editors). Either <samp>extension</samp>,
+<samp>extendedType</samp> or both must be specified.</li><li><b>class</b> - a name of the class that implements <samp>org.eclipse.ui.IEditorPart</samp>.
+This attribute may  be left undefined if this is an  external
+editor.</li><li><b>command</b> - a command to run in order to launch an external editor. Attributes
+<samp>class</samp> and <samp>command</samp> are mutually exclusive.</li><li><b>contributorClass</b> - a name of the class that implements <samp>com.ibm.itp.ui.api.contributions.IEditorActionBarContributor</samp>.
+This class provides for contributions to the workbench menu bar
+and toolbar when the editor is active. Only one instance of the
+contributor is made per editor ID, regardless of the number of
+editor instances currently opened.</li><li><b>default</b> - if true, this editor will be used as the default editor for the
+type. This is only relevant in a case where more than one editor
+is registered for the same type. If an editor is not the default
+for the type, it can still be launched using "Open with..."
+submenu for the selected resource.</li></ul>
+<H2>Example</H2>
+The following is an example of an editor extension definition: 
+<p>
+<pre>
+   &lt;extension point="org.eclipse.ui.editors"&gt; 
+      &lt;editor 
+         id="com.xyz.XMLEditor" 
+         name="Fancy XYZ XML editor" 
+         icon="./icons/XMLEditor.gif" 
+         extensions="xml" 
+         class="com.xyz.XMLEditor" 
+         contributorClass="com.xyz.XMLEditorContributor" 
+         default="false"&gt; 
+      &lt;/editor&gt; 
+   &lt;/extension&gt; 
+</pre><H2>API Information</H2>
+If the attribute command is used, it will be treated as an external program command line that will 
+be executed in a platform-dependent manner. If the attribute class is used, the workbench will 
+assume that it is an internal editor and the specified
+class must implement <samp>org.eclipse.ui.IEditorPart</samp>. However, it is common 
+practice to extend
+<samp>org.eclipse.ui.EditorPart</samp> in order to inherit the default functionality. 
+<p>
+If attribute <samp>contributorClass</samp> is specified, it must represent a name of the class 
+that implements <samp>com.ibm.itp.ui.api.contributions.IEditorActionBarContributor</samp>. 
+This interface provides for adding menus and actions into the workbench menu bar and toolbar 
+using the following legal paths:
+<ul>  
+<li>edit.copy -  for additional flavors of the Copy action (for example, Copy Background)</li>
+<li>edit.paste - for additional flavors of the Paste action (for example, Paste as Link)</li>
+<li>edit.context - for adding additional actions that apply to the editor in the extension</li>
+<li>additions - for adding new top level menus to the right of the Perspective menu</li>
+<li>additions-end - for adding new top level menus to the left of the Window menu</li>
+</ul>
+<p>
+Actions and menus added into these paths will be shown only while the associated editor is active. 
+When the editor is closed, menus and actions will be removed.<H2>Supplied Implementation</H2>
+The workbench does not provide any built-in content editors, but the 
+end user product may contain some as part of the shipping bundle. 
+In that case, editors will be registered as extensions using the syntax described above.</BODY>
+</HTML>

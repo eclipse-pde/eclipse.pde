@@ -1,0 +1,201 @@
+<HTML>
+<BODY>
+<H1><CENTER>Action Sets</CENTER></H1>
+<H2>Identifier</H2>
+org.eclipse.ui.actionSets<H2>Description</H2>
+This extension point is used to add menus, menu items 
+and toolbar buttons to the common areas in the workbench
+ window. These contributions are collectively known 
+as an <i>action set</i> and appear within the 
+workbench window by user preference.<H2>Markup</H2>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT extension (actionSet*)&gt;</samp>
+<br><samp>&nbsp;&nbsp; &lt;!ATTLIST extension</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;point&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>point</b> - a fully qualified identifier of the target extension point</li><li><b>id</b> - an optional identifier of the extension instance</li><li><b>name</b> - an optional name of the extension instance</li></ul>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT actionSet (menu | action)*&gt;</samp>
+<br><samp>&nbsp;&nbsp; &lt;!ATTLIST actionSet</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;label&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;visible&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) "false"#IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;description&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>id</b> - a unique name that will be used to identify this action set.</li><li><b>label</b> - a translatable name that will be used in the workbench window menu to represent this action set.</li><li><b>visible</b> - determines the initial visibility of the action set. 
+If <samp>true</samp>, the action set is initially 
+visible in the workbench window. The
+user may override this option from the "Action Sets Dialog".</li><li><b>description</b> - a short description 
+of the action set.</li></ul>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT menu (separator+)&gt;</samp>
+<br><samp>&nbsp;&nbsp; &lt;!ATTLIST menu</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;label&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;path&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>id</b> - a unique identifier that can be used to reference this menu</li><li><b>label</b> - a text label of the new menu. 
+The label should include mnemonic information.</li><li><b>path</b> - a location of the menu starting from the root of the menu
+bar. If omitted, the menu will be added between the 
+Perspective and Window menus on the menu bar. Each token 
+in the path must refer to an existing menu in the 
+workbench, except the last one, which should represent a 
+named group in the last menu in the path.</li></ul>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT separator (EMPTY)&gt;</samp>
+<br><samp>&nbsp;&nbsp; &lt;!ATTLIST separator</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>name</b> - a name of the separator that can later be referenced 
+as the last token in the action path. 
+Therefore, separators serve as named groups 
+into which actions and submenus can be added.</li></ul>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT action (selection*)&gt;</samp>
+<br><samp>&nbsp;&nbsp; &lt;!ATTLIST action</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;label&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;menubarPath&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;toolbarPath&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;icon&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tooltip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;helpContextId&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;state&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) "false"#IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pulldown&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) "false"#IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enablesFor&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>id</b> - a unique identifier that can be used as a reference for this action.</li><li><b>label</b> - a translatable name that is used in various ways, depending
+on the context. In menus, it is used as the menu text. In
+toolbars, it is used as the button label. The label can
+contain JFace-encoded mnemonic and accelerator 
+information (see example).</li><li><b>menubarPath</b> - a slash-delimited path ('/') that is used to specify the 
+location of the action in the menu bar. Each token in the
+path except the last one must represent a valid ID of an
+existing menu in the hierarchy. The last token represents
+the named separator group into which the action will be 
+added. If the path is omitted, the action will not appear 
+in the menu bar.</li><li><b>toolbarPath</b> - a slash-delimited path ('/') that is used to specify the
+location of the action in the toolbar. The first token
+represents the toolbar ID (with "Normal" being the 
+default toolbar), while the second token is the named 
+group within the toolbar. If the group does not exist 
+in the toolbar, it will be created. If toolbarPath 
+is omitted, the action will not appear in the tool bar.</li><li><b>icon</b> - a relative path of an icon that will be used to visually 
+represent the action in its context. If it is omitted 
+and the action should appear in the toolbar, the 
+workbench will use a place holder icon. The path is 
+relative to the location of the plugin.xml
+file of the contributing plug-in.</li><li><b>tooltip</b> - a value of the tool tip text if 
+the action is to appear in the toolbar. 
+Otherwise, it is ignored.</li><li><b>helpContextId</b> - a unique identifier indicating the help context id 
+for this action. If the action appears as a menu 
+item, then pressing F1 while the menu item is highlighted 
+will display help for the given context id.</li><li><b>state</b> - an optional attribute indicating that the action should 
+be of a toggle type. When added to a menu, it will 
+manifest itself as a check box item. When added to a 
+toolbar, it will become a toggle button. If defined, 
+the attribute value will be used as the initial state 
+(either <samp>true</samp> or <samp>false</samp>).  
+This attribute is mutually exclusive with pulldown.</li><li><b>pulldown</b> - an optional attribute indicating that the action has an 
+additional pulldown menu. If the action appears in a toolbar,
+and the attribute value is <samp>true</samp>, a pulldown 
+menu will appear beside the action.  If the action appears in 
+a menu this attribute is ignored. This attribute is 
+mutually exclusive with <samp>state</samp>.</li><li><b>class</b> - a fully qualified name of a class which implements 
+<samp>org.eclipse.ui.IWorkbenchWindowActionDelegate</samp>
+or <samp>org.eclipse.ui.IWorkbenchWindowPulldownDelegate</samp>.
+The latter should be implemented in cases where 
+<samp>pulldown</samp> is <samp>true</samp>.</li><li><b>enablesFor</b> - a value indicating the selection count which must be met
+to enable the action.  If this attribute is specified and
+the condition is met the action is enabled. If the 
+condition is not met the action is disabled. If no 
+attribute is specified the action is enabled for 
+any number of items selected. The following attribute 
+formats are supported:
+<ul> 
+<br><b>!</b> - 0 items selected 
+<br><b>?</b> - 0 or 1 items selected 
+<br><b>+</b> - 1 or more items selected 
+<br><b>multiple, 2+</b> - 2 or more items selected 
+<br><b>n</b> - a precise number of items selected.  Example: 4.
+<br><b>*</b> - any number of items selected
+</ul></li></ul>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT selection (EMPTY)&gt;</samp>
+<br><samp>&nbsp;&nbsp; &lt;!ATTLIST selection</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>class</b> - a fully qualified name of the class or interface that 
+each object in the selection must subclass or 
+implement in order to enable the action.</li><li><b>name</b> - a wild card filter for the name that can optionally
+be applied to objects in the selection. If this
+filter is specified and the match fails, the action 
+will be disabled.</li></ul>
+<H2>Example</H2>
+The following is an example of an action set (note 
+the subelements and the way attributes are used): 
+<p>
+<pre>
+    &lt;extension point = "org.eclipse.ui.actionSets"&gt; 
+        &lt;actionSet id="com.xyz.actionSet" 
+            label="My Actions" 
+            visible="true"&gt; 
+            &lt;menu id="com.xyz.xyzMenu" path="additions"&gt; 
+                &lt;separator name="group1"/&gt; 
+            &lt;/menu&gt; 
+            &lt;action id="com.xyz.runXYZ" 
+                label="&amp;amp;Run XYZ Tool" 
+                menubarPath="tools/com.xyz.xyzMenu/group1" 
+                toolbarPath="Normal/XYZ" 
+                icon="icons/runXYZ.gif" 
+                tooltip="Run XYZ Tool" 
+                helpContextId="com.xyz.run_action_context" 
+                class="com.xyz.actions.RunXYZ" 
+                enablesFor="1"&gt; 
+                &lt;selection class="org.eclipse.core.resources.IFile" name="*.java"/&gt; 
+            &lt;/action&gt; 
+        &lt;/actionSet&gt; 
+    &lt;/extension&gt; 
+</pre>
+</p><H2>API Information</H2>
+The value of the class attribute must be the fully qualified 
+name of a class that implements
+<samp>org.eclipse.ui.IWorkbenchWindowActionDelegate</samp>
+or <samp>org.eclipse.ui.IWorkbenchWindowPulldownDelegate</samp>.
+The latter should be implemented in cases 
+where <samp>pulldown</samp> is <samp>true</samp>.  
+This class is loaded as late as possible to avoid 
+loading the entire plug-in before it is really needed.<H2>Supplied Implementation</H2>
+Plug-ins may use this extension point to add new top level
+menus (for example, Debug). Plug-ins can
+also define named groups which allow other plug-ins to 
+contribute their actions into them. 
+<p>
+Top level menus are created by using the following values
+for the path attribute: 
+<ul>
+<li>additions - represents a group to the left of the 
+Window menu. 
+</ul>
+Omitting the path attribute will result in adding the new 
+menu into the additions menu bar group. 
+<p>
+The default groups in a workbench window are defined in the
+<samp>IWorkbenchActionConstants</samp> interface. These
+constants can be used in code for dynamic contribution.
+The values can also be copied into an XML file for fine
+grained integration with the existing workbench menus
+and toolbar. 
+<p>
+Various menu and toolbar items within the workbench 
+window are defined algorithmically.  In these cases 
+a separate mechanism must be used to extend the 
+window. For example, adding a new workbench view 
+results in a new menu item appearing in the
+Perspective menu. Import, Export, and New Wizards 
+extensions are also added automatically to the window.</BODY>
+</HTML>

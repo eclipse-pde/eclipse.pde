@@ -1,0 +1,179 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.ui.newWizards">
+<annotation>
+   <appInfo>
+      <meta.schema plugin="org.eclipse.ui" id="newWizards" name="Artifact Creation (New)"/>
+   </appInfo>
+   <documentation>
+      The workbench supports a common New dialog that organizes the
+various artifact creation wizards and setup actions into specific
+usage categories. This extension point allows new items to be
+added to the dialog, merged into the appropriate category. The
+purpose of this extension point is to allow registration of one
+or more executable components whose invocation results in creating
+one or more of workbench resources (solutions, projects, folders
+and/or files). 
+&lt;p&gt;
+Wizards should be organized into categories
+based on their commonality. Categories are defined by one plug-in,
+and can be referenced using the category attribute by other plug-ins.
+Uncategorized wizards, as well as wizards with invalid category
+paths, will end up in"Other" category. 
+&lt;p&gt;
+Wizards may optionally specify a description subelement whose body should contain short
+text about the wizard.
+   </documentation>
+</annotation>
+
+   <element name="extension">
+      <complexType>
+         <choice minOccurs="0" maxOccurs="unbounded">
+            <element ref="category"/>
+            <element ref="wizard"/>
+         </choice>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a unique extension point identifier
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  an optional extension identifier
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  an optional extension name
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="category">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a unique name that can be used to identify this category
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a translatable name of the category that will be used in the dialog box
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="parentCategory" type="string">
+            <annotation>
+               <documentation>
+                  a path to another category if this category should be added as a child
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="wizard">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="description" minOccurs="0" maxOccurs="1"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a unique name that can be used to identify this wizard
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a translatable name of the wizard that will be used in the dialog box
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="availableAsShortcut" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  if true, a menu item will be added to the New submenu available from the File menu. This item allows 
+users to bypass the central New dialog box and go directly to the wizard.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  a relative path of an icon that will be used together with the name to represent the wizard 
+as one of the choices in the creation dialog box.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="category" type="string">
+            <annotation>
+               <documentation>
+                  a slash-delimited path ('/') of category IDs. Each token in the
+path must represent a valid category ID previously defined
+by this or some other plug-in. If omitted, the wizard will be
+added to the "Other" category.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified name of the Java class implementing &lt;samp&gt;com.ibm.itp.ui.api.INewWizard&lt;/samp&gt;.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="com.ibm.itp.ui.api.INewWizard"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="description" type="string">
+      <annotation>
+         <documentation>
+            an optional subelement whose body contains a short text describing what the wizard will do when started
+         </documentation>
+      </annotation>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         [Enter extension point usage example here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         [Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+
+</schema>

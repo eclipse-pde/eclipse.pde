@@ -1,0 +1,60 @@
+<HTML>
+<BODY>
+<H1><CENTER>Artifact Creation (New)</CENTER></H1>
+<H2>Identifier</H2>
+org.eclipse.ui.newWizards<H2>Description</H2>
+The workbench supports a common New dialog that organizes the
+various artifact creation wizards and setup actions into specific
+usage categories. This extension point allows new items to be
+added to the dialog, merged into the appropriate category. The
+purpose of this extension point is to allow registration of one
+or more executable components whose invocation results in creating
+one or more of workbench resources (solutions, projects, folders
+and/or files). 
+<p>
+Wizards should be organized into categories
+based on their commonality. Categories are defined by one plug-in,
+and can be referenced using the category attribute by other plug-ins.
+Uncategorized wizards, as well as wizards with invalid category
+paths, will end up in"Other" category. 
+<p>
+Wizards may optionally specify a description subelement whose body should contain short
+text about the wizard.<H2>Markup</H2>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT extension (category | wizard)*&gt;</samp>
+<br><samp>&nbsp;&nbsp; &lt;!ATTLIST extension</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;point&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>point</b> - a unique extension point identifier</li><li><b>id</b> - an optional extension identifier</li><li><b>name</b> - an optional extension name</li></ul>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT category (EMPTY)&gt;</samp>
+<br><samp>&nbsp;&nbsp; &lt;!ATTLIST category</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;parentCategory&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>id</b> - a unique name that can be used to identify this category</li><li><b>name</b> - a translatable name of the category that will be used in the dialog box</li><li><b>parentCategory</b> - a path to another category if this category should be added as a child</li></ul>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT wizard (description?)&gt;</samp>
+<br><samp>&nbsp;&nbsp; &lt;!ATTLIST wizard</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;availableAsShortcut&nbsp;(true | false) "false""false"</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;icon&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;category&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>id</b> - a unique name that can be used to identify this wizard</li><li><b>name</b> - a translatable name of the wizard that will be used in the dialog box</li><li><b>availableAsShortcut</b> - if true, a menu item will be added to the New submenu available from the File menu. This item allows 
+users to bypass the central New dialog box and go directly to the wizard.</li><li><b>icon</b> - a relative path of an icon that will be used together with the name to represent the wizard 
+as one of the choices in the creation dialog box.</li><li><b>category</b> - a slash-delimited path ('/') of category IDs. Each token in the
+path must represent a valid category ID previously defined
+by this or some other plug-in. If omitted, the wizard will be
+added to the "Other" category.</li><li><b>class</b> - a fully qualified name of the Java class implementing <samp>com.ibm.itp.ui.api.INewWizard</samp>.</li></ul>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT description (#CDATA)&gt;</samp>
+<H2>Example</H2>
+[Enter extension point usage example here.]<H2>API Information</H2>
+<H2>Supplied Implementation</H2>
+[Enter information about supplied implementation of this extension point.]</BODY>
+</HTML>

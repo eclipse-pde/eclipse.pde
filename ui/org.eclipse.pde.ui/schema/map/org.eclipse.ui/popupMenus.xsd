@@ -1,0 +1,242 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.ui.popupMenus">
+<annotation>
+   <appInfo>
+      <meta.schema plugin="org.eclipse.ui" id="popupMenus" name="Pop-up Menus"/>
+   </appInfo>
+   <documentation>
+      [Enter description of this extension point]
+   </documentation>
+</annotation>
+
+   <element name="extension">
+      <complexType>
+         <choice minOccurs="0" maxOccurs="unbounded">
+            <element ref="objectContribution"/>
+            <element ref="viewerContribution"/>
+         </choice>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a unique extension point identifier
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  an optional extension identifier
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  an optional extension name
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="objectContribution">
+      <complexType>
+         <choice minOccurs="0" maxOccurs="unbounded">
+            <element ref="menu"/>
+            <element ref="action"/>
+         </choice>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a unique identifier that can be used to reference this contribution
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="objectClass" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified name of the class or interface that all the objects in the 
+selection must subclass or implement.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="nameFilter" type="string">
+            <annotation>
+               <documentation>
+                  an optional filter that will be applied against each object in the selection. 
+No contribution will take place if there is no match.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="viewerContribution">
+      <complexType>
+         <choice minOccurs="0" maxOccurs="unbounded">
+            <element ref="menu"/>
+            <element ref="action"/>
+         </choice>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a unique identifier that can be used to reference this contribution
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="targetID" type="string">
+            <annotation>
+               <documentation>
+                  the unique ID of a popup menu inside a view, editor or viewer.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="menu">
+      <complexType>
+         <sequence>
+            <element ref="separator" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a unique identifier that can be used to reference this submenu
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="label" type="string">
+            <annotation>
+               <documentation>
+                  the text label of the new menu. The label should include mnemonic information.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="path" type="string">
+            <annotation>
+               <documentation>
+                  the location of the submenu starting from the pop-up menu as a root. If omitted, the menu will 
+be added at the end of the pop-up menu.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="separator">
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the name of the separator that can later be referenced as the last token in the action path. 
+Therefore, separators serve as named groups into which actions can be added.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="action">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a unique identifier that can be used as a reference for this action.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="label" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a translatable name that will be used for a pop-up menu item label. The label can 
+contain JFace-encoded mnemonic and accelerator (see example).
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="menubarPath" type="string">
+            <annotation>
+               <documentation>
+                  a slash-delimited path ('/') that is used to specify the location of the action in the pop-up menu. 
+Each token in the path except the last one represents an existing submenu in the hierarchy. 
+The last token represents the named separator group into which the action will be added. 
+If the path is omitted, the action will be added at the end.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  a relative path for an icon that will be used to visually represent the action in the pop-up menu. 
+The path is relative to the location of the &lt;samp&gt;plugin.xml&lt;/samp&gt; file of the contributing plug-in.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="enablesFor" type="string">
+            <annotation>
+               <documentation>
+                  a value indicating the selection count which must be met to enable the action.  If this attribute 
+is specified and the condition is met the action is enabled.  If the condition is not met the 
+action is disabled.  If no attribute is specified the action is enabled for any number of items selected.  
+The following attribute formats are supported: 
+&lt;ul&gt;            
+          &lt;br&gt;! - 0 items selected 
+          &lt;br&gt;? - 0 or 1 items selected 
+          &lt;br&gt;+ - 1 or more items selected 
+          &lt;br&gt;multiple, 2+ - 2 or more items selected 
+          &lt;br&gt;n - a precise number of items selected.  Example: 4. 
+          &lt;br&gt;* - any number of items selected
+&lt;/ul&gt;
+The enablement criteria for an action extension are initially defined 
+by &lt;samp&gt;enablesFor&lt;/samp&gt; and selection.  However, once the action
+delegate has been instantiated it may control the action enable state directly 
+within its &lt;samp&gt;selectionChanged&lt;/samp&gt; method.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="state" type="boolean">
+            <annotation>
+               <documentation>
+                  an optional attribute indicating that the action should be of a toggle type. 
+ When added to a pop-up menu, it will manifest itself as a check box item.. 
+ If defined, attribute value will be used as the initial state (either &lt;samp&gt;true&lt;/samp&gt; 
+ or &lt;samp&gt;false&lt;/samp&gt;) .
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         [Enter extension point usage example here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         [Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+
+</schema>

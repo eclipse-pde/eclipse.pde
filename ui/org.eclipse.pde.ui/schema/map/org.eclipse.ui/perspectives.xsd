@@ -1,0 +1,126 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.ui.perspective">
+<annotation>
+   <appInfo>
+      <meta.schema plugin="org.eclipse.ui" id="perspective" name="Perspectives"/>
+   </appInfo>
+   <documentation>
+      This extension point is used to add layout engines to the workbench.  A layout engine
+is used to define a layout for a perspective.  The user can select a layout 
+by invoking the "Switch To" submenu of the Perspective menu.
+   </documentation>
+</annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="layout" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a unique extension point identifier
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  an optional extension identifier
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  an optional extension name
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="description" type="string">
+      <annotation>
+         <documentation>
+            an optional subelement whose body should contain text providing short description of the layout.
+         </documentation>
+      </annotation>
+   </element>
+
+   <element name="layout">
+      <complexType>
+         <sequence>
+            <element ref="description" minOccurs="0" maxOccurs="1"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a unique name that will be used to identify this layout.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a translatable name that will be used in the workbench window menu bar to represent this layout.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified name of the class that implements 
+&lt;samp&gt;org.eclipse.ui.ILayoutEngine interface&lt;/samp&gt;.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.ILayoutEngine"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example of a layout extension: 
+&lt;p&gt;
+&lt;pre&gt;
+   &lt;extension 
+        point="org.eclipse.ui.layout"&gt; 
+        &lt;layout 
+            id="org.eclipse.ui.defaultLayout" 
+            name="Default Layout" 
+            class="org.eclipse.ui.internal.DefaultLayout"&gt; 
+        &lt;/layout&gt; 
+    &lt;/extension&gt; 
+&lt;/pre&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         The value of the class attribute must be the fully qualified name of a class that 
+implements &lt;samp&gt;org.eclipse.ui.ILayoutEngine&lt;/samp&gt;. The class must 
+supply the initial layout for a perspective when asked by the workbench.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         The workbench provides a default layout.  Additional layouts may be added by plug-ins. They are
+selected using the "Switch To" submenu of the View menu.
+      </documentation>
+   </annotation>
+
+</schema>

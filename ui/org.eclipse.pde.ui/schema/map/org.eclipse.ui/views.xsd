@@ -1,0 +1,148 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.ui.views">
+<annotation>
+   <appInfo>
+      <meta.schema plugin="org.eclipse.ui" id="views" name="Workbench Views"/>
+   </appInfo>
+   <documentation>
+      The workbench has a number of standard views that include the
+Navigator, Properties and Outline. Plug-ins are allowed to augment
+this setup with additional views, provided that they are written
+in JFace. All the views (both the default setup and the views
+provided by the plug-ins) can be closed from their local title
+bar, and can be turned on again from the Perspective menu on
+the menu bar. 
+&lt;p&gt;
+In order to reduce the visual clutter in the
+Perspective menu, views should be grouped using categories. Each
+category will create asubmenu.
+   </documentation>
+</annotation>
+
+   <element name="extension">
+      <complexType>
+         <choice minOccurs="0" maxOccurs="unbounded">
+            <element ref="category"/>
+            <element ref="view"/>
+         </choice>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a unique extension point identifier
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  an optional extension identifier
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  an optional extension name
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="category">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a unique name that will be used to identify this category
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a translatable name that will be used in the UI for this category
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="parentCategory" type="string">
+            <annotation>
+               <documentation>
+                  an optional path composed of category IDs separated by '/'. This
+attribute provides for creating category hierarchy.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="view">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a unique name that will be used to identify this view
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a translatable name that will be used in the UI for this view
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="category" type="string">
+            <annotation>
+               <documentation>
+                  an optional attribute that is composed of the category IDs separated
+by '/'. Each referenced category must exist prior to being referenced
+in this attribute.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required" value="">
+            <annotation>
+               <documentation>
+                  a fully qualified name of the class the implements &lt;tt&gt;org.eclipse.ui.IViewPart&lt;/tt&gt;.
+A common practice is to subclass &lt;tt&gt;com.ibm.itp.ui.support.parts.ViewPart&lt;/tt&gt;
+in order to inherit the default functionality.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.part.ViewPart"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         [Enter extension point usage example here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         [Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+
+</schema>

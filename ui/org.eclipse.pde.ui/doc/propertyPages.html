@@ -1,0 +1,51 @@
+<HTML>
+<BODY>
+<H1><CENTER>Property Pages</CENTER></H1>
+<H2>Identifier</H2>
+org.eclipse.ui.propertyPages<H2>Description</H2>
+Property pages offer an alternative to making object properties
+available for viewing and editing through the workbenchProperties
+view. Properties may be restrictive if editing requires controls
+that cannot be created in-place due to their size. The problem
+issolved by offering a button with a "..." label that launches
+an editor in a separate dialog box. However, if many of the properties
+requirethis solution, it may be better to relocate them into
+property pages. Another reason to use property pages would be
+when a number ofproperties logically go together and need to
+be clustered in a page, rather than scattered in the property
+sheet (this problem may bepartially solved by grouping properties
+in the property sheet together). In some applications, it may
+even make sense to expose someproperties via the property sheet,
+and some via the property pages. 
+<p>
+Property pages are shown in
+a dialog box that is normally visible when Properties menu item
+is selected on a pop-up menu for an object.In addition to the
+object class, the name filter can optionally be supplied to register
+property pages only for specific object types.<H2>Markup</H2>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT extension (page*)&gt;</samp>
+<br><samp>&nbsp;&nbsp; &lt;!ATTLIST extension</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;point&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>point</b> - a unique extension point identifier</li><li><b>id</b> - an optional extension identifier</li><li><b>name</b> - an optional extension name</li></ul>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT page (EMPTY)&gt;</samp>
+<br><samp>&nbsp;&nbsp; &lt;!ATTLIST page</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;icon&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;objectClass&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nameFilter&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>id</b> - a unique name that will be used to identify this page</li><li><b>name</b> - a translatable name that will be used in the UI for this page</li><li><b>icon</b> - a relative path to an icon that will be used in the UI in addition to the page name</li><li><b>objectClass</b> - a fully qualified name of the class for which the page is registered.</li><li><b>class</b> - a fully qualified name of the class that implements <tt>org.eclipse.ui.IWorkbenchPropertyPage</tt>
+interface.</li><li><b>nameFilter</b> - an optional attribute that allows registration conditional on
+wild card match applied to the target object name.</li></ul>
+<H2>Example</H2>
+[Enter extension point usage example here.]<H2>API Information</H2>
+<H2>Supplied Implementation</H2>
+[Enter information about supplied implementation of this extension point.]</BODY>
+</HTML>
