@@ -14,16 +14,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.build.IPDEBuildConstants;
+import org.eclipse.pde.internal.build.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.FeatureModel;
-import org.eclipse.update.internal.core.*;
+import org.eclipse.update.internal.core.FeatureExecutableContentProvider;
+import org.eclipse.update.internal.core.URLEncoder;
 
 /**
  *
  *
  */
-public class BuildTimeFeatureFactory extends BaseFeatureFactory implements IFeatureFactory, IPDEBuildConstants {
+public class BuildTimeFeatureFactory extends BaseFeatureFactory implements IFeatureFactory, IPDEBuildConstants, IBuildPropertiesConstants {
 	public final static String BUILDTIME_FEATURE_FACTORY_ID = PI_PDEBUILD + ".BuildTimeFeatureFactory"; //$NON-NLS-1$
 
 	public IFeature createFeature(URL url, ISite site, IProgressMonitor p) throws CoreException {
@@ -37,12 +38,16 @@ public class BuildTimeFeatureFactory extends BaseFeatureFactory implements IFeat
 			//	TODO FeatureExecutableContentProvider is a non API class
 			IFeatureContentProvider contentProvider = new FeatureExecutableContentProvider(url);
 
-			URL nonResolvedURL = contentProvider.getFeatureManifestReference(null /*IProgressMonitor*/
-			).asURL();
+			URL nonResolvedURL = contentProvider.getFeatureManifestReference(null).asURL();
 			URL resolvedURL = URLEncoder.encode(nonResolvedURL);
 
 			featureStream = resolvedURL.openStream();
 			feature = (Feature) this.parseFeature(featureStream);
+
+			String newVersion = QualifierReplacer.replaceQualifierInVersion(feature.getFeatureVersion(), feature.getFeatureIdentifier(), AbstractScriptGenerator.readProperties(new Path(url.getFile()).removeLastSegments(1).toOSString(), PROPERTIES_FILE, 0).getProperty(PROPERTY_QUALIFIER), ((BuildTimeSite) site).getFeatureVersions());
+			if (newVersion != null)
+				((BuildTimeFeature) feature).setFeatureVersion(newVersion);
+
 			feature.setSite(site);
 			feature.setFeatureContentProvider(contentProvider);
 			feature.resolve(url, url);

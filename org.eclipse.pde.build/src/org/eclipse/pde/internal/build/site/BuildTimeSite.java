@@ -10,9 +10,10 @@
  **********************************************************************/
 package org.eclipse.pde.internal.build.site;
 
-import java.io.File;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Properties;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.internal.build.*;
@@ -26,6 +27,24 @@ import org.eclipse.update.core.*;
  */
 public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IXMLConstants {
 	private PDEState state;
+	private Properties repositoryVersions; //version for the features
+
+	public Properties getFeatureVersions() {
+		if (repositoryVersions == null) {
+			repositoryVersions = new Properties();
+			try {
+				InputStream input = new BufferedInputStream(new FileInputStream(AbstractScriptGenerator.getWorkingDirectory() + '/' + DEFAULT_FEATURE_VERSION_FILENAME_DESCRIPTOR));
+				try {
+					repositoryVersions.load(input);
+				} finally {
+					input.close();
+				}
+			} catch (IOException e) {
+				//Ignore
+			}
+		}
+		return repositoryVersions;
+	}
 
 	public PDEState getRegistry() throws CoreException {
 		if (state == null) {

@@ -158,33 +158,12 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		return osgiPath;
 	}
 
-	private String getDate() {
-		final String empty = "";
-		int monthNbr = Calendar.getInstance().get(Calendar.MONTH) + 1;
-		String month = (monthNbr < 10 ? "0" : empty) + monthNbr;
-
-		int dayNbr = Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + 1;
-		String day = (monthNbr < 10 ? "0" : empty) + dayNbr;
-		return empty + Calendar.getInstance().get(Calendar.YEAR) + month + day; //$NON-NLS-1$
-	}
-
 	private void updateVersionNumber(Dictionary manifest) {
-		String q = (String) manifest.get(PROPERTY_QUALIFIER);
-		if (q == null)
-			return;
-		String newQualifier = null;
-		if (q.equalsIgnoreCase(PROPERTY_CONTEXT)) {
-			newQualifier = (String) repositoryVersions.get(manifest.get(Constants.BUNDLE_SYMBOLICNAME));
-			if (newQualifier == null)
-				newQualifier = getDate();
-		} else {
-			newQualifier = q;
-		}
-		if (newQualifier == null)
-			return;
-		String oldVersion = (String) manifest.get(Constants.BUNDLE_VERSION);
-		manifest.put(Constants.BUNDLE_VERSION, oldVersion.replaceFirst(PROPERTY_QUALIFIER, newQualifier));
+		String newVersion = QualifierReplacer.replaceQualifierInVersion((String) manifest.get(Constants.BUNDLE_VERSION), (String) manifest.get(Constants.BUNDLE_SYMBOLICNAME), (String) manifest.get(PROPERTY_QUALIFIER), repositoryVersions);
+		if (newVersion != null)
+			manifest.put(Constants.BUNDLE_VERSION, newVersion);
 	}
+	
 
 	/**
 	 * @param bundleLocation

@@ -55,7 +55,8 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	// Variables to control is a mkdir to a specific folder was already.
 	protected List mkdirLocations = new ArrayList(5);
 	// A property table containing the association between the plugins and the version from the map  
-	protected Properties repositoryVersions = new Properties();
+	protected Properties repositoryPluginVersions = new Properties();
+	protected Properties repositoryFeatureVersions = new Properties();
 
 	public static final String FEATURE_ONLY = "featureOnly"; //$NON-NLS-1$
 	public static final String FEATURE_AND_PLUGINS = "featureAndPlugins"; //$NON-NLS-1$
@@ -101,11 +102,11 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		saveRepositoryVersions();
 	}
 
-	private void saveRepositoryVersions() throws CoreException {
+	private void saveRepositoryVersions(Properties properties, String fileName) throws CoreException {
 		try {
-			InputStream input = new BufferedInputStream(new FileInputStream(workingDirectory + '/' + DEFAULT_PLUGIN_VERSION_FILENAME_DESCRIPTOR)); //$NON-NLS-1$
+			InputStream input = new BufferedInputStream(new FileInputStream(workingDirectory + '/' + fileName)); //$NON-NLS-1$
 			try {
-				repositoryVersions.load(input);
+				properties.load(input);
 			} finally {
 				input.close();
 			}
@@ -114,9 +115,9 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		}
 
 		try {
-			OutputStream os = new BufferedOutputStream(new FileOutputStream(workingDirectory + '/' + DEFAULT_PLUGIN_VERSION_FILENAME_DESCRIPTOR));
+			OutputStream os = new BufferedOutputStream(new FileOutputStream(workingDirectory + '/' + fileName));
 			try {
-				repositoryVersions.store(os, null);
+				properties.store(os, null);
 			} finally {
 				os.close();
 			}
@@ -124,7 +125,11 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			String message = Policy.bind("exception.writingFile", directoryLocation + '/' + DEFAULT_PLUGIN_VERSION_FILENAME_DESCRIPTOR); //$NON-NLS-1$
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, null));
 		}
-
+	}
+	
+	private void saveRepositoryVersions() throws CoreException {
+		saveRepositoryVersions(repositoryPluginVersions, DEFAULT_PLUGIN_VERSION_FILENAME_DESCRIPTOR);
+		saveRepositoryVersions(repositoryFeatureVersions, DEFAULT_FEATURE_VERSION_FILENAME_DESCRIPTOR);
 	}
 
 	/**
@@ -143,7 +148,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			generator.setCvsPassFileLocation(cvsPassFileLocation);
 			generator.setRecursiveGeneration(recursiveGeneration);
 			generator.setFetchTag(fetchTag);
-			generator.repositoryVersions = repositoryVersions;
+			generator.repositoryPluginVersions = repositoryPluginVersions;
 			generator.generate();
 		}
 	}
@@ -279,16 +284,17 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			fullLocation = location + '/' + (String) mapFileEntry.get(ELEMENT) + '/' + DEFAULT_FEATURE_FILENAME_DESCRIPTOR; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			params.put("fileToCheck", fullLocation); //$NON-NLS-1$
 			cvsPackage += xmlFileOnly ? '/' + DEFAULT_FEATURE_FILENAME_DESCRIPTOR : ""; //$NON-NLS-1$ //$NON-NLS-2$
+			repositoryFeatureVersions.put(mapFileEntry.get(ELEMENT), mapFileEntry.get(TAG));
 		} else if (type.equals("plugin")) { //$NON-NLS-1$
 			fullLocation = location + '/' + (String) mapFileEntry.get(ELEMENT) + '/' + DEFAULT_PLUGIN_FILENAME_DESCRIPTOR; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			params.put("fileToCheck", fullLocation); //$NON-NLS-1$
 			cvsPackage += xmlFileOnly ? '/' + DEFAULT_PLUGIN_FILENAME_DESCRIPTOR : ""; //$NON-NLS-1$ //$NON-NLS-2$
-			repositoryVersions.put(mapFileEntry.get(ELEMENT), mapFileEntry.get(TAG));
+			repositoryPluginVersions.put(mapFileEntry.get(ELEMENT), mapFileEntry.get(TAG));
 		} else if (type.equals("fragment")) { //$NON-NLS-1$
 			fullLocation = location + '/' + (String) mapFileEntry.get(ELEMENT) + '/' + DEFAULT_FRAGMENT_FILENAME_DESCRIPTOR; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			params.put("fileToCheck", fullLocation); //$NON-NLS-1$
 			cvsPackage += xmlFileOnly ? '/' + DEFAULT_FRAGMENT_FILENAME_DESCRIPTOR : ""; //$NON-NLS-1$ //$NON-NLS-2$
-			repositoryVersions.put(mapFileEntry.get(ELEMENT), mapFileEntry.get(TAG));
+			repositoryPluginVersions.put(mapFileEntry.get(ELEMENT), mapFileEntry.get(TAG));
 		}
 		params.put("package", cvsPackage); //$NON-NLS-1$
 

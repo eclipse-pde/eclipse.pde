@@ -455,7 +455,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				model = getSite(false).getRegistry().getResolvedBundle(entryIdentifier, versionRequested);
 				pluginVersionInfo += (entryIdentifier + ',' + model.getVersion() + ',');
 			}
-			script.println("<eclipse.idReplacer featureFilePath=\"" + root + '/' + DEFAULT_FEATURE_FILENAME_DESCRIPTOR + "\" featureIds=\"" + featureVersionInfo + "\" pluginIds=\"" + pluginVersionInfo + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			script.println("<eclipse.idReplacer featureFilePath=\"" + root + '/' + DEFAULT_FEATURE_FILENAME_DESCRIPTOR + "\"  selfVersion=\"" + feature.getVersionedIdentifier().getVersion()  + "\" featureIds=\"" + featureVersionInfo + "\" pluginIds=\"" + pluginVersionInfo + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		}
 		generateRootFilesAndPermissionsCalls();
 		script.printTargetEnd();
