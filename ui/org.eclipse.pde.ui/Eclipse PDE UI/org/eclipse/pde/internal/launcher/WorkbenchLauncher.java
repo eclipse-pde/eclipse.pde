@@ -107,6 +107,11 @@ public static void addExternalModels(PrintWriter writer, String itpDir) {
 				writer.println(line);
 			}
 		}
+	
+	// http://bugs.eclipse.org/bugs/show_bug.cgi?id=5314	
+	String line = "platformPath.fragments.bug5314 = file:" + itpDir + File.separator + "fragments/";
+	line = fixEscapeChars(line);
+	writer.println(line);
 }
 
 public static void addWorkspaceModels(PrintWriter writer) {

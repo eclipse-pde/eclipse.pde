@@ -17,6 +17,6 @@ public IContentOutlinePage createContentOutlinePage() {
 	return new ComponentOutlinePage(this);
 }
 protected Form createForm() {
-	return new ComponentForm(this);;
+	return new ComponentForm(this);
 }
 }
