@@ -35,7 +35,7 @@ public class PluginImport
 	public boolean isReexported() {
 		return reexported;
 	}
-	
+
 	public boolean isOptional() {
 		return optional;
 	}
@@ -61,14 +61,35 @@ public class PluginImport
 		this.optional = importModel.getOptional();
 	}
 
+	public boolean equals(Object obj) {
+		if (obj == this)
+			return true;
+		if (obj == null)
+			return false;
+		if (obj instanceof IPluginImport) {
+			IPluginImport target = (IPluginImport) obj;
+			if (target.getId().equals(getId())
+				&& target.isReexported() == isReexported()
+				&& (target.getVersion() == null
+					&& getVersion() == null
+					|| target.getVersion().equals(getVersion()))
+				&& target.getMatch() == getMatch()
+				&& target.isOptional() == isOptional())
+				return true;
+		}
+		return false;
+	}
+
 	void load(Node node, Hashtable lineTable) {
 		String id = getNodeAttribute(node, "plugin");
 		String export = getNodeAttribute(node, "export");
 		String option = getNodeAttribute(node, "optional");
 		String version = getNodeAttribute(node, "version");
 		String match = getNodeAttribute(node, "match");
-		boolean reexport = export != null && export.toLowerCase().equals("true");
-		boolean optional = option != null && option.toLowerCase().equals("true");
+		boolean reexport =
+			export != null && export.toLowerCase().equals("true");
+		boolean optional =
+			option != null && option.toLowerCase().equals("true");
 		this.match = NONE;
 		if (match != null) {
 			String lmatch = match.toLowerCase();
@@ -112,27 +133,28 @@ public class PluginImport
 		this.version = version;
 		firePropertyChanged(P_VERSION, oldValue, version);
 	}
-	
-	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
+
+	public void restoreProperty(String name, Object oldValue, Object newValue)
+		throws CoreException {
 		if (name.equals(P_MATCH)) {
-			setMatch(((Integer)newValue).intValue());
+			setMatch(((Integer) newValue).intValue());
 			return;
 		}
 		if (name.equals(P_REEXPORTED)) {
-			setReexported(((Boolean)newValue).booleanValue());
+			setReexported(((Boolean) newValue).booleanValue());
 			return;
 		}
 		if (name.equals(P_OPTIONAL)) {
-			setOptional(((Boolean)newValue).booleanValue());
+			setOptional(((Boolean) newValue).booleanValue());
 			return;
 		}
 		if (name.equals(P_VERSION)) {
-			setVersion(newValue!=null ? newValue.toString():null);
+			setVersion(newValue != null ? newValue.toString() : null);
 			return;
 		}
 		super.restoreProperty(name, oldValue, newValue);
-	}	
-	
+	}
+
 	public void write(String indent, PrintWriter writer) {
 		writeComments(writer);
 		writer.print(indent);
@@ -141,9 +163,9 @@ public class PluginImport
 			writer.print(" export=\"true\"");
 		if (version != null && version.length() > 0)
 			writer.print(" version=\"" + version + "\"");
-		if (match!=NONE) {
+		if (match != NONE) {
 			String matchValue = RULE_NAME_TABLE[match];
-			writer.print(" match=\""+matchValue+"\"");
+			writer.print(" match=\"" + matchValue + "\"");
 		}
 		writer.println("/>");
 	}

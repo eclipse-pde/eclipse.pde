@@ -357,7 +357,7 @@ public class ManifestEditor
 		if (underlyingResource == null) {
 			editor = openExternalPlugin(plugin);
 		} else {
-			editor = openWorkspacePlugin((IFile) underlyingResource);
+			editor = openWorkspacePlugin((IFile) underlyingResource, plugin instanceof IFragment);
 		}
 		if (editor != null && object != null) {
 			editor.openTo(object);
@@ -365,8 +365,8 @@ public class ManifestEditor
 		return editor;
 	}
 
-	private static ManifestEditor openWorkspacePlugin(IFile pluginFile) {
-		String editorId = PDEPlugin.MANIFEST_EDITOR_ID;
+	private static ManifestEditor openWorkspacePlugin(IFile pluginFile, boolean fragment) {
+		String editorId = fragment ? PDEPlugin.FRAGMENT_EDITOR_ID:PDEPlugin.MANIFEST_EDITOR_ID;
 		try {
 			FileEditorInput input = new FileEditorInput(pluginFile);
 			return (ManifestEditor) PDEPlugin.getActivePage().openEditor(

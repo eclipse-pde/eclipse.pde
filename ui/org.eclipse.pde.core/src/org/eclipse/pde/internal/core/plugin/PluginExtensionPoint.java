@@ -40,6 +40,19 @@ void load(Node node, Hashtable lineTable) {
 	addComments(node);
 	bindSourceLocation(node, lineTable);
 }
+
+public boolean equals(Object obj) {
+	if (obj==this) return true;
+	if (obj instanceof IPluginExtensionPoint) {
+		IPluginExtensionPoint target = (IPluginExtensionPoint)obj;
+		if (target.getId().equals(getId()) &&
+			target.getName().equals(getName()) &&
+			target.getSchema().equals(getSchema()))
+			return true;
+	}
+	return false;
+}
+
 public void setSchema(String newSchema) throws CoreException {
 	ensureModelEditable();
 	String oldValue = this.schema;
