@@ -378,8 +378,12 @@ public class ProductExportJob extends FeatureExportJob {
 		ILauncherInfo info = fProduct.getLauncherInfo();	
 		if (info != null) {
 			String name = info.getLauncherName();
-			if (name != null && name.length() > 0)
-				return name.trim();
+			if (name != null && name.length() > 0) {
+				name = name.trim();
+				if (name.endsWith(".exe")) //$NON-NLS-1$
+					name = name.substring(0, name.length() - 4);
+				return name;
+			}
 		}
 		return ECLIPSE;	
 	}
