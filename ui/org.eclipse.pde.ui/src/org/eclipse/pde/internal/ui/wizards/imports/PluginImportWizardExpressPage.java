@@ -194,13 +194,13 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		}
 		
 		if (wModels.length > 0) {
-			removeCheckedModels(result);
+			removeSharedModels(result);
 		}
 		
 		importListViewer.add(result.toArray());
 	}
 	
-	private void removeCheckedModels(ArrayList result) {
+	private void removeSharedModels(ArrayList result) {
 		IPluginModelBase[] smodels = (IPluginModelBase[])result.toArray(new IPluginModelBase[result.size()]);
 		PluginModelManager manager = PDECore.getDefault().getModelManager();
 		for (int i = 0; i < smodels.length; i++) {
