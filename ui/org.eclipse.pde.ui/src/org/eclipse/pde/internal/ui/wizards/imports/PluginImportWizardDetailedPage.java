@@ -8,32 +8,22 @@ package org.eclipse.pde.internal.ui.wizards.imports;
 
 
 
-import java.util.ArrayList;
+import java.util.*;
 
-import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
-import org.eclipse.pde.internal.ui.util.SWTUtil;
-import org.eclipse.pde.internal.ui.wizards.ListUtil;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.pde.internal.core.util.*;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.elements.*;
+import org.eclipse.pde.internal.ui.util.*;
+import org.eclipse.pde.internal.ui.wizards.*;
+import org.eclipse.swt.*;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
 
 /**
  * @author Wassim Melhem
@@ -51,6 +41,8 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 
 	private Label countLabel;
 	private TableViewer availableListViewer;
+	private Text filterText;
+	private Button caseCheck;
 	
 	public PluginImportWizardDetailedPage(String pageName, PluginImportWizardFirstPage firstPage) {
 		super(pageName, firstPage);
@@ -62,10 +54,12 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
+		layout.makeColumnsEqualWidth = false;
 		layout.horizontalSpacing = 5;
 		layout.verticalSpacing = 10;
 		container.setLayout(layout);
-		
+				
+		createScrollArea(container);
 		createAvailableList(container).setLayoutData(new GridData(GridData.FILL_BOTH));
 		createButtonArea(container);
 		createImportList(container).setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -77,10 +71,14 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		
 		addViewerListeners();
 		
-		setPageComplete(false);
+		initialize();
 		setControl(container);
 		Dialog.applyDialogFont(container);
 		
+	}
+	
+	private void initialize(){
+		setPageComplete(false);
 	}
 	
 	private void addViewerListeners() {
@@ -95,6 +93,13 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 				handleRemove();
 			}
 		});
+		
+		filterText.addModifyListener(new ModifyListener(){
+			public void modifyText(ModifyEvent e) {
+				handleFilter();
+			}
+		});
+		
 	}
 
 	private Composite createAvailableList(Composite parent) {
@@ -103,7 +108,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
 		container.setLayout(layout);
-		container.setLayoutData(new GridData(GridData.FILL_BOTH));
+		container.setLayoutData(new GridData());
 
 		Label label = new Label(container, SWT.NONE);
 		label.setText(PDEPlugin.getResourceString("ImportWizard.DetailedPage.availableList"));
@@ -146,8 +151,9 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 				handleExistingProjects();
 			}
 		});
+		Dialog.applyDialogFont(button);
 		SWTUtil.setButtonDimensionHint(button);
-		
+
 		button = new Button(container, SWT.PUSH);
 		button.setText(PDEPlugin.getResourceString("ImportWizard.DetailedPage.existingUnshared"));
 		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -156,6 +162,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 				handleExistingUnshared();
 			}
 		});
+		Dialog.applyDialogFont(button);
 		SWTUtil.setButtonDimensionHint(button);
 		
 		new Label(container, SWT.NONE);
@@ -169,6 +176,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 				handleAdd();
 			}
 		});
+		Dialog.applyDialogFont(button);
 		SWTUtil.setButtonDimensionHint(button);
 		
 		button = new Button(container, SWT.PUSH);
@@ -179,6 +187,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 				handleAddAll();
 			}
 		});
+		Dialog.applyDialogFont(button);
 		SWTUtil.setButtonDimensionHint(button);
 		
 		button = new Button(container, SWT.PUSH);
@@ -189,6 +198,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 				handleRemove();
 			}
 		});
+		Dialog.applyDialogFont(button);
 		SWTUtil.setButtonDimensionHint(button);
 		
 		button = new Button(container, SWT.PUSH);
@@ -199,6 +209,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 				handleRemoveAll();
 			}
 		});
+		Dialog.applyDialogFont(button);
 		SWTUtil.setButtonDimensionHint(button);
 		
 		button = new Button(container, SWT.PUSH);
@@ -209,6 +220,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 				handleSwap();
 			}
 		});
+		Dialog.applyDialogFont(button);
 		SWTUtil.setButtonDimensionHint(button);
 		
 		button = new Button(container, SWT.PUSH);
@@ -220,6 +232,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 			}
 
 		});
+		Dialog.applyDialogFont(button);
 		SWTUtil.setButtonDimensionHint(button);
 		
 		countLabel = new Label(comp, SWT.NONE);
@@ -227,6 +240,36 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		return container;
 	}
 	
+	private Composite createScrollArea(Composite parent){
+		Group container = new Group(parent, SWT.NONE);
+		GridLayout layout = new GridLayout(2, false);
+		layout.marginWidth = layout.marginHeight = 6;
+		container.setLayout(layout);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan=3;
+		container.setLayoutData(gd);
+		container.setText(PDEPlugin.getResourceString("ImportWizard.DetailedPage.filterDesc"));
+	
+		Label filterLabel = new Label(container, SWT.NONE);
+		filterLabel.setText(PDEPlugin.getResourceString("SearchPage.searchString"));
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan=2;
+		filterLabel.setLayoutData(gd);
+		
+		filterText = new Text(container, SWT.BORDER);
+		filterText.setText("");
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.grabExcessHorizontalSpace = true;
+		gd.widthHint=450;
+		filterText.setLayoutData(gd);
+			
+		caseCheck = new Button(container, SWT.CHECK);
+		caseCheck.setText(PDEPlugin.getResourceString("SearchPage.caseSensitive"));
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
+		caseCheck.setLayoutData(gd);
+		
+		return container;
+	}
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		setPageComplete(visible && importListViewer.getTable().getItemCount() > 0);
@@ -239,6 +282,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	}
 	protected void pageChanged() {
 		updateCount();
+		handleFilter();
 		setPageComplete(importListViewer.getTable().getItemCount() > 0);
 	}
 	private void updateCount() {
@@ -274,6 +318,31 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 			importListViewer.add(data.toArray());
 			availableListViewer.remove(data.toArray());
 			pageChanged();
+		}
+	}
+	
+	private void handleFilter() {
+		if (filterText == null || filterText.getText() == null || filterText.getText().length() == 0){
+			availableListViewer.setSelection(null);
+			return;
+		}
+
+		StringMatcher stringMatcher = new StringMatcher(filterText.getText(), !caseCheck.getSelection(), false);
+		TableItem[] tableItems = availableListViewer.getTable().getItems();
+		ArrayList results = new ArrayList();
+		for (int i = 0; i<tableItems.length; i++){
+			Object data = tableItems[i].getData();
+			if (data instanceof IPluginModelBase){
+				IPluginModelBase pluginBase = (IPluginModelBase)data;
+				if (stringMatcher.match(pluginBase.getBundleDescription().getUniqueId()))
+					results.add(tableItems[i]);
+			}
+		}
+		if (results.size()>0){
+			TableItem[] selectionList = (TableItem[])results.toArray(new TableItem[results.size()]);
+			availableListViewer.getTable().setSelection(selectionList);
+		} else {
+			availableListViewer.setSelection(null);
 		}
 	}
 	
