@@ -92,10 +92,12 @@ protected String getClasspath(PluginModel model, JAR jar) throws CoreException {
 	addDevEntries(runtime, location, classpath);
 	// add libraries from pre-requisite plug-ins
 	PluginPrerequisiteModel[] requires = model.getRequires();
+	List pluginChain = new ArrayList(10);
+	pluginChain.add(model);
 	if (requires != null) {
 		for (int i = 0; i < requires.length; i++) {
 			PluginModel prerequisite = getPlugin(requires[i].getPlugin(), requires[i].getVersion());
-			addPrerequisiteLibraries(prerequisite, classpath, location, true);
+			addPrerequisiteLibraries(prerequisite, classpath, location, pluginChain, true);
 			addFragmentsLibraries(prerequisite, classpath, location);
 			addDevEntries(prerequisite, location, classpath);
 		}
@@ -139,7 +141,7 @@ protected String getClasspath(PluginModel model, JAR jar) throws CoreException {
 	// if it is a fragment, add the plugin as prerequisite
 	if (model instanceof PluginFragmentModel) {
 		PluginModel plugin = getRegistry().getPlugin(((PluginFragmentModel) model).getPlugin());
-		addPrerequisiteLibraries(plugin, classpath, location, false);
+		addPrerequisiteLibraries(plugin, classpath, location, pluginChain, false);
 	}
 	// add extra classpath if it exists
 	String extraClasspath = (String) getBuildProperties(model).get(PROPERTY_JAR_EXTRA_CLASSPATH);
@@ -218,20 +220,28 @@ protected void addPluginLibrariesToFragmentLocations(PluginModel plugin, PluginF
 	}
 }
 
-protected void addPrerequisiteLibraries(PluginModel prerequisite, Set classpath, String baseLocation, boolean considerExport) throws CoreException {
+/**
+ * The pluginChain parameter is used to keep track of possible cycles. If prerequisite is already
+ * present in the chain it is not included in the classpath.
+ */
+protected void addPrerequisiteLibraries(PluginModel prerequisite, Set classpath, String baseLocation, List pluginChain, boolean considerExport) throws CoreException {
+	if (pluginChain.contains(prerequisite))
+		throw new CoreException(new Status(IStatus.ERROR, IPDEBuildConstants.PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_CLASSPATH_CYCLE, Policy.bind("error.pluginCycle"), null)); //$NON-NLS-1$
 	addLibraries(prerequisite, classpath, baseLocation);
 	// add libraries (if exported) from pre-requisite plug-ins
 	PluginPrerequisiteModel[] requires = prerequisite.getRequires();
 	if (requires == null)
 		return;
+	pluginChain.add(prerequisite);
 	for (int i = 0; i < requires.length; i++) {
 		if (considerExport && !requires[i].getExport())
 			continue;
 		PluginModel plugin = getPlugin(requires[i].getPlugin(), requires[i].getVersion());
-		addLibraries(plugin, classpath, baseLocation);
+		addPrerequisiteLibraries(plugin, classpath, baseLocation, pluginChain, considerExport);
 		addFragmentsLibraries(plugin, classpath, baseLocation);
 		addDevEntries(plugin, baseLocation, classpath);
 	}
+	pluginChain.remove(prerequisite);
 }
 
 

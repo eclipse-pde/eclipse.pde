@@ -1,9 +1,14 @@
+/**********************************************************************
+ * Copyright (c) 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.pde.internal.build;
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
-
 /**
  * Generic constants for this plug-in classes.
  */
@@ -56,5 +61,6 @@ public interface IPDEBuildConstants {
 	public final static int EXCEPTION_SOURCE_LOCATION_MISSING = 11;
 	public final static int EXCEPTION_WRITING_FILE = 12;
 	public final static int EXCEPTION_INVALID_JAR_ORDER = 13;
+	public final static int EXCEPTION_CLASSPATH_CYCLE = 14;
 	public final static int WARNING_MISSING_SOURCE = 20;
 }
