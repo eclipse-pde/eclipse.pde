@@ -282,6 +282,10 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
         PDEState state = PDECore.getDefault().getExternalModelManager().getState();
         ExportPackageDescription[] desc = state.getState().getExportedPackages();
         for (int i = 0; i < desc.length; i++) {
+            String id = desc[i].getExporter().getSymbolicName();
+            //TODO hack until we use the state properly
+            if (PDECore.getDefault().getModelManager().findModel(id) == null)
+                continue;
 			if (set.contains(desc[i].getExporter().getSymbolicName()))
                 continue;
 			if (fPackages != null && !fPackages.containsKey(desc[i].getName()))
