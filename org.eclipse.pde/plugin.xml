@@ -149,7 +149,7 @@
          <description>%cheatsheet.updates.desc</description>
       </cheatsheet>
    </extension>
-   
+<!--   
    <extension point="org.eclipse.core.runtime.contentTypes">
 	  <content-type 
 	  		id="pluginManifest" 
@@ -174,5 +174,5 @@
 	    	priority="high"				
 	    	file-names="plugin.properties"/>
 	</extension>
-   
+-->   
 </plugin>
