@@ -207,4 +207,10 @@ public void write(String indent, PrintWriter writer) {
 		writer.println("/>"); //$NON-NLS-1$
 	}
 }
+/* (non-Javadoc)
+ * @see org.eclipse.pde.internal.core.ischema.ISchemaAttribute#isTranslatable()
+ */
+public boolean isTranslatable() {
+	return false;
+}
 }
