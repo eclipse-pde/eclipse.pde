@@ -27,14 +27,34 @@ public class RequiredPluginsClasspathContainer implements IClasspathContainer {
 	 * @see org.eclipse.jdt.core.IClasspathContainer#getClasspathEntries()
 	 */
 	public IClasspathEntry[] getClasspathEntries() {
-		return BuildPathUtilCore.computePluginEntries(model);
+		IClasspathEntry [] entries = BuildPathUtilCore.computePluginEntries(model);
+		return verifyWithAttachmentManager(entries);
+	}
+	
+	private IClasspathEntry[] verifyWithAttachmentManager(IClasspathEntry [] entries) {
+		SourceAttachmentManager manager = PDECore.getDefault().getSourceAttachmentManager();
+		if (manager.isEmpty())
+			return entries;
+		IClasspathEntry [] newEntries = new IClasspathEntry[entries.length]; 
+		for (int i=0; i<entries.length; i++) {
+			IClasspathEntry entry = entries[i];
+			newEntries[i] = entry;
+			if (entry.getEntryKind()==IClasspathEntry.CPE_LIBRARY) {
+				SourceAttachmentManager.SourceAttachmentEntry saentry = manager.findEntry(entry.getPath());
+				if (saentry!=null) {
+					IClasspathEntry newEntry = JavaCore.newLibraryEntry(entry.getPath(), saentry.getAttachmentPath(), saentry.getAttachmentRootPath(), entry.isExported());
+					newEntries[i] = newEntry;
+				}
+			}
+		}
+		return newEntries;
 	}
 
 	/**
 	 * @see org.eclipse.jdt.core.IClasspathContainer#getDescription()
 	 */
 	public String getDescription() {
-		return "Required plug-in entries (press 'Edit...' for details)";
+		return "Required plug-in entries";
 	}
 
 	/**

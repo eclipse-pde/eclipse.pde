@@ -32,6 +32,9 @@ public class PDECore extends Plugin {
 	private ExternalModelManager externalModelManager;
 	// Tracing options manager
 	private TracingOptionsManager tracingOptionsManager;
+	
+	// User-defined attachments manager
+	private SourceAttachmentManager sourceAttachmentManager;
 	// Schema registry
 	private SchemaRegistry schemaRegistry;
 	private WorkspaceModelManager workspaceModelManager;
@@ -223,6 +226,12 @@ public class PDECore extends Plugin {
 		if (sourceLocationManager == null)
 			sourceLocationManager = new SourceLocationManager();
 		return sourceLocationManager;
+	}
+	
+	public SourceAttachmentManager getSourceAttachmentManager() {
+		if (sourceAttachmentManager == null)
+			sourceAttachmentManager = new SourceAttachmentManager();
+		return sourceAttachmentManager;
 	}
 	
 	public TempFileManager getTempFileManager() {
