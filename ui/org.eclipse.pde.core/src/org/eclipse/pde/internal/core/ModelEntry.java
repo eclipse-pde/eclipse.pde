@@ -155,7 +155,7 @@ public class ModelEntry extends PlatformObject {
 			String id = changedPlugin.getId();
 			if (id == null)
 				continue;
-			if (plugin.getId().equals(id))
+			if (plugin.getId()!=null && plugin.getId().equals(id))
 				return true;
 			if (isRequired(changedPlugin))
 				return true;

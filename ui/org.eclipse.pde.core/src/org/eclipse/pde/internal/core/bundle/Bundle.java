@@ -31,6 +31,9 @@ public class Bundle extends BundleObject implements IBundle {
 	 * @see org.eclipse.pde.internal.core.ibundle.IBundle#getHeader(java.lang.String)
 	 */
 	public String getHeader(String key) {
+		if (fProperties == null) {
+			return null;
+		}
 		return (String)fProperties.get(key);
 	}
 	
