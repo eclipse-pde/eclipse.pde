@@ -160,7 +160,7 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 	}
 	
 	private void writeIcon(String indent, String iconId, PrintWriter writer) {
-		String icon = fIcons.get(iconId).toString();
+		String icon = (String)fIcons.get(iconId);
 		if (icon != null && icon.length() > 0) {
 			writer.println();
 			writer.print(indent + "   " + iconId + "=\"" + icon + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
