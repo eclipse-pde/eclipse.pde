@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
+import java.io.*;
 import java.net.*;
 import java.util.*;
 
@@ -96,12 +97,16 @@ public abstract class PluginBase
 			ExtensionsParser handler = new ExtensionsParser(getModel());
 			URL url = getModel().getResourceURL(filename);
 			if (url != null) {
-				parser.parse(url.openStream(), handler);
+				InputStream stream = url.openStream();
+				parser.parse(stream, handler);
 				loadExtensions(handler.getExtensions());
 				loadExtensionPoints(handler.getExtensionPoints());
 				schemaVersion = handler.isLegacy() ? null : "3.0"; //$NON-NLS-1$
+				stream.close();
 			}
-		} catch (Exception e) {
+		} catch (IOException e) {
+		} catch (SAXException e1) {		
+		} catch (ParserConfigurationException e2) {
 		}
 	}
 	
