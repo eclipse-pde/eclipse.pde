@@ -24,6 +24,8 @@ import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -116,6 +118,11 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		gd.horizontalSpan = 2;
 		implicitButton.setLayoutData(gd);
 		implicitButton.setSelection(getDialogSettings().getBoolean(SETTINGS_IMPLICIT));
+		implicitButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				pageChanged();
+			}
+		});
 
 		initialize();
 		setControl(container);

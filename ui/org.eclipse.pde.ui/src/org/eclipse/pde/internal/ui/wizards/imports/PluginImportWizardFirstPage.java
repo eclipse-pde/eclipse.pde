@@ -243,7 +243,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		});
 
 		changeButton = new Button(composite, SWT.PUSH);
-		changeButton.setText(PDEPlugin.getResourceString("Target Platform"));
+		changeButton.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.goToTarget"));
 		changeButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleChangeTargetPlatform();
