@@ -88,7 +88,8 @@ public class InfoSection extends PDEFormSection {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
 		layout.marginWidth = FormWidgetFactory.BORDER_STYLE == SWT.NULL ? 2 : 0;
-		layout.marginHeight = FormWidgetFactory.BORDER_STYLE == SWT.NULL ? 2 : 0;
+		layout.marginHeight =
+			FormWidgetFactory.BORDER_STYLE == SWT.NULL ? 2 : 0;
 		layout.verticalSpacing = 9;
 		container.setLayout(layout);
 		GridData gd;
@@ -124,11 +125,10 @@ public class InfoSection extends PDEFormSection {
 			});
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			urlText.setLayoutData(gd);
-		}
-		else {
+		} else {
 			Composite textContainer = createText(container, factory);
 			gd = new GridData(GridData.FILL_HORIZONTAL);
-			textContainer.setLayoutData(gd);			
+			textContainer.setLayoutData(gd);
 		}
 
 		factory.createLabel(container, null);
@@ -281,13 +281,10 @@ public class InfoSection extends PDEFormSection {
 		IFeatureInfo targetInfo,
 		String urlText,
 		String text) {
-		URL url = null;
+		String url = null;
 
-		try {
-			if (urlText.length() > 0) {
-				url = new URL(urlText);
-			}
-		} catch (MalformedURLException e) {
+		if (urlText.length() > 0) {
+			url = urlText;
 		}
 		try {
 			IFeatureModel model = (IFeatureModel) getFormPage().getModel();
@@ -407,7 +404,7 @@ public class InfoSection extends PDEFormSection {
 		}
 		ignoreChange = true;
 		String text = "";
-		URL url = null;
+		String url = null;
 		if (input instanceof IFeatureInfo) {
 			IFeatureInfo info = (IFeatureInfo) input;
 			text = info.getDescription();

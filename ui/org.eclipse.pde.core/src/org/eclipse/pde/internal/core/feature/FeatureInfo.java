@@ -7,11 +7,11 @@
 package org.eclipse.pde.internal.core.feature;
 
 import java.io.PrintWriter;
-import java.net.*;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.core.ifeature.IFeature;
+import org.eclipse.pde.internal.core.ifeature.IFeatureInfo;
 import org.w3c.dom.Node;
 
 /**
@@ -19,21 +19,23 @@ import org.w3c.dom.Node;
  * @author
  */
 public class FeatureInfo extends FeatureObject implements IFeatureInfo {
-	private static final String KEY_INFO_DESCRIPTION ="FeatureEditor.info.description";
+	private static final String KEY_INFO_DESCRIPTION =
+		"FeatureEditor.info.description";
 	private static final String KEY_INFO_LICENSE = "FeatureEditor.info.license";
-	private static final String KEY_INFO_COPYRIGHT = "FeatureEditor.info.copyright";
-	private URL url;
+	private static final String KEY_INFO_COPYRIGHT =
+		"FeatureEditor.info.copyright";
+	private String url;
 	private String description;
 	private int index;
-	
+
 	public FeatureInfo(int index) {
 		this.index = index;
 	}
-	
+
 	public int getIndex() {
 		return index;
 	}
-	
+
 	private String getTag() {
 		return IFeature.INFO_TAGS[index];
 	}
@@ -41,7 +43,7 @@ public class FeatureInfo extends FeatureObject implements IFeatureInfo {
 	/*
 	 * @see IFeatureInfo#getURL()
 	 */
-	public URL getURL() {
+	public String getURL() {
 		return url;
 	}
 
@@ -55,21 +57,21 @@ public class FeatureInfo extends FeatureObject implements IFeatureInfo {
 	/*
 	 * @see IFeatureInfo#setURL(URL)
 	 */
-	public void setURL(URL url) throws CoreException {
+	public void setURL(String url) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.url;
 		this.url = url;
 		firePropertyChanged(P_URL, oldValue, url);
 	}
-	
-	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
+
+	public void restoreProperty(String name, Object oldValue, Object newValue)
+		throws CoreException {
 		if (name.equals(P_DESC)) {
-			setDescription(newValue!=null ? newValue.toString() : null);
-		}
-		else if (name.equals(P_URL)) {
-			setURL((URL)newValue);
-		}
-		else super.restoreProperty(name, oldValue, newValue);
+			setDescription(newValue != null ? newValue.toString() : null);
+		} else if (name.equals(P_URL)) {
+			setURL(newValue != null ? newValue.toString() : null);
+		} else
+			super.restoreProperty(name, oldValue, newValue);
 	}
 
 	/*
@@ -82,42 +84,39 @@ public class FeatureInfo extends FeatureObject implements IFeatureInfo {
 		firePropertyChanged(P_DESC, oldValue, description);
 	}
 	protected void parse(Node node) {
-		String urlName = getNodeAttribute(node, "url");
-		try {
-			url = new URL(urlName);
-		}
-		catch (MalformedURLException e) {
-		}
+		url = getNodeAttribute(node, "url");
 		description = getNormalizedText(node.getFirstChild().getNodeValue());
 	}
-	
+
 	public void write(String indent, PrintWriter writer) {
-		String indent2 = indent+Feature.INDENT;
+		String indent2 = indent + Feature.INDENT;
 		String desc = getWritableString(description.trim());
 		writer.println();
-		writer.print(indent+"<"+getTag());
-		if (url!=null) {
-			writer.print(" url=\""+url.toString()+"\"");
+		writer.print(indent + "<" + getTag());
+		if (url != null) {
+			writer.print(" url=\"" + url + "\"");
 		}
 		writer.println(">");
-		writer.println(indent2+desc);
-		writer.println(indent+"</"+getTag()+">");
+		writer.println(indent2 + desc);
+		writer.println(indent + "</" + getTag() + ">");
 	}
-	
+
 	public boolean isEmpty() {
-		if (url!=null) return false;
-		String desc = description!=null ? description.trim() : null;
-		if (desc!=null && desc.length()>0) return false;
+		if (url != null)
+			return false;
+		String desc = description != null ? description.trim() : null;
+		if (desc != null && desc.length() > 0)
+			return false;
 		return true;
 	}
-	
+
 	public String toString() {
 		switch (index) {
-			case IFeature.INFO_DESCRIPTION:
+			case IFeature.INFO_DESCRIPTION :
 				return PDECore.getResourceString(KEY_INFO_DESCRIPTION);
-			case IFeature.INFO_LICENSE:
+			case IFeature.INFO_LICENSE :
 				return PDECore.getResourceString(KEY_INFO_LICENSE);
-			case IFeature.INFO_COPYRIGHT:
+			case IFeature.INFO_COPYRIGHT :
 				return PDECore.getResourceString(KEY_INFO_COPYRIGHT);
 		}
 		return super.toString();
