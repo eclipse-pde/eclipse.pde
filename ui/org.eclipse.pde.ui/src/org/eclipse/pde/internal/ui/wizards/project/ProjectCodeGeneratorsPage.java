@@ -250,9 +250,8 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 		IRunnableWithProgress operation = new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) {
 				try {
-					boolean exists =
-						createBlankManifest(project, structureData, monitor);
-					setJavaSettings(project, structureData, !exists, monitor);
+					createBlankManifest(project, structureData, monitor);
+					setJavaSettings(project, structureData, monitor);
 					BasicNewProjectResourceWizard.updatePerspective(config);
 				} catch (JavaModelException e) {
 					PDEPlugin.logException(e);
@@ -273,7 +272,6 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 	private void setJavaSettings(
 		IProject project,
 		IPluginStructureData structureData,
-		boolean setBuildpath,
 		IProgressMonitor monitor)
 		throws JavaModelException, CoreException {
 		if (project.exists() == false) {
@@ -284,23 +282,13 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 			project.open(monitor);
 		}
 		if (!project.hasNature(JavaCore.NATURE_ID))
-			CoreUtility.addNatureToProject(
-				project,
-				JavaCore.NATURE_ID,
-				monitor);
+			CoreUtility.addNatureToProject(project, JavaCore.NATURE_ID, monitor);
 		if (!project.hasNature(PDE.PLUGIN_NATURE))
 			CoreUtility.addNatureToProject(project, PDE.PLUGIN_NATURE, monitor);
-		JavaCore.create(project);
-		if (setBuildpath)
-			ClasspathUtil.setClasspath(
-				project,
-				structureData,
-				projectStructurePage.getSchemaVersion(),
-				new IClasspathEntry[0],
-				monitor);
+		ClasspathUtil.setClasspath(project, structureData, monitor);
 	}
 
-	private boolean createBlankManifest(
+	private void createBlankManifest(
 		IProject project,
 		IPluginStructureData structureData,
 		IProgressMonitor monitor)
@@ -323,6 +311,7 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 			pluginBase.setId(structureData.getPluginId());
 			pluginBase.setVersion("1.0.0");
 			pluginBase.setName(structureData.getPluginId());
+			pluginBase.setSchemaVersion("3.0");
 			if (structureData.getRuntimeLibraryName() != null) {
 				IPluginLibrary library = model.getPluginFactory().createLibrary();
 				library.setName(structureData.getRuntimeLibraryName());
@@ -331,7 +320,6 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 			}
 			model.save();
 		}
-		return !file.exists();
 	}
 
 	private void setWizardListEnabled(boolean enabled) {

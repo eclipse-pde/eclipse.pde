@@ -261,8 +261,7 @@ public abstract class AbstractNewBundleTemplateWizard
 	}
 
 	private void setJavaSettings(IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
-		boolean useContainers = PDEPlugin.getUseClasspathContainers();
-		ClasspathUtil.setClasspath(model, useContainers, monitor);
+		ClasspathUtil.setClasspath(model, monitor);
 	}
 	
 	private void setPackages(BundlePluginModelBase model, ArrayList generatedPackages) {

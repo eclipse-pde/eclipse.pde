@@ -31,7 +31,6 @@ import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 public class UpdateBuildpathWizardPage extends StatusWizardPage {
 	private IPluginModelBase[] selected;
 	private CheckboxTableViewer pluginListViewer;
-	private Button useContainersCheck;
 	private static final String KEY_TITLE = "UpdateBuildpathWizard.title";
 	private static final String KEY_DESC = "UpdateBuildpathWizard.desc";
 	private static final String KEY_PLUGIN_LIST =
@@ -103,14 +102,6 @@ public class UpdateBuildpathWizardPage extends StatusWizardPage {
 		pluginListViewer.setInput(PDEPlugin.getDefault());
 		tablePart.setSelection(selected);
 
-		useContainersCheck = new Button(container, SWT.CHECK);
-		useContainersCheck.setText(PDEPlugin.getResourceString("Preferences.BuildpathPage.classpathContainers"));
-		boolean useContainers = PDEPlugin.getUseClasspathContainers();
-		useContainersCheck.setSelection(useContainers);
-		gd = new GridData();
-		gd.horizontalSpan = 2;
-		useContainersCheck.setLayoutData(gd);
-			
 		setControl(container);
 		Dialog.applyDialogFont(container);
 		WorkbenchHelp.setHelp(container, IHelpContextIds.UPDATE_CLASSPATH);
@@ -123,10 +114,6 @@ public class UpdateBuildpathWizardPage extends StatusWizardPage {
 		return tablePart.getSelection();
 	}
 	
-	public boolean getUseContainers() {
-		return useContainersCheck.getSelection();
-	}
-
 	private void dialogChanged() {
 		setPageComplete(tablePart.getSelectionCount() > 0);
 	}

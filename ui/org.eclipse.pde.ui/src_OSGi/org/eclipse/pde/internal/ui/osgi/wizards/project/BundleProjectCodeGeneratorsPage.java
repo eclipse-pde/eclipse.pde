@@ -230,9 +230,8 @@ public class BundleProjectCodeGeneratorsPage extends WizardListSelectionPage {
 		IRunnableWithProgress operation = new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) {
 				try {
-					boolean exists =
-						createBlankManifest(project, structureData, monitor);
-					setJavaSettings(project, structureData, !exists, monitor);
+					createBlankManifest(project, structureData, monitor);
+					setJavaSettings(project, structureData, monitor);
 					BasicNewProjectResourceWizard.updatePerspective(config);
 				} catch (JavaModelException e) {
 					PDEPlugin.logException(e);
@@ -253,7 +252,6 @@ public class BundleProjectCodeGeneratorsPage extends WizardListSelectionPage {
 	private void setJavaSettings(
 		IProject project,
 		IPluginStructureData structureData,
-		boolean setBuildpath,
 		IProgressMonitor monitor)
 		throws JavaModelException, CoreException {
 		if (project.exists() == false) {
@@ -270,17 +268,10 @@ public class BundleProjectCodeGeneratorsPage extends WizardListSelectionPage {
 				monitor);
 		if (!project.hasNature(PDE.PLUGIN_NATURE))
 			CoreUtility.addNatureToProject(project, PDE.PLUGIN_NATURE, monitor);
-		JavaCore.create(project);
-		if (setBuildpath)
-			ClasspathUtil.setClasspath(
-				project,
-				structureData,
-				"3.0",
-				new IClasspathEntry[0],
-				monitor);
+		ClasspathUtil.setClasspath(project, structureData, monitor);
 	}
 
-	private boolean createBlankManifest(
+	private void createBlankManifest(
 		IProject project,
 		IPluginStructureData structureData,
 		IProgressMonitor monitor)
@@ -302,7 +293,6 @@ public class BundleProjectCodeGeneratorsPage extends WizardListSelectionPage {
 			}
 			model.save();
 		}
-		return !file.exists();
 	}
 
 	private void setWizardListEnabled(boolean enabled) {

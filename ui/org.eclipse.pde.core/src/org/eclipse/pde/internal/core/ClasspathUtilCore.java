@@ -23,26 +23,18 @@ public class ClasspathUtilCore {
 
 	public static void setClasspath(
 		IPluginModelBase model,
-		boolean useClasspathContainer,
 		IProgressMonitor monitor)
 		throws CoreException {
 
 		Vector result = new Vector();
-		int numUnits = 3;
-		if (!useClasspathContainer)
-			numUnits += model.getPluginBase().getImports().length;
-		monitor.beginTask("", numUnits);
+		monitor.beginTask("", 3);
 
 		// add own libraries/source
 		addSourceAndLibraries(model, result);
 		monitor.worked(1);
 
-		if (useClasspathContainer) {
-			result.add(createContainerEntry());
-			monitor.worked(1);
-		} else {
-			computePluginEntries(model, true, result, monitor);
-		}
+		result.add(createContainerEntry());
+		monitor.worked(1);
 
 		// add JRE
 		addJRE(result);
@@ -68,7 +60,6 @@ public class ClasspathUtilCore {
 
 	private static void computePluginEntries(
 		IPluginModelBase model,
-		boolean relative,
 		Vector result,
 		IProgressMonitor monitor) {
 		try {
@@ -76,7 +67,6 @@ public class ClasspathUtilCore {
 			if (model.isFragmentModel()) {
 				addParentPlugin(
 					(IFragment) model.getPluginBase(),
-					relative,
 					result,
 					alreadyAdded);
 			}
@@ -94,7 +84,6 @@ public class ClasspathUtilCore {
 					addDependency(
 						plugin,
 						dependency.isReexported(),
-						relative,
 						result,
 						alreadyAdded);
 				}
@@ -108,7 +97,6 @@ public class ClasspathUtilCore {
 			addImplicitDependencies(
 				model.getPluginBase().getId(),
 				model.getPluginBase().getSchemaVersion(),
-				relative,
 				result,
 				alreadyAdded);
 			if (monitor != null)
@@ -184,14 +172,13 @@ public class ClasspathUtilCore {
 
 	public static IClasspathEntry[] computePluginEntries(IPluginModelBase model) {
 		Vector result = new Vector();
-		computePluginEntries(model, false, result, null);
+		computePluginEntries(model, result, null);
 		return (IClasspathEntry[]) result.toArray(new IClasspathEntry[result.size()]);
 	}
 
 	private static void addDependency(
 		IPlugin plugin,
 		boolean isExported,
-		boolean relative,
 		Vector result,
 		HashSet alreadyAdded)
 		throws CoreException {
@@ -217,7 +204,7 @@ public class ClasspathUtilCore {
 				|| !libraries[i].isExported())
 				continue;
 			IClasspathEntry entry =
-				createLibraryEntry(libraries[i], isExported, relative);
+				createLibraryEntry(libraries[i], isExported);
 			if (entry != null && !result.contains(entry)) {
 				result.add(entry);
 			}
@@ -236,7 +223,6 @@ public class ClasspathUtilCore {
 					addDependency(
 						importedPlugin,
 						isExported,
-						relative,
 						result,
 						alreadyAdded);
 			}
@@ -250,7 +236,6 @@ public class ClasspathUtilCore {
 	protected static void addImplicitDependencies(
 		String id,
 		String schemaVersion,
-		boolean relative,
 		Vector result,
 		HashSet alreadyAdded)
 		throws CoreException {
@@ -267,16 +252,16 @@ public class ClasspathUtilCore {
 					PDECore.getDefault().findPlugin(
 						"org.eclipse.core.runtime.compatibility");
 				if (plugin != null)
-					addDependency(plugin, false, relative, result, alreadyAdded);
+					addDependency(plugin, false, result, alreadyAdded);
 			}
 		} else {
 			IPlugin plugin = PDECore.getDefault().findPlugin("org.eclipse.core.boot");
 			if (plugin != null)
-				addDependency(plugin, false, relative, result, alreadyAdded);
+				addDependency(plugin, false, result, alreadyAdded);
 			if (!id.equals("org.eclipse.core.runtime")) {
 				plugin = PDECore.getDefault().findPlugin("org.eclipse.core.runtime");
 				if (plugin != null)
-					addDependency(plugin, false, relative, result, alreadyAdded);
+					addDependency(plugin, false, result, alreadyAdded);
 			}
 		}
 	}
@@ -290,12 +275,11 @@ public class ClasspathUtilCore {
 	public static void addLibraries(
 		IPluginModelBase model,
 		boolean unconditionallyExport,
-		boolean relative,
 		Vector result) {
 		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
 		for (int i = 0; i < libraries.length; i++) {
 			IClasspathEntry entry =
-				createLibraryEntry(libraries[i], unconditionallyExport, relative);
+				createLibraryEntry(libraries[i], unconditionallyExport);
 			if (entry != null && !result.contains(entry))
 				result.add(entry);
 		}
@@ -303,7 +287,6 @@ public class ClasspathUtilCore {
 
 	private static void addParentPlugin(
 		IFragment fragment,
-		boolean relative,
 		Vector result,
 		HashSet alreadyAdded)
 		throws CoreException {
@@ -313,7 +296,7 @@ public class ClasspathUtilCore {
 				fragment.getPluginVersion(),
 				fragment.getRule());
 		if (parent != null) {
-			addDependency(parent, false, relative, result, alreadyAdded);
+			addDependency(parent, false, result, alreadyAdded);
 			IPluginImport[] imports = parent.getImports();
 			for (int i = 0; i < imports.length; i++) {
 				if (!imports[i].isReexported()) {
@@ -323,7 +306,7 @@ public class ClasspathUtilCore {
 							imports[i].getVersion(),
 							imports[i].getMatch());
 					if (plugin != null) {
-						addDependency(plugin, false, relative, result, alreadyAdded);
+						addDependency(plugin, false, result, alreadyAdded);
 					}
 				}
 			}
@@ -381,7 +364,7 @@ public class ClasspathUtilCore {
 			// add library, since no source folder was found.
 			if (!found) {
 				IClasspathEntry entry =
-					createLibraryEntry(library, library.isExported(), true);
+					createLibraryEntry(library, library.isExported());
 				if (entry != null && !result.contains(entry))
 					result.add(entry);
 
@@ -419,14 +402,12 @@ public class ClasspathUtilCore {
 	 */
 
 	public static IClasspathEntry createContainerEntry() {
-		IPath path = new Path(PDECore.CLASSPATH_CONTAINER_ID);
-		return JavaCore.newContainerEntry(path);
+		return JavaCore.newContainerEntry(new Path(PDECore.CLASSPATH_CONTAINER_ID));
 	}
 
 	private static IClasspathEntry createLibraryEntry(
 		IPluginLibrary library,
-		boolean unconditionallyExport,
-		boolean relative) {
+		boolean unconditionallyExport) {
 		try {
 			String expandedName = expandLibraryName(library.getName());
 			boolean isExported = unconditionallyExport ? true : library.isFullyExported();
@@ -435,24 +416,16 @@ public class ClasspathUtilCore {
 			IPath path = getPath(model, expandedName);
 			if (path == null) {
 				if (model.isFragmentModel()
-					|| !model.getPluginBase().getId().equals("org.eclipse.swt"))
+					|| !model.getPluginBase().getId().startsWith("org.eclipse.swt"))
 					return null;
 				model = resolveLibraryInFragments(library, expandedName);
 				if (model == null)
 					return null;
 				path = getPath(model, expandedName);
 			}
-			if (relative && model.getUnderlyingResource() == null) {
-				return JavaCore.newVariableEntry(
-					EclipseHomeInitializer.createEclipseRelativeHome(path.toOSString()),
-					getSourceAnnotation(model, expandedName, true),
-					null,
-					isExported);
-			}
-
 			return JavaCore.newLibraryEntry(
 				path,
-				getSourceAnnotation(model, expandedName, false),
+				getSourceAnnotation(model, expandedName),
 				null,
 				isExported);
 		} catch (CoreException e) {
@@ -494,10 +467,7 @@ public class ClasspathUtilCore {
 		return new IBuildEntry[0];
 	}
 
-	private static IPath getSourceAnnotation(
-		IPluginModelBase model,
-		String libraryName,
-		boolean relative)
+	private static IPath getSourceAnnotation(IPluginModelBase model, String libraryName)
 		throws CoreException {
 		IPath path = null;
 		int dot = libraryName.lastIndexOf('.');
@@ -505,7 +475,6 @@ public class ClasspathUtilCore {
 			String zipName = libraryName.substring(0, dot) + "src.zip";
 			path = getPath(model, zipName);
 			if (path == null) {
-				IResource resource = model.getUnderlyingResource();
 				SourceLocationManager manager =
 					PDECore.getDefault().getSourceLocationManager();
 				path =
@@ -513,20 +482,10 @@ public class ClasspathUtilCore {
 						model.getPluginBase(),
 						new Path(zipName));
 				if (path != null) {
-					if (!relative
-						|| (resource != null
-							&& !resource.getProject().hasNature(JavaCore.NATURE_ID))
-						|| (resource != null && resource.isLinked()))
-						path = JavaCore.getResolvedVariablePath(path);
+					path = JavaCore.getResolvedVariablePath(path);
 				}
-			} else {
-				if (relative)
-					path =
-						EclipseHomeInitializer.createEclipseRelativeHome(
-							path.toOSString());
 			}
 		}
-
 		return path;
 	}
 

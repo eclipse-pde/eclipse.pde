@@ -13,9 +13,9 @@ package org.eclipse.pde.internal.ui.wizards.templates;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.ui.templates.*;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.ui.IPluginStructureData;
@@ -73,6 +73,14 @@ public class NewWizardTemplate extends PDETemplateSection {
 		String pluginId = model.getPluginBase().getId();
 		initializeOption(KEY_PACKAGE_NAME, pluginId+".wizards");
 		initializeOption("categoryId", pluginId);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getDependencies(java.lang.String)
+	 */
+	public IPluginReference[] getDependencies(String schemaVersion) {
+		return new IPluginReference[] {
+			 new PluginReference("org.eclipse.core.resources", null, 0)};
 	}
 	
 	public boolean isDependentOnFirstPage() {

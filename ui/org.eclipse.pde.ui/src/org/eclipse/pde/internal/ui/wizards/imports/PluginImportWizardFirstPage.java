@@ -9,6 +9,7 @@ package org.eclipse.pde.internal.ui.wizards.imports;
 import java.io.File;
 import java.util.*;
 
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
@@ -130,7 +131,11 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		}
 
 		
-		int importType = PluginImportOperation.IMPORT_BINARY;
+		int importType =
+			ResourcesPlugin.getPlugin().getPluginPreferences().getBoolean(
+				ResourcesPlugin.PREF_DISABLE_LINKING)
+				? PluginImportOperation.IMPORT_BINARY
+				: PluginImportOperation.IMPORT_BINARY_WITH_LINKS;
 		try {
 			importType = settings.getInt(SETTINGS_IMPORTTYPE);
 		} catch (NumberFormatException e) {

@@ -12,19 +12,6 @@ package org.eclipse.pde.internal.ui;
 
 public interface IPreferenceConstants {
 	
-	// Java build path control preference page
-	public static final String PROP_PLUGIN_PROJECT_UPDATE =
-		"Preferences.BuildpathPage.pluginProjectUpdate";
-	public static final String PROP_FRAGMENT_PROJECT_UPDATE =
-		"Preferences.BuildpathPage.fragmentProjectUpdate";
-	public static final String PROP_MANIFEST_UPDATE =
-		"Preferences.BuildpathPage.manifestUpdate";
-	public static final String PROP_BUILD_PROPERTIES_UPDATE =
-		"Preferences.BuildpathPage.buildPropertiesUpdate";		
-	public static final String PROP_CLASSPATH_CONTAINERS =
-		"Preferences.BuildpathPage.useClasspathContainers";
-	public static final String PROP_LAUNCH_DUP_WARNING = "Launcher.plugin.duplicates";
-
 	// editor preference page
 	public static final String P_USE_SOURCE_PAGE = "useSourcePage";
 

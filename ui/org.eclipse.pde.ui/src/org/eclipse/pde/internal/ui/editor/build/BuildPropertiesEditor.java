@@ -10,46 +10,19 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.build;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Vector;
+import java.io.*;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.pde.core.IEditable;
-import org.eclipse.pde.core.IModel;
-import org.eclipse.pde.core.build.IBuildEntry;
-import org.eclipse.pde.core.build.IBuildModel;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.build.ExternalBuildModel;
-import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.editor.IPDEEditorPage;
-import org.eclipse.pde.internal.ui.editor.PDEMultiPageEditor;
-import org.eclipse.pde.internal.ui.editor.PDESourcePage;
-import org.eclipse.pde.internal.ui.preferences.EditorPreferencePage;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IStorageEditorInput;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.text.*;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.build.*;
+import org.eclipse.pde.internal.core.build.*;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.preferences.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 
 public class BuildPropertiesEditor extends PDEMultiPageEditor {
 	public static final String BUILD_PAGE_TITLE = "BuildPropertiesEditor.BuildPage.title";
@@ -200,10 +173,10 @@ public class BuildPropertiesEditor extends PDEMultiPageEditor {
 		return cleanModel;
 	}
 	
-	public void doSave(IProgressMonitor monitor) {
-		if (isJavaProject()&& PDEPlugin.isBuildPropertiesUpdate() && hasPluginModel())
+	/*public void doSave(IProgressMonitor monitor) {
+		//if (isJavaProject()&& PDEPlugin.isBuildPropertiesUpdate() && hasPluginModel())
 //		if (isJavaProject()&& PDEPlugin.isBuildPropertiesUpdate())
-			validateSourceFolders(monitor);
+			//validateSourceFolders(monitor);
 		super.doSave(monitor);
 	}
 	
@@ -338,5 +311,5 @@ public class BuildPropertiesEditor extends PDEMultiPageEditor {
 		} catch (CoreException e) {
 		}
 		return false;
-	}
+	}*/
 }

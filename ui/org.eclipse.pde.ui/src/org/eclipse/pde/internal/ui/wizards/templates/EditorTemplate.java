@@ -10,11 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.templates;
 
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.ui.templates.*;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.ui.IPluginStructureData;
@@ -32,13 +33,29 @@ public class EditorTemplate extends BaseEditorTemplate {
 		"EditorTemplate.fileExtension";
 	private static final String KEY_DEFAULT_EDITOR_NAME =
 		"EditorTemplate.defaultEditorName";
-
+	
+	private IPluginReference[] dep;
 	/**
 	 * Constructor for EditorTemplate.
 	 */
 	public EditorTemplate() {
 		setPageCount(1);
 		createOptions();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getDependencies(java.lang.String)
+	 */
+	public IPluginReference[] getDependencies(String schemaVersion) {
+		if (schemaVersion==null)
+			return new IPluginReference[0];
+		if (dep==null) {
+			dep = new IPluginReference[3];
+			dep[0] = new PluginReference("org.eclipse.jface.text", null, 0);
+			dep[1] = new PluginReference("org.eclipse.ui.workbench.texteditor", null, 0);
+			dep[2] = new PluginReference("org.eclipse.ui.editors", null, 0);
+		}
+		return dep;
 	}
 
 	public void addPages(Wizard wizard) {

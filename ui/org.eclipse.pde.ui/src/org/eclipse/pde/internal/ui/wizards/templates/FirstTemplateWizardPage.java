@@ -595,10 +595,10 @@ public class FirstTemplateWizardPage extends WizardPage implements IFirstWizardP
 		monitor.worked(1);
 	}
 	
-	public IPluginReference[] getDependencies(boolean isUIPlugin) {
+	public IPluginReference[] getDependencies(boolean isWorkspaceCheck) {
 		ArrayList dependencies = new ArrayList();
 		dependencies.add(new PluginReference("org.eclipse.ui", null, 0));
-		if (isUIPlugin) {
+		if (isWorkspaceCheck) {
 			dependencies.add(new PluginReference("org.eclipse.core.resources", null, 0));
 		}
 		if (structureData.isR3Compatible()) {

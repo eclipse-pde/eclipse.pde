@@ -91,7 +91,6 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 	public static void run(
 		boolean fork,
 		IRunnableContext context,
-		final boolean useContainers,
 		final IPluginModelBase[] models) {
 		try {
 			context.run(fork, true, new IRunnableWithProgress() {
@@ -101,7 +100,7 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 						IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 							public void run(IProgressMonitor monitor)
 								throws CoreException {
-								doUpdateClasspath(monitor, useContainers, models);
+								doUpdateClasspath(monitor, models);
 							}
 						};
 						PDEPlugin.getWorkspace().run(runnable, monitor);
@@ -128,16 +127,7 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 	}
 	
 	public static void doUpdateClasspath(
-			IProgressMonitor monitor,
-			IPluginModelBase[] models)
-	throws CoreException {
-		boolean useContainers = PDEPlugin.getUseClasspathContainers();
-		doUpdateClasspath(monitor, useContainers, models);
-	}
-
-	public static void doUpdateClasspath(
 		IProgressMonitor monitor,
-		boolean useContainers,
 		IPluginModelBase[] models)
 		throws CoreException {
 		monitor.beginTask(PDEPlugin.getResourceString(KEY_UPDATE), models.length);
@@ -153,7 +143,6 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 				}
 				ClasspathUtil.setClasspath(
 					model,
-					useContainers,
 					new SubProgressMonitor(monitor, 1));
 				if (monitor.isCanceled())
 					break;

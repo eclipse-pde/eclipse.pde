@@ -215,11 +215,6 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants, IPre
 	
 	protected void initializeDefaultPreferences(IPreferenceStore store) {
 		ColorManager.initializeDefaults(store);
-		store.setDefault(PROP_PLUGIN_PROJECT_UPDATE, true);
-		store.setDefault(PROP_FRAGMENT_PROJECT_UPDATE, true);
-		store.setDefault(PROP_MANIFEST_UPDATE, true);
-		store.setDefault(PROP_LAUNCH_DUP_WARNING, false);
-		store.setDefault(PROP_CLASSPATH_CONTAINERS, false);
 		store.setDefault(P_USE_SOURCE_PAGE, false);
 		store.setDefault(PROP_SHOW_OBJECTS, VALUE_USE_IDS);
 		store.setDefault(PROP_JAVAC_DEBUG_INFO, true);
@@ -235,35 +230,6 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants, IPre
 		return store.getString(PROP_SHOW_OBJECTS).equals(VALUE_USE_NAMES);
 	}
 	
-	public static boolean isPluginProjectUpdate() {
-		IPreferenceStore store = getDefault().getPreferenceStore();
-		return store.getBoolean(PROP_PLUGIN_PROJECT_UPDATE);
-	}
-
-	public static boolean isFragmentProjectUpdate() {
-		IPreferenceStore store = getDefault().getPreferenceStore();
-		return store.getBoolean(PROP_FRAGMENT_PROJECT_UPDATE);
-	}
-
-	public static boolean isManifestUpdate() {
-		IPreferenceStore store = getDefault().getPreferenceStore();
-		return store.getBoolean(PROP_MANIFEST_UPDATE);
-	}
-	
-	public static boolean isDuplicateWarningNeeded() {
-		IPreferenceStore store = getDefault().getPreferenceStore();
-		return store.getBoolean(PROP_LAUNCH_DUP_WARNING);
-	}
-	
-	public static boolean isBuildPropertiesUpdate() {
-		IPreferenceStore store = getDefault().getPreferenceStore();
-		return store.getBoolean(PROP_BUILD_PROPERTIES_UPDATE);
-	}	
-	
-	public static boolean getUseClasspathContainers() {
-		IPreferenceStore store = getDefault().getPreferenceStore();
-		return store.getBoolean(PROP_CLASSPATH_CONTAINERS);
-	}
 	private void loadRuntimeUISupport() {
 		IConfigurationElement[] runtimes = Platform.getPluginRegistry().getConfigurationElementsFor(PLUGIN_ID, "alternativeRuntimeUISupport");
 		

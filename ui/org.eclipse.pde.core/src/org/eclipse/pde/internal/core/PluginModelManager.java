@@ -323,7 +323,7 @@ public class PluginModelManager implements IAdaptable {
 		searchablePluginsManager.shutdown();
 	}
 	
-	public void setInJavaSearch(ModelEntry [] entries, boolean value, boolean useContainers, IProgressMonitor monitor) throws CoreException {
+	public void setInJavaSearch(ModelEntry [] entries, boolean value, IProgressMonitor monitor) throws CoreException {
 		PluginModelDelta delta = new PluginModelDelta();
 		for (int i=0; i<entries.length; i++) {
 			ModelEntry entry = entries[i];
@@ -333,7 +333,7 @@ public class PluginModelManager implements IAdaptable {
 			}
 		}
 		if (delta.getKind()!=0) {
-			searchablePluginsManager.persistStates(useContainers, monitor);
+			searchablePluginsManager.persistStates( monitor);
 			fireDelta(delta);
 		}
 	}

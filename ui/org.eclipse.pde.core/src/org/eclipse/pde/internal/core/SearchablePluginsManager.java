@@ -106,7 +106,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory {
 		}
 	}
 
-	public void persistStates(boolean useContainers, IProgressMonitor monitor)
+	public void persistStates(IProgressMonitor monitor)
 		throws CoreException {
 		ModelEntry[] entries = manager.getEntries();
 		StringBuffer buffer = new StringBuffer();
@@ -135,14 +135,12 @@ public class SearchablePluginsManager implements IFileAdapterFactory {
 		monitor.worked(1);
 		computeClasspath(
 			entries,
-			useContainers,
 			new SubProgressMonitor(monitor, 1));
 		monitor.worked(1);
 	}
 
 	private void computeClasspath(
 		ModelEntry[] entries,
-		boolean useContainers,
 		IProgressMonitor monitor)
 		throws CoreException {
 		Vector result = new Vector();
@@ -160,7 +158,6 @@ public class SearchablePluginsManager implements IFileAdapterFactory {
 			ClasspathUtilCore.addLibraries(
 				model,
 				false,
-				!useContainers,
 				modelResult);
 			addUniqueEntries(result, modelResult);
 		}

@@ -639,9 +639,7 @@ public class PluginsView extends ViewPart {
 				PluginModelManager manager =
 					PDECore.getDefault().getModelManager();
 				try {
-					boolean useContainers =
-						PDEPlugin.getUseClasspathContainers();
-					manager.setInJavaSearch(array, add, useContainers, monitor);
+					manager.setInJavaSearch(array, add, monitor);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
 				} finally {

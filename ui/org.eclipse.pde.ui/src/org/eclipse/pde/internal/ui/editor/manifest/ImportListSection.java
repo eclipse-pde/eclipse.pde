@@ -356,7 +356,7 @@ public class ImportListSection
 					PDESourcePage sourcePage =
 						(PDESourcePage) getFormPage().getEditor().getPage(
 							ManifestEditor.SOURCE_PAGE);
-					if (PDEPlugin.isManifestUpdate() && !sourcePage.containsError())
+					if (!sourcePage.containsError())
 						updateBuildPath();
 				}
 			}
@@ -382,8 +382,7 @@ public class ImportListSection
 					if (save && getFormPage().getEditor().isDirty()) {
 						getFormPage().getEditor().doSave(monitor);
 					}
-					boolean useContainers = PDEPlugin.getUseClasspathContainers();
-					ClasspathUtil.setClasspath(model, useContainers, monitor);
+					ClasspathUtil.setClasspath(model, monitor);
 					monitor.worked(1);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
