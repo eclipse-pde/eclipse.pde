@@ -14,23 +14,23 @@ import java.net.*;
 import java.util.*;
 
 public abstract class PluginTool implements IPlatformRunnable, ScriptGeneratorConstants {
-	protected boolean usage = false;
+	private boolean usage = false;
 	private PluginRegistryModel registry = null;
-	URL pluginPath = null;
-	ArrayList plugins = new ArrayList(3);
-	String install = null;
+	private URL pluginPath = null;
+	private ArrayList plugins = new ArrayList(9);
+	private String install = null;
 	private List devEntries = null;
 	private Hashtable propertyValues = new Hashtable(9);
 	private MultiStatus problems = new MultiStatus(PI_PDECORE,IStatus.OK,Policy.bind("label.generationProblems"),null);
-	
-	public final static String PI_PDECORE = "org.eclipse.pde.core";
-	private static final String SEPARATOR_VERSION = "_";
+
+	public final static String PI_PDECORE = "org.eclipse.pde.core";	
 	private static final String USAGE = "-?";
 	private static final String PLUGINS = "-plugins";
 	private static final String INSTALL = "-install";
 	private static final String DEV_ENTRIES = "-dev";
 	private static final String PROPERTYASSIGNMENT_PREFIX = "${";
 	private static final String PROPERTYASSIGNMENT_SUFFIX = "}";
+
 /**
  * Deletes all the files and directories from the given root down (inclusive).
  * Returns false if we could not delete some file or an exception occurred
@@ -54,6 +54,9 @@ public static boolean clear(File root) {
 		result = false;
 	}
 	return result;
+}
+public static ILog getPluginLog() {
+	return Platform.getPlugin(PI_PDECORE).getLog();
 }
 protected void addProblem(IStatus problem) {
 	problems.add(problem);
@@ -128,7 +131,7 @@ protected List getListFromString(String prop) {
 	}
 	return result;
 }
-private URL[] getPluginPath() {
+protected URL[] getPluginPath() {
 	// get the plugin path.  If one was spec'd on the command line, use that.
 	// Otherwise, if the install location was spec'd, compute the default path.
 	// Finally, if nothing was said, allow the system to figure out the plugin

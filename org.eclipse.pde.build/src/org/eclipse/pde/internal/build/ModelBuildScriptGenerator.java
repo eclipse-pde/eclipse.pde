@@ -93,7 +93,7 @@ public IStatus execute() {
 				output.flush();
 			}
 		} catch (IOException e) {
-			e.printStackTrace(System.out);
+			getPluginLog().log(new Status(IStatus.ERROR,PI_PDECORE,EXCEPTION_OUTPUT,"Output exception",e));
 		}
 	}
 	
@@ -209,7 +209,7 @@ protected void generateJarTarget(PrintWriter output, PluginModel descriptor,Stri
 		fullJar = new URL(descriptor.getLocation() + relativeJar).getFile();
 	} catch (MalformedURLException e) {
 		// should not happen
-		e.printStackTrace();
+		getPluginLog().log(new Status(IStatus.ERROR,PI_PDECORE,EXCEPTION_URL,"URL exception",e));
 	}
 	
 	String jar = fullJar.substring(fullJar.lastIndexOf('/') + 1);
@@ -342,7 +342,7 @@ protected void generateSrcTarget(PrintWriter output,PluginModel descriptor,Strin
 		fullJar = new URL(descriptor.getLocation() + relativeJar).getFile();
 	} catch (MalformedURLException e) {
 		// should not happen
-		e.printStackTrace();
+		getPluginLog().log(new Status(IStatus.ERROR,PI_PDECORE,EXCEPTION_URL,"URL exception",e));
 	}
 	
 	// zip name is jar name without the ".jar" but with SOURCE_EXTENSION appended		
@@ -483,7 +483,7 @@ protected PrintWriter openOutput(PluginModel descriptor) throws IOException {
 		String file = location.getFile() + OUTPUT_FILENAME;
 		return new PrintWriter(new FileOutputStream(new File(file).getAbsoluteFile()));
 	} catch (MalformedURLException e) {
-		e.printStackTrace(); // should never get here
+		getPluginLog().log(new Status(IStatus.ERROR,PI_PDECORE,EXCEPTION_URL,"URL exception",e));
 		return null;
 	}
 }

@@ -48,7 +48,13 @@ protected void readComponent(File componentFile) {
 	} catch (FileNotFoundException e) {
 		return;
 	} catch (Exception e) {
-		e.printStackTrace();
+		PluginTool.getPluginLog().log(
+			new Status(
+				IStatus.ERROR,
+				PluginTool.PI_PDECORE,
+				ScriptGeneratorConstants.EXCEPTION_COMPONENT_INPUT,
+				"Component input exception",
+				e));
 		return;
 	} finally {
 		if (inStream != null) {
@@ -71,7 +77,13 @@ protected void readConfiguration(File configurationFile) {
 	} catch (FileNotFoundException e) {
 		return;
 	} catch (Exception e) {
-		e.printStackTrace();
+		PluginTool.getPluginLog().log(
+			new Status(
+				IStatus.ERROR,
+				PluginTool.PI_PDECORE,
+				ScriptGeneratorConstants.EXCEPTION_CONFIGURATION_INPUT,
+				"Configuration input exception",
+				e));
 		return;
 	} finally {
 		if (inStream != null) {
