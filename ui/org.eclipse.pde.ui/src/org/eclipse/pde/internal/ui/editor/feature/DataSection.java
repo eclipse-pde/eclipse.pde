@@ -296,10 +296,12 @@ public class DataSection
 	}
 
 	public void update(Object input) {
-		IFeatureModel model = (IFeatureModel) input;
-		IFeature feature = model.getFeature();
-		dataViewer.setInput(feature);
-		updateNeeded = false;
+		if (getFormPage().isVisible()) { 
+			IFeatureModel model = (IFeatureModel) input;
+			IFeature feature = model.getFeature();
+			dataViewer.setInput(feature);
+			updateNeeded = false;
+		}
 	}
 	/**
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(Object, Object[])

@@ -261,10 +261,12 @@ public class IncludedFeaturesSection
 	}
 
 	public void update(Object input) {
-		IFeatureModel model = (IFeatureModel) input;
-		IFeature feature = model.getFeature();
-		includesViewer.setInput(feature);
-		updateNeeded = false;
+		if (getFormPage().isVisible()) {
+			IFeatureModel model = (IFeatureModel) input;
+			IFeature feature = model.getFeature();
+			includesViewer.setInput(feature);
+			updateNeeded = false;
+		}
 	}
 	/**
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(Clipboard)
