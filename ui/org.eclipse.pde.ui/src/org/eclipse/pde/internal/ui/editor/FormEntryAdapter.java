@@ -16,11 +16,11 @@
  */
 package org.eclipse.pde.internal.ui.editor;
 
-import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.text.*;
 import org.eclipse.pde.internal.ui.parts.*;
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.*;
+import org.eclipse.ui.forms.events.*;
 
 public class FormEntryAdapter implements IFormEntryListener {
 	private IContextPart contextPart;
@@ -34,7 +34,8 @@ public class FormEntryAdapter implements IFormEntryListener {
 		this.actionBars = actionBars;
 	}
 	public void focusGained(FormEntry entry) {
-		contextPart.getPage().getPDEEditor().getContributor().updateSelectableActions(new StructuredSelection());
+		ITextSelection selection = new TextSelection(1,1);
+		contextPart.getPage().getPDEEditor().getContributor().updateSelectableActions(selection);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.newparts.IFormEntryListener#textDirty(org.eclipse.pde.internal.ui.newparts.FormEntry)
@@ -72,5 +73,9 @@ public class FormEntryAdapter implements IFormEntryListener {
 	 * @see org.eclipse.ui.forms.events.HyperlinkListener#linkActivated(org.eclipse.ui.forms.events.HyperlinkEvent)
 	 */
 	public void linkActivated(HyperlinkEvent e) {
+	}
+	public void selectionChanged(FormEntry entry) {
+		ITextSelection selection = new TextSelection(1,1);
+		contextPart.getPage().getPDEEditor().getContributor().updateSelectableActions(selection);
 	}
 }

@@ -35,4 +35,6 @@ public interface IFormEntryListener extends IHyperlinkListener {
  * @param entry
  */
 	void browseButtonSelected(FormEntry entry);
+	
+	void selectionChanged(FormEntry entry);
 }

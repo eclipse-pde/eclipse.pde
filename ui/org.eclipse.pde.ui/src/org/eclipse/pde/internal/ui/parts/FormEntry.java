@@ -234,7 +234,8 @@ public class FormEntry {
 		} else if (e.character == '\u001b') { // Escape character
 			text.setText(value != null ? value : ""); // restore old //$NON-NLS-1$
 			dirty = false;
-		}
+		}	
+		listener.selectionChanged(FormEntry.this);
 	}
 	/**
 	 * Sets the value of this entry.

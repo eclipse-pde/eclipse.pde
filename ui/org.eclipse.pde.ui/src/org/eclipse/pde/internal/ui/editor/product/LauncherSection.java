@@ -11,6 +11,7 @@ import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.pde.internal.ui.util.*;
 import org.eclipse.swt.*;
+import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -281,7 +282,6 @@ public class LauncherSection extends PDESection {
 		}			
 	}
 
-	
 	private String getExtension(String iconId) {
 		if (iconId.equals(ILauncherInfo.LINUX_ICON))
 			return "xpm"; //$NON-NLS-1$
@@ -299,4 +299,13 @@ public class LauncherSection extends PDESection {
 			return "ico"; //$NON-NLS-1$
 		return "bmp";	 //$NON-NLS-1$
 	}
+	
+	public boolean canPaste(Clipboard clipboard) {
+		Display d = getSection().getDisplay();
+		Control c = d.getFocusControl();
+		if (c instanceof Text)
+			return true;
+		return false;
+	}
+
 }

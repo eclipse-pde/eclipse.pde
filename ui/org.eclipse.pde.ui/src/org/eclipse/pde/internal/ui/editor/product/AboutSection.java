@@ -12,6 +12,7 @@ import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.pde.internal.ui.util.*;
 import org.eclipse.swt.*;
+import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -161,5 +162,14 @@ public class AboutSection extends PDESection {
 		}
 		return path;
 	}
+	
+	public boolean canPaste(Clipboard clipboard) {
+		Display d = getSection().getDisplay();
+		Control c = d.getFocusControl();
+		if (c instanceof Text)
+			return true;
+		return false;
+	}
+
 
 }

@@ -205,10 +205,6 @@ public class ProductInfoSection extends PDESection {
 		return site.getActionBars().getStatusLineManager();
 	}
 	
-	public boolean doGlobalAction(String actionId) {
-		return super.doGlobalAction(actionId);
-	}
-	
 	public boolean canPaste(Clipboard clipboard) {
 		Display d = getSection().getDisplay();
 		Control c = d.getFocusControl();

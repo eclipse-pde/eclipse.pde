@@ -7,6 +7,7 @@ import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.pde.internal.ui.util.*;
 import org.eclipse.swt.*;
+import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -134,5 +135,14 @@ public class ConfigurationSection extends PDESection {
 		fCustomEntry.cancelEdit();
 		super.cancelEdit();
 	}
+	
+	public boolean canPaste(Clipboard clipboard) {
+		Display d = getSection().getDisplay();
+		Control c = d.getFocusControl();
+		if (c instanceof Text)
+			return true;
+		return false;
+	}
+
 
 }
