@@ -15,6 +15,7 @@ public class FeatureURLElement
 	extends FeatureObject
 	implements IFeatureURLElement {
 	private int elementType;
+	private int siteType = UPDATE_SITE;
 	private URL url;
 
 	public FeatureURLElement(int elementType) {
@@ -30,6 +31,9 @@ public class FeatureURLElement
 	public URL getURL() {
 		return url;
 	}
+	public int getSiteType() {
+		return siteType;
+	}
 	protected void parse(Node node) {
 		super.parse(node);
 		String urlName = getNodeAttribute(node, "url");
@@ -37,7 +41,11 @@ public class FeatureURLElement
 			url = new URL(urlName);
 		} catch (MalformedURLException e) {
 		}
+		String typeName = getNodeAttribute(node, "type");
+		if (typeName != null && typeName.equals("web"))
+			siteType = WEB_SITE;
 	}
+
 	public void setURL(URL url) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.url;
@@ -45,10 +53,19 @@ public class FeatureURLElement
 		firePropertyChanged(this, P_URL, oldValue, url);
 	}
 
+	public void setSiteType(int type) throws CoreException {
+		ensureModelEditable();
+		Integer oldValue = new Integer(this.siteType);
+		this.siteType = type;
+		firePropertyChanged(this, P_URL, oldValue, new Integer(type));
+	}
+
 	public void restoreProperty(String name, Object oldValue, Object newValue)
 		throws CoreException {
 		if (name.equals(P_URL)) {
 			setURL((URL) newValue);
+		} else if (name.equals(P_SITE_TYPE)) {
+			setSiteType(((Integer) newValue).intValue());
 		} else
 			super.restoreProperty(name, oldValue, newValue);
 	}
@@ -78,6 +95,9 @@ public class FeatureURLElement
 		}
 		if (url != null) {
 			writer.print(" url=\"" + getWritableString(url.toString()) + "\"");
+		}
+		if (siteType == WEB_SITE) {
+			writer.print(" type=\"web\"");
 		}
 		writer.println("/>");
 	}
