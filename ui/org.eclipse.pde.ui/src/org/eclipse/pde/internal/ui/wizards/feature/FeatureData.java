@@ -19,16 +19,24 @@ public class FeatureData {
 	String provider;
 	String library;
 	boolean hasCustomHandler;
+	boolean isPatch;
+	String featureToPatchId;
+	String featureToPatchVersion;
 
 	public FeatureData() {
 		library = null;
 		hasCustomHandler = false;
+		isPatch = false;
 	}
 
 	public boolean hasCustomHandler() {
 		return hasCustomHandler;
 	}
 
+	public boolean isPatch(){
+	    return isPatch;
+	}
+	
 	public String getSourceFolderName() {
 		return PreferenceConstants.getPreferenceStore().getString(
 				PreferenceConstants.SRCBIN_SRCNAME);

@@ -109,26 +109,10 @@ public class PatchPluginListPage extends BasePluginListPage {
 		return featureModel.getFeature().getPlugins();
 	}
 
-//	public IFeature[] getSelectedFeatures() {
-//		Object[] result = tablePart.getSelection();
-//		IFeature[] features = new IFeature[result.length];
-//		for (int i = 0; i < result.length; i++) {
-//			IFeatureChild child = (IFeatureChild) result[i];
-//			features[i] = child.getModel().getFeature();
-//		}
-//		return features;
-//	}
-//	
-//	public IFeatureChild[] getSelectedFeatureChildren(){
-//		Object[] result = tablePart.getSelection();
-//		IFeatureChild[] children = new IFeatureChild[result.length];
-//		for (int i = 0 ;i<children.length; i++){
-//			children[i] = (IFeatureChild)result[i];
-//		}
-//		return children;
-//	}
-	
 	public IFeaturePlugin[] getSelectedPlugins(){
+		IFeatureModel featureModel = ((FeaturePatchProvider)provider).getFeatureToPatch();
+		if (featureModel== null)
+			return new IFeaturePlugin[0];
 		Object[] result = tablePart.getSelection();
 		IFeaturePlugin[] plugins = new IFeaturePlugin[result.length];
 		for (int i = 0 ;i<plugins.length; i++){

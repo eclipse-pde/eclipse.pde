@@ -306,11 +306,17 @@ public class NewFeaturePatchWizard extends NewWizard implements IExecutableExten
 		feature.addPlugins(added);
 
 		FeatureImport featureImport = (FeatureImport) model.getFactory().createImport();
-		featureImport.loadFrom(featureModel.getFeature());
-		featureImport.setPatch(true);
-		featureImport.setVersion(featureModel.getFeature().getVersion());
-		featureImport.setId(featureModel.getFeature().getId());
-
+		if (featureModel != null){
+		    featureImport.loadFrom(featureModel.getFeature());
+		    featureImport.setPatch(true);
+		    featureImport.setVersion(featureModel.getFeature().getVersion());
+		    featureImport.setId(featureModel.getFeature().getId());
+		} else if (data.isPatch()){
+		    featureImport.setPatch(true);
+		    featureImport.setVersion(data.featureToPatchVersion);
+		    featureImport.setId(data.featureToPatchId);
+		}
+		
 		feature.addImports(new IFeatureImport[]{featureImport});
 		IFeatureInstallHandler handler = feature.getInstallHandler();
 		if (handler == null) {

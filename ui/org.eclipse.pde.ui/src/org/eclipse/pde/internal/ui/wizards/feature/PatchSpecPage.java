@@ -13,6 +13,8 @@ package org.eclipse.pde.internal.ui.wizards.feature;
 
 import java.util.*;
 
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.ui.dialogs.*;
@@ -58,26 +60,35 @@ public class PatchSpecPage extends BaseFeatureSpecPage {
 			setErrorMessage(PDEPlugin.getResourceString(KEY_LIBRARY_MISSING));
 			return;
 		}
-
-		if (canFlipToNextPage()) {
-
-			IFeatureModel[] featureModels = getAllFeatureModels();
-
-			for (int i = 0; i < featureModels.length; i++) {
-				IFeature feature = featureModels[i].getFeature();
-				if (feature.getId().equals(featureIdText.getText())
-						&& feature.getVersion().equals(featureVersionText.getText())) {
-					fFeatureToPatch = feature.getModel();
-					return;
-				}
-			}
-			fFeatureToPatch = null;
+		IFeatureModel[] featureModels = getAllFeatureModels();
+		
+		for (int i = 0; i < featureModels.length; i++) {
+		    IFeature feature = featureModels[i].getFeature();
+		    if (feature.getId().equals(featureIdText.getText())
+		            && feature.getVersion().equals(featureVersionText.getText())) {
+		        fFeatureToPatch = feature.getModel();
+		        setMessage(null);
+		        setPageComplete(true);
+		        setErrorMessage(null);
+		        return;
+		    }
 		}
-
-		setPageComplete(true);
+		
+		fFeatureToPatch = null;
+		setMessage(PDEPlugin.getFormattedMessage("NewFeaturePatch.SpecPage.notFound", featureIdText.getText()), DialogPage.WARNING); //$NON-NLS-1$
 		setErrorMessage(null);
-
+		getContainer().updateButtons();
+		return;
 	}
+	
+	/* (non-Javadoc)
+     * @see org.eclipse.jface.wizard.WizardPage#getNextPage()
+     */
+    public IWizardPage getNextPage() {
+        if (fFeatureToPatch == null)
+            return null;
+        return super.getNextPage();
+    }
 
 	private String getPatchId() {
 		if (patchIdText == null)
@@ -96,7 +107,7 @@ public class PatchSpecPage extends BaseFeatureSpecPage {
 			return ""; //$NON-NLS-1$
 		return patchProviderText.getText();
 	}
-
+	
 	public FeatureData getFeatureData() {
 		FeatureData data = new FeatureData();
 		data.id = getPatchId();
@@ -105,6 +116,9 @@ public class PatchSpecPage extends BaseFeatureSpecPage {
 		data.name = getPatchName();
 		data.library = getInstallHandlerLibrary();
 		data.hasCustomHandler = customChoice.getSelection();
+		data.isPatch = true;
+		data.featureToPatchId = featureIdText.getText();
+		data.featureToPatchVersion = featureVersionText.getText();
 		return data;
 	}
 
