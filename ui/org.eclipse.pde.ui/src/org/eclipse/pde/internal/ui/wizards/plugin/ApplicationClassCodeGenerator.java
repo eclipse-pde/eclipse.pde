@@ -77,7 +77,7 @@ public class ApplicationClassCodeGenerator {
         writer.println("\t * @see org.eclipse.core.runtime.IPlatformRunnable#run(java.lang.Object)"); //$NON-NLS-1$
         writer.println("\t */"); //$NON-NLS-1$
         writer.println("\tpublic Object run(Object args) throws Exception {"); //$NON-NLS-1$
-        writer.println("\t\t// TODO Auto-generated method stub");
+        writer.println("\t\t// TODO Auto-generated method stub"); //$NON-NLS-1$
         writer.println("\t\treturn null;"); //$NON-NLS-1$
         writer.println("\t}"); //$NON-NLS-1$
         writer.println("}"); //$NON-NLS-1$
