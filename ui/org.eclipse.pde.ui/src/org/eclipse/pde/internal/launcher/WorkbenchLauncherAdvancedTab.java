@@ -30,7 +30,7 @@ import org.eclipse.debug.ui.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.jface.dialogs.Dialog;
 
-public class WorkbenchLauncherAdvancedTab implements ILaunchConfigurationTab, ILauncherSettings {
+public class WorkbenchLauncherAdvancedTab implements /* ILaunchConfigurationTab, */ ILauncherSettings {
 	public static final String KEY_WORKSPACE_PLUGINS =
 		"Preferences.AdvancedTracingPage.workspacePlugins";
 	public static final String KEY_EXTERNAL_PLUGINS =
@@ -530,7 +530,7 @@ public class WorkbenchLauncherAdvancedTab implements ILaunchConfigurationTab, IL
 	}
 	
 	private void updateStatus() {
-		launchDialog.refreshStatus();
+		//launchDialog.refreshStatus();
 	}
 
 	private IStatus validatePlugins() {
