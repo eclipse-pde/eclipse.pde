@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.build.packager;
 import java.io.*;
 import java.util.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.pde.internal.build.*;
 
 public class UnzipperGenerator extends AbstractScriptGenerator {
@@ -81,7 +82,7 @@ public class UnzipperGenerator extends AbstractScriptGenerator {
 	}
 
 	private void generateUncompressionCommands() throws CoreException {
-		zipsList = readProperties(workingDirectory, directoryLocation); //$NON-NLS-1$
+		zipsList = readProperties(workingDirectory, directoryLocation, IStatus.ERROR); //$NON-NLS-1$
 		
 		List toUnzipWithOrder = new ArrayList(unzipOrder.length);
 		String zipEntries = zipsList.getProperty(Config.genericConfig().toString(","), ""); //$NON-NLS-1$	//$NON-NLS-2$
@@ -137,14 +138,14 @@ public class UnzipperGenerator extends AbstractScriptGenerator {
 	private void generateUnzip(String[] entryDetail) {
 		List parameters = new ArrayList(1);
 		parameters.add("-o -X ${unzipArgs} "); //$NON-NLS-1$
-		parameters.add(getPropertyFormat("downloadDirectory") + "/" + entryDetail[0]); //$NON-NLS-1$ //$NON-NLS-2$
+		parameters.add(getPropertyFormat("downloadDirectory") + '/' + entryDetail[0]); //$NON-NLS-1$ //$NON-NLS-2$
 		script.printExecTask("unzip", "${tempDirectory}/" + entryDetail[1], parameters, null); //$NON-NLS-1$//$NON-NLS-2$
 	}
 	
 	private void generateUntar(String[] entryDetail) {
 		List parameters = new ArrayList(2);
 		parameters.add("-" + (entryDetail[0].endsWith(".gz") ? "z" : "") + "pxvf"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-		parameters.add(getPropertyFormat("downloadDirectory") + "/" + entryDetail[0]); //$NON-NLS-1$ //$NON-NLS-2$
+		parameters.add(getPropertyFormat("downloadDirectory") + '/' + entryDetail[0]); //$NON-NLS-1$ //$NON-NLS-2$
 		script.printExecTask("tar", "${tempDirectory}/" + entryDetail[1], parameters, null); //$NON-NLS-1$//$NON-NLS-2$	
 	}
 	

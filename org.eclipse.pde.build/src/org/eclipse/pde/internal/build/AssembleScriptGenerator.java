@@ -19,17 +19,16 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 	private String directory; // representing the directory where to generate the file
 	private AssemblyInformation assemblageInformation;
 	private String featureId;
-
+	
 	private AssembleConfigScriptGenerator configScriptGenerator = new AssembleConfigScriptGenerator();
 
 	public AssembleScriptGenerator(String directory, AssemblyInformation assemblageInformation, String featureId, String scriptFilename) throws CoreException {
 		this.directory = directory;
 		this.assemblageInformation = assemblageInformation;
 		this.featureId = featureId;
-
-		String filename = directory + "/" + (scriptFilename == null ? (DEFAULT_ASSEMBLE_NAME + "." + featureId + "." + DEFAULT_ASSEMBLE_ALL) : scriptFilename); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		
+		String filename = directory + '/' + (scriptFilename == null ? (DEFAULT_ASSEMBLE_NAME + "." + featureId + "." + DEFAULT_ASSEMBLE_ALL) : scriptFilename); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		try {
-			// FIXME: THE FILE management can cause problem if an error occur when setting other params
 			script = new AntScript(new FileOutputStream(filename));
 		} catch (FileNotFoundException e) {
 			// ignore this exception
@@ -58,7 +57,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 
 	protected void generateAssembleConfigFileTargetCall(Config aConfig) throws CoreException {
 		// generate the script for a configuration
-		configScriptGenerator.initialize(directory, null, featureId, aConfig, assemblageInformation.getPlugins(aConfig), assemblageInformation.getFragments(aConfig), assemblageInformation.getFeatures(aConfig), assemblageInformation.copyRootFile(aConfig));
+		configScriptGenerator.initialize(directory, null, featureId, aConfig, assemblageInformation.getPlugins(aConfig), assemblageInformation.getFeatures(aConfig), assemblageInformation.copyRootFile(aConfig));
 		configScriptGenerator.generate();
 
 		Map params = new HashMap(1);

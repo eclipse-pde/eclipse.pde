@@ -11,11 +11,9 @@
 package org.eclipse.pde.internal.build;
 
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.model.PluginModel;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.internal.build.ant.AntScript;
 import org.eclipse.update.core.SiteManager;
 
@@ -23,13 +21,17 @@ import org.eclipse.update.core.SiteManager;
  * Generic super-class for all script generator classes. 
  * It contains basic informations like the script, the configurations, and a location 
  */
-public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuildConstants {
+public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuildConstants, IBuildPropertiesConstants {
 
+	protected static String outputFormat = "zip"; 
+	protected static boolean embeddedSource = false;
+	protected static boolean forceUpdateJarFormat = false;
 	private static List configInfos;
 	protected static String workingDirectory;
 	protected static boolean buildingOSGi = false;
 	protected AntScript script;
-
+ 
+	
 	static {
 		// By default, a generic configuration is set
 		configInfos = new ArrayList(1);
@@ -97,27 +99,23 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	 * @return String
 	 * @throws CoreException if a valid file-system location could not be constructed
 	 */
-	public String getLocation(PluginModel model) throws CoreException {
-		try {
-			return new URL(model.getLocation()).getFile();
-		} catch (MalformedURLException e) {
-			String message = Policy.bind("exception.url"); //$NON-NLS-1$
-			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_MALFORMED_URL, message, e));
-		}
+	public String getLocation(BundleDescription model) throws CoreException {
+		return model.getLocation();		
 	}
 
-	protected Properties readProperties(String location, String fileName) throws CoreException {
+	public static Properties readProperties(String location, String fileName, int errorLevel) throws CoreException {
 		Properties result = new Properties();
 		File file = new File(location, fileName);
 		try {
-			InputStream input = new FileInputStream(file);
+			InputStream input = new BufferedInputStream(new FileInputStream(file));
 			try {
 				result.load(input);
 			} finally {
 				input.close();
 			}
 		} catch (FileNotFoundException e) {
-			// ignore and return the empty Properties object
+			String message = Policy.bind("exception.missingFile", file.toString()); //$NON-NLS-1$
+			BundleHelper.getDefault().getLog().log(new Status(errorLevel, PI_PDEBUILD, EXCEPTION_READING_FILE, message, null));
 		} catch (IOException e) {
 			String message = Policy.bind("exception.readingFile", file.toString()); //$NON-NLS-1$
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READING_FILE, message, e));
@@ -130,20 +128,20 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 			return;
 
 		try {
-			OutputStream scriptStream = new BufferedOutputStream(new FileOutputStream(scriptLocation + "/" + scriptName)); //$NON-NLS-1$
+			OutputStream scriptStream = new BufferedOutputStream(new FileOutputStream(scriptLocation + '/' + scriptName)); //$NON-NLS-1$
 			try {
 				script = new AntScript(scriptStream);
 			} catch (IOException e) {
 				try {
 					scriptStream.close();
-					String message = Policy.bind("exception.writingFile", scriptLocation + "/" + scriptName); //$NON-NLS-1$ //$NON-NLS-2$
+					String message = Policy.bind("exception.writingFile", scriptLocation + '/' + scriptName); //$NON-NLS-1$ //$NON-NLS-2$
 					throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
 				} catch (IOException e1) {
 					// Ignored		
 				}
 			}
 		} catch (FileNotFoundException e) {
-			String message = Policy.bind("exception.writingFile", scriptLocation + "/" + scriptName); //$NON-NLS-1$ //$NON-NLS-2$
+			String message = Policy.bind("exception.writingFile", scriptLocation + '/' + scriptName); //$NON-NLS-1$ //$NON-NLS-2$
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
 		}
 	}
@@ -158,4 +156,8 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	public static boolean isBuildingOSGi() {
 		return buildingOSGi;
 	}
+	public static String getWorkingDirectory() {
+		return workingDirectory;
+	}
+
 }

@@ -13,12 +13,17 @@ package org.eclipse.pde.internal.build;
 import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.build.builder.*;
+import org.eclipse.pde.internal.build.builder.FeatureBuildScriptGenerator;
+import org.eclipse.pde.internal.build.builder.ModelBuildScriptGenerator;
 
 /**
  * 
  */
 public class BuildScriptGenerator extends AbstractScriptGenerator {
-
+	/**
+	 * Indicates whether the assemble script should contain the archive generation statement.
+	 */
+	protected boolean generateArchive = true;
 	/**
 	 * Indicates whether scripts for a feature's children should be generated.
 	 */
@@ -32,7 +37,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	/**
 	 * Additional dev entries for the compile classpath.
 	 */
-	protected String[] devEntries = new String[0];
+	protected DevClassPathHelper devEntries;
 
 	/**
 	 * Plugin path. URLs that point where to find the plugins.
@@ -46,30 +51,25 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	 * @throws CoreException
 	 */
 	public void generate() throws CoreException {
-		// TO CHECK Does this usecase really exist? Do we really pass list of map file entry?
 		List plugins = new ArrayList(5);
-		List fragments = new ArrayList(5);
 		List features = new ArrayList(5);
-		sortElements(features, plugins, fragments);
+		sortElements(features, plugins);
 
 		// It is not required to filter in the two first generateModels, since it is only for the building of a single plugin
-		generateModels(new PluginBuildScriptGenerator(), plugins);
-		generateModels(new FragmentBuildScriptGenerator(), fragments);
+		generateModels(new ModelBuildScriptGenerator(), plugins);
 		generateFeatures(features);
 	}
 
 	/**
 	 * Separate elements by kind.
 	 */
-	protected void sortElements(List features, List plugins, List fragments) {
+	protected void sortElements(List features, List plugins) {
 		for (int i = 0; i < elements.length; i++) {
 			int index = elements[i].indexOf('@');
 			String type = elements[i].substring(0, index);
 			String element = elements[i].substring(index + 1);
-			if (type.equals("plugin")) //$NON-NLS-1$
+			if (type.equals("plugin") || type.equals("fragment")) //$NON-NLS-1$ //$NON-NLS-2$
 				plugins.add(element);
-			else if (type.equals("fragment")) //$NON-NLS-1$
-				fragments.add(element);
 			else if (type.equals("feature")) //$NON-NLS-1$
 				features.add(element);
 		}
@@ -98,7 +98,6 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	protected void generateFeatures(List features) throws CoreException {
 		for (Iterator i = features.iterator(); i.hasNext();) {
 			AssemblyInformation assemblageInformation = null;
-			//if (! noAssembleGeneration) //FIXME Put a parameter for assembly Generation
 			assemblageInformation = new AssemblyInformation();
 
 			String featureId = (String) i.next();
@@ -108,8 +107,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 			generator.setSourceFeatureGeneration(false);
 			generator.setBinaryFeatureGeneration(true);
 			generator.setScriptGeneration(true);
-			generator.getSite(true); // Force the site to be refreshed
-			generator.setPluginPath(Utils.asURL(pluginPath));
+			generator.setPluginPath(pluginPath);
 			generator.setBuildSiteFactory(null);
 			generator.setDevEntries(devEntries);
 			generator.setSourceToGather(new SourceFeatureInformation());
@@ -121,6 +119,9 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		}
 	}
 
+	public void setGenerateArchive(boolean generateArchive) {
+		this.generateArchive = generateArchive;
+	}
 	/**
 	 * 
 	 * @param children
@@ -133,8 +134,9 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	 * 
 	 * @param devEntries
 	 */
-	public void setDevEntries(String[] devEntries) {
-		this.devEntries = devEntries;
+	public void setDevEntries(String devEntries) {
+		if (devEntries != null)
+			this.devEntries = new DevClassPathHelper(devEntries);
 	}
 
 	/**
@@ -145,12 +147,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		this.elements = elements;
 	}
 
-	/**
-	 * 
-	 * @param pluginPath
-	 */
-	//TODO Shoudn't we get path instead of url?
-	public void setPluginPath(String[] pluginPath) {
+	public void setPluginPath(String[] pluginPath) throws CoreException {
 		this.pluginPath = pluginPath;
 	}
 
@@ -162,4 +159,19 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		this.recursiveGeneration = recursiveGeneration;
 	}
 
+	/**
+	 * Indicates the output format of the resulting files. Supports "zip", "antzip", "folder".
+	 * @param outputFormat
+	 */
+	public void setOutputFormat(String output) {
+		outputFormat = output;
+	}
+	
+	public void setForceUpdateJar(boolean forcing) {
+		forceUpdateJarFormat = forcing;
+	}
+	
+	public void setEmbeddedSource(boolean embed) {
+		embeddedSource = embed;
+	}
 }

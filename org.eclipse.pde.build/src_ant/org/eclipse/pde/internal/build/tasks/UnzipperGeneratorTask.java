@@ -32,7 +32,6 @@ public class UnzipperGeneratorTask extends Task {
 		generator.setDirectoryLocation(filename);
 	}
 
-	//FIXME To rename
 	public void setWorkingDirectory(String installLocation) throws MalformedURLException {
 		generator.setWorkingDirectory(installLocation);
 	}

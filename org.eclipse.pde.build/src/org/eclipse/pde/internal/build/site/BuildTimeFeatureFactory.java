@@ -34,7 +34,7 @@ public class BuildTimeFeatureFactory extends BaseFeatureFactory implements IFeat
 			return createFeature(site);
 
 		try {
-			//	FIXME FeatureExecutableContentProvider is a non API class
+			//	TODO FeatureExecutableContentProvider is a non API class
 			IFeatureContentProvider contentProvider = new FeatureExecutableContentProvider(url);
 
 			URL nonResolvedURL = contentProvider.getFeatureManifestReference(null /*IProgressMonitor*/
@@ -66,7 +66,7 @@ public class BuildTimeFeatureFactory extends BaseFeatureFactory implements IFeat
 	 */
 	private IFeature createFeature(ISite site) throws CoreException {
 		Feature feature = null;
-		//FIXME FeatureExecutableContentProvider is a non API class
+		//TODO FeatureExecutableContentProvider is a non API class
 		IFeatureContentProvider contentProvider = new FeatureExecutableContentProvider(null);
 		feature = (Feature) createFeatureModel();
 		feature.setSite(site);

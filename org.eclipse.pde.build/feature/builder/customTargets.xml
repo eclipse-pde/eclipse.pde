@@ -29,7 +29,7 @@
 <!-- ===================================================================== -->
 <target name="getMapFiles">
 	<!-- ***  change the repo info -->
-	<property name="cvsRoot" value=":pserver:anonymous@dev.eclipse.org:/home/cvs/org.eclipse.releng" />
+	<property name="cvsRoot" value=":pserver:anonymous@dev.eclipse.org:/home/eclipse" />
 	<property name="mapVersionTag" value="HEAD" />
 	<cvs cvsRoot="${cvsRoot}"
 		package="org.eclipse.releng"

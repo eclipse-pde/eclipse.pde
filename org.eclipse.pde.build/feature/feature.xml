@@ -31,12 +31,6 @@
          version="0.0.0"/>
 
    <plugin
-         id="org.eclipse.core.boot"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
          id="org.eclipse.core.resources"
          download-size="0"
          install-size="0"
@@ -48,6 +42,30 @@
          install-size="0"
          version="0.0.0"/>
 
+    <plugin
+         id="org.eclipse.osgi"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+    <plugin
+         id="org.eclipse.osgi.util"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+    <plugin
+         id="org.eclipse.osgi.services"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+    <plugin
+         id="org.eclipse.core.runtime.compatibility"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+ 
    <plugin
          id="org.eclipse.jdt.core"
          download-size="0"
@@ -80,6 +98,18 @@
 
    <plugin
          id="org.eclipse.team.core"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.core.variables"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.update.configurator"
          download-size="0"
          install-size="0"
          version="0.0.0"/>

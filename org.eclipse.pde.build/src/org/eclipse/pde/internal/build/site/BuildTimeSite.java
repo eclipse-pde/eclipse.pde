@@ -10,8 +10,12 @@
  **********************************************************************/
 package org.eclipse.pde.internal.build.site;
 
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.model.*;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.VersionConstraint;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.update.core.*;
 
@@ -22,103 +26,42 @@ import org.eclipse.update.core.*;
  * Moreover this site provide access to a pluginRegistry.
  */
 public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IXMLConstants {
-	private PluginRegistryModel pluginRegistry;
-
-	public PluginRegistryModel getPluginRegistry() throws CoreException {
-		if (pluginRegistry == null) {
+	private PDEState state;
+	public PDEState getRegistry() throws CoreException {
+		if (state == null) {
 			// create the registry according to the site where the code to compile is, and a existing installation of eclipse 
 			BuildTimeSiteContentProvider contentProvider = (BuildTimeSiteContentProvider) getSiteContentProvider();
-			MultiStatus problems = new MultiStatus(PI_PDEBUILD, EXCEPTION_MODEL_PARSE, Policy.bind("exception.pluginParse"), null); //$NON-NLS-1$
-			Factory factory = new Factory(problems);
-			pluginRegistry = PluginRegistryModel.parsePlugins(contentProvider.getPluginPaths(), factory);
-			setFragments();
-			if (AbstractScriptGenerator.isBuildingOSGi())
-				setExtraPrerequisites();
-			IStatus status = factory.getStatus();
-			if (!status.isOK())
-				throw new CoreException(status);
-		}
-		return pluginRegistry;
-	}
-
-	/**
-	 * This methods allows to set extra prerequisite for a given plugin
-	 */
-	private void setExtraPrerequisites() {
-		PluginModel[] plugins = pluginRegistry.getPlugins();
-		for (int i = 0; i < plugins.length; i++) {
-			addPrerequisites(plugins[i]);
-		}
-		PluginModel[] fragments = pluginRegistry.getFragments();
-		for (int i = 0; i < fragments.length; i++) {
-			addPrerequisites(fragments[i]);
-		}
-	}
-
-	private void addPrerequisites(PluginModel model) {
-		String id = model.getId();
-		if("org.eclipse.osgi".equals(id) ||
-		"org.eclipse.osgi.services".equals(id) ||
-		"org.eclipse.osgi.util".equals(id) ||
-		"org.eclipse.core.runtime".equals(id) ||
-		"org.eclipse.core.runtime.compatibility".equals(id) ||
-		"org.eclipse.core.boot".equals(id) ||
-		"org.eclipse.core.applicationrunner".equals(id) ||
-		"org.eclipse.update.configurator".equals(id))
-			return;
-		
-		
-		//Read the build.properties
-//		Properties buildProperties = new Properties();
-//		try {
-//			buildProperties.load(new URL(model.getLocation() + "/" + PROPERTIES_FILE).openStream()); //$NON-NLS-1$
-//		} catch (Exception e) {
-//			return;
-//		}
-//
-		String extraPrereqs = "org.eclipse.core.runtime.compatibility";
-//		if (extraPrereqs==null)
-//			return;
-
-		//Create the new prerequisite from the list
-		PluginPrerequisiteModel[] oldRequires = model.getRequires();
-		String[] extraPrereqsList = Utils.getArrayFromString(extraPrereqs);
-		int oldRequiresLength = oldRequires==null ? 0 : oldRequires.length; 
-		PluginPrerequisiteModel[] newRequires = new PluginPrerequisiteModel[oldRequiresLength + extraPrereqsList.length];
-		if (oldRequires!=null)
-			System.arraycopy(oldRequires, 0, newRequires, 0, oldRequires.length);
-		for (int i = 0; i < extraPrereqsList.length; i++) {
-			PluginPrerequisiteModel prereq = new PluginPrerequisiteModel();
-			prereq.setPlugin(extraPrereqsList[i]);
-			newRequires[oldRequiresLength + i] = prereq; 
-		}
-		model.setRequires(newRequires);
-	}
-
-	//Associate the fragments to their corresponding plugin
-	//because this is not done when parsing, and because
-	//we can not use the registry resolver
-	private void setFragments() {
-		PluginFragmentModel[] fragments = pluginRegistry.getFragments();
-		for (int i = 0; i < fragments.length; i++) {
-			String pluginId = fragments[i].getPluginId();
-			PluginDescriptorModel plugin = pluginRegistry.getPlugin(pluginId);
-			if (plugin == null) {
-				IStatus status = new Status(IStatus.WARNING, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, Policy.bind("exception.missingPlugin", pluginId), null); //$NON-NLS-1$
-				Platform.getPlugin(PI_PDEBUILD).getLog().log(status);
-				continue;
-			}
 			
-			PluginFragmentModel[] existingFragments = plugin.getFragments();
-			if (existingFragments == null)
-				plugin.setFragments(new PluginFragmentModel[] { fragments[i] });
-			else {
-				PluginFragmentModel[] newFragments = new PluginFragmentModel[existingFragments.length + 1];
-				System.arraycopy(existingFragments, 0, newFragments, 0, existingFragments.length);
-				newFragments[newFragments.length - 1] = fragments[i];
-				plugin.setFragments(newFragments);
+			if(AbstractScriptGenerator.isBuildingOSGi())
+				state = new PDEState();
+			else
+				state = new PluginRegistryConverter();
+			
+			state.addBundles(contentProvider.getPluginPaths());
+
+			state.resolveState();
+			BundleDescription[] allBundles = state.getState().getBundles();
+			BundleDescription[] resolvedBundles = state.getState().getResolvedBundles();
+			if (allBundles.length == resolvedBundles.length)
+				return state;
+			
+			//display a report of the unresolved constraints
+			for (int i = 0; i < allBundles.length; i++) {
+				BundleHelper.getDefault().getLog();
+				if (! allBundles[i].isResolved()) {
+					String message = "Bundle: " + allBundles[i].getUniqueId() + '\n'; //$NON-NLS-1$
+					VersionConstraint[] unsatisfiedConstraint = allBundles[i].getUnsatisfiedConstraints();
+					for (int j = 0; j < unsatisfiedConstraint.length; j++) {
+						message += '\t' + unsatisfiedConstraint[j].toString() + '\n';
+					}
+					IStatus status = new Status(IStatus.WARNING, IPDEBuildConstants.PI_PDEBUILD,  EXCEPTION_STATE_PROBLEM, Policy.bind("exception.registryResolution", message), null);//$NON-NLS-1$
+					BundleHelper.getDefault().getLog().log(status);	
+				}
 			}
 		}
+		if (! state.getState().isResolved())
+			state.state.resolve(true);
+		return state;
 	}
 
 	public IFeature findFeature(String featureId) throws CoreException {
@@ -128,5 +71,24 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 				return features[i].getFeature(null);
 		}
 		return null;
+	}
+	
+	public void addFeatureReferenceModel(File featureXML) {
+		URL featureURL;
+		SiteFeatureReferenceModel featureRef;
+		if (featureXML.exists()) {
+			// Here we could not use toURL() on currentFeatureDir, because the URL has a slash after the colons (file:/c:/foo) whereas the plugins don't
+			// have it (file:d:/eclipse/plugins) and this causes problems later to compare URLs... and compute relative paths
+			try {
+				featureURL = new URL("file:" + featureXML.getAbsolutePath() + '/'); //$NON-NLS-1$
+				featureRef = new SiteFeatureReference();
+				featureRef.setSiteModel(this);
+				featureRef.setURLString(featureURL.toExternalForm());
+				featureRef.setType(BuildTimeFeatureFactory.BUILDTIME_FEATURE_FACTORY_ID);
+				addFeatureReferenceModel(featureRef);
+			} catch (MalformedURLException e) {
+				Platform.getPlugin(PI_PDEBUILD).getLog().log(new Status(IStatus.WARNING, PI_PDEBUILD, WARNING_MISSING_SOURCE, Policy.bind("warning.cannotLocateSource", featureXML.getAbsolutePath()), e)); //$NON-NLS-1$
+			}		
+		}
 	}
 }

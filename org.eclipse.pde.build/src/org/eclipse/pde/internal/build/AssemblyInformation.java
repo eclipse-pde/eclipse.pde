@@ -11,7 +11,8 @@
 package org.eclipse.pde.internal.build;
 
 import java.util.*;
-import org.eclipse.core.runtime.model.*;
+
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.internal.build.site.BuildTimeFeature;
 import org.eclipse.update.core.IFeature;
 
@@ -32,8 +33,8 @@ public class AssemblyInformation {
 		AssemblyLevelConfigInfo entry = (AssemblyLevelConfigInfo) assembleInformation.get(config);
 		entry.addFeature(feature);
 	}
-
-	public void addPlugin(Config config, PluginModel plugin) {
+	
+	public void addPlugin(Config config, BundleDescription plugin) {
 		AssemblyLevelConfigInfo entry = (AssemblyLevelConfigInfo) assembleInformation.get(config);
 		entry.addPlugin(plugin);
 	}
@@ -41,16 +42,7 @@ public class AssemblyInformation {
 	public Collection getPlugins(Config config) {
 		return ((AssemblyLevelConfigInfo) assembleInformation.get(config)).getPlugins();
 	}
-
-	public void addFragment(Config config, PluginModel fragment) {
-		AssemblyLevelConfigInfo entry = (AssemblyLevelConfigInfo) assembleInformation.get(config);
-		entry.addFragment(fragment);
-	}
-
-	public Collection getFragments(Config config) {
-		return ((AssemblyLevelConfigInfo) assembleInformation.get(config)).getFragments();
-	}
-
+	
 	public Collection getFeatures(Config config) {
 		return ((AssemblyLevelConfigInfo) assembleInformation.get(config)).getFeatures();
 	}
@@ -67,8 +59,6 @@ public class AssemblyInformation {
 	private class AssemblyLevelConfigInfo {
 		// the plugins that are contained into this config
 		private Collection plugins = new HashSet(20);
-		//	the fragments that are contained into this config
-		private Collection fragments = new HashSet(10);
 		// the features that are contained into this config
 		private Collection features = new HashSet(7);
 		// indicate whether root files needs to be copied
@@ -88,10 +78,6 @@ public class AssemblyInformation {
 			return plugins;
 		}
 
-		public Collection getFragments() {
-			return fragments;
-		}
-
 		public void addFeature(IFeature feature) {
 			for (Iterator iter = features.iterator(); iter.hasNext();) {
 				BuildTimeFeature featureDescriptor = (BuildTimeFeature) iter.next();
@@ -101,25 +87,8 @@ public class AssemblyInformation {
 			features.add(feature);
 		}
 
-		public void addPlugin(PluginModel plugin) {
-			//TODO Could be improve if PluginModel could be compared
-			for (Iterator iter = plugins.iterator(); iter.hasNext();) {
-				PluginDescriptorModel descriptor = (PluginDescriptorModel) iter.next();
-				if (descriptor.getId().equals(plugin.getId()) && descriptor.getVersion().equals(plugin.getVersion()))
-					return;
-			}
+		public void addPlugin(BundleDescription plugin) {
 			plugins.add(plugin);
 		}
-
-		public void addFragment(PluginModel fragment) {
-			//TODO Could be improve if PluginModel could be compared
-			for (Iterator iter = fragments.iterator(); iter.hasNext(); ) {
-				PluginFragmentModel descriptor = (PluginFragmentModel) iter.next();
-				if (descriptor.getId().equals(fragment.getId()) && descriptor.getVersion().equals(fragment.getVersion()))
-					return;				
-			}
-			fragments.add(fragment);
-		}
-
 	}
 }

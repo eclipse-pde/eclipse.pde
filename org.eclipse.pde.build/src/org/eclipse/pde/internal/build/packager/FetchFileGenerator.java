@@ -18,6 +18,8 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.build.*;
 
 public class FetchFileGenerator extends AbstractScriptGenerator {
+	private static final String CONTENT_FILTER_SEPARATOR = "&";  //$NON-NLS-1$
+	
 	private Config config;
 	private String[] filters;
 	private String mapLocation;
@@ -61,13 +63,14 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 			login = login_password[0];
 			password = login_password[1];
 		} else {
-			//TODO Log an warning if the size is 1 
+			IStatus status = new Status(IStatus.WARNING, PI_PDEBUILD, 1, Policy.bind("warning.missingPassword", fileName), null); //$NON-NLS-1$
+			BundleHelper.getDefault().getLog().log(status);
 		}
-		script.printGet(baseurl + fileName, getPropertyFormat(PROPERTY_DOWNLOAD_DIRECTORY) + "/" + fileName, login, password, true); //$NON-NLS-1$
+		script.printGet(baseurl + fileName, getPropertyFormat(PROPERTY_DOWNLOAD_DIRECTORY) + '/' + fileName, login, password, true);
 	}
 
 	public void setContentFilter(String filters) {
-		this.filters = Utils.getArrayFromStringWithBlank(filters, "&"); //$NON-NLS-1$
+		this.filters = Utils.getArrayFromStringWithBlank(filters, CONTENT_FILTER_SEPARATOR); //$NON-NLS-1$
 	}
 
 	public void setMapLocation(String mapLocation) {
@@ -79,17 +82,17 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 		selectedFiles.put(config.toString(","), collectedFiles); //$NON-NLS-1$
 
 		try {
-			OutputStream stream = new BufferedOutputStream(new FileOutputStream(workingDirectory + "/" + DEFAULT_PACKAGER_DIRECTORY_FILENAME_DESCRIPTOR)); //$NON-NLS-1$
+			OutputStream stream = new BufferedOutputStream(new FileOutputStream(workingDirectory + '/' + DEFAULT_PACKAGER_DIRECTORY_FILENAME_DESCRIPTOR)); //$NON-NLS-1$
 			try {
 				selectedFiles.store(stream, null);
 			} finally {
 				stream.close();
 			}
 		} catch (FileNotFoundException e) {
-			String message = Policy.bind("exception.writingFile", workingDirectory + "/" + DEFAULT_PACKAGER_DIRECTORY_FILENAME_DESCRIPTOR); //$NON-NLS-1$ //$NON-NLS-2$
+			String message = Policy.bind("exception.writingFile", workingDirectory + '/' + DEFAULT_PACKAGER_DIRECTORY_FILENAME_DESCRIPTOR); //$NON-NLS-1$ //$NON-NLS-2$
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
 		} catch (IOException e) {
-			String message = Policy.bind("exception.writingFile", workingDirectory + "/" + DEFAULT_PACKAGER_DIRECTORY_FILENAME_DESCRIPTOR); //$NON-NLS-1$ //$NON-NLS-2$
+			String message = Policy.bind("exception.writingFile", workingDirectory + '/' + DEFAULT_PACKAGER_DIRECTORY_FILENAME_DESCRIPTOR); //$NON-NLS-1$ //$NON-NLS-2$
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
 		}
 	}
@@ -100,7 +103,7 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 		final int DIRECTORY = 2;
 		final int FILTERS = 3;
 		
-		mapContent = readProperties(mapLocation, ""); //$NON-NLS-1$
+		mapContent = readProperties(mapLocation, "", IStatus.ERROR); //$NON-NLS-1$
 
 		for (Iterator iter = mapContent.entrySet().iterator(); iter.hasNext();) {
 			Map.Entry mapEntry = (Map.Entry) iter.next();
@@ -117,14 +120,16 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 			try {
 				userInfos = new URL(fileDescription[URL]).getUserInfo();
 			} catch (MalformedURLException e) {
-				//TODO Should through an exception? and / or try to check the url with the file name concatenated?
+				IStatus status = new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_MALFORMED_URL, Policy.bind("exception.url",fileDescription[URL]), e); //$NON-NLS-1$
+				throw new CoreException(status); 
 			}
 			
 			if (filterByConfig(fileDescription[CONFIGS]) &&	filterByFilter(fileDescription[FILTERS])) {
 				generateFetchFileFor(fileName, fileDescription[URL], userInfos);
 				collectedFiles += fileName + ", " + (fileDescription[DIRECTORY].equals("") ? "." : fileDescription[DIRECTORY]) + " & "; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$				
 			} else {
-				//TODO Write something into a log
+				IStatus status = new Status(IStatus.INFO, PI_PDEBUILD, WARNING_ELEMENT_NOT_FETCHED, Policy.bind("error.fetchingFailed", fileDescription[DIRECTORY]), null); //$NON-NLS-1$
+				BundleHelper.getDefault().getLog().log(status);
 			} 
 		}
 	}
@@ -150,7 +155,7 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 
 	//Return true, if the entryConfigs match the config we are packaging
 	private boolean filterByConfig(String entryConfigString) {
-		String[] entryConfigs = Utils.getArrayFromStringWithBlank(entryConfigString, "&"); //$NON-NLS-1$
+		String[] entryConfigs = Utils.getArrayFromStringWithBlank(entryConfigString, CONTENT_FILTER_SEPARATOR); //$NON-NLS-1$
 		if (entryConfigs.length == 0 || config.equals(Config.genericConfig()))
 			return true;
 			

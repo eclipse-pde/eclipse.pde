@@ -15,7 +15,7 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.model.PluginModel;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.internal.build.builder.FeatureBuildScriptGenerator;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.URLEntryModel;
@@ -132,7 +132,7 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 	}
 
 	public void printIncludes() throws CoreException {
-		IIncludedFeatureReference[] features = feature.getFeatureIncluded();
+		IIncludedFeatureReference[] features = feature.getRawIncludedFeatureReferences();
 		for (int i = 0; i < features.length; i++) {
 			parameters.clear();
 			try {
@@ -204,12 +204,9 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 			if (versionRequested.equals(IPDEBuildConstants.GENERIC_VERSION_NUMBER)) {
 				versionRequested = null;
 			}
-			PluginModel effectivePlugin = null;
+			BundleDescription effectivePlugin = null;
 			try {
-				if (plugins[i].isFragment())
-					effectivePlugin = generator.getSite(false).getPluginRegistry().getFragment(plugins[i].getVersionedIdentifier().getIdentifier(), versionRequested);
-				else
-					effectivePlugin = generator.getSite(false).getPluginRegistry().getPlugin(plugins[i].getVersionedIdentifier().getIdentifier(), versionRequested);
+				effectivePlugin = generator.getSite(false).getRegistry().getResolvedBundle(plugins[i].getVersionedIdentifier().getIdentifier(), versionRequested);
 			} catch (CoreException e) {
 				String message = Policy.bind("exception.missingPlugin", plugins[i].getVersionedIdentifier().toString()); //$NON-NLS-1$
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, message, null));

@@ -191,7 +191,7 @@ public class IdReplaceTask extends Task {
 	}
 
 	private StringBuffer readFile(File targetName) throws IOException {
-		InputStreamReader reader = new InputStreamReader(new FileInputStream(targetName));
+		InputStreamReader reader = new InputStreamReader(new BufferedInputStream(new FileInputStream(targetName)));
 		StringBuffer result = new StringBuffer();
 		char[] buf = new char[4096];
 		int count;

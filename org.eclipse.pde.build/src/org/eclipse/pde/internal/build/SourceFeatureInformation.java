@@ -11,7 +11,8 @@
 package org.eclipse.pde.internal.build;
 
 import java.util.*;
-import org.eclipse.core.runtime.model.PluginModel;
+
+import org.eclipse.osgi.service.resolver.BundleDescription;
 
 public class SourceFeatureInformation implements IPDEBuildConstants {
 	// Key : a configuration 
@@ -29,7 +30,7 @@ public class SourceFeatureInformation implements IPDEBuildConstants {
 		sourceFeatureInformation.put(Config.genericConfig(), new HashSet(2));
 	}
 
-	public void addElementEntry(Config config, PluginModel plugin) {
+	public void addElementEntry(Config config, BundleDescription plugin) {
 		Set entry = (Set) sourceFeatureInformation.get(config);
 		entry.add(plugin);
 	}

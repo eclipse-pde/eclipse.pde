@@ -3,8 +3,14 @@
 	<name>org.eclipse.pde.build</name>
 	<comment></comment>
 	<projects>
+		<project>org.apache.ant</project>
+		<project>org.eclipse.ant.core</project>
 		<project>org.eclipse.core.boot</project>
+		<project>org.eclipse.core.runtime</project>
 		<project>org.eclipse.core.runtime.compatibility</project>
+		<project>org.eclipse.osgi.util</project>
+		<project>org.eclipse.update.configurator</project>
+		<project>org.eclipse.update.core</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

@@ -63,21 +63,15 @@ public interface IPDEBuildConstants {
 	public final static String DEFAULT_SOURCE_PLUGIN_SUFFIX = "source"; //$NON-NLS-1$
 	public final static String DEFAULT_PACKAGER_DIRECTORY_FILENAME_DESCRIPTOR = "packager.directory.txt"; //$NON-NLS-1$
 	public final static String DEFAULT_UNZIPPER_FILENAME_DESCRIPTOR = "unzipper.xml"; //$NON-NLS-1$
-
-	//permission prefixes
-	public final static String PERMISSIONS = "permissions"; //$NON-NLS-1$
-	public final static String LINK = "link"; //$NON-NLS-1$
-	public final static String EXECUTABLE = "executable"; //$NON-NLS-1$
-
+	public final static String DEFAULT_PLUGIN_VERSION_FILENAME_DESCRIPTOR = "pluginVersions.properties"; //$NON-NLS-1$
+	public final static String DEFAULT_PLUGINS_POSTPROCESSINGSTEPS_FILENAME_DESCRIPTOR = "plugins.postProcessingSteps.properties"; //$NON-NLS-1$
+	public final static String DEFAULT_FEATURES_POSTPROCESSINGSTEPS_FILENAME_DESCRIPTOR = "features.PostProcessingSteps.properties"; //$NON-NLS-1$
+	
 	// Tag replaced in files
 	public final static String REPLACED_PLUGIN_ID = "PLUGIN_ID"; //$NON-NLS-1$
 	public final static String REPLACED_PLUGIN_VERSION = "PLUGIN_VERSION"; //$NON-NLS-1$
 	public final static String REPLACED_FRAGMENT_VERSION = "FRAGMENT_VERSION"; //$NON-NLS-1$ 
 	public final static String REPLACED_FRAGMENT_ID = "FRAGMENT_ID"; //$NON-NLS-1$
-
-	public final static String GENERATION_SOURCE_PREFIX = "generate."; //$NON-NLS-1$
-	public final static String GENERATION_SOURCE_FEATURE_PREFIX = GENERATION_SOURCE_PREFIX + "feature@"; //$NON-NLS-1$
-	public final static String GENERATION_SOURCE_PLUGIN_PREFIX = GENERATION_SOURCE_PREFIX + "plugin@"; //$NON-NLS-1$
 
 	// status constants	
 	public final static int EXCEPTION_FEATURE_MISSING = 1;
@@ -94,5 +88,9 @@ public interface IPDEBuildConstants {
 	public final static int EXCEPTION_WRITING_FILE = 12;
 	public final static int EXCEPTION_INVALID_JAR_ORDER = 13;
 	public final static int EXCEPTION_CLASSPATH_CYCLE = 14;
+	public final static int EXCEPTION_STATE_PROBLEM = 15;
+	public final static int EXCEPTION_GENERIC = 16;
 	public final static int WARNING_MISSING_SOURCE = 20;
+	public final static int WARNING_ELEMENT_NOT_FETCHED = 21;
+	
 }

@@ -14,9 +14,10 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
-import org.eclipse.core.boot.BootLoader;
+
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.model.*;
+import org.eclipse.osgi.service.resolver.*;
+import org.eclipse.pde.internal.build.site.PDEState;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.core.IPluginEntry;
 
@@ -75,26 +76,6 @@ public final class Utils implements IPDEBuildConstants {
 	}
 
 	/**
-	 * Finds out if an status has the given severity. In case of a multi status,
-	 * its children are also included.
-	 * 
-	 * @param status
-	 * @param severity
-	 * @return boolean
-	 */
-	public static boolean contains(IStatus status, int severity) {
-		if (status.matches(severity))
-			return true;
-		if (status.isMultiStatus()) {
-			IStatus[] children = status.getChildren();
-			for (int i = 0; i < children.length; i++)
-				if (contains(children[i], severity))
-					return true;
-		}
-		return false;
-	}
-
-	/**
 	 * Converts an array of strings into an array of URLs.
 	 * 
 	 * @param target
@@ -114,6 +95,20 @@ public final class Utils implements IPDEBuildConstants {
 		}
 	}
 
+	public static URL[] asURL(Collection target) throws CoreException {
+		if (target == null)
+			return null;
+		try {
+			URL[] result = new URL[target.size()];
+			int i = 0;
+			for (Iterator iter = target.iterator(); iter.hasNext();) {
+				result[i++] = ((File) iter.next()).toURL();
+			}
+			return result;
+		} catch (MalformedURLException e) {
+			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_MALFORMED_URL, e.getMessage(), e));
+		}	
+	}
 	/**
 	 * Return a string which is a concatination of each member of the given collection,
 	 * separated by the given separator.
@@ -153,126 +148,6 @@ public final class Utils implements IPDEBuildConstants {
 		return result.toString();
 	}
 
-	public static String[] computePrerequisiteOrder(PluginModel[] plugins, PluginModel[] fragments, boolean buildingOSGi) {
-		List prereqs = new ArrayList(9);
-		List pluginList = new ArrayList(plugins.length + (fragments == null ? 0 : fragments.length));
-		//Build a list of now plugins and fragments
-		for (int i = 0; i < plugins.length; i++)
-			pluginList.add(plugins[i].getId());
-				
-		if (fragments!=null) {		
-			for (int i = 0; i < fragments.length; i++)
-		 		pluginList.add(fragments[i].getId());
-		}				
-
-		// create a collection of directed edges from plugin to prereq
-		for (int i = 0; i < plugins.length; i++) {
-			boolean boot = false;
-			boolean runtime = false;
-			boolean found = false;
-			PluginPrerequisiteModel[] prereqList = plugins[i].getRequires();
-			if (prereqList != null) {
-				for (int j = 0; j < prereqList.length; j++) {
-					// ensure that we only include values from the original set.
-					String prereq = prereqList[j].getPlugin();
-					boot = boot || prereq.equals(BootLoader.PI_BOOT);
-					runtime = runtime || prereq.equals(Platform.PI_RUNTIME);
-					int prereqIndex;
-					if ((prereqIndex = pluginList.indexOf(prereq)) != -1) {
-						found = true;
-						prereqs.add(new String[] { plugins[i].getId(), prereq });
-					}
-					// If the prereq is a plugin, then add a dependency between the given plugin and the fragments of the prereq 
-//					if (prereqIndex != -1 && prereqIndex < plugins.length) {
-//						PluginFragmentModel[] prereqsFragments = ((PluginDescriptorModel) plugins[prereqIndex]).getFragments();
-//						if (prereqsFragments==null)
-//						  continue;
-//						for (int k = 0; k < prereqsFragments.length; k++) {
-//							prereqs.add(new String[] { plugins[i].getId(), prereqsFragments[k].getId()});	
-//						}
-//					}
-				}
-			}
-
-			// if we didn't find any prereqs for this plugin, add a null prereq
-			// to ensure the value is in the output	
-			if (!found)
-				prereqs.add(new String[] { plugins[i].getId(), null });
-
-			// if we didn't find the boot or runtime plugins as prereqs and they are in the list
-			// of plugins to build, add prereq relations for them.  This is required since the 
-			// boot and runtime are implicitly added to a plugin's requires list by the platform runtime.
-			// Note that we should skip the xerces plugin as this would cause a circularity.
-			if (plugins[i].getId().equals("org.apache.xerces")) //$NON-NLS-1$
-				continue;
-			if (buildingOSGi && ( plugins[i].getId().startsWith("org.eclipse.osgi") || plugins[i].getId().equals("org.eclipse.core.runtime") || plugins[i].getId().equals("org.eclipse.core.runtime.osgi") || plugins[i].getId().equals("org.eclipse.core.runtime.compatibility") || plugins[i].getId().equals("org.eclipse.update.configurator") )) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-				continue;
-		
-			if (!buildingOSGi || buildingOSGi && !new File(plugins[i].getLocation(), MANIFEST_FOLDER + "/" + MANIFEST).exists()) { //$NON-NLS-1$
-				if (!boot && pluginList.contains(BootLoader.PI_BOOT) && !plugins[i].getId().equals(BootLoader.PI_BOOT))
-					prereqs.add(new String[] { plugins[i].getId(), BootLoader.PI_BOOT });
-				if (!runtime && pluginList.contains(Platform.PI_RUNTIME) && !plugins[i].getId().equals(Platform.PI_RUNTIME) && !plugins[i].getId().equals(BootLoader.PI_BOOT) && !plugins[i].getId().equals("org.eclipse.core.runtime.compatibility"))
-					prereqs.add(new String[] { plugins[i].getId(), "org.eclipse.core.runtime.compatibility" });
-			}
-		}
-
-		if (fragments != null) {
-			//The fragments needs to added relatively to their own prerequisite but also relatively to their host (bug #43244) 
-			for (int i = 0; i < fragments.length; i++) {
-				boolean found = false;
-				PluginPrerequisiteModel[] prereqList = fragments[i].getRequires();
-				if (prereqList != null) {
-					for (int j = 0; j < prereqList.length; j++) {
-						// ensure that we only include values from the original set.
-						String prereq = prereqList[j].getPlugin();
-						if (pluginList.contains(prereq)) {
-							found = true;
-							prereqs.add(new String[] { fragments[i].getId(), prereq });
-						}
-					}
-				}
-				PluginFragmentModel fragment = (PluginFragmentModel) fragments[i];
-				if (pluginList.contains(fragment.getPlugin())) {
-					found = true;
-					prereqs.add(new String[] {fragments[i].getId(), fragment.getPlugin() });
-				}
-					
-				if (!found)
-					prereqs.add(new String[] { fragments[i].getId(), null });
-			}
-		}
-		
-		// do a topological sort, insert the fragments into the sorted elements
-		String[][] prereqArray = (String[][]) prereqs.toArray(new String[prereqs.size()][]);
-		return computeNodeOrder(prereqArray);
-	}
-
-	/**
-	 * 
-	 * @param specs
-	 * @return String[][]
-	 */
-	protected static String[] computeNodeOrder(String[][] specs) {
-		Map counts = computeCounts(specs);
-		List nodes = new ArrayList(counts.size());
-		while (!counts.isEmpty()) {
-			List roots = findRootNodes(counts);
-			if (roots.isEmpty())
-				break;
-			for (Iterator i = roots.iterator(); i.hasNext();)
-				counts.remove(i.next());
-			nodes.addAll(roots);
-			removeArcs(specs, roots, counts);
-		}
-		String[] result = new String[nodes.size()];
-		nodes.toArray(result);
-
-		//We can get rid of this because counts is always empty since we iterate until it is empty. 
-		//result[1] = (String[]) counts.keySet().toArray(new String[counts.size()]);
-
-		return result;
-	}
-
 	/**
 	 * 
 	 * @param counts
@@ -281,55 +156,12 @@ public final class Utils implements IPDEBuildConstants {
 	protected static List findRootNodes(Map counts) {
 		List result = new ArrayList(5);
 		for (Iterator i = counts.keySet().iterator(); i.hasNext();) {
-			String node = (String) i.next();
+			Object node = i.next();
 			int count = ((Integer) counts.get(node)).intValue();
 			if (count == 0)
 				result.add(node);
 		}
 		return result;
-	}
-
-	/**
-	 * 
-	 * @param mappings
-	 * @param roots
-	 * @param counts
-	 */
-	protected static void removeArcs(String[][] mappings, List roots, Map counts) {
-		for (Iterator j = roots.iterator(); j.hasNext();) {
-			String root = (String) j.next();
-			for (int i = 0; i < mappings.length; i++) {
-				if (root.equals(mappings[i][1])) {
-					String input = mappings[i][0];
-					Integer count = (Integer) counts.get(input);
-					if (count != null)
-						counts.put(input, new Integer(count.intValue() - 1));
-				}
-			}
-		}
-	}
-
-	/**
-	 * 
-	 * @param mappings
-	 * @return HashMap
-	 */
-	protected static Map computeCounts(String[][] mappings) {
-		Map counts = new HashMap(5);
-		for (int i = 0; i < mappings.length; i++) {
-			String from = mappings[i][0];
-			Integer fromCount = (Integer) counts.get(from);
-			String to = mappings[i][1];
-			if (to == null)
-				counts.put(from, new Integer(0));
-			else {
-				if (((Integer) counts.get(to)) == null)
-					counts.put(to, new Integer(0));
-				fromCount = fromCount == null ? new Integer(1) : new Integer(fromCount.intValue() + 1);
-				counts.put(from, fromCount);
-			}
-		}
-		return counts;
 	}
 
 	/**
@@ -398,8 +230,12 @@ public final class Utils implements IPDEBuildConstants {
 		}
 	}
 
-	public static IPluginEntry[] getPluginEntry(IFeature feature, String pluginId) {
-		IPluginEntry[] plugins = feature.getRawPluginEntries();
+	public static IPluginEntry[] getPluginEntry(IFeature feature, String pluginId, boolean raw) {
+		IPluginEntry[] plugins;
+		if (raw)
+			plugins = feature.getRawPluginEntries();
+		else
+			plugins = feature.getPluginEntries();
 		List foundEntries = new ArrayList(5);
 
 		for (int i = 0; i < plugins.length; i++) {
@@ -420,7 +256,7 @@ public final class Utils implements IPDEBuildConstants {
 			return coll;
 		}
 
-		String featureDirectory = from + "/" + foldername; //$NON-NLS-1$
+		String featureDirectory = from + '/' + foldername; //$NON-NLS-1$
 		Collection collectedElements = new ArrayList(10);
 
 		File[] featureDirectoryContent = new File(featureDirectory).listFiles();
@@ -440,7 +276,7 @@ public final class Utils implements IPDEBuildConstants {
 		}
 		return collectedElements;
 	}
-
+	
 	public static boolean isIn(IPluginEntry[] array, IPluginEntry element) {
 		for (int i = 0; i < array.length; i++) {
 			if (array[i].getVersionedIdentifier().equals(element.getVersionedIdentifier()))
@@ -469,7 +305,7 @@ public final class Utils implements IPDEBuildConstants {
 						throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READING_FILE, message, e));
 					}
 
-					String fileToCopy = toDir + "/" + files[i].getName(); //$NON-NLS-1$
+					String fileToCopy = toDir + '/' + files[i].getName(); //$NON-NLS-1$
 					try {
 						outputStream = new FileOutputStream(fileToCopy);
 					} catch (FileNotFoundException e) {
@@ -489,4 +325,128 @@ public final class Utils implements IPDEBuildConstants {
 		}
 		return copiedFiles;
 	}
+	
+	static private class Relation {
+		Object from;
+		Object to;
+		Relation(Object from, Object to) {
+			this.from = from; this.to = to;
+		}
+		public String toString() {
+			return from.toString() + "->" + (to==null ? "" : to.toString());
+		}
+	}
+	
+	public static List extractPlugins(List initialList, List toExtract) {	//TODO This algorithm needs to be improved
+		if (initialList.size() == toExtract.size())
+			return initialList;
+		List result = new ArrayList(toExtract.size());
+		for (Iterator iter = initialList.iterator(); iter.hasNext();) {
+			Object element = iter.next();
+			if (toExtract.contains(element)) {
+				result.add(element);
+				if(result.size() == toExtract.size())
+					break;
+			}
+		}
+		return result;
+	}
+	public static List computePrerequisiteOrder(List plugins) {		
+		List prereqs = new ArrayList(plugins.size());
+		List fragments = new ArrayList();
+		
+		// create a collection of directed edges from plugin to prereq
+		for (Iterator iter = plugins.iterator(); iter.hasNext();) {
+			BundleDescription current = (BundleDescription) iter.next();
+			if (current.getHost() != null) {
+				fragments.add(current);
+				continue;
+			}
+			boolean found = false;
+			
+			BundleDescription[] prereqList = PDEState.getDependentBundles(current);
+			for (int j = 0; j < prereqList.length; j++) {
+				// ensure that we only include values from the original set.
+				if (plugins.contains(prereqList[j])) {
+					found = true;
+					prereqs.add(new Relation(current, prereqList[j]));	
+				}
+			}
+
+			
+			// if we didn't find any prereqs for this plugin, add a null prereq
+			// to ensure the value is in the output	
+			if (!found)
+				prereqs.add(new Relation(current, null));
+		}
+
+		//The fragments needs to added relatively to their host and to their own prerequisite (bug #43244) 
+		for (Iterator iter = fragments.iterator(); iter.hasNext();) {
+			BundleDescription current = (BundleDescription) iter.next();
+			
+			if (plugins.contains(current.getHost().getBundle()))
+				prereqs.add(new Relation(current, current.getHost().getSupplier()));
+			else 
+				System.out.println("Host not found for this fragment");	//This should not happen since we only build things that are resolved
+			
+			BundleDescription[] prereqList = PDEState.getDependentBundles(current);
+			for (int j = 0; j < prereqList.length; j++) {
+				// ensure that we only include values from the original set.
+				if (plugins.contains(prereqList[j])) {
+					prereqs.add(new Relation(current, prereqList[j]));
+				}
+			}		
+		}
+
+		// do a topological sort, insert the fragments into the sorted elements
+		return computeNodeOrder(prereqs);
+	}
+	
+	protected static List computeNodeOrder(List edges) {
+		Map counts = computeCounts(edges);
+		List nodes = new ArrayList(counts.size());
+		while (!counts.isEmpty()) {
+			List roots = findRootNodes(counts);
+			if (roots.isEmpty())
+				break;
+			for (Iterator i = roots.iterator(); i.hasNext();)
+				counts.remove(i.next());
+			nodes.addAll(roots);
+			removeArcs(edges, roots, counts);
+		}
+		return nodes;
+	}
+	
+	protected static Map computeCounts(List mappings) {
+		Map counts = new HashMap(5);
+		for (int i = 0; i < mappings.size(); i++) {
+			Object from = ((Relation) mappings.get(i)).from;
+			Integer fromCount = (Integer) counts.get(from);
+			Object to = ((Relation) mappings.get(i)).to;
+			if (to == null)
+				counts.put(from, new Integer(0));
+			else {
+				if (((Integer) counts.get(to)) == null)
+					counts.put(to, new Integer(0));
+				fromCount = fromCount == null ? new Integer(1) : new Integer(fromCount.intValue() + 1);
+				counts.put(from, fromCount);
+			}
+		}
+		return counts;
+	}
+	
+	protected static void removeArcs(List edges, List roots, Map counts) {
+		for (Iterator j = roots.iterator(); j.hasNext();) {
+			Object root = j.next();
+			for (int i = 0; i < edges.size(); i++) {
+				if (root.equals(((Relation) edges.get(i)).to)) {
+					Object input = ((Relation) edges.get(i)).from;
+					Integer count = (Integer) counts.get(input);
+					if (count != null)
+						counts.put(input, new Integer(count.intValue() - 1));
+				}
+			}
+		}
+	}
+
 }

@@ -32,8 +32,6 @@ public class PackagerBuildScriptGenerator extends FeatureBuildScriptGenerator {
 	public void run() throws CoreException {
 		AssemblyInformation assemblageInformation = new AssemblyInformation();
 
-		//FIXME This approach is not really correct since we should have one instance.
-		// This will stay like until we are back in using static for most of the variables.
 		for (int i = 0; i < featureList.length; i++) {
 			FeatureBuildScriptGenerator generator = new PackagerBuildScriptGenerator(featureList[i], assemblageInformation);
 			generator.setGenerateIncludedFeatures(true);
@@ -52,7 +50,7 @@ public class PackagerBuildScriptGenerator extends FeatureBuildScriptGenerator {
 
 		PackagingConfigScriptGenerator configAssembler = new PackagingConfigScriptGenerator();
 		Config config = (Config) getConfigInfos().get(0);
-		configAssembler.initialize(workingDirectory, DEFAULT_ASSEMBLE_FILENAME, "", config, assemblageInformation.getPlugins(config), assemblageInformation.getFragments(config), assemblageInformation.getFeatures(config), true); //$NON-NLS-1$ //Here the last arg is true because we do not have the root info while packaging
+		configAssembler.initialize(workingDirectory, DEFAULT_ASSEMBLE_FILENAME, "", config, assemblageInformation.getPlugins(config), assemblageInformation.getFeatures(config), true); //$NON-NLS-1$ //Here the last arg is true because we do not have the root info while packaging
 		configAssembler.setPackagingPropertiesLocation(packagingPropertiesLocation);
 		configAssembler.generate();
 

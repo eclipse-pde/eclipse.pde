@@ -19,10 +19,7 @@ import org.eclipse.pde.internal.build.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.InvalidSiteTypeException;
 import org.eclipse.update.core.model.SiteModel;
-/**
- *
- *
- */
+
 public class BuildTimeSiteFactory extends BaseSiteFactory implements ISiteFactory, IPDEBuildConstants {
 	// The whole site : things to be compiled and the installedBase
 	private Site site = null;
@@ -31,14 +28,14 @@ public class BuildTimeSiteFactory extends BaseSiteFactory implements ISiteFactor
 	private boolean urlsChanged = false;
 
 	// URLs from the the site will be built
-	private URL[] sitePaths;
+	private String[] sitePaths;
 
 	//	adress of the site used as a base
 	private static String installedBaseLocation = null;
 
 	/** 
 	 * Create a build time site, using the sitePaths, and the installedBaseLocation.
-	 * Note that the site object is not recomputed is no change has been done.
+	 * Note that the site object is not recomputed if no change has been done.
 	 * 
 	 * @return ISite
 	 * @throws CoreException
@@ -54,20 +51,24 @@ public class BuildTimeSiteFactory extends BaseSiteFactory implements ISiteFactor
 		Collection featureXMLs = findFeatureXMLs();
 
 		// If an installed base is provided we need to look at it
-		URL installedBaseURL = null;
+		String installedBaseURL = null;
 		if (installedBaseLocation != null && !installedBaseLocation.equals("")) { //$NON-NLS-1$
-			try {
-				if (!new File(installedBaseLocation).exists()) {
-					String message = Policy.bind("error.incorrectDirectoryEntry", installedBaseLocation); //$NON-NLS-1$
-					throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READ_DIRECTORY, message, null));
-				}
-				installedBaseURL = new URL("file:" + installedBaseLocation); //$NON-NLS-1$
-				Collection installedFeatures = Utils.findFiles(installedBaseLocation, DEFAULT_FEATURE_LOCATION, DEFAULT_FEATURE_FILENAME_DESCRIPTOR);
-				if (installedFeatures != null)
-					featureXMLs.addAll(installedFeatures);
-			} catch (MalformedURLException e) {
-				String message = Policy.bind("error.incorrectDirectoryEntry", installedBaseURL.toExternalForm()); //$NON-NLS-1$
+			if (!new File(installedBaseLocation).exists()) {
+				String message = Policy.bind("error.incorrectDirectoryEntry", installedBaseLocation); //$NON-NLS-1$
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READ_DIRECTORY, message, null));
+			}
+			
+			installedBaseURL = installedBaseLocation; //$NON-NLS-1$
+			Collection installedFeatures = Utils.findFiles(installedBaseLocation, DEFAULT_FEATURE_LOCATION, DEFAULT_FEATURE_FILENAME_DESCRIPTOR);
+			if (installedFeatures != null)
+				featureXMLs.addAll(installedFeatures);
+			
+			//Search the features in the links
+			String[] linkPaths = PluginPathFinder.getPluginPaths(installedBaseURL);
+			for (int i = 0; i < linkPaths.length; i++) {
+				Collection foundFeatures = Utils.findFiles(linkPaths[i], DEFAULT_FEATURE_LOCATION, DEFAULT_FEATURE_FILENAME_DESCRIPTOR);
+				if (foundFeatures != null)
+					featureXMLs.addAll(foundFeatures);
 			}
 		}
 
@@ -114,7 +115,7 @@ public class BuildTimeSiteFactory extends BaseSiteFactory implements ISiteFactor
 		BuildTimeSiteFactory.installedBaseLocation = installedBaseSite;
 	}
 
-	public void setSitePaths(URL[] urls) {
+	public void setSitePaths(String[] urls) {
 		if (sitePaths == null) {
 			sitePaths = urls;
 			urlsChanged = true;
@@ -127,7 +128,7 @@ public class BuildTimeSiteFactory extends BaseSiteFactory implements ISiteFactor
 		while (found && i < sitePaths.length) {
 			found = false;
 			for (int j = 0; j < urls.length; j++) {
-				if (sitePaths[i].sameFile(urls[j])) {
+				if (sitePaths[i].equals(urls[j])) {
 					found = true;
 					break;
 				}
@@ -148,7 +149,7 @@ public class BuildTimeSiteFactory extends BaseSiteFactory implements ISiteFactor
 	private Collection findFeatureXMLs() {
 		Collection features = new ArrayList();
 		for (int i = 0; i < sitePaths.length; i++) {
-			Collection foundFeatures = Utils.findFiles(sitePaths[i].getFile(), DEFAULT_FEATURE_LOCATION, DEFAULT_FEATURE_FILENAME_DESCRIPTOR);
+			Collection foundFeatures = Utils.findFiles(sitePaths[i], DEFAULT_FEATURE_LOCATION, DEFAULT_FEATURE_FILENAME_DESCRIPTOR);
 			if (foundFeatures != null)
 				features.addAll(foundFeatures);
 		}

@@ -4,7 +4,8 @@
    id="org.eclipse.pde.build"
    name="%pluginName"
    version="3.0"
-   provider-name="%providerName">
+   provider-name="%providerName"
+   class="org.eclipse.pde.internal.build.BuildActivator">
 
    <runtime>
       <library name="pdebuild.jar">
@@ -12,14 +13,17 @@
       </library>
    </runtime>
    <requires>
-      <import plugin="org.eclipse.core.runtime.compatibility"/> 
+      <import plugin="org.eclipse.core.runtime"/>
+	  <import plugin="org.eclipse.core.runtime.compatibility"/>
       <import plugin="org.eclipse.ant.core"/>
       <import plugin="org.eclipse.update.core"/>
       <import plugin="org.apache.ant"/>
    </requires>
 
+
 <!-- Tasks -->
-   <extension point="org.eclipse.ant.core.antTasks">
+   <extension
+         point="org.eclipse.ant.core.antTasks">
       <antTask
             library="lib/pdebuild-ant.jar"
             name="eclipse.fetch"
@@ -49,30 +53,42 @@
             library="lib/pdebuild-ant.jar"
             name="eclipse.unzipperBuilder"
             class="org.eclipse.pde.internal.build.tasks.UnzipperGeneratorTask">
-      </antTask>    
+      </antTask>
       <antTask
             library="lib/pdebuild-ant.jar"
             name="eclipse.fetchFilesGenerator"
             class="org.eclipse.pde.internal.build.tasks.FetchFileGeneratorTask">
-      </antTask>    
+      </antTask>
+      <antTask
+            library="lib/pdebuild-ant.jar"
+            name="eclipse.versionReplacer"
+            class="org.eclipse.pde.internal.build.tasks.GenericVersionReplacer">
+      </antTask>
+      
    </extension>
-   <!-- Extra Classpath -->
-   <extension point="org.eclipse.ant.core.extraClasspathEntries">
-      <extraClasspathEntry library="lib/pdebuild-ant.jar"/>
+<!-- Extra Classpath -->
+   <extension
+         point="org.eclipse.ant.core.extraClasspathEntries">
+      <extraClasspathEntry
+            library="lib/pdebuild-ant.jar">
+      </extraClasspathEntry>
    </extension>
-
    <extension
          id="BuildScriptGenerator"
          point="org.eclipse.core.runtime.applications">
       <application>
-         <run class="org.eclipse.pde.internal.build.BuildScriptGeneratorApplication"/>
+         <run
+               class="org.eclipse.pde.internal.build.BuildScriptGeneratorApplication">
+         </run>
       </application>
    </extension>
    <extension
          id="FetchScriptGenerator"
          point="org.eclipse.core.runtime.applications">
       <application>
-         <run class="org.eclipse.pde.internal.build.FetchScriptGeneratorApplication"/>
+         <run
+               class="org.eclipse.pde.internal.build.FetchScriptGeneratorApplication">
+         </run>
       </application>
    </extension>
    <extension

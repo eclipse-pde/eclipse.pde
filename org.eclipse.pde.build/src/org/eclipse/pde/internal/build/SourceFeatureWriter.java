@@ -19,10 +19,6 @@ import org.eclipse.pde.internal.build.builder.FeatureBuildScriptGenerator;
 import org.eclipse.update.core.Feature;
 import org.eclipse.update.core.IIncludedFeatureReference;
 
-/**
- *
- *
- */
 public class SourceFeatureWriter extends FeatureWriter {
 
 	public SourceFeatureWriter(OutputStream out, Feature feature, FeatureBuildScriptGenerator generator) throws IOException {

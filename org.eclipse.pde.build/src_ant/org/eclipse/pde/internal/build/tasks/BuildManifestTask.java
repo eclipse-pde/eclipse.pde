@@ -218,7 +218,7 @@ public class BuildManifestTask extends Task implements IPDEBuildConstants, IXMLC
 				is.close();
 			}
 		} catch (IOException e) {
-			String message = Policy.bind("error.readingDirectory"); //$NON-NLS-1$
+			String message = Policy.bind("error.readingDirectory", directoryLocation); //$NON-NLS-1$
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READ_DIRECTORY, message, e));
 		}
 	}
