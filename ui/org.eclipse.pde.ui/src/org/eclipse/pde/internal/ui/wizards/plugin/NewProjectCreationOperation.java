@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.*;
 import java.util.*;
 import org.eclipse.core.resources.*;
@@ -63,6 +68,33 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		// create project
 		IProject project = createProject();
 		monitor.worked(1);
+		// copy jars
+		if (fData instanceof LibraryPluginFieldData) {
+			String[] paths = ((LibraryPluginFieldData) fData).getLibraryPaths();
+			for (int i = 0; i < paths.length; i++) {
+				File jarFile = new File(paths[i]);
+				String jarName = jarFile.getName();
+				IFile file = project.getFile(jarName);
+				monitor.subTask(PDEPlugin.getFormattedMessage(
+						"NewProjectCreationOperation.copyingJar", jarName)); //$NON-NLS-1$
+
+				InputStream in = null;
+				try {
+					in = new FileInputStream(jarFile);
+					file.create(in, true, monitor);
+				} catch (FileNotFoundException fnfe) {
+				} finally {
+					if (in != null) {
+						try {
+							in.close();
+						} catch (IOException ioe) {
+
+						}
+					}
+				}
+				monitor.worked(1);
+			}
+		}
 		// set classpath if project has a Java nature
 		if (project.hasNature(JavaCore.NATURE_ID)) {
 			monitor.subTask(PDEPlugin
@@ -164,7 +196,10 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
             if (fContentWizard != null)
                 numUnits++;
         }
-        return numUnits;
+		if (fData instanceof LibraryPluginFieldData) {
+			numUnits += ((LibraryPluginFieldData) fData).getLibraryPaths().length;
+		}
+       return numUnits;
     }
     
     private IProject createProject() throws CoreException {
@@ -178,8 +213,8 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
             CoreUtility.addNatureToProject(project, PDE.PLUGIN_NATURE, null);
         if (!fData.isSimple() && !project.hasNature(JavaCore.NATURE_ID))
             CoreUtility.addNatureToProject(project, JavaCore.NATURE_ID, null);
-        if (!fData.isSimple()
-                && fData.getSourceFolderName().trim().length() > 0) {
+        if (!fData.isSimple() && fData.getSourceFolderName() != null
+				&& fData.getSourceFolderName().trim().length() > 0) {
             IFolder folder = project.getFolder(fData.getSourceFolderName());
             if (!folder.exists())
                 CoreUtility.createFolder(folder, true, true, null);
@@ -218,7 +253,19 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
             library.setExported(true);
             pluginBase.add(library);
         }
-        IPluginReference[] dependencies = getDependencies();
+		if (fData instanceof LibraryPluginFieldData) {
+			String[] paths = ((LibraryPluginFieldData) fData).getLibraryPaths();
+			for (int i = 0; i < paths.length; i++) {
+				File jarFile = new File(paths[i]);
+				IPluginLibrary library = fModel.getPluginFactory()
+						.createLibrary();
+				library.setName(jarFile.getName());
+				library.setExported(true);
+				pluginBase.add(library);
+			}
+		}
+
+		IPluginReference[] dependencies = getDependencies();
         for (int i = 0; i < dependencies.length; i++) {
             IPluginReference ref = dependencies[i];
             IPluginImport iimport = fModel.getPluginFactory().createImport();
@@ -242,6 +289,17 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 									: "plugin.xml"); //$NON-NLS-1$
             if (fData.hasBundleStructure())
                 binEntry.addToken("META-INF/"); //$NON-NLS-1$
+			
+			if (fData instanceof LibraryPluginFieldData) {
+				String[] libraryPaths = ((LibraryPluginFieldData) fData)
+						.getLibraryPaths();
+				for (int j = 0; j < libraryPaths.length; j++) {
+					File jarFile = new File(libraryPaths[j]);
+					String name = jarFile.getName();
+					if (!binEntry.contains(name))
+						binEntry.addToken(name);
+				}
+			}
 			
 			String libraryName = fData.getLibraryName();
             if (!fData.isSimple() && libraryName != null) {
@@ -279,19 +337,41 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
     }
     
     private void setClasspath(IProject project, IFieldData data)
-    throws JavaModelException, CoreException {
-        // Set output folder
-        IJavaProject javaProject = JavaCore.create(project);
-        IPath path = project.getFullPath().append(data.getOutputFolderName());
-        javaProject.setOutputLocation(path, null);
-        // Set classpath
-        IClasspathEntry[] entries = new IClasspathEntry[3];
-        path = project.getFullPath().append(data.getSourceFolderName());
-        entries[0] = JavaCore.newSourceEntry(path);
-        entries[1] = ClasspathUtilCore.createContainerEntry();
-        entries[2] = ClasspathUtilCore.createJREEntry();
-        javaProject.setRawClasspath(entries, null);
-    }
+			throws JavaModelException, CoreException {
+		IJavaProject javaProject = JavaCore.create(project);
+		// Set output folder
+		if (data.getOutputFolderName() != null) {
+			IPath path = project.getFullPath().append(
+					data.getOutputFolderName());
+			javaProject.setOutputLocation(path, null);
+		}
+		// Set classpath
+		IClasspathEntry[] entries = null;
+		int i = 0;
+		if (data.getSourceFolderName() != null) {
+			entries = new IClasspathEntry[3];
+			IPath path = project.getFullPath().append(
+					data.getSourceFolderName());
+			entries[i++] = JavaCore.newSourceEntry(path);
+		} else {
+			String[] libraryPaths = new String[0];
+			if (fData instanceof LibraryPluginFieldData) {
+				libraryPaths = ((LibraryPluginFieldData) fData)
+						.getLibraryPaths();
+			}
+			entries = new IClasspathEntry[2 + libraryPaths.length];
+			for (int j = 0; j < libraryPaths.length; j++) {
+				File jarFile = new File(libraryPaths[j]);
+				String jarName = jarFile.getName();
+				IPath path = project.getFullPath().append(jarName);
+				entries[2 + j] = JavaCore.newLibraryEntry(path, null, null,
+						true);
+			}
+		}
+		entries[i++] = ClasspathUtilCore.createContainerEntry();
+		entries[i++] = ClasspathUtilCore.createJREEntry();
+		javaProject.setRawClasspath(entries, null);
+	}
     
     private IPluginReference[] getDependencies() {
         ArrayList result = new ArrayList();

@@ -44,6 +44,9 @@ public interface IHelpContextIds {
 
  	public static final String NEW_FRAGMENT_STRUCTURE_PAGE = PREFIX + "new_fragment_structure_page"; //$NON-NLS-1$
  	public static final String NEW_FRAGMENT_REQUIRED_DATA = PREFIX + "new_fragment_required_data"; //$NON-NLS-1$
+	
+ 	public static final String NEW_LIBRARY_PROJECT_STRUCTURE_PAGE = PREFIX + "new_library_plugin_structure_page"; //$NON-NLS-1$
+ 	public static final String NEW_LIBRARY_PROJECT_JAR_PAGE = PREFIX + "new_library_plugin_jar_page"; //$NON-NLS-1$
  	
  	public static final String NEW_FEATURE_MAIN = PREFIX + "new_feature_main"; //$NON-NLS-1$
  	public static final String NEW_FEATURE_DATA = PREFIX + "new_feature_data"; //$NON-NLS-1$

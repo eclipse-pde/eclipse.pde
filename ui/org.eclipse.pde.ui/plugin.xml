@@ -104,6 +104,18 @@
          </description>
       </wizard>
       <wizard
+            name="%new.pluginWithJarsProject.name"
+            icon="icons/etool16/jarToPlugin.gif"
+            category="org.eclipse.pde.PDE"
+            class="org.eclipse.pde.internal.ui.wizards.plugin.NewLibraryPluginProjectWizard"
+            project="true"
+            finalPerspective="org.eclipse.pde.ui.PDEPerspective"
+            id="org.eclipse.pde.ui.NewLibraryPluginProjectWizard">
+         <description>
+            %new.pluginWithJarsProject.description
+         </description>
+      </wizard>
+      <wizard
             name="%new.fragmentProject.name"
             icon="icons/etool16/newfprj_wiz.gif"
             category="org.eclipse.pde.PDE"
