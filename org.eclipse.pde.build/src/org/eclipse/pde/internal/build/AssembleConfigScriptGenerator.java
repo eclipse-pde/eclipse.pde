@@ -127,6 +127,8 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	private void generateMoveRootFiles() {
+		if (rootFileProviders.size() == 0)
+			return;
 		FileSet[] rootFiles = new FileSet[1];
 		rootFiles[0] = new FileSet(getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER), null, "**/**", null, null, null, null); //$NON-NLS-1$//$NON-NLS-2$	
 		script.printMoveTask(getPropertyFormat(PROPERTY_ECLIPSE_BASE), rootFiles,false);
