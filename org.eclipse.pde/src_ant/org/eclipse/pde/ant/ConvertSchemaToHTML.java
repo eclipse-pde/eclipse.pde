@@ -54,7 +54,7 @@ public class ConvertSchemaToHTML extends Task {
 			this.url = url;
 			schema = new Schema(this, url);
 		}
-		public IPath getPluginLocation(String id) {
+		public IPath getPluginRelativePath(String id, IPath schemaPath) {
 			IPluginModelBase model = (IPluginModelBase)point.getModel();
 			String location = model.getInstallLocation();
 			IPath path = new Path(location);
@@ -62,7 +62,7 @@ public class ConvertSchemaToHTML extends Task {
 			// and append the plug-in ID
 			// During the build, all the plug-ins are 
 			// colocated.
-			return path.removeLastSegments(1).append(id);			
+			return path.removeLastSegments(1).append(id).append(schemaPath);			
 		}
 		public URL getSchemaURL() {
 			return url;
