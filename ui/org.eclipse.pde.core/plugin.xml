@@ -14,16 +14,15 @@
    </runtime>
    <requires>
       <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.jdt.core" export="true"/>
+      <import plugin="org.eclipse.jdt.core"/>
       <import plugin="org.apache.xerces"/>
       <import plugin="org.eclipse.team.core"/>
-      <import plugin="org.eclipse.jface.text"/>
       <import plugin="org.eclipse.ant.core"/>
+      <import plugin="org.eclipse.text"/>
    </requires>
 
 
    <extension-point id="source" name="%expoint.source.name" schema="schema/source.exsd"/>
-
 
    <extension
          point="org.eclipse.jdt.core.classpathVariableInitializer">
@@ -32,7 +31,6 @@
             class="org.eclipse.pde.internal.core.EclipseHomeInitializer">
       </classpathVariableInitializer>
    </extension>
-
    <extension
          point="org.eclipse.team.core.repository">
       <repository
