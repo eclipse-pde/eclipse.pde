@@ -8,6 +8,8 @@ package org.eclipse.pde.internal.ui.util;
 
 import org.eclipse.jface.viewers.*;
 import java.util.*;
+
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
 import org.eclipse.pde.core.plugin.*;
@@ -144,6 +146,7 @@ public class SharedLabelProvider
 				images.put(key, image);
 			}
 		} catch (MalformedURLException e) {
+		} catch (SWTException e) {
 		}
 		return image;
 	}
