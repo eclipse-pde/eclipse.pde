@@ -155,4 +155,21 @@ public class BuildScriptGeneratorTask extends Task {
 	public void setBrandExecutable(boolean brand) {
 		AbstractScriptGenerator.setBrandExecutable(brand);
 	}
+
+	/**
+	 * Set the boolean value indicating whether or not to sign any constructed JAs.
+	 * @param value <code>true</code> if built jars should be signed.
+	 */
+	public void setSignJars(boolean value) {
+		generator.setSignJars(value);
+	}
+
+	/**
+	 * Set the boolean value indicating whether or not to generate JNLP files for 
+	 * built features.
+	 * @param value <code>true</code> if JNLP manifests should be generated.
+	 */
+	public void setGenerateJnlp(boolean value) {
+		generator.setGenerateJnlp(value);
+	}
 }
