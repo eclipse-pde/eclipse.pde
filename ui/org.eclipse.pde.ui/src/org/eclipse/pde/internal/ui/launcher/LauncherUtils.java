@@ -360,7 +360,7 @@ public class LauncherUtils {
 						message.append(duplicates.get(i) + lineSeparator);
 				}
 				MessageDialogWithToggle dialog =
-					MessageDialogWithToggle.openConfirm(
+					MessageDialogWithToggle.openQuestion(
 						getDisplay().getActiveShell(),
 						PDEPlugin.getResourceString(KEY_TITLE),
 						message.toString(),
