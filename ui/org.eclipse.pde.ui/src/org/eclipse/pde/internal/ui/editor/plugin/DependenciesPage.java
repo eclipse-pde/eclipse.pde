@@ -62,14 +62,13 @@ public class DependenciesPage extends PDEFormPage implements IInputContextListen
 		matchSection.getSection().setLayoutData(gd);
 		managedForm.addPart(matchSection);
 		matchSection.setOsgiMode(isOsgiMode());
-		if (getModel().isEditable()) {
-			DependencyAnalysisSection analysisSection = new DependencyAnalysisSection(
-					this, body);
-			gd = new GridData(GridData.FILL_HORIZONTAL
-					| GridData.VERTICAL_ALIGN_BEGINNING);
-			analysisSection.getSection().setLayoutData(gd);
-			managedForm.addPart(analysisSection);
-		}
+		
+		DependencyAnalysisSection analysisSection = new DependencyAnalysisSection(
+				this, body);
+		gd = new GridData(GridData.FILL_HORIZONTAL
+				| GridData.VERTICAL_ALIGN_BEGINNING);
+		analysisSection.getSection().setLayoutData(gd);
+		managedForm.addPart(analysisSection);
 		InputContextManager contextManager = getPDEEditor().getContextManager();
 		contextManager.addInputContextListener(this);
 	}

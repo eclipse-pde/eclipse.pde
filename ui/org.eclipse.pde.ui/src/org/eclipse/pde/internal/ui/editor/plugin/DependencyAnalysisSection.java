@@ -5,6 +5,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.builders.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
@@ -40,10 +41,17 @@ public class DependencyAnalysisSection extends PDESection implements IPartSelect
 	}
 	
 	private String getFormText() {
-		if (getPage().getModel() instanceof IPluginModel)
-			return PDEPlugin.getResourceString("DependencyAnalysisSection.form.isPluginModel");  //$NON-NLS-1$
-		else
-			return PDEPlugin.getResourceString("DependencyAnalysisSection.form.notPluginModel");  //$NON-NLS-1$
+		boolean editable = getPage().getModel().isEditable();
+		if (getPage().getModel() instanceof IPluginModel) {
+			if (editable)
+				return PDEPlugin.getResourceString("DependencyAnalysisSection.plugin.editable");  //$NON-NLS-1$
+			return PDEPlugin.getResourceString("DependencyAnalysisSection.plugin.notEditable"); //$NON-NLS-1$
+		}
+		else {
+			if (editable)
+				return PDEPlugin.getResourceString("DependencyAnalysisSection.fragment.editable");  //$NON-NLS-1$
+			return PDEPlugin.getResourceString("DependencyAnalysisSection.fragment.notEditable"); //$NON-NLS-1$
+		}
 	}
 
 	/* (non-Javadoc)
@@ -66,6 +74,8 @@ public class DependencyAnalysisSection extends PDESection implements IPartSelect
 					doFindUnusedDependencies();
 				else if (e.getHref().equals("loops")) //$NON-NLS-1$
 					doFindLoops();
+				else if (e.getHref().equals("references")) //$NON-NLS-1$
+					doFindReferences();
 			}
 		});
 		section.setClient(formText);
@@ -94,7 +104,27 @@ public class DependencyAnalysisSection extends PDESection implements IPartSelect
 		IBaseModel model = getPage().getModel();
 		if (model instanceof IPluginModelBase) {
 			new UnusedDependenciesAction((IPluginModelBase)model).run();
-		}
-		
+		}		
 	}
+	
+	private void doFindReferences() {
+		IBaseModel model = getPage().getModel();
+		if (model instanceof IPluginModel) {
+			new FindReferencesAction(((IPluginModel)model).getPlugin()).run();
+		} else if (model instanceof IFragmentModel){
+			IFragment fragment = ((IFragmentModel)model).getFragment();
+			String id = fragment.getPluginId();
+			ModelEntry entry = PDECore.getDefault().getModelManager().findEntry(id);
+			if (entry != null) {
+				IPluginModelBase pluginModel = entry.getActiveModel();
+				new FindDeclarationsAction(pluginModel.getPluginBase()).run();
+			} else {
+				MessageDialog.openInformation(
+						PDEPlugin.getActiveWorkbenchShell(), 
+						PDEPlugin.getResourceString(PDEPlugin.getResourceString("DependencyAnalysisSection.references")),  //$NON-NLS-1$
+						PDEPlugin.getResourceString(PDEPlugin.getResourceString("DependencyAnalysisSection.noReferencesFound")));  //$NON-NLS-1$
+			}
+		}
+	}
+
 }
