@@ -1,5 +1,6 @@
 package org.eclipse.pde.internal.ui.launcher;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.*;
@@ -36,6 +37,16 @@ public class WorkbenchLauncherTabGroup
 		final ILaunchConfigurationTab[] tabs = getTabs();
 		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
 			public void run() {
+				try {
+					String id = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, (String)null);
+					if (id == null) {
+						if (config instanceof ILaunchConfigurationWorkingCopy) {
+							ILaunchConfigurationWorkingCopy wc = (ILaunchConfigurationWorkingCopy)config;
+							wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, "org.eclipse.pde.ui.workbenchClasspathProvider");
+						}
+					}
+				} catch (CoreException e) {
+				}
 				for (int i = 0; i < tabs.length; i++) {
 					if (tabs[i] instanceof AdvancedLauncherTab) {
 						((AdvancedLauncherTab) tabs[i]).initialize(
@@ -44,6 +55,7 @@ public class WorkbenchLauncherTabGroup
 						tabs[i].initializeFrom(config);
 					}
 				}
+				
 			}
 		});
 	}

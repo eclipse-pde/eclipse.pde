@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.debug.core.model.*;
 import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.debug.ui.JavaUISourceLocator;
 import org.eclipse.jdt.launching.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -94,6 +95,24 @@ public class WorkbenchLaunchConfigurationDelegate
 		
 		PDEPlugin.getDefault().getLaunchesListener().manage(launch);
 		launcher.getVMRunner(mode).run(runnerConfig, launch, monitor);
+		
+		// create a default source locator if required, and migrate configuration
+		String id = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, (String)null);
+		if (id == null) {
+			IPersistableSourceLocator locator = DebugPlugin.getDefault().getLaunchManager().newSourceLocator(JavaUISourceLocator.ID_PROMPTING_JAVA_SOURCE_LOCATOR);
+			ILaunchConfigurationWorkingCopy wc = null;
+			if (configuration.isWorkingCopy()) {
+				wc = (ILaunchConfigurationWorkingCopy)configuration;
+			} else {
+				wc = configuration.getWorkingCopy();
+			}
+			wc.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, JavaUISourceLocator.ID_PROMPTING_JAVA_SOURCE_LOCATOR);
+			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, "org.eclipse.pde.ui.workbenchClasspathProvider");
+			locator.initializeDefaults(wc);
+			wc.doSave();
+			launch.setSourceLocator(locator);
+		}
+		
 		monitor.worked(1);
 	}
 
