@@ -8,6 +8,7 @@ import java.util.StringTokenizer;
 import java.util.TreeSet;
 import java.util.Vector;
 
+import org.eclipse.core.boot.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -101,11 +102,33 @@ public class LauncherUtils {
 	}
 
 	public static String getDefaultProgramArguments() {
+		StringBuffer buffer = new StringBuffer();
+		
 		String os = TargetPlatform.getOS();
+		if (!os.equals(BootLoader.getOS()))
+			buffer.append("-os " + os);
+		
 		String ws = TargetPlatform.getWS();
+		if (!ws.equals(BootLoader.getWS())) {
+			if (buffer.length() > 0)
+				buffer.append(" ");
+			buffer.append("-ws " + ws);
+		}
+		
 		String arch = TargetPlatform.getOSArch();
+		if (!arch.equals(BootLoader.getOSArch())) {
+			if (buffer.length() > 0)
+				buffer.append(" ");
+			buffer.append("-arch " + arch);
+		}
+		
 		String nl = TargetPlatform.getNL();
-		return "-os " + os + " -ws " + ws + " -arch " + arch + " -nl " + nl;
+		if (!nl.equals(BootLoader.getNL())) {
+			if (buffer.length() > 0)
+				buffer.append(" ");
+			buffer.append("-nl " + nl);
+		}
+		return buffer.toString();
 	}
 	
 	public static String getDefaultWorkspace() {
