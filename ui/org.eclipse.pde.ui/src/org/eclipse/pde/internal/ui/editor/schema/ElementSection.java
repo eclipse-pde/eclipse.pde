@@ -41,15 +41,15 @@ public class ElementSection extends TreeSection {
 	private NewAttributeAction newAttributeAction = new NewAttributeAction();
 	private Clipboard clipboard;
 	public static final String SECTION_TITLE =
-		"SchemaEditor.ElementSection.title";
+		"SchemaEditor.ElementSection.title"; //$NON-NLS-1$
 	public static final String SECTION_DESC =
-		"SchemaEditor.ElementSection.desc";
+		"SchemaEditor.ElementSection.desc"; //$NON-NLS-1$
 	public static final String SECTION_NEW_ELEMENT =
-		"SchemaEditor.ElementSection.newElement";
+		"SchemaEditor.ElementSection.newElement"; //$NON-NLS-1$
 	public static final String SECTION_NEW_ATTRIBUTE =
-		"SchemaEditor.ElementSection.newAttribute";
-	public static final String POPUP_NEW = "Menus.new.label";
-	public static final String POPUP_DELETE = "Actions.delete.label";
+		"SchemaEditor.ElementSection.newAttribute"; //$NON-NLS-1$
+	public static final String POPUP_NEW = "Menus.new.label"; //$NON-NLS-1$
+	public static final String POPUP_DELETE = "Actions.delete.label"; //$NON-NLS-1$
 	private PropertiesAction propertiesAction;
 
 	class ContentProvider
@@ -196,7 +196,7 @@ public class ElementSection extends TreeSection {
 			else
 				element =
 					(SchemaElement) ((SchemaAttribute) object).getParent();
-			if (element.getName().equals("extension") == false) {
+			if (element.getName().equals("extension") == false) { //$NON-NLS-1$
 				newAttributeAction.setElement(element);
 				newAttributeAction.setEnabled(schema.isEditable());
 				submenu.add(newAttributeAction);
@@ -205,7 +205,7 @@ public class ElementSection extends TreeSection {
 		manager.add(submenu);
 		if (!selection.isEmpty()) {
 			if (!(object instanceof SchemaElement)
-				|| ((SchemaElement) object).getName().equals("extension")
+				|| ((SchemaElement) object).getName().equals("extension") //$NON-NLS-1$
 					== false) {
 				manager.add(new Separator());
 				Action deleteAction = new Action() {
@@ -257,7 +257,7 @@ public class ElementSection extends TreeSection {
 			else
 				element =
 					(SchemaElement) ((SchemaAttribute) object).getParent();
-			if (element.getName().equals("extension") == false) {
+			if (element.getName().equals("extension") == false) { //$NON-NLS-1$
 				newAttributeAction.setElement(element);
 				newAttributeAction.run();
 			}
@@ -332,11 +332,11 @@ public class ElementSection extends TreeSection {
 		if (sobject != null) {
 			String name = sobject.getName();
 			if (sobject instanceof ISchemaElement) {
-				if (name.equals("extension") == false)
+				if (name.equals("extension") == false) //$NON-NLS-1$
 					canAddAttribute = true;
 			} else if (sobject instanceof ISchemaAttribute) {
 				ISchemaElement element = (ISchemaElement) (sobject.getParent());
-				if (element.getName().equals("extension") == false)
+				if (element.getName().equals("extension") == false) //$NON-NLS-1$
 					canAddAttribute = true;
 			}
 		}

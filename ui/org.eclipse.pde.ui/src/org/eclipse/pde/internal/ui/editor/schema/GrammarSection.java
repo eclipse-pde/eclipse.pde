@@ -31,16 +31,16 @@ public class GrammarSection extends PDESection implements IPartSelectionListener
 	private TreeViewer treeViewer;
 	private Text dtdLabel;
 	public static final String SECTION_TITLE =
-		"SchemaEditor.GrammarSection.title";
+		"SchemaEditor.GrammarSection.title"; //$NON-NLS-1$
 	public static final String SECTION_COMPOSITOR =
-		"SchemaEditor.GrammarSection.compositor";
+		"SchemaEditor.GrammarSection.compositor"; //$NON-NLS-1$
 	public static final String SECTION_REFERENCE =
-		"SchemaEditor.GrammarSection.reference";
-	public static final String POPUP_NEW = "Menus.new.label";
-	public static final String POPUP_DELETE = "Actions.delete.label";
+		"SchemaEditor.GrammarSection.reference"; //$NON-NLS-1$
+	public static final String POPUP_NEW = "Menus.new.label"; //$NON-NLS-1$
+	public static final String POPUP_DELETE = "Actions.delete.label"; //$NON-NLS-1$
 	public static final String SECTION_DESC =
-		"SchemaEditor.GrammarSection.desc";
-	public static final String KEY_DTD = "SchemaEditor.GrammarSection.dtd";
+		"SchemaEditor.GrammarSection.desc"; //$NON-NLS-1$
+	public static final String KEY_DTD = "SchemaEditor.GrammarSection.dtd"; //$NON-NLS-1$
 
 	class GrammarContentProvider
 		extends DefaultContentProvider
@@ -122,7 +122,7 @@ public class GrammarSection extends PDESection implements IPartSelectionListener
 		dtdLabel =
 			toolkit.createText(
 				container,
-				"",
+				"", //$NON-NLS-1$
 				SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
 		dtdLabel.setData(
 			FormToolkit.KEY_DRAW_BORDER,
@@ -264,7 +264,7 @@ public class GrammarSection extends PDESection implements IPartSelectionListener
 					(SchemaComplexType) element.getType();
 				if (complexType.getAttributeCount() == 0)
 					element.setType(
-						new SchemaSimpleType(element.getSchema(), "string"));
+						new SchemaSimpleType(element.getSchema(), "string")); //$NON-NLS-1$
 				else
 					complexType.setCompositor(null);
 			} else if (parent instanceof SchemaCompositor) {
@@ -348,8 +348,8 @@ public class GrammarSection extends PDESection implements IPartSelectionListener
 		treeViewer.setInput(changeObject);
 	}
 	private void updateDTDLabel(ISchemaObject object) {
-		String prefix = PDEPlugin.getResourceString(KEY_DTD) + "\n";
-		String text = "";
+		String prefix = PDEPlugin.getResourceString(KEY_DTD) + "\n"; //$NON-NLS-1$
+		String text = ""; //$NON-NLS-1$
 		if (object != null) {
 			ISchemaElement element = (ISchemaElement) object;
 			text = element.getDTDRepresentation(false);

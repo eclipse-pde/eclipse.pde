@@ -20,44 +20,42 @@ import org.eclipse.pde.internal.ui.*;
 public class AttributePropertySource
 	extends SchemaObjectPropertySource
 	implements ICloneablePropertySource {
-	public static final String P_USE = "use";
-	public static final String P_KIND = "kind";
-	public static final String P_VALUE = "value";
-	public static final String P_BASED_ON = "basedOn";
-	public static final String P_TYPE = "type";
+	public static final String P_USE = "use"; //$NON-NLS-1$
+	public static final String P_KIND = "kind"; //$NON-NLS-1$
+	public static final String P_VALUE = "value"; //$NON-NLS-1$
+	public static final String P_BASED_ON = "basedOn"; //$NON-NLS-1$
+	public static final String P_TYPE = "type"; //$NON-NLS-1$
 	public static final String KEY_COPY_OF =
-		"SchemaEditor.AttributePR.attributeCopy";
-	public static final String KEY_USE = "SchemaEditor.AttributePR.use";
-	public static final String KEY_KIND = "SchemaEditor.AttributePR.kind";
-	public static final String KEY_TYPE = "SchemaEditor.AttributePR.type";
+		"SchemaEditor.AttributePR.attributeCopy"; //$NON-NLS-1$
+	public static final String KEY_USE = "SchemaEditor.AttributePR.use"; //$NON-NLS-1$
+	public static final String KEY_KIND = "SchemaEditor.AttributePR.kind"; //$NON-NLS-1$
+	public static final String KEY_TYPE = "SchemaEditor.AttributePR.type"; //$NON-NLS-1$
 	public static final String KEY_RESTRICTION =
-		"SchemaEditor.AttributePR.restriction";
-	public static final String KEY_VALUE = "SchemaEditor.AttributePR.value";
+		"SchemaEditor.AttributePR.restriction"; //$NON-NLS-1$
+	public static final String KEY_VALUE = "SchemaEditor.AttributePR.value"; //$NON-NLS-1$
 	public static final String KEY_BASED_ON =
-		"SchemaEditor.AttributePR.basedOn";
-	public static final String KEY_NAME = "SchemaEditor.AttributePR.name";
-	public static final String P_RESTRICTION = "restriction";
-	public static final String P_NAME = "name";
+		"SchemaEditor.AttributePR.basedOn"; //$NON-NLS-1$
+	public static final String KEY_NAME = "SchemaEditor.AttributePR.name"; //$NON-NLS-1$
+	public static final String P_RESTRICTION = "restriction"; //$NON-NLS-1$
+	public static final String P_NAME = "name"; //$NON-NLS-1$
 	private Vector descriptors;
 
-	private static final String[] typeTable = { "string", "boolean" };
+	private static final String[] typeTable = { "string", "boolean" }; //$NON-NLS-1$ //$NON-NLS-2$
 
 	class ValueValidator implements ICellEditorValidator {
 		public String isValid(Object value) {
 			String svalue = value.toString();
 			ISchemaAttribute att = (ISchemaAttribute) getSourceObject();
 			ISchemaSimpleType type = att.getType();
-			if (type.getName().equals("boolean")) {
-				if (!svalue.equals("true") && !svalue.equals("false"))
-					return "Boolean value must either be \"true\" or \"false\"";
+			if (type.getName().equals("boolean")) { //$NON-NLS-1$
+				if (!svalue.equals("true") && !svalue.equals("false")) //$NON-NLS-1$ //$NON-NLS-2$
+					return PDEPlugin.getResourceString("AttributePropertySource.assertBoolean"); //$NON-NLS-1$
 			} else if (
-				type.getName().equals("string")
+				type.getName().equals("string") //$NON-NLS-1$
 					&& type.getRestriction() != null) {
 				ISchemaRestriction restriction = type.getRestriction();
 				if (restriction.isValueValid(svalue) == false) {
-					return "Value \""
-						+ svalue
-						+ "\" is not valid for the specified restriction";
+					return PDEPlugin.getFormattedMessage("AttributePropertySource.invalidRestriction", svalue); //$NON-NLS-1$
 				}
 			}
 			return null;
@@ -145,7 +143,7 @@ public class AttributePropertySource
 	public Object getPropertyValue(Object name) {
 		ISchemaAttribute att = (ISchemaAttribute) getSourceObject();
 		if (name.equals(P_RESTRICTION))
-			return ((ISchemaSimpleType) att.getType()).getRestriction();
+			return att.getType().getRestriction();
 		if (name.equals(P_VALUE))
 			return getNonzeroValue(att.getValue());
 		if (name.equals(P_BASED_ON))
@@ -169,11 +167,11 @@ public class AttributePropertySource
 			if (name.equals(P_TYPE))
 				return att.getType().getName();
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	public boolean isCloneable() {
 		ISchemaAttribute att = (ISchemaAttribute) getSourceObject();
-		if (att.getParent().getName().equals("extension"))
+		if (att.getParent().getName().equals("extension")) //$NON-NLS-1$
 			return false;
 		return true;
 	}

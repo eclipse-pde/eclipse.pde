@@ -18,13 +18,13 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.ui.*;
 
 public class ElementPropertySource extends SchemaObjectPropertySource {
-	public static final String P_LABEL_ATTRIBUTE = "labelAttribute";
-	public static final String P_ICON = "icon";
-	public static final String P_NAME = "name";
-	public static final String KEY_NAME = "SchemaEditor.ElementPR.name";
-	public static final String KEY_ICON = "SchemaEditor.ElementPR.icon";
-	public static final String KEY_LABEL_ATTRIBUTE = "SchemaEditor.ElementPR.labelAttribute";
-	public static final String KEY_INVALID = "SchemaEditor.ElementPR.invalid";
+	public static final String P_LABEL_ATTRIBUTE = "labelAttribute"; //$NON-NLS-1$
+	public static final String P_ICON = "icon"; //$NON-NLS-1$
+	public static final String P_NAME = "name"; //$NON-NLS-1$
+	public static final String KEY_NAME = "SchemaEditor.ElementPR.name"; //$NON-NLS-1$
+	public static final String KEY_ICON = "SchemaEditor.ElementPR.icon"; //$NON-NLS-1$
+	public static final String KEY_LABEL_ATTRIBUTE = "SchemaEditor.ElementPR.labelAttribute"; //$NON-NLS-1$
+	public static final String KEY_INVALID = "SchemaEditor.ElementPR.invalid"; //$NON-NLS-1$
 	private Vector descriptors;
 
 	class LabelAttributeValidator implements ICellEditorValidator {
@@ -67,7 +67,7 @@ public Object getPropertyValue(Object name) {
 		return getNonzeroValue(element.getIconProperty());
 	if (name.equals(P_NAME))
 		return getNonzeroValue(element.getName());
-	return "";
+	return ""; //$NON-NLS-1$
 }
 public boolean isPropertySet(Object property) {
 	return false;

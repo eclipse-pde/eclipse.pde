@@ -57,7 +57,7 @@ public abstract class SchemaObjectPropertySource implements IPropertySource {
 	protected Object getNonzeroValue(Object value) {
 		if (value != null)
 			return value;
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	public java.lang.Object getSourceObject() {
 		return sourceObject;

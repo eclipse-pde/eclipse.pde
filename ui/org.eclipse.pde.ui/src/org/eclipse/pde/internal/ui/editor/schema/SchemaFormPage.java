@@ -23,8 +23,8 @@ import org.eclipse.ui.views.properties.IPropertySheetPage;
  * 
  */
 public class SchemaFormPage extends PDEFormPage implements IModelChangedListener {
-	public static final String PAGE_ID = "form";
-	public static final String PAGE_TITLE = "SchemaEditor.FormPage.title";
+	public static final String PAGE_ID = "form"; //$NON-NLS-1$
+	public static final String PAGE_TITLE = "SchemaEditor.FormPage.title"; //$NON-NLS-1$
 	private SchemaSpecSection schemaSpecSection;
 	private ElementSection elementSection;
 	private DescriptionSection descriptionSection;

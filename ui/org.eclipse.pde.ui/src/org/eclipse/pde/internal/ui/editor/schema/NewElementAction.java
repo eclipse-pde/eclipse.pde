@@ -17,11 +17,11 @@ import org.eclipse.pde.internal.ui.*;
 
 public class NewElementAction extends Action {
 	private Schema schema;
-	private static final String NAME_COUNTER_KEY = "__schema_element_name";
-	public static final String KEY_LABEL = "SchemaEditor.NewElement.label";
-	public static final String KEY_TOOLTIP = "SchemaEditor.NewElement.tooltip";
+	private static final String NAME_COUNTER_KEY = "__schema_element_name"; //$NON-NLS-1$
+	public static final String KEY_LABEL = "SchemaEditor.NewElement.label"; //$NON-NLS-1$
+	public static final String KEY_TOOLTIP = "SchemaEditor.NewElement.tooltip"; //$NON-NLS-1$
 	public static final String KEY_INITIAL_NAME =
-		"SchemaEditor.NewElement.initialName";
+		"SchemaEditor.NewElement.initialName"; //$NON-NLS-1$
 
 	public NewElementAction() {
 		setText(PDEPlugin.getResourceString(KEY_LABEL));
@@ -39,7 +39,7 @@ public class NewElementAction extends Action {
 		counters.put(NAME_COUNTER_KEY, counter);
 		return PDEPlugin.getFormattedMessage(
 			KEY_INITIAL_NAME,
-			counter.intValue() + "");
+			counter.intValue() + ""); //$NON-NLS-1$
 	}
 	public org.eclipse.pde.internal.core.schema.Schema getSchema() {
 		return schema;
@@ -47,7 +47,7 @@ public class NewElementAction extends Action {
 	public void run() {
 		String name = getInitialName();
 		SchemaElement element = new SchemaElement(schema, name);
-		element.setType(new SchemaSimpleType(schema, "string"));
+		element.setType(new SchemaSimpleType(schema, "string")); //$NON-NLS-1$
 		schema.addElement(element);
 		schema.updateReferencesFor(element, Schema.REFRESH_ADD);
 	}

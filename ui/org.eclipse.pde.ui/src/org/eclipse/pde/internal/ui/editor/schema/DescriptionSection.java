@@ -45,15 +45,15 @@ public class DescriptionSection extends PDESection implements IPartSelectionList
 	private ISchemaObject element;
 	private SourceViewer sourceViewer;
 	public static final String SECTION_TITLE =
-		"SchemaEditor.DescriptionSection.title";
+		"SchemaEditor.DescriptionSection.title"; //$NON-NLS-1$
 	public static final String KEY_PENDING_TITLE =
-		"SchemaEditor.DescriptionSection.pending.title";
-	public static final String KEY_APPLY = "Actions.apply.flabel";
-	public static final String KEY_RESET = "Actions.reset.flabel";
+		"SchemaEditor.DescriptionSection.pending.title"; //$NON-NLS-1$
+	public static final String KEY_APPLY = "Actions.apply.flabel"; //$NON-NLS-1$
+	public static final String KEY_RESET = "Actions.reset.flabel"; //$NON-NLS-1$
 	public static final String KEY_PENDING_MESSAGE =
-		"SchemaEditor.DescriptionSection.pending.message";
+		"SchemaEditor.DescriptionSection.pending.message"; //$NON-NLS-1$
 	public static final String SECTION_DESC =
-		"SchemaEditor.DescriptionSection.desc";
+		"SchemaEditor.DescriptionSection.desc"; //$NON-NLS-1$
 	private IDocumentPartitioner partitioner;
 	private ISchema schema;
 	private boolean ignoreChange = false;
@@ -119,7 +119,7 @@ public class DescriptionSection extends PDESection implements IPartSelectionList
 		Control styledText = sourceViewer.getTextWidget();
 		styledText.setFont(
 			JFaceResources.getFontRegistry().get(JFaceResources.TEXT_FONT));
-		if (SWT.getPlatform().equals("motif") == false)
+		if (SWT.getPlatform().equals("motif") == false) //$NON-NLS-1$
 			toolkit.paintBordersFor(container);
 		styledText.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
 		Control[] children = container.getChildren();
@@ -270,7 +270,7 @@ public class DescriptionSection extends PDESection implements IPartSelectionList
 		ignoreChange = true;
 		String text = element.getDescription();
 		if (text == null)
-			text = "";
+			text = ""; //$NON-NLS-1$
 		/*
 		else
 			text = TextUtil.createMultiLine(text, 60, false);

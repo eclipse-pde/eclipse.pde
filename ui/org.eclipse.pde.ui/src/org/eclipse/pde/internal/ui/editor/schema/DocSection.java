@@ -35,20 +35,20 @@ import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.widgets.*;
 
 public class DocSection extends PDESection {
-	public static final String SECTION_TITLE = "SchemaEditor.DocSection.title";
-	public static final String KEY_APPLY = "Actions.apply.flabel";
-	public static final String KEY_RESET = "Actions.reset.flabel";
-	public static final String SECTION_DESC = "SchemaEditor.DocSection.desc";
+	public static final String SECTION_TITLE = "SchemaEditor.DocSection.title"; //$NON-NLS-1$
+	public static final String KEY_APPLY = "Actions.apply.flabel"; //$NON-NLS-1$
+	public static final String KEY_RESET = "Actions.reset.flabel"; //$NON-NLS-1$
+	public static final String SECTION_DESC = "SchemaEditor.DocSection.desc"; //$NON-NLS-1$
 	public static final String KEY_TOPIC_OVERVIEW =
-		"SchemaEditor.topic.overview";
-	public static final String KEY_TOPIC_SINCE = "SchemaEditor.topic.since";
+		"SchemaEditor.topic.overview"; //$NON-NLS-1$
+	public static final String KEY_TOPIC_SINCE = "SchemaEditor.topic.since"; //$NON-NLS-1$
 	public static final String KEY_TOPIC_EXAMPLES =
-		"SchemaEditor.topic.examples";
+		"SchemaEditor.topic.examples"; //$NON-NLS-1$
 	public static final String KEY_TOPIC_IMPLEMENTATION =
-		"SchemaEditor.topic.implementation";
-	public static final String KEY_TOPIC_API = "SchemaEditor.topic.api";
+		"SchemaEditor.topic.implementation"; //$NON-NLS-1$
+	public static final String KEY_TOPIC_API = "SchemaEditor.topic.api"; //$NON-NLS-1$
 	public static final String KEY_TOPIC_COPYRIGHT =
-		"SchemaEditor.topic.copyright";
+		"SchemaEditor.topic.copyright"; //$NON-NLS-1$
 	private IDocument document;
 	private IDocumentPartitioner partitioner;
 	private SourceViewerConfiguration sourceConfiguration;
@@ -131,7 +131,7 @@ public class DocSection extends PDESection {
 		styledText.setMenu(getPage().getPDEEditor().getContextMenu());
 		styledText.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
 
-		if (SWT.getPlatform().equals("motif") == false)
+		if (SWT.getPlatform().equals("motif") == false) //$NON-NLS-1$
 			toolkit.paintBordersFor(container);
 		Control[] children = container.getChildren();
 		Control control = children[children.length - 1];
@@ -259,7 +259,7 @@ public class DocSection extends PDESection {
 			if (sectionId.equals(IDocumentSection.COPYRIGHT))
 				return PDEPlugin.getResourceString(KEY_TOPIC_COPYRIGHT);
 		}
-		return "?";
+		return "?"; //$NON-NLS-1$
 	}
 	private void handleApply() {
 		if (element != null) {
@@ -353,12 +353,12 @@ public class DocSection extends PDESection {
 
 	public void updateEditorInput(Object input) {
 		ignoreChange = true;
-		String text = "";
+		String text = ""; //$NON-NLS-1$
 		if (input instanceof ISchemaObject) {
 			text = ((ISchemaObject) input).getDescription();
 		}
 		if (text == null)
-			text = "";
+			text = ""; //$NON-NLS-1$
 		/*
 		else
 			text = TextUtil.createMultiLine(text, 60, false);

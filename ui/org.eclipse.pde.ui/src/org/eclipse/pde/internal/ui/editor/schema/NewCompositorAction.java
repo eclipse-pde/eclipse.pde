@@ -17,7 +17,7 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.jface.resource.*;
 
 public class NewCompositorAction extends Action {
-	public static final String KEY_TOOLTIP = "SchemaEditor.NewCompositor.tooltip";
+	public static final String KEY_TOOLTIP = "SchemaEditor.NewCompositor.tooltip"; //$NON-NLS-1$
 	private ISchemaElement source;
 	private Object object;
 	private int kind;
@@ -26,7 +26,7 @@ public NewCompositorAction(ISchemaElement source, Object object, int kind) {
 	this.source = source;
 	this.object = object;
 	this.kind = kind;
-	setText("&"+ISchemaCompositor.kindTable[kind]);
+	setText("&"+ISchemaCompositor.kindTable[kind]); //$NON-NLS-1$
 	setToolTipText(PDEPlugin.getFormattedMessage(KEY_TOOLTIP, ISchemaCompositor.kindTable[kind]));
 	ImageDescriptor desc = null;
 

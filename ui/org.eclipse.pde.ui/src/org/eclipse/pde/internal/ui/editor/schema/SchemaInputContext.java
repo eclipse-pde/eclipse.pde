@@ -33,7 +33,7 @@ import org.eclipse.ui.IEditorInput;
  *
  */
 public class SchemaInputContext extends XMLInputContext {
-	public static final String CONTEXT_ID="schema-context";
+	public static final String CONTEXT_ID="schema-context"; //$NON-NLS-1$
 	/**
 	 * @param editor
 	 * @param input
@@ -76,7 +76,7 @@ public class SchemaInputContext extends XMLInputContext {
 		
 	private IBaseModel createExternalModel(SystemFileEditorInput input) {
 		File file = (File)input.getAdapter(File.class);
-		ExternalSchemaDescriptor sd = new ExternalSchemaDescriptor(file, "", false);
+		ExternalSchemaDescriptor sd = new ExternalSchemaDescriptor(file, "", false); //$NON-NLS-1$
 
 		ISchema schema = sd.getSchema();
 		if (schema.isValid() == false)
@@ -134,7 +134,7 @@ public class SchemaInputContext extends XMLInputContext {
 		String text = doc.get();
 		try {
 			InputStream stream =
-				new ByteArrayInputStream(text.getBytes("UTF8"));
+				new ByteArrayInputStream(text.getBytes("UTF8")); //$NON-NLS-1$
 			schema.reload(stream);
 			if (schema instanceof IEditable)
 			   ((IEditable)schema).setDirty(false);

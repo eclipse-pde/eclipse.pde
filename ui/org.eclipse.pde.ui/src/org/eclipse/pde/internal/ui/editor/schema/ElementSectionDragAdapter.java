@@ -57,7 +57,7 @@ public class ElementSectionDragAdapter extends DragSourceAdapter {
 		for (Iterator iter = sel.iterator(); iter.hasNext();) {
 			String name = iter.next().toString();
 			buf.append(name);
-			buf.append(" ");
+			buf.append(" "); //$NON-NLS-1$
 		}
 		return buf.toString();
 	}

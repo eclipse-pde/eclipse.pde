@@ -19,7 +19,7 @@ import org.eclipse.pde.internal.ui.util.SWTUtil;
 
 public class TypeRestrictionCellEditor extends DialogCellEditor {
 	private Label label;
-	private static final String KEY_TYPE_RESTRICTION_TITLE = "SchemaEditor.RestrictionDialog.wtitle";
+	private static final String KEY_TYPE_RESTRICTION_TITLE = "RestrictionDialog.wtitle"; //$NON-NLS-1$
 
 protected TypeRestrictionCellEditor(Composite parent) {
 	super(parent);
@@ -49,6 +49,6 @@ protected void updateContents(Object value) {
 	if (value != null)
 		label.setText(value.toString());
 	else
-		label.setText("");
+		label.setText(""); //$NON-NLS-1$
 }
 }

@@ -22,8 +22,8 @@ import org.eclipse.pde.internal.ui.*;
  *
  */
 public class SchemaPropertySheet extends PropertySheetPage {
-	public static final String CLONE_LABEL = "SchemaEditor.SchemaPropertySheet.clone.label";
-	public static final String CLONE_TOOLTIP = "SchemaEditor.SchemaPropertySheet.clone.tooltip";
+	public static final String CLONE_LABEL = "SchemaPropertySheet.clone.label"; //$NON-NLS-1$
+	public static final String CLONE_TOOLTIP = "SchemaPropertySheet.clone.tooltip"; //$NON-NLS-1$
 	private Action cloneAction;
 	protected ISelection currentSelection;
 	private IWorkbenchPart part;

@@ -38,7 +38,7 @@ public class SchemaEditorContributor extends PDEFormEditorContributor {
 	}
 
 	public SchemaEditorContributor() {
-		super("&Schema");
+		super("&Schema"); //$NON-NLS-1$
 	}
 
 	protected boolean hasKnownTypes(Clipboard clipboard) {
@@ -60,6 +60,6 @@ public class SchemaEditorContributor extends PDEFormEditorContributor {
 		previewAction = new PreviewAction();
 		previewAction.setText(
 			PDEPlugin.getResourceString(
-				"SchemaEditorContributor.previewAction"));
+				"SchemaEditorContributor.previewAction")); //$NON-NLS-1$
 	}
 }

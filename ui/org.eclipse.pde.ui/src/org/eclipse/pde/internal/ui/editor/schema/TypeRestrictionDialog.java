@@ -23,9 +23,9 @@ import org.eclipse.pde.internal.ui.*;
 import java.util.Hashtable;
 
 public class TypeRestrictionDialog extends Dialog {
-	public static final String KEY_RESTRICTION_TYPE ="SchemaEditor.RestrictionDialog.type";
-	private static final String T_ENUMERATION = "enumeration";
-	private static final String T_NONE = "none";
+	public static final String KEY_RESTRICTION_TYPE ="RestrictionDialog.type"; //$NON-NLS-1$
+	private static final String T_ENUMERATION = "enumeration"; //$NON-NLS-1$
+	private static final String T_NONE = "none"; //$NON-NLS-1$
 	
 	private String [] typeChoices = { T_NONE, T_ENUMERATION };
 	private Combo typeCombo;

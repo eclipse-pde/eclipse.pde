@@ -22,11 +22,11 @@ import org.eclipse.ui.forms.widgets.*;
  *
  */
 public class SchemaSpecSection extends PDESection {
-	public static final String SECTION_TITLE = "SchemaEditor.SpecSection.title";
-	public static final String SECTION_DESC = "SchemaEditor.SpecSection.desc";
-	public static final String SECTION_PLUGIN = "SchemaEditor.SpecSection.plugin";
-	public static final String SECTION_POINT = "SchemaEditor.SpecSection.point";
-	public static final String SECTION_NAME = "SchemaEditor.SpecSection.name";
+	public static final String SECTION_TITLE = "SchemaEditor.SpecSection.title"; //$NON-NLS-1$
+	public static final String SECTION_DESC = "SchemaEditor.SpecSection.desc"; //$NON-NLS-1$
+	public static final String SECTION_PLUGIN = "SchemaEditor.SpecSection.plugin"; //$NON-NLS-1$
+	public static final String SECTION_POINT = "SchemaEditor.SpecSection.point"; //$NON-NLS-1$
+	public static final String SECTION_NAME = "SchemaEditor.SpecSection.name"; //$NON-NLS-1$
 	private FormEntry pluginText;
 	private FormEntry pointText;
 	private FormEntry nameText;

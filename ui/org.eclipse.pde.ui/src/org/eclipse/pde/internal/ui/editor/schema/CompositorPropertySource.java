@@ -17,8 +17,8 @@ import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.ui.*;
 
 public class CompositorPropertySource extends GrammarPropertySource {
-	public static final String P_KIND = "kind";
-	public static final String KEY_KIND = "SchemaEditor.CompositorPR.kind";
+	public static final String P_KIND = "kind"; //$NON-NLS-1$
+	public static final String KEY_KIND = "SchemaEditor.CompositorPR.kind"; //$NON-NLS-1$
 
 public CompositorPropertySource(ISchemaCompositor obj) {
 	super(obj);

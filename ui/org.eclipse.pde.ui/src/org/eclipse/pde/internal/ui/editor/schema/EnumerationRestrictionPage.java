@@ -22,13 +22,13 @@ import org.eclipse.pde.internal.ui.util.SWTUtil;
 
 public class EnumerationRestrictionPage implements IRestrictionPage {
 	public static final String KEY_CHOICES =
-		"SchemaEditor.RestrictionDialog.enumeration.choices";
+		"RestrictionDialog.choices"; //$NON-NLS-1$
 	public static final String KEY_NEW_CHOICE =
-		"SchemaEditor.RestrictionDialog.enumeration.newChoice";
+		"RestrictionDialog.newChoice"; //$NON-NLS-1$
 	public static final String KEY_ADD =
-		"SchemaEditor.RestrictionDialog.enumeration.add";
+		"RestrictionDialog.add"; //$NON-NLS-1$
 	public static final String KEY_REMOVE =
-		"SchemaEditor.RestrictionDialog.enumeration.remove";
+		"RestrictionDialog.remove"; //$NON-NLS-1$
 	private List choiceList;
 	private Button addButton;
 	private Button deleteButton;
@@ -149,7 +149,7 @@ public class EnumerationRestrictionPage implements IRestrictionPage {
 		if (item.length()==0) return;
 		choiceList.add(item);
 		choiceList.setSelection(new String[] { item });
-		text.setText("");
+		text.setText(""); //$NON-NLS-1$
 		deleteButton.setEnabled(true);
 	}
 
