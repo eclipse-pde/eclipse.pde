@@ -22,8 +22,23 @@ import org.osgi.framework.Constants;
 public class PluginRegistryConverter extends PDEState {
 	private PluginRegistryModel registry;
 
+	private URL[] removeInvalidURLs(URL[] files) {
+		URL[] validURLs = new URL[files.length];
+		int validURL = 0;
+		for (int i = 0; i < files.length; i++) {
+			if (!files[i].toExternalForm().endsWith("feature.xml") && !files[i].toExternalForm().endsWith("MANIFEST.MF"))  //$NON-NLS-1$//$NON-NLS-2$
+				validURLs[validURL++] = files[i];
+		}
+		if (files.length == validURL)
+			return validURLs;
+		URL[] result = new URL[validURL];
+		System.arraycopy(validURLs, 0, result, 0, validURL);
+		return result;
+	}
+
 	private PluginRegistryModel getPluginRegistry(URL[] files) throws CoreException {
 		if (registry == null) {
+			files = removeInvalidURLs(files);
 			// create the registry according to the site where the code to compile is, and a existing installation of eclipse 
 			MultiStatus problems = new MultiStatus(IPDEBuildConstants.PI_PDEBUILD, EXCEPTION_MODEL_PARSE, Policy.bind("exception.pluginParse"), null); //$NON-NLS-1$
 			Factory factory = new Factory(problems);
