@@ -132,7 +132,7 @@
   		<!-- Extension to the SDK Overview Page. -->
   		<extensionContent path="overview" style="" alt-style="css/swt.properties">
         	<link
-	        	url="about:blank;"
+	        	url="http://org.eclipse.ui.intro/showHelpTopic?id=/org.eclipse.pde.doc.user/guide/pde.htm"
 	            label="%intro.pde.label"
 	            id="pde">
 	            <text>%intro.pde.text</text>
