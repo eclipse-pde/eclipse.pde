@@ -74,11 +74,8 @@ public class BuildSourcePage extends KeyValueSourcePage {
 	protected IDocumentRange getRangeElement(ITextSelection selection) {
 		if (selection.isEmpty())
 			return null;
-		BuildModel model = (BuildModel) getInputContext().getModel();
-		int offset = selection.getOffset();
-		BuildEntry node = findBuildNode(model.getBuild().getBuildEntries(),
-				offset);
-		return node;
+		IBuildModel model = (IBuildModel) getInputContext().getModel();
+		return findBuildNode(model.getBuild().getBuildEntries(), selection.getOffset());
 	}
 
 	private BuildEntry findBuildNode(IBuildEntry[] nodes, int offset) {

@@ -10,10 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 import java.util.*;
+
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.elements.*;
+import org.eclipse.pde.internal.ui.model.IDocumentRange;
 import org.eclipse.pde.internal.ui.model.bundle.*;
 import org.eclipse.swt.graphics.*;
 
@@ -68,5 +72,30 @@ public class BundleSourcePage extends KeyValueSourcePage {
 	
 	protected ITreeContentProvider createOutlineContentProvider() {
 		return new BundleOutlineContentProvider();
+	}
+	protected IDocumentRange getRangeElement(ITextSelection selection) {
+		if (selection.isEmpty())
+			return null;
+		IBundleModel model = (IBundleModel) getInputContext().getModel();
+		Dictionary manifest = ((Bundle) model.getBundle()).getHeaders();
+		int offset = selection.getOffset();
+		IDocumentRange[] keys = new IDocumentRange[manifest.size()];
+		int i = 0;
+		for (Enumeration elements = manifest.keys(); elements.hasMoreElements();) {
+			keys[i++] = (IDocumentRange) manifest.get(elements.nextElement());
+		}
+		IDocumentRange node = findBuildNode(keys, offset);
+		return node;
+	}
+
+	private IDocumentRange findBuildNode(IDocumentRange[] nodes, int offset) {
+		for (int i = 0; i < nodes.length; i++) {
+			IDocumentRange node = (IDocumentRange) nodes[i];
+			if (offset >= node.getOffset()
+					&& offset < node.getOffset() + node.getLength()) {
+				return node;
+			}
+		}
+		return null;
 	}
 }

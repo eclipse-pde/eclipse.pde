@@ -16,6 +16,7 @@ import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.ui.model.IDocumentNode;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
@@ -203,6 +204,8 @@ public class FormOutlinePage extends ContentOutlinePage
 			return;
 		editorSelection = true;
 		try {
+			if (treeViewer == null)
+				return;
 			if (!selection.isEmpty()
 					&& selection instanceof IStructuredSelection) {
 				Object item = ((IStructuredSelection) selection)
@@ -211,9 +214,17 @@ public class FormOutlinePage extends ContentOutlinePage
 					selection = new StructuredSelection(((ImportObject) item)
 							.getImport());
 				}
+				if (item instanceof IDocumentNode) {
+					while (null == treeViewer.testFindItem(item)) {
+						item = ((IDocumentNode) item).getParentNode();
+						if (item == null) {
+							break;
+						} 
+						selection = new StructuredSelection(item);					
+					}
+				}
 			}
-			if (treeViewer != null)
-				treeViewer.setSelection(selection);
+			treeViewer.setSelection(selection);
 		} finally {
 			editorSelection = false;
 		}

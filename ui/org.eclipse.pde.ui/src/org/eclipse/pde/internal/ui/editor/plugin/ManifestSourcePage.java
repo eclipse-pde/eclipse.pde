@@ -205,7 +205,7 @@ public class ManifestSourcePage extends XMLSourcePage {
 	protected IDocumentRange getRangeElement(ITextSelection selection) {
 		if (selection.isEmpty())
 			return null;
-		PluginModelBase model = (PluginModelBase) getInputContext().getModel();
+		IPluginModelBase model = (IPluginModelBase) getInputContext().getModel();
 		int offset = selection.getOffset();
 		IDocumentRange node = findNode(model.getPluginBase().getLibraries(),
 				offset);
@@ -215,6 +215,9 @@ public class ManifestSourcePage extends XMLSourcePage {
 			node = findNode(model.getPluginBase().getExtensionPoints(), offset);
 		if (node == null)
 			node = findNode(model.getPluginBase().getExtensions(), offset);
+		if (node == null) {
+			node = findNode(new IPluginObject[] { model.getPluginBase() }, offset);
+		}
 		return node;
 	}
 
