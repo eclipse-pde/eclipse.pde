@@ -697,7 +697,7 @@ public class Feature extends VersionableObject implements IFeature {
 	}
 	private void writeIfDefined(String indent, PrintWriter writer,
 			String attName, String attValue) {
-		if (attValue == null)
+		if (attValue == null || attValue.trim().length() == 0)
 			return;
 		writer.println();
 		writer.print(indent + attName + "=\"" + attValue + "\""); //$NON-NLS-1$ //$NON-NLS-2$

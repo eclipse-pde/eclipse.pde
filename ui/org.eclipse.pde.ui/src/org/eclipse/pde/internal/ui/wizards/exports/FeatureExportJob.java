@@ -136,7 +136,12 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 			for (int i = 0; i < fItems.length; i++) {
 				IFeatureModel model = (IFeatureModel)fItems[i];
 				try {
-					doExport(model.getFeature().getId(), model.getFeature().getVersion(), model.getInstallLocation(), new SubProgressMonitor(monitor, 1));
+					IFeature feature = model.getFeature();
+					String id = feature.getId();
+					String os = getOS(feature);
+					String ws = getWS(feature);
+					String arch = getOSArch(feature);
+					doExport(id, model.getFeature().getVersion(), model.getInstallLocation(), os, ws, arch, new SubProgressMonitor(monitor, 1));
 				} finally {
 					deleteBuildFiles(model);
 				}
@@ -147,6 +152,27 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		}
 	}
 	
+	private String getOS(IFeature feature) {
+		String os = feature.getOS();
+		if (os == null || os.trim().length() == 0 || os.indexOf(',') != -1 || os.equals("*"))
+			return TargetPlatform.getOS();
+		return os;
+	}
+	
+	private String getWS(IFeature feature) {
+		String ws = feature.getWS();
+		if (ws == null || ws.trim().length() == 0 || ws.indexOf(',') != -1 || ws.equals("*"))
+			return TargetPlatform.getWS();
+		return ws;
+	}
+	
+	private String getOSArch(IFeature feature) {
+		String arch = feature.getArch();
+		if (arch == null || arch.trim().length() == 0 || arch.indexOf(',') != -1 || arch.equals("*"))
+			return TargetPlatform.getOSArch();
+		return arch;
+	}
+	
 	private void createDestination() throws InvocationTargetException {
 		File file = new File(fDestinationDirectory);
 		if (!file.exists() || !file.isDirectory()) {
@@ -155,24 +181,24 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		}
 	}
 	
-	protected void doExport(String featureID, String version, String featureLocation, IProgressMonitor monitor)
+	protected void doExport(String featureID, String version, String featureLocation, String os, String ws, String arch, IProgressMonitor monitor)
 		throws CoreException, InvocationTargetException {
 		monitor.beginTask("", 5); //$NON-NLS-1$
 		monitor.setTaskName(PDEPlugin.getResourceString("FeatureExportJob.taskName")); //$NON-NLS-1$
 		try {
-			HashMap properties = createBuildProperties();
-			makeScript(featureID, version, featureLocation);
+			HashMap properties = createBuildProperties(os, ws, arch);
+			makeScript(featureID, version, os, ws, arch, featureLocation);
 			monitor.worked(1);
 			runScript(getBuildScriptName(featureLocation), getBuildExecutionTargets(),
 					properties, new SubProgressMonitor(monitor, 2));
-			runScript(getAssemblyScriptName(featureID, featureLocation), new String[]{"main"}, //$NON-NLS-1$
+			runScript(getAssemblyScriptName(featureID, os, ws, arch, featureLocation), new String[]{"main"}, //$NON-NLS-1$
 					properties, new SubProgressMonitor(monitor, 2));
 		} finally {
 			monitor.done();
 		}
 	}
 
-	protected HashMap createBuildProperties() {
+	protected HashMap createBuildProperties(String os, String ws, String arch) {
 		if (fBuildProperties == null) {
 			fBuildProperties = new HashMap(15);
 			fBuildProperties.put(IXMLConstants.PROPERTY_BUILD_TEMP, fBuildTempLocation + "/destination"); //$NON-NLS-1$
@@ -180,9 +206,9 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 			fBuildProperties.put(IXMLConstants.PROPERTY_FEATURE_TEMP_FOLDER, fBuildTempLocation + "/destination"); //$NON-NLS-1$
 			fBuildProperties.put(IXMLConstants.PROPERTY_INCLUDE_CHILDREN, "true"); //$NON-NLS-1$
 			fBuildProperties.put("eclipse.running", "true"); //$NON-NLS-1$ //$NON-NLS-2$
-			fBuildProperties.put(IXMLConstants.PROPERTY_BASE_OS, TargetPlatform.getOS());
-			fBuildProperties.put(IXMLConstants.PROPERTY_BASE_WS, TargetPlatform.getWS());
-			fBuildProperties.put(IXMLConstants.PROPERTY_BASE_ARCH, TargetPlatform.getOSArch());
+			fBuildProperties.put(IXMLConstants.PROPERTY_BASE_OS, os);
+			fBuildProperties.put(IXMLConstants.PROPERTY_BASE_WS, ws);
+			fBuildProperties.put(IXMLConstants.PROPERTY_BASE_ARCH, arch);
 			fBuildProperties.put(IXMLConstants.PROPERTY_BASE_NL, TargetPlatform.getNL());
 			fBuildProperties.put(IXMLConstants.PROPERTY_BOOTCLASSPATH, BaseBuildAction.getBootClasspath());
 			IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
@@ -208,7 +234,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		return fBuildProperties;
 	}
 	
-	private void makeScript(String featureID, String versionId, String featureLocation) throws CoreException {
+	private void makeScript(String featureID, String versionId, String os, String ws, String arch, String featureLocation) throws CoreException {
 		BuildScriptGenerator generator = new BuildScriptGenerator();
 		generator.setBuildingOSGi(PDECore.getDefault().getModelManager().isOSGiRuntime());
 		generator.setChildren(true);
@@ -224,7 +250,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		BuildScriptGenerator.setOutputFormat(format);
 		BuildScriptGenerator.setForceUpdateJar(fExportType == EXPORT_AS_UPDATE_JARS);
 		BuildScriptGenerator.setEmbeddedSource(fExportSource && fExportType != EXPORT_AS_UPDATE_JARS);
-		BuildScriptGenerator.setConfigInfo(TargetPlatform.getOS() + "," + TargetPlatform.getWS() + "," + TargetPlatform.getOSArch()); //$NON-NLS-1$ //$NON-NLS-2$
+		BuildScriptGenerator.setConfigInfo(os + "," + ws + "," + arch); //$NON-NLS-1$ //$NON-NLS-2$
 		generator.generate();	
 	}
 	
@@ -250,10 +276,10 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		return featureLocation + Path.SEPARATOR + "build.xml"; //$NON-NLS-1$
 	}
 	
-	protected String getAssemblyScriptName(String featureID, String featureLocation) {
+	protected String getAssemblyScriptName(String featureID, String os, String ws, String arch, String featureLocation) {
 		return featureLocation + Path.SEPARATOR + "assemble." //$NON-NLS-1$
-				+ featureID + "." + TargetPlatform.getOS() + "." //$NON-NLS-1$ //$NON-NLS-2$
-				+ TargetPlatform.getWS() + "." + TargetPlatform.getOSArch() //$NON-NLS-1$
+				+ featureID + "." + os + "." //$NON-NLS-1$ //$NON-NLS-2$
+				+ ws + "." + arch //$NON-NLS-1$
 				+ ".xml"; //$NON-NLS-1$
 	}
 	

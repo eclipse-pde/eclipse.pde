@@ -15,6 +15,7 @@ import java.lang.reflect.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
 
 
 public class PluginExportJob extends FeatureExportJob {
@@ -41,7 +42,7 @@ public class PluginExportJob extends FeatureExportJob {
 			fFeatureLocation = fBuildTempLocation + File.separator + featureID;
 			createFeature(featureID, fFeatureLocation);
 			createBuildPropertiesFile(fFeatureLocation);
-			doExport(featureID, null, fFeatureLocation, monitor);
+			doExport(featureID, null, fFeatureLocation, TargetPlatform.getOS(), TargetPlatform.getWS(), TargetPlatform.getOSArch(), monitor);
 		} catch (IOException e) {
 		} finally {
 			for (int i = 0; i < fItems.length; i++) {
