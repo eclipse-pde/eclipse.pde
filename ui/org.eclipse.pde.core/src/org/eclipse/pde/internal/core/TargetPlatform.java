@@ -204,7 +204,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 			
 			bWriter.write("#Eclipse Runtime Configuration File");
 			bWriter.newLine();
-			bWriter.write("osgi.installLocation=file:" + ExternalModelManager.getEclipseHome().toString());
+			bWriter.write("osgi.install.area=file:" + ExternalModelManager.getEclipseHome().toString());
 			bWriter.newLine();
 			
 			if (primaryFeatureId != null) {
