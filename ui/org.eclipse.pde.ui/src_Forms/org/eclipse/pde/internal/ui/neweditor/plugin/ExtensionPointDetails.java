@@ -1,23 +1,34 @@
-/*
- * Created on Jan 29, 2004
- *
- * To change the template for this generated file go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.pde.internal.ui.neweditor.plugin;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+import org.eclipse.jface.wizard.*;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.neweditor.*;
-import org.eclipse.pde.internal.ui.neweditor.FormEntryAdapter;
-import org.eclipse.pde.internal.ui.newparts.FormEntry;
-import org.eclipse.swt.SWT;
+import org.eclipse.pde.internal.ui.newparts.*;
+import org.eclipse.pde.internal.ui.search.*;
+import org.eclipse.pde.internal.ui.util.*;
+import org.eclipse.pde.internal.ui.wizards.extension.*;
+import org.eclipse.swt.*;
+import org.eclipse.swt.custom.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.part.*;
 /**
  * @author dejan
  * 
@@ -138,7 +149,21 @@ public class ExtensionPointDetails extends AbstractFormPart implements IDetailsP
 				PDEPluginImages.DESC_PSEARCH_OBJ));
 		rtext.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
-				System.out.println("Link active: " + e.getHref());
+				if (e.getHref().equals("search")) {
+					FindReferencesAction pluginReferencesAction = new FindReferencesAction(input);
+					pluginReferencesAction.run();
+				} else if (e.getHref().equals("schema")){
+					IProject project = getPage().getPDEEditor().getCommonProject();
+					IFile file = project.getFile(schema.getValue());
+					if (file.exists())
+						openSchemaFile(file);
+					else
+						generateSchema();
+					
+				} else {
+					ShowDescriptionAction showDescAction = new ShowDescriptionAction(input);
+					showDescAction.run();
+				}
 			}
 		});
 		
@@ -173,6 +198,43 @@ public class ExtensionPointDetails extends AbstractFormPart implements IDetailsP
 		rtextData = hasSchema ? SCHEMA_RTEXT_DATA : NO_SCHEMA_RTEXT_DATA;
 		rtext.setText(rtextData, true, false);
 		getManagedForm().getForm().reflow(true);
+	}
+	private void openSchemaFile(final IFile file) {
+		final IWorkbenchWindow ww = PDEPlugin.getActiveWorkbenchWindow();
+
+		Display d = ww.getShell().getDisplay();
+		d.asyncExec(new Runnable() {
+			public void run() {
+				try {
+					String editorId = PDEPlugin.SCHEMA_EDITOR_ID;
+					ww.getActivePage().openEditor(
+						new FileEditorInput(file),
+						editorId);
+				} catch (PartInitException e) {
+					PDEPlugin.logException(e);
+				}
+			}
+		});
+	}
+	
+	private void generateSchema() {
+		final IProject project = getPage().getPDEEditor().getCommonProject();
+		BusyIndicator
+			.showWhile(getPage().getPartControl().getDisplay(), new Runnable() {
+			public void run() {
+				NewExtensionPointWizard wizard =
+					new NewExtensionPointWizard(
+						project,
+						(IPluginModelBase) getPage().getModel());
+				WizardDialog dialog =
+					new WizardDialog(
+						PDEPlugin.getActiveWorkbenchShell(),
+						wizard);
+				dialog.create();
+				SWTUtil.setDialogSize(dialog, 400, 450);
+				dialog.open();
+			}
+		});
 	}
 	/*
 	 * (non-Javadoc)
