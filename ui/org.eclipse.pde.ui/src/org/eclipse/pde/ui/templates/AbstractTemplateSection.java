@@ -512,9 +512,9 @@ public abstract class AbstractTemplateSection
 						String line = preBuffer.toString().trim();
 						preStack.processLine(line);
 						continue;
-					} else {
-						preBuffer.append(c);
-					}
+					} 
+					preBuffer.append(c);
+					
 					continue;
 				}
 
