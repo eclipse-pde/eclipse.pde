@@ -15,6 +15,7 @@ import java.util.*;
 
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.wizard.*;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.widgets.*;
@@ -67,7 +68,7 @@ public class PatchSpecPage extends BaseFeatureSpecPage {
 			setErrorMessage(PDEPlugin.getResourceString(KEY_LIBRARY_MISSING));
 			return;
 		}
-		IFeatureModel[] featureModels = getAllFeatureModels();
+		IFeatureModel[] featureModels = PDECore.getDefault().getModelManager().getAllFeatures();
 		
 		for (int i = 0; i < featureModels.length; i++) {
 		    IFeature feature = featureModels[i].getFeature();
@@ -82,7 +83,7 @@ public class PatchSpecPage extends BaseFeatureSpecPage {
 		}
 		
 		fFeatureToPatch = null;
-		setMessage(PDEPlugin.getFormattedMessage("NewFeaturePatch.SpecPage.notFound", featureIdText.getText()), DialogPage.WARNING); //$NON-NLS-1$
+		setMessage(PDEPlugin.getFormattedMessage("NewFeaturePatch.SpecPage.notFound", featureIdText.getText()), IMessageProvider.WARNING); //$NON-NLS-1$
 		setErrorMessage(null);
 		getContainer().updateButtons();
 		return;

@@ -47,7 +47,7 @@ public class IncludeFeaturesWizardPage extends WizardPage {
 		extends DefaultContentProvider
 		implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
-			return getChoices();
+			return PDECore.getDefault().getModelManager().getAllFeatures();
 		}
 	}
 	
@@ -144,11 +144,6 @@ public class IncludeFeaturesWizardPage extends WizardPage {
 	private void initialize() {
 		pluginViewer.setInput(model.getFeature());
 		checkboxTablePart.setSelection(new Object[0]);
-	}
-
-	private Object[] getChoices() {
-		WorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
-		return mng.getFeatureModels();
 	}
 
 	public boolean finish() {

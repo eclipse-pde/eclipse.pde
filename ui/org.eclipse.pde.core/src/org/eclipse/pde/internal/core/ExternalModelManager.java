@@ -9,12 +9,18 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.feature.ExternalFeatureModel;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 
 public class ExternalModelManager {
 	private List fModels;
@@ -120,6 +126,61 @@ public class ExternalModelManager {
 		return allModels;
 	}
 	
+	public IFeatureModel[] getAllFeatureModels(){
+		IPath targetPath = ExternalModelManager.getEclipseHome();
+		File mainFeatureDir = targetPath.append("features").toFile(); //$NON-NLS-1$
+		if (mainFeatureDir.exists() == false || !mainFeatureDir.isDirectory())
+			return null;
+		File[] featureDirs = mainFeatureDir.listFiles();
+		
+		PluginVersionIdentifier bestVid = null;
+		File bestDir = null;
+		ArrayList allModels = new ArrayList();
+		
+		for (int i = 0; i < featureDirs.length; i++) {
+			bestVid = null;
+			bestDir = null;
+			File featureDir = featureDirs[i];
+			String name = featureDir.getName();
+			if (featureDir.isDirectory()) {
+				int loc = name.lastIndexOf("_"); //$NON-NLS-1$
+				if (loc == -1)
+					continue;
+				String version = name.substring(loc + 1);
+				PluginVersionIdentifier vid =
+					new PluginVersionIdentifier(version);
+				if (bestVid == null || vid.isGreaterThan(bestVid)) {
+					bestVid = vid;
+					bestDir = featureDir;
+				}
+			}
+			
+			if (bestVid == null)
+				return null;
+			// We have a feature and know the version
+			File manifest = new File(bestDir, "feature.xml"); //$NON-NLS-1$
+			ExternalFeatureModel model = new ExternalFeatureModel();
+			model.setInstallLocation(bestDir.getAbsolutePath());
+			
+			InputStream stream = null;
+			boolean error = false;
+			try {
+				stream = new FileInputStream(manifest);
+				model.load(stream, false);
+			} catch (Exception e) {
+				error = true;
+			}
+			if (stream != null) {
+				try {
+					stream.close();
+				} catch (IOException e) {
+				}
+			}
+			if (!(error || !model.isLoaded()))
+				allModels.add(model);
+		}
+		return (IFeatureModel[])allModels.toArray(new IFeatureModel[allModels.size()]);
+	}
 	private void initializeAllModels() {
 		Preferences pref = PDECore.getDefault().getPluginPreferences();
 		String saved = pref.getString(ICoreConstants.CHECKED_PLUGINS);
