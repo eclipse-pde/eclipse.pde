@@ -125,7 +125,7 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
 		Composite container = createClientContainer(section, 2, toolkit);
-		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
+		createViewerPartControl(container, SWT.SINGLE, 2, toolkit);
 		TablePart tablePart = getTablePart();
 		fPackageViewer = tablePart.getTableViewer();
 		fPackageViewer.setContentProvider(new ExportPackageContentProvider());
