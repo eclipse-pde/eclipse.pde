@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.ui.views.properties.*;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.editor.schema.ICloneablePropertySource;
 /**
  *
  */
