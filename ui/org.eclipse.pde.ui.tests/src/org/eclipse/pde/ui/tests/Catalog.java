@@ -26,4 +26,8 @@ public class Catalog {
 	public static final String IMPORT_BINARY_FEATURE_1 = "macro12.emc";
 	public static final String IMPORT_BINARY_FEATURE_2 = "macro13.emc";
 	public static final String IMPORT_SOURCE_FEATURE = "macro14.emc";
+	public static final String SIMPLE_FEATURE_1 = "macro15.emc";
+	public static final String SIMPLE_FEATURE_2 = "macro16.emc";
+	public static final String FEATURE_WITH_PLUGIN_1 = "macro17.emc";
+	public static final String FEATURE_WITH_PLUGIN_2 = "macro18.emc";
 }

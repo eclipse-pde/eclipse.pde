@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<macro version="0.1">
+   <shell id="org.eclipse.ui.internal.WorkbenchWindow" return-code="0">
+      <command type="select" contextId="menus" widgetId="contribclass/org.eclipse.ui.actions.NewWizardMenu">
+         <parent widgetId="file"/>
+         <parent widgetId="new"/>
+      </command>
+      <shell id="org.eclipse.jface.wizard.WizardDialog" return-code="0">
+         <command type="item-select" contextId="wizard-page/newWizardSelectionPage" widgetId="org.eclipse.swt.widgets.Tree#1">
+            <item path="org.eclipse.jdt.ui.wizards.JavaProjectWizard"/>
+         </command>
+         <command type="item-expand" contextId="wizard-page/newWizardSelectionPage" widgetId="org.eclipse.swt.widgets.Tree#1" value="true">
+            <item path="org.eclipse.pde.PDE"/>
+         </command>
+         <command type="item-select" contextId="wizard-page/newWizardSelectionPage" widgetId="org.eclipse.swt.widgets.Tree#1">
+            <item path="org.eclipse.pde.ui.NewFeatureProjectWizard"/>
+         </command>
+         <command type="select" contextId="wizard" widgetId="org.eclipse.swt.widgets.Button#ButtonId=15"/>
+         <command type="modify" contextId="wizard-page/main" widgetId="org.eclipse.swt.widgets.Text#1">
+         com.example.test.feature
+         </command>
+         <command type="select" contextId="wizard" widgetId="org.eclipse.swt.widgets.Button#ButtonId=15"/>
+         <command type="modify" contextId="wizard-page/specPage" widgetId="org.eclipse.swt.widgets.Text#1">
+         com.example.test.feature
+         </command>
+         <command type="focus" contextId="wizard" widgetId="org.eclipse.swt.widgets.Button#ButtonId=14"/>
+         <command type="modify" contextId="wizard-page/specPage" widgetId="org.eclipse.swt.widgets.Text#2">
+         com.example.test.feature
+         </command>
+         <command type="modify" contextId="wizard-page/specPage" widgetId="org.eclipse.swt.widgets.Text#3">
+         1.0.0
+         </command>
+         <command type="focus" contextId="wizard-page/specPage" widgetId="org.eclipse.swt.widgets.Text#1"/>
+         <command type="modify" contextId="wizard-page/specPage" widgetId="org.eclipse.swt.widgets.Text#2">
+         Test Feature
+         </command>
+         <command type="modify" contextId="wizard-page/specPage" widgetId="org.eclipse.swt.widgets.Text#3">
+         1.0.1
+         </command>
+         <command type="modify" contextId="wizard-page/specPage" widgetId="org.eclipse.swt.widgets.Text#4">
+         Eclipse.org
+         </command>
+         <command type="select" contextId="wizard-page/specPage" widgetId="org.eclipse.swt.widgets.Button#1" selection="true"/>
+         <command type="modify" contextId="wizard-page/specPage" widgetId="org.eclipse.swt.widgets.Text#5">
+         handler.jar
+         </command>
+         <command type="select" contextId="wizard" widgetId="org.eclipse.swt.widgets.Button#ButtonId=16"/>
+         <command type="wait"/>
+         <command type="focus" contextId="wizard" widgetId="org.eclipse.swt.widgets.Button#ButtonId=16"/>
+      </shell>
+      <command type="focus" contextId="editor/org.eclipse.pde.ui.featureEditor/feature.xml" widgetId="org.eclipse.ui.forms.widgets.Form#1"/>
+   </shell>
+</macro>
