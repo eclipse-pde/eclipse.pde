@@ -120,6 +120,7 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 			String computedName = getComputedName(configType.getName());
 			ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, computedName);  //$NON-NLS-1$
 			wc.setAttribute(ILauncherSettings.LOCATION + "0", BasicLauncherTab.getDefaultWorkspace()); //$NON-NLS-1$
+			wc.setAttribute(ILauncherSettings.PROGARGS, BasicLauncherTab.getDefaultProgramArguments());
 			wc.setAttribute(ILauncherSettings.VMINSTALL, JavaRuntime.getDefaultVMInstall().getName());
 			String appName = "org.eclipse.ui.workbench"; //$NON-NLS-1$
 			wc.setAttribute(ILauncherSettings.APPLICATION, appName);
