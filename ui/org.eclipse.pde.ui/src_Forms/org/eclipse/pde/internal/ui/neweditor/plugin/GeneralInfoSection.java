@@ -92,8 +92,13 @@ public class GeneralInfoSection extends PDESection {
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText(PDEPlugin
 				.getResourceString("ManifestEditor.PluginSpecSection.title"));
-		section.setDescription(PDEPlugin
-				.getResourceString("ManifestEditor.PluginSpecSection.desc"));
+		String fileName = ((ManifestEditor) getPage().getEditor()).getEditorInput().getName();
+		if (fileName.equals("plugin.xml"))
+			section.setDescription(PDEPlugin
+					.getResourceString("ManifestEditor.PluginSpecSection.desc"));
+		else if (fileName.equals("fragment.xml"))
+			section.setDescription(PDEPlugin
+					.getResourceString("ManifestEditor.PluginSpecSection.fdesc"));
 		Composite client = toolkit.createComposite(section);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = toolkit.getBorderStyle() != SWT.NULL ? 0 : 2;
