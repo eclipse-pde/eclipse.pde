@@ -51,8 +51,8 @@ public class AlertSection
 			if (project == null)
 				return true;
 			if (resource.getProject().equals(ourProject)) {
-				if ((delta.getKind() | IResourceDelta.CHANGED) != 0) {
-					if ((delta.getFlags() | IResourceDelta.MARKERS) != 0) {
+				if ((delta.getKind() & IResourceDelta.CHANGED) != 0) {
+					if ((delta.getFlags() & IResourceDelta.MARKERS) != 0) {
 						markersChanged = true;
 						return false;
 					}

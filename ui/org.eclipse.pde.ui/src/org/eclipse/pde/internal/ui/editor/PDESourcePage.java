@@ -106,6 +106,8 @@ public Control getControl() {
 	return control;
 }
 public PDEMultiPageEditor getEditor() {
+	if (editor.getEditorInput() != getEditorInput())
+		editor.setInput(getEditorInput());
 	return editor;
 }
 public String getLabel() {

@@ -17,6 +17,7 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.swt.SWTError;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -557,8 +558,30 @@ public abstract class PDEMultiPageEditor
 	public boolean canPasteFromClipboard() {
 		IPDEEditorPage page = getCurrentPage();
 		if (page instanceof PDEFormPage) {
-			return page.canPaste(getClipboard());
+			return hasKnownTypes() && page.canPaste(getClipboard());
 		}
 		return false;
 	}
+	
+	protected boolean hasKnownTypes() {
+		// defect 18146
+		try {
+			Object data =
+				getClipboard().getContents(ModelDataTransfer.getInstance());
+			return (data != null);
+		} catch (SWTError e) {
+			return false;
+		}
+	}
+	
+	public boolean canCopy(ISelection selection) {
+		return selection != null && !selection.isEmpty();
+	}
+	/**
+	 * @see org.eclipse.ui.part.EditorPart#setInput(IEditorInput)
+	 */
+	public void setInput(IEditorInput input) {
+		super.setInput(input);
+	}
+
 }

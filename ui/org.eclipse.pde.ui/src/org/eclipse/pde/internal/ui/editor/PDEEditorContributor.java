@@ -71,7 +71,7 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 			setText(PDEPlugin.getResourceString(ACTIONS_CUT));
 		}
 		public void selectionChanged(ISelection selection) {
-			setEnabled(isEditable() && selection != null && !selection.isEmpty());
+			setEnabled(isEditable() && editor.canCopy(selection));
 		}
 	}
 
@@ -81,7 +81,7 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 			setText(PDEPlugin.getResourceString(ACTIONS_COPY));
 		}
 		public void selectionChanged(ISelection selection) {
-			setEnabled(selection != null && !selection.isEmpty());
+			setEnabled(editor.canCopy(selection));
 		}
 	}
 
@@ -92,15 +92,7 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 			//selectionChanged(null);
 		}
 		public void selectionChanged(ISelection selection) {
-			boolean enabled = isEditable();
-			if (enabled) {
-				boolean knownType = hasKnownTypes(editor.getClipboard());
-				enabled = knownType;
-				if (knownType) {
-					enabled = editor.canPasteFromClipboard();
-				}
-			}
-			setEnabled(enabled);
+			setEnabled(isEditable() && editor.canPasteFromClipboard());
 		}
 	}
 
@@ -135,17 +127,6 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 		mng.add(cutAction);
 		mng.add(copyAction);
 		mng.add(pasteAction);
-	}
-	
-	protected boolean hasKnownTypes(Clipboard clipboard) {
-		// defect 18146
-		try {
-			Object data =
-				clipboard.getContents(ModelDataTransfer.getInstance());
-			return (data != null);
-		} catch (SWTError e) {
-			return false;
-		}
 	}
 	
 	public void contextMenuAboutToShow(IMenuManager mng) {

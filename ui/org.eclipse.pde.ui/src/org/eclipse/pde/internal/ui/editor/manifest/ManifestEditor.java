@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.util.*;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.plugin.*;
@@ -20,7 +21,9 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.preferences.*;
 import org.eclipse.pde.internal.ui.wizards.templates.TemplateEditorInput;
+import org.eclipse.swt.SWTError;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.FileEditorInput;
@@ -123,7 +126,7 @@ public class ManifestEditor
 			stream.close();
 		} catch (IOException e) {
 		}
-		storageModel=true;
+		storageModel = true;
 		return model;
 	}
 	protected Object createModel(Object input) throws CoreException {
@@ -229,8 +232,7 @@ public class ManifestEditor
 			modelProvider.disconnect(buildModel.getUnderlyingResource(), this);
 			((WorkspacePluginModelBase) model).setBuildModel(null);
 			modelProvider.disconnect(model.getUnderlyingResource(), this);
-		}
-		else {
+		} else {
 			model.dispose();
 		}
 		PDEPlugin
@@ -401,5 +403,29 @@ public class ManifestEditor
 				}
 			});
 		}
+	}
+	/**
+	 * @see org.eclipse.pde.internal.ui.editor.PDEMultiPageEditor#canCopy(ISelection)
+	 */
+	public boolean canCopy(ISelection selection) {
+		return (getCurrentPage() instanceof ManifestFormPage)
+			? true
+			: super.canCopy(selection);
+	}
+
+	/**
+	 * @see org.eclipse.pde.internal.ui.editor.PDEMultiPageEditor#hasKnownTypes()
+	 */
+	protected boolean hasKnownTypes() {
+		if (getCurrentPage() instanceof ManifestFormPage) {
+			try {
+				Object data =
+					getClipboard().getContents(TextTransfer.getInstance());
+				return (data != null);
+			} catch (SWTError e) {
+				return false;
+			}
+		}
+		return super.hasKnownTypes();
 	}
 }
