@@ -257,7 +257,7 @@ public class FeatureBuildOperation implements IRunnableWithProgress {
 		createLogFile(buildModel);
 		runner.setBuildFileLocation(scriptFile.getLocation().toOSString());
 		runner.setArguments(computeBuildArguments(buildModel));
-		URL[] customURLs = computeCustomClasspath();
+		//URL[] customURLs = computeCustomClasspath();
 		//if (customURLs!=null)
 		//runner.setCustomClasspath(customURLs);
 		runner.setExecutionTargets(computeTargets());

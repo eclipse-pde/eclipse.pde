@@ -114,7 +114,7 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard {
 			}
 
 		monitor.beginTask("", items.length + 1);
-		ArrayList statusEntries = new ArrayList();
+
 		for (int i = 0; i < items.length; i++) {
 			IModel model = (IModel) items[i];
 			doExport(

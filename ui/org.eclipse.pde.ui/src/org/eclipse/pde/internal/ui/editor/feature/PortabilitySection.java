@@ -120,9 +120,6 @@ public class PortabilitySection extends PDEFormSection {
 		layout.horizontalSpacing = 6;
 		container.setLayout(layout);
 
-		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
-		final IFeature feature = model.getFeature();
-
 		osText =
 			new FormEntry(
 				createText(

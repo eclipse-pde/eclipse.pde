@@ -278,9 +278,6 @@ public class ExternalPluginsBlock {
 			return;
 
 		pluginListViewer.setInput(PDECore.getDefault().getExternalModelManager());
-		String saved =
-			PDECore.getDefault().getPluginPreferences().getString(
-				ICoreConstants.CHECKED_PLUGINS);
 		IPluginModelBase[] allModels = getAllModels();
 
 		Vector selection = new Vector();

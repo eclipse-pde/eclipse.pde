@@ -78,8 +78,6 @@ public class TargetPlatformPreferencePage
 		container.setLayout(layout);
 		container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		Label label;
-
 		Group group = new Group(container, SWT.NULL);
 		group.setText(PDEPlugin.getResourceString(KEY_TARGET_MODE));
 		group.setLayout(new GridLayout());

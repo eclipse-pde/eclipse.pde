@@ -79,8 +79,6 @@ public class FeatureImportWizardFirstPage extends StatusWizardPage {
 	 * @see IDialogPage#createControl(Composite)
 	 */
 	public void createControl(Composite parent) {
-		Label label;
-		GridData gd;
 		initializeDialogUnits(parent);
 
 		Composite composite = new Composite(parent, SWT.NONE);
@@ -94,7 +92,6 @@ public class FeatureImportWizardFirstPage extends StatusWizardPage {
 		runtimeLocationButton.setText(
 			PDEPlugin.getResourceString(KEY_RUNTIME_LOCATION));
 
-		int wizardClientWidth = parent.getSize().x - 2 * layout.marginWidth;
 		otherLocationLabel = new Label(composite, SWT.NULL);
 		otherLocationLabel.setText(
 			PDEPlugin.getResourceString(KEY_OTHER_FOLDER));
