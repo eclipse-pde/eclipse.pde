@@ -114,6 +114,12 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		private MissingProperties(){
 			//nothing to do;
 		}
+		public synchronized Object setProperty(String key, String value) {
+			throw new UnsupportedOperationException();
+		}
+		public synchronized Object put(Object key, Object value) {
+			throw new UnsupportedOperationException();
+		}
 		public static MissingProperties getInstance() {
 			if (singleton == null)
 				singleton = new MissingProperties();

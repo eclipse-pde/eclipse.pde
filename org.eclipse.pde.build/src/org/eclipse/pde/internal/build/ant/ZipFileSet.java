@@ -14,7 +14,8 @@ public class ZipFileSet extends FileSet {
 
 	String prefix;
 	boolean file;
-
+	String permission;
+	
 	/**
 	 * @param dir
 	 * @param defaultexcludes
@@ -23,13 +24,15 @@ public class ZipFileSet extends FileSet {
 	 * @param excludes
 	 * @param excludesfile
 	 * @param casesensitive
+	 * @param permission
 	 */
-	public ZipFileSet(String dir, boolean file, String defaultexcludes, String includes, String includesfile, String excludes, String excludesfile, String prefix, String casesensitive) {
+	public ZipFileSet(String dir, boolean file, String defaultexcludes, String includes, String includesfile, String excludes, String excludesfile, String prefix, String casesensitive, String permission) {
 		super(dir, defaultexcludes, includes, includesfile, excludes, excludesfile, casesensitive);
 		this.prefix = prefix;
 		this.file = file;
+		this.permission = permission;
 	}
-
+	
 	protected void print(AntScript script) {
 		script.printTab();
 		script.print("<zipfileset"); //$NON-NLS-1$
@@ -47,6 +50,12 @@ public class ZipFileSet extends FileSet {
 			script.printAttribute("fullpath", prefix, false); //$NON-NLS-1$
 		else
 			script.printAttribute("prefix", prefix, false); //$NON-NLS-1$
+		
+		if (file)
+			script.printAttribute("filemode", permission, false); //$NON-NLS-1$
+		else 
+			script.printAttribute("dirmode", permission, false); //$NON-NLS-1$
+		
 		script.println("/>"); //$NON-NLS-1$
 	}
 }

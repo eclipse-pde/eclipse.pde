@@ -23,8 +23,8 @@ public class TarFileSet extends ZipFileSet {
 	 * @param prefix
 	 * @param casesensitive
 	 */
-	public TarFileSet(String dir, boolean file, String defaultexcludes, String includes, String includesfile, String excludes, String excludesfile, String prefix, String casesensitive) {
-		super(dir, file, defaultexcludes, includes, includesfile, excludes, excludesfile, prefix, casesensitive);
+	public TarFileSet(String dir, boolean file, String defaultexcludes, String includes, String includesfile, String excludes, String excludesfile, String prefix, String casesensitive, String permission) {
+		super(dir, file, defaultexcludes, includes, includesfile, excludes, excludesfile, prefix, casesensitive, null);
 	}
 
 	protected void print(AntScript script) {
@@ -44,6 +44,12 @@ public class TarFileSet extends ZipFileSet {
 			script.printAttribute("fullpath", prefix, false); //$NON-NLS-1$
 		else
 			script.printAttribute("prefix", prefix, false); //$NON-NLS-1$
+		
+		if (file)
+			script.printAttribute("filemode", permission, false); //$NON-NLS-1$
+		else 
+			script.printAttribute("dirmode", permission, false); //$NON-NLS-1$
+		
 		script.println("/>"); //$NON-NLS-1$
 	}
 }
