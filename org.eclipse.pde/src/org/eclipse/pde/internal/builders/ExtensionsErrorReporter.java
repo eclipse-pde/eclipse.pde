@@ -273,18 +273,7 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 
 	protected void validateResourceAttribute(Element element, Attr attr) {
 		int severity = CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_RESOURCE);
-		if (severity == CompilerFlags.IGNORE)
-			return;
-
-		String[] resourcePaths = getResourcePaths(attr.getValue());
-		IProject project = fFile.getProject();
-		IResource resource = null;
-		for (int i = 0; i < resourcePaths.length; i++) {
-			resource = project.findMember(resourcePaths[i]);
-			if (resource != null)
-				break;
-		}
-		if (resource == null) {
+		if (severity != CompilerFlags.IGNORE && !resourceExists(attr.getValue())) {
 			report(PDE.getFormattedMessage(
 							"Builders.Manifest.resource", new String[] { attr.getValue(), attr.getName() }),  //$NON-NLS-1$
 							getLine(element,
@@ -292,6 +281,47 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 							severity);
 		}
 	}
+	
+	private boolean resourceExists(String location) {
+		IPath path = new Path(location);
+		if ("platform:".equals(path.getDevice()) && path.segmentCount() > 2) {
+			if ("plugin".equals(path.segment(0))) {
+				String id = path.segment(1);
+				IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(id);
+				if (model != null && model.isEnabled()) {
+					path = path.setDevice(null).removeFirstSegments(2);
+					path = new Path(model.getInstallLocation()).append(path);
+					location = path.toString();
+				}
+			}
+		}		
+		
+		ArrayList paths = new ArrayList();		
+		if (location.indexOf("$nl$") != -1) { //$NON-NLS-1$
+			String language = TargetPlatform.getNL().substring(0, 2);
+			String country = TargetPlatform.getNL().substring(3);
+			paths.add(location
+					.replaceAll(
+							"\\$nl\\$", "nl" + IPath.SEPARATOR + language + IPath.SEPARATOR + country)); //$NON-NLS-1$ //$NON-NLS-2$
+			paths.add(location.replaceAll(
+					"\\$nl\\$", "nl" + IPath.SEPARATOR + language)); //$NON-NLS-1$ //$NON-NLS-2$
+			paths.add(location.replaceAll("\\$nl\\$", "")); //$NON-NLS-1$ //$NON-NLS-2$
+		} else {
+			paths.add(location);
+		}
+		
+		for (int i = 0; i < paths.size(); i++) {
+			IPath currPath = new Path(paths.get(i).toString());
+			if (currPath.isAbsolute() && currPath.toFile().exists())
+				return true;
+			if (!currPath.isAbsolute() && fFile.getProject().findMember(currPath) != null)
+				return true;
+		}
+		
+		return false;
+	}
+
+
 
 	protected void validateJavaAttribute(Element element, Attr attr) {
 		int severity = CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_CLASS);
@@ -383,22 +413,6 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 					element.getNodeName(), parent.getNodeName() }),
 					getLine(element), severity);
 		}
-	}
-
-	private String[] getResourcePaths(String path) {
-		if (path.indexOf("$nl$") != -1) { //$NON-NLS-1$
-			String language = TargetPlatform.getNL().substring(0, 2);
-			String country = TargetPlatform.getNL().substring(3);
-			String[] paths = new String[3];
-			paths[0] = path
-					.replaceAll(
-							"\\$nl\\$", "nl" + IPath.SEPARATOR + language + IPath.SEPARATOR + country); //$NON-NLS-1$ //$NON-NLS-2$
-			paths[1] = path.replaceAll(
-					"\\$nl\\$", "nl" + IPath.SEPARATOR + language); //$NON-NLS-1$ //$NON-NLS-2$
-			paths[2] = path.replaceAll("\\$nl\\$", ""); //$NON-NLS-1$ //$NON-NLS-2$
-			return paths;
-		}
-		return new String[] { path };
 	}
 
 }
