@@ -103,6 +103,7 @@ public class ManifestForm extends ScrollableSectionForm {
 		registerSection(requiresSection);
 		registerSection(extensionSection);
 		registerSection(extensionPointSection);
+		
 		if (((ManifestEditor)page.getEditor()).isFragmentEditor()	)
 			WorkbenchHelp.setHelp(parent,IHelpContextIds.MANIFEST_FRAGMENT_OVERVIEW);
 		else
@@ -118,9 +119,12 @@ public class ManifestForm extends ScrollableSectionForm {
 		}
 		super.initialize(model);
 		setHeadingText(name);
+		((Composite) getControl()).layout(true);
 	}
 	
 	public void setFocus() {
+		if(pluginSection!=null)
+			pluginSection.setFocus();		
 	}
 	
 	public void setHeadingText(String text) {
