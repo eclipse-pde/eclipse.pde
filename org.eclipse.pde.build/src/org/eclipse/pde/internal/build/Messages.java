@@ -67,7 +67,8 @@ public class Messages extends NLS {
 	
 	// assemble.xml
 	public static String assemble_jarUp;
-
+	public static String sign_Jar;
+	
 	// unsatisfied constraints
 	public static String unsatisfied_import;
 	public static String unsatisfied_required;

@@ -57,6 +57,7 @@ public interface IXMLConstants {
 	public static final String TARGET_EFFECTIVE_FETCH = "effectiveFetch"; //$NON-NLS-1$
 	public static final String TARGET_JARUP = "jarUp"; //$NON-NLS-1$
 	public static final String TARGET_JARING = "jarIng"; //$NON-NLS-1$
+	public static final String TARGET_JARSIGNING = "jarSigning";  //$NON-NLS-1$
 	public static final String TARGET_ROOTFILES_PREFIX = "rootFiles"; //$NON-NLS-1$
 	// properties
 	public static final String PROPERTY_ARCH = "arch"; //$NON-NLS-1$
@@ -118,4 +119,13 @@ public interface IXMLConstants {
 	public static final String PROPERTY_BUILD_TEMP = "buildTempFolder"; //$NON-NLS-1$
 
 	public static final String PROPERTY_ASSEMBLY_TMP = "assemblyTempDir"; //$NON-NLS-1$
+
+	//Jar signing properties
+	public static final String PROPERTY_SIGN_ALIAS = "sign.alias"; //$NON-NLS-1$
+	public static final String PROPERTY_SIGN_KEYSTORE = "sign.keystore";  //$NON-NLS-1$
+	public static final String PROPERTY_SIGN_STOREPASS ="sign.storepass"; //$NON-NLS-1$
+	
+	//JNLP generation properties
+	public static final String PROPERTY_JNLP_CODEBASE = "jnlp.codebase"; //$NON-NLS-1$
+	public static final String PROPERTY_JNLP_J2SE = "jnlp.j2se";  //$NON-NLS-1$
 }

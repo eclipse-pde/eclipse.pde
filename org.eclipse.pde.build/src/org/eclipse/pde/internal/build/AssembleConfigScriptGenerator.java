@@ -172,9 +172,13 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		script.printTargetDeclaration(TARGET_JARING, null, fileExists, null, null);
 		script.printZipTask(fileName + ".jar", fileName, false, false, null); //$NON-NLS-1$
 		script.printDeleteTask(fileName, null, null);
-		if (signJars)
-			script.println("<signjar jar=\"" + fileName + ".jar" + "\" alias=\"" + getPropertyFormat("sign.alias") + "\" keystore=\"" + getPropertyFormat("sign.keystore") + "\" storepass=\"" + getPropertyFormat("sign.storepass") + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ 
 
+		script.printTargetEnd();
+		script.printComment("End of the jarUp task"); //$NON-NLS-1$
+		
+		script.printComment("Beginning of the jar signing  target"); //$NON-NLS-1$
+		script.printTargetDeclaration(TARGET_JARSIGNING, null, null, null, Messages.sign_Jar);
+		script.println("<signjar jar=\"" + fileName + ".jar" + "\" alias=\"" + getPropertyFormat(PROPERTY_SIGN_ALIAS) + "\" keystore=\"" + getPropertyFormat(PROPERTY_SIGN_KEYSTORE) + "\" storepass=\"" + getPropertyFormat(PROPERTY_SIGN_STOREPASS) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ 
 		script.printTargetEnd();
 		script.printComment("End of the jarUp task"); //$NON-NLS-1$
 	}
@@ -282,6 +286,15 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		}
 	}
 
+	private void generateSignJarCall(String name, String version, byte type) {
+		if (!signJars)
+			return;
+		Map properties = new HashMap(2);
+		properties.put(PROPERTY_SOURCE, type == BUNDLE ? getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS) : getPropertyFormat(PROPERTY_ECLIPSE_FEATURES));
+		properties.put(PROPERTY_ELEMENT_NAME, name + '_' + version);
+		script.printAntCallTask(TARGET_JARSIGNING, null, properties);
+	}
+	
 	//generate the appropriate postProcessingCall
 	private void generatePostProcessingSteps(String name, String version, byte type) {
 		String style = (String) getFinalShape(name, version, type)[1];
@@ -290,13 +303,21 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			return;
 		if (FILE.equalsIgnoreCase(style)) {
 			generateJarUpCall(name, version, type);
-			String dir = type == BUNDLE ? getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS) : getPropertyFormat(PROPERTY_ECLIPSE_FEATURES);
-			String location = dir + '/' + name + '_' + version + ".jar"; //$NON-NLS-1$
-			if (type == FEATURE)
-				if (generateJnlp)
-					script.println("<eclipse.jnlpGenerator feature=\"" + location + "\"  codebase=\"" + getPropertyFormat("jnlp.codebase") + "\" j2se=\"" + getPropertyFormat("jnlp.j2se") + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ 
+			generateSignJarCall(name, version, type);
+			generateJNLPCall(name, version, type);
 			return;
 		}
+	}
+
+	private void generateJNLPCall(String name, String version, byte type) {
+		if (generateJnlp == false)
+			return;
+		if (type != FEATURE)
+			return;
+		
+		String dir = type == BUNDLE ? getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS) : getPropertyFormat(PROPERTY_ECLIPSE_FEATURES);
+		String location = dir + '/' + name + '_' + version + ".jar"; //$NON-NLS-1$
+		script.println("<eclipse.jnlpGenerator feature=\"" + location + "\"  codebase=\"" + getPropertyFormat(PROPERTY_JNLP_CODEBASE) + "\" j2se=\"" + getPropertyFormat(PROPERTY_JNLP_J2SE) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ 
 	}
 
 	//Get the unpack clause from the feature.xml
