@@ -117,6 +117,7 @@ public class WorkbenchLaunchConfigurationDelegate
 		programArgs.add(targetWorkspace);
 		
 		boolean useDefault = configuration.getAttribute(USECUSTOM, true);
+		boolean isOSGI = PDECore.getDefault().getModelManager().isOSGiRuntime();
 		if (configuration.getAttribute(USEFEATURES, false)) {
 			validateFeatures();
 			IPath installPath = PDEPlugin.getWorkspace().getRoot().getLocation();
@@ -141,13 +142,13 @@ public class WorkbenchLaunchConfigurationDelegate
 					primaryFeatureId);
 			programArgs.add("file:" + configFile.getPath());
 			
-			if (primaryFeatureId != null) {
+			if (primaryFeatureId != null && !isOSGI) {
 				programArgs.add("-feature");
 				programArgs.add(primaryFeatureId);
 			}
 		}
 		
-		if (LauncherUtils.isBootInSource()) {
+		if (LauncherUtils.isBootInSource() && !isOSGI) {
 			String bootPath = LauncherUtils.getBootPath();
 			if (bootPath != null) {
 				programArgs.add("-boot");

@@ -168,7 +168,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 		try {
 			File configDir = createWorkingDirectory(data);
 			if (PDECore.getDefault().getModelManager().isOSGiRuntime()) {
-				createConfigIniFile(configDir, pluginMap);
+				createConfigIniFile(configDir, pluginMap, primaryFeatureId);
 			}
 			File configFile = new File(configDir, "platform.cfg");
 			savePlatformConfiguration(configFile, pluginMap, primaryFeatureId);
@@ -191,7 +191,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 		}
 	}
 	
-	private static void createConfigIniFile(File configDir, TreeMap pluginMap) {
+	private static void createConfigIniFile(File configDir, TreeMap pluginMap, String primaryFeatureId) {
 		File file = new File(configDir, "config.ini");
 		try {
 			FileOutputStream stream = new FileOutputStream(file);
@@ -200,9 +200,16 @@ public class TargetPlatform implements IEnvironmentVariables {
 			
 			bWriter.write("#Eclipse Runtime Configuration File");
 			bWriter.newLine();
-			bWriter.write("osgi.installLocation" + "=file:" + ExternalModelManager.getEclipseHome(null).toString());
+			bWriter.write("osgi.installLocation=file:" + ExternalModelManager.getEclipseHome(null).toString());
 			bWriter.newLine();
-			bWriter.write("osgi.framework" + "=" + getLocation("org.eclipse.osgi", pluginMap));
+			
+			String splashPath = getLocation(primaryFeatureId, pluginMap);
+			if (splashPath != null) {
+				bWriter.write("osgi.splashPath=" + splashPath);
+				bWriter.newLine();
+			}
+				
+			bWriter.write("osgi.framework=" + getLocation("org.eclipse.osgi", pluginMap));
 			bWriter.newLine();
 			
 			StringBuffer buffer = new StringBuffer();
@@ -210,7 +217,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 			buffer.append(getOSGiLocation("org.eclipse.osgi.util", pluginMap) + ",");
 			buffer.append(getOSGiLocation("org.eclipse.core.runtime", pluginMap) + "@2,");
 			buffer.append(getOSGiLocation("org.eclipse.update.configurator", pluginMap) + "@3");
-			bWriter.write("osgi.bundles" + "=" + buffer.toString());
+			bWriter.write("osgi.bundles=" + buffer.toString());
 			bWriter.newLine();
 			
 			bWriter.write("eof=eof");
@@ -222,15 +229,17 @@ public class TargetPlatform implements IEnvironmentVariables {
 	}
 	
 	private static String getLocation(String id, TreeMap pluginMap) {
-		IPluginModelBase model = (IPluginModelBase)pluginMap.get(id);	
+		IPluginModelBase model = (IPluginModelBase)pluginMap.get(id);
+		if (model == null)
+			return null;
+		
 		IPath path = null;
 		IResource resource = model.getUnderlyingResource();
 		if (resource != null && resource.isLinked()) {
 			path = resource.getLocation().removeLastSegments(1).addTrailingSeparator();
 		} else {
 			path = new Path(model.getInstallLocation()).addTrailingSeparator();
-		}
-		
+		}	
 		return "file:" + path.toString();
 	}
 	
