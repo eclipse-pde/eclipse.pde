@@ -430,7 +430,7 @@ public class ClasspathUtilCore {
 		return source;
 	}
 
-	private static IBuild getBuild(IPluginModelBase model) throws CoreException {
+	protected static IBuild getBuild(IPluginModelBase model) throws CoreException {
 		IBuildModel buildModel = model.getBuildModel();
 		if (buildModel == null) {
 			IProject project = model.getUnderlyingResource().getProject();

@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.core.IClasspathContainer;
+import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 
@@ -187,6 +188,28 @@ public class ModelEntry extends PlatformObject {
 			&& !id.equals("org.apache.xerces"))
 			set.add("org.eclipse.core.boot");
 			set.add("org.eclipse.core.runtime");
+		try {
+			IBuild build = ClasspathUtilCore.getBuild(plugin.getPluginModel());
+			IBuildEntry entry = (build == null) ? null : build.getEntry("jars.extra.classpath");
+			if (entry != null) {
+				String[] tokens = entry.getTokens();
+				for (int i = 0; i < tokens.length; i++) {
+					IPath path = new Path(tokens[i]);
+					String device = path.getDevice();
+					if (device == null) {
+						if (path.segmentCount() > 1 && path.segment(0).equals(".."))
+							set.add(path.segment(1));
+					} else if (device.equals("platform:")) {
+						if (path.segmentCount() > 1 && path.segment(0).equals("plugin")) {
+							set.add(path.segment(1));
+						}
+					}					
+				}
+			}
+			
+		} catch (CoreException e) {
+			
+		}
 		return set;
 	}
 	
