@@ -24,6 +24,9 @@ public class UpdateBuildpathWizardPage extends StatusWizardPage {
 	private Image pluginImage = PDEPluginImages.get(PDEPluginImages.IMG_PLUGIN_OBJ);
 	private Image fragmentImage =
 		PDEPluginImages.get(PDEPluginImages.IMG_FRAGMENT_OBJ);
+	private Image errorPluginImage = PDEPluginImages.get(PDEPluginImages.IMG_ERR_PLUGIN_OBJ);
+	private Image errorFragmentImage =
+		PDEPluginImages.get(PDEPluginImages.IMG_ERR_FRAGMENT_OBJ);
 	private boolean block;
 	private CheckboxTableViewer pluginListViewer;
 	private int counter;
@@ -75,10 +78,16 @@ public class UpdateBuildpathWizardPage extends StatusWizardPage {
 		}
 		public Image getColumnImage(Object obj, int index) {
 			if (index == 0) {
-				if (obj instanceof IFragmentModel)
-					return fragmentImage;
-				else
-					return pluginImage;
+				if (obj instanceof IPluginModelBase) {
+					IPluginModelBase model = (IPluginModelBase)obj;
+					boolean error = !model.isLoaded();
+					if (model instanceof IFragmentModel) {
+						return error?errorFragmentImage:fragmentImage;
+					}
+					else {
+						return error?errorPluginImage:pluginImage;
+					}
+				}
 			}
 			return null;
 		}

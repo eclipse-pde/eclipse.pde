@@ -436,25 +436,36 @@ public class WorkspaceModelManager
 	}
 	private void loadWorkspaceModel(IPluginModelBase model) {
 		IFile file = (IFile) model.getUnderlyingResource();
+		InputStream stream = null;
 		try {
-			InputStream stream = file.getContents(false);
+			stream = file.getContents(false);
+		}
+		catch (CoreException e) {
+			// cannot get file contents - something is 
+			// seriously wrong
+			IPluginBase base = model.getPluginBase(true);
+			try {
+				base.setId(file.getProject().getName());
+				base.setName(base.getId());
+				base.setVersion("0.0.0");
+				PDEPlugin.log(e);
+			}
+			catch (CoreException ex) {
+			}
+			return;
+		}
+		try {
 			model.load(stream);
 			stream.close();
 		} catch (CoreException e) {
+			// errors in loading, but we will still
+			// initialize.
 		} catch (IOException e) {
 			PDEPlugin.logException(e);
 		}
 	}
 	private void reloadWorkspaceModel(IPluginModelBase model) {
-		IFile file = (IFile) model.getUnderlyingResource();
-		try {
-			InputStream stream = file.getContents(false);
-			model.reload(stream);
-			stream.close();
-		} catch (CoreException e) {
-		} catch (IOException e) {
-			PDEPlugin.logException(e);
-		}
+		loadWorkspaceModel(model);
 		fireModelsChanged(new IModel[] { model });
 		PDEPlugin.getDefault().getTracingOptionsManager().reset();
 	}

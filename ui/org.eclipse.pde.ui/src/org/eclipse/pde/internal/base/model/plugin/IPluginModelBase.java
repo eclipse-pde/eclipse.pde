@@ -58,9 +58,18 @@ IPluginModelFactory getFactory();
  */
 public String getInstallLocation();
 /**
- * @return org.eclipse.pde.internal.base.model.plugin.IPluginBase
+ * Returns a top-level model object. Equivalent to
+ * calling <pre>getPluginBase(false)</pre>.
+ * @return a top-level model object representing a plug-in or a fragment.
  */
 IPluginBase getPluginBase();
+/**
+ * Returns a top-level model object.
+ * @param createIfMissing if true, root model object will
+ * be created if not defined.
+ * @return a top-level model object
+ */
+IPluginBase getPluginBase(boolean createIfMissing);
 /**
  * Returns </samp>true</samp> if this model is currently enabled.
  *

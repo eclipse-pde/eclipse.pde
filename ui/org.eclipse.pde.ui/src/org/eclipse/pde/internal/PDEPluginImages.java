@@ -7,11 +7,14 @@ package org.eclipse.pde.internal;
 import java.net.MalformedURLException;
 import org.eclipse.core.runtime.*;
 import java.io.File;
+
+import org.eclipse.pde.internal.util.OverlayIcon;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import java.net.URL;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.pde.internal.util.ImageOverlayIcon;
 
 /**
  * Bundle of all images used by the PDE plugin.
@@ -68,6 +71,8 @@ public class PDEPluginImages {
 	public static final String IMG_ATT_FILE_OBJ = NAME_PREFIX+"ATT_FILE_OBJ";
 	public static final String IMG_PLUGIN_OBJ = NAME_PREFIX+"PLUGIN_OBJ";
 	public static final String IMG_FRAGMENT_OBJ = NAME_PREFIX+"FRAGMENT_OBJ";
+	public static final String IMG_ERR_PLUGIN_OBJ = NAME_PREFIX+"ERR_PLUGIN_OBJ";
+	public static final String IMG_ERR_FRAGMENT_OBJ = NAME_PREFIX+"ERR_FRAGMENT_OBJ";
 
 	/**
 	 * OBJ16
@@ -250,9 +255,16 @@ private static final void initialize() {
 	manage(IMG_ATT_FILE_OBJ, DESC_ATT_FILE_OBJ);
 	manage(IMG_FORM_WIZ, DESC_FORM_WIZ);
 	manage(IMG_FORM_BANNER, DESC_FORM_BANNER);
-	manage(IMG_PLUGIN_OBJ, DESC_PLUGIN_OBJ);
-	manage(IMG_FRAGMENT_OBJ, DESC_FRAGMENT_OBJ);
-
+	
+	Image pluginImage = manage(IMG_PLUGIN_OBJ, DESC_PLUGIN_OBJ);
+	Image fragmentImage = manage(IMG_FRAGMENT_OBJ, DESC_FRAGMENT_OBJ);
+	// make some often used combinations
+	ImageDescriptor desc = new ImageOverlayIcon(pluginImage,
+		new ImageDescriptor [][] { {}, {}, { DESC_ERROR_CO }, {} });
+	manage(IMG_ERR_PLUGIN_OBJ, desc);
+	desc = new ImageOverlayIcon(fragmentImage,
+		new ImageDescriptor [][] { {}, {}, { DESC_ERROR_CO }, {} });	
+	manage(IMG_ERR_FRAGMENT_OBJ, desc);
 }
 
 private static URL makeImageURL(String prefix, String name) {

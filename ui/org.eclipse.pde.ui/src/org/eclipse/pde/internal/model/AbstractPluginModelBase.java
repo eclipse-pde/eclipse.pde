@@ -34,6 +34,12 @@ public IPluginModelFactory getFactory() {
 public IPluginBase getPluginBase() {
 	return pluginBase;
 }
+public IPluginBase getPluginBase(boolean createIfMissing) {
+	if (pluginBase==null) {
+		pluginBase = (PluginBase)createPluginBase();
+	}
+	return pluginBase;
+}
 public boolean isEnabled() {
 	return enabled;
 }
