@@ -90,4 +90,7 @@ public interface IXMLConstants {
 	public static final String PROPERTY_VERSION_SUFFIX = "version.suffix"; //$NON-NLS-1$
 	public static final String PROPERTY_WS = "ws"; //$NON-NLS-1$
 	public static final String PROPERTY_ZIPNAME = "zipname"; //$NON-NLS-1$
+	
+	public static final String PROPERTY_OUTPUT_PREFIX = "output."; //$NON-NLS-1$
+	public static final String PROPERTY_EXTRAPATH_PREFIX = "extra."; //$NON-NLS-1$	
 }

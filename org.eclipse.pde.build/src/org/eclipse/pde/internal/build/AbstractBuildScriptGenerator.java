@@ -60,10 +60,14 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 	protected class JAR {
 		private String name;
 		private String[] source;
-		
-		protected JAR(String name, String[] source) {
+		private String[] output;
+		private String[] extraClasspath;
+
+		protected JAR(String name, String[] source, String[] output, String[] extraClasspath) {
 			this.name = name;
 			this.source = source;
+			this.output = output;
+			this.extraClasspath = extraClasspath;
 		}
 		protected String getName() {
 			return name;
@@ -71,7 +75,17 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 		protected String[] getSource() {
 			return source;
 		}
+		public String[] getOutput() {
+			return output;
+		}
+		public String[] getExtraClasspath() {
+			return extraClasspath;
+		}
 	}
+	
+
+	/** The plugin for which the classpath is being computed */ 
+	private PluginModel currentModel;
 	
 	/** constants */
 	protected static final String BASEDIR = getPropertyFormat(PROPERTY_BASEDIR);
@@ -86,62 +100,60 @@ public AbstractBuildScriptGenerator() {
 }
 
 /**
- * 
- * @param model
- * @param jar
- * @return String
+ * Compute the classpath for the given jar.
+ * The path returned conforms to Parent / Self / Prerequisite
+ * @param model : the plugin containing the jar compiled
+ * @param jar : the jar for which the classpath is being compiled
+ * @return String : the classpath
  * @throws CoreException
  */
 protected String getClasspath(PluginModel model, JAR jar) throws CoreException {
-	Set classpath = new HashSet(20);
-	String location = getLocation(model);
-	// always add boot and runtime
-	PluginModel boot = getPlugin(PI_BOOT, null);
-	addLibraries(boot, classpath, location);
-	addFragmentsLibraries(boot, classpath, location);
-	addDevEntries(boot, location, classpath);
-	PluginModel runtime = getPlugin(PI_RUNTIME, null);
-	addLibraries(runtime, classpath, location);
-	addFragmentsLibraries(runtime, classpath, location);
-	addDevEntries(runtime, location, classpath);
-	// add libraries from pre-requisite plug-ins
-	PluginPrerequisiteModel[] requires = model.getRequires();
+	currentModel = model;
+	List classpath = new ArrayList(20);
 	List pluginChain = new ArrayList(10);
-	pluginChain.add(model);
-	if (requires != null) {
-		for (int i = 0; i < requires.length; i++) {
-			PluginModel prerequisite = getPlugin(requires[i].getPlugin(), requires[i].getVersion());
-			addPrerequisiteLibraries(prerequisite, classpath, location, pluginChain, true);
-			addFragmentsLibraries(prerequisite, classpath, location);
-			addDevEntries(prerequisite, location, classpath);
-		}
-	}
-	// add libraries from this plug-in
-	String jarOrder = (String) getBuildProperties(model).get(PROPERTY_JAR_ORDER);
+	String location = getLocation(model);
+
+	//PARENT  
+	addPlugin(getPlugin(PI_BOOT, null), classpath, location);
+
+	//SELF
+	addSelf(model, jar, classpath, location, pluginChain);
+	
+	//PREREQUISITE
+	addPrerequisites(model, classpath, location, pluginChain);
+		
+	return Utils.getStringFromCollection(classpath, ";"); //$NON-NLS-1$
+
+}
+
+
+protected void addSelf(PluginModel model, JAR jar, List classpath, String location, List pluginChain) throws CoreException {
+	// If model is a fragment, we need to add in the classpath the plugin to which it is related
+	if (model instanceof PluginFragmentModel) {
+		PluginModel plugin = getRegistry().getPlugin(((PluginFragmentModel) model).getPlugin());
+		addPluginAndPrerequisites(plugin, classpath, location, pluginChain);
+	}	
+	
+	// Add the libraries
+	Properties modelProperties = getBuildProperties(model);
+	String jarOrder = (String) modelProperties.get(PROPERTY_JAR_ORDER);
 	if (jarOrder == null) {
 		// if no jar order was specified in build.properties, we add all the libraries but the current one
-		JAR[] jars = extractJars(getBuildProperties(model));
-		for (int i = 0; i < jars.length; i++) {
-			if (jar.getName().equals(jars[i].getName()))
-				continue;
-			classpath.add(jars[i].getName());
-		}
-		// Add the plug-in libraries that were not declared in build.properties .
-		// It usually happens when the library is provided already built.
+		// based on the order specified by the plugin.xml. Both library that we compile and .jar provided are processed
 		LibraryModel[] libraries = model.getRuntime();
-		if (libraries != null) {
-			for (int i = 0; i < libraries.length; i++) {
-				boolean found = false;
-				for (int j = 0; j < jars.length; j++) {
-					if (jars[j].getName().equals(libraries[i].getName())) {
-						found = true;
-						break;
-					}
-				}
-				if (found)
-					continue;
-				classpath.add(libraries[i].getName());
+		for (int i = 0; i < libraries.length; i++) {
+			String libraryName = libraries[i].getName();
+			if (jar.getName().equals(libraryName))
+				continue;
+
+			boolean isSource = (modelProperties.getProperty(PROPERTY_SOURCE_PREFIX + libraryName) != null);
+			if (isSource) {
+				addDevEntries(model, location, classpath, (String[]) Utils.getArrayFromString(modelProperties.getProperty(PROPERTY_OUTPUT_PREFIX + libraryName)));
 			}
+			//Potential pb: here there maybe a nasty case where the libraries variable may refer to something which is part of the base
+			//but $xx$ will replace it by the $xx instead of $basexx. The solution is for the user to use the explicitly set the content
+			// of its build.property file
+			addPathAndCheck(libraryName, classpath);
 		}
 	} else {
 		// otherwise we add all the predecessor jars
@@ -149,23 +161,40 @@ protected String getClasspath(PluginModel model, JAR jar) throws CoreException {
 		for (int i = 0; i < order.length; i++) {
 			if (order[i].equals(jar.getName()))
 				break;
-			classpath.add(order[i]);
+			addDevEntries(model, location, classpath, (String[]) Utils.getArrayFromString((String) modelProperties.get(PROPERTY_OUTPUT_PREFIX + order[i])));
+			addPathAndCheck(order[i], classpath);
+		}
+		// Then we add all the "pure libraries" (the one that does not contain source)
+		LibraryModel[] libraries = model.getRuntime();
+		for (int i = 0; i < libraries.length; i++) {
+			String libraryName = libraries[i].getName();
+			if (modelProperties.get(PROPERTY_SOURCE_PREFIX + libraryName) == null) {
+				//Potential pb: if the pure library is something that is being compiled (which is supposetly not the case, but who knows...)
+				//the user will get $basexx instead of $ws 
+				addPathAndCheck(libraryName, classpath);
+			}
 		}
 	}
-	// if it is a fragment, add the plugin as prerequisite
-	if (model instanceof PluginFragmentModel) {
-		PluginModel plugin = getRegistry().getPlugin(((PluginFragmentModel) model).getPlugin());
-		addPrerequisiteLibraries(plugin, classpath, location, pluginChain, false);
-	}
-	// add extra classpath if it exists
-	String extraClasspath = (String) getBuildProperties(model).get(PROPERTY_JAR_EXTRA_CLASSPATH);
+
+	// add extra classpath if it exists. this code is kept for backward compatibility
+	String extraClasspath = (String) modelProperties.get(PROPERTY_JAR_EXTRA_CLASSPATH);
 	if (extraClasspath != null) {
 		String[] extra = Utils.getArrayFromString(extraClasspath, ";,"); //$NON-NLS-1$
-		for (int i = 0; i < extra.length; i++)			
-			classpath.add(extra[i]);
+		for (int i = 0; i < extra.length; i++)
+			//Potential pb: if the path refers to something that is being compiled (which is supposetly not the case, but who knows...)
+			//the user will get $basexx instead of $ws 
+			addPathAndCheck(extra[i], classpath); 
 	}
-	return replaceVariables(Utils.getStringFromCollection(classpath, ";")); //$NON-NLS-1$
+
+	//	add extra classpath if it is specified for the given jar
+	String[] jarSpecificExtraClasspath = (String[]) jar.getExtraClasspath();
+	for (int i = 0; i < jarSpecificExtraClasspath.length; i++) {
+		//Potential pb: if the path refers to something that is being compiled (which is supposetly not the case, but who knows...)
+		//the user will get $basexx instead of $ws 
+		addPathAndCheck(jarSpecificExtraClasspath[i], classpath); 
+	}
 }
+
 
 /**
  * Return the plug-in model object from the plug-in registry for the given
@@ -193,12 +222,36 @@ protected PluginModel getPlugin(String id, String version) throws CoreException 
  * @param classpath
  * @throws CoreException
  */
-protected void addDevEntries(PluginModel model, String baseLocation, Set classpath) throws CoreException {
-	if (devEntries == null)
+protected void addDevEntries(PluginModel model, String baseLocation, List classpath, String[] jarSpecificEntries) throws CoreException {
+	// first we verify is the addition of dev entries is required
+	if (devEntries != null && devEntries.length == 0)
 		return;
+
+	if (devEntries == null && jarSpecificEntries == null)
+		return;
+
+	String[] entries;
+	// if jarSpecificEntries is given, then it overrides devEntries 
+	if (jarSpecificEntries != null && jarSpecificEntries.length > 0)
+		entries = jarSpecificEntries;
+	else
+		entries = devEntries;
+
 	IPath root = Utils.makeRelative(new Path(getLocation(model)), new Path(baseLocation));
-	for (int i = 0; i < devEntries.length; i++)
-		classpath.add(root.append(devEntries[i]));
+	String path;
+	for (int i = 0; i < entries.length; i++) {
+		path = root.append(entries[i]).toString();
+		addPathAndCheck(path, classpath);
+	}
+}
+
+// Add a path into the classpath for a given model
+// path : The path to add
+// classpath : The classpath in which we want to add this path 
+private void addPathAndCheck(String path, List classpath) {
+	path = replaceVariables(path);
+	if (!classpath.contains(path))
+		classpath.add(path);
 }
 
 /**
@@ -221,38 +274,60 @@ public String getScriptTargetLocation() {
 }
 
 /**
- * 
+ * Add the runtime libraries for the specified plugin. 
  * @param model
  * @param classpath
  * @param baseLocation
  * @throws CoreException
  */
-protected void addLibraries(PluginModel model, Set classpath, String baseLocation) throws CoreException {
+protected void addRuntimeLibraries(PluginModel model, List classpath, String baseLocation) throws CoreException {
 	LibraryModel[] libraries = model.getRuntime();
 	if (libraries == null)
 		return;
 	String root = getLocation(model);
 	IPath base = Utils.makeRelative(new Path(root), new Path(baseLocation));
 	for (int i = 0; i < libraries.length; i++) {
+		addDevEntries(model, baseLocation, classpath, Utils.getArrayFromString(getBuildProperties(model).getProperty(PROPERTY_OUTPUT_PREFIX + libraries[i].getName())));
 		String library = base.append(libraries[i].getName()).toString();
-		classpath.add(library);
+		addPathAndCheck(library, classpath);
 	}
 }
 
 /**
- * 
+ * Add the specified plugin (including its jars) and its fragments 
+ * @param model
+ * @param classpath
+ * @param location
+ * @throws CoreException
+ */
+private void addPlugin(PluginModel plugin, List classpath, String location) throws CoreException {
+	addRuntimeLibraries(plugin, classpath, location);
+	addFragmentsLibraries(plugin, classpath, location);
+}
+
+
+/**
+ * Add all fragments of the given plugin
  * @param plugin
  * @param classpath
  * @param baseLocation
  * @throws CoreException
  */
-protected void addFragmentsLibraries(PluginModel plugin, Set classpath, String baseLocation) throws CoreException {
-	PluginFragmentModel[] fragments = getRegistry().getFragments();
+protected void addFragmentsLibraries(PluginModel plugin, List classpath, String baseLocation) throws CoreException {
+	// if plugin is not a plugin, it's a fragment and there is no fragment for a fragment. So we return.
+	if (!(plugin instanceof PluginDescriptorModel))
+		return;
+
+	PluginDescriptorModel pluginModel = (PluginDescriptorModel) plugin;
+	PluginFragmentModel[] fragments = pluginModel.getFragments();
+	if (fragments == null)
+		return;
+
 	for (int i = 0; i < fragments.length; i++) {
-		if (fragments[i].getPlugin().equals(plugin.getId())) {
-			addLibraries(fragments[i], classpath, baseLocation);
-			addPluginLibrariesToFragmentLocations(plugin, fragments[i], classpath, baseLocation);
-		}
+		if (fragments[i]==currentModel)
+			continue;
+		addRuntimeLibraries(fragments[i], classpath, baseLocation);
+		addPluginLibrariesToFragmentLocations(plugin, fragments[i], classpath, baseLocation);
 	}
 }
 
@@ -267,47 +342,65 @@ protected void addFragmentsLibraries(PluginModel plugin, Set classpath, String b
  * @param baseLocation
  * @throws CoreException
  */
-protected void addPluginLibrariesToFragmentLocations(PluginModel plugin, PluginFragmentModel fragment, Set classpath, String baseLocation) throws CoreException {
+protected void addPluginLibrariesToFragmentLocations(PluginModel plugin, PluginFragmentModel fragment, List classpath, String baseLocation) throws CoreException {
+	if (fragment.getRuntime() != null)
+		return;
+
 	LibraryModel[] libraries = plugin.getRuntime();
 	if (libraries == null)
 		return;
 	String root = getLocation(fragment);
 	IPath base = Utils.makeRelative(new Path(root), new Path(baseLocation));
 	for (int i = 0; i < libraries.length; i++) {
-		String library = base.append(libraries[i].getName()).toString();
-		classpath.add(library);
+		String libraryName = base.append(libraries[i].getName()).toString();
+		addPathAndCheck(libraryName, classpath);
 	}
 }
+
+
 
 /**
  * The pluginChain parameter is used to keep track of possible cycles. If prerequisite is already
  * present in the chain it is not included in the classpath.
  * 
- * @param prerequisite
- * @param classpath
+ * @param target : the plugin for which we are going to introduce
+ * @param classpath 
  * @param baseLocation
  * @param pluginChain
  * @param considerExport
  * @throws CoreException
  */
-protected void addPrerequisiteLibraries(PluginModel prerequisite, Set classpath, String baseLocation, List pluginChain, boolean considerExport) throws CoreException {
-	if (pluginChain.contains(prerequisite))
-		throw new CoreException(new Status(IStatus.ERROR, IPDEBuildConstants.PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_CLASSPATH_CYCLE, Policy.bind("error.pluginCycle"), null)); //$NON-NLS-1$
-	addLibraries(prerequisite, classpath, baseLocation);
-	// add libraries (if exported) from pre-requisite plug-ins
-	PluginPrerequisiteModel[] requires = prerequisite.getRequires();
-	if (requires == null)
-		return;
-	pluginChain.add(prerequisite);
-	for (int i = 0; i < requires.length; i++) {
-		if (considerExport && !requires[i].getExport())
-			continue;
-		PluginModel plugin = getPlugin(requires[i].getPlugin(), requires[i].getVersion());
-		addPrerequisiteLibraries(plugin, classpath, baseLocation, pluginChain, considerExport);
-		addFragmentsLibraries(plugin, classpath, baseLocation);
-		addDevEntries(plugin, baseLocation, classpath);
+protected void addPluginAndPrerequisites(PluginModel target, List classpath, String baseLocation, List pluginChain) throws CoreException {
+	addPlugin(target, classpath, baseLocation);
+	addPrerequisites(target, classpath, baseLocation, pluginChain);
+}
+
+//Add the prerequisite of a given plugin (target)
+protected void addPrerequisites(PluginModel target, List classpath, String baseLocation, List pluginChain) throws CoreException {
+
+	if (pluginChain.contains(target)) {
+		if (target==getPlugin(PI_RUNTIME,null))
+			return;
+		String message = Policy.bind("error.pluginCycle"); //$NON-NLS-1$
+		throw new CoreException(new Status(IStatus.ERROR, IPDEBuildConstants.PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_CLASSPATH_CYCLE, message, null));
 	}
-	pluginChain.remove(prerequisite);
+	
+	//	The first prerequisite is ALWAYS runtime
+	 if (target != getPlugin(PI_RUNTIME, null))
+		 addPluginAndPrerequisites(getPlugin(PI_RUNTIME, null), classpath, baseLocation, pluginChain);
+	
+	 // add libraries from pre-requisite plug-ins.  Don't worry about the export flag
+	 // as all required plugins may be required for compilation.
+	PluginPrerequisiteModel[] requires = target.getRequires();
+	if (requires != null) {
+		pluginChain.add(target);
+	 	for (int i = 0; i < requires.length; i++) {
+			PluginModel plugin = getPlugin(requires[i].getPlugin(), requires[i].getVersion());
+			if (plugin != null)
+				addPluginAndPrerequisites(plugin, classpath, baseLocation, pluginChain);
+	 	}
+	 	pluginChain.remove(target);
+	}
 }
 
 /**
@@ -360,15 +453,17 @@ protected Properties readBuildProperties(String rootLocation) throws CoreExcepti
  */
 protected JAR[] extractJars(Properties properties) {
 	List result = new ArrayList(5);
-	int n = PROPERTY_SOURCE_PREFIX.length();
+	int prefixLength = PROPERTY_SOURCE_PREFIX.length();
 	for (Iterator iterator = properties.entrySet().iterator(); iterator.hasNext();) {
 		Map.Entry entry = (Map.Entry) iterator.next();
 		String key = (String) entry.getKey();
 		if (!(key.startsWith(PROPERTY_SOURCE_PREFIX) && key.endsWith(PROPERTY_JAR_SUFFIX)))
 			continue;
-		key = key.substring(n);
+		key = key.substring(prefixLength);
 		String[] source = Utils.getArrayFromString((String) entry.getValue());
-		JAR jar = new JAR(key, source);
+		String[] output = Utils.getArrayFromString((String) properties.getProperty(PROPERTY_OUTPUT_PREFIX + key));
+		String[] extraClasspath = Utils.getArrayFromString((String) properties.getProperty(PROPERTY_EXTRAPATH_PREFIX + key));
+		JAR jar = new JAR(key, source, output, extraClasspath);
 		result.add(jar);
 	}
 	return (JAR[]) result.toArray(new JAR[result.size()]);
@@ -613,11 +708,29 @@ protected PluginRegistryModel getRegistry() throws CoreException {
 		MultiStatus problems = new MultiStatus(PI_PDEBUILD, EXCEPTION_MODEL_PARSE, Policy.bind("exception.pluginParse"), null); //$NON-NLS-1$
 		Factory factory = new Factory(problems);
 		registry = Platform.parsePlugins(pluginPath, factory);
+		setFragments();
 		IStatus status = factory.getStatus();
 		if (Utils.contains(status, IStatus.ERROR))
 			throw new CoreException(status);
 	}
 	return registry;
+}
+
+private void setFragments() {
+	PluginFragmentModel[] fragments = registry.getFragments();
+	for (int i = 0; i < fragments.length; i++) {
+		String pluginId = fragments[i].getPluginId();
+		PluginDescriptorModel plugin = registry.getPlugin(pluginId);
+		PluginFragmentModel[] existingFragments = plugin.getFragments();
+		if (existingFragments == null)
+			plugin.setFragments(new PluginFragmentModel[] { fragments[i] });
+		else {
+			PluginFragmentModel[] newFragments = new PluginFragmentModel[existingFragments.length + 1];
+			System.arraycopy(existingFragments, 0, newFragments, 0, existingFragments.length);
+			newFragments[newFragments.length - 1] = fragments[i];
+			plugin.setFragments(newFragments);
+		}
+	}
 }
 
 /**
