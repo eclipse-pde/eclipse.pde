@@ -24,9 +24,10 @@ public void createInitialLayout(IPageLayout factory) {
 			IPageLayout.LEFT,
 			(float) 0.25,
 			factory.getEditorArea());
-	topLeft.addView(IPageLayout.ID_RES_NAV);
+	//topLeft.addView(IPageLayout.ID_RES_NAV);
+	topLeft.addPlaceholder(IPageLayout.ID_RES_NAV);
 	topLeft.addView(JavaUI.ID_PACKAGES);
-	topLeft.addPlaceholder(JavaUI.ID_TYPE_HIERARCHY);
+	topLeft.addView(JavaUI.ID_TYPE_HIERARCHY);
 
 	IFolderLayout bottomRight =
 		factory.createFolder(
