@@ -14,16 +14,12 @@ import org.eclipse.pde.internal.core.build.*;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.codegen.*;
-import org.eclipse.pde.internal.ui.editor.plugin.*;
 import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.pde.ui.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.part.*;
-/**
- * @author melhem
- *  
- */
+
 public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 	private IFieldData fData;
 	private IProjectProvider fProjectProvider;
@@ -80,10 +76,39 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		if (fData.hasBundleStructure()) {
 			String filename = (fData instanceof IFragmentFieldData)? "fragment.xml" : "plugin.xml";
 			PDEPluginConverter.convertToOSGIFormat(project, filename, new SubProgressMonitor(monitor, 1));
+			trimModel(fModel.getPluginBase());
+			fModel.save();
+			openFile(project.getFile("META-INF/MANIFEST.MF"));
+		} else {
+			openFile((IFile)fModel.getUnderlyingResource());
 		}
 		monitor.worked(1);
-		openFile();
 		result = contentWizardResult;
+	}
+	
+	private void trimModel(IPluginBase base) throws CoreException {
+		base.setId(null);
+		base.setVersion(null);
+		base.setName(null);
+		base.setProviderName(null);
+		
+		if (base instanceof IFragment) {
+			((IFragment)base).setPluginId(null);
+			((IFragment)base).setPluginVersion(null);
+			((IFragment)base).setRule(0);
+		} else {
+			((IPlugin)base).setClassName(null);
+		}
+		
+		IPluginImport[] imports = base.getImports();
+		for (int i = 0; i < imports.length; i++) {
+			base.remove(imports[i]);
+		}
+		
+		IPluginLibrary[] libraries = base.getLibraries();
+		for (int i = 0; i < libraries.length; i++) {
+			base.remove(libraries[i]);
+		}		
 	}
 	
 	public boolean getResult() {
@@ -245,7 +270,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 				.size()]);
 	}
 	
-	private void openFile() {
+	private void openFile(final IFile file) {
 		final IWorkbenchWindow ww = PDEPlugin.getActiveWorkbenchWindow();
 		final IWorkbenchPage page = ww.getActivePage();
 		if (page == null)
@@ -254,13 +279,15 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		final IWorkbenchPart focusPart = page.getActivePart();
 		 ww.getShell().getDisplay().asyncExec(new Runnable() {
 			public void run() {
-				IFile file = (IFile) fModel.getUnderlyingResource();
 				if (focusPart instanceof ISetSelectionTarget) {
 					ISelection selection = new StructuredSelection(file);
 					((ISetSelectionTarget) focusPart)
 							.selectReveal(selection);
+				}			
+				try {
+					page.openEditor(new FileEditorInput(file), PDEPlugin.MANIFEST_EDITOR_ID);
+				} catch (PartInitException e) {
 				}
-				ManifestEditor.openPluginEditor(fModel.getPluginBase());
 			}
 		});
 	}
