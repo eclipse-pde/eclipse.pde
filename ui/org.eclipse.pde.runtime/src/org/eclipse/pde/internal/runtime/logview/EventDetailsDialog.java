@@ -566,6 +566,7 @@ public class EventDetailsDialog extends Dialog {
 		} catch (NumberFormatException e) {
 			dialogLocation= null;
 			dialogSize = null;
+			sashWeights = null;
 		}
 	}
 	
