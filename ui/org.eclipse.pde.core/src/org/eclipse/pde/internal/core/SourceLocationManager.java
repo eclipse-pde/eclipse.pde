@@ -16,7 +16,6 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.plugin.*;
 
 public class SourceLocationManager implements ICoreConstants {
 	private ArrayList fUserLocations = new ArrayList();
@@ -180,7 +179,7 @@ public class SourceLocationManager implements ICoreConstants {
 			if (extension.getPoint().equals(PDECore.getPluginId() + ".source")) {
 				int origLength = fExtensionLocations.size();
 				processExtension(extension);
-				if (fExtensionLocations.size() == origLength && model instanceof WorkspacePluginModelBase) {
+				if (fExtensionLocations.size() == origLength && model.getUnderlyingResource() != null) {
 					processExtensions(entry, true);					
 				}
 			}
