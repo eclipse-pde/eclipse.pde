@@ -68,14 +68,14 @@ public IFile generate(IProgressMonitor monitor) throws CoreException {
 		sourceFolder != null ? sourceFolder.getFullPath() : project.getFullPath();
 	path = path.append(packageName.replace('.', '/'));
 	IFile file = workbench.getRoot().getFile(path.append(javaFileName));
-	ByteArrayOutputStream bstream = new ByteArrayOutputStream();
-	PrintWriter writer = new PrintWriter(bstream);
+	StringWriter swriter = new StringWriter();
+	PrintWriter writer = new PrintWriter(swriter);
 	generateContents(packageName, className, writer);
 	writer.flush();
-	writer.close();
 	try {
+		swriter.close();
 		ByteArrayInputStream stream =
-			new ByteArrayInputStream(bstream.toString().getBytes("UTF-8"));
+			new ByteArrayInputStream(swriter.toString().getBytes("UTF-8"));
 		if (file.exists())
 			file.setContents(stream, false, true, monitor);
 		else

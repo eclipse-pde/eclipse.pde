@@ -272,8 +272,8 @@ public void generateUnknownContents(
 }
 
 private String generateMethods() throws JavaModelException {
-	ByteArrayOutputStream bstream = new ByteArrayOutputStream();
-	PrintWriter writer = new PrintWriter(bstream, true);
+	StringWriter swriter = new StringWriter();
+	PrintWriter writer = new PrintWriter(swriter, true);
 	if (requiredMethods != null) {
 		for (int i = 0; i < requiredMethods.size(); i++) {
 			if (i>0) writer.println();
@@ -282,7 +282,7 @@ private String generateMethods() throws JavaModelException {
 		}
 	}
 	writer.close();
-	return bstream.toString();
+	return swriter.toString();
 }
 private void generateRequiredMethod(IMethod method, PrintWriter writer)
 	throws JavaModelException {

@@ -218,7 +218,7 @@ public Object getPropertyValue(Object name) {
 		// Make sure we still return special values
 		if (isEditable() && attInfo != null) {
 			if (attInfo.getKind() == ISchemaAttribute.JAVA) {
-				IPluginModelBase model = att.getModel();
+				IPluginModelBase model = getElement().getModel();
 				return new JavaAttributeValue(project, model, attInfo, "");
 			} else
 				if (attInfo.getKind() == ISchemaAttribute.RESOURCE) {

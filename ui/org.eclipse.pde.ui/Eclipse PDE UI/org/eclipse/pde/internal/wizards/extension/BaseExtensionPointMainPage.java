@@ -160,16 +160,21 @@ private InputStream createSchemaStream(String plugin, String id, String name) {
 		PDEPlugin.getResourceString(KEY_SECTIONS_COPYRIGHT));
 	schema.addDocumentSection(section);
 
-	ByteArrayOutputStream bstream = new ByteArrayOutputStream();
+	StringWriter swriter = new StringWriter();
 	try {
-		PrintWriter writer = new PrintWriter(bstream, true);
+		PrintWriter writer = new PrintWriter(swriter, true);
 		schema.save(writer);
-		bstream.close();
+		swriter.close();
 	} catch (IOException e) {
 		PDEPlugin.logException(e);
 	}
-
-	return new ByteArrayInputStream(bstream.toByteArray());
+	
+	try {
+		return new ByteArrayInputStream(swriter.toString().getBytes("UTF-8"));
+	}
+	catch (UnsupportedEncodingException e) {
+		return new ByteArrayInputStream(new byte [0]);
+	}
 }
 private IFile generateSchemaFile(
 	String pluginId,

@@ -24,15 +24,15 @@ public void fireModelChanged(IModelChangedEvent event) {
 	super.fireModelChanged(event);
 }
 public String getContents() {
-	ByteArrayOutputStream bstream = new ByteArrayOutputStream();
-	PrintWriter writer = new PrintWriter(bstream);
+	StringWriter swriter = new StringWriter();
+	PrintWriter writer = new PrintWriter(swriter);
 	save(writer);
 	writer.flush();
 	try {
-		bstream.close();
+		swriter.close();
 	} catch (IOException e) {
 	}
-	return bstream.toString();
+	return swriter.toString();
 }
 public IFile getFile() {
 	return file;

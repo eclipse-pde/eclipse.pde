@@ -384,12 +384,12 @@ void updateDocument() {
 	try {
 		// need to update the document
 		IDocument document = documentProvider.getDocument(getEditorInput());
-		ByteArrayOutputStream bstream = new ByteArrayOutputStream();
-		PrintWriter writer = new PrintWriter(bstream);
+		StringWriter swriter = new StringWriter();
+		PrintWriter writer = new PrintWriter(swriter);
 		editableModel.save(writer);
 		writer.flush();
-		bstream.close();
-		document.set(bstream.toString());
+		swriter.close();
+		document.set(swriter.toString());
 	} catch (IOException e) {
 		PDEPlugin.logException(e);
 	}
