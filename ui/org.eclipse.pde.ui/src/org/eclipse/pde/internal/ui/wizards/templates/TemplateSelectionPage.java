@@ -83,9 +83,13 @@ public class TemplateSelectionPage extends WizardPage {
 		candidates = new ArrayList();
 		candidates.add(new HelloWorldTemplate());
 		candidates.add(new ViewTemplate());
+		candidates.add(new EditorTemplate());
 		candidates.add(new MultiPageEditorTemplate());
 		candidates.add(new NewWizardTemplate());
 		candidates.add(new PreferencePageTemplate());
+		candidates.add(new PropertyPageTemplate());
+		candidates.add(new PopupMenuTemplate());
+		candidates.add(new PerspectiveExtensionsTemplate());
 	}
 
 	/**

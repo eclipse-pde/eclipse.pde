@@ -205,6 +205,42 @@
             %projectGenerators.choice.description
          </description>
       </wizard>
+      <wizard
+            name="%projectGenerators.perspectiveExtensions.name"
+            icon="icons/full/ctool16/defcon_wiz.gif"
+            class="org.eclipse.pde.internal.ui.wizards.templates.PerspectiveExtensionsNewWizard"
+            id="org.eclipse.pde.ui.projectGenerators.perspectiveExtensions">
+         <description>
+            %projectGenerators.perspectiveExtensions.description
+         </description>
+      </wizard>
+      <wizard
+            name="%projectGenerators.propertyPages.name"
+            icon="icons/full/ctool16/defcon_wiz.gif"
+            class="org.eclipse.pde.internal.ui.wizards.templates.PropertyPageNewWizard"
+            id="org.eclipse.pde.ui.projectGenerators.propertyPages">
+         <description>
+            %projectGenerators.propertyPages.description
+         </description>
+      </wizard>
+      <wizard
+            name="%projectGenerators.popupMenus.name"
+            icon="icons/full/ctool16/defcon_wiz.gif"
+            class="org.eclipse.pde.internal.ui.wizards.templates.PopupMenuNewWizard"
+            id="org.eclipse.pde.ui.projectGenerators.popupMenus">
+         <description>
+            %projectGenerators.popupMenus.description
+         </description>
+      </wizard>
+      <wizard
+            name="%projectGenerators.editor.name"
+            icon="icons/full/ctool16/defcon_wiz.gif"
+            class="org.eclipse.pde.internal.ui.wizards.templates.EditorNewWizard"
+            id="org.eclipse.pde.ui.projectGenerators.editor">
+         <description>
+            %projectGenerators.editor.description
+         </description>
+      </wizard>
    </extension>
    <extension
          point="org.eclipse.pde.ui.newExtension">
@@ -285,6 +321,54 @@
             id="org.eclipse.pde.ui.newExtension.preferences">
          <description>
             %newExtension.templates.preferences.desc
+         </description>
+      </wizard>
+      <wizard
+            availableAsShortcut="true"
+            name="%newExtension.templates.perspectiveExtensions.name"
+            icon="icons/full/ctool16/newex_wiz.gif"
+            template="true"
+            category="templates"
+            class="org.eclipse.pde.internal.ui.wizards.templates.PerspectiveExtensionsTemplate"
+            id="org.eclipse.pde.ui.newExtension.perspectiveExtensions">
+         <description>
+            %newExtension.templates.perspectiveExtensions.desc
+         </description>
+      </wizard>
+      <wizard
+            category="templates"
+            class="org.eclipse.pde.internal.ui.wizards.templates.PropertyPageTemplate"
+            template="true"
+            icon="icons/full/ctool16/newex_wiz.gif"
+            availableAsShortcut="true"
+            id="org.eclipse.pde.ui.newExtension.propertyPages"
+            name="%newExtension.templates.propertyPages.name">
+         <description>
+            %newExtension.templates.propertyPages.desc
+         </description>
+      </wizard>
+      <wizard
+            category="templates"
+            availableAsShortcut="true"
+            icon="icons/full/ctool16/newex_wiz.gif"
+            template="true"
+            class="org.eclipse.pde.internal.ui.wizards.templates.PopupMenuTemplate"
+            id="org.eclipse.pde.ui.newExtension.popupMenus"
+            name="%newExtension.templates.popupMenus.name">
+         <description>
+            %newExtension.templates.popupMenus.desc
+         </description>
+      </wizard>
+      <wizard
+            category="templates"
+            class="org.eclipse.pde.internal.ui.wizards.templates.EditorTemplate"
+            template="true"
+            icon="icons/full/ctool16/newex_wiz.gif"
+            availableAsShortcut="true"
+            id="org.eclipse.pde.ui.newExtension.editor"
+            name="%newExtension.templates.editor.name">
+         <description>
+            %newExtension.templates.editor.desc
          </description>
       </wizard>
    </extension>
