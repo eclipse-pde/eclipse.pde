@@ -11,7 +11,7 @@
             To learn more about using cheat sheets or to see a 
             list of available cheat sheets click help (?). To start 
             working on this cheat sheet, click the &quot;Click to 
-            begin&quot; button below.
+            Begin&quot; button below.
 		</description>
 	</intro>
 
@@ -19,53 +19,52 @@
 		href="/org.eclipse.pde.doc.user/guide/pde_setup.htm"
 		title="Switching to the PDE perspective">
 		<action
-			confirm="true"
 			pluginId="org.eclipse.pde.ui"
 			class="org.eclipse.pde.internal.ui.OpenPDEPerspectiveAction"/>
 		<description>
-			Select <b>Window&gt;Open Perspective&gt;Other...&gt;Plug-in Development</b>
+			Select <b>Window-&gt;Open Perspective-&gt;Other...-&gt;Plug-in Development</b>
 			to switch to the PDE perspective. The PDE perspective is
 			automatically launched when you click the 
-			&quot;Click to perform button&quot;.
+			&quot;Click to Perform&quot; button.
 		</description>
 	</item>
 	<item
 		href="/org.eclipse.pde.doc.user/guide/pde_creating.htm"
-		title="Creating the plug-in project">
+		title="Creating the plug-in project"
+		skip="true">
 		<action
-			confirm="true"
 			pluginId="org.eclipse.pde.ui"
 		    param1="com.example.xyz"
             param2="org.eclipse.pde.ui.pluginContent.helloWorld"
 			class="org.eclipse.pde.internal.ui.wizards.plugin.OpenProjectWizardAction"/>
 		<description>
-		   	Select <b>File&gt;New&gt;Plug-in Project</b> to bring up the plug-in
+		   	Select <b>File-&gt;New-&gt;Plug-in Project</b> to bring up the plug-in
 			project creation wizard. Choose 'com.example.xyz' for the project
 			name. Accept all the defaults. Pick the <b>Hello, World</b> template
 			from the list of templates and press <b>Finish</b>. The wizard 
 			is automatically launched when you click the 
-			&quot;Click to perform button&quot;.
+			&quot;Click to Perform&quot; button.
 		</description>
 	</item>
 	<item
 		href="/org.eclipse.pde.doc.user/guide/pde_feature_setup.htm"
-		title="Creating the feature project">
+		title="Creating the feature project"
+		skip="true">
 		<action
-			confirm="true"
 			pluginId="org.eclipse.pde.ui"
 		    param1="com.example.xyz-feature"
 		    param2="com.example.xyz"
             param3="XYZ Feature"
 			class="org.eclipse.pde.internal.ui.wizards.feature.OpenProjectWizardAction"/>
 		<description>
-		   	Select <b>File&gt;New&gt;Feature Project</b> to bring up the
-		   	feature	project creation wizard. Choose 'com.example.xyz-feature'
+		   	Select <b>File-&gt;New-&gt;Feature Project</b> to bring up the
+		   	feature project creation wizard. Choose 'com.example.xyz-feature'
 		   	for the project name. Choose 'com.example.xyz' for the feature id
 		   	and 'XYZ Feature' for the feature name.
 		   	Check 'com.example.xyz' plug-in in the list of plug-ins and
 		   	press <b>Finish</b>. The wizard 
 			is automatically launched when you click the 
-			&quot;Click to perform button&quot;.
+			&quot;Click to Perform&quot; button.
 		</description>
 	</item>
 	<item
@@ -83,19 +82,19 @@
 	</item>
 	<item
 		href="/org.eclipse.pde.doc.user/guide/pde_site_setup.htm"
-		title="Creating an update site project">
+		title="Creating an update site project"
+		skip="true">
 		<action
-			confirm="true"
 			pluginId="org.eclipse.pde.ui"
 		    param1="updates"
 			class="org.eclipse.pde.internal.ui.wizards.site.OpenProjectWizardAction"/>
 		<description>
-		   	Select <b>File&gt;New&gt;Project&gt;Plug-in Development&gt;Update Site Project</b>
+		   	Select <b>File-&gt;New-&gt;Project-&gt;Plug-in Development-&gt;Update Site Project</b>
 		   	to bring up the update site project creation wizard. 
 		   	Choose 'updates' for the project name and
 	   		press <b>Finish</b>. The wizard 
 			is automatically launched when you click the 
-			&quot;Click to perform button&quot;.
+			&quot;Click to Perform&quot; button.
 		</description>
 	</item>
 	<item
@@ -105,7 +104,7 @@
 		   	Select <b>Add...</b> in <b>Features to Build</b>
 		   	section and check 'com.example.xyz' from the list.
 		   	Verify that the feature appears in the section
-		   	upon pressing <b>Finish</b>.
+		   	upon clicking <b>Finish</b>.
 		</description>
 	</item>
 	<item
@@ -117,7 +116,7 @@
 		   	'Sample' for the label and some random text
 		   	for description.
 		   	Verify that the category appears in the section
-		   	upon pressing <b>OK</b>.
+		   	upon clicking <b>OK</b>.
 		</description>
 	</item>
 	<item
@@ -136,8 +135,8 @@
 		href="/org.eclipse.pde.doc.user/guide/pde_site_building.htm"
 		title="Saving and building">
 		<description>
-		   	Select 'Ctrl+S' to save the file. Select
-		   	<b>Build All</b> button in <b>Features to Build</b> 
+		   	Select 'Ctrl+S' to save the file. Select the
+		   	<b>Build All</b> button in the <b>Features to Build</b> 
 		   	section. Verify that 'plugins' and 'features'
 		   	folders in the update site project contain
 		   	JARs after the build is done.
@@ -147,24 +146,23 @@
 		href="/org.eclipse.pde.doc.user/guide/pde_site_previewing.htm"
 		title="Testing the update site">
 		<action
-			confirm="true"
-			pluginId="org.eclipse.update.ui"
-		    class="org.eclipse.update.internal.ui.InstallWizardAction"/>
+			pluginId="org.eclipse.ui.ide"
+		    class="org.eclipse.ui.internal.ide.update.InstallWizardAction"/>
 		<description>
-		   	Select <b>Help&gt;Software Updates&gt;Find and Install...</b>.
+		   	Select <b>Help-&gt;Software Updates-&gt;Find and Install...</b>.
 		   	The wizard is automatically launched when you click the 
-			&quot;Click to perform button&quot;.
-		   	Select <b>Search for new features to install</b> radio button.
-		   	Press <b>Next</b>. Select <b>Add Local Site...</b>.
+			&quot;Click to Perform&quot; button.
+		   	Select the <b>Search for new features to install</b> radio button.
+		   	Click <b>Next</b>. Select <b>Add Local Site...</b>.
 		   	Find the workspace in the local file system and 
 		   	navigate to the update site project.
 		   	Check the site, expand it and verify that 'Sample'
-		   	category shows up. Press <b>Next</b>.
+		   	category shows up. Click <b>Next</b>.
 		   	<br/>
 		   	The wizard list should show 'XYZ Feature'. Select it
 		   	and verify that the description shows up. 
-		   	Select <b>Properties</b> button and verify that 
-		   	properties are correct. Press <b>Next</b>.
+		   	Click the <b>Properties</b> button and verify that 
+		   	properties are correct. Click <b>Next</b>.
 		   	Verify that the license agreement shows up correctly.
 		</description>
 	</item>
@@ -174,7 +172,7 @@
 		<description>
 		   	When ready to test the feature itself, install
 		   	another Eclipse instance and start it.
-		   	Select <b>Help&gt;Software Updates&gt;Find and Install...</b>.
+		   	Select <b>Help-&gt;Software Updates-&gt;Find and Install...</b>.
 		   	in that instance. Repeat the previous two steps. This 
 		   	time, go all the way to the
 		   	end of the wizard and press <b>Finish</b>.
@@ -185,7 +183,7 @@
 		href="/org.eclipse.pde.doc.user/guide/pde_site_previewing.htm"
 		title="Verifying the installation">
 		<description>
-			Upon restart, select <b>File&gt;Software Updates&gt;Manage Configuration...</b>.
+			Upon restart, select <b>Help-&gt;Software Updates-&gt;Manage Configuration...</b>.
 			Expand the install location under <b>Eclipse Platform</b>.
 			Verify that the 'XYZ Feature' exists.
 		</description>
