@@ -9,34 +9,27 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.neweditor.plugin;
-import java.util.Vector;
-import org.eclipse.core.runtime.CoreException;
+import java.util.*;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.core.plugin.IPluginLibrary;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.pde.internal.ui.neweditor.*;
-import org.eclipse.pde.internal.ui.neweditor.TableSection;
-import org.eclipse.pde.internal.ui.newparts.EditableTablePart;
-import org.eclipse.swt.SWT;
+import org.eclipse.pde.internal.ui.newparts.*;
+import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.actions.*;
+import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.forms.*;
-import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.forms.widgets.Section;
 
 public class ExportSection extends TableSection implements IPartSelectionListener {
 	private Button noExportButton;
@@ -53,6 +46,8 @@ public class ExportSection extends TableSection implements IPartSelectionListene
 	public static final String KEY_SELECTED_EXPORT = "ManifestEditor.ExportSection.selectedExport";
 	public static final String KEY_ADD = "ManifestEditor.ExportSection.add";
 	public static final String KEY_REMOVE = "ManifestEditor.ExportSection.remove";
+	public static final String SECTION_ADD_TITLE = "ManifestEditor.ExportSection.addTitle";
+	public static final String PACKAGE_MESSAGE = "PackageSelectionDialog.label";
 	private Vector filters;
 	private boolean ignoreModelEvents;
 	class NameFilter {
@@ -251,14 +246,24 @@ public class ExportSection extends TableSection implements IPartSelectionListene
 				manager);
 	}
 	private void handleAdd() {
-		NameFilter filter = new NameFilter(PDEPlugin
-				.getResourceString(KEY_NEW_FILTER));
-		filters.add(filter);
-		nameTableViewer.add(filter);
-		nameTableViewer.editElement(filter, 0);
-		markDirty();
-		commit(false);
+		IProject project= ((IPluginModelBase)getPage().getModel()).getUnderlyingResource().getProject();
+		PackageSelectionDialog dialog = new PackageSelectionDialog(nameTableViewer.getTable().getShell(),
+				PackageSelectionDialog.F_SHOW_PARENTS | PackageSelectionDialog.F_REMOVE_DUPLICATES, project);
+		dialog.setTitle(PDEPlugin.getResourceString(SECTION_ADD_TITLE));
+		dialog.setMessage(PDEPlugin.getResourceString(PACKAGE_MESSAGE));
+		if (dialog.open() == SelectionDialog.OK) {
+
+			IPackageFragment[] packages = dialog.getSelectedPackages();
+			for (int i = 0; i<packages.length; i++){
+//				TODO: add selected packages to nameTableViewer
+//				nameTableViewer.add(packages[i]);
+//				nameTableViewer.editElement(packages[i], 0);
+				markDirty();
+				commit(false);
+			}
+		}			
 	}
+	
 	private void handleDelete() {
 		ISelection selection = nameTableViewer.getSelection();
 		Object item = ((IStructuredSelection) selection).getFirstElement();
