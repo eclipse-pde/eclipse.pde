@@ -109,6 +109,7 @@ public class ModelEntry extends PlatformObject {
 				JavaCore.setClasspathContainer(path, javaProjects, containers, null);
 			} catch (OperationCanceledException e) {
 				getClasspathContainer().reset();
+				throw e;
 			}
 		}
 	}
