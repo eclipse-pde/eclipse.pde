@@ -60,7 +60,8 @@ public class TargetPlatform implements IEnvironmentVariables {
 							: "plugin.xml");
 				IPath relative =
 					location.removeFirstSegments(location.segmentCount() - 3);
-				list[i] = relative.setDevice(null).toString();
+				//31489 - entry must be relative
+				list[i] = relative.setDevice(null).makeRelative().toString();
 			}
 			return list;
 		}
