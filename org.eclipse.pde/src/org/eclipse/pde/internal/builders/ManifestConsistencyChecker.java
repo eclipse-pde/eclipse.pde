@@ -203,7 +203,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 
 		if (reporter.getErrorCount() == 0) {
 			if (isFragment(file)) {
-				validateFragment(file, reporter);
+				validateFragment(file, reporter, bundle);
 			} else {
 				validatePlugin(file, reporter, bundle);
 			}
@@ -252,7 +252,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		model.dispose();
 	}
 
-	private void validateFragment(IFile file, PluginErrorReporter reporter) {
+	private void validateFragment(IFile file, PluginErrorReporter reporter, boolean bundle) {
 		WorkspaceFragmentModel model = new WorkspaceFragmentModel(file);
 		model.load();
 
@@ -260,25 +260,27 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			// Test the version
 			// Test if plugin exists
 			IFragment fragment = model.getFragment();
-			validateRequiredAttributes(fragment, reporter);
+			if (!bundle) validateRequiredAttributes(fragment, reporter);
 			if (reporter.getErrorCount() == 0) {
-				validateVersion(fragment, reporter);
-				String pluginId = fragment.getPluginId();
-				String pluginVersion = fragment.getPluginVersion();
-				int match = fragment.getRule();
-				IPlugin plugin = PDECore.getDefault().findPlugin(pluginId,
+				if (!bundle) {
+					validateVersion(fragment, reporter);
+					String pluginId = fragment.getPluginId();
+					String pluginVersion = fragment.getPluginVersion();
+					int match = fragment.getRule();
+					IPlugin plugin = PDECore.getDefault().findPlugin(pluginId,
 						pluginVersion, match);
-				if (plugin == null) {
-					// broken fragment link
-					String[] args = {pluginId, pluginVersion};
-					String message = PDE.getFormattedMessage(
+					if (plugin == null) {
+						// broken fragment link
+						String[] args = {pluginId, pluginVersion};
+						String message = PDE.getFormattedMessage(
 							BUILDERS_FRAGMENT_BROKEN_LINK, args);
-					int line = 1;
-					if (fragment instanceof ISourceObject)
-						line = ((ISourceObject) fragment).getStartLine();
-					reporter.reportError(message, line);
+						int line = 1;
+						if (fragment instanceof ISourceObject)
+							line = ((ISourceObject) fragment).getStartLine();
+						reporter.reportError(message, line);
+					}
 				}
-				validateValues(fragment, reporter, false);
+				validateValues(fragment, reporter, bundle);
 			}
 		}
 		model.dispose();
