@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.core.osgi;
-import java.io.*;
 import java.net.URL;
 import java.util.*;
 
@@ -293,19 +292,4 @@ public class OSGiExternalModelManager implements IExternalModelManager {
 		initialized=false;
 	}
 	
-	private static boolean isTargetOSGi() {
-		IPath home = getEclipseHome(null);
-		File homeDir = home.toFile();
-		File pluginsDir = new File(homeDir, "plugins");
-		if (pluginsDir.exists()==false) return false;
-		
-		File [] osgiPlugins = pluginsDir.listFiles(new FileFilter() {
-			public boolean accept(File file) {
-				if (file.getName().startsWith("org.eclipse.osgi"))
-					return true;
-				return false;
-			}
-		});
-		return osgiPlugins.length>0;
-	}
 }

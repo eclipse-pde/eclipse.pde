@@ -17,8 +17,6 @@ import java.util.Vector;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.PluginModel;
-import org.eclipse.osgi.service.resolver.*;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.plugin.*;
 
 
@@ -31,9 +29,6 @@ public class BundleLoader {
 		boolean useCache,
 		IProgressMonitor monitor) {
 		
-		PlatformAdmin admin = PDECore.getDefault().acquirePlatform();
-		StateObjectFactory factory = admin.getFactory();
-		State state = factory.createState();
 		long id[]= {0};
 		for (int i = 0; i < pluginPaths.length; i++) {
 			String pluginPath = pluginPaths[i];
@@ -86,21 +81,6 @@ public class BundleLoader {
 		System.out.println((fragment?"Plugin: ":"Fragment: ")+file.getPath());
 	}
 
-	private static void processPluginModels(
-		Vector result,
-		PluginModel[] models,
-		boolean isFragment,
-		IProgressMonitor monitor) {
-		monitor.beginTask("", models.length);
-		for (int i = 0; i < models.length; i++) {
-			ExternalPluginModelBase model = processPluginModel(models[i], isFragment);
-			if (model.isLoaded()) {
-				result.add(model);
-			}
-			monitor.worked(1);
-		}
-	}
-	
 	public static ExternalPluginModelBase processPluginModel(PluginModel registryModel, boolean isFragment) {
 		ExternalPluginModelBase model = null;
 		if (isFragment) {
