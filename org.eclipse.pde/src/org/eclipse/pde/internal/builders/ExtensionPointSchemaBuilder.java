@@ -10,16 +10,40 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.builders;
 
-import java.io.*;
-import java.net.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Map;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.internal.plugins.PluginDescriptor;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceDeltaVisitor;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.core.IModel;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.PDE;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.WorkspaceModelManager;
 
 public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 	public static final String BUILDERS_SCHEMA_COMPILING =
@@ -69,6 +93,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 	public ExtensionPointSchemaBuilder() {
 		super();
 		transformer = new SchemaTransformer();
+		cssURL = null;
 	}
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
 		throws CoreException {
@@ -99,6 +124,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 		return true;
 	}
 	private void compileFile(IFile file, IProgressMonitor monitor) {
+
 		String message =
 			PDE.getFormattedMessage(
 				BUILDERS_SCHEMA_COMPILING,
@@ -130,15 +156,48 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 				ensureFoldersExist(file.getProject(), docLocation);
 				IFile outputFile = workspace.getRoot().getFile(outputPath);
 				ByteArrayInputStream target =
-					new ByteArrayInputStream(
-						stringWriter.toString().getBytes("UTF8"));
+					new ByteArrayInputStream(stringWriter.toString().getBytes("UTF8"));
 				if (!workspace.getRoot().exists(outputPath)) {
 					// the file does not exist - create it
 					outputFile.create(target, true, monitor);
 				} else {
 					outputFile.setContents(target, true, false, monitor);
 				}
+				
+				
+				// generate CSS files if necessary
+				IPath path = file.getProject().getFullPath().append(getDocLocation());
+								
+				outputPath = (Path)path.append(SchemaTransformer.getSchemaCSSName());
+				IFile schemaCSSFile = workspace.getRoot().getFile(outputPath);
+				if (!workspace.getRoot().exists(outputPath)){
+					stringWriter = new StringWriter();
+					pwriter = new PrintWriter(stringWriter);
+					addCSS(outputPath, pwriter);
+					stringWriter.close();
+					target = new ByteArrayInputStream(stringWriter.toString().getBytes("UTF8"));
+					schemaCSSFile.create(target, true, monitor);
+				} 
+				
+				
+				if (getCSSURL()==null)
+					outputPath=(Path)path.append(SchemaTransformer.getPlatformCSSName());
+				else
+					outputPath = new Path(getCSSURL().getPath());
+				
+				outputPath = (Path)path.append(outputPath.toFile().getName());
+				IFile cssFile = workspace.getRoot().getFile(outputPath);
+				if (!workspace.getRoot().exists(outputPath)){
+					stringWriter = new StringWriter();
+					pwriter = new PrintWriter(stringWriter);
+					addCSS(outputPath, pwriter);
+					stringWriter.close();
+					target = new ByteArrayInputStream(stringWriter.toString().getBytes("UTF8"));
+					cssFile.create(target, true, monitor);
+				} 
+
 			}
+
 		} catch (UnsupportedEncodingException e) {
 			PDE.logException(e);
 		} catch (CoreException e) {
@@ -150,6 +209,40 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 		monitor.done();
 	}
 	
+	private void addCSS(Path outputPath, PrintWriter pwriter) {
+		File cssFile;
+		
+		if (outputPath.toFile().getName().equals(SchemaTransformer.getPlatformCSSName())){
+			PluginDescriptor descriptor =(PluginDescriptor) Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.platform.doc.user");
+			if (descriptor == null)
+				return;
+			cssFile =new File(descriptor.getInstallURLInternal().getFile() +SchemaTransformer.getPlatformCSSName());
+		} else if (outputPath.toFile().getName().equals(SchemaTransformer.getSchemaCSSName())){
+			PluginDescriptor descriptor =(PluginDescriptor) Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.pde");
+			if (descriptor == null)
+				return;
+			cssFile =new File(descriptor.getInstallURLInternal().getFile() +SchemaTransformer.getSchemaCSSName());
+		} else{
+			cssFile = new File(getCSSURL().getFile());
+		}
+		
+		try {
+
+			FileReader freader = new FileReader(cssFile);
+			BufferedReader breader = new BufferedReader(freader);
+
+			while (breader.ready()) {
+				pwriter.println(breader.readLine());
+			}
+
+			breader.close();
+			freader.close();
+		} catch (Exception e) {
+			// do nothing if problem with css as it will only affect formatting.  
+			// may want to log this error in the future.
+		}
+		
+	}
 	private void ensureFoldersExist(IProject project, String pathName) throws CoreException {
 		IPath path = new Path(pathName);
 		IContainer parent=project;

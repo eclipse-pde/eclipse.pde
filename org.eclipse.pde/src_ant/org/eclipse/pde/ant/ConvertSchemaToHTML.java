@@ -90,7 +90,7 @@ public class ConvertSchemaToHTML extends Task {
 						extPoints[i].getFullId().replace('.', '_') + ".html");
 				
 				out = new PrintWriter(new FileWriter(file), true);
-				transformer.transform(out, schema, cssURL);
+				transformer.transform(out, schema, cssURL, false);
 			} catch (Exception e) {
 				if (e.getMessage() != null)
 					System.out.println(e.getMessage());

@@ -17,6 +17,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Stack;
 import java.util.StringTokenizer;
@@ -72,11 +73,6 @@ public class SchemaTransformer implements ISchemaTransformer {
 	public static final String REPORT_OPEN = 
 		"SchemaTransformer.Validator.open_tag";
 
-	private static final String COLOR_TAG = "#000080";
-	private static final String COLOR_CSTRING = "#008000";
-	private static final String COLOR_DTD = "#800000";
-	private static final String COLOR_COPYRIGHT = "#336699";
-	private File tempCSSFile;
 	public static final String[] forbiddenEndTagKeys =
 		{
 			"area",
@@ -211,7 +207,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 		InputStream is,
 		PrintWriter out,
 		PluginErrorReporter reporter) {
-		transform(schemaURL, is, out, reporter, null);
+		transform(schemaURL, is, out, reporter, null); 
 	}
 
 	public void transform(
@@ -230,9 +226,10 @@ public class SchemaTransformer implements ISchemaTransformer {
 
 		if (verifySchema(schema, reporter)
 			&& verifySections(schema, reporter)
-			&& CompilerFlags.getBoolean(CompilerFlags.S_CREATE_DOCS)
-			&& CompilerFlags.getBoolean(CompilerFlags.S_OPEN_TAGS))
-			transform(out, schema, cssURL);
+			&& CompilerFlags.getBoolean(CompilerFlags.S_CREATE_DOCS)){
+			transform(out, schema, cssURL, false);
+
+		}
 	}
 
 	private boolean verifySchema(Schema schema, PluginErrorReporter reporter) {
@@ -336,25 +333,34 @@ public class SchemaTransformer implements ISchemaTransformer {
 		return errors;
 	}
 
-	public void addPlatformCSS(PrintWriter out, URL cssURL) {
+	public static String getSchemaCSSName(){
+		return "schema.css";
+	}
+	public static String getPlatformCSSName(){
+		return "book.css";
+	}
+	public void addCSS(PrintWriter out, URL cssURL, boolean isTemp) {
 		File cssFile;
 
+		
 		if (cssURL == null) {
-			PluginDescriptor descriptor =
-				(PluginDescriptor) Platform
-					.getPluginRegistry()
-					.getPluginDescriptor(
-					"org.eclipse.platform.doc.user");
+			PluginDescriptor descriptor =(PluginDescriptor) Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.platform.doc.user");
 			if (descriptor == null)
 				return;
-			cssFile =
-				new File(
-					descriptor.getInstallURLInternal().getFile() + "book.css");
+			cssFile =new File(descriptor.getInstallURLInternal().getFile() + getPlatformCSSName());
+			if (!isTemp){
+				out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\""+getPlatformCSSName()+"\"/>");
+				return;
+			}
 		} else {
 			cssFile = new File(cssURL.getFile());
+			if (!isTemp){
+				out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\""+cssFile.getName()+"\"/>");
+				return;
+			}
 		}
 		try {
-			tempCSSFile =
+			File tempCSSFile =
 				PDECore.getDefault().getTempFileManager().createTempFile(
 					this,
 					"book",
@@ -367,9 +373,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 				pwriter.println(breader.readLine());
 			}
 			out.println(
-				"<link rel=\"stylesheet\" type=\"text/css\" href=\""
-					+ tempCSSFile.getName()
-					+ "\"/>");
+				"<link rel=\"stylesheet\" type=\"text/css\" href=\""+ tempCSSFile.getName()+ "\"/>");
 			pwriter.close();
 			breader.close();
 			freader.close();
@@ -379,19 +383,20 @@ public class SchemaTransformer implements ISchemaTransformer {
 		}
 	}
 
+
 	public void transform(PrintWriter out, ISchema schema) {
-		transform(out, schema, null);
+		transform(out, schema, null,true); 
 	}
 
-	public void transform(PrintWriter out, ISchema schema, URL cssURL) {
+	public void transform(PrintWriter out, ISchema schema, URL cssURL, boolean isTemp) {
 		out.println(
 			"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">");
 		out.print("<HEAD>");
 		out.println(
 			"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">");
-		addStyle(out);
-		addPlatformCSS(out, cssURL);
-
+		
+		addCSS(out, cssURL, isTemp);
+		addSchemaStyle(out, isTemp);
 		out.println("</HEAD>");
 		out.println("<HTML>");
 		out.println("<BODY>");
@@ -421,27 +426,20 @@ public class SchemaTransformer implements ISchemaTransformer {
 		out.println("</HTML>");
 	}
 
-	private void addStyle(PrintWriter out) {
-		out.println("<STYLE type=\"text/css\">");
-		out.println(
-			".header {font-style: italic; font-weight: bold ; font-size:16px; display:inline}");
-		out.println(
-			".copyright-text {font-size: 10px; color: "
-				+ COLOR_COPYRIGHT
-				+ "; display:inline }");
-		out.println(
-			"samp.dtd {color: "
-				+ COLOR_DTD
-				+ "; display: inline}");
-		out.println(
-			".tag {color: "
-				+ COLOR_TAG
-				+ "; display:inline}");
-		out.println(
-			".cstring {color: "
-				+ COLOR_CSTRING
-				+ "; display:inline}");
-		out.println("</STYLE>");
+	private void addSchemaStyle(PrintWriter out, boolean isTemp) {
+		PluginDescriptor descriptor =
+		(PluginDescriptor) Platform
+			.getPluginRegistry()
+			.getPluginDescriptor(
+			"org.eclipse.pde");
+		try {
+			if(isTemp)
+				addCSS(out, new URL(descriptor.getInstallURLInternal() + "schema.css"), isTemp);
+			else
+				out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\""+ getSchemaCSSName()+"\"/>");
+		} catch (MalformedURLException e) {
+			// do nothing
+		}
 	}
 
 	private void transformDescription(PrintWriter out, ISchema schema) {
@@ -449,7 +447,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 		transformText(out, schema.getDescription());
 		ISchemaInclude[] includes = schema.getIncludes();
 		for (int i = 0; i < includes.length; i++) {
-
+ 
 			ISchema ischema = includes[i].getIncludedSchema();
 			if (ischema != null) {
 				out.println("<p>");
@@ -563,6 +561,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 		}
 		return false;
 	}
+
 	private boolean verifyDescription(String desc, PlatformObject container, PluginErrorReporter reporter) {
 		boolean openTag = false, isPre = false;
 		boolean flagForbidden = CompilerFlags.getFlag(CompilerFlags.S_FORBIDDEN_END_TAGS)!= CompilerFlags.IGNORE;
