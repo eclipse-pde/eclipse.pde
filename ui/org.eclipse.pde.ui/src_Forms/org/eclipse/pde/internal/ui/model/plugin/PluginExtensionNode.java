@@ -28,6 +28,20 @@ public class PluginExtensionNode extends PluginParentNode
 	public void setPoint(String point) throws CoreException {
 		setXMLAttribute(P_POINT, point);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.plugin.IPluginObject#setName(java.lang.String)
+	 */
+	public void setName(String name) throws CoreException {
+		setXMLAttribute(P_NAME, name);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.plugin.IPluginObject#getName()
+	 */
+	public String getName() {
+		return getXMLAttributeValue(P_NAME);
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IIdentifiable#getId()
 	 */
