@@ -11,6 +11,7 @@ import org.eclipse.core.internal.boot.InternalBootLoader;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -30,6 +31,10 @@ import org.eclipse.pde.internal.ui.wizards.templates.ControlStack;
 
 public abstract class AbstractTemplateSection
 	implements ITemplateSection, IVariableProvider {
+		
+	private static final String KEY_CODEGEN = "AbstractTemplateSection.codeGenTitle";
+	private static final String KEY_NOJAVA = "AbstractTemplateSection.noJavaClasses";
+	
 	/**
 	 * The project handle.
 	 * <p>
@@ -461,7 +466,17 @@ public abstract class AbstractTemplateSection
 				if (firstLevel) {
 					binary = false;
 					if (member.getName().equals("java")) {
-						dstContainer = generateJavaSourceFolder(monitor);
+						IFolder sourceFolder = getSourceFolder(monitor);
+						if (sourceFolder != null) {
+							dstContainer =
+								generateJavaSourceFolder(sourceFolder, monitor);
+						} else {
+							MessageDialog.openError(
+								PDEPlugin.getActiveWorkbenchShell(),
+								PDEPlugin.getResourceString(KEY_CODEGEN),
+								PDEPlugin.getResourceString(KEY_NOJAVA));
+							continue;
+						}
 					} else if (member.getName().equals("bin")) {
 						binary = true;
 						dstContainer = dst;
@@ -485,9 +500,8 @@ public abstract class AbstractTemplateSection
 		}
 	}
 
-	private IFolder generateJavaSourceFolder(IProgressMonitor monitor)
+	private IFolder generateJavaSourceFolder(IFolder sourceFolder, IProgressMonitor monitor)
 		throws CoreException {
-		IFolder sourceFolder = getSourceFolder(monitor);
 		IPath path = sourceFolder.getProjectRelativePath();
 		Object packageValue = getValue(KEY_PACKAGE_NAME);
 		String packageName = packageValue != null ? packageValue.toString() : null;
