@@ -215,11 +215,11 @@ public class TracingLauncherTab
 		boolean tracingEnabled = fTracingCheck.getSelection();
 		config.setAttribute(TRACING, tracingEnabled);
 		
-		IPluginModelBase model = getSelectedModel();
-		String id = (model == null) ? null : model.getPluginBase().getId();
-		config.setAttribute(TRACING_SELECTED_PLUGIN, id);
-		
 		if (tracingEnabled) {
+			IPluginModelBase model = getSelectedModel();
+			String id = (model == null) ? null : model.getPluginBase().getId();
+			config.setAttribute(TRACING_SELECTED_PLUGIN, id);
+			
 			boolean changes = false;
 			for (Enumeration enum = fPropertySources.elements();
 				enum.hasMoreElements();
@@ -232,6 +232,8 @@ public class TracingLauncherTab
 			}
 			if (changes)
 				config.setAttribute(TRACING_OPTIONS, fMasterOptions);
+		} else {
+			config.setAttribute(TRACING_SELECTED_PLUGIN, (String)null);
 		}
 	}
 
