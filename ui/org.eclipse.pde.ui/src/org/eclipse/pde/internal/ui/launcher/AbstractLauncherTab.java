@@ -27,11 +27,6 @@ public abstract class AbstractLauncherTab extends AbstractLaunchConfigurationTab
 		currentStatus= createStatus(IStatus.OK, "");
 	}
 
-	protected void refreshStatus() {
-		getLaunchConfigurationDialog().updateButtons();
-		getLaunchConfigurationDialog().updateMessage();
-	}
-	
 	protected boolean isChanged() {
 		return changed;
 	}
@@ -87,7 +82,7 @@ public abstract class AbstractLauncherTab extends AbstractLaunchConfigurationTab
 		}
 		tab.setErrorMessage(errorMessage);
 		tab.setMessage(warningMessage);
-		tab.refreshStatus();
+		tab.updateLaunchConfigurationDialog();
 	}
 	
 	public static IStatus getMoreSevere(IStatus s1, IStatus s2) {
@@ -100,5 +95,5 @@ public abstract class AbstractLauncherTab extends AbstractLaunchConfigurationTab
 	
 	public static IStatus createStatus(int severity, String message) {
 		return new Status(severity, PDEPlugin.getPluginId(), severity, message, null);
-	}	
+	}		
 }
