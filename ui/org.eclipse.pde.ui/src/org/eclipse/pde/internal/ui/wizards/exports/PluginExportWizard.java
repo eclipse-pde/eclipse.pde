@@ -54,7 +54,7 @@ public class PluginExportWizard extends BaseExportWizard {
 		String destination,
 		String zipFileName,
 		IModel model,
-		IProgressMonitor monitor) {
+		IProgressMonitor monitor) throws CoreException, InvocationTargetException{
 
 		IPluginModelBase modelBase = (IPluginModelBase) model;
 		try {
@@ -72,9 +72,6 @@ public class PluginExportWizard extends BaseExportWizard {
 				exportZip,
 				exportSource,
 				new SubProgressMonitor(monitor, 9));
-		} catch (Exception e) {
-			if (writer != null && e.getMessage() != null)
-				writer.write(e.getMessage() + System.getProperty("line.separator"));
 		} finally {
 			deleteBuildFile(modelBase);
 			monitor.done();

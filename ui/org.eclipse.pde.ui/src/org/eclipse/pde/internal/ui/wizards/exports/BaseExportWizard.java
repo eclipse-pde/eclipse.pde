@@ -84,7 +84,7 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard {
 		String destination,
 		String zipFileName,
 		IModel model,
-		IProgressMonitor monitor);
+		IProgressMonitor monitor) throws CoreException, InvocationTargetException;
 
 	protected void doPerformFinish(
 		boolean exportZip,
@@ -93,7 +93,7 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard {
 		String zipFileName,
 		Object[] items,
 		IProgressMonitor monitor)
-		throws InvocationTargetException {
+		throws InvocationTargetException, CoreException {
 		File file = new File(destination);
 		if (!file.exists() || !file.isDirectory())
 			if (!file.mkdirs()) {
@@ -142,7 +142,11 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard {
 		
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException{
-				doPerformFinish(exportZip, exportSource, destination, zipFileName, items, monitor);
+				try {
+					doPerformFinish(exportZip, exportSource, destination, zipFileName, items, monitor);
+				} catch (CoreException e) {
+					throw new InvocationTargetException(e);
+				}
 			}
 		};
 		try {
@@ -151,6 +155,7 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard {
 		} catch (InterruptedException e) {
 			return false;
 		} catch (InvocationTargetException e) {
+			MessageDialog.openError(getShell(), getWindowTitle(), e.getTargetException().getMessage());
 			return false;
 		} finally {
 			if (writer != null)

@@ -59,7 +59,7 @@ public class FeatureExportWizard extends BaseExportWizard {
 		String destination,
 		String zipFileName,
 		IModel model,
-		IProgressMonitor monitor) {
+		IProgressMonitor monitor) throws CoreException, InvocationTargetException {
 		IFeatureModel feature = (IFeatureModel) model;
 		String label = PDEPlugin.getDefault().getLabelProvider().getObjectText(feature);
 
@@ -74,9 +74,6 @@ public class FeatureExportWizard extends BaseExportWizard {
 				exportZip,
 				destination,
 				new SubProgressMonitor(monitor, 9));
-		} catch (Exception e) {
-			if (writer != null && e.getMessage() != null)
-				writer.write(e.getMessage() + System.getProperty("line.separator"));
 		} finally {
 			deleteBuildFiles(feature);
 			monitor.done();
