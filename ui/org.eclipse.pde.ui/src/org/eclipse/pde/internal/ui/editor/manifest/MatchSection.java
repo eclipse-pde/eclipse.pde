@@ -150,13 +150,13 @@ public class MatchSection extends PDEFormSection {
 					}
 					ignoreModelEvents = false;
 				} catch (Throwable e) {
+					text.setValue(currentImport.getVersion(), true);
 					String message =
 						PDEPlugin.getResourceString(KEY_VERSION_FORMAT);
 					MessageDialog.openError(
 						PDEPlugin.getActiveWorkbenchShell(),
 						PDEPlugin.getResourceString(KEY_VERSION_TITLE),
 						message);
-					text.setValue(currentImport.getVersion(), true);
 				}
 			}
 			public void textDirty(FormEntry text) {
