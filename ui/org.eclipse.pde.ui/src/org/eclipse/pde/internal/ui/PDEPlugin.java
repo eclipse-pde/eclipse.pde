@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
-public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
+public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants, IPreferenceConstants {
 	private static final String KEY_RUNNING = "RunningEclipse.message";
 
 	// Shared instance
@@ -209,5 +209,17 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 	
 	protected void initializeDefaultPreferences(IPreferenceStore store) {
 		ColorManager.initializeDefaults(store);
+		store.setDefault(PROP_PLUGIN_PROJECT_UPDATE, true);
+		store.setDefault(
+			PROP_FRAGMENT_PROJECT_UPDATE,
+			true);
+		store.setDefault(PROP_MANIFEST_UPDATE, true);
+		store.setDefault(PROP_CONVERSION_UPDATE, true);
+		store.setDefault(PROP_CLASSPATH_CONTAINERS, false);
+		store.setDefault(P_USE_SOURCE_PAGE, false);
+		
+		store.setDefault(PROP_SHOW_OBJECTS, VALUE_USE_IDS);
+		store.setDefault(PROP_BUILD_SCRIPT_NAME, "build.xml");
+		store.setDefault(PROP_ADD_TODO, "true");
 	}
 }

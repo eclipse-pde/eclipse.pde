@@ -14,7 +14,7 @@ import org.eclipse.swt.*;
 
 public class BuildpathPreferencePage
 	extends FieldEditorPreferencePage
-	implements IWorkbenchPreferencePage {
+	implements IWorkbenchPreferencePage, IPreferenceConstants {
 	private static final String KEY_PLUGIN_PROJECT_UPDATE =
 		"Preferences.BuildpathPage.pluginProjectUpdate";
 	private static final String KEY_FRAGMENT_PROJECT_UPDATE =
@@ -28,41 +28,11 @@ public class BuildpathPreferencePage
 	private static final String KEY_CLASSPATH_CONTAINERS =
 		"Preferences.BuildpathPage.classpathContainers";
 
-	private static final String PROP_PLUGIN_PROJECT_UPDATE =
-		"Preferences.BuildpathPage.pluginProjectUpdate";
-	private static final String PROP_FRAGMENT_PROJECT_UPDATE =
-		"Preferences.BuildpathPage.fragmentProjectUpdate";
-	private static final String PROP_MANIFEST_UPDATE =
-		"Preferences.BuildpathPage.manifestUpdate";
-	private static final String PROP_CONVERSION_UPDATE =
-		"Preferences.BuildpathPage.conversionUpdate";
-		
-	private static final String PROP_CLASSPATH_CONTAINERS =
-		"Preferences.BuildpathPage.useClasspathContainers";
-
-
-	private static final boolean D_PLUGIN_PROJECT_UPDATE = true;
-	private static final boolean D_FRAGMENT_PROJECT_UPDATE = true;
-	private static final boolean D_MANIFEST_UPDATE = true;
-	private static final boolean D_CONVERSION_UPDATE = true;
-	private static final boolean D_CLASSPATH_CONTAINERS = false;
 
 	public BuildpathPreferencePage() {
 		super(GRID);
 		setPreferenceStore(PDEPlugin.getDefault().getPreferenceStore());
 		setDescription(PDEPlugin.getResourceString(KEY_DESCRIPTION));
-		initializeDefaults();
-	}
-
-	private static void initializeDefaults() {
-		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-		store.setDefault(PROP_PLUGIN_PROJECT_UPDATE, D_PLUGIN_PROJECT_UPDATE);
-		store.setDefault(
-			PROP_FRAGMENT_PROJECT_UPDATE,
-			D_FRAGMENT_PROJECT_UPDATE);
-		store.setDefault(PROP_MANIFEST_UPDATE, D_MANIFEST_UPDATE);
-		store.setDefault(PROP_CONVERSION_UPDATE, D_CONVERSION_UPDATE);
-		store.setDefault(PROP_CLASSPATH_CONTAINERS, D_CLASSPATH_CONTAINERS);
 	}
 
 	protected void createFieldEditors() {
@@ -107,33 +77,26 @@ public class BuildpathPreferencePage
 
 	public static boolean isPluginProjectUpdate() {
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-		store.setDefault(PROP_PLUGIN_PROJECT_UPDATE, D_PLUGIN_PROJECT_UPDATE);
 		return store.getBoolean(PROP_PLUGIN_PROJECT_UPDATE);
 	}
 
 	public static boolean isFragmentProjectUpdate() {
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-		store.setDefault(
-			PROP_FRAGMENT_PROJECT_UPDATE,
-			D_FRAGMENT_PROJECT_UPDATE);
 		return store.getBoolean(PROP_FRAGMENT_PROJECT_UPDATE);
 	}
 
 	public static boolean isManifestUpdate() {
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-		store.setDefault(PROP_MANIFEST_UPDATE, D_MANIFEST_UPDATE);
 		return store.getBoolean(PROP_MANIFEST_UPDATE);
 	}
 
 	public static boolean isConversionUpdate() {
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-		store.setDefault(PROP_CONVERSION_UPDATE, D_CONVERSION_UPDATE);
 		return store.getBoolean(PROP_CONVERSION_UPDATE);
 	}
 	
 	public static boolean getUseClasspathContainers() {
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-		store.setDefault(PROP_CLASSPATH_CONTAINERS, D_CLASSPATH_CONTAINERS);
 		return store.getBoolean(PROP_CLASSPATH_CONTAINERS);
 	}
 

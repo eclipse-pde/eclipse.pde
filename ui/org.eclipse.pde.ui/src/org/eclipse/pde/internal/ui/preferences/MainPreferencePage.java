@@ -21,7 +21,7 @@ import org.eclipse.pde.internal.ui.*;
 
 public class MainPreferencePage
 	extends PreferencePage
-	implements IWorkbenchPreferencePage {
+	implements IWorkbenchPreferencePage, IPreferenceConstants {
 	private static final String KEY_DESCRIPTION =
 		"Preferences.MainPage.Description";
 	private static final String KEY_NO_PDE_NATURE =
@@ -39,14 +39,6 @@ public class MainPreferencePage
 	private static final String KEY_ADD_TODO = 
 		"Preferences.MainPage.addTodo";
 
-	public static final String PROP_SHOW_OBJECTS =
-		"Preferences.MainPage.showObjects";
-	public static final String VALUE_USE_IDS = "useIds";
-	public static final String VALUE_USE_NAMES = "useNames";
-	public static final String PROP_BUILD_SCRIPT_NAME =
-		"Preferences.MainPage.buildScriptName";
-	public static final String PROP_ADD_TODO = 
-		"Preferences.MainPage.addTodo";
 
 	private Button useID;
 	private Button useName;
@@ -56,19 +48,10 @@ public class MainPreferencePage
 	public MainPreferencePage() {
 		setPreferenceStore(PDEPlugin.getDefault().getPreferenceStore());
 		setDescription(PDEPlugin.getResourceString(KEY_DESCRIPTION));
-		initializeDefaults();
-	}
-
-	private static void initializeDefaults() {
-		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-		store.setDefault(PROP_SHOW_OBJECTS, VALUE_USE_IDS);
-		store.setDefault(PROP_BUILD_SCRIPT_NAME, "build.xml");
-		store.setDefault(PROP_ADD_TODO, "true");
 	}
 
 	protected Control createContents(Composite parent) {
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-		initializeDefaults();
 		
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout());
@@ -123,19 +106,16 @@ public class MainPreferencePage
 
 	public static boolean isFullNameModeEnabled() {
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-		initializeDefaults();
 		return store.getString(PROP_SHOW_OBJECTS).equals(VALUE_USE_NAMES);
 	}
 
 	public static String getBuildScriptName() {
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-		initializeDefaults();
 		return store.getString(PROP_BUILD_SCRIPT_NAME);
 	}
 	
 	public static boolean getAddTodo() {
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-		initializeDefaults();
 		return store.getString(PROP_ADD_TODO).equals("true");
 	}	
 

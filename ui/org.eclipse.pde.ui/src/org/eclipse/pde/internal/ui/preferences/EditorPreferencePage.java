@@ -16,8 +16,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 
 public class EditorPreferencePage
 	extends FieldEditorPreferencePage
-	implements IWorkbenchPreferencePage {
-	public static final String P_USE_SOURCE_PAGE = "useSourcePage";
+	implements IWorkbenchPreferencePage, IPreferenceConstants {
 
 	public EditorPreferencePage() {
 		super(GRID);
@@ -25,12 +24,6 @@ public class EditorPreferencePage
 		setDescription(PDEPlugin.getResourceString("EditorPreferencePage.desc")); //$NON-NLS-1$
 	}
 	
-	private static IPreferenceStore initializeDefaults() {
-		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-		store.setDefault(P_USE_SOURCE_PAGE, false);
-		return store;
-	}
-
 	protected void createFieldEditors() {
 		addField(new BooleanFieldEditor(P_USE_SOURCE_PAGE, 
 				PDEPlugin.getResourceString("EditorPreferencePage.useSourcePage"),
@@ -47,8 +40,7 @@ public class EditorPreferencePage
 	}
 	
 	public static boolean getUseSourcePage() {
-		IPreferenceStore store = initializeDefaults();
-		return store.getBoolean(P_USE_SOURCE_PAGE);
+		return PDEPlugin.getDefault().getPreferenceStore().getBoolean(P_USE_SOURCE_PAGE);
 	}
 	
 	private void addLabel(String text, int span) {
