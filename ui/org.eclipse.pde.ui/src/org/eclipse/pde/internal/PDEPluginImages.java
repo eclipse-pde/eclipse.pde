@@ -121,6 +121,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_DOC_CO   = create(PATH_OVR, "doc_co.gif");
 	public static final ImageDescriptor DESC_WARNING_CO   = create(PATH_OVR, "warning_co.gif");
 	public static final ImageDescriptor DESC_ERROR_CO   = create(PATH_OVR, "error_co.gif");
+	public static final ImageDescriptor DESC_EXPORT_CO   = create(PATH_OVR, "export_co.gif");
 
 	/**
 	 * TOOL16

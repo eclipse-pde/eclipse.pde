@@ -94,7 +94,13 @@ public static void setBuildPath(IPluginModelBase model, IProgressMonitor monitor
 	IJavaProject javaProject = JavaCore.create(project);
 	// Set classpath
 	Vector result = new Vector();
-	addSourceFolders(model.getBuildModel(), result);
+	IBuildModel buildModel = model.getBuildModel();
+	if (buildModel!=null)
+		addSourceFolders(buildModel, result);
+	else {
+		// just keep the source folders
+		keepExistingSourceFolders(javaProject, result);
+	}
 	if (model instanceof IPluginModel) {
 		IPluginModel pluginModel = (IPluginModel)model;
 		addDependencies(project, pluginModel.getPlugin().getImports(), result);
@@ -108,7 +114,6 @@ public static void setBuildPath(IPluginModelBase model, IProgressMonitor monitor
 }
 
 private static void addSourceFolders(IBuildModel model, Vector result)throws CoreException {
-	if (model==null) return;
 	IBuild build = model.getBuild();
 	IBuildEntry [] entries = build.getBuildEntries();
 	for (int i=0; i<entries.length; i++) {
@@ -120,6 +125,17 @@ private static void addSourceFolders(IBuildModel model, Vector result)throws Cor
 				       model.getUnderlyingResource().getProject(), 
 				       result);
 			}
+		}
+	}
+}
+
+private static void keepExistingSourceFolders(IJavaProject jproject, Vector result) throws CoreException {
+	IClasspathEntry [] entries = jproject.getRawClasspath();
+	for (int i=0; i<entries.length; i++) {
+		IClasspathEntry entry = entries[i];
+		if (entry.getEntryKind()==IClasspathEntry.CPE_SOURCE &&
+		entry.getContentKind()==IPackageFragmentRoot.K_SOURCE) {
+			result.add(entry);
 		}
 	}
 }

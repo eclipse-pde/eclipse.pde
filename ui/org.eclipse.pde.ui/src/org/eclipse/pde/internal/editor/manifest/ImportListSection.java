@@ -39,6 +39,7 @@ public class ImportListSection
 	private TreeViewer importTree;
 	private FormWidgetFactory factory;
 	private Image importImage;
+	private Image exportImportImage;
 	private Image errorImportImage;
 	public static final String SECTION_TITLE = "ManifestEditor.ImportListSection.title";
 	public static final String SECTION_DESC = "ManifestEditor.ImportListSection.desc";
@@ -183,6 +184,7 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 public void dispose() {
 	importImage.dispose();
 	errorImportImage.dispose();
+	exportImportImage.dispose();
 	IPluginModelBase model = (IPluginModelBase)getFormPage().getModel();
 	model.removeModelChangedListener(this);
 	super.dispose();
@@ -276,6 +278,11 @@ public void initializeImages() {
 		new ImageDescriptor[][] { {}, {}, { PDEPluginImages.DESC_ERROR_CO }
 	});
 	errorImportImage = errorDesc.createImage();	
+	ImageDescriptor exportDesc = 
+		new OverlayIcon(PDEPluginImages.DESC_REQ_PLUGIN_OBJ, 
+		new ImageDescriptor[][] { { PDEPluginImages.DESC_EXPORT_CO }
+	});
+	exportImportImage = exportDesc.createImage();
 }
 
 private void makeActions() {
@@ -349,8 +356,12 @@ private ImportObject findImportObject(IPluginImport iimport) {
 
 private Image resolveObjectImage(Object obj) {
 	ImportObject importObject = (ImportObject)obj;
-	if (importObject.isResolved())
-	   return importImage;
+	if (importObject.isResolved()) {
+		if (importObject.getImport().isReexported())
+			return exportImportImage;
+		else
+	 	  	return importImage;
+	}
 	return errorImportImage;
 }
 

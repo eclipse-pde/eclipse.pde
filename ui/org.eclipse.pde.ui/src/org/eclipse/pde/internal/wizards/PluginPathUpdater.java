@@ -112,10 +112,12 @@ private static void addToClasspathEntries(CheckedPlugin element, Vector result) 
 		   result.addElement(libraryEntry);
 		}
 	}
-	// Recursively add
+	// Recursively add reexported libraries
 	IPluginImport [] imports = plugin.getImports();
 	for (int i=0; i<imports.length; i++) {
 		IPluginImport iimport = imports[i];
+		// don't recurse if the library is not reexported
+		if (iimport.isReexported()==false) continue;
 		String id = iimport.getId();
 		IPlugin reference = PDEPlugin.getDefault().findPlugin(id);
 		if (reference!=null) {
@@ -265,6 +267,7 @@ private void updateLibrariesFor(
 	IPluginImport [] imports = element.getPluginInfo().getImports();
 	for (int i=0; i<imports.length; i++) {
 		IPluginImport iimport = imports[i];
+		if (iimport.isReexported()==false) continue;
 		String id = iimport.getId();
 		IPlugin reference = PDEPlugin.getDefault().findPlugin(id);
 		if (reference!=null) {

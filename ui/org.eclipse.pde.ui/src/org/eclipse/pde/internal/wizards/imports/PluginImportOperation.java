@@ -23,6 +23,12 @@ import org.eclipse.pde.internal.PDEPlugin;
 import java.util.zip.*;
 
 public class PluginImportOperation implements IWorkspaceRunnable {
+	private static final String KEY_TITLE = "ImportWizard.messages.title";
+	private static final String KEY_CREATING = "ImportWizard.operation.creating";
+	private static final String KEY_PROBLEM = "ImportWizard.operation.problem";
+	private static final String KEY_CREATING2 = "ImportWizard.operation.creating2";
+	private static final String KEY_EXTRACTING =
+		"ImportWizard.operation.extracting";
 
 	public interface IReplaceQuery {
 
@@ -67,20 +73,24 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		monitor.beginTask("Creating projects from plugins...", models.length);
+		monitor.beginTask(PDEPlugin.getResourceString(KEY_CREATING), models.length);
 		try {
 			MultiStatus multiStatus =
-				new MultiStatus(PDEPlugin.getPluginId(), IStatus.OK, "Import Plugins", null);
+				new MultiStatus(
+					PDEPlugin.getPluginId(),
+					IStatus.OK,
+					PDEPlugin.getResourceString(KEY_TITLE),
+					null);
 			for (int i = 0; i < models.length; i++) {
 				try {
 					createProject(models[i], new SubProgressMonitor(monitor, 1));
 				} catch (CoreException e) {
 					IStatus status = e.getStatus();
+					String pattern = PDEPlugin.getResourceString(KEY_PROBLEM);
 					String newMessage =
-						"Problem while importing plugin '"
-							+ models[i].getPluginBase().getId()
-							+ "': "
-							+ status.getMessage();
+						PDEPlugin.getFormattedMessage(
+							pattern,
+							new String[] { models[i].getPluginBase().getId(), status.getMessage()});
 					IStatus newStatus =
 						new Status(
 							status.getSeverity(),
@@ -106,7 +116,9 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		throws CoreException {
 		IPluginBase plugin = model.getPluginBase();
 		String name = plugin.getId();
-		monitor.beginTask("Creating " + name + "...", 7);
+		String pattern = PDEPlugin.getResourceString(KEY_CREATING2);
+		String task = PDEPlugin.getFormattedMessage(pattern, name);
+		monitor.beginTask(task, 7);
 		try {
 			File pluginDir = new File(model.getInstallLocation());
 			IPath pluginPath = new Path(pluginDir.getPath());
@@ -229,7 +241,9 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		IClasspathEntry[] entries,
 		IProgressMonitor monitor)
 		throws CoreException {
-		monitor.beginTask("Extracting...", entries.length * 2);
+		monitor.beginTask(
+			PDEPlugin.getResourceString(KEY_EXTRACTING),
+			entries.length * 2);
 		try {
 			for (int i = 0; i < entries.length; i++) {
 				IClasspathEntry entry = entries[i];

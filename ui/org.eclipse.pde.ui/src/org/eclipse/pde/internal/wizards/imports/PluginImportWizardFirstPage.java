@@ -134,6 +134,7 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 			public void widgetSelected(SelectionEvent e) {
 				if (runtimeLocationButton.getSelection()) {
 					setOtherEnabled(false);
+					validateDropLocation();
 					updateStatus(dropLocationStatus);
 				}
 			}
