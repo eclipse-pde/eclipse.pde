@@ -14,18 +14,10 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.team.core.*;
 
-/**
- * @author dejan
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
- */
 public class BinaryProjectFilter extends ViewerFilter {
-	private static final QualifiedName IMPORTED_KEY = new QualifiedName("org.eclipse.pde.core", "imported"); //$NON-NLS-1$ //$NON-NLS-2$
-	private static final QualifiedName TEAM_KEY = new QualifiedName("org.eclipse.team.core", "repository"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	/**
 	 * Constructor for BinaryProjectFilter.
@@ -68,18 +60,14 @@ public class BinaryProjectFilter extends ViewerFilter {
 	
 	private boolean isBinary(IProject project) {
 		try {
-			String value = project.getPersistentProperty(IMPORTED_KEY);
-			if (value==null) return false;
-			if (value.equals("external")) //$NON-NLS-1$
-				return true;
-			if (value.equals("binary")) { //$NON-NLS-1$
-				if (project.getSessionProperty(TEAM_KEY)==null)
-					return true;
+			String binary = project.getPersistentProperty(PDECore.EXTERNAL_PROJECT_PROPERTY);
+			if (binary != null) {
+				RepositoryProvider provider = RepositoryProvider.getProvider(project);
+				return provider==null || provider instanceof BinaryRepositoryProvider;
 			}
-			return false;
+		} catch (CoreException e) {
+			PDECore.logException(e);
 		}
-		catch (CoreException e) {
-			return false;
-		}
+		return false;
 	}
 }
