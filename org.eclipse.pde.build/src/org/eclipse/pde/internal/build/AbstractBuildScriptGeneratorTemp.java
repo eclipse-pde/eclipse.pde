@@ -215,6 +215,8 @@ protected Properties getBuildProperties(PluginModel model) throws CoreException 
 protected Properties readBuildProperties(String rootLocation) throws CoreException {
 	Properties result = new Properties();
 	File file = new File(rootLocation, PROPERTIES_FILE);
+	if (!file.exists())
+		return result; // the file is not required to exist
 	try {
 		InputStream input = new FileInputStream(file);
 		try {
