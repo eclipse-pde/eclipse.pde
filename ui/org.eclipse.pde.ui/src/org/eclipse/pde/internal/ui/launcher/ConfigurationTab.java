@@ -25,26 +25,108 @@ import org.eclipse.swt.widgets.*;
 public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSettings {
 	private Image fImage;
 	private ArrayList fPluginList = new ArrayList();
-	private Button fUpButton;
-	private Button fDownButton;
 	private Button fAddButton;
 	private Button fRemoveButton;
 	private Button fUseDefault;
 	private Button fClearConfig;
 	private TableViewer fTableViewer;
 	
-	class ContentProvider extends DefaultTableProvider {
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-		 */
-		public Object[] getElements(Object inputElement) {
-			if (inputElement instanceof ArrayList) {
-				return ((ArrayList)inputElement).toArray();
-			}
-			return new Object[0];
+	class SelectionDialog extends PluginSelectionDialog {
+		
+		private Text startLevelText;
+		private int startLevel = -1;
+		
+		public SelectionDialog(Shell parentShell, IPluginModelBase[] models, boolean multipleSelection) {
+			super(parentShell, models, multipleSelection);
+		}
+	
+		protected Control createDialogArea(Composite parent) {			
+			Composite area = (Composite)super.createDialogArea(parent);
+			
+			Composite container = new Composite(area, SWT.NONE);
+			GridLayout layout = new GridLayout();
+			layout.numColumns = 2;
+			layout.marginHeight = layout.marginWidth = 0;
+			container.setLayout(layout);
+			container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			
+			Label label = new Label(container, SWT.NONE);
+			label.setText(PDEPlugin.getResourceString("ConfigurationTab.startLevel"));
+			
+			startLevelText = new Text(container, SWT.SINGLE|SWT.BORDER);
+			startLevelText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));			
+			return area;		
 		}
 		
+		public int getStartLevel() {
+			return startLevel;
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.dialogs.SelectionStatusDialog#okPressed()
+		 */
+		protected void okPressed() {
+			String level = startLevelText.getText().trim();
+			if (level.length() > 0) {
+				try {
+					Integer integer = new Integer(level);
+					if (integer.intValue() > 0)
+						startLevel = integer.intValue();
+				} catch (NumberFormatException e) {
+				}
+			}
+			super.okPressed();
+		}
+
+	}
+	
+	class Entry {
+		public IPluginModelBase model;
+		public Integer startLevel;
+		
+		public Entry(IPluginModelBase model, int level) {
+			this.model = model;
+			startLevel = new Integer(level);
+		}
+		
+		public boolean equals(Object obj) {
+			if (obj instanceof Entry)
+				return ((Entry)obj).model.getPluginBase().getId().equals(model.getPluginBase().getId());
+			return false;
+		}
+		
+
+	}
+	
+	class ContentProvider extends DefaultTableProvider {
+		public Object[] getElements(Object inputElement) {
+			return ((ArrayList)inputElement).toArray();
+		}		
+	}
+	
+	class ConfigurationLabelProvider extends LabelProvider implements ITableLabelProvider {
+		public Image getColumnImage(Object element, int columnIndex) {
+			if (columnIndex == 0 && element instanceof Entry) {
+				IPluginModelBase model = ((Entry)element).model;
+				return PDEPlugin.getDefault().getLabelProvider().getImage(model);
+			}
+			return null;
+		}
+
+		public String getColumnText(Object element, int columnIndex) {
+			if (element instanceof Entry) {
+				Entry entry = (Entry)element;
+				switch (columnIndex) {
+					case 0:
+						IPluginBase plugin = entry.model.getPluginBase();
+						return plugin.getId() + " (" + plugin.getVersion() + ")";
+					case 1:
+						int start = entry.startLevel.intValue();
+						return (start > 0) ? entry.startLevel.toString() : PDEPlugin.getResourceString("ConfigurationTab.unspecified");
+				}
+			}
+			return null;
+		}		
 	}
 	
 	public ConfigurationTab() {
@@ -54,24 +136,30 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 	
 	private void initializeDefaultPlugins() {
 		fPluginList.clear();
-		String[] plugins = new String[]{"org.eclipse.osgi.services",
-				"org.eclipse.osgi.util", "org.eclipse.core.runtime",
-				"org.eclipse.update.configurator"};
-		for (int i = 0; i < plugins.length; i++) {
-			IPluginModelBase model = getPlugin(plugins[i]);
-			if (model != null) {
-				fPluginList.add(model);
-			}
-		}
+		IPluginModelBase model = getPlugin("org.eclipse.osgi.services");
+		if (model != null)
+			fPluginList.add(new Entry(model, -1));
+		model = getPlugin("org.eclipse.osgi.util");
+		if (model != null)
+			fPluginList.add(new Entry(model, -1));
+		model = getPlugin("org.eclipse.core.runtime");
+		if (model != null)
+			fPluginList.add(new Entry(model, 2));
+		model = getPlugin("org.eclipse.update.configurator");
+		if (model != null)
+			fPluginList.add(new Entry(model, 3));
 	}
 	
 	private void initializePlugins(String selected) {
 		fPluginList.clear();
 		StringTokenizer tokenizer = new StringTokenizer(selected, ",");
 		while (tokenizer.hasMoreTokens()) {
-			IPluginModelBase model = getPlugin(tokenizer.nextToken());
+			String token = tokenizer.nextToken().trim();
+			String id = token.substring(0,token.indexOf('@'));
+			Integer level = new Integer(token.substring(token.indexOf('@') + 1));
+			IPluginModelBase model = getPlugin(id);
 			if (model != null)
-				fPluginList.add(model);
+				fPluginList.add(new Entry(model, level.intValue()));
 		}		
 	}
 	
@@ -86,28 +174,29 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
 		container.setLayout(layout);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		createStartingSpace(container, 2);
+		createStartingSpace(container, 1);
 		
-		Label label = new Label(container, SWT.NONE);
+		Label label = new Label(container, SWT.WRAP);
 		label.setText(PDEPlugin.getResourceString("ConfigurationTab.listLabel"));
-		GridData gd = new GridData();
-		gd.horizontalSpan = 2;
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.widthHint = 300;
 		label.setLayoutData(gd);
 		
-		createViewer(container);
-		createButtonContainer(container);
+		Composite middle = new Composite(container, SWT.NONE);
+		layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.marginWidth = layout.marginHeight = 0;
+		middle.setLayout(layout);
+		middle.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		createStartingSpace(container, 2);
+		createViewer(middle);
+		createButtonContainer(middle);
 		
 		fUseDefault = new Button(container, SWT.CHECK);
 		fUseDefault.setText(PDEPlugin.getResourceString("ConfigurationTab.defaultList"));
-		gd = new GridData();
-		gd.horizontalSpan = 2;
-		fUseDefault.setLayoutData(gd);
 		fUseDefault.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (fUseDefault.getSelection()) {
@@ -121,9 +210,6 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 		
 		fClearConfig = new Button(container, SWT.CHECK);
 		fClearConfig.setText(PDEPlugin.getResourceString("ConfigurationTab.clearArea"));
-		gd = new GridData();
-		gd.horizontalSpan = 2;
-		fClearConfig.setLayoutData(gd);
 		fClearConfig.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
@@ -134,9 +220,21 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 	}
 	
 	private void createViewer(Composite container) {
-		fTableViewer = new TableViewer(container, SWT.BORDER);
+		Table table = new Table(container, SWT.BORDER|SWT.FULL_SELECTION);
+		TableColumn column1 = new TableColumn(table, SWT.NONE);
+		column1.setText("Plug-in ID");
+		TableColumn column2 = new TableColumn(table, SWT.NONE);
+		column2.setText("Start Level");
+		table.setHeaderVisible(true);
+		
+		TableLayout layout = new TableLayout();
+		layout.addColumnData(new ColumnWeightData(80));
+		layout.addColumnData(new ColumnWeightData(20));
+		table.setLayout(layout);
+		
+		fTableViewer = new TableViewer(table);
 		fTableViewer.setContentProvider(new ContentProvider());
-		fTableViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
+		fTableViewer.setLabelProvider(new ConfigurationLabelProvider());
 		fTableViewer.setInput(fPluginList);
 		fTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -145,8 +243,8 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 		});
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 100;
-		gd.widthHint = 250;
-		fTableViewer.getControl().setLayoutData(gd);
+		gd.widthHint = 300;
+		table.setLayoutData(gd);
 	}
 	
 	private void createButtonContainer(Composite parent) {
@@ -156,58 +254,20 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 		container.setLayout(layout);
 		container.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 		
-		fUpButton = new Button(container, SWT.PUSH);
-		fUpButton.setText(PDEPlugin.getResourceString("ConfigurationTab.up"));
-		fUpButton.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING|GridData.FILL_HORIZONTAL));
-		SWTUtil.setButtonDimensionHint(fUpButton);
-		fUpButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				int index = fTableViewer.getTable().getSelectionIndex();
-				Object object = fPluginList.remove(index);
-				fPluginList.add(index - 1, object);
-				fTableViewer.refresh();
-				fTableViewer.setSelection(new StructuredSelection(object));
-				updateLaunchConfigurationDialog();
-			}
-		});
-		
-		fDownButton = new Button(container, SWT.PUSH);
-		fDownButton.setText(PDEPlugin.getResourceString("ConfigurationTab.down"));
-		fDownButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		SWTUtil.setButtonDimensionHint(fDownButton);
-		fDownButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				int index = fTableViewer.getTable().getSelectionIndex();
-				Object object = fPluginList.remove(index);
-				fPluginList.add(index + 1, object);
-				fTableViewer.refresh();
-				fTableViewer.setSelection(new StructuredSelection(object));
-				updateLaunchConfigurationDialog();
-			}
-		});
-		
 		fAddButton = new Button(container, SWT.PUSH);
 		fAddButton.setText(PDEPlugin.getResourceString("ConfigurationTab.add"));
-		fAddButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fAddButton.setLayoutData(new GridData());
 		SWTUtil.setButtonDimensionHint(fAddButton);
 		fAddButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				ArrayList result = new ArrayList();
 				IPluginModelBase[] models = PDECore.getDefault().getModelManager().getPluginsOnly();
-				for (int i = 0; i < models.length; i++) {
-					if (!fPluginList.contains(models[i]))
-						result.add(models[i]);
-				}
-				PluginSelectionDialog dialog = new PluginSelectionDialog(getShell(), (IPluginModelBase[])result.toArray(new IPluginModelBase[result.size()]), true);
+				SelectionDialog dialog = new SelectionDialog(getShell(), models, true);
 				if (dialog.open() == PluginSelectionDialog.OK) {
 					Object[] selected = dialog.getResult();
-					int index = fTableViewer.getTable().getSelectionIndex();
-					index = (index == -1) ? fPluginList.size() : index + 1;
 					for (int i = 0; i < selected.length; i++) {
-						fPluginList.add(index + i, selected[i]);
+						fPluginList.add(new Entry((IPluginModelBase)selected[i], dialog.getStartLevel()));
 					}
 					fTableViewer.refresh();
-					fTableViewer.setSelection(new StructuredSelection(selected[selected.length - 1]));
 					updateLaunchConfigurationDialog();
 				}
 			}
@@ -215,7 +275,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 		
 		fRemoveButton = new Button(container, SWT.PUSH);
 		fRemoveButton.setText(PDEPlugin.getResourceString("ConfigurationTab.remove"));
-		fRemoveButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fRemoveButton.setLayoutData(new GridData());
 		SWTUtil.setButtonDimensionHint(fRemoveButton);
 		fRemoveButton.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
@@ -228,8 +288,6 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 				fTableViewer.setSelection(new StructuredSelection(fPluginList.get(index)));
 			updateLaunchConfigurationDialog();
 		}});
-		
-		setControl(parent);
 	}
 	
 	/* (non-Javadoc)
@@ -269,8 +327,6 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 	private void enableButtons(boolean enabled) {
 		ISelection selection = fTableViewer.getSelection();
 		boolean selected = selection != null && !selection.isEmpty();
-		fUpButton.setEnabled(enabled && selected && !fTableViewer.getTable().isSelected(0));
-		fDownButton.setEnabled(enabled && selected && !fTableViewer.getTable().isSelected(fPluginList.size()-1));
 		fAddButton.setEnabled(enabled);
 		fRemoveButton.setEnabled(selected && enabled);
 	}
@@ -283,8 +339,9 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 		if (!fUseDefault.getSelection()) {
 			StringBuffer buffer = new StringBuffer();
 			for (int i = 0; i < fPluginList.size(); i++) {
-				IPluginModelBase model = (IPluginModelBase)fPluginList.get(i);
-				buffer.append(model.getPluginBase().getId());
+				Entry entry = (Entry)fPluginList.get(i);
+				IPluginModelBase model = entry.model;
+				buffer.append(model.getPluginBase().getId() + "@" + entry.startLevel);
 				if (i < fPluginList.size() - 1)
 					buffer.append(',');
 			}
