@@ -55,10 +55,6 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 		"NewProjectWizard.ProjectCodeGeneratorsPage.fdesc";
 	private ProjectStructurePage projectStructurePage;
 
-	public static final String KEY_CODEGEN_TITLE =
-		"NewProjectWizard.ProjectCodeGeneratorsPage.title";
-	public static final String KEY_CODEGEN_DESC =
-		"NewProjectWizard.ProjectCodeGeneratorsPage.desc";
 
 	public ProjectCodeGeneratorsPage(
 		IProjectProvider provider,
@@ -68,18 +64,15 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 		boolean fragment) {
 		super(wizardElements, message);
 		this.fragment = fragment;
-
-
-		if (fragment) {
-			setTitle(PDEPlugin.getResourceString(KEY_FTITLE));
-			setDescription(PDEPlugin.getResourceString(KEY_FDESC));
-		} else {
-			setTitle(PDEPlugin.getResourceString(KEY_TITLE));
-			setDescription(PDEPlugin.getResourceString(KEY_DESC));
-		}
 		this.provider = provider;
 		this.projectStructurePage = projectStructurePage;
+
+		setTitle(
+			PDEPlugin.getResourceString(fragment ? KEY_FTITLE : KEY_TITLE));
+		setDescription(
+			PDEPlugin.getResourceString(fragment ? KEY_FDESC : KEY_DESC));
 	}
+	
 	public void createControl(Composite parent) {
 		Composite outerContainer = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -87,45 +80,32 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 		outerContainer.setLayout(layout);
 
 		blankPageRadio = new Button(outerContainer, SWT.RADIO | SWT.LEFT);
+		blankPageRadio.setText(PDEPlugin.getResourceString(fragment ? KEY_BLANK_FLABEL : KEY_BLANK_LABEL));
+		blankPageRadio.setSelection(false);
 		GridData gd = new GridData();
 		gd.horizontalAlignment = GridData.FILL;
 		gd.verticalAlignment = GridData.BEGINNING;
 		gd.grabExcessHorizontalSpace = true;
-		blankPageRadio.setSelection(false);
-		String labelText =
-			fragment
-				? PDEPlugin.getResourceString(KEY_BLANK_FLABEL)
-				: PDEPlugin.getResourceString(KEY_BLANK_LABEL);
-		blankPageRadio.setText(labelText);
 		blankPageRadio.setLayoutData(gd);
+		blankPageRadio.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				setWizardListEnabled(!blankPageRadio.getSelection());
+				getContainer().updateButtons();
+			}
+		});
 
 		templateRadio = new Button(outerContainer, SWT.RADIO | SWT.LEFT);
-		labelText =
-			fragment
-				? PDEPlugin.getResourceString(KEY_TEMPLATE_FLABEL)
-				: PDEPlugin.getResourceString(KEY_TEMPLATE_LABEL);
-		templateRadio.setText(labelText);
+		templateRadio.setText(PDEPlugin.getResourceString(fragment ? KEY_TEMPLATE_FLABEL : KEY_TEMPLATE_LABEL));
 		templateRadio.setSelection(true);
 		gd = new GridData();
 		gd.horizontalAlignment = GridData.FILL;
 		gd.verticalAlignment = GridData.BEGINNING;
 		gd.grabExcessHorizontalSpace = true;
 		templateRadio.setLayoutData(gd);
-
-		SelectionListener listener = new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				setWizardListEnabled(!blankPageRadio.getSelection());
-				updateWizardButtons();
-			}
-		};
-		blankPageRadio.addSelectionListener(listener);
-
-		gd = new GridData(GridData.FILL_BOTH);
+		
 		super.createControl(outerContainer);
 		wizardList = super.wizardSelectionViewer.getControl();
-		Control control = getControl();
-		control.setLayoutData(gd);
-		//setWizardListEnabled(false);
+		getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 		setControl(outerContainer);
 	}
 
@@ -164,14 +144,15 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 		}
 		return true;
 	}
+	
 	public boolean canFlipToNextPage() {
 		return !blankPageRadio.getSelection();
 	}
+	
 	public IWizardPage getNextPage() {
-		if (blankPageRadio.getSelection())
-			return null;
-		return super.getNextPage();
+		return (blankPageRadio.getSelection() ? null : super.getNextPage());
 	}
+	
 	public boolean isPageComplete() {
 		if (blankPageRadio != null && blankPageRadio.getSelection())
 			return true;
@@ -245,10 +226,9 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 			CoreUtility.addNatureToProject(project, JavaCore.NATURE_ID, monitor);
 		if (!project.hasNature(PDE.PLUGIN_NATURE))
 			CoreUtility.addNatureToProject(project, PDE.PLUGIN_NATURE, monitor);
-		ProjectStructurePage.setDefaultVM(project);
-		IClasspathEntry[] libraries = new IClasspathEntry[0];
+		JavaCore.create(project);
 		if (setBuildpath)
-			BuildPathUtil.setBuildPath(project, structureData, libraries, monitor);
+			BuildPathUtil.setBuildPath(project, structureData, new IClasspathEntry[0], monitor);
 	}
 
 	private boolean createBlankManifest(
@@ -256,8 +236,7 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 		IPluginStructureData structureData,
 		IProgressMonitor monitor)
 		throws CoreException {
-			
-		String id = structureData.getPluginId();
+
 		IPath path = project.getFullPath().append(fragment ? "fragment.xml" : "plugin.xml");
 		IFile file = project.getWorkspace().getRoot().getFile(path);
 
@@ -270,13 +249,12 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 
 		if (!file.exists()) {
 			IPluginBase pluginBase = model.getPluginBase();
-			pluginBase.setId(id);
+			pluginBase.setId(structureData.getPluginId());
 			pluginBase.setVersion("1.0.0");
-			pluginBase.setName(id);
+			pluginBase.setName(structureData.getPluginId());
 			if (structureData.getRuntimeLibraryName() != null) {
-				String libName = structureData.getRuntimeLibraryName();
 				IPluginLibrary library = model.getFactory().createLibrary();
-				library.setName(libName);
+				library.setName(structureData.getRuntimeLibraryName());
 				model.getPluginBase().add(library);
 			}
 			model.save();
@@ -290,10 +268,8 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 		} else {
 			if (wizardListEnableState != null)
 				wizardListEnableState.restore();
+			wizardSelectionViewer.getControl().setEnabled(true);
 			wizardList.setFocus();
 		}
-	}
-	private void updateWizardButtons() {
-		getContainer().updateButtons();
 	}
 }
