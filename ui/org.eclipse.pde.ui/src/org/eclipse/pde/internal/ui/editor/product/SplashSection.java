@@ -6,6 +6,7 @@ import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -31,14 +32,15 @@ public class SplashSection extends PDESection {
 		section.setDescription(PDEPlugin.getResourceString("SplashSection.desc")); //$NON-NLS-1$
 
 		Composite client = toolkit.createComposite(section);
-		GridLayout layout = new GridLayout(3, false);
-		layout.marginTop = 5;
+		TableWrapLayout layout = new TableWrapLayout();
+		layout.numColumns = 3;
+		layout.topMargin = 5;
 		client.setLayout(layout);
 		
-		Label label = toolkit.createLabel(client, PDEPlugin.getResourceString("SplashSection.label")); //$NON-NLS-1$
-		GridData gd = new GridData();
-		gd.horizontalSpan = 3;
-		label.setLayoutData(gd);
+		Label label = toolkit.createLabel(client, PDEPlugin.getResourceString("SplashSection.label"), SWT.WRAP); //$NON-NLS-1$
+		TableWrapData td = new TableWrapData();
+		td.colspan = 3;
+		label.setLayoutData(td);
 		
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
 		fPluginEntry = new FormEntry(client, toolkit, PDEPlugin.getResourceString("SplashSection.plugin"), PDEPlugin.getResourceString("SplashSection.browse"), false); //$NON-NLS-1$ //$NON-NLS-2$
