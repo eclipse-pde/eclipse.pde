@@ -1,6 +1,7 @@
 package org.eclipse.pde.internal.ui.search;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -9,7 +10,6 @@ import org.eclipse.pde.internal.core.search.IPluginSearchResultCollector;
 import org.eclipse.pde.internal.core.search.PluginSearchInput;
 import org.eclipse.pde.internal.core.search.PluginSearchOperation;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 
 
 public class PluginSearchUIOperation
@@ -31,7 +31,7 @@ public class PluginSearchUIOperation
 					execute(pm);
 				}
 			};
-			WorkbenchPlugin.getPluginWorkspace().run(
+			ResourcesPlugin.getWorkspace().run(
 				workspaceRunnable,
 				monitor);
 		} catch (CoreException e) {
