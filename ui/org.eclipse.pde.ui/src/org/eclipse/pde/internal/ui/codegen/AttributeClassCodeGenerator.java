@@ -102,8 +102,9 @@ public class AttributeClassCodeGenerator extends JavaCodeGenerator {
 						removeImplementedMethod(method);
 					}
 				}
-			} else
+			} else if (!method.getElementName().equals("<clinit>")) {
 				addAbstractMethod(method);
+			}
 		}
 	}
 	private String calculateReturnValue(String signature) {

@@ -305,7 +305,8 @@ public class ImportListSection
 		imports = null;
 		importTable.getControl().getDisplay().asyncExec(new Runnable() {
 			public void run() {
-				importTable.refresh();
+				if (!importTable.getControl().isDisposed())
+					importTable.refresh();
 			}
 		});
 	}
