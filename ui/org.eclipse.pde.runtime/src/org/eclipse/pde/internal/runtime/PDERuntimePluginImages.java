@@ -126,7 +126,7 @@ public class PDERuntimePluginImages {
 		create(PATH_LCL_DISABLED, "import_log.gif");
 	
 	/*
-	 * Event Properties
+	 * Event Details
 	 */
 	public static final ImageDescriptor DESC_PREV_EVENT =
 		create(PATH_EVENTS, "event_prev.gif");

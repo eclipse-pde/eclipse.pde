@@ -194,7 +194,7 @@ public class LogView extends ViewPart implements ILogListener {
 			public void selectionChanged(SelectionChangedEvent e) {
 				handleSelectionChanged(e.getSelection());
 				if (propertiesAction.isEnabled())
-					((EventPropertyDialogAction)propertiesAction).resetSelection();
+					((EvenDetailsDialogAction)propertiesAction).resetSelection();
 			}
 		});	
 		tableTreeViewer.addDoubleClickListener(new IDoubleClickListener() {
@@ -237,7 +237,7 @@ public class LogView extends ViewPart implements ILogListener {
 						return super.compare(viewer, entry1.getMessage(), entry2.getMessage()) * MESSAGE_ORDER;
 					}
 				});
-				((EventPropertyDialogAction)propertiesAction).resetSelection(MESSAGE, MESSAGE_ORDER);
+				((EvenDetailsDialogAction)propertiesAction).resetSelection(MESSAGE, MESSAGE_ORDER);
 			}
 		});
 		
@@ -253,7 +253,7 @@ public class LogView extends ViewPart implements ILogListener {
 						return super.compare(viewer, entry1.getPluginId(), entry2.getPluginId()) * PLUGIN_ORDER;
 					}
 				});
-				((EventPropertyDialogAction)propertiesAction).resetSelection(PLUGIN, PLUGIN_ORDER);
+				((EvenDetailsDialogAction)propertiesAction).resetSelection(PLUGIN, PLUGIN_ORDER);
 			}
 		});
 		
@@ -282,7 +282,7 @@ public class LogView extends ViewPart implements ILogListener {
 						return 0;
 					}
 				});
-				((EventPropertyDialogAction)propertiesAction).resetSelection(DATE, DATE_ORDER);
+				((EvenDetailsDialogAction)propertiesAction).resetSelection(DATE, DATE_ORDER);
 			}
 		});
 		
@@ -297,7 +297,7 @@ public class LogView extends ViewPart implements ILogListener {
 	}
 	
 	private void makeActions(Table table) {
-		propertiesAction = new EventPropertyDialogAction(table.getShell(), tableTreeViewer);
+		propertiesAction = new EvenDetailsDialogAction(table.getShell(), tableTreeViewer);
 		propertiesAction.setImageDescriptor(PDERuntimePluginImages.DESC_PROPERTIES);
 		propertiesAction.setDisabledImageDescriptor(
 			PDERuntimePluginImages.DESC_PROPERTIES_DISABLED);

@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.update.ui.forms.internal.*;
 
-public class EventPropertiesDialog extends Dialog {
+public class EventDetailsDialog extends Dialog {
 	private LogEntry entry, parentEntry;
 	private LogViewLabelProvider labelProvider;
 	private static int COPY_ID = 22;
@@ -42,7 +42,7 @@ public class EventPropertiesDialog extends Dialog {
 	private Label severityLabel;
 	private Text msgText;
 	private Text stackTraceText;
-	private Label sessionDataText;
+	private Text sessionDataText;
 	private Clipboard clipboard;
 	private Button copyButton;
 	private Button backButton;
@@ -62,7 +62,7 @@ public class EventPropertiesDialog extends Dialog {
 	 * @param parentShell
 	 *            shell in which dialog is displayed
 	 */
-	protected EventPropertiesDialog(Shell parentShell, IAdaptable selection, ISelectionProvider provider) {
+	protected EventDetailsDialog(Shell parentShell, IAdaptable selection, ISelectionProvider provider) {
 		super(parentShell);
 		labelProvider = new LogViewLabelProvider();
 		this.provider = (TableTreeViewer) provider;
@@ -401,21 +401,21 @@ public class EventPropertiesDialog extends Dialog {
 		textContainer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		Label label = new Label(textContainer, SWT.NONE);
-		label.setText(PDERuntimePlugin.getResourceString("EventPropertyDialog.date")); //$NON-NLS-1$
+		label.setText(PDERuntimePlugin.getResourceString("EventDetailsDialog.date")); //$NON-NLS-1$
 		dateLabel = new Label(textContainer, SWT.NULL);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		dateLabel.setLayoutData(gd);
 
 		label = new Label(textContainer, SWT.NONE);
-		label.setText(PDERuntimePlugin.getResourceString("EventPropertyDialog.severity")); //$NON-NLS-1$
+		label.setText(PDERuntimePlugin.getResourceString("EventDetailsDialog.severity")); //$NON-NLS-1$
 		severityImageLabel = new Label(textContainer, SWT.NULL);
 		severityLabel = new Label(textContainer, SWT.NULL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		severityLabel.setLayoutData(gd);
 
 		label = new Label(textContainer, SWT.NONE);
-		label.setText(PDERuntimePlugin.getResourceString("EventPropertyDialog.message")); //$NON-NLS-1$
+		label.setText(PDERuntimePlugin.getResourceString("EventDetailsDialog.message")); //$NON-NLS-1$
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		label.setLayoutData(gd);
 		msgText = new Text(textContainer, SWT.MULTI | SWT.V_SCROLL | SWT.WRAP | SWT.BORDER | FormWidgetFactory.BORDER_STYLE);
@@ -435,7 +435,7 @@ public class EventPropertiesDialog extends Dialog {
 		String stack = entry.getStack();
 
 		Label label = new Label(container, SWT.NULL);
-		label.setText(PDERuntimePlugin.getResourceString("EventPropertyDialog.exception")); //$NON-NLS-1$
+		label.setText(PDERuntimePlugin.getResourceString("EventDetailsDialog.exception")); //$NON-NLS-1$
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 3;
 		label.setLayoutData(gd);
@@ -457,16 +457,17 @@ public class EventPropertiesDialog extends Dialog {
 		container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		Label label = new Label(container, SWT.NONE);
-		label.setText(PDERuntimePlugin.getResourceString("EventPropertyDialog.session")); //$NON-NLS-1$
+		label.setText(PDERuntimePlugin.getResourceString("EventDetailsDialog.session")); //$NON-NLS-1$
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		label.setLayoutData(gd);
-		sessionDataText = new Label(container, SWT.NONE);
+		sessionDataText = new Text(container, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL );
 		gd = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL);
 		gd.grabExcessHorizontalSpace = true;
 		gd.horizontalSpan = 3;
 		gd.widthHint = 300;
-		gd.heightHint = 60;
+		gd.heightHint = 65;
 		sessionDataText.setLayoutData(gd);
+		sessionDataText.setEditable(false);
 	}
 
 }

@@ -19,14 +19,14 @@ import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 
-public class EventPropertyDialogAction extends SelectionProviderAction{
+public class EvenDetailsDialogAction extends SelectionProviderAction{
 
 	/**
 	 * The shell in which to open the property dialog
 	 */
 	private Shell shell;
 	private ISelectionProvider provider;
-	private EventPropertiesDialog propertyDialog;
+	private EventDetailsDialog propertyDialog;
 	/**
 	 * Creates a new action for opening a property dialog
 	 * on the elements from the given selection provider
@@ -34,7 +34,7 @@ public class EventPropertyDialogAction extends SelectionProviderAction{
 	 * @param provider - the selection provider whose elements
 	 * the property dialog will describe
 	 */
-	public EventPropertyDialogAction(Shell shell, ISelectionProvider provider){
+	public EvenDetailsDialogAction(Shell shell, ISelectionProvider provider){
 		super(provider, WorkbenchMessages.getString("PropertyDialog.text"));
 		Assert.isNotNull(shell);
 		this.shell = shell;
@@ -69,9 +69,9 @@ public class EventPropertyDialogAction extends SelectionProviderAction{
 		if (element == null)
 			return;
 		
-		propertyDialog = new EventPropertiesDialog(shell, element, provider);
+		propertyDialog = new EventDetailsDialog(shell, element, provider);
 		propertyDialog.create();
-		propertyDialog.getShell().setText(PDERuntimePlugin.getResourceString("EventPropertyDialog.title"));
+		propertyDialog.getShell().setText(PDERuntimePlugin.getResourceString("EventDetailsDialog.title"));
 		propertyDialog.getShell().setSize(500,550);
 		propertyDialog.open();
 	}
