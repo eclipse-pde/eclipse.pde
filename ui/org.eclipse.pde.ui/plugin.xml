@@ -281,15 +281,6 @@
          </description>
       </wizard>
       <wizard
-            name="%pluginContent.perspectiveExtensions.name"
-            icon="icons/etool16/newexprj_wiz.gif"
-            class="org.eclipse.pde.internal.ui.wizards.templates.PerspectiveExtensionsNewWizard"
-            id="org.eclipse.pde.ui.pluginContent.perspectiveExtensions">
-         <description>
-            %pluginContent.perspectiveExtensions.description
-         </description>
-      </wizard>
-      <wizard
             name="%pluginContent.propertyPages.name"
             icon="icons/etool16/newexprj_wiz.gif"
             class="org.eclipse.pde.internal.ui.wizards.templates.PropertyPageNewWizard"
@@ -314,6 +305,15 @@
             id="org.eclipse.pde.ui.pluginContent.editor">
          <description>
             %pluginContent.editor.description
+         </description>
+      </wizard>
+      <wizard
+            name="%pluginContent.builder.name"
+            icon="icons/etool16/newexprj_wiz.gif"
+            class="org.eclipse.pde.internal.ui.wizards.templates.BuilderNewWizard"
+            id="org.eclipse.pde.ui.pluginContent.builder">
+         <description>
+            %pluginContent.builder.description
          </description>
       </wizard>
    </extension>
@@ -377,17 +377,6 @@
       </wizard>
       <wizard
             availableAsShortcut="true"
-            name="%newExtension.templates.perspectiveExtensions.name"
-            template="org.eclipse.pde.ui.templates.perspectiveExtensions"
-            icon="icons/etool16/newex_wiz.gif"
-            category="templates"
-            id="org.eclipse.pde.ui.newExtension.perspectiveExtensions">
-         <description>
-            %newExtension.templates.perspectiveExtensions.desc
-         </description>
-      </wizard>
-      <wizard
-            availableAsShortcut="true"
             name="%newExtension.templates.propertyPages.name"
             template="org.eclipse.pde.ui.templates.propertyPage"
             icon="icons/etool16/newex_wiz.gif"
@@ -428,6 +417,17 @@
             id="org.eclipse.pde.ui.newExtension.help">
          <description>
             %newExtension.templates.help.desc
+         </description>
+      </wizard>
+      <wizard
+            class="org.eclipse.pde.internal.ui.wizards.templates.BuilderNewExtensionWizard"
+            icon="icons/etool16/newex_wiz.gif"
+            category="templates"
+            availableAsShortcut="true"
+            name="%newExtension.templates.builder.name"
+            id="org.eclipse.pde.ui.newExtension.builder">
+         <description>
+            %newExtension.templates.builder.desc
          </description>
       </wizard>
    </extension>
@@ -1075,12 +1075,6 @@
             name="%template.helloWorld.name"
             class="org.eclipse.pde.internal.ui.wizards.templates.HelloWorldTemplate"
             id="org.eclipse.pde.ui.templates.helloWorld">
-      </template>
-      <template
-            contributingId="org.eclipse.ui.perspectiveExtensions"
-            name="%template.perspectiveExtensions.name"
-            class="org.eclipse.pde.internal.ui.wizards.templates.PerspectiveExtensionsTemplate"
-            id="org.eclipse.pde.ui.templates.perspectiveExtensions">
       </template>
       <template
             contributingId="org.eclipse.ui.propertyPages"

@@ -75,6 +75,7 @@ public interface IHelpContextIds {
  	public static final String TEMPLATE_PREFERENCE_PAGE = PREFIX + "template_preference_page"; //$NON-NLS-1$
  	public static final String TEMPLATE_PROPERTY_PAGE = PREFIX + "template_property_page"; //$NON-NLS-1$
  	public static final String TEMPLATE_VIEW = PREFIX + "template_view"; //$NON-NLS-1$
+ 	public static final String TEMPLATE_BUILDER = PREFIX + "template_builder"; //$NON-NLS-1$
  	
  	public static final String MANIFEST_ADD_DEPENDENCIES = PREFIX + "manifest_add_dependencies"; //$NON-NLS-1$
  	public static final String ADD_EXTENSIONS_MAIN = PREFIX + "add_extensions_main"; //$NON-NLS-1$
