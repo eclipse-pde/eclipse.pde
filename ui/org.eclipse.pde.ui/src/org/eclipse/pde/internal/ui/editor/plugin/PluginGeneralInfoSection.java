@@ -55,7 +55,7 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 	}
 	
 	protected String getSectionDescription() {
-		return PDEPlugin.getResourceString("ManifestEditor.PluginSpecSection.desc");
+		return PDEPlugin.getResourceString("ManifestEditor.PluginSpecSection.desc"); //$NON-NLS-1$
 	}
 	
 	protected void createSpecificControls(Composite parent, FormToolkit toolkit, IActionBars actionBars) {
@@ -66,7 +66,7 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 		fClassEntry = new FormEntry(
 							client,
 							toolkit,
-							PDEPlugin.getResourceString("GeneralInfoSection.class"), 
+							PDEPlugin.getResourceString("GeneralInfoSection.class"),  //$NON-NLS-1$
 							PDEPlugin.getResourceString("GeneralInfoSection.browse"), //$NON-NLS-1$ 
 							isEditable());
 		fClassEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {

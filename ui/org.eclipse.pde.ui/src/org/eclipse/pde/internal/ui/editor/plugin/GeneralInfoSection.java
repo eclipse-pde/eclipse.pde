@@ -15,15 +15,16 @@ import org.eclipse.pde.core.IModelChangeProvider;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.editor.context.*;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IActionBars;
@@ -33,10 +34,13 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 public abstract class GeneralInfoSection extends PDESection {
+	private static String PLATFORM_FILTER = "Eclipse-PlatformFilter"; //$NON-NLS-1$
+
 	private FormEntry fIdEntry;
 	private FormEntry fVersionEntry;
 	private FormEntry fNameEntry;
 	private FormEntry fProviderEntry;
+	private FormEntry fPlatformFilterEntry;
 
 	public GeneralInfoSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION);
@@ -66,6 +70,8 @@ public abstract class GeneralInfoSection extends PDESection {
 		createNameEntry(client, toolkit, actionBars);
 		createProviderEntry(client, toolkit, actionBars);		
 		createSpecificControls(client, toolkit, actionBars);
+		if (isBundle())
+			createPlatformFilterEntry(client, toolkit, actionBars);
 		toolkit.paintBordersFor(client);
 		
 		IBaseModel model = getPage().getModel();
@@ -80,6 +86,24 @@ public abstract class GeneralInfoSection extends PDESection {
 	protected  IPluginBase getPluginBase() {
 		IBaseModel model = getPage().getPDEEditor().getAggregateModel();
 		return ((IPluginModelBase) model).getPluginBase();
+	}
+	
+	protected boolean isBundle() {
+		return getBundleContext() != null;
+	}
+	
+	private BundleInputContext getBundleContext() {
+		InputContextManager manager = getPage().getPDEEditor().getContextManager();
+		return (BundleInputContext) manager.findContext(BundleInputContext.CONTEXT_ID);
+	}
+	
+	private IBundle getBundle() {
+		BundleInputContext context = getBundleContext();
+		if (context != null) {
+			IBundleModel model = (IBundleModel)context.getModel();
+			return model.getBundle();
+		}
+		return null;
 	}
 	
 	private void createIDEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
@@ -138,11 +162,24 @@ public abstract class GeneralInfoSection extends PDESection {
 		fProviderEntry.setEditable(isEditable());
 	}
 	
+	private void createPlatformFilterEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
+		fPlatformFilterEntry = new FormEntry(client, toolkit, "Platform filter:", null, false);//$NON-NLS-1$
+		fPlatformFilterEntry.setFormEntryListener(new FormEntryAdapter(this,actionBars) {
+			public void textValueChanged(FormEntry entry) {
+				getBundle().setHeader(PLATFORM_FILTER, fPlatformFilterEntry.getValue());
+			}
+		});
+		fPlatformFilterEntry.setEditable(isEditable());
+	}
+
+	
 	public void commit(boolean onSave) {
 		fIdEntry.commit();
 		fVersionEntry.commit();
 		fNameEntry.commit();
 		fProviderEntry.commit();
+		if (fPlatformFilterEntry != null)
+			fPlatformFilterEntry.commit();
 		super.commit(onSave);
 	}
 
@@ -175,6 +212,8 @@ public abstract class GeneralInfoSection extends PDESection {
 		fNameEntry.setValue(pluginBase.getName(), true);
 		fVersionEntry.setValue(pluginBase.getVersion(), true);
 		fProviderEntry.setValue(pluginBase.getProviderName(), true);
+		if (fPlatformFilterEntry != null)
+			fPlatformFilterEntry.setValue(getBundle().getHeader(PLATFORM_FILTER), true);
 		getPage().getPDEEditor().updateTitle();
 		super.refresh();
 	}
@@ -184,6 +223,8 @@ public abstract class GeneralInfoSection extends PDESection {
 		fNameEntry.cancelEdit();
 		fVersionEntry.cancelEdit();
 		fProviderEntry.cancelEdit();
+		if (fPlatformFilterEntry != null) 
+			fPlatformFilterEntry.cancelEdit();
 		super.cancelEdit();
 	}
 	
@@ -196,9 +237,6 @@ public abstract class GeneralInfoSection extends PDESection {
 	
 	public boolean canPaste(Clipboard clipboard) {
 		Display d = getSection().getDisplay();
-		Control c = d.getFocusControl();
-		if (c instanceof Text)
-			return true;
-		return false;
+		return (d.getFocusControl() instanceof Text);
 	}
 }

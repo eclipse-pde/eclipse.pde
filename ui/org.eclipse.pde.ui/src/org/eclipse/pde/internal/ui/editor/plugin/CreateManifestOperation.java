@@ -52,7 +52,7 @@ public class CreateManifestOperation implements IRunnableWithProgress{
 	
 	private void trimOldManifest() throws BadLocationException, CoreException {
 		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
-		String filename = fModel.isFragmentModel() ? "fragment.xml" : "plugin.xml";
+		String filename = fModel.isFragmentModel() ? "fragment.xml" : "plugin.xml"; //$NON-NLS-1$ //$NON-NLS-2$
 		IFile file = fModel.getUnderlyingResource().getProject().getFile(filename);
 		try {
 			manager.connect(file.getFullPath(), null);

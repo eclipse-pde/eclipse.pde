@@ -87,7 +87,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		Section section = createStaticSection(
 							toolkit, 
 							parent, 
-							PDEPlugin.getResourceString("ManifestEditor.ContentSection." + (isFragment() ? "ftitle" : "title")));
+							PDEPlugin.getResourceString("ManifestEditor.ContentSection." + (isFragment() ? "ftitle" : "title"))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 		Composite container = toolkit.createComposite(section, SWT.NONE);
 		TableWrapLayout layout = new TableWrapLayout();
@@ -97,17 +97,17 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		
 		FormText text = createClient(container, isFragment() ? fcontentText : contentText, toolkit);
 		PDELabelProvider lp = PDEPlugin.getDefault().getLabelProvider();
-		text.setImage("page", lp.get(PDEPluginImages.DESC_PAGE_OBJ, PDELabelProvider.F_EDIT));
+		text.setImage("page", lp.get(PDEPluginImages.DESC_PAGE_OBJ, PDELabelProvider.F_EDIT)); //$NON-NLS-1$
 		
 		if (!isBundle() && isEditable())
-			text = createClient(container, PDEPlugin.getResourceString("OverviewPage." + (isFragment() ? "fOsgi" : "osgi")), toolkit);
+			text = createClient(container, PDEPlugin.getResourceString("OverviewPage." + (isFragment() ? "fOsgi" : "osgi")), toolkit); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		section.setClient(container);
 		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 	}
 	
 	private void createTestingSection(IManagedForm managedForm,
 			Composite parent, FormToolkit toolkit) {
-		Section section = createStaticSection(toolkit, parent, PDEPlugin.getResourceString("ManifestEditor.TestingSection.title"));
+		Section section = createStaticSection(toolkit, parent, PDEPlugin.getResourceString("ManifestEditor.TestingSection.title")); //$NON-NLS-1$
 		PDELabelProvider lp = PDEPlugin.getDefault().getLabelProvider();
 		
 		ImageHyperlink info = new ImageHyperlink(section, SWT.NULL);
@@ -129,7 +129,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 	
 	private void createExportingSection(IManagedForm managedForm,
 			Composite parent, FormToolkit toolkit) {
-		Section section = createStaticSection(toolkit, parent, PDEPlugin.getResourceString("ManifestEditor.DeployingSection.title"));
+		Section section = createStaticSection(toolkit, parent, PDEPlugin.getResourceString("ManifestEditor.DeployingSection.title")); //$NON-NLS-1$
 		ImageHyperlink info = new ImageHyperlink(section, SWT.NULL);
 		toolkit.adapt(info, true, true);
 		info.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_HELP));
@@ -202,7 +202,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 			getLaunchShortcut().debug((IPluginModelBase)getModel());
 		} else if (href.equals("export")) { //$NON-NLS-1$
 			getExportAction().run();
-		} else if (href.equals("action.convert")) {
+		} else if (href.equals("action.convert")) { //$NON-NLS-1$
 			handleConvert();
 		}
 	}
@@ -254,7 +254,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 			editor.doSave(null);
 			service.runInUI(service, op, model.getUnderlyingResource().getProject());
 		} catch (InvocationTargetException e) {
-			MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), "Error", e.getCause().getMessage());
+			MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), PDEPlugin.getResourceString("OverviewPage.error"), e.getCause().getMessage()); //$NON-NLS-1$
 		} catch (InterruptedException e) {
 		}
 	}

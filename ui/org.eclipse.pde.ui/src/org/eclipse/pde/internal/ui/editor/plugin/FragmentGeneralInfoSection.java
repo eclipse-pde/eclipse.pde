@@ -49,7 +49,7 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 	}
 	
 	protected String getSectionDescription() {
-		return PDEPlugin.getResourceString("ManifestEditor.PluginSpecSection.fdesc");
+		return PDEPlugin.getResourceString("ManifestEditor.PluginSpecSection.fdesc"); //$NON-NLS-1$
 	}
 	
 	protected void createSpecificControls(Composite parent, FormToolkit toolkit, IActionBars actionBars) {
@@ -63,7 +63,7 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 		fPluginIdEntry = new FormEntry(
 				parent,
 				toolkit,
-				PDEPlugin.getResourceString("GeneralInfoSection.pluginId"), 
+				PDEPlugin.getResourceString("GeneralInfoSection.pluginId"),  //$NON-NLS-1$
 				PDEPlugin.getResourceString("GeneralInfoSection.browse"), //$NON-NLS-1$ 
 				isEditable());
 		fPluginIdEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
@@ -97,10 +97,11 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 
 	private void createPluginVersionEntry(Composite client,
 			FormToolkit toolkit, IActionBars actionBars) {
+		String key = isBundle() ? "GeneralInfoSection.hostVersionRange" : "GeneralInfoSection.pluginVersion"; //$NON-NLS-1$ //$NON-NLS-2$
 		fPluginVersionEntry = new FormEntry(
 				client,
 				toolkit,
-				PDEPlugin.getResourceString("GeneralInfoSection.pluginVersion"), null, false); //$NON-NLS-1$
+				PDEPlugin.getResourceString(key), null, false); 
 		fPluginVersionEntry.setFormEntryListener(new FormEntryAdapter(this,
 				actionBars) {
 			public void textValueChanged(FormEntry entry) {
@@ -166,8 +167,4 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 		super.refresh();
 	}
 	
-	private boolean isBundle() {
-		return getPage().getPDEEditor().getContextManager().findContext(BundleInputContext.CONTEXT_ID) != null;
-	}
-
 }
