@@ -1,56 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- File written by PDE 1.0 -->
 <plugin
    id="org.eclipse.pde.runtime"
    name="%name"
    version="1.0"
    provider-name="International Business Machines Corp."
    class="org.eclipse.pde.internal.runtime.PDERuntimePlugin">
-<!-- Required plugins -->
-<requires>
-   <import plugin="org.eclipse.ui"/>
-   <import plugin="org.apache.xerces"/>
-   <import plugin="org.eclipse.core.runtime"/>
-   <import plugin="org.eclipse.core.resources"/>
-</requires>
 
 <!-- Runtime -->
-<runtime>
-   <library name="pdert.jar">
-      <export name="*"/>
-   </library>
-</runtime>
+   <runtime>
+      <library name="pdert.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+<!-- Required plugins -->
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.apache.xerces"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.core.resources"/>
+   </requires>
 
-<!-- Extensions -->
+
 <!-- Extension points -->
-<extension
-      point="org.eclipse.ui.views">
-   <category
-         name="%views.category.name"
-         id="org.eclipse.pde.runtime">
-   </category>
-   <view
-         name="%views.registry.name"
-         icon="icons/full/view16/registry.gif"
-         category="org.eclipse.pde.runtime"
-         class="org.eclipse.pde.internal.runtime.registry.RegistryBrowser"
-         id="org.eclipse.pde.runtime.RegistryBrowser">
-   </view>
-   <view
-         name="%views.errorLog.name"
-         icon="icons/full/view16/error_log.gif"
-         category="org.eclipse.pde.runtime"
-         class="org.eclipse.pde.internal.runtime.logview.LogView"
-         id="org.eclipse.pde.runtime.LogView">
-   </view>
-</extension>
-<extension
-      point="org.eclipse.ui.propertyPages">
-   <page
-         objectClass="org.eclipse.pde.internal.runtime.logview.StatusAdapter"
-         name="%propertyPages.details.name"
-         class="org.eclipse.pde.internal.runtime.logview.StatusPropertyPage"
-         id="org.eclipse.pde.runtime.StatusDetails">
-   </page>
-</extension>
+<!-- Extensions -->
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="%views.category.name"
+            id="org.eclipse.pde.runtime">
+      </category>
+      <view
+            name="%views.registry.name"
+            icon="icons/full/view16/registry.gif"
+            category="org.eclipse.pde.runtime"
+            class="org.eclipse.pde.internal.runtime.registry.RegistryBrowser"
+            id="org.eclipse.pde.runtime.RegistryBrowser">
+      </view>
+      <view
+            name="%views.errorLog.name"
+            icon="icons/full/view16/error_log.gif"
+            category="org.eclipse.pde.runtime"
+            class="org.eclipse.pde.internal.runtime.logview.LogView"
+            id="org.eclipse.pde.runtime.LogView">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            objectClass="org.eclipse.pde.internal.runtime.logview.StatusAdapter"
+            name="%propertyPages.details.name"
+            class="org.eclipse.pde.internal.runtime.logview.StatusPropertyPage"
+            id="org.eclipse.pde.runtime.StatusDetails">
+      </page>
+   </extension>
+
 </plugin>

@@ -20,19 +20,7 @@ public class PDERuntimePluginImages {
 	private final static URL BASE_URL= PDERuntimePlugin.getDefault().getDescriptor().getInstallURL();
 	private final static ImageRegistry PLUGIN_REGISTRY= PDERuntimePlugin.getDefault().getImageRegistry();
 
-	public final static String ICONS_PATH;
-	static {
-		Display display = Display.getCurrent();
-		if (display==null) {
-			ICONS_PATH = "icons/full/";
-		}
-		else {
-			if(display.getIconDepth() > 4)
-				ICONS_PATH = "icons/full/";//$NON-NLS-1$
-			else
-				ICONS_PATH = "icons/basic/";//$NON-NLS-1$
-		}
-	}
+	public final static String ICONS_PATH = "icons/full/";
 	
 	private static final String PATH_OBJ= ICONS_PATH+"obj16/";
 	private static final String PATH_VIEW = ICONS_PATH+"view16/";
@@ -72,6 +60,10 @@ public class PDERuntimePluginImages {
 	public static final ImageDescriptor DESC_CLEAR = create(PATH_LCL, "clear.gif");
 	public static final ImageDescriptor DESC_CLEAR_HOVER = create(PATH_LCL_HOVER, "clear.gif");
 	public static final ImageDescriptor DESC_CLEAR_DISABLED = create(PATH_LCL_DISABLED, "clear.gif");
+	
+	public static final ImageDescriptor DESC_READ_LOG = create(PATH_LCL, "read_log.gif");
+	public static final ImageDescriptor DESC_READ_LOG_HOVER = create(PATH_LCL_HOVER, "read_log.gif");
+	public static final ImageDescriptor DESC_READ_LOG_DISABLED = create(PATH_LCL_DISABLED, "read_log.gif");
 	
 	/*
 	 * Overlays
