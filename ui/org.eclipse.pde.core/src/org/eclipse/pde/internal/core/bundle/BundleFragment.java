@@ -32,8 +32,8 @@ public class BundleFragment extends BundlePluginBase implements IBundleFragment 
 		IBundle bundle = getBundle();
 		if (bundle != null) {
 			String oldValue = getPluginId();
-			model.fireModelObjectChanged(this, P_PLUGIN_ID, oldValue, id);
 			bundle.setHeader(Constants.FRAGMENT_HOST, writeFragmentHost(id, getPluginVersion()));
+			model.fireModelObjectChanged(this, P_PLUGIN_ID, oldValue, id);
 		}
 	}
 
@@ -44,8 +44,8 @@ public class BundleFragment extends BundlePluginBase implements IBundleFragment 
 		IBundle bundle = getBundle();
 		if (bundle != null) {
 			String oldValue = getPluginVersion();
-			model.fireModelObjectChanged(this, P_PLUGIN_VERSION, oldValue, version);
 			bundle.setHeader(Constants.FRAGMENT_HOST, writeFragmentHost(getPluginId(), version));
+			model.fireModelObjectChanged(this, P_PLUGIN_VERSION, oldValue, version);
 		}
 	}
 

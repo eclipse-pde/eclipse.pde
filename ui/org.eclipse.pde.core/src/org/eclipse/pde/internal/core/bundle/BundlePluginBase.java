@@ -36,13 +36,11 @@ public class BundlePluginBase
 	public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == ModelChangedEvent.WORLD_CHANGED) {
 			reset();
-		} else if (event.getChangeType() == ModelChangedEvent.CHANGE) {
-			String header = event.getChangedProperty();
-			if (header.equals(Constants.IMPORT_PACKAGE)
-				|| header.equals(Constants.REQUIRE_BUNDLE))
-				imports = null;
-			else if (header.equals(Constants.BUNDLE_CLASSPATH))
-				libraries = null;
+			getModel().fireModelChanged(event);
+		} else {
+			if (!(event.getChangeProvider() instanceof IBundleModel)) {
+				getModel().fireModelChanged(event);
+			}
 		}
 	}
 
@@ -131,9 +129,7 @@ public class BundlePluginBase
 	public void add(IPluginImport pluginImport) throws CoreException {
 		if (imports != null) {
 			imports.add(pluginImport);
-			IBundle bundle = getBundle();
-			if (bundle != null) 
-				bundle.setHeader(Constants.REQUIRE_BUNDLE, writeImports());
+			updateImports();
 			fireStructureChanged(pluginImport, true);
 		}
 	}
@@ -164,9 +160,7 @@ public class BundlePluginBase
 	public void remove(IPluginImport pluginImport) throws CoreException {
 		if (imports != null) {
 			imports.remove(pluginImport);
-			IBundle bundle = getBundle();
-			if (bundle != null) 
-				bundle.setHeader(Constants.REQUIRE_BUNDLE, writeImports());
+			updateImports();
 			fireStructureChanged(pluginImport, false);	
 		}
 	}
@@ -299,10 +293,12 @@ public class BundlePluginBase
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#setProviderName(java.lang.String)
 	 */
 	public void setProviderName(String providerName) throws CoreException {
-		model.fireModelObjectChanged(this, IPluginBase.P_PROVIDER, getProviderName(), providerName);			
 		IBundle bundle = getBundle();
-		if (bundle != null) 
+		if (bundle != null) {
+			String old = getProviderName();
 			bundle.setHeader(Constants.BUNDLE_VENDOR, providerName);
+			model.fireModelObjectChanged(this, IPluginBase.P_PROVIDER, old, providerName);			
+		}
 	}
 
 	/*
@@ -329,10 +325,13 @@ public class BundlePluginBase
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#setVersion(java.lang.String)
 	 */
 	public void setVersion(String version) throws CoreException {
-		model.fireModelObjectChanged(this, IPluginBase.P_VERSION, getVersion(), version);
 		IBundle bundle = getBundle();
-		if (bundle != null) 
+		if (bundle != null) {
+			String old = getVersion();
 			bundle.setHeader(Constants.BUNDLE_VERSION, getVersion());
+			model.fireModelObjectChanged(this, IPluginBase.P_VERSION, old, version);
+		}
+
 	}
 
 	/*
@@ -469,9 +468,7 @@ public class BundlePluginBase
 			int index2 = imports.indexOf(import2);
 			imports.set(index1, import2);
 			imports.set(index2, import1);
-			IBundle bundle = getBundle();
-			if (bundle != null) 
-				bundle.setHeader(Constants.REQUIRE_BUNDLE, writeImports());
+			updateImports();
 			model.fireModelObjectChanged(this, P_IMPORT_ORDER, import1, import2);
 		}
 	}
@@ -494,8 +491,12 @@ public class BundlePluginBase
 	 * @see org.eclipse.pde.core.IIdentifiable#setId(java.lang.String)
 	 */
 	public void setId(String id) throws CoreException {
-		Object oldValue = getId();
-		model.fireModelObjectChanged(this, IPluginBase.P_ID, oldValue, id);
+		IBundle bundle = getBundle();
+		if (bundle != null) {
+			String old = getId();
+			bundle.setHeader(Constants.BUNDLE_SYMBOLICNAME, old);
+			model.fireModelObjectChanged(this, IPluginBase.P_ID, old, id);
+		}
 	}
 
 	/*
@@ -522,10 +523,18 @@ public class BundlePluginBase
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#setName(java.lang.String)
 	 */
 	public void setName(String name) throws CoreException {
-		model.fireModelObjectChanged(this, IPluginBase.P_NAME, getName(), name);
+		IBundle bundle = getBundle();
+		if (bundle != null) {
+			String old = getName();
+			bundle.setHeader(Constants.BUNDLE_NAME, name);
+			//model.fireModelObjectChanged(this, IPluginBase.P_NAME, old, name);
+		}
+	}
+	
+	public void updateImports() {
 		IBundle bundle = getBundle();
 		if (bundle != null) 
-			bundle.setHeader(Constants.BUNDLE_NAME, name);
+			bundle.setHeader(Constants.REQUIRE_BUNDLE, writeImports());		
 	}
 	/*
 	 * (non-Javadoc)

@@ -25,8 +25,9 @@ public class BundlePlugin extends BundlePluginBase implements IBundlePlugin {
 	public void setClassName(String className) throws CoreException {
 		IBundle bundle = getBundle();
 		if (bundle != null) {
-			model.fireModelObjectChanged(this, P_CLASS_NAME, getClassName(), className);
+			String old = getClassName();
 			bundle.setHeader(Constants.BUNDLE_ACTIVATOR, className);
+			model.fireModelObjectChanged(this, P_CLASS_NAME, old, className);
 		}
 	}
 }

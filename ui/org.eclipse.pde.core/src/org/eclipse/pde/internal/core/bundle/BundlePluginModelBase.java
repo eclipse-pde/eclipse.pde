@@ -11,6 +11,7 @@ import java.net.URL;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.service.resolver.*;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.IEditable;
 import org.eclipse.pde.core.IEditableModel;
 import org.eclipse.pde.core.build.IBuildModel;
@@ -28,13 +29,14 @@ public abstract class BundlePluginModelBase extends AbstractModel
 		implements
 			IBundlePluginModelBase,
 			IPluginModelFactory {
-	private IBundleModel bundleModel;
-	private ISharedExtensionsModel extensionsModel;
-	private IBundlePluginBase bundlePluginBase;
-	private IBuildModel buildModel;
+	private IBundleModel fBundleModel;
+	private ISharedExtensionsModel fExtensionsModel;
+	private IBundlePluginBase fBundlePluginBase;
+	private IBuildModel fBuildModel;
 	private BundleDescription fBundleDescription;
 	private boolean enabled;
 	public BundlePluginModelBase() {
+		getPluginBase();
 	}
 	/*
 	 * (non-Javadoc)
@@ -42,10 +44,10 @@ public abstract class BundlePluginModelBase extends AbstractModel
 	 * @see org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase#getBundleModel()
 	 */
 	public IBundleModel getBundleModel() {
-		return bundleModel;
+		return fBundleModel;
 	}
 	public IResource getUnderlyingResource() {
-		return bundleModel.getUnderlyingResource();
+		return fBundleModel.getUnderlyingResource();
 	}
 	/*
 	 * (non-Javadoc)
@@ -53,30 +55,32 @@ public abstract class BundlePluginModelBase extends AbstractModel
 	 * @see org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase#getExtensionsModel()
 	 */
 	public ISharedExtensionsModel getExtensionsModel() {
-		return extensionsModel;
+		return fExtensionsModel;
 	}
 	public void dispose() {
-		if (bundleModel != null) {
-			if (bundlePluginBase != null)
-				bundleModel.removeModelChangedListener(bundlePluginBase);
-			bundleModel.dispose();
-			bundleModel = null;
+		if (fBundleModel != null) {
+			if (fBundlePluginBase != null)
+				fBundleModel.removeModelChangedListener(fBundlePluginBase);
+			fBundleModel.dispose();
+			fBundleModel = null;
 		}
-		if (extensionsModel != null) {
-			extensionsModel.dispose();
-			extensionsModel = null;
+		if (fExtensionsModel != null) {
+			if (fBundlePluginBase != null)
+				fExtensionsModel.removeModelChangedListener(fBundlePluginBase);
+			fExtensionsModel.dispose();
+			fExtensionsModel = null;
 		}
 		super.dispose();
 	}
 	public void save() {
-		if (bundleModel != null && bundleModel instanceof IEditableModel) {
-			IEditableModel emodel = (IEditableModel) bundleModel;
+		if (fBundleModel != null && fBundleModel instanceof IEditableModel) {
+			IEditableModel emodel = (IEditableModel) fBundleModel;
 			if (emodel.isDirty())
 				emodel.save();
 		}
-		if (extensionsModel != null
-				&& extensionsModel instanceof IEditableModel) {
-			IEditableModel emodel = (IEditableModel) extensionsModel;
+		if (fExtensionsModel != null
+				&& fExtensionsModel instanceof IEditableModel) {
+			IEditableModel emodel = (IEditableModel) fExtensionsModel;
 			if (emodel.isDirty())
 				emodel.save();
 		}
@@ -87,12 +91,12 @@ public abstract class BundlePluginModelBase extends AbstractModel
 	 * @see org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase#setBundleModel(org.eclipse.pde.internal.core.ibundle.IBundleModel)
 	 */
 	public void setBundleModel(IBundleModel bundleModel) {
-		if (this.bundleModel != null && bundlePluginBase != null) {
-			this.bundleModel.removeModelChangedListener(bundlePluginBase);
+		if (fBundleModel != null && fBundlePluginBase != null) {
+			fBundleModel.removeModelChangedListener(fBundlePluginBase);
 		}
-		this.bundleModel = bundleModel;
-		if (bundlePluginBase != null)
-			bundleModel.addModelChangedListener(bundlePluginBase);
+		fBundleModel = bundleModel;
+		if (fBundleModel != null && fBundlePluginBase != null)
+			bundleModel.addModelChangedListener(fBundlePluginBase);
 	}
 	/*
 	 * (non-Javadoc)
@@ -100,7 +104,12 @@ public abstract class BundlePluginModelBase extends AbstractModel
 	 * @see org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase#setExtensionsModel(org.eclipse.pde.core.plugin.IExtensionsModel)
 	 */
 	public void setExtensionsModel(ISharedExtensionsModel extensionsModel) {
-		this.extensionsModel = extensionsModel;
+		if (fExtensionsModel != null && fBundlePluginBase != null) {
+			fExtensionsModel.removeModelChangedListener(fBundlePluginBase);
+		}
+		fExtensionsModel = extensionsModel;
+		if (extensionsModel != null && fBundlePluginBase != null)
+			extensionsModel.addModelChangedListener(fBundlePluginBase);
 	}
 	/*
 	 * (non-Javadoc)
@@ -113,10 +122,10 @@ public abstract class BundlePluginModelBase extends AbstractModel
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getBuildModel()
 	 */
 	public IBuildModel getBuildModel() {
-		return buildModel;
+		return fBuildModel;
 	}
 	public void setBuildModel(IBuildModel buildModel) {
-		this.buildModel = buildModel;
+		fBuildModel = buildModel;
 	}
 	/*
 	 * (non-Javadoc)
@@ -129,19 +138,30 @@ public abstract class BundlePluginModelBase extends AbstractModel
 	public IExtensions getExtensions() {
 		return getPluginBase();
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.IModelChangeProvider#fireModelChanged(org.eclipse.pde.core.IModelChangedEvent)
+	 */
+	public void fireModelChanged(IModelChangedEvent event) {
+		super.fireModelChanged(event);
+		Object[] objects = event.getChangedObjects();
+		if (objects.length > 0 && objects[0] instanceof IPluginImport)
+			((BundlePluginBase)fBundlePluginBase).updateImports();
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getPluginBase(boolean)
 	 */
 	public IPluginBase getPluginBase(boolean createIfMissing) {
-		if (bundlePluginBase == null && createIfMissing) {
-			bundlePluginBase = (BundlePluginBase) createPluginBase();
-			if (bundleModel != null)
-				bundleModel.addModelChangedListener(bundlePluginBase);
+		if (fBundlePluginBase == null && createIfMissing) {
+			fBundlePluginBase = (BundlePluginBase) createPluginBase();
+			if (fBundleModel != null)
+				fBundleModel.addModelChangedListener(fBundlePluginBase);
 			loaded = true;
 		}
-		return bundlePluginBase;
+		return fBundlePluginBase;
 	}
 	public IExtensions getExtensions(boolean createIfMissing) {
 		return getPluginBase(createIfMissing);
@@ -160,8 +180,8 @@ public abstract class BundlePluginModelBase extends AbstractModel
 	 * @see org.eclipse.pde.core.plugin.ISharedPluginModel#getFactory()
 	 */
 	public IExtensionsModelFactory getFactory() {
-		if (extensionsModel != null)
-			return extensionsModel.getFactory();
+		if (fExtensionsModel != null)
+			return fExtensionsModel.getFactory();
 		return null;
 	}
 	/*
@@ -170,8 +190,8 @@ public abstract class BundlePluginModelBase extends AbstractModel
 	 * @see org.eclipse.pde.core.plugin.ISharedPluginModel#getInstallLocation()
 	 */
 	public String getInstallLocation() {
-		if (bundleModel != null)
-			return bundleModel.getInstallLocation();
+		if (fBundleModel != null)
+			return fBundleModel.getInstallLocation();
 		return null;
 	}
 	public URL getNLLookupLocation() {
@@ -191,9 +211,9 @@ public abstract class BundlePluginModelBase extends AbstractModel
 	 * @see org.eclipse.pde.core.IModel#isEditable()
 	 */
 	public boolean isEditable() {
-		if (bundleModel != null && bundleModel.isEditable() == false)
+		if (fBundleModel != null && fBundleModel.isEditable() == false)
 			return false;
-		if (extensionsModel != null && extensionsModel.isEditable() == false)
+		if (fExtensionsModel != null && fExtensionsModel.isEditable() == false)
 			return false;
 		return true;
 	}
@@ -203,7 +223,7 @@ public abstract class BundlePluginModelBase extends AbstractModel
 	 * @see org.eclipse.pde.core.IModel#isInSync()
 	 */
 	public boolean isInSync() {
-		return ((bundleModel == null || bundleModel.isInSync()) && (extensionsModel == null || extensionsModel
+		return ((fBundleModel == null || fBundleModel.isInSync()) && (fExtensionsModel == null || fExtensionsModel
 				.isInSync()));
 	}
 	/*
@@ -212,7 +232,7 @@ public abstract class BundlePluginModelBase extends AbstractModel
 	 * @see org.eclipse.pde.core.IModel#isValid()
 	 */
 	public boolean isValid() {
-		return ((bundleModel == null || bundleModel.isValid()) && (extensionsModel == null || extensionsModel
+		return ((fBundleModel == null || fBundleModel.isValid()) && (fExtensionsModel == null || fExtensionsModel
 				.isValid()));
 	}
 	/*
@@ -264,6 +284,7 @@ public abstract class BundlePluginModelBase extends AbstractModel
 		iimport.setParent(getPluginBase());
 		return iimport;
 	}
+	
 	public IPluginLibrary createLibrary() {
 		PluginLibrary library = new PluginLibrary();
 		library.setModel(this);
@@ -271,23 +292,23 @@ public abstract class BundlePluginModelBase extends AbstractModel
 		return library;
 	}
 	public IPluginAttribute createAttribute(IPluginElement element) {
-		if (extensionsModel != null)
-			return extensionsModel.getFactory().createAttribute(element);
+		if (fExtensionsModel != null)
+			return fExtensionsModel.getFactory().createAttribute(element);
 		return null;
 	}
 	public IPluginElement createElement(IPluginObject parent) {
-		if (extensionsModel != null)
-			return extensionsModel.getFactory().createElement(parent);
+		if (fExtensionsModel != null)
+			return fExtensionsModel.getFactory().createElement(parent);
 		return null;
 	}
 	public IPluginExtension createExtension() {
-		if (extensionsModel != null)
-			return extensionsModel.getFactory().createExtension();
+		if (fExtensionsModel != null)
+			return fExtensionsModel.getFactory().createExtension();
 		return null;
 	}
 	public IPluginExtensionPoint createExtensionPoint() {
-		if (extensionsModel != null)
-			return extensionsModel.getFactory().createExtensionPoint();
+		if (fExtensionsModel != null)
+			return fExtensionsModel.getFactory().createExtensionPoint();
 		return null;
 	}
 	/*
@@ -323,11 +344,11 @@ public abstract class BundlePluginModelBase extends AbstractModel
 	 * @see org.eclipse.pde.core.IEditable#isDirty()
 	 */
 	public boolean isDirty() {
-		if (bundleModel != null && (bundleModel instanceof IEditable)
-				&& ((IEditable) bundleModel).isDirty())
+		if (fBundleModel != null && (fBundleModel instanceof IEditable)
+				&& ((IEditable) fBundleModel).isDirty())
 			return true;
-		if (extensionsModel != null && (extensionsModel instanceof IEditable)
-				&& ((IEditable) extensionsModel).isDirty())
+		if (fExtensionsModel != null && (fExtensionsModel instanceof IEditable)
+				&& ((IEditable) fExtensionsModel).isDirty())
 			return true;
 		return false;
 	}
