@@ -50,28 +50,8 @@
 
 <extension point="org.eclipse.ant.core.antTasks">
    <antTask
-      name="initTemplate"
-      class="org.eclipse.pde.internal.build.tasks.InitTemplate"
-      library="lib/pdebuild-ant.jar">
-   </antTask>
-   <antTask
-      name="eclipse.initTemplate"
-      class="org.eclipse.pde.internal.build.tasks.InitTemplate"
-      library="lib/pdebuild-ant.jar">
-   </antTask>
-   <antTask
-      name="fetch"
-      class="org.eclipse.pde.internal.build.tasks.FetchTask"
-      library="lib/pdebuild-ant.jar">
-   </antTask>
-   <antTask
       name="eclipse.fetch"
       class="org.eclipse.pde.internal.build.tasks.FetchTask"
-      library="lib/pdebuild-ant.jar">
-   </antTask>
-   <antTask
-      name="buildscript"
-      class="org.eclipse.pde.internal.build.tasks.BuildScriptGeneratorTask"
       library="lib/pdebuild-ant.jar">
    </antTask>
    <antTask
@@ -80,23 +60,8 @@
       library="lib/pdebuild-ant.jar">
    </antTask>
    <antTask
-      name="buildManifest"
-      class="org.eclipse.pde.internal.build.tasks.BuildManifestTask"
-      library="lib/pdebuild-ant.jar">
-   </antTask>
-   <antTask
       name="eclipse.buildManifest"
       class="org.eclipse.pde.internal.build.tasks.BuildManifestTask"
-      library="lib/pdebuild-ant.jar">
-   </antTask>
-   <antTask
-      name="pluginLocation"
-      class="org.eclipse.pde.internal.build.tasks.PluginLocationTask"
-      library="lib/pdebuild-ant.jar">
-   </antTask>
-   <antTask
-      name="eclipse.pluginLocation"
-      class="org.eclipse.pde.internal.build.tasks.PluginLocationTask"
       library="lib/pdebuild-ant.jar">
    </antTask>
 </extension>
@@ -105,11 +70,6 @@
 <!-- Types -->
 
 <extension point="org.eclipse.ant.core.antTypes">
-   <antType
-      name="stripMapper"
-      class="org.eclipse.pde.internal.build.types.StripMapper"
-      library="lib/pdebuild-ant.jar">
-   </antType>
    <antType
       name="eclipse.stripMapper"
       class="org.eclipse.pde.internal.build.types.StripMapper"
