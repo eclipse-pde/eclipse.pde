@@ -69,6 +69,8 @@ public class NewFragmentProjectWizard extends NewWizard implements IExecutableEx
 	 */
 	public boolean performFinish() {
 		try {
+			fStructurePage.updateData();
+			fContentPage.updateData();
 			BasicNewProjectResourceWizard.updatePerspective(fConfig);
 			getContainer().run(false, true,
 					new NewProjectCreationOperation(fFragmentData, fProjectProvider, null));

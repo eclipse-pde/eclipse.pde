@@ -76,8 +76,6 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 			fContentPage.updateData();
 			BasicNewProjectResourceWizard.updatePerspective(fConfig);
 			IPluginContentWizard contentWizard = fWizardListPage.getSelectedWizard();
-			if (contentWizard!=null)
-				contentWizard.init(fPluginData);
 			getContainer().run(false, true,
 					new NewProjectCreationOperation(fPluginData, fProjectProvider, contentWizard));
 			return true;
