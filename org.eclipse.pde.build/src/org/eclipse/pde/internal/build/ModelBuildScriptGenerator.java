@@ -106,8 +106,7 @@ public void generateBuildScript(PrintWriter output,PluginModel descriptor) {
 //	generateJavadocsTarget(output, descriptor);
 //	generateJavadocTargets(output, descriptor);
 			
-//	generateSrcTargets(output, descriptor);
-//	generateSrcTarget(output, descriptor);
+	generateSrcTargets(output, descriptor);
 
 	generateBinTarget(output, descriptor);
 
@@ -320,7 +319,7 @@ protected void generatePrologue(PrintWriter output, PluginModel descriptor) {
 
 	output.println("  </target>");
 }
-protected void generateSrcTarget(PrintWriter output, PluginModel descriptor) {
+protected void generateSrcTargets(PrintWriter output, PluginModel descriptor) {
 	StringBuffer jars = new StringBuffer();
 	for (Iterator i = jarOrder.iterator(); i.hasNext();) {
 		jars.append(",");
@@ -328,42 +327,48 @@ protected void generateSrcTarget(PrintWriter output, PluginModel descriptor) {
 		String jar = (String) i.next();
 		String zip = jar.substring(0, jar.length() - 4) + SOURCE_EXTENSION;
 		jars.append(zip);
+		generateSrcTarget(output,descriptor,jar,zip);
 	}
 	output.println();
 	output.println("  <target name=\"" + TARGET_SRC + "\" depends=\"init" + jars.toString() + "\">");
 	output.println("  </target>");
 }
-protected void generateSrcTargets(PrintWriter output, PluginModel descriptor) {
-	for (Iterator i = devJars.keySet().iterator(); i.hasNext();) {
-		String fullJar = (String) i.next();
-		// zip name is jar name without the ".jar" but with SOURCE_EXTENSION appended		
-		String zip = fullJar.substring(fullJar.lastIndexOf('/') + 1, fullJar.length() - 4) + SOURCE_EXTENSION;
-		Collection sourceDirs = (Collection) trimmedDevJars.get(fullJar);
-		String src = (sourceDirs == null || sourceDirs.isEmpty()) ? "" : getStringFromCollection(sourceDirs, "", "/**/*.java", ",");
-		output.println();
-		output.println("  <target name=\"" + zip + "\" depends=\"init\">");
-
-		if (src.length() != 0) {
-			output.println("    <property name=\"auto.includes\" value=\"" + src + "\"/>");
-			output.println("    <property name=\"auto.excludes\" value=\"\"/>");
-			output.println("    <ant antfile=\"${template}\" target=\"" + TARGET_SRC + "\">");
-			
-			String inclusions = getSubstitution(descriptor,SRC_INCLUDES);
-			if (inclusions == null)
-				inclusions = "${auto.includes}";
-			output.println("      <property name=\"includes\" value=\"" + inclusions + "\"/>");
-				
-			String exclusions = getSubstitution(descriptor,SRC_EXCLUDES);
-			if (exclusions == null)
-				exclusions = "${auto.excludes}";
-			output.println("      <property name=\"excludes\" value=\"" + exclusions + "\"/>");
-			
-			output.println("      <property name=\"dest\" value=\"${destroot}/" + getComponentDirectoryName() + "\"/>");
-			output.println("    </ant>");
-		}
-		
-		output.println("  </target>");
+protected void generateSrcTarget(PrintWriter output,PluginModel descriptor,String relativeJar,String target) {
+	String fullJar = null;
+	try { 
+		fullJar = new URL(descriptor.getLocation() + relativeJar).getFile();
+	} catch (MalformedURLException e) {
+		// should not happen
+		e.printStackTrace();
 	}
+	
+	// zip name is jar name without the ".jar" but with SOURCE_EXTENSION appended		
+	String zip = fullJar.substring(fullJar.lastIndexOf('/') + 1, fullJar.length() - 4) + SOURCE_EXTENSION;
+	Collection sourceDirs = (Collection) trimmedDevJars.get(fullJar);
+	String src = (sourceDirs == null || sourceDirs.isEmpty()) ? "" : getStringFromCollection(sourceDirs, "", "/**/*.java", ",");
+	output.println();
+	output.println("  <target name=\"" + target + "\" depends=\"init\">");
+
+	if (src.length() != 0) {
+		output.println("    <property name=\"auto.includes\" value=\"" + src + "\"/>");
+		output.println("    <property name=\"auto.excludes\" value=\"\"/>");
+		output.println("    <ant antfile=\"${template}\" target=\"" + TARGET_SRC + "\">");
+			
+		String inclusions = getSubstitution(descriptor,SRC_INCLUDES);
+		if (inclusions == null)
+			inclusions = "${auto.includes}";
+		output.println("      <property name=\"includes\" value=\"" + inclusions + "\"/>");
+				
+		String exclusions = getSubstitution(descriptor,SRC_EXCLUDES);
+		if (exclusions == null)
+			exclusions = "${auto.excludes}";
+		output.println("      <property name=\"excludes\" value=\"" + exclusions + "\"/>");
+			
+		output.println("      <property name=\"dest\" value=\"${destroot}/" + getComponentDirectoryName() + "\"/>");
+		output.println("    </ant>");
+	}
+		
+	output.println("  </target>");
 }
 
 protected abstract String getComponentDirectoryName();

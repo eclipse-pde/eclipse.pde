@@ -110,7 +110,19 @@ protected void generateBinTarget(PrintWriter output) {
 	output.println("    <delete dir=\"${basedir}/temp\"/>");
 	output.println("  </target>");
 }
-
+protected void generateBuildScript(PrintWriter output) {
+	System.out.println("Generating configuration " + configurationModel.getId());
+	
+	generatePrologue(output);
+	generateComponentTemplateTarget(output);
+	generateBinTarget(output);
+	generateTemplateTargetCall(output,TARGET_JAR);
+	generateTemplateTargetCall(output,TARGET_SRC);
+	generateTemplateTargetCall(output,TARGET_LOG);
+	generateCleanTarget(output);
+	generateAllTarget(output);
+	generateEpilogue(output);
+}
 protected void generateCleanTarget(PrintWriter output) {
 	output.println();
 	output.println("  <target name=\"" + TARGET_CLEAN + "\" depends=\"init\">");
@@ -119,19 +131,6 @@ protected void generateCleanTarget(PrintWriter output) {
 	output.println("    </antcall>");
 	output.println("    <delete file=\"${configuration}_${configVersion}.jar\"/>");
 	output.println("  </target>");
-}
-protected void generateBuildScript(PrintWriter output) {
-	System.out.println("Generating configuration " + configurationModel.getId());
-	
-	generatePrologue(output);
-	generateComponentTemplateTarget(output);
-	generateTemplateTargetCall(output,TARGET_JAR);
-	generateBinTarget(output);
-	generateTemplateTargetCall(output,TARGET_SRC);
-	generateTemplateTargetCall(output,TARGET_LOG);
-	generateCleanTarget(output);
-	generateAllTarget(output);
-	generateEpilogue(output);
 }
 protected void generateComponentTemplateTarget(PrintWriter output) {
 	ComponentModel[] components = determineComponents();

@@ -100,7 +100,7 @@ protected void generateAllTarget(PrintWriter output) {
 	targets.add("init");
 	targets.add(TARGET_JAR);
 	targets.add(TARGET_BIN);
-// 	targets.add(TARGET_SRC);
+ 	targets.add(TARGET_SRC);
 	targets.add(TARGET_LOG);
 //	targets.add(TARGET_DOC);
 
