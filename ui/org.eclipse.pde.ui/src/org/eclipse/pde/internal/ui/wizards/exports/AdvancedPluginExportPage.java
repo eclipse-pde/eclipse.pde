@@ -143,7 +143,7 @@ public class AdvancedPluginExportPage extends WizardPage {
 	
 	public void saveSettings() {
 		IDialogSettings settings = getDialogSettings();
-		settings.put(S_SIGN_JARS, true);
+		settings.put(S_SIGN_JARS, fButton.getSelection());
 		settings.put(S_KEYSTORE, fKeystoreText.getText().trim());
 		settings.put(S_ALIAS, fAliasText.getText().trim());
 		settings.put(S_PASSWORD, fPasswordText.getText().trim());
