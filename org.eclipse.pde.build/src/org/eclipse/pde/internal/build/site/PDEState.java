@@ -19,7 +19,9 @@ import org.eclipse.osgi.service.pluginconversion.PluginConverter;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.internal.build.*;
-import org.osgi.framework.*;
+import org.eclipse.pde.internal.build.builder.AbstractBuildScriptGenerator;
+import org.osgi.framework.BundleException;
+import org.osgi.framework.Constants;
 
 // This class provides a higher level API on the state
 public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
@@ -194,8 +196,10 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			if (versionInfo[0].getValue().endsWith(PROPERTY_QUALIFIER)) {
 				try {
 					String qualifierInfo = AbstractScriptGenerator.readProperties(bundleLocation.getAbsolutePath(), IPDEBuildConstants.PROPERTIES_FILE, IStatus.INFO).getProperty(PROPERTY_QUALIFIER);
+					//TODO Log a warning when no qualifier has been found in the manifest
 					manifest.put(PROPERTY_QUALIFIER, qualifierInfo);
 				} catch (CoreException e1) {
+
 					//Ignore
 				}
 			}
@@ -219,7 +223,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			PluginConverter converter;
 			try {
 				converter = acquirePluginConverter();
-				return converter.convertManifest(bundleLocation, false, null);
+				return converter.convertManifest(bundleLocation, false, AbstractBuildScriptGenerator.isBuildingOSGi() ? null : "2.1"); //$NON-NLS-1$
 			} catch (Exception e1) {
 				return null;
 			}

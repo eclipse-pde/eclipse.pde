@@ -67,6 +67,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		try {
 			script = new AntScript(new FileOutputStream(filename));
 		} catch (FileNotFoundException e) {
+			//TODO Log an error
 			// a file doesn't exist so we will create a new one
 		} catch (IOException e) {
 			String message = Policy.bind("exception.writingFile", filename); //$NON-NLS-1$
