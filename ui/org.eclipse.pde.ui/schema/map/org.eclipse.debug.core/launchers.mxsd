@@ -130,6 +130,17 @@ is used by the debug UI.
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  a relative path of an icon that will represent the launcher 
+in the UI if specified.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

@@ -388,17 +388,19 @@
 <extension
       point="org.eclipse.debug.core.launchers">
    <launcher
-         label="%launcher.regular.label"
-         modes="run, debug"
-         class="org.eclipse.pde.internal.launcher.WorkbenchLauncherDelegate"
-         id="org.eclipse.pde.WorkbenchLauncher">
-   </launcher>
-   <launcher
          label="%launcher.withWizard.label"
          wizard="org.eclipse.pde.internal.launcher.WorkbenchLauncherWizard"
          modes="run, debug"
          class="org.eclipse.pde.internal.launcher.WorkbenchLauncherDelegate:withWizard"
-         id="org.eclipse.pde.WorkbenchLauncherWithWizard">
+         id="org.eclipse.pde.WorkbenchLauncherWithWizard"
+         icon = "icons/full/ctool16/eclipse_launcher_wiz.gif">
+   </launcher>
+   <launcher
+         label="%launcher.regular.label"
+         modes="run, debug"
+         class="org.eclipse.pde.internal.launcher.WorkbenchLauncherDelegate"
+         id="org.eclipse.pde.WorkbenchLauncher"
+         icon = "icons/full/ctool16/eclipse_launcher.gif">
    </launcher>
 </extension>
 <extension

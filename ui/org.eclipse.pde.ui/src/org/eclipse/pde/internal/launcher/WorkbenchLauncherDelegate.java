@@ -89,15 +89,17 @@ public class WorkbenchLauncherDelegate
 			String[] vmArgs = args.getVMArgumentsArray();
 			String[] progArgs = args.getProgramArgumentsArray();
 
-			int exCount = tracing ? 6 : 4;
+			int exCount = tracing ? 8 : 6;
 			String[] fullProgArgs = new String[progArgs.length + exCount];
 			fullProgArgs[0] = appname;
 			fullProgArgs[1] = propertiesFile.getPath();
-			fullProgArgs[2] = "-data";
-			fullProgArgs[3] = targetWorkbenchLocation.toOSString();
+			fullProgArgs[2] = "-dev";
+			fullProgArgs[3] = "bin";
+			fullProgArgs[4] = "-data";
+			fullProgArgs[5] = targetWorkbenchLocation.toOSString();
 			if (tracing) {
-				fullProgArgs[4] = "-debug";
-				fullProgArgs[5] = getTracingFileArgument();
+				fullProgArgs[6] = "-debug";
+				fullProgArgs[7] = getTracingFileArgument();
 			}
 			System.arraycopy(progArgs, 0, fullProgArgs, exCount, progArgs.length);
 

@@ -152,7 +152,7 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage {
 		IDialogSettings initialSettings = getDialogSettings();
 		int jreSelectionIndex = 0;
 		String vmArgs = "";
-		String progArgs = "-dev bin";
+		String progArgs = "";
 		String appName = "org.eclipse.ui.workbench";
 		String[] workspaceSelectionItems = new String[0];
 		boolean doClear = false;
@@ -207,7 +207,7 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage {
 		progArgsText.setText(progArgs);
 		applicationNameText.setText(appName);
 		workspaceCombo.setItems(workspaceSelectionItems);
-		workspaceCombo.select(0);
+		if (workspaceSelectionItems.length>0) workspaceCombo.select(0);
 		clearWorkspaceCheck.setSelection(doClear);
 		tracingCheck.setSelection(tracing);
 		//validate
@@ -224,7 +224,7 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage {
 		IVMInstall launcher = null;
 		int jreSelectionIndex = 0;
 		String vmArgs = "";
-		String progArgs = "-dev bin";
+		String progArgs = "";
 		String appName = "org.eclipse.ui.workbench";
 		String[] workspaceSelectionItems = new String[0];
 		boolean doClear = false;
