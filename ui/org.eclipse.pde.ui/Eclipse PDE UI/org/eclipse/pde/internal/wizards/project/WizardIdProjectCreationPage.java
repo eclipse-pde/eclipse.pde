@@ -1,5 +1,8 @@
 package org.eclipse.pde.internal.wizards.project;
-
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.pde.internal.*;
 import java.util.StringTokenizer;

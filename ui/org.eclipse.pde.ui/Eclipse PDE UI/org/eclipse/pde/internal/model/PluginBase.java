@@ -194,6 +194,11 @@ public void setVersion(String newVersion) throws CoreException {
 	version = newVersion;
 	firePropertyChanged(P_VERSION);
 }
+
+public void internalSetVersion(String newVersion) {
+	version = newVersion;
+}
+
 public void swap(IPluginLibrary l1, IPluginLibrary l2) throws CoreException {
 	ensureModelEditable();
 	int index1 = libraries.indexOf(l1);

@@ -161,8 +161,17 @@ private void forceVersion(String targetVersion, IPluginModelBase modelBase)
 				fragment.setPluginVersion(ref.getVersion());
 		}
 		model.save();
+		if (base instanceof IPlugin) {
+		   IPlugin local = PDEPlugin.getDefault().findPlugin(base.getId());
+		   if (local!=null && 
+		       local.getModel().getUnderlyingResource()!=null &&
+		       local.getModel().getUnderlyingResource().equals(file)) {
+		      ((PluginBase)local).internalSetVersion(base.getVersion());
+		   }
+		}
 	}
 	modelProvider.disconnect(file, componentEditor);
+
 }
 private void loadSettings() {
 	IDialogSettings settings = getDialogSettings();
