@@ -65,6 +65,11 @@ public interface IModelChangedEvent {
 	 */
 	int CHANGE = 3;
 	/**
+	 * Returns the provider that fired this event.
+	 * @return the event provider
+	 */
+	public IModelChangeProvider getChangeProvider();
+	/**
 	 * Returns an array of model objects that are affected
 	 * by the change.
 	 *

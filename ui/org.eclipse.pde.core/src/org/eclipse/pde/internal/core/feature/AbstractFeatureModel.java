@@ -95,7 +95,7 @@ public abstract class AbstractFeatureModel
 			feature.reset();
 		load(stream, outOfSync);
 		fireModelChanged(
-			new ModelChangedEvent(
+			new ModelChangedEvent(this,
 				IModelChangedEvent.WORLD_CHANGED,
 				new Object[] { feature },
 				null));

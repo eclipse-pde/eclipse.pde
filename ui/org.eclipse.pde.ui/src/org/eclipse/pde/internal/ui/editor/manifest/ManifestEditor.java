@@ -459,7 +459,7 @@ public class ManifestEditor
 			final IModelChangeProvider provider =
 				(IModelChangeProvider) getModel();
 			final ModelChangedEvent e =
-				new ModelChangedEvent(
+				new ModelChangedEvent(provider,
 					IModelChangedEvent.WORLD_CHANGED,
 					null,
 					null);

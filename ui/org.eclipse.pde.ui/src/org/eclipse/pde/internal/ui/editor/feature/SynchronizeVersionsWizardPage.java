@@ -204,7 +204,7 @@ private void runOperation(int mode, IProgressMonitor monitor)
 		synchronizeVersion(mode, feature.getVersion(), plugins[i], monitor);
 	}
 	model.fireModelChanged(
-		new ModelChangedEvent(IModelChangedEvent.WORLD_CHANGED, null, null));
+		new ModelChangedEvent(model, IModelChangedEvent.WORLD_CHANGED, null, null));
 }
 private int saveSettings() {
 	IDialogSettings settings = getDialogSettings();

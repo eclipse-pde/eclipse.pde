@@ -29,7 +29,7 @@ public class BuildEntry extends BuildObject implements IBuildEntry {
 		ensureModelEditable();
 		tokens.add(token);
 		getModel().fireModelChanged(
-			new ModelChangedEvent(
+			new ModelChangedEvent(getModel(), 
 				IModelChangedEvent.INSERT,
 				new Object[] { token },
 				null));
@@ -58,7 +58,7 @@ public class BuildEntry extends BuildObject implements IBuildEntry {
 		ensureModelEditable();
 		tokens.remove(token);
 		getModel().fireModelChanged(
-			new ModelChangedEvent(
+			new ModelChangedEvent(getModel(),
 				IModelChangedEvent.REMOVE,
 				new Object[] { token },
 				null));
@@ -73,7 +73,7 @@ public class BuildEntry extends BuildObject implements IBuildEntry {
 			}
 		}
 		getModel().fireModelChanged(
-			new ModelChangedEvent(
+			new ModelChangedEvent(getModel(),
 				IModelChangedEvent.CHANGE,
 				new Object[] { oldName },
 				null));

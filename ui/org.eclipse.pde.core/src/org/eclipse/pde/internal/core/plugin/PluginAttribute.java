@@ -94,7 +94,7 @@ public void setValue(String newValue) throws CoreException {
 	ensureModelEditable();
 	String oldValue = this.value;
 	this.value = newValue;
-	AttributeChangedEvent e = new AttributeChangedEvent(getParent(), this, oldValue, newValue);
+	AttributeChangedEvent e = new AttributeChangedEvent(getModel(), getParent(), this, oldValue, newValue);
 	fireModelChanged(e);
 }
 

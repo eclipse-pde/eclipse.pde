@@ -66,7 +66,7 @@ public abstract class SiteObject
 		ISiteModel model = getModel();
 		if (model.isEditable() && model instanceof IModelChangeProvider) {
 			IModelChangeProvider provider = (IModelChangeProvider) model;
-			provider.fireModelChanged(new ModelChangedEvent(changeType, children, null));
+			provider.fireModelChanged(new ModelChangedEvent(provider, changeType, children, null));
 		}
 	}
 	public ISite getSite() {

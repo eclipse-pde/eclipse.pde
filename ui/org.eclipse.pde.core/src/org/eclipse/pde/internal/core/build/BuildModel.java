@@ -78,7 +78,7 @@ public abstract class BuildModel extends AbstractModel implements IBuildModel {
 		}
 		load(source, outOfSync);
 		fireModelChanged(
-			new ModelChangedEvent(
+			new ModelChangedEvent(this,
 				IModelChangedEvent.WORLD_CHANGED,
 				new Object[0],
 				null));

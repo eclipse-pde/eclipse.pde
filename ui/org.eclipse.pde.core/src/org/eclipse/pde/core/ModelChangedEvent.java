@@ -22,13 +22,15 @@ package org.eclipse.pde.core;
  */
 public class ModelChangedEvent implements IModelChangedEvent {
 	private int type;
+	private IModelChangeProvider provider;
 	private Object[] changedObjects;
 	private Object oldValue, newValue;
 	private String changedProperty;
 	/**
 	 * The constructor of the event.
-	 * @param event type
-	 * @param changed objects
+	 * @param provider the change provider
+	 * @param type the event type
+	 * @param objects the changed objects
 	 * @param changedProperty or <samp>null</samp> if not applicable
 	 * <p>
 	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
@@ -37,14 +39,16 @@ public class ModelChangedEvent implements IModelChangedEvent {
 	 * (repeatedly) as the API evolves.
 	 * </p>
 	 */
-	public ModelChangedEvent(int type, Object[] objects, String changedProperty) {
+	public ModelChangedEvent(IModelChangeProvider provider, int type, Object[] objects, String changedProperty) {
 		this.type = type;
+		this.provider = provider;
 		this.changedObjects = objects;
 		this.changedProperty = changedProperty;
 	}
 
 	/**
 	 * A costructor that should be used for changes of object properties.
+	 * @param provider the event provider
 	 * @param object affected object
 	 * @param changedProperty changed property of the affected object
 	 * @param oldValue the value before the change
@@ -58,15 +62,23 @@ public class ModelChangedEvent implements IModelChangedEvent {
 	 */
 
 	public ModelChangedEvent(
+		IModelChangeProvider provider,
 		Object object,
 		String changedProperty,
 		Object oldValue,
 		Object newValue) {
 		this.type = CHANGE;
+		this.provider = provider;
 		this.changedObjects = new Object[] { object };
 		this.changedProperty = changedProperty;
 		this.oldValue = oldValue;
 		this.newValue = newValue;
+	}
+	/**
+	 * @see IModelChangedEvent#getChangeProvider
+	 */
+	public IModelChangeProvider getChangeProvider() {
+		return provider;
 	}
 	/**
 	 * @see IModelChangedEvent#getChangedObjects

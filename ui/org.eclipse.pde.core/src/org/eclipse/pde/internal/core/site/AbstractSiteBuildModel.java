@@ -91,7 +91,7 @@ public abstract class AbstractSiteBuildModel
 			siteBuild.reset();
 		load(stream, outOfSync);
 		fireModelChanged(
-			new ModelChangedEvent(
+			new ModelChangedEvent(this,
 				IModelChangedEvent.WORLD_CHANGED,
 				new Object[] { siteBuild },
 				null));

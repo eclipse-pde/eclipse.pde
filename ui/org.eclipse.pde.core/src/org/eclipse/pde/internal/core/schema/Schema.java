@@ -54,7 +54,7 @@ public class Schema extends PlatformObject implements ISchema {
 	public void addDocumentSection(IDocumentSection docSection) {
 		docSections.addElement(docSection);
 		fireModelChanged(
-			new ModelChangedEvent(
+			new ModelChangedEvent(this,
 				ModelChangedEvent.INSERT,
 				new Object[] { docSection },
 				null));
@@ -76,7 +76,7 @@ public class Schema extends PlatformObject implements ISchema {
 		else
 			elements.add(element);
 		fireModelChanged(
-			new ModelChangedEvent(
+			new ModelChangedEvent(this,
 				ModelChangedEvent.INSERT,
 				new Object[] { element },
 				null));
@@ -87,7 +87,7 @@ public class Schema extends PlatformObject implements ISchema {
 			includes = new Vector();
 		includes.add(include);
 		fireModelChanged(
-			new ModelChangedEvent(
+			new ModelChangedEvent(this,
 				ModelChangedEvent.INSERT,
 				new Object[] { include },
 				null));
@@ -98,7 +98,7 @@ public class Schema extends PlatformObject implements ISchema {
 			return;
 		includes.remove(include);
 		fireModelChanged(
-			new ModelChangedEvent(
+			new ModelChangedEvent(this,
 				ModelChangedEvent.REMOVE,
 				new Object[] { include },
 				null));
@@ -167,7 +167,7 @@ public class Schema extends PlatformObject implements ISchema {
 		Object oldValue,
 		Object newValue) {
 		fireModelChanged(
-			new ModelChangedEvent(object, property, oldValue, newValue));
+			new ModelChangedEvent(this, object, property, oldValue, newValue));
 	}
 	private String getAttribute(Node node, String name) {
 		NamedNodeMap map = node.getAttributes();
@@ -770,7 +770,7 @@ public class Schema extends PlatformObject implements ISchema {
 			load();
 		setNotificationEnabled(true);
 		fireModelChanged(
-			new ModelChangedEvent(
+			new ModelChangedEvent(this, 
 				IModelChangedEvent.WORLD_CHANGED,
 				new Object[0],
 				null));
@@ -778,7 +778,7 @@ public class Schema extends PlatformObject implements ISchema {
 	public void removeDocumentSection(IDocumentSection docSection) {
 		docSections.removeElement(docSection);
 		fireModelChanged(
-			new ModelChangedEvent(
+			new ModelChangedEvent(this,
 				ModelChangedEvent.REMOVE,
 				new Object[] { docSection },
 				null));
@@ -787,7 +787,7 @@ public class Schema extends PlatformObject implements ISchema {
 	public void removeElement(ISchemaElement element) {
 		elements.removeElement(element);
 		fireModelChanged(
-			new ModelChangedEvent(
+			new ModelChangedEvent(this,
 				ModelChangedEvent.REMOVE,
 				new Object[] { element },
 				null));

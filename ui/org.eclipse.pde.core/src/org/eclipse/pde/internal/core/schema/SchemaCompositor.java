@@ -50,7 +50,7 @@ public class SchemaCompositor
 		children.addElement(child);
 		child.setParent(this);
 		getSchema().fireModelChanged(
-			new ModelChangedEvent(
+			new ModelChangedEvent(getSchema(),
 				ModelChangedEvent.INSERT,
 				new Object[] { child },
 				null));
@@ -77,7 +77,7 @@ public class SchemaCompositor
 	public void removeChild(ISchemaObject child) {
 		children.removeElement(child);
 		getSchema().fireModelChanged(
-			new ModelChangedEvent(
+			new ModelChangedEvent(getSchema(),
 				ModelChangedEvent.REMOVE,
 				new Object[] { child },
 				null));

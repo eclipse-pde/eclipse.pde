@@ -67,7 +67,7 @@ public abstract class BundleModel
 	public void reload(InputStream source, boolean outOfSync) {
 		load(source, outOfSync);
 		fireModelChanged(
-			new ModelChangedEvent(
+			new ModelChangedEvent(this,
 				IModelChangedEvent.WORLD_CHANGED,
 				new Object[0],
 				null));

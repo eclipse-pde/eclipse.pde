@@ -298,7 +298,7 @@ public class BundlePluginBase
 	
 	private void fireStructureChanged(Object object, boolean added) {
 		int type = (added)?IModelChangedEvent.INSERT:IModelChangedEvent.REMOVE;
-		model.fireModelChanged(new ModelChangedEvent(type, new Object[]{object}, null ));
+		model.fireModelChanged(new ModelChangedEvent(model, type, new Object[]{object}, null ));
 	}
 
 	/*

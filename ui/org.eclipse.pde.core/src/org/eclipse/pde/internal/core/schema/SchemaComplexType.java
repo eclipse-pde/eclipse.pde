@@ -45,7 +45,7 @@ public class SchemaComplexType
 		else
 			attributes.addElement(attribute);
 		getSchema().fireModelChanged(
-			new ModelChangedEvent(
+			new ModelChangedEvent(getSchema(),
 				ModelChangedEvent.INSERT,
 				new Object[] { attribute },
 				null));
@@ -77,7 +77,7 @@ public class SchemaComplexType
 	public void removeAttribute(ISchemaAttribute attribute) {
 		attributes.removeElement(attribute);
 		getSchema().fireModelChanged(
-			new ModelChangedEvent(
+			new ModelChangedEvent(getSchema(),
 				ModelChangedEvent.REMOVE,
 				new Object[] { attribute },
 				null));

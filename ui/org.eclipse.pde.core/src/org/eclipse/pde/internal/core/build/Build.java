@@ -26,7 +26,7 @@ public void add(IBuildEntry entry) throws CoreException {
 	ensureModelEditable();
 	entries.add(entry);
 	getModel().fireModelChanged(
-		new ModelChangedEvent(IModelChangedEvent.INSERT, new Object[] { entry }, null));
+		new ModelChangedEvent(getModel(), IModelChangedEvent.INSERT, new Object[] { entry }, null));
 }
 public IBuildEntry[] getBuildEntries() {
 	IBuildEntry [] result = new IBuildEntry[entries.size()];
@@ -49,7 +49,7 @@ public void remove(IBuildEntry entry) throws CoreException {
 	ensureModelEditable();
 	entries.remove(entry);
 	getModel().fireModelChanged(
-		new ModelChangedEvent(IModelChangedEvent.REMOVE, new Object[] { entry }, null));
+		new ModelChangedEvent(getModel(), IModelChangedEvent.REMOVE, new Object[] { entry }, null));
 }
 public void reset() {
 	entries.clear();

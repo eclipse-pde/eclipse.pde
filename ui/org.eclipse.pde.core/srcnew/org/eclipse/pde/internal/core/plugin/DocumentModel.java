@@ -166,7 +166,7 @@ public class DocumentModel implements IDocumentNode {
 					}
 					if (!initialRun) {
 						fPluginModelBase.fireModelChanged(
-							new ModelChangedEvent(
+							new ModelChangedEvent(fPluginModelBase,
 								IModelChangedEvent.WORLD_CHANGED,
 								new Object[] { pluginBase },
 								null));

@@ -73,7 +73,7 @@ public abstract class PluginObject
 		IModel model = getModel();
 		if (model.isEditable() && model instanceof IModelChangeProvider) {
 			IModelChangedEvent e =
-				new ModelChangedEvent(changeType, new Object[] { child }, null);
+				new ModelChangedEvent((IModelChangeProvider)model, changeType, new Object[] { child }, null);
 			fireModelChanged(e);
 		}
 	}

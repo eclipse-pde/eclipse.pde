@@ -108,7 +108,7 @@ public abstract class AbstractExtensionsModel
 		throws CoreException {
 		load(stream, outOfSync);
 		fireModelChanged(
-			new ModelChangedEvent(
+			new ModelChangedEvent(this,
 				IModelChangedEvent.WORLD_CHANGED,
 				new Object[] { extensions },
 				null));

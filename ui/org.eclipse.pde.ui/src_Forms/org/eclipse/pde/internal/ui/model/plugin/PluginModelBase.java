@@ -153,7 +153,7 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 	public void reload(InputStream source, boolean outOfSync) {
 		load(source, outOfSync);
 		fireModelChanged(
-			new ModelChangedEvent(
+			new ModelChangedEvent(this, 
 				IModelChangedEvent.WORLD_CHANGED,
 				new Object[] {getPluginBase()},
 				null));

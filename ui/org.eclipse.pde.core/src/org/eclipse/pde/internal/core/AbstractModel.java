@@ -60,7 +60,7 @@ public abstract class AbstractModel
 		Object oldValue,
 		Object newValue) {
 		fireModelChanged(
-			new ModelChangedEvent(object, property, oldValue, newValue));
+			new ModelChangedEvent(this, object, property, oldValue, newValue));
 	}
 
 	public String getResourceString(String key) {
