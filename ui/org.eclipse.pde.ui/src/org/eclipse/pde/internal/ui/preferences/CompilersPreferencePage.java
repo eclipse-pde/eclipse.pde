@@ -11,10 +11,13 @@
 package org.eclipse.pde.internal.ui.preferences;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 
 import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -22,14 +25,27 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.pde.internal.builders.CompilerFlags;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.IEnvironmentVariables;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -59,8 +75,8 @@ public class CompilersPreferencePage
 		flagControls = new ArrayList();
 		SelectionListener listener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if (changedControls == null)
-					changedControls = new HashSet();
+				if (changedControls == null)  
+					changedControls = new HashSet();  
 				changedControls.add(e.widget);
 			}
 		};
@@ -68,11 +84,11 @@ public class CompilersPreferencePage
 		ModifyListener mlistener = new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				if (changedControls == null)
-					changedControls = new HashSet();
+					changedControls = new HashSet();  
 				changedControls.add(e.widget);
 			}
 		};
-
+		
 		String[] choices = new String[] { PDEPlugin.getResourceString("CompilersPreferencePage.error"), PDEPlugin.getResourceString("CompilersPreferencePage.warning"), PDEPlugin.getResourceString("CompilersPreferencePage.ignore")}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 		createPage(folder, PDEPlugin.getResourceString("CompilersPreferencePage.plugins"), CompilerFlags.PLUGIN_FLAGS, choices); //$NON-NLS-1$
@@ -164,20 +180,28 @@ public class CompilersPreferencePage
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
+		boolean hasChange = false;
+		changedControls = new HashSet();
 		for (int i = 0; i < flagControls.size(); i++) {
 			Control control = (Control) flagControls.get(i);
 			String flagId = (String) control.getData();
 			if (control instanceof Combo) {
+				hasChange = ((Combo)control).getSelectionIndex() != CompilerFlags.getDefaultFlag(flagId);
 				((Combo) control).select(CompilerFlags.getDefaultFlag(flagId));
 			} else if (control instanceof Button) {
+				hasChange = ((Button) control).getSelection() != CompilerFlags.getDefaultBoolean(flagId);
 				((Button) control).setSelection(
 					CompilerFlags.getDefaultBoolean(flagId));
 			} else if (control instanceof Text) {
+				hasChange = ((Text) control).getText() != CompilerFlags.getDefaultString(flagId);
 				((Text) control).setText(
 					CompilerFlags.getDefaultString(flagId));
 			}
+			if (hasChange)
+				changedControls.add(control);
+			hasChange = false;
 		}
-		changedControls = null;
+
 	}
 
 	public boolean performOk() {
@@ -222,7 +246,9 @@ public class CompilersPreferencePage
 			if (res == 0) {
 				doFullBuild();
 			}
+			changedControls=null; 
 		}
+
 		return super.performOk();
 	}
 
