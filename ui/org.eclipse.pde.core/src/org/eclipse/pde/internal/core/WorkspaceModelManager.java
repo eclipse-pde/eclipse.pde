@@ -32,6 +32,7 @@ import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
+import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.plugin.WorkspaceFragmentModel;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
@@ -817,7 +818,21 @@ public class WorkspaceModelManager
 			return false;
 		if (project.isOpen() == false)
 			return false;
-		// passed
-		return true;
+		return hasRootObject(model);
+	}
+	private boolean hasRootObject(IModel model) {
+		if (model instanceof IPluginModelBase)
+			return hasRootObject((IPluginModelBase) model);
+		if (model instanceof IFeatureModel)
+			return hasRootObject((IFeatureModel) model);
+		return false;
+	}
+	private boolean hasRootObject(IPluginModelBase model) {
+		IPluginBase plugin = model.getPluginBase();
+		return plugin != null;
+	}
+	private boolean hasRootObject(IFeatureModel model) {
+		IFeature feature = model.getFeature();
+		return feature != null;
 	}
 }
