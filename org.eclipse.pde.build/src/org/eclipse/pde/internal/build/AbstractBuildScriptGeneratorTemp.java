@@ -119,6 +119,13 @@ protected String getClasspath(PluginModel model, JAR jar) throws CoreException {
 		PluginModel plugin = getRegistry().getPlugin(((PluginFragmentModel) model).getPlugin());
 		addPrerequisiteLibraries(plugin, classpath, location, false);
 	}
+	// add extra classpath if it exists
+	String extraClasspath = (String) getBuildProperties(model).get(PROPERTY_JAR_EXTRA_CLASSPATH);
+	if (extraClasspath != null) {
+		String[] extra = Utils.getArrayFromString(extraClasspath, ";,");
+		for (int i = 0; i < extra.length; i++)			
+			classpath.add(extra[i]);
+	}
 	return replaceVariables(Utils.getStringFromCollection(classpath, ";"));
 }
 
