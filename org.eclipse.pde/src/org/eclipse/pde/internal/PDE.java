@@ -19,19 +19,19 @@ import org.eclipse.pde.internal.builders.*;
 
 
 public class PDE extends Plugin {
-	public static final String PLUGIN_ID = "org.eclipse.pde";
+	public static final String PLUGIN_ID = "org.eclipse.pde"; //$NON-NLS-1$
 
 	public static final String MANIFEST_BUILDER_ID =
-		PLUGIN_ID + "." + "ManifestBuilder";
+		PLUGIN_ID + "." + "ManifestBuilder"; //$NON-NLS-1$ //$NON-NLS-2$
 	public static final String SCHEMA_BUILDER_ID =
-		PLUGIN_ID + "." + "SchemaBuilder";
-	public static final String PLUGIN_NATURE = PLUGIN_ID + "." + "PluginNature";
-	public static final String FEATURE_NATURE = PLUGIN_ID + "." + "FeatureNature";
-	public static final String SITE_NATURE = PLUGIN_ID + "." + "UpdateSiteNature";
+		PLUGIN_ID + "." + "SchemaBuilder"; //$NON-NLS-1$ //$NON-NLS-2$
+	public static final String PLUGIN_NATURE = PLUGIN_ID + "." + "PluginNature"; //$NON-NLS-1$ //$NON-NLS-2$
+	public static final String FEATURE_NATURE = PLUGIN_ID + "." + "FeatureNature"; //$NON-NLS-1$ //$NON-NLS-2$
+	public static final String SITE_NATURE = PLUGIN_ID + "." + "UpdateSiteNature"; //$NON-NLS-1$ //$NON-NLS-2$
 	public static final String FEATURE_BUILDER_ID =
-		PLUGIN_ID + "." + "FeatureBuilder";
+		PLUGIN_ID + "." + "FeatureBuilder"; //$NON-NLS-1$ //$NON-NLS-2$
 	public static final String SITE_BUILDER_ID =
-		PLUGIN_ID + "." + "UpdateSiteBuilder";
+		PLUGIN_ID + "." + "UpdateSiteBuilder"; //$NON-NLS-1$ //$NON-NLS-2$
 
 	// Shared instance
 	private static PDE inst;
@@ -43,7 +43,7 @@ public class PDE extends Plugin {
 		inst = this;
 		try {
 			resourceBundle =
-				ResourceBundle.getBundle("org.eclipse.pde.internal.pderesources");
+				ResourceBundle.getBundle("org.eclipse.pde.internal.pderesources"); //$NON-NLS-1$
 		} catch (MissingResourceException x) {
 			log(x);
 			resourceBundle = null;
