@@ -367,7 +367,7 @@ public class WorkbenchLaunchConfigurationDelegate
 			
 		ArrayList result = new ArrayList();
 		TreeSet deselectedWSPlugins =
-			AdvancedLauncherTab.parseDeselectedWSIds(config);
+			LauncherUtils.parseDeselectedWSIds(config);
 		for (int i = 0; i < wsmodels.length; i++) {
 			String id = wsmodels[i].getPluginBase().getId();
 			if (id != null && !deselectedWSPlugins.contains(id))
@@ -385,7 +385,7 @@ public class WorkbenchLaunchConfigurationDelegate
 			return PDECore.getDefault().getExternalModelManager().getAllEnabledModels();
 
 		ArrayList exList = new ArrayList();
-		TreeSet selectedExModels = AdvancedLauncherTab.parseSelectedExtIds(config);
+		TreeSet selectedExModels = LauncherUtils.parseSelectedExtIds(config);
 		IPluginModelBase[] exmodels =
 			PDECore.getDefault().getExternalModelManager().getAllModels();
 		for (int i = 0; i < exmodels.length; i++) {

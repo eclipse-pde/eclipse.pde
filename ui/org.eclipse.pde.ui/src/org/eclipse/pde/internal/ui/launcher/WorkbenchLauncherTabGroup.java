@@ -44,24 +44,28 @@ public class WorkbenchLauncherTabGroup
 		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
 			public void run() {
 				try {
-					String id = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, (String)null);
-					if (id == null) {
-						if (config instanceof ILaunchConfigurationWorkingCopy) {
-							ILaunchConfigurationWorkingCopy wc = (ILaunchConfigurationWorkingCopy)config;
-							wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, "org.eclipse.pde.ui.workbenchClasspathProvider");
-						}
+					String id =
+						config.getAttribute(
+							IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER,
+							(String) null);
+					if (id == null
+						&& config instanceof ILaunchConfigurationWorkingCopy) {
+						ILaunchConfigurationWorkingCopy wc =
+							(ILaunchConfigurationWorkingCopy) config;
+						wc.setAttribute(
+							IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER,
+							"org.eclipse.pde.ui.workbenchClasspathProvider");
 					}
 				} catch (CoreException e) {
 				}
 				for (int i = 0; i < tabs.length; i++) {
 					if (tabs[i] instanceof AdvancedLauncherTab) {
-						((AdvancedLauncherTab) tabs[i]).initialize(
-							config);
+						((AdvancedLauncherTab) tabs[i]).initialize(config);
 					} else {
 						tabs[i].initializeFrom(config);
 					}
 				}
-				
+
 			}
 		});
 	}

@@ -1,8 +1,13 @@
 package org.eclipse.pde.internal.ui.launcher;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.StringTokenizer;
+import java.util.TreeSet;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -52,4 +57,36 @@ public class LauncherUtils {
 			PDEPlugin.getWorkspace().getRoot().getLocation().removeLastSegments(1);
 		return path.append("runtime-workspace").toOSString();
 	}
+	
+	public static TreeSet parseDeselectedWSIds(ILaunchConfiguration config)
+		throws CoreException {
+		TreeSet deselected = new TreeSet();
+		String ids = config.getAttribute(ILauncherSettings.WSPROJECT, (String) null);
+		if (ids != null) {
+			StringTokenizer tok = new StringTokenizer(ids, File.pathSeparator);
+			while (tok.hasMoreTokens())
+				deselected.add(tok.nextToken());
+		}
+		return deselected;
+	}
+	
+	public static TreeSet parseSelectedExtIds(ILaunchConfiguration config)
+		throws CoreException {
+		TreeSet selected = new TreeSet();
+		String ids = config.getAttribute(ILauncherSettings.EXTPLUGINS, (String) null);
+		if (ids != null) {
+			StringTokenizer tok = new StringTokenizer(ids, File.pathSeparator);
+			while (tok.hasMoreTokens()) {
+				String token = tok.nextToken();
+				int loc = token.lastIndexOf(',');
+				if (loc == -1) {
+					selected.add(token);
+				} else if (token.charAt(loc + 1) == 't') {
+					selected.add(token.substring(0, loc));
+				}
+			}
+		}
+		return selected;
+	}
+
 }
