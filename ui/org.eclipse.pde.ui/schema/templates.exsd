@@ -7,7 +7,7 @@
       </appInfo>
       <documentation>
          This extension point registers plug-in project content templates that are used to generate code for the new extensions.
-&lt;p&gt;&lt;b&gt;Note: this extension point is experimental and can be used by the PDE plug-ins only.&lt;/b&gt;
+&lt;p&gt;&lt;b&gt;Note: this extension point is experimental and can be used by the PDE plug-ins only.&lt;/b&gt;&lt;/p&gt;
       </documentation>
    </annotation>
 

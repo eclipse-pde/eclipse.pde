@@ -11,7 +11,7 @@ that will be used to create new extensions in
 PDE plug-in manifest editor. Wizards can create on
 or more extensions at the same time, as well
 as the code needed to implement those extensions.
-&lt;p&gt;&lt;b&gt;Note: this extension point is experimental and can be used by the PDE plug-ins only.&lt;/b&gt;
+&lt;p&gt;&lt;b&gt;Note: this extension point is experimental and can be used by the PDE plug-ins only.&lt;/b&gt;&lt;/p&gt;
       </documentation>
    </annotation>
 

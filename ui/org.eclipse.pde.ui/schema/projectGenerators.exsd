@@ -11,7 +11,7 @@ wizards that create initial content of the PDE plug-in
 projects. These wizards can create plug-in manifest,
 key classes, initial folder structure and even
 generate some extensions and the required code for them.
-&lt;p&gt;&lt;b&gt;Note: this extension point is experimental and can be used by the PDE plug-ins only.&lt;/b&gt;
+&lt;p&gt;&lt;b&gt;Note: this extension point is experimental and can be used by the PDE plug-ins only.&lt;/b&gt;&lt;/p&gt;
       </documentation>
    </annotation>
 
