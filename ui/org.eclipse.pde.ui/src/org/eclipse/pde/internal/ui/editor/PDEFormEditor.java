@@ -52,13 +52,15 @@ public abstract class PDEFormEditor extends FormEditor
 	private IContentOutlinePage formOutline;
 	private PDEMultiPagePropertySheet propertySheet;
 	private PDEMultiPageContentOutline contentOutline;
-	
+	private String lastActivePageId;
+
 	private static class PDEMultiPageEditorSite extends MultiPageEditorSite {
-		public PDEMultiPageEditorSite(MultiPageEditorPart multiPageEditor, IEditorPart editor) {
+		public PDEMultiPageEditorSite(MultiPageEditorPart multiPageEditor,
+				IEditorPart editor) {
 			super(multiPageEditor, editor);
 		}
 		public IEditorActionBarContributor getActionBarContributor() {
-			PDEFormEditor editor = (PDEFormEditor)getMultiPageEditor();
+			PDEFormEditor editor = (PDEFormEditor) getMultiPageEditor();
 			PDEFormEditorContributor contributor = editor.getContributor();
 			return contributor.getSourceContributor();
 		}
@@ -71,11 +73,10 @@ public abstract class PDEFormEditor extends FormEditor
 		inputContextManager = createInputContextManager();
 	}
 	/**
-	 * We must override nested site creation so that
-	 * we properly pass the source editor contributor
-	 * when asked.
+	 * We must override nested site creation so that we properly pass the source
+	 * editor contributor when asked.
 	 */
-	protected IEditorSite createSite(IEditorPart editor){
+	protected IEditorSite createSite(IEditorPart editor) {
 		return new PDEMultiPageEditorSite(this, editor);
 	}
 	public IProject getCommonProject() {
@@ -161,6 +162,8 @@ public abstract class PDEFormEditor extends FormEditor
 		IFormPage page = getActivePageInstance();
 		updateContentOutline(page);
 		updatePropertySheet(page);
+		if (page!=null)
+			lastActivePageId = page.getId();
 	}
 	public Clipboard getClipboard() {
 		return clipboard;
@@ -232,18 +235,17 @@ public abstract class PDEFormEditor extends FormEditor
 	}
 	public void doRevert() {
 		IFormPage currentPage = getActivePageInstance();
-		if (currentPage!=null && currentPage instanceof PDEFormPage) 
-			((PDEFormPage)currentPage).cancelEdit();
+		if (currentPage != null && currentPage instanceof PDEFormPage)
+			((PDEFormPage) currentPage).cancelEdit();
 		IFormPage[] pages = getPages();
 		for (int i = 0; i < pages.length; i++) {
 			if (pages[i] instanceof PDESourcePage) {
 				PDESourcePage page = (PDESourcePage) pages[i];
 				page.doRevertToSaved();
 				/*
-				InputContext context = inputContextManager.findContext(page
-						.getId());
-				context.doRevert();
-				*/
+				 * InputContext context = inputContextManager.findContext(page
+				 * .getId()); context.doRevert();
+				 */
 			}
 		}
 		editorDirtyStateChanged();
@@ -272,17 +274,13 @@ public abstract class PDEFormEditor extends FormEditor
 	public boolean isSaveAsAllowed() {
 		return false;
 	}
+
 	private void storeDefaultPage() {
 		IEditorInput input = getEditorInput();
-		int lastPage = getCurrentPage();
-		if (lastPage == -1)
+		String pageId = lastActivePageId;
+		if (pageId == null)
 			return;
-		Object page = pages.get(lastPage);
-		if (!(page instanceof IFormPage))
-			return;
-		String pageId = ((IFormPage) page).getId();
 		if (input instanceof IFileEditorInput) {
-			// load the setting from the resource
 			IFile file = ((IFileEditorInput) input).getFile();
 			if (file != null) {
 				//set the settings on the resouce
@@ -335,15 +333,17 @@ public abstract class PDEFormEditor extends FormEditor
 		}
 		super.dispose();
 		inputContextManager.dispose();
-		inputContextManager = null;		
+		inputContextManager = null;
 	}
 	public boolean isDirty() {
 		IFormPage page = getActivePageInstance();
-		if ((page != null && page.isDirty()) || (inputContextManager != null && inputContextManager.isDirty()))
+		if ((page != null && page.isDirty())
+				|| (inputContextManager != null && inputContextManager
+						.isDirty()))
 			return true;
 		return super.isDirty();
 	}
-	
+
 	public void fireSaveNeeded(String contextId, boolean notify) {
 		if (contextId == null)
 			return;
@@ -354,7 +354,8 @@ public abstract class PDEFormEditor extends FormEditor
 	public void fireSaveNeeded(IEditorInput input, boolean notify) {
 		if (notify)
 			editorDirtyStateChanged();
-		if (isDirty()) validateEdit(input);
+		if (isDirty())
+			validateEdit(input);
 	}
 	public void editorDirtyStateChanged() {
 		super.editorDirtyStateChanged();
@@ -384,25 +385,19 @@ public abstract class PDEFormEditor extends FormEditor
 	}
 	public void openTo(Object obj, IMarker marker) {
 		//TODO hack until the move to the new search
-		PDESourcePage sourcePage = (PDESourcePage)setActivePage(PluginInputContext.CONTEXT_ID);
+		PDESourcePage sourcePage = (PDESourcePage) setActivePage(PluginInputContext.CONTEXT_ID);
 		if (sourcePage != null)
 			sourcePage.selectReveal(marker);
-		
-		/*if (EditorPreferencePage.getUseSourcePage()
-				|| getEditorInput() instanceof SystemFileEditorInput) {
-			if (marker != null) {
-				IResource resource = marker.getResource();
-				InputContext context = getContextManager()
-						.findContext(resource);
-				if (context != null) {
-					PDESourcePage sourcePage = (PDESourcePage) setActivePage(context
-							.getId());
-					sourcePage.selectReveal(marker);
-				}
-			}
-		} else {
-			selectReveal(obj);
-		}*/
+
+		/*
+		 * if (EditorPreferencePage.getUseSourcePage() || getEditorInput()
+		 * instanceof SystemFileEditorInput) { if (marker != null) { IResource
+		 * resource = marker.getResource(); InputContext context =
+		 * getContextManager() .findContext(resource); if (context != null) {
+		 * PDESourcePage sourcePage = (PDESourcePage) setActivePage(context
+		 * .getId()); sourcePage.selectReveal(marker); } } } else {
+		 * selectReveal(obj); }
+		 */
 	}
 	public void setSelection(ISelection selection) {
 		getSite().getSelectionProvider().setSelection(selection);
@@ -478,7 +473,7 @@ public abstract class PDEFormEditor extends FormEditor
 	}
 	/* package */IFormPage[] getPages() {
 		ArrayList formPages = new ArrayList();
-		for (int i=0; i<pages.size(); i++) {
+		for (int i = 0; i < pages.size(); i++) {
 			Object page = pages.get(i);
 			if (page instanceof IFormPage)
 				formPages.add(page);
@@ -511,7 +506,7 @@ public abstract class PDEFormEditor extends FormEditor
 	}
 	private void copyToClipboard(ISelection selection) {
 		Object[] objects = null;
-		String textVersion=null;
+		String textVersion = null;
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) selection;
 			if (ssel == null || ssel.size() == 0)
@@ -537,11 +532,11 @@ public abstract class PDEFormEditor extends FormEditor
 				writer.close();
 			} catch (IOException e) {
 			}
+		} else if (selection instanceof ITextSelection) {
+			textVersion = ((ITextSelection) selection).getText();
 		}
-		else if (selection instanceof ITextSelection) {
-			textVersion = ((ITextSelection)selection).getText(); 
-		}
-		if (textVersion==null && objects==null) return;
+		if (textVersion == null && objects == null)
+			return;
 		// set the clipboard contents
 		clipboard.setContents(new Object[]{objects, textVersion},
 				new Transfer[]{ModelDataTransfer.getInstance(),
