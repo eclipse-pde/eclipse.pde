@@ -7,6 +7,7 @@ package org.eclipse.pde.internal.builders;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.util.CompilerFlags;
 import org.xml.sax.*;
 
 public class PluginErrorReporter implements ErrorHandler {
@@ -62,6 +63,13 @@ public class PluginErrorReporter implements ErrorHandler {
 	}
 	public void reportError(String message) {
 		reportError(message, -1);
+	}
+	
+	public void report(String message, int line, int severity) {
+		if (severity==CompilerFlags.ERROR)
+			reportError(message, line);
+		else if (severity==CompilerFlags.WARNING)
+			reportWarning(message, line);
 	}
 
 	public void reportError(String message, int line) {

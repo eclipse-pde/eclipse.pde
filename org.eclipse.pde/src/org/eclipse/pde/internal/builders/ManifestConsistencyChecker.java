@@ -16,6 +16,7 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.plugin.*;
+import org.eclipse.pde.internal.core.util.CompilerFlags;
 import org.w3c.dom.Node;
 
 public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
@@ -66,15 +67,16 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		throws CoreException {
 
 		IProject project = getProject();
-		
+
 		IResourceDelta delta = null;
 		if (kind != FULL_BUILD)
 			delta = getDelta(getProject());
 
 		if (delta == null || kind == FULL_BUILD) {
 			// Full build
-			if (!PDE.hasPluginNature(project)) return null;
-			
+			if (!PDE.hasPluginNature(project))
+				return null;
+
 			IPath path = project.getFullPath().append("plugin.xml");
 			IWorkspace workspace = project.getWorkspace();
 			IFile file = workspace.getRoot().getFile(path);
@@ -134,7 +136,8 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		return name.equals("fragment.xml");
 	}
 	private boolean isManifestFile(IFile file) {
-		if (file.getParent() instanceof IFolder) return false;
+		if (file.getParent() instanceof IFolder)
+			return false;
 		String name = file.getName().toLowerCase();
 		return name.equals("plugin.xml") || name.equals("fragment.xml");
 	}
@@ -162,7 +165,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			// Test the version
 			IPlugin plugin = model.getPlugin();
 			validateVersion(plugin, reporter);
-			//validateValues(plugin, reporter);
+			validateValues(plugin, reporter);
 		}
 		model.release();
 	}
@@ -192,7 +195,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 					line = ((ISourceObject) fragment).getStartLine();
 				reporter.reportError(message, line);
 			}
-			//validateValues(fragment, reporter);
+			validateValues(fragment, reporter);
 		}
 		model.release();
 	}
@@ -219,8 +222,15 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 	private void validateValues(
 		IPluginBase pluginBase,
 		PluginErrorReporter reporter) {
+
+		if (!CompilerFlags.isGroupActive(CompilerFlags.PLUGIN_FLAGS))
+			return;
+
 		// Validate requires
-		validateRequires(pluginBase, reporter);
+		validateRequires(
+			pluginBase,
+			reporter,
+			CompilerFlags.getFlag(CompilerFlags.P_UNRESOLVED_IMPORTS));
 		// Validate extensions
 		validateExtensions(pluginBase, reporter);
 		// Validate extension points
@@ -229,8 +239,11 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 
 	private void validateRequires(
 		IPluginBase pluginBase,
-		PluginErrorReporter reporter) {
+		PluginErrorReporter reporter,
+		int flag) {
 		// Try to find the plug-ins
+		if (flag == CompilerFlags.IGNORE)
+			return;
 		IPluginImport[] imports = pluginBase.getImports();
 		for (int i = 0; i < imports.length; i++) {
 			IPluginImport iimport = imports[i];
@@ -241,9 +254,12 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 					iimport.getVersion(),
 					iimport.getMatch())
 				== null) {
-				reporter.reportError(
-					"Cannot resolve plug-in dependency: " + iimport.getId(),
-					getLine(iimport));
+				reporter.report(
+					PDE.getFormattedMessage(
+						"Builders.Manifest.dependency",
+						iimport.getId()),
+					getLine(iimport),
+					flag);
 			}
 		}
 	}
@@ -257,9 +273,13 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			IPluginExtensionPoint point =
 				PDECore.getDefault().findExtensionPoint(extension.getPoint());
 			if (point == null) {
-				reporter.reportError(
-					"Uknown extension point: " + extension.getPoint(),
-					getLine(extension));
+				reporter.report(
+					PDE.getFormattedMessage(
+						"Builders.Manifest.ex-point",
+						extension.getPoint()),
+					getLine(extension),
+					CompilerFlags.getFlag(
+						CompilerFlags.P_UNRESOLVED_EX_POINTS));
 			} else {
 				ISchema schema =
 					PDECore.getDefault().getSchemaRegistry().getSchema(
@@ -288,11 +308,12 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		ISchemaElement schemaElement = schema.findElement(element.getName());
 		if (schemaElement == null) {
 			// Invalid
-			reporter.reportError(
-				"Element '"
-					+ element.getName()
-					+ "' is not legal in the enclosing extension point.",
-				getLine(element));
+			reporter.report(
+				PDE.getFormattedMessage(
+					"Builders.Manifest.element",
+					element.getName()),
+				getLine(element),
+				CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_ELEMENT));
 		} else {
 			IPluginAttribute[] atts = element.getAttributes();
 			validateExistingAttributes(atts, schemaElement, reporter);
@@ -309,8 +330,12 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			ISchemaAttribute attInfo =
 				schemaElement.getAttribute(att.getName());
 			if (attInfo == null) {
-				reporter.reportWarning(
-					"Unknown attribute '" + att.getName() + "'.");
+				reporter.report(
+					PDE.getFormattedMessage(
+						"Builders.Manifest.attribute",
+						att.getName()),
+					getLine(att.getParent()),
+					CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_ATTRIBUTE));
 			} else
 				validateAttribute(att, attInfo, reporter);
 		}
@@ -319,8 +344,6 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		IPluginAttribute att,
 		ISchemaAttribute attInfo,
 		PluginErrorReporter reporter) {
-		String name = att.getName();
-		String value = att.getValue();
 		ISchemaSimpleType type = attInfo.getType();
 		ISchemaRestriction restriction = type.getRestriction();
 		if (restriction != null) {
@@ -331,6 +354,8 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			validateJava(att, attInfo, reporter);
 		} else if (kind == ISchemaAttribute.RESOURCE) {
 			validateResource(att, attInfo, reporter);
+		} else if (type.getName().equals("boolean")) {
+			validateBoolean(att, reporter);
 		}
 	}
 
@@ -350,14 +375,27 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 				}
 			}
 		}
-		reporter.reportError(
-			"Illegal value '"
-				+ value
-				+ "' for attribute '"
-				+ att.getName()
-				+ "'.",
-			getLine(att.getParent()));
+		reporter.report(
+			PDE.getFormattedMessage(
+				"Builders.Manifest.att-value",
+				new String[] { value, att.getName()}),
+			getLine(att.getParent()),
+			CompilerFlags.getFlag(CompilerFlags.P_ILLEGAL_ATT_VALUE));
 	}
+	
+	private void validateBoolean(IPluginAttribute att,
+	PluginErrorReporter reporter) {
+		String value = att.getValue();
+		if (value.equalsIgnoreCase("true")) return;
+		if (value.equalsIgnoreCase("false")) return;
+		reporter.report(
+			PDE.getFormattedMessage(
+				"Builders.Manifest.att-value",
+				new String[] { value, att.getName()}),
+			getLine(att.getParent()),
+			CompilerFlags.getFlag(CompilerFlags.P_ILLEGAL_ATT_VALUE));
+	}
+		
 
 	private void validateJava(
 		IPluginAttribute att,
@@ -370,9 +408,12 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		try {
 			IType element = javaProject.findType(value);
 			if (element == null) {
-				reporter.reportError(
-					"Class '" + value + "' cannot be found.",
-					getLine(att.getParent()));
+				reporter.report(
+					PDE.getFormattedMessage(
+						"Builders.Manifest.class",
+						new String[] { value, att.getName()}),
+					getLine(att.getParent()),
+					CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_CLASS));
 			} else if (basedOn != null) {
 				// Test the type conditions
 				String baseType;
@@ -406,13 +447,12 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		IProject project = att.getModel().getUnderlyingResource().getProject();
 		IResource resource = project.findMember(new Path(path));
 		if (resource == null) {
-			reporter.reportError(
-				"Referenced resource '"
-					+ path
-					+ "' in attribute '"
-					+ att.getName()
-					+ "' not found.",
-				getLine(att.getParent()));
+			reporter.report(
+				PDE.getFormattedMessage(
+					"Builders.Manifest.resource",
+					new String[] { path, att.getName()}),
+				getLine(att.getParent()),
+				CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_RESOURCE));
 		}
 	}
 
@@ -425,11 +465,12 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			ISchemaAttribute attInfo = attInfos[i];
 			if (attInfo.getUse() == ISchemaAttribute.REQUIRED) {
 				if (element.getAttribute(attInfo.getName()) == null) {
-					reporter.reportError(
-						"Required attribute '"
-							+ attInfo.getName()
-							+ "' not defined.",
-						getLine(element));
+					reporter.report(
+						PDE.getFormattedMessage(
+							"Builders.Manifest.required",
+							attInfo.getName()),
+						getLine(element),
+						CompilerFlags.getFlag(CompilerFlags.P_NO_REQUIRED_ATT));
 				}
 			}
 		}
