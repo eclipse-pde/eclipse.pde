@@ -17,12 +17,12 @@
       <import plugin="org.eclipse.pde.core" export="true"/>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.jdt.core"/>
-      <import plugin="org.apache.ant"/>
       <import plugin="org.eclipse.ant.core"/>
       <import plugin="org.eclipse.text"/>
       <import plugin="org.eclipse.core.runtime.compatibility"/>
       <import plugin="org.eclipse.ui.intro"/>
       <import plugin="org.eclipse.ui.cheatsheets"/>
+      <import plugin="org.apache.ant"/>
    </requires>
 
 
