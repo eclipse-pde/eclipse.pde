@@ -70,36 +70,35 @@ class LogReader {
 			} else
 				state = TEXT_STATE;
 
+			if (state == TEXT_STATE) {
+				if (writer != null)
+					writer.println(line);
+				if (i < lines.size() - 1)
+					continue;
+			}
+
+			if (writer != null) {
+				if (writerState == STACK_STATE && current != null) {
+					current.setStack(swriter.toString());
+				} else if (writerState == SESSION_STATE && session != null) {
+					session.setSessionData(swriter.toString());
+				}
+				writerState = UNKNOWN_STATE;
+				swriter = null;
+				writer.close();
+				writer = null;
+			}
+
 			if (state == STACK_STATE) {
-				String sline = line.substring(6);
 				swriter = new StringWriter();
 				writer = new PrintWriter(swriter, true);
-				writer.println(sline);
 				writerState = STACK_STATE;
 			} else if (state == SESSION_STATE) {
 				session = new LogSession();
 				swriter = new StringWriter();
 				writer = new PrintWriter(swriter, true);
 				writerState = SESSION_STATE;
-			} else if (state == TEXT_STATE) {
-				if (writer != null)
-					writer.println(line);
-			} else {
-				if (writer != null) {
-					if (writerState == STACK_STATE && current != null) {
-						current.setStack(swriter.toString());
-					} else if (
-						writerState == SESSION_STATE && session != null) {
-						session.setSessionData(swriter.toString());
-					}
-					writerState = UNKNOWN_STATE;
-					writer.close();
-					swriter = null;
-					writer.close();
-					writer = null;
-				}
-			}
-			if (state == ENTRY_STATE) {
+			} else if (state == ENTRY_STATE) {
 				LogEntry entry = new LogEntry();
 				entry.setSession(session);
 				entry.processLogLine(line, true);
@@ -115,15 +114,16 @@ class LogReader {
 				LogEntry parent = (LogEntry) parents.get(depth - 1);
 				parent.addChild(entry);
 			} else if (state == MESSAGE_STATE) {
-				String message="";
-				if (line.length()>8)
+				String message = "";
+				if (line.length() > 8)
 					message = line.substring(9);
 				if (current != null)
 					current.setMessage(message);
 			}
 		}
 		return (LogEntry[]) entries.toArray(new LogEntry[entries.size()]);
-	}
+	}	
+	
 	private static void setNewParent(
 		ArrayList parents,
 		LogEntry entry,

@@ -21,6 +21,7 @@ public class LogSessionPropertyPage extends PropertyPage {
 	protected Control createContents(Composite parent) {
 		LogEntry entry = (LogEntry) getElement();
 		LogSession session = entry.getSession();
+		
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		//layout.numColumns = 2;
@@ -33,7 +34,9 @@ public class LogSessionPropertyPage extends PropertyPage {
 				container,
 				SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
 		text.setEditable(false);
-		text.setText(session.getSessionData());
+		// defect 17008
+		if (session != null && session.getSessionData() != null)
+			text.setText(session.getSessionData());
 		text.setLayoutData(new GridData(GridData.FILL_BOTH));
 		return container;
 	}
