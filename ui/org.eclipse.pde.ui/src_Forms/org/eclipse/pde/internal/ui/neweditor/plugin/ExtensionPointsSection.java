@@ -6,10 +6,10 @@
  */
 package org.eclipse.pde.internal.ui.neweditor.plugin;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.neweditor.*;
-import org.eclipse.pde.internal.ui.neweditor.plugin.dummy.*;
 import org.eclipse.pde.internal.ui.newparts.TablePart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -30,9 +30,8 @@ public class ExtensionPointsSection extends TableSection {
 			implements
 				IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
-			return new DummyExtensionPoint[] {
-					new DummyExtensionPoint("point1", "Point 1", "schema/point1.exsd"),
-					new DummyExtensionPoint("point2", "Point 2", "schema/point2.exsd") };					
+			IPluginModelBase model = (IPluginModelBase)getPage().getPDEEditor().getAggregateModel();
+			return model.getPluginBase().getExtensionPoints();
 		}
 	}
 	
@@ -50,7 +49,7 @@ public class ExtensionPointsSection extends TableSection {
 		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
 		pointTable = tablePart.getTableViewer();
 		pointTable.setContentProvider(new TableContentProvider());
-		//pointTable.setLabelProvider(new ExtensionPointLabelProvider());
+		pointTable.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
 		pointTable.setInput(getPage());		

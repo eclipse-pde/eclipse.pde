@@ -5,8 +5,8 @@
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
 package org.eclipse.pde.internal.ui.neweditor.plugin;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.internal.ui.neweditor.*;
-import org.eclipse.pde.internal.ui.neweditor.plugin.dummy.DummyExtensionPoint;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.editor.FormEditor;
@@ -30,8 +30,18 @@ public class ExtensionPointsPage extends PDEFormPage {
 			return new ExtensionPointsSection(getPage(), parent);
 		}
 		protected void registerPages(DetailsPart detailsPart) {
-			detailsPart.registerPage(DummyExtensionPoint.class, new
-					ExtensionPointDetails());
+			detailsPart.setPageProvider(new IDetailsPageProvider() {
+				public Object getPageKey(Object object) {
+					if (object instanceof IPluginExtensionPoint)
+						return IPluginExtensionPoint.class;
+					return object.getClass();
+				}
+				public IDetailsPage getPage(Object key) {
+					if (key.equals(IPluginExtensionPoint.class))
+						return new ExtensionPointDetails();
+					return null;
+				}
+			});
 		}
 	}
 	/**

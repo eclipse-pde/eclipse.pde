@@ -5,10 +5,12 @@
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
 package org.eclipse.pde.internal.ui.neweditor.plugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.neweditor.*;
 import org.eclipse.pde.internal.ui.neweditor.FormEntryAdapter;
-import org.eclipse.pde.internal.ui.neweditor.plugin.dummy.DummyExtensionPoint;
 import org.eclipse.pde.internal.ui.newparts.FormEntry;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -21,14 +23,15 @@ import org.eclipse.ui.forms.widgets.*;
  * To change the template for this generated type comment go to Window -
  * Preferences - Java - Code Generation - Code and Comments
  */
-public class ExtensionPointDetails implements IDetailsPage {
+public class ExtensionPointDetails implements IDetailsPage, IContextPart {
 	private IManagedForm mform;
-	private DummyExtensionPoint input;
+	private IPluginExtensionPoint input;
 	private FormEntry id;
 	private FormEntry name;
 	private FormEntry schema;
 	private FormText rtext;
 	private String rtextData;
+	private DetailsPart detailsPart;
 	private static final String SCHEMA_RTEXT_DATA = "<form>"
 			+ "<p><img href=\"search\"/> <a href=\"search\">Find references</a></p>"
 			+ "<p><img href=\"schema\"/> <a href=\"schema\">Open extension point schema file</a></p>"
@@ -45,6 +48,9 @@ public class ExtensionPointDetails implements IDetailsPage {
 	 */
 	public void initialize(IManagedForm mform) {
 		this.mform = mform;
+	}
+	public String getContextId() {
+		return PluginInputContext.CONTEXT_ID;
 	}
 	/*
 	 * (non-Javadoc)
@@ -80,22 +86,35 @@ public class ExtensionPointDetails implements IDetailsPage {
 		id = new FormEntry(client, toolkit, "Id:", null, false);
 		id.setFormEntryListener(new FormEntryAdapter(mform) {
 			public void textValueChanged(FormEntry entry) {
-				if (input != null)
-					input.setId(id.getValue());
+				if (input != null) {
+					try {
+						input.setId(id.getValue());
+					} catch (CoreException e) {
+						PDEPlugin.logException(e);
+					}
+				}
 			}
 		});
 		name = new FormEntry(client, toolkit, "Name:", null, false);
 		name.setFormEntryListener(new FormEntryAdapter(mform) {
 			public void textValueChanged(FormEntry entry) {
 				if (input != null)
-					input.setName(name.getValue());
+					try {
+						input.setName(name.getValue());
+					} catch (CoreException e) {
+						PDEPlugin.logException(e);
+					}
 			}
 		});
 		schema = new FormEntry(client, toolkit, "Schema:", null, false);
 		schema.setFormEntryListener(new FormEntryAdapter(mform) {
 			public void textValueChanged(FormEntry entry) {
 				if (input != null) {
-					input.setSchema(schema.getValue());
+					try {
+						input.setSchema(schema.getValue());
+					} catch (CoreException e) {
+						PDEPlugin.logException(e);
+					}
 					updateRichText();
 				}
 			}
@@ -154,7 +173,7 @@ public class ExtensionPointDetails implements IDetailsPage {
 	public void selectionChanged(IFormPart masterPart, ISelection selection) {
 		IStructuredSelection ssel = (IStructuredSelection) selection;
 		if (ssel.size() == 1) {
-			input = (DummyExtensionPoint) ssel.getFirstElement();
+			input = (IPluginExtensionPoint) ssel.getFirstElement();
 		} else
 			input = null;
 		update();

@@ -161,7 +161,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	public void doSave(IProgressMonitor monitor) {
 		commitFormPages(true);
 		inputContextManager.save(monitor);
-		fireDirtyStateChanged();
+		editorDirtyStateChanged();
 	}
 	public void doRevert() {
 		/*
@@ -262,17 +262,12 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		inputContextManager.dispose();
 		inputContextManager = null;
 	}
-	
-	public void fireDirtyStateChanged() {
-		firePropertyChange(PROP_DIRTY);
-		//PDEEditorContributor contributor = getContributor();
-		//if (contributor != null)
-			//contributor.updateActions();
-	}
-	
+
 	public boolean isDirty() {
 		IFormPage page = getActivePageInstance();
-		return (page!=null && page.isDirty()) || inputContextManager.isDirty();
+		if ((page!=null && page.isDirty()) || inputContextManager.isDirty())
+			return true;
+		return super.isDirty();
 	}
 
 	public void fireSaveNeeded(String contextId) {
@@ -283,8 +278,15 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	}
 	
 	public void fireSaveNeeded(IEditorInput input) {
-		fireDirtyStateChanged();
+		editorDirtyStateChanged();
 		validateEdit(input);
+	}
+	
+	public void editorDirtyStateChanged() {
+		super.editorDirtyStateChanged();
+		//PDEEditorContributor contributor = getContributor();
+		//if (contributor != null)
+			//contributor.updateActions();
 	}	
 
 	private void validateEdit(IEditorInput input) {

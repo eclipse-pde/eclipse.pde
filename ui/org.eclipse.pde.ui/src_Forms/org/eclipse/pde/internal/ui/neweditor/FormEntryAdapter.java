@@ -9,7 +9,6 @@ package org.eclipse.pde.internal.ui.neweditor;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.pde.internal.ui.newparts.*;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 

@@ -231,15 +231,6 @@ public class GeneralInfoSection extends PDESection {
 		//olderVersions.getSelection();
 		super.commit(onSave);
 	}
-	public boolean isDirty() {
-		boolean common = idEntry.isDirty() || nameEntry.isDirty()
-				|| versionEntry.isDirty() || providerEntry.isDirty();
-		if (isFragment())
-			return common || pluginIdEntry.isDirty()
-					|| pluginVersionEntry.isDirty();
-		else
-			return common || classEntry.isDirty();
-	}
 	public void refresh() {
 		IPluginModelBase model = (IPluginModelBase) getPage().getPDEEditor()
 				.getContextManager().getAggregateModel();
