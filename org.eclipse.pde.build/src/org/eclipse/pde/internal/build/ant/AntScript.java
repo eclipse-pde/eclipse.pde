@@ -85,11 +85,12 @@ public void printAntTask(int tab, String antfile, String dir, String target, Str
 	}
 }
 
-public void printZipTask(int tab, String zipfile, String basedir, FileSet[] fileSets) {
+public void printZipTask(int tab, String zipfile, String basedir, boolean filesOnly, FileSet[] fileSets) {
 	printTab(tab);
 	output.print("<zip");
 	printAttribute("zipfile", zipfile, true);
 	printAttribute("basedir", basedir, false);
+	printAttribute("filesonly", filesOnly ? "true" : "false", true);
 	if (fileSets == null)
 		output.println("/>");
 	else {

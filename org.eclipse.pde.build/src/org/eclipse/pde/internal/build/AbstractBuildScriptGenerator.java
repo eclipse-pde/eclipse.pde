@@ -108,17 +108,19 @@ protected String getClasspath(PluginModel model, JAR jar) throws CoreException {
 		// Add the plug-in libraries that were not declared in build.properties .
 		// It usually happens when the library is provided already built.
 		LibraryModel[] libraries = model.getRuntime();
-		for (int i = 0; i < libraries.length; i++) {
-			boolean found = false;
-			for (int j = 0; j < jars.length; j++) {
-				if (jars[j].getName().equals(libraries[i].getName())) {
-					found = true;
-					break;
+		if (libraries != null) {
+			for (int i = 0; i < libraries.length; i++) {
+				boolean found = false;
+				for (int j = 0; j < jars.length; j++) {
+					if (jars[j].getName().equals(libraries[i].getName())) {
+						found = true;
+						break;
+					}
 				}
+				if (found)
+					continue;
+				classpath.add(libraries[i].getName());
 			}
-			if (found)
-				continue;
-			classpath.add(libraries[i].getName());
 		}
 	} else {
 		// otherwise we add all the predecessor jars
@@ -362,7 +364,7 @@ protected void generateSRCTarget(AntScript script, JAR jar) throws CoreException
 	for (int i = 0; i < sources.length; i++) {
 		fileSets[i] = new FileSet(sources[i], null, "**/*.java", null, null, null, null);
 	}
-	script.printZipTask(tab, zip, null, fileSets);
+	script.printZipTask(tab, zip, null, false, fileSets);
 	script.printEndTag(--tab, "target");
 }
 

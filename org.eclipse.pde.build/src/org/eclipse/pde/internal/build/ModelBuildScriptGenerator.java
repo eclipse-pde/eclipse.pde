@@ -135,7 +135,7 @@ protected void generateZipIndividualTarget(AntScript script, String zipName, Str
 	script.println();
 	script.printTargetDeclaration(tab++, zipName, TARGET_INIT, null, null, null);
 	IPath root = new Path(getPropertyFormat(PROPERTY_BASEDIR));
-	script.printZipTask(tab, root.append(zipName).toString(), root.append(source).toString(), null);
+	script.printZipTask(tab, root.append(zipName).toString(), root.append(source).toString(), false, null);
 	script.printString(--tab, "</target>");
 }
 
@@ -212,7 +212,7 @@ protected void generateZipPluginTarget(AntScript script, PluginModel model) thro
 	script.printAntCallTask(tab, TARGET_GATHER_SOURCES, null, params);
 	FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BASE), null, "**/*.bin.log", null, null, null, null);
 	script.printDeleteTask(tab, null, null, new FileSet[] {fileSet});
-	script.printZipTask(tab, basedir.append(FULL_NAME + ".zip").toString(), destination.toString(), null);
+	script.printZipTask(tab, basedir.append(FULL_NAME + ".zip").toString(), destination.toString(), false, null);
 	script.printDeleteTask(tab, destination.toString(), null, null);
 	script.printString(--tab, "</target>");
 }
@@ -242,7 +242,7 @@ protected void generateBuildUpdateJarTarget(AntScript script) {
 	script.printAntCallTask(tab, TARGET_GATHER_BIN_PARTS, null, params);
 	FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BASE), null, "**/*.bin.log", null, null, null, null);
 	script.printDeleteTask(tab, null, null, new FileSet[] {fileSet});
-	script.printZipTask(tab, destination.append(FULL_NAME + ".jar").toString(), getPropertyFormat(PROPERTY_BASE) + "/" + FULL_NAME, null);
+	script.printZipTask(tab, destination.append(FULL_NAME + ".jar").toString(), getPropertyFormat(PROPERTY_BASE) + "/" + FULL_NAME, false, null);
 	script.printDeleteTask(tab, getPropertyFormat(PROPERTY_BASE), null, null);
 	tab--;
 	script.printString(tab, "</target>");
