@@ -109,6 +109,7 @@ public interface IXMLConstants {
 	public static final String PROPERTY_ARCHIVE_PARENT = "archiveParentFolder"; //$NON-NLS-1$
 	public static final String PROPERTY_BUILD_ID_PARAM = "buildId"; //$NON-NLS-1$
 	public static final String PROPERTY_ZIP_ARGS = "zipargs"; //$NON-NLS-1$
+	public static final String PROPERTY_TAR_ARGS = "tarargs"; //$NON-NLS-1$
 	public static final String PROPERTY_DOWNLOAD_DIRECTORY = "downloadDirectory"; //$NON-NLS-1$
 	public static final String PROPERTY_RESOURCE_PATH = "resourcePath"; //$NON-NLS-1$
 	public static final String PROPERTY_PLUGIN_TEMP = "pluginTemp"; //$NON-NLS-1$

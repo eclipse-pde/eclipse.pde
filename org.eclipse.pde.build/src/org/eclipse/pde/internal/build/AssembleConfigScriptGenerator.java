@@ -391,7 +391,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	private void createZipExecCommand(List parameters) {
-		parameters.add(0, "-r -q " + getPropertyFormat(PROPERTY_ZIP_ARGS) + " " + getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH)); //$NON-NLS-1$ //$NON-NLS-2$
+		parameters.add(0, "-r -q " + getPropertyFormat(PROPERTY_ZIP_ARGS) + ' ' + getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH)); //$NON-NLS-1$
 		script.printExecTask("zip", getPropertyFormat(PROPERTY_ASSEMBLY_TMP), parameters, null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
@@ -412,7 +412,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			script.printExecTask("rm", getPropertyFormat(PROPERTY_BASEDIR), parameters, null); //$NON-NLS-1$
 		}
 		parameters.clear();
-		parameters.add("-cvf " + getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH) + ' ' + getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + ' '); //$NON-NLS-1$
+		parameters.add("-cvf " + getPropertyFormat(PROPERTY_TAR_ARGS) + ' ' + getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH) + ' ' + getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + ' '); //$NON-NLS-1$
 		script.printExecTask("tar", getPropertyFormat(PROPERTY_ASSEMBLY_TMP), parameters, null); //$NON-NLS-1$ 
 	}
 
