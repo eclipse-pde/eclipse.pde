@@ -145,19 +145,21 @@ protected void addSelf(PluginModel model, JAR jar, List classpath, String locati
 		// if no jar order was specified in build.properties, we add all the libraries but the current one
 		// based on the order specified by the plugin.xml. Both library that we compile and .jar provided are processed
 		LibraryModel[] libraries = model.getRuntime();
-		for (int i = 0; i < libraries.length; i++) {
-			String libraryName = libraries[i].getName();
-			if (jar.getName().equals(libraryName))
-				continue;
-
-			boolean isSource = (modelProperties.getProperty(PROPERTY_SOURCE_PREFIX + libraryName) != null);
-			if (isSource) {
-				addDevEntries(model, location, classpath, (String[]) Utils.getArrayFromString(modelProperties.getProperty(PROPERTY_OUTPUT_PREFIX + libraryName)));
+		if (libraries != null) {
+			for (int i = 0; i < libraries.length; i++) {
+				String libraryName = libraries[i].getName();
+				if (jar.getName().equals(libraryName))
+					continue;
+	
+				boolean isSource = (modelProperties.getProperty(PROPERTY_SOURCE_PREFIX + libraryName) != null);
+				if (isSource) {
+					addDevEntries(model, location, classpath, (String[]) Utils.getArrayFromString(modelProperties.getProperty(PROPERTY_OUTPUT_PREFIX + libraryName)));
+				}
+				//Potential pb: here there maybe a nasty case where the libraries variable may refer to something which is part of the base
+				//but $xx$ will replace it by the $xx instead of $basexx. The solution is for the user to use the explicitly set the content
+				// of its build.property file
+				addPathAndCheck(libraryName, classpath);
 			}
-			//Potential pb: here there maybe a nasty case where the libraries variable may refer to something which is part of the base
-			//but $xx$ will replace it by the $xx instead of $basexx. The solution is for the user to use the explicitly set the content
-			// of its build.property file
-			addPathAndCheck(libraryName, classpath);
 		}
 	} else {
 		// otherwise we add all the predecessor jars
