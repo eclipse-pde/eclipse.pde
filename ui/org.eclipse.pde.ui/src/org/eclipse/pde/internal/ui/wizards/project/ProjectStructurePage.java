@@ -43,6 +43,7 @@ public class ProjectStructurePage extends WizardPage {
 	private static final String KEY_ID = "ProjectStructurePage.id";
 	private static final String KEY_INVALID_ID =
 		"WizardIdProjectCreationPage.invalidId";
+	private static final String KEY_EMPTY_ID = "WizardIdProjectCreationPage.emptyId";
 	private static final String KEY_FLIBRARY = "ProjectStructurePage.flibrary";
 	private static final String KEY_LIBRARY = "ProjectStructurePage.library";
 	private static final String KEY_CREATING = "ProjectStructurePage.creating";
@@ -66,6 +67,7 @@ public class ProjectStructurePage extends WizardPage {
 	private Text libraryText;
 	private Composite bottomContainer;
 	private Button simpleChoice;
+	private int numErrors = 0;
 
 	class StructureData implements IPluginStructureData {
 		String pluginId;
@@ -100,13 +102,10 @@ public class ProjectStructurePage extends WizardPage {
 		super("projectStructure");
 		this.fragment = fragment;
 		this.provider = provider;
-		if (fragment) {
-			setTitle(PDEPlugin.getResourceString(KEY_FTITLE));
-			setDescription(PDEPlugin.getResourceString(KEY_FDESC));
-		} else {
-			setTitle(PDEPlugin.getResourceString(KEY_TITLE));
-			setDescription(PDEPlugin.getResourceString(KEY_DESC));
-		}
+		setTitle(
+			PDEPlugin.getResourceString(fragment ? KEY_FTITLE : KEY_TITLE));
+		setDescription(
+			PDEPlugin.getResourceString(fragment ? KEY_FDESC : KEY_DESC));
 	}
 
 	public static void createProject(IProject project, IProjectProvider provider, IPluginStructureData data, IProgressMonitor monitor)
@@ -120,18 +119,9 @@ public class ProjectStructurePage extends WizardPage {
 		if (!project.hasNature(PDE.PLUGIN_NATURE))
 			CoreUtility.addNatureToProject(project, PDE.PLUGIN_NATURE, monitor);
 
-		setDefaultVM(project);
+		JavaCore.create(project);
 	}
 
-	static void setDefaultVM(IProject project) throws CoreException {
-		IVMInstall install = JavaRuntime.getDefaultVMInstall();
-		if (install != null) {
-			IJavaProject javaProject = JavaCore.create(project);
-			// method is deprecated and does nothing.
-			//JavaRuntime.setVM(javaProject, install);
-		}
-	}
-	
 	public static void createBuildProperties(
 		IProject project,
 		IPluginStructureData data,
@@ -151,26 +141,25 @@ public class ProjectStructurePage extends WizardPage {
 		String fileName = "build.properties";
 		IPath path = project.getFullPath().append(fileName);
 		IFile file = project.getWorkspace().getRoot().getFile(path);
-		boolean exists = file.exists();
-		if (!exists) {
+		if (!file.exists()) {
 			WorkspaceBuildModel model = new WorkspaceBuildModel(file);
 			if (library != null && source != null) {
-				String libKey = IBuildEntry.JAR_PREFIX + library;
-				IBuildEntry entry = model.getFactory().createEntry(libKey);
+				IBuildEntry entry =
+					model.getFactory().createEntry(
+						IBuildEntry.JAR_PREFIX + library);
 				if (!source.endsWith("/"))
-					source = source + "/";
+					source += "/";
 				entry.addToken(source);
 				model.getBuild().add(entry);
 			}
 			model.save();
 		}
-		IWorkbench workbench = PlatformUI.getWorkbench();
-		workbench.getEditorRegistry().setDefaultEditor(
+		PlatformUI.getWorkbench().getEditorRegistry().setDefaultEditor(
 			file,
 			PDEPlugin.BUILD_EDITOR_ID);
 	}
 	
-	private Composite addTopSection(Composite container) {
+	private void addTopSection(Composite container) {
 		Composite topContainer = new Composite(container, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -178,10 +167,7 @@ public class ProjectStructurePage extends WizardPage {
 		topContainer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		Label label = new Label(topContainer, SWT.NULL);
-		if (fragment)
-			label.setText(PDEPlugin.getResourceString(KEY_FID));
-		else
-			label.setText(PDEPlugin.getResourceString(KEY_ID));
+		label.setText(PDEPlugin.getResourceString(fragment ? KEY_FID : KEY_ID));
 		idText = new Text(topContainer, SWT.SINGLE | SWT.BORDER);
 		idText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		idText.addModifyListener(new ModifyListener() {
@@ -189,10 +175,9 @@ public class ProjectStructurePage extends WizardPage {
 				verifyId(idText.getText());
 			}
 		});
-		return topContainer;
 	} 
 	
-	private Composite addMiddleSection(Composite container) {
+	private void addMiddleSection(Composite container) {
 		Composite middleContainer = new Composite(container, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -203,19 +188,18 @@ public class ProjectStructurePage extends WizardPage {
 		simpleChoice.setText(PDEPlugin.getResourceString(KEY_SIMPLE_PROJECT));
 		simpleChoice.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				bottomContainer.setVisible(!((Button)e.widget).getSelection());
+				boolean isSelected = ((Button) e.widget).getSelection();
+				bottomContainer.setVisible(!isSelected);
 				getContainer().updateButtons();
 			}
 		});
 		
 		Button button = new Button(middleContainer, SWT.RADIO);
 		button.setText(PDEPlugin.getResourceString(KEY_JAVA_PROJECT));
-		button.setSelection(true);
-		
-		return middleContainer;
+		button.setSelection(true);		
 	}
 	
-	private Composite addBottomSection(Composite container) {
+	private void addBottomSection(Composite container) {
 		bottomContainer = new Composite(container, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -238,8 +222,6 @@ public class ProjectStructurePage extends WizardPage {
 		sourceLabel.setText(PDEPlugin.getResourceString(KEY_SOURCE));
 		sourceText = new Text(bottomContainer, SWT.SINGLE | SWT.BORDER);
 		sourceText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		return bottomContainer;
 	}
 	
 	public void createControl(Composite parent) {
@@ -256,10 +238,14 @@ public class ProjectStructurePage extends WizardPage {
 		setControl(container);
 	}
 
-	private void verifyId(String id) {
-		String error = verifyIdRules(id);
+	private boolean verifyId(String id) {
+		String error =
+			(id.length() == 0)
+				? PDEPlugin.getResourceString(KEY_EMPTY_ID)
+				: verifyIdRules(id);
 		setErrorMessage(error);
 		setPageComplete(error == null);
+		return (error == null);
 	}
 
 	private String verifyIdRules(String id) {
@@ -268,7 +254,7 @@ public class ProjectStructurePage extends WizardPage {
 		while (stok.hasMoreTokens()) {
 			String token = stok.nextToken();
 			for (int i = 0; i < token.length(); i++) {
-				if (Character.isLetterOrDigit(token.charAt(i)) == false)
+				if (!Character.isLetterOrDigit(token.charAt(i)))
 					return problemText;
 			}
 		}
@@ -393,7 +379,9 @@ public class ProjectStructurePage extends WizardPage {
 	}
 
 	public IWizardPage getNextPage() {
-		return (!fragment && simpleChoice.getSelection() ? null : super.getNextPage());
+		if (!fragment && simpleChoice.getSelection())
+			return null;
+		return super.getNextPage();
 	}
 
 }
