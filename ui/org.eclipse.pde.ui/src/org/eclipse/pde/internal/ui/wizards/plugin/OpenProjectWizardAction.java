@@ -6,12 +6,14 @@ import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.util.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.cheatsheets.*;
+import org.eclipse.ui.cheatsheets.ICheatSheetAction;
 
 /**
  * @author melhem
  *
  */
-public class OpenProjectWizardAction extends Action {
+public class OpenProjectWizardAction extends Action implements ICheatSheetAction {
 	/**
 	 * @param text
 	 */
@@ -29,7 +31,16 @@ public class OpenProjectWizardAction extends Action {
 		dialog.create();
 		SWTUtil.setDialogSize(dialog, 500, 500);
 		dialog.getShell().setText(wizard.getWindowTitle());
-		dialog.open();
+		int result = dialog.open();
+		// TODO need to notify result here
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.cheatsheets.ICheatSheetAction#run(java.lang.String[], org.eclipse.ui.cheatsheets.ICheatSheetManager)
+	 */
+	public void run(String[] params, ICheatSheetManager manager) {
+		// TODO need to initialize the wizard with default
+		// values so that it comes preset
+		run();
+	}
 }
