@@ -90,7 +90,7 @@ public class BundlePlugin extends PlatformObject implements IBundlePluginBase {
 			libraries = new ArrayList();
 			StringTokenizer stok = new StringTokenizer(getBundle().getHeader(IBundle.KEY_CLASSPATH), ",");
 			while (stok.hasMoreTokens()) {
-				String token = stok.nextToken();
+				String token = stok.nextToken().trim();
 				try {
 					IPluginLibrary library = model.createLibrary();
 					library.setName(token);
@@ -110,8 +110,18 @@ public class BundlePlugin extends PlatformObject implements IBundlePluginBase {
 	public IPluginImport[] getImports() {
 		if (imports==null) {
 			imports = new ArrayList();
+			StringTokenizer stok = new StringTokenizer(getBundle().getHeader(IBundle.KEY_REQUIRE_BUNDLE), ",");
+			String token = stok.nextToken().trim();
+			try {
+				IPluginImport iimport = model.createImport();
+				iimport.setId(token);
+				imports.add(iimport);
+			}
+			catch (CoreException e) {
+				PDECore.logException(e);
+			}
 		}
-		return (IPluginImport[])libraries.toArray(new IPluginImport[imports.size()]);
+		return (IPluginImport[])imports.toArray(new IPluginImport[imports.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -251,7 +261,10 @@ public class BundlePlugin extends PlatformObject implements IBundlePluginBase {
 	public String getId() {
 		IBundle bundle = getBundle();
 		if (bundle==null) return null;
-		return bundle.getHeader(IBundle.KEY_NAME);
+		String id = bundle.getHeader(IBundle.KEY_UNIQUEID);
+		if (id==null)
+			id = bundle.getHeader(IBundle.KEY_NAME);
+		return id;
 	}
 
 	/* (non-Javadoc)
@@ -259,8 +272,10 @@ public class BundlePlugin extends PlatformObject implements IBundlePluginBase {
 	 */
 	public void setId(String id) throws CoreException {
 		IBundle bundle = getBundle();
-		if (bundle!=null)
+		if (bundle!=null) {
 			bundle.setHeader(IBundle.KEY_NAME, id);
+			bundle.setHeader(IBundle.KEY_UNIQUEID, id);
+		}
 	}
 
 	/* (non-Javadoc)

@@ -59,12 +59,37 @@ public class Bundle extends BundleObject implements IBundle {
 		reset();
 		monitor.beginTask("", 2);
 		// migrate from a plug-in
+		headers.put(KEY_LEGACY, "true");
 		headers.put(KEY_NAME, plugin.getId());
+		headers.put(KEY_UNIQUEID, plugin.getId());
 		headers.put(KEY_DESC, plugin.getName());
 		headers.put(KEY_VENDOR, plugin.getProviderName());
 		headers.put(KEY_VERSION, plugin.getVersion());
+		if (plugin instanceof IFragment)
+			loadFragment((IFragment)plugin);
+		else
+			loadPlugin((IPlugin)plugin);
 		loadLibraries(plugin.getLibraries(), new SubProgressMonitor(monitor, 1));
 		loadImports(plugin.getImports(), new SubProgressMonitor(monitor, 1));
+	}
+
+	private void loadPlugin(IPlugin plugin) {
+		headers.put(KEY_ACTIVATOR, "org.eclipse.core.runtime.compatibility.PluginActivator");
+		String pluginClass = plugin.getClassName();
+		if (pluginClass!=null)
+			headers.put(KEY_PLUGIN, pluginClass);
+	}
+
+	private void loadFragment(IFragment fragment) {
+		String pluginId = fragment.getPluginId();
+		String pluginVersion = fragment.getPluginVersion();
+		int pluginMatch = fragment.getRule();
+		StringBuffer hostBundle = new StringBuffer();
+
+		hostBundle.append(pluginId).append("; ");
+		hostBundle.append("version=");
+		hostBundle.append(pluginVersion);
+		headers.put(KEY_HOST_BUNDLE, hostBundle.toString());
 	}
 	
 	private void loadLibraries(IPluginLibrary [] libraries, IProgressMonitor monitor) {
@@ -81,8 +106,19 @@ public class Bundle extends BundleObject implements IBundle {
 	}
 	
 	private void loadImports(IPluginImport[] imports, IProgressMonitor monitor) {
+		StringBuffer requires = new StringBuffer();
+		
 		for (int i=0; i<imports.length; i++) {
+			IPluginImport iimport = imports[i];
+			String id = iimport.getId();
+			String version = iimport.getVersion();
+			int match = iimport.getMatch();
+			if (i>0) requires.append(", ");
+			requires.append(id);
+			if (version!=null) {
+			}
 		}
+		headers.put(KEY_REQUIRE_BUNDLE, requires.toString());
 	}
 
 	public void write(String indent, PrintWriter writer) {

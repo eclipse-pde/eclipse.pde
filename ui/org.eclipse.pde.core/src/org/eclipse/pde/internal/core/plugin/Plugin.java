@@ -36,6 +36,11 @@ public class Plugin extends PluginBase implements IPlugin {
 		this.className = pd.getPluginClass();
 		super.load(pm);
 	}
+	
+	public void load(IPluginBase srcPluginBase) {
+		PluginBase base = (PluginBase)srcPluginBase;
+		this.load(base);
+	}
 
 	void load(PluginBase srcPluginBase) {
 		className = ((Plugin) srcPluginBase).className;
@@ -69,7 +74,6 @@ public class Plugin extends PluginBase implements IPlugin {
 
 	public void write(String indent, PrintWriter writer) {
 		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-		//writer.println("<!-- File written by PDE 1.0 -->");
 		writer.print("<plugin");
 		if (getId() != null) {
 			writer.println();
