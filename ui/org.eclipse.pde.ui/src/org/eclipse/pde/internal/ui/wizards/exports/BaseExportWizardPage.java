@@ -448,7 +448,7 @@ public abstract class BaseExportWizardPage extends WizardPage {
 			fExportPart.getTableViewer().reveal(checked.get(0));
 	}
 
-	protected abstract IModel findModelFor(IProject project);
+	protected abstract IModel findModelFor(IAdaptable object);
 
 	private void pageChanged() {
 		String message = null;
@@ -615,13 +615,9 @@ public abstract class BaseExportWizardPage extends WizardPage {
 			for (int i = 0; i < workingSets.length; i++) {
 				IAdaptable[] elements = workingSets[i].getElements();
 				for (int j = 0; j < elements.length; j++) {
-					IAdaptable element = elements[j];
-					if (element instanceof IJavaProject)
-						element = ((IJavaProject)element).getProject();
-					if (element instanceof IProject) {
-						IModel model = findModelFor((IProject)element);
-						if (isValidModel(model))
-							models.add(model);						
+					IModel model = findModelFor(elements[j]);
+					if (isValidModel(model)) {
+						models.add(model);						
 					}
 				}
 			}

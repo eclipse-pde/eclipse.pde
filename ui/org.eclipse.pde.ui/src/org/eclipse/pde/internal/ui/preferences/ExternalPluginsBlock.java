@@ -14,21 +14,26 @@ import java.lang.reflect.*;
 import java.net.*;
 import java.util.*;
 
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jface.operation.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.window.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.pde.internal.ui.parts.*;
+import org.eclipse.pde.internal.ui.util.*;
 import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.forms.widgets.*;
 
 
@@ -44,6 +49,7 @@ public class ExternalPluginsBlock {
 	private IPluginModelBase[] initialModels;
 	private IPluginModelBase[] fModels;
 	private PDEState fCurrentState;
+	private Button fIncludeFragments;
 
 	
 	class ReloadOperation implements IRunnableWithProgress {
@@ -76,13 +82,19 @@ public class ExternalPluginsBlock {
 
 		protected void buttonSelected(Button button, int index) {
 			switch (index) {
-				case 0 :
+				case 0:
 					handleReload();
 					break;
-				case 5 :
+				case 5:
+					handleWorkingSets();
+					break;
+				case 6:
+					handleAddRequired();
+					break;
+				case 7:
 					selectNotInWorkspace();
 					break;
-				default :
+				default:
 					super.buttonSelected(button, index);
 			}
 		}
@@ -119,8 +131,10 @@ public class ExternalPluginsBlock {
 				}
 			}
 		}
-
-
+		
+		public void incrementCounter(int increment) {
+			updateCounter(getSelectionCount() + increment);
+		}
 	}
 
 	public ExternalPluginsBlock(TargetPlatformPreferencePage page) {
@@ -129,14 +143,16 @@ public class ExternalPluginsBlock {
 			{
 				PDEPlugin.getResourceString(KEY_RELOAD),
 				null,
+				null,
 				PDEPlugin.getResourceString(WizardCheckboxTablePart.KEY_SELECT_ALL),
 				PDEPlugin.getResourceString(
 					WizardCheckboxTablePart.KEY_DESELECT_ALL),
-				null,
+				PDEPlugin.getResourceString("ExternalPluginsBlock.workingSet"), //$NON-NLS-1$
+				PDEPlugin.getResourceString("ExternalPluginsBlock.addRequired"), //$NON-NLS-1$
 				PDEPlugin.getResourceString(KEY_WORKSPACE)};
 		tablePart = new TablePart(buttonLabels);
-		tablePart.setSelectAllIndex(2);
-		tablePart.setDeselectAllIndex(3);
+		tablePart.setSelectAllIndex(3);
+		tablePart.setDeselectAllIndex(4);
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 
@@ -174,23 +190,30 @@ public class ExternalPluginsBlock {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
-		layout.marginHeight = 15;
+		layout.marginHeight = 5;
 		layout.marginWidth = 0;
 		container.setLayout(layout);
 
-		Label label = new Label(container, SWT.NONE);
-		label.setText(PDEPlugin.getResourceString("ExternalPluginsBlock.title")); //$NON-NLS-1$
-		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan = 2;
-		label.setLayoutData(gd);
 		tablePart.createControl(container);
 
 		pluginListViewer = tablePart.getTableViewer();
 		pluginListViewer.setContentProvider(new PluginContentProvider());
 		pluginListViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 
-		gd = (GridData) tablePart.getControl().getLayoutData();
+		GridData gd = (GridData) tablePart.getControl().getLayoutData();
 		gd.heightHint = 100;
+		
+		Label label = new Label(container, SWT.NONE);
+		gd = new GridData();
+		gd.horizontalSpan = 2;
+		label.setLayoutData(gd);
+				
+		fIncludeFragments = new Button(container, SWT.CHECK);
+		fIncludeFragments.setText(PDEPlugin.getResourceString("ExternalPluginsBlock.includeFragments")); //$NON-NLS-1$
+		gd = new GridData();
+		gd.horizontalSpan = 2;
+		fIncludeFragments.setLayoutData(gd);
+		fIncludeFragments.setSelection(PDECore.getDefault().getPluginPreferences().getBoolean(ICoreConstants.INCLUDE_FRAGMENTS));
 		return container;
 	}
 
@@ -270,6 +293,7 @@ public class ExternalPluginsBlock {
 		for (int i = 0; i < locations.length && i < 5; i++) {
 			preferences.setValue(ICoreConstants.SAVED_PLATFORM + i, locations[i]);
 		}
+		preferences.setValue(ICoreConstants.INCLUDE_FRAGMENTS, fIncludeFragments.getSelection());
 		PDECore.getDefault().savePluginPreferences();
 	}
 	
@@ -315,6 +339,145 @@ public class ExternalPluginsBlock {
 	
 	public void handleSelectAll(boolean selected) {
 		tablePart.selectAll(selected);
+	}
+	
+	private void handleWorkingSets() {
+		IWorkingSetManager manager = PlatformUI.getWorkbench().getWorkingSetManager();
+		IWorkingSetSelectionDialog dialog = manager.createWorkingSetSelectionDialog(tablePart.getControl().getShell(), true);
+		if (dialog.open() == Window.OK) {
+			HashSet set = getPluginIDs(dialog.getSelection());
+			IPluginModelBase[] models = getAllModels();
+			int counter = 0;
+			for (int i = 0; i < models.length; i++) {
+				String id = models[i].getPluginBase().getId();
+				if (id == null)
+					continue;
+				if (set.contains(id)) {
+					if (!pluginListViewer.getChecked(models[i])) {
+						pluginListViewer.setChecked(models[i], true);
+						counter += 1;
+						if (!models[i].isEnabled())
+							changed.add(models[i]);
+					}
+					set.remove(id);
+				}
+				if (set.isEmpty())
+					break;				
+			}
+			tablePart.incrementCounter(counter);
+		}
+	}
+	
+	private HashSet getPluginIDs(IWorkingSet[] workingSets) {
+		HashSet set = new HashSet();
+		for (int i = 0; i < workingSets.length; i++) {
+			IAdaptable[] elements = workingSets[i].getElements();
+			for (int j = 0; j < elements.length; j++) {
+				Object element = elements[j];
+				if (element instanceof PersistablePluginObject) {
+					set.add(((PersistablePluginObject)element).getPluginID());
+				} else {
+					if (element instanceof IJavaProject)
+						element = ((IJavaProject)element).getProject();
+					if (element instanceof IProject) {
+						IPluginModelBase model = (IPluginModelBase)PDECore.getDefault().getWorkspaceModelManager().getWorkspacePluginModel((IProject)element);
+						if (model != null)
+							set.add(model.getPluginBase().getId());
+					}
+				}
+			}
+		}
+		return set;
+	}
+	
+	private void handleAddRequired() {
+		TableItem[] items = tablePart.getTableViewer().getTable().getItems();
+		
+		if (items.length == 0)
+			return;
+		
+		ArrayList result = new ArrayList();
+		for (int i = 0; i < items.length; i++) {
+			IPluginModelBase model = (IPluginModelBase)items[i].getData();
+			if (tablePart.getTableViewer().getChecked(model))
+				addPluginAndDependencies((IPluginModelBase) items[i].getData(), result);
+		}
+		tablePart.setSelection(result.toArray());
+	}
+	
+	protected void addPluginAndDependencies(
+			IPluginModelBase model,
+			ArrayList selected) {
+				
+			if (!selected.contains(model)) {
+				selected.add(model);
+				if (!model.isEnabled())
+					changed.add(model);
+				addDependencies(getAllModels(), model, selected);
+			}
+		}
+		
+	protected void addDependencies(
+	    IPluginModelBase[] models,
+		IPluginModelBase model,
+		ArrayList selected) {
+		
+		IPluginImport[] required = model.getPluginBase().getImports();
+		if (required.length > 0) {
+			for (int i = 0; i < required.length; i++) {
+				IPluginModelBase found = findModel(models, required[i].getId());
+				if (found != null) {
+					addPluginAndDependencies(found, selected);
+				}
+			}
+		}
+		
+		if (model instanceof IPluginModel) {
+			boolean addFragments = fIncludeFragments.getSelection();
+			if (!addFragments) {
+				IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
+				for (int i = 0; i < libraries.length; i++) {
+					if (ClasspathUtilCore.containsVariables(libraries[i].getName())) {
+						addFragments = true;
+						break;
+					}
+				}
+			}
+			if (addFragments) {
+				IFragmentModel[] fragments = findFragments(models, ((IPluginModel)model).getPlugin());
+				for (int i = 0; i < fragments.length; i++) {
+					addPluginAndDependencies(fragments[i], selected);
+				}
+			}
+		} else {
+			IFragment fragment = ((IFragmentModel) model).getFragment();
+			IPluginModelBase found = findModel(models, fragment.getPluginId());
+			if (found != null) {
+				addPluginAndDependencies(found, selected);
+			}
+		}
+	}
+
+	private IPluginModelBase findModel(IPluginModelBase[] models, String id) {
+		for (int i = 0; i < models.length; i++) {
+			String modelId = models[i].getPluginBase().getId();
+			if (modelId != null && modelId.equals(id))
+				return models[i];
+		}
+		return null;
+	}
+
+	private IFragmentModel[] findFragments(IPluginModelBase[] models, IPlugin plugin) {
+		ArrayList result = new ArrayList();
+		for (int i = 0; i < models.length; i++) {
+			if (models[i] instanceof IFragmentModel) {
+				IFragment fragment = ((IFragmentModel) models[i]).getFragment();
+				if (plugin.getId().equalsIgnoreCase(fragment.getPluginId())) {
+					result.add(models[i]);
+				}
+			}
+		}
+		return (IFragmentModel[]) result.toArray(new IFragmentModel[result.size()]);
 	}
 
 }

@@ -537,26 +537,8 @@ public class BasicLauncherTab
 		config.setAttribute(BOOTSTRAP_ENTRIES, ""); //$NON-NLS-1$
 	}
 	
-	protected void doRestoreDefaults() {
-		fProgArgsText.setText(LauncherUtils.getDefaultProgramArguments());
-		fVmArgsText.setText(""); //$NON-NLS-1$
-		fWorkspaceCombo.setText(LauncherUtils.getDefaultWorkspace());
-		fClearWorkspaceCheck.setSelection(false);
-		fAskClearCheck.setSelection(true);
-		fAskClearCheck.setEnabled(false);
-		fJreCombo.setText(LauncherUtils.getDefaultVMInstallName());
-		fApplicationButton.setSelection(true);
-		fApplicationCombo.setText(LauncherUtils.getDefaultApplicationName());
-		fApplicationCombo.setEnabled(true);
-		fProductButton.setSelection(false);
-		fProductCombo.setEnabled(false);
-		fProductCombo.setEnabled(false);
-		updateLaunchConfigurationDialog();
-	}
-
 	private void updateStatus() {
-		updateStatus(
-			getMoreSevere(fWorkspaceSelectionStatus, fJreSelectionStatus));
+		updateStatus(getMoreSevere(fWorkspaceSelectionStatus, fJreSelectionStatus));
 	}
 
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
@@ -637,10 +619,7 @@ public class BasicLauncherTab
 		dialog.setText(PDEPlugin.getResourceString("BasicLauncherTab.workspace.title")); //$NON-NLS-1$
 		dialog.setMessage(PDEPlugin.getResourceString("BasicLauncherTab.workspace.message")); //$NON-NLS-1$
 		String res = dialog.open();
-		if (res != null) {
-			return new Path(res);
-		}
-		return null;
+		return res != null ? new Path(res) : null;
 	}
 
 	private IStatus validateJRESelection() {

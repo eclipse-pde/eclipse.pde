@@ -151,7 +151,7 @@ public class PluginClassCodeGenerator {
 		writer.println("\t */"); //$NON-NLS-1$
 		writer.println("\tpublic ResourceBundle getResourceBundle() {"); //$NON-NLS-1$
 		writer.println("\t\ttry {"); //$NON-NLS-1$
-		writer.println("\t\t\tif (resourceBundle == null)");
+		writer.println("\t\t\tif (resourceBundle == null)"); //$NON-NLS-1$
 		writer.println("\t\t\t\tresourceBundle = ResourceBundle.getBundle(\"" //$NON-NLS-1$
 				+ packageName + "." + className + "Resources\");"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("\t\t} catch (MissingResourceException x) {"); //$NON-NLS-1$
@@ -219,7 +219,7 @@ public class PluginClassCodeGenerator {
 		writer.println("\t */"); //$NON-NLS-1$
 		writer.println("\tpublic ResourceBundle getResourceBundle() {"); //$NON-NLS-1$
 		writer.println("\t\ttry {"); //$NON-NLS-1$
-		writer.println("\t\t\tif (resourceBundle == null)");
+		writer.println("\t\t\tif (resourceBundle == null)"); //$NON-NLS-1$
 		writer.println("\t\t\t\tresourceBundle   = ResourceBundle.getBundle(\"" //$NON-NLS-1$
 				+ packageName + "." + className + "Resources\");"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("\t\t} catch (MissingResourceException x) {"); //$NON-NLS-1$

@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
-import java.util.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,8 +27,6 @@ import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.StandardSourcePathProvider;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 /**
  * Generates a source lookup path for Runtime Workbench launch configurations.
@@ -85,33 +82,7 @@ public class WorkbenchSourcePathProvider extends StandardSourcePathProvider {
 	 */
 	private IProject[] getJavaProjects(ILaunchConfiguration configuration)
 			throws CoreException {
-		boolean useFeatures = configuration.getAttribute(
-				ILauncherSettings.USEFEATURES, false);
-		boolean useDefault = configuration.getAttribute(
-				ILauncherSettings.USECUSTOM, true);
-		
-		IPluginModelBase[] models = PDECore.getDefault()
-				.getWorkspaceModelManager().getAllModels();
-		
-		Set deselected = (!useFeatures && !useDefault) ? LauncherUtils
-				.parseDeselectedWSIds(configuration) : new TreeSet();
-		
-		ArrayList result = new ArrayList();
-		for (int i = 0; i < models.length; i++) {
-			String id = models[i].getPluginBase().getId();
-			if (id == null || deselected.contains(id))
-				continue;
-			IProject project = models[i].getUnderlyingResource().getProject();
-			if (project.hasNature(JavaCore.NATURE_ID)) {
-				result.add(project);
-			}
-		}
-		SearchablePluginsManager manager = PDECore.getDefault().getModelManager().getSearchablePluginsManager();
-		IJavaProject proxy = manager.getProxyProject();
-		if (proxy != null)
-			result.add(proxy.getProject());
-		IProject[] projects = (IProject[]) result.toArray(new IProject[result
-				.size()]);
+		IProject[] projects = LauncherUtils.getAffectedProjects(configuration);
 		return PDEPlugin.getWorkspace().computeProjectOrder(projects).projects;
 	}
 	/**

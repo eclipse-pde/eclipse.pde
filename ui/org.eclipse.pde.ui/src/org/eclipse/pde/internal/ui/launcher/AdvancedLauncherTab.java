@@ -13,11 +13,14 @@ package org.eclipse.pde.internal.ui.launcher;
 import java.io.*;
 import java.util.*;
 
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.debug.ui.*;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.window.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.plugin.*;
@@ -31,6 +34,8 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.help.*;
 
 public class AdvancedLauncherTab
@@ -42,7 +47,6 @@ public class AdvancedLauncherTab
 	private Button fUseListRadio;
 	private Button fAddRequiredButton;
 	private CheckboxTreeViewer fPluginTreeViewer;
-	private Label fVisibleLabel;
 	private NamedElement fWorkspacePlugins;
 	private NamedElement fExternalPlugins;
 	private IPluginModelBase[] fExternalModels;
@@ -54,6 +58,9 @@ public class AdvancedLauncherTab
 	private boolean fShowFeatures = true;
 	private Button fSelectAllButton;
 	private Button fDeselectButton;
+	private Button fWorkingSetButton;
+	private Button fIncludeFragmentsButton;
+	private Button fAddWorkspaceButton;
 
 	class PluginContentProvider
 		extends DefaultContentProvider
@@ -112,6 +119,14 @@ public class AdvancedLauncherTab
 		fUseListRadio.setText(PDEPlugin.getResourceString("AdvancedLauncherTab.useList")); //$NON-NLS-1$
 
 		createPluginList(composite);
+		
+		createSeparator(composite, 1);
+		
+		Button button = new Button(composite, SWT.PUSH);
+		button.setText(PDEPlugin.getResourceString("AdvancedLauncherTab.validatePlugins")); //$NON-NLS-1$
+		button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+		SWTUtil.setButtonDimensionHint(button);
+		
 
 		hookListeners();
 		setControl(composite);
@@ -134,6 +149,13 @@ public class AdvancedLauncherTab
 		fDefaultsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				computeInitialCheckState();
+				updateStatus();
+			}
+		});
+		
+		fWorkingSetButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleWorkingSets();
 				updateStatus();
 			}
 		});
@@ -162,12 +184,66 @@ public class AdvancedLauncherTab
 				updateStatus();
 			}}
 		);
+		
+		fIncludeFragmentsButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateStatus();
+			}
+		});
 
+		fAddWorkspaceButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateStatus();
+			}
+		});
 	}
 
-	/**
-	 * @param b
-	 */
+	private void handleWorkingSets() {
+		IWorkingSetManager workingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
+		IWorkingSetSelectionDialog dialog = workingSetManager.createWorkingSetSelectionDialog(getControl().getShell(), true);
+		if (dialog.open() == Window.OK) {
+			String[] ids = getPluginIDs(dialog.getSelection());
+			PluginModelManager manager = PDECore.getDefault().getModelManager();
+			for (int i = 0; i < ids.length; i++) {
+				ModelEntry entry = manager.findEntry(ids[i]);
+				if (entry != null) {
+					IPluginModelBase model = entry.getActiveModel();
+					if (!fPluginTreeViewer.getChecked(model)) {
+						fPluginTreeViewer.setChecked(model, true);
+						if (model.getUnderlyingResource() == null)
+							fNumExternalChecked += 1;
+						else
+							fNumWorkspaceChecked += 1;
+					}
+				}
+			}
+			adjustGroupState();
+		}
+	}
+	
+	private String[] getPluginIDs(IWorkingSet[] workingSets) {
+		HashSet set = new HashSet();
+		for (int i = 0; i < workingSets.length; i++) {
+			IAdaptable[] elements = workingSets[i].getElements();
+			for (int j = 0; j < elements.length; j++) {
+				Object element = elements[j];
+				if (element instanceof PersistablePluginObject) {
+					set.add(((PersistablePluginObject)element).getPluginID());
+				} else {
+					if (element instanceof IJavaProject)
+						element = ((IJavaProject)element).getProject();
+					if (element instanceof IProject) {
+						IPluginModelBase model = (IPluginModelBase)PDECore.getDefault().getWorkspaceModelManager().getWorkspacePluginModel((IProject)element);
+						if (model != null)
+							set.add(model.getPluginBase().getId());
+					}
+				}
+			}
+		}
+		return (String[])set.toArray(new String[set.size()]);
+	}
+
+
 	protected void toggleGroups(boolean select) {
 		handleGroupStateChanged(fWorkspacePlugins, select);
 		handleGroupStateChanged(fExternalPlugins, select);
@@ -179,12 +255,14 @@ public class AdvancedLauncherTab
 	}
 
 	private void adjustCustomControlEnableState(boolean enable) {
-		fVisibleLabel.setVisible(enable);
-		fPluginTreeViewer.getTree().setVisible(enable);
-		fAddRequiredButton.setVisible(enable);
-		fDefaultsButton.setVisible(enable);
-		fSelectAllButton.setVisible(enable);
-		fDeselectButton.setVisible(enable);
+		fPluginTreeViewer.getTree().setEnabled(enable);
+		fAddRequiredButton.setEnabled(enable);
+		fDefaultsButton.setEnabled(enable);
+		fWorkingSetButton.setEnabled(enable);
+		fSelectAllButton.setEnabled(enable);
+		fDeselectButton.setEnabled(enable);
+		fIncludeFragmentsButton.setEnabled(enable);
+		fAddWorkspaceButton.setEnabled(enable);
 	}
 
 	private void createPluginList(Composite parent) {
@@ -192,17 +270,24 @@ public class AdvancedLauncherTab
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		composite.setLayout(layout);
-		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-		fVisibleLabel = new Label(composite, SWT.NULL);
-		GridData gd = new GridData();
-		gd.horizontalSpan = 2;
-		fVisibleLabel.setLayoutData(gd);
-		fVisibleLabel.setText(
-			PDEPlugin.getResourceString("AdvancedLauncherTab.visibleList")); //$NON-NLS-1$
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.horizontalIndent = 30;
+		composite.setLayoutData(gd);
 
 		createPluginViewer(composite);
 		createButtonContainer(composite);
+		
+		fIncludeFragmentsButton = new Button(composite, SWT.CHECK);
+		fIncludeFragmentsButton.setText(PDEPlugin.getResourceString("AdvancedLauncherTab.includeFragments")); //$NON-NLS-1$
+		gd = new GridData();
+		gd.horizontalSpan = 2;
+		fIncludeFragmentsButton.setLayoutData(gd);
+		
+		fAddWorkspaceButton = new Button(composite, SWT.CHECK);
+		fAddWorkspaceButton.setText(PDEPlugin.getResourceString("AdvancedLauncherTab.addNew")); //$NON-NLS-1$
+		gd = new GridData();
+		gd.horizontalSpan = 2;
+		fAddWorkspaceButton.setLayoutData(gd);
 	}
 
 	private void computeSubset() {
@@ -217,14 +302,6 @@ public class AdvancedLauncherTab
 		if (!PDECore.getDefault().getModelManager().isOSGiRuntime()) {
 			addPluginAndDependencies(findPlugin("org.eclipse.core.runtime"), map); //$NON-NLS-1$
 		}
-		/*
-			addPluginAndDependencies(findPlugin("org.eclipse.osgi"), map);
-			addPluginAndDependencies(findPlugin("org.eclipse.osgi.services"), map);
-			addPluginAndDependencies(findPlugin("org.eclipse.osgi.util"), map);
-			addPluginAndDependencies(findPlugin("org.eclipse.update.configurator"), map);
-		} else {
-			addPluginAndDependencies(findPlugin("org.eclipse.core.boot"), map);
-		}*/
 
 		checked = map.values().toArray();
 
@@ -255,7 +332,7 @@ public class AdvancedLauncherTab
 				findPlugin(((IFragmentModel) model).getFragment().getPluginId());
 			addPluginAndDependencies(parent, map);
 		} else {
-			boolean addFragments = false;
+			boolean addFragments = fIncludeFragmentsButton.getSelection();
 			IPluginLibrary[] libs = model.getPluginBase().getLibraries();
 			for (int i = 0; i < libs.length; i++) {
 				if (ClasspathUtilCore.containsVariables(libs[i].getName())) {
@@ -390,6 +467,11 @@ public class AdvancedLauncherTab
 		fDeselectButton.setText(PDEPlugin.getResourceString("AdvancedLauncherTab.deselectAll")); //$NON-NLS-1$
 		fDeselectButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		SWTUtil.setButtonDimensionHint(fDeselectButton);
+		
+		fWorkingSetButton = new Button(composite, SWT.PUSH);
+		fWorkingSetButton.setText(PDEPlugin.getResourceString("AdvancedLauncherTab.workingSet")); //$NON-NLS-1$
+		fWorkingSetButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		SWTUtil.setButtonDimensionHint(fWorkingSetButton);
 
 		fAddRequiredButton = new Button(composite, SWT.PUSH);
 		fAddRequiredButton.setText(PDEPlugin.getResourceString("AdvancedLauncherTab.subset")); //$NON-NLS-1$
@@ -402,19 +484,36 @@ public class AdvancedLauncherTab
 		fDefaultsButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		SWTUtil.setButtonDimensionHint(fDefaultsButton);
 	}
-	private void initWorkspacePluginsState(ILaunchConfiguration config)
-		throws CoreException {
-		fNumWorkspaceChecked = fWorkspaceModels.length;
-		fPluginTreeViewer.setSubtreeChecked(fWorkspacePlugins, true);
-
-		TreeSet deselected = LauncherUtils.parseDeselectedWSIds(config);
+	
+	/*
+	 * if the "automatic add" option is selected, then we save the ids of plugins
+	 * that have been "deselected" by the user.
+	 * When we initialize the tree, we first set the workspace plugins subtree to 'checked',
+	 * then we check the plugins that had been deselected and saved in the config.
+	 *
+	 * If the "automatic add" option is not selected, then we save the ids of plugins
+	 * that were "selected" by the user.
+	 * When we initialize the tree, we first set the workspace plugins subtree to 'unchecked',
+	 * then we check the plugins that had been selected and saved in the config.
+	 */
+	private void initWorkspacePluginsState(ILaunchConfiguration config) throws CoreException {
+		boolean automaticAdd = config.getAttribute(AUTOMATIC_ADD, true);		
+		fPluginTreeViewer.setSubtreeChecked(fWorkspacePlugins, automaticAdd);
+		fNumWorkspaceChecked = automaticAdd ? fWorkspaceModels.length : 0;
+		
+		TreeSet ids = LauncherUtils.parseWorkspacePluginIds(config);
 		for (int i = 0; i < fWorkspaceModels.length; i++) {
 			String id = fWorkspaceModels[i].getPluginBase().getId();
-			if (id != null && deselected.contains(id)) {
+			if (id == null)
+				continue;
+			if (automaticAdd && ids.contains(id)) {
 				if (fPluginTreeViewer.setChecked(fWorkspaceModels[i], false))
 					fNumWorkspaceChecked -= 1;
-			}
-		}
+			} else if (!automaticAdd && ids.contains(id)) {
+				if (fPluginTreeViewer.setChecked(fWorkspaceModels[i], true))
+					fNumWorkspaceChecked += 1;
+			} 
+		}			
 
 		if (fNumWorkspaceChecked == 0)
 			fPluginTreeViewer.setChecked(fWorkspacePlugins, false);
@@ -428,7 +527,7 @@ public class AdvancedLauncherTab
 		fNumExternalChecked = 0;
 
 		fPluginTreeViewer.setSubtreeChecked(fExternalPlugins, false);
-		TreeSet selected = LauncherUtils.parseSelectedExtIds(config);
+		TreeSet selected = LauncherUtils.parseExternalPluginIds(config);
 		for (int i = 0; i < fExternalModels.length; i++) {
 			if (selected.contains(fExternalModels[i].getPluginBase().getId())) {
 				if (fPluginTreeViewer.setChecked(fExternalModels[i], true))
@@ -449,7 +548,7 @@ public class AdvancedLauncherTab
 	 */
 	public void initializeFrom(ILaunchConfiguration config) {
 		try {
-			fUseDefaultRadio.setSelection(config.getAttribute(USECUSTOM, true));
+			fUseDefaultRadio.setSelection(config.getAttribute(USE_DEFAULT, true));
 			if (fShowFeatures) {
 				fUseFeaturesRadio.setSelection(config.getAttribute(USEFEATURES, false));
 				fUseListRadio.setSelection(
@@ -458,6 +557,8 @@ public class AdvancedLauncherTab
 			} else {
 				fUseListRadio.setSelection(!fUseDefaultRadio.getSelection());
 			}
+			fIncludeFragmentsButton.setSelection(config.getAttribute(INCLUDE_FRAGMENTS, false));
+			fAddWorkspaceButton.setSelection(config.getAttribute(AUTOMATIC_ADD, true));
 
 			if (fPluginTreeViewer.getInput() == null) {
 				fPluginTreeViewer.setUseHashlookup(true);
@@ -535,23 +636,29 @@ public class AdvancedLauncherTab
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		if (fShowFeatures) {
-			config.setAttribute(USECUSTOM, true);
+			config.setAttribute(USE_DEFAULT, true);
 			config.setAttribute(USEFEATURES, false);
 		} else {
-			config.setAttribute(USECUSTOM, true);
+			config.setAttribute(USE_DEFAULT, true);
 		}
+		config.setAttribute(INCLUDE_FRAGMENTS, false);
+		config.setAttribute(AUTOMATIC_ADD, true);
 	}
 	
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
-		config.setAttribute(USECUSTOM, fUseDefaultRadio.getSelection());
+		config.setAttribute(USE_DEFAULT, fUseDefaultRadio.getSelection());
 		if (fShowFeatures)
 			config.setAttribute(USEFEATURES, fUseFeaturesRadio.getSelection());
+		config.setAttribute(INCLUDE_FRAGMENTS, fIncludeFragmentsButton.getSelection());
+		config.setAttribute(AUTOMATIC_ADD, fAddWorkspaceButton.getSelection());
 		if (fUseListRadio.getSelection()) {
 			// store deselected projects
 			StringBuffer wbuf = new StringBuffer();
 			for (int i = 0; i < fWorkspaceModels.length; i++) {
 				IPluginModelBase model = (IPluginModelBase) fWorkspaceModels[i];
-				if (!fPluginTreeViewer.getChecked(model))
+				// if "automatic add" option is selected, save "deselected" workspace plugins
+				// Otherwise, save "selected" workspace plugins
+				if (fPluginTreeViewer.getChecked(model) != fAddWorkspaceButton.getSelection())
 					wbuf.append(model.getPluginBase().getId() + File.pathSeparatorChar);
 			}
 			config.setAttribute(WSPROJECT, wbuf.toString());

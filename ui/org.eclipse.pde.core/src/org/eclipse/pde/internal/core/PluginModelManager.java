@@ -93,7 +93,10 @@ public class PluginModelManager implements IAdaptable {
 		Collection values = getEntryTable().values();
 		return (ModelEntry[]) values.toArray(new ModelEntry[values.size()]);
 	}
-
+	
+	/*
+	 * @return enabled plug-ins only
+	 */
 	public IPluginModelBase[] getPlugins() {
 		Collection values = getEntryTable().values();
 		ArrayList result = new ArrayList();
@@ -102,6 +105,19 @@ public class PluginModelManager implements IAdaptable {
 			IPluginModelBase model = entry.getActiveModel();
 			if (model.isEnabled())
 				result.add(model);
+		}
+		return (IPluginModelBase[])result.toArray(new IPluginModelBase[result.size()]);
+	}
+	
+	/*
+	 * @return all plug-ins (enabled and disabled)
+	 */
+	public IPluginModelBase[] getAllPlugins() {
+		Collection values = getEntryTable().values();
+		ArrayList result = new ArrayList();
+		for (Iterator iter = values.iterator(); iter.hasNext();) {
+			ModelEntry entry = (ModelEntry) iter.next();
+			result.add(entry.getActiveModel());
 		}
 		return (IPluginModelBase[])result.toArray(new IPluginModelBase[result.size()]);
 	}

@@ -14,11 +14,14 @@ import java.io.File;
 import java.util.*;
 
 import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.util.*;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.help.WorkbenchHelp;
 
@@ -66,10 +69,20 @@ public class PluginExportWizardPage extends BaseExportWizardPage {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.exports.BaseExportWizardPage#findModelFor(org.eclipse.core.resources.IProject)
+	 * @see org.eclipse.pde.internal.ui.wizards.exports.BaseExportWizardPage#findModelFor(org.eclipse.core.runtime.IAdaptable)
 	 */
-	protected IModel findModelFor(IProject project) {
-		return PDECore.getDefault().getModelManager().findModel(project);
+	protected IModel findModelFor(IAdaptable object) {
+		if (object instanceof IJavaProject)
+			object = ((IJavaProject)object).getProject();
+		if (object instanceof IProject)
+			return PDECore.getDefault().getModelManager().findModel((IProject)object);
+		if (object instanceof PersistablePluginObject) {
+			ModelEntry entry = PDECore.getDefault().getModelManager().findEntry(((PersistablePluginObject)object).getPluginID());
+			if (entry != null) {
+				return entry.getWorkspaceModel();
+			}
+		}
+		return null;
 	}
 				
 }

@@ -29,10 +29,12 @@ public interface ILauncherSettings {
 	String BOOTSTRAP_ENTRIES = "bootstrap"; //$NON-NLS-1$
 	
 	// Plug-ins and Fragments settings
-	String USECUSTOM = "default"; //$NON-NLS-1$
+	String USE_DEFAULT = "default"; //$NON-NLS-1$
 	String USEFEATURES = "usefeatures"; //$NON-NLS-1$
 	String WSPROJECT = "wsproject"; //$NON-NLS-1$
 	String EXTPLUGINS = "extplugins"; //$NON-NLS-1$
+	String INCLUDE_FRAGMENTS = "includeFragments"; //$NON-NLS-1$
+	String AUTOMATIC_ADD = "automaticAdd"; //$NON-NLS-1$
 	
 	// Tracing settings
 	String TRACING = "tracing"; //$NON-NLS-1$

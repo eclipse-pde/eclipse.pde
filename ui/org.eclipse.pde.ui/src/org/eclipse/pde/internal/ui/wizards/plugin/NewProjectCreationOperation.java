@@ -384,10 +384,10 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
         }
         
         if (fData instanceof IPluginFieldData && ((IPluginFieldData)fData).isRCPApplicationPlugin()) {
-        	IPluginReference ref = new PluginReference("org.eclipse.core.runtime", null, 0);
+        	IPluginReference ref = new PluginReference("org.eclipse.core.runtime", null, 0); //$NON-NLS-1$
         	if (!result.contains(ref))
         		result.add(ref);
-        	ref = new PluginReference("org.eclipse.ui", null, 0);
+        	ref = new PluginReference("org.eclipse.ui", null, 0); //$NON-NLS-1$
         	if (!result.contains(ref))
         		result.add(ref);
         }

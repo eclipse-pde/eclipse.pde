@@ -105,19 +105,19 @@ public class LauncherUtils {
 		return PDEPlugin.getWorkspace().getRoot().getLocation().removeLastSegments(1);
 	}
 	
-	public static TreeSet parseDeselectedWSIds(ILaunchConfiguration config)
+	public static TreeSet parseWorkspacePluginIds(ILaunchConfiguration config)
 		throws CoreException {
-		TreeSet deselected = new TreeSet();
+		TreeSet set = new TreeSet();
 		String ids = config.getAttribute(ILauncherSettings.WSPROJECT, (String) null);
 		if (ids != null) {
 			StringTokenizer tok = new StringTokenizer(ids, File.pathSeparator);
 			while (tok.hasMoreTokens())
-				deselected.add(tok.nextToken());
+				set.add(tok.nextToken());
 		}
-		return deselected;
+		return set;
 	}
 	
-	public static TreeSet parseSelectedExtIds(ILaunchConfiguration config)
+	public static TreeSet parseExternalPluginIds(ILaunchConfiguration config)
 		throws CoreException {
 		TreeSet selected = new TreeSet();
 		String ids = config.getAttribute(ILauncherSettings.EXTPLUGINS, (String) null);
@@ -184,7 +184,7 @@ public class LauncherUtils {
 		TreeMap map = null;
 		ArrayList statusEntries = new ArrayList();
 		
-		if (!config.getAttribute(ILauncherSettings.USECUSTOM, true)) {
+		if (!config.getAttribute(ILauncherSettings.USE_DEFAULT, true)) {
 			map = validatePlugins(getSelectedPlugins(config), statusEntries);
 		}
 		
@@ -303,20 +303,22 @@ public class LauncherUtils {
 	
 	private static IPluginModelBase[] getSelectedPlugins(ILaunchConfiguration config) throws CoreException {
 		TreeMap map = new TreeMap();
+		boolean automaticAdd = config.getAttribute(ILauncherSettings.AUTOMATIC_ADD, true);
 		IPluginModelBase[] wsmodels = PDECore.getDefault().getWorkspaceModelManager().getAllModels();
-		Set deselectedWSPlugins = parseDeselectedWSIds(config);
+		Set wsPlugins = parseWorkspacePluginIds(config);
 		for (int i = 0; i < wsmodels.length; i++) {
-			String id = wsmodels[i].getPluginBase().getId();
-			if (id != null && !deselectedWSPlugins.contains(id))
+			String id = wsmodels[i].getPluginBase().getId();		
+			// see the documentation of AdvancedLauncherUtils.initWorkspacePluginsState
+			if (id != null && automaticAdd != wsPlugins.contains(id))
 				map.put(id, wsmodels[i]);
 		}
 		
-		Set selectedExModels = parseSelectedExtIds(config);
+		Set exModels = parseExternalPluginIds(config);
 		IPluginModelBase[] exmodels =
 			PDECore.getDefault().getExternalModelManager().getAllModels();
 		for (int i = 0; i < exmodels.length; i++) {
 			String id = exmodels[i].getPluginBase().getId();
-			if (id != null && selectedExModels.contains(id) && !map.containsKey(id))
+			if (id != null && exModels.contains(id) && !map.containsKey(id))
 				map.put(id, exmodels[i]);
 		}
 
@@ -324,18 +326,33 @@ public class LauncherUtils {
 	}
 	
 	public static IProject[] getAffectedProjects(ILaunchConfiguration config) throws CoreException {
-		ArrayList projects = new ArrayList();
+		boolean doAdd = config.getAttribute(ILauncherSettings.AUTOMATIC_ADD, true);
+		boolean useFeatures = config.getAttribute(ILauncherSettings.USEFEATURES, false);
+		boolean useDefault = config.getAttribute(ILauncherSettings.USE_DEFAULT, true);
+
+		ArrayList projects = new ArrayList();		
 		IPluginModelBase[] models = PDECore.getDefault().getWorkspaceModelManager().getAllModels();
-		Set ignored = parseDeselectedWSIds(config);
+		Set wsPlugins = parseWorkspacePluginIds(config);
 		for (int i = 0; i < models.length; i++) {
 			String id = models[i].getPluginBase().getId();
-			if (id == null || id.length() == 0 || ignored.contains(id))
+			if (id == null)
 				continue;
-			IProject project = models[i].getUnderlyingResource().getProject();
-			if (project.hasNature(JavaCore.NATURE_ID))
-				projects.add(project);
+			// see the documentation of AdvancedLauncherUtils.initWorkspacePluginsState
+			if (useDefault || useFeatures || doAdd != wsPlugins.contains(id)) {
+				IProject project = models[i].getUnderlyingResource().getProject();
+				if (project.hasNature(JavaCore.NATURE_ID))
+					projects.add(project);
+			}
 		}
 		
+		// add fake "Java Search" project
+		SearchablePluginsManager manager = PDECore.getDefault().getModelManager().getSearchablePluginsManager();
+		IJavaProject proxy = manager.getProxyProject();
+		if (proxy != null) {
+			IProject project = proxy.getProject();
+			if (project.isOpen())
+				projects.add(project);
+		}
 		return (IProject[])projects.toArray(new IProject[projects.size()]);
 	}
 	
@@ -599,7 +616,7 @@ public class LauncherUtils {
 								continue;
 							if (!"product".equals(children[0].getName())) //$NON-NLS-1$
 								continue;
-							if (appID.equals(((IPluginElement)children[0]).getAttribute("application").getValue())) {
+							if (appID.equals(((IPluginElement)children[0]).getAttribute("application").getValue())) { //$NON-NLS-1$
 								result = id;
 								break;
 							}

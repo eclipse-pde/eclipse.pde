@@ -1234,5 +1234,19 @@
          </filter>
       </page>      
    </extension>
+   <extension
+         point="org.eclipse.ui.workingSets">
+      <workingSet
+            icon="icons/obj16/plugin_obj.gif"
+            name="Plug-ins"
+            pageClass="org.eclipse.pde.internal.ui.util.PluginWorkingSet"
+            id="org.eclipse.pde.ui.pluginWorkingSet"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.elementFactories">
+      <factory
+            class="org.eclipse.pde.internal.ui.util.PersistablePluginObject"
+            id="org.eclipse.pde.ui.elementFactory"/>
+   </extension>
 
 </plugin>

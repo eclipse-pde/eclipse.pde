@@ -45,7 +45,7 @@ public class TemplateListSelectionPage extends WizardListSelectionPage
 			IConfigurationElement config = welement.getConfigurationElement();
 			boolean uiFlag = getFlag(config, "ui-content", true); //$NON-NLS-1$
 			boolean javaFlag = getFlag(config, "java", true); //$NON-NLS-1$
-			boolean rcpFlag = getFlag(config, "rcp", false);
+			boolean rcpFlag = getFlag(config, "rcp", false); //$NON-NLS-1$
 			
 			//filter out java wizards for simple projects
 			if (simple && javaFlag) return false;
