@@ -3,6 +3,7 @@ package org.eclipse.pde.internal.ui.build;
 import java.io.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.ui.*;
@@ -19,6 +20,7 @@ public class BuildSiteJob extends FeatureExportJob {
 				null,  
 				models);
 		fSiteProject = project;
+		setRule(MultiRule.combine(fSiteProject, getRule()));
 	}
 	
 	/* (non-Javadoc)
