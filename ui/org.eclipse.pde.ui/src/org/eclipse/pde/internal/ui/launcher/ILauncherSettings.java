@@ -19,6 +19,7 @@ public interface ILauncherSettings {
 	// Command line settings
 	String VMINSTALL = "vminstall";
 	String APPLICATION = "application";
+	String APP_TO_TEST = "testApplication";
 	String VMARGS = "vmargs";
 	String PROGARGS = "progargs";
 	String CLASSPATH_ENTRIES = "classpath";

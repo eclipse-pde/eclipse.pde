@@ -70,6 +70,7 @@ public class BasicLauncherTab
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		createWorkspaceDataSection(composite);
+		createApplicationSection(composite);
 		createCommandLineSettingsSection(composite);
 		createDefaultsButton(composite);
 		
@@ -167,7 +168,6 @@ public class BasicLauncherTab
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		createJRESection(group);
-		createApplicationSection(group);
 		createVMArgsSection(group);
 		createProgArgsSection(group);
 		createDevEntriesSection(group);

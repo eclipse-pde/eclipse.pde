@@ -136,6 +136,12 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		
 		programArgs.add("-application");
 		programArgs.add(configuration.getAttribute(APPLICATION, fgDefaultApp));
+		
+		String testApplication = configuration.getAttribute(APP_TO_TEST, (String)null);
+		if (testApplication != null && testApplication.length() > 0) {
+			programArgs.add("-testApplication");
+			programArgs.add(testApplication);
+		}
 
 		String targetWorkspace =
 			configuration.getAttribute(LOCATION + "0", getDefaultWorkspace(configuration));
