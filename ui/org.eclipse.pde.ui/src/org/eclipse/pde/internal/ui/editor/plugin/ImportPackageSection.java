@@ -213,6 +213,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
         if (dialog.open() == DependencyPropertiesDialog.OK && isEditable()) {
             importObject.setOptional(dialog.isOptional());
             importObject.setVersion(dialog.getVersion());
+            writeImportPackages();
             fPackageViewer.refresh(importObject);
          }
     }

@@ -13,6 +13,8 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 
 import java.util.*;
 
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.ui.*;
 import org.eclipse.jface.action.*;
@@ -20,6 +22,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.osgi.util.*;
 import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.bundle.*;
 import org.eclipse.pde.internal.core.ibundle.*;
@@ -34,7 +37,6 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.*;
-import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.osgi.framework.*;
 
@@ -213,6 +215,7 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
         dialog.setTitle(exportObject.getName());
         if (dialog.open() == DependencyPropertiesDialog.OK && isEditable()) {
              exportObject.setVersion(dialog.getVersion());
+             writeExportPackageHeader();
              fPackageViewer.refresh(exportObject);
          }
     }
@@ -233,27 +236,40 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 	}
 
 	private void handleAdd() {
-       ElementListSelectionDialog dialog = new ElementListSelectionDialog(
-                PDEPlugin.getActiveWorkbenchShell(), 
-                new ExportPackageDialogLabelProvider());
-        dialog.setElements(getAvailablePackages());
-        dialog.setMultipleSelection(true);
-        dialog.setMessage("Available Packages:");
-        dialog.setTitle("Package Selection");
-        dialog.create();
-		if (dialog.open() == ElementListSelectionDialog.OK) {
-			Object[] selected = dialog.getResult();
-			for (int i = 0; i < selected.length; i++) {
-				IPackageFragment candidate = (IPackageFragment) selected[i];
-				ExportPackageObject p = new ExportPackageObject(candidate, getVersionAttribute());
-                fPackages.put(p.getName(), p);
-                fPackageViewer.add(p);
+        IPluginModelBase model = (IPluginModelBase) getPage().getModel();
+        IProject project = model.getUnderlyingResource().getProject();
+        try {
+            if (project.hasNature(JavaCore.NATURE_ID)) {
+                ILabelProvider labelProvider = new JavaElementLabelProvider();
+                PackageSelectionDialog dialog = new PackageSelectionDialog(
+                        PDEPlugin.getActiveWorkbenchShell(),
+                        labelProvider, JavaCore.create(project), getNames());
+                if (dialog.open() == PackageSelectionDialog.OK) {
+                    Object[] selected = dialog.getResult();
+                    for (int i = 0; i < selected.length; i++) {
+                        IPackageFragment candidate = (IPackageFragment) selected[i];
+                        ExportPackageObject p = new ExportPackageObject(candidate, getVersionAttribute());
+                        fPackages.put(p.getName(), p);
+                        fPackageViewer.add(p);
+                    }
+                    if (selected.length > 0) {
+                        writeExportPackageHeader();
+                    }
+                }
+                labelProvider.dispose();
             }
-			if (selected.length > 0) {
-				writeExportPackageHeader();
-			}
-		}
+        } catch (CoreException e) {
+        }
 	}
+    
+    private Vector getNames() {
+        Vector vector = new Vector(fPackages.size());
+        Iterator iter = fPackages.keySet().iterator();
+        for (int i = 0; iter.hasNext(); i++) {
+            vector.add(iter.next().toString());
+        }
+        return vector;
+    }
 
 	private void writeExportPackageHeader() {
 		StringBuffer buffer = new StringBuffer();
@@ -267,12 +283,6 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 			}
 		}
 		getBundle().setHeader(getExportedPackageHeader(), buffer.toString());
-	}
-
-	private IPackageFragment[] getAvailablePackages() {
-		ArrayList result = new ArrayList();
-        //TODO collect packages
- 		return (IPackageFragment[])result.toArray(new IPackageFragment[result.size()]);
 	}
 
 	public void modelChanged(IModelChangedEvent event) {
