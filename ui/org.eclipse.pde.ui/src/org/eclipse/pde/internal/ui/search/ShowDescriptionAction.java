@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.ui.search;
 
 import java.io.*;
-import java.net.*;
 
 import org.eclipse.help.browser.*;
 import org.eclipse.help.internal.browser.*;
@@ -31,7 +30,6 @@ public class ShowDescriptionAction extends Action {
 	private String fPointID;
 	private ISchema fSchema;
 	private File fPreviewFile;
-	private URL fCssURL;
 
 	public ShowDescriptionAction(IPluginExtensionPoint point) {
 		setExtensionPoint(point);
@@ -42,12 +40,12 @@ public class ShowDescriptionAction extends Action {
 	}
 	
 	public void setSchema(ISchema schema) {
-		this.fSchema = schema;
-		this.fPointID = schema.getQualifiedPointId();
+		fSchema = schema;
+		fPointID = schema.getQualifiedPointId();
 	}
 	
 	public void setExtensionPoint(IPluginExtensionPoint point) {
-		this.fPointID = point.getFullId();
+		fPointID = point.getFullId();
 		setText(PDEPlugin.getResourceString("ShowDescriptionAction.label")); //$NON-NLS-1$
 		fSchema = null;
 	}
@@ -60,14 +58,13 @@ public class ShowDescriptionAction extends Action {
 				showNoSchemaMessage();
 				return;
 			}
-		}
+		} 
 		showSchemaDocument();
 	}
 	
 	private void showNoSchemaMessage() {
 		String title = PDEPlugin.getResourceString("ShowDescriptionAction.title"); //$NON-NLS-1$
 		String message = PDEPlugin.getFormattedMessage("ShowDescriptionAction.noPoint.desc",fPointID); //$NON-NLS-1$ //$NON-NLS-2$
-		
 		MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), title, message);
 	}
 
@@ -80,11 +77,11 @@ public class ShowDescriptionAction extends Action {
 			SchemaTransformer transformer = new SchemaTransformer();
 			OutputStream os = new FileOutputStream(fPreviewFile);
 			PrintWriter printWriter = new PrintWriter(os, true);
-			transformer.transform(printWriter, fSchema, fCssURL, SchemaTransformer.TEMP); 
+			transformer.transform(fSchema, printWriter); 
 			os.flush();
 			os.close();
 			showURL(fPreviewFile.getPath());
-		} catch (Exception e) {
+		} catch (IOException e) {
 			PDEPlugin.logException(e);
 		}
 	}
@@ -100,13 +97,11 @@ public class ShowDescriptionAction extends Action {
 	}
 	
 	private void showURL(String url) {
-		boolean win32 = SWT.getPlatform().equals("win32"); //$NON-NLS-1$
-		if (win32) {
+		if (SWT.getPlatform().equals("win32")) {//$NON-NLS-1$
 			Program.launch(url);
-		}
-		else {
-			IBrowser browser = BrowserManager.getInstance().createBrowser();
+		} else {
 			try {
+				IBrowser browser = BrowserManager.getInstance().createBrowser();
 				browser.displayURL("file://" + url); //$NON-NLS-1$
 			} catch (Exception e) {
 			}

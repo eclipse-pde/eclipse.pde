@@ -13,20 +13,15 @@ package org.eclipse.pde.internal.core.schema;
 import java.io.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.ischema.*;
 
 public abstract class SchemaObject extends PlatformObject implements
-		ISchemaObject, ISourceObject, Serializable {
+		ISchemaObject, Serializable {
 	protected String fName;
 
 	private String fDescription;
 
 	transient private ISchemaObject fParent;
-
-	private int fStartLine;
-
-	private int fStopLine;
 
 	public SchemaObject(ISchemaObject parent, String name) {
 		fParent = parent;
@@ -109,14 +104,6 @@ public abstract class SchemaObject extends PlatformObject implements
 		if (fName != null)
 			return fName;
 		return super.toString();
-	}
-
-	public int getStartLine() {
-		return fStartLine;
-	}
-
-	public int getStopLine() {
-		return fStopLine;
 	}
 
 }
