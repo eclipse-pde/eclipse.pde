@@ -18,7 +18,7 @@ public class PluginSearchInput {
 	public static final int LIMIT_ALL = 3;
 		
 	private String searchString = null;
-	private boolean caseSensitive = false;
+	private boolean caseSensitive = true;
 	private int searchElement = 0;
 	private int searchLimit = 0;
 	private PluginSearchScope searchScope;
