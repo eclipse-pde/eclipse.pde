@@ -17,7 +17,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.internal.core.feature.FeatureImport;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
+import org.eclipse.pde.internal.core.ifeature.IFeatureImport;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeatureURL;
 import org.eclipse.pde.internal.core.ifeature.IFeatureURLElement;
@@ -41,11 +43,17 @@ public class FeatureSpecSection extends PDESection {
 
 	public static final String SECTION_DESC = "FeatureEditor.SpecSection.desc"; //$NON-NLS-1$
 
+	public static final String SECTION_DESC_PATCH = "FeatureEditor.SpecSection.desc.patch"; //$NON-NLS-1$
+
 	public static final String SECTION_ID = "FeatureEditor.SpecSection.id"; //$NON-NLS-1$
+
+	public static final String SECTION_PATCHED_ID = "FeatureEditor.SpecSection.patchedId"; //$NON-NLS-1$
 
 	public static final String SECTION_NAME = "FeatureEditor.SpecSection.name"; //$NON-NLS-1$
 
 	public static final String SECTION_VERSION = "FeatureEditor.SpecSection.version"; //$NON-NLS-1$
+
+	public static final String SECTION_PATCHED_VERSION = "FeatureEditor.SpecSection.patchedVersion"; //$NON-NLS-1$
 
 	public static final String SECTION_PROVIDER = "FeatureEditor.SpecSection.provider"; //$NON-NLS-1$
 
@@ -75,10 +83,15 @@ public class FeatureSpecSection extends PDESection {
 
 	private FormEntry fUpdateSiteUrlText;
 
+	private FormEntry fPatchedIdText;
+
+	private FormEntry fPatchedVersionText;
+
+	private boolean fPatch = false;
+
 	public FeatureSpecSection(FeatureFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION);
 		getSection().setText(PDEPlugin.getResourceString(SECTION_TITLE));
-		getSection().setDescription(PDEPlugin.getResourceString(SECTION_DESC));
 		createClient(getSection(), page.getManagedForm().getToolkit());
 	}
 
@@ -87,6 +100,10 @@ public class FeatureSpecSection extends PDESection {
 		fProviderText.commit();
 		fIdText.commit();
 		fVersionText.commit();
+		if (fPatchedIdText != null) {
+			fPatchedIdText.commit();
+			fPatchedVersionText.commit();
+		}
 		fUpdateSiteUrlText.commit();
 		fUpdateSiteNameText.commit();
 		super.commit(onSave);
@@ -181,16 +198,53 @@ public class FeatureSpecSection extends PDESection {
 		}
 	}
 
+	/**
+	 * Obtains or creates a feature import with patch="true"
+	 * 
+	 * @return
+	 */
+	private IFeatureImport getPatchedFeature() {
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
+		IFeature feature = model.getFeature();
+		IFeatureImport[] imports = feature.getImports();
+		for (int i = 0; i < imports.length; i++) {
+			if (imports[i].isPatch()) {
+				return imports[i];
+			}
+		}
+		// need to recreate the import element
+		FeatureImport fimport = (FeatureImport) model.getFactory()
+				.createImport();
+		try {
+			fimport.setType(IFeatureImport.FEATURE);
+			fimport.setPatch(true);
+			feature.addImports(new IFeatureImport[] { fimport });
+		} catch (CoreException ce) {
+			PDEPlugin.logException(ce);
+		}
+		return null;
+	}
+
+	private boolean isPatch() {
+		return fPatch;
+	}
+
 	public void createClient(Section section, FormToolkit toolkit) {
+		fPatch = ((FeatureEditor) getPage().getEditor()).isPatchEditor();
+
+		final IFeatureModel model = (IFeatureModel) getPage().getModel();
+		final IFeature feature = model.getFeature();
+
+		getSection().setDescription(
+				PDEPlugin.getResourceString(isPatch() ? SECTION_DESC_PATCH
+						: SECTION_DESC));
+
 		Composite container = toolkit.createComposite(section);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.verticalSpacing = 5;
 		layout.horizontalSpacing = 6;
 		container.setLayout(layout);
-
-		final IFeatureModel model = (IFeatureModel) getPage().getModel();
-		final IFeature feature = model.getFeature();
 
 		fIdText = new FormEntry(container, toolkit, PDEPlugin
 				.getResourceString(SECTION_ID), null, false);
@@ -243,6 +297,40 @@ public class FeatureSpecSection extends PDESection {
 			}
 		});
 
+		if (isPatch()) {
+			fPatchedIdText = new FormEntry(container, toolkit, PDEPlugin
+					.getResourceString(SECTION_PATCHED_ID), null, false);
+			fPatchedIdText.setFormEntryListener(new FormEntryAdapter(this) {
+				public void textValueChanged(FormEntry text) {
+					try {
+						IFeatureImport patchImport = getPatchedFeature();
+						if (patchImport != null) {
+							patchImport.setId(text.getValue());
+						}
+					} catch (CoreException e) {
+						PDEPlugin.logException(e);
+					}
+				}
+			});
+
+			fPatchedVersionText = new FormEntry(container, toolkit, PDEPlugin
+					.getResourceString(SECTION_PATCHED_VERSION), null, false);
+			fPatchedVersionText
+					.setFormEntryListener(new FormEntryAdapter(this) {
+						public void textValueChanged(FormEntry text) {
+							IFeatureImport patchImport = getPatchedFeature();
+							if (patchImport != null) {
+								if (verifySetVersion(patchImport, text
+										.getValue()) == false) {
+									warnBadVersionFormat(text.getValue());
+									text.setValue(patchImport.getVersion());
+								}
+							}
+						}
+					});
+
+		}
+
 		fUpdateSiteUrlText = new FormEntry(container, toolkit, PDEPlugin
 				.getResourceString(SECTION_UPDATE_SITE_URL), null, false);
 		fUpdateSiteUrlText.setFormEntryListener(new FormEntryAdapter(this) {
@@ -278,6 +366,16 @@ public class FeatureSpecSection extends PDESection {
 		try {
 			PluginVersionIdentifier pvi = new PluginVersionIdentifier(value);
 			feature.setVersion(pvi.toString());
+		} catch (Exception e) {
+			return false;
+		}
+		return true;
+	}
+
+	private boolean verifySetVersion(IFeatureImport featureImport, String value) {
+		try {
+			PluginVersionIdentifier pvi = new PluginVersionIdentifier(value);
+			featureImport.setVersion(pvi.toString());
 		} catch (Exception e) {
 			return false;
 		}
@@ -320,6 +418,10 @@ public class FeatureSpecSection extends PDESection {
 			fTitleText.getText().setEditable(false);
 			fVersionText.getText().setEditable(false);
 			fProviderText.getText().setEditable(false);
+			if (isPatch()) {
+				fPatchedIdText.getText().setEditable(false);
+				fPatchedVersionText.getText().setEditable(false);
+			}
 			fUpdateSiteUrlText.getText().setEditable(false);
 			fUpdateSiteNameText.getText().setEditable(false);
 		}
@@ -347,6 +449,9 @@ public class FeatureSpecSection extends PDESection {
 		if (objs.length > 0 && objs[0] instanceof IFeatureURLElement) {
 			markStale();
 		}
+		if (isPatch() && objs.length > 0 && objs[0] instanceof IFeatureImport) {
+			markStale();
+		}
 	}
 
 	public void setFocus() {
@@ -369,7 +474,20 @@ public class FeatureSpecSection extends PDESection {
 				model.getResourceString(feature.getLabel()));
 		setIfDefined(fVersionText, feature.getVersion());
 		setIfDefined(fProviderText, feature.getProviderName());
-
+		if (isPatch()) {
+			IFeatureImport featureImport = getPatchedFeature();
+			if (featureImport != null) {
+				fPatchedIdText.setValue(
+						featureImport.getId() != null ? featureImport.getId()
+								: "", true); //$NON-NLS-1$
+				fPatchedVersionText.setValue(
+						featureImport.getVersion() != null ? featureImport
+								.getVersion() : "", true); //$NON-NLS-1$
+			} else {
+				fPatchedIdText.setValue("", true); //$NON-NLS-1$
+				fPatchedVersionText.setValue("", true); //$NON-NLS-1$
+			}
+		}
 		setUpdateSiteUrlText();
 		setUpdateSiteNameText();
 		super.refresh();
@@ -414,6 +532,10 @@ public class FeatureSpecSection extends PDESection {
 		fTitleText.cancelEdit();
 		fVersionText.cancelEdit();
 		fProviderText.cancelEdit();
+		if (isPatch()) {
+			fPatchedIdText.cancelEdit();
+			fPatchedVersionText.cancelEdit();
+		}
 		fUpdateSiteNameText.cancelEdit();
 		fUpdateSiteUrlText.cancelEdit();
 		super.cancelEdit();

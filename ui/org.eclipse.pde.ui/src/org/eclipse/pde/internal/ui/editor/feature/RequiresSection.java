@@ -87,8 +87,18 @@ public class RequiresSection extends TableSection implements
 	class ImportContentProvider extends DefaultContentProvider implements
 			IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
-			if (parent instanceof IFeature)
-				return ((IFeature) parent).getImports();
+			if (parent instanceof IFeature) {
+				IFeatureImport[] imports = ((IFeature) parent).getImports();
+				ArrayList displayable = new ArrayList();
+				for (int i = 0; i < imports.length; i++) {
+					if (imports[i].isPatch())
+						continue;
+					displayable.add(imports[i]);
+				}
+
+				return (IFeatureImport[]) displayable
+						.toArray(new IFeatureImport[displayable.size()]);
+			}
 			return new Object[0];
 		}
 	}

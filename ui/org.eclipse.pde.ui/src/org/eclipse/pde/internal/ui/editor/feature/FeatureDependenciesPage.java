@@ -14,6 +14,7 @@ import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.editor.plugin.MatchSection;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -32,7 +33,7 @@ public class FeatureDependenciesPage extends PDEFormPage {
 
 	private RequiresSection fRequiresSection;
 
-	private FeatureMatchSection fMatchSection;
+	private MatchSection fMatchSection;
 
 	/**
 	 * 
@@ -74,7 +75,7 @@ public class FeatureDependenciesPage extends PDEFormPage {
 		gd = new GridData(GridData.FILL_BOTH);
 		fRequiresSection.getSection().setLayoutData(gd);
 
-		fMatchSection = new FeatureMatchSection(this, right);
+		fMatchSection = new MatchSection(this, right, false);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fMatchSection.getSection().setLayoutData(gd);
 		managedForm.addPart(fRequiresSection);

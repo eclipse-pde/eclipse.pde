@@ -16,9 +16,11 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IIdentifiable;
 import org.eclipse.pde.internal.core.build.IBuildObject;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
+import org.eclipse.pde.internal.core.ifeature.IFeatureImport;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeatureObject;
 import org.eclipse.pde.internal.ui.IPreferenceConstants;
@@ -328,4 +330,18 @@ public class FeatureEditor extends MultiSourceEditor {
 		return context;
 	}
 
+	protected boolean isPatchEditor() {
+		IBaseModel model = getAggregateModel();
+		if(model==null || !(model instanceof IFeatureModel)){
+			return false;
+		}
+		IFeature feature = ((IFeatureModel)model).getFeature();
+		IFeatureImport[] imports = feature.getImports();
+		for (int i = 0; i < imports.length; i++) {
+			if (imports[i].isPatch()) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

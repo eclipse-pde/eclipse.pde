@@ -32,6 +32,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.feature.FeatureChild;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
+import org.eclipse.pde.internal.core.ifeature.IFeatureImport;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
@@ -203,6 +204,12 @@ public class IncludedFeaturesSection extends TableSection implements
 			return false;
 		}
 
+		boolean isPatchEditor = ((FeatureEditor) getPage().getEditor())
+		.isPatchEditor();
+		if (isPatchEditor && !isFeaturePatch(candidate.getFeature())) {
+			return false;
+		}
+
 		IFeatureChild[] features = feature.getIncludedFeatures();
 
 		for (int i = 0; i < features.length; i++) {
@@ -211,6 +218,15 @@ public class IncludedFeaturesSection extends TableSection implements
 				return false;
 		}
 		return true;
+	}
+
+	private static boolean isFeaturePatch(IFeature feature) {
+		IFeatureImport[] imports = feature.getImports();
+		for (int i = 0; i < imports.length; i++) {
+			if (imports[i].isPatch())
+				return true;
+		}
+		return false;
 	}
 
 	private void handleSelectAll() {
