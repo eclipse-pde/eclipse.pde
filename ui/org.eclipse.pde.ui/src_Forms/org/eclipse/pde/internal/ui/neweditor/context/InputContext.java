@@ -153,7 +153,7 @@ public abstract class InputContext {
 			try {
 				MultiTextEdit edit = new MultiTextEdit();
 				for (int i = 0; i < fEditOperations.size(); i++) {
-					edit.addChild((TextEdit)fEditOperations.get(i));
+					insert(edit, (TextEdit)fEditOperations.get(i));
 				}
 				edit.apply(doc);
 				fEditOperations.clear();
@@ -165,6 +165,47 @@ public abstract class InputContext {
 		}	
 	}
 	
+	protected static void insert(TextEdit parent, TextEdit edit) {
+		if (!parent.hasChildren()) {
+			parent.addChild(edit);
+			return;
+		}
+		TextEdit[] children= parent.getChildren();
+		// First dive down to find the right parent.
+		for (int i= 0; i < children.length; i++) {
+			TextEdit child= children[i];
+			if (covers(child, edit)) {
+				insert(child, edit);
+				return;
+			}
+		}
+		// We have the right parent. Now check if some of the children have to
+		// be moved under the new edit since it is covering it.
+		for (int i= children.length - 1; i >= 0; i--) {
+			TextEdit child= children[i];
+			if (covers(edit, child)) {
+				parent.removeChild(i);
+				edit.addChild(child);
+			}
+		}
+		parent.addChild(edit);
+	}
+	
+	protected static boolean covers(TextEdit thisEdit, TextEdit otherEdit) {
+		if (thisEdit.getLength() == 0)	// an insertion point can't cover anything
+			return false;
+		
+		int thisOffset= thisEdit.getOffset();
+		int thisEnd= thisEdit.getExclusiveEnd();	
+		if (otherEdit.getLength() == 0) {
+			int otherOffset= otherEdit.getOffset();
+			return thisOffset < otherOffset && otherOffset < thisEnd;
+		} else {
+			int otherOffset= otherEdit.getOffset();
+			int otherEnd= otherEdit.getExclusiveEnd();
+			return thisOffset <= otherOffset && otherEnd <= thisEnd;
+		}
+	}		
 	protected abstract TextEdit[] getMoveOperations();
 	
 	public boolean mustSave() {

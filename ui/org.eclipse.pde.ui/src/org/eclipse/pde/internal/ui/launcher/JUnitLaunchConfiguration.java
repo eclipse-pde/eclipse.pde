@@ -177,7 +177,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		fConfigDir =
 			TargetPlatform.createPlatformConfigurationArea(
 				pluginMap,
-				new Path(targetWorkspace),
+				configuration.getName(),
 				primaryFeatureId,
 				LauncherUtils.getAutoStartPlugins(configuration));
 		programArgs.add("-configuration");

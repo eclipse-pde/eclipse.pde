@@ -36,55 +36,72 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		Object[] objects = event.getChangedObjects();
 		if (objects != null ) {
 			for (int i = 0; i < objects.length; i++) {
-				if (objects[i] instanceof IDocumentAttribute) {
-					addEditAttributeOperation(ops, (IDocumentAttribute) objects[i], event);
-				} else if (objects[i] instanceof IDocumentNode) {
-					addEditNodeOperation(ops, (IDocumentNode)objects[i], event);
-				}
+				Object object = objects[i];
+				switch (event.getChangeType()) {
+					case IModelChangedEvent.REMOVE:
+						if (object instanceof IDocumentNode)
+							removeNode((IDocumentNode)object, ops);
+						break;
+					case IModelChangedEvent.INSERT:
+						if (object instanceof IDocumentNode)
+							insertNode((IDocumentNode)object, ops);
+						break;
+					case IModelChangedEvent.CHANGE:
+						if (object instanceof IDocumentAttribute)
+							addAttributeOperation((IDocumentAttribute)object, ops, event);
+						else if (object instanceof IDocumentNode)
+							modifyNode((IDocumentNode)object, ops, event);
+				}		
 			}
 		}
 	}
 	
-	private void addEditNodeOperation(ArrayList ops, IDocumentNode node, IModelChangedEvent event) {
-		TextEdit op = null;
-		if (event.getChangeType() == IModelChangedEvent.REMOVE){
-			TextEdit old = (TextEdit)fOperationTable.get(node);
-			if (old != null) {
-				ops.remove(old);
-				fOperationTable.remove(node);
-				return;
-			} else if (node.getOffset() > -1) {
-				op = getNodeDeleteEditOperation(node);
-			}
+	private void removeNode(IDocumentNode node, ArrayList ops) {
+		// delete previous op on this node, if any
+		TextEdit old = (TextEdit)fOperationTable.get(node);
+		if (old != null) {
+			ops.remove(old);
+			fOperationTable.remove(node);				
 		}
-		if (op == null) {
-			node = getHighestNodeToBeWritten(node);
-			if (node.getParentNode() == null) {
-				op = new InsertEdit(0, node.write(true));
+		// if node has an offset, delete it
+		if (node.getOffset() > -1) {
+			// Create a delete op for this node
+			IRegion region = getNodeRegion(node);
+			TextEdit op = new DeleteEdit(region.getOffset(), region.getLength());
+			ops.add(op);
+			fOperationTable.put(node, op);			
+		} else if (old == null){
+			// No previous op on this non-offset node, just rewrite highest ancestor with an offset
+			insertNode(node, ops);
+		}
+	}
+
+	private void insertNode(IDocumentNode node, ArrayList ops) {
+		TextEdit op = null;
+		node = getHighestNodeToBeWritten(node);
+		if (node.getParentNode() == null) {
+			op = new InsertEdit(0, node.write(true));
+		} else {
+			if (node.getOffset() > -1) {
+				// this is an element that was of the form <element/>
+				// it now needs to be broken up into <element><new/></element>
+				op = new ReplaceEdit(node.getOffset(), node.getLength(), node.write(false));
 			} else {
-				if (node.getOffset() > -1) {
-					// this is an element that was of the form <element/>
-					// it now needs to be broken up into <element><new/></element>
-					op = new ReplaceEdit(node.getOffset(), node.getLength(), node.write(false));
-				} else {
-					// try to insert after last sibling that has an offset
-					op = insertAfterSibling(node);
-					
-					// insert as first child of its parent
-					if (op == null) {
-						op = insertAsFirstChild(node);
-					}
+				// try to insert after last sibling that has an offset
+				op = insertAfterSibling(node);
+				// insert as first child of its parent
+				if (op == null) {
+					op = insertAsFirstChild(node);
 				}
 			}
 		}
-		
-		TextEdit old = (TextEdit)fOperationTable.get(node);
+		TextEdit old = (TextEdit) fOperationTable.get(node);
 		if (old != null)
 			ops.remove(old);
 		ops.add(op);
 		fOperationTable.put(node, op);				
 	}
-	
+
 	private InsertEdit insertAfterSibling(IDocumentNode node) {
 		IDocumentNode sibling = node.getPreviousSibling();
 		for (;;) {
@@ -106,8 +123,37 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		return new InsertEdit(offset+ length + 1, System.getProperty("line.separator") + node.write(true));	
 	}
 	
-	
-	protected void addEditAttributeOperation(ArrayList ops, IDocumentAttribute attr, IModelChangedEvent event) {
+
+	private void modifyNode(IDocumentNode node, ArrayList ops, IModelChangedEvent event) {
+		IDocumentNode node1 = (IDocumentNode)event.getOldValue();
+		IDocumentNode node2 = (IDocumentNode)event.getNewValue();
+		
+		if (node1.getOffset() < 0 && node2.getOffset() < 2) {
+			TextEdit op = (TextEdit)fOperationTable.get(node1);
+			if (op == null) {
+				// node 1 has no rule, so node 2 has no rule, therefore rewrite parent/ancestor
+				insertNode(node, ops);
+			} else {
+				// swap order of insert operations
+				TextEdit op2 = (TextEdit)fOperationTable.get(node2);
+				ops.set(ops.indexOf(op), op2);
+				ops.set(ops.indexOf(op2), op);
+			}
+		} else if (node1.getOffset() > -1 && node2.getOffset() > -1) {
+			// both nodes have offsets, so create a move target/source combo operation
+			MoveSourceEdit source = new MoveSourceEdit(node1.getOffset(), node1.getLength());
+			MoveTargetEdit target = new MoveTargetEdit(node2.getOffset(), source);
+			ops.add(0, source);
+			fOperationTable.put(node1, source);
+			ops.add(0, target);
+			fOperationTable.put(node2, source);			
+		} else {
+			// one node with offset, the other without offset.  Delete/reinsert the one without offset
+			insertNode((node1.getOffset() < 0) ? node1 : node2, ops);
+		}		
+	}
+
+	private void addAttributeOperation(IDocumentAttribute attr, ArrayList ops, IModelChangedEvent event) {
 		int offset = attr.getValueOffset();
 		Object newValue = event.getNewValue();
 		Object changedObject = attr;
@@ -129,7 +175,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 				int len = getNextPosition(doc, node.getOffset(), '>');
 				op = new ReplaceEdit(node.getOffset(), len + 1, node.writeShallow(shouldTerminateElement(doc, node.getOffset() + len)));		
 			} else {
-				addEditNodeOperation(ops, node, event);
+				insertNode(node, ops);
 				return;
 			}		
 		}
@@ -140,7 +186,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		fOperationTable.put(changedObject, op);
 
 	}
-	
+
 	private boolean shouldTerminateElement(IDocument doc, int offset) {
 		try {
 			return doc.get(offset-1, 1).toCharArray()[0] == '/';
@@ -178,7 +224,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 	}
 	
 
-	private DeleteEdit getNodeDeleteEditOperation(IDocumentNode node) {
+	private IRegion getNodeRegion(IDocumentNode node) {
 		int offset = node.getOffset();
 		int length = node.getLength();
 		int indent = 0;
@@ -205,7 +251,8 @@ public abstract class XMLInputContext extends UTF8InputContext {
 			//System.out.println("\"" + getDocumentProvider().getDocument(getInput()).get(offset-indent, length + indent) + "\"");
 		} catch (BadLocationException e) {
 		}
-		return new DeleteEdit(offset - indent, length + indent);		
+		return new Region(offset - indent, length + indent);
+		
 	}
 /**
 	 * @param node

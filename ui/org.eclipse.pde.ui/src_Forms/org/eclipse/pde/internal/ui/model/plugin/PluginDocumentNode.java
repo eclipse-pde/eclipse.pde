@@ -212,17 +212,17 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 		int index1 = fChildren.indexOf(child1);
 		int index2 = fChildren.indexOf(child2);
 		
-		if (index1 < index2) {
-			fChildren.remove(index1);
-			fChildren.add(index1, child2);
-			fChildren.remove(index2);
-			fChildren.add(index2, child1);
-		} else {
-			fChildren.remove(index2);
-			fChildren.add(index2, child1);
-			fChildren.remove(index1);
-			fChildren.add(index1, child2);
-		}
+		fChildren.set(index1, child2);
+		fChildren.set(index2, child1);
+		
+		child1.setPreviousSibling(index2 == 0 ? null : (IDocumentNode)fChildren.get(index2 - 1));
+		child2.setPreviousSibling(index1 == 1 ? null : (IDocumentNode)fChildren.get(index1 - 1));
+		
+		if (index1 < fChildren.size() - 1)
+			((IDocumentNode)fChildren.get(index1 + 1)).setPreviousSibling(child2);
+		
+		if (index2 < fChildren.size() - 1)
+			((IDocumentNode)fChildren.get(index2 + 1)).setPreviousSibling(child1);
 	}
 	
 }

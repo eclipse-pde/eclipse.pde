@@ -163,12 +163,12 @@ public class TargetPlatform implements IEnvironmentVariables {
 
 	public static File createPlatformConfigurationArea(
 		TreeMap pluginMap,
-		IPath data,
+		String configName,
 		String primaryFeatureId,
 		HashMap autoStartPlugins)
 		throws CoreException {
 		try {
-			File configDir = createWorkingDirectory(data);
+			File configDir = createWorkingDirectory(configName);
 			if (PDECore.getDefault().getModelManager().isOSGiRuntime()) {
 				createConfigIniFile(configDir, pluginMap, primaryFeatureId, autoStartPlugins);
 				if (autoStartPlugins.containsKey("org.eclipse.update.configurator")) { 
@@ -270,13 +270,11 @@ public class TargetPlatform implements IEnvironmentVariables {
 		return "file:" + new Path(location).addTrailingSeparator().toString();
 	}
 	
-	public static File createWorkingDirectory(IPath data) {
-		String dataSuffix = createDataSuffix(data);
+	public static File createWorkingDirectory(String name) {
 		IPath statePath = PDECore.getDefault().getStateLocation();
 		File dir = new File(statePath.toOSString());
-
-		if (dataSuffix.length() > 0) {
-			dir = new File(dir, dataSuffix);
+		if (name.length() > 0) {
+			dir = new File(dir, name);
 			if (!dir.exists()) {
 				dir.mkdir();
 			}

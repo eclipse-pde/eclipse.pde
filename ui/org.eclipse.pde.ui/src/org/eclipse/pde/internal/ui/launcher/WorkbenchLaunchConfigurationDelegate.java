@@ -128,7 +128,7 @@ public class WorkbenchLaunchConfigurationDelegate
 			fConfigDir =
 				TargetPlatform.createPlatformConfigurationArea(
 					pluginMap,
-					new Path(targetWorkspace),
+					configuration.getName(),
 					primaryFeatureId,
 					LauncherUtils.getAutoStartPlugins(configuration));
 			programArgs.add("-configuration");
@@ -164,7 +164,7 @@ public class WorkbenchLaunchConfigurationDelegate
 					TRACING_CHECKED, (String) null))) {
 			if (fConfigDir == null) {
 				fConfigDir =
-					TargetPlatform.createWorkingDirectory(new Path(targetWorkspace));
+					TargetPlatform.createWorkingDirectory(configuration.getName());
 			}
 			String directoryName = fConfigDir.toString();
 			programArgs.add("-debug");
