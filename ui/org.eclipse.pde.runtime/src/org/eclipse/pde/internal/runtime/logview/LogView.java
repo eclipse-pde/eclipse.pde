@@ -360,6 +360,7 @@ public class LogView extends ViewPart implements ILogListener {
 			} finally {
 				readLogAction.setText(PDERuntimePlugin.getResourceString("LogView.readLog.reload"));
 				readLogAction.setToolTipText(PDERuntimePlugin.getResourceString("LogView.readLog.reload"));
+				deleteLogAction.setEnabled(inputFile.equals(Platform.getLogFileLocation().toFile()));
 				asyncRefresh();				
 			}
 		}	
@@ -424,14 +425,17 @@ public class LogView extends ViewPart implements ILogListener {
 		
 	}
 	private void doDeleteLog() {
-		if (inputFile.exists()) {
+		if (inputFile.exists() && inputFile.equals(Platform.getLogFileLocation().toFile())) {
 			String title = PDERuntimePlugin.getResourceString("LogView.confirmDelete.title");
 			String message = PDERuntimePlugin.getResourceString("LogView.confirmDelete.message");
 			if (!MessageDialog.openConfirm(tableTreeViewer.getControl().getShell(), title, message))
 				return;
-			inputFile.delete();
-			logs.clear();
-			tableTreeViewer.refresh();
+			if (inputFile.delete()) {
+				logs.clear();
+				tableTreeViewer.refresh();
+			} else {
+				MessageDialog.openError(getViewSite().getShell(), "Error", "Delete was not successful");
+			}
 		}
 	}
 	
