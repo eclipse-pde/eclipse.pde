@@ -85,7 +85,7 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 	}
 
 	public void setContentFilter(String filters) {
-		this.filters = Utils.getArrayFromStringWithBlank(filters, FILTER_SEPARATOR); //$NON-NLS-1$
+		this.filters = Utils.getArrayFromStringWithBlank(filters, ","); //$NON-NLS-1$
 	}
 
 	public void setMapLocation(String mapLocation) {
