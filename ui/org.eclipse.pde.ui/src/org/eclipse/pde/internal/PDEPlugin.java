@@ -28,6 +28,7 @@ import java.net.URL;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.pde.internal.base.model.plugin.IMatchRules;
+import org.eclipse.pde.internal.launcher.ICurrentLaunchListener;
 
 public class PDEPlugin extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "org.eclipse.pde";
@@ -84,9 +85,32 @@ public class PDEPlugin extends AbstractUIPlugin {
 			inVAJ = false;
 		}
 	}
+	
+	class DebugListener implements IDebugEventListener {
+		public void handleDebugEvent(DebugEvent e) {
+			if (currentLaunch==null) return;
+			Object obj = e.getSource();
+			if (obj instanceof IProcess) {
+				if ((e.getKind() & DebugEvent.TERMINATE) != 0) {
+					if (currentLaunch.isTerminated()) {
+						currentLaunch = null;
+						fireCurrentLaunchChanged();
+					}
+				}
+			}
+		}
+
+		private void fireCurrentLaunchChanged() {
+			for (Enumeration enum=currentLaunchListeners.elements();
+					enum.hasMoreElements();) {
+				((ICurrentLaunchListener)enum.nextElement()).currentLaunchChanged();
+			}
+		}
+	}
 	private java.util.Hashtable counters;
 	private WorkspaceModelManager workspaceModelManager;
-	private Vector pluginListeners = new Vector();
+	private Vector currentLaunchListeners = new Vector();
+	private IDebugEventListener debugListener;
 	private ILaunch currentLaunch = null;
 
 	public PDEPlugin(IPluginDescriptor descriptor) {
@@ -99,6 +123,16 @@ public class PDEPlugin extends AbstractUIPlugin {
 			resourceBundle = null;
 		}
 	}
+	
+	public void addCurrentLaunchListener(ICurrentLaunchListener listener) {
+		if (currentLaunchListeners.contains(listener)==false)
+			currentLaunchListeners.add(listener);
+	}
+	public void removeCurrentLaunchListener(ICurrentLaunchListener listener) {
+		if (currentLaunchListeners.contains(listener))
+			currentLaunchListeners.remove(listener);
+	}
+
 	public IPluginExtensionPoint findExtensionPoint(String fullID) {
 		if (fullID == null || fullID.length() == 0)
 			return null;
@@ -335,6 +369,7 @@ public class PDEPlugin extends AbstractUIPlugin {
 			schemaRegistry.shutdown();
 		if (workspaceModelManager != null)
 			workspaceModelManager.shutdown();
+		detachFromLaunchManager();
 		super.shutdown();
 	}
 	public void startup() throws CoreException {
@@ -361,6 +396,16 @@ public class PDEPlugin extends AbstractUIPlugin {
 		// set eclipse home variable if not sets
 
 		getWorkspaceModelManager().reset();
+		attachToLaunchManager();
+	}
+	
+	private void attachToLaunchManager() {
+		debugListener = new DebugListener();
+		DebugPlugin.getDefault().addDebugEventListener(debugListener);
+	}
+	
+	private void detachFromLaunchManager() {
+		DebugPlugin.getDefault().removeDebugEventListener(debugListener);
 	}
 
 	public static File getFileInPlugin(IPath path) {
@@ -377,20 +422,11 @@ public class PDEPlugin extends AbstractUIPlugin {
 	public void registerLaunch(ILaunch launch) {
 		this.currentLaunch = launch;
 	}
-
+	
 	public IStatus getCurrentLaunchStatus() {
-		if (currentLaunch == null)
-			return null;
-		IProcess[] processes = currentLaunch.getProcesses();
-		boolean terminated = true;
-		for (int i = 0; i < processes.length; i++) {
-			IProcess process = processes[i];
-			if (process.isTerminated() == false) {
-				terminated = false;
-				break;
-			}
-		}
-		if (terminated) {
+		if (currentLaunch==null) return null;
+
+		if (currentLaunch.isTerminated()) {
 			currentLaunch = null;
 			return null;
 		}
