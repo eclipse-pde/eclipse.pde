@@ -249,9 +249,9 @@ public class ConvertedProjectsPage extends WizardPage {
 			convertProject(project, monitor);
 			monitor.worked(1);
 		}
-		WorkspaceModelManager manager =
-			PDECore.getDefault().getWorkspaceModelManager();
-		manager.reset();
+		//WorkspaceModelManager manager =
+			//PDECore.getDefault().getWorkspaceModelManager();
+		//manager.reset();
 
 		if (updateBuildPath) {
 			monitor.subTask(PDEPlugin.getResourceString(KEY_UPDATING));
