@@ -398,6 +398,9 @@ public class OSGiWorkspaceModelManager
 		return getWorkspaceModel(project, true);
 	}
 	public IModel getWorkspaceModel(IProject project, boolean validate) {
+		if (workspaceModels == null) {
+			initializeWorkspacePluginModels();
+		}
 		if (validate) validate();
 
 		if (isBundleProject(project)) {

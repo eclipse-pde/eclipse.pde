@@ -307,6 +307,9 @@ public class WorkspaceModelManager
 		return getWorkspaceModel(file.getProject(), models);
 	}
 	public IModel getWorkspaceModel(IProject project) {
+		if (workspaceModels == null) {
+			initializeWorkspacePluginModels();
+		}
 		validate();
 		IPath filePath = project.getFullPath().append("plugin.xml");
 		IFile file = project.getWorkspace().getRoot().getFile(filePath);
