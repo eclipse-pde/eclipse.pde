@@ -853,9 +853,9 @@ public class LogView extends ViewPart implements ILogListener {
 	void onMouseMove(Event e){
 		if (textShell != null && !textShell.isDisposed()){
 			textShell.close();
-			canOpenTextShell = textShell.isDisposed() && e.x < (column0.getWidth() + column1.getWidth());
+			canOpenTextShell = textShell.isDisposed() && e.x > column0.getWidth() && e.x < (column0.getWidth() + column1.getWidth());
 		} else {
-			canOpenTextShell = e.x < (column0.getWidth() + column1.getWidth());
+			canOpenTextShell = e.x > column0.getWidth() && e.x < (column0.getWidth() + column1.getWidth());
 		}
 	}
 	
