@@ -10,32 +10,27 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.build;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.util.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.IModelChangedListener;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.build.*;
-import org.eclipse.pde.internal.build.IXMLConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.TableSection;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
-import org.eclipse.pde.internal.ui.parts.EditableTablePart;
-import org.eclipse.swt.SWT;
+import org.eclipse.pde.internal.build.*;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.elements.*;
+import org.eclipse.pde.internal.ui.parts.*;
+import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
-import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
-import org.eclipse.ui.dialogs.ISelectionStatusValidator;
-import org.eclipse.ui.model.WorkbenchContentProvider;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.views.navigator.ResourceSorter;
-import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
+import org.eclipse.ui.dialogs.*;
+import org.eclipse.ui.model.*;
+import org.eclipse.ui.views.navigator.*;
+import org.eclipse.update.ui.forms.internal.*;
 
 public class BuildClasspathSection
 	extends TableSection
@@ -206,13 +201,9 @@ public class BuildClasspathSection
 	}
 	
 	public void disableSection(){
-		EditableTablePart tablePart  = getTablePart();
-		tablePart.setButtonEnabled(1, false);
-		tablePart.setButtonEnabled(0, false);
-		tablePart.getTableViewer().setSelection(null,false);
-		tablePart.getControl().setForeground(new Color(tablePart.getControl().getDisplay(), LIGHT_GRAY));
-		if (getSectionControl()!=null)
-			getSectionControl().setEnabled(false);
+		getTablePart().setEnabled(false);
+//		if (getSectionControl()!=null)
+//			getSectionControl().setEnabled(false);
 	}
  
 	public void setSectionControl(Control control){
@@ -274,12 +265,11 @@ public class BuildClasspathSection
 	
 	public void enableSection(){
 		EditableTablePart tablePart = getTablePart();
+		tablePart.setEnabled(true);
 		tablePart.setButtonEnabled(1, false);
 		tablePart.setButtonEnabled(0, true);
-		tablePart.getTableViewer().setSelection(null,false);
-		tablePart.getControl().setForeground(new Color(tablePart.getControl().getDisplay(), BLACK));
-		if (getSectionControl()!=null)
-			getSectionControl().setEnabled(true);
+//		if (getSectionControl()!=null)
+//			getSectionControl().setEnabled(true);
 	}
 
 	protected void selectionChanged(IStructuredSelection selection) {

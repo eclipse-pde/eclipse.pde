@@ -20,29 +20,25 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.build.*;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.build.IXMLConstants;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.build.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.PDEFormSection;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.*;
+import org.eclipse.swt.custom.*;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
-import org.eclipse.ui.dialogs.ISelectionStatusValidator;
-import org.eclipse.ui.model.WorkbenchContentProvider;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
+import org.eclipse.ui.dialogs.*;
+import org.eclipse.ui.model.*;
+import org.eclipse.update.ui.forms.internal.*;
 
 public class RuntimeInfoSection
 	extends PDEFormSection
@@ -589,27 +585,23 @@ public class RuntimeInfoSection
 	public void handleDoubleClick(IStructuredSelection selection) {
 		
 	}
-
-	public void disableSection() {
-
-		if (getSectionControl() != null)
-			getSectionControl().setEnabled(false);
-
-		EditableTablePart tablePart = getJarsTablePart();
-		tablePart.setButtonEnabled(0, false);
-		tablePart.getControl().setForeground(
-			new Color(tablePart.getControl().getDisplay(), LIGHT_GRAY));
-		tablePart.getTableViewer().setSelection(null, false);
-
-		tablePart = getLibTablePart();
-		tablePart.setButtonEnabled(0, false);
+	public void enableSection() {
+		EditableTablePart tablePart = getLibTablePart();
+		tablePart.setEnabled(true);
+		tablePart.setButtonEnabled(0, true);
 		tablePart.setButtonEnabled(2, false);
 		tablePart.setButtonEnabled(3, false);
 
-		tablePart.getControl().setForeground(
-			new Color(tablePart.getControl().getDisplay(), LIGHT_GRAY));
-		tablePart.getTableViewer().setSelection(null, false);
+		tablePart = getJarsTablePart();
+		tablePart.setEnabled(true);
+		tablePart.setButtonEnabled(0, false);
 
+		jarIncludeButton.setEnabled(true);
+	}
+	public void disableSection() {
+		getJarsTablePart().setEnabled(false);
+		getLibTablePart().setEnabled(false);
+		jarIncludeButton.setEnabled(false);
 	}
 
 	public void setSectionControl(Control control) {
@@ -646,23 +638,6 @@ public class RuntimeInfoSection
 				entryModified(entry, dialog.getNewName());
 			}
 		}
-	}
-	
-	public void enableSection() {
-		EditableTablePart tablePart = getLibTablePart();
-		tablePart.setButtonEnabled(0, true);
-		tablePart.setButtonEnabled(2, false);
-		tablePart.setButtonEnabled(3, false);
-
-		tablePart.getControl().setForeground(
-			new Color(tablePart.getControl().getDisplay(), BLACK));
-
-		tablePart = getJarsTablePart();
-		tablePart.setButtonEnabled(0, false);
-		tablePart.getControl().setForeground(
-			new Color(tablePart.getControl().getDisplay(), BLACK));
-		if (getSectionControl() != null)
-			getSectionControl().setEnabled(true);
 	}
 
 	public void dispose() {
@@ -739,7 +714,6 @@ public class RuntimeInfoSection
 			jarIncludeButton.setSelection(isJarIncluded(item.toString().substring(7)));
 		}
 		getFormPage().setSelection(selection);
-
 	}
 
 	protected void updateDirectionalButtons() {
@@ -919,6 +893,7 @@ public class RuntimeInfoSection
 					libraryViewer.setSelection(null);
 					foldersViewer.setInput(null);
 					jarIncludeButton.setVisible(false);
+					currentLibrary = null;
 				}
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);

@@ -16,20 +16,18 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.IModelChangedListener;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.build.*;
-import org.eclipse.pde.internal.build.IXMLConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.editor.TableSection;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.pde.internal.build.*;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.elements.*;
+import org.eclipse.swt.*;
+import org.eclipse.swt.custom.*;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
+import org.eclipse.ui.model.*;
+import org.eclipse.update.ui.forms.internal.*;
 
 public abstract class BuildContentsSection
 	extends TableSection
@@ -161,22 +159,20 @@ public abstract class BuildContentsSection
 
 	private Tree createTree(Composite parent, FormWidgetFactory factory) {
 		Tree tree = new Tree(parent, SWT.CHECK);
-		tree.setBackground(factory.getBackgroundColor());
-		tree.setForeground(factory.getForegroundColor());
 		factory.hookDeleteListener(tree);
 		return tree;
 	}
 
 	public void disableSection() {
 		treeViewer.getTree().setEnabled(false);
-		if (getSectionControl() != null)
-			getSectionControl().setEnabled(false);
+//		if (getSectionControl() != null)
+//			getSectionControl().setEnabled(false);
 	}
 
 	public void enableSection() {
 		treeViewer.getTree().setEnabled(true);
-		if (getSectionControl() != null)
-			getSectionControl().setEnabled(true);
+//		if (getSectionControl() != null)
+//			getSectionControl().setEnabled(true);
 	}
 
 	protected void handleCheckStateChanged(

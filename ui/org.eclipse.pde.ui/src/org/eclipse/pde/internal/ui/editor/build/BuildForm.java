@@ -10,25 +10,21 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.build;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.IModel;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.build.*;
-import org.eclipse.pde.core.plugin.IPluginModel;
-import org.eclipse.pde.internal.build.IXMLConstants;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.build.*;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.swt.*;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
-import org.eclipse.update.ui.forms.internal.ScrollableSectionForm;
+import org.eclipse.ui.help.*;
+import org.eclipse.update.ui.forms.internal.*;
 
 public class BuildForm extends ScrollableSectionForm {
 	public static final String FORM_TITLE = "BuildEditor.Form.title";
