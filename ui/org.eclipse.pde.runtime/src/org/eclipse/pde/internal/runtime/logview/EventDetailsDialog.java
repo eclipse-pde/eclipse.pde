@@ -277,7 +277,7 @@ public class EventDetailsDialog extends Dialog {
 		if (stack != null) {
 			stackTraceText.setText(stack);
 		} else {
-			stackTraceText.setText(PDERuntimePlugin.getResourceString("LogView.preview.noStack"));
+			stackTraceText.setText(PDERuntimePlugin.getResourceString("EventDetailsDialog.noStack"));
 		}
 		LogSession session = entry.getSession();
 		if (session != null && session.getSessionData() != null)
