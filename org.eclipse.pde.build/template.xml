@@ -49,8 +49,8 @@
   </target>
 
   <target name="log" depends="init">
-    <mkdir dir="${dest}/logs"/>
-    <copy todir="${dest}/logs">
+    <mkdir dir="${dest}"/>
+    <copy todir="${dest}">
       <fileset dir="." includes="*.log"/>
       <mapper type="glob" from="*.bin.log" to="*.log"/>
     </copy>
