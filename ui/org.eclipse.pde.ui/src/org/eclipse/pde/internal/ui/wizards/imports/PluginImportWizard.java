@@ -20,7 +20,7 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
+import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.wizards.imports.PluginImportOperation.IReplaceQuery;
@@ -212,15 +212,14 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 	}
 	
 	private IPluginModelBase[] getWorkspaceCounterparts(ArrayList modelIds) {
-		IPluginModelBase[] wModels = new IPluginModelBase[modelIds.size()];
-		for (int i = 0; i < modelIds.size(); i++) {
-			IPlugin plugin =
-				PDECore.getDefault().findPlugin((String) modelIds.get(i));
-			if (plugin != null
-				&& plugin.getModel() instanceof WorkspacePluginModel) {
-				wModels[i] = plugin.getModel();
-			}
+		
+		IPluginModelBase[] allModels = PDECore.getDefault().getWorkspaceModelManager().getAllModels();
+		ArrayList desiredModels = new ArrayList();
+		for (int i = 0; i < allModels.length; i++) {
+			if (modelIds.contains(allModels[i].getPluginBase().getId()))
+				desiredModels.add(allModels[i]);				
 		}
-		return wModels;
+		
+		return (IPluginModelBase[])desiredModels.toArray(new IPluginModelBase[desiredModels.size()]);
 	}
 }

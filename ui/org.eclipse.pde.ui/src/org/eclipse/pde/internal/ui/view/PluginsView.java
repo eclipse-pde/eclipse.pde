@@ -562,15 +562,14 @@ public class PluginsView extends ViewPart {
 		return "";
 	}
 	private IPluginModelBase[] getWorkspaceCounterparts(ArrayList modelIds) {
-		IPluginModelBase[] wModels = new IPluginModelBase[modelIds.size()];
-		for (int i = 0; i < modelIds.size(); i++) {
-			IPlugin plugin =
-				PDECore.getDefault().findPlugin((String) modelIds.get(i));
-			if (plugin != null
-				&& plugin.getModel() instanceof WorkspacePluginModel) {
-				wModels[i] = plugin.getModel();
-			}
+		
+		IPluginModelBase[] allModels = PDECore.getDefault().getWorkspaceModelManager().getAllModels();
+		ArrayList desiredModels = new ArrayList();
+		for (int i = 0; i < allModels.length; i++) {
+			if (modelIds.contains(allModels[i].getPluginBase().getId()))
+				desiredModels.add(allModels[i]);				
 		}
-		return wModels;
+		
+		return (IPluginModelBase[])desiredModels.toArray(new IPluginModelBase[desiredModels.size()]);
 	}
 }
