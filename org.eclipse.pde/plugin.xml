@@ -149,4 +149,30 @@
          <description>%cheatsheet.updates.desc</description>
       </cheatsheet>
    </extension>
+   
+   <extension point="org.eclipse.core.runtime.contentTypes">
+	  <content-type 
+	  		id="pluginManifest" 
+	  		name="%pluginManifestName" 
+	     	base-type="org.eclipse.core.runtime.xml"
+	    	priority="high"				
+	    	file-names="plugin.xml"
+			describer="org.eclipse.core.runtime.XMLRootElementContentDescriber:plugin"/>		
+		
+	  <content-type 
+	  		id="fragmentManifest" 
+	  		name="%fragmentManifestName" 
+	    	base-type="org.eclipse.core.runtime.xml"
+	    	priority="high"				
+	    	file-names="fragment.xml"
+			describer="org.eclipse.core.runtime.XMLRootElementContentDescriber:fragment"/>
+	
+	  <content-type 
+	  		id="pluginProperties" 
+	  		name="%pluginPropertiesName" 
+	    	base-type="org.eclipse.jdt.core.javaProperties"
+	    	priority="high"				
+	    	file-names="plugin.properties"/>
+	</extension>
+   
 </plugin>
