@@ -305,7 +305,7 @@ public class BuildPathUtil {
 		IProject project = resource != null ? resource.getProject() : null;
 		IPath path = entry.getPath();
 		if (project == null) {
-			return path.isValidPath(path.toString());
+			return path.toFile().exists();
 		} else {
 			IWorkspaceRoot root = project.getWorkspace().getRoot();
 			return root.findMember(path) != null;
