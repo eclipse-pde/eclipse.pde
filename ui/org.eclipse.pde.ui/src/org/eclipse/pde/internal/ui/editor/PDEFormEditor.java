@@ -31,6 +31,8 @@ import org.eclipse.ui.forms.editor.*;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.ide.*;
 import org.eclipse.ui.ide.IGotoMarker;
+import org.eclipse.ui.part.*;
+import org.eclipse.ui.part.MultiPageEditorSite;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 /**
@@ -48,12 +50,31 @@ public abstract class PDEFormEditor extends FormEditor
 	private IContentOutlinePage formOutline;
 	private PDEMultiPagePropertySheet propertySheet;
 	private PDEMultiPageContentOutline contentOutline;
+	
+	private static class PDEMultiPageEditorSite extends MultiPageEditorSite {
+		public PDEMultiPageEditorSite(MultiPageEditorPart multiPageEditor, IEditorPart editor) {
+			super(multiPageEditor, editor);
+		}
+		public IEditorActionBarContributor getActionBarContributor() {
+			PDEFormEditor editor = (PDEFormEditor)getMultiPageEditor();
+			PDEFormEditorContributor contributor = editor.getContributor();
+			return contributor.getSourceContributor();
+		}
+	}
 	/**
 	 *  
 	 */
 	public PDEFormEditor() {
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		inputContextManager = createInputContextManager();
+	}
+	/**
+	 * We must override nested site creation so that
+	 * we properly pass the source editor contributor
+	 * when asked.
+	 */
+	protected IEditorSite createSite(IEditorPart editor){
+		return new PDEMultiPageEditorSite(this, editor);
 	}
 	public IProject getCommonProject() {
 		return inputContextManager.getCommonProject();

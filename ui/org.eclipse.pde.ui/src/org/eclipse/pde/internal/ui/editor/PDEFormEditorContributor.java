@@ -130,6 +130,10 @@ public class PDEFormEditorContributor
 		sourceContributor = new TextEditorActionContributor();
 		makeActions();
 	}
+	
+	public IEditorActionBarContributor getSourceContributor() {
+		return sourceContributor;
+	}
 	private void addGlobalAction(String id) {
 		GlobalAction action = new GlobalAction(id);
 		addGlobalAction(id, action);
@@ -173,6 +177,7 @@ public class PDEFormEditorContributor
 		sourceActionBars = new SubActionBars(bars);
 		sourceContributor.init(sourceActionBars);
 	}
+	
 	public PDEFormEditor getEditor() {
 		return editor;
 	}
