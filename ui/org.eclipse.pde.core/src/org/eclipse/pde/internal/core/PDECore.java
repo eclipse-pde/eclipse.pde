@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import java.io.*;
 import java.lang.reflect.*;
+import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.resources.*;
@@ -107,25 +109,20 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		String text = getResourceString(key);
 		return java.text.MessageFormat.format(text, args);
 	}
-	static IPath getInstallLocation() {
-		return new Path(inst.getDescriptor().getInstallURL().getFile());
-	}
+
 	public static String getPluginId() {
-		return inst.getDescriptor().getUniqueIdentifier();
+		return getDefault().getBundle().getSymbolicName();
 	}
+	
 	public static String getResourceString(String key) {
-		ResourceBundle bundle = inst.getResourceBundle();
-		if (bundle != null) {
-			try {
-				String bundleString = bundle.getString(key);
-				//return "$"+bundleString;
-				return bundleString;
-			} catch (MissingResourceException e) {
-				// default actions is to return key, which is OK
-			}
+		ResourceBundle bundle = getDefault().getResourceBundle();
+		try {
+			return (bundle != null) ? bundle.getString(key) : key;
+		} catch (MissingResourceException e) {
+			return key;
 		}
-		return key;
 	}
+	
 	public static IWorkspace getWorkspace() {
 		return ResourcesPlugin.getWorkspace();
 	}
@@ -215,18 +212,18 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 	private ExternalModelManager externalModelManager;
 	private WorkspaceModelManager workspaceModelManager;
 
-	public PDECore(IPluginDescriptor descriptor) {
-		super(descriptor);
+	public PDECore() {
 		inst = this;
-		try {
-			resourceBundle =
-				ResourceBundle.getBundle(
-					"org.eclipse.pde.internal.core.pderesources"); //$NON-NLS-1$
-		} catch (MissingResourceException x) {
-			resourceBundle = null;
-		}
 	}
 
+	public URL getInstallURL() {
+		try {
+			return Platform.resolve(getDefault().getBundle().getEntry("/")); //$NON-NLS-1$
+		} catch (IOException e) {
+			return null;
+		}
+	}
+	
 	public IPluginExtensionPoint findExtensionPoint(String fullID) {
 		if (fullID == null || fullID.length() == 0)
 			return null;
@@ -313,6 +310,13 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 	}
 	
 	public ResourceBundle getResourceBundle() {
+		try {
+			resourceBundle =
+				ResourceBundle.getBundle(
+					"org.eclipse.pde.internal.core.pderesources"); //$NON-NLS-1$
+		} catch (MissingResourceException x) {
+			resourceBundle = null;
+		}
 		return resourceBundle;
 	}
 	public SchemaRegistry getSchemaRegistry() {
@@ -412,7 +416,7 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		return this.context;
 	}
 
-	public void shutdown() throws CoreException {
+	public void stop(BundleContext context) throws CoreException {
 		PDECore.getDefault().savePluginPreferences();
 		if (schemaRegistry != null) {
 			schemaRegistry.shutdown();
@@ -430,8 +434,5 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 			workspaceModelManager.shutdown();
 			workspaceModelManager = null;
 		}
-		super.shutdown();
 	}
-	
-
 }

@@ -59,7 +59,7 @@ public abstract class AbstractFeatureModel
 		try {
 			SAXParser parser = getSaxParser();
 			InputSource source = new InputSource(stream);
-			URL dtdLocation = PDECore.getDefault().getDescriptor().getInstallURL();
+			URL dtdLocation = PDECore.getDefault().getInstallURL();
 			source.setSystemId(dtdLocation.toString());
 			XMLDefaultHandler handler = new XMLDefaultHandler();
 			parser.setProperty("http://xml.org/sax/properties/lexical-handler", handler); //$NON-NLS-1$

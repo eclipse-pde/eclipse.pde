@@ -14,7 +14,6 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import org.eclipse.core.boot.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.*;
@@ -22,6 +21,7 @@ import org.eclipse.pde.internal.core.bundle.*;
 import org.eclipse.pde.internal.core.feature.*;
 import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.update.configurator.*;
 
 public class TargetPlatform implements IEnvironmentVariables {
 
@@ -102,14 +102,14 @@ public class TargetPlatform implements IEnvironmentVariables {
 
 
 	public static void createPlatformConfigurationArea(
-		TreeMap pluginMap,
+		Map pluginMap,
 		File configDir,
 		String brandingPluginID)
 		throws CoreException {
 		try {
 			if (PDECore.getDefault().getModelManager().isOSGiRuntime()) {
 				if (pluginMap.containsKey("org.eclipse.update.configurator")) {  //$NON-NLS-1$
-					savePlatformConfiguration(BootLoader.getPlatformConfiguration(null),configDir, pluginMap, brandingPluginID);
+					savePlatformConfiguration(ConfiguratorUtils.getPlatformConfiguration(null),configDir, pluginMap, brandingPluginID);
 				}
 			} else {
 				savePlatformConfiguration(new PlatformConfiguration(null), new File(configDir, "platform.cfg"), pluginMap, brandingPluginID); //$NON-NLS-1$
@@ -152,7 +152,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 	private static void savePlatformConfiguration(
 		IPlatformConfiguration platformConfiguration,
 		File configFile,
-		TreeMap pluginMap,
+		Map pluginMap,
 		String primaryFeatureId)
 		throws IOException, CoreException, MalformedURLException {
 		ArrayList sites = new ArrayList();
@@ -273,7 +273,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 
 	private static void createFeatureEntries(
 		IPlatformConfiguration config,
-		TreeMap pluginMap,
+		Map pluginMap,
 		String primaryFeatureId)
 		throws MalformedURLException {
 		IPath targetPath = ExternalModelManager.getEclipseHome();

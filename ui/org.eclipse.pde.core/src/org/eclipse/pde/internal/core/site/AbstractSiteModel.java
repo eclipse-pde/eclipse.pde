@@ -71,7 +71,7 @@ public abstract class AbstractSiteModel
 			SAXParser parser = getSaxParser();
 			XMLDefaultHandler handler = new XMLDefaultHandler();
 			InputSource source = new InputSource(stream);
-			URL dtdLocation = PDECore.getDefault().getDescriptor().getInstallURL();
+			URL dtdLocation = PDECore.getDefault().getInstallURL();
 			source.setSystemId(dtdLocation.toString());
 			parser.setProperty("http://xml.org/sax/properties/lexical-handler", handler); //$NON-NLS-1$
 			parser.parse(source, handler);

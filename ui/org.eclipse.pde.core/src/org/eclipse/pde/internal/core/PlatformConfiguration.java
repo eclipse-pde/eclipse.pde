@@ -14,8 +14,8 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import org.eclipse.core.boot.*;
 import org.eclipse.core.internal.boot.*;
+import org.eclipse.update.configurator.*;
 
 public class PlatformConfiguration implements IPlatformConfiguration {
 

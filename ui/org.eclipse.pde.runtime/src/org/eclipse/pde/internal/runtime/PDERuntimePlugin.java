@@ -50,7 +50,7 @@ public class PDERuntimePlugin extends AbstractUIPlugin {
 		inst = this;
 	}
 	
-	public java.util.ResourceBundle getResourceBundle() {
+	public ResourceBundle getResourceBundle() {
 		try {
 			if (resourceBundle == null)
 				resourceBundle = ResourceBundle.getBundle("org.eclipse.pde.internal.runtime.pderuntimeresources"); //$NON-NLS-1$
@@ -61,7 +61,7 @@ public class PDERuntimePlugin extends AbstractUIPlugin {
 	}
 	
 	public static String getResourceString(String key) {
-		ResourceBundle bundle = PDERuntimePlugin.getDefault().getResourceBundle();
+		ResourceBundle bundle = getDefault().getResourceBundle();
 		try {
 			return (bundle != null) ? bundle.getString(key) : key;
 		} catch (MissingResourceException e) {
