@@ -15,12 +15,6 @@ import java.io.PrintWriter;
 import org.eclipse.swt.widgets.Event;
 import org.w3c.dom.Node;
 
-/**
- * @author dejan
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
 public abstract class ToggleStructuredCommand extends AbstractStructuredCommand {
 	protected boolean value;
 

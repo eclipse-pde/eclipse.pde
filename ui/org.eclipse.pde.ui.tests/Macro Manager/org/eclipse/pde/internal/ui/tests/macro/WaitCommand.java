@@ -14,22 +14,14 @@ import java.io.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
-import org.eclipse.jface.dialogs.*;
 import org.eclipse.swt.widgets.*;
 
-/**
- * @author dejan
- * 
- * TODO To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Style - Code Templates
- */
 public class WaitCommand extends MacroCommand {
 	public static final String TYPE = "wait";
 	private static final WidgetIdentifier nullIdentifier = new WidgetIdentifier(new Path(""), new Path(""));
 	
 	private static class JobListener extends JobChangeAdapter {
 		private int counter=0;
-		private MessageDialog dialog;
 		private IProgressMonitor monitor;
 		private Thread t;
 		

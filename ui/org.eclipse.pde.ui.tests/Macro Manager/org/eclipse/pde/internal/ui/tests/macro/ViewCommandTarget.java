@@ -14,12 +14,6 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.*;
 import org.eclipse.ui.IViewPart;
 
-/**
- * @author dejan
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
 public class ViewCommandTarget extends CommandTarget {
 	public ViewCommandTarget(Widget widget, IViewPart view) {
 		super(widget, view);
