@@ -283,6 +283,11 @@ public class PluginContentPage extends ContentPage {
 	protected void validatePage() {
 		setMessage(null);
 		String errorMessage = validateProperties();
+		if (errorMessage == null && !fData.isSimple()) {
+			if (fLibraryText.getText().trim().length() == 0) {
+				errorMessage = "Library name is not set";
+			}	
+		}
 		if (errorMessage == null && fGenerateClass.isEnabled() && fGenerateClass.getSelection()) {
 			IStatus status = JavaConventions.validateJavaTypeName(fClassText.getText().trim());
 			if (status.getSeverity() == IStatus.ERROR) {
