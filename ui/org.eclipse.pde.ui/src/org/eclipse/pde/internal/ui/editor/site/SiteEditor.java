@@ -81,13 +81,6 @@ public class SiteEditor extends MultiSourceEditor {
 	}
 	
 	public void monitoredFileAdded(IFile file) {
-		/*
-		String name = file.getName();
-		if (name.equalsIgnoreCase("site.xml")) {
-			IEditorInput in = new FileEditorInput(file);
-			inputContextManager.putContext(in, new SiteInputContext(this, in, false));
-		}
-		*/
 	}
 
 	public boolean monitoredFileRemoved(IFile file) {
@@ -174,7 +167,6 @@ public class SiteEditor extends MultiSourceEditor {
 		
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getInputContext(java.lang.Object)
 	 */
 	protected InputContext getInputContext(Object object) {

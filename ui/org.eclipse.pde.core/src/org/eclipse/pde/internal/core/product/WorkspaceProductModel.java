@@ -33,13 +33,7 @@ public class WorkspaceProductModel extends ProductModel implements IEditableMode
 				stream = fFile.getContents(true);
 				load(stream, false);
 			} catch (CoreException e) {
-			} finally {
-				try {
-					if (stream != null)
-						stream.close();
-				} catch (IOException e) {
-				}
-			}
+			} 
 		} 
 	}
 	

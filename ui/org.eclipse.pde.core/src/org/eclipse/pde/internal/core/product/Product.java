@@ -47,14 +47,20 @@ public class Product extends ProductObject implements IProduct {
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#setId(java.lang.String)
 	 */
 	public void setId(String id) {
+		String old = fId;
 		fId = id;
+		if (isEditable())
+			firePropertyChanged(P_ID, old, fId);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#setName(java.lang.String)
 	 */
 	public void setName(String name) {
+		String old = fName;
 		fName = name;
+		if (isEditable())
+			firePropertyChanged(P_NAME, old, fName);
 	}
 	
 	/* (non-Javadoc)
@@ -68,7 +74,10 @@ public class Product extends ProductObject implements IProduct {
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#setApplication(java.lang.String)
 	 */
 	public void setApplication(String application) {
+		String old = fApplication;
 		fApplication = application;
+		if (isEditable())
+			firePropertyChanged(P_APPLICATION, old, fApplication);
 	}
 	
 	/* (non-Javadoc)

@@ -106,9 +106,9 @@ public abstract class InputContextManager implements IResourceChangeListener {
 		}
 		return null;
 	}
-	public IBaseModel getAggregateModel() {
-		return null;
-	}
+	
+	public abstract IBaseModel getAggregateModel();
+	
 	public InputContext getContext(IEditorInput input) {
 		return (InputContext)inputContexts.get(input);
 	}

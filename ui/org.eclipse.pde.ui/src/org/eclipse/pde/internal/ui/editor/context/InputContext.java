@@ -191,30 +191,6 @@ public abstract class InputContext {
 		return true;
 	}
 	public void doSave(IProgressMonitor monitor) {
-		/*
-		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
-		public void execute(final IProgressMonitor monitor)
-				throws CoreException {
-			flushModel(documentProvider.getDocument(input));
-			documentProvider.saveDocument(
-					monitor,
-					input,
-					documentProvider.getDocument(input),
-					true);
-			}
-		};
-
-		try {
-			documentProvider.aboutToChange(input);
-			op.run(monitor);
-			documentProvider.changed(input);
-		} catch (InterruptedException x) {
-		} catch (InvocationTargetException x) {
-			PDEPlugin.logException(x);
-		}
-		*/
-		//Removed unnecessary usage of workspace modify operation
-		// as per defect #62225
 		try {
 			IDocument doc = documentProvider.getDocument(input);
 			documentProvider.aboutToChange(input);

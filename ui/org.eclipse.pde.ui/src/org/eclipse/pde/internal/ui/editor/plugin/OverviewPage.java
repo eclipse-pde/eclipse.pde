@@ -23,12 +23,8 @@ import org.eclipse.ui.forms.editor.*;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.help.*;
-/**
- * @author dejan
- * 
- * To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Generation - Code and Comments
- */
+
+
 public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 	public static final String PAGE_ID = "overview"; //$NON-NLS-1$
 	private static final String contentText = PDEPlugin.getResourceString("OverviewPage.content"); //$NON-NLS-1$
@@ -71,26 +67,19 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		layout.verticalSpacing = 20;
 		layout.horizontalSpacing = 10;
 		body.setLayout(layout);
-		// alerts
-		//createAlertSection(managedForm, body, toolkit);
+
 		// sections
 		createGeneralInfoSection(managedForm, body, toolkit);
 		createContentSection(managedForm, body, toolkit);
 		createTestingSection(managedForm, body, toolkit);
 		createDeployingSection(managedForm, body, toolkit);
 	}
-	/*private void createAlertSection(IManagedForm managedForm, Composite parent,
-			FormToolkit toolkit) {
-		AlertSection section = new AlertSection(this, parent);
-		managedForm.addPart(section);
-		TableWrapData td = new TableWrapData(TableWrapData.FILL_GRAB);
-		td.colspan = 2;
-		section.getSection().setLayoutData(td);
-	}*/
+
 	private void createGeneralInfoSection(IManagedForm managedForm,
 			Composite parent, FormToolkit toolkit) {
 		managedForm.addPart(new GeneralInfoSection(this, parent));
 	}
+	
 	private void createContentSection(IManagedForm managedForm,
 			Composite parent, FormToolkit toolkit) {
 		Section section = createStaticSection(parent, toolkit);
@@ -108,6 +97,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		text.setImage("page", lp.get(PDEPluginImages.DESC_PAGE_OBJ, //$NON-NLS-1$
 				PDELabelProvider.F_EDIT));
 	}
+	
 	private void createTestingSection(IManagedForm managedForm,
 			Composite parent, FormToolkit toolkit) {
 		Section section = createStaticSection(parent, toolkit);
@@ -161,7 +151,6 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 	private Section createStaticSection(Composite parent, FormToolkit toolkit) {
 		Section section = toolkit.createSection(parent, Section.TITLE_BAR);
 		section.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
-		//toolkit.createCompositeSeparator(section);
 		return section;
 	}
 	private FormText createClient(Section section, String content,

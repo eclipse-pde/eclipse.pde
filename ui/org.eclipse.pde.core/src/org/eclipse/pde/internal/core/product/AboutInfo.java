@@ -78,9 +78,14 @@ public class AboutInfo extends ProductObject implements IAboutInfo {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
 				if (child.getNodeName().equals("image")) {
-					fImagePath = ((Element)node).getAttribute("path");
+					fImagePath = ((Element)child).getAttribute("path");
 				} else if (child.getNodeName().equals("text")) {
-					fAboutText = ((Element)node).getNodeValue();
+					child.normalize();
+					if (child.getChildNodes().getLength() > 0) {
+						Node text = child.getFirstChild();
+						if (text.getNodeType() == Node.TEXT_NODE)
+							fAboutText = ((Text)text).getData().trim();
+					}
 				}
 			}
 		}

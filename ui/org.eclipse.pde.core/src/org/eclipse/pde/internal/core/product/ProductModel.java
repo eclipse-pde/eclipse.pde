@@ -92,6 +92,12 @@ public class ProductModel extends AbstractModel implements IProductModel {
 			setLoaded(true);
 		} catch (Exception e) {
 			PDECore.logException(e);
+		} finally {
+			try {
+				if (stream != null)
+					stream.close();
+			} catch (IOException e) {
+			}
 		}
 	}
 
