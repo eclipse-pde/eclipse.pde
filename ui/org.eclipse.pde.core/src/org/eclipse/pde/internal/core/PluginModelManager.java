@@ -452,7 +452,8 @@ public class PluginModelManager implements IAdaptable {
 		if (model.getBundleDescription() != null) {
 			state.removeBundleDescription(model.getBundleDescription());
 		}
-		model.setBundleDescription(state.addBundle(new File(model.getInstallLocation())));		
+		IResource file = model.getUnderlyingResource();
+		model.setBundleDescription(state.addBundle(new File(file.getLocation().removeLastSegments(2).toString())));		
 	}
 	
 	private void removeWorkspaceBundleFromState(IPluginModelBase model, PDEState state) {
@@ -485,7 +486,10 @@ public class PluginModelManager implements IAdaptable {
 			return;
 		PDEState state = externalManager.getState();
 		state.removeBundleDescription(description);
-		BundleDescription newDesc = state.addBundle(new File(model.getInstallLocation()));
+		
+		IResource file = model.getUnderlyingResource();
+		String path = file != null ? file.getLocation().removeLastSegments(2).toString() : model.getInstallLocation();
+		BundleDescription newDesc = state.addBundle(new File(path));
 		model.setBundleDescription(newDesc);
 		state.resolveState(true);
 	}
