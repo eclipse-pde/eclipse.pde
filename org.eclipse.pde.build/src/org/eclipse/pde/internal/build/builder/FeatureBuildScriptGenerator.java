@@ -957,7 +957,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		// create the directory for the plugin
 		IPath sourcePluginDirURL = new Path(workingDirectory + '/' + DEFAULT_PLUGIN_LOCATION + '/' + getSourcePluginName(result, false)); //$NON-NLS-1$ //$NON-NLS-2$
 		File sourcePluginDir = sourcePluginDirURL.toFile();
-		sourcePluginDir.mkdir();
+		sourcePluginDir.mkdirs();
 
 		// Create the plugin.xml
 		StringBuffer buffer;
@@ -982,7 +982,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		try {
 			Utils.transferStreams(new ByteArrayInputStream(buffer.toString().getBytes()), new FileOutputStream(sourcePluginDirURL.append(DEFAULT_PLUGIN_FILENAME_DESCRIPTOR).toOSString()));
 		} catch (IOException e1) {
-			String message = Policy.bind("exception.readingFile", templatePluginURL.toExternalForm()); //$NON-NLS-1$
+			String message = Policy.bind("exception.writingFile", templatePluginURL.toExternalForm()); //$NON-NLS-1$
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READING_FILE, message, e1));
 		}
 		Collection copiedFiles = Utils.copyFiles(featureRootLocation + '/' + "sourceTemplatePlugin", sourcePluginDir.getAbsolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1017,7 +1017,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		// create the directory for the plugin
 		Path sourceFragmentDirURL = new Path(workingDirectory + '/' + DEFAULT_PLUGIN_LOCATION + '/' + getSourcePluginName(fragment, false)); //$NON-NLS-1$ //$NON-NLS-2$
 		File sourceFragmentDir = new File(sourceFragmentDirURL.toOSString());
-		sourceFragmentDir.mkdir();
+		sourceFragmentDir.mkdirs();
 		try {
 			// read the content of the template file
 			Path fragmentPath = new Path("templates/fragment/" + DEFAULT_FRAGMENT_FILENAME_DESCRIPTOR);//$NON-NLS-1$
@@ -1164,7 +1164,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private void writeSourceFeature() throws CoreException {
 		String sourceFeatureDir = workingDirectory + '/' + DEFAULT_FEATURE_LOCATION + '/' + sourceFeatureFullName; //$NON-NLS-1$ //$NON-NLS-2$
 		File sourceDir = new File(sourceFeatureDir);
-		sourceDir.mkdir();
+		sourceDir.mkdirs();
 		// write the source feature to the feature.xml
 		File file = new File(sourceFeatureDir + '/' + DEFAULT_FEATURE_FILENAME_DESCRIPTOR); //$NON-NLS-1$
 		try {
