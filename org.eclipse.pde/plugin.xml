@@ -10,7 +10,6 @@
    <runtime>
       <library name="pde.jar">
          <export name="*"/>
-         <packages prefixes="org.eclipse.pde.internal"/>
       </library>
    </runtime>
    <requires>
