@@ -581,8 +581,15 @@ public class LauncherUtils {
 			properties.setProperty("osgi.install.area", "file:" + ExternalModelManager.getEclipseHome().toOSString()); //$NON-NLS-1$ //$NON-NLS-2$
 			properties.setProperty("osgi.configuration.cascaded", "false"); //$NON-NLS-1$ //$NON-NLS-2$
 			properties.setProperty("osgi.framework", "org.eclipse.osgi"); //$NON-NLS-1$ //$NON-NLS-2$
-			if (brandingID != null && map.containsKey(brandingID))
-				properties.setProperty("osgi.splashPath", brandingID); //$NON-NLS-1$
+			if (brandingID != null) {
+				if (!map.containsKey(brandingID)) {
+					int index = brandingID.lastIndexOf('.');
+					if (index != -1)
+						brandingID = brandingID.substring(0, index);
+				}
+				if (map.containsKey(brandingID))
+					properties.setProperty("osgi.splashPath", brandingID); //$NON-NLS-1$
+			}
 			if (map.containsKey("org.eclipse.update.configurator")) { //$NON-NLS-1$
 				properties.setProperty("osgi.bundles", "org.eclipse.core.runtime@2:start,org.eclipse.update.configurator@3:start"); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
