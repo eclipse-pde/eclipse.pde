@@ -283,13 +283,12 @@ protected void generateJarTarget(PrintWriter output, PluginModel descriptor, Str
 	String jarName = removeBraces(relativeJar);
 	output.println();
 	output.println("  <target name=\"" + jarName + "\" depends=\"init\">");
-	output.println("    <property name=\"destroot\" value=\"${basedir}\"/>");
 	if (src.length() != 0) {
 		output.println("    <ant antfile=\"${template}\" target=\"" + TARGET_JAR + "\">");
 		output.println("      <property name=\"mapping\" value=\"" + mapping + "\"/>");
 		output.println("      <property name=\"includes\" value=\"" + src + "\"/>");
 		output.println("      <property name=\"excludes\" value=\"\"/>");
-		output.println("      <property name=\"dest\" value=\"${destroot}/" + jarName + "\"/>");
+		output.println("      <property name=\"dest\" value=\"${basedir}/" + jarName + "\"/>");
 		output.println("      <property name=\"compilePath\" value=\"" + compilePath + "\"/>");
 		output.println("    </ant>");
 	}
@@ -634,6 +633,8 @@ protected String[] processCommandLine(String[] args) {
 		// accumulate the list of models to generate
 		if (previousArg.substring(1).equalsIgnoreCase(getModelTypeName()))
 			commandLineModelNames.addElement(currentArg);
+		if (previousArg.substring(1).equalsIgnoreCase(getModelTypeName() + "s"))
+			commandLineModelNames.addAll(getListFromString(currentArg));
 	}
 	
 	return new String[0];

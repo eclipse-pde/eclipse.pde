@@ -32,7 +32,19 @@
 <extension point="org.eclipse.ant.core.antTasks">
    <antTask
          name="buildscript"
-         class="org.eclipse.pde.internal.core.ScriptBuilder">
+         class="org.eclipse.pde.internal.core.ScriptBuilderTask">
+   </antTask>
+</extension>
+<extension point="org.eclipse.ant.core.antTasks">
+   <antTask
+         name="fetch"
+         class="org.eclipse.pde.internal.core.FetchTask">
+   </antTask>
+</extension>
+<extension point="org.eclipse.ant.core.antTasks">
+   <antTask
+         name="cvspass"
+         class="org.eclipse.pde.internal.core.CVSPass">
    </antTask>
 </extension>
 

@@ -30,8 +30,8 @@
       </fileset>
       <mapper refid="stripMapper.id"/>
     </copy>
-    <copy file="${out}.log" todir="${basedir}"/>
     <jar jarfile="${dest}" basedir="${out}"/>
+    <copy file="${out}.log" todir="${basedir}"/>
     <copy file="${dest}" todir="${basedir}"/>
     <delete dir="${out}"/>
   </target>

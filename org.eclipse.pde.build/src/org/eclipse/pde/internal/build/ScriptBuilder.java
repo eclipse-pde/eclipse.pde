@@ -1,50 +1,73 @@
 package org.eclipse.pde.internal.core;
 
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
-public class ScriptBuilder extends Task {
-	String script;
-	String element;
-	String elements;
-	String install;
-	String directory;
-
-public void execute() throws BuildException {
-	try {
-		if (script.equals("plugin")) {
-			PluginBuildScriptGenerator.main(new String[] {"-install ", install, " -" + element, elements});
-			return;
-		}
-		if (script.equals("fragment")) {
-			FragmentBuildScriptGenerator.main(new String[] {"-install ", install, " -" + element, elements});
-			return;
-		}
-		if (script.equals("component")) {
-			ComponentBuildScriptGenerator.main(new String[] {"-install ", install, " -" + element, elements});
-			return;
-		}
-		if (script.equals("configuration")) {
-			ConfigurationBuildScriptGenerator.main(new String[] {"-install ", install, " -" + element, elements});
-			return;
-		}
-	} catch (Exception e) {
-		throw new BuildException(script + ": Unable to generate build.xml", e);
+public class ScriptBuilder extends PluginTool {
+	String[] elements;
+	boolean children = true;
+		
+public void execute() throws Exception {
+	List[] types = sortElements();
+	if (!types[0].isEmpty())
+		new PluginBuildScriptGenerator().run(new String[] {"-install", getInstall(), "-plugins", getStringFromCollection(types[0], "", "", ",")});
+	if (!types[1].isEmpty())
+		new FragmentBuildScriptGenerator().run(new String[] {"-install", getInstall(), "-fragments", getStringFromCollection(types[1], "", "", ",")});
+	if (!types[2].isEmpty()) {
+		List components = types[2];
+		for (int i = 0; i < components.size(); i++)
+			new ComponentBuildScriptGenerator().run(new String[] {"-install", getInstall(), "-component", (String)components.get(i), children ? "" : "-noChildren"});
+	}
+	if (!types[3].isEmpty()) {
+		List configurations = types[3];
+		for (int i = 0; i < configurations.size(); i++)
+			new ConfigurationBuildScriptGenerator().run(new String[] {"-install", getInstall(), "-configuration", (String)configurations.get(i), children ? "" : "-noChildren"});
 	}
 }
-public void setDirectory(String value) {
-	directory = value;
+protected void printUsage(PrintWriter out) {
 }
-public void setElement(String value) {
-	element = value;
+protected String[] processCommandLine(String[] args) {
+	super.processCommandLine(args);
+	for (int i = 0; i < args.length; i++) {
+		// check for args without parameters (i.e., a flag arg)
+		if (args[i].equalsIgnoreCase("-children")) {
+			children = true;
+			continue;
+		}
+		// check for args with parameters
+		if (i == args.length - 1 || args[i + 1].startsWith("-")) 
+			continue;
+		String arg = args[++i];
+
+		if (args[i - 1].equalsIgnoreCase("-elements"))
+			elements = getArrayFromString(arg);
+	}
+	return null;
 }
-public void setElements(String value) {
-	elements = value;
+public Object run(Object args) throws Exception {
+	super.run(args);
+	execute();
+	return null;
 }
-public void setInstall(String value) {
-	install = value;
-}
-public void setScript(String value) {
-	script = value;
+protected List[] sortElements() {
+	List plugins = new ArrayList(5);
+	List fragments = new ArrayList(5);
+	List components = new ArrayList(5);
+	List configurations = new ArrayList(5);
+	for (int i = 0; i < elements.length; i++) {
+		int index = elements[i].indexOf('@');
+		String type = elements[i].substring(0, index);
+		String element = elements[i].substring(index + 1);
+		if (type.equals("plugin")) 
+			plugins.add(element);
+		if (type.equals("fragment")) 
+			fragments.add(element);
+		if (type.equals("component")) 
+			components.add(element);
+		if (type.equals("configuration")) 
+			configurations.add(element);
+	}
+	return new List[] {plugins, fragments, components, configurations};
 }
 }

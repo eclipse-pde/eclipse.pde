@@ -51,13 +51,11 @@ protected PluginModel[] determineFragments() {
 		else
 			plugins = new PluginModel[0];
 	}
-
 	return fragments;
 }
 protected String determineFullComponentModelId() {
 	if (componentModel == null)
 		return "";
-
 	return componentModel.getId() + SEPARATOR_VERSION + componentModel.getVersion();
 }
 protected PluginModel[] determinePlugins() {
@@ -67,14 +65,12 @@ protected PluginModel[] determinePlugins() {
 		else
 			plugins = new PluginModel[0];
 	}
-		
 	return plugins;
 }
 
 public IStatus execute() {
 	if (!readComponentModel())
 		return getProblems();
-
 	if (generateChildren) {
 		PluginModel plugins[] = determinePlugins();
 		PluginBuildScriptGenerator pluginGenerator = new PluginBuildScriptGenerator(plugins,getRegistry());
@@ -98,7 +94,6 @@ public IStatus execute() {
 	} catch (IOException e) {
 		getPluginLog().log(new Status(IStatus.ERROR,PI_PDECORE,EXCEPTION_OUTPUT,Policy.bind("exception.output"),e));
 	}
-	
 	return getProblems();
 }
 protected void generateAllTarget(PrintWriter output) {
@@ -109,7 +104,6 @@ protected void generateAllTarget(PrintWriter output) {
  	targets.add(TARGET_SRC);
 	targets.add(TARGET_LOG);
 //	targets.add(TARGET_DOC);
-
 	output.println();
 	output.println("  <target name=\"" + TARGET_ALL + "\" depends=\"" + getStringFromCollection(targets, "", "", ",") + "\">");
 	output.println("  </target>");
@@ -126,24 +120,19 @@ protected void generateBinTarget(PrintWriter output) {
 	output.println("      <param name=\"target\" value=\"" + TARGET_BIN + "\"/>");
 	output.println("      <param name=\"destbase\" value=\"${basedir}/_temp___/\"/>");
 	output.println("    </antcall>");
-
 	output.println("    <property name=\"comp.auto.includes\" value=\"install.xml\"/>");
 	output.println("    <property name=\"comp.auto.excludes\" value=\"\"/>");
 	output.println("    <ant antfile=\"${template}\" target=\"bin\">");
-	
 	String inclusions = getSubstitution(componentModel,BIN_INCLUDES);
 	if (inclusions == null)
 		inclusions = "${comp.auto.includes}";
 	output.println("      <property name=\"includes\" value=\"" + inclusions + "\"/>");
-
 	String exclusions = getSubstitution(componentModel,BIN_EXCLUDES);
 	if (exclusions == null)
 		exclusions = "${comp.auto.excludes}";
 	output.println("      <property name=\"excludes\" value=\"" + exclusions + "\"/>");
-
 	output.println("      <property name=\"dest\" value=\"${basedir}/_temp___/install/components/${component}_${compVersion}\"/>");
 	output.println("    </ant>");
-
 	output.println("    <jar jarfile=\"${component}_${compVersion}.jar\" basedir=\"${basedir}/_temp___\"/>");
 	output.println("    <delete dir=\"${basedir}/_temp___\"/>");
 	output.println("  </target>");
@@ -154,15 +143,11 @@ protected void generateBuildScript(PrintWriter output) {
 	generateFragmentTemplateTarget(output);
 	generateAllTemplateTarget(output);
 	generateTemplateTargetCall(output, TARGET_JAR);
-			
 	generateBinTarget(output);
-	
 	generateTemplateTargetCall(output, TARGET_JAVADOC);
 	generateGatherTemplateCall(output, TARGET_DOC,true);
-		
 	generateSrcTarget(output);
 	generateLogTarget(output);
-				
 	generateCleanTarget(output);
 	generateAllTarget(output);
 	generateEpilogue(output);
@@ -173,12 +158,10 @@ protected void generateCleanTarget(PrintWriter output) {
 	output.println("    <antcall target=\"" + TARGET_ALL_TEMPLATE + "\">");
 	output.println("      <param name=\"target\" value=\"clean\"/>");
 	output.println("    </antcall>");
-
 	output.println("    <delete file=\"${component}_${compVersion}.jar\"/>");
 	output.println("    <delete file=\"" + DEFAULT_FILENAME_LOG + "\"/>");
 	output.println("    <delete file=\"" + DEFAULT_FILENAME_DOC + "\"/>");
 	output.println("    <delete file=\"" + DEFAULT_FILENAME_SRC + "\"/>");
-
 	output.println("  </target>");
 }
 protected void generateDocTarget(PrintWriter output) {
@@ -201,7 +184,6 @@ protected void generateEpilogue(PrintWriter output) {
 protected void generateFragmentTemplateTarget(PrintWriter output) {
 	PluginModel[] list = determineFragments();
 	IPath base = new Path(componentModel.getLocation());
-
 	output.println();
 	output.println("  <target name=\"" + TARGET_FRAGMENT_TEMPLATE + "\" depends=\"init\">");
 	for (int i = 0; i < list.length; i++) {
@@ -217,7 +199,6 @@ protected void generateGatherTemplateCall(PrintWriter output, String targetName,
 	output.println("      <param name=\"target\" value=\"" + targetName + "\"/>");
 	output.println("      <param name=\"destbase\" value=\"${basedir}/_temp___/\"/>");
 	output.println("    </antcall>");
-	
 	if (outputTerminatingTag)
 		output.println("  </target>");
 }
@@ -235,14 +216,12 @@ protected void generatePrologue(PrintWriter output) {
 	output.println("    <initTemplate/>");
 	output.println("    <property name=\"component\" value=\"" + componentModel.getId() + "\"/>");
 	output.println("    <property name=\"compVersion\" value=\"" + componentModel.getVersion() + "\"/>");
-	
 	Map map = getPropertyAssignments(componentModel);
 	Iterator keys = map.keySet().iterator();
 	while (keys.hasNext()) {
 		String key = (String)keys.next();
 		output.println("    <property name=\"" + key + "\" value=\"" + (String)map.get(key) + "\"/>");
 	}
-
 	output.println("  </target>");
 }
 protected void generateSrcTarget(PrintWriter output) {
@@ -255,7 +234,6 @@ protected void generatePluginTemplateTarget(PrintWriter output) {
 	PluginModel[] plugins = determinePlugins();
 	IPath base = new Path(componentModel.getLocation());
 	String[][] sortedPlugins = computePrerequisiteOrder(plugins);
-
 	output.println();
 	output.println("  <target name=\"" + TARGET_PLUGIN_TEMPLATE + "\" depends=\"init\">");
 	for (int list = 0; list < 2; list++) {
@@ -263,7 +241,7 @@ protected void generatePluginTemplateTarget(PrintWriter output) {
 			PluginModel plugin = getRegistry().getPlugin(sortedPlugins[list][i]);
 			String location = makeRelative(getLocation(plugin), base);
 			output.println("      <ant dir=\"" + location + "\" target=\"${target}\">");
-			output.println("        <property name=\"destroot\" value=\"${destbase}/plugins/" + plugin.getId() + "/>");
+			output.println("        <property name=\"destroot\" value=\"${destbase}/plugins/" + plugin.getId() + "\"/>");
 			output.println("      </ant>");
 		}
 	}
@@ -295,22 +273,17 @@ protected void printUsage(PrintWriter out) {
 }
 protected String[] processCommandLine(String[] args) {
 	super.processCommandLine(args);
-	
 	for (int i = 0; i < args.length; i++) {
 		String currentArg = args[i];
 		if (currentArg.equalsIgnoreCase(SWITCH_NOCHILDREN))
 			generateChildren = false;
-
 		if (i == args.length - 1 || args[i + 1].startsWith(SWITCH_DELIMITER))
 			continue;
-
 		String previousArg = currentArg;
 		currentArg = args[++i];
-
 		if (previousArg.equalsIgnoreCase(SWITCH_COMPONENT))
 			componentId = currentArg;
 	}
-	
 	return new String[0];
 }
 protected boolean readComponentModel() {
@@ -331,13 +304,11 @@ protected boolean readComponentModel() {
 		componentModel = component;
 		return true;
 	}
-	
 	return false;
 }
 protected PluginModel[] readFragmentsFromComponentModel() {
 	Vector accumulatingResult = new Vector();
 	PluginModel componentFragments[] = componentModel.getFragments();
-
 	for (int i = 0; i < componentFragments.length; i++) {
 		PluginModel currentReadFragment = componentFragments[i];
 		PluginModel resultingFragment = getRegistry().getFragment(currentReadFragment.getId());
@@ -358,19 +329,15 @@ protected PluginModel[] readFragmentsFromComponentModel() {
 				Policy.bind("warning.usingIncorrectFragmentVersion",currentReadFragment.getId()),
 				null));
 		}
-
 		accumulatingResult.addElement(resultingFragment);
 	}
-	
 	PluginModel result[] = new PluginModel[accumulatingResult.size()];
 	accumulatingResult.copyInto(result);
-	
 	return result;	
 }
 protected PluginModel[] readPluginsFromComponentModel() {
 	Vector accumulatingResult = new Vector();
 	PluginModel componentPlugins[] = componentModel.getPlugins();
-
 	for (int i = 0; i < componentPlugins.length; i++) {
 		PluginModel currentReadPlugin = componentPlugins[i];
 		PluginModel resultingPlugin = getRegistry().getPlugin(currentReadPlugin.getId());
@@ -391,13 +358,10 @@ protected PluginModel[] readPluginsFromComponentModel() {
 				Policy.bind("warning.usingIncorrectPluginVersion",currentReadPlugin.getId()),
 				null));
 		}
-		
 		accumulatingResult.addElement(resultingPlugin);
 	}
-	
 	PluginModel result[] = new PluginModel[accumulatingResult.size()];
 	accumulatingResult.copyInto(result);
-	
 	return result;	
 }
 public Object run(Object args) throws Exception {
@@ -433,7 +397,6 @@ protected String[][] computePrerequisiteOrder(PluginModel[] plugins) {
 			}
 		}
 	}
-
 	String[][] prereqArray = (String[][]) prereqs.toArray(new String[prereqs.size()][]);
 	return computeNodeOrder(prereqArray);
 }

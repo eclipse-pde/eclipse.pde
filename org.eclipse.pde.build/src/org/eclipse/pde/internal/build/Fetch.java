@@ -5,7 +5,6 @@ import java.util.*;
 
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
-import org.apache.tools.ant.taskdefs.ExecTask;
 import org.apache.tools.ant.types.Commandline;
 import org.apache.tools.ant.types.Commandline.Argument;
 import org.eclipse.ant.core.EclipseProject;
@@ -16,6 +15,7 @@ public class Fetch extends PluginTool {
 	String directory = "directory.txt";
 	Properties specs;
 	String cvsexe;
+	String passfile = null;
 	boolean recursive = true;
 	boolean children = false;
 	boolean moreLevels = false;
@@ -26,7 +26,7 @@ void addChildren() {
 	modelRegistry.seekComponents(getInstall());
 	modelRegistry.seekConfigurations(getInstall());
 	for (int i = 0; i < elements.length; i++) {
-		int index = elements[i].indexOf('.');
+		int index = elements[i].indexOf('@');
 		String type = elements[i].substring(0, index);
 		String element = elements[i].substring(index + 1);
 		if (type.equals("component")) {
@@ -35,10 +35,10 @@ void addChildren() {
 				continue;
 			PluginDescriptorModel[] plugins = model.getPlugins();
 			for (int j = 0; j < plugins.length; j++) 
-				seen.add("plugin." + plugins[j].getId());
+				seen.add("plugin@" + plugins[j].getId());
 			PluginFragmentModel[] fragments = model.getFragments();
 			for (int j = 0; j < fragments.length; j++) 
-				seen.add("fragment." + fragments[j].getId());
+				seen.add("fragment@" + fragments[j].getId());
 		}
 		if (type.equals("configuration")) {
 			ConfigurationModel model = modelRegistry.getConfiguration(element);
@@ -46,7 +46,7 @@ void addChildren() {
 				continue;
 			ComponentModel[] list = model.getComponents();
 			for (int j = 0; j < list.length; j++)
-				seen.add("component." + list[j].getId());
+				seen.add("component@" + list[j].getId());
 		}
 	}
 	elements = (String[])seen.toArray(new String[seen.size()]);
@@ -67,6 +67,10 @@ private void fetchNextLevel() throws Exception {
 	args.add(getInstall());
 	args.add("-directory");
 	args.add(directory);
+	args.add("-cvs");
+	args.add(cvsexe);
+	if (recursive)
+		args.add("-recursive");	
 	args.add("-elements");
 	args.add(getStringFromCollection(Arrays.asList(elements), "", "", ","));
 	new Fetch().run((String[])args.toArray(new String[args.size()]));
@@ -84,36 +88,58 @@ protected void generateFetchEntries(Project output) {
 //	output.println("<target name=\"fetch\">");
 	Target target = new Target();
 	target.setName("fetch");
+	output.addTarget(target);
 	for (int i = 0; i < elements.length; i++)
 		generateFetchEntry(target, elements[i]);
 //	output.println("</target>");
-	output.addTarget(target);
 }
 protected void generateEpilogue(Project output) {
 //	output.println("</project>");
 }
 protected void generateFetchEntry(Target output, String entry) {
-if (true) 	System.out.println("fetch " + entry);
+System.out.println("fetch " + entry);
 	String spec = (String)specs.get(entry);
 	if (spec == null)
 		return;
-	String type = entry.substring(0, entry.indexOf('.'));
+	String[] specFields = getArrayFromString(spec);
+	int index = entry.indexOf('@');
+	String type = entry.substring(0, index);
+	String element = entry.substring(index + 1);
 	if (type.equals("component") || type.equals("configuration")) {
 		type = "install/" + type;
 		moreLevels = true;
 	}
-if (true) return;
+	// <cvspass cvsroot=":pserver:<user>@<host>:<repo>" password="abc123" [passfile="<file location>"/>
+	CVSPass pass = new CVSPass();
+	pass.setCvsroot(specFields[1]);
+	pass.setPassword(specFields[2]);
+	pass.setPassfile(new File("c:/.cvspass"));
+	pass.setProject(output.getProject());
+	if (passfile != null)
+		pass.setPassfile(new File(passfile));
+	output.addTask(pass);
 
-//	output.println("  <exec dir=\"./" + type + "s\" executable=\""+cvsexe+"\">");
-//	output.println("    <arg line=\"-d :pserver:" + spec[2] + " checkout -r " + "\"/>");
-//	output.println("  </exec>");
+	//	<exec dir="./<type location>" executable="cvsexe">
+	//	  <arg line="-d :pserver:<user>@<host>:<repo> checkout -r <label> <module>"/>
+	//	</exec>
+	ExecTask exec = new ExecTask();
+	exec.setDir(new File(getInstall() + "/" + type + "s"));
+	exec.setExecutable(cvsexe);
+	exec.setProject(output.getProject());
+	Commandline.Argument arg = exec.createArg();
+	arg.setLine("-d " + specFields[1] + " checkout -r " + specFields[0] + " " + element);
+	output.addTask(exec);
 
-//	ExecTask exec = new ExecTask();
-//	exec.setDir(new File(type + "s"));
-//	exec.setExecutable(cvsexe);
-//	Commandline.Argument arg = exec.createArg();
-//	arg.setLine("-d :pserver:" + spec[2] + " checkout -r />");
-//	output.addTask(exec);
+	//	<exec dir="." executable="cvsexe">
+	//	  <arg line="-d :pserver:<user>@<host>:<repo> logout"/>
+	//	</exec>
+	exec = new ExecTask();
+	exec.setDir(new File("."));
+	exec.setExecutable(cvsexe);
+	exec.setProject(output.getProject());
+	arg = exec.createArg();
+	arg.setLine("-d " + specFields[1] + " logout/>");
+	output.addTask(exec);
 }
 protected void generatePrologue(Project output) {
 	// output.println("<project name=\"Fetch\" basedir=\".\" default=\"all\">");
@@ -163,8 +189,14 @@ protected String[] processCommandLine(String[] args) {
 		if (args[i - 1].equalsIgnoreCase("-elements"))
 			elements = getArrayFromString(arg);
 
+		if (args[i - 1].equalsIgnoreCase("-cvs"))
+			cvsexe = arg;
+
 		if (args[i - 1].equalsIgnoreCase("-directory"))
 			directory = arg;
+
+		if (args[i - 1].equalsIgnoreCase("-passfile"))
+			passfile = arg;
 	}
 	return null;
 }
