@@ -523,7 +523,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		IJavaProject jProject = JavaCore.create(project);
 		Vector entries = new Vector();
 		if (fImportType == IMPORT_BINARY_WITH_LINKS) {
-			ClasspathUtilCore.addLibraries(model, true, entries);
+			getLinkedLibraries(project, model, entries);
 		} else {
 			IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
 			for (int i = 0; i < libraries.length; i++) {
@@ -545,6 +545,34 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		jProject.setRawClasspath((IClasspathEntry[]) entries
 				.toArray(new IClasspathEntry[entries.size()]), jProject
 				.getOutputLocation(), null);
+	}
+	
+	private void getLinkedLibraries(IProject project, IPluginModelBase model, Vector entries) {
+		ClasspathUtilCore.addLibraries(model, true, entries);
+		for (int i = 0; i < entries.size(); i++) {
+			IPath path = new Path(model.getInstallLocation());
+			IClasspathEntry entry = (IClasspathEntry)entries.remove(i);			
+			if (entry.getPath().matchingFirstSegments(path) == path.segmentCount()) {
+				path = entry.getPath().removeFirstSegments(path.segmentCount());
+				path = project.getFullPath().append(path).setDevice(null);
+			} else {
+				if (!(model instanceof IFragmentModel)) {
+					IFragment[] fragments = getFragmentsFor(model);
+					for (int j = 0; j < fragments.length; j++) {
+						IPath fragPath = new Path(fragments[j].getModel().getInstallLocation());
+						if (entry.getPath().matchingFirstSegments(fragPath) == fragPath.segmentCount()) {
+							path = PDEPlugin.getWorkspace().getRoot().getFullPath();
+							path = path.append(fragments[j].getId());
+							path = path.append(entry.getPath().removeFirstSegments(fragPath.segmentCount())).setDevice(null);
+							break;
+						}
+					}
+				}
+			}
+			IPath srcAttachment = entry.getSourceAttachmentPath();
+			IPath srcAttRoot = entry.getSourceAttachmentRootPath();
+			entries.add(i, JavaCore.newLibraryEntry(path, srcAttachment, srcAttRoot, entry.isExported()));	
+		}		
 	}
 	
 	private IClasspathEntry getLibraryEntry(IProject project, IPluginLibrary library) {
