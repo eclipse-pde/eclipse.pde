@@ -39,7 +39,7 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 	private IPluginModelBase model;
 	private InitialClassProperties initialValues;
 	private IJavaProject javaProject;
-	private IStatus currentStatus;
+	private IStatus fClassNameStatus, fPackageNameStatus;
 	
 	class InitialClassProperties {
 		// populate new wizard page
@@ -106,8 +106,6 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 				&& initialValues.interfaceName.length() > 0;
 		setMethodStubSelection(false, hasSuperClass, hasInterface
 				|| hasSuperClass, true);
-		if (!currentStatus.isOK())
-			updateStatus(currentStatus);
 	}
 	private IType findTypeForName(String typeName) throws JavaModelException {
 		if (typeName == null)
@@ -130,11 +128,12 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 			return;
 		try {
 			//			source folder name, package name, class name
-			currentStatus = JavaConventions.validateJavaTypeName(initialValues.className);
+			fClassNameStatus = JavaConventions.validateJavaTypeName(initialValues.className);
 			int loc = className.lastIndexOf('.');
 			if (loc != -1) {
+				fPackageNameStatus = JavaConventions.validatePackageName(className.substring(0, loc));
 				initialValues.packageName = className.substring(0, loc);
-				currentStatus = JavaConventions.validateJavaTypeName(className
+				fClassNameStatus = JavaConventions.validateJavaTypeName(className
 						.substring(loc + 1));
 				initialValues.className = className.substring(loc + 1);
 			} 
@@ -219,7 +218,9 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 		// policy: wizards are not allowed to come up with an error message;
 		// in this wizard, some fields may need initial validation and thus,
 		// potentially start with an error message.
-		if (!currentStatus.isOK())
-			updateStatus(currentStatus);
+		if (!fClassNameStatus.isOK())
+		updateStatus(fClassNameStatus);
+		if (!fPackageNameStatus.isOK())
+		updateStatus(fPackageNameStatus);
 	}
 }
