@@ -38,6 +38,29 @@ public class SourceLocationManager {
 		return (SourceLocation[]) list.toArray(new SourceLocation[list.size()]);
 	}
 
+	public File findSourceFile(IPath sourcePath) {
+		initialize();
+		File file = findSourceFile(extensionLocations, sourcePath);
+		if (file != null)
+			return file;
+		file = findSourceFile(userLocations, sourcePath);
+		return file;
+	}
+	
+	private File findSourceFile(ArrayList list, IPath sourcePath) {
+		for (int i = 0; i < list.size(); i++) {
+			SourceLocation location = (SourceLocation) list.get(i);
+			File file = findSourcePath(location, sourcePath);
+			if (file != null)
+				return file;
+		}
+		return null;
+	}
+
+	private File findSourcePath(SourceLocation location, IPath libraryPath) {
+		return null;
+	}
+
 	public SourceLocation[] getAllLocations() {
 		initialize();
 		int size = userLocations.size() + extensionLocations.size();
@@ -52,33 +75,9 @@ public class SourceLocationManager {
 		return array;
 	}
 
-	public IPath findSourceArchive(IPath libraryPath) {
-		initialize();
-		IPath path = findSourceArchive(libraryPath, userLocations);
-		if (path != null)
-			return path;
-		return findSourceArchive(libraryPath, extensionLocations);
-	}
-
 	private void initialize() {
 		initializeUserLocations();
 		initializeExtensionLocations();
-	}
-
-	private IPath findSourceArchive(IPath libraryPath, ArrayList list) {
-		for (int i = 0; i < list.size(); i++) {
-			SourceLocation location = (SourceLocation) list.get(i);
-			IPath path = findSourceArchive(libraryPath, location);
-			if (path != null)
-				return path;
-		}
-		return null;
-	}
-
-	private IPath findSourceArchive(
-		IPath libraryPath,
-		SourceLocation location) {
-		return null;
 	}
 
 	private void initializeUserLocations() {

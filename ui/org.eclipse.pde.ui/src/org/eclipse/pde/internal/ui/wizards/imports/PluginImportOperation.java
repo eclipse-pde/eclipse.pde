@@ -16,6 +16,7 @@ import org.eclipse.jface.util.Assert;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.PDE;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.*;
@@ -307,24 +308,13 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		}
 	}
 	
-	private IPath getSourceRootPath(IPath pluginPath) {
-		String pluginDir = pluginPath.lastSegment();
-		IPath sourcePath = pluginPath.removeLastSegments(2);
-		sourcePath = sourcePath.append("src");
-		sourcePath = sourcePath.append(pluginDir);
-		File sourceDir = sourcePath.toFile();
-		if (sourceDir.exists() == false || sourceDir.isDirectory() == false)
-			return null;
-		return sourcePath;
-	}
-
 	private void importSource(
 		IProject project,
 		IPluginBase plugin,
 		IPath pluginPath,
 		IProgressMonitor monitor)
 		throws CoreException {
-		IPath rootSourcePath = getSourceRootPath(pluginPath);
+		SourceLocationManager manager = PDEPlugin.getDefault().getSourceLocationManager();
 		IPluginLibrary[] libraries = plugin.getLibraries();
 		monitor.beginTask(PDEPlugin.getResourceString(KEY_COPYING_SOURCE), libraries.length);
 		for (int i = 0; i < libraries.length; i++) {
@@ -334,13 +324,20 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			boolean variableReference = libraryName.indexOf('$') != -1;
 			IPath srcPath = UpdateClasspathOperation.getSourcePath(libPath);
 			if (srcPath!=null) {
-				if (rootSourcePath!=null) {
-					IPath fullSrcPath = rootSourcePath.append(srcPath);
-					File srcFile = fullSrcPath.toFile();
-					if (srcFile.exists()) {
-						importSourceFile(project, srcFile, srcPath);
-						continue;
-					}
+				IFile sourceZip = project.getFile(srcPath);
+				if (sourceZip.exists()) {
+					// this library already has the zip as a library sibling -
+					// no need to do anything here.
+					continue;
+				}
+				// we must look up the source locations to
+				// find this zip.
+
+				File srcFile = manager.findSourceFile(srcPath);
+				// cannot find it
+				if (srcFile!=null) {;
+					importSourceFile(project, srcFile, srcPath);
+					continue;
 				}
 				// if we are here, either root source path is null
 				// or full source file does not exist.
