@@ -11,7 +11,7 @@ import org.eclipse.jface.text.*;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.neweditor.*;
-import org.eclipse.pde.internal.ui.neweditor.InputContext;
+import org.eclipse.pde.internal.ui.neweditor.context.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.editors.text.FileDocumentProvider;
 import org.eclipse.ui.texteditor.IDocumentProvider;

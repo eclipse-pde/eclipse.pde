@@ -7,6 +7,7 @@
 package org.eclipse.pde.internal.ui.neweditor;
 
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.neweditor.context.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.forms.IManagedForm;

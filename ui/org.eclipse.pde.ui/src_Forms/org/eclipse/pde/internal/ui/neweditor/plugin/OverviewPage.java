@@ -5,15 +5,16 @@
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
 package org.eclipse.pde.internal.ui.neweditor.plugin;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
-import org.eclipse.pde.internal.ui.neweditor.*;
-import org.eclipse.pde.internal.ui.newparts.ILinkLabelProvider;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.pde.internal.ui.neweditor.PDEFormPage;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.ManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
+import org.eclipse.ui.forms.events.*;
+import org.eclipse.ui.forms.events.HyperlinkListener;
 import org.eclipse.ui.forms.widgets.*;
 /**
  * @author dejan
@@ -21,90 +22,34 @@ import org.eclipse.ui.forms.widgets.*;
  * To change the template for this generated type comment go to Window -
  * Preferences - Java - Code Generation - Code and Comments
  */
-public class OverviewPage extends PDEFormPage {
+public class OverviewPage extends PDEFormPage implements HyperlinkListener {
 	public static final String PAGE_ID = "overview";
-	private ILinkLabelProvider labelProvider;
-	//Some dummy object to test the page until
-	// a real model comes along
-	private Object[] exobjects = new Object[]{
-			new DummyObject(ExtensionsPage.PAGE_ID, "Extension 1"),
-			new DummyObject(ExtensionsPage.PAGE_ID, "Extension 2"),
-			new DummyObject(ExtensionsPage.PAGE_ID, "Longer extension 3"),
-			new DummyObject(ExtensionsPage.PAGE_ID, "Extension 4"),
-			new DummyObject(ExtensionsPage.PAGE_ID, "Extension 5"),
-			new DummyObject(ExtensionsPage.PAGE_ID, "Extension 6"),
-			new DummyObject(ExtensionsPage.PAGE_ID, "Extension 7"),
-			new DummyObject(ExtensionsPage.PAGE_ID, "Extension 8"),};
-	private Object[] rtobjects = new Object[]{
-			new DummyObject(RuntimePage.PAGE_ID, "xyz.jar"),
-			new DummyObject(RuntimePage.PAGE_ID, "foo.jar"),
-			new DummyObject(RuntimePage.PAGE_ID, "bar.jar")};
-	private Object[] epobjects = new Object[]{
-			new DummyObject(ExtensionPointsPage.PAGE_ID, "Expoint 1"),
-			new DummyObject(ExtensionPointsPage.PAGE_ID, "Expoint 2"),
-			new DummyObject(ExtensionPointsPage.PAGE_ID, "Longer Expoint 3")};
-	private Object[] depobjects = new Object[]{
-			new DummyObject(DependenciesPage.PAGE_ID, "Import 1"),
-			new DummyObject(DependenciesPage.PAGE_ID, "Import 2"),
-			new DummyObject(DependenciesPage.PAGE_ID, "Import 3")};
-	private static class DummyObject {
-		private String name;
-		private String pageId;
-		public DummyObject(String pageId, String name) {
-			this.name = name;
-			this.pageId = pageId;
-		}
-		public String getName() {
-			return name;
-		}
-		public String getPageId() {
-			return pageId;
-		}
-	}
-	// When dummy objects are gone, the provider
-	// should hook to the real model and
-	// return real objects
-	class OverviewProvider extends DefaultContentProvider
-			implements
-				IStructuredContentProvider {
-		private Object[] objects;
-		public OverviewProvider(Object[] objects) {
-			this.objects = objects;
-		}
-		public Object[] getElements(Object parent) {
-			return objects;
-		}
-	}
-	// When dummy objects are gone, the label provider
-	// should pass the object directly to the
-	// PDE label provider because it will know
-	// how to decorate it
-	class OverviewLabelProvider extends LabelProvider
-			implements
-				ILinkLabelProvider {
-		public String getText(Object obj) {
-			return ((DummyObject) obj).getName();
-		}
-		public Image getImage(Object obj) {
-			String pageId = ((DummyObject) obj).getPageId();
-			PDELabelProvider lp = PDEPlugin.getDefault().getLabelProvider();
-			if (pageId.equals(ExtensionsPage.PAGE_ID))
-				return lp.get(PDEPluginImages.DESC_EXTENSION_OBJ);
-			if (pageId.equals(RuntimePage.PAGE_ID))
-				return lp.get(PDEPluginImages.DESC_RUNTIME_OBJ);
-			if (pageId.equals(DependenciesPage.PAGE_ID))
-				return lp.get(PDEPluginImages.DESC_REQ_PLUGIN_OBJ);
-			if (pageId.equals(ExtensionPointsPage.PAGE_ID))
-				return lp.get(PDEPluginImages.DESC_EXT_POINT_OBJ);
-			return null;
-		}
-		public String getToolTipText(Object obj) {
-			return getText(obj);
-		}
-		public String getStatusText(Object obj) {
-			return getText(obj);
-		}
-	}
+	
+	private static final String contentText = 
+		"<form><p>You can do the following things with this plug-in:</p>"+
+		"<li bindent=\"5\">Make a dependency on other plug-ins in <a href=\"dependencies\">Dependencies</a></li>" +
+		"<li bindent=\"5\">Change the class path and other run-time information in <a href=\"runtime\">Runtime</a></li>"+
+		"<li bindent=\"5\">Extend other plug-ins in <a href=\"extensions\">Extensions</a></li>"+
+		"<li bindent=\"5\">Create extension points for others in <a href=\"ex-points\">Extension Points</a></li>"+
+		"</form>";
+	
+	private static final String testingText =
+		"<form><p>You can test this plug-in by launching another Eclipse instance. You can do it in two ways:</p>" +
+		"<li bindent=\"5\">By creating a new <a href=\"run-config\">Run configuration</a></li>"+
+		"<li bindent=\"5\">Through the Runtime Workbench <a href=\"run\">run shortcut</a></li>"+
+		"<p>If your plug-in contains Java code, you can debug it in a similar way:</p>"+
+		"<li bindent=\"5\">By creating a new <a href=\"debug-config\">Debug configuration</a></li>"+
+		"<li bindent=\"5\">Through the Runtime Workbench <a href=\"debug\">debug shortcut</a></li>"+
+		"<p><img href=\"tbs\"/> <a href=\"tbs-testing\">Troubleshooting</a></p>"+
+		"</form>";
+	
+	private static final String deployingText = 
+		"<form><p>In order to deploy a working plug-in, you need to do two things:</p>"+
+		"<li bindent=\"5\" style=\"text\" value=\"1.\">Configure build properties in <a href=\"build\">Build</a></li>" +
+		"<li bindent=\"5\" style=\"text\" value=\"2.\">Export the plug-in using <a href=\"export\">Export wizard</a></li>"+
+		"<p><img href=\"tbs\"/> <a href=\"tbs-deploying\">Troubleshooting</a></p>"+
+		"</form>";
+
 	/**
 	 * @param editor
 	 * @param id
@@ -112,7 +57,9 @@ public class OverviewPage extends PDEFormPage {
 	 */
 	public OverviewPage(FormEditor editor) {
 		super(editor, PAGE_ID, "Overview");
-		labelProvider = new OverviewLabelProvider();
+	}
+	protected String getHelpResource() {
+		return "/org.eclipse.pde.doc.user/guide/pde_manifest_overview.htm";
 	}
 	protected void createFormContent(ManagedForm managedForm) {
 		super.createFormContent(managedForm);
@@ -120,86 +67,133 @@ public class OverviewPage extends PDEFormPage {
 		FormToolkit toolkit = managedForm.getToolkit();
 		form.setText("Overview");
 		fillBody(managedForm, toolkit);
+		managedForm.refresh();
 	}
+
 	private void fillBody(ManagedForm managedForm, FormToolkit toolkit) {
-		ScrolledForm form = managedForm.getForm();
-		Composite body = form.getBody();
-		ColumnLayout layout = new ColumnLayout();
-		layout.horizontalSpacing = 10;
+		Composite body = managedForm.getForm().getBody();
+		TableWrapLayout layout = new TableWrapLayout();
+		layout.bottomMargin = 10;
+		layout.topMargin = 10;
+		layout.leftMargin = 10;
+		layout.rightMargin = 10;
 		layout.verticalSpacing = 10;
-		layout.minNumColumns = 1;
-		layout.maxNumColumns = 2;
+		layout.horizontalSpacing = 10;
+		layout.numColumns = 2;
+		layout.makeColumnsEqualWidth = true;
+		layout.verticalSpacing = 15;
+		layout.horizontalSpacing = 10;
 		body.setLayout(layout);
-		LinkSection extensions = new LinkSection(this, body, Section.TWISTIE
-				| Section.EXPANDED | Section.DESCRIPTION);
-		// Extension section
-		extensions
-				.getSection()
-				.setText(
-						PDEPlugin
-								.getResourceString("ManifestEditor.ExtensionSection.title"));
-		extensions
-				.getSection()
-				.setDescription(
-						PDEPlugin
-								.getResourceString("ManifestEditor.ExtensionSection.desc"));
-		extensions.setContentProvider(new OverviewProvider(exobjects));
-		extensions.setMorePageId(ExtensionsPage.PAGE_ID);
-		configureLinkSection(managedForm, extensions);
-		LinkSection runtime = new LinkSection(this, body, Section.TWISTIE
-				| Section.EXPANDED | Section.DESCRIPTION);
-		// Runtime section
-		runtime
-				.getSection()
-				.setText(
-						PDEPlugin
-								.getResourceString("ManifestEditor.RuntimeSection.title"));
-		runtime
-				.getSection()
-				.setDescription(
-						PDEPlugin
-								.getResourceString("ManifestEditor.RuntimeSection.desc"));
-		runtime.setContentProvider(new OverviewProvider(rtobjects));
-		runtime.setMorePageId(RuntimePage.PAGE_ID);
-		configureLinkSection(managedForm, runtime);
-		LinkSection requires = new LinkSection(this, body, Section.TWISTIE
-				| Section.EXPANDED | Section.DESCRIPTION);
-		// Import section
-		requires
-				.getSection()
-				.setText(
-						PDEPlugin
-								.getResourceString("ManifestEditor.RequiresSection.title"));
-		requires
-				.getSection()
-				.setDescription(
-						PDEPlugin
-								.getResourceString("ManifestEditor.RequiresSection.desc"));
-		requires.setContentProvider(new OverviewProvider(depobjects));
-		requires.setMorePageId(DependenciesPage.PAGE_ID);
-		configureLinkSection(managedForm, requires);
-		LinkSection expoints = new LinkSection(this, body, Section.TWISTIE
-				| Section.EXPANDED | Section.DESCRIPTION);
-		// Extension points section
-		expoints
-				.getSection()
-				.setText(
-						PDEPlugin
-								.getResourceString("ManifestEditor.ExtensionPointSection.title"));
-		expoints
-				.getSection()
-				.setDescription(
-						PDEPlugin
-								.getResourceString("ManifestEditor.ExtensionPointSection.desc"));
-		expoints.setContentProvider(new OverviewProvider(epobjects));
-		expoints.setMorePageId(ExtensionPointsPage.PAGE_ID);
-		configureLinkSection(managedForm, expoints);
+		
+		// alerts
+		createAlertSection(managedForm, body, toolkit);
+		// left column
+		Composite left = toolkit.createComposite(body);
+		TableWrapLayout ll = new TableWrapLayout();
+		ll.topMargin = 0;
+		ll.bottomMargin = 0;
+		ll.leftMargin = 0;
+		ll.rightMargin = 0;
+		ll.verticalSpacing = 15;
+		left.setLayout(ll);
+		left.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
+		
+		// right column
+		Composite right = toolkit.createComposite(body);
+		TableWrapLayout rl = new TableWrapLayout();
+		rl.topMargin = 0;
+		rl.bottomMargin = 0;
+		rl.leftMargin = 0;
+		rl.rightMargin = 0;
+		rl.verticalSpacing = 10;
+		right.setLayout(rl);
+		right.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
+		// sections
+		createGeneralInfoSection(managedForm, left, toolkit);
+		createContentSection(managedForm, left, toolkit);
+		createTestingSection(managedForm, right, toolkit);
+		createDeployingSection(managedForm, right, toolkit);
 	}
-	private void configureLinkSection(ManagedForm managedForm, LinkSection part) {
-		managedForm.getToolkit().createCompositeSeparator(part.getSection());
-		part.setLabelProvider(labelProvider);
-		part.setLinkNumberLimit(5);
-		part.refresh();
-		managedForm.addPart(part);
+	private void createAlertSection(ManagedForm managedForm, Composite parent, FormToolkit toolkit) {
+		AlertSection section = new AlertSection(this, parent);
+		managedForm.addPart(section);
+		TableWrapData td = new TableWrapData(TableWrapData.FILL_GRAB);
+		td.colspan = 2;
+		section.getSection().setLayoutData(td);		
+	}
+	private void createGeneralInfoSection(ManagedForm managedForm, Composite parent, FormToolkit toolkit) {
+		GeneralInfoSection section = new GeneralInfoSection(this, parent);
+		managedForm.addPart(section);
+	}
+	private void createContentSection(ManagedForm managedForm, Composite parent, FormToolkit toolkit) {
+		Section section = createStaticSection(parent, toolkit);
+		section.setText("Content");
+		createClient(section, contentText, toolkit);
+	}
+	private void createTestingSection(ManagedForm managedForm, Composite parent, FormToolkit toolkit) {
+		Section section = createStaticSection(parent, toolkit);		
+		section.setText("Testing");		
+		createClient(section, testingText, toolkit);
+	}
+	private void createDeployingSection(ManagedForm managedForm, Composite parent, FormToolkit toolkit) {
+		Section section = createStaticSection(parent, toolkit);		
+		section.setText("Deploying");
+		createClient(section, deployingText, toolkit);
+	}
+	private Section createStaticSection(Composite parent, FormToolkit toolkit) {
+		Section section = toolkit.createSection(parent, Section.EXPANDED|Section.TWISTIE);		
+		toolkit.createCompositeSeparator(section);
+		return section;
+	}
+	private void createClient(Section section, String content, FormToolkit toolkit) {
+		FormText text = toolkit.createFormText(section, true);
+		try {
+			text.setText(content, true, false);
+		}
+		catch (SWTException e) {
+			text.setText(e.getMessage(), false, false);
+		}
+		section.setClient(text);
+		TableWrapData td = new TableWrapData(TableWrapData.FILL_GRAB);
+		section.setLayoutData(td);
+		text.addHyperlinkListener(this);
+		text.setImage("tbs", PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_INFO_TSK));
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.events.HyperlinkListener#linkActivated(org.eclipse.ui.forms.events.HyperlinkEvent)
+	 */
+	public void linkActivated(HyperlinkEvent e) {
+		String href = (String)e.getHref();
+		// try page references
+		if (href.equals("dependencies"))
+			getEditor().setActivePage(DependenciesPage.PAGE_ID);
+		else if (href.equals("runtime"))
+			getEditor().setActivePage(RuntimePage.PAGE_ID);
+		else if (href.equals("extensions"))
+			getEditor().setActivePage(ExtensionsPage.PAGE_ID);
+		else if (href.equals("ex-points"))
+			getEditor().setActivePage(ExtensionPointsPage.PAGE_ID);
+		else if (href.equals("build"))
+			getEditor().setActivePage(BuildPage.PAGE_ID);
+		// try running
+		// try troubleshooting
+		else if (href.equals("tbs-test")) {
+		}
+		else if (href.equals("tbs-deploy")) {
+		}
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.events.HyperlinkListener#linkEntered(org.eclipse.ui.forms.events.HyperlinkEvent)
+	 */
+	public void linkEntered(HyperlinkEvent e) {
+		IStatusLineManager mng = getEditor().getEditorSite().getActionBars().getStatusLineManager();
+		mng.setMessage(e.getLabel());
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.events.HyperlinkListener#linkExited(org.eclipse.ui.forms.events.HyperlinkEvent)
+	 */
+	public void linkExited(HyperlinkEvent e) {
+		IStatusLineManager mng = getEditor().getEditorSite().getActionBars().getStatusLineManager();
+		mng.setMessage(null);		
 	}
 }

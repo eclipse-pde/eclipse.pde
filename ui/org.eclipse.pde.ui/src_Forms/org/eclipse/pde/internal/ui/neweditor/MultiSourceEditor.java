@@ -5,39 +5,19 @@
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
 package org.eclipse.pde.internal.ui.neweditor;
-
-import java.util.Enumeration;
-
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.neweditor.context.*;
 import org.eclipse.ui.PartInitException;
-
-
+import org.eclipse.ui.forms.editor.IFormPage;
 /**
  * @author dejan
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * 
+ * To change the template for this generated type comment go to Window -
+ * Preferences - Java - Code Generation - Code and Comments
  */
 public abstract class MultiSourceEditor extends PDEFormEditor {
-	protected InputContext findContext(String id) {
-		for (Enumeration enum=inputContexts.elements(); enum.hasMoreElements();) {
-			InputContext context = (InputContext)enum.nextElement();
-			if (context.getId().equals(id))
-				return context;
-		}
-		return null;
-	}
-	protected InputContext getPrimaryContext() {
-		for (Enumeration enum=inputContexts.elements(); enum.hasMoreElements();) {
-			InputContext context = (InputContext)enum.nextElement();
-			if (context.isPrimary())
-				return context;
-		}
-		return null;
-	}
-	
 	protected void addSourcePage(String contextId) {
-		InputContext context = findContext(contextId);
+		InputContext context = inputContextManager.findContext(contextId);
 		if (context == null)
 			return;
 		PDESourcePage sourcePage;
@@ -52,6 +32,19 @@ public abstract class MultiSourceEditor extends PDEFormEditor {
 			addPage(sourcePage, context.getInput());
 		} catch (PartInitException e) {
 			PDEPlugin.logException(e);
+		}
+	}
+	
+	protected void removePage(String pageId) {
+		IFormPage page = findPage(pageId);
+		if (page == null)
+			return;
+		if (page.isDirty()) {
+			// need to ask the user about this
+		} else {
+			removePage(page.getIndex());
+			if (!page.isSource())
+				page.dispose();
 		}
 	}
 }

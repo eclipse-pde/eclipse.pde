@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.ui.neweditor;
 
 import java.io.File;
-import java.util.*;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
@@ -20,6 +19,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
+import org.eclipse.pde.internal.ui.neweditor.context.*;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -31,10 +31,10 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
  * Example plug-in is configured to create one instance of
  * form colors that is shared between multiple editor instances.
  */
-public abstract class PDEFormEditor extends FormEditor {
+public abstract class PDEFormEditor extends FormEditor implements IInputContextListener {
 	private Clipboard clipboard;
 	private Menu contextMenu;
-	protected Hashtable inputContexts;
+	protected InputContextManager inputContextManager;
 	private IContentOutlinePage formOutline;
 	private PDEMultiPageContentOutline contentOutline;
 	/**
@@ -42,9 +42,10 @@ public abstract class PDEFormEditor extends FormEditor {
 	 */
 	public PDEFormEditor() {
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
-		inputContexts = new Hashtable();
+		inputContextManager = new InputContextManager();
+		inputContextManager.addInputContextListener(this);
 	}
-	
+
 /**
  * Tests whether this editor has a context with
  * a provided id. The test can be used to check
@@ -54,32 +55,29 @@ public abstract class PDEFormEditor extends FormEditor {
  * present, <code>false</code> otherwise.
  */	
 	public boolean hasInputContext(String contextId) {
-		for (Enumeration enum=inputContexts.elements(); enum.hasMoreElements();) {
-			InputContext context = (InputContext)enum.nextElement();
-			if (contextId.equals(context.getId()))
-				return true;
-		}
-		return false;
+		return inputContextManager.hasContext(contextId);
 	}
-	
-	protected void createInputContexts(Dictionary contexts) {
+	public InputContextManager getContextManager() {
+		return inputContextManager;
+	}
+	protected void createInputContexts(InputContextManager contextManager) {
 		IEditorInput input = getEditorInput();
 		if (input instanceof IFileEditorInput) {
 			// resource - find the project
-			createResourceContexts(contexts, (IFileEditorInput)input);
+			createResourceContexts(contextManager, (IFileEditorInput)input);
 		}
 		else if (input instanceof SystemFileEditorInput) {
 			// system file - find the file system folder
-			createSystemFileContexts(contexts, (SystemFileEditorInput)input);
+			createSystemFileContexts(contextManager, (SystemFileEditorInput)input);
 		}
 		else if (input instanceof IStorageEditorInput) {
-			createStorageContexts(contexts, (IStorageEditorInput)input);
+			createStorageContexts(contextManager, (IStorageEditorInput)input);
 		}
 	}
 	
-	protected abstract void createResourceContexts(Dictionary contexts, IFileEditorInput input);
-	protected abstract void createSystemFileContexts(Dictionary contexts, SystemFileEditorInput input);
-	protected abstract void createStorageContexts(Dictionary contexts, IStorageEditorInput input);
+	protected abstract void createResourceContexts(InputContextManager contexts, IFileEditorInput input);
+	protected abstract void createSystemFileContexts(InputContextManager contexts, SystemFileEditorInput input);
+	protected abstract void createStorageContexts(InputContextManager contexts, IStorageEditorInput input);
 	
 	
 	/*
@@ -106,8 +104,8 @@ public abstract class PDEFormEditor extends FormEditor {
 		manager.addMenuListener(listener);
 		contextMenu = manager.createContextMenu(getContainer());
 		getContainer().setMenu(contextMenu);
-		createInputContexts(inputContexts);		
 		super.createPages();
+		createInputContexts(inputContextManager);			
 		String pageToShow = computeInitialPageId();
 		if (pageToShow!=null)
 				setActivePage(pageToShow);
@@ -148,11 +146,7 @@ public abstract class PDEFormEditor extends FormEditor {
 	 */
 	public void doSave(IProgressMonitor monitor) {
 		commitFormPages(true);
-		for (Enumeration enum=inputContexts.elements(); enum.hasMoreElements();) {
-			InputContext context = (InputContext)enum.nextElement();
-			if (context.mustSave())
-				context.doSave(monitor);
-		}
+		inputContextManager.save(monitor);
 		fireDirtyStateChanged();
 	}
 	public void doRevert() {
@@ -245,12 +239,8 @@ public abstract class PDEFormEditor extends FormEditor {
 			clipboard.dispose();
 			clipboard = null;
 		}
-		// dispose input contexts
-		for (Enumeration enum=inputContexts.elements();enum.hasMoreElements();) {
-			InputContext context = (InputContext)enum.nextElement();
-			context.dispose();
-		}
-		inputContexts = null;
+		inputContextManager.dispose();
+		inputContextManager = null;
 	}
 	
 	public void fireDirtyStateChanged() {
@@ -261,21 +251,16 @@ public abstract class PDEFormEditor extends FormEditor {
 	}
 	
 	public boolean isDirty() {
-		for (Enumeration enum=inputContexts.elements(); enum.hasMoreElements();) {
-			InputContext context = (InputContext)enum.nextElement();
-			if (context.mustSave())
-				return true;
-		}
-		return false;
+		return inputContextManager.isDirty();
 	}
 
 	public void fireSaveNeeded(IEditorInput input) {
 		fireDirtyStateChanged();
 		validateEdit(input);
 	}
-	
+
 	private void validateEdit(IEditorInput input) {
-		InputContext context = (InputContext)inputContexts.get(input);
+		InputContext context = inputContextManager.getContext(input);
 		context.validateEdit();
 	}
 	
