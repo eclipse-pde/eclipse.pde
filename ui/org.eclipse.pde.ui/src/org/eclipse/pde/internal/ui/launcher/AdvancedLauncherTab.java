@@ -515,8 +515,7 @@ public class AdvancedLauncherTab
 			} 
 		}			
 
-		if (fNumWorkspaceChecked == 0)
-			fPluginTreeViewer.setChecked(fWorkspacePlugins, false);
+		fPluginTreeViewer.setChecked(fWorkspacePlugins, fNumWorkspaceChecked > 0);
 		fPluginTreeViewer.setGrayed(
 			fWorkspacePlugins,
 			fNumWorkspaceChecked > 0 && fNumWorkspaceChecked < fWorkspaceModels.length);
