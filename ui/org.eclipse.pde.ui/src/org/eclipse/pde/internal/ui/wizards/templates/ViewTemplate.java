@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.ui.IPluginStructureData;
 
 public class ViewTemplate extends PDETemplateSection {
 	private static final String NL_TITLE0 = "ViewTemplate.title0";
@@ -86,12 +85,11 @@ public class ViewTemplate extends PDETemplateSection {
 		setOptionEnabled("drillDown", false);
 	}
 
-	protected void initializeFields(IPluginStructureData sdata, IFieldData data) {
+	protected void initializeFields(String id) {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
-		String pluginId = sdata.getPluginId();
-		initializeOption(KEY_PACKAGE_NAME, pluginId+".views");
-		initializeOption("viewCategoryId", pluginId);
+		initializeOption(KEY_PACKAGE_NAME, id+".views");
+		initializeOption("viewCategoryId", id);
 	}
 	public void initializeFields(IPluginModelBase model) {
 		// In the new extension wizard, the model exists so 
@@ -208,5 +206,12 @@ public class ViewTemplate extends PDETemplateSection {
 		categoryElement.setAttribute("name", getStringOption("viewCategoryName"));
 		categoryElement.setAttribute("id", id);
 		extension.add(categoryElement);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#getFoldersToInclude()
+	 */
+	public String[] getFoldersToInclude() {
+		return new String[] {"icons/"};
 	}
 }

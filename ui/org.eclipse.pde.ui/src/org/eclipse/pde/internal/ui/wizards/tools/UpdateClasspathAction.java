@@ -25,7 +25,6 @@ import org.eclipse.pde.core.IWorkspaceModelManager;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.ui.ClasspathUtil;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.*;
 
@@ -141,7 +140,7 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 					monitor.worked(1);
 					continue;
 				}
-				ClasspathUtil.setClasspath(
+				ClasspathUtilCore.setClasspath(
 					model,
 					new SubProgressMonitor(monitor, 1));
 				if (monitor.isCanceled())

@@ -37,7 +37,7 @@ public class ClasspathUtilCore {
 		monitor.worked(1);
 
 		// add JRE
-		addJRE(result);
+		result.add(createJREEntry());
 		monitor.worked(1);
 
 		IClasspathEntry[] entries =
@@ -254,10 +254,9 @@ public class ClasspathUtilCore {
 		}
 	}
 	
-	protected static void addJRE(Vector result) {
-		result.add(
-			JavaCore.newContainerEntry(
-				new Path("org.eclipse.jdt.launching.JRE_CONTAINER")));
+	public static IClasspathEntry createJREEntry() {
+		return JavaCore.newContainerEntry(new Path(
+		"org.eclipse.jdt.launching.JRE_CONTAINER"));
 	}
 
 	public static void addLibraries(

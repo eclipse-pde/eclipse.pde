@@ -223,8 +223,6 @@ public class TemplateSelectionPage extends WizardPage {
 	}
 
 	public IWizardPage getNextVisiblePage(IWizardPage page) {
-		if (page instanceof FirstTemplateWizardPage)
-			return this;
 		if (page == this)
 			return page.getNextPage();
 		else {
@@ -235,16 +233,4 @@ public class TemplateSelectionPage extends WizardPage {
 		}
 	}
 
-	public IWizardPage getPreviousVisiblePage(IWizardPage page) {
-		if (page instanceof FirstTemplateWizardPage)
-			return null;
-		if (page == this)
-			return super.getPreviousPage();
-		else {
-			int index = visiblePages.indexOf(page);
-			if (index > 0 && index < visiblePages.size())
-				return (IWizardPage) visiblePages.get(index - 1);
-			return null;
-		}
-	}
 }

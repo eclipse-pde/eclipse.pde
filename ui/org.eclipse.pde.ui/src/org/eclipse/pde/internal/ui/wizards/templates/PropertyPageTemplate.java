@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.ui.IPluginStructureData;
 import org.eclipse.pde.ui.templates.*;
 
 public class PropertyPageTemplate extends PDETemplateSection {
@@ -89,11 +88,10 @@ public class PropertyPageTemplate extends PDETemplateSection {
 		return true;
 	}
 
-	protected void initializeFields(IPluginStructureData sdata, IFieldData data) {
+	protected void initializeFields(String id) {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
-		String pluginId = sdata.getPluginId();
-		initializeOption(KEY_PACKAGE_NAME, pluginId + ".properties");
+		initializeOption(KEY_PACKAGE_NAME, id + ".properties");
 	}
 
 	public void initializeFields(IPluginModelBase model) {
@@ -156,6 +154,16 @@ public class PropertyPageTemplate extends PDETemplateSection {
 	 */
 	public String getUsedExtensionPoint() {
 		return "org.eclipse.ui.propertyPages";
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getDependencies(java.lang.String)
+	 */
+	public IPluginReference[] getDependencies(String schemaVersion) {
+		PluginReference[] refs = new PluginReference[2];
+		refs[0] = new PluginReference("org.eclipse.core.resources", null, 0);
+		refs[1] = new PluginReference("org.eclipse.ui", null, 0);		
+		return refs;
 	}
 
 }

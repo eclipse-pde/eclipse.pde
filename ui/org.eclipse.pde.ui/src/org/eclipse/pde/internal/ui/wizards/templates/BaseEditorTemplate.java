@@ -18,4 +18,11 @@ public abstract class BaseEditorTemplate extends PDETemplateSection {
 	public String getUsedExtensionPoint() {
 		return "org.eclipse.ui.editors";
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.ui.templates.ITemplateSection#getFoldersToInclude()
+	 */
+	public String[] getFoldersToInclude() {
+		return new String[] {"icons/"};
+	}
 }

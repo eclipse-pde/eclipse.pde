@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.ui.*;
 import org.eclipse.pde.ui.templates.*;
 
 public class PreferencePageTemplate extends PDETemplateSection {
@@ -62,12 +61,11 @@ public class PreferencePageTemplate extends PDETemplateSection {
 			0);
 	}
 
-	protected void initializeFields(IPluginStructureData sdata, IFieldData data) {
+	protected void initializeFields(String id) {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
-		String pluginId = sdata.getPluginId();
-		initializeOption(KEY_PACKAGE_NAME, pluginId + ".preferences");
-		mainClassName = data.getClassName();
+		initializeOption(KEY_PACKAGE_NAME, id + ".preferences");
+		mainClassName = id + ".PreferenceClass";
 	}
 	public void initializeFields(IPluginModelBase model) {
 		// In the new extension wizard, the model exists so 

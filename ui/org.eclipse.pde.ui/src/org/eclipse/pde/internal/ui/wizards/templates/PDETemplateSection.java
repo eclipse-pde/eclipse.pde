@@ -25,4 +25,11 @@ public abstract class PDETemplateSection extends OptionTemplateSection {
 	protected URL getInstallURL() {
 		return PDEPlugin.getDefault().getDescriptor().getInstallURL();
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.ui.templates.ITemplateSection#getFoldersToInclude()
+	 */
+	public String[] getFoldersToInclude() {
+		return new String[0];
+	}
 }

@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.internal.ui.wizards.templates.*;
+import org.eclipse.pde.ui.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -98,11 +98,9 @@ public class OptionTemplateWizardPage extends WizardPage {
 	 */
 	public void setVisible(boolean visible) {
 		if (visible && section.isDependentOnFirstPage()) {
-			IWizardPage page1 = getWizard().getStartingPage();
-			if (page1 instanceof IFirstWizardPage) {
-				IFirstWizardPage firstPage = (IFirstWizardPage)page1;
-				IFieldData data = firstPage.createFieldData();
-				section.initializeFields(firstPage.getStructureData(), data);
+			IWizard wizard = getWizard();
+			if (wizard instanceof IPluginContentWizard) {
+				section.initializeFields(((IPluginContentWizard)wizard).getPluginId());
 			}
 		}
 		super.setVisible(visible);

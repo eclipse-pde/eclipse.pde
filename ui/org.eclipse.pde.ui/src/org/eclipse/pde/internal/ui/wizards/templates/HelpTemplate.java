@@ -253,5 +253,12 @@ public class HelpTemplate extends PDETemplateSection {
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		return new IPluginReference[] {new PluginReference("org.eclipse.help", null, 0)};
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#getFoldersToInclude()
+	 */
+	public String[] getFoldersToInclude() {
+		return new String[] {"html/", "*.xml"};
+	}
 
 }

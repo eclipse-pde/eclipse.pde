@@ -14,7 +14,6 @@ import java.util.Hashtable;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.ui.IPluginStructureData;
 
 /**
  * This class adds a notion of options to the default
@@ -256,10 +255,8 @@ public abstract class BaseOptionTemplateSection
 	 * <p>The method is called before the actual plug-in has
 	 * been built.
 	 * </p>
-	 * @param sdata plug-in structure data as defined in the common plug-in project
+	 * @param data plug-in structure data as defined in the common plug-in project
 	 * wizard pages
-	 * @param data initial plug-in data as defined in the mandatory first
-	 * wizard page (e.g. plug-in Id, plug-in name, provider etc.).
 	 * <p>
 	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
 	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
@@ -267,9 +264,7 @@ public abstract class BaseOptionTemplateSection
 	 * (repeatedly) as the API evolves.
 	 * </p>
 	 */
-	protected void initializeFields(
-		IPluginStructureData sdata,
-		IFieldData data) {
+	protected void initializeFields(String pluginId) {
 	}
 	/**
 	 * Initializes options in the wizard page using the data provided

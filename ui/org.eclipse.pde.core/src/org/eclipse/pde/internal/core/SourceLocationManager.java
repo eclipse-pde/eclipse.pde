@@ -170,11 +170,9 @@ public class SourceLocationManager implements ICoreConstants {
 	}
 
 	private void processExtensions(ModelEntry entry, boolean useExternal) {
-		IPluginModelBase model = null;
-		if (useExternal) 
-			model = entry.getExternalModel();
+		IPluginModelBase model = useExternal ? entry.getExternalModel() : entry.getActiveModel();		
 		if (model == null)
-			model = entry.getActiveModel();
+			return;
 		
 		IPluginExtension[] extensions = model.getPluginBase().getExtensions();
 		for (int j = 0; j < extensions.length; j++) {

@@ -166,9 +166,10 @@ public class Fragment extends PluginBase implements IFragment {
 
 		// add runtime
 		Object[] children = getLibraries();
-		writeChildren(firstIndent, "runtime", children, writer);
-		// add extension points
-		writer.println();
+		if (children.length > 0) {
+			writeChildren(firstIndent, "runtime", children, writer);
+			writer.println();
+		}
 
 		// add requires
 		children = getImports();
@@ -179,14 +180,15 @@ public class Fragment extends PluginBase implements IFragment {
 		}
 
 		children = getExtensionPoints();
-		for (int i = 0; i < children.length; i++) {
-			((IPluginExtensionPoint) children[i]).write(firstIndent, writer);
+		if (children.length > 0) {
+			for (int i = 0; i < children.length; i++) {
+				((IPluginExtensionPoint) children[i]).write(firstIndent, writer);
+			}
+			writer.println();
 		}
-		writer.println();
 
 		// add extensions
 		children = getExtensions();
-
 		for (int i = 0; i < children.length; i++) {
 			((IPluginExtension) children[i]).write(firstIndent, writer);
 		}

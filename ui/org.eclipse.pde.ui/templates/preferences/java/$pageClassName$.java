@@ -36,7 +36,7 @@ public class $pageClassName$
 %if hasDefault
 		setPreferenceStore($pluginClassName$.getDefault().getPreferenceStore());
 %else
-		setPreferenceStore($pluginClassName$.getDefaultPreferenceStore());
+		setPreferenceStore($pluginClassName$.getDefault().getPreferenceStore());
 %endif
 		setDescription("A demonstration of a preference page implementation");
 		initializeDefaults();

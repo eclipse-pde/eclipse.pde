@@ -74,7 +74,7 @@ public abstract class NewPluginTemplateWizard
 	 * (repeatedly) as the API evolves.
 	 * </p>
 	 */
-	protected final ITemplateSection[] getTemplateSections() {
+	public final ITemplateSection[] getTemplateSections() {
 		return sections;
 	}
 

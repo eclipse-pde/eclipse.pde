@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.ui;
 
-import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.pde.ui.templates.*;
 
 
 
@@ -40,10 +40,6 @@ public interface IPluginContentWizard extends IBasePluginWizard {
 	 * required plug-in folder structure and create
 	 * initial files.
 	 *
-	 * @param provider the object to ask for the project
-	 * @param structureData provides data about initial plug-in structure
-	 * @param fragment true if the new project will host a fragment
-	 * @param config the registry element used to create the parent wizard
 	 * <p>
 	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
 	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
@@ -51,9 +47,9 @@ public interface IPluginContentWizard extends IBasePluginWizard {
 	 * (repeatedly) as the API evolves.
 	 * </p>
 	 */
-	void init(
-		IProjectProvider provider,
-		IPluginStructureData structureData,
-		boolean fragment,
-		IConfigurationElement config);
+	void init(String id);
+	
+	String getPluginId();
+	
+	ITemplateSection[] getTemplateSections();
 }

@@ -31,7 +31,6 @@ public class PluginsContentProvider
 		this.manager = manager;
 		manager.addPluginModelListener(this);
 		this.view = view;
-		javaProvider = new StandardJavaElementContentProvider(false, false);
 	}
 
 	public void dispose() {

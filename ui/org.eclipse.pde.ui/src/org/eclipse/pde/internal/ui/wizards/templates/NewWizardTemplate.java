@@ -18,7 +18,6 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.ui.IPluginStructureData;
 
 public class NewWizardTemplate extends PDETemplateSection {
 	private static final String KEY_TITLE = "NewWizardTemplate.title";
@@ -60,12 +59,11 @@ public class NewWizardTemplate extends PDETemplateSection {
 		addOption("initialFileName", PDEPlugin.getResourceString(KEY_FILE_LABEL), "new_file.mpe", 0);
 	}
 
-	protected void initializeFields(IPluginStructureData sdata, IFieldData data) {
+	protected void initializeFields(String id) {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
-		String pluginId = sdata.getPluginId();
-		initializeOption(KEY_PACKAGE_NAME, pluginId+".wizards");
-		initializeOption("categoryId", pluginId);
+		initializeOption(KEY_PACKAGE_NAME, id+".wizards");
+		initializeOption("categoryId", id);
 	}
 	public void initializeFields(IPluginModelBase model) {
 		// In the new extension wizard, the model exists so 
@@ -159,5 +157,12 @@ public class NewWizardTemplate extends PDETemplateSection {
 		categoryElement.setAttribute("name", getStringOption("categoryName"));
 		categoryElement.setAttribute("id", id);
 		extension.add(categoryElement);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#getFoldersToInclude()
+	 */
+	public String[] getFoldersToInclude() {
+		return new String[] {"icons/"};
 	}
 }

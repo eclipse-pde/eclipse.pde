@@ -110,7 +110,8 @@ public class Plugin extends PluginBase implements IPlugin {
 
 		// add runtime
 		Object[] children = getLibraries();
-		writeChildren(firstIndent, "runtime", children, writer);
+		if (children.length > 0)
+			writeChildren(firstIndent, "runtime", children, writer);
 
 		// add requires
 		children = getImports();

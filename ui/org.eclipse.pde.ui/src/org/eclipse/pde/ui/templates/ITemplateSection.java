@@ -232,4 +232,6 @@ public interface ITemplateSection {
 		IPluginModelBase model,
 		IProgressMonitor monitor)
 		throws CoreException;
+	
+	public String[] getFoldersToInclude();
 }

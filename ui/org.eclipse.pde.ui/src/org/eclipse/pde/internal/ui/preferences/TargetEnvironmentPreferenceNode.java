@@ -1,40 +1,45 @@
-/*
- * Created on Aug 23, 2003
- *
- * To change the template for this generated file go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
- */
-package org.eclipse.pde.internal.ui.wizards.exports;
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.pde.internal.ui.preferences;
 
-import org.eclipse.jface.preference.*;
+import org.eclipse.jface.preference.IPreferenceNode;
+import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.preferences.BuildOptionsPreferencePage;
 import org.eclipse.swt.graphics.Image;
 
 /**
- * @author melhem
+ * @author dejan
  *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ * To change this generated comment edit the template variable "typecomment":
+ * Window>Preferences>Java>Templates.
+ * To enable and disable the creation of type comments go to
+ * Window>Preferences>Java>Code Generation.
  */
-public class BuildOptionsPreferenceNode implements IPreferenceNode {
+public class TargetEnvironmentPreferenceNode implements IPreferenceNode {
+	TargetEnvironmentPreferencePage page;
 
-	private BuildOptionsPreferencePage page;
-	
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.jface.preference.IPreferenceNode#add(org.eclipse.jface.preference.IPreferenceNode)
 	 */
 	public void add(IPreferenceNode node) {
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.jface.preference.IPreferenceNode#createPage()
 	 */
 	public void createPage() {
-		page = new BuildOptionsPreferencePage();
+		page = new TargetEnvironmentPreferencePage();
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.jface.preference.IPreferenceNode#disposeResources()
 	 */
 	public void disposeResources() {
@@ -42,60 +47,59 @@ public class BuildOptionsPreferenceNode implements IPreferenceNode {
 		page = null;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.jface.preference.IPreferenceNode#findSubNode(java.lang.String)
 	 */
 	public IPreferenceNode findSubNode(String id) {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.jface.preference.IPreferenceNode#getId()
 	 */
 	public String getId() {
-		return "org.eclipse.pde.ui.buildOptionsPreferencePage";
+		return "org.eclipse.pde.ui.TargetEnvironmentPreferencePage";
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.jface.preference.IPreferenceNode#getLabelImage()
 	 */
 	public Image getLabelImage() {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.jface.preference.IPreferenceNode#getLabelText()
 	 */
 	public String getLabelText() {
-		return PDEPlugin.getDefault().getDescriptor().getResourceString("%preferences.buildOptions.name");
+		return PDEPlugin.getDefault().getDescriptor().getResourceString("%preferences.targetEnv.name");
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.jface.preference.IPreferenceNode#getPage()
 	 */
 	public IPreferencePage getPage() {
 		return page;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.jface.preference.IPreferenceNode#getSubNodes()
 	 */
 	public IPreferenceNode[] getSubNodes() {
-		return new IPreferenceNode[0];
+		return new IPreferenceNode [0];
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.jface.preference.IPreferenceNode#remove(java.lang.String)
 	 */
 	public IPreferenceNode remove(String id) {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.jface.preference.IPreferenceNode#remove(org.eclipse.jface.preference.IPreferenceNode)
 	 */
 	public boolean remove(IPreferenceNode node) {
 		return false;
 	}
-
 }

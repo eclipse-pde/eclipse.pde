@@ -37,8 +37,6 @@ public class NewPluginTemplateChoiceWizard
 		return selectionPage.getNextVisiblePage(page);
 	}
 	public IWizardPage getPreviousPage(IWizardPage page) {
-		if (selectionPage == null)
-			return null;
-		return selectionPage.getPreviousVisiblePage(page);
+		return null;
 	}
 }

@@ -181,30 +181,6 @@
             %new.site.description
          </description>
       </wizard>
-      <wizard
-            name="%new.bundleProject.name"
-            icon="icons/ctool16/newbprj_wiz.gif"
-            category="org.eclipse.pde.PDE"
-            class="org.eclipse.pde.internal.ui.osgi.wizards.project.NewBundleProjectWizard"
-            project="true"
-            finalPerspective="org.eclipse.pde.ui.PDEPerspective"
-            id="org.eclipse.pde.ui.NewBundleProjectWizard">
-         <description>
-            %new.bundleProject.description
-         </description>
-      </wizard>
-      <wizard
-            name="%new.bundleFragmentProject.name"
-            icon="icons/ctool16/newbfprj_wiz.gif"
-            category="org.eclipse.pde.PDE"
-            class="org.eclipse.pde.internal.ui.osgi.wizards.project.NewBundleFragmentProjectWizard"
-            project="true"
-            finalPerspective="org.eclipse.pde.ui.PDEPerspective"
-            id="org.eclipse.pde.ui.NewBundleFragmentWizard">
-         <description>
-            %new.bundleFragmentProject.description
-         </description>
-      </wizard>
    </extension>
    <extension
          id="selfhosting.import"
@@ -269,35 +245,6 @@
    </extension>
    <extension
          point="org.eclipse.pde.ui.projectGenerators">
-      <wizard
-            name="%projectGenerators.defaultPlugin.name"
-            icon="icons/ctool16/defcon_wiz.gif"
-            class="org.eclipse.pde.internal.ui.wizards.templates.DefaultPluginTemplateWizard"
-            id="org.eclipse.pde.ui.projectGenerators.default">
-         <description>
-            %projectGenerators.defaultPlugin.description
-         </description>
-      </wizard>
-      <wizard
-            name="%projectGenerators.defaultFragment.name"
-            icon="icons/ctool16/defcon_wiz.gif"
-            category="fragment"
-            class="org.eclipse.pde.internal.ui.wizards.templates.DefaultPluginTemplateWizard"
-            id="org.eclipse.pde.ui.projectGenerators.defaultFragment">
-         <description>
-            %projectGenerators.defaultFragment.description
-         </description>
-      </wizard>
-      <wizard
-            name="%projectGenerators.helloWorldBundle.name"
-            icon="icons/ctool16/newbexprj_wiz.gif"
-            category="bundle"
-            class="org.eclipse.pde.internal.ui.osgi.templates.HelloWorldNewBundleWizard"
-            id="org.eclipse.pde.ui.projectGenerators.helloWorldBundle">
-         <description>
-            %projectGenerators.helloWorldBundle.description
-         </description>
-      </wizard>
       <wizard
             name="%projectGenerators.helloWorld.name"
             icon="icons/ctool16/newexprj_wiz.gif"
@@ -368,36 +315,6 @@
             id="org.eclipse.pde.ui.projectGenerators.editor">
          <description>
             %projectGenerators.editor.description
-         </description>
-      </wizard>
-      <wizard
-            name="%projectGenerators.defaultBundle.name"
-            icon="icons/ctool16/defbcon_wiz.gif"
-            category="bundle"
-            class="org.eclipse.pde.internal.ui.osgi.templates.DefaultBundleTemplateWizard"
-            id="org.eclipse.pde.ui.projectGenerators.defaultBundle">
-         <description>
-            %projectGenerators.defaultBundle.description
-         </description>
-      </wizard>
-      <wizard
-            name="%projectGenerators.defaultBundleFragment.name"
-            icon="icons/ctool16/defbcon_wiz.gif"
-            category="bundleFragment"
-            class="org.eclipse.pde.internal.ui.osgi.templates.DefaultBundleTemplateWizard"
-            id="org.eclipse.pde.ui.projectGenerators.defaultBundleFragment">
-         <description>
-            %projectGenerators.defaultBundleFragment.description
-         </description>
-      </wizard>
-      <wizard
-            name="%projectGenerators.bundleChoice.name"
-            icon="icons/ctool16/script_wiz.gif"
-            category="bundle"
-            class="org.eclipse.pde.internal.ui.osgi.templates.NewBundleTemplateChoiceWizard"
-            id="org.eclipse.pde.ui.projectGenerators.bundleChoice">
-         <description>
-            %projectGenerators.bundleChoice.description
          </description>
       </wizard>
    </extension>

@@ -18,7 +18,6 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.ui.IPluginStructureData;
 
 public class EditorTemplate extends BaseEditorTemplate {
 	public static final String EDITOR_CLASS_NAME = "editorClass";
@@ -98,11 +97,10 @@ public class EditorTemplate extends BaseEditorTemplate {
 		return super.getNumberOfWorkUnits() + 1;
 	}
 
-	protected void initializeFields(IPluginStructureData sdata, IFieldData data) {
+	protected void initializeFields(String id) {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
-		String pluginId = sdata.getPluginId();
-		initializeOption(KEY_PACKAGE_NAME, pluginId + ".editors");
+		initializeOption(KEY_PACKAGE_NAME, id + ".editors");
 	}
 	public void initializeFields(IPluginModelBase model) {
 		// In the new extension wizard, the model exists so 

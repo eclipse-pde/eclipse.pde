@@ -102,6 +102,7 @@ public class PluginToBundleAction implements IWorkbenchWindowActionDelegate {
 				.getWorkspaceModelManager();
 		return (IPluginModelBase) manager.getWorkspaceModel(project);
 	}
+	
 	public static void doConvertPluginsToBundles(IProgressMonitor monitor,
 			IPluginModelBase[] models) throws CoreException {
 		monitor.beginTask(PDEPlugin
@@ -111,8 +112,10 @@ public class PluginToBundleAction implements IWorkbenchWindowActionDelegate {
 			for (int i = 0; i < models.length; i++) {
 				monitor.subTask(models[i].getPluginBase().getId());
 				IProject project = models[i].getUnderlyingResource().getProject();
-				createBundleManifest(project);
-				project.refreshLocal(IResource.DEPTH_INFINITE, null);
+				if (models[i] instanceof IFragmentModel)
+					createBundleManifest(project, "fragment.xml");
+				else
+					createBundleManifest(project, "plugin.xml");
 				monitor.worked(1);
 				if (monitor.isCanceled())
 					break;
@@ -122,17 +125,18 @@ public class PluginToBundleAction implements IWorkbenchWindowActionDelegate {
 		}
 	}
 
-	private static void createBundleManifest(IProject project)
+	public static void createBundleManifest(IProject project, String filename)
 			throws CoreException {
 		File outputFile = new File(project.getLocation().append(
 				"META-INF/MANIFEST.MF").toOSString());
-		File inputFile = new File(project.getLocation().append("plugin.xml")
+		File inputFile = new File(project.getLocation().append(filename)
 				.toOSString());
 		ServiceTracker tracker = new ServiceTracker(PDEPlugin.getDefault()
 				.getBundleContext(), PluginConverter.class.getName(), null);
 		tracker.open();
 		PluginConverter converter = (PluginConverter) tracker.getService();
 		converter.convertManifest(inputFile, outputFile);
+		project.refreshLocal(IResource.DEPTH_INFINITE, null);
 	}
 	/*
 	 * @see IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)

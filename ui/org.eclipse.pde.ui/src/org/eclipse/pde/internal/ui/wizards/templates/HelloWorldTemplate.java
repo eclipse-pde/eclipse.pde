@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.ui.IPluginStructureData;
 
 public class HelloWorldTemplate extends PDETemplateSection {
 	public static final String KEY_CLASS_NAME = "className";
@@ -106,11 +105,10 @@ public class HelloWorldTemplate extends PDETemplateSection {
 		return true;
 	}
 
-	protected void initializeFields(IPluginStructureData sdata, IFieldData data) {
+	protected void initializeFields(String id) {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
-		String pluginId = sdata.getPluginId();
-		initializeOption(KEY_PACKAGE_NAME, pluginId + ".actions");
+		initializeOption(KEY_PACKAGE_NAME, id + ".actions");
 	}
 	public void initializeFields(IPluginModelBase model) {
 		// In the new extension wizard, the model exists so 
@@ -160,8 +158,13 @@ public class HelloWorldTemplate extends PDETemplateSection {
 		setElement.add(actionElement);
 		extension.add(setElement);
 		if (!extension.isInTheModel())
-			plugin.add(extension);
-		
-			
+			plugin.add(extension);			
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.ui.templates.ITemplateSection#getFoldersToInclude()
+	 */
+	public String[] getFoldersToInclude() {
+		return new String[] {"icons/"};
 	}
 }

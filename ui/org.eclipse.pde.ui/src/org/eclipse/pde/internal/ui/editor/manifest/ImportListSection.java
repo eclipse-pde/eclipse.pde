@@ -30,7 +30,6 @@ import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.pde.internal.ui.search.PluginSearchActionGroup;
 import org.eclipse.pde.internal.ui.search.UnusedDependenciesAction;
 import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.pde.ui.ClasspathUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.widgets.Composite;
@@ -382,7 +381,7 @@ public class ImportListSection
 					if (save && getFormPage().getEditor().isDirty()) {
 						getFormPage().getEditor().doSave(monitor);
 					}
-					ClasspathUtil.setClasspath(model, monitor);
+					ClasspathUtilCore.setClasspath(model, monitor);
 					monitor.worked(1);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);

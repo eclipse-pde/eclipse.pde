@@ -12,7 +12,6 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.*;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.swt.SWT;
 % if viewType == "treeViewer"
 import org.eclipse.core.runtime.IAdaptable;
@@ -253,7 +252,7 @@ public class $className$ extends ViewPart {
 %if sorter
 		viewer.setSorter(new NameSorter());
 %endif
-		viewer.setInput(ResourcesPlugin.getWorkspace());
+		viewer.setInput(getViewSite());
 %if (localToolbar || localPulldown || popup)
 		makeActions();
 %endif

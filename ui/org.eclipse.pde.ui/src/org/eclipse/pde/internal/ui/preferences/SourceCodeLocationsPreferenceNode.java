@@ -8,12 +8,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.wizards.imports;
+package org.eclipse.pde.internal.ui.preferences;
 
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.preferences.TargetPlatformPreferencePage;
 import org.eclipse.swt.graphics.Image;
 
 /**
@@ -24,8 +23,8 @@ import org.eclipse.swt.graphics.Image;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public class TargetPlatformPreferenceNode implements IPreferenceNode {
-	TargetPlatformPreferencePage page;
+public class SourceCodeLocationsPreferenceNode implements IPreferenceNode {
+	SourcePreferencePage page;
 
 	/**
 	 * @see org.eclipse.jface.preference.IPreferenceNode#add(org.eclipse.jface.preference.IPreferenceNode)
@@ -37,7 +36,7 @@ public class TargetPlatformPreferenceNode implements IPreferenceNode {
 	 * @see org.eclipse.jface.preference.IPreferenceNode#createPage()
 	 */
 	public void createPage() {
-		page = new TargetPlatformPreferencePage();
+		page = new SourcePreferencePage();
 	}
 
 	/**
@@ -59,7 +58,7 @@ public class TargetPlatformPreferenceNode implements IPreferenceNode {
 	 * @see org.eclipse.jface.preference.IPreferenceNode#getId()
 	 */
 	public String getId() {
-		return "org.eclipse.pde.ui.TargetPlatformPreferencePage";
+		return "org.eclipse.pde.ui.SourcePreferencePage";
 	}
 
 	/**
@@ -73,7 +72,7 @@ public class TargetPlatformPreferenceNode implements IPreferenceNode {
 	 * @see org.eclipse.jface.preference.IPreferenceNode#getLabelText()
 	 */
 	public String getLabelText() {
-		return PDEPlugin.getDefault().getDescriptor().getResourceString("%preferences.target.name");
+		return PDEPlugin.getDefault().getDescriptor().getResourceString("%preferences.source.name");
 	}
 
 	/**

@@ -35,6 +35,14 @@ public interface IBuildEntry extends IWritable {
 	public static final String P_NAME = "name";
 
 	public static final String JAR_PREFIX = "source.";
+	
+	public static final String OUTPUT_PREFIX = "output.";
+	
+	public static final String BIN_INCLUDES = "bin.includes";
+	
+	public static final String SRC_INCLUDES = "src.includes";
+	
+	public static final String JARS_EXTRA_CLASSPATH = "jars.extra.classpath";
 	/**
 	 * Adds the token to the list of token for this entry.
 	 * This method will throw a CoreException if

@@ -1,103 +1,109 @@
-/*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
+
+import java.lang.reflect.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.pde.ui.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.ui.dialogs.*;
+import org.eclipse.ui.wizards.newresource.*;
 
-public class NewPluginProjectWizard
-	extends NewWizard
-	implements IExecutableExtension {
-
-	private WizardNewProjectCreationPage mainPage;
-	private ProjectStructurePage structurePage;
-	private ProjectCodeGeneratorsPage codegenPage;
-	private FragmentContentPage fragmentTemplatePage;
-	private IConfigurationElement config;
-
+/**
+ * @author melhem
+ *
+ */
+public class NewPluginProjectWizard extends NewWizard implements IExecutableExtension {
 	public static final String PLUGIN_POINT = "projectGenerators";
-	public static final String TAG_DESCRIPTION = "description";
-	public static final String KEY_TITLE = "NewProjectWizard.MainPage.title";
-	public static final String KEY_FTITLE = "NewProjectWizard.MainPage.ftitle";
-	public static final String KEY_DESC = "NewProjectWizard.MainPage.desc";
-	public static final String KEY_FDESC = "NewProjectWizard.MainPage.fdesc";
 	public static final String TAG_WIZARD = "wizard";
-	public static final String ATT_CATEGORY = "category";
-	public static final String KEY_CODEGEN_MESSAGE =
-		"NewProjectWizard.ProjectCodeGeneratorsPage.message";
-	private static final String KEY_WTITLE = "NewProjectWizard.title";
+
+	private IConfigurationElement fConfig;
+	private PluginFieldData fPluginData;
+	private IProjectProvider fProjectProvider;
+	private WizardNewProjectCreationPage fMainPage;
+	private ProjectStructurePage fStructurePage;
+	private ContentPage fContentPage;
+	private WizardListSelectionPage fWizardListPage;
 
 	public NewPluginProjectWizard() {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWPPRJ_WIZ);
 		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
-		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
+		setWindowTitle(PDEPlugin.getResourceString("NewProjectWizard.title"));
 		setNeedsProgressMonitor(true);
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
-
+		fPluginData = new PluginFieldData();
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.Wizard#addPages()
+	 */
 	public void addPages() {
-		super.addPages();
-		mainPage = new WizardNewProjectCreationPage("main");
-		if (isFragmentWizard()) {
-			mainPage.setTitle(PDEPlugin.getResourceString(KEY_FTITLE));
-			mainPage.setDescription(PDEPlugin.getResourceString(KEY_FDESC));
-		} else {
-			mainPage.setTitle(PDEPlugin.getResourceString(KEY_TITLE));
-			mainPage.setDescription(PDEPlugin.getResourceString(KEY_DESC));
-		}
-		addPage(mainPage);
-
-		IProjectProvider provider = new IProjectProvider() {
+		fMainPage = new WizardNewProjectCreationPage("main");
+		fMainPage.setTitle(PDEPlugin.getResourceString("NewProjectWizard.MainPage.title"));
+		fMainPage.setDescription(PDEPlugin.getResourceString("NewProjectWizard.MainPage.desc"));
+		addPage(fMainPage);
+		
+		fProjectProvider = new IProjectProvider() {
 			public String getProjectName() {
-				return mainPage.getProjectName();
+				return fMainPage.getProjectName();
 			}
 			public IProject getProject() {
-				return mainPage.getProjectHandle();
+				return fMainPage.getProjectHandle();
 			}
 			public IPath getLocationPath() {
-				return mainPage.getLocationPath();
+				return fMainPage.getLocationPath();
 			}
 		};
-
-		structurePage = new ProjectStructurePage(provider, isFragmentWizard());
-		addPage(structurePage);
-		if (!isFragmentWizard()){
-			codegenPage =
-				new ProjectCodeGeneratorsPage(
-					provider,
-					structurePage,
-					getAvailableCodegenWizards(),
-					PDEPlugin.getResourceString(KEY_CODEGEN_MESSAGE),
-					config);
-			addPage(codegenPage);
-		} else {
-			fragmentTemplatePage = new FragmentContentPage(provider, structurePage);
-			addPage(fragmentTemplatePage);
-		}
+		
+		fStructurePage = new ProjectStructurePage("page1", fProjectProvider, false);
+		fContentPage = new ContentPage("page2", fProjectProvider, fStructurePage, false);
+		fWizardListPage = new WizardListSelectionPage(getAvailableCodegenWizards(), fContentPage, PDEPlugin.getResourceString("WizardListSelectionPage.templates"));
+		addPage(fStructurePage);
+		addPage(fContentPage);
+		addPage(fWizardListPage);
 	}
-	public boolean canFinish() {
-		IWizardPage page = getContainer().getCurrentPage();
-		if (page == mainPage)
-			return false;
-		if (page == structurePage && page.getNextPage() == null && page.isPageComplete())
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ui.wizards.NewWizard#performFinish()
+	 */
+	public boolean performFinish() {
+		fStructurePage.finish(fPluginData);
+		fContentPage.finish(fPluginData);
+		fWizardListPage.finish(fPluginData);
+		try {
+			getContainer().run(false, true,
+					new NewProjectCreationOperation(fPluginData, fProjectProvider));
+			BasicNewProjectResourceWizard.updatePerspective(fConfig);
+			revealSelection(fMainPage.getProjectHandle());
 			return true;
-		return super.canFinish();
+		} catch (InvocationTargetException e) {
+			PDEPlugin.logException(e);
+		} catch (InterruptedException e) {
+		}
+		return false;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.Wizard#dispose()
+	 */
+	public void dispose() {
+		super.dispose();
+		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
+	 */
+	public void setInitializationData(IConfigurationElement config,
+			String propertyName, Object data) throws CoreException {
+		fConfig = config;
+	}
+	
 	protected WizardElement createWizardElement(IConfigurationElement config) {
 		String name = config.getAttribute(WizardElement.ATT_NAME);
 		String id = config.getAttribute(WizardElement.ATT_ID);
@@ -117,10 +123,6 @@ public class NewPluginProjectWizard
 		}
 		return element;
 	}
-	public void dispose() {
-		super.dispose();
-		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
-	}
 
 	public ElementList getAvailableCodegenWizards() {
 		ElementList wizards = new ElementList("CodegenWizards");
@@ -136,43 +138,13 @@ public class NewPluginProjectWizard
 			for (int j = 0; j < elements.length; j++) {
 				if (elements[j].getName().equals(TAG_WIZARD)) {
 					WizardElement element = createWizardElement(elements[j]);
-
 					if (element != null) {
-						String categoryAtt =
-							element.getConfigurationElement().getAttribute(
-								ATT_CATEGORY);
-						boolean fragmentWizard = categoryAtt!=null && categoryAtt.equalsIgnoreCase("fragment");
-						if (!fragmentWizard && categoryAtt!=null) continue;
-						if (fragmentWizard == isFragmentWizard()) {
-							wizards.add(element);
-						}
+						wizards.add(element);
 					}
 				}
 			}
 		}
 		return wizards;
-	}
-	public boolean isFragmentWizard() {
-		return false;
-	}
-	public boolean performFinish() {
-		if (structurePage.finish()) {
-			boolean hasCodegen = structurePage.getNextPage()!=null;
-			
-			if (!hasCodegen || (codegenPage != null && codegenPage.finish()) || (fragmentTemplatePage !=null && fragmentTemplatePage.finish())) {
-				revealSelection(mainPage.getProjectHandle()); 
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public void setInitializationData(
-		IConfigurationElement config,
-		String propertyName,
-		Object data)
-		throws CoreException {
-		this.config = config;
 	}
 
 }
