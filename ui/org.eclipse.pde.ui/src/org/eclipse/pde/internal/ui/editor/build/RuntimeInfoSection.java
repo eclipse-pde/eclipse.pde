@@ -40,6 +40,7 @@ import org.eclipse.ui.actions.*;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.model.*;
+import org.eclipse.core.runtime.Path;
 
 public class RuntimeInfoSection extends PDESection
 implements

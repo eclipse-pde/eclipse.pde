@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.help.*;
 import org.eclipse.ui.model.*;
+import org.eclipse.core.runtime.Path;
 
 public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSettings {
 	private Button fClearConfig;
