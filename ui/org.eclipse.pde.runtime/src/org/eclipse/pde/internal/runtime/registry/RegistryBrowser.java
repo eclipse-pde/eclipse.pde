@@ -85,6 +85,7 @@ public class RegistryBrowser extends ViewPart
 		setSashForm(fSashForm);
 		createTreeViewer();
 		createAttributesViewer();
+		treeViewer.refresh();
 	}
 	private void createTreeViewer() {
 		Tree tree = new Tree(getSashForm(), SWT.FLAT);
