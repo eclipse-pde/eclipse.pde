@@ -41,6 +41,7 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 		IProgressMonitor monitor)
 		throws CoreException {
 		try {
+			fConfigDir = null;
 			monitor.beginTask("", 3); //$NON-NLS-1$
 			
 			IVMInstall launcher = LauncherUtils.createLauncher(configuration);

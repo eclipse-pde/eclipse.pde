@@ -42,6 +42,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		IProgressMonitor monitor)
 		throws CoreException {
 		try {
+			fConfigDir = null;
 			monitor.beginTask("", 4); //$NON-NLS-1$
 			IJavaProject javaProject = getJavaProject(configuration);
 			if ((javaProject == null) || !javaProject.exists()) {
