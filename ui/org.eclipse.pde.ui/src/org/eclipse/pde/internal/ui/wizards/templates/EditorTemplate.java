@@ -18,15 +18,12 @@ import org.eclipse.pde.ui.IPluginStructureData;
 
 public class EditorTemplate extends PDETemplateSection {
 	public static final String EDITOR_CLASS_NAME = "editorClass";
-	public static final String CONTRIBUTOR_CLASS = "contributorClass";
 	public static final String EDITOR_NAME = "editorName";
 	public static final String EXTENSIONS = "extensions";
 	private static final String KEY_TITLE = "EditorTemplate.title";
 	private static final String KEY_DESC = "EditorTemplate.desc";
 	private static final String KEY_PACKAGE_LABEL = "EditorTemplate.packageName";
 	private static final String KEY_CLASS_LABEL = "EditorTemplate.editorClass";
-	private static final String KEY_CONTRIBUTOR_LABEL =
-		"EditorTemplate.contributorClass";
 	private static final String KEY_EDITOR_LABEL = "EditorTemplate.editorName";
 	private static final String KEY_EXTENSION_LABEL =
 		"EditorTemplate.fileExtension";
@@ -60,11 +57,6 @@ public class EditorTemplate extends PDETemplateSection {
 			EDITOR_CLASS_NAME,
 			PDEPlugin.getResourceString(KEY_CLASS_LABEL),
 			"XMLEditor",
-			0);
-		addOption(
-			CONTRIBUTOR_CLASS,
-			PDEPlugin.getResourceString(KEY_CONTRIBUTOR_LABEL),
-			"XMLEditorContributor",
 			0);
 		addOption(
 			EDITOR_NAME,
@@ -151,7 +143,7 @@ public class EditorTemplate extends PDETemplateSection {
 			getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(EDITOR_CLASS_NAME));
 		editorElement.setAttribute(
 			"contributorClass",
-			getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(CONTRIBUTOR_CLASS));
+			"org.eclipse.ui.texteditor.BasicTextEditorActionContributor");
 		extension.add(editorElement);
 		if (!extension.isInTheModel())
 			plugin.add(extension);

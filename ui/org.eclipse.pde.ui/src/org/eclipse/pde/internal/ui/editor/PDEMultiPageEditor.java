@@ -145,6 +145,7 @@ public abstract class PDEMultiPageEditor
 		manager.setRemoveAllWhenShown(true);
 		manager.addMenuListener(listener);
 		contextMenu = manager.createContextMenu(formWorkbook.getControl());
+		formWorkbook.getControl().setMenu(contextMenu);
 
 		for (Iterator iter = pages.iterator(); iter.hasNext();) {
 			IFormPage page = (IFormPage) iter.next();
@@ -230,7 +231,7 @@ public abstract class PDEMultiPageEditor
 		}
 		return contentOutline;
 	}
-	public org.eclipse.swt.widgets.Menu getContextMenu() {
+	public Menu getContextMenu() {
 		return contextMenu;
 	}
 	public PDEEditorContributor getContributor() {
