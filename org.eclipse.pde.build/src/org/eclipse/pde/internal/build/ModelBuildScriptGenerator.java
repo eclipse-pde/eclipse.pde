@@ -204,7 +204,7 @@ protected void generateZipPluginTarget(AntScript script, PluginModel model) thro
 	script.printAntCallTask(tab, TARGET_GATHER_SOURCES, null, params);
 	FileSet fileSet = new FileSet(TEMP_FOLDER, null, "**/*.bin.log", null, null, null, null); //$NON-NLS-1$
 	script.printDeleteTask(tab, null, null, new FileSet[] {fileSet});
-	script.printZipTask(tab, PLUGIN_ZIP_DESTINATION, TEMP_FOLDER, false, null);
+	script.printZipTask(tab, PLUGIN_ZIP_DESTINATION, TEMP_FOLDER, true, null);
 	script.printDeleteTask(tab, TEMP_FOLDER, null, null);
 	script.printString(--tab, "</target>"); //$NON-NLS-1$
 }
