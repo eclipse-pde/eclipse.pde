@@ -64,6 +64,7 @@ public class ModelDataTransfer extends ByteArrayTransfer {
 		}
 		Object[] objects = (Object[]) data;
 		int count = objects.length;
+		
 		try {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			ObjectOutputStream objectOut = new ObjectOutputStream(out);
@@ -85,6 +86,7 @@ public class ModelDataTransfer extends ByteArrayTransfer {
 			//it's best to send nothing if there were problems
 			System.out.println(e);
 		}
+			
 	}
 	/* (non-Javadoc)
 	 * Method declared on Transfer.
@@ -101,6 +103,7 @@ public class ModelDataTransfer extends ByteArrayTransfer {
 			for (int i = 0; i < count; i++) {
 				objects[i] = in.readObject();
 			}
+			in.close();
 			return objects;
 		} catch (ClassNotFoundException e) {
 			return null;

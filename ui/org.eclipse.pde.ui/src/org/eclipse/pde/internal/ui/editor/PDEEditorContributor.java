@@ -42,6 +42,7 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 		}
 		public void run() {
 			editor.performGlobalAction(id);
+			updateSelectableActions(editor.getSelection());
 		}
 		public void update() {
 			getActionBars().updateActionBars();

@@ -5,6 +5,7 @@ package org.eclipse.pde.internal.core.plugin;
  */
 
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.util.Hashtable;
 
 import org.eclipse.core.runtime.CoreException;
@@ -14,7 +15,7 @@ import org.w3c.dom.Node;
 
 public class PluginImport
 	extends IdentifiablePluginObject
-	implements IPluginImport {
+	implements IPluginImport, Serializable {
 	private int match = NONE;
 	private boolean reexported = false;
 	private boolean optional = false;

@@ -8,11 +8,14 @@ import org.eclipse.pde.core.plugin.*;
 public class ImportObject extends PluginReference implements IWritable, Serializable {
 	private IPluginImport iimport;
 	
+	public ImportObject() {
+		super();
+	}
 	public ImportObject(IPluginImport iimport) {
 		super(iimport.getId());
 		this.iimport = iimport;
 	}
-	public ImportObject(IPluginImport iiport, IPlugin plugin) {
+	public ImportObject(IPluginImport iimport, IPlugin plugin) {
 		super(plugin);
 		this.iimport = iimport;
 	}

@@ -53,7 +53,7 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 				config.launch(mode, null);
 			}			
 		} catch (CoreException e) {
-			ErrorDialog.openError(getShell(), PDEPlugin.getResourceString("RuntimeWorkbenchShortcut.launchFailed"), e.getMessage(), e.getStatus());   //$NON-NLS-1$
+			PDEPlugin.logException(e);
 		}
 	}
 	

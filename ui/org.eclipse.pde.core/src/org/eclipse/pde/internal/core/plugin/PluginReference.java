@@ -6,7 +6,9 @@ import org.eclipse.pde.internal.core.PDECore;
 
 public class PluginReference extends PlatformObject {
 	private String id;
-	private IPlugin plugin;
+	private transient IPlugin plugin;
+	
+	public PluginReference() {}
 	
 	public PluginReference(String id) {
 		this.id = id;
@@ -20,6 +22,8 @@ public class PluginReference extends PlatformObject {
 		return id;
 	}
 	public IPlugin getPlugin() {
+		if (plugin == null)
+			plugin = PDECore.getDefault().findPlugin(id);		
 		return plugin;
 	}
 	public String toString() {
