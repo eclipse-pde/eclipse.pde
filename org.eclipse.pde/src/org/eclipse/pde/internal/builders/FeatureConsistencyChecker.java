@@ -20,6 +20,7 @@ import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.feature.*;
 import org.eclipse.pde.internal.core.ifeature.*;
+import org.osgi.framework.*;
 
 public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 	public static final String BUILDERS_VERIFYING = "Builders.verifying"; //$NON-NLS-1$
@@ -29,8 +30,6 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 		"Builders.Feature.freference"; //$NON-NLS-1$
 	public static final String BUILDERS_UPDATING = "Builders.updating"; //$NON-NLS-1$
 	
-	private boolean fileCompiled=false;
-
 	class DeltaVisitor implements IResourceDeltaVisitor {
 		private IProgressMonitor monitor;
 		public DeltaVisitor(IProgressMonitor monitor) {
@@ -98,9 +97,11 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 	}
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
 		throws CoreException {
+		if (PDECore.getDefault().getBundle().getState() != Bundle.ACTIVE || monitor.isCanceled())
+			return new IProject[0];
 
 		IResourceDelta delta = null;
-		fileCompiled = false;
+
 		IProject project = getProject();
 		if (kind != FULL_BUILD)
 			delta = getDelta(project);
@@ -111,26 +112,7 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 		} else {
 			delta.accept(new DeltaVisitor(monitor));
 		}
-		IProject[] interestingProjects = null;
-
-		// Compute interesting projects
-		IFeatureModel thisModel = PDECore.getDefault().getWorkspaceModelManager().getFeatureModel(project);
-		if (thisModel != null)
-			interestingProjects = computeInterestingProjects(thisModel);
-		// If not compiled already, see if there are interesting
-		// changes in referenced projects that may cause us
-		// to compile
-		if (!fileCompiled
-			&& kind != FULL_BUILD
-			&& interestingProjects != null) {
-		/*
-			checkInterestingProjectDeltas(
-				project,
-				interestingProjects,
-				monitor);
-		*/
-		}
-		return interestingProjects;
+		return new IProject[0];
 	}
 
 	private void checkProject(IProject project, IProgressMonitor monitor) {
@@ -151,7 +133,6 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 		}
 		monitor.subTask(PDE.getResourceString(BUILDERS_UPDATING));
 		monitor.done();
-		fileCompiled = true;
 	}
 	
 	private boolean isManifestFile(IFile file) {
@@ -159,16 +140,13 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 	}
 	
 	private boolean isValidReference(IFeaturePlugin plugin) {
-		WorkspaceModelManager manager =
-			PDECore.getDefault().getWorkspaceModelManager();
-		IPluginModelBase[] models =
-			plugin.isFragment()
-				? (IPluginModelBase[]) manager.getFragmentModels()
-				: (IPluginModelBase[]) manager.getPluginModels();
-		for (int i = 0; i < models.length; i++) {
-			IPluginModelBase model = models[i];
-			if (model.getPluginBase().getId().equals(plugin.getId())) {
-				return true;
+		String id = plugin.getId();
+		if (id != null && id.trim().length() > 0) {
+			ModelEntry entry = PDECore.getDefault().getModelManager().findEntry(id);
+			if (entry != null) {
+				if (plugin.isFragment())
+					return entry.getActiveModel() instanceof IFragmentModel;
+				return entry.getActiveModel() instanceof IPluginModel;
 			}
 		}
 		return false;
@@ -340,7 +318,4 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 		}
 	}
 	
-	private IProject[] computeInterestingProjects(IFeatureModel model) {
-		return new IProject[0];
-	}
 }
