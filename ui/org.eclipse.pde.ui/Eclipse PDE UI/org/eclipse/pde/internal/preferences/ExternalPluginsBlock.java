@@ -308,6 +308,8 @@ private void updateSelectedCount(int mode) {
 					selectedCount++;
 			}
 		}
-	selectedLabel.setText(selectedCount + " selected.");
+	String[] args = { ""+selectedCount };
+	String selectedLabelText= PDEPlugin.getFormattedMessage(KEY_SELECTED, args);
+	selectedLabel.setText(selectedLabelText);
 }
 }
