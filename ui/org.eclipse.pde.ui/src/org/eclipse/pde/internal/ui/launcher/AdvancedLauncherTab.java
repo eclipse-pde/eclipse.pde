@@ -231,8 +231,7 @@ public class AdvancedLauncherTab
 						pluginTreeViewer.getControl().getDisplay(),
 						new Runnable() {
 					public void run() {
-						Vector checked = computeInitialCheckState();
-						pluginTreeViewer.setCheckedElements(checked.toArray());
+						computeInitialCheckState();
 						updateStatus();
 						setChanged(true);
 					}
@@ -437,22 +436,19 @@ public class AdvancedLauncherTab
 
 		try {
 			useDefaultRadio.setSelection(config.getAttribute(USECUSTOM, true));
-			useFeaturesRadio.setSelection(
-				config.getAttribute(USEFEATURES, false));
-			useListRadio.setSelection(!useDefaultRadio.getSelection() && !useFeaturesRadio.getSelection());
-
+			useFeaturesRadio.setSelection(config.getAttribute(USEFEATURES, false));
+			useListRadio.setSelection(
+				!useDefaultRadio.getSelection() && !useFeaturesRadio.getSelection());
 			if (pluginTreeViewer.getInput() == null)
 				pluginTreeViewer.setInput(PDEPlugin.getDefault());
 
 			if (useDefaultRadio.getSelection()) {
-				pluginTreeViewer.setCheckedElements(
-					computeInitialCheckState().toArray());
+				computeInitialCheckState();
 			} else if (useListRadio.getSelection()) {
 				ArrayList result = initWorkspacePluginsState(config);
 				result.addAll(initExternalPluginsState(config));
 				pluginTreeViewer.setCheckedElements(result.toArray());
-			}
-			else {
+			} else {
 				pluginPathButton.setEnabled(false);
 			}
 		} catch (CoreException e) {
@@ -463,41 +459,42 @@ public class AdvancedLauncherTab
 		updateStatus();
 	}
 
-	private Vector computeInitialCheckState() {
-		Vector checked = new Vector();
+	private void computeInitialCheckState() {
 		Hashtable wtable = new Hashtable();
 		numWorkspaceChecked = 0;
 		numExternalChecked = 0;
 
 		for (int i = 0; i < workspaceModels.length; i++) {
 			IPluginModelBase model = workspaceModels[i];
-			checked.add(model);
+			pluginTreeViewer.setChecked(model, true);
 			numWorkspaceChecked += 1;
 			String id = model.getPluginBase().getId();
 			if (id != null)
 				wtable.put(model.getPluginBase().getId(), model);
 		}
-		if (checked.size() > 0)
-			checked.add(workspacePlugins);
+		if (numWorkspaceChecked > 0)
+			pluginTreeViewer.setChecked(workspacePlugins, true);
 		pluginTreeViewer.setGrayed(workspacePlugins, false);
 
+
+		pluginTreeViewer.setSubtreeChecked(externalPlugins, true);
 		for (int i = 0; i < externalModels.length; i++) {
 			IPluginModelBase model = externalModels[i];
 			boolean masked = wtable.get(model.getPluginBase().getId()) != null;
 			if (!masked && model.isEnabled()) {
-				checked.add(model);
 				numExternalChecked += 1;
+			} else {
+				pluginTreeViewer.setChecked(model, false);
 			}
 		}
 
-		if (numExternalChecked > 0)
-			checked.add(externalPlugins);
+		if (numExternalChecked == 0)
+			pluginTreeViewer.setChecked(externalPlugins, false);
 		pluginTreeViewer.setGrayed(
 			externalPlugins,
 			numExternalChecked > 0
 				&& numExternalChecked < externalModels.length);
 
-		return checked;
 	}
 
 	private void handleCheckStateChanged(
