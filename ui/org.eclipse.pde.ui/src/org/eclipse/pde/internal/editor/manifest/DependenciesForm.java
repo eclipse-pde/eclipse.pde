@@ -25,8 +25,8 @@ public class DependenciesForm extends ScrollableSectionForm {
 
 	public DependenciesForm(ManifestDependenciesPage page) {
 		this.page = page;
-		//setVerticalFit(true);
-		setScrollable(false);
+		setVerticalFit(true);
+		setScrollable(true);
 	}
 	public void commitChanges(boolean onSave) {
 		if (importListSection == null)

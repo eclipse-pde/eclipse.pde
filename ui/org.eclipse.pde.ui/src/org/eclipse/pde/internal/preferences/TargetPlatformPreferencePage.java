@@ -130,6 +130,7 @@ public class TargetPlatformPreferencePage
 				PDEPlugin.getResourceString(KEY_PLATFORM_HOME_BUTTON));
 
 		pluginsEditor = new ExternalPluginsEditor(getFieldEditorParent());
+		pluginsEditor.setUseOther(useOther);
 		addField(targetPathEditor);
 		addField(pluginsEditor);
 		modeChanged(useOther);
@@ -139,6 +140,7 @@ public class TargetPlatformPreferencePage
 		String oldPath = getPlatformPath();
 		targetPathEditor.setEnabled(useOther);
 		this.useOther = useOther;
+		pluginsEditor.setUseOther(useOther);
 		String newPath = getPlatformPath();
 		boolean reloadNeeded = false;
 		if (oldPath != null && newPath == null)
@@ -177,6 +179,15 @@ public class TargetPlatformPreferencePage
 			store.setDefault(PROP_PLATFORM_PATH, path);
 			store.setValue(PROP_PLATFORM_PATH, path);
 		}
+	}
+
+	public static boolean getUseOther() {
+		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
+		boolean useOther = false;
+		String mode = store.getString(PROP_TARGET_MODE);
+		if (mode != null && mode.equals(VALUE_USE_OTHER))
+			useOther = true;
+		return useOther;
 	}
 
 	private static String computeDefaultPlatformPath() {

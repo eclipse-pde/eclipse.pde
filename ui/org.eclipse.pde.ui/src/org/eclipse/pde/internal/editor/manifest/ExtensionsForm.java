@@ -22,8 +22,8 @@ public class ExtensionsForm extends ScrollableSectionForm {
 
 public ExtensionsForm(ManifestExtensionsPage page) {
 	this.page = page;
-	//setVerticalFit(true);
-	setScrollable(false);
+	setVerticalFit(true);
+	setScrollable(true);
 }
 protected void createFormClient(Composite parent) {
 	GridLayout layout = new GridLayout();

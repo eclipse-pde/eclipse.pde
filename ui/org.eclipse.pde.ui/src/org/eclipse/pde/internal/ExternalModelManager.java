@@ -33,6 +33,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.core.runtime.IPluginRegistry;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -215,25 +216,27 @@ public class ExternalModelManager {
 	}
 
 	private boolean loadModels(IProgressMonitor monitor) {
-		//long startTime = System.currentTimeMillis();
-		boolean result = reload(null, monitor);
+		TargetPlatformPreferencePage.initializePlatformPath();
+		boolean useOther = TargetPlatformPreferencePage.getUseOther();
+		boolean result;
+
+		if (useOther) {
+			result = reload(null, monitor);
+		}
+		else {
+			reloadFromLive(monitor);
+			result = true;
+		}
 		if (result) {
 			IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 			ExternalPluginsBlock.initialize(this, store);
 		}
-		//long stopTime = System.currentTimeMillis();
 		Object[] array = models.toArray();
 		ArraySorter.INSTANCE.sortInPlace(array);
 
 		for (int i = 0; i < array.length; i++) {
 			models.set(i, array[i]);
 		}
-		//long sortTime = System.currentTimeMillis();
-		/*
-		System.out.println("Load time: "+(stopTime - startTime));
-		System.out.println("Sort time: "+(sortTime - stopTime));
-		System.out.println("Total: "+(sortTime - startTime));
-		*/
 		return result;
 	}
 
@@ -345,6 +348,25 @@ public class ExternalModelManager {
 		}
 	}
 
+	private static void processPluginRegistryModel(
+		PluginRegistryModel registryModel,
+		Vector result,
+		Vector fresult,
+		IProgressMonitor monitor) {
+		PluginDescriptorModel[] pluginDescriptorModels = registryModel.getPlugins();
+		PluginFragmentModel[] fragmentModels = registryModel.getFragments();
+		for (int i = 0; i < pluginDescriptorModels.length; i++) {
+			PluginDescriptorModel pluginDescriptorModel = pluginDescriptorModels[i];
+			monitor.subTask(pluginDescriptorModel.getId());
+			if (pluginDescriptorModel.getEnabled())
+				processPluginDescriptorModel(result, pluginDescriptorModel, monitor);
+		}
+		for (int i = 0; i < fragmentModels.length; i++) {
+			PluginFragmentModel fragmentModel = fragmentModels[i];
+			processFragmentModel(fresult, fragmentModel, monitor);
+		}
+	}
+
 	public boolean reload(String platformPath, IProgressMonitor monitor) {
 		models = new Vector();
 		fmodels = new Vector();
@@ -360,6 +382,17 @@ public class ExternalModelManager {
 		internalProcessPluginDirectories(models, fmodels, paths, monitor);
 
 		return true;
+	}
+
+	public void reloadFromLive(IProgressMonitor monitor) {
+		models = new Vector();
+		fmodels = new Vector();
+
+		if (monitor == null)
+			monitor = new NullProgressMonitor();
+
+		IPluginRegistry liveRegistry = Platform.getPluginRegistry();
+		processPluginRegistryModel((PluginRegistryModel)liveRegistry, models, fmodels, monitor);
 	}
 
 	public void removeModelProviderListener(IModelProviderListener listener) {

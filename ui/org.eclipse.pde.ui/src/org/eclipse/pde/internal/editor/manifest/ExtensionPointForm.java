@@ -22,7 +22,8 @@ public class ExtensionPointForm extends ScrollableSectionForm {
 
 public ExtensionPointForm(ManifestExtensionPointPage page) {
 	this.page = page;
-	setScrollable(false);
+	setVerticalFit(true);
+	setScrollable(true);
 }
 protected void createFormClient(Composite parent) {
 	GridLayout layout = new GridLayout();
@@ -33,9 +34,7 @@ protected void createFormClient(Composite parent) {
 	layout.horizontalSpacing=15;
 	extensionPointSection = new DetailExtensionPointSection(page);
 	Control control = extensionPointSection.createControl(parent, getFactory());
-	GridData gd = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
-	//gd.widthHint = 250;
-	//gd.heightHint = 300;
+	GridData gd = new GridData(GridData.FILL_BOTH);
 	control.setLayoutData(gd);
 
 	usageSection = new PointUsageSection(page);

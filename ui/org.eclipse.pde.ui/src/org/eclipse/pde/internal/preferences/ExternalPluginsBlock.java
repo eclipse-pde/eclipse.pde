@@ -185,11 +185,15 @@ public class ExternalPluginsBlock {
 
 	void handleReload() {
 		final String platformPath = editor.getPlatformPath();
+		final boolean useOther = editor.getUseOther();
 		if (platformPath != null && platformPath.length() > 0) {
 			IRunnableWithProgress op = new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) {
 						//monitor.beginTask("Reloading", IProgressMonitor.UNKNOWN);
-	registry.reload(platformPath, monitor);
+					if (useOther)
+						registry.reload(platformPath, monitor);
+					else
+						registry.reloadFromLive(monitor);
 					monitor.done();
 				}
 			};

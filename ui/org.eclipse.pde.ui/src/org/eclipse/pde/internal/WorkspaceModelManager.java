@@ -203,6 +203,7 @@ public class WorkspaceModelManager
 		Vector result = new Vector();
 		if (workspaceFragmentModels == null)
 			initializeWorkspacePluginModels();
+		validate();
 		for (int i = 0; i < workspaceFragmentModels.size(); i++) {
 			IFragmentModel model = (IFragmentModel) workspaceFragmentModels.elementAt(i);
 			IFragment fragment = model.getFragment();
@@ -230,6 +231,7 @@ public class WorkspaceModelManager
 		if (workspaceFragmentModels == null) {
 			initializeWorkspacePluginModels();
 		}
+		validate();
 		IFragmentModel[] result = new IFragmentModel[workspaceFragmentModels.size()];
 		workspaceFragmentModels.copyInto(result);
 		return result;
@@ -237,6 +239,7 @@ public class WorkspaceModelManager
 	private IPluginModelBase getWorkspaceModel(IFile file) {
 		String name = file.getName().toLowerCase();
 		Vector models = null;
+		validate();
 
 		if (name.equals("plugin.xml"))
 			models = workspaceModels;
@@ -245,6 +248,7 @@ public class WorkspaceModelManager
 		return getWorkspaceModel(file.getProject(), models);
 	}
 	public IPluginModelBase getWorkspaceModel(IProject project) {
+		validate();
 		IPath filePath = project.getFullPath().append("plugin.xml");
 		IFile file = project.getWorkspace().getRoot().getFile(filePath);
 		if (file.exists()) {
@@ -273,6 +277,7 @@ public class WorkspaceModelManager
 		if (workspaceModels == null) {
 			initializeWorkspacePluginModels();
 		}
+		validate();
 		IPluginModel[] result = new IPluginModel[workspaceModels.size()];
 		workspaceModels.copyInto(result);
 		return result;
@@ -536,13 +541,6 @@ public class WorkspaceModelManager
 	}
 
 	private void processModelChanges() {
-		/*
-		if (startup) {
-			startup = false;
-			modelChanges = null;
-			return;
-		}
-		*/
 		if (modelChanges.size()==0) {
 			modelChanges = null;
 			return;
@@ -638,5 +636,39 @@ public class WorkspaceModelManager
 			}
 		}
 		missingNature = false;
+	}
+	
+	private void validate() {
+		// let's be paranoid - see if the underlying resources
+		// are still valid
+		if (workspaceModels!=null) {
+			validate(workspaceModels);
+		}
+		if (workspaceFragmentModels!=null) {
+			validate(workspaceFragmentModels);
+		}
+	}
+	private void validate(Vector models) {
+		Object [] entries = models.toArray();
+		for (int i=0; i<entries.length; i++) {
+			IPluginModelBase model = (IPluginModelBase)entries[i];
+			if (!isValid(model)) {
+				// drop it
+				models.remove(model);
+			}
+		}
+	}
+	private boolean isValid(IPluginModelBase model) {
+		IResource resource = model.getUnderlyingResource();
+		// Must have the resource handle
+		if (resource==null) return false;
+		// Must have a resource handle that exists
+		if (resource.exists()==false) return false;
+		// The project must not be closed
+		IProject project = resource.getProject();
+		if (project==null) return false;
+		if (project.isOpen()==false) return false;
+		// passed
+		return true;
 	}
 }

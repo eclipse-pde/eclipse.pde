@@ -15,6 +15,7 @@ public class ExternalPluginsEditor extends FieldEditor {
 	private final static String KEY_LABEL = "ExternalPluginsEditor.label";
 	private Label label;
 	private String oldPath;
+	private boolean useOther;
 
 	protected ExternalPluginsEditor(Composite parent) {
 		pluginsBlock = new ExternalPluginsBlock(this);
@@ -68,6 +69,14 @@ public class ExternalPluginsEditor extends FieldEditor {
 
 	void reload() {
 		pluginsBlock.handleReload();
+	}
+	
+	public boolean getUseOther() {
+		return useOther;
+	}
+	
+	public void setUseOther(boolean value) {
+		this.useOther = value;
 	}
 
 	public int getNumberOfControls() {

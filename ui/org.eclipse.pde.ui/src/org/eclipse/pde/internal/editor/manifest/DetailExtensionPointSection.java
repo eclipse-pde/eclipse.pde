@@ -78,8 +78,6 @@ public class DetailExtensionPointSection
 		pointTable.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		factory.paintBordersFor(container);
 		
-		GridData gd = (GridData)part.getControl().getLayoutData();
-		gd.widthHint = 200;
 		return container;
 	}
 	
