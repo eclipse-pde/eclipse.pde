@@ -25,11 +25,6 @@ public abstract class AbstractBuildScriptGenerator extends AbstractBuildScriptGe
 	protected BuildAntScript script;
 
 	/**
-	 * 
-	 */
-	protected String buildScriptName = DEFAULT_BUILD_SCRIPT_FILENAME;
-
-	/**
 	 * Where to find the elements.
 	 */
 	protected String installLocation;
@@ -111,15 +106,6 @@ public void setPluginPath(URL[] pluginPath) {
 }
 
 
-/**
- * Sets the buildScriptName.
- */
-public void setBuildScriptName(String buildScriptName) {
-	if (buildScriptName == null)
-		this.buildScriptName = DEFAULT_BUILD_SCRIPT_FILENAME;
-	else
-		this.buildScriptName = buildScriptName;
-}
 
 
 }

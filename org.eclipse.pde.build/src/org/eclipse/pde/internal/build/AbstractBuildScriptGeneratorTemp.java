@@ -32,6 +32,9 @@ public abstract class AbstractBuildScriptGeneratorTemp extends AbstractScriptGen
 	 */
 	protected Map buildProperties;
 
+	/** build script name */
+	protected String buildScriptName = DEFAULT_BUILD_SCRIPT_FILENAME;
+
 	/**
 	 * Additional dev entries for the compile classpath.
 	 */
@@ -338,5 +341,16 @@ protected String replaceVariables(String sourceString) {
 public void setDevEntries(String[] entries) {
 	this.devEntries = entries;
 }
+
+/**
+ * Sets the buildScriptName.
+ */
+public void setBuildScriptName(String buildScriptName) {
+	if (buildScriptName == null)
+		this.buildScriptName = DEFAULT_BUILD_SCRIPT_FILENAME;
+	else
+		this.buildScriptName = buildScriptName;
+}
+
 
 }

@@ -32,7 +32,6 @@ import org.eclipse.update.core.VersionedIdentifier;
 public class PluginModelSourceBuildScriptGenerator extends AbstractBuildScriptGeneratorTemp {
 
 	protected PluginRegistryModel registry;
-	protected String scriptName = DEFAULT_BUILD_SCRIPT_FILENAME;
 	protected String sourceLocation;
 
 public PluginModelSourceBuildScriptGenerator() {
@@ -83,7 +82,7 @@ protected void generateMainScript(AntScript script, PluginModel[] plugins, Plugi
 	for (int i = 0; i < models.length; i++) {
 		String location = getLocation(models[i]);
 		script.printEchoTask(tab, "===========  " + models[i].getId() + "  ===========");
-		script.printAntTask(tab, scriptName, location, target, null, null, null);
+		script.printAntTask(tab, buildScriptName, location, target, null, null, null);
 	}
 	script.printEndTag(--tab, TARGET_TARGET);
 	script.printEndTag(--tab, "project");
@@ -217,7 +216,7 @@ protected void generatePrologue(AntScript script, PluginModel model) {
 
 
 protected String getScriptLocation(PluginModel model) throws CoreException {
-	File file = new File(getLocation(model), scriptName);
+	File file = new File(getLocation(model), buildScriptName);
 	return file.getAbsolutePath();
 }
 
@@ -257,7 +256,7 @@ protected String getLibraryLocation() throws CoreException {
 protected String getMainScriptLocation() throws CoreException {
 	if (sourceLocation == null)
 		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_SOURCE_LOCATION_MISSING, Policy.bind("error.missingSourceLocation"), null));
-	File file = new File(sourceLocation, scriptName);
+	File file = new File(sourceLocation, buildScriptName);
 	return file.getAbsolutePath();
 }
 	
