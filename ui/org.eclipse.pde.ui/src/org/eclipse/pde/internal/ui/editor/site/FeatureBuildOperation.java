@@ -15,7 +15,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
 
-import org.apache.tools.ant.Project;
 import org.eclipse.ant.core.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -262,7 +261,6 @@ public class FeatureBuildOperation implements IRunnableWithProgress {
 		//if (customURLs!=null)
 		//runner.setCustomClasspath(customURLs);
 		runner.setExecutionTargets(computeTargets());
-		runner.setMessageOutputLevel(Project.MSG_ERR);
 		runner.addBuildListener(BUILD_LISTENER_CLASS);
 		runner.run(monitor);
 	}
