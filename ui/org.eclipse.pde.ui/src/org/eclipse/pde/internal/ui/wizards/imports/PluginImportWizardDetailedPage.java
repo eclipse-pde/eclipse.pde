@@ -70,19 +70,13 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		createButtonArea(container);
 		createImportList(container).setLayoutData(new GridData(GridData.FILL_BOTH));
 		updateCount();
+		Composite options = createComputationsOption(container);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 3;
+		options.setLayoutData(gd);
 		
 		addViewerListeners();
 		
-		implicitButton = new Button(container, SWT.CHECK);
-		implicitButton.setText(PDEPlugin.getResourceString("ImportWizard.SecondPage.implicit"));
-		GridData gd = new GridData();
-		gd.horizontalSpan = 3;
-		implicitButton.setLayoutData(gd);
-		if (getDialogSettings().get(SETTINGS_IMPLICIT) != null)
-			implicitButton.setSelection(getDialogSettings().getBoolean(SETTINGS_IMPLICIT));
-		else 
-			implicitButton.setSelection(true);
-			
 		setPageComplete(false);
 		setControl(container);
 		Dialog.applyDialogFont(container);
@@ -117,7 +111,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		Table table = new Table(container, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 180;
-		gd.heightHint = 310;
+		gd.heightHint = 250;
 		table.setLayoutData(gd);
 
 		availableListViewer = new TableViewer(table);
@@ -226,7 +220,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	protected void refreshPage() {
 		availableListViewer.refresh();
 		importListViewer.getTable().removeAll();		
-		super.refreshPage();
+		pageChanged();
 	}
 	protected void pageChanged() {
 		updateCount();

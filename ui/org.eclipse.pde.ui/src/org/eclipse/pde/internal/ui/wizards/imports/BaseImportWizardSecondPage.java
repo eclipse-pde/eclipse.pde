@@ -28,12 +28,13 @@ import org.eclipse.swt.widgets.TableItem;
 public abstract class BaseImportWizardSecondPage extends WizardPage {
 	
 	protected static final String SETTINGS_IMPLICIT = "implicit";
+	protected static final String SETTINGS_ADD_FRAGMENTS = "addFragments";
 	
 	protected PluginImportWizardFirstPage page1;
 	protected IPluginModelBase[] models = new IPluginModelBase[0];
-	//protected ArrayList selected = new ArrayList();
 	private String location;
 	protected Button implicitButton;
+	protected Button addFragments;
 	protected TableViewer importListViewer;
 
 	class ContentProvider
@@ -64,7 +65,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage {
 		Table table = new Table(container, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 180;
-		gd.heightHint = 310;
+		gd.heightHint = 250;
 		table.setLayoutData(gd);
 
 		importListViewer = new TableViewer(table);
@@ -73,6 +74,38 @@ public abstract class BaseImportWizardSecondPage extends WizardPage {
 		importListViewer.setInput(PDECore.getDefault().getExternalModelManager());
 		importListViewer.setSorter(ListUtil.PLUGIN_SORTER);
 		return container;
+	}
+	
+	protected Composite createComputationsOption(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayout(new GridLayout());
+		
+		Label label = new Label(composite, SWT.NONE);
+		label.setText("When computing required plug-ins:");
+		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		implicitButton = new Button(composite, SWT.CHECK);
+		implicitButton.setText("Always include org.eclipse.core.boot and org.eclipse.core.runtime");
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalIndent = 15;
+		implicitButton.setLayoutData(gd);
+		if (getDialogSettings().get(SETTINGS_IMPLICIT) != null)
+			implicitButton.setSelection(getDialogSettings().getBoolean(SETTINGS_IMPLICIT));
+		else 
+			implicitButton.setSelection(true);
+				
+		addFragments = new Button(composite, SWT.CHECK);
+		addFragments.setText("Include fragments");
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalIndent = 15;
+		addFragments.setLayoutData(gd);
+		if (getDialogSettings().get(SETTINGS_ADD_FRAGMENTS) != null)
+			addFragments.setSelection(getDialogSettings().getBoolean(SETTINGS_ADD_FRAGMENTS));
+		else 
+			addFragments.setSelection(true);
+			
+		return composite;
+		
 	}
 
 	public void dispose() {
@@ -87,22 +120,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage {
 		}
 	}
 
-	protected void refreshPage() {
-		boolean showButton = false;
-		for (int i = 0; i < models.length; i++) {
-			String id = models[i].getPluginBase().getId();
-			if (id.equals("org.eclipse.core.boot")
-				|| id.equals("org.eclipse.core.runtime")) {
-				showButton = true;
-				break;
-			}
-		}
-		implicitButton.setVisible(showButton);
-		pageChanged();
-	}
-
-	protected void pageChanged() {
-	}
+	protected abstract void refreshPage();
 
 	protected boolean isRefreshNeeded() {
 		String currLocation = page1.getDropLocation();
@@ -199,6 +217,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage {
 	public void storeSettings() {
 		IDialogSettings settings = getDialogSettings();
 		settings.put(SETTINGS_IMPLICIT, implicitButton.getSelection());
+		settings.put(SETTINGS_ADD_FRAGMENTS, addFragments.getSelection());
 	}
 
 }

@@ -108,25 +108,28 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		layout.horizontalSpacing = 20;
 		layout.verticalSpacing = 10;
 		container.setLayout(layout);
+		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		createTablePart(container);
 		createImportPart(container);
 
-		implicitButton = new Button(container, SWT.CHECK);
-		implicitButton.setText(PDEPlugin.getResourceString("ImportWizard.SecondPage.implicit"));
+		Composite options = createComputationsOption(container);
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
-		implicitButton.setLayoutData(gd);
-		if (getDialogSettings().get(SETTINGS_IMPLICIT) != null)
-			implicitButton.setSelection(getDialogSettings().getBoolean(SETTINGS_IMPLICIT));
-		else 
-			implicitButton.setSelection(true);
+		options.setLayoutData(gd);
+
 		implicitButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				pageChanged();
 			}
 		});
-
+		
+		addFragments.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				pageChanged();
+			}
+		});
+		
 		initialize();
 		setControl(container);
 		Dialog.applyDialogFont(container);
@@ -258,6 +261,10 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 			}
 		} catch (CoreException e) {
 		}
+	}
+	
+	protected void refreshPage() {
+		pageChanged();
 	}
 	
 	protected void pageChanged() {
