@@ -13,8 +13,7 @@ import org.eclipse.pde.internal.core.*;
  * @author melhem
  *
  */
-public abstract class AbstractEditingModel extends PlatformObject implements IEditingModel {
-	
+public abstract class AbstractEditingModel extends PlatformObject implements IEditingModel, IModelChangeProviderExtension {
 	private ArrayList fListeners = new ArrayList();
 	protected boolean fReconciling;
 	protected boolean fInSync = true;
@@ -159,6 +158,25 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 		if (!fListeners.contains(listener))
 			fListeners.add(listener);
 	}
+	public void transferListenersTo(IModelChangeProviderExtension target) {
+		for (int i=0; i<fListeners.size(); i++) {
+			target.addModelChangedListener((IModelChangedListener)fListeners.get(i));
+		}
+		fListeners.clear();
+	}
+	/**
+	 * Accepts all the listeners from the source change provider.
+	 * @param target
+	 */
+	public void acceptListenersFrom(IModelChangeProviderExtension source) {
+		List slisteners = source.getListeners();
+		fListeners.addAll(slisteners);
+	}
+	
+	public List getListeners() {
+		return fListeners;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModelChangeProvider#fireModelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */

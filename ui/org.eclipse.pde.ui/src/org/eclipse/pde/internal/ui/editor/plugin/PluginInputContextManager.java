@@ -8,8 +8,10 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.IModelChangeProviderExtension;
 import org.eclipse.pde.internal.core.bundle.*;
 import org.eclipse.pde.internal.core.ibundle.*;
+import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.build.*;
 import org.eclipse.pde.internal.ui.editor.context.*;
 
@@ -24,7 +26,8 @@ public class PluginInputContextManager extends InputContextManager {
 	/**
 	 * 
 	 */
-	public PluginInputContextManager() {
+	public PluginInputContextManager(PDEFormEditor editor) {
+		super(editor);
 	}
 
 	public IBaseModel getAggregateModel() {
@@ -73,8 +76,10 @@ public class PluginInputContextManager extends InputContextManager {
 	
 	private void syncExtensions() {
 		IModel emodel = findPluginModel();
-		if (emodel!=null && emodel instanceof ISharedExtensionsModel)
+		if (emodel!=null && emodel instanceof ISharedExtensionsModel) {
 			bmodel.setExtensionsModel((ISharedExtensionsModel)emodel);
+			transferListeners(emodel, bmodel);
+		}
 		else
 			bmodel.setExtensionsModel(null);
 	}
@@ -88,7 +93,25 @@ public class PluginInputContextManager extends InputContextManager {
 	}
 
 	private void bundleRemoved(InputContext bundleContext) {
+		if (bmodel!=null) {
+			IModel emodel = findPluginModel();
+			if (emodel!=null) 
+				transferListeners(bmodel, emodel);
+		}
 		bmodel = null;
+	}
+	
+	private void transferListeners(IModel source, IModel target) {
+		if (source instanceof IModelChangeProviderExtension &&
+				target instanceof IModelChangeProviderExtension) {
+			IModelChangeProviderExtension smodel = (IModelChangeProviderExtension)source;
+			IModelChangeProviderExtension tmodel = (IModelChangeProviderExtension)target;
+			// first fire one last event to all the listeners to 
+			// refresh
+			smodel.fireModelChanged(new ModelChangedEvent(smodel, IModelChangedEvent.WORLD_CHANGED, null, null));
+			// now pass the listener to the target model
+			smodel.transferListenersTo(tmodel);
+		}
 	}
 	
 	private void pluginAdded(InputContext pluginContext) {

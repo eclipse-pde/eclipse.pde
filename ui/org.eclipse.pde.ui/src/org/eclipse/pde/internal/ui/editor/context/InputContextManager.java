@@ -15,6 +15,7 @@ import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.ui.*;
 
 public abstract class InputContextManager implements IResourceChangeListener {
+	private PDEFormEditor editor;
 	private Hashtable inputContexts;
 	private ArrayList monitoredFiles;
 	private ArrayList listeners;
@@ -22,7 +23,8 @@ public abstract class InputContextManager implements IResourceChangeListener {
 	/**
 	 *  
 	 */
-	public InputContextManager() {
+	public InputContextManager(PDEFormEditor editor) {
+		this.editor = editor;
 		inputContexts = new Hashtable();
 		listeners = new ArrayList();
 		PDEPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
@@ -150,9 +152,9 @@ public abstract class InputContextManager implements IResourceChangeListener {
 					IResource resource = delta.getResource();
 					if (resource instanceof IFile) {
 						if (kind == IResourceDelta.ADDED)
-							structureChanged((IFile)resource, true);
+							asyncStructureChanged((IFile)resource, true);
 						else if (kind==IResourceDelta.REMOVED)
-							structureChanged((IFile)resource, false);
+							asyncStructureChanged((IFile)resource, false);
 						return false;
 					}
 					else return true;
@@ -161,6 +163,14 @@ public abstract class InputContextManager implements IResourceChangeListener {
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
+	}
+	
+	private void asyncStructureChanged(final IFile file, final boolean added) {
+		editor.getEditorSite().getShell().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				structureChanged(file, added);
+			}
+		});
 	}
 	
 	private void structureChanged(IFile file, boolean added) {

@@ -77,7 +77,7 @@ public class ManifestEditor extends MultiSourceEditor {
 	}
 	
 	protected InputContextManager createInputContextManager() {
-		PluginInputContextManager manager =  new PluginInputContextManager();
+		PluginInputContextManager manager =  new PluginInputContextManager(this);
 		manager.setUndoManager(new PluginUndoManager(this));
 		return manager;
 	}
@@ -110,11 +110,21 @@ public class ManifestEditor extends MultiSourceEditor {
 	}
 	public void contextAdded(InputContext context) {
 		addSourcePage(context.getId());
+		try {
+			if (context.getId().equals(BuildPage.PAGE_ID))
+				addPage(new BuildPage(this));
+		}
+		catch (PartInitException e) {
+			PDEPlugin.logException(e);
+		}
 	}
 	public void contextRemoved(InputContext context) {
 		IFormPage page = findPage(context.getId());
-		if (page!=null)
+		if (page!=null) {
 			removePage(context.getId());
+			if (context.getId().equals(BuildInputContext.CONTEXT_ID))
+				removePage(BuildPage.PAGE_ID);
+		}
 	}
 
 	protected void createSystemFileContexts(InputContextManager manager,

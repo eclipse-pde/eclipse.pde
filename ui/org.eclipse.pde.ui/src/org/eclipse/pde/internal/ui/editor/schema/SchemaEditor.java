@@ -39,7 +39,7 @@ public class SchemaEditor extends MultiSourceEditor {
 	}
 	
 	protected InputContextManager createInputContextManager() {
-		SchemaInputContextManager contextManager = new SchemaInputContextManager();
+		SchemaInputContextManager contextManager = new SchemaInputContextManager(this);
 		//contextManager.setUndoManager(new SchemaUndoManager(this));
 		return contextManager;
 	}

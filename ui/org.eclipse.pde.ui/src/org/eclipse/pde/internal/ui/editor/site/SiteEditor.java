@@ -49,7 +49,7 @@ public class SiteEditor extends MultiSourceEditor {
 	}
 	
 	protected InputContextManager createInputContextManager() {
-		SiteInputContextManager contextManager = new SiteInputContextManager();
+		SiteInputContextManager contextManager = new SiteInputContextManager(this);
 		contextManager.setUndoManager(new SiteUndoManager(this));
 		return contextManager;
 	}

@@ -77,7 +77,7 @@ public class FeatureEditor extends MultiSourceEditor {
 	}
 	
 	protected InputContextManager createInputContextManager() {
-		FeatureInputContextManager manager =  new FeatureInputContextManager();
+		FeatureInputContextManager manager =  new FeatureInputContextManager(this);
 		manager.setUndoManager(new FeatureUndoManager(this));
 		return manager;
 	}

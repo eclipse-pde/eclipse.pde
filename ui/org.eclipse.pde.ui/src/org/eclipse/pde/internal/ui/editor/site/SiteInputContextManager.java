@@ -7,6 +7,7 @@
 package org.eclipse.pde.internal.ui.editor.site;
 
 import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.context.*;
 
 /**
@@ -19,7 +20,8 @@ public class SiteInputContextManager extends InputContextManager {
 	/**
 	 * 
 	 */
-	public SiteInputContextManager() {
+	public SiteInputContextManager(PDEFormEditor editor) {
+		super(editor);
 	}
 
 	public IBaseModel getAggregateModel() {

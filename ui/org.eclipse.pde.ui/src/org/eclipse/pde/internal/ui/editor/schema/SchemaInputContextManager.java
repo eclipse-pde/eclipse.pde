@@ -7,6 +7,7 @@
 package org.eclipse.pde.internal.ui.editor.schema;
 
 import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.context.*;
 
 /**
@@ -19,7 +20,8 @@ public class SchemaInputContextManager extends InputContextManager {
 	/**
 	 * 
 	 */
-	public SchemaInputContextManager() {
+	public SchemaInputContextManager(PDEFormEditor editor) {
+		super(editor);
 	}
 
 	public IBaseModel getAggregateModel() {

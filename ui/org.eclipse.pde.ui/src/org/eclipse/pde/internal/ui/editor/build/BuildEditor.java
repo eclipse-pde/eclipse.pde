@@ -37,7 +37,7 @@ public class BuildEditor extends MultiSourceEditor {
 	}
 	
 	protected InputContextManager createInputContextManager() {
-		BuildInputContextManager manager =  new BuildInputContextManager();
+		BuildInputContextManager manager =  new BuildInputContextManager(this);
 		manager.setUndoManager(new BuildUndoManager(this));
 		return manager;
 	}
