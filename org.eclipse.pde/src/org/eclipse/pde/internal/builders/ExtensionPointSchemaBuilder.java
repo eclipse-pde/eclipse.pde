@@ -283,8 +283,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 	
 	private String getMangledPluginId(IFile file) {
 		IProject project = file.getProject();
-		WorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
-		IModel model = manager.getWorkspaceModel(project);
+		IModel model = PDECore.getDefault().getModelManager().findModel(project);
 		if (model instanceof IPluginModelBase) {
 			IPluginBase plugin = ((IPluginModelBase)model).getPluginBase();
 			if (plugin!=null) {

@@ -114,12 +114,9 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 		IProject[] interestingProjects = null;
 
 		// Compute interesting projects
-		WorkspaceModelManager wmanager =
-			PDECore.getDefault().getWorkspaceModelManager();
-		IModel thisModel = wmanager.getWorkspaceModel(project);
-		if (thisModel != null && thisModel instanceof IFeatureModel)
-			interestingProjects =
-				computeInterestingProjects((IFeatureModel) thisModel);
+		IFeatureModel thisModel = PDECore.getDefault().getWorkspaceModelManager().getFeatureModel(project);
+		if (thisModel != null)
+			interestingProjects = computeInterestingProjects(thisModel);
 		// If not compiled already, see if there are interesting
 		// changes in referenced projects that may cause us
 		// to compile

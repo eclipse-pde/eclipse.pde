@@ -119,11 +119,9 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		IProject[] interestingProjects = null;
 
 		// Compute interesting projects
-		WorkspaceModelManager wmanager = PDECore.getDefault()
-				.getWorkspaceModelManager();
-		IModel thisModel = wmanager.getWorkspaceModel(project);
-		if (thisModel != null && thisModel instanceof IPluginModelBase)
-			interestingProjects = computeInterestingProjects((IPluginModelBase) thisModel);
+		IPluginModelBase thisModel = PDECore.getDefault().getModelManager().findModel(project);
+		if (thisModel != null)
+			interestingProjects = computeInterestingProjects(thisModel);
 		// If not compiled already, see if there are interesting
 		// changes in referenced projects that may cause us
 		// to compile
