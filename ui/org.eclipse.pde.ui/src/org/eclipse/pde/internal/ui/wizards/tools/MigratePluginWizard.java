@@ -42,6 +42,7 @@ public class MigratePluginWizard extends Wizard {
 		final IPluginModelBase[] models = page1.getSelected();
 		page1.storeSettings();
 		final boolean doUpdateClasspath = page1.isUpdateClasspathRequested();
+		final boolean doCleanProjects = page1.isCleanProjectsRequested();
 		
 		IRunnableWithProgress operation = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor)
@@ -56,6 +57,12 @@ public class MigratePluginWizard extends Wizard {
 							IResource.DEPTH_ZERO,
 							null);
 						monitor.worked(1);
+						if (doCleanProjects) {
+							IProject project = models[i].getUnderlyingResource().getProject();
+							IProjectDescription desc = project.getDescription();
+							desc.setReferencedProjects(new IProject[0]);
+							project.setDescription(desc, null);
+						}
 					}
 					if (doUpdateClasspath) {
 						UpdateClasspathAction.doUpdateClasspath(

@@ -33,6 +33,8 @@ public class MigratePluginWizardPage extends WizardPage {
 	private TablePart fTablePart;
 	private Button fUpdateClasspathButton;
 	private String S_UPDATE_CLASSATH = "updateClasspath"; //$NON-NLS-1$
+	private String S_CLEAN_PROJECTS = "cleanProjects"; //$NON-NLS-1$
+	private Button fCleanProjectsButton;
 
 	public class ContentProvider
 		extends DefaultContentProvider
@@ -104,8 +106,19 @@ public class MigratePluginWizardPage extends WizardPage {
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = 2;
 		fUpdateClasspathButton.setLayoutData(gd);
-		fUpdateClasspathButton.setSelection(getDialogSettings().getBoolean(S_UPDATE_CLASSATH));
+		String update = getDialogSettings().get(S_UPDATE_CLASSATH);
+		boolean doUpdate = update == null ? true : getDialogSettings().getBoolean(S_UPDATE_CLASSATH);
+		fUpdateClasspathButton.setSelection(doUpdate);
 		
+		fCleanProjectsButton = new Button(container, SWT.CHECK);
+		fCleanProjectsButton.setText(PDEPlugin.getResourceString("MigratePluginWizard.cleanProjects")); //$NON-NLS-1$
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan = 2;
+		fCleanProjectsButton.setLayoutData(gd);
+		String clean = getDialogSettings().get(S_CLEAN_PROJECTS);
+		boolean doClean = clean == null ? true : getDialogSettings().getBoolean(S_CLEAN_PROJECTS);
+		fCleanProjectsButton.setSelection(doClean);
+
 		setControl(container);
 		Dialog.applyDialogFont(container);
 	}
@@ -145,10 +158,15 @@ public class MigratePluginWizardPage extends WizardPage {
 	public void storeSettings() {
 		IDialogSettings settings = getDialogSettings();
 		settings.put(S_UPDATE_CLASSATH, fUpdateClasspathButton.getSelection());
+		settings.put(S_CLEAN_PROJECTS, fCleanProjectsButton.getSelection());
 	}
 	
 	public boolean isUpdateClasspathRequested() {
 		return fUpdateClasspathButton.getSelection();
+	}
+	
+	public boolean isCleanProjectsRequested() {
+		return fCleanProjectsButton.getSelection();
 	}
 
 }
