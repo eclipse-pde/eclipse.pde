@@ -36,6 +36,7 @@ public class SchemaEditor extends MultiSourceEditor {
 		IFile file = input.getFile();
 		IFileEditorInput in = new FileEditorInput(file);
 		manager.putContext(in, new SchemaInputContext(this, in, true));
+		manager.monitorFile(file);		
 	}
 	
 	protected InputContextManager createInputContextManager() {
