@@ -12,9 +12,9 @@ package org.eclipse.pde.internal.ui.wizards.exports;
 
 import java.io.*;
 import java.lang.reflect.*;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.ui.*;
 
 
 public class PluginExportJob extends FeatureExportJob {
@@ -61,12 +61,12 @@ public class PluginExportJob extends FeatureExportJob {
 		File featureXML = new File(file, "feature.xml"); //$NON-NLS-1$
 		PrintWriter writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(featureXML), "UTF-8"), true); //$NON-NLS-1$
 		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
-		writer.println(PDEPlugin.getFormattedMessage("PluginExportJob.feature",featureID)); //$NON-NLS-1$
+		writer.println("<feature id=\"" + featureID+ "\" version=\"1.0\">"); //$NON-NLS-1$ //$NON-NLS-2$
 		for (int i = 0; i < fItems.length; i++) {
 			if (fItems[i] instanceof IPluginModelBase) {
 				IPluginBase plugin = ((IPluginModelBase) fItems[i])
 						.getPluginBase();
-				writer.println(PDEPlugin.getFormattedMessage("PluginExportJob.plugin",plugin.getId())); //$NON-NLS-1$
+				writer.println("<plugin id=\"" + plugin.getId()+ "\" version=\"0.0.0\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		writer.println("</feature>"); //$NON-NLS-1$
