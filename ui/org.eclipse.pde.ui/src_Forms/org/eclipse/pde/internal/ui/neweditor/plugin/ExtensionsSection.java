@@ -415,7 +415,7 @@ public class ExtensionsSection extends TreeSection
 		extensionTree.getControl().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				extensionTree.refresh();
-				getForm().fireSelectionChanged(ExtensionsSection.this,
+				getManagedForm().fireSelectionChanged(ExtensionsSection.this,
 						extensionTree.getSelection());
 			}
 		});

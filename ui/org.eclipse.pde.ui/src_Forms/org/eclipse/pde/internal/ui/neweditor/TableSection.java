@@ -27,7 +27,7 @@ public abstract class TableSection extends StructuredViewerSection {
 			TableSection.this.entryModified(entry, value);
 		}
 		public void selectionChanged(IStructuredSelection selection) {
-			getForm().fireSelectionChanged(TableSection.this, selection);
+			getManagedForm().fireSelectionChanged(TableSection.this, selection);
 			TableSection.this.selectionChanged(selection);
 		}
 		public void handleDoubleClick(IStructuredSelection selection) {

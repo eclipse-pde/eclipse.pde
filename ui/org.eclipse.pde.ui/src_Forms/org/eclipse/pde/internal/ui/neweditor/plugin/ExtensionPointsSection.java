@@ -125,7 +125,7 @@ public class ExtensionPointsSection extends TableSection {
 	}	
 	public void refresh() {
 		pointTable.refresh();
-		getForm().fireSelectionChanged(this, pointTable.getSelection());
+		getManagedForm().fireSelectionChanged(this, pointTable.getSelection());
 		super.refresh();
 	}
 	public boolean setFormInput(Object object) {

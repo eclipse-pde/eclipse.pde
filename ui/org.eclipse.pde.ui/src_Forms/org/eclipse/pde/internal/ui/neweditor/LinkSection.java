@@ -79,7 +79,7 @@ public class LinkSection extends PDESection {
 		linkContainer.setLayout(linkLayout);
 	}
 	private void createMoreButton() {
-		moreButton = getForm().getToolkit().createButton(container, "More...",
+		moreButton = getManagedForm().getToolkit().createButton(container, "More...",
 				SWT.PUSH);
 		moreButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -160,19 +160,19 @@ public class LinkSection extends PDESection {
 	private void reflow() {
 		linkContainer.layout();
 		container.layout();
-		getForm().reflow(true);
+		getManagedForm().reflow(true);
 	}
 	private void createLinks() {
 		if (contentProvider == null)
 			return;
-		Object[] objects = contentProvider.getElements(getForm().getInput());
+		Object[] objects = contentProvider.getElements(getManagedForm().getInput());
 		for (int i = 0; i < objects.length; i++) {
 			if (i == linkNumberLimit)
 				break;
 			createLink(objects[i]);
 		}
 		if (objects.length > linkNumberLimit)
-			getForm().getToolkit().createLabel(linkContainer, "...", SWT.NULL);
+			getManagedForm().getToolkit().createLabel(linkContainer, "...", SWT.NULL);
 		updateMoreState(objects.length > linkNumberLimit);
 	}
 	private void updateMoreState(boolean needMore) {
@@ -190,11 +190,11 @@ public class LinkSection extends PDESection {
 				: null;
 		Hyperlink hyperlink;
 		if (image != null) {
-			hyperlink = getForm().getToolkit().createImageHyperlink(
+			hyperlink = getManagedForm().getToolkit().createImageHyperlink(
 					linkContainer, SWT.NULL);
 			((ImageHyperlink) hyperlink).setImage(image);
 		} else
-			hyperlink = getForm().getToolkit().createHyperlink(linkContainer,
+			hyperlink = getManagedForm().getToolkit().createHyperlink(linkContainer,
 					null, SWT.NULL);
 		update(hyperlink, object);
 		hyperlink.setData(object);

@@ -25,7 +25,7 @@ public abstract class TreeSection extends StructuredViewerSection {
 			super(buttonLabels);
 		}
 		public void selectionChanged(IStructuredSelection selection) {
-			getForm().fireSelectionChanged(TreeSection.this, selection);
+			getManagedForm().fireSelectionChanged(TreeSection.this, selection);
 			TreeSection.this.selectionChanged(selection);
 		}
 		public void handleDoubleClick(IStructuredSelection selection) {

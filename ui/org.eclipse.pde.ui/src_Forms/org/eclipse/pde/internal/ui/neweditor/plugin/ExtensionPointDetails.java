@@ -49,7 +49,7 @@ public class ExtensionPointDetails extends AbstractFormPart implements IDetailsP
 		getPage().getPDEEditor().fireSaveNeeded(getContextId(), false);
 	}
 	public PDEFormPage getPage() {
-		return (PDEFormPage)managedForm.getContainer();
+		return (PDEFormPage)getManagedForm().getContainer();
 	}
 	public boolean isEditable() {
 		return getPage().getPDEEditor().getAggregateModel().isEditable();
@@ -66,7 +66,7 @@ public class ExtensionPointDetails extends AbstractFormPart implements IDetailsP
 		layout.rightMargin = 0;
 		layout.bottomMargin = 0;
 		parent.setLayout(layout);
-		FormToolkit toolkit = getForm().getToolkit();
+		FormToolkit toolkit = getManagedForm().getToolkit();
 		Section section = toolkit.createSection(parent, Section.DESCRIPTION|Section.TITLE_BAR);
 		section.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
 		section.marginHeight = 5;
@@ -172,7 +172,7 @@ public class ExtensionPointDetails extends AbstractFormPart implements IDetailsP
 			return;
 		rtextData = hasSchema ? SCHEMA_RTEXT_DATA : NO_SCHEMA_RTEXT_DATA;
 		rtext.setText(rtextData, true, false);
-		getForm().getForm().reflow(true);
+		getManagedForm().getForm().reflow(true);
 	}
 	/*
 	 * (non-Javadoc)

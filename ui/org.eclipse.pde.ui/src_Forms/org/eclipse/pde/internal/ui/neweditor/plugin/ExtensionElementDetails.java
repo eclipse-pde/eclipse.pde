@@ -43,7 +43,7 @@ public class ExtensionElementDetails extends AbstractFormPart implements IDetail
 		getPage().getPDEEditor().fireSaveNeeded(getContextId(), false);
 	}
 	public PDEFormPage getPage() {
-		return (PDEFormPage)managedForm.getContainer();
+		return (PDEFormPage)getManagedForm().getContainer();
 	}
 	public boolean isEditable() {
 		return getPage().getPDEEditor().getAggregateModel().isEditable();
@@ -60,7 +60,7 @@ public class ExtensionElementDetails extends AbstractFormPart implements IDetail
 		layout.rightMargin = 0;
 		layout.bottomMargin = 0;
 		parent.setLayout(layout);
-		FormToolkit toolkit = managedForm.getToolkit();
+		FormToolkit toolkit = getManagedForm().getToolkit();
 		section = toolkit.createSection(parent, Section.TITLE_BAR|Section.DESCRIPTION);
 		section.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
 		section.marginHeight = 5;

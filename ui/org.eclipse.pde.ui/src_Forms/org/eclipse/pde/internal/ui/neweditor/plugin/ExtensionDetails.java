@@ -47,7 +47,7 @@ public class ExtensionDetails extends AbstractFormPart implements IDetailsPage, 
 	 */
 	public void createContents(Composite parent) {
 		TableWrapLayout layout = new TableWrapLayout();
-		FormToolkit toolkit = managedForm.getToolkit();
+		FormToolkit toolkit = getManagedForm().getToolkit();
 		boolean paintedBorder = toolkit.getBorderStyle()!=SWT.BORDER;
 		layout.topMargin = 0;
 		layout.leftMargin = 5;
@@ -187,7 +187,7 @@ public class ExtensionDetails extends AbstractFormPart implements IDetailsPage, 
 	 */
 	public void fireSaveNeeded() {
 		markDirty();
-		PDEFormPage page = (PDEFormPage)managedForm.getContainer();
+		PDEFormPage page = (PDEFormPage)getManagedForm().getContainer();
 		page.getPDEEditor().fireSaveNeeded(getContextId(), false);
 	}
 	/* (non-Javadoc)
@@ -197,7 +197,7 @@ public class ExtensionDetails extends AbstractFormPart implements IDetailsPage, 
 		return PluginInputContext.CONTEXT_ID;
 	}
 	public PDEFormPage getPage() {
-		return (PDEFormPage)managedForm.getContainer();
+		return (PDEFormPage)getManagedForm().getContainer();
 	}
 	public boolean isEditable() {
 		return getPage().getPDEEditor().getAggregateModel().isEditable();
