@@ -10,11 +10,20 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.resource.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.runtime.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.ILibrary;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IPluginPrerequisite;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.osgi.util.ManifestElement;
+import org.eclipse.pde.internal.runtime.OverlayIcon;
+import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
+import org.eclipse.pde.internal.runtime.PDERuntimePluginImages;
+import org.eclipse.swt.graphics.Image;
 
 public class RegistryBrowserLabelProvider extends LabelProvider {
 	private Image pluginImage;
@@ -99,7 +108,7 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 		if (element instanceof IPluginPrerequisite) {
 			return reqPluginImage;
 		}
-		if (element instanceof ILibrary) {
+		if (element instanceof ILibrary || element instanceof ManifestElement) {
 			return libraryImage;
 		}
 		if (element instanceof IConfigurationElement) {
@@ -143,6 +152,9 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 		}
 		if (element instanceof ILibrary) {
 			return ((ILibrary) element).getPath().toString();
+		}
+		if (element instanceof ManifestElement) {
+			return ((ManifestElement)element).getValue();
 		}
 		if (element instanceof IConfigurationElement) {
 			String label = ((IConfigurationElement) element).getAttribute("label");

@@ -9,10 +9,20 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Hashtable;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IPluginRegistry;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.osgi.util.ManifestElement;
+import org.osgi.framework.BundleException;
+import org.osgi.framework.Constants;
 public class RegistryBrowserContentProvider
 		implements
 			org.eclipse.jface.viewers.ITreeContentProvider {
@@ -72,6 +82,8 @@ public class RegistryBrowserContentProvider
 		return getChildren(element);
 	}
 	public Object[] getChildren(Object element) {
+		if (element == null)
+			return null;
 		
 		if (element instanceof ExtensionAdapter) {
 			return ((ExtensionAdapter) element).getChildren();
@@ -193,6 +205,14 @@ public class RegistryBrowserContentProvider
 				break;
 			case IPluginFolder.F_LIBRARIES :
 				array = pd.getRuntimeLibraries();
+				try {
+					if (array == null || array.length == 0){
+						Object classpath = pd.getPlugin().getBundle().getHeaders().get(Constants.BUNDLE_CLASSPATH);
+						return classpath == null ? null : ManifestElement.parseClassPath(classpath.toString());
+					}
+				} catch (BundleException e) {
+				} catch (CoreException e) {
+				}
 				break;
 		}
 		Object[] result = null;
