@@ -203,15 +203,11 @@ public class RequiredPluginsContainerPage
 		IClasspathEntry entry = (IClasspathEntry) ssel.getFirstElement();
 		IClasspathEntry editableEntry = getEditableEntry(entry);
 
-		SourceAttachmentDialog dialog =
-			new SourceAttachmentDialog(
+		IClasspathEntry newEntry = BuildPathDialogAccess.configureSourceAttachment(
 				viewer.getControl().getShell(),
 				editableEntry);
-		IClasspathEntry newEntry = null;
-		if (dialog.open() == SourceAttachmentDialog.OK) {
-			newEntry = dialog.getNewEntry();
+		if (newEntry != null)
 			replacedEntries.put(entry, newEntry);
-		}
 	}
 
 	/**
