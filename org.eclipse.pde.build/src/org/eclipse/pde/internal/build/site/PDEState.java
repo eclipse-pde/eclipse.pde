@@ -146,7 +146,8 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		}
 	}
 
-	private Dictionary loadManifest(File bundleLocation) {
+	//Return a dictionary representing a manifest. The data may result from plugin.xml conversion  
+	private Dictionary basicLoadManifest(File bundleLocation) {
 		InputStream manifestStream = null;
 		try {
 			URL manifestLocation = null;
@@ -160,43 +161,63 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			//ignore
 		}
 
-		//The manifestStream is not present 
-		if (manifestStream == null)
-			return convertPluginManifest(bundleLocation, true);
+		//It is not a manifest, but a plugin or a fragment
+		Dictionary manifest = null;
+		if (manifestStream == null) {
+			manifest = convertPluginManifest(bundleLocation, true);
+			if (manifest == null)
+				return null;
+		}
 
-		try {
-			Manifest m = new Manifest(manifestStream);
-			Properties originalManifest = manifestToProperties(m.getMainAttributes());
-
-			//The manifest has a symbolic name
-			if (originalManifest.get(Constants.BUNDLE_SYMBOLICNAME) != null) {
-				//Add dot on the classpath if none has been specified
-				String classpath = (String) originalManifest.get(Constants.BUNDLE_CLASSPATH);
-				if (classpath == null)
-					originalManifest.put(Constants.BUNDLE_CLASSPATH, "."); //$NON-NLS-1$
-				return originalManifest;
-			}
-
-			//The manifest does not have a symbolic name
-			Dictionary generatedManifest = convertPluginManifest(bundleLocation, false);
-			if (generatedManifest == null)
-				return originalManifest;
-			//merge manifests
-			Enumeration enumeration = originalManifest.keys();
-			while (enumeration.hasMoreElements()) {
-				Object key = enumeration.nextElement();
-				generatedManifest.put(key, originalManifest.get(key));
-			}
-			return generatedManifest;
-		} catch (IOException e) {
-			return null;
-		} finally {
+		if (manifestStream != null) {
 			try {
-				manifestStream.close();
-			} catch (IOException e1) {
-				//Ignore
+				Manifest m = new Manifest(manifestStream);
+				manifest = manifestToProperties(m.getMainAttributes());
+			} catch (IOException ioe) {
+				return null;
+			} finally {
+				try {
+					manifestStream.close();
+				} catch (IOException e1) {
+					//Ignore
+				}
 			}
 		}
+		return manifest;
+	}
+	
+	private void enforceSymbolicName(File bundleLocation, Dictionary initialManifest) {
+		if (initialManifest.get(Constants.BUNDLE_SYMBOLICNAME) != null)
+			return;
+	
+		Dictionary generatedManifest = convertPluginManifest(bundleLocation, false);
+		if (generatedManifest == null)
+			return;
+		
+		//merge manifests. The values from the generated manifest are added to the initial one. Values from the initial one are not deleted 
+		Enumeration enumeration = generatedManifest.keys();
+		while (enumeration.hasMoreElements()) {
+			Object key = enumeration.nextElement();
+			if (initialManifest.get(key) == null)
+				initialManifest.put(key, generatedManifest.get(key));
+		}
+	}
+	
+
+	private void enforceClasspath(Dictionary manifest) {
+		String classpath = (String) manifest.get(Constants.BUNDLE_CLASSPATH);
+		if (classpath == null)
+			manifest.put(Constants.BUNDLE_CLASSPATH, "."); //$NON-NLS-1$
+	}
+	
+	private Dictionary loadManifest(File bundleLocation) {
+		Dictionary manifest = basicLoadManifest(bundleLocation);
+		if (manifest == null)
+			return null;
+		
+		enforceSymbolicName(bundleLocation, manifest);
+		enforceClasspath(manifest);
+		return manifest;
 	}
 
 	private Dictionary convertPluginManifest(File bundleLocation, boolean logConversionException) {
@@ -264,7 +285,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			if (!root.getLocation().equals(packages[i].getExporter().getLocation()) && !resolvedImports.contains(packages[i].getExporter()))
 				resolvedImports.add(packages[i].getExporter());
 		return (BundleDescription[]) resolvedImports.toArray(new BundleDescription[resolvedImports.size()]);
-		}
+	}
 
 	/**
 	 * This methods return the bundleDescriptions to which required bundles
@@ -276,7 +297,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		if (root == null)
 			return new BundleDescription[0];
 		return root.getResolvedRequires();
-		}
+	}
 
 	public BundleDescription getResolvedBundle(String bundleId, String version) {
 		if (IPDEBuildConstants.GENERIC_VERSION_NUMBER.equals(version) || version == null) {
@@ -292,10 +313,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			Version versionToMatch = Version.parseVersion(version.substring(0, qualifierIdx));
 			for (int i = 0; i < bundles.length; i++) {
 				Version bundleVersion = bundles[i].getVersion();
-				if (bundleVersion.getMajor() == versionToMatch.getMajor() &&
-						bundleVersion.getMinor() == versionToMatch.getMinor() &&
-						bundleVersion.getMicro() >= versionToMatch.getMicro() &&
-						bundleVersion.getQualifier().compareTo(versionToMatch.getQualifier()) >= 0)
+				if (bundleVersion.getMajor() == versionToMatch.getMajor() && bundleVersion.getMinor() == versionToMatch.getMinor() && bundleVersion.getMicro() >= versionToMatch.getMicro() && bundleVersion.getQualifier().compareTo(versionToMatch.getQualifier()) >= 0)
 					return bundles[i];
 			}
 		}
