@@ -1,13 +1,13 @@
 /*******************************************************************************
-* Copyright (c) 2000, 2003 IBM Corporation and others.
-* All rights reserved. This program and the accompanying materials 
-* are made available under the terms of the Common Public License v1.0
-* which accompanies this distribution, and is available at
-* http://www.eclipse.org/legal/cpl-v10.html
-* 
-* Contributors:
-*     IBM Corporation - initial API and implementation
-*******************************************************************************/
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
@@ -50,14 +50,14 @@ IRegistryChangeListener {
 	private Action collapseAllAction;
 	private Action[] toggleViewAction;
 	private DrillDownAdapter drillDownAdapter;
-		
+	
 	//attributes view
 	private SashForm fSashForm;
 	private Label fPropertyLabel;
 	private Label fPropertyImage;
 	private PropertySheetPage fPropertySheet;
-
-
+	
+	
 	public RegistryBrowser() {
 		super();
 		Platform.getExtensionRegistry().addRegistryChangeListener(this);
@@ -65,99 +65,33 @@ IRegistryChangeListener {
 		.addBundleListener(this);
 	}
 	
-	protected void setLastSashWeights(int[] weights) {
-		if (orientation == HORIZONTAL_ORIENTATION)
-			horizontalSashWeight = weights;
-		else if (orientation == VERTICAL_ORIENTATION)
-			verticalSashWeight = weights;
+	public void init(IViewSite site, IMemento memento) throws PartInitException {
+		super.init(site, memento);
+		if (memento == null)
+			this.memento = XMLMemento.createWriteRoot("REGISTRYVIEW");
+		else
+			this.memento = memento;
+		initializeMemento();
+		orientation = this.memento.getInteger(REGISTRY_ORIENTATION).intValue();
 	}
-
-	public void setViewOrientation(int viewOrientation){
-		setLastSashWeights(getSashForm().getWeights());
-		if (viewOrientation == SINGLE_PANE_ORIENTATION){
-			getSashForm().setMaximizedControl(treeViewer.getControl());		
-		} else {
-			if (viewOrientation == VERTICAL_ORIENTATION)
-				getSashForm().setOrientation(SWT.VERTICAL);
-			else
-				getSashForm().setOrientation(SWT.HORIZONTAL);
-			getSashForm().setMaximizedControl(null);
-			getSashForm().setWeights(getLastSashWeights(viewOrientation));
-		}
-		orientation = viewOrientation;
-	}
-	protected int[] getLastSashWeights(int viewOrientation) {
-		if (viewOrientation == HORIZONTAL_ORIENTATION){
-			if (horizontalSashWeight == null) 
-				horizontalSashWeight = DEFAULT_SASH_WEIGHTS;
-			return horizontalSashWeight;
-		} else {
-			if (verticalSashWeight == null)
-				verticalSashWeight = DEFAULT_SASH_WEIGHTS;
-			return verticalSashWeight;
-		}
-
+	private void initializeMemento() {
+		if (memento.getString(SHOW_RUNNING_PLUGINS) == null)
+			memento.putString(SHOW_RUNNING_PLUGINS, "true");
+		if (memento.getString(TogglePropertiesAction.SHOW_PROPERTIES_SHEET) == null)
+			memento.putString(TogglePropertiesAction.SHOW_PROPERTIES_SHEET, "true");
+		if (memento.getInteger(REGISTRY_ORIENTATION) == null)
+			memento.putInteger(REGISTRY_ORIENTATION, HORIZONTAL_ORIENTATION);
 	}
 	
-	public void makeActions() {
-		refreshAction = new Action("refresh") {
-			public void run() {
-				BusyIndicator.showWhile(treeViewer.getTree().getDisplay(),
-						new Runnable() {
-					public void run() {
-						treeViewer.refresh();
-					}
-				});
-			}
-		};
-		refreshAction.setText(PDERuntimePlugin
-				.getResourceString(KEY_REFRESH_LABEL));
-		refreshAction.setToolTipText(PDERuntimePlugin
-				.getResourceString(KEY_REFRESH_TOOLTIP));
-		refreshAction.setImageDescriptor(PDERuntimePluginImages.DESC_REFRESH);
-		refreshAction
-		.setDisabledImageDescriptor(PDERuntimePluginImages.DESC_REFRESH_DISABLED);
-		refreshAction
-		.setHoverImageDescriptor(PDERuntimePluginImages.DESC_REFRESH_HOVER);
-		
-		showPluginsAction = new Action(PDERuntimePlugin.getResourceString(SHOW_RUNNING_PLUGINS)){
-			public void run(){
-				((RegistryBrowserContentProvider) treeViewer.getContentProvider())
-			.setShowRunning(showPluginsAction.isChecked());
-				handleShowRunningPlugins(showPluginsAction.isChecked());
-			}
-		};
-		showPluginsAction.setChecked(memento.getString(SHOW_RUNNING_PLUGINS).equals("true"));
-		
-		collapseAllAction = new Action("collapseAll"){
-			public void run(){
-				treeViewer.collapseAll();
-			}
-		};
-		collapseAllAction.setText(PDERuntimePlugin.getResourceString(KEY_COLLAPSE_ALL_LABEL));
-		collapseAllAction.setImageDescriptor(PDERuntimePluginImages.DESC_COLLAPSE_ALL);
-		collapseAllAction.setHoverImageDescriptor(PDERuntimePluginImages.DESC_COLLAPSE_ALL_HOVER);
-		collapseAllAction.setToolTipText(PDERuntimePlugin.getResourceString(KEY_COLLAPSE_ALL_TOOLTIP));
-		
-		toggleViewAction = new TogglePropertiesAction[3];
-		toggleViewAction[0] = new TogglePropertiesAction(this, VERTICAL_ORIENTATION);
-		toggleViewAction[1] = new TogglePropertiesAction(this, HORIZONTAL_ORIENTATION);
-		toggleViewAction[2] = new TogglePropertiesAction(this, SINGLE_PANE_ORIENTATION);
-		if (orientation == VERTICAL_ORIENTATION)
-			toggleViewAction[0].setChecked(true);
-		else if (orientation == HORIZONTAL_ORIENTATION)
-			toggleViewAction[1].setChecked(true);
-		else
-			toggleViewAction[2].setChecked(true);
-	}
+	
+	
 	public void dispose() {
 		Platform.getExtensionRegistry().removeRegistryChangeListener(this);
 		PDERuntimePlugin.getDefault().getBundleContext().removeBundleListener(
 				this);
 		super.dispose();
 	}
-	public void setFocus() {
-	}
+	
 	public void createPartControl(Composite parent) {
 		// create the sash form that will contain the tree viewer & text viewer
 		fSashForm = new SashForm(parent, SWT.HORIZONTAL);
@@ -216,6 +150,44 @@ IRegistryChangeListener {
 		Menu menu = popupMenuManager.createContextMenu(tree);
 		tree.setMenu(menu);
 	}
+	/* 
+	 * add attributes viewer 
+	 */
+	protected void createAttributesViewer() {
+		Composite composite = new Composite(getSashForm(), SWT.FLAT);
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = layout.marginHeight = 2;
+		layout.numColumns = 2;
+		layout.makeColumnsEqualWidth = false;
+		composite.setLayout(layout);
+		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
+		fPropertyImage = new Label(composite, SWT.NONE);
+		GridData gd = new GridData(GridData.FILL);
+		gd.widthHint = 20;
+		fPropertyImage.setLayoutData(gd);
+		fPropertyLabel = new Label(composite, SWT.NULL);
+		fPropertyLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		createPropertySheet(composite);
+	}	
+	/*
+	 * add property sheet
+	 */
+	protected void createPropertySheet(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = layout.marginHeight = 0;
+		composite.setLayout(layout);
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.horizontalSpan = 2;
+		composite.setLayoutData(gd);
+		fPropertySheet = new PropertySheetPage();
+		fPropertySheet.createControl(composite);
+		gd = new GridData(GridData.FILL_BOTH);
+		fPropertySheet.getControl().setLayoutData(gd);
+		fPropertySheet.makeContributions(new MenuManager(),
+				new ToolBarManager(), null);
+	}
 	private void fillToolBar(){
 		drillDownAdapter = new DrillDownAdapter(treeViewer);
 		IActionBars bars = getViewSite().getActionBars();
@@ -240,22 +212,8 @@ IRegistryChangeListener {
 	public TreeViewer getTreeViewer() {
 		return treeViewer;
 	}
-	public void init(IViewSite site, IMemento memento) throws PartInitException {
-		super.init(site, memento);
-		if (memento == null)
-			this.memento = XMLMemento.createWriteRoot("REGISTRYVIEW");
-		else
-			this.memento = memento;
-		initializeMemento();
-		orientation = this.memento.getInteger(REGISTRY_ORIENTATION).intValue();
-	}
-	private void initializeMemento() {
-		if (memento.getString(SHOW_RUNNING_PLUGINS) == null)
-			memento.putString(SHOW_RUNNING_PLUGINS, "true");
-		if (memento.getString(TogglePropertiesAction.SHOW_PROPERTIES_SHEET) == null)
-			memento.putString(TogglePropertiesAction.SHOW_PROPERTIES_SHEET, "true");
-		if (memento.getInteger(REGISTRY_ORIENTATION) == null)
-			memento.putInteger(REGISTRY_ORIENTATION, HORIZONTAL_ORIENTATION);
+	protected SashForm getSashForm() {
+		return fSashForm;
 	}
 	public void saveState(IMemento memento) {
 		boolean showRunning = ((RegistryBrowserContentProvider) treeViewer
@@ -267,40 +225,7 @@ IRegistryChangeListener {
 		this.memento.putInteger(REGISTRY_ORIENTATION, orientation);
 		memento.putMemento(this.memento);
 	}
-	/* add attributes viewer */
-	protected void createAttributesViewer() {
-		Composite composite = new Composite(getSashForm(), SWT.FLAT);
-		GridLayout layout = new GridLayout();
-		layout.marginWidth = layout.marginHeight = 2;
-		layout.numColumns = 2;
-		layout.makeColumnsEqualWidth = false;
-		composite.setLayout(layout);
-		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
-		fPropertyImage = new Label(composite, SWT.NONE);
-		GridData gd = new GridData(GridData.FILL);
-		gd.widthHint = 20;
-		fPropertyImage.setLayoutData(gd);
-		fPropertyLabel = new Label(composite, SWT.NULL);
-		fPropertyLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		createPropertySheet(composite);
-	}	
 	
-	protected void createPropertySheet(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.marginWidth = layout.marginHeight = 0;
-		composite.setLayout(layout);
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.horizontalSpan = 2;
-		composite.setLayoutData(gd);
-		fPropertySheet = new PropertySheetPage();
-		fPropertySheet.createControl(composite);
-		gd = new GridData(GridData.FILL_BOTH);
-		fPropertySheet.getControl().setLayoutData(gd);
-		fPropertySheet.makeContributions(new MenuManager(),
-				new ToolBarManager(), null);
-	}
 	public void updateAttributesView(Object selection) {
 		fPropertyImage.setImage(((RegistryBrowserLabelProvider) treeViewer
 				.getLabelProvider()).getImage(selection));
@@ -313,15 +238,16 @@ IRegistryChangeListener {
 			fPropertySheet.selectionChanged(null, new StructuredSelection(
 					new Object()));
 	}
-	protected SashForm getSashForm() {
-		return fSashForm;
-	}
+	
 	private void setSashForm(SashForm sashForm) {
 		fSashForm = sashForm;
 	}
+	public void setFocus() {
+	}
+	
 	/*
-* @see org.osgi.framework.BundleListener#bundleChanged(org.osgi.framework.BundleEvent)
-*/
+	 * @see org.osgi.framework.BundleListener#bundleChanged(org.osgi.framework.BundleEvent)
+	 */
 	public void bundleChanged(BundleEvent event) {
 		final RegistryBrowserContentProvider provider = ((RegistryBrowserContentProvider) treeViewer
 				.getContentProvider());
@@ -359,8 +285,8 @@ IRegistryChangeListener {
 		});
 	}
 	/*
-* @see org.eclipse.core.runtime.IRegistryChangeListener#registryChanged(org.eclipse.core.runtime.IRegistryChangeEvent)
-*/
+	 * @see org.eclipse.core.runtime.IRegistryChangeListener#registryChanged(org.eclipse.core.runtime.IRegistryChangeEvent)
+	 */
 	public void registryChanged(IRegistryChangeEvent event) {
 		final IExtensionDelta[] deltas = event.getExtensionDeltas();
 		treeViewer.getTree().getDisplay().syncExec(new Runnable() {
@@ -388,6 +314,63 @@ IRegistryChangeListener {
 			}
 		});
 	}
+	/*
+	 * toolbar and context menu actions
+	 */
+	public void makeActions() {
+		refreshAction = new Action("refresh") {
+			public void run() {
+				BusyIndicator.showWhile(treeViewer.getTree().getDisplay(),
+						new Runnable() {
+					public void run() {
+						treeViewer.refresh();
+					}
+				});
+			}
+		};
+		refreshAction.setText(PDERuntimePlugin
+				.getResourceString(KEY_REFRESH_LABEL));
+		refreshAction.setToolTipText(PDERuntimePlugin
+				.getResourceString(KEY_REFRESH_TOOLTIP));
+		refreshAction.setImageDescriptor(PDERuntimePluginImages.DESC_REFRESH);
+		refreshAction
+		.setDisabledImageDescriptor(PDERuntimePluginImages.DESC_REFRESH_DISABLED);
+		refreshAction
+		.setHoverImageDescriptor(PDERuntimePluginImages.DESC_REFRESH_HOVER);
+		
+		showPluginsAction = new Action(PDERuntimePlugin.getResourceString(SHOW_RUNNING_PLUGINS)){
+			public void run(){
+				((RegistryBrowserContentProvider) treeViewer.getContentProvider())
+			.setShowRunning(showPluginsAction.isChecked());
+				handleShowRunningPlugins(showPluginsAction.isChecked());
+			}
+		};
+		showPluginsAction.setChecked(memento.getString(SHOW_RUNNING_PLUGINS).equals("true"));
+		
+		collapseAllAction = new Action("collapseAll"){
+			public void run(){
+				treeViewer.collapseAll();
+			}
+		};
+		collapseAllAction.setText(PDERuntimePlugin.getResourceString(KEY_COLLAPSE_ALL_LABEL));
+		collapseAllAction.setImageDescriptor(PDERuntimePluginImages.DESC_COLLAPSE_ALL);
+		collapseAllAction.setHoverImageDescriptor(PDERuntimePluginImages.DESC_COLLAPSE_ALL_HOVER);
+		collapseAllAction.setToolTipText(PDERuntimePlugin.getResourceString(KEY_COLLAPSE_ALL_TOOLTIP));
+		
+		toggleViewAction = new TogglePropertiesAction[3];
+		toggleViewAction[0] = new TogglePropertiesAction(this, VERTICAL_ORIENTATION);
+		toggleViewAction[1] = new TogglePropertiesAction(this, HORIZONTAL_ORIENTATION);
+		toggleViewAction[2] = new TogglePropertiesAction(this, SINGLE_PANE_ORIENTATION);
+		if (orientation == VERTICAL_ORIENTATION)
+			toggleViewAction[0].setChecked(true);
+		else if (orientation == HORIZONTAL_ORIENTATION)
+			toggleViewAction[1].setChecked(true);
+		else
+			toggleViewAction[2].setChecked(true);
+	}
+	/*
+	 * show plug-ins action
+	 */
 	protected void handleShowRunningPlugins(boolean showRunning){
 		if (showRunning){
 			TreeItem[] items = treeViewer.getTree().getItems();
@@ -412,6 +395,41 @@ IRegistryChangeListener {
 				if (!descriptors[i].isPluginActivated())
 					treeViewer.add(treeViewer.getInput(), new PluginObjectAdapter(descriptors[i]));
 			}
+		}
+	}
+	/*
+	 * orientation and properties display handler
+	 */
+	protected void setLastSashWeights(int[] weights) {
+		if (orientation == HORIZONTAL_ORIENTATION)
+			horizontalSashWeight = weights;
+		else if (orientation == VERTICAL_ORIENTATION)
+			verticalSashWeight = weights;
+	}
+	
+	public void setViewOrientation(int viewOrientation){
+		setLastSashWeights(getSashForm().getWeights());
+		if (viewOrientation == SINGLE_PANE_ORIENTATION){
+			getSashForm().setMaximizedControl(treeViewer.getControl());		
+		} else {
+			if (viewOrientation == VERTICAL_ORIENTATION)
+				getSashForm().setOrientation(SWT.VERTICAL);
+			else
+				getSashForm().setOrientation(SWT.HORIZONTAL);
+			getSashForm().setMaximizedControl(null);
+			getSashForm().setWeights(getLastSashWeights(viewOrientation));
+		}
+		orientation = viewOrientation;
+	}
+	protected int[] getLastSashWeights(int viewOrientation) {
+		if (viewOrientation == HORIZONTAL_ORIENTATION){
+			if (horizontalSashWeight == null) 
+				horizontalSashWeight = DEFAULT_SASH_WEIGHTS;
+			return horizontalSashWeight;
+		} else {
+			if (verticalSashWeight == null)
+				verticalSashWeight = DEFAULT_SASH_WEIGHTS;
+			return verticalSashWeight;
 		}
 	}
 }
