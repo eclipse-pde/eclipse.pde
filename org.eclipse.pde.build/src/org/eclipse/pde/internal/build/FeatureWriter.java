@@ -81,8 +81,8 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 		parameters.put("url", feature.getDescriptionModel().getURLString()); //$NON-NLS-1$
 
 		startTag("description", parameters, true); //$NON-NLS-1$
-
-		print(feature.getDescriptionModel().getAnnotationNonLocalized());
+		printTabulation();
+		println(feature.getDescriptionModel().getAnnotationNonLocalized());
 		endTag("description"); //$NON-NLS-1$
 	}
 
@@ -92,7 +92,8 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 		parameters.clear();
 		parameters.put("url", feature.getCopyrightModel().getURLString()); //$NON-NLS-1$
 		startTag("copyright", parameters, true); //$NON-NLS-1$
-		print(feature.getCopyrightModel().getAnnotationNonLocalized());
+		printTabulation();
+		println(feature.getCopyrightModel().getAnnotationNonLocalized());
 		endTag("copyright"); //$NON-NLS-1$
 	}
 
@@ -102,6 +103,7 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 		parameters.clear();
 		parameters.put("url", feature.getLicenseModel().getURLString()); //$NON-NLS-1$
 		startTag("license", parameters, true); //$NON-NLS-1$
+		printTabulation();
 		println(feature.getLicenseModel().getAnnotationNonLocalized());
 		endTag("license"); //$NON-NLS-1$
 	}
@@ -115,8 +117,7 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 				parameters.clear();
 				parameters.put("url", feature.getUpdateSiteEntryModel().getURLString()); //$NON-NLS-1$
 				parameters.put("label", feature.getUpdateSiteEntryModel().getAnnotationNonLocalized()); //$NON-NLS-1$
-				startTag("update", parameters); //$NON-NLS-1$
-				endTag("update"); //$NON-NLS-1$
+				printTag("update", parameters, true, true, true); //$NON-NLS-1$
 			}
 
 			URLEntryModel[] siteEntries = feature.getDiscoverySiteEntryModels();
@@ -124,8 +125,7 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 				parameters.clear();
 				parameters.put("url", siteEntries[i].getURLString()); //$NON-NLS-1$
 				parameters.put("label", siteEntries[i].getAnnotationNonLocalized()); //$NON-NLS-1$
-				startTag("discovery", parameters); //$NON-NLS-1$
-				endTag("discovery"); //$NON-NLS-1$
+				printTag("discovery", parameters, true, true, true); //$NON-NLS-1$
 			}
 			endTag("url"); //$NON-NLS-1$
 		}
@@ -144,8 +144,7 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, message, null));
 			}
 
-			startTag("includes", parameters); //$NON-NLS-1$
-			endTag("includes"); //$NON-NLS-1$
+			printTag("includes", parameters, true, true, true); //$NON-NLS-1$
 		}
 	}
 
@@ -170,8 +169,7 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 				parameters.put("version", imports[i].getVersionedIdentifier().getVersion().toString()); //$NON-NLS-1$
 			}
 			parameters.put("match", getStringForMatchingRule(imports[i].getRule())); //$NON-NLS-1$
-			startTag("import", parameters); //$NON-NLS-1$
-			endTag("import"); //$NON-NLS-1$
+			printTag("import", parameters, true, true, true); //$NON-NLS-1$
 		}
 	}
 
@@ -224,8 +222,7 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 			parameters.put("nl", plugins[i].getNL()); //$NON-NLS-1$
 			parameters.put("download-size", new Long(plugins[i].getDownloadSize() != -1 ? plugins[i].getDownloadSize() : 0)); //$NON-NLS-1$
 			parameters.put("install-size", new Long(plugins[i].getInstallSize() != -1 ? plugins[i].getInstallSize() : 0)); //$NON-NLS-1$
-			startTag("plugin", parameters); //$NON-NLS-1$
-			endTag("plugin"); //$NON-NLS-1$
+			printTag("plugin", parameters, true, true, true); //$NON-NLS-1$
 		}
 	}
 
@@ -239,8 +236,7 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 			parameters.put("nl", entries[i].getNL()); //$NON-NLS-1$
 			parameters.put("download-size", new Long(entries[i].getDownloadSize() != -1 ? entries[i].getDownloadSize() : 0)); //$NON-NLS-1$
 			parameters.put("install-size", new Long(entries[i].getInstallSize() != -1 ? entries[i].getInstallSize() : 0)); //$NON-NLS-1$
-			startTag("data", parameters); //$NON-NLS-1$
-			endTag("data"); //$NON-NLS-1$
+			printTag("data", parameters, true, true, true); //$NON-NLS-1$
 		}
 	}
 }

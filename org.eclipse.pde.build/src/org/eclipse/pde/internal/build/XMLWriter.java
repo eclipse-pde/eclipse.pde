@@ -36,9 +36,9 @@ public class XMLWriter extends PrintWriter {
 	public void printSimpleTag(String name, Object value) {
 		if (value == null)
 			return;
-		printTag(name, null, true, false);
+		printTag(name, null, true, false, false);
 		print(getEscaped(String.valueOf(value)));
-		printTag('/' + name, null, false, true);
+		printTag('/' + name, null, false, true, false);
 	}
 
 	public void printTabulation() {
@@ -47,10 +47,10 @@ public class XMLWriter extends PrintWriter {
 	}
 
 	public void printTag(String name, Map parameters) {
-		printTag(name, parameters, true, true);
+		printTag(name, parameters, true, true, false);
 	}
 
-	public void printTag(String name, Map parameters, boolean shouldTab, boolean newLine) {
+	public void printTag(String name, Map parameters, boolean shouldTab, boolean newLine, boolean close) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<"); //$NON-NLS-1$
 		sb.append(name);
@@ -65,7 +65,10 @@ public class XMLWriter extends PrintWriter {
 					sb.append("\""); //$NON-NLS-1$
 				}
 			}
-		sb.append(">"); //$NON-NLS-1$
+		if (close)
+			sb.append("/>"); //$NON-NLS-1$
+		else 
+			sb.append(">"); //$NON-NLS-1$
 		if (shouldTab)
 			printTabulation();
 		if (newLine)
@@ -79,7 +82,7 @@ public class XMLWriter extends PrintWriter {
 	}
 
 	public void startTag(String name, Map parameters, boolean newLine) {
-		printTag(name, parameters, true, newLine);
+		printTag(name, parameters, true, newLine, false);
 		tab++;
 	}
 

@@ -38,8 +38,7 @@ public class SourceFeatureWriter extends FeatureWriter {
 				e.printStackTrace(); //TO CHECK better handling of exception
 			}
 
-			startTag("includes", parameters); //$NON-NLS-1$
-			endTag("includes"); //$NON-NLS-1$
+			printTag("includes", parameters, true, true, true); //$NON-NLS-1$
 		}
 	}
 }
