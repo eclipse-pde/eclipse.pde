@@ -32,21 +32,16 @@ import org.eclipse.pde.internal.core.*;
 public class TracingLauncherTab
 	extends AbstractLauncherTab
 	implements ILauncherSettings {
-	public static final String KEY_DESC = "Preferences.AdvancedTracingPage.desc";
-	private static final String KEY_TRACING =
-		"WorkbenchLauncherWizardBasicPage.tracing";
-	public static final String KEY_PLUGINS =
-		"Preferences.AdvancedTracingPage.plugins";
+	public static final String KEY_DESC = "TracingLauncherTab.desc";
+	private static final String KEY_TRACING = "TracingLauncherTab.tracing";
+	public static final String KEY_PLUGINS = "TracingLauncherTab.plugins";
 	public static final String KEY_WORKSPACE_PLUGINS =
-		"Preferences.AdvancedTracingPage.workspacePlugins";
+		"TracingLauncherTab.workspacePlugins";
 	public static final String KEY_EXTERNAL_PLUGINS =
-		"Preferences.AdvancedTracingPage.externalPlugins";
-	public static final String KEY_OPTIONS =
-		"Preferences.AdvancedTracingPage.options";
-	public static final String KEY_MAXIMIZE = 
-		"Preferences.AdvancedTracingPage.maximize";
-	public static final String KEY_RESTORE = 
-		"Preferences.AdvancedTracingPage.restore";
+		"TracingLauncherTab.externalPlugins";
+	public static final String KEY_OPTIONS = "TracingLauncherTab.options";
+	public static final String KEY_MAXIMIZE = "TracingLauncherTab.maximize";
+	public static final String KEY_RESTORE = "TracingLauncherTab.restore";
 
 	private static final String S_SELECTED_PLUGIN = "selectedPlugin";
 	private static final String S_MAXIMIZED = "maximized";
@@ -106,7 +101,7 @@ public class TracingLauncherTab
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		container.setLayout(layout);
-		
+
 		createStartingSpace(container, 1);
 
 		tracingCheck = new Button(container, SWT.CHECK);
@@ -118,11 +113,11 @@ public class TracingLauncherTab
 				tracingCheckChanged();
 			}
 		});
-		
-		Label separator = new Label(container, SWT.SEPARATOR|SWT.HORIZONTAL);
+
+		Label separator = new Label(container, SWT.SEPARATOR | SWT.HORIZONTAL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		separator.setLayoutData(gd);
-		
+
 		sashForm = new SashForm(container, SWT.VERTICAL);
 		gd = new GridData(GridData.FILL_BOTH);
 		sashForm.setLayoutData(gd);
@@ -268,7 +263,8 @@ public class TracingLauncherTab
 		return composite;
 	}
 	public void dispose() {
-		if (propertySheet!=null) propertySheet.dispose();
+		if (propertySheet != null)
+			propertySheet.dispose();
 		super.dispose();
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 	}
@@ -325,7 +321,7 @@ public class TracingLauncherTab
 		pluginTreeViewer.setInput(PDEPlugin.getDefault());
 		pluginTreeViewer.reveal(workspacePlugins);
 	}
-	
+
 	private void tracingCheckChanged() {
 		boolean enabled = tracingCheck.getSelection();
 		pluginTreeViewer.getTree().setEnabled(enabled);
@@ -353,15 +349,13 @@ public class TracingLauncherTab
 	}
 
 	public void initializeFrom(final ILaunchConfiguration config) {
-		BusyIndicator.showWhile(getControl().getDisplay(),
-			new Runnable() {
-				public void run() {
-					doInitializeFrom(config);
-				}
+		BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
+			public void run() {
+				doInitializeFrom(config);
 			}
-		);
+		});
 	}
-	
+
 	private void doInitializeFrom(ILaunchConfiguration config) {
 		masterOptions =
 			PDECore.getDefault().getTracingOptionsManager().getTracingTemplateCopy();
@@ -371,11 +365,11 @@ public class TracingLauncherTab
 			tracing = config.getAttribute(TRACING, tracing);
 			tracingCheck.setSelection(tracing);
 			tracingCheckChanged();
-			
+
 			Map options = config.getAttribute(TRACING_OPTIONS, (Map) null);
 			if (options != null)
 				initializeFrom(options);
-			
+
 			IDialogSettings settings = getDialogSettings();
 			String selectedPlugin = settings.get(S_SELECTED_PLUGIN);
 			if (selectedPlugin != null && selectedPlugin.length() > 0) {
@@ -384,12 +378,11 @@ public class TracingLauncherTab
 			boolean maximized = settings.getBoolean(S_MAXIMIZED);
 			doMaximize(maximized);
 
-
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
 	}
-	
+
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(TRACING, isTracingEnabled());
 		boolean changes = false;
@@ -423,7 +416,7 @@ public class TracingLauncherTab
 		//config.setAttribute(TRACING_OPTIONS, template);
 		config.setAttribute(TRACING, false);
 	}
-	
+
 	public boolean isTracingEnabled() {
 		return tracingCheck.getSelection();
 	}

@@ -5,40 +5,45 @@
 package org.eclipse.pde.internal.ui.launcher;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
-import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.ui.preferences.TargetPlatformPreferencePage;
-import org.eclipse.swt.layout.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.pde.internal.ui.preferences.ExternalPluginsBlock;
-import org.eclipse.jface.dialogs.IDialogConstants;
-
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.debug.ui.*;
 import org.eclipse.debug.core.*;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.elements.*;
+import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
 
 public class AdvancedLauncherTab
 	extends AbstractLauncherTab
 	implements ILaunchConfigurationTab, ILauncherSettings {
-	public static final String KEY_WORKSPACE_PLUGINS =
-		"Preferences.AdvancedTracingPage.workspacePlugins";
-	public static final String KEY_EXTERNAL_PLUGINS =
-		"Preferences.AdvancedTracingPage.externalPlugins";
+	private static final String KEY_NAME = "AdvancedLauncherTab.name";
+	private static final String KEY_WORKSPACE_PLUGINS =
+		"AdvancedLauncherTab.workspacePlugins";
+	private static final String KEY_EXTERNAL_PLUGINS =
+		"AdvancedLauncherTab.externalPlugins";
+	private static final String KEY_USE_DEFAULT = "AdvancedLauncherTab.useDefault";
+	private static final String KEY_USE_LIST = "AdvancedLauncherTab.useList";
+	private static final String KEY_VISIBLE_LIST =
+		"AdvancedLauncherTab.visibleList";
+	private static final String KEY_DEFAULTS = "AdvancedLauncherTab.defaults";
+	private static final String KEY_PLUGIN_PATH = "AdvancedLauncherTab.pluginPath";
+	private static final String KEY_PLUGIN_PATH_TITLE =
+		"AdvancedLauncherTab.pluginPath.title";
+	private static final String KEY_ERROR_NO_PLUGINS =
+		"AdvancedLauncherTab.error.no_plugins";
+	private static final String KEY_ERROR_NO_BOOT =
+		"AdvancedLauncherTab.error.no_boot";
+
 	private Button useDefaultRadio;
 	private Button useListRadio;
 	private CheckboxTreeViewer pluginTreeViewer;
@@ -142,16 +147,15 @@ public class AdvancedLauncherTab
 		createStartingSpace(composite, 1);
 
 		useDefaultRadio = new Button(composite, SWT.RADIO);
-		useDefaultRadio.setText(
-			"&Launch with all workspace and enabled external plug-ins");
+		useDefaultRadio.setText(PDEPlugin.getResourceString(KEY_USE_DEFAULT));
 		fillIntoGrid(useDefaultRadio, 1, false);
 
 		useListRadio = new Button(composite, SWT.RADIO);
-		useListRadio.setText("&Choose plug-ins and fragments to launch from the list");
+		useListRadio.setText(PDEPlugin.getResourceString(KEY_USE_LIST));
 		fillIntoGrid(useListRadio, 1, false);
 
 		visibleLabel = new Label(composite, SWT.NULL);
-		visibleLabel.setText("&Visible plug-ins and fragments:");
+		visibleLabel.setText(PDEPlugin.getResourceString(KEY_VISIBLE_LIST));
 		fillIntoGrid(visibleLabel, 1, false);
 
 		Control list = createPluginList(composite);
@@ -169,12 +173,12 @@ public class AdvancedLauncherTab
 		buttonContainer.setLayoutData(gd);
 
 		defaultsButton = new Button(buttonContainer, SWT.PUSH);
-		defaultsButton.setText("&Restore Defaults");
+		defaultsButton.setText(PDEPlugin.getResourceString(KEY_DEFAULTS));
 		defaultsButton.setLayoutData(new GridData());
 		SWTUtil.setButtonDimensionHint(defaultsButton);
 
 		pluginPathButton = new Button(buttonContainer, SWT.PUSH);
-		pluginPathButton.setText("&Plug-in Paths...");
+		pluginPathButton.setText(PDEPlugin.getResourceString(KEY_PLUGIN_PATH));
 		pluginPathButton.setLayoutData(new GridData());
 		SWTUtil.setButtonDimensionHint(pluginPathButton);
 
@@ -215,7 +219,6 @@ public class AdvancedLauncherTab
 		visibleLabel.setEnabled(enable);
 		pluginTreeViewer.getTree().setEnabled(enable);
 		defaultsButton.setEnabled(enable);
-		//restoreLabel.setEnabled(enable);
 	}
 
 	private GridData fillIntoGrid(Control control, int hspan, boolean grab) {
@@ -540,7 +543,7 @@ public class AdvancedLauncherTab
 			PluginPathDialog dialog =
 				new PluginPathDialog(pluginPathButton.getShell(), urls);
 			dialog.create();
-			dialog.getShell().setText("Plug-in URLs");
+			dialog.getShell().setText(PDEPlugin.getResourceString(KEY_PLUGIN_PATH_TITLE));
 			dialog.getShell().setSize(500, 400);
 			dialog.open();
 		} catch (CoreException e) {
@@ -556,21 +559,16 @@ public class AdvancedLauncherTab
 	private IStatus validatePlugins() {
 		IPluginModelBase[] plugins = getPlugins();
 		if (plugins.length == 0) {
-			return createStatus(IStatus.ERROR, "No plugins available.");
+			return createStatus(
+				IStatus.ERROR,
+				PDEPlugin.getResourceString(KEY_ERROR_NO_PLUGINS));
 		}
 		IPluginModelBase boot = findModel("org.eclipse.core.boot", plugins);
 		if (boot == null) {
-			return createStatus(IStatus.ERROR, "Plugin 'org.eclipse.core.boot' not found.");
+			return createStatus(
+				IStatus.ERROR,
+				PDEPlugin.getResourceString(KEY_ERROR_NO_BOOT));
 		}
-		/*
-		if (findModel("org.eclipse.ui", plugins) != null) {
-			if (findModel("org.eclipse.sdk", plugins) == null) {
-				return createStatus(
-					IStatus.WARNING,
-					"'org.eclipse.sdk' not found. It is implicitly required by 'org.eclipse.ui'.");
-			}
-		};
-		*/
 		return createStatus(IStatus.OK, "");
 	}
 
@@ -616,6 +614,6 @@ public class AdvancedLauncherTab
 		return (IPluginModelBase[]) res.toArray(new IPluginModelBase[res.size()]);
 	}
 	public String getName() {
-		return "&Plug-ins and Fragments";
+		return PDEPlugin.getResourceString(KEY_NAME);
 	}
 }

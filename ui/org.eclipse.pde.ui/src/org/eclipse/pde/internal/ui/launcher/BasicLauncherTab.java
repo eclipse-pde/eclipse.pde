@@ -8,56 +8,41 @@ import java.io.File;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.events.*;
-
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IDialogSettings;
-
-import org.eclipse.jdt.launching.*;
-import org.eclipse.pde.internal.ui.preferences.TargetPlatformPreferencePage;
-import org.eclipse.pde.internal.ui.util.SWTUtil;
-import org.eclipse.jface.preference.IPreferenceStore;
-
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.debug.ui.*;
 import org.eclipse.debug.core.*;
+import org.eclipse.jdt.launching.*;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
 
-public class BasicLauncherTab extends AbstractLauncherTab implements ILauncherSettings {
+public class BasicLauncherTab
+	extends AbstractLauncherTab
+	implements ILauncherSettings {
 	private static final String KEY_DESC = "";
 
-	private static final String KEY_WORKSPACE =
-		"WorkbenchLauncherWizardBasicPage.workspace";
-	private static final String KEY_BROWSE =
-		"WorkbenchLauncherWizardBasicPage.browse";
-	private static final String KEY_CLEAR =
-		"WorkbenchLauncherWizardBasicPage.clear";
-	private static final String KEY_JRE = "WorkbenchLauncherWizardBasicPage.jre";
-	private static final String KEY_VMARGS =
-		"WorkbenchLauncherWizardBasicPage.vmArgs";
-	private static final String KEY_PARGS =
-		"WorkbenchLauncherWizardBasicPage.programArgs";
-	private static final String KEY_APPNAME =
-		"WorkbenchLauncherWizardBasicPage.appName";
-	private static final String KEY_RESTORE =
-		"WorkbenchLauncherWizardBasicPage.restore";
-	private static final String KEY_RESTORE_TEXT =
-		"WorkbenchLauncherWizardBasicPage.restoreText";
-	private static final String KEY_WTITLE =
-		"WorkbenchLauncherWizardBasicPage.workspace.title";
-	private static final String KEY_WMESSAGE =
-		"WorkbenchLauncherWizardBasicPage.workspace.message";
-	private static final String KEY_NO_JRE =
-		"WorkbenchLauncherWizardBasicPage.noJRE";
+	private static final String KEY_NAME = "BasicLauncherTab.name";
+	private static final String KEY_WORKSPACE = "BasicLauncherTab.workspace";
+	private static final String KEY_BROWSE = "BasicLauncherTab.browse";
+	private static final String KEY_CLEAR = "BasicLauncherTab.clear";
+	private static final String KEY_JRE = "BasicLauncherTab.jre";
+	private static final String KEY_VMARGS = "BasicLauncherTab.vmArgs";
+	private static final String KEY_PARGS = "BasicLauncherTab.programArgs";
+	private static final String KEY_APPNAME = "BasicLauncherTab.appName";
+	private static final String KEY_RESTORE = "BasicLauncherTab.restore";
+	private static final String KEY_RESTORE_TEXT = "BasicLauncherTab.restoreText";
+	private static final String KEY_WTITLE = "BasicLauncherTab.workspace.title";
+	private static final String KEY_WMESSAGE = "BasicLauncherTab.workspace.message";
+	private static final String KEY_NO_JRE = "BasicLauncherTab.noJRE";
 	private static final String KEY_ENTER_WORKSPACE =
-		"WorkbenchLauncherWizardBasicPage.enterWorkspace";
+		"BasicLauncherTab.enterWorkspace";
 	private static final String KEY_INVALID_WORKSPACE =
-		"WorkbenchLauncherWizardBasicPage.invalidWorkspace";
+		"BasicLauncherTab.invalidWorkspace";
 	private static final String KEY_EXISTING_WORKSPACE =
-		"WorkbenchLauncherWizardBasicPage.workspaceExisting";
+		"BasicLauncherTab.workspaceExisting";
 
 	public static final String RT_WORKSPACE = "runtime-workspace";
 	private Combo workspaceCombo;
@@ -89,7 +74,7 @@ public class BasicLauncherTab extends AbstractLauncherTab implements ILauncherSe
 		composite.setLayout(layout);
 
 		createStartingSpace(composite, 3);
-		
+
 		Label label = new Label(composite, SWT.NULL);
 		label.setText(PDEPlugin.getResourceString(KEY_WORKSPACE));
 
@@ -170,8 +155,7 @@ public class BasicLauncherTab extends AbstractLauncherTab implements ILauncherSe
 			appName = config.getAttribute(APPLICATION, appName);
 			ArrayList items = new ArrayList();
 			for (int i = 0; i < 6; i++) {
-				String curr =
-					config.getAttribute(LOCATION + String.valueOf(i), (String) null);
+				String curr = config.getAttribute(LOCATION + String.valueOf(i), (String) null);
 				if (curr != null && !items.contains(curr)) {
 					items.add(curr);
 				}
@@ -211,7 +195,8 @@ public class BasicLauncherTab extends AbstractLauncherTab implements ILauncherSe
 	static String getDefaultWorkspace() {
 		ExternalModelManager.initializePlatformPath();
 		IPath ppath =
-			new Path(PDECore.getDefault().getSettings().getString(ICoreConstants.PLATFORM_PATH));
+			new Path(
+				PDECore.getDefault().getSettings().getString(ICoreConstants.PLATFORM_PATH));
 		IPath runtimeWorkspace = ppath.append(RT_WORKSPACE);
 		return runtimeWorkspace.toOSString();
 	}
@@ -276,20 +261,19 @@ public class BasicLauncherTab extends AbstractLauncherTab implements ILauncherSe
 			}
 		});
 	}
-	
+
 	private void updateStatus() {
 		updateStatus(getMoreSevere(workspaceSelectionStatus, jreSelectionStatus));
 	}
-	
+
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(VMARGS, getVMArguments());
 		config.setAttribute(PROGARGS, getProgramArguments());
 		config.setAttribute(VMINSTALL, getVMInstall().getName());
 		config.setAttribute(APPLICATION, getApplicationName());
 		config.setAttribute(DOCLEAR, doClearWorkspace());
-		
-		config.setAttribute(LOCATION + String.valueOf(0),
-									workspaceCombo.getText());
+
+		config.setAttribute(LOCATION + String.valueOf(0), workspaceCombo.getText());
 		String[] items = workspaceCombo.getItems();
 		int nEntries = Math.min(items.length, 5);
 		for (int i = 0; i < nEntries; i++) {
@@ -332,7 +316,7 @@ public class BasicLauncherTab extends AbstractLauncherTab implements ILauncherSe
 				IStatus.ERROR,
 				PDEPlugin.getResourceString(KEY_INVALID_WORKSPACE));
 		}
-		
+
 		File file = curr.toFile();
 		if (file.isFile()) {
 			return createStatus(
@@ -410,8 +394,8 @@ public class BasicLauncherTab extends AbstractLauncherTab implements ILauncherSe
 		}
 		return names;
 	}
-	
+
 	public String getName() {
-		return "&Arguments";
+		return PDEPlugin.getResourceString(KEY_NAME);
 	}
 }
