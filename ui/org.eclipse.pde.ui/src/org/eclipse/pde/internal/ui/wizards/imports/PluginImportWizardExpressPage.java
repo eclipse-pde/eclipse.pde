@@ -157,7 +157,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 	private void createImportPart(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		container.setLayout(new GridLayout());
-		container.setLayoutData(new GridData(GridData.FILL_BOTH));
+		container.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 		
 		createImportList(container);
 		counterLabel = new Label(container, SWT.NONE);

@@ -114,6 +114,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
 		container.setLayout(layout);
+		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Label label = new Label(container, SWT.NONE);
 		label.setText(PDEPlugin.getResourceString("ImportWizard.DetailedPage.availableList"));
@@ -121,7 +122,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		Table table = new Table(container, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 180;
-		gd.heightHint = 250;
+		gd.heightHint = 300;
 		table.setLayoutData(gd);
 
 		availableListViewer = new TableViewer(table);
