@@ -78,7 +78,7 @@ public class SampleEditor extends EditorPart {
 		toolkit = new FormToolkit(parent.getDisplay());
 		form = toolkit.createScrolledForm(parent);
 		Properties properties = loadContent();
-		form.setText(properties.getProperty("name"));
+		form.setText(properties.getProperty("name")); //$NON-NLS-1$
 		TableWrapLayout layout = new TableWrapLayout();
 		layout.verticalSpacing = 10;
 		layout.topMargin = 10;
@@ -87,17 +87,17 @@ public class SampleEditor extends EditorPart {
 		layout.rightMargin = 10;
 		form.getBody().setLayout(layout);
 		
-		final String launcher = properties.getProperty("launcher");
-		final String launchTarget = properties.getProperty("launchTarget");
+		final String launcher = properties.getProperty("launcher"); //$NON-NLS-1$
+		final String launchTarget = properties.getProperty("launchTarget"); //$NON-NLS-1$
 		
 		descText = toolkit.createFormText(form.getBody(), true);
 		descText.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
-		String desc = properties.getProperty("description");
+		String desc = properties.getProperty("description"); //$NON-NLS-1$
 		String content = "<form>"+(desc!=null?desc:"")+"</form>";
 		descText.setText(content, true, false);
-		final String helpURL = properties.getProperty("helpHref");
+		final String helpURL = properties.getProperty("helpHref"); //$NON-NLS-1$
 		if (helpURL!=null) {
-			Hyperlink moreLink = toolkit.createHyperlink(form.getBody(), "Read More", SWT.NULL);
+			Hyperlink moreLink = toolkit.createHyperlink(form.getBody(), "Read More", SWT.NULL); //$NON-NLS-1$
 			moreLink.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
 					WorkbenchHelp.displayHelpResource(helpURL);
@@ -119,20 +119,20 @@ public class SampleEditor extends EditorPart {
 		instText.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				Object href = e.getHref();
-				if (href.equals("help")) {
+				if (href.equals("help")) { //$NON-NLS-1$
 					WorkbenchHelp.displayHelpResource(helpURL);
 				}
-				else if (href.equals("run")) {
+				else if (href.equals("run")) { //$NON-NLS-1$
 					doRun(launcher, launchTarget, false);
 				}
-				else if (href.equals("debug")) {
+				else if (href.equals("debug")) { //$NON-NLS-1$
 					doRun(launcher, launchTarget, true);
 				}
 			}
 		});
-		instText.setImage("run", PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_RUN_EXC));
-		instText.setImage("debug", PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_DEBUG_EXC));
-		instText.setImage("help", PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_INFO_TSK));
+		instText.setImage("run", PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_RUN_EXC)); //$NON-NLS-1$
+		instText.setImage("debug", PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_DEBUG_EXC)); //$NON-NLS-1$
+		instText.setImage("help", PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_INFO_TSK)); //$NON-NLS-1$
 	}
 	
 	private void doRun(String launcher, String target, final boolean debug) {

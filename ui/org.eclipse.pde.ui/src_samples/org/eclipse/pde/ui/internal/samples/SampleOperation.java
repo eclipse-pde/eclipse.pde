@@ -27,7 +27,7 @@ import org.eclipse.ui.wizards.datatransfer.*;
  * Preferences - Java - Code Generation - Code and Comments
  */
 public class SampleOperation implements IRunnableWithProgress {
-	private static final String SAMPLE_PROPERTIES = "sample.properties";
+	private static final String SAMPLE_PROPERTIES = "sample.properties"; //$NON-NLS-1$
 	private IConfigurationElement sample;
 	private String [] projectNames;
 	private IFile sampleManifest;
@@ -56,8 +56,8 @@ public class SampleOperation implements IRunnableWithProgress {
 	public void run(IProgressMonitor monitor) throws InvocationTargetException,
 			InterruptedException {
 		try {
-			IConfigurationElement[] projects = sample.getChildren("project");
-			monitor.beginTask("Creating projects...", 4 * projects.length);
+			IConfigurationElement[] projects = sample.getChildren("project"); //$NON-NLS-1$
+			monitor.beginTask(PDEPlugin.getResourceString("SampleOperation.creating"), 4 * projects.length); //$NON-NLS-1$
 			createdProjects = new IProject[projects.length];			
 			for (int i = 0; i < projects.length; i++) {
 				IFile file = importProject(projectNames[i], projects[i], new SubProgressMonitor(
@@ -77,7 +77,7 @@ public class SampleOperation implements IRunnableWithProgress {
 	private IFile importProject(String name, IConfigurationElement config,
 			IProgressMonitor monitor) throws CoreException,
 			InvocationTargetException, InterruptedException {
-		String path = config.getAttribute("archive");
+		String path = config.getAttribute("archive"); //$NON-NLS-1$
 		if (name == null || path == null)
 			return null;
 		IWorkspace workspace = PDEPlugin.getWorkspace();
@@ -126,13 +126,13 @@ public class SampleOperation implements IRunnableWithProgress {
 			try {
 				ByteArrayOutputStream out = new ByteArrayOutputStream();
 				Properties properties = new Properties();
-				createSampleManifestContent(config.getAttribute("name"), properties);
-				properties.store(out, "");
+				createSampleManifestContent(config.getAttribute("name"), properties); //$NON-NLS-1$
+				properties.store(out, ""); //$NON-NLS-1$
 				out.flush();
 				String contents = out.toString();
 				out.close();
 				ByteArrayInputStream stream = new ByteArrayInputStream(contents
-						.getBytes("UTF8"));
+						.getBytes("UTF8")); //$NON-NLS-1$
 				file.create(stream, true, monitor);
 				stream.close();
 			} catch (UnsupportedEncodingException e) {
@@ -142,15 +142,15 @@ public class SampleOperation implements IRunnableWithProgress {
 		return file;
 	}
 	private void createSampleManifestContent(String projectName, Properties properties) {
-		writeProperty(properties, "id", sample.getAttribute("id"));
-		writeProperty(properties, "name", sample.getAttribute("name"));
-		writeProperty(properties, "projectName", projectName);
-		writeProperty(properties, "launcher", sample.getAttribute("launcher"));
-		IConfigurationElement desc[] = sample.getChildren("description");
+		writeProperty(properties, "id", sample.getAttribute("id")); //$NON-NLS-1$ //$NON-NLS-2$
+		writeProperty(properties, "name", sample.getAttribute("name")); //$NON-NLS-1$ //$NON-NLS-2$
+		writeProperty(properties, "projectName", projectName); //$NON-NLS-1$
+		writeProperty(properties, "launcher", sample.getAttribute("launcher")); //$NON-NLS-1$ //$NON-NLS-2$
+		IConfigurationElement desc[] = sample.getChildren("description"); //$NON-NLS-1$
 		if (desc.length == 1) {
-			writeProperty(properties, "helpHref", desc[0]
-					.getAttribute("helpHref"));
-			writeProperty(properties, "description", desc[0].getValue());
+			writeProperty(properties, "helpHref", desc[0] //$NON-NLS-1$
+					.getAttribute("helpHref")); //$NON-NLS-1$
+			writeProperty(properties, "description", desc[0].getValue()); //$NON-NLS-1$
 		}
 	}
 	private void writeProperty(Properties properties, String name, String value) {

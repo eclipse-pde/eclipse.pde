@@ -56,8 +56,8 @@ public class SampleWizard extends Wizard
 			final int[] result = {IDialogConstants.CANCEL_ID};
 			getShell().getDisplay().syncExec(new Runnable() {
 				public void run() {
-					String title = "Sample Wizard";
-					String msg = "Project '"+file+"' already exists. Do you want to replace it?";
+					String title = PDEPlugin.getResourceString("SampleWizard.title"); //$NON-NLS-1$
+					String msg = PDEPlugin.getFormattedMessage("SampleWizard.overwrite",file); //$NON-NLS-1$
 					String[] options = {IDialogConstants.YES_LABEL,
 							IDialogConstants.NO_LABEL,
 							IDialogConstants.YES_TO_ALL_LABEL,
@@ -78,7 +78,7 @@ public class SampleWizard extends Wizard
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWEXP_WIZ);
 		samples = Platform.getExtensionRegistry().getConfigurationElementsFor(
-				"org.eclipse.pde.ui.samples");
+				"org.eclipse.pde.ui.samples"); //$NON-NLS-1$
 		namesPage= new ProjectNamesPage(this);
 		lastPage = new ReviewPage(this);
 		setNeedsProgressMonitor(true);
@@ -105,7 +105,7 @@ public class SampleWizard extends Wizard
 	 */
 	public boolean performFinish() {
 		try {
-			String perspId = selection.getAttribute("perspectiveId");
+			String perspId = selection.getAttribute("perspectiveId"); //$NON-NLS-1$
 			IWorkbenchPage page = PDEPlugin.getActivePage();
 			if (perspId != null && switchPerspective) {
 				PlatformUI.getWorkbench().showPerspective(perspId, page.getWorkbenchWindow());
@@ -149,7 +149,7 @@ public class SampleWizard extends Wizard
 	private void doSelectReveal() {
 		if (selection == null || createdProjects==null)
 			return;
-		String viewId = selection.getAttribute("targetViewId");
+		String viewId = selection.getAttribute("targetViewId"); //$NON-NLS-1$
 		if (viewId == null)
 			return;
 		IWorkbenchWindow window = PlatformUI.getWorkbench()
@@ -163,11 +163,11 @@ public class SampleWizard extends Wizard
 		if (view == null || !(view instanceof ISetSelectionTarget))
 			return;
 		ISetSelectionTarget target = (ISetSelectionTarget) view;
-		IConfigurationElement[] projects = selection.getChildren("project");
+		IConfigurationElement[] projects = selection.getChildren("project"); //$NON-NLS-1$
 
 		ArrayList items = new ArrayList();
 		for (int i = 0; i < projects.length; i++) {
-			String path = projects[i].getAttribute("selectReveal");
+			String path = projects[i].getAttribute("selectReveal"); //$NON-NLS-1$
 			if (path == null)
 				continue;
 			IResource resource = createdProjects[i].findMember(path);
@@ -178,13 +178,13 @@ public class SampleWizard extends Wizard
 			target.selectReveal(new StructuredSelection(items));
 	}
 	public void enableActivities() {
-		IConfigurationElement [] elements = selection.getChildren("activity");
+		IConfigurationElement [] elements = selection.getChildren("activity"); //$NON-NLS-1$
 		HashSet activitiesToEnable=new HashSet();
 		IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI.getWorkbench().getActivitySupport();
 		
 		for (int i=0; i<elements.length; i++) {
 			IConfigurationElement element = elements[i];
-			String id=element.getAttribute("id");
+			String id=element.getAttribute("id"); //$NON-NLS-1$
 			if (id==null) continue;
 			activitiesToEnable.add(id);
 		}
@@ -202,7 +202,7 @@ public class SampleWizard extends Wizard
 		if (variable != null) {
 			for (int i = 0; i < samples.length; i++) {
 				IConfigurationElement element = samples[i];
-				String id = element.getAttribute("id");
+				String id = element.getAttribute("id"); //$NON-NLS-1$
 				if (id != null && id.equals(variable)) {
 					setSelection(element);
 					break;

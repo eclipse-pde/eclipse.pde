@@ -31,10 +31,10 @@ public class ProjectNamesPage extends WizardPage {
 	 * @param pageName
 	 */
 	public ProjectNamesPage(SampleWizard wizard) {
-		super("projects");
+		super("projects"); //$NON-NLS-1$
 		this.wizard = wizard;
-		setTitle("Project names");
-		setDescription("Select project names or accept the defaults.");
+		setTitle(PDEPlugin.getResourceString("ProjectNamesPage.title")); //$NON-NLS-1$
+		setDescription(PDEPlugin.getResourceString("ProjectNamesPage.desc")); //$NON-NLS-1$
 	}
 	public void setVisible(boolean visible) {
 		setPageComplete(wizard.getSelection()!=null);
@@ -46,11 +46,11 @@ public class ProjectNamesPage extends WizardPage {
 		IConfigurationElement selection = wizard.getSelection();
 		if (selection!=null) {
 			setMessage(null);
-			IConfigurationElement [] projects = selection.getChildren("project");
+			IConfigurationElement [] projects = selection.getChildren("project"); //$NON-NLS-1$
 			Control [] children = container.getChildren();
 			if (projects.length==1 && children.length==2) {
 				Text text = (Text)children[1];
-				text.setText(projects[0].getAttribute("name"));
+				text.setText(projects[0].getAttribute("name")); //$NON-NLS-1$
 				validateEntries();
 				return;
 			}
@@ -60,19 +60,19 @@ public class ProjectNamesPage extends WizardPage {
 			}
 			// create entries
 			if (projects.length==1) {
-				createEntry("Project name:", projects[0].getAttribute("name"));
+				createEntry(PDEPlugin.getResourceString("ProjectNamesPage.projectName"), projects[0].getAttribute("name")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			else {
 				for (int i=0; i<projects.length; i++) {
-					String label = "Project name #"+(i+1)+":";
-					createEntry(label, projects[i].getAttribute("name"));
+					String label = "Project name #"+(i+1)+":"; //$NON-NLS-1$ //$NON-NLS-2$
+					createEntry(label, projects[i].getAttribute("name")); //$NON-NLS-1$
 				}
 			}
 			container.layout();
 			validateEntries();
 		}
 		else {
-			setMessage("No sample has been selected.", WizardPage.WARNING);
+			setMessage(PDEPlugin.getResourceString("ProjectNamesPage.noSampleFound"), WizardPage.WARNING); //$NON-NLS-1$
 		}
 	}
 	public String [] getProjectNames() {
@@ -125,14 +125,14 @@ public class ProjectNamesPage extends WizardPage {
 			}
 		}
 		if (empty) {
-			setErrorMessage("Project name cannot be empty.");
+			setErrorMessage(PDEPlugin.getResourceString("ProjectNamesPage.emptyName")); //$NON-NLS-1$
 			setPageComplete(false);
 		}
 		else {
 			int nnames = set.size();
 			int nfields = children.length/2;
 			if (nfields>nnames) {
-				setErrorMessage("Duplicate project names.");
+				setErrorMessage(PDEPlugin.getResourceString("ProjectNamesPage.duplicateNames")); //$NON-NLS-1$
 				setPageComplete(false);
 			}
 			else {

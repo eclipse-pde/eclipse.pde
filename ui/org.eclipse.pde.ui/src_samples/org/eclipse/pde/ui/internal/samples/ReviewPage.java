@@ -12,6 +12,7 @@ package org.eclipse.pde.ui.internal.samples;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.Composite;
@@ -31,10 +32,10 @@ public class ReviewPage extends WizardPage {
 	 * @param pageName
 	 */
 	public ReviewPage(SampleWizard wizard) {
-		super("last");
+		super("last"); //$NON-NLS-1$
 		this.wizard = wizard;
-		setTitle("Review");
-		setDescription("Review the selected sample.");
+		setTitle(PDEPlugin.getResourceString("ReviewPage.title")); //$NON-NLS-1$
+		setDescription(PDEPlugin.getResourceString("ReviewPage.desc")); //$NON-NLS-1$
 	}
 	public void setVisible(boolean visible) {
 		setPageComplete(wizard.getSelection()!=null);			
@@ -49,10 +50,10 @@ public class ReviewPage extends WizardPage {
 		IConfigurationElement selection = wizard.getSelection();
 		if (selection!=null) {
 			setMessage(null);
-			IConfigurationElement [] desc = selection.getChildren("description");
+			IConfigurationElement [] desc = selection.getChildren("description"); //$NON-NLS-1$
 			buf.append("<p>You have selected the following sample:</p>");
 			buf.append("<p><b>");
-			buf.append(selection.getAttribute("name"));
+			buf.append(selection.getAttribute("name")); //$NON-NLS-1$
 			buf.append("</b></p>");
 			if (desc.length==1) {
 				buf.append("<p>");
@@ -62,7 +63,7 @@ public class ReviewPage extends WizardPage {
 			buf.append("<p>If the selection is correct, press <b>Finish</b> to create the sample.</p>");
 		}
 		else {
-			setMessage("No sample has been selected.", WizardPage.WARNING);
+			setMessage(PDEPlugin.getResourceString("ReviewPage.noSampleFound"), WizardPage.WARNING); //$NON-NLS-1$
 		}
 		buf.append("</form>");
 		formText.setText(buf.toString());

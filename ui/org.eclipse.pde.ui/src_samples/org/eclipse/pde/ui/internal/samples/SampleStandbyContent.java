@@ -71,8 +71,8 @@ public class SampleStandbyContent implements IStandbyContentPart {
 		form.getBody().setLayout(layout);
 		descText = toolkit.createFormText(form.getBody(), true);
 		descText.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
-		descText.setText("", false, false);
-		moreLink = toolkit.createHyperlink(form.getBody(), "Read More",
+		descText.setText("", false, false); //$NON-NLS-1$
+		moreLink = toolkit.createHyperlink(form.getBody(), "Read More", //$NON-NLS-1$
 				SWT.NULL);
 		moreLink.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
@@ -100,22 +100,22 @@ public class SampleStandbyContent implements IStandbyContentPart {
 		instText.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				Object href = e.getHref();
-				if (href.equals("help")) {
+				if (href.equals("help")) { //$NON-NLS-1$
 					WorkbenchHelp.displayHelpResource(helpURL);
-				} else if (href.equals("browse")) {
+				} else if (href.equals("browse")) { //$NON-NLS-1$
 					doBrowse();
-				} else if (href.equals("run")) {
+				} else if (href.equals("run")) { //$NON-NLS-1$
 					doRun(launcher, launchTarget, false);
-				} else if (href.equals("debug")) {
+				} else if (href.equals("debug")) { //$NON-NLS-1$
 					doRun(launcher, launchTarget, true);
 				}
 			}
 		});
-		instText.setImage("run", PDEPlugin.getDefault().getLabelProvider().get(
+		instText.setImage("run", PDEPlugin.getDefault().getLabelProvider().get( //$NON-NLS-1$
 				PDEPluginImages.DESC_RUN_EXC));
-		instText.setImage("debug", PDEPlugin.getDefault().getLabelProvider()
+		instText.setImage("debug", PDEPlugin.getDefault().getLabelProvider() //$NON-NLS-1$
 				.get(PDEPluginImages.DESC_DEBUG_EXC));
-		instText.setImage("help", PlatformUI.getWorkbench().getSharedImages()
+		instText.setImage("help", PlatformUI.getWorkbench().getSharedImages() //$NON-NLS-1$
 				.getImage(ISharedImages.IMG_OBJS_INFO_TSK));
 	}
 	private void doRun(String launcher, String target, final boolean debug) {
@@ -140,7 +140,7 @@ public class SampleStandbyContent implements IStandbyContentPart {
 		ISetSelectionTarget target = findTarget();
 		if (target == null)
 			return;
-		String sid = sample.getAttribute("id");
+		String sid = sample.getAttribute("id"); //$NON-NLS-1$
 		if (sid == null)
 			return;
 		ArrayList items = new ArrayList();
@@ -148,18 +148,18 @@ public class SampleStandbyContent implements IStandbyContentPart {
 			IProject project = projects[i];
 			if (!project.exists() || !project.isOpen())
 				continue;
-			IFile pfile = project.getFile("sample.properties");
+			IFile pfile = project.getFile("sample.properties"); //$NON-NLS-1$
 			if (pfile.exists()) {
 				try {
 					InputStream is = pfile.getContents();
 					Properties prop = new Properties();
 					prop.load(is);
 					is.close();
-					String id = prop.getProperty("id");
+					String id = prop.getProperty("id"); //$NON-NLS-1$
 					if (id != null && id.equals(sid)) {
 						//match
 						IResource res = findSelectReveal(project, prop
-								.getProperty("projectName"));
+								.getProperty("projectName")); //$NON-NLS-1$
 						if (res != null)
 							items.add(res);
 					}
@@ -174,7 +174,7 @@ public class SampleStandbyContent implements IStandbyContentPart {
 			target.selectReveal(new StructuredSelection(items));
 	}
 	private ISetSelectionTarget findTarget() {
-		String id = sample.getAttribute("targetViewId");
+		String id = sample.getAttribute("targetViewId"); //$NON-NLS-1$
 		if (id == null)
 			return null;
 		IViewPart view = PDEPlugin.getActivePage().findView(id);
@@ -183,10 +183,10 @@ public class SampleStandbyContent implements IStandbyContentPart {
 		return (ISetSelectionTarget) view;
 	}
 	private IResource findSelectReveal(IProject project, String originalName) {
-		IConfigurationElement[] projects = sample.getChildren("project");
+		IConfigurationElement[] projects = sample.getChildren("project"); //$NON-NLS-1$
 		for (int i = 0; i < projects.length; i++) {
-			if (originalName.equals(projects[i].getAttribute("name"))) {
-				String path = projects[i].getAttribute("selectReveal");
+			if (originalName.equals(projects[i].getAttribute("name"))) { //$NON-NLS-1$
+				String path = projects[i].getAttribute("selectReveal"); //$NON-NLS-1$
 				if (path == null)
 					continue;
 				IResource res = project.findMember(path);
@@ -219,10 +219,10 @@ public class SampleStandbyContent implements IStandbyContentPart {
 	public void setInput(Object input) {
 		String sampleId = input.toString();
 		IConfigurationElement[] samples = Platform.getExtensionRegistry()
-				.getConfigurationElementsFor("org.eclipse.pde.ui.samples");
+				.getConfigurationElementsFor("org.eclipse.pde.ui.samples"); //$NON-NLS-1$
 		for (int i = 0; i < samples.length; i++) {
 			IConfigurationElement sample = samples[i];
-			String id = sample.getAttribute("id");
+			String id = sample.getAttribute("id"); //$NON-NLS-1$
 			if (id != null && id.equals(sampleId)) {
 				update(sample);
 				return;
@@ -234,26 +234,26 @@ public class SampleStandbyContent implements IStandbyContentPart {
 		this.sample = sample;
 		if (form == null)
 			return;
-		String title = sample != null ? sample.getAttribute("name") : "";
+		String title = sample != null ? sample.getAttribute("name") : ""; //$NON-NLS-1$ //$NON-NLS-2$
 		form.setText(title);
 		if (sample != null) {
-			launcher = sample.getAttribute("launcher");
-			launchTarget = sample.getAttribute("launchTarget");
+			launcher = sample.getAttribute("launcher"); //$NON-NLS-1$
+			launchTarget = sample.getAttribute("launchTarget"); //$NON-NLS-1$
 		} else {
 			launcher = null;
 			launchTarget = null;
 		}
 		IConfigurationElement[] descConfig = sample != null ? sample
-				.getChildren("description") : null;
+				.getChildren("description") : null; //$NON-NLS-1$
 		if (descConfig.length == 1) {
 			String desc = descConfig[0].getValue();
 			String content = "<form>" + (desc != null ? desc : "") + "</form>";
-			helpURL = descConfig[0].getAttribute("helpHref");
+			helpURL = descConfig[0].getAttribute("helpHref"); //$NON-NLS-1$
 			moreLink.setVisible(helpURL != null);
 			descText.setText(content, true, false);
 		} else {
 			moreLink.setVisible(false);
-			descText.setText("", false, false);
+			descText.setText("", false, false); //$NON-NLS-1$
 		}
 		form.reflow(true);
 	} /*

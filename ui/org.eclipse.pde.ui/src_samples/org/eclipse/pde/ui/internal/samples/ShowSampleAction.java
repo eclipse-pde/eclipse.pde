@@ -31,9 +31,9 @@ import org.eclipse.update.standalone.InstallCommand;
  * Preferences - Java - Code Generation - Code and Comments
  */
 public class ShowSampleAction extends Action implements IIntroAction {
-	private static final String SAMPLE_FEATURE_ID = "org.eclipse.sdk.samples";
-	private static final String SAMPLE_FEATURE_VERSION = "3.0.0";
-	private static final String UPDATE_SITE = "http://dev.eclipse.org/viewcvs/index.cgi/%7Echeckout%7E/pde-ui-home/samples/";
+	private static final String SAMPLE_FEATURE_ID = "org.eclipse.sdk.samples"; //$NON-NLS-1$
+	private static final String SAMPLE_FEATURE_VERSION = "3.0.0"; //$NON-NLS-1$
+	private static final String UPDATE_SITE = "http://dev.eclipse.org/viewcvs/index.cgi/%7Echeckout%7E/pde-ui-home/samples/"; //$NON-NLS-1$
 	private String sampleId;
 	/**
 	 *  
@@ -42,14 +42,14 @@ public class ShowSampleAction extends Action implements IIntroAction {
 	}
 
 	public void run(IIntroSite site, Properties params) {
-		sampleId = params.getProperty("id");
+		sampleId = params.getProperty("id"); //$NON-NLS-1$
 		if (sampleId == null)
 			return;
 		if (!ensureSampleFeaturePresent())
 			return;
 		SampleWizard wizard = new SampleWizard();
 		try {
-			wizard.setInitializationData(null, "class", sampleId);
+			wizard.setInitializationData(null, "class", sampleId); //$NON-NLS-1$
 			wizard.setSampleEditorNeeded(false);
 			wizard.setSwitchPerspective(false);
 			wizard.setSelectRevealEnabled(false);
@@ -57,7 +57,7 @@ public class ShowSampleAction extends Action implements IIntroAction {
 			WizardDialog dialog = new WizardDialog(PDEPlugin
 					.getActiveWorkbenchShell(), wizard);
 			dialog.create();
-			dialog.getShell().setText("Eclipse Samples");
+			dialog.getShell().setText(PDEPlugin.getResourceString("ShowSampleAction.title")); //$NON-NLS-1$
 			dialog.getShell().setSize(400, 500);
 			if (dialog.open() == WizardDialog.OK) {
 				switchToSampleStandby(wizard);
@@ -68,12 +68,12 @@ public class ShowSampleAction extends Action implements IIntroAction {
 	}
 	private void switchToSampleStandby(SampleWizard wizard) {
 		StringBuffer url = new StringBuffer();
-		url.append("http://org.eclipse.ui.intro/showStandby?");
-		url.append("pluginId=org.eclipse.pde.ui");
-		url.append("&");
-		url.append("partId=org.eclipse.pde.ui.sampleStandbyPart");
-		url.append("&");
-		url.append("input=");
+		url.append("http://org.eclipse.ui.intro/showStandby?"); //$NON-NLS-1$
+		url.append("pluginId=org.eclipse.pde.ui"); //$NON-NLS-1$
+		url.append("&"); //$NON-NLS-1$
+		url.append("partId=org.eclipse.pde.ui.sampleStandbyPart"); //$NON-NLS-1$
+		url.append("&"); //$NON-NLS-1$
+		url.append("input="); //$NON-NLS-1$
 		url.append(sampleId);
 		IIntroURL introURL = IntroURLFactory.createIntroURL(url.toString());
 		if (introURL != null) {
@@ -83,7 +83,7 @@ public class ShowSampleAction extends Action implements IIntroAction {
 	}
 	private void ensureProperContext(SampleWizard wizard) {
 		IConfigurationElement sample = wizard.getSelection();
-		String perspId = sample.getAttribute("perspectiveId");
+		String perspId = sample.getAttribute("perspectiveId"); //$NON-NLS-1$
 		if (perspId!=null) {
 			try {
 				wizard.enableActivities();
@@ -105,8 +105,8 @@ public class ShowSampleAction extends Action implements IIntroAction {
 		if (MessageDialog
 				.openQuestion(
 						PDEPlugin.getActiveWorkbenchShell(),
-						"Samples",
-						"The samples are currently not installed. Do you want to dowload samples from Eclipse.org?")) {
+						PDEPlugin.getResourceString("ShowSampleAction.msgTitle"), //$NON-NLS-1$
+						PDEPlugin.getResourceString("ShowSampleAction.msgDesc"))) { //$NON-NLS-1$
 			return downloadFeature();
 		}
 		return false;
@@ -137,7 +137,7 @@ public class ShowSampleAction extends Action implements IIntroAction {
 				try {
 					InstallCommand command = new InstallCommand(
 							SAMPLE_FEATURE_ID, SAMPLE_FEATURE_VERSION,
-							UPDATE_SITE, null, "false");
+							UPDATE_SITE, null, "false"); //$NON-NLS-1$
 					command.run(monitor);
 					command.applyChangesNow();
 				} catch (Exception e) {

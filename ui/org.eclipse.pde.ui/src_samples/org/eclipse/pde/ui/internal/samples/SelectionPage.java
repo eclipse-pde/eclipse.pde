@@ -37,7 +37,7 @@ public class SelectionPage extends WizardPage {
 	
 	class SelectionPart extends TablePart {
 		public SelectionPart() {
-			super(new String [] { "More Info" });
+			super(new String [] { "More Info" }); //$NON-NLS-1$
 		}
 		protected void buttonSelected(Button button, int index) {
 			if (index == 0)
@@ -64,7 +64,7 @@ public class SelectionPage extends WizardPage {
 		}
 		public String getText(Object obj) {
 			IConfigurationElement sample = (IConfigurationElement)obj;
-			return sample.getAttribute("name");
+			return sample.getAttribute("name"); //$NON-NLS-1$
 		}
 		public Image getImage(Object obj) {
 			return image;
@@ -74,10 +74,10 @@ public class SelectionPage extends WizardPage {
 	 * @param pageName
 	 */
 	public SelectionPage(SampleWizard wizard) {
-		super("selection");
+		super("selection"); //$NON-NLS-1$
 		this.wizard = wizard;
-		setTitle("Selection");
-		setDescription("Select the sample to create from the provided list.");
+		setTitle(PDEPlugin.getResourceString("SelectionPage.title")); //$NON-NLS-1$
+		setDescription(PDEPlugin.getResourceString("SelectionPage.desc")); //$NON-NLS-1$
 		part  = new SelectionPart();
 	}
 
@@ -100,25 +100,25 @@ public class SelectionPage extends WizardPage {
 	}
 	private void doMoreInfo() {
 		if (wizard.getSelection()!=null) {
-			IConfigurationElement desc[] = wizard.getSelection().getChildren("description");
-			String helpHref = desc[0].getAttribute("helpHref");
+			IConfigurationElement desc[] = wizard.getSelection().getChildren("description"); //$NON-NLS-1$
+			String helpHref = desc[0].getAttribute("helpHref"); //$NON-NLS-1$
 			WorkbenchHelp.displayHelpResource(helpHref);
 		}
 	}
 	private void updateSelection(IStructuredSelection selection) {
 		if (selection==null) {
-			desc.setText("");
+			desc.setText(""); //$NON-NLS-1$
 			part.setButtonEnabled(0, false);
 			setPageComplete(false);
 		}
 		else {
 			IConfigurationElement sample = (IConfigurationElement)selection.getFirstElement();
-			String text = "";
+			String text = ""; //$NON-NLS-1$
 			String helpHref=null;
-			IConfigurationElement [] sampleDesc = sample.getChildren("description");
+			IConfigurationElement [] sampleDesc = sample.getChildren("description"); //$NON-NLS-1$
 			if (sampleDesc.length==1) {
 				text = sampleDesc[0].getValue();
-				helpHref = sampleDesc[0].getAttribute("helpHref");
+				helpHref = sampleDesc[0].getAttribute("helpHref"); //$NON-NLS-1$
 			}
 			desc.setText(text);
 			part.setButtonEnabled(0, helpHref!=null);
