@@ -99,48 +99,23 @@ public abstract class AbstractPluginModelBase
 		if (pluginBase != null) {
 			String id = pluginBase.getId();
 			String version = pluginBase.getVersion();
-			// Add matching external fragments
-			ExternalModelManager emng =
-				PDECore.getDefault().getExternalModelManager();
-			if (emng.hasEnabledModels()) {
-				IFragmentModel[] models = emng.getFragmentModels();
-				addMatchingFragments(id, version, models, result);
-			}
-			// Add matching workspace fragments
-			WorkspaceModelManager wmng =
-				PDECore.getDefault().getWorkspaceModelManager();
-			IFragmentModel[] models = wmng.getFragmentModels();
-			addMatchingFragments(id, version, models, result);
+			addMatchingFragments(PDECore.getDefault().findFragmentsFor(id, version), result);
 		}
 		URL[] locations = new URL[result.size()];
 		result.copyInto(locations);
 		return locations;
 	}
 
-	private void addMatchingFragments(
-		String id,
-		String version,
-		IFragmentModel[] models,
-		Vector result) {
-		for (int i = 0; i < models.length; i++) {
-			IFragmentModel model = models[i];
-			if (model.isEnabled() == false)
-				continue;
-			IFragment fragment = model.getFragment();
-			String refid = fragment.getPluginId();
-			String refversion = fragment.getPluginVersion();
-			int refmatch = fragment.getRule();
-			if (PDECore.compare(refid, refversion, id, version, refmatch)) {
-				URL location = model.getNLLookupLocation();
-				if (location==null) continue;
-				IPluginLibrary libraries[] = fragment.getLibraries();
-				for (int j = 0; j < libraries.length; j++) {
-					IPluginLibrary library = libraries[j];
-					try {
-						URL libLocation = new URL(location, library.getName());
-						result.add(libLocation);
-					} catch (MalformedURLException e) {
-					}
+	private void addMatchingFragments(IFragment[] fragments, Vector result) {
+		for (int i = 0; i < fragments.length; i++) {
+			IFragment fragment = fragments[i];
+			URL location = ((IFragmentModel)fragment.getModel()).getNLLookupLocation();
+			if (location == null) continue;
+			IPluginLibrary libraries[] = fragment.getLibraries();
+			for (int j = 0; j < libraries.length; j++) {
+				try {
+					result.add(new URL(location, libraries[j].getName()));
+				} catch (MalformedURLException e) {
 				}
 			}
 		}

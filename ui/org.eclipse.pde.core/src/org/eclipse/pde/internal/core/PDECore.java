@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.core;
 import java.lang.reflect.*;
 import java.util.*;
 
-import org.eclipse.core.boot.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.*;
@@ -274,39 +273,31 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 	}
 
 	public IFragment[] findFragmentsFor(String id, String version) {
-		if (modelsLocked)
-			return new IFragment[0];
-		HashMap result = new HashMap();
-		IFragment[] extFragments =
-			getExternalModelManager().getFragmentsFor(id, version);
-		for (int i = 0; i < extFragments.length; i++) {
-			if (extFragments[i].getPluginModel().isEnabled())
-				result.put(extFragments[i].getId(), extFragments[i]);
-		}
-
-		IFragment[] wFragments =
-			getWorkspaceModelManager().getFragmentsFor(id, version);
-		for (int i = 0; i < wFragments.length; i++) {
-			result.put(wFragments[i].getId(), wFragments[i]);
-		}
-		return (IFragment[]) result.values().toArray(
-			new IFragment[result.size()]);
+		IFragmentModel[] models = getModelManager().getFragments();
+		ArrayList list = new ArrayList();
+		for (int i = 0; i < models.length; i++) {
+			if (!models[i].isEnabled())
+				continue;
+			IFragment fragment = models[i].getFragment();
+			if (compare(
+					fragment.getPluginId(),
+					fragment.getPluginVersion(),
+					id,
+					version,
+					fragment.getRule())) {
+				list.add(fragment);
+			}
+		}	
+		return (IFragment[]) list.toArray(new IFragment[list.size()]);
 	}
 
 	public IPlugin findPlugin(String id) {
-		return findPlugin(id, null, IMatchRules.NONE);
+		return findPlugin(id, null, 0);
 	}
 
 	public IPlugin findPlugin(String id, String version, int match) {
-		if (modelsLocked)
-			return null;
-		IPluginModelBase model =
-			getModelManager().findPlugin(id, version, match);
-		if (model != null
-			&& model.isEnabled()
-			&& model.getPluginBase() instanceof IPlugin)
-			return (IPlugin) model.getPluginBase();
-		return null;
+		IPluginModel model = getModelManager().findPluginModel(id);
+		return (model != null && model.isEnabled()) ? model.getPlugin() : null;
 	}
 
 	public ExternalModelManager getExternalModelManager() {
@@ -376,10 +367,10 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 				ExternalModelManager.computeDefaultPlatformPath());
 
 		// set defaults for the target environment variables.
-		preferences.setDefault(OS, BootLoader.getOS());
-		preferences.setDefault(WS, BootLoader.getWS());
+		preferences.setDefault(OS, Platform.getOS());
+		preferences.setDefault(WS, Platform.getWS());
 		preferences.setDefault(NL, Locale.getDefault().toString());
-		preferences.setDefault(ARCH, BootLoader.getOSArch());
+		preferences.setDefault(ARCH, Platform.getOSArch());
 	}
 
 	private void initializeModels() {

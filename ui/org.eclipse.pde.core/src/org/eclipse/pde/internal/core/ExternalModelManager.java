@@ -12,36 +12,28 @@ package org.eclipse.pde.internal.core;
 import java.net.*;
 import java.util.*;
 
-import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.ifeature.*;
 
-/**
- */
 public class ExternalModelManager {
-	private Vector models = new Vector();
-	private Vector fmodels = new Vector();
-	private Vector listeners = new Vector();
-	private PDEState fState = new PDEState();
-	private boolean initialized;
+	private List fModels;
+	private List fFragmentModels;
+	private Vector fListeners = new Vector();
+	private PDEState fState = null;
+	private boolean fInitialized = false;
 
 	public static String computeDefaultPlatformPath() {
-		URL installURL = BootLoader.getInstallURL();
+		URL installURL = Platform.getInstallLocation().getURL();
 		IPath ppath = new Path(installURL.getFile()).removeTrailingSeparator();
 		return getCorrectPath(ppath.toOSString());
 	}
 	
-	public boolean isInitialized() {
-		return initialized;
-	}
-
 	private static String getCorrectPath(String path) {
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < path.length(); i++) {
 			char c = path.charAt(i);
-			if (BootLoader.getOS().equals("win32")) {
+			if (Platform.getOS().equals("win32")) {
 				if (i == 0 && c == '/')
 					continue;
 			}
@@ -58,25 +50,14 @@ public class ExternalModelManager {
 			buf.append(c);
 		}
 		return buf.toString();
-	}
-	
+	}	
 	public static IPath getEclipseHome() {
 		Preferences preferences = PDECore.getDefault().getPluginPreferences();
 		return new Path(preferences.getString(ICoreConstants.PLATFORM_PATH));
 	}
 
-	public ExternalModelManager() {
-		//Moved to lazy loading due to reentry issues
-		//loadModels(new NullProgressMonitor());
-	}
-	
-	private void ensureLoaded() {
-		if (initialized==false)
-			loadModels(new NullProgressMonitor());
-	}
-
 	public void addModelProviderListener(IModelProviderListener listener) {
-		listeners.add(listener);
+		fListeners.add(listener);
 	}
 
 	private Vector createSavedList(String saved) {
@@ -88,152 +69,61 @@ public class ExternalModelManager {
 		return result;
 	}
 	
-	public  void enableAll() {
-		enableAll(true);
-	}
-
-	private void enableAll(boolean loadIfNeeded) {
-		if (loadIfNeeded) ensureLoaded();
-		for (int i = 0; i < models.size(); i++)
-			((IPluginModel)models.get(i)).setEnabled(true);
+	private void enableAll() {
+		for (int i = 0; i < fModels.size(); i++)
+			((IPluginModel)fModels.get(i)).setEnabled(true);
 			
-		for (int i = 0; i < fmodels.size(); i++)
-			((IFragmentModel)fmodels.get(i)).setEnabled(true);			
-	}
-
-	public IPluginExtensionPoint findExtensionPoint(String fullID) {
-		if (fullID == null || fullID.length() == 0)
-			return null;
-		// separate plugin ID first
-		int lastDot = fullID.lastIndexOf('.');
-		if (lastDot == -1)
-			return null;
-		String pluginID = fullID.substring(0, lastDot);
-		IPlugin plugin = findPlugin(pluginID);
-		if (plugin == null)
-			return null;
-		String pointID = fullID.substring(lastDot + 1);
-		IPluginExtensionPoint[] points = plugin.getExtensionPoints();
-		for (int i = 0; i < points.length; i++) {
-			IPluginExtensionPoint point = points[i];
-			if (point.getId().equals(pointID))
-				return point;
-		}
-		return null;
-	}
-
-	public IPlugin findPlugin(String id) {
-		ensureLoaded();
-		for (int i = 0; i < models.size(); i++) {
-			IPlugin plugin = ((IPluginModel)models.get(i)).getPlugin();
-			if (plugin.getId().equals(id))
-				return plugin;
-		}
-		return null;
+		for (int i = 0; i < fFragmentModels.size(); i++)
+			((IFragmentModel)fFragmentModels.get(i)).setEnabled(true);			
 	}
 
 	public void fireModelProviderEvent(IModelProviderEvent e) {
-		for (Iterator iter = listeners.iterator(); iter.hasNext();) {
+		for (Iterator iter = fListeners.iterator(); iter.hasNext();) {
 			IModelProviderListener listener = (IModelProviderListener) iter.next();
 			listener.modelsChanged(e);
 		}
 	}
 
-	public IFragmentModel[] getFragmentModels() {
-		ensureLoaded();
-		return (IFragmentModel[]) fmodels.toArray(
-			new IFragmentModel[fmodels.size()]);
-	}
-	
-	public IFeatureModel[] getFeatureModels() {
-		return new IFeatureModel[0];
-	}
-
-	public IFragment[] getFragmentsFor(String pluginID, String pluginVersion) {
-		ensureLoaded();
-		ArrayList result = new ArrayList();
-
-		for (int i = 0; i < fmodels.size(); i++) {
-			IFragment fragment = ((IFragmentModel) fmodels.get(i)).getFragment();
-			if (PDECore
-				.compare(
-					fragment.getPluginId(),
-					fragment.getPluginVersion(),
-					pluginID,
-					pluginVersion,
-					fragment.getRule()))
-				result.add(fragment);
-		}
-
-		return (IFragment[]) result.toArray(new IFragment[result.size()]);
-	}
-
 	public IPluginModelBase[] getAllModels() {
-		ensureLoaded();
+		loadModels(new NullProgressMonitor());
 		IPluginModelBase[] allModels =
-			new IPluginModelBase[models.size() + fmodels.size()];
-		System.arraycopy(getPluginModels(), 0, allModels, 0, models.size());
+			new IPluginModelBase[fModels.size() + fFragmentModels.size()];
+		System.arraycopy(fModels.toArray(), 0, allModels, 0, fModels.size());
 		System.arraycopy(
-			getFragmentModels(),
+			fFragmentModels.toArray(),
 			0,
 			allModels,
-			models.size(),
-			fmodels.size());
+			fModels.size(),
+			fFragmentModels.size());
 
 		return allModels;
-	}
-	
-	public IPluginModelBase[] getAllEnabledModels() {
-		ensureLoaded();
-		ArrayList result = new ArrayList();
-		for (int i = 0; i < models.size(); i++) {
-			IPluginModelBase model = (IPluginModelBase) models.get(i);
-			if (model.isEnabled())
-				result.add(model);
-		}
-		for (int i = 0; i < fmodels.size(); i++) {
-			IPluginModelBase fmodel = (IPluginModelBase) fmodels.get(i);
-			if (fmodel.isEnabled())
-				result.add(fmodel);
-		}
-		return (IPluginModelBase[]) result.toArray(new IPluginModelBase[result.size()]);
-	}
-	
-
-	public IPluginModel[] getPluginModels() {
-		ensureLoaded();
-		return (IPluginModel[]) models.toArray(new IPluginModel[models.size()]);
-	}
-
-	public boolean hasEnabledModels() {
-		ensureLoaded();
-		for (int i = 0; i < models.size(); i++) {
-			if (((IPluginModel)models.get(i)).isEnabled())
-				return true;
-		}
-		return false;
 	}
 	
 	private void initializeAllModels() {
 		Preferences pref = PDECore.getDefault().getPluginPreferences();
 		String saved = pref.getString(ICoreConstants.CHECKED_PLUGINS);
 		if (saved.equals(ICoreConstants.VALUE_SAVED_ALL))
-			enableAll(false);
+			enableAll();
 		else if (!saved.equals(ICoreConstants.VALUE_SAVED_NONE)) {
 			Vector list = createSavedList(saved);
-			for (int i = 0; i < models.size(); i++) {
-				IPluginModel model = (IPluginModel) models.get(i);
+			for (int i = 0; i < fModels.size(); i++) {
+				IPluginModel model = (IPluginModel) fModels.get(i);
 				model.setEnabled(!list.contains(model.getPlugin().getId()));
 			}
-			for (int i = 0; i < fmodels.size(); i++) {
-				IFragmentModel fmodel = (IFragmentModel) fmodels.get(i);
+			for (int i = 0; i < fFragmentModels.size(); i++) {
+				IFragmentModel fmodel = (IFragmentModel) fFragmentModels.get(i);
 				fmodel.setEnabled(!list.contains(fmodel.getFragment().getId()));
 			}
 		}
 
 	}
 
-	private void loadModels(IProgressMonitor monitor) {
+	private synchronized void loadModels(IProgressMonitor monitor) {
+		if (fInitialized)
+			return;
+		fState = new PDEState();
+		fModels = Collections.synchronizedList(new ArrayList());
+		fFragmentModels = Collections.synchronizedList(new ArrayList());
 		Preferences pref = PDECore.getDefault().getPluginPreferences();
 		String[] pluginPaths =
 			PluginPathFinder.getPluginPaths(
@@ -241,45 +131,45 @@ public class ExternalModelManager {
 		IPluginModelBase[] resolved = TargetPlatformRegistryLoader.loadModels(pluginPaths, true, fState, monitor);
 		for (int i = 0; i < resolved.length; i++) {
 			if (resolved[i] instanceof IPluginModel) {
-				models.add(resolved[i]);
+				fModels.add(resolved[i]);
 			} else {
-				fmodels.add(resolved[i]);
+				fFragmentModels.add(resolved[i]);
 			}
 		}		
 		initializeAllModels();
-		initialized=true;
+		fInitialized=true;
 	}
 	
 	public void removeModelProviderListener(IModelProviderListener listener) {
-		listeners.remove(listener);
+		fListeners.remove(listener);
 	}
 			
 	public void reset(PDEState state, IPluginModelBase[] newModels) {
 		fState = state;
 		PDECore.getDefault().getModelManager().addWorkspaceBundlesToState();
-		models.clear();
-		fmodels.clear();
+		fModels.clear();
+		fFragmentModels.clear();
 		for (int i = 0; i < newModels.length; i++) {
 			if (newModels[i] instanceof IPluginModel)
-				models.add(newModels[i]);
+				fModels.add(newModels[i]);
 			else
-				fmodels.add(newModels[i]);
+				fFragmentModels.add(newModels[i]);
 		}
 	}
 	
 	public void shutdown() {
 		int disabled = 0;
 		StringBuffer saved = new StringBuffer();
-		for (int i = 0; i < models.size(); i++) {
-			IPluginModel model = (IPluginModel)models.get(i);
+		for (int i = 0; i < fModels.size(); i++) {
+			IPluginModel model = (IPluginModel)fModels.get(i);
 			if (!model.isEnabled()) {
 				disabled += 1;
 				if (saved.length() > 0) saved.append(" ");
 				saved.append(model.getPlugin().getId());
 			}
 		}
-		for (int i = 0; i < fmodels.size(); i++) {
-			IFragmentModel fmodel = (IFragmentModel)fmodels.get(i);
+		for (int i = 0; i < fFragmentModels.size(); i++) {
+			IFragmentModel fmodel = (IFragmentModel)fFragmentModels.get(i);
 			if (!fmodel.isEnabled()) {
 				disabled += 1;
 				if (saved.length() > 0) saved.append(" ");
@@ -290,7 +180,7 @@ public class ExternalModelManager {
 		Preferences pref= PDECore.getDefault().getPluginPreferences();
 		if (disabled == 0) {
 			pref.setValue(ICoreConstants.CHECKED_PLUGINS, ICoreConstants.VALUE_SAVED_ALL);
-		} else if (disabled == models.size() + fmodels.size()) {
+		} else if (disabled == fModels.size() + fFragmentModels.size()) {
 			pref.setValue(
 				ICoreConstants.CHECKED_PLUGINS,
 				ICoreConstants.VALUE_SAVED_NONE);
@@ -299,10 +189,10 @@ public class ExternalModelManager {
 		}
 		
 		PDECore.getDefault().savePluginPreferences();
-		initialized=false;
 	}
 	
 	public PDEState getState() {
+		loadModels(new NullProgressMonitor());
 		return fState;
 	}
 }

@@ -42,9 +42,9 @@ public class WorkspaceModelManager
 		}		
 	}
 	
-	private HashMap fModels;
-	private HashMap fFragmentModels;	
-	private ArrayList fFeatureModels;	
+	private Map fModels;
+	private Map fFragmentModels;	
+	private List fFeatureModels;	
 	private ArrayList fChangedModels;	
 	private ArrayList fListeners = new ArrayList();
 	private boolean fInitialized = false;
@@ -126,8 +126,7 @@ public class WorkspaceModelManager
 	 * @see org.eclipse.pde.core.IWorkspaceModelManager#getWorkspaceModel(org.eclipse.core.resources.IProject)
 	 */
 	public IModel getWorkspaceModel(IProject project) {
-		if (!fInitialized)
-			initializeWorkspaceModels();
+		initializeWorkspaceModels();
 		
 		if (hasFeatureManifest(project))
 			return getWorkspaceModel(project, fFeatureModels);
@@ -296,7 +295,7 @@ public class WorkspaceModelManager
 		return null;		
 	}
 	
-	private IModel getWorkspaceModel(IProject project, ArrayList models) {
+	private IModel getWorkspaceModel(IProject project, List models) {
 		for (int i = 0; i < models.size(); i++) {
 			IModel model = (IModel) models.get(i);
 			IFile file = (IFile) model.getUnderlyingResource();
@@ -311,8 +310,7 @@ public class WorkspaceModelManager
 	 * @see org.eclipse.pde.core.IModelManager#getAllModels()
 	 */
 	public IPluginModelBase[] getAllModels() {
-		if (!fInitialized) 
-			initializeWorkspaceModels();
+		initializeWorkspaceModels();
 		
 		ArrayList result = new ArrayList();
 		Iterator iter = fModels.values().iterator();
@@ -426,9 +424,9 @@ public class WorkspaceModelManager
 		if (fInitialized || fModelsLocked)
 			return;
 		fModelsLocked = true;
-		fModels = new HashMap();
-		fFragmentModels = new HashMap();
-		fFeatureModels = new ArrayList();
+		fModels = Collections.synchronizedMap(new HashMap());
+		fFragmentModels = Collections.synchronizedMap(new HashMap());
+		fFeatureModels = Collections.synchronizedList(new ArrayList());
 		
 		IWorkspace workspace = PDECore.getWorkspace();
 		IProject[] projects = workspace.getRoot().getProjects();
@@ -588,32 +586,28 @@ public class WorkspaceModelManager
 	 * @see org.eclipse.pde.core.IModelManager#getPluginModels()
 	 */
 	public IPluginModel[] getPluginModels() {
-		if (!fInitialized)
-			initializeWorkspaceModels();
+		initializeWorkspaceModels();
 		return (IPluginModel[])fModels.values().toArray(new IPluginModel[fModels.size()]);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModelManager#getFragmentModels()
 	 */
 	public IFragmentModel[] getFragmentModels() {
-		if (!fInitialized)
-			initializeWorkspaceModels();
+		initializeWorkspaceModels();
 		return (IFragmentModel[]) fFragmentModels.values().toArray(new IFragmentModel[fFragmentModels.size()]);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModelManager#getFeatureModels()
 	 */
 	public IFeatureModel[] getFeatureModels() {
-		if (!fInitialized)
-			initializeWorkspaceModels();
+		initializeWorkspaceModels();
 		return (IFeatureModel[]) fFeatureModels.toArray(new IFeatureModel[fFeatureModels.size()]);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModelManager#getFragmentsFor(java.lang.String, java.lang.String)
 	 */
 	public IFragment[] getFragmentsFor(String pluginId, String version) {
-		if (!fInitialized)
-			initializeWorkspaceModels();
+		initializeWorkspaceModels();
 		ArrayList result = new ArrayList();
 		
 		Iterator iter = fFragmentModels.values().iterator();
@@ -638,12 +632,7 @@ public class WorkspaceModelManager
 		PDECore.getWorkspace().removeResourceChangeListener(this);
 		JavaCore.removePreProcessingResourceChangedListener(this);
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModelManager#isInitialized()
-	 */
-	public boolean isInitialized() {
-		return fInitialized;
-	}
+
 	public IModel getModel(IFile file) {
 		String name = file.getName().toLowerCase();
 		IProject project = file.getProject();

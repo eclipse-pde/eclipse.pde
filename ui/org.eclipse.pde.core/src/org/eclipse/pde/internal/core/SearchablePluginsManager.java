@@ -100,7 +100,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory {
 	private void initializeStates(ArrayList ids) {
 		for (int i = 0; i < ids.size(); i++) {
 			String id = (String) ids.get(i);
-			ModelEntry entry = manager.findEntry(id, null, 0);
+			ModelEntry entry = manager.findEntry(id);
 			if (entry != null)
 				entry.setInJavaSearch(true);
 		}

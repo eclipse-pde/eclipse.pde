@@ -141,10 +141,9 @@ public class SchemaRegistry
 	private void loadExternalDescriptors() {
 		ExternalModelManager registry =
 			PDECore.getDefault().getExternalModelManager();
-		IPluginModel[] models = registry.getPluginModels();
+		IPluginModelBase[] models = registry.getAllModels();
 		for (int i = 0; i < models.length; i++) {
-			IPlugin pluginInfo = models[i].getPlugin();
-			IPluginExtensionPoint[] points = pluginInfo.getExtensionPoints();
+			IPluginExtensionPoint[] points = models[i].getPluginBase().getExtensionPoints();
 			for (int j = 0; j < points.length; j++) {
 				IPluginExtensionPoint point = points[j];
 				if (point.getSchema() != null) {

@@ -105,9 +105,7 @@ public class PluginJavaSearchUtil {
 	private static ArrayList getLibraryPaths(IPluginBase plugin) {
 		ArrayList libraryPaths = new ArrayList();
 		IFragment[] fragments =
-			PDECore.getDefault().getExternalModelManager().getFragmentsFor(
-				plugin.getId(),
-				plugin.getVersion());
+			PDECore.getDefault().findFragmentsFor(plugin.getId(), plugin.getVersion());
 
 		IPluginLibrary[] libraries = plugin.getLibraries();
 		for (int i = 0; i < libraries.length; i++) {
