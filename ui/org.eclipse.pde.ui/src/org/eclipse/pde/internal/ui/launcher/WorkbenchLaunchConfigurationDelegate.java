@@ -240,7 +240,7 @@ public class WorkbenchLaunchConfigurationDelegate
 			fullProgArgs[0] = appname;
 			fullProgArgs[1] = propertiesFile.getPath();
 			fullProgArgs[2] = "-dev";
-			fullProgArgs[3] = "bin";
+			fullProgArgs[3] = getBuildOutputFolders();
 			fullProgArgs[4] = "-data";
 			fullProgArgs[5] = targetWorkspace.toOSString();
 			if (tracing) {
@@ -286,6 +286,29 @@ public class WorkbenchLaunchConfigurationDelegate
 		return true;
 	}
 
+	private String getBuildOutputFolders() {
+		IPluginModelBase[] wsmodels = AdvancedLauncherTab.getWorkspacePlugins();
+		HashSet set = new HashSet();
+		set.add("bin");
+		for (int i = 0; i < wsmodels.length; i++) {
+			IProject project = wsmodels[i].getUnderlyingResource().getProject();
+			try {
+				if (project.hasNature(JavaCore.NATURE_ID)) {
+					set.add(
+						JavaCore
+							.create(project)
+							.getOutputLocation()
+							.lastSegment());
+				}
+			} catch (JavaModelException e) {
+			} catch (CoreException e) {
+			}
+		}
+		String result = set.toString();
+		// the return result from set.toString() is in the form:
+		// [bin, xxx, yyy].  So we need to strip out the square brackets.
+		return result.substring(1,result.length()-1);
+	}
 	private String getTracingFileArgument(ILaunchConfiguration config) {
 		TracingOptionsManager mng = PDECore.getDefault().getTracingOptionsManager();
 		Map options;

@@ -67,7 +67,6 @@ public class ProjectStructurePage extends WizardPage {
 	private Text libraryText;
 	private Composite bottomContainer;
 	private Button simpleChoice;
-	private int numErrors = 0;
 
 	class StructureData implements IPluginStructureData {
 		String pluginId;
@@ -108,18 +107,33 @@ public class ProjectStructurePage extends WizardPage {
 			PDEPlugin.getResourceString(fragment ? KEY_FDESC : KEY_DESC));
 	}
 
-	public static void createProject(IProject project, IProjectProvider provider, IPluginStructureData data, IProgressMonitor monitor)
+	public static void createProject(
+		IProject project,
+		IProjectProvider provider,
+		IPluginStructureData data,
+		IProgressMonitor monitor)
 		throws CoreException {
 		if (project.exists() == false) {
-			CoreUtility.createProject(project, provider.getLocationPath(), monitor);
+			CoreUtility.createProject(
+				project,
+				provider.getLocationPath(),
+				monitor);
 			project.open(monitor);
 		}
-		if (!project.hasNature(JavaCore.NATURE_ID) && data.getRuntimeLibraryName() != null)
-			CoreUtility.addNatureToProject(project, JavaCore.NATURE_ID, monitor);
 		if (!project.hasNature(PDE.PLUGIN_NATURE))
 			CoreUtility.addNatureToProject(project, PDE.PLUGIN_NATURE, monitor);
 
-		JavaCore.create(project);
+		if (!project.hasNature(JavaCore.NATURE_ID)
+			&& data.getRuntimeLibraryName() != null) {
+			CoreUtility.addNatureToProject(
+				project,
+				JavaCore.NATURE_ID,
+				monitor);
+			JavaCore.create(project).setOutputLocation(
+				project.getFullPath().append(data.getJavaBuildFolderName()),
+				monitor);
+		}
+
 	}
 
 	public static void createBuildProperties(
@@ -211,7 +225,6 @@ public class ProjectStructurePage extends WizardPage {
 		buildOutputLabel.setText(PDEPlugin.getResourceString(KEY_OUTPUT));
 		buildOutputText = new Text(bottomContainer, SWT.SINGLE | SWT.BORDER);
 		buildOutputText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		buildOutputText.setEditable(false);
 
 		Label libraryLabel = new Label(bottomContainer, SWT.NULL);
 		libraryLabel.setText(PDEPlugin.getResourceString(fragment ? KEY_FLIBRARY : KEY_LIBRARY));
