@@ -250,6 +250,7 @@ public class BundlePluginBase
 	 */
 	public void setProviderName(String providerName) throws CoreException {
 		Object oldValue = getProviderName();
+		fProvider = providerName;
 		model.fireModelObjectChanged(this, IPluginBase.P_PROVIDER, oldValue, providerName);			
 	}
 
