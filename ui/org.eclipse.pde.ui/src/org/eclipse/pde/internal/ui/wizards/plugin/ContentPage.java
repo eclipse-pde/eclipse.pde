@@ -259,14 +259,7 @@ public abstract class ContentPage extends WizardPage {
 	}
 
 	private String computeId() {
-		String fullName = fProjectProvider.getProjectName();
-		StringBuffer buffer = new StringBuffer();
-		
-		String[] name = fullName.split("[^a-zA-Z0-9\\._]");
-		for (int i = 0; i<name.length; i++)
-			if (name[i].length() != 0)
-				buffer.append(name[i]);
-		return buffer.toString();
+		return fProjectProvider.getProjectName().replaceAll("[^a-zA-Z0-9\\._]", "_");
 	}
 
 	private void presetLibraryField(String id){
