@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.pde.internal.ui.neweditor.plugin;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -153,19 +151,68 @@ public class ExtensionPointDetails extends AbstractFormPart implements IDetailsP
 						PDEPlugin.getActiveWorkbenchShell(),
 						new WorkbenchLabelProvider(),
 						new WorkbenchContentProvider());
-				dialog.setTitle(PDEPlugin.getResourceString("BaseExtensionPointMainPage.schemaLocation.title"));
-				dialog.setMessage(PDEPlugin.getResourceString("BaseExtensionPointMainPage.schemaLocation.desc"));
+				dialog.setTitle(PDEPlugin.getResourceString("ManifestEditor.ExtensionPointDetails.schemaLocation.title"));
+				dialog.setMessage(PDEPlugin.getResourceString("ManifestEditor.ExtensionPointDetails.schemaLocation.desc"));
 				dialog.setDoubleClickSelects(false);
 				dialog.setAllowMultiple(false);
 				dialog.addFilter(new ViewerFilter(){
-					public boolean select(Viewer viewer, Object parentElement, Object element) {
-						return ((IResource)element).getProject().equals(project);
+					public boolean select(Viewer viewer, Object parent,
+							Object element) {
+						if (element instanceof IFile){
+							String ext = ((IFile)element).getFullPath().getFileExtension();
+							return ext.equals("exsd") || ext.equals("mxsd");
+						} else if (element instanceof IContainer){ // i.e. IProject, IFolder
+							try {
+								IResource[] resources = ((IContainer)element).members();
+								for (int i = 0; i < resources.length; i++){
+									if (select(viewer, parent, resources[i]))
+										return true;
+								}
+							} catch (CoreException e) {
+								PDEPlugin.logException(e);
+							}
+						}
+						return false;
 					}
 				});
-				
-				dialog.setInput(PDEPlugin.getWorkspace().getRoot());
+				dialog.setValidator(new ISelectionStatusValidator() {
+					public IStatus validate(Object[] selection) {
+						IPluginModelBase model = (IPluginModelBase) getPage()
+								.getPDEEditor().getAggregateModel();
+						String pluginName = model.getPluginBase().getId();
+
+						if (selection == null || selection.length != 1
+								|| !(selection[0] instanceof IFile))
+							return new Status(
+									IStatus.ERROR,
+									pluginName,
+									IStatus.ERROR,
+									PDEPlugin
+											.getResourceString("ManifestEditor.ExtensionPointDetails.validate.errorStatus"),
+									null);
+						IFile file = (IFile) selection[0];
+						String ext = file.getFullPath().getFileExtension();
+						if (ext.equals("exsd") || ext.equals("mxsd"))
+							return new Status(IStatus.OK, pluginName,
+									IStatus.OK, "", null);
+						return new Status(
+								IStatus.ERROR,
+								pluginName,
+								IStatus.ERROR,
+								PDEPlugin
+										.getResourceString("ManifestEditor.ExtensionPointDetails.validate.errorStatus"),
+								null);
+					}
+				});
+				dialog.setDoubleClickSelects(true);
+				dialog.setStatusLineAboveButtons(true);
+				dialog.setInput(project);
 				dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));
-				dialog.setInitialSelection(project);
+				String filePath = fSchemaEntry.getValue();
+				if (filePath!=null && filePath.length()!=0 && project.exists(new Path(filePath)))
+					dialog.setInitialSelection(project.getFile(new Path(filePath)));
+				else
+					dialog.setInitialSelection(null);
 				if (dialog.open() == ElementTreeSelectionDialog.OK) {
 					Object[] elements = dialog.getResult();
 					if (elements.length >0){
