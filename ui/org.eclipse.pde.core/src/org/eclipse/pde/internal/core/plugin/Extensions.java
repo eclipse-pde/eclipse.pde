@@ -14,7 +14,6 @@ import java.io.*;
 import java.util.*;
 
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
 import org.w3c.dom.*;
 
 public class Extensions
