@@ -1,4 +1,8 @@
 package org.eclipse.pde.internal.schema;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
 import org.eclipse.core.resources.*;
 import org.eclipse.jface.resource.*;

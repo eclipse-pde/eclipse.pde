@@ -1,4 +1,8 @@
 package org.eclipse.pde.internal.model.component;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
 import org.w3c.dom.Node;
 import org.eclipse.pde.internal.base.model.*;

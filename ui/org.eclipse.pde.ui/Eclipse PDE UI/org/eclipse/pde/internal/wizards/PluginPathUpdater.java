@@ -1,4 +1,8 @@
 package org.eclipse.pde.internal.wizards;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
 import org.eclipse.pde.internal.model.*;
 import org.eclipse.jface.preference.*;

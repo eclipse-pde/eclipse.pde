@@ -1,4 +1,8 @@
 package org.eclipse.pde.internal.editor.manifest;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
 import java.io.*;
 import org.eclipse.core.resources.*;

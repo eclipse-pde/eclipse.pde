@@ -1,4 +1,8 @@
 package org.eclipse.pde.internal.preferences;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
 import org.eclipse.core.runtime.*;
 import java.net.URL;
@@ -12,9 +16,6 @@ import org.eclipse.core.boot.BootLoader;
 import org.eclipse.jdt.core.*;
 
 /**
- * Insert the type's description here.
- * Creation date: (12/1/2000 9:35:46 AM)
- * @author: Dejan Glozic
  */
 public class PDEBasePreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	public static final String PROP_PLATFORM_PATH="org.eclipse.pde.platformPath";
@@ -34,8 +35,6 @@ public PDEBasePreferencePage() {
 	setDescription(PDEPlugin.getResourceString(KEY_DESCRIPTION));
 }
 /**
- * Insert the method's description here.
- * Creation date: (12/1/2000 9:41:47 AM)
  */
 protected void createFieldEditors() {
 	editor =
@@ -61,8 +60,6 @@ protected void createFieldEditors() {
 	addField(plugins);
 }
 /**
- * Insert the method's description here.
- * Creation date: (3/26/2001 4:36:34 PM)
  * @return java.lang.String
  */
 public String getPlatformPath() {
@@ -78,8 +75,6 @@ public String getPlatformPath() {
 public void init(IWorkbench workbench) {
 }
 /**
- * Insert the method's description here.
- * Creation date: (5/6/2001 6:45:47 PM)
  */
 public static void initializePlatformPath() {
 	IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();

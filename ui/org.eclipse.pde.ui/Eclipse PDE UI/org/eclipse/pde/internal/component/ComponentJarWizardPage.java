@@ -1,4 +1,8 @@
 package org.eclipse.pde.internal.component;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
 import org.eclipse.ant.internal.ui.*;
 import org.eclipse.ant.core.*;

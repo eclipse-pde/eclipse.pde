@@ -1,4 +1,8 @@
 package org.eclipse.pde.internal.base.schema;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
 /**
  * Objects that implement this interface are carrying metadata about

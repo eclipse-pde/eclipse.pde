@@ -1,4 +1,8 @@
 package org.eclipse.pde.internal.base.model.component;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
 import java.net.URL;
 import org.eclipse.core.resources.IResource;
