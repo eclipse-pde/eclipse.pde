@@ -72,12 +72,11 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 		}
 	});
 
-	nameText = new FormEntry(createText(container, PDEPlugin.getResourceString(SECTION_POINT), factory));
+	nameText = new FormEntry(createText(container, PDEPlugin.getResourceString(SECTION_NAME), factory));
 	nameText.addFormTextListener(new IFormTextListener() {
 		public void textValueChanged(FormEntry text) {
 			schema.setName(text.getValue());
 			getFormPage().getForm().setHeadingText(schema.getName());
-			//((SchemaEditor) getFormPage().getEditor()).updateTitle();
 		}
 		public void textDirty(FormEntry text) {
 			forceDirty();

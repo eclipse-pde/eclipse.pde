@@ -26,7 +26,7 @@ The symbolic name it the id of the nature extension.
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="runtume" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="runtime" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -95,7 +95,7 @@ The symbolic name it the id of the nature extension.
       </complexType>
    </element>
 
-   <element name="runtume">
+   <element name="runtime">
       <complexType>
          <sequence>
             <element ref="run" minOccurs="0" maxOccurs="1"/>
