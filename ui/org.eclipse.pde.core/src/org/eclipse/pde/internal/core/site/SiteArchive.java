@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.core.site;
 
 import java.io.PrintWriter;
+import java.util.Hashtable;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.isite.ISiteArchive;
@@ -55,10 +56,11 @@ public class SiteArchive extends SiteObject implements ISiteArchive {
 		url = null;
 		path = null;
 	}
-	protected void parse(Node node) {
-		super.parse(node);
+	protected void parse(Node node, Hashtable lineTable) {
+		super.parse(node, lineTable);
 		path = getNodeAttribute(node, "path");
 		url = getNodeAttribute(node, "url");
+		bindSourceLocation(node, lineTable);
 	}
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent);

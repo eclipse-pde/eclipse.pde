@@ -11,6 +11,8 @@
 package org.eclipse.pde.internal.core.site;
 
 import java.io.PrintWriter;
+import java.util.*;
+import java.util.Map;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
@@ -21,11 +23,12 @@ import org.w3c.dom.Node;
 
 public abstract class SiteObject
 	extends PlatformObject
-	implements ISiteObject {
+	implements ISiteObject, ISourceObject {
 	transient ISiteModel model;
 	transient ISiteObject parent;
 	protected String label;
 	boolean inTheModel;
+	protected int[] range;
 
 	void setInTheModel(boolean value) {
 		inTheModel = value;
@@ -123,7 +126,7 @@ public abstract class SiteObject
 		return parent;
 	}
 
-	protected void parse(Node node) {
+	protected void parse(Node node, Hashtable lineTable) {
 		label = getNodeAttribute(node, "label");
 	}
 
@@ -188,5 +191,24 @@ public abstract class SiteObject
 	
 	public void setParent(ISiteObject parent) {
 		this.parent = parent;
+	}
+	void bindSourceLocation(Node node, Map lineTable) {
+		Integer[] lines = (Integer[]) lineTable.get(node);
+		if (lines != null) {
+			range = new int[2];
+			range[0] = lines[0].intValue();
+			range[1] = lines[1].intValue();
+		}
+	}
+
+	public int getStartLine() {
+		if (range == null)
+			return -1;
+		return range[0];
+	}
+	public int getStopLine() {
+		if (range == null)
+			return -1;
+		return range[1];
 	}
 }

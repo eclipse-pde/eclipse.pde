@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.core.site;
 
 import java.io.PrintWriter;
+import java.util.*;
 import java.util.Vector;
 
 import org.eclipse.core.resources.*;
@@ -111,8 +112,9 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 		firePropertyChanged(P_TYPE, oldValue, url);
 	}
 
-	protected void parse(Node node) {
-		super.parse(node);
+	protected void parse(Node node, Hashtable lineTable) {
+		super.parse(node, lineTable);
+		bindSourceLocation(node, lineTable);
 		type = getNodeAttribute(node, "type");
 		url = getNodeAttribute(node, "url");
 		NodeList children = node.getChildNodes();
@@ -122,7 +124,7 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 				&& child.getNodeName().equalsIgnoreCase("category")) {
 				SiteCategory category =
 					(SiteCategory) getModel().getFactory().createCategory(this);
-				((SiteCategory) category).parse(child);
+				((SiteCategory) category).parse(child, lineTable);
 				((SiteCategory) category).setInTheModel(true);
 				categories.add(category);
 			}

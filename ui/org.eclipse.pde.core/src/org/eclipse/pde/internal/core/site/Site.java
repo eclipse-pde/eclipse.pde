@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.core.site;
 
 import java.io.PrintWriter;
+import java.util.*;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.CoreException;
@@ -199,41 +200,42 @@ public class Site extends SiteObject implements ISite {
 		type = null;
 		url = null;
 	}
-	protected void parse(Node node) {
+	protected void parse(Node node, Hashtable lineTable) {
 		type = getNodeAttribute(node, "type");
 		url = getNodeAttribute(node, "url");
+		bindSourceLocation(node, lineTable);
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
-				parseChild(child);
+				parseChild(child, lineTable);
 			}
 		}
 	}
 
-	protected void parseChild(Node child) {
+	protected void parseChild(Node child, Hashtable lineTable) {
 		String tag = child.getNodeName().toLowerCase();
 		if (tag.equals("feature")) {
 			ISiteFeature feature = getModel().getFactory().createFeature();
-			((SiteFeature) feature).parse(child);
+			((SiteFeature) feature).parse(child, lineTable);
 			((SiteFeature) feature).setInTheModel(true);
 			features.add(feature);
 		} else if (tag.equals("archive")) {
 			ISiteArchive archive = getModel().getFactory().createArchive();
-			((SiteArchive) archive).parse(child);
+			((SiteArchive) archive).parse(child, lineTable);
 			((SiteArchive) archive).setInTheModel(true);
 			archives.add(archive);
 		} else if (tag.equals("category-def")) {
 			ISiteCategoryDefinition def =
 				getModel().getFactory().createCategoryDefinition();
-			((SiteCategoryDefinition) def).parse(child);
+			((SiteCategoryDefinition) def).parse(child, lineTable);
 			((SiteCategoryDefinition) def).setInTheModel(true);
 			categoryDefs.add(def);
 		} else if (tag.equals("description")) {
 			if (description != null)
 				return;
 			description = getModel().getFactory().createDescription(this);
-			((SiteDescription) description).parse(child);
+			((SiteDescription) description).parse(child, lineTable);
 			((SiteDescription) description).setInTheModel(true);
 		}
 	}
@@ -277,7 +279,7 @@ public class Site extends SiteObject implements ISite {
 			ISiteArchive archive = (ISiteArchive)archives.get(i);
 			if (!archive.isValid()) return false;
 		}
-		for (int i=0; i<features.size(); i++) {
+		for (int i=0; i<categoryDefs.size(); i++) {
 			ISiteCategoryDefinition def = (ISiteCategoryDefinition)categoryDefs.get(i);
 			if (!def.isValid()) return false;
 		}

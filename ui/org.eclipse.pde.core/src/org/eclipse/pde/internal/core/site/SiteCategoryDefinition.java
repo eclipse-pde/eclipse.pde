@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.core.site;
 
 import java.io.PrintWriter;
+import java.util.Hashtable;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.isite.*;
@@ -76,8 +77,9 @@ public class SiteCategoryDefinition
 		description = null;
 	}
 
-	protected void parse(Node node) {
-		super.parse(node);
+	protected void parse(Node node, Hashtable lineTable) {
+		super.parse(node, lineTable);
+		bindSourceLocation(node, lineTable);
 		name = getNodeAttribute(node, "name");
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
@@ -85,7 +87,7 @@ public class SiteCategoryDefinition
 			if (child.getNodeType() == Node.ELEMENT_NODE
 				&& child.getNodeName().equalsIgnoreCase("description")) {
 				description = getModel().getFactory().createDescription(this);
-				((SiteDescription) description).parse(child);
+				((SiteDescription) description).parse(child, lineTable);
 				((SiteDescription)description).setInTheModel(true);
 				break;
 			}

@@ -595,6 +595,10 @@ public class Feature extends VersionableObject implements IFeature {
 			IFeatureData entry = (IFeatureData) data.elementAt(i);
 			if (entry.getId()==null) return false;
 		}
+		for (int i = 0; i < imports.size(); i++) {
+			IFeatureImport iimport = (IFeatureImport) imports.elementAt(i);
+			if (iimport.getId()==null) return false;
+		}
 		return true;
 	}
 

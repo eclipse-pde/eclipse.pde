@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.core.site;
 
 import java.io.PrintWriter;
+import java.util.Hashtable;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.isite.*;
@@ -37,8 +38,9 @@ public class SiteCategory extends SiteObject implements ISiteCategory {
 		return name!=null;
 	}
 	
-	protected void parse(Node node) {
+	protected void parse(Node node, Hashtable lineTable) {
 		name = getNodeAttribute(node, "name");
+		bindSourceLocation(node, lineTable);
 	}
 	
 	protected void reset() {

@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.core.site;
 
 import java.io.PrintWriter;
+import java.util.Hashtable;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.isite.ISiteDescription;
@@ -68,8 +69,9 @@ public class SiteDescription extends SiteObject implements ISiteDescription {
 		text = null;
 	}
 
-	protected void parse(Node node) {
+	protected void parse(Node node, Hashtable lineTable) {
 		url = getNodeAttribute(node, "url");
+		bindSourceLocation(node, lineTable);
 		NodeList children = node.getChildNodes();
 		for (int i=0; i<children.getLength(); i++) {
 			Node child = children.item(i);

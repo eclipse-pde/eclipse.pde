@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.core.site;
 
 import java.io.*;
 import java.net.URL;
+import java.util.Hashtable;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.*;
@@ -86,7 +87,7 @@ public abstract class AbstractSiteModel
 				|| errorHandler.getFatalErrorCount() > 0) {
 				throwParseErrorsException();
 			}
-			processDocument(parser.getDocument());
+			processDocument(parser.getDocument(), parser.getLineTable());
 			loaded = true;
 			if (!outOfSync)
 				updateTimeStamp();
@@ -96,7 +97,7 @@ public abstract class AbstractSiteModel
 		}
 	}
 
-	private void processDocument(Document doc) {
+	private void processDocument(Document doc, Hashtable lineTable) {
 		Node rootNode = doc.getDocumentElement();
 		if (site == null) {
 			site = new Site();
@@ -104,7 +105,7 @@ public abstract class AbstractSiteModel
 		} else {
 			site.reset();
 		}
-		site.parse(rootNode);
+		site.parse(rootNode, lineTable);
 	}
 	public void reload(InputStream stream, boolean outOfSync)
 		throws CoreException {
