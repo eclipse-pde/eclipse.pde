@@ -60,9 +60,6 @@ IRegistryChangeListener {
 	
 	public RegistryBrowser() {
 		super();
-		Platform.getExtensionRegistry().addRegistryChangeListener(this);
-		PDERuntimePlugin.getDefault().getBundleContext()
-		.addBundleListener(this);
 	}
 	
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
@@ -104,6 +101,9 @@ IRegistryChangeListener {
 		fillToolBar();
 		treeViewer.refresh();
 		setViewOrientation(orientation);
+		
+		Platform.getExtensionRegistry().addRegistryChangeListener(this);
+		PDERuntimePlugin.getDefault().getBundleContext().addBundleListener(this);
 	}
 	private void createTreeViewer() {
 		Tree tree = new Tree(getSashForm(), SWT.FLAT);
