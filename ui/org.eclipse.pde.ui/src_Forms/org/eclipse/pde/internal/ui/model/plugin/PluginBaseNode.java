@@ -31,15 +31,21 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 			IDocumentNode node = (IDocumentNode)pluginImport;
 			parent.addChildNode(node);
 			node.setParentNode(parent);
+			fireStructureChanged(pluginImport, IModelChangedEvent.INSERT);
 		}
-		fireStructureChanged(pluginImport, IModelChangedEvent.INSERT);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#remove(org.eclipse.pde.core.plugin.IPluginImport)
 	 */
 	public void remove(IPluginImport pluginImport) throws CoreException {
-		
+		IDocumentNode parent = getEnclosingElement("requires", false);
+		if (parent != null) {
+			parent.removeChildNode((IDocumentNode)pluginImport);
+			pluginImport.setInTheModel(false);
+			fireStructureChanged(pluginImport, IModelChangedEvent.REMOVE);
+		}	
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#getLibraries()
 	 */

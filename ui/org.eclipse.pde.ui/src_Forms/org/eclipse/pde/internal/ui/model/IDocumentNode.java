@@ -12,6 +12,8 @@ public interface IDocumentNode {
 	
 	void addChildNode(IDocumentNode child);
 	void addChildNode(IDocumentNode child, int position);
+	IDocumentNode removeChildNode(IDocumentNode child);
+	
 	IDocumentNode[] getChildNodes();
 
 	IDocumentNode getPreviousSibling();

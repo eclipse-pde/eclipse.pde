@@ -46,30 +46,34 @@ public abstract class XMLInputContext extends UTF8InputContext {
 	}
 	
 	private void addEditNodeOperation(ArrayList ops, IDocumentNode node, IModelChangedEvent event) {
+		TextEdit op = null;
 		if (event.getChangeType() == IModelChangedEvent.REMOVE){
 			TextEdit old = (TextEdit)fOperationTable.get(node);
 			if (old != null) {
 				ops.remove(old);
+				fOperationTable.remove(node);
 				return;
-			} 
+			} else if (node.getOffset() > -1) {
+				op = getNodeDeleteEditOperation(node);
+			}
 		}
-		
-		node = getHighestNodeToBeWritten(node);
-		TextEdit op = null;
-		if (node.getParentNode() == null) {
-			op = new InsertEdit(0, node.write(true));
-		} else {
-			if (node.getOffset() > -1) {
-				// this is an element that was of the form <element/>
-				// it now needs to be broken up into <element><new/></element>
-				op = new ReplaceEdit(node.getOffset(), node.getLength(), node.write(false));
+		if (op == null) {
+			node = getHighestNodeToBeWritten(node);
+			if (node.getParentNode() == null) {
+				op = new InsertEdit(0, node.write(true));
 			} else {
-				// try to insert after last sibling that has an offset
-				op = insertAfterSibling(node);
-				
-				// insert as first child of its parent
-				if (op == null) {
-					op = insertAsFirstChild(node);
+				if (node.getOffset() > -1) {
+					// this is an element that was of the form <element/>
+					// it now needs to be broken up into <element><new/></element>
+					op = new ReplaceEdit(node.getOffset(), node.getLength(), node.write(false));
+				} else {
+					// try to insert after last sibling that has an offset
+					op = insertAfterSibling(node);
+					
+					// insert as first child of its parent
+					if (op == null) {
+						op = insertAsFirstChild(node);
+					}
 				}
 			}
 		}
@@ -111,7 +115,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		if (offset > -1) {
 			if (newValue == null || newValue.toString().length() == 0) {
 				int length = attr.getValueOffset() + attr.getValueLength() + 1 - attr.getNameOffset();
-				op = getDeleteEditOperation(attr.getNameOffset(), length);
+				op = getAttributeDeleteEditOperation(attr.getNameOffset(), length);
 			} else {
 				op = new ReplaceEdit(offset, attr.getValueLength(), getWritableString(event.getNewValue().toString()));
 			}
@@ -157,13 +161,14 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		return i;
 	}
 	
-	private DeleteEdit getDeleteEditOperation(int offset, int length) {
+	private DeleteEdit getAttributeDeleteEditOperation(int offset, int length) {
 		try {
 			IDocument doc = getDocumentProvider().getDocument(getInput());
 			for (;;) {
 				char ch = doc.get(offset + length, 1).toCharArray()[0];
 				if (!Character.isWhitespace(ch))
 					break;
+				
 				length += 1;
 			}
 		} catch (BadLocationException e) {
@@ -171,7 +176,25 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		return new DeleteEdit(offset, length);		
 	}
 	
-	/**
+
+	private DeleteEdit getNodeDeleteEditOperation(IDocumentNode node) {
+		int offset = node.getOffset();
+		int length = node.getLength();
+		try {
+			IDocument doc = getDocumentProvider().getDocument(getInput());
+			int line = doc.getLineOfOffset(offset + length);
+			for (;;) {
+				char ch = doc.get(offset + length, 1).toCharArray()[0];
+				if (!Character.isWhitespace(ch) || doc.getLineOfOffset(offset + length) > line)
+					break;
+				
+				length += 1;
+			}
+		} catch (BadLocationException e) {
+		}
+		return new DeleteEdit(offset - node.getLineIndent(), length + node.getLineIndent());		
+	}
+/**
 	 * @param node
 	 * @return
 	 */

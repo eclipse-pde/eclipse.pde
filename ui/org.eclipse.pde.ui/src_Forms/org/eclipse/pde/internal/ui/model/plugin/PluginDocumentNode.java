@@ -55,6 +55,22 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 		if (fChildren.size() > 1 && position < fChildren.size() - 1)
 			((IDocumentNode)fChildren.get(position + 1)).setPreviousSibling(child);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#removeChildNode(org.eclipse.pde.internal.ui.model.IDocumentNode)
+	 */
+	public IDocumentNode removeChildNode(IDocumentNode child) {
+		int index = fChildren.indexOf(child);
+		if (index != -1) {
+			fChildren.remove(child);
+			if (index < fChildren.size()) {
+				IDocumentNode prevSibling = index == 0 ? null : (IDocumentNode)fChildren.get(index - 1);
+				((IDocumentNode)fChildren.get(index)).setPreviousSibling(prevSibling);
+				return child;
+			}
+		}
+		return null;
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.model.IDocumentNode#isErrorNode()
 	 */
