@@ -151,4 +151,7 @@ public abstract class AbstractExtensionsModel
 		if (extensions==null) return false;
 		return extensions.isValid();	
 	}
+	public boolean isReconcilingModel() {
+		return false;
+	}
 }

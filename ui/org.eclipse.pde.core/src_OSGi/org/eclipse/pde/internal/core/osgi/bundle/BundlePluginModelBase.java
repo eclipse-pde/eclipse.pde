@@ -306,4 +306,10 @@ public abstract class BundlePluginModelBase
 			return extensionsModel.getFactory().createExtensionPoint();
 		return null;
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.IModel#isReconcilingModel()
+	 */
+	public boolean isReconcilingModel() {
+		return false;
+	}
 }

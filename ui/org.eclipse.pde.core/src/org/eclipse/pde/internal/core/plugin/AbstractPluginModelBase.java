@@ -14,14 +14,14 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import javax.xml.parsers.*;
+import javax.xml.parsers.SAXParser;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.w3c.dom.*;
-import org.xml.sax.*;
+import org.xml.sax.InputSource;
 
 public abstract class AbstractPluginModelBase
 	extends AbstractModel
@@ -29,6 +29,7 @@ public abstract class AbstractPluginModelBase
 	protected PluginBase pluginBase;
 	private boolean enabled;
 	private DocumentModel documentModel;
+	private boolean reconcilingModel=false;
 	
 	public AbstractPluginModelBase() {
 		super();
@@ -143,7 +144,7 @@ public abstract class AbstractPluginModelBase
 	
 	public synchronized void load(InputStream stream, boolean outOfSync)
 		throws CoreException {
-		if (XMLCore.NEW_CODE_PATHS) {
+		if (reconcilingModel && XMLCore.NEW_CODE_PATHS) {
 			getDocumentModel().load(stream, outOfSync);
 		} else {
 			loadOrig(stream, outOfSync);
@@ -169,12 +170,14 @@ public abstract class AbstractPluginModelBase
 			if (!outOfSync)
 				updateTimeStamp();
 		} catch (Exception e) {
+			e.printStackTrace();
 			throwParseErrorsException();
 		}
 	}
 
 	private void processDocument(Document doc, Hashtable lineTable) {
 		String schemaVersion = processSchemaVersion(doc);
+		//System.out.println("Schema Version="+schemaVersion);
 		Node pluginNode = doc.getDocumentElement();
 		pluginBase.load(pluginNode, schemaVersion, lineTable);
 	}
@@ -184,10 +187,26 @@ public abstract class AbstractPluginModelBase
 		for (int i=0; i<children.getLength(); i++) {
 			Node node = children.item(i);
 			if (node.getNodeType()==Node.PROCESSING_INSTRUCTION_NODE) {
-				String name = node.getNodeName();
-				if (name.equals("eclipse")) {
-					Node vnode = node.getAttributes().getNamedItem("version");
-					if (vnode!=null) return vnode.getNodeValue();
+				ProcessingInstruction pi = (ProcessingInstruction)node;
+				String target = pi.getTarget();
+				if (target.equals("eclipse")) {
+					String data = pi.getData();
+					if (data!=null) {
+						data = data.trim().toLowerCase();
+						int loc = data.indexOf('=');
+						if (loc!=-1) {
+							String key = data.substring(0, loc);
+							if (key.equals("version")) {
+								int start = loc+1;
+								if (data.charAt(start)=='\"')
+									start++;
+								int end = data.length()-1;
+								if (data.charAt(end)=='\"')
+									end--;
+								return data.substring(start, end+1);
+							}
+						}
+					}
 				}
 			}
 		}
@@ -196,7 +215,7 @@ public abstract class AbstractPluginModelBase
 	
 	public void reload(InputStream stream, boolean outOfSync)
 		throws CoreException {
-		if (XMLCore.NEW_CODE_PATHS) {
+		if (reconcilingModel && XMLCore.NEW_CODE_PATHS) {
 			getDocumentModel().reload(stream, outOfSync);
 		} else {
 			reloadOrig(stream, outOfSync);
@@ -265,4 +284,13 @@ public abstract class AbstractPluginModelBase
 		if (pluginBase==null) return false;
 		return pluginBase.isValid();	
 	}
+
+	public boolean isReconcilingModel() {
+		return reconcilingModel;
+	}
+
+	public void setReconcilingModel(boolean reconcilingModel) {
+		this.reconcilingModel = reconcilingModel;
+	}
+
 }

@@ -33,7 +33,7 @@ public class WorkspaceModelManager
 	private Vector workspaceFragmentModels = null;
 	private Vector workspaceFeatureModels = null;
 	private Vector modelChanges = null;
-	private static final boolean DEBUG = false;
+	private static final boolean DEBUG = true;
 	private boolean modelsLocked=false;
 
 	class ModelChange {

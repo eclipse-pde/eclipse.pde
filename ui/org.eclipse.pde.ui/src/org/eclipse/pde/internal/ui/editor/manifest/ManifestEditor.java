@@ -93,6 +93,7 @@ public class ManifestEditor
 			model = new ExternalFragmentModel();
 		else
 			model = new ExternalPluginModel();
+		model.setReconcilingModel(true);
 		String parentPath = file.getParentFile().getAbsolutePath();
 		model.setInstallLocation("file:" + parentPath);
 		try {
@@ -123,6 +124,7 @@ public class ManifestEditor
 			model = new ExternalFragmentModel();
 		else
 			model = new ExternalPluginModel();
+		model.setReconcilingModel(true);
 		//String parentPath = file.getParentFile().getAbsolutePath();
 		model.setInstallLocation("");
 		try {
@@ -210,6 +212,7 @@ public class ManifestEditor
 		modelProvider.connect(file, this);
 		WorkspacePluginModelBase model =
 			(WorkspacePluginModelBase) modelProvider.getModel(file, this);
+		model.setReconcilingModel(true);
 		try {
 			model.load(stream, false);
 		} catch (CoreException e) {

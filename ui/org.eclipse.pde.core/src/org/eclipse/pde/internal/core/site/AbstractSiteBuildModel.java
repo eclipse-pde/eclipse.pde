@@ -97,4 +97,7 @@ public abstract class AbstractSiteBuildModel
 				new Object[] { siteBuild },
 				null));
 	}
+	public boolean isReconcilingModel() {
+		return false;
+	}
 }

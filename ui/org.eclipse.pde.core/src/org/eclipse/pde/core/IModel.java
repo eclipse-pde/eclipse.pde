@@ -244,4 +244,12 @@ public interface IModel extends IAdaptable {
 	 * </p>
 	 */
 	public void reload(InputStream source, boolean outOfSync) throws CoreException;
+	/**
+	 * Returns whether this model needs to react to changes
+	 * in source and reconcile them. Only model instances
+	 * used in editors need to perform this task.
+	 * @return <code>true</code> if this is a reconciling
+	 * model, false otherwise.
+	 */
+	public boolean isReconcilingModel();
 }
