@@ -209,7 +209,7 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 	 * @param element
 	 * @return List
 	 */
-	public List selectConfigs(IPlatformEnvironment element) { //PASCAL To modify here
+	public List selectConfigs(IPlatformEnvironment element) {
 		List result = new ArrayList(getConfigInfos());
 
 		if (((element.getOS() == null || element.getOS().equals(Config.ANY)) && includePlatformIndependent == false) && 
@@ -222,21 +222,21 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 		if (element.getOS() != null && !element.getOS().equals(Config.ANY)) {
 			for (Iterator iter = result.iterator(); iter.hasNext();) {
 				Config config = (Config) iter.next();
-				if (element.getOS().indexOf(config.getOs()) == -1)
+				if (! element.getOS().equalsIgnoreCase(config.getOs()) )
 					iter.remove();
 			}
 		}
 		if (element.getWS() != null && !element.getWS().equals(Config.ANY)) {
 			for (Iterator iter = result.iterator(); iter.hasNext();) {
 				Config config = (Config) iter.next();
-				if (element.getWS().indexOf(config.getWs()) == -1)
+				if (! element.getWS().equalsIgnoreCase(config.getWs()) )
 					iter.remove();
 			}
 		}
 		if (element.getOSArch() != null && !element.getOSArch().equals(Config.ANY)) {
 			for (Iterator iter = result.iterator(); iter.hasNext();) {
 				Config config = (Config) iter.next();
-				if (element.getOSArch().indexOf(config.getArch()) == -1)
+				if (! element.getOSArch().equalsIgnoreCase(config.getArch()) )
 					iter.remove();
 			}
 		}
