@@ -9,13 +9,6 @@
       %description
    </description>
 
-  <url>
-     <update 
-         url="http://download.eclipse.org/updates"
-         label="Eclipse Nevada Test Site">
-     </update>
-  </url>
-
    <plugin id="org.eclipse.pde" version="2.0.0" />
    <plugin id="org.eclipse.pde.build" version="2.0.0" />
    <plugin id="org.eclipse.pde.core" version="2.0.0" />
