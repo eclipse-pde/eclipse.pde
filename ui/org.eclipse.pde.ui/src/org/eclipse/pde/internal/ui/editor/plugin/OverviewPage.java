@@ -11,13 +11,18 @@
 package org.eclipse.pde.internal.ui.editor.plugin;
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.pde.core.build.IBuild;
+import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.build.*;
+import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.launcher.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
@@ -255,10 +260,30 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 			IProgressService service = PlatformUI.getWorkbench().getProgressService();
 			editor.doSave(null);
 			service.runInUI(service, op, model.getUnderlyingResource().getProject());
+            updateBuildProperties();
 		} catch (InvocationTargetException e) {
 			MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), PDEPlugin.getResourceString("OverviewPage.error"), e.getCause().getMessage()); //$NON-NLS-1$
 		} catch (InterruptedException e) {
 		}
 	}
-	
+    
+    private void updateBuildProperties() throws InvocationTargetException {
+       try {
+        InputContext context = getPDEEditor().getContextManager().findContext(BuildInputContext.CONTEXT_ID);
+        if (context != null) {
+               IBuildModel buildModel = (IBuildModel)context.getModel();
+               IBuild build = buildModel.getBuild();
+               IBuildEntry entry = build.getEntry("bin.includes");
+               if (entry == null) {
+                   entry = buildModel.getFactory().createEntry("bin.includes");
+                   build.add(entry);
+               } 
+               if (!entry.contains("META-INF"))
+                   entry.addToken("META-INF/");          
+           }
+        } catch (CoreException e) {
+            throw new InvocationTargetException(e);
+        }
+    }
+
 }
