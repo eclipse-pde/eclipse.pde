@@ -226,7 +226,9 @@ public class PluginModelManager implements IAdaptable {
 		workspaceManager.addModelProviderListener(providerListener);
 	}
 	public void shutdown() {
-		workspaceManager.removeModelProviderListener(providerListener);
-		externalManager.removeModelProviderListener(providerListener);
+		if (workspaceManager != null)	
+			workspaceManager.removeModelProviderListener(providerListener);
+		if (externalManager != null)
+			externalManager.removeModelProviderListener(providerListener);
 	}
 }
