@@ -7,15 +7,30 @@ package org.eclipse.pde.internal.ui.wizards.imports;
 import java.io.File;
 import java.util.ArrayList;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.core.CoreSettings;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.TargetPlatform;
 import org.eclipse.pde.internal.ui.preferences.TargetEnvironmentPreferencePage;
 import org.eclipse.pde.internal.ui.wizards.StatusWizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Label;
 
 public class PluginImportWizardFirstPage extends StatusWizardPage {
 
@@ -54,7 +69,7 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 
 	private Label otherLocationLabel;
 	private Button runtimeLocationButton;
-	private Button otherLocationButton;
+	//private Button otherLocationButton;
 	private Button browseButton;
 	private Combo dropLocation;
 	//private Button doImportCheck;
@@ -84,19 +99,20 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 		layout.numColumns = 3;
 		composite.setLayout(layout);
 
-		runtimeLocationButton = new Button(composite, SWT.RADIO);
+		runtimeLocationButton = new Button(composite, SWT.CHECK);
 		fillHorizontal(runtimeLocationButton, 3, false);
 		runtimeLocationButton.setText(
 			PDEPlugin.getResourceString(KEY_RUNTIME_LOCATION));
 
 		int wizardClientWidth = parent.getSize().x - 2 * layout.marginWidth;
-
+/*
 		createMultiLineLabel(
 			composite,
 			wizardClientWidth,
 			PDEPlugin.getResourceString(KEY_RUNTIME_DESC),
 			3);
-
+*/
+/*
 		otherLocationButton = new Button(composite, SWT.RADIO);
 		fillHorizontal(otherLocationButton, 3, false);
 		otherLocationButton.setText(PDEPlugin.getResourceString(KEY_OTHER_LOCATION));
@@ -105,7 +121,7 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 			wizardClientWidth,
 			PDEPlugin.getResourceString(KEY_OTHER_DESC),
 			3);
-
+*/
 		otherLocationLabel = new Label(composite, SWT.NULL);
 		otherLocationLabel.setText(PDEPlugin.getResourceString(KEY_OTHER_FOLDER));
 
@@ -214,16 +230,23 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 		}
 		return buf.toString();
 	}
+	
+	private String getTargetHome() {
+		CoreSettings settings = PDECore.getDefault().getSettings();
+		return settings.getString(ICoreConstants.PLATFORM_PATH);
+	}
 
 	private void hookListeners() {
 		runtimeLocationButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				setOtherEnabled(!runtimeLocationButton.getSelection());
+				updateStatus();
 				if (runtimeLocationButton.getSelection()) {
-					setOtherEnabled(false);
-					updateStatus();
+					dropLocation.setText(getTargetHome());
 				}
 			}
 		});
+/*
 		otherLocationButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (otherLocationButton.getSelection()) {
@@ -232,6 +255,7 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 				}
 			}
 		});
+*/
 /*
 		doImportCheck.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -297,10 +321,12 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 		}
 		dropLocation.setItems(dropItems);
 		runtimeLocationButton.setSelection(!doOther);
-		otherLocationButton.setSelection(doOther);
+		//otherLocationButton.setSelection(doOther);
 		setOtherEnabled(doOther);
 		if (doOther)
 			dropLocation.select(0);
+		else
+			dropLocation.setText(getTargetHome());
 		//doImportCheck.setSelection(doImport);
 		//doImportCheck.setEnabled(!doExtract);
 		doExtractCheck.setSelection(doExtract);
@@ -317,7 +343,7 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 
 	public void storeSettings(boolean finishPressed) {
 		IDialogSettings settings = getDialogSettings();
-		boolean other = otherLocationButton.getSelection();
+		boolean other = !runtimeLocationButton.getSelection();
 		if (finishPressed || dropLocation.getText().length() > 0 && other) {
 			settings.put(SETTINGS_DROPLOCATION + String.valueOf(0), dropLocation.getText());
 			String[] items = dropLocation.getItems();
@@ -338,7 +364,7 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 	 */
 	private IPath chooseDropLocation() {
 		DirectoryDialog dialog = new DirectoryDialog(getShell());
-		dialog.setFilterPath(otherLocationLabel.getText());
+		dialog.setFilterPath(dropLocation.getText());
 		dialog.setText(PDEPlugin.getResourceString(KEY_FOLDER_TITLE));
 		dialog.setMessage(PDEPlugin.getResourceString(KEY_FOLDER_MESSAGE));
 		String res = dialog.open();
@@ -380,7 +406,7 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 	}
 
 	public boolean isOtherLocation() {
-		return otherLocationButton.getSelection();
+		return !runtimeLocationButton.getSelection();
 	}
 
 	/**
