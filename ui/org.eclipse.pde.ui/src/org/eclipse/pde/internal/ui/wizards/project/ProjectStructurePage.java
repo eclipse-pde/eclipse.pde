@@ -195,7 +195,7 @@ public class ProjectStructurePage extends WizardPage {
 	private void addMiddleSection(Composite container) {
 		Composite middleContainer = new Composite(container, SWT.NONE);
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
+		//layout.numColumns = 2;
 		middleContainer.setLayout(layout);
 		middleContainer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		

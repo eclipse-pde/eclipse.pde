@@ -304,10 +304,13 @@ public class WorkbenchLaunchConfigurationDelegate
 			} catch (CoreException e) {
 			}
 		}
-		String result = set.toString();
-		// the return result from set.toString() is in the form:
-		// [bin, xxx, yyy].  So we need to strip out the square brackets.
-		return result.substring(1,result.length()-1);
+		StringBuffer result = new StringBuffer();
+		for (Iterator iter=set.iterator(); iter.hasNext();) {
+			String folder = iter.next().toString();
+			result.append(folder);
+			if (iter.hasNext()) result.append(",");
+		}
+		return result.toString();
 	}
 	private String getTracingFileArgument(ILaunchConfiguration config) {
 		TracingOptionsManager mng = PDECore.getDefault().getTracingOptionsManager();
