@@ -75,7 +75,7 @@ public class LauncherSection extends PDESection {
 		section.setDescription(PDEPlugin.getResourceString("LauncherSection.desc")); //$NON-NLS-1$
 
 		Composite client = toolkit.createComposite(section);
-		GridLayout layout = new GridLayout();
+		TableWrapLayout layout = new TableWrapLayout();
 		layout.numColumns = 2;
 		client.setLayout(layout);
 		
@@ -149,9 +149,17 @@ public class LauncherSection extends PDESection {
 	
 	private void createLabel(Composite parent, FormToolkit toolkit, String text, int span) {
 		Label label = toolkit.createLabel(parent, text, SWT.WRAP);
-		GridData gd = new GridData();
-		gd.horizontalSpan = span;
-		label.setLayoutData(gd);
+		Layout layout = parent.getLayout();
+		if (layout instanceof GridLayout) {
+			GridData gd = new GridData();
+			gd.horizontalSpan = span;
+			label.setLayoutData(gd);				
+		}
+		else if (layout instanceof TableWrapLayout) {
+			TableWrapData td = new TableWrapData();
+			td.colspan = span;
+			label.setLayoutData(td);			
+		}
 	}
 	
 	private void addLinuxSection(Composite parent, FormToolkit toolkit) {
@@ -184,8 +192,8 @@ public class LauncherSection extends PDESection {
 		ExpandableComposite ec = toolkit.createExpandableComposite(parent, ExpandableComposite.TWISTIE|ExpandableComposite.COMPACT);
 		ec.setText(text);
 		
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.horizontalSpan = 2;
+		TableWrapData gd = new TableWrapData(TableWrapData.FILL_GRAB);
+		gd.colspan = 2;
 		ec.setLayoutData(gd);
 		ec.addExpansionListener(new ExpansionAdapter() {
 			public void expansionStateChanged(ExpansionEvent e) {
