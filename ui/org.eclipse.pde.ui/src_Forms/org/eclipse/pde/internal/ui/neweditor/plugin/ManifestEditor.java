@@ -114,7 +114,6 @@ public class ManifestEditor extends MultiSourceEditor {
 		File buildFile = null;
 		File pluginFile = null;
 		String name = file.getName().toLowerCase();
-		File rootFolder;
 		if (name.equals("manifest.mf")) {
 			manifestFile = file;
 			File dir = file.getParentFile().getParentFile();
@@ -216,4 +215,12 @@ public class ManifestEditor extends MultiSourceEditor {
 		}
 		return firstPageId;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.neweditor.MultiSourceEditor#createXMLSourcePage(org.eclipse.pde.internal.ui.neweditor.PDEFormEditor, java.lang.String, java.lang.String)
+	 */
+	protected PDESourcePage createXMLSourcePage(PDEFormEditor editor, String title, String name) {
+		return new ManifestSourcePage(editor, title, name);
+	}
+
 }

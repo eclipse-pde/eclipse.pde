@@ -22,11 +22,9 @@ public abstract class MultiSourceEditor extends PDEFormEditor {
 			return;
 		PDESourcePage sourcePage;
 		if (context instanceof XMLInputContext)
-			sourcePage = new XMLSourcePage(this, contextId, context.getInput()
-					.getName());
+			sourcePage = createXMLSourcePage(this, contextId, context.getInput().getName());
 		else
-			sourcePage = new PDESourcePage(this, contextId, context.getInput()
-					.getName());
+			sourcePage = new PDESourcePage(this, contextId, context.getInput().getName());
 		sourcePage.setInputContext(context);
 		try {
 			addPage(sourcePage, context.getInput());
@@ -47,4 +45,6 @@ public abstract class MultiSourceEditor extends PDEFormEditor {
 				page.dispose();
 		}
 	}
+	
+	protected abstract PDESourcePage createXMLSourcePage(PDEFormEditor editor, String title, String name);
 }

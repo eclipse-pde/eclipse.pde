@@ -169,7 +169,6 @@ public abstract class AbstractPluginModelBase
 			if (!outOfSync)
 				updateTimeStamp();
 		} catch (Exception e) {
-			throwParseErrorsException(e);
 		}
 	}
 

@@ -56,6 +56,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 		if (obj instanceof IPluginLibrary) {
 			return getObjectText((IPluginLibrary) obj);
 		}
+		if (obj instanceof IPluginExtension) {
+			return getObjectText((IPluginExtension)obj);
+		}
 		if (obj instanceof IPluginExtensionPoint) {
 			return getObjectText((IPluginExtensionPoint) obj);
 		}
@@ -121,7 +124,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 	public String getObjectText(IPluginExtension extension) {
 		return preventNull(isFullNameModeEnabled()
 			? extension.getTranslatedName()
-			: extension.getId());
+			: extension.getPoint());
 	}
 
 	public String getObjectText(IPluginExtensionPoint point) {

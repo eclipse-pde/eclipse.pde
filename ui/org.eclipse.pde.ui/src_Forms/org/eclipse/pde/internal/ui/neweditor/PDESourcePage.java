@@ -14,14 +14,9 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.ide.IGotoMarker;
+import org.eclipse.ui.texteditor.*;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
-/**
- * @author dejan
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
 public class PDESourcePage extends TextEditor implements IFormPage, IGotoMarker {
 	private PDEFormEditor editor;
 	private Control control;
@@ -39,6 +34,7 @@ public class PDESourcePage extends TextEditor implements IFormPage, IGotoMarker 
 		this.title = title;
 		initialize(editor);
 		setPreferenceStore(PDEPlugin.getDefault().getPreferenceStore());
+		setRangeIndicator(new DefaultRangeIndicator());
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.IFormPage#initialize(org.eclipse.ui.forms.editor.FormEditor)
@@ -165,4 +161,5 @@ public class PDESourcePage extends TextEditor implements IFormPage, IGotoMarker 
 	public void focusOn(Object object) {
 		// TODO Auto-generated method stub
 	}
+	
 }

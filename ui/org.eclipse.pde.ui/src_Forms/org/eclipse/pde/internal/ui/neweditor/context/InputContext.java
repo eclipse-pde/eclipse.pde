@@ -70,25 +70,25 @@ public abstract class InputContext {
 	}
 	protected abstract IDocumentProvider createDocumentProvider(
 			IEditorInput input);
-	protected abstract IModel createModel(IEditorInput input);
+	protected abstract IModel createModel(IEditorInput input) throws CoreException;
 	
 	protected void create() {
 		documentProvider = createDocumentProvider(input);
 		if (documentProvider == null)
 			return;
-		model = createModel(input);
-		if (model instanceof IModelChangeProvider) {
-			modelListener = new IModelChangedListener() {
-				public void modelChanged(IModelChangedEvent e) {
-					if (e.getChangeType() != IModelChangedEvent.WORLD_CHANGED)
-						editor.fireSaveNeeded(input, true);
-				}
-			};
-			((IModelChangeProvider) model).addModelChangedListener(modelListener);
-		}
-
 		try {
 			documentProvider.connect(input);
+			model = createModel(input);
+			if (model instanceof IModelChangeProvider) {
+				modelListener = new IModelChangedListener() {
+					public void modelChanged(IModelChangedEvent e) {
+						if (e.getChangeType() != IModelChangedEvent.WORLD_CHANGED)
+							editor.fireSaveNeeded(input, true);
+					}
+				};
+				((IModelChangeProvider) model).addModelChangedListener(modelListener);
+			}
+
 			IAnnotationModel amodel = documentProvider
 					.getAnnotationModel(input);
 			if (amodel != null)

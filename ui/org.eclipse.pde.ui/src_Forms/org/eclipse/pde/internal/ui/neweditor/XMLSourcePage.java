@@ -6,8 +6,9 @@
  */
 package org.eclipse.pde.internal.ui.neweditor;
 
-import org.eclipse.pde.internal.ui.editor.XMLConfiguration;
 import org.eclipse.pde.internal.ui.editor.text.*;
+import org.eclipse.pde.internal.ui.neweditor.text.*;
+import org.eclipse.ui.texteditor.*;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 /**
@@ -26,24 +27,17 @@ public class XMLSourcePage extends PDESourcePage {
 	public XMLSourcePage(PDEFormEditor editor, String id, String title) {
 		super(editor, id, title);
 		setSourceViewerConfiguration(createXMLConfiguration());
+		setRangeIndicator(new DefaultRangeIndicator());
 	}
 
-	protected XMLConfiguration createXMLConfiguration() {
+	protected XMLSourceViewerConfiguration createXMLConfiguration() {
 		if (colorManager != null)
 			colorManager.dispose();
 		colorManager = new ColorManager();
-		return new XMLConfiguration(colorManager);
+		return new XMLSourceViewerConfiguration(this, colorManager);
 	}
 	
 	protected IContentOutlinePage createOutlinePage() {
-		/*
-		XMLOutlinePage outlinePage = new XMLOutlinePage(XMLCore.getDefault());
-		outlinePage.setContentProvider(new XMLOutlinePageContentProvider());
-		//outlinePage.setLabelProvider(new ManifestSourceOutlinePageLabelProvider());
-		//outlinePage.addSelectionChangedListener(selectionChangedListener);
-		outlinePage.setPageInput((IDocumentNode)getInputContext().getModel());
-		return outlinePage;
-		*/
 		return null;
 	}
 

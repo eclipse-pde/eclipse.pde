@@ -10,25 +10,20 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.text;
 
-import java.util.*;
 import org.eclipse.jface.text.rules.*;
 import org.eclipse.jface.text.*;
 
 public class XMLScanner extends RuleBasedScanner {
 
-public XMLScanner(IColorManager manager) {
-	List rules = new ArrayList();
-	IToken procInstr =
-		new Token(new TextAttribute(manager.getColor(IPDEColorConstants.P_PROC_INSTR)));
-
-	//Add rule for processing instructions
-	rules.add(new SingleLineRule("<?", "?>", procInstr));
-
-	// Add generic whitespace rule.
-	rules.add(new WhitespaceRule(new XMLWhitespaceDetector()));
-
-	IRule[] result = new IRule[rules.size()];
-	rules.toArray(result);
-	setRules(result);
-}
+	public XMLScanner(IColorManager manager) {
+		IToken procInstr = new Token(new TextAttribute(manager
+				.getColor(IPDEColorConstants.P_PROC_INSTR)));
+		
+		IRule[] rules = new IRule[2];		
+		//Add rule for processing instructions
+		rules[0] = new SingleLineRule("<?", "?>", procInstr);
+		// Add generic whitespace rule.
+		rules[1] = new WhitespaceRule(new XMLWhitespaceDetector());
+		setRules(rules);
+	}
 }
