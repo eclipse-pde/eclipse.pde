@@ -185,13 +185,9 @@ public abstract class ContentPage extends WizardPage {
 		if (id.length() == 0)
 			return PDEPlugin.getResourceString("ContentPage.noid"); //$NON-NLS-1$
 
-		StringTokenizer stok = new StringTokenizer(id, "."); //$NON-NLS-1$
-		while (stok.hasMoreTokens()) {
-			String token = stok.nextToken();
-			for (int i = 0; i < token.length(); i++) {
-				if (!Character.isLetterOrDigit(token.charAt(i)) && '_' != token.charAt(i))
-					return PDEPlugin.getResourceString("ContentPage.invalidId"); //$NON-NLS-1$
-			}
+		for (int i = 0; i<id.length(); i++){
+			if (!id.substring(i,i+1).matches("[a-zA-Z0-9\\._]")) //$NON-NLS-1$
+				return PDEPlugin.getResourceString("ContentPage.invalidId"); //$NON-NLS-1$
 		}
 		return null;
 	}

@@ -171,7 +171,7 @@ public class SharedLabelProvider
 	public Image getImageFromPlugin(String bundleID, String subdirectoryAndFilename) {
 		try {
 			Bundle bundle = Platform.getBundle(bundleID);
-			return getImageFromURL(Platform.resolve(bundle.getEntry("/")), subdirectoryAndFilename);
+			return getImageFromURL(Platform.resolve(bundle.getEntry("/")), subdirectoryAndFilename); //$NON-NLS-1$
 		} catch (IOException e) {
 			return null;
 		}
