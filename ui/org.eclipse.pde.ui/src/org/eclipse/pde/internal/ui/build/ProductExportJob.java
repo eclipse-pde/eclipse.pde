@@ -367,12 +367,16 @@ public class ProductExportJob extends FeatureExportJob {
 	
 	private String getWin32Images(ILauncherInfo info) {
 		StringBuffer buffer = new StringBuffer();
-		append(buffer, info.getIconPath(ILauncherInfo.WIN32_16_HIGH));
-		append(buffer, info.getIconPath(ILauncherInfo.WIN32_16_LOW));
-		append(buffer, info.getIconPath(ILauncherInfo.WIN32_32_HIGH));
-		append(buffer, info.getIconPath(ILauncherInfo.WIN32_32_LOW));
-		append(buffer, info.getIconPath(ILauncherInfo.WIN32_48_HIGH));
-		append(buffer, info.getIconPath(ILauncherInfo.WIN32_48_LOW));
+		if (info.usesWinIcoFile()) {
+			append(buffer, info.getIconPath(ILauncherInfo.P_ICO_PATH));
+		} else {
+			append(buffer, info.getIconPath(ILauncherInfo.WIN32_16_HIGH));
+			append(buffer, info.getIconPath(ILauncherInfo.WIN32_16_LOW));
+			append(buffer, info.getIconPath(ILauncherInfo.WIN32_32_HIGH));
+			append(buffer, info.getIconPath(ILauncherInfo.WIN32_32_LOW));
+			append(buffer, info.getIconPath(ILauncherInfo.WIN32_48_HIGH));
+			append(buffer, info.getIconPath(ILauncherInfo.WIN32_48_LOW));
+		}
 		return buffer.length() > 0 ? buffer.toString() : null;
 	}
 	
