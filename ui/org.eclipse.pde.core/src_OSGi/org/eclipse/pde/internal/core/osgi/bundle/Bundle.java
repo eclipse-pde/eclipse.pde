@@ -70,26 +70,29 @@ public class Bundle extends BundleObject implements IBundle {
 		headers.put(KEY_DESC, plugin.getName());
 		headers.put(KEY_VENDOR, plugin.getProviderName());
 		headers.put(KEY_VERSION, plugin.getVersion());
+		boolean hasPluginClass=false;
 		if (plugin instanceof IFragment)
 			loadFragment((IFragment) plugin);
 		else
-			loadPlugin((IPlugin) plugin);
+			hasPluginClass = loadPlugin((IPlugin) plugin);
 		loadLibraries(
 			plugin.getLibraries(),
 			new SubProgressMonitor(monitor, 1));
-		loadImports(plugin.getImports(), new SubProgressMonitor(monitor, 1));
+		loadImports(plugin.getImports(), hasPluginClass, new SubProgressMonitor(monitor, 1));
 		if (plugin.getModel().getUnderlyingResource() != null)
 			loadExports(plugin.getModel().getUnderlyingResource().getProject());
 	}
 
-	private void loadPlugin(IPlugin plugin) {
+	private boolean loadPlugin(IPlugin plugin) {
 		String pluginClass = plugin.getClassName();
 		if (pluginClass != null) {
 			headers.put(
 				KEY_ACTIVATOR,
 				"org.eclipse.core.runtime.compatibility.PluginActivator");
 			headers.put(KEY_PLUGIN, pluginClass);
+			return true;
 		}
+		return false;
 	}
 
 	private void loadFragment(IFragment fragment) {
@@ -114,18 +117,27 @@ public class Bundle extends BundleObject implements IBundle {
 
 	private void loadImports(
 		IPluginImport[] imports,
+		boolean hasPluginClass,
 		IProgressMonitor monitor) {
 		StringBuffer requires = new StringBuffer();
+		boolean hasRuntime=false;
 
 		for (int i = 0; i < imports.length; i++) {
 			IPluginImport iimport = imports[i];
 			String id = iimport.getId();
+			if (id.equals("org.eclipse.core.runtime"))
+				hasRuntime=true;
 			String version = iimport.getVersion();
 			if (i > 0)
 				requires.append(", ");
 			requires.append(id);
 			if (version != null) {
 			}
+		}
+		if (hasPluginClass && !hasRuntime) {
+			if (requires.length()>0)
+				requires.append(", ");
+			requires.append("org.eclipse.core.runtime");
 		}
 		headers.put(KEY_REQUIRE_BUNDLE, requires.toString());
 	}
