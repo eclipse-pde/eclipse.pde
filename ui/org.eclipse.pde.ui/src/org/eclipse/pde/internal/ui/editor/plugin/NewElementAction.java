@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ischema.*;
@@ -38,8 +39,6 @@ public NewElementAction(ISchemaElement elementInfo, IPluginParent parent) {
 }
 public String createDefaultClassName(ISchemaAttribute attInfo, int counter) {
 	String tag = attInfo.getParent().getName();
-	String projectName = project.getName();
-	String packageName = projectName;
 	String expectedType = attInfo.getBasedOn();
 	String className = ""; //$NON-NLS-1$
 	if (expectedType == null) {
@@ -56,8 +55,9 @@ public String createDefaultClassName(ISchemaAttribute attInfo, int counter) {
 		if (className.length() > 2 && className.charAt(0) == 'I' && Character.isUpperCase(className.charAt(1)))
 			className = className.substring(1);
 	}
+    String packageName = createDefaultPackageName(project.getName(), className);
 	className += counter;
-	return packageName + "." + className; //$NON-NLS-1$
+    return packageName + "." + className; //$NON-NLS-1$
 }
 public String createDefaultName(ISchemaAttribute attInfo, int counter) {
 	if (attInfo.getType().getName().equals("boolean")) //$NON-NLS-1$
@@ -116,5 +116,28 @@ public void run() {
 	} catch (CoreException e) {
 		PDEPlugin.logException(e);
 	}
+}
+
+public String createDefaultPackageName(String id, String className) {
+    StringBuffer buffer = new StringBuffer();
+    IStatus status;
+    for (int i = 0; i < id.length(); i++) {
+        char ch = id.charAt(i);
+        if (buffer.length() == 0) {
+            if (Character.isJavaIdentifierStart(ch))
+                buffer.append(Character.toLowerCase(ch));
+        } else {
+            if (Character.isJavaIdentifierPart(ch) || ch == '.')
+                buffer.append(ch);
+        }
+    }
+    StringTokenizer tok = new StringTokenizer(buffer.toString(), "."); //$NON-NLS-1$
+    while (tok.hasMoreTokens()) {
+        String token = tok.nextToken();
+        status = JavaConventions.validatePackageName(buffer.toString());
+        if (status.getSeverity() == IStatus.ERROR)
+            buffer.append(className.toLowerCase());
+    }
+    return buffer.toString();
 }
 }
