@@ -513,7 +513,7 @@ public abstract class PDEFormEditor extends FormEditor
 	}
 	private void copyToClipboard(ISelection selection) {
 		Object[] objects = null;
-		String textVersion = null;
+		String textVersion = null;		
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) selection;
 			if (ssel == null || ssel.size() == 0)
@@ -542,12 +542,22 @@ public abstract class PDEFormEditor extends FormEditor
 		} else if (selection instanceof ITextSelection) {
 			textVersion = ((ITextSelection) selection).getText();
 		}
-		if (textVersion == null && objects == null)
+		if ((textVersion == null || textVersion.length() == 0) && objects == null)
 			return;
 		// set the clipboard contents
-		clipboard.setContents(new Object[]{objects, textVersion},
-				new Transfer[]{ModelDataTransfer.getInstance(),
-						TextTransfer.getInstance()});
+		Object[]o = null;
+		Transfer[] t = null;
+		if (objects == null ) {
+			o = new Object[] {textVersion};
+			t = new Transfer[] {TextTransfer.getInstance()};
+		} else if (textVersion == null || textVersion.length() == 0) {
+			o = new Object[] {objects};
+			t = new Transfer[] {ModelDataTransfer.getInstance()};
+		} else {
+			o = new Object[] {objects, textVersion};
+			t = new Transfer[] {ModelDataTransfer.getInstance(), TextTransfer.getInstance()};
+		}
+		clipboard.setContents(o, t);
 	}
 	public boolean canPasteFromClipboard() {
 		IFormPage page = getActivePageInstance();
