@@ -332,27 +332,29 @@ public class TracingLauncherTab
 		});
 	}
 
-
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		boolean tracingEnabled = fTracingCheck.getSelection();
-		if (!tracingEnabled) return;
-		
-		config.setAttribute(TRACING, tracingEnabled);
-		
-		config.setAttribute(TRACING_VIEWER_MAXIMIZED, fSashForm.getMaximizedControl() != null);
-		
-		boolean changes = false;
-		for (Enumeration enum = fPropertySources.elements(); enum.hasMoreElements();) {
-			TracingPropertySource source = (TracingPropertySource) enum.nextElement();
-			if (source.isModified()) {
-				changes = true;
-				source.save();
-			}
-		}
-		if (changes)
-			config.setAttribute(TRACING_OPTIONS, fMasterOptions);
-	}
 
+		config.setAttribute(TRACING, tracingEnabled);
+		config.setAttribute(
+			TRACING_VIEWER_MAXIMIZED,
+			fSashForm.getMaximizedControl() != null);
+
+		if (tracingEnabled) {
+			boolean changes = false;
+			for (Enumeration enum = fPropertySources.elements();
+				enum.hasMoreElements();
+				) {
+				TracingPropertySource source = (TracingPropertySource) enum.nextElement();
+				if (source.isModified()) {
+					changes = true;
+					source.save();
+				}
+			}
+			if (changes)
+				config.setAttribute(TRACING_OPTIONS, fMasterOptions);
+		}
+	}
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(TRACING, false);
