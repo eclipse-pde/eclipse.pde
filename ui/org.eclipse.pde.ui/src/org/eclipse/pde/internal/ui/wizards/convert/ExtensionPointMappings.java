@@ -1,4 +1,4 @@
-package org.eclipse.pde.internal.ui.wizards.project;
+package org.eclipse.pde.internal.ui.wizards.convert;
 
 import java.util.*;
 
