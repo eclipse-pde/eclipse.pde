@@ -195,6 +195,26 @@ public class PluginDocumentHandler extends DefaultHandler {
 	 */
 	public void characters(char[] ch, int start, int length)
 			throws SAXException {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(ch, start, length);
+		String text = buffer.toString().trim();
+		if (text.length() > 0) {
+			DocumentTextNode textNode = new DocumentTextNode();
+			textNode.setText(text);
+			int offset = start;
+			for (;offset < start + length;offset += 1) {
+				if (!Character.isWhitespace(ch[offset])) {
+					textNode.setOffset(offset);
+					textNode.setTopOffset(start);
+					textNode.setLength(text.length());
+					textNode.setFullLength(buffer.length());
+					IDocumentNode parent = (IDocumentNode)fDocumentNodeStack.peek();
+					textNode.setEnclosingElement(parent);
+					parent.addTextNode(textNode);
+					break;
+				}
+			}
+		}
 		super.characters(ch, start, length);
 	}
 	/* (non-Javadoc)

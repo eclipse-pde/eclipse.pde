@@ -54,8 +54,12 @@ public abstract class XMLInputContext extends UTF8InputContext {
 							if (attr != null) {
 								addAttributeOperation(attr, ops, event);
 							} else {
-								// swapping of nodes
-								modifyNode(node, ops, event);
+								if (event.getOldValue() instanceof IDocumentTextNode) {
+									addElementContentOperation((IDocumentTextNode)event.getOldValue(), ops);
+								} else {
+									// swapping of nodes
+									modifyNode(node, ops, event);
+								}
 							}
 						}
 					default:
@@ -229,8 +233,50 @@ public abstract class XMLInputContext extends UTF8InputContext {
 			ops.remove(oldOp);
 		ops.add(op);
 		fOperationTable.put(changedObject, op);
-
 	}
+	
+	private void addElementContentOperation(IDocumentTextNode textNode, ArrayList ops) {
+		TextEdit op = null;
+		Object changedObject = textNode;
+		if (textNode.getOffset() > -1) {
+			int length = textNode.getText().length() == 0 ? textNode.getFullLength() : textNode.getLength();
+			int offset = textNode.getText().length() == 0 ? textNode.getTopOffset() : textNode.getOffset();
+			op = new ReplaceEdit(offset, length, textNode.getText());
+		} else {
+			IDocumentNode parent = textNode.getEnclosingElement();
+			if (parent.getOffset() > -1) {
+				IDocument doc = getDocumentProvider().getDocument(getInput());
+				try {
+					String endChars = doc.get(parent.getOffset() + parent.getLength() - 2, 2);
+					if ("/>".equals(endChars)) {
+						// parent element is of the form <element/>, rewrite it
+						insertNode(parent, ops);
+						return;
+					}
+				} catch (BadLocationException e) {
+				}
+				// add text as first child
+				changedObject = parent;
+				StringBuffer buffer = new StringBuffer(System.getProperty("line.separator"));
+				for (int i = 0; i < parent.getLineIndent(); i++) 
+					buffer.append(" ");
+				buffer.append("   " + getWritableString(textNode.getText()));
+				int offset = parent.getOffset();
+				int length = getNextPosition(doc, offset, '>');
+				op = new InsertEdit(offset+ length + 1, buffer.toString());	
+			} else {
+				insertNode(parent, ops);
+				return;
+			}
+		}
+		TextEdit oldOp = (TextEdit)fOperationTable.get(changedObject);
+		if (oldOp != null)
+			ops.remove(oldOp);
+		ops.add(op);
+		fOperationTable.put(changedObject, op);		
+	}
+
+
 
 	private boolean shouldTerminateElement(IDocument doc, int offset) {
 		try {
@@ -356,6 +402,12 @@ public abstract class XMLInputContext extends UTF8InputContext {
 						Object op = fOperationTable.remove(attrs[i]);
 						if (op != null)
 							fEditOperations.remove(op);
+					}
+					IDocumentTextNode textNode = node.getTextNode();
+					if (textNode != null) {
+						Object op = fOperationTable.remove(textNode);
+						if (op != null)
+							fEditOperations.remove(op);						
 					}
 				}
 			}

@@ -1,20 +1,17 @@
 package org.eclipse.pde.internal.ui.model;
 
-/**
- * @author melhem
- *
- */
 public interface IDocumentNode {
-	
-	
+		
 	IDocumentNode getParentNode();	
 	void setParentNode(IDocumentNode node);
 	
 	void addChildNode(IDocumentNode child);
 	void addChildNode(IDocumentNode child, int position);
-	IDocumentNode removeChildNode(IDocumentNode child);
-	
+	IDocumentNode removeChildNode(IDocumentNode child);	
 	IDocumentNode[] getChildNodes();
+	
+	void addTextNode(IDocumentTextNode textNode);
+	IDocumentTextNode getTextNode();
 	
 	int indexOf(IDocumentNode child);
 	IDocumentNode getChildAt(int index);
@@ -24,18 +21,16 @@ public interface IDocumentNode {
 	
 	void swap(IDocumentNode child1, IDocumentNode child2);
 	
-	void setXMLTagName(String tag);
-	
+	void setXMLTagName(String tag);	
 	String getXMLTagName();
 	
 	void setXMLAttribute(IDocumentAttribute attribute);	
 	void setXMLAttribute(String name, String value);	
-
-	String getXMLAttributeValue(String name);	
+	String getXMLAttributeValue(String name);
+	
 	IDocumentAttribute getDocumentAttribute(String name);
 	IDocumentAttribute[] getNodeAttributes();
 	
-
 	boolean isErrorNode();	
 	void setIsErrorNode(boolean isErrorNode);
 	
@@ -50,5 +45,4 @@ public interface IDocumentNode {
 	
 	String write(boolean indent);
 	String writeShallow(boolean terminate);
-	
 }

@@ -19,6 +19,7 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 	private String fTag;
 	private int fIndent = 0;
 	private IDocumentNode fPreviousSibling;
+	protected IDocumentTextNode fTextNode;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.model.IDocumentNode#getChildNodes()
@@ -224,6 +225,20 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 		
 		if (index2 < fChildren.size() - 1)
 			((IDocumentNode)fChildren.get(index2 + 1)).setPreviousSibling(child1);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#addTextNode(org.eclipse.pde.internal.ui.model.IDocumentTextNode)
+	 */
+	public void addTextNode(IDocumentTextNode textNode) {
+		fTextNode = textNode;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#getTextNode()
+	 */
+	public IDocumentTextNode getTextNode() {
+		return fTextNode;
 	}
 	
 }

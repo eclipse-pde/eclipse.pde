@@ -12,7 +12,7 @@ import org.eclipse.pde.internal.ui.model.*;
 public class PluginElementNode extends PluginParentNode
 		implements
 			IPluginElement {
-	private String fText;
+
 	private transient ISchemaElement elementInfo;
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginElement#createCopy()
@@ -42,7 +42,8 @@ public class PluginElementNode extends PluginParentNode
 	 * @see org.eclipse.pde.core.plugin.IPluginElement#getText()
 	 */
 	public String getText() {
-		return fText;
+		IDocumentTextNode node = getTextNode();
+		return node == null ? "" : node.getText();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginElement#setAttribute(java.lang.String, java.lang.String)
@@ -54,7 +55,14 @@ public class PluginElementNode extends PluginParentNode
 	 * @see org.eclipse.pde.core.plugin.IPluginElement#setText(java.lang.String)
 	 */
 	public void setText(String text) throws CoreException {
-		fText = text;
+		IDocumentTextNode node = getTextNode();
+		if (node == null) {
+			node = new DocumentTextNode();
+			node.setEnclosingElement(this);
+			addTextNode(node);
+		}		
+		node.setText(text);
+		firePropertyChanged(this, P_TEXT, node, node);
 	}
 	
 	/* (non-Javadoc)
@@ -67,8 +75,11 @@ public class PluginElementNode extends PluginParentNode
 			buffer.append(getIndent());
 		
 		IDocumentNode[] children = getChildNodes();
-		if (children.length > 0) {
+		String text = getText();
+		if (children.length > 0 || text.length() > 0) {
 			buffer.append(writeShallow(false) + sep);
+			if (text.length() > 0)
+				buffer.append(getIndent() + "   " + text + sep);
 			for (int i = 0; i < children.length; i++) {
 				children[i].setLineIndent(getLineIndent() + 3);
 				buffer.append(children[i].write(true) + sep);
