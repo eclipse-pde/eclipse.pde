@@ -15,6 +15,7 @@ import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
+import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.wizards.PluginPathUpdater;
 /**
@@ -304,8 +305,7 @@ public class BuildPathUtil {
 		IProject project = resource != null ? resource.getProject() : null;
 		IPath path = entry.getPath();
 		if (project == null) {
-			File file = path.toFile();
-			return file.exists();
+			return path.isValidPath(path.toString());
 		} else {
 			IWorkspaceRoot root = project.getWorkspace().getRoot();
 			return root.findMember(path) != null;
@@ -324,7 +324,8 @@ public class BuildPathUtil {
 			int match = iimport.getMatch();
 			IPlugin ref = PDECore.getDefault().findPlugin(id, version, match);
 			if (ref != null) {
-				PluginPathUpdater.CheckedPlugin cplugin = new PluginPathUpdater.CheckedPlugin(ref, true);
+				PluginPathUpdater.CheckedPlugin cplugin =
+					new PluginPathUpdater.CheckedPlugin(ref, true);
 				cplugin.setExported(iimport.isReexported());
 				checkedPlugins.add(cplugin);
 			}
@@ -343,12 +344,19 @@ public class BuildPathUtil {
 		return PDECore.getDefault().findPlugin(id, version, match);
 	}
 
-	private static void addFragmentPlugin(IFragmentModel model, Vector result) {
+	private static void addFragmentPlugin(
+		IFragmentModel model,
+		Vector result) {
 		IPlugin plugin = findFragmentPlugin(model);
 		if (plugin != null) {
-			IProject project = plugin.getModel().getUnderlyingResource().getProject();
+			IProject project = null;
+			if (plugin.getModel() instanceof WorkspacePluginModel) {
+				project =
+					plugin.getModel().getUnderlyingResource().getProject();
+			}
 			Vector checkedPlugins = new Vector();
-			checkedPlugins.add(new PluginPathUpdater.CheckedPlugin(plugin, true));
+			checkedPlugins.add(
+				new PluginPathUpdater.CheckedPlugin(plugin, true));
 			PluginPathUpdater ppu =
 				new PluginPathUpdater(project, checkedPlugins.iterator());
 			ppu.addClasspathEntries(result);
