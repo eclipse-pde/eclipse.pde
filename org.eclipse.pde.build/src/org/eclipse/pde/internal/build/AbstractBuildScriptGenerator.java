@@ -225,7 +225,7 @@ private String computeExtraPath(String url, String location) throws CoreExceptio
 		if (urlfragments[1].equalsIgnoreCase("resource")) { 	//TODO I did not find the declaration of the constant 
 			String message = Policy.bind("exception.url", PROPERTIES_FILE + "::"+url);  //$NON-NLS-1$  //$NON-NLS-2$
 			throw new CoreException(new Status(IStatus.ERROR,PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_MALFORMED_URL, message,null));
-		}			
+		}		
 		if (modelLocation != null) {
 			for (int i = 3; i < urlfragments.length; i++) {
 				if (i==3)
@@ -237,7 +237,7 @@ private String computeExtraPath(String url, String location) throws CoreExceptio
 		}
 	}
 	
-	// Then it's just a regular URL
+	// Then it's just a regular URL, or just something that will be added at the end of the classpath for backward compatibility.......
 	try {
 		URL extraURL = new URL(url);
 		try {
@@ -247,8 +247,10 @@ private String computeExtraPath(String url, String location) throws CoreExceptio
 			throw new CoreException(new Status(IStatus.ERROR,PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_MALFORMED_URL, message,e));
 		}
 	} catch (MalformedURLException e) {
-		String message = Policy.bind("exception.url", PROPERTIES_FILE + "::"+url); //$NON-NLS-1$  //$NON-NLS-2$
-		throw new CoreException(new Status(IStatus.ERROR,PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_MALFORMED_URL, message,e));
+		relativePath = url;
+		//TODO remove this backward compatibility support for as soon as we go to 2.2 and put back the exception
+		//		String message = Policy.bind("exception.url", PROPERTIES_FILE + "::"+url); //$NON-NLS-1$  //$NON-NLS-2$
+		//		throw new CoreException(new Status(IStatus.ERROR,PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_MALFORMED_URL, message,e));
 	}		 
 	return relativePath;
 }
