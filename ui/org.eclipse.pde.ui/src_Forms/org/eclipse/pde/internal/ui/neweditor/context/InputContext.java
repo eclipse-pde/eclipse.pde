@@ -162,11 +162,21 @@ public abstract class InputContext {
 			}
 		}
 	}
-	
+
+	protected boolean synchronizeModel(IDocument doc) {
+		return true;
+	}
+
 	public boolean mustSave() {
+		if (!fIsSourceMode) {
+			if (model instanceof IEditable) {
+				if (((IEditable)model).isDirty())
+					return true;
+			}
+		}
 		return documentProvider.canSaveDocument(input);
 	}
-	
+
 	public void dispose() {
 		IAnnotationModel amodel = documentProvider.getAnnotationModel(input);
 		if (amodel != null)
@@ -193,7 +203,7 @@ public abstract class InputContext {
 	public void setPrimary(boolean primary) {
 		this.primary = primary;
 	}
-	
+
 	public void setSourceEditingMode(boolean sourceMode) {
 		fIsSourceMode = sourceMode;
 		if (sourceMode) {
@@ -209,6 +219,10 @@ public abstract class InputContext {
 			// has been modified while in this mode,
 			// fire the 'world changed' event from the model
 			// to cause all the model listeners to become stale.
+			boolean cleanSource = synchronizeModel(documentProvider.getDocument(input));
+			if (!cleanSource) {
+				// should go back to the source mode
+			}
 		}
 	}
 	

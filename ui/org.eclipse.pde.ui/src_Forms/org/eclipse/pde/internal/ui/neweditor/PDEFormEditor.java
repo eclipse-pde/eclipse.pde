@@ -10,20 +10,27 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.neweditor;
 
+import java.io.*;
 import java.io.File;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.neweditor.context.*;
+import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.*;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -57,6 +64,9 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	protected InputContextManager createInputContextManager() {
 		return new InputContextManager();
 	}
+	protected IModelUndoManager createModelUndoManager() {
+		return new NullUndoManager();
+	}	
 
 /**
  * Tests whether this editor has a context with
@@ -366,6 +376,85 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	/* package */ IFormPage [] getPages() {
 		return (IFormPage[])pages.toArray(new IFormPage[pages.size()]);
 	}
-	/* package */ void performGlobalAction(String actionId) {
+	protected void performGlobalAction(String id) {
+		// preserve selection
+		ISelection selection = getSelection();
+		boolean handled = ((PDEFormPage)getActivePageInstance()).performGlobalAction(id);
+		if (!handled) {
+			IFormPage page = getActivePageInstance();
+			if (page instanceof PDEFormPage) {
+				if (id.equals(ActionFactory.UNDO.getId())) {
+					//undoManager.undo();
+					return;
+				}
+				if (id.equals(ActionFactory.REDO.getId())) {
+					//undoManager.redo();
+					return;
+				}
+				if (id.equals(ActionFactory.CUT.getId())
+					|| id.equals(ActionFactory.COPY.getId())) {
+					copyToClipboard(selection);
+					return;
+				}
+			}
+		}
+	}
+	
+	private void copyToClipboard(ISelection selection) {
+		IStructuredSelection ssel = (IStructuredSelection) selection;
+		if (ssel == null || ssel.size() == 0)
+			return;
+		Object[] objects = ssel.toArray();
+		StringWriter writer = new StringWriter();
+		PrintWriter pwriter = new PrintWriter(writer);
+
+		Class objClass = null;
+
+		for (int i = 0; i < objects.length; i++) {
+			Object obj = objects[i];
+			if (objClass == null)
+				objClass = obj.getClass();
+			else if (objClass.equals(obj.getClass()) == false)
+				return;
+			if (obj instanceof IWritable) {
+				((IWritable) obj).write("", pwriter);
+			}
+		}
+		pwriter.flush();
+		String textVersion = writer.toString();
+		try {
+			pwriter.close();
+			writer.close();
+		} catch (IOException e) {
+		}
+		// set the clipboard contents
+		clipboard.setContents(
+			new Object[] { objects, textVersion },
+			new Transfer[] {
+				ModelDataTransfer.getInstance(),
+				TextTransfer.getInstance()});
+	}
+
+	public boolean canPasteFromClipboard() {
+		IFormPage page = getActivePageInstance();
+		if (page instanceof PDEFormPage) {
+			return ((PDEFormPage)page).canPaste(getClipboard());
+		}
+		return false;
+	}
+
+	public boolean canCopy(ISelection selection) {
+		if (selection == null)
+			return false;
+		if (selection instanceof IStructuredSelection)
+			return !selection.isEmpty();
+		if (selection instanceof ITextSelection) {
+			ITextSelection textSelection = (ITextSelection) selection;
+			return textSelection.getLength() > 0;
+		}
+		return false;
+	}
+	void updateUndo(IAction undoAction, IAction redoAction) {
+		//undoManager.setActions(undoAction, redoAction);
 	}
 }

@@ -33,7 +33,8 @@ public class FormEntry {
 	 * The default constructor. Call 'createControl' to make it.
 	 *  
 	 */
-	public FormEntry() {
+	public FormEntry(Composite parent, FormToolkit toolkit, String labelText, int style) {
+		createControl(parent, toolkit, labelText, style, null, false);
 	}
 	/**
 	 * This constructor create all the controls right away.
@@ -46,7 +47,7 @@ public class FormEntry {
 	 */
 	public FormEntry(Composite parent, FormToolkit toolkit, String labelText,
 			String browseText, boolean linkLabel) {
-		createControl(parent, toolkit, labelText, browseText, linkLabel);
+		createControl(parent, toolkit, labelText, SWT.SINGLE, browseText, linkLabel);
 	}
 	/**
 	 * Create all the controls in the provided parent.
@@ -58,8 +59,8 @@ public class FormEntry {
 	 * @param browseText
 	 * @param linkLabel
 	 */
-	public void createControl(Composite parent, FormToolkit toolkit,
-			String labelText, String browseText, boolean linkLabel) {
+	private void createControl(Composite parent, FormToolkit toolkit,
+			String labelText, int style, String browseText, boolean linkLabel) {
 		if (linkLabel) {
 			Hyperlink link = toolkit.createHyperlink(parent, labelText,
 					SWT.NULL);
@@ -67,7 +68,7 @@ public class FormEntry {
 		} else {
 			label = toolkit.createLabel(parent, labelText);
 		}
-		text = toolkit.createText(parent, "", SWT.SINGLE);
+		text = toolkit.createText(parent, "", style);
 		addListeners();
 		if (browseText != null) {
 			browse = toolkit.createButton(parent, browseText, SWT.PUSH);

@@ -104,6 +104,13 @@ public class BuildInputContext extends InputContext {
 		return CONTEXT_ID;
 	}
 
+	protected void flushModel(IDocument doc) {
+	}
+	
+	protected boolean synchronizeModel(IDocument doc) {
+		return true;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#addTextEditOperation(java.util.ArrayList, org.eclipse.pde.core.IModelChangedEvent)
 	 */

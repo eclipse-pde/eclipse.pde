@@ -8,6 +8,8 @@ package org.eclipse.pde.internal.ui.neweditor;
 import org.eclipse.jface.action.*;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.*;
@@ -27,6 +29,9 @@ public abstract class PDEFormPage extends FormPage {
 	 */
 	public PDEFormPage(FormEditor editor, String id, String title) {
 		super(editor, id, title);
+	}
+	public boolean performGlobalAction(String actionId) {
+		return false;
 	}
 	protected void createFormContent(IManagedForm managedForm) {
 		final ScrolledForm form = managedForm.getForm();
@@ -62,5 +67,36 @@ public abstract class PDEFormPage extends FormPage {
 		return getPDEEditor().getAggregateModel();
 	}
 	public void contextMenuAboutToShow(IMenuManager menu) {
+	}
+	
+	protected Control getFocusControl() {
+		Control control = getManagedForm().getForm();
+		if (control == null || control.isDisposed())
+			return null;
+		Display display = control.getDisplay();
+		Control focusControl = display.getFocusControl();
+		if (focusControl == null || focusControl.isDisposed())
+			return null;
+		return focusControl;
+	}
+
+	public boolean canPaste(Clipboard clipboard) {
+		Control focusControl = getFocusControl();
+		if (focusControl == null)
+			return false;
+		Composite parent = focusControl.getParent();
+		PDESection targetSection = null;
+		while (parent != null) {
+			Object data = parent.getData("part");
+			if (data != null && data instanceof PDESection) {
+				targetSection = (PDESection) data;
+				break;
+			}
+			parent = parent.getParent();
+		}
+		if (targetSection != null) {
+			return targetSection.canPaste(clipboard);
+		}
+		return false;
 	}
 }

@@ -7,6 +7,7 @@
 package org.eclipse.pde.internal.ui.neweditor;
 
 import org.eclipse.pde.core.*;
+import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.*;
@@ -28,6 +29,7 @@ public abstract class PDESection extends SectionPart implements IModelChangedLis
 		this.page = page;
 		initialize(page.getManagedForm());
 		getSection().clientVerticalSpacing = 8;
+		getSection().setData("part", this);
 		//createClient(getSection(), page.getManagedForm().getToolkit());
 	}
 	
@@ -52,5 +54,8 @@ public abstract class PDESection extends SectionPart implements IModelChangedLis
 	}
 	public boolean isEditable() {
 		return getPage().getPDEEditor().getAggregateModel().isEditable();
+	}
+	public boolean canPaste(Clipboard clipboard) {
+		return false;
 	}
 }
