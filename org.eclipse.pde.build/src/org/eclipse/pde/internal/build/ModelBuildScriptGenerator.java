@@ -83,7 +83,7 @@ protected String computeCompleteSrc(PluginModel descriptor) {
 	Set jars = new HashSet(9);
 	for (Iterator i = devJars.values().iterator(); i.hasNext();)
 		jars.addAll((Collection) i.next());
-	return getStringFromCollection(jars, "", "/", ",");
+	return getStringFromCollection(jars, "", "", ",");
 }
 /**
  * Performs script generation for the configured plugins or fragments.
@@ -233,48 +233,20 @@ protected void generateJarTarget(PrintWriter output, PluginModel descriptor,Stri
 	}
 	
 	String jar = fullJar.substring(fullJar.lastIndexOf('/') + 1);
-	Collection sourceDirs = (Collection) trimmedDevJars.get(fullJar);
-	String src = (sourceDirs == null || sourceDirs.isEmpty()) ? "" : getStringFromCollection(sourceDirs, "", "/", ",");
+	Collection source = (Collection) trimmedDevJars.get(fullJar);
+	String src = (source == null || source.isEmpty()) ? "" : getStringFromCollection(source, "", "", ",");
 	String compilePath = computeCompilePathClause(descriptor, fullJar);
 	output.println();
 	output.println("  <target name=\"" + relativeJar + "\" depends=\"init\">");
-	
+	output.println("    <property name=\"destroot\" value=\"${basedir}\"/>");
 	if (src.length() != 0) {
-		output.println("    <property name=\"out\" value=\"${basedir}/" + jar + ".bin\"/>");
-		output.println("    <delete dir=\"${out}\"/>");
-		output.println("    <mkdir dir=\"${out}\"/>");
 		output.println("    <ant antfile=\"${template}\" target=\"" + TARGET_JAR + "\">");
 		output.println("      <property name=\"includes\" value=\"" + src + "\"/>");
 		output.println("      <property name=\"excludes\" value=\"\"/>");
+		output.println("      <property name=\"dest\" value=\"${destroot}/" + relativeJar + "\"/>");
 		output.println("      <property name=\"compilePath\" value=\"" + compilePath + "\"/>");
 		output.println("    </ant>");
 	}
-
-	if (sourceDirs != null) {
-		output.println("    <copy todir=\"${out}\">");
-		output.println("      <fileset dir=\".\">");
-		output.println("        <include name=\"" + src + "\"/>");
-		output.println("        <exclude name=\"**/*.java\"/>");
-		output.println("      </fileset>");
-		output.println("      <mapper refid=\"stripMapper.id\"/>");		
-		output.println("    </copy>");
-	}
-//	if (sourceDirs != null) {
-//		Iterator iterator = sourceDirs.iterator();
-//		while (iterator.hasNext()) {
-//			output.println("    <copy todir=\"${out}\">");
-//			output.println("      <fileset dir=\"" + (String)iterator.next() + "\">");
-//			output.println("        <include name=\"**\"/>");
-//			output.println("        <exclude name=\"**/*.java\"/>");
-//			output.println("      </fileset>");
-//			output.println("    </copy>");
-//		}
-//	}
-
-	output.println("    <property name=\"dest\" value=\"${destroot}/" + getComponentDirectoryName() + "\"/>");
-	output.println("    <jar jarfile=\"" + relativeJar + "\" basedir=\"${out}\"/>");
-	output.println("    <delete dir=\"${out}\"/>");
-
 	output.println("  </target>");
 }
 protected void generateJavadocsTarget(PrintWriter output, PluginModel descriptor) {
@@ -389,7 +361,7 @@ protected void generateModelTarget(PrintWriter output, PluginModel descriptor) {
 	output.println("    <antcall target=\"bin\">");
 	output.println("      <param name =\"destroot\" value=\"${base}/" + getComponentDirectoryName() + "\"/>");
 	output.println("    </antcall>");
-	output.println("    <zip zipfile=\"" + getModelFileBase() + DEFAULT_FILENAME_BIN + "\" basedir=\"${base}\"/>");
+	output.println("    <zip zipfile=\"" + getModelFileBase() + DEFAULT_FILENAME_BIN + "\" basedir=\"${base}\" excludes=\"**/*.bin.log\"/>");
 	output.println("    <delete dir=\"${base}\"/>");
 	output.println("  </target>");
 }
@@ -443,18 +415,17 @@ protected void generateSrcTarget(PrintWriter output,PluginModel descriptor,Strin
 		// should not happen
 		getPluginLog().log(new Status(IStatus.ERROR,PI_PDECORE,EXCEPTION_URL,Policy.bind("exception.url"),e));
 	}
-	
 	// zip name is jar name without the ".jar" but with SOURCE_EXTENSION appended		
 	String zip = fullJar.substring(fullJar.lastIndexOf('/') + 1, fullJar.length() - 4) + SOURCE_EXTENSION;
-	Collection sourceDirs = (Collection) trimmedDevJars.get(fullJar);
-	String src = (sourceDirs == null || sourceDirs.isEmpty()) ? "" : getStringFromCollection(sourceDirs, "", "/**/*.java", ",");
+	Collection source = (Collection) trimmedDevJars.get(fullJar);
+	String src = source == null || source.isEmpty() ? "" : getSourceList(source, "**/*.java");
 	output.println();
 	output.println("  <target name=\"" + target + "\" depends=\"init\">");
 	output.println("    <property name=\"destroot\" value=\"${basedir}\"/>");
 
 	if (src.length() != 0) {
 		output.println("    <ant antfile=\"${template}\" target=\"" + TARGET_SRC + "\">");
-			
+
 		String inclusions = getSubstitution(descriptor, SRC_INCLUDES);
 		if (inclusions == null)
 			inclusions = src;
@@ -474,7 +445,6 @@ protected void generateSrcTarget(PrintWriter output,PluginModel descriptor,Strin
 		output.println("      <property name=\"dest\" value=\"${destroot}/" + target + "\"/>");
 		output.println("    </ant>");
 	}
-		
 	output.println("  </target>");
 }
 
@@ -531,6 +501,15 @@ protected String getLocation(PluginModel descriptor) {
 protected abstract String getModelTypeName();
 protected String getModelFileBase() {
 	return "${" + getModelTypeName() + "}" + SEPARATOR_VERSION + "${version}";
+}
+
+protected String getSourceList (Collection source, String ending) {
+	ArrayList srcList = new ArrayList(source.size());
+	for (Iterator i = source.iterator(); i.hasNext();) {
+		String entry = (String)i.next();
+		srcList.add(entry.endsWith("/") ? entry + ending : entry);
+	}
+	return getStringFromCollection(srcList, "", "", ",");
 }
 protected void initializeFor(PluginModel descriptor) {
 	devJars = loadJarDefinitions(descriptor);

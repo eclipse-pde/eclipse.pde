@@ -18,7 +18,10 @@ public FileNameMapper getImplementation() {
  * @see FileNameMapper#mapFileName(String)
  */
 public String[] mapFileName(String path) {
-	return new String[] {new Path (path).removeFirstSegments(segmentsToStrip).toOSString()};
+	Path original = new Path (path);
+	if (original.segmentCount() < 2)
+		return new String[] {path};
+	return new String[] {original.removeFirstSegments(segmentsToStrip).toOSString()};
 }
 /**
  * @see FileNameMapper#setFrom(String)

@@ -17,10 +17,22 @@
   <stripMapper id="stripMapper.id" to="1"/>
   
   <target name="jar" depends="init">
+    <property name="out" value="${dest}.bin"/>
+    <delete dir="${out}"/>
+    <mkdir dir="${out}"/>
     <javac srcdir="${basedir}" destdir="${out}" verbose="yes" failonerror="no">
       <patternset refid="pattern.id"/>
       <classpath path="${compilePath}"/>
     </javac>
+    <copy todir="${out}">
+      <fileset dir=".">
+         <patternset refid="copy.id"/>
+      </fileset>
+      <mapper refid="stripMapper.id"/>
+    </copy>
+    <copy file="${out}.log" todir="${basedir}"/>
+    <jar jarfile="${dest}" basedir="${out}"/>
+    <delete dir="${out}"/>
   </target>
 
   <target name="javadoc" depends="init">
