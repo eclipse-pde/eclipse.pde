@@ -84,30 +84,8 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		layout.verticalSpacing = 9;
 		layout.makeColumnsEqualWidth = false;
 		container.setLayout(layout);
-		Label label = new Label(container, SWT.NONE);
-		label.setText(PDEPlugin.getResourceString(KEY_SCHEMA_LOCATION));
-		schemaLocationText = new Text(container, SWT.SINGLE | SWT.BORDER);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.widthHint = 150;
-		gd.grabExcessHorizontalSpace = true;
-		schemaLocationText.setLayoutData(gd);
-		schemaLocationText.addModifyListener(new ModifyListener(){
-			public void modifyText(ModifyEvent e){
-				validatePage(true);
-			}
-		});
-		findLocationButton = new Button(container, SWT.PUSH);
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
-		gd.widthHint = 50;
-		findLocationButton.setLayoutData(gd);
-		findLocationButton.setText(PDEPlugin.getResourceString(KEY_BROWSE));
-		findLocationButton.setToolTipText(PDEPlugin.getResourceString("BaseExtensionPointMainPage.schemaLocation.tooltip"));
-		findLocationButton.addSelectionListener(new SelectionAdapter(){
-			public void widgetSelected(SelectionEvent e) {
-				handleSchemaLocation();
-			}
-		});
-		SWTUtil.setButtonDimensionHint(findLocationButton);
+		Label label;
+		GridData gd;
 		if (isPluginIdNeeded()) {
 			label = new Label(container, SWT.NONE);
 			label.setText(PDEPlugin.getResourceString(KEY_PLUGIN_ID));
@@ -158,6 +136,32 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 				validatePage(false);
 			}
 		});
+		if (isPluginIdNeeded()){
+			label = new Label(container, SWT.NONE);
+			label.setText(PDEPlugin.getResourceString(KEY_SCHEMA_LOCATION));
+			schemaLocationText = new Text(container, SWT.SINGLE | SWT.BORDER);
+			gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.widthHint = 150;
+			gd.grabExcessHorizontalSpace = true;
+			schemaLocationText.setLayoutData(gd);
+			schemaLocationText.addModifyListener(new ModifyListener(){
+				public void modifyText(ModifyEvent e){
+					validatePage(true);
+				}
+			});
+			findLocationButton = new Button(container, SWT.PUSH);
+			gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
+			gd.widthHint = 50;
+			findLocationButton.setLayoutData(gd);
+			findLocationButton.setText(PDEPlugin.getResourceString(KEY_BROWSE));
+			findLocationButton.setToolTipText(PDEPlugin.getResourceString("BaseExtensionPointMainPage.schemaLocation.tooltip"));
+			findLocationButton.addSelectionListener(new SelectionAdapter(){
+				public void widgetSelected(SelectionEvent e) {
+					handleSchemaLocation();
+				}
+			});
+			SWTUtil.setButtonDimensionHint(findLocationButton);
+		}
 		label = new Label(container, SWT.NONE);
 		label.setText(PDEPlugin.getResourceString(KEY_SCHEMA));
 		schemaText = new Text(container, SWT.SINGLE | SWT.BORDER);
@@ -182,7 +186,10 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		openSchemaButton.setLayoutData(gd);
-		schemaLocationText.setFocus();
+		if (isPluginIdNeeded())
+			pluginIdText.setFocus();
+		else
+			idText.setFocus();
 		setControl(container);
 		Dialog.applyDialogFont(container);
 		WorkbenchHelp.setHelp(container, IHelpContextIds.NEW_SCHEMA);
