@@ -96,16 +96,22 @@ protected boolean updateModel() {
 	IJarsModel model = (IJarsModel) getModel();
 	IDocument document = getDocumentProvider().getDocument(getEditorInput());
 	String text = document.get();
-	InputStream stream = new ByteArrayInputStream(text.getBytes());
 	boolean cleanModel = true;
 	try {
-		model.reload(stream);
-	} catch (CoreException e) {
-		cleanModel = false;
+		InputStream stream = new ByteArrayInputStream(text.getBytes("UTF-8"));
+
+		try {
+			model.reload(stream);
+		} catch (CoreException e) {
+			cleanModel = false;
+		}
+		try {
+			stream.close();
+		} catch (IOException e) {
+		}
 	}
-	try {
-		stream.close();
-	} catch (IOException e) {
+	catch (UnsupportedEncodingException e) {
+		PDEPlugin.logException(e);
 	}
 	return false;
 }

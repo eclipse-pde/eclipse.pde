@@ -167,17 +167,22 @@ protected boolean isValidContentType(IEditorInput input) {
 protected boolean updateModel() {
 	IComponentModel model = (IComponentModel) getModel();
 	IDocument document = getDocumentProvider().getDocument(getEditorInput());
-	String text = document.get();
-	InputStream stream = new ByteArrayInputStream(text.getBytes());
 	boolean cleanModel = true;
+	String text = document.get();
 	try {
-		model.reload(stream);
-	} catch (CoreException e) {
-		cleanModel = false;
+		InputStream stream = new ByteArrayInputStream(text.getBytes("UTF-8"));
+		try {
+			model.reload(stream);
+		} catch (CoreException e) {
+			cleanModel = false;
+		}
+		try {
+			stream.close();
+		} catch (IOException e) {
+		}
 	}
-	try {
-		stream.close();
-	} catch (IOException e) {
+	catch (UnsupportedEncodingException e) {
+		PDEPlugin.logException(e);
 	}
 	return cleanModel;
 }

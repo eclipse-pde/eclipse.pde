@@ -112,7 +112,7 @@ private void compileFile(IFile file, IProgressMonitor monitor) {
 			}
 			IFile outputFile = workspace.getRoot().getFile(outputPath);
 			ByteArrayInputStream target =
-				new ByteArrayInputStream(outputBuffer.toString().getBytes());
+				new ByteArrayInputStream(outputBuffer.toString().getBytes("UTF-8"));
 			if (!workspace.getRoot().exists(outputPath)) {
 				// the file does not exist - create it
 				outputFile.create(target, true, monitor);
@@ -120,7 +120,11 @@ private void compileFile(IFile file, IProgressMonitor monitor) {
 				outputFile.setContents(target, true, false, monitor);
 			}
 		}
-	} catch (CoreException e) {
+	} 
+	catch (UnsupportedEncodingException e) {
+		PDEPlugin.logException(e);
+	}
+	catch (CoreException e) {
 		PDEPlugin.logException(e);
 	}
 	monitor.subTask(PDEPlugin.getResourceString(BUILDERS_UPDATING));

@@ -302,6 +302,7 @@ private IFile createFile(IContainer parent, String contents, IProgressMonitor mo
 		InputStream initialContents = new ByteArrayInputStream(contents.getBytes("UTF-8"));
 		file.create(initialContents, false, monitor);
 	}catch(UnsupportedEncodingException uee){
+		PDEPlugin.logException(uee);
 	}
 	IWorkbench workbench = PlatformUI.getWorkbench();
 	workbench.getEditorRegistry().setDefaultEditor(file, PDEPlugin.MANIFEST_EDITOR_ID);

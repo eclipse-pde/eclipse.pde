@@ -15,6 +15,7 @@ import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.*;
 import org.eclipse.pde.internal.editor.*;
+import org.eclipse.pde.internal.*;
 
 public class SchemaEditor extends PDEMultiPageXMLEditor {
 	public static final String DEFINITION_PAGE = "definition";
@@ -57,11 +58,16 @@ protected boolean updateModel() {
 	Schema schema = (Schema)getModel();
 	IDocument document = getDocumentProvider().getDocument(getEditorInput());
 	String text = document.get();
-	InputStream stream = new ByteArrayInputStream(text.getBytes());
-	schema.reload(stream);
 	try {
-		stream.close();
-	} catch (IOException e) {
+		InputStream stream = new ByteArrayInputStream(text.getBytes("UTF-8"));
+		schema.reload(stream);
+		try {
+			stream.close();
+		} catch (IOException e) {
+		}
+	}
+	catch (UnsupportedEncodingException e) {
+		PDEPlugin.logException(e);
 	}
 	return true;
 }

@@ -29,7 +29,6 @@ public class FormWidgetFactory {
 	private Color foregroundColor;
 	private Display display;
 	private Font titleFont;
-	private Font sectionFont;
 	public static final int BORDER_STYLE = SWT.NONE;//SWT.BORDER;
 	private BorderPainter borderPainter;
 	private Color borderColor;
@@ -105,15 +104,9 @@ public Label createHeadingLabel(Composite parent, String text, Color bg) {
 public Label createHeadingLabel(Composite parent, String text, Color bg, int style) {
 	Label label = new Label(parent, style);
 	label.setText(text);
-	//label.setBackground(bg);
-	//label.setForeground(backgroundColor);
 	label.setBackground(backgroundColor);
 	label.setForeground(foregroundColor);
-	//label.setData(backgroundColor);
-	if (SWT.getPlatform().equals("motif"))
-	   label.setFont(JFaceResources.getFontRegistry().get(JFaceResources.BANNER_FONT));
-	else
-	   label.setFont(sectionFont);
+    label.setFont(JFaceResources.getFontRegistry().get(JFaceResources.BANNER_FONT));
 	return label;
 }
 public Label createHyperlinkLabel(Composite parent, String text, IHyperlinkListener listener) {
@@ -185,7 +178,6 @@ public void dispose() {
 	}
 	hyperlinkHandler.dispose();
 	titleFont.dispose();
-	sectionFont.dispose();
 	colorRegistry=null;
 }
 public Color getBackgroundColor() {
@@ -250,7 +242,6 @@ private void initialize() {
 	Font bf = JFaceResources.getFontRegistry().get(JFaceResources.BANNER_FONT);
 	FontData [] fd = bf.getFontData();
 	titleFont = new Font(display, fd[0].getName(), 12, SWT.BOLD);
-	sectionFont = new Font(display, fd[0].getName(), 8, SWT.BOLD);
 }
 public void paintBordersFor(Composite parent) {
 	if (BORDER_STYLE == SWT.BORDER) return;

@@ -54,15 +54,15 @@ public IBuildModel getBuildModel() {
 	return buildModel;
 }
 public String getContents() {
-	ByteArrayOutputStream bstream = new ByteArrayOutputStream();
-	PrintWriter writer = new PrintWriter(bstream);
+	StringWriter swriter = new StringWriter();
+	PrintWriter writer = new PrintWriter(swriter);
 	save(writer);
 	writer.flush();
 	try {
-		bstream.close();
+		swriter.close();
 	} catch (IOException e) {
 	}
-	return bstream.toString();
+	return swriter.toString();
 }
 public IFile getFile() {
 	return file;
@@ -107,7 +107,7 @@ public void save() {
 		return;
 	try {
 		String contents = getContents();
-		ByteArrayInputStream stream = new ByteArrayInputStream(contents.getBytes());
+		ByteArrayInputStream stream = new ByteArrayInputStream(contents.getBytes("UTF-8"));
 		if (file.exists()) {
 			file.setContents(stream, false, false, null);
 		} else {

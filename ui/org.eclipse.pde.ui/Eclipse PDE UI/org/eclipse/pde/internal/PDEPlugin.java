@@ -72,7 +72,7 @@ public PDEPlugin(IPluginDescriptor descriptor) {
 	super(descriptor);
 	inst = this;
 	try {
-		resourceBundle = ResourceBundle.getBundle("org.eclipse.pde.internal.PDEResources");
+		resourceBundle = ResourceBundle.getBundle("org.eclipse.pde.internal.pderesources");
 	} catch (MissingResourceException x) {
 		resourceBundle = null;
 	}

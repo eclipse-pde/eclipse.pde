@@ -75,7 +75,7 @@ public IFile generate(IProgressMonitor monitor) throws CoreException {
 	writer.close();
 	try {
 		ByteArrayInputStream stream =
-			new ByteArrayInputStream(bstream.toString().getBytes());
+			new ByteArrayInputStream(bstream.toString().getBytes("UTF-8"));
 		if (file.exists())
 			file.setContents(stream, false, true, monitor);
 		else
