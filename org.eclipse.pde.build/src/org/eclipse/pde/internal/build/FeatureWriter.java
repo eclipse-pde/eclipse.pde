@@ -197,7 +197,7 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 	}
 
 	public void printPlugins() throws CoreException {
-		IPluginEntry[] plugins = feature.getPluginEntries();
+		IPluginEntry[] plugins = feature.getRawPluginEntries();
 		for (int i = 0; i < plugins.length; i++) {
 			parameters.clear();
 			parameters.put("id", plugins[i].getVersionedIdentifier().getIdentifier()); //$NON-NLS-1$

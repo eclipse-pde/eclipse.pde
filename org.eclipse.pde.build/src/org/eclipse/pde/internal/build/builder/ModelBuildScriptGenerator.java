@@ -163,19 +163,20 @@ public abstract class ModelBuildScriptGenerator extends AbstractBuildScriptGener
 			configInfo = new Config(entry.getOS(), entry.getWS(), entry.getOSArch());
 
 		Set pluginsToGatherSourceFrom = (Set) featureGenerator.sourceToGather.getElementEntries().get(configInfo);
-		for (Iterator iter = pluginsToGatherSourceFrom.iterator(); iter.hasNext();) {
-			PluginModel plugin = (PluginModel) iter.next();
-			if (plugin.getId().equals(model.getId())) // We are not trying to gather the source from ourself since we are generated and we know we don't have source...
-				continue;
-
-			// The two steps are required, because some plugins (xerces, junit, ...) don't build their source: the source already comes zipped
-			IPath location = Utils.makeRelative(new Path(getLocation(plugin)), new Path(getLocation(model)));
-			script.printAntTask(location.append(DEFAULT_BUILD_SCRIPT_FILENAME).toString(), location.toOSString(), TARGET_BUILD_SOURCES, null, null, null);
-			HashMap params = new HashMap(1);
-			params.put(PROPERTY_DESTINATION_TEMP_FOLDER, getPropertyFormat(PROPERTY_BASEDIR) + "/src"); //$NON-NLS-1$
-			script.printAntTask(location.append(DEFAULT_BUILD_SCRIPT_FILENAME).toString(), location.toOSString(), TARGET_GATHER_SOURCES, null, null, params);
+		if (pluginsToGatherSourceFrom != null) {
+			for (Iterator iter = pluginsToGatherSourceFrom.iterator(); iter.hasNext();) {
+				PluginModel plugin = (PluginModel) iter.next();
+				if (plugin.getId().equals(model.getId())) // We are not trying to gather the source from ourself since we are generated and we know we don't have source...
+					continue;
+	
+				// The two steps are required, because some plugins (xerces, junit, ...) don't build their source: the source already comes zipped
+				IPath location = Utils.makeRelative(new Path(getLocation(plugin)), new Path(getLocation(model)));
+				script.printAntTask(location.append(DEFAULT_BUILD_SCRIPT_FILENAME).toString(), location.toOSString(), TARGET_BUILD_SOURCES, null, null, null);
+				HashMap params = new HashMap(1);
+				params.put(PROPERTY_DESTINATION_TEMP_FOLDER, getPropertyFormat(PROPERTY_BASEDIR) + "/src"); //$NON-NLS-1$
+				script.printAntTask(location.append(DEFAULT_BUILD_SCRIPT_FILENAME).toString(), location.toOSString(), TARGET_GATHER_SOURCES, null, null, params);
+			}
 		}
-
 		script.printTargetEnd();
 	}
 

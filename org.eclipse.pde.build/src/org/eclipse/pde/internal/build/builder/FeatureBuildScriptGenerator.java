@@ -84,7 +84,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	protected List computeElements(boolean fragments) throws CoreException {
 		List result = new ArrayList(5);
 
-		IPluginEntry[] pluginList = feature.getPluginEntries();
+		IPluginEntry[] pluginList = feature.getRawPluginEntries();
 
 		for (int i = 0; i < pluginList.length; i++) {
 			IPluginEntry entry = pluginList[i];
@@ -946,8 +946,8 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			String sourceFragmentId = sourceFeature.getFeatureIdentifier() + "." + configInfo.toString("."); //$NON-NLS-1$ //$NON-NLS-2$
 			sourceFragment.setPluginIdentifier(sourceFragmentId);
 			sourceFragment.setPluginVersion(sourceFeature.getFeatureVersion());
-			sourceFragment.setOS(configInfo.getWs());
-			sourceFragment.setWS(configInfo.getOs());
+			sourceFragment.setOS(configInfo.getOs());
+			sourceFragment.setWS(configInfo.getWs());
 			sourceFragment.setArch(configInfo.getArch());
 			sourceFragment.isFragment(true);
 			//sourceFeature.addPluginEntryModel(sourceFragment);
@@ -974,8 +974,8 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			String sourceFragmentId = sourceFeature.getFeatureIdentifier() + "." + configInfo.toString("."); //$NON-NLS-1$ //$NON-NLS-2$
 			sourceFragment.setPluginIdentifier(sourceFragmentId);
 			sourceFragment.setPluginVersion(sourceFeature.getFeatureVersion());
-			sourceFragment.setOS(configInfo.getWs());
-			sourceFragment.setWS(configInfo.getOs());
+			sourceFragment.setOS(configInfo.getOs());
+			sourceFragment.setWS(configInfo.getWs());
 			sourceFragment.setArch(configInfo.getArch());
 			sourceFragment.isFragment(true);
 			sourceFeature.addPluginEntryModel(sourceFragment);
