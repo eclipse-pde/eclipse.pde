@@ -158,7 +158,10 @@ public class BuildPage extends PDEFormPage {
 				for (int i = 0; i < tokens.length; i++)
 					customEntry.removeToken(tokens[i]);
 			}
-			customEntry.addToken(isCustom ? "true" : "false");
+			if (isCustom)
+				customEntry.addToken("true");
+			else
+				getBuildModel().getBuild().remove(customEntry);
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}	
