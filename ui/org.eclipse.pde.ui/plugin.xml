@@ -353,21 +353,6 @@
    <extension
          point="org.eclipse.ui.popupMenus">
       <objectContribution
-            objectClass="org.eclipse.core.resources.IProject"
-            adaptable="true"
-            id="org.eclipse.pde.ui.popupMenus">
-         <filter
-               name="projectNature"
-               value="org.eclipse.jdt.core.javanature">
-         </filter>
-         <action
-               label="%popupMenus.convert.label"
-               class="org.eclipse.pde.internal.ui.wizards.project.ConvertJavaToPDEProjectAction"
-               menubarPath="additions"
-               id="org.eclipse.pde.ui.ConvertJavaToPDEProject">
-         </action>
-      </objectContribution>
-      <objectContribution
             objectClass="org.eclipse.core.resources.IFile"
             nameFilter="feature.xml"
             id="org.eclipse.pde.ui.featureJar">

@@ -90,6 +90,35 @@ public class ManifestEditor
 		}
 		return model;
 	}
+	private IPluginModelBase createStorageModel(IStorage storage) {
+		boolean fragment = storage.getName().toLowerCase().equals("fragment.xml");
+		InputStream stream = null;
+		try {
+			stream = storage.getContents();
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+			return null;
+		}
+		ExternalPluginModelBase model = null;
+
+		if (fragment)
+			model = new ExternalFragmentModel();
+		else
+			model = new ExternalPluginModel();
+		//String parentPath = file.getParentFile().getAbsolutePath();
+		model.setInstallLocation("");
+		try {
+			model.load(stream, false);
+		} catch (CoreException e) {
+			// Errors in the file
+			return null;
+		}
+		try {
+			stream.close();
+		} catch (IOException e) {
+		}
+		return model;
+	}
 	protected Object createModel(Object input) throws CoreException {
 		if (input instanceof IFile)
 			return createResourceModel((IFile) input);

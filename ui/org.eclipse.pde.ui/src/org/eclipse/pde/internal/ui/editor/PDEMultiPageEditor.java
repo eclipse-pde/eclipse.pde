@@ -290,8 +290,16 @@ public abstract class PDEMultiPageEditor
 		Object inputObject = null;
 		if (input instanceof SystemFileEditorInput) {
 			inputObject = input.getAdapter(File.class);
-		} else if (input instanceof FileEditorInput) {
+		} else if (input instanceof IFileEditorInput) {
 			inputObject = input.getAdapter(IFile.class);
+		}
+		else if (input instanceof IStorageEditorInput) {
+			try {
+			inputObject = ((IStorageEditorInput)input).getStorage();
+			}
+			catch (CoreException e) {
+				throw new PartInitException(e.getStatus());
+			}
 		}
 		site.setSelectionProvider(this);
 		try {
