@@ -29,7 +29,6 @@ public class FeaturesPage extends PDEFormPage {
 		super(editor, PAGE_ID, PDEPlugin.getResourceString("SiteEditor.page1"));
 	}
 	protected void createFormContent(IManagedForm mform) {
-		FormToolkit toolkit = mform.getToolkit();
 		ScrolledForm form = mform.getForm();
 		GridLayout layout = new GridLayout();
 		form.getBody().setLayout(layout);
