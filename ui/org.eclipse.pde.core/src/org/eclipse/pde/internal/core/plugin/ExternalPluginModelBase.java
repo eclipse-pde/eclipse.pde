@@ -86,7 +86,11 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 		} else {
 			pluginBase.reset();
 		}
-		setInstallLocation(description.getLocation());
+		IPath path = new Path(description.getLocation());
+		String device = path.getDevice();
+		if (device != null)
+			path = path.setDevice(device.toUpperCase());
+		setInstallLocation(path.toOSString());
 		setBundleDescription(description);
 		pluginBase.load(description, state);
 		updateTimeStamp();
