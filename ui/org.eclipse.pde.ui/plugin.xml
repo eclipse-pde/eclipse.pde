@@ -216,6 +216,9 @@
                name="fragment.xml"
                class="org.eclipse.core.resources.IFile">
          </selection>
+         <selection
+               class="org.eclipse.core.resources.IProject">
+         </selection>
       </wizard>
       <wizard
             name="%FeatureExportWizard.label"
@@ -228,6 +231,9 @@
          <selection
                name="feature.xml"
                class="org.eclipse.core.resources.IFile">
+         </selection>
+         <selection
+               class="org.eclipse.core.resources.IProject">
          </selection>
       </wizard>
    </extension>
@@ -776,10 +782,10 @@
          </perspective>
       </shortcut>
       <shortcut
-            class="org.eclipse.pde.internal.ui.launcher.JUnitWorkbenchShortcut"
             label="%launcher.junit.workbench.shortcut"
-            modes="run, debug"
             icon="icons/full/obj16/julaunchpgn.gif"
+            modes="run, debug"
+            class="org.eclipse.pde.internal.ui.launcher.JUnitWorkbenchShortcut"
             id="org.eclipse.pde.ui.junitWorkbenchShortcut">
          <perspective
                id="org.eclipse.jdt.ui.JavaPerspective">
@@ -798,10 +804,10 @@
          </perspective>
       </shortcut>
       <shortcut
-            class="org.eclipse.pde.internal.ui.launcher.RuntimeWorkbenchShortcut"
             label="%launcher.shortcut.label"
-            modes="run, debug"
             icon="icons/full/ctool16/eclipse_launcher_wiz.gif"
+            modes="run, debug"
+            class="org.eclipse.pde.internal.ui.launcher.RuntimeWorkbenchShortcut"
             id="org.eclipse.pde.ui.runtimeWorkbenchShortcut">
          <perspective
                id="org.eclipse.jdt.ui.JavaPerspective">
