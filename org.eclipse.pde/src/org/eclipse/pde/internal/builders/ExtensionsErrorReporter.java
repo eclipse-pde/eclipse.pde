@@ -20,6 +20,7 @@ import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.schema.*;
+import org.eclipse.pde.internal.core.util.IdUtil;
 import org.w3c.dom.*;
 import org.xml.sax.*;
 
@@ -251,7 +252,17 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 	}
 
 	protected void validateExtensionPoint(Element element) {
-		assertAttributeDefined(element, "id", CompilerFlags.ERROR); //$NON-NLS-1$
+		if (assertAttributeDefined(element, "id", CompilerFlags.ERROR)) { //$NON-NLS-1$
+            Attr idAttr = element.getAttributeNode("id"); //$NON-NLS-1$
+            if (!IdUtil.isValidExtensionPointId(idAttr.getValue())) {
+                String message = PDE.getFormattedMessage(
+                        "Builders.Manifest.extensionPointId-value", //$NON-NLS-1$
+                        idAttr.getValue());
+                report(message, getLine(element, idAttr.getName()),
+                        CompilerFlags.ERROR);
+            }
+        }
+
 		assertAttributeDefined(element, "name", CompilerFlags.ERROR); //$NON-NLS-1$
 		
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_UNKNOWN_ATTRIBUTE);
