@@ -20,18 +20,18 @@ import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.help.*;
 
 public class RuntimePage extends PDEFormPage {
-	public static final String PAGE_ID="runtime";
+	public static final String PAGE_ID="runtime"; //$NON-NLS-1$
 	private LibrarySection librarySection;
 	private ExportSection exportSection;
 	private PluginActivationSection osgiSection;
 
 	public RuntimePage(FormEditor editor) {
-		super(editor, PAGE_ID, "Runtime");
+		super(editor, PAGE_ID, "Runtime"); //$NON-NLS-1$
 	}
 	protected void createFormContent(IManagedForm mform) {
 		super.createFormContent(mform);
 		ScrolledForm form = mform.getForm();
-		form.setText(PDEPlugin.getResourceString("ManifestEditor.RuntimeForm.title"));
+		form.setText(PDEPlugin.getResourceString("ManifestEditor.RuntimeForm.title")); //$NON-NLS-1$
 		GridLayout layout = new GridLayout();
 		form.getBody().setLayout(layout);
 		layout.numColumns = 2;

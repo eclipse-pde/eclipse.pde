@@ -30,7 +30,7 @@ import org.eclipse.ui.help.*;
  * Preferences - Java - Code Generation - Code and Comments
  */
 public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
-	public static final String PAGE_ID = "overview";
+	public static final String PAGE_ID = "overview"; //$NON-NLS-1$
 	private static final String contentText = "<form><p>The content of the plug-in is made up of four sections:</p>"
 			+ "<li style=\"image\" value=\"page\" bindent=\"5\"><a href=\"dependencies\">Dependencies</a>: lists all the plug-ins required on this plug-in's classpath to compile and run.</li>"
 			+ "<li style=\"image\" value=\"page\" bindent=\"5\"><a href=\"runtime\">Runtime</a>: lists the libraries that make up this plug-in's runtime.</li>"
@@ -69,17 +69,17 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 	 * @param title
 	 */
 	public OverviewPage(FormEditor editor) {
-		super(editor, PAGE_ID, "Overview");
+		super(editor, PAGE_ID, "Overview"); //$NON-NLS-1$
 	}
 	protected String getHelpResource() {
-		return "/org.eclipse.pde.doc.user/guide/pde_manifest_overview.htm";
+		return PDEPlugin.getResourceString("OverviewPage.help.manifest"); //$NON-NLS-1$
 	}
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
 		form.setText(PDEPlugin
-				.getResourceString("ManifestEditor.OverviewPage.title"));
+				.getResourceString("ManifestEditor.OverviewPage.title")); //$NON-NLS-1$
 		fillBody(managedForm, toolkit);
 		managedForm.refresh();
 	}
@@ -120,22 +120,22 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		FormText text;
 		if (isFragment()) {
 			section.setText(PDEPlugin
-					.getResourceString("ManifestEditor.ContentSection.ftitle"));
+					.getResourceString("ManifestEditor.ContentSection.ftitle")); //$NON-NLS-1$
 			text = createClient(section, fcontentText, toolkit);
 		} else {
 			section.setText(PDEPlugin
-					.getResourceString("ManifestEditor.ContentSection.title"));
+					.getResourceString("ManifestEditor.ContentSection.title")); //$NON-NLS-1$
 			text = createClient(section, contentText, toolkit);
 		}
 		PDELabelProvider lp = PDEPlugin.getDefault().getLabelProvider();
-		text.setImage("page", lp.get(PDEPluginImages.DESC_PAGE_OBJ,
+		text.setImage("page", lp.get(PDEPluginImages.DESC_PAGE_OBJ, //$NON-NLS-1$
 				PDELabelProvider.F_EDIT));
 	}
 	private void createTestingSection(IManagedForm managedForm,
 			Composite parent, FormToolkit toolkit) {
 		Section section = createStaticSection(parent, toolkit);
 		section.setText(PDEPlugin
-				.getResourceString("ManifestEditor.TestingSection.title"));
+				.getResourceString("ManifestEditor.TestingSection.title")); //$NON-NLS-1$
 		ImageHyperlink info = new ImageHyperlink(section, SWT.NULL);
 		toolkit.adapt(info, true, true);
 		Image image = PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_HELP);
@@ -144,7 +144,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		info.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				WorkbenchHelp
-						.displayHelpResource("/org.eclipse.pde.doc.user/guide/pde_running.htm");
+						.displayHelpResource(PDEPlugin.getResourceString("OverviewPage.help.pdeRunning")); //$NON-NLS-1$
 			}
 		});
 		section.setTextClient(info);
@@ -154,16 +154,16 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		else
 			text = createClient(section, testingText, toolkit);
 		PDELabelProvider lp = PDEPlugin.getDefault().getLabelProvider();
-		text.setImage("run", lp.get(PDEPluginImages.DESC_RUN_EXC));
-		text.setImage("debug", lp.get(PDEPluginImages.DESC_DEBUG_EXC));
-		text.setImage("workbench", lp
+		text.setImage("run", lp.get(PDEPluginImages.DESC_RUN_EXC)); //$NON-NLS-1$
+		text.setImage("debug", lp.get(PDEPluginImages.DESC_DEBUG_EXC)); //$NON-NLS-1$
+		text.setImage("workbench", lp //$NON-NLS-1$
 				.get(PDEPluginImages.DESC_WORKBENCH_LAUNCHER_WIZ));
 	}
 	private void createDeployingSection(IManagedForm managedForm,
 			Composite parent, FormToolkit toolkit) {
 		Section section = createStaticSection(parent, toolkit);
 		section.setText(PDEPlugin
-				.getResourceString("ManifestEditor.DeployingSection.title"));
+				.getResourceString("ManifestEditor.DeployingSection.title")); //$NON-NLS-1$
 		ImageHyperlink info = new ImageHyperlink(section, SWT.NULL);
 		toolkit.adapt(info, true, true);
 		Image image = PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_HELP);
@@ -171,7 +171,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		info.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				WorkbenchHelp
-						.displayHelpResource("/org.eclipse.pde.doc.user/guide/pde_deploy.htm");
+						.displayHelpResource(PDEPlugin.getResourceString("OverviewPage.help.deploy")); //$NON-NLS-1$
 			}
 		});
 		info.setBackground(section.getTitleBarGradientBackground());
@@ -213,21 +213,21 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 	public void linkActivated(HyperlinkEvent e) {
 		String href = (String) e.getHref();
 		// try page references
-		if (href.equals("dependencies"))
+		if (href.equals("dependencies")) //$NON-NLS-1$
 			getEditor().setActivePage(DependenciesPage.PAGE_ID);
-		else if (href.equals("runtime"))
+		else if (href.equals("runtime")) //$NON-NLS-1$
 			getEditor().setActivePage(RuntimePage.PAGE_ID);
-		else if (href.equals("extensions"))
+		else if (href.equals("extensions")) //$NON-NLS-1$
 			getEditor().setActivePage(ExtensionsPage.PAGE_ID);
-		else if (href.equals("ex-points"))
+		else if (href.equals("ex-points")) //$NON-NLS-1$
 			getEditor().setActivePage(ExtensionPointsPage.PAGE_ID);
-		else if (href.equals("build"))
+		else if (href.equals("build")) //$NON-NLS-1$
 			getEditor().setActivePage(BuildPage.PAGE_ID);
-		else if (href.equals("action.run"))
+		else if (href.equals("action.run")) //$NON-NLS-1$
 			getLaunchShortcut().run();
-		else if (href.equals("action.debug"))
+		else if (href.equals("action.debug")) //$NON-NLS-1$
 			getLaunchShortcut().debug();
-		else if (href.equals("export"))
+		else if (href.equals("export")) //$NON-NLS-1$
 			getExportAction().run();
 	}
 	/*

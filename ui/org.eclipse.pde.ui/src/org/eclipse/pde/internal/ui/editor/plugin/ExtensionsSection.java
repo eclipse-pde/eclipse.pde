@@ -48,18 +48,18 @@ public class ExtensionsSection extends TreeSection
 	//private TableTreeViewer extensionTree;
 	private TreeViewer extensionTree;
 	private Image extensionImage;
-	public static final String SECTION_TITLE = "ManifestEditor.DetailExtensionSection.title";
-	public static final String SECTION_NEW = "ManifestEditor.DetailExtensionSection.new";
-	public static final String SECTION_EDIT = "ManifestEditor.DetailExtensionSection.edit";
-	public static final String SECTION_DOWN = "ManifestEditor.DetailExtensionSection.down";
-	public static final String SECTION_UP = "ManifestEditor.DetailExtensionSection.up";
-	public static final String SECTION_SHOW_CHILDREN = "ManifestEditor.DetailExtensionSection.showAllChildren";
-	public static final String POPUP_NEW = "Menus.new.label";
-	public static final String POPUP_EDIT = "Menus.edit.label";
-	public static final String POPUP_NEW_EXTENSION = "ManifestEditor.DetailExtensionSection.newExtension";
-	public static final String POPUP_COLLAPSE_ALL = "ManifestEditor.DetailExtensionSection.collapseAll";
-	public static final String POPUP_GO_TO = "Menus.goTo.label";
-	public static final String POPUP_DELETE = "Actions.delete.label";
+	public static final String SECTION_TITLE = "ManifestEditor.DetailExtension.title"; //$NON-NLS-1$
+	public static final String SECTION_NEW = "ManifestEditor.DetailExtension.new"; //$NON-NLS-1$
+	public static final String SECTION_EDIT = "ManifestEditor.DetailExtension.edit"; //$NON-NLS-1$
+	public static final String SECTION_DOWN = "ManifestEditor.DetailExtension.down"; //$NON-NLS-1$
+	public static final String SECTION_UP = "ManifestEditor.DetailExtension.up"; //$NON-NLS-1$
+	public static final String SECTION_SHOW_CHILDREN = "ManifestEditor.DetailExtension.showAllChildren"; //$NON-NLS-1$
+	public static final String POPUP_NEW = "Menus.new.label"; //$NON-NLS-1$
+	public static final String POPUP_EDIT = "Menus.edit.label"; //$NON-NLS-1$
+	public static final String POPUP_NEW_EXTENSION = "ManifestEditor.DetailExtension.newExtension"; //$NON-NLS-1$
+	public static final String POPUP_COLLAPSE_ALL = "ManifestEditor.DetailExtension.collapseAll"; //$NON-NLS-1$
+	public static final String POPUP_GO_TO = "Menus.goTo.label"; //$NON-NLS-1$
+	public static final String POPUP_DELETE = "Actions.delete.label"; //$NON-NLS-1$
 	private Image genericElementImage;
 	//private Button showAllChildrenButton;
 	private SchemaRegistry schemaRegistry;
@@ -68,8 +68,8 @@ public class ExtensionsSection extends TreeSection
 	private Action newExtensionAction;
 	private Action collapseAllAction;
 	private Hashtable editorWizards;
-	private static final String[] COMMON_LABEL_PROPERTIES = {"label", "name",
-			"id"};
+	private static final String[] COMMON_LABEL_PROPERTIES = {"label", "name", //$NON-NLS-1$ //$NON-NLS-2$
+			"id"}; //$NON-NLS-1$
 	class ExtensionContentProvider extends DefaultContentProvider
 			implements
 				ITreeContentProvider {
@@ -124,7 +124,7 @@ public class ExtensionsSection extends TreeSection
 	private static void addItemsForExtensionWithSchema(MenuManager menu,
 			IPluginExtension extension, IPluginParent parent) {
 		ISchema schema = getSchema(extension);
-		String tagName = (parent == extension ? "extension" : parent.getName());
+		String tagName = (parent == extension ? "extension" : parent.getName()); //$NON-NLS-1$
 		ISchemaElement elementInfo = schema.findElement(tagName);
 		if (elementInfo == null)
 			return;
@@ -383,7 +383,7 @@ public class ExtensionsSection extends TreeSection
 		IProject project = getPage().getPDEEditor().getCommonProject();
 		IPluginModelBase model = (IPluginModelBase)getPage().getModel();
 		try {
-			final IExtensionEditorWizard wizard = (IExtensionEditorWizard)element.createExecutableExtension("class");
+			final IExtensionEditorWizard wizard = (IExtensionEditorWizard)element.createExecutableExtension("class"); //$NON-NLS-1$
 			wizard.init(project, model, selection);
 			BusyIndicator.showWhile(extensionTree.getTree().getDisplay(),
 					new Runnable() {
@@ -449,11 +449,11 @@ public class ExtensionsSection extends TreeSection
 
 	private void loadExtensionWizards() {
 		editorWizards = new Hashtable();
-		IConfigurationElement [] elements = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.pde.ui.newExtension");
+		IConfigurationElement [] elements = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.pde.ui.newExtension"); //$NON-NLS-1$
 		for (int i=0; i<elements.length; i++) {
 			IConfigurationElement element = elements[i];
-			if (element.getName().equals("editorWizard")) {
-				String pointId = element.getAttribute("point");
+			if (element.getName().equals("editorWizard")) { //$NON-NLS-1$
+				String pointId = element.getAttribute("point"); //$NON-NLS-1$
 				if (pointId==null) continue;
 				ArrayList list = (ArrayList)editorWizards.get(pointId);
 				if (list==null) {
@@ -635,7 +635,7 @@ public class ExtensionsSection extends TreeSection
 			return null;
 		// 39283 - ignore icon paths that
 		// point at plugin.properties
-		if (iconPathName.startsWith("%"))
+		if (iconPathName.startsWith("%")) //$NON-NLS-1$
 			return null;
 		URL modelURL = null;
 		String path = model.getInstallLocation();
@@ -645,8 +645,8 @@ public class ExtensionsSection extends TreeSection
 			path = realPath.toOSString();
 		}
 		try {
-			if (!path.startsWith("file:"))
-				path = "file:" + path;
+			if (!path.startsWith("file:")) //$NON-NLS-1$
+				path = "file:" + path; //$NON-NLS-1$
 			modelURL = new URL(path + File.separator);
 			return PDEPlugin.getDefault().getLabelProvider().getImageFromURL(
 					modelURL, iconPathName);
@@ -705,7 +705,7 @@ public class ExtensionsSection extends TreeSection
 				return fullName != null ? fullName : baseName;
 			else
 				return fullName != null
-						? (fullName + " (" + baseName + ")")
+						? (fullName + " (" + baseName + ")") //$NON-NLS-1$ //$NON-NLS-2$
 						: baseName;
 		}
 		return obj.toString();

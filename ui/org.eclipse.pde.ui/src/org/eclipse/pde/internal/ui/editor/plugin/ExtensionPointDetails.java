@@ -79,9 +79,9 @@ public class ExtensionPointDetails extends PDEDetails {
 		section.marginHeight = 5;
 		section.marginWidth = 5;
 		//TODO translate strings
-		section.setText("Extension Point Details");
+		section.setText(PDEPlugin.getResourceString("ExtensionPointDetails.title")); //$NON-NLS-1$
 		section
-				.setDescription("Set the properties of the selected extension point.");
+				.setDescription(PDEPlugin.getResourceString("ExtensionPointDetails.desc")); //$NON-NLS-1$
 		TableWrapData td = new TableWrapData(TableWrapData.FILL,
 				TableWrapData.TOP);
 		td.grabHorizontal = true;
@@ -97,7 +97,7 @@ public class ExtensionPointDetails extends PDEDetails {
 		GridData gd = new GridData();
 		gd.horizontalSpan = 3;
 		
-		fIdEntry = new FormEntry(client, toolkit, "ID:", null, false);
+		fIdEntry = new FormEntry(client, toolkit, PDEPlugin.getResourceString("ExtensionPointDetails.id"), null, false); //$NON-NLS-1$
 		fIdEntry.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
 				if (fInput != null) {
@@ -109,7 +109,7 @@ public class ExtensionPointDetails extends PDEDetails {
 				}
 			}
 		});
-		fNameEntry = new FormEntry(client, toolkit, "Name:", null, false);
+		fNameEntry = new FormEntry(client, toolkit, PDEPlugin.getResourceString("ExtensionPointDetails.name"), null, false); //$NON-NLS-1$
 		fNameEntry.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
 				if (fInput != null)
@@ -121,7 +121,7 @@ public class ExtensionPointDetails extends PDEDetails {
 			}
 		});
 		boolean editable = getPage().getModel().isEditable();
-		fSchemaEntry = new FormEntry(client, toolkit, "Schema:", "Browse...", editable);
+		fSchemaEntry = new FormEntry(client, toolkit, PDEPlugin.getResourceString("ExtensionPointDetails.schema"), PDEPlugin.getResourceString("ExtensionPointDetails.browse"), editable); //$NON-NLS-1$ //$NON-NLS-2$
 		fSchemaEntry.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
 				if (fInput != null) {
@@ -154,8 +154,8 @@ public class ExtensionPointDetails extends PDEDetails {
 						PDEPlugin.getActiveWorkbenchShell(),
 						new WorkbenchLabelProvider(),
 						new WorkbenchContentProvider());
-				dialog.setTitle(PDEPlugin.getResourceString("ManifestEditor.ExtensionPointDetails.schemaLocation.title"));
-				dialog.setMessage(PDEPlugin.getResourceString("ManifestEditor.ExtensionPointDetails.schemaLocation.desc"));
+				dialog.setTitle(PDEPlugin.getResourceString("ManifestEditor.ExtensionPointDetails.schemaLocation.title")); //$NON-NLS-1$
+				dialog.setMessage(PDEPlugin.getResourceString("ManifestEditor.ExtensionPointDetails.schemaLocation.desc")); //$NON-NLS-1$
 				dialog.setDoubleClickSelects(false);
 				dialog.setAllowMultiple(false);
 				dialog.addFilter(new ViewerFilter(){
@@ -163,7 +163,7 @@ public class ExtensionPointDetails extends PDEDetails {
 							Object element) {
 						if (element instanceof IFile){
 							String ext = ((IFile)element).getFullPath().getFileExtension();
-							return ext.equals("exsd") || ext.equals("mxsd");
+							return ext.equals("exsd") || ext.equals("mxsd"); //$NON-NLS-1$ //$NON-NLS-2$
 						} else if (element instanceof IContainer){ // i.e. IProject, IFolder
 							try {
 								IResource[] resources = ((IContainer)element).members();
@@ -191,19 +191,19 @@ public class ExtensionPointDetails extends PDEDetails {
 									pluginName,
 									IStatus.ERROR,
 									PDEPlugin
-											.getResourceString("ManifestEditor.ExtensionPointDetails.validate.errorStatus"),
+											.getResourceString("ManifestEditor.ExtensionPointDetails.validate.errorStatus"), //$NON-NLS-1$
 									null);
 						IFile file = (IFile) selection[0];
 						String ext = file.getFullPath().getFileExtension();
-						if (ext.equals("exsd") || ext.equals("mxsd"))
+						if (ext.equals("exsd") || ext.equals("mxsd")) //$NON-NLS-1$ //$NON-NLS-2$
 							return new Status(IStatus.OK, pluginName,
-									IStatus.OK, "", null);
+									IStatus.OK, "", null); //$NON-NLS-1$
 						return new Status(
 								IStatus.ERROR,
 								pluginName,
 								IStatus.ERROR,
 								PDEPlugin
-										.getResourceString("ManifestEditor.ExtensionPointDetails.validate.errorStatus"),
+										.getResourceString("ManifestEditor.ExtensionPointDetails.validate.errorStatus"), //$NON-NLS-1$
 								null);
 					}
 				});
@@ -231,15 +231,15 @@ public class ExtensionPointDetails extends PDEDetails {
 		td.grabHorizontal = true;
 		td.indent = 10;
 		fRichText.setLayoutData(td);
-		fRichText.setImage("schema", PDEPlugin.getDefault().getLabelProvider().get(
+		fRichText.setImage("schema", PDEPlugin.getDefault().getLabelProvider().get( //$NON-NLS-1$
 				PDEPluginImages.DESC_SCHEMA_OBJ));
-		fRichText.setImage("desc", PDEPlugin.getDefault().getLabelProvider().get(
+		fRichText.setImage("desc", PDEPlugin.getDefault().getLabelProvider().get( //$NON-NLS-1$
 				PDEPluginImages.DESC_DOC_SECTION_OBJ));
-		fRichText.setImage("search", PDEPlugin.getDefault().getLabelProvider().get(
+		fRichText.setImage("search", PDEPlugin.getDefault().getLabelProvider().get( //$NON-NLS-1$
 				PDEPluginImages.DESC_PSEARCH_OBJ));
 		fRichText.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
-				if (e.getHref().equals("search")) {
+				if (e.getHref().equals("search")) { //$NON-NLS-1$
 					FindReferencesAction pluginReferencesAction = new FindReferencesAction(fInput);
 					pluginReferencesAction.run();
 				} else {
@@ -274,12 +274,12 @@ public class ExtensionPointDetails extends PDEDetails {
 	}
 	private void update() {
 		fIdEntry.setValue(
-				fInput != null && fInput.getId() != null ? fInput.getId() : "",
+				fInput != null && fInput.getId() != null ? fInput.getId() : "", //$NON-NLS-1$
 				true);
 		fNameEntry.setValue(fInput != null && fInput.getName() != null ? fInput
-				.getName() : "", true);
+				.getName() : "", true); //$NON-NLS-1$
 		fSchemaEntry.setValue(fInput != null && fInput.getSchema() != null ? fInput
-				.getSchema() : "", true);
+				.getSchema() : "", true); //$NON-NLS-1$
 		updateRichText();
 	}
 	public void cancelEdit() {

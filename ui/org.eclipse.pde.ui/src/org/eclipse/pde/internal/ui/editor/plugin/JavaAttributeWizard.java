@@ -31,7 +31,7 @@ public class JavaAttributeWizard extends Wizard {
 	private ISchemaAttribute attInfo;
 	private IPluginModelBase model;
 	private JavaAttributeWizardPage mainPage;
-	private static String STORE_SECTION = "JavaAttributeWizard";
+	private static String STORE_SECTION = "JavaAttributeWizard"; //$NON-NLS-1$
 	public JavaAttributeWizard(JavaAttributeValue value) {
 		this(value.getProject(), value.getModel(), value.getAttributeInfo(),
 				value.getClassName());
@@ -47,7 +47,7 @@ public class JavaAttributeWizard extends Wizard {
 				.getDialogSettings();
 		setDialogSettings(getSettingsSection(masterSettings));
 		setWindowTitle(PDEPlugin
-				.getResourceString("JavaAttributeWizard.wtitle"));
+				.getResourceString("JavaAttributeWizard.wtitle")); //$NON-NLS-1$
 		setNeedsProgressMonitor(true);
 	}
 	private IDialogSettings getSettingsSection(IDialogSettings master) {
@@ -66,7 +66,7 @@ public class JavaAttributeWizard extends Wizard {
 	public boolean performFinish() {
 		if (mainPage.getPackageText() != null
 				&& mainPage.getPackageText().length() > 0)
-			className = mainPage.getPackageText() + "."
+			className = mainPage.getPackageText() + "." //$NON-NLS-1$
 					+ mainPage.getTypeName();
 		else
 			className = mainPage.getTypeName();
@@ -114,7 +114,7 @@ public class JavaAttributeWizard extends Wizard {
 	}
 	public String getClassNameWithArgs() {
 		if (classArgs != null && classArgs.length() > 0)
-			return className + ":" + classArgs;
+			return className + ":" + classArgs; //$NON-NLS-1$
 		return getClassName();
 	}
 }

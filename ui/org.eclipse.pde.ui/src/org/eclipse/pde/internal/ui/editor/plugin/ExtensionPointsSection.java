@@ -36,14 +36,14 @@ import org.eclipse.ui.part.*;
  * Preferences - Java - Code Generation - Code and Comments
  */
 public class ExtensionPointsSection extends TableSection {
-	public static final String SECTION_TITLE = "ManifestEditor.DetailExtensionPointSection.title";
-	public static final String SECTION_DESC = "ManifestEditor.DetailExtensionPointSection.desc";
-	public static final String SECTION_NEW = "ManifestEditor.DetailExtensionPointSection.new";
+	public static final String SECTION_TITLE = "ManifestEditor.DetailExtensionPointSection.title"; //$NON-NLS-1$
+	public static final String SECTION_DESC = "ManifestEditor.DetailExtensionPointSection.desc"; //$NON-NLS-1$
+	public static final String SECTION_NEW = "ManifestEditor.DetailExtensionPointSection.new"; //$NON-NLS-1$
 	public static final String POPUP_NEW_EXTENSION_POINT =
-		"ManifestEditor.DetailExtensionPointSection.newExtensionPoint";
+		"ManifestEditor.DetailExtensionPointSection.newExtensionPoint"; //$NON-NLS-1$
 	public static final String POPUP_OPEN_SCHEMA =
-		"ManifestEditor.DetailExtensionPointSection.openSchema";
-	public static final String POPUP_DELETE = "Actions.delete.label";	
+		"ManifestEditor.DetailExtensionPointSection.openSchema"; //$NON-NLS-1$
+	public static final String POPUP_DELETE = "Actions.delete.label";	 //$NON-NLS-1$
 	private TableViewer pointTable;
 	
 	class TableContentProvider extends DefaultContentProvider
@@ -266,7 +266,7 @@ public class ExtensionPointsSection extends TableSection {
 		} else {
 			IPluginModelBase pmodel = (IPluginModelBase) model;
 			String location = pmodel.getInstallLocation();
-			if (location.startsWith("file:"))
+			if (location.startsWith("file:")) //$NON-NLS-1$
 				location = location.substring(5);
 			File file = new File(location + File.separator + schema);
 			if (file.exists()==false) {

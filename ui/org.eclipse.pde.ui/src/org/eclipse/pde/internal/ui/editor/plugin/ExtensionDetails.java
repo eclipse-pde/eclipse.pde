@@ -65,8 +65,8 @@ public class ExtensionDetails extends PDEDetails {
 		section.marginHeight = 5;		
 		section.marginWidth = 5;
 		//TODO translate strings in this file
-		section.setText("Extension Details");
-		section.setDescription("Set the properties of the selected extension.");
+		section.setText(PDEPlugin.getResourceString("ExtensionDetails.title")); //$NON-NLS-1$
+		section.setDescription(PDEPlugin.getResourceString("ExtensionDetails.desc")); //$NON-NLS-1$
 		TableWrapData td = new TableWrapData(TableWrapData.FILL, TableWrapData.TOP);
 		td.grabHorizontal = true;
 		section.setLayoutData(td);
@@ -81,7 +81,7 @@ public class ExtensionDetails extends PDEDetails {
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 
-		id = new FormEntry(client, toolkit, "Id:", null, false);
+		id = new FormEntry(client, toolkit, PDEPlugin.getResourceString("ExtensionDetails.id"), null, false); //$NON-NLS-1$
 		id.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
 				if (input!=null)
@@ -93,7 +93,7 @@ public class ExtensionDetails extends PDEDetails {
 			}
 		});
 		
-		name = new FormEntry(client, toolkit, "Name:", null, false);
+		name = new FormEntry(client, toolkit, PDEPlugin.getResourceString("ExtensionDetails.name"), null, false); //$NON-NLS-1$
 		name.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
 				if (input!=null)
@@ -105,7 +105,7 @@ public class ExtensionDetails extends PDEDetails {
 			}
 		});
 		
-		point = new FormEntry(client, toolkit, "Point:", null, false);
+		point = new FormEntry(client, toolkit, PDEPlugin.getResourceString("ExtensionDetails.point"), null, false); //$NON-NLS-1$
 		point.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
 				if (input!=null)
@@ -124,11 +124,11 @@ public class ExtensionDetails extends PDEDetails {
 		td.grabHorizontal = true;
 		td.indent = 10;
 		rtext.setLayoutData(td);
-		rtext.setImage("desc", PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_DOC_SECTION_OBJ));
-		rtext.setImage("search", PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PSEARCH_OBJ));		
+		rtext.setImage("desc", PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_DOC_SECTION_OBJ)); //$NON-NLS-1$
+		rtext.setImage("search", PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PSEARCH_OBJ));		 //$NON-NLS-1$
 		rtext.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
-				if (e.getHref().equals("search")){
+				if (e.getHref().equals("search")){ //$NON-NLS-1$
 					FindDeclarationsAction findDeclarationsAction = new FindDeclarationsAction(input);
 					findDeclarationsAction.run();
 				} else {
@@ -238,8 +238,8 @@ public class ExtensionDetails extends PDEDetails {
 		return getPage().getPDEEditor().getAggregateModel().isEditable();
 	}
 	private void showNoExtensionPointMessage() {
-		String title = "Extension Point Description";
-		String message = "Description for extension point \""+input.getPoint()+"\" cannot be found.";
+		String title = PDEPlugin.getResourceString("ExtensionDetails.noPoint.title"); //$NON-NLS-1$
+		String message = PDEPlugin.getFormattedMessage("ExtensionDetails.noPoint.desc",input.getPoint()); //$NON-NLS-1$
 		
 		MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), title, message);
 	}

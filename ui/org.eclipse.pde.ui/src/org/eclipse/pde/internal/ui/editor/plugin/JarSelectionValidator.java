@@ -36,14 +36,14 @@ public class JarSelectionValidator implements ISelectionStatusValidator {
 					IStatus.OK,
 					PDEPlugin.getPluginId(),
 					IStatus.OK,
-					"",
+					"", //$NON-NLS-1$
 					null);
 			}
 			return new Status(
 				IStatus.ERROR,
 				PDEPlugin.getPluginId(),
 				IStatus.ERROR,
-				"",
+				"", //$NON-NLS-1$
 				null);
 		}	
 

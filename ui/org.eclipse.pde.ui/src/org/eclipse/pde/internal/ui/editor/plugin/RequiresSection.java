@@ -62,13 +62,13 @@ public class RequiresSection
 	}
 
 	public RequiresSection(DependenciesPage page, Composite parent) {
-		super(page, parent, Section.DESCRIPTION, new String[] {"Add...", null, "Up", "Down"});
-		getSection().setText("Required Plug-ins");
+		super(page, parent, Section.DESCRIPTION, new String[] {"Add...", null, "Up", "Down"}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		getSection().setText(PDEPlugin.getResourceString("RequiresSection.title")); //$NON-NLS-1$
 		boolean fragment = ((IPluginModelBase)getPage().getModel()).isFragmentModel();
 		if (fragment)
-			getSection().setDescription("Specify the list of plug-ins required for the operation of this fragment:");
+			getSection().setDescription(PDEPlugin.getResourceString("RequiresSection.fDesc")); //$NON-NLS-1$
 		else
-			getSection().setDescription("Specify the list of plug-ins required for the operation of this plug-in:");
+			getSection().setDescription(PDEPlugin.getResourceString("RequiresSection.desc")); //$NON-NLS-1$
 		getTablePart().setEditable(false);
 	}
 
@@ -318,7 +318,7 @@ public class RequiresSection
 				handleDelete();
 			}
 		};		
-		buildpathAction = new Action("Compute Build Path") {
+		buildpathAction = new Action(PDEPlugin.getResourceString("RequiresSection.compute")) { //$NON-NLS-1$
 			public void run() {
 				Object model = getPage().getModel();
 				if (model instanceof IPluginModelBase)
@@ -398,7 +398,7 @@ public class RequiresSection
 		final boolean save) {
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
-				monitor.beginTask("Updating the build path...", 1);
+				monitor.beginTask(PDEPlugin.getResourceString("RequiresSection.update"), 1); //$NON-NLS-1$
 				try {
 					if (save && getPage().getEditor().isDirty()) {
 						getPage().getEditor().doSave(monitor);

@@ -25,11 +25,11 @@ public class PackageLabelProvider extends JavaElementLabelProvider {
 	public String getText(Object element) {
 		StringBuffer buffer = new StringBuffer(super.getText(element));
 		if (element instanceof IPackageFragment && showParentName){
-			buffer.append(" (");
+			buffer.append(" ("); //$NON-NLS-1$
 			buffer.append(((IPackageFragment) element).getParent()
 					.getElementName());
-			buffer.append("/");
-			buffer.append(")");
+			buffer.append("/"); //$NON-NLS-1$
+			buffer.append(")"); //$NON-NLS-1$
 		}
 		return buffer.toString();
 	}

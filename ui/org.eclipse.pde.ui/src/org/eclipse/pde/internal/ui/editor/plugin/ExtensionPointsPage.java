@@ -6,6 +6,7 @@
  */
 package org.eclipse.pde.internal.ui.editor.plugin;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.*;
@@ -18,7 +19,7 @@ import org.eclipse.ui.forms.widgets.*;
  * Preferences - Java - Code Generation - Code and Comments
  */
 public class ExtensionPointsPage extends PDEFormPage {
-	public static final String PAGE_ID = "ex-points";
+	public static final String PAGE_ID = "ex-points"; //$NON-NLS-1$
 	private ExtensionPointsSection extensionPointsSection;
 	private ExtensionPointsBlock block;
 	public class ExtensionPointsBlock extends PDEMasterDetailsBlock {
@@ -51,13 +52,13 @@ public class ExtensionPointsPage extends PDEFormPage {
 	 * @param title
 	 */
 	public ExtensionPointsPage(FormEditor editor) {
-		super(editor, PAGE_ID, "Extension Points");
+		super(editor, PAGE_ID, "Extension Points"); //$NON-NLS-1$
 		block = new ExtensionPointsBlock();
 	}
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
-		form.setText("Extension Points");
+		form.setText(PDEPlugin.getResourceString("ExtensionPointsPage.title")); //$NON-NLS-1$
 		block.createContent(managedForm);
 		extensionPointsSection.fireSelection();
 	}

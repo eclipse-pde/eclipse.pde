@@ -44,17 +44,17 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 	private boolean blockChanges = false;
 	private boolean addReexport = true;
 	private boolean osgiMode = false;
-	public static final String KEY_OPTIONAL = "ManifestEditor.MatchSection.optional";
-	public static final String KEY_REEXPORT = "ManifestEditor.MatchSection.reexport";
-	public static final String KEY_VERSION = "ManifestEditor.MatchSection.version";
-	public static final String KEY_RULE = "ManifestEditor.MatchSection.rule";
-	public static final String KEY_NONE = "ManifestEditor.MatchSection.none";
-	public static final String KEY_PERFECT = "ManifestEditor.MatchSection.perfect";
-	public static final String KEY_EQUIVALENT = "ManifestEditor.MatchSection.equivalent";
-	public static final String KEY_COMPATIBLE = "ManifestEditor.MatchSection.compatible";
-	public static final String KEY_GREATER = "ManifestEditor.MatchSection.greater";
-	public static final String KEY_VERSION_FORMAT = "ManifestEditor.PluginSpecSection.versionFormat";
-	public static final String KEY_VERSION_TITLE = "ManifestEditor.PluginSpecSection.versionTitle";
+	public static final String KEY_OPTIONAL = "ManifestEditor.MatchSection.optional"; //$NON-NLS-1$
+	public static final String KEY_REEXPORT = "ManifestEditor.MatchSection.reexport"; //$NON-NLS-1$
+	public static final String KEY_VERSION = "ManifestEditor.MatchSection.version"; //$NON-NLS-1$
+	public static final String KEY_RULE = "ManifestEditor.MatchSection.rule"; //$NON-NLS-1$
+	public static final String KEY_NONE = "ManifestEditor.MatchSection.none"; //$NON-NLS-1$
+	public static final String KEY_PERFECT = "ManifestEditor.MatchSection.perfect"; //$NON-NLS-1$
+	public static final String KEY_EQUIVALENT = "ManifestEditor.MatchSection.equivalent"; //$NON-NLS-1$
+	public static final String KEY_COMPATIBLE = "ManifestEditor.MatchSection.compatible"; //$NON-NLS-1$
+	public static final String KEY_GREATER = "ManifestEditor.MatchSection.greater"; //$NON-NLS-1$
+	public static final String KEY_VERSION_FORMAT = "ManifestEditor.PluginSpecSection.versionFormat"; //$NON-NLS-1$
+	public static final String KEY_VERSION_TITLE = "ManifestEditor.PluginSpecSection.versionTitle"; //$NON-NLS-1$
 	/**
 	 * @param formPage
 	 * @param parent
@@ -63,9 +63,9 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 	public MatchSection(PDEFormPage formPage, Composite parent,
 			boolean addReexport) {
 		super(formPage, parent, Section.DESCRIPTION);
-		getSection().setText("Dependency Properties");
+		getSection().setText(PDEPlugin.getResourceString("MatchSection.title")); //$NON-NLS-1$
 		getSection().setDescription(
-				"Define the properties of the selected dependency:");
+				PDEPlugin.getResourceString("MatchSection.desc")); //$NON-NLS-1$
 		this.addReexport = addReexport;
 		createClient(getSection(), formPage.getEditor().getToolkit());
 	}
@@ -321,7 +321,7 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 			boolean enableState = false;
 			versionText.getText().setEditable(enableState);
 			matchCombo.getControl().setEnabled(enableState);
-			matchCombo.setText("");
+			matchCombo.setText(""); //$NON-NLS-1$
 			blockChanges = false;
 			return;
 		}
@@ -337,7 +337,7 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 			versionText.setValue(ref.getVersion());
 			resetMatchCombo(ref);
 		} else {
-			versionText.setValue("");
+			versionText.setValue(""); //$NON-NLS-1$
 			matchCombo.getControl().setEnabled(true);
 			setMatchCombo(null);
 		}
@@ -356,7 +356,7 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 			boolean enableState = false;
 			versionText.getText().setEditable(enableState);
 			matchCombo.getControl().setEnabled(enableState);
-			matchCombo.setText("");
+			matchCombo.setText(""); //$NON-NLS-1$
 			currentImport = null;
 			blockChanges = false;
 			return;

@@ -45,7 +45,7 @@ public class PluginActivationSection extends TableSection
 	private Button fDoActivateButton;
 	private Button fDoNotActivateButton;
 	private Font fBoldFont;
-	private static final String ECLIPSE_AUTOSTART = "Eclipse-AutoStart";
+	private static final String ECLIPSE_AUTOSTART = PDEPlugin.getResourceString("PluginActivationSection.autostart"); //$NON-NLS-1$
 
 	class TableContentProvider extends DefaultContentProvider
 			implements
@@ -72,13 +72,13 @@ public class PluginActivationSection extends TableSection
 				Section.DESCRIPTION,
 				new String[]{
 						PDEPlugin
-								.getResourceString("ManifestEditor.OSGiSection.add"),
+								.getResourceString("ManifestEditor.OSGiSection.add"), //$NON-NLS-1$
 						PDEPlugin
-								.getResourceString("ManifestEditor.OSGiSection.remove")});
-		getSection().setText("Plug-in Activation (Eclipse 3.0 Platforms Only)");
+								.getResourceString("ManifestEditor.OSGiSection.remove")}); //$NON-NLS-1$
+		getSection().setText(PDEPlugin.getResourceString("PluginActivationSection.title")); //$NON-NLS-1$
 		getSection()
 				.setDescription(
-						"In order to improve performance, specify the conditions under which the plug-in should be activated.");
+						PDEPlugin.getResourceString("PluginActivationSection.desc")); //$NON-NLS-1$
 	}
 	private void update() {
 		fDoActivateButton.setEnabled(isEditable());
@@ -90,7 +90,7 @@ public class PluginActivationSection extends TableSection
 
 	private boolean isAutoStart() {
 		ManifestElement element = getManifestElement();
-		return (element == null) ? true : !"false".equals(element.getValue());
+		return (element == null) ? true : !"false".equals(element.getValue()); //$NON-NLS-1$
 	}
 
 	private String[] getExceptions() {
@@ -98,12 +98,12 @@ public class PluginActivationSection extends TableSection
 		if (element == null)
 			return new String[0];
 
-		String exceptions = element.getAttribute("exceptions");
+		String exceptions = element.getAttribute("exceptions"); //$NON-NLS-1$
 		if (exceptions == null)
 			return new String[0];
 
 		ArrayList tokens = new ArrayList();
-		StringTokenizer tok = new StringTokenizer(exceptions, ",");
+		StringTokenizer tok = new StringTokenizer(exceptions, ","); //$NON-NLS-1$
 		while (tok.hasMoreTokens())
 			tokens.add(tok.nextToken().trim());
 		return (String[]) tokens.toArray(new String[tokens.size()]);
@@ -241,9 +241,9 @@ public class PluginActivationSection extends TableSection
 			toolkit
 					.createLabel(
 							topContainer,
-							"To take advantage of this feature, the plug-in must contain a manifest.mf file.");
+							PDEPlugin.getResourceString("PluginActivationSection.manifestRequired")); //$NON-NLS-1$
 			Hyperlink manifestLink = toolkit.createHyperlink(topContainer,
-					"Create a manifest file", SWT.NULL);
+					PDEPlugin.getResourceString("PluginActivationSection.createManifest"), SWT.NULL); //$NON-NLS-1$
 			manifestLink.addHyperlinkListener(new IHyperlinkListener() {
 				public void linkActivated(HyperlinkEvent e) {
 					try {
@@ -253,8 +253,8 @@ public class PluginActivationSection extends TableSection
 						PDEPluginConverter.convertToOSGIFormat(model
 								.getUnderlyingResource().getProject(), model
 								.isFragmentModel()
-								? "fragment.xml"
-								: "plugin.xml", new NullProgressMonitor());
+								? "fragment.xml" //$NON-NLS-1$
+								: "plugin.xml", new NullProgressMonitor()); //$NON-NLS-1$
 					} catch (CoreException e1) {
 					}
 				}
@@ -287,11 +287,11 @@ public class PluginActivationSection extends TableSection
 				GridData.VERTICAL_ALIGN_BEGINNING));
 
 		Label activateLabel = toolkit.createLabel(ruleContainer,
-				"Activation Rule");
+				PDEPlugin.getResourceString("PluginActivationSection.rule")); //$NON-NLS-1$
 		activateLabel.setFont(fBoldFont);
 
 		fDoActivateButton = toolkit.createButton(ruleContainer,
-				"Always activate this plug-in", SWT.RADIO);
+				PDEPlugin.getResourceString("PluginActivationSection.activate"), SWT.RADIO); //$NON-NLS-1$
 
 		GridData gd = new GridData();
 		gd.horizontalIndent = 5;
@@ -306,7 +306,7 @@ public class PluginActivationSection extends TableSection
 		 * package list
 		 */
 		fDoNotActivateButton = toolkit.createButton(ruleContainer,
-				"Do not activate this plug-in", SWT.RADIO);
+				PDEPlugin.getResourceString("PluginActivationSection.noActivate"), SWT.RADIO); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalIndent = 5;
 		fDoNotActivateButton.setLayoutData(gd);
@@ -327,13 +327,13 @@ public class PluginActivationSection extends TableSection
 		exceptionsContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Label exceptionLabel = toolkit.createLabel(exceptionsContainer,
-				"Exceptions to the Rule");
+				PDEPlugin.getResourceString("PluginActivationSection.exception.title")); //$NON-NLS-1$
 		exceptionLabel.setFont(fBoldFont);
 		exceptionLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		Label label = toolkit
 				.createLabel(
 						exceptionsContainer,
-						"Ignore the activation rule when loaded classes belong to the following subset of packages:",
+						PDEPlugin.getResourceString("PluginActivationSection.exception.desc"), //$NON-NLS-1$
 						SWT.WRAP);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 225;
@@ -406,19 +406,19 @@ public class PluginActivationSection extends TableSection
 
 	private void writeHeader() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append(fDoActivateButton.getSelection() ? "true" : "false");
+		buffer.append(fDoActivateButton.getSelection() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 		TableItem[] items = fExceptionsTableViewer.getTable().getItems();
 		if (items.length > 0)
-			buffer.append(";exceptions=\"");
+			buffer.append(";exceptions=\""); //$NON-NLS-1$
 		for (int i = 0; i < items.length; i++) {
 			if (i > 0)
-				buffer.append(" ");
+				buffer.append(" "); //$NON-NLS-1$
 			buffer.append(items[i].getData().toString());
 			if (i < items.length - 1)
-				buffer.append("," + System.getProperty("line.separator"));
+				buffer.append("," + System.getProperty("line.separator")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (items.length > 0)
-			buffer.append("\"");
+			buffer.append("\""); //$NON-NLS-1$
 		getBundleModel().getBundle().setHeader(ECLIPSE_AUTOSTART,
 				buffer.toString());
 	}

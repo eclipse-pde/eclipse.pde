@@ -108,7 +108,7 @@ public class LoopDialog extends Dialog {
 		tree.setLayoutData(gd);
 		fLoopViewer.setInput(PDEPlugin.getDefault());
 		fLoopViewer.expandAll();
-		getShell().setText("Cycles in Dependency Graph");
+		getShell().setText(PDEPlugin.getResourceString("LoopDialog.title")); //$NON-NLS-1$
 		return container;
 	}
 }

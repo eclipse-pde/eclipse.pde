@@ -41,12 +41,12 @@ public class DependencyAnalysisSection extends PDESection implements IPartSelect
 	
 	private String getFormText() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("<form>");
+		buffer.append("<form>"); //$NON-NLS-1$
 		if (getPage().getModel() instanceof IPluginModel)
-			buffer.append("<p><img href=\"loops\"/> <a href=\"loops\">Look for cycles in the dependency graph</a></p>");
-		buffer.append("<p><img href=\"search\"/> <a href=\"extent\">Compute Dependency Extent</a></p>");
-		buffer.append("<p><img href=\"search\"/> <a href=\"unused\">Find unused dependencies</a></p>");
-		buffer.append("</form>");
+			buffer.append("<p><img href=\"loops\"/> <a href=\"loops\">Look for cycles in the dependency graph</a></p>"); //$NON-NLS-1$
+		buffer.append("<p><img href=\"search\"/> <a href=\"extent\">Compute Dependency Extent</a></p>"); //$NON-NLS-1$
+		buffer.append("<p><img href=\"search\"/> <a href=\"unused\">Find unused dependencies</a></p>"); //$NON-NLS-1$
+		buffer.append("</form>"); //$NON-NLS-1$
 		return buffer.toString();
 	}
 
@@ -54,21 +54,21 @@ public class DependencyAnalysisSection extends PDESection implements IPartSelect
 	 * @see org.eclipse.pde.internal.ui.neweditor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
-		section.setText("Dependency Analysis");
+		section.setText(PDEPlugin.getResourceString("DependencyAnalysisSection.title")); //$NON-NLS-1$
 		//toolkit.createCompositeSeparator(section);
 		
 		formText = toolkit.createFormText(section, true);
 		formText.setText(getFormText(), true, false);		
 		PDELabelProvider lp = PDEPlugin.getDefault().getLabelProvider();
-		formText.setImage("loops", lp.get(PDEPluginImages.DESC_LOOP_OBJ));
-		formText.setImage("search", lp.get(PDEPluginImages.DESC_PSEARCH_OBJ));
+		formText.setImage("loops", lp.get(PDEPluginImages.DESC_LOOP_OBJ)); //$NON-NLS-1$
+		formText.setImage("search", lp.get(PDEPluginImages.DESC_PSEARCH_OBJ)); //$NON-NLS-1$
 		formText.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
-				if (e.getHref().equals("extent"))
+				if (e.getHref().equals("extent")) //$NON-NLS-1$
 					doFindPlugins();
-				else if (e.getHref().equals("unused"))
+				else if (e.getHref().equals("unused")) //$NON-NLS-1$
 					doFindUnusedDependencies();
-				else if (e.getHref().equals("loops"))
+				else if (e.getHref().equals("loops")) //$NON-NLS-1$
 					doFindLoops();
 			}
 		});
@@ -81,7 +81,7 @@ public class DependencyAnalysisSection extends PDESection implements IPartSelect
 			IPlugin plugin = ((IPluginModel)model).getPlugin();
 			DependencyLoop[] loops = DependencyLoopFinder.findLoops(plugin);
 			if (loops.length == 0)
-				MessageDialog.openInformation(PDEPlugin.getActiveWorkbenchShell(), "Dependency Loops", "The dependency graph of this plug-in does not contain cycles.");
+				MessageDialog.openInformation(PDEPlugin.getActiveWorkbenchShell(), PDEPlugin.getResourceString("DependencyAnalysisSection.loops"), PDEPlugin.getResourceString("DependencyAnalysisSection.noCycles")); //$NON-NLS-1$ //$NON-NLS-2$
 			else {
 				LoopDialog dialog = new LoopDialog(PDEPlugin.getActiveWorkbenchShell(), loops);
 				dialog.open();

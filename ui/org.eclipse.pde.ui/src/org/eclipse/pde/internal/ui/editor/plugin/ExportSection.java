@@ -40,15 +40,15 @@ import org.osgi.framework.*;
 public class ExportSection extends TableSection
 		implements
 			IPartSelectionListener, IInputContextListener {
-	public static final String SECTION_TITLE = "ManifestEditor.ExportSection.title";
-	public static final String SECTION_DESC = "ManifestEditor.ExportSection.desc";
-	public static final String KEY_NO_EXPORT = "ManifestEditor.ExportSection.noExport";
-	public static final String KEY_NEW_FILTER = "ManifestEditor.ExportSection.newFilter";
-	public static final String KEY_FULL_EXPORT = "ManifestEditor.ExportSection.fullExport";
-	public static final String KEY_SELECTED_EXPORT = "ManifestEditor.ExportSection.selectedExport";
-	public static final String KEY_ADD = "ManifestEditor.ExportSection.add";
-	public static final String KEY_REMOVE = "ManifestEditor.ExportSection.remove";
-	public static final String SECTION_ADD_TITLE = "ManifestEditor.ExportSection.addTitle";
+	public static final String SECTION_TITLE = "ManifestEditor.ExportSection.title"; //$NON-NLS-1$
+	public static final String SECTION_DESC = "ManifestEditor.ExportSection.desc"; //$NON-NLS-1$
+	public static final String KEY_NO_EXPORT = "ManifestEditor.ExportSection.noExport"; //$NON-NLS-1$
+	public static final String KEY_NEW_FILTER = "ManifestEditor.ExportSection.newFilter"; //$NON-NLS-1$
+	public static final String KEY_FULL_EXPORT = "ManifestEditor.ExportSection.fullExport"; //$NON-NLS-1$
+	public static final String KEY_SELECTED_EXPORT = "ManifestEditor.ExportSection.selectedExport"; //$NON-NLS-1$
+	public static final String KEY_ADD = "ManifestEditor.ExportSection.add"; //$NON-NLS-1$
+	public static final String KEY_REMOVE = "ManifestEditor.ExportSection.remove"; //$NON-NLS-1$
+	public static final String SECTION_ADD_TITLE = "ManifestEditor.ExportSection.addTitle"; //$NON-NLS-1$
 	private Button fFullExportButton;
 	private Button fSelectedExportButton;
 	private IPluginLibrary fCurrentLibrary;

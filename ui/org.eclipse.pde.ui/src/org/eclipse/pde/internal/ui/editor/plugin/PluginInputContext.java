@@ -20,7 +20,7 @@ import org.eclipse.text.edits.*;
 import org.eclipse.ui.*;
 
 public class PluginInputContext extends XMLInputContext {
-	public static final String CONTEXT_ID = "plugin-context";
+	public static final String CONTEXT_ID = "plugin-context"; //$NON-NLS-1$
 	private boolean fIsFragment;
 	/**
 	 * @param editor
@@ -84,13 +84,13 @@ public class PluginInputContext extends XMLInputContext {
 				if (node.getParentNode() instanceof PluginBaseNode) {
 					TextEdit edit = (TextEdit)map.get(node);
 					if (edit instanceof InsertEdit) {
-						if (node.getXMLTagName().equals("runtime")) {
+						if (node.getXMLTagName().equals("runtime")) { //$NON-NLS-1$
 							runtimeInsert = edit;
-						} else if (node.getXMLTagName().equals("requires")) {
+						} else if (node.getXMLTagName().equals("requires")) { //$NON-NLS-1$
 							requiresInsert = edit;
-						} else if (node.getXMLTagName().equals("extension")) {
+						} else if (node.getXMLTagName().equals("extension")) { //$NON-NLS-1$
 							extensionInserts.add(edit);
-						} else if (node.getXMLTagName().equals("extension-point")) {
+						} else if (node.getXMLTagName().equals("extension-point")) { //$NON-NLS-1$
 							extensionPointInserts.add(edit);
 						}
 					}

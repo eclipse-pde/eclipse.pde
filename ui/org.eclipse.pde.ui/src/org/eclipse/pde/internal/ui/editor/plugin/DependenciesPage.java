@@ -10,6 +10,7 @@ import org.eclipse.jface.action.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.context.*;
 import org.eclipse.pde.internal.ui.editor.context.IInputContextListener;
@@ -25,7 +26,7 @@ import org.eclipse.ui.forms.widgets.*;
  * Preferences - Java - Code Generation - Code and Comments
  */
 public class DependenciesPage extends PDEFormPage implements IInputContextListener {
-	public static final String PAGE_ID = "dependencies";
+	public static final String PAGE_ID = "dependencies"; //$NON-NLS-1$
 	private RequiresSection requiresSection;
 	private MatchSection matchSection;
 	/**
@@ -34,12 +35,12 @@ public class DependenciesPage extends PDEFormPage implements IInputContextListen
 	 * @param title
 	 */
 	public DependenciesPage(FormEditor editor) {
-		super(editor, PAGE_ID, "Dependencies");
+		super(editor, PAGE_ID, "Dependencies"); //$NON-NLS-1$
 	}
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
-		form.setText("Dependencies");
+		form.setText(PDEPlugin.getResourceString("DependenciesPage.title")); //$NON-NLS-1$
 		Composite body = form.getBody();
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;

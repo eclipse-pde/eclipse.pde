@@ -10,6 +10,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.plugin.rows.*;
 import org.eclipse.swt.*;
@@ -67,8 +68,8 @@ public class ExtensionElementDetails extends PDEDetails {
 		section.marginHeight = 5;
 		section.marginWidth = 5;
 		//TODO translate strings in this file
-		section.setText("Extension Element Details");
-		section.setDescription("Set the properties of the selected element.");
+		section.setText(PDEPlugin.getResourceString("ExtensionElementDetails.title")); //$NON-NLS-1$
+		section.setDescription(PDEPlugin.getResourceString("ExtensionElementDetails.desc")); //$NON-NLS-1$
 		TableWrapData td = new TableWrapData(TableWrapData.FILL,
 				TableWrapData.TOP);
 		td.grabHorizontal = true;
@@ -126,7 +127,7 @@ public class ExtensionElementDetails extends PDEDetails {
 			row = new ResourceAttributeRow(this, att);
 		else {
 			ISchemaSimpleType type = att.getType();
-			if (type.getName().equals("boolean"))
+			if (type.getName().equals("boolean")) //$NON-NLS-1$
 				row = new BooleanAttributeRow(this, att);
 			else {
 				ISchemaRestriction restriction = type.getRestriction();
@@ -220,10 +221,10 @@ public class ExtensionElementDetails extends PDEDetails {
 		//TODO translate strings
 		if (input != null) {
 			String iname = input.getName();
-			section.setDescription("Set the properties of '" + iname + "'.");
+			section.setDescription(PDEPlugin.getFormattedMessage("ExtensionElementDetails.setDesc", iname)); //$NON-NLS-1$
 		} else {
 			section
-					.setDescription("Set the properties of the selected element.");
+					.setDescription(PDEPlugin.getResourceString("ExtensionElementDetails.setSelectedDesc")); //$NON-NLS-1$
 		}
 		section.layout();
 	}

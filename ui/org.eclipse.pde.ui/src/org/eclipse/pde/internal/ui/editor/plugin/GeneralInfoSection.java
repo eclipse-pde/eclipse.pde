@@ -38,11 +38,11 @@ import org.eclipse.ui.ide.IDE;
 public class GeneralInfoSection extends PDESection
 		implements
 			IInputContextListener {
-	public static final String KEY_MATCH = "ManifestEditor.PluginSpecSection.versionMatch";
-	public static final String KEY_MATCH_PERFECT = "ManifestEditor.MatchSection.perfect";
-	public static final String KEY_MATCH_EQUIVALENT = "ManifestEditor.MatchSection.equivalent";
-	public static final String KEY_MATCH_COMPATIBLE = "ManifestEditor.MatchSection.compatible";
-	public static final String KEY_MATCH_GREATER = "ManifestEditor.MatchSection.greater";
+	public static final String KEY_MATCH = "ManifestEditor.PluginSpecSection.versionMatch"; //$NON-NLS-1$
+	public static final String KEY_MATCH_PERFECT = "ManifestEditor.MatchSection.perfect"; //$NON-NLS-1$
+	public static final String KEY_MATCH_EQUIVALENT = "ManifestEditor.MatchSection.equivalent"; //$NON-NLS-1$
+	public static final String KEY_MATCH_COMPATIBLE = "ManifestEditor.MatchSection.compatible"; //$NON-NLS-1$
+	public static final String KEY_MATCH_GREATER = "ManifestEditor.MatchSection.greater"; //$NON-NLS-1$
 	private FormEntry fIdEntry;
 	private FormEntry fVersionEntry;
 	private FormEntry fNameEntry;
@@ -69,7 +69,7 @@ public class GeneralInfoSection extends PDESection
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText(PDEPlugin
-				.getResourceString("ManifestEditor.PluginSpecSection.title"));
+				.getResourceString("ManifestEditor.PluginSpecSection.title")); //$NON-NLS-1$
 		TableWrapData td = new TableWrapData(TableWrapData.FILL,
 				TableWrapData.TOP);
 		td.grabHorizontal = true;
@@ -77,11 +77,11 @@ public class GeneralInfoSection extends PDESection
 		if (isFragment())
 			section
 					.setDescription(PDEPlugin
-							.getResourceString("ManifestEditor.PluginSpecSection.fdesc"));
+							.getResourceString("ManifestEditor.PluginSpecSection.fdesc")); //$NON-NLS-1$
 		else
 			section
 					.setDescription(PDEPlugin
-							.getResourceString("ManifestEditor.PluginSpecSection.desc"));
+							.getResourceString("ManifestEditor.PluginSpecSection.desc")); //$NON-NLS-1$
 		Composite client = toolkit.createComposite(section);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = toolkit.getBorderStyle() != SWT.NULL ? 0 : 2;
@@ -129,7 +129,7 @@ public class GeneralInfoSection extends PDESection
 	private void createIDEntry(Composite client, FormToolkit toolkit,
 			IActionBars actionBars) {
 		//TODO translate string
-		fIdEntry = new FormEntry(client, toolkit, "ID:", null, false);
+		fIdEntry = new FormEntry(client, toolkit, PDEPlugin.getResourceString("GeneralInfoSection.id"), null, false); //$NON-NLS-1$
 		fIdEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
 				try {
@@ -144,7 +144,7 @@ public class GeneralInfoSection extends PDESection
 	private void createVersionEntry(Composite client, FormToolkit toolkit,
 			IActionBars actionBars) {
 		//TODO translate string
-		fVersionEntry = new FormEntry(client, toolkit, "Version:", null, false);
+		fVersionEntry = new FormEntry(client, toolkit, PDEPlugin.getResourceString("GeneralInfoSection.version"), null, false); //$NON-NLS-1$
 		fVersionEntry.setFormEntryListener(new FormEntryAdapter(this,
 				actionBars) {
 			public void textValueChanged(FormEntry entry) {
@@ -160,7 +160,7 @@ public class GeneralInfoSection extends PDESection
 	private void createNameEntry(Composite client, FormToolkit toolkit,
 			IActionBars actionBars) {
 		//TODO translate string
-		fNameEntry = new FormEntry(client, toolkit, "Name:", null, false);
+		fNameEntry = new FormEntry(client, toolkit, PDEPlugin.getResourceString("GeneralInfoSection.name"), null, false); //$NON-NLS-1$
 		fNameEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
 				try {
@@ -175,7 +175,7 @@ public class GeneralInfoSection extends PDESection
 	private void createProviderEntry(Composite client, FormToolkit toolkit,
 			IActionBars actionBars) {
 //		TODO translate string
-		fProviderEntry = new FormEntry(client, toolkit, "Provider:", null,
+		fProviderEntry = new FormEntry(client, toolkit, PDEPlugin.getResourceString("GeneralInfoSection.provider"), null, //$NON-NLS-1$
 				false);
 		fProviderEntry.setFormEntryListener(new FormEntryAdapter(this,
 				actionBars) {
@@ -193,7 +193,7 @@ public class GeneralInfoSection extends PDESection
 			IActionBars actionBars) {
 //		TODO translate string
 		boolean editable = getPage().getModel().isEditable();
-		fClassEntry = new FormEntry(client, toolkit, "Class:", "Browse...",
+		fClassEntry = new FormEntry(client, toolkit, PDEPlugin.getResourceString("GeneralInfoSection.class"), PDEPlugin.getResourceString("GeneralInfoSection.browse"), //$NON-NLS-1$ //$NON-NLS-2$
 				editable);
 		fClassEntry
 				.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
@@ -235,16 +235,16 @@ public class GeneralInfoSection extends PDESection
 		value = value.trim();
 		while (value.length() > 0 && !Character.isLetter(value.charAt(0)))
 			value = value.substring(1, value.length());
-		int loc = value.indexOf(":");
+		int loc = value.indexOf(":"); //$NON-NLS-1$
 		if (loc != -1 && loc > 0)
 			value = value.substring(0, loc);
 		else if (loc == 0)
-			value = "";
+			value = ""; //$NON-NLS-1$
 		return value;
 	}
 	private boolean doesClassExist(String className) {
 		IProject project = getPage().getPDEEditor().getCommonProject();
-		String path = className.replace('.', '/') + ".java";
+		String path = className.replace('.', '/') + ".java"; //$NON-NLS-1$
 		try {
 			if (project.hasNature(JavaCore.NATURE_ID)) {
 				IJavaProject javaProject = JavaCore.create(project);
@@ -270,7 +270,7 @@ public class GeneralInfoSection extends PDESection
 	private void createPluginIDEntry(Composite parent, FormToolkit toolkit,
 			IActionBars actionBars) {
 //		TODO translate string
-		Hyperlink link = toolkit.createHyperlink(parent, "Plug-in Id:",
+		Hyperlink link = toolkit.createHyperlink(parent, PDEPlugin.getResourceString("GeneralInfoSection.pluginId"), //$NON-NLS-1$
 				SWT.NULL);
 		link.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
@@ -286,7 +286,7 @@ public class GeneralInfoSection extends PDESection
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 1;
 		client.setLayoutData(gd);
-		fPluginIdText = toolkit.createText(client, "", SWT.SINGLE);
+		fPluginIdText = toolkit.createText(client, "", SWT.SINGLE); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 20;
 		fPluginIdText.setLayoutData(gd);
@@ -304,7 +304,7 @@ public class GeneralInfoSection extends PDESection
 				}
 			}
 		});
-		Button button = toolkit.createButton(client, "Browse...", SWT.PUSH);
+		Button button = toolkit.createButton(client, PDEPlugin.getResourceString("GeneralInfoSection.browse"), SWT.PUSH); //$NON-NLS-1$
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				PluginSelectionDialog dialog = new PluginSelectionDialog(
@@ -333,7 +333,7 @@ public class GeneralInfoSection extends PDESection
 			FormToolkit toolkit, IActionBars actionBars) {
 		//TODO translate string
 		fPluginVersionEntry = new FormEntry(client, toolkit,
-				"Plug-in Version:", null, false);
+				PDEPlugin.getResourceString("GeneralInfoSection.pluginVersion"), null, false); //$NON-NLS-1$
 		fPluginVersionEntry.setFormEntryListener(new FormEntryAdapter(this,
 				actionBars) {
 			public void textValueChanged(FormEntry entry) {
@@ -359,7 +359,7 @@ public class GeneralInfoSection extends PDESection
 		gd.widthHint = 20;
 		gd.grabExcessHorizontalSpace = true;
 		fMatchCombo.getControl().setLayoutData(gd);
-		String[] items = new String[]{"",
+		String[] items = new String[]{"", //$NON-NLS-1$
 				PDEPlugin.getResourceString(KEY_MATCH_EQUIVALENT),
 				PDEPlugin.getResourceString(KEY_MATCH_COMPATIBLE),
 				PDEPlugin.getResourceString(KEY_MATCH_PERFECT),
@@ -447,7 +447,7 @@ public class GeneralInfoSection extends PDESection
 		String name = fClassEntry.getText().getText();
 		name = trimNonAlphaChars(name);
 		IProject project = getPage().getPDEEditor().getCommonProject();
-		String path = name.replace('.', '/') + ".java";
+		String path = name.replace('.', '/') + ".java"; //$NON-NLS-1$
 		try {
 			if (project.hasNature(JavaCore.NATURE_ID)) {
 				IJavaProject javaProject = JavaCore.create(project);
@@ -481,9 +481,9 @@ public class GeneralInfoSection extends PDESection
 						PlatformUI.getWorkbench().getProgressService(),
 						getSearchScope(project),
 						IJavaElementSearchConstants.CONSIDER_CLASSES, false,
-						"*");
+						"*"); //$NON-NLS-1$
 				//TODO translate string
-				dialog.setTitle("Select Type");
+				dialog.setTitle(PDEPlugin.getResourceString("GeneralInfoSection.selectionTitle")); //$NON-NLS-1$
 				if (dialog.open() == SelectionDialog.OK) {
 					IType type = (IType) dialog.getResult()[0];
 					fClassEntry.setValue(type.getFullyQualifiedName());

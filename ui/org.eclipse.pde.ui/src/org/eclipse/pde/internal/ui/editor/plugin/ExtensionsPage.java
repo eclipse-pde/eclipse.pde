@@ -22,7 +22,7 @@ import org.eclipse.ui.forms.widgets.*;
  * Preferences - Java - Code Generation - Code and Comments
  */
 public class ExtensionsPage extends PDEFormPage {
-	public static final String PAGE_ID = "extensions";
+	public static final String PAGE_ID = "extensions"; //$NON-NLS-1$
 	private ExtensionsBlock block;
 	private ExtensionsSection section;
 	
@@ -52,7 +52,7 @@ public class ExtensionsPage extends PDEFormPage {
 				IPluginElement pelement = (IPluginElement)object;
 				String ename = pelement.getName();
 				IPluginExtension extension = ExtensionsSection.getExtension((IPluginParent)pelement.getParent());
-				return extension.getPoint()+"/"+ename;
+				return extension.getPoint()+"/"+ename; //$NON-NLS-1$
 			}
 			return object.getClass();
 		}
@@ -65,12 +65,12 @@ public class ExtensionsPage extends PDEFormPage {
 		}
 		protected void createToolBarActions(IManagedForm managedForm) {
 			final ScrolledForm form = managedForm.getForm();
-			Action collapseAction = new Action("col") {
+			Action collapseAction = new Action("col") { //$NON-NLS-1$
 				public void run() {
 					section.handleCollapseAll();
 				}
 			};
-			collapseAction.setToolTipText("Collapse All");
+			collapseAction.setToolTipText(PDEPlugin.getResourceString("ExtensionsPage.collapseAll")); //$NON-NLS-1$
 			collapseAction.setImageDescriptor(PDEPluginImages.DESC_COLLAPSE_ALL);
 			form.getToolBarManager().add(collapseAction);
 			super.createToolBarActions(managedForm);
@@ -82,13 +82,13 @@ public class ExtensionsPage extends PDEFormPage {
 	 * @param title
 	 */
 	public ExtensionsPage(FormEditor editor) {
-		super(editor, PAGE_ID, "Extensions");
+		super(editor, PAGE_ID, "Extensions"); //$NON-NLS-1$
 		block = new ExtensionsBlock();
 	}
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
-		form.setText("Extensions");
+		form.setText(PDEPlugin.getResourceString("ExtensionsPage.title")); //$NON-NLS-1$
 		block.createContent(managedForm);
 		BodyTextSection bodyTextSection = new BodyTextSection(this, form.getBody());
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL|GridData.VERTICAL_ALIGN_BEGINNING);

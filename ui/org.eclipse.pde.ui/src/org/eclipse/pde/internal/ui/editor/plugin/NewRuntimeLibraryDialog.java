@@ -35,7 +35,7 @@ public class NewRuntimeLibraryDialog extends SelectionStatusDialog {
 				IStatus.OK,
 				PDEPlugin.getPluginId(),
 				IStatus.OK,
-				"",
+				"", //$NON-NLS-1$
 				null);
 
 			if (librarySet.contains(new Path(ClasspathUtilCore.expandLibraryName(text))))
@@ -44,13 +44,13 @@ public class NewRuntimeLibraryDialog extends SelectionStatusDialog {
 					PDEPlugin.getPluginId(),
 					IStatus.ERROR,
 					PDEPlugin.getResourceString(
-						"ManifestEditor.LibrarySection.NewRuntimeLibraryDialog.validationError"),
+						"ManifestEditor.RuntimeLibraryDialog.validationError"), //$NON-NLS-1$
 					null);
 			return new Status(
 				IStatus.OK,
 				PDEPlugin.getPluginId(),
 				IStatus.OK,
-				"",
+				"", //$NON-NLS-1$
 				null);
 
 		}
@@ -89,14 +89,14 @@ public class NewRuntimeLibraryDialog extends SelectionStatusDialog {
 		libraryLabel.setLayoutData(gd);
 		libraryLabel
 				.setText(PDEPlugin
-						.getResourceString("ManifestEditor.LibrarySection.NewRuntimeLibraryDialog.label"));
+						.getResourceString("ManifestEditor.RuntimeLibraryDialog.label")); //$NON-NLS-1$
 		
 		libraryText = new Text(container, SWT.SINGLE|SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		libraryText.setLayoutData(gd);
 		libraryText
 				.setText(PDEPlugin
-						.getResourceString("ManifestEditor.LibrarySection.NewRuntimeLibraryDialog.default"));
+						.getResourceString("ManifestEditor.RuntimeLibraryDialog.default")); //$NON-NLS-1$
 		libraryText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				updateStatus(validator.validate(libraryText.getText()));
@@ -109,7 +109,7 @@ public class NewRuntimeLibraryDialog extends SelectionStatusDialog {
 	 * @see org.eclipse.jface.window.Window#open()
 	 */
 	public int open() {
-		libraryText.setText("library.jar");
+		libraryText.setText("library.jar"); //$NON-NLS-1$
 		libraryText.setSelection(0, libraryText.getText().length() - 4);
 		return super.open();
 	}

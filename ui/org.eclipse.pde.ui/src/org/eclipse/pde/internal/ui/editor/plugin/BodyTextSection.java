@@ -28,12 +28,12 @@ public class BodyTextSection
 	extends PDESection
 	implements IModelChangedListener, IPartSelectionListener {
 	public static final String SECTION_TITLE =
-		"ManifestEditor.BodyTextSection.title";
+		"ManifestEditor.BodyTextSection.title"; //$NON-NLS-1$
 	public static final String SECTION_TITLE_FULL =
-		"ManifestEditor.BodyTextSection.titleFull";
-	public static final String KEY_APPLY = "Actions.apply.flabel";
-	public static final String KEY_RESET = "Actions.reset.flabel";
-	public static final String KEY_DELETE = "Actions.delete.flabel";
+		"ManifestEditor.BodyTextSection.titleFull"; //$NON-NLS-1$
+	public static final String KEY_APPLY = "Actions.apply.flabel"; //$NON-NLS-1$
+	public static final String KEY_RESET = "Actions.reset.flabel"; //$NON-NLS-1$
+	public static final String KEY_DELETE = "Actions.delete.flabel"; //$NON-NLS-1$
 	private Button applyButton;
 	private Button resetButton;
 	private IPluginElement currentElement;
@@ -74,7 +74,7 @@ public class BodyTextSection
 		text =
 			toolkit.createText(
 				container,
-				"",
+				"", //$NON-NLS-1$
 				SWT.MULTI
 					| SWT.WRAP
 					| SWT.V_SCROLL);
@@ -131,7 +131,7 @@ public class BodyTextSection
 			}
 		});
 
-		if (SWT.getPlatform().equals("motif") == false)
+		if (SWT.getPlatform().equals("motif") == false) //$NON-NLS-1$
 			toolkit.paintBordersFor(container);
 		section.setClient(container);
 		initialize();
@@ -178,7 +178,7 @@ public class BodyTextSection
 		try {
 			if (currentElement!=null)
 				currentElement.setText(
-						text.getText().length() > 0 ? text.getText() : "");
+						text.getText().length() > 0 ? text.getText() : ""); //$NON-NLS-1$
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
@@ -233,7 +233,7 @@ public class BodyTextSection
 		String bodyText = element != null ? element.getText() : null;
 
 		blockNotification=true;
-		text.setText(bodyText != null && bodyText.length()>0? bodyText : "");
+		text.setText(bodyText != null && bodyText.length()>0? bodyText : ""); //$NON-NLS-1$
 		applyButton.setEnabled(false);
 		resetButton.setEnabled(false);
 

@@ -20,7 +20,7 @@ import org.eclipse.text.edits.*;
 import org.eclipse.ui.*;
 
 public class BundleInputContext extends UTF8InputContext {
-	public static final String CONTEXT_ID = "bundle-context";
+	public static final String CONTEXT_ID = "bundle-context"; //$NON-NLS-1$
 	
 	private HashMap fOperationTable = new HashMap();
 	/**
@@ -104,7 +104,7 @@ public class BundleInputContext extends UTF8InputContext {
 			} catch (BadLocationException e) {
 			}
 		}
-		InsertEdit op = new InsertEdit(offset, key.write() + System.getProperty("line.separator"));
+		InsertEdit op = new InsertEdit(offset, key.write() + System.getProperty("line.separator")); //$NON-NLS-1$
 		fOperationTable.put(key, op);
 		ops.add(op);
 	}
@@ -121,7 +121,7 @@ public class BundleInputContext extends UTF8InputContext {
 		if (key.getOffset() == -1) {
 			insertKey(key, ops);
 		} else {
-			TextEdit op = new ReplaceEdit(key.getOffset(), key.getLength(), key.write() + System.getProperty("line.separator"));
+			TextEdit op = new ReplaceEdit(key.getOffset(), key.getLength(), key.write() + System.getProperty("line.separator")); //$NON-NLS-1$
 			fOperationTable.put(key, op);
 			ops.add(op);
 		}	

@@ -19,6 +19,6 @@ public class ManifestEditorContributor extends PDEFormEditorContributor {
 	 * 
 	 */
 	public ManifestEditorContributor() {
-		super("&Plugin");
+		super("&Plugin"); //$NON-NLS-1$
 	}
 }

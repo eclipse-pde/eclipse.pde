@@ -39,19 +39,19 @@ public class LibrarySection
 	extends TableSection
 	implements IModelChangedListener {
 	public static final String SECTION_TITLE =
-		"ManifestEditor.LibrarySection.title";
-	public static final String SECTION_DESC = "ManifestEditor.LibrarySection.desc";
+		"ManifestEditor.LibrarySection.title"; //$NON-NLS-1$
+	public static final String SECTION_DESC = "ManifestEditor.LibrarySection.desc"; //$NON-NLS-1$
 	public static final String SECTION_FDESC =
-		"ManifestEditor.LibrarySection.fdesc";
-	public static final String SECTION_ADD = "NewManifestEditor.LibrarySection.add";
-	public static final String SECTION_NEW = "NewManifestEditor.LibrarySection.new";
-	public static final String SECTION_UP = "ManifestEditor.LibrarySection.up";
-	public static final String SECTION_DOWN = "ManifestEditor.LibrarySection.down";
+		"ManifestEditor.LibrarySection.fdesc"; //$NON-NLS-1$
+	public static final String SECTION_ADD = "NewManifestEditor.LibrarySection.add"; //$NON-NLS-1$
+	public static final String SECTION_NEW = "NewManifestEditor.LibrarySection.new"; //$NON-NLS-1$
+	public static final String SECTION_UP = "ManifestEditor.LibrarySection.up"; //$NON-NLS-1$
+	public static final String SECTION_DOWN = "ManifestEditor.LibrarySection.down"; //$NON-NLS-1$
 	public static final String POPUP_NEW_LIBRARY =
-		"ManifestEditor.LibrarySection.newLibrary";
-	public static final String POPUP_DELETE = "Actions.delete.label";
+		"ManifestEditor.LibrarySection.newLibrary"; //$NON-NLS-1$
+	public static final String POPUP_DELETE = "Actions.delete.label"; //$NON-NLS-1$
 	public static final String NEW_LIBRARY_ENTRY =
-		"ManifestEditor.LibrarySection.newLibraryEntry";
+		"ManifestEditor.LibrarySection.newLibraryEntry"; //$NON-NLS-1$
 
 	private RenameAction renameAction;
 	private TableViewer libraryTable;
@@ -321,8 +321,8 @@ public class LibrarySection
 				
 		Class[] acceptedClasses = new Class[] { IFile.class };
 		dialog.setValidator(new LibrarySelectionValidator(acceptedClasses, true));
-		dialog.setTitle(PDEPlugin.getResourceString("BuildEditor.ClasspathSection.jarsTitle"));
-		dialog.setMessage("Select JAR archives to be added to the plug-in's classpath:");
+		dialog.setTitle(PDEPlugin.getResourceString("BuildEditor.ClasspathSection.jarsTitle")); //$NON-NLS-1$
+		dialog.setMessage(PDEPlugin.getResourceString("LibrarySection.jarsMessage")); //$NON-NLS-1$
 		IPluginLibrary[] libraries = ((IPluginModelBase)getPage().getModel()).getPluginBase().getLibraries();
 		HashSet set = new HashSet();
 		for (int i = 0; i < libraries.length; i++) {
@@ -433,7 +433,7 @@ public class LibrarySection
 		IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
 		if (selection.size()==1 && isEditable()) {
 			Object obj = selection.getFirstElement();
-			String oldName = "";
+			String oldName = ""; //$NON-NLS-1$
 			if (obj instanceof IPluginLibrary)
 				oldName = ((IPluginLibrary)obj).getName();
 			

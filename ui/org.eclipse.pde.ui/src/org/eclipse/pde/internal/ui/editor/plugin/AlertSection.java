@@ -6,6 +6,7 @@
  */
 package org.eclipse.pde.internal.ui.editor.plugin;
 
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -34,11 +35,11 @@ public class AlertSection extends PDESection {
 	 * @see org.eclipse.pde.internal.ui.neweditor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
-		section.setText("Alerts and Action Items");
+		section.setText(PDEPlugin.getResourceString("AlertSection.title")); //$NON-NLS-1$
 		//toolkit.createCompositeSeparator(section);
 		text = toolkit.createFormText(section, true);
-		text.setImage("warning", PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_WARN_TSK));
-		text.setImage("error", PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_ERROR_TSK));
+		text.setImage("warning", PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_WARN_TSK)); //$NON-NLS-1$
+		text.setImage("error", PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_ERROR_TSK)); //$NON-NLS-1$
 		section.setClient(text);
 	}
 	public void refresh() {

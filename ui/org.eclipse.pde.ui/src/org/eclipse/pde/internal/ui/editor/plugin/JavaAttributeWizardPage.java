@@ -40,7 +40,7 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 		IPackageFragment packageFragment;
 		public InitialClassProperties() {
 			this.superClassType = null;
-			this.superClassName = "";
+			this.superClassName = ""; //$NON-NLS-1$
 			this.interfaceName = null;
 			this.interfaceType = null;
 			this.className = null;
@@ -99,7 +99,7 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 		if (typeName == null || typeName.length() == 0)
 			return null;
 		IType type = null;
-		String fileName = typeName.replace('.', '/') + ".java";
+		String fileName = typeName.replace('.', '/') + ".java"; //$NON-NLS-1$
 		IJavaElement element = javaProject.findElement(new Path(fileName));
 		if (element == null)
 			return null;
@@ -115,7 +115,7 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 		
 		
 		//			source folder name, package name, class name
-		int loc = className.indexOf(":");
+		int loc = className.indexOf(":"); //$NON-NLS-1$
 		if (loc != -1) {
 			if (loc < className.length()) {
 				initialValues.classArgs = className.substring(loc + 1,
@@ -125,7 +125,7 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 			if (loc > 0)
 				initialValues.className = className.substring(0, loc);
 			else if (loc == 0)
-				initialValues.className = "";
+				initialValues.className = ""; //$NON-NLS-1$
 		}
 		fClassNameStatus = JavaConventions
 		.validateJavaTypeName(initialValues.className);
@@ -168,11 +168,11 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 			}
 			//			superclass and interface
 			if (attInfo == null) {
-				initialValues.superClassName = "org.eclipse.core.runtime.Plugin";
+				initialValues.superClassName = "org.eclipse.core.runtime.Plugin"; //$NON-NLS-1$
 				IPluginImport[] imports = model.getPluginBase().getImports();
 				for (int i = 0; i < imports.length; i++) {
-					if (imports[i].getId().equals("org.eclipse.ui")) {
-						initialValues.superClassName = "org.eclipse.ui.plugin.AbstractUIPlugin";
+					if (imports[i].getId().equals("org.eclipse.ui")) { //$NON-NLS-1$
+						initialValues.superClassName = "org.eclipse.ui.plugin.AbstractUIPlugin"; //$NON-NLS-1$
 						break;
 					}
 				}
@@ -181,7 +181,7 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 			}
 			String schemaBasedOn = attInfo.getBasedOn();
 			if (schemaBasedOn == null || schemaBasedOn.length() == 0) {
-				initialValues.superClassName = "java.lang.Object";
+				initialValues.superClassName = "java.lang.Object"; //$NON-NLS-1$
 				initialValues.superClassType = findTypeForName(initialValues.superClassName);
 				return;
 			}
@@ -192,7 +192,7 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 				initialValues.interfaceName = schemaBasedOn.substring(del + 1);
 				initialValues.interfaceType = findTypeForName(initialValues.interfaceName);
 			} else {
-				int schemaLoc = schemaBasedOn.lastIndexOf(".");
+				int schemaLoc = schemaBasedOn.lastIndexOf("."); //$NON-NLS-1$
 				if (schemaLoc != -1 && schemaLoc < schemaBasedOn.length()) {
 					IType type = findTypeForName(schemaBasedOn);
 					if (type!=null && type.isInterface()){
@@ -227,7 +227,7 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 	
 	public String getClassArgs(){
 		if (initialValues.classArgs == null)
-			return "";
+			return ""; //$NON-NLS-1$
 		return initialValues.classArgs;
 	}
 

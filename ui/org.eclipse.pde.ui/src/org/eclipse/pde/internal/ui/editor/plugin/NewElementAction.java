@@ -19,7 +19,7 @@ import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.ui.*;
 
 public class NewElementAction extends Action {
-	public static final String UNKNOWN_ELEMENT_TAG = "Generic";
+	public static final String UNKNOWN_ELEMENT_TAG = PDEPlugin.getResourceString("NewElementAction.generic"); //$NON-NLS-1$
 	private ISchemaElement elementInfo;
 	private Hashtable counters;
 	private IPluginParent parent;
@@ -41,7 +41,7 @@ public String createDefaultClassName(ISchemaAttribute attInfo, int counter) {
 	String projectName = project.getName();
 	String packageName = projectName;
 	String expectedType = attInfo.getBasedOn();
-	String className = "";
+	String className = ""; //$NON-NLS-1$
 	if (expectedType == null) {
 		StringBuffer buf = new StringBuffer(tag);
 		buf.setCharAt(0, Character.toUpperCase(tag.charAt(0)));
@@ -57,17 +57,17 @@ public String createDefaultClassName(ISchemaAttribute attInfo, int counter) {
 			className = className.substring(1);
 	}
 	className += counter;
-	return packageName + "." + className;
+	return packageName + "." + className; //$NON-NLS-1$
 }
 public String createDefaultName(ISchemaAttribute attInfo, int counter) {
-	if (attInfo.getType().getName().equals("boolean"))
-		return "true";
+	if (attInfo.getType().getName().equals("boolean")) //$NON-NLS-1$
+		return "true"; //$NON-NLS-1$
 	
 	String tag = attInfo.getParent().getName();
-	return project.getName() + "." + tag + counter;
+	return project.getName() + "." + tag + counter; //$NON-NLS-1$
 }
 private String getCounterKey(ISchemaElement elementInfo) {
-	return elementInfo.getSchema().getQualifiedPointId()+"."+elementInfo.getName();
+	return elementInfo.getSchema().getQualifiedPointId()+"."+elementInfo.getName(); //$NON-NLS-1$
 }
 private String getElementName() {
 	return elementInfo!=null?elementInfo.getName() : UNKNOWN_ELEMENT_TAG;
