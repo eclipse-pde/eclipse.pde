@@ -7,7 +7,6 @@
 package org.eclipse.pde.internal.ui.launcher;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
@@ -26,6 +25,7 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.StandardSourcePathProvider;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 
 /**
  * Generates a source lookup path for Runtime Workbench launch configurations.
@@ -74,18 +74,15 @@ public class WorkbenchSourcePathProvider extends StandardSourcePathProvider {
 		boolean useFeatures = configuration.getAttribute(ILauncherSettings.USEFEATURES, false);		
 		boolean useDefault = configuration.getAttribute(ILauncherSettings.USECUSTOM, true);
 		
-		List plugins =
+		IPluginModelBase[] plugins =
 			useFeatures
 				? null
 				: WorkbenchLaunchConfigurationDelegate.getWorkspacePluginsToRun(configuration, useDefault);		
 		
 		if (plugins != null) {
-			List projects = getJavaProjects(plugins);
-			Iterator iter = projects.iterator();
-			
-			while (iter.hasNext()) {
-				IRuntimeClasspathEntry r = JavaRuntime.newProjectRuntimeClasspathEntry((IJavaProject)iter.next());
-				sourcePath.add(r);
+			IProject[] projects = getJavaProjects(plugins);
+			for (int i = 0; i < projects.length; i++){
+				sourcePath.add(JavaRuntime.newProjectRuntimeClasspathEntry(JavaCore.create(projects[i])));
 			}
 		}
 		
@@ -96,22 +93,21 @@ public class WorkbenchSourcePathProvider extends StandardSourcePathProvider {
 	/**
 	 * Converts plugin models to java projects
 	 */
-	private List getJavaProjects(List plugins)
-		throws CoreException {
+	private IProject[] getJavaProjects(IPluginModelBase[] plugins) throws CoreException {
 		ArrayList result = new ArrayList();
-		Iterator iter = plugins.iterator();
-		while (iter.hasNext()) {
-			IResource resource = ((IPluginModelBase)iter.next()).getUnderlyingResource();
+		for (int i = 0; i < plugins.length; i++) {
+			IResource resource = plugins[i].getUnderlyingResource();
 			if (resource != null) {
 				IProject project = resource.getProject();
 				if (project.hasNature(JavaCore.NATURE_ID)) {
-					result.add(JavaCore.create(project));
+					result.add(project);
 				}
 			}
 		}
-		return result;
-	}	
-
+		IProject[] projects = (IProject[])result.toArray(new IProject[result.size()]);
+		
+		return PDEPlugin.getWorkspace().computeProjectOrder(projects).projects;
+	}
 	/**
 	 * @see IRuntimeClasspathProvider#resolveClasspath(IRuntimeClasspathEntry[], ILaunchConfiguration)
 	 */
