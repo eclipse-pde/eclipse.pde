@@ -357,7 +357,8 @@ public class PortabilitySection extends PDESection implements IPartSelectionList
 
 	public void dispose() {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
-		model.removeModelChangedListener(this);
+		if (model!=null)
+			model.removeModelChangedListener(this);
 		super.dispose();
 	}
 

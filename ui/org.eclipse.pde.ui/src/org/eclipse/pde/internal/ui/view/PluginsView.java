@@ -20,7 +20,7 @@ import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.actions.OpenAction;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.*;
@@ -602,8 +602,7 @@ public class PluginsView extends ViewPart {
 					shell,
 					importType,
 					models);
-			ProgressMonitorDialog pmd = new ProgressMonitorDialog(shell);
-			pmd.run(true, true, op);
+			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(op);
 		} catch (InterruptedException e) {
 		} catch (InvocationTargetException e) {
 			PDEPlugin.logException(e);
@@ -646,10 +645,8 @@ public class PluginsView extends ViewPart {
 			}
 		};
 
-		ProgressMonitorDialog pmd =
-			new ProgressMonitorDialog(treeViewer.getTree().getShell());
 		try {
-			pmd.run(false, false, op);
+			PlatformUI.getWorkbench().getProgressService().run(false, false, op);
 		} catch (InterruptedException e) {
 		} catch (InvocationTargetException e) {
 			PDEPlugin.logException(e);

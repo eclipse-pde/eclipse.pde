@@ -261,7 +261,8 @@ public class ExtensionPointDetails extends PDEDetails {
 
 	public void dispose() {
 		IPluginModelBase model = (IPluginModelBase)getPage().getModel();
-		model.removeModelChangedListener(this);
+		if (model!=null)
+			model.removeModelChangedListener(this);
 		super.dispose();
 	}
 	public void modelChanged(IModelChangedEvent e) {

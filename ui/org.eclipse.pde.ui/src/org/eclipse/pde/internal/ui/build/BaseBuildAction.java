@@ -57,10 +57,8 @@ public abstract class BaseBuildAction implements IObjectActionDelegate, IPrefere
 				}
 			}
 		};
-		ProgressMonitorDialog pmd =
-			new ProgressMonitorDialog(PDEPlugin.getActiveWorkbenchShell());
 		try {
-			pmd.run(false, false, op);
+			PlatformUI.getWorkbench().getProgressService().run(false, false, op);			
 		} catch (InterruptedException e) {
 		} catch (InvocationTargetException e) {
 			PDEPlugin.logException(e);

@@ -14,6 +14,7 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.ui.PlatformUI;
 
 public class UnusedDependenciesAction extends Action {
 
@@ -26,10 +27,8 @@ public class UnusedDependenciesAction extends Action {
 
 	public void run() {
 		UnusedDependenciesOperation op = new UnusedDependenciesOperation(model);
-		ProgressMonitorDialog pmd =
-			new ProgressMonitorDialog(PDEPlugin.getActiveWorkbenchShell());
 		try {
-			pmd.run(true, true, op);
+			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(op);
 		} catch (Exception e) {
 		}
 

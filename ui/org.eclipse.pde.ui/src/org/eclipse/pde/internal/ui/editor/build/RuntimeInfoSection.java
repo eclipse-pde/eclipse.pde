@@ -214,6 +214,8 @@ public class RuntimeInfoSection extends PDESection
 	private IBuildModel getBuildModel() {
 		InputContext context = getPage().getPDEEditor().getContextManager()
 				.findContext(BuildInputContext.CONTEXT_ID);
+		if (context==null)
+			return null;
 		return (IBuildModel) context.getModel();
 	}
 
@@ -580,7 +582,9 @@ public class RuntimeInfoSection extends PDESection
 	}
 
 	public void dispose() {
-		getBuildModel().removeModelChangedListener(this);
+		IBuildModel buildModel = getBuildModel();
+		if (buildModel!=null)
+			buildModel.removeModelChangedListener(this);
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();
 	}

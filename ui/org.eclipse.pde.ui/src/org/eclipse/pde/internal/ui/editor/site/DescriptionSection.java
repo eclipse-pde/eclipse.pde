@@ -109,7 +109,8 @@ public class DescriptionSection extends PDESection {
 	}
 	public void dispose() {
 		ISiteModel model = (ISiteModel) getPage().getModel();
-		model.removeModelChangedListener(this);
+		if (model!=null)
+			model.removeModelChangedListener(this);
 		super.dispose();
 	}
 	public void initialize() {

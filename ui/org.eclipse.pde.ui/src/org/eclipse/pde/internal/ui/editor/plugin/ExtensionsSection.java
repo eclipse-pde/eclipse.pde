@@ -200,7 +200,8 @@ public class ExtensionsSection extends TreeSection
 		editorWizards = null;
 		IPluginModelBase model = (IPluginModelBase) getPage().getPDEEditor()
 				.getAggregateModel();
-		model.removeModelChangedListener(this);
+		if (model!=null)
+			model.removeModelChangedListener(this);
 		super.dispose();
 	}
 	public boolean doGlobalAction(String actionId) {

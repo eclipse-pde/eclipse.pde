@@ -37,7 +37,7 @@ public class BuildPage extends PDEFormPage {
 	
 	public BuildPage(FormEditor editor) {
 		//TODO translate this string
-		super(editor, PAGE_ID, "Build Configuration");
+		super(editor, PAGE_ID, "Build");
 	}
 
 	protected void createFormContent(IManagedForm mform) {

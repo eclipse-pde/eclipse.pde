@@ -229,6 +229,9 @@ public class ExternalPluginsBlock {
 			ReloadOperation op = new ReloadOperation(pluginPaths);
 			ProgressMonitorDialog pmd = new ProgressMonitorDialog(PDEPlugin.getActiveWorkbenchShell());
 			try {
+				//TODO we should move to the new progress
+				// monitor but the porting document does not
+				// cover the 'true,false' combination of flags
 				pmd.run(true, false, op);
 			} catch (InvocationTargetException e) {
 			} catch (InterruptedException e) {

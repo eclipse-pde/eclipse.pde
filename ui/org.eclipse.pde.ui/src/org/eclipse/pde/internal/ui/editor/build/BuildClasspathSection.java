@@ -168,6 +168,7 @@ public class BuildClasspathSection
 	private IBuildModel getBuildModel() {
 		InputContext context = getPage().getPDEEditor().getContextManager()
 				.findContext(BuildInputContext.CONTEXT_ID);
+		if (context==null) return null;
 		return (IBuildModel) context.getModel();
 	}
 
@@ -226,7 +227,9 @@ public class BuildClasspathSection
 	}
 	
 	public void dispose() {
-		getBuildModel().removeModelChangedListener(this);
+		IBuildModel model = getBuildModel();
+		if (model!=null)
+			model.removeModelChangedListener(this);
 		super.dispose();
 	}
 	

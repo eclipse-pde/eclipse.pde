@@ -64,11 +64,7 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 			final IPluginModelBase[] modelArray =
 				(IPluginModelBase[]) models.toArray(
 					new IPluginModelBase[models.size()]);
-			/*
-			 * ProgressMonitorDialog pd = new
-			 * ProgressMonitorDialog(PDEPlugin.getActiveWorkbenchShell());
-			 * run(true, pd, modelArray);
-			 */
+
 			UpdateBuildpathWizard wizard =
 				new UpdateBuildpathWizard(modelArray);
 			final WizardDialog dialog =

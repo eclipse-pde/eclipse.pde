@@ -10,25 +10,26 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
-import java.lang.reflect.*;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.operation.*;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.plugin.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.pde.internal.ui.parts.*;
+import org.eclipse.pde.internal.core.plugin.ImportObject;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.editor.TableSection;
+import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
+import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.pde.internal.ui.search.*;
-import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.swt.*;
+import org.eclipse.pde.internal.ui.wizards.PluginSelectionDialog;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.forms.widgets.*;
 
@@ -127,7 +128,8 @@ public class RequiresSection
 
 	public void dispose() {
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
-		model.removeModelChangedListener(this);
+		if (model!=null)
+			model.removeModelChangedListener(this);
 		PDECore.getDefault().getWorkspaceModelManager().removeModelProviderListener(
 			this);
 		PDECore.getDefault().getExternalModelManager().removeModelProviderListener(
@@ -411,11 +413,8 @@ public class RequiresSection
 			}
 		};
 		
-
-		ProgressMonitorDialog pm =
-			new ProgressMonitorDialog(PDEPlugin.getActiveWorkbenchShell());
 		try {
-			pm.run(false, false, op);
+			PlatformUI.getWorkbench().getProgressService().run(false, false, op);
 		} catch (InterruptedException e) {
 			PDEPlugin.logException(e);
 		} catch (InvocationTargetException e) {

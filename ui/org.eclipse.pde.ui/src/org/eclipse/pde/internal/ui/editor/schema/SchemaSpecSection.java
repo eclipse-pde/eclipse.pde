@@ -80,7 +80,8 @@ public class SchemaSpecSection extends PDESection {
 	}
 	public void dispose() {
 		ISchema schema = (ISchema) getPage().getModel();
-		schema.removeModelChangedListener(this);
+		if (schema!=null)
+			schema.removeModelChangedListener(this);
 		super.dispose();
 	}
 	public void initialize() {

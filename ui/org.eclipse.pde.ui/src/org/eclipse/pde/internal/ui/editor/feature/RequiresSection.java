@@ -203,7 +203,8 @@ public class RequiresSection
 	}
 	public void dispose() {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
-		model.removeModelChangedListener(this);
+		if (model!=null)
+			model.removeModelChangedListener(this);
 		WorkspaceModelManager mng =
 			PDECore.getDefault().getWorkspaceModelManager();
 		mng.removeModelProviderListener(this);

@@ -13,15 +13,11 @@ package org.eclipse.pde.internal.ui.search;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.pde.core.plugin.IFragment;
-import org.eclipse.pde.core.plugin.IPlugin;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginImport;
-import org.eclipse.pde.internal.core.search.PluginSearchInput;
-import org.eclipse.pde.internal.core.search.PluginSearchScope;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.search.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.search.ui.SearchUI;
+import org.eclipse.ui.PlatformUI;
 
 
 public class FindDeclarationsAction extends Action {
@@ -54,13 +50,11 @@ public class FindDeclarationsAction extends Action {
 		input.setSearchScope(new PluginSearchScope());
 		try {
 			SearchUI.activateSearchResultView();
-			ProgressMonitorDialog pmd =
-				new ProgressMonitorDialog(PDEPlugin.getActiveWorkbenchShell());
-			PluginSearchUIOperation op =
+ 			PluginSearchUIOperation op =
 				new PluginSearchUIOperation(
 					input,
 					new PluginSearchResultCollector());
-			pmd.run(true, true, op);
+			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(op);
 		} catch (InvocationTargetException e) {
 		} catch (InterruptedException e) {
 		}

@@ -14,18 +14,12 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.ModelEntry;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.search.PluginSearchInput;
-import org.eclipse.pde.internal.core.search.PluginSearchScope;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.search.*;
 import org.eclipse.search.ui.SearchUI;
-import org.eclipse.ui.IObjectActionDelegate;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.*;
 
 /**
  * @author W Melhem
@@ -56,13 +50,11 @@ public class FindPluginReferencesAction implements IObjectActionDelegate {
 		input.setSearchScope(new PluginSearchScope());
 		try {
 			SearchUI.activateSearchResultView();
-			ProgressMonitorDialog pmd =
-				new ProgressMonitorDialog(PDEPlugin.getActiveWorkbenchShell());
 			PluginSearchUIOperation op =
 				new PluginSearchUIOperation(
 					input,
 					new PluginSearchResultCollector());
-			pmd.run(true, true, op);
+			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(op);
 		} catch (InvocationTargetException e) {
 		} catch (InterruptedException e) {
 		}

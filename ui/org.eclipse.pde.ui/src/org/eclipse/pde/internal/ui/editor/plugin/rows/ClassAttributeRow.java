@@ -8,18 +8,18 @@
  ******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin.rows;
 import java.util.ArrayList;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.core.search.*;
 import org.eclipse.jdt.ui.*;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.IContextPart;
 import org.eclipse.pde.internal.ui.editor.plugin.*;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -128,7 +128,7 @@ public class ClassAttributeRow extends ReferenceAttributeRow {
 					.getProject();
 			if (project != null) {
 				SelectionDialog dialog = JavaUI.createTypeDialog(shell,
-						new ProgressMonitorDialog(shell),
+						PlatformUI.getWorkbench().getProgressService(),
 						getSearchScope(project),
 						IJavaElementSearchConstants.CONSIDER_CLASSES, false,
 						"*");

@@ -9,19 +9,19 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
-import java.lang.reflect.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.operation.*;
+import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.pde.internal.ui.wizards.exports.*;
-import org.eclipse.ui.*;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.wizards.ResizableWizardDialog;
+import org.eclipse.pde.internal.ui.wizards.exports.FeatureExportWizard;
+import org.eclipse.ui.PlatformUI;
 public class EditorBuildFeatureAction extends Action {
 	public static final String LABEL = "FeatureEditor.BuildAction.label";
 	private FeatureEditor activeEditor;
@@ -31,10 +31,8 @@ public class EditorBuildFeatureAction extends Action {
 	}
 	private void ensureContentSaved() {
 		if (activeEditor.isDirty()) {
-			ProgressMonitorDialog monitor = new ProgressMonitorDialog(PDEPlugin
-					.getActiveWorkbenchShell());
 			try {
-				monitor.run(false, false, new IRunnableWithProgress() {
+				PlatformUI.getWorkbench().getProgressService().run(false, false, new IRunnableWithProgress() {
 					public void run(IProgressMonitor monitor) {
 						activeEditor.doSave(monitor);
 					}

@@ -14,16 +14,13 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.core.search.*;
 import org.eclipse.jdt.ui.*;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ibundle.*;
-import org.eclipse.pde.internal.core.ibundle.IBundlePluginBase;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.context.*;
-import org.eclipse.pde.internal.ui.editor.context.IInputContextListener;
 import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.PluginSelectionDialog;
@@ -423,7 +420,8 @@ public class GeneralInfoSection extends PDESection
 			((IModelChangeProvider) model).removeModelChangedListener(this);
 		InputContextManager manager = getPage().getPDEEditor()
 				.getContextManager();
-		manager.removeInputContextListener(this);
+		if (manager!=null)
+			manager.removeInputContextListener(this);
 		super.dispose();
 	}
 	private void doOpenClass() {
@@ -461,7 +459,7 @@ public class GeneralInfoSection extends PDESection
 					.getProject();
 			if (project != null) {
 				SelectionDialog dialog = JavaUI.createTypeDialog(shell,
-						new ProgressMonitorDialog(shell),
+						PlatformUI.getWorkbench().getProgressService(),
 						getSearchScope(project),
 						IJavaElementSearchConstants.CONSIDER_CLASSES, false,
 						"*");

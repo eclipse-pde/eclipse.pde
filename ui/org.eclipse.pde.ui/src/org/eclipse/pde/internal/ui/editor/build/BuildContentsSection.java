@@ -236,6 +236,7 @@ public abstract class BuildContentsSection extends TableSection
 		fTreeViewer.getTree().getDisplay().asyncExec(new Runnable() {
 
 			public void run() {
+				if (fTreeViewer.getTree().isDisposed()) return;
 				Vector fileExt = new Vector();
 				String[] inclTokens, exclTokens = new String[0];
 				if (fProject == null || includes == null)
@@ -478,6 +479,8 @@ public abstract class BuildContentsSection extends TableSection
 	}
 
 	public void resourceChanged(IResourceChangeEvent event) {
+		if (fTreeViewer.getControl().isDisposed())
+			return;
 		fDoRefresh = false;
 		IResourceDelta delta = event.getDelta();
 		try {

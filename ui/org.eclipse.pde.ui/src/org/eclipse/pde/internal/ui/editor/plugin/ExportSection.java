@@ -154,7 +154,8 @@ public class ExportSection extends TableSection
 	}
 	public void dispose() {
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
-		model.removeModelChangedListener(this);
+		if (model!=null)
+			model.removeModelChangedListener(this);
 		InputContextManager contextManager = getPage().getPDEEditor().getContextManager();
 		if (contextManager!=null)
 			contextManager.removeInputContextListener(this);
