@@ -102,15 +102,14 @@ public class WorkbenchLaunchConfigurationDelegate
 	private String[] getProgramArguments(ILaunchConfiguration configuration) throws CoreException {
 		ArrayList programArgs = new ArrayList();
 		
-		//35296
-		programArgs.add(PDECore.ARG_PDELAUNCH);	
-		
+		// specify the application to launch, only if it is not the default.
 		String appName = configuration.getAttribute(APPLICATION, (String)null);
 		if (appName != null && appName.length() > 0) {
 			programArgs.add("-application");
 			programArgs.add(appName);
 		}
 		
+		// specify the workspace location for the runtime workbench
 		String targetWorkspace =
 			configuration.getAttribute(LOCATION + "0", LauncherUtils.getDefaultPath().append("runtime-workbench-workspace").toOSString());
 		programArgs.add("-data");
@@ -130,7 +129,7 @@ public class WorkbenchLaunchConfigurationDelegate
 				return null;
 				
 			programArgs.add("-configuration");
-			String primaryFeatureId = getPrimaryFeatureId();
+			String primaryFeatureId = LauncherUtils.getPrimaryFeatureId();
 			configFile =
 				TargetPlatform.createPlatformConfigurationArea(
 					pluginMap,
@@ -138,11 +137,11 @@ public class WorkbenchLaunchConfigurationDelegate
 					primaryFeatureId);
 			programArgs.add("file:" + configFile.getPath());
 			
-			if (primaryFeatureId != null && !isOSGI) {
-				programArgs.add("-feature");
-				programArgs.add(primaryFeatureId);
-			}
 			if (!isOSGI) {
+				if (primaryFeatureId != null) {
+					programArgs.add("-feature");
+					programArgs.add(primaryFeatureId);					
+				}
 				IPluginModelBase bootModel = (IPluginModelBase)pluginMap.get("org.eclipse.core.boot");
 				String bootPath = LauncherUtils.getBootPath(bootModel);
 				if (bootPath != null && !bootPath.endsWith(".jar")) {
@@ -152,10 +151,12 @@ public class WorkbenchLaunchConfigurationDelegate
 			}
 		}
 		
+		// add the output folder names
 		programArgs.add("-dev");
 		String devEntry = LauncherUtils.getBuildOutputFolders();
 		programArgs.add(configuration.getAttribute(CLASSPATH_ENTRIES, devEntry));
 
+		// add tracing, if turned on
 		if (configuration.getAttribute(TRACING, false)) {
 			if (configFile == null) {
 				configFile =
@@ -169,27 +170,25 @@ public class WorkbenchLaunchConfigurationDelegate
 					directoryName + Path.SEPARATOR + ".options"));
 		}
 
+		// add the program args specified by the user
 		StringTokenizer tokenizer =
 			new StringTokenizer(configuration.getAttribute(PROGARGS, ""));
 		while (tokenizer.hasMoreTokens()) {
 			programArgs.add(tokenizer.nextToken());
 		}
 		
-		if (configuration.getAttribute(SHOW_SPLASH, true)) {
-			boolean showSplash = true;
-			int index = programArgs.indexOf("-application");
-			if (index != -1 && index <= programArgs.size() - 2) {
-				if (!programArgs.get(index + 1).equals("org.eclipse.ui.workbench") && 
-					!programArgs.get(index + 1).equals("org.eclipse.ui.ide.workbench")) {
-					showSplash = false;
-				}
-			}
-			if (showSplash) {
-				programArgs.add("-showsplash");
-				programArgs.add(computeShowsplashArgument());
+		// show splash only if we are launching the default application
+		boolean showSplash = true;
+		int index = programArgs.indexOf("-application");
+		if (index != -1 && index <= programArgs.size() - 2) {
+			if (!programArgs.get(index + 1).equals(LauncherUtils.getDefaultApplicationName())) {
+				showSplash = false;
 			}
 		}
-		
+		if (showSplash) {
+			programArgs.add("-showsplash");
+			programArgs.add(computeShowsplashArgument());
+		}
 		return (String[])programArgs.toArray(new String[programArgs.size()]);
 	}
 	
@@ -197,23 +196,18 @@ public class WorkbenchLaunchConfigurationDelegate
 		return new ExecutionArguments(configuration.getAttribute(VMARGS,""),"").getVMArgumentsArray();
 	}
 			
-	private void validateFeatures()
-		throws CoreException {
+	private void validateFeatures() throws CoreException {
 		IPath installPath = PDEPlugin.getWorkspace().getRoot().getLocation();
 		String lastSegment = installPath.lastSegment();
-		boolean badStructure = false;
-		if (lastSegment.equalsIgnoreCase("plugins") == false) {
-			badStructure = true;
-		}
-		IPath featuresPath =
-			installPath.removeLastSegments(1).append("features");
-		if (featuresPath.toFile().exists() == false) {
-			badStructure = true;
+		boolean badStructure = lastSegment == null;
+		if (!badStructure) {
+			IPath featuresPath = installPath.removeLastSegments(1).append("features");
+			badStructure = !lastSegment.equalsIgnoreCase("plugins")
+					|| !featuresPath.toFile().exists();
 		}
 		if (badStructure) {
-			throw new CoreException(
-				LauncherUtils.createErrorStatus(
-					PDEPlugin.getResourceString(KEY_BAD_FEATURE_SETUP)));
+			throw new CoreException(LauncherUtils.createErrorStatus(PDEPlugin
+					.getResourceString(KEY_BAD_FEATURE_SETUP)));
 		} else {
 			// Ensure important files are present
 			ensureProductFilesExist(getProductPath());
@@ -232,22 +226,6 @@ public class WorkbenchLaunchConfigurationDelegate
 		IPath eclipseHome = ExternalModelManager.getEclipseHome(null);
 		IPath fullPath = eclipseHome.append("eclipse");
 		return fullPath.toOSString() + " -showsplash 600";
-	}
-
-	private String getPrimaryFeatureId() {
-		IPath eclipsePath = ExternalModelManager.getEclipseHome(null);
-		File iniFile = new File(eclipsePath.toFile(), "install.ini");
-		if (iniFile.exists() == false)
-			return null;
-		Properties pini = new Properties();
-		try {
-			FileInputStream fis = new FileInputStream(iniFile);
-			pini.load(fis);
-			fis.close();
-			return pini.getProperty("feature.default.id");
-		} catch (IOException e) {
-			return null;
-		}
 	}
 
 	private void ensureProductFilesExist(IPath productArea) {

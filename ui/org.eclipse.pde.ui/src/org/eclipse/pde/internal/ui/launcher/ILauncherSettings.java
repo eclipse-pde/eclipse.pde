@@ -23,7 +23,6 @@ public interface ILauncherSettings {
 	String VMARGS = "vmargs";
 	String PROGARGS = "progargs";
 	String CLASSPATH_ENTRIES = "classpath";
-	String SHOW_SPLASH = "showSplash";
 	
 	// Plug-ins and Fragments settings
 	String USECUSTOM = "default";

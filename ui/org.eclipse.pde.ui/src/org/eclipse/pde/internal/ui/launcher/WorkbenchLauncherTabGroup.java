@@ -27,7 +27,7 @@ public class WorkbenchLauncherTabGroup extends AbstractLaunchConfigurationTabGro
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		ILaunchConfigurationTab[] tabs =
 			new ILaunchConfigurationTab[] {
-				new RuntimeWorkbenchArgumentsTab(),
+				new BasicLauncherTab(),
 				new AdvancedLauncherTab(),
 				new TracingLauncherTab(),
 				new JavaSourceLookupTab(),

@@ -10,12 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
+import java.util.*;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.*;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
@@ -49,6 +52,8 @@ public class BasicLauncherTab
 	
 	private boolean fBlockChanges = false;
 
+	protected Combo fApplicationCombo;
+
 	public BasicLauncherTab() {
 		fJreSelectionStatus = createStatus(IStatus.OK, "");
 		fWorkspaceSelectionStatus = createStatus(IStatus.OK, "");
@@ -66,7 +71,6 @@ public class BasicLauncherTab
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		createWorkspaceDataSection(composite);
-		createApplicationSection(composite);
 		createCommandLineSettingsSection(composite);
 		createDefaultsButton(composite);
 		
@@ -163,14 +167,47 @@ public class BasicLauncherTab
 		group.setLayout(layout);
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
+		createApplicationSection(group);
 		createJRESection(group);
 		createVMArgsSection(group);
 		createProgArgsSection(group);
 		createDevEntriesSection(group);
-		createShowSplashSection(group);		
 	}
 	
 	protected void createApplicationSection(Composite parent) {
+		Label label = new Label(parent, SWT.NONE);
+		label.setText(PDEPlugin.getResourceString("JUnitArgumentsTab.applicationName"));
+		
+		fApplicationCombo = new Combo(parent, SWT.READ_ONLY|SWT.DROP_DOWN);
+		fApplicationCombo.setItems(getApplicationNames());
+		fApplicationCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fApplicationCombo.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateLaunchConfigurationDialog();
+			}
+		});		
+	}
+	
+	private String[] getApplicationNames() {
+		TreeSet result = new TreeSet();
+		IPluginModelBase[] plugins = PDECore.getDefault().getModelManager().getPlugins();
+		for (int i = 0; i < plugins.length; i++) {
+			IPluginExtension[] extensions = plugins[i].getPluginBase().getExtensions();
+			for (int j = 0; j < extensions.length; j++) {
+				String point = extensions[j].getPoint();
+				if (point != null && point.equals("org.eclipse.core.runtime.applications")) {
+					String id = extensions[j].getPluginBase().getId() + "." + extensions[j].getId();
+					if (id != null && !id.startsWith("org.eclipse.pde.junit.runtime")){
+						result.add(id);
+					}
+				}
+			}
+		}
+		return (String[])result.toArray(new String[result.size()]);
+	}
+	
+	protected String getApplicationAttribute() {
+		return APPLICATION;
 	}
 	
 	protected void createJRESection(Composite parent) {
@@ -275,9 +312,6 @@ public class BasicLauncherTab
 		});		
 	}
 	
-	protected void createShowSplashSection(Composite parent) {
-	}
-
 	public void initializeFrom(ILaunchConfiguration config) {
 		try {
 			fBlockChanges = true;
@@ -288,7 +322,6 @@ public class BasicLauncherTab
 			initializeVMArgsSection(config);
 			initializeProgArgsSection(config);
 			initializeDevEntriesSection(config);
-			initializeShowSplashSection(config);
 				
 			fWorkspaceSelectionStatus = validateWorkspaceSelection();
 			fJreSelectionStatus = validateJRESelection();
@@ -302,6 +335,41 @@ public class BasicLauncherTab
 
 	protected void initializeApplicationSection(ILaunchConfiguration config)
 		throws CoreException {
+		String attribute = getApplicationAttribute();
+		
+		// first see if the application name has been set on the launch config
+		String application = config.getAttribute(attribute, (String) null);
+		if (application == null
+			|| fApplicationCombo.indexOf(application) == -1) {
+			application = null;
+			
+			// check if the user has entered the -application arg in the program arg field
+			StringTokenizer tokenizer =
+				new StringTokenizer(config.getAttribute(PROGARGS, ""));
+			while (tokenizer.hasMoreTokens()) {
+				String token = tokenizer.nextToken();
+				if (token.equals("-application") && tokenizer.hasMoreTokens()) {
+					application = tokenizer.nextToken();
+					break;
+				}
+			}
+			
+			int index = -1;
+			if (application != null)
+				index = fApplicationCombo.indexOf(application);
+			
+			// use default application as specified in the install.ini of the target platform
+			if (index == -1)
+				index = fApplicationCombo.indexOf(LauncherUtils.getDefaultApplicationName());
+			
+			if (index != -1) {
+				fApplicationCombo.setText(fApplicationCombo.getItem(index));
+			} else if (fApplicationCombo.getItemCount() > 0) {
+				fApplicationCombo.setText(fApplicationCombo.getItem(0));
+			}
+		} else {
+			fApplicationCombo.setText(application);
+		}
 	}
 
 	protected void initializeWorkspaceDataSection(ILaunchConfiguration config)
@@ -345,15 +413,11 @@ public class BasicLauncherTab
 		fClasspathText.setText(config.getAttribute(CLASSPATH_ENTRIES, getClasspathEntries()));		
 	}
 
-	protected void initializeShowSplashSection(ILaunchConfiguration config) throws CoreException {
-	}
-	
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(LOCATION + "0", LauncherUtils.getDefaultWorkspace());
 		config.setAttribute(DOCLEAR, false);
-		config.setAttribute(PROGARGS, LauncherUtils.getDefaultProgramArguments());
-		config.setAttribute(SHOW_SPLASH,true);
 		config.setAttribute(ASKCLEAR, true);
+		config.setAttribute(PROGARGS, LauncherUtils.getDefaultProgramArguments());
 		config.setAttribute(VMARGS,"");
 	}
 	
@@ -371,7 +435,8 @@ public class BasicLauncherTab
 		fClearWorkspaceCheck.setSelection(false);
 		fAskClearCheck.setSelection(true);
 		fAskClearCheck.setEnabled(false);
-		fJreCombo.setText(LauncherUtils.getDefaultVMInstallName());		
+		fJreCombo.setText(LauncherUtils.getDefaultVMInstallName());	
+		fApplicationCombo.setText(LauncherUtils.getDefaultApplicationName());
 	}
 
 	private void updateStatus() {
@@ -387,7 +452,6 @@ public class BasicLauncherTab
 			saveVMArgsSection(config);
 			saveProgArgsSection(config);
 			saveDevEntriesSection(config);
-			saveShowSplashSection(config);
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
@@ -443,10 +507,13 @@ public class BasicLauncherTab
 		}
 	}
 	
-	protected void saveShowSplashSection(ILaunchConfigurationWorkingCopy config) {
-	}
-	
 	protected void saveApplicationSection(ILaunchConfigurationWorkingCopy config) {
+		String text = fApplicationCombo.getText();
+		String attribute = getApplicationAttribute();
+		if (text.length() == 0 || text.equals(LauncherUtils.getDefaultApplicationName()))
+			config.setAttribute(attribute, (String) null);
+		else
+			config.setAttribute(attribute, text);
 	}
 
 	private IPath chooseWorkspaceLocation() {
@@ -495,5 +562,5 @@ public class BasicLauncherTab
 	public Image getImage() {
 		return fImage;
 	}
-
+	
 }

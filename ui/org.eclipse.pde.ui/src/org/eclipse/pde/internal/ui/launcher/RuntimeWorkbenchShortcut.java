@@ -144,7 +144,6 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 				"org.eclipse.pde.ui.workbenchClasspathProvider");
 			wc.setAttribute(ILauncherSettings.DOCLEAR, false);
 			wc.setAttribute(ILauncherSettings.ASKCLEAR, true);
-			wc.setAttribute(ILauncherSettings.SHOW_SPLASH, true);
 			config= wc.doSave();		
 		} catch (CoreException ce) {
 			PDEPlugin.logException(ce);

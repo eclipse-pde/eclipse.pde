@@ -513,7 +513,7 @@ public class LauncherUtils {
 			return "";
 		}
 
-		String tracingArg = "\"file:" + optionsFileName + "\"";
+		String tracingArg = "file:" + optionsFileName;
 		if (SWT.getPlatform().equals("motif"))
 			tracingArg = "file:" + optionsFileName;
 		// defect 17661
@@ -521,6 +521,32 @@ public class LauncherUtils {
 			tracingArg = "file://localhost" + optionsFileName;
 
 		return tracingArg;
+	}
+
+	public static String getPrimaryFeatureId() {
+		Properties properties = getInstallProperties();
+		return (properties == null) ? null : properties.getProperty("feature.default.id");
+	}
+
+	public static String getDefaultApplicationName() {
+		Properties properties = getInstallProperties();
+		return (properties == null) ? null : properties.getProperty("feature.default.application");
+	}
+	
+	public static Properties getInstallProperties() {
+		IPath eclipsePath = ExternalModelManager.getEclipseHome(null);
+		File iniFile = new File(eclipsePath.toFile(), "install.ini");
+		if (!iniFile.exists())
+			return null;
+		Properties pini = new Properties();
+		try {
+			FileInputStream fis = new FileInputStream(iniFile);
+			pini.load(fis);
+			fis.close();
+			return pini;
+		} catch (IOException e) {
+		}		
+		return null;
 	}
 
 

@@ -9,13 +9,11 @@ import java.io.*;
 import java.util.*;
 
 import org.eclipse.core.boot.*;
-import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.internal.junit.launcher.JUnitBaseLaunchConfiguration;
 import org.eclipse.jdt.launching.*;
-import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.IWorkspaceModelManager;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -27,8 +25,7 @@ import org.eclipse.pde.internal.ui.*;
  */
 public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration implements ILauncherSettings {
 
-	private static final String KEY_NO_STARTUP =
-		"WorkbenchLauncherConfigurationDelegate.noStartup";
+	private static final String KEY_NO_STARTUP = "WorkbenchLauncherConfigurationDelegate.noStartup";
 		
 	public static final String CORE_APPLICATION = "org.eclipse.pde.junit.runtime.coretestapplication";
 	public static final String UI_APPLICATION = "org.eclipse.pde.junit.runtime.uitestapplication";
@@ -149,31 +146,35 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		throws CoreException {
 		ArrayList programArgs = new ArrayList();
 		
+		// Get the list of plug-ins to run
 		TreeMap pluginMap = LauncherUtils.getPluginsToRun(configuration);
 		if (pluginMap == null)
-			return null;
-		
+			return null;		
 		addRequiredPlugins(pluginMap);
 		
 		programArgs.add("-version"); //$NON-NLS-1$
 		programArgs.add("3"); //$NON-NLS-1$
 		
+		// Specify the application to launch based on the list of plug-ins to run.
 		programArgs.add("-application");
-		programArgs.add(getApplicationName(pluginMap, configuration));
+		programArgs.add(getApplicationName(pluginMap));
 		
+		// Specify the application to test
 		String testApplication = configuration.getAttribute(APP_TO_TEST, (String)null);
 		if (testApplication != null && testApplication.length() > 0) {
 			programArgs.add("-testApplication");
 			programArgs.add(testApplication);
 		}
 		
+		// Specify the location of the runtime workbench
 		String targetWorkspace =
 			configuration.getAttribute(LOCATION + "0", getDefaultWorkspace(configuration));
 		programArgs.add("-data");
 		programArgs.add(targetWorkspace);
 		
+		// Create the platform configuration for the runtime workbench
 		programArgs.add("-configuration");
-		String primaryFeatureId = getPrimaryFeatureId();
+		String primaryFeatureId = LauncherUtils.getPrimaryFeatureId();
 		
 		configFile =
 			TargetPlatform.createPlatformConfigurationArea(
@@ -182,12 +183,12 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 				primaryFeatureId);
 		programArgs.add("file:" + configFile.getPath());
 
-		if (primaryFeatureId != null) {
-			programArgs.add("-feature");
-			programArgs.add(primaryFeatureId);
-		}
-
 		if (!PDECore.getDefault().getModelManager().isOSGiRuntime()) {
+			if (primaryFeatureId != null) {
+				programArgs.add("-feature");
+				programArgs.add(primaryFeatureId);
+			}
+			// Pre-OSGi platforms need the location of org.eclipse.core.boot specified
 			IPluginModelBase bootModel = (IPluginModelBase)pluginMap.get("org.eclipse.core.boot");
 			String bootPath = LauncherUtils.getBootPath(bootModel);
 			if (bootPath != null && !bootPath.endsWith(".jar")) {
@@ -196,10 +197,12 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 			}
 		}
 
+		// Specify the output folder names
 		programArgs.add("-dev");
 		String devEntry = LauncherUtils.getBuildOutputFolders();
 		programArgs.add(configuration.getAttribute(CLASSPATH_ENTRIES, devEntry));
 
+		// Create the .options file if tracing is turned on
 		if (configuration.getAttribute(TRACING, false)) {
 			programArgs.add("-debug");
 			programArgs.add(
@@ -208,6 +211,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 					configFile.getParent() + Path.SEPARATOR + ".options"));
 		}
 		
+		// Add the program args entered by the user
 		StringTokenizer tokenizer =
 			new StringTokenizer(configuration.getAttribute(PROGARGS, ""));
 		while (tokenizer.hasMoreTokens()) {
@@ -307,31 +311,14 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		LauncherUtils.setDefaultSourceLocator(configuration, launch);
 	}
 	
-	private String getPrimaryFeatureId() {
-		IPath eclipsePath = ExternalModelManager.getEclipseHome(null);
-		File iniFile = new File(eclipsePath.toFile(), "install.ini");
-		if (iniFile.exists() == false)
-			return null;
-		Properties pini = new Properties();
-		try {
-			FileInputStream fis = new FileInputStream(iniFile);
-			pini.load(fis);
-			fis.close();
-			return pini.getProperty("feature.default.id");
-		} catch (IOException e) {
-			return null;
-		}
-	}
-	
 	private String getDefaultWorkspace(ILaunchConfiguration config) throws CoreException {
 		if (config.getAttribute(APPLICATION, UI_APPLICATION).equals(UI_APPLICATION))
 			return LauncherUtils.getDefaultPath().append("junit-workbench-workspace").toOSString();
 		return LauncherUtils.getDefaultPath().append("junit-core-workspace").toOSString();				
 	}
 	
-	private String getApplicationName(TreeMap pluginMap, ILaunchConfiguration config) throws CoreException {
-		String application = config.getAttribute(APPLICATION, (String)null);
-		if (CORE_APPLICATION.equals(application))
+	private String getApplicationName(TreeMap pluginMap) {
+		if (!pluginMap.containsKey("org.eclipse.swt"))
 			return CORE_APPLICATION;
 		
 		IPluginModelBase model = (IPluginModelBase)pluginMap.get("org.eclipse.ui");
@@ -348,39 +335,4 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		}
 		return UI_APPLICATION;
 	}
-	
-	public static String getApplicationName(IProject project) {
-		IModel model = PDECore.getDefault().getWorkspaceModelManager().getWorkspaceModel(project);
-		HashSet set = new HashSet();
-		if (model != null && model instanceof IPluginModelBase) {
-			addDependency(((IPluginModelBase)model).getPluginBase().getId(), set);
-		}
-		return set.contains("org.eclipse.swt") ? UI_APPLICATION : CORE_APPLICATION;
-			
-	}
-	
-	private static void addDependency(String id, HashSet set) {
-		if (!set.add(id))
-			return;
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
-		ModelEntry entry = manager.findEntry(id);
-		if (entry != null) {
-			IPluginBase plugin = entry.getActiveModel().getPluginBase();
-			IPluginImport[] imports = plugin.getImports();
-			for (int i = 0; i < imports.length; i++) {
-				addDependency(imports[i].getId(), set);
-			}
-		}
-	}
-	
-	public static String getPluginId(IJavaProject jProject) {
-		IProject project = jProject.getProject();
-		IModel model = PDECore.getDefault().getWorkspaceModelManager().getWorkspaceModel(project);
-		if (model != null && model instanceof IPluginModelBase) {
-			return ((IPluginModelBase)model).getPluginBase().getId();
-		}
-		return project.getName();
-	}
-
-	
 }
