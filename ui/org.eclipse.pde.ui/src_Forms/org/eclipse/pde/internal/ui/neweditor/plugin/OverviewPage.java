@@ -87,11 +87,9 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		Composite body = managedForm.getForm().getBody();
 		TableWrapLayout layout = new TableWrapLayout();
 		layout.bottomMargin = 10;
-		layout.topMargin = 10;
+		layout.topMargin = 5;
 		layout.leftMargin = 10;
 		layout.rightMargin = 10;
-		layout.verticalSpacing = 10;
-		layout.horizontalSpacing = 10;
 		layout.numColumns = 2;
 		layout.verticalSpacing = 20;
 		layout.horizontalSpacing = 10;

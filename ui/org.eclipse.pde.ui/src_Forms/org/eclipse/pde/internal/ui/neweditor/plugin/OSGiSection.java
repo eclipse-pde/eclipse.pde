@@ -116,8 +116,8 @@ public class OSGiSection extends TableSection implements IModelChangedListener {
 		
 		Composite mainContainer = toolkit.createComposite(section);
 		GridLayout layout = new GridLayout();
-		layout.marginHeight = layout.marginWidth = 2;
-		layout.verticalSpacing = 10;
+		layout.marginHeight = layout.marginWidth = 0;
+		layout.verticalSpacing = 5;
 		mainContainer.setLayout(layout);
 		mainContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
 		

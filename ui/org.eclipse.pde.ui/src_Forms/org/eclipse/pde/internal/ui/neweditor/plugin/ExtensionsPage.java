@@ -36,6 +36,7 @@ public class ExtensionsPage extends PDEFormPage {
 			return section;
 		}
 		protected void registerPages(DetailsPart detailsPart) {
+			detailsPart.setPageLimit(10);
 			// register static page for the extensions
 			detailsPart.registerPage(IPluginExtension.class, new ExtensionDetails());
 			// register a dynamic provider for elements

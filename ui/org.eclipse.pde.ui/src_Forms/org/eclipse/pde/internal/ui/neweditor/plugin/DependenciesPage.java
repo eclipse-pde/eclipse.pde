@@ -41,7 +41,6 @@ public class DependenciesPage extends PDEFormPage {
 		layout.numColumns = 2;
 		layout.makeColumnsEqualWidth = true;
 		layout.marginWidth = 10;
-		layout.marginHeight = 10;
 		layout.verticalSpacing = 20;
 		layout.horizontalSpacing = 10;
 		body.setLayout(layout);
