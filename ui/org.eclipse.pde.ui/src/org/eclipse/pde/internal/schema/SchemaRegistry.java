@@ -154,22 +154,22 @@ public void modelsChanged(IModelProviderEvent e) {
 	int type = e.getEventTypes();
 	
 	if ((type & IModelProviderEvent.MODELS_ADDED)!=0) {
-		IPluginModelBase [] added = (IPluginModelBase[])e.getAddedModels();
+		IModel [] added = e.getAddedModels();
 		for (int i=0; i<added.length; i++) {
-			loadWorkspaceDescriptors(added[i]);
+			loadWorkspaceDescriptors((IPluginModelBase)added[i]);
 		}
 	}
 	if ((type & IModelProviderEvent.MODELS_REMOVED)!=0) {
-		IPluginModelBase [] removed = (IPluginModelBase[])e.getRemovedModels();
+		IModel [] removed = e.getRemovedModels();
 		for (int i=0; i<removed.length; i++) {
-			removeWorkspaceDescriptors(removed[i]);
+			removeWorkspaceDescriptors((IPluginModelBase)removed[i]);
 		}
 	}
 	if ((type & IModelProviderEvent.MODELS_CHANGED)!=0) {
-		IPluginModelBase [] changed = (IPluginModelBase[])e.getChangedModels();
+		IModel [] changed = e.getChangedModels();
 		if (dirtyWorkspaceModels==null) dirtyWorkspaceModels = new Vector();
 		for (int i=0; i<changed.length; i++) {
-			dirtyWorkspaceModels.add(changed[i]);
+			dirtyWorkspaceModels.add((IPluginModelBase)changed[i]);
 		}
 	}
 }

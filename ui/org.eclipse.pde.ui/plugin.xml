@@ -48,7 +48,7 @@
       point="org.eclipse.ui.preferencePages">
    <page
          name="%preferences.main.name"
-         class="org.eclipse.pde.internal.preferences.PDEBasePreferencePage"
+         class="org.eclipse.pde.internal.preferences.MainPreferencePage"
          id="org.eclipse.pde.MainPreferencePage">
    </page>
    <page
@@ -68,6 +68,12 @@
          category="org.eclipse.pde.MainPreferencePage"
          class="org.eclipse.pde.internal.preferences.BuildpathPreferencePage"
          id="org.eclipse.pde.BuildpathPreferencePage">
+   </page>
+   <page
+         name="%preferences.target.name"
+         category="org.eclipse.pde.MainPreferencePage"
+         class="org.eclipse.pde.internal.preferences.TargetPlatformPreferencePage"
+         id="org.eclipse.pde.TargetPlatformPreferencePage">
    </page>
 </extension>
 <extension

@@ -9,9 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Properties;
+import java.util.*;
 import org.eclipse.pde.internal.TracingOptionsManager;
 import org.eclipse.swt.SWT;
 
@@ -32,7 +30,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.*;
 import org.eclipse.debug.core.model.*;
 import org.eclipse.pde.internal.base.model.plugin.*;
-import org.eclipse.pde.internal.PDEPlugin;
+import org.eclipse.pde.internal.*;
 import org.eclipse.core.runtime.IExecutableExtension;
 
 public class WorkbenchLauncherDelegate
@@ -86,7 +84,7 @@ public class WorkbenchLauncherDelegate
 		try {
 			IWorkspace workspace = PDEPlugin.getWorkspace();
 
-			File propertiesFile = createPropertiesFile(plugins);
+			File propertiesFile = TargetPlatformManager.createPropertiesFile(plugins);
 			String[] vmArgs = args.getVMArgumentsArray();
 			String[] progArgs = args.getProgramArgumentsArray();
 
@@ -302,43 +300,7 @@ public class WorkbenchLauncherDelegate
 			(IJavaProject[]) javaProjects.toArray(new IJavaProject[javaProjects.size()]);
 		return new ProjectSourceLocator(projs, false);
 	}
-
-	private File createPropertiesFile(IPluginModelBase[] plugins)
-		throws CoreException {
-		try {
-			File file = File.createTempFile(PDEPlugin.getPluginId(), ".properties");
-			file.deleteOnExit();
-			Properties properties = new Properties();
-
-			for (int i = 0; i < plugins.length; i++) {
-				IPluginModelBase curr = plugins[i];
-				String prefix = "file:" + curr.getInstallLocation() + File.separator;
-
-				if (curr instanceof IPluginModel) {
-					IPlugin plugin = ((IPluginModel) curr).getPlugin();
-					properties.setProperty(plugin.getId(), prefix + "plugin.xml");
-				} else if (curr instanceof IFragmentModel) {
-					IFragment fragment = ((IFragmentModel) curr).getFragment();
-					properties.setProperty(fragment.getId(), prefix + "fragment.xml");
-				}
-			}
-
-			FileOutputStream fos = null;
-			try {
-				fos = new FileOutputStream(file);
-				properties.store(fos, null);
-			} finally {
-				if (fos != null) {
-					fos.close();
-				}
-			}
-			return file;
-		} catch (IOException e) {
-			throw new CoreException(
-				new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, "", e));
-		}
-	}
-
+	
 	/*
 	 * @see ILauncherDelegate#getLaunchMemento
 	 */

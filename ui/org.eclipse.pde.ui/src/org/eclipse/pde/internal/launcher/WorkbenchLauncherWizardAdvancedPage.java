@@ -17,7 +17,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.base.model.plugin.*;
-import org.eclipse.pde.internal.preferences.PDEBasePreferencePage;
+import org.eclipse.pde.internal.preferences.TargetPlatformPreferencePage;
 import org.eclipse.pde.internal.wizards.StatusWizardPage;
 import org.eclipse.swt.layout.*;
 import org.eclipse.jface.viewers.*;

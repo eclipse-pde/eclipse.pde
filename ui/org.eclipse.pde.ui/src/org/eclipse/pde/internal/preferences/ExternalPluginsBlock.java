@@ -44,6 +44,10 @@ public class ExternalPluginsBlock implements ICheckStateListener {
 	private static final String KEY_DESELECT_ALL = "ExternalPluginsBlock.deselectAll";
 	private static final String KEY_SELECTED = "ExternalPluginsBlock.selected";
 
+	private final static int SELECT_ALL = 1;
+	private final static int DESELECT_ALL = -1;
+	private final static int SELECT_SOME = 0;
+
 	private int selectedCount;
 	private ExternalModelManager registry;
 	private Image externalPluginImage;
@@ -85,9 +89,7 @@ public class ExternalPluginsBlock implements ICheckStateListener {
 			return null;
 		}
 	}
-	private final static int SELECT_ALL = 1;
-	private final static int DESELECT_ALL = -1;
-	private final static int SELECT_SOME = 0;
+
 
 public ExternalPluginsBlock(ExternalPluginsEditor editor) {
 	registry = PDEPlugin.getDefault().getExternalModelManager();
@@ -203,7 +205,7 @@ private void handleReload() {
 			public void run() {
 				registry.reload(platformPath, null);
 				pluginListViewer.setInput(registry);
-				initializeDefault(true);
+				initializeDefault(false);
 			}
 		});
 	} else {
@@ -218,17 +220,18 @@ public void initialize(IPreferenceStore store) {
 	if (editor!=null) platformPath = editor.getPlatformPath();
 	if (platformPath!=null && platformPath.length()==0) return;
 	int mode;
-
-
+	
+	store.setDefault(CHECKED_PLUGINS, SAVED_NONE);
+	
 	pluginListViewer.setInput(registry);
 	String saved = store.getString(CHECKED_PLUGINS);
-	if (saved.length() == 0 || saved.equals(SAVED_ALL)) {
-		initializeDefault(true);
-		mode = SELECT_ALL;
+	if (saved.length() == 0 || saved.equals(SAVED_NONE)) {
+		initializeDefault(false);
+		mode = DESELECT_ALL;
 	} else
-		if (saved.equals(SAVED_NONE)) {
-			initializeDefault(false);
-			mode = DESELECT_ALL;
+		if (saved.equals(SAVED_ALL)) {
+			initializeDefault(true);
+			mode = SELECT_ALL;
 		} else {
 			Vector savedList = createSavedList(saved);
 
@@ -248,11 +251,11 @@ public void initialize(IPreferenceStore store) {
 public static void initialize(ExternalModelManager registry, IPreferenceStore store) {
 	String saved = store.getString(CHECKED_PLUGINS);
 
-	if (saved.length() == 0 || saved.equals(SAVED_ALL)) {
-		initializeDefault(registry, true);
+	if (saved.length() == 0 || saved.equals(SAVED_NONE)) {
+		initializeDefault(registry, false);
 	} else
-		if (saved.equals(SAVED_NONE)) {
-			initializeDefault(registry, false);
+		if (saved.equals(SAVED_ALL)) {
+			initializeDefault(registry, true);
 		} else {
 			Vector savedList = createSavedList(saved);
 
@@ -273,9 +276,11 @@ private static int initializeDefault(ExternalModelManager registry, boolean enab
 	return enabled ? models.length : 0;
 }
 public void initializeDefault(boolean enabled) {
-	selectedCount = initializeDefault(registry, enabled);
+	initializeDefault(registry, enabled);
 	pluginListViewer.setAllChecked(enabled);
+	updateSelectedCount(enabled?SELECT_ALL:DESELECT_ALL);
 }
+
 private static boolean isChecked(String name, Vector list) {
 	for (int i = 0; i < list.size(); i++) {
 		if (name.equals(list.elementAt(i)))

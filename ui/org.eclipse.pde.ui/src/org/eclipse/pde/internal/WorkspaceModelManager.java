@@ -19,15 +19,23 @@ import org.eclipse.pde.internal.wizards.PluginPathUpdater;
 import org.eclipse.pde.internal.wizards.imports.UpdateBuildpathWizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.pde.internal.preferences.MainPreferencePage;
+import org.eclipse.pde.internal.wizards.project.ConvertedProjectWizard;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.preference.IPreferenceStore;
 
 public class WorkspaceModelManager
 	implements IModelProvider, IResourceChangeListener, IResourceDeltaVisitor {
+		
+	private static final String KEY_MISSING_NATURE_TITLE = "MissingPDENature.title";
+	private static final String KEY_MISSING_NATURE_MESSAGE = "MissingPDENature.message";
 	private Hashtable models = new Hashtable();
 	private Vector listeners = new Vector();
 	private Vector workspaceModels = null;
 	private Vector workspaceFragmentModels = null;
 	private Vector modelChanges = null;
 	private boolean startup = true;
+	private boolean missingNature=false;
 
 	class ModelChange {
 		IModel model;
@@ -275,6 +283,7 @@ public class WorkspaceModelManager
 
 		if (delta.getKind() == IResourceDelta.ADDED) {
 			// manifest added - add the model
+			checkForPDENature(file.getProject());
 			IPluginModelBase model = getWorkspaceModel(file);
 			if (model == null)
 				addWorkspaceModel(createWorkspacePluginModel(file));
@@ -293,6 +302,17 @@ public class WorkspaceModelManager
 			}
 		}
 	}
+	
+	private void checkForPDENature(IProject project) {
+		try {
+			if (!project.hasNature(PDEPlugin.PLUGIN_NATURE)) {
+				if (MainPreferencePage.isNoPDENature()) missingNature=true;
+			}
+		}
+		catch (CoreException e) {
+		}
+	}
+	
 	private void handleProjectClosing(IProject project) {
 		// not reason to keep it around if it is closed
 		handleProjectToBeDeleted(project);
@@ -304,7 +324,8 @@ public class WorkspaceModelManager
 
 		if (project.isOpen() == false)
 			return;
-		if (delta.getKind() == IResourceDelta.CHANGED
+		
+		if (kind == IResourceDelta.CHANGED
 			&& (delta.getFlags() | IResourceDelta.DESCRIPTION) != 0) {
 			// Project description changed. Test if this
 			// is now a PDE project and act
@@ -326,6 +347,9 @@ public class WorkspaceModelManager
 	private void handleResourceDelta(IResourceDelta delta) {
 		try {
 			delta.accept(this);
+			if (missingNature) {
+				handleMissingNature();
+			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
@@ -564,5 +588,26 @@ public class WorkspaceModelManager
 			}
 		}
 		return true;
+	}
+	
+	private void handleMissingNature() {
+		if (missingNature) {
+			NoPDENatureDialog dialog = new NoPDENatureDialog(PDEPlugin.getActiveWorkbenchShell(),
+					PDEPlugin.getResourceString(KEY_MISSING_NATURE_TITLE),
+					PDEPlugin.getResourceString(KEY_MISSING_NATURE_MESSAGE));
+			dialog.open();
+			int result = dialog.getResult();
+			if (result==NoPDENatureDialog.STOP_WARNING) {
+				IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
+				store.setValue(MainPreferencePage.PROP_NO_PDE_NATURE, false);
+			}
+			else if (result==NoPDENatureDialog.OPEN_WIZARD) {
+				ConvertedProjectWizard wizard = new ConvertedProjectWizard();
+				wizard.init(PlatformUI.getWorkbench(), new StructuredSelection());
+				WizardDialog wdialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
+				wdialog.open();
+			}
+		}
+		missingNature = false;
 	}
 }

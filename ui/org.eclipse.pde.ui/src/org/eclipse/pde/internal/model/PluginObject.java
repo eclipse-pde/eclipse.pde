@@ -21,7 +21,7 @@ public abstract class PluginObject
 	private IPluginObject parent;
 	private IPluginModelBase model;
 	private Vector comments;
-	private int lineNumber;
+	protected int lineNumber;
 
 	public PluginObject() {
 	}

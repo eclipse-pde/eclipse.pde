@@ -17,7 +17,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 
 import org.eclipse.jdt.launching.*;
-import org.eclipse.pde.internal.preferences.PDEBasePreferencePage;
+import org.eclipse.pde.internal.preferences.TargetPlatformPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import org.eclipse.pde.internal.wizards.StatusWizardPage;
@@ -52,6 +52,7 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage {
 	private static final String SETTINGS_TRACING = "tracing";
 	private static final String DEFAULT_VALUE = "[-]";
 
+	public static final String RT_WORKSPACE = "runtime-workspace";
 	private Combo workspaceCombo;
 	private Button browseButton;
 	private Button clearWorkspaceCheck;
@@ -175,11 +176,8 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage {
 		boolean tracing = false;
 
 		IPreferenceStore pstore = PDEPlugin.getDefault().getPreferenceStore();
-
-		String defaultWorkspace =
-			pstore.getString(PDEBasePreferencePage.PROP_PLATFORM_LOCATION);
-		progArgs = pstore.getString(PDEBasePreferencePage.PROP_PLATFORM_ARGS);
-		vmArgs = pstore.getString(PDEBasePreferencePage.PROP_VM_ARGS);
+		
+		String defaultWorkspace = getDefaultWorkspace(pstore);
 
 		if (initialSettings != null) {
 			String value = initialSettings.get(SETTINGS_VMARGS);
@@ -232,6 +230,13 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage {
 		jreSelectionStatus = validateJRESelection();
 		updateStatus();
 	}
+	
+	private static String getDefaultWorkspace(IPreferenceStore pstore) {
+		TargetPlatformPreferencePage.initializePlatformPath();
+		IPath ppath = new Path(pstore.getString(TargetPlatformPreferencePage.PROP_PLATFORM_PATH));
+		IPath runtimeWorkspace = ppath.append(RT_WORKSPACE);
+		return runtimeWorkspace.toOSString();
+	}
 
 /**
  * Load the stored settings into the provided data object to be
@@ -249,11 +254,7 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage {
 		boolean tracing = false;
 
 		IPreferenceStore pstore = PDEPlugin.getDefault().getPreferenceStore();
-
-		defaultWorkspace =
-			pstore.getString(PDEBasePreferencePage.PROP_PLATFORM_LOCATION);
-		progArgs = pstore.getString(PDEBasePreferencePage.PROP_PLATFORM_ARGS);
-		vmArgs = pstore.getString(PDEBasePreferencePage.PROP_VM_ARGS);
+		defaultWorkspace = getDefaultWorkspace(pstore);
 
 		if (settings != null) {
 			String value = settings.get(SETTINGS_VMARGS);
@@ -305,11 +306,9 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage {
 	private void doRestoreDefaults() {
 		IPreferenceStore pstore = PDEPlugin.getDefault().getPreferenceStore();
 
-		String defaultWorkspace =
-			pstore.getString(PDEBasePreferencePage.PROP_PLATFORM_LOCATION);
-		progArgsText.setText(
-			pstore.getString(PDEBasePreferencePage.PROP_PLATFORM_ARGS));
-		vmArgsText.setText(pstore.getString(PDEBasePreferencePage.PROP_VM_ARGS));
+		String defaultWorkspace = getDefaultWorkspace(pstore);
+		progArgsText.setText("");
+		vmArgsText.setText("");
 		workspaceCombo.setText(defaultWorkspace);
 		IDialogSettings settings = getDialogSettings();
 		settings.put(SETTINGS_VMARGS, DEFAULT_VALUE);

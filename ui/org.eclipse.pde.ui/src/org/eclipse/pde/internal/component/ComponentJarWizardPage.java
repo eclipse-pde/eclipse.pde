@@ -121,26 +121,6 @@ public void createControl(Composite parent) {
 	loadSettings();
 }
 
-private String createPluginPath(String eclipseDir) {
-	IPath stateLocation = PDEPlugin.getDefault().getStateLocation();
-
-	File file = stateLocation.append("component_plugin_path.properties").toFile();
-
-	String fileName = file.getAbsolutePath();
-	try {
-		OutputStream stream = new FileOutputStream(file);
-		PrintWriter writer = new PrintWriter(stream);
-		String projectPath = Platform.getLocation().toOSString();
-		WorkbenchLauncher.addExternalModels(writer, eclipseDir);
-		WorkbenchLauncher.addWorkspaceModels(writer);
-		writer.flush();
-		writer.close();
-	} catch (IOException e) {
-		return null;
-	}
-	return fileName;
-}
-
 public boolean finish() {
 	saveSettings();
 	final boolean makeScripts = makeScriptsButton.getSelection();
@@ -213,11 +193,8 @@ private void makeScripts(IProgressMonitor monitor) throws CoreException {
 	ComponentBuildScriptGenerator generator = new ComponentBuildScriptGenerator();
 	Vector args = new Vector();
 
-	String eclipseDir =
-		PDEPlugin.getDefault().getPreferenceStore().getString(
-			PDEBasePreferencePage.PROP_PLATFORM_PATH);
-	//eclipseDir += File.separator + "eclipse";
-	String pluginPath = createPluginPath(eclipseDir);
+	File pluginFile = TargetPlatformManager.createPropertiesFile();
+	String pluginPath = pluginFile.getPath();
 
 	IPath platform =
 		Platform.getLocation().append(

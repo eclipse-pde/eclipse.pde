@@ -55,11 +55,9 @@ public class ImportListSection
 	public static final String KEY_UPDATING_BUILD_PATH = "ManifestEditor.ImportListSection.updatingBuildPath";
 	public static final String KEY_COMPUTE_BUILD_PATH = "ManifestEditor.ImportListSection.updateBuildPath";
 	private Button newButton;
-	private Button importButton;
 	private Button buildpathButton;
 	private Vector imports;
 	private Action openAction;
-	private Action importAction;
 	private Action newAction;
 	private Action deleteAction;
 	private Action buildpathAction;
@@ -171,29 +169,8 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 			newButton.getShell().setDefaultButton(null);
 		}
 	});
-	if (isSelfhostingEnabled()) {
-		importButton = factory.createButton(buttonContainer, PDEPlugin.getResourceString(SECTION_IMPORT), SWT.PUSH);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.verticalAlignment= GridData.BEGINNING;
-		importButton.setLayoutData(gd);
-		importButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleImport();
-				importButton.getShell().setDefaultButton(null);
-			}
-		});
-	}
-	
 	makeActions();
 	return container;
-}
-
-private static boolean isSelfhostingEnabled() {
-	IPluginRegistry registry=Platform.getPluginRegistry();
-	String pointId = "org.eclipse.ui.importWizards";
-	String extensionId = "org.eclipse.pde.selfhosting.import";
-	IExtension extension = registry.getExtension(pointId, extensionId);
-	return extension != null;
 }
 
 public void dispose() {
@@ -222,7 +199,6 @@ public void expandTo(Object object) {
 private void fillContextMenu(IMenuManager manager) {
 	ISelection selection = importTree.getSelection();
 	manager.add(newAction);
-	if (isSelfhostingEnabled()) manager.add(importAction);
 	manager.add(new Separator());
 	if (!selection.isEmpty()) {
 		manager.add(openAction);
@@ -327,12 +303,6 @@ private void makeActions() {
 	};
 	newAction.setText(PDEPlugin.getResourceString(POPUP_NEW));
 	
-	importAction = new Action() {
-		public void run() {
-			handleImport();
-		}
-	};
-	importAction.setText(PDEPlugin.getResourceString(SECTION_IMPORT));
 	openAction = new Action() {
 		public void run() {
 			handleOpen(importTree.getSelection());
@@ -382,6 +352,7 @@ public void modelChanged(IModelChangedEvent event) {
 				}
 			}
 		}
+		setDirty(true);
 	}
 }
 

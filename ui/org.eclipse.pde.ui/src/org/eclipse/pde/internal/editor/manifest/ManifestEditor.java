@@ -49,7 +49,7 @@ public ManifestEditor() {
 }
 private void checkPlatformHome() throws PartInitException {
    IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-   String home = store.getString(PDEBasePreferencePage.PROP_PLATFORM_PATH);
+   String home = store.getString(TargetPlatformPreferencePage.PROP_PLATFORM_PATH);
    if (home==null || home.length()==0) {
 	   throw new PartInitException(PDEPlugin.getResourceString(NO_PLATFORM_HOME));
    }

@@ -220,7 +220,7 @@ public class PDEPlugin extends AbstractUIPlugin {
 		return workspaceModelManager;
 	}
 	private void initializePlatformPath() {
-		PDEBasePreferencePage.initializePlatformPath();
+		TargetPlatformPreferencePage.initializePlatformPath();
 	}
 	private IWorkbenchPage internalGetActivePage() {
 		return getWorkbench().getActiveWorkbenchWindow().getActivePage();

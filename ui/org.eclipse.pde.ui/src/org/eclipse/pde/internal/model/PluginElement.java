@@ -98,10 +98,11 @@ void load(ConfigurationElementModel elementModel) {
 void load(Node node, Hashtable lineTable) {
 	this.name = node.getNodeName();
 	NamedNodeMap attributes = node.getAttributes();
+	bindSourceLocation(node, lineTable);
 	for (int i = 0; i < attributes.getLength(); i++) {
 		Node attribute = attributes.item(i);
 		IPluginAttribute att = getModel().getFactory().createAttribute(this);
-		((PluginAttribute)att).load(attribute, null);
+		((PluginAttribute)att).load(attribute, lineTable);
 		this.attributes.put(attribute.getNodeName(), att);
 	}
 	NodeList children = node.getChildNodes();
@@ -122,7 +123,6 @@ void load(Node node, Hashtable lineTable) {
 			}
 	}
 	addComments(node);
-	bindSourceLocation(node, lineTable);
 }
 public void removeAttribute(String name) throws CoreException {
 	ensureModelEditable();

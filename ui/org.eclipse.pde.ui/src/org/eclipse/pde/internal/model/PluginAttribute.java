@@ -55,8 +55,11 @@ void load(ConfigurationPropertyModel attributeModel) {
 void load(Node node, Hashtable lineTable) {
 	this.name = node.getNodeName();
 	this.value = node.getNodeValue();
-	bindSourceLocation(node, lineTable);
+	if (getParent() instanceof ISourceObject)
+		this.lineNumber = ((ISourceObject)getParent()).getStartLine();
+	//bindSourceLocation(node, lineTable);
 }
+
 public void setAttributeInfo(ISchemaAttribute newAttributeInfo) {
 	attributeInfo = newAttributeInfo;
 }

@@ -23,7 +23,7 @@ public class SchemaElementReference extends PlatformObject implements ISchemaEle
 	private int minOccurs=1;
 	private int maxOccurs=1;
 	private Vector comments;
-	private int line, column;
+	private int line;
 
 public SchemaElementReference(ISchemaCompositor compositor, String ref) {
 	referenceName = ref;
@@ -162,15 +162,12 @@ void writeComments(PrintWriter writer, Vector source) {
 public int getStartLine() {
 	return line;
 }
-public int getStartColumn() {
-	return column;
-}
+
 void bindSourceLocation(Node node, Hashtable lineTable) {
 	if (lineTable==null) return;
-	int[] data = (int[]) lineTable.get(node);
+	Integer data = (Integer) lineTable.get(node);
 	if (data != null) {
-		line = data[0];
-		column = data[1];
+		line = data.intValue();
 	}
 }
 }

@@ -48,7 +48,7 @@ protected void doLoad() {
 	pluginsBlock.initialize(store);
 }
 protected void doLoadDefault() {
-	pluginsBlock.initializeDefault(true);
+	pluginsBlock.initializeDefault(false);
 }
 protected void doStore() {
 	pluginsBlock.save(getPreferenceStore());
@@ -58,6 +58,6 @@ public int getNumberOfControls() {
 	return 1;
 }
 public String getPlatformPath() {
-	return ((PDEBasePreferencePage)getPreferencePage()).getPlatformPath();
+	return ((TargetPlatformPreferencePage)getPreferencePage()).getPlatformPath();
 }
 }

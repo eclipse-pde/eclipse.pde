@@ -114,7 +114,7 @@ public class ExternalModelManager {
 			JavaCore.getClasspathVariable(PDEPlugin.ECLIPSE_HOME_VARIABLE);
 		if (eclipseHome == null) {
 			IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-			String newValue = store.getString(PDEBasePreferencePage.PROP_PLATFORM_PATH);
+			String newValue = store.getString(TargetPlatformPreferencePage.PROP_PLATFORM_PATH);
 			if (newValue == null || newValue.length() == 0)
 				return null;
 			setEclipseHome(newValue);
@@ -160,7 +160,7 @@ public class ExternalModelManager {
 	private String[] getPluginPaths(String platformHome) {
 		if (platformHome == null) {
 			IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-			platformHome = store.getString(PDEBasePreferencePage.PROP_PLATFORM_PATH);
+			platformHome = store.getString(TargetPlatformPreferencePage.PROP_PLATFORM_PATH);
 		}
 		if (platformHome == null || platformHome.length() == 0) {
 			Display.getCurrent().beep();
