@@ -31,6 +31,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.*;
+import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.ide.*;
@@ -326,7 +327,8 @@ public class GeneralInfoSection extends PDESection {
 	}
 	private void createMatchCombo(Composite client, FormToolkit toolkit,
 			IActionBars actionBars) {
-		toolkit.createLabel(client, PDEPlugin.getResourceString(KEY_MATCH));
+		Label label = toolkit.createLabel(client, PDEPlugin.getResourceString(KEY_MATCH));
+		label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));		
 		fMatchCombo = new ComboPart();
 		fMatchCombo.createControl(client, toolkit, SWT.READ_ONLY);
 		

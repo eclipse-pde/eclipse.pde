@@ -113,7 +113,8 @@ public class InfoSection extends PDESection {
 			}
 		});
 
-		toolkit.createLabel(container, PDEPlugin.getResourceString(KEY_URL));
+		Label label = toolkit.createLabel(container, PDEPlugin.getResourceString(KEY_URL));
+		label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));		
 
 		urlText = toolkit.createText(container, null, SWT.SINGLE);
 		urlText.addModifyListener(new ModifyListener() {
@@ -126,10 +127,11 @@ public class InfoSection extends PDESection {
 
 		toolkit.createLabel(container, null);
 
-		Label label =
+		label =
 			toolkit.createLabel(
 				container,
 				PDEPlugin.getResourceString(KEY_TEXT));
+		label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));		
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		label.setLayoutData(gd);
 

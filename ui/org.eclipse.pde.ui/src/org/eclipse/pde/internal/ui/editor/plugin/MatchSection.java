@@ -131,7 +131,8 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 				blockChanges = false;
 			}
 		});
-		toolkit.createLabel(container, PDEPlugin.getResourceString(KEY_RULE));
+		Label label = toolkit.createLabel(container, PDEPlugin.getResourceString(KEY_RULE));
+		label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
 		matchCombo = new ComboPart();
 		matchCombo.createControl(container, toolkit, SWT.READ_ONLY);
 		matchCombo.add(PDEPlugin.getResourceString(KEY_NONE));
