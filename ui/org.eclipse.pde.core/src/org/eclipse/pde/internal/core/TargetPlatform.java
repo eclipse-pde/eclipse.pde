@@ -166,7 +166,6 @@ public class TargetPlatform implements IEnvironmentVariables {
 				createConfigIniFile(configDir, pluginMap, primaryFeatureId, autoStartPlugins);
 				if (autoStartPlugins.containsKey("org.eclipse.update.configurator")) { 
 					savePlatformConfiguration(BootLoader.getPlatformConfiguration(null),configDir, pluginMap, primaryFeatureId);
-					savePlatformConfiguration(new PlatformConfiguration(null),new File(configDir, "platform.cfg"), pluginMap, primaryFeatureId);	
 				}
 			} else {
 				savePlatformConfiguration(new PlatformConfiguration(null), new File(configDir, "platform.cfg"), pluginMap, primaryFeatureId);
