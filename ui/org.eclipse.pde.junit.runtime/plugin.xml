@@ -13,6 +13,7 @@
       <import plugin="org.eclipse.jdt.junit.runtime"/>
       <import plugin="org.eclipse.ui" optional="true"/>
       <import plugin="org.junit"/>
+      <import plugin="org.eclipse.core.runtime.compatibility"/>
    </requires>
 
 
