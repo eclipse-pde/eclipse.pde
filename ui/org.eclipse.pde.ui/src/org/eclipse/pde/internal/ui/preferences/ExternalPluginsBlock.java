@@ -113,7 +113,7 @@ public class ExternalPluginsBlock {
 		pluginListViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 
 		GridData gd = (GridData) tablePart.getControl().getLayoutData();
-		gd.heightHint = 200;
+		gd.heightHint = 100;
 		this.control = container;
 		return container;
 	}

@@ -96,6 +96,7 @@ public abstract class ReferenceWizardPage extends WizardPage {
 
 	private void initialize() {
 		pluginViewer.setInput(model.getFeature());
+		checkboxTablePart.setSelection(new Object[0]);
 	}
 
 	private Object[] getChoices() {

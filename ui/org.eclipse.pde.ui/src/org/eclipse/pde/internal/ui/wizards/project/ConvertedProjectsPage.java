@@ -104,6 +104,7 @@ public class ConvertedProjectsPage extends WizardPage {
 				return isCandidate((IProject)object);
 			}
 		});
+		
 		GridData gd = (GridData) tablePart.getControl().getLayoutData();
 		gd.heightHint = 200;
 
@@ -118,6 +119,9 @@ public class ConvertedProjectsPage extends WizardPage {
 		projectViewer.setInput(PDEPlugin.getWorkspace());
 		if (initialSelection != null)
 			tablePart.setSelection(initialSelection.toArray());
+		else 
+			//defect 17757
+			tablePart.updateCounter(0);
 		setControl(container);
 	}
 

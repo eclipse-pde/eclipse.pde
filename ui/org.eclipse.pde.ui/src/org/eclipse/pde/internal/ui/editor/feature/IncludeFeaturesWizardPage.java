@@ -101,18 +101,17 @@ public class IncludeFeaturesWizardPage extends WizardPage {
 		IFeatureChild[] features = model.getFeature().getIncludedFeatures();
 		IFeature cfeature = candidate.getFeature();
 		
-		if (isThisModel(candidate)) return true;
+		if (isThisModel(cfeature)) return true;
 
 		for (int i = 0; i < features.length; i++) {
-			FeatureChild child = (FeatureChild)features[i];
+			IFeatureChild child = features[i];
 			if (child.getId().equals(cfeature.getId()) &&
-				child.getVersion().equals(cfeature.getVersion())) return true;				return true;
+				child.getVersion().equals(cfeature.getVersion())) return true;
 		}
 		return false;
 	}
 	
-	private boolean isThisModel(IFeatureModel candidate) {
-		IFeature cfeature = candidate.getFeature();
+	private boolean isThisModel(IFeature cfeature) {
 		IFeature thisFeature = this.model.getFeature();
 		
 		return cfeature.getId().equals(thisFeature.getId()) &&
@@ -124,6 +123,7 @@ public class IncludeFeaturesWizardPage extends WizardPage {
 
 	private void initialize() {
 		pluginViewer.setInput(model.getFeature());
+		checkboxTablePart.setSelection(new Object[0]);
 	}
 
 	private Object[] getChoices() {
