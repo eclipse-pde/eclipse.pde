@@ -38,4 +38,7 @@ public interface ICoreConstants {
 	public final static String PROVIDE_PACKAGE = "Provide-Package"; //$NON-NLS-1$
 	public final static String REPROVIDE_ATTRIBUTE = "reprovide"; //$NON-NLS-1$
 	public final static String OPTIONAL_ATTRIBUTE = "optional"; //$NON-NLS-1$
+	public final static String REQUIRE_PACKAGES_ATTRIBUTE = "require-packages"; //$NON-NLS-1$
+	public final static String SINGLETON_ATTRIBUTE = "singleton"; //$NON-NLS-1$
+	public final static String PACKAGE_SPECIFICATION_VERSION = "specification-version"; //$NON-NLS-1$
 }

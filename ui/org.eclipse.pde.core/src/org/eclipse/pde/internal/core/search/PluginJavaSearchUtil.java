@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.search.dependencies;
+package org.eclipse.pde.internal.core.search;
 
 import java.io.*;
 import java.util.*;

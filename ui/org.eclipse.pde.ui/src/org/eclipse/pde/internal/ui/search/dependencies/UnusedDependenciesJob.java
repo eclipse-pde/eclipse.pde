@@ -19,6 +19,7 @@ import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.core.search.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.search.PluginJavaSearchUtil;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.widgets.*;
 
