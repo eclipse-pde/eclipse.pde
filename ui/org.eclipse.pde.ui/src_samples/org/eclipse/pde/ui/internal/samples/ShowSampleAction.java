@@ -15,9 +15,8 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.ui.*;
 import org.eclipse.ui.intro.IIntroSite;
-import org.eclipse.ui.intro.internal.model.IIntroAction;
+import org.eclipse.ui.intro.internal.model.*;
 import org.eclipse.update.internal.standalone.InstallCommand;
 /**
  * @author dejan
@@ -52,18 +51,32 @@ public class ShowSampleAction extends Action implements IIntroAction {
 		SampleWizard wizard = new SampleWizard();
 		try {
 			wizard.setInitializationData(null, "class", sampleId);
+			wizard.setSampleEditorNeeded(false);
 			WizardDialog dialog = new WizardDialog(PDEPlugin
 					.getActiveWorkbenchShell(), wizard);
 			dialog.create();
 			dialog.getShell().setText("Eclipse Samples");
 			dialog.getShell().setSize(400, 500);
 			if (dialog.open() == WizardDialog.OK) {
-				// switch to the workbench
-				IWorkbench workbench = PlatformUI.getWorkbench();
-				workbench.setIntroStandby(workbench.findIntro(), true);
+				switchToSampleStandby();
 			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
+		}
+	}
+	private void switchToSampleStandby() {
+		StringBuffer url = new StringBuffer();
+		url.append("http://org.eclipse.ui.intro/showStandby?");
+		url.append("pluginId=org.eclipse.pde.ui");
+		url.append("&");
+		url.append("partId=org.eclipse.pde.ui.sampleStandbyPart");
+		url.append("&");
+		url.append("input=");
+		url.append(sampleId);
+		IntroURLParser parser = new IntroURLParser(url.toString());
+		if (parser.hasIntroUrl()) {
+			IntroURL introURL = parser.getIntroURL();
+			introURL.execute();
 		}
 	}
 	private boolean ensureSampleFeaturePresent() {

@@ -29,6 +29,7 @@ public class SampleWizard extends Wizard
 	private IConfigurationElement[] samples;
 	private IConfigurationElement selection;
 	private ReviewPage lastPage;
+	private boolean sampleEditorNeeded;
 	
 	private class ImportOverwriteQuery implements IOverwriteQuery {
 		public String queryOverwrite(String file) {
@@ -100,7 +101,7 @@ public class SampleWizard extends Wizard
 					new ImportOverwriteQuery());
 			getContainer().run(true, true, op);
 			IFile sampleManifest = op.getSampleManifest();
-			if (sampleManifest != null)
+			if (sampleEditorNeeded && sampleManifest != null)
 				IDE.openEditor(page, sampleManifest, true);
 		} catch (InvocationTargetException e) {
 			PDEPlugin.logException(e);
@@ -145,5 +146,17 @@ public class SampleWizard extends Wizard
 	 */
 	public void setSelection(IConfigurationElement selection) {
 		this.selection = selection;
+	}
+	/**
+	 * @return Returns the sampleEditorNeeded.
+	 */
+	public boolean isSampleEditorNeeded() {
+		return sampleEditorNeeded;
+	}
+	/**
+	 * @param sampleEditorNeeded The sampleEditorNeeded to set.
+	 */
+	public void setSampleEditorNeeded(boolean sampleEditorNeeded) {
+		this.sampleEditorNeeded = sampleEditorNeeded;
 	}
 }
