@@ -279,7 +279,7 @@ public class NewFeaturePatchWizard extends NewWizard implements IExecutableExten
 		IFeaturePlugin[] added = new IFeaturePlugin[plugins.length];
 		for (int i = 0; i<plugins.length; i++){
 			added[i] = model.getFactory().createPlugin();
-			String name = plugins[i].getId();
+			String name = feature.getId();
 			int loc = name.lastIndexOf(".");
 			if (loc!=-1 && loc != name.length())
 				name = name.substring(loc+1, name.length());
@@ -292,14 +292,19 @@ public class NewFeaturePatchWizard extends NewWizard implements IExecutableExten
 				}
 			}
 			version.append(name);
-			System.out.println("check version " + version.toString());
 			IStatus status = PluginVersionIdentifier.validateVersion(version.toString());
-			System.out.println("status: " + status.isOK() + " OK " + IStatus.OK);
 			if (status.isOK())
 				added[i].setVersion(version.toString());
 			else 
 				added[i].setVersion(plugins[i].getVersion());
 			added[i].setId(plugins[i].getId());
+			added[i].setDownloadSize(plugins[i].getDownloadSize());
+			added[i].setArch(plugins[i].getArch());
+			added[i].setInstallSize(plugins[i].getInstallSize());
+			added[i].setLabel(plugins[i].getLabel());
+			added[i].setNL(plugins[i].getNL());
+			added[i].setOS(plugins[i].getOS());
+			added[i].setWS(plugins[i].getWS());
 		}
 		feature.addPlugins(added);
 
