@@ -10,6 +10,7 @@ import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.internal.core.ModelEntry;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
 import org.eclipse.search.ui.ISearchResultViewEntry;
 import org.eclipse.ui.actions.ActionContext;
@@ -78,8 +79,15 @@ public class PluginSearchActionGroup extends ActionGroup {
 	private void addShowDescriptionAction(Object object, IMenuManager menu) {
 		if (object instanceof ISearchResultViewEntry)
 			object = ((ISearchResultViewEntry) object).getGroupByKey();
-		if (object instanceof IPluginExtensionPoint)
+		if (object instanceof IPluginExtensionPoint) {
 			menu.add(new ShowDescriptionAction((IPluginExtensionPoint) object));
+		} else if (object instanceof IPluginExtension) {
+			String pointId = ((IPluginExtension) object).getPoint();
+			IPluginExtensionPoint extPoint =
+				PDECore.getDefault().findExtensionPoint(pointId);
+			if (extPoint != null)
+				menu.add(new ShowDescriptionAction(extPoint));
+		}
 	}
 
 }
