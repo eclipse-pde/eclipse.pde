@@ -26,7 +26,7 @@
       <import plugin="org.eclipse.debug.ui"/>
       <import plugin="org.eclipse.update.ui.forms"/>
       <import plugin="org.eclipse.pde.build"/>
-      <import plugin="org.eclipse.pde.core"/>
+      <import plugin="org.eclipse.pde"/>
    </requires>
 
 

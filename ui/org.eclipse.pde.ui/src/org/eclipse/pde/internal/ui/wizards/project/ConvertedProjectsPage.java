@@ -29,6 +29,7 @@ import org.eclipse.jdt.core.*;
 import org.eclipse.pde.internal.ui.preferences.*;
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.PDE;
 
 public class ConvertedProjectsPage extends WizardPage {
 	private Button updateBuildPathButton;
@@ -124,7 +125,7 @@ public class ConvertedProjectsPage extends WizardPage {
 		if (project.isOpen()) {
 			try {
 				if (project.hasNature(JavaCore.NATURE_ID)
-					&& !PDECore.hasPluginNature(project))
+					&& !PDE.hasPluginNature(project))
 					return true;
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);
@@ -254,7 +255,7 @@ public class ConvertedProjectsPage extends WizardPage {
 
 	public static void convertProject(IProject project, IProgressMonitor monitor)
 		throws CoreException {
-		CoreUtility.addNatureToProject(project, PDECore.PLUGIN_NATURE, monitor);
+		CoreUtility.addNatureToProject(project, PDE.PLUGIN_NATURE, monitor);
 		IPath manifestPath = project.getFullPath().append("plugin.xml");
 		IFile file = project.getWorkspace().getRoot().getFile(manifestPath);
 		if (file.exists()) {

@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.PDE;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
 
 public class NewFeatureProjectWizard extends NewWizard 
@@ -132,7 +133,7 @@ private void createFeatureProject(
 	monitor.beginTask(PDEPlugin.getResourceString(CREATING_PROJECT), 2);
 	CoreUtility.createProject(project, location, monitor);
 	project.open(monitor);
-	CoreUtility.addNatureToProject(project, PDECore.FEATURE_NATURE, monitor);
+	CoreUtility.addNatureToProject(project, PDE.FEATURE_NATURE, monitor);
 	// create initial folder structure
 	monitor.subTask(PDEPlugin.getResourceString(CREATING_FOLDERS));
 	String name = data.id + "_" + data.version;

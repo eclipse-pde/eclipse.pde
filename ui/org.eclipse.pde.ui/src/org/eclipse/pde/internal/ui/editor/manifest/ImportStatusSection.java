@@ -4,34 +4,25 @@ package org.eclipse.pde.internal.ui.editor.manifest;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.ui.*;
-import org.eclipse.jface.resource.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.internal.ui.util.*;
-import org.eclipse.pde.internal.ui.wizards.extension.*;
-import org.eclipse.pde.core.*;
+import java.util.Vector;
+
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.builders.*;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.plugin.ImportObject;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.editor.PDEFormSection;
+import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.swt.*;
-import org.eclipse.pde.internal.ui.elements.*;
-
-import java.util.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.swt.custom.*;
-import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.pde.internal.core.plugin.ImportObject;
-import org.eclipse.swt.custom.CCombo;
-import org.eclipse.pde.internal.core.builders.*;
+import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
 public class ImportStatusSection
 	extends PDEFormSection

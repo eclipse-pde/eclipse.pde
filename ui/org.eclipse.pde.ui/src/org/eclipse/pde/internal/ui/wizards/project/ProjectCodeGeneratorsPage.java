@@ -26,6 +26,7 @@ import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.PDE;
 
 public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 	private Button blankPageRadio;
@@ -202,8 +203,8 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 		}
 		if (!project.hasNature(JavaCore.NATURE_ID))
 			CoreUtility.addNatureToProject(project, JavaCore.NATURE_ID, monitor);
-		if (!project.hasNature(PDECore.PLUGIN_NATURE))
-			CoreUtility.addNatureToProject(project, PDECore.PLUGIN_NATURE, monitor);
+		if (!project.hasNature(PDE.PLUGIN_NATURE))
+			CoreUtility.addNatureToProject(project, PDE.PLUGIN_NATURE, monitor);
 		ProjectStructurePage.setDefaultVM(project);
 		PDEPlugin.registerPlatformLaunchers(project);
 		IClasspathEntry[] libraries = new IClasspathEntry[0];

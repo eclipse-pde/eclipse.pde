@@ -10,8 +10,7 @@ import java.util.*;
 
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.builders.SourceDOMParser;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.w3c.dom.*;
 import org.xml.sax.*;

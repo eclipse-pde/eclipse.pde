@@ -9,7 +9,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.builders.*;
+import org.eclipse.pde.internal.builders.*;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.PDEFormSection;
 import org.eclipse.swt.graphics.Image;
@@ -18,7 +19,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.views.tasklist.TaskList;
 import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.pde.internal.core.PDECore;
 
 
 public class AlertSection

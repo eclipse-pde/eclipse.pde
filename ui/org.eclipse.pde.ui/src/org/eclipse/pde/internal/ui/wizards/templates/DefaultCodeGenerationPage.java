@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.PDE;
 
 public class DefaultCodeGenerationPage extends WizardPage {
 	private static final String RUNTIME_ID = "org.eclipse.core.runtime";
@@ -403,8 +404,8 @@ public class DefaultCodeGenerationPage extends WizardPage {
 		}
 		if (!project.hasNature(JavaCore.NATURE_ID))
 			CoreUtility.addNatureToProject(project, JavaCore.NATURE_ID, monitor);
-		if (!PDECore.hasPluginNature(project))
-			CoreUtility.addNatureToProject(project, PDECore.PLUGIN_NATURE, monitor);
+		if (!PDE.hasPluginNature(project))
+			CoreUtility.addNatureToProject(project, PDE.PLUGIN_NATURE, monitor);
 		PDEPlugin.registerPlatformLaunchers(project);
 	}
 	public boolean finish() {

@@ -19,8 +19,9 @@ import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.pde.internal.ui.*;
 import java.util.*;
 import org.eclipse.ui.views.properties.*;
-import org.eclipse.pde.internal.core.builders.*;
+import org.eclipse.pde.internal.builders.*;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.builders.*;
 
 
 public class NewDependencyWizardPage extends WizardPage {

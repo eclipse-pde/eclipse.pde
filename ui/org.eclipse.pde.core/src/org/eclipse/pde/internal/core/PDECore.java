@@ -17,15 +17,6 @@ import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 public class PDECore extends Plugin {
 	public static final String PLUGIN_ID = "org.eclipse.pde.core";
 
-	public static final String MANIFEST_BUILDER_ID =
-		PLUGIN_ID + "." + "ManifestBuilder";
-	public static final String SCHEMA_BUILDER_ID =
-		PLUGIN_ID + "." + "SchemaBuilder";
-	public static final String PLUGIN_NATURE = PLUGIN_ID + "." + "PluginNature";
-	public static final String FEATURE_NATURE = PLUGIN_ID + "." + "FeatureNature";
-	public static final String FEATURE_BUILDER_ID =
-		PLUGIN_ID + "." + "FeatureBuilder";
-
 	public static final String ECLIPSE_HOME_VARIABLE = "ECLIPSE_HOME";
 	public static final QualifiedName EXTERNAL_PROJECT_PROPERTY =
 		new QualifiedName(PLUGIN_ID, "imported");
@@ -64,24 +55,6 @@ public class PDECore extends Plugin {
 				ResourceBundle.getBundle("org.eclipse.pde.internal.ui.pderesources");
 		} catch (MissingResourceException x) {
 			resourceBundle = null;
-		}
-	}
-
-	public static boolean hasPluginNature(IProject project) {
-		// Be flexible with 1.0 IDs - check all combinations
-		try {
-			String suffix = ".PluginNature";
-			String id = PLUGIN_NATURE;
-			if (project.hasNature(id))
-				return true;
-			id = "org.eclipse.pde" + suffix;
-			if (project.hasNature(id))
-				return true;
-			id = "org.eclipse.pde.ui" + suffix;
-			return project.hasNature(id);
-		} catch (CoreException e) {
-			PDECore.log(e);
-			return false;
 		}
 	}
 

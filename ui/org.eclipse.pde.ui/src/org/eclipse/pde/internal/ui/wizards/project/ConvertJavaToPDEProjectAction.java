@@ -18,6 +18,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.pde.internal.PDE;
 
 public class ConvertJavaToPDEProjectAction implements IObjectActionDelegate {
 	public static final String KEY_CONVERTING = "ConvertProjectAction.converting";
@@ -44,7 +45,7 @@ public class ConvertJavaToPDEProjectAction implements IObjectActionDelegate {
 					object = ((IJavaProject) object).getProject();
 				if (object instanceof IProject) {
 					IProject project = (IProject) object;
-					if (!project.isOpen() || !PDECore.hasPluginNature(project)) {
+					if (!project.isOpen() || !PDE.hasPluginNature(project)) {
 						enable = false;
 						break;
 					} else {

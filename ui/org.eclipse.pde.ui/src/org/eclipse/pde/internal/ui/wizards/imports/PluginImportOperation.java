@@ -6,22 +6,19 @@ package org.eclipse.pde.internal.ui.wizards.imports;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.*;
+import java.util.zip.ZipFile;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jface.util.Assert;
-
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.PDE;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.*;
-import org.eclipse.jdt.core.*;
-import org.eclipse.pde.ui.BuildPathUtil;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import java.util.zip.*;
-import org.eclipse.pde.internal.core.PDECore;
 
 public class PluginImportOperation implements IWorkspaceRunnable {
 	private static final String KEY_TITLE = "ImportWizard.messages.title";
@@ -176,7 +173,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			}
 
 			desc = project.getDescription();
-			desc.setNatureIds(new String[] { JavaCore.NATURE_ID, PDECore.PLUGIN_NATURE });
+			desc.setNatureIds(new String[] { JavaCore.NATURE_ID, PDE.PLUGIN_NATURE });
 			project.setDescription(desc, new SubProgressMonitor(monitor, 1));
 			PDEPlugin.registerPlatformLaunchers(project);
 			//Mark this project so that we can show image overlay

@@ -2,7 +2,7 @@
  * (c) Copyright 2001 MyCorporation.
  * All Rights Reserved.
  */
-package org.eclipse.pde.internal.core.builders;
+package org.eclipse.pde.internal.core;
 
 import org.apache.xerces.parsers.DOMParser;
 import org.apache.xerces.utils.QName;

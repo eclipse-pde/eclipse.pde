@@ -12,7 +12,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.builders.SourceDOMParser;
 import org.w3c.dom.*;
 import org.xml.sax.*;
 
