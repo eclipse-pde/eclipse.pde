@@ -1,7 +1,9 @@
 package org.eclipse.pde.internal.ui.editor.product;
 
+import java.io.*;
 import java.util.*;
 
+import org.eclipse.core.resources.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
@@ -20,8 +22,11 @@ import org.eclipse.pde.internal.ui.wizards.feature.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.ide.*;
+import org.eclipse.ui.part.*;
 
 
 public class FeatureSection extends TableSection {
@@ -168,6 +173,23 @@ public class FeatureSection extends TableSection {
 	}
 
 	private void handleOpen(IStructuredSelection selection) {
+		if (!selection.isEmpty()) {
+			IProductFeature feature = (IProductFeature)selection.getFirstElement();
+			FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
+			IFeatureModel model = manager.findFeatureModel(feature.getId(), feature.getVersion());
+			if (model != null) {
+				IResource resource = model.getUnderlyingResource();
+				try {
+					IEditorInput input = null;
+					if (resource != null) 
+						input = new FileEditorInput((IFile)resource);
+					else
+						input = new SystemFileEditorInput(new File(model.getInstallLocation(), "feature.xml"));			
+					IDE.openEditor(PDEPlugin.getActivePage(), input, PDEPlugin.FEATURE_EDITOR_ID, true);
+				} catch (PartInitException e) {
+				}
+			}
+		}
 	}
 
 	private void handleAdd() {
