@@ -72,6 +72,11 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		String[] ws = new String[configs.length];
 		String[] archs = new String[configs.length];
 		for (int i = 0; i < configs.length; i++) {
+			String[] configElements = Utils.getArrayFromStringWithBlank(configs[i], ",");
+			if (configElements.length != 3) {
+				IStatus error = new Status(IStatus.ERROR, IPDEBuildConstants.PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_CONFIG_FORMAT, Policy.bind("error.configWrongFormat", configs[i]), null); //$NON-NLS-1$
+				throw new CoreException(error);
+			}
 			Config aConfig = new Config(configs[i]); //$NON-NLS-1$
 			if (aConfig.equals(Config.genericConfig()))
 				configInfos.add(Config.genericConfig());
