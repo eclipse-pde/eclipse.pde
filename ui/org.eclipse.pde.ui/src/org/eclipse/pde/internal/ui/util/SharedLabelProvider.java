@@ -41,6 +41,7 @@ public class SharedLabelProvider
 	public static final int F_PROJECT = 256;
 	Hashtable images = new Hashtable();
 	ArrayList consumers = new ArrayList();
+	private Image fBlankImage;
 
 	public SharedLabelProvider() {
 
@@ -61,6 +62,10 @@ public class SharedLabelProvider
 				((Image)elements.nextElement()).dispose();
 			}
 			images.clear();
+			if (fBlankImage != null) {
+				fBlankImage.dispose();
+				fBlankImage = null;
+			}
 		}
 	}
 	
@@ -183,6 +188,13 @@ public class SharedLabelProvider
 		Image image = null;
 		try {
 			URL newURL = new URL(installURL, subdirectoryAndFilename);
+			File file = new File(newURL.getFile());
+			if (!file.exists()) {
+				if (fBlankImage == null)
+					fBlankImage = ImageDescriptor.createFromURL(null).createImage();
+				return fBlankImage;	
+			}
+			
 			String key = newURL.toString();
 			image = (Image)images.get(key);
 			if (image == null) {
