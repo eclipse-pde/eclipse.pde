@@ -40,6 +40,7 @@ public class DefaultCodeGenerationPage extends WizardPage {
 	private static final String KEY_TITLE = "DefaultCodeGenerationPage.title";
 	private static final String KEY_FTITLE = "DefaultCodeGenerationPage.ftitle";
 	private static final String KEY_ID_NOT_SET = "DefaultCodeGenerationPage.idNotSet";
+	private static final String KEY_VERSION_FORMAT = "DefaultCodeGenerationPage.versionFormat";
 	private static final String KEY_INVALID_ID = "DefaultCodeGenerationPage.invalidId";
 	private static final String KEY_DESC = "DefaultCodeGenerationPage.desc";
 	private static final String KEY_FDESC = "DefaultCodeGenerationPage.fdesc";
@@ -179,6 +180,19 @@ public void createControl(Composite parent) {
 	nameField = createField(container, label);
 	versionField = createField(container, PDEPlugin.getResourceString(KEY_VERSION));
 	versionField.setText("1.0.0");
+	versionField.addModifyListener(new ModifyListener() {
+		public void modifyText(ModifyEvent e) {
+			if (isVersionValid()==false) {
+				setPageComplete(false);
+				setErrorMessage(PDEPlugin.getResourceString(KEY_VERSION_FORMAT));
+			}
+		    else if (fragment) verifyPluginFields();
+		    else {
+		    	setPageComplete(true);
+		    	setErrorMessage(null);
+		    }
+		}
+	});
 	providerField = createField(container, PDEPlugin.getResourceString(KEY_PROVIDER));
 	if (fragment) {
 		pluginIdField = createField(container, PDEPlugin.getResourceString(KEY_PLUGIN_ID), false);
@@ -263,6 +277,18 @@ private Text createField(Composite parent, String label, boolean addFiller) {
 	}
 	return text;
 }
+
+private boolean isVersionValid() {
+	String version = versionField.getText();
+	try {
+	   PluginVersionIdentifier pid = new PluginVersionIdentifier(version);
+	}
+	catch (Exception e) {
+		return false;
+	}
+	return true;
+}
+
 private IFile createFile(IContainer parent, String contents, IProgressMonitor monitor) throws CoreException {
 	// create the new file resource
 	IWorkspace workspace = parent.getWorkspace();
@@ -406,11 +432,13 @@ private FieldData initializeFieldData() {
 	FieldData data = new FieldData();
 	data.name = nameField.getText();
 	data.structureData = structureData;
-	data.version = versionField.getText();
+	PluginVersionIdentifier pvi = new PluginVersionIdentifier(versionField.getText());
+	data.version = pvi.toString();
 	data.provider = providerField.getText();
 	if (fragment) {
 		data.pluginId = pluginIdField.getText();
-		data.pluginVersion = pluginVersionField.getText();
+		PluginVersionIdentifier fvi = new PluginVersionIdentifier(pluginIdField.getText());
+		data.pluginVersion = fvi.toString();
 	} else {
 		data.className = classField.getText();
 		data.thisCheck = thisCheck.getSelection();

@@ -39,6 +39,7 @@ public class WorkbenchLauncher
 	private final static int NO_MODELS = 2;
 	private final static String NO_LAUNCHER_TITLE = "WorkbenchLauncher.noLauncher.title";
 	private final static String NO_LAUNCHER_MESSAGE = "WorkbenchLauncher.noLauncher.message";
+	private final static String KEY_STARTING = "WorkbenchLauncher.starting";
 	private final static int SELECTED_MODELS = 3;
 	protected String vmArgs;
 	protected String platformArgs;
@@ -197,7 +198,8 @@ protected boolean doLaunch(
 						throw new InvocationTargetException(e);
 					}
 				}
-				pm.beginTask("Starting run-time platform...", IProgressMonitor.UNKNOWN);
+				pm.beginTask(PDEPlugin.getResourceString(KEY_STARTING), 
+				                  IProgressMonitor.UNKNOWN);
 				VMRunnerResult result = launcher.run(config);
 				if (result != null) {
 					Launch newLaunch =
@@ -340,7 +342,7 @@ public boolean launch(Object[] elements, String mode, ILauncher launcher) {
 		String programArgs = "-dev bin -application org.eclipse.ui.workbench";
 
 		if (platformLocation != null && platformLocation.length() > 0)
-			programArgs += " -platform " + platformLocation;
+			programArgs += " -data " + platformLocation;
 		String pluginPath = createPluginPath(eclipseDir);
 		if (pluginPath == null)
 			return false;

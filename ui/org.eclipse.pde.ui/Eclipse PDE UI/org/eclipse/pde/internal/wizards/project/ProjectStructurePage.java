@@ -25,6 +25,7 @@ import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.*;
 import org.eclipse.pde.internal.wizards.*;
 import org.eclipse.pde.internal.*;
+import org.eclipse.jdt.launching.*;
 
 public class ProjectStructurePage extends WizardPage {
 	public static final String PROP_JDK = "org.eclipse.jdt.ui.build.jdk.library";
@@ -95,7 +96,17 @@ private void createProject(IProject project, IProgressMonitor monitor)
 		CoreUtility.addNatureToProject(project, JavaCore.NATURE_ID, monitor);
 	if (!project.hasNature(PDEPlugin.PLUGIN_NATURE))
 		CoreUtility.addNatureToProject(project, PDEPlugin.PLUGIN_NATURE, monitor);
+
+	setDefaultVM(project);	   
 	PDEPlugin.registerPlatformLaunchers(project);
+}
+
+static void setDefaultVM(IProject project) throws CoreException {
+	IVMInstall install = JavaRuntime.getDefaultVMInstall();
+	if (install!=null) {
+		IJavaProject javaProject = JavaCore.create(project);
+		JavaRuntime.setVM(javaProject, install);
+	}
 }
 
 private void createBuildProperties(IProject project, String library, String source) throws CoreException {

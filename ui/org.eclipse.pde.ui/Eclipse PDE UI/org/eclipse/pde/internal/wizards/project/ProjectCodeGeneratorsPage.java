@@ -188,6 +188,7 @@ private void setJavaSettings(
 		CoreUtility.addNatureToProject(project, JavaCore.NATURE_ID, monitor);
 	if (!project.hasNature(PDEPlugin.PLUGIN_NATURE))
 		CoreUtility.addNatureToProject(project, PDEPlugin.PLUGIN_NATURE, monitor);
+	ProjectStructurePage.setDefaultVM(project);
 	PDEPlugin.registerPlatformLaunchers(project);
 	IClasspathEntry[] libraries = new IClasspathEntry[0];
 	BuildPathUtil.setBuildPath(project, structureData, libraries, monitor);
@@ -208,7 +209,10 @@ private void createBlankManifest(IProject project, IPluginStructureData structur
    else
       model = new WorkspacePluginModel(file);
    model.load();
-   model.getPluginBase().setId(id);
+   IPluginBase pluginBase = model.getPluginBase();
+   pluginBase.setId(id);
+   pluginBase.setVersion("1.0.0");
+   pluginBase.setName(id);
    String libName = structureData.getRuntimeLibraryName();
    IPluginLibrary library = model.getFactory().createLibrary();
    library.setName(libName);
