@@ -4,10 +4,7 @@ package org.eclipse.pde.internal.ui.elements;
  * All Rights Reserved.
  */
 
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Image;
-import java.util.Iterator;
-import java.util.ArrayList;
 
 public abstract class DefaultElement implements IPDEElement {
 

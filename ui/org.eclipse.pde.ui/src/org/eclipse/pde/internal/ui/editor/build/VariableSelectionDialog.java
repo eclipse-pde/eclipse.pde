@@ -6,7 +6,6 @@ package org.eclipse.pde.internal.ui.editor.build;
 
 import org.eclipse.swt.events.*;
 import java.util.*;
-import org.eclipse.ui.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;

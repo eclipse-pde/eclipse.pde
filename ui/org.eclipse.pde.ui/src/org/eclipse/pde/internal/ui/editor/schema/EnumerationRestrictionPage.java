@@ -7,7 +7,6 @@ package org.eclipse.pde.internal.ui.editor.schema;
 import java.util.Vector;
 import org.eclipse.pde.internal.core.schema.*;
 import org.eclipse.swt.events.*;
-import java.util.Iterator;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.*;

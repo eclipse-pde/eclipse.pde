@@ -4,10 +4,8 @@ package org.eclipse.pde.internal.ui.wizards.project;
  * All Rights Reserved.
  */
 
-import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.core.resources.IProject;
 import java.util.Vector;
 
 public class ConvertedProjectWizard extends NewWizard {

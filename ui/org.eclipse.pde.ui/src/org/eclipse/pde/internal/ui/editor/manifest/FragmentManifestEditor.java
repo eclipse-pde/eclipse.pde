@@ -4,14 +4,6 @@ package org.eclipse.pde.internal.ui.editor.manifest;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.core.plugin.*;
-import java.io.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.ui.*;
-
 public class FragmentManifestEditor extends ManifestEditor {
 
 public FragmentManifestEditor() {

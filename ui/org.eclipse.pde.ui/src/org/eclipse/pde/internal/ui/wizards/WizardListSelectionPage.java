@@ -12,7 +12,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.layout.*;
 import java.util.*;
-import org.eclipse.swt.custom.*;
 
 
 public abstract class WizardListSelectionPage

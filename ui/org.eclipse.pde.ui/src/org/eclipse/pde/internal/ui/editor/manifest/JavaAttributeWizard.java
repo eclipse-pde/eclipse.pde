@@ -6,19 +6,8 @@ package org.eclipse.pde.internal.ui.editor.manifest;
 
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.core.resources.*;
-import java.util.Iterator;
-import java.util.Vector;
-import org.eclipse.pde.internal.core.schema.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.ui.part.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.swt.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.internal.ui.*;
-import java.util.Hashtable;
 import org.eclipse.pde.core.plugin.*;
 
 public class JavaAttributeWizard extends Wizard {

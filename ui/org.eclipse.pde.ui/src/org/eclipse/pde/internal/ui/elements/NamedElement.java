@@ -4,7 +4,6 @@ package org.eclipse.pde.internal.ui.elements;
  * All Rights Reserved.
  */
 
-import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
 
 public class NamedElement extends DefaultElement {

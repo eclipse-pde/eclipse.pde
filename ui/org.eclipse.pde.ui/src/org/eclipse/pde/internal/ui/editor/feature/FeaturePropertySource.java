@@ -4,15 +4,8 @@ package org.eclipse.pde.internal.ui.editor.feature;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.*;
-import java.net.*;
-import org.eclipse.ui.*;
 import java.util.*;
 import org.eclipse.ui.views.properties.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.pde.internal.core.feature.*;
-import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 

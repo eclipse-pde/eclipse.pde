@@ -16,8 +16,6 @@ import java.lang.reflect.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.jface.operation.*;
 import org.eclipse.core.resources.*;
-import org.eclipse.ui.plugin.*;
-import org.eclipse.jface.preference.*;
 import org.eclipse.core.runtime.*;
 
 import java.util.*;
@@ -28,13 +26,9 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.pde.ui.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.*;
-import org.eclipse.pde.internal.ui.util.*;
-import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.jdt.launching.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.PDE;
 
 public class ProjectStructurePage extends WizardPage {

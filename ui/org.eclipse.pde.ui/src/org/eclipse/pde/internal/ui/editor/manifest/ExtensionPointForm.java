@@ -4,14 +4,9 @@ package org.eclipse.pde.internal.ui.editor.manifest;
  * All Rights Reserved.
  */
 
-import org.w3c.dom.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.jface.resource.*;
-import org.w3c.dom.Document;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.swt.*;
 import org.eclipse.pde.internal.ui.*;
 
 public class ExtensionPointForm extends ScrollableSectionForm {

@@ -8,7 +8,6 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.editor.FormOutlinePage.*;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.swt.graphics.Image;
 

@@ -87,8 +87,8 @@ public class InfoSection extends PDEFormSection {
 		Composite container = factory.createComposite(parent);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
-		layout.marginWidth = factory.BORDER_STYLE == SWT.NULL ? 2 : 0;
-		layout.marginHeight = factory.BORDER_STYLE == SWT.NULL ? 2 : 0;
+		layout.marginWidth = FormWidgetFactory.BORDER_STYLE == SWT.NULL ? 2 : 0;
+		layout.marginHeight = FormWidgetFactory.BORDER_STYLE == SWT.NULL ? 2 : 0;
 		layout.verticalSpacing = 9;
 		container.setLayout(layout);
 		GridData gd;
@@ -141,7 +141,7 @@ public class InfoSection extends PDEFormSection {
 		label.setLayoutData(gd);
 
 		int styles = SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL /*| SWT.WRAP */
-		| factory.BORDER_STYLE;
+		| FormWidgetFactory.BORDER_STYLE;
 		sourceViewer = new SourceViewer(container, null, styles);
 		sourceViewer.configure(sourceConfiguration);
 		sourceViewer.setDocument(document);
@@ -231,27 +231,27 @@ public class InfoSection extends PDEFormSection {
 	}
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.CUT)) {
-			sourceViewer.doOperation(sourceViewer.CUT);
+			sourceViewer.doOperation(SourceViewer.CUT);
 			return true;
 		} else if (
 			actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.COPY)) {
-			sourceViewer.doOperation(sourceViewer.COPY);
+			sourceViewer.doOperation(SourceViewer.COPY);
 			return true;
 		} else if (
 			actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.PASTE)) {
-			sourceViewer.doOperation(sourceViewer.PASTE);
+			sourceViewer.doOperation(SourceViewer.PASTE);
 			return true;
 		} else if (
 			actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {
-			sourceViewer.doOperation(sourceViewer.DELETE);
+			sourceViewer.doOperation(SourceViewer.DELETE);
 			return true;
 		} else if (
 			actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.UNDO)) {
-			sourceViewer.doOperation(sourceViewer.UNDO);
+			sourceViewer.doOperation(SourceViewer.UNDO);
 			return true;
 		} else if (
 			actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.REDO)) {
-			sourceViewer.doOperation(sourceViewer.REDO);
+			sourceViewer.doOperation(SourceViewer.REDO);
 			return true;
 		}
 		return false;
@@ -429,6 +429,6 @@ public class InfoSection extends PDEFormSection {
 	}
 
 	public boolean canPaste(Clipboard clipboard) {
-		return sourceViewer.canDoOperation(sourceViewer.PASTE);
+		return sourceViewer.canDoOperation(SourceViewer.PASTE);
 	}
 }

@@ -4,7 +4,6 @@ package org.eclipse.pde.internal.ui.wizards;
  * All Rights Reserved.
  */
 
-import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.ui.elements.*;
 

@@ -33,7 +33,7 @@ public class SynchronizeVersionsWizardPage extends WizardPage {
 	private Button useReferencesButton;
 
 	private static final String PREFIX =
-		PDEPlugin.getDefault().getPluginId() + ".synchronizeVersions.";
+		PDEPlugin.getPluginId() + ".synchronizeVersions.";
 	private static final String PROP_SYNCHRO_MODE = PREFIX + "mode";
 	public static final String PAGE_TITLE = "VersionSyncWizard.title";
 	public static final String KEY_GROUP = "VersionSyncWizard.group";

@@ -1,6 +1,5 @@
 package org.eclipse.pde.internal.ui.util;
 
-import org.eclipse.pde.internal.ui.*;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.

@@ -61,7 +61,7 @@ protected void doFillIntoGrid(Composite parent, int numColumns) {
 	combo = getComboControl(parent);
 	GridData gd = new GridData();
 	gd.horizontalSpan = numColumns - 1;
-	gd.horizontalAlignment = gd.FILL;
+	gd.horizontalAlignment = GridData.FILL;
 	gd.grabExcessHorizontalSpace = true;
 	combo.setLayoutData(gd);
 }

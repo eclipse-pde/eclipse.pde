@@ -16,7 +16,6 @@ import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.core.TargetPlatform;
-import org.eclipse.pde.internal.ui.preferences.TargetEnvironmentPreferencePage;
 import org.eclipse.pde.internal.ui.wizards.StatusWizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -300,7 +299,6 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 
 	private void initializeFields(IDialogSettings initialSettings) {
 		String[] dropItems = new String[0];
-		boolean doImport = true;
 		boolean doExtract = false;
 		boolean doOther = false;
 

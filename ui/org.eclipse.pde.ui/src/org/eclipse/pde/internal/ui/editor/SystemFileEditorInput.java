@@ -4,11 +4,8 @@ package org.eclipse.pde.internal.ui.editor;
  * All Rights Reserved.
  */
 
-import java.net.*;
-import org.eclipse.core.runtime.*;
 import java.io.*;
 import org.eclipse.ui.*;
-import org.eclipse.pde.internal.ui.*;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.pde.internal.ui.PDEPlugin;

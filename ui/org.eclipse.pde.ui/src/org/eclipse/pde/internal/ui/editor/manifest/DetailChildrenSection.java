@@ -15,8 +15,6 @@ import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.swt.*;
 import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.jface.viewers.*;
-import java.util.*;
-import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.ui.*;
@@ -110,7 +108,7 @@ public class DetailChildrenSection
 			factory.createText(
 				container,
 				"",
-				SWT.MULTI | SWT.WRAP | SWT.V_SCROLL | factory.BORDER_STYLE);
+				SWT.MULTI | SWT.WRAP | SWT.V_SCROLL | FormWidgetFactory.BORDER_STYLE);
 		text.setEditable(false);
 		gd = new GridData(GridData.FILL_BOTH);
 		text.setLayoutData(gd);
@@ -334,13 +332,13 @@ public class DetailChildrenSection
 		if (changeObject instanceof IPluginElement) {
 			IPluginElement element = (IPluginElement) changeObject;
 			treeViewer.refresh();
-			if (event.getChangeType() == event.INSERT) {
+			if (event.getChangeType() == IModelChangedEvent.INSERT) {
 				if (!(element.getParent() instanceof IPluginExtension)) {
 					treeViewer.setSelection(
 						new StructuredSelection(element),
 						true);
 				}
-			} else if (event.getChangeType() == event.CHANGE) {
+			} else if (event.getChangeType() == IModelChangedEvent.CHANGE) {
 				treeViewer.update(changeObject, null);
 				if (treeViewer.getTree().isFocusControl()) {
 					ISelection sel = getFormPage().getSelection();

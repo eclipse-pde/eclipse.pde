@@ -36,8 +36,8 @@ public class HandlerSection extends PDEFormSection {
 		setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
 		setDescription(PDEPlugin.getResourceString(SECTION_DESC));
 		//setCollapsable(true);
-		IFeatureModel model = (IFeatureModel)page.getModel();
-		IFeature feature = model.getFeature();
+		//IFeatureModel model = (IFeatureModel)page.getModel();
+		//IFeature feature = model.getFeature();
 		//setCollapsed(feature.getInstallHandler()==null);
 	}
 	public boolean canPaste(Clipboard clipboard) {

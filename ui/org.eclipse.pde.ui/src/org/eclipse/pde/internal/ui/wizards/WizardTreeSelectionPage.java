@@ -5,7 +5,6 @@ package org.eclipse.pde.internal.ui.wizards;
  */
 
 import org.eclipse.jface.wizard.*;
-import java.util.*;
 import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;

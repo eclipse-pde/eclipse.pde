@@ -4,7 +4,6 @@ package org.eclipse.pde.internal.ui.editor.manifest;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.internal.core.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.events.*;
 import org.eclipse.jface.action.*;

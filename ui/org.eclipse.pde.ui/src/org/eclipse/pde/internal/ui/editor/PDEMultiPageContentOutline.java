@@ -5,17 +5,12 @@ package org.eclipse.pde.internal.ui.editor;
  */
 
 import org.eclipse.jface.action.*;
-import java.util.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.ui.part.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.views.contentoutline.*;
 import org.eclipse.swt.*;
-import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.pde.internal.ui.*;
 
 public class PDEMultiPageContentOutline implements IContentOutlinePage, ISelectionChangedListener {
 	private PageBook pagebook;

@@ -4,16 +4,12 @@ package org.eclipse.pde.internal.ui.launcher;
  * All Rights Reserved.
  */
 
-import java.io.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.resources.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.jface.preference.*;
 import org.eclipse.swt.*;
-import org.eclipse.ui.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
@@ -25,7 +21,6 @@ import org.eclipse.debug.core.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.pde.internal.ui.editor.manifest.NullMenuManager;
 import org.eclipse.pde.internal.ui.editor.manifest.NullToolBarManager;
-import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.pde.internal.core.*;

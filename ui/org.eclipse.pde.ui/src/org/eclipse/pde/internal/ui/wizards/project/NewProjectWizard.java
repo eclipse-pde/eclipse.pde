@@ -4,8 +4,6 @@ package org.eclipse.pde.internal.ui.wizards.project;
  * All Rights Reserved.
  */
 
-import java.io.File;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;

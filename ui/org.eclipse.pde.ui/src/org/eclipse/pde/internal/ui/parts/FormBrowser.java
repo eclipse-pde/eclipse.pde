@@ -5,7 +5,6 @@ import org.eclipse.update.ui.forms.internal.engine.FormEngine;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.*;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.*;
 

@@ -168,16 +168,7 @@ public class MatchSection extends PDEFormSection {
 				blockChanges = false;
 			}
 		});
-		SelectionListener listener = new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				buttonChanged((Button) e.widget);
-			}
-		};
 
-		Label label =
-			factory.createLabel(
-				container,
-				PDEPlugin.getResourceString(KEY_RULE));
 		matchCombo = new CCombo(container, SWT.READ_ONLY | SWT.FLAT);
 		matchCombo.add(PDEPlugin.getResourceString(KEY_NONE));
 		matchCombo.add(PDEPlugin.getResourceString(KEY_EQUIVALENT));

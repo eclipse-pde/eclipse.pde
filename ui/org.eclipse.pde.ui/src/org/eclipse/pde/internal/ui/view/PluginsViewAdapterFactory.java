@@ -7,8 +7,6 @@ package org.eclipse.pde.internal.ui.view;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.core.resources.*;
 
 public class PluginsViewAdapterFactory implements IAdapterFactory {
 	private FileAdapterPropertySource adapterPropertySource;

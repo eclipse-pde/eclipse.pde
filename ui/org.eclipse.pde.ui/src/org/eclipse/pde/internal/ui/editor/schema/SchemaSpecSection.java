@@ -10,10 +10,8 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.schema.*;
-import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.*;
-import org.eclipse.core.runtime.CoreException;
 
 
 public class SchemaSpecSection extends PDEFormSection {
@@ -36,7 +34,6 @@ public SchemaSpecSection(SchemaFormPage page) {
 	setCollapsed(true);
 }
 public void commitChanges(boolean onSave) {
-	Schema schema = (Schema) getFormPage().getModel();
 	pluginText.commit();
 	pointText.commit();
 	nameText.commit();

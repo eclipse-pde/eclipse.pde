@@ -169,11 +169,11 @@ public class UpdateClasspathOperation implements IWorkspaceRunnable {
 			if (parentModel!=null) {
 				addPrereqs(parentModel, projectsAdded, entries);
 			}
-		} else {
+		} //else {
 			// add fragment libraries
-			IPlugin plugin = ((IPluginModel) model).getPlugin();
+			//IPlugin plugin = ((IPluginModel) model).getPlugin();
 			//addFragmentLibraries(plugin, entries);
-		}
+		//}
 		addPrereqs(model, projectsAdded, entries);
 		// boot project & runtime project are implicitly imported
 		String prjName = project.getName();

@@ -17,7 +17,6 @@ import org.eclipse.pde.internal.core.schema.SchemaObject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.text.*;
-import org.eclipse.pde.internal.ui.util.PDEProblemFinder;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.*;
@@ -84,7 +83,7 @@ public class DescriptionSection extends PDEFormSection {
 		layout.numColumns = 2;
 		container.setLayout(layout);
 		GridData gd;
-		int styles = SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | factory.BORDER_STYLE;
+		int styles = SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | FormWidgetFactory.BORDER_STYLE;
 		sourceViewer = new SourceViewer(container, null, styles);
 		sourceViewer.configure(sourceConfiguration);
 		sourceViewer.setDocument(document);
@@ -148,22 +147,22 @@ public class DescriptionSection extends PDEFormSection {
 
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.CUT)) {
-			sourceViewer.doOperation(sourceViewer.CUT);
+			sourceViewer.doOperation(SourceViewer.CUT);
 			return true;
 		} else if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.COPY)) {
-			sourceViewer.doOperation(sourceViewer.COPY);
+			sourceViewer.doOperation(SourceViewer.COPY);
 			return true;
 		} else if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.PASTE)) {
-			sourceViewer.doOperation(sourceViewer.PASTE);
+			sourceViewer.doOperation(SourceViewer.PASTE);
 			return true;
 		} else if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {
-			sourceViewer.doOperation(sourceViewer.DELETE);
+			sourceViewer.doOperation(SourceViewer.DELETE);
 			return true;
 		} else if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.UNDO)) {
-			sourceViewer.doOperation(sourceViewer.UNDO);
+			sourceViewer.doOperation(SourceViewer.UNDO);
 			return true;
 		} else if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.REDO)) {
-			sourceViewer.doOperation(sourceViewer.REDO);
+			sourceViewer.doOperation(SourceViewer.REDO);
 			return true;
 		}
 		return false;
@@ -233,6 +232,6 @@ public class DescriptionSection extends PDEFormSection {
 	}
 
 	public boolean canPaste(Clipboard clipboard) {
-		return sourceViewer.canDoOperation(sourceViewer.PASTE);
+		return sourceViewer.canDoOperation(SourceViewer.PASTE);
 	}
 }

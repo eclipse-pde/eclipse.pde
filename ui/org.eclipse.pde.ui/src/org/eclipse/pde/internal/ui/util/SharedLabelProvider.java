@@ -11,13 +11,10 @@ import java.util.*;
 
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
-import org.eclipse.pde.core.plugin.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import java.net.*;
-import java.io.File;
 
 /**
  * @version 	1.0

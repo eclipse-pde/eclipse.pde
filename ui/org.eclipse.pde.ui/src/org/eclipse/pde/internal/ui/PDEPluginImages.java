@@ -6,14 +6,11 @@ package org.eclipse.pde.internal.ui;
 
 import java.net.MalformedURLException;
 import org.eclipse.core.runtime.*;
-import java.io.File;
 
-import org.eclipse.pde.internal.ui.util.OverlayIcon;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import java.net.URL;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.pde.internal.ui.util.ImageOverlayIcon;
 
 /**

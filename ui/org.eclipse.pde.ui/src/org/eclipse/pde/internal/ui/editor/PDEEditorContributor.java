@@ -10,8 +10,6 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.IEditable;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.swt.SWTError;
-import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.texteditor.*;

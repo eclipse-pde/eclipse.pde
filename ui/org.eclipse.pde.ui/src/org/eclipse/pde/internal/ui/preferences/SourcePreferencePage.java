@@ -3,10 +3,6 @@ package org.eclipse.pde.internal.ui.preferences;
 import java.io.File;
 import java.util.*;
 
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IPluginRegistry;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -324,7 +320,6 @@ public class SourcePreferencePage
 	}
 
 	private void initializeStates() {
-		ArrayList selected = new ArrayList();
 		for (int i = 0; i < extensionLocations.length; i++) {
 			SourceLocation loc = (SourceLocation) extensionLocations[i];
 			tableViewer.setChecked(loc, loc.isEnabled());

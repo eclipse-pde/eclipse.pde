@@ -4,9 +4,6 @@ package org.eclipse.pde.internal.ui.editor.schema;
  * All Rights Reserved.
  */
 
-import java.util.Iterator;
-import java.util.Vector;
-import org.eclipse.pde.internal.core.schema.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.ui.part.*;
 import org.eclipse.swt.layout.*;

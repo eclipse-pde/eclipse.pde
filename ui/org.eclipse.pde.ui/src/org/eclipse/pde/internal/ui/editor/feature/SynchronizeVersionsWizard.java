@@ -4,7 +4,6 @@ package org.eclipse.pde.internal.ui.editor.feature;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.resources.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.internal.ui.*;
 

@@ -4,7 +4,6 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.core.*;
-import java.io.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.viewers.ViewerFilter;
 

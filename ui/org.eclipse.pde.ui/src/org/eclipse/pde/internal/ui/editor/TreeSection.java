@@ -7,12 +7,8 @@
 package org.eclipse.pde.internal.ui.editor;
 
 import org.eclipse.swt.widgets.*;
-import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 import org.eclipse.pde.internal.ui.parts.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.IModel;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.layout.GridLayout;
 
 /**
  * @version 	1.0

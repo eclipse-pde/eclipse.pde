@@ -4,15 +4,11 @@ package org.eclipse.pde.internal.ui.editor;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.internal.registry.*;
 import org.eclipse.ui.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.ListenerList;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.widgets.*;
 import java.util.*;
 
 

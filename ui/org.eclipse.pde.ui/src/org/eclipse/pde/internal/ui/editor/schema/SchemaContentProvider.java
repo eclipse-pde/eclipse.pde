@@ -4,7 +4,6 @@ package org.eclipse.pde.internal.ui.editor.schema;
  * All Rights Reserved.
  */
 
-import java.util.*;
 import org.eclipse.jface.viewers.*;
 
 public class SchemaContentProvider implements ITreeContentProvider {

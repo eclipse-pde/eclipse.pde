@@ -7,7 +7,6 @@ package org.eclipse.pde.internal.ui.editor.schema;
 import java.util.*;
 import org.eclipse.pde.internal.core.schema.*;
 import org.eclipse.jface.action.*;
-import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.ui.*;
 
 public class NewElementAction extends Action {

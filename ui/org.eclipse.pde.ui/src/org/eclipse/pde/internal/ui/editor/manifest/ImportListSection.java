@@ -267,7 +267,7 @@ public class ImportListSection
 		Object changeObject = event.getChangedObjects()[0];
 		if (changeObject instanceof IPluginImport) {
 			IPluginImport iimport = (IPluginImport) changeObject;
-			if (event.getChangeType() == event.INSERT) {
+			if (event.getChangeType() == IModelChangedEvent.INSERT) {
 				ImportObject iobj = new ImportObject(iimport);
 				imports.add(iobj);
 				importTable.add(iobj);
@@ -276,7 +276,7 @@ public class ImportListSection
 			} else {
 				ImportObject iobj = findImportObject(iimport);
 				if (iobj != null) {
-					if (event.getChangeType() == event.REMOVE) {
+					if (event.getChangeType() == IModelChangedEvent.REMOVE) {
 						imports.remove(iobj);
 						importTable.remove(iobj);
 					} else {

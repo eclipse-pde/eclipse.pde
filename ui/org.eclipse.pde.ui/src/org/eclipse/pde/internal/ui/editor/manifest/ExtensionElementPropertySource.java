@@ -7,23 +7,16 @@ package org.eclipse.pde.internal.ui.editor.manifest;
 import org.eclipse.pde.internal.core.schema.*;
 import org.eclipse.ui.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.jdt.internal.ui.util.*;
-import java.lang.reflect.*;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.jface.operation.*;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.dialogs.*;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.*;
 import org.eclipse.pde.internal.core.ischema.*;
-import org.eclipse.pde.internal.core.*;
 import java.util.*;
 import org.eclipse.ui.views.properties.*;
 import org.eclipse.jface.viewers.*;
@@ -31,7 +24,6 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.ui.*;
 import org.eclipse.pde.internal.core.plugin.PluginAttribute;
 import org.eclipse.pde.internal.core.plugin.PluginElement;
@@ -149,17 +141,17 @@ public void createPropertyDescriptors() {
 		ISchemaAttribute att = attributes[i];
 		PropertyDescriptor desc;
 
-		if (att.getKind() == att.JAVA) {
+		if (att.getKind() == ISchemaAttribute.JAVA) {
 			desc = new JavaAttributeDescriptor(att.getName(), att.getName(), !isEditable());
 			desc.setLabelProvider(new PropertyLabelProvider(att.getName(), classImage));
 		} else
-			if (att.getKind() == att.RESOURCE) {
+			if (att.getKind() == ISchemaAttribute.RESOURCE) {
 				desc =
 					new ResourceAttributeDescriptor(att.getName(), att.getName(), !isEditable());
 				desc.setLabelProvider(new PropertyLabelProvider(att.getName(), resourceImage));
 			} else {
 				desc = createPropertyDescriptor(att);
-				if (att.getUse() == att.REQUIRED) {
+				if (att.getUse() == ISchemaAttribute.REQUIRED) {
 					desc.setLabelProvider(new PropertyLabelProvider(att.getName(), reqImage));
 				} else {
 				}

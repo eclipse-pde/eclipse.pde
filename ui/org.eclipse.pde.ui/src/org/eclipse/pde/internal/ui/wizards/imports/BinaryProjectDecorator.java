@@ -14,9 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.pde.internal.ui.util.ImageOverlayIcon;
-import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 import java.util.*;
 import org.eclipse.pde.internal.core.*;
 

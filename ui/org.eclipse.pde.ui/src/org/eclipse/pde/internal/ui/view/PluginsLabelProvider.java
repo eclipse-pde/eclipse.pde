@@ -5,7 +5,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
-import java.io.*;
 import org.eclipse.ui.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 

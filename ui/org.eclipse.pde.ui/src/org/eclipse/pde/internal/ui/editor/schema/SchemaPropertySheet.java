@@ -4,8 +4,6 @@ package org.eclipse.pde.internal.ui.editor.schema;
  * All Rights Reserved.
  */
 
-import org.eclipse.swt.layout.*;
-import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.ui.*;
@@ -14,9 +12,7 @@ import org.eclipse.swt.custom.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.ui.views.properties.*;
-import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.swt.*;
 
 public class SchemaPropertySheet extends PropertySheetPage {
 	public static final String CLONE_LABEL = "SchemaEditor.SchemaPropertySheet.clone.label";

@@ -17,7 +17,6 @@ import org.eclipse.debug.core.model.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.debug.ui.JavaUISourceLocator;
 import org.eclipse.jdt.launching.*;
-import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.ui.*;
@@ -92,8 +91,7 @@ public class WorkbenchLaunchConfigurationDelegate
 		IVMRunner runner = launcher.getVMRunner(mode);
 		ExecutionArguments args = new ExecutionArguments(vmArgs, progArgs);
 		IPath path = new Path(data);
-		boolean success =
-			doLaunch(
+		doLaunch(
 				launch,
 				configuration,
 				mode,

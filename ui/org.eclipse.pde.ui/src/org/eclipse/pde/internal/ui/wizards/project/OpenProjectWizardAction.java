@@ -5,7 +5,6 @@
 package org.eclipse.pde.internal.ui.wizards.project;
 
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.ui.*;
 import org.eclipse.jface.wizard.WizardDialog;

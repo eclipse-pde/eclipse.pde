@@ -6,11 +6,9 @@ package org.eclipse.pde.internal.ui.editor.build;
 
 import org.eclipse.jface.viewers.*;
 import org.eclipse.ui.views.contentoutline.*;
-import org.eclipse.ui.editors.text.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.*;
 import org.eclipse.pde.internal.ui.elements.*;
-import java.util.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.texteditor.*;
 

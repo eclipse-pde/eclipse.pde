@@ -6,11 +6,9 @@ package org.eclipse.pde.internal.ui.wizards;
 
 import org.eclipse.ui.part.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.views.navigator.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.ui.*;
-import org.eclipse.jface.resource.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 
 

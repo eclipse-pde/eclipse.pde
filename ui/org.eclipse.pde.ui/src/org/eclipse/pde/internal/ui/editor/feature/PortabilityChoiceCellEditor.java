@@ -4,16 +4,11 @@ package org.eclipse.pde.internal.ui.editor.feature;
  * All Rights Reserved.
  */
 
-import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.ischema.*;
-import org.eclipse.pde.internal.ui.util.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.pde.core.plugin.*;
 
 public class PortabilityChoiceCellEditor extends DialogCellEditor {
 	private static final String KEY_TITLE =

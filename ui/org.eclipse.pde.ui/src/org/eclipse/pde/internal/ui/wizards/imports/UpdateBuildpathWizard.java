@@ -6,7 +6,6 @@
  */
 package org.eclipse.pde.internal.ui.wizards.imports;
 
-import org.eclipse.jdt.internal.ui.actions.WorkbenchRunnableAdapter;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.ui.wizards.imports.UpdateClasspathAction;

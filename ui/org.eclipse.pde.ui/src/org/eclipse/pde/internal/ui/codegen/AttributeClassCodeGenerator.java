@@ -9,7 +9,6 @@ import java.io.*;
 import org.eclipse.core.runtime.*;
 import java.util.*;
 import org.eclipse.pde.internal.core.ischema.*;
-import org.eclipse.pde.internal.ui.util.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.internal.core.SourceType;
 

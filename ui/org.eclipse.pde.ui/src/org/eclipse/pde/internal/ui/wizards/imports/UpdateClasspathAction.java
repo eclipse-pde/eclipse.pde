@@ -11,7 +11,6 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -23,9 +22,7 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.ui.BuildPathUtil;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.pde.internal.ui.preferences.BuildpathPreferencePage;
-import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.pde.internal.core.*;
 
 import org.eclipse.jdt.core.*;

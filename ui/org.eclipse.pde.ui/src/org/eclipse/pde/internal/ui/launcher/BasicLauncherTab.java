@@ -7,11 +7,9 @@ package org.eclipse.pde.internal.ui.launcher;
 import java.io.File;
 import java.util.ArrayList;
 
-import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.jdt.launching.*;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;

@@ -9,7 +9,6 @@ import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.editor.FormOutlinePage.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 

@@ -78,8 +78,8 @@ public class DataSection
 		setDescription(PDEPlugin.getResourceString(SECTION_DESC));
 		getTablePart().setEditable(false);
 		//setCollapsable(true);
-		IFeatureModel model = (IFeatureModel)page.getModel();
-		IFeature feature = model.getFeature();
+		//IFeatureModel model = (IFeatureModel)page.getModel();
+		//IFeature feature = model.getFeature();
 		//setCollapsed(feature.getData().length==0);
 	}
 

@@ -21,9 +21,6 @@ public class PluginsDragAdapter extends DragSourceAdapter {
 	 * operation.
 	 */
 	public void dragSetData(DragSourceEvent event) {
-		DragSource dragSource = (DragSource) event.widget;
-		Control control = dragSource.getControl();
-		Shell shell = control.getShell();
 
 		//resort to a file transfer
 		if (!FileTransfer.getInstance().isSupportedType(event.dataType))

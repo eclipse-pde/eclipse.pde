@@ -133,7 +133,7 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 		}
 	});
 	
-	Tree tree = new Tree(container, factory.BORDER_STYLE);
+	Tree tree = new Tree(container, FormWidgetFactory.BORDER_STYLE);
 	factory.hookDeleteListener(tree);
 
 	MenuManager popupMenuManager = new MenuManager();
@@ -221,7 +221,7 @@ public void initializeImages() {
 
 	importImage = provider.get(PDEPluginImages.DESC_REQ_PLUGIN_OBJ);
 	loopNodeImage = provider.get(PDEPluginImages.DESC_LOOP_NODE_OBJ);
-	warningLoopImage = provider.get(PDEPluginImages.DESC_LOOP_OBJ, provider.F_WARNING);
+	warningLoopImage = provider.get(PDEPluginImages.DESC_LOOP_OBJ, PDELabelProvider.F_WARNING);
 }
 
 private void makeActions() {

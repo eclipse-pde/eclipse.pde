@@ -3,8 +3,6 @@ package org.eclipse.pde.internal.ui.wizards.templates;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.pde.internal.ui.editor.*;
 
 public class TemplateEditorInput extends FileEditorInput {
 	private String firstPageId;

@@ -4,11 +4,9 @@ package org.eclipse.pde.internal.ui.editor;
  * All Rights Reserved.
  */
 
-import org.eclipse.jface.viewers.*;
 import org.eclipse.ui.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.swt.widgets.*;
 
 public class PropertiesAction extends Action {
 	public static final String LABEL = "Actions.properties.label";

@@ -4,27 +4,19 @@ package org.eclipse.pde.internal.ui.editor.feature;
  * All Rights Reserved.
  */
 
-import java.util.Iterator;
 import java.util.Vector;
-import org.eclipse.pde.internal.core.schema.*;
-import org.eclipse.pde.internal.ui.util.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.ui.part.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.ui.*;
-import java.util.Hashtable;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
 import java.util.StringTokenizer;
-import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
 
 public class PortabilityChoicesDialog extends Dialog {

@@ -4,22 +4,9 @@ package org.eclipse.pde.internal.ui.editor.manifest;
  * All Rights Reserved.
  */
 
-import org.eclipse.swt.graphics.*;
-import org.eclipse.pde.core.plugin.*;
-import java.util.*;
-import org.eclipse.core.runtime.*;
-import org.xml.sax.*;
-import java.io.*;
-import org.eclipse.core.resources.*;
 import org.eclipse.ui.views.contentoutline.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.part.*;
-import org.eclipse.swt.*;
 import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.w3c.dom.Document;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.jface.action.*;
 
 

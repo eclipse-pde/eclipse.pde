@@ -39,7 +39,7 @@ public void run() {
 		}
 	}
 	if (file!=null && file.exists()) {
-		IWorkbenchPage page = PDEPlugin.getDefault().getActivePage();
+		IWorkbenchPage page = PDEPlugin.getActivePage();
 		try {
 			page.openEditor(file);
 		} catch (PartInitException e) {

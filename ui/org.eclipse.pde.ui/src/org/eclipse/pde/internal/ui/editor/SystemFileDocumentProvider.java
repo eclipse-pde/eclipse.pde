@@ -4,13 +4,9 @@ package org.eclipse.pde.internal.ui.editor;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.internal.ui.editor.text.*;
 import java.io.*;
 import org.eclipse.jface.text.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.text.source.*;
-import org.eclipse.ui.editors.text.*;
-import org.eclipse.ui.texteditor.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 
 public class SystemFileDocumentProvider extends StreamDocumentProvider {

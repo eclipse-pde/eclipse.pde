@@ -5,7 +5,6 @@ package org.eclipse.pde.internal.ui.wizards.extension;
  */
 
 import org.eclipse.core.resources.*;
-import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.ui.*;
 import org.eclipse.pde.core.plugin.*;

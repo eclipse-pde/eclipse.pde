@@ -5,7 +5,6 @@ package org.eclipse.pde.internal.ui.editor.feature;
  */
 
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.editor.manifest.MatchSection;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;

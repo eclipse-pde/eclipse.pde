@@ -1,7 +1,5 @@
 package org.eclipse.pde.internal.ui.wizards;
 
-import java.util.ArrayList;
-
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.ui.wizards.*;
 import org.eclipse.jface.viewers.*;
@@ -173,7 +171,6 @@ public class RequiredPluginsContainerPage extends WizardPage implements IClasspa
 	private void initializeView() {
 		viewer.setInput(entry);
 		viewer.setAllGrayed(true);
-		ArrayList checked = new ArrayList();
 		for (int i=0; i<realEntries.length; i++) {
 			if (realEntries[i].isExported())
 				viewer.setChecked(realEntries[i], true);

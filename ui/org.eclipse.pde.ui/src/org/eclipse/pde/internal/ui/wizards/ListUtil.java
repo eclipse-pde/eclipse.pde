@@ -5,7 +5,6 @@ package org.eclipse.pde.internal.ui.wizards;
  */
 
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.*;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ModelEntry;

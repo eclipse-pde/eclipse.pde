@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.HashSet;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.JFaceColors;
@@ -12,7 +11,6 @@ import org.eclipse.pde.internal.core.SourceLocation;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.layout.*;

@@ -4,16 +4,10 @@ package org.eclipse.pde.internal.ui.preferences;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.*;
-import java.net.URL;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
 import org.eclipse.jface.preference.*;
 import org.eclipse.ui.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.text.IPDEColorConstants;
-import org.eclipse.swt.*;
-import org.eclipse.jdt.core.*;
 
 public class EditorPreferencePage
 	extends FieldEditorPreferencePage

@@ -7,12 +7,9 @@ package org.eclipse.pde.internal.ui.wizards.extension;
 import org.eclipse.ui.part.*;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.*;
-import org.eclipse.core.runtime.OperationCanceledException;
-import java.lang.reflect.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.internal.core.schema.*;
-import org.eclipse.pde.internal.ui.util.*;
 
 import java.io.*;
 import org.eclipse.pde.internal.ui.*;
@@ -21,17 +18,13 @@ import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.operation.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
-import org.eclipse.pde.core.plugin.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.*;
-import org.eclipse.jface.window.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.ui.codegen.*;
-import org.eclipse.pde.internal.ui.editor.schema.*;
-import org.eclipse.pde.internal.ui.editor.*;
 
 public abstract class BaseExtensionPointMainPage extends WizardPage {
 	public static final String KEY_PLUGIN_ID = "BaseExtensionPoint.pluginId"; //$NON-NLS-1$
@@ -285,7 +278,6 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 	}
 	private boolean validateContainer() {
 		boolean exists = container!=null && container.exists();
-		String message = null;
 		if (!exists) {
 			setErrorMessage(PDEPlugin.getResourceString("BaseExtensionPointMainPage.noContainer")); //$NON-NLS-1$
 			setPageComplete(false);

@@ -4,7 +4,6 @@ package org.eclipse.pde.internal.ui.util;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 

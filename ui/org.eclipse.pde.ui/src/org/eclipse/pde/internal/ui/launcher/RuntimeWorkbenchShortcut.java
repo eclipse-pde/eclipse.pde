@@ -4,8 +4,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.*;
 import org.eclipse.debug.ui.*;
 import org.eclipse.jdt.debug.ui.JavaUISourceLocator;
-import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.widgets.Shell;
@@ -105,7 +103,7 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 		dialog.setMultipleSelection(false);
 		int result= dialog.open();
 		labelProvider.dispose();
-		if (result == dialog.OK) {
+		if (result == ElementListSelectionDialog.OK) {
 			return (ILaunchConfiguration)dialog.getFirstResult();
 		}
 		return null;		

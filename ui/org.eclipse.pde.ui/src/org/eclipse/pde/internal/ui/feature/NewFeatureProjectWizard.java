@@ -4,13 +4,11 @@ package org.eclipse.pde.internal.ui.feature;
  * All Rights Reserved.
  */
 
-import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -190,7 +188,7 @@ public class NewFeatureProjectWizard
 	}
 
 	private void openFeatureManifest(IFile manifestFile) {
-		IWorkbenchPage page = PDEPlugin.getDefault().getActivePage();
+		IWorkbenchPage page = PDEPlugin.getActivePage();
 		// Reveal the file first
 		final ISelection selection = new StructuredSelection(manifestFile);
 		final IWorkbenchPart activePart = page.getActivePart();

@@ -5,14 +5,9 @@ package org.eclipse.pde.internal.ui.editor.manifest;
  */
 
 import org.eclipse.pde.core.plugin.*;
-import org.w3c.dom.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.jface.resource.*;
-import org.w3c.dom.Document;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.swt.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.core.resources.*;

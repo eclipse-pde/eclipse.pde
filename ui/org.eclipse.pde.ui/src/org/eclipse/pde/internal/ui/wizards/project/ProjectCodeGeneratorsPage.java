@@ -7,12 +7,9 @@ package org.eclipse.pde.internal.ui.wizards.project;
 import java.lang.reflect.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.jface.operation.*;
-import org.eclipse.pde.internal.ui.util.*;
 import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.*;
-import org.eclipse.ui.dialogs.*;
 import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.layout.*;
@@ -27,7 +24,6 @@ import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.PDE;
 
 public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
@@ -168,7 +164,7 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 			public void execute(IProgressMonitor monitor) {
 				try {
 					createBlankManifest(project, structureData, monitor);
-					projectStructurePage.createBuildProperties(project, structureData, monitor);
+					ProjectStructurePage.createBuildProperties(project, structureData, monitor);
 				} catch (CoreException e) {
 					PDEPlugin.logException(e);
 				} finally {

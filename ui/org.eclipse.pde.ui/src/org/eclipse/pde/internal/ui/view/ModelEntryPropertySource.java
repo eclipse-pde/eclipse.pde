@@ -2,7 +2,6 @@ package org.eclipse.pde.internal.ui.view;
 
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.ui.views.properties.*;
-import java.util.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.core.resources.IResource;
 

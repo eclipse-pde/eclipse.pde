@@ -1,7 +1,6 @@
 package org.eclipse.pde.internal.ui.editor.manifest;
 
 import org.eclipse.update.ui.forms.internal.WebForm;
-import org.eclipse.update.ui.forms.internal.IFormPage;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.SWT;
@@ -13,8 +12,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.launcher.RuntimeWorkbenchShortcut;
-import org.eclipse.debug.ui.actions.RunAction;
-import org.eclipse.debug.ui.actions.DebugAction;
 import org.eclipse.core.resources.*;
 import org.eclipse.jdt.core.*;
 import java.util.*;

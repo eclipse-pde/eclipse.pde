@@ -268,7 +268,6 @@ public class PluginsView extends ViewPart {
 
 		if (selection.size() == 1) {
 			Object sobj = selection.getFirstElement();
-			boolean addSeparator = false;
 			if (sobj instanceof FileAdapter
 				&& ((FileAdapter) sobj).isDirectory() == false) {
 				manager.add(openAction);

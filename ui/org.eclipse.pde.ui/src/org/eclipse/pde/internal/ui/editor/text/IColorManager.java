@@ -5,7 +5,6 @@ package org.eclipse.pde.internal.ui.editor.text;
  */
 
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.RGB;
 
 public interface IColorManager {
 

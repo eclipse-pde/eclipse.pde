@@ -5,7 +5,6 @@ package org.eclipse.pde.internal.ui.wizards.project;
  */
 
 import org.eclipse.pde.internal.ui.codegen.*;
-import org.eclipse.pde.internal.ui.util.*;
 import org.eclipse.core.resources.*;
 import java.io.*;
 

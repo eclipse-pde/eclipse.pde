@@ -1,7 +1,6 @@
 package org.eclipse.pde.internal.ui.view;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import java.util.*;
 import org.eclipse.pde.internal.core.FileAdapter;

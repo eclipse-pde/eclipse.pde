@@ -8,7 +8,6 @@ import org.eclipse.jface.action.*;
 import org.eclipse.ui.views.properties.*;
 import org.eclipse.ui.views.contentoutline.*;
 import org.eclipse.ui.*;
-import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.swt.dnd.Clipboard;
 

@@ -5,8 +5,6 @@ package org.eclipse.pde.internal.ui.util;
  */
 import java.text.Collator;
 
-import org.eclipse.pde.internal.ui.*;
-
 public class ArraySorter extends Sorter {
 	public static ArraySorter INSTANCE = new ArraySorter();
 public boolean compare(Object elementOne, Object elementTwo) {

@@ -7,7 +7,6 @@ import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import java.text.MessageFormat;
 import org.eclipse.jface.viewers.*;

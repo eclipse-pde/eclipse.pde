@@ -4,7 +4,6 @@ package org.eclipse.pde.internal.ui.elements;
  * All Rights Reserved.
  */
 
-import java.util.*;
 import org.eclipse.jface.viewers.*;
 
 public class TreeContentProvider extends ListContentProvider implements ITreeContentProvider {

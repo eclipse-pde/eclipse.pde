@@ -14,7 +14,6 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.events.*;
 

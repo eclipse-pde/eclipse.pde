@@ -7,7 +7,6 @@ package org.eclipse.pde.internal.ui.wizards.templates;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.ui.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.jdt.core.*;
 
 public class PluginCodeGeneratorWizard extends Wizard implements IPluginContentWizard {
 	private DefaultCodeGenerationPage defaultPage;

@@ -8,7 +8,6 @@ import java.util.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.jface.dialogs.*;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.swt.*;
 import org.eclipse.jface.viewers.*;

@@ -4,16 +4,7 @@ package org.eclipse.pde.internal.ui.editor.schema;
  * All Rights Reserved.
  */
 
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Widget;
-import org.eclipse.jface.action.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.editors.text.*;
-import org.eclipse.jface.text.*;
-import org.eclipse.core.runtime.*;
 import org.eclipse.ui.views.contentoutline.*;
-import java.util.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.text.*;
 

@@ -98,7 +98,7 @@ public class GrammarSection extends PDEFormSection {
 		tree.setLayoutData(gd);
 
 		dtdLabel = factory.createLabel(container, "", SWT.WRAP);
-		dtdLabel.setForeground(factory.getColor(factory.DEFAULT_HEADER_COLOR));
+		dtdLabel.setForeground(factory.getColor(FormWidgetFactory.DEFAULT_HEADER_COLOR));
 		gd = new GridData(GridData.FILL_BOTH);
 		dtdLabel.setLayoutData(gd);
 		updateDTDLabel(null);

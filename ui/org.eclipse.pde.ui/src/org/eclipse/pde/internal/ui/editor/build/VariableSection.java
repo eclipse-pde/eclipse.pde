@@ -185,9 +185,9 @@ public class VariableSection
 		}
 		Object changeObject = event.getChangedObjects()[0];
 		if (changeObject instanceof IBuildEntry) {
-			if (event.getChangeType() == event.INSERT) {
+			if (event.getChangeType() == IModelChangedEvent.INSERT) {
 				variableTable.add(changeObject);
-			} else if (event.getChangeType() == event.REMOVE) {
+			} else if (event.getChangeType() == IModelChangedEvent.REMOVE) {
 				variableTable.remove(changeObject);
 			} else {
 				if (event.getChangedProperty() == null) {

@@ -512,7 +512,7 @@ public class DetailExtensionSection
 		}
 		Object changeObject = event.getChangedObjects()[0];
 		if (changeObject instanceof IPluginBase
-			&& event.getChangeType() == event.CHANGE
+			&& event.getChangeType() == IModelChangedEvent.CHANGE
 			&& event.getChangedProperty().equals(IPluginBase.P_EXTENSION_ORDER)) {
 			IStructuredSelection sel = (IStructuredSelection) extensionTree.getSelection();
 			IPluginExtension extension = (IPluginExtension) sel.getFirstElement();
@@ -532,13 +532,13 @@ public class DetailExtensionSection
 					&& !(parent instanceof IPluginExtension))
 					return;
 			}
-			if (event.getChangeType() == event.INSERT) {
+			if (event.getChangeType() == IModelChangedEvent.INSERT) {
 				extensionTree.add(parent, pobj);
 				extensionTree.setSelection(new StructuredSelection(changeObject), true);
 				extensionTree.getTree().setFocus();
 				// defect 16606: update property sheet
 				asyncResendSelection(getFormPage().getSelection());
-			} else if (event.getChangeType() == event.REMOVE) {
+			} else if (event.getChangeType() == IModelChangedEvent.REMOVE) {
 				extensionTree.remove(pobj);
 			} else {
 				if (event.getChangedProperty().equals(IPluginParent.P_SIBLING_ORDER)) {

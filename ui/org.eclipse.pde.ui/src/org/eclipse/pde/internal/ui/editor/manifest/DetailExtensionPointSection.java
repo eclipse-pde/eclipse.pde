@@ -7,28 +7,19 @@ package org.eclipse.pde.internal.ui.editor.manifest;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.ui.*;
-import org.eclipse.jface.resource.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.extension.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.jface.action.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.core.*;
 import org.eclipse.swt.*;
 import org.eclipse.pde.internal.ui.elements.*;
-import java.util.*;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.pde.internal.core.ischema.*;
-import org.eclipse.pde.internal.core.schema.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.jface.window.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.pde.internal.core.plugin.PluginExtensionPoint;
@@ -193,11 +184,11 @@ public class DetailExtensionPointSection
 		}
 		Object changeObject = event.getChangedObjects()[0];
 		if (changeObject instanceof IPluginExtensionPoint) {
-			if (event.getChangeType() == event.INSERT) {
+			if (event.getChangeType() == IModelChangedEvent.INSERT) {
 				pointTable.add(changeObject);
 				pointTable.setSelection(new StructuredSelection(changeObject), true);
 				pointTable.getTable().setFocus();
-			} else if (event.getChangeType() == event.REMOVE) {
+			} else if (event.getChangeType() == IModelChangedEvent.REMOVE) {
 				pointTable.remove(changeObject);
 			} else {
 				pointTable.update(changeObject, null);

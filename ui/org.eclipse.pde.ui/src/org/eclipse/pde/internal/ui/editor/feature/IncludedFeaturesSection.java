@@ -6,7 +6,6 @@ package org.eclipse.pde.internal.ui.editor.feature;
 
 import java.util.Iterator;
 
-import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
@@ -60,8 +59,8 @@ public class IncludedFeaturesSection
 		setDescription(PDEPlugin.getResourceString(SECTION_DESC));
 		getTablePart().setEditable(false);
 		//setCollapsable(true);
-		IFeatureModel model = (IFeatureModel)page.getModel();
-		IFeature feature = model.getFeature();
+		//IFeatureModel model = (IFeatureModel)page.getModel();
+		//IFeature feature = model.getFeature();
 		//setCollapsed(feature.getData().length==0);
 	}
 
@@ -118,8 +117,6 @@ public class IncludedFeaturesSection
 
 	private void handleNew() {
 		final IFeatureModel model = (IFeatureModel) getFormPage().getModel();
-		IResource resource = model.getUnderlyingResource();
-		final IProject project = resource.getProject();
 
 		BusyIndicator.showWhile(includesViewer.getTable().getDisplay(), new Runnable() {
 			public void run() {

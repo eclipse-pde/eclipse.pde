@@ -171,7 +171,6 @@ public class JarsSection
 			((IStructuredSelection) entryTable.getSelection()).getFirstElement();
 		if (object != null && object instanceof String) {
 			String folderName = object.toString();
-			IPath path = project.getFullPath().append(folderName);
 			IFolder folder = project.getFolder(folderName);
 			removeIfOnBuildPath(project, folder);
 			String libKey = IBuildEntry.JAR_PREFIX + currentLibrary.getName();

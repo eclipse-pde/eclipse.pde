@@ -4,20 +4,9 @@ package org.eclipse.pde.internal.ui.editor.manifest;
  * All Rights Reserved.
  */
 
-import org.eclipse.swt.graphics.*;
-import java.util.*;
 import org.eclipse.ui.views.properties.*;
-import org.eclipse.core.runtime.*;
-import java.io.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.ui.views.contentoutline.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.part.*;
-import org.eclipse.swt.*;
 import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
 
 
 public class ManifestExtensionPointPage extends PDEChildFormPage {

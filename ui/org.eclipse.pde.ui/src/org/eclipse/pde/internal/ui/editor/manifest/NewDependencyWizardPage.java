@@ -4,9 +4,7 @@ package org.eclipse.pde.internal.ui.editor.manifest;
  * All Rights Reserved.
  */
 
-import java.io.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.resources.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.layout.*;
@@ -19,7 +17,6 @@ import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.pde.internal.ui.*;
 import java.util.*;
-import org.eclipse.ui.views.properties.*;
 import org.eclipse.pde.internal.builders.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.builders.*;

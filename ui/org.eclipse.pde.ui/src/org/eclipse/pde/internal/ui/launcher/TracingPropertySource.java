@@ -5,9 +5,7 @@ package org.eclipse.pde.internal.ui.launcher;
  */
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.resources.*;
 import java.util.*;
-import java.io.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.ui.views.properties.*;
 import java.util.Vector;
