@@ -584,7 +584,9 @@ public abstract class PDEMultiPageEditor
 		selectionProvider.removeSelectionChangedListener(listener);
 	}
 	public void setFocus() {
-		getCurrentPage().setFocus();
+		IPDEEditorPage page = getCurrentPage();
+		if (page != null)
+			page.setFocus();
 	}
 	public void setSelection(ISelection selection) {
 		selectionProvider.setSelection(selection);
