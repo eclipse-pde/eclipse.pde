@@ -148,17 +148,17 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		ArrayList programArgs = new ArrayList();
 		
 		boolean useDefault = configuration.getAttribute(USECUSTOM, true);
-		IPluginModelBase[] plugins =
+		TreeMap pluginMap =
 			LauncherUtils.validatePlugins(
 				LauncherUtils.getWorkspacePluginsToRun(configuration, useDefault),
 				getExternalPluginsToRun(configuration, useDefault));
-		if (plugins == null)
+		if (pluginMap == null)
 			return null;
-			
-		plugins = addRequiredPlugins(plugins);
 		
+		addRequiredPlugins(pluginMap);
+					
 		programArgs.add("-application");
-		programArgs.add(getApplicationName(plugins, configuration));
+		programArgs.add(getApplicationName(pluginMap, configuration));
 		
 		String testApplication = configuration.getAttribute(APP_TO_TEST, (String)null);
 		if (testApplication != null && testApplication.length() > 0) {
@@ -173,9 +173,10 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		
 		programArgs.add("-configuration");
 		String primaryFeatureId = getPrimaryFeatureId();
+		
 		configFile =
-			TargetPlatform.createPlatformConfiguration(
-				plugins,
+			TargetPlatform.createPlatformConfigurationArea(
+				pluginMap,
 				new Path(targetWorkspace),
 				primaryFeatureId);
 		programArgs.add("file:" + configFile.getPath());
@@ -235,46 +236,23 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		return (String[]) programArgs.toArray(new String[programArgs.size()]);
 	}
 	
-	/**
-	 * @param plugins
-	 */
-	private IPluginModelBase[] addRequiredPlugins(IPluginModelBase[] plugins) throws CoreException {
-		boolean pdeJunitMissing = true;
-		boolean jdtJunitMissing = true;
-		boolean junitMissing = true;
-		for (int i = 0; i < plugins.length; i++) {
-			if (!pdeJunitMissing && !jdtJunitMissing && !junitMissing)
-				break;
-			String id = plugins[i].getPluginBase().getId();
-			if (id.equals("org.eclipse.pde.junit.runtime")) {
-				pdeJunitMissing = false;
-			} else if (id.equals("org.eclipse.jdt.junit.runtime")) {
-				jdtJunitMissing = false;
-			} else if (id.equals("org.junit")) {
-				junitMissing = false;
-			}
+	private IPluginModelBase[] addRequiredPlugins(TreeMap pluginMap)
+		throws CoreException {
+		if (!pluginMap.containsKey("org.eclipse.pde.junit.runtime")) {
+			pluginMap.put(
+				"org.eclipse.pde.junit.runtime",
+				findPlugin("org.eclipse.pde.junit.runtime"));
 		}
-
-		ArrayList extraPlugins = new ArrayList();
-		if (pdeJunitMissing) {
-			extraPlugins.add(findPlugin("org.eclipse.pde.junit.runtime"));
+		if (!pluginMap.containsKey("org.eclipse.jdt.junit.runtime")) {
+			pluginMap.put(
+				"org.eclipse.jdt.junit.runtime",
+				findPlugin("org.eclipse.jdt.junit.runtime"));
 		}
-		if (jdtJunitMissing) {
-			extraPlugins.add(findPlugin("org.eclipse.jdt.junit.runtime"));
-		} 
-		if (junitMissing) {
-			extraPlugins.add(findPlugin("org.junit"));
+		if (!pluginMap.containsKey("org.junit")) {
+			pluginMap.put("org.junit", findPlugin("org.junit"));
 		}
-		if (extraPlugins.size() > 0) {
-			IPluginModelBase[] all =
-				new IPluginModelBase[plugins.length + extraPlugins.size()];
-			System.arraycopy(plugins, 0, all, 0, plugins.length);
-			for (int i = 0; i < extraPlugins.size(); i++) {
-				all[plugins.length + i] = (IPluginModelBase) extraPlugins.get(i);
-			}
-			return all;
-		}
-		return plugins;	
+		return (IPluginModelBase[]) pluginMap.values().toArray(
+			new IPluginModelBase[pluginMap.size()]);
 	}
 	
 	private IPluginModelBase findPlugin(String id) throws CoreException {
@@ -371,18 +349,18 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		return LauncherUtils.getDefaultPath().append("junit-core-workspace").toOSString();				
 	}
 	
-	private String getApplicationName(IPluginModelBase[] models, ILaunchConfiguration config) throws CoreException {
+	private String getApplicationName(TreeMap pluginMap, ILaunchConfiguration config) throws CoreException {
 		String application = config.getAttribute(APPLICATION, (String)null);
 		if (CORE_APPLICATION.equals(application))
 			return CORE_APPLICATION;
 		
-		for (int i = 0; i < models.length; i++) {
-			IPluginExtension[] extensions = models[i].getPluginBase().getExtensions();
-			for (int j = 0; j < extensions.length; j++) {
-				String point = extensions[j].getPoint();
+		IPluginModelBase model = (IPluginModelBase)pluginMap.get("org.eclipse.ui");
+		if (model != null) {
+			IPluginExtension[] extensions = model.getPluginBase().getExtensions();
+			for (int i = 0; i < extensions.length; i++) {
+				String point = extensions[i].getPoint();
 				if (point != null && point.equals("org.eclipse.core.runtime.applications")) {
-					String id = extensions[j].getPluginBase().getId() + "." + extensions[j].getId();
-					if ("org.eclipse.ui.workbench".equals(id)){
+					if ("workbench".equals(extensions[i].getId())){
 						return LEGACY_UI_APPLICATION;
 					}
 				}

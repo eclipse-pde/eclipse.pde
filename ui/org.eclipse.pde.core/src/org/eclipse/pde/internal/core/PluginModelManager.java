@@ -30,7 +30,7 @@ public class PluginModelManager implements IAdaptable {
 	private ArrayList listeners;
 	private boolean osgiRuntime;
 
-	private Hashtable entries;
+	private TreeMap entries;
 
 	public PluginModelManager() {
 		providerListener = new IModelProviderListener() {
@@ -250,7 +250,7 @@ public class PluginModelManager implements IAdaptable {
 	
 	private void initializeTable() {
 		if (workspaceManager.isLocked()) return;
-		entries = new Hashtable();
+		entries = new TreeMap();
 		IPluginModelBase[] models = workspaceManager.getAllModels();
 		addToTable(models, true);
 		models = externalManager.getAllModels();

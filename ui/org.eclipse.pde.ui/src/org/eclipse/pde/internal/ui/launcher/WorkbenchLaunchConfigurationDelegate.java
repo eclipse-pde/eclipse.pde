@@ -125,18 +125,18 @@ public class WorkbenchLaunchConfigurationDelegate
 			programArgs.add("file:" + installDir.getPath() + File.separator);
 			programArgs.add("-update");
 		} else {
-			IPluginModelBase[] plugins =
+			TreeMap pluginMap =
 				LauncherUtils.validatePlugins(
 					LauncherUtils.getWorkspacePluginsToRun(configuration, useDefault),
 					getExternalPluginsToRun(configuration, useDefault));
-			if (plugins == null) 
+			if (pluginMap == null) 
 				return null;
 				
 			programArgs.add("-configuration");
 			String primaryFeatureId = getPrimaryFeatureId();
 			configFile =
-				TargetPlatform.createPlatformConfiguration(
-					plugins,
+				TargetPlatform.createPlatformConfigurationArea(
+					pluginMap,
 					new Path(targetWorkspace),
 					primaryFeatureId);
 			programArgs.add("file:" + configFile.getPath());

@@ -1,55 +1,26 @@
 package org.eclipse.pde.internal.ui.launcher;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
-import java.util.ArrayList;
-import java.util.StringTokenizer;
-import java.util.TreeSet;
-import java.util.Vector;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.model.IPersistableSourceLocator;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.debug.core.*;
+import org.eclipse.debug.core.model.*;
 import org.eclipse.jdt.core.*;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.debug.ui.JavaUISourceLocator;
-import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
-import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.IVMInstallType;
-import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.preference.*;
+import org.eclipse.jdt.debug.ui.*;
+import org.eclipse.jdt.launching.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.ExternalModelManager;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.parts.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.*;
+import org.eclipse.swt.widgets.*;
 
 public class LauncherUtils {
-	private static final String KEY_DUPLICATES =
-		"WorkbenchLauncherConfigurationDelegate.duplicates";
-	private static final String KEY_DUPLICATE_PLUGINS =
-		"WorkbenchLauncherConfigurationDelegate.duplicatePlugins";
-	private static final String KEY_NO_BOOT =
-		"WorkbenchLauncherConfigurationDelegate.noBoot";
+	private static final String KEY_MISSING_REQUIRED =
+		"WorkbenchLauncherConfigurationDelegate.missingRequired";
 	private static final String KEY_BROKEN_PLUGINS =
 		"WorkbenchLauncherConfigurationDelegate.brokenPlugins";
 	private static final String KEY_NO_JRE =
@@ -233,14 +204,13 @@ public class LauncherUtils {
 		}		
 	}
 	
-	public static IPluginModelBase[] validatePlugins(
+	public static TreeMap validatePlugins(
 		IPluginModelBase[] wsmodels,
 		IPluginModelBase[] exmodels)
 		throws CoreException {
 		bootPath = null;
 		bootInSource = false;
-		IPluginModelBase bootModel = null;
-		ArrayList result = new ArrayList();
+		TreeMap result = new TreeMap();
 		ArrayList statusEntries = new ArrayList();
 
 		for (int i = 0; i < wsmodels.length; i++) {
@@ -248,57 +218,55 @@ public class LauncherUtils {
 			if (status == null) {
 				String id = wsmodels[i].getPluginBase().getId();
 				if (id != null) {
-					result.add(wsmodels[i]);
-					if (id.equals("org.eclipse.core.boot"))
-						bootModel = wsmodels[i];
+					result.put(id, wsmodels[i]);
 				}
 			} else {
 				statusEntries.add(status);
 			}
 		}
-
-		Vector duplicates = new Vector();
+		
 		for (int i = 0; i < exmodels.length; i++) {
-			IStatus status = validateModel(exmodels[i]);
-			if (status == null) {
-				boolean duplicate = false;
-				String id = exmodels[i].getPluginBase().getId();
-				for (int j = 0; j < wsmodels.length; j++) {
-					if (wsmodels[j].getPluginBase().getId().equalsIgnoreCase(id)) {
-						duplicates.add(id);
-						duplicate = true;
-						break;
-					}
-				}
-				if (!duplicate) {
-					result.add(exmodels[i]);
-					if (id.equals("org.eclipse.core.boot"))
-						bootModel = exmodels[i];
-				}
-			} else {
-				statusEntries.add(status);
+			String id = exmodels[i].getPluginBase().getId();
+			if (id != null && !result.containsKey(id)) {
+				result.put(id, exmodels[i]);
 			}
 		}
-
-		// Look for boot path.  Cancel launch, if not found.
-		bootPath = getBootPath(bootModel);
-		if (bootPath == null) {
+		
+		StringBuffer errorText = new StringBuffer();
+		
+		bootPath = getBootPath((IPluginModelBase) result.get("org.eclipse.core.boot"));
+		boolean isOSGI = PDECore.getDefault().getModelManager().isOSGiRuntime();
+		final String lineSeparator = System.getProperty("line.separator");
+		if (bootPath == null && !isOSGI) {
+			errorText.append("org.eclipse.core.boot" + lineSeparator);
+		}
+		
+		if (isOSGI) {
+			if (!result.containsKey("org.eclipse.osgi"))
+				errorText.append("org.eclipse.osgi" + lineSeparator);
+			if (!result.containsKey("org.eclipse.osgi.services"))
+				errorText.append("org.eclipse.osgi.services" + lineSeparator);
+			if (!result.containsKey("org.eclipse.osgi.util"))
+				errorText.append("org.eclipse.osgi.util" + lineSeparator);
+			if (!result.containsKey("org.eclipse.core.runtime"))
+				errorText.append("org.eclipse.core.runtime" + lineSeparator);
+			if (!result.containsKey("org.eclipse.update.configurator"))
+				errorText.append("org.eclipse.update.configurator");
+		}
+		
+		if (errorText.length() > 0) {
+			final String text = errorText.toString();
 			final Display display = getDisplay();
 			display.syncExec(new Runnable() {
 				public void run() {
 					MessageDialog.openError(
 						display.getActiveShell(),
 						PDEPlugin.getResourceString(KEY_TITLE),
-						PDEPlugin.getResourceString(KEY_NO_BOOT));
+						PDEPlugin.getResourceString(KEY_MISSING_REQUIRED)
+							+ lineSeparator
+							+ text);
 				}
 			});
-			return null;
-		}
-
-		// alert user if there are duplicate plug-ins.
-		if (duplicates.size() > 0
-			&& PDEPlugin.isDuplicateWarningNeeded()
-			&& !continueRunning(duplicates)) {
 			return null;
 		}
 
@@ -315,7 +283,7 @@ public class LauncherUtils {
 				return null;
 			}
 		}
-		return (IPluginModelBase[]) result.toArray(new IPluginModelBase[result.size()]);
+		return result;
 	}
 
 	private static IStatus validateModel(IPluginModelBase model) {
@@ -362,42 +330,6 @@ public class LauncherUtils {
 		return null;
 	}
 	
-	private static boolean continueRunning(final Vector duplicates) {
-		final boolean[] result = new boolean[1];
-		getDisplay().syncExec(new Runnable() {
-			public void run() {
-				StringBuffer message =
-					new StringBuffer(
-						PDEPlugin.getFormattedMessage(
-							KEY_DUPLICATES,
-							new Integer(duplicates.size()).toString()));
-				if (duplicates.size() <= 5) {
-					String lineSeparator = System.getProperty("line.separator");
-					message.append(
-						lineSeparator
-							+ lineSeparator
-							+ PDEPlugin.getResourceString(KEY_DUPLICATE_PLUGINS)
-							+ ":"
-							+ lineSeparator);
-					for (int i = 0; i < duplicates.size(); i++)
-						message.append(duplicates.get(i) + lineSeparator);
-				}
-				MessageDialogWithToggle dialog =
-					MessageDialogWithToggle.openQuestion(
-						getDisplay().getActiveShell(),
-						PDEPlugin.getResourceString(KEY_TITLE),
-						message.toString(),
-						PDEPlugin.getResourceString("LauncherConfigurationDelegate.doNotShow"),
-						false);
-				result[0] = dialog.getReturnCode() == MessageDialogWithToggle.OK;
-				IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-				store.setValue(IPreferenceConstants.PROP_LAUNCH_DUP_WARNING, !dialog.getToggleState());
-				PDEPlugin.getDefault().savePluginPreferences();
-			}
-		});
-		return result[0];
-	}
-
 	private static boolean ignoreValidationErrors(final MultiStatus status) {
 		final boolean[] result = new boolean[1];
 		getDisplay().syncExec(new Runnable() {

@@ -160,14 +160,18 @@ public class TargetPlatform implements IEnvironmentVariables {
 		}
 	}
 
-	public static File createPlatformConfiguration(
-		IPluginModelBase[] plugins,
+	public static File createPlatformConfigurationArea(
+		TreeMap pluginMap,
 		IPath data,
 		String primaryFeatureId)
 		throws CoreException {
 		try {
-			File configFile = new File(createWorkingDirectory(data), "platform.cfg");
-			savePlatformConfiguration(configFile, plugins, primaryFeatureId);
+			File configDir = createWorkingDirectory(data);
+			if (PDECore.getDefault().getModelManager().isOSGiRuntime()) {
+				createConfigIniFile(configDir, pluginMap);
+			}
+			File configFile = new File(configDir, "platform.cfg");
+			savePlatformConfiguration(configFile, pluginMap, primaryFeatureId);
 			return configFile;
 		} catch (CoreException e) {
 			// Rethrow
@@ -187,6 +191,40 @@ public class TargetPlatform implements IEnvironmentVariables {
 		}
 	}
 	
+	private static void createConfigIniFile(File configDir, TreeMap pluginMap) {
+		File file = new File(configDir, "config.ini");
+		try {
+			FileOutputStream stream = new FileOutputStream(file);
+			OutputStreamWriter writer = new OutputStreamWriter(stream, "8859_1");
+			BufferedWriter bWriter = new BufferedWriter(writer);
+			
+			bWriter.write("#Eclipse Runtime Configuration File");
+			bWriter.newLine();
+			bWriter.write("osgi.framework" + "=" + getLocation("org.eclipse.osgi", pluginMap));
+			bWriter.newLine();
+			
+			StringBuffer buffer = new StringBuffer();
+			buffer.append(getLocation("org.eclipse.osgi.services", pluginMap) + ",");
+			buffer.append(getLocation("org.eclipse.osgi.util", pluginMap) + ",");
+			buffer.append(getLocation("org.eclipse.core.runtime", pluginMap) + "@2,");
+			buffer.append(getLocation("org.eclipse.update.configurator", pluginMap) + "@3");
+			bWriter.write("osgi.bundles" + "=" + buffer.toString());
+			bWriter.newLine();
+			
+			bWriter.write("eof=eof");
+			bWriter.flush();
+			bWriter.close();
+		} catch (IOException e) {
+			PDECore.logException(e);
+		}
+	}
+	
+	private static String getLocation(String id, TreeMap pluginMap) {
+		IPluginModelBase model = (IPluginModelBase)pluginMap.get(id);
+		IPath path = new Path(model.getInstallLocation()).addTrailingSeparator();
+		return "reference:file:" + path.toString();
+	}
+	
 	public static File createWorkingDirectory(IPath data) {
 		String dataSuffix = createDataSuffix(data);
 		IPath statePath = PDECore.getDefault().getStateLocation();
@@ -203,31 +241,26 @@ public class TargetPlatform implements IEnvironmentVariables {
 
 	private static void savePlatformConfiguration(
 		File configFile,
-		IPluginModelBase[] models,
+		TreeMap pluginMap,
 		String primaryFeatureId)
 		throws IOException, CoreException, MalformedURLException {
 		ArrayList sites = new ArrayList();
-		IPluginModelBase bootModel = null;
 
 		// Compute local sites
-
-		for (int i = 0; i < models.length; i++) {
-			IPluginModelBase model = models[i];
-			IPluginBase plugin = model.getPluginBase();
-
-			String id = plugin.getId();
-			if (id.equals(BOOT_ID))
-				bootModel = model;
-			IAlternativeRuntimeSupport altRuntime = PDECore.getDefault().getRuntimeSupport();
+		IAlternativeRuntimeSupport altRuntime = PDECore.getDefault().getRuntimeSupport();
+		Iterator iter = pluginMap.values().iterator();
+		while(iter.hasNext()) {
+			IPluginModelBase model = (IPluginModelBase)iter.next();
 			IPath sitePath = altRuntime.getTransientSitePath(model);
 			addToSite(sitePath, model, sites);
 		}
 
+		IPluginModelBase bootModel = (IPluginModelBase)pluginMap.get(BOOT_ID);	
 		URL configURL = new URL("file:" + configFile.getPath()); //$NON-NLS-1$
 		IPlatformConfiguration platformConfiguration =
 			BootLoader.getPlatformConfiguration(null);
 		createConfigurationEntries(platformConfiguration, bootModel, sites);
-		createFeatureEntries(platformConfiguration, models, primaryFeatureId);
+		createFeatureEntries(platformConfiguration, pluginMap, primaryFeatureId);
 		platformConfiguration.refresh();
 		platformConfiguration.save(configURL);
 
@@ -312,7 +345,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 
 	private static void createFeatureEntries(
 		IPlatformConfiguration config,
-		IPluginModelBase[] models,
+		TreeMap pluginMap,
 		String primaryFeatureId)
 		throws MalformedURLException {
 		IPath targetPath = ExternalModelManager.getEclipseHome(null);
@@ -327,10 +360,10 @@ public class TargetPlatform implements IEnvironmentVariables {
 		IFeature feature = featureModel.getFeature();
 		String featureVersion = feature.getVersion();
 		String pluginId = primaryFeatureId;
-		IPluginBase primaryPlugin = findPlugin(pluginId, models);
+		IPluginModelBase primaryPlugin = (IPluginModelBase)pluginMap.get(pluginId);
 		if (primaryPlugin == null)
 			return;
-		IPath pluginPath = getPluginLocation(primaryPlugin.getPluginModel());
+		IPath pluginPath = getPluginLocation(primaryPlugin);
 		URL pluginURL = new URL("file:" + pluginPath.toString()); //$NON-NLS-1$
 		URL[] root = new URL[] { pluginURL };
 		IPlatformConfiguration.IFeatureEntry featureEntry =
@@ -338,26 +371,12 @@ public class TargetPlatform implements IEnvironmentVariables {
 				primaryFeatureId,
 				featureVersion,
 				pluginId,
-				primaryPlugin.getVersion(),
+				primaryPlugin.getPluginBase().getVersion(),
 				true,
 				null,
 				root);
 		config.configureFeatureEntry(featureEntry);
 		featureModel.dispose();
-	}
-
-	private static IPluginBase findPlugin(
-		String id,
-		IPluginModelBase[] models) {
-		for (int i = 0; i < models.length; i++) {
-			IPluginModelBase model = models[i];
-			if (model.isFragmentModel())
-				continue;
-			IPluginBase plugin = model.getPluginBase();
-			if (plugin.getId().equals(id))
-				return plugin;
-		}
-		return null;
 	}
 
 	private static IFeatureModel loadPrimaryFeatureModel(
