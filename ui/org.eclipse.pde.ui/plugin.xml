@@ -812,13 +812,31 @@
          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
       <launchConfigurationTabGroup
             type="org.eclipse.pde.ui.RuntimeWorkbench"
-            class="org.eclipse.pde.internal.ui.launcher.WorkbenchLauncherTabGroup"
-            id="org.eclipse.pde.ui.launcher.WorkbenchLauncherTabGroup">
-      </launchConfigurationTabGroup>
-      <launchConfigurationTabGroup
-            type="org.eclipse.pde.ui.JunitLaunchConfig"
-            class="org.eclipse.pde.internal.ui.launcher.JUnitTabGroup"
-            id="org.eclipse.pde.ui.launcher.JUnitTabGroup">
+             class="org.eclipse.pde.internal.ui.launcher.WorkbenchLauncherTabGroup"
+             id="org.eclipse.pde.ui.launcher.WorkbenchLauncherTabGroup">
+            <launchMode 
+                  mode="debug"
+                  perspective="org.eclipse.debug.ui.DebugPerspective"
+                  description="%workbenchLauncherTabGroup.description.debug">
+            </launchMode>
+            <launchMode
+                  mode="run"
+                  description="%workbenchLauncherTabGroup.description.run">
+            </launchMode>
+       </launchConfigurationTabGroup>
+       <launchConfigurationTabGroup
+             type="org.eclipse.pde.ui.JunitLaunchConfig"
+             class="org.eclipse.pde.internal.ui.launcher.JUnitTabGroup"
+             id="org.eclipse.pde.ui.launcher.JUnitTabGroup">
+            <launchMode 
+                  mode="debug"
+                  perspective="org.eclipse.debug.ui.DebugPerspective"
+                  description="%jUnitTabGroup.description.debug">
+            </launchMode>
+            <launchMode
+                  mode="run"
+                  description="%jUnitTabGroup.description.run">
+            </launchMode>
       </launchConfigurationTabGroup>
    </extension>
    <extension
