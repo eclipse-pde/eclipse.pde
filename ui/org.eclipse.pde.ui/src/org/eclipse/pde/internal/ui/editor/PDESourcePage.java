@@ -225,6 +225,7 @@ protected void selectObjectRange(ISelection selection) {
 		return true;
 	}
 	public void setFocus() {
+		getControl().setFocus();
 	}
 
 	public boolean containsError() {

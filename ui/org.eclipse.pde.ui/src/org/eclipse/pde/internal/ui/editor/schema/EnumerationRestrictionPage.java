@@ -12,6 +12,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.*;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.util.SWTUtil;
 
 public class EnumerationRestrictionPage implements IRestrictionPage {
 	public static final String KEY_CHOICES =
@@ -81,6 +82,7 @@ public class EnumerationRestrictionPage implements IRestrictionPage {
 				handleAdd();
 			}
 		});
+		SWTUtil.setButtonDimensionHint(addButton);
 
 		deleteButton = new Button(editColumn, SWT.PUSH);
 		deleteButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -91,6 +93,7 @@ public class EnumerationRestrictionPage implements IRestrictionPage {
 				handleDelete();
 			}
 		});
+		SWTUtil.setButtonDimensionHint(deleteButton);
 
 		text.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
@@ -140,7 +143,8 @@ public class EnumerationRestrictionPage implements IRestrictionPage {
 		return restriction;
 	}
 	private void handleAdd() {
-		String item = text.getText();
+		String item = text.getText().trim();
+		if (item.length()==0) return;
 		choiceList.add(item);
 		choiceList.setSelection(new String[] { item });
 		text.setText("");
