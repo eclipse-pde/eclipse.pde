@@ -199,15 +199,12 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		IPluginModelBase model,
 		IProgressMonitor monitor)
 		throws CoreException {
-		IPluginBase plugin = model.getPluginBase();
-		String name = plugin.getId();
+		String name = model.getPluginBase().getId();
 		String task = PDEPlugin.getFormattedMessage(KEY_CREATING2, name);
 		monitor.beginTask(task, 8);
 		try {
-			File pluginDir = new File(model.getInstallLocation());
-			IPath pluginPath = new Path(pluginDir.getPath());
-
 			IProject project = root.getProject(name);
+
 			if (project.exists()) {
 				if (queryReplace(project)) {
 					boolean deleteContent =
@@ -221,41 +218,28 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 				} else {
 					return;
 				}
-			} else {
+			} else { 
 				monitor.worked(1);
 			}
 
-			IProjectDescription desc =
-				root.getWorkspace().newProjectDescription(project.getName());
-			if (!doImport) {
-				desc.setLocation(pluginPath);
-			}
-
-			project.create(desc, new SubProgressMonitor(monitor, 1));
+			project.create(new SubProgressMonitor(monitor, 1));
 			if (!project.isOpen()) {
 				project.open(null);
 			}
 
 			if (doImport) {
-				importContent(
-					pluginDir,
-					project.getFullPath(),
-					FileSystemStructureProvider.INSTANCE,
-					null,
-					new SubProgressMonitor(monitor, 1));
-				importSource(
-					project,
-					plugin,
-					pluginPath,
-					new SubProgressMonitor(monitor, 1));
+				importContentAndSource(project, model, monitor);
 			} else {
 				monitor.worked(2);
 			}
 
-			desc = project.getDescription();
-			desc.setNatureIds(
-				new String[] { JavaCore.NATURE_ID, PDE.PLUGIN_NATURE });
-			project.setDescription(desc, new SubProgressMonitor(monitor, 1));
+			boolean needsJavaNature = project.getFile(".classpath").exists();
+
+			setProjectDescription(project, needsJavaNature, monitor);
+
+			if (needsJavaNature)
+				updateClasspath(project, model, monitor);
+
 			//Mark this project so that we can show image overlay
 			// using the label decorator
 			if (!extractSource)
@@ -265,43 +249,6 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 						? PDECore.EXTERNAL_PROJECT_VALUE
 						: PDECore.BINARY_PROJECT_VALUE);
 
-			IPath outputLocation = project.getFullPath();
-
-			IPluginLibrary[] libraries = plugin.getLibraries();
-
-			IClasspathEntry[] classpathEntries = null;
-			if (libraries.length > 0) {
-				classpathEntries = new IClasspathEntry[libraries.length];
-				for (int i = 0; i < libraries.length; i++) {
-					classpathEntries[i] =
-						UpdateClasspathOperation.getLibraryEntry(
-							project,
-							libraries[i],
-							true);
-				}
-				if (extractSource) {
-					doExtractSource(
-						project,
-						classpathEntries,
-						new SubProgressMonitor(monitor, 1));
-				} else {
-					monitor.worked(1);
-				}
-				outputLocation = project.getFullPath().append("bin");
-			} else {
-				classpathEntries = new IClasspathEntry[0];
-				outputLocation = project.getFullPath();
-				monitor.worked(1);
-			}
-			IJavaProject jproject = JavaCore.create(project);
-			UpdateClasspathOperation op =
-				new UpdateClasspathOperation(
-					jproject,
-					model,
-					models,
-					classpathEntries,
-					outputLocation);
-			op.run(new SubProgressMonitor(monitor, 2));
 		} finally {
 			monitor.done();
 		}
@@ -709,5 +656,83 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		}
 		return true;
 	}
+	
+	private void updateClasspath(
+		IProject project,
+		IPluginModelBase model,
+		IProgressMonitor monitor)
+		throws CoreException {
+		IPath outputLocation = project.getFullPath();
 
+		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
+
+		IClasspathEntry[] classpathEntries = null;
+		if (libraries.length > 0) {
+			classpathEntries = new IClasspathEntry[libraries.length];
+			for (int i = 0; i < libraries.length; i++) {
+				classpathEntries[i] =
+					UpdateClasspathOperation.getLibraryEntry(
+						project,
+						libraries[i],
+						true);
+			}
+			if (extractSource) {
+				doExtractSource(
+					project,
+					classpathEntries,
+					new SubProgressMonitor(monitor, 1));
+			} else {
+				monitor.worked(1);
+			}
+			outputLocation = project.getFullPath().append("bin");
+		} else {
+			classpathEntries = new IClasspathEntry[0];
+			outputLocation = project.getFullPath();
+			monitor.worked(1);
+		}
+		IJavaProject jproject = JavaCore.create(project);
+		UpdateClasspathOperation op =
+			new UpdateClasspathOperation(
+				jproject,
+				model,
+				models,
+				classpathEntries,
+				outputLocation);
+		op.run(new SubProgressMonitor(monitor, 2));
+		
+	}
+	
+	private void importContentAndSource(
+		IProject project,
+		IPluginModelBase model,
+		IProgressMonitor monitor) throws CoreException {
+		File pluginDir = new File(model.getInstallLocation());
+		IPath pluginPath = new Path(pluginDir.getPath());
+		importContent(
+			pluginDir,
+			project.getFullPath(),
+			FileSystemStructureProvider.INSTANCE,
+			null,
+			new SubProgressMonitor(monitor, 1));
+		importSource(
+			project,
+			model.getPluginBase(),
+			pluginPath,
+			new SubProgressMonitor(monitor, 1));
+	}
+	
+	private void setProjectDescription(
+		IProject project,
+		boolean needsJavaNature,
+		IProgressMonitor monitor)
+		throws CoreException {
+		IProjectDescription desc = project.getDescription();
+		if (needsJavaNature)
+			desc.setNatureIds(
+				new String[] { JavaCore.NATURE_ID, PDE.PLUGIN_NATURE });
+		else
+			desc.setNatureIds(new String[] { PDE.PLUGIN_NATURE });
+		project.setDescription(desc, new SubProgressMonitor(monitor, 1));
+	}
+	
 }
