@@ -128,10 +128,13 @@ public class WorkbenchSourcePathProvider extends StandardSourcePathProvider {
 					for (int j = 0; j < roots.length; j++) {
 						if (roots[j].isArchive() && !isJRELibrary(roots[j])) {
 							IRuntimeClasspathEntry rte = JavaRuntime.newArchiveRuntimeClasspathEntry(roots[j].getPath());
-							rte.setSourceAttachmentPath(roots[j].getSourceAttachmentPath());
-							rte.setSourceAttachmentRootPath(roots[j].getSourceAttachmentRootPath());
-							if (!all.contains(rte))
-								all.add(rte);
+							IPath path = roots[j].getSourceAttachmentPath();
+							if (path != null) {
+								rte.setSourceAttachmentPath(path);
+								rte.setSourceAttachmentRootPath(roots[j].getSourceAttachmentRootPath());
+								if (!all.contains(rte))
+									all.add(rte);
+							}
 						}
 					}
 				}
