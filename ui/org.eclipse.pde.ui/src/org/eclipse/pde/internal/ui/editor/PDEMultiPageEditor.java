@@ -662,7 +662,14 @@ public abstract class PDEMultiPageEditor
 	}
 
 	public boolean canCopy(ISelection selection) {
-		return selection != null && !selection.isEmpty();
+		if (selection==null) return false;
+		if (selection instanceof IStructuredSelection)
+			return !selection.isEmpty();
+		if (selection instanceof ITextSelection) {
+			ITextSelection textSelection = (ITextSelection)selection;
+			return textSelection.getLength()>0;
+		}
+		return false;
 	}
 	/**
 	 * @see org.eclipse.ui.part.EditorPart#setInput(IEditorInput)
