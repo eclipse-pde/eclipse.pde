@@ -293,7 +293,7 @@ public class BundleProjectCodeGeneratorsPage extends WizardListSelectionPage {
 			WorkspaceBundleModel model = new WorkspaceBundleModel(file);
 			IBundle bundle = model.getBundle();
 			bundle.setHeader(IBundle.KEY_NAME, structureData.getPluginId());
-			bundle.setHeader(IBundle.KEY_UNIQUEID, structureData.getPluginId());
+			bundle.setHeader(IBundle.KEY_GLOBAL_NAME, structureData.getPluginId());
 			bundle.setHeader(IBundle.KEY_VERSION, "1.0.0");
 			bundle.setHeader(IBundle.KEY_DESC, structureData.getPluginId());
 			if (structureData.getRuntimeLibraryName() != null) {

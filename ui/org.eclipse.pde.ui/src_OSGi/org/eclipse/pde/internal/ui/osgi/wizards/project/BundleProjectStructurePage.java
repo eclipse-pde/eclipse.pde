@@ -312,7 +312,7 @@ public class BundleProjectStructurePage extends WizardPage {
 
 			IBundle bundle = bmodel.getBundle();
 			bundle.setHeader(IBundle.KEY_NAME, idText.getText());
-			bundle.setHeader(IBundle.KEY_UNIQUEID, idText.getText());
+			bundle.setHeader(IBundle.KEY_GLOBAL_NAME, idText.getText());
 			bundle.setHeader(IBundle.KEY_VERSION, "1.0.0");
 			bundle.setHeader(IBundle.KEY_DESC, idText.getText());
 			bmodel.save();
