@@ -254,19 +254,25 @@ public class PluginContentPage extends ContentPage {
 				if (Character.isJavaIdentifierStart(ch))
 					buffer.append(Character.toLowerCase(ch));
 			} else {
-				if (Character.isJavaIdentifierPart(ch) || ch == '.')
+				if (Character.isJavaIdentifierPart(ch))
+                    buffer.append(ch);
+                else if (ch == '.'){
+                    status = JavaConventions.validatePackageName(buffer.toString());
+                    if (status.getSeverity() == IStatus.ERROR)
+                        buffer.append(suffix.toLowerCase());
 					buffer.append(ch);
+                }
 			}
 		}
 		StringTokenizer tok = new StringTokenizer(buffer.toString(), "."); //$NON-NLS-1$
 		while (tok.hasMoreTokens()) {
 			String token = tok.nextToken();
-            status = JavaConventions.validatePackageName(buffer.toString());
-            if (status.getSeverity() == IStatus.ERROR)
-                buffer.append(suffix.toLowerCase());
-			if (!tok.hasMoreTokens())
+			if (!tok.hasMoreTokens()){
+                status = JavaConventions.validatePackageName(buffer.toString());
+                if (status.getSeverity() == IStatus.ERROR)
+                    buffer.append(suffix.toLowerCase());
 				buffer.append("." + Character.toUpperCase(token.charAt(0)) + token.substring(1) + suffix); //$NON-NLS-1$ //$NON-NLS-2$
-            
+            }
 		}
 		text.setText(buffer.toString());
 	}
