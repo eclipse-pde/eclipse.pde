@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+* Copyright (c) 2000, 2003 IBM Corporation and others.
+* All rights reserved. This program and the accompanying materials 
+* are made available under the terms of the Common Public License v1.0
+* which accompanies this distribution, and is available at
+* http://www.eclipse.org/legal/cpl-v10.html
+* 
+* Contributors:
+*     IBM Corporation - initial API and implementation
+*******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
@@ -29,26 +29,76 @@ IRegistryChangeListener {
 	public static final String KEY_REFRESH_LABEL = "RegistryView.refresh.label";
 	public static final String KEY_REFRESH_TOOLTIP = "RegistryView.refresh.tooltip";
 	public static final String SHOW_RUNNING_PLUGINS = "RegistryView.showRunning.label";
+	public static final String REGISTRY_ORIENTATION = "RegistryView.orientation";
 	public static final String KEY_COLLAPSE_ALL_LABEL = "RegistryView.collapseAll.label";
 	public static final String KEY_COLLAPSE_ALL_TOOLTIP = "RegistryView.collapseAll.tooltip";
+	
+	public static final int VERTICAL_ORIENTATION = 1;
+	public static final int HORIZONTAL_ORIENTATION = 2;
+	public static final int SINGLE_PANE_ORIENTATION = 3;
+	
 	private TreeViewer treeViewer;
+	private IMemento memento;
+	private static int orientation;
+	private int[] horizontalSashWeight;
+	private int[] verticalSashWeight;
+	private static final int[] DEFAULT_SASH_WEIGHTS = {13, 6};
+	
+	// menus and action items
 	private Action refreshAction;
 	private Action showPluginsAction;
 	private Action collapseAllAction;
+	private Action[] toggleViewAction;
 	private DrillDownAdapter drillDownAdapter;
-	private IMemento memento;
-
+		
 	//attributes view
 	private SashForm fSashForm;
 	private Label fPropertyLabel;
 	private Label fPropertyImage;
 	private PropertySheetPage fPropertySheet;
+
+
 	public RegistryBrowser() {
 		super();
 		Platform.getExtensionRegistry().addRegistryChangeListener(this);
 		PDERuntimePlugin.getDefault().getBundleContext()
 		.addBundleListener(this);
 	}
+	
+	protected void setLastSashWeights(int[] weights) {
+		if (orientation == HORIZONTAL_ORIENTATION)
+			horizontalSashWeight = weights;
+		else if (orientation == VERTICAL_ORIENTATION)
+			verticalSashWeight = weights;
+	}
+
+	public void setViewOrientation(int viewOrientation){
+		setLastSashWeights(getSashForm().getWeights());
+		if (viewOrientation == SINGLE_PANE_ORIENTATION){
+			getSashForm().setMaximizedControl(treeViewer.getControl());		
+		} else {
+			if (viewOrientation == VERTICAL_ORIENTATION)
+				getSashForm().setOrientation(SWT.VERTICAL);
+			else
+				getSashForm().setOrientation(SWT.HORIZONTAL);
+			getSashForm().setMaximizedControl(null);
+			getSashForm().setWeights(getLastSashWeights(viewOrientation));
+		}
+		orientation = viewOrientation;
+	}
+	protected int[] getLastSashWeights(int viewOrientation) {
+		if (viewOrientation == HORIZONTAL_ORIENTATION){
+			if (horizontalSashWeight == null) 
+				horizontalSashWeight = DEFAULT_SASH_WEIGHTS;
+			return horizontalSashWeight;
+		} else {
+			if (verticalSashWeight == null)
+				verticalSashWeight = DEFAULT_SASH_WEIGHTS;
+			return verticalSashWeight;
+		}
+
+	}
+	
 	public void makeActions() {
 		refreshAction = new Action("refresh") {
 			public void run() {
@@ -88,6 +138,17 @@ IRegistryChangeListener {
 		collapseAllAction.setImageDescriptor(PDERuntimePluginImages.DESC_COLLAPSE_ALL);
 		collapseAllAction.setHoverImageDescriptor(PDERuntimePluginImages.DESC_COLLAPSE_ALL_HOVER);
 		collapseAllAction.setToolTipText(PDERuntimePlugin.getResourceString(KEY_COLLAPSE_ALL_TOOLTIP));
+		
+		toggleViewAction = new TogglePropertiesAction[3];
+		toggleViewAction[0] = new TogglePropertiesAction(this, VERTICAL_ORIENTATION);
+		toggleViewAction[1] = new TogglePropertiesAction(this, HORIZONTAL_ORIENTATION);
+		toggleViewAction[2] = new TogglePropertiesAction(this, SINGLE_PANE_ORIENTATION);
+		if (orientation == VERTICAL_ORIENTATION)
+			toggleViewAction[0].setChecked(true);
+		else if (orientation == HORIZONTAL_ORIENTATION)
+			toggleViewAction[1].setChecked(true);
+		else
+			toggleViewAction[2].setChecked(true);
 	}
 	public void dispose() {
 		Platform.getExtensionRegistry().removeRegistryChangeListener(this);
@@ -108,6 +169,7 @@ IRegistryChangeListener {
 		createAttributesViewer();
 		fillToolBar();
 		treeViewer.refresh();
+		setViewOrientation(orientation);
 	}
 	private void createTreeViewer() {
 		Tree tree = new Tree(getSashForm(), SWT.FLAT);
@@ -137,7 +199,7 @@ IRegistryChangeListener {
 							.getExpandedState(selection));
 			}
 		});
-
+		
 		WorkbenchHelp.setHelp(treeViewer.getControl(),
 				IHelpContextIds.REGISTRY_VIEW);
 		
@@ -163,6 +225,10 @@ IRegistryChangeListener {
 		mng.add(new Separator());
 		mng.add(collapseAllAction);
 		IMenuManager mgr = bars.getMenuManager();
+		mgr.add(toggleViewAction[0]);
+		mgr.add(toggleViewAction[1]);
+		mgr.add(toggleViewAction[2]);
+		mgr.add(new Separator());
 		mgr.add(showPluginsAction);
 	}
 	public void fillContextMenu(IMenuManager manager) {
@@ -181,10 +247,15 @@ IRegistryChangeListener {
 		else
 			this.memento = memento;
 		initializeMemento();
+		orientation = this.memento.getInteger(REGISTRY_ORIENTATION).intValue();
 	}
 	private void initializeMemento() {
 		if (memento.getString(SHOW_RUNNING_PLUGINS) == null)
 			memento.putString(SHOW_RUNNING_PLUGINS, "true");
+		if (memento.getString(TogglePropertiesAction.SHOW_PROPERTIES_SHEET) == null)
+			memento.putString(TogglePropertiesAction.SHOW_PROPERTIES_SHEET, "true");
+		if (memento.getInteger(REGISTRY_ORIENTATION) == null)
+			memento.putInteger(REGISTRY_ORIENTATION, HORIZONTAL_ORIENTATION);
 	}
 	public void saveState(IMemento memento) {
 		boolean showRunning = ((RegistryBrowserContentProvider) treeViewer
@@ -193,18 +264,19 @@ IRegistryChangeListener {
 			this.memento.putString(SHOW_RUNNING_PLUGINS, "true");
 		else
 			this.memento.putString(SHOW_RUNNING_PLUGINS, "false");
+		this.memento.putInteger(REGISTRY_ORIENTATION, orientation);
 		memento.putMemento(this.memento);
 	}
 	/* add attributes viewer */
 	protected void createAttributesViewer() {
 		Composite composite = new Composite(getSashForm(), SWT.FLAT);
 		GridLayout layout = new GridLayout();
-		layout.marginWidth = layout.marginHeight = 0;
+		layout.marginWidth = layout.marginHeight = 2;
 		layout.numColumns = 2;
 		layout.makeColumnsEqualWidth = false;
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-
+		
 		fPropertyImage = new Label(composite, SWT.NONE);
 		GridData gd = new GridData(GridData.FILL);
 		gd.widthHint = 20;
@@ -215,7 +287,7 @@ IRegistryChangeListener {
 	}	
 	
 	protected void createPropertySheet(Composite parent) {
-		Composite composite = new Composite(parent, SWT.BORDER);
+		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = layout.marginHeight = 0;
 		composite.setLayout(layout);
@@ -248,8 +320,8 @@ IRegistryChangeListener {
 		fSashForm = sashForm;
 	}
 	/*
-	 * @see org.osgi.framework.BundleListener#bundleChanged(org.osgi.framework.BundleEvent)
-	 */
+* @see org.osgi.framework.BundleListener#bundleChanged(org.osgi.framework.BundleEvent)
+*/
 	public void bundleChanged(BundleEvent event) {
 		final RegistryBrowserContentProvider provider = ((RegistryBrowserContentProvider) treeViewer
 				.getContentProvider());
@@ -260,6 +332,8 @@ IRegistryChangeListener {
 		final PluginObjectAdapter adapter = new PluginObjectAdapter(descriptor);
 		treeViewer.getTree().getDisplay().asyncExec(new Runnable() {
 			public void run() {
+				if (treeViewer == null || treeViewer.getTree() == null)
+					return;
 				TreeItem[] items = treeViewer.getTree().getItems();
 				if (items != null) {
 					for (int i = 0; i < items.length; i++) {
@@ -285,8 +359,8 @@ IRegistryChangeListener {
 		});
 	}
 	/*
-	 * @see org.eclipse.core.runtime.IRegistryChangeListener#registryChanged(org.eclipse.core.runtime.IRegistryChangeEvent)
-	 */
+* @see org.eclipse.core.runtime.IRegistryChangeListener#registryChanged(org.eclipse.core.runtime.IRegistryChangeEvent)
+*/
 	public void registryChanged(IRegistryChangeEvent event) {
 		final IExtensionDelta[] deltas = event.getExtensionDeltas();
 		treeViewer.getTree().getDisplay().syncExec(new Runnable() {
