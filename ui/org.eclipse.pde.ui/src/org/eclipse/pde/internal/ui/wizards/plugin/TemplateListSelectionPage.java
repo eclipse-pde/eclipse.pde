@@ -91,17 +91,12 @@ public class TemplateListSelectionPage extends WizardListSelectionPage
 				getContainer().updateButtons();
 			}
 		});
-		if (getInitialTemplateId()!=null)
-			fUseTemplate.setSelection(true);
+		fUseTemplate.setSelection(true);
 	}
 	
 	protected void initializeViewer() {
 		wizardSelectionViewer.addFilter(new WizardFilter());
-		if (getInitialTemplateId()==null) {
-			wizardSelectionViewer.getControl().setEnabled(false);
-			setDescriptionEnabled(false);
-		}
-		else
+		if (getInitialTemplateId() != null) 
 			selectInitialTemplate();
 	}
 	
@@ -138,9 +133,8 @@ public class TemplateListSelectionPage extends WizardListSelectionPage
 	public boolean isPageComplete() {
 		IPluginFieldData data = (IPluginFieldData)fContentPage.getData();
 		boolean rcp = data.isRCPApplicationPlugin();
-		boolean templateSelected = fUseTemplate.getSelection() && getSelectedNode() != null;
 		
-		return (!fUseTemplate.getSelection() && !rcp) || templateSelected;
+		return !rcp || (fUseTemplate.getSelection() && rcp && getSelectedNode() != null);
 	}
 	
 	
