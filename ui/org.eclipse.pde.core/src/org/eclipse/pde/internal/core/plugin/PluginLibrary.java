@@ -16,7 +16,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.ibundle.*;
+import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.w3c.dom.*;
 
 public class PluginLibrary extends PluginObject implements IPluginLibrary {
@@ -36,12 +36,13 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 	public String[] getContentFilters() {
 		IPluginModelBase model = (IPluginModelBase)getModel();
 		ArrayList list = new ArrayList();
-		if (model instanceof IBundlePluginModelBase) {
+		if (ClasspathUtilCore.isBundle(model)) {
 			BundleDescription desc = model.getBundleDescription();
 			if (desc != null) {
 				ExportPackageDescription[] exports = desc.getExportPackages();
 				for (int i = 0; i < exports.length; i++) {
-					list.add(exports[i].getName());
+					if (ClasspathUtilCore.isPackageAccessible(exports[i], null))
+						list.add(exports[i].getName());
 				}
 			}
 			return (String[])list.toArray(new String[list.size()]);

@@ -11,9 +11,11 @@
 package org.eclipse.pde.internal.core;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Vector;
+import java.util.zip.ZipFile;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -44,6 +46,7 @@ import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.bundle.BundlePlugin;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.plugin.Plugin;
 
 public class ClasspathUtilCore {
@@ -190,7 +193,6 @@ public class ClasspathUtilCore {
 		return (IClasspathEntry[]) result.toArray(new IClasspathEntry[result.size()]);
 	}
     
-    
     public static boolean hasExtensibleAPI(IPlugin plugin) {
         if (plugin instanceof Plugin) 
             return ((Plugin)plugin).hasExtensibleAPI();
@@ -257,7 +259,9 @@ public class ClasspathUtilCore {
 		if (project.hasNature(JavaCore.NATURE_ID)) {
 			IClasspathEntry entry = null;
 			if (ENABLE_RESTRICTIONS && useinclusionPatterns) {
-				IPath[] inclusionPatterns = getInclusionPatterns(model);
+				IPath[] inclusionPatterns = model.isFragmentModel()
+												? getInclusionPatterns((IFragmentModel)model)
+											    : getInclusions(model);
 				IAccessRule[] accessRules = getAccessRules(inclusionPatterns);
 				entry = JavaCore.newProjectEntry(
 							project.getFullPath(), 
@@ -306,7 +310,9 @@ public class ClasspathUtilCore {
 		
 		IClasspathEntry entry = null;
 		if (ENABLE_RESTRICTIONS && useInclusionPatterns) {
-			IPath[] inclusionPatterns = getInclusionPatterns(model);
+			IPath[] inclusionPatterns = model.isFragmentModel()
+											? getInclusionPatterns((IFragmentModel)model)
+										    : getInclusions(model);
 			IAccessRule[] accessRules = getAccessRules(inclusionPatterns);
 			entry = JavaCore.newLibraryEntry(
 						new Path(model.getInstallLocation()), 
@@ -517,18 +523,30 @@ public class ClasspathUtilCore {
 		return entry;
 	}
 	
-	private static IPath[] getInclusionPatterns(IPluginModelBase model) throws CoreException {
+	private static IPath[] getInclusionPatterns(IFragmentModel model) throws CoreException{
+		IPath[] direct = getInclusions(model);
+		IPlugin plugin = PDECore.getDefault().findPlugin(model.getFragment().getPluginId());
+		if (plugin == null || !hasExtensibleAPI(plugin))
+			return direct;
+		
+		IPath[] indirect = getInclusions((IPluginModelBase)plugin.getModel());		
+		IPath[] all = new IPath[direct.length + indirect.length];
+		System.arraycopy(direct, 0, all, 0, direct.length);
+		System.arraycopy(indirect, 0, all, direct.length, indirect.length);
+		return all;
+	}
+	
+	private static IPath[] getInclusions(IPluginModelBase model) throws CoreException {
 		ArrayList list = new ArrayList();
-		if (model.getUnderlyingResource() == null) {
+		if (isBundle(model)) {
 			BundleDescription desc = model.getBundleDescription();
 			if (desc != null) {
 				ExportPackageDescription[] exports = desc.getExportPackages();
 				for (int i = 0; i < exports.length; i++) {
-					list.add(new Path(exports[i].getName().replaceAll("\\.", "/") + "/*")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					if (isPackageAccessible(exports[i], null))
+						list.add(new Path(exports[i].getName().replaceAll("\\.", "/") + "/*")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				}
 			}
-			if (list.size() == 0)
-				return new IPath[] {new Path("**/*")}; //$NON-NLS-1$
 		} else {
 			IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
 			for (int i = 0; i < libraries.length; i++) {
@@ -540,6 +558,44 @@ public class ClasspathUtilCore {
 			}
 		}
 		return (IPath[])list.toArray(new IPath[list.size()]);
+	}
+	
+	public static boolean isPackageAccessible(ExportPackageDescription exportPackage, String id) {
+		if (Boolean.getBoolean(exportPackage.getDirective("x-internal").toString()))
+			return false;
+		
+		String[] friends = (String[])exportPackage.getDirective("x-friends");
+		if (friends != null && id != null) {
+			for (int i = 0; i < friends.length; i++) {
+				if (friends[i].equals(""))
+					return true;
+			}
+			return false;
+		}
+		return true;
+	}
+	
+	public static boolean isBundle(IPluginModelBase model) {
+		if (model instanceof IBundlePluginModelBase)
+			return true;
+		if (model.getUnderlyingResource() == null) {
+			File file = new File(model.getInstallLocation());
+			if (file.isDirectory())
+				return new File(file, "META-INF/MANIFEST.MF").exists();
+			ZipFile jarFile = null;
+			try {
+				jarFile = new ZipFile(file, ZipFile.OPEN_READ);
+				return jarFile.getEntry("META-INF/MANIFEST.MF") != null;
+			} catch (IOException e) {
+			} finally {
+				try {
+					if (jarFile != null)
+						jarFile.close();
+				} catch (IOException e) {
+				}
+			}
+		}
+		return false;
 	}
 	
 	private static IAccessRule[] getAccessRules(IPath[] inclusionPatterns) {
