@@ -93,7 +93,7 @@ public class SampleEditor extends EditorPart {
 		descText = toolkit.createFormText(form.getBody(), true);
 		descText.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		String desc = properties.getProperty("description"); //$NON-NLS-1$
-		String content = "<form>"+(desc!=null?desc:"")+"</form>";
+		String content = PDEPlugin.getFormattedMessage("SampleEditor.desc",(desc!=null?desc:"")); //$NON-NLS-1$
 		descText.setText(content, true, false);
 		final String helpURL = properties.getProperty("helpHref"); //$NON-NLS-1$
 		if (helpURL!=null) {
@@ -107,14 +107,7 @@ public class SampleEditor extends EditorPart {
 		instText = toolkit.createFormText(form.getBody(), true);
 		instText.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		StringBuffer buf = new StringBuffer();
-		buf.append("<form>");
-		buf.append("<p><b>What you can do with the sample</b></p>");
-		buf.append("<li>Browse the source code in the workspace.</li>");
-		buf.append("<li>When ready, <a href=\"run\">run the sample</a> and follow instructions in the <img href=\"help\"/><a href=\"help\">help document.</a></li>");
-		buf.append("<li>Later on, you can re-run the sample by pressing the <img href=\"run\"/><b>Run</b> icon on the tool bar.</li>");
-		buf.append("<li>If you place breakpoints in the code, you can <a href=\"debug\">debug it.</a></li>");
-		buf.append("<li>Later on, you can debug the sample by pressing the <img href=\"debug\"/><b>Debug</b> icon on the tool bar.</li>");
-		buf.append("</form>");
+		buf.append(PDEPlugin.getResourceString("SampleEditor.content")); //$NON-NLS-1$
 		instText.setText(buf.toString(), true, false);
 		instText.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {

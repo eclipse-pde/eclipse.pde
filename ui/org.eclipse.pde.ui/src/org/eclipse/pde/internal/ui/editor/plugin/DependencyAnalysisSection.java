@@ -40,14 +40,10 @@ public class DependencyAnalysisSection extends PDESection implements IPartSelect
 	}
 	
 	private String getFormText() {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("<form>"); //$NON-NLS-1$
 		if (getPage().getModel() instanceof IPluginModel)
-			buffer.append("<p><img href=\"loops\"/> <a href=\"loops\">Look for cycles in the dependency graph</a></p>"); //$NON-NLS-1$
-		buffer.append("<p><img href=\"search\"/> <a href=\"extent\">Compute Dependency Extent</a></p>"); //$NON-NLS-1$
-		buffer.append("<p><img href=\"search\"/> <a href=\"unused\">Find unused dependencies</a></p>"); //$NON-NLS-1$
-		buffer.append("</form>"); //$NON-NLS-1$
-		return buffer.toString();
+			return PDEPlugin.getResourceString("DependencyAnalysisSection.form.isPluginModel");  //$NON-NLS-1$
+		else
+			return PDEPlugin.getResourceString("DependencyAnalysisSection.form.notPluginModel");  //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

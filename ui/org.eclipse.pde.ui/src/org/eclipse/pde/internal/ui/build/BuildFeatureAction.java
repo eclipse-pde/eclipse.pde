@@ -47,12 +47,12 @@ public class BuildFeatureAction extends BaseBuildAction {
 		generator.setChildren(true);
 		BuildScriptGenerator.setEmbeddedSource(AbstractScriptGenerator.getDefaultEmbeddedSource());
 
-		URL url = getDevEntriesProperties(file.getProject().getLocation().addTrailingSeparator().toString() + "dev.properties");
-		generator.setDevEntries(url != null ? url.toString() : "bin");
+		URL url = getDevEntriesProperties(file.getProject().getLocation().addTrailingSeparator().toString() + "dev.properties"); //$NON-NLS-1$
+		generator.setDevEntries(url != null ? url.toString() : "bin"); //$NON-NLS-1$
 		generator.setWorkingDirectory(file.getProject().getLocation().toOSString());
 		BuildScriptGenerator.setOutputFormat(AbstractScriptGenerator.getDefaultOutputFormat());
 		BuildScriptGenerator.setConfigInfo(AbstractScriptGenerator.getDefaultConfigInfos());
-		generator.setElements(new String[] {"feature@" + model.getFeature().getId()});	
+		generator.setElements(new String[] {"feature@" + model.getFeature().getId()});	 //$NON-NLS-1$
 		generator.setPluginPath(all);
 		generator.setGenerateAssembleScript(false);
 		generator.generate();	

@@ -20,7 +20,7 @@ import org.eclipse.ui.forms.widgets.*;
  */
 public class AlertSection extends PDESection {
 	private FormText text;
-	private String noItemsText = "<form><p>No alerts at this time.</p></form>";
+	private String noItemsText = PDEPlugin.getResourceString("AlertSection.default.noAlerts"); //$NON-NLS-1$
 	/**
 	 * @param page
 	 * @param parent

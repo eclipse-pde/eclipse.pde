@@ -31,36 +31,13 @@ import org.eclipse.ui.help.*;
  */
 public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 	public static final String PAGE_ID = "overview"; //$NON-NLS-1$
-	private static final String contentText = "<form><p>The content of the plug-in is made up of four sections:</p>"
-			+ "<li style=\"image\" value=\"page\" bindent=\"5\"><a href=\"dependencies\">Dependencies</a>: lists all the plug-ins required on this plug-in's classpath to compile and run.</li>"
-			+ "<li style=\"image\" value=\"page\" bindent=\"5\"><a href=\"runtime\">Runtime</a>: lists the libraries that make up this plug-in's runtime.</li>"
-			+ "<li style=\"image\" value=\"page\" bindent=\"5\"><a href=\"extensions\">Extensions</a>: declares contributions this plug-in makes to the platform.</li>"
-			+ "<li style=\"image\" value=\"page\" bindent=\"5\"><a href=\"ex-points\">Extension Points</a>: declares new function points this plug-in adds to the platform.</li>"
-			+ "</form>";
-	private static final String testingText = "<form>"
-			+ "<p>You can test the plug-in by launching a second (runtime) instance of the workbench:</p>"
-			+ "<li style=\"image\" value=\"run\" bindent=\"5\"><a href=\"action.run\">Launch a runtime workbench</a></li>"
-			+ "<li style=\"image\" value=\"debug\" bindent=\"5\"><a href=\"action.debug\">Launch a runtime workbench in Debug mode</a></li>"
-			+ "</form>";
-	private static final String deployingText = "<form><p>To deploy the plug-in:</p>"
-			+ "<li style=\"text\" value=\"1.\" bindent=\"5\">Specify what needs to be packaged in the deployable plug-in on the <a href=\"build\">Build Configuration</a> page</li>"
-			+ "<li style=\"text\" value=\"2.\" bindent=\"5\">Export the plug-in in a format suitable for deployment using the <a href=\"export\">Export Wizard</a></li>"
-			+ "</form>";
-	private static final String fcontentText = "<form><p>The content of the fragment is made up of four sections:</p>"
-			+ "<li style=\"image\" value=\"page\" bindent=\"5\"><a href=\"dependencies\">Dependencies</a>: lists all the plug-ins required on this fragment's classpath to compile and run.</li>"
-			+ "<li style=\"image\" value=\"page\" bindent=\"5\"><a href=\"runtime\">Runtime</a>: lists the libraries that make up this fragment's runtime.</li>"
-			+ "<li style=\"image\" value=\"page\" bindent=\"5\"><a href=\"extensions\">Extensions</a>: declares contributions this fragment makes to the platform.</li>"
-			+ "<li style=\"image\" value=\"page\" bindent=\"5\"><a href=\"ex-points\">Extension Points</a>: declares new function points this fragment adds to the platform.</li>"
-			+ "</form>";
-	private static final String ftestingText = "<form>"
-			+ "<p>You can test the fragment by launching a second (runtime) instance of the workbench:</p>"
-			+ "<li style=\"image\" value=\"run\" bindent=\"5\"><a href=\"action.run\">Launch a runtime workbench</a></li>"
-			+ "<li style=\"image\" value=\"debug\" bindent=\"5\"><a href=\"action.debug\">Launch a runtime workbench in Debug mode</a></li>"
-			+ "</form>";
-	private static final String fdeployingText = "<form><p>To deploy the fragment:</p>"
-			+ "<li style=\"text\" value=\"1.\" bindent=\"5\">Specify what needs to be packaged in the deployable fragment on the <a href=\"build\">Build Configuration</a> page</li>"
-			+ "<li style=\"text\" value=\"2.\" bindent=\"5\">Export the fragment in a format suitable for deployment using the <a href=\"export\">Export Wizard</a></li>"
-			+ "</form>";
+	private static final String contentText = PDEPlugin.getResourceString("OverviewPage.content"); //$NON-NLS-1$
+	private static final String testingText = PDEPlugin.getResourceString("OverviewPage.testing"); //$NON-NLS-1$
+	private static final String deployingText = PDEPlugin.getResourceString("OverviewPage.deploying"); //$NON-NLS-1$
+	private static final String fcontentText = PDEPlugin.getResourceString("OverviewPage.fContent"); //$NON-NLS-1$
+	private static final String ftestingText = PDEPlugin.getResourceString("OverviewPage.fTesting"); //$NON-NLS-1$
+	private static final String fdeployingText = PDEPlugin.getResourceString("OverviewPage.fDeploying"); //$NON-NLS-1$
+
 	private RuntimeWorkbenchShortcut fLaunchShortcut;
 	private PluginExportAction fExportAction;
 	/**

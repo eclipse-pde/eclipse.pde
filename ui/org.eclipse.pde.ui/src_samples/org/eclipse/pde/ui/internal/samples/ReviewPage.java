@@ -46,26 +46,20 @@ public class ReviewPage extends WizardPage {
 	
 	private void updateContent() {
 		StringBuffer buf = new StringBuffer();
-		buf.append("<form>");
+		buf.append("<form>"); //$NON-NLS-1$
 		IConfigurationElement selection = wizard.getSelection();
 		if (selection!=null) {
 			setMessage(null);
-			IConfigurationElement [] desc = selection.getChildren("description"); //$NON-NLS-1$
-			buf.append("<p>You have selected the following sample:</p>");
-			buf.append("<p><b>");
-			buf.append(selection.getAttribute("name")); //$NON-NLS-1$
-			buf.append("</b></p>");
-			if (desc.length==1) {
-				buf.append("<p>");
-				buf.append(desc[0].getValue());
-				buf.append("</p>");
-			}
-			buf.append("<p>If the selection is correct, press <b>Finish</b> to create the sample.</p>");
+			IConfigurationElement [] desc = selection.getChildren("description");  //$NON-NLS-1$
+			if (desc.length==1)
+				buf.append(PDEPlugin.getFormattedMessage("ReviewPage.descContent", new String[]{selection.getAttribute("name"), desc[0].getValue()})); //$NON-NLS-1$ //$NON-NLS-2$
+			else
+				buf.append(PDEPlugin.getFormattedMessage("ReviewPage.content", selection.getAttribute("name"))); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		else {
 			setMessage(PDEPlugin.getResourceString("ReviewPage.noSampleFound"), WizardPage.WARNING); //$NON-NLS-1$
 		}
-		buf.append("</form>");
+		buf.append("</form>"); //$NON-NLS-1$
 		formText.setText(buf.toString());
 	}
 	/* (non-Javadoc)

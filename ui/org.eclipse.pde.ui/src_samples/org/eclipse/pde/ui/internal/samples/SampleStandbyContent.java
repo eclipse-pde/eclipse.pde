@@ -83,19 +83,7 @@ public class SampleStandbyContent implements IStandbyContentPart {
 		instText = toolkit.createFormText(form.getBody(), true);
 		instText.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		StringBuffer buf = new StringBuffer();
-		buf.append("<form>");
-		buf.append("<p><b>What you can do with the sample</b></p>");
-		buf
-				.append("<li><a href=\"browse\">Browse the source code</a> in the workspace.</li>");
-		buf
-				.append("<li>When ready, <a href=\"run\">run the sample</a> and follow instructions in the <img href=\"help\"/><a href=\"help\">help document.</a></li>");
-		buf
-				.append("<li>Later on, you can re-run the sample by pressing the <img href=\"run\"/><b>Run</b> icon on the tool bar.</li>");
-		buf
-				.append("<li>If you place breakpoints in the code, you can <a href=\"debug\">debug it.</a></li>");
-		buf
-				.append("<li>Later on, you can debug the sample by pressing the <img href=\"debug\"/><b>Debug</b> icon on the tool bar.</li>");
-		buf.append("</form>");
+		buf.append(PDEPlugin.getResourceString("SampleStandbyContent.content")); //$NON-NLS-1$
 		instText.setText(buf.toString(), true, false);
 		instText.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
@@ -247,7 +235,7 @@ public class SampleStandbyContent implements IStandbyContentPart {
 				.getChildren("description") : null; //$NON-NLS-1$
 		if (descConfig.length == 1) {
 			String desc = descConfig[0].getValue();
-			String content = "<form>" + (desc != null ? desc : "") + "</form>";
+			String content = PDEPlugin.getFormattedMessage("SampleStandbyContent.desc",(desc != null ? desc : "")); //$NON-NLS-1$
 			helpURL = descConfig[0].getAttribute("helpHref"); //$NON-NLS-1$
 			moreLink.setVisible(helpURL != null);
 			descText.setText(content, true, false);

@@ -37,10 +37,7 @@ public class ExtensionDetails extends PDEDetails {
 	private FormText rtext;
 
 	private static final String RTEXT_DATA =
-		"<form>"+
-		"<p><img href=\"search\"/> <a href=\"search\">Find declaring extension point</a></p>"+		
-		"<p><img href=\"desc\"/> <a href=\"desc\">Open extension point description</a></p>"+
-		"</form>";
+		PDEPlugin.getResourceString("ExtensionDetails.extensionPointLinks"); //$NON-NLS-1$
 	/**
 	 * 
 	 */

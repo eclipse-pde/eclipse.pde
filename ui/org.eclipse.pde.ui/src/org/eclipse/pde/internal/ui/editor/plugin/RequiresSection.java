@@ -303,17 +303,17 @@ public class RequiresSection
 	}
 
 	private void makeActions() {
-		newAction = new Action("Add...") {
+		newAction = new Action(PDEPlugin.getResourceString("RequiresSection.add")) { //$NON-NLS-1$
 			public void run() {
 				handleNew();
 			}
 		};
-		openAction = new Action("Open") {
+		openAction = new Action(PDEPlugin.getResourceString("RequiresSection.open")) { //$NON-NLS-1$
 			public void run() {
 				handleOpen(importTable.getSelection());
 			}
 		};
-		deleteAction = new Action("Delete") {
+		deleteAction = new Action(PDEPlugin.getResourceString("RequiresSection.delete")) { //$NON-NLS-1$
 			public void run() {
 				handleDelete();
 			}

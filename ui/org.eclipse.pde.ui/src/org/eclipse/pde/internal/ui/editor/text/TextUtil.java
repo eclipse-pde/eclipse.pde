@@ -36,7 +36,7 @@ public static String createMultiLine(
 					preformatted = false;
 				}
 				else if (isParagraph(text, i)) {
-					buffer.append("\n<p>\n");
+					buffer.append("\n<p>\n"); //$NON-NLS-1$
 					counter=0;
 					i+=2;
 					continue;

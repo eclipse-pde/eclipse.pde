@@ -172,8 +172,8 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard
 	private void writeTemplateFile(PrintWriter writer) {
 		String indent = "   "; //$NON-NLS-1$
 		// open
-		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-		writer.println("<form>");
+		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
+		writer.println("<form>"); //$NON-NLS-1$
 		ITemplateSection[] templateSections = getTemplateSections();
 		if (templateSections.length > 0) {
 			// add the standard prolog
@@ -184,9 +184,9 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard
 			// add template section descriptions
 			for (int i = 0; i < templateSections.length; i++) {
 				ITemplateSection section = templateSections[i];
-				String list = "<li style=\"text\" value=\"" + (i + 1) + ".\">";
-				writer.println(indent + list + "<b>" + section.getLabel()
-						+ ".</b>" + section.getDescription() + "</li>");
+				String list = "<li style=\"text\" value=\"" + (i + 1) + ".\">"; //$NON-NLS-1$ //$NON-NLS-2$
+				writer.println(indent + list + "<b>" + section.getLabel() //$NON-NLS-1$
+						+ ".</b>" + section.getDescription() + "</li>"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		// add the standard epilogue
@@ -195,6 +195,6 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard
 						+ PDEPlugin
 								.getResourceString("ManifestEditor.TemplatePage.common")); //$NON-NLS-1$
 		// close
-		writer.println("</form>");
+		writer.println("</form>"); //$NON-NLS-1$
 	}
 }
