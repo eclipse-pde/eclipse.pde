@@ -215,17 +215,22 @@ private IMarker[] mergeMarkers(IMarker[] problems, IMarker[] tasks) {
 	} 
 	return result;
 }
+
 public void modelChanged(IModelChangedEvent e) {
-	Object object = e.getChangedObjects()[0];
-	if (object instanceof IPluginImport) {
-		int eventType = e.getChangeType();
-		if (eventType == IModelChangedEvent.INSERT
-			|| eventType == IModelChangedEvent.REMOVE) {
-			updateNeeded = true;
-			if (getFormPage().isVisible())
-				update();
+	int eventType = e.getChangeType();
+	if (eventType == IModelChangedEvent.WORLD_CHANGED)
+	   updateNeeded = true;
+	else {
+		Object object = e.getChangedObjects()[0];
+		if (object instanceof IPluginImport) {
+			if (eventType == IModelChangedEvent.INSERT
+				|| eventType == IModelChangedEvent.REMOVE) {
+				updateNeeded = true;
+			}
 		}
 	}
+	if (getFormPage().isVisible())
+				update();
 }
 /**
  *

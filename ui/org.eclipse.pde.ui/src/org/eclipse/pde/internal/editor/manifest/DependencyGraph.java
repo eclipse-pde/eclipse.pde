@@ -13,7 +13,7 @@ import org.eclipse.swt.widgets.*;
 import java.util.*;
 import org.eclipse.update.ui.forms.internal.*;
 
-public class DependencyGraph extends Composite implements IHyperlinkListener {
+public class DependencyGraph extends Canvas implements IHyperlinkListener {
 	private IDependencyGraphNode rootNode;
 	private IDependencyGraphNode selectedNode;
 	private boolean borderPainted;

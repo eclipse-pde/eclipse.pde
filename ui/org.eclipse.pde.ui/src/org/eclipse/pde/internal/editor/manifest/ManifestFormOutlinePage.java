@@ -194,6 +194,11 @@ IPluginBase getPlugin() {
 	return model.getPluginBase();
 }
 public void modelChanged(IModelChangedEvent event) {
+	if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
+		treeViewer.refresh();
+		treeViewer.expandAll();
+		return;
+	}
 	Object object = event.getChangedObjects()[0];
 	if (event.getChangeType() == IModelChangedEvent.CHANGE) {
 		treeViewer.update(object, null);

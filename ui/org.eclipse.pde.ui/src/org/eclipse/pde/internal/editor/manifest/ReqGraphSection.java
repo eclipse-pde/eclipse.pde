@@ -521,4 +521,8 @@ private void updateGraph(
 private void updateLayout() {
 	(getFormPage().getForm()).update();
 }
+
+public void setFocus() {
+	graph.setFocus();
+}
 }
