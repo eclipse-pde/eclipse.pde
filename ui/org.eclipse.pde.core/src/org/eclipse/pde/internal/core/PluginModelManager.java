@@ -199,6 +199,8 @@ public class PluginModelManager implements IAdaptable {
 
 	private void addToTable(IPluginModelBase model, boolean workspace) {
 		String id = model.getPluginBase().getId();
+		if (id == null)
+			return;
 		ModelEntry entry = (ModelEntry) entries.get(id);
 		if (entry == null) {
 			entry = new ModelEntry(id);

@@ -448,7 +448,9 @@ public class AdvancedLauncherTab
 			IPluginModelBase model = workspaceModels[i];
 			checked.add(model);
 			numWorkspaceChecked += 1;
-			wtable.put(model.getPluginBase().getId(), model);
+			String id = model.getPluginBase().getId();
+			if (id != null)
+				wtable.put(model.getPluginBase().getId(), model);
 		}
 		if (checked.size() > 0)
 			checked.add(workspacePlugins);
