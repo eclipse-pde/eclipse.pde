@@ -78,10 +78,10 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		String[] libraries = getClasspathEntries(model);
 		String root = generator.getLocation(model);
 		IPath base = Utils.makeRelative(new Path(root), new Path(baseLocation));
+		Properties modelProps = getBuildPropertiesFor(model);
 		for (int i = 0; i < libraries.length; i++) {
 			addDevEntries(model, baseLocation, classpath, Utils.getArrayFromString(generator.getBuildProperties().getProperty(PROPERTY_OUTPUT_PREFIX + libraries[i])));
-			String library = base.append(libraries[i]).toString();
-			addPathAndCheck(model.getUniqueId(), library, classpath);
+			addPathAndCheck(model.getSymbolicName(), base, libraries[i], modelProps, classpath);
 		}
 	}
 
@@ -126,19 +126,30 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 
 		String root = generator.getLocation(fragment);
 		IPath base = Utils.makeRelative(new Path(root), new Path(baseLocation));
+		Properties modelProps = getBuildPropertiesFor(fragment);
 		for (int i = 0; i < libraries.length; i++) {
-			String libraryName = base.append(libraries[i]).toString();
-			addPathAndCheck(fragment.getUniqueId(), libraryName, classpath);
+			addPathAndCheck(fragment.getSymbolicName(), base, libraries[i], modelProps, classpath);
 		}
 	}
 
+	private Properties getBuildPropertiesFor(BundleDescription bundle) {
+		try {
+			return AbstractScriptGenerator.readProperties(generator.getLocation(bundle), "build.properties", 0);	//TODO
+		} catch (CoreException e) {
+			//ignore
+		}
+		return null;
+	}
+	
 	// Add a path into the classpath for a given model
 	// path : The path to add
 	// classpath : The classpath in which we want to add this path 
-	private void addPathAndCheck(String pluginId, String path, List classpath) {
+	private void addPathAndCheck(String pluginId, IPath basePath, String libraryName, Properties modelProperties, List classpath) {
+		String path = basePath.append(libraryName).toString();
 		path = generator.replaceVariables(path, pluginId == null ? false : generator.getCompiledElements().contains(pluginId));
 		if (generator.getCompiledElements().contains(pluginId)) {
-			path = generator.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + '/' + path;
+			if (modelProperties==null || modelProperties.getProperty("source." + libraryName)!=null)
+				path = generator.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + '/' + path;
 		}
 		if (!classpath.contains(path))
 			classpath.add(path);
@@ -171,7 +182,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 					//Potential pb: here there maybe a nasty case where the libraries variable may refer to something which is part of the base
 					//but $xx$ will replace it by the $xx instead of $basexx. The solution is for the user to use the explicitly set the content
 					// of its build.property file
-					addPathAndCheck(model.getUniqueId(), libraryName, classpath);
+					addPathAndCheck(model.getSymbolicName(), Path.EMPTY,  libraryName, null, classpath);
 				}
 			}
 		} else {
@@ -181,7 +192,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 				if (order[i].equals(jar.getName(false)))
 					break;
 				addDevEntries(model, location, classpath, Utils.getArrayFromString((String) modelProperties.get(PROPERTY_OUTPUT_PREFIX + order[i])));
-				addPathAndCheck(model.getUniqueId(), order[i], classpath);
+				addPathAndCheck(model.getSymbolicName(), Path.EMPTY, order[i], null, classpath);
 			}
 			// Then we add all the "pure libraries" (the one that does not contain source)
 			String[] libraries = getClasspathEntries(model);
@@ -190,7 +201,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 				if (modelProperties.get(PROPERTY_SOURCE_PREFIX + libraryName) == null) {
 					//Potential pb: if the pure library is something that is being compiled (which is supposetly not the case, but who knows...)
 					//the user will get $basexx instead of $ws 
-					addPathAndCheck(model.getUniqueId(), libraryName, classpath);
+					addPathAndCheck(model.getSymbolicName(), Path.EMPTY, libraryName, null, classpath);
 				}
 			}
 		}
@@ -203,7 +214,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			for (int i = 0; i < extra.length; i++) {
 				//Potential pb: if the path refers to something that is being compiled (which is supposetly not the case, but who knows...)
 				//the user will get $basexx instead of $ws 
-				addPathAndCheck(null, computeExtraPath(extra[i], location), classpath);
+				addPathAndCheck(null, new Path(computeExtraPath(extra[i], location)), "", null, classpath);
 			}
 		}
 
@@ -212,7 +223,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		for (int i = 0; i < jarSpecificExtraClasspath.length; i++) {
 			//Potential pb: if the path refers to something that is being compiled (which is supposetly not the case, but who knows...)
 			//the user will get $basexx instead of $ws 
-			addPathAndCheck(null, computeExtraPath(jarSpecificExtraClasspath[i], location), classpath);
+			addPathAndCheck(null, new Path(computeExtraPath(jarSpecificExtraClasspath[i], location)), "", null, classpath);
 		}
 	}
 
@@ -326,13 +337,11 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		if (jarSpecificEntries != null && jarSpecificEntries.length > 0)
 			entries = jarSpecificEntries;
 		else
-			entries = generator.devEntries.getDevClassPath(model.getUniqueId());
+			entries = generator.devEntries.getDevClassPath(model.getSymbolicName());
 
 		IPath root = Utils.makeRelative(new Path(generator.getLocation(model)), new Path(baseLocation));
-		String path;
 		for (int i = 0; i < entries.length; i++) {
-			path = root.append(entries[i]).toString();
-			addPathAndCheck(model.getUniqueId(), path, classpath);
+			addPathAndCheck(model.getSymbolicName(), root, entries[i], null, classpath);
 		}
 	}
 
