@@ -218,10 +218,7 @@ public class DependenciesView extends ViewPart {
 		dialog.getShell().setText(PDEPlugin.getResourceString("DependenciesView.pluginSelection.title"));
 		dialog.getShell().setSize(300, 400);
 		if (dialog.open()==PluginSelectionDialog.OK) {
-			Object [] result = dialog.getResult();
-			if (result.length==1) {
-				handleFocusOn(result[0]);
-			}
+			handleFocusOn(dialog.getFirstResult());
 		}
 	}
 	

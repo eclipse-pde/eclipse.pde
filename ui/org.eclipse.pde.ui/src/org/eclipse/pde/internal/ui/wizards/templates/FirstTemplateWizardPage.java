@@ -138,13 +138,10 @@ public class FirstTemplateWizardPage extends WizardPage {
 				SWTUtil.setDialogSize(dialog, 300, 400);
 				dialog.getShell().setText(PDEPlugin.getResourceString(KEY_BROWSE_TITLE));
 				if (dialog.open() == PluginSelectionDialog.OK) {
-					Object[] result = dialog.getResult();
-					if (result != null && result.length == 1) {
-						IPluginModel model = (IPluginModel) result[0];
-						IPlugin plugin = model.getPlugin();
-						pluginIdField.setText(plugin.getId());
-						pluginVersionField.setText(plugin.getVersion());
-					}
+					IPluginModel model = (IPluginModel) dialog.getFirstResult();
+					IPlugin plugin = model.getPlugin();
+					pluginIdField.setText(plugin.getId());
+					pluginVersionField.setText(plugin.getVersion());
 				}
 			}
 		});
