@@ -43,7 +43,7 @@ public class XMLReconcilingStrategy implements IReconcilingStrategy {
 		}
 	}	
 	private synchronized void internalReconcile() {
-		if (!fPage.tryGetModelUpdatingTicket())
+		if (!fPage.isDynamicReconciling() || !fPage.tryGetModelUpdatingTicket())
 			return;
 		
 		if (fDocument == null)

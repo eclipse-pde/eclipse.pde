@@ -34,6 +34,8 @@ public class ManifestSourcePageNew extends ManifestSourcePage {
 	};
 
 	private Object modelNeedsUpdatingLock;
+	private Object dynamicReconcilingLock;
+	private boolean dynamicReconciling;
 	private SelectionChangedListener selectionChangedListener= new SelectionChangedListener();
 
 	public ManifestSourcePageNew(ManifestEditor editor) {
@@ -41,6 +43,7 @@ public class ManifestSourcePageNew extends ManifestSourcePage {
 	}
 	
 	protected void initializeViewerConfiguration() {
+		dynamicReconcilingLock= new Object();
 		modelNeedsUpdatingLock= new Object();
 		setRangeIndicator(new DefaultRangeIndicator());
 		setSourceViewerConfiguration(new XMLViewerConfiguration(this, colorManager));
@@ -56,6 +59,7 @@ public class ManifestSourcePageNew extends ManifestSourcePage {
 	}
 	
 	public boolean becomesInvisible(IFormPage newPage) {
+		setDynamicReconciling(false);
 		((ManifestEditor)getEditor()).updateModel();
 
 		ensureModelFinishedUpdating();
@@ -70,6 +74,7 @@ public class ManifestSourcePageNew extends ManifestSourcePage {
 	
 	public void becomesVisible(IFormPage oldPage) {
 		((ManifestEditor)getEditor()).updateModel();
+		setDynamicReconciling(true);
 
 		if (oldPage instanceof PDEFormPage) {
 			selectObjectRange(((PDEFormPage)oldPage).getSelection());
@@ -167,6 +172,18 @@ public class ManifestSourcePageNew extends ManifestSourcePage {
 		IPartService service= window.getPartService();
 		IWorkbenchPart part= service.getActivePart();
 		return part != null && part.equals(getEditor());
+	}
+	
+	private void setDynamicReconciling(boolean enabled) {
+		synchronized (dynamicReconcilingLock) {
+			dynamicReconciling= enabled;
+		}
+	}
+	
+	boolean isDynamicReconciling() {
+		synchronized (dynamicReconcilingLock) {
+			return dynamicReconciling;
+		}
 	}
 	
 }
