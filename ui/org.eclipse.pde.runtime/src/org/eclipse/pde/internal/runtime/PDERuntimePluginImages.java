@@ -17,9 +17,6 @@ import org.eclipse.swt.graphics.Image;
 
 public class PDERuntimePluginImages {
 
-	private static final String NAME_PREFIX = PDERuntimePlugin.getPluginId() + ".";
-	private static final int NAME_PREFIX_LENGTH = NAME_PREFIX.length();
-
 	private final static URL BASE_URL =
 		PDERuntimePlugin.getDefault().getDescriptor().getInstallURL();
 	private final static ImageRegistry PLUGIN_REGISTRY =
@@ -28,7 +25,6 @@ public class PDERuntimePluginImages {
 	public final static String ICONS_PATH = "icons/full/";
 
 	private static final String PATH_OBJ = ICONS_PATH + "obj16/";
-	private static final String PATH_VIEW = ICONS_PATH + "view16/";
 	private static final String PATH_LCL = ICONS_PATH + "elcl16/";
 	private static final String PATH_LCL_HOVER = ICONS_PATH + "clcl16/";
 	private static final String PATH_LCL_DISABLED = ICONS_PATH + "dlcl16/";
@@ -119,13 +115,7 @@ public class PDERuntimePluginImages {
 	private static ImageDescriptor create(String prefix, String name) {
 		return ImageDescriptor.createFromURL(makeIconURL(prefix, name));
 	}
-	private static ImageDescriptor createManaged(String prefix, String name) {
-		ImageDescriptor result =
-			ImageDescriptor.createFromURL(
-				makeIconURL(prefix, name.substring(NAME_PREFIX_LENGTH)));
-		PLUGIN_REGISTRY.put(name, result);
-		return result;
-	}
+
 	public static Image get(String key) {
 		return PLUGIN_REGISTRY.get(key);
 	}

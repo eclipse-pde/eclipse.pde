@@ -90,7 +90,6 @@ public void fillContextMenu(IMenuManager manager) {
 public TreeViewer getTreeViewer() {
 	return treeViewer;
 }
-private void initializeImages() {}
 public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 }
 public void setFocus() {}

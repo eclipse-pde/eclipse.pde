@@ -36,26 +36,21 @@ public class LogViewLabelProvider
 	public Image getColumnImage(Object element, int columnIndex) {
 		LogEntry entry = (LogEntry) element;
 		if (columnIndex == 1) {
-			if (entry.isOK()) {
-			} else {
-				switch (entry.getSeverity()) {
-					case IStatus.INFO :
-						return infoImage;
-					case IStatus.WARNING :
-						return warningImage;
-					case IStatus.ERROR :
-						return errorImage;
-				}
+			switch (entry.getSeverity()) {
+				case IStatus.INFO :
+					return infoImage;
+				case IStatus.WARNING :
+					return warningImage;
+				case IStatus.ERROR :
+					return errorImage;
 			}
 		}
 		return null;
 	}
+	
 	public String getColumnText(Object element, int columnIndex) {
 		LogEntry entry = (LogEntry) element;
 		switch (columnIndex) {
-			case 1 :
-				/* return getSeverityText(status.getSeverity()); */
-				break;
 			case 2 :
 				return entry.getMessage();
 			case 3 :

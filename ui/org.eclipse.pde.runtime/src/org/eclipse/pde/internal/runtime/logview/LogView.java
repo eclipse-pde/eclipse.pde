@@ -12,8 +12,10 @@ package org.eclipse.pde.internal.runtime.logview;
 
 import java.io.*;
 import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Date;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
@@ -36,91 +38,55 @@ public class LogView extends ViewPart implements ILogListener {
 	private TableTreeViewer tableTreeViewer;
 	private ArrayList logs = new ArrayList();
 	
+	public static final String P_LOG_WARNING = "warning";
+	public static final String P_LOG_ERROR = "error";
+	public static final String P_LOG_INFO = "info";
+	public static final String P_LOG_LIMIT = "limit";
+	public static final String P_USE_LIMIT = "useLimit";
+	public static final String P_SHOW_ALL_SESSIONS = "allSessions";
+	
+	private static final String P_COLUMN_1 = "column1";
+	private static final String P_COLUMN_2 = "column2";
+	private static final String P_COLUMN_3 = "column3";
+	private static final String P_COLUMN_4 = "column4";
+	
+		
 	private int MESSAGE_ORDER = -1;
 	private int PLUGIN_ORDER = -1;
+	private int DATE_ORDER = -1;
 	
-	private static final String C_SEVERITY = "LogView.column.severity";
-	private static final String KEY_PROPERTIES_TOOLTIP =
-		"LogView.properties.tooltip";
+	private static int ASCENDING = 1;
+	private static int DESCENDING = -1;
+	
 	private static final String KEY_CLEAR_LABEL = "LogView.clear.label";
-	private static final String KEY_CLEAR_TOOLTIP = "LogView.clear.tooltip";
 	private static final String KEY_READ_LOG_LABEL = "LogView.readLog.label";
-	private static final String KEY_READ_LOG_TOOLTIP =
-		"LogView.readLog.tooltip";
-	private static final String C_MESSAGE = "LogView.column.message";
-	private static final String C_PLUGIN = "LogView.column.plugin";
-	private static final String C_DATE = "LogView.column.date";
+
 	private Action propertiesAction;
 	private Action clearAction;
 	private Action copyAction;
 	private Action readLogAction; 
 	private Action deleteLogAction;
 	private Action filterAction;
-	private LogSession thisSession;
 	private Clipboard clipboard;
+	private IMemento memento;
+	
+	private TableColumn column1;
+	private TableColumn column2;
+	private TableColumn column3;
+	private TableColumn column4;
+	
+	private boolean firstEvent = true;
 
 	public LogView() {
 		logs = new ArrayList();
-		thisSession = new LogSession();
-		thisSession.createSessionData();
 	}
 	public void createPartControl(Composite parent) {
 		TableTree tableTree = new TableTree(parent, SWT.FULL_SELECTION);
-		TableLayout tlayout = new TableLayout();
 
 		Table table = tableTree.getTable();
-		TableColumn tableColumn = new TableColumn(table, SWT.NULL);
-		tableColumn.setText("");
-		tableColumn = new TableColumn(table, SWT.NULL);
-		tableColumn.setText(PDERuntimePlugin.getResourceString(C_SEVERITY));
-		tableColumn = new TableColumn(table, SWT.NULL);
-		tableColumn.setText(PDERuntimePlugin.getResourceString(C_MESSAGE));
-		tableColumn.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				MESSAGE_ORDER *= -1;
-				tableTreeViewer.setSorter(new ViewerSorter() {
-					public int compare(Viewer viewer, Object e1, Object e2) {
-						LogEntry entry1 = (LogEntry)e1;
-						LogEntry entry2 = (LogEntry)e2;
-						return super.compare(viewer, entry1.getMessage(), entry2.getMessage()) * MESSAGE_ORDER;
-					}
-				});
-			}
-		});
-		tableColumn = new TableColumn(table, SWT.NULL);
-		tableColumn.setText(PDERuntimePlugin.getResourceString(C_PLUGIN));
-		tableColumn.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				PLUGIN_ORDER *= -1;
-				tableTreeViewer.setSorter(new ViewerSorter() {
-					public int compare(Viewer viewer, Object e1, Object e2) {
-						LogEntry entry1 = (LogEntry)e1;
-						LogEntry entry2 = (LogEntry)e2;
-						return super.compare(viewer, entry1.getPluginId(), entry2.getPluginId()) * PLUGIN_ORDER;
-					}
-				});
-			}
-		});
-		tableColumn = new TableColumn(table, SWT.NULL);
-		tableColumn.setText(PDERuntimePlugin.getResourceString(C_DATE));
-		tableColumn.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				tableTreeViewer.setSorter(null);
-				Collections.reverse(logs);
-				tableTreeViewer.refresh();
-			}
-		});
-		ColumnLayoutData cLayout = new ColumnPixelData(21);
-		tlayout.addColumnData(cLayout);
-		cLayout = new ColumnPixelData(20);
-		tlayout.addColumnData(cLayout);
-		cLayout = new ColumnWeightData(100, 300, true);
-		tlayout.addColumnData(cLayout);
-		cLayout = new ColumnWeightData(50, 150);
-		tlayout.addColumnData(cLayout);
-		cLayout = new ColumnWeightData(50, 150);
-		tlayout.addColumnData(cLayout);
-		table.setLayout(tlayout);
+		
+		createColumns(table);
+		
 		table.setHeaderVisible(true);
 
 		tableTreeViewer = new TableTreeViewer(tableTree);
@@ -157,7 +123,7 @@ public class LogView extends ViewPart implements ILogListener {
 		propertiesAction.setHoverImageDescriptor(
 			PDERuntimePluginImages.DESC_PROPERTIES_HOVER);
 		propertiesAction.setToolTipText(
-			PDERuntimePlugin.getResourceString(KEY_PROPERTIES_TOOLTIP));
+			PDERuntimePlugin.getResourceString("LogView.properties.tooltip"));
 		propertiesAction.setEnabled(false);
 
 		clearAction =
@@ -172,7 +138,7 @@ public class LogView extends ViewPart implements ILogListener {
 		clearAction.setHoverImageDescriptor(
 			PDERuntimePluginImages.DESC_CLEAR_HOVER);
 		clearAction.setToolTipText(
-			PDERuntimePlugin.getResourceString(KEY_CLEAR_TOOLTIP));
+			PDERuntimePlugin.getResourceString("LogView.clear.tooltip"));
 		clearAction.setText(
 			PDERuntimePlugin.getResourceString(KEY_CLEAR_LABEL));
 
@@ -184,7 +150,7 @@ public class LogView extends ViewPart implements ILogListener {
 			}
 		};
 		readLogAction.setToolTipText(
-			PDERuntimePlugin.getResourceString(KEY_READ_LOG_TOOLTIP));
+			PDERuntimePlugin.getResourceString("LogView.readLog.tooltip"));
 		readLogAction.setImageDescriptor(PDERuntimePluginImages.DESC_READ_LOG);
 		readLogAction.setDisabledImageDescriptor(
 			PDERuntimePluginImages.DESC_READ_LOG_DISABLED);
@@ -222,8 +188,12 @@ public class LogView extends ViewPart implements ILogListener {
 		
 		filterAction = new Action(PDERuntimePlugin.getResourceString("LogView.filter")) {
 			public void run() {
-				FilterDialog dialog = new FilterDialog(PDERuntimePlugin.getActiveWorkbenchShell());
-				dialog.open();
+				FilterDialog dialog = new FilterDialog(PDERuntimePlugin.getActiveWorkbenchShell(), memento);
+				dialog.create();
+				dialog.getShell().setText("Log Filters");
+				if (dialog.open() == FilterDialog.OK)
+					restoreFromFile();
+			
 			}
 		};
 		filterAction.setToolTipText(PDERuntimePlugin.getResourceString("LogView.filter"));
@@ -249,6 +219,81 @@ public class LogView extends ViewPart implements ILogListener {
 		WorkbenchHelp.setHelp(tableTree,IHelpContextIds.LOG_VIEW);
 		clipboard = new Clipboard(tableTree.getDisplay());
 	}
+	
+	private void createColumns(Table table) {
+		TableColumn column = new TableColumn(table, SWT.NULL);
+		column.setText("");
+		
+		column1 = new TableColumn(table, SWT.NULL);
+		column1.setText(PDERuntimePlugin.getResourceString("LogView.column.severity"));
+
+		column2 = new TableColumn(table, SWT.NULL);
+		column2.setText(PDERuntimePlugin.getResourceString("LogView.column.message"));
+		column2.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				MESSAGE_ORDER *= -1;
+				tableTreeViewer.setSorter(new ViewerSorter() {
+					public int compare(Viewer viewer, Object e1, Object e2) {
+						LogEntry entry1 = (LogEntry)e1;
+						LogEntry entry2 = (LogEntry)e2;
+						return super.compare(viewer, entry1.getMessage(), entry2.getMessage()) * MESSAGE_ORDER;
+					}
+				});
+			}
+		});
+		
+		column3 = new TableColumn(table, SWT.NULL);
+		column3.setText(PDERuntimePlugin.getResourceString("LogView.column.plugin"));
+		column3.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				PLUGIN_ORDER *= -1;
+				tableTreeViewer.setSorter(new ViewerSorter() {
+					public int compare(Viewer viewer, Object e1, Object e2) {
+						LogEntry entry1 = (LogEntry)e1;
+						LogEntry entry2 = (LogEntry)e2;
+						return super.compare(viewer, entry1.getPluginId(), entry2.getPluginId()) * PLUGIN_ORDER;
+					}
+				});
+			}
+		});
+		
+		column4 = new TableColumn(table, SWT.NULL);
+		column4.setText(PDERuntimePlugin.getResourceString("LogView.column.date"));
+		column4.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (DATE_ORDER == ASCENDING) {
+					DATE_ORDER = DESCENDING;
+				} else {
+					DATE_ORDER = ASCENDING;
+				}
+				tableTreeViewer.setSorter(new ViewerSorter() {
+					public int compare(Viewer viewer, Object e1, Object e2) {
+						try {
+							SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy HH:mm:ss.SS"); //$NON-NLS-1$
+							Date date1 = formatter.parse(((LogEntry)e1).getDate());
+							Date date2 = formatter.parse(((LogEntry)e2).getDate());
+							if (DATE_ORDER == ASCENDING) {
+								return date1.before(date2) ? -1 : 1;
+							} else {
+								return date1.after(date2) ? -1 : 1;
+							}
+						} catch (ParseException e) {
+						}
+						return 0;
+					}
+				});
+			}
+		});
+		
+		TableLayout tlayout = new TableLayout();
+		tlayout.addColumnData(new ColumnPixelData(21));
+		tlayout.addColumnData(new ColumnPixelData(memento.getInteger(P_COLUMN_1).intValue()));
+		tlayout.addColumnData(new ColumnPixelData(memento.getInteger(P_COLUMN_2).intValue()));
+		tlayout.addColumnData(new ColumnPixelData(memento.getInteger(P_COLUMN_3).intValue()));
+		tlayout.addColumnData(new ColumnPixelData(memento.getInteger(P_COLUMN_4).intValue()));
+		table.setLayout(tlayout);
+	}
+	
 	public void dispose() {
 		Platform.removeLogListener(this);
 		clipboard.dispose();
@@ -280,9 +325,8 @@ public class LogView extends ViewPart implements ILogListener {
 	public LogEntry[] getLogs() {
 		return (LogEntry[]) logs.toArray(new LogEntry[logs.size()]);
 	}
-	public TableTreeViewer getTableTreeViewer() {
-		return tableTreeViewer;
-	}
+	
+	
 	protected void handleClear() {
 		BusyIndicator
 			.showWhile(
@@ -310,19 +354,25 @@ public class LogView extends ViewPart implements ILogListener {
 		File logFile = Platform.getLogFileLocation().toFile();
 		if (!logFile.exists())
 			return;
-		LogReader.parseLogFile(logFile, logs);
+		LogReader.parseLogFile(logFile, logs, memento);
 	}
-	public void logging(IStatus status) {
-		pushStatus(status);
-	}
+	
 	public void logging(IStatus status, String plugin) {
-		pushStatus(status);
+		if (firstEvent) {
+			restoreFromFile();
+			firstEvent = false;
+		} else {
+			pushStatus(status);
+		}
 	}
 	private void pushStatus(IStatus status) {
 		LogEntry entry = new LogEntry(status);
-		entry.setSession(thisSession);
-		logs.add(0, entry);
+		LogReader.addEntry(entry, logs, memento, true);
 		asyncRefresh();
+		try {
+			PDERuntimePlugin.getActivePage().showView(PDERuntimePlugin.getPluginId() + ".LogView");
+		} catch (PartInitException e) {
+		}
 	}
 
 	private void asyncRefresh() {
@@ -356,8 +406,7 @@ public class LogView extends ViewPart implements ILogListener {
 			status.setMessage(null);
 		else {
 			LogEntry entry = (LogEntry)((IStructuredSelection)selection).getFirstElement();
-			LogViewLabelProvider provider = (LogViewLabelProvider)getTableTreeViewer().getLabelProvider();
-			status.setMessage(provider.getColumnText(entry, 2));
+			status.setMessage(((LogViewLabelProvider)tableTreeViewer.getLabelProvider()).getColumnText(entry, 2));
 		}
 	}
 	private void copyToClipboard(ISelection selection) {
@@ -381,4 +430,44 @@ public class LogView extends ViewPart implements ILogListener {
 			new Transfer[] {
 				TextTransfer.getInstance()});
 	}
+	
+	public void init(IViewSite site, IMemento memento) throws PartInitException {
+		super.init(site, memento);
+		this.memento = memento;
+		initializeMemento();		
+	}
+	
+	private void initializeMemento() {
+		if (memento.getString(P_USE_LIMIT) == null)
+			memento.putString(P_USE_LIMIT, "true");
+		if (memento.getInteger(P_LOG_LIMIT) == null)
+			memento.putInteger(P_LOG_LIMIT, 50);
+		if (memento.getString(P_LOG_INFO) == null)
+			memento.putString(P_LOG_INFO, "true");
+		if (memento.getString(P_LOG_WARNING) == null)
+			memento.putString(P_LOG_WARNING, "true");
+		if (memento.getString(P_LOG_ERROR) == null)
+			memento.putString(P_LOG_ERROR, "true");
+		if (memento.getString(P_SHOW_ALL_SESSIONS) == null)
+			memento.putString(P_SHOW_ALL_SESSIONS, "true");
+		if (memento.getInteger(P_COLUMN_1) == null)
+			memento.putInteger(P_COLUMN_1, 20);
+		if (memento.getInteger(P_COLUMN_2) == null)
+			memento.putInteger(P_COLUMN_2, 300);
+		if (memento.getInteger(P_COLUMN_3) == null)
+			memento.putInteger(P_COLUMN_3, 150);
+		if (memento.getInteger(P_COLUMN_4) == null)
+			memento.putInteger(P_COLUMN_4, 150);	
+	}
+	
+	public void saveState(IMemento memento) {
+		this.memento.putInteger(P_COLUMN_1, column1.getWidth());
+		this.memento.putInteger(P_COLUMN_2, column2.getWidth());
+		this.memento.putInteger(P_COLUMN_3, column3.getWidth());
+		this.memento.putInteger(P_COLUMN_4, column4.getWidth());
+		
+		memento.putMemento(this.memento);
+	}
+	
+	
 }

@@ -19,6 +19,7 @@ import java.util.*;
 import org.eclipse.ui.*;
 
 public class PDERuntimePlugin extends AbstractUIPlugin {
+	
 	private static PDERuntimePlugin inst;
 	private ResourceBundle resourceBundle;
 
@@ -80,4 +81,5 @@ public class PDERuntimePlugin extends AbstractUIPlugin {
 			new RegistryPropertySourceFactory();
 		manager.registerAdapters(factory, PluginObjectAdapter.class);
 	}
+	
 }

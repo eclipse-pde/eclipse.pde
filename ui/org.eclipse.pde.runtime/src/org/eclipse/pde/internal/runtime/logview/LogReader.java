@@ -13,6 +13,9 @@ package org.eclipse.pde.internal.runtime.logview;
 import java.io.*;
 import java.util.*;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.ui.IMemento;
+
 class LogReader {
 	private static final int SESSION_STATE = 10;
 	private static final int ENTRY_STATE = 20;
@@ -21,38 +24,10 @@ class LogReader {
 	private static final int STACK_STATE = 50;
 	private static final int TEXT_STATE = 60;
 	private static final int UNKNOWN_STATE = 70;
-
-	public static void parseLogFile(File file, ArrayList entries) {
-		List lines = load(file);
-		parse(lines, entries);
-	}
-	/**
-	 * Reads the contents from the given file and returns them as
-	 * a List of lines.
-	 */
-	private static List load(File file) {
-		List lines = null;
-		// read current contents
-		InputStream is = null;
-		try {
-			is = new FileInputStream(file);
-			BufferedReader reader =
-				new BufferedReader(new InputStreamReader(is, "UTF8"));
-			lines = new LineReader(reader).readLines();
-		} catch (FileNotFoundException ex) {
-		} catch (UnsupportedEncodingException ex) {
-		} finally {
-			if (is != null)
-				try {
-					is.close();
-				} catch (IOException ex) {
-				}
-		}
-		if (lines == null)
-			lines = new ArrayList();
-		return lines;
-	}
-	private static LogEntry[] parse(List lines, ArrayList entries) {
+	
+	private static LogSession currentSession;
+	
+	public static void parseLogFile(File file, ArrayList entries, IMemento memento) {
 		ArrayList parents = new ArrayList();
 		LogEntry current = null;
 		LogSession session = null;
@@ -60,78 +35,110 @@ class LogReader {
 		StringWriter swriter = null;
 		PrintWriter writer = null;
 		int state = UNKNOWN_STATE;
+		currentSession = null;
 
-		for (int i = 0; i < lines.size(); i++) {
-			String line = (String) lines.get(i);
-			line = line.trim();
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(file));
+			while(reader.ready()) {
+				String line = reader.readLine().trim();
 
-			if (line.startsWith("!SESSION")) {
-				state = SESSION_STATE;
-			} else if (line.startsWith("!ENTRY")) {
-				state = ENTRY_STATE;
-			} else if (line.startsWith("!SUBENTRY")) {
-				state = SUBENTRY_STATE;
-			} else if (line.startsWith("!MESSAGE")) {
-				state = MESSAGE_STATE;
-			} else if (line.startsWith("!STACK")) {
-				state = STACK_STATE;
-			} else
-				state = TEXT_STATE;
-
-			if (state == TEXT_STATE) {
-				if (writer != null)
-					writer.println(line);
-				if (i < lines.size() - 1)
-					continue;
-			}
-
-			if (writer != null) {
-				if (writerState == STACK_STATE && current != null) {
-					current.setStack(swriter.toString());
-				} else if (writerState == SESSION_STATE && session != null) {
-					session.setSessionData(swriter.toString());
+				if (line.startsWith("!SESSION")) {
+					state = SESSION_STATE;
+				} else if (line.startsWith("!ENTRY")) {
+					state = ENTRY_STATE;
+				} else if (line.startsWith("!SUBENTRY")) {
+					state = SUBENTRY_STATE;
+				} else if (line.startsWith("!MESSAGE")) {
+					state = MESSAGE_STATE;
+				} else if (line.startsWith("!STACK")) {
+					state = STACK_STATE;
+				} else
+					state = TEXT_STATE;
+			
+				if (state == TEXT_STATE) {
+					if (writer != null)
+						writer.println(line);
+					if (reader.ready())
+						continue;
 				}
-				writerState = UNKNOWN_STATE;
-				swriter = null;
-				writer.close();
-				writer = null;
+			
+				if (writer != null) {
+					if (writerState == STACK_STATE && current != null) {
+						current.setStack(swriter.toString());
+					} else if (writerState == SESSION_STATE && session != null) {
+						session.setSessionData(swriter.toString());
+					}
+					writerState = UNKNOWN_STATE;
+					swriter = null;
+					writer.close();
+					writer = null;
+				}
+			
+				if (state == STACK_STATE) {
+					swriter = new StringWriter();
+					writer = new PrintWriter(swriter, true);
+					writerState = STACK_STATE;
+				} else if (state == SESSION_STATE) {
+					session = new LogSession();
+					session.processLogLine(line);
+					swriter = new StringWriter();
+					writer = new PrintWriter(swriter, true);
+					writerState = SESSION_STATE;
+					if (currentSession == null || session.getDate().after(currentSession.getDate())) {
+						currentSession = session;
+					}
+					if (currentSession.equals(session) && !memento.getString(LogView.P_SHOW_ALL_SESSIONS).equals("true"))
+						entries.clear();
+				} else if (state == ENTRY_STATE) {
+					LogEntry entry = new LogEntry();
+					entry.setSession(session);
+					entry.processLogLine(line, true);
+					setNewParent(parents, entry, 0);
+					current = entry;
+					addEntry(current, entries, memento, false);
+				} else if (state == SUBENTRY_STATE) {
+					LogEntry entry = new LogEntry();
+					entry.setSession(session);
+					int depth = entry.processLogLine(line, false);
+					setNewParent(parents, entry, depth);
+					current = entry;
+					LogEntry parent = (LogEntry) parents.get(depth - 1);
+					parent.addChild(entry);
+				} else if (state == MESSAGE_STATE) {
+					String message = "";
+					if (line.length() > 8)
+						message = line.substring(9).trim();
+					if (current != null)
+						current.setMessage(message);
+				}
 			}
-
-			if (state == STACK_STATE) {
-				swriter = new StringWriter();
-				writer = new PrintWriter(swriter, true);
-				writerState = STACK_STATE;
-			} else if (state == SESSION_STATE) {
-				session = new LogSession();
-				swriter = new StringWriter();
-				writer = new PrintWriter(swriter, true);
-				writerState = SESSION_STATE;
-			} else if (state == ENTRY_STATE) {
-				LogEntry entry = new LogEntry();
-				entry.setSession(session);
-				entry.processLogLine(line, true);
-				setNewParent(parents, entry, 0);
-				current = entry;
-				entries.add(0, entry);
-			} else if (state == SUBENTRY_STATE) {
-				LogEntry entry = new LogEntry();
-				entry.setSession(session);
-				int depth = entry.processLogLine(line, false);
-				setNewParent(parents, entry, depth);
-				current = entry;
-				LogEntry parent = (LogEntry) parents.get(depth - 1);
-				parent.addChild(entry);
-			} else if (state == MESSAGE_STATE) {
-				String message = "";
-				if (line.length() > 8)
-					message = line.substring(9);
-				if (current != null)
-					current.setMessage(message);
-			}
+		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
 		}
-		return (LogEntry[]) entries.toArray(new LogEntry[entries.size()]);
 	}	
 	
+	public static void addEntry(LogEntry current, ArrayList entries, IMemento memento, boolean useCurrentSession) {
+		int severity = current.getSeverity();
+		boolean doAdd = true;
+		switch(severity) {
+			case IStatus.INFO:
+				doAdd = memento.getString(LogView.P_LOG_INFO).equals("true");
+			case IStatus.WARNING:
+				doAdd = memento.getString(LogView.P_LOG_WARNING).equals("true");
+			case IStatus.ERROR:
+				doAdd = memento.getString(LogView.P_LOG_ERROR).equals("true");
+		}
+		if (doAdd) {
+			if (useCurrentSession)
+				current.setSession(currentSession);
+			entries.add(0, current);
+			
+			if (memento.getString(LogView.P_USE_LIMIT).equals("true")
+				&& entries.size() > memento.getInteger(LogView.P_LOG_LIMIT).intValue())
+				entries.remove(entries.size() - 1);
+		}
+	}
+
 	private static void setNewParent(
 		ArrayList parents,
 		LogEntry entry,

@@ -11,6 +11,8 @@
 package org.eclipse.pde.internal.runtime.logview;
 
 import java.io.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
@@ -163,7 +165,7 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 					break;
 			}
 		}
-		date = dateBuffer.toString();
+		date = dateBuffer.toString().trim();
 		return depth;
 	}
 
@@ -186,7 +188,8 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 		pluginId = status.getPlugin();
 		severity = status.getSeverity();
 		code = status.getCode();
-		date = new Date().toString();
+		DateFormat formatter = new SimpleDateFormat("MMM dd, yyyy HH:mm:ss.SS"); //$NON-NLS-1$
+		date = formatter.format(new Date());
 		message = status.getMessage();
 		Throwable throwable = status.getException();
 		if (throwable != null) {
