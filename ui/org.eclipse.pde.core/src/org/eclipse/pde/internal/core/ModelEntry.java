@@ -155,7 +155,7 @@ public class ModelEntry extends PlatformObject {
 		return false;
 	}
 	private boolean isRequired(IPluginBase plugin, IPluginBase changedPlugin) {
-		String changedId = changedPlugin.getId();
+		/*String changedId = changedPlugin.getId();
 		if (changedId == null)
 			return false;
 			
@@ -171,6 +171,7 @@ public class ModelEntry extends PlatformObject {
 			if (iimport.getId().equals(changedId))
 				return true;
 		}
-		return false;
+		return false;*/
+		return true;
 	}
 }
