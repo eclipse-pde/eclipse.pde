@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.logview;
 
+import java.io.*;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -20,6 +21,8 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.runtime.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.*;
+import org.eclipse.swt.dnd.*;
+import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -44,9 +47,11 @@ public class LogView extends ViewPart implements ILogListener {
 	private static final String C_DATE = "LogView.column.date";
 	private Action propertiesAction;
 	private Action clearAction;
+	private Action copyAction;
 	private Action readLogAction; 
 	private Action deleteLogAction;
 	private LogSession thisSession;
+	private Clipboard clipboard;
 
 	public LogView() {
 		logs = new ArrayList();
@@ -87,8 +92,7 @@ public class LogView extends ViewPart implements ILogListener {
 		tableTreeViewer
 			.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent e) {
-				propertiesAction.setEnabled(!e.getSelection().isEmpty());
-				updateStatus(e.getSelection());
+				handleSelectionChanged(e.getSelection());
 			}
 		});
 
@@ -165,6 +169,15 @@ public class LogView extends ViewPart implements ILogListener {
 			}
 		};
 		deleteLogAction.setToolTipText(PDERuntimePlugin.getResourceString("LogView.delete.tooltip"));
+		copyAction = 
+			new Action(PDERuntimePlugin.getResourceString("LogView.copy")) {
+				public void run() {
+					copyToClipboard(tableTreeViewer.getSelection());
+				}
+			};
+		copyAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
+		copyAction.setDisabledImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
+		copyAction.setHoverImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY_HOVER));
 		
 		deleteLogAction.setImageDescriptor(PDERuntimePluginImages.DESC_REMOVE_LOG);
 		deleteLogAction.setDisabledImageDescriptor(PDERuntimePluginImages.DESC_REMOVE_LOG_DISABLED);
@@ -172,6 +185,7 @@ public class LogView extends ViewPart implements ILogListener {
 		
 		IActionBars bars = getViewSite().getActionBars();
 		bars.setGlobalActionHandler(IWorkbenchActionConstants.PROPERTIES, propertiesAction);
+		bars.setGlobalActionHandler(IWorkbenchActionConstants.COPY, copyAction);
 
 		IToolBarManager toolBarManager = bars.getToolBarManager();
 		
@@ -183,9 +197,11 @@ public class LogView extends ViewPart implements ILogListener {
 		toolBarManager.add(propertiesAction);		
 		
 		WorkbenchHelp.setHelp(tableTree,IHelpContextIds.LOG_VIEW);
+		clipboard = new Clipboard(tableTree.getDisplay());
 	}
 	public void dispose() {
 		Platform.removeLogListener(this);
+		clipboard.dispose();
 		super.dispose();
 	}
 	
@@ -206,6 +222,7 @@ public class LogView extends ViewPart implements ILogListener {
 		manager.add(readLogAction);
 		manager.add(clearAction);
 		manager.add(new Separator());
+		manager.add(copyAction);
 		manager.add(deleteLogAction);
 		manager.add(new Separator());
 		manager.add(propertiesAction);
@@ -277,6 +294,12 @@ public class LogView extends ViewPart implements ILogListener {
 		tableTreeViewer.getTableTree().getTable().setFocus();
 	}
 	
+	private void handleSelectionChanged(ISelection selection) {
+		propertiesAction.setEnabled(!selection.isEmpty());
+		updateStatus(selection);
+		copyAction.setEnabled(!selection.isEmpty());
+	}
+	
 	private void updateStatus(ISelection selection) {
 		IStatusLineManager status = getViewSite().getActionBars().getStatusLineManager();
 		if (selection.isEmpty())
@@ -286,5 +309,28 @@ public class LogView extends ViewPart implements ILogListener {
 			LogViewLabelProvider provider = (LogViewLabelProvider)getTableTreeViewer().getLabelProvider();
 			status.setMessage(provider.getColumnText(entry, 2));
 		}
+	}
+	private void copyToClipboard(ISelection selection) {
+		IStructuredSelection ssel = (IStructuredSelection) selection;
+		Object[] objects = ssel.toArray();
+		StringWriter writer = new StringWriter();
+		PrintWriter pwriter = new PrintWriter(writer);
+		
+		if (selection.isEmpty())
+			return;
+		LogEntry entry = (LogEntry)((IStructuredSelection)selection).getFirstElement();
+		entry.write(pwriter);
+		pwriter.flush();
+		String textVersion = writer.toString();
+		try {
+			pwriter.close();
+			writer.close();
+		} catch (IOException e) {
+		}
+		// set the clipboard contents
+		clipboard.setContents(
+			new Object[] { textVersion },
+			new Transfer[] {
+				TextTransfer.getInstance()});
 	}
 }

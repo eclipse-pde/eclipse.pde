@@ -34,11 +34,11 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 
 	public LogEntry() {
 	}
-	
+
 	public LogSession getSession() {
 		return session;
 	}
-	
+
 	void setSession(LogSession session) {
 		this.session = session;
 	}
@@ -140,8 +140,10 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 				continue;
 			switch (i) {
 				case 0 : // entry or subentry
-					if (root) i+=2;
-					else i++;
+					if (root)
+						i += 2;
+					else
+						i++;
 					break;
 				case 1 : // depth
 					depth = parseInteger(token);
@@ -164,12 +166,11 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 		date = dateBuffer.toString();
 		return depth;
 	}
-	
+
 	private int parseInteger(String token) {
 		try {
 			return Integer.parseInt(token);
-		}
-		catch (NumberFormatException e) {
+		} catch (NumberFormatException e) {
 			return 0;
 		}
 	}
@@ -185,7 +186,7 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 		pluginId = status.getPlugin();
 		severity = status.getSeverity();
 		code = status.getCode();
-		date = 	new Date().toString();
+		date = new Date().toString();
 		message = status.getMessage();
 		Throwable throwable = status.getException();
 		if (throwable != null) {
@@ -210,5 +211,19 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 			children = new ArrayList();
 		children.add(child);
 		child.setParent(this);
+	}
+	public void write(PrintWriter writer) {
+		writer.print(getSeverityText());
+		if (date != null) {
+			writer.print(" ");
+			writer.print(getDate());
+		}
+		if (message != null) {
+			writer.print(" ");
+			writer.print(getMessage());
+		}
+		writer.println();
+		if (stack != null)
+			writer.println(stack);
 	}
 }
