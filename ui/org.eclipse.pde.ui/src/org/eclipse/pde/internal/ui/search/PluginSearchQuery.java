@@ -1,0 +1,81 @@
+package org.eclipse.pde.internal.ui.search;
+
+import org.eclipse.core.runtime.*;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.internal.core.search.*;
+import org.eclipse.search.ui.*;
+import org.eclipse.search.ui.text.*;
+
+public class PluginSearchQuery implements ISearchQuery {
+
+	private SearchResult fSearchResult;
+
+	private PluginSearchInput fSearchInput;
+
+	public PluginSearchQuery(PluginSearchInput input) {
+		fSearchInput = input;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.search.ui.ISearchQuery#run(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public IStatus run(IProgressMonitor monitor) {
+		final AbstractTextSearchResult result = (AbstractTextSearchResult) getSearchResult();
+		result.removeAll();
+		ISearchResultCollector collector = new ISearchResultCollector() {
+			public void accept(Object match) {
+				if (match instanceof ISourceObject) {
+					ISourceObject object = (ISourceObject) match;
+					result.addMatch(new Match(match, Match.UNIT_LINE,
+							object.getStartLine() - 1, 1));
+				}
+			}
+		};
+		PluginSearchOperation op = new PluginSearchOperation(fSearchInput, collector);
+		op.execute(monitor);
+		monitor.done();
+		return Status.OK_STATUS;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.search.ui.ISearchQuery#getLabel()
+	 */
+	public String getLabel() {
+		return fSearchInput.getSearchString();
+	}
+	
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.search.ui.ISearchQuery#canRerun()
+	 */
+	public boolean canRerun() {
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.search.ui.ISearchQuery#canRunInBackground()
+	 */
+	public boolean canRunInBackground() {
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.search.ui.ISearchQuery#getSearchResult()
+	 */
+	public ISearchResult getSearchResult() {
+		if (fSearchResult == null)
+			fSearchResult = new SearchResult(this);
+		return fSearchResult;
+	}
+
+}

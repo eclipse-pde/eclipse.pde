@@ -18,7 +18,6 @@ import org.eclipse.help.internal.browser.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.builders.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ischema.*;
@@ -29,10 +28,10 @@ import org.eclipse.swt.program.*;
 
 
 public class ShowDescriptionAction extends Action {
-	private String pointId;
-	private ISchema schema;
-	private File previewFile;
-	private URL cssURL;
+	private String fPointID;
+	private ISchema fSchema;
+	private File fPreviewFile;
+	private URL fCssURL;
 
 	public ShowDescriptionAction(IPluginExtensionPoint point) {
 		setExtensionPoint(point);
@@ -43,37 +42,21 @@ public class ShowDescriptionAction extends Action {
 	}
 	
 	public void setSchema(ISchema schema) {
-		this.schema = schema;
-		this.pointId = schema.getQualifiedPointId();
+		this.fSchema = schema;
+		this.fPointID = schema.getQualifiedPointId();
 	}
 	
 	public void setExtensionPoint(IPluginExtensionPoint point) {
-		this.pointId = point.getFullId();
+		this.fPointID = point.getFullId();
 		setText(PDEPlugin.getResourceString("ShowDescriptionAction.label")); //$NON-NLS-1$
-		schema = null;
-	}
-	
-	public URL getCSSURL(){
-		return cssURL;
-	}
-	
-	public void setCSSURL(String url){
-		try {
-			cssURL = new URL(url);
-		} catch (MalformedURLException e) {
-			PDE.logException(e);
-		}
-	}
-	
-	public void setCSSURL(URL url){
-		cssURL = url;
+		fSchema = null;
 	}
 	
 	public void run() {
-		if (schema==null) {
+		if (fSchema == null) {
 			SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
-			schema = registry.getSchema(pointId);
-			if (schema==null) {
+			fSchema = registry.getSchema(fPointID);
+			if (fSchema == null) {
 				showNoSchemaMessage();
 				return;
 			}
@@ -83,24 +66,24 @@ public class ShowDescriptionAction extends Action {
 	
 	private void showNoSchemaMessage() {
 		String title = PDEPlugin.getResourceString("ShowDescriptionAction.title"); //$NON-NLS-1$
-		String message = PDEPlugin.getFormattedMessage("ShowDescriptionAction.noPoint.desc",pointId); //$NON-NLS-1$ //$NON-NLS-2$
+		String message = PDEPlugin.getFormattedMessage("ShowDescriptionAction.noPoint.desc",fPointID); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), title, message);
 	}
 
 	private void showSchemaDocument() {
 		try {
-			previewFile = getPreviewFile();
-			if (previewFile == null)
+			fPreviewFile = getPreviewFile();
+			if (fPreviewFile == null)
 				return;
 
 			SchemaTransformer transformer = new SchemaTransformer();
-			OutputStream os = new FileOutputStream(previewFile);
+			OutputStream os = new FileOutputStream(fPreviewFile);
 			PrintWriter printWriter = new PrintWriter(os, true);
-			transformer.transform(printWriter, schema, cssURL, SchemaTransformer.TEMP); 
+			transformer.transform(printWriter, fSchema, fCssURL, SchemaTransformer.TEMP); 
 			os.flush();
 			os.close();
-			showURL(previewFile.getPath());
+			showURL(fPreviewFile.getPath());
 		} catch (Exception e) {
 			PDEPlugin.logException(e);
 		}

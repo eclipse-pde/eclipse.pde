@@ -16,20 +16,19 @@
  */
 package org.eclipse.pde.internal.ui.editor.schema;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.pde.internal.core.ischema.ISchema;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.core.resources.*;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.editor.context.*;
-import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
-import org.eclipse.swt.SWTError;
+import org.eclipse.pde.internal.ui.search.*;
+import org.eclipse.swt.*;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.forms.editor.IFormPage;
-import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.forms.editor.*;
+import org.eclipse.ui.part.*;
 
 /**
  * @author dejan
@@ -164,4 +163,16 @@ public class SchemaEditor extends MultiSourceEditor {
 	protected ISortableContentOutlinePage createContentOutline() {
 		return new SchemaFormOutlinePage(this);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getInputContext(java.lang.Object)
+	 */
+	protected InputContext getInputContext(Object object) {
+		InputContext context = null;
+		if (object instanceof ISchemaObject) {
+			context = inputContextManager.findContext(SchemaInputContext.CONTEXT_ID);
+		}		
+		return context;
+	}
+
 }

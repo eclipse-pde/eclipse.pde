@@ -10,27 +10,17 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search;
 
-import java.lang.reflect.InvocationTargetException;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.jface.action.IAction;
+import org.eclipse.core.resources.*;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.search.*;
-import org.eclipse.search.ui.SearchUI;
+import org.eclipse.search.ui.*;
 import org.eclipse.ui.*;
 
-/**
- * @author W Melhem
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
- */
 public class FindPluginReferencesAction implements IObjectActionDelegate {
-	private String searchString = null;
+	private String fSearchString = null;
 	/**
 	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
 	 */
@@ -41,30 +31,26 @@ public class FindPluginReferencesAction implements IObjectActionDelegate {
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		if (searchString == null)
-			return;
+		if (fSearchString != null) {
+			NewSearchUI.activateSearchResultView();
+			NewSearchUI.runQuery(createSearchQuery());
+		}
+	}
+	
+	private ISearchQuery createSearchQuery() {
 		PluginSearchInput input = new PluginSearchInput();
 		input.setSearchElement(PluginSearchInput.ELEMENT_PLUGIN);
 		input.setSearchLimit(PluginSearchInput.LIMIT_REFERENCES);
-		input.setSearchString(searchString);
+		input.setSearchString(fSearchString);
 		input.setSearchScope(new PluginSearchScope());
-		try {
-			SearchUI.activateSearchResultView();
-			PluginSearchUIOperation op =
-				new PluginSearchUIOperation(
-					input,
-					new PluginSearchResultCollector());
-			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(op);
-		} catch (InvocationTargetException e) {
-		} catch (InterruptedException e) {
-		}
+		return new PluginSearchQuery(input);
 	}
 
 	/**
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
-		searchString = null;
+		fSearchString = null;
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection sSelection = (IStructuredSelection) selection;
 			if (sSelection.size() == 1) {
@@ -74,7 +60,7 @@ public class FindPluginReferencesAction implements IObjectActionDelegate {
 				if (entry != null) {
 					IPluginModelBase model = entry.getActiveModel();
 					if (model != null)
-						searchString = model.getPluginBase().getId();
+						fSearchString = model.getPluginBase().getId();
 				}
 			}
 		}

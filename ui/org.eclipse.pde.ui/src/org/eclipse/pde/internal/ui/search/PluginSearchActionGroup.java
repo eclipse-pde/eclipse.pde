@@ -1,35 +1,21 @@
-/*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
 package org.eclipse.pde.internal.ui.search;
 
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.Separator;
-//import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.pde.core.plugin.IPlugin;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
-import org.eclipse.pde.core.plugin.IPluginImport;
-import org.eclipse.pde.internal.core.ModelEntry;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.plugin.ImportObject;
-import org.eclipse.search.ui.ISearchResultViewEntry;
-import org.eclipse.ui.actions.ActionContext;
-import org.eclipse.ui.actions.ActionGroup;
+import org.eclipse.core.resources.*;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.plugin.*;
+import org.eclipse.pde.internal.ui.search.dependencies.*;
+import org.eclipse.ui.actions.*;
+
 
 public class PluginSearchActionGroup extends ActionGroup {
-
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.actions.ActionGroup#fillContextMenu(org.eclipse.jface.action.IMenuManager)
+	 */
 	public void fillContextMenu(IMenuManager menu) {
-		super.fillContextMenu(menu);
 		ActionContext context = getContext();
 		ISelection selection = context.getSelection();
 		if (selection instanceof IStructuredSelection) {
@@ -44,38 +30,30 @@ public class PluginSearchActionGroup extends ActionGroup {
 		}
 	}
 
-	private void addDependencyExtentAction(Object object, IMenuManager menu) {
-		if (object instanceof ISearchResultViewEntry) {
-			object = ((ISearchResultViewEntry) object).getGroupByKey();
-		} else if (object instanceof ImportObject) {
-			object = ((ImportObject) object).getImport();
-		}
-		
-		if (object instanceof IPluginImport
-			&& ((IPluginImport) object).getModel().getUnderlyingResource()
-				!= null) {
-			menu.add(new Separator());
-			menu.add(new DependencyExtentAction((IPluginImport) object));
-		}
-	}
-	
-
 	private void addFindDeclarationsAction(Object object, IMenuManager menu) {
-		if (object instanceof ISearchResultViewEntry) {
-			object = ((ISearchResultViewEntry) object).getGroupByKey();
-		} else if (object instanceof ImportObject) {
-			object = ((ImportObject) object).getImport();
-		}
-		if (object instanceof IPluginImport
-			|| object instanceof IPluginExtension) {
+		if (object instanceof ImportObject)
+			object = ((ImportObject)object).getImport();
+		
+		if (object instanceof IPluginBase 
+				|| object instanceof IPluginExtension
+				|| object instanceof IPluginImport) {
 			menu.add(new FindDeclarationsAction(object));
 		}
 	}
 
+	private void addShowDescriptionAction(Object object, IMenuManager menu) {
+		if (object instanceof IPluginExtensionPoint) {
+			menu.add(new ShowDescriptionAction((IPluginExtensionPoint)object));
+		} else if (object instanceof IPluginExtension) {
+			String point = ((IPluginExtension)object).getPoint();
+			IPluginExtensionPoint extPoint = PDECore.getDefault().findExtensionPoint(point);
+			if (extPoint != null)
+				menu.add(new ShowDescriptionAction(extPoint));
+		}
+	}
+
 	private void addFindReferencesAction(Object object, IMenuManager menu) {
-		if (object instanceof ISearchResultViewEntry) {
-			object = ((ISearchResultViewEntry) object).getGroupByKey();
-		} else if (object instanceof ModelEntry) {
+		if (object instanceof ModelEntry) {
 			object = ((ModelEntry) object).getActiveModel().getPluginBase();
 		} else if (object instanceof ImportObject) {
 			object = ((ImportObject) object).getImport();
@@ -85,18 +63,18 @@ public class PluginSearchActionGroup extends ActionGroup {
 			|| (object instanceof IPlugin))
 			menu.add(new FindReferencesAction(object));
 	}
-
-	private void addShowDescriptionAction(Object object, IMenuManager menu) {
-		if (object instanceof ISearchResultViewEntry)
-			object = ((ISearchResultViewEntry) object).getGroupByKey();
-		if (object instanceof IPluginExtensionPoint) {
-			menu.add(new ShowDescriptionAction((IPluginExtensionPoint) object));
-		} else if (object instanceof IPluginExtension) {
-			String pointId = ((IPluginExtension) object).getPoint();
-			IPluginExtensionPoint extPoint =
-				PDECore.getDefault().findExtensionPoint(pointId);
-			if (extPoint != null)
-				menu.add(new ShowDescriptionAction(extPoint));
+	
+	private void addDependencyExtentAction(Object object, IMenuManager menu) {
+		if (object instanceof ImportObject) {
+			object = ((ImportObject)object).getImport();
+		}
+		
+		if (object instanceof IPluginImport) {
+			String id = ((IPluginImport)object).getId();
+			IResource resource = ((IPluginImport)object).getModel().getUnderlyingResource();
+			if (resource != null) {
+				menu.add(new DependencyExtentAction(resource.getProject(), id));
+			}
 		}
 	}
 

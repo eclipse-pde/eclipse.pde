@@ -26,6 +26,7 @@ import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.pde.internal.ui.search.*;
+import org.eclipse.pde.internal.ui.search.dependencies.*;
 import org.eclipse.pde.internal.ui.wizards.PluginSelectionDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;

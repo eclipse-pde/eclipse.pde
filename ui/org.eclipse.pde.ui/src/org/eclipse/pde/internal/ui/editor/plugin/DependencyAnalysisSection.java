@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
+import org.eclipse.core.resources.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
@@ -20,6 +21,7 @@ import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.search.*;
+import org.eclipse.pde.internal.ui.search.dependencies.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.events.*;
@@ -104,8 +106,12 @@ public class DependencyAnalysisSection extends PDESection implements IPartSelect
 	}
 
 	protected void doFindPlugins() {
-		if (fSelectedDependency != null)
-			new DependencyExtentAction(fSelectedDependency.getImport()).run();
+		if (fSelectedDependency != null) {
+			getPage().getPDEEditor().doSave(null);
+			IPluginImport dep = fSelectedDependency.getImport();
+			IResource resource = dep.getModel().getUnderlyingResource();
+			new DependencyExtentAction(resource.getProject(), dep.getId()).run();
+		}
 	}
 	
 	protected void doFindUnusedDependencies() {

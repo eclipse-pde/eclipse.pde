@@ -18,6 +18,7 @@ import org.eclipse.jface.preference.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.build.*;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
@@ -335,20 +336,13 @@ public class ManifestEditor extends MultiSourceEditor {
 		}
 	}
 
-	public static void openPluginEditor(IPluginBase plugin) {
-		openPluginEditor(plugin, null);
+	public static IEditorPart openPluginEditor(IPluginBase plugin) {
+		return openPluginEditor(plugin, null);
 	}
 	
-	public static void openPluginEditor(
+	public static IEditorPart openPluginEditor(
 		IPluginBase plugin,
 		Object object) {
-		openPluginEditor(plugin, object, null);
-	}
-
-	public static void openPluginEditor(
-		IPluginBase plugin,
-		Object object,
-		IMarker marker) {
 		IEditorPart editor = null;
 		IResource underlyingResource = plugin.getModel().getUnderlyingResource();
 		if (underlyingResource == null) {
@@ -356,11 +350,9 @@ public class ManifestEditor extends MultiSourceEditor {
 		} else {
 			editor = openWorkspacePlugin((IFile) underlyingResource, plugin instanceof IFragment);
 		}
-		if (editor instanceof ManifestEditor && editor != null && object != null ) {
-			((ManifestEditor)editor).openTo(object, marker);
-		}
+		return editor;
 	}
-
+	
 	private static IEditorPart openWorkspacePlugin(IFile pluginFile, boolean fragment) {
 		String editorId = PDEPlugin.MANIFEST_EDITOR_ID;
 		try {
@@ -434,4 +426,22 @@ public class ManifestEditor extends MultiSourceEditor {
 			return pluginBase.getName();
 		return pluginBase.getId();
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getInputContext(java.lang.Object)
+	 */
+	protected InputContext getInputContext(Object object) {
+		InputContext context = null;
+		if (object instanceof IBuildObject) {
+			context = inputContextManager.findContext(BuildInputContext.CONTEXT_ID);
+		} else if (object instanceof IPluginExtensionPoint || object instanceof IPluginExtension) {
+			context = inputContextManager.findContext(PluginInputContext.CONTEXT_ID);
+		} else {
+			context = inputContextManager.findContext(BundleInputContext.CONTEXT_ID);
+			if (context == null)
+				context = inputContextManager.findContext(PluginInputContext.CONTEXT_ID);
+		}		
+		return context;
+	}
+
 }

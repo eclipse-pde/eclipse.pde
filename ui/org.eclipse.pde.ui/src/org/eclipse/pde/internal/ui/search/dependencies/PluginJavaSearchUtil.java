@@ -8,46 +8,32 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.search;
+package org.eclipse.pde.internal.ui.search.dependencies;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.io.*;
+import java.util.*;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.pde.core.plugin.IFragment;
-import org.eclipse.pde.core.plugin.IPlugin;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginImport;
-import org.eclipse.pde.core.plugin.IPluginLibrary;
-import org.eclipse.pde.internal.core.ClasspathUtilCore;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.core.search.*;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
 
 public class PluginJavaSearchUtil {
+	
+	public static IPlugin[] getPluginImports(IPluginImport dep) {
+		return getPluginImports(dep.getId());
+	}
 
+	public static IPlugin[] getPluginImports(String pluginImportID) {
+		HashSet set = new HashSet();
+		collectAllPrerequisites(PDECore.getDefault().findPlugin(pluginImportID), set);
+		return (IPlugin[]) set.toArray(new IPlugin[set.size()]);
+	}
 	public static void collectAllPrerequisites(IPlugin plugin, HashSet set) {
 		if (!set.add(plugin))
 			return;
-
-		if (plugin.getModel() instanceof WorkspacePluginModelBase) {
-			IFragment[] fragments =
-				PDECore.getDefault().getWorkspaceModelManager().getFragmentsFor(
-					plugin.getId(),
-					plugin.getVersion());
-			for (int i = 0; i < fragments.length; i++) {
-				set.add(fragments[i]);
-			}
-		}
-
 		IPluginImport[] imports = plugin.getImports();
 		for (int i = 0; i < imports.length; i++) {
 			if (imports[i].isReexported()) {
@@ -57,17 +43,31 @@ public class PluginJavaSearchUtil {
 			}
 		}
 	}
-
+	
+	public static boolean provideExtensionPoint(IPluginModelBase model, IPlugin[] plugins) {
+		IPluginExtension[] extensions = model.getPluginBase().getExtensions();
+		for (int i = 0; i < extensions.length; i++) {
+			String extPoint = extensions[i].getPoint();
+			for (int j = 0; j < plugins.length; j++) {
+				IPluginExtensionPoint[] points = plugins[j].getExtensionPoints();			
+				for (int k = 0; k < points.length; k++) {
+					if (extPoint.equals(points[k].getFullId()))
+						return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 	public static IPackageFragment[] collectPackageFragments(
-		IPluginBase[] models,
-		IProject parentProject)
+		IPluginBase[] plugins,
+		IJavaProject parentProject)
 		throws JavaModelException {
 		ArrayList result = new ArrayList();
-		IPackageFragmentRoot[] roots =
-			JavaCore.create(parentProject).getAllPackageFragmentRoots();
+		IPackageFragmentRoot[] roots = parentProject.getAllPackageFragmentRoots();
 
-		for (int i = 0; i < models.length; i++) {
-			IPluginBase preReq = models[i];
+		for (int i = 0; i < plugins.length; i++) {
+			IPluginBase preReq = plugins[i];
 			IResource resource = preReq.getModel().getUnderlyingResource();
 			if (resource == null) {
 				ArrayList libraryPaths = getLibraryPaths(preReq);
@@ -137,5 +137,20 @@ public class PluginJavaSearchUtil {
 			}
 		}
 	}
+	
+	public static IJavaSearchScope createSeachScope(IJavaProject jProject) throws JavaModelException {
+		IPackageFragmentRoot[] roots = jProject.getPackageFragmentRoots();
+		ArrayList filteredRoots = new ArrayList();
+		for (int i = 0; i < roots.length; i++) {
+			if (roots[i].getResource() != null
+				&& roots[i].getResource().getProject().equals(jProject.getProject())) {
+				filteredRoots.add(roots[i]);
+			}
+		}
+		return SearchEngine.createJavaSearchScope(
+			(IJavaElement[]) filteredRoots.toArray(
+				new IJavaElement[filteredRoots.size()]));
+	}
+
 
 }

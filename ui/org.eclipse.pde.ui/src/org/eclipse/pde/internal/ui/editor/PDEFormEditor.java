@@ -10,33 +10,32 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 import java.io.*;
-import java.util.ArrayList;
+import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.source.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.context.*;
-import org.eclipse.pde.internal.ui.editor.plugin.*;
-import org.eclipse.pde.internal.ui.preferences.EditorPreferencePage;
+import org.eclipse.pde.internal.ui.preferences.*;
+import org.eclipse.search.ui.text.*;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.editors.text.ILocationProvider;
-import org.eclipse.ui.forms.IManagedForm;
+import org.eclipse.ui.actions.*;
+import org.eclipse.ui.editors.text.*;
+import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.editor.*;
-import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.ide.*;
-import org.eclipse.ui.ide.IGotoMarker;
 import org.eclipse.ui.part.*;
-import org.eclipse.ui.part.MultiPageEditorSite;
-import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
-import org.eclipse.ui.views.properties.IPropertySheetPage;
+import org.eclipse.ui.views.contentoutline.*;
+import org.eclipse.ui.views.properties.*;
 /**
  * A simple multi-page form editor that uses Eclipse Forms support. Example
  * plug-in is configured to create one instance of form colors that is shared
@@ -45,7 +44,7 @@ import org.eclipse.ui.views.properties.IPropertySheetPage;
 public abstract class PDEFormEditor extends FormEditor
 		implements
 			IInputContextListener,
-			IGotoMarker {
+			IGotoMarker, ISearchEditorAccess {
 	/**
 	 * Updates the OutlinePage selection.
 	 * 
@@ -487,22 +486,16 @@ public abstract class PDEFormEditor extends FormEditor
 		IFormPage page = setActivePage(context.getId());
 		IDE.gotoMarker(page, marker);
 	}
-	public void openTo(Object obj, IMarker marker) {
-		//TODO hack until the move to the new search
-		PDESourcePage sourcePage = (PDESourcePage) setActivePage(PluginInputContext.CONTEXT_ID);
-		if (sourcePage != null && marker != null)
-			IDE.gotoMarker(sourcePage, marker);
-
-		/*
-		 * if (EditorPreferencePage.getUseSourcePage() || getEditorInput()
-		 * instanceof SystemFileEditorInput) { if (marker != null) { IResource
-		 * resource = marker.getResource(); InputContext context =
-		 * getContextManager() .findContext(resource); if (context != null) {
-		 * PDESourcePage sourcePage = (PDESourcePage) setActivePage(context
-		 * .getId()); sourcePage.selectReveal(marker); } } } else {
-		 * selectReveal(obj); }
-		 */
+	
+	public void openToSourcePage(Object object, int offset, int length) {
+		InputContext context = getInputContext(object);
+		if (context != null) {
+			PDESourcePage page = (PDESourcePage)setActivePage(context.getId());
+			if (page != null)
+				page.selectAndReveal(offset, length);
+		}
 	}
+
 	public void setSelection(ISelection selection) {
 		getSite().getSelectionProvider().setSelection(selection);
 		getContributor().updateSelectableActions(selection);
@@ -518,6 +511,9 @@ public abstract class PDEFormEditor extends FormEditor
 			return getPropertySheet();
 		}
 		if (key.equals(IGotoMarker.class)) {
+			return this;
+		}
+		if (key.equals(ISearchEditorAccess.class)) {
 			return this;
 		}
 		return super.getAdapter(key);
@@ -702,4 +698,23 @@ public abstract class PDEFormEditor extends FormEditor
 			getFormOutline().setSelection(getSelection());
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.search.ui.text.ISearchEditorAccess#getDocument(org.eclipse.search.ui.text.Match)
+	 */
+	public IDocument getDocument(Match match) {
+		InputContext context = getInputContext(match.getElement());
+		return context == null ? null : context.getDocumentProvider().getDocument(context.getInput());
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.search.ui.text.ISearchEditorAccess#getAnnotationModel(org.eclipse.search.ui.text.Match)
+	 */
+	public IAnnotationModel getAnnotationModel(Match match) {
+		InputContext context = getInputContext(match.getElement());
+		return context == null ? null : context.getDocumentProvider().getAnnotationModel(context.getInput());
+	}
+	
+	protected abstract InputContext getInputContext(Object object);
+
 }

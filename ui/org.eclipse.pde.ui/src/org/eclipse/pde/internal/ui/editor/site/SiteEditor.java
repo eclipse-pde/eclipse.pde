@@ -182,4 +182,16 @@ public class SiteEditor extends MultiSourceEditor {
 			return true;
 		return super.isDirty();
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getInputContext(java.lang.Object)
+	 */
+	protected InputContext getInputContext(Object object) {
+		InputContext context = null;
+		if (object instanceof ISiteObject) {
+			context = inputContextManager.findContext(SiteInputContext.CONTEXT_ID);
+		}		
+		return context;
+	}
+
 }

@@ -10,53 +10,42 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search;
 
-import java.lang.reflect.InvocationTargetException;
-
-import org.eclipse.jface.action.Action;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.search.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.search.ui.SearchUI;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.search.ui.*;
 
 
-public class FindDeclarationsAction extends Action {
+public class FindDeclarationsAction extends BaseSearchAction {
 	
 	private static final String KEY_DECLARATION = "SearchAction.Declaration"; //$NON-NLS-1$
 
-	private Object object;
+	private Object fSelectedObject;
 
 	public FindDeclarationsAction(Object object) {
-		this.object = object;
-		setText(PDEPlugin.getResourceString(KEY_DECLARATION));
+		super(PDEPlugin.getResourceString(KEY_DECLARATION));
+		this.fSelectedObject = object;
 	}
-	public void run() {
+	
+	protected ISearchQuery createSearchQuery() {
 		PluginSearchInput input = new PluginSearchInput();
 
-		if (object instanceof IPluginImport) {
-			input.setSearchString(((IPluginImport) object).getId());
+		if (fSelectedObject instanceof IPluginImport) {
+			input.setSearchString(((IPluginImport) fSelectedObject).getId());
 			input.setSearchElement(PluginSearchInput.ELEMENT_PLUGIN);
-		} else if (object instanceof IPluginExtension)  {
-			input.setSearchString(((IPluginExtension)object).getPoint());
+		} else if (fSelectedObject instanceof IPluginExtension)  {
+			input.setSearchString(((IPluginExtension)fSelectedObject).getPoint());
 			input.setSearchElement(PluginSearchInput.ELEMENT_EXTENSION_POINT);
-		} else if (object instanceof IPlugin) {
-			input.setSearchString(((IPlugin)object).getId());
+		} else if (fSelectedObject instanceof IPlugin) {
+			input.setSearchString(((IPlugin)fSelectedObject).getId());
 			input.setSearchElement(PluginSearchInput.ELEMENT_PLUGIN);
-		} else if (object instanceof IFragment) {
-			input.setSearchString(((IFragment)object).getId());
+		} else if (fSelectedObject instanceof IFragment) {
+			input.setSearchString(((IFragment)fSelectedObject).getId());
 			input.setSearchElement(PluginSearchInput.ELEMENT_FRAGMENT);
 		}
 		input.setSearchLimit(PluginSearchInput.LIMIT_DECLARATIONS);
 		input.setSearchScope(new PluginSearchScope());
-		try {
-			SearchUI.activateSearchResultView();
- 			PluginSearchUIOperation op =
-				new PluginSearchUIOperation(
-					input,
-					new PluginSearchResultCollector());
-			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(op);
-		} catch (InvocationTargetException e) {
-		} catch (InterruptedException e) {
-		}
+		return new PluginSearchQuery(input);
 	}
+
 }

@@ -8,35 +8,31 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.search;
+package org.eclipse.pde.internal.ui.search.dependencies;
 
 
-import org.eclipse.jface.action.Action;
-import org.eclipse.pde.core.plugin.IPluginImport;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.search.ui.SearchUI;
-import org.eclipse.ui.*;
+import org.eclipse.core.resources.*;
+import org.eclipse.jface.action.*;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.search.ui.*;
 
 public class DependencyExtentAction extends Action {
 	
 	private static final String KEY_COMPUTE = "DependencyExtentAction.label"; //$NON-NLS-1$
 	
-	DependencyExtentSearchOperation op;
+	private IProject fProject;
+
+	private String fImportID;
 	
-	public DependencyExtentAction(IPluginImport object) {
-		op = new DependencyExtentSearchOperation(object);
+	public DependencyExtentAction(IProject project, String importID) {
+		fProject = project;
+		fImportID = importID;
 		setText(PDEPlugin.getResourceString(KEY_COMPUTE));
 	}
 		
-	
 	public void run() {
-		try {
-			SearchUI.activateSearchResultView();
-			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(op);
-		} catch (Exception e) {
-		}
-	}
-	
-	
+		NewSearchUI.activateSearchResultView();
+		NewSearchUI.runQuery(new DependencyExtentQuery(fProject, fImportID));
+	}	
 	
 }

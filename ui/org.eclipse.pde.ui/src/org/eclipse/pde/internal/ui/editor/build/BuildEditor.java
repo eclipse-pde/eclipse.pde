@@ -10,19 +10,19 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.build;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.pde.core.build.IBuildModel;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.core.resources.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.build.*;
+import org.eclipse.pde.internal.core.build.*;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.editor.context.*;
-import org.eclipse.swt.SWTError;
+import org.eclipse.swt.*;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.forms.editor.IFormPage;
-import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.views.properties.IPropertySheetPage;
+import org.eclipse.ui.forms.editor.*;
+import org.eclipse.ui.part.*;
+import org.eclipse.ui.views.properties.*;
 
 public class BuildEditor extends MultiSourceEditor {
 	public BuildEditor() {
@@ -151,4 +151,16 @@ public class BuildEditor extends MultiSourceEditor {
 		}
 		return super.getAdapter(key);
 	}	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getInputContext(java.lang.Object)
+	 */
+	protected InputContext getInputContext(Object object) {
+		InputContext context = null;
+		if (object instanceof IBuildObject) {
+			context = inputContextManager.findContext(BuildInputContext.CONTEXT_ID);
+		} 
+		return context;
+	}
+
 }

@@ -1166,14 +1166,15 @@
       </page>
    </extension>
    <extension
-         point="org.eclipse.search.searchResultSorters">
-      <sorter
-            pageId="org.eclipse.pde.internal.ui.search.dependencyExtent"
-            label="%DependencyExtent.type"
-            icon="icons/dlcl16/search_sortmatch.gif"
-            class="org.eclipse.pde.internal.ui.search.DependencyExtentViewerSorter"
-            id="org.eclipse.pde.ui.sorter1">
-      </sorter>
+         point="org.eclipse.search.searchResultViewPages">
+      <viewPage
+            class="org.eclipse.pde.internal.ui.search.PluginSearchResultPage"
+            searchResultClass="org.eclipse.pde.internal.ui.search.SearchResult"
+            id="org.eclipse.pde.ui.searchResultPage"/>
+      <viewPage
+            class="org.eclipse.pde.internal.ui.search.dependencies.DependencyExtentSearchResultPage"
+            searchResultClass="org.eclipse.pde.internal.ui.search.dependencies.DependencyExtentSearchResult"
+            id="org.eclipse.pde.ui.dependencyExtentResultPage"/>
    </extension>
    <extension
          point="org.eclipse.ant.core.antTasks">
@@ -1200,13 +1201,6 @@
             class="org.eclipse.pde.internal.ui.launcher.WorkbenchSourcePathProvider"
             id="org.eclipse.pde.ui.workbenchClasspathProvider">
       </classpathProvider>
-   </extension>
-   <extension
-         point="org.eclipse.ui.ide.markerResolution">
-      <markerResolutionGenerator
-            markerType="org.eclipse.pde.validation-marker"
-            class="org.eclipse.pde.internal.ui.search.SchemaMarkerResolutionGenerator">
-      </markerResolutionGenerator>
    </extension>
    <extension
          point="org.eclipse.ui.intro.configExtension">
@@ -1248,5 +1242,4 @@
          point="org.eclipse.core.runtime.preferences">
       <initializer class="org.eclipse.pde.internal.ui.preferences.PreferenceInitializer"/>
    </extension>
-
 </plugin>

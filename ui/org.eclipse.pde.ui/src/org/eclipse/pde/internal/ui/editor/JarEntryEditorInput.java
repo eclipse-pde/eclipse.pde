@@ -11,6 +11,8 @@
 package org.eclipse.pde.internal.ui.editor;
 
 
+import java.io.*;
+
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.*;
@@ -93,6 +95,8 @@ public class JarEntryEditorInput implements IStorageEditorInput {
 	 * @see IAdaptable#getAdapter(Class)
 	 */
 	public Object getAdapter(Class adapter) {
+		if (adapter.equals(File.class))
+			return fJarEntryFile.getAdapter(File.class);
 		return null;
 	}
 		
