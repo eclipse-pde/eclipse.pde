@@ -263,7 +263,12 @@ public class ManifestEditor
 		String name = model.getPluginBase().getName();
 		if (name == null)
 			return super.getTitle();
-		return model.getResourceString(name);
+		String value = model.getResourceString(name);
+		if (value.startsWith("%")) {
+			// could not find the translation - use the default
+			return super.getTitle();
+		}
+		return value;
 	}
 
 	public void init(IEditorSite site, IEditorInput input)

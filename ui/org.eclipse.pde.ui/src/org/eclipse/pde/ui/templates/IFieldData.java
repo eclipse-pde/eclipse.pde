@@ -54,4 +54,11 @@ public interface IFieldData {
 	 * </p>
 	 */
 	public String getClassName();
+	/**
+	 * Returns true if the project that is about to be
+	 * created is for a fragment, or false it is to be a plug-in.
+	 *
+	 * @return true if a fragment, false for a plug-in
+	 */
+	public boolean isFragment();
 }

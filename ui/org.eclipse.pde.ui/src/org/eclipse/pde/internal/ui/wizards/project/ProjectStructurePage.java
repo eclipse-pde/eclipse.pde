@@ -136,24 +136,34 @@ public class ProjectStructurePage extends WizardPage {
 	public static void createBuildProperties(
 		IProject project,
 		IPluginStructureData data,
+		boolean fragment,
 		IProgressMonitor monitor)
 		throws CoreException {
 		createBuildProperties(
 			project,
 			data.getRuntimeLibraryName(),
-			data.getSourceFolderName());
+			data.getSourceFolderName(),
+			fragment);
 	}
 
 	public static void createBuildProperties(
 		IProject project,
 		String library,
-		String source)
+		String source,
+		boolean fragment)
 		throws CoreException {
 		String fileName = "build.properties";
 		IPath path = project.getFullPath().append(fileName);
 		IFile file = project.getWorkspace().getRoot().getFile(path);
 		if (!file.exists()) {
 			WorkspaceBuildModel model = new WorkspaceBuildModel(file);
+			IBuildEntry ientry = 
+				model.getFactory().createEntry("bin.includes");
+			if (fragment)
+				ientry.addToken("fragment.xml");
+			else
+				ientry.addToken("plugin.xml");
+			
 			if (library != null && source != null) {
 				IBuildEntry entry =
 					model.getFactory().createEntry(
@@ -161,8 +171,10 @@ public class ProjectStructurePage extends WizardPage {
 				if (!source.endsWith("/"))
 					source += "/";
 				entry.addToken(source);
+				ientry.addToken("*.jar");
 				model.getBuild().add(entry);
 			}
+			model.getBuild().add(ientry);
 			model.save();
 		}
 		PlatformUI.getWorkbench().getEditorRegistry().setDefaultEditor(
@@ -315,7 +327,7 @@ public class ProjectStructurePage extends WizardPage {
 					String message = PDEPlugin.getResourceString(KEY_CREATING);
 					monitor.beginTask(message, 1);
 					createProject(project, provider, data, monitor);
-					createBuildProperties(project, data, monitor);
+					createBuildProperties(project, data, fragment, monitor);
 					if (simpleChoice.getSelection())
 						createBlankManifest(project, monitor);
 					monitor.worked(1);

@@ -4,6 +4,7 @@ package org.eclipse.pde.internal.ui.wizards.templates;
 import org.eclipse.pde.ui.templates.IFieldData;
 
 	public class FieldData implements IFieldData {
+		boolean fragment;
 		String name;
 		String version;
 		String pluginId;
@@ -15,6 +16,10 @@ import org.eclipse.pde.ui.templates.IFieldData;
 		boolean thisCheck;
 		boolean bundleCheck;
 		boolean workspaceCheck;
+		
+		public boolean isFragment() {
+			return fragment;
+		}
 		
 		public String getName() {
 			return name;

@@ -35,7 +35,7 @@ public class WorkbenchLaunchConfigurationDelegate
 		"WorkbenchLauncherConfigurationDelegate.starting";
 	private static final String KEY_NO_BOOT =
 		"WorkbenchLauncherConfigurationDelegate.noBoot";
-	private static final String KEY_NO_STARTUP = 
+	private static final String KEY_NO_STARTUP =
 		"WorkbenchLauncherConfigurationDelegate.noStartup";
 	private static final String KEY_BROKEN_PLUGINS =
 		"WorkbenchLauncherConfigurationDelegate.brokenPlugins";
@@ -53,6 +53,7 @@ public class WorkbenchLaunchConfigurationDelegate
 		"WorkbenchLauncherConfigurationDelegate.duplicatePlugins";
 
 	private Vector duplicates = new Vector();
+	private static final boolean USE_PLATFORM_CONFIG = true;
 
 	/*
 	 * @see ILaunchConfigurationDelegate#launch(ILaunchConfiguration, String)
@@ -76,9 +77,9 @@ public class WorkbenchLaunchConfigurationDelegate
 			configuration.getAttribute(SHOW_SPLASH, true);
 		final boolean useFeatures =
 			configuration.getAttribute(USEFEATURES, false);
-			
+
 		boolean useDefault = configuration.getAttribute(USECUSTOM, true);
-		
+
 		final IPluginModelBase[] plugins =
 			useFeatures
 				? null
@@ -159,10 +160,11 @@ public class WorkbenchLaunchConfigurationDelegate
 		getDisplay().syncExec(new Runnable() {
 			public void run() {
 				String title = PDEPlugin.getResourceString(KEY_TITLE);
-				result[0] = MessageDialog.openConfirm(
-					PDEPlugin.getActiveWorkbenchShell(),
-					title,
-					status.getMessage());
+				result[0] =
+					MessageDialog.openConfirm(
+						PDEPlugin.getActiveWorkbenchShell(),
+						title,
+						status.getMessage());
 			}
 		});
 
@@ -193,7 +195,10 @@ public class WorkbenchLaunchConfigurationDelegate
 		}
 	}
 
-	private ArrayList getWorkspacePluginsToRun(ILaunchConfiguration config, boolean useDefault) throws CoreException{
+	private ArrayList getWorkspacePluginsToRun(
+		ILaunchConfiguration config,
+		boolean useDefault)
+		throws CoreException {
 		ArrayList result = new ArrayList();
 
 		TreeSet deselectedWSPlugins =
@@ -210,10 +215,12 @@ public class WorkbenchLaunchConfigurationDelegate
 		}
 		return result;
 	}
-	
-	private ArrayList getExternalPluginsToRun(ILaunchConfiguration config, boolean useDefault)
+
+	private ArrayList getExternalPluginsToRun(
+		ILaunchConfiguration config,
+		boolean useDefault)
 		throws CoreException {
-		
+
 		ArrayList exList = new ArrayList();
 		TreeSet selectedExModels =
 			AdvancedLauncherTab.parseSelectedExtIds(config);
@@ -224,7 +231,8 @@ public class WorkbenchLaunchConfigurationDelegate
 			if (useDefault) {
 				if (model.isEnabled())
 					exList.add(model);
-			} else if (selectedExModels.contains(model.getPluginBase().getId()))
+			} else if (
+				selectedExModels.contains(model.getPluginBase().getId()))
 				exList.add(model);
 		}
 		return exList;
@@ -237,7 +245,8 @@ public class WorkbenchLaunchConfigurationDelegate
 		ArrayList result = new ArrayList();
 
 		for (int i = 0; i < wsmodels.size(); i++) {
-			if (((IPluginModelBase) wsmodels.get(i)).getPluginBase().getId() != null)
+			if (((IPluginModelBase) wsmodels.get(i)).getPluginBase().getId()
+				!= null)
 				result.add(wsmodels.get(i));
 		}
 		duplicates = new Vector();
@@ -258,7 +267,8 @@ public class WorkbenchLaunchConfigurationDelegate
 			if (!duplicate)
 				result.add(exmodel);
 		}
-		return (IPluginModelBase[]) result.toArray(new IPluginModelBase[result.size()]);
+		return (IPluginModelBase[]) result.toArray(
+			new IPluginModelBase[result.size()]);
 	}
 
 	private boolean isDuplicate(
@@ -329,21 +339,32 @@ public class WorkbenchLaunchConfigurationDelegate
 		}
 		monitor.beginTask(PDEPlugin.getResourceString(KEY_STARTING), 3);
 		try {
-			String bootPath = getBootPath(plugins);			
-			if (bootPath == null) {
-				String message = PDEPlugin.getResourceString(KEY_NO_BOOT);
-				monitor.setCanceled(true);
-				throw new CoreException(createErrorStatus(message));
+			String bootPath = null;
+			if (!USE_PLATFORM_CONFIG && !useFeatures) {
+				bootPath = getBootPath(plugins);
+				if (bootPath == null) {
+					String message = PDEPlugin.getResourceString(KEY_NO_BOOT);
+					monitor.setCanceled(true);
+					throw new CoreException(createErrorStatus(message));
+				}
 			}
-			
+
 			String[] vmArgs = args.getVMArgumentsArray();
 			String[] progArgs = args.getProgramArgumentsArray();
 
 			boolean appSpecified = appname != null && appname.length() > 0;
 
 			int exCount = 6;
-			if (bootPath.startsWith("file:"))
-				exCount += 2;
+			String primaryFeatureId = getPrimaryFeatureId();
+
+			if (!useFeatures) {
+				if (!USE_PLATFORM_CONFIG) {
+					if (bootPath.startsWith("file:"))
+						exCount += 2;
+				} else if (primaryFeatureId != null)
+					exCount += 2;
+			}
+
 			if (appSpecified)
 				exCount += 2;
 			if (tracing)
@@ -353,21 +374,27 @@ public class WorkbenchLaunchConfigurationDelegate
 			if (useFeatures)
 				exCount += 1;
 
-
 			String[] fullProgArgs = new String[progArgs.length + exCount];
-			
+
 			int i = 0;
-			if (bootPath.startsWith("file:")) {
-				fullProgArgs[i++] = "-boot";
-				fullProgArgs[i++] = bootPath;
+
+			if (!USE_PLATFORM_CONFIG && !useFeatures) {
+				if (bootPath.startsWith("file:")) {
+					fullProgArgs[i++] = "-boot";
+					fullProgArgs[i++] = bootPath;
+				}
 			}
-			
+
 			if (appSpecified) {
 				fullProgArgs[i++] = "-application";
 				fullProgArgs[i++] = appname;
 			}
 			fullProgArgs[i++] = "-dev";
-			fullProgArgs[i++] = getBuildOutputFolders(getWorkspacePluginsToRun(config, config.getAttribute(USECUSTOM,true)));
+			fullProgArgs[i++] =
+				getBuildOutputFolders(
+					getWorkspacePluginsToRun(
+						config,
+						config.getAttribute(USECUSTOM, true)));
 			if (useFeatures) {
 				IPath installPath =
 					PDEPlugin.getWorkspace().getRoot().getLocation();
@@ -377,12 +404,28 @@ public class WorkbenchLaunchConfigurationDelegate
 					"file:" + installDir.getPath() + File.separator;
 				fullProgArgs[i++] = "-update";
 			} else {
-				fullProgArgs[i++] = "-plugins";
-				File propertiesFile =
-					TargetPlatform.createPropertiesFile(
-						plugins,
-						targetWorkspace);
-				fullProgArgs[i++] = "file:" + propertiesFile.getPath();
+				if (!USE_PLATFORM_CONFIG) {
+					fullProgArgs[i++] = "-plugins";
+
+					File propertiesFile =
+						TargetPlatform.createPropertiesFile(
+							plugins,
+							targetWorkspace);
+					fullProgArgs[i++] = "file:" + propertiesFile.getPath();
+
+				} else {
+					fullProgArgs[i++] = "-configuration";
+
+					File configFile =
+						TargetPlatform.createPlatformConfiguration(
+							plugins,
+							targetWorkspace);
+					fullProgArgs[i++] = "file:" + configFile.getPath();
+					if (primaryFeatureId != null) {
+						fullProgArgs[i++] = "-feature";
+						fullProgArgs[i++] = primaryFeatureId;
+					}
+				}
 			}
 			fullProgArgs[i++] = "-data";
 			fullProgArgs[i++] = targetWorkspace.toOSString();
@@ -396,7 +439,7 @@ public class WorkbenchLaunchConfigurationDelegate
 				fullProgArgs[i++] = "-debug";
 				fullProgArgs[i++] = getTracingFileArgument(config);
 			}
-			
+
 			System.arraycopy(
 				progArgs,
 				0,
@@ -414,7 +457,7 @@ public class WorkbenchLaunchConfigurationDelegate
 			VMRunnerConfiguration runnerConfig =
 				new VMRunnerConfiguration(
 					"org.eclipse.core.launcher.Main",
-					new String[]{classpath});
+					new String[] { classpath });
 			runnerConfig.setVMArguments(vmArgs);
 			runnerConfig.setProgramArguments(fullProgArgs);
 
@@ -450,11 +493,16 @@ public class WorkbenchLaunchConfigurationDelegate
 		set.add(new Path("bin"));
 		for (int i = 0; i < wsmodels.size(); i++) {
 			IProject project =
-				((IPluginModelBase) wsmodels.get(i)).getUnderlyingResource().getProject();
+				((IPluginModelBase) wsmodels.get(i))
+					.getUnderlyingResource()
+					.getProject();
 			try {
 				if (project.hasNature(JavaCore.NATURE_ID)) {
 					set.add(
-						JavaCore.create(project).getOutputLocation().removeFirstSegments(
+						JavaCore
+							.create(project)
+							.getOutputLocation()
+							.removeFirstSegments(
 							1));
 				}
 			} catch (JavaModelException e) {
@@ -595,9 +643,13 @@ public class WorkbenchLaunchConfigurationDelegate
 	 */
 	private String constructClasspath(IPluginModelBase[] plugins)
 		throws CoreException {
-			
-		File startupJar = ExternalModelManager.getEclipseHome(null).append("startup.jar").toFile();
-	
+
+		File startupJar =
+			ExternalModelManager
+				.getEclipseHome(null)
+				.append("startup.jar")
+				.toFile();
+
 		if (!startupJar.exists()) {
 			PDEPlugin.logErrorMessage(
 				PDEPlugin.getResourceString(KEY_SLIMLAUNCHER));
@@ -606,8 +658,6 @@ public class WorkbenchLaunchConfigurationDelegate
 		return startupJar.getAbsolutePath();
 	}
 
-		
-		
 	private String getBootPath(IPluginModelBase[] models) {
 		IPluginModelBase bootModel = findModel("org.eclipse.core.boot", models);
 		if (bootModel == null)
@@ -629,11 +679,12 @@ public class WorkbenchLaunchConfigurationDelegate
 				File binDir = new File(bootModel.getInstallLocation(), "bin/");
 				if (binDir.exists())
 					return binDir.getAbsolutePath();
-					
-				File bootJar = new File(bootModel.getInstallLocation(), "boot.jar");
+
+				File bootJar =
+					new File(bootModel.getInstallLocation(), "boot.jar");
 				if (bootJar.exists())
 					return "file:" + bootJar.getAbsolutePath();
-				
+
 			}
 		} catch (CoreException e) {
 		}
@@ -673,6 +724,22 @@ public class WorkbenchLaunchConfigurationDelegate
 		return new JavaUISourceLocator(
 			(IJavaProject[]) result.toArray(new IJavaProject[result.size()]),
 			false);
+	}
+
+	private String getPrimaryFeatureId() {
+		IPath eclipsePath = ExternalModelManager.getEclipseHome(null);
+		File iniFile = new File(eclipsePath.toFile(), "install.ini");
+		if (iniFile.exists() == false)
+			return null;
+		Properties pini = new Properties();
+		try {
+			FileInputStream fis = new FileInputStream(iniFile);
+			pini.load(fis);
+			fis.close();
+			return pini.getProperty("feature.default.id");
+		} catch (IOException e) {
+			return null;
+		}
 	}
 
 	private void ensureProductFilesExist(IPath productArea) {

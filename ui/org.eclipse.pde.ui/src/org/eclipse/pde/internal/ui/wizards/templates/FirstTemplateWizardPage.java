@@ -432,6 +432,7 @@ public class FirstTemplateWizardPage extends WizardPage {
 			new PluginVersionIdentifier(versionField.getText());
 		data.version = pvi.toString();
 		data.provider = providerField.getText();
+		data.fragment = fragment;
 		if (fragment) {
 			data.pluginId = pluginIdField.getText();
 			try {

@@ -196,6 +196,7 @@ public abstract class AbstractNewPluginTemplateWizard
 		ProjectStructurePage.createBuildProperties(
 			project,
 			structureData,
+			data.isFragment(),
 			monitor);
 		monitor.worked(1);
 		

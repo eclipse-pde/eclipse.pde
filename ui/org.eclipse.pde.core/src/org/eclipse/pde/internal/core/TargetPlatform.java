@@ -10,6 +10,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
+import org.eclipse.core.boot.*;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
@@ -20,6 +21,44 @@ import org.eclipse.pde.core.plugin.*;
  * @author
  */
 public class TargetPlatform implements IEnvironmentVariables {
+
+	private static final String BOOT_ID = "org.eclipse.core.boot";
+
+	static class LocalSite {
+		private ArrayList plugins;
+		private IPath path;
+
+		public LocalSite(IPath path) {
+			this.path = path;
+			plugins = new ArrayList();
+		}
+
+		public IPath getPath() {
+			return path;
+		}
+
+		public URL getURL() throws MalformedURLException {
+			return new URL("file:" + path.addTrailingSeparator().toString());
+		}
+
+		public void add(IPluginModelBase model) {
+			plugins.add(model);
+		}
+
+		public String[] getRelativePluginList() {
+			String[] list = new String[plugins.size()];
+			for (int i = 0; i < plugins.size(); i++) {
+				IPluginModelBase model = (IPluginModelBase) plugins.get(i);
+				IPath location = new Path(model.getInstallLocation());
+				location = location.append(
+					model.isFragmentModel() ? "fragment.xml" : "plugin.xml");
+				IPath relative =
+					location.removeFirstSegments(location.segmentCount() - 3);
+				list[i] = relative.setDevice(null).toString();
+			}
+			return list;
+		}
+	}
 
 	public static File createPropertiesFile() throws CoreException {
 		return createPropertiesFile(getVisibleModels(), null);
@@ -109,13 +148,129 @@ public class TargetPlatform implements IEnvironmentVariables {
 					e));
 		}
 	}
-	
+
+	public static File createPlatformConfiguration(
+		IPluginModelBase[] plugins,
+		IPath data)
+		throws CoreException {
+		try {
+			String dataSuffix = createDataSuffix(data);
+			IPath statePath = PDECore.getDefault().getStateLocation();
+			String fileName = "platform.cfg";
+			File dir = new File(statePath.toOSString());
+
+			if (dataSuffix.length() > 0) {
+				dir = new File(dir, dataSuffix);
+				if (!dir.exists()) {
+					dir.mkdir();
+				}
+			}
+			File configFile = new File(dir, fileName);
+			savePlatformConfiguration(configFile, plugins);
+			return configFile;
+		} catch (CoreException e) {
+			// Rethrow
+			throw e;
+		} catch (Exception e) {
+			// Wrap everything else in a core exception.
+			throw new CoreException(
+				new Status(
+					IStatus.ERROR,
+					PDECore.getPluginId(),
+					IStatus.ERROR,
+					e.getMessage(),
+					e));
+		}
+	}
+
+	private static void savePlatformConfiguration(
+		File configFile,
+		IPluginModelBase[] models)
+		throws IOException, CoreException, MalformedURLException {
+		IPath workspaceLocation =
+			PDECore.getWorkspace().getRoot().getLocation().removeLastSegments(1);
+		ArrayList sites = new ArrayList();
+		IPluginModelBase bootModel = null;
+
+		// Compute local sites
+
+		for (int i = 0; i < models.length; i++) {
+			IPluginModelBase model = models[i];
+			IPluginBase plugin = model.getPluginBase();
+
+			String id = plugin.getId();
+			if (id.equals(BOOT_ID))
+				bootModel = model;
+			IResource resource = model.getUnderlyingResource();
+			if (resource != null) {
+				// workspace
+				addToSite(workspaceLocation, model, sites);
+			} else {
+				// external
+				IPath path = new Path(model.getInstallLocation());
+				path = path.removeLastSegments(2);
+				addToSite(path, model, sites);
+			}
+		}
+
+		URL configURL = new URL("file:" + configFile.getPath());
+		IPlatformConfiguration platformConfiguration =
+			BootLoader.getPlatformConfiguration(null);
+		createConfigurationEntries(platformConfiguration, bootModel, sites);
+		platformConfiguration.refresh();
+		platformConfiguration.save(configURL);
+	}
+
+	private static void addToSite(
+		IPath path,
+		IPluginModelBase model,
+		ArrayList sites) {
+		for (int i = 0; i < sites.size(); i++) {
+			LocalSite localSite = (LocalSite) sites.get(i);
+			if (localSite.getPath().equals(path)) {
+				localSite.add(model);
+				return;
+			}
+		}
+		// First time - add site
+		LocalSite localSite = new LocalSite(path);
+		localSite.add(model);
+		sites.add(localSite);
+	}
+
+	private static void createConfigurationEntries(
+		IPlatformConfiguration config,
+		IPluginModelBase bootModel,
+		ArrayList sites)
+		throws CoreException, MalformedURLException {
+
+		for (int i = 0; i < sites.size(); i++) {
+			LocalSite localSite = (LocalSite) sites.get(i);
+			String[] plugins = localSite.getRelativePluginList();
+
+			int policy = IPlatformConfiguration.ISitePolicy.USER_INCLUDE;
+			IPlatformConfiguration.ISitePolicy sitePolicy =
+				config.createSitePolicy(policy, plugins);
+			IPlatformConfiguration.ISiteEntry siteEntry =
+				config.createSiteEntry(localSite.getURL(), sitePolicy);
+			config.configureSite(siteEntry);
+		}
+
+		// Set boot location
+		String location = bootModel.getInstallLocation();
+		IPath path = new Path(location).addTrailingSeparator();
+		URL bootURL = new URL("file:" + path.toOSString());
+
+		config.setBootstrapPluginLocation(BOOT_ID, bootURL);
+	}
+
 	private static String getKey(IPluginModelBase model) {
 		if (model.isLoaded()) {
 			return model.getPluginBase().getId();
 		}
 		IResource resource = model.getUnderlyingResource();
-		if (resource!=null) return resource.getProject().getName();
+		if (resource != null)
+			return resource.getProject().getName();
 		return model.getInstallLocation();
 	}
 
@@ -130,7 +285,8 @@ public class TargetPlatform implements IEnvironmentVariables {
 
 	private static String createURL(IPluginModelBase model) {
 		String linkedURL = createLinkedURL(model);
-		if (linkedURL!=null) return linkedURL;
+		if (linkedURL != null)
+			return linkedURL;
 		String prefix = "file:" + model.getInstallLocation() + File.separator;
 
 		if (model instanceof IPluginModel) {
@@ -140,12 +296,13 @@ public class TargetPlatform implements IEnvironmentVariables {
 		} else
 			return "";
 	}
-	
+
 	private static String createLinkedURL(IPluginModelBase model) {
 		IResource resource = model.getUnderlyingResource();
-		if (resource==null || !resource.isLinked()) return null;
+		if (resource == null || !resource.isLinked())
+			return null;
 		// linked resource - redirect
-		return "file:"+resource.getLocation().toOSString();
+		return "file:" + resource.getLocation().toOSString();
 	}
 
 	public static String getOS() {
@@ -201,12 +358,15 @@ public class TargetPlatform implements IEnvironmentVariables {
 		Choice[] choices = new Choice[locales.length];
 		for (int i = 0; i < locales.length; i++) {
 			Locale locale = locales[i];
-			choices[i] = new Choice(locale.toString(),locale.toString() + " - " + locale.getDisplayName());
+			choices[i] =
+				new Choice(
+					locale.toString(),
+					locale.toString() + " - " + locale.getDisplayName());
 		}
 		CoreArraySorter.INSTANCE.sortInPlace(choices);
 		return choices;
 	}
-	
+
 	public static Choice[] getArchChoices() {
 		return getKnownChoices(BootLoader.knownOSArchValues());
 	}

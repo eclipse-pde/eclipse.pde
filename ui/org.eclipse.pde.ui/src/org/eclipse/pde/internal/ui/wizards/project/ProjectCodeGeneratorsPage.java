@@ -4,30 +4,29 @@ package org.eclipse.pde.internal.ui.wizards.project;
  * All Rights Reserved.
  */
 
-import java.lang.reflect.*;
-import org.eclipse.ui.actions.*;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.jface.dialogs.ControlEnableState;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.operation.*;
-import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.pde.ui.*;
+import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.pde.internal.ui.*;
 import org.eclipse.jdt.core.*;
-import org.eclipse.pde.internal.core.plugin.*;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.wizard.*;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.PDE;
+import org.eclipse.pde.internal.core.CoreUtility;
+import org.eclipse.pde.internal.core.plugin.*;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.elements.ElementList;
+import org.eclipse.pde.internal.ui.wizards.*;
+import org.eclipse.pde.ui.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 	private Button blankPageRadio;
@@ -172,7 +171,7 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 			public void execute(IProgressMonitor monitor) {
 				try {
 					createBlankManifest(project, structureData, monitor);
-					ProjectStructurePage.createBuildProperties(project, structureData, monitor);
+					ProjectStructurePage.createBuildProperties(project, structureData, fragment, monitor);
 				} catch (CoreException e) {
 					PDEPlugin.logException(e);
 				} finally {
