@@ -27,6 +27,9 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.internal.core.FeatureModelManager;
+import org.eclipse.pde.internal.core.IFeatureModelDelta;
+import org.eclipse.pde.internal.core.IFeatureModelListener;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureImport;
@@ -63,7 +66,8 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.ide.IDE;
 
-public class CategorySection extends TreeSection {
+public class CategorySection extends TreeSection implements
+		IFeatureModelListener {
 	private static final int BUTTON_ADD_CATEGORY = 0;
 
 	private static final int BUTTON_ADD_FEATURE = 1;
@@ -509,8 +513,10 @@ public class CategorySection extends TreeSection {
 
 	public void dispose() {
 		super.dispose();
+		FeatureModelManager mng = PDECore.getDefault().getFeatureModelManager();
+		mng.removeFeatureModelListener(this);
 		fModel.removeModelChangedListener(this);
-		if(fSiteLabelProvider!=null)
+		if (fSiteLabelProvider != null)
 			fSiteLabelProvider.dispose();
 	}
 
@@ -595,6 +601,8 @@ public class CategorySection extends TreeSection {
 
 	public void initialize() {
 		refresh();
+		FeatureModelManager mng = PDECore.getDefault().getFeatureModelManager();
+		mng.addFeatureModelListener(this);
 	}
 
 	/*
@@ -866,5 +874,8 @@ public class CategorySection extends TreeSection {
 			}
 		}
 		
+	}
+	public void modelsChanged(IFeatureModelDelta delta) {
+		markStale();
 	}
 }
