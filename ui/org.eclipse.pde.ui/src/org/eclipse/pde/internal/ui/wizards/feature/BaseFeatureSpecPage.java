@@ -11,12 +11,17 @@
 
 package org.eclipse.pde.internal.ui.wizards.feature;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.feature.ExternalFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.util.*;
@@ -32,7 +37,7 @@ import org.eclipse.ui.help.*;
  *  
  */
 public abstract class BaseFeatureSpecPage extends WizardPage {
-
+	
 	private boolean isPatch;
 	protected WizardNewProjectCreationPage mainPage;
 	protected Text featureIdText;
@@ -47,16 +52,16 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 	protected String initialName;
 	protected boolean isInitialized = false;
 	protected IFeatureModel fFeatureToPatch;
-
+	
 	public static final String PATCH_ID = "NewFeaturePatch.SpecPage.id";
 	public static final String PATCH_NAME = "NewFeaturePatch.SpecPage.name";
 	public static final String PATCH_PROVIDER = "NewFeaturePatch.SpecPage.provider";
-
+	
 	public static final String FEATURE_ID = "NewFeatureWizard.SpecPage.id";
 	public static final String FEATURE_NAME = "NewFeatureWizard.SpecPage.name";
 	public static final String FEATURE_VERSION = "NewFeatureWizard.SpecPage.version";
 	public static final String FEATURE_PROVIDER = "NewFeatureWizard.SpecPage.provider";
-
+	
 	public static final String KEY_VERSION_FORMAT = "NewFeatureWizard.SpecPage.versionFormat";
 	public static final String KEY_INVALID_ID = "NewFeatureWizard.SpecPage.invalidId";
 	public static final String KEY_MISSING = "NewFeatureWizard.SpecPage.missing";
@@ -67,7 +72,7 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 		this.isPatch = isPatch;
 		this.mainPage = mainPage;
 	}
-
+	
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
@@ -75,13 +80,13 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 		layout.verticalSpacing = 9;
 		layout.horizontalSpacing = 9;
 		container.setLayout(layout);
-
+		
 		ModifyListener listener = new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				verifyComplete();
 			}
 		};
-
+		
 		if (isPatch()) {
 			Label label = new Label(container, SWT.NULL);
 			label.setText(PDEPlugin.getResourceString(PATCH_ID));
@@ -91,7 +96,7 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 			if (initialId != null)
 				patchIdText.setText(initialId);
 			patchIdText.addModifyListener(listener);
-
+			
 			label = new Label(container, SWT.NULL);
 			label.setText(PDEPlugin.getResourceString(PATCH_NAME));
 			patchNameText = new Text(container, SWT.BORDER);
@@ -100,14 +105,14 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 			if (initialName != null)
 				patchNameText.setText(initialName);
 			patchNameText.addModifyListener(listener);
-
+			
 			label = new Label(container, SWT.NULL);
 			label.setText(PDEPlugin.getResourceString(PATCH_PROVIDER));
 			patchProviderText = new Text(container, SWT.BORDER);
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			patchProviderText.setLayoutData(gd);
 			patchProviderText.addModifyListener(listener);
-
+			
 			Group patchGroup = new Group(container, SWT.NULL);
 			layout = new GridLayout(2, false);
 			layout.marginHeight = layout.marginWidth = 10;
@@ -125,11 +130,11 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 		Dialog.applyDialogFont(container);
 		WorkbenchHelp.setHelp(container, IHelpContextIds.NEW_FEATURE_DATA);
 	}
-
+	
 	public boolean isPatch() {
 		return isPatch;
 	}
-
+	
 	protected abstract void verifyComplete();
 	/**
 	 * @return Returns the initialName.
@@ -137,7 +142,7 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 	public String getInitialName() {
 		return initialName;
 	}
-
+	
 	/**
 	 * @param initialName
 	 *            The initialName to set.
@@ -145,7 +150,7 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 	public void setInitialName(String initialName) {
 		this.initialName = initialName;
 	}
-
+	
 	/**
 	 * 
 	 * @param initialId
@@ -153,7 +158,7 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 	public void setInitialId(String initialId) {
 		this.initialId = initialId;
 	}
-
+	
 	/**
 	 * @return Returns the initialId.
 	 */
@@ -174,11 +179,11 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 	
 	protected void initialize(){
 	}
-
+	
 	private void addFeatureProperties(Composite container, ModifyListener listener){
 		
 		if (isPatch()){
-
+			
 			
 			Label label = new Label(container, SWT.NULL);
 			label.setText(PDEPlugin.getResourceString(FEATURE_ID));
@@ -205,7 +210,7 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 			browseButton.addSelectionListener(new SelectionAdapter() {
 				
 				public void widgetSelected(SelectionEvent e) {
-					FeatureSelectionDialog dialog = new FeatureSelectionDialog(getShell(), getWorkspaceFeatureModels());
+					FeatureSelectionDialog dialog = new FeatureSelectionDialog(getShell(), getAllFeatureModels());
 					dialog.create();
 					if (dialog.open() == Dialog.OK) {
 						Object[] result = dialog.getResult();
@@ -229,7 +234,7 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 			featureIdText.addModifyListener(listener);
 			
 		}
-
+		
 		Label label = new Label(container, SWT.NULL);
 		label.setText(PDEPlugin.getResourceString(FEATURE_NAME));
 		featureNameText = new Text(container, SWT.BORDER);
@@ -238,7 +243,7 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 		if (initialName != null)
 			featureNameText.setText(initialName);
 		featureNameText.addModifyListener(listener);
-
+		
 		label = new Label(container, SWT.NULL);
 		label.setText(PDEPlugin.getResourceString(FEATURE_VERSION));
 		featureVersionText = new Text(container, SWT.BORDER);
@@ -269,7 +274,7 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 		}
 		return buffer.toString();
 	}
-
+	
 	protected boolean verifyVersion() {
 		String value = featureVersionText.getText();
 		boolean result = true;
@@ -286,7 +291,7 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 		}
 		return result;
 	}
-
+	
 	protected String verifyIdRules() {
 		String problemText = PDEPlugin.getResourceString(KEY_INVALID_ID);
 		String name = featureIdText.getText();
@@ -316,8 +321,77 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 		return fFeatureToPatch;
 	}
 	
-	public static IFeatureModel[] getWorkspaceFeatureModels(){
+	public IFeatureModel[] getAllFeatureModels(){
+		IPath targetPath = ExternalModelManager.getEclipseHome();
+		File mainFeatureDir = targetPath.append("features").toFile(); //$NON-NLS-1$
+		if (mainFeatureDir.exists() == false || !mainFeatureDir.isDirectory())
+			return null;
+		File[] featureDirs = mainFeatureDir.listFiles();
+		
+		PluginVersionIdentifier bestVid = null;
+		File bestDir = null;
+		ArrayList allModels = new ArrayList();
+		
+		for (int i = 0; i < featureDirs.length; i++) {
+			bestVid = null;
+			bestDir = null;
+			File featureDir = featureDirs[i];
+			String name = featureDir.getName();
+			if (featureDir.isDirectory()) {
+				int loc = name.lastIndexOf("_"); //$NON-NLS-1$
+				if (loc == -1)
+					continue;
+				String version = name.substring(loc + 1);
+				PluginVersionIdentifier vid =
+					new PluginVersionIdentifier(version);
+				if (bestVid == null || vid.isGreaterThan(bestVid)) {
+					bestVid = vid;
+					bestDir = featureDir;
+				}
+			}
+			
+			if (bestVid == null)
+				return null;
+			// We have a feature and know the version
+			File manifest = new File(bestDir, "feature.xml"); //$NON-NLS-1$
+			ExternalFeatureModel model = new ExternalFeatureModel();
+			model.setInstallLocation(bestDir.getAbsolutePath());
+			
+			InputStream stream = null;
+			boolean error = false;
+			try {
+				stream = new FileInputStream(manifest);
+				model.load(stream, false);
+			} catch (Exception e) {
+				error = true;
+			}
+			if (stream != null) {
+				try {
+					stream.close();
+				} catch (IOException e) {
+				}
+			}
+			if (!(error || !model.isLoaded()))
+				allModels.add(model);
+		}
 		WorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
-		return mng.getFeatureModels();
+		IFeatureModel[] workspaceModels = mng.getFeatureModels();
+		for (int i = 0; i<workspaceModels.length; i++){
+		if (!isFeatureIncluded(allModels, workspaceModels[i]))
+			allModels.add(workspaceModels[i]);
+		}
+		return (IFeatureModel[])allModels.toArray(new IFeatureModel[allModels.size()]);
+	}
+	
+	protected boolean isFeatureIncluded(ArrayList models, IFeatureModel workspaceModel){
+		for (int i = 0; i<models.size(); i++){
+			if (!(models.get(i) instanceof IFeatureModel))
+				continue;
+			IFeatureModel model = (IFeatureModel)models.get(i);
+			if (model.getFeature().getId().equals(workspaceModel.getFeature().getId()) 
+					&& model.getFeature().getVersion().equals(workspaceModel.getFeature().getVersion()))
+				return true;	
+		}
+		return false;
 	}
 }

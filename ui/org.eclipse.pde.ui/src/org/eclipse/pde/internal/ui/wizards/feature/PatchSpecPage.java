@@ -56,7 +56,7 @@ public class PatchSpecPage extends BaseFeatureSpecPage {
 		
 		if (canFlipToNextPage()){
 
-			IFeatureModel[] featureModels = getWorkspaceFeatureModels();
+			IFeatureModel[] featureModels = getAllFeatureModels();
 
 			for (int i = 0; i < featureModels.length; i++) {
 				IFeature feature = featureModels[i].getFeature();
