@@ -15,6 +15,7 @@ import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.IModelChangeProvider;
 import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.core.isite.ISiteModel;
+import org.eclipse.pde.internal.core.site.*;
 import org.eclipse.pde.internal.core.site.SiteObject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
@@ -52,7 +53,7 @@ public class SiteUndoManager extends ModelUndoManager {
 	}
 
 	protected void execute(IModelChangedEvent event, boolean undo) {
-		ISiteModel model = (ISiteModel)event.getChangeProvider();
+		IModelChangeProvider model = event.getChangeProvider();
 		Object[] elements = event.getChangedObjects();
 		int type = event.getChangeType();
 		String propertyName = event.getChangedProperty();
@@ -86,9 +87,18 @@ public class SiteUndoManager extends ModelUndoManager {
 		}
 	}
 
-	private void executeAdd(ISiteModel model, Object[] elements) {
-		ISite site = model.getSite();
-		ISiteBuild siteBuild = model.getBuildModel().getSiteBuild();
+	private void executeAdd(IModelChangeProvider model, Object[] elements) {
+		ISiteModel siteModel = (model instanceof ISiteModel)?(ISiteModel)model:null;
+		ISite site = siteModel!=null?siteModel.getSite():null;
+		ISiteBuild siteBuild = null;
+		ISiteBuildModel siteBuildModel = null;
+		if (siteModel!=null)
+			siteBuildModel = siteModel.getBuildModel();
+		else if (model instanceof ISiteBuildModel)
+			siteBuildModel = (ISiteBuildModel)model;
+		
+		if (siteBuildModel!=null)
+			siteBuild = siteBuildModel.getSiteBuild();
 
 		try {
 			for (int i = 0; i < elements.length; i++) {
@@ -113,9 +123,18 @@ public class SiteUndoManager extends ModelUndoManager {
 		}
 	}
 
-	private void executeRemove(ISiteModel model, Object[] elements) {
-		ISite site = model.getSite();
-		ISiteBuild siteBuild = model.getBuildModel().getSiteBuild();
+	private void executeRemove(IModelChangeProvider model, Object[] elements) {
+		ISiteModel siteModel = (model instanceof ISiteModel)?(ISiteModel)model:null;
+		ISite site = siteModel!=null?siteModel.getSite():null;
+		ISiteBuild siteBuild = null;
+		ISiteBuildModel siteBuildModel = null;
+		if (siteModel!=null)
+			siteBuildModel = siteModel.getBuildModel();
+		else if (model instanceof ISiteBuildModel)
+			siteBuildModel = (ISiteBuildModel)model;
+		
+		if (siteBuildModel!=null)
+			siteBuild = siteBuildModel.getSiteBuild();
 
 		try {
 			for (int i = 0; i < elements.length; i++) {
@@ -151,6 +170,15 @@ public class SiteUndoManager extends ModelUndoManager {
 			try {
 				sobj.restoreProperty(propertyName, oldValue, newValue);
 			} catch (CoreException e) {
+				PDEPlugin.logException(e);
+			}
+		}
+		if (element instanceof SiteBuildObject) {
+			SiteBuildObject sobj = (SiteBuildObject)element;
+			try {
+				sobj.restoreProperty(propertyName, oldValue, newValue);
+			}
+			catch (CoreException e) {
 				PDEPlugin.logException(e);
 			}
 		}
