@@ -75,7 +75,7 @@ public class WorkbenchLaunchConfigurationDelegate
 			createWorkspaceRunnerConfiguration(
 				configuration,
 				targetWorkspace,
-				null,
+				configuration.getAttribute(APPLICATION, (String)null),
 				monitor);
 		if (monitor.isCanceled())
 			return;

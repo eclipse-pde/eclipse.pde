@@ -24,4 +24,5 @@ public interface ILauncherSettings {
 	String EXTPLUGINS = "extplugins";
 	String TRACING_OPTIONS = "tracingOptions";
 	String SHOW_SPLASH = "showSplash";
+	String APPLICATION = "application";
 }
