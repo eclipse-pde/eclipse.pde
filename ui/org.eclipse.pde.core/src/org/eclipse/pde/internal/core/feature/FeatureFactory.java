@@ -27,6 +27,13 @@ public IFeatureData createData() {
 	return data;
 }
 
+public IFeatureChild createChild() {
+	FeatureChild child = new FeatureChild();
+	child.model = model;
+	child.parent = model.getFeature();
+	return child;
+}
+
 public IFeatureImport createImport() {
 	FeatureImport iimport = new FeatureImport();
 	iimport.model = model;

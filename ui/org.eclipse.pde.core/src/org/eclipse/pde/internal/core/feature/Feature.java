@@ -20,6 +20,7 @@ public class Feature extends VersionableObject implements IFeature {
 	private IFeatureURL url;
 	private IFeatureInfo[] infos = new IFeatureInfo[3];
 	private Vector data = new Vector();
+	private Vector children = new Vector();
 	private Vector plugins = new Vector();
 	private Vector imports = new Vector();
 	private String os;
@@ -45,6 +46,15 @@ public class Feature extends VersionableObject implements IFeature {
 		fireStructureChanged(newData, IModelChangedEvent.INSERT);
 	}
 
+	public void addIncludedFeatures(IFeatureChild[] features)
+		throws CoreException {
+		ensureModelEditable();
+		for (int i = 0; i < features.length; i++) {
+			children.add(features[i]);
+		}
+		fireStructureChanged(features, IModelChangedEvent.INSERT);
+	}
+
 	public void addImport(IFeatureImport iimport) throws CoreException {
 		ensureModelEditable();
 		imports.add(iimport);
@@ -60,6 +70,12 @@ public class Feature extends VersionableObject implements IFeature {
 	public IFeatureData[] getData() {
 		IFeatureData[] result = new IFeatureData[data.size()];
 		data.copyInto(result);
+		return result;
+	}
+
+	public IFeatureChild[] getIncludedFeatures() {
+		IFeatureChild[] result = new IFeatureChild[children.size()];
+		children.copyInto(result);
 		return result;
 	}
 	public IFeatureImport[] getImports() {
@@ -153,6 +169,10 @@ public class Feature extends VersionableObject implements IFeature {
 					IFeatureData newData = getModel().getFactory().createData();
 					((FeatureData) newData).parse(child);
 					data.add(newData);
+				} else if (tag.equals("includes")) {
+					IFeatureChild newChild = getModel().getFactory().createChild();
+					((FeatureChild) newChild).parse(child);
+					this.children.add(newChild);
 				}
 			}
 		}
@@ -274,6 +294,14 @@ public class Feature extends VersionableObject implements IFeature {
 			data.remove(removed[i]);
 		fireStructureChanged(removed, IModelChangedEvent.REMOVE);
 	}
+
+	public void removeIncludedFeatures(IFeatureChild[] features)
+		throws CoreException {
+		ensureModelEditable();
+		for (int i = 0; i < features.length; i++)
+			children.remove(features[i]);
+		fireStructureChanged(features, IModelChangedEvent.REMOVE);
+	}
 	public void removeImport(IFeatureImport iimport) throws CoreException {
 		ensureModelEditable();
 		imports.remove(iimport);
@@ -291,8 +319,7 @@ public class Feature extends VersionableObject implements IFeature {
 	public String getNL() {
 		return nl;
 	}
-	
-	
+
 	public String getArch() {
 		return arch;
 	}
@@ -419,6 +446,11 @@ public class Feature extends VersionableObject implements IFeature {
 		if (url != null) {
 			writer.println();
 			url.write(indent2, writer);
+		}
+		for (int i = 0; i < children.size(); i++) {
+			IFeatureChild child = (IFeatureChild) children.elementAt(i);
+			writer.println();
+			child.write(indent2, writer);
 		}
 		if (imports.size() > 0) {
 			writer.println();

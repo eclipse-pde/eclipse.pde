@@ -14,6 +14,7 @@ import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.plugin.*;
 
 public class WorkspaceModelManager
@@ -26,6 +27,7 @@ public class WorkspaceModelManager
 	private Vector listeners = new Vector();
 	private Vector workspaceModels = null;
 	private Vector workspaceFragmentModels = null;
+	private Vector workspaceFeatureModels = null;
 	private Vector modelChanges = null;
 	private boolean startup = true;
 
@@ -60,6 +62,8 @@ public class WorkspaceModelManager
 			initializeWorkspacePluginModels();
 		if (model instanceof IFragmentModel)
 			workspaceFragmentModels.add(model);
+		if (model instanceof IFeatureModel)
+			workspaceFeatureModels.add(model);
 		else
 			workspaceModels.add(model);
 		PDECore.getDefault().getTracingOptionsManager().reset();
@@ -145,6 +149,24 @@ public class WorkspaceModelManager
 		}
 		return null;
 	}
+
+	private IFeatureModel createWorkspaceFeatureModel(IFile featureFile) {
+		if (featureFile.exists() == false)
+			return null;
+		connect(featureFile, null, false);
+		IFeatureModel model = (IFeatureModel) getModel(featureFile, null);
+		loadFeatureModel(model);
+		return model;
+	}
+
+	private IFeatureModel createWorkspaceFeatureModel(IProject project) {
+		IFile featureFile = project.getFile("feature.xml");
+		if (featureFile.exists()) {
+			return createWorkspaceFeatureModel(featureFile);
+		}
+		return null;
+	}
+
 	public void disconnect(Object element, Object consumer) {
 		ModelInfo info = (ModelInfo) models.get(element);
 		if (info != null) {
@@ -226,7 +248,16 @@ public class WorkspaceModelManager
 		workspaceFragmentModels.copyInto(result);
 		return result;
 	}
-	private IPluginModelBase getWorkspaceModel(IFile file) {
+	public IFeatureModel[] getWorkspaceFeatureModels() {
+		if (workspaceFeatureModels == null) {
+			initializeWorkspacePluginModels();
+		}
+		validate();
+		IFeatureModel[] result = new IFeatureModel[workspaceFeatureModels.size()];
+		workspaceFeatureModels.copyInto(result);
+		return result;
+	}
+	private IModel getWorkspaceModel(IFile file) {
 		String name = file.getName().toLowerCase();
 		Vector models = null;
 		validate();
@@ -235,9 +266,11 @@ public class WorkspaceModelManager
 			models = workspaceModels;
 		else if (name.equals("fragment.xml"))
 			models = workspaceFragmentModels;
+		else if (name.equals("feature.xml"))
+			models = workspaceFeatureModels;
 		return getWorkspaceModel(file.getProject(), models);
 	}
-	public IPluginModelBase getWorkspaceModel(IProject project) {
+	public IModel getWorkspaceModel(IProject project) {
 		validate();
 		IPath filePath = project.getFullPath().append("plugin.xml");
 		IFile file = project.getWorkspace().getRoot().getFile(filePath);
@@ -249,13 +282,17 @@ public class WorkspaceModelManager
 		if (file.exists()) {
 			return getWorkspaceModel(project, workspaceFragmentModels);
 		}
+		file = project.getFile("feature.xml");
+		if (file.exists()) {
+			return getWorkspaceModel(project, workspaceFeatureModels);
+		}
 		return null;
 	}
-	private IPluginModelBase getWorkspaceModel(IProject project, Vector models) {
+	private IModel getWorkspaceModel(IProject project, Vector models) {
 		if (models == null)
 			return null;
 		for (int i = 0; i < models.size(); i++) {
-			IPluginModelBase model = (IPluginModelBase) models.elementAt(i);
+			IModel model = (IModel) models.elementAt(i);
 			IFile file = (IFile) model.getUnderlyingResource();
 			if (file.getProject().equals(project)) {
 				return model;
@@ -295,20 +332,25 @@ public class WorkspaceModelManager
 
 		if (delta.getKind() == IResourceDelta.ADDED) {
 			// manifest added - add the model
-			IPluginModelBase model = getWorkspaceModel(file);
+			IModel model = getWorkspaceModel(file);
 			if (model == null)
 				addWorkspaceModel(createWorkspacePluginModel(file));
+			else if (model instanceof IFeatureModel)
+				reloadFeatureModel((IFeatureModel) model);
 			else
-				reloadWorkspaceModel(model);
+				reloadWorkspaceModel((IPluginModelBase) model);
 		} else {
-			IPluginModelBase model = getWorkspaceModel(file);
+			IModel model = getWorkspaceModel(file);
 			if (delta.getKind() == IResourceDelta.REMOVED) {
 				// manifest has been removed - ditch the model
 				removeWorkspaceModel(model);
 			} else if (delta.getKind() == IResourceDelta.CHANGED) {
 				if ((IResourceDelta.CONTENT & delta.getFlags()) != 0) {
 					// file content modified - sync up
-					reloadWorkspaceModel(model);
+					if (model instanceof IFeatureModel)
+						reloadFeatureModel((IFeatureModel) model);
+					else
+						reloadWorkspaceModel((IPluginModelBase) model);
 				}
 			}
 		}
@@ -340,7 +382,7 @@ public class WorkspaceModelManager
 		if (isPluginProject(project) == false) {
 			return;
 		}
-		IPluginModelBase model = getWorkspaceModel(project);
+		IModel model = getWorkspaceModel(project);
 		if (model != null) {
 			removeWorkspaceModel(model);
 		}
@@ -355,24 +397,24 @@ public class WorkspaceModelManager
 	private void initializeWorkspacePluginModels() {
 		workspaceModels = new Vector();
 		workspaceFragmentModels = new Vector();
+		workspaceFeatureModels = new Vector();
 		IWorkspace workspace = PDECore.getWorkspace();
 		IProject[] projects = workspace.getRoot().getProjects();
 		for (int i = 0; i < projects.length; i++) {
 			IProject project = projects[i];
 			if (!project.isOpen())
 				continue;
-			try {
-				if (project.hasNature(JavaCore.NATURE_ID)) {
-					IPluginModelBase model = createWorkspacePluginModel(project);
-					if (model != null) {
-						if (model.isFragmentModel())
-							workspaceFragmentModels.add(model);
-						else
-							workspaceModels.add(model);
-					}
+			if (isPluginProject(project)) {
+				IPluginModelBase model = createWorkspacePluginModel(project);
+				if (model != null) {
+					if (model.isFragmentModel())
+						workspaceFragmentModels.add(model);
+					else
+						workspaceModels.add(model);
 				}
-			} catch (CoreException e) {
-				PDECore.logException(e);
+			} else if (isFeatureProject(project)) {
+				IFeatureModel model = createWorkspaceFeatureModel(project);
+				workspaceFeatureModels.add(model);
 			}
 		}
 		workspace.addResourceChangeListener(
@@ -408,6 +450,11 @@ public class WorkspaceModelManager
 		return project.exists(new Path("plugin.xml"))
 			|| project.exists(new Path("fragment.xml"));
 	}
+	public static boolean isFeatureProject(IProject project) {
+		if (project.isOpen() == false)
+			return false;
+		return project.exists(new Path("feature.xml"));
+	}
 
 	public static boolean isJavaPluginProject(IProject project) {
 		if (!isPluginProject(project))
@@ -425,7 +472,7 @@ public class WorkspaceModelManager
 	private void ensureModelExists(IProject pluginProject) {
 		if (!initialized)
 			return;
-		IPluginModelBase model = getWorkspaceModel(pluginProject);
+		IModel model = getWorkspaceModel(pluginProject);
 		if (model == null) {
 			model = createWorkspacePluginModel(pluginProject);
 			if (model != null) {
@@ -436,12 +483,15 @@ public class WorkspaceModelManager
 
 	private boolean isSupportedFile(IFile file) {
 		String name = file.getName().toLowerCase();
-		if (!name.equals("plugin.xml") && !name.equals("fragment.xml"))
+		if (!name.equals("plugin.xml")
+			&& !name.equals("fragment.xml")
+			&& !name.equals("feature.xml"))
 			return false;
 		IPath expectedPath = file.getProject().getFullPath().append(name);
 		// Supported files must be directly under the project
 		return expectedPath.equals(file.getFullPath());
 	}
+
 	private void loadWorkspaceModel(IPluginModelBase model) {
 		IFile file = (IFile) model.getUnderlyingResource();
 		InputStream stream = null;
@@ -479,19 +529,66 @@ public class WorkspaceModelManager
 			PDECore.logException(e);
 		}
 	}
+	private void loadFeatureModel(IFeatureModel model) {
+		IFile file = (IFile) model.getUnderlyingResource();
+		InputStream stream = null;
+		boolean outOfSync = false;
+		try {
+			stream = file.getContents(false);
+		} catch (CoreException e) {
+			outOfSync = true;
+		}
+		if (outOfSync) {
+			try {
+				stream = file.getContents(true);
+			} catch (CoreException e) {
+				// cannot get file contents - something is 
+				// seriously wrong
+				/*
+				IFeature feature = model.getFeature(true);
+				try {
+					base.setId(file.getProject().getName());
+					base.setName(base.getId());
+					base.setVersion("0.0.0");
+					PDECore.log(e);
+				} catch (CoreException ex) {
+					PDECore.logException(ex);
+				}
+				*/
+				return;
+			}
+		}
+		try {
+			model.load(stream, outOfSync);
+			stream.close();
+		} catch (CoreException e) {
+			// errors in loading, but we will still
+			// initialize.
+		} catch (IOException e) {
+			PDECore.logException(e);
+		}
+	}
 	private void reloadWorkspaceModel(IPluginModelBase model) {
 		loadWorkspaceModel(model);
 		fireModelsChanged(new IModel[] { model });
 		PDECore.getDefault().getTracingOptionsManager().reset();
 	}
+	private void reloadFeatureModel(IFeatureModel model) {
+		loadFeatureModel(model);
+		fireModelsChanged(new IModel[] { model });
+	}
 	public void removeModelProviderListener(IModelProviderListener listener) {
 		listeners.remove(listener);
 	}
-	private void removeWorkspaceModel(IPluginModelBase model) {
+	private void removeWorkspaceModel(IModel model) {
 		// remove
 		if (model instanceof IFragmentModel) {
 			if (workspaceFragmentModels != null)
 				workspaceFragmentModels.remove(model);
+		}
+		if (model instanceof IFeatureModel) {
+			if (workspaceFeatureModels != null)
+				workspaceFeatureModels.remove(model);
 		} else {
 			if (workspaceModels != null)
 				workspaceModels.remove(model);
@@ -623,18 +720,21 @@ public class WorkspaceModelManager
 		if (workspaceFragmentModels != null) {
 			validate(workspaceFragmentModels);
 		}
+		if (workspaceFeatureModels != null) {
+			validate(workspaceFeatureModels);
+		}
 	}
 	private void validate(Vector models) {
 		Object[] entries = models.toArray();
 		for (int i = 0; i < entries.length; i++) {
-			IPluginModelBase model = (IPluginModelBase) entries[i];
+			IModel model = (IModel) entries[i];
 			if (!isValid(model)) {
 				// drop it
 				models.remove(model);
 			}
 		}
 	}
-	private boolean isValid(IPluginModelBase model) {
+	private boolean isValid(IModel model) {
 		IResource resource = model.getUnderlyingResource();
 		// Must have the resource handle
 		if (resource == null)

@@ -68,6 +68,24 @@ public void addPlugins(IFeaturePlugin [] plugins) throws CoreException;
 public void addData(IFeatureData [] entries) throws CoreException;
 
 /**
+ * Adds included feature to this feature.
+ * This method may throw a CoreException if
+ * the model is not editable.
+ *
+ * @param features features to include
+ */
+public void addIncludedFeatures(IFeatureChild [] features) throws CoreException;
+
+/**
+ * Remove included feature from this feature.
+ * This method may throw a CoreException if
+ * the model is not editable.
+ *
+ * @param features included features to remove
+ */
+public void removeIncludedFeatures(IFeatureChild [] features) throws CoreException;
+
+/**
  * Adds a required plug-in reference to this feature.
  * This method may throw a CoreException if
  * the model is not editable.
@@ -94,6 +112,14 @@ public IFeatureData [] getData();
  * @return an array of plug-in references in this feature
  */
 public IFeatureImport [] getImports();
+
+/**
+ * Returns references to included features
+ *
+ * @return an array of feature references included in this feature
+ */
+public IFeatureChild [] getIncludedFeatures();
+
 /**
  * Returns a feature provider name
  *

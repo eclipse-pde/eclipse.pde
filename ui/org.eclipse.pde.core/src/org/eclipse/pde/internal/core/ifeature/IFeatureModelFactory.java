@@ -25,6 +25,12 @@ IFeaturePlugin createPlugin();
  */
 IFeatureData createData();
 /**
+ * Creates a new feature child object.
+ *
+ * @return new instance of the feature child object
+ */
+IFeatureChild createChild();
+/**
  * Creates a new import model object.
  *
  * @return new instance of the feature import object
