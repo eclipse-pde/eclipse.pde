@@ -73,4 +73,6 @@ public void setVisible(boolean visible) {}
 public void update() {}
 public void update(boolean force) {}
 public void updateAll(boolean force) {}
+public boolean isEnabledAllowed() { return true; }
+public void setEnabledAllowed(boolean value) {}
 }
