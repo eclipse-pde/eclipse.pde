@@ -21,6 +21,8 @@ public class Bundle extends BundleObject implements IBundle {
 	 * @see org.eclipse.pde.internal.core.ibundle.IBundle#setHeader(java.lang.String, java.lang.String)
 	 */
 	public void setHeader(String key, String value) {
+        if (fProperties == null)
+            return;
 		Object oldValue = fProperties.get(key);
 		if (value == null || value.trim().length() == 0)
 			fProperties.remove(key);
