@@ -25,11 +25,11 @@ import org.eclipse.pde.internal.ui.*;
  */
 public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration implements ILauncherSettings {
 
-	private static final String KEY_NO_STARTUP = "WorkbenchLauncherConfigurationDelegate.noStartup";
+	private static final String KEY_NO_STARTUP = "WorkbenchLauncherConfigurationDelegate.noStartup"; //$NON-NLS-1$
 		
-	public static final String CORE_APPLICATION = "org.eclipse.pde.junit.runtime.coretestapplication";
-	public static final String UI_APPLICATION = "org.eclipse.pde.junit.runtime.uitestapplication";
-	public static final String LEGACY_UI_APPLICATION = "org.eclipse.pde.junit.runtime.legacyUItestapplication";
+	public static final String CORE_APPLICATION = "org.eclipse.pde.junit.runtime.coretestapplication"; //$NON-NLS-1$
+	public static final String UI_APPLICATION = "org.eclipse.pde.junit.runtime.uitestapplication"; //$NON-NLS-1$
+	public static final String LEGACY_UI_APPLICATION = "org.eclipse.pde.junit.runtime.legacyUItestapplication"; //$NON-NLS-1$
 	
 	private static IPluginModelBase[] registryPlugins;
 	private File fConfigDir = null;
@@ -41,7 +41,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		IProgressMonitor monitor)
 		throws CoreException {
 		try {
-			monitor.beginTask("", 4);
+			monitor.beginTask("", 4); //$NON-NLS-1$
 			IJavaProject javaProject = getJavaProject(configuration);
 			if ((javaProject == null) || !javaProject.exists()) {
 				abort(PDEPlugin.getResourceString("JUnitLaunchConfiguration.error.invalidproject"), null, IJavaLaunchConfigurationConstants.ERR_NOT_A_JAVA_PROJECT); //$NON-NLS-1$ //$NON-NLS-2$
@@ -67,7 +67,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 			} 
 			monitor.worked(1);
 			
-			String workspace = configuration.getAttribute(LOCATION + "0", getDefaultWorkspace(configuration));
+			String workspace = configuration.getAttribute(LOCATION + "0", getDefaultWorkspace(configuration)); //$NON-NLS-1$
 			LauncherUtils.clearWorkspace(configuration,workspace);
 
 			setDefaultSourceLocator(launch, configuration);
@@ -107,7 +107,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 			DebugPlugin.getDefault().getLaunchManager().getEnvironment(configuration);
 
 		VMRunnerConfiguration runnerConfig =
-			new VMRunnerConfiguration("org.eclipse.core.launcher.Main", classpath);
+			new VMRunnerConfiguration("org.eclipse.core.launcher.Main", classpath); //$NON-NLS-1$
 		runnerConfig.setVMArguments(computeVMArguments(configuration));
 		runnerConfig.setProgramArguments(programArgs);
 		runnerConfig.setEnvironment(envp);
@@ -126,7 +126,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 					IStatus.ERROR,
 					PDEPlugin.PLUGIN_ID,
 					IStatus.ERROR,
-					PDEPlugin.getResourceString("JUnitLaunchConfiguration.error.notaplugin"),
+					PDEPlugin.getResourceString("JUnitLaunchConfiguration.error.notaplugin"), //$NON-NLS-1$
 					null));
 		return model.getPluginBase().getId();
 	}
@@ -154,20 +154,20 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		programArgs.add("3"); //$NON-NLS-1$
 		
 		// Specify the application to launch based on the list of plug-ins to run.
-		programArgs.add("-application");
+		programArgs.add("-application"); //$NON-NLS-1$
 		programArgs.add(getApplicationName(pluginMap, configuration));
 		
 		// Specify the application to test
 		String testApplication = configuration.getAttribute(APP_TO_TEST, (String)null);
 		if (testApplication != null && testApplication.length() > 0) {
-			programArgs.add("-testApplication");
+			programArgs.add("-testApplication"); //$NON-NLS-1$
 			programArgs.add(testApplication);
 		}
 		
 		// Specify the location of the runtime workbench
 		String targetWorkspace =
-			configuration.getAttribute(LOCATION + "0", getDefaultWorkspace(configuration));
-		programArgs.add("-data");
+			configuration.getAttribute(LOCATION + "0", getDefaultWorkspace(configuration)); //$NON-NLS-1$
+		programArgs.add("-data"); //$NON-NLS-1$
 		programArgs.add(targetWorkspace);
 		
 		// Create the platform configuration for the runtime workbench
@@ -178,29 +178,29 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 			getConfigDir(configuration),
 			primaryFeatureId,
 			LauncherUtils.getAutoStartPlugins(configuration));
-		programArgs.add("-configuration");
+		programArgs.add("-configuration"); //$NON-NLS-1$
 		if (PDECore.getDefault().getModelManager().isOSGiRuntime())
-			programArgs.add("file:" + new Path(getConfigDir(configuration).getPath()).addTrailingSeparator().toString());
+			programArgs.add("file:" + new Path(getConfigDir(configuration).getPath()).addTrailingSeparator().toString()); //$NON-NLS-1$
 		else
-			programArgs.add("file:" + new Path(getConfigDir(configuration).getPath()).append("platform.cfg").toString());
+			programArgs.add("file:" + new Path(getConfigDir(configuration).getPath()).append("platform.cfg").toString()); //$NON-NLS-1$ //$NON-NLS-2$
 
 		
 		if (!PDECore.getDefault().getModelManager().isOSGiRuntime()) {
 			if (primaryFeatureId != null) {
-				programArgs.add("-feature");
+				programArgs.add("-feature"); //$NON-NLS-1$
 				programArgs.add(primaryFeatureId);
 			}
 			// Pre-OSGi platforms need the location of org.eclipse.core.boot specified
-			IPluginModelBase bootModel = (IPluginModelBase)pluginMap.get("org.eclipse.core.boot");
+			IPluginModelBase bootModel = (IPluginModelBase)pluginMap.get("org.eclipse.core.boot"); //$NON-NLS-1$
 			String bootPath = LauncherUtils.getBootPath(bootModel);
-			if (bootPath != null && !bootPath.endsWith(".jar")) {
-				programArgs.add("-boot");
-				programArgs.add("file:" + bootPath);
+			if (bootPath != null && !bootPath.endsWith(".jar")) { //$NON-NLS-1$
+				programArgs.add("-boot"); //$NON-NLS-1$
+				programArgs.add("file:" + bootPath); //$NON-NLS-1$
 			}
 		}
 
 		// Specify the output folder names
-		programArgs.add("-dev");
+		programArgs.add("-dev"); //$NON-NLS-1$
 		String devEntry = LauncherUtils.getBuildOutputFolders();
 		programArgs.add(configuration.getAttribute(CLASSPATH_ENTRIES, devEntry));
 
@@ -208,33 +208,33 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		if (configuration.getAttribute(TRACING, false)
 				&& !TRACING_NONE.equals(configuration.getAttribute(
 						TRACING_CHECKED, (String) null))) {
-			programArgs.add("-debug");
-			String path = getConfigDir(configuration).getPath() + Path.SEPARATOR + ".options";
+			programArgs.add("-debug"); //$NON-NLS-1$
+			String path = getConfigDir(configuration).getPath() + Path.SEPARATOR + ".options"; //$NON-NLS-1$
 			programArgs.add(LauncherUtils.getTracingFileArgument(configuration, path));
 		}
 		
 		// Add the program args entered by the user
 		StringTokenizer tokenizer =
-			new StringTokenizer(configuration.getAttribute(PROGARGS, ""));
+			new StringTokenizer(configuration.getAttribute(PROGARGS, "")); //$NON-NLS-1$
 		while (tokenizer.hasMoreTokens()) {
 			programArgs.add(tokenizer.nextToken());
 		}
 			
 		if (keepAlive(configuration) && runMode.equals(ILaunchManager.DEBUG_MODE))
-			programArgs.add("-keepalive");
-		programArgs.add("-port");
+			programArgs.add("-keepalive"); //$NON-NLS-1$
+		programArgs.add("-port"); //$NON-NLS-1$
 		programArgs.add(Integer.toString(port));
-		programArgs.add("-testpluginname");
+		programArgs.add("-testpluginname"); //$NON-NLS-1$
 		programArgs.add(getTestPluginId(configuration));
 
 		// a testname was specified just run the single test
 		String testName =
-			configuration.getAttribute(JUnitBaseLaunchConfiguration.TESTNAME_ATTR, "");
+			configuration.getAttribute(JUnitBaseLaunchConfiguration.TESTNAME_ATTR, ""); //$NON-NLS-1$
 		if (testName.length() > 0) {
 			programArgs.add("-test"); //$NON-NLS-1$
-			programArgs.add(testTypes[0].getFullyQualifiedName() + ":" + testName);
+			programArgs.add(testTypes[0].getFullyQualifiedName() + ":" + testName); //$NON-NLS-1$
 		} else {
-			programArgs.add("-classnames");
+			programArgs.add("-classnames"); //$NON-NLS-1$
 			for (int i = 0; i < testTypes.length; i++)
 			programArgs.add(testTypes[i].getFullyQualifiedName());
 		}
@@ -243,18 +243,18 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 	
 	private IPluginModelBase[] addRequiredPlugins(TreeMap pluginMap)
 		throws CoreException {
-		if (!pluginMap.containsKey("org.eclipse.pde.junit.runtime")) {
+		if (!pluginMap.containsKey("org.eclipse.pde.junit.runtime")) { //$NON-NLS-1$
 			pluginMap.put(
-				"org.eclipse.pde.junit.runtime",
-				findPlugin("org.eclipse.pde.junit.runtime"));
+				"org.eclipse.pde.junit.runtime", //$NON-NLS-1$
+				findPlugin("org.eclipse.pde.junit.runtime")); //$NON-NLS-1$
 		}
-		if (!pluginMap.containsKey("org.eclipse.jdt.junit.runtime")) {
+		if (!pluginMap.containsKey("org.eclipse.jdt.junit.runtime")) { //$NON-NLS-1$
 			pluginMap.put(
-				"org.eclipse.jdt.junit.runtime",
-				findPlugin("org.eclipse.jdt.junit.runtime"));
+				"org.eclipse.jdt.junit.runtime", //$NON-NLS-1$
+				findPlugin("org.eclipse.jdt.junit.runtime")); //$NON-NLS-1$
 		}
-		if (!pluginMap.containsKey("org.junit")) {
-			pluginMap.put("org.junit", findPlugin("org.junit"));
+		if (!pluginMap.containsKey("org.junit")) { //$NON-NLS-1$
+			pluginMap.put("org.junit", findPlugin("org.junit")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return (IPluginModelBase[]) pluginMap.values().toArray(
 			new IPluginModelBase[pluginMap.size()]);
@@ -278,7 +278,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		}
 		abort(
 			PDEPlugin.getFormattedMessage(
-				"JUnitLaunchConfiguration.error.missingPlugin",
+				"JUnitLaunchConfiguration.error.missingPlugin", //$NON-NLS-1$
 				id),
 			null,
 			IStatus.OK);
@@ -286,17 +286,17 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 	}
 	
 	private String[] computeVMArguments(ILaunchConfiguration configuration) throws CoreException {
-		return new ExecutionArguments(getVMArguments(configuration),"").getVMArgumentsArray();		
+		return new ExecutionArguments(getVMArguments(configuration),"").getVMArgumentsArray();		 //$NON-NLS-1$
 	}
 	
 	public String getProgramArguments(ILaunchConfiguration configuration)
 		throws CoreException {
-		return configuration.getAttribute(ILauncherSettings.PROGARGS, "");
+		return configuration.getAttribute(ILauncherSettings.PROGARGS, ""); //$NON-NLS-1$
 	}
 	
 	public String getVMArguments(ILaunchConfiguration configuration)
 		throws CoreException {
-		return configuration.getAttribute(ILauncherSettings.VMARGS, "");
+		return configuration.getAttribute(ILauncherSettings.VMARGS, ""); //$NON-NLS-1$
 	}
 
 	protected void setDefaultSourceLocator(ILaunch launch, ILaunchConfiguration configuration) throws CoreException {
@@ -305,8 +305,8 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 	
 	private String getDefaultWorkspace(ILaunchConfiguration config) throws CoreException {
 		if (config.getAttribute(APPLICATION, UI_APPLICATION).equals(UI_APPLICATION))
-			return LauncherUtils.getDefaultPath().append("junit-workbench-workspace").toOSString();
-		return LauncherUtils.getDefaultPath().append("junit-core-workspace").toOSString();				
+			return LauncherUtils.getDefaultPath().append("junit-workbench-workspace").toOSString(); //$NON-NLS-1$
+		return LauncherUtils.getDefaultPath().append("junit-core-workspace").toOSString();				 //$NON-NLS-1$
 	}
 	
 	private String getApplicationName(TreeMap pluginMap, ILaunchConfiguration configuration) {
@@ -317,13 +317,13 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		} catch (CoreException e) {
 		}
 				
-		IPluginModelBase model = (IPluginModelBase)pluginMap.get("org.eclipse.ui");
+		IPluginModelBase model = (IPluginModelBase)pluginMap.get("org.eclipse.ui"); //$NON-NLS-1$
 		if (model != null) {
 			IPluginExtension[] extensions = model.getPluginBase().getExtensions();
 			for (int i = 0; i < extensions.length; i++) {
 				String point = extensions[i].getPoint();
-				if (point != null && point.equals("org.eclipse.core.runtime.applications")) {
-					if ("workbench".equals(extensions[i].getId())){
+				if (point != null && point.equals("org.eclipse.core.runtime.applications")) { //$NON-NLS-1$
+					if ("workbench".equals(extensions[i].getId())){ //$NON-NLS-1$
 						return LEGACY_UI_APPLICATION;
 					}
 				}
@@ -334,7 +334,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 	
 	public static String getPluginID(ILaunchConfiguration configuration) {
 		try {
-			String projectID = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, "");
+			String projectID = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""); //$NON-NLS-1$
 			if (projectID.length() > 0) {
 				IResource project = PDEPlugin.getWorkspace().getRoot().findMember(projectID);
 				if (project != null && project instanceof IProject) {
@@ -355,7 +355,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 			IPluginModelBase[] models = LauncherUtils.getPluginAndPrereqs(id);
 			int i = 0;
 			for (; i < models.length; i++) {
-				if ("org.eclipse.swt".equals(models[i].getPluginBase().getId()))
+				if ("org.eclipse.swt".equals(models[i].getPluginBase().getId())) //$NON-NLS-1$
 					return true;
 			}
 			return false;

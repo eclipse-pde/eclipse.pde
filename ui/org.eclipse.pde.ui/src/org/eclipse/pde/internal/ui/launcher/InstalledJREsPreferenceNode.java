@@ -55,7 +55,7 @@ public class InstalledJREsPreferenceNode implements IPreferenceNode {
 	 * @see org.eclipse.jface.preference.IPreferenceNode#getId()
 	 */
 	public String getId() {
-		return "org.eclipse.jdt.debug.ui.preferences.VMPreferencePage";
+		return "org.eclipse.jdt.debug.ui.preferences.VMPreferencePage"; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -69,7 +69,7 @@ public class InstalledJREsPreferenceNode implements IPreferenceNode {
 	 * @see org.eclipse.jface.preference.IPreferenceNode#getLabelText()
 	 */
 	public String getLabelText() {
-		return PDEPlugin.getResourceString("BasicLauncherTab.jrePreferencePage");
+		return PDEPlugin.getResourceString("BasicLauncherTab.jrePreferencePage"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

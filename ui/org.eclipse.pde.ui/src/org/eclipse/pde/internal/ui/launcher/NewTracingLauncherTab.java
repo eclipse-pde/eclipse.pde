@@ -66,7 +66,7 @@ public class NewTracingLauncherTab extends AbstractLauncherTab
 		container.setLayout(layout);
 		fSelectAllButton = new Button(container, SWT.PUSH);
 		fSelectAllButton.setText(PDEPlugin
-				.getResourceString("TracingLauncherTab.selectAll"));
+				.getResourceString("TracingLauncherTab.selectAll")); //$NON-NLS-1$
 		fSelectAllButton.setLayoutData(new GridData(
 				GridData.HORIZONTAL_ALIGN_BEGINNING));
 		SWTUtil.setButtonDimensionHint(fSelectAllButton);
@@ -78,7 +78,7 @@ public class NewTracingLauncherTab extends AbstractLauncherTab
 		});
 		fDeselectAllButton = new Button(container, SWT.PUSH);
 		fDeselectAllButton.setText(PDEPlugin
-				.getResourceString("TracinglauncherTab.deselectAll"));
+				.getResourceString("TracinglauncherTab.deselectAll")); //$NON-NLS-1$
 		fDeselectAllButton.setLayoutData(new GridData(
 				GridData.HORIZONTAL_ALIGN_BEGINNING));
 		SWTUtil.setButtonDimensionHint(fDeselectAllButton);
@@ -92,7 +92,7 @@ public class NewTracingLauncherTab extends AbstractLauncherTab
 	private void createEnableTracingButton(Composite container) {
 		fTracingCheck = new Button(container, SWT.CHECK);
 		fTracingCheck.setText(PDEPlugin
-				.getResourceString("TracingLauncherTab.tracing"));
+				.getResourceString("TracingLauncherTab.tracing")); //$NON-NLS-1$
 		fTracingCheck.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fTracingCheck.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -115,7 +115,7 @@ public class NewTracingLauncherTab extends AbstractLauncherTab
 		Label label = new Label(composite, SWT.NULL);
 		label
 				.setText(PDEPlugin
-						.getResourceString("TracingLauncherTab.plugins"));
+						.getResourceString("TracingLauncherTab.plugins")); //$NON-NLS-1$
 		fPluginViewer = CheckboxTableViewer.newCheckList(composite, SWT.BORDER);
 		fPluginViewer.setContentProvider(new ArrayContentProvider());
 		fPluginViewer.setLabelProvider(PDEPlugin.getDefault()
@@ -251,7 +251,7 @@ public class NewTracingLauncherTab extends AbstractLauncherTab
 			} else if (checked.equals(TRACING_NONE)) {
 				fPluginViewer.setAllChecked(false);
 			} else {
-				StringTokenizer tokenizer = new StringTokenizer(checked, ",");
+				StringTokenizer tokenizer = new StringTokenizer(checked, ","); //$NON-NLS-1$
 				ArrayList list = new ArrayList();
 				PluginModelManager manager = PDECore.getDefault()
 						.getModelManager();
@@ -323,7 +323,7 @@ public class NewTracingLauncherTab extends AbstractLauncherTab
 	}
 	private void updatePropertyLabel(IPluginModelBase model) {
 		String text = (model == null) ? PDEPlugin
-				.getResourceString("TracingLauncherTab.options") : PDEPlugin
+				.getResourceString("TracingLauncherTab.options") : PDEPlugin //$NON-NLS-1$
 				.getDefault().getLabelProvider().getText(model);
 		fPropertyLabel.setText(text);
 	}
@@ -341,7 +341,7 @@ public class NewTracingLauncherTab extends AbstractLauncherTab
 		updatePropertyLabel(model);
 	}
 	public String getName() {
-		return PDEPlugin.getResourceString("TracingLauncherTab.name");
+		return PDEPlugin.getResourceString("TracingLauncherTab.name"); //$NON-NLS-1$
 	}
 	public Image getImage() {
 		return fImage;

@@ -100,16 +100,16 @@ public class AdvancedLauncherTab
 
 		fUseDefaultRadio = new Button(composite, SWT.RADIO);
 		fUseDefaultRadio.setText(
-			PDEPlugin.getResourceString("AdvancedLauncherTab.useDefault"));
+			PDEPlugin.getResourceString("AdvancedLauncherTab.useDefault")); //$NON-NLS-1$
 
 		if (fShowFeatures) {
 			fUseFeaturesRadio = new Button(composite, SWT.RADIO);
 			fUseFeaturesRadio.setText(
-				PDEPlugin.getResourceString("AdvancedLauncherTab.useFeatures"));
+				PDEPlugin.getResourceString("AdvancedLauncherTab.useFeatures")); //$NON-NLS-1$
 		}
 
 		fUseListRadio = new Button(composite, SWT.RADIO);
-		fUseListRadio.setText(PDEPlugin.getResourceString("AdvancedLauncherTab.useList"));
+		fUseListRadio.setText(PDEPlugin.getResourceString("AdvancedLauncherTab.useList")); //$NON-NLS-1$
 
 		createPluginList(composite);
 
@@ -199,7 +199,7 @@ public class AdvancedLauncherTab
 		gd.horizontalSpan = 2;
 		fVisibleLabel.setLayoutData(gd);
 		fVisibleLabel.setText(
-			PDEPlugin.getResourceString("AdvancedLauncherTab.visibleList"));
+			PDEPlugin.getResourceString("AdvancedLauncherTab.visibleList")); //$NON-NLS-1$
 
 		createPluginViewer(composite);
 		createButtonContainer(composite);
@@ -215,7 +215,7 @@ public class AdvancedLauncherTab
 			}
 		}
 		if (!PDECore.getDefault().getModelManager().isOSGiRuntime()) {
-			addPluginAndDependencies(findPlugin("org.eclipse.core.runtime"), map);
+			addPluginAndDependencies(findPlugin("org.eclipse.core.runtime"), map); //$NON-NLS-1$
 		}
 		/*
 			addPluginAndDependencies(findPlugin("org.eclipse.osgi"), map);
@@ -365,11 +365,11 @@ public class AdvancedLauncherTab
 
 		fWorkspacePlugins =
 			new NamedElement(
-				PDEPlugin.getResourceString("AdvancedLauncherTab.workspacePlugins"),
+				PDEPlugin.getResourceString("AdvancedLauncherTab.workspacePlugins"), //$NON-NLS-1$
 				pluginsImage);
 		fExternalPlugins =
 			new NamedElement(
-				PDEPlugin.getResourceString("AdvancedLauncherTab.externalPlugins"),
+				PDEPlugin.getResourceString("AdvancedLauncherTab.externalPlugins"), //$NON-NLS-1$
 				pluginsImage);
 	}
 
@@ -382,23 +382,23 @@ public class AdvancedLauncherTab
 
 		
 		fSelectAllButton = new Button(composite, SWT.PUSH);
-		fSelectAllButton.setText(PDEPlugin.getResourceString("AdvancedLauncherTab.selectAll"));
+		fSelectAllButton.setText(PDEPlugin.getResourceString("AdvancedLauncherTab.selectAll")); //$NON-NLS-1$
 		fSelectAllButton.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL));
 		SWTUtil.setButtonDimensionHint(fSelectAllButton);
 		
 		fDeselectButton = new Button(composite, SWT.PUSH);
-		fDeselectButton.setText(PDEPlugin.getResourceString("AdvancedLauncherTab.deselectAll"));
+		fDeselectButton.setText(PDEPlugin.getResourceString("AdvancedLauncherTab.deselectAll")); //$NON-NLS-1$
 		fDeselectButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		SWTUtil.setButtonDimensionHint(fDeselectButton);
 
 		fAddRequiredButton = new Button(composite, SWT.PUSH);
-		fAddRequiredButton.setText(PDEPlugin.getResourceString("AdvancedLauncherTab.subset"));
+		fAddRequiredButton.setText(PDEPlugin.getResourceString("AdvancedLauncherTab.subset")); //$NON-NLS-1$
 		fAddRequiredButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		SWTUtil.setButtonDimensionHint(fAddRequiredButton);
 
 		fDefaultsButton = new Button(composite, SWT.PUSH);
 		fDefaultsButton.setText(
-			PDEPlugin.getResourceString("AdvancedLauncherTab.defaults"));
+			PDEPlugin.getResourceString("AdvancedLauncherTab.defaults")); //$NON-NLS-1$
 		fDefaultsButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		SWTUtil.setButtonDimensionHint(fDefaultsButton);
 	}
@@ -578,19 +578,19 @@ public class AdvancedLauncherTab
 	private IStatus validate() {
 		if (fShowFeatures && fUseFeaturesRadio.getSelection()) {
 			IPath workspacePath = PDEPlugin.getWorkspace().getRoot().getLocation();
-			IPath featurePath = workspacePath.removeLastSegments(1).append("features");
-			if (!workspacePath.lastSegment().equalsIgnoreCase("plugins")
+			IPath featurePath = workspacePath.removeLastSegments(1).append("features"); //$NON-NLS-1$
+			if (!workspacePath.lastSegment().equalsIgnoreCase("plugins") //$NON-NLS-1$
 				|| !featurePath.toFile().exists())
 				return createStatus(
 					IStatus.ERROR,
 					PDEPlugin.getResourceString(
-						"AdvancedLauncherTab.error.featureSetup"));
+						"AdvancedLauncherTab.error.featureSetup")); //$NON-NLS-1$
 		} 
-		return createStatus(IStatus.OK, "");
+		return createStatus(IStatus.OK, ""); //$NON-NLS-1$
 	}
 
 	public String getName() {
-		return PDEPlugin.getResourceString("AdvancedLauncherTab.name");
+		return PDEPlugin.getResourceString("AdvancedLauncherTab.name"); //$NON-NLS-1$
 	}
 
 	public Image getImage() {

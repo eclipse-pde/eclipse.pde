@@ -25,7 +25,7 @@ public class TracingPropertySource implements IPropertySource, IAdaptable {
 	private Hashtable fTemplate;
 	private Hashtable fValues;
 	private Hashtable fDvalues;
-	private static final String[] fBooleanChoices = { "false", "true" };
+	private static final String[] fBooleanChoices = { "false", "true" }; //$NON-NLS-1$ //$NON-NLS-2$
 	private Properties fMasterOptions;
 	private boolean fIsModified;
 	private TracingLauncherTab fTab;
@@ -90,17 +90,17 @@ public class TracingPropertySource implements IPropertySource, IAdaptable {
 			String masterValue = fMasterOptions.getProperty(key);
 			if (value != null)
 				lvalue = value.toLowerCase();
-			if (lvalue != null && (lvalue.equals("true") || lvalue.equals("false"))) {
+			if (lvalue != null && (lvalue.equals("true") || lvalue.equals("false"))) { //$NON-NLS-1$ //$NON-NLS-2$
 				desc = createBooleanPropertyDescriptor(shortKey, value);
-				Integer dvalue = new Integer(lvalue.equals("true") ? 1 : 0);
+				Integer dvalue = new Integer(lvalue.equals("true") ? 1 : 0); //$NON-NLS-1$
 				fDvalues.put(shortKey, dvalue);
 				if (masterValue != null) {
-					Integer mvalue = new Integer(masterValue.equals("true") ? 1 : 0);
+					Integer mvalue = new Integer(masterValue.equals("true") ? 1 : 0); //$NON-NLS-1$
 					fValues.put(shortKey, mvalue);
 				}
 			} else {
 				desc = createTextPropertyDescriptor(shortKey, value);
-				fDvalues.put(shortKey, value != null ? value : "");
+				fDvalues.put(shortKey, value != null ? value : ""); //$NON-NLS-1$
 				if (masterValue != null) {
 					fValues.put(shortKey, masterValue);
 				}

@@ -23,7 +23,7 @@ public class JUnitWorkbenchShortcut extends JUnitLaunchShortcut {
 	 */
 	protected ILaunchConfigurationType getJUnitLaunchConfigType() {
 		ILaunchManager lm= DebugPlugin.getDefault().getLaunchManager();
-		return lm.getLaunchConfigurationType("org.eclipse.pde.ui.JunitLaunchConfig");		
+		return lm.getLaunchConfigurationType("org.eclipse.pde.ui.JunitLaunchConfig");		 //$NON-NLS-1$
 	}
 	
 	protected ILaunchConfiguration createConfiguration(
@@ -32,15 +32,15 @@ public class JUnitWorkbenchShortcut extends JUnitLaunchShortcut {
 		try {
 			ILaunchConfigurationType configType= getJUnitLaunchConfigType();
 			ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, getLaunchManager().generateUniqueLaunchConfigurationNameFrom(name));
-			wc.setAttribute(ILauncherSettings.LOCATION + "0", getDefaultWorkspaceLocation());
-			wc.setAttribute(ILauncherSettings.VMARGS, "");
+			wc.setAttribute(ILauncherSettings.LOCATION + "0", getDefaultWorkspaceLocation()); //$NON-NLS-1$
+			wc.setAttribute(ILauncherSettings.VMARGS, ""); //$NON-NLS-1$
 			wc.setAttribute(ILauncherSettings.PROGARGS, LauncherUtils.getDefaultProgramArguments());
 			wc.setAttribute(ILauncherSettings.USECUSTOM, true);
 			wc.setAttribute(ILauncherSettings.DOCLEAR, true);
 			wc.setAttribute(ILauncherSettings.ASKCLEAR, false);
 			wc.setAttribute(
 				IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER,
-				"org.eclipse.pde.ui.workbenchClasspathProvider");
+				"org.eclipse.pde.ui.workbenchClasspathProvider"); //$NON-NLS-1$
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, project.getElementName());
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, mainType);
 			wc.setAttribute(JUnitBaseLaunchConfiguration.ATTR_KEEPRUNNING, false);
@@ -55,7 +55,7 @@ public class JUnitWorkbenchShortcut extends JUnitLaunchShortcut {
 	}
 	
 	protected String getDefaultWorkspaceLocation() {
-		return LauncherUtils.getDefaultPath().append("junit-workbench-workspace").toOSString();				
+		return LauncherUtils.getDefaultPath().append("junit-workbench-workspace").toOSString();				 //$NON-NLS-1$
 	}
 	
 }

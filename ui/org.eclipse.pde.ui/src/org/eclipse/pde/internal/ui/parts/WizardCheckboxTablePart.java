@@ -22,10 +22,10 @@ import org.eclipse.pde.internal.ui.util.SWTUtil;
  * @author
  */
 public class WizardCheckboxTablePart extends CheckboxTablePart {
-	public static final String KEY_SELECT_ALL = "WizardCheckboxTablePart.selectAll";
+	public static final String KEY_SELECT_ALL = "WizardCheckboxTablePart.selectAll"; //$NON-NLS-1$
 	public static final String KEY_DESELECT_ALL =
-		"WizardCheckboxTablePart.deselectAll";
-	public static final String KEY_COUNTER = "WizardCheckboxTablePart.counter";
+		"WizardCheckboxTablePart.deselectAll"; //$NON-NLS-1$
+	public static final String KEY_COUNTER = "WizardCheckboxTablePart.counter"; //$NON-NLS-1$
 
 	private int selectAllIndex = -1;
 	private int deselectAllIndex = -1;
@@ -128,8 +128,8 @@ public class WizardCheckboxTablePart extends CheckboxTablePart {
 	}
 
 	protected void updateCounterLabel() {
-		String number = "" + getSelectionCount();
-		String totalNumber = "" + getTotalCount();
+		String number = "" + getSelectionCount(); //$NON-NLS-1$
+		String totalNumber = "" + getTotalCount(); //$NON-NLS-1$
 		String message =
 			PDEPlugin.getFormattedMessage(
 				KEY_COUNTER,

@@ -24,7 +24,7 @@ public class NewTracingPropertySource {
 	private Hashtable fTemplate;
 	private Hashtable fValues;
 	private Hashtable fDvalues;
-	private static final String[] fBooleanChoices = {"false", "true"};
+	private static final String[] fBooleanChoices = {"false", "true"}; //$NON-NLS-1$ //$NON-NLS-2$
 	private Properties fMasterOptions;
 	private boolean fModified;
 	private NewTracingLauncherTab fTab;
@@ -86,7 +86,7 @@ public class NewTracingPropertySource {
 			TableWrapData td = new TableWrapData();
 			td.valign = TableWrapData.MIDDLE;
 			label.setLayoutData(td);
-			text = fTab.getToolkit().createText(parent, "");
+			text = fTab.getToolkit().createText(parent, ""); //$NON-NLS-1$
 			td = new TableWrapData(TableWrapData.FILL_GRAB);
 			//gd.widthHint = 100;
 			text.setLayoutData(td);
@@ -170,19 +170,19 @@ public class NewTracingPropertySource {
 			if (value != null)
 				lvalue = value.toLowerCase();
 			if (lvalue != null
-					&& (lvalue.equals("true") || lvalue.equals("false"))) {
+					&& (lvalue.equals("true") || lvalue.equals("false"))) { //$NON-NLS-1$ //$NON-NLS-2$
 				editor = new BooleanEditor(shortKey, shortKey);
-				Integer dvalue = new Integer(lvalue.equals("true") ? 1 : 0);
+				Integer dvalue = new Integer(lvalue.equals("true") ? 1 : 0); //$NON-NLS-1$
 				fDvalues.put(shortKey, dvalue);
 				if (masterValue != null) {
-					Integer mvalue = new Integer(masterValue.equals("true")
+					Integer mvalue = new Integer(masterValue.equals("true") //$NON-NLS-1$
 							? 1
 							: 0);
 					fValues.put(shortKey, mvalue);
 				}
 			} else {
 				editor = new TextEditor(shortKey, shortKey);
-				fDvalues.put(shortKey, value != null ? value : "");
+				fDvalues.put(shortKey, value != null ? value : ""); //$NON-NLS-1$
 				if (masterValue != null) {
 					fValues.put(shortKey, masterValue);
 				}

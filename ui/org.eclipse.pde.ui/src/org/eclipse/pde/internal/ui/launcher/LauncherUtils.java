@@ -17,19 +17,19 @@ import org.eclipse.swt.widgets.*;
 
 public class LauncherUtils {
 	private static final String KEY_MISSING_REQUIRED =
-		"WorkbenchLauncherConfigurationDelegate.missingRequired";
+		"WorkbenchLauncherConfigurationDelegate.missingRequired"; //$NON-NLS-1$
 	private static final String KEY_BROKEN_PLUGINS =
-		"WorkbenchLauncherConfigurationDelegate.brokenPlugins";
+		"WorkbenchLauncherConfigurationDelegate.brokenPlugins"; //$NON-NLS-1$
 	private static final String KEY_NO_JRE =
-		"WorkbenchLauncherConfigurationDelegate.noJRE";
+		"WorkbenchLauncherConfigurationDelegate.noJRE"; //$NON-NLS-1$
 	private static final String KEY_JRE_PATH_NOT_FOUND =
-		"WorkbenchLauncherConfigurationDelegate.jrePathNotFound";
+		"WorkbenchLauncherConfigurationDelegate.jrePathNotFound"; //$NON-NLS-1$
 	private static final String KEY_PROBLEMS_DELETING =
-		"WorkbenchLauncherConfigurationDelegate.problemsDeleting";
+		"WorkbenchLauncherConfigurationDelegate.problemsDeleting"; //$NON-NLS-1$
 	private static final String KEY_TITLE =
-		"WorkbenchLauncherConfigurationDelegate.title";
+		"WorkbenchLauncherConfigurationDelegate.title"; //$NON-NLS-1$
 	private static final String KEY_DELETE_WORKSPACE =
-		"WorkbenchLauncherConfigurationDelegate.confirmDeleteWorkspace";
+		"WorkbenchLauncherConfigurationDelegate.confirmDeleteWorkspace"; //$NON-NLS-1$
 
 	public static IVMInstall[] getAllVMInstances() {
 		ArrayList res = new ArrayList();
@@ -75,11 +75,11 @@ public class LauncherUtils {
 		String ws = TargetPlatform.getWS();
 		String arch = TargetPlatform.getOSArch();
 		String nl = TargetPlatform.getNL();
-		return "-os " + os + " -ws " + ws + " -arch " + arch + " -nl " + nl;
+		return "-os " + os + " -ws " + ws + " -arch " + arch + " -nl " + nl; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
 	
 	public static String getDefaultWorkspace() {
-		return getDefaultPath().append("runtime-workspace").toOSString();
+		return getDefaultPath().append("runtime-workspace").toOSString(); //$NON-NLS-1$
 	}
 	
 	public static IPath getDefaultPath() {
@@ -125,14 +125,14 @@ public class LauncherUtils {
 		
 		ArrayList entries = new ArrayList();
 		entries.add(jarPath);
-		StringTokenizer tok = new StringTokenizer(configuration.getAttribute(ILauncherSettings.BOOTSTRAP_ENTRIES, ""), ",");
+		StringTokenizer tok = new StringTokenizer(configuration.getAttribute(ILauncherSettings.BOOTSTRAP_ENTRIES, ""), ","); //$NON-NLS-1$ //$NON-NLS-2$
 		while (tok.hasMoreTokens())
 			entries.add(tok.nextToken().trim());
 		return (String[])entries.toArray(new String[entries.size()]);
 	}
 	
 	private static String getStartupJarPath() throws CoreException {
-		IPlugin plugin = PDECore.getDefault().findPlugin("org.eclipse.platform");
+		IPlugin plugin = PDECore.getDefault().findPlugin("org.eclipse.platform"); //$NON-NLS-1$
 		if (plugin != null && plugin.getModel().getUnderlyingResource() != null) {
 			IProject project = plugin.getModel().getUnderlyingResource().getProject();
 			if (project.hasNature(JavaCore.NATURE_ID)) {
@@ -145,11 +145,11 @@ public class LauncherUtils {
 					}
 				}
 			}
-			if (project.getFile("startup.jar").exists())
-				return project.getFile("startup.jar").getLocation().toOSString();
+			if (project.getFile("startup.jar").exists()) //$NON-NLS-1$
+				return project.getFile("startup.jar").getLocation().toOSString(); //$NON-NLS-1$
 		}
 		File startupJar =
-			ExternalModelManager.getEclipseHome().append("startup.jar").toFile();
+			ExternalModelManager.getEclipseHome().append("startup.jar").toFile(); //$NON-NLS-1$
 		
 		return startupJar.exists() ? startupJar.getAbsolutePath() : null;
 	}
@@ -157,7 +157,7 @@ public class LauncherUtils {
 	public static String getBuildOutputFolders() {
 		IPluginModelBase[] wsmodels = PDECore.getDefault().getWorkspaceModelManager().getAllModels();
 		ArrayList result = new ArrayList();
-		result.add(new Path("bin"));
+		result.add(new Path("bin")); //$NON-NLS-1$
 		for (int i = 0; i < wsmodels.length; i++) {
 			addOutputLocations(result, wsmodels[i]);
 		}
@@ -165,7 +165,7 @@ public class LauncherUtils {
 		for (int i = 0; i < result.size(); i++) {
 			buffer.append(result.get(i).toString());
 			if (i < result.size() -1)
-				buffer.append(",");
+				buffer.append(","); //$NON-NLS-1$
 		}
 		return buffer.toString();
 	}
@@ -207,7 +207,7 @@ public class LauncherUtils {
 			map = validatePlugins(PDECore.getDefault().getModelManager().getPlugins(), statusEntries);
 
 		StringBuffer errorText = new StringBuffer();		
-		final String lineSeparator = System.getProperty("line.separator");
+		final String lineSeparator = System.getProperty("line.separator"); //$NON-NLS-1$
 		
 		HashMap autoStart = getAutoStartPlugins(config);
 		Iterator iter = autoStart.keySet().iterator();
@@ -253,27 +253,27 @@ public class LauncherUtils {
 	public static HashMap getAutoStartPlugins(ILaunchConfiguration config) {
 		HashMap list = new HashMap();
 		if (!PDECore.getDefault().getModelManager().isOSGiRuntime()) {
-			list.put("org.eclipse.core.boot", new Integer(0));
+			list.put("org.eclipse.core.boot", new Integer(0)); //$NON-NLS-1$
 		} else {
 			try {
-				list.put("org.eclipse.osgi", new Integer(0));
+				list.put("org.eclipse.osgi", new Integer(0)); //$NON-NLS-1$
 				String bundles = null;
 				if (config.getAttribute(ILauncherSettings.CONFIG_USE_DEFAULT, true)) {
-					Properties prop = getConfigIniProperties(ExternalModelManager.getEclipseHome().toOSString(), "configuration/config.ini");
+					Properties prop = getConfigIniProperties(ExternalModelManager.getEclipseHome().toOSString(), "configuration/config.ini"); //$NON-NLS-1$
 					if (prop != null)
-						bundles = prop.getProperty("osgi.bundles");
+						bundles = prop.getProperty("osgi.bundles"); //$NON-NLS-1$
 					if (prop == null || bundles == null) {
 						String path = getOSGiPath();
 						if (path != null)
-							prop = getConfigIniProperties(path, "eclipse.properties");
+							prop = getConfigIniProperties(path, "eclipse.properties"); //$NON-NLS-1$
 						if (prop != null)
-							bundles = prop.getProperty("osgi.bundles");
+							bundles = prop.getProperty("osgi.bundles"); //$NON-NLS-1$
 					} 
 				} else {
-					bundles = config.getAttribute(ILauncherSettings.CONFIG_AUTO_START, "");
+					bundles = config.getAttribute(ILauncherSettings.CONFIG_AUTO_START, ""); //$NON-NLS-1$
 				}
 				if (bundles != null) {
-					StringTokenizer tokenizer = new StringTokenizer(bundles, ",");
+					StringTokenizer tokenizer = new StringTokenizer(bundles, ","); //$NON-NLS-1$
 					while (tokenizer.hasMoreTokens()) {
 						String token = tokenizer.nextToken().trim();
 						int index = token.indexOf('@');
@@ -288,7 +288,7 @@ public class LauncherUtils {
 	}
 	
 	private static String getOSGiPath() {
-		ModelEntry entry = PDECore.getDefault().getModelManager().findEntry("org.eclipse.osgi");
+		ModelEntry entry = PDECore.getDefault().getModelManager().findEntry("org.eclipse.osgi"); //$NON-NLS-1$
 		if (entry != null) {
 			IPluginModelBase model = entry.getActiveModel();
 			if (model.getUnderlyingResource() != null) {
@@ -300,7 +300,7 @@ public class LauncherUtils {
 	}
 	
 	private static Integer getStartLevel(String text) {
-		StringTokenizer tok = new StringTokenizer(text, ":");
+		StringTokenizer tok = new StringTokenizer(text, ":"); //$NON-NLS-1$
 		while (tok.hasMoreTokens()) {
 			String token = tok.nextToken().trim();
 			try {
@@ -315,8 +315,8 @@ public class LauncherUtils {
 		TreeMap map = new TreeMap();
 		addPluginAndPrereqs(id, map);
 		if (!PDECore.getDefault().getModelManager().isOSGiRuntime()) {
-			addPluginAndPrereqs("org.eclipse.core.boot", map);
-			addPluginAndPrereqs("org.eclipse.core.runtime", map);
+			addPluginAndPrereqs("org.eclipse.core.boot", map); //$NON-NLS-1$
+			addPluginAndPrereqs("org.eclipse.core.runtime", map); //$NON-NLS-1$
 		}
 		
 		return (IPluginModelBase[])map.values().toArray(new IPluginModelBase[map.size()]);
@@ -420,9 +420,9 @@ public class LauncherUtils {
 			if (resource != null) {
 				IProject project = resource.getProject();
 				if (project.hasNature(JavaCore.NATURE_ID)) {
-					resource = project.findMember("boot.jar");
+					resource = project.findMember("boot.jar"); //$NON-NLS-1$
 					if (resource != null)
-						return "file:" + resource.getLocation().toOSString();
+						return "file:" + resource.getLocation().toOSString(); //$NON-NLS-1$
 					IPath path = JavaCore.create(project).getOutputLocation();
 					if (path != null) {
 						IPath sourceBootPath =
@@ -431,9 +431,9 @@ public class LauncherUtils {
 					}
 				}
 			} else {
-				File bootJar = new File(bootModel.getInstallLocation(), "boot.jar");
+				File bootJar = new File(bootModel.getInstallLocation(), "boot.jar"); //$NON-NLS-1$
 				if (bootJar.exists())
-					return "file:" + bootJar.getAbsolutePath();
+					return "file:" + bootJar.getAbsolutePath(); //$NON-NLS-1$
 			}
 		} catch (CoreException e) {
 		}
@@ -506,7 +506,7 @@ public class LauncherUtils {
 		// set source path provider on pre-2.1 configurations
 		String id = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, (String) null);
 		if (id == null) 
-			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, "org.eclipse.pde.ui.workbenchClasspathProvider");
+			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, "org.eclipse.pde.ui.workbenchClasspathProvider"); //$NON-NLS-1$
 		
 		if (locator != null || id == null)
 			wc.doSave();
@@ -578,7 +578,7 @@ public class LauncherUtils {
 				}
 			}
 		} catch (IOException e) {
-			showWarningDialog(PDEPlugin.getResourceString("LauncherUtils.problemsDeletingConfig"));
+			showWarningDialog(PDEPlugin.getResourceString("LauncherUtils.problemsDeletingConfig")); //$NON-NLS-1$
 		}
 	}
 	
@@ -607,42 +607,42 @@ public class LauncherUtils {
 				mng.save(optionsFileName, options);
 			} else if (!selected.equals(ILauncherSettings.TRACING_NONE)) {
 				HashSet result = new HashSet();
-				StringTokenizer tokenizer = new StringTokenizer(selected, ",");
+				StringTokenizer tokenizer = new StringTokenizer(selected, ","); //$NON-NLS-1$
 				while (tokenizer.hasMoreTokens()) {
 					result.add(tokenizer.nextToken());
 				}
 				mng.save(optionsFileName, options, result);
 			}
 		} catch (CoreException e) {
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 
-		String tracingArg = "file:" + optionsFileName;
-		if (SWT.getPlatform().equals("motif"))
-			tracingArg = "file:" + optionsFileName;
+		String tracingArg = "file:" + optionsFileName; //$NON-NLS-1$
+		if (SWT.getPlatform().equals("motif")) //$NON-NLS-1$
+			tracingArg = "file:" + optionsFileName; //$NON-NLS-1$
 		// defect 17661
-		else if (SWT.getPlatform().equals("gtk"))
-			tracingArg = "file://localhost" + optionsFileName;
+		else if (SWT.getPlatform().equals("gtk")) //$NON-NLS-1$
+			tracingArg = "file://localhost" + optionsFileName; //$NON-NLS-1$
 
 		return tracingArg;
 	}
 
 	public static String getPrimaryFeatureId() {
 		boolean isOSGi = PDECore.getDefault().getModelManager().isOSGiRuntime();
-		String filename = isOSGi ? "configuration/config.ini" : "install.ini";		
+		String filename = isOSGi ? "configuration/config.ini" : "install.ini";		 //$NON-NLS-1$ //$NON-NLS-2$
 		Properties properties = getConfigIniProperties(ExternalModelManager.getEclipseHome().toOSString(), filename);		
 
-		String property = isOSGi ? "eclipse.product" : "feature.default.id";
+		String property = isOSGi ? "eclipse.product" : "feature.default.id"; //$NON-NLS-1$ //$NON-NLS-2$
 		return (properties == null) ? null : properties.getProperty(property);
 	}
 
 	public static String getDefaultApplicationName() {
 		if (!PDECore.getDefault().getModelManager().isOSGiRuntime())
-			return "org.eclipse.ui.workbench";
+			return "org.eclipse.ui.workbench"; //$NON-NLS-1$
 		
-		Properties properties = getConfigIniProperties(ExternalModelManager.getEclipseHome().toOSString(), "configuration/config.ini");
-		String appName = (properties != null) ? properties.getProperty("eclipse.application") : null;
-		return (appName != null) ? appName : "org.eclipse.ui.ide.workbench";
+		Properties properties = getConfigIniProperties(ExternalModelManager.getEclipseHome().toOSString(), "configuration/config.ini"); //$NON-NLS-1$
+		String appName = (properties != null) ? properties.getProperty("eclipse.application") : null; //$NON-NLS-1$
+		return (appName != null) ? appName : "org.eclipse.ui.ide.workbench"; //$NON-NLS-1$
 	}
 	
 	public static Properties getConfigIniProperties(String directory, String filename) {

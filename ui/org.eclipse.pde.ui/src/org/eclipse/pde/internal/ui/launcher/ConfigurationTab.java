@@ -51,7 +51,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 			container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			
 			Label label = new Label(container, SWT.NONE);
-			label.setText(PDEPlugin.getResourceString("ConfigurationTab.startLevel"));
+			label.setText(PDEPlugin.getResourceString("ConfigurationTab.startLevel")); //$NON-NLS-1$
 			
 			startLevelText = new Text(container, SWT.SINGLE|SWT.BORDER);
 			startLevelText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));			
@@ -119,10 +119,10 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 				switch (columnIndex) {
 					case 0:
 						IPluginBase plugin = entry.model.getPluginBase();
-						return plugin.getId() + " (" + plugin.getVersion() + ")";
+						return plugin.getId() + " (" + plugin.getVersion() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 					case 1:
 						int start = entry.startLevel.intValue();
-						return (start > 0) ? entry.startLevel.toString() : PDEPlugin.getResourceString("ConfigurationTab.unspecified");
+						return (start > 0) ? entry.startLevel.toString() : PDEPlugin.getResourceString("ConfigurationTab.unspecified"); //$NON-NLS-1$
 				}
 			}
 			return null;
@@ -136,17 +136,17 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 	
 	private void initializeDefaultPlugins() {
 		fPluginList.clear();
-		IPluginModelBase model = getPlugin("org.eclipse.core.runtime");
+		IPluginModelBase model = getPlugin("org.eclipse.core.runtime"); //$NON-NLS-1$
 		if (model != null)
 			fPluginList.add(new Entry(model, 2));
-		model = getPlugin("org.eclipse.update.configurator");
+		model = getPlugin("org.eclipse.update.configurator"); //$NON-NLS-1$
 		if (model != null)
 			fPluginList.add(new Entry(model, 3));
 	}
 	
 	private void initializePlugins(String selected) {
 		fPluginList.clear();
-		StringTokenizer tokenizer = new StringTokenizer(selected, ",");
+		StringTokenizer tokenizer = new StringTokenizer(selected, ","); //$NON-NLS-1$
 		while (tokenizer.hasMoreTokens()) {
 			String token = tokenizer.nextToken().trim();
 			String id = token.substring(0,token.indexOf('@'));
@@ -174,7 +174,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 		createStartingSpace(container, 1);
 		
 		Label label = new Label(container, SWT.WRAP);
-		label.setText(PDEPlugin.getResourceString("ConfigurationTab.listLabel"));
+		label.setText(PDEPlugin.getResourceString("ConfigurationTab.listLabel")); //$NON-NLS-1$
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 300;
 		label.setLayoutData(gd);
@@ -190,7 +190,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 		createButtonContainer(middle);
 		
 		fUseDefault = new Button(container, SWT.CHECK);
-		fUseDefault.setText(PDEPlugin.getResourceString("ConfigurationTab.defaultList"));
+		fUseDefault.setText(PDEPlugin.getResourceString("ConfigurationTab.defaultList")); //$NON-NLS-1$
 		fUseDefault.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (fUseDefault.getSelection()) {
@@ -203,7 +203,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 		});
 		
 		fClearConfig = new Button(container, SWT.CHECK);
-		fClearConfig.setText(PDEPlugin.getResourceString("ConfigurationTab.clearArea"));
+		fClearConfig.setText(PDEPlugin.getResourceString("ConfigurationTab.clearArea")); //$NON-NLS-1$
 		fClearConfig.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
@@ -216,9 +216,9 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 	private void createViewer(Composite container) {
 		Table table = new Table(container, SWT.BORDER|SWT.FULL_SELECTION);
 		TableColumn column1 = new TableColumn(table, SWT.NONE);
-		column1.setText("Plug-in ID");
+		column1.setText(PDEPlugin.getResourceString("ConfigurationTab.col1")); //$NON-NLS-1$
 		TableColumn column2 = new TableColumn(table, SWT.NONE);
-		column2.setText("Start Level");
+		column2.setText(PDEPlugin.getResourceString("ConfigurationTab.col2")); //$NON-NLS-1$
 		table.setHeaderVisible(true);
 		
 		TableLayout layout = new TableLayout();
@@ -249,7 +249,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 		container.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 		
 		fAddButton = new Button(container, SWT.PUSH);
-		fAddButton.setText(PDEPlugin.getResourceString("ConfigurationTab.add"));
+		fAddButton.setText(PDEPlugin.getResourceString("ConfigurationTab.add")); //$NON-NLS-1$
 		fAddButton.setLayoutData(new GridData());
 		SWTUtil.setButtonDimensionHint(fAddButton);
 		fAddButton.addSelectionListener(new SelectionAdapter() {
@@ -268,7 +268,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 		});
 		
 		fRemoveButton = new Button(container, SWT.PUSH);
-		fRemoveButton.setText(PDEPlugin.getResourceString("ConfigurationTab.remove"));
+		fRemoveButton.setText(PDEPlugin.getResourceString("ConfigurationTab.remove")); //$NON-NLS-1$
 		fRemoveButton.setLayoutData(new GridData());
 		SWTUtil.setButtonDimensionHint(fRemoveButton);
 		fRemoveButton.addSelectionListener(new SelectionAdapter() {
@@ -309,7 +309,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 			if (useDefault)
 				initializeDefaultPlugins();
 			else
-				initializePlugins(configuration.getAttribute(CONFIG_AUTO_START, ""));
+				initializePlugins(configuration.getAttribute(CONFIG_AUTO_START, "")); //$NON-NLS-1$
 			fUseDefault.setSelection(useDefault);
 			enableButtons(!useDefault);
 			fClearConfig.setSelection(configuration.getAttribute(CONFIG_CLEAR, true));
@@ -335,7 +335,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 			for (int i = 0; i < fPluginList.size(); i++) {
 				Entry entry = (Entry)fPluginList.get(i);
 				IPluginModelBase model = entry.model;
-				buffer.append(model.getPluginBase().getId() + "@" + entry.startLevel);
+				buffer.append(model.getPluginBase().getId() + "@" + entry.startLevel); //$NON-NLS-1$
 				if (i < fPluginList.size() - 1)
 					buffer.append(',');
 			}
@@ -348,7 +348,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return PDEPlugin.getResourceString("ConfigurationTab.name");
+		return PDEPlugin.getResourceString("ConfigurationTab.name"); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)

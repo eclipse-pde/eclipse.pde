@@ -21,7 +21,7 @@ public Image getImage() {
 	return null;
 }
 public String getLabel() {
-	return "";
+	return ""; //$NON-NLS-1$
 }
 public Object getParent() {
 	return null;

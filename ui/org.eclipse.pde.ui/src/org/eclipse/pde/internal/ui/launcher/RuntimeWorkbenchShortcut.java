@@ -132,13 +132,13 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 			String computedName = getComputedName(configType.getName());
 			ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, computedName);  //$NON-NLS-1$
 			wc.setAttribute(ILauncherSettings.LOCATION + "0", getDefaultWorkspaceLocation()); //$NON-NLS-1$
-			wc.setAttribute(ILauncherSettings.VMARGS, "");
+			wc.setAttribute(ILauncherSettings.VMARGS, ""); //$NON-NLS-1$
 			wc.setAttribute(ILauncherSettings.PROGARGS, LauncherUtils.getDefaultProgramArguments());
 			wc.setAttribute(ILauncherSettings.USECUSTOM, true);
 			wc.setAttribute(ILauncherSettings.USEFEATURES, false);
 			wc.setAttribute(
 				IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER,
-				"org.eclipse.pde.ui.workbenchClasspathProvider");
+				"org.eclipse.pde.ui.workbenchClasspathProvider"); //$NON-NLS-1$
 			wc.setAttribute(ILauncherSettings.DOCLEAR, false);
 			wc.setAttribute(ILauncherSettings.ASKCLEAR, true);
 			config= wc.doSave();		
@@ -170,7 +170,7 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 	}
 	
 	private String getDefaultWorkspaceLocation() {
-		return LauncherUtils.getDefaultPath().append("runtime-workbench-workspace").toOSString();				
+		return LauncherUtils.getDefaultPath().append("runtime-workbench-workspace").toOSString();				 //$NON-NLS-1$
 	}
 	
 }

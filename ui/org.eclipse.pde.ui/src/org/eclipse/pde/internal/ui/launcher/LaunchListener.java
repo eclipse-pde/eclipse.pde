@@ -134,8 +134,8 @@ public class LaunchListener
 					public void run() {
 						MessageDialog.openError(
 							PDEPlugin.getActiveWorkbenchShell(),
-							PDEPlugin.getResourceString("Launcher.error.title"),
-							PDEPlugin.getResourceString("Launcher.error.code15"));
+							PDEPlugin.getResourceString("Launcher.error.title"), //$NON-NLS-1$
+							PDEPlugin.getResourceString("Launcher.error.code15")); //$NON-NLS-1$
 					}
 				});
 				return;
@@ -149,8 +149,8 @@ public class LaunchListener
 							File log = getMostRecentLogFile(launch);
 							if (log != null && MessageDialog.openQuestion(
 								PDEPlugin.getActiveWorkbenchShell(),
-								PDEPlugin.getResourceString("Launcher.error.title"),
-								PDEPlugin.getResourceString("Launcher.error.code13"))) {
+								PDEPlugin.getResourceString("Launcher.error.title"), //$NON-NLS-1$
+								PDEPlugin.getResourceString("Launcher.error.code13"))) { //$NON-NLS-1$
 									Program.launch(log.getAbsolutePath());
 							}
 						} catch (CoreException e) {
@@ -164,9 +164,9 @@ public class LaunchListener
 	private File getMostRecentLogFile(ILaunch launch) throws CoreException {
 		File latest = null;
 		
-		String workspace = launch.getLaunchConfiguration().getAttribute(ILauncherSettings.LOCATION + "0", "");
+		String workspace = launch.getLaunchConfiguration().getAttribute(ILauncherSettings.LOCATION + "0", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (workspace.length() > 0) {
-			latest = new File(workspace, ".metadata/.log");
+			latest = new File(workspace, ".metadata/.log"); //$NON-NLS-1$
 			if (!latest.exists())
 				latest = null;
 		}
@@ -177,7 +177,7 @@ public class LaunchListener
 			File[] children = configDir.listFiles();
 			if (children != null) {
 				for (int i = 0; i < children.length; i++) {
-					if (!children[i].isDirectory() && children[i].getName().endsWith(".log")) {
+					if (!children[i].isDirectory() && children[i].getName().endsWith(".log")) { //$NON-NLS-1$
 						if (latest == null || latest.lastModified() < children[i].lastModified())
 							latest = children[i];
 					}

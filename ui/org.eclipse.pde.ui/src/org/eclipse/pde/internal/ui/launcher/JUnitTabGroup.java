@@ -48,7 +48,7 @@ public class JUnitTabGroup extends AbstractLaunchConfigurationTabGroup {
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		super.setDefaults(config); 
-		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, "org.eclipse.pde.ui.workbenchClasspathProvider");
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, "org.eclipse.pde.ui.workbenchClasspathProvider"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -70,7 +70,7 @@ public class JUnitTabGroup extends AbstractLaunchConfigurationTabGroup {
 							(ILaunchConfigurationWorkingCopy) config;
 						wc.setAttribute(
 							IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER,
-							"org.eclipse.pde.ui.workbenchClasspathProvider");
+							"org.eclipse.pde.ui.workbenchClasspathProvider"); //$NON-NLS-1$
 					}
 				} catch (CoreException e) {
 				}

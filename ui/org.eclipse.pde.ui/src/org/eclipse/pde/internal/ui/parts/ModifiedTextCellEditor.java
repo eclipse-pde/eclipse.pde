@@ -22,7 +22,7 @@ public class ModifiedTextCellEditor extends TextCellEditor {
 	
 	protected void doSetValue(Object object) {
 		// Workaround for 32926
-		if (object==null) object = "";
+		if (object==null) object = ""; //$NON-NLS-1$
 		super.doSetValue(object);
 	}
 	public Control createControl(Composite parent) {

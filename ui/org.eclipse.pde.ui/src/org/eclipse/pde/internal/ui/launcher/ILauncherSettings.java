@@ -12,38 +12,38 @@ package org.eclipse.pde.internal.ui.launcher;
 
 public interface ILauncherSettings {
 	// Workspace data settings
-	String LOCATION = "location";
-	String DOCLEAR = "clearws";
-	String ASKCLEAR = "askclear";
+	String LOCATION = "location"; //$NON-NLS-1$
+	String DOCLEAR = "clearws"; //$NON-NLS-1$
+	String ASKCLEAR = "askclear"; //$NON-NLS-1$
 	
 	// Command line settings
-	String VMINSTALL = "vminstall";
-	String APPLICATION = "application";
-	String APP_TO_TEST = "testApplication";
-	String VMARGS = "vmargs";
-	String PROGARGS = "progargs";
-	String CLASSPATH_ENTRIES = "classpath";
-	String BOOTSTRAP_ENTRIES = "bootstrap";
+	String VMINSTALL = "vminstall"; //$NON-NLS-1$
+	String APPLICATION = "application"; //$NON-NLS-1$
+	String APP_TO_TEST = "testApplication"; //$NON-NLS-1$
+	String VMARGS = "vmargs"; //$NON-NLS-1$
+	String PROGARGS = "progargs"; //$NON-NLS-1$
+	String CLASSPATH_ENTRIES = "classpath"; //$NON-NLS-1$
+	String BOOTSTRAP_ENTRIES = "bootstrap"; //$NON-NLS-1$
 	
 	// Plug-ins and Fragments settings
-	String USECUSTOM = "default";
-	String USEFEATURES = "usefeatures";
-	String WSPROJECT = "wsproject";
-	String EXTPLUGINS = "extplugins";
+	String USECUSTOM = "default"; //$NON-NLS-1$
+	String USEFEATURES = "usefeatures"; //$NON-NLS-1$
+	String WSPROJECT = "wsproject"; //$NON-NLS-1$
+	String EXTPLUGINS = "extplugins"; //$NON-NLS-1$
 	
 	// Tracing settings
-	String TRACING = "tracing";
-	String TRACING_OPTIONS = "tracingOptions";
-	String TRACING_SELECTED_PLUGIN = "selectedPlugin";
-	String TRACING_CHECKED = "checked";
-	String TRACING_NONE = "[NONE]";
+	String TRACING = "tracing"; //$NON-NLS-1$
+	String TRACING_OPTIONS = "tracingOptions"; //$NON-NLS-1$
+	String TRACING_SELECTED_PLUGIN = "selectedPlugin"; //$NON-NLS-1$
+	String TRACING_CHECKED = "checked"; //$NON-NLS-1$
+	String TRACING_NONE = "[NONE]"; //$NON-NLS-1$
 	
 	// Configuration tab
-	String CONFIG_USE_DEFAULT = "useDefaultConfig";
-	String CONFIG_AUTO_START = "autoStartList";
-	String CONFIG_CLEAR = "clearConfig";
+	String CONFIG_USE_DEFAULT = "useDefaultConfig"; //$NON-NLS-1$
+	String CONFIG_AUTO_START = "autoStartList"; //$NON-NLS-1$
+	String CONFIG_CLEAR = "clearConfig"; //$NON-NLS-1$
 		
 	// config file location
-	String CONFIG_LOCATION = "configLocation";
+	String CONFIG_LOCATION = "configLocation"; //$NON-NLS-1$
 	
 }

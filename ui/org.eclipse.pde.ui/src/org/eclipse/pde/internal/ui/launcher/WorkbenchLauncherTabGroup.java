@@ -65,7 +65,7 @@ public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 							(ILaunchConfigurationWorkingCopy) config;
 						wc.setAttribute(
 							IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER,
-							"org.eclipse.pde.ui.workbenchClasspathProvider");
+							"org.eclipse.pde.ui.workbenchClasspathProvider"); //$NON-NLS-1$
 					}
 				} catch (CoreException e) {
 				}
@@ -83,7 +83,7 @@ public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		super.setDefaults(configuration);
 		configuration.setAttribute(
 			IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER,
-			"org.eclipse.pde.ui.workbenchClasspathProvider");
+			"org.eclipse.pde.ui.workbenchClasspathProvider"); //$NON-NLS-1$
 	}
 
 }

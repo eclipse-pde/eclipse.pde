@@ -33,7 +33,7 @@ public class BasicLauncherTab
 	extends AbstractLauncherTab
 	implements ILauncherSettings {
 
-	private static final String KEY_NAME = "BasicLauncherTab.name";
+	private static final String KEY_NAME = "BasicLauncherTab.name"; //$NON-NLS-1$
 	
 	private Combo fWorkspaceCombo;
 	private Button fBrowseButton;
@@ -57,8 +57,8 @@ public class BasicLauncherTab
 	private Text fBootstrap;
 
 	public BasicLauncherTab() {
-		fJreSelectionStatus = createStatus(IStatus.OK, "");
-		fWorkspaceSelectionStatus = createStatus(IStatus.OK, "");
+		fJreSelectionStatus = createStatus(IStatus.OK, ""); //$NON-NLS-1$
+		fWorkspaceSelectionStatus = createStatus(IStatus.OK, ""); //$NON-NLS-1$
 		fImage = PDEPluginImages.DESC_ARGUMENT_TAB.createImage();
 	}
 
@@ -83,7 +83,7 @@ public class BasicLauncherTab
 	
 	protected void createDefaultsButton(Composite parent) {
 		fDefaultsButton = new Button(parent, SWT.PUSH);
-		fDefaultsButton.setText(PDEPlugin.getResourceString("BasicLauncherTab.restore"));
+		fDefaultsButton.setText(PDEPlugin.getResourceString("BasicLauncherTab.restore")); //$NON-NLS-1$
 		fDefaultsButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		SWTUtil.setButtonDimensionHint(fDefaultsButton);
 		fDefaultsButton.addSelectionListener(new SelectionAdapter() {
@@ -96,14 +96,14 @@ public class BasicLauncherTab
 	
 	protected void createWorkspaceDataSection(Composite composite) {
 		Group group = new Group(composite, SWT.NONE);
-		group.setText(PDEPlugin.getResourceString("BasicLauncherTab.workspace"));
+		group.setText(PDEPlugin.getResourceString("BasicLauncherTab.workspace")); //$NON-NLS-1$
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
 		group.setLayout(layout);
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		Label label = new Label(group, SWT.NULL);
-		label.setText(PDEPlugin.getResourceString("BasicLauncherTab.location"));
+		label.setText(PDEPlugin.getResourceString("BasicLauncherTab.location")); //$NON-NLS-1$
 
 		fWorkspaceCombo = new Combo(group, SWT.DROP_DOWN);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -124,7 +124,7 @@ public class BasicLauncherTab
 		});
 
 		fBrowseButton = new Button(group, SWT.PUSH);
-		fBrowseButton.setText(PDEPlugin.getResourceString("BasicLauncherTab.browse"));
+		fBrowseButton.setText(PDEPlugin.getResourceString("BasicLauncherTab.browse")); //$NON-NLS-1$
 		fBrowseButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		fBrowseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -141,7 +141,7 @@ public class BasicLauncherTab
 		SWTUtil.setButtonDimensionHint(fBrowseButton);
 
 		fClearWorkspaceCheck = new Button(group, SWT.CHECK);
-		fClearWorkspaceCheck.setText(PDEPlugin.getResourceString("BasicLauncherTab.clear"));
+		fClearWorkspaceCheck.setText(PDEPlugin.getResourceString("BasicLauncherTab.clear")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		fClearWorkspaceCheck.setLayoutData(gd);
@@ -153,7 +153,7 @@ public class BasicLauncherTab
 		});
 		
 		fAskClearCheck = new Button(group, SWT.CHECK);
-		fAskClearCheck.setText(PDEPlugin.getResourceString("BasicLauncherTab.askClear"));
+		fAskClearCheck.setText(PDEPlugin.getResourceString("BasicLauncherTab.askClear")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		fAskClearCheck.setLayoutData(gd);
@@ -166,7 +166,7 @@ public class BasicLauncherTab
 	
 	protected void createCommandLineSettingsSection(Composite composite) {
 		Group group = new Group(composite, SWT.NONE);
-		group.setText(PDEPlugin.getResourceString("BasicLauncherTab.commandLineSettings"));
+		group.setText(PDEPlugin.getResourceString("BasicLauncherTab.commandLineSettings")); //$NON-NLS-1$
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		group.setLayout(layout);
@@ -182,7 +182,7 @@ public class BasicLauncherTab
 	
 	protected void createApplicationSection(Composite parent) {
 		Label label = new Label(parent, SWT.NONE);
-		label.setText(PDEPlugin.getResourceString("JUnitArgumentsTab.applicationName"));
+		label.setText(PDEPlugin.getResourceString("JUnitArgumentsTab.applicationName")); //$NON-NLS-1$
 		
 		fApplicationCombo = new Combo(parent, SWT.READ_ONLY|SWT.DROP_DOWN);
 		fApplicationCombo.setItems(getApplicationNames());
@@ -201,9 +201,9 @@ public class BasicLauncherTab
 			IPluginExtension[] extensions = plugins[i].getPluginBase().getExtensions();
 			for (int j = 0; j < extensions.length; j++) {
 				String point = extensions[j].getPoint();
-				if (point != null && point.equals("org.eclipse.core.runtime.applications")) {
-					String id = extensions[j].getPluginBase().getId() + "." + extensions[j].getId();
-					if (id != null && !id.startsWith("org.eclipse.pde.junit.runtime")){
+				if (point != null && point.equals("org.eclipse.core.runtime.applications")) { //$NON-NLS-1$
+					String id = extensions[j].getPluginBase().getId() + "." + extensions[j].getId(); //$NON-NLS-1$
+					if (id != null && !id.startsWith("org.eclipse.pde.junit.runtime")){ //$NON-NLS-1$
 						result.add(id);
 					}
 				}
@@ -218,7 +218,7 @@ public class BasicLauncherTab
 	
 	protected void createJRESection(Composite parent) {
 		Label label = new Label(parent, SWT.NONE);
-		label.setText(PDEPlugin.getResourceString("BasicLauncherTab.jre"));
+		label.setText(PDEPlugin.getResourceString("BasicLauncherTab.jre")); //$NON-NLS-1$
 
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -237,7 +237,7 @@ public class BasicLauncherTab
 		});
 		
 		Button button = new Button(composite, SWT.PUSH);
-		button.setText(PDEPlugin.getResourceString("BasicLauncherTab.installedJREs"));
+		button.setText(PDEPlugin.getResourceString("BasicLauncherTab.installedJREs")); //$NON-NLS-1$
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				String currentVM = fJreCombo.getText();
@@ -272,7 +272,7 @@ public class BasicLauncherTab
 	
 	protected void createVMArgsSection(Composite parent) {
 		Label label = new Label(parent, SWT.NONE);
-		label.setText(PDEPlugin.getResourceString("BasicLauncherTab.vmArgs"));
+		label.setText(PDEPlugin.getResourceString("BasicLauncherTab.vmArgs")); //$NON-NLS-1$
 		
 		fVmArgsText = new Text(parent, SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -288,7 +288,7 @@ public class BasicLauncherTab
 	
 	protected void createProgArgsSection(Composite parent) {
 		Label label = new Label(parent, SWT.NONE);
-		label.setText(PDEPlugin.getResourceString("BasicLauncherTab.programArgs"));
+		label.setText(PDEPlugin.getResourceString("BasicLauncherTab.programArgs")); //$NON-NLS-1$
 
 		fProgArgsText = new Text(parent, SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -304,7 +304,7 @@ public class BasicLauncherTab
 	
 	protected void createDevEntriesSection(Composite parent) {
 		Label label = new Label(parent, SWT.NONE);
-		label.setText(PDEPlugin.getResourceString("BasicLauncherTab.classpath"));
+		label.setText(PDEPlugin.getResourceString("BasicLauncherTab.classpath")); //$NON-NLS-1$
 		
 		fClasspathText = new Text(parent, SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -320,7 +320,7 @@ public class BasicLauncherTab
 	
 	private void createBootstrapEntriesSection(Composite parent) {
 		Label label = new Label(parent, SWT.NONE);
-		label.setText(PDEPlugin.getResourceString("BasicLauncherTab.bootstrap"));
+		label.setText(PDEPlugin.getResourceString("BasicLauncherTab.bootstrap")); //$NON-NLS-1$
 		
 		fBootstrap = new Text(parent, SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -367,10 +367,10 @@ public class BasicLauncherTab
 			
 			// check if the user has entered the -application arg in the program arg field
 			StringTokenizer tokenizer =
-				new StringTokenizer(config.getAttribute(PROGARGS, ""));
+				new StringTokenizer(config.getAttribute(PROGARGS, "")); //$NON-NLS-1$
 			while (tokenizer.hasMoreTokens()) {
 				String token = tokenizer.nextToken();
-				if (token.equals("-application") && tokenizer.hasMoreTokens()) {
+				if (token.equals("-application") && tokenizer.hasMoreTokens()) { //$NON-NLS-1$
 					application = tokenizer.nextToken();
 					break;
 				}
@@ -424,7 +424,7 @@ public class BasicLauncherTab
 	}
 	
 	protected void initializeVMArgsSection(ILaunchConfiguration config) throws CoreException {
-		fVmArgsText.setText(config.getAttribute(VMARGS, ""));		
+		fVmArgsText.setText(config.getAttribute(VMARGS, ""));		 //$NON-NLS-1$
 	}
 	
 	protected void initializeProgArgsSection(ILaunchConfiguration config) throws CoreException {
@@ -436,16 +436,16 @@ public class BasicLauncherTab
 	}
 
 	private void initializeBootstrapEntriesSection(ILaunchConfiguration config) throws CoreException {
-		fBootstrap.setText(config.getAttribute(BOOTSTRAP_ENTRIES, ""));
+		fBootstrap.setText(config.getAttribute(BOOTSTRAP_ENTRIES, "")); //$NON-NLS-1$
 	}
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-		config.setAttribute(LOCATION + "0", LauncherUtils.getDefaultWorkspace());
+		config.setAttribute(LOCATION + "0", LauncherUtils.getDefaultWorkspace()); //$NON-NLS-1$
 		config.setAttribute(DOCLEAR, false);
 		config.setAttribute(ASKCLEAR, true);
 		config.setAttribute(PROGARGS, LauncherUtils.getDefaultProgramArguments());
-		config.setAttribute(VMARGS,"");
-		config.setAttribute(BOOTSTRAP_ENTRIES, "");
+		config.setAttribute(VMARGS,""); //$NON-NLS-1$
+		config.setAttribute(BOOTSTRAP_ENTRIES, ""); //$NON-NLS-1$
 	}
 	
 	private String getClasspathEntries() {
@@ -456,7 +456,7 @@ public class BasicLauncherTab
 
 	protected void doRestoreDefaults() {
 		fProgArgsText.setText(LauncherUtils.getDefaultProgramArguments());
-		fVmArgsText.setText("");
+		fVmArgsText.setText(""); //$NON-NLS-1$
 		fWorkspaceCombo.setText(LauncherUtils.getDefaultWorkspace());
 		fClasspathText.setText(getClasspathEntries());
 		fClearWorkspaceCheck.setSelection(false);
@@ -549,8 +549,8 @@ public class BasicLauncherTab
 	private IPath chooseWorkspaceLocation() {
 		DirectoryDialog dialog = new DirectoryDialog(getControl().getShell());
 		dialog.setFilterPath(fWorkspaceCombo.getText());
-		dialog.setText(PDEPlugin.getResourceString("BasicLauncherTab.workspace.title"));
-		dialog.setMessage(PDEPlugin.getResourceString("BasicLauncherTab.workspace.message"));
+		dialog.setText(PDEPlugin.getResourceString("BasicLauncherTab.workspace.title")); //$NON-NLS-1$
+		dialog.setMessage(PDEPlugin.getResourceString("BasicLauncherTab.workspace.message")); //$NON-NLS-1$
 		String res = dialog.open();
 		if (res != null) {
 			return new Path(res);
@@ -562,9 +562,9 @@ public class BasicLauncherTab
 		if (fJreCombo.getSelectionIndex() == -1) {
 			return createStatus(
 				IStatus.ERROR,
-				PDEPlugin.getResourceString("BasicLauncherTab.noJRE"));
+				PDEPlugin.getResourceString("BasicLauncherTab.noJRE")); //$NON-NLS-1$
 		}
-		return createStatus(IStatus.OK, "");
+		return createStatus(IStatus.OK, ""); //$NON-NLS-1$
 	}
 
 	private IStatus validateWorkspaceSelection() {
@@ -572,17 +572,17 @@ public class BasicLauncherTab
 		if (!Path.ROOT.isValidPath(location)) {
 			return createStatus(
 				IStatus.ERROR,
-				PDEPlugin.getResourceString("BasicLauncherTab.invalidWorkspace"));
+				PDEPlugin.getResourceString("BasicLauncherTab.invalidWorkspace")); //$NON-NLS-1$
 		}
 		
 		IPath curr = new Path(location);
 		if (curr.segmentCount() == 0 && curr.getDevice() == null) {
 			return createStatus(
 				IStatus.ERROR,
-				PDEPlugin.getResourceString("BasicLauncherTab.noWorkspace"));
+				PDEPlugin.getResourceString("BasicLauncherTab.noWorkspace")); //$NON-NLS-1$
 		}
 
-		return createStatus(IStatus.OK, "");
+		return createStatus(IStatus.OK, ""); //$NON-NLS-1$
 	}
 
 	public String getName() {

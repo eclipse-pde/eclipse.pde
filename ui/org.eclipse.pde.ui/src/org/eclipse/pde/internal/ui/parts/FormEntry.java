@@ -70,7 +70,7 @@ public class FormEntry {
 			label = toolkit.createLabel(parent, labelText);
 			label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
 		}
-		text = toolkit.createText(parent, "", style);
+		text = toolkit.createText(parent, "", style); //$NON-NLS-1$
 		addListeners();
 		if (browseText != null) {
 			browse = toolkit.createButton(parent, browseText, SWT.PUSH);
@@ -224,7 +224,7 @@ public class FormEntry {
 			if (dirty)
 				commit();
 		} else if (e.character == '\u001b') { // Escape character
-			text.setText(value != null ? value : ""); // restore old
+			text.setText(value != null ? value : ""); // restore old //$NON-NLS-1$
 			dirty = false;
 		}
 	}
@@ -235,8 +235,8 @@ public class FormEntry {
 	 */
 	public void setValue(String value) {
 		if (text != null)
-			text.setText(value != null ? value : "");
-		this.value = (value != null) ? value : "";
+			text.setText(value != null ? value : ""); //$NON-NLS-1$
+		this.value = (value != null) ? value : ""; //$NON-NLS-1$
 	}
 	/**
 	 * Sets the value of this entry with the possibility to turn the

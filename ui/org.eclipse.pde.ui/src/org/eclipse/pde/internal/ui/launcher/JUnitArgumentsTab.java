@@ -6,6 +6,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.ui.*;
 
 public class JUnitArgumentsTab extends BasicLauncherTab {
 	
@@ -15,28 +16,28 @@ public class JUnitArgumentsTab extends BasicLauncherTab {
 	
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(
-			LOCATION + "0",
-			LauncherUtils.getDefaultPath().append("runtime-test-workspace").toOSString());
+			LOCATION + "0", //$NON-NLS-1$
+			LauncherUtils.getDefaultPath().append("runtime-test-workspace").toOSString()); //$NON-NLS-1$
 		config.setAttribute(DOCLEAR, true);
 		config.setAttribute(ASKCLEAR, false);
 		config.setAttribute(PROGARGS, LauncherUtils.getDefaultProgramArguments());
-		config.setAttribute(VMARGS, "");
-		config.setAttribute(BOOTSTRAP_ENTRIES, "");
+		config.setAttribute(VMARGS, ""); //$NON-NLS-1$
+		config.setAttribute(BOOTSTRAP_ENTRIES, ""); //$NON-NLS-1$
 		if (!JUnitLaunchConfiguration.requiresUI(config))
 			config.setAttribute(APPLICATION, JUnitLaunchConfiguration.CORE_APPLICATION);
 	}
 	
 	protected String[] getApplicationNames() {
 		TreeSet result = new TreeSet();
-		result.add("[No Application] - Headless Mode");
+		result.add(PDEPlugin.getResourceString("JUnitArgumentsTab.headless")); //$NON-NLS-1$
 		IPluginModelBase[] plugins = PDECore.getDefault().getModelManager().getPlugins();
 		for (int i = 0; i < plugins.length; i++) {
 			IPluginExtension[] extensions = plugins[i].getPluginBase().getExtensions();
 			for (int j = 0; j < extensions.length; j++) {
 				String point = extensions[j].getPoint();
-				if (point != null && point.equals("org.eclipse.core.runtime.applications")) {
-					String id = extensions[j].getPluginBase().getId() + "." + extensions[j].getId();
-					if (id != null && !id.startsWith("org.eclipse.pde.junit.runtime")){
+				if (point != null && point.equals("org.eclipse.core.runtime.applications")) { //$NON-NLS-1$
+					String id = extensions[j].getPluginBase().getId() + "." + extensions[j].getId(); //$NON-NLS-1$
+					if (id != null && !id.startsWith("org.eclipse.pde.junit.runtime")){ //$NON-NLS-1$
 						result.add(id);
 					}
 				}
