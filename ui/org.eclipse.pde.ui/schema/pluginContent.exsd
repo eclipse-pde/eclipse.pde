@@ -115,6 +115,13 @@ represent the wizard.
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="rcp" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

@@ -246,7 +246,8 @@
             name="%pluginContent.helloWorld.name"
             icon="icons/etool16/newexprj_wiz.gif"
             class="org.eclipse.pde.internal.ui.wizards.templates.HelloWorldNewWizard"
-            id="org.eclipse.pde.ui.pluginContent.helloWorld">
+            id="org.eclipse.pde.ui.pluginContent.helloWorld"
+            rcp="true">
          <description>
             %pluginContent.helloWorld.description
          </description>
