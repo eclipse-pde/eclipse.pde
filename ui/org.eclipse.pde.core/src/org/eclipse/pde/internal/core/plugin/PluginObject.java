@@ -41,7 +41,7 @@ public abstract class PluginObject
 		}
 	}
 
-	void setInTheModel(boolean value) {
+	public void setInTheModel(boolean value) {
 		inTheModel = value;
 	}
 

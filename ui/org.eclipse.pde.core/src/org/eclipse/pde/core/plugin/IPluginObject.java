@@ -71,6 +71,20 @@ public interface IPluginObject extends IWritable, IAdaptable {
 	 * </p>
 	 */
 	boolean isInTheModel();
+	
+	/**
+	 * Set the value indicating whether the object is currently part of a model.
+	 * It is useful to ignore modification events of objects
+	 * that have not yet being added to the model or if they
+	 * have been removed.
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
+	 */
+	void setInTheModel(boolean inModel);
 
 	/**
 	 * Returns the translated name of this model object using

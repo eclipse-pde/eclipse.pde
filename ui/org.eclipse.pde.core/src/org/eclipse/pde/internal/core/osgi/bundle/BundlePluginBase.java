@@ -636,4 +636,10 @@ public class BundlePluginBase
 		String value = getBundle().getHeader(key);
 		return value != null ? value : "";
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.plugin.IPluginObject#setInTheModel(boolean)
+	 */
+	public void setInTheModel(boolean inModel) {
+	}
 }
