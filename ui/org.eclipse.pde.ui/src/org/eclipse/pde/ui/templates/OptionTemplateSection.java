@@ -158,7 +158,36 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 		if (pageIndex < 0 || pageIndex >= pages.size())
 			return null;
 		TemplatePage tpage = (TemplatePage) pages.get(pageIndex);
-		tpage.page = new OptionTemplateWizardPage(this, tpage.options);
+		tpage.page = new OptionTemplateWizardPage(this, tpage.options, null);
+		return tpage.page;
+	}
+	/**
+	 * Creates the wizard page for the specified page index. This method
+	 * cannot be called before setPageCount(int). The page will be
+	 * created with all the options registered for that page index.
+	 * Therefore, make all the calls to addOption() before calling
+	 * this method.
+	 * @param pageIndex a zero-based index of the page relative to
+	 * this template. For example, if a template need to have two
+	 * pages, you have to call this method twice (once with index 0
+	 * and again with index 1). 
+	 * @param helpContextId the Id of the help context defined in
+	 * the contributing plug-in that will be used to locate content
+	 * of the info-pop displayed when F1 is pressed.
+	 * @see #setPageCount(int)
+	 * @see BaseOptionTemplateSection#addOption
+	 * <p> 
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
+	 */
+	public WizardPage createPage(int pageIndex, String helpContextId) {
+		if (pageIndex < 0 || pageIndex >= pages.size())
+			return null;
+		TemplatePage tpage = (TemplatePage) pages.get(pageIndex);
+		tpage.page = new OptionTemplateWizardPage(this, tpage.options, helpContextId);
 		return tpage.page;
 	}
 	/**

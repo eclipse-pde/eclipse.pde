@@ -11,6 +11,7 @@ import org.eclipse.pde.internal.ui.wizards.templates.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * An implementation of the standard wizard page that
@@ -30,6 +31,7 @@ import org.eclipse.swt.widgets.Composite;
 public class OptionTemplateWizardPage extends WizardPage {
 	private BaseOptionTemplateSection section;
 	private ArrayList options;
+	private String helpContextId;
 
 	/**
 	 * The constructor. 
@@ -44,10 +46,12 @@ public class OptionTemplateWizardPage extends WizardPage {
 	 */
 	public OptionTemplateWizardPage(
 		BaseOptionTemplateSection section,
-		ArrayList options) {
+		ArrayList options,
+		String helpContextId) {
 		super("");
 		this.section = section;
 		this.options = options;
+		this.helpContextId = helpContextId;
 	}
 	/**
 	 * Creates the page control by creating individual options in the
@@ -70,6 +74,8 @@ public class OptionTemplateWizardPage extends WizardPage {
 			TemplateOption option = (TemplateOption) options.get(i);
 			option.createControl(container, 2);
 		}
+		if (helpContextId!=null)
+			WorkbenchHelp.setHelp(container, helpContextId);
 		setControl(container);
 	}
 	/**
