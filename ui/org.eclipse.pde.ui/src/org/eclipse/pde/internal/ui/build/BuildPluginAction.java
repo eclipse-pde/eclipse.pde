@@ -26,7 +26,6 @@ public class BuildPluginAction extends BaseBuildAction {
 		throws InvocationTargetException, CoreException {
 	
 		ModelBuildScriptGenerator generator = new ModelBuildScriptGenerator();
-		ModelBuildScriptGenerator.setOutputFormat(AbstractScriptGenerator.getDefaultOutputFormat());
 		ModelBuildScriptGenerator.setEmbeddedSource(AbstractScriptGenerator.getDefaultEmbeddedSource());
 		ModelBuildScriptGenerator.setForceUpdateJar(AbstractScriptGenerator.getForceUpdateJarFormat());
 		ModelBuildScriptGenerator.setConfigInfo(AbstractScriptGenerator.getDefaultConfigInfos());

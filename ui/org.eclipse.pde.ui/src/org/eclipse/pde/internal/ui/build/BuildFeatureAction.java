@@ -54,8 +54,8 @@ public class BuildFeatureAction extends BaseBuildAction {
 		String url = ClasspathHelper.getDevEntriesProperties(fManifestFile.getProject().getLocation().addTrailingSeparator().toString() + "dev.properties", false); //$NON-NLS-1$
 		generator.setDevEntries(url);
 		generator.setWorkingDirectory(fManifestFile.getProject().getLocation().toOSString());
-		AbstractScriptGenerator.setOutputFormat(AbstractScriptGenerator.getDefaultOutputFormat());
-		AbstractScriptGenerator.setConfigInfo(AbstractScriptGenerator.getDefaultConfigInfos());
+		AbstractScriptGenerator.setConfigInfo(AbstractScriptGenerator.getDefaultConfigInfos()); //This needs to be set before we set the format
+		generator.setArchivesFormat(AbstractScriptGenerator.getDefaultConfigInfos() + '-' + IXMLConstants.FORMAT_ANTZIP);
 		generator.setElements(new String[] { "feature@" + model.getFeature().getId() + (model.getFeature().getVersion() == null ? "" : ":" + model.getFeature().getVersion()) }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		generator.setPluginPath(all);
 		generator.setGenerateAssembleScript(false);

@@ -310,16 +310,16 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		generator.setIgnoreMissingPropertiesFile(true);
 		generator.setSignJars(fSigningInfo != null);
 		generator.setGenerateJnlp(fJnlpInfo != null);
+		String config = os + ',' + ws + ',' + arch;
+		AbstractScriptGenerator.setConfigInfo(config);  //This needs to be set before we set the format
 		String format;
 		if (fExportToDirectory)
-			format = "folder"; //$NON-NLS-1$
+			format = config + '-' + IXMLConstants.FORMAT_FOLDER;
 		else
-			format = "antZip"; //$NON-NLS-1$
-			
-		AbstractScriptGenerator.setOutputFormat(format);
+			format = config + '-' + IXMLConstants.FORMAT_ANTZIP;
+		generator.setArchivesFormat(format);
 		AbstractScriptGenerator.setForceUpdateJar(false);
 		AbstractScriptGenerator.setEmbeddedSource(fExportSource);
-		AbstractScriptGenerator.setConfigInfo(os + "," + ws + "," + arch); //$NON-NLS-1$ //$NON-NLS-2$
 		generator.generate();
 	}
 
