@@ -651,8 +651,8 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		for (int i = 0; i < children.length; i++) {
 			Object child = children[i];
 			if (child instanceof ISchemaEnumeration) {
-				ISchemaEnumeration enum = (ISchemaEnumeration) child;
-				if (enum.getName().equals(value)) {
+				ISchemaEnumeration enumeration = (ISchemaEnumeration) child;
+				if (enumeration.getName().equals(value)) {
 					return;
 				}
 			}
