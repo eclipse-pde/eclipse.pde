@@ -4,10 +4,12 @@ package org.eclipse.pde.internal.ui.editor.feature;
  * All Rights Reserved.
  */
 
-import java.util.*;
+import java.util.Vector;
+
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.pde.internal.core.ifeature.IFeatureObject;
+import org.eclipse.pde.internal.ui.editor.ModifiedTextPropertyDescriptor;
 import org.eclipse.ui.views.properties.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.core.ifeature.*;
 
 public abstract class FeaturePropertySource implements IPropertySource {
 	protected IFeatureObject object;
@@ -21,6 +23,23 @@ public abstract class FeaturePropertySource implements IPropertySource {
 		if (isEditable())
 			return new ModifiedTextPropertyDescriptor(name, displayName);
 		else
+			return new PropertyDescriptor(name, displayName);
+	}
+
+	protected PropertyDescriptor createChoicePropertyDescriptor(
+		String name,
+		String displayName,
+		final String[] choices) {
+		if (isEditable()) {
+			PropertyDescriptor desc = new ComboBoxPropertyDescriptor(name, displayName, choices);
+			desc.setLabelProvider(new LabelProvider() {
+				public String getText(Object obj) {
+					Integer index = (Integer)obj;
+					return choices[index.intValue()];
+				}
+			});
+			return desc;
+		} else
 			return new PropertyDescriptor(name, displayName);
 	}
 	public Object getEditableValue() {
