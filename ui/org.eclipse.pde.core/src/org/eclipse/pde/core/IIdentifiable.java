@@ -15,6 +15,8 @@ import org.eclipse.core.runtime.*;
  * Classes implement this interface if
  * their instances need to be uniquely identified
  * using an id.
+ * 
+ * @since 2.0
  */
 public interface IIdentifiable {
 	/**

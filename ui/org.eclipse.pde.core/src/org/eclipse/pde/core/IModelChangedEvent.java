@@ -13,6 +13,8 @@ package org.eclipse.pde.core;
  * Model change events are fired by the model when it is changed from the last
  * clean state. Model change listeners can use these events to update
  * accordingly.
+ * 
+ * @since 2.0
  */
 public interface IModelChangedEvent {
 	/**

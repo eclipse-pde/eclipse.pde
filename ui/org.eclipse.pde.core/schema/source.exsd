@@ -2,13 +2,15 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.pde.core">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.pde.core" id="source" name="Source Locations"/>
-   </appInfo>
-   <documentation>
-      [Enter description of this extension point]
-   </documentation>
-</annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.pde.core" id="source" name="Source Locations"/>
+      </appInfo>
+      <documentation>
+         This extension point allows PDE to find source archives for libraries in Eclipse plug-ins found in an Eclipse-based product. It is used to contribute locations that contain source archives. These locations are expected to contain the same layout as the &apos;plugins&apos; directory. 
+&lt;p&gt;
+For each plug-in or fragment, a directory in the form {id}_{version} should exist. The content of the directory corresponds to the plug-in/fragment location. It should contain source code zip file in the form {library name}src.zip where library name is the name of the Java library that matches the source code. In addition, it should contain any file or directory specified in the build.properties using &lt;code&gt;source.include&lt;/code&gt; variable.
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -44,7 +46,7 @@
          <attribute name="path" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  the relative path of the directory in the contributing plug-in where source content is stored. The folder must contain one or more directories in the form {id}_{version} where &lt;code&gt;id&lt;/code&gt; is a matching plug-in or fragment identifier and &lt;code&gt;version&lt;/code&gt; is the matching plugin/fragment version. These directories in turn should contain source archives and any other file or folder specified using &lt;code&gt;source.includes&lt;/code&gt; variable in build.properties file of the corresponding plug-in/fragment.
                </documentation>
             </annotation>
          </attribute>
@@ -53,10 +55,26 @@
 
    <annotation>
       <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         2.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         [Enter extension point usage example here.]
+         The following is an example of the &lt;code&gt;source&lt;/code&gt; extension:
+&lt;pre&gt;
+ &lt;extension point = &quot;org.eclipse.pde.core.source&quot;&gt;
+     &lt;location path=&quot;src&quot; /&gt;
+  &lt;/extension&gt;
+&lt;/pre&gt;
+
+In the example above, the source location &lt;code&gt;src&lt;/code&gt; in the contributing plug-in has been registered.
       </documentation>
    </annotation>
 
@@ -65,7 +83,7 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         [Enter API information here.]
+         No Java code is requied for this extension point.
       </documentation>
    </annotation>
 
@@ -74,7 +92,7 @@
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         Eclipse SDK comes with source plug-ins that contain source information for all the plug-ins and fragments in Eclipse SDK.
       </documentation>
    </annotation>
 
@@ -83,7 +101,11 @@
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         
+         Copyright (c) 2000, 2003 IBM Corporation and others.&lt;br&gt;
+All rights reserved. This program and the accompanying materials are made 
+available under the terms of the Common Public License v1.0 which accompanies 
+this distribution, and is available at 
+&lt;a href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
 

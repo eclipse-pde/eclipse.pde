@@ -15,6 +15,8 @@ package org.eclipse.pde.core;
  * that implement this interface are responsible for calling the
  * method <code>save</code> of <code>IEditable</code> and supplying
  * the required <code>PrintWriter</code> object.
+ * 
+ * @since 2.0
  */
 public interface IEditableModel extends IEditable {
 /**

@@ -13,6 +13,8 @@ package org.eclipse.pde.core;
  * This interface indicates that a model object is created by parsing an
  * editable source file and can be traced back to a particular location in the
  * file.
+ * 
+ * @since 2.0
  */
 public interface ISourceObject {
 	/**

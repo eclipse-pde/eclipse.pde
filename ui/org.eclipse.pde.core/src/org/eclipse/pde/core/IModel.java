@@ -23,6 +23,8 @@ import org.eclipse.core.runtime.*;
  * </ul>
  * If a model is not created from a workspace resource file, its underlying
  * resource will be <samp>null </samp>.
+ * 
+ * @since 2.0
  */
 public interface IModel extends IBaseModel {
 	/**

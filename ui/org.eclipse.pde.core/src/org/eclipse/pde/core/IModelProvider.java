@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.core;
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IFile;
 /**
  * Classes that implement this interface are responsible for holding a table of
  * models associated with the underlying objects. They have several
@@ -25,6 +25,8 @@ import org.eclipse.core.resources.*;
  * Model providers are responsible for listening to the workspace, updating
  * models whose underlying resources have been updated, and removing them from
  * the table when those resources have been deleted.
+ * 
+ * @since 2.0
  */
 public interface IModelProvider {
 	/**
@@ -37,9 +39,11 @@ public interface IModelProvider {
 	void addModelProviderListener(IModelProviderListener listener);
 	/**
 	 * Returns the model for the provided file resource.
-	 * @param file the file resource we need the model for
-	 * @return the object that represents a structured representation
-	 * of the file content
+	 * 
+	 * @param file
+	 *            the file resource we need the model for
+	 * @return the object that represents a structured representation of the
+	 *         file content
 	 */
 	public IModel getModel(IFile file);
 	/**

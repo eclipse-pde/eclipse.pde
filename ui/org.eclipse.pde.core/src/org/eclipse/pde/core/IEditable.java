@@ -20,6 +20,7 @@ import java.io.*;
  * Models that implement this interface are expected
  * to be able to save in ASCII file format
  * (e.g. XML).
+ * @since 2.0
  */
 public interface IEditable {
 	/**
@@ -31,6 +32,7 @@ public interface IEditable {
 	 * read-only models can never be changed, editable
 	 * models can go in and out editable state during
 	 * their life cycle.
+	 * 
 	 * @return <code>true</code> if model can be modified, <code>false</code>
 	 * otherwise.
 	 */

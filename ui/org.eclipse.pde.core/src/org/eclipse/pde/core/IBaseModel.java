@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IAdaptable;
  * <li>Tell if they are editable</li>
  * <li>Tell if they contain valid data</li>
  * </ul>
+ * @since 2.0
  */
 public interface IBaseModel extends IAdaptable {
 	/**

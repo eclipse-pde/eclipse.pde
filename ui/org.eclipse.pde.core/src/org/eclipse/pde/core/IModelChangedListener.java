@@ -15,6 +15,8 @@ package org.eclipse.pde.core;
  * changes should implement this interface
  * and add themselves as listeners to
  * the model they want to listen to.
+ * 
+ * @since 2.0
  */
 public interface IModelChangedListener {
 	/**

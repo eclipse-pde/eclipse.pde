@@ -11,6 +11,8 @@
 package org.eclipse.pde.core;
 /**
  * @see IModelChangedEvent
+ * 
+ * @since 2.0
  */
 public class ModelChangedEvent implements IModelChangedEvent {
 	private int type;

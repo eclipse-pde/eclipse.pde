@@ -12,6 +12,8 @@ package org.eclipse.pde.core;
 /**
  * This event will be delivered to all model provider listeners when a model
  * managed by the model provider changes in some way.
+ * 
+ * @since 2.0
  */
 public interface IModelProviderEvent {
 	/**
