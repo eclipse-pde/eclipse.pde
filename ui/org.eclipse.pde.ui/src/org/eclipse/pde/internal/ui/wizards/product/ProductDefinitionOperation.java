@@ -9,6 +9,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.operation.*;
 import org.eclipse.jface.text.*;
 import org.eclipse.pde.core.plugin.*;
@@ -162,23 +164,39 @@ public class ProductDefinitionOperation implements IRunnableWithProgress {
 	
 	private String getAboutImage() {
 		IAboutInfo info = fProduct.getAboutInfo();
-		if (info != null) {
-			String image = info.getImagePath();
-			return image == null || image.length() == 0 ? null : image;
+		return info != null ? getURL(info.getImagePath()) : null;
+	}
+	
+	private String getURL(String location) {
+		if (location == null || location.trim().length() == 0)
+			return null;
+		IPath path = new Path(location);
+		if (!path.isAbsolute())
+			return location;
+		String projectName = path.segment(0);
+		IProject project = PDEPlugin.getWorkspace().getRoot().getProject(projectName);
+		if (project.exists()) {
+			IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(project);
+			if (model != null) {
+				String id = model.getPluginBase().getId();
+				if (fPluginId.equals(id))
+					return path.removeFirstSegments(1).toString();
+				return "platform:/base/plugins/" + id + "/" + path.removeFirstSegments(1);
+			}
 		}
-		return null;
+		return location;
 	}
 	
 	private String getWindowImagesString() {
 		IWindowImages images = fProduct.getWindowImages();
 		StringBuffer buffer = new StringBuffer();
 		if (images != null) {
-			String image16 = images.getSmallImagePath();
-			if (image16 != null && image16.length() > 0)
+			String image16 = getURL(images.getSmallImagePath());
+			if (image16 != null)
 				buffer.append(image16);
 
-			String image32 = images.getLargeImagePath();
-			if (image32 != null && image32.length() > 0) {
+			String image32 = getURL(images.getLargeImagePath());
+			if (image32 != null) {
 				if (buffer.length() > 0)
 					buffer.append(","); //$NON-NLS-1$
 				buffer.append(image32);
@@ -267,7 +285,7 @@ public class ProductDefinitionOperation implements IRunnableWithProgress {
 			IPluginElement candidate = (IPluginElement)children[i];
 			if (candidate.getName().equals("property")) { //$NON-NLS-1$
 				IPluginAttribute attr = candidate.getAttribute("name"); //$NON-NLS-1$
-				if (attr != null && attr.getName().equals(propertyName)) {
+				if (attr != null && attr.getValue().equals(propertyName)) {
 					child = candidate;
 					break;
 				}
@@ -281,9 +299,11 @@ public class ProductDefinitionOperation implements IRunnableWithProgress {
 		
 		if (child == null) {
 			child = element.getModel().getFactory().createElement(element);
-			child.setAttribute("value", value); //$NON-NLS-1$
-			child.setAttribute("name", propertyName); //$NON-NLS-1$
+			child.setName("property");
+			element.add(child);
 		}
+		child.setAttribute("value", value); //$NON-NLS-1$
+		child.setAttribute("name", propertyName); //$NON-NLS-1$
 	}
 	
 	private TextEdit insertNewProductElement(IPluginExtension extension) throws CoreException {
