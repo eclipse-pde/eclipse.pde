@@ -27,7 +27,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	protected static boolean forceUpdateJarFormat = false;
 	private static List configInfos;
 	protected static String workingDirectory;
-	protected static boolean buildingOSGi = false;
+	protected static boolean buildingOSGi = true;
 	protected AntScript script;
 
 	static {

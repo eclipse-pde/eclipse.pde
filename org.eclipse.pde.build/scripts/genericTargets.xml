@@ -17,7 +17,7 @@
 <!-- ===================================================================== -->
 <property name="configs" value="*,*,*"/>
 <property name="fetchTag" value=""/>
-<property name="buildingOSGi" value="false"/>
+<property name="buildingOSGi" value="true"/>
 <!-- ===================================================================== -->
 <!-- Fetch a single element (feature, plugin, fragment) -->
 <!-- ===================================================================== -->
