@@ -49,20 +49,17 @@ public class Fragment extends PluginBase implements IFragment {
 			case VersionConstraint.GREATER_EQUAL_MATCH:
 				rule = IMatchRules.GREATER_OR_EQUAL;
 				break;
-			case VersionConstraint.NO_MATCH:
-				rule = IMatchRules.NONE;
-				break;
 			case VersionConstraint.MINOR_MATCH:
 				rule = IMatchRules.EQUIVALENT;
 				break;
-			case VersionConstraint.MICRO_MATCH:
-				rule = IMatchRules.PERFECT;
+			case VersionConstraint.MAJOR_MATCH:
+				rule = IMatchRules.COMPATIBLE;
 				break;
 			case VersionConstraint.QUALIFIER_MATCH:
 				rule = IMatchRules.PERFECT;
 				break;
 			default:
-				rule = IMatchRules.COMPATIBLE;			
+				rule = IMatchRules.NONE;			
 		}
 		super.load(bundleDescription, state);
 	}
