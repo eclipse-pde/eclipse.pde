@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.build.AbstractScriptGenerator;
 import org.eclipse.pde.internal.build.builder.*;
 import org.eclipse.pde.internal.core.*;
 
@@ -23,9 +24,14 @@ public class BuildPluginAction extends BaseBuildAction {
 
 	protected void makeScripts(IProgressMonitor monitor)
 		throws InvocationTargetException, CoreException {
-
+	
 		ModelBuildScriptGenerator generator;
 		generator = new ModelBuildScriptGenerator();
+		ModelBuildScriptGenerator.setOutputFormat(AbstractScriptGenerator.getDefaultOutputFormat());
+		ModelBuildScriptGenerator.setEmbeddedSource(AbstractScriptGenerator.getDefaultEmbeddedSource());
+		ModelBuildScriptGenerator.setForceUpdateJar(AbstractScriptGenerator.getForceUpdateJarFormat());
+		ModelBuildScriptGenerator.setConfigInfo(AbstractScriptGenerator.getDefaultConfigInfos());
+		
 		IProject project = file.getProject();
 		generator.setWorkingDirectory(project.getLocation().toOSString());
 		generator.setDevEntries("bin"); // FIXME: look at bug #5747

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.build.AbstractScriptGenerator;
 import org.eclipse.pde.internal.build.builder.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatform;
@@ -41,12 +42,16 @@ public class BuildFeatureAction extends BaseBuildAction {
 		System.arraycopy(features, 0, all, plugins.length, features.length);
 		
 		FeatureBuildScriptGenerator generator = new FeatureBuildScriptGenerator();
+		ModelBuildScriptGenerator.setOutputFormat(AbstractScriptGenerator.getDefaultOutputFormat());
+		ModelBuildScriptGenerator.setEmbeddedSource(AbstractScriptGenerator.getDefaultEmbeddedSource());
+		ModelBuildScriptGenerator.setForceUpdateJar(AbstractScriptGenerator.getForceUpdateJarFormat());
+		ModelBuildScriptGenerator.setConfigInfo(AbstractScriptGenerator.getDefaultConfigInfos());
+		
 		generator.setWorkingDirectory(file.getProject().getLocation().toOSString());
 		generator.setBuildingOSGi(PDECore.getDefault().getModelManager().isOSGiRuntime());
 		generator.setAnalyseChildren(true);
 		generator.setFeature(model.getFeature().getId());
 		generator.setPluginPath(all);
-		FeatureBuildScriptGenerator.setConfigInfo("*,*,*");
 		generator.generate();	
 	}
 	
