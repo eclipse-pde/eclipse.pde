@@ -5,6 +5,7 @@ package org.eclipse.pde.internal.ui.editor.site;
  */
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -19,6 +20,10 @@ public class NewCategoryDefinitionDialog extends BaseDialog {
 	private static final String KEY_LABEL = "NewCategoryDefinitionDialog.label";
 	private static final String KEY_DESC = "NewCategoryDefinitionDialog.desc";
 	private static final String KEY_EMPTY = "NewCategoryDefinitionDialog.empty";
+	private static final String SETTINGS_SECTION = "NewCategoryDefinitionDialog";
+	private static final String S_NAME = "name";
+	private static final String S_LABEL = "label";
+	private static final String S_DESC = "desc";
 	private Text nameText;
 	private Text labelText;
 	private Text descText;
@@ -52,6 +57,16 @@ public class NewCategoryDefinitionDialog extends BaseDialog {
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 150;
 		descText.setLayoutData(gd);
+		if (getCategoryDefinition()==null) {
+			presetFields();
+		}
+	}
+	
+	private void presetFields() {
+		IDialogSettings settings = getDialogSettings(SETTINGS_SECTION);
+		setIfDefined(nameText, settings.get(S_NAME));
+		setIfDefined(labelText, settings.get(S_LABEL));
+		setIfDefined(descText, settings.get(S_DESC));
 	}
 	
 	private ISiteCategoryDefinition getCategoryDefinition() {
@@ -90,12 +105,28 @@ public class NewCategoryDefinitionDialog extends BaseDialog {
 
 	protected void dialogChanged() {
 		IStatus status = null;
-		if (nameText.getText().length() == 0
+		String name = nameText.getText();
+		if (name.length() == 0
 			|| labelText.getText().length() == 0)
 			status = getEmptyErrorStatus();
-		else
+		else {
+			if (alreadyExists(name))
+				status = createErrorStatus("This category already exists."); 
+		}
+		if (status==null)
 			status = getOKStatus();
 		updateStatus(status);
+	}
+	
+	private boolean alreadyExists(String name) {
+		ISiteCategoryDefinition [] defs = getSiteModel().getSite().getCategoryDefinitions();
+		for (int i=0; i<defs.length; i++) {
+			ISiteCategoryDefinition def = defs[i];
+			String dname = def.getName();
+			if (dname!=null && dname.equals(name))
+				return true;
+		}
+		return false;
 	}
 
 	protected void execute() {
@@ -123,6 +154,10 @@ public class NewCategoryDefinitionDialog extends BaseDialog {
 			if (add) {
 				siteModel.getSite().addCategoryDefinitions(
 					new ISiteCategoryDefinition[] { categoryDef });
+				IDialogSettings settings = getDialogSettings(SETTINGS_SECTION);
+				settings.put(S_NAME, categoryDef.getName());
+				settings.put(S_LABEL, categoryDef.getLabel());
+				settings.put(S_DESC, desc);
 			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
