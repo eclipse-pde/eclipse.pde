@@ -22,6 +22,7 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.core.schema.*;
+import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.util.*;
 import org.eclipse.pde.internal.ui.wizards.*;
@@ -46,8 +47,9 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 	public static final String KEY_EDIT = "BaseExtensionPoint.edit"; //$NON-NLS-1$
 	public static final String KEY_SHARED = "BaseExtensionPoint.shared"; //$NON-NLS-1$
 	public static final String KEY_MISSING_ID = "BaseExtensionPoint.missingId"; //$NON-NLS-1$
-	public static final String KEY_NO_PLUGIN_MISSING_ID = "BaseExtensionPoint.noPlugin.missingId"; //$NON-NLS-1$
-	public static final String KEY_SECTIONS_OVERVIEW = "BaseExtensionPoint.sections.overview"; //$NON-NLS-1$
+    public static final String KEY_NO_PLUGIN_MISSING_ID = "BaseExtensionPoint.noPlugin.missingId"; //$NON-NLS-1$
+    public static final String KEY_INVALID_ID = "BaseExtensionPoint.malformedId"; //$NON-NLS-1$
+    public static final String KEY_SECTIONS_OVERVIEW = "BaseExtensionPoint.sections.overview"; //$NON-NLS-1$
 	public static final String KEY_SECTIONS_SINCE = "BaseExtensionPoint.sections.since"; //$NON-NLS-1$
 	public static final String KEY_SECTIONS_USAGE = "BaseExtensionPoint.sections.usage"; //$NON-NLS-1$
 	public static final String KEY_GENERATING = "BaseExtensionPoint.generating"; //$NON-NLS-1$
@@ -369,9 +371,11 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			}
 		});
 	}
-	public boolean checkFieldsFilled() {
-		
+	public boolean checkFieldsFilled() {	
 		boolean empty = fIdText.getText().length() == 0 || fNameText.getText().length() == 0;
+        if (!empty) {
+            empty = !IdUtil.isValidExtensionPointId(fIdText.getText());
+        }
 		if (!empty && isPluginIdNeeded()) {
 			empty = getPluginId().length() == 0 || fSchemaText.getText().length() == 0 ;
 		}
@@ -380,19 +384,24 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		return !empty;
 	}
 
+    public boolean isInvalidValidId() {
+        return fIdText.getText().length()>0 && !IdUtil.isValidExtensionPointId(fIdText.getText());
+    }
+
 	private void validatePage(boolean hasContainerChanged) {
 		if (hasContainerChanged && !validateContainer())
 			return;
-		boolean isComplete = checkFieldsFilled();
-		
+		boolean isFilled = checkFieldsFilled();
 		String message = null;
-		if (!isComplete) {
-			if (isPluginIdNeeded())
+        if (isInvalidValidId())
+            message = PDEPlugin.getResourceString(KEY_INVALID_ID);                
+        else if (!isFilled) {
+            if (isPluginIdNeeded())
 				message = PDEPlugin.getResourceString(KEY_MISSING_ID);
 			else
 				message = PDEPlugin.getResourceString(KEY_NO_PLUGIN_MISSING_ID);
 		}
-		setPageComplete(isComplete);
+		setPageComplete(isFilled);
 		setMessage(message, IMessageProvider.WARNING);
 	}
 	private boolean validateContainer() {
