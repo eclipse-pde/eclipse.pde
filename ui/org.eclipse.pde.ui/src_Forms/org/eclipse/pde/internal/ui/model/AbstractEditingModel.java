@@ -23,6 +23,7 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	private transient NLResourceHelper fNLResourceHelper;
 	private IDocument fDocument;
 	private boolean fDirty;
+	private String fCharset;
 	
 	public AbstractEditingModel(IDocument document, boolean isReconciling) {
 		fDocument = document;
@@ -121,10 +122,16 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	}
 	
 	protected InputStream getInputStream(IDocument document) throws UnsupportedEncodingException {
-		return new ByteArrayInputStream(document.get().getBytes(getCharSetName()));
+		return new ByteArrayInputStream(document.get().getBytes(getCharset()));
 	}
 	
-	protected abstract String getCharSetName();
+	public String getCharset() {
+		return fCharset;
+	}
+	
+	public void setCharset(String charset) {
+		fCharset = charset;
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModelChangeProvider#addModelChangedListener(org.eclipse.pde.core.IModelChangedListener)

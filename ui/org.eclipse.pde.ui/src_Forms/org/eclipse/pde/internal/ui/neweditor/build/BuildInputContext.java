@@ -6,21 +6,16 @@
  */
 package org.eclipse.pde.internal.ui.neweditor.build;
 
-import java.io.File;
+import java.io.*;
 import java.util.*;
-
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.*;
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.core.build.*;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.neweditor.PDEFormEditor;
-import org.eclipse.pde.internal.ui.neweditor.context.InputContext;
+import org.eclipse.pde.internal.ui.neweditor.*;
+import org.eclipse.pde.internal.ui.neweditor.context.*;
 import org.eclipse.text.edits.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.editors.text.FileDocumentProvider;
-import org.eclipse.ui.texteditor.IDocumentProvider;
 
 /**
  * @author dejan
@@ -38,36 +33,12 @@ public class BuildInputContext extends InputContext {
 		super(editor, input, primary);
 		create();
 	}
-
-	protected IDocumentProvider createDocumentProvider(IEditorInput input) {
-		IDocumentProvider documentProvider = null;
-		if (input instanceof IFileEditorInput)
-			documentProvider = new FileDocumentProvider() {
-			public IDocument createDocument(Object element)
-				throws CoreException {
-				IDocument document = super.createDocument(element);
-				if (document != null) {
-					IDocumentPartitioner partitioner =
-						createDocumentPartitioner();
-					if (partitioner != null) {
-						partitioner.connect(document);
-						document.setDocumentPartitioner(partitioner);
-					}
-				}
-				return document;
-			}
-		};
-		else if (input instanceof SystemFileEditorInput) {
-			documentProvider =
-				new SystemFileDocumentProvider(createDocumentPartitioner());
-		} else if (input instanceof IStorageEditorInput) {
-			documentProvider =
-				new StorageDocumentProvider(createDocumentPartitioner());
-		}
-		return documentProvider;
-	}
-	protected IDocumentPartitioner createDocumentPartitioner() {
-		return null;
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#getCharSet()
+	 */
+	protected String getDefaultCharset() {
+		return "8859_1";
 	}
 
 	protected IBaseModel createModel(IEditorInput input) {

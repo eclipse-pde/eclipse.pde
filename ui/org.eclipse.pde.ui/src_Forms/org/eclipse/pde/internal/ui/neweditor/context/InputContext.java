@@ -17,11 +17,13 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.neweditor.PDEFormEditor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.text.edits.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.editors.text.FileDocumentProvider;
 import org.eclipse.ui.texteditor.*;
 /**
  * This class maintains objects associated with a single editor input.
@@ -74,8 +76,35 @@ public abstract class InputContext {
 	public IDocumentProvider getDocumentProvider() {
 		return documentProvider;
 	}
-	protected abstract IDocumentProvider createDocumentProvider(
-			IEditorInput input);
+	protected IDocumentProvider createDocumentProvider(IEditorInput input) {
+		IDocumentProvider documentProvider = null;
+		if (input instanceof IFileEditorInput) {
+			documentProvider = new FileDocumentProvider() {
+				public IDocument createDocument(Object element) throws CoreException {
+					IDocument document = super.createDocument(element);
+					if (document != null) {
+						IDocumentPartitioner partitioner = createDocumentPartitioner();
+						if (partitioner != null) {
+							partitioner.connect(document);
+							document.setDocumentPartitioner(partitioner);
+						}
+					}
+					return document;
+				}
+			};
+		} else if (input instanceof SystemFileEditorInput) {
+			return new SystemFileDocumentProvider(createDocumentPartitioner(), getDefaultCharset());
+		} else if (input instanceof IStorageEditorInput) {
+			documentProvider = new StorageDocumentProvider(createDocumentPartitioner(), getDefaultCharset());
+		}
+		return documentProvider;
+	}
+	
+	protected IDocumentPartitioner createDocumentPartitioner() {
+		return null;
+	}
+	
+	protected abstract String getDefaultCharset();
 	
 	protected abstract IBaseModel createModel(IEditorInput input) throws CoreException;
 	
