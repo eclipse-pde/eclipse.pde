@@ -15,7 +15,6 @@ public class ScrollableForm extends Form {
 	private Composite container;
 	private boolean verticalFit;
 	private boolean scrollable=true;
-	private boolean scrollableUpdated=false;
 	
 	private static final int HBAR_INCREMENT = 10;
 	private static final int HPAGE_INCREMENT = 40;
@@ -101,14 +100,11 @@ public void updateScrollBars() {
 	}
 }
 public void updateScrolledComposite() {
-	if(!scrollableUpdated){
-		ScrolledComposite sc = (ScrolledComposite) container;
-		Control formControl = getControl();
-		Point newSize = formControl.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		formControl.setSize(newSize);
-		sc.setMinWidth(newSize.x);
-		sc.setMinHeight(newSize.y);
-		scrollableUpdated=true;
-	}
+	ScrolledComposite sc = (ScrolledComposite) container;
+	Control formControl = getControl();
+	Point newSize = formControl.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+	formControl.setSize(newSize);
+	sc.setMinWidth(newSize.x);
+	sc.setMinHeight(newSize.y);
 }
 }

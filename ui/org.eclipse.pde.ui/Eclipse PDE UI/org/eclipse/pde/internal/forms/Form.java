@@ -40,7 +40,7 @@ public class Form implements PaintListener, IPropertyChangeListener {
 			return csize;
 		}
 		protected void layout(Composite composite, boolean flushCache) {
-			Rectangle clientArea = composite.getBounds();
+			Rectangle clientArea = composite.getClientArea();
 			Control client = composite.getChildren()[0];
 			int theight = headingVisible?getTitleHeight() : 0;
 			client.setBounds(
