@@ -89,7 +89,7 @@ public abstract class PluginBase
 		this.version = bundleDesc.getVersion().toString();
 		this.name = state.getPluginName(bundleDesc.getBundleId());
 		this.providerName = state.getProviderName(bundleDesc.getBundleId());
-		fTargetVersion = PDECore.getDefault().getTargetVersion();
+		fTargetVersion = "3.1";
 		loadRuntime(bundleDesc, state);
 		loadImports(bundleDesc);		
 		if (!ignoreExtensions) {
