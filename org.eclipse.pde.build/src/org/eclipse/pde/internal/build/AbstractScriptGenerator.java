@@ -23,7 +23,6 @@ import org.eclipse.update.core.SiteManager;
  * It contains basic informations like the script, the configurations, and a location 
  */
 public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuildConstants, IBuildPropertiesConstants {
-	protected static String outputFormat = "zip"; //$NON-NLS-1$
 	protected static boolean embeddedSource = false;
 	protected static boolean forceUpdateJarFormat = false;
 	protected static boolean brandExecutable = false;
@@ -111,22 +110,26 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	static public class MissingProperties extends Properties {
 		private static final long serialVersionUID = 3546924667060303927L;
 		private static MissingProperties singleton;
-		private MissingProperties(){
+
+		private MissingProperties() {
 			//nothing to do;
 		}
+
 		public synchronized Object setProperty(String key, String value) {
 			throw new UnsupportedOperationException();
 		}
+
 		public synchronized Object put(Object key, Object value) {
 			throw new UnsupportedOperationException();
 		}
+
 		public static MissingProperties getInstance() {
 			if (singleton == null)
 				singleton = new MissingProperties();
 			return singleton;
 		}
 	}
-	 
+
 	public static Properties readProperties(String location, String fileName, int errorLevel) throws CoreException {
 		Properties result = new Properties();
 		File file = new File(location, fileName);
@@ -193,10 +196,6 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		return "zip"; //$NON-NLS-1$
 	}
 
-	public static void setOutputFormat(String format) {
-		outputFormat = format;
-	}
-
 	public static boolean getDefaultEmbeddedSource() {
 		return false;
 	}
@@ -208,7 +207,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	public static void setBrandExecutable(boolean brand) {
 		brandExecutable = brand;
 	}
-	
+
 	public static boolean getForceUpdateJarFormat() {
 		return false;
 	}

@@ -92,6 +92,7 @@ public class BundleHelper {
 		try {
 			return context.createFilter(filter);
 		} catch (InvalidSyntaxException e) {
+		    //Ignore, this has been caught when resolving the state.
 			return null;
 		}
 	}

@@ -128,4 +128,11 @@ public interface IXMLConstants {
 	//JNLP generation properties
 	public static final String PROPERTY_JNLP_CODEBASE = "jnlp.codebase"; //$NON-NLS-1$
 	public static final String PROPERTY_JNLP_J2SE = "jnlp.j2se";  //$NON-NLS-1$
+	
+	//Output format supported
+	public static final String FORMAT_TAR = "tar"; //$NON-NLS-1$
+	public static final String FORMAT_ANTTAR = "antTar"; //$NON-NLS-1$
+	public static final String FORMAT_ZIP = "zip"; //$NON-NLS-1$
+	public static final String FORMAT_ANTZIP = "antZip"; //$NON-NLS-1$
+	public static final String FORMAT_FOLDER = "folder"; //$NON-NLS-1$
 }

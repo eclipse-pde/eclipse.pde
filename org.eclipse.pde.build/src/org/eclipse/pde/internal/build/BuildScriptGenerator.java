@@ -11,7 +11,9 @@
 package org.eclipse.pde.internal.build;
 
 import java.util.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.builder.*;
 import org.eclipse.pde.internal.build.packager.PackageScriptGenerator;
 
@@ -45,6 +47,9 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	protected boolean signJars = false;
 	protected boolean generateJnlp = false;
 
+	//Map configuration with the expected output format: key: Config, value: string
+	protected HashMap archivesFormat;
+
 	/**
 	 * flag indicating if the assemble script should be generated
 	 */
@@ -55,10 +60,10 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	 * For example in releng mode we are interested in reporting the errors. It is the default. 
 	 */
 	private boolean reportResolutionErrors = true;
-	
+
 	/** flag indicating if missing properties file should be logged */
 	private boolean ignoreMissingPropertiesFile = false;
-	
+
 	/**
 	 * 
 	 * @throws CoreException
@@ -118,11 +123,11 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 			result[0] = id;
 		return result;
 	}
-	
+
 	protected void generateFeatures(List features) throws CoreException {
 		AssemblyInformation assemblageInformation = null;
 		assemblageInformation = new AssemblyInformation();
-		
+
 		for (Iterator i = features.iterator(); i.hasNext();) {
 			String[] featureInfo = getNameAndVersion((String) i.next());
 			FeatureBuildScriptGenerator generator = new FeatureBuildScriptGenerator(featureInfo[0], featureInfo[1], assemblageInformation);
@@ -141,24 +146,24 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 			generator.setReportResolutionErrors(reportResolutionErrors);
 			generator.setIgnoreMissingPropertiesFile(ignoreMissingPropertiesFile);
 			generator.setSignJars(signJars);
-			generator.setGenerateJnlp(generateJnlp);			
+			generator.setGenerateJnlp(generateJnlp);
 			generator.generate();
 		}
-		
+
 		if (generateAssembleScript == true) {
 			String[] featureInfo = null;
 			if (features.size() == 1)
 				featureInfo = getNameAndVersion((String) features.get(0));
 			else
 				featureInfo = new String[] {"all"};
-			
+
 			generateAssembleScripts(assemblageInformation, featureInfo);
-			
+
 			if (features.size() == 1)
 				featureInfo = getNameAndVersion((String) features.get(0));
 			else
 				featureInfo = new String[] {""};
-			
+
 			generatePackageScripts(assemblageInformation, featureInfo);
 		}
 	}
@@ -167,15 +172,15 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		PackageScriptGenerator assembler = new PackageScriptGenerator(workingDirectory, assemblageInformation, featureInfo[0]);
 		assembler.setSignJars(signJars);
 		assembler.setGenerateJnlp(generateJnlp);
-		assembler.setOutput(outputFormat);	//TODO Check 
+		assembler.setArchivesFormat(archivesFormat); //TODO Check 
 		assembler.generate();
 	}
-	
+
 	private void generateAssembleScripts(AssemblyInformation assemblageInformation, String[] featureInfo) throws CoreException {
 		AssembleScriptGenerator assembler = new AssembleScriptGenerator(workingDirectory, assemblageInformation, featureInfo[0]);
 		assembler.setSignJars(signJars);
 		assembler.setGenerateJnlp(generateJnlp);
-		setOutputFormat(outputFormat); //TODO Need to change that
+		assembler.setArchivesFormat(archivesFormat);
 		assembler.generate();
 	}
 
@@ -229,6 +234,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	public void setGenerateAssembleScript(boolean generateAssembleScript) {
 		this.generateAssembleScript = generateAssembleScript;
 	}
+
 	/**
 	 * @param value The reportResolutionErrors to set.
 	 */
@@ -249,5 +255,38 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 
 	public void setGenerateJnlp(boolean value) {
 		generateJnlp = value;
+	}
+
+	public void setArchivesFormat(String archivesFormatAsString) throws CoreException {
+		if ("${archivesFormat}".equalsIgnoreCase(archivesFormatAsString)) {
+			//Set backward compatible values
+			archivesFormatAsString = "win32, win32, x86 - zip & " + //$NON-NLS-1$
+					"linux, gtk, x86 - tar & " + //$NON-NLS-1$
+					"linux, gtk64, x86_64 - tar & " + //$NON-NLS-1$
+					"linux, gtk, ppc - tar & " + //$NON-NLS-1$
+					"linux, motif, x86- tar  & " + //$NON-NLS-1$
+					"solaris, motif, sparc- zip  & " + //$NON-NLS-1$
+					"solaris, gtk, sparc - zip & " + //$NON-NLS-1$
+					"aix, motif, ppc - zip & " + //$NON-NLS-1$
+					"hpux, motif, PA_RISC - zip &" + //$NON-NLS-1$
+					"macosx, carbon, ppc - tar & " + //$NON-NLS-1$
+					"qnx, photon, x86 - zip"; //$NON-NLS-1$
+		}
+
+		archivesFormat = new HashMap(getConfigInfos().size());
+		String[] configs = Utils.getArrayFromStringWithBlank(archivesFormatAsString, "&"); //$NON-NLS-1$
+		for (int i = 0; i < configs.length; i++) {
+			String[] configElements = Utils.getArrayFromStringWithBlank(configs[i], ","); //$NON-NLS-1$
+			if (configElements.length != 3) {
+				IStatus error = new Status(IStatus.ERROR, IPDEBuildConstants.PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_CONFIG_FORMAT, NLS.bind(Messages.error_configWrongFormat, configs[i]), null);
+				throw new CoreException(error);
+			}
+			String[] archAndFormat = Utils.getArrayFromStringWithBlank(configElements[2], "-"); //$NON-NLS-1$
+
+			Config aConfig = new Config(configElements[0], configElements[1], archAndFormat[0]);
+			if (getConfigInfos().contains(aConfig)) {
+				archivesFormat.put(aConfig, archAndFormat[1]);
+			}
+		}
 	}
 }

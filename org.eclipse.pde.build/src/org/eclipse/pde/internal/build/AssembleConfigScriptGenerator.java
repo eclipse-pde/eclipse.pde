@@ -12,12 +12,9 @@ package org.eclipse.pde.internal.build;
 
 import java.util.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.osgi.service.environment.Constants;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.internal.build.ant.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.core.IFeature;
-import org.eclipse.update.core.IPluginEntry;
 
 /**
  * Generate an assemble script for a given feature and a given config. It
@@ -50,6 +47,8 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	protected String PROPERTY_ECLIPSE_FEATURES = "eclipse.features"; //$NON-NLS-1$
 	private boolean signJars;
 	private boolean generateJnlp;
+
+	private String archiveFormat;
 
 	public AssembleConfigScriptGenerator() {
 		super();
@@ -105,25 +104,30 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	private void generateArchivingSteps() {
-		if (outputFormat.equalsIgnoreCase("folder")) { //$NON-NLS-1$
+		if (FORMAT_FOLDER.equalsIgnoreCase(archiveFormat)) {
 			generateMoveRootFiles();
 			return;
 		}
-		//Windows is archived as zip
-		if (configInfo.getOs().equalsIgnoreCase(Constants.OS_WIN32) || configInfo.equals(Config.genericConfig())) {
-			if (outputFormat.equalsIgnoreCase("zip")) //$NON-NLS-1$
-				generateZipTarget();
-			else
-				generateAntZipTarget();
+
+		if (FORMAT_ZIP.equalsIgnoreCase(archiveFormat)) {
+			generateZipTarget();
 			return;
 		}
 
-		//Non-windows platform are archived as tar.gz
-		if (!Platform.getOS().equals(Constants.OS_WIN32)) {
+		if (FORMAT_ANTZIP.equalsIgnoreCase(archiveFormat)) {
+			generateAntZipTarget();
+			return;
+		}
+
+		if (FORMAT_ANTTAR.equalsIgnoreCase(archiveFormat)) {
+			generateAntTarTarget();
+			return;
+		}
+
+		if (FORMAT_TAR.equalsIgnoreCase(archiveFormat)) {
 			generateTarTarget();
 			generateGZipTarget();
-		} else {
-			generateAntTarTarget();
+			return;
 		}
 	}
 
@@ -176,7 +180,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 
 		script.printTargetEnd();
 		script.printComment("End of the jarUp task"); //$NON-NLS-1$
-		
+
 		script.printComment("Beginning of the jar signing  target"); //$NON-NLS-1$
 		script.printTargetDeclaration(TARGET_JARSIGNING, null, null, null, Messages.sign_Jar);
 		script.println("<signjar jar=\"" + fileName + ".jar" + "\" alias=\"" + getPropertyFormat(PROPERTY_SIGN_ALIAS) + "\" keystore=\"" + getPropertyFormat(PROPERTY_SIGN_KEYSTORE) + "\" storepass=\"" + getPropertyFormat(PROPERTY_SIGN_STOREPASS) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ 
@@ -245,7 +249,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	protected void generatePostProcessingSteps() {
 		for (int i = 0; i < plugins.length; i++) {
 			BundleDescription plugin = plugins[i];
-			generatePostProcessingSteps( plugin.getSymbolicName(), plugin.getVersion().toString(), (String) getFinalShape(plugin)[1], BUNDLE);
+			generatePostProcessingSteps(plugin.getSymbolicName(), plugin.getVersion().toString(), (String) getFinalShape(plugin)[1], BUNDLE);
 		}
 
 		for (int i = 0; i < features.length; i++) {
@@ -295,7 +299,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		properties.put(PROPERTY_ELEMENT_NAME, name + '_' + version);
 		script.printAntCallTask(TARGET_JARSIGNING, null, properties);
 	}
-	
+
 	//generate the appropriate postProcessingCall
 	private void generatePostProcessingSteps(String name, String version, String style, byte type) {
 		if (FOLDER.equalsIgnoreCase(style))
@@ -313,7 +317,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			return;
 		if (type != FEATURE)
 			return;
-		
+
 		String dir = type == BUNDLE ? getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS) : getPropertyFormat(PROPERTY_ECLIPSE_FEATURES);
 		String location = dir + '/' + name + '_' + version + ".jar"; //$NON-NLS-1$
 		script.println("<eclipse.jnlpGenerator feature=\"" + location + "\"  codebase=\"" + getPropertyFormat(PROPERTY_JNLP_CODEBASE) + "\" j2se=\"" + getPropertyFormat(PROPERTY_JNLP_J2SE) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ 
@@ -333,17 +337,18 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	private boolean getUnpackClause(BundleDescription bundle) {
-		return ((PluginEntry) ((ArrayList) ((Properties) bundle.getUserObject()).get(PLUGIN_ENTRY)).get(0)).isUnpack(); 
+		return ((PluginEntry) ((ArrayList) ((Properties) bundle.getUserObject()).get(PLUGIN_ENTRY)).get(0)).isUnpack();
 	}
-	protected Object[] getFinalShape(BundleDescription bundle)  {
+
+	protected Object[] getFinalShape(BundleDescription bundle) {
 		String style = getUnpackClause(bundle) ? FLAT : UPDATEJAR;
 		return getFinalShape(bundle.getSymbolicName(), bundle.getVersion().toString(), style, BUNDLE);
 	}
-	
-	protected Object[] getFinalShape(IFeature feature)  {
-		return getFinalShape(feature.getVersionedIdentifier().getIdentifier(), feature.getVersionedIdentifier().getVersion().toString(), FLAT, FEATURE);	
+
+	protected Object[] getFinalShape(IFeature feature) {
+		return getFinalShape(feature.getVersionedIdentifier().getIdentifier(), feature.getVersionedIdentifier().getVersion().toString(), FLAT, FEATURE);
 	}
-	
+
 	protected Object[] getFinalShape(String name, String version, String initialShape, byte type) {
 		String style = initialShape;
 		style = getShapeOverride(name, type, style);
@@ -380,7 +385,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	private void generateEpilogue() {
-		if (!"folder".equalsIgnoreCase(outputFormat)) //$NON-NLS-1$
+		if (! FORMAT_FOLDER.equalsIgnoreCase(archiveFormat)) //$NON-NLS-1$
 			script.printDeleteTask(getPropertyFormat(PROPERTY_ASSEMBLY_TMP), null, null);
 		script.printTargetEnd();
 		script.printProjectEnd();
@@ -563,5 +568,9 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 
 	public void setSignJars(boolean value) {
 		signJars = value;
+	}
+
+	public void setArchiveFormat(String archiveFormat) {
+		this.archiveFormat = archiveFormat;
 	}
 }

@@ -116,6 +116,17 @@ public class BuildScriptGeneratorTask extends Task {
 		AbstractScriptGenerator.setConfigInfo(configInfo);
 	}
 
+		 
+	 /** 
+	  * Set on a configuration basis, the format of the archive being produced. The default is set to be configuration independent.
+	  * @param archivesFormat an ampersand separated list of configuration (for example win32, win32 - zip, x86 & macoxs, carbon, ppc - tar).
+	  * @throws CoreException
+	  * @since 3.0
+	  */
+	 public void setArchivesFormat(String archivesFormat) throws CoreException {
+	 		 generator.setArchivesFormat(archivesFormat);
+	 }
+		 
 	/**
 	 * Set a location that contains plugins and features required by plugins and features for which build scripts are being generated.
 	 * @param baseLocation a path to a folder

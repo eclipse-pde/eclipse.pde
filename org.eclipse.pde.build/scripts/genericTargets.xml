@@ -59,6 +59,7 @@
 		configInfo="${configs}"
 		baseLocation="${baseLocation}"
 		buildingOSGi="${buildingOSGi}"
+		archivesFormat="${archivesFormat}"
 	/>
 </target>
 

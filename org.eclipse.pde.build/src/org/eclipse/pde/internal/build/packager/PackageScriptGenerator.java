@@ -16,11 +16,7 @@ import org.eclipse.pde.internal.build.*;
 
 public class PackageScriptGenerator extends AssembleScriptGenerator {
 	private String packagingPropertiesLocation;
-	private String[] featureList;
-	//TODO Need to change this value before releasing
-	private String outputFormat = "zip"; //$NON-NLS-1$
-	
-	
+		
 	public PackageScriptGenerator(String directory, AssemblyInformation assemblageInformation, String featureId) throws CoreException {
 		super(directory, assemblageInformation, featureId);
 	}
@@ -37,14 +33,6 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 		packagingPropertiesLocation = propertyFile;
 	}
 
-	public void setFeatureList(String features) {
-		featureList = Utils.getArrayFromString(features, ","); //$NON-NLS-1$
-	}
-
-	public void setOutput(String format) { //TODO To rename
-		this.outputFormat = format;
-	}
-
 	protected void generateAssembleConfigFileTargetCall(Config aConfig) throws CoreException {
 		basicGenerateAssembleConfigFileTargetCall(aConfig, assemblageInformation.getBinaryPlugins(aConfig), assemblageInformation.getBinaryFeatures(aConfig), assemblageInformation.getFeatures(aConfig), null); //TODO Check if there are case where this is interesting
 	}
@@ -52,7 +40,7 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 	protected void basicGenerateAssembleConfigFileTargetCall(Config aConfig, Collection binaryPlugins, Collection binaryFeatures, Collection allFeatures, Collection rootFiles) throws CoreException {
 		configScriptGenerator.initialize(directory, featureId, aConfig, binaryPlugins, binaryFeatures, allFeatures, rootFiles); 
 		((PackageConfigScriptGenerator) configScriptGenerator).setPackagingPropertiesLocation(packagingPropertiesLocation);
-		setOutputFormat(outputFormat);
+		configScriptGenerator.setArchiveFormat((String) archivesFormat.get(aConfig));
 		setForceUpdateJar(forceUpdateJarFormat);
 		setBrandExecutable(false);
 		configScriptGenerator.generate();

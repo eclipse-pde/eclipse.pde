@@ -17,9 +17,10 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 	protected String directory; // representing the directory where to generate the file
 	protected AssemblyInformation assemblageInformation;
 	protected String featureId;
-	
+	protected HashMap archivesFormat;
+
 	protected AssembleConfigScriptGenerator configScriptGenerator;
-	
+
 	public AssembleScriptGenerator(String directory, AssemblyInformation assemblageInformation, String featureId) throws CoreException {
 		this.directory = directory;
 		this.assemblageInformation = assemblageInformation;
@@ -30,11 +31,11 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 	protected String getScriptName() {
 		return DEFAULT_ASSEMBLE_NAME + '.' + (featureId.equals("") ? "" : featureId + '.') + DEFAULT_ASSEMBLE_ALL;
 	}
-	
+
 	protected AssembleConfigScriptGenerator getConfigScriptGenerator() {
 		return new AssembleConfigScriptGenerator();
 	}
-	
+
 	public void generate() throws CoreException {
 		try {
 			openScript(directory, getScriptName());
@@ -57,6 +58,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 	protected void generateAssembleConfigFileTargetCall(Config aConfig) throws CoreException {
 		// generate the script for a configuration
 		configScriptGenerator.initialize(directory, featureId, aConfig, assemblageInformation.getCompiledPlugins(aConfig), assemblageInformation.getCompiledFeatures(aConfig), assemblageInformation.getFeatures(aConfig), assemblageInformation.getRootFileProviders(aConfig));
+		configScriptGenerator.setArchiveFormat((String) archivesFormat.get(aConfig));
 		configScriptGenerator.generate();
 
 		Map params = new HashMap(1);
@@ -70,5 +72,9 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 
 	public void setGenerateJnlp(boolean value) {
 		configScriptGenerator.setGenerateJnlp(value);
+	}
+
+	public void setArchivesFormat(HashMap outputFormat) {
+		archivesFormat = outputFormat;
 	}
 }
