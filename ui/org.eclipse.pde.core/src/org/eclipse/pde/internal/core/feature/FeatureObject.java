@@ -93,7 +93,15 @@ public abstract class FeatureObject
 		}
 		return 0;
 	}
-
+	
+	boolean getBooleanAttribute(Node node, String name) {
+		String value = getNodeAttribute(node, name);
+		if (value != null) {
+			return value.equalsIgnoreCase("true");
+		}
+		return false;
+	}
+	
 	protected String getNormalizedText(String source) {
 		String result = source.replace('\t', ' ');
 		result = result.trim();
