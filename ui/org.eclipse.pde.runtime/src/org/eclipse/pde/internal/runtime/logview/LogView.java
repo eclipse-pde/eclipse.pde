@@ -459,19 +459,16 @@ public class LogView extends ViewPart implements ILogListener {
 			}
 		});
 	}
+	
 	protected void reloadLog() {
-		BusyIndicator
-			.showWhile(tableTreeViewer.getControl().getDisplay(), new Runnable() {
-			public void run() {
-				readLogAction.setText(
-					PDERuntimePlugin.getResourceString("LogView.readLog.restore"));
-				readLogAction.setToolTipText(
-					PDERuntimePlugin.getResourceString("LogView.readLog.restore"));
-				readLogFile();
-				tableTreeViewer.refresh();
-			}
-		});
+		readLogAction.setText(
+			PDERuntimePlugin.getResourceString("LogView.readLog.restore"));
+		readLogAction.setToolTipText(
+			PDERuntimePlugin.getResourceString("LogView.readLog.restore"));
+		readLogFile();
+		tableTreeViewer.refresh();
 	}
+	
 	private void readLogFile() {
 		logs.clear();
 		if (!inputFile.exists())
