@@ -267,8 +267,6 @@ public class RequiresSection
 			IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 			IPluginBase pluginBase = model.getPluginBase();
 			pluginBase.swap(dep1, dep2);
-			refresh();
-			updateDirectionalButtons();
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}		
@@ -338,8 +336,13 @@ public class RequiresSection
 			markStale();
 			return;
 		}
+		if (event.getChangedProperty() == IPluginBase.P_IMPORT_ORDER) {
+			refresh();
+			updateDirectionalButtons();
+			return;
+		}
 
-		Object changeObject = event.getChangedObjects()[0];
+		Object changeObject = event.getChangedObjects()[0];		
 		if (changeObject instanceof IPluginImport) {
 			IPluginImport iimport = (IPluginImport) changeObject;
 			if (event.getChangeType() == IModelChangedEvent.INSERT) {
