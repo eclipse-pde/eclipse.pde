@@ -646,7 +646,7 @@ protected void generateEpilogue() {
  */
 protected void generatePrologue() {
 	int tab = 1;
-	script.printProjectDeclaration(model.getId(), TARGET_INIT, ".");
+	script.printProjectDeclaration(model.getId(), TARGET_BUILD_JARS, ".");
 	script.println();
 	script.printTargetDeclaration(tab++, "initTemplate", null, null, PROPERTY_TEMPLATE, null);
 	script.printString(tab, "<initTemplate/>");

@@ -19,27 +19,22 @@ import org.eclipse.update.internal.core.FeatureExecutableFactory;
  * Generates build.xml script for features.
  */
 public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
-
 	/**
 	 * Indicates whether scripts for this feature's children should be generated.
 	 */
 	protected boolean generateChildrenScript = true;
-
 	/**
 	 * 
 	 */
 	protected String featureID;
-
 	/**
 	 * Where to get the feature description from.
 	 */
 	protected String featureRootLocation;
-
 	/**
 	 * Target feature.
 	 */
 	protected Feature feature;
-
 /**
  * Returns a list of PluginModel objects representing the elements. The boolean
  * argument indicates whether the list should consist of plug-ins or fragments.
@@ -64,12 +59,9 @@ protected List computeElements(boolean fragments) throws CoreException {
 	}
 	return result;
 }
-
 public void setGenerateChildrenScript(boolean generate) {
 	generateChildrenScript = generate;
 }
-
-
 public void generate() throws CoreException {
 	if (featureID == null)
 		throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_FEATURE_MISSING, Policy.bind("error.missingFeatureId"), null));
@@ -99,7 +91,6 @@ public void generate() throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_WRITING_SCRIPT, Policy.bind("exception.writeScript"), e));
 	}
 }
-
 /**
  * Main call for generating the script.
  */
@@ -123,7 +114,6 @@ protected void generateBuildScript() throws CoreException {
 	generatePropertiesTarget();
 	generateEpilogue();
 }
-
 /**
  * FIXME: add comments
  */
@@ -150,7 +140,6 @@ protected void generateBuildJarsTarget() throws CoreException {
 	tab--;
 	script.printString(tab, "</target>");
 }
-
 /**
  * FIXME: add comments
  */
@@ -175,7 +164,6 @@ protected void generateBuildZipsTarget() throws CoreException {
 	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, null, params);
 	script.printString(--tab, "</target>");
 }
-
 /**
  * FIXME: add comments
  */
@@ -187,7 +175,6 @@ protected void generateZipIndividualTarget(String zipName, String source) throws
 	script.printZipTask(tab, root.append(zipName).toString(), root.append(source).toString());
 	script.printString(--tab, "</target>");
 }
-
 /**
  * FIXME: add comments
  */
@@ -216,8 +203,6 @@ protected void generateBuildSourcesTarget() throws CoreException {
 	tab--;
 	script.printString(tab, "</target>");
 }
-
-
 /**
  * FIXME: add comments
  */
@@ -238,8 +223,6 @@ protected void generateJarIndividualTarget(String jarName, String jarSource) thr
 	script.printAntTask(tab, getPropertyFormat(PROPERTY_TEMPLATE), null, TARGET_JAR, null, null, properties);
 	script.printString(--tab, "</target>");
 }
-
-
 protected void generateCleanTarget() {
 	int tab = 1;
 	script.println();
@@ -256,7 +239,6 @@ protected void generateCleanTarget() {
 	tab--;
 	script.printString(tab, "</target>");
 }
-
 protected void generateZipLogsTarget() {
 	IPath base = new Path(getPropertyFormat(PROPERTY_BASEDIR));
 	base = base.append("_temp_");
@@ -274,7 +256,6 @@ protected void generateZipLogsTarget() {
 	script.printDeleteTask(tab, getPropertyFormat(PROPERTY_BASE), null, null);
 	script.printString(--tab, "</target>");
 }
-
 protected void generateGatherLogTarget() {
 	String source = new Path(getPropertyFormat(PROPERTY_BASEDIR)).toString();
 	String destination = new Path(getPropertyFormat(PROPERTY_DESTINATION)).append(getDirectoryName()).toString();
@@ -286,8 +267,6 @@ protected void generateGatherLogTarget() {
 	script.printCopyTask(tab, null, destination, new FileSet[] {fileSet});
 	script.printString(--tab, "</target>");
 }
-
-
 protected void generateGatherSourcesTarget() {
 	IPath source = new Path(getPropertyFormat(PROPERTY_BASEDIR));
 	IPath destination = new Path(getPropertyFormat(PROPERTY_DESTINATION));
@@ -309,14 +288,12 @@ protected void generateGatherSourcesTarget() {
 	}
 	script.printString(--tab, "</target>");
 }
-
 /**
  * 
  */
 protected String getDirectoryName() {
 	return "install/features/${feature}";
 }
-
 protected void generateZipSourcesTarget() {
 	String featurebase = getPropertyFormat(PROPERTY_FEATURE_BASE);
 	int tab = 1;
@@ -337,9 +314,6 @@ protected void generateZipSourcesTarget() {
 	tab--;
 	script.printString(tab, "</target>");
 }
-
-
-
 protected void generateGatherBinPartsTarget() {
 	int tab = 1;
 	script.println();
@@ -362,7 +336,6 @@ protected void generateGatherBinPartsTarget() {
 	script.printAntTask(tab, getPropertyFormat(PROPERTY_TEMPLATE), null, "includesExcludesCopy", null, null, params);
 	script.printString(--tab, "</target>");
 }
-
 protected void generatePropertiesTarget() {
 	int tab = 1;
 	script.println();
@@ -370,7 +343,6 @@ protected void generatePropertiesTarget() {
 	generateMandatoryProperties(tab);
 	script.printEndTag(--tab, "target");
 }
-
 /**
  * 
  */
@@ -382,8 +354,6 @@ protected void generateMandatoryProperties(int tab) {
 		script.printPluginLocationDeclaration(tab, (String) entry.getKey(), (String) entry.getValue());
 	}
 }
-
-
 protected void generateBuildUpdateJarTarget() {
 	int tab = 1;
 	script.println();
@@ -407,9 +377,6 @@ protected void generateBuildUpdateJarTarget() {
 	tab--;
 	script.printString(tab, "</target>");
 }
-
-
-
 /**
  * Zip up the whole feature.
  */
@@ -430,9 +397,6 @@ protected void generateZipDistributionWholeTarget() {
 	tab--;
 	script.printString(tab, "</target>");
 }
-
-
-
 /**
  * Executes a given target in all children's script files.
  */
@@ -448,7 +412,6 @@ protected void generateAllChildrenTarget() {
 	script.printTargetDeclaration(1, TARGET_ALL_CHILDREN, depends.toString(), null, null, null);
 	script.printString(1, "</target>");
 }
-
 protected void generateSourceIndividualTarget(String name, String source) throws CoreException {
 	String basedir = getPropertyFormat(PROPERTY_BASEDIR);
 	IPath destination = new Path(basedir);
@@ -467,7 +430,6 @@ protected void generateSourceIndividualTarget(String name, String source) throws
 	tab--;
 	script.printString(tab, "</target>");
 }
-
 /**
  * Target responsible for delegating target calls to plug-in's build.xml scripts.
  */
@@ -486,8 +448,6 @@ protected void generateAllPluginsTarget() throws CoreException {
 	}
 	script.printString(--tab, "</target>");
 }
-
-
 /**
  * Target responsible for delegating target calls to fragments's build.xml scripts.
  */
@@ -503,12 +463,6 @@ protected void generateAllFragmentsTarget() throws CoreException {
 	}
 	script.printString(--tab, "</target>");
 }
-
-
-
-
-
-
 /**
  * 
  */
@@ -554,7 +508,6 @@ protected String[][] computePrerequisiteOrder(PluginModel[] plugins) {
 	String[][] prereqArray = (String[][]) prereqs.toArray(new String[prereqs.size()][]);
 	return computeNodeOrder(prereqArray);
 }
-
 /**
  * 
  */
@@ -575,7 +528,6 @@ protected String[][] computeNodeOrder(String[][] specs) {
 	result[1] = (String[]) counts.keySet().toArray(new String[counts.size()]);
 	return result;
 }
-
 /**
  * 
  */
@@ -592,7 +544,6 @@ protected static void removeArcs(String[][] mappings, List roots, HashMap counts
 		}
 	}
 }
-
 /**
  * 
  */
@@ -606,7 +557,6 @@ protected List findRootNodes(HashMap counts) {
 	}
 	return result;
 }
-
 /**
  * 
  */
@@ -627,7 +577,6 @@ protected HashMap computeCounts(String[][] mappings) {
 	}
 	return counts;
 }
-
 /**
  * Just ends the script.
  */
@@ -635,13 +584,12 @@ protected void generateEpilogue() {
 	script.println();
 	script.printString(0, "</project>");
 }
-
 /**
  * Defines, the XML declaration, Ant project and init target.
  */
 protected void generatePrologue() {
 	int tab = 1;
-	script.printProjectDeclaration(feature.getFeatureIdentifier(), TARGET_INIT, ".");
+	script.printProjectDeclaration(feature.getFeatureIdentifier(), TARGET_BUILD_JARS, ".");
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_INIT, "initTemplate, " + TARGET_PROPERTIES, null, null, null);
 	script.printString(--tab, "</target>");
@@ -650,13 +598,10 @@ protected void generatePrologue() {
 	script.printString(tab, "<initTemplate/>");
 	script.printString(--tab, "</target>");
 }
-
-
 protected void generateChildrenScripts() throws CoreException {
 	generateModels(new PluginBuildScriptGenerator(), computeElements(false));
 	generateModels(new PluginBuildScriptGenerator(), computeElements(true));
 }
-
 protected void generateModels(ModelBuildScriptGenerator generator, List models) throws CoreException {
 	if (models.isEmpty())
 		return;
@@ -672,7 +617,6 @@ protected void generateModels(ModelBuildScriptGenerator generator, List models) 
 		generator.generate();
 	}
 }
-
 /**
  * Propagates properties that are set for this feature but should
  * overwrite any values set for the children.
@@ -686,18 +630,12 @@ protected void configurePersistentProperties(AbstractBuildScriptGenerator genera
 		generator.setBuildProperty(key, value);
 	}
 }
-
-
-
-
-
 public void setFeature(String featureID) throws CoreException {
 	if (featureID == null)
 		throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_FEATURE_MISSING, Policy.bind("error.missingFeatureId"), null));
 	this.featureID = featureID;
 	readProperties(getFeatureRootLocation());
 }
-
 /**
  * Reads the target feature from the specified location.
  */
@@ -716,7 +654,6 @@ protected void readFeature() throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_FEATURE_MISSING, Policy.bind("error.creatingFeature", new String[] {featureID}), e));
 	}
 }
-
 /**
  * If the feature location was not specified, use a default one.
  */
@@ -729,14 +666,12 @@ protected String getFeatureRootLocation() {
 	}
 	return featureRootLocation;
 }
-
 /**
  *
  */
 public void setFeatureRootLocation(String location) {
 	this.featureRootLocation = location;
 }
-
 /**
  * Delegates some target call to all-template only if the property
  * includeChildren is set.
@@ -747,5 +682,4 @@ protected void generateChildrenTarget() {
 	script.printAntCallTask(2, TARGET_ALL_CHILDREN, null, null);
 	script.printString(1, "</target>");
 }
-
 }
