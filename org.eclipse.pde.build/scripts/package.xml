@@ -38,7 +38,8 @@
 									workingDirectory="${workingDirectory}" 
 									configInfo="${config}" 
 									baseLocation="${tempDirectory}/${featurePaths}" 
-									packagePropertyFile="${packagingPropertyFile}" /> 
+									packagePropertyFile="${packagingPropertyFile}" 
+									deltaPack="${deltaPack}"/> 
 	</target>
 
 	<!-- Call the assemble.xml script -->

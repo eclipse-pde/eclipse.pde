@@ -122,6 +122,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 			generator.setSourceToGather(new SourceFeatureInformation());
 			generator.setCompiledElements(generator.getCompiledElements());
 			generator.setBuildingOSGi(isBuildingOSGi());
+			generator.includePlatformIndependent(true);
 			generator.generate();
 
 			if (generateAssembleScript == true) {

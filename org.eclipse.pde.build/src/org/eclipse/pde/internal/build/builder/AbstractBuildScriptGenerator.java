@@ -36,6 +36,8 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 	protected BuildTimeSiteFactory siteFactory;
 	private Set compiledElements; //The elements we are compiling
 
+	private boolean includePlatformIndependent = true;
+
 	abstract protected Properties getBuildProperties() throws CoreException;
 
 	public void setDevEntries(String entries) {
@@ -46,6 +48,14 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 		devEntries = entries;
 	}
 
+	public void includePlatformIndependent(boolean value) {
+		includePlatformIndependent = value;
+	}
+	
+	public boolean isPlatformIndependentIncluded() {
+		return includePlatformIndependent;
+	}
+	
 	/**
 	 * Return the path of the plugins		//TODO Do we need to add support for features, or do we simply consider one list of URL? It is just a matter of style/
 	 * @return URL[]
@@ -206,27 +216,34 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 	 * @param element
 	 * @return List
 	 */
-	public List selectConfigs(IPlatformEnvironment element) {
+	public List selectConfigs(IPlatformEnvironment element) { //PASCAL To modify here
 		List result = new ArrayList(getConfigInfos());
+
+		if (((element.getOS() == null || element.getOS().equals(Config.ANY)) && includePlatformIndependent == false) && 
+			((element.getWS() == null || element.getWS().equals(Config.ANY)) && includePlatformIndependent == false) && 
+			((element.getOSArch() == null || element.getOSArch().equals(Config.ANY)) && includePlatformIndependent == false)) {
+			result.clear();
+			return result;
+		}
 
 		if (element.getOS() != null && !element.getOS().equals(Config.ANY)) {
 			for (Iterator iter = result.iterator(); iter.hasNext();) {
 				Config config = (Config) iter.next();
-				if (!config.getOs().equals(element.getOS()))
+				if (element.getOS().indexOf(config.getOs()) == -1)
 					iter.remove();
 			}
 		}
 		if (element.getWS() != null && !element.getWS().equals(Config.ANY)) {
 			for (Iterator iter = result.iterator(); iter.hasNext();) {
 				Config config = (Config) iter.next();
-				if (!config.getWs().equals(element.getWS()))
+				if (element.getWS().indexOf(config.getWs()) == -1)
 					iter.remove();
 			}
 		}
 		if (element.getOSArch() != null && !element.getOSArch().equals(Config.ANY)) {
 			for (Iterator iter = result.iterator(); iter.hasNext();) {
 				Config config = (Config) iter.next();
-				if (!config.getArch().equals(element.getOSArch()))
+				if (element.getOSArch().indexOf(config.getArch()) == -1)
 					iter.remove();
 			}
 		}

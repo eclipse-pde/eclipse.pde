@@ -21,8 +21,6 @@ public class UnzipperGenerator extends AbstractScriptGenerator {
 	private String directoryLocation = DEFAULT_PACKAGER_DIRECTORY_FILENAME_DESCRIPTOR;
 	// The list of zips. The key is the name of the zipfile, and the first property is the place to extract it
 	private Properties zipsList;
-	// The config info for which the generate the unzip command.
-	private Config configInfo; //We only consider one config at a time
 	// The location of the packaging.properties file
 	private String packagingPropertiesLocation;
 
@@ -74,8 +72,7 @@ public class UnzipperGenerator extends AbstractScriptGenerator {
 
 	private void generatePrologue() {
 		script.println();
-		configInfo = (Config) getConfigInfos().get(0);
-		script.printComment("Unzip script for " + configInfo.toString(".")); //$NON-NLS-1$ //$NON-NLS-2$
+		script.printComment("Unzip script"); //$NON-NLS-1$ //$NON-NLS-2$
 		script.println();
 		script.printProjectDeclaration("Unzipper", TARGET_MAIN, "."); //$NON-NLS-1$	//$NON-NLS-2$
 		script.printTargetDeclaration(TARGET_MAIN, null, null, null, null);
@@ -84,11 +81,9 @@ public class UnzipperGenerator extends AbstractScriptGenerator {
 	private void generateUncompressionCommands() throws CoreException {
 		zipsList = readProperties(workingDirectory, directoryLocation, IStatus.ERROR); //$NON-NLS-1$
 
-		List toUnzipWithOrder = new ArrayList(unzipOrder.length);
-		String zipEntries = zipsList.getProperty(Config.genericConfig().toString(","), ""); //$NON-NLS-1$	//$NON-NLS-2$
-		if (!configInfo.equals(Config.genericConfig()))
-			zipEntries += (zipEntries.length() == 0 ? "" : " & ") + zipsList.getProperty(configInfo.toString(","), ""); //$NON-NLS-1$	//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		String zipEntries = zipsList.getProperty("toUnzip",""); //$NON-NLS-1$	//$NON-NLS-2$
 
+		List toUnzipWithOrder = new ArrayList(unzipOrder.length);
 		String[] allZipEntries = Utils.getArrayFromString(zipEntries, "&"); //$NON-NLS-1$
 		for (int i = 0; i < allZipEntries.length; i++) {
 			String[] entryDetail = Utils.getArrayFromString(allZipEntries[i], ","); //$NON-NLS-1$

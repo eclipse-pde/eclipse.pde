@@ -86,4 +86,9 @@ public class AssemblerTask extends Task {
 	public void setPackagePropertyFile(String propertyFile) {
 		generator.setPropertyFile(propertyFile);
 	}
+	
+	public void setDeltaPack(boolean value) {
+		generator.includePlatformIndependent(! value);
+		generator.groupConfigs(value);
+	}
 }

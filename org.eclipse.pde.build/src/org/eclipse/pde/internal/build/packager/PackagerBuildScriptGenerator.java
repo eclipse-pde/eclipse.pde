@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.pde.internal.build.packager;
 
+import java.util.*;
 import java.util.Iterator;
 import java.util.List;
 import org.eclipse.core.runtime.CoreException;
@@ -27,7 +28,12 @@ public class PackagerBuildScriptGenerator extends FeatureBuildScriptGenerator {
 	private String[] rootDirs;
 	private String outputFormat = "zip"; //$NON-NLS-1$
 	private String[] ignoredFeatures;
-
+	private boolean groupConfigs = false;
+	
+	public void groupConfigs(boolean group) {
+		groupConfigs = group;
+	}
+	
 	public PackagerBuildScriptGenerator() {
 		super();
 	}
@@ -51,34 +57,33 @@ public class PackagerBuildScriptGenerator extends FeatureBuildScriptGenerator {
 			generator.setDevEntries(devEntries);
 			generator.setCompiledElements(getCompiledElements());
 			generator.setBuildingOSGi(isBuildingOSGi());
+			generator.includePlatformIndependent(isPlatformIndependentIncluded());
 			setFeature(featureList[i]);
 			generator.generate();
 		}
 
-		removeIgnoredFeatures(assemblageInformation);
 		PackagingConfigScriptGenerator configAssembler = new PackagingConfigScriptGenerator();
-		Config config = (Config) getConfigInfos().get(0);
-		configAssembler.initialize(workingDirectory, DEFAULT_ASSEMBLE_FILENAME, "", config, assemblageInformation.getPlugins(config), assemblageInformation.getFeatures(config), assemblageInformation.getRootFileProviders(config)); //$NON-NLS-1$ //Here the last arg is true because we do not have the root info while packaging
+		
+		Collection allPlugins = new HashSet();
+		Collection allFeatures = new HashSet();
+		Collection allRootFiles = new HashSet();
+		
+		for (Iterator allConfigs = getConfigInfos().iterator(); allConfigs.hasNext();) {
+			Config element = (Config) allConfigs.next();
+			allPlugins.addAll(assemblageInformation.getPlugins(element));
+			allFeatures.addAll(assemblageInformation.getFeatures(element));
+			allRootFiles.addAll(assemblageInformation.getRootFileProviders(element));
+			if (groupConfigs == false)
+				break;
+		}
+		configAssembler.initialize(workingDirectory, DEFAULT_ASSEMBLE_FILENAME, "", groupConfigs ? new Config("delta", "delta", "delta") : (Config) getConfigInfos().get(0), allPlugins, allFeatures, allRootFiles); //$NON-NLS-1$ //Here the last arg is true because we do not have the root info while packaging
 		configAssembler.setPackagingPropertiesLocation(packagingPropertiesLocation);
 		configAssembler.rootFiles(rootFiles);
 		configAssembler.rootDirs(rootDirs);
 		configAssembler.setOutput(outputFormat);
 		configAssembler.generate();
-
 	}
-
-	private void removeIgnoredFeatures(AssemblyInformation toAssemble) {
-		if (ignoredFeatures == null)
-			return;
-		for (int i = 0; i < ignoredFeatures.length; i++) {
-			try {
-				toAssemble.removeFeature((Config) getConfigInfos().get(0), getSite(false).findFeature(ignoredFeatures[i], null, true));
-			} catch (CoreException e) {
-				//Ignore
-			}
-		}
-	}
-
+	
 	protected void generateIncludedFeatureBuildFile() throws CoreException {
 		IIncludedFeatureReference[] referencedFeatures = feature.getIncludedFeatureReferences();
 		for (int i = 0; i < referencedFeatures.length; i++) {
@@ -94,6 +99,7 @@ public class PackagerBuildScriptGenerator extends FeatureBuildScriptGenerator {
 			generator.setDevEntries(devEntries);
 			generator.setCompiledElements(getCompiledElements());
 			generator.setBuildingOSGi(isBuildingOSGi());
+			generator.includePlatformIndependent(isPlatformIndependentIncluded());
 			try {
 				generator.generate();
 			} catch (CoreException exception) {
@@ -122,10 +128,6 @@ public class PackagerBuildScriptGenerator extends FeatureBuildScriptGenerator {
 
 	public void setOutput(String format) { //TODO To rename
 		this.outputFormat = format;
-	}
-
-	public void setIgnoredFeatures(String[] features) {
-		ignoredFeatures = features;
 	}
 
 	protected void collectElementToAssemble(IFeature featureToCollect) throws CoreException {

@@ -129,6 +129,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		featureGenerator.setSourceToGather(sourceToGather);
 		featureGenerator.setSourcePluginOnly(true);
 		featureGenerator.setBuildingOSGi(isBuildingOSGi());
+		featureGenerator.includePlatformIndependent(isPlatformIndependentIncluded());
 		featureGenerator.generate();
 	}
 
@@ -235,6 +236,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			generator.setCompiledElements(getCompiledElements());
 			generator.setSourceToGather(new SourceFeatureInformation());
 			generator.setBuildingOSGi(isBuildingOSGi());
+			generator.includePlatformIndependent(isPlatformIndependentIncluded());
 			generator.generate();
 		}
 	}
@@ -734,6 +736,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			generator.setPluginPath(getPluginPath());
 			generator.setBuildingOSGi(isBuildingOSGi());
 			generator.setDevEntries(devEntries);
+			generator.includePlatformIndependent(isPlatformIndependentIncluded());
 			generator.generate();
 		}
 	}
@@ -921,6 +924,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		sourceScriptGenerator.setCompiledElements(getCompiledElements());
 		sourceScriptGenerator.setSourcePluginOnly(sourcePluginOnly);
 		sourceScriptGenerator.setBuildingOSGi(isBuildingOSGi());
+		sourceScriptGenerator.includePlatformIndependent(isPlatformIndependentIncluded());
 		sourceScriptGenerator.generate();
 	}
 

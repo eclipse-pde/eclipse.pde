@@ -23,27 +23,23 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 	// Unknown component name
 	private static final String UNKNOWN = "*"; //$NON-NLS-1$ 	
 
-	private Config config;
 	private String[] filters;
 	private String mapLocation;
 	private String collectedFiles;
 	private String[] componentFilter;
 
 	private Properties mapContent;
-	private Properties selectedFiles;
 
 	private void displayDebugInfo() {
 		if (!BundleHelper.getDefault().isDebugging())
 			return;
 
-		System.out.println("Configuration: " + config.toString()); //$NON-NLS-1$
 		System.out.println("Filters: " + (filters != null ? Utils.getStringFromArray(filters, ", ") : "NONE")); //$NON-NLS-1$ 	//$NON-NLS-2$ 	//$NON-NLS-3$
 		System.out.println("Component filter: " + (componentFilter != null ? Utils.getStringFromArray(componentFilter, ", ") : "NONE")); //$NON-NLS-1$ 	//$NON-NLS-2$ 	//$NON-NLS-3$
 		System.out.println("Map location: " + mapLocation); //$NON-NLS-1$
 	}
 
 	public void generate() throws CoreException {
-		config = (Config) getConfigInfos().get(0);
 		collectedFiles = ""; //$NON-NLS-1$
 		displayDebugInfo();
 
@@ -93,9 +89,8 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 	}
 
 	private void writeDirectory() throws CoreException {
-		selectedFiles = new Properties();
-		selectedFiles.put(config.toString(","), collectedFiles); //$NON-NLS-1$
-
+		Properties selectedFiles = new Properties();
+		selectedFiles.put("toUnzip", collectedFiles); //$NON-NLS-1$
 		try {
 			OutputStream stream = new BufferedOutputStream(new FileOutputStream(workingDirectory + '/' + DEFAULT_PACKAGER_DIRECTORY_FILENAME_DESCRIPTOR)); //$NON-NLS-1$
 			try {
@@ -174,18 +169,32 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 	//Return true, if the entryConfigs match the config we are packaging
 	private boolean filterByConfig(String entryConfigString) {
 		String[] entryConfigs = Utils.getArrayFromStringWithBlank(entryConfigString, FILTER_SEPARATOR);
-		if (entryConfigs.length == 0 || config.equals(Config.genericConfig()))
+		if (entryConfigs.length == 0 || containsGenericConfig(getConfigInfos()))
 			return true;
 
 		for (int i = 0; i < entryConfigs.length; i++) {
+			Iterator iter = getConfigInfos().iterator();
 			Config aConfig = new Config(entryConfigs[i]);
-			if (aConfig.equals(config) || aConfig.equals(Config.genericConfig())) {
-				return true;
+			while (iter.hasNext()) {
+				if (aConfig.equals(iter.next()) || aConfig.equals(Config.genericConfig())) {
+					return true;
+				}
 			}
 		}
 		return false;
 	}
 
+	boolean containsGenericConfig(List configs) {
+		if (configs == null)
+			return false;
+		Iterator iter = configs.iterator();
+		while (iter.hasNext()) {
+			if (Config.genericConfig().equals(iter.next()))
+				return true;
+		}
+		return false;
+	}
+	
 	//Return true if the componentName is listed in the component filter, or if no filter is specified
 	private boolean filterByComponentName(String componentName) {
 		if (componentName.equals(UNKNOWN) || componentFilter == null)
