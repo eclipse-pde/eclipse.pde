@@ -18,6 +18,7 @@ import org.eclipse.debug.core.*;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.swt.program.*;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -119,13 +120,15 @@ public class LaunchListener
 		}
 	}
 
-	private void launchTerminated(ILaunch launch, int returnValue) {
+	private void launchTerminated(final ILaunch launch, int returnValue) {
 		if (managedLaunches.contains(launch)) {
 			update(launch, true);
 			if (returnValue == 23) {
 				doRestart(launch);
 				return;
 			}
+			
+			// launch failed because the associated workspace is in use
 			if (returnValue == 15) {
 				Display.getDefault().asyncExec(new Runnable() {
 					public void run() {
@@ -137,13 +140,24 @@ public class LaunchListener
 				});
 				return;
 			}
+			
+			// launch failed for reasons printed to the log.
 			if (returnValue == 13) {
 				Display.getDefault().asyncExec(new Runnable() {
 					public void run() {
-						MessageDialog.openError(
-							PDEPlugin.getActiveWorkbenchShell(),
-							PDEPlugin.getResourceString("Launcher.error.title"),
-							PDEPlugin.getResourceString("Launcher.error.code13"));
+						try {
+							String workspace = launch.getLaunchConfiguration().getAttribute(ILauncherSettings.LOCATION + "0", "");
+							if (workspace.length() > 0) {
+								File file = new File(workspace, ".metadata/.log");
+								if (file.exists() && MessageDialog.openQuestion(
+								PDEPlugin.getActiveWorkbenchShell(),
+								PDEPlugin.getResourceString("Launcher.error.title"),
+								PDEPlugin.getResourceString("Launcher.error.code13"))) {
+									Program.launch(file.getAbsolutePath());
+								}
+							}
+						} catch (CoreException e) {
+						}
 					}
 				});
 			}
