@@ -385,7 +385,8 @@ public class PDEPlugin extends AbstractUIPlugin {
 
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				JavaRuntime.initializeJREVariables(monitor);
+				//This causes PDE to bomb - problem in Debug UI
+				//JavaRuntime.initializeJREVariables(monitor);
 				getExternalModelManager().getEclipseHome(monitor);
 			}
 		};

@@ -88,6 +88,7 @@ public class ExportSection extends TableSection {
 				PDEPlugin.getResourceString(KEY_REMOVE)});
 		setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
 		setDescription(PDEPlugin.getResourceString(SECTION_DESC));
+		handleDefaultButton=false;
 	}
 	private void buttonChanged(Button selectedButton) {
 		ignoreModelEvents = true;
