@@ -78,8 +78,11 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		GridData gd = new GridData();
 		gd.horizontalSpan = 3;
 		implicitButton.setLayoutData(gd);
-		implicitButton.setSelection(getDialogSettings().getBoolean(SETTINGS_IMPLICIT));
-		
+		if (getDialogSettings().get(SETTINGS_IMPLICIT) != null)
+			implicitButton.setSelection(getDialogSettings().getBoolean(SETTINGS_IMPLICIT));
+		else 
+			implicitButton.setSelection(true);
+			
 		setPageComplete(false);
 		setControl(container);
 		Dialog.applyDialogFont(container);
