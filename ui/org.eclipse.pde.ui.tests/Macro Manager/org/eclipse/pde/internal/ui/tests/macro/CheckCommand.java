@@ -30,11 +30,11 @@ public class CheckCommand extends ToggleStructuredCommand {
 		super.processEvent(event);
 		Widget item = event.item;
 		if (item instanceof TreeItem)
-			value = !((TreeItem)item).getChecked();
+			value = ((TreeItem)item).getChecked();
 		else if (item instanceof TableItem)
-			value = !((TableItem)item).getChecked();
+			value = ((TableItem)item).getChecked();
 		else if (item instanceof TableTreeItem)
-			value = !((TableTreeItem)item).getChecked();
+			value = ((TableTreeItem)item).getChecked();
 	}
 
 	protected void playTreeCommand(Tree tree, TreeItem[] matches) {
@@ -42,11 +42,11 @@ public class CheckCommand extends ToggleStructuredCommand {
 			matches[i].setChecked(getValue());
 		}
 	}
-
+	
 	protected void playTableCommand(Table table, TableItem[] matches) {
 		for (int i=0; i<matches.length; i++) {
 			matches[i].setChecked(getValue());
-		}		
+		}
 	}
 	
 	protected void playTableTreeCommand(TableTree tableTree, TableTreeItem [] matches) {
