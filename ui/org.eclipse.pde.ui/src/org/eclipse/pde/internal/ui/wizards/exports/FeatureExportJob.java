@@ -230,6 +230,8 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 			runScript(getAssemblyScriptName(featureID, os, ws, arch, featureLocation), new String[] {"main"}, //$NON-NLS-1$
 					properties, new SubProgressMonitor(monitor, 2));
 			runScript(getPackagerScriptName(featureID, os, ws, arch, featureLocation), null, properties, new SubProgressMonitor(monitor, 2));
+			properties.put("destination.temp.folder", fBuildTempLocation + "/pde.logs"); //$NON-NLS-1$ //$NON-NLS-2$
+			runScript(getBuildScriptName(featureLocation), new String[] {"gather.logs"}, properties, new SubProgressMonitor(monitor, 2)); //$NON-NLS-1$
 		} finally {
 			monitor.done();
 		}
@@ -370,8 +372,8 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 
 	private String[] getBuildExecutionTargets() {
 		if (fExportSource)
-			return new String[] {"build.jars", "build.sources", "gather.logs"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		return new String[] {"build.jars", "gather.logs"}; //$NON-NLS-1$ //$NON-NLS-2$
+			return new String[] {"build.jars", "build.sources"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		return new String[] {"build.jars"}; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public void deleteBuildFiles(IModel model) throws CoreException {
@@ -533,7 +535,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 	private boolean generateZipLogsTarget(PrintWriter writer) {
 		if (logFile != null && logFile.exists() && logFile.length() > 0) {
 			writer.println("<target name=\"zip.logs\">"); //$NON-NLS-1$
-			writer.println("<zip zipfile=\"" + fDestinationDirectory + "/logs.zip\" basedir=\"" + fBuildTempLocation + "/temp.folder\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			writer.println("<zip zipfile=\"" + fDestinationDirectory + "/logs.zip\" basedir=\"" + fBuildTempLocation + "/pde.logs\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			writer.println("</target>"); //$NON-NLS-1$
 			return true;
 		}
