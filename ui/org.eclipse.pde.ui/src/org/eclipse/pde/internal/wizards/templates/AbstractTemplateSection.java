@@ -10,6 +10,8 @@ import java.io.*;
 import java.net.*;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.core.internal.boot.InternalBootLoader;
+import java.util.ResourceBundle;
+import java.util.MissingResourceException;
 
 public abstract class AbstractTemplateSection implements ITemplateSection {
 	protected IProject project;
@@ -39,6 +41,19 @@ public abstract class AbstractTemplateSection implements ITemplateSection {
 	public String getDescription() {
 		return "";
 	}
+	
+	public String getPluginResourceString(String key) {
+		ResourceBundle bundle = getPluginResourceBundle();
+		if (bundle==null) return key;
+		try {
+			return bundle.getString(key);
+		}
+		catch (MissingResourceException e) {
+			return key;
+		}
+	}
+	
+	protected abstract ResourceBundle getPluginResourceBundle();
 
 	/*
 	 * @see ITemplateSection#addPages(IBasePluginWizard)
@@ -59,7 +74,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection {
 	public IPluginReference[] getDependencies() {
 		return new IPluginReference[0];
 	}
-
+	
 	protected IFolder getSourceFolder(IProgressMonitor monitor)
 		throws CoreException {
 		IFolder sourceFolder = null;

@@ -31,9 +31,17 @@ public interface ITemplateSection {
 	 * Java IO. If template files are stored in a ZIP 
 	 * or JAR archive, the name of the archive must
 	 * be part of the URL.
+	 * @return a template location URL
 	 */
 	public URL getTemplateLocation();
 	
+	/**
+	 * Returns a description of the section. The description
+	 * should explain what extension will be plugged into,
+	 * what classes will be generated and how to
+	 * test that the generated code works properly.
+	 * @return a template description
+	 */
 	public String getDescription();
 	
 	/**
@@ -74,6 +82,15 @@ public interface ITemplateSection {
 	 * these classes and interfaces are correctly resolved.
 	 */
 	public IPluginReference[] getDependencies();
+	
+	/**
+	 * Returns identifier of the extension point used in
+	 * this section.
+	 * @return extension point id if this section contributes
+	 * into an extension point or <samp>null</samp> if not
+	 * applicable.
+	 */
+	public String getUsedExtensionPoint();
 
 	/**
 	 * Executes the template. As part of the execution, template

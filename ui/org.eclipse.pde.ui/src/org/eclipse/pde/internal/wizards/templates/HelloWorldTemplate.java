@@ -15,7 +15,7 @@ import java.net.*;
 import java.util.*;
 import org.eclipse.jface.wizard.*;
 
-public class HelloWorldTemplate extends GenericTemplateSection {
+public class HelloWorldTemplate extends PDETemplateSection {
 	public static final String KEY_CLASS_NAME = "className";
 	public static final String KEY_MESSAGE = "message";
 	public static final String CLASS_NAME = "SampleAction";
@@ -26,6 +26,10 @@ public class HelloWorldTemplate extends GenericTemplateSection {
 	 */
 	public HelloWorldTemplate() {
 
+	}
+	
+	public String getSectionId() {
+		return "helloWorld";
 	}
 	/*
 	 * @see ITemplateSection#getNumberOfWorkUnits()
@@ -66,20 +70,8 @@ public class HelloWorldTemplate extends GenericTemplateSection {
 		}
 	}
 	
-	public URL getTemplateLocation() {
-		URL url = PDEPlugin.getDefault().getDescriptor().getInstallURL();
-		try {
-			return new URL(url, "templates/helloWorld");
-		}
-		catch (MalformedURLException e) {
-			return null;
-		}
-	}
-	
-	public String getReplacementString(String fileName, String key) {
-		String value = getStringOption(key);
-		if (value!=null) return value;
-		return super.getReplacementString(fileName, key);
+	public String getUsedExtensionPoint() {
+		return "org.eclipse.ui.actionSets";
 	}
 	
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {

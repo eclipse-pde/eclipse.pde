@@ -15,7 +15,7 @@ import java.net.*;
 import java.util.*;
 import org.eclipse.jface.wizard.*;
 
-public class ViewTemplate extends GenericTemplateSection {
+public class ViewTemplate extends PDETemplateSection {
 	public static final String KEY_CLASS_NAME = "className";
 	public static final String KEY_MESSAGE = "message";
 	public static final String CLASS_NAME = "SampleView";
@@ -25,7 +25,10 @@ public class ViewTemplate extends GenericTemplateSection {
 	 * Constructor for HelloWorldTemplate.
 	 */
 	public ViewTemplate() {
-
+	}
+	
+	public String getSectionId() {
+		return "view";
 	}
 	/*
 	 * @see ITemplateSection#getNumberOfWorkUnits()
@@ -64,20 +67,8 @@ public class ViewTemplate extends GenericTemplateSection {
 		String name = source.getName();
 	}
 	
-	public URL getTemplateLocation() {
-		URL url = PDEPlugin.getDefault().getDescriptor().getInstallURL();
-		try {
-			return new URL(url, "templates/view");
-		}
-		catch (MalformedURLException e) {
-			return null;
-		}
-	}
-	
-	public String getReplacementString(String fileName, String key) {
-		String value = getStringOption(key);
-		if (value!=null) return value;
-		return super.getReplacementString(fileName, key);
+	public String getUsedExtensionPoint() {
+		return "org.eclipse.ui.views";
 	}
 	
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
