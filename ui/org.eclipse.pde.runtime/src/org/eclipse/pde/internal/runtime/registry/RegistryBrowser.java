@@ -215,6 +215,8 @@ IRegistryChangeListener {
 		return fSashForm;
 	}
 	public void saveState(IMemento memento) {
+		if (memento == null || this.memento == null || treeViewer == null)
+			return;
 		boolean showRunning = ((RegistryBrowserContentProvider) treeViewer
 				.getContentProvider()).isShowRunning();
 		if (showRunning)
