@@ -130,7 +130,7 @@ public class OSGiSection extends TableSection implements IModelChangedListener {
 		Label manifestLabel = toolkit.createLabel(createManifestContainer, "To take advantage of this feature, the plug-in must contain a manifest.mf file.");
 		gd = new GridData();
 		manifestLabel.setLayoutData(gd);
-		Hyperlink manifestLink = toolkit.createHyperlink(createManifestContainer, "Create manifest file",SWT.NULL);
+		Hyperlink manifestLink = toolkit.createHyperlink(createManifestContainer, "Create a manifest file",SWT.NULL);
 		manifestLink.addHyperlinkListener(new IHyperlinkListener(){
 			public void linkActivated(HyperlinkEvent e) {
 				/**
