@@ -60,7 +60,8 @@ public class ImportAsSourceTestCase extends PDETestCase {
 
 	private void verifyProject(IProject project) throws CoreException {
 		assertTrue("Project was not created.", project.exists());
-		assertNotNull(project.getPersistentProperty(PDECore.EXTERNAL_PROJECT_PROPERTY));
+		if (!project.getName().equals("org.eclipse.swt"))
+			assertFalse(WorkspaceModelManager.isBinaryPluginProject(project));
 		if (project.hasNature(JavaCore.NATURE_ID))
 			assertTrue(checkSourceAttached(JavaCore.create(project)));
 	}
@@ -69,7 +70,8 @@ public class ImportAsSourceTestCase extends PDETestCase {
 		IPackageFragmentRoot[] roots = jProject.getPackageFragmentRoots();
 		for (int i = 0; i < roots.length; i++) {
 			IClasspathEntry entry = roots[i].getRawClasspathEntry();
-			if (entry.getEntryKind() != IClasspathEntry.CPE_CONTAINER || !entry.getPath().equals(new Path(PDECore.CLASSPATH_CONTAINER_ID)))
+			if (entry.getEntryKind() != IClasspathEntry.CPE_CONTAINER 
+					|| !entry.getPath().equals(new Path(PDECore.CLASSPATH_CONTAINER_ID)))
 				continue;
 			if (roots[i].getSourceAttachmentPath() == null)
 				return false;

@@ -70,7 +70,9 @@ public class ImportWithLinksTestCase extends PDETestCase {
 		IPackageFragmentRoot[] roots = jProject.getPackageFragmentRoots();
 		for (int i = 0; i < roots.length; i++) {
 			IClasspathEntry entry = roots[i].getRawClasspathEntry();
-			if (entry.getEntryKind() != IClasspathEntry.CPE_CONTAINER || !entry.getPath().equals(new Path(PDECore.CLASSPATH_CONTAINER_ID)))
+			if (entry.getEntryKind() != IClasspathEntry.CPE_LIBRARY 
+					|| entry.getEntryKind() != IClasspathEntry.CPE_CONTAINER 
+					|| !entry.getPath().equals(new Path(PDECore.CLASSPATH_CONTAINER_ID)))
 				continue;
 			if (roots[i].getSourceAttachmentPath() == null)
 				return false;

@@ -18,6 +18,7 @@ public class AllImportTests {
 		TestSuite suite = new TestSuite("Test Suite to test the plug-in import wizard."); //$NON-NLS-1$
 		suite.addTest(ImportWithLinksTestCase.suite());
 		suite.addTest(ImportAsBinaryTestCase.suite());
+		suite.addTest(ImportAsSourceTestCase.suite());
 		return suite;
 	}
 
