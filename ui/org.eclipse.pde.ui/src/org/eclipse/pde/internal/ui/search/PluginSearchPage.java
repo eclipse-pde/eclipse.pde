@@ -209,7 +209,7 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 		input.setSearchElement(getSearchFor());
 		input.setSearchLimit(getLimitTo());
 		input.setSearchScope(scope);
-		input.setSearchString(patternCombo.getText());
+		input.setSearchString(patternCombo.getText().trim());
 		input.setCaseSensitive(caseSensitive.getSelection());
 		return input;
 	}
@@ -298,7 +298,7 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 		
 		patternCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				container.setPerformActionEnabled(patternCombo.getText().length() > 0);
+				container.setPerformActionEnabled(patternCombo.getText().trim().length() > 0);
 			}
 		});	
 	}
