@@ -6,7 +6,6 @@ import javax.xml.parsers.*;
 
 import org.eclipse.jface.text.*;
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.ui.model.plugin.*;
 import org.xml.sax.helpers.*;
 
 /**
@@ -16,7 +15,6 @@ import org.xml.sax.helpers.*;
 public abstract class XMLEditingModel extends AbstractEditingModel {
 	
 	private SAXParser fParser;
-	private DefaultHandler fHandler;
 
 	public XMLEditingModel(IDocument document, boolean isReconciling) {
 		super(document, isReconciling);
@@ -42,7 +40,7 @@ public abstract class XMLEditingModel extends AbstractEditingModel {
 	public void load(InputStream source, boolean outOfSync) {
 		try {
 			fIsValid = true;
-			getParser().parse(source, new PluginDocumentHandler((PluginModelBase)this));
+			getParser().parse(source, createDocumentHandler(this));
 		} catch (Exception e) {
 			fIsValid = false;
 		}
@@ -55,17 +53,10 @@ public abstract class XMLEditingModel extends AbstractEditingModel {
 			if (fParser == null) {
 				fParser = SAXParserFactory.newInstance().newSAXParser();
 			}
-			//fParser.setProperty("http://xml.org/sax/properties/lexical-handler",
-					//getDocumentHandler());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return fParser;
 	}
 	
-	private DefaultHandler getDocumentHandler() {
-		if (fHandler == null)
-			fHandler = createDocumentHandler(this);
-		return fHandler;
-	}
 }

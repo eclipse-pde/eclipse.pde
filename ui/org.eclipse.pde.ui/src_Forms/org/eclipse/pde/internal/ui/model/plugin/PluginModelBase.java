@@ -24,6 +24,7 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 	private boolean fIsEnabled;
 	private String fInstallLocation;
 	private IResource fUnderlyingResource;
+	private PluginDocumentHandler fHandler;
 	
 	public PluginModelBase(IDocument document, boolean isReconciling) {
 		super(document, isReconciling);	
@@ -162,7 +163,9 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 	 * @see org.eclipse.pde.internal.ui.model.XMLEditingModel#createDocumentHandler(org.eclipse.pde.core.IModel)
 	 */
 	protected DefaultHandler createDocumentHandler(IModel model) {
-		return null;
+		if (fHandler == null)
+			fHandler = new PluginDocumentHandler(this);
+		return fHandler;
 	}
 	
 	////////////////////////////////////////////////////////////////////////////
