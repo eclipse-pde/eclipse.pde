@@ -27,7 +27,10 @@ import org.eclipse.jdt.core.*;
 public class UpdateClasspathAction implements IWorkbenchWindowActionDelegate {
 
 	private ISelection fSelection;
-
+	private static final String KEY_TITLE = "Actions.classpath.title";
+	private static final String KEY_MESSAGE = "Actions.classpath.message";
+	private static final String KEY_UPDATE = "Actions.classpath.update";
+	private static final String KEY_SETTING = "Actions.classpath.setting";
 	/*
 	 * @see IActionDelegate#run(IAction)
 	 */
@@ -74,12 +77,12 @@ public class UpdateClasspathAction implements IWorkbenchWindowActionDelegate {
 			} catch (InterruptedException e) {
 				return;
 			} catch (InvocationTargetException e) {
-				String title = "Update Classpaths";
-				String message = "Updating failed. See log for details.";
+				String title = PDEPlugin.getResourceString(KEY_TITLE);
+				String message = PDEPlugin.getResourceString(KEY_MESSAGE);
 				PDEPlugin.logException(e, title, message);
 			} catch (CoreException e) {
-				String title = "Update Classpaths";
-				String message = "Updating failed. See log for details.";
+				String title = PDEPlugin.getResourceString(KEY_TITLE);
+				String message = PDEPlugin.getResourceString(KEY_MESSAGE);
 				PDEPlugin.logException(e, title, message);
 			}
 		}
@@ -96,7 +99,7 @@ public class UpdateClasspathAction implements IWorkbenchWindowActionDelegate {
 		ArrayList models,
 		ArrayList projects)
 		throws CoreException {
-		monitor.beginTask("Update classpaths...", models.size());
+		monitor.beginTask(PDEPlugin.getResourceString(KEY_UPDATE), models.size());
 		try {
 			for (int i = 0; i < models.size(); i++) {
 				IPluginModelBase model = (IPluginModelBase) models.get(i);
@@ -113,7 +116,9 @@ public class UpdateClasspathAction implements IWorkbenchWindowActionDelegate {
 		IProgressMonitor monitor)
 		throws CoreException {
 		IPluginBase pluginBase = model.getPluginBase();
-		monitor.beginTask("Setting class path of '" + pluginBase.getId() + "'...", 1);
+		String pattern = PDEPlugin.getResourceString(KEY_SETTING);
+		String message = PDEPlugin.getFormattedMessage(pattern, pluginBase.getId());
+		monitor.beginTask(message, 1);
 		try {
 			BuildPathUtil.setBuildPath(model, monitor);
 			monitor.worked(1);
