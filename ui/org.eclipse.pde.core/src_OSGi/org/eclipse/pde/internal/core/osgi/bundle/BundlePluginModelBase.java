@@ -11,10 +11,18 @@ import java.io.InputStream;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.build.IBuildModel;
-import org.eclipse.pde.core.osgi.bundle.*;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.osgi.bundle.IBundleModel;
+import org.eclipse.pde.core.osgi.bundle.IBundlePluginBase;
+import org.eclipse.pde.core.osgi.bundle.IBundlePluginModelBase;
+import org.eclipse.pde.core.plugin.IExtensionsModel;
+import org.eclipse.pde.core.plugin.IExtensionsModelFactory;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.pde.core.plugin.IPluginLibrary;
+import org.eclipse.pde.core.plugin.IPluginModelFactory;
 import org.eclipse.pde.internal.core.AbstractModel;
-import org.eclipse.pde.internal.core.plugin.*;
+import org.eclipse.pde.internal.core.plugin.PluginImport;
+import org.eclipse.pde.internal.core.plugin.PluginLibrary;
 
 /**
  * @author dejan
@@ -121,7 +129,6 @@ public class BundlePluginModelBase extends AbstractModel implements IBundlePlugi
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getPluginFactory()
 	 */
 	public IPluginModelFactory getPluginFactory() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -129,7 +136,6 @@ public class BundlePluginModelBase extends AbstractModel implements IBundlePlugi
 	 * @see org.eclipse.pde.core.plugin.ISharedPluginModel#getFactory()
 	 */
 	public IExtensionsModelFactory getFactory() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -137,7 +143,8 @@ public class BundlePluginModelBase extends AbstractModel implements IBundlePlugi
 	 * @see org.eclipse.pde.core.plugin.ISharedPluginModel#getInstallLocation()
 	 */
 	public String getInstallLocation() {
-		// TODO Auto-generated method stub
+		if (bundleModel!=null)
+			return bundleModel.getInstallLocation();
 		return null;
 	}
 

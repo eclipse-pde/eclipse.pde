@@ -309,18 +309,10 @@ public class TargetPlatform implements IEnvironmentVariables {
 	}
 
 	private static IPath getPluginLocation(IPluginModelBase model) {
-		String location = model.getInstallLocation();
-		IResource resource = model.getUnderlyingResource();
-		if (resource != null && resource.isLinked()) {
-			// special case - linked resource
-			location =
-				resource
-					.getLocation()
-					.removeLastSegments(1)
-					.addTrailingSeparator()
-					.toString();
-		}
-		return new Path(location).addTrailingSeparator();
+		// Moved this into alternative runtime support
+		// because bundle location reported here must
+		// be different
+		return PDECore.getDefault().getRuntimeSupport().getPluginLocation(model);
 	}
 
 	private static void createFeatureEntries(

@@ -5,7 +5,10 @@
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
 package org.eclipse.pde.internal.core;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 /**
  * @author dejan
@@ -30,6 +33,21 @@ public class DefaultRuntimeSupport implements IAlternativeRuntimeSupport {
 		if (externalModelManager==null)
 			externalModelManager = new ExternalModelManager();
 		return externalModelManager;
+	}
+	
+	public IPath getPluginLocation(IPluginModelBase model) {
+		String location = model.getInstallLocation();
+		IResource resource = model.getUnderlyingResource();
+		if (resource != null && resource.isLinked()) {
+			// special case - linked resource
+			location =
+				resource
+					.getLocation()
+					.removeLastSegments(1)
+					.addTrailingSeparator()
+					.toString();
+		}
+		return new Path(location).addTrailingSeparator();
 	}
 	
 	public void shutdown() {

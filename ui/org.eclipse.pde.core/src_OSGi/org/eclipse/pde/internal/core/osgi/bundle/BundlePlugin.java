@@ -94,6 +94,10 @@ public class BundlePlugin extends PlatformObject implements IBundlePluginBase {
 				try {
 					IPluginLibrary library = model.createLibrary();
 					library.setName(token);
+					// TODO this is wrong - 
+					// must respect ExportPackage
+					// or ProvidePackage
+					library.setExported(true);
 					libraries.add(library);
 				}
 				catch (CoreException e) {
@@ -252,7 +256,6 @@ public class BundlePlugin extends PlatformObject implements IBundlePluginBase {
 	 * @see org.eclipse.pde.core.plugin.IExtensions#load(org.eclipse.pde.core.plugin.IExtensions)
 	 */
 	public void load(IExtensions plugin) {
-		// TODO Auto-generated method stub
 	}
 
 	/* (non-Javadoc)
@@ -282,7 +285,6 @@ public class BundlePlugin extends PlatformObject implements IBundlePluginBase {
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getPluginModel()
 	 */
 	public IPluginModelBase getPluginModel() {
-		// TODO Auto-generated method stub
 		return model;
 	}
 
@@ -299,8 +301,7 @@ public class BundlePlugin extends PlatformObject implements IBundlePluginBase {
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#isInTheModel()
 	 */
 	public boolean isInTheModel() {
-		// TODO Auto-generated method stub
-		return false;
+		return model!=null;
 	}
 
 	/* (non-Javadoc)

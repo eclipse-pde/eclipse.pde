@@ -46,6 +46,11 @@ public class WorkspaceBundleModel extends BundleModel implements IEditable {
 	public IResource getUnderlyingResource() {
 		return file;
 	}
+	
+	public String getInstallLocation() {
+		return file.getProject().getLocation().toOSString();
+	}
+	
 	public boolean isDirty() {
 		return dirty;
 	}

@@ -10,8 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.core;
 
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+
 public interface IAlternativeRuntimeSupport {
 	IWorkspaceModelManager getWorkspaceModelManager();
 	IExternalModelManager getExternalModelManager();
+	IPath getPluginLocation(IPluginModelBase model);
 	void shutdown();
 }

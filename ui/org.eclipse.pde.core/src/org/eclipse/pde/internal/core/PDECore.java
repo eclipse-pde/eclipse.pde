@@ -315,6 +315,12 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 			initializeModels();
 		return modelManager;
 	}
+	
+	public IAlternativeRuntimeSupport getRuntimeSupport() {
+		if (runtimeSupport ==null)
+			initializeModels();
+		return runtimeSupport;
+	}
 	public ResourceBundle getResourceBundle() {
 		return resourceBundle;
 	}
