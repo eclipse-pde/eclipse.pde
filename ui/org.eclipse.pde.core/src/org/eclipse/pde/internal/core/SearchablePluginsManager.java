@@ -146,11 +146,13 @@ public class SearchablePluginsManager implements IFileAdapterFactory {
 			IPluginModelBase model = entries[i].getExternalModel();
 			if (model == null)
 				continue;
+			Vector modelResult = new Vector();
 			BuildPathUtilCore.addLibraries(
 				model,
 				false,
 				!useContainers,
-				result);
+				modelResult);
+			addUniqueEntries(result, modelResult);
 		}
 		IClasspathEntry[] classpathEntries =
 			(IClasspathEntry[]) result.toArray(
@@ -159,6 +161,24 @@ public class SearchablePluginsManager implements IFileAdapterFactory {
 			proxyProject.setRawClasspath(classpathEntries, monitor);
 		} catch (JavaModelException e) {
 			throwCoreException(e);
+		}
+	}
+	
+	private void addUniqueEntries(Vector result, Vector localResult) {
+		Vector resultCopy = (Vector)result.clone();
+		for (int i=0; i<localResult.size(); i++) {
+			IClasspathEntry localEntry = (IClasspathEntry)localResult.get(i);
+			boolean duplicate=false;
+			for (int j=0; j<resultCopy.size(); j++) {
+				IClasspathEntry entry = (IClasspathEntry)resultCopy.get(j);
+				if (entry.getEntryKind()==localEntry.getEntryKind() &&
+				entry.getContentKind()==localEntry.getContentKind() &&
+				entry.getPath().equals(localEntry.getPath())) {
+					duplicate=true;
+					break;
+				}
+			}
+			if (!duplicate) result.add(localEntry);
 		}
 	}
 
@@ -188,7 +208,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory {
 
 	private void throwCoreException(Throwable e) throws CoreException {
 		IStatus status =
-			new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.OK, null, e);
+			new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.OK, e.getMessage(), e);
 		throw new CoreException(status);
 	}
 
