@@ -9,25 +9,44 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
-import org.eclipse.jdt.ui.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.core.ibundle.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.editor.context.*;
-import org.eclipse.pde.internal.ui.elements.*;
+import java.util.ArrayList;
+
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.plugin.IPluginModel;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.ibundle.IBundleModel;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.editor.TableSection;
+import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
+import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.model.bundle.ExportPackageObject;
-import org.eclipse.pde.internal.ui.parts.*;
-import org.eclipse.swt.*;
+import org.eclipse.pde.internal.ui.model.bundle.PackageFriend;
+import org.eclipse.pde.internal.ui.parts.EditableTablePart;
+import org.eclipse.pde.internal.ui.wizards.PluginSelectionDialog;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.actions.*;
-import org.eclipse.ui.forms.*;
-import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.forms.IFormPart;
+import org.eclipse.ui.forms.IPartSelectionListener;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Section;
+import org.osgi.framework.Constants;
 
 public class ExportPackageVisibilitySection extends TableSection
 		implements IPartSelectionListener {
@@ -38,17 +57,19 @@ public class ExportPackageVisibilitySection extends TableSection
 	private static final String KEY_ADD = "ManifestEditor.ExportSection.add"; //$NON-NLS-1$
 	private static final String KEY_REMOVE = "ManifestEditor.ExportSection.remove"; //$NON-NLS-1$
 
-	private TableViewer fPackageExportViewer;
+	private TableViewer fFriendViewer;
     private Action fAddAction;
     private Action fRemoveAction;
     private Button fInternalButton;
     private boolean fBlockChanges;
     private ExportPackageObject fCurrentObject;
+    private Image fImage;
 	
 	class TableContentProvider extends DefaultContentProvider
 			implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
-            return (fCurrentObject != null) ? fCurrentObject.getFriends() : new Object[0];
+            ExportPackageObject object = (ExportPackageObject)parent;
+            return (object != null) ? object.getFriends() : new Object[0];
 		}
 	}
 	class TableLabelProvider extends LabelProvider
@@ -58,8 +79,7 @@ public class ExportPackageVisibilitySection extends TableSection
 			return obj.toString();
 		}
 		public Image getColumnImage(Object obj, int index) {
-			return JavaUI.getSharedImages().getImage(
-					ISharedImages.IMG_OBJS_PACKAGE);
+			return fImage;
 		}
 	}
     
@@ -100,14 +120,13 @@ public class ExportPackageVisibilitySection extends TableSection
         EditableTablePart tablePart = getTablePart();
         tablePart.setEditable(getPage().getModel().isEditable());
         createViewerPartControl(container, SWT.FULL_SELECTION, 2, toolkit);
-        fPackageExportViewer = tablePart.getTableViewer();
-        fPackageExportViewer.setContentProvider(new TableContentProvider());
-        fPackageExportViewer.setLabelProvider(new TableLabelProvider());
-        fPackageExportViewer.setSorter(new ViewerSorter());
+        fFriendViewer = tablePart.getTableViewer();
+        fFriendViewer.setContentProvider(new TableContentProvider());
+        fFriendViewer.setLabelProvider(new TableLabelProvider());
         toolkit.paintBordersFor(container);
 
         makeActions();
-        
+        fImage = PDEPluginImages.DESC_PLUGIN_OBJ.createImage();
         update(null);
         getBundleModel().addModelChangedListener(this);
         
@@ -155,6 +174,8 @@ public class ExportPackageVisibilitySection extends TableSection
 		IBundleModel model = getBundleModel();
 		if (model != null)
 			model.removeModelChangedListener(this);
+        if (fImage != null)
+            fImage.dispose();
 		super.dispose();
 	}
     
@@ -163,21 +184,64 @@ public class ExportPackageVisibilitySection extends TableSection
 	}
     
 	private void handleAdd() {
+        PluginSelectionDialog dialog = new PluginSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), getModels(), true);
+        dialog.create();
+        if (dialog.open() == PluginSelectionDialog.OK) {
+            Object[] selected = dialog.getResult();
+            for (int i = 0; i < selected.length; i++) {
+                IPluginModelBase model = (IPluginModelBase)selected[i];
+                fCurrentObject.addFriend(new PackageFriend(fCurrentObject, model.getPluginBase().getId()));
+            }
+        }
 	}
+    
+    private IPluginModelBase[] getModels() {
+        ArrayList list = new ArrayList();
+        IPluginModel[] models = PDECore.getDefault().getModelManager().getPluginsOnly();
+        for (int i = 0; i < models.length; i++) {
+            if (!fCurrentObject.hasFriend(models[i].getPlugin().getId()))
+                list.add(models[i]);
+        }
+        return (IPluginModelBase[])list.toArray(new IPluginModelBase[list.size()]);
+    }
     
 	private void handleRemove() {
+        Object[] removed = ((IStructuredSelection) fFriendViewer.getSelection()).toArray();
+        for (int i = 0; i < removed.length; i++) {
+            fCurrentObject.removeFriend((PackageFriend) removed[i]);
+        }
 	}
     
-	public void modelChanged(IModelChangedEvent e) {
-		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
+	public void modelChanged(IModelChangedEvent event) {
+		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			markStale();
 			return;
 		}
-        //if (e.getChangedProperty().equals(fMaster.getExportedPackageHeader()))
-            //refresh();
+        
+        if (Constants.EXPORT_PACKAGE.equals(event.getChangedProperty())) {
+            refresh();
+            return;
+        }
+        
+        Object[] objects = event.getChangedObjects();
+        for (int i = 0; i < objects.length; i++) {
+            if (objects[i] instanceof PackageFriend) {
+                switch (event.getChangeType()) {
+                    case IModelChangedEvent.INSERT:
+                        fFriendViewer.add(objects[i]);
+                        break;
+                    case IModelChangedEvent.REMOVE:
+                        fFriendViewer.remove(objects[i]);
+                        break;
+                    default:
+                        fFriendViewer.refresh(objects[i]);
+                }
+            }
+        }
 	}
 
 	public void refresh() {
+        update(null);
 		super.refresh();
 	}
 
@@ -195,12 +259,12 @@ public class ExportPackageVisibilitySection extends TableSection
     private void update(ExportPackageObject object) {
         fBlockChanges = true;
         fCurrentObject = object;
-        boolean hasSelection = !fPackageExportViewer.getSelection().isEmpty();
+        boolean hasSelection = !fFriendViewer.getSelection().isEmpty();
         fInternalButton.setEnabled(object != null && isEditable());
         fInternalButton.setSelection(object != null && object.isInternal());
         getTablePart().setButtonEnabled(0, object != null && isEditable());
         getTablePart().setButtonEnabled(1, object != null && isEditable() && hasSelection);
-        fPackageExportViewer.setInput(object);
+        fFriendViewer.setInput(object);
         fBlockChanges = false;
     }
     

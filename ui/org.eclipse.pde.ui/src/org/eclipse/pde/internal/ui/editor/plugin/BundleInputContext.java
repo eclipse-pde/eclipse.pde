@@ -74,6 +74,8 @@ public class BundleInputContext extends UTF8InputContext {
 				Object object = objects[i];
                 if (object instanceof PackageObject)
                     object = ((PackageObject)object).getHeader();
+                else if (object instanceof PackageFriend)
+                    object = ((PackageFriend)object).getHeader();
                 
 				if (object instanceof ManifestHeader) {
 					ManifestHeader header = (ManifestHeader)object;
