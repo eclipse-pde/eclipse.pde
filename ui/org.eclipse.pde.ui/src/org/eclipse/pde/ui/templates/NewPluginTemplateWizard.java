@@ -41,7 +41,7 @@ public abstract class NewPluginTemplateWizard
 	/**
 	 * Returns templates that appear in this section.
 	 * 
-	 * @return
+	 * @return an array of templates
 	 */
 	public final ITemplateSection[] getTemplateSections() {
 		return sections;

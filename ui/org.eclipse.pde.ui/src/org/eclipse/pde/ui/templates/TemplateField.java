@@ -64,7 +64,7 @@ public abstract class TemplateField {
 	/**
 	 * Factory method that creates the label in the provided parent.
 	 * 
-	 * @param parant
+	 * @param parent
 	 *            the parent composite to create the label in
 	 * @param span
 	 *            number of columns that the label should span

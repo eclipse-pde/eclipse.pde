@@ -140,7 +140,7 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 	 * that name must exist and must be registered as a boolean option to begin
 	 * with.
 	 * 
-	 * @param name
+	 * @param key
 	 *            the unique name of the option
 	 * @return the boolean value of the option with a given name or <samp>null
 	 *         </samp> if not found.

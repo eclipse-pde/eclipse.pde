@@ -68,7 +68,7 @@ public interface IPluginBase extends IExtensions, IIdentifiable {
 	 * method will throw a CoreException if
 	 * the model is not editable.
 	 *
-	 * @param import the import object
+	 * @param pluginImport the import object
 	 */
 	void remove(IPluginImport pluginImport) throws CoreException;
 	/**
@@ -136,8 +136,8 @@ public interface IPluginBase extends IExtensions, IIdentifiable {
 	 * in the dependency list. This order is the one used
 	 * used by the classloader when loading classes.
 	 *
-	 * @param l1 the first library object
-	 * @param l2 the second library object
+	 * @param import1 the first import object
+	 * @param import2 the second import object
 	 */
 	void swap(IPluginImport import1, IPluginImport import2) throws CoreException;
 	

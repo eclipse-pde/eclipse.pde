@@ -71,7 +71,7 @@ public abstract class AbstractTemplateSection
 	 * following keys: <samp>pluginClass </samp>, <samp>pluginId </samp> and
 	 * <samp>pluginName </samp>.
 	 * 
-	 * @see ITemplateSection#getReplacementString(String)
+	 * @see ITemplateSection#getReplacementString(String,String)
 	 */
 	public String getReplacementString(String fileName, String key) {
 		if (key.equals(KEY_PLUGIN_CLASS) && model != null) {
@@ -140,11 +140,12 @@ public abstract class AbstractTemplateSection
 	 */
 	protected abstract ResourceBundle getPluginResourceBundle();
 
-	/**
-	 * @see ITemplateSection#addPages(IBasePluginWizard)
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.ui.templates.ITemplateSection#addPages(org.eclipse.jface.wizard.Wizard)
 	 */
 	public void addPages(Wizard wizard) {
 	}
+	
 	/**
 	 * Tests if wizard pages for this template section have been added.
 	 * 
@@ -175,14 +176,14 @@ public abstract class AbstractTemplateSection
 		return 1;
 	}
 
-	/**
-	 * @see ITemplateSection#getDependencies()
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.ui.templates.ITemplateSection#getDependencies(java.lang.String)
 	 */
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		return new IPluginReference[]{new PluginReference("org.eclipse.ui", //$NON-NLS-1$
 				null, 0)};
 	}
-
+	
 	/**
 	 * Returns the folder with Java files in the target project. The default
 	 * implementation looks for source folders in the classpath of the target
@@ -249,14 +250,6 @@ public abstract class AbstractTemplateSection
 	 * Tests if the folder found in the template location should be created in
 	 * the target project. Subclasses may use this method to conditionally block
 	 * creation of the entire directories (subject to user choices).
-	 * 
-	 * @param sourceFolder
-	 *            the folder found in the template location that needs to be
-	 *            created.
-	 * @return <samp>true </samp> if the specified folder should be created in
-	 *         the project, or <samp>false </samp> to skip it, including all
-	 *         subfolders and files it may contain. The default implementation
-	 *         is <samp>true </samp>.
 	 * 
 	 * @param sourceFolder
 	 *            the folder that is tested

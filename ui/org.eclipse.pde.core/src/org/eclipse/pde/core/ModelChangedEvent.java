@@ -97,7 +97,7 @@ public class ModelChangedEvent implements IModelChangedEvent {
 		return newValue;
 	}
 	/**
-	 * @see IModelChangedEvent#getChangedType
+	 * @see IModelChangedEvent#getChangeType
 	 */
 	public int getChangeType() {
 		return type;

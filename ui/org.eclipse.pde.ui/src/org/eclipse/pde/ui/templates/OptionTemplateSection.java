@@ -34,7 +34,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
  * It also assumes that all wizard pages associated with this template will be
  * based on <code>OptionWizardTemplatePage</code>.
  * 
- * @see OptionWizardTemplatePage
+ * 
  * @since 2.0
  */
 

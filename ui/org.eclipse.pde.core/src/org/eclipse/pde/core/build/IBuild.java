@@ -34,7 +34,7 @@ public interface IBuild extends IWritable {
 	/**
 	 * Returns the build entry with the specified name.
 	 * 
-	 * @param the
+	 * @param name
 	 *            name of the desired entry
 	 * @return the entry object with the specified name, or <samp>null </samp>
 	 *         if not found.

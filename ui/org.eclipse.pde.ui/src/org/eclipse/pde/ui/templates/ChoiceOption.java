@@ -47,9 +47,9 @@ public class ChoiceOption extends TemplateOption {
 		super(section, name, label);
 		this.choices = choices;
 	}
-
-	/**
-	 * @see TemplateField#createControl(Composite, int, FormWidgetFactory)
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.ui.templates.TemplateField#createControl(org.eclipse.swt.widgets.Composite, int)
 	 */
 	public void createControl(Composite parent, int span) {
 		Composite container = createComposite(parent, span);

@@ -38,8 +38,10 @@ public class OptionTemplateWizardPage extends WizardPage {
 	 * 
 	 * @param section
 	 *            the section that is contributing this page
-	 * @param option
+	 * @param options
 	 *            a list of options that should be shown in this page.
+	 * @param helpContextId
+	 * 			  the help context id
 	 */
 	public OptionTemplateWizardPage(BaseOptionTemplateSection section,
 			ArrayList options, String helpContextId) {

@@ -112,7 +112,7 @@ public interface ITemplateSection {
 	 * the execution. This number is used to calculate the total number of work
 	 * units when initializing the progress indicator.
 	 * 
-	 * @return
+	 * @return the number of work units
 	 */
 	public int getNumberOfWorkUnits();
 
@@ -127,7 +127,8 @@ public interface ITemplateSection {
 	 *            version of the target manifest, or <samp>null </samp> if older
 	 *            manifest (prior to 3.0) will be created. Depending on the
 	 *            manifest version, the list of dependencies may vary.
-	 * @return
+	 *            
+	 * @return an array of template dependencies
 	 */
 	public IPluginReference[] getDependencies(String schemaVersion);
 

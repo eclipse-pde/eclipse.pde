@@ -29,7 +29,7 @@ public abstract class TemplateOption extends TemplateField {
 	 *            the parent template section
 	 * @param name
 	 *            the unique name of this option
-	 * @param the
+	 * @param label
 	 *            presentable label of this option
 	 */
 	public TemplateOption(BaseOptionTemplateSection section, String name,

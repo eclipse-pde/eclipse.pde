@@ -67,7 +67,8 @@ public interface IPluginContentWizard extends IBasePluginWizard {
 	 * variable as-is, it is legal to use all wild cards also legal in
 	 * <code>build.properties,
 	 * such as "*.gif".
-	 * @return
+	 * 
+	 * @return an array of new file and folder names
 	 */
 	String[] getNewFiles();
 
