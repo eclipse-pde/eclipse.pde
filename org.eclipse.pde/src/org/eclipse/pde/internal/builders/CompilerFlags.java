@@ -146,8 +146,8 @@ public class CompilerFlags {
 
 		pref.setDefault(S_CREATE_DOCS, false);
 		pref.setDefault(S_DOC_FOLDER, "doc");
-		pref.setDefault(S_OPEN_TAGS, IGNORE);
-		pref.setDefault(S_FORBIDDEN_END_TAGS, IGNORE);
+		pref.setDefault(S_OPEN_TAGS, WARNING);
+		pref.setDefault(S_FORBIDDEN_END_TAGS, WARNING);
 		pref.setDefault(S_OPTIONAL_END_TAGS, IGNORE);
 
 		pref.setDefault(F_UNRESOLVED_PLUGINS, WARNING);
