@@ -95,30 +95,12 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		IReplaceQuery replaceQuery) {
 		Assert.isNotNull(models);
 		Assert.isNotNull(replaceQuery);
-		this.models = placeFragmentsFirst(models);
+		this.models = models;
 		this.extractSource = doExtractSource;
 		this.doImport = doExtractSource ? true : doImport;
 
 		root = ResourcesPlugin.getWorkspace().getRoot();
 		this.replaceQuery = replaceQuery;
-	}
-
-	private IPluginModelBase[] placeFragmentsFirst(IPluginModelBase[] models) {
-		ArrayList result = new ArrayList();
-		for (int i = 0; i < models.length; i++) {
-			if (models[i].isFragmentModel())
-				result.add(models[i]);
-		}
-		if (result.size() > 0) {
-			// Now add plug-ins
-			for (int i = 0; i < models.length; i++) {
-				if (models[i].isFragmentModel() == false)
-					result.add(models[i]);
-			}
-			return (IPluginModelBase[]) result.toArray(
-				new IPluginModelBase[result.size()]);
-		} else
-			return models;
 	}
 
 	private IFragment[] findFragmentsFor(IPlugin plugin) {
@@ -165,23 +147,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 						models[i],
 						new SubProgressMonitor(monitor, 1));
 				} catch (CoreException e) {
-					IStatus status = e.getStatus();
-					/*
-					String newMessage =
-						PDEPlugin.getFormattedMessage(
-							KEY_PROBLEM,
-							new String[] {
-								models[i].getPluginBase().getId(),
-								status.getMessage()});
-					MultiStatus newStatus =
-						new Status(
-							status.getSeverity(),
-							PDEPlugin.getPluginId(),
-							status.getCode(),
-							newMessage,
-							status.getException());
-					*/
-					multiStatus.merge(status);
+					multiStatus.merge(e.getStatus());
 				}
 				if (monitor.isCanceled()) {
 					throw new OperationCanceledException();
@@ -248,8 +214,8 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 
 			setProjectDescription(project, isJavaProject, monitor);
 
-			if (isJavaProject)
-				updateClasspath(project, model, monitor);
+			if (isJavaProject & extractSource) 
+				setInitialClasspath(project, model, monitor);
 
 			//Mark this project so that we can show image overlay
 			// using the label decorator
@@ -678,7 +644,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		return true;
 	}
 	
-	private void updateClasspath(
+	private void setInitialClasspath(
 		IProject project,
 		IPluginModelBase model,
 		IProgressMonitor monitor)
@@ -687,40 +653,17 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 
 		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
 
-		IClasspathEntry[] classpathEntries = null;
-		if (libraries.length > 0) {
-			classpathEntries = new IClasspathEntry[libraries.length];
-			for (int i = 0; i < libraries.length; i++) {
-				classpathEntries[i] =
-					UpdateClasspathOperation.getLibraryEntry(
-						project,
-						libraries[i],
-						true);
-			}
-			if (extractSource) {
-				doExtractSource(
-					project,
-					classpathEntries,
-					new SubProgressMonitor(monitor, 1));
-			} else {
-				monitor.worked(1);
-			}
-			outputLocation = project.getFullPath().append("bin");
+		IClasspathEntry[] classpathEntries =
+			new IClasspathEntry[libraries.length];
+		for (int i = 0; i < libraries.length; i++) {
+			classpathEntries[i] = UpdateClasspathOperation.getLibraryEntry(project, libraries[i], true);
+		}
+		if (extractSource) {
+			doExtractSource(project,classpathEntries, new SubProgressMonitor(monitor, 1));
 		} else {
-			classpathEntries = new IClasspathEntry[0];
-			outputLocation = project.getFullPath();
 			monitor.worked(1);
 		}
-		IJavaProject jproject = JavaCore.create(project);
-		UpdateClasspathOperation op =
-			new UpdateClasspathOperation(
-				jproject,
-				model,
-				models,
-				classpathEntries,
-				outputLocation);
-		op.run(new SubProgressMonitor(monitor, 2));
-		
+		outputLocation = project.getFullPath().append("bin");
 	}
 	
 	private void setProjectDescription(

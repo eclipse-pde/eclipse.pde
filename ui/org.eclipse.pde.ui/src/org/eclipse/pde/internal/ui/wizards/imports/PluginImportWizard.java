@@ -17,6 +17,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.wizards.imports.PluginImportOperation.IReplaceQuery;
@@ -98,6 +99,10 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 					doExtractPluginSource,
 					models);
 			getContainer().run(true, true, op);
+			UpdateClasspathAction.run(
+				true,
+				getContainer(),
+				PDECore.getDefault().getWorkspaceModelManager().getAllModels());
 		} catch (InterruptedException e) {
 			return false;
 		} catch (InvocationTargetException e) {
@@ -118,7 +123,11 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 				try {
 					IReplaceQuery query = new ReplaceQuery(shell);
 					PluginImportOperation op =
-						new PluginImportOperation(models, doImport, doExtract, query);
+						new PluginImportOperation(
+							models,
+							doImport,
+							doExtract,
+							query);
 					PDEPlugin.getWorkspace().run(op, monitor);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);

@@ -125,6 +125,8 @@ public class UpdateClasspathAction implements IWorkbenchWindowActionDelegate {
 		try {
 			for (int i = 0; i < models.length; i++) {
 				IPluginModelBase model = models[i];
+				if (model.getPluginBase().getLibraries().length == 0)
+					continue;
 				IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
 				setProjectBuildpath(model, useContainers, subMonitor);
 				if (monitor.isCanceled()) break;
