@@ -17,28 +17,28 @@ import org.xml.sax.*;
 
 public abstract class AbstractPluginModelBase
 	extends AbstractModel
-	implements IPluginModelBase {
+	implements IPluginModelBase, IPluginModelFactory {
 	public static final String KEY_ERROR = "AbstractPluginModelBase.error";
 	protected PluginBase pluginBase;
-	private PluginModelFactory factory;
 	private boolean enabled;
 
 	public AbstractPluginModelBase() {
 		super();
 	}
+	
 	public abstract IPluginBase createPluginBase();
+	
 	public IPluginModelFactory getFactory() {
-		if (factory == null)
-			factory = new PluginModelFactory(this);
-		return factory;
+		return this;
 	}
+
 	public IPluginBase getPluginBase() {
 		return pluginBase;
 	}
 	public IPluginBase getPluginBase(boolean createIfMissing) {
 		if (pluginBase == null) {
 			pluginBase = (PluginBase) createPluginBase();
-			loaded=true;
+			loaded = true;
 		}
 		return pluginBase;
 	}
@@ -71,13 +71,15 @@ public abstract class AbstractPluginModelBase
 			String id = pluginBase.getId();
 			String version = pluginBase.getVersion();
 			// Add matching external fragments
-			ExternalModelManager emng = PDECore.getDefault().getExternalModelManager();
+			ExternalModelManager emng =
+				PDECore.getDefault().getExternalModelManager();
 			if (emng.hasEnabledModels()) {
 				IFragmentModel[] models = emng.getFragmentModels(null);
 				addMatchingFragments(id, version, models, result);
 			}
 			// Add matching workspace fragments
-			WorkspaceModelManager wmng = PDECore.getDefault().getWorkspaceModelManager();
+			WorkspaceModelManager wmng =
+				PDECore.getDefault().getWorkspaceModelManager();
 			IFragmentModel[] models = wmng.getWorkspaceFragmentModels();
 			addMatchingFragments(id, version, models, result);
 		}
@@ -100,23 +102,24 @@ public abstract class AbstractPluginModelBase
 			String refversion = fragment.getPluginVersion();
 			int refmatch = fragment.getRule();
 			if (PDECore.compare(refid, refversion, id, version, refmatch)) {
-				URL location = ((AbstractPluginModelBase)model).getNLLookupLocation();
+				URL location =
+					((AbstractPluginModelBase) model).getNLLookupLocation();
 				result.add(location);
 				IPluginLibrary libraries[] = fragment.getLibraries();
-				for (int j=0; j<libraries.length; j++) {
+				for (int j = 0; j < libraries.length; j++) {
 					IPluginLibrary library = libraries[j];
 					try {
 						URL libLocation = new URL(location, library.getName());
 						result.add(libLocation);
-					}
-					catch (MalformedURLException e) {
+					} catch (MalformedURLException e) {
 					}
 				}
 			}
 		}
 	}
 
-	public void load(InputStream stream, boolean outOfSync) throws CoreException {
+	public void load(InputStream stream, boolean outOfSync)
+		throws CoreException {
 		XMLErrorHandler errorHandler = new XMLErrorHandler();
 		SourceDOMParser parser = new SourceDOMParser();
 		parser.setErrorHandler(errorHandler);
@@ -125,7 +128,7 @@ public abstract class AbstractPluginModelBase
 			pluginBase.setModel(this);
 		}
 		pluginBase.reset();
-		loaded=false;
+		loaded = false;
 		try {
 			InputSource source = new InputSource(stream);
 			parser.parse(source);
@@ -177,4 +180,41 @@ public abstract class AbstractPluginModelBase
 	}
 
 	protected abstract void updateTimeStamp();
+
+	public IPluginAttribute createAttribute(IPluginElement element) {
+		PluginAttribute attribute = new PluginAttribute();
+		attribute.setModel(this);
+		attribute.setParent(element);
+		return attribute;
+	}
+	public IPluginElement createElement(IPluginObject parent) {
+		PluginElement element = new PluginElement();
+		element.setModel(this);
+		element.setParent(parent);
+		return element;
+	}
+	public IPluginExtension createExtension() {
+		PluginExtension extension = new PluginExtension();
+		extension.setParent(getPluginBase());
+		extension.setModel(this);
+		return extension;
+	}
+	public IPluginExtensionPoint createExtensionPoint() {
+		PluginExtensionPoint extensionPoint = new PluginExtensionPoint();
+		extensionPoint.setModel(this);
+		extensionPoint.setParent(getPluginBase());
+		return extensionPoint;
+	}
+	public IPluginImport createImport() {
+		PluginImport iimport = new PluginImport();
+		iimport.setModel(this);
+		iimport.setParent(getPluginBase());
+		return iimport;
+	}
+	public IPluginLibrary createLibrary() {
+		PluginLibrary library = new PluginLibrary();
+		library.setModel(this);
+		library.setParent(getPluginBase());
+		return library;
+	}
 }

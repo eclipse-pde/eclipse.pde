@@ -29,24 +29,25 @@ public abstract class PluginBase
 	public void add(IPluginExtension extension) throws CoreException {
 		ensureModelEditable();
 		extensions.addElement(extension);
-		((PluginExtension)extension).setInTheModel(true);
+		((PluginExtension) extension).setInTheModel(true);
 		fireStructureChanged(extension, IModelChangedEvent.INSERT);
 	}
-	public void add(IPluginExtensionPoint extensionPoint) throws CoreException {
+	public void add(IPluginExtensionPoint extensionPoint)
+		throws CoreException {
 		ensureModelEditable();
 		extensionPoints.addElement(extensionPoint);
-		((PluginExtensionPoint)extensionPoint).setInTheModel(true);
+		((PluginExtensionPoint) extensionPoint).setInTheModel(true);
 		fireStructureChanged(extensionPoint, IModelChangedEvent.INSERT);
 	}
 	public void add(IPluginLibrary library) throws CoreException {
 		ensureModelEditable();
 		libraries.addElement(library);
-		((PluginLibrary)library).setInTheModel(true);
+		((PluginLibrary) library).setInTheModel(true);
 		fireStructureChanged(library, IModelChangedEvent.INSERT);
 	}
 	public void add(IPluginImport iimport) throws CoreException {
 		ensureModelEditable();
-		((PluginImport)iimport).setInTheModel(true);
+		((PluginImport) iimport).setInTheModel(true);
 		imports.addElement(iimport);
 		fireStructureChanged(iimport, IModelChangedEvent.INSERT);
 	}
@@ -95,23 +96,24 @@ public abstract class PluginBase
 		// add imports
 		loadImports(pd.getRequires());
 	}
-	
-	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
+
+	public void restoreProperty(String name, Object oldValue, Object newValue)
+		throws CoreException {
 		if (name.equals(P_VERSION)) {
-			setVersion(newValue!=null ? newValue.toString():null);
+			setVersion(newValue != null ? newValue.toString() : null);
 			return;
 		}
 		if (name.equals(P_PROVIDER)) {
-			setProviderName(newValue!=null ? newValue.toString():null);
+			setProviderName(newValue != null ? newValue.toString() : null);
 			return;
 		}
 		if (name.equals(P_LIBRARY_ORDER)) {
-			swap((IPluginLibrary)oldValue, (IPluginLibrary)newValue);
+			swap((IPluginLibrary) oldValue, (IPluginLibrary) newValue);
 			return;
 		}
 		super.restoreProperty(name, oldValue, newValue);
 	}
-	
+
 	void load(Node node, Hashtable lineTable) {
 		bindSourceLocation(node, lineTable);
 		this.id = getNodeAttribute(node, "id");
@@ -248,25 +250,26 @@ public abstract class PluginBase
 	public void remove(IPluginExtension extension) throws CoreException {
 		ensureModelEditable();
 		extensions.removeElement(extension);
-		((PluginExtension)extension).setInTheModel(false);
+		((PluginExtension) extension).setInTheModel(false);
 		fireStructureChanged(extension, ModelChangedEvent.REMOVE);
 	}
-	public void remove(IPluginExtensionPoint extensionPoint) throws CoreException {
+	public void remove(IPluginExtensionPoint extensionPoint)
+		throws CoreException {
 		ensureModelEditable();
 		extensionPoints.removeElement(extensionPoint);
-		((PluginExtensionPoint)extensionPoint).setInTheModel(false);
+		((PluginExtensionPoint) extensionPoint).setInTheModel(false);
 		fireStructureChanged(extensionPoint, ModelChangedEvent.REMOVE);
 	}
 	public void remove(IPluginLibrary library) throws CoreException {
 		ensureModelEditable();
 		libraries.removeElement(library);
-		((PluginLibrary)library).setInTheModel(false);
+		((PluginLibrary) library).setInTheModel(false);
 		fireStructureChanged(library, ModelChangedEvent.REMOVE);
 	}
 	public void remove(IPluginImport iimport) throws CoreException {
 		ensureModelEditable();
 		imports.removeElement(iimport);
-		((PluginImport)iimport).setInTheModel(false);
+		((PluginImport) iimport).setInTheModel(false);
 		fireStructureChanged(iimport, ModelChangedEvent.REMOVE);
 	}
 	public void reset() {
@@ -302,7 +305,8 @@ public abstract class PluginBase
 		version = newVersion;
 	}
 
-	public void swap(IPluginLibrary l1, IPluginLibrary l2) throws CoreException {
+	public void swap(IPluginLibrary l1, IPluginLibrary l2)
+		throws CoreException {
 		ensureModelEditable();
 		int index1 = libraries.indexOf(l1);
 		int index2 = libraries.indexOf(l2);
@@ -312,15 +316,16 @@ public abstract class PluginBase
 		libraries.setElementAt(l2, index1);
 		firePropertyChanged(this, P_LIBRARY_ORDER, l1, l2);
 	}
-	
+
 	public int getExtensionCount() {
 		return extensions.size();
 	}
-	
+
 	public int getIndexOf(IPluginExtension e) {
 		return extensions.indexOf(e);
 	}
-	public void swap(IPluginExtension e1, IPluginExtension e2) throws CoreException {
+	public void swap(IPluginExtension e1, IPluginExtension e2)
+		throws CoreException {
 		ensureModelEditable();
 		int index1 = extensions.indexOf(e1);
 		int index2 = extensions.indexOf(e2);
@@ -330,7 +335,11 @@ public abstract class PluginBase
 		extensions.setElementAt(e2, index1);
 		firePropertyChanged(this, P_EXTENSION_ORDER, e1, e2);
 	}
-	void writeChildren(String indent, String tag, Object[] children, PrintWriter writer) {
+	void writeChildren(
+		String indent,
+		String tag,
+		Object[] children,
+		PrintWriter writer) {
 		if (tag.equals("runtime"))
 			writeComments(writer);
 		writer.println(indent + "<" + tag + ">");

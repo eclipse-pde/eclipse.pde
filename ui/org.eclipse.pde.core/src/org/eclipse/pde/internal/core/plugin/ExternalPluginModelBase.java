@@ -17,7 +17,6 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 	private String installLocation;
 	private IPath eclipseHomeRelativePath;
 	private IBuildModel buildModel;
-	private long timeStamp;
 
 	public ExternalPluginModelBase() {
 		super();
