@@ -151,7 +151,7 @@ private void forceVersion(String targetVersion, IPluginModelBase modelBase)
 			IFragment fragment = (IFragment) base;
 			IFeaturePlugin ref = findPluginReference(fragment.getPluginId());
 			if (ref != null)
-				fragment.setPluginVersion(ref.getVersion());
+				fragment.setPluginVersion(targetVersion);
 		}
 		model.save();
 		if (base instanceof IPlugin) {
