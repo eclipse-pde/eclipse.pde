@@ -36,10 +36,16 @@ public class FeatureImport
 	}
 
 	public IPlugin getPlugin() {
+		if (id != null && type == PLUGIN && plugin == null) {
+			setPlugin(PDECore.getDefault().findPlugin(id, getVersion(), match));
+		}
 		return plugin;
 	}
 
 	public IFeature getFeature() {
+		if (id != null && type == FEATURE && feature == null) { 
+			setFeature(PDECore.getDefault().findFeature(id, getVersion(), match));
+		}
 		return feature;
 	}
 
@@ -109,14 +115,6 @@ public class FeatureImport
 				idMatch = PREFIX;
 		}
 		patch = getBooleanAttribute(node, "patch"); //$NON-NLS-1$
-		if (id != null) {
-			if (type == PLUGIN)
-				setPlugin(
-					PDECore.getDefault().findPlugin(id, getVersion(), match));
-			else
-				setFeature(
-					PDECore.getDefault().findFeature(id, getVersion(), match));
-		}
 	}
 
 	public void loadFrom(IFeature feature) {
