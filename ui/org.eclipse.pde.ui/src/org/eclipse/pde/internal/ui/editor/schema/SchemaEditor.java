@@ -95,7 +95,7 @@ public class SchemaEditor extends PDEMultiPageXMLEditor {
 	void previewReferenceDocument() {
 		ISchema schema = (ISchema) getModel();
 		if (previewAction==null)
-			previewAction = new ShowDescriptionAction(this, schema);
+			previewAction = new ShowDescriptionAction(schema);
 		else
 			previewAction.setSchema(schema);
 		previewAction.run();

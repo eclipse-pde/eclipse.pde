@@ -20,15 +20,13 @@ import org.eclipse.swt.program.Program;
 public class ShowDescriptionAction extends Action {
 	private String pointId;
 	private ISchema schema;
-	private Object client;
 	private File previewFile;
 
 	public ShowDescriptionAction(IPluginExtensionPoint point) {
 		setExtensionPoint(point);
 	}
 	
-	public ShowDescriptionAction(Object client, ISchema schema) {
-		this.client = client;
+	public ShowDescriptionAction(ISchema schema) {
 		setSchema(schema);
 	}
 	
@@ -38,7 +36,6 @@ public class ShowDescriptionAction extends Action {
 	}
 	
 	public void setExtensionPoint(IPluginExtensionPoint point) {
-		this.client = "SchemaDescriptionAction";
 		this.pointId = point.getFullId();
 		setText(PDEPlugin.getResourceString("ShowDescriptionAction.label"));
 		schema = null;

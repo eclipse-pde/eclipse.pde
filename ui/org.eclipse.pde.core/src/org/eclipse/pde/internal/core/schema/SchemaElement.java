@@ -182,7 +182,7 @@ public void write(String indent, PrintWriter writer) {
 		if (realDescription != null) {
 			writer.println(indent3 + "<documentation>");
 			if (getDescription() != null)
-				writer.println(indent4 + getDescription());
+				writer.println(indent4 + realDescription);
 			writer.println(indent3 + "</documentation>");
 		}
 		writer.println(indent2 + "</annotation>");
