@@ -64,11 +64,15 @@ protected Control createContents(Composite parent) {
 		gd.heightHint = 300;
 		text.setLayoutData(gd);
 
-		ByteArrayOutputStream bstream = new ByteArrayOutputStream();
-		PrintWriter writer = new PrintWriter(bstream, true);
+		StringWriter swriter = new StringWriter();
+		PrintWriter writer = new PrintWriter(swriter, true);
 		exception.printStackTrace(writer);
-		writer.close();
-		text.setText(bstream.toString());
+		try {
+			swriter.close();
+		}
+		catch (IOException e) {
+		}
+		text.setText(swriter.toString());
 	}
 	return container;
 }
