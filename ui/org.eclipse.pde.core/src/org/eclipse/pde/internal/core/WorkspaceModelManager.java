@@ -48,6 +48,7 @@ public class WorkspaceModelManager
 	private ArrayList fChangedModels;	
 	private ArrayList fListeners = new ArrayList();
 	private boolean fInitialized = false;
+	private boolean fModelsLocked;
 	
 	public static boolean isPluginProject(IProject project) {
 		if (project.isOpen())
@@ -422,8 +423,9 @@ public class WorkspaceModelManager
 	}
 	
 	private synchronized void initializeWorkspaceModels() {
-		if (fInitialized)
+		if (fInitialized || fModelsLocked)
 			return;
+		fModelsLocked = true;
 		fModels = new HashMap();
 		fFragmentModels = new HashMap();
 		fFeatureModels = new ArrayList();
@@ -438,6 +440,7 @@ public class WorkspaceModelManager
 		}
 		workspace.addResourceChangeListener(this, IResourceChangeEvent.PRE_CLOSE);
 		JavaCore.addPreProcessingResourceChangedListener(this);
+		fModelsLocked = false;
 		fInitialized = true;
 	}
 
