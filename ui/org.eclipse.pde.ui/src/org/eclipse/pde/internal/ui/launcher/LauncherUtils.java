@@ -715,5 +715,20 @@ public class LauncherUtils {
 			PDECore.logException(e);
 		}
 	}
+	
+	public static void synchronizeManifests(ILaunchConfiguration config, File configDir) {
+		if (!PDECore.getDefault().getModelManager().isOSGiRuntime())
+			return;
+		try {
+			String programArgs = config.getAttribute(ILauncherSettings.PROGARGS, ""); //$NON-NLS-1$
+			if (programArgs.indexOf("-clean") != -1) //$NON-NLS-1$
+				return;
+		} catch (CoreException e) {
+		}
+		File dir = new File(configDir, "org.eclipse.osgi/manifests"); //$NON-NLS-1$
+		if (dir.exists() && dir.isDirectory()) {
+			PDECore.getDefault().getJavaElementChangeListener().synchronizeManifests(dir);	
+		}
+	}
 
 }

@@ -211,6 +211,7 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 	private ServiceTracker tracker;
 	private ExternalModelManager externalModelManager;
 	private WorkspaceModelManager workspaceModelManager;
+	private JavaElementChangeListener fJavaElementChangeListener;
 
 	public PDECore() {
 		inst = this;
@@ -307,6 +308,12 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 	public PluginModelManager getModelManager() {
 		initializeModels();
 		return modelManager;
+	}
+	
+	public JavaElementChangeListener getJavaElementChangeListener() {
+		if (fJavaElementChangeListener == null)
+			fJavaElementChangeListener = new JavaElementChangeListener();
+		return fJavaElementChangeListener;
 	}
 	
 	public ResourceBundle getResourceBundle() {
@@ -410,6 +417,7 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		this.context = context;
+		fJavaElementChangeListener = new JavaElementChangeListener();
 	}
 
 	public BundleContext getBundleContext() {
@@ -418,6 +426,10 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 
 	public void stop(BundleContext context) throws CoreException {
 		PDECore.getDefault().savePluginPreferences();
+		if (fJavaElementChangeListener != null) {
+			fJavaElementChangeListener.shutdown();
+			fJavaElementChangeListener = null;
+		}
 		if (schemaRegistry != null) {
 			schemaRegistry.shutdown();
 			schemaRegistry = null;

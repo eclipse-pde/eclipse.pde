@@ -521,7 +521,7 @@ public class BasicLauncherTab
 	}
 	
 	protected void initializeProgArgsSection(ILaunchConfiguration config) throws CoreException {
-		fProgArgsText.setText(config.getAttribute(PROGARGS, ""));		
+		fProgArgsText.setText(config.getAttribute(PROGARGS, ""));		 //$NON-NLS-1$
 	}
 	
 	private void initializeBootstrapEntriesSection(ILaunchConfiguration config) throws CoreException {
@@ -532,7 +532,7 @@ public class BasicLauncherTab
 		config.setAttribute(LOCATION + "0", LauncherUtils.getDefaultWorkspace()); //$NON-NLS-1$
 		config.setAttribute(DOCLEAR, false);
 		config.setAttribute(ASKCLEAR, true);
-		config.setAttribute(PROGARGS, "");
+		config.setAttribute(PROGARGS, ""); //$NON-NLS-1$
 		config.setAttribute(VMARGS,""); //$NON-NLS-1$
 		config.setAttribute(BOOTSTRAP_ENTRIES, ""); //$NON-NLS-1$
 	}

@@ -70,6 +70,7 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 			monitor.worked(1);
 						
 			LauncherUtils.setDefaultSourceLocator(configuration, launch);
+			LauncherUtils.synchronizeManifests(configuration, getConfigDir(configuration));
 			PDEPlugin.getDefault().getLaunchListener().manage(launch);
 			launcher.getVMRunner(mode).run(runnerConfig, launch, monitor);		
 			monitor.worked(1);
@@ -203,20 +204,20 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 			programArgs.add(0, "-showsplash"); //$NON-NLS-1$
 			programArgs.add(1, computeShowsplashArgument());
 		}
-		if (!programArgs.contains("-os")) {
-			programArgs.add("-os");
+		if (!programArgs.contains("-os")) { //$NON-NLS-1$
+			programArgs.add("-os"); //$NON-NLS-1$
 			programArgs.add(TargetPlatform.getOS());
 		}
-		if (!programArgs.contains("-ws")) {
-			programArgs.add("-ws");
+		if (!programArgs.contains("-ws")) { //$NON-NLS-1$
+			programArgs.add("-ws"); //$NON-NLS-1$
 			programArgs.add(TargetPlatform.getWS());
 		}
-		if (!programArgs.contains("-arch")) {
-			programArgs.add("-arch");
+		if (!programArgs.contains("-arch")) { //$NON-NLS-1$
+			programArgs.add("-arch"); //$NON-NLS-1$
 			programArgs.add(TargetPlatform.getOSArch());
 		}
-		if (!programArgs.contains("-nl")) {
-			programArgs.add("-nl");
+		if (!programArgs.contains("-nl")) { //$NON-NLS-1$
+			programArgs.add("-nl"); //$NON-NLS-1$
 			programArgs.add(TargetPlatform.getNL());
 		}
 		return (String[])programArgs.toArray(new String[programArgs.size()]);

@@ -184,9 +184,9 @@ public abstract class BaseBuildAction
 			properties.put(IXMLConstants.PROPERTY_BASE_NL, TargetPlatform.getNL()); 
 			properties.put("eclipse.running", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 
-			properties.put(IXMLConstants.PROPERTY_JAVAC_FAIL_ON_ERROR, "false");
+			properties.put(IXMLConstants.PROPERTY_JAVAC_FAIL_ON_ERROR, "false"); //$NON-NLS-1$
 			properties.put(IXMLConstants.PROPERTY_JAVAC_DEBUG_INFO, "on"); //$NON-NLS-1$ //$NON-NLS-2$ 
-			properties.put(IXMLConstants.PROPERTY_JAVAC_VERBOSE, "true");
+			properties.put(IXMLConstants.PROPERTY_JAVAC_VERBOSE, "true"); //$NON-NLS-1$
 			
 			if (!project.hasNature(JavaCore.NATURE_ID)) {
 				Preferences pref = JavaCore.getPlugin().getPluginPreferences();

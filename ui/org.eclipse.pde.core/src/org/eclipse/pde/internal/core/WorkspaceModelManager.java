@@ -104,6 +104,10 @@ public class WorkspaceModelManager
 		return false;
 	}
 	
+	public static boolean isNonBinaryPluginProject(IProject project) {
+		return isPluginProject(project) && !isBinaryPluginProject(project);
+	}
+	
 	public static boolean isJavaPluginProject(IProject project) {
 		if (isPluginProject(project)) {
 			try {
