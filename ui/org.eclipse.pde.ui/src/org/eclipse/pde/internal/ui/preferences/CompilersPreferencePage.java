@@ -9,7 +9,10 @@ import java.util.*;
 
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.pde.internal.builders.CompilerFlags;
@@ -80,7 +83,7 @@ public class CompilersPreferencePage
 			else if (control instanceof Text)
 				 ((Text) control).addModifyListener(mlistener);
 		}
-
+		Dialog.applyDialogFont(parent);
 		//WorkbenchHelp.setHelp(container, IHelpContextIds.TARGET_ENVIRONMENT_PREFERENCE_PAGE);
 		return container;
 	}

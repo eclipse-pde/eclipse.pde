@@ -5,6 +5,7 @@ package org.eclipse.pde.internal.ui.preferences;
  */
 
 import org.eclipse.swt.widgets.*;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -100,6 +101,7 @@ public class BuildpathPreferencePage
 	
 	public void createControl(Composite parent) {
 		super.createControl(parent);
+		Dialog.applyDialogFont(getControl());
 		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.BUILDPATH_PREFERENCE_PAGE);
 	}
 

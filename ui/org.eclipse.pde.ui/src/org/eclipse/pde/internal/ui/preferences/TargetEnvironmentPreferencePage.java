@@ -8,6 +8,7 @@ import java.util.*;
 
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
@@ -84,6 +85,7 @@ public class TargetEnvironmentPreferencePage
 		arch.setItems(BootLoader.knownOSArchValues());
 		arch.select(arch.indexOf(preferences.getString(ARCH)));
 		
+		Dialog.applyDialogFont(container);
 		WorkbenchHelp.setHelp(container, IHelpContextIds.TARGET_ENVIRONMENT_PREFERENCE_PAGE);
 
 		return container;

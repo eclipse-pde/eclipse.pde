@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.*;
 
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
@@ -303,6 +304,7 @@ public class SourcePreferencePage
 		tableViewer.setInput(this);
 		initializeStates();
 		tablePart.setButtonEnabled(4, false);
+		Dialog.applyDialogFont(parent);
 		WorkbenchHelp.setHelp(parent, IHelpContextIds.SOURCE_PREFERENCE_PAGE);
 		return container;
 	}

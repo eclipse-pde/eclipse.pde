@@ -4,6 +4,7 @@ package org.eclipse.pde.internal.ui.preferences;
  * All Rights Reserved.
  */
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -98,6 +99,7 @@ public class MainPreferencePage
 	
 	public void createControl(Composite parent) {
 		super.createControl(parent);
+		Dialog.applyDialogFont(getControl());
 		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.MAIN_PREFERENCE_PAGE);
 	}	
 

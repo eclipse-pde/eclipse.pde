@@ -6,6 +6,7 @@ package org.eclipse.pde.internal.ui.preferences;
 
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferencePage;
@@ -117,6 +118,7 @@ public class TargetPlatformPreferencePage
 			}
 		});
 		originalText = homeText.getText();
+		Dialog.applyDialogFont(container);
 		WorkbenchHelp.setHelp(container, IHelpContextIds.TARGET_PLATFORM_PREFERENCE_PAGE);
 		return container;
 	}
