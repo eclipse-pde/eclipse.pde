@@ -39,7 +39,6 @@ public class InfoSection extends PDESection {
 	private static final String KEY_APPLY = "Actions.apply.flabel";
 	private static final String KEY_RESET = "Actions.reset.flabel";
 	private static final String SECTION_DESC = "FeatureEditor.InfoSection.desc";
-	private static final String KEY_INFO = "FeatureEditor.InfoSection.info";
 	private static final String KEY_URL = "FeatureEditor.InfoSection.url";
 	private static final String KEY_TEXT = "FeatureEditor.InfoSection.text";
 	private static final String KEY_INFO_DESCRIPTION =

@@ -31,7 +31,6 @@ import org.eclipse.ui.part.ISetSelectionTarget;
  * Preferences - Java - Code Generation - Code and Comments
  */
 public class SampleStandbyContent implements IStandbyContentPart {
-	private FormToolkit toolkit;
 	private ScrolledForm form;
 	private Hyperlink moreLink;
 	private String helpURL;
@@ -40,7 +39,6 @@ public class SampleStandbyContent implements IStandbyContentPart {
 	private FormText descText;
 	private FormText instText;
 	private ILaunchShortcut defaultShortcut;
-	private IIntroPart introPart;
 	private IConfigurationElement sample;
 	/**
 	 *  
@@ -207,7 +205,6 @@ public class SampleStandbyContent implements IStandbyContentPart {
 	 * @see org.eclipse.ui.intro.internal.parts.IStandbyContentPart#init(org.eclipse.ui.intro.IIntroPart)
 	 */
 	public void init(IIntroPart introPart) {
-		this.introPart = introPart;
 	}
 	/*
 	 * (non-Javadoc)

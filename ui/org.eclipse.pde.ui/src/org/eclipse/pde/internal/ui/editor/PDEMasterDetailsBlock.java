@@ -34,7 +34,6 @@ public abstract class PDEMasterDetailsBlock extends MasterDetailsBlock {
 
 	protected void createMasterPart(final IManagedForm managedForm,
 			Composite parent) {
-		FormToolkit toolkit = managedForm.getToolkit();
 		PDESection section = createMasterSection(managedForm, parent);
 		managedForm.addPart(section);
 		Section sc = section.getSection();

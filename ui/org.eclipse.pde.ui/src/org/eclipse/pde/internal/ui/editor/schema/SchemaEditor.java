@@ -5,7 +5,6 @@
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
 package org.eclipse.pde.internal.ui.editor.schema;
-import java.io.File;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.action.IMenuManager;
@@ -95,14 +94,12 @@ public class SchemaEditor extends MultiSourceEditor {
 
 	protected void createSystemFileContexts(InputContextManager manager,
 			SystemFileEditorInput input) {
-		File file = (File) input.getAdapter(File.class);
 		manager.putContext(input, new SchemaInputContext(this, input,
 					true));
 	}
 
 	protected void createStorageContexts(InputContextManager manager,
 			IStorageEditorInput input) {
-		String name = input.getName().toLowerCase();
 		manager.putContext(input,
 							new SchemaInputContext(this, input, true));
 	}

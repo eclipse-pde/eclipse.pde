@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
@@ -19,7 +19,6 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -42,7 +41,6 @@ public class InfoFormPage extends PDEFormPage {
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
-		FormToolkit toolkit = managedForm.getToolkit();
 		GridLayout layout = new GridLayout();
 		form.getBody().setLayout(layout);
 		layout.marginWidth = 10;
@@ -61,7 +59,6 @@ public class InfoFormPage extends PDEFormPage {
 		super.dispose();
 	}
 	public void initialize() {
-		IFeatureModel model = (IFeatureModel) getModel();
 		getManagedForm().getForm().setText(PDEPlugin.getResourceString(KEY_TITLE));
 	}
 }

@@ -19,7 +19,6 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 public class SchemaDocPage extends PDEFormPage {
@@ -43,7 +42,6 @@ public class SchemaDocPage extends PDEFormPage {
 	}
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
-		FormToolkit toolkit = managedForm.getToolkit();
 		ScrolledForm form = managedForm.getForm();
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = 10;

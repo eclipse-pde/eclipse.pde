@@ -44,7 +44,6 @@ public class FeatureEditor extends MultiSourceEditor {
 	public static final String ADVANCED_PAGE_TITLE =
 		"FeatureEditor.AdvancedPage.title";
 	public static final String INFO_PAGE_TITLE = "FeatureEditor.InfoPage.title";
-	private boolean storageModel=false;
 
 	public FeatureEditor() {
 	}

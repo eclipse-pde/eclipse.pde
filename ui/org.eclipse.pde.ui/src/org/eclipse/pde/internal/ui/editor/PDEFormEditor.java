@@ -18,7 +18,6 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.context.*;
 import org.eclipse.pde.internal.ui.preferences.EditorPreferencePage;
 import org.eclipse.swt.dnd.*;

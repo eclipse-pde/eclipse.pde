@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.editor.*;
@@ -87,7 +86,6 @@ public class FeatureReferencePage extends PDEFormPage {
 		initialize();
 	}
 	public void initialize() {
-		IFeatureModel model = (IFeatureModel) getModel();
 		getManagedForm().getForm().setText(
 				PDEPlugin.getResourceString(KEY_HEADING));
 	}

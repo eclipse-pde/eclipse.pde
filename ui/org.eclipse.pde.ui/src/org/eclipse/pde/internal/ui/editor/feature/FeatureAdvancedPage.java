@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.swt.layout.*;
@@ -78,7 +77,6 @@ public class FeatureAdvancedPage extends PDEFormPage {
 	}
 	
 	public void initialize() {
-		IFeatureModel model = (IFeatureModel) getModel();
 		getManagedForm().getForm().setText(PDEPlugin.getResourceString(KEY_HEADING));
 	}
 }

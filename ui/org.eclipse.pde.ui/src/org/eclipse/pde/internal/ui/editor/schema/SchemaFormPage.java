@@ -37,7 +37,6 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 	}
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
-		FormToolkit toolkit = managedForm.getToolkit();
 		ScrolledForm form = managedForm.getForm();
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;

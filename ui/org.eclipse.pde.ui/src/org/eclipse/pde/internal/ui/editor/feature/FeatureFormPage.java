@@ -31,7 +31,6 @@ public class FeatureFormPage extends PDEFormPage {
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
-		FormToolkit toolkit = managedForm.getToolkit();
 		GridLayout layout = new GridLayout();
 		form.getBody().setLayout(layout);
 		layout.numColumns = 2;
