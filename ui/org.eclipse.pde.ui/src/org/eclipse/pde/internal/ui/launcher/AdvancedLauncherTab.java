@@ -90,6 +90,7 @@ public class AdvancedLauncherTab
 	private int numExternalChecked = 0;
 	private int numWorkspaceChecked = 0;
 	private boolean firstReveal = true;
+	private Image image;
 
 	class PluginContentProvider
 		extends DefaultContentProvider
@@ -126,12 +127,14 @@ public class AdvancedLauncherTab
 
 	public AdvancedLauncherTab() {
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
+		image = PDEPluginImages.DESC_REQ_PLUGINS_OBJ.createImage();
 		externalModels = PDECore.getDefault().getExternalModelManager().getAllModels();
 		workspaceModels = PDECore.getDefault().getWorkspaceModelManager().getAllModels();
 	}
 
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
+		image.dispose();
 		super.dispose();
 	}
 
@@ -653,7 +656,6 @@ public class AdvancedLauncherTab
 	}
 	
 	public Image getImage() {
-		return PDEPlugin.getDefault().getLabelProvider().get(
-			PDEPluginImages.DESC_REQ_PLUGINS_OBJ);
+			return image;
 	}
 }

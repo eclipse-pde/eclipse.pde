@@ -58,6 +58,7 @@ public class TracingLauncherTab
 	private Composite tableChild;
 	private Label propertyLabel;
 	private ToolItem maximizeItem;
+	private Image image;
 
 	class PluginContentProvider
 		extends DefaultContentProvider
@@ -94,6 +95,7 @@ public class TracingLauncherTab
 	public TracingLauncherTab() {
 		//setDescription(PDEPlugin.getResourceString(KEY_DESC));
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
+		image = PDEPluginImages.DESC_DOC_SECTION_OBJ.createImage();
 	}
 
 	public void createControl(Composite parent) {
@@ -276,8 +278,9 @@ public class TracingLauncherTab
 	public void dispose() {
 		if (propertySheet != null)
 			propertySheet.dispose();
-		super.dispose();
+		image.dispose();
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
+		super.dispose();
 	}
 
 	private IDialogSettings getDialogSettings() {
@@ -462,6 +465,7 @@ public class TracingLauncherTab
 		return PDEPlugin.getResourceString(KEY_NAME);
 	}
 	public Image getImage() {
-		return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_DOC_SECTION_OBJ);
+		return image;
 	}
+
 }
