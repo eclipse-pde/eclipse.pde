@@ -60,21 +60,14 @@ public class EnumerationRestrictionPage implements IRestrictionPage {
 		GridLayout clayout = new GridLayout();
 		clayout.marginHeight = 0;
 		clayout.marginWidth = 0;
-		clayout.numColumns = 2;
-		clayout.makeColumnsEqualWidth = true;
 		editColumn.setLayout(clayout);
 		label = new Label(editColumn, SWT.NULL);
 		label.setText(PDEPlugin.getResourceString(KEY_NEW_CHOICE));
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		label.setLayoutData(gd);
+		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		text = new Text(editColumn, SWT.SINGLE | SWT.BORDER);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		text.setLayoutData(gd);
+		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		addButton = new Button(editColumn, SWT.PUSH);
-		addButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		addButton.setText(PDEPlugin.getResourceString(KEY_ADD));
 		addButton.setEnabled(false);
 		addButton.addSelectionListener(new SelectionAdapter() {
@@ -82,10 +75,10 @@ public class EnumerationRestrictionPage implements IRestrictionPage {
 				handleAdd();
 			}
 		});
+		addButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER));
 		SWTUtil.setButtonDimensionHint(addButton);
 
 		deleteButton = new Button(editColumn, SWT.PUSH);
-		deleteButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		deleteButton.setText(PDEPlugin.getResourceString(KEY_REMOVE));
 		deleteButton.setEnabled(false);
 		deleteButton.addSelectionListener(new SelectionAdapter() {
@@ -93,6 +86,7 @@ public class EnumerationRestrictionPage implements IRestrictionPage {
 				handleDelete();
 			}
 		});
+		deleteButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER));
 		SWTUtil.setButtonDimensionHint(deleteButton);
 
 		text.addModifyListener(new ModifyListener() {
