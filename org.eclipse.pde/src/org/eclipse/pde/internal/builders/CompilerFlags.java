@@ -65,8 +65,7 @@ public class CompilerFlags {
 	public static final String S_CREATE_DOCS = "compilers.s.create-docs"; //$NON-NLS-1$
 	public static final String S_DOC_FOLDER = "compilers.s.doc-folder"; //$NON-NLS-1$
 	public static final String S_OPEN_TAGS = "compilers.s.open-tags"; //$NON-NLS-1$
-	public static final String S_FORBIDDEN_END_TAGS = "compilers.s.forbidden-end-tags"; //$NON-NLS-1$
-	public static final String S_OPTIONAL_END_TAGS = "compilers.s.optional-end-tags"; //$NON-NLS-1$
+
 	public static final String F_UNRESOLVED_PLUGINS =
 		"compilers.f.unresolved-plugins"; //$NON-NLS-1$
 	public static final String F_UNRESOLVED_FEATURES =
@@ -86,8 +85,7 @@ public class CompilerFlags {
 				P_NOT_EXTERNALIZED,
 				P_DEPRECATED,
 				P_NOT_USED},
-			{
-			S_CREATE_DOCS, S_DOC_FOLDER, S_OPEN_TAGS, S_FORBIDDEN_END_TAGS, S_OPTIONAL_END_TAGS}, {
+			{S_CREATE_DOCS, S_DOC_FOLDER, S_OPEN_TAGS}, {
 			F_UNRESOLVED_PLUGINS, F_UNRESOLVED_FEATURES }, {
 		}
 	};
@@ -266,8 +264,6 @@ public class CompilerFlags {
 		pref.setDefault(S_CREATE_DOCS, false);
 		pref.setDefault(S_DOC_FOLDER, "doc"); //$NON-NLS-1$
 		pref.setDefault(S_OPEN_TAGS, WARNING);
-		pref.setDefault(S_FORBIDDEN_END_TAGS, WARNING);
-		pref.setDefault(S_OPTIONAL_END_TAGS, IGNORE);
 
 		pref.setDefault(F_UNRESOLVED_PLUGINS, WARNING);
 		pref.setDefault(F_UNRESOLVED_FEATURES, WARNING);

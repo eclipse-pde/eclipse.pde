@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.builders;
 
 import java.io.*;
-import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.resources.*;
@@ -20,9 +19,7 @@ import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
-import org.eclipse.pde.internal.core.schema.FileSchemaDescriptor;
-import org.osgi.framework.*;
+import org.eclipse.pde.internal.core.schema.*;
 
 public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 	public static final String BUILDERS_SCHEMA_COMPILING =
@@ -33,9 +30,6 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 	public static final String BUILDERS_SCHEMA_REMOVING =
 		"Builders.Schema.removing"; //$NON-NLS-1$
 
-	private ISchemaTransformer transformer;
-	private URL cssURL;
-
 	class DeltaVisitor implements IResourceDeltaVisitor {
 		private IProgressMonitor monitor;
 		public DeltaVisitor(IProgressMonitor monitor) {
@@ -44,205 +38,103 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 		public boolean visit(IResourceDelta delta) {
 			IResource resource = delta.getResource();
 
-			if (resource instanceof IProject) {
-				// Only check projects with plugin nature
-				IProject project = (IProject) resource;
-				return isInterestingProject(project);
-			}
+			if (resource instanceof IProject)
+				return isInterestingProject((IProject)resource);
+			
 			if (resource instanceof IFolder)
 				return true;
+			
 			if (resource instanceof IFile) {
 				// see if this is it
 				IFile candidate = (IFile) resource;
-
 				if (isSchemaFile(candidate)) {
 					// That's it, but only check it if it has been added or changed
 					if (delta.getKind() != IResourceDelta.REMOVED) {
 						compileFile(candidate, monitor);
-						return true;
+					} else {
+						removeOutputFile(candidate, monitor);
 					}
-					removeOutputFile(candidate, monitor);
 				}
 			}
 			return false;
 		}
 	}
 
-	public ExtensionPointSchemaBuilder() {
-		super();
-		transformer = new SchemaTransformer();
-		cssURL = null;
-	}
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
 		throws CoreException {
-
 		IResourceDelta delta = null;
-
 		if (kind != FULL_BUILD)
 			delta = getDelta(getProject());
 
 		if (delta == null || kind == FULL_BUILD) {
-			// Full build
-			IProject project = getProject();
-			if (!isInterestingProject(project))
-				return null;
-			compileSchemasIn(project, monitor);
+			if (isInterestingProject(getProject()))
+				compileSchemasIn(getProject(), monitor);
 		} else {
 			delta.accept(new DeltaVisitor(monitor));
 		}
-		return null;
+		return new IProject[0];
+	}
+	
+	private boolean isInterestingProject(IProject project) {
+		return PDE.hasPluginNature(project) && !WorkspaceModelManager.isBinaryPluginProject(project);
 	}
 
-	private boolean isInterestingProject(IProject project) {
-		if (!PDE.hasPluginNature(project))
-			return false;
-		if (WorkspaceModelManager.isBinaryPluginProject(project))
-			return false;
-		// This is it - a plug-in project that is not external or binary
-		return true;
-	}
 	private void compileFile(IFile file, IProgressMonitor monitor) {
 		
-		String message = 
-			PDE.getFormattedMessage(
+		String message = PDE.getFormattedMessage(
 				BUILDERS_SCHEMA_COMPILING,
 				file.getFullPath().toString());
 		monitor.subTask(message);
-		SchemaHandler reporter = new SchemaHandler(file);
+		
+		SchemaErrorReporter reporter = new SchemaErrorReporter(file);
+		ValidatingSAXParser.parse(file, reporter);
+		reporter.validateContent(monitor);
 
-		String outputFileName = getOutputFileName(file);
-		IWorkspace workspace = file.getWorkspace();
-		Path outputPath = new Path(outputFileName);
-
+		StringWriter swriter = new StringWriter();
+		PrintWriter writer = new PrintWriter(swriter);
 		try {
-			InputStream source = file.getContents(false);
-			StringWriter stringWriter = new StringWriter();
-			PrintWriter pwriter = new PrintWriter(stringWriter);
-
-			FileSchemaDescriptor desc = new FileSchemaDescriptor(file);
 			boolean generateDoc = CompilerFlags.getBoolean(file.getProject(), CompilerFlags.S_CREATE_DOCS);
-			transform(desc, source, pwriter, reporter, cssURL, generateDoc);
-			stringWriter.close();
-			if (reporter.getErrorCount() == 0
-				&& generateDoc) {
-				String docLocation = getDocLocation(file);
-				ensureFoldersExist(file.getProject(), docLocation);
+			if (reporter.getDocumentRoot() != null && reporter.getErrorCount() == 0 && generateDoc) {
+				ensureFoldersExist(file.getProject(), getDocLocation(file));
+				String outputFileName = getOutputFileName(file);
+				IWorkspace workspace = file.getWorkspace();
+				Path outputPath = new Path(outputFileName);
+
+				FileSchemaDescriptor desc = new FileSchemaDescriptor(file);
+				Schema schema = (Schema)desc.getSchema();
+				schema.traverseDocumentTree(reporter.getDocumentRoot());
+				
+				SchemaTransformer transformer = new SchemaTransformer();
+				transformer.transform(schema, writer);
+				
+				ByteArrayInputStream target = new ByteArrayInputStream(swriter.toString().getBytes("UTF8")); //$NON-NLS-1$
 				IFile outputFile = workspace.getRoot().getFile(outputPath);
-				ByteArrayInputStream target =
-					new ByteArrayInputStream(stringWriter.toString().getBytes("UTF8")); //$NON-NLS-1$
 				if (!workspace.getRoot().exists(outputPath)) {
-					// the file does not exist - create it
 					outputFile.create(target, true, monitor);
 				} else {
 					outputFile.setContents(target, true, false, monitor);
 				}
-				
-				
-				// generate CSS files if necessary (schema.css is default below)
-				IPath path = file.getProject().getFullPath().append(getDocLocation(file));
-								
-				outputPath = (Path)path.append(SchemaTransformer.getSchemaCSSName());
-				IFile schemaCSSFile = workspace.getRoot().getFile(outputPath);
-				
-				stringWriter = new StringWriter();
-				pwriter = new PrintWriter(stringWriter);
-				if(addCSS(outputPath, pwriter)){
-					if (schemaCSSFile.exists())
-						schemaCSSFile.delete(true,false,null);			
-					stringWriter.close();
-					target = new ByteArrayInputStream(stringWriter.toString().getBytes("UTF8")); //$NON-NLS-1$
-					schemaCSSFile.create(target, true, monitor);
-				}
-
-				// generate CSS files if necessary (book.css is default below)
-				if (getCSSURL()==null)
-					outputPath=(Path)path.append(SchemaTransformer.getPlatformCSSName());
-				else
-					outputPath = new Path(getCSSURL().getPath());
-				
-				outputPath = (Path)path.append(outputPath.toFile().getName());
-				IFile cssFile = workspace.getRoot().getFile(outputPath);
-				stringWriter = new StringWriter();
-				pwriter = new PrintWriter(stringWriter);
-				if (addCSS(outputPath, pwriter)){
-					if (cssFile.exists())
-						cssFile.delete(true,false,null);
-					stringWriter.close();
-					target = new ByteArrayInputStream(stringWriter.toString().getBytes("UTF8")); //$NON-NLS-1$
-					cssFile.create(target, true, monitor);
-				}
 			}
-
 		} catch (UnsupportedEncodingException e) {
 			PDE.logException(e);
 		} catch (CoreException e) {
 			PDE.logException(e);
-		} catch (IOException e) {
-			PDE.logException(e);
+		} finally {
+			writer.close();
+			try {
+				swriter.close();
+			} catch (IOException e1) {
+			}
 		}
 		monitor.subTask(PDE.getResourceString(BUILDERS_UPDATING));
 		monitor.done();
 	}
 	
-	private boolean addCSS(Path outputPath, PrintWriter pwriter) {
-		File cssFile;
-		
-		if (outputPath.toFile().getName().equals(SchemaTransformer.getPlatformCSSName())){
-			Bundle bundle = Platform.getBundle(SchemaTransformer.PLATFORM_PLUGIN_DOC);
-			if (bundle == null)
-				return false;
-			URL url = bundle.getEntry(SchemaTransformer.getPlatformCSSName());
-			if (url == null)
-				return false;
-			try {
-				url = Platform.resolve(url);
-			} catch (IOException e1) {
-				return false;
-			}
-			cssFile = new File(url.getFile());
-		} else if (outputPath.toFile().getName().equals(SchemaTransformer.getSchemaCSSName())){
-			Bundle bundle = Platform.getBundle(SchemaTransformer.PLATFORM_PLUGIN_DOC);
-			if (bundle == null)
-				return false;
-			URL url = bundle.getEntry(SchemaTransformer.getSchemaCSSName());
-			if (url == null)
-				return false;
-			try {
-				url = Platform.resolve(url);
-			} catch (IOException e1) {
-				return false;
-			}
-			cssFile = new File(url.getFile());
-		} else{
-			if (getCSSURL() == null)
-				return false;
-			cssFile = new File(getCSSURL().getFile());
-		}
-		
-		try {
-
-			FileReader freader = new FileReader(cssFile);
-			BufferedReader breader = new BufferedReader(freader);
-
-			while (breader.ready()) {
-				pwriter.println(breader.readLine());
-			}
-
-			breader.close();
-			freader.close();
-			return true;
-		} catch (Exception e) {
-			// do nothing if problem with css as it will only affect formatting.  
-			// may want to log this error in the future.
-			return false;
-		}
-		
-	}
 	private void ensureFoldersExist(IProject project, String pathName) throws CoreException {
 		IPath path = new Path(pathName);
 		IContainer parent=project;
 		
-		for (int i=0; i<path.segmentCount(); i++){
+		for (int i = 0; i < path.segmentCount(); i++) {
 			String segment = path.segment(i);
 			IFolder folder = parent.getFolder(new Path(segment));
 			if (!folder.exists()) {
@@ -252,13 +144,9 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 		}
 	}
 
-	private void compileSchemasIn(IContainer container, IProgressMonitor monitor)
-		throws CoreException {
-		monitor.subTask(
-			PDE.getResourceString(BUILDERS_SCHEMA_COMPILING_SCHEMAS));
-
+	private void compileSchemasIn(IContainer container, IProgressMonitor monitor) throws CoreException {
+		monitor.subTask(PDE.getResourceString(BUILDERS_SCHEMA_COMPILING_SCHEMAS));
 		IResource[] members = container.members();
-
 		for (int i = 0; i < members.length; i++) {
 			IResource member = members[i];
 			if (member instanceof IContainer)
@@ -270,7 +158,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 		monitor.done();
 	}
 	
-	public String getDocLocation(IFile file) {
+	private String getDocLocation(IFile file) {
 		return CompilerFlags.getString(file.getProject(), CompilerFlags.S_DOC_FOLDER);
 	}
 	
@@ -279,11 +167,10 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 		int dot = fileName.lastIndexOf('.');
 		String pageName = fileName.substring(0, dot) + ".html"; //$NON-NLS-1$
 		String mangledPluginId = getMangledPluginId(file);
-		if (mangledPluginId!=null)
-		   pageName = mangledPluginId + "_"+pageName; //$NON-NLS-1$
-		IPath path =
-			file.getProject().getFullPath().append(getDocLocation(file)).append(
-				pageName);
+		if (mangledPluginId != null)
+			pageName = mangledPluginId + "_" + pageName; //$NON-NLS-1$
+		IPath path = file.getProject().getFullPath().append(
+				getDocLocation(file)).append(pageName);
 		return path.toString();
 	}
 	
@@ -291,29 +178,12 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 		IProject project = file.getProject();
 		IModel model = PDECore.getDefault().getModelManager().findModel(project);
 		if (model instanceof IPluginModelBase) {
-			IPluginBase plugin = ((IPluginModelBase)model).getPluginBase();
-			if (plugin!=null) {
-				String id = plugin.getId();
-				return id.replace('.', '_');
+			IPluginBase plugin = ((IPluginModelBase) model).getPluginBase();
+			if (plugin != null) {
+				return plugin.getId().replace('.', '_');
 			}
 		}
 		return null;
-	}
-	
-	public URL getCSSURL(){
-		return cssURL;
-	}
-	
-	public void setCSSURL(String url){
-		try {
-			cssURL = new URL(url);
-		} catch (MalformedURLException e) {
-			PDE.logException(e);
-		}
-	}
-	
-	public void setCSSURL(URL url){
-		cssURL = url;
 	}
 	
 	private boolean isSchemaFile(IFile file) {
@@ -322,10 +192,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 	
 	private void removeOutputFile(IFile file, IProgressMonitor monitor) {
 		String outputFileName = getOutputFileName(file);
-		String message =
-			PDE.getFormattedMessage(BUILDERS_SCHEMA_REMOVING, outputFileName);
-
-		monitor.subTask(message);
+		monitor.subTask(PDE.getFormattedMessage(BUILDERS_SCHEMA_REMOVING, outputFileName));
 
 		IWorkspace workspace = file.getWorkspace();
 		IPath path = new Path(outputFileName);
@@ -340,19 +207,5 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 			}
 		}
 		monitor.done();
-	}
-	
-	protected void startupOnInitialize() {
-		super.startupOnInitialize();
-	}
-	
-	private void transform(
-		ISchemaDescriptor desc,
-		InputStream input,
-		PrintWriter output,
-		SchemaHandler reporter,
-		URL cssURL,
-		boolean generateDoc) {
-		transformer.transform(desc, input, output, reporter, cssURL, generateDoc);
 	}
 }

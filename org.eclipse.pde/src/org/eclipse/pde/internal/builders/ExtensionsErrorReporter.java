@@ -413,17 +413,10 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 		}
 	}
 
-	protected void reportEmptyRequiredAttribute(Element element, String attName, int severity) {
-		String message = PDE
-				.getFormattedMessage(
-						"Builders.manifest.nonEmptyRequired", new String[] { attName, element.getNodeName() }); //$NON-NLS-1$			
-		report(message, getLine(element, attName), severity);
-	}
-
 	protected void reportMissingRequiredAttribute(Element element, String attName, int severity) {
 		String message = PDE
 				.getFormattedMessage(
-						"Builders.manifest.missingRequired", new String[] { attName, element.getNodeName() }); //$NON-NLS-1$			
+						"Builders.Manifest.missingRequired", new String[] { attName, element.getNodeName() }); //$NON-NLS-1$			
 		report(message, getLine(element), severity);
 	}
 

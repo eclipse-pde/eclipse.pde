@@ -121,9 +121,7 @@ public class ConvertSchemaToHTML extends Task {
 				}
 				StandaloneSchemaDescriptor desc = new StandaloneSchemaDescriptor(extPoints[i], url);
 				schema = (Schema)desc.getSchema();
-				schema.traverseDocumentTree(
-					handler.getDocumentElement(),
-					handler.getLineTable());
+				schema.traverseDocumentTree(handler.getDocumentElement());
 					
 				File directory =
 					new Path(destination).isAbsolute()
@@ -141,7 +139,7 @@ public class ConvertSchemaToHTML extends Task {
 						(pluginID + "." + extPoints[i].getId()).replace('.', '_') + ".html"); //$NON-NLS-1$ //$NON-NLS-2$
 				
 				out = new PrintWriter(new FileWriter(file), true);
-				fTransformer.transform(out, schema, cssURL, SchemaTransformer.BUILD);
+				fTransformer.transform(schema, out, cssURL, SchemaTransformer.BUILD);
 			} catch (Exception e) {
 				if (e.getMessage() != null)
 					System.out.println(e.getMessage());
