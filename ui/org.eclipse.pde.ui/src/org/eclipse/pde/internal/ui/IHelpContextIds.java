@@ -87,8 +87,6 @@ public interface IHelpContextIds {
  	public static final String ADD_EXTENSIONS_SCHEMA_BASED = PREFIX + "add_extensions_schema_based"; //$NON-NLS-1$
  	public static final String JAVA_ATTRIBUTE_WIZARD_PAGE = PREFIX + "java_attribute_wizard_page"; //$NON-NLS-1$
 	public static final String UPDATE_CLASSPATH = PREFIX + "update_classpath"; //$NON-NLS-1$
-	public static final String FEATURE_ADD_REQUIRED_WIZARD = PREFIX + "feature_add_required_wizard"; //$NON-NLS-1$
-	public static final String FEATURE_ADD_PACKAGED_WIZARD = PREFIX + "feature_add_packaged_wizard"; //$NON-NLS-1$
 	public static final String FEATURE_PORTABILITY_WIZARD = PREFIX + "feature_portability_wizard"; //$NON-NLS-1$
 
 	public static final String PLUGINS_CONTAINER_PAGE = PREFIX + "plugins_container_page"; //$NON-NLS-1$

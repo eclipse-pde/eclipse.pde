@@ -23,13 +23,14 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelProviderEvent;
 import org.eclipse.pde.core.IModelProviderListener;
 import org.eclipse.pde.core.plugin.IFragment;
 import org.eclipse.pde.core.plugin.IFragmentModel;
+import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
@@ -47,6 +48,7 @@ import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.pde.internal.ui.wizards.FeatureSelectionDialog;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
+import org.eclipse.pde.internal.ui.wizards.PluginSelectionDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.Clipboard;
@@ -151,20 +153,54 @@ public class RequiresSection extends TableSection implements
 	}
 
 	private void handleNewPlugin() {
-		final IFeatureModel model = (IFeatureModel) getPage().getModel();
 		BusyIndicator.showWhile(fPluginViewer.getTable().getDisplay(),
 				new Runnable() {
 					public void run() {
-						NewFeatureRequireWizardPage page = new NewFeatureRequireWizardPage(
-								model);
-						ReferenceWizard wizard = new ReferenceWizard(model,
-								page);
-						WizardDialog dialog = new WizardDialog(PDEPlugin
-								.getActiveWorkbenchShell(), wizard);
-						dialog.create();
-						dialog.open();
+						IPluginModelBase[] allModels = PDECore.getDefault()
+								.getModelManager().getPlugins();
+						ArrayList newModels = new ArrayList();
+						for (int i = 0; i < allModels.length; i++) {
+							if (canAdd(allModels[i]))
+								newModels.add(allModels[i]);
+						}
+						IPluginModelBase[] candidateModels = (IPluginModelBase[]) newModels
+								.toArray(new IPluginModelBase[newModels.size()]);
+						PluginSelectionDialog dialog = new PluginSelectionDialog(
+								fPluginViewer.getTable().getShell(),
+								candidateModels, true);
+						if (dialog.open() == Window.OK) {
+							Object[] models = dialog.getResult();
+							try {
+								doAdd(models);
+							} catch (CoreException e) {
+								PDECore.log(e);
+							}
+						}
 					}
 				});
+	}
+
+	private boolean canAdd(IPluginModelBase candidate) {
+		IPluginBase plugin = candidate.getPluginBase();
+		if (candidate.isFragmentModel())
+			return false;
+
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
+		IFeatureImport[] imports = model.getFeature().getImports();
+
+		for (int i = 0; i < imports.length; i++) {
+			IFeatureImport fimport = imports[i];
+			if (plugin.getId().equals(fimport.getId()))
+				return false;
+		}
+		// don't show plug-ins that are listed in this feature
+		IFeaturePlugin[] fplugins = model.getFeature().getPlugins();
+		for (int i = 0; i < fplugins.length; i++) {
+			IFeaturePlugin fplugin = fplugins[i];
+			if (plugin.getId().equals(fplugin.getId()))
+				return false;
+		}
+		return true;
 	}
 
 	private void handleNewFeature() {
@@ -200,10 +236,18 @@ public class RequiresSection extends TableSection implements
 		IFeature feature = model.getFeature();
 		IFeatureImport[] added = new IFeatureImport[candidates.length];
 		for (int i = 0; i < candidates.length; i++) {
-			IFeatureModel candidate = (IFeatureModel) candidates[i];
-			FeatureImport iimport = (FeatureImport) model.getFactory().createImport();
-			iimport.loadFrom(candidate.getFeature());
-			added[i] = iimport;
+			FeatureImport fimport = (FeatureImport) model.getFactory()
+			.createImport();
+			if (candidates[i] instanceof IFeatureModel) {
+				IFeatureModel candidate = (IFeatureModel) candidates[i];
+				fimport.loadFrom(candidate.getFeature());
+			} else { // instanceof IPluginModelBase
+				IPluginModelBase candidate = (IPluginModelBase) candidates[i];
+				IPluginBase pluginBase = candidate.getPluginBase();
+				fimport.setPlugin((IPlugin) candidate.getPluginBase());
+				fimport.setId(pluginBase.getId());
+			}
+			added[i] = fimport;
 		}
 		feature.addImports(added);
 	}
