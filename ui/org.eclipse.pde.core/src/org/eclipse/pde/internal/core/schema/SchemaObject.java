@@ -19,7 +19,7 @@ public abstract class SchemaObject
 	private String description;
 	private ISchemaObject parent;
 	private Vector comments;
-	private int line;
+	private int [] range;
 
 	public SchemaObject(ISchemaObject parent, String name) {
 		this.parent = parent;
@@ -119,14 +119,22 @@ public abstract class SchemaObject
 	}
 
 	public int getStartLine() {
-		return line;
+		if (range==null)
+			return -1;
+		return range[0];
+	}
+	
+	public int getStopLine() {
+		if (range==null)
+			return -1;
+		return range[1];
 	}
 
 	void bindSourceLocation(Node node, Hashtable lineTable) {
 		if (lineTable==null) return;
-		Integer lineObject = (Integer) lineTable.get(node);
-		if (lineObject != null) {
-			line = lineObject.intValue();
+		Integer [] lines = (Integer[]) lineTable.get(node);
+		if (lines != null) {
+			range = new int[] { lines[0].intValue(), lines[1].intValue() };
 		}
 	}
 }

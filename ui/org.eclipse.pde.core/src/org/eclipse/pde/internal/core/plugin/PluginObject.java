@@ -21,7 +21,7 @@ public abstract class PluginObject
 	private transient IPluginObject parent;
 	private transient IPluginModelBase model;
 	private Vector comments;
-	protected int lineNumber;
+	protected int [] range;
 	private boolean inTheModel;
 
 	public PluginObject() {
@@ -204,13 +204,22 @@ public abstract class PluginObject
 	}
 
 	void bindSourceLocation(Node node, Hashtable lineTable) {
-		Integer lineValue = (Integer) lineTable.get(node);
-		if (lineValue != null) {
-			lineNumber = lineValue.intValue();
+		Integer [] lines = (Integer[]) lineTable.get(node);
+		if (lines != null) {
+			range = new int[2];
+			range[0] = lines[0].intValue();
+			range[1] = lines[1].intValue();
 		}
 	}
 
 	public int getStartLine() {
-		return lineNumber;
+		if (range==null)
+			return -1;
+		return range[0];
+	}
+	public int getStopLine() {
+		if (range==null)
+			return -1;
+		return range[1];
 	}
 }
