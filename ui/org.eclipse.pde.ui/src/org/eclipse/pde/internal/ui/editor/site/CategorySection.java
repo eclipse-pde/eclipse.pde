@@ -4,19 +4,22 @@ package org.eclipse.pde.internal.ui.editor.site;
  * All Rights Reserved.
  */
 
-import java.util.List;
+import java.util.*;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.IEditable;
 import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.update.ui.forms.internal.FormSection;
 
-public class CategorySection extends ObjectListSection {
+public class CategorySection extends CheckboxObjectListSection {
 	private static final String SECTION_TITLE =
 		"SiteEditor.CategorySection.title";
 	private static final String SECTION_DESC =
 		"SiteEditor.CategorySection.desc";
 	private static final String KEY_NEW = "SiteEditor.CategorySection.new";
+
+	private ISiteFeature currentInput;
 
 	public CategorySection(FeaturePage page) {
 		super(
@@ -27,8 +30,8 @@ public class CategorySection extends ObjectListSection {
 	}
 
 	protected Object[] getElements(Object parent) {
-		if (parent instanceof ISiteFeature) {
-			return ((ISiteFeature) parent).getCategories();
+		if (parent instanceof ISite && currentInput!=null) {
+			return ((ISite) parent).getCategoryDefinitions();
 		}
 		return new Object[0];
 	}
@@ -42,7 +45,7 @@ public class CategorySection extends ObjectListSection {
 	}
 
 	protected boolean isApplicable(Object object) {
-		return object instanceof ISiteCategory;
+		return object instanceof ISiteCategoryDefinition;
 	}
 
 	protected String getOpenPopupLabel() {
@@ -54,24 +57,8 @@ public class CategorySection extends ObjectListSection {
 	}
 
 	protected void handleNew() {
-		/*
-				final ISiteModel model = (ISiteModel) getFormPage().getModel();
-				final ISiteBuildModel buildModel = model.getBuildModel();
-		
-				BusyIndicator
-					.showWhile(projectViewer.getTable().getDisplay(), new Runnable() {
-					public void run() {
-						BuiltFeaturesWizard wizard =
-							new BuiltFeaturesWizard(buildModel);
-						WizardDialog dialog =
-							new WizardDialog(
-								projectViewer.getControl().getShell(),
-								wizard);
-						dialog.open();
-						forceDirty();
-					}
-				});
-		*/
+		ISiteModel model = (ISiteModel) getFormPage().getModel();
+		CategoryDefinitionSection.showCategoryDialog(tableViewer, model, null);
 	}
 
 	protected void remove(Object input, List objects) throws CoreException {
@@ -88,7 +75,7 @@ public class CategorySection extends ObjectListSection {
 	protected void setButtonsEnabled(boolean value) {
 		getTablePart().setButtonEnabled(0, value);
 	}
-	
+
 	public void sectionChanged(
 		FormSection source,
 		int changeType,
@@ -100,9 +87,74 @@ public class CategorySection extends ObjectListSection {
 
 	private void inputChanged(Object changeObject) {
 		if (changeObject instanceof ISiteFeature) {
-			getTablePart().getViewer().setInput(changeObject);
-		} else {
-			getTablePart().getViewer().setInput(null);
+			currentInput = (ISiteFeature) changeObject;
+			tableViewer.refresh();
+			refresh();
 		}
+		else {
+			currentInput = null;
+			tableViewer.refresh();
+		}
+	}
+
+	private void refresh() {
+		ArrayList checked = new ArrayList();
+		if (currentInput != null) {
+			ISiteCategoryDefinition[] defs =
+				currentInput.getSite().getCategoryDefinitions();
+			ISiteCategory[] categories = currentInput.getCategories();
+
+			for (int i = 0; i < defs.length; i++) {
+				ISiteCategoryDefinition def = defs[i];
+				if (findMatchingCategory(def) != null)
+					checked.add(def);
+			}
+		}
+		tableViewer.setCheckedElements(checked.toArray());
+	}
+
+	public void update(Object input) {
+		refresh();
+		updateNeeded = false;
+	}
+
+	private ISiteCategory findMatchingCategory(ISiteCategoryDefinition def) {
+		ISiteCategory[] categories = currentInput.getCategories();
+		for (int j = 0; j < categories.length; j++) {
+			ISiteCategory category = categories[j];
+			if (category.getName().equalsIgnoreCase(def.getName())) {
+				return category;
+			}
+		}
+		return null;
+	}
+
+	protected void elementChecked(Object element, boolean checked) {
+		if (currentInput == null
+			|| !(getFormPage().getModel() instanceof IEditable)) {
+			tableViewer.setChecked(element, !checked);
+			return;
+		}
+		try {
+			ISiteCategoryDefinition def = (ISiteCategoryDefinition) element;
+			ISiteCategory category = findMatchingCategory(def);
+			if (checked && category == null) {
+				category =
+					currentInput.getModel().getFactory().createCategory(
+						currentInput);
+				category.setName(def.getName());
+				currentInput.addCategories(new ISiteCategory[] { category });
+			} else if (!checked && category != null) {
+				currentInput.removeCategories(new ISiteCategory[] { category });
+			}
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}
+	}
+
+	public void initialize(Object input) {
+		super.initialize(input);
+		ISiteModel model = (ISiteModel) input;
+		getTablePart().getViewer().setInput(model.getSite());
 	}
 }

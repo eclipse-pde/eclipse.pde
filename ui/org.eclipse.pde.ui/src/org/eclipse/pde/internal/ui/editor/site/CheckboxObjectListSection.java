@@ -98,10 +98,13 @@ public abstract class CheckboxObjectListSection
 		manager.add(new Separator());
 		if (isOpenable()) manager.add(openAction);
 		manager.add(deleteAction);
+		fillClientActions(manager);
 		getFormPage().getEditor().getContributor().contextMenuAboutToShow(
 			manager);
 	}
 
+	protected void fillClientActions(IMenuManager manager) {
+	}
 	protected abstract void handleOpen();
 	protected abstract void handleNew();
 	protected abstract String getOpenPopupLabel();
@@ -205,7 +208,7 @@ public abstract class CheckboxObjectListSection
 		}
 	}
 
-	private void makeActions() {
+	protected void makeActions() {
 		IModel model = (IModel) getFormPage().getModel();
 		newAction = new Action() {
 			public void run() {

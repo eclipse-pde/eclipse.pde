@@ -7,8 +7,11 @@ package org.eclipse.pde.internal.ui.editor.site;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.swt.custom.BusyIndicator;
 
 public class CategoryDefinitionSection extends ObjectListSection {
 	private static final String SECTION_TITLE =
@@ -66,32 +69,44 @@ public class CategoryDefinitionSection extends ObjectListSection {
 		ISiteCategoryDefinition[] array =
 			(ISiteCategoryDefinition[]) objects.toArray(
 				new ISiteCategoryDefinition[objects.size()]);
-		ISite site = (ISite)input;
+		ISite site = (ISite) input;
 		site.removeCategoryDefinitions(array);
 	}
 
 	protected void handleNew() {
-		/*
-				final ISiteModel model = (ISiteModel) getFormPage().getModel();
-				final ISiteBuildModel buildModel = model.getBuildModel();
-		
-				BusyIndicator
-					.showWhile(projectViewer.getTable().getDisplay(), new Runnable() {
-					public void run() {
-						BuiltFeaturesWizard wizard =
-							new BuiltFeaturesWizard(buildModel);
-						WizardDialog dialog =
-							new WizardDialog(
-								projectViewer.getControl().getShell(),
-								wizard);
-						dialog.open();
-						forceDirty();
-					}
-				});
-		*/
+		ISiteModel model = (ISiteModel) getFormPage().getModel();
+		showCategoryDialog(tableViewer, model, null);
+	}
+
+	static void showCategoryDialog(
+		final Viewer viewer,
+		final ISiteModel model,
+		final ISiteCategoryDefinition def) {
+		BusyIndicator
+			.showWhile(viewer.getControl().getDisplay(), new Runnable() {
+			public void run() {
+				NewCategoryDefinitionDialog dialog =
+					new NewCategoryDefinitionDialog(
+						viewer.getControl().getShell(),
+						model,
+						def);
+				dialog.create();
+				dialog.getShell().setSize(400, 300);
+				dialog.open();
+			}
+		});
 	}
 
 	protected void handleOpen() {
+		IStructuredSelection sel =
+			(IStructuredSelection) tableViewer.getSelection();
+		if (sel.size() == 1) {
+			ISiteModel model = (ISiteModel) getFormPage().getModel();
+			showCategoryDialog(
+				tableViewer,
+				model,
+				(ISiteCategoryDefinition) sel.getFirstElement());
+		}
 	}
 
 	protected void setButtonsEnabled(boolean value) {

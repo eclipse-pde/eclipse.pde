@@ -4,9 +4,12 @@ package org.eclipse.pde.internal.ui.editor.site;
  * All Rights Reserved.
  */
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IEditable;
@@ -28,6 +31,8 @@ public class FeatureProjectSection extends CheckboxObjectListSection {
 	private static final String KEY_DESELECT_ALL =
 		"SiteEditor.FeatureProjectSection.deselectAll";
 
+	private Action buildAction;
+
 	public FeatureProjectSection(BuildPage page) {
 		super(
 			page,
@@ -39,14 +44,14 @@ public class FeatureProjectSection extends CheckboxObjectListSection {
 				PDEPlugin.getResourceString(KEY_SELECT_ALL),
 				PDEPlugin.getResourceString(KEY_DESELECT_ALL)});
 	}
-	
-	protected Object [] getElements(Object input) {
+
+	protected Object[] getElements(Object input) {
 		if (input instanceof ISiteBuild) {
-			return ((ISiteBuild)input).getFeatures();
+			return ((ISiteBuild) input).getFeatures();
 		}
 		return new Object[0];
 	}
-	
+
 	protected boolean isApplicable(Object object) {
 		return object instanceof ISiteBuildFeature;
 	}
@@ -128,16 +133,18 @@ public class FeatureProjectSection extends CheckboxObjectListSection {
 		StructuredSelection ssel = new StructuredSelection(elements);
 		tableViewer.setSelection(ssel);
 	}
-	
+
 	protected void handleOpen() {
 	}
-	
+
 	protected void remove(Object input, List removed) throws CoreException {
-		ISiteBuildFeature [] array = (ISiteBuildFeature[])removed.toArray(new ISiteBuildFeature[removed.size()]);
-		ISiteBuild siteBuild = (ISiteBuild)input;
+		ISiteBuildFeature[] array =
+			(ISiteBuildFeature[]) removed.toArray(
+				new ISiteBuildFeature[removed.size()]);
+		ISiteBuild siteBuild = (ISiteBuild) input;
 		siteBuild.removeFeatures(array);
 	}
-	
+
 	public boolean isOpenable() {
 		return true;
 	}
@@ -160,10 +167,53 @@ public class FeatureProjectSection extends CheckboxObjectListSection {
 			PDECore.getDefault().getWorkspaceModelManager();
 		mng.addModelProviderListener(this);
 	}
-	
+
+	protected void makeActions() {
+		super.makeActions();
+		buildAction = new Action() {
+			public void run() {
+				doBuild();
+			}
+		};
+		buildAction.setText("Build JARs");
+	}
+
+	protected void fillClientActions(IMenuManager manager) {
+		IStructuredSelection selection =
+			(IStructuredSelection) tableViewer.getSelection();
+		if (selection.size() > 0) {
+			manager.add(buildAction);
+			manager.add(new Separator());
+		}
+	}
+
+	private void doBuild() {
+		ArrayList result = new ArrayList();
+		IStructuredSelection selection =
+			(IStructuredSelection) tableViewer.getSelection();
+		for (Iterator iter = selection.iterator(); iter.hasNext();) {
+			ISiteBuildFeature sbfeature = (ISiteBuildFeature) iter.next();
+			if (sbfeature.getReferencedFeature() != null) {
+				result.add(sbfeature);
+			}
+		}
+		if (result.size() == 0) {
+		} else {
+			FeatureBuildOperation op = new FeatureBuildOperation(result);
+			ProgressMonitorDialog dialog =
+				new ProgressMonitorDialog(tableViewer.getControl().getShell());
+			try {
+				dialog.run(true, true, op);
+			} catch (InterruptedException e) {
+			} catch (InvocationTargetException e) {
+				PDEPlugin.logException(e);
+			}
+		}
+	}
+
 	protected void setButtonsEnabled(boolean value) {
 	}
-	
+
 	protected String getOpenPopupLabel() {
 		return "&Open";
 	}

@@ -30,7 +30,7 @@ public abstract class ObjectListSection
 	private static final String POPUP_DELETE = "Actions.delete.label";
 	private boolean updateNeeded;
 
-	private TableViewer tableViewer;
+	protected TableViewer tableViewer;
 	private Action openAction;
 	private Action newAction;
 	private Action deleteAction;
@@ -171,6 +171,9 @@ public abstract class ObjectListSection
 			fireSelectionNotification(selection.getFirstElement());
 		else
 			fireSelectionNotification(null);
+		boolean singleSelection = selection.size()==1;
+		openAction.setEnabled(singleSelection);
+		deleteAction.setEnabled(selection.isEmpty()==false);
 	}
 
 	public void initialize(Object input) {
@@ -237,7 +240,7 @@ public abstract class ObjectListSection
 					handleOpen();
 				}
 			};
-			openAction.setEnabled(model.isEditable());
+			openAction.setEnabled(false);
 			openAction.setText(getOpenPopupLabel());
 		}
 	}

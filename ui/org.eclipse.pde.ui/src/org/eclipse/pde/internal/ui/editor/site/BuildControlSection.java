@@ -241,6 +241,7 @@ public class BuildControlSection extends PDEFormSection {
 		model.removeModelChangedListener(this);
 		super.dispose();
 	}
+
 	private void handleBuild() {
 		/*
 			final FeatureEditorContributor contributor =

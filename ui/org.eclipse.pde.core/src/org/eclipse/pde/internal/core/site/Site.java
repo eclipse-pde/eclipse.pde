@@ -111,7 +111,7 @@ public class Site extends SiteObject implements ISite {
 		ensureModelEditable();
 		for (int i = 0; i < defs.length; i++) {
 			ISiteCategoryDefinition def = defs[i];
-			((SiteFeature) def).setInTheModel(true);
+			((SiteCategoryDefinition) def).setInTheModel(true);
 			categoryDefs.add(defs[i]);
 		}
 		fireStructureChanged(defs, IModelChangedEvent.INSERT);
