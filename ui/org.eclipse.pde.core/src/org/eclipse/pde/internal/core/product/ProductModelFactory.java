@@ -1,0 +1,35 @@
+package org.eclipse.pde.internal.core.product;
+
+import org.eclipse.pde.internal.core.iproduct.*;
+
+
+public class ProductModelFactory implements IProductModelFactory {
+
+	private IProductModel fModel;
+
+	public ProductModelFactory(IProductModel model) {
+		fModel = model;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.iproduct.IProductModelFactory#createProduct()
+	 */
+	public IProduct createProduct() {
+		return new Product(fModel);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.iproduct.IProductModelFactory#createAboutInfo()
+	 */
+	public IAboutInfo createAboutInfo() {
+		return new AboutInfo(fModel);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.iproduct.IProductModelFactory#createPlugin()
+	 */
+	public IProductPlugin createPlugin() {
+		return new ProductPlugin(fModel);
+	}
+
+}

@@ -25,7 +25,7 @@ public abstract class AbstractModel
 	implements IModel, IModelChangeProviderExtension, Serializable {
 	private static final String KEY_ERROR = "Errors.modelError"; //$NON-NLS-1$
 	private transient List listeners;
-	protected boolean loaded;
+	private boolean loaded;
 	protected transient NLResourceHelper nlHelper;
 	protected boolean disposed;
 	private long timeStamp;
@@ -149,6 +149,13 @@ public abstract class AbstractModel
 	
 	protected SAXParser getSaxParser() throws ParserConfigurationException, SAXException, FactoryConfigurationError  {
 		return SAXParserFactory.newInstance().newSAXParser();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.IModel#isReconcilingModel()
+	 */
+	public boolean isReconcilingModel() {
+		return false;
 	}
 
 }

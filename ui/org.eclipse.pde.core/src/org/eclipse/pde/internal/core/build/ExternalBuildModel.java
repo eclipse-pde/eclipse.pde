@@ -47,7 +47,7 @@ public class ExternalBuildModel extends BuildModel {
 		} catch (IOException e) {
 			fBuild = new Build();
 			fBuild.setModel(this);
-			loaded = true;
+			setLoaded(true);
 		}
 	}
 

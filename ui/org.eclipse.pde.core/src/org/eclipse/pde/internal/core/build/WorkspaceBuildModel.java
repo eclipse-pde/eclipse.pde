@@ -69,7 +69,7 @@ public class WorkspaceBuildModel extends BuildModel implements IEditableModel {
 		} else {
 			fBuild = new Build();
 			fBuild.setModel(this);
-			loaded = true;
+			setLoaded(true);
 		}
 	}
 

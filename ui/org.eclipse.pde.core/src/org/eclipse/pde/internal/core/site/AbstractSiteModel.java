@@ -63,7 +63,7 @@ public abstract class AbstractSiteModel
 			XMLDefaultHandler handler = new XMLDefaultHandler();
 			parser.parse(stream, handler);
 			processDocument(handler.getDocument(), handler.getLineTable());
-			loaded = true;
+			setLoaded(true);
 			if (!outOfSync)
 				updateTimeStamp();
 		} catch (Exception e) {
@@ -94,8 +94,5 @@ public abstract class AbstractSiteModel
 	}
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
-	}
-	public boolean isReconcilingModel() {
-		return false;
 	}
 }

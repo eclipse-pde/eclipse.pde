@@ -60,7 +60,7 @@ public abstract class AbstractFeatureModel
 			XMLDefaultHandler handler = new XMLDefaultHandler();
 			parser.parse(stream, handler);
 			processDocument(handler.getDocument(), handler.getLineTable());
-			loaded = true;
+			setLoaded(true);
 			if (!outOfSync)
 				updateTimeStamp();
 		} catch (SAXException e) {
@@ -98,8 +98,5 @@ public abstract class AbstractFeatureModel
 	}
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
-	}
-	public boolean isReconcilingModel() {
-		return false;
 	}
 }

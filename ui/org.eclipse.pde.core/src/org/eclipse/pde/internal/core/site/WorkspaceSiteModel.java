@@ -23,14 +23,11 @@ public class WorkspaceSiteModel
 	implements IEditableModel {
 	private static final long serialVersionUID = 1L;
 	private boolean fDirty;
-	private IFile file;
-	private boolean editable = true;
+	private IFile fFile;
+	private boolean fEditable = true;
 
-	public WorkspaceSiteModel() {
-		super();
-	}
 	public WorkspaceSiteModel(IFile file) {
-		setFile(file);
+		fFile = file;
 	}
 	public void fireModelChanged(IModelChangedEvent event) {
 		setDirty(event.getChangeType()!=IModelChangedEvent.WORLD_CHANGED);
@@ -38,11 +35,8 @@ public class WorkspaceSiteModel
 	}
 
 	protected NLResourceHelper createNLResourceHelper() {
-		if(file == null){
-			return null;
-		}
 		try {
-			IPath path = file.getLocation().removeLastSegments(1);
+			IPath path = fFile.getLocation().removeLastSegments(1);
 			String installLocation = path.toOSString();
 			if (installLocation.startsWith("file:") == false) //$NON-NLS-1$
 				installLocation = "file:" + installLocation; //$NON-NLS-1$
@@ -59,7 +53,7 @@ public class WorkspaceSiteModel
 	public String getContents() {
 		StringWriter swriter = new StringWriter();
 		PrintWriter writer = new PrintWriter(swriter);
-		loaded = true;
+		setLoaded(true);
 		save(writer);
 		writer.flush();
 		try {
@@ -69,68 +63,57 @@ public class WorkspaceSiteModel
 		return swriter.toString();
 	}
 	public IFile getFile() {
-		return file;
+		return fFile;
 	}
 	public String getInstallLocation() {
-		return file.getParent().getLocation().toOSString();
+		return fFile.getParent().getLocation().toOSString();
 	}
 	public IResource getUnderlyingResource() {
-		return file;
+		return fFile;
 	}
 	public boolean isDirty() {
 		return fDirty;
 	}
 	public boolean isEditable() {
-		return editable;
+		return fEditable;
 	}
 
 	public boolean isInSync() {
-		return isInSync(file.getLocation().toFile());
+		return isInSync(fFile.getLocation().toFile());
 	}
 
 	protected void updateTimeStamp() {
-		updateTimeStamp(file.getLocation().toFile());
+		updateTimeStamp(fFile.getLocation().toFile());
 	}
 	public void load() {
-		if (file == null)
-			return;
-		if (file.exists()) {
-			boolean outOfSync = false;
+		if (fFile.exists()) {
 			InputStream stream = null;
 			try {
-				stream = file.getContents(false);
+				stream = fFile.getContents(true);
+				load(stream, false);
 			} catch (CoreException e) {
-				outOfSync = true;
+			} finally {
 				try {
-					stream = file.getContents(true);
-				} catch (CoreException ex) {
-					return;
+					if (stream != null)
+						stream.close();
+				} catch (IOException e) {
 				}
-			}
-			try {
-				load(stream, outOfSync);
-				stream.close();
-			} catch (CoreException e) {
-			} catch (IOException e) {
-				PDECore.logException(e);
 			}
 		} else {
 			this.site = new Site();
 			site.model = this;
-			loaded = true;
+			setLoaded(true);
 		}
 	}
 	public void save() {
-		if (file == null)
-			return;
 		try {
 			String contents = getContents();
 			ByteArrayInputStream stream =
 				new ByteArrayInputStream(contents.getBytes("UTF8")); //$NON-NLS-1$
-			if (file.exists()) {
-				file.setContents(stream, false, false, null);
+			if (fFile.exists()) {
+				fFile.setContents(stream, false, false, null);
 			} else {
-				file.create(stream, false, null);
+				fFile.create(stream, false, null);
 			}
 			stream.close();
 		} catch (CoreException e) {
@@ -141,7 +124,6 @@ public class WorkspaceSiteModel
 	public void save(PrintWriter writer) {
 		if (isLoaded()) {
 			writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
-			//writer.println("<!DOCTYPE site SYSTEM \"dtd/site.dtd\">");
 			site.write("", writer); //$NON-NLS-1$
 		}
 		setDirty(false);
@@ -149,10 +131,8 @@ public class WorkspaceSiteModel
 	public void setDirty(boolean dirty) {
 		fDirty = dirty;
 	}
+
 	public void setEditable(boolean newEditable) {
-		editable = newEditable;
-	}
-	public void setFile(IFile newFile) {
-		file = newFile;
+		fEditable = newEditable;
 	}
 }

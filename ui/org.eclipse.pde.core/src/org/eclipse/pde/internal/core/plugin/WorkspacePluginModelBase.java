@@ -112,7 +112,7 @@ public abstract class WorkspacePluginModelBase extends AbstractPluginModelBase
 		} else {
 			pluginBase = (PluginBase) createPluginBase();
 			pluginBase.setModel(this);
-			loaded = true;
+			setLoaded(true);
 		}
 	}
 

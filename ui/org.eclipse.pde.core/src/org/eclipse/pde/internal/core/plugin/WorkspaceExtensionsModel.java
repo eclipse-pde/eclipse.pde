@@ -121,7 +121,7 @@ public class WorkspaceExtensionsModel
 			}
 		} else {
 			getExtensions(true);		
-			loaded = true;
+			setLoaded(true);
 		}
 	}
 

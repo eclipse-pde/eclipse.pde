@@ -12,14 +12,6 @@ package org.eclipse.pde.internal.core.site;
 
 import org.eclipse.pde.internal.core.isite.*;
 
-/**
- * @author dejan
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
- */
 public class SiteModelFactory implements ISiteModelFactory {
 	private ISiteModel model;
 	public SiteModelFactory(ISiteModel model) {

@@ -32,7 +32,7 @@ public abstract class BuildModel extends AbstractModel implements IBuildModel {
 		if (fBuild == null && createIfMissing) {
 			fBuild = new Build();
 			fBuild.setModel(this);
-			loaded = true;
+			setLoaded(true);
 		}
 		return getBuild();
 	}
@@ -61,7 +61,7 @@ public abstract class BuildModel extends AbstractModel implements IBuildModel {
 			String name = names.nextElement().toString();
 			fBuild.processEntry(name, (String) properties.get(name));
 		}
-		loaded = true;
+		setLoaded(true);
 	}
 
 	public void reload(InputStream source, boolean outOfSync) {
@@ -74,9 +74,5 @@ public abstract class BuildModel extends AbstractModel implements IBuildModel {
 		load(source, outOfSync);
 		fireModelChanged(new ModelChangedEvent(this,
 				IModelChangedEvent.WORLD_CHANGED, new Object[0], null));
-	}
-
-	public boolean isReconcilingModel() {
-		return false;
 	}
 }

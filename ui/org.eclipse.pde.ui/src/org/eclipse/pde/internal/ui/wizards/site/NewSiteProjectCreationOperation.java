@@ -65,8 +65,7 @@ public class NewSiteProjectCreationOperation extends WorkspaceModifyOperation {
 		IFile file = fProject.getFile("site.xml"); //$NON-NLS-1$
 		if (file.exists()) return file;
 		
-		WorkspaceSiteModel model = new WorkspaceSiteModel();
-		model.setFile(file);
+		WorkspaceSiteModel model = new WorkspaceSiteModel(file);
 		model.getSite();
 		// Save the model
 		model.save();

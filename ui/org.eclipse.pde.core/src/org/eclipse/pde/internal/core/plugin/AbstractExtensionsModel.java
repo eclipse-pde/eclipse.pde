@@ -43,7 +43,7 @@ public abstract class AbstractExtensionsModel
 	public IExtensions getExtensions(boolean createIfMissing) {
 		if (extensions == null && createIfMissing) {
 			extensions = createExtensions();
-			loaded = true;
+			setLoaded(true);
 		}
 		return extensions;
 	}
@@ -63,13 +63,13 @@ public abstract class AbstractExtensionsModel
 			extensions.setModel(this);
 		}
 		extensions.reset();
-		loaded = false;
+		setLoaded(false);
 		try {
 			SAXParser parser = getSaxParser();
 			XMLDefaultHandler handler = new XMLDefaultHandler();
 			parser.parse(stream, handler);
 			processDocument(handler.getDocument(), handler.getLineTable());
-			loaded = true;
+			setLoaded(true);
 			if (!outOfSync)
 				updateTimeStamp();
 		} catch (Exception e) {
@@ -120,8 +120,5 @@ public abstract class AbstractExtensionsModel
 		if (!isLoaded()) return false;
 		if (extensions==null) return false;
 		return extensions.isValid();	
-	}
-	public boolean isReconcilingModel() {
-		return false;
 	}
 }

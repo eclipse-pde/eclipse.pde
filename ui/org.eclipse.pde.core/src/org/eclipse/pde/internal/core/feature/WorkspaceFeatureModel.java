@@ -56,7 +56,7 @@ public class WorkspaceFeatureModel extends AbstractFeatureModel
 	public String getContents() {
 		StringWriter swriter = new StringWriter();
 		PrintWriter writer = new PrintWriter(swriter);
-		loaded = true;
+		setLoaded(true);
 		save(writer);
 		writer.flush();
 		try {
@@ -103,7 +103,7 @@ public class WorkspaceFeatureModel extends AbstractFeatureModel
 		} else {
 			this.feature = new Feature();
 			feature.model = this;
-			loaded = true;
+			setLoaded(true);
 		}
 	}
 	public void save() {

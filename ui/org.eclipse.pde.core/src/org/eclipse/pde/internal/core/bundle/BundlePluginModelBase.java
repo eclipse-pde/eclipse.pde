@@ -8,12 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-/*
- * Created on Oct 1, 2003
- * 
- * To change the template for this generated file go to Window - Preferences -
- * Java - Code Generation - Code and Comments
- */
 package org.eclipse.pde.internal.core.bundle;
 import java.io.*;
 import java.io.InputStream;
@@ -164,7 +158,7 @@ public abstract class BundlePluginModelBase extends AbstractModel
 			fBundlePluginBase = (BundlePluginBase) createPluginBase();
 			if (fBundleModel != null)
 				fBundleModel.addModelChangedListener(fBundlePluginBase);
-			loaded = true;
+			setLoaded(true);
 		}
 		return fBundlePluginBase;
 	}
@@ -346,14 +340,7 @@ public abstract class BundlePluginModelBase extends AbstractModel
 			return fExtensionsModel.getFactory().createExtensionPoint();
 		return null;
 	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.core.IModel#isReconcilingModel()
-	 */
-	public boolean isReconcilingModel() {
-		return false;
-	}
+
 	public boolean isBundleModel() {
 		return true;
 	}

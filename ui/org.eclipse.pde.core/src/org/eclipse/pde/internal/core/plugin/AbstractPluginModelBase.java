@@ -29,7 +29,6 @@ public abstract class AbstractPluginModelBase
 	implements IPluginModelBase, IPluginModelFactory {
 	protected PluginBase pluginBase;
 	private boolean enabled;
-	private boolean reconcilingModel=false;
 	private BundleDescription fBundleDescription;
 	
 	public AbstractPluginModelBase() {
@@ -79,7 +78,7 @@ public abstract class AbstractPluginModelBase
 	public IPluginBase getPluginBase(boolean createIfMissing) {
 		if (pluginBase == null && createIfMissing) {
 			pluginBase = (PluginBase) createPluginBase();
-			loaded = true;
+			setLoaded(true);
 		}
 		return pluginBase;
 	}
@@ -150,13 +149,13 @@ public abstract class AbstractPluginModelBase
 			pluginBase.setModel(this);
 		}
 		pluginBase.reset();
-		loaded = false;
+		setLoaded(false);
 		try {
 			SAXParser parser = getSaxParser();
 			XMLDefaultHandler handler = new XMLDefaultHandler();
 			parser.parse(stream, handler);
 			processDocument(handler.getDocument(), handler.getLineTable());
-			loaded = true;
+			setLoaded(true);
 			if (!outOfSync)
 				updateTimeStamp();
 		} catch (Exception e) {
@@ -265,13 +264,6 @@ public abstract class AbstractPluginModelBase
 		return pluginBase.isValid();	
 	}
 
-	public boolean isReconcilingModel() {
-		return reconcilingModel;
-	}
-
-	public void setReconcilingModel(boolean reconcilingModel) {
-		this.reconcilingModel = reconcilingModel;
-	}
 	public boolean isBundleModel() {
 		return false;
 	}

@@ -76,10 +76,4 @@ public abstract class BundleModel
 				new Object[0],
 				null));
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModel#isReconcilingModel()
-	 */
-	public boolean isReconcilingModel() {
-		return false;
-	}
 }

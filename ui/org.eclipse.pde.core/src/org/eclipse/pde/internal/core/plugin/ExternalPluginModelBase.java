@@ -65,7 +65,7 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 		setBundleDescription(description);
 		((PluginBase)getPluginBase()).load(description, state, ignoreExtensions);
 		updateTimeStamp();
-		loaded = true;
+		setLoaded(true);
 		
 	}
 
