@@ -70,6 +70,15 @@ public class PDE extends Plugin {
 		}
 	}
 
+	public static boolean hasUpdateSiteNature(IProject project) {
+		// Be flexible with 1.0 IDs - check all combinations
+		try {
+			return project.hasNature(SITE_NATURE);
+		} catch (CoreException e) {
+			log(e);
+			return false;
+		}
+	}
 	public static PDE getDefault() {
 		return inst;
 	}
