@@ -13,7 +13,6 @@ import java.io.*;
 import java.net.URL;
 import java.util.*;
 
-import org.eclipse.core.internal.boot.InternalBootLoader;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
@@ -447,7 +446,7 @@ public abstract class AbstractTemplateSection
 			URL location = getTemplateLocation();
 			if (location == null)
 				return null;
-			URL url = InternalBootLoader.resolve(location);
+			URL url = Platform.resolve(location);
 			String name = url.getFile();
 			return new File(name);
 		} catch (Exception e) {
