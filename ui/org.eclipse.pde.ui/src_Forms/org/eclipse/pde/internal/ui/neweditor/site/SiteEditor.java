@@ -155,13 +155,4 @@ public class SiteEditor extends MultiSourceEditor {
 	protected IContentOutlinePage createContentOutline() {
 		return null;//return new SiteOutlinePage(this);
 	}
-	public void doRevert() {
-		/*
-		try {
-			((ISiteModel)getModel()).getBuildModel().load();
-			super.doRevert();
-		} catch (CoreException e) {
-		}
-		*/
-	}
 }

@@ -153,13 +153,4 @@ public class SchemaEditor extends MultiSourceEditor {
 	protected IContentOutlinePage createContentOutline() {
 		return new SchemaFormOutlinePage(this);
 	}
-	public void doRevert() {
-		/*
-		try {
-			((ISiteModel)getModel()).getBuildModel().load();
-			super.doRevert();
-		} catch (CoreException e) {
-		}
-		*/
-	}
 }

@@ -305,6 +305,12 @@ public class ElementSection extends TreeSection {
 			}
 		}
 	}
+	
+	public void refresh() {
+		treeViewer.refresh();
+		super.refresh();
+	}
+	
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getManagedForm().fireSelectionChanged(this, selection);
 		getPage().getPDEEditor().setSelection(selection);

@@ -330,6 +330,10 @@ public class GrammarSection extends PDESection implements IPartSelectionListener
 
 		updateDTDLabel((ISchemaObject) treeViewer.getInput());
 	}
+	public void refresh() {
+		treeViewer.refresh();
+		super.refresh();
+	}
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		if (!(part instanceof ElementSection))
 			return;

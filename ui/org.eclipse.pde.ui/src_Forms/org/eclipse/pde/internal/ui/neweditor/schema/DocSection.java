@@ -392,14 +392,16 @@ public class DocSection extends PDESection {
 			createTabs();
 			getPage().getManagedForm().getForm().reflow(true);
 			updateEditorInput(schema);
-			return;
 		}
-		int index = tabFolder.getSelectionIndex();
-		if (index == 0)
-			updateEditorInput(schema);
 		else {
-			updateEditorInput(sections[index - 1]);
+			int index = tabFolder.getSelectionIndex();
+			if (index == 0)
+				updateEditorInput(schema);
+			else {
+				updateEditorInput(sections[index - 1]);
+			}
 		}
+		super.refresh();
 	}
 
 	private void disposeAllTabs() {
