@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
@@ -28,10 +29,14 @@ public abstract class AbstractNewPluginTemplateWizard
 	extends Wizard
 	implements IPluginContentWizard {
 	private static final String KEY_WTITLE = "PluginCodeGeneratorWizard.title";
-	private static final String KEY_WFTITLE = "PluginCodeGeneratorWizard.ftitle";
-	private static final String KEY_MISSING = "PluginCodeGeneratorWizard.missing";
-	private static final String KEY_FMISSING = "PluginCoreGeneratorWizard.fmissing";
-	private static final String KEY_GENERATING = "PluginCoreGeneratorWizard.generating";
+	private static final String KEY_WFTITLE =
+		"PluginCodeGeneratorWizard.ftitle";
+	private static final String KEY_MISSING =
+		"PluginCodeGeneratorWizard.missing";
+	private static final String KEY_FMISSING =
+		"PluginCoreGeneratorWizard.fmissing";
+	private static final String KEY_GENERATING =
+		"PluginCoreGeneratorWizard.generating";
 
 	private IProjectProvider provider;
 	private IPluginStructureData structureData;
@@ -65,36 +70,38 @@ public abstract class AbstractNewPluginTemplateWizard
 			PDEPlugin.getResourceString(fragment ? KEY_WFTITLE : KEY_WTITLE));
 	}
 
-/**
- * Subclasses must implement this method by returning an array
- * of templates that will contribute pages to this wizard.
- * @return an array of template sections that will contribute
- * pages to this wizard.
- */
+	/**
+	 * Subclasses must implement this method by returning an array
+	 * of templates that will contribute pages to this wizard.
+	 * @return an array of template sections that will contribute
+	 * pages to this wizard.
+	 */
 	protected abstract ITemplateSection[] getTemplateSections();
-/**
- * This wizard adds a mandatory first page. Subclasses implement
- * this method to add additional pages to the wizard.
- */
+	/**
+	 * This wizard adds a mandatory first page. Subclasses implement
+	 * this method to add additional pages to the wizard.
+	 */
 	protected abstract void addAdditionalPages();
 
-/**
- * Implements wizard method. Subclasses cannot override it.
- */
+	/**
+	 * Implements wizard method. Subclasses cannot override it.
+	 */
 	public final void addPages() {
 		// add the mandatory first page
-		firstPage = new FirstTemplateWizardPage(provider, structureData, fragment);
+		firstPage =
+			new FirstTemplateWizardPage(provider, structureData, fragment);
 		addPage(firstPage);
 		addAdditionalPages();
 	}
-/**
- * Implements required wizard method. Subclasses cannot override it.
- */
+	/**
+	 * Implements required wizard method. Subclasses cannot override it.
+	 */
 	public final boolean performFinish() {
 		activeSections = getTemplateSections();
 		final FieldData data = firstPage.createFieldData();
 		IRunnableWithProgress operation = new WorkspaceModifyOperation() {
-			public void execute(IProgressMonitor monitor) {
+			public void execute(IProgressMonitor monitor)
+				throws InterruptedException {
 				try {
 					doFinish(data, monitor);
 				} catch (CoreException e) {
@@ -110,12 +117,11 @@ public abstract class AbstractNewPluginTemplateWizard
 			PDEPlugin.logException(e);
 			return false;
 		} catch (InterruptedException e) {
-			PDEPlugin.logException(e);
 			return false;
 		}
 		return true;
 	}
-	
+
 	// private methods
 
 	private int computeTotalWork() {
@@ -128,20 +134,32 @@ public abstract class AbstractNewPluginTemplateWizard
 	}
 
 	private void doFinish(FieldData data, IProgressMonitor monitor)
-		throws CoreException {
+		throws CoreException, InterruptedException {
 		int totalWork = computeTotalWork();
-		monitor.beginTask(PDEPlugin.getResourceString(KEY_GENERATING), totalWork);
-		IProject project = provider.getProject();
-		ProjectStructurePage.createProject(project, provider, monitor); // one step
-		monitor.worked(1);
-		ProjectStructurePage.createBuildProperties(project, structureData, monitor);
-		monitor.worked(1);
+		monitor.beginTask(
+			PDEPlugin.getResourceString(KEY_GENERATING),
+			totalWork);
 		ArrayList dependencies = getDependencies();
-		WorkspacePluginModelBase model =
-			firstPage.createPluginManifest(project, data, dependencies, monitor);
+		if (!verifyPluginPath(dependencies))
+			throw new InterruptedException();
+		IProject project = provider.getProject();
+		ProjectStructurePage.createProject(project, provider, monitor);
 		// one step
 		monitor.worked(1);
-		verifyPluginPath(dependencies);
+		ProjectStructurePage.createBuildProperties(
+			project,
+			structureData,
+			monitor);
+		monitor.worked(1);
+		WorkspacePluginModelBase model =
+			firstPage.createPluginManifest(
+				project,
+				data,
+				dependencies,
+				monitor);
+		// one step
+		monitor.worked(1);
+
 		setJavaSettings(model, monitor); // one step
 		monitor.worked(1);
 		executeTemplates(project, model, monitor); // nsteps
@@ -157,14 +175,21 @@ public abstract class AbstractNewPluginTemplateWizard
 		openPluginFile(file);
 	}
 
-	private void setJavaSettings(IPluginModelBase model, IProgressMonitor monitor)
+	private void setJavaSettings(
+		IPluginModelBase model,
+		IProgressMonitor monitor)
 		throws CoreException {
 		try {
 			BuildPathUtil.setBuildPath(model, monitor);
 		} catch (JavaModelException e) {
 			String message = e.getMessage();
 			IStatus status =
-				new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.OK, message, e);
+				new Status(
+					IStatus.ERROR,
+					PDEPlugin.getPluginId(),
+					IStatus.OK,
+					message,
+					e);
 			throw new CoreException(status);
 		}
 	}
@@ -187,7 +212,7 @@ public abstract class AbstractNewPluginTemplateWizard
 		}
 	}
 
-	private void verifyPluginPath(ArrayList dependencies) {
+	private boolean verifyPluginPath(ArrayList dependencies) {
 		PluginModelManager manager = PDECore.getDefault().getModelManager();
 		ArrayList matches = new ArrayList();
 		boolean workspaceModels = false;
@@ -195,7 +220,10 @@ public abstract class AbstractNewPluginTemplateWizard
 		for (int i = 0; i < dependencies.size(); i++) {
 			IPluginReference ref = (IPluginReference) dependencies.get(i);
 			IPluginModelBase model =
-				manager.findPlugin(ref.getId(), ref.getVersion(), ref.getMatch());
+				manager.findPlugin(
+					ref.getId(),
+					ref.getVersion(),
+					ref.getMatch());
 			if (model != null) {
 				if (model.getUnderlyingResource() != null) {
 					workspaceModels = true;
@@ -208,21 +236,42 @@ public abstract class AbstractNewPluginTemplateWizard
 		}
 		if (!workspaceModels && matches.size() > 0) {
 			// enable
-			getShell().getDisplay().syncExec(new Runnable () {
+			final boolean[] result = new boolean[1];
+			getShell().getDisplay().syncExec(new Runnable() {
 				public void run() {
 					if (askToEnable()) {
-						ExternalModelManager mng = PDECore.getDefault().getExternalModelManager();
+						ExternalModelManager mng =
+							PDECore.getDefault().getExternalModelManager();
 						mng.initializeAndStore(true);
-					}
+						result[0] = true;
+					} else
+						result[0] = false;
 				}
 			});
+			return result[0];
+
 		}
+		return true;
 	}
-	
+
 	private boolean askToEnable() {
 		String title = getWindowTitle();
-		String message = PDEPlugin.getResourceString(fragment?KEY_FMISSING:KEY_MISSING);
-		return MessageDialog.openQuestion(getShell(), title, message);
+		String message =
+			PDEPlugin.getResourceString(fragment ? KEY_FMISSING : KEY_MISSING);
+			MessageDialog dialog =
+				new MessageDialog(
+					getShell(),
+					title,
+					null,
+		// accept the default window icon
+	message,
+		MessageDialog.WARNING,
+		new String[] {
+			IDialogConstants.OK_LABEL,
+			IDialogConstants.CANCEL_LABEL },
+		0);
+		// OK is the default
+		return dialog.open() == 0;
 	}
 
 	private void executeTemplates(
@@ -244,7 +293,9 @@ public abstract class AbstractNewPluginTemplateWizard
 		if (activeSections.length > 0) {
 			// add the standard prolog
 			writer.println(
-				indent + PDEPlugin.getResourceString("ManifestEditor.TemplatePage.intro"));
+				indent
+					+ PDEPlugin.getResourceString(
+						"ManifestEditor.TemplatePage.intro"));
 			// add template section descriptions
 			for (int i = 0; i < activeSections.length; i++) {
 				ITemplateSection section = activeSections[i];
@@ -261,7 +312,9 @@ public abstract class AbstractNewPluginTemplateWizard
 		}
 		// add the standard epilogue
 		writer.println(
-			indent + PDEPlugin.getResourceString("ManifestEditor.TemplatePage.common"));
+			indent
+				+ PDEPlugin.getResourceString(
+					"ManifestEditor.TemplatePage.common"));
 		// close
 		writer.println("</form>");
 	}
@@ -309,11 +362,14 @@ public abstract class AbstractNewPluginTemplateWizard
 			public void run() {
 				try {
 					String editorId =
-						fragment ? PDEPlugin.FRAGMENT_EDITOR_ID : PDEPlugin.MANIFEST_EDITOR_ID;
+						fragment
+							? PDEPlugin.FRAGMENT_EDITOR_ID
+							: PDEPlugin.MANIFEST_EDITOR_ID;
 
 					if (focusPart instanceof ISetSelectionTarget) {
 						ISelection selection = new StructuredSelection(file);
-						((ISetSelectionTarget) focusPart).selectReveal(selection);
+						((ISetSelectionTarget) focusPart).selectReveal(
+							selection);
 					}
 					IEditorInput input = createEditorInput(file);
 					ww.getActivePage().openEditor(input, editorId);
