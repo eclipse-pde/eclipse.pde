@@ -11,17 +11,14 @@
 package org.eclipse.pde.internal.builders;
 
 import java.util.*;
-import java.util.Map;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.ISourceObject;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.PDE;
+import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.plugin.*;
 
@@ -48,7 +45,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			if (resource instanceof IProject) {
 				// Only check projects with plugin nature
 				IProject project = (IProject) resource;
-				return (PDE.hasPluginNature(project));
+				return (project.isOpen() && PDE.hasPluginNature(project));
 			}
 			if (resource instanceof IFile) {
 				// see if this is it
@@ -83,7 +80,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			if (resource instanceof IProject) {
 				// Only check projects with plugin nature
 				IProject project = (IProject) resource;
-				return (PDE.hasPluginNature(project));
+				return (project.isOpen() && PDE.hasPluginNature(project));
 			}
 			if (resource instanceof IFile) {
 				// see if this is it
@@ -109,7 +106,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		ignoreJavaChanges = CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_CLASS)==CompilerFlags.IGNORE;
 
 		// Ignore binary plug-in projects
-		if (WorkspaceModelManager.isBinaryPluginProject(project))
+		if (NewWorkspaceModelManager.isBinaryPluginProject(project))
 			return null;
 
 		IResourceDelta delta = null;
@@ -124,7 +121,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		IProject[] interestingProjects = null;
 
 		// Compute interesting projects
-		IWorkspaceModelManager wmanager =
+		NewWorkspaceModelManager wmanager =
 			PDECore.getDefault().getWorkspaceModelManager();
 		IModel thisModel = wmanager.getWorkspaceModel(project);
 		if (thisModel != null && thisModel instanceof IPluginModelBase)
@@ -204,7 +201,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 
 	private void checkFile(IFile file, IProgressMonitor monitor) {
 		PluginErrorReporter reporter = new PluginErrorReporter(file);
-		if (WorkspaceModelManager.isBinaryPluginProject(file.getProject()))
+		if (NewWorkspaceModelManager.isBinaryPluginProject(file.getProject()))
 			return;
 		String message =
 			PDE.getFormattedMessage(

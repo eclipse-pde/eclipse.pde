@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal;
 
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.*;
 import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.builders.CompilerFlags;
+import org.eclipse.pde.internal.builders.*;
 
 
 public class PDE extends Plugin {

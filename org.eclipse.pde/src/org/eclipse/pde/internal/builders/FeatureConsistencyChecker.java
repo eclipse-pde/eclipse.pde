@@ -10,15 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.builders;
 
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.PDE;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.*;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.feature.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 
 public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
@@ -114,7 +114,7 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 		IProject[] interestingProjects = null;
 
 		// Compute interesting projects
-		IWorkspaceModelManager wmanager =
+		NewWorkspaceModelManager wmanager =
 			PDECore.getDefault().getWorkspaceModelManager();
 		IModel thisModel = wmanager.getWorkspaceModel(project);
 		if (thisModel != null && thisModel instanceof IFeatureModel)
@@ -162,7 +162,7 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 	}
 	
 	private boolean isValidReference(IFeaturePlugin plugin) {
-		IWorkspaceModelManager manager =
+		NewWorkspaceModelManager manager =
 			PDECore.getDefault().getWorkspaceModelManager();
 		IPluginModelBase[] models =
 			plugin.isFragment()
@@ -178,7 +178,7 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 	}
 	
 	private boolean isValidReference(IFeatureChild child) {
-		IWorkspaceModelManager manager =
+		NewWorkspaceModelManager manager =
 			PDECore.getDefault().getWorkspaceModelManager();
 		IFeatureModel[] models = manager.getFeatureModels();
 

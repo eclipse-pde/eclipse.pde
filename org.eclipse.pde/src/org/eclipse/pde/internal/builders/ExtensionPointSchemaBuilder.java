@@ -12,14 +12,14 @@ package org.eclipse.pde.internal.builders;
 
 import java.io.*;
 import java.net.*;
-import java.util.Map;
+import java.util.*;
 
-import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.boot.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.PDE;
+import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.core.*;
 
 public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
@@ -95,7 +95,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 	private boolean isInterestingProject(IProject project) {
 		if (!PDE.hasPluginNature(project))
 			return false;
-		if (WorkspaceModelManager.isBinaryPluginProject(project))
+		if (NewWorkspaceModelManager.isBinaryPluginProject(project))
 			return false;
 		// This is it - a plug-in project that is not external or binary
 		return true;
@@ -287,7 +287,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 	
 	private String getMangledPluginId(IFile file) {
 		IProject project = file.getProject();
-		IWorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
+		NewWorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
 		IModel model = manager.getWorkspaceModel(project);
 		if (model instanceof IPluginModelBase) {
 			IPluginBase plugin = ((IPluginModelBase)model).getPluginBase();

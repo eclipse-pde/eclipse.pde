@@ -15,11 +15,11 @@ package org.eclipse.pde.internal.builders;
  * @author
  */
 
-import java.util.Vector;
+import java.util.*;
 
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.PDE;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.*;
+import org.eclipse.pde.internal.core.*;
 
 public class DependencyLoopFinder {
 	private static final String KEY_LOOP_NAME = "Builders.DependencyLoopFinder.loopName";	

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal;
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 
 public class FeatureProject extends BaseProject {
 

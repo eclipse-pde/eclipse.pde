@@ -11,7 +11,7 @@
 package org.eclipse.pde.internal.builders;
 
 import java.io.*;
-import java.net.URL;
+import java.net.*;
 
 public interface ISchemaTransformer {
 	public void transform(URL schemaURL, InputStream schema, PrintWriter output, SchemaHandler reporter);

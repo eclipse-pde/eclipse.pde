@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.builders;
 
-import org.eclipse.core.runtime.Preferences;
-import org.eclipse.pde.internal.PDE;
+import org.eclipse.core.runtime.*;
+import org.eclipse.pde.internal.*;
 
 /**
  * @author dejan
