@@ -3,4 +3,3 @@ build.xml
 pdeuitests.jar
 pdeuitests.jar.bin.log
 org.eclipse.pde.ui.tests_*
-temp.folder
