@@ -4,7 +4,7 @@ package org.eclipse.pde.internal.editor.manifest;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 import org.eclipse.ui.*;
 import org.eclipse.jface.resource.*;
 import org.eclipse.core.resources.*;
@@ -27,6 +27,11 @@ import org.eclipse.pde.internal.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.pde.internal.model.ImportObject;
+import org.eclipse.pde.internal.preferences.BuildpathPreferencePage;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.pde.internal.base.*;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import java.lang.reflect.InvocationTargetException;
 
 public class ImportListSection
 	extends PDEFormSection
@@ -41,11 +46,15 @@ public class ImportListSection
 	public static final String POPUP_NEW = "Menus.new.label";
 	public static final String POPUP_OPEN = "Actions.open.label";
 	public static final String POPUP_DELETE = "Actions.delete.label";
+	public static final String KEY_UPDATING_BUILD_PATH = "ManifestEditor.ImportListSection.updatingBuildPath";
+	public static final String KEY_COMPUTE_BUILD_PATH = "ManifestEditor.ImportListSection.updateBuildPath";
 	private Button newButton;
+	private Button buildpathButton;
 	private Vector imports;
 	private Action openAction;
 	private Action newAction;
 	private Action deleteAction;
+	private Action buildpathAction;
 	
 	class ImportContentProvider
 		extends DefaultContentProvider
@@ -155,6 +164,20 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 		}
 	});
 	makeActions();
+/*
+
+	buildpathButton = factory.createButton(container, buildpathAction.getText(), SWT.PUSH);
+	//gd = new GridData(GridData.FILL_HORIZONTAL);
+	//gd.verticalAlignment = GridData.BEGINNING;
+	//buildpathButton.setLayoutData(gd);
+	buildpathButton.addSelectionListener(new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			buildpathAction.run();
+			buildpathButton.getShell().setDefaultButton(null);
+		}
+	});	
+*/
+
 	return container;
 }
 public void dispose() {
@@ -184,7 +207,9 @@ private void fillContextMenu(IMenuManager manager) {
 	if (!selection.isEmpty()) {
 		manager.add(openAction);
 		manager.add(deleteAction);
+		manager.add(new Separator());
 	}
+	((NewDependenciesForm)getFormPage().getForm()).fillContextMenu(manager);
 	getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager);
 }
 
@@ -273,6 +298,13 @@ private void makeActions() {
 		}
 	};
 	deleteAction.setText(PDEPlugin.getResourceString(POPUP_DELETE));
+	buildpathAction = new Action() {
+		public void run() {
+			IPluginModel model = (IPluginModel) getFormPage().getModel();
+			computeBuildPath(model, true);
+		}
+	};
+	buildpathAction.setText(PDEPlugin.getResourceString(KEY_COMPUTE_BUILD_PATH));
 }
 
 public void modelChanged(IModelChangedEvent event) {
@@ -324,6 +356,55 @@ private Image resolveObjectImage(Object obj) {
 
 private String resolveObjectName(Object obj) {
 	return obj.toString();
+}
+
+public void commitChanges(boolean onSave) {
+	if (onSave) {
+		boolean shouldUpdate = BuildpathPreferencePage.isManifestUpdate();
+		if (shouldUpdate)
+		   updateBuildPath();
+	}
+	setDirty(false);
+}
+
+private void updateBuildPath() {
+	computeBuildPath((IPluginModel)getFormPage().getModel(), false);
+}
+
+Action getBuildpathAction() {
+	return buildpathAction;
+}
+
+private void computeBuildPath(final IPluginModel model, final boolean save) {
+	IRunnableWithProgress op = new IRunnableWithProgress() {
+		public void run(IProgressMonitor monitor) {
+			monitor.beginTask(PDEPlugin.getResourceString(KEY_UPDATING_BUILD_PATH), 1);
+			try {
+			   if (save && getFormPage().getEditor().isDirty()) {
+			      getFormPage().getEditor().doSave(monitor);
+			   }
+			   BuildPathUtil.setBuildPath(model, monitor);
+			   monitor.worked(1);
+			}
+			catch (CoreException e) {
+				PDEPlugin.logException(e);
+			}
+			finally {
+			   monitor.done();
+			}
+		}
+	};
+	
+	ProgressMonitorDialog pm = new ProgressMonitorDialog(PDEPlugin.getActiveWorkbenchShell());
+	try {
+	   pm.run(false, false, op);
+	}
+	catch (InterruptedException e) {
+		PDEPlugin.logException(e);
+	}
+	catch (InvocationTargetException e) {
+		PDEPlugin.logException(e.getTargetException());
+	}
 }
 
 public void setFocus() {

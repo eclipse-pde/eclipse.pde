@@ -52,6 +52,7 @@ public void createInitialLayout(IPageLayout factory) {
 		factory.getEditorArea());
 
 	// Add action sets
+	factory.addActionSet(IDebugUIConstants.LAUNCH_ACTION_SET);
 	factory.addActionSet(IDebugUIConstants.DEBUG_ACTION_SET);
 	factory.addActionSet(JavaUI.ID_ACTION_SET);
 }

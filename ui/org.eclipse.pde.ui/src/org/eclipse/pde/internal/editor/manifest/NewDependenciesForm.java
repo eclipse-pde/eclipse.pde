@@ -87,7 +87,8 @@ public void expandTo(Object object) {
 }
 
 public boolean fillContextMenu(IMenuManager manager) {
-	//return importListSection.fillContextMenu(manager);
+	manager.add(importListSection.getBuildpathAction());
+	manager.add(new Separator());
 	return true;
 }
 }

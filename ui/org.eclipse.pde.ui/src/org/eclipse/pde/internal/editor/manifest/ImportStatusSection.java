@@ -202,6 +202,7 @@ private void fillContextMenu(IMenuManager manager) {
 	}
 	manager.add(refreshAction);
 	manager.add(new Separator());
+	((NewDependenciesForm)getFormPage().getForm()).fillContextMenu(manager);
 	getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager);
 }
 
@@ -335,7 +336,10 @@ private Object[] getLoops() {
 
 private Image resolveObjectImage(Object obj) {
 	if (obj instanceof IPlugin) {
-		return loopNodeImage;
+		if (mode==REFERENCE_MODE)
+			return pluginImage;
+		else if (mode==LOOP_MODE)
+			return loopNodeImage;
 	}
 	if (obj instanceof DependencyLoop) {
 		return warningLoopImage;
