@@ -44,5 +44,15 @@ public class JUnitArgumentsTab extends BasicLauncherTab {
 	protected void saveApplicationSection(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(APPLICATION, applicationCombo.getText());
 	}
+	
+	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
+		config.setAttribute(
+			LOCATION + "0",
+			LauncherUtils.getDefaultPath().append("runtime-test-workspace").toOSString());
+		config.setAttribute(DOCLEAR, true);
+		config.setAttribute(PROGARGS, LauncherUtils.getDefaultProgramArguments());
+		config.setAttribute(ASKCLEAR, false);
+		config.setAttribute(VMARGS, "");
+	}
 
 }

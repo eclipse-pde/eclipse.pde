@@ -760,29 +760,7 @@
    <extension
          point="org.eclipse.debug.ui.launchShortcuts">
       <shortcut
-            label="%launcher.junit.core.shortcut"
-            icon="icons/full/obj16/julaunchpgn.gif"
-            modes="run, debug"
-            class="org.eclipse.pde.internal.ui.launcher.JUnitCoreApplicationShortcut"
-            id="org.eclipse.pde.ui.junitCoreShortcut">
-         <perspective
-               id="org.eclipse.jdt.ui.JavaPerspective">
-         </perspective>
-         <perspective
-               id="org.eclipse.jdt.ui.JavaHierarchyPerspective">
-         </perspective>
-         <perspective
-               id="org.eclipse.jdt.ui.JavaBrowsingPerspective">
-         </perspective>
-         <perspective
-               id="org.eclipse.debug.ui.DebugPerspective">
-         </perspective>
-         <perspective
-               id="org.eclipse.pde.PDEPerspective">
-         </perspective>
-      </shortcut>
-      <shortcut
-            label="%launcher.junit.workbench.shortcut"
+            label="%launcher.junit.name"
             icon="icons/full/obj16/julaunchpgn.gif"
             modes="run, debug"
             class="org.eclipse.pde.internal.ui.launcher.JUnitWorkbenchShortcut"

@@ -27,24 +27,6 @@ public class JUnitWorkbenchShortcut extends JUnitLaunchShortcut {
 		return lm.getLaunchConfigurationType("org.eclipse.pde.ui.JunitLaunchConfig");		
 	}
 	
-	protected void launchConfiguration(String mode, ILaunchConfiguration config) {
-		try {
-			if (!config
-				.getAttribute(ILauncherSettings.APPLICATION, getApplicationName())
-				.equals(getApplicationName())) {
-				ILaunchConfigurationWorkingCopy wc = null;
-				if (config.isWorkingCopy())
-					wc = (ILaunchConfigurationWorkingCopy) config;
-				else
-					wc = config.getWorkingCopy();
-				wc.setAttribute(ILauncherSettings.APPLICATION, getApplicationName());
-				wc.doSave();
-			}
-		} catch (CoreException e) {
-		}
-		super.launchConfiguration(mode, config);
-	}
-	
 	protected ILaunchConfiguration createConfiguration(
 		IJavaProject project, String name, String mainType, String container, String testName) {
 		ILaunchConfiguration config = null;
@@ -56,8 +38,8 @@ public class JUnitWorkbenchShortcut extends JUnitLaunchShortcut {
 			wc.setAttribute(ILauncherSettings.VMARGS, "");
 			wc.setAttribute(ILauncherSettings.PROGARGS, LauncherUtils.getDefaultProgramArguments());
 			wc.setAttribute(ILauncherSettings.USECUSTOM, true);
-			wc.setAttribute(ILauncherSettings.DOCLEAR, false);
-			wc.setAttribute(ILauncherSettings.ASKCLEAR, true);
+			wc.setAttribute(ILauncherSettings.DOCLEAR, true);
+			wc.setAttribute(ILauncherSettings.ASKCLEAR, false);
 			wc.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, JavaUISourceLocator.ID_PROMPTING_JAVA_SOURCE_LOCATOR);
 			wc.setAttribute(
 				IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER,
