@@ -24,6 +24,7 @@ import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
@@ -114,10 +115,7 @@ public class UnusedDependenciesOperation implements IRunnableWithProgress {
 
 			monitor.beginTask("", packageFragments.length + 1);
 
-			HashSet ids = new HashSet();
-			for (int i = 0; i < models.length; i++)
-				ids.add(models[i].getId());
-			if (providesExtensionPoint(ids))
+			if (providesExtensionPoint(models))
 				return true;
 			monitor.worked(1);
 			
@@ -136,10 +134,21 @@ public class UnusedDependenciesOperation implements IRunnableWithProgress {
 		return (IPluginImport[]) unused.toArray(new IPluginImport[unused.size()]);
 	}
 
-	private boolean providesExtensionPoint(HashSet ids) {
+	private boolean providesExtensionPoint(IPluginBase[] models) {
 		IPluginExtension[] extensions = model.getPluginBase().getExtensions();
 		for (int i = 0; i < extensions.length; i++) {
-			if (ids.contains(extensions[i].getPoint()))
+			for (int j = 0; j < models.length; j++) {
+				if (providesExtensionPoint(models[j], extensions[i].getPoint()))
+					return true;
+			}
+		}
+		return false;
+	}
+	
+	private boolean providesExtensionPoint(IPluginBase model, String targetID) {
+		IPluginExtensionPoint[] extPoints = model.getExtensionPoints();
+		for (int i = 0; i < extPoints.length; i++) {
+			if (extPoints[i].getFullId().equals(targetID))
 				return true;
 		}
 		return false;

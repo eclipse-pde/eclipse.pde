@@ -3,8 +3,8 @@ package org.eclipse.pde.internal.ui.search;
 import java.io.*;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.help.ui.browser.IBrowser;
-import org.eclipse.help.ui.internal.browser.BrowserManager;
+import org.eclipse.help.browser.IBrowser;
+import org.eclipse.help.internal.browser.BrowserManager;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
@@ -100,7 +100,10 @@ public class ShowDescriptionAction extends Action {
 		}
 		else {
 			IBrowser browser = BrowserManager.getInstance().createBrowser();
-			browser.displayURL(url);
+			try {
+				browser.displayURL(url);
+			} catch (Exception e) {
+			}
 		}
 	}
 }

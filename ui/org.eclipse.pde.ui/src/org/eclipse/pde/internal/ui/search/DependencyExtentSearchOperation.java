@@ -137,8 +137,7 @@ public class DependencyExtentSearchOperation extends WorkspaceModifyOperation {
 		for (int i = 0; i < models.length; i++) {
 			IPluginExtensionPoint[] extPoints = models[i].getExtensionPoints();
 			for (int j = 0; j < extPoints.length; j++) {
-				String id = extPoints[j].getPluginBase().getId() + "." + extPoints[j].getId();
-				if (id.equals(targetId))
+				if (extPoints[j].getFullId().equals(targetId))
 					return extPoints[j];
 			}
 		}
