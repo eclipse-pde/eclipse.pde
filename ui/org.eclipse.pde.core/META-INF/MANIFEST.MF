@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %name
 Bundle-SymbolicName: org.eclipse.pde.core; singleton:=true
 Bundle-Version: 3.1.0
-Bundle-ClassPath: pdecore.jar
 Bundle-Activator: org.eclipse.pde.internal.core.PDECore
 Bundle-Vendor: %provider-name
 Bundle-Localization: plugin

@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %name
 Bundle-SymbolicName: org.eclipse.pde.runtime; singleton:=true
 Bundle-Version: 3.1.0
-Bundle-ClassPath: pdert.jar
 Bundle-Activator: org.eclipse.pde.internal.runtime.PDERuntimePlugin
 Bundle-Vendor: %provider-name
 Bundle-Localization: plugin
