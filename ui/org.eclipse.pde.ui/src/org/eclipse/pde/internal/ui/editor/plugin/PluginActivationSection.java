@@ -13,17 +13,24 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.ui.*;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.text.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.util.*;
 import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.build.*;
 import org.eclipse.pde.internal.ui.editor.context.*;
 import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.swt.*;
@@ -31,6 +38,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.text.edits.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
@@ -247,17 +255,7 @@ public class PluginActivationSection extends TableSection
 					PDEPlugin.getResourceString("PluginActivationSection.createManifest"), SWT.NULL); //$NON-NLS-1$
 			manifestLink.addHyperlinkListener(new IHyperlinkListener() {
 				public void linkActivated(HyperlinkEvent e) {
-					try {
-						getPage().getEditor().doSave(null);
-						IPluginModelBase model = (IPluginModelBase) getPage()
-								.getPDEEditor().getAggregateModel();
-						PDEPluginConverter.convertToOSGIFormat(model
-								.getUnderlyingResource().getProject(), model
-								.isFragmentModel()
-								? "fragment.xml" //$NON-NLS-1$
-								: "plugin.xml", new NullProgressMonitor()); //$NON-NLS-1$
-					} catch (CoreException e1) {
-					}
+					handleConvert();
 				}
 				public void linkExited(HyperlinkEvent e) {
 				}
@@ -365,6 +363,141 @@ public class PluginActivationSection extends TableSection
 			contextManager.addInputContextListener(this);
 		update();
 	}
+	
+	private void handleConvert() {
+		try {
+			getPage().getEditor().doSave(null);
+			IPluginModelBase model = (IPluginModelBase) getPage()
+					.getPDEEditor().getAggregateModel();
+			IResource resource = model.getUnderlyingResource();
+			
+			TreeSet list = new TreeSet();
+			IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
+			for (int i = 0; i < libraries.length; i++) {
+				addLibraryPackageFragments(resource.getProject(), libraries[i], list);
+			}
+			PDEPluginConverter.convertToOSGIFormat(resource.getProject(), resource.getName(), (String[]) list.toArray(new String[list.size()]), new NullProgressMonitor()); //$NON-NLS-1$
+
+			InputContextManager mgr = getPage().getPDEEditor().getContextManager();
+			InputContext context = mgr.findContext(PluginInputContext.CONTEXT_ID);
+			IDocument doc = context.getDocumentProvider().getDocument(context.getInput());
+			FindReplaceDocumentAdapter adapter = new FindReplaceDocumentAdapter(doc);
+			MultiTextEdit multiEdit = new MultiTextEdit();
+			TextEdit edit = editPluginElement(adapter, doc, 0);
+			if (edit != null)
+				multiEdit.addChild(edit);
+			edit = removeElement("requires", adapter, doc, 0);
+			if (edit != null)
+				multiEdit.addChild(edit);
+			edit = removeElement("runtime", adapter, doc, 0);
+			if (edit != null)
+				multiEdit.addChild(edit);
+			
+			if (multiEdit.hasChildren()) {
+				multiEdit.apply(doc);
+				getPage().getEditor().doSave(null);
+			}
+		} catch (Exception e1) {
+		}
+		
+	}
+	
+	private void addLibraryPackageFragments(IProject project,
+			IPluginLibrary library, Set set) {
+		try {
+			if (!project.hasNature(JavaCore.NATURE_ID))
+				return;
+			
+			if (library.isFullyExported()) {
+				IPackageFragmentRoot[] roots = getPackageFragmentRoots(
+						project, ClasspathUtilCore.expandLibraryName(library.getName()));
+				for (int i = 0; i < roots.length; i++) {
+					IJavaElement[] fragments = roots[i].getChildren();
+					for (int j = 0; j < fragments.length; j++) {
+						if (fragments[j] instanceof IPackageFragment) {
+							if (((IPackageFragment)fragments[j]).hasChildren())
+								set.add(fragments[j].getElementName());
+						}
+					}
+				}
+			}
+
+			String[] filters = library.getContentFilters();
+			for (int i = 0; i < filters.length; i++) {
+				String filter = filters[i].trim();
+				if (filter.endsWith(".*")) {
+					set.add(filter.substring(0, filter.length() - 2));
+				} 
+			}
+		} catch (CoreException e) {
+			return;
+		}
+	}
+	
+	private IPackageFragmentRoot[] getPackageFragmentRoots(IProject project, String libraryName) {
+		IJavaProject jProject = JavaCore.create(project);
+		IResource resource = project.findMember(libraryName);
+		if (resource != null) {
+			IPackageFragmentRoot root = jProject.getPackageFragmentRoot(libraryName);
+			if (root.exists())
+				return new IPackageFragmentRoot[] {root};
+		}
+			
+		InputContext context = getPage().getPDEEditor().getContextManager().findContext(BuildInputContext.CONTEXT_ID);
+		if (context != null) {
+			IBuildModel model = (IBuildModel)context.getModel();
+			IBuildEntry entry = model.getBuild().getEntry("source." + libraryName);
+			if (entry != null) {
+				String[] tokens = entry.getTokens();
+				ArrayList list = new ArrayList();
+				for (int i = 0; i < tokens.length; i++) {
+					resource = project.findMember(tokens[i]);
+					if (resource != null) {
+						IPackageFragmentRoot root = jProject.getPackageFragmentRoot(resource);
+						if (root.exists())
+							list.add(root);
+					}
+				}
+				return (IPackageFragmentRoot[])list.toArray(new IPackageFragmentRoot[list.size()]);
+			}
+		}
+		return new IPackageFragmentRoot[0];
+	}
+	
+	private TextEdit editPluginElement(FindReplaceDocumentAdapter adapter, IDocument doc, int offset) {
+		try {
+			IRegion region = adapter.find(0, "<plugin[^>]*", true, true, false, true);
+			if (region != null) {
+				String replacementString = "<plugin";
+				if (doc.getChar(region.getOffset() + region.getLength()) == '/')
+					replacementString += "/";
+				return new ReplaceEdit(region.getOffset(), region.getLength(), replacementString);
+			}
+		} catch (BadLocationException e) {
+		}
+		return null;
+	}
+	private TextEdit removeElement(String elementName, FindReplaceDocumentAdapter adapter, IDocument doc, int offset) {
+		try {
+			IRegion region = adapter.find(0, "<" + elementName + "[^>]*", true, true, false, true);
+			if (region != null) {
+				if (doc.getChar(region.getOffset() + region.getLength()) == '/')
+					return new DeleteEdit(region.getOffset(), region.getLength() + 1);
+				IRegion endRegion = adapter.find(0, "</" + elementName +">", true, true, false, true);
+				if (endRegion != null) {
+					int lastPos = endRegion.getOffset() + endRegion.getLength() + 1;
+					while (Character.isWhitespace(doc.getChar(lastPos))) {
+						lastPos += 1;
+					}
+					lastPos -= 1;
+					return new DeleteEdit(region.getOffset(), lastPos - region.getOffset());
+				}
+			}
+		} catch (BadLocationException e) {
+		}
+		return null;
+	}
+	
 	protected void enableButtons() {
 		getTablePart().setButtonEnabled(0, isEditable());
 		getTablePart().setButtonEnabled(1, false);

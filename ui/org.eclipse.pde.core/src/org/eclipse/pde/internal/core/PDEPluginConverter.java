@@ -11,10 +11,12 @@
 package org.eclipse.pde.internal.core;
 
 import java.io.*;
+import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.pluginconversion.*;
+import org.osgi.framework.*;
 import org.osgi.util.tracker.*;
 
 public class PDEPluginConverter {
@@ -36,6 +38,39 @@ public class PDEPluginConverter {
 		} finally {
 			monitor.done();
 		}
+	}
+
+	public static void convertToOSGIFormat(IProject project, String filename, String[] packageNames, IProgressMonitor monitor) throws CoreException {
+		try {
+			File outputFile = new File(project.getLocation().append(
+					"META-INF/MANIFEST.MF").toOSString()); //$NON-NLS-1$
+			File inputFile = new File(project.getLocation().append(filename).toOSString());
+			ServiceTracker tracker = new ServiceTracker(PDECore.getDefault()
+					.getBundleContext(), PluginConverter.class.getName(), null);
+			tracker.open();
+			PluginConverter converter = (PluginConverter) tracker.getService();
+			Dictionary dictionary = converter.convertManifest(inputFile, false, null, true);
+			String value = getPackageProvideValue(packageNames);
+			if (value.length() > 0)
+				dictionary.put(Constants.PROVIDE_PACKAGE,value);
+			converter.writeManifest(outputFile, dictionary, false);
+			project.refreshLocal(IResource.DEPTH_INFINITE, null);
+			tracker.close();
+		} catch (PluginConversionException e) {
+		} catch (CoreException e) {
+		} finally {
+			monitor.done();
+		}
+	}
+	
+	private static String getPackageProvideValue(String[] packages) {
+		StringBuffer buffer = new StringBuffer();
+		for (int i = 0; i < packages.length; i++) {
+			buffer.append(packages[i]);
+			if (i < packages.length - 1)
+				buffer.append("," + System.getProperty("line.separator") + " ");
+		}
+		return buffer.toString();
 	}
 
 }
