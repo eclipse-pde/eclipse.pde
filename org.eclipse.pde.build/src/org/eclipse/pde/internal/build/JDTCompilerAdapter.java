@@ -90,7 +90,7 @@ protected Commandline setupJavacCommand() {
 	if (!attributes.getFailonerror())
 		cmd.createArgument().setValue("-proceedOnError");
 
-	cmd.createArgument().setValue("-warn:constructorName,packageDefaultMethod,maskedCatchBlocks,deprecation,syntheticAccess");
+	cmd.createArgument().setValue("-warn:constructorName,packageDefaultMethod,maskedCatchBlocks,deprecation");
 	cmd.createArgument().setValue("-time");
 	cmd.createArgument().setValue("-noImportError");
 	cmd.createArgument().setValue("-g");
