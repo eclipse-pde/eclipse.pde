@@ -22,7 +22,7 @@ import org.eclipse.ui.PlatformUI;
 
 public class FindReferencesAction extends Action {
 	
-	private static final String KEY_REFERENCES = "SearchAction.references";
+	private static final String KEY_REFERENCES = "SearchAction.references"; //$NON-NLS-1$
 	private Object object;
 	
 	public FindReferencesAction(Object object) {
@@ -43,7 +43,7 @@ public class FindReferencesAction extends Action {
 						.getPluginModel()
 						.getPluginBase()
 						.getId()
-						+ "."
+						+ "." //$NON-NLS-1$
 						+ ((IPluginExtensionPoint) object).getId());
 		} else if (object instanceof IPluginImport) {
 			input.setSearchElement(PluginSearchInput.ELEMENT_PLUGIN);

@@ -84,22 +84,22 @@ public class UnusedDependenciesOperation implements IRunnableWithProgress {
 				return;
 
 			monitor.setTaskName(
-				PDEPlugin.getResourceString("UnusedDependencies.analyze"));
-			monitor.beginTask("", imports.length);
+				PDEPlugin.getResourceString("UnusedDependencies.analyze")); //$NON-NLS-1$
+			monitor.beginTask("", imports.length); //$NON-NLS-1$
 			for (int i = 0; i < imports.length; i++) {
 				if (!isUsed(imports[i], new SubProgressMonitor(monitor, 1)))
 					unused.add(imports[i]);
 				monitor.setTaskName(
-					PDEPlugin.getResourceString("UnusedDependencies.analyze")
+					PDEPlugin.getResourceString("UnusedDependencies.analyze") //$NON-NLS-1$
 						+ unused.size()
-						+ " "
-						+ PDEPlugin.getResourceString("UnusedDependencies.unused")
-						+ " "
+						+ " " //$NON-NLS-1$
+						+ PDEPlugin.getResourceString("UnusedDependencies.unused") //$NON-NLS-1$
+						+ " " //$NON-NLS-1$
 						+ (unused.size() == 1
-							? PDEPlugin.getResourceString("DependencyExtent.singular")
-							: PDEPlugin.getResourceString("DependencyExtent.plural"))
-						+ " "
-						+ PDEPlugin.getResourceString("DependencyExtent.found"));
+							? PDEPlugin.getResourceString("DependencyExtent.singular") //$NON-NLS-1$
+							: PDEPlugin.getResourceString("DependencyExtent.plural")) //$NON-NLS-1$
+						+ " " //$NON-NLS-1$
+						+ PDEPlugin.getResourceString("DependencyExtent.found")); //$NON-NLS-1$
 			}
 		} finally {
 			monitor.done();
@@ -121,7 +121,7 @@ public class UnusedDependenciesOperation implements IRunnableWithProgress {
 				packageFragments =
 					PluginJavaSearchUtil.collectPackageFragments(models, parentProject);
 
-			monitor.beginTask("", packageFragments.length + 1);
+			monitor.beginTask("", packageFragments.length + 1); //$NON-NLS-1$
 
 			if (providesExtensionPoint(models))
 				return true;
@@ -177,7 +177,7 @@ public class UnusedDependenciesOperation implements IRunnableWithProgress {
 				searchEngine.search(
 					PDEPlugin.getWorkspace(),
 					SearchEngine.createSearchPattern(
-						packageFragment.getElementName() + ".*",
+						packageFragment.getElementName() + ".*", //$NON-NLS-1$
 						IJavaSearchConstants.TYPE,
 						IJavaSearchConstants.REFERENCES,
 						true),

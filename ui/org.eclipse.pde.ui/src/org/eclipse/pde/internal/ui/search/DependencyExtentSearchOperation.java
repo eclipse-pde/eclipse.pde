@@ -42,9 +42,9 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 
 public class DependencyExtentSearchOperation implements IWorkspaceRunnable, IRunnableWithProgress {
 	
-	private static final String KEY_DEPENDENCY = "DependencyExtent.singular";
-	private static final String KEY_DEPENDENCIES = "DependencyExtent.plural";
-	private static final String KEY_SEARCHING = "DependencyExtent.searching";
+	private static final String KEY_DEPENDENCY = "DependencyExtent.singular"; //$NON-NLS-1$
+	private static final String KEY_DEPENDENCIES = "DependencyExtent.plural"; //$NON-NLS-1$
+	private static final String KEY_SEARCHING = "DependencyExtent.searching"; //$NON-NLS-1$
 
 	IPluginImport object;
 	IProject parentProject;
@@ -109,7 +109,7 @@ public class DependencyExtentSearchOperation implements IWorkspaceRunnable, IRun
 				packageFragments = PluginJavaSearchUtil.collectPackageFragments(models,parentProject);
 
 			monitor.setTaskName(PDEPlugin.getResourceString(KEY_SEARCHING));
-			monitor.beginTask("",packageFragments.length + 1);
+			monitor.beginTask("",packageFragments.length + 1); //$NON-NLS-1$
 			resultCollector.searchStarted();
 			
 			findExtensionPoints(monitor);
@@ -165,7 +165,7 @@ public class DependencyExtentSearchOperation implements IWorkspaceRunnable, IRun
 				searchEngine.search(
 					PDEPlugin.getWorkspace(),
 					SearchEngine.createSearchPattern(
-						packageFragment.getElementName() + ".*",
+						packageFragment.getElementName() + ".*", //$NON-NLS-1$
 						IJavaSearchConstants.TYPE,
 						IJavaSearchConstants.REFERENCES,
 						true),
@@ -235,11 +235,11 @@ public class DependencyExtentSearchOperation implements IWorkspaceRunnable, IRun
 	}
 	
 	public String getPluralLabel() {
-		return object.getId() + " - {0} " + PDEPlugin.getResourceString(KEY_DEPENDENCIES);
+		return object.getId() + " - {0} " + PDEPlugin.getResourceString(KEY_DEPENDENCIES); //$NON-NLS-1$
 	}
 	
 	public String getSingularLabel() {
-		return object.getId() + " - 1 " + PDEPlugin.getResourceString(KEY_DEPENDENCY);
+		return object.getId() + " - 1 " + PDEPlugin.getResourceString(KEY_DEPENDENCY); //$NON-NLS-1$
 	}
 	
 	public IProject getProject() {

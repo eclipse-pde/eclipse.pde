@@ -43,13 +43,13 @@ public class DependencyExtentLabelProvider extends JavaElementLabelProvider {
 				.getPluginModel()
 				.getPluginBase()
 				.getId()
-				+ "."
+				+ "." //$NON-NLS-1$
 				+ ((IPluginExtensionPoint) element).getId();
 		} else if (element instanceof IJavaElement) {
 			IJavaElement javaElement = (IJavaElement) element;
 			String text =
 				super.getText(javaElement)
-					+ " - "
+					+ " - " //$NON-NLS-1$
 					+ javaElement
 						.getAncestor(IJavaElement.PACKAGE_FRAGMENT)
 						.getElementName();
@@ -60,7 +60,7 @@ public class DependencyExtentLabelProvider extends JavaElementLabelProvider {
 				if (ancestor == null)
 					ancestor = javaElement.getAncestor(IJavaElement.COMPILATION_UNIT);
 				if (ancestor != null)
-					text += "." + ancestor.getElementName();
+					text += "." + ancestor.getElementName(); //$NON-NLS-1$
 			}
 			return text;
 		}

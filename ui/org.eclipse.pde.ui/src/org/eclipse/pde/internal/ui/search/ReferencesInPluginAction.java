@@ -35,14 +35,14 @@ import org.eclipse.search.ui.SearchUI;
  */
 public class ReferencesInPluginAction extends Action {
 	
-	private static final String KEY_REFERENCES = "DependencyExtent.references";
+	private static final String KEY_REFERENCES = "DependencyExtent.references"; //$NON-NLS-1$
 	
 	ISearchResultViewEntry entry;
 	
 	
 	public ReferencesInPluginAction(ISearchResultViewEntry entry) {
 		this.entry = entry;
-		setText(PDEPlugin.getResourceString(KEY_REFERENCES) + " " + entry.getResource().getName());
+		setText(PDEPlugin.getResourceString(KEY_REFERENCES) + " " + entry.getResource().getName()); //$NON-NLS-1$
 	}
 	
 	public void run() {
@@ -68,13 +68,13 @@ public class ReferencesInPluginAction extends Action {
 		input.setSearchElement(PluginSearchInput.ELEMENT_EXTENSION_POINT);
 		input.setSearchString(
 			((IPluginExtensionPoint) object).getPluginBase().getId()
-				+ "."
+				+ "." //$NON-NLS-1$
 				+ ((IPluginExtensionPoint) object).getId());
 		input.setSearchLimit(PluginSearchInput.LIMIT_REFERENCES);
 		HashSet set = new HashSet();
-		IResource resource = ((IProject)entry.getResource()).getFile("plugin.xml");
+		IResource resource = ((IProject)entry.getResource()).getFile("plugin.xml"); //$NON-NLS-1$
 		if (!resource.exists())
-			resource = ((IProject)entry.getResource()).getFile("fragment.xml");
+			resource = ((IProject)entry.getResource()).getFile("fragment.xml"); //$NON-NLS-1$
 			
 		set.add(resource);
 		input.setSearchScope(

@@ -19,7 +19,7 @@ import org.eclipse.ui.*;
 
 public class DependencyExtentAction extends Action {
 	
-	private static final String KEY_COMPUTE = "DependencyExtentAction.label";
+	private static final String KEY_COMPUTE = "DependencyExtentAction.label"; //$NON-NLS-1$
 	
 	DependencyExtentSearchOperation op;
 	

@@ -49,7 +49,7 @@ public class ShowDescriptionAction extends Action {
 	
 	public void setExtensionPoint(IPluginExtensionPoint point) {
 		this.pointId = point.getFullId();
-		setText(PDEPlugin.getResourceString("ShowDescriptionAction.label"));
+		setText(PDEPlugin.getResourceString("ShowDescriptionAction.label")); //$NON-NLS-1$
 		schema = null;
 	}
 	
@@ -82,8 +82,8 @@ public class ShowDescriptionAction extends Action {
 	}
 	
 	private void showNoSchemaMessage() {
-		String title = "Extension Point Description";
-		String message = "Description for extension point \""+pointId+"\" cannot be found.";
+		String title = PDEPlugin.getResourceString("ShowDescriptionAction.title"); //$NON-NLS-1$
+		String message = PDEPlugin.getFormattedMessage("ShowDescriptionAction.noPoint.desc",pointId); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), title, message);
 	}
@@ -108,7 +108,7 @@ public class ShowDescriptionAction extends Action {
 	
 	private File getPreviewFile(){
 		try {
-			File file = File.createTempFile("pde", ".html");
+			File file = File.createTempFile("pde", ".html"); //$NON-NLS-1$ //$NON-NLS-2$
 			file.deleteOnExit();
 			return file;
 		} catch (IOException e) {
@@ -117,14 +117,14 @@ public class ShowDescriptionAction extends Action {
 	}
 	
 	private void showURL(String url) {
-		boolean win32 = SWT.getPlatform().equals("win32");
+		boolean win32 = SWT.getPlatform().equals("win32"); //$NON-NLS-1$
 		if (win32) {
 			Program.launch(url);
 		}
 		else {
 			IBrowser browser = BrowserManager.getInstance().createBrowser();
 			try {
-				browser.displayURL("file://" + url);
+				browser.displayURL("file://" + url); //$NON-NLS-1$
 			} catch (Exception e) {
 			}
 		}

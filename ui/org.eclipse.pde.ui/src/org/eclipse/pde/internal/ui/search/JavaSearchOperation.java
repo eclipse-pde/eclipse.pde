@@ -28,8 +28,8 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 class JavaSearchOperation implements IWorkspaceRunnable, IRunnableWithProgress {
 	IJavaElement element;
 	IProject parentProject;
-	private static final String KEY_MATCH = "Search.singleMatch";
-	private static final String KEY_MATCHES = "Search.multipleMatches";
+	private static final String KEY_MATCH = "Search.singleMatch"; //$NON-NLS-1$
+	private static final String KEY_MATCHES = "Search.multipleMatches"; //$NON-NLS-1$
 	
 	public JavaSearchOperation(IJavaElement element, IProject parentProject) {
 		this.element = element;
@@ -69,11 +69,11 @@ class JavaSearchOperation implements IWorkspaceRunnable, IRunnableWithProgress {
 	}
 	
 	public String getPluralLabel() {
-		return element.getElementName() + " - {0} " + PDEPlugin.getResourceString(KEY_MATCHES);
+		return element.getElementName() + " - {0} " + PDEPlugin.getResourceString(KEY_MATCHES); //$NON-NLS-1$
 	}
 
 	public String getSingularLabel() {
-		return element.getElementName() + " - 1 " + PDEPlugin.getResourceString(KEY_MATCH);
+		return element.getElementName() + " - 1 " + PDEPlugin.getResourceString(KEY_MATCH); //$NON-NLS-1$
 	}
 
 }

@@ -48,7 +48,7 @@ public class UnusedImportsDialog extends Dialog {
 		this.unused = unused;
 		checkboxTablePart =
 			new WizardCheckboxTablePart(
-				PDEPlugin.getResourceString("UnusedDependencies.remove"));
+				PDEPlugin.getResourceString("UnusedDependencies.remove")); //$NON-NLS-1$
 	}
 
 	protected void createButtonsForButtonBar(Composite parent) {

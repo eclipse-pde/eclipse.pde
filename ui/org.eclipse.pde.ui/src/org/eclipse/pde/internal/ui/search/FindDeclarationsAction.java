@@ -22,7 +22,7 @@ import org.eclipse.ui.PlatformUI;
 
 public class FindDeclarationsAction extends Action {
 	
-	private static final String KEY_DECLARATION = "SearchAction.Declaration";
+	private static final String KEY_DECLARATION = "SearchAction.Declaration"; //$NON-NLS-1$
 
 	private Object object;
 

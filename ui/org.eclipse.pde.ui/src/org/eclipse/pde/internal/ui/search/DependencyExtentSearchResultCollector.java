@@ -34,12 +34,12 @@ import org.eclipse.ui.actions.ActionGroup;
 
 public class DependencyExtentSearchResultCollector {
 	
-	private static final String PAGE_ID = "org.eclipse.pde.internal.ui.search.dependencyExtent";
+	private static final String PAGE_ID = "org.eclipse.pde.internal.ui.search.dependencyExtent"; //$NON-NLS-1$
 	
-	private static final String KEY_DEPENDENCY = "DependencyExtent.singular";
-	private static final String KEY_DEPENDENCIES = "DependencyExtent.plural";
-	private static final String KEY_FOUND = "DependencyExtent.found";
-	private static final String KEY_SEARCHING = "DependencyExtent.searching";
+	private static final String KEY_DEPENDENCY = "DependencyExtent.singular"; //$NON-NLS-1$
+	private static final String KEY_DEPENDENCIES = "DependencyExtent.plural"; //$NON-NLS-1$
+	private static final String KEY_FOUND = "DependencyExtent.found"; //$NON-NLS-1$
+	private static final String KEY_SEARCHING = "DependencyExtent.searching"; //$NON-NLS-1$
 	
 	private int numMatches = 0;
 	
@@ -105,11 +105,11 @@ public class DependencyExtentSearchResultCollector {
 			
 			monitor.setTaskName(
 				PDEPlugin.getResourceString(KEY_SEARCHING)
-					+ " "
+					+ " " //$NON-NLS-1$
 					+ numMatches
-					+ " "
+					+ " " //$NON-NLS-1$
 					+ text
-					+ " "
+					+ " " //$NON-NLS-1$
 					+ PDEPlugin.getResourceString(KEY_FOUND));
 		} catch (CoreException e) {
 		}
@@ -125,8 +125,8 @@ public class DependencyExtentSearchResultCollector {
 		String path = model.getInstallLocation();
 		String manifest =
 				model.isFragmentModel()
-			? "fragment.xml"
-			: "plugin.xml";
+			? "fragment.xml" //$NON-NLS-1$
+			: "plugin.xml"; //$NON-NLS-1$
 		String fileName = path + File.separator + manifest;
 		marker.setAttribute(IPDEUIConstants.MARKER_SYSTEM_FILE_PATH, fileName);
 	}

@@ -37,8 +37,8 @@ public class PluginSearchResultCollector
 
 	}
 		
-	private static final String KEY_MATCH = "Search.singleMatch";
-	private static final String KEY_MATCHES = "Search.multipleMatches";
+	private static final String KEY_MATCH = "Search.singleMatch"; //$NON-NLS-1$
+	private static final String KEY_MATCHES = "Search.multipleMatches"; //$NON-NLS-1$
 
 	private PluginSearchUIOperation operation;
 	private ISearchResultView resultView;
@@ -46,7 +46,7 @@ public class PluginSearchResultCollector
 	private int numMatches = 0;
 	
 	private static final String pageID =
-		"org.eclipse.pde.internal.ui.search.SearchPage";
+		"org.eclipse.pde.internal.ui.search.SearchPage"; //$NON-NLS-1$
 
 
 	public void setOperation(PluginSearchOperation operation) {
@@ -82,7 +82,7 @@ public class PluginSearchResultCollector
 					? PDEPlugin.getResourceString(KEY_MATCHES)
 					: PDEPlugin.getResourceString(KEY_MATCH);
 
-			monitor.subTask(numMatches + " " + text);
+			monitor.subTask(numMatches + " " + text); //$NON-NLS-1$
 			
 		} catch (CoreException e) {
 		}
@@ -93,8 +93,8 @@ public class PluginSearchResultCollector
 		String path = model.getInstallLocation();
 		String manifest =
 				model.isFragmentModel()
-			? "fragment.xml"
-			: "plugin.xml";
+			? "fragment.xml" //$NON-NLS-1$
+			: "plugin.xml"; //$NON-NLS-1$
 		String fileName = path + File.separator + manifest;
 		marker.setAttribute(IPDEUIConstants.MARKER_SYSTEM_FILE_PATH, fileName);
 	}

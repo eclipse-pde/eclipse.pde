@@ -61,13 +61,13 @@ public class PluginSearchLabelProvider extends LabelProvider {
 			
 			if (object instanceof IPluginImport) {
 				return ((IPluginImport)object).getId() 
-					+ " - "
+					+ " - " //$NON-NLS-1$
 					+ object.getPluginModel().getPluginBase().getId();
 			} 
 			
 			if (object instanceof IPluginExtension) {
 				return ((IPluginExtension)object).getPoint()
-					 + " - "
+					 + " - " //$NON-NLS-1$
 					+ object.getPluginModel().getPluginBase().getId();
 			}
 			

@@ -239,7 +239,7 @@ public class ExtensionDetails extends PDEDetails {
 	}
 	private void showNoExtensionPointMessage() {
 		String title = PDEPlugin.getResourceString("ExtensionDetails.noPoint.title"); //$NON-NLS-1$
-		String message = PDEPlugin.getFormattedMessage("ExtensionDetails.noPoint.desc",input.getPoint()); //$NON-NLS-1$
+		String message = PDEPlugin.getFormattedMessage("ShowDescriptionAction.noPoint.desc",input.getPoint()); //$NON-NLS-1$
 		
 		MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), title, message);
 	}

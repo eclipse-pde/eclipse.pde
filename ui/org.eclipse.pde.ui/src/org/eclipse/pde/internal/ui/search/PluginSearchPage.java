@@ -67,20 +67,20 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 		
 	}
 	
-	private static final String KEY_SEARCH_STRING = "SearchPage.searchString";
-	private static final String KEY_CASE_SENSITIVE = "SearchPage.caseSensitive";
-	private static final String KEY_SEARCH_FOR = "SearchPage.searchFor";
-	private static final String KEY_LIMIT_TO = "SearchPage.limitTo";
-	private static final String KEY_EXTERNAL_SCOPE = "SearchPage.externalScope";
-	private static final String KEY_PLUGIN = "SearchPage.plugin";
-	private static final String KEY_FRAGMENT = "SearchPage.fragment";
-	private static final String KEY_EXT_PT = "SearchPage.extPt";
-	private static final String KEY_DECLARATIONS = "SearchPage.declarations";
-	private static final String KEY_REFERENCES = "SearchPage.references";
-	private static final String KEY_ALL_OCCURRENCES = "SearchPage.allOccurrences";
-	private static final String KEY_ALL = "SearchPage.all";
-	private static final String KEY_ENABLED = "SearchPage.enabledOnly";
-	private static final String KEY_NONE = "SearchPage.none";
+	private static final String KEY_SEARCH_STRING = "SearchPage.searchString"; //$NON-NLS-1$
+	private static final String KEY_CASE_SENSITIVE = "SearchPage.caseSensitive"; //$NON-NLS-1$
+	private static final String KEY_SEARCH_FOR = "SearchPage.searchFor"; //$NON-NLS-1$
+	private static final String KEY_LIMIT_TO = "SearchPage.limitTo"; //$NON-NLS-1$
+	private static final String KEY_EXTERNAL_SCOPE = "SearchPage.externalScope"; //$NON-NLS-1$
+	private static final String KEY_PLUGIN = "SearchPage.plugin"; //$NON-NLS-1$
+	private static final String KEY_FRAGMENT = "SearchPage.fragment"; //$NON-NLS-1$
+	private static final String KEY_EXT_PT = "SearchPage.extPt"; //$NON-NLS-1$
+	private static final String KEY_DECLARATIONS = "SearchPage.declarations"; //$NON-NLS-1$
+	private static final String KEY_REFERENCES = "SearchPage.references"; //$NON-NLS-1$
+	private static final String KEY_ALL_OCCURRENCES = "SearchPage.allOccurrences"; //$NON-NLS-1$
+	private static final String KEY_ALL = "SearchPage.all"; //$NON-NLS-1$
+	private static final String KEY_ENABLED = "SearchPage.enabledOnly"; //$NON-NLS-1$
+	private static final String KEY_NONE = "SearchPage.none"; //$NON-NLS-1$
 	
 	private static ArrayList previousQueries = new ArrayList();
 	
@@ -185,16 +185,16 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 			item = ((IJavaProject)item).getProject();
 			
 		if (item instanceof IProject) {
-			IFile file = ((IProject) item).getFile("plugin.xml");
+			IFile file = ((IProject) item).getFile("plugin.xml"); //$NON-NLS-1$
 			if (file.exists())
 				return file;
-			file = ((IProject) item).getFile("fragment.xml");
+			file = ((IProject) item).getFile("fragment.xml"); //$NON-NLS-1$
 			if (file.exists())
 				return file;
 		} else if (item instanceof IFile) {
 			IFile file = (IFile)item;
-			if (file.getName().equals("plugin.xml")
-				|| file.getName().equals("fragment.xml")) {
+			if (file.getName().equals("plugin.xml") //$NON-NLS-1$
+				|| file.getName().equals("fragment.xml")) { //$NON-NLS-1$
 				return file;
 			}
 		}
@@ -224,7 +224,7 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 		String searchString = patternCombo.getText().trim();
 		if (searchFor == PluginSearchInput.ELEMENT_EXTENSION_POINT
 			&& searchString.indexOf('.') == -1) {
-			searchString = "*." + searchString;
+			searchString = "*." + searchString; //$NON-NLS-1$
 		}
 		input.setSearchString(searchString);
 		input.setCaseSensitive(caseSensitive.getSelection());

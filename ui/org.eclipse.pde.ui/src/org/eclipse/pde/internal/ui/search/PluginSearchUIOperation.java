@@ -26,8 +26,8 @@ public class PluginSearchUIOperation
 	extends PluginSearchOperation
 	implements IWorkspaceRunnable, IRunnableWithProgress {
 
-	private static final String KEY_MATCH = "Search.singleMatch";
-	private static final String KEY_MATCHES = "Search.multipleMatches";
+	private static final String KEY_MATCH = "Search.singleMatch"; //$NON-NLS-1$
+	private static final String KEY_MATCHES = "Search.multipleMatches"; //$NON-NLS-1$
 	public PluginSearchUIOperation(
 		PluginSearchInput input,
 		IPluginSearchResultCollector collector) {
@@ -50,11 +50,11 @@ public class PluginSearchUIOperation
 	}
 	
 	public String getPluralLabel() {
-		return input.getSearchString() + " - {0} " + PDEPlugin.getResourceString(KEY_MATCHES);
+		return input.getSearchString() + " - {0} " + PDEPlugin.getResourceString(KEY_MATCHES); //$NON-NLS-1$
 	}
 
 	public String getSingularLabel() {
-		return input.getSearchString() + " - 1 " + PDEPlugin.getResourceString(KEY_MATCH);
+		return input.getSearchString() + " - 1 " + PDEPlugin.getResourceString(KEY_MATCH); //$NON-NLS-1$
 	}
 	
 

@@ -22,7 +22,7 @@ public class UnusedDependenciesAction extends Action {
 
 	public UnusedDependenciesAction(IPluginModelBase model) {
 		this.model = model;
-		setText(PDEPlugin.getResourceString("UnusedDependencies.action"));
+		setText(PDEPlugin.getResourceString("UnusedDependencies.action")); //$NON-NLS-1$
 	}
 
 	public void run() {
@@ -36,8 +36,8 @@ public class UnusedDependenciesAction extends Action {
 		if (unused.length == 0)
 			MessageDialog.openInformation(
 				PDEPlugin.getActiveWorkbenchShell(),
-				PDEPlugin.getResourceString("UnusedDependencies.title"),
-				PDEPlugin.getResourceString("UnusedDependencies.notFound"));
+				PDEPlugin.getResourceString("UnusedDependencies.title"), //$NON-NLS-1$
+				PDEPlugin.getResourceString("UnusedDependencies.notFound")); //$NON-NLS-1$
 		else if (model.isEditable()) {
 			UnusedImportsDialog dialog =
 				new UnusedImportsDialog(
@@ -46,18 +46,18 @@ public class UnusedDependenciesAction extends Action {
 					unused);
 			dialog.create();
 			dialog.getShell().setText(
-				PDEPlugin.getResourceString("UnusedDependencies.title"));
+				PDEPlugin.getResourceString("UnusedDependencies.title")); //$NON-NLS-1$
 			dialog.open();
 		} else {
-			String lineSeparator = System.getProperty("line.separator");
+			String lineSeparator = System.getProperty("line.separator"); //$NON-NLS-1$
 			StringBuffer buffer =
-				new StringBuffer(PDEPlugin.getResourceString("UnusedDependencies.found"));
+				new StringBuffer(PDEPlugin.getResourceString("UnusedDependencies.found")); //$NON-NLS-1$
 			for (int i = 0; i < unused.length; i++) {
 				buffer.append(lineSeparator + unused[i].getId());
 			}
 			MessageDialog.openInformation(
 				PDEPlugin.getActiveWorkbenchShell(),
-				PDEPlugin.getResourceString("UnusedDependencies.title"),
+				PDEPlugin.getResourceString("UnusedDependencies.title"), //$NON-NLS-1$
 				buffer.toString());
 		}
 	}

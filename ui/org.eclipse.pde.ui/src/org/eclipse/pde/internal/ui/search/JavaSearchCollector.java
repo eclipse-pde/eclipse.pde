@@ -57,7 +57,7 @@ class JavaSearchCollector implements IJavaSearchResultCollector {
 			operation.getSingularLabel(),
 			operation.getPluralLabel(),
 			null,
-			"org.eclipse.pde.internal.ui.search.javaSearch",
+			"org.eclipse.pde.internal.ui.search.javaSearch", //$NON-NLS-1$
 			new DependencyExtentLabelProvider(),
 			new SearchGoToAction(),
 			new GroupByKeyComputer(),
