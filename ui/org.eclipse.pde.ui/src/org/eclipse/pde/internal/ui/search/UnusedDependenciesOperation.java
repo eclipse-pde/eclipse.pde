@@ -127,7 +127,7 @@ public class UnusedDependenciesOperation implements IRunnableWithProgress {
 		} finally {
 			monitor.done();
 		}
-		return true;
+		return false;
 	}
 
 	public IPluginImport[] getUnusedDependencies() {
