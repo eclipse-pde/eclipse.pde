@@ -26,10 +26,8 @@ interface ScriptGeneratorConstants {
 
 	// switches
 	public static final String SWITCH_DELIMITER = "-";
-	public static final String SWITCH_NOCHILDREN = "-nochildren";
 	
-	public static final String FILENAME_COMPONENT = "install.xml";
-	public static final String FILENAME_CONFIGURATION = "install.xml";
+	public static final String FILENAME_FEATURE = "feature.xml";
 	
 	// substitutable properties
 	public static final String BIN_INCLUDES = "bin.includes";
@@ -43,15 +41,12 @@ interface ScriptGeneratorConstants {
 	public final static int EXCEPTION_MODEL_PARSE = 1;
 	public final static int EXCEPTION_PLUGIN_MISSING = 2;
 	public final static int EXCEPTION_FRAGMENT_MISSING = 3;
-	public final static int EXCEPTION_COMPONENT_INPUT = 4;
-	public final static int EXCEPTION_COMPONENT_MISSING = 5;
-	public final static int EXCEPTION_COMPONENT_PARSE = 6;
-	public final static int EXCEPTION_CONFIGURATION_INPUT = 7;
-	public final static int EXCEPTION_CONFIGURATION_MISSING = 8;
-	public final static int EXCEPTION_CONFIGURATION_PARSE = 9;
+	public final static int EXCEPTION_FEATURE_INPUT = 4;
+	public final static int EXCEPTION_FEATURE_MISSING = 5;
+	public final static int EXCEPTION_FEATURE_PARSE = 6;
 	public final static int WARNING_PLUGIN_INCORRECTVERSION = 10;
 	public final static int WARNING_FRAGMENT_INCORRECTVERSION = 11;
-	public final static int WARNING_COMPONENT_INCORRECTVERSION = 12;
+	public final static int WARNING_FEATURE_INCORRECTVERSION = 12;
 	public final static int WARNING_MISSING_SOURCE = 13;
 	public final static int EXCEPTION_FILE_MISSING = 14;
 	public final static int EXCEPTION_OUTPUT = 15;

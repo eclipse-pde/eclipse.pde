@@ -22,7 +22,7 @@ abstract class ModelBuildScriptGenerator extends PluginTool {
 	private Vector commandLineModelNames = new Vector();
 	
 	// constant output filenames
-	private static final String DEFAULT_FILENAME_BIN = ".zip";
+	private static final String BIN_EXTENSION = ".jar";
 	private static final String DEFAULT_FILENAME_SRC = ".src.zip";
 	private static final String DEFAULT_FILENAME_LOG = ".log.zip";
 	private static final String DEFAULT_FILENAME_DOC = ".doc.zip";
@@ -131,9 +131,9 @@ public IStatus execute() {
 		// do we need to generate build.xml?
 		Properties properties = getProperties(modelsToGenerate[i]);
 		String custom = properties.getProperty(FLAG_CUSTOM);
-		if (custom != null && custom.equals("true"))
+		if (custom != null && custom.equalsIgnoreCase("true"))
 			continue;
-		
+
 		try {
 			PrintWriter output = openOutput(modelsToGenerate[i]);
 			try {
@@ -162,44 +162,33 @@ private String[] extractVars(String entry) {
 public void generateBuildScript(PrintWriter output, PluginModel descriptor) {
 	initializeFor(descriptor);
 	generatePrologue(output, descriptor);
-	generateModelSrcTarget(output, descriptor);
-	generateModelTarget(output, descriptor);
+
+	generateBinZipTarget(output, descriptor);
+	generateBinGatherWholeTarget(output, descriptor);
+	generateBinGatherPartsTarget(output, descriptor);
+	generateCompileTarget(output, descriptor);
+
+	generateSrcZipTarget(output, descriptor);
+	generateSrcGatherWholeTarget(output, descriptor);
+	generateSrcGatherPartsTarget(output, descriptor);
+	generateSrcTarget(output, descriptor);
+
 	generateModelLogTarget(output, descriptor);
-	generateJarsTarget(output, descriptor);
+	generateLogTarget(output, descriptor);
+
+	generateCleanTarget(output, descriptor);
+//	generateDocTarget(output, descriptor);
 //	generateDocsTarget(output, descriptor);
 //	generateJavadocsTarget(output, descriptor);
 //	generateJavadocTargets(output, descriptor);
-	generateSrcTargets(output, descriptor);
+	// generate a bin target to simplify -dev bin testing.  This should be removed
+	// when the platform stops passing through all command line args.
 	generateBinTarget(output, descriptor);
-//	generateDocTarget(output, descriptor);
-	generateLogTarget(output, descriptor);
-	generateCleanTarget(output, descriptor);
 	generateEpilogue(output, descriptor);
 }
 protected void generateBinTarget(PrintWriter output, PluginModel descriptor) {
 	output.println();
-	output.println("  <target name=\"" + TARGET_BIN + "\" depends=\"init\">");
-	output.println("    <property name=\"destroot\" value=\"${basedir}\"/>");
-	output.println("    <ant antfile=\"${template}\" target=\"" + TARGET_BIN + "\">");
-
-	String inclusions = getSubstitution(descriptor,BIN_INCLUDES);
-	if (inclusions == null)
-		inclusions = "**";
-	else
-		if (inclusions.startsWith("${auto}"))
-			inclusions = "**" + inclusions.substring(7);
-	output.println("      <property name=\"includes\" value=\"" + inclusions + "\"/>");
-
-	String exclusions = getSubstitution(descriptor, BIN_EXCLUDES);
-	if (exclusions == null)
-		exclusions = computeCompleteSrc(descriptor);
-	else
-		if (exclusions.startsWith("${auto}"))
-			exclusions = computeCompleteSrc(descriptor) + exclusions.substring(7);
-	output.println("      <property name=\"excludes\" value=\"" + exclusions + "\"/>");
-		
-	output.println("      <property name=\"dest\" value=\"${destroot}\"/>");
-	output.println("    </ant>");
+	output.println("  <target name=\"" + TARGET_BIN + "\">");
 	output.println("  </target>");
 }
 protected void generateCleanTarget(PrintWriter output, PluginModel descriptor) {
@@ -226,7 +215,7 @@ protected void generateCleanTarget(PrintWriter output, PluginModel descriptor) {
 	output.println("    <delete>");
 	output.println("      <fileset dir=\".\" includes=\"**/*.pdetemp\"/>");
 	output.println("    </delete>");
-	output.println("    <delete file=\"" + getModelFileBase() + DEFAULT_FILENAME_BIN + "\"/>");
+	output.println("    <delete file=\"" + getModelFileBase() + BIN_EXTENSION + "\"/>");
 	output.println("    <delete file=\"" + getModelFileBase() + DEFAULT_FILENAME_SRC + "\"/>");
 	output.println("    <delete file=\"" + getModelFileBase() + DEFAULT_FILENAME_DOC + "\"/>");
 	output.println("    <delete file=\"" + getModelFileBase() + DEFAULT_FILENAME_LOG + "\"/>");
@@ -259,7 +248,39 @@ protected void generateDocsTarget(PrintWriter output, PluginModel descriptor) {
 protected void generateEpilogue(PrintWriter output, PluginModel descriptor) {
 	output.println("</project>");
 }
-protected void generateJarsTarget(PrintWriter output, PluginModel descriptor) {
+protected void generateBinGatherWholeTarget(PrintWriter output, PluginModel descriptor) {
+	String zipfile = "${basedir}/" + getModelFileBase() + BIN_EXTENSION;
+	output.println();
+	output.println("  <target name=\"" + "bin.gather.whole" + "\" depends=\"init\" if=\"destroot\">");
+	output.println("    <copy file=\"" + zipfile + "\" todir=\"${destroot}\"/>");
+	output.println("  </target>");
+}
+protected void generateBinGatherPartsTarget(PrintWriter output, PluginModel descriptor) {
+	output.println();
+	output.println("  <target name=\"" + "bin.gather.parts" + "\" depends=\"init\" if=\"destroot\">");
+//	output.println("    <property name=\"destroot\" value=\"${basedir}\"/>");
+	output.println("    <ant antfile=\"${template}\" target=\"" + "includesExcludesCopy" + "\">");
+
+	String inclusions = getSubstitution(descriptor,BIN_INCLUDES);
+	if (inclusions == null)
+		inclusions = "**";
+	else
+		if (inclusions.startsWith("${auto}"))
+			inclusions = "**" + inclusions.substring(7);
+	output.println("      <property name=\"includes\" value=\"" + inclusions + "\"/>");
+
+	String exclusions = getSubstitution(descriptor, BIN_EXCLUDES);
+	if (exclusions == null)
+		exclusions = computeCompleteSrc(descriptor);
+	else
+		if (exclusions.startsWith("${auto}"))
+			exclusions = computeCompleteSrc(descriptor) + exclusions.substring(7);
+	output.println("      <property name=\"excludes\" value=\"" + exclusions + "\"/>");
+	output.println("      <property name=\"dest\" value=\"${destroot}/" + getComponentDirectoryName() + "\"/>");
+	output.println("    </ant>");
+	output.println("  </target>");
+}
+protected void generateCompileTarget(PrintWriter output, PluginModel descriptor) {
 	StringBuffer jars = new StringBuffer();
 	for (Iterator i = jarOrder.iterator(); i.hasNext();) {
 		jars.append(',');
@@ -268,7 +289,7 @@ protected void generateJarsTarget(PrintWriter output, PluginModel descriptor) {
 		generateJarTarget(output, descriptor, currentJar);
 	}
 	output.println();
-	output.println("  <target name=\"" + TARGET_JAR + "\" depends=\"init" + jars.toString() + "\">");
+	output.println("  <target name=\"" + "compile" + "\" depends=\"init" + jars.toString() + "\">");
 	output.println("  </target>");
 }
 protected void generateJarTarget(PrintWriter output, PluginModel descriptor, String relativeJar) {
@@ -371,16 +392,15 @@ protected void generateModelDocTarget(PrintWriter output, PluginModel descriptor
 	output.println("    <delete dir=\"${base}\"/>");
 	output.println("    <mkdir dir=\"${base}\"/>");
 	output.println("    <antcall target=\"doc\">");
-	output.println("      <param name =\"destroot\" value=\"${base}/" + getComponentDirectoryName() + "\"/>");
+	output.println("      <param name =\"destroot\" value=\"${base}/\"/>");
 	output.println("    </antcall>");
 	
 	// call runZip on template.xml in case we want to use an external program
-	output.println("	<ant antfile=\"${template}\" target=\"runZip\">");
+	output.println("    <ant antfile=\"${template}\" target=\"runZip\">");
 	output.println("      <property name=\"resultingFile\" value=\"${basedir}/" + getModelFileBase() + DEFAULT_FILENAME_DOC + "\"/>");
 	output.println("      <property name=\"targetDir\" value=\"${base}\"/>");
-	output.println("	</ant>");
+	output.println("    </ant>");
 	
-	//output.println("    <zip zipfile=\"" + getModelFileBase() + DEFAULT_FILENAME_DOC + "\" basedir=\"${base}\"/>");
 	output.println("    <delete dir=\"${base}\"/>");
 	output.println("  </target>");
 }
@@ -391,50 +411,49 @@ protected void generateModelLogTarget(PrintWriter output, PluginModel descriptor
 	output.println("    <delete dir=\"${base}\"/>");
 	output.println("    <mkdir dir=\"${base}\"/>");
 	output.println("    <antcall target=\"log\">");
-	output.println("      <param name =\"destroot\" value=\"${base}/" + getComponentDirectoryName() + "\"/>");
+	output.println("      <param name =\"destroot\" value=\"${base}/\"/>");
 	output.println("    </antcall>");
 
 	// call runZip on template.xml in case we want to use an external program
-	output.println("	<ant antfile=\"${template}\" target=\"runZip\">");
+	output.println("    <ant antfile=\"${template}\" target=\"runZip\">");
 	output.println("      <property name=\"resultingFile\" value=\"${basedir}/" + getModelFileBase() + DEFAULT_FILENAME_LOG + "\"/>");
 	output.println("      <property name=\"targetDir\" value=\"${base}\"/>");
-	output.println("	</ant>");
+	output.println("    </ant>");
 	
-	//output.println("    <zip zipfile=\"" + getModelFileBase() + DEFAULT_FILENAME_LOG + "\" basedir=\"${base}\"/>");
 	output.println("    <delete dir=\"${base}\"/>");
 	output.println("  </target>");
 }
-protected void generateModelSrcTarget(PrintWriter output, PluginModel descriptor) {
+protected void generateSrcZipTarget(PrintWriter output, PluginModel descriptor) {
 	output.println();
-	output.println("  <target name=\"" + TARGET_SRC_ZIP + "\" depends=\"init\">");
+	output.println("  <target name=\"src.zip\" depends=\"init\">");
 	output.println("    <property name=\"base\" value=\"${basedir}/src.zip.pdetemp\"/>");
 	output.println("    <delete dir=\"${base}\"/>");
 	output.println("    <mkdir dir=\"${base}\"/>");
-	output.println("    <antcall target=\"src\">");
-	output.println("      <param name =\"destroot\" value=\"${base}/" + getComponentDirectoryName() + "\"/>");
+	output.println("    <antcall target=\"src\"/>");
+	output.println("    <antcall target=\"src.gather.parts\">");
+	output.println("      <param name =\"destroot\" value=\"${base}/\"/>");
 	output.println("    </antcall>");
 
 	// call runZip on template.xml in case we want to use an external program
-	output.println("	<ant antfile=\"${template}\" target=\"runZip\">");
+	output.println("    <ant antfile=\"${template}\" target=\"runZip\">");
 	output.println("      <property name=\"resultingFile\" value=\"${basedir}/" + getModelFileBase() + DEFAULT_FILENAME_SRC + "\"/>");
-	output.println("      <property name=\"targetDir\" value=\"${base}\"/>");
-	output.println("	</ant>");
+	output.println("      <property name=\"targetDir\" value=\"${base}/" + getComponentDirectoryName() + "\"/>");
+	output.println("    </ant>");
 	
 	output.println("    <delete dir=\"${base}\"/>");
 	output.println("  </target>");
 }
-protected void generateModelTarget(PrintWriter output, PluginModel descriptor) {
+
+protected void generateBinZipTarget(PrintWriter output, PluginModel descriptor) {
 	output.println();
 	output.println("  <target name=\"" + getModelTypeName() + ".zip" + "\" depends=\"" + TARGET_BIN_ZIP + "\"/>");
 	output.println("  <target name=\"" + TARGET_BIN_ZIP + "\" depends=\"init\">");
 	output.println("    <property name=\"base\" value=\"${basedir}/bin.zip.pdetemp\"/>");
 	output.println("    <delete dir=\"${base}\"/>");
 	output.println("    <mkdir dir=\"${base}\"/>");
-	output.println("    <antcall target=\"jar\">");
-	output.println("      <param name =\"destroot\" value=\"${base}/" + getComponentDirectoryName() + "\"/>");
-	output.println("    </antcall>");
-	output.println("    <antcall target=\"bin\">");
-	output.println("      <param name =\"destroot\" value=\"${base}/" + getComponentDirectoryName() + "\"/>");
+	output.println("    <antcall target=\"compile\"/>");
+	output.println("    <antcall target=\"bin.gather.parts\">");
+	output.println("      <param name =\"destroot\" value=\"${base}/\"/>");
 	output.println("    </antcall>");
 
 	// delete *.bin.log
@@ -443,12 +462,11 @@ protected void generateModelTarget(PrintWriter output, PluginModel descriptor) {
 	output.println("    </delete>");
 
 	// call runZip on template.xml in case we want to use an external program
-	output.println("	<ant antfile=\"${template}\" target=\"runZip\">");
-	output.println("      <property name=\"resultingFile\" value=\"${basedir}/" + getModelFileBase() + DEFAULT_FILENAME_BIN + "\"/>");
-	output.println("      <property name=\"targetDir\" value=\"${base}\"/>");
-	output.println("	</ant>");
+	output.println("    <ant antfile=\"${template}\" target=\"runZip\">");
+	output.println("      <property name=\"resultingFile\" value=\"${basedir}/" + getModelFileBase() + BIN_EXTENSION + "\"/>");
+	output.println("      <property name=\"targetDir\" value=\"${base}/" + getComponentDirectoryName() + "\"/>");
+	output.println("    </ant>");
 	
-	//output.println("    <zip zipfile=\"" + getModelFileBase() + DEFAULT_FILENAME_BIN + "\" basedir=\"${base}\" excludes=\"**/*.bin.log\"/>");
 	output.println("    <delete dir=\"${base}\"/>");
 	output.println("  </target>");
 }
@@ -484,7 +502,7 @@ protected void generatePrologue(PrintWriter output, PluginModel descriptor) {
 
 	output.println("  </target>");
 }
-protected void generateSrcTarget(PrintWriter output, PluginModel descriptor, String relativeJar, String target) {
+protected void generateSrcIndividualTarget(PrintWriter output, PluginModel descriptor, String relativeJar, String target) {
 	String fullJar = null;
 	try { 
 		fullJar = new URL(descriptor.getLocation() + relativeJar).getFile();
@@ -504,7 +522,7 @@ protected void generateSrcTarget(PrintWriter output, PluginModel descriptor, Str
 	}
 	output.println();
 	output.println("  <target name=\"" + target + "\" depends=\"init\">");
-	output.println("    <property name=\"destroot\" value=\"${basedir}\"/>");
+//	output.println("    <property name=\"destroot\" value=\"${basedir}\"/>");
 
 	if (src.length() != 0) {
 		output.println("    <ant antfile=\"${template}\" target=\"" + TARGET_SRC + "\">");
@@ -526,12 +544,32 @@ protected void generateSrcTarget(PrintWriter output, PluginModel descriptor, Str
 				exclusions = exclusions.substring(7);
 		output.println("      <property name=\"excludes\" value=\"" + exclusions + "\"/>");
 			
-		output.println("      <property name=\"dest\" value=\"${destroot}/" + target + "\"/>");
+		output.println("      <property name=\"dest\" value=\"" + target + "\"/>");
+//		output.println("      <property name=\"dest\" value=\"${destroot}/" + target + "\"/>");
 		output.println("    </ant>");
 	}
 	output.println("  </target>");
 }
-protected void generateSrcTargets(PrintWriter output, PluginModel descriptor) {
+protected void generateSrcGatherPartsTarget(PrintWriter output, PluginModel descriptor) {
+	output.println();
+	output.println("  <target name=\"" + "src.gather.parts" + "\" depends=\"init\" if=\"destroot\">");
+	for (Iterator i = jarOrder.iterator(); i.hasNext();) {
+		// zip name is jar name without the ".jar" but with SOURCE_EXTENSION appended
+		String jar = (String) i.next();
+		String zip = removeBraces(jar);
+		zip = zip.substring(0, zip.length() - 4) + SOURCE_EXTENSION;
+		output.println("    <copy file=\"" + zip + "\" todir=\"${destroot}/" + getComponentDirectoryName() + "\"/>");
+	}
+	output.println("  </target>");
+}
+protected void generateSrcGatherWholeTarget(PrintWriter output, PluginModel descriptor) {
+	String zipfile = "${basedir}/" + getModelFileBase() + SOURCE_EXTENSION;
+	output.println();
+	output.println("  <target name=\"" + "src.gather.whole" + "\" depends=\"init\" if=\"destroot\">");
+	output.println("    <copy file=\"" + zipfile + "\" todir=\"${destroot}\"/>");
+	output.println("  </target>");
+}
+protected void generateSrcTarget(PrintWriter output, PluginModel descriptor) {
 	StringBuffer jars = new StringBuffer();
 	for (Iterator i = jarOrder.iterator(); i.hasNext();) {
 		jars.append(",");
@@ -540,10 +578,10 @@ protected void generateSrcTargets(PrintWriter output, PluginModel descriptor) {
 		String zip = removeBraces(jar);
 		zip = zip.substring(0, zip.length() - 4) + SOURCE_EXTENSION;
 		jars.append(zip);
-		generateSrcTarget(output, descriptor, jar, zip);
+		generateSrcIndividualTarget(output, descriptor, jar, zip);
 	}
 	output.println();
-	output.println("  <target name=\"" + TARGET_SRC + "\" depends=\"init" + jars.toString() + "\">");
+	output.println("  <target name=\"src\" depends=\"init" + jars.toString() + "\">");
 	output.println("  </target>");
 }
 

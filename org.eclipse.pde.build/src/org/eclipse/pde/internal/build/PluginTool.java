@@ -4,15 +4,16 @@ package org.eclipse.pde.internal.core;
  * All Rights Reserved.
  */
 
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
+
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformRunnable;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import org.eclipse.update.core.Feature;
 
 public abstract class PluginTool implements IPlatformRunnable, ScriptGeneratorConstants {
 	private boolean usage = false;
@@ -26,7 +27,8 @@ public abstract class PluginTool implements IPlatformRunnable, ScriptGeneratorCo
 	protected String os = BootLoader.getOS();
 	protected String ws = BootLoader.getWS();
 	protected String nl = BootLoader.getNL();
-	protected String arch = BootLoader.getOSArch();
+	// FIXME: it should be moved to BootLoader as well
+	protected String arch = System.getProperty("os.arch");
 	protected String stamp = "";
 	
 	public final static String PI_PDECORE = "org.eclipse.pde.core";	
@@ -165,13 +167,14 @@ protected URL[] getPluginPath() {
 protected IStatus getProblems() {
 	return problems;
 }
-protected Properties getProperties(InstallModel descriptor) {
+protected Properties getProperties(Feature descriptor) {
 	Properties result = (Properties)propertyValues.get(descriptor);
 	if (result != null)
 		return result;
-	
-	result = readProperties(new Path("file:" + descriptor.getLocation()).addTrailingSeparator().toString());
-	propertyValues.put(descriptor,result);
+
+	result = readProperties(descriptor.getURL().toString() + "/");
+	result = filterProperties(result);
+	propertyValues.put(descriptor, result);
 	return result;
 }
 protected Properties getProperties(PluginModel descriptor) {
@@ -273,7 +276,7 @@ protected boolean matchesCurrentBuild(String key) {
 	}
 	return true;
 }
-protected Map getPropertyAssignments(InstallModel descriptor) {
+protected Map getPropertyAssignments(Feature descriptor) {
 	return getPropertyAssignments(getProperties(descriptor));
 }
 protected Map getPropertyAssignments(PluginModel descriptor) {
@@ -296,7 +299,7 @@ protected PluginRegistryModel getRegistry() {
 protected String getSubstitution(PluginModel descriptor,String propertyName) {
 	return (String)getProperties(descriptor).get(propertyName);
 }
-protected String getSubstitution(InstallModel descriptor,String propertyName) {
+protected String getSubstitution(Feature descriptor, String propertyName) {
 	return (String)getProperties(descriptor).get(propertyName);
 }
 protected boolean isPropertyAssignment(String key) {
@@ -372,6 +375,19 @@ protected String[] processCommandLine(String[] args) {
 	}
 	return new String[0];
 }
+protected String[] readElementFile(String filename) {
+	Properties props = new Properties();
+	try {
+		InputStream stream = new FileInputStream(filename);
+		try {
+			props.load(stream);
+		} finally {
+			stream.close();
+		}
+	} catch (IOException e) {
+	}
+	return (String[])props.keySet().toArray(new String[props.size()]);
+}
 protected Properties readProperties(String modelDirectory) {
 	Properties result = new Properties();
 	
@@ -412,7 +428,7 @@ protected String[] separateNameFromVersion(String name) {
 	
 	String versionPortion = name.substring(lastSeparator + 1);
 	try {
-		new VersionIdentifier(versionPortion);
+		new PluginVersionIdentifier(versionPortion);
 	} catch (NumberFormatException e) {
 		result[0] = name;
 		result[1] = new String();

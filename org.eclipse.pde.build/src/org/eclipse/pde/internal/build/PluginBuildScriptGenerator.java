@@ -16,7 +16,8 @@ public PluginBuildScriptGenerator(PluginModel modelsToGenerate[],PluginRegistryM
 }
 
 protected String getComponentDirectoryName() {
-	return "plugins/${plugin}_${version}";
+//	return "plugins/${plugin}_${version}";
+	return "plugins/${plugin}";
 }
 protected String getModelTypeName() {
 	return "plugin";

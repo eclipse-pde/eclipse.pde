@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ScriptBuilder extends PluginTool {
-	String[] elements;
-	boolean children = true;
+	protected String[] elements;
+	protected boolean children = false;
 		
 public void execute() throws Exception {
 	List[] types = sortElements();
@@ -18,16 +18,14 @@ public void execute() throws Exception {
 	if (!types[1].isEmpty())
 		new FragmentBuildScriptGenerator().run(new String[] {"-install", getInstall(), "-elements", getStringFromCollection(types[1], "", "", ",")});
 	if (!types[2].isEmpty()) {
-		List components = types[2];
-		for (int i = 0; i < components.size(); i++)
-			new ComponentBuildScriptGenerator().run(new String[] {"-install", getInstall(), "-elements", (String)components.get(i), children ? "" : "-noChildren"});
-	}
-	if (!types[3].isEmpty()) {
-		List configurations = types[3];
-		for (int i = 0; i < configurations.size(); i++)
-			new ConfigurationBuildScriptGenerator().run(new String[] {"-install", getInstall(), "-elements", (String)configurations.get(i), children ? "" : "-noChildren"});
+		List features = types[2];
+		for (int i = 0; i < features.size(); i++)
+			new FeatureBuildScriptGenerator().run(new String[] {"-install", getInstall(), "-elements", (String)features.get(i), children ? "-children" : ""});
 	}
 }
+/**
+ *  FIXME:
+ */
 protected void printUsage(PrintWriter out) {
 }
 protected String[] processCommandLine(String[] args) {
@@ -56,8 +54,7 @@ public Object run(Object args) throws Exception {
 protected List[] sortElements() {
 	List plugins = new ArrayList(5);
 	List fragments = new ArrayList(5);
-	List components = new ArrayList(5);
-	List configurations = new ArrayList(5);
+	List features = new ArrayList(5);
 	for (int i = 0; i < elements.length; i++) {
 		int index = elements[i].indexOf('@');
 		String type = elements[i].substring(0, index);
@@ -66,11 +63,9 @@ protected List[] sortElements() {
 			plugins.add(element);
 		if (type.equals("fragment")) 
 			fragments.add(element);
-		if (type.equals("component")) 
-			components.add(element);
-		if (type.equals("configuration")) 
-			configurations.add(element);
+		if (type.equals("feature")) 
+			features.add(element);
 	}
-	return new List[] {plugins, fragments, components, configurations};
+	return new List[] {plugins, fragments, features};
 }
 }

@@ -14,10 +14,10 @@ import java.util.Properties;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
-import org.eclipse.core.runtime.model.ComponentModel;
-import org.eclipse.core.runtime.model.ConfigurationModel;
 import org.eclipse.core.runtime.model.PluginDescriptorModel;
 import org.eclipse.core.runtime.model.PluginFragmentModel;
+import org.eclipse.update.core.Feature;
+import org.eclipse.update.core.IPluginEntry;
 /**
  * Used to create a build manifest file describing
  * what plug-ins and versions were included in a
@@ -50,30 +50,20 @@ protected boolean hasMoreElements(String[] entries) {
 		return false;
 	HashSet seen = new HashSet(10);
 	ModelRegistry modelRegistry = new ModelRegistry();
-	modelRegistry.seekComponents(destination);
-	modelRegistry.seekConfigurations(destination);
+	modelRegistry.seekFeatures(destination);
 	for (int i = 0; i < entries.length; i++) {
 		int index = entries[i].indexOf('@');
 		String type = entries[i].substring(0, index);
 		String element = entries[i].substring(index + 1);
-		if (type.equals("component")) {
-			ComponentModel model = modelRegistry.getComponent(element);
-			if (model == null)
+		if (type.equals("feature")) {
+			Feature feature = modelRegistry.getFeature(element);
+			if (feature == null)
 				continue;
-			PluginDescriptorModel[] plugins = model.getPlugins();
-			for (int j = 0; j < plugins.length; j++) 
-				seen.add("plugin@" + plugins[j].getId());
-			PluginFragmentModel[] fragments = model.getFragments();
-			for (int j = 0; j < fragments.length; j++) 
-				seen.add("fragment@" + fragments[j].getId());
-		}
-		if (type.equals("configuration")) {
-			ConfigurationModel model = modelRegistry.getConfiguration(element);
-			if (model == null)
-				continue;
-			ComponentModel[] list = model.getComponents();
-			for (int j = 0; j < list.length; j++)
-				seen.add("component@" + list[j].getId());
+			IPluginEntry[] pluginList = feature.getPluginEntries();
+			for (int j = 0; j < pluginList.length; j++) {
+				IPluginEntry entry = pluginList[j];
+				seen.add((entry.isFragment() ? "fragment@" : "plugin@") + entry.getVersionIdentifier().getIdentifier());
+			}
 		}
 	}
 	if (seen.size() == 0)
