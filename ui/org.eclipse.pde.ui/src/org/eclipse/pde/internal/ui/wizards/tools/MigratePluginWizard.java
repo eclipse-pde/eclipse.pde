@@ -104,7 +104,8 @@ public class MigratePluginWizard extends Wizard {
 		FindReplaceDocumentAdapter findAdapter = new FindReplaceDocumentAdapter(document);
 		addEclipseProcessingInstruction(document, findAdapter);
 		updateExtensions(document, findAdapter);
-		addNewImports(document, findAdapter, getAdditionalImports(model));
+		if (model.getPluginBase().getImports().length > 0)
+			addNewImports(document, findAdapter, getAdditionalImports(model));
 		writeFile(document, file);
 	}
 	
