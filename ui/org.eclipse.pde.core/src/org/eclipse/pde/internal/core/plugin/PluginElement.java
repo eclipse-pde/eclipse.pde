@@ -20,14 +20,19 @@ import org.w3c.dom.*;
 import org.xml.sax.*;
 
 public class PluginElement extends PluginParent implements IPluginElement {
-	private transient ISchemaElement elementInfo;
-	private String text;
 	static final String ATTRIBUTE_SHIFT = "      "; //$NON-NLS-1$
+
 	static final String ELEMENT_SHIFT = "   "; //$NON-NLS-1$
-	private Hashtable attributes = new Hashtable();
+
+	private transient ISchemaElement fElementInfo;
+
+	private String fText;
+
+	private Hashtable fAttributes = new Hashtable();
 
 	public PluginElement() {
 	}
+
 	PluginElement(PluginElement element) {
 		setModel(element.getModel());
 		setParent(element.getParent());
@@ -35,102 +40,116 @@ public class PluginElement extends PluginParent implements IPluginElement {
 		IPluginAttribute[] atts = element.getAttributes();
 		for (int i = 0; i < atts.length; i++) {
 			PluginAttribute att = (PluginAttribute) atts[i];
-			attributes.put(att.getName(), att.clone());
+			fAttributes.put(att.getName(), att.clone());
 		}
-		this.text = element.getText();
-		this.elementInfo = (ISchemaElement)element.getElementInfo();
+		fText = element.getText();
+		fElementInfo = (ISchemaElement) element.getElementInfo();
 	}
-	
+
 	public boolean equals(Object obj) {
-		if (obj==this) return true;
-		if (obj==null) return false;
+		if (obj == this)
+			return true;
+		if (obj == null)
+			return false;
 		if (obj instanceof IPluginElement) {
-			IPluginElement target = (IPluginElement)obj;
+			IPluginElement target = (IPluginElement) obj;
 			if (target.getModel().equals(getModel()))
 				return false;
-			if (target.getAttributeCount()!=getAttributeCount())
+			if (target.getAttributeCount() != getAttributeCount())
 				return false;
-			IPluginAttribute tatts [] = target.getAttributes();
-			for (int i=0; i<tatts.length; i++) {
+			IPluginAttribute tatts[] = target.getAttributes();
+			for (int i = 0; i < tatts.length; i++) {
 				IPluginAttribute tatt = tatts[i];
-				if (tatt.equals(attributes.get(tatt.getName()))==false)
+				if (tatt.equals(fAttributes.get(tatt.getName())) == false)
 					return false;
 			}
 			return super.equals(obj);
-		}	
+		}
 		return false;
 	}
 
 	public IPluginElement createCopy() {
 		return new PluginElement(this);
 	}
+
 	public IPluginAttribute getAttribute(String name) {
-		return (IPluginAttribute) attributes.get(name);
+		return (IPluginAttribute) fAttributes.get(name);
 	}
+
 	public IPluginAttribute[] getAttributes() {
-		Collection values = attributes.values();
+		Collection values = fAttributes.values();
 		IPluginAttribute[] result = new IPluginAttribute[values.size()];
 		return (IPluginAttribute[]) values.toArray(result);
 	}
+
 	public int getAttributeCount() {
-		return attributes.size();
+		return fAttributes.size();
 	}
+
 	public Object getElementInfo() {
-		if (elementInfo != null) {
-			ISchema schema = elementInfo.getSchema();
+		if (fElementInfo != null) {
+			ISchema schema = fElementInfo.getSchema();
 			if (schema.isDisposed()) {
-				elementInfo = null;
+				fElementInfo = null;
 			}
 		}
-		if (elementInfo == null) {
+		if (fElementInfo == null) {
 			IPluginObject parent = getParent();
 			while (parent != null && !(parent instanceof IPluginExtension)) {
 				parent = parent.getParent();
 			}
 			if (parent != null) {
 				PluginExtension extension = (PluginExtension) parent;
-				ISchema schema = (ISchema)extension.getSchema();
+				ISchema schema = (ISchema) extension.getSchema();
 				if (schema != null) {
-					elementInfo = schema.findElement(getName());
+					fElementInfo = schema.findElement(getName());
 				}
 			}
 		}
-		return elementInfo;
+		return fElementInfo;
 	}
+
 	public String getText() {
-		return text;
+		return fText;
 	}
+
 	void load(String tagName, Attributes attributes) {
 		this.name = tagName;
 		for (int i = 0; i < attributes.getLength(); i++) {
-			IPluginAttribute att = getModel().getFactory().createAttribute(this);
-			((PluginAttribute) att).load(attributes.getQName(i), attributes.getValue(i));
-			this.attributes.put(attributes.getQName(i), att);
-		}		
+			PluginAttribute att = (PluginAttribute) getModel().getFactory()
+					.createAttribute(this);
+			att.name = attributes.getQName(i);
+			att.value = attributes.getValue(i);
+			fAttributes.put(attributes.getQName(i), att);
+		}
 	}
-	
+
 	public void reconnect() {
 		super.reconnect();
 		reconnectAttributes();
 	}
+
 	private void reconnectAttributes() {
-		for (Enumeration elements=attributes.elements(); elements.hasMoreElements();) {
-			PluginAttribute att = (PluginAttribute)elements.nextElement();
+		for (Enumeration elements = fAttributes.elements(); elements
+				.hasMoreElements();) {
+			PluginAttribute att = (PluginAttribute) elements.nextElement();
 			att.setModel(getModel());
 			att.setParent(this);
 			att.setInTheModel(true);
 		}
 	}
+
 	void load(Node node, Hashtable lineTable) {
 		this.name = node.getNodeName();
 		NamedNodeMap attributes = node.getAttributes();
 		bindSourceLocation(node, lineTable);
 		for (int i = 0; i < attributes.getLength(); i++) {
 			Node attribute = attributes.item(i);
-			IPluginAttribute att = getModel().getFactory().createAttribute(this);
+			IPluginAttribute att = getModel().getFactory()
+					.createAttribute(this);
 			((PluginAttribute) att).load(attribute, lineTable);
 			((PluginAttribute) att).setInTheModel(true);
-			this.attributes.put(attribute.getNodeName(), att);
+			this.fAttributes.put(attribute.getNodeName(), att);
 		}
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
@@ -142,18 +161,19 @@ public class PluginElement extends PluginParent implements IPluginElement {
 				this.children.add(childElement);
 				childElement.setParent(this);
 				childElement.load(child, lineTable);
-			} else if (
-				child.getNodeType() == Node.TEXT_NODE && child.getNodeValue() != null) {
+			} else if (child.getNodeType() == Node.TEXT_NODE
+					&& child.getNodeValue() != null) {
 				String text = child.getNodeValue();
 				text = text.trim();
 				if (isNotEmpty(text))
-					this.text = text;
+					this.fText = text;
 			}
 		}
 	}
+
 	public void removeAttribute(String name) throws CoreException {
 		ensureModelEditable();
-		PluginAttribute att = (PluginAttribute) attributes.remove(name);
+		PluginAttribute att = (PluginAttribute) fAttributes.remove(name);
 		String oldValue = att.getValue();
 		if (att != null) {
 			att.setInTheModel(false);
@@ -171,35 +191,39 @@ public class PluginElement extends PluginParent implements IPluginElement {
 		if (attribute == null) {
 			attribute = getModel().getFactory().createAttribute(this);
 			attribute.setName(name);
-			attributes.put(name, attribute);
+			fAttributes.put(name, attribute);
 			((PluginAttribute) attribute).setInTheModel(true);
 		}
 		attribute.setValue(value);
 	}
 
 	public void setElementInfo(ISchemaElement newElementInfo) {
-		elementInfo = newElementInfo;
-		if (elementInfo==null) {
-			for (Enumeration atts = attributes.elements(); atts.hasMoreElements();) {
-				PluginAttribute att = (PluginAttribute)atts.nextElement();
+		fElementInfo = newElementInfo;
+		if (fElementInfo == null) {
+			for (Enumeration atts = fAttributes.elements(); atts
+					.hasMoreElements();) {
+				PluginAttribute att = (PluginAttribute) atts.nextElement();
 				att.setAttributeInfo(null);
 			}
 		}
 	}
+
 	public void setText(String newText) throws CoreException {
 		ensureModelEditable();
-		String oldValue = text;
-		text = newText;
-		firePropertyChanged(P_TEXT, oldValue, text);
+		String oldValue = fText;
+		fText = newText;
+		firePropertyChanged(P_TEXT, oldValue, fText);
 
 	}
+
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent);
 		writer.print("<" + getName()); //$NON-NLS-1$
 		String newIndent = indent + ATTRIBUTE_SHIFT;
-		if (attributes.isEmpty() == false) {
+		if (fAttributes.isEmpty() == false) {
 			writer.println();
-			for (Iterator iter = attributes.values().iterator(); iter.hasNext();) {
+			for (Iterator iter = fAttributes.values().iterator(); iter
+					.hasNext();) {
 				IPluginAttribute attribute = (IPluginAttribute) iter.next();
 				attribute.write(newIndent, writer);
 				if (iter.hasNext())

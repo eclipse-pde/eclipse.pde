@@ -18,20 +18,24 @@ import org.xml.sax.helpers.*;
 
 /**
  * @author melhem
- *
+ *  
  */
 public class ExtensionsParser extends DefaultHandler {
-	
+
 	private Vector fExtensions;
+
 	private Vector fExtensionPoints;
-	
+
 	private Stack fOpenElements;
+
 	private Locator fLocator;
+
 	private boolean fIsLegacy = true;
+
 	private ISharedPluginModel fModel;
-	
+
 	/**
-	 * 
+	 *  
 	 */
 	public ExtensionsParser(ISharedPluginModel model) {
 		super();
@@ -39,9 +43,12 @@ public class ExtensionsParser extends DefaultHandler {
 		fExtensions = new Vector();
 		fModel = model;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.xml.sax.helpers.DefaultHandler#processingInstruction(java.lang.String, java.lang.String)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.xml.sax.helpers.DefaultHandler#processingInstruction(java.lang.String,
+	 *      java.lang.String)
 	 */
 	public void processingInstruction(String target, String data)
 			throws SAXException {
@@ -49,11 +56,15 @@ public class ExtensionsParser extends DefaultHandler {
 			fIsLegacy = false;
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String,
+	 *      java.lang.String, java.lang.String, org.xml.sax.Attributes)
 	 */
-	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+	public void startElement(String uri, String localName, String qName,
+			Attributes attributes) throws SAXException {
 		if (fOpenElements == null) {
 			if (qName.equals("plugin") || qName.equals("fragment")) { //$NON-NLS-1$ //$NON-NLS-2$
 				fOpenElements = new Stack();
@@ -63,23 +74,27 @@ public class ExtensionsParser extends DefaultHandler {
 				createExtension(attributes);
 			} else if (qName.equals("extension-point")) { //$NON-NLS-1$
 				createExtensionPoint(attributes);
-			}				
+			}
 		} else {
 			createElement(qName, attributes);
 		}
 	}
-	
+
 	/**
 	 * @param attributes
 	 */
 	private void createExtension(Attributes attributes) {
-		PluginExtension extension = new PluginExtension();
-		if (extension.load(attributes, fLocator.getLineNumber())) {
-			extension.setModel(fModel);
+		PluginExtension extension = (PluginExtension) fModel.getFactory()
+				.createExtension();
+		extension.point = attributes.getValue("point"); //$NON-NLS-1$
+		extension.id = attributes.getValue("id"); //$NON-NLS-1$
+		extension.name = attributes.getValue("name"); //$NON-NLS-1$
+		extension.range = new int[] { fLocator.getLineNumber(),
+				fLocator.getLineNumber() };
+		if (extension.isValid()) {
 			extension.setInTheModel(true);
 			fExtensions.add(extension);
-			String point = extension.getPoint();
-			if ("org.eclipse.pde.core.source".equals(point) || "org.eclipse.core.runtime.products".equals(point)) //$NON-NLS-1$ //$NON-NLS-2$
+			if ("org.eclipse.pde.core.source".equals(extension.point) || "org.eclipse.core.runtime.products".equals(extension.point)) //$NON-NLS-1$ //$NON-NLS-2$
 				fOpenElements.push(extension);
 		}
 	}
@@ -88,17 +103,21 @@ public class ExtensionsParser extends DefaultHandler {
 	 * @param attributes
 	 */
 	private void createExtensionPoint(Attributes attributes) {
-		PluginExtensionPoint extPoint = new PluginExtensionPoint();
-		if (extPoint.load(attributes, fLocator.getLineNumber())) {
-			extPoint.setModel(fModel);
+		PluginExtensionPoint extPoint = (PluginExtensionPoint) fModel
+				.getFactory().createExtensionPoint();
+		extPoint.id = attributes.getValue("id"); //$NON-NLS-1$
+		extPoint.name = attributes.getValue("name"); //$NON-NLS-1$
+		extPoint.schema = attributes.getValue("schema"); //$NON-NLS-1$
+		extPoint.range = new int[] {fLocator.getLineNumber(), fLocator.getLineNumber()};
+		if (extPoint.isValid()) {
 			extPoint.setInTheModel(true);
 			fExtensionPoints.add(extPoint);
 		}
 	}
-	
+
 	private void createElement(String tagName, Attributes attributes) {
 		PluginElement element = new PluginElement();
-		PluginParent parent = (PluginParent)fOpenElements.peek();
+		PluginParent parent = (PluginParent) fOpenElements.peek();
 		element.setParent(parent);
 		element.setInTheModel(true);
 		element.setModel(fModel);
@@ -106,9 +125,12 @@ public class ExtensionsParser extends DefaultHandler {
 		parent.appendChild(element);
 		fOpenElements.push(element);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String,
+	 *      java.lang.String, java.lang.String)
 	 */
 	public void endElement(String uri, String localName, String qName)
 			throws SAXException {
@@ -116,21 +138,23 @@ public class ExtensionsParser extends DefaultHandler {
 			fOpenElements.pop();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.xml.sax.helpers.DefaultHandler#setDocumentLocator(org.xml.sax.Locator)
 	 */
 	public void setDocumentLocator(Locator locator) {
 		fLocator = locator;
 	}
-	
+
 	public boolean isLegacy() {
 		return fIsLegacy;
 	}
-	
+
 	public Vector getExtensions() {
 		return fExtensions;
 	}
-	
+
 	public Vector getExtensionPoints() {
 		return fExtensionPoints;
 	}

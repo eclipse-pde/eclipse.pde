@@ -19,10 +19,9 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.schema.*;
 import org.w3c.dom.*;
-import org.xml.sax.*;
 
 public class PluginExtension extends PluginParent implements IPluginExtension {
-	private String point;
+	protected String point;
 	private transient ISchema schema;
 
 	public PluginExtension() {
@@ -32,7 +31,7 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 	}
 	
 	public boolean isValid() {
-		return point!=null;
+		return point != null;
 	}
 	
 	public Object getSchema() {
@@ -45,17 +44,6 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 		return schema;
 	}
 	
-	boolean load(Attributes attributes, int line) {
-		String point = attributes.getValue("point"); //$NON-NLS-1$
-		if (point == null || point.length() == 0)
-			return false;
-		this.point = point;
-		this.id = attributes.getValue("id"); //$NON-NLS-1$
-		this.name = attributes.getValue("name"); //$NON-NLS-1$
-		range = new int[] {line, line};
-		return true;
-	}
-
 	void load(Node node, Hashtable lineTable) {
 		this.id = getNodeAttribute(node, "id"); //$NON-NLS-1$
 		this.name = getNodeAttribute(node, "name"); //$NON-NLS-1$

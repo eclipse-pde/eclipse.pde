@@ -16,19 +16,15 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.*;
 import org.w3c.dom.*;
-import org.xml.sax.*;
 
 public class PluginExtensionPoint
 	extends IdentifiablePluginObject
 	implements IPluginExtensionPoint {
-	private String schema;
+	protected String schema;
 	static final String ID_SEPARATOR = "."; //$NON-NLS-1$
 
-	public PluginExtensionPoint() {
-	}
-
 	public boolean isValid() {
-		return id != null;
+		return id != null && name != null;
 	}
 
 	public String getFullId() {
@@ -38,25 +34,11 @@ public class PluginExtensionPoint
 			id = ((IFragment) pluginBase).getPluginId();
 		return id + ID_SEPARATOR + getId();
 	}
+	
 	public String getSchema() {
 		return schema;
 	}
 	
-	boolean load(Attributes attributes, int line) {
-		String id = attributes.getValue("id"); //$NON-NLS-1$
-		if (id == null || id.length() == 0)
-			return false;
-		this.id = id;
-		
-		String name = attributes.getValue("name"); //$NON-NLS-1$
-		if (name == null || name.length() == 0)
-			return false;
-		this.name = name;
-		
-		this.schema = attributes.getValue("schema"); //$NON-NLS-1$
-		this.range = new int[] {line, line};
-		return true;
-	}
 	void load(Node node, Hashtable lineTable) {
 		this.id = getNodeAttribute(node, "id"); //$NON-NLS-1$
 		this.name = getNodeAttribute(node, "name"); //$NON-NLS-1$
