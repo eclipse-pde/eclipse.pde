@@ -198,6 +198,7 @@ public void dispose() {
 	taskAlertImage.dispose();
 	super.dispose();
 }
+
 public void initialize(Object input) {
 	IPluginModelBase model = (IPluginModelBase) input;
 	model.addModelChangedListener(this);
@@ -244,6 +245,7 @@ public void resourceChanged(IResourceChangeEvent event) {
 			event.getType()==IResourceChangeEvent.PRE_DELETE) {
 			return;
 		}
+		if (container==null || container.isDisposed()) return;
 
 		DeltaVisitor visitor = new DeltaVisitor(ourProject);
 		IResourceDelta delta = event.getDelta();
