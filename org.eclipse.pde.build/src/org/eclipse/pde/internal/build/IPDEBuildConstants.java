@@ -18,7 +18,6 @@ public interface IPDEBuildConstants {
 
 	/** file names */
 	public final static String PROPERTIES_FILE = "build.properties";
-	public final static String LIBRARY_FILE = "library.xml";
 
 
 	// command line arguments

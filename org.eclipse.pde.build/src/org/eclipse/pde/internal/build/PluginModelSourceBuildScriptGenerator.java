@@ -46,7 +46,6 @@ public void generate() throws CoreException {
 	generate(plugins);
 	PluginModel[] fragments = getRegistry().getFragments();
 	generate(fragments);
-	generateLibrary();
 	generateMainScript(plugins, fragments);
 }
 
@@ -124,17 +123,6 @@ protected void generate(PluginModel model) throws CoreException {
 	}
 }
 
-protected void generateLibrary() throws CoreException {
-	String location = getLibraryLocation();
-	try {
-		URL library = new URL(Platform.getPlugin(PI_PDEBUILD).getDescriptor().getInstallURL(), LIBRARY_FILE);
-		InputStream input = library.openStream();
-		FileOutputStream output = new FileOutputStream(location);
-		transferStreams(input, output);
-	} catch (IOException e) {
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, Policy.bind("exception.writingFile", location), e));
-	}
-}
 
 /**
  * Transfers all available bytes from the given input stream to the given output stream. 
@@ -246,12 +234,6 @@ protected URL[] getPluginPath() throws CoreException {
 	}
 }
 
-protected String getLibraryLocation() throws CoreException {
-	if (sourceLocation == null)
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_SOURCE_LOCATION_MISSING, Policy.bind("error.missingSourceLocation"), null));
-	File file = new File(sourceLocation, LIBRARY_FILE);
-	return file.getAbsolutePath();
-}
 
 protected String getMainScriptLocation() throws CoreException {
 	if (sourceLocation == null)
