@@ -200,10 +200,18 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			extractResources(file, project, false, new SubProgressMonitor(monitor, 1));
 			fBuildModel = new WorkspaceBuildModel(project.getFile("build.properties")); //$NON-NLS-1$
 			IBuild build = fBuildModel.getBuild(true);
-			IBuildEntry entry = fBuildModel.getFactory().createEntry("bin.includes"); //$NON-NLS-1$
-			entry.addToken("*"); //$NON-NLS-1$
-			entry = fBuildModel.getFactory().createEntry("source.."); //$NON-NLS-1$
-			entry.addToken("*"); //$NON-NLS-1$
+			IBuildEntry entry = fBuildModel.getFactory().createEntry("source.."); //$NON-NLS-1$
+			entry.addToken("."); //$NON-NLS-1$
+			build.add(entry);
+			entry = fBuildModel.getFactory().createEntry("bin.includes"); //$NON-NLS-1$
+			entry.addToken("."); //$NON-NLS-1$
+			build.add(entry);
+			entry = fBuildModel.getFactory().createEntry("bin.excludes"); //$NON-NLS-1$
+			entry.addToken("bin/**"); //$NON-NLS-1$
+			entry.addToken("temp.folder/**"); //$NON-NLS-1$
+			entry.addToken(".project"); //$NON-NLS-1$
+			entry.addToken(".classpath"); //$NON-NLS-1$
+			entry.addToken("build.properties"); //$NON-NLS-1$
 			build.add(entry);
 			fBuildModel.save();		
 		} else {
@@ -573,7 +581,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		IJavaProject jProject = JavaCore.create(project);
 		Vector entries = new Vector();
 		if (new File(model.getInstallLocation()).isFile()) {
-			if (fBuildModel != null && fBuildModel.getBuild().getEntry("source..") != null) //$NON-NLS-1$
+			if (project.getFile("build.properties").exists()) //$NON-NLS-1$
 				entries.add(JavaCore.newSourceEntry(project.getFullPath()));
 			else
 				entries.add(JavaCore.newLibraryEntry(project.getFullPath(), getJARdPluginSrcPath(project), null, true));
