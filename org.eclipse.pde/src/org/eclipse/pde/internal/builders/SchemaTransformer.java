@@ -260,10 +260,24 @@ public static final String KEY_DEPRECATED_TYPE =
 		out.println("&gt;</samp>");
 
 		ISchemaAttribute[] attributes = element.getAttributes();
+		String description = element.getDescription();
+
+		if (description!=null && description.trim().length()>0) {
+			out.print("<p>");
+			out.print("&nbsp;&nbsp; ");
+			transformText(out, description);
+			out.println("</p>");
+			if (attributes.length>0)
+				out.println("<p></p>");
+		}		
+		else if (attributes.length>0) {
+			out.print("<br><br>");
+		}
+		
 		if (attributes.length == 0)
 			return;
 
-		out.println("<br><samp>&nbsp;&nbsp; &lt;!ATTLIST " + name + "</samp>");
+		out.println("<samp>&nbsp;&nbsp; &lt;!ATTLIST " + name + "</samp>");
 		int maxWidth = calculateMaxAttributeWidth(element.getAttributes());
 		for (int i = 0; i < attributes.length; i++) {
 			appendAttlist(out, attributes[i], maxWidth);
