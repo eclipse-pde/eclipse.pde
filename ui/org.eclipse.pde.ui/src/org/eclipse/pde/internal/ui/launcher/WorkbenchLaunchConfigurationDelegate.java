@@ -125,6 +125,7 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 		programArgs.add(targetWorkspace);
 		
 		boolean isOSGI = PDECore.getDefault().getModelManager().isOSGiRuntime();
+		boolean showSplash = true;
 		if (configuration.getAttribute(USEFEATURES, false)) {
 			validateFeatures();
 			IPath installPath = PDEPlugin.getWorkspace().getRoot().getLocation();
@@ -142,8 +143,9 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 				
 			String brandingPlugin = LauncherUtils.getBrandingPluginID(configuration);
 			if (isOSGI) {
-				LauncherUtils.createConfigIniFile(configuration,
+				Properties prop = LauncherUtils.createConfigIniFile(configuration,
 						brandingPlugin, pluginMap, getConfigDir(configuration));
+				showSplash = prop.containsKey("osgi.splashPath") || prop.containsKey("splashLocation"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			TargetPlatform.createPlatformConfigurationArea(
 					pluginMap,
@@ -197,7 +199,7 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 			programArgs.add(tokenizer.nextToken());
 		}
 		
-		if (!programArgs.contains("-nosplash")) { //$NON-NLS-1$
+		if (!programArgs.contains("-nosplash") && showSplash) { //$NON-NLS-1$
 			programArgs.add(0, "-showsplash"); //$NON-NLS-1$
 			programArgs.add(1, computeShowsplashArgument());
 		}

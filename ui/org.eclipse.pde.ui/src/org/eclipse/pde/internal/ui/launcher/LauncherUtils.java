@@ -599,13 +599,14 @@ public class LauncherUtils {
 		return null;
 	}
 	
-	public static void createConfigIniFile(ILaunchConfiguration configuration, String brandingID, Map map, File directory) throws CoreException {
+	public static Properties createConfigIniFile(ILaunchConfiguration configuration, String brandingID, Map map, File directory) throws CoreException {
 		Properties properties = new Properties();
 		if (configuration.getAttribute(ILauncherSettings.CONFIG_GENERATE_DEFAULT, true)) {
 			properties.setProperty("osgi.install.area", "file:" + ExternalModelManager.getEclipseHome().toOSString()); //$NON-NLS-1$ //$NON-NLS-2$
 			properties.setProperty("osgi.configuration.cascaded", "false"); //$NON-NLS-1$ //$NON-NLS-2$
 			properties.setProperty("osgi.framework", "org.eclipse.osgi"); //$NON-NLS-1$ //$NON-NLS-2$
-			properties.setProperty("osgi.splashPath", brandingID); //$NON-NLS-1$
+			if (map.containsKey(brandingID))
+				properties.setProperty("osgi.splashPath", brandingID); //$NON-NLS-1$
 			if (map.containsKey("org.eclipse.update.configurator")) { //$NON-NLS-1$
 				properties.setProperty("osgi.bundles", "org.eclipse.core.runtime@2:start,org.eclipse.update.configurator@3:start"); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
@@ -648,6 +649,7 @@ public class LauncherUtils {
 		}
 		setBundleLocations(map, properties);
 		save(new File(directory, "config.ini"), properties); //$NON-NLS-1$
+		return properties;
 	}
 	
 	private static void setBundleLocations(Map map, Properties properties) {
