@@ -48,7 +48,6 @@ public class FileSet {
 	 * Print this fileset to the given Ant script.
 	 * 
 	 * @param script the script to output to
-	 * @param tab the number of tabs to indent
 	 */
 	protected void print(AntScript script) {
 		script.printTab();

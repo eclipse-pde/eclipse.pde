@@ -68,8 +68,6 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	/**
 	 * Constructor FeatureBuildScriptGenerator.
-	 * 
-	 * @param string
 	 */
 	public FeatureBuildScriptGenerator(String featureId, AssemblyInformation informationGathering) throws CoreException {
 		if (featureId == null) {
@@ -249,8 +247,6 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	/**
 	 * Main call for generating the script.
 	 * 
-	 * @param script
-	 *                   the script to add the Ant target to
 	 * @throws CoreException
 	 */
 	private void generateBuildScript() throws CoreException {
@@ -279,8 +275,6 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	/**
 	 * Method generateGatherSource. Used to enable the recursive call of
 	 * gathering the sources for the features
-	 * 
-	 * @param script
 	 */
 	private void generateGatherSourcesTarget() throws CoreException {
 		script.printTargetDeclaration(TARGET_GATHER_SOURCES, null, null, null, null);
@@ -294,8 +288,6 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	/**
 	 * Method generateGatherSource. Used to enable the recursive call of
 	 * gathering the sources for the features
-	 * 
-	 * @param script
 	 */
 	private void generateGatherLogsTarget() {
 		script.println();
@@ -316,8 +308,6 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	/**
 	 * Add the <code>build.zips</code> target to the given Ant script.
 	 * 
-	 * @param script
-	 *                   the script to add the target to
 	 * @throws CoreException
 	 */
 	private void generateBuildZipsTarget() throws CoreException {
@@ -344,12 +334,8 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	/**
 	 * Add a <code>zip</code> target to the given Ant script.
 	 * 
-	 * @param script
-	 *                   the script to add the targets to
-	 * @param zipName
-	 *                   the name of the zip file to create
-	 * @param source
-	 *                   the directory name to read the files from
+	 * @param zipName the name of the zip file to create
+	 * @param source the directory name to read the files from
 	 * @throws CoreException
 	 */
 	private void generateZipIndividualTarget(String zipName, String source) throws CoreException {
@@ -362,8 +348,6 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	/**
 	 * Add the <code>clean</code> target to the given Ant script.
 	 * 
-	 * @param script
-	 *                   the script to add the target to
 	 * @throws CoreException
 	 */
 	private void generateCleanTarget() throws CoreException {
@@ -382,9 +366,6 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	/**
 	 * Add the <code>zip.logs</code> target to the given Ant script.
-	 * 
-	 * @param script
-	 *                   the script to add the target to
 	 */
 	private void generateZipLogsTarget() {
 		script.println();
@@ -404,9 +385,6 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	/**
 	 * Add the <code>zip.sources</code> target to the given Ant script.
-	 * 
-	 * @param script
-	 *                   the script to add the target to
 	 */
 	protected void generateZipSourcesTarget() {
 		script.println();
@@ -426,8 +404,6 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	/**
 	 * Add the <code>gather.bin.parts</code> target to the given Ant script
 	 * 
-	 * @param script
-	 *                   the script to add the target to
 	 * @throws CoreException
 	 */
 	private void generateGatherBinPartsTarget() throws CoreException {
@@ -582,9 +558,6 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	/**
 	 * Add the <code>build.update.jar</code> target to the given script.
-	 * 
-	 * @param script
-	 *                   the script to add the target to
 	 */
 	private void generateBuildUpdateJarTarget() {
 		script.println();
@@ -614,9 +587,6 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	/**
 	 * Add the <code>zip.distribution</code> target to the given Ant script.
 	 * Zip up the whole feature.
-	 * 
-	 * @param script
-	 *                   the script to add the target to
 	 */
 	protected void generateZipDistributionWholeTarget() {
 		script.println();
@@ -638,9 +608,6 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	/**
 	 * Executes a given target in all children's script files.
-	 * 
-	 * @param script
-	 *                   the script to add the target to
 	 */
 	private void generateAllChildrenTarget() {
 		StringBuffer depends = new StringBuffer();
@@ -717,9 +684,6 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	/**
 	 * Just ends the script.
-	 * 
-	 * @param script
-	 *                   the script to end
 	 */
 	private void generateEpilogue() {
 		script.println();
@@ -728,9 +692,6 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	/**
 	 * Defines, the XML declaration, Ant project and init target.
-	 * 
-	 * @param script
-	 *                   the script to annotate
 	 */
 	private void generatePrologue() {
 		script.printProjectDeclaration(feature.getVersionedIdentifier().getIdentifier(), TARGET_BUILD_UPDATE_JAR, "."); //$NON-NLS-1$
@@ -750,7 +711,6 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	}
 
 	/**
-	 * @param generator
 	 * @param models
 	 * @throws CoreException
 	 */
@@ -815,8 +775,6 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 * for the given feature. If no file exists, then an empty properties
 	 * object is returned.
 	 * 
-	 * @param feature
-	 *                   the feature to retrieve the build.properties from
 	 * @return Properties the feature's build.properties
 	 * @throws CoreException
 	 * @see Feature
@@ -831,9 +789,6 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 * Add the <code>children</code> target to the given Ant script.
 	 * Delegates some target call to all-template only if the property
 	 * includeChildren is set.
-	 * 
-	 * @param script
-	 *                   the script to add the target to
 	 */
 	private void generateChildrenTarget() {
 		script.println();
@@ -845,8 +800,6 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	/**
 	 * Add the <code>build.jars</code> target to the given Ant script.
 	 * 
-	 * @param script
-	 *                   the script to add the target to
 	 * @throws CoreException
 	 */
 	private void generateBuildJarsTarget() throws CoreException {
@@ -866,9 +819,6 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	/**
 	 * Add the <code>refresh</code> target to the given Ant script.
-	 * 
-	 * @param script
-	 *                   the script to add the target to
 	 */
 	private void generateRefreshTarget() {
 		script.println();

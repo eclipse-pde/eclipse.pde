@@ -160,7 +160,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 
 	/**
 	 * Indicates the output format of the resulting files. Supports "zip", "antzip", "folder".
-	 * @param outputFormat
+	 * @param output
 	 */
 	public void setOutputFormat(String output) {
 		outputFormat = output;

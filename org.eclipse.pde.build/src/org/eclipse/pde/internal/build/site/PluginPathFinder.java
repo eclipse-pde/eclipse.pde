@@ -13,11 +13,12 @@ package org.eclipse.pde.internal.build.site;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Properties;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 public class PluginPathFinder {
 	public static File[] getLinkFiles(String platformHome) {
-		File file = new File(platformHome + Path.SEPARATOR + "links");
+		File file = new File(platformHome + IPath.SEPARATOR + "links");
 		File[] linkFiles = null;
 		if (file.exists() && file.isDirectory()) {
 			linkFiles = file.listFiles();
@@ -36,8 +37,8 @@ public class PluginPathFinder {
 			String path = properties.getProperty("path");
 			if (path != null) {
 				if (!new Path(path).isAbsolute())
-					path = prefix + Path.SEPARATOR + path;
-				path += Path.SEPARATOR + "eclipse";
+					path = prefix + IPath.SEPARATOR + path;
+				path += IPath.SEPARATOR + "eclipse";
 				if (new File(path).exists()) {
 					return path;
 				}

@@ -179,7 +179,6 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	/**
 	 * Main call for generating the script.
 	 * 
-	 * @param script the script to generate
 	 * @throws CoreException
 	 */
 	private void generateBuildScript() throws CoreException {
@@ -244,7 +243,6 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	/**
 	 * Add the <code>clean</code> target to the given Ant script.
 	 * 
-	 * @param script the script to add the target to
 	 * @throws CoreException
 	 */
 	private void generateCleanTarget() throws CoreException {
@@ -270,7 +268,6 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	/**
 	 * Add the <code>gather.logs</code> target to the given Ant script.
 	 * 
-	 * @param script the script to add the target to
 	 * @throws CoreException
 	 */
 	private void generateGatherLogTarget() throws CoreException {
@@ -295,7 +292,6 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	/**
 	 * 
-	 * @param script
 	 * @param zipName
 	 * @param source
 	 * @throws CoreException
@@ -311,7 +307,6 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	/**
 	 * Add the <code>gather.sources</code> target to the given Ant script.
 	 * 
-	 * @param script the script to add the target to
 	 * @throws CoreException
 	 */
 	private void generateGatherSourcesTarget() throws CoreException {
@@ -343,7 +338,6 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	/**
 	 * Add the <code>gather.bin.parts</code> target to the given Ant script.
 	 * 
-	 * @param script the script to add the target to
 	 * @throws CoreException
 	 */
 	private void generateGatherBinPartsTarget() throws CoreException {
@@ -441,7 +435,6 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	/**
 	 * Add the <code>zip.plugin</code> target to the given Ant script.
 	 * 
-	 * @param script the script to add the target to
 	 * @throws CoreException
 	 */
 	private void generateZipPluginTarget() throws CoreException {
@@ -464,8 +457,6 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	/**
 	 * Add the <code>build.update.jar</code> target to the given Ant script.
-	 * 
-	 * @param script the script to add the target to
 	 */
 	private void generateBuildUpdateJarTarget() {
 		script.println();
@@ -483,8 +474,6 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	/**
 	 * Add the <code>refresh</code> target to the given Ant script.
-	 * 
-	 * @param script the script to add the target to
 	 */
 	private void generateRefreshTarget() throws CoreException {
 		script.println();
@@ -496,8 +485,6 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	/**
 	 * End the script by closing the project element.
-	 * 
-	 * @param script the script to end
 	 */
 	private void generateEpilogue() {
 		script.println();
@@ -506,8 +493,6 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	/**
 	 * Defines, the XML declaration, Ant project and targets init and initTemplate.
-	 * 
-	 * @param script the script to begin
 	 */
 	private void generatePrologue() {
 		script.printProjectDeclaration(model.getUniqueId(), TARGET_BUILD_JARS, DOT); //$NON-NLS-1$
@@ -580,7 +565,6 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	/**
 	 * Add the <code>build.zips</code> target to the given Ant script.
 	 * 
-	 * @param script the script to add the target to
 	 * @throws CoreException
 	 */
 	private void generateBuildZipsTarget() throws CoreException {
@@ -612,8 +596,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	/**
 	 * Add the "build.jars" target to the given Ant script using the specified plug-in model.
 	 * 
-	 * @param script the script to add the target to
-	 * @param model the plug-in model to reference
+	 * @param pluginModel the plug-in model to reference
 	 * @throws CoreException
 	 */
 	private void generateBuildJarsTarget(BundleDescription pluginModel) throws CoreException {

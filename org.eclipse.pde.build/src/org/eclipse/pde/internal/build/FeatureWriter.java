@@ -177,7 +177,7 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 
 	/**
 	 * Method getStringForMatchingRule.
-	 * @param i
+	 * @param ruleNumber
 	 */
 	private String getStringForMatchingRule(int ruleNumber) {
 		switch (ruleNumber) {

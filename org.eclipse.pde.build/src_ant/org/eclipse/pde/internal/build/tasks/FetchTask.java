@@ -63,7 +63,7 @@ public class FetchTask extends Task {
 
 	/**
 	 * 
-	 * @param elements
+	 * @param element
 	 */
 	public void setElements(String element) {
 		try {

@@ -42,7 +42,6 @@ public class Condition {
 	 * Add this Ant condition to the given Ant script.
 	 * 
 	 * @param script the script to add the condition to
-	 * @param tab the number of tabs to use when indenting
 	 */
 	protected void print(AntScript script) {
 		if (type != null) {

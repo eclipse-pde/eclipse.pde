@@ -20,7 +20,6 @@ public interface ITask {
 	 * tab index for indenting.
 	 * 
 	 * @param script the script to print to
-	 * @param tab the index for indenting
 	 */
 	public void print(AntScript script);
 }

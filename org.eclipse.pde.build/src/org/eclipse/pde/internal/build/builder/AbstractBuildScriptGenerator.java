@@ -33,12 +33,8 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 
 	/** The content of the build.properties file associated to the element for which the script is generated */
 	protected Properties buildProperties;
-
 	protected BuildTimeSiteFactory siteFactory;
-
 	private Set compiledElements; //The elements we are compiling
-
-	private HashMap repoVersion;
 
 	abstract protected Properties getBuildProperties() throws CoreException;
 
@@ -61,7 +57,7 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 	/**
 	 * Sets the pluginPath.
 	 * 
-	 * @param pluginPath
+	 * @param path
 	 */
 	public void setPluginPath(String[] path) {
 		pluginPath = path;

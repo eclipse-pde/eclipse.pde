@@ -20,8 +20,6 @@ import org.apache.tools.ant.Task;
 public class PluginVersionReplaceTask extends Task {
 	private static final String PLUGIN = "plugin"; //$NON-NLS-1$
 	private static final String FRAGMENT = "fragment"; //$NON-NLS-1$
-
-	private static final String ID = "id";//$NON-NLS-1$
 	private static final String VERSION = "version";//$NON-NLS-1$
 	private static final String BACKSLASH = "\""; //$NON-NLS-1$
 
@@ -74,6 +72,7 @@ public class PluginVersionReplaceTask extends Task {
 		try {
 			transferStreams(new ByteArrayInputStream(buffer.toString().getBytes()), new FileOutputStream(pluginFilePath));
 		} catch (FileNotFoundException e) {
+			// ignore
 		} catch (IOException e) {
 			throw new BuildException(e);
 		}
@@ -132,10 +131,12 @@ public class PluginVersionReplaceTask extends Task {
 			try {
 				source.close();
 			} catch (IOException e) {
+				// ignore
 			}
 			try {
 				destination.close();
 			} catch (IOException e) {
+				// ignore
 			}
 		}
 	}

@@ -23,12 +23,12 @@ import org.eclipse.update.internal.core.FeatureExecutableFactory;
  * to retrieve plug-ins and features from the CVS repository.
  */
 public class FetchScriptGenerator extends AbstractScriptGenerator {
-	private static final String ELEMENT = "element";
-	private static final String TYPE = "type";
-	private static final String PATH = "path";
-	private static final String PASSWORD = "password";
-	private static final String CVSROOT = "cvsRoot";
-	private static final String TAG = "tag";
+	private static final String ELEMENT = "element"; //$NON-NLS-1$
+	private static final String TYPE = "type"; //$NON-NLS-1$
+	private static final String PATH = "path"; //$NON-NLS-1$
+	private static final String PASSWORD = "password"; //$NON-NLS-1$
+	private static final String CVSROOT = "cvsRoot"; //$NON-NLS-1$
+	private static final String TAG = "tag"; //$NON-NLS-1$
 
 	// flag saying if we want to recursively generate the scripts	
 	protected boolean recursiveGeneration = true;
@@ -82,7 +82,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	public void generate() throws CoreException {
 		mapInfos = processMapFileEntry(element);
 		if (mapInfos == null) {
-			IStatus warning = new Status(IStatus.WARNING, PI_PDEBUILD, WARNING_ELEMENT_NOT_FETCHED, Policy.bind("error.fetchingFailed", element), null);
+			IStatus warning = new Status(IStatus.WARNING, PI_PDEBUILD, WARNING_ELEMENT_NOT_FETCHED, Policy.bind("error.fetchingFailed", element), null); //$NON-NLS-1$
 			BundleHelper.getDefault().getLog().log(warning);
 			return;
 		}
@@ -184,7 +184,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		try {
 			generateFetchEntry(element, false);
 		} catch (CoreException e) {
-			IStatus status = new Status(IStatus.ERROR, PI_PDEBUILD, WARNING_ELEMENT_NOT_FETCHED, Policy.bind("error.fetchingFailed", element), null);
+			IStatus status = new Status(IStatus.ERROR, PI_PDEBUILD, WARNING_ELEMENT_NOT_FETCHED, Policy.bind("error.fetchingFailed", element), null); //$NON-NLS-1$
 			BundleHelper.getDefault().getLog().log(status);
 		}
 		script.printTargetEnd();
@@ -308,7 +308,6 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	 * Helper method to control for what locations a mkdir Ant task was already
 	 * generated so we can reduce replication.
 	 * 
-	 * @param tab
 	 * @param location
 	 */
 	protected void generateMkdirs(String location) {
@@ -320,8 +319,6 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 
 	/**
 	 * 
-	 * @param tab
-	 * @param feature
 	 * @throws CoreException
 	 */
 	protected void generateChildrenFetchScript() throws CoreException {
@@ -351,11 +348,10 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	 * which will retrieve the "feature.xml" file from CVS, and then call the feature object
 	 * constructor from Update.
 	 * 
-	 * @param element the feature to retrieve
+	 * @param elementName the feature to retrieve
 	 * @param cvsRoot the root in CVS
 	 * @param tag the CVS tag
 	 * @param password the CVS password
-	 * @return Feature
 	 * @throws CoreException
 	 */
 	protected void retrieveFeature(String elementName, String cvsRoot, String tag, String password, String path) throws CoreException {

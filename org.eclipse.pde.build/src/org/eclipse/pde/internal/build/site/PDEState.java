@@ -27,8 +27,6 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	protected State state;
 	private long id;
 	private Properties repositoryVersions;
-
-	private ServiceReference converterServiceReference;
 	private HashMap bundleClasspaths;
 
 	protected long getNextId() {
@@ -126,6 +124,9 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		return addBundle(manifest, bundleLocation);
 	}
 
+	/*
+	 * TODO: method is not call locally
+	 */
 	private String findOSGiJars(File bundleLocation) {
 		String eclipseProperies = "eclipse.properties"; //$NON-NLS-1$
 		InputStream manifestStream = null;
@@ -271,8 +272,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	 * This methods return the bundleDescriptions to which imports have been
 	 * bound to.
 	 * 
-	 * @param bundleId
-	 * @param version
+	 * @param root
 	 * @return
 	 */
 	public static BundleDescription[] getImportedBundles(BundleDescription root) {
@@ -292,8 +292,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	 * This methods return the bundleDescriptions to which required bundles
 	 * have been bound to.
 	 * 
-	 * @param bundleId
-	 * @param version
+	 * @param root
 	 * @return
 	 */
 	public static BundleDescription[] getRequiredBundles(BundleDescription root) {

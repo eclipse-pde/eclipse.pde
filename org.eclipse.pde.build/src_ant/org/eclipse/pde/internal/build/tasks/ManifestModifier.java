@@ -20,7 +20,7 @@ import org.apache.tools.ant.Task;
 public class ManifestModifier extends Task {
 	private String manifestLocation;
 	private Map newValues = new HashMap();
-	private static String DELIM = "#|";
+	private static String DELIM = "#|"; //$NON-NLS-1$
 	private Manifest manifest = null;
 
 	/**

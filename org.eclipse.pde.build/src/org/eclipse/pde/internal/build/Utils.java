@@ -223,10 +223,12 @@ public final class Utils implements IPDEBuildConstants {
 			try {
 				source.close();
 			} catch (IOException e) {
+				// ignore
 			}
 			try {
 				destination.close();
 			} catch (IOException e) {
+				// ignore
 			}
 		}
 	}

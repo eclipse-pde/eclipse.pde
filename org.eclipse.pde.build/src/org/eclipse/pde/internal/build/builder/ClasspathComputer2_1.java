@@ -59,7 +59,7 @@ public class ClasspathComputer2_1 implements IClasspathComputer, IPDEBuildConsta
 
 	/**
 	 * Add the specified plugin (including its jars) and its fragments 
-	 * @param model
+	 * @param plugin
 	 * @param classpath
 	 * @param location
 	 * @throws CoreException
@@ -324,7 +324,6 @@ public class ClasspathComputer2_1 implements IClasspathComputer, IPDEBuildConsta
 	 * @param classpath 
 	 * @param baseLocation
 	 * @param pluginChain
-	 * @param considerExport
 	 * @throws CoreException
 	 */
 	private void addPluginAndPrerequisites(BundleDescription target, List classpath, String baseLocation, List pluginChain) throws CoreException {

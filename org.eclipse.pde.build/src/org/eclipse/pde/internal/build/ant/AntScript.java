@@ -56,7 +56,6 @@ public class AntScript {
 	 * Print an <code>antcall</code> task to the script. This calls Ant on the given 
 	 * target which is located within the same build file. 
 	 * 
-	 * @param tab the number of tabs to indent the task
 	 * @param target the target of the ant call
 	 * @param inheritAll <code>true</code> if the parameters should be pass to the
 	 * 	called target
@@ -87,7 +86,6 @@ public class AntScript {
 	 * Print a <code>jar</code> Ant task to this script. This jars together a group of 
 	 * files into a single file.
 	 * 
-	 * @param tab the number of tabs to indent
 	 * @param jarFile the destination file name
 	 * @param basedir the base directory
 	 */
@@ -103,7 +101,6 @@ public class AntScript {
 	 * Print the <code>available</code> Ant task to this script. This task sets a property
 	 * value if the given file exists at runtime.
 	 * 
-	 * @param tab the number of tabs to indent
 	 * @param property the property to set
 	 * @param file the file to look for
 	 */
@@ -119,7 +116,6 @@ public class AntScript {
 	 * Print an <code>ant</code> task to this script. This calls Ant on the specified 
 	 * target contained in the specified Ant file with the given parameters.
 	 * 
-	 * @param tab the number of tabs to indent
 	 * @param antfile the name of the Ant file which contains the target to run
 	 * @param dir the basedir for the target
 	 * @param target the name of the target
@@ -160,7 +156,6 @@ public class AntScript {
 	 * @param filesOnly <code>true</code> if the resulting zip file should contain only files and not directories
 	 * @param update ndicates whether to update or overwrite the destination file if it already exists
 	 * @param fileSets the inclusion/exclusion rules to use when zipping
-	 * @param tab the number of tabs to indent
 	 */
 	public void printZipTask(String zipfile, String basedir, boolean filesOnly, boolean update, FileSet[] fileSets) {
 		printTab();
@@ -187,7 +182,6 @@ public class AntScript {
 	/**
 	 * Print an <code>arg</code> element to the Ant file.
 	 * 
-	 * @param tab the number of tabs to indent
 	 * @param line
 	 */
 	protected void printArg(String line) {
@@ -200,7 +194,6 @@ public class AntScript {
 	/**
 	 * Print the given string to the Ant script.
 	 * 
-	 * @param tab the number of tabs to indent
 	 * @param string the string to write to the file
 	 */
 	public void printString(String string) {
@@ -211,7 +204,6 @@ public class AntScript {
 	/**
 	 * Print the given comment to the Ant script.
 	 * 
-	 * @param tab the number of tabs to indent
 	 * @param comment the comment to write out
 	 */
 	public void printComment(String comment) {
@@ -247,7 +239,6 @@ public class AntScript {
 	 * by the <code>file</code> parameter. The destination directory is specified by 
 	 * the <code>todir</code> parameter. 
 	 * 
-	 * @param tab the number of tabs to indent
 	 * @param file the source file
 	 * @param todir the destination directory
 	 * @param fileSets the inclusion/exclusion rules to use when copying
@@ -275,7 +266,6 @@ public class AntScript {
 	 * Print a <code>copy</code> tak to the script. The source file is specified by
 	 * the <code>file</code> parameter.  The destination file is specified by the
 	 * <code>toFile</code> parameter.
-	 * @param tab the number of tabs to indent
 	 * @param file the source file
 	 * @param toFile the destination file 
 	 */
@@ -293,7 +283,6 @@ public class AntScript {
 	 * or <code>file</code> is required unless some <code>fileSets</code> are
 	 * present.
 	 * 
-	 * @param tab the number of tabs to indent
 	 * @param dir the name of the directory to delete
 	 * @param file the name of the file to delete
 	 * @param fileSets the specification for the files to delete
@@ -319,7 +308,6 @@ public class AntScript {
 	/**
 	 * Print an <code>exec</code> task to the Ant script.
 	 * 
-	 * @param tab the number of tabs to indent
 	 * @param executable the program to execute
 	 * @param dir the working directory for the executable
 	 * @param lineArgs the arguments for the executable
@@ -346,7 +334,6 @@ public class AntScript {
 	/**
 	 * Print a <code>mkdir</code> task to the Ant script.
 	 * 
-	 * @param tab the number of tabs to indent
 	 * @param dir the name of the directory to create.
 	 */
 	public void printMkdirTask(String dir) {
@@ -359,7 +346,6 @@ public class AntScript {
 	/**
 	 * Print an <code>echo</code> task to the Ant script.
 	 * 
-	 * @param tab the number of tabs to indent
 	 * @param message the message to echo to the output
 	 */
 	public void printEchoTask(String message) {
@@ -372,7 +358,6 @@ public class AntScript {
 	/**
 	 * Print a <code>cvs</code> task to the Ant script.
 	 * 
-	 * @param tab the number of tabs to indent
 	 * @param command the CVS command to run
 	 * @param cvsRoot value for the CVSROOT variable
 	 * @param dest the destination directory for the checked out resources
@@ -397,7 +382,6 @@ public class AntScript {
 	/**
 	 * Print a <code>cvspass</code> task to the Ant script.
 	 * 
-	 * @param tab the number of tabs to indent
 	 * @param cvsRoot the name of the repository
 	 * @param password the password
 	 * @param passFile the name of the password file
@@ -414,7 +398,6 @@ public class AntScript {
 	/**
 	 * Print a <code>param</code> tag to the Ant script.
 	 * 
-	 * @param tab the number of tabs to indent
 	 * @param name the parameter name
 	 * @param value the parameter value
 	 */
@@ -453,7 +436,6 @@ public class AntScript {
 	/**
 	 * Print a <code>property</code> tag to the Ant script.
 	 * 
-	 * @param tab the number of tabs to indent
 	 * @param name the property name
 	 * @param value the property value
 	 */
@@ -479,7 +461,6 @@ public class AntScript {
 	/**
 	 * Print a start tag in the Ant script for the given element name.
 	 * 
-	 * @param tab the number of tabs to indent
 	 * @param tag the name of the element
 	 */
 	public void printStartTag(String tag) {
@@ -492,7 +473,6 @@ public class AntScript {
 	/**
 	 * Print an end tag in the Ant script for the given element name.
 	 * 
-	 * @param tab the number of tabs to indent
 	 * @param tag the name of the element
 	 */
 	public void printEndTag(String tag) {
@@ -504,8 +484,6 @@ public class AntScript {
 
 	/**
 	 * Print the given number of tabs to the Ant script.
-	 * 
-	 * @param indent the number of tabs to indent
 	 */
 	protected void printTab() {
 		for (int i = 0; i < indent; i++)
@@ -541,7 +519,6 @@ public class AntScript {
 	/**
 	 * Print the given task to the Ant script.
 	 * 
-	 * @param tab the number of tabs to indent
 	 * @param task the task to print
 	 */
 	public void print(ITask task) {
@@ -551,7 +528,6 @@ public class AntScript {
 	/**
 	 * Print a <code>target</code> tag to the Ant script.
 	 * 
-	 * @param tab the number of tabs to indent
 	 * @param name the name of the target
 	 * @param depends a comma separated list of required targets
 	 * @param ifClause the name of the property that this target depends on
@@ -573,8 +549,6 @@ public class AntScript {
 	/**
 	 * Print a closing <code>target</code> tag to the script. Indent the specified
 	 * number of tabs.
-	 * 
-	 * @param tab the number of tabs to use when indenting
 	 */
 	public void printTargetEnd() {
 		indent--;
@@ -585,7 +559,6 @@ public class AntScript {
 	 * Print a <code>eclipse.refreshLocal</code> task to the script. This task refreshes
 	 * the specified resource in the workspace, to the specified depth. 
 	 * 
-	 * @param tab the number of tabs to use when indenting
 	 * @param resource the resource to refresh
 	 * @param depth one of <code>IResource.DEPTH_ZERO</code>,
 	 *   <code>IResource.DEPTH_ONE</code>, or <code>IResource.DEPTH_INFINITY</code>
@@ -626,7 +599,6 @@ public class AntScript {
 	 * Print a <code> eclipse.convertTask</code> task to the script. This task convert a file path to 
 	 * an Eclipse resource or vice-versa. 
 	 *
-	 * @param tab the number of tabs to use when indenting
 	 * @param toConvert the entry to convert 
 	 * @param propertyName the property where to store the result of the convertion
 	 * @param isEclipseResource true if toConvert refers to an eclipse resource. 

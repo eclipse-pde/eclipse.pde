@@ -168,6 +168,7 @@ public class IdReplaceTask extends Task {
 		try {
 			transferStreams(new ByteArrayInputStream(buffer.toString().getBytes()), new FileOutputStream(featureFilePath));
 		} catch (FileNotFoundException e) {
+			// ignore
 		} catch (IOException e) {
 			throw new BuildException(e);
 		}
@@ -226,10 +227,12 @@ public class IdReplaceTask extends Task {
 			try {
 				source.close();
 			} catch (IOException e) {
+				// ignore
 			}
 			try {
 				destination.close();
 			} catch (IOException e) {
+				// ignore
 			}
 		}
 	}
