@@ -395,8 +395,7 @@ public class ManifestEditor extends MultiSourceEditor {
 		String pref = store.getString(IPreferenceConstants.PROP_SHOW_OBJECTS);
 		if (pref!=null && pref.equals(IPreferenceConstants.VALUE_USE_NAMES))
 			return IPluginBase.P_NAME;
-		else
-			return IPluginBase.P_ID;
+		return IPluginBase.P_ID;
 	}
 	
 	private String getTitleText(IPluginBase pluginBase) {
@@ -404,7 +403,6 @@ public class ManifestEditor extends MultiSourceEditor {
 		String pref = store.getString(IPreferenceConstants.PROP_SHOW_OBJECTS);
 		if (pref!=null && pref.equals(IPreferenceConstants.VALUE_USE_NAMES))
 			return pluginBase.getName();
-		else
-			return pluginBase.getId();
+		return pluginBase.getId();
 	}
 }

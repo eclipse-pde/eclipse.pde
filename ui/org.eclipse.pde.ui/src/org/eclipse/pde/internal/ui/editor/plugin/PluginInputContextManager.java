@@ -93,10 +93,7 @@ public class PluginInputContextManager extends InputContextManager {
 	
 	private IModel findPluginModel() {
 		InputContext pcontext = findContext(PluginInputContext.CONTEXT_ID);
-		if (pcontext!=null)
-			return (IModel)pcontext.getModel();
-		else
-			return null;
+		return (pcontext != null) ? (IModel)pcontext.getModel() : null;
 	}
 
 	private void bundleRemoved(InputContext bundleContext) {

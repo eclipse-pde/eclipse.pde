@@ -256,10 +256,10 @@ public class GeneralInfoSection extends PDESection
 
 				IJavaElement result = javaProject.findElement(new Path(path));
 				return result != null;
-			} else {
-				IResource resource = project.findMember(new Path(path));
-				return resource != null;
-			}
+			} 
+			
+			IResource resource = project.findMember(new Path(path));
+			return resource != null;
 		} catch (JavaModelException e) {
 			return false;
 		} catch (CoreException e) {

@@ -713,10 +713,9 @@ public class ExtensionsSection extends TreeSection
 			fullName = element.getResourceString(fullName);
 			if (fullNames)
 				return fullName != null ? fullName : baseName;
-			else
-				return fullName != null
-						? (fullName + " (" + baseName + ")") //$NON-NLS-1$ //$NON-NLS-2$
-						: baseName;
+			return fullName != null
+					? (fullName + " (" + baseName + ")") //$NON-NLS-1$ //$NON-NLS-2$
+					: baseName;
 		}
 		return obj.toString();
 	}

@@ -57,11 +57,9 @@ public class DependencyAnalysisSection extends PDESection implements IPartSelect
 				return PDEPlugin.getResourceString("DependencyAnalysisSection.plugin.editable");  //$NON-NLS-1$
 			return PDEPlugin.getResourceString("DependencyAnalysisSection.plugin.notEditable"); //$NON-NLS-1$
 		}
-		else {
-			if (editable)
-				return PDEPlugin.getResourceString("DependencyAnalysisSection.fragment.editable");  //$NON-NLS-1$
-			return PDEPlugin.getResourceString("DependencyAnalysisSection.fragment.notEditable"); //$NON-NLS-1$
-		}
+		if (editable)
+			return PDEPlugin.getResourceString("DependencyAnalysisSection.fragment.editable");  //$NON-NLS-1$
+		return PDEPlugin.getResourceString("DependencyAnalysisSection.fragment.notEditable"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

@@ -46,8 +46,7 @@ public abstract class SharedPart {
 		FormToolkit toolkit) {
 		if (toolkit == null)
 			return new Composite(parent, SWT.NULL);
-		else
-			return toolkit.createComposite(parent);
+		return toolkit.createComposite(parent);
 	}
 	protected Label createEmptySpace(
 		Composite parent,

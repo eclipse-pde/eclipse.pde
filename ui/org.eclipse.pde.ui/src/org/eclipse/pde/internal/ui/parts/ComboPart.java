@@ -52,8 +52,7 @@ public class ComboPart {
 	public int getSelectionIndex() {
 		if (combo instanceof Combo)
 			return ((Combo) combo).getSelectionIndex();
-		else
-			return ((CCombo) combo).getSelectionIndex();
+		return ((CCombo) combo).getSelectionIndex();
 	}
 	public void add(String item) {
 		if (combo instanceof Combo)
@@ -70,8 +69,7 @@ public class ComboPart {
 	public String getSelection() {
 		if (combo instanceof Combo)
 			return ((Combo) combo).getItem(getSelectionIndex());
-		else
-			return ((CCombo) combo).getItem(getSelectionIndex());
+		return ((CCombo) combo).getItem(getSelectionIndex());
 	}
 	public void setText(String text) {
 		if (combo instanceof Combo)
