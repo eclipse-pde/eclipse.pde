@@ -59,8 +59,8 @@ public class PluginVersionReplaceTask extends Task {
 
 		//Find the version tag in the plugin header
 		int versionAttr = scan(buffer, startPlugin, VERSION);
-		if (versionAttr > endPlugin)
-			throw new BuildException("Malformed " + (plugin ? "plugin.xml " : "fragment.xml ") + pluginFilePath);
+		if (versionAttr == -1 || versionAttr > endPlugin)
+			return;
 
 		//Extract the version id and replace it
 		int startVersionId = scan(buffer, versionAttr + 1, BACKSLASH);
