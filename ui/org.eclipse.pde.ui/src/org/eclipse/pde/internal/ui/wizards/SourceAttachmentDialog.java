@@ -1,6 +1,5 @@
 package org.eclipse.pde.internal.ui.wizards;
 
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.internal.ui.wizards.IStatusChangeListener;
@@ -28,7 +27,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 			
 			String title = PDEPlugin.getFormattedMessage("SourceAttachmentDialog.title", entry.getPath().toString());
 			setTitle(title);
-			fSourceAttachmentBlock= new SourceAttachmentBlock(ResourcesPlugin.getWorkspace().getRoot(), this, entry);
+			fSourceAttachmentBlock= new SourceAttachmentBlock(this, entry, null, null);
 		}
 		
 		/*
