@@ -19,7 +19,6 @@ import org.eclipse.jdt.core.*;
 
 import java.io.PrintWriter;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
 import org.eclipse.jface.dialogs.MessageDialog;
 
 public class AttributeClassCodeGenerator extends JavaCodeGenerator {
@@ -38,15 +37,18 @@ public class AttributeClassCodeGenerator extends JavaCodeGenerator {
 	private IType expectedInterface;
 	private Vector requiredMethods;
 	private Vector requiredImports;
+	private boolean addToDo = false;
 
 	public AttributeClassCodeGenerator(
 		IJavaProject javaProject,
 		IFolder sourceFolder,
 		String fullyQualifiedClassName,
-		ISchemaAttribute attInfo) {
+		ISchemaAttribute attInfo,
+		boolean addToDo) {
 		super(javaProject.getProject(), sourceFolder, fullyQualifiedClassName);
 		this.attInfo = attInfo;
 		this.javaProject = javaProject;
+		this.addToDo = addToDo;
 		requiredImports = new Vector();
 	}
 	private void addAbstractMethod(IMethod method) throws JavaModelException {
@@ -257,7 +259,7 @@ public class AttributeClassCodeGenerator extends JavaCodeGenerator {
 			writer.println();
 			addImports(writer);
 			writer.println("/**");
-			if (MainPreferencePage.getAddTodo())
+			if (addToDo)
 				writer.println(
 					PDEPlugin.getFormattedMessage(KEY_CLASS_DESC, className));
 			writer.println(" * @see " + expectedType.getElementName());
@@ -270,7 +272,7 @@ public class AttributeClassCodeGenerator extends JavaCodeGenerator {
 					+ interfaceExtending
 					+ " {");
 			writer.println("\t/**");
-			if (MainPreferencePage.getAddTodo())
+			if (addToDo)
 				writer.println(
 					PDEPlugin.getFormattedMessage(KEY_CONST_DESC, className));
 			else
@@ -296,13 +298,13 @@ public class AttributeClassCodeGenerator extends JavaCodeGenerator {
 		writer.println("package " + packageName + ";");
 		writer.println();
 		writer.println("/**");
-		if (MainPreferencePage.getAddTodo())
+		if (addToDo)
 			writer.println(
 				PDEPlugin.getFormattedMessage(KEY_CLASS_DESC, className));
 		writer.println(" */");
 		writer.println("public class " + className + " {");
 		writer.println("\t/**");
-		if (MainPreferencePage.getAddTodo())
+		if (addToDo)
 			writer.println(
 				PDEPlugin.getFormattedMessage(KEY_CONST_DESC, className));
 		writer.println("\t */");
@@ -332,7 +334,7 @@ public class AttributeClassCodeGenerator extends JavaCodeGenerator {
 		String access = isProtected ? "protected" : "public";
 		String returnType = parseSignature(method, method.getReturnType());
 		writer.println("\t/**");
-		if (MainPreferencePage.getAddTodo())
+		if (addToDo)
 			writer.println(
 				PDEPlugin.getFormattedMessage(
 					KEY_METHOD_DESC,

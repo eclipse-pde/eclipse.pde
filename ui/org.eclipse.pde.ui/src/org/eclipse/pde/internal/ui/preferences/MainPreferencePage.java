@@ -33,15 +33,9 @@ public class MainPreferencePage
 	private static final String KEY_USE_IDS = "Preferences.MainPage.useIds";
 	private static final String KEY_USE_FULL_NAMES =
 		"Preferences.MainPage.useFullNames";
-	private static final String KEY_CODE_GENERATION =
-		"Preferences.MainPage.codeGeneration";
-	private static final String KEY_ADD_TODO = 
-		"Preferences.MainPage.addTodo";
-
 
 	private Button useID;
 	private Button useName;
-	private Button addTodo;
 	
 	public MainPreferencePage() {
 		setPreferenceStore(PDEPlugin.getDefault().getPreferenceStore());
@@ -71,21 +65,6 @@ public class MainPreferencePage
 			useName.setSelection(true);
 		}
 		
-		Composite buildArea = new Composite(composite, SWT.NONE);
-		buildArea.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		buildArea.setLayout(layout);
-		
-		group = new Group(composite, SWT.NONE);
-		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		group.setText(PDEPlugin.getResourceString(KEY_CODE_GENERATION));
-		group.setLayout(new GridLayout());
-		
-		addTodo = new Button(group, SWT.CHECK);
-		addTodo.setText(PDEPlugin.getResourceString(KEY_ADD_TODO));
-		addTodo.setSelection(store.getBoolean(PROP_ADD_TODO));
-
 		return composite;		
 	}
 	
@@ -100,11 +79,6 @@ public class MainPreferencePage
 		return store.getString(PROP_SHOW_OBJECTS).equals(VALUE_USE_NAMES);
 	}
 
-	public static boolean getAddTodo() {
-		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-		return store.getString(PROP_ADD_TODO).equals("true");
-	}	
-
 	public boolean performOk() {
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 		if (useID.getSelection()) {
@@ -112,8 +86,6 @@ public class MainPreferencePage
 		} else {
 			store.setValue(PROP_SHOW_OBJECTS, VALUE_USE_NAMES);
 		}
-		store.setValue(PROP_ADD_TODO, addTodo.getSelection()?"true":"false");
-		
 		PDEPlugin.getDefault().savePluginPreferences();
 		return super.performOk();
 	}
@@ -127,7 +99,6 @@ public class MainPreferencePage
 			useID.setSelection(false);
 			useName.setSelection(true);
 		}
-		addTodo.setSelection(store.getDefaultBoolean(PROP_ADD_TODO));
 	}
 
 	/**

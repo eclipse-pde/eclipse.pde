@@ -15,6 +15,7 @@ import java.lang.reflect.*;
 import java.util.ArrayList;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.*;
 import org.eclipse.core.runtime.*;
@@ -40,43 +41,9 @@ import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.core.plugin.*;
 
 public class JavaAttributeWizardPage extends WizardPage {
-	public static final String PAGE_TITLE = "JavaAttributeWizard.title";
-	public static final String DUPLICATION_TITLE =
-		"JavaAttributeWizard.duplication.title";
-	public static final String KEY_GENERATING = "JavaAttributeWizard.generating";
-	public static final String KEY_FINISH = "JavaAttributeWizard.finish";
-	public static final String DUPLICATION_MESSAGE =
-		"JavaAttributeWizard.duplication.message";
-	public static final String PAGE_DESC = "JavaAttributeWizard.desc";
-	public static final String KEY_CONTAINER_SELECTION =
-		"JavaAttributeWizard.containerSelection";
-	public static final String KEY_PACKAGE_SELECTION =
-		"JavaAttributeWizard.packageSelection";
-	public static final String KEY_MISSING_CONTAINER =
-		"JavaAttributeWizard.error.container";
-	public static final String NESTED_TITLE = "JavaAttributeWizard.nested.title";
-	public static final String NESTED_DESC = "JavaAttributeWizard.nested.desc";
-
-	public static final String GENERATE = "JavaAttributeWizard.generate";
-	public static final String GENERATE_CONTAINER_NAME =
-		"JavaAttributeWizard.generate.container";
-	public static final String GENERATE_CONTAINER_BROWSE =
-		"JavaAttributeWizard.generate.container.browse";
-	public static final String GENERATE_PACKAGE_NAME =
-		"JavaAttributeWizard.generate.package";
-	public static final String GENERATE_PACKAGE_BROWSE =
-		"JavaAttributeWizard.generate.package.browse";
-	public static final String GENERATE_CLASS_NAME = "JavaAttributeWizard.generate.class";
-	public static final String GENERATE_OPEN_EDITOR =
-		"JavaAttributeWizard.generate.openEditor";
-
-	public static final String SEARCH = "JavaAttributeWizard.search";
-	public static final String SEARCH_CLASS_NAME = "JavaAttributeWizard.search.className";
-	public static final String SEARCH_CLASS_BROWSE =
-		"JavaAttributeWizard.search.className.browse";
-
-	public static final String KEY_FIND_TYPE = "JavaAttributeWizard.findType";
-	public static final String KEY_FILTER = "JavaAttributeWizard.filter";
+	
+	private static final String ADD_TODO = "JavaAttributeWizard.AddToDo";
+	private static final String OPEN_FILE = "JavaAttributeWizard.openFile";
 	private static final int MAX_WIDTH = 250;
 	private String className;
 	private IProject project;
@@ -100,6 +67,7 @@ public class JavaAttributeWizardPage extends WizardPage {
 	private Text classText;
 
 	private Button openFileButton;
+	private Button addToDoButton;
 
 	private ModifyListener modifyListener;
 
@@ -127,8 +95,8 @@ public class JavaAttributeWizardPage extends WizardPage {
 		this.project = project;
 		this.attInfo = attInfo;
 		this.className = className;
-		setTitle(PDEPlugin.getResourceString(PAGE_TITLE));
-		setDescription(PDEPlugin.getResourceString(PAGE_DESC));
+		setTitle(PDEPlugin.getResourceString("JavaAttributeWizard.title"));
+		setDescription(PDEPlugin.getResourceString("JavaAttributeWizard.desc"));
 		modifyListener = new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				verifyComplete();
@@ -172,6 +140,7 @@ public class JavaAttributeWizardPage extends WizardPage {
 		classLabel.setEnabled(enabled);
 		classText.setEnabled(enabled);
 		openFileButton.setEnabled(enabled);
+		addToDoButton.setEnabled(enabled);
 	}
 
 	private void enableSearchSection(boolean enabled) {
@@ -181,15 +150,8 @@ public class JavaAttributeWizardPage extends WizardPage {
 	}
 
 	private void createSearchSection(Composite parent) {
-
-		//		public void run(IAction action) {
-		//		   Dialog sdialog = new ContainerDialog(searchText.getShell(),
-		//			  null);
-		//		   sdialog.open();
-		//		}
-
 		searchButton = new Button(parent, SWT.RADIO);
-		searchButton.setText(PDEPlugin.getResourceString(SEARCH));
+		searchButton.setText(PDEPlugin.getResourceString("JavaAttributeWizard.search"));
 		searchButton.setSelection(true);
 		searchButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -202,7 +164,7 @@ public class JavaAttributeWizardPage extends WizardPage {
 		searchButton.setLayoutData(gd);
 
 		searchLabel = new Label(parent, SWT.NONE);
-		searchLabel.setText(PDEPlugin.getResourceString(SEARCH_CLASS_NAME));
+		searchLabel.setText(PDEPlugin.getResourceString("JavaAttributeWizard.search.className"));
 		gd = new GridData();
 		gd.horizontalIndent = 25;
 		searchLabel.setLayoutData(gd);
@@ -218,7 +180,7 @@ public class JavaAttributeWizardPage extends WizardPage {
 		searchBrowse = new Button(parent, SWT.PUSH);
 		searchBrowse.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		SWTUtil.setButtonDimensionHint(searchBrowse);
-		searchBrowse.setText(PDEPlugin.getResourceString(SEARCH_CLASS_BROWSE));
+		searchBrowse.setText(PDEPlugin.getResourceString("JavaAttributeWizard.search.className.browse"));
 		searchBrowse.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleFindType(searchText);
@@ -230,7 +192,7 @@ public class JavaAttributeWizardPage extends WizardPage {
 	private void createGenerateSection(Composite parent) {
 
 		generateButton = new Button(parent, SWT.RADIO);
-		generateButton.setText(PDEPlugin.getResourceString(GENERATE));
+		generateButton.setText(PDEPlugin.getResourceString("JavaAttributeWizard.generate"));
 		generateButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				enableGenerateSection(generateButton.getSelection());
@@ -243,7 +205,7 @@ public class JavaAttributeWizardPage extends WizardPage {
 		generateButton.setLayoutData(gd);
 
 		containerLabel = new Label(parent, SWT.NONE);
-		containerLabel.setText(PDEPlugin.getResourceString(GENERATE_CONTAINER_NAME));
+		containerLabel.setText(PDEPlugin.getResourceString("JavaAttributeWizard.generate.container"));
 		gd = new GridData();
 		gd.horizontalIndent = 25;
 		containerLabel.setLayoutData(gd);
@@ -259,7 +221,7 @@ public class JavaAttributeWizardPage extends WizardPage {
 		containerText.addModifyListener(modifyListener);
 
 		containerBrowse = new Button(parent, SWT.PUSH);
-		containerBrowse.setText(PDEPlugin.getResourceString(GENERATE_CONTAINER_BROWSE));
+		containerBrowse.setText(PDEPlugin.getResourceString("JavaAttributeWizard.generate.container.browse"));
 		containerBrowse.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		SWTUtil.setButtonDimensionHint(containerBrowse);
 		containerBrowse.addSelectionListener(new SelectionAdapter() {
@@ -269,7 +231,7 @@ public class JavaAttributeWizardPage extends WizardPage {
 		});
 
 		packageLabel = new Label(parent, SWT.NONE);
-		packageLabel.setText(PDEPlugin.getResourceString(GENERATE_PACKAGE_NAME));
+		packageLabel.setText(PDEPlugin.getResourceString("JavaAttributeWizard.generate.package"));
 		gd = new GridData();
 		gd.horizontalIndent = 25;
 		packageLabel.setLayoutData(gd);
@@ -281,7 +243,7 @@ public class JavaAttributeWizardPage extends WizardPage {
 		packageText.addModifyListener(modifyListener);
 
 		packageBrowse = new Button(parent, SWT.PUSH);
-		packageBrowse.setText(PDEPlugin.getResourceString(GENERATE_PACKAGE_BROWSE));
+		packageBrowse.setText(PDEPlugin.getResourceString("JavaAttributeWizard.generate.package.browse"));
 		packageBrowse.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		SWTUtil.setButtonDimensionHint(packageBrowse);
 		packageBrowse.addSelectionListener(new SelectionAdapter() {
@@ -291,7 +253,7 @@ public class JavaAttributeWizardPage extends WizardPage {
 		});
 
 		classLabel = new Label(parent, SWT.NONE);
-		classLabel.setText(PDEPlugin.getResourceString(GENERATE_CLASS_NAME));
+		classLabel.setText(PDEPlugin.getResourceString("JavaAttributeWizard.generate.class"));
 		gd = new GridData();
 		gd.horizontalIndent = 25;
 		classLabel.setLayoutData(gd);
@@ -309,13 +271,20 @@ public class JavaAttributeWizardPage extends WizardPage {
 		}
 
 		openFileButton = new Button(parent, SWT.CHECK);
-		openFileButton.setText(PDEPlugin.getResourceString(GENERATE_OPEN_EDITOR));
+		openFileButton.setText(PDEPlugin.getResourceString("JavaAttributeWizard.generate.openEditor"));
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 3;
 		gd.horizontalIndent = 25;
 		openFileButton.setLayoutData(gd);
-		openFileButton.setSelection(true);
-
+		openFileButton.setSelection(getDialogSettings().getBoolean(OPEN_FILE));
+		
+		addToDoButton = new Button(parent, SWT.CHECK);
+		addToDoButton.setText(PDEPlugin.getResourceString("JavaAttributeWizard.generate.addToDo"));
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 3;
+		gd.horizontalIndent = 25;
+		addToDoButton.setLayoutData(gd);
+		addToDoButton.setSelection(getDialogSettings().getBoolean(ADD_TODO));
 	}
 
 	private void computeSourceFolders() {
@@ -375,6 +344,10 @@ public class JavaAttributeWizardPage extends WizardPage {
 	}
 
 	public boolean finish() {
+		IDialogSettings settings = getDialogSettings();
+		settings.put(ADD_TODO, addToDoButton.getSelection());
+		settings.put(OPEN_FILE, openFileButton.getSelection());
+		
 		if (searchButton.getSelection()) {
 			className = searchText.getText();
 		} else {
@@ -391,8 +364,8 @@ public class JavaAttributeWizardPage extends WizardPage {
 			boolean ok =
 				MessageDialog.openQuestion(
 					PDEPlugin.getActiveWorkbenchShell(),
-					PDEPlugin.getResourceString(DUPLICATION_TITLE),
-					PDEPlugin.getFormattedMessage(DUPLICATION_MESSAGE, className));
+					PDEPlugin.getResourceString("JavaAttributeWizard.duplication.title"),
+					PDEPlugin.getFormattedMessage("JavaAttributeWizard.duplication.message", className));
 
 			if (!ok)
 				return false;
@@ -407,8 +380,8 @@ public class JavaAttributeWizardPage extends WizardPage {
 				} catch (JavaModelException e) {
 					MessageDialog.openError(
 						searchText.getShell(),
-						PDEPlugin.getResourceString(NESTED_TITLE),
-						PDEPlugin.getFormattedMessage(NESTED_DESC, folderName));
+						PDEPlugin.getResourceString("JavaAttributeWizard.nested.title"),
+						PDEPlugin.getFormattedMessage("JavaAttributeWizard.nested.desc", folderName));
 					throw new InvocationTargetException(e);
 				} catch (Exception e) {
 					PDEPlugin.logException(e);
@@ -432,7 +405,7 @@ public class JavaAttributeWizardPage extends WizardPage {
 		boolean openFile,
 		IProgressMonitor monitor)throws Exception{
 
-		monitor.beginTask(PDEPlugin.getFormattedMessage(KEY_GENERATING, className),11);//IProgressMonitor.UNKNOWN);
+		monitor.beginTask(PDEPlugin.getFormattedMessage("JavaAttributeWizard.generating", className),11);//IProgressMonitor.UNKNOWN);
 		if (folderName.charAt(0) == Path.SEPARATOR)
 			folderName = folderName.substring(1, folderName.length());
 
@@ -441,7 +414,7 @@ public class JavaAttributeWizardPage extends WizardPage {
 		IFolder folder = project.getWorkspace().getRoot().getFolder(path);
 		
 		AttributeClassCodeGenerator generator =
-			new AttributeClassCodeGenerator(javaProject, folder, className, attInfo);
+			new AttributeClassCodeGenerator(javaProject, folder, className, attInfo, addToDoButton.getSelection());
 
 		
 		path = project.getFullPath().append(folderName);
@@ -506,7 +479,7 @@ public class JavaAttributeWizardPage extends WizardPage {
 			}			
 		});
 		dialog.setAllowMultiple(false);
-		dialog.setTitle(PDEPlugin.getResourceString(KEY_CONTAINER_SELECTION));
+		dialog.setTitle(PDEPlugin.getResourceString("JavaAttributeWizard.containerSelection"));
 		int status = dialog.open();
 		if (status == FolderSelectionDialog.OK) {
 			Object[] result = dialog.getResult();
@@ -539,7 +512,7 @@ public class JavaAttributeWizardPage extends WizardPage {
 						0,
 						"");
 			}
-			dialog.setTitle(PDEPlugin.getResourceString(KEY_PACKAGE_SELECTION));
+			dialog.setTitle(PDEPlugin.getResourceString("JavaAttributeWizard.packageSelection"));
 			dialog.setMessage("");
 			int status = dialog.open();
 			if (status == SelectionDialog.OK) {
@@ -575,8 +548,8 @@ public class JavaAttributeWizardPage extends WizardPage {
 					project,
 					IJavaElementSearchConstants.CONSIDER_TYPES,
 					false);
-			dialog.setTitle(PDEPlugin.getResourceString(KEY_FIND_TYPE));
-			dialog.setMessage(PDEPlugin.getResourceString(KEY_FILTER));
+			dialog.setTitle(PDEPlugin.getResourceString("JavaAttributeWizard.findType"));
+			dialog.setMessage(PDEPlugin.getResourceString("JavaAttributeWizard.filter"));
 			int status = dialog.open();
 			//ensure re-indexing does not reset selection
 			searchButton.setSelection(initSearchSelect);
@@ -626,7 +599,7 @@ public class JavaAttributeWizardPage extends WizardPage {
 		if (errorMessage == null
 			&& !searchButton.getSelection()
 			&& containerText.getText().length() == 0)
-			errorMessage = PDEPlugin.getResourceString(KEY_MISSING_CONTAINER);
+			errorMessage = PDEPlugin.getResourceString("JavaAttributeWizard.error.container");
 
 		if (errorMessage != null)
 			setErrorMessage(errorMessage);
