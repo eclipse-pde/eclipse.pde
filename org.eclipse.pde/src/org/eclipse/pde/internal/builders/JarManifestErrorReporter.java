@@ -332,6 +332,12 @@ public class JarManifestErrorReporter {
 		report(msg, getLine(header, key + "="), CompilerFlags.ERROR); //$NON-NLS-1$
 	}
 
+	protected void reportIllegalValue(IHeader header) {
+		String msg = PDE.getFormattedMessage(
+				"BundleErrorReporter.illegal-value", header.getValue()); //$NON-NLS-1$
+		report(msg, getLine(header, header.getValue()), CompilerFlags.ERROR); //$NON-NLS-1$
+	}
+
 	protected void reportIllegalDirectiveValue(IHeader header, String key,
 			String value) {
 		String msg = PDE.getFormattedMessage(
@@ -362,6 +368,10 @@ public class JarManifestErrorReporter {
 			ManifestElement element, String key) {
 		validateDirectiveValue(header, element, key, BOOLEAN_VALUES);
 	}
+	
+	protected void validateBooleanValue(IHeader header){
+		validateHeaderValue(header, BOOLEAN_VALUES);
+	}
 
 	public void validateContent(IProgressMonitor monitor) {
 		removeFileMarkers();
@@ -384,4 +394,17 @@ public class JarManifestErrorReporter {
 		}
 		reportIllegalDirectiveValue(header, key, value);
 	}
+	
+	protected void validateHeaderValue(IHeader header, String[] allowedValues) {
+		if (header.getValue() == null) {
+			return;
+		}
+		for (int i = 0; i < allowedValues.length; i++) {
+			if (allowedValues[i].equals(header.getValue())) {
+				return;
+			}
+		}
+		reportIllegalValue(header);
+	}
+
 }
