@@ -157,7 +157,7 @@ public abstract class InputContextManager implements IResourceChangeListener {
 							asyncStructureChanged((IFile)resource, false);
 						return false;
 					}
-					else return true;
+					return true;
 				}
 			});
 		} catch (CoreException e) {
@@ -166,6 +166,8 @@ public abstract class InputContextManager implements IResourceChangeListener {
 	}
 	
 	private void asyncStructureChanged(final IFile file, final boolean added) {
+		if (editor == null || editor.getEditorSite() == null)
+			return;
 		editor.getEditorSite().getShell().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				structureChanged(file, added);
