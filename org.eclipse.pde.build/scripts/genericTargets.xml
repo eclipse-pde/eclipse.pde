@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project name="Generic Build Targets" default="noDefault">
 
 <!-- Properties that must be passed to this script:

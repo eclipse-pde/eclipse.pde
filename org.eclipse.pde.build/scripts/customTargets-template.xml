@@ -12,8 +12,8 @@
 <!-- ===================================================================== -->
 <target name="allElements">
 	<ant antfile="${genericTargets}" target="${target}" >
-		<property name="type" value="<feature | plugin | fragment>" />
-		<property name="id" value="<element.id>" />
+		<property name="type" value="&lt;feature | plugin | fragment&gt;" />
+		<property name="id" value="&lt;element.id&gt;" />
 	</ant>
 </target>
 
@@ -24,7 +24,7 @@
 <!-- Add one target for each root element and each configuration -->
 <!-- ===================================================================== -->
 
-<target name="assemble.<element.id>[.config.spec]">
+<target name="assemble.&lt;element.id&gt;[.config.spec]">
 	<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 </target>
 
@@ -34,10 +34,10 @@
 <!-- ===================================================================== -->
 <target name="getMapFiles">
 	<!-- Notify recipients that build has started.-->
-	<property name="cvsRoot" value="<cvs repo locator and login info>" />
+	<property name="cvsRoot" value="&lt;cvs repo locator and login info&gt;" />
 	<property name="mapVersionTag" value="HEAD" />
 	<cvs 
-		package="<repo location of map files>"
+		package="&lt;repo location of map files&gt;"
 		dest="${buildDirectory}/maps"
 		tag="${mapVersionTag}"	/>
 </target>
