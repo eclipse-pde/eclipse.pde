@@ -474,6 +474,7 @@ public class ExternalModelManager {
 				char c2 = path.charAt(i + 2);
 				if (c1 == '2' && c2 == '0') {
 					i += 2;
+					buf.append(" ");
 					continue;
 				}
 			}
