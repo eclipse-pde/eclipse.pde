@@ -3,16 +3,22 @@ package org.eclipse.pde.internal.ui.wizards.imports;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
+import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
@@ -151,7 +157,9 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		selected.clear();
 		Object[] wModels = tablePart.getSelection();
 		for (int i = 0; i < wModels.length; i++) {
-			addDependencies((IPluginModelBase)wModels[i], true);
+			IPluginModelBase model = (IPluginModelBase)wModels[i];
+			addDependencies(model, true);
+			addExtraPrerequisites(model);
 		}
 		removeCheckedModels();
 		return super.getModelsToImport();
@@ -174,6 +182,39 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		setPageComplete(visible && tablePart.getSelectionCount() > 0);
+	}
+	
+	private void addExtraPrerequisites(IPluginModelBase model) {
+		try {
+			IBuildModel buildModel = model.getBuildModel();
+			if (buildModel == null) {
+				IFile buildFile = model.getUnderlyingResource().getProject().getFile("build.properties");
+				if (buildFile.exists()) {
+					buildModel = new WorkspaceBuildModel(buildFile);
+					buildModel.load();
+				}
+			}
+			if (buildModel == null)
+				return;
+				
+			IBuildEntry entry = buildModel.getBuild().getEntry("jars.extra.classpath");
+			if (entry == null)
+				return;
+				
+			String[] tokens = entry.getTokens();
+			for (int i = 0; i < tokens.length; i++) {
+				Path path = new Path(tokens[i]);
+				if (path.segmentCount() >= 2 && path.segment(0).equals("..")) {
+					for (int j = 0; j < models.length; j++) {
+						if (models[j].getPluginBase().getId().equals(path.segment(1))
+							&& !selected.contains(models[j])) {
+							selected.add(models[j]);
+						}
+					}
+				}
+			}
+		} catch (CoreException e) {
+		}
 	}
 
 }
