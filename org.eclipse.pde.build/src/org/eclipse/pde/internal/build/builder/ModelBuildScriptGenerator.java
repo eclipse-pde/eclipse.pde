@@ -662,7 +662,6 @@ public abstract class ModelBuildScriptGenerator extends AbstractBuildScriptGener
 	/**
 	 * Add the "src" target to the given Ant script.
 	 * 
-	 * @param script the script to add the target to
 	 * @param jar
 	 * @throws CoreException
 	 */
@@ -672,13 +671,29 @@ public abstract class ModelBuildScriptGenerator extends AbstractBuildScriptGener
 		String srcName = getSRCName(name);
 		script.printTargetDeclaration(srcName, TARGET_INIT, null, srcName, null);
 		String[] sources = jar.getSource();
+		filterNonExistingSourceFolders(sources);
 		FileSet[] fileSets = new FileSet[sources.length];
-		for (int i = 0; i < sources.length; i++)
-			fileSets[i] = new FileSet(sources[i], null, "**/*.java", null, null, null, null); //$NON-NLS-1$
-		String srcLocation = getSRCLocation(name);
-		script.printMkdirTask(new Path(srcLocation).removeLastSegments(1).toString());
-		script.printZipTask(srcLocation, null, false, fileSets);
+		int count = 0;
+		for (int i = 0; i < sources.length; i++) {
+			if (sources[i] != null)
+				fileSets[count++] = new FileSet(sources[i], null, "**/*.java", null, null, null, null); //$NON-NLS-1$
+		}
+
+			String srcLocation = getSRCLocation(name);
+			script.printMkdirTask(new Path(srcLocation).removeLastSegments(1).toString());
+
+		if (count!=0)			
+			script.printZipTask(srcLocation, null, false, fileSets);
+
 		script.printTargetEnd();
+	}
+
+	private void filterNonExistingSourceFolders(String[] sources) {
+		File pluginRoot = new File(model.getLocation());
+		for (int i = 0; i < sources.length; i++) {
+			if (! new File(pluginRoot, sources[i]).exists())
+				sources[i] = null;
+		}
 	}
 
 	/**

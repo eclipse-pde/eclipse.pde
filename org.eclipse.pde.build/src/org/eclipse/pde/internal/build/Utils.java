@@ -207,14 +207,6 @@ public final class Utils implements IPDEBuildConstants {
 		return computeNodeOrder(prereqArray);
 	}
 
-	private static String[] insertFragments(String[] orderedPlugins, PluginModel[] fragments) {
-		List sortedPluginList = new ArrayList(Arrays.asList(orderedPlugins));
-		for (int i = 0; i < fragments.length; i++) {
-			int index = sortedPluginList.indexOf(fragments[i].getPluginId()) + 1;
-			sortedPluginList.add(index, ((PluginFragmentModel) fragments[i]).getId());
-		}
-		return (String[]) sortedPluginList.toArray(new String[sortedPluginList.size()]);
-	}
 	/**
 	 * 
 	 * @param specs

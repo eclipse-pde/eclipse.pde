@@ -168,13 +168,15 @@ public class AntScript {
 		printAttribute("zipfile", zipfile, true); //$NON-NLS-1$
 		printAttribute("basedir", basedir, false); //$NON-NLS-1$
 		printAttribute("filesonly", filesOnly ? "true" : "false", true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		printAttribute("whenempty", "skip", true);  //$NON-NLS-1$//$NON-NLS-2$
 		if (fileSets == null)
 			output.println("/>"); //$NON-NLS-1$
 		else {
 			output.println(">"); //$NON-NLS-1$
 			indent++;
 			for (int i = 0; i < fileSets.length; i++)
-				fileSets[i].print(this);
+				if (fileSets[i]!= null)
+					fileSets[i].print(this);
 			indent--;
 			printTab();
 			output.println("</zip>"); //$NON-NLS-1$
