@@ -52,14 +52,21 @@ public class ExtensionSection
 		IPluginExtensionPoint pointInfo =
 			PDECore.getDefault().findExtensionPoint(point);
 		Label imageLabel = factory.createLabel(extensionParent, "");
-
 		String name = point;
-		if (pointInfo != null && MainPreferencePage.isFullNameModeEnabled())
-			name = pointInfo.getResourceString(pointInfo.getName());
+		String tooltip = point;
+
+		if (pointInfo != null) {
+			String translatedName = pointInfo.getTranslatedName();
+			if (MainPreferencePage.isFullNameModeEnabled())
+				name = translatedName;
+			else
+				tooltip = translatedName;
+		}
+
 		SelectableFormLabel hyperlink =
 			factory.createSelectableLabel(extensionParent, name);
 		factory.turnIntoHyperlink(hyperlink, this);
-		hyperlink.setToolTipText(point);
+		hyperlink.setToolTipText(tooltip);
 		hyperlink.setData(extension);
 		imageLabel.setImage(extensionImage);
 	}

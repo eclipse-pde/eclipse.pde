@@ -48,12 +48,16 @@ public class ExtensionPointSection
 	private void addExtensionPointLink(IPluginExtensionPoint point) {
 		Label imageLabel = factory.createLabel(pointParent, "");
 		String name = point.getId();
+		String tooltip = name;
+
 		if (MainPreferencePage.isFullNameModeEnabled())
 			name = point.getTranslatedName();
+		else
+			tooltip = point.getTranslatedName();
 		SelectableFormLabel hyperlink =
 			factory.createSelectableLabel(pointParent, name);
 		factory.turnIntoHyperlink(hyperlink, this);
-		hyperlink.setToolTipText(point.getId());
+		hyperlink.setToolTipText(tooltip);
 		PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
 		Image image = provider.get(PDEPluginImages.DESC_EXT_POINT_OBJ);
 		imageLabel.setImage(image);

@@ -39,7 +39,7 @@ public MainPreferencePage() {
 private static void initializeDefaults() {
 	IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 	store.setDefault(PROP_NO_PDE_NATURE, true);
-	store.setDefault(PROP_SHOW_OBJECTS, VALUE_USE_NAMES);
+	store.setDefault(PROP_SHOW_OBJECTS, VALUE_USE_IDS);
 	store.setDefault(PROP_BUILD_SCRIPT_NAME, "build.xml");
 }
 

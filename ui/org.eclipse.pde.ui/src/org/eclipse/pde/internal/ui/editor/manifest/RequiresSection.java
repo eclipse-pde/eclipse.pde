@@ -52,9 +52,15 @@ public class RequiresSection
 		String pluginId = importObject.getId();
 		IPlugin refPlugin = PDECore.getDefault().findPlugin(pluginId);
 		String name = pluginId;
+		String tooltip = pluginId;
 
-		if (refPlugin != null && MainPreferencePage.isFullNameModeEnabled())
-			name = refPlugin.getTranslatedName();
+		if (refPlugin != null) {
+			String translatedName = refPlugin.getTranslatedName();
+			if (MainPreferencePage.isFullNameModeEnabled())
+				name = translatedName;
+			else
+				tooltip = translatedName;
+		}
 
 		int flags = 0;
 		if (refPlugin == null)
@@ -69,7 +75,7 @@ public class RequiresSection
 			SelectableFormLabel hyperlink =
 				factory.createSelectableLabel(requiresParent, name);
 			factory.turnIntoHyperlink(hyperlink, this);
-			hyperlink.setToolTipText(pluginId);
+			hyperlink.setToolTipText(tooltip);
 			hyperlink.setData(refPlugin);
 		} else {
 			factory.createLabel(requiresParent, name);
