@@ -353,37 +353,36 @@ public class ManifestEditor
 		return null;
 	}
 
-	public static ManifestEditor openPluginEditor(String pluginId) {
-		return openPluginEditor(pluginId, null);
+	public static void openPluginEditor(String pluginId) {
+		openPluginEditor(pluginId, null);
 	}
 
-	public static ManifestEditor openPluginEditor(
+	public static void openPluginEditor(
 		String pluginId,
 		Object object) {
 		IPlugin pluginToOpen = PDECore.getDefault().findPlugin(pluginId);
 		if (pluginToOpen != null) {
-			return openPluginEditor(pluginToOpen, object);
+			openPluginEditor(pluginToOpen, object);
 		} else {
 			Display.getCurrent().beep();
 		}
-		return null;
 	}
 
-	public static ManifestEditor openPluginEditor(IPluginBase plugin) {
-		return openPluginEditor(plugin, null);
+	public static void openPluginEditor(IPluginBase plugin) {
+		openPluginEditor(plugin, null);
 	}
 	
-	public static ManifestEditor openPluginEditor(
+	public static void openPluginEditor(
 		IPluginBase plugin,
 		Object object) {
-		return openPluginEditor(plugin, object, null);
+		openPluginEditor(plugin, object, null);
 	}
 
-	public static ManifestEditor openPluginEditor(
+	public static void openPluginEditor(
 		IPluginBase plugin,
 		Object object,
 		IMarker marker) {
-		ManifestEditor editor = null;
+		IEditorPart editor = null;
 		IResource underlyingResource =
 			plugin.getModel().getUnderlyingResource();
 		if (underlyingResource == null) {
@@ -391,17 +390,16 @@ public class ManifestEditor
 		} else {
 			editor = openWorkspacePlugin((IFile) underlyingResource, plugin instanceof IFragment);
 		}
-		if (editor != null && object != null) {
-			editor.openTo(object, marker);
+		if (editor instanceof ManifestEditor && editor != null && object != null ) {
+			((ManifestEditor)editor).openTo(object, marker);
 		}
-		return editor;
 	}
 
-	private static ManifestEditor openWorkspacePlugin(IFile pluginFile, boolean fragment) {
+	private static IEditorPart openWorkspacePlugin(IFile pluginFile, boolean fragment) {
 		String editorId = fragment ? PDEPlugin.FRAGMENT_EDITOR_ID:PDEPlugin.MANIFEST_EDITOR_ID;
 		try {
 			FileEditorInput input = new FileEditorInput(pluginFile);
-			return (ManifestEditor) PDEPlugin.getActivePage().openEditor(
+			return PDEPlugin.getActivePage().openEditor(
 				input,
 				editorId);
 		} catch (PartInitException e) {
