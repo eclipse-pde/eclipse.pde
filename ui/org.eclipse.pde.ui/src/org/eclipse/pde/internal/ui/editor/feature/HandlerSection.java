@@ -202,4 +202,10 @@ public class HandlerSection extends PDESection {
 		}
 		super.refresh();
 	}
+	public void cancelEdit() {
+		urlText.cancelEdit();
+		libraryText.cancelEdit();
+		handlerText.cancelEdit();
+		super.cancelEdit();
+	}
 }

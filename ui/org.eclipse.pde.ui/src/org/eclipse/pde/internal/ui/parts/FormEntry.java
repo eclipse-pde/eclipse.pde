@@ -175,6 +175,9 @@ public class FormEntry {
 		}
 		dirty = false;
 	}
+	public void cancelEdit() {
+		dirty = false;
+	}
 	private void editOccured(ModifyEvent e) {
 		if (ignoreModify)
 			return;

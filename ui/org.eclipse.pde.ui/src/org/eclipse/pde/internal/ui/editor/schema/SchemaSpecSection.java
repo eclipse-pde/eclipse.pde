@@ -42,6 +42,13 @@ public class SchemaSpecSection extends PDESection {
 		nameText.commit();
 		super.commit(onSave);
 	}
+	
+	public void cancelEdit() {
+		pluginText.cancelEdit();
+		pointText.cancelEdit();
+		nameText.cancelEdit();
+		super.cancelEdit();
+	}
 	public void createClient(Section section, FormToolkit toolkit) {
 		Composite container = toolkit.createComposite(section);
 		GridLayout layout = new GridLayout();

@@ -139,6 +139,11 @@ public class DescriptionSection extends PDESection {
 				.getDescription().getText() : null);
 		super.refresh();
 	}
+	public void cancelEdit() {
+		fURLEntry.cancelEdit();
+		fDescEntry.cancelEdit();
+		super.cancelEdit();
+	}
 	/**
 	 * @see org.eclipse.update.ui.forms.internal.FormSection#canPaste(Clipboard)
 	 */

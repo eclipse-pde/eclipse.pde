@@ -43,4 +43,7 @@ public abstract class PDEDetails extends AbstractFormPart implements IDetailsPag
 		gd.horizontalSpan = span;
 		spacer.setLayoutData(gd);
 	}
+	public void cancelEdit() {
+		super.refresh();
+	}
 }

@@ -46,7 +46,7 @@ public abstract class InputContext {
 		}
 		public void elementContentReplaced(Object element) {
 			doRevert();
-			editor.fireSaveNeeded(input, true);
+			//editor.fireSaveNeeded(input, true);
 		}
 		public void elementDeleted(Object element) {
 		}
@@ -321,9 +321,11 @@ public abstract class InputContext {
 	public void doRevert() {
 		mustSynchronize=true;
 		synchronizeModelIfNeeded();
+		/*
 		if (model instanceof IEditable) {
 			((IEditable)model).setDirty(false);
 		}
+		*/
 	}
 
 	public boolean isInSourceMode() {

@@ -282,6 +282,13 @@ public class ExtensionPointDetails extends PDEDetails {
 				.getSchema() : "", true);
 		updateRichText();
 	}
+	public void cancelEdit() {
+		fIdEntry.cancelEdit();
+		fNameEntry.cancelEdit();
+		fSchemaEntry.cancelEdit();
+		updateRichText();
+		super.cancelEdit();
+	}
 	private void updateRichText() {
 		boolean hasSchema = fSchemaEntry.getValue().length() > 0;
 		if (hasSchema && fRichTextData == SCHEMA_RTEXT_DATA)

@@ -160,4 +160,12 @@ public abstract class PDEFormPage extends FormPage {
 		}
 		return false;
 	}	
+	public void cancelEdit() {
+		IFormPart [] parts = getManagedForm().getParts();
+		for (int i=0; i<parts.length; i++) {
+			IFormPart part = parts[i];
+			if (part instanceof IContextPart)
+				((IContextPart)part).cancelEdit();
+		}
+	}
 }

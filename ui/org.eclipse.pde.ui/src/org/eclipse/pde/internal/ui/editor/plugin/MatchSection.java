@@ -88,6 +88,10 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 		}
 		super.commit(onSave);
 	}
+	public void cancelEdit() {
+		versionText.cancelEdit();
+		super.cancelEdit();
+	}
 	public void createClient(Section section, FormToolkit toolkit) {
 		//toolkit.createCompositeSeparator(section);
 		Composite container = toolkit.createComposite(section);

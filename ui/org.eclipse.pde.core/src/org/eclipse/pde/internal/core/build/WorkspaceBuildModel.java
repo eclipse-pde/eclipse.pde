@@ -26,7 +26,7 @@ public WorkspaceBuildModel(IFile file) {
 	setFile(file);
 }
 public void fireModelChanged(IModelChangedEvent event) {
-	dirty = true;
+	setDirty(event.getChangeType() != IModelChangedEvent.WORLD_CHANGED);
 	super.fireModelChanged(event);
 }
 public String getContents() {

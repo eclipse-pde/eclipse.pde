@@ -414,6 +414,18 @@ public class GeneralInfoSection extends PDESection
 		}
 		super.refresh();
 	}
+	public void cancelEdit() {
+		fIdEntry.cancelEdit();
+		fNameEntry.cancelEdit();
+		fVersionEntry.cancelEdit();
+		fProviderEntry.cancelEdit();
+		if (isFragment()) {
+			fPluginVersionEntry.cancelEdit();
+		} else {
+			fClassEntry.cancelEdit();
+		}
+		super.cancelEdit();
+	}
 	public void dispose() {
 		IBaseModel model = getPage().getModel();
 		if (model instanceof IModelChangeProvider)

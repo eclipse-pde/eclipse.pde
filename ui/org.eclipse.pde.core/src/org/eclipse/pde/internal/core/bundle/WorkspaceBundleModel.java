@@ -27,7 +27,7 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 		setFile(file);
 	}
 	public void fireModelChanged(IModelChangedEvent event) {
-		dirty = true;
+		setDirty(event.getChangeType() != IModelChangedEvent.WORLD_CHANGED);
 		super.fireModelChanged(event);
 	}
 	public String getContents() {

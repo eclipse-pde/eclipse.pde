@@ -19,4 +19,5 @@ public interface IContextPart extends IModelChangedListener {
 	PDEFormPage getPage();
 	String getContextId();
 	void fireSaveNeeded();
+	void cancelEdit();
 }

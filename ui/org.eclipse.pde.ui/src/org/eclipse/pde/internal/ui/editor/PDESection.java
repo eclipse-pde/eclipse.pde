@@ -67,4 +67,7 @@ public abstract class PDESection extends SectionPart implements IModelChangedLis
 	public boolean canPaste(Clipboard clipboard) {
 		return false;
 	}
+	public void cancelEdit() {
+		super.refresh();
+	}
 }

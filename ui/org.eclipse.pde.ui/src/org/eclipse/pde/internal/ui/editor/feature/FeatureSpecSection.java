@@ -425,6 +425,15 @@ public class FeatureSpecSection extends PDESection {
 		super.refresh();
 		blockNotification=false;
 	}
+	public void cancelEdit() {
+		idText.cancelEdit();
+		titleText.cancelEdit();
+		versionText.cancelEdit();
+		providerText.cancelEdit();
+		pluginText.cancelEdit();
+		imageText.cancelEdit();
+		super.cancelEdit();
+	}
 	/**
 	 * @see org.eclipse.update.ui.forms.internal.FormSection#canPaste(Clipboard)
 	 */

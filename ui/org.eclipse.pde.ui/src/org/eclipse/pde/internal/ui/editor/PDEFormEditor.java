@@ -231,14 +231,19 @@ public abstract class PDEFormEditor extends FormEditor
 		editorDirtyStateChanged();
 	}
 	public void doRevert() {
+		IFormPage currentPage = getActivePageInstance();
+		if (currentPage!=null && currentPage instanceof PDEFormPage) 
+			((PDEFormPage)currentPage).cancelEdit();
 		IFormPage[] pages = getPages();
 		for (int i = 0; i < pages.length; i++) {
 			if (pages[i] instanceof PDESourcePage) {
 				PDESourcePage page = (PDESourcePage) pages[i];
 				page.doRevertToSaved();
+				/*
 				InputContext context = inputContextManager.findContext(page
 						.getId());
 				context.doRevert();
+				*/
 			}
 		}
 		editorDirtyStateChanged();

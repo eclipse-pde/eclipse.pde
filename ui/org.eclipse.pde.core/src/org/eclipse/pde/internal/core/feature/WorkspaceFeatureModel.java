@@ -36,8 +36,7 @@ public class WorkspaceFeatureModel extends AbstractFeatureModel
 		setFile(file);
 	}
 	public void fireModelChanged(IModelChangedEvent event) {
-		if (event.getChangeType() != IModelChangedEvent.WORLD_CHANGED)
-			setDirty(true);
+		setDirty(event.getChangeType() != IModelChangedEvent.WORLD_CHANGED);
 		super.fireModelChanged(event);
 	}
 

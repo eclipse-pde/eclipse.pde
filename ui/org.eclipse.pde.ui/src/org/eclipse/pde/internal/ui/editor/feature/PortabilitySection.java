@@ -438,4 +438,11 @@ public class PortabilitySection extends PDESection implements IPartSelectionList
 			currentInput = null;
 		refresh();
 	}
+	public void cancelEdit() {
+		osText.cancelEdit();
+		wsText.cancelEdit();
+		nlText.cancelEdit();
+		archText.cancelEdit();
+		super.cancelEdit();
+	}
 }

@@ -173,6 +173,12 @@ public class ExtensionDetails extends PDEDetails {
 		name.setValue(input!=null?input.getName():null, true);
 		point.setValue(input!=null?input.getPoint():null, true);
 	}
+	public void cancelEdit() {
+		id.cancelEdit();
+		name.cancelEdit();
+		point.cancelEdit();
+		super.cancelEdit();
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.IDetailsPage#commit()
 	 */
