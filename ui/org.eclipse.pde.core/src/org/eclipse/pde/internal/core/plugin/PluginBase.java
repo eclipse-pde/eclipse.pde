@@ -85,24 +85,9 @@ public abstract class PluginBase
 	public String getId() {
 		return id;
 	}
-	/*void load(PluginModel pd) {
-		this.id = pd.getId();
-		this.name = pd.getName();
-		this.providerName = pd.getProviderName();
-		this.version = pd.getVersion();
-		this.schemaVersion = pd.getSchemaVersion();
-		// add libraries
-		loadRuntime(pd.getRuntime());
-		// add extensions
-		loadExtensions(pd.getDeclaredExtensions());
-		// add extension points
-		loadExtensionPoints(pd.getDeclaredExtensionPoints());
-		// add imports
-		loadImports(pd.getRequires());
-	}*/
-	
+
 	void load(BundleDescription bundleDescription, PDEState state) {
-		this.id = bundleDescription.getUniqueId();
+		this.id = bundleDescription.getSymbolicName();
 		this.version = bundleDescription.getVersion().toString();
 		Dictionary manifest = state.getManifest(bundleDescription.getBundleId());
 		this.name = (String)manifest.get(Constants.BUNDLE_NAME);

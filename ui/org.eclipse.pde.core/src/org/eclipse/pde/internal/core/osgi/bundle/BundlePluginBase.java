@@ -414,7 +414,7 @@ public class BundlePluginBase
 	 */
 	public String getId() {
 		BundleDescription desc = model.getBundleDescription();
-		return (desc == null) ? "" : desc.getUniqueId();
+		return (desc == null) ? "" : desc.getSymbolicName();
 	}
 
 	/*

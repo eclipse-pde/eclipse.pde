@@ -73,7 +73,7 @@ public class TargetPlatformRegistryLoader {
 		BundleDescription[] bundleDescriptions = resolve ? state.getState().getResolvedBundles() : state.getState().getBundles();
 		IPluginModelBase[] models = new IPluginModelBase[bundleDescriptions.length];
 		for (int i = 0; i < bundleDescriptions.length; i++) {
-			monitor.subTask(bundleDescriptions[i].getUniqueId());
+			monitor.subTask(bundleDescriptions[i].getSymbolicName());
 			models[i] = createModelFromDescription(bundleDescriptions[i], state);
 		}	
 		monitor.done();
@@ -94,18 +94,18 @@ public class TargetPlatformRegistryLoader {
 			if (!all[i].isResolved()) {
 				VersionConstraint[] unsatisfiedConstraints = helper.getUnsatisfiedConstraints(all[i]);
 				if (unsatisfiedConstraints.length == 0) {
-					BundleDescription activeBundle = findActiveBundle(state, all[i].getUniqueId());
+					BundleDescription activeBundle = findActiveBundle(state, all[i].getSymbolicName());
 					if (activeBundle == null) {
 						String message = PDECore.getFormattedMessage("ECLIPSE_IGNORE", all[i].getLocation());
-						errors.add(new Status(IStatus.ERROR, all[i].getUniqueId(), IStatus.WARNING, message, null));
+						errors.add(new Status(IStatus.ERROR, all[i].getSymbolicName(), IStatus.WARNING, message, null));
 					} else {
 						String message = PDECore.getFormattedMessage("ECLIPSE_OTHER_VERSION", new String[] {all[i].getLocation(), activeBundle.getLocation()});
-						errors.add(new Status(IStatus.INFO, all[i].getUniqueId(), IStatus.INFO, message, null));
+						errors.add(new Status(IStatus.INFO, all[i].getSymbolicName(), IStatus.INFO, message, null));
 					}
 				} else {
 					for (int j = 0; j < unsatisfiedConstraints.length; j++) {
                         String message = getResolutionFailureMessage(unsatisfiedConstraints[j]);
-    	                errors.add(new Status(IStatus.WARNING, all[i].getUniqueId(), IStatus.WARNING, message, null));
+    	                errors.add(new Status(IStatus.WARNING, all[i].getSymbolicName(), IStatus.WARNING, message, null));
 					}
                 }
 			}

@@ -73,7 +73,7 @@ public class PluginImport
 	}
 	
 	public void load(BundleDescription description) {
-		this.id = description.getUniqueId();
+		this.id = description.getSymbolicName();
 	}
 	
 	public void load(BundleSpecification importModel) {

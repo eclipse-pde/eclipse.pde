@@ -511,7 +511,7 @@ public class WorkspaceModelManager
 		BundleDescription desc = state.addBundle(new File(file.getLocation().removeLastSegments(2).toString()));
 		if (desc == null)
 			return null;
-		if (desc.getUniqueId() == null || desc.getUniqueId().length() == 0)
+		if (desc.getSymbolicName() == null || desc.getSymbolicName().length() == 0)
 			return null;
 		
 		WorkspaceBundleModel model = new WorkspaceBundleModel(file);
