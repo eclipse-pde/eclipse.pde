@@ -6,6 +6,7 @@ package org.eclipse.pde.internal.ui.editor.schema;
 
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.text.*;
@@ -40,6 +41,8 @@ protected void createFormClient(Composite parent) {
 	control.setLayoutData(gd);
 
 	registerSection(docSection);
+	
+	WorkbenchHelp.setHelp(parent, IHelpContextIds.SCHEMA_EDITOR_DOC);
 }
 public void dispose() {
 	colorManager.dispose();

@@ -12,6 +12,8 @@ import org.eclipse.swt.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
+import org.eclipse.ui.help.WorkbenchHelp;
+
 import java.util.StringTokenizer;
 
 public class FeatureSpecPage extends WizardPage {
@@ -80,6 +82,7 @@ public void createControl(Composite parent) {
 
 	verifyComplete();
 	setControl(container);
+	WorkbenchHelp.setHelp(container, IHelpContextIds.NEW_FEATURE_DATA);
 }
 
 private void initialize() {

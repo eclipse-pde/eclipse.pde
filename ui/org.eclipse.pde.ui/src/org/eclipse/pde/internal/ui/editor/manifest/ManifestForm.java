@@ -5,9 +5,11 @@ package org.eclipse.pde.internal.ui.editor.manifest;
  */
 
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.ui.forms.internal.*;
 
 public class ManifestForm extends ScrollableSectionForm {
@@ -95,6 +97,10 @@ public class ManifestForm extends ScrollableSectionForm {
 		registerSection(requiresSection);
 		registerSection(extensionSection);
 		registerSection(extensionPointSection);
+		if (((ManifestEditor)page.getEditor()).isFragmentEditor()	)
+			WorkbenchHelp.setHelp(parent,IHelpContextIds.MANIFEST_FRAGMENT_OVERVIEW);
+		else
+			WorkbenchHelp.setHelp(parent,IHelpContextIds.MANIFEST_PLUGIN_OVERVIEW);		
 	}
 
 	public void initialize(Object modelObject) {

@@ -14,6 +14,7 @@ import org.eclipse.pde.internal.core.schema.*;
 import java.io.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.ui.actions.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.operation.*;
 import org.eclipse.swt.events.*;
@@ -110,6 +111,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		else
 			idText.setFocus();
 		setControl(container);
+		WorkbenchHelp.setHelp(container,IHelpContextIds.NEW_SCHEMA);
 	}
 	private InputStream createSchemaStream(String pluginId, String pointId, String name) {
 		if (name.length()==0) name = pointId;

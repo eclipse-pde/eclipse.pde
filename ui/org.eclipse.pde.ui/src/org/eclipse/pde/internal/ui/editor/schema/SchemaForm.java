@@ -5,10 +5,12 @@ package org.eclipse.pde.internal.ui.editor.schema;
  */
 
 import org.eclipse.pde.core.*;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.editor.text.*;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.ui.forms.internal.*;
 
 public class SchemaForm extends ScrollableSectionForm implements IModelChangedListener {
@@ -71,6 +73,8 @@ protected void createFormClient(Composite parent) {
 	registerSection(elementSection);
 	registerSection(grammarSection);
 	registerSection(descriptionSection);
+	
+	WorkbenchHelp.setHelp(parent, IHelpContextIds.SCHEMA_EDITOR_MAIN);
 }
 public void dispose() {
 	ISchema schema = (ISchema) page.getModel();

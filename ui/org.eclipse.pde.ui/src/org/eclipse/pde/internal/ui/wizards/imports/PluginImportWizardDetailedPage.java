@@ -14,6 +14,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
@@ -21,6 +22,7 @@ import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
 public class PluginImportWizardDetailedPage extends StatusWizardPage {
@@ -205,6 +207,7 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 		gd.heightHint = 300;
 		gd.widthHint = 300;
 		setControl(container);
+		WorkbenchHelp.setHelp(container, IHelpContextIds.PLUGIN_IMPORT_SECOND_PAGE);
 	}
 
 	public void dispose() {

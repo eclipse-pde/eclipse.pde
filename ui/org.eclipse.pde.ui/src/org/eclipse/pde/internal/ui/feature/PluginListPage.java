@@ -8,6 +8,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
@@ -15,6 +16,7 @@ import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class PluginListPage extends WizardPage {
 	public static final String PAGE_TITLE = "NewFeatureWizard.PlugPage.title";
@@ -60,6 +62,7 @@ public class PluginListPage extends WizardPage {
 		pluginViewer.setInput(PDECore.getDefault().getWorkspaceModelManager());
 		tablePart.setSelection(new Object[0]);
 		setControl(container);
+		WorkbenchHelp.setHelp(container, IHelpContextIds.NEW_FEATURE_REFERENCED_PLUGINS);
 	}
 
 	private Object[] getPluginModels() {

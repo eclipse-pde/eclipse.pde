@@ -4,6 +4,7 @@ import org.eclipse.update.ui.forms.internal.WebForm;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.update.ui.forms.internal.engine.*;
@@ -17,6 +18,7 @@ import org.eclipse.jdt.core.*;
 import java.util.*;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.*;
 import java.io.*;
 
@@ -145,6 +147,8 @@ public class TemplateForm extends WebForm {
 				dontShow = dontShowCheck.getSelection();
 			}
 		});
+		
+		WorkbenchHelp.setHelp(parent, IHelpContextIds.MANIFEST_WELCOME);
 	}
 
 	public void dispose() {

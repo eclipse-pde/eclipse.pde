@@ -14,6 +14,7 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.plugin.*;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.project.*;
@@ -23,6 +24,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class FirstTemplateWizardPage extends WizardPage {
 	private static final String RUNTIME_ID = "org.eclipse.core.runtime";
@@ -268,6 +270,11 @@ public class FirstTemplateWizardPage extends WizardPage {
 		}
 		presetFields();
 		setControl(container);
+		
+		if (fragment) 
+			WorkbenchHelp.setHelp(container, IHelpContextIds.NEW_FRAGMENT_REQUIRED_DATA);
+		else
+			WorkbenchHelp.setHelp(container, IHelpContextIds.NEW_PROJECT_REQUIRED_DATA);
 	}
 	
 	private void verifyPluginFields() {

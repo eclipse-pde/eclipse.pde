@@ -6,9 +6,11 @@ package org.eclipse.pde.internal.ui.editor.build;
 
 import org.eclipse.pde.core.IEditable;
 import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.ui.forms.internal.*;
 
 public class BuildForm extends ScrollableSectionForm {
@@ -49,6 +51,8 @@ public class BuildForm extends ScrollableSectionForm {
 
 		registerSection(variableSection);
 		registerSection(tokenSection);
+		
+		WorkbenchHelp.setHelp(parent, IHelpContextIds.BUILD_PAGE);
 	}
 	
 	public void expandTo(Object object) {

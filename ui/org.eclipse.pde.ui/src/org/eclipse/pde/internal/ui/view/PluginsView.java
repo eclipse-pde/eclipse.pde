@@ -18,6 +18,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.preferences.*;
@@ -31,6 +32,7 @@ import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionContext;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.*;
 
 public class PluginsView extends ViewPart {
@@ -157,6 +159,10 @@ public class PluginsView extends ViewPart {
 		PDEPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(
 			propertyListener);
 		getViewSite().setSelectionProvider(treeViewer);
+		
+		WorkbenchHelp.setHelp(
+			treeViewer.getControl(),
+			IHelpContextIds.PLUGINS_VIEW);
 	}
 
 	private void contributeToActionBars(IActionBars actionBars) {

@@ -6,6 +6,7 @@ package org.eclipse.pde.internal.ui.wizards.project;
 
 import java.lang.reflect.*;
 import org.eclipse.ui.actions.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.jface.operation.*;
 import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.swt.widgets.*;
@@ -104,6 +105,11 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 		wizardList = super.wizardSelectionViewer.getControl();
 		getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 		setControl(outerContainer);
+		
+		if (fragment)
+			WorkbenchHelp.setHelp(outerContainer,IHelpContextIds.NEW_FRAGMENT_CODE_GEN_PAGE);
+		else
+			WorkbenchHelp.setHelp(outerContainer, IHelpContextIds.NEW_PROJECT_CODE_GEN_PAGE);
 	}
 
 	public void setVisible(boolean visible) {

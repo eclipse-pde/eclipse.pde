@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.ui.wizards.StatusWizardPage;
@@ -30,6 +31,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class PluginImportWizardFirstPage extends StatusWizardPage {
 
@@ -166,6 +168,7 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 		hookListeners();
 
 		setControl(composite);
+		WorkbenchHelp.setHelp(composite, IHelpContextIds.PLUGIN_IMPORT_FIRST_PAGE);
 	}
 
 	private Label createMultiLineLabel(

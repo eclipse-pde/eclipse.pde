@@ -4,11 +4,13 @@ package org.eclipse.pde.internal.ui.editor.feature;
  * All Rights Reserved.
  */
 
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.manifest.MatchSection;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.ui.forms.internal.*;
 
 public class ReferenceForm extends ScrollableSectionForm {
@@ -68,6 +70,8 @@ protected void createFormClient(Composite parent) {
 	registerSection(pluginSection);
 	registerSection(requiresSection);
 	registerSection(matchSection);
+	
+	WorkbenchHelp.setHelp(parent, IHelpContextIds.MANIFEST_FEATURE_CONTENT);
 }
 
 public void expandTo(Object object) {

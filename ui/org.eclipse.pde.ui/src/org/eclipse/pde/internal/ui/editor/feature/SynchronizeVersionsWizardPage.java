@@ -17,11 +17,13 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.plugin.*;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class SynchronizeVersionsWizardPage extends WizardPage {
 	public static final int USE_FEATURE = 1;
@@ -78,6 +80,7 @@ public void createControl(Composite parent) {
 
 	setControl(container);
 	loadSettings();
+	WorkbenchHelp.setHelp(container, IHelpContextIds.FEATURE_SYNCHRONIZE_VERSIONS);
 }
 private WorkspacePluginModelBase findFragment(String id) {
 	IPluginModelBase[] models =

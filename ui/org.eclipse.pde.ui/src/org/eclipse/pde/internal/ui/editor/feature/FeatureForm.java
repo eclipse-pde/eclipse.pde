@@ -5,8 +5,10 @@ package org.eclipse.pde.internal.ui.editor.feature;
  */
 
 import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.ui.forms.internal.*;
 
 public class FeatureForm extends ScrollableSectionForm {
@@ -52,6 +54,8 @@ public class FeatureForm extends ScrollableSectionForm {
 		registerSection(specSection);
 		registerSection(urlSection);
 		registerSection(portabilitySection);
+		
+		WorkbenchHelp.setHelp(parent, IHelpContextIds.MANIFEST_FEATURE_OVERVIEW);
 	}
 	
 	public void expandTo(Object object) {

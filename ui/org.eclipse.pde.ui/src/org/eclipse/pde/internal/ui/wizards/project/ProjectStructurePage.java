@@ -14,6 +14,7 @@ import org.eclipse.pde.core.plugin.*;
 
 import java.lang.reflect.*;
 import org.eclipse.ui.actions.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.jface.operation.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -244,6 +245,10 @@ public class ProjectStructurePage extends WizardPage {
 	
 		initialize();
 		setControl(container);
+		if (fragment)
+			WorkbenchHelp.setHelp(container, IHelpContextIds.NEW_FRAGMENT_STRUCTURE_PAGE);
+		else
+			WorkbenchHelp.setHelp(container, IHelpContextIds.NEW_PROJECT_STRUCTURE_PAGE);
 	}
 
 	private boolean verifyId(String id) {

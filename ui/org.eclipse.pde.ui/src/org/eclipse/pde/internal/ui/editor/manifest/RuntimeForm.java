@@ -6,6 +6,7 @@ package org.eclipse.pde.internal.ui.editor.manifest;
 
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.pde.internal.ui.*;
 
@@ -54,6 +55,11 @@ protected void createFormClient(Composite parent) {
 	registerSection(librarySection);
 	registerSection(exportSection);
 	registerSection(jarsSection);
+
+	if (((ManifestEditor)page.getEditor()).isFragmentEditor()	)
+		WorkbenchHelp.setHelp(parent,IHelpContextIds.MANIFEST_FRAGMENT_RUNTIME);
+	else
+		WorkbenchHelp.setHelp(parent,IHelpContextIds.MANIFEST_PLUGIN_RUNTIME);		
 }
 public void expandTo(Object object) {
    librarySection.expandTo(object);

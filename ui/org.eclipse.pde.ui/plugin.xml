@@ -482,6 +482,7 @@
          </filter>
          <action
                label="%popupMenus.createJar.label"
+               helpContextId="org.eclipse.pde.doc.user.create_feature_jars"
                class="org.eclipse.pde.internal.ui.feature.BuildFeatureAction"
                menubarPath="additions"
                enablesFor="1"
@@ -498,6 +499,7 @@
          </filter>
          <action
                label="%popupMenus.buildPlugin.label"
+               helpContextId="org.eclipse.pde.doc.user.create_plugin_jars"
                class="org.eclipse.pde.internal.ui.feature.BuildPluginAction"
                menubarPath="additions"
                enablesFor="1"
@@ -514,6 +516,7 @@
          </filter>
          <action
                label="%popupMenus.buildFragment.label"
+               helpContextId="org.eclipse.pde.doc.user.create_fragment_jars"
                class="org.eclipse.pde.internal.ui.feature.BuildPluginAction"
                menubarPath="additions"
                enablesFor="1"
@@ -530,6 +533,7 @@
          </filter>
          <action
                label="%UpdateClasspathAction.label"
+               helpContextId="org.eclipse.pde.doc.user.update_classpath"
                tooltip="%UpdateClasspathAction.tooltip"
                class="org.eclipse.pde.internal.ui.wizards.imports.UpdateClasspathAction"
                menubarPath="additions"
@@ -538,6 +542,7 @@
          </action>
          <action
                label="%OpenDependenciesAction.label"
+               helpContextId="org.eclipse.pde.doc.user.open_dependencies"
                tooltip="%UpdateClasspathAction.tooltip"
                class="org.eclipse.pde.internal.ui.view.OpenDependenciesAction"
                menubarPath="additions"
@@ -555,6 +560,7 @@
          </filter>
          <action
                label="%UpdateClasspathAction.label"
+               helpContextId="org.eclipse.pde.doc.user.update_classpath"
                tooltip="%UpdateClasspathAction.tooltip"
                class="org.eclipse.pde.internal.ui.wizards.imports.UpdateClasspathAction"
                menubarPath="additions"
@@ -563,6 +569,7 @@
          </action>
          <action
                label="%OpenDependenciesAction.label"
+               helpContextId="org.eclipse.pde.doc.user.open_dependencies"
                tooltip="%UpdateClasspathAction.tooltip"
                class="org.eclipse.pde.internal.ui.view.OpenDependenciesAction"
                menubarPath="additions"
@@ -580,6 +587,7 @@
          </filter>
          <action
                label="%UpdateClasspathAction.label"
+               helpContextId="org.eclipse.pde.doc.user.update_classpath"
                tooltip="%UpdateClasspathAction.tooltip"
                class="org.eclipse.pde.internal.ui.wizards.imports.UpdateClasspathAction"
                menubarPath="additions"
@@ -588,6 +596,7 @@
          </action>
          <action
                label="%OpenDependenciesAction.label"
+               helpContextId="org.eclipse.pde.doc.user.open_dependencies"
                tooltip="%UpdateClasspathAction.tooltip"
                class="org.eclipse.pde.internal.ui.view.OpenDependenciesAction"
                menubarPath="additions"
@@ -605,6 +614,7 @@
          </filter>
          <action
                label="%PluginSearch.references"
+               helpContextId="org.eclipse.pde.doc.user.find_references"
                class="org.eclipse.pde.internal.ui.search.FindPluginReferencesAction"
                menubarPath="additions"
                enablesFor="1"
