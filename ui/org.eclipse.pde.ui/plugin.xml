@@ -531,6 +531,16 @@
             class="org.eclipse.pde.internal.ui.editor.site.SiteEditor"
             id="org.eclipse.pde.ui.siteEditor">
       </editor>
+      <editor
+            name="%editors.extensionsManifest.name"
+            default="true"
+            icon="icons/full/obj16/plugin_mf_obj.gif"
+            filenames="extensions.xml"
+            contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
+            class="org.eclipse.pde.internal.ui.editor.standalone.extensions.ExtensionsSourceEditor"
+            id="org.eclipse.pde.ui.extensionsEditor">
+      </editor>
+      
    </extension>
    <extension
          point="org.eclipse.ui.views">
