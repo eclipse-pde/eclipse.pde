@@ -550,16 +550,14 @@
             class="org.eclipse.pde.internal.ui.editor.manifest.ManifestEditor"
             id="org.eclipse.pde.ui.manifestEditor">
       </editor>
-<!--
       <editor
-            name="New Manifest Editor"
+            name="%editors.pluginManifest.name"
             icon="icons/obj16/plugin_mf_obj.gif"
             filenames="plugin.xml,fragment.xml,build.properties,MANIFEST.MF"
             contributorClass="org.eclipse.pde.internal.ui.neweditor.plugin.ManifestEditorContributor"
             class="org.eclipse.pde.internal.ui.neweditor.plugin.ManifestEditor"
             id="org.eclipse.pde.ui.newManifestEditor">
       </editor>
--->
       <editor
             name="%editors.fragmentManifest.name"
             default="true"
