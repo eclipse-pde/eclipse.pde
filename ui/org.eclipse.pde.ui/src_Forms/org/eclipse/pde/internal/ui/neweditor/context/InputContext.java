@@ -312,6 +312,14 @@ public abstract class InputContext {
 		return true;
 	}
 
+	public void doRevert() {
+		mustSynchronize=true;
+		synchronizeModelIfNeeded();
+		if (model instanceof IEditable) {
+			((IEditable)model).setDirty(false);
+		}
+	}
+
 	public boolean isInSourceMode() {
 		return fIsSourceMode;
 	}

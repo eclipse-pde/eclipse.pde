@@ -201,13 +201,16 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		editorDirtyStateChanged();
 	}
 	public void doRevert() {
-		/*
-		PDESourcePage sourcePage = (PDESourcePage) getPage(getSourcePageId());
-		sourcePage.doRevertToSaved();
-		updateModel();
-		((IEditable)getModel()).setDirty(false);
-		fireSaveNeeded();
-		*/
+		IFormPage [] pages = getPages();
+		for (int i=0; i<pages.length; i++) {
+			if (pages[i] instanceof PDESourcePage) {
+				PDESourcePage page = (PDESourcePage)pages[i];
+				page.doRevertToSaved();
+				InputContext context = inputContextManager.findContext(page.getId());
+				context.doRevert();
+			}
+		}
+		editorDirtyStateChanged();
 	}
 	
 	private void commitFormPages(boolean onSave) {
