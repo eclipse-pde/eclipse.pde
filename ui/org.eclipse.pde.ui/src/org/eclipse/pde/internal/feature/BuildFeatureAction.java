@@ -25,6 +25,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.pde.internal.model.feature.*;
 import org.eclipse.pde.internal.base.model.feature.*;
+import java.net.URL;
 
 public class BuildFeatureAction implements IObjectActionDelegate {
 	public static final String KEY_ERRORS_TITLE = "GenerateFeatureJars.errorsTitle";
@@ -159,11 +160,13 @@ public class BuildFeatureAction implements IObjectActionDelegate {
 		// feature's children. The default is true.
 		//	generator.setGenerateChildrenScript(children);
 
-		// RTP: haven't fixed this yet. Could you provide a use case on when this is necessary?
-		//		File pluginFile = TargetPlatform.createPropertiesFile();
-		//		String pluginPath = pluginFile.getPath();
-		//		args.add("-plugins");
-		//		args.add(pluginPath);
+		URL [] pluginPath = TargetPlatform.createPluginPath();
+		generator.setPluginPath(pluginPath);
+
+		generator.setBuildVariableOS(TargetPlatform.getOS());
+		generator.setBuildVariableWS(TargetPlatform.getWS());
+		generator.setBuildVariableNL(TargetPlatform.getNL());
+		generator.setBuildVariableARCH(TargetPlatform.getOSArch());
 
 		try {
 			monitor.subTask(PDEPlugin.getResourceString(KEY_GENERATING));

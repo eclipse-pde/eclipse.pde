@@ -23,6 +23,7 @@ import java.util.*;
 import org.eclipse.ant.internal.ui.AntAction;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
+import java.net.URL;
 
 public class BuildPluginAction implements IObjectActionDelegate {
 	public static final String KEY_ERRORS_TITLE = "GeneratePluginJars.errorsTitle";
@@ -168,17 +169,13 @@ public class BuildPluginAction implements IObjectActionDelegate {
 		generator.setInstallLocation(platform.toOSString());
 		generator.setDevEntries(new String[] {"bin"}); // FIXME: look at bug #5747
 
-// RTP: haven't fixed this yet. Could you provide a use case on when this is necessary?
-//		File pluginFile = TargetPlatform.createPropertiesFile();
-//		String pluginPath = pluginFile.getPath();
-//		args.add("-plugins");
-//		args.add(pluginPath);
+		URL [] pluginPath = TargetPlatform.createPluginPath();
+		generator.setPluginPath(pluginPath);
 
-// RTP: in order to pass in platform variables, use the following commands:
-//		generator.setBuildVariableOS( value );
-//		generator.setBuildVariableWS( value );
-//		generator.setBuildVariableNL( value );
-//		generator.setBuildVariableARCH( value );
+		generator.setBuildVariableOS(TargetPlatform.getOS());
+		generator.setBuildVariableWS(TargetPlatform.getWS());
+		generator.setBuildVariableNL(TargetPlatform.getNL());
+		generator.setBuildVariableARCH(TargetPlatform.getOSArch());
 
 		try {
 			generator.setModelId(model.getPluginBase().getId());
