@@ -44,7 +44,7 @@ public class FeatureSection extends TableSection {
 		labels[1] = PDEPlugin.getResourceString("Product.PluginSection.removeAll"); //$NON-NLS-1$
 		labels[2] = null;
 		labels[3] = null;
-		labels[4] = "New Feature...";
+		labels[4] = PDEPlugin.getResourceString("Product.FeatureSection.newFeature"); //$NON-NLS-1$
 		return labels;
 	}
 

@@ -8,6 +8,7 @@ public interface IProduct extends IProductObject {
 	String P_APPLICATION = "application"; //$NON-NLS-1$
 	String P_USEFEATURES = "useFeatures"; //$NON-NLS-1$
 	String P_DESTINATION = "destination"; //$NON-NLS-1$
+	String P_INCLUDE_SOURCE = "includeSource"; //$NON-NLS-1$
 	String P_INCLUDE_FRAGMENTS = "includeFragments"; //$NON-NLS-1$
 	
 	String getId();
@@ -23,6 +24,8 @@ public interface IProduct extends IProductObject {
 	IAboutInfo getAboutInfo();
 	
 	String getExportDestination();
+	
+	boolean includeSource();
 	
 	IConfigurationFileInfo getConfigurationFileInfo();
 	
@@ -61,6 +64,8 @@ public interface IProduct extends IProductObject {
 	void setLauncherInfo(ILauncherInfo info);
 	
 	void setExportDestination(String destination);
+	
+	void setIncludeSource(boolean includeSource);
 	
 	void setUseFeatures(boolean use);
 	

@@ -8,6 +8,7 @@ import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.dnd.*;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -17,6 +18,7 @@ import org.eclipse.ui.forms.widgets.*;
 public class ExportSection extends PDESection {
 
 	private FormEntry fArchiveEntry;
+	private Button fIncludeSource;
 
 	public ExportSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION);
@@ -43,7 +45,7 @@ public class ExportSection extends PDESection {
 		text.setLayoutData(gd);
 				
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
-		fArchiveEntry = new FormEntry(comp, toolkit, null, PDEPlugin.getResourceString("Product.ExportSection.browse"), false, 25); //$NON-NLS-1$
+		fArchiveEntry = new FormEntry(comp, toolkit, PDEPlugin.getResourceString("Product.ExportSection.archive"), PDEPlugin.getResourceString("Product.ExportSection.browse"), false, 25); //$NON-NLS-1$ //$NON-NLS-2$
 		fArchiveEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
 				getProduct().setExportDestination(entry.getValue().trim());
@@ -64,6 +66,18 @@ public class ExportSection extends PDESection {
 		});
 		fArchiveEntry.setEditable(isEditable());
 		fArchiveEntry.getText().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		fIncludeSource = toolkit.createButton(comp, PDEPlugin.getResourceString("Product.ExportSection.includeSource"), SWT.CHECK); //$NON-NLS-1$
+		gd = new GridData();
+		gd.horizontalIndent = 25;
+		gd.horizontalSpan = 3;
+		fIncludeSource.setLayoutData(gd);
+		fIncludeSource.setEnabled(isEditable());
+		fIncludeSource.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				getProduct().setIncludeSource(fIncludeSource.getSelection());
+			}
+		});
 		
 		text = toolkit.createFormText(comp, true);
 		text.setText(PDEPlugin.getResourceString("Product.overview.export"), true, false); //$NON-NLS-1$
@@ -103,6 +117,7 @@ public class ExportSection extends PDESection {
 	
 	public void refresh() {
 		fArchiveEntry.setValue(getProduct().getExportDestination(), true);
+		fIncludeSource.setSelection(getProduct().includeSource());
 		super.refresh();
 	}
 

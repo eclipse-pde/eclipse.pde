@@ -25,6 +25,7 @@ public class Product extends ProductObject implements IProduct {
 	private IWindowImages fWindowImages;
 	private ISplashInfo fSplashInfo;
 	private ILauncherInfo fLauncherInfo;
+	private boolean fIncludeSource;
 
 	public Product(IProductModel model) {
 		super(model);
@@ -102,11 +103,12 @@ public class Product extends ProductObject implements IProduct {
 		writer.print(" " + P_USEFEATURES + "=\"" + Boolean.toString(fUseFeatures) + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		writer.println(">"); //$NON-NLS-1$
 
-		if (fExportDestination != null && fExportDestination.length() > 0) {
-			writer.println();
-			writer.println(indent + "   <export " + P_DESTINATION + "=\"" + getWritableString(fExportDestination) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		}
-		
+		writer.println();
+		writer.print(indent + "   <export "); //$NON-NLS-1$
+		if (fExportDestination != null && fExportDestination.length() > 0)
+			writer.print(P_DESTINATION + "=\"" + getWritableString(fExportDestination) + "\" ");  //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println(P_INCLUDE_SOURCE + "=\"" + Boolean.toString(fIncludeSource) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
+
 		if (fAboutInfo != null) {
 			writer.println();
 			fAboutInfo.write(indent + "   ", writer); //$NON-NLS-1$
@@ -204,6 +206,7 @@ public class Product extends ProductObject implements IProduct {
 						fConfigIniInfo.parse(child);
 					} else if (name.equals("export")) { //$NON-NLS-1$
 						fExportDestination = ((Element)child).getAttribute(P_DESTINATION);
+						fIncludeSource = "true".equals(((Element)child).getAttribute(P_INCLUDE_SOURCE)); //$NON-NLS-1$
 					} else if (name.equals("windowImages")) { //$NON-NLS-1$
 						fWindowImages = factory.createWindowImages();
 						fWindowImages.parse(child);
@@ -373,6 +376,17 @@ public class Product extends ProductObject implements IProduct {
 
 	public IProductFeature[] getFeatures() {
 		return (IProductFeature[])fFeatures.values().toArray(new IProductFeature[fFeatures.size()]);
+	}
+
+	public boolean includeSource() {
+		return fIncludeSource;
+	}
+
+	public void setIncludeSource(boolean includeSource) {
+		boolean old = fIncludeSource;
+		fIncludeSource = includeSource;
+		if (isEditable())
+			firePropertyChanged(P_INCLUDE_SOURCE, Boolean.toString(old), Boolean.toString(fIncludeSource));
 	}
 
 }
