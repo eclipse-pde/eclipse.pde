@@ -18,7 +18,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 
 public class SystemFileEditorInput implements IStorageEditorInput, IPersistableElement {
 	private SystemFileStorage storage;
-	private static final String FACTORY_ID = PDEPlugin.getPluginId()+".systemFileEditorInputFactory";
+	private static final String FACTORY_ID = PDEPlugin.getPluginId()+".systemFileEditorInputFactory"; //$NON-NLS-1$
 
 	public SystemFileEditorInput(File file) {
 		storage = new SystemFileStorage(file);
@@ -41,7 +41,7 @@ public class SystemFileEditorInput implements IStorageEditorInput, IPersistableE
 		return this;
 	}
 	public void saveState(IMemento memento) {
-		memento.putString("path", storage.getFile().getAbsolutePath());
+		memento.putString("path", storage.getFile().getAbsolutePath()); //$NON-NLS-1$
 	}
 	public String getFactoryId() {
 		return FACTORY_ID;

@@ -26,11 +26,11 @@ import org.eclipse.ui.texteditor.IUpdate;
 public class PDEFormEditorContributor
 		extends
 			MultiPageEditorActionBarContributor {
-	public static final String ACTIONS_SAVE = "EditorActions.save";
-	public static final String ACTIONS_CUT = "EditorActions.cut";
-	public static final String ACTIONS_COPY = "EditorActions.copy";
-	public static final String ACTIONS_PASTE = "EditorActions.paste";
-	public static final String ACTIONS_REVERT = "EditorActions.revert";
+	public static final String ACTIONS_SAVE = "EditorActions.save"; //$NON-NLS-1$
+	public static final String ACTIONS_CUT = "EditorActions.cut"; //$NON-NLS-1$
+	public static final String ACTIONS_COPY = "EditorActions.copy"; //$NON-NLS-1$
+	public static final String ACTIONS_PASTE = "EditorActions.paste"; //$NON-NLS-1$
+	public static final String ACTIONS_REVERT = "EditorActions.revert"; //$NON-NLS-1$
 	private SubActionBars sourceActionBars;
 	private PDEFormEditor editor;
 	private IFormPage page;

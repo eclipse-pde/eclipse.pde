@@ -7,6 +7,7 @@
 package org.eclipse.pde.internal.ui.editor;
 import org.eclipse.jface.action.*;
 import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.Clipboard;
@@ -40,7 +41,7 @@ public abstract class PDEFormPage extends FormPage {
 		final String href = getHelpResource();
 		if (href != null) {
 			IToolBarManager manager = form.getToolBarManager();
-			Action helpAction = new Action("help") {
+			Action helpAction = new Action("help") { //$NON-NLS-1$
 				public void run() {
 					BusyIndicator.showWhile(form.getDisplay(), new Runnable() {
 						public void run() {
@@ -50,7 +51,7 @@ public abstract class PDEFormPage extends FormPage {
 				}
 			};
 			//TODO translate
-			helpAction.setToolTipText("Help");
+			helpAction.setToolTipText(PDEPlugin.getResourceString("PDEFormPage.help")); //$NON-NLS-1$
 			helpAction.setImageDescriptor(PDEPluginImages.DESC_HELP);
 			manager.add(helpAction);
 			form.updateToolBar();
@@ -115,7 +116,7 @@ public abstract class PDEFormPage extends FormPage {
 		Composite parent = focusControl.getParent();
 		AbstractFormPart targetPart = null;
 		while (parent != null) {
-			Object data = parent.getData("part");
+			Object data = parent.getData("part"); //$NON-NLS-1$
 			if (data != null && data instanceof AbstractFormPart) {
 				targetPart = (AbstractFormPart) data;
 				break;
@@ -152,7 +153,7 @@ public abstract class PDEFormPage extends FormPage {
 					int caretPos = text.getCaretPosition();
 					text.setSelection(caretPos, caretPos + 1);
 				}
-				text.insert("");
+				text.insert(""); //$NON-NLS-1$
 				return true;
 			}
 		}

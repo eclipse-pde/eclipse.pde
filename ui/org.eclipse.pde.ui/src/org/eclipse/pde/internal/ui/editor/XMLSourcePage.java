@@ -19,7 +19,7 @@ import org.eclipse.ui.texteditor.DefaultRangeIndicator;
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
 public abstract class XMLSourcePage extends PDESourcePage {
-	public static final String ERROR_MESSAGE = "SourcePage.errorMessage";
+	public static final String ERROR_MESSAGE = "SourcePage.errorMessage"; //$NON-NLS-1$
 	protected IColorManager colorManager;
 	/**
 	 * @param editor

@@ -369,9 +369,9 @@ public abstract class PDEFormEditor extends FormEditor
 	private IDialogSettings getSettingsSection() {
 		// store the setting in dialog settings
 		IDialogSettings root = PDEPlugin.getDefault().getDialogSettings();
-		IDialogSettings section = root.getSection("multi-page-editor");
+		IDialogSettings section = root.getSection("multi-page-editor"); //$NON-NLS-1$
 		if (section == null)
-			section = root.addNewSection("multi-page-editor");
+			section = root.addNewSection("multi-page-editor"); //$NON-NLS-1$
 		return section;
 	}
 	public void gotoMarker(IMarker marker) {
@@ -463,7 +463,7 @@ public abstract class PDEFormEditor extends FormEditor
 		contentOutline.setPageActive(outline);
 	}
 	protected IPropertySheetPage getPropertySheet(PDEFormPage page) {
-		return ((PDEFormPage) page).getPropertySheetPage();
+		return page.getPropertySheetPage();
 	}
 	void updatePropertySheet(IFormPage page) {
 		if (propertySheet == null)
@@ -527,7 +527,7 @@ public abstract class PDEFormEditor extends FormEditor
 				else if (objClass.equals(obj.getClass()) == false)
 					return;
 				if (obj instanceof IWritable) {
-					((IWritable) obj).write("", pwriter);
+					((IWritable) obj).write("", pwriter); //$NON-NLS-1$
 				}
 			}
 			pwriter.flush();

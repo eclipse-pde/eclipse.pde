@@ -79,7 +79,7 @@ public class LinkSection extends PDESection {
 		linkContainer.setLayout(linkLayout);
 	}
 	private void createMoreButton() {
-		moreButton = getManagedForm().getToolkit().createButton(container, "More...",
+		moreButton = getManagedForm().getToolkit().createButton(container, "More...", //$NON-NLS-1$
 				SWT.PUSH);
 		moreButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -172,7 +172,7 @@ public class LinkSection extends PDESection {
 			createLink(objects[i]);
 		}
 		if (objects.length > linkNumberLimit)
-			getManagedForm().getToolkit().createLabel(linkContainer, "...", SWT.NULL);
+			getManagedForm().getToolkit().createLabel(linkContainer, "...", SWT.NULL); //$NON-NLS-1$
 		updateMoreState(objects.length > linkNumberLimit);
 	}
 	private void updateMoreState(boolean needMore) {

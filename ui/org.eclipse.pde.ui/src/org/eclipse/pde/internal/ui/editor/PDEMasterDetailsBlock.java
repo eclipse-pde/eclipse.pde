@@ -7,6 +7,7 @@
 package org.eclipse.pde.internal.ui.editor;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -43,25 +44,25 @@ public abstract class PDEMasterDetailsBlock extends MasterDetailsBlock {
 	protected void createToolBarActions(IManagedForm managedForm) {
 		final ScrolledForm form = managedForm.getForm();
 	
-		Action haction = new Action("hor", Action.AS_RADIO_BUTTON) {
+		Action haction = new Action("hor", Action.AS_RADIO_BUTTON) { //$NON-NLS-1$
 			public void run() {
 				sashForm.setOrientation(SWT.HORIZONTAL);
 				form.reflow(true);
 			}
 		};
 		haction.setChecked(true);
-		haction.setToolTipText("Horizontal orientation");
+		haction.setToolTipText(PDEPlugin.getResourceString("DetailsBlock.horizontal")); //$NON-NLS-1$
 		haction.setImageDescriptor(PDEPluginImages.DESC_HORIZONTAL);
 		haction.setDisabledImageDescriptor(PDEPluginImages.DESC_HORIZONTAL_DISABLED);
 
-		Action vaction = new Action("ver", Action.AS_RADIO_BUTTON) {
+		Action vaction = new Action("ver", Action.AS_RADIO_BUTTON) { //$NON-NLS-1$
 			public void run() {
 				sashForm.setOrientation(SWT.VERTICAL);
 				form.reflow(true);
 			}
 		};
 		vaction.setChecked(false);
-		vaction.setToolTipText("Vertical orientation");
+		vaction.setToolTipText(PDEPlugin.getResourceString("DetailsBlock.vertical")); //$NON-NLS-1$
 		vaction.setImageDescriptor(PDEPluginImages.DESC_VERTICAL);
 		vaction.setDisabledImageDescriptor(PDEPluginImages.DESC_VERTICAL_DISABLED);
 		form.getToolBarManager().add(haction);

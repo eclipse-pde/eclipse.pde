@@ -34,11 +34,11 @@ public abstract class PDEDetails extends AbstractFormPart implements IDetailsPag
 	}
 	
 	protected void markDetailsPart(Control control) {
-		control.setData("part", this);
+		control.setData("part", this); //$NON-NLS-1$
 	}
 	
 	protected void createSpacer(FormToolkit toolkit, Composite parent, int span) {
-		Label spacer = toolkit.createLabel(parent, "");
+		Label spacer = toolkit.createLabel(parent, ""); //$NON-NLS-1$
 		GridData gd = new GridData();
 		gd.horizontalSpan = span;
 		spacer.setLayoutData(gd);

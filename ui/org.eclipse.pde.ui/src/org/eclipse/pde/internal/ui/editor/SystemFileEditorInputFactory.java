@@ -26,7 +26,7 @@ public class SystemFileEditorInputFactory implements IElementFactory {
 	}
 	
 	public IAdaptable createElement (IMemento memento) {
-		String path = memento.getString("path");
+		String path = memento.getString("path"); //$NON-NLS-1$
 		File file = new File(path);
 		SystemFileEditorInput input = new SystemFileEditorInput(file);
 		return input;

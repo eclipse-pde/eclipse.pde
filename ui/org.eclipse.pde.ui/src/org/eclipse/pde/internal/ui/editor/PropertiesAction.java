@@ -13,7 +13,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.ui.*;
 public class PropertiesAction extends Action {
-	public static final String LABEL = "Actions.properties.label";
+	public static final String LABEL = "Actions.properties.label"; //$NON-NLS-1$
 	private PDEFormEditor editor;
 	public PropertiesAction(PDEFormEditor editor) {
 		this.editor = editor;

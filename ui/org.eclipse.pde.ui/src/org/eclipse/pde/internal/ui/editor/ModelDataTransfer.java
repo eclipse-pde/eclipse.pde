@@ -27,11 +27,11 @@ public class ModelDataTransfer extends ByteArrayTransfer {
 	// Create a unique ID to make sure that different Eclipse
 	// applications use different "types" of <code>ModelDataTransfer</code>
 	
-	public static final String TYPE_PREFIX = "pde-model-transfer-format";
+	public static final String TYPE_PREFIX = "pde-model-transfer-format"; //$NON-NLS-1$
 	private static final String TYPE_NAME =
-		TYPE_PREFIX + ":"
+		TYPE_PREFIX + ":" //$NON-NLS-1$
 			+ System.currentTimeMillis()
-			+ ":"
+			+ ":" //$NON-NLS-1$
 			+ instance.hashCode();
 
 	private static final int TYPEID = registerType(TYPE_NAME);
