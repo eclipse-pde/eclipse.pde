@@ -48,6 +48,7 @@ public class NewExtensionRegistryReader {
 
 		return newElement;
 	}
+	
 	protected WizardElement createWizardElement(IConfigurationElement config) {
 		String name = config.getAttribute(WizardElement.ATT_NAME);
 		String id = config.getAttribute(WizardElement.ATT_ID);
@@ -61,9 +62,9 @@ public class NewExtensionRegistryReader {
 		String imageName = config.getAttribute(WizardElement.ATT_ICON);
 		if (imageName != null) {
 			IExtension extension = config.getDeclaringExtension();
-			IPluginDescriptor pd = extension.getDeclaringPluginDescriptor();
+			String pluginID = extension.getNamespace();
 			Image image = PDEPlugin.getDefault().getLabelProvider()
-					.getImageFromPlugin(pd, imageName);
+					.getImageFromPlugin(pluginID, imageName);
 			element.setImage(image);
 		}
 		return element;
@@ -81,9 +82,9 @@ public class NewExtensionRegistryReader {
 		String imageName = config.getAttribute(WizardElement.ATT_ICON);
 		if (imageName != null) {
 			IExtension extension = config.getDeclaringExtension();
-			IPluginDescriptor pd = extension.getDeclaringPluginDescriptor();
+			String pluginID = extension.getNamespace();
 			Image image = PDEPlugin.getDefault().getLabelProvider()
-					.getImageFromPlugin(pd, imageName);
+					.getImageFromPlugin(pluginID, imageName);
 			element.setImage(image);
 		}
 		return element;

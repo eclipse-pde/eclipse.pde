@@ -146,12 +146,9 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 		WizardElement element = new WizardElement(config);
 		String imageName = config.getAttribute(WizardElement.ATT_ICON);
 		if (imageName != null) {
-			IPluginDescriptor pd =
-				config.getDeclaringExtension().getDeclaringPluginDescriptor();
+			String pluginID = config.getDeclaringExtension().getNamespace();
 			Image image =
-				PDEPlugin.getDefault().getLabelProvider().getImageFromPlugin(
-					pd,
-					imageName);
+				PDEPlugin.getDefault().getLabelProvider().getImageFromPlugin(pluginID, imageName);
 			element.setImage(image);
 		}
 		return element;
@@ -159,9 +156,8 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 
 	public ElementList getAvailableCodegenWizards() {
 		ElementList wizards = new ElementList("CodegenWizards"); //$NON-NLS-1$
-		IPluginRegistry registry = Platform.getPluginRegistry();
-		IExtensionPoint point =
-			registry.getExtensionPoint(PDEPlugin.getPluginId(), PLUGIN_POINT);
+		IExtensionRegistry registry = Platform.getExtensionRegistry();
+		IExtensionPoint point = registry.getExtensionPoint(PDEPlugin.getPluginId(), PLUGIN_POINT);
 		if (point == null)
 			return wizards;
 		IExtension[] extensions = point.getExtensions();

@@ -17,7 +17,10 @@ import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.*;
+import org.osgi.framework.*;
+
+import java.io.*;
 import java.net.*;
 
 /**
@@ -54,9 +57,8 @@ public class SharedLabelProvider
 	}
 	public void dispose() {
 		if (consumers.size() == 0) {
-			for (Enumeration enum = images.elements(); enum.hasMoreElements();) {
-				Image image = (Image) enum.nextElement();
-				image.dispose();
+			for (Enumeration elements = images.elements(); elements.hasMoreElements();) {
+				((Image)elements.nextElement()).dispose();
 			}
 			images.clear();
 		}
@@ -166,11 +168,13 @@ public class SharedLabelProvider
 		return getImage(obj);
 	}
 
-	public Image getImageFromPlugin(
-		IPluginDescriptor pluginDescriptor,
-		String subdirectoryAndFilename) {
-		URL installURL = pluginDescriptor.getInstallURL();
-		return getImageFromURL(installURL, subdirectoryAndFilename);
+	public Image getImageFromPlugin(String bundleID, String subdirectoryAndFilename) {
+		try {
+			Bundle bundle = Platform.getBundle(bundleID);
+			return getImageFromURL(Platform.resolve(bundle.getEntry("/")), subdirectoryAndFilename);
+		} catch (IOException e) {
+			return null;
+		}
 	}
 
 	public Image getImageFromURL(
