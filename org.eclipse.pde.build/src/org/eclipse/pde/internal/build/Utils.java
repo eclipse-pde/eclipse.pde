@@ -40,25 +40,10 @@ public static String[] getArrayFromString(String list, String separator) {
 }
 
 /**
- * Convert the given list of comma-separated tokens into a string array and 
- * return it.
- *  * @param list the list to convert * @return String[] */
+ * Return a string array constructed from the given list of comma-separated tokens. 
+ *  * @param list the list to convert * @return the array of strings */
 public static String[] getArrayFromString(String list) {
 	return getArrayFromString(list, ","); //$NON-NLS-1$
-}
-
-/**
- * Substitutes a word in a sentence.
- *  * @param sentence * @param oldWord * @param newWord * @return String */
-public static String substituteWord(String sentence, String oldWord, String newWord) {
-	int index = sentence.indexOf(oldWord);
-	if (index == -1)
-		return sentence;
-	StringBuffer sb = new StringBuffer();
-	sb.append(sentence.substring(0, index));
-	sb.append(newWord);
-	sb.append(sentence.substring(index + oldWord.length()));
-	return sb.toString();
 }
 
 /**

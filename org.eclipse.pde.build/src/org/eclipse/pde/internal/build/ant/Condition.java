@@ -20,7 +20,9 @@ public class Condition {
 	/**
 	 * Types of conditions.
 	 */
-	protected String type;	public static final String TYPE_AND = "and";	protected List singleConditions;
+	protected String type;	
+	public static final String TYPE_AND = "and";	//$NON-NLS-1$
+	protected List singleConditions;
 	protected List nestedConditions;
 
 /**
