@@ -84,7 +84,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 			assertAttributeDefined(plugin, "id", CompilerFlags.ERROR); //$NON-NLS-1$
 			assertAttributeDefined(plugin, "version", CompilerFlags.ERROR); //$NON-NLS-1$
 			NamedNodeMap attributes = plugin.getAttributes();
-			boolean isFragment = plugin.getAttribute("fragment").equals("false"); //$NON-NLS-1$ //$NON-NLS-2$
+			boolean isFragment = plugin.getAttribute("fragment").equals("true"); //$NON-NLS-1$ //$NON-NLS-2$
 			for (int j = 0; j < attributes.getLength(); j++) {
 				Attr attr = (Attr)attributes.item(j);
 				String name = attr.getName();
