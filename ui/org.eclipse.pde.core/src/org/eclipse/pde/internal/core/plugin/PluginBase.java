@@ -26,6 +26,7 @@ public abstract class PluginBase
 	private Vector libraries = new Vector();
 	private Vector imports = new Vector();
 	protected Vector requiresComments;
+	protected Vector endComments;
 	private String providerName;
 	private String id;
 	private String version;
@@ -128,6 +129,9 @@ public abstract class PluginBase
 		providerName= base.providerName;
 		version= base.version;
 		schemaVersion = base.schemaVersion;
+		leadComments = base.leadComments;
+		requiresComments = base.requiresComments;
+		endComments = base.endComments;
 		super.load(srcPluginBase);
 		addArrayToVector(imports, srcPluginBase.getImports());
 		addArrayToVector(libraries, srcPluginBase.getLibraries());

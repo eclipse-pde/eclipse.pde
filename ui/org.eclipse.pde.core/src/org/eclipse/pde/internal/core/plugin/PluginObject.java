@@ -26,7 +26,7 @@ public abstract class PluginObject
 	private String translatedName;
 	private transient IPluginObject parent;
 	private transient ISharedPluginModel model;
-	private Vector comments;
+	protected Vector leadComments;
 	protected int[] range;
 	private boolean inTheModel;
 
@@ -169,7 +169,7 @@ public abstract class PluginObject
 	}
 
 	public void addComments(Node node) {
-		comments = addComments(node, comments);
+		leadComments = addComments(node, leadComments);
 	}
 
 	public Vector addComments(Node node, Vector result) {
@@ -190,7 +190,7 @@ public abstract class PluginObject
 	}
 
 	void writeComments(PrintWriter writer) {
-		writeComments(writer, comments);
+		writeComments(writer, leadComments);
 	}
 
 	void writeComments(PrintWriter writer, Vector source) {
