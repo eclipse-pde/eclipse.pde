@@ -10,16 +10,16 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import java.io.File;
-import java.util.ArrayList;
+import java.io.*;
+import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
-import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.debug.core.model.*;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.program.*;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.*;
 
 /**
  * @author dejan
@@ -151,7 +151,19 @@ public class LaunchListener
 								PDEPlugin.getActiveWorkbenchShell(),
 								PDEPlugin.getResourceString("Launcher.error.title"), //$NON-NLS-1$
 								PDEPlugin.getResourceString("Launcher.error.code13"))) { //$NON-NLS-1$
-									Program.launch(log.getAbsolutePath());
+								if (log.exists()){
+									boolean canLaunch = Program.launch(log.getAbsolutePath());
+									if (!canLaunch){
+										Program p = Program.findProgram (".txt"); //$NON-NLS-1$
+										if (p != null) 
+											p.execute (log.getAbsolutePath());
+										else {
+											OpenLogDialog openDialog = new OpenLogDialog(PDEPlugin.getActiveWorkbenchShell(), log);
+											openDialog.create();
+											openDialog.open();
+										}
+									}
+								}
 							}
 						} catch (CoreException e) {
 						}
