@@ -409,7 +409,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		boolean allJars = containsStarDotJar(splitIncludes);
 		String[] fileSetValues = new String[compiledJarNames.size()];
 		int count = 0;
-		boolean dotIncluded = allJars;
+		boolean dotIncluded = allJars && dotOnTheClasspath;
 		for (Iterator iter = compiledJarNames.iterator(); iter.hasNext();) {
 			CompiledEntry entry = (CompiledEntry) iter.next();
 			String formatedName = entry.getName(false) + (entry.getType() == CompiledEntry.FOLDER ? "/" : ""); //$NON-NLS-1$//$NON-NLS-2$
