@@ -304,7 +304,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(CONFIG_USE_DEFAULT, true);
-		configuration.setAttribute(CONFIG_CLEAR, true);
+		configuration.setAttribute(CONFIG_CLEAR, false);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
@@ -318,7 +318,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 				initializePlugins(configuration.getAttribute(CONFIG_AUTO_START, "")); //$NON-NLS-1$
 			fUseDefault.setSelection(useDefault);
 			enableButtons(!useDefault);
-			fClearConfig.setSelection(configuration.getAttribute(CONFIG_CLEAR, true));
+			fClearConfig.setSelection(configuration.getAttribute(CONFIG_CLEAR, false));
 		} catch (CoreException e) {
 		}
 		fTableViewer.setInput(fPluginList);

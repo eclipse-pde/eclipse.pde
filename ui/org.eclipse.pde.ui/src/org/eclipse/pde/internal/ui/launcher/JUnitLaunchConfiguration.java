@@ -57,7 +57,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 			IVMInstall launcher = LauncherUtils.createLauncher(configuration);
 			monitor.worked(1);
 
-			if (configuration.getAttribute(CONFIG_CLEAR, true))
+			if (configuration.getAttribute(CONFIG_CLEAR, false))
 				LauncherUtils.clearConfigArea(getConfigDir(configuration));
 			launch.setAttribute(ILauncherSettings.CONFIG_LOCATION, getConfigDir(configuration).toString());
 			
