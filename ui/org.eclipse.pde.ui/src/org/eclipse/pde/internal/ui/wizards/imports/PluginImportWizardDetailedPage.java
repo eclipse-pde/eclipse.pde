@@ -380,17 +380,8 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 			IPluginModelBase curr = (IPluginModelBase) models[i];
 			String id = curr.getPluginBase().getId();
 			IProject proj = (IProject) root.findMember(id);
-			try {
-				if (proj != null && proj.isOpen()) {
-					String property =
-						proj.getPersistentProperty(
-							PDECore.EXTERNAL_PROJECT_PROPERTY);
-					if (property != null && (property.equals(PDECore.BINARY_PROJECT_VALUE) || property.equals(PDECore.EXTERNAL_PROJECT_VALUE))) {
-						selected.add(curr);
-					}
-				}
-			} catch (CoreException e) {
-				PDEPlugin.logException(e);
+			if (proj != null && WorkspaceModelManager.isBinaryPluginProject(proj)) {
+				selected.add(curr);
 			}
 		}
 		return selected;
