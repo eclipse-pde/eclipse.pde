@@ -1,6 +1,6 @@
 Bundle-Name: %pluginName
 Bundle-Version: 3.1.0
-Bundle-SymbolicName: org.eclipse.pde.build
+Bundle-SymbolicName: org.eclipse.pde.build; singleton=true
 Bundle-Vendor: %providerName
 Bundle-ClassPath: pdebuild.jar
 Bundle-Activator: org.eclipse.pde.internal.build.BuildActivator
