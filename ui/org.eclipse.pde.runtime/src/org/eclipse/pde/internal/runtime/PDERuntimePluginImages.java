@@ -87,6 +87,13 @@ public class PDERuntimePluginImages {
 		create(PATH_LCL_HOVER, "restore_log.gif");
 	public static final ImageDescriptor DESC_READ_LOG_DISABLED =
 		create(PATH_LCL_DISABLED, "restore_log.gif");
+		
+	public static final ImageDescriptor DESC_REMOVE_LOG =
+		create(PATH_LCL, "remove.gif");
+	public static final ImageDescriptor DESC_REMOVE_LOG_HOVER =
+		create(PATH_LCL_HOVER, "remove.gif");
+	public static final ImageDescriptor DESC_REMOVE_LOG_DISABLED =
+		create(PATH_LCL_DISABLED, "remove.gif");
 
 	/*
 	 * Overlays

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.runtime.*;
 import org.eclipse.swt.SWT;
@@ -140,12 +141,6 @@ public class LogView extends ViewPart implements ILogListener {
 		readLogAction.setHoverImageDescriptor(
 			PDERuntimePluginImages.DESC_READ_LOG_HOVER);
 
-		IToolBarManager toolBarManager =
-			getViewSite().getActionBars().getToolBarManager();
-		toolBarManager.add(clearAction);
-		toolBarManager.add(readLogAction);
-		toolBarManager.add(new Separator());
-		toolBarManager.add(propertiesAction);
 		table.addSelectionListener(new SelectionAdapter() {
 			public void widgetDefaultSelected(SelectionEvent e) {
 				if (tableTreeViewer.getSelection().isEmpty() == false) {
@@ -157,14 +152,23 @@ public class LogView extends ViewPart implements ILogListener {
 		deleteLogAction =
 			new Action(PDERuntimePlugin.getResourceString("LogView.delete")) {
 			public void run() {
-				File logFile = Platform.getLogFileLocation().toFile();
-				if (logFile.exists()) {
-					logFile.delete();
-					logs.clear();
-					tableTreeViewer.refresh();
-				}
+				doDeleteLog();
 			}
 		};
+		deleteLogAction.setToolTipText(PDERuntimePlugin.getResourceString("LogView.delete.tooltip"));
+		
+		deleteLogAction.setImageDescriptor(PDERuntimePluginImages.DESC_REMOVE_LOG);
+		deleteLogAction.setDisabledImageDescriptor(PDERuntimePluginImages.DESC_REMOVE_LOG_DISABLED);
+		deleteLogAction.setHoverImageDescriptor(PDERuntimePluginImages.DESC_REMOVE_LOG_HOVER);
+		
+		IToolBarManager toolBarManager =
+			getViewSite().getActionBars().getToolBarManager();
+		toolBarManager.add(deleteLogAction);
+		toolBarManager.add(new Separator());
+		toolBarManager.add(clearAction);
+		toolBarManager.add(readLogAction);
+		toolBarManager.add(new Separator());
+		toolBarManager.add(propertiesAction);		
 		
 		WorkbenchHelp.setHelp(tableTree,IHelpContextIds.LOG_VIEW);
 	}
@@ -172,9 +176,24 @@ public class LogView extends ViewPart implements ILogListener {
 		Platform.removeLogListener(this);
 		super.dispose();
 	}
+	
+	private void doDeleteLog() {
+		File logFile = Platform.getLogFileLocation().toFile();
+		if (logFile.exists()) {
+			String title = PDERuntimePlugin.getResourceString("LogView.confirmDelete.title");
+			String message = PDERuntimePlugin.getResourceString("LogView.confirmDelete.message");
+			if (!MessageDialog.openConfirm(tableTreeViewer.getControl().getShell(), title, message))
+				return;
+			logFile.delete();
+			logs.clear();
+			tableTreeViewer.refresh();
+		}
+	}
+	
 	public void fillContextMenu(IMenuManager manager) {
 		manager.add(readLogAction);
 		manager.add(clearAction);
+		manager.add(new Separator());
 		manager.add(deleteLogAction);
 		manager.add(new Separator());
 		manager.add(propertiesAction);
