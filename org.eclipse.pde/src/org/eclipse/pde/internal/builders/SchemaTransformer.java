@@ -13,8 +13,8 @@ package org.eclipse.pde.internal.builders;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.io.StringReader;
 import java.net.URL;
+import java.util.Stack;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IFile;
@@ -425,11 +425,10 @@ public class SchemaTransformer implements ISchemaTransformer {
 		return null;
 	}
 
-	private boolean verifySections(
-		ISchema schema,
-		PluginErrorReporter reporter) {
-		boolean hasError = false;
-
+	private boolean verifySections(ISchema schema, PluginErrorReporter reporter){
+		boolean openTag = false;
+		IDocumentSection section = null;
+		Stack tagStack = null;
 		String sectionIds[] =
 			{	IDocumentSection.API_INFO,
 				IDocumentSection.EXAMPLES,
@@ -437,46 +436,55 @@ public class SchemaTransformer implements ISchemaTransformer {
 				IDocumentSection.P_DESCRIPTION,
 				IDocumentSection.COPYRIGHT,
 				IDocumentSection.SINCE };
-		
-		for (int i = 0; i < sectionIds.length; i++) {
-			IDocumentSection section = findSection(schema.getDocumentSections(), sectionIds[i]);
 			
-			if (section != null) {
+		for (int i = 0; i < sectionIds.length; i++) {
+			section = findSection(schema.getDocumentSections(), sectionIds[i]);
+			if (section !=null){
+				tagStack = new Stack();
 				String desc = section.getDescription();
-				StringReader reader = new StringReader(desc.indexOf("<")==-1 ? "" : desc.substring(desc.indexOf("<")));
-				SourceDOMParser parser = new SourceDOMParser();
-				try {
-					InputSource source = new InputSource(reader);
-					parser.parse(source);
-					if (parser == null) {
-						return false;
-					}
-				} catch (Exception e) {
-					if (!e.getMessage().equals("Content is not allowed in prolog.")
-						&& !e.getMessage().equals("Premature end of file.")) {
-						StringTokenizer err = new StringTokenizer(e.getMessage());
-						String msg = "";
-						
-						while (err.countTokens()>0){
-							String token = err.nextToken();
-							if (token.equals("XML"))
-								msg = msg + "HTML ";
-							else
-								msg = msg + token + " " ;	
+				if (desc !=null && desc.trim().length()!=0){
+					StringTokenizer text = new StringTokenizer(desc, "<>", true);
+					openTag = false;
+					
+					while (text.countTokens() >0){
+						if (text.nextToken().equals("<")){
+							openTag = true;
+							
+							if (text.hasMoreTokens()){
+								String tag = text.nextToken().trim();
+								int loc = tag.indexOf(" ");
+								if (tag.indexOf("/")==-1){
+									tag = (loc == -1 ? tag.substring(0) : tag.substring(0,loc));  // trim all attributes if existing (i.e. color=blue)
+									tagStack.add(tag);
+								} else {
+									tag = (loc == -1 ? tag.substring(1) : tag.substring(1,loc+1));  // take off "/" prefix
+									if (!tagStack.isEmpty() && tagStack.peek().equals(tag)){
+										tagStack.pop();
+									} else {
+										reporter.reportError(schema.getName() + " " + sectionIds[i] + ": Unmatched tags in documentation." );
+										return false;
+									}
+								}
+								
+								if (text.hasMoreTokens() && text.nextToken().equals(">")){
+									openTag = false;
+								} else {
+									reporter.reportError(schema.getName() + " " + sectionIds[i] + ": Unmatched tags in documentation." );
+									return false;
+								}
+							}
 						}
-						reporter.reportError(
-							schema.getName()
-								+ " "
-								+ sectionIds[i]
-								+ ": Unmatched tags in documentation ["
-								+ msg + "]");
-						hasError = true;
+						
+					}
+					if ( openTag || !tagStack.isEmpty()){
+						reporter.reportError(schema.getName() + " " + sectionIds[i] + ": Unmatched tags in documentation." );
+						return false;
 					}
 				}
 			}
 		}
-
-		return !hasError;
+		
+		return (!openTag && tagStack.isEmpty());
 	}
 
 	private void transformSection(
