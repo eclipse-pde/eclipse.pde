@@ -28,6 +28,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.ViewPart;
 
@@ -66,6 +67,7 @@ public class LogView extends ViewPart implements ILogListener {
 	private Action exportAction;
 	private Action importAction;
 	private Action activateViewAction;
+	private Action propertiesAction;
 	
 	private Action filterAction;
 	private Clipboard clipboard;
@@ -92,7 +94,6 @@ public class LogView extends ViewPart implements ILogListener {
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		createTableSection(container);
 		createDetailsSection(container);
-		//createTableSection(parent);		
 	}
 	
 	private void createTableSection(Composite parent) {
@@ -181,7 +182,12 @@ public class LogView extends ViewPart implements ILogListener {
 			public void selectionChanged(SelectionChangedEvent e) {
 				handleSelectionChanged(e.getSelection());
 			}
-		});		
+		});	
+		tableTreeViewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				propertiesAction.run();
+			}
+		});
 		tableTreeViewer.setInput(Platform.class);
 	}
 	
@@ -274,6 +280,16 @@ public class LogView extends ViewPart implements ILogListener {
 	}
 	
 	private void makeActions(Table table) {
+		propertiesAction = new PropertyDialogAction(table.getShell(), tableTreeViewer);
+		propertiesAction.setImageDescriptor(PDERuntimePluginImages.DESC_PROPERTIES);
+		propertiesAction.setDisabledImageDescriptor(
+			PDERuntimePluginImages.DESC_PROPERTIES_DISABLED);
+		propertiesAction.setHoverImageDescriptor(
+			PDERuntimePluginImages.DESC_PROPERTIES_HOVER);
+		propertiesAction.setToolTipText(
+			PDERuntimePlugin.getResourceString("LogView.properties.tooltip"));
+		propertiesAction.setEnabled(false);
+
 		clearAction = new Action(PDERuntimePlugin.getResourceString("LogView.clear")) {
 			public void run() {
 				handleClear();
@@ -498,6 +514,7 @@ public class LogView extends ViewPart implements ILogListener {
 		manager.add(exportAction);
 		manager.add(importAction);
 		manager.add(new Separator());
+		manager.add(propertiesAction);
 	}
 	public LogEntry[] getLogs() {
 		return (LogEntry[]) logs.toArray(new LogEntry[logs.size()]);
@@ -603,6 +620,7 @@ public class LogView extends ViewPart implements ILogListener {
 		updateStatus(selection);
 		updatePreview(selection);
 		copyAction.setEnabled(!selection.isEmpty());
+		propertiesAction.setEnabled(!selection.isEmpty());
 	}
 	
 	private void updatePreview(ISelection selection) {
