@@ -80,7 +80,7 @@ public class TargetPlatformRegistryLoader {
 				if (!all[i].isResolved()) {
 					VersionConstraint[] unsatisfiedConstraints = helper.getUnsatisfiedConstraints(all[i]);
 					if (unsatisfiedConstraints.length == 0) {
-	   	                errors.add(new Status(IStatus.WARNING, all[i].getUniqueId(), IStatus.WARNING, PDECore.getResourceString("ECLIPSE_LOW_VERSION"), null));
+	   	                errors.add(new Status(IStatus.WARNING, all[i].getUniqueId(), IStatus.WARNING, PDECore.getResourceString("ECLIPSE_IGNORE"), null));
 					} else {
 						for (int j = 0; j < unsatisfiedConstraints.length; j++) {
 	                        String message = getResolutionFailureMessage(unsatisfiedConstraints[j]);
