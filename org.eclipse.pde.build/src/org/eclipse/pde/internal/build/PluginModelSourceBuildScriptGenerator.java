@@ -11,27 +11,24 @@
 package org.eclipse.pde.internal.build;
 
 import java.io.*;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
+import org.eclipse.core.internal.plugins.InternalFactory;
+import org.eclipse.core.internal.plugins.PluginRegistry;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.model.*;
-import org.eclipse.core.runtime.model.LibraryModel;
 import org.eclipse.core.runtime.model.PluginModel;
-import org.eclipse.pde.internal.build.ant.*;
+import org.eclipse.pde.internal.build.AbstractBuildScriptGeneratorTemp.JAR;
 import org.eclipse.pde.internal.build.ant.AntScript;
-import org.eclipse.pde.internal.build.ant.JavacTask;
-import org.eclipse.update.core.VersionedIdentifier;
+import org.eclipse.pde.internal.build.ant.FileSet;
 
 /**
  * Given a set of plug-ins and fragments, generate their build scripts.
  */
 public class PluginModelSourceBuildScriptGenerator extends AbstractBuildScriptGeneratorTemp {
 
-	protected PluginRegistryModel registry;
+	protected PluginRegistry registry;
 	protected String sourceLocation;
 
 public PluginModelSourceBuildScriptGenerator() {
@@ -208,12 +205,13 @@ protected String getScriptLocation(PluginModel model) throws CoreException {
 	return file.getAbsolutePath();
 }
 
-protected PluginRegistryModel getRegistry() throws CoreException {
+protected PluginRegistry getRegistry() throws CoreException {
 	if (registry == null) {
 		URL[] pluginPath = getPluginPath();
 		MultiStatus problems = new MultiStatus(PI_PDEBUILD, EXCEPTION_MODEL_PARSE, Policy.bind("exception.pluginParse"), null);
-		Factory factory = new Factory(problems);
-		registry = Platform.parsePlugins(pluginPath, factory);
+		InternalFactory factory = new InternalFactory(problems);
+		registry = (PluginRegistry) Platform.parsePlugins(pluginPath, factory);
+		registry.resolve(false, false);
 		IStatus status = factory.getStatus();
 		if (Utils.contains(status, IStatus.ERROR))
 			throw new CoreException(status);

@@ -3,15 +3,14 @@ package org.eclipse.pde.internal.build;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
 
-import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.internal.plugins.InternalFactory;
+import org.eclipse.core.internal.plugins.PluginRegistry;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.model.*;
-import org.eclipse.pde.internal.build.ant.AntScript;
+import org.eclipse.core.runtime.model.Factory;
+import org.eclipse.core.runtime.model.PluginRegistryModel;
 
 
 /**
@@ -37,28 +36,20 @@ public abstract class AbstractBuildScriptGenerator extends AbstractBuildScriptGe
 	/**
 	 * Plug-in registry for the elements. Should only be accessed by getRegistry().
 	 */
-	private PluginRegistryModel registry;
-
-
-
-
-
-
-
+	private PluginRegistry registry;
 
 
 public void setInstallLocation(String location) {
 	this.installLocation = location;
 }
 
-
-
-protected PluginRegistryModel getRegistry() throws CoreException {
+protected PluginRegistry getRegistry() throws CoreException {
 	if (registry == null) {
 		URL[] pluginPath = getPluginPath();
 		MultiStatus problems = new MultiStatus(PI_PDEBUILD, EXCEPTION_MODEL_PARSE, Policy.bind("exception.pluginParse"), null);
-		Factory factory = new Factory(problems);
-		registry = Platform.parsePlugins(pluginPath, factory);
+		InternalFactory factory = new InternalFactory(problems);
+		registry = (PluginRegistry) Platform.parsePlugins(pluginPath, factory);
+		registry.resolve(false, false);
 		IStatus status = factory.getStatus();
 		if (Utils.contains(status, IStatus.ERROR))
 			throw new CoreException(status);

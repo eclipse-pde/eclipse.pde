@@ -21,7 +21,7 @@ public abstract class ModelBuildScriptGenerator extends AbstractBuildScriptGener
 	 * PluginModel to generate script from.
 	 */
 	protected PluginModel model;
-	
+
 
 /**
  * @see AbstractScriptGenerator#generate()

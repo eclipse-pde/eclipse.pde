@@ -14,12 +14,11 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
-import java.util.Map.Entry;
 
+import org.eclipse.core.internal.plugins.PluginRegistry;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
 import org.eclipse.pde.internal.build.ant.*;
-import org.eclipse.pde.internal.build.ant.AntScript;
 import org.eclipse.update.core.VersionedIdentifier;
 
 /**
@@ -90,7 +89,8 @@ protected String getClasspath(PluginModel model, JAR jar) throws CoreException {
 		for (int i = 0; i < jars.length; i++) {
 			if (jar.getName().equals(jars[i].getName()))
 				continue;
-			classpath.add(jars[i].getName());
+			String library = getLibraryLocation(model, jars[i].getName(), location);
+			classpath.add(library);
 		}
 		// Add the plug-in libraries that were not declared in build.properties .
 		// It usually happens when the library is provided already built.
@@ -105,7 +105,8 @@ protected String getClasspath(PluginModel model, JAR jar) throws CoreException {
 			}
 			if (found)
 				continue;
-			classpath.add(libraries[i].getName());
+			String library = getLibraryLocation(model, libraries[i].getName(), location);
+			classpath.add(library);
 		}
 	} else {
 		// otherwise we add all the predecessor jars
@@ -113,10 +114,12 @@ protected String getClasspath(PluginModel model, JAR jar) throws CoreException {
 		for (int i = 0; i < order.length; i++) {
 			if (order[i].equals(jar.getName()))
 				break;
-			classpath.add(order[i]);
+			String library = getLibraryLocation(model, order[i], location);
+			classpath.add(library);
 		}
 	}
-	return replaceVariables(Utils.getStringFromCollection(classpath, ";"));
+	return Utils.getStringFromCollection(classpath, ";");
+//	return replaceVariables(Utils.getStringFromCollection(classpath, ";"));
 }
 
 protected PluginModel getPlugin(String id, String version) throws CoreException {
@@ -136,7 +139,7 @@ protected void addDevEntries(PluginModel model, String baseLocation, Set classpa
 		classpath.add(root.append(devEntries[i]));
 }
 
-abstract protected PluginRegistryModel getRegistry() throws CoreException;
+abstract protected PluginRegistry getRegistry() throws CoreException;
 
 protected String getLocation(PluginModel model) throws CoreException {
 	try {
@@ -150,20 +153,34 @@ protected void addLibraries(PluginModel model, Set classpath, String baseLocatio
 	LibraryModel[] libraries = model.getRuntime();
 	if (libraries == null)
 		return;
-	String root = getLocation(model);
-	IPath base = Utils.makeRelative(new Path(root), new Path(baseLocation));
 	for (int i = 0; i < libraries.length; i++) {
-		String library = base.append(libraries[i].getName()).toString();
+		String library = getLibraryLocation(model, libraries[i].getName(), baseLocation);
 		classpath.add(library);
 	}
+}
+
+protected String getLibraryLocation(PluginModel model, String libraryName, String baseLocation) throws CoreException {
+	IPluginDescriptor descriptor = getRegistry().getPluginDescriptor(model.getId());
+	String absoluteLocation = descriptor.find(new Path(libraryName)).getFile();
+	IPath relativePath = Utils.makeRelative(new Path(absoluteLocation), new Path(baseLocation));
+	return relativePath.toString();
 }
 
 
 protected void addFragmentsLibraries(PluginModel plugin, Set classpath, String baseLocation) throws CoreException {
 	PluginFragmentModel[] fragments = getRegistry().getFragments();
 	for (int i = 0; i < fragments.length; i++) {
-		if (fragments[i].getPlugin().equals(plugin.getId()))
-			addLibraries(fragments[i], classpath, baseLocation);
+		if (fragments[i].getPlugin().equals(plugin.getId())) {
+			LibraryModel[] libraries = fragments[i].getRuntime();
+			if (libraries == null)
+				return;
+			String root = getLocation(fragments[i]);
+			IPath base = Utils.makeRelative(new Path(root), new Path(baseLocation));
+			for (int j = 0; j < libraries.length; j++) {
+				String library = base.append(libraries[j].getName()).toString();
+				classpath.add(library);
+			}
+		}
 	}
 }
 
