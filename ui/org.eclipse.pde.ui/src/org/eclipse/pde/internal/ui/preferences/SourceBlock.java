@@ -22,6 +22,7 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.*;
+import org.eclipse.pde.internal.ui.search.*;
 import org.eclipse.pde.internal.ui.util.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
@@ -266,6 +267,9 @@ public class SourceBlock implements IHyperlinkListener {
 	}
 
 	public void linkActivated(HyperlinkEvent e) {
+		IPluginExtensionPoint point = PDECore.getDefault().findExtensionPoint("org.eclipse.pde.core.source");
+		if (point != null)
+			new ShowDescriptionAction(point).run();
 	}
 	
 }
