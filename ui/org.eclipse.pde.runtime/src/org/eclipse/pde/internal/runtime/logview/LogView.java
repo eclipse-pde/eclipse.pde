@@ -466,7 +466,7 @@ public class LogView extends ViewPart implements ILogListener {
 		readLogAction.setToolTipText(
 			PDERuntimePlugin.getResourceString("LogView.readLog.restore"));
 		readLogFile();
-		tableTreeViewer.refresh();
+		asyncRefresh();
 	}
 	
 	private void readLogFile() {
@@ -492,7 +492,6 @@ public class LogView extends ViewPart implements ILogListener {
 		LogEntry entry = new LogEntry(status);
 		LogReader.addEntry(entry, logs, memento, true);
 		asyncRefresh();
-		PDERuntimePlugin.getActivePage().activate(this);
 	}
 
 	private void asyncRefresh() {
@@ -501,15 +500,19 @@ public class LogView extends ViewPart implements ILogListener {
 			return;
 
 		Display display = control.getDisplay();
+		final ViewPart view = this;
+
 		if (display != null) {
 			display.asyncExec(new Runnable() {
 				public void run() {
 					if (!control.isDisposed())
 						tableTreeViewer.refresh();
+					PDERuntimePlugin.getActivePage().activate(view);
 				}
 			});
 		}
 	}
+	
 	public void setFocus() {
 		tableTreeViewer.getTableTree().getTable().setFocus();
 	}
