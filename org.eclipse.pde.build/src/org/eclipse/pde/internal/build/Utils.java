@@ -194,7 +194,7 @@ public final class Utils implements IPDEBuildConstants {
 			// of plugins to build, add prereq relations for them.  This is required since the 
 			// boot and runtime are implicitly added to a plugin's requires list by the platform runtime.
 			// Note that we should skip the xerces plugin as this would cause a circularity.
-			if (plugins[i].getId().equals("org.apache.xerces")) //$NON-NLS-1$
+			if (plugins[i].getId().equals("org.apache.xerces") //$NON-NLS-1$
 				continue;
 			if (!boot && pluginList.contains(BootLoader.PI_BOOT) && !plugins[i].getId().equals(BootLoader.PI_BOOT))
 				prereqs.add(new String[] { plugins[i].getId(), BootLoader.PI_BOOT });
@@ -202,6 +202,32 @@ public final class Utils implements IPDEBuildConstants {
 				prereqs.add(new String[] { plugins[i].getId(), Platform.PI_RUNTIME });
 		}
 
+		if (fragments != null) {
+			//The fragments needs to added relatively to their own prerequisite but also relatively to their host (bug #43244) 
+			for (int i = 0; i < fragments.length; i++) {
+				boolean found = false;
+				PluginPrerequisiteModel[] prereqList = fragments[i].getRequires();
+				if (prereqList != null) {
+					for (int j = 0; j < prereqList.length; j++) {
+						// ensure that we only include values from the original set.
+						String prereq = prereqList[j].getPlugin();
+						if (pluginList.contains(prereq)) {
+							found = true;
+							prereqs.add(new String[] { fragments[i].getId(), prereq });
+						}
+					}
+				}
+				PluginFragmentModel fragment = (PluginFragmentModel) fragments[i];
+				if (pluginList.contains(fragment.getPlugin())) {
+					found = true;
+					prereqs.add(new String[] {fragments[i].getId(), fragment.getPlugin() });
+				}
+					
+				if (!found)
+					prereqs.add(new String[] { fragments[i].getId(), null });
+			}
+		}
+		
 		// do a topological sort, insert the fragments into the sorted elements
 		String[][] prereqArray = (String[][]) prereqs.toArray(new String[prereqs.size()][]);
 		return computeNodeOrder(prereqArray);
