@@ -34,7 +34,6 @@ public class EditorTemplate extends BaseEditorTemplate {
 	private static final String KEY_DEFAULT_EDITOR_NAME =
 		"EditorTemplate.defaultEditorName";
 	
-	private IPluginReference[] dep;
 	/**
 	 * Constructor for EditorTemplate.
 	 */
@@ -47,15 +46,14 @@ public class EditorTemplate extends BaseEditorTemplate {
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getDependencies(java.lang.String)
 	 */
 	public IPluginReference[] getDependencies(String schemaVersion) {
-		if (schemaVersion==null)
-			return new IPluginReference[0];
-		if (dep==null) {
-			dep = new IPluginReference[3];
+		if (schemaVersion != null) {
+			IPluginReference[] dep = new IPluginReference[3];
 			dep[0] = new PluginReference("org.eclipse.jface.text", null, 0);
-			dep[1] = new PluginReference("org.eclipse.ui.workbench.texteditor", null, 0);
-			dep[2] = new PluginReference("org.eclipse.ui.editors", null, 0);
+			dep[1] = new PluginReference("org.eclipse.ui.editors", null, 0);
+			dep[2] = new PluginReference("org.eclipse.ui.workbench.texteditor", null, 0);
+			return dep;
 		}
-		return dep;
+		return super.getDependencies(schemaVersion);
 	}
 
 	public void addPages(Wizard wizard) {

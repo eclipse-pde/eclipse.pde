@@ -20,6 +20,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.wizards.templates.*;
 import org.eclipse.pde.internal.ui.wizards.templates.ControlStack;
 
 /**
@@ -258,7 +259,7 @@ public abstract class AbstractTemplateSection
 	 * </p>
 	 */
 	public IPluginReference[] getDependencies(String schemaVersion) {
-		return new IPluginReference[0];
+		return new IPluginReference[] {new PluginReference("org.eclipse.ui", null, 0)};
 	}
 
 	/**

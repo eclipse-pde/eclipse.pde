@@ -35,8 +35,6 @@ public class MultiPageEditorTemplate extends BaseEditorTemplate {
 	private static final String KEY_EXTENSIONS_LABEL =
 		"MultiPageEditorTemplate.extensions";
 
-	private IPluginReference [] dep;
-
 	/**
 	 * Constructor for MultiPageEditorTemplate.
 	 */
@@ -50,16 +48,15 @@ public class MultiPageEditorTemplate extends BaseEditorTemplate {
 	}
 	
 	public IPluginReference[] getDependencies(String schemaVersion) {
-		if (schemaVersion==null)
-			return new IPluginReference[0];
-		if (dep==null) {
-			dep = new IPluginReference[4];
-			dep[0] = new PluginReference("org.eclipse.ui.ide", null, 0);
-			dep[1] = new PluginReference("org.eclipse.jface.text", null, 0);
-			dep[2] = new PluginReference("org.eclipse.ui.workbench.texteditor", null, 0);
-			dep[3] = new PluginReference("org.eclipse.ui.editors", null, 0);
+		if (schemaVersion != null) {
+			IPluginReference[] dep = new IPluginReference[4];
+			dep[0] = new PluginReference("org.eclipse.jface.text", null, 0);
+			dep[1] = new PluginReference("org.eclipse.ui.editors", null, 0);
+			dep[2] = new PluginReference("org.eclipse.ui.ide", null, 0);
+			dep[3] = new PluginReference("org.eclipse.ui.workbench.texteditor", null, 0);
+			return dep;
 		}
-		return dep;
+		return super.getDependencies(schemaVersion);
 	}
 	
 	/*

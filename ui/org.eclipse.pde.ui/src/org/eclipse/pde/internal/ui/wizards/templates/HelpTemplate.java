@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
@@ -244,6 +245,13 @@ public class HelpTemplate extends PDETemplateSection {
 	 */
 	public String getUsedExtensionPoint() {
 		return "org.eclipse.help.toc";
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getDependencies(java.lang.String)
+	 */
+	public IPluginReference[] getDependencies(String schemaVersion) {
+		return new IPluginReference[] {new PluginReference("org.eclipse.help", null, 0)};
 	}
 
 }
