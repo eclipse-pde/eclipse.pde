@@ -82,6 +82,7 @@ public class AdvancedPluginExportPage extends WizardPage {
 		
 		fPasswordLabel = createLabel(group, PDEPlugin.getResourceString("AdvancedPluginExportPage.password"));	 //$NON-NLS-1$
 		fPasswordText = createText(group);
+		fPasswordText.setEchoChar('*');
 		fPasswordText.setText(getString(S_PASSWORD));
 
 		fButton.setSelection(settings.getBoolean(S_SIGN_JARS));
