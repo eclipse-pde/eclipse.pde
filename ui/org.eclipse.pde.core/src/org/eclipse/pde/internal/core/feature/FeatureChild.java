@@ -21,7 +21,6 @@ import org.w3c.dom.*;
 public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 	private static final long serialVersionUID = 1L;
 	private String fVersion;
-	private IFeature fFeature;
 	private String fName;
 	private boolean fOptional;
 	private int fSearchLocation = ROOT;
@@ -81,7 +80,6 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 		fVersion = feature.getVersion();
 		fOptional = false;
 		fName = feature.getLabel();
-		this.fFeature = feature;
 	}
 	/**
 	 * @see IFeatureChild#getVersion()
@@ -123,20 +121,12 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 	}
 
 	public IFeature getReferencedFeature() {
-		if (fFeature == null)
-			hookWithWorkspace();
-		return fFeature;
-	}
-
-	public void hookWithWorkspace() {
-		if (fVersion != null) {
-			IFeatureModel workspaceModel = PDECore.getDefault()
-					.getFeatureModelManager().findFeatureModel(getId(),
-							fVersion);
-			if (workspaceModel != null && workspaceModel.getFeature() != null) {
-				this.fFeature = workspaceModel.getFeature();
-			}
+		IFeatureModel workspaceModel = PDECore.getDefault()
+				.getFeatureModelManager().findFeatureModel(getId(), fVersion);
+		if (workspaceModel != null) {
+			return workspaceModel.getFeature();
 		}
+		return null;
 	}
 
 	/**
@@ -147,7 +137,6 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 		Object oldValue = this.fVersion;
 		this.fVersion = version;
 		firePropertyChanged(P_VERSION, oldValue, version);
-		hookWithWorkspace();
 	}
 
 	public void setName(String name) throws CoreException {
@@ -236,7 +225,6 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 
 	public void setId(String id) throws CoreException {
 		super.setId(id);
-		hookWithWorkspace();
 	}
 
 	/**

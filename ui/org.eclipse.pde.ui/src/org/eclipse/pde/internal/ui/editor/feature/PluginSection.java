@@ -436,7 +436,6 @@ public class PluginSection extends TableSection implements
 				FeaturePlugin fPlugin = (FeaturePlugin) objects[i];
 				fPlugin.setModel(model);
 				fPlugin.setParent(feature);
-				fPlugin.hookWithWorkspace();
 				fPlugins[i] = fPlugin;
 			}
 			feature.addPlugins(fPlugins);

@@ -24,9 +24,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.plugin.IFragment;
-import org.eclipse.pde.core.plugin.IFragmentModel;
-import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.IFeatureModelDelta;
@@ -40,8 +37,6 @@ import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureImport;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
-import org.eclipse.pde.internal.core.plugin.Fragment;
-import org.eclipse.pde.internal.core.plugin.Plugin;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
 import org.eclipse.pde.internal.ui.editor.TableSection;
@@ -255,7 +250,6 @@ public class RequiresSection extends TableSection implements
 			} else { // instanceof IPluginModelBase
 				IPluginModelBase candidate = (IPluginModelBase) candidates[i];
 				IPluginBase pluginBase = candidate.getPluginBase();
-				fimport.setPlugin((IPlugin) candidate.getPluginBase());
 				fimport.setId(pluginBase.getId());
 			}
 			added[i] = fimport;
@@ -548,7 +542,6 @@ public class RequiresSection extends TableSection implements
 				FeatureImport fImport = (FeatureImport) objects[i];
 				fImport.setModel(model);
 				fImport.setParent(feature);
-				reconnectReference(fImport);
 				imports[i] = fImport;
 			}
 			feature.addImports(imports);
@@ -556,33 +549,6 @@ public class RequiresSection extends TableSection implements
 			PDEPlugin.logException(e);
 		}
 
-	}
-
-	private void reconnectReference(FeatureImport fImport) {
-		if (fImport.getType() == IFeatureImport.FEATURE) {
-			fImport.setFeature(PDECore.getDefault().findFeature(
-					fImport.getId(), fImport.getVersion(), fImport.getMatch()));
-		} else {
-			Plugin plugin = (Plugin) fImport.getPlugin();
-			if (plugin.getPluginBase() instanceof Fragment) {
-				IFragmentModel[] fragments = PDECore.getDefault()
-						.getWorkspaceModelManager().getFragmentModels();
-				for (int i = 0; i < fragments.length; i++) {
-					IFragment fragment = fragments[i].getFragment();
-					if (fragment.getId().equals(plugin.getId())) {
-						if (plugin.getVersion() == null
-								|| fragment.getVersion().equals(
-										plugin.getVersion())) {
-							plugin.setModel(fragment.getModel());
-							return;
-						}
-					}
-				}
-			} else {
-				plugin.setModel(PDECore.getDefault().findPlugin(plugin.getId(),
-						plugin.getVersion(), 0).getModel());
-			}
-		}
 	}
 
 	void fireSelection() {

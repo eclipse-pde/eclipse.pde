@@ -25,8 +25,6 @@ public class FeatureImport
 	private static final long serialVersionUID = 1L;
 	private int fMatch = NONE;
 	private int fIdMatch = PERFECT;
-	private IPlugin fPlugin;
-	private IFeature fFeature;
 	private int fType = PLUGIN;
 	private boolean fPatch = false;
 
@@ -34,29 +32,21 @@ public class FeatureImport
 	}
 
 	public IPlugin getPlugin() {
-		if (id != null && fType == PLUGIN && fPlugin == null) {
-			setPlugin(PDECore.getDefault().findPlugin(id, getVersion(), fMatch));
+		if (id != null && fType == PLUGIN) {
+			return PDECore.getDefault().findPlugin(id, getVersion(), fMatch);
 		}
-		return fPlugin;
+		return null;
 	}
 
 	public IFeature getFeature() {
-		if (id != null && fType == FEATURE && fFeature == null) { 
-			setFeature(PDECore.getDefault().findFeature(id, getVersion(), fMatch));
+		if (id != null && fType == FEATURE) { 
+			return PDECore.getDefault().findFeature(id, getVersion(), fMatch);
 		}
-		return fFeature;
+		return null;
 	}
 
 	public int getIdMatch() {
 		return fIdMatch;
-	}
-
-	public void setPlugin(IPlugin plugin) {
-		this.fPlugin = plugin;
-	}
-
-	public void setFeature(IFeature feature) {
-		this.fFeature = feature;
 	}
 
 	protected void reset() {
@@ -99,7 +89,6 @@ public class FeatureImport
 
 	public void loadFrom(IFeature feature) {
 		reset();
-		this.fFeature = feature;
 		fType = FEATURE;
 		id = feature.getId();
 		version = feature.getVersion();
@@ -178,11 +167,14 @@ public class FeatureImport
 		}
 		writer.println("/>"); //$NON-NLS-1$
 	}
+
 	public String toString() {
-		if (fPlugin != null)
-			return fPlugin.getTranslatedName();
-		else if (fFeature != null)
-			return fFeature.getLabel();
+		IPlugin plugin = getPlugin();
+		if (plugin != null)
+			return plugin.getTranslatedName();
+		IFeature feature = getFeature();
+		if (feature != null)
+			return feature.getLabel();
 		return getId();
 	}
 }

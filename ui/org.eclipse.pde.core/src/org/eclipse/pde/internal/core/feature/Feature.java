@@ -317,9 +317,6 @@ public class Feature extends VersionableObject implements IFeature {
 			iimport.setMatch(match);
 			((FeatureImport) iimport).setInTheModel(true);
 			newImports.add(iimport);
-			IPlugin p = PDECore.getDefault().findPlugin(pluginImport.getId(),
-					pluginImport.getVersion(), pluginImport.getMatch());
-			((FeatureImport) iimport).setPlugin(p);
 		}
 	}
 

@@ -21,7 +21,6 @@ import org.w3c.dom.*;
 
 public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 	private static final long serialVersionUID = 1L;
-	private IPluginBase fPluginBase;
 	private boolean fFragment;
 	private String fVersion;
 	private boolean fUnpack = true;
@@ -40,11 +39,21 @@ public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 	}
 
 	public IPluginBase getPluginBase() {
-		if (fPluginBase == null && id != null) {
-			hookWithWorkspace();
+		if (id == null) {
+			return null;
 		}
-		return fPluginBase;
+		PluginModelManager manager = PDECore.getDefault().getModelManager();
+		ModelEntry entry = manager.findEntry(id);
+		if (entry != null) {
+			IPluginModelBase model = entry.getActiveModel();
+			if (fFragment && model instanceof IFragmentModel)
+				return model.getPluginBase();
+			else if (!fFragment && model instanceof IPluginModel)
+				return model.getPluginBase();
+		}
+		return null;
 	}
+	
 	public String getVersion() {
 		return fVersion;
 	}
@@ -89,25 +98,11 @@ public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 			fUnpack = false;
 	}
 	
-	public void hookWithWorkspace() {
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
-		ModelEntry entry = manager.findEntry(id);
-		if (entry != null) {
-			IPluginModelBase model = entry.getActiveModel();
-			if (fFragment && model instanceof IFragmentModel)
-				fPluginBase = model.getPluginBase();
-			else if (!fFragment && model instanceof IPluginModel)
-				fPluginBase = model.getPluginBase();
-		}		
-	}
-
-
 	public void loadFrom(IPluginBase plugin) {
 		id = plugin.getId();
 		label = plugin.getTranslatedName();
 		fVersion = plugin.getVersion();
 		fFragment = plugin instanceof IFragment;
-		this.fPluginBase = plugin;
 	}
 
 	public void write(String indent, PrintWriter writer) {
@@ -131,8 +126,9 @@ public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 	}
 
 	public String getLabel() {
-		if (fPluginBase != null) {
-			return fPluginBase.getTranslatedName();
+		IPluginBase pluginBase = getPluginBase();
+		if (pluginBase != null) {
+			return pluginBase.getTranslatedName();
 		}
 		String name = super.getLabel();
 		if (name == null)

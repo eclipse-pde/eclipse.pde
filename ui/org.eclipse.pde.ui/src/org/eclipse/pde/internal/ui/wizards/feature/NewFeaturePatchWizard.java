@@ -278,6 +278,7 @@ public class NewFeaturePatchWizard extends NewWizard implements IExecutableExten
 		    featureImport.setVersion(featureModel.getFeature().getVersion());
 		    featureImport.setId(featureModel.getFeature().getId());
 		} else if (data.isPatch()){
+			featureImport.setType(IFeatureImport.FEATURE);
 		    featureImport.setPatch(true);
 		    featureImport.setVersion(data.featureToPatchVersion);
 		    featureImport.setId(data.featureToPatchId);

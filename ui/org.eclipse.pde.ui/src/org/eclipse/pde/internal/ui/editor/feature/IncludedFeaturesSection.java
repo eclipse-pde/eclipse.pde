@@ -451,7 +451,6 @@ public class IncludedFeaturesSection extends TableSection implements
 					FeatureChild fChild = (FeatureChild) objects[i];
 					fChild.setModel(model);
 					fChild.setParent(feature);
-					fChild.hookWithWorkspace();
 					fChildren[i] = fChild;
 				}
 			}
