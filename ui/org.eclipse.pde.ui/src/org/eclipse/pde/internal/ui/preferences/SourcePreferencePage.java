@@ -17,6 +17,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
 /**
@@ -302,6 +303,7 @@ public class SourcePreferencePage
 		tableViewer.setInput(this);
 		initializeStates();
 		tablePart.setButtonEnabled(4, false);
+		WorkbenchHelp.setHelp(parent, IHelpContextIds.SOURCE_PREFERENCE_PAGE);
 		return container;
 	}
 	

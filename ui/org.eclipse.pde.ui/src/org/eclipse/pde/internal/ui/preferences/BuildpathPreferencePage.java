@@ -7,6 +7,7 @@ package org.eclipse.pde.internal.ui.preferences;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.jface.preference.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.*;
 
@@ -95,6 +96,11 @@ public class BuildpathPreferencePage
 				PDEPlugin.getResourceString(KEY_CLASSPATH_CONTAINERS),
 				getFieldEditorParent());
 		addField(editor);
+	}
+	
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.BUILDPATH_PREFERENCE_PAGE);
 	}
 
 	public static boolean isPluginProjectUpdate() {

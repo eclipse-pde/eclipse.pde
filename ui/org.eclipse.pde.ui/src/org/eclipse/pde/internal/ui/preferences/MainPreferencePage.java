@@ -5,7 +5,9 @@ package org.eclipse.pde.internal.ui.preferences;
  */
 
 import org.eclipse.jface.preference.*;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.pde.internal.ui.*;
 
 public class MainPreferencePage
@@ -66,6 +68,11 @@ public class MainPreferencePage
 				getFieldEditorParent());
 		addField(textEditor);
 	}
+	
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.MAIN_PREFERENCE_PAGE);
+	}	
 
 	public static boolean isNoPDENature() {
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();

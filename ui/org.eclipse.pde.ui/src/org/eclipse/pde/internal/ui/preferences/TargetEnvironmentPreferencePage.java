@@ -4,22 +4,18 @@ package org.eclipse.pde.internal.ui.preferences;
  * All Rights Reserved.
  */
 
-import java.util.Locale;
-import java.util.StringTokenizer;
+import java.util.*;
 
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.jface.preference.*;
+import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  */
@@ -87,6 +83,8 @@ public class TargetEnvironmentPreferencePage
 		arch.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		arch.setItems(BootLoader.knownOSArchValues());
 		arch.select(arch.indexOf(preferences.getString(ARCH)));
+		
+		WorkbenchHelp.setHelp(container, IHelpContextIds.TARGET_ENVIRONMENT_PREFERENCE_PAGE);
 
 		return container;
 	}

@@ -5,12 +5,13 @@ package org.eclipse.pde.internal.ui.preferences;
  */
 
 import org.eclipse.jface.preference.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.text.IPDEColorConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class EditorPreferencePage
 	extends FieldEditorPreferencePage
@@ -41,6 +42,11 @@ public class EditorPreferencePage
 		addLabel("", 2);
 		addLabel(PDEPlugin.getResourceString("EditorPreferencePage.colorSettings"), 2);
 		addSourceColorFields();
+	}
+	
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.EDITOR_PREFERENCE_PAGE);
 	}
 	
 	public static boolean getUseSourcePage() {
