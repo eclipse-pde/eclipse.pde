@@ -10,47 +10,29 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import java.io.File;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.TreeSet;
+import java.io.*;
+import java.net.*;
+import java.util.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.core.runtime.*;
+import org.eclipse.debug.core.*;
+import org.eclipse.debug.ui.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
-import org.eclipse.jface.viewers.CheckboxTreeViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.TargetPlatform;
-import org.eclipse.pde.internal.core.plugin.ExternalPluginModelBase;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
-import org.eclipse.pde.internal.ui.elements.NamedElement;
-import org.eclipse.pde.internal.ui.util.SWTUtil;
-import org.eclipse.pde.internal.ui.wizards.ListUtil;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.plugin.*;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.elements.*;
+import org.eclipse.pde.internal.ui.util.*;
+import org.eclipse.pde.internal.ui.wizards.*;
+import org.eclipse.swt.*;
+import org.eclipse.swt.custom.*;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.*;
 
 public class AdvancedLauncherTab
 	extends AbstractLauncherTab
@@ -195,47 +177,45 @@ public class AdvancedLauncherTab
 	}
 
 	protected Control createPluginList(final Composite parent) {
-		fPluginTreeViewer = new CheckboxTreeViewer(parent, SWT.BORDER);
-		fPluginTreeViewer.setContentProvider(new PluginContentProvider());
-		fPluginTreeViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
-		fPluginTreeViewer.setAutoExpandLevel(2);
-		fPluginTreeViewer.addCheckStateListener(new ICheckStateListener() {
-			public void checkStateChanged(final CheckStateChangedEvent event) {
-				final Object element = event.getElement();
-				BusyIndicator.showWhile(parent.getDisplay(), new Runnable() {
-					public void run() {
-						if (element instanceof IPluginModelBase) {
-							handleCheckStateChanged((IPluginModelBase)element, event.getChecked());
-						} else {
-							handleGroupStateChanged(element, event.getChecked());
-						}
-						updateStatus();
+			fPluginTreeViewer = new CheckboxTreeViewer(parent, SWT.BORDER);
+			fPluginTreeViewer.setContentProvider(new PluginContentProvider());
+			fPluginTreeViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
+			fPluginTreeViewer.setAutoExpandLevel(2);
+			fPluginTreeViewer.addCheckStateListener(new ICheckStateListener() {
+				public void checkStateChanged(final CheckStateChangedEvent event) {
+					Object element = event.getElement();
+					if (element instanceof IPluginModelBase) {
+						handleCheckStateChanged(
+							(IPluginModelBase) element,
+							event.getChecked());
+					} else {
+						handleGroupStateChanged(element, event.getChecked());
 					}
-				});
-			}
-		});
-		fPluginTreeViewer.setSorter(new ListUtil.PluginSorter() {
-			public int category(Object obj) {
-				if (obj == fWorkspacePlugins)
-					return -1;
-				return 0;
-			}
-		});
-
-		Image pluginsImage =
-			PDEPlugin.getDefault().getLabelProvider().get(
-				PDEPluginImages.DESC_REQ_PLUGINS_OBJ);
-
-		fWorkspacePlugins =
-			new NamedElement(
-				PDEPlugin.getResourceString("AdvancedLauncherTab.workspacePlugins"),
-				pluginsImage);
-		fExternalPlugins =
-			new NamedElement(
-				PDEPlugin.getResourceString("AdvancedLauncherTab.externalPlugins"),
-				pluginsImage);
-		return fPluginTreeViewer.getTree();
-	}
+					updateLaunchConfigurationDialog();
+				}
+			});
+			fPluginTreeViewer.setSorter(new ListUtil.PluginSorter() {
+				public int category(Object obj) {
+					if (obj == fWorkspacePlugins)
+						return -1;
+					return 0;
+				}
+			});
+	
+			Image pluginsImage =
+				PDEPlugin.getDefault().getLabelProvider().get(
+					PDEPluginImages.DESC_REQ_PLUGINS_OBJ);
+	
+			fWorkspacePlugins =
+				new NamedElement(
+					PDEPlugin.getResourceString("AdvancedLauncherTab.workspacePlugins"),
+					pluginsImage);
+			fExternalPlugins =
+				new NamedElement(
+					PDEPlugin.getResourceString("AdvancedLauncherTab.externalPlugins"),
+					pluginsImage);
+			return fPluginTreeViewer.getTree();
+		}
 
 
 	private void initWorkspacePluginsState(ILaunchConfiguration config)
@@ -449,41 +429,13 @@ public class AdvancedLauncherTab
 				return createStatus(
 					IStatus.ERROR,
 					PDEPlugin.getResourceString("AdvancedLauncherTab.error.featureSetup"));
-		} else {
-			IPluginModelBase[] plugins = getPlugins();
-			if (plugins.length == 0)
-				return createStatus(
-					IStatus.ERROR,
-					PDEPlugin.getResourceString("AdvancedLauncherTab.error.no_plugins"));
-
-			if (findModel("org.eclipse.core.boot", plugins) == null)
-				return createStatus(
-					IStatus.ERROR,
-					PDEPlugin.getResourceString("AdvancedLauncherTab.error.no_boot"));
-
-			for (int i = 0; i < plugins.length; i++) {
-				if (!plugins[i].isLoaded())
-					return createStatus(
-						IStatus.WARNING,
-						PDEPlugin.getResourceString("AdvancedLauncherTab.error.brokenPlugins"));
-			}
-		}
+		} 
 		return createStatus(IStatus.OK, "");
-	}
-
-	private IPluginModelBase findModel(String id, IPluginModelBase[] models) {
-		for (int i = 0; i < models.length; i++) {
-			IPluginModelBase model = (IPluginModelBase) models[i];
-			String pid = model.getPluginBase().getId();
-			if (pid != null && pid.equals(id))
-				return model;
-		}
-		return null;
 	}
 
 	private IPluginModelBase[] getPlugins() {
 		if (fUseDefaultRadio.getSelection()) {
-			HashMap map = new HashMap();
+			TreeMap map = new TreeMap();
 			for (int i = 0; i < fWorkspaceModels.length; i++) {
 				// check for null is to accomodate previous unclean exits (e.g. workspace crashes)
 				String id = fWorkspaceModels[i].getPluginBase().getId();
