@@ -58,7 +58,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 
 		// It is not required to filter in the two first generateModels, since
 		// it is only for the building of a single plugin
-		generateModels(new ModelBuildScriptGenerator(), plugins);
+		generateModels(plugins);
 		generateFeatures(features);
 	}
 
@@ -79,12 +79,12 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 
 	/**
 	 * 
-	 * @param generator
 	 * @param models
 	 * @throws CoreException
 	 */
-	protected void generateModels(ModelBuildScriptGenerator generator, List models) throws CoreException {
+	protected void generateModels(List models) throws CoreException {
 		for (Iterator iterator = models.iterator(); iterator.hasNext();) {
+			ModelBuildScriptGenerator generator = new ModelBuildScriptGenerator();
 			//Filtering is not required here, since we are only generating the
 			// build for a plugin or a fragment
 			String model = (String) iterator.next();
