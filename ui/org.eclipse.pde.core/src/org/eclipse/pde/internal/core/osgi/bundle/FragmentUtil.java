@@ -90,14 +90,14 @@ public class FragmentUtil {
 	}
 	private int getEquivalentRule(String name) {
 		if (name != null) {
-			if (name.equalsIgnoreCase(Constants.VERSION_MATCH_QUALIFIER) || 
-					name.equalsIgnoreCase(Constants.VERSION_MATCH_MICRO))
+			if (name.equalsIgnoreCase(Constants.VERSION_MATCH_QUALIFIER))
 				return IMatchRules.PERFECT;
 			if (name.equalsIgnoreCase(Constants.VERSION_MATCH_MINOR))
 				return IMatchRules.EQUIVALENT;
 			if (name.equalsIgnoreCase(Constants.VERSION_MATCH_GREATERTHANOREQUAL))
 				return IMatchRules.GREATER_OR_EQUAL;
-			return IMatchRules.COMPATIBLE;
+			if (name.equalsIgnoreCase(Constants.VERSION_MATCH_MAJOR))
+				return IMatchRules.COMPATIBLE;
 		}
 		return IMatchRules.NONE;
 	}
@@ -114,9 +114,10 @@ public class FragmentUtil {
 			case IMatchRules.GREATER_OR_EQUAL:
 				ruleName = Constants.VERSION_MATCH_GREATERTHANOREQUAL;
 				break;
-			case IMatchRules.NONE:
+			case IMatchRules.COMPATIBLE:
+				ruleName = Constants.VERSION_MATCH_MAJOR;
 			default:
-				ruleName=null;
+				ruleName = null;
 		}
 		return ruleName;
 	}
