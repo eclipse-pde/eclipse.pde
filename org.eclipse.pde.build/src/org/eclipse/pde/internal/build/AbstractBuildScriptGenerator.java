@@ -248,29 +248,9 @@ protected String makeRelative(String property, String fullPath, String pathToTri
 }
 
 	
-/**
- * @deprecated
- */
-public void setBuildVariableARCH(String buildVariableARCH) {
-}
 
-/**
- * @deprecated
- */
-public void setBuildVariableNL(String buildVariableNL) {
-}
 
-/**
- * @deprecated
- */
-public void setBuildVariableOS(String buildVariableOS) {
-}
 
-/**
- * @deprecated
- */
-public void setBuildVariableWS(String buildVariableWS) {
-}
 
 /**
  * Sets the pluginPath.
