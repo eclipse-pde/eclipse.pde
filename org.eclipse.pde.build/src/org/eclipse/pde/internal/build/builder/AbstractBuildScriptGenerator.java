@@ -93,13 +93,6 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 	 * @return URL[]
 	 */
 	private String[] getPaths() throws MalformedURLException {
-		String[] paths;
-		if (pluginPath != null && workingDirectory != null) {
-			paths = new String[pluginPath.length + 1];
-			System.arraycopy(pluginPath, 0, paths, 0, pluginPath.length);
-			paths[pluginPath.length] = workingDirectory; //$NON-NLS-1$
-			return paths;
-		}
 		if (pluginPath != null)
 			return pluginPath;
 
