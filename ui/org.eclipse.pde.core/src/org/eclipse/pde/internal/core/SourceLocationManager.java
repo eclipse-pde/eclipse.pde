@@ -313,8 +313,4 @@ public class SourceLocationManager implements ICoreConstants {
 		return extensions;
 	}
 	
-	public void updateSourceLocations() {
-		initializeExtensionLocations();
-	}
-
 }
