@@ -17,6 +17,7 @@ public class RuntimeForm extends ScrollableSectionForm {
 	private JarsSection jarsSection;
 	private ExportSection exportSection;
 	private PackagePrefixesSection prefixesSection;
+	private LibraryTypeSection typeSection;
 
 public RuntimeForm(ManifestRuntimePage page) {
 	this.page = page;
@@ -37,11 +38,22 @@ protected void createFormClient(Composite parent) {
 	//gd.heightHint = 300;
 	control.setLayoutData(gd);
 
+	Composite container = factory.createComposite(parent);
+	GridLayout l = new GridLayout();
+	l.marginHeight = 0;
+	l.marginWidth = 0;
+	container.setLayout(l);
+	container.setLayoutData(new GridData(GridData.FILL_BOTH));
+	
+	typeSection = new LibraryTypeSection(page);
+	control = typeSection.createControl(container, getFactory());
+	control.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
 	exportSection = new ExportSection(page);
-	control = exportSection.createControl(parent, getFactory());
-	gd = new GridData(GridData.FILL_BOTH);
+	control = exportSection.createControl(container, getFactory());
+	gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_FILL);
 	control.setLayoutData(gd);
-
+	
 	jarsSection = new JarsSection(page);
 	control = jarsSection.createControl(parent, getFactory());
 	gd = new GridData(GridData.FILL_BOTH);
@@ -56,11 +68,13 @@ protected void createFormClient(Composite parent) {
 
 	// Link
 	SectionChangeManager manager = new SectionChangeManager();
+	manager.linkSections(librarySection, typeSection);
 	manager.linkSections(librarySection, exportSection);
 	manager.linkSections(librarySection, jarsSection);
 	manager.linkSections(librarySection, prefixesSection);
 
 	registerSection(librarySection);
+	registerSection(typeSection);
 	registerSection(exportSection);
 	registerSection(jarsSection);
 	registerSection(prefixesSection);

@@ -44,6 +44,7 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 		this.contentFilters = libraryModel.getExports();
 		this.exported = libraryModel.isExported();
 		this.packages = libraryModel.getPackagePrefixes();
+		this.type = libraryModel.getType();
 		range =
 			new int[] {
 				libraryModel.getStartLine(),
@@ -51,6 +52,7 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 	}
 	void load(Node node, Hashtable lineTable) {
 		this.name = getNodeAttribute(node, "name");
+		this.type = getNodeAttribute(node, "type");
 		NodeList children = node.getChildNodes();
 		Vector exports = new Vector();
 		Vector prefixes = new Vector();
