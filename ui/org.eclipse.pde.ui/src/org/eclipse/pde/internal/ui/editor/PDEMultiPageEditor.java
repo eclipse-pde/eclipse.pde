@@ -219,6 +219,10 @@ public abstract class PDEMultiPageEditor
 				undoManager.disconnect((IModelChangeProvider) model);
 		}
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
+		if (clipboard!=null) {
+			clipboard.dispose();
+			clipboard = null;
+		}
 		disposed = true;
 	}
 
