@@ -147,15 +147,15 @@ public class PluginSelectionDialog extends ElementTreeSelectionDialog {
 						IStatus.OK,
 						PDEPlugin.getPluginId(),
 						IStatus.OK,
-						((LabelProvider) treeViewer.getLabelProvider()).getText(selection[0]),
+						((LabelProvider) treeViewer.getLabelProvider()).getText(
+							selection[0]),
 						null);
-				else
-					return new Status(
-						IStatus.ERROR,
-						PDEPlugin.getPluginId(),
-						IStatus.ERROR,
-						"",
-						null);
+				return new Status(
+					IStatus.ERROR,
+					PDEPlugin.getPluginId(),
+					IStatus.ERROR,
+					"",
+					null);
 			}
 		});
 	}

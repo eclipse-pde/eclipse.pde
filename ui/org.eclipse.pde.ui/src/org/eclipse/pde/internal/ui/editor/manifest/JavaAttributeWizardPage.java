@@ -480,16 +480,30 @@ public class JavaAttributeWizardPage extends WizardPage {
 		});
 		dialog.setAllowMultiple(false);
 		dialog.setTitle(PDEPlugin.getResourceString("JavaAttributeWizard.containerSelection"));
-		int status = dialog.open();
-		if (status == FolderSelectionDialog.OK) {
-			Object[] result = dialog.getResult();
-			if (!(result[0] instanceof IFolder))
-				return;
-			IFolder folder = (IFolder) result[0];
+		dialog.setValidator(new ISelectionStatusValidator() {
+			public IStatus validate(Object[] selection) {
+				if (selection != null
+					&& selection.length > 0
+					&& selection[0] instanceof IFolder)
+					return new Status(
+						IStatus.OK,
+						PDEPlugin.getPluginId(),
+						IStatus.OK,
+						"",
+						null);
+				return new Status(
+					IStatus.ERROR,
+					PDEPlugin.getPluginId(),
+					IStatus.ERROR,
+					"",
+					null);
+			}
+		});
+		if (dialog.open() == FolderSelectionDialog.OK) {
+			IFolder folder = (IFolder) dialog.getFirstResult();
 			containerText.setText(
 				folder.getProjectRelativePath().addTrailingSeparator().toString());
 			containerBrowse.setFocus();
-
 		}
 	}
 
