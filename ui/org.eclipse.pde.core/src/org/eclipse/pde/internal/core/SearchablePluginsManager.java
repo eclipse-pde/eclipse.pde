@@ -155,6 +155,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory {
 			if (model == null)
 				continue;
 			Vector modelResult = new Vector();
+			modelResult.add(ClasspathUtilCore.createJREEntry());
 			ClasspathUtilCore.addLibraries(
 				model,
 				false,
