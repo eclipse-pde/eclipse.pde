@@ -12,10 +12,6 @@ import org.eclipse.jdt.internal.junit.launcher.JUnitLaunchShortcut;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 public class JUnitWorkbenchShortcut extends JUnitLaunchShortcut {	
 	
 	/**
