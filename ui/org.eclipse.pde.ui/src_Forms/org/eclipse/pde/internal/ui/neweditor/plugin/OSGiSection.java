@@ -70,7 +70,7 @@ public class OSGiSection extends TableSection implements IModelChangedListener {
 								.getResourceString("ManifestEditor.OSGiSection.add"),
 						PDEPlugin
 								.getResourceString("ManifestEditor.OSGiSection.remove")});
-		getSection().setText("Plug-in Activation (3.0 Plug-ins Only)");
+		getSection().setText("Plug-in Activation (3.0 Eclipse Platforms Only)");
 		getSection().setDescription("In order to improve performance, specify the conditions under which the plug-in should be activated.");
 	}
 	public void initialize() {
