@@ -233,11 +233,11 @@ public class TargetPlatform implements IEnvironmentVariables {
 					buffer.append(","); //$NON-NLS-1$
 			}
 			
-			if (!autoStartPlugins.containsKey("org.eclipse.update.configurator")) {
+			if (!autoStartPlugins.containsKey("org.eclipse.update.configurator")) { //$NON-NLS-1$
 				iter = pluginMap.keySet().iterator();
 				while (iter.hasNext()) {
 					String id = iter.next().toString();
-					if ("org.eclipse.osgi".equals(id) || autoStartPlugins.containsKey(id))
+					if ("org.eclipse.osgi".equals(id) || autoStartPlugins.containsKey(id)) //$NON-NLS-1$
 						continue;
 					String url = getBundleURL(id, pluginMap);
 					if (url == null)

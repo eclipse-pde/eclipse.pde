@@ -46,7 +46,7 @@ public class LogView extends ViewPart implements ILogListener {
 	public static final String P_SHOW_ALL_SESSIONS = "allSessions"; //$NON-NLS-1$
 	
 	private static final String P_COLUMN_1 = "column1"; //$NON-NLS-1$
-	private static final String P_COLUMN_2 = "column2"; //$NOwN-NLS-1$
+	private static final String P_COLUMN_2 = "column2"; //$NON-NLS-1$
 	private static final String P_COLUMN_3 = "column3"; //$NON-NLS-1$
 	private static final String P_COLUMN_4 = "column4"; //$NON-NLS-1$
 	
