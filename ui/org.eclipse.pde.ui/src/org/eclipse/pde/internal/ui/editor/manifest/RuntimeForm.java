@@ -43,7 +43,9 @@ protected void createFormClient(Composite parent) {
 	l.marginHeight = 0;
 	l.marginWidth = 0;
 	container.setLayout(l);
-	container.setLayoutData(new GridData(GridData.FILL_BOTH));
+	gd = new GridData(GridData.FILL_BOTH);
+	gd.verticalSpan = 2;
+	container.setLayoutData(gd);
 	
 	typeSection = new LibraryTypeSection(page);
 	control = typeSection.createControl(container, getFactory());
@@ -62,8 +64,8 @@ protected void createFormClient(Composite parent) {
 	prefixesSection = new PackagePrefixesSection(page);
 	prefixesSection.setCollapsable(true);
 	prefixesSection.setCollapsed(true);
-	control = prefixesSection.createControl(parent, getFactory());
-	gd = new GridData(GridData.FILL_BOTH);
+	control = prefixesSection.createControl(container, getFactory());
+	gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 	control.setLayoutData(gd);
 
 	// Link
