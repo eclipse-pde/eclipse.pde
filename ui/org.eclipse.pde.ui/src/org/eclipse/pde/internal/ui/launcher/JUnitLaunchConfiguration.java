@@ -91,7 +91,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		int port,
 		String runMode)
 		throws CoreException {
-		String[] classpath = LauncherUtils.constructClasspath();
+		String[] classpath = LauncherUtils.constructClasspath(configuration);
 		if (classpath == null) {
 			abort(PDEPlugin.getResourceString(KEY_NO_STARTUP), null, IStatus.OK);
 		}

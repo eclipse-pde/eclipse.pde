@@ -119,7 +119,21 @@ public class LauncherUtils {
 		return selected;
 	}
 	
-	public static String[] constructClasspath() throws CoreException {
+	
+	public static String[] constructClasspath(ILaunchConfiguration configuration) throws CoreException {
+		String jarPath = getStartupJarPath();
+		if (jarPath == null)
+			return null;
+		
+		ArrayList entries = new ArrayList();
+		entries.add(jarPath);
+		StringTokenizer tok = new StringTokenizer(configuration.getAttribute(ILauncherSettings.BOOTSTRAP_ENTRIES, ""), ",");
+		while (tok.hasMoreTokens())
+			entries.add(tok.nextToken().trim());
+		return (String[])entries.toArray(new String[entries.size()]);
+	}
+	
+	private static String getStartupJarPath() throws CoreException {
 		IPlugin plugin = PDECore.getDefault().findPlugin("org.eclipse.platform");
 		if (plugin != null && plugin.getModel().getUnderlyingResource() != null) {
 			IProject project = plugin.getModel().getUnderlyingResource().getProject();
@@ -129,17 +143,17 @@ public class LauncherUtils {
 				for (int i = 0; i < roots.length; i++) {
 					if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE) {
 						IPath path = jProject.getOutputLocation().removeFirstSegments(1);
-						return new String[] {project.getLocation().append(path).toOSString()};
+						return project.getLocation().append(path).toOSString();
 					}
 				}
 			}
 			if (project.getFile("startup.jar").exists())
-				return new String[] {project.getFile("startup.jar").getLocation().toOSString()};
+				return project.getFile("startup.jar").getLocation().toOSString();
 		}
 		File startupJar =
 			ExternalModelManager.getEclipseHome().append("startup.jar").toFile();
 		
-		return startupJar.exists() ? new String[] { startupJar.getAbsolutePath()} : null;
+		return startupJar.exists() ? startupJar.getAbsolutePath() : null;
 	}
 		
 	public static String getBuildOutputFolders() {

@@ -54,6 +54,8 @@ public class BasicLauncherTab
 
 	protected Combo fApplicationCombo;
 
+	private Text fBootstrap;
+
 	public BasicLauncherTab() {
 		fJreSelectionStatus = createStatus(IStatus.OK, "");
 		fWorkspaceSelectionStatus = createStatus(IStatus.OK, "");
@@ -175,6 +177,7 @@ public class BasicLauncherTab
 		createVMArgsSection(group);
 		createProgArgsSection(group);
 		createDevEntriesSection(group);
+		createBootstrapEntriesSection(group);
 	}
 	
 	protected void createApplicationSection(Composite parent) {
@@ -315,6 +318,22 @@ public class BasicLauncherTab
 		});		
 	}
 	
+	private void createBootstrapEntriesSection(Composite parent) {
+		Label label = new Label(parent, SWT.NONE);
+		label.setText(PDEPlugin.getResourceString("BasicLauncherTab.bootstrap"));
+		
+		fBootstrap = new Text(parent, SWT.BORDER);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.widthHint = 300;
+		fBootstrap.setLayoutData(gd);
+		fBootstrap.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				if (!fBlockChanges)	
+					updateLaunchConfigurationDialog();
+			}
+		});		
+	}
+
 	public void initializeFrom(ILaunchConfiguration config) {
 		try {
 			fBlockChanges = true;
@@ -325,7 +344,7 @@ public class BasicLauncherTab
 			initializeVMArgsSection(config);
 			initializeProgArgsSection(config);
 			initializeDevEntriesSection(config);
-				
+			initializeBootstrapEntriesSection(config);	
 			fWorkspaceSelectionStatus = validateWorkspaceSelection();
 			fJreSelectionStatus = validateJRESelection();
 			updateStatus();
@@ -416,12 +435,17 @@ public class BasicLauncherTab
 		fClasspathText.setText(config.getAttribute(CLASSPATH_ENTRIES, getClasspathEntries()));		
 	}
 
+	private void initializeBootstrapEntriesSection(ILaunchConfiguration config) throws CoreException {
+		fBootstrap.setText(config.getAttribute(BOOTSTRAP_ENTRIES, ""));
+	}
+
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(LOCATION + "0", LauncherUtils.getDefaultWorkspace());
 		config.setAttribute(DOCLEAR, false);
 		config.setAttribute(ASKCLEAR, true);
 		config.setAttribute(PROGARGS, LauncherUtils.getDefaultProgramArguments());
 		config.setAttribute(VMARGS,"");
+		config.setAttribute(BOOTSTRAP_ENTRIES, "");
 	}
 	
 	private String getClasspathEntries() {
@@ -455,6 +479,7 @@ public class BasicLauncherTab
 			saveVMArgsSection(config);
 			saveProgArgsSection(config);
 			saveDevEntriesSection(config);
+			saveBootstrapEntriesSection(config);
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
@@ -496,6 +521,10 @@ public class BasicLauncherTab
 		config.setAttribute(PROGARGS, fProgArgsText.getText().trim());		
 	}
 	
+	protected void saveBootstrapEntriesSection(ILaunchConfigurationWorkingCopy config) {
+		config.setAttribute(BOOTSTRAP_ENTRIES, fBootstrap.getText().trim());
+	}
+
 	protected void saveDevEntriesSection(ILaunchConfigurationWorkingCopy config)
 		throws CoreException {
 		String classpath = fClasspathText.getText().trim();

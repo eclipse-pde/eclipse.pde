@@ -73,7 +73,7 @@ public class WorkbenchLaunchConfigurationDelegate
 
 	private VMRunnerConfiguration createVMRunner(ILaunchConfiguration configuration)
 		throws CoreException {
-		String[] classpath = LauncherUtils.constructClasspath();
+		String[] classpath = LauncherUtils.constructClasspath(configuration);
 		if (classpath == null) {
 			String message = PDEPlugin.getResourceString(KEY_NO_STARTUP);
 			throw new CoreException(LauncherUtils.createErrorStatus(message));

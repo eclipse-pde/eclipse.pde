@@ -21,6 +21,7 @@ public class JUnitArgumentsTab extends BasicLauncherTab {
 		config.setAttribute(ASKCLEAR, false);
 		config.setAttribute(PROGARGS, LauncherUtils.getDefaultProgramArguments());
 		config.setAttribute(VMARGS, "");
+		config.setAttribute(BOOTSTRAP_ENTRIES, "");
 		if (!JUnitLaunchConfiguration.requiresUI(config))
 			config.setAttribute(APPLICATION, JUnitLaunchConfiguration.CORE_APPLICATION);
 	}
