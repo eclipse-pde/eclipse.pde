@@ -20,6 +20,7 @@ public class PluginDocumentHandler extends DefaultHandler {
 	private Locator fLocator;
 	private Stack fDocumentNodeStack = new Stack();
 	private int fHighestOffset = 0;
+	private long fStart;
 	
 	
 	public PluginDocumentHandler(PluginModelBase model) {
@@ -33,6 +34,14 @@ public class PluginDocumentHandler extends DefaultHandler {
 	public void startDocument() throws SAXException {
 		fDocumentNodeStack.clear();
 		fHighestOffset = 0;
+		fStart = System.currentTimeMillis();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.xml.sax.helpers.DefaultHandler#endDocument()
+	 */
+	public void endDocument() throws SAXException {
+		System.out.println("Time elapsed: " + (System.currentTimeMillis() - fStart) + " ms");
 	}
 	
 	/* (non-Javadoc)
@@ -92,9 +101,38 @@ public class PluginDocumentHandler extends DefaultHandler {
 		if (col < 0)
 			col = doc.getLineLength(line);
 		String text = doc.get(fHighestOffset + 1, doc.getLineOffset(line) - fHighestOffset - 1);
-		int index = text.indexOf("<" + elementName);
-		if (index > -1)
-			fHighestOffset += index + 1;
+
+		ArrayList commentPositions = new ArrayList();
+		for (int idx = 0; idx < text.length();) {
+			idx = text.indexOf("<!--", idx);
+			if (idx == -1)
+				break;
+			int end = text.indexOf("-->", idx);
+			if (end == -1) 
+				break;
+			
+			commentPositions.add(new Position(idx, end - idx));
+			idx = end + 1;
+		}
+
+		int idx = 0;
+		for (; idx < text.length(); idx += 1) {
+			idx = text.indexOf("<" + elementName, idx);
+			if (idx == -1)
+				break;
+			boolean valid = true;
+			for (int i = 0; i < commentPositions.size(); i++) {
+				Position pos = (Position)commentPositions.get(i);
+				if (pos.includes(idx)) {
+					valid = false;
+					break;
+				}
+			}
+			if (valid)
+				break;
+		}
+		if (idx > -1)
+			fHighestOffset += idx + 1;
 		return fHighestOffset;
 	}
 	
