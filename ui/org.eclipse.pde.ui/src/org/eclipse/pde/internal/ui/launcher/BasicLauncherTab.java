@@ -453,6 +453,17 @@ public class BasicLauncherTab
 	
 	protected void saveApplicationSection(ILaunchConfigurationWorkingCopy config) {
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	 */
+	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#deactivated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	 */
+	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
+	}
 
 	private IPath chooseWorkspaceLocation() {
 		DirectoryDialog dialog = new DirectoryDialog(getControl().getShell());
