@@ -202,7 +202,7 @@ public class CompilerFlags {
 		node.putInt(P_UNRESOLVED_IMPORTS, ERROR);
 		node.putInt(P_UNRESOLVED_EX_POINTS, ERROR);
 		node.putInt(P_NO_REQUIRED_ATT, ERROR);
-		node.putInt(P_UNKNOWN_ELEMENT, ERROR);
+		node.putInt(P_UNKNOWN_ELEMENT, WARNING);
 		node.putInt(P_UNKNOWN_ATTRIBUTE, ERROR);
 		node.putInt(P_UNKNOWN_CLASS, IGNORE);
 		node.putInt(P_UNKNOWN_RESOURCE, IGNORE);
