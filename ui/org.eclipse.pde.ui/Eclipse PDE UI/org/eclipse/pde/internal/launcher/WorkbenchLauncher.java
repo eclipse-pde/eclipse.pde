@@ -329,7 +329,11 @@ protected void initializeSettings() {
 		TracingOptionsManager mng = PDEPlugin.getDefault().getTracingOptionsManager();
 		mng.ensureTracingFileExists();
 		String optionsFileName = mng.getTracingFileName();
-		String tracingArg = "-debug \"file:"+optionsFileName+"\"";
+		String tracingArg;
+		if (SWT.getPlatform().equals("motif"))
+			tracingArg = "-debug file:"+optionsFileName;
+        else
+			tracingArg = "-debug \"file:"+optionsFileName+"\"";
 		platformArgs += tracingArg;
 	}
 }
@@ -355,8 +359,14 @@ public boolean launch(Object[] elements, String mode, ILauncher launcher) {
 
 		String programArgs = "-dev bin -application org.eclipse.ui.workbench";
 
-		if (platformLocation != null && platformLocation.length() > 0)
-			programArgs += " -data \"" + platformLocation + "\"";
+		if (platformLocation != null && platformLocation.length() > 0) {
+			String dataOption;
+			if (SWT.getPlatform().equals("motif"))
+				dataOption = " -data "+platformLocation;
+			else
+				dataOption = " -data \"" + platformLocation + "\"";
+			programArgs += dataOption;
+		}
 		String pluginPath = createPluginPath(eclipseDir);
 		if (pluginPath == null)
 			return false;
