@@ -182,16 +182,7 @@
          </description>
       </wizard>
       <wizard
-            name="Empty Template Wizard"
-            icon="icons/full/ctool16/defcon_wiz.gif"
-            class="org.eclipse.pde.internal.wizards.templates.DefaultPluginTemplateWizard"
-            id="org.eclipse.pde.projectGenerators.default">
-         <description>
-            Empty template
-         </description>
-      </wizard>
-      <wizard
-            name="Hello, World plug-in"
+            name="%projectGenerators.helloWorld.name"
             icon="icons/full/ctool16/defcon_wiz.gif"
             class="org.eclipse.pde.internal.wizards.templates.HelloWorldNewWizard"
             id="org.eclipse.pde.projectGenerators.helloWorld">
@@ -200,7 +191,7 @@
          </description>
       </wizard>
       <wizard
-            name="Plug-in with a view"
+            name="%projectGenerators.view.name"
             icon="icons/full/ctool16/defcon_wiz.gif"
             class="org.eclipse.pde.internal.wizards.templates.ViewNewWizard"
             id="org.eclipse.pde.projectGenerators.view">
@@ -225,7 +216,7 @@
             icon="icons/full/ctool16/newex_wiz.gif"
             category="generic"
             class="org.eclipse.pde.internal.wizards.extension.GenericExtensionWizard"
-            id="com.ibm.etools.plugins.generic">
+            id="org.eclipse.pde.newExtension.generic">
          <description>
             %newExtension.generic.desc
          </description>
@@ -237,9 +228,21 @@
             icon="icons/full/ctool16/newex_wiz.gif"
             category="templates"
             class="org.eclipse.pde.internal.wizards.templates.HelloWorldTemplate"
-            id="com.ibm.etools.plugins.hello">
+            id="org.eclipse.pde.newExtension.hello">
          <description>
             %newExtension.templates.hello.desc
+         </description>
+      </wizard>
+      <wizard
+            availableAsShortcut="true"
+            name="%newExtension.templates.view.name"
+            template="true"
+            icon="icons/full/ctool16/newex_wiz.gif"
+            category="templates"
+            class="org.eclipse.pde.internal.wizards.templates.ViewTemplate"
+            id="org.eclipse.pde.newExtension.view">
+         <description>
+            %newExtension.templates.view.desc
          </description>
       </wizard>
    </extension>

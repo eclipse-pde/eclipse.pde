@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.pde.internal.model.plugin.*;
 import org.eclipse.pde.internal.wizards.templates.*;
 import java.util.*;
+import java.io.*;
 import org.eclipse.ui.*;
 import org.eclipse.pde.internal.wizards.PluginPathUpdater;
 import org.eclipse.jdt.core.JavaModelException;
@@ -27,6 +28,7 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.ui.part.ISetSelectionTarget;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.internal.editor.manifest.ManifestEditor;
 
 /**
  * This wizard should be used as a base class for 
@@ -125,7 +127,7 @@ public abstract class NewPluginTemplateWizard
 	}
 
 	private int computeTotalWork() {
-		int totalWork = 4;
+		int totalWork = 5;
 
 		for (int i = 0; i < sections.length; i++) {
 			totalWork += sections[i].getNumberOfWorkUnits();
@@ -151,6 +153,8 @@ public abstract class NewPluginTemplateWizard
 		monitor.worked(1);
 		executeTemplates(project, model, monitor); // nsteps
 		model.save();
+		saveTemplateFile(project, monitor); // one step
+		monitor.worked(1);
 
 		IFile file = (IFile) model.getUnderlyingResource();
 		IWorkbench workbench = PlatformUI.getWorkbench();
@@ -200,9 +204,55 @@ public abstract class NewPluginTemplateWizard
 			section.execute(project, model, monitor);
 		}
 	}
+	
+	protected void writeTemplateFile(PrintWriter writer) {
+		String indent = "   ";
+		// open
+		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+		writer.println("<form>");
+		// add the standard prolog
+		writer.println(indent+PDEPlugin.getResourceString("ManifestEditor.TemplatePage.intro"));
+		// add template section descriptions
+		for (int i=0; i<sections.length; i++) {
+			ITemplateSection section = sections [i];
+			String list = "<li style=\"text\" value=\""+(i+1)+".\">";
+			writer.println(indent+list+"<b>"+section.getLabel()+".</b>"+section.getDescription()+"</li>");
+		}
+		// add the standard epilogue
+		writer.println(indent+PDEPlugin.getResourceString("ManifestEditor.TemplatePage.common"));
+		// close
+		writer.println("</form>");
+	}
+	
+	private void saveTemplateFile(IProject project, IProgressMonitor monitor) {
+		StringWriter swriter = new StringWriter();
+		PrintWriter writer = new PrintWriter(swriter);
+		writeTemplateFile(writer);
+		writer.flush();
+		try {
+			swriter.close();
+		} catch (IOException e) {
+		}
+		String contents = swriter.toString();
+		IFile file = project.getFile(".template");
 
-	protected IEditorInput createEditorInput(IFile file) {
-		return new FileEditorInput(file);
+		try {
+			ByteArrayInputStream stream =
+				new ByteArrayInputStream(contents.getBytes("UTF8"));
+			if (file.exists()) {
+				file.setContents(stream, false, false, null);
+			} else {
+				file.create(stream, false, null);
+			}
+			stream.close();
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		} catch (IOException e) {
+		}		
+	}
+
+	public IEditorInput createEditorInput(IFile file) {
+		return new TemplateEditorInput(file, ManifestEditor.TEMPLATE_PAGE);
 	}
 
 	private void openPluginFile(final IFile file) {

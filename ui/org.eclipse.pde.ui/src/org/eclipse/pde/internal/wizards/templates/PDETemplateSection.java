@@ -17,7 +17,6 @@ import org.eclipse.jface.wizard.*;
 import java.io.File;
 
 public abstract class PDETemplateSection extends GenericTemplateSection {
-	public static final String KEY_SECTION_DESC_PREFIX = "template.desc.";
 	public static final String TEMPLATE_DIRECTORY = "templates";
 	/**
 	 * Constructor for HelloWorldTemplate.
@@ -48,8 +47,13 @@ public abstract class PDETemplateSection extends GenericTemplateSection {
 		return super.getReplacementString(fileName, key);
 	}
 	
+	public String getLabel() {
+		String key = "template."+getSectionId()+".name";
+		return getPluginResourceString(key);
+	}
+	
 	public String getDescription() {
-		String key = KEY_SECTION_DESC_PREFIX + getSectionId();
+		String key = "template."+getSectionId()+".desc";
 		return getPluginResourceString(key);
 	}
 }

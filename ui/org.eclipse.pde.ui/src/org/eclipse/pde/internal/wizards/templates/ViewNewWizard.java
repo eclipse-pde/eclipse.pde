@@ -30,16 +30,4 @@ public class ViewNewWizard extends NewPluginTemplateWizard {
 		return new ITemplateSection [] {
 				new ViewTemplate() };
 	}
-	
-	public IEditorInput createEditorInput(IFile file) {
-		return new TemplateEditorInput(file) {
-			public PDEChildFormPage createPage(PDEFormPage parent, String title) {
-				return new PDEChildFormPage(parent, title) {
-					public AbstractSectionForm createForm() {
-						return new TemplateForm(this);
-					}
-				};
-			}
-		};
-	}
 }

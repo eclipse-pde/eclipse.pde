@@ -133,12 +133,12 @@ public class ManifestEditor
 		addPage(SOURCE_PAGE, new ManifestSourcePage(this));
 	}
 	
-	private void addTemplatePage(final TemplateEditorInput input) {
-		PDEFormPage parentPage = (PDEFormPage)getPage(OVERVIEW_PAGE);
-		firstPageId = TEMPLATE_PAGE;
-		
-		PDEChildFormPage page = input.createPage(parentPage,
-				PDEPlugin.getResourceString(KEY_TEMPLATE));
+	private void addTemplatePage(IProject project) {
+		IFile templateFile = project.getFile(".template");
+		if (!templateFile.exists()) return;
+		ManifestFormPage parent = (ManifestFormPage)getPage(OVERVIEW_PAGE);
+		ManifestTemplatePage page = new ManifestTemplatePage(parent, 
+				PDEPlugin.getResourceString(KEY_TEMPLATE), templateFile);
 		addPage(TEMPLATE_PAGE, page, 0);
 	}
 	
@@ -188,6 +188,7 @@ public class ManifestEditor
 		}
 		PDEPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 	}
+
 	public IPDEEditorPage getHomePage() {
 		return getPage(OVERVIEW_PAGE);
 	}
@@ -208,7 +209,12 @@ public class ManifestEditor
 		throws PartInitException {
 		checkPlatformHome();
 		if (input instanceof TemplateEditorInput) {
-			addTemplatePage((TemplateEditorInput)input);
+			firstPageId = ((TemplateEditorInput)input).getFirstPageId();
+		}
+		if (input instanceof IFileEditorInput) {
+			IFile file = ((IFileEditorInput)input).getFile();
+			IProject project = file.getProject();
+			addTemplatePage(project);
 		}
 		super.init(site, input);
 	}

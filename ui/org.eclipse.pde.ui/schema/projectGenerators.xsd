@@ -90,6 +90,13 @@ represent the wizard.
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="fragmentWizard" type="boolean">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

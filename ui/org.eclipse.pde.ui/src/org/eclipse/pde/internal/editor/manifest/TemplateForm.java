@@ -1,9 +1,10 @@
-package org.eclipse.pde.internal.wizards.templates;
+package org.eclipse.pde.internal.editor.manifest;
 
 import org.eclipse.update.ui.forms.internal.WebForm;
 import org.eclipse.update.ui.forms.internal.IFormPage;
 import org.eclipse.pde.model.plugin.*;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.pde.internal.PDEPlugin;
 import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.update.ui.forms.internal.engine.*;
@@ -20,16 +21,26 @@ import java.util.*;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.*;
+import java.io.*;
+import org.eclipse.swt.events.*;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.core.runtime.*;
+import java.lang.reflect.InvocationTargetException;
 
 public class TemplateForm extends WebForm {
 	private static final String KEY_HEADING = "ManifestEditor.templatePage.heading";
 	private static final String KEY_INTRO = "ManifestEditor.TemplatePage.intro";
 	private static final String KEY_COMMON = "ManifestEditor.TemplatePage.common";
-	private IFormPage page;
+	private static final String KEY_DONT_SHOW =
+		"ManifestEditor.TemplatePage.dontShow";
+	private ManifestTemplatePage page;
+	private Button dontShowCheck;
+	private boolean dontShow;
 	/**
 	 * Constructor for TemplateForm.
 	 */
-	public TemplateForm(IFormPage page) {
+	public TemplateForm(ManifestTemplatePage page) {
 		this.page = page;
 	}
 
@@ -40,7 +51,7 @@ public class TemplateForm extends WebForm {
 		layout.rightMargin = 0;
 		layout.topMargin = 15;
 		layout.horizontalSpacing = 5;
-		layout.verticalSpacing = 0;
+		layout.verticalSpacing = 10;
 
 		FormWidgetFactory factory = getFactory();
 
@@ -82,14 +93,18 @@ public class TemplateForm extends WebForm {
 				openNewExtensionWizard();
 			}
 		};
-		String introMarkup = PDEPlugin.getResourceString(KEY_INTRO);
-		String sectionsMarkup = ""; //getSectionMarkup();
-		String commonMarkup = PDEPlugin.getResourceString(KEY_COMMON);
-		String totalMarkup = "<form>"+introMarkup+sectionsMarkup+commonMarkup+"</form>";
-		
 		text = factory.createFormEngine(parent);
 		text.setHyperlinkSettings(factory.getHyperlinkHandler());
-		text.load(totalMarkup, true, false);
+		IFile file = page.getTemplateFile();
+		try {
+			InputStream is = file.getContents(true);
+			text.load(is, true);
+			is.close();
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		} catch (IOException e) {
+			PDEPlugin.logException(e);
+		}
 
 		// register hyperlink actions
 		text.registerTextObject("ExtensionsPage", pageAction);
@@ -107,32 +122,80 @@ public class TemplateForm extends WebForm {
 		TableData td = new TableData();
 		td.grabHorizontal = true;
 		text.setLayoutData(td);
+
+		Composite separator = new Composite(parent, SWT.NULL);
+		separator.setBackground(factory.getBorderColor());
+		td = new TableData();
+		td.heightHint = 1;
+		td.align = TableData.FILL;
+		separator.setLayoutData(td);
+
+		dontShowCheck =
+			factory.createButton(
+				parent,
+				PDEPlugin.getResourceString(KEY_DONT_SHOW),
+				SWT.CHECK);
+		dontShowCheck.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				dontShow = dontShowCheck.getSelection();
+			}
+		});
+	}
+
+	public void dispose() {
+		if (dontShow)
+			deleteTemplateFile(page.getTemplateFile());
+		super.dispose();
+	}
+
+	private void deleteTemplateFile(final IFile file) {
+		if (file.exists()) {
+			ProgressMonitorDialog pmd =
+				new ProgressMonitorDialog(PDEPlugin.getActiveWorkbenchShell());
+			try {
+				pmd.run(false, false, new IRunnableWithProgress() {
+					public void run(IProgressMonitor monitor) throws InvocationTargetException {
+						try {
+							file.delete(true, monitor);
+						} catch (CoreException e) {
+							throw new InvocationTargetException(e);
+						} finally {
+							monitor.done();
+						}
+					}
+				});
+			} catch (InvocationTargetException e) {
+				PDEPlugin.logException(e);
+			} catch (InterruptedException e) {
+			}
+		}
 	}
 
 	private void expandSourceFolders() {
-		IPluginModelBase model = (IPluginModelBase)((PDEFormPage)page).getModel();
+		IPluginModelBase model = (IPluginModelBase) ((PDEFormPage) page).getModel();
 		IProject project = model.getUnderlyingResource().getProject();
 		IJavaProject javaProject = JavaCore.create(project);
 		try {
-			IClasspathEntry [] entries = javaProject.getRawClasspath();
+			IClasspathEntry[] entries = javaProject.getRawClasspath();
 			ArrayList sourceFolders = new ArrayList();
-			for (int i=0; i<entries.length; i++) {
+			for (int i = 0; i < entries.length; i++) {
 				IClasspathEntry entry = entries[i];
-				if (entry.getEntryKind()==IClasspathEntry.CPE_SOURCE) {
+				if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
 					IFolder folder = project.getFolder(entry.getPath());
-					if (folder.exists()) sourceFolders.add(folder);
+					if (folder.exists())
+						sourceFolders.add(folder);
 				}
 			}
-			if (sourceFolders.size()>0) {
-				StructuredSelection selection = new StructuredSelection(sourceFolders.toArray());
+			if (sourceFolders.size() > 0) {
+				StructuredSelection selection =
+					new StructuredSelection(sourceFolders.toArray());
 				IWorkbenchPage page = PDEPlugin.getActivePage();
 				IWorkbenchPart part = page.getActivePart();
 				if (part instanceof ISetSelectionTarget) {
-					((ISetSelectionTarget)part).selectReveal(selection);
+					((ISetSelectionTarget) part).selectReveal(selection);
 				}
 			}
-		}
-		catch (JavaModelException e) {
+		} catch (JavaModelException e) {
 		}
 	}
 
@@ -150,5 +213,7 @@ public class TemplateForm extends WebForm {
 		IPluginBase plugin = modelBase.getPluginBase();
 		setHeadingText(
 			PDEPlugin.getFormattedMessage(KEY_HEADING, plugin.getTranslatedName()));
+		((Composite) getControl()).layout(true);
+		updateSize();
 	}
 }

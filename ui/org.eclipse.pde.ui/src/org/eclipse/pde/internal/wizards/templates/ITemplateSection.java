@@ -34,6 +34,11 @@ public interface ITemplateSection {
 	 * @return a template location URL
 	 */
 	public URL getTemplateLocation();
+	/**
+	 * Returns a presentable label the section.
+	 * @return a template label
+	 */	
+	public String getLabel();
 	
 	/**
 	 * Returns a description of the section. The description

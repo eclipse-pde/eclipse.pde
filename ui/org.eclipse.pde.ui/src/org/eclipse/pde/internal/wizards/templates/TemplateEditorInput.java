@@ -6,15 +6,19 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.pde.internal.editor.*;
 
-public abstract class TemplateEditorInput extends FileEditorInput {
+public class TemplateEditorInput extends FileEditorInput {
+	private String firstPageId;
 
 	/**
 	 * Constructor for TemplateEditorInput.
 	 * @param file
 	 */
-	public TemplateEditorInput(IFile file) {
+	public TemplateEditorInput(IFile file, String firstPageId) {
 		super(file);
+		this.firstPageId = firstPageId;
 	}
 	
-	public abstract PDEChildFormPage createPage(PDEFormPage parentPage, String title);
+	public String getFirstPageId() {
+		return firstPageId;
+	}
 }
