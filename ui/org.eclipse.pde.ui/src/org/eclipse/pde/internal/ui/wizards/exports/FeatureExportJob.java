@@ -98,7 +98,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 			final Display display = getStandardDisplay();
 			display.asyncExec(new Runnable() {
 				public void run() {
-					ErrorDialog.openError(display.getActiveShell(), PDEPlugin.getResourceString("FeatureExportJob.error"), e.getMessage(), e.getStatus()); //$NON-NLS-1$
+					ErrorDialog.openError(display.getActiveShell(), PDEPlugin.getResourceString("FeatureExportJob.error"), PDEPlugin.getResourceString("FeatureExportJob.problems"), e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
 					done(new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "", null)); //$NON-NLS-1$
 				}
 			});
