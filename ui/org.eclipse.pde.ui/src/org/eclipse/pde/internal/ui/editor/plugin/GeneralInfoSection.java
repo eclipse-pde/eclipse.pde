@@ -501,13 +501,11 @@ public class GeneralInfoSection extends PDESection
 						PlatformUI.getWorkbench().getProgressService(),
 						getSearchScope(project),
 						IJavaElementSearchConstants.CONSIDER_CLASSES, false,
-						"*"); //$NON-NLS-1$
-				dialog
-						.setTitle(PDEPlugin
-								.getResourceString("GeneralInfoSection.selectionTitle")); //$NON-NLS-1$
+						""); //$NON-NLS-1$
+				dialog.setTitle(PDEPlugin.getResourceString("GeneralInfoSection.selectionTitle")); //$NON-NLS-1$
 				if (dialog.open() == SelectionDialog.OK) {
 					IType type = (IType) dialog.getResult()[0];
-					fClassEntry.setValue(type.getFullyQualifiedName());
+					fClassEntry.setValue(type.getFullyQualifiedName('.'));
 				}
 			}
 		} catch (CoreException e) {
