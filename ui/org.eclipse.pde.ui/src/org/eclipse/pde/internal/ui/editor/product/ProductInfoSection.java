@@ -4,6 +4,8 @@ import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.*;
+import org.eclipse.swt.*;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.widgets.*;
@@ -28,7 +30,8 @@ public class ProductInfoSection extends PDESection {
 		section.setDescription("Define the product and the default application that will run when running the product:");
 		
 		Composite client = toolkit.createComposite(section);
-		TableWrapLayout layout = new TableWrapLayout();
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = toolkit.getBorderStyle() != SWT.NULL ? 0 : 2;
 		layout.numColumns = 3;
 		client.setLayout(layout);
 
