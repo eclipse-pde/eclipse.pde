@@ -26,7 +26,7 @@ public interface IHelpContextIds {
  	public static final String TARGET_PLATFORM_PREFERENCE_PAGE = PREFIX + "target_platform_preference_page"; //$NON-NLS-1$
  	
  	// Property Pages
- 	public static final String SELFHOSTING_PROPERTY_PAGE = PREFIX + "selfhosting_property_page";
+ 	public static final String SELFHOSTING_PROPERTY_PAGE = PREFIX + "selfhosting_property_page"; //$NON-NLS-1$
  	
  	// Views
  	public static final String PLUGINS_VIEW = PREFIX + "plugins_view";	 //$NON-NLS-1$
@@ -40,17 +40,17 @@ public interface IHelpContextIds {
  	public static final String NEW_FRAGMENT_STRUCTURE_PAGE = PREFIX + "new_fragment_structure_page"; //$NON-NLS-1$
  	public static final String NEW_FRAGMENT_REQUIRED_DATA = PREFIX + "new_fragment_required_data"; //$NON-NLS-1$
  	
- 	public static final String NEW_FEATURE_MAIN = PREFIX + "new_feature_main";
+ 	public static final String NEW_FEATURE_MAIN = PREFIX + "new_feature_main"; //$NON-NLS-1$
  	public static final String NEW_FEATURE_DATA = PREFIX + "new_feature_data"; //$NON-NLS-1$
  	public static final String NEW_FEATURE_REFERENCED_PLUGINS = PREFIX + "new_feature_referenced_plugins"; //$NON-NLS-1$
  	
- 	public static final String NEW_PATCH_MAIN = PREFIX + "new_patch_main";
- 	public static final String NEW_PATCH_REQUIRED_DATA = PREFIX + "new_patch_data";
+ 	public static final String NEW_PATCH_MAIN = PREFIX + "new_patch_main"; //$NON-NLS-1$
+ 	public static final String NEW_PATCH_REQUIRED_DATA = PREFIX + "new_patch_data"; //$NON-NLS-1$
  	public static final String NEW_PATCH_REFERENCED_PLUGINS = PREFIX + "new_patch_referenced_plugins"; //$NON-NLS-1$
  
- 	public static final String NEW_SITE_MAIN = PREFIX + "new_site_main";
+ 	public static final String NEW_SITE_MAIN = PREFIX + "new_site_main"; //$NON-NLS-1$
  	
- 	public static final String MIGRATE_3_0 = PREFIX + "migrate_3_0";
+ 	public static final String MIGRATE_3_0 = PREFIX + "migrate_3_0"; //$NON-NLS-1$
  	public static final String CONVERTED_PROJECTS = PREFIX + "converted_projects"; //$NON-NLS-1$
  	public static final String NEW_SCHEMA = PREFIX + "new_schema"; //$NON-NLS-1$
  	
@@ -95,7 +95,7 @@ public interface IHelpContextIds {
 	public static final String LAUNCHER_BASIC = PREFIX + "launcher_basic"; //$NON-NLS-1$
 	public static final String LAUNCHER_ADVANCED = PREFIX + "launcher_advanced"; //$NON-NLS-1$
 	public static final String LAUNCHER_TRACING = PREFIX + "launcher_tracing"; //$NON-NLS-1$
-	public static final String LAUNCHER_CONFIGURATION = PREFIX + "launcher_configuration";
+	public static final String LAUNCHER_CONFIGURATION = PREFIX + "launcher_configuration"; //$NON-NLS-1$
 	
 	// Generic source page
 	public static final String MANIFEST_SOURCE_PAGE = PREFIX + "manifest_source_page"; //$NON-NLS-1$
