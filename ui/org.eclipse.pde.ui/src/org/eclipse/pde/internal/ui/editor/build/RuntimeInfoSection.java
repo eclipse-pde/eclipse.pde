@@ -73,7 +73,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
-import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.ISharedImages;
@@ -112,12 +111,12 @@ public class RuntimeInfoSection
 	private static RGB BLACK = new RGB(0, 0, 0);
 	public Image libImage;
 	public Image jarsImage;
-	protected TableViewer libraryTable;
-	protected TableViewer jarsTable;
+	protected TableViewer libraryViewer;
+	protected TableViewer foldersViewer;
 	protected Control sectionControl;
 
 	protected StructuredViewerPart libraryPart;
-	protected StructuredViewerPart jarsPart;
+	protected StructuredViewerPart foldersPart;
 	private IBuildEntry currentLibrary;
 	private Button jarIncludeButton;
 	private PDEFormPage page;
@@ -151,7 +150,7 @@ public class RuntimeInfoSection
 						handleDown();
 						break;
 				}
-			} else if (this.getViewer() == jarsPart.getViewer()) {
+			} else if (this.getViewer() == foldersPart.getViewer()) {
 				if (index == 0)
 					handleJarsNew();
 			} else {
@@ -257,19 +256,6 @@ public class RuntimeInfoSection
 	public RuntimeInfoSection(PDEFormPage page) {
 		super(page);
 		this.page = page;
-		libraryPart =
-			createViewerPart(
-				new String[] {
-					PDEPlugin.getResourceString(SECTION_NEW),
-					null,
-					PDEPlugin.getResourceString(SECTION_UP),
-					PDEPlugin.getResourceString(SECTION_DOWN)});
-		//libraryPart.setMinimumSize(50, 50);
-
-		jarsPart =
-			createViewerPart(
-				new String[] { PDEPlugin.getResourceString(JSECTION_NEW)});
-		//jarsPart.setMinimumSize(50, 50);
 
 		setAddSeparator(true);
 		setHeaderPainted(true);
@@ -324,7 +310,6 @@ public class RuntimeInfoSection
 	}
 	public void initialize(Object input) {
 		IBuildModel model = (IBuildModel) input;
-		libraryTable.setInput(model);
 		setReadOnly(false);
 		model.addModelChangedListener(this);
 	}
@@ -404,30 +389,25 @@ public class RuntimeInfoSection
 		FormWidgetFactory factory) {
 
 		intializeImages();
-		Composite container = createClientContainer(parent, 4, factory);
-		EditableTablePart tablePart = getLibTablePart();
-		tablePart.setEditable(true);
-		createViewerPartControl(container, SWT.FULL_SELECTION, 2, factory);
-
-		libraryTable = tablePart.getTableViewer();
-		libraryTable.setContentProvider(new LibTableContentProvider());
-		libraryTable.setLabelProvider(new LibTableLabelProvider());
-
-		tablePart.setButtonEnabled(2, false);
-		tablePart.setButtonEnabled(3, false);
-
-		EditableTablePart JtablePart = getJarsTablePart();
-		JtablePart.setEditable(true);
-		jarsTable = JtablePart.getTableViewer();
-		jarsTable.setContentProvider(new JarsTableContentProvider());
-		jarsTable.setLabelProvider(new JarsTableLabelProvider());
+		
+		Composite container = factory.createComposite(parent);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.marginHeight = layout.marginWidth = 0;
+		layout.makeColumnsEqualWidth = true;
+		container.setLayout(layout);
+		
+		createLeftSection(container, factory);
+		createRightSection(container, factory);
 
 		jarIncludeButton =
 			factory.createButton(
 				container,
 				PDEPlugin.getResourceString(JAR_INCLUDE),
 				SWT.CHECK);
-		jarIncludeButton.setAlignment(SWT.RIGHT);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		jarIncludeButton.setLayoutData(gd);
 		jarIncludeButton.setVisible(false);
 		jarIncludeButton.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e){
@@ -442,12 +422,74 @@ public class RuntimeInfoSection
 		return container;
 	}
 	
+	private void createLeftSection(Composite parent, FormWidgetFactory factory) {
+		Composite container = factory.createComposite(parent);
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = layout.marginWidth = 2;
+		layout.numColumns = 2;
+		container.setLayout(layout);
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.widthHint = 100;
+		container.setLayoutData(gd);
+		
+		libraryPart =
+			createViewerPart(
+				new String[] {
+					PDEPlugin.getResourceString(SECTION_NEW),
+					null,
+					PDEPlugin.getResourceString(SECTION_UP),
+					PDEPlugin.getResourceString(SECTION_DOWN)});
+		libraryPart.createControl(container, SWT.FULL_SELECTION, 2, factory);
+		((EditableTablePart)libraryPart).setEditable(true);
+		libraryViewer = (TableViewer)libraryPart.getViewer();
+		libraryViewer.setContentProvider(new LibTableContentProvider());
+		libraryViewer.setLabelProvider(new LibTableLabelProvider());
+		libraryPart.setButtonEnabled(2, false);
+		libraryPart.setButtonEnabled(3, false);
+		libraryViewer.setInput(getFormPage().getModel());	
+		factory.paintBordersFor(container);
+		
+		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
+		menuMgr.setRemoveAllWhenShown(true);
+		menuMgr.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager manager) {
+				fillContextMenu(manager);
+			}
+		});
+
+		libraryViewer.getControl().setMenu(
+			menuMgr.createContextMenu(libraryViewer.getControl()));
+	}
+	
+	protected void fillContextMenu(IMenuManager manager) {		
+	}
+
+	private void createRightSection(Composite parent, FormWidgetFactory factory) {
+		Composite container = factory.createComposite(parent);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.marginHeight = layout.marginWidth = 2;
+		container.setLayout(layout);
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.widthHint = 100;
+		container.setLayoutData(gd);
+		
+		foldersPart =
+			createViewerPart(new String[] { PDEPlugin.getResourceString(JSECTION_NEW)});
+		foldersPart.createControl(container, SWT.FULL_SELECTION, 2, factory);
+		((EditableTablePart)foldersPart).setEditable(true);
+		foldersViewer = (TableViewer)foldersPart.getViewer();
+		foldersViewer.setContentProvider(new JarsTableContentProvider());
+		foldersViewer.setLabelProvider(new JarsTableLabelProvider());
+		factory.paintBordersFor(container);		
+	}
+	
 	protected void createViewerPartControl(
 		Composite parent,
 		int style,
 		int span,
 		FormWidgetFactory factory) {
-		GridData gd = new GridData(GridData.FILL_BOTH);
+		/*GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint=200;
 		libraryPart.createControl(parent, style, span, factory);
 		MenuManager libPopupMenuManager = new MenuManager();
@@ -466,31 +508,21 @@ public class RuntimeInfoSection
 
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 200;
-		jarsPart.createControl(parent, style, span, factory);
+		foldersPart.createControl(parent, style, span, factory);
 		MenuManager jarsPopupMenuManager = new MenuManager();
 		IMenuListener jarsListener = new IMenuListener() {
 			public void menuAboutToShow(IMenuManager mng) {
 				fillJarsContextMenu(mng);
 			}
 		};
+		
+		getM
 		jarsPopupMenuManager.addMenuListener(jarsListener);
 		jarsPopupMenuManager.setRemoveAllWhenShown(true);
-		control = jarsPart.getControl();
+		control = foldersPart.getControl();
 		menu = jarsPopupMenuManager.createContextMenu(control);
 		control.setMenu(menu);
-		control.setLayoutData(gd);
-	}
-
-	protected Composite createClientContainer(
-		Composite parent,
-		int span,
-		FormWidgetFactory factory) {
-		Composite container = factory.createComposite(parent);
-		GridLayout layout = new GridLayout();
-		layout.marginWidth = layout.marginHeight = 2;
-		layout.numColumns = span;
-		container.setLayout(layout);
-		return container;
+		control.setLayoutData(gd);*/
 	}
 
 	protected EditableTablePart getLibTablePart() {
@@ -498,7 +530,7 @@ public class RuntimeInfoSection
 	}
 
 	protected EditableTablePart getJarsTablePart() {
-		return (EditableTablePart) jarsPart;
+		return (EditableTablePart) foldersPart;
 	}
 
 	protected IAction getLibRenameAction() {
@@ -506,7 +538,7 @@ public class RuntimeInfoSection
 	}
 
 	protected void fillJarsContextMenu(IMenuManager manager) {
-		ISelection selection = jarsTable.getSelection();
+		ISelection selection = foldersViewer.getSelection();
 
 		if (currentLibrary != null) {
 			Action newAction =
@@ -540,7 +572,7 @@ public class RuntimeInfoSection
 
 	protected void fillLibContextMenu(IMenuManager manager) {
 
-		ISelection selection = libraryTable.getSelection();
+		ISelection selection = libraryViewer.getSelection();
 
 		Action newAction =
 			new Action(PDEPlugin.getResourceString(POPUP_NEW_LIBRARY)) {
@@ -610,19 +642,19 @@ public class RuntimeInfoSection
 			if (tempEntry!=null && tempEntry.contains(oldName))
 				tempEntry.renameToken(oldName, newValue.substring(7));
 			
-			libraryTable.getTable().getDisplay().asyncExec(new Runnable() {
+			libraryViewer.getTable().getDisplay().asyncExec(new Runnable() {
 				public void run() {
-					libraryTable.update(entry, null);
+					libraryViewer.update(entry, null);
 				}
 			});
-			libraryTable.refresh();
+			libraryViewer.refresh();
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
 	}
 
 	public void expandTo(Object object) {
-		libraryTable.setSelection(new StructuredSelection(object), true);
+		libraryViewer.setSelection(new StructuredSelection(object), true);
 	}
 
 	public void handleDoubleClick(IStructuredSelection selection) {
@@ -744,16 +776,16 @@ public class RuntimeInfoSection
 		update(variable);
 	}
 	public void setJarsFocus() {
-		jarsTable.getTable().setFocus();
+		foldersViewer.getTable().setFocus();
 	}
 
 	public void setLibFocus() {
-		libraryTable.getTable().setFocus();
+		libraryViewer.getTable().setFocus();
 	}
 
 	private void update(IBuildEntry variable) {
 		currentLibrary = variable;
-		jarsTable.setInput(currentLibrary);
+		foldersViewer.setInput(currentLibrary);
 		getJarsTablePart().setButtonEnabled(
 			0,
 			!isReadOnly() && variable != null);
@@ -772,7 +804,7 @@ public class RuntimeInfoSection
 	}
 
 	protected void updateDirectionalButtons() {
-		Table table = libraryTable.getTable();
+		Table table = libraryViewer.getTable();
 		TableItem[] selection = table.getSelection();
 		boolean hasSelection = selection.length > 0;
 		boolean canMove = table.getItemCount() > 1;
@@ -804,10 +836,10 @@ public class RuntimeInfoSection
 
 	public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
-			libraryTable.refresh();
-			jarsTable.refresh();
-			libraryTable.setSelection(null);
-			jarsTable.setInput(null);
+			libraryViewer.refresh();
+			foldersViewer.refresh();
+			libraryViewer.setSelection(null);
+			foldersViewer.setInput(null);
 			jarIncludeButton.setVisible(false);
 		}
 	}
@@ -841,8 +873,8 @@ public class RuntimeInfoSection
 				IBuildEntry library = model.getFactory().createEntry(name);
 				build.add(library);
 
-				libraryTable.refresh();
-				libraryTable.setSelection(new StructuredSelection(library));
+				libraryViewer.refresh();
+				libraryViewer.setSelection(new StructuredSelection(library));
 				jarIncludeButton.setSelection(true);
 				handleLibInBinBuild(true);
 			}
@@ -867,9 +899,9 @@ public class RuntimeInfoSection
 	}
 	protected void handleDelete() {
 		String libName;
-		int index = libraryTable.getTable().getSelectionIndex();
+		int index = libraryViewer.getTable().getSelectionIndex();
 		Object object =
-			((IStructuredSelection) libraryTable.getSelection())
+			((IStructuredSelection) libraryViewer.getSelection())
 				.getFirstElement();
 		if (object != null && object instanceof IBuildEntry) {
 			IBuildEntry library = (IBuildEntry) object;
@@ -898,22 +930,22 @@ public class RuntimeInfoSection
 					entry.removeToken(library.getName().substring(7));
  
 				build.remove(library);
-				libraryTable.refresh();
+				libraryViewer.refresh();
 				IBuildEntry[] libraries = BuildUtil.getBuildLibraries(build.getBuildEntries());
 				if (libraries.length > index) {
-					libName = libraryTable.getElementAt(index).toString();
+					libName = libraryViewer.getElementAt(index).toString();
 				} else if (libraries.length==index && libraries.length != 0){
-					libName = libraryTable.getElementAt(index-1).toString();
+					libName = libraryViewer.getElementAt(index-1).toString();
 				} else {
 					libName="";
 				}
 				
 				IBuildEntry selection = build.getEntry(libName);
 				if (selection!=null){
-					libraryTable.setSelection(new StructuredSelection(selection));
+					libraryViewer.setSelection(new StructuredSelection(selection));
 				}else{ 
-					libraryTable.setSelection(null);
-					jarsTable.setInput(null);
+					libraryViewer.setSelection(null);
+					foldersViewer.setInput(null);
 					jarIncludeButton.setVisible(false);
 				}
 			} catch (CoreException e) {
@@ -927,14 +959,14 @@ public class RuntimeInfoSection
 		IBuildModel buildModel = (IBuildModel) getFormPage().getModel();
 
 		Object object =
-			((IStructuredSelection) jarsTable.getSelection()).getFirstElement();
+			((IStructuredSelection) foldersViewer.getSelection()).getFirstElement();
 		if (object != null && object instanceof String) {
 			String libKey = currentLibrary.getName();
 			IBuildEntry entry = buildModel.getBuild().getEntry(libKey);
 			if (entry != null) {
 				try {
 					entry.removeToken(object.toString());
-					jarsTable.remove(object);
+					foldersViewer.remove(object);
 				} catch (CoreException e) {
 					PDEPlugin.logException(e);
 				}
@@ -1030,8 +1062,8 @@ public class RuntimeInfoSection
 					buildModel.getBuild().add(entry);
 				}
 				entry.addToken(folderPath);
-				jarsTable.refresh();
-				jarsTable.setSelection(new StructuredSelection(folderPath));
+				foldersViewer.refresh();
+				foldersViewer.setSelection(new StructuredSelection(folderPath));
 				refreshOutputKeys();		
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);
@@ -1040,7 +1072,7 @@ public class RuntimeInfoSection
 	}
 
 	protected void handleDown() {
-		int index = libraryTable.getTable().getSelectionIndex();
+		int index = libraryViewer.getTable().getSelectionIndex();
 		IBuildModel model = (IBuildModel) getFormPage().getModel();
 		IBuild build = model.getBuild();
 		IBuildEntry jarsOrderEntry = build.getEntry(IXMLConstants.PROPERTY_JAR_ORDER);
@@ -1069,13 +1101,13 @@ public class RuntimeInfoSection
 			selectionEntry = build.getEntry(IBuildEntry.JAR_PREFIX + tempLib);	
 		}
 		updateJarsCompileOrder(newLibEntries);
-		libraryTable.refresh();
-		libraryTable.setSelection(new StructuredSelection(selectionEntry));
+		libraryViewer.refresh();
+		libraryViewer.setSelection(new StructuredSelection(selectionEntry));
 		updateDirectionalButtons();
 	}
 	
 	protected void handleUp() {
-		int index = libraryTable.getTable().getSelectionIndex();
+		int index = libraryViewer.getTable().getSelectionIndex();
 		IBuildModel model = (IBuildModel) getFormPage().getModel();
 		IBuild build = model.getBuild();
 		IBuildEntry jarsOrderEntry = build.getEntry(IXMLConstants.PROPERTY_JAR_ORDER);
@@ -1103,8 +1135,8 @@ public class RuntimeInfoSection
 			selectionEntry = build.getEntry(IBuildEntry.JAR_PREFIX + tempLib);	
 		}
 		updateJarsCompileOrder(newLibEntries);
-		libraryTable.refresh();
-		libraryTable.setSelection(new StructuredSelection(selectionEntry));
+		libraryViewer.refresh();
+		libraryViewer.setSelection(new StructuredSelection(selectionEntry));
 		updateDirectionalButtons();
 	}
 
