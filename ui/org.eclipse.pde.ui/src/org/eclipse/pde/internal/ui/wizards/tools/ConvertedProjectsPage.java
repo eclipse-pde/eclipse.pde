@@ -219,13 +219,14 @@ public class ConvertedProjectsPage extends WizardPage  {
 			IDE.setDefaultEditor(file, PDEPlugin.MANIFEST_EDITOR_ID);
 		} else {
 			manifestPath = project.getFullPath().append("fragment.xml");
-			file = project.getWorkspace().getRoot().getFile(manifestPath);
-			if (file.exists()) {
+			IFile fragmentFile = project.getWorkspace().getRoot().getFile(manifestPath);
+			if (fragmentFile.exists()) {
 				IDE.setDefaultEditor(file, PDEPlugin.FRAGMENT_EDITOR_ID);
 			} else {
-				createManifestFile(file, monitor);
+				createManifestFile(file, monitor);				
 			}
 		}
+		
 		IPath buildPath = project.getFullPath().append("build.properties");
 		IFile buildFile = project.getWorkspace().getRoot().getFile(buildPath);
 		if (buildFile.exists()) {
