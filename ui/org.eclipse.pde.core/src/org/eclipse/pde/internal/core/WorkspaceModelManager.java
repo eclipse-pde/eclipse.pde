@@ -176,6 +176,16 @@ public class WorkspaceModelManager
 			return;
 		}
 		
+		if (file.getName().equals("plugin.properties")) {
+			IProject project = file.getProject();
+			if (isPluginProject(project) && !isBinaryPluginProject(project)) {
+				IPluginModelBase model = getWorkspacePluginModel(project);
+				if (model != null && model instanceof AbstractModel) {
+					((AbstractModel)model).resetNLResourceHelper();
+				}
+			}
+		}
+		
 		if (!isSupportedFile(file))
 			return;
 		

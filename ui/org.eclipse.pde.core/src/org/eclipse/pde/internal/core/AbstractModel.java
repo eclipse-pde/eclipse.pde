@@ -52,6 +52,17 @@ public abstract class AbstractModel
 	protected NLResourceHelper createNLResourceHelper() {
 		return null;
 	}
+	
+	public NLResourceHelper getNLResourceHelper() {
+		if (nlHelper == null)
+			nlHelper = createNLResourceHelper();
+		return nlHelper;
+	}
+	
+	public void resetNLResourceHelper() {
+		nlHelper = null;
+	}
+	
 	public void dispose() {
 		if (nlHelper != null) {
 			nlHelper.dispose();
@@ -59,6 +70,7 @@ public abstract class AbstractModel
 		}
 		disposed = true;
 	}
+	
 	public void fireModelChanged(IModelChangedEvent event) {
 		IModelChangedListener [] list = (IModelChangedListener[])listeners.toArray(new IModelChangedListener[listeners.size()]);
 		for (int i=0; i<list.length; i++) {

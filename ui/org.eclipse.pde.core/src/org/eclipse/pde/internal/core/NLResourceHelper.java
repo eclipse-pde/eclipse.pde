@@ -85,5 +85,16 @@ public class NLResourceHelper {
 			return dflt;
 		}
 	}
+	
+	public boolean resourceExists(String value) {
+		if (bundle == null)
+			return false;
+		try {
+			bundle.getString(value.trim().substring(1));
+			return true;
+		} catch (MissingResourceException e) {
+			return false;
+		}
+	}
 
 }
