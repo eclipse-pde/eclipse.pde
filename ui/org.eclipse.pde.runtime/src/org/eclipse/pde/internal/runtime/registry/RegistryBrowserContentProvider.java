@@ -14,6 +14,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.util.*;
+import org.eclipse.pde.internal.runtime.*;
 import org.osgi.framework.*;
 public class RegistryBrowserContentProvider
 		implements
@@ -22,6 +23,7 @@ public class RegistryBrowserContentProvider
 	private boolean showRunning;
 	public boolean isInExtensionSet;
 	private TreeViewer viewer;
+	private int numPluginsTotal;
 
 	
 	class PluginFolder implements IPluginFolder {
@@ -52,6 +54,7 @@ public class RegistryBrowserContentProvider
 		super();
 		this.viewer = viewer;
 		this.showRunning = showRunning;
+		this.numPluginsTotal = 0;
 	}
 	protected PluginObjectAdapter createAdapter(Object object, int id) {
 		if (id == IPluginFolder.F_EXTENSIONS)
@@ -93,8 +96,12 @@ public class RegistryBrowserContentProvider
 		if (element.equals(Platform.getPluginRegistry())) {
 			Object[] plugins = getPlugins(Platform.getPluginRegistry());
 			
-			if (plugins == null)
+			if (plugins == null){
+				numPluginsTotal = 0;
 				return new Object[0];
+			} else {
+				numPluginsTotal = plugins.length;
+			}
 			
 			if (showRunning){
 				ArrayList resultList = new ArrayList();
@@ -230,4 +237,16 @@ public class RegistryBrowserContentProvider
 	public boolean isShowRunning(){
 		return showRunning;
 	}
+	
+	public String getTitleSummary(){
+		if (viewer == null || viewer.getTree() == null)
+			return PDERuntimePlugin.getFormattedMessage(
+					"RegistryView.titleSummary",  //$NON-NLS-1$
+					new String[] {"0", "0"}); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		return PDERuntimePlugin.getFormattedMessage(
+				"RegistryView.titleSummary",  //$NON-NLS-1$
+				new String[] {new Integer(viewer.getTree().getItemCount()).toString(), new Integer(numPluginsTotal).toString()});
+	}
+	
 }

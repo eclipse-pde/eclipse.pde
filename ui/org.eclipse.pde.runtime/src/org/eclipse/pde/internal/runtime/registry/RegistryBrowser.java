@@ -56,6 +56,13 @@ IRegistryChangeListener {
 	private Label fPropertyLabel;
 	private Label fPropertyImage;
 	private PropertySheetPage fPropertySheet;
+	
+	// title bar
+	private Label titleLabel;
+	
+	// single-pane control
+	private Composite mainView;
+	
 	/*
 	 * customized DrillDownAdapter which modifies enabled state of showing active/inactive
 	 * plug-ins action - see Bug 58467
@@ -100,8 +107,9 @@ IRegistryChangeListener {
 	}
 	
 	private void initializeMemento() {
+		// show all plug-ins by default (i.e. not just activated ones)
 		if (memento.getString(SHOW_RUNNING_PLUGINS) == null)
-			memento.putString(SHOW_RUNNING_PLUGINS, "true"); //$NON-NLS-1$
+			memento.putString(SHOW_RUNNING_PLUGINS, "false"); //$NON-NLS-1$
 		if (memento.getString(TogglePropertiesAction.SHOW_PROPERTIES_SHEET) == null)
 			memento.putString(TogglePropertiesAction.SHOW_PROPERTIES_SHEET, "true"); //$NON-NLS-1$
 		if (memento.getInteger(REGISTRY_ORIENTATION) == null)
@@ -127,12 +135,27 @@ IRegistryChangeListener {
 		fillToolBar();
 		treeViewer.refresh();
 		setViewOrientation(orientation);
+		titleLabel.setText(((RegistryBrowserContentProvider)treeViewer.getContentProvider()).getTitleSummary());
 		
 		Platform.getExtensionRegistry().addRegistryChangeListener(this);
 		PDERuntimePlugin.getDefault().getBundleContext().addBundleListener(this);
 	}
 	private void createTreeViewer() {
-		Tree tree = new Tree(getSashForm(), SWT.FLAT);
+		mainView = new Composite(getSashForm(), SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = layout.marginWidth = 0;
+		mainView.setLayout(layout);
+		mainView.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
+		// create title bar with filter information
+		titleLabel = new Label(mainView, SWT.NONE);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.heightHint = 15;
+		titleLabel.setLayoutData(gd);
+		
+		Tree tree = new Tree(mainView, SWT.FLAT);
+		gd = new GridData(GridData.FILL_BOTH);
+		tree.setLayoutData(gd);
 		treeViewer = new TreeViewer(tree);
 		boolean showRunning = memento.getString(SHOW_RUNNING_PLUGINS).equals("true") ? true : false; //$NON-NLS-1$
 		treeViewer.setContentProvider(new RegistryBrowserContentProvider(treeViewer, showRunning));
@@ -182,7 +205,7 @@ IRegistryChangeListener {
 	protected void createAttributesViewer() {
 		Composite composite = new Composite(getSashForm(), SWT.FLAT);
 		GridLayout layout = new GridLayout();
-		layout.marginWidth = layout.marginHeight = 2;
+		layout.marginWidth = layout.marginHeight = 0;
 		layout.numColumns = 2;
 		layout.makeColumnsEqualWidth = false;
 		composite.setLayout(layout);
@@ -190,10 +213,14 @@ IRegistryChangeListener {
 		
 		fPropertyImage = new Label(composite, SWT.NONE);
 		GridData gd = new GridData(GridData.FILL);
+		gd.heightHint = 15; 
 		gd.widthHint = 20;
 		fPropertyImage.setLayoutData(gd);
+		
 		fPropertyLabel = new Label(composite, SWT.NULL);
-		fPropertyLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.heightHint = 15;
+		fPropertyLabel.setLayoutData(gd);
 		createPropertySheet(composite);
 	}	
 	/*
@@ -234,6 +261,7 @@ IRegistryChangeListener {
 		manager.add(new Separator());
 		drillDownAdapter.addNavigationActions(manager);
 		manager.add(new Separator());
+		manager.add(showPluginsAction);
 	}
 	public TreeViewer getTreeViewer() {
 		return treeViewer;
@@ -307,6 +335,7 @@ IRegistryChangeListener {
 				if (provider.isShowRunning() && !descriptor.isPluginActivated())
 					return;
 				treeViewer.add(treeViewer.getInput(), adapter);
+				updateTitle();
 			}
 		});
 	}
@@ -337,6 +366,7 @@ IRegistryChangeListener {
 						treeViewer.refresh();
 					}
 				}
+				updateTitle();
 			}
 		});
 	}
@@ -366,7 +396,8 @@ IRegistryChangeListener {
 			public void run(){
 				((RegistryBrowserContentProvider) treeViewer.getContentProvider())
 			.setShowRunning(showPluginsAction.isChecked());
-				handleShowRunningPlugins(showPluginsAction.isChecked());
+				treeViewer.refresh();
+				updateTitle();
 			}
 		};
 		showPluginsAction.setChecked(memento.getString(SHOW_RUNNING_PLUGINS).equals("true")); //$NON-NLS-1$
@@ -391,35 +422,7 @@ IRegistryChangeListener {
 		else
 			toggleViewAction[2].setChecked(true);
 	}
-	/*
-	 * show plug-ins action
-	 */
-	protected void handleShowRunningPlugins(boolean showRunning){
-		if (showRunning){
-			TreeItem[] items = treeViewer.getTree().getItems();
-			if (items == null)
-				return;
-			
-			for (int i = 0; i < items.length; i++) {
-				PluginObjectAdapter plugin = (PluginObjectAdapter) items[i].getData();
-				if (plugin != null) {
-					Object object = plugin.getObject();
-					if (object instanceof IPluginDescriptor) {
-						IPluginDescriptor desc = (IPluginDescriptor) object;
-						if (!desc.isPluginActivated())
-							treeViewer.remove(plugin);
-					}
-				}
-			}
-			
-		} else {
-			IPluginDescriptor[] descriptors = Platform.getPluginRegistry().getPluginDescriptors();
-			for (int i = 0; i<descriptors.length; i++){
-				if (!descriptors[i].isPluginActivated())
-					treeViewer.add(treeViewer.getInput(), new PluginObjectAdapter(descriptors[i]));
-			}
-		}
-	}
+
 	/*
 	 * orientation and properties display handler
 	 */
@@ -433,7 +436,7 @@ IRegistryChangeListener {
 	public void setViewOrientation(int viewOrientation){
 		setLastSashWeights(getSashForm().getWeights());
 		if (viewOrientation == SINGLE_PANE_ORIENTATION){
-			getSashForm().setMaximizedControl(treeViewer.getControl());		
+			getSashForm().setMaximizedControl(mainView);
 		} else {
 			if (viewOrientation == VERTICAL_ORIENTATION)
 				getSashForm().setOrientation(SWT.VERTICAL);
@@ -453,5 +456,11 @@ IRegistryChangeListener {
 		if (verticalSashWeight == null)
 			verticalSashWeight = DEFAULT_SASH_WEIGHTS;
 		return verticalSashWeight;
+	}
+	
+	public void updateTitle(){
+		if (treeViewer == null || treeViewer.getContentProvider() == null)
+			return;
+		titleLabel.setText(((RegistryBrowserContentProvider)treeViewer.getContentProvider()).getTitleSummary());
 	}
 }
