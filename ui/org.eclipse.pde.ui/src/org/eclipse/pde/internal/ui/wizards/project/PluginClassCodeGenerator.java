@@ -106,7 +106,7 @@ public void generateContents(
 				+ className
 				+ ".getDefault().getResourceBundle();"); 
 		writer.println("\t\ttry {");
-		writer.println("\t\t\treturn bundle.getString(key);");
+		writer.println("\t\t\treturn (bundle!=null ? bundle.getString(key) : key);");
 		writer.println("\t\t} catch (MissingResourceException e) {");
 		writer.println("\t\t\treturn key;");
 		writer.println("\t\t}");
