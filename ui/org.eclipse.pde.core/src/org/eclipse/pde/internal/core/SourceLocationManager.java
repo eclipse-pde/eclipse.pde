@@ -21,7 +21,6 @@ import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginObject;
-import org.eclipse.pde.internal.core.plugin.Plugin;
 
 /**
  * @author dejan
@@ -218,7 +217,7 @@ public class SourceLocationManager implements ICoreConstants {
 	}
 
 	private String getComputedName(IPluginExtension extension, String pathValue) {
-		String name = ((Plugin)extension.getParent()).getId() + "_" + pathValue;
+		String name = ((IPluginBase)extension.getParent()).getId() + "_" + pathValue;
 		return name.replace('.','_').toUpperCase();
 	}
 
@@ -313,18 +312,22 @@ public class SourceLocationManager implements ICoreConstants {
 	}
 	private IPluginExtension[] getRegisteredSourceExtensions() {
 		Vector result = new Vector();
-		IPluginModelBase[] models = PDECore.getDefault().getExternalModelManager().getAllModels();
+		IPluginModelBase[] models =
+			PDECore.getDefault().getExternalModelManager().getAllModels();
 		for (int i = 0; i < models.length; i++) {
-			IPluginExtension[] extensions = models[i].getPluginBase().getExtensions();
+			IPluginExtension[] extensions =
+				models[i].getPluginBase().getExtensions();
 			for (int j = 0; j < extensions.length; j++) {
 				IPluginExtension extension = extensions[j];
-				if (extension.getPoint().equals(PDECore.getPluginId() + ".source")) {
-					if (!result.contains(extension))
-						result.add(extension);
+				if (extension
+					.getPoint()
+					.equals(PDECore.getPluginId() + ".source")) {
+					result.add(extension);
 				}
 			}
 		}
-		return (IPluginExtension[]) result.toArray(new IPluginExtension[result.size()]);
+		return (IPluginExtension[]) result.toArray(
+			new IPluginExtension[result.size()]);
 	}
 	
 	public void reinitializeClasspathVariables(IProgressMonitor monitor) {
