@@ -232,7 +232,7 @@ public abstract class AbstractNewPluginTemplateWizard
 
 	private void setJavaSettings(IPluginModelBase model, IProgressMonitor monitor) {
 		boolean useContainers = BuildpathPreferencePage.getUseClasspathContainers();
-		ClasspathUtil.setClasspath(model, useContainers, monitor);
+		ClasspathUtil.setClasspath(model, useContainers, null, monitor);
 	}
 
 	private ArrayList getDependencies() {

@@ -212,7 +212,7 @@ public class ConvertedProjectsPage extends WizardPage {
 		if (!model.isLoaded())
 			return;
 			
-		ClasspathUtilCore.setClasspath(model, false, monitor);
+		ClasspathUtilCore.setClasspath(model, false, null, monitor);
 	}
 
 	public static void convertProject(IProject project, IProgressMonitor monitor)

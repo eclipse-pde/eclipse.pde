@@ -363,7 +363,7 @@ public class ImportListSection
 						getFormPage().getEditor().doSave(monitor);
 					}
 					boolean useContainers = BuildpathPreferencePage.getUseClasspathContainers();
-					ClasspathUtil.setClasspath(model, useContainers, monitor);
+					ClasspathUtil.setClasspath(model, useContainers, null, monitor);
 					monitor.worked(1);
 				} finally {
 					monitor.done();

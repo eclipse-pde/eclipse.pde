@@ -34,6 +34,7 @@ public class ClasspathUtilCore {
 	public static void setClasspath(
 		IPluginModelBase model,
 		boolean useClasspathContainer,
+		IMissingPluginConfirmation confirmation,
 		IProgressMonitor monitor) {
 
 		Vector result = new Vector();
@@ -51,7 +52,7 @@ public class ClasspathUtilCore {
 				result.add(createContainerEntry());
 				monitor.worked(1);
 			} else {
-				computePluginEntries(model, true, result, monitor);
+				computePluginEntries(model, true, result, confirmation, monitor);
 			}
 			
 			// add JRE
@@ -82,6 +83,7 @@ public class ClasspathUtilCore {
 		IPluginModelBase model,
 		boolean relative,
 		Vector result,
+		IMissingPluginConfirmation confirmation,
 		IProgressMonitor monitor) {
 		try {
 			HashSet alreadyAdded = new HashSet();
@@ -94,19 +96,23 @@ public class ClasspathUtilCore {
 			// add dependencies
 			IPluginImport[] dependencies = model.getPluginBase().getImports();
 			for (int i = 0; i < dependencies.length; i++) {
+				IPluginImport dependency = dependencies[i];
 				IPlugin plugin =
 					PDECore.getDefault().findPlugin(
-						dependencies[i].getId(),
-						dependencies[i].getVersion(),
-						dependencies[i].getMatch());
+						dependency.getId(),
+						dependency.getVersion(),
+						dependency.getMatch());
 				if (plugin != null) {
 					addDependency(
 						plugin,
-						dependencies[i].isReexported(),
+						dependency.isReexported(),
 						relative,
 						true,
 						result,
 						alreadyAdded);
+				}
+				else if (confirmation!=null && confirmation.getUseProjectReference()) {
+					addMissingDependencyAsProject(dependency.getId(), dependency.isReexported(), result);
 				}
 				if (monitor != null)
 					monitor.worked(1);
@@ -121,10 +127,16 @@ public class ClasspathUtilCore {
 
 	}
 	
-	public static IClasspathEntry[] computePluginEntries(IPluginModelBase model) {
+	public static IClasspathEntry[] computePluginEntries(IPluginModelBase model, IMissingPluginConfirmation confirmation) {
 		Vector result = new Vector();
-		computePluginEntries(model, false, result, null);
+		computePluginEntries(model, false, result, confirmation, null);
 		return (IClasspathEntry[])result.toArray(new IClasspathEntry[result.size()]);
+	}
+
+	private static void addMissingDependencyAsProject(String name, boolean isExported, Vector result) {
+		IProject project = PDECore.getWorkspace().getRoot().getProject(name);
+		IClasspathEntry entry = JavaCore.newProjectEntry(project.getFullPath(), isExported);
+		result.add(entry);
 	}
 	
 	private static void addDependency(
