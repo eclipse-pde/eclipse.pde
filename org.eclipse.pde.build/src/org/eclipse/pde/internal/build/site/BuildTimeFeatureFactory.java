@@ -10,7 +10,8 @@
  **********************************************************************/
 package org.eclipse.pde.internal.build.site;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;

@@ -11,10 +11,7 @@
 package org.eclipse.pde.internal.build;
 
 import java.util.*;
-
-import org.eclipse.core.runtime.model.PluginDescriptorModel;
-import org.eclipse.core.runtime.model.PluginFragmentModel;
-import org.eclipse.core.runtime.model.PluginModel;
+import org.eclipse.core.runtime.model.*;
 import org.eclipse.pde.internal.build.site.BuildTimeFeature;
 import org.eclipse.update.core.IFeature;
 
