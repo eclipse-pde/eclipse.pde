@@ -18,7 +18,10 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.model.PluginDescriptorModel;
+import org.eclipse.core.runtime.model.PluginRegistryModel;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
@@ -33,6 +36,8 @@ import org.eclipse.jdt.launching.VMRunnerConfiguration;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ExternalModelManager;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PluginModelManager;
+import org.eclipse.pde.internal.core.RegistryLoader;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -150,6 +155,8 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 				getExternalPluginsToRun(configuration, useDefault));
 		if (plugins == null)
 			return null;
+			
+		plugins = addRequiredPlugins(plugins);
 
 		programArgs.add("-configuration");
 		String primaryFeatureId = getPrimaryFeatureId();
@@ -205,6 +212,63 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 			programArgs.add(testTypes[i].getFullyQualifiedName());
 		}
 		return (String[]) programArgs.toArray(new String[programArgs.size()]);
+	}
+	
+	/**
+	 * @param plugins
+	 */
+	private IPluginModelBase[] addRequiredPlugins(IPluginModelBase[] plugins) throws CoreException {
+		boolean pdeJunitMissing = true;
+		boolean jdtJunitMissing = true;
+		boolean junitMissing = true;
+		for (int i = 0; i < plugins.length; i++) {
+			if (!pdeJunitMissing && !jdtJunitMissing && !junitMissing)
+				break;
+			String id = plugins[i].getPluginBase().getId();
+			if (id.equals("org.eclipse.pde.junit.runtime")) {
+				pdeJunitMissing = false;
+			} else if (id.equals("org.eclipse.jdt.junit.runtime")) {
+				jdtJunitMissing = false;
+			} else if (id.equals("org.junit")) {
+				junitMissing = false;
+			}
+		}
+
+		ArrayList extraPlugins = new ArrayList();
+		if (pdeJunitMissing) {
+			extraPlugins.add(findPlugin("org.eclipse.pde.junit.runtime"));
+		}
+		if (jdtJunitMissing) {
+			extraPlugins.add(findPlugin("org.eclipse.jdt.junit.runtime"));
+		} 
+		if (junitMissing) {
+			extraPlugins.add(findPlugin("org.junit"));
+		}
+		if (extraPlugins.size() > 0) {
+			IPluginModelBase[] all =
+				new IPluginModelBase[plugins.length + extraPlugins.size()];
+			System.arraycopy(plugins, 0, all, 0, plugins.length);
+			for (int i = 0; i < extraPlugins.size(); i++) {
+				all[plugins.length + i] = (IPluginModelBase) extraPlugins.get(i);
+			}
+			return all;
+		}
+		return plugins;	
+	}
+	
+	private IPluginModelBase findPlugin(String id) throws CoreException {
+		PluginModelManager manager = PDECore.getDefault().getModelManager();
+		IPluginModelBase model = manager.findPlugin(id, null, 0);
+		if (model != null)
+			return model;
+		PluginRegistryModel registryModel = (PluginRegistryModel) Platform.getPluginRegistry();
+		PluginDescriptorModel plugin = registryModel.getPlugin(id);
+		if (plugin == null)
+			abort(
+				PDEPlugin.getFormattedMessage("JUnitLaunchConfiguration.error.missingPlugin", id),
+				null,
+				IStatus.OK);
+		return RegistryLoader.processPluginModel(plugin, false);
 	}
 	
 	private String[] computeVMArguments(ILaunchConfiguration configuration) throws CoreException {
