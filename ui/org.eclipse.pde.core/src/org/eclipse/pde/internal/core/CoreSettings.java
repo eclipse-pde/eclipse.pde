@@ -27,6 +27,8 @@ public class CoreSettings extends Properties {
 	 */
 	public CoreSettings() {
 		defaults = new Properties();
+		defaults.setProperty(ICoreConstants.TARGET_MODE, ICoreConstants.VALUE_USE_THIS);
+		defaults.setProperty(ICoreConstants.CHECKED_PLUGINS, ICoreConstants.VALUE_SAVED_NONE);
 	}
 
 	/**

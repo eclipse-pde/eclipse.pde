@@ -32,6 +32,16 @@ public class PDECore extends Plugin {
 	public static final String EXTERNAL_PROJECT_VALUE = "external";
 	public static final String BINARY_PROJECT_VALUE = "binary";
 
+	private static boolean inVAJ;	
+	static {
+		try {
+			Class.forName("com.ibm.uvm.lang.ProjectClassLoader");
+			inVAJ = true;
+		} catch (Exception e) {
+			inVAJ = false;
+		}
+	}
+
 	// Shared instance
 	private static PDECore inst;
 	// Resource bundle
@@ -221,7 +231,7 @@ public class PDECore extends Plugin {
 		return modelManager;
 	}
 	private void initializePlatformPath() {
-		//TargetPlatformPreferencePage.initializePlatformPath();
+		ExternalModelManager.initializePlatformPath();
 	}
 	public static void log(IStatus status) {
 		ResourcesPlugin.getPlugin().getLog().log(status);
@@ -272,6 +282,9 @@ public class PDECore extends Plugin {
 		loadSettings();
 		workspaceModelManager = new WorkspaceModelManager();
 		externalModelManager = new ExternalModelManager();
+		
+		if (inVAJ == false)
+			initializePlatformPath();
 
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
