@@ -263,10 +263,6 @@ public class ClasspathUtilCore {
 		}					
 	}
 	
-	private static boolean isOSGiRuntime() {
-		return PDECore.getDefault().getModelManager().isOSGiRuntime();
-	}
-
 	protected static void addImplicitDependencies(
 		String id,
 		String schemaVersion,
@@ -274,13 +270,15 @@ public class ClasspathUtilCore {
 		HashSet alreadyAdded)
 		throws CoreException {
 		
-		if ((isOSGiRuntime() && schemaVersion != null)
+		boolean isOSGi = PDECore.getDefault().getModelManager().isOSGiRuntime();
+		
+		if ((isOSGi && schemaVersion != null)
 			|| id.equals("org.eclipse.core.boot") //$NON-NLS-1$
 			|| id.equals("org.apache.xerces") //$NON-NLS-1$
 			|| id.startsWith("org.eclipse.swt")) //$NON-NLS-1$
 			return;
 		
-		if (schemaVersion == null && isOSGiRuntime()) {
+		if (schemaVersion == null && isOSGi) {
 			if (!id.equals("org.eclipse.core.runtime")) { //$NON-NLS-1$
 				IPlugin plugin =
 					PDECore.getDefault().findPlugin(
