@@ -101,8 +101,8 @@ public class LibraryPluginJarsPage extends WizardPage {
 
 		dialog.setValidator(new FileValidator());
 		dialog.setAllowMultiple(true);
-		dialog.setTitle(PDEPlugin.getResourceString(".selection")); //$NON-NLS-1$
-		dialog.setMessage(PDEPlugin.getResourceString(".message")); //$NON-NLS-1$
+		dialog.setTitle(PDEPlugin.getResourceString("LibraryPluginJarsPage.SelectionDialog.title")); //$NON-NLS-1$
+		dialog.setMessage(PDEPlugin.getResourceString("LibraryPluginJarsPage.SelectionDialog.message")); //$NON-NLS-1$
 		dialog.addFilter(new FileExtensionFilter("jar")); //$NON-NLS-1$
 		dialog.setInput(PDEPlugin.getWorkspace().getRoot());
 

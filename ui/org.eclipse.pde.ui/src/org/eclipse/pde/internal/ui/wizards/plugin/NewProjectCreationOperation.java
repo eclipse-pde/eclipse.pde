@@ -364,7 +364,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 				File jarFile = new File(libraryPaths[j]);
 				String jarName = jarFile.getName();
 				IPath path = project.getFullPath().append(jarName);
-				entries[2 + j] = JavaCore.newLibraryEntry(path, null, null,
+				entries[i++] = JavaCore.newLibraryEntry(path, null, null,
 						true);
 			}
 		}
