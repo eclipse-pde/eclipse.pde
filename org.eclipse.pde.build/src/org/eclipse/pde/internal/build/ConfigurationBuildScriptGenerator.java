@@ -100,19 +100,19 @@ protected void generateBinTarget(PrintWriter output) {
 		exclusions = "${auto.excludes}";
 	output.println("      <property name=\"excludes\" value=\"" + exclusions + "\"/>");
 
-	output.println("      <property name=\"dest\" value=\"${basedir}/temp/install/configurations/${configuration}_${configVersion}\"/>");
+	output.println("      <property name=\"dest\" value=\"${basedir}/_temp___/install/configurations/${configuration}_${configVersion}\"/>");
 	output.println("    </ant>");
 
 	IPath base = new Path(configurationModel.getLocation());
 	String binLocation = makeRelative(new Path(getInstall()).append(DIRECTORY_BIN).toString(),base);
 	
 	output.println("    <property name=\"binSource\" value=\"" + binLocation + "\"/>");
-	output.println("    <property name=\"binDest\" value=\"${basedir}/temp/bin\"/>");
+	output.println("    <property name=\"binDest\" value=\"${basedir}/_temp___/bin\"/>");
 	output.println("    <available file=\"${binSource}\" property=\"binSource.exists\"/>");
 	output.println("    <antcall target=\"bin-copy\"/>");
 
-	output.println("    <jar jarfile=\"${configuration}_${configVersion}.jar\" basedir=\"${basedir}/temp\"/>");
-	output.println("    <delete dir=\"${basedir}/temp\"/>");
+	output.println("    <jar jarfile=\"${configuration}_${configVersion}.jar\" basedir=\"${basedir}/_temp___\"/>");
+	output.println("    <delete dir=\"${basedir}/_temp___\"/>");
 	output.println("  </target>");
 	
 	generateBinCopyTarget(output);
@@ -120,6 +120,7 @@ protected void generateBinTarget(PrintWriter output) {
 protected void generateBinCopyTarget(PrintWriter output) {
 	output.println();
 	output.println("  <target name=\"" + TARGET_BINCOPY + "\" depends=\"init\" if=\"binSource.exists\">");
+	output.println("    <delete dir=\"${binDest}\"/>");	
 	output.println("    <mkdir dir=\"${binDest}\"/>");
 	output.println("    <copydir src=\"${binSource}\" dest=\"${binDest}\"/>");
 	output.println("  </target>");
