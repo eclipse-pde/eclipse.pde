@@ -19,7 +19,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
@@ -41,7 +40,6 @@ import org.eclipse.jdt.launching.ExecutionArguments;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
@@ -66,9 +64,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 	 */
 	protected VMRunnerConfiguration createVMRunner(ILaunchConfiguration configuration, IType[] testTypes, int port, String runMode) throws CoreException {
 		String applicationName= configuration.getAttribute(APPLICATION, fgDefaultApp);
-		String workspace = configuration.getAttribute(LOCATION, (String)null);
-		if (workspace == null)
-			workspace= getTempWorkSpaceLocation();
+		String workspace = configuration.getAttribute(LOCATION, LauncherUtils.getTempWorkspace());
 
 		//VMRunnerConfiguration vmConfig= WorkbenchLaunchConfigurationDelegate.createWorkspaceRunnerConfiguration(workspace, applicationName, new NullProgressMonitor());
 		VMRunnerConfiguration vmConfig= createWorkspaceRunnerConfiguration(configuration, applicationName, workspace);
@@ -180,14 +176,6 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		return null;
 	}
 	
-	private String getTempLocation() {
-		return System.getProperty("java.io.tmpdir") + File.separator;
-	}
-
-	private String getTempWorkSpaceLocation() {	
- 		return getTempLocation() + "org.eclipse.pde.junit.workspace";		
-	}
-		
 	private void deleteTestWorkspace(String workspace) throws IOException {
 		deleteContent(new File(workspace));
 	}
@@ -408,16 +396,5 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		return result.toString();
 	}
 
-	static String getDefaultWorkspace() {
-		IPath ppath =
-			new Path(
-				PDECore.getDefault().getPluginPreferences().getString(
-					ICoreConstants.PLATFORM_PATH));
-		IPath runtimeWorkspace = ppath.append("runtime-test-workspace");
-		return runtimeWorkspace.toOSString();
-
-
-
-	}
 
 }

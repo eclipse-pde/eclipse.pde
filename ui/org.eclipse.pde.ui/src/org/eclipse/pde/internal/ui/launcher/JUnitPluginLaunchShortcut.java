@@ -38,7 +38,6 @@ public class JUnitPluginLaunchShortcut extends JUnitLaunchShortcut {
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, mainType);
 			wc.setAttribute(ILauncherSettings.APPLICATION, JUnitLaunchConfiguration.fgDefaultApp);
 			wc.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, JavaUISourceLocator.ID_PROMPTING_JAVA_SOURCE_LOCATOR);
-			wc.setAttribute(ILauncherSettings.LOCATION, JUnitLaunchConfiguration.getDefaultWorkspace()); 
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, LauncherUtils.getDefaultProgramArguments());
 			wc.setAttribute(JUnitBaseLaunchConfiguration.ATTR_KEEPRUNNING, false);
 			wc.setAttribute(JUnitBaseLaunchConfiguration.LAUNCH_CONTAINER_ATTR, container);

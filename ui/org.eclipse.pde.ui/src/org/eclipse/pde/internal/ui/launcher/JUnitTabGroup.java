@@ -13,6 +13,7 @@ import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
 import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.jdt.debug.ui.launchConfigurations.JavaSourceLookupTab;
 import org.eclipse.jdt.internal.junit.launcher.JUnitMainTab;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -27,6 +28,7 @@ public class JUnitTabGroup extends AbstractLaunchConfigurationTabGroup {
 			new JUnitMainTab(),
 			new JUnitArgumentsTab(),
 			new AdvancedLauncherTab(false),
+			new JavaSourceLookupTab(),
 			new CommonTab()
 		};
 		setTabs(tabs);

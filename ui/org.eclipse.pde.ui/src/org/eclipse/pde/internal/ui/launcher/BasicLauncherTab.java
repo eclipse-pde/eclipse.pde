@@ -363,7 +363,7 @@ public class BasicLauncherTab
 			return currentClasspath;
 		WorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
 		IPluginModelBase[] wsmodels = manager.getAllModels();
-		currentClasspath = WorkbenchLaunchConfigurationDelegate.getBuildOutputFolders(wsmodels);
+		currentClasspath = LauncherUtils.getBuildOutputFolders(wsmodels);
 		return currentClasspath;
 	}
 
