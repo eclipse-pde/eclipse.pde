@@ -181,8 +181,12 @@ public class TracingOptionsManager {
 	}
 
 	public void save(Map map) {
+		save(getTracingFileName(), map);
+	}
+	
+	public void save(String filename, Map map) {
 		Properties properties = new Properties();
 		properties.putAll(map);
-		save(getTracingFileName(), properties);
+		save(filename, properties);		
 	}
 }

@@ -30,55 +30,39 @@ import org.eclipse.swt.events.*;
 import org.eclipse.pde.internal.ui.editor.manifest.NullMenuManager;
 import org.eclipse.pde.internal.ui.editor.manifest.NullToolBarManager;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.pde.internal.core.*;
 
 public class TracingLauncherTab
 	extends AbstractLauncherTab
 	implements ILauncherSettings {
-	public static final String KEY_NAME = "TracingLauncherTab.name";
-	public static final String KEY_DESC = "TracingLauncherTab.desc";
-	private static final String KEY_TRACING = "TracingLauncherTab.tracing";
-	public static final String KEY_PLUGINS = "TracingLauncherTab.plugins";
-	public static final String KEY_WORKSPACE_PLUGINS =
-		"TracingLauncherTab.workspacePlugins";
-	public static final String KEY_EXTERNAL_PLUGINS =
-		"TracingLauncherTab.externalPlugins";
-	public static final String KEY_OPTIONS = "TracingLauncherTab.options";
-	public static final String KEY_MAXIMIZE = "TracingLauncherTab.maximize";
-	public static final String KEY_RESTORE = "TracingLauncherTab.restore";
 
-	private static final String S_SELECTED_PLUGIN = "selectedPlugin";
-	private static final String S_MAXIMIZED = "maximized";
-	private Button tracingCheck;
-	private TreeViewer pluginTreeViewer;
-	private NamedElement workspacePlugins;
-	private NamedElement externalPlugins;
-	private Properties masterOptions;
-	private Hashtable propertySources = new Hashtable();
-	private Vector externalList;
-	private Vector workspaceList;
-	private PropertySheetPage propertySheet;
-	private SashForm sashForm;
-	private Composite tableChild;
-	private Label propertyLabel;
-	private ToolItem maximizeItem;
-	private Image image;
+	private Button fTracingCheck;
+	private TreeViewer fPluginTreeViewer;
+	private NamedElement fWorkspacePlugins;
+	private NamedElement fExternalPlugins;
+	private Properties fMasterOptions = new Properties();
+	private ArrayList fExternalList;
+	private ArrayList fWorkspaceList;
+	private Hashtable fPropertySources = new Hashtable();
+	private PropertySheetPage fPropertySheet;
+	private SashForm fSashForm;
+	private Composite fTableChild;
+	private Label fPropertyLabel;
+	private ToolItem fMaximizeItem;
+	private Image fImage;
 
 	class PluginContentProvider
 		extends DefaultContentProvider
 		implements ITreeContentProvider {
 		public boolean hasChildren(Object parent) {
-			if (parent instanceof IPluginModel)
-				return false;
-			return true;
+			return !(parent instanceof IPluginModel);
 		}
 		public Object[] getChildren(Object parent) {
-			if (parent == externalPlugins) {
+			if (parent == fExternalPlugins) {
 				return getExternalTraceablePlugins();
 			}
-			if (parent == workspacePlugins) {
+			if (parent == fWorkspacePlugins) {
 				return getWorkspaceTraceablePlugins();
 			}
 			return new Object[0];
@@ -86,144 +70,70 @@ public class TracingLauncherTab
 		public Object getParent(Object child) {
 			if (child instanceof IPluginModel) {
 				IPluginModel model = (IPluginModel) child;
-				if (model.getUnderlyingResource() != null)
-					return workspacePlugins;
-				else
-					return externalPlugins;
+				return (model.getUnderlyingResource() != null)
+					? fWorkspacePlugins
+					: fExternalPlugins;
 			}
 			return null;
 		}
 		public Object[] getElements(Object input) {
-			return new Object[] { workspacePlugins, externalPlugins };
+			return new Object[] { fWorkspacePlugins, fExternalPlugins };
 		}
 	}
 
 	public TracingLauncherTab() {
-		//setDescription(PDEPlugin.getResourceString(KEY_DESC));
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
-		image = PDEPluginImages.DESC_DOC_SECTION_OBJ.createImage();
+		fImage = PDEPluginImages.DESC_DOC_SECTION_OBJ.createImage();
 	}
 
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
-		GridLayout layout = new GridLayout();
-		container.setLayout(layout);
-
+		container.setLayout(new GridLayout());
+		Dialog.applyDialogFont(container);
+		
 		createStartingSpace(container, 1);
-
-		tracingCheck = new Button(container, SWT.CHECK);
-		tracingCheck.setText(PDEPlugin.getResourceString(KEY_TRACING));
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		tracingCheck.setLayoutData(gd);
-		tracingCheck.addSelectionListener(new SelectionAdapter() {
+		createEnableTracingButton(container);
+		Label separator = new Label(container, SWT.SEPARATOR | SWT.HORIZONTAL);
+		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		createSashSection(container);
+		
+		setControl(container);		
+		WorkbenchHelp.setHelp(container, IHelpContextIds.LAUNCHER_TRACING);
+	}
+	
+	private void createEnableTracingButton(Composite container) {
+		fTracingCheck = new Button(container, SWT.CHECK);
+		fTracingCheck.setText(PDEPlugin.getResourceString("TracingLauncherTab.tracing"));
+		fTracingCheck.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fTracingCheck.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				masterCheckChanged(true);
 				updateLaunchConfigurationDialog();
 			}
 		});
-
-		Label separator = new Label(container, SWT.SEPARATOR | SWT.HORIZONTAL);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		separator.setLayoutData(gd);
-
-		sashForm = new SashForm(container, SWT.VERTICAL);
-		gd = new GridData(GridData.FILL_BOTH);
-		sashForm.setLayoutData(gd);
-
-		Composite treeChild = new Composite(sashForm, SWT.NULL);
-		GridLayout clayout = new GridLayout();
-		clayout.marginWidth = 0;
-		clayout.marginHeight = 0;
-		treeChild.setLayout(clayout);
-
-		Label label = new Label(treeChild, SWT.NULL);
-		label.setText(PDEPlugin.getResourceString(KEY_PLUGINS));
-		Control c = createPluginList(treeChild);
-		gd = new GridData(GridData.FILL_BOTH);
-		c.setLayoutData(gd);
-
-		tableChild = new Composite(sashForm, SWT.NULL);
-		clayout = new GridLayout();
-		//clayout.numColumns = 2;
-		clayout.marginWidth = 0;
-		clayout.marginHeight = 0;
-		clayout.verticalSpacing = 2;
-		tableChild.setLayout(clayout);
-
-		Composite titleBar = new Composite(tableChild, SWT.NULL);
-		clayout = new GridLayout();
-		clayout.numColumns = 2;
-		clayout.marginWidth = clayout.marginHeight = 0;
-		titleBar.setLayout(clayout);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		titleBar.setLayoutData(gd);
-
-		propertyLabel = new Label(titleBar, SWT.NULL);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		propertyLabel.setLayoutData(gd);
-		updatePropertyLabel(null);
-		ToolBar toolbar = new ToolBar(titleBar, SWT.FLAT);
-		//gd = new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.GRAB_HORIZONTAL);
-		//toolbar.setLayoutData(gd);
-
-		maximizeItem = new ToolItem(toolbar, SWT.PUSH);
-		maximizeItem.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				toggleMaximize();
-			}
-		});
-		updateMaximizeItem();
-
-		c = createPropertySheet(toolbar, tableChild);
-		gd = new GridData(GridData.FILL_BOTH);
-		c.setLayoutData(gd);
-		propertyLabel.addMouseListener(new MouseAdapter() {
-			public void mouseDoubleClick(MouseEvent e) {
-				toggleMaximize();
-			}
-		});
-		initialize();
-		setControl(container);
-		
-		Dialog.applyDialogFont(container);
-		WorkbenchHelp.setHelp(container, IHelpContextIds.LAUNCHER_TRACING);
 	}
 
-	private void toggleMaximize() {
-		doMaximize(sashForm.getMaximizedControl() == null);
+	private void createSashSection(Composite container) {
+		fSashForm = new SashForm(container, SWT.VERTICAL);
+		fSashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		createPluginViewer();
+		createPropertySheetClient();
 	}
+	
+	private void createPluginViewer() {
+		Composite composite = new Composite(fSashForm, SWT.NULL);
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = layout.marginHeight = 0;
+		composite.setLayout(layout);
 
-	private void doMaximize(boolean maximize) {
-		Control maxControl = maximize ? tableChild : null;
-		sashForm.setMaximizedControl(maxControl);
-		updateMaximizeItem();
-	}
+		Label label = new Label(composite, SWT.NULL);
+		label.setText(PDEPlugin.getResourceString("TracingLauncherTab.plugins"));
 
-	private void updateMaximizeItem() {
-		boolean maximized = sashForm.getMaximizedControl() != null;
-		Image image;
-		String tooltip;
-
-		if (maximized) {
-			image =
-				PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_RESTORE);
-			tooltip = PDEPlugin.getResourceString(KEY_RESTORE);
-		} else {
-			image =
-				PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_MAXIMIZE);
-			tooltip = PDEPlugin.getResourceString(KEY_MAXIMIZE);
-		}
-		maximizeItem.setImage(image);
-		maximizeItem.setToolTipText(tooltip);
-		maximizeItem.getParent().redraw();
-	}
-
-	protected Control createPluginList(Composite parent) {
-		pluginTreeViewer = new TreeViewer(parent, SWT.BORDER);
-		pluginTreeViewer.setContentProvider(new PluginContentProvider());
-		pluginTreeViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
-		pluginTreeViewer.setAutoExpandLevel(3);
-		pluginTreeViewer.addFilter(new ViewerFilter() {
+		fPluginTreeViewer = new TreeViewer(composite, SWT.BORDER);
+		fPluginTreeViewer.setContentProvider(new PluginContentProvider());
+		fPluginTreeViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
+		fPluginTreeViewer.addFilter(new ViewerFilter() {
 			public boolean select(Viewer v, Object parent, Object object) {
 				if (object instanceof IPluginModel) {
 					return ((IPluginModel) object).isEnabled();
@@ -231,16 +141,16 @@ public class TracingLauncherTab
 				return true;
 			}
 		});
-		pluginTreeViewer.setSorter(new ListUtil.PluginSorter() {
+		fPluginTreeViewer.setSorter(new ListUtil.PluginSorter() {
 			public int category(Object obj) {
-				if (obj == workspacePlugins)
+				if (obj == fWorkspacePlugins)
 					return -1;
-				if (obj == externalPlugins)
+				if (obj == fExternalPlugins)
 					return 1;
 				return 0;
 			}
 		});
-		pluginTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+		fPluginTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent e) {
 				Object item = ((IStructuredSelection) e.getSelection()).getFirstElement();
 				if (item instanceof IPluginModel)
@@ -250,121 +160,154 @@ public class TracingLauncherTab
 			}
 		});
 		Image pluginsImage =
-			PDEPlugin.getDefault().getLabelProvider().get(
+		PDEPlugin.getDefault().getLabelProvider().get(
 				PDEPluginImages.DESC_REQ_PLUGINS_OBJ);
-		workspacePlugins =
-			new NamedElement(
-				PDEPlugin.getResourceString(KEY_WORKSPACE_PLUGINS),
+		fWorkspacePlugins =
+		new NamedElement(
+				PDEPlugin.getResourceString("TracingLauncherTab.workspacePlugins"),
 				pluginsImage);
-		externalPlugins =
-			new NamedElement(
-				PDEPlugin.getResourceString(KEY_EXTERNAL_PLUGINS),
+		fExternalPlugins =
+		new NamedElement(
+				PDEPlugin.getResourceString("TracingLauncherTab.externalPlugins"),
 				pluginsImage);
-		return pluginTreeViewer.getTree();
+		
+		fPluginTreeViewer.getTree().setLayoutData(new GridData(GridData.FILL_BOTH));
+		fPluginTreeViewer.setInput(PDEPlugin.getDefault());
+		fPluginTreeViewer.expandAll();
+		
 	}
-	protected Control createPropertySheet(
-		final ToolBar toolbar,
-		Composite parent) {
+	
+	private void createPropertySheetClient() {
+		fTableChild = new Composite(fSashForm, SWT.NULL);
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = layout.marginHeight = 0;
+		layout.verticalSpacing = 2;
+		fTableChild.setLayout(layout);
+
+		Composite titleBar = new Composite(fTableChild, SWT.NULL);
+		layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.marginWidth = layout.marginHeight = 0;
+		titleBar.setLayout(layout);
+		titleBar.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		fPropertyLabel = new Label(titleBar, SWT.NULL);
+		fPropertyLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		updatePropertyLabel(null);
+		fPropertyLabel.addMouseListener(new MouseAdapter() {
+			public void mouseDoubleClick(MouseEvent e) {
+				doMaximize(fSashForm.getMaximizedControl() == null);
+			}
+		});
+		
+		ToolBar toolbar = new ToolBar(titleBar, SWT.FLAT);
+		fMaximizeItem = new ToolItem(toolbar, SWT.PUSH);
+		fMaximizeItem.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				doMaximize(fSashForm.getMaximizedControl() == null);
+			}
+		});
+		updateMaximizeItem();
+		createPropertySheet(toolbar, fTableChild);		
+	}
+
+	private void doMaximize(boolean maximize) {
+		Control maxControl = maximize ? fTableChild : null;
+		fSashForm.setMaximizedControl(maxControl);
+		updateMaximizeItem();
+	}
+
+	private void updateMaximizeItem() {
+		boolean maximized = fSashForm.getMaximizedControl() != null;
+		Image image;
+		String tooltip;
+
+		if (maximized) {
+			image =
+				PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_RESTORE);
+			tooltip = PDEPlugin.getResourceString("TracingLauncherTab.restore");
+		} else {
+			image =
+				PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_MAXIMIZE);
+			tooltip = PDEPlugin.getResourceString("TracingLauncherTab.maximize");
+		}
+		fMaximizeItem.setImage(image);
+		fMaximizeItem.setToolTipText(tooltip);
+		fMaximizeItem.getParent().redraw();
+	}
+
+	protected void createPropertySheet(final ToolBar toolbar, Composite parent) {
 		Composite composite = new Composite(parent, SWT.BORDER);
 		GridLayout layout = new GridLayout();
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
+		layout.marginWidth = layout.marginHeight = 0;
 		composite.setLayout(layout);
-		propertySheet = new PropertySheetPage();
-		propertySheet.createControl(composite);
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		propertySheet.getControl().setLayoutData(gd);
-		//ToolBarManager manager = new ToolBarManager(toolbar);
-		propertySheet.makeContributions(
+		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		fPropertySheet = new PropertySheetPage();
+		fPropertySheet.createControl(composite);
+		fPropertySheet.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
+		fPropertySheet.makeContributions(
 			new NullMenuManager(),
 			new NullToolBarManager(),
 			null);
-		//manager.update(true);
-		return composite;
 	}
+
 	public void dispose() {
-		if (propertySheet != null)
-			propertySheet.dispose();
-		image.dispose();
+		if (fPropertySheet != null)
+			fPropertySheet.dispose();
+		fImage.dispose();
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();
 	}
 
-	private IDialogSettings getDialogSettings() {
-		IDialogSettings master = PDEPlugin.getDefault().getDialogSettings();
-		String sectionId = "tracingLauncherTab";
-		IDialogSettings section = master.getSection(sectionId);
-		if (section == null) {
-			section = master.addNewSection(sectionId);
-		}
-		return section;
-	}
-	private void fillTraceableModelList(IPluginModelBase[] models, Vector result) {
+	private ArrayList fillTraceableModelList(IPluginModelBase[] models) {
+		ArrayList result = new ArrayList();
 		for (int i = 0; i < models.length; i++) {
-			IPluginModelBase model = models[i];
-			if (TracingOptionsManager.isTraceable(model))
-				result.add(model);
+			if (TracingOptionsManager.isTraceable(models[i]))
+				result.add(models[i]);
 		}
+		return result;
 	}
+	
 	private IAdaptable getAdaptable(IPluginModel model) {
 		if (model == null)
 			return null;
-		IAdaptable adaptable = (IAdaptable) propertySources.get(model);
+		IAdaptable adaptable = (IAdaptable) fPropertySources.get(model);
 		if (adaptable == null) {
 			String id = model.getPlugin().getId();
 			Hashtable defaults =
 				PDECore.getDefault().getTracingOptionsManager().getTemplateTable(id);
-			adaptable = new TracingPropertySource(model, masterOptions, defaults, this);
-			propertySources.put(model, adaptable);
+			adaptable = new TracingPropertySource(model, fMasterOptions, defaults, this);
+			fPropertySources.put(model, adaptable);
 		}
 		return adaptable;
 	}
+	
 	private Object[] getExternalTraceablePlugins() {
-		if (externalList == null) {
-			externalList = new Vector();
-			IPluginModel[] models =
-				PDECore.getDefault().getExternalModelManager().getPluginModels();
-			fillTraceableModelList(models, externalList);
-		}
-		return externalList.toArray();
+		IPluginModel[] models =
+			PDECore.getDefault().getExternalModelManager().getPluginModels();
+		fExternalList = fillTraceableModelList(models);
+		return fExternalList.toArray();
 	}
+	
 	private Object[] getWorkspaceTraceablePlugins() {
-		if (workspaceList == null) {
-			workspaceList = new Vector();
-			IPluginModelBase[] models =
-				PDECore.getDefault().getWorkspaceModelManager().getAllModels();
-			fillTraceableModelList(models, workspaceList);
-		}
-		return workspaceList.toArray();
-	}
-
-	private void initialize() {
-		pluginTreeViewer.setInput(PDEPlugin.getDefault());
-		pluginTreeViewer.reveal(workspacePlugins);
+		IPluginModelBase[] models =
+			PDECore.getDefault().getWorkspaceModelManager().getAllModels();
+		fWorkspaceList = fillTraceableModelList(models);
+		return fWorkspaceList.toArray();
 	}
 
 	private void masterCheckChanged(boolean userChange) {
-		boolean enabled = tracingCheck.getSelection();
-		pluginTreeViewer.getTree().setEnabled(enabled);
-		propertySheet.getControl().setEnabled(enabled);
+		boolean enabled = fTracingCheck.getSelection();
+		fPluginTreeViewer.getTree().setEnabled(enabled);
+		fPropertySheet.getControl().setEnabled(enabled);
 		setChanged(userChange);
 	}
 
-	private void selectPlugin(String pluginId) {
-		IPluginModel model = findModel(pluginId, workspaceList);
-		if (model == null)
-			model = findModel(pluginId, externalList);
-		if (model != null)
-			pluginTreeViewer.setSelection(new StructuredSelection(model), true);
-	}
-
-	private IPluginModel findModel(String id, Vector list) {
-		if (list == null)
-			return null;
+	private IPluginModel findModel(String id, ArrayList list) {
 		for (int i = 0; i < list.size(); i++) {
 			IPluginModel model = (IPluginModel) list.get(i);
-			IPlugin plugin = model.getPlugin();
-			if (plugin.getId().equals(id))
+			if (model.getPlugin().getId().equals(id))
 				return model;
 		}
 		return null;
@@ -373,89 +316,65 @@ public class TracingLauncherTab
 	public void initializeFrom(final ILaunchConfiguration config) {
 		BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
 			public void run() {
-				doInitializeFrom(config);
+				fMasterOptions.clear();
+				fPropertySources.clear();
+				try {
+					fTracingCheck.setSelection(config.getAttribute(TRACING, false));
+
+					Map options =
+						(config
+							.getAttribute(
+								TRACING_OPTIONS,
+								PDECore
+									.getDefault()
+									.getTracingOptionsManager()
+									.getTracingTemplateCopy()));
+					fMasterOptions.putAll(options);
+
+					doMaximize(config.getAttribute(TRACING_VIEWER_MAXIMIZED, false));
+
+					masterCheckChanged(false);
+					pluginSelected(null);
+				} catch (CoreException e) {
+					PDEPlugin.logException(e);
+				}
 			}
 		});
 	}
 
-	private void doInitializeFrom(ILaunchConfiguration config) {
-		masterOptions =
-			PDECore.getDefault().getTracingOptionsManager().getTracingTemplateCopy();
-		propertySources.clear();
-		try {
-			boolean tracing = false;
-			tracing = config.getAttribute(TRACING, tracing);
-			tracingCheck.setSelection(tracing);
-			masterCheckChanged(false);
-
-			Map options = config.getAttribute(TRACING_OPTIONS, (Map) null);
-			if (options != null)
-				initializeFrom(options);
-
-			IDialogSettings settings = getDialogSettings();
-			String selectedPlugin = settings.get(S_SELECTED_PLUGIN);
-			if (selectedPlugin != null && selectedPlugin.length() > 0) {
-				selectPlugin(selectedPlugin);
-			}
-			boolean maximized = settings.getBoolean(S_MAXIMIZED);
-			doMaximize(maximized);
-
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
-		}
-	}
 
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
-		if (!isTracingEnabled() && !isChanged()) return;
-		config.setAttribute(TRACING, isTracingEnabled());
+		boolean tracingEnabled = fTracingCheck.getSelection();
+		if (!tracingEnabled && !isChanged()) return;
+		
+		config.setAttribute(TRACING, tracingEnabled);
+		
+		config.setAttribute(TRACING_VIEWER_MAXIMIZED, fSashForm.getMaximizedControl() != null);
+		
 		boolean changes = false;
-		for (Enumeration enum = propertySources.elements(); enum.hasMoreElements();) {
+		for (Enumeration enum = fPropertySources.elements(); enum.hasMoreElements();) {
 			TracingPropertySource source = (TracingPropertySource) enum.nextElement();
 			if (source.isModified()) {
 				changes = true;
 				source.save();
 			}
 		}
-		boolean maximized = sashForm.getMaximizedControl() != null;
-		IDialogSettings settings = getDialogSettings();
-		settings.put(S_MAXIMIZED, maximized);
-		IStructuredSelection sel =
-			(IStructuredSelection) pluginTreeViewer.getSelection();
-		if (!sel.isEmpty()) {
-			Object el = sel.getFirstElement();
-			if (el instanceof IPluginModelBase) {
-				IPluginModelBase model = (IPluginModelBase) sel.getFirstElement();
-				IPluginBase pluginBase = model.getPluginBase();
-				settings.put(S_SELECTED_PLUGIN, pluginBase.getId());
-			}
-		}
 		if (changes)
-			config.setAttribute(TRACING_OPTIONS, masterOptions);
+			config.setAttribute(TRACING_OPTIONS, fMasterOptions);
 		setChanged(false);
 	}
 
-	private void initializeFrom(Map options) {
-		masterOptions.putAll(options);
-	}
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-		//Properties template = PDEPlugin.getDefault().getTracingOptionsManager().getTracingTemplateCopy();
-		//config.setAttribute(TRACING_OPTIONS, template);
 		config.setAttribute(TRACING, false);
 	}
 
-	public boolean isTracingEnabled() {
-		return tracingCheck.getSelection();
-	}
-
 	private void updatePropertyLabel(IPluginModel model) {
-		String text;
-		if (model == null) {
-			text = PDEPlugin.getResourceString(KEY_OPTIONS);
-		} else {
-			text = PDEPlugin.getDefault().getLabelProvider().getText(model);
-		}
-		propertyLabel.setText(text);
+		String text =
+			(model == null)
+				? PDEPlugin.getResourceString("TracingLauncherTab.options")
+				: PDEPlugin.getDefault().getLabelProvider().getText(model);
+		fPropertyLabel.setText(text);
 	}
 
 	private void pluginSelected(IPluginModel model) {
@@ -464,14 +383,16 @@ public class TracingLauncherTab
 			adaptable != null
 				? new StructuredSelection(adaptable)
 				: new StructuredSelection();
-		propertySheet.selectionChanged(null, selection);
+		fPropertySheet.selectionChanged(null, selection);
 		updatePropertyLabel(model);
 	}
+	
 	public String getName() {
-		return PDEPlugin.getResourceString(KEY_NAME);
+		return PDEPlugin.getResourceString("TracingLauncherTab.name");
 	}
+	
 	public Image getImage() {
-		return image;
+		return fImage;
 	}
 
 }

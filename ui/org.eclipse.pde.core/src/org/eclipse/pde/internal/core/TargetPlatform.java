@@ -168,18 +168,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 		String primaryFeatureId)
 		throws CoreException {
 		try {
-			String dataSuffix = createDataSuffix(data);
-			IPath statePath = PDECore.getDefault().getStateLocation();
-			String fileName = "platform.cfg"; //$NON-NLS-1$
-			File dir = new File(statePath.toOSString());
-
-			if (dataSuffix.length() > 0) {
-				dir = new File(dir, dataSuffix);
-				if (!dir.exists()) {
-					dir.mkdir();
-				}
-			}
-			File configFile = new File(dir, fileName);
+			File configFile = new File(createWorkingDirectory(data), "platform.cfg");
 			savePlatformConfiguration(configFile, plugins, primaryFeatureId);
 			return configFile;
 		} catch (CoreException e) {
@@ -198,6 +187,20 @@ public class TargetPlatform implements IEnvironmentVariables {
 					message,
 					e));
 		}
+	}
+	
+	public static File createWorkingDirectory(IPath data) {
+		String dataSuffix = createDataSuffix(data);
+		IPath statePath = PDECore.getDefault().getStateLocation();
+		File dir = new File(statePath.toOSString());
+
+		if (dataSuffix.length() > 0) {
+			dir = new File(dir, dataSuffix);
+			if (!dir.exists()) {
+				dir.mkdir();
+			}
+		}
+		return dir;		
 	}
 
 	private static void savePlatformConfiguration(

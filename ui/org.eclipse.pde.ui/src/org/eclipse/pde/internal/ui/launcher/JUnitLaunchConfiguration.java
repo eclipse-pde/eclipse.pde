@@ -188,7 +188,10 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 
 		if (configuration.getAttribute(TRACING, false)) {
 			programArgs.add("-debug");
-			programArgs.add(LauncherUtils.getTracingFileArgument(configuration));
+			programArgs.add(
+				LauncherUtils.getTracingFileArgument(
+					configuration,
+					configFile.getParent() + Path.SEPARATOR + ".options"));
 		}
 		
 		StringTokenizer tokenizer =

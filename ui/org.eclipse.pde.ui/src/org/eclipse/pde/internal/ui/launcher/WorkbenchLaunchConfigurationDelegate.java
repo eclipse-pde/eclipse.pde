@@ -51,9 +51,15 @@ public class WorkbenchLaunchConfigurationDelegate
 			} 
 			monitor.worked(1);
 			
-			launch.setAttribute(
-				ILauncherSettings.CONFIG_LOCATION,
-				(configFile == null) ? null : configFile.getParent());
+			if (configFile == null) {
+				launch.setAttribute(ILauncherSettings.CONFIG_LOCATION, null);
+			} else {
+				launch.setAttribute(
+					ILauncherSettings.CONFIG_LOCATION,
+					configFile.isDirectory()
+						? configFile.toString()
+						: configFile.getParent());
+			}
 				
 			String workspace = configuration.getAttribute(LOCATION + "0", LauncherUtils.getDefaultPath().append("runtime-workbench-workspace").toOSString());
 			LauncherUtils.clearWorkspace(configuration, workspace);
@@ -149,8 +155,16 @@ public class WorkbenchLaunchConfigurationDelegate
 		programArgs.add(configuration.getAttribute(CLASSPATH_ENTRIES, devEntry));
 
 		if (configuration.getAttribute(TRACING, false)) {
+			if (configFile == null) {
+				configFile =
+					TargetPlatform.createWorkingDirectory(new Path(targetWorkspace));
+			}
+			String directoryName = configFile.isDirectory() ? configFile.toString() : configFile.getParent();
 			programArgs.add("-debug");
-			programArgs.add(LauncherUtils.getTracingFileArgument(configuration));
+			programArgs.add(
+				LauncherUtils.getTracingFileArgument(
+					configuration,
+					directoryName + Path.SEPARATOR + ".options"));
 		}
 
 		StringTokenizer tokenizer =
@@ -163,7 +177,8 @@ public class WorkbenchLaunchConfigurationDelegate
 			boolean showSplash = true;
 			int index = programArgs.indexOf("-application");
 			if (index != -1 && index <= programArgs.size() - 2) {
-				if (!programArgs.get(index + 1).equals("org.eclipse.ui.workbench")) {
+				if (!programArgs.get(index + 1).equals("org.eclipse.ui.workbench") && 
+					!programArgs.get(index + 1).equals("org.eclipse.ui.ide.workbench")) {
 					showSplash = false;
 				}
 			}

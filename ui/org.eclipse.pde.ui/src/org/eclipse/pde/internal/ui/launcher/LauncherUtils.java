@@ -506,28 +506,28 @@ public class LauncherUtils {
 		curr.delete();
 	}
 	
-	public static String getTracingFileArgument(ILaunchConfiguration config) {
-		TracingOptionsManager mng =
-			PDECore.getDefault().getTracingOptionsManager();
-		Map options;
+	public static String getTracingFileArgument(
+		ILaunchConfiguration config,
+		String optionsFileName)
+		throws CoreException {
 		try {
-			options =
+			TracingOptionsManager mng = PDECore.getDefault().getTracingOptionsManager();
+			Map options =
 				config.getAttribute(
 					ILauncherSettings.TRACING_OPTIONS,
 					mng.getTracingTemplateCopy());
+			mng.save(optionsFileName, options);
 		} catch (CoreException e) {
 			return "";
 		}
-		mng.save(options);
-		String optionsFileName = mng.getTracingFileName();
-		String tracingArg;
+
+		String tracingArg = "\"file:" + optionsFileName + "\"";
 		if (SWT.getPlatform().equals("motif"))
 			tracingArg = "file:" + optionsFileName;
 		// defect 17661
 		else if (SWT.getPlatform().equals("gtk"))
 			tracingArg = "file://localhost" + optionsFileName;
-		else
-			tracingArg = "\"file:" + optionsFileName + "\"";
+
 		return tracingArg;
 	}
 

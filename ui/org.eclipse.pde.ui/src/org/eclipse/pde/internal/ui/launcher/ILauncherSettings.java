@@ -34,6 +34,8 @@ public interface ILauncherSettings {
 	// Tracing settings
 	String TRACING = "tracing";
 	String TRACING_OPTIONS = "tracingOptions";
+	String TRACING_VIEWER_MAXIMIZED = "maximized";
+	
 	
 	// config file location
 	String CONFIG_LOCATION = "configLocation";
