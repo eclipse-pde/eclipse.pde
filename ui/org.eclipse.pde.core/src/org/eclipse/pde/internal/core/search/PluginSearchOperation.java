@@ -34,14 +34,17 @@ public class PluginSearchOperation {
 		collector.searchStarted();
 		collector.setProgressMonitor(monitor);
 		monitor.beginTask("", entries.length);
-		
-		for (int i = 0; i < entries.length; i++) {
-			IPluginModelBase candidate = entries[i];
-			visit(candidate);
-			monitor.worked(1);
+
+		try {
+			for (int i = 0; i < entries.length; i++) {
+				IPluginModelBase candidate = entries[i];
+				visit(candidate);
+				monitor.worked(1);
+			}
+		} finally {
+			monitor.done();
+			collector.done();
 		}
-		monitor.done();
-		collector.done();
 	}
 	
 	private void visit(IPluginModelBase model) {
