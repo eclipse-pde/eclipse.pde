@@ -56,6 +56,7 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 				LauncherUtils.clearConfigArea(getConfigDir(configuration), new SubProgressMonitor(monitor, 1));
 			launch.setAttribute(ILauncherSettings.CONFIG_LOCATION, getConfigDir(configuration).toString());
 			
+			
 			// create launcher
 			IVMInstall launcher = LauncherUtils.createLauncher(configuration);
 			monitor.worked(1);
@@ -321,6 +322,8 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 				fConfigDir = LauncherUtils.createConfigArea(config.getName());
 			}
 		}
+		if (!fConfigDir.exists())
+			fConfigDir.mkdirs();
 		return fConfigDir;
 	}
 }

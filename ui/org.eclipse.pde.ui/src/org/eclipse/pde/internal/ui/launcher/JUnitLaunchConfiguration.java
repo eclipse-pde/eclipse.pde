@@ -421,6 +421,8 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		if (fConfigDir == null) {
 			fConfigDir = LauncherUtils.createConfigArea(config.getName());
 		}
+		if (!fConfigDir.exists())
+			fConfigDir.mkdirs();
 		return fConfigDir;
 	}
 	
