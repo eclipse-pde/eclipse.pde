@@ -7,7 +7,7 @@
 package org.eclipse.pde.core;
 
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.ifeature.*;
 
 /**
  * @author dejan

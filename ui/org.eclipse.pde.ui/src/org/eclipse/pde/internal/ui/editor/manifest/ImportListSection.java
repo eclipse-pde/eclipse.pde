@@ -351,7 +351,7 @@ public class ImportListSection
 					.getUnderlyingResource();
 			if (resource != null) {
 				IProject project = resource.getProject();
-				if (WorkspaceModelManager.isJavaPluginProject(project)) {
+				if (NewWorkspaceModelManager.isJavaPluginProject(project)) {
 					PDESourcePage sourcePage =
 						(PDESourcePage) getFormPage().getEditor().getPage(
 							ManifestEditor.SOURCE_PAGE);

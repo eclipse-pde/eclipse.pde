@@ -11,11 +11,10 @@
 
 package org.eclipse.pde.internal.core;
 
-import org.eclipse.core.runtime.model.*;
-
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
+
+import org.eclipse.core.runtime.model.*;
 
 public class PDERegistryCacheWriter {
 	// See RegistryCacheReader for constants commonly used here too.

@@ -12,9 +12,9 @@ package org.eclipse.pde.internal.core.schema;
 
 import java.net.*;
 
-import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
+import org.eclipse.pde.internal.core.ischema.*;
 
 /**
  * @author dejan

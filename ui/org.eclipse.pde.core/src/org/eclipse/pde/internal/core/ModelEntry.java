@@ -10,17 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.File;
+import java.io.*;
 import java.util.*;
 
-import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.jdt.core.*;
-import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 public class ModelEntry extends PlatformObject {
 	public static final int AUTOMATIC = 0;
@@ -171,12 +168,15 @@ public class ModelEntry extends PlatformObject {
 	
 	private boolean isRequired(IPluginBase plugin, IPluginBase changedPlugin) {
 		if (changedPlugin instanceof IFragment)
-			return false;		
+			return false;
 		return getRequiredIds(plugin).contains(changedPlugin.getId());
 	}
 	
 	private HashSet getRequiredIds(IPluginBase plugin) {
 		HashSet set = new HashSet();
+		if (plugin instanceof IFragment) {
+			addDependency(((IFragment)plugin).getPluginId(), set);
+		}
 		IPluginImport[] imports = plugin.getImports();
 		for (int i = 0; i < imports.length; i++) {
 			addDependency(imports[i].getId(), set);				
@@ -214,7 +214,7 @@ public class ModelEntry extends PlatformObject {
 	}
 	
 	private void addDependency(String id, HashSet set) {
-		if (!set.add(id))
+		if (id == null || !set.add(id))
 			return;
 
 		ModelEntry entry = manager.findEntry(id);

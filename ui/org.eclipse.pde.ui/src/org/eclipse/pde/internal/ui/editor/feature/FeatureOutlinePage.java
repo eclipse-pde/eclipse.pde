@@ -10,16 +10,16 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import java.util.Vector;
+import java.util.*;
 
 import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.elements.NamedElement;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.elements.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 
 public class FeatureOutlinePage extends FormOutlinePage {

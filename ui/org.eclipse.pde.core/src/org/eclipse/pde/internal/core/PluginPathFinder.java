@@ -10,13 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Properties;
+import java.io.*;
+import java.util.*;
 
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.*;
 
 public class PluginPathFinder {
 	

@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.ifeature;
 
-import org.eclipse.core.runtime.*;
 import java.net.*;
+
+import org.eclipse.core.runtime.*;
 /**
  * A URL element is a model object that represents
  * a single URL reference. The reference has a type

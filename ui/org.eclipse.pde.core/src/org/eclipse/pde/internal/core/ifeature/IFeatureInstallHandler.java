@@ -9,8 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.core.ifeature;
-import java.net.URL;
-import org.eclipse.core.runtime.CoreException;
+import java.net.*;
+
+import org.eclipse.core.runtime.*;
 /**
  * @version 	1.0
  * @author

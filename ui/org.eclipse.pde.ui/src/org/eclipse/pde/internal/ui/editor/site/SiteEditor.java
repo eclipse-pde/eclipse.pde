@@ -60,10 +60,9 @@ public class SiteEditor extends PDEMultiPageXMLEditor {
 		InputStream stream = null;
 		stream = file.getContents(false);
 
-		IModelProvider provider =
+		NewWorkspaceModelManager provider =
 			PDECore.getDefault().getWorkspaceModelManager();
-		provider.connect(file, this);
-		ISiteModel model = (ISiteModel) provider.getModel(file, this);
+		ISiteModel model = (ISiteModel) provider.getModel(file);
 		//boolean cleanModel = true;
 		try {
 			model.load(stream, false);
@@ -75,9 +74,8 @@ public class SiteEditor extends PDEMultiPageXMLEditor {
 				PDECore.SITEBUILD_DIR).append(
 				PDECore.SITEBUILD_PROPERTIES);
 		IFile buildFile = file.getWorkspace().getRoot().getFile(buildPath);
-		provider.connect(buildFile, this);
 		ISiteBuildModel buildModel =
-			(ISiteBuildModel) provider.getModel(buildFile, this);
+			(ISiteBuildModel) provider.getModel(buildFile);
 		try {
 			buildModel.load();
 		} catch (CoreException e) {
@@ -94,18 +92,12 @@ public class SiteEditor extends PDEMultiPageXMLEditor {
 	
 	public void dispose() {
 		super.dispose();
-		IModelProvider provider =
-			PDECore.getDefault().getWorkspaceModelManager();
 		ISiteModel model = (ISiteModel) getModel();
 		ISiteBuildModel buildModel = model.getBuildModel();
 		if (storageModel) {
 			model.dispose();
 			if (buildModel != null)
 				buildModel.dispose();
-		} else {
-			provider.disconnect(model.getUnderlyingResource(), this);
-			if (buildModel != null)
-				provider.disconnect(buildModel.getUnderlyingResource(), this);
 		}
 	}
 

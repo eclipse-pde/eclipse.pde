@@ -10,14 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.site;
 
-import java.io.PrintWriter;
+import java.io.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.IWorkspaceModelManager;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.isite.*;
-import org.w3c.dom.Node;
+import org.w3c.dom.*;
 
 /**
  * @author dejan
@@ -72,7 +71,7 @@ public class SiteBuildFeature
 
 	public IFeature getReferencedFeature() {
 		if (feature == null) {
-			IWorkspaceModelManager manager =
+			NewWorkspaceModelManager manager =
 				PDECore.getDefault().getWorkspaceModelManager();
 			IFeatureModel[] models = manager.getFeatureModels();
 			for (int i = 0; i < models.length; i++) {

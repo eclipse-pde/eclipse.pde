@@ -10,13 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
-import java.util.Vector;
+import java.util.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.ModelChangedEvent;
-import org.eclipse.pde.core.plugin.IPluginObject;
-import org.eclipse.pde.core.plugin.IPluginParent;
+import org.eclipse.core.runtime.*;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.plugin.*;
 
 public abstract class PluginParent extends IdentifiablePluginObject implements IPluginParent {
 	protected Vector children = new Vector();

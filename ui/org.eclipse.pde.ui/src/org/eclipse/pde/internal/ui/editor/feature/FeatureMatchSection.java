@@ -10,19 +10,19 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import java.util.Iterator;
+import java.util.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.pde.internal.core.ifeature.IFeatureImport;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.manifest.MatchSection;
-import org.eclipse.swt.SWT;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.manifest.*;
+import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
+import org.eclipse.update.ui.forms.internal.*;
 
 /**
  * @author dejan

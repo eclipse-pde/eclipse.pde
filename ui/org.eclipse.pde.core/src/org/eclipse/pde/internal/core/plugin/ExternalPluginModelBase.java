@@ -13,11 +13,11 @@ package org.eclipse.pde.internal.core.plugin;
 import java.io.*;
 import java.net.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.model.PluginModel;
-import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.model.*;
+import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.build.ExternalBuildModel;
+import org.eclipse.pde.internal.core.build.*;
 
 public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 	private String installLocation;

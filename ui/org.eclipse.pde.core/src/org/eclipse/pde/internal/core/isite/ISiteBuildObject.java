@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.isite;
 
-import java.io.Serializable;
+import java.io.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.IWritable;
+import org.eclipse.pde.core.*;
 /**
  * A base of all site model objects.
  */

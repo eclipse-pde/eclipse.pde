@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.ifeature;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.IIdentifiable;
+import org.eclipse.core.runtime.*;
+import org.eclipse.pde.core.*;
 /**
  * The reference to a plug-in that is part of this feature.
  */

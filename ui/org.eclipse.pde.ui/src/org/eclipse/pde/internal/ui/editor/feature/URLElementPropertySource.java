@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import org.eclipse.core.runtime.*;
 import java.net.*;
 import java.util.*;
-import org.eclipse.ui.views.properties.*;
-import org.eclipse.pde.internal.ui.*;
+
+import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.ui.views.properties.*;
 
 public class URLElementPropertySource extends FeaturePropertySource {
 	private Vector descriptors;

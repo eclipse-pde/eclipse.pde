@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.core.feature.FeatureObject;
+import org.eclipse.pde.internal.core.feature.*;
 import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 
 /**

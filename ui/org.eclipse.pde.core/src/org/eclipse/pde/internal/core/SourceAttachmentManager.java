@@ -11,11 +11,9 @@
 package org.eclipse.pde.internal.core;
 
 import java.io.*;
-import java.io.FileInputStream;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.IPath;
 
 /**
  * @author dejan

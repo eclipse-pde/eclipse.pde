@@ -16,7 +16,7 @@ import java.util.*;
 
 import javax.xml.parsers.*;
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
@@ -114,10 +114,6 @@ public abstract class AbstractExtensionsModel
 				new Object[] { extensions },
 				null));
 	}
-	public String toString() {
-		return "extensions.xml";
-	}
-
 	protected abstract void updateTimeStamp();
 
 	public IPluginAttribute createAttribute(IPluginElement element) {

@@ -327,7 +327,7 @@ public class ExternalPluginsBlock {
 
 
 	private void selectNotInWorkspace() {
-		IWorkspaceModelManager wm = PDECore.getDefault().getWorkspaceModelManager();
+		NewWorkspaceModelManager wm = PDECore.getDefault().getWorkspaceModelManager();
 		IPluginModelBase[] wsModels = wm.getAllModels();
 		IPluginModelBase[] exModels = getAllModels();
 		Vector selected = new Vector();

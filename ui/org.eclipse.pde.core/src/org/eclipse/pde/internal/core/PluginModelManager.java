@@ -12,12 +12,9 @@ package org.eclipse.pde.internal.core;
 
 import java.util.*;
 
-import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.IClasspathContainer;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 
@@ -25,7 +22,7 @@ public class PluginModelManager implements IAdaptable {
 	private static final String OSGI_RUNTIME ="org.eclipse.osgi";
 	private IModelProviderListener providerListener;
 	private IExternalModelManager externalManager;
-	private IWorkspaceModelManager workspaceManager;
+	private NewWorkspaceModelManager workspaceManager;
 	private SearchablePluginsManager searchablePluginsManager;
 	private ArrayList listeners;
 	private boolean osgiRuntime;
@@ -309,7 +306,7 @@ public class PluginModelManager implements IAdaptable {
 		}
 	}
 
-	public void connect(IWorkspaceModelManager wm, IExternalModelManager em) {
+	public void connect(NewWorkspaceModelManager wm, IExternalModelManager em) {
 		externalManager = em;
 		workspaceManager = wm;
 		externalManager.addModelProviderListener(providerListener);

@@ -10,20 +10,20 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.*;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.operation.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.wizards.ResizableWizardDialog;
-import org.eclipse.pde.internal.ui.wizards.exports.FeatureExportWizard;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.jface.wizard.*;
+import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.wizards.*;
+import org.eclipse.pde.internal.ui.wizards.exports.*;
+import org.eclipse.ui.*;
 
 public class EditorBuildFeatureAction extends Action {
 	public static final String LABEL = "FeatureEditor.BuildAction.label";

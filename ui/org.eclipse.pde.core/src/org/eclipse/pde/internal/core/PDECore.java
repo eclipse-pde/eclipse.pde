@@ -10,19 +10,18 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.*;
 import java.util.*;
 
-import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.boot.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.osgi.service.resolver.PlatformAdmin;
-import org.eclipse.pde.core.*;
+import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.core.schema.SchemaRegistry;
-import org.osgi.framework.BundleContext;
-import org.osgi.util.tracker.ServiceTracker;
+import org.eclipse.pde.internal.core.schema.*;
+import org.osgi.framework.*;
+import org.osgi.util.tracker.*;
 
 public class PDECore extends Plugin implements IEnvironmentVariables {
 	public static final String PLUGIN_ID = "org.eclipse.pde.core";
@@ -190,7 +189,6 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
 	// External model manager
-	private IAlternativeRuntimeSupport runtimeSupport;
 	private boolean launchedInstance = false;
 	private PluginModelManager modelManager;
 	private boolean modelsLocked = false;
@@ -207,6 +205,8 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 	private TracingOptionsManager tracingOptionsManager;
 	private BundleContext context;
 	private ServiceTracker tracker;
+	private ExternalModelManager externalModelManager;
+	private NewWorkspaceModelManager workspaceModelManager;
 
 	public PDECore(IPluginDescriptor descriptor) {
 		super(descriptor);
@@ -218,7 +218,6 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		} catch (MissingResourceException x) {
 			resourceBundle = null;
 		}
-		initializeLaunchedInstanceFlag();
 	}
 
 	public IPluginExtensionPoint findExtensionPoint(String fullID) {
@@ -270,7 +269,7 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 	public IFeature findFeature(String id, String version, int match) {
 		if (modelsLocked)
 			return null;
-		IWorkspaceModelManager manager = getWorkspaceModelManager();
+		NewWorkspaceModelManager manager = getWorkspaceModelManager();
 		return findFeature(manager.getFeatureModels(), id, version, match);
 	}
 
@@ -310,10 +309,10 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		return null;
 	}
 
-	public IExternalModelManager getExternalModelManager() {
-		if (runtimeSupport == null)
-			initializeModels();
-		return runtimeSupport.getExternalModelManager();
+	public ExternalModelManager getExternalModelManager() {
+		if (externalModelManager == null)
+			externalModelManager = new ExternalModelManager();
+		return externalModelManager;
 	}
 	public PluginModelManager getModelManager() {
 		if (modelManager == null)
@@ -321,11 +320,6 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		return modelManager;
 	}
 	
-	public IAlternativeRuntimeSupport getRuntimeSupport() {
-		if (runtimeSupport ==null)
-			initializeModels();
-		return runtimeSupport;
-	}
 	public ResourceBundle getResourceBundle() {
 		return resourceBundle;
 	}
@@ -356,10 +350,10 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 			tracingOptionsManager = new TracingOptionsManager();
 		return tracingOptionsManager;
 	}
-	public IWorkspaceModelManager getWorkspaceModelManager() {
-		if (runtimeSupport == null)
-			initializeModels();
-		return runtimeSupport.getWorkspaceModelManager();
+	public NewWorkspaceModelManager getWorkspaceModelManager() {
+		if (workspaceModelManager==null)
+			workspaceModelManager = new NewWorkspaceModelManager();
+		return workspaceModelManager;
 	}
 
 	/**
@@ -393,45 +387,12 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		preferences.setDefault(ARCH, BootLoader.getOSArch());
 	}
 
-	public static boolean isAlternativeRuntimeSupportEnabled() {
-		Preferences pref = getDefault().getPluginPreferences();
-		return pref.getBoolean(ICoreConstants.ENABLE_ALT_RUNTIME);
-	}
-	
-	public void resetAlternativeRuntimeSupport() {
-		if (modelManager != null) {
-			modelManager.shutdown();
-			modelManager = null;
-		}
-		if (runtimeSupport != null) {
-			runtimeSupport.shutdown();
-			runtimeSupport = null;
-		}
-	}
-
-	private void initializeLaunchedInstanceFlag() {
-		String[] args = BootLoader.getCommandLineArgs();
-		for (int i = 0; i < args.length; i++) {
-			String arg = args[i];
-			if (arg.equals(ARG_PDELAUNCH)) {
-				launchedInstance = true;
-				break;
-			}
-		}
-	}
-
 	private void initializeModels() {
 		modelsLocked = true;
-		if (runtimeSupport == null)
-			loadRuntimeSupport();
-		IExternalModelManager exManager =
-			runtimeSupport.getExternalModelManager();
-		IWorkspaceModelManager wsManager =
-			runtimeSupport.getWorkspaceModelManager();
 
 		if (modelManager == null) {
 			modelManager = new PluginModelManager();
-			modelManager.connect(wsManager, exManager);
+			modelManager.connect(getWorkspaceModelManager(), getExternalModelManager());
 		}
 		modelsLocked = false;
 	}
@@ -478,7 +439,18 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 			schemaRegistry.shutdown();
 			schemaRegistry = null;
 		}
-		resetAlternativeRuntimeSupport();
+		if (modelManager != null) {
+			modelManager.shutdown();
+			modelManager = null;
+		}
+		if (externalModelManager!=null) {
+			externalModelManager.shutdown();
+			externalModelManager=null;
+		}
+		if (workspaceModelManager!=null) {
+			workspaceModelManager.shutdown();
+			workspaceModelManager = null;
+		}
 		if (tempFileManager != null) {
 			tempFileManager.shutdown();
 			tempFileManager = null;
@@ -487,49 +459,4 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 	}
 	
 
-	private void loadRuntimeSupport() {
-		IConfigurationElement[] runtimes =
-			Platform.getPluginRegistry().getConfigurationElementsFor(
-				PDECore.PLUGIN_ID,
-				"alternativeRuntimeSupport");
-
-		if (runtimes.length == 0)
-			return;
-		IConfigurationElement runtime = runtimes[0];
-		if (runtimes.length > 1) {
-			// pick the first runtime support that is
-			// not the default
-			runtime = null;
-			for (int i = 0; i < runtimes.length; i++) {
-				String def = runtimes[i].getAttribute("default");
-				if (def != null && def.equalsIgnoreCase("true")) {
-					if (isAlternativeRuntimeSupportEnabled())
-						continue;
-					else {
-						runtime = runtimes[i];
-						break;
-					}
-				}
-				if (runtime == null) {
-					runtime = runtimes[i];
-					break;
-				}
-			}
-		}
-		if (runtime == null)
-			return;
-		try {
-			Object cobj = runtime.createExecutableExtension("class");
-			if (cobj==null) {
-				logErrorMessage("PDE Core: Failed to load runtime support.");
-			}
-			else if (cobj instanceof IAlternativeRuntimeSupport) 
-				runtimeSupport = (IAlternativeRuntimeSupport)cobj;
-			else {
-				logErrorMessage("PDE Core: Runtime support of the wrong type: "+cobj.getClass().getName());
-			}
-		} catch (CoreException e) {
-			logException(e);
-		}
-	}
 }

@@ -10,18 +10,17 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.*;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.pde.core.IModel;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.operation.*;
+import org.eclipse.jface.wizard.*;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.ui.*;
 
 public class SynchronizeVersionsAction extends Action {
 	public static final String LABEL = "Actions.synchronizeVersions.label";

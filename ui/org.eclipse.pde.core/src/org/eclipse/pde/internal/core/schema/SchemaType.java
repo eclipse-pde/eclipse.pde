@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.schema;
 
-import java.io.Serializable;
+import java.io.*;
 
 import org.eclipse.pde.internal.core.ischema.*;
 

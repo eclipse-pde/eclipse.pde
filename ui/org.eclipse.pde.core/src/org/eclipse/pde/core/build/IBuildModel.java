@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.core.build;
 
-import org.eclipse.pde.core.IModel;
-import org.eclipse.pde.core.IModelChangeProvider;
+import org.eclipse.pde.core.*;
 /**
  * This model is created from the "plugin.jars" file
  * that defines what source folders in the plug-in are

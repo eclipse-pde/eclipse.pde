@@ -207,11 +207,10 @@ public class ManifestEditor
 
 		stream = file.getContents(false);
 
-		IModelProvider modelProvider =
+		NewWorkspaceModelManager modelProvider =
 			PDECore.getDefault().getWorkspaceModelManager();
-		modelProvider.connect(file, this);
 		WorkspacePluginModelBase model =
-			(WorkspacePluginModelBase) modelProvider.getModel(file, this);
+			(WorkspacePluginModelBase) modelProvider.getModel(file);
 		model.setReconcilingModel(true);
 		try {
 			model.load(stream, false);
@@ -221,9 +220,8 @@ public class ManifestEditor
 		String buildName = "build.properties";
 		IPath buildPath = file.getProject().getFullPath().append(buildName);
 		IFile buildFile = file.getWorkspace().getRoot().getFile(buildPath);
-		modelProvider.connect(buildFile, this);
 		IBuildModel buildModel =
-			(IBuildModel) modelProvider.getModel(buildFile, this);
+			(IBuildModel) modelProvider.getModel(buildFile);
 		try {
 			buildModel.load();
 		} catch (CoreException e) {
@@ -240,13 +238,8 @@ public class ManifestEditor
 	public void dispose() {
 		super.dispose();
 		IPluginModelBase model = (IPluginModelBase) getModel();
-		IModelProvider modelProvider =
-			PDECore.getDefault().getWorkspaceModelManager();
 		if (model instanceof WorkspacePluginModelBase) {
-			IBuildModel buildModel = model.getBuildModel();
-			modelProvider.disconnect(buildModel.getUnderlyingResource(), this);
 			((WorkspacePluginModelBase) model).setBuildModel(null);
-			modelProvider.disconnect(model.getUnderlyingResource(), this);
 		} else {
 			model.dispose();
 		}

@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.build;
 
-import java.io.PrintWriter;
-import java.util.Vector;
+import java.io.*;
+import java.util.*;
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.build.*;
 

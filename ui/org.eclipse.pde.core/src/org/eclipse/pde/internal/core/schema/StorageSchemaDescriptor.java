@@ -10,13 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.schema;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
+import java.io.*;
+import java.net.*;
 
-import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.pde.internal.core.*;
 
 public class StorageSchemaDescriptor extends AbstractSchemaDescriptor {
 	private IStorage storage;

@@ -9,14 +9,14 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
-import java.net.URL;
+import java.net.*;
 import java.util.*;
 
-import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.ifeature.*;
 
 /**
  */

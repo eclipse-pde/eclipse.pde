@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.core.plugin;
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 /**
  * The class that implements this interface represents a
  * reference to the library that is defined in the plug-in

@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.ischema;
 
-import java.net.URL;
+import java.net.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.IModelChangeProvider;
+import org.eclipse.core.runtime.*;
+import org.eclipse.pde.core.*;
 /**
  * Objects of this class encapsulate data loaded from
  * the XML Schema file that defines an Eclipse extension point.

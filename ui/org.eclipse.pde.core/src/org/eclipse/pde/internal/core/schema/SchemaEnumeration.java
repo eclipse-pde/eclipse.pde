@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.schema;
 
-import java.io.PrintWriter;
+import java.io.*;
 
 import org.eclipse.pde.internal.core.ischema.*;
 

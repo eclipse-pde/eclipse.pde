@@ -15,10 +15,10 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.ui.forms.internal.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.core.resources.*;
-import org.eclipse.pde.internal.core.*;
 
 public class DependenciesForm extends ScrollableSectionForm {
 	public static final String TITLE = "ManifestEditor.DependenciesForm.title";
@@ -100,7 +100,7 @@ public class DependenciesForm extends ScrollableSectionForm {
 		IResource resource =
 			((IPluginModelBase) page.getModel()).getUnderlyingResource();
 		if (resource != null
-			&& WorkspaceModelManager.isJavaPluginProject(resource.getProject())) {
+			&& NewWorkspaceModelManager.isJavaPluginProject(resource.getProject())) {
 			manager.add(importListSection.getBuildpathAction());
 			manager.add(new Separator());
 		}

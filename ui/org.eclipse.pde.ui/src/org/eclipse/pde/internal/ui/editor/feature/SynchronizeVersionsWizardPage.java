@@ -10,26 +10,26 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.*;
 
-import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.jface.operation.*;
+import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
+import org.eclipse.pde.internal.core.feature.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.swt.SWT;
+import org.eclipse.swt.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.actions.*;
+import org.eclipse.ui.help.*;
 
 public class SynchronizeVersionsWizardPage extends WizardPage {
 	public static final int USE_FEATURE = 1;
@@ -147,11 +147,10 @@ public boolean finish() {
 private void forceVersion(String targetVersion, IPluginModelBase modelBase)
 	throws CoreException {
 	IFile file = (IFile) modelBase.getUnderlyingResource();
-	IModelProvider modelProvider =
+	NewWorkspaceModelManager modelProvider =
 		PDECore.getDefault().getWorkspaceModelManager();
-	modelProvider.connect(file, featureEditor);
 	WorkspacePluginModelBase model =
-		(WorkspacePluginModelBase) modelProvider.getModel(file, featureEditor);
+		(WorkspacePluginModelBase) modelProvider.getModel(file);
 	model.load();
 	if (model.isLoaded()) {
 		IPluginBase base = model.getPluginBase();
@@ -173,8 +172,6 @@ private void forceVersion(String targetVersion, IPluginModelBase modelBase)
 		   }
 		}
 	}
-	modelProvider.disconnect(file, featureEditor);
-
 }
 private void loadSettings() {
 	IDialogSettings settings = getDialogSettings();

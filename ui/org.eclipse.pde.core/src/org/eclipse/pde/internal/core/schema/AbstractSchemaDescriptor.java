@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.schema;
 
-import java.net.URL;
+import java.net.*;
 
 import org.eclipse.pde.internal.core.ischema.*;
 

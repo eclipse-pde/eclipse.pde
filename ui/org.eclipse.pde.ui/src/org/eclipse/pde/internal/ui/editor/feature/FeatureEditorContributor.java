@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.ui.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.swt.dnd.*;
+import org.eclipse.ui.*;
 
 
 public class FeatureEditorContributor extends PDEEditorContributor {

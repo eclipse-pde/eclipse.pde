@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.ui.views.contentoutline.*;
 import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.ui.views.contentoutline.*;
+import org.eclipse.update.ui.forms.internal.*;
 
 public class FeatureFormPage extends PDEFormPage {
 

@@ -10,11 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.site;
 
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.*;
-import java.util.Vector;
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.isite.*;
 import org.w3c.dom.*;

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.core;
 
-import java.io.PrintWriter;
+import java.io.*;
 /**
  * Classes that implement this interface can participate
  * in saving the model to the ASCII output stream using

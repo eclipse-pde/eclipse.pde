@@ -43,8 +43,6 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants, IPre
 	private static PDEPlugin inst;
 	// Resource bundle
 	private ResourceBundle resourceBundle;
-	// Alternative runtime UI support
-	private IAlternativeRuntimeUISupport runtimeUISupport;
 	// Launches listener
 	private LaunchListener launchListener;
 	
@@ -54,6 +52,7 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants, IPre
 	
 	// Shared colors for all forms
 	private FormColors formColors;
+	private PDELabelProvider labelProvider;
 
 	public PDEPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
@@ -217,6 +216,10 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants, IPre
 			formColors.dispose();
 			formColors=null;
 		}
+		if (labelProvider != null) {
+			labelProvider.dispose();
+			labelProvider = null;
+		}
 		super.shutdown();
 	}
 
@@ -232,9 +235,9 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants, IPre
 	}
 
 	public PDELabelProvider getLabelProvider() {
-		if (runtimeUISupport==null)
-			loadRuntimeUISupport();
-		return runtimeUISupport.getLabelProvider();
+		if (labelProvider==null)
+			labelProvider = new PDELabelProvider();
+		return labelProvider;
 	}
 	
 	public LaunchListener getLaunchesListener() {
@@ -260,37 +263,4 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants, IPre
 		return store.getString(PROP_SHOW_OBJECTS).equals(VALUE_USE_NAMES);
 	}
 	
-	private void loadRuntimeUISupport() {
-		IConfigurationElement[] runtimes = Platform.getPluginRegistry().getConfigurationElementsFor(PLUGIN_ID, "alternativeRuntimeUISupport");
-		
-		if (runtimes.length==0) return;
-		IConfigurationElement runtime = runtimes[0];
-		if (runtimes.length>1) {
-			// pick the first runtime support that is
-			// not the default
-			runtime = null;
-			for (int i=0; i<runtimes.length; i++) {
-				String def = runtimes[i].getAttribute("default");
-				if (def!=null && def.equalsIgnoreCase("true")) {
-					if (PDECore.isAlternativeRuntimeSupportEnabled())
-						continue;
-					else {
-						runtime = runtimes[i];
-						break;
-					}
-				}
-				if (runtime==null) {
-					runtime = runtimes[i];
-					break;
-				}
-			}
-		}
-		if (runtime==null) return;
-		try {
-			runtimeUISupport = (IAlternativeRuntimeUISupport)runtime.createExecutableExtension("class");
-		}
-		catch (CoreException e) {
-			logException(e);
-		}
-	}	
 }

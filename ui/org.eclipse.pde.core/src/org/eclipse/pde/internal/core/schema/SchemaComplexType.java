@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.schema;
 
-import java.io.PrintWriter;
-import java.util.Vector;
+import java.io.*;
+import java.util.*;
 
-import org.eclipse.pde.core.ModelChangedEvent;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.ischema.*;
 
 public class SchemaComplexType

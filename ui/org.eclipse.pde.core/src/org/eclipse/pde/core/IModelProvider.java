@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.core;
 
+import org.eclipse.core.resources.*;
+
 
 /**
  * Classes that implement this interface are
@@ -58,7 +60,7 @@ void addModelProviderListener(IModelProviderListener listener);
  * @param element the underlying element that the model is associated with
  * @param consumer the consumer of the model
  */
-public void connect(Object element, Object consumer);
+//public void connect(Object element, Object consumer);
 /**
  * Connects the consumer with the model associated with
  * the element. The additional flag allows consumer
@@ -73,7 +75,7 @@ public void connect(Object element, Object consumer);
  * @param editableCopy if true, an editable copy will be
  * provided, but inly if not in use already
  */
-public void connect(Object element, Object consumer, boolean editableCopy);
+//public void connect(Object element, Object consumer, boolean editableCopy);
 /**
  * Disassociates the consumer and the model for the
  * provided element.
@@ -85,7 +87,7 @@ public void connect(Object element, Object consumer, boolean editableCopy);
  * @param element the underlying element of the model
  * @param consumer the model requester
  */
-public void disconnect(Object element, Object consumer);
+//public void disconnect(Object element, Object consumer);
 /**
  * Returns the model copy that matches the underlying
  * element. If the consumer is the one that is connected
@@ -97,7 +99,8 @@ public void disconnect(Object element, Object consumer);
  * @param consumer the model requester
  * @return model instance that matches the underlying element
  */
-public IModel getModel(Object element, Object consumer);
+//public IModel getModel(Object element, Object consumer);
+public IModel getModel(IFile file);
 /**
  * Deregisters a listener from notification.
  *

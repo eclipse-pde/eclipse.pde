@@ -11,7 +11,7 @@
  
 package org.eclipse.pde.internal.core.ifeature;
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 /**
  * @version 	1.0
  * @author

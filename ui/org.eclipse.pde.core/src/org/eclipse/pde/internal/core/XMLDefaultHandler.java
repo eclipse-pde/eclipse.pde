@@ -6,8 +6,6 @@ import javax.xml.parsers.*;
 
 import org.w3c.dom.*;
 import org.xml.sax.*;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 import org.xml.sax.ext.*;
 import org.xml.sax.helpers.*;
 

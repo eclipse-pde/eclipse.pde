@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.ischema;
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 
 /**
  * Classes that implement this interface represent

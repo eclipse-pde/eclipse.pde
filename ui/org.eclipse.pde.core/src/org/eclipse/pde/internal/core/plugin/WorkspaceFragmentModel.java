@@ -14,9 +14,6 @@ import org.eclipse.pde.core.plugin.*;
 
 public class WorkspaceFragmentModel extends WorkspacePluginModelBase implements IFragmentModel {
 
-public WorkspaceFragmentModel() {
-	super();
-}
 public WorkspaceFragmentModel(org.eclipse.core.resources.IFile file) {
 	super(file);
 }

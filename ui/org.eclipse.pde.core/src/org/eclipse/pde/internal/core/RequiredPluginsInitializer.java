@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 

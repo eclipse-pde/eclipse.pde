@@ -11,13 +11,10 @@
 package org.eclipse.pde.internal.core;
 
 import java.io.*;
-import java.io.File;
-import java.net.URL;
+import java.net.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.model.*;
-import org.eclipse.core.runtime.model.PluginRegistryModel;
 
 /**
  *

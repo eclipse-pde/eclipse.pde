@@ -12,25 +12,23 @@ package org.eclipse.pde.internal.ui.editor.feature;
 
 import java.net.*;
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.feature.*;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
-import org.eclipse.pde.internal.ui.editor.PDEFormSection;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.feature.FeatureURLElement;
-import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.pde.internal.ui.elements.*;
+import org.eclipse.swt.*;
+import org.eclipse.swt.dnd.*;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.*;
-import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
+import org.eclipse.update.ui.forms.internal.*;
 
 public class URLSection extends PDEFormSection {
 	public static final String SECTION_TITLE = "FeatureEditor.URLSection.title";

@@ -16,7 +16,7 @@ import java.net.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.internal.core.*;
 
 public abstract class WorkspacePluginModelBase
@@ -26,10 +26,6 @@ public abstract class WorkspacePluginModelBase
 	private boolean dirty;
 	private boolean editable = true;
 	private IBuildModel buildModel;
-
-	public WorkspacePluginModelBase() {
-		this(null);
-	}
 
 	protected NLResourceHelper createNLResourceHelper() {
 		String name = isFragmentModel() ? "fragment" : "plugin";

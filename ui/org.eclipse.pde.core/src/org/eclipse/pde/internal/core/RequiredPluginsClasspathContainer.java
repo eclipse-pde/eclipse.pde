@@ -11,9 +11,8 @@
 package org.eclipse.pde.internal.core;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.*;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.*;
 
 /**
  * @author dejan

@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.core.plugin;
 
-import java.io.Serializable;
+import java.io.*;
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 
 /**
  * A model object that represents the content of a plug-in or

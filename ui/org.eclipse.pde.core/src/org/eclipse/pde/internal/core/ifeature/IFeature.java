@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.ifeature;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.core.runtime.*;
+import org.eclipse.pde.core.plugin.*;
 /**
  * The top-level model object of the Eclipse feature model.
  */

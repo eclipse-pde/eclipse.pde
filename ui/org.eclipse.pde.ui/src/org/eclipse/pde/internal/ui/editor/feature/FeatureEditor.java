@@ -13,18 +13,17 @@ package org.eclipse.pde.internal.ui.editor.feature;
 import java.io.*;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.text.*;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.feature.ExternalFeatureModel;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.core.feature.*;
+import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.swt.SWTError;
+import org.eclipse.swt.*;
 import org.eclipse.swt.dnd.*;
-import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.ui.*;
 
 public class FeatureEditor extends PDEMultiPageXMLEditor {
@@ -98,10 +97,9 @@ public class FeatureEditor extends PDEMultiPageXMLEditor {
 		InputStream stream = null;
 		stream = file.getContents(false);
 
-		IModelProvider provider =
+		NewWorkspaceModelManager provider =
 			PDECore.getDefault().getWorkspaceModelManager();
-		provider.connect(file, this);
-		IFeatureModel model = (IFeatureModel) provider.getModel(file, this);
+		IFeatureModel model = (IFeatureModel) provider.getModel(file);
 		//boolean cleanModel = true;
 		try {
 			model.load(stream, false);
@@ -142,13 +140,9 @@ public class FeatureEditor extends PDEMultiPageXMLEditor {
 	}
 	public void dispose() {
 		super.dispose();
-		IModelProvider provider =
-			PDECore.getDefault().getWorkspaceModelManager();
 		IModel model = (IModel) getModel();
 		if (storageModel)
 			model.dispose();
-		else
-			provider.disconnect(model.getUnderlyingResource(), this);
 	}
 
 	public IPDEEditorPage getHomePage() {

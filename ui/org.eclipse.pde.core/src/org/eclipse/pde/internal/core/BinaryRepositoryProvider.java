@@ -13,7 +13,7 @@ package org.eclipse.pde.internal.core;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.team.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.core.*;
 
 /**
  * @author dejan

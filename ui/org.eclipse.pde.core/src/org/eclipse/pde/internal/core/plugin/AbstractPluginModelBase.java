@@ -14,9 +14,9 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.*;
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
@@ -102,7 +102,7 @@ public abstract class AbstractPluginModelBase
 				addMatchingFragments(id, version, models, result);
 			}
 			// Add matching workspace fragments
-			IWorkspaceModelManager wmng =
+			NewWorkspaceModelManager wmng =
 				PDECore.getDefault().getWorkspaceModelManager();
 			IFragmentModel[] models = wmng.getFragmentModels();
 			addMatchingFragments(id, version, models, result);

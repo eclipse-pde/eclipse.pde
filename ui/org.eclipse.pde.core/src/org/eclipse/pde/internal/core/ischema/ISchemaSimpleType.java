@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.ischema;
 
-import org.eclipse.pde.core.IWritable;
+import org.eclipse.pde.core.*;
 /**
  * Classes that implement this interface define
  * simple types. Simple types do not have compositors.

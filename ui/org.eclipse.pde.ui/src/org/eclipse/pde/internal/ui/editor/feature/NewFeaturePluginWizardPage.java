@@ -10,18 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.feature.FeaturePlugin;
-import org.eclipse.pde.internal.core.ifeature.IFeature;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.core.runtime.*;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.feature.*;
+import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.*;
 
 public class NewFeaturePluginWizardPage extends ReferenceWizardPage {
 	public static final String KEY_TITLE = "FeatureEditor.PluginSection.new.title";

@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.IIdentifiable;
+import org.eclipse.core.runtime.*;
+import org.eclipse.pde.core.*;
 
 public abstract class IdentifiablePluginObject extends PluginObject implements IIdentifiable {
 	protected String id;

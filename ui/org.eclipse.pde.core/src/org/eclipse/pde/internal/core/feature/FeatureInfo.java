@@ -10,14 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.feature;
 
-import java.io.PrintWriter;
-import java.util.Hashtable;
+import java.io.*;
+import java.util.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.ifeature.IFeature;
-import org.eclipse.pde.internal.core.ifeature.IFeatureInfo;
-import org.w3c.dom.Node;
+import org.eclipse.core.runtime.*;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ifeature.*;
+import org.w3c.dom.*;
 
 /**
  * @version 	1.0

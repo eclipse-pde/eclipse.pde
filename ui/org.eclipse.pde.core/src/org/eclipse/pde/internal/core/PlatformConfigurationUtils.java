@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.*;
+import java.net.*;
 import java.util.*;
-import org.eclipse.core.internal.boot.PlatformURLBaseConnection;
+
+import org.eclipse.core.internal.boot.*;
 
 public class PlatformConfigurationUtils {
 	private static final String PLUGIN_PATH = ".plugin-path"; //$NON-NLS-1$

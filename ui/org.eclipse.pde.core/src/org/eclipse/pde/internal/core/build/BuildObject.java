@@ -10,11 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.build;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.pde.core.build.IBuildModel;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.core.runtime.*;
+import org.eclipse.pde.core.build.*;
+import org.eclipse.pde.internal.core.*;
 
 public class BuildObject {
 	private IBuildModel model;

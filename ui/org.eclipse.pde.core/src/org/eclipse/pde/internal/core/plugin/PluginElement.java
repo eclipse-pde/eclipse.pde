@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.*;
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ischema.*;

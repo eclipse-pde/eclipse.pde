@@ -10,28 +10,28 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import java.util.Iterator;
+import java.util.*;
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.feature.FeaturePlugin;
+import org.eclipse.pde.internal.core.feature.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
-import org.eclipse.pde.internal.ui.parts.TablePart;
-import org.eclipse.pde.internal.ui.wizards.ListUtil;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.pde.internal.ui.elements.*;
+import org.eclipse.pde.internal.ui.parts.*;
+import org.eclipse.pde.internal.ui.wizards.*;
+import org.eclipse.swt.*;
+import org.eclipse.swt.custom.*;
+import org.eclipse.swt.dnd.*;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.*;
-import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
+import org.eclipse.update.ui.forms.internal.*;
 
 public class PluginSection
 	extends TableSection
@@ -100,7 +100,7 @@ public class PluginSection
 	public void dispose() {
 		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
 		model.removeModelChangedListener(this);
-		IWorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
+		NewWorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
 		mng.removeModelProviderListener(this);
 		super.dispose();
 	}
@@ -199,7 +199,7 @@ public class PluginSection
 		update(input);
 		getTablePart().setButtonEnabled(0, model.isEditable());
 		model.addModelChangedListener(this);
-		IWorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
+		NewWorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
 		mng.addModelProviderListener(this);
 	}
 

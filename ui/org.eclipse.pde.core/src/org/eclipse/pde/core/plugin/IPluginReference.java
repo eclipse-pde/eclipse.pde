@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.core.plugin;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.IIdentifiable;
+import org.eclipse.core.runtime.*;
+import org.eclipse.pde.core.*;
 /**
  * Object that implement this interface represent references of
  * plug-ins. Plug-ins are referenced using their identifiers,

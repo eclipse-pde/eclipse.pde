@@ -10,26 +10,26 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.resource.*;
 import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.rules.DefaultPartitioner;
+import org.eclipse.jface.text.rules.*;
 import org.eclipse.jface.text.source.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.text.*;
-import org.eclipse.swt.SWT;
+import org.eclipse.swt.*;
 import org.eclipse.swt.custom.*;
-import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.*;
-import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
+import org.eclipse.update.ui.forms.internal.*;
 
 public class InfoSection extends PDEFormSection {
 	private static final String KEY_APPLY = "Actions.apply.flabel";

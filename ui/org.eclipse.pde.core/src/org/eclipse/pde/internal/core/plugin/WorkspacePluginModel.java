@@ -14,9 +14,6 @@ import org.eclipse.pde.core.plugin.*;
 
 public class WorkspacePluginModel extends WorkspacePluginModelBase implements IPluginModel {
 
-public WorkspacePluginModel() {
-	super();
-}
 public WorkspacePluginModel(org.eclipse.core.resources.IFile file) {
 	super(file);
 }

@@ -12,7 +12,7 @@ package org.eclipse.pde.internal.ui.wizards.exports;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.IWorkspaceModelManager;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.*;
@@ -32,7 +32,7 @@ public class FeatureExportWizardPage extends BaseExportWizardPage {
 	}
 
 	public Object[] getListElements() {
-		IWorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
+		NewWorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
 		return manager.getFeatureModels();
 	}
 	

@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import org.eclipse.core.runtime.IAdapterFactory;
+import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.views.properties.IPropertySource;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.ui.views.properties.*;
 
 public class FeatureAdapterFactory implements IAdapterFactory {
 	private Image errorImage;

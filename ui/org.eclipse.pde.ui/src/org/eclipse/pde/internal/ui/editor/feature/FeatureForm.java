@@ -11,10 +11,10 @@
 package org.eclipse.pde.internal.ui.editor.feature;
 
 import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.help.*;
 import org.eclipse.update.ui.forms.internal.*;
 
 public class FeatureForm extends ScrollableSectionForm {

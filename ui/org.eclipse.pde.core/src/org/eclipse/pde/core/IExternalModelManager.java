@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.core;
 
-import java.util.Vector;
+import java.util.*;
 
 import org.eclipse.pde.core.plugin.*;
 

@@ -7,7 +7,6 @@ import org.eclipse.jdt.core.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.swt.custom.*;
@@ -72,7 +71,7 @@ public class MigrationAction implements IObjectActionDelegate {
 	}
 	
 	private IPluginModelBase findModelFor(IProject project) {
-		IWorkspaceModelManager manager =
+		NewWorkspaceModelManager manager =
 		PDECore.getDefault().getWorkspaceModelManager();
 		return (IPluginModelBase) manager.getWorkspaceModel(project);
 	}

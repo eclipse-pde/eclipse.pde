@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.*;
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.osgi.bundle.IBundle;
+import org.eclipse.pde.core.osgi.bundle.*;
 import org.eclipse.pde.core.plugin.*;
 import org.w3c.dom.*;
 

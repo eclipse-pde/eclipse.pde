@@ -12,14 +12,13 @@ package org.eclipse.pde.internal.ui.editor.feature;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.internal.core.feature.FeaturePlugin;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.feature.*;
 import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.core.ifeature.IFeatureData;
-import org.eclipse.pde.internal.core.isite.ISiteBuildFeature;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.core.isite.*;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.actions.SelectionProviderAction;
+import org.eclipse.ui.actions.*;
 import org.eclipse.ui.ide.*;
 
 public class OpenReferenceAction extends SelectionProviderAction {

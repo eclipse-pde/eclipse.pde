@@ -38,7 +38,7 @@ package org.eclipse.pde.core.plugin;
  * (repeatedly) as the API evolves.
  * </p>
  */
-public interface IExtensionsModel extends ISharedPluginModel {
+public interface IExtensionsModel extends ISharedPluginModel, IBundleModelProvider {
 	/**
 	 * Returns a top-level model object. Equivalent to
 	 * calling <pre>getPluginBase(true)</pre>.
@@ -75,4 +75,4 @@ public interface IExtensionsModel extends ISharedPluginModel {
 	 * (repeatedly) as the API evolves.
 	 * </p>
 	 */
-}
+	}

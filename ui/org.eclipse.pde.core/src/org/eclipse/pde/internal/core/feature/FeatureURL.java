@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.feature;
 
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.*;
-import java.util.Vector;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.core.runtime.*;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.w3c.dom.*;
 

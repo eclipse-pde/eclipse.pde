@@ -11,7 +11,7 @@
 package org.eclipse.pde.internal.ui.editor.feature;
 
 import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.*;
 
 public class RequiredFeaturesWizard extends Wizard {

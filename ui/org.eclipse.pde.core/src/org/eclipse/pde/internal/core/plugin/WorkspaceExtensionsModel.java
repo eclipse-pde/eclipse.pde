@@ -16,6 +16,7 @@ import java.net.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.osgi.bundle.*;
 import org.eclipse.pde.internal.core.*;
 
 public class WorkspaceExtensionsModel
@@ -24,13 +25,11 @@ public class WorkspaceExtensionsModel
 	private IFile file;
 	private boolean dirty;
 	private boolean editable = true;
+	private transient IBundlePluginModelBase fBundleModel;
 
-	public WorkspaceExtensionsModel() {
-		this(null);
-	}
 
 	protected NLResourceHelper createNLResourceHelper() {
-		String name = "extensions";
+		String name = file.getName().equals("plugin.xml") ? "plugin" : "fragment";
 		NLResourceHelper helper =
 			new NLResourceHelper(name, getNLLookupLocations());
 		//helper.setFile(file);
@@ -174,4 +173,29 @@ public class WorkspaceExtensionsModel
 		file = newFile;
 		//setEditable(newFile.isReadOnly()==false);
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.plugin.AbstractExtensionsModel#createExtensions()
+	 */
+	protected Extensions createExtensions() {
+		Extensions extensions = super.createExtensions();
+		extensions.setIsFragment(file.getName().equals("fragment.xml"));
+		return extensions;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return file.getName();
+	}
+	
+	public void setBundleModel(IBundlePluginModelBase model) {
+		fBundleModel = model;
+	}
+	
+	public IBundlePluginModelBase getBundleModel() {
+		return fBundleModel;
+	}
+	
+	
 }

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
-import org.eclipse.pde.core.ModelChangedEvent;
+import org.eclipse.pde.core.*;
 
 /**
  * @version 	1.0

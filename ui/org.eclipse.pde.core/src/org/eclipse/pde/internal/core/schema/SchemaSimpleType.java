@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.schema;
 
-import java.io.PrintWriter;
+import java.io.*;
 
-import org.eclipse.pde.core.IWritable;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.ischema.*;
 
 public class SchemaSimpleType

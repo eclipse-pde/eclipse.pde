@@ -17,7 +17,6 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.isite.*;
@@ -133,7 +132,7 @@ public class BuiltFeaturesWizardPage extends WizardPage {
 	}
 
 	private Object[] getChoices() {
-		IWorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
+		NewWorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
 		return mng.getFeatureModels();
 	}
 

@@ -11,7 +11,7 @@
 package org.eclipse.pde.internal.ui.editor.feature;
 
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
+import org.eclipse.ui.views.contentoutline.*;
 
 public class FeatureSourcePage extends XMLSourcePage {
 

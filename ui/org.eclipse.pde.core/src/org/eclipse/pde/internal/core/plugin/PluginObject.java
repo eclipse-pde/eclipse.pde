@@ -16,7 +16,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.*;
 import org.w3c.dom.*;
 
 public abstract class PluginObject
@@ -89,7 +89,10 @@ public abstract class PluginObject
 	}
 	
 	public IPluginModelBase getPluginModel() {
-		return model instanceof IPluginModelBase?(IPluginModelBase)model:null;
+		if (model instanceof IBundleModelProvider)
+			return ((IBundleModelProvider)model).getBundleModel();
+		
+		return model instanceof IPluginModelBase? (IPluginModelBase)model : null;
 	}
 	
 	public String getName() {

@@ -10,21 +10,20 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import java.util.Vector;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.help.WorkbenchHelp;
+import java.util.*;
+
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.swt.*;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.graphics.Image;
-import java.util.StringTokenizer;
-import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
+import org.eclipse.pde.internal.ui.elements.*;
+import org.eclipse.pde.internal.ui.parts.*;
+import org.eclipse.swt.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.*;
 
 public class PortabilityChoicesDialog extends Dialog {
 	private static final String KEY_CHOICES =

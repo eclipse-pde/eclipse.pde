@@ -18,8 +18,8 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
@@ -340,7 +340,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 				(IProject) PDEPlugin.getWorkspace().getRoot().findMember(id);
 			if (project != null
 				&& project.isOpen()
-				&& WorkspaceModelManager.isPluginProject(project)) {
+				&& NewWorkspaceModelManager.isPluginProject(project)) {
 				result.add(models[i]);
 			}
 		}
@@ -360,7 +360,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 				(IProject) PDEPlugin.getWorkspace().getRoot().findMember(id);
 			if (project != null
 				&& project.isOpen()
-				&& WorkspaceModelManager.isUnsharedPluginProject(project)) {
+				&& NewWorkspaceModelManager.isUnsharedPluginProject(project)) {
 				result.add(models[i]);
 			}
 		}

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.isite;
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 /**
  * The top-level model object of the Eclipse update site model.
  */

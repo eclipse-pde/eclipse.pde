@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.core;
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 /**
  * Classes implement this interface if
  * their instances need to be uniquely identified

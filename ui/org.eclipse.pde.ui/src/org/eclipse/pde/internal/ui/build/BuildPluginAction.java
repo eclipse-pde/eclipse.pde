@@ -14,7 +14,6 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.IWorkspaceModelManager;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.build.builder.*;
 import org.eclipse.pde.internal.core.*;
@@ -37,7 +36,7 @@ public class BuildPluginAction extends BaseBuildAction {
 		generator.setPluginPath(TargetPlatform.createPluginPath());
 
 		try {
-			IWorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
+			NewWorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
 			IPluginModelBase model = (IPluginModelBase) manager.getWorkspaceModel(project);
 			if (model != null) {
 				generator.setModelId(model.getPluginBase().getId());

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.schema;
 
-import java.io.File;
+import java.io.*;
 import java.net.*;
 import java.util.*;
 
@@ -180,7 +180,7 @@ public class SchemaRegistry
 		}
 	}
 	private void loadWorkspaceDescriptors() {
-		IWorkspaceModelManager manager =
+		NewWorkspaceModelManager manager =
 			PDECore.getDefault().getWorkspaceModelManager();
 		IPluginModel[] models = manager.getPluginModels();
 		for (int i = 0; i < models.length; i++) {
@@ -403,7 +403,7 @@ public class SchemaRegistry
 			String fileName = file.getName().toLowerCase();
 			if (!(fileName.endsWith(".exsd") || fileName.endsWith(".mxsd")))
 				return true;
-			if (WorkspaceModelManager.isPluginProject(file.getProject())
+			if (NewWorkspaceModelManager.isPluginProject(file.getProject())
 				== false)
 				return true;
 			if (delta.getKind() == IResourceDelta.CHANGED) {

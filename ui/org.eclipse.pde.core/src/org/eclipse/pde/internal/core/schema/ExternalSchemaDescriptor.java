@@ -10,13 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.schema;
 
-import java.io.File;
+import java.io.*;
 import java.net.*;
 
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.PDECore;
 
 public class ExternalSchemaDescriptor extends AbstractSchemaDescriptor {
 	private IPluginExtensionPoint info;

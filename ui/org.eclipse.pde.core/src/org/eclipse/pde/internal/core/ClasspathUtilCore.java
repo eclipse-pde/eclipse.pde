@@ -305,15 +305,13 @@ public class ClasspathUtilCore {
 
 		IProject project = model.getUnderlyingResource().getProject();
 
-		if (!WorkspaceModelManager.isBinaryPluginProject(project)) {
-			// keep existing source folders
-			IClasspathEntry[] entries = JavaCore.create(project).getRawClasspath();
-			for (int i = 0; i < entries.length; i++) {
-				IClasspathEntry entry = entries[i];
-				if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
-					if (!result.contains(entry))
-						result.add(entry);
-				}
+		// keep existing source folders
+		IClasspathEntry[] entries = JavaCore.create(project).getRawClasspath();
+		for (int i = 0; i < entries.length; i++) {
+			IClasspathEntry entry = entries[i];
+			if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
+				if (!result.contains(entry))
+					result.add(entry);
 			}
 		}
 

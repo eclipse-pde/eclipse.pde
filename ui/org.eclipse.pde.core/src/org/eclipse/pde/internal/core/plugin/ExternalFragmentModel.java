@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
-import java.io.File;
+import java.io.*;
 
 import org.eclipse.pde.core.plugin.*;
 

@@ -10,18 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.search;
 
-import java.util.ArrayList;
+import java.util.*;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.pde.core.plugin.IFragment;
-import org.eclipse.pde.core.plugin.IPlugin;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
-import org.eclipse.pde.core.plugin.IPluginImport;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.IPluginObject;
-import org.eclipse.pde.internal.core.util.StringMatcher;
+import org.eclipse.core.runtime.*;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.util.*;
 
 
 public class PluginSearchOperation {

@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import java.util.Vector;
+import java.util.*;
 
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.pde.internal.core.ifeature.IFeatureObject;
-import org.eclipse.pde.internal.ui.editor.ModifiedTextPropertyDescriptor;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.ui.views.properties.*;
 
 public abstract class FeaturePropertySource implements IPropertySource {

@@ -11,12 +11,12 @@
 package org.eclipse.pde.internal.ui.editor.feature;
 
 import org.eclipse.jface.viewers.*;
-import org.eclipse.ui.views.contentoutline.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.*;
 import org.eclipse.pde.internal.ui.elements.*;
+import org.eclipse.swt.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.texteditor.*;
+import org.eclipse.ui.views.contentoutline.*;
 
 
 public class FeatureSourceOutlinePage extends ContentOutlinePage {

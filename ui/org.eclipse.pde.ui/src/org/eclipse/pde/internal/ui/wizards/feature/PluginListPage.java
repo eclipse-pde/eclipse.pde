@@ -13,8 +13,8 @@ package org.eclipse.pde.internal.ui.wizards.feature;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.pde.core.IWorkspaceModelManager;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
@@ -75,7 +75,7 @@ public class PluginListPage extends WizardPage {
 
 	private Object[] getPluginModels() {
 		if (models == null) {
-			IWorkspaceModelManager manager =
+			NewWorkspaceModelManager manager =
 				PDECore.getDefault().getWorkspaceModelManager();
 			IPluginModel[] workspaceModels = manager.getPluginModels();
 			IFragmentModel[] fragmentModels = manager.getFragmentModels();

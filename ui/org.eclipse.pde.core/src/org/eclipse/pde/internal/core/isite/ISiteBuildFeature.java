@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.core.isite;
 
 import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.core.ifeature.IVersionable;
 
 /**
  * @author dejan

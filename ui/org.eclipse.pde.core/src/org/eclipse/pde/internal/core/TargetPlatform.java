@@ -15,13 +15,13 @@ import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.boot.*;
-import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.osgi.bundle.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.feature.*;
 import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.core.osgi.bundle.*;
 
 /**
  * @version 	1.0
@@ -217,7 +217,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 			
 			bWriter.write("osgi.configuration.cascaded=false");
 			bWriter.newLine();
-				
+			
 			bWriter.write("osgi.framework=" + getLocation("org.eclipse.osgi", pluginMap));
 			bWriter.newLine();
 			
@@ -289,11 +289,10 @@ public class TargetPlatform implements IEnvironmentVariables {
 		ArrayList sites = new ArrayList();
 
 		// Compute local sites
-		IAlternativeRuntimeSupport altRuntime = PDECore.getDefault().getRuntimeSupport();
 		Iterator iter = pluginMap.values().iterator();
 		while(iter.hasNext()) {
 			IPluginModelBase model = (IPluginModelBase)iter.next();
-			IPath sitePath = altRuntime.getTransientSitePath(model);
+			IPath sitePath = getTransientSitePath(model);
 			addToSite(sitePath, model, sites);
 		}
 
@@ -324,6 +323,23 @@ public class TargetPlatform implements IEnvironmentVariables {
 		}
 	}
 
+	private static IPath getTransientSitePath(IPluginModelBase model) {
+		boolean bundle=false;
+		if (model instanceof BundlePluginModelBase) {
+			bundle=true;
+		}
+		IResource resource = model.getUnderlyingResource();
+		if (resource != null) {
+			IPath realPath = resource.getLocation();
+			return realPath.removeLastSegments(bundle?4:3);
+		} else {
+			// external
+			//TODO we may need to do something for external
+			// bundle paths here
+			IPath path = new Path(model.getInstallLocation());
+			return path.removeLastSegments(2);
+		}
+	}
 	private static void repairConfigurationVersion(URL url) throws IOException {
 		File file = new File(url.getFile());
 		if (file.exists()) {
@@ -383,10 +399,30 @@ public class TargetPlatform implements IEnvironmentVariables {
 	}
 
 	private static IPath getPluginLocation(IPluginModelBase model) {
-		// Moved this into alternative runtime support
-		// because bundle location reported here must
-		// be different
-		return PDECore.getDefault().getRuntimeSupport().getPluginLocation(model);
+		String location = model.getInstallLocation();
+		IResource resource = model.getUnderlyingResource();
+		if (resource != null && resource.isLinked()) {
+			// special case - linked resource
+			if (model instanceof IBundlePluginModelBase) {
+				// OSGi bundle - remove two segments.
+				// We must get rid of META-INF
+				location =
+					resource
+						.getLocation()
+						.removeLastSegments(2)
+						.addTrailingSeparator()
+						.toString();
+			}
+			else {
+				location =
+					resource
+						.getLocation()
+						.removeLastSegments(1)
+						.addTrailingSeparator()
+						.toString();
+			}
+		}
+		return new Path(location).addTrailingSeparator();
 	}
 
 	private static void createFeatureEntries(

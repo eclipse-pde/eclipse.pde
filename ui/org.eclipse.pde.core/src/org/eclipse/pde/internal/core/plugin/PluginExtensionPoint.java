@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
-import java.io.PrintWriter;
-import java.util.Hashtable;
+import java.io.*;
+import java.util.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.model.ExtensionPointModel;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.model.*;
 import org.eclipse.pde.core.plugin.*;
-import org.w3c.dom.Node;
+import org.w3c.dom.*;
 
 public class PluginExtensionPoint
 	extends IdentifiablePluginObject

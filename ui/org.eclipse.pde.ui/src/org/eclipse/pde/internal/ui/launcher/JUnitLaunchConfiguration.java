@@ -16,7 +16,6 @@ import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.internal.junit.launcher.JUnitBaseLaunchConfiguration;
 import org.eclipse.jdt.launching.*;
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.IWorkspaceModelManager;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.*;
@@ -119,7 +118,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 	protected String getTestPluginId(ILaunchConfiguration configuration)
 		throws CoreException {
 		IJavaProject javaProject = getJavaProject(configuration);
-		IWorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
+		NewWorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
 		IPluginModelBase model =
 			(IPluginModelBase) manager.getWorkspaceModel(javaProject.getProject());
 		if (model == null)

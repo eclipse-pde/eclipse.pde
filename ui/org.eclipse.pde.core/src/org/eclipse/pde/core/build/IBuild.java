@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.core.build;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.IWritable;
+import org.eclipse.core.runtime.*;
+import org.eclipse.pde.core.*;
 /**
  * The top-level model object of the model that is created
  * from "plugin.jars" or "fragment.jars" file.

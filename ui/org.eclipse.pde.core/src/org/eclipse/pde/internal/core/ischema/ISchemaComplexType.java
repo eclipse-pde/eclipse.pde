@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.ischema;
 
-import org.eclipse.pde.core.IWritable;
+import org.eclipse.pde.core.*;
 /**
  * Objects of this type are holding information about complex types defined
  * inside schema elements.

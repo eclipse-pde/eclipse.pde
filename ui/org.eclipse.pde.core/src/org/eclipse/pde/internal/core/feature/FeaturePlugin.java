@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.feature;
 
-import java.io.PrintWriter;
-import java.util.Hashtable;
+import java.io.*;
+import java.util.*;
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
-import org.w3c.dom.Node;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ifeature.*;
+import org.w3c.dom.*;
 
 public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 	private IPluginBase pluginBase;

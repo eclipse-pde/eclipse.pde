@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.build;
 
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.*;
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.build.IBuildEntry;
-import org.eclipse.pde.internal.core.util.PropertiesUtil;
+import org.eclipse.pde.core.build.*;
+import org.eclipse.pde.internal.core.util.*;
 
 public class BuildEntry extends BuildObject implements IBuildEntry {
 	private Vector tokens = new Vector();

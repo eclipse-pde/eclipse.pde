@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.schema;
 
-import java.io.PrintWriter;
+import java.io.*;
 
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
+import org.eclipse.pde.internal.core.ischema.*;
 
 public class EditableSchema extends Schema implements IEditable {
 	private boolean dirty;

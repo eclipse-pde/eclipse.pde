@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.swt.widgets.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.swt.*;
+import org.eclipse.swt.widgets.*;
 
 public class PortabilityChoiceCellEditor extends DialogCellEditor {
 	private static final String KEY_TITLE =

@@ -10,15 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
-import java.io.PrintWriter;
-import java.util.Hashtable;
+import java.io.*;
+import java.util.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.model.ConfigurationPropertyModel;
-import org.eclipse.pde.core.ISourceObject;
-import org.eclipse.pde.core.plugin.IPluginAttribute;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.model.*;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ischema.*;
-import org.w3c.dom.Node;
+import org.w3c.dom.*;
 
 public class PluginAttribute extends PluginObject implements IPluginAttribute {
 	private String value;

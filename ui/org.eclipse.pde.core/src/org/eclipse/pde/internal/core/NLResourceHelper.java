@@ -10,15 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.MissingResourceException;
-import java.util.PropertyResourceBundle;
-import java.util.StringTokenizer;
+import java.io.*;
+import java.net.*;
+import java.util.*;
 
-import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.boot.*;
 
 
 public class NLResourceHelper {

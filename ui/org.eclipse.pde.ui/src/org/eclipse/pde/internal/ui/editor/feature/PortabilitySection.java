@@ -10,35 +10,22 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import java.util.Iterator;
+import java.util.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.pde.core.IEditable;
-import org.eclipse.pde.core.IModel;
-import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.internal.core.Choice;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.core.ifeature.IFeature;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.editor.PDEFormSection;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.*;
+import org.eclipse.swt.custom.*;
 import org.eclipse.swt.dnd.*;
-import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.update.ui.forms.internal.FormEntry;
-import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
-import org.eclipse.update.ui.forms.internal.IFormTextListener;
 
 public class PortabilitySection extends PDEFormSection {
 	public static final String KEY_DIALOG_TITLE =

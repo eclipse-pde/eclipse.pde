@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.feature;
 
-import java.util.Hashtable;
+import java.util.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.IIdentifiable;
-import org.w3c.dom.Node;
+import org.eclipse.core.runtime.*;
+import org.eclipse.pde.core.*;
+import org.w3c.dom.*;
 
 public class IdentifiableObject extends FeatureObject implements IIdentifiable {
 	protected String id;

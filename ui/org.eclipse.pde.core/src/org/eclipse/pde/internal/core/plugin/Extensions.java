@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
-import java.io.PrintWriter;
-import java.util.Hashtable;
+import java.io.*;
+import java.util.*;
 
 import org.eclipse.pde.core.plugin.*;
 import org.w3c.dom.*;
@@ -19,6 +19,7 @@ import org.w3c.dom.*;
 public class Extensions
 	extends AbstractExtensions {
 	private boolean valid;
+	private boolean fIsFragment;
 
 	public Extensions() {
 	}
@@ -56,7 +57,8 @@ public class Extensions
 
 	public void write(String indent, PrintWriter writer) {
 		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-		writer.print("<bundle>");
+		writer.print(fIsFragment ? "<fragment>" : "<plugin>");
+		
 		writer.println();
 	
 		String firstIndent = "   ";
@@ -76,6 +78,10 @@ public class Extensions
 			((IPluginExtension) children[i]).write(firstIndent, writer);
 		}
 		writer.println();
-		writer.println("</bundle>");
+		writer.println(fIsFragment ? "</fragment>" : "</plugin>");
+	}
+	
+	public void setIsFragment(boolean isFragment) {
+		fIsFragment = isFragment;
 	}
 }

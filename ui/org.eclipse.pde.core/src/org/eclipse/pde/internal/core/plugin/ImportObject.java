@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.core.plugin;
 import java.io.*;
 
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.IWritable;
 import org.eclipse.pde.core.plugin.*;
 
 public class ImportObject extends PluginReference implements IWritable, Serializable {

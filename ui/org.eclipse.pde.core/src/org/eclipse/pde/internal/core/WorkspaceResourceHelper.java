@@ -9,11 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
-import java.net.URL;
+import java.net.*;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.IModelChangeProvider;
+import org.eclipse.core.runtime.*;
+import org.eclipse.pde.core.*;
  
 public class WorkspaceResourceHelper extends NLResourceHelper
 implements IResourceChangeListener {

@@ -10,7 +10,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.ui.*;
@@ -62,20 +61,18 @@ public class BuildSiteAction implements IObjectActionDelegate, IPreferenceConsta
 			if (obj != null && obj instanceof IFile) {
 				fSiteXML = (IFile)obj;
 				IProject project = fSiteXML.getProject();
-				IWorkspaceModelManager manager =
+				NewWorkspaceModelManager manager =
 					PDECore.getDefault().getWorkspaceModelManager();
 				IResource buildFile =
 					project.findMember(
 						new Path(PDECore.SITEBUILD_DIR).append(
 							PDECore.SITEBUILD_PROPERTIES));
 				if (buildFile != null && buildFile instanceof IFile) {
-					manager.connect(buildFile, this);
-					fBuildModel = (ISiteBuildModel) manager.getModel(buildFile, this);
+					fBuildModel = (ISiteBuildModel) manager.getModel((IFile)buildFile);
 					try {
 						fBuildModel.load();
 					} catch (CoreException e) {
 					}
-					manager.disconnect(buildFile, this);
 				}
 			}
 		}

@@ -8,7 +8,6 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.IModel;
-import org.eclipse.pde.core.IWorkspaceModelManager;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.*;
@@ -38,11 +37,11 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		public Object[] getElements(Object parent) {
 			IProject[] projects = PDEPlugin.getWorkspace().getRoot().getProjects();
 			ArrayList result = new ArrayList();
-			IWorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
+			NewWorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
 			for (int i = 0; i < projects.length; i++) {
 				if (projects[i].isOpen()
-					&& WorkspaceModelManager.isPluginProject(projects[i])
-					&& !WorkspaceModelManager.isBinaryPluginProject(projects[i])) {
+					&& NewWorkspaceModelManager.isPluginProject(projects[i])
+					&& !NewWorkspaceModelManager.isBinaryPluginProject(projects[i])) {
 					IModel model = manager.getWorkspaceModel(projects[i]);
 					if (model != null)
 						result.add(model);
@@ -162,7 +161,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 	private void initialize() {
 		Object[] items = initialSelection.toArray();
 		ArrayList list = new ArrayList();
-		IWorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
+		NewWorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
 		
 		for (int i = 0; i < items.length; i++) {
 			Object item = items[i];
@@ -172,8 +171,8 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 			if (item instanceof IProject) {
 				IProject project = (IProject) item;
 				if (project.isOpen()
-					&& WorkspaceModelManager.isPluginProject(project)
-					&& !WorkspaceModelManager.isBinaryPluginProject(project)) {
+					&& NewWorkspaceModelManager.isPluginProject(project)
+					&& !NewWorkspaceModelManager.isBinaryPluginProject(project)) {
 					list.add(manager.getWorkspaceModel(project));
 				}
 			}

@@ -10,27 +10,26 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.operation.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.pde.core.IWorkspaceModelManager;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.feature.FeatureImport;
+import org.eclipse.jface.wizard.*;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.feature.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
-import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
-import org.eclipse.pde.internal.ui.wizards.ListUtil;
-import org.eclipse.swt.SWT;
+import org.eclipse.pde.internal.ui.elements.*;
+import org.eclipse.pde.internal.ui.parts.*;
+import org.eclipse.pde.internal.ui.wizards.*;
+import org.eclipse.swt.*;
 import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.help.*;
+import org.eclipse.update.ui.forms.internal.*;
 
 public class RequiredFeaturesWizardPage extends WizardPage {
 	public static final String KEY_TITLE = "FeatureEditor.RequiresSection.newFeature.title";
@@ -150,7 +149,7 @@ public class RequiredFeaturesWizardPage extends WizardPage {
 	}
 
 	private Object[] getChoices() {
-		IWorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
+		NewWorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
 		return mng.getFeatureModels();
 	}
 

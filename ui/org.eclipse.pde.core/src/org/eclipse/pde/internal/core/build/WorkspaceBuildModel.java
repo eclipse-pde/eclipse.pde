@@ -13,9 +13,9 @@ package org.eclipse.pde.internal.core.build;
 import java.io.*;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.*;
 
 public class WorkspaceBuildModel extends BuildModel implements IEditableModel {
 	private IFile file;

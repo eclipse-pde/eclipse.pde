@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.File;
+import java.io.*;
 
 public class EntryFileAdapter extends FileAdapter {
 	private ModelEntry entry;

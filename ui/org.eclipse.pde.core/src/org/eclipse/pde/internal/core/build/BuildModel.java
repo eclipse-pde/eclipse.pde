@@ -10,18 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.build;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Enumeration;
-import java.util.Properties;
+import java.io.*;
+import java.util.*;
 
-import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.ModelChangedEvent;
-import org.eclipse.pde.core.build.IBuild;
-import org.eclipse.pde.core.build.IBuildModel;
-import org.eclipse.pde.core.build.IBuildModelFactory;
-import org.eclipse.pde.internal.core.AbstractModel;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.build.*;
+import org.eclipse.pde.internal.core.*;
 
 public abstract class BuildModel extends AbstractModel implements IBuildModel {
 	protected Build build;

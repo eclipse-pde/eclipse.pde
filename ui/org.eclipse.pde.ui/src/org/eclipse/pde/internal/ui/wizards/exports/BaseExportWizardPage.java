@@ -22,6 +22,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.*;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
@@ -151,7 +152,7 @@ public abstract class BaseExportWizardPage extends WizardPage {
 		
 		exportPart.createControl(composite);
 		GridData gd = (GridData) exportPart.getControl().getLayoutData();
-		gd.heightHint = 100;
+		gd.heightHint = 125;
 		gd.widthHint = 150;
 		gd.horizontalSpan = 2;		
 	}
@@ -410,7 +411,7 @@ public abstract class BaseExportWizardPage extends WizardPage {
 	}
 
 	private IModel findModelFor(IProject project) {
-		IWorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
+		NewWorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
 		return manager.getWorkspaceModel(project);
 	}
 
@@ -562,7 +563,7 @@ public abstract class BaseExportWizardPage extends WizardPage {
 		IWorkingSetSelectionDialog dialog = manager.createWorkingSetSelectionDialog(getShell(), true);
 		if (dialog.open() == Window.OK) {
 			ArrayList models = new ArrayList();
-			IWorkspaceModelManager wManager = PDECore.getDefault().getWorkspaceModelManager();
+			NewWorkspaceModelManager wManager = PDECore.getDefault().getWorkspaceModelManager();
 			IWorkingSet[] workingSets = dialog.getSelection();
 			for (int i = 0; i < workingSets.length; i++) {
 				IAdaptable[] elements = workingSets[i].getElements();

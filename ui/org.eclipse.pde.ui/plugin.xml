@@ -46,7 +46,6 @@
    <extension-point id="projectGenerators" name="%expoint.projectGenerators.name" schema="schema/projectGenerators.exsd"/>
    <extension-point id="newExtension" name="%expoint.newExtension.name" schema="schema/newExtension.exsd"/>
    <extension-point id="templates" name="%expoint.templates.name" schema="schema/templates.exsd"/>
-   <extension-point id="alternativeRuntimeUISupport" name="%expoint.alternativeRuntimeUI.name" schema="schema/alternativeRuntimeUISupport.exsd"/>
 
 <!-- Extensions -->
    <extension
@@ -100,12 +99,6 @@
             category="org.eclipse.pde.ui.MainPreferencePage"
             class="org.eclipse.pde.internal.ui.preferences.BuildOptionsPreferencePage"
             id="org.eclipse.pde.ui.buildOptionsPreferencePage">
-      </page>
-      <page
-            name="%preferences.inProgress.name"
-            category="org.eclipse.pde.ui.MainPreferencePage"
-            class="org.eclipse.pde.internal.ui.preferences.InProgressPreferencePage"
-            id="org.eclipse.pde.ui.inProgressPreferencePage">
       </page>
    </extension>
    <extension
@@ -1044,18 +1037,6 @@
             markerType="org.eclipse.pde.validation-marker"
             class="org.eclipse.pde.internal.ui.search.SchemaMarkerResolutionGenerator">
       </markerResolutionGenerator>
-   </extension>
-   <extension
-         point="org.eclipse.pde.ui.alternativeRuntimeUISupport">
-      <runtimeUI
-            default="true"
-            class="org.eclipse.pde.internal.ui.DefaultRuntimeUISupport"
-            id="org.eclipse.pde.ui.defaultRuntimeUI">
-      </runtimeUI>
-      <runtimeUI
-            class="org.eclipse.pde.internal.ui.osgi.OSGiRuntimeUISupport"
-            id="org.eclipse.pde.ui.osgiRuntimeUI">
-      </runtimeUI>
    </extension>
 
 </plugin>

@@ -10,14 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import java.util.Vector;
+import java.util.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.plugin.IMatchRules;
-//import org.eclipse.pde.internal.core.*;
-//import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.core.runtime.*;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.ui.views.properties.*;
 
 public class FeatureChildPropertySource extends FeaturePropertySource {

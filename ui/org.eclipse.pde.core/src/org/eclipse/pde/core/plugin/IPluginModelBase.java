@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.core.plugin;
 
-import java.net.URL;
+import java.net.*;
 
-import org.eclipse.pde.core.IModelChangeProvider;
-import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.build.*;
 /**
  * This type of model is created by parsing the manifest file.
  * It serves as a base interface for both plug-in and

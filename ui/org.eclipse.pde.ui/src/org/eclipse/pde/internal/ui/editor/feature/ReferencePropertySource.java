@@ -10,15 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.pde.core.IWorkspaceModelManager;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.views.properties.PropertyDescriptor;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.ui.views.properties.*;
 
 public class ReferencePropertySource extends FeatureEntryPropertySource {
 	private IPluginBase pluginBase;
@@ -60,7 +59,7 @@ public class ReferencePropertySource extends FeatureEntryPropertySource {
 			if (reference.getModel().getUnderlyingResource() == null)
 				return null;
 			String id = reference.getId();
-			IWorkspaceModelManager manager =
+			NewWorkspaceModelManager manager =
 				PDECore.getDefault().getWorkspaceModelManager();
 			IPluginModelBase[] models = null;
 			if (reference.isFragment()) {

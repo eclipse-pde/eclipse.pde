@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.ifeature.*;
 
 
 public class PluginReference {

@@ -12,8 +12,9 @@
 package org.eclipse.pde.internal.core;
 
 import java.io.*;
-import java.net.URL;
-import java.util.ArrayList;
+import java.net.*;
+import java.util.*;
+
 import org.eclipse.core.runtime.model.*;
 
 public class PDERegistryCacheReader {
