@@ -226,7 +226,6 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 			
 		if (keepAlive(configuration) && runMode.equals(ILaunchManager.DEBUG_MODE))
 			programArgs.add("-keepalive");
-		programArgs.add("-consolelog");
 		programArgs.add("-port");
 		programArgs.add(Integer.toString(port));
 		programArgs.add("-testpluginname");
