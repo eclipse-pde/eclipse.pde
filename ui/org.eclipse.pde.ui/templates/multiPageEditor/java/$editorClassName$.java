@@ -201,7 +201,7 @@ public class $editorClassName$ extends MultiPageEditorPart {
 		StringWriter displayText = new StringWriter();
 		for (int i = 0; i < editorWords.size(); i++) {
 			displayText.write(((String) editorWords.get(i)));
-			displayText.write("\n");
+			displayText.write(System.getProperty("line.separator"));
 		}
 		text.setText(displayText.toString());
 	}
