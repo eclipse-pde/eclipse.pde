@@ -63,7 +63,7 @@ public class NewFeatureProjectWizard
 		addPage(mainPage);
 		specPage = new FeatureSpecPage(mainPage);
 		addPage(specPage);
-		if (hasInterestingProjects(false)) {
+		if (hasInterestingProjects()) {
 			pluginListPage = new PluginListPage();
 			addPage(pluginListPage);
 		}
@@ -174,7 +174,7 @@ public class NewFeatureProjectWizard
 		}
 
 	}
-	private boolean hasInterestingProjects(boolean fragments) {
+	private boolean hasInterestingProjects() {
 		IWorkspace workspace = PDEPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();
 		IProject[] projects = root.getProjects();
