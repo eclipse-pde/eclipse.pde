@@ -12,15 +12,20 @@ import org.eclipse.jdt.ui.text.IJavaColorConstants;
 import org.eclipse.jface.action.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.core.PluginModelManager;
+import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
 import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
 import org.eclipse.jface.util.*;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.pde.internal.core.*;
 import java.util.*;
+
+import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.pde.internal.ui.wizards.imports.PluginImportWizard;
+import org.eclipse.pde.internal.ui.wizards.imports.UpdateClasspathAction;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import java.lang.reflect.InvocationTargetException;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
@@ -393,10 +398,11 @@ public class PluginsView extends ViewPart {
 				PluginImportWizard.getImportOperation(shell, true, extractSource, models);
 			ProgressMonitorDialog pmd = new ProgressMonitorDialog(shell);
 			pmd.run(true, true, op);
+			UpdateClasspathAction.doUpdateClasspath(new NullProgressMonitor(),getWorkspaceCounterparts(models));
 		} catch (InterruptedException e) {
 		} catch (InvocationTargetException e) {
 			PDEPlugin.logException(e);
-		}
+		} catch (Exception e) {}
 	}
 
 	private void handleOpenTextEditor(FileAdapter adapter, String editorId) {
@@ -553,5 +559,22 @@ public class PluginsView extends ViewPart {
 			return "plugin: "+model.getInstallLocation();
 		}
 		return "";
+	}
+	private IPluginModelBase[] getWorkspaceCounterparts(IPluginModelBase[] models) {
+		ArrayList modelIds = new ArrayList();
+		for (int i = 0; i < models.length; i++) {
+			if (models[i].getPluginBase().getLibraries().length > 0)
+				modelIds.add(models[i].getPluginBase().getId());
+		}
+		IPluginModelBase[] wModels = new IPluginModelBase[modelIds.size()];
+		for (int i = 0; i < modelIds.size(); i++) {
+			IPlugin plugin =
+				PDECore.getDefault().findPlugin((String) modelIds.get(i));
+			if (plugin != null
+				&& plugin.getModel() instanceof WorkspacePluginModel) {
+				wModels[i] = plugin.getModel();
+			}
+		}
+		return wModels;
 	}
 }

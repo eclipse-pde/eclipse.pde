@@ -116,7 +116,7 @@ public class UpdateClasspathAction implements IWorkbenchWindowActionDelegate {
 		return (IPluginModelBase)manager.getWorkspaceModel(project);
 	}
 
-	private static void doUpdateClasspath(
+	public static void doUpdateClasspath(
 		IProgressMonitor monitor,
 		IPluginModelBase[] models)
 		throws CoreException {

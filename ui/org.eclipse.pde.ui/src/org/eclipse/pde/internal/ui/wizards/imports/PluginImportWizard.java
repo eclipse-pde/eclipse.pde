@@ -5,6 +5,7 @@
 package org.eclipse.pde.internal.ui.wizards.imports;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -16,8 +17,10 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.wizards.imports.PluginImportOperation.IReplaceQuery;
@@ -99,10 +102,8 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 					doExtractPluginSource,
 					models);
 			getContainer().run(true, true, op);
-			UpdateClasspathAction.run(
-				true,
-				getContainer(),
-				PDECore.getDefault().getWorkspaceModelManager().getAllModels());
+					
+			UpdateClasspathAction.run(true, getContainer(), getWorkspaceCounterparts(models));
 		} catch (InterruptedException e) {
 			return false;
 		} catch (InvocationTargetException e) {
@@ -204,5 +205,23 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 			});
 			return result[0];
 		}
+	}
+	
+	private IPluginModelBase[] getWorkspaceCounterparts(IPluginModelBase[] models) {
+		ArrayList modelIds = new ArrayList();
+		for (int i = 0; i < models.length; i++) {
+			if (models[i].getPluginBase().getLibraries().length > 0)
+				modelIds.add(models[i].getPluginBase().getId());
+		}
+		IPluginModelBase[] wModels = new IPluginModelBase[modelIds.size()];
+		for (int i = 0; i < modelIds.size(); i++) {
+			IPlugin plugin =
+				PDECore.getDefault().findPlugin((String) modelIds.get(i));
+			if (plugin != null
+				&& plugin.getModel() instanceof WorkspacePluginModel) {
+				wModels[i] = plugin.getModel();
+			}
+		}
+		return wModels;
 	}
 }
