@@ -359,7 +359,7 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 						String[] paths = createPaths(dropLocation);
 
 						MultiStatus errors =
-							ExternalModelManager.processPluginDirectories(result, paths, monitor);
+							ExternalModelManager.processPluginDirectories(result, paths, false, monitor);
 						if (errors != null && errors.getChildren().length > 0) {
 							PDEPlugin.log(errors);
 						}

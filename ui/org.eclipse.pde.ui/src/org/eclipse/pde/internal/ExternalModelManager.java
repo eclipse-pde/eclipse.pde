@@ -237,7 +237,7 @@ public class ExternalModelManager {
 		Vector result,
 		String[] pluginPaths,
 		IProgressMonitor monitor) {
-		MultiStatus errors = processPluginDirectories(result, pluginPaths, monitor);
+		MultiStatus errors = processPluginDirectories(result, pluginPaths, true, monitor);
 		if (errors != null && errors.getChildren().length > 0) {
 			ResourcesPlugin.getPlugin().getLog().log(errors);
 		}
@@ -246,6 +246,7 @@ public class ExternalModelManager {
 	public static MultiStatus processPluginDirectories(
 		Vector result,
 		String[] pluginPaths,
+		boolean resolve,
 		IProgressMonitor monitor) {
 		try {
 			MultiStatus errors =
@@ -264,7 +265,8 @@ public class ExternalModelManager {
 			//monitor.subTask(message);
 			PluginRegistryModel registryModel =
 				Platform.parsePlugins(urls, new Factory(errors));
-			IStatus resolveStatus = registryModel.resolve(true, false);
+			IStatus resolveStatus = null;
+			if (resolve) registryModel.resolve(true, false);
 			PluginDescriptorModel[] pluginDescriptorModels = registryModel.getPlugins();
 			for (int i = 0; i < pluginDescriptorModels.length; i++) {
 				PluginDescriptorModel pluginDescriptorModel = pluginDescriptorModels[i];
@@ -272,7 +274,7 @@ public class ExternalModelManager {
 				if (pluginDescriptorModel.getEnabled())
 					processPluginDescriptorModel(result, pluginDescriptorModels[i]);
 			}
-			errors.merge(resolveStatus);
+			if (resolve) errors.merge(resolveStatus);
 			return errors;
 		} catch (MalformedURLException e) {
 			return null;
