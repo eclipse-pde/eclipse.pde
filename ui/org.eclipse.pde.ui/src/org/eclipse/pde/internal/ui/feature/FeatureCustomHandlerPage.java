@@ -25,6 +25,7 @@ import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.*;
+import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.build.*;
 import org.eclipse.pde.internal.core.feature.*;
@@ -133,7 +134,7 @@ public class FeatureCustomHandlerPage extends WizardPage {
 			String library = structureData.getRuntimeLibraryName();
 			if (library != null){
 				String source = structureData.getSourceFolderName();
-				if (library != null && source != null) {
+				if (source != null) {
 					IBuildEntry entry =
 						model.getFactory().createEntry(
 							IBuildEntry.JAR_PREFIX + library);
@@ -143,7 +144,16 @@ public class FeatureCustomHandlerPage extends WizardPage {
 					ientry.addToken(library);
 					model.getBuild().add(entry);
 				}
+				String output = structureData.getJavaBuildFolderName();
+				if (output!=null){
+					IBuildEntry entry = model.getFactory().createEntry(IXMLConstants.PROPERTY_OUTPUT_PREFIX + library);
+					if (!output.endsWith("/"))
+						output+="/";
+					entry.addToken(output);
+					model.getBuild().add(entry);
+				}
 			}
+
 			model.getBuild().add(ientry);
 			model.save();
 		}
