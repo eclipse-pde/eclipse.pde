@@ -105,7 +105,7 @@ public class PatchPluginListPage extends BasePluginListPage {
 	 * @see org.eclipse.pde.internal.ui.wizards.feature.BasePluginListPage#setVisible(boolean)
 	 */
 	public void setVisible(boolean visible) {
-		if (visible = true){
+		if (visible){
 			pluginViewer.refresh();
 		}
 		super.setVisible(visible);
