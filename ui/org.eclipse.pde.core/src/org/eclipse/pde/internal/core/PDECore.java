@@ -192,7 +192,7 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 	// External model manager
 	private boolean launchedInstance = false;
 	private PluginModelManager modelManager;
-	private boolean modelsLocked = false;
+	//private boolean modelsLocked = false;
 	// Resource bundle
 	private ResourceBundle resourceBundle;
 	// Schema registry
@@ -248,9 +248,6 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		String version,
 		int match) {
 
-		if (modelsLocked)
-			return null;
-
 		for (int i = 0; i < models.length; i++) {
 			IFeatureModel model = models[i];
 
@@ -268,8 +265,6 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 	}
 
 	public IFeature findFeature(String id, String version, int match) {
-		if (modelsLocked)
-			return null;
 		WorkspaceModelManager manager = getWorkspaceModelManager();
 		return findFeature(manager.getFeatureModels(), id, version, match);
 	}
@@ -303,13 +298,11 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 	}
 
 	public ExternalModelManager getExternalModelManager() {
-		if (externalModelManager == null)
-			externalModelManager = new ExternalModelManager();
+		initializeModels();
 		return externalModelManager;
 	}
 	public PluginModelManager getModelManager() {
-		if (modelManager == null)
-			initializeModels();
+		initializeModels();
 		return modelManager;
 	}
 	
@@ -339,8 +332,7 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		return tracingOptionsManager;
 	}
 	public WorkspaceModelManager getWorkspaceModelManager() {
-		if (workspaceModelManager==null)
-			workspaceModelManager = new WorkspaceModelManager();
+		initializeModels();
 		return workspaceModelManager;
 	}
 
@@ -375,14 +367,13 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		preferences.setDefault(ARCH, Platform.getOSArch());
 	}
 
-	private void initializeModels() {
-		modelsLocked = true;
-
-		if (modelManager == null) {
-			modelManager = new PluginModelManager();
-			modelManager.connect(getWorkspaceModelManager(), getExternalModelManager());
-		}
-		modelsLocked = false;
+	private synchronized void initializeModels() {
+		if (modelManager != null && externalModelManager != null && workspaceModelManager != null)
+			return;
+		externalModelManager = new ExternalModelManager();
+		workspaceModelManager = new WorkspaceModelManager();
+		modelManager = new PluginModelManager();
+		modelManager.connect(workspaceModelManager, externalModelManager);
 	}
 
 	private boolean isLaunchedInstance() {
