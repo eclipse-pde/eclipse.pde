@@ -258,25 +258,28 @@ public class BuildPathUtilCore {
 		IPluginModelBase model,
 		IPluginLibrary library,
 		Vector result) {
-			
+
 		IPlugin plugin = (IPlugin) model.getPluginBase();
-		IResource resource = model.getUnderlyingResource();
 
-		IFragmentModel[] fmodels;
+		IFragmentModel[] wfmodels =
+			PDECore
+				.getDefault()
+				.getWorkspaceModelManager()
+				.getWorkspaceFragmentModels();
+		IFragmentModel[] extfmodels =
+			PDECore.getDefault().getExternalModelManager().getFragmentModels(
+				null);
+		IFragmentModel[] fmodels =
+			new IFragmentModel[wfmodels.length + extfmodels.length];
 
-		if (resource != null)
-			fmodels =
-				PDECore
-					.getDefault()
-					.getWorkspaceModelManager()
-					.getWorkspaceFragmentModels();
-		else
-			fmodels =
-				PDECore
-					.getDefault()
-					.getExternalModelManager()
-					.getFragmentModels(
-					null);
+		System.arraycopy(wfmodels, 0, fmodels, 0, wfmodels.length);
+		System.arraycopy(
+			extfmodels,
+			0,
+			fmodels,
+			wfmodels.length,
+			extfmodels.length);
+
 		for (int i = 0; i < fmodels.length; i++) {
 			IFragmentModel fmodel = fmodels[i];
 			if (fmodel.isEnabled() == false)
@@ -292,7 +295,8 @@ public class BuildPathUtilCore {
 					fragment.getRule())) {
 
 				IClasspathEntry entry =
-					PluginPathUpdater.createLibraryEntry(
+					PluginPathUpdater.createLibraryEntryFromFragment(
+						fmodel,
 						library,
 						getRootPath(fmodel),
 						false);
