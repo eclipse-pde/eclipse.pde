@@ -241,6 +241,11 @@ public void resourceChanged(IResourceChangeEvent event) {
 	if (input instanceof IFileEditorInput) {
 		IFile file = ((IFileEditorInput) input).getFile();
 		IProject ourProject = file.getProject();
+		
+		if (event.getType()==IResourceChangeEvent.PRE_CLOSE ||
+			event.getType()==IResourceChangeEvent.PRE_DELETE) {
+			return;
+		}
 
 		DeltaVisitor visitor = new DeltaVisitor(ourProject);
 		IResourceDelta delta = event.getDelta();
@@ -268,6 +273,7 @@ public void resourceChanged(IResourceChangeEvent event) {
 	}
 }
 public void update() {
+	if (container.isDisposed()) return;
 	if (updateNeeded) {
 		Control [] children = container.getChildren();
 		for (int i=0; i<children.length; i++) {

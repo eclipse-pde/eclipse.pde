@@ -32,12 +32,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 			if (resource instanceof IProject) {
 				// Only check projects with plugin nature
 				IProject project = (IProject) resource;
-				try {
-					return (project.hasNature(PDEPlugin.PLUGIN_NATURE));
-				} catch (CoreException e) {
-					PDEPlugin.logException(e);
-					return false;
-				}
+				return isInterestingProject(project);
 			}
 			if (resource instanceof IFolder) return true;
 			if (resource instanceof IFile) {
@@ -58,6 +53,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 			return false;
 		}
 	}
+	
 
 public ExtensionPointSchemaBuilder() {
 	super();
@@ -74,6 +70,7 @@ protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
 	if (delta == null || kind == FULL_BUILD) {
 		// Full build
 		IProject project = getProject();
+		if (!isInterestingProject(project)) return null;
 		IPath path = project.getFullPath().append(getSchemaLocation());
 		IWorkspace workspace = project.getWorkspace();
 		if (workspace.getRoot().exists(path)) {
@@ -86,6 +83,20 @@ protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
 		delta.accept(new DeltaVisitor(monitor));
 	}
 	return null;
+}
+
+private boolean isInterestingProject(IProject project) {
+	try {
+		if (!project.hasNature(PDEPlugin.PLUGIN_NATURE)) 
+			return false;
+		if (project.getPersistentProperty(PDEPlugin.EXTERNAL_PROJECT_PROPERTY)!=null)
+			return false;
+		// This is it - a plug-in project that is not external or binary
+		return true;
+	} catch (CoreException e) {
+		PDEPlugin.log(e);
+		return false;
+	}
 }
 private void compileFile(IFile file, IProgressMonitor monitor) {
 	String message =

@@ -60,7 +60,9 @@ public class ExternalModelManager {
 		models = null;
 	}
 
-	private static IPath createEclipseRelativeHome(String installLocation, IProgressMonitor monitor) {
+	private static IPath createEclipseRelativeHome(
+		String installLocation,
+		IProgressMonitor monitor) {
 		IPath fullPath = new Path(installLocation);
 		IPath eclipseHome = getEclipseHome(monitor);
 		int nmatching = fullPath.matchingFirstSegments(eclipseHome);
@@ -214,7 +216,8 @@ public class ExternalModelManager {
 
 	protected static void processPluginDescriptorModel(
 		Vector result,
-		PluginDescriptorModel descriptorModel, IProgressMonitor monitor) {
+		PluginDescriptorModel descriptorModel,
+		IProgressMonitor monitor) {
 		ExternalPluginModel model = new ExternalPluginModel();
 		String location = descriptorModel.getLocation();
 		try {
@@ -310,6 +313,8 @@ public class ExternalModelManager {
 	public static void setEclipseHome(
 		final String newValue,
 		IProgressMonitor monitor) {
+		if (monitor == null)
+			monitor = new NullProgressMonitor();
 		try {
 			JavaCore.setClasspathVariable(
 				PDEPlugin.ECLIPSE_HOME_VARIABLE,

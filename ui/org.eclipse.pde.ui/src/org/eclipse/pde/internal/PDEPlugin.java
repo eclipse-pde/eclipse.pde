@@ -57,6 +57,10 @@ public class PDEPlugin extends AbstractUIPlugin {
 	
 	private static final String KEY_RUNNING = "RunningEclipse.message";
 
+	public static final QualifiedName EXTERNAL_PROJECT_PROPERTY = new QualifiedName(PLUGIN_ID, "imported");
+	public static final String EXTERNAL_PROJECT_VALUE = "external";
+	public static final String BINARY_PROJECT_VALUE = "binary";
+
 	// Shared instance
 	private static PDEPlugin inst;
 	// Resource bundle
@@ -118,7 +122,8 @@ public class PDEPlugin extends AbstractUIPlugin {
 			if (model.isEnabled() == false)
 				continue;
 			IPlugin plugin = model.getPlugin();
-			if (plugin.getId().equals(id))
+			String pid = plugin.getId();
+			if (pid!=null && pid.equals(id))
 				return plugin;
 		}
 		return null;
@@ -129,7 +134,8 @@ public class PDEPlugin extends AbstractUIPlugin {
 			if (model.isEnabled() == false)
 				continue;
 			IPlugin plugin = model.getPlugin();
-			if (plugin.getId().equals(id)) {
+			String pid = plugin.getId();
+			if (pid!=null && pid.equals(id)) {
 				if (version == null || plugin.getVersion().equals(version))
 					return plugin;
 			}
@@ -234,7 +240,7 @@ public class PDEPlugin extends AbstractUIPlugin {
 		return inVAJ;
 	}
 	public static void log(IStatus status) {
-		getDefault().getLog().log(status);
+		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
 
 	public static void logErrorMessage(String message) {
@@ -245,12 +251,17 @@ public class PDEPlugin extends AbstractUIPlugin {
 		if (e instanceof InvocationTargetException) {
 			e = ((InvocationTargetException) e).getTargetException();
 		}
-		if (message == null)
-			message = e.getMessage();
-		if (message == null)
-			message = e.toString();
-		Status status =
-			new Status(IStatus.ERROR, getPluginId(), IStatus.OK, message, e);
+		IStatus status = null;
+		if (e instanceof CoreException)
+		   status = ((CoreException)e).getStatus();
+		else {
+			if (message == null)
+				message = e.getMessage();
+			if (message == null)
+				message = e.toString();
+			status =
+				new Status(IStatus.ERROR, getPluginId(), IStatus.OK, message, e);
+		}
 		ErrorDialog.openError(getActiveWorkbenchShell(), title, null, status);
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
@@ -262,8 +273,12 @@ public class PDEPlugin extends AbstractUIPlugin {
 	public static void log(Throwable e) {
 		if (e instanceof InvocationTargetException)
 			e = ((InvocationTargetException) e).getTargetException();
-		Status status =
-			new Status(IStatus.ERROR, getPluginId(), IStatus.OK, e.getMessage(), e);
+		IStatus status = null;
+		if (e instanceof CoreException)
+			status = ((CoreException)e).getStatus();
+		else 
+			status =
+				new Status(IStatus.ERROR, getPluginId(), IStatus.OK, e.getMessage(), e);
 		log(status);
 	}
 

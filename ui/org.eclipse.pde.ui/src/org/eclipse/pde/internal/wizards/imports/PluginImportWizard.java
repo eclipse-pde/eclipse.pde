@@ -127,7 +127,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 		} catch (InterruptedException e) {
 			return false;
 		} catch (InvocationTargetException e) {
-			PDEPlugin.log(e);
+			PDEPlugin.logException(e);
 			return true; // exception handled
 		}
 		return true;

@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- File written by PDE 1.0 -->
 <plugin
    id="org.eclipse.pde"
    name="%name"
    version="1.0"
    provider-name="International Business Machines Corp."
    class="org.eclipse.pde.internal.PDEPlugin">
+
+<runtime>
+   <library name="pde.jar">
+      <export name="*"/>
+   </library>
+</runtime>
 <!-- Required plugins -->
 <requires>
    <import plugin="org.eclipse.ui"/>
@@ -23,11 +28,6 @@
    <import plugin="org.eclipse.update.ui.forms"/>
 </requires>
 
-<runtime>
-   <library name="pde.jar">
-      <export name="*"/>
-   </library>
-</runtime>
 
 <!-- Extension points -->
 <extension-point id="projectGenerators" name="%expoint.projectGenerators.name" schema="schema/projectGenerators.xsd"/>
@@ -587,6 +587,19 @@
          schema="schema/map/org.eclipse.ui/views.mxsd">
    </map>
 </extension>
+
+<extension
+      point="org.eclipse.ui.decorators">
+   <decorator
+         objectClass="org.eclipse.core.resources.IProject"
+         adaptable="true"
+         label="%decorator.label"
+         state="true"
+         class="org.eclipse.pde.internal.wizards.imports.BinaryProjectDecorator"
+         id="org.eclipse.pde.binaryProjectDecorator">
+   </decorator>
+</extension>
+
 <extension
       point="org.eclipse.ui.views">
    <category
@@ -601,4 +614,5 @@
          id="org.eclipse.pde.pluginsView">
    </view>
 </extension>
+
 </plugin>

@@ -120,7 +120,6 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_LINKS_OBJ = create(PATH_OBJ, "links_obj.gif");
 	public static final ImageDescriptor DESC_ERROR_ST_OBJ = create(PATH_OBJ, "error_st_obj.gif");
 	
-	
 	/**
 	 * OVR16
 	 */
@@ -128,6 +127,8 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_WARNING_CO   = create(PATH_OVR, "warning_co.gif");
 	public static final ImageDescriptor DESC_ERROR_CO   = create(PATH_OVR, "error_co.gif");
 	public static final ImageDescriptor DESC_EXPORT_CO   = create(PATH_OVR, "export_co.gif");
+	public static final ImageDescriptor DESC_EXTERNAL_CO   = create(PATH_OVR, "external_co.gif");
+	public static final ImageDescriptor DESC_BINARY_CO   = create(PATH_OVR, "binary_co.gif");
 
 	/**
 	 * TOOL16

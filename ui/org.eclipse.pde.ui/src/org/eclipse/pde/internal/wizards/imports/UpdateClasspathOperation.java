@@ -39,7 +39,7 @@ public class UpdateClasspathOperation implements IWorkspaceRunnable {
 		if (monitor == null) {
 			monitor= new NullProgressMonitor();
 		}
-		monitor.beginTask("Setting class path of '" + javaProject.getElementName() + "'...", 1);
+		monitor.beginTask("", 1);
 		try {
 			IProject proj= javaProject.getProject();
 			

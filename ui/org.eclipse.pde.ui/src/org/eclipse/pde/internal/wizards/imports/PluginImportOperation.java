@@ -161,6 +161,11 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			desc.setNatureIds(new String[] { JavaCore.NATURE_ID, PDEPlugin.PLUGIN_NATURE });
 			project.setDescription(desc, new SubProgressMonitor(monitor, 1));
 			PDEPlugin.registerPlatformLaunchers(project);
+			//Mark this project so that we can show image overlay
+			// using the label decorator
+			project.setPersistentProperty(PDEPlugin.EXTERNAL_PROJECT_PROPERTY, doImport ? 
+					PDEPlugin.EXTERNAL_PROJECT_VALUE :
+					PDEPlugin.BINARY_PROJECT_VALUE);
 
 			IPath outputLocation = project.getFullPath();
 

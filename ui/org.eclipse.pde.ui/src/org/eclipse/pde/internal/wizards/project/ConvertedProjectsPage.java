@@ -228,6 +228,7 @@ private void createConversionCandidates() {
 
 	for (int i = 0; i < projects.length; i++) {
 		IProject project = projects[i];
+		if (project.isOpen()==false) continue;
 		try {
 			if (project.hasNature(JavaCore.NATURE_ID)
 				&& !project.hasNature(PDEPlugin.PLUGIN_NATURE)) {
