@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.ui.wizards.templates;
 
 import java.util.ArrayList;
 
-import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.*;
@@ -28,10 +27,10 @@ import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 public class TemplateSelectionPage extends WizardPage {
-	private ArrayList candidates;
-	private ArrayList visiblePages;
-	private WizardCheckboxTablePart tablePart;
-	private FormBrowser descriptionBrowser;
+	private ITemplateSection[] fCandidates;
+	private ArrayList fVisiblePages;
+	private WizardCheckboxTablePart fTablePart;
+	private FormBrowser fDescriptionBrowser;
 	private static final String NL_TITLE = "TemplateSelectionPage.title"; //$NON-NLS-1$
 	private static final String NL_DESC = "TemplateSelectionPage.desc"; //$NON-NLS-1$
 	private static final String NL_TABLE = "TemplateSelectionPage.table"; //$NON-NLS-1$
@@ -62,7 +61,7 @@ public class TemplateSelectionPage extends WizardPage {
 		extends DefaultContentProvider
 		implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
-			return candidates.toArray();
+			return fCandidates;
 		}
 	}
 
@@ -86,50 +85,25 @@ public class TemplateSelectionPage extends WizardPage {
 	 * Constructor for TemplateSelectionPage.
 	 * @param pageName
 	 */
-	public TemplateSelectionPage() {
+	public TemplateSelectionPage(ITemplateSection[] candidates) {
 		super("templateSelection"); //$NON-NLS-1$
+        fCandidates = candidates;
 		setTitle(PDEPlugin.getResourceString(NL_TITLE));
 		setDescription(PDEPlugin.getResourceString(NL_DESC));
 		initializeTemplates();
 	}
 
 	private void initializeTemplates(){
-		createCandidates();
-		tablePart = new TablePart(PDEPlugin.getResourceString(NL_TABLE));
-		descriptionBrowser = new FormBrowser(SWT.BORDER | SWT.V_SCROLL);
-		descriptionBrowser.setText(""); //$NON-NLS-1$
+		fTablePart = new TablePart(PDEPlugin.getResourceString(NL_TABLE));
+		fDescriptionBrowser = new FormBrowser(SWT.BORDER | SWT.V_SCROLL);
+		fDescriptionBrowser.setText(""); //$NON-NLS-1$
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
-		visiblePages = new ArrayList();
+		fVisiblePages = new ArrayList();
 	}
 
 	public void dispose() {
 		super.dispose();
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
-	}
-
-	private void createCandidates() {
-		candidates = new ArrayList();
-		IExtensionRegistry registry = Platform.getExtensionRegistry();
-		IConfigurationElement[] elements =
-			registry.getConfigurationElementsFor(PDEPlugin.getPluginId(), "templates"); //$NON-NLS-1$
-		for (int i = 0; i < elements.length; i++) {
-			IConfigurationElement element = elements[i];
-			addTemplate(element, candidates);
-		}
-	}
-
-	private void addTemplate(IConfigurationElement config, ArrayList result) {
-		if (config.getName().equalsIgnoreCase("template") == false) //$NON-NLS-1$
-			return;
-
-		try {
-			Object template = config.createExecutableExtension("class"); //$NON-NLS-1$
-			if (template instanceof ITemplateSection) {
-				result.add(template);
-			}
-		} catch (CoreException e) {
-			PDEPlugin.log(e);
-		}
 	}
 
 	/**
@@ -140,8 +114,8 @@ public class TemplateSelectionPage extends WizardPage {
 		GridLayout layout = new GridLayout();
 		container.setLayout(layout);
 		layout.numColumns = 2;
-		tablePart.createControl(container);
-		CheckboxTableViewer viewer = tablePart.getTableViewer();
+		fTablePart.createControl(container);
+		CheckboxTableViewer viewer = fTablePart.getTableViewer();
 		viewer.setContentProvider(new ListContentProvider());
 		viewer.setLabelProvider(new ListLabelProvider());
 		initializeTable(viewer.getTable());
@@ -152,25 +126,25 @@ public class TemplateSelectionPage extends WizardPage {
 				handleSelectionChanged((ITemplateSection) sel.getFirstElement());
 			}
 		});
-		descriptionBrowser.createControl(container);
-		Control c = descriptionBrowser.getControl();
+		fDescriptionBrowser.createControl(container);
+		Control c = fDescriptionBrowser.getControl();
 		GridData gd =
 			new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
 		gd.heightHint = 100;
 		//gd.horizontalSpan = 2;
 		c.setLayoutData(gd);
 		viewer.setInput(PDEPlugin.getDefault());
-		tablePart.selectAll(true);
+		fTablePart.selectAll(true);
 		setControl(container);
 		Dialog.applyDialogFont(container);
 		WorkbenchHelp.setHelp(container, IHelpContextIds.TEMPLATE_SELECTION);
 	}
 
 	public ITemplateSection[] getSelectedTemplates() {
-		Object[] elements = tablePart.getTableViewer().getCheckedElements();
-		ITemplateSection[] result = new ITemplateSection[elements.length];
-		System.arraycopy(elements, 0, result, 0, elements.length);
-		return result;
+        Object[] elements = fTablePart.getTableViewer().getCheckedElements();
+        ITemplateSection[] result = new ITemplateSection[elements.length];
+        System.arraycopy(elements, 0, result, 0, elements.length);
+        return result;
 	}
 
 	private void initializeTable(Table table) {
@@ -192,18 +166,18 @@ public class TemplateSelectionPage extends WizardPage {
 		String text = section != null ? section.getDescription() : ""; //$NON-NLS-1$
 		if (text.length() > 0)
 			text = "<p>" + text + "</p>"; //$NON-NLS-1$ //$NON-NLS-2$
-		descriptionBrowser.setText(text);
+		fDescriptionBrowser.setText(text);
 	}
 
 	public boolean canFlipToNextPage() {
-		if (tablePart.getSelectionCount() == 0)
+		if (fTablePart.getSelectionCount() == 0)
 			return false;
 		return super.canFlipToNextPage();
 	}
 
 	public IWizardPage getNextPage() {
 		ITemplateSection[] sections = getSelectedTemplates();
-		visiblePages.clear();
+		fVisiblePages.clear();
 
 		for (int i = 0; i < sections.length; i++) {
 			ITemplateSection section = sections[i];
@@ -211,11 +185,11 @@ public class TemplateSelectionPage extends WizardPage {
 				section.addPages((Wizard) getWizard());
 
 			for (int j = 0; j < section.getPageCount(); j++) {
-				visiblePages.add(section.getPage(j));
+				fVisiblePages.add(section.getPage(j));
 			}
 		}
-		if (visiblePages.size() > 0)
-			return (IWizardPage) visiblePages.get(0);
+		if (fVisiblePages.size() > 0)
+			return (IWizardPage) fVisiblePages.get(0);
 		
 		return null;
 	}
@@ -223,9 +197,9 @@ public class TemplateSelectionPage extends WizardPage {
 	public IWizardPage getNextVisiblePage(IWizardPage page) {
 		if (page == this)
 			return page.getNextPage();
-		int index = visiblePages.indexOf(page);
-		if (index >= 0 && index < visiblePages.size() - 1)
-			return (IWizardPage) visiblePages.get(index + 1);
+		int index = fVisiblePages.indexOf(page);
+		if (index >= 0 && index < fVisiblePages.size() - 1)
+			return (IWizardPage) fVisiblePages.get(index + 1);
 		return null;
 	}
 
