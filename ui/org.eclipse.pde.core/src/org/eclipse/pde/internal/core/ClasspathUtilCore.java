@@ -224,7 +224,13 @@ public class ClasspathUtilCore {
 			if (ENABLE_RESTRICTIONS) {
 				IPath[] inclusionPatterns = getInclusionPatterns(model);
 				IPath[] exclusionPatterns = (inclusionPatterns.length == 0) ? new IPath[] {new Path("**/*")} : new Path[0]; //$NON-NLS-1$
-				entry = JavaCore.newProjectEntry(project.getFullPath(), inclusionPatterns, exclusionPatterns, isExported);
+				entry = JavaCore.newProjectEntry(
+							project.getFullPath(), 
+							inclusionPatterns, 
+							exclusionPatterns, 
+							false, 
+							new IClasspathAttribute[0], 
+							isExported);
 			} else {
 				entry = JavaCore.newProjectEntry(project.getFullPath(), isExported);		
 			}
@@ -274,7 +280,8 @@ public class ClasspathUtilCore {
 						sourcePath, 
 						null,
 						inclusionPatterns, 
-						exclusionPatterns, 
+						exclusionPatterns,
+						new IClasspathAttribute[0],
 						isExported);
 		} else {
 			entry = JavaCore.newLibraryEntry(
@@ -464,7 +471,8 @@ public class ClasspathUtilCore {
 							getSourceAnnotation(model, expandedName), 
 							null, 
 							inclusionPatterns,
-							exclusionPatterns, 
+							exclusionPatterns,
+							new IClasspathAttribute[0], 
 							exported);
 			} else {
 				entry = JavaCore.newLibraryEntry(
