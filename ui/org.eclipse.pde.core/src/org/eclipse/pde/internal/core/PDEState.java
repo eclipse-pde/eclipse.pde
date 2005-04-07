@@ -107,7 +107,7 @@ public class PDEState {
 		createModels();
 		fPluginInfos = null;
 		fExtensions = null;
-		System.gc();
+
 		long end = System.currentTimeMillis();
 		if (DEBUG)
 			System.out.println("Total time elapsed to initialize models: " + (end - start) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
