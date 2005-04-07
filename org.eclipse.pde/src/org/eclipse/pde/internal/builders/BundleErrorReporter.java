@@ -1038,6 +1038,16 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			report(status.getMessage(), getPackageLine(header, element.getValue()),
 					CompilerFlags.ERROR); //$NON-NLS-1$
 		}
+		if (isCheckDeprecated()) {
+			if (fEclipse3_1 && version != null) {
+				String message = PDE
+						.getFormattedMessage(
+								"BundleErrorReporter.deprecated-attribute", ICoreConstants.PACKAGE_SPECIFICATION_VERSION); //$NON-NLS-1$
+				report(message,
+						getPackageLine(header,
+								element.getValue()), CompilerFlags.P_DEPRECATED); //$NON-NLS-1$
+			}
+		}
 	}
 
 	private void validateVersionAttribute(IHeader header,
