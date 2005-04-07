@@ -434,7 +434,7 @@ public abstract class AbstractTemplateSection
 			throws CoreException {
 		int pathLength = path.segmentCount();
 		// Immidiate children
-		Set childZipEntries = new HashSet(); // "dir/" or "dir/file.java"
+		Map childZipEntries = new HashMap(); // "dir/" or "dir/file.java"
 
 		for (Enumeration zipEntries = zipFile.entries(); zipEntries
 				.hasMoreElements();) {
@@ -449,15 +449,18 @@ public abstract class AbstractTemplateSection
 				continue;
 			}
 			if (entryPath.segmentCount() == pathLength + 1) {
-				childZipEntries.add(zipEntry);
+				childZipEntries.put(zipEntry.getName(), zipEntry);
 			} else {
-				ZipEntry dirEntry = new ZipEntry(entryPath.uptoSegment(
-						pathLength + 1).addTrailingSeparator().toString());
-				childZipEntries.add(dirEntry);
+				String name = entryPath.uptoSegment(
+						pathLength + 1).addTrailingSeparator().toString();
+				if(!childZipEntries.containsKey(name)){	
+					ZipEntry dirEntry = new ZipEntry(name);
+					childZipEntries.put(name, dirEntry);
+				}
 			}
 		}
 
-		for (Iterator it = childZipEntries.iterator(); it.hasNext();) {
+		for (Iterator it = childZipEntries.values().iterator(); it.hasNext();) {
 			ZipEntry zipEnry = (ZipEntry) it.next();
 			String name = new Path(zipEnry.getName()).lastSegment().toString();
 			if (zipEnry.isDirectory()) {
