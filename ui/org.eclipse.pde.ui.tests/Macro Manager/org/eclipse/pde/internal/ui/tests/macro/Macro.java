@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.tests.macro;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Stack;
 
 import org.eclipse.core.runtime.CoreException;
@@ -37,10 +38,10 @@ public class Macro implements IWritable, IPlayable {
 		shells = new ArrayList();
 	}
 	
-	void addShell(Node node) {
+	void addShell(Node node, Hashtable lineTable) {
 		String sid = MacroUtil.getAttribute(node, "id");
 		MacroCommandShell shell = new MacroCommandShell(null, sid);
-		shell.load(node);
+		shell.load(node, lineTable);
 		shells.add(shell);
 	}
 	

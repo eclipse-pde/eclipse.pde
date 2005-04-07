@@ -13,29 +13,28 @@ package org.eclipse.pde.internal.ui.tests.macro;
 import java.util.Hashtable;
 import java.util.Map;
 
-import org.eclipse.core.runtime.Path;
-import org.eclipse.swt.widgets.Event;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.w3c.dom.Node;
 
-public abstract class MacroCommand implements IWritable, IPlayable {
-	private WidgetIdentifier widgetId;
+public abstract class MacroInstruction implements IWritable, IPlayable {
     private int [] range;
+    private String id;
 
-	public MacroCommand (WidgetIdentifier widgetId) {
-		this.widgetId = widgetId;
-	}
-	
-	public abstract String getType();
-	public abstract void processEvent(Event e);
-	
-	protected void load(Node node, Hashtable lineTable) {
-		String cid = MacroUtil.getAttribute(node, "contextId");		
-		String wid = MacroUtil.getAttribute(node, "widgetId");
-		if (wid!=null && cid!=null)
-			widgetId = new WidgetIdentifier(new Path(cid), new Path(wid));
-        bindSourceLocation(node, lineTable);
+	public MacroInstruction (String id) {
+        this.id = id;
 	}
     
+    public String getId() {
+        return id;
+    }
+	
+	protected void load(Node node, Hashtable lineTable) {
+        this.id = MacroUtil.getAttribute(node, "id");
+        bindSourceLocation(node, lineTable);
+	}
     
     void bindSourceLocation(Node node, Map lineTable) {
         Integer[] lines = (Integer[]) lineTable.get(node);
@@ -56,11 +55,9 @@ public abstract class MacroCommand implements IWritable, IPlayable {
             return -1;
         return range[1];
     }
-	
-	public boolean mergeEvent(Event e) {
-		return false;
-	}
-	public WidgetIdentifier getWidgetId() {
-		return widgetId;
-	}
+    
+
+    public boolean playback(Display display, Composite parent, IProgressMonitor monitor) throws CoreException {
+        return false;
+    }
 }

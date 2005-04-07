@@ -10,25 +10,35 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.tests.macro;
 
-import java.io.*;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Vector;
 
-import javax.xml.parsers.*;
-import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobManager;
-import org.eclipse.jface.operation.*;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.pde.internal.core.XMLDefaultHandler;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.PlatformUI;
-import org.w3c.dom.*;
-import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class MacroManager {
@@ -78,7 +88,7 @@ public class MacroManager {
 	private Vector listeners;
 
 	private ArrayList widgetResolvers;
-	private DocumentBuilder parser;
+	private SAXParser parser;
 
 	public MacroManager() {
 		listener = new DisplayListener();
@@ -185,19 +195,19 @@ public class MacroManager {
 	 */
 	public boolean play(final Display display, IRunnableContext context,
 			InputStream is) throws CoreException {
-		Document doc = createMacroDocument(is);
-		Node root = doc.getDocumentElement();
+		XMLDefaultHandler handler = createMacroDocument(is);
+		Node root = handler.getDocumentElement();
 		NodeList children = root.getChildNodes();
 
 		final Macro macro = new Macro();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeName().equals("shell")) {
-				macro.addShell(child);
+				macro.addShell(child, handler.getLineTable());
 			}
 		}
 		// discard the DOM
-		doc = null;
+		handler = null;
 		
 		macro.setIndexHandler(getIndexHandler());
 
@@ -225,33 +235,34 @@ public class MacroManager {
 		return result[0];
 	}
 
-	private Document createMacroDocument(InputStream is) throws CoreException {
-		Document doc =null;
+	private XMLDefaultHandler createMacroDocument(InputStream is) throws CoreException {
+        XMLDefaultHandler handler=null;
 		try {
-			DocumentBuilder parser = getParser();
-			doc = parser.parse(is);
+			SAXParser parser = getParser();
+            handler = new XMLDefaultHandler();
+            parser.parse(is, handler);            
 		} catch (SAXException e) {
-			MacroUtil.throwCoreException("Error parsing the macro file", e);
+			MacroUtil.throwCoreException("Error parsing the macro file", 0, e);
 		} catch (IOException e) {
-			MacroUtil.throwCoreException("Error parsing the macro file", e);
+			MacroUtil.throwCoreException("Error parsing the macro file", 0, e);
 		} finally {
 			try {
 				is.close();
 			} catch (IOException e) {
 			}
 		}
-		return doc;
+		return handler;
 	}
 	
-	private DocumentBuilder getParser() throws CoreException {
+	private SAXParser getParser() throws CoreException {
 		if (parser==null) {
 			try {
-				DocumentBuilderFactory domFactory = DocumentBuilderFactory
-					.newInstance();
-				parser = domFactory.newDocumentBuilder();
+                return SAXParserFactory.newInstance().newSAXParser();
 			} catch (ParserConfigurationException e) {
-				MacroUtil.throwCoreException("Error parsing the macro file", e);
-			}
+				MacroUtil.throwCoreException("Error parsing the macro file", 0, e);
+			} catch (SAXException e) {
+                MacroUtil.throwCoreException("Error parsing the macro file", 0, e);                
+            }
 		}
 		return parser;
 	}

@@ -12,21 +12,43 @@ package org.eclipse.pde.internal.ui.tests.macro;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Hashtable;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.custom.TableTree;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
-import org.eclipse.ui.keys.*;
-import org.w3c.dom.*;
+import org.eclipse.ui.keys.KeySequence;
+import org.eclipse.ui.keys.KeyStroke;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
-public class MacroCommandShell implements IWritable, IPlayable {
-	private String path;
-
+public class MacroCommandShell extends MacroInstruction {
 	private ArrayList commands;
 
 	private int expectedReturnCode;
@@ -103,14 +125,10 @@ public class MacroCommandShell implements IWritable, IPlayable {
 		this(null, null);
 	}
 
-	public String getId() {
-		return path;
-	}
-
 	public MacroCommandShell(Shell shell, String path) {
+        super(path);
 		commands = new ArrayList();
 		this.shell = shell;
-		this.path = path;
 		hookWindow(false);
 	}
 
@@ -133,8 +151,9 @@ public class MacroCommandShell implements IWritable, IPlayable {
 			this.window = (Window) data;
 	}
 
-	public void load(Node node) {
-		this.path = MacroUtil.getAttribute(node, "id");
+	public void load(Node node, Hashtable lineTable) {
+        super.load(node, lineTable);
+
 		String codeId = MacroUtil.getAttribute(node, "return-code");
 		if (codeId != null) {
 			try {
@@ -148,16 +167,16 @@ public class MacroCommandShell implements IWritable, IPlayable {
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
 				String name = child.getNodeName();
 				if (name.equals("command"))
-					processCommand(child);
+					processCommand(child, lineTable);
 				else if (name.equals("shell"))
-					processShell(child);
+					processShell(child, lineTable);
 				else if (name.equals("index"))
-					processIndex(child);
+					processIndex(child, lineTable);
 			}
 		}
 	}
 
-	private void processCommand(Node node) {
+	private void processCommand(Node node, Hashtable lineTable) {
 		String wid = MacroUtil.getAttribute(node, "widgetId");
 		String cid = MacroUtil.getAttribute(node, "contextId");
 		String type = MacroUtil.getAttribute(node, "type");
@@ -186,20 +205,20 @@ public class MacroCommandShell implements IWritable, IPlayable {
 		else if (type.equals(WaitCommand.TYPE))
 			command = new WaitCommand();
 		if (command != null) {
-			command.load(node);
+			command.load(node, lineTable);
 			commands.add(command);
 		}
 	}
 
-	private void processShell(Node node) {
+	private void processShell(Node node, Hashtable lineTable) {
 		MacroCommandShell shell = new MacroCommandShell();
-		shell.load(node);
+		shell.load(node, lineTable);
 		commands.add(shell);
 	}
 
-	private void processIndex(Node node) {
+	private void processIndex(Node node, Hashtable lineTable) {
 		MacroIndex index = new MacroIndex();
-		index.load(node);
+		index.load(node, lineTable);
 		commands.add(index);
 	}
 
@@ -210,7 +229,7 @@ public class MacroCommandShell implements IWritable, IPlayable {
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent);
 		writer.print("<shell id=\"");
-		writer.print(path);
+		writer.print(getId());
 		writer.print("\" return-code=\"");
 		writer.print(expectedReturnCode + "");
 		writer.println("\">");

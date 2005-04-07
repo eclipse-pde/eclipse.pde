@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.tests.macro;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
@@ -69,8 +70,8 @@ public abstract class AbstractStructuredCommand extends MacroCommand {
 		return null;
 	}
 
-	protected void load(Node node) {
-		super.load(node);
+	protected void load(Node node, Hashtable lineTable) {
+		super.load(node, lineTable);
 		NodeList children = node.getChildNodes();
 		for (int i=0; i<children.getLength(); i++) {
 			Node child = children.item(i);
@@ -112,7 +113,7 @@ public abstract class AbstractStructuredCommand extends MacroCommand {
 	protected abstract void playTableTreeCommand(TableTree tableTree, TableTreeItem[] matches);	
 
 	public final boolean playback(Display display, Composite parent, IProgressMonitor monitor) throws CoreException {
-		CommandTarget target = MacroUtil.locateCommandTarget(parent, getWidgetId());
+		CommandTarget target = MacroUtil.locateCommandTarget(parent, getWidgetId(), getStartLine());
 
 		if (target==null) return false;
 		target.setFocus();

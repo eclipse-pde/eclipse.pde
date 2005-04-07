@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.tests.macro;
 
 import java.io.PrintWriter;
+import java.util.Hashtable;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
@@ -41,8 +42,8 @@ public class ModifyCommand extends MacroCommand {
 		doProcessEvent(e);
 	}
 
-	protected void load(Node node) {
-		super.load(node);
+	protected void load(Node node, Hashtable lineTable) {
+		super.load(node, lineTable);
 
 		NodeList children = node.getChildNodes();
 		for (int i=0; i<children.getLength(); i++) {
@@ -96,7 +97,7 @@ public class ModifyCommand extends MacroCommand {
 	public boolean playback(Display display, Composite parent, IProgressMonitor monitor) throws CoreException {
 		if (parent.isDisposed()) return false;
 		CommandTarget target = MacroUtil.locateCommandTarget(parent,
-				getWidgetId());
+				getWidgetId(), getStartLine());
 		if (target != null) {
 			target.setFocus();
 			Widget widget = target.getWidget();

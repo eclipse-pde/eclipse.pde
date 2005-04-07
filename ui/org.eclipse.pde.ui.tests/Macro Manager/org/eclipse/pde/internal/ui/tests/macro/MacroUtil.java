@@ -10,18 +10,54 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.tests.macro;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.window.*;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.keys.*;
-import org.w3c.dom.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.CoolBarManager;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.ICoolBarManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.ToolBarContributionItem;
+import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.window.ApplicationWindow;
+import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.CoolBar;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IPluginContribution;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.EditorSite;
+import org.eclipse.ui.internal.PartPane;
+import org.eclipse.ui.internal.PartSite;
+import org.eclipse.ui.keys.SWTKeySupport;
+import org.w3c.dom.Node;
 
 public class MacroUtil {
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
@@ -474,42 +510,42 @@ public class MacroUtil {
 		return buf.toString();
 	}
 	
-	public static CommandTarget locateCommandTarget(Composite parent, WidgetIdentifier wid) throws CoreException {
-		return locateCommandTarget(parent, wid, null);
+	public static CommandTarget locateCommandTarget(Composite parent, WidgetIdentifier wid, int line) throws CoreException {
+		return locateCommandTarget(parent, wid, null, line);
 	}
 
-	public static CommandTarget locateCommandTarget(Composite parent, WidgetIdentifier wid, ArrayList parents) throws CoreException {
+	public static CommandTarget locateCommandTarget(Composite parent, WidgetIdentifier wid, ArrayList parents, int line) throws CoreException {
 		Shell shell = (Shell)parent;
 
 		String firstToken = wid.contextPath.segment(0);
 		IPath wpath = wid.widgetPath;
 		Iterator iter = parents!=null?parents.iterator():null;
 		if (firstToken.equals("menus"))
-			return locateMenuBarItem(shell, wpath, iter);
+			return locateMenuBarItem(shell, wpath, iter, line);
 		if (firstToken.equals("popup"))
-			return locatePopupMenuItem(shell, wid, iter);
+			return locatePopupMenuItem(shell, wid, iter, line);
 		if (firstToken.equals("toolbar"))
-			return locateToolItem(shell, wpath);
+			return locateToolItem(shell, wpath, line);
 		if (firstToken.equals("local-toolbar"))
-			return locateLocalToolItem(shell, wid);
+			return locateLocalToolItem(shell, wid, line);
 		if (firstToken.equals("wizard"))
-			return locateWizardControl(shell, wpath);
+			return locateWizardControl(shell, wpath, line);
 		if (firstToken.equals("shell"))
-			return locateShellControl(shell, wpath);
+			return locateShellControl(shell, wpath, line);
 
 		String id = wid.contextPath.segment(1);
 		if (firstToken.equals("wizard-page"))
-			return locateWizardPageControl(shell, id, wpath);
+			return locateWizardPageControl(shell, id, wpath, line);
 		if (firstToken.equals("view"))
-			return locateViewControl(shell, id, wpath);
+			return locateViewControl(shell, id, wpath, line);
 		if (firstToken.equals("editor")) {
 			String inputName = wid.contextPath.segment(2);
-			return locateEditorControl(shell, id, inputName, wpath);
+			return locateEditorControl(shell, id, inputName, wpath, line);
 		}
 		return null;
 	}
 	
-	private static CommandTarget locateMenuBarItem(Shell shell, IPath path, Iterator parents) throws CoreException {
+	private static CommandTarget locateMenuBarItem(Shell shell, IPath path, Iterator parents, int line) throws CoreException {
 		MenuItem item = null;
 		Object data = shell.getData();
 		Menu menuBar = shell.getMenuBar();
@@ -517,17 +553,17 @@ public class MacroUtil {
 		if (data instanceof ApplicationWindow && parents!=null) {
 			ApplicationWindow window = (ApplicationWindow)data;
 			MenuManager manager = window.getMenuBarManager();
-			item = locateMenuItem(manager, path.toString(), parents);
+			item = locateMenuItem(manager, path.toString(), parents, line);
 		}
 		else {
-			item = locateMenuItem(menuBar, path.toString());
+			item = locateMenuItem(menuBar, path.toString(), line);
 		}
 		if (item!=null) return new CommandTarget(item, menuBar);
-		throwCoreException("Cannot locate menu item: "+path.toString());
+		throwCoreException("Cannot locate menu item: "+path.toString(), line);
 		return null;
 	}
 
-	private static MenuItem locateMenuItem(Menu menu, String id) {
+	private static MenuItem locateMenuItem(Menu menu, String id, int line) {
 		MenuItem [] items = menu.getItems();
 		
 		for (int i=0; i<items.length; i++) {
@@ -535,7 +571,7 @@ public class MacroUtil {
 		
 			Menu submenu = item.getMenu();
 			if (submenu!=null) {
-				MenuItem hit = locateMenuItem(submenu, id);
+				MenuItem hit = locateMenuItem(submenu, id, line);
 				if (hit!=null)
 					return hit;
 			}
@@ -548,7 +584,7 @@ public class MacroUtil {
 		return null;
 	}
 	
-	private static MenuItem locateMenuItem(MenuManager mng, String id, Iterator parents) {
+	private static MenuItem locateMenuItem(MenuManager mng, String id, Iterator parents, int line) {
 		IContributionItem [] items = mng.getItems();
 		
 		String parentId = null;
@@ -568,7 +604,7 @@ public class MacroUtil {
 					Menu menu = submenu.getMenu();
 					forceMenuOpen(null, menu);
 					
-					MenuItem hit = locateMenuItem(submenu, id, parents);
+					MenuItem hit = locateMenuItem(submenu, id, parents, line);
 					forceMenuClosed(menu);
 					if (hit!=null)
 						return hit;
@@ -577,7 +613,7 @@ public class MacroUtil {
 			else {
 				String itemId = getActionId(citem);
 				if (itemId!=null && id.equals(itemId)) {
-					MenuItem hit = locateMenuItem(mng.getMenu(), id);
+					MenuItem hit = locateMenuItem(mng.getMenu(), id, line);
 					if (hit!=null)
 						return hit;
 				}
@@ -620,53 +656,53 @@ public class MacroUtil {
 		}
 	}
 
-	private static CommandTarget locatePopupMenuItem(Shell shell, WidgetIdentifier wid, Iterator parents) throws CoreException {
+	private static CommandTarget locatePopupMenuItem(Shell shell, WidgetIdentifier wid, Iterator parents, int line) throws CoreException {
 		IPath contextPath = wid.contextPath.removeFirstSegments(1);
 		IPath wpath = new Path(contextPath.lastSegment());
 		contextPath = contextPath.removeLastSegments(1);
-		CommandTarget target = locateCommandTarget(shell, new WidgetIdentifier(contextPath, wpath));
+		CommandTarget target = locateCommandTarget(shell, new WidgetIdentifier(contextPath, wpath), line);
 		if (target!=null) {
 			Control control = (Control)target.getWidget();
 			Menu popupMenu = control.getMenu();
 			if (popupMenu!=null) {
 				forceMenuOpen(control, popupMenu);
-				MenuItem menuItem = locateMenuItem(popupMenu, wid.getWidgetId());
+				MenuItem menuItem = locateMenuItem(popupMenu, wid.getWidgetId(), line);
 				forceMenuClosed(popupMenu);
 				if (menuItem!=null) {
 					return new CommandTarget(menuItem, control);
 				}
 			}
 		}
-		throwCoreException("Cannot locate pop-up menu item: "+wid.getWidgetId());
+		throwCoreException("Cannot locate pop-up menu item: "+wid.getWidgetId(), line);
 		return null;
 	}
 
-	private static CommandTarget locateToolItem(Shell shell, IPath path) throws CoreException {
+	private static CommandTarget locateToolItem(Shell shell, IPath path, int line) throws CoreException {
 		Object data = shell.getData();
 		CommandTarget target = null;
 		if (data instanceof ApplicationWindow) {
 			ApplicationWindow window = (ApplicationWindow)data;
 			CoolBarManager coolMng = window.getCoolBarManager();
 			if (coolMng!=null) {
-				target = locateToolItem(coolMng, path.toString());
+				target = locateToolItem(coolMng, path.toString(), line);
 			}
 			ToolBarManager toolMng = window.getToolBarManager();
 			if (toolMng!=null) {
-				target = locateToolItem(toolMng, path.toString());
+				target = locateToolItem(toolMng, path.toString(), line);
 			}
 		}
 		if (target==null)
-			throwCoreException("Cannot locate pop-up menu item: "+path.toString());
+			throwCoreException("Cannot locate pop-up menu item: "+path.toString(), line);
 		return target;
 	}
 	
-	private static CommandTarget locateToolItem(ICoolBarManager coolMng, String id) {
+	private static CommandTarget locateToolItem(ICoolBarManager coolMng, String id, int line) {
 		IContributionItem [] items = coolMng.getItems();
 		for (int i=0; i<items.length; i++) {
 			if (items[i] instanceof ToolBarContributionItem) {
 				ToolBarContributionItem item = (ToolBarContributionItem)items[i];
 				IToolBarManager toolMng = item.getToolBarManager();
-				CommandTarget target = locateToolItem((ToolBarManager)toolMng, id);
+				CommandTarget target = locateToolItem((ToolBarManager)toolMng, id, line);
 				if (target!=null)
 					return target;
 			}
@@ -674,11 +710,11 @@ public class MacroUtil {
 		return null;
 	}
 
-	private static CommandTarget locateToolItem(ToolBarManager toolMng, String id) {
-		return locateToolItem(toolMng.getControl(), id);
+	private static CommandTarget locateToolItem(ToolBarManager toolMng, String id, int line) {
+		return locateToolItem(toolMng.getControl(), id, line);
 	}
 	
-	private static CommandTarget locateToolItem(ToolBar toolBar, String id) {
+	private static CommandTarget locateToolItem(ToolBar toolBar, String id, int line) {
 		ToolItem [] items = toolBar.getItems();
 		for (int i=0; i<items.length; i++) {
 			ToolItem item = items[i];
@@ -689,13 +725,13 @@ public class MacroUtil {
 		return null;
 	}
 	
-	private static CommandTarget locateLocalToolItem(Shell shell, WidgetIdentifier wid) throws CoreException {
+	private static CommandTarget locateLocalToolItem(Shell shell, WidgetIdentifier wid, int line) throws CoreException {
 		IPath wpath = wid.contextPath.removeFirstSegments(1);
 		String firstToken = wpath.segment(0);
 		
 		if (firstToken.equals("view")) {
 			String id = wpath.segment(1);
-			IViewPart view = locateView(shell, id);
+			IViewPart view = locateView(shell, id, line);
 			if (view!=null) {
 				PartPane pane = getPartPane(view);
 				processDisplayEvents(shell.getDisplay());
@@ -704,35 +740,35 @@ public class MacroUtil {
 				if (c!=null) {	
 					//TODO bad cast
 					ToolBarManager mng = (ToolBarManager)view.getViewSite().getActionBars().getToolBarManager();
-					CommandTarget target = locateToolItem(mng, wid.getWidgetId());
+					CommandTarget target = locateToolItem(mng, wid.getWidgetId(), line);
 					if (target!=null)
 						return target;
 				}
 			}
 		}
-		throwCoreException("Cannot locate local tool bar item: "+wid.getFullyQualifiedId().toString());
+		throwCoreException("Cannot locate local tool bar item: "+wid.getFullyQualifiedId().toString(), line);
 		return null;
 	}
 
-	private static WizardCommandTarget locateWizardControl(Shell shell, IPath wpath) throws CoreException {
+	private static WizardCommandTarget locateWizardControl(Shell shell, IPath wpath, int line) throws CoreException {
 		WizardDialog wdialog = (WizardDialog)shell.getData();
 		IWizardPage page = wdialog.getCurrentPage();
 		Composite pparent = (Composite)page.getControl();
 		Control control=locateVisibleChild(shell, pparent, wpath);
 		if (control==null)
-			throwCoreException("Cannot locate wizard control: "+wpath.toString());		
+			throwCoreException("Cannot locate wizard control: "+wpath.toString(), line);		
 		return new WizardCommandTarget(control, wdialog);
 	}
 	
-	private static WindowCommandTarget locateShellControl(Shell shell, IPath wpath) throws CoreException {
+	private static WindowCommandTarget locateShellControl(Shell shell, IPath wpath, int line) throws CoreException {
 		Window window = (Window)shell.getData();
 		Control control=locateVisibleChild(shell, null, wpath);
 		if (control==null)
-			throwCoreException("Cannot locate shell control: "+wpath.toString());		
+			throwCoreException("Cannot locate shell control: "+wpath.toString(), line);		
 		return new WindowCommandTarget(control, window);
 	}
 
-	private static WizardCommandTarget locateWizardPageControl(Shell shell, String id, IPath wpath) throws CoreException {
+	private static WizardCommandTarget locateWizardPageControl(Shell shell, String id, IPath wpath, int line) throws CoreException {
 		Control control=null;
 		Object data = shell.getData();
 		if (data instanceof WizardDialog) {
@@ -741,18 +777,18 @@ public class MacroUtil {
 			String pname = page.getName();
 			// assert page
 			if (pname.equals(id)==false)
-				throwCoreException("Unexpected wizard page: "+pname);
+				throwCoreException("Unexpected wizard page: "+pname+", expected "+id, line);
 			Composite pparent = (Composite)page.getControl();
 			control = locateVisibleChild(pparent, null, wpath);
 			if (control!=null)
 				return new WizardCommandTarget(control, wdialog);
 		}
 		if (control==null)
-			throwCoreException("Cannot locate wizard page control: "+wpath.toString());
+			throwCoreException("Cannot locate wizard page control: "+wpath.toString(), line);
 		return null;
 	}
 	
-	private static IViewPart locateView(Shell shell, String id) throws CoreException {
+	private static IViewPart locateView(Shell shell, String id, int line) throws CoreException {
 		Object data = shell.getData();
 		
 		if (data instanceof IWorkbenchWindow) {
@@ -763,7 +799,7 @@ public class MacroUtil {
 				return view;
 			}
 		}
-		throwCoreException("Cannot locate view: "+id);
+		throwCoreException("Cannot locate view: "+id, line);
 		return null;		
 	}
 	
@@ -773,10 +809,10 @@ public class MacroUtil {
 		return pane;
 	}
 	
-	private static ViewCommandTarget locateViewControl(Shell shell, String id, IPath wpath) throws CoreException {
+	private static ViewCommandTarget locateViewControl(Shell shell, String id, IPath wpath, int line) throws CoreException {
 		Control control=null;
 		
-		IViewPart view = locateView(shell, id);
+		IViewPart view = locateView(shell, id, line);
 		if (view!=null) {
 			PartPane pane = getPartPane(view);
 			Control c = pane.getControl();
@@ -785,10 +821,10 @@ public class MacroUtil {
 				return new ViewCommandTarget(control, view);
 			}
 		}
-		throwCoreException("Cannot locate view control: "+wpath.toString());
+		throwCoreException("Cannot locate view control: "+wpath.toString(), line);
 		return null;
 	}
-	private static EditorCommandTarget locateEditorControl(Shell shell, String id, String inputName, IPath wpath) throws CoreException {
+	private static EditorCommandTarget locateEditorControl(Shell shell, String id, String inputName, IPath wpath, int line) throws CoreException {
 		Control control=null;
 		
 		Object data = shell.getData();
@@ -822,7 +858,7 @@ public class MacroUtil {
 			}
 		}
 		if (control==null)
-			throwCoreException("Cannot locate editor control: "+wpath.toString());
+			throwCoreException("Cannot locate editor control: "+wpath.toString(), line);
 		return null;
 	}
 	
@@ -862,10 +898,12 @@ public class MacroUtil {
 		return null;
 	}
 
-	public static void throwCoreException(String message) throws CoreException {
-		throwCoreException(message, null);
+	public static void throwCoreException(String message, int line) throws CoreException {
+		throwCoreException(message, line, null);
 	}
-	public static void throwCoreException(String message, Throwable t) throws CoreException {
+	public static void throwCoreException(String message, int line, Throwable t) throws CoreException {
+        if (line >0) 
+            message = "Line "+line+": "+message;
 		Status s = new Status(IStatus.ERROR, "org.eclipse.ui.macro", IStatus.OK, message, t);
 		throw new CoreException(s);
 	}

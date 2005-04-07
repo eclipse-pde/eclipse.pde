@@ -64,7 +64,7 @@ public class KeyCommand extends MacroCommand {
 	 */
 	public boolean playback(Display display, Composite parent,
 			IProgressMonitor monitor) throws CoreException {
-		CommandTarget target = MacroUtil.locateCommandTarget(parent, getWidgetId());
+		CommandTarget target = MacroUtil.locateCommandTarget(parent, getWidgetId(), getStartLine());
 		if (target==null) return false;
 		IWorkbenchCommandSupport csupport = PlatformUI.getWorkbench().getCommandSupport();
 		ICommand command = csupport.getCommandManager().getCommand(commandId);

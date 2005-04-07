@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.tests.macro;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
@@ -71,8 +72,8 @@ public class BooleanSelectionCommand extends MacroCommand {
 		return segments.size()>0?segments:null;
 	}
 	
-	protected void load(Node node) {
-		super.load(node);
+	protected void load(Node node, Hashtable lineTable) {
+		super.load(node, lineTable);
 		String sel = MacroUtil.getAttribute(node, "selection");
 		if (sel!=null) {
 			selection = sel.equals("true")?Boolean.TRUE:Boolean.FALSE;
@@ -120,7 +121,7 @@ public class BooleanSelectionCommand extends MacroCommand {
 	}
 
 	public boolean playback(Display display, Composite parent, IProgressMonitor monitor) throws CoreException {
-		CommandTarget target = MacroUtil.locateCommandTarget(parent, getWidgetId(), path);
+		CommandTarget target = MacroUtil.locateCommandTarget(parent, getWidgetId(), path, getStartLine());
 		if (target==null) return false;
 		target.setFocus();
 		Widget widget = target.getWidget();

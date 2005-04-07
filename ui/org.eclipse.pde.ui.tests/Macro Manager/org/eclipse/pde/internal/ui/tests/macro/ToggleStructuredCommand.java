@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.tests.macro;
 
 import java.io.PrintWriter;
+import java.util.Hashtable;
 
 import org.eclipse.swt.widgets.Event;
 import org.w3c.dom.Node;
@@ -29,8 +30,8 @@ public abstract class ToggleStructuredCommand extends AbstractStructuredCommand 
 		return false;
 	}
 	
-	protected void load(Node node) {
-		super.load(node);
+	protected void load(Node node, Hashtable lineTable) {
+		super.load(node, lineTable);
 		String att = MacroUtil.getAttribute(node, "value");
 		this.value = att!=null && att.equals("true");
 	}

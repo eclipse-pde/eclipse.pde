@@ -62,7 +62,7 @@ public class FocusCommand extends MacroCommand {
 	 */
 	public boolean playback(Display display, Composite parent, IProgressMonitor monitor) throws CoreException {
 		if (parent.isDisposed()) return false;
-		CommandTarget target = MacroUtil.locateCommandTarget(parent, getWidgetId());
+		CommandTarget target = MacroUtil.locateCommandTarget(parent, getWidgetId(), getStartLine());
 		if (target!=null)
 			target.setFocus();
 		return true;

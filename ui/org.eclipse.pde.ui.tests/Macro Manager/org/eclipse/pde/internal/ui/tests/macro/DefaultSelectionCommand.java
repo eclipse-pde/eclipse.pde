@@ -59,7 +59,7 @@ public class DefaultSelectionCommand extends MacroCommand {
 	 * @see org.eclipse.ui.macro.IPlayable#playback(org.eclipse.swt.widgets.Composite)
 	 */
 	public boolean playback(Display display, Composite parent, IProgressMonitor monitor) throws CoreException {
-		CommandTarget target = MacroUtil.locateCommandTarget(parent, getWidgetId());
+		CommandTarget target = MacroUtil.locateCommandTarget(parent, getWidgetId(), getStartLine());
 		if (target==null) return false;
 		target.setFocus();
 		Widget widget = target.getWidget();
