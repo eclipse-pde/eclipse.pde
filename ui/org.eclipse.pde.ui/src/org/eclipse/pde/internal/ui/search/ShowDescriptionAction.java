@@ -30,36 +30,39 @@ import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
-
 
 public class ShowDescriptionAction extends Action {
 	private String fPointID;
+
 	private ISchema fSchema;
+
 	private File fPreviewFile;
 
 	public ShowDescriptionAction(IPluginExtensionPoint point) {
 		setExtensionPoint(point);
 	}
-	
+
 	public ShowDescriptionAction(ISchema schema) {
 		setSchema(schema);
 	}
-	
+
 	public void setSchema(ISchema schema) {
 		fSchema = schema;
 		fPointID = schema.getQualifiedPointId();
 	}
-	
+
 	public void setExtensionPoint(IPluginExtensionPoint point) {
 		fPointID = point.getFullId();
 		setText(PDEPlugin.getResourceString("ShowDescriptionAction.label")); //$NON-NLS-1$
 		fSchema = null;
 	}
-	
+
 	public void run() {
 		if (fSchema == null) {
-			IPluginExtensionPoint point = PDECore.getDefault().findExtensionPoint(fPointID);
+			IPluginExtensionPoint point = PDECore.getDefault()
+					.findExtensionPoint(fPointID);
 			URL url = null;
 			if (point != null) {
 				url = SchemaRegistry.getSchemaURL(point);
@@ -68,18 +71,21 @@ public class ShowDescriptionAction extends Action {
 					fSchema = desc.getSchema(false);
 				}
 			}
-			if (point == null|| url == null || fSchema == null) {
+			if (point == null || url == null || fSchema == null) {
 				showNoSchemaMessage();
 				return;
 			}
-		} 
+		}
 		showSchemaDocument();
 	}
-	
+
 	private void showNoSchemaMessage() {
-		String title = PDEPlugin.getResourceString("ShowDescriptionAction.title"); //$NON-NLS-1$
-		String message = PDEPlugin.getFormattedMessage("ShowDescriptionAction.noPoint.desc",fPointID); //$NON-NLS-1$ //$NON-NLS-2$
-		MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), title, message);
+		String title = PDEPlugin
+				.getResourceString("ShowDescriptionAction.title"); //$NON-NLS-1$
+		String message = PDEPlugin.getFormattedMessage(
+				"ShowDescriptionAction.noPoint.desc", fPointID); //$NON-NLS-1$ //$NON-NLS-2$
+		MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), title,
+				message);
 	}
 
 	private void showSchemaDocument() {
@@ -91,7 +97,7 @@ public class ShowDescriptionAction extends Action {
 			SchemaTransformer transformer = new SchemaTransformer();
 			OutputStream os = new FileOutputStream(fPreviewFile);
 			PrintWriter printWriter = new PrintWriter(os, true);
-			transformer.transform(fSchema, printWriter); 
+			transformer.transform(fSchema, printWriter);
 			os.flush();
 			os.close();
 			showURL(fPreviewFile.getPath());
@@ -99,8 +105,8 @@ public class ShowDescriptionAction extends Action {
 			PDEPlugin.logException(e);
 		}
 	}
-	
-	private File getPreviewFile(){
+
+	private File getPreviewFile() {
 		try {
 			File file = File.createTempFile("pde", ".html"); //$NON-NLS-1$ //$NON-NLS-2$
 			file.deleteOnExit();
@@ -109,16 +115,19 @@ public class ShowDescriptionAction extends Action {
 		}
 		return null;
 	}
-	
+
 	private void showURL(String url) {
 		try {
-			IWorkbenchBrowserSupport support = PlatformUI.getWorkbench().getBrowserSupport();
-			support.getExternalBrowser().openURL(new URL("file:" + url));
-		}
-		catch (MalformedURLException e) {
+			IWorkbenchBrowserSupport support = PlatformUI.getWorkbench()
+					.getBrowserSupport();
+			IWebBrowser browser = support.createBrowser(
+					IWorkbenchBrowserSupport.AS_EDITOR
+							| IWorkbenchBrowserSupport.STATUS,
+					"org.eclipse.pde", fPointID, fPointID); //$NON-NLS-1$
+			browser.openURL(new URL("file:///" + url)); //$NON-NLS-1$
+		} catch (MalformedURLException e) {
 			PDEPlugin.logException(e);
-		}
-		catch (PartInitException e) {
+		} catch (PartInitException e) {
 			PDEPlugin.logException(e);
 		}
 	}
