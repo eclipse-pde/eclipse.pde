@@ -150,7 +150,7 @@ public class ConvertSchemaToHTML extends Task {
 	private IPluginModelBase readManifestFile() {
 		if (manifest == null) {
 			System.out.println(
-				PDE.getFormattedMessage("Builders.Convert.missingAttribute", "manifest")); //$NON-NLS-1$ //$NON-NLS-2$
+				NLS.bind(PDEMessages.Builders_Convert_missingAttribute, "manifest")); //$NON-NLS-1$ //$NON-NLS-2$
 			return null;
 		}
 		
@@ -175,7 +175,7 @@ public class ConvertSchemaToHTML extends Task {
 				model = new ExternalPluginModel();
 			else {
 				System.out.println(
-					PDE.getFormattedMessage("Builders.Convert.illegalValue", "manifest")); //$NON-NLS-1$ //$NON-NLS-2$
+						NLS.bind(PDEMessages.Builders_Convert_illegalValue, "manifest")); //$NON-NLS-1$ //$NON-NLS-2$
 				return null;
 			}
 
@@ -206,13 +206,12 @@ public class ConvertSchemaToHTML extends Task {
 		boolean valid = true;
 		if (destination == null) {
 			System.out.println(
-				PDE.getFormattedMessage(
-					"Builders.Convert.missingAttribute", //$NON-NLS-1$
+					NLS.bind(PDEMessages.Builders_Convert_missingAttribute,
 					"destination")); //$NON-NLS-1$
 			valid = false;
 		} else if (!new Path(destination).isValidPath(destination)) {
 			System.out.println(
-				PDE.getFormattedMessage("Builders.Convert.illegalValue", "destination")); //$NON-NLS-1$ //$NON-NLS-2$
+					NLS.bind(PDEMessages.Builders_Convert_illegalValue, "destination")); //$NON-NLS-1$ //$NON-NLS-2$
 			valid = false;
 		}
 		return valid;
