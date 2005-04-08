@@ -288,17 +288,17 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		if (type.equals(FEATURE)) {
 			fullLocation = location + '/' + (String) mapFileEntry.get(ELEMENT) + '/' + DEFAULT_FEATURE_FILENAME_DESCRIPTOR; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			params.put("fileToCheck", fullLocation); //$NON-NLS-1$
-			cvsPackage += manifestFileOnly ? '/' + DEFAULT_FEATURE_FILENAME_DESCRIPTOR : ""; //$NON-NLS-1$ //$NON-NLS-2$
+			cvsPackage += manifestFileOnly ? '/' + DEFAULT_FEATURE_FILENAME_DESCRIPTOR : ""; //$NON-NLS-1$
 			repositoryFeatureVersions.put(mapFileEntry.get(ELEMENT), mapFileEntry.get(TAG));
 		} else if (type.equals(PLUGIN)) {
 			fullLocation = location + '/' + (String) mapFileEntry.get(ELEMENT) + '/' + DEFAULT_PLUGIN_FILENAME_DESCRIPTOR; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			params.put("fileToCheck", fullLocation); //$NON-NLS-1$
-			cvsPackage += manifestFileOnly ? '/' + DEFAULT_PLUGIN_FILENAME_DESCRIPTOR : ""; //$NON-NLS-1$ //$NON-NLS-2$
+			cvsPackage += manifestFileOnly ? '/' + DEFAULT_PLUGIN_FILENAME_DESCRIPTOR : ""; //$NON-NLS-1$
 			repositoryPluginVersions.put(mapFileEntry.get(ELEMENT), mapFileEntry.get(TAG));
 		} else if (type.equals(FRAGMENT)) {
 			fullLocation = location + '/' + (String) mapFileEntry.get(ELEMENT) + '/' + DEFAULT_FRAGMENT_FILENAME_DESCRIPTOR; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			params.put("fileToCheck", fullLocation); //$NON-NLS-1$
-			cvsPackage += manifestFileOnly ? '/' + DEFAULT_FRAGMENT_FILENAME_DESCRIPTOR : ""; //$NON-NLS-1$ //$NON-NLS-2$
+			cvsPackage += manifestFileOnly ? '/' + DEFAULT_FRAGMENT_FILENAME_DESCRIPTOR : ""; //$NON-NLS-1$
 			repositoryPluginVersions.put(mapFileEntry.get(ELEMENT), mapFileEntry.get(TAG));
 		} else if (type.equals(BUNDLE)) {
 			fullLocation = location + '/' + (String) mapFileEntry.get(ELEMENT) + '/' + DEFAULT_BUNDLE_FILENAME_DESCRIPTOR;
@@ -310,6 +310,9 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 
 		// This call create a new property for every feature, plugins or fragments that we must check the existence of 
 		script.printAvailableTask(fullLocation, fullLocation);
+		if (type.equals(PLUGIN) || type.equals(FRAGMENT)) {
+			script.printAvailableTask(fullLocation, location + '/' + (String) mapFileEntry.get(ELEMENT) + '/' + DEFAULT_BUNDLE_FILENAME_DESCRIPTOR);
+		}
 		script.printAntTask("../" + scriptName, getPropertyFormat(PROPERTY_BUILD_DIRECTORY) + '/' + (type.equals(FEATURE) ? DEFAULT_FEATURE_LOCATION : DEFAULT_PLUGIN_LOCATION), TARGET_GET_FROM_CVS, null, null, params); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		return true;
 	}
