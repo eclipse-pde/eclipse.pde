@@ -18,16 +18,26 @@ import org.eclipse.swt.custom.*;
 import org.eclipse.swt.widgets.*;
 
 public class StructuredSelectionCommand extends AbstractStructuredCommand {
-	public static final String TYPE="item-select";
+	private String type;
+	public static final String DEFAULT_SELECT="default-select";
+	public static final String ITEM_SELECT="item-select";
 	private ArrayList items;
 	
-	public StructuredSelectionCommand(WidgetIdentifier wid) {
+	public StructuredSelectionCommand(WidgetIdentifier wid, String type) {
 		super(wid);
 		items = new ArrayList();
+		this.type = type;
+	}
+
+	public boolean mergeEvent(Event e) {
+		if (e.type==SWT.DefaultSelection) {
+			this.type = DEFAULT_SELECT;
+		}
+		return super.mergeEvent(e);
 	}
 	
 	public String getType() {
-		return TYPE;
+		return type;
 	}
 
 	protected Widget[] getItemsForEvent(Event event) {
@@ -45,23 +55,24 @@ public class StructuredSelectionCommand extends AbstractStructuredCommand {
 
 	protected void playTreeCommand(Tree tree, TreeItem[] matches) {
 		tree.setSelection(matches);
-		fireEvent(tree);
+		fireEvent(tree, matches);
 	}
 	
-	private void fireEvent(Widget widget) {
+	private void fireEvent(Widget widget, Widget [] items) {
 		Event e = new Event();
 		e.widget = widget;
-		e.type = SWT.Selection;
+		e.type = type.equals(ITEM_SELECT)?SWT.Selection:SWT.DefaultSelection;
+		e.item = items.length>0?items[0]:null;
 		widget.notifyListeners(e.type, e);
 	}
 
 	protected void playTableCommand(Table table, TableItem[] matches) {
 		table.setSelection(matches);
-		fireEvent(table);
+		fireEvent(table, matches);
 	}
 	
 	protected void playTableTreeCommand(TableTree tableTree, TableTreeItem [] matches) {
 		tableTree.setSelection(matches);
-		fireEvent(tableTree);
+		fireEvent(tableTree, matches);
 	}
 }

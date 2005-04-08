@@ -126,7 +126,7 @@ public class MacroCommandShell extends MacroInstruction {
 	}
 
 	public MacroCommandShell(Shell shell, String path) {
-        super(path);
+		super(path);
 		commands = new ArrayList();
 		this.shell = shell;
 		hookWindow(false);
@@ -152,7 +152,7 @@ public class MacroCommandShell extends MacroInstruction {
 	}
 
 	public void load(Node node, Hashtable lineTable) {
-        super.load(node, lineTable);
+		super.load(node, lineTable);
 
 		String codeId = MacroUtil.getAttribute(node, "return-code");
 		if (codeId != null) {
@@ -190,16 +190,15 @@ public class MacroCommandShell extends MacroInstruction {
 			command = new ModifyCommand(wi);
 		else if (type.equals(BooleanSelectionCommand.TYPE))
 			command = new BooleanSelectionCommand(wi);
-		else if (type.equals(StructuredSelectionCommand.TYPE))
-			command = new StructuredSelectionCommand(wi);
+		else if (type.equals(StructuredSelectionCommand.ITEM_SELECT)
+				|| type.equals(StructuredSelectionCommand.DEFAULT_SELECT))
+			command = new StructuredSelectionCommand(wi, type);
 		else if (type.equals(ExpansionCommand.TYPE))
 			command = new ExpansionCommand(wi);
 		else if (type.equals(CheckCommand.TYPE))
 			command = new CheckCommand(wi);
 		else if (type.equals(FocusCommand.TYPE))
 			command = new FocusCommand(wi);
-		else if (type.equals(DefaultSelectionCommand.TYPE))
-			command = new DefaultSelectionCommand(wi);
 		else if (type.equals(ChoiceSelectionCommand.TYPE))
 			command = new ChoiceSelectionCommand(wi);
 		else if (type.equals(WaitCommand.TYPE))
@@ -289,19 +288,21 @@ public class MacroCommandShell extends MacroInstruction {
 
 	private boolean isFocusCommand(String type) {
 		return type.equals(BooleanSelectionCommand.TYPE)
-				|| type.equals(StructuredSelectionCommand.TYPE)
+				|| type.equals(StructuredSelectionCommand.ITEM_SELECT)
+				|| type.equals(StructuredSelectionCommand.DEFAULT_SELECT)
 				|| type.equals(ExpansionCommand.TYPE)
 				|| type.equals(CheckCommand.TYPE)
-				|| type.equals(ModifyCommand.TYPE)
-				|| type.equals(DefaultSelectionCommand.TYPE);
+				|| type.equals(ModifyCommand.TYPE);
 	}
 
 	protected MacroCommand createCommand(Event event) {
 		MacroCommand lastCommand = getLastCommand();
-		if (lastEvent != null && lastEvent.widget.equals(event.widget)
-				&& lastEvent.type == event.type) {
-			if (lastCommand != null && lastCommand.mergeEvent(event))
-				return null;
+		if (lastEvent != null && lastEvent.widget.equals(event.widget)) {
+			if (lastEvent.type == event.type
+					|| (lastEvent.type == SWT.Selection && event.type == SWT.DefaultSelection)) {
+				if (lastCommand != null && lastCommand.mergeEvent(event))
+					return null;
+			}
 		}
 		MacroCommand command = null;
 		WidgetIdentifier wi = MacroUtil.getWidgetIdentifier(event.widget);
@@ -349,8 +350,6 @@ public class MacroCommandShell extends MacroInstruction {
 
 	private MacroCommand createSelectionCommand(WidgetIdentifier wid,
 			Event event) {
-		if (event.type == SWT.DefaultSelection)
-			return new DefaultSelectionCommand(wid);
 		if (event.widget instanceof MenuItem
 				|| event.widget instanceof ToolItem
 				|| event.widget instanceof Button) {
@@ -365,8 +364,9 @@ public class MacroCommandShell extends MacroInstruction {
 				|| event.widget instanceof TableTree) {
 			if (event.detail == SWT.CHECK)
 				return new CheckCommand(wid);
-			else
-				return new StructuredSelectionCommand(wid);
+			String type = event.type == SWT.DefaultSelection ? StructuredSelectionCommand.DEFAULT_SELECT
+						: StructuredSelectionCommand.ITEM_SELECT;
+			return new StructuredSelectionCommand(wid, type);
 		}
 		if (event.widget instanceof TabFolder
 				|| event.widget instanceof CTabFolder)
@@ -543,10 +543,10 @@ public class MacroCommandShell extends MacroInstruction {
 
 	public void setIndexHandler(IIndexHandler indexHandler) {
 		this.indexHandler = indexHandler;
-		for (int i=0; i<commands.size(); i++) {
+		for (int i = 0; i < commands.size(); i++) {
 			Object c = commands.get(i);
 			if (c instanceof MacroCommandShell) {
-				MacroCommandShell child = (MacroCommandShell)c;
+				MacroCommandShell child = (MacroCommandShell) c;
 				child.setIndexHandler(indexHandler);
 			}
 		}
