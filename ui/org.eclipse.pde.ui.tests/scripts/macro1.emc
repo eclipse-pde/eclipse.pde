@@ -6,10 +6,9 @@
          <parent widgetId="new"/>
       </command>
       <shell id="org.eclipse.jface.wizard.WizardDialog" return-code="0">
-         <command type="item-select" contextId="wizard-page/newWizardSelectionPage" widgetId="org.eclipse.swt.widgets.Tree#1">
+         <command type="default-select" contextId="wizard-page/newWizardSelectionPage" widgetId="org.eclipse.swt.widgets.Tree#1">
             <item path="org.eclipse.pde.ui.NewProjectWizard"/>
          </command>
-         <command type="default-select" contextId="wizard-page/newWizardSelectionPage" widgetId="org.eclipse.swt.widgets.Tree#1"/>
          <command type="modify" contextId="wizard-page/main" widgetId="org.eclipse.swt.widgets.Text#1">
          com.example.simple
          </command>

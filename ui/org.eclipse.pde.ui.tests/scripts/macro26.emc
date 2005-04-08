@@ -5,10 +5,9 @@
          <parent widgetId="file"/>
       </command>
       <shell id="org.eclipse.jface.wizard.WizardDialog" return-code="0">
-         <command type="item-select" contextId="wizard-page/singleWizardSelectionPage" widgetId="org.eclipse.swt.widgets.Table#1">
+         <command type="default-select" contextId="wizard-page/singleWizardSelectionPage" widgetId="org.eclipse.swt.widgets.Table#1">
             <item path="org.eclipse.pde.ui.PluginImportWizard"/>
          </command>
-         <command type="default-select" contextId="wizard-page/singleWizardSelectionPage" widgetId="org.eclipse.swt.widgets.Table#1"/>
          <command type="focus" contextId="wizard-page/first" widgetId="org.eclipse.swt.widgets.Button#1"/>
          <command type="focus" contextId="wizard-page/first" widgetId="org.eclipse.swt.widgets.Button#8"/>
          <command type="select" contextId="wizard-page/first" widgetId="org.eclipse.swt.widgets.Button#9" selection="false"/>
@@ -16,10 +15,9 @@
          <command type="select" contextId="wizard" widgetId="org.eclipse.swt.widgets.Button#ButtonId=15"/>
          <command type="focus" contextId="wizard" widgetId="org.eclipse.swt.widgets.Button#ButtonId=15"/>
          <command type="focus" contextId="wizard" widgetId="org.eclipse.swt.widgets.Button#ButtonId=14"/>
-         <command type="item-select" contextId="wizard-page/detailed" widgetId="org.eclipse.swt.widgets.Table#1">
+         <command type="default-select" contextId="wizard-page/detailed" widgetId="org.eclipse.swt.widgets.Table#1">
             <item path="org.eclipse.pde.ui"/>
          </command>
-         <command type="default-select" contextId="wizard-page/detailed" widgetId="org.eclipse.swt.widgets.Table#1"/>
          <command type="select" contextId="wizard" widgetId="org.eclipse.swt.widgets.Button#ButtonId=16"/>
          <command type="wait"/>
          <command type="focus" contextId="wizard" widgetId="org.eclipse.swt.widgets.Button#ButtonId=16"/>
