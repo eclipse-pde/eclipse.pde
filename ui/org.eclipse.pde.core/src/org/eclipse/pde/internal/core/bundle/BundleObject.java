@@ -19,6 +19,7 @@ import org.eclipse.pde.core.IModelChangeProvider;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.ModelChangedEvent;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 
 public class BundleObject implements Serializable {
@@ -30,7 +31,7 @@ public class BundleObject implements Serializable {
 	}
 	protected void ensureModelEditable() throws CoreException {
 		if (!model.isEditable()) {
-			throwCoreException(PDECore.getResourceString("BundleObject.readOnlyException")); //$NON-NLS-1$
+			throwCoreException(PDECoreMessages.BundleObject_readOnlyException); //$NON-NLS-1$
 		}
 	}
 	public IBundleModel getModel() {

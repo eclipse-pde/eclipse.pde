@@ -115,7 +115,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 			// Wrap everything else in a core exception.
 			String message = e.getMessage();
 			if (message==null || message.length() == 0)
-				message = PDECore.getResourceString("TargetPlatform.exceptionThrown"); //$NON-NLS-1$
+				message = PDECoreMessages.TargetPlatform_exceptionThrown; //$NON-NLS-1$
 			throw new CoreException(
 				new Status(
 					IStatus.ERROR,
@@ -147,7 +147,7 @@ public class TargetPlatform implements IEnvironmentVariables {
                 if (files[i].isDirectory())
                     continue;
                 String name = files[i].getName();
-                if (name.startsWith("plugin") && name.endsWith(".properties")
+                if (name.startsWith("plugin") && name.endsWith(".properties") //$NON-NLS-1$ //$NON-NLS-2$
                         && files[i].lastModified() > timestamp) {
                      return true;
                 }

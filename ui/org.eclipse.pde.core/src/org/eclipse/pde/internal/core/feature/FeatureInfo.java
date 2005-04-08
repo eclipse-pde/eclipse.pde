@@ -20,11 +20,6 @@ import org.w3c.dom.*;
 
 public class FeatureInfo extends FeatureObject implements IFeatureInfo {
 	private static final long serialVersionUID = 1L;
-	private static final String KEY_INFO_DESCRIPTION =
-		"FeatureInfo.description"; //$NON-NLS-1$
-	private static final String KEY_INFO_LICENSE = "FeatureInfo.license"; //$NON-NLS-1$
-	private static final String KEY_INFO_COPYRIGHT =
-		"FeatureInfo.copyright"; //$NON-NLS-1$
 	private String url;
 	private String description;
 	private int index;
@@ -117,11 +112,11 @@ public class FeatureInfo extends FeatureObject implements IFeatureInfo {
 	public String toString() {
 		switch (index) {
 			case IFeature.INFO_DESCRIPTION :
-				return PDECore.getResourceString(KEY_INFO_DESCRIPTION);
+				return PDECoreMessages.FeatureInfo_description;
 			case IFeature.INFO_LICENSE :
-				return PDECore.getResourceString(KEY_INFO_LICENSE);
+				return PDECoreMessages.FeatureInfo_license;
 			case IFeature.INFO_COPYRIGHT :
-				return PDECore.getResourceString(KEY_INFO_COPYRIGHT);
+				return PDECoreMessages.FeatureInfo_copyright;
 		}
 		return super.toString();
 	}

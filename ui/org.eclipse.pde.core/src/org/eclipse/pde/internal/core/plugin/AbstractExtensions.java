@@ -126,7 +126,7 @@ public abstract class AbstractExtensions
 		int index1 = extensions.indexOf(e1);
 		int index2 = extensions.indexOf(e2);
 		if (index1 == -1 || index2 == -1)
-			throwCoreException(PDECore.getResourceString("AbstractExtensions.extensionsNotFoundException")); //$NON-NLS-1$
+			throwCoreException(PDECoreMessages.AbstractExtensions_extensionsNotFoundException); //$NON-NLS-1$
 		extensions.setElementAt(e1, index2);
 		extensions.setElementAt(e2, index1);
 		firePropertyChanged(this, P_EXTENSION_ORDER, e1, e2);

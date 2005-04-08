@@ -193,7 +193,7 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 	}
 
 	private IStatus createProblemStatus() {
-		String message = PDECore.getResourceString("BinaryRepositoryProvider.veto"); //$NON-NLS-1$
+		String message = PDECoreMessages.BinaryRepositoryProvider_veto; //$NON-NLS-1$
 		return new Status(
 			IStatus.ERROR,
 			PDECore.PLUGIN_ID,

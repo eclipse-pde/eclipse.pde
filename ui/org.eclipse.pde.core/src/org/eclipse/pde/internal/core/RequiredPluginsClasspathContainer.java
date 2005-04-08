@@ -59,6 +59,6 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer {
 	 * @see org.eclipse.jdt.core.IClasspathContainer#getDescription()
 	 */
 	public String getDescription() {
-		return PDECore.getResourceString("RequiredPluginsClasspathContainer.description"); //$NON-NLS-1$
+		return PDECoreMessages.RequiredPluginsClasspathContainer_description; //$NON-NLS-1$
 	}
 }

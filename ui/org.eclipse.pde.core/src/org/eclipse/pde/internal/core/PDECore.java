@@ -97,26 +97,8 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 	public static PDECore getDefault() {
 		return inst;
 	}
-	public static String getFormattedMessage(String key, String arg) {
-		String text = getResourceString(key);
-		return java.text.MessageFormat.format(text, new Object[] { arg });
-	}
-	public static String getFormattedMessage(String key, String[] args) {
-		String text = getResourceString(key);
-		return java.text.MessageFormat.format(text, args);
-	}
-
 	public static String getPluginId() {
 		return getDefault().getBundle().getSymbolicName();
-	}
-	
-	public static String getResourceString(String key) {
-		ResourceBundle bundle = getDefault().getResourceBundle();
-		try {
-			return (bundle != null) ? bundle.getString(key) : key;
-		} catch (MissingResourceException e) {
-			return key;
-		}
 	}
 	
 	public static IWorkspace getWorkspace() {
@@ -192,8 +174,7 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 	// External model manager
 	private PluginModelManager modelManager;
 	//private boolean modelsLocked = false;
-	// Resource bundle
-	private ResourceBundle resourceBundle;
+
 	// Schema registry
 	private SchemaRegistry schemaRegistry;
 
@@ -334,16 +315,6 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		return fJavaElementChangeListener;
 	}
 	
-	public ResourceBundle getResourceBundle() {
-		try {
-			resourceBundle =
-				ResourceBundle.getBundle(
-					"org.eclipse.pde.internal.core.pderesources"); //$NON-NLS-1$
-		} catch (MissingResourceException x) {
-			resourceBundle = null;
-		}
-		return resourceBundle;
-	}
 	public SchemaRegistry getSchemaRegistry() {
 		if (schemaRegistry == null)
 			schemaRegistry = new SchemaRegistry();

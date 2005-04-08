@@ -346,7 +346,7 @@ public class PDEState {
 			new MultiStatus(
 				PDECore.getPluginId(),
 				1,
-				PDECore.getResourceString("ExternalModelManager.scanningProblems"), //$NON-NLS-1$
+				PDECoreMessages.ExternalModelManager_scanningProblems, //$NON-NLS-1$
 				null);
 		
 		StateHelper helper = acquireStateHelper();
@@ -532,7 +532,7 @@ public class PDEState {
 			Manifest m = new Manifest(manifestStream);
 			return manifestToProperties(m.getMainAttributes());
 		} catch (IOException e) {
-			PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.ERROR, PDECore.getResourceString("PDEState.invalidFormat") + bundleLocation.toString(), null)); //$NON-NLS-1$
+			PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.ERROR, PDECoreMessages.PDEState_invalidFormat + bundleLocation.toString(), null)); //$NON-NLS-1$
 			return null;
 		} finally {
 			try {

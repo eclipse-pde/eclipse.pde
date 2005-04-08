@@ -77,7 +77,7 @@ public void swap(IPluginObject child1, IPluginObject child2) throws CoreExceptio
 	int index1 = children.indexOf(child1);
 	int index2 = children.indexOf(child2);
 	if (index1 == -1 || index2 == -1)
-		throwCoreException(PDECore.getResourceString("PluginParent.siblingsNotFoundException")); //$NON-NLS-1$
+		throwCoreException(PDECoreMessages.PluginParent_siblingsNotFoundException); //$NON-NLS-1$
 	children.setElementAt(child1, index2);
 	children.setElementAt(child2, index1);
 	firePropertyChanged(this, P_SIBLING_ORDER, child1, child2);

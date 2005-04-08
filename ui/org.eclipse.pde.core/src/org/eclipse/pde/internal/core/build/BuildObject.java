@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.core.build;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDECoreMessages;
 
 public class BuildObject implements IBuildObject {
 	private IBuildModel fModel;
@@ -29,8 +30,7 @@ public class BuildObject implements IBuildObject {
 
 	protected void ensureModelEditable() throws CoreException {
 		if (!fModel.isEditable()) {
-			throwCoreException(PDECore
-					.getResourceString("BuildObject.readOnlyException")); //$NON-NLS-1$
+			throwCoreException(PDECoreMessages.BuildObject_readOnlyException); //$NON-NLS-1$
 		}
 	}
 

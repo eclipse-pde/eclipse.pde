@@ -23,7 +23,6 @@ import org.xml.sax.*;
 public abstract class AbstractModel
 	extends PlatformObject
 	implements IModel, IModelChangeProviderExtension, Serializable {
-	private static final String KEY_ERROR = "Errors.modelError"; //$NON-NLS-1$
 	private transient List listeners;
 	private boolean loaded;
 	protected transient NLResourceHelper nlHelper;
@@ -142,7 +141,7 @@ public abstract class AbstractModel
 				IStatus.ERROR,
 				PDECore.getPluginId(),
 				IStatus.OK,
-				PDECore.getResourceString(KEY_ERROR),
+				PDECoreMessages.Errors_modelError,
 				e);
 		throw new CoreException(status);
 	}

@@ -47,6 +47,6 @@ public class ExternalJavaSearchClasspathContainer extends PDEClasspathContainer 
 	 * @see org.eclipse.jdt.core.IClasspathContainer#getDescription()
 	 */
 	public String getDescription() {
-		return PDECore.getResourceString("ExternalJavaSearchClasspathContainer.description"); //$NON-NLS-1$
+		return PDECoreMessages.ExternalJavaSearchClasspathContainer_description; //$NON-NLS-1$
 	}
 }

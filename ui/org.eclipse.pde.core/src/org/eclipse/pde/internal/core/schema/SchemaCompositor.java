@@ -33,16 +33,16 @@ public class SchemaCompositor
 		this.kind = kind;
 		switch (kind) {
 			case ALL :
-				fName = PDECore.getResourceString("SchemaCompositor.all"); //$NON-NLS-1$
+				fName = PDECoreMessages.SchemaCompositor_all; //$NON-NLS-1$
 				break;
 			case CHOICE :
-				fName = PDECore.getResourceString("SchemaCompositor.choice"); //$NON-NLS-1$
+				fName = PDECoreMessages.SchemaCompositor_choice; //$NON-NLS-1$
 				break;
 			case GROUP :
-				fName = PDECore.getResourceString("SchemaCompositor.group"); //$NON-NLS-1$
+				fName = PDECoreMessages.SchemaCompositor_group; //$NON-NLS-1$
 				break;
 			case SEQUENCE :
-				fName = PDECore.getResourceString("SchemaCompositor.sequence"); //$NON-NLS-1$
+				fName = PDECoreMessages.SchemaCompositor_sequence; //$NON-NLS-1$
 				break;
 		}
 	}
@@ -92,16 +92,16 @@ public class SchemaCompositor
 			this.kind = kind;
 			switch (kind) {
 				case ALL :
-					fName = PDECore.getResourceString("SchemaCompositor.all"); //$NON-NLS-1$
+					fName = PDECoreMessages.SchemaCompositor_all; //$NON-NLS-1$
 					break;
 				case CHOICE :
-					fName = PDECore.getResourceString("SchemaCompositor.choice"); //$NON-NLS-1$
+					fName = PDECoreMessages.SchemaCompositor_choice; //$NON-NLS-1$
 					break;
 				case GROUP :
-					fName = PDECore.getResourceString("SchemaCompositor.group"); //$NON-NLS-1$
+					fName = PDECoreMessages.SchemaCompositor_group; //$NON-NLS-1$
 					break;
 				case SEQUENCE :
-					fName = PDECore.getResourceString("SchemaCompositor.sequence"); //$NON-NLS-1$
+					fName = PDECoreMessages.SchemaCompositor_sequence; //$NON-NLS-1$
 					break;
 			}
 			getSchema().fireModelObjectChanged(
