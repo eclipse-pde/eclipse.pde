@@ -141,7 +141,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	private Properties getBuildPropertiesFor(BundleDescription bundle) {
 		try {
 			Properties bundleProperties = AbstractScriptGenerator.readProperties(generator.getLocation(bundle), PROPERTIES_FILE, IStatus.OK);
-			if (Utils.isStringIn(generator.getClasspathEntries(bundle), ModelBuildScriptGenerator.DOT)) {
+			if (Utils.isStringIn(generator.getClasspathEntries(bundle), ModelBuildScriptGenerator.DOT) != -1) {
 				String sourceFolder = bundleProperties.getProperty(PROPERTY_SOURCE_PREFIX + ModelBuildScriptGenerator.DOT);
 				if (sourceFolder != null) {
 					bundleProperties.setProperty(PROPERTY_SOURCE_PREFIX + ModelBuildScriptGenerator.EXPANDED_DOT, sourceFolder);

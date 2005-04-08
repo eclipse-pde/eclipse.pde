@@ -409,15 +409,23 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		boolean allJars = containsStarDotJar(splitIncludes);
 		String[] fileSetValues = new String[compiledJarNames.size()];
 		int count = 0;
-		boolean dotIncluded = allJars && dotOnTheClasspath;
+		
+		boolean dotIncluded = false; //This flag indicates if . should be gathered
+		int pos = Utils.isStringIn(splitIncludes, EXPANDED_DOT + '/');
+		if (pos != -1) {
+			splitIncludes[pos] = null;
+			dotIncluded = true;
+		}
+		
+		//Iterate over the classpath
 		for (Iterator iter = compiledJarNames.iterator(); iter.hasNext();) {
 			CompiledEntry entry = (CompiledEntry) iter.next();
 			String formatedName = entry.getName(false) + (entry.getType() == CompiledEntry.FOLDER ? "/" : ""); //$NON-NLS-1$//$NON-NLS-2$
-			if (allJars || Utils.isStringIn(splitIncludes, formatedName)) {
-				if (dotOnTheClasspath && formatedName.startsWith(EXPANDED_DOT)) {
-					dotIncluded = true;
-					continue;
-				}
+			if (dotOnTheClasspath && formatedName.startsWith(EXPANDED_DOT)) {
+				dotIncluded = dotIncluded & true;
+				continue;
+			}
+			if (allJars) {
 				fileSetValues[count++] = formatedName;
 				continue;
 			}
@@ -433,7 +441,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		}
 		//General copy of the files listed in the includes
 		if (include != null || exclude != null) {
-			FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BASEDIR), null, replaceVariables(include, true), null, replaceVariables(exclude, true), null, null);
+			FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BASEDIR), null, replaceVariables(Utils.getStringFromArray(splitIncludes, ","), true), null, replaceVariables(exclude, true), null, null);
 			script.printCopyTask(null, root, new FileSet[] {fileSet}, true);
 		}
 		generatePermissionProperties(root);
