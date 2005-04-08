@@ -15,6 +15,7 @@ import java.util.ArrayList;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.core.*;
@@ -33,19 +34,16 @@ public class ManifestErrorReporter extends XMLErrorReporter {
 	protected void reportIllegalElement(Element element, int severity) {
 		Node parent = element.getParentNode();
 		if (parent == null || parent instanceof org.w3c.dom.Document) {
-			report(PDE.getResourceString("Builders.Manifest.illegalRoot"), getLine(element), severity); //$NON-NLS-1$
+			report(PDEMessages.Builders_Manifest_illegalRoot, getLine(element), severity); //$NON-NLS-1$
 		} else {
-			report(PDE.getFormattedMessage(
-					"Builders.Manifest.child", new String[] { //$NON-NLS-1$
-					element.getNodeName(), parent.getNodeName() }),
+			report(NLS.bind(PDEMessages.Builders_Manifest_child, (new String[] { //$NON-NLS-1$
+			element.getNodeName(), parent.getNodeName() })),
 					getLine(element), severity);
 		}
 	}
 	
 	protected void reportMissingRequiredAttribute(Element element, String attName, int severity) {
-		String message = PDE
-				.getFormattedMessage(
-						"Builders.Manifest.missingRequired", new String[] { attName, element.getNodeName() }); //$NON-NLS-1$			
+		String message = NLS.bind(PDEMessages.Builders_Manifest_missingRequired, (new String[] { attName, element.getNodeName() })); //$NON-NLS-1$			
 		report(message, getLine(element), severity);
 	}
 
@@ -59,14 +57,12 @@ public class ManifestErrorReporter extends XMLErrorReporter {
 	}
 
 	protected void reportUnknownAttribute(Element element, String attName, int severity) {
-		String message = PDE.getFormattedMessage("Builders.Manifest.attribute", //$NON-NLS-1$
-				attName);
+		String message = NLS.bind(PDEMessages.Builders_Manifest_attribute, attName);
 		report(message, getLine(element, attName), severity);
 	}
 	
 	protected void reportIllegalAttributeValue(Element element, Attr attr) {
-		String message = PDE.getFormattedMessage("Builders.Manifest.att-value", //$NON-NLS-1$
-				new String[] { attr.getValue(), attr.getName() });
+		String message = NLS.bind(PDEMessages.Builders_Manifest_att_value, (new String[] { attr.getValue(), attr.getName() }));
 		report(message, getLine(element, attr.getName()), CompilerFlags.ERROR);
 	}
 	
@@ -99,16 +95,15 @@ public class ManifestErrorReporter extends XMLErrorReporter {
 	}
 
 	private void reportMissingElementContent(Element element) {
-		report(PDE.getFormattedMessage("Builders.Feature.empty", element //$NON-NLS-1$
-				.getNodeName()), getLine(element), CompilerFlags.ERROR);
+		report(NLS.bind(PDEMessages.Builders_Feature_empty, element //$NON-NLS-1$
+		.getNodeName()), getLine(element), CompilerFlags.ERROR);
 	}
 	
 	protected void reportExtraneousElements(NodeList elements, int maximum) {
 		if (elements.getLength() > maximum) {
 			for (int i = maximum; i < elements.getLength(); i++) {
 				Element element = (Element) elements.item(i);
-				report(PDE.getFormattedMessage("Builders.Feature.multiplicity", //$NON-NLS-1$
-						element.getNodeName()), getLine(element),
+				report(NLS.bind(PDEMessages.Builders_Feature_multiplicity, element.getNodeName()), getLine(element),
 						CompilerFlags.ERROR);
 			}
 		}
@@ -121,7 +116,7 @@ public class ManifestErrorReporter extends XMLErrorReporter {
 				value = "file:" + value; //$NON-NLS-1$
 			new URL(value);
 		} catch (MalformedURLException e) {
-			report(PDE.getFormattedMessage("Builders.Feature.badURL", attName), getLine(element, attName), CompilerFlags.ERROR); //$NON-NLS-1$
+			report(NLS.bind(PDEMessages.Builders_Feature_badURL, attName), getLine(element, attName), CompilerFlags.ERROR); //$NON-NLS-1$
 		}
 	}
 	
@@ -133,7 +128,7 @@ public class ManifestErrorReporter extends XMLErrorReporter {
 		if (severity != CompilerFlags.IGNORE) {
 			IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(attr.getValue());
 			if (model == null || !model.isEnabled()) {
-				report(PDE.getFormattedMessage("Builders.Manifest.dependency", attr.getValue()),  //$NON-NLS-1$
+				report(NLS.bind(PDEMessages.Builders_Manifest_dependency, attr.getValue()),  //$NON-NLS-1$
 						getLine(element, attr.getName()),
 						severity);
 			}
@@ -176,8 +171,7 @@ public class ManifestErrorReporter extends XMLErrorReporter {
 	protected void reportDeprecatedAttribute(Element element, Attr attr) {
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_DEPRECATED);
 		if (severity != CompilerFlags.IGNORE) {
-			report(PDE.getFormattedMessage("Builders.Manifest.deprecated-attribute", //$NON-NLS-1$
-					attr.getName()), getLine(element, attr.getName()), severity);
+			report(NLS.bind(PDEMessages.Builders_Manifest_deprecated_attribute, attr.getName()), getLine(element, attr.getName()), severity);
 		}	
 	}
 }

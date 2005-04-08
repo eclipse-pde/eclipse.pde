@@ -11,7 +11,8 @@
 package org.eclipse.pde.internal.builders;
 
 import org.eclipse.osgi.util.ManifestElement;
-import org.eclipse.pde.internal.PDE;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.PDEMessages;
 import org.osgi.framework.BundleException;
 
 public class JarManifestHeader implements IHeader {
@@ -58,8 +59,7 @@ public class JarManifestHeader implements IHeader {
 				} catch (BundleException be) {
 					fManifestElements = new ManifestElement[0];
 					if (fErrorReporter != null) {
-						String message = PDE.getFormattedMessage(
-								"BundleErrorReporter.parseHeader", getName()); //$NON-NLS-1$
+						String message = NLS.bind(PDEMessages.BundleErrorReporter_parseHeader, getName()); //$NON-NLS-1$
 						fErrorReporter.report(message, getLineNumber() + 1,
 								CompilerFlags.ERROR);
 					}

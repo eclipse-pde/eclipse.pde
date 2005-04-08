@@ -14,6 +14,7 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.core.*;
@@ -147,9 +148,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 				} else if (name.equals("match")) { //$NON-NLS-1$
 					if (element.getAttributeNode("patch") != null) { //$NON-NLS-1$
 						report(
-								PDE
-										.getFormattedMessage(
-												"Builders.Feature.patchedMatch", attr.getValue()), //$NON-NLS-1$
+								NLS.bind(PDEMessages.Builders_Feature_patchedMatch, attr.getValue()), //$NON-NLS-1$
 								getLine(element, attr.getValue()), //$NON-NLS-1$
 								CompilerFlags.ERROR);
 					} else {
@@ -158,16 +157,12 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 				} else if (name.equals("patch")) { //$NON-NLS-1$
 					if ("true".equalsIgnoreCase(attr.getValue()) && feature == null) { //$NON-NLS-1$
 						report(
-								PDE
-										.getFormattedMessage(
-												"Builders.Feature.patchPlugin", attr.getValue()), //$NON-NLS-1$
+								NLS.bind(PDEMessages.Builders_Feature_patchPlugin, attr.getValue()), //$NON-NLS-1$
 								getLine(element, attr.getValue()), //$NON-NLS-1$
 								CompilerFlags.ERROR);
 					} else if ("true".equalsIgnoreCase(attr.getValue()) && element.getAttributeNode("version") == null) { //$NON-NLS-1$ //$NON-NLS-2$
 						report(
-								PDE
-										.getFormattedMessage(
-												"Builders.Feature.patchedVersion", attr.getValue()), //$NON-NLS-1$
+								NLS.bind(PDEMessages.Builders_Feature_patchedVersion, attr.getValue()), //$NON-NLS-1$
 								getLine(element, attr.getValue()), //$NON-NLS-1$
 								CompilerFlags.ERROR);
 					} else {
@@ -379,7 +374,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 					|| !model.isEnabled() 
 					|| (isFragment && !model.isFragmentModel())
 					|| (!isFragment && model.isFragmentModel())) {
-				report(PDE.getFormattedMessage("Builders.Feature.reference", attr.getValue()),  //$NON-NLS-1$
+				report(NLS.bind(PDEMessages.Builders_Feature_reference, attr.getValue()),  //$NON-NLS-1$
 						getLine(element, attr.getName()),
 						severity);
 			}
@@ -391,15 +386,14 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 		if (severity != CompilerFlags.IGNORE) {
 			IFeature feature = PDECore.getDefault().findFeature(attr.getValue());	
 			if (feature == null) {
-				report(PDE.getFormattedMessage("Builders.Feature.freference", attr.getValue()),  //$NON-NLS-1$
+				report(NLS.bind(PDEMessages.Builders_Feature_freference, attr.getValue()),  //$NON-NLS-1$
 						getLine(element, attr.getName()),
 						severity);
 			}
 		}
 	}
 	protected void reportExclusiveAttributes(Element element, String attName1, String attName2, int severity) {
-		String message = PDE.getFormattedMessage("Builders.Feature.exclusiveAttributes", //$NON-NLS-1$
-				new String[] {attName1, attName2});
+		String message = NLS.bind(PDEMessages.Builders_Feature_exclusiveAttributes, (new String[] {attName1, attName2}));
 		report(message, getLine(element, attName2), severity);
 	}
 

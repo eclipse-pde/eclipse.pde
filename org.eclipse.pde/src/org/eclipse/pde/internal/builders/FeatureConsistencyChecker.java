@@ -14,14 +14,12 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.core.*;
 import org.osgi.framework.*;
 
 public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
-	private static final String BUILDERS_VERIFYING = "Builders.verifying"; //$NON-NLS-1$
-	private static final String BUILDERS_UPDATING = "Builders.updating"; //$NON-NLS-1$
-	
 	class DeltaVisitor implements IResourceDeltaVisitor {
 		private IProgressMonitor monitor;
 		public DeltaVisitor(IProgressMonitor monitor) {
@@ -86,14 +84,14 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 	
 	private void checkFile(IFile file, IProgressMonitor monitor) {
 		String message =
-			PDE.getFormattedMessage(BUILDERS_VERIFYING, file.getFullPath().toString());
+			NLS.bind(PDEMessages.Builders_verifying, file.getFullPath().toString());
 		monitor.subTask(message);
 		FeatureErrorReporter reporter = new FeatureErrorReporter(file);
 		ValidatingSAXParser.parse(file, reporter);
 		if (reporter.getErrorCount() == 0) {
 			reporter.validateContent(monitor);
 		}
-		monitor.subTask(PDE.getResourceString(BUILDERS_UPDATING));
+		monitor.subTask(PDEMessages.Builders_updating);
 		monitor.done();
 	}
 	

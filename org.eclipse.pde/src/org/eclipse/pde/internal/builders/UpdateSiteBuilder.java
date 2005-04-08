@@ -14,12 +14,10 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.*;
 
 public class UpdateSiteBuilder extends IncrementalProjectBuilder {
-	public static final String BUILDERS_VERIFYING = "Builders.verifying"; //$NON-NLS-1$
-	public static final String BUILDERS_UPDATING = "Builders.updating"; //$NON-NLS-1$
-
 	class DeltaVisitor implements IResourceDeltaVisitor {
 		private IProgressMonitor monitor;
 		public DeltaVisitor(IProgressMonitor monitor) {
@@ -75,14 +73,14 @@ public class UpdateSiteBuilder extends IncrementalProjectBuilder {
 	
 	private void checkFile(IFile file, IProgressMonitor monitor) {
 		String message =
-			PDE.getFormattedMessage(BUILDERS_VERIFYING, file.getFullPath().toString());
+			NLS.bind(PDEMessages.Builders_verifying, file.getFullPath().toString());
 		monitor.subTask(message);
 		UpdateSiteErrorReporter reporter = new UpdateSiteErrorReporter(file);
 		ValidatingSAXParser.parse(file, reporter);
 		if (reporter.getErrorCount() == 0) {
 			reporter.validateContent(monitor);
 		}
-		monitor.subTask(PDE.getResourceString(BUILDERS_UPDATING));
+		monitor.subTask(PDEMessages.Builders_updating);
 		monitor.done();
 	}
 	

@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.builders;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.core.*;
@@ -148,9 +149,7 @@ public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {
 	
 	protected void validatePluginID(Element element, Attr attr) {
         if (!IdUtil.isValidPluginId(attr.getValue())) {
-            String message = PDE.getFormattedMessage(
-                    "Builders.Manifest.pluginId-value", //$NON-NLS-1$
-                    attr.getValue());
+            String message = NLS.bind(PDEMessages.Builders_Manifest_pluginId_value, attr.getValue());
             report(message, getLine(element, attr.getName()),
                     CompilerFlags.ERROR);
             return;
@@ -162,7 +161,7 @@ public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {
 		if (severity != CompilerFlags.IGNORE) {
 			IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(attr.getValue());
 			if (model == null || !model.isEnabled()) {
-				report(PDE.getFormattedMessage("Builders.Manifest.dependency", attr.getValue()),  //$NON-NLS-1$
+				report(NLS.bind(PDEMessages.Builders_Manifest_dependency, attr.getValue()),  //$NON-NLS-1$
 						getLine(element, attr.getName()),
 						severity);
 			}
@@ -170,8 +169,7 @@ public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {
 	}
 	
 	private void reportDeprecatedElement(Element element, int severity) {
-		report(PDE.getFormattedMessage("Builders.Manifest.deprecated-3.0", //$NON-NLS-1$
-				element.getNodeName()), getLine(element), severity);
+		report(NLS.bind(PDEMessages.Builders_Manifest_deprecated_3_0, element.getNodeName()), getLine(element), severity);
 	}
 
 }

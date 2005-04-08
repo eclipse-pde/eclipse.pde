@@ -13,7 +13,6 @@ package org.eclipse.pde.internal;
 import java.io.*;
 import java.lang.reflect.*;
 import java.net.*;
-import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -41,9 +40,6 @@ public class PDE extends Plugin {
 	
 	private BundleContext fBundleContext;
 	
-	// Resource bundle
-	private ResourceBundle fResourceBundle;
-
 	public PDE() {
 		fInstance = this;
 	}
@@ -65,20 +61,9 @@ public class PDE extends Plugin {
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
 		fInstance = null;
-		fResourceBundle = null;
 		fBundleContext = null;
 	}
 
-	public ResourceBundle getResourceBundle() {
-		try {
-			if (fResourceBundle == null)
-				fResourceBundle = ResourceBundle.getBundle("org.eclipse.pde.internal.pderesources"); //$NON-NLS-1$
-		} catch (MissingResourceException x) {
-			fResourceBundle = null;
-		}
-		return fResourceBundle;
-	}
-	
 	public URL getInstallURL() {
 		try {
 			return Platform.resolve(getDefault().getBundle().getEntry("/")); //$NON-NLS-1$
@@ -118,29 +103,10 @@ public class PDE extends Plugin {
 		return fInstance;
 	}
 
-	public static String getFormattedMessage(String key, String[] args) {
-		String text = getResourceString(key);
-		return java.text.MessageFormat.format(text, args);
-	}
-	
-	public static String getFormattedMessage(String key, String arg) {
-		String text = getResourceString(key);
-		return java.text.MessageFormat.format(text, new Object[] { arg });
-	}
-	
 	public static String getPluginId() {
 		return getDefault().getBundle().getSymbolicName();
 	}
 	
-	public static String getResourceString(String key) {
-		ResourceBundle bundle = getDefault().getResourceBundle();
-		try {
-			return (bundle != null) ? bundle.getString(key) : key;
-		} catch (MissingResourceException e) {
-			return key;
-		}
-	}
-
 	public static IWorkspace getWorkspace() {
 		return ResourcesPlugin.getWorkspace();
 	}

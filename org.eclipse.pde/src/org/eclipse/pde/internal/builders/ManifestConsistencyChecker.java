@@ -14,14 +14,12 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.core.*;
 import org.osgi.framework.*;
 
 public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
-	public static final String BUILDERS_VERIFYING = "Builders.verifying"; //$NON-NLS-1$
-	public static final String BUILDERS_UPDATING = "Builders.updating"; //$NON-NLS-1$
-
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
 			throws CoreException {
 		
@@ -54,13 +52,13 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 	private void checkManifestFileOnly(IFile file, IProgressMonitor monitor) {
 		if (monitor.isCanceled())
 			return;
-		String message = PDE.getFormattedMessage(BUILDERS_VERIFYING, file.getFullPath().toString());
+		String message = NLS.bind(PDEMessages.Builders_verifying, file.getFullPath().toString());
 		monitor.subTask(message);
 
 		BundleErrorReporter reporter = new BundleErrorReporter(file);
 		if (reporter != null) {
 			reporter.validateContent(monitor);
-			monitor.subTask(PDE.getResourceString(BUILDERS_UPDATING));
+			monitor.subTask(PDEMessages.Builders_updating);
 		}
 		monitor.done();
 	}
@@ -68,7 +66,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 	private void checkFile(IFile file, IProgressMonitor monitor) {
 		if (monitor.isCanceled())
 			return;
-		String message = PDE.getFormattedMessage(BUILDERS_VERIFYING, file.getFullPath().toString());
+		String message = NLS.bind(PDEMessages.Builders_verifying, file.getFullPath().toString());
 		monitor.subTask(message);
 
 		IFile bundleManifest = file.getProject().getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
@@ -85,11 +83,11 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		if (reporter != null) {
 			ValidatingSAXParser.parse(file, reporter);
 			reporter.validateContent(monitor);
-			monitor.subTask(PDE.getResourceString(BUILDERS_UPDATING));
+			monitor.subTask(PDEMessages.Builders_updating);
 		}
 		if (bundleReporter != null) {
 			bundleReporter.validateContent(monitor);
-			monitor.subTask(PDE.getResourceString(BUILDERS_UPDATING));
+			monitor.subTask(PDEMessages.Builders_updating);
 		}
 		monitor.done();
 	}

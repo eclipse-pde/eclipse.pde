@@ -14,6 +14,7 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.*;
 import org.w3c.dom.*;
 
@@ -132,7 +133,7 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 								if (tagName.endsWith("/")) { //$NON-NLS-1$
 									tagName = getTagName(tagName.substring(0, tagName.length() - 1));
 									if (forbiddenEndTag(tagName)) {
-										report(PDE.getFormattedMessage("Builders.Schema.forbiddenEndTag", tagName), lineNumber, flag); //$NON-NLS-1$
+										report(NLS.bind(PDEMessages.Builders_Schema_forbiddenEndTag, tagName), lineNumber, flag); //$NON-NLS-1$
 										errorReported = true;
 									}
 								} else if (tagName.startsWith("/")) { //$NON-NLS-1$
@@ -152,7 +153,7 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 										}
 									}
 									if (stack.isEmpty() && !found) {
-										report(PDE.getFormattedMessage("Builders.Schema.noMatchingStartTag", tagName), lineNumber, flag); //$NON-NLS-1$
+										report(NLS.bind(PDEMessages.Builders_Schema_noMatchingStartTag, tagName), lineNumber, flag); //$NON-NLS-1$
 										errorReported = true;
 									}
 								} else {
@@ -171,9 +172,7 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 					if (!stack.isEmpty()) {
 						StackEntry entry = (StackEntry)stack.pop();
 						if (!optionalEndTag(entry.tag))
-							report(PDE.getFormattedMessage(
-									"Builders.Schema.noMatchingEndTag", //$NON-NLS-1$
-									entry.tag), entry.line, flag);
+							report(NLS.bind(PDEMessages.Builders_Schema_noMatchingEndTag, entry.tag), entry.line, flag);
 					}
 					stack.clear();
 				}
@@ -220,13 +219,11 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 		Attr use = element.getAttributeNode("use"); //$NON-NLS-1$
 		Attr value = element.getAttributeNode("value"); //$NON-NLS-1$
 		if (use != null && "default".equals(use.getValue()) && value == null) { //$NON-NLS-1$
-			report(PDE.getFormattedMessage(
-					"Builders.Schema.valueRequired", element.getNodeName()),  //$NON-NLS-1$
+			report(NLS.bind(PDEMessages.Builders_Schema_valueRequired, element.getNodeName()),  //$NON-NLS-1$
 					getLine(element),
 					CompilerFlags.ERROR);
 		} else if (use == null && value != null) {
-			report(PDE.getFormattedMessage(
-					"Builders.Schema.valueNotRequired", element.getNodeName()),  //$NON-NLS-1$
+			report(NLS.bind(PDEMessages.Builders_Schema_valueNotRequired, element.getNodeName()),  //$NON-NLS-1$
 					getLine(element),
 					CompilerFlags.ERROR);
 		}

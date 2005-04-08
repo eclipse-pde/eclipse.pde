@@ -15,6 +15,7 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.*;
@@ -22,14 +23,6 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.schema.*;
 
 public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
-	public static final String BUILDERS_SCHEMA_COMPILING =
-		"Builders.Schema.compiling"; //$NON-NLS-1$
-	public static final String BUILDERS_SCHEMA_COMPILING_SCHEMAS =
-		"Builders.Schema.compilingSchemas"; //$NON-NLS-1$
-	public static final String BUILDERS_UPDATING = "Builders.updating"; //$NON-NLS-1$
-	public static final String BUILDERS_SCHEMA_REMOVING =
-		"Builders.Schema.removing"; //$NON-NLS-1$
-
 	class DeltaVisitor implements IResourceDeltaVisitor {
 		private IProgressMonitor monitor;
 		public DeltaVisitor(IProgressMonitor monitor) {
@@ -81,9 +74,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 
 	private void compileFile(IFile file, IProgressMonitor monitor) {
 		
-		String message = PDE.getFormattedMessage(
-				BUILDERS_SCHEMA_COMPILING,
-				file.getFullPath().toString());
+		String message = NLS.bind(PDEMessages.Builders_Schema_compiling, file.getFullPath().toString());
 		monitor.subTask(message);
 		
 		SchemaErrorReporter reporter = new SchemaErrorReporter(file);
@@ -126,7 +117,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 			} catch (IOException e1) {
 			}
 		}
-		monitor.subTask(PDE.getResourceString(BUILDERS_UPDATING));
+		monitor.subTask(PDEMessages.Builders_updating);
 		monitor.done();
 	}
 	
@@ -145,7 +136,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 	}
 
 	private void compileSchemasIn(IContainer container, IProgressMonitor monitor) throws CoreException {
-		monitor.subTask(PDE.getResourceString(BUILDERS_SCHEMA_COMPILING_SCHEMAS));
+		monitor.subTask(PDEMessages.Builders_Schema_compilingSchemas);
 		IResource[] members = container.members();
 		for (int i = 0; i < members.length; i++) {
 			IResource member = members[i];
@@ -192,7 +183,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 	
 	private void removeOutputFile(IFile file, IProgressMonitor monitor) {
 		String outputFileName = getOutputFileName(file);
-		monitor.subTask(PDE.getFormattedMessage(BUILDERS_SCHEMA_REMOVING, outputFileName));
+		monitor.subTask(NLS.bind(PDEMessages.Builders_Schema_removing, outputFileName));
 
 		IWorkspace workspace = file.getWorkspace();
 		IPath path = new Path(outputFileName);

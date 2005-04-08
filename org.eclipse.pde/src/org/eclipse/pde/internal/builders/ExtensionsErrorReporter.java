@@ -15,6 +15,7 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.core.*;
@@ -89,8 +90,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		if (point == null) {
 			int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_UNRESOLVED_EX_POINTS);
 			if (severity != CompilerFlags.IGNORE) {
-				report(PDE.getFormattedMessage(
-					"Builders.Manifest.ex-point", pointID), //$NON-NLS-1$
+				report(NLS.bind(PDEMessages.Builders_Manifest_ex_point, pointID), //$NON-NLS-1$
 					getLine(element, "point"), severity); //$NON-NLS-1$
 			}
 		} else {
@@ -126,7 +126,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		}	
 		if (schemaElement == null && parentSchema != null) {
 			ISchemaAttribute attr = parentSchema.getAttribute(elementName);
-			if (attr != null && attr.getKind() == ISchemaAttribute.JAVA) {
+			if (attr != null && attr.getKind() == IMetaAttribute.JAVA) {
 				if (attr.isDeprecated())
 					reportDeprecatedAttribute(element, element.getAttributeNode("class")); //$NON-NLS-1$
 				validateJavaAttribute(element, element.getAttributeNode("class")); //$NON-NLS-1$				
@@ -156,7 +156,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 
 			ISchemaAttribute[] attrs = complexType.getAttributes();
 			for (int i = 0; i < attrs.length; i++) {
-				if (attrs[i].getKind() == ISchemaAttribute.JAVA)
+				if (attrs[i].getKind() == IMetaAttribute.JAVA)
 					elementSet.add(attrs[i].getName());
 			}
 		}
@@ -191,7 +191,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 			ISchemaAttribute attInfo = attInfos[i];
 			if (attInfo.getUse() == ISchemaAttribute.REQUIRED) {
 				boolean found = element.getAttributeNode(attInfo.getName()) != null;
-				if (!found && attInfo.getKind() == ISchemaAttribute.JAVA) {
+				if (!found && attInfo.getKind() == IMetaAttribute.JAVA) {
 					NodeList children = element.getChildNodes();
 					for (int j = 0; j < children.getLength(); j++) {
 						if (attInfo.getName().equals(children.item(j).getNodeName())) {
@@ -236,9 +236,9 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		}
 		
 		int kind = attInfo.getKind();
-		if (kind == ISchemaAttribute.JAVA) {
+		if (kind == IMetaAttribute.JAVA) {
 			validateJavaAttribute(element, attr);
-		} else if (kind == ISchemaAttribute.RESOURCE) {
+		} else if (kind == IMetaAttribute.RESOURCE) {
 			validateResourceAttribute(element, attr);
 		} else if (type.getName().equals("boolean")) { //$NON-NLS-1$
 			validateBoolean(element, attr);
@@ -255,9 +255,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		if (assertAttributeDefined(element, "id", CompilerFlags.ERROR)) { //$NON-NLS-1$
             Attr idAttr = element.getAttributeNode("id"); //$NON-NLS-1$
             if (!IdUtil.isValidExtensionPointId(idAttr.getValue())) {
-                String message = PDE.getFormattedMessage(
-                        "Builders.Manifest.extensionPointId-value", //$NON-NLS-1$
-                        idAttr.getValue());
+                String message = NLS.bind(PDEMessages.Builders_Manifest_extensionPointId_value, idAttr.getValue());
                 report(message, getLine(element, idAttr.getName()),
                         CompilerFlags.ERROR);
             }
@@ -292,11 +290,11 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		String value = attr.getValue();
 		if (shouldTranslate) {
 			if (!value.startsWith("%")) { //$NON-NLS-1$
-				report(PDE.getFormattedMessage("Builders.Manifest.non-ext-attribute", attr.getName()), getLine(element, attr.getName()), severity); //$NON-NLS-1$
+				report(NLS.bind(PDEMessages.Builders_Manifest_non_ext_attribute, attr.getName()), getLine(element, attr.getName()), severity); //$NON-NLS-1$
 			} else if (fModel != null && fModel instanceof AbstractModel) {
 				NLResourceHelper helper = ((AbstractModel)fModel).getNLResourceHelper();
 				if (helper == null || !helper.resourceExists(value)) {
-					report(PDE.getFormattedMessage("Builders.Manifest.key-not-found", value.substring(1)), getLine(element, attr.getName()), severity); //$NON-NLS-1$
+					report(NLS.bind(PDEMessages.Builders_Manifest_key_not_found, value.substring(1)), getLine(element, attr.getName()), severity); //$NON-NLS-1$
 				}
 			}
 		} 
@@ -310,11 +308,11 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		if (value == null)
 			return;
 		if (!value.startsWith("%")) { //$NON-NLS-1$
-			report(PDE.getFormattedMessage("Builders.Manifest.non-ext-element", element.getNodeName()), getLine(element), severity); //$NON-NLS-1$
+			report(NLS.bind(PDEMessages.Builders_Manifest_non_ext_element, element.getNodeName()), getLine(element), severity); //$NON-NLS-1$
 		} else if (fModel != null && fModel instanceof AbstractModel) {
 			NLResourceHelper helper = ((AbstractModel)fModel).getNLResourceHelper();
 			if (helper == null || !helper.resourceExists(value)) {
-				report(PDE.getFormattedMessage("Builders.Manifest.key-not-found", value.substring(1)), getLine(element), severity); //$NON-NLS-1$
+				report(NLS.bind(PDEMessages.Builders_Manifest_key_not_found, value.substring(1)), getLine(element), severity); //$NON-NLS-1$
 			}
 		}
 	}
@@ -322,8 +320,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 	protected void validateResourceAttribute(Element element, Attr attr) {
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_UNKNOWN_RESOURCE);
 		if (severity != CompilerFlags.IGNORE && !resourceExists(attr.getValue())) {
-			report(PDE.getFormattedMessage(
-							"Builders.Manifest.resource", new String[] { attr.getValue(), attr.getName() }),  //$NON-NLS-1$
+			report(NLS.bind(PDEMessages.Builders_Manifest_resource, (new String[] { attr.getValue(), attr.getName() })),  //$NON-NLS-1$
 							getLine(element,
 							attr.getName()), 
 							severity);
@@ -390,8 +387,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 
 			IType javaType = javaProject.findType(value);
 			if (javaType == null) {
-				report(PDE.getFormattedMessage("Builders.Manifest.class", //$NON-NLS-1$
-						new String[] { value, attr.getName() }), getLine(
+				report(NLS.bind(PDEMessages.Builders_Manifest_class, (new String[] { value, attr.getName() })), getLine(
 						element, attr.getName()), severity);
 			} 
 		} catch (JavaModelException e) {
@@ -414,24 +410,21 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 	}
 	
 	protected void reportUnusedAttribute(Element element, String attName, int severity) {
-		String message = PDE.getFormattedMessage("Builders.Manifest.unused-attribute", //$NON-NLS-1$
-				attName);
+		String message = NLS.bind(PDEMessages.Builders_Manifest_unused_attribute, attName);
 		report(message, getLine(element, attName), severity);
 	}
 	
 	protected void reportUnusedElement(Element element, int severity) {
 		Node parent = element.getParentNode();
-			report(PDE.getFormattedMessage(
-					"Builders.Manifest.unused-element", new String[] { //$NON-NLS-1$
-					element.getNodeName(), parent.getNodeName() }),
+			report(NLS.bind(PDEMessages.Builders_Manifest_unused_element, (new String[] { //$NON-NLS-1$
+			element.getNodeName(), parent.getNodeName() })),
 					getLine(element), severity);
 	}
 	
 	protected void reportDeprecatedElement(Element element) {
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_DEPRECATED);
 		if (severity != CompilerFlags.IGNORE) {
-			report(PDE.getFormattedMessage("Builders.Manifest.deprecated-element", //$NON-NLS-1$
-					element.getNodeName()), getLine(element), severity);
+			report(NLS.bind(PDEMessages.Builders_Manifest_deprecated_element, element.getNodeName()), getLine(element), severity);
 		}	
 	}
 
