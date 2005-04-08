@@ -332,6 +332,10 @@ public class PDEState {
 		return PDECore.getDefault().acquirePlatform().getStateHelper();
 	}
 	
+	private void releasePlatform() {
+		PDECore.getDefault().releasePlatform();
+	}
+	
 	private BundleDescription findActiveBundle(String symbolicName) {
 		BundleDescription[] bundles = fState.getBundles(symbolicName);
 		for (int i = 0; i < bundles.length; i++) {
@@ -370,7 +374,8 @@ public class PDEState {
 			}
 		}
 		if (errors.getChildren().length > 0)
-			PDECore.log(errors);		
+			PDECore.log(errors);
+		releasePlatform();
 	}
 	
 	private String getResolutionFailureMessage(VersionConstraint unsatisfied) {
