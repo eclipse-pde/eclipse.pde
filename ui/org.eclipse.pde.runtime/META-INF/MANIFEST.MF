@@ -10,3 +10,6 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui,
  org.eclipse.ui.views
 Eclipse-AutoStart: true
+Export-Package: org.eclipse.pde.internal.runtime;x-internal:=true,
+ org.eclipse.pde.internal.runtime.logview;x-internal:=true,
+ org.eclipse.pde.internal.runtime.registry;x-internal:=true
