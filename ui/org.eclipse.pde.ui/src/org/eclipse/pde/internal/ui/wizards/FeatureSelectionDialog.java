@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.wizards;
 
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
@@ -26,9 +27,8 @@ public class FeatureSelectionDialog extends ElementListSelectionDialog {
 	public FeatureSelectionDialog(Shell parent, IFeatureModel[] models,
 			boolean multiSelect) {
 		super(parent, PDEPlugin.getDefault().getLabelProvider());
-		setTitle(PDEPlugin.getResourceString("FeatureSelectionDialog.title")); //$NON-NLS-1$
-		setMessage(PDEPlugin
-				.getResourceString("FeatureSelectionDialog.message")); //$NON-NLS-1$
+		setTitle(PDEUIMessages.FeatureSelectionDialog_title); //$NON-NLS-1$
+		setMessage(PDEUIMessages.FeatureSelectionDialog_message); //$NON-NLS-1$
 		setElements(models);
 		setMultipleSelection(multiSelect);
 		PDEPlugin.getDefault().getLabelProvider().connect(this);

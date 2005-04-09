@@ -20,6 +20,7 @@ import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.IContextPart;
 import org.eclipse.pde.internal.ui.editor.plugin.*;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
@@ -133,7 +134,7 @@ public class ClassAttributeRow extends ReferenceAttributeRow {
 						IJavaElementSearchConstants.CONSIDER_ALL_TYPES, 
                         false,
 						""); //$NON-NLS-1$
-				dialog.setTitle(PDEPlugin.getResourceString("ClassAttributeRow.dialogTitle")); //$NON-NLS-1$
+				dialog.setTitle(PDEUIMessages.ClassAttributeRow_dialogTitle); //$NON-NLS-1$
 				if (dialog.open() == SelectionDialog.OK) {
 					IType type = (IType) dialog.getResult()[0];
 					text.setText(type.getFullyQualifiedName('.'));

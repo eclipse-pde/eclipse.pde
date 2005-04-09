@@ -106,8 +106,8 @@ public class RequiredPluginsContainerPage
 	 */
 	public RequiredPluginsContainerPage() {
 		super("requiredPluginsContainerPage"); //$NON-NLS-1$
-		setTitle(PDEPlugin.getResourceString("RequiredPluginsContainerPage.title")); //$NON-NLS-1$
-		setDescription(PDEPlugin.getResourceString("RequiredPluginsContainerPage.desc")); //$NON-NLS-1$
+		setTitle(PDEUIMessages.RequiredPluginsContainerPage_title); //$NON-NLS-1$
+		setDescription(PDEUIMessages.RequiredPluginsContainerPage_desc); //$NON-NLS-1$
 		projectImage =
 			PlatformUI.getWorkbench().getSharedImages().getImage(
 				IDE.SharedImages.IMG_OBJ_PROJECT);
@@ -132,7 +132,7 @@ public class RequiredPluginsContainerPage
 		layout.numColumns = 2;
 		container.setLayout(layout);
 		Label label = new Label(container, SWT.NULL);
-		label.setText(PDEPlugin.getResourceString("RequiredPluginsContainerPage.label")); //$NON-NLS-1$
+		label.setText(PDEUIMessages.RequiredPluginsContainerPage_label); //$NON-NLS-1$
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -159,7 +159,7 @@ public class RequiredPluginsContainerPage
 		gd.heightHint = 300;
 		viewer.getTable().setLayoutData(gd);
 		attachSourceButton = new Button(container, SWT.PUSH);
-		attachSourceButton.setText(PDEPlugin.getResourceString("RequiredPluginsContainerPage.attachSource")); //$NON-NLS-1$
+		attachSourceButton.setText(PDEUIMessages.RequiredPluginsContainerPage_attachSource); //$NON-NLS-1$
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		attachSourceButton.setLayoutData(gd);
 		SWTUtil.setButtonDimensionHint(attachSourceButton);

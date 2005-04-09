@@ -16,6 +16,7 @@ import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.swt.SWT;
@@ -78,7 +79,7 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 			createReexportButton(toolkit, container);
 		}
 		
-		fVersionText = new FormEntry(container, toolkit, PDEPlugin.getResourceString("ManifestEditor.MatchSection.version"), null, false);
+		fVersionText = new FormEntry(container, toolkit, PDEUIMessages.ManifestEditor_MatchSection_version, null, false);
 		fVersionText.setFormEntryListener(new FormEntryAdapter(this, getPage().getEditor().getEditorSite().getActionBars()) {
 			public void textValueChanged(FormEntry text) {
 				applyVersion(text.getValue());
@@ -93,16 +94,16 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 			}
 		});
 		
-		Label matchLabel = toolkit.createLabel(container, PDEPlugin.getResourceString(FragmentGeneralInfoSection.KEY_MATCH));
+		Label matchLabel = toolkit.createLabel(container, PDEUIMessages.ManifestEditor_PluginSpecSection_versionMatch);
 		matchLabel.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
 
 		fMatchCombo = new ComboPart();
 		fMatchCombo.createControl(container, toolkit, SWT.READ_ONLY);
 		fMatchCombo.add("");
-		fMatchCombo.add(PDEPlugin.getResourceString(FragmentGeneralInfoSection.KEY_MATCH_EQUIVALENT));
-		fMatchCombo.add(PDEPlugin.getResourceString(FragmentGeneralInfoSection.KEY_MATCH_COMPATIBLE));
-		fMatchCombo.add(PDEPlugin.getResourceString(FragmentGeneralInfoSection.KEY_MATCH_PERFECT));
-		fMatchCombo.add(PDEPlugin.getResourceString(FragmentGeneralInfoSection.KEY_MATCH_GREATER));
+		fMatchCombo.add(PDEUIMessages.ManifestEditor_MatchSection_equivalent);
+		fMatchCombo.add(PDEUIMessages.ManifestEditor_MatchSection_compatible);
+		fMatchCombo.add(PDEUIMessages.ManifestEditor_MatchSection_perfect);
+		fMatchCombo.add(PDEUIMessages.ManifestEditor_MatchSection_greater);
 		fMatchCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fMatchCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -116,13 +117,13 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 		update((IPluginReference) null);
 		
 		section.setClient(container);		
-		section.setText(PDEPlugin.getResourceString("MatchSection.title")); //$NON-NLS-1$
-		section.setDescription(PDEPlugin.getResourceString("MatchSection.desc")); //$NON-NLS-1$
+		section.setText(PDEUIMessages.MatchSection_title); //$NON-NLS-1$
+		section.setDescription(PDEUIMessages.MatchSection_desc); //$NON-NLS-1$
 		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL|GridData.VERTICAL_ALIGN_BEGINNING));
 	}
 	
 	private void createReexportButton(FormToolkit toolkit, Composite container) {
-		fReexportButton = toolkit.createButton(container, PDEPlugin.getResourceString("ManifestEditor.MatchSection.reexport"), SWT.CHECK);
+		fReexportButton = toolkit.createButton(container, PDEUIMessages.ManifestEditor_MatchSection_reexport, SWT.CHECK);
 		fReexportButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (!fBlockChanges && fCurrentImport instanceof IPluginImport) {
@@ -141,7 +142,7 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 	}
 	
 	private void createOptionalButton(FormToolkit toolkit, Composite container) {
-		fOptionalButton = toolkit.createButton(container, PDEPlugin.getResourceString("ManifestEditor.MatchSection.optional"), SWT.CHECK);
+		fOptionalButton = toolkit.createButton(container, PDEUIMessages.ManifestEditor_MatchSection_optional, SWT.CHECK);
 		fOptionalButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (fBlockChanges)

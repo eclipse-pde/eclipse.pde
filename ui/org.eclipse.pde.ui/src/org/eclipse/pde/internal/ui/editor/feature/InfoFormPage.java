@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.ui.editor.feature;
 
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.text.*;
 import org.eclipse.pde.internal.ui.editor.text.IColorManager;
@@ -27,7 +26,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class InfoFormPage extends PDEFormPage {
 	public static final String PAGE_ID = "info";	 //$NON-NLS-1$
-	private static final String KEY_TITLE = "FeatureEditor.InfoPage.heading"; //$NON-NLS-1$
 	private IColorManager colorManager = ColorManager.getDefault();
 	private InfoSection infoSection;
 /**
@@ -59,6 +57,6 @@ public class InfoFormPage extends PDEFormPage {
 		super.dispose();
 	}
 	public void initialize() {
-		getManagedForm().getForm().setText(PDEPlugin.getResourceString(KEY_TITLE));
+		getManagedForm().getForm().setText(PDEUIMessages.FeatureEditor_InfoPage_heading);
 	}
 }

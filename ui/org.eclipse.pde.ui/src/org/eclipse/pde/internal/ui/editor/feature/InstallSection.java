@@ -15,6 +15,7 @@ import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
@@ -35,16 +36,6 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 public class InstallSection extends PDESection {
-	public static final String SECTION_TITLE = "FeatureEditor.InstallSection.title"; //$NON-NLS-1$
-
-	public static final String SECTION_DESC = "FeatureEditor.InstallSection.desc"; //$NON-NLS-1$
-
-	public static final String SECTION_COLOCATION_DESC = "FeatureEditor.InstallSection.colocation.desc"; //$NON-NLS-1$
-
-	public static final String SECTION_EXCLUSIVE = "FeatureEditor.InstallSection.exclusive"; //$NON-NLS-1$
-
-	public static final String SECTION_COLOCATION = "FeatureEditor.InstallSection.colocation"; //$NON-NLS-1$
-
 	private Button fExclusiveButton;
 
 	private FormEntry fColocationText;
@@ -53,8 +44,8 @@ public class InstallSection extends PDESection {
 
 	public InstallSection(FeatureAdvancedPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION);
-		getSection().setText(PDEPlugin.getResourceString(SECTION_TITLE));
-		getSection().setDescription(PDEPlugin.getResourceString(SECTION_DESC));
+		getSection().setText(PDEUIMessages.FeatureEditor_InstallSection_title);
+		getSection().setDescription(PDEUIMessages.FeatureEditor_InstallSection_desc);
 		createClient(getSection(), page.getManagedForm().getToolkit());
 	}
 
@@ -87,8 +78,7 @@ public class InstallSection extends PDESection {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		final IFeature feature = model.getFeature();
 
-		fExclusiveButton = toolkit.createButton(container, PDEPlugin
-				.getResourceString(SECTION_EXCLUSIVE), SWT.CHECK);
+		fExclusiveButton = toolkit.createButton(container, PDEUIMessages.FeatureEditor_InstallSection_exclusive, SWT.CHECK);
 		TableWrapData gd = new TableWrapData(TableWrapData.FILL);
 		gd.colspan = 2;
 		fExclusiveButton.setLayoutData(gd);
@@ -104,13 +94,12 @@ public class InstallSection extends PDESection {
 		});
 
 		Label colocationDescLabel = toolkit.createLabel(container,
-				PDEPlugin.getResourceString(SECTION_COLOCATION_DESC), SWT.WRAP);
+				PDEUIMessages.FeatureEditor_InstallSection_colocation_desc, SWT.WRAP);
 		gd = new TableWrapData(TableWrapData.FILL);
 		gd.colspan = 2;
 		colocationDescLabel.setLayoutData(gd);
 
-		fColocationText = new FormEntry(container, toolkit, PDEPlugin
-				.getResourceString(SECTION_COLOCATION), null, false);
+		fColocationText = new FormEntry(container, toolkit, PDEUIMessages.FeatureEditor_InstallSection_colocation, null, false);
 		fColocationText.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
 				IFeatureModel model = (IFeatureModel) getPage().getModel();

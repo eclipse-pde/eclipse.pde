@@ -16,8 +16,6 @@ import org.eclipse.pde.ui.*;
 import org.eclipse.pde.ui.templates.*;
 
 public class MultiPageEditorNewWizard extends NewPluginTemplateWizard {
-	private static final String KEY_WTITLE = "MultiPageEditorNewWizard.wtitle"; //$NON-NLS-1$
-
 	/**
 	 * Constructor for MultiPageEditorNewWizard.
 	 */
@@ -26,7 +24,7 @@ public class MultiPageEditorNewWizard extends NewPluginTemplateWizard {
 	}
 	public void init(IFieldData data) {
 		super.init(data);
-		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
+		setWindowTitle(PDEUIMessages.MultiPageEditorNewWizard_wtitle);
 	}
 
 	/*

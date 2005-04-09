@@ -26,6 +26,7 @@ import org.eclipse.pde.internal.core.isite.ISiteFeature;
 import org.eclipse.pde.internal.core.isite.ISiteModel;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -39,19 +40,7 @@ public class SynchronizePropertiesWizardPage extends WizardPage {
 
 	public static final int ALL_FEATURES = 2;
 
-	public static final String KEY_GROUP = "SynchronizePropertiesWizardPage.group"; //$NON-NLS-1$
-
-	public static final String KEY_SYNCHRONIZING = "SynchronizePropertiesWizardPage.synchronizing"; //$NON-NLS-1$
-
-	public static final String KEY_USE_ALL_FEATURES = "SynchronizePropertiesWizardPage.allFeatures"; //$NON-NLS-1$
-
-	public static final String KEY_USE_ONE_FEATURE = "SynchronizePropertiesWizardPage.oneFeature"; //$NON-NLS-1$
-
 	public static final int ONE_FEATURE = 1;
-
-	public static final String PAGE_DESC = "SynchronizePropertiesWizardPage.desc"; //$NON-NLS-1$
-
-	public static final String PAGE_TITLE = "SynchronizePropertiesWizardPage.title"; //$NON-NLS-1$
 
 	private static final String PREFIX = PDEPlugin.getPluginId()
 			+ ".synchronizeFeatueEnvironment."; //$NON-NLS-1$
@@ -74,8 +63,8 @@ public class SynchronizePropertiesWizardPage extends WizardPage {
 	public SynchronizePropertiesWizardPage(ISiteFeature siteFeature,
 			ISiteModel model) {
 		super("featureSelection"); //$NON-NLS-1$
-		setTitle(PDEPlugin.getResourceString(PAGE_TITLE));
-		setDescription(PDEPlugin.getResourceString(PAGE_DESC));
+		setTitle(PDEUIMessages.SynchronizePropertiesWizardPage_title);
+		setDescription(PDEUIMessages.SynchronizePropertiesWizardPage_desc);
 		fSiteFeature = siteFeature != null && getFeature(siteFeature) != null ? siteFeature
 				: null;
 		fModel = model;
@@ -91,17 +80,15 @@ public class SynchronizePropertiesWizardPage extends WizardPage {
 		layout = new GridLayout();
 		group.setLayout(layout);
 		group.setLayoutData(gd);
-		group.setText(PDEPlugin.getResourceString(KEY_GROUP));
+		group.setText(PDEUIMessages.SynchronizePropertiesWizardPage_group);
 
 		fOneFeatureButton = new Button(group, SWT.RADIO);
-		fOneFeatureButton.setText(PDEPlugin
-				.getResourceString(KEY_USE_ONE_FEATURE));
+		fOneFeatureButton.setText(PDEUIMessages.SynchronizePropertiesWizardPage_oneFeature);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fOneFeatureButton.setLayoutData(gd);
 
 		fAllFeaturesButton = new Button(group, SWT.RADIO);
-		fAllFeaturesButton.setText(PDEPlugin
-				.getResourceString(KEY_USE_ALL_FEATURES));
+		fAllFeaturesButton.setText(PDEUIMessages.SynchronizePropertiesWizardPage_allFeatures);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fAllFeaturesButton.setLayoutData(gd);
 
@@ -229,7 +216,7 @@ public class SynchronizePropertiesWizardPage extends WizardPage {
 			siteFeatures = fModel.getSite().getFeatures();
 		}
 		int size = siteFeatures.length;
-		monitor.beginTask(PDEPlugin.getResourceString(KEY_SYNCHRONIZING), size);
+		monitor.beginTask(PDEUIMessages.SynchronizePropertiesWizardPage_synchronizing, size);
 		importEnvironment(siteFeatures, monitor);
 	}
 

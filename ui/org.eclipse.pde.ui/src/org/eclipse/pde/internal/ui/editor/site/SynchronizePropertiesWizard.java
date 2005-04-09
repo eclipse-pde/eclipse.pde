@@ -15,10 +15,9 @@ import org.eclipse.pde.internal.core.isite.ISiteFeature;
 import org.eclipse.pde.internal.core.isite.ISiteModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public class SynchronizePropertiesWizard extends Wizard {
-	private static final String KEY_WTITLE = "SynchronizePropertiesWizard.wtitle"; //$NON-NLS-1$
-
 	private SynchronizePropertiesWizardPage fMainPage;
 
 	private ISiteModel fModel;
@@ -31,7 +30,7 @@ public class SynchronizePropertiesWizard extends Wizard {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWFTRPRJ_WIZ);
 		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
 		setNeedsProgressMonitor(true);
-		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
+		setWindowTitle(PDEUIMessages.SynchronizePropertiesWizard_wtitle);
 		fSiteFeature = siteFeature;
 		fModel = model;
 	}

@@ -18,6 +18,7 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.widgets.Shell;
@@ -27,8 +28,6 @@ import org.eclipse.pde.internal.ui.wizards.imports.FeatureImportOperation.IRepla
 public class FeatureImportWizard extends Wizard implements IImportWizard {
 
 	private static final String STORE_SECTION = "FeatureImportWizard"; //$NON-NLS-1$
-	private static final String KEY_MESSAGES_TITLE = "FeatureImportWizard.messages.title"; //$NON-NLS-1$
-
 	private FeatureImportWizardFirstPage fPage1;
 	private FeatureImportWizardDetailedPage fPage2;
 
@@ -36,7 +35,7 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 		IDialogSettings masterSettings = PDEPlugin.getDefault().getDialogSettings();
 		setDialogSettings(getSettingsSection(masterSettings));
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_FEATURE_IMPORT_WIZ);
-		setWindowTitle(PDEPlugin.getResourceString("FeatureImportWizard.title")); //$NON-NLS-1$
+		setWindowTitle(PDEUIMessages.FeatureImportWizard_title); //$NON-NLS-1$
 	}
 
 	/*
@@ -132,7 +131,7 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 		public ReplaceDialog(Shell parentShell, String dialogMessage) {
 			super(
 				parentShell,
-				PDEPlugin.getResourceString(KEY_MESSAGES_TITLE),
+				PDEUIMessages.FeatureImportWizard_messages_title,
 				null,
 				dialogMessage,
 				MessageDialog.QUESTION,
@@ -140,7 +139,7 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 					IDialogConstants.YES_LABEL,
 					IDialogConstants.YES_TO_ALL_LABEL,
 					IDialogConstants.NO_LABEL,
-					PDEPlugin.getResourceString("FeatureImportWizard.noToAll"), //$NON-NLS-1$
+					PDEUIMessages.FeatureImportWizard_noToAll, //$NON-NLS-1$
 					IDialogConstants.CANCEL_LABEL },
 				0);
 		}
@@ -167,9 +166,7 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 			}
 
 			final String message =
-				PDEPlugin.getFormattedMessage(
-					"FeatureImportWizard.messages.exists", //$NON-NLS-1$
-					project.getName());
+				NLS.bind(PDEUIMessages.FeatureImportWizard_messages_exists, project.getName());
 			final int[] result = { IReplaceQuery.CANCEL };
 			shell.getDisplay().syncExec(new Runnable() {
 				public void run() {

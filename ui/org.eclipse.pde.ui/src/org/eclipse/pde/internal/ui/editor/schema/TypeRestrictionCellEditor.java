@@ -14,14 +14,12 @@ import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 
 public class TypeRestrictionCellEditor extends DialogCellEditor {
 	private Label label;
-	private static final String KEY_TYPE_RESTRICTION_TITLE = "RestrictionDialog.wtitle"; //$NON-NLS-1$
-
-protected TypeRestrictionCellEditor(Composite parent) {
+	protected TypeRestrictionCellEditor(Composite parent) {
 	super(parent);
 }
 protected Control createContents(Composite cell) {
@@ -38,7 +36,7 @@ protected Object openDialogBox(Control cellEditorWindow) {
 			(ISchemaRestriction) value);
 	dialog.create();
 	SWTUtil.setDialogSize(dialog, 300, 350);
-	dialog.getShell().setText(PDEPlugin.getResourceString(KEY_TYPE_RESTRICTION_TITLE));
+	dialog.getShell().setText(PDEUIMessages.RestrictionDialog_wtitle);
 	int result = dialog.open();
 	if (result == TypeRestrictionDialog.OK) {
 		value = dialog.getValue();

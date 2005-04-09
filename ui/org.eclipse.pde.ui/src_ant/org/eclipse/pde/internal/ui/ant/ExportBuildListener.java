@@ -15,7 +15,7 @@ import java.io.PrintWriter;
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildListener;
 import org.apache.tools.ant.Project;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.exports.*;
 
 public class ExportBuildListener implements BuildListener {
@@ -66,19 +66,19 @@ public class ExportBuildListener implements BuildListener {
 		if (writer != null && event.getPriority() == Project.MSG_ERR) {
 			if (event.getMessage() != null)
 				writer.println(
-					PDEPlugin.getResourceString("ExportWizard.build.error.error")
+					PDEUIMessages.ExportBuildListener_error_error
 						+ " "
 						+ event.getMessage());
 			if (event.getProject() != null && event.getProject().getName() != null)
 				writer.println(
 					"\t"
-						+ PDEPlugin.getResourceString("ExportWizard.build.error.project")
+						+ PDEUIMessages.ExportBuildListener_error_project
 						+ " "
 						+ event.getProject().getName());
 			if (event.getTarget() != null && event.getTarget().getName() != null)
 				writer.println(
 					"\t"
-						+ PDEPlugin.getResourceString("ExportWizard.build.error.target")
+						+ PDEUIMessages.ExportBuildListener_error_target
 						+ " "
 						+ event.getTarget().getName());
 			if (event.getException() != null

@@ -13,7 +13,7 @@ package org.eclipse.pde.internal.ui.preferences;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
@@ -30,10 +30,9 @@ public class CompilersPreferencePage extends PreferencePage implements
 	 */
 	public CompilersPreferencePage() {
 		super();
-		setDescription(PDEPlugin
-				.getResourceString("CompilersPreferencePage.desc")); //$NON-NLS-1$
+		setDescription(PDEUIMessages.CompilersPreferencePage_desc); //$NON-NLS-1$
 		// only used when page is shown programatically
-		setTitle(PDEPlugin.getResourceString("CompilersPreferencePage.title")); //$NON-NLS-1$
+		setTitle(PDEUIMessages.CompilersPreferencePage_title); //$NON-NLS-1$
 
 		configurationBlock = new CompilersConfigurationBlock(null);
 	}

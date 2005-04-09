@@ -55,8 +55,7 @@ public class AddLibraryDialog extends SelectionStatusDialog {
 					IStatus.ERROR,
 					PDEPlugin.getPluginId(),
 					IStatus.ERROR,
-					PDEPlugin.getResourceString(
-						"BuildEditor.RuntimeInfoSection.duplicateLibrary"), //$NON-NLS-1$
+					PDEUIMessages.BuildEditor_RuntimeInfoSection_duplicateLibrary, //$NON-NLS-1$
 					null);
 			}
 			return new Status(
@@ -121,7 +120,7 @@ public class AddLibraryDialog extends SelectionStatusDialog {
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		Label label = new Label(container, SWT.NULL);
-		label.setText(PDEPlugin.getResourceString("BuildEditor.AddLibraryDialog.label")); //$NON-NLS-1$
+		label.setText(PDEUIMessages.BuildEditor_AddLibraryDialog_label); //$NON-NLS-1$
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		text = new Text(container, SWT.SINGLE|SWT.BORDER);

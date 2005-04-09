@@ -22,16 +22,15 @@ import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
 import org.eclipse.pde.internal.core.ifeature.IFeatureData;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.ide.IDE;
 
 public class OpenReferenceAction extends SelectionProviderAction {
-	public static final String LABEL = "Actions.open.label"; //$NON-NLS-1$
-
-public OpenReferenceAction(ISelectionProvider provider) {
-	super(provider, PDEPlugin.getResourceString(LABEL));
+	public OpenReferenceAction(ISelectionProvider provider) {
+	super(provider, PDEUIMessages.Actions_open_label);
 }
 public void run() {
 	IStructuredSelection sel = (IStructuredSelection) getSelection();

@@ -38,7 +38,7 @@ public class ProductExportJob extends FeatureExportJob {
 	private String fRoot;
 
 	public ProductExportJob(IProductModel model, String productRoot, boolean toDirectory, boolean exportSource, String destination, String zipFileName) {
-		super(PDEPlugin.getResourceString("ProductExportJob.jobName")); //$NON-NLS-1$
+		super(PDEUIMessages.ProductExportJob_jobName); //$NON-NLS-1$
 		fProduct = model.getProduct();
 		fExportToDirectory = toDirectory;
 		fExportSource = exportSource;

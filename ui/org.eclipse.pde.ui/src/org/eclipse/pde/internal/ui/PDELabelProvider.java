@@ -29,9 +29,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PlatformUI;
 
 public class PDELabelProvider extends SharedLabelProvider {
-	private static final String KEY_OUT_OF_SYNC =
-		"PluginModelManager.outOfSync"; //$NON-NLS-1$
-
 	public PDELabelProvider() {
 
 	}
@@ -114,7 +111,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 		else
 			text = name;
 		if (pluginBase.getModel() != null && !pluginBase.getModel().isInSync())
-			text += " " + PDEPlugin.getResourceString(KEY_OUT_OF_SYNC); //$NON-NLS-1$
+			text += " " + PDEUIMessages.PluginModelManager_outOfSync; //$NON-NLS-1$
 		return text;
 	}
 	

@@ -33,12 +33,14 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.PDE;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.IFeatureInstallHandler;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
@@ -94,15 +96,14 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 			monitor = new NullProgressMonitor();
 		}
 		monitor.beginTask(
-			PDEPlugin.getResourceString("FeatureImportWizard.operation.creating"), //$NON-NLS-1$
+			PDEUIMessages.FeatureImportWizard_operation_creating, //$NON-NLS-1$
 			fModels.length);
 		try {
 			MultiStatus multiStatus =
 				new MultiStatus(
 					PDEPlugin.getPluginId(),
 					IStatus.OK,
-					PDEPlugin.getResourceString(
-						"FeatureImportWizard.operation.multiProblem"), //$NON-NLS-1$
+					PDEUIMessages.FeatureImportWizard_operation_multiProblem, //$NON-NLS-1$
 					null);
 			for (int i = 0; i < fModels.length; i++) {
 				try {
@@ -136,9 +137,7 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 		}
 		
 		String task =
-			PDEPlugin.getFormattedMessage(
-				"FeatureImportWizard.operation.creating2", //$NON-NLS-1$
-				name);
+			NLS.bind(PDEUIMessages.FeatureImportWizard_operation_creating2, name);
 		monitor.beginTask(task, 8);
 		try {
 			IProject project = fRoot.getProject(name);

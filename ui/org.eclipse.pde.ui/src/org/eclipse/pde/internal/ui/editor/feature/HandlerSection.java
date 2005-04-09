@@ -16,6 +16,7 @@ import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureInstallHandler;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
@@ -30,22 +31,14 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 public class HandlerSection extends PDESection {
-	public static final String SECTION_TITLE = "FeatureEditor.HandlerSection.title"; //$NON-NLS-1$
-
-	public static final String SECTION_DESC = "FeatureEditor.HandlerSection.desc"; //$NON-NLS-1$
-
-	public static final String SECTION_LIBRARY = "FeatureEditor.HandlerSection.library"; //$NON-NLS-1$
-
-	public static final String SECTION_HANDLER = "FeatureEditor.HandlerSection.handler"; //$NON-NLS-1$
-
 	private FormEntry fLibraryText;
 
 	private FormEntry fHandlerText;
 
 	public HandlerSection(FeatureAdvancedPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION);
-		getSection().setText(PDEPlugin.getResourceString(SECTION_TITLE));
-		getSection().setDescription(PDEPlugin.getResourceString(SECTION_DESC));
+		getSection().setText(PDEUIMessages.FeatureEditor_HandlerSection_title);
+		getSection().setDescription(PDEUIMessages.FeatureEditor_HandlerSection_desc);
 		createClient(getSection(), page.getManagedForm().getToolkit());
 	}
 
@@ -79,8 +72,7 @@ public class HandlerSection extends PDESection {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		final IFeature feature = model.getFeature();
 
-		fLibraryText = new FormEntry(container, toolkit, PDEPlugin
-				.getResourceString(SECTION_LIBRARY), null, false);
+		fLibraryText = new FormEntry(container, toolkit, PDEUIMessages.FeatureEditor_HandlerSection_library, null, false);
 		fLibraryText.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
 				try {
@@ -90,8 +82,7 @@ public class HandlerSection extends PDESection {
 				}
 			}
 		});
-		fHandlerText = new FormEntry(container, toolkit, PDEPlugin
-				.getResourceString(SECTION_HANDLER), null, false);
+		fHandlerText = new FormEntry(container, toolkit, PDEUIMessages.FeatureEditor_HandlerSection_handler, null, false);
 		fHandlerText.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
 				try {

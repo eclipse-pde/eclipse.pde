@@ -42,13 +42,13 @@ public class ManifestSourcePage extends XMLSourcePage {
 		
 		public String getText(Object obj) {
 			if (obj == fLibraries)
-				return PDEPlugin.getResourceString("ManifestSourcePage.libraries"); //$NON-NLS-1$
+				return PDEUIMessages.ManifestSourcePage_libraries; //$NON-NLS-1$
 			if (obj == fImports)
-				return PDEPlugin.getResourceString("ManifestSourcePage.dependencies"); //$NON-NLS-1$
+				return PDEUIMessages.ManifestSourcePage_dependencies; //$NON-NLS-1$
 			if (obj == fExtensionPoints)
-				return PDEPlugin.getResourceString("ManifestSourcePage.extensionPoints"); //$NON-NLS-1$
+				return PDEUIMessages.ManifestSourcePage_extensionPoints; //$NON-NLS-1$
 			if (obj == fExtensions)
-				return PDEPlugin.getResourceString("ManifestSourcePage.extensions"); //$NON-NLS-1$
+				return PDEUIMessages.ManifestSourcePage_extensions; //$NON-NLS-1$
 			return fProvider.getText(obj);
 		}
 

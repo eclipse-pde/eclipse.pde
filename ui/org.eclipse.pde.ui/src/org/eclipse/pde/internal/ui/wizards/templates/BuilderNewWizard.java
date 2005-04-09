@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.templates;
 
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.ui.IFieldData;
 import org.eclipse.pde.ui.templates.ITemplateSection;
 import org.eclipse.pde.ui.templates.NewPluginTemplateWizard;
@@ -19,8 +19,6 @@ import org.eclipse.pde.ui.templates.NewPluginTemplateWizard;
  * Constructor for BuilderNewWizard.
  */
 public class BuilderNewWizard extends NewPluginTemplateWizard {
-
-	private static final String KEY_WTITLE = "BuilderNewWizard.wtitle"; //$NON-NLS-1$
 
 	/**
 	 *  
@@ -31,7 +29,7 @@ public class BuilderNewWizard extends NewPluginTemplateWizard {
 
 	public void init(IFieldData data) {
 		super.init(data);
-		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
+		setWindowTitle(PDEUIMessages.BuilderNewWizard_wtitle);
 	}
 
 	/*

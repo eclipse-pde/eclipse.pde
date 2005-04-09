@@ -15,7 +15,9 @@ import java.util.HashSet;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
@@ -33,8 +35,8 @@ public class ProjectNamesPage extends WizardPage {
 	public ProjectNamesPage(SampleWizard wizard) {
 		super("projects"); //$NON-NLS-1$
 		this.wizard = wizard;
-		setTitle(PDEPlugin.getResourceString("ProjectNamesPage.title")); //$NON-NLS-1$
-		setDescription(PDEPlugin.getResourceString("ProjectNamesPage.desc")); //$NON-NLS-1$
+		setTitle(PDEUIMessages.ProjectNamesPage_title); //$NON-NLS-1$
+		setDescription(PDEUIMessages.ProjectNamesPage_desc); //$NON-NLS-1$
 	}
 	public void setVisible(boolean visible) {
 		setPageComplete(wizard.getSelection()!=null);
@@ -60,11 +62,11 @@ public class ProjectNamesPage extends WizardPage {
 			}
 			// create entries
 			if (projects.length==1) {
-				createEntry(PDEPlugin.getResourceString("ProjectNamesPage.projectName"), projects[0].getAttribute("name")); //$NON-NLS-1$ //$NON-NLS-2$
+				createEntry(PDEUIMessages.ProjectNamesPage_projectName, projects[0].getAttribute("name")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			else {
 				for (int i=0; i<projects.length; i++) {
-					String label = PDEPlugin.getFormattedMessage("ProjectNamesPage.multiProjectName", ""+(i+1)); //$NON-NLS-1$ //$NON-NLS-2$
+					String label = NLS.bind(PDEUIMessages.ProjectNamesPage_multiProjectName, ""+(i+1)); //$NON-NLS-1$ //$NON-NLS-2$
 					createEntry(label, projects[i].getAttribute("name")); //$NON-NLS-1$
 				}
 			}
@@ -72,7 +74,7 @@ public class ProjectNamesPage extends WizardPage {
 			validateEntries();
 		}
 		else {
-			setMessage(PDEPlugin.getResourceString("ProjectNamesPage.noSampleFound"), WizardPage.WARNING); //$NON-NLS-1$
+			setMessage(PDEUIMessages.ProjectNamesPage_noSampleFound, WizardPage.WARNING); //$NON-NLS-1$
 		}
 	}
 	public String [] getProjectNames() {
@@ -123,14 +125,14 @@ public class ProjectNamesPage extends WizardPage {
 			}
 		}
 		if (empty) {
-			setErrorMessage(PDEPlugin.getResourceString("ProjectNamesPage.emptyName")); //$NON-NLS-1$
+			setErrorMessage(PDEUIMessages.ProjectNamesPage_emptyName); //$NON-NLS-1$
 			setPageComplete(false);
 		}
 		else {
 			int nnames = set.size();
 			int nfields = children.length/2;
 			if (nfields>nnames) {
-				setErrorMessage(PDEPlugin.getResourceString("ProjectNamesPage.duplicateNames")); //$NON-NLS-1$
+				setErrorMessage(PDEUIMessages.ProjectNamesPage_duplicateNames); //$NON-NLS-1$
 				setPageComplete(false);
 			}
 			else {

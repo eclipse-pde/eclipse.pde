@@ -44,12 +44,12 @@ public class SynchronizationOperation extends ProductDefinitionOperation {
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(fPluginId);
 		if (model == null) {
-			String message = PDEPlugin.getResourceString("SynchronizationOperation.noDefiningPlugin"); //$NON-NLS-1$
+			String message = PDEUIMessages.SynchronizationOperation_noDefiningPlugin; //$NON-NLS-1$
 			throw new InvocationTargetException(createCoreException(message));
 		}
 		
 		if (model.getUnderlyingResource() == null) {
-			String message = PDEPlugin.getResourceString("SynchronizationOperation.externalPlugin"); //$NON-NLS-1$
+			String message = PDEUIMessages.SynchronizationOperation_externalPlugin; //$NON-NLS-1$
 			throw new InvocationTargetException(createCoreException(message));
 		}
 		

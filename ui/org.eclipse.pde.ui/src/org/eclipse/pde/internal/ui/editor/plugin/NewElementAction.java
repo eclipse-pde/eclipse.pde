@@ -20,7 +20,7 @@ import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.ui.*;
 
 public class NewElementAction extends Action {
-	public static final String UNKNOWN_ELEMENT_TAG = PDEPlugin.getResourceString("NewElementAction.generic"); //$NON-NLS-1$
+	public static final String UNKNOWN_ELEMENT_TAG = PDEUIMessages.NewElementAction_generic; //$NON-NLS-1$
 	private ISchemaElement elementInfo;
 	private Hashtable counters;
 	private IPluginParent parent;

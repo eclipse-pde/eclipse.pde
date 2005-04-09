@@ -35,16 +35,16 @@ public class AdvancedFeatureExportPage extends AdvancedPluginExportPage {
 	}
 	
 	protected String getDescriptionText() {
-		return PDEPlugin.getResourceString("AdvancedFeatureExportPage.desc"); //$NON-NLS-1$
+		return PDEUIMessages.AdvancedFeatureExportPage_desc; //$NON-NLS-1$
 	}
 	
 	protected void createJNLPSection(Composite parent) {
 		Group group = new Group(parent, SWT.NONE);
-		group.setText(PDEPlugin.getResourceString("AdvancedFeatureExportPage.jnlp")); //$NON-NLS-1$
+		group.setText(PDEUIMessages.AdvancedFeatureExportPage_jnlp); //$NON-NLS-1$
 		group.setLayout(new GridLayout(2, false));
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		fButton = createbutton(group, PDEPlugin.getResourceString("AdvancedFeatureExportPage.createJNLP")); //$NON-NLS-1$
+		fButton = createbutton(group, PDEUIMessages.AdvancedFeatureExportPage_createJNLP); //$NON-NLS-1$
 		fButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				boolean selected = fButton.getSelection();
@@ -53,11 +53,11 @@ public class AdvancedFeatureExportPage extends AdvancedPluginExportPage {
 			}
 		});
 
-		fURLLabel = createLabel(group, PDEPlugin.getResourceString("AdvancedFeatureExportPage.siteURL"));		 //$NON-NLS-1$
+		fURLLabel = createLabel(group, PDEUIMessages.AdvancedFeatureExportPage_siteURL);		 //$NON-NLS-1$
 		fURLText = createText(group);
 		fURLText.setText(getString(S_URL));
 		
-		fVersionLabel = createLabel(group, PDEPlugin.getResourceString("AdvancedFeatureExportPage.jreVersion"));	 //$NON-NLS-1$
+		fVersionLabel = createLabel(group, PDEUIMessages.AdvancedFeatureExportPage_jreVersion);	 //$NON-NLS-1$
 		fVersionText = createText(group);
 		fVersionText.setText(getString(S_JRE));
 		
@@ -80,9 +80,9 @@ public class AdvancedFeatureExportPage extends AdvancedPluginExportPage {
 			String error = null;
 			if (fButton.getSelection()) {
 				if (fURLText.getText().trim().length() == 0) {
-					error = PDEPlugin.getResourceString("AdvancedFeatureExportPage.noSite"); //$NON-NLS-1$
+					error = PDEUIMessages.AdvancedFeatureExportPage_noSite; //$NON-NLS-1$
 				} else if (fVersionText.getText().trim().length() == 0) {
-					error = PDEPlugin.getResourceString("AdvancedFeatureExportPage.noVersion"); //$NON-NLS-1$
+					error = PDEUIMessages.AdvancedFeatureExportPage_noVersion; //$NON-NLS-1$
 				}
 			}
 			setErrorMessage(error);

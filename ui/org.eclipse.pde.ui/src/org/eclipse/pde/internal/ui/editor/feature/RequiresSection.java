@@ -38,6 +38,7 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureImport;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
 import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
@@ -57,22 +58,6 @@ import org.eclipse.ui.forms.widgets.Section;
 
 public class RequiresSection extends TableSection implements
 		IPluginModelListener, IFeatureModelListener {
-	public static final int MULTI_SELECTION = 33;
-
-	private static final String KEY_TITLE = "FeatureEditor.RequiresSection.title"; //$NON-NLS-1$
-
-	private static final String KEY_DESC = "FeatureEditor.RequiresSection.desc"; //$NON-NLS-1$
-
-	private static final String KEY_NEW_PLUGIN_BUTTON = "FeatureEditor.RequiresSection.plugin"; //$NON-NLS-1$
-
-	private static final String KEY_NEW_FEATURE_BUTTON = "FeatureEditor.RequiresSection.feature"; //$NON-NLS-1$
-
-	private static final String KEY_SYNC_BUTTON = "FeatureEditor.RequiresSection.sync"; //$NON-NLS-1$
-
-	private static final String KEY_COMPUTE = "FeatureEditor.RequiresSection.compute"; //$NON-NLS-1$
-
-	private static final String KEY_DELETE = "Actions.delete.label"; //$NON-NLS-1$
-
 	private Button fSyncButton;
 
 	private TableViewer fPluginViewer;
@@ -100,11 +85,11 @@ public class RequiresSection extends TableSection implements
 
 	public RequiresSection(FeatureDependenciesPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION, new String[] {
-				PDEPlugin.getResourceString(KEY_NEW_PLUGIN_BUTTON),
-				PDEPlugin.getResourceString(KEY_NEW_FEATURE_BUTTON), null,
-				PDEPlugin.getResourceString(KEY_COMPUTE) });
-		getSection().setText(PDEPlugin.getResourceString(KEY_TITLE));
-		getSection().setDescription(PDEPlugin.getResourceString(KEY_DESC));
+				PDEUIMessages.FeatureEditor_RequiresSection_plugin,
+				PDEUIMessages.FeatureEditor_RequiresSection_feature, null,
+				PDEUIMessages.FeatureEditor_RequiresSection_compute });
+		getSection().setText(PDEUIMessages.FeatureEditor_RequiresSection_title);
+		getSection().setDescription(PDEUIMessages.FeatureEditor_RequiresSection_desc);
 		getTablePart().setEditable(false);
 	}
 
@@ -115,8 +100,7 @@ public class RequiresSection extends TableSection implements
 	public void createClient(Section section, FormToolkit toolkit) {
 		Composite container = createClientContainer(section, 2, toolkit);
 
-		fSyncButton = toolkit.createButton(container, PDEPlugin
-				.getResourceString(KEY_SYNC_BUTTON), SWT.CHECK);
+		fSyncButton = toolkit.createButton(container, PDEUIMessages.FeatureEditor_RequiresSection_sync, SWT.CHECK);
 		// syncButton.setSelection(true);
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = 2;
@@ -136,7 +120,7 @@ public class RequiresSection extends TableSection implements
 				handleDelete();
 			}
 		};
-		fDeleteAction.setText(PDEPlugin.getResourceString(KEY_DELETE));
+		fDeleteAction.setText(PDEUIMessages.Actions_delete_label);
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
 		initialize();

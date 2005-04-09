@@ -26,11 +26,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 public class EnvironmentBlock implements IEnvironmentVariables {
-	public static final String KEY_OS = "Preferences.TargetEnvironmentPage.os"; //$NON-NLS-1$
-	public static final String KEY_WS = "Preferences.TargetEnvironmentPage.ws"; //$NON-NLS-1$
-	public static final String KEY_NL = "Preferences.TargetEnvironmentPage.nl"; //$NON-NLS-1$
-	public static final String KEY_ARCH = "Preferences.TargetEnvironmentPage.arch"; //$NON-NLS-1$
-		
 	private Combo fOSCombo;
 	private Combo fWSCombo;
 	private Combo fNLCombo;
@@ -103,10 +98,10 @@ public class EnvironmentBlock implements IEnvironmentVariables {
 		layout.numColumns = 2;
 		group.setLayout(layout);
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		group.setText(PDEPlugin.getResourceString("EnvironmentBlock.jreGroup")); //$NON-NLS-1$
+		group.setText(PDEUIMessages.EnvironmentBlock_jreGroup); //$NON-NLS-1$
 		
 		fDefaultJREButton = new Button(group, SWT.RADIO);
-		fDefaultJREButton.setText(PDEPlugin.getResourceString("EnvironmentBlock.defaultJRE") + LauncherUtils.getDefaultVMInstallName() + "."); //$NON-NLS-1$ //$NON-NLS-2$
+		fDefaultJREButton.setText(PDEUIMessages.EnvironmentBlock_defaultJRE + LauncherUtils.getDefaultVMInstallName() + "."); //$NON-NLS-1$ //$NON-NLS-2$
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		fDefaultJREButton.setLayoutData(gd);
@@ -114,7 +109,7 @@ public class EnvironmentBlock implements IEnvironmentVariables {
 		fDefaultJREButton.setSelection(usedefault);
 		
 		fThisJREButton = new Button(group, SWT.RADIO);
-		fThisJREButton.setText(PDEPlugin.getResourceString("EnvironmentBlock.thisJRE")); //$NON-NLS-1$
+		fThisJREButton.setText(PDEUIMessages.EnvironmentBlock_thisJRE); //$NON-NLS-1$
 		fThisJREButton.setSelection(!usedefault);
 		
 		fJRECombo = new Combo(group, SWT.SINGLE|SWT.READ_ONLY);
@@ -135,7 +130,7 @@ public class EnvironmentBlock implements IEnvironmentVariables {
 		});
 		
 		Label label = new Label(group, SWT.WRAP);
-		label.setText(PDEPlugin.getResourceString("EnvironmentBlock.jreNote")); //$NON-NLS-1$
+		label.setText(PDEUIMessages.EnvironmentBlock_jreNote); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		gd.horizontalIndent = 25;
@@ -149,33 +144,33 @@ public class EnvironmentBlock implements IEnvironmentVariables {
 		layout.numColumns = 2;
 		group.setLayout(layout);	
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		group.setText(PDEPlugin.getResourceString("EnvironmentBlock.targetEnv")); //$NON-NLS-1$
+		group.setText(PDEUIMessages.EnvironmentBlock_targetEnv); //$NON-NLS-1$
 		
 		initializeChoices();
 		
 		Label label = new Label(group, SWT.NULL);
-		label.setText(PDEPlugin.getResourceString(KEY_OS));
+		label.setText(PDEUIMessages.Preferences_TargetEnvironmentPage_os);
 		
 		fOSCombo = new Combo(group, SWT.SINGLE | SWT.BORDER);
 		fOSCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fOSCombo.setItems((String[])fOSChoices.toArray(new String[fOSChoices.size()]));
 		
 		label = new Label(group, SWT.NULL);
-		label.setText(PDEPlugin.getResourceString(KEY_WS));
+		label.setText(PDEUIMessages.Preferences_TargetEnvironmentPage_ws);
 		
 		fWSCombo = new Combo(group, SWT.SINGLE | SWT.BORDER);
 		fWSCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fWSCombo.setItems((String[])fWSChoices.toArray(new String[fWSChoices.size()]));
 		
 		label = new Label(group, SWT.NULL);
-		label.setText(PDEPlugin.getResourceString(KEY_ARCH));
+		label.setText(PDEUIMessages.Preferences_TargetEnvironmentPage_arch);
 		
 		fArchCombo = new Combo(group, SWT.SINGLE | SWT.BORDER);
 		fArchCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fArchCombo.setItems((String[])fArchChoices.toArray(new String[fArchChoices.size()]));
 		
 		label = new Label(group, SWT.NULL);
-		label.setText(PDEPlugin.getResourceString(KEY_NL));
+		label.setText(PDEUIMessages.Preferences_TargetEnvironmentPage_nl);
 		
 		fNLCombo = new Combo(group, SWT.SINGLE | SWT.BORDER);
 		fNLCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));

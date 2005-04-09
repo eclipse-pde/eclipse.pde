@@ -29,7 +29,7 @@ public class GrammarPropertySource extends SchemaObjectPropertySource {
 				int ivalue = Integer.parseInt(svalue);
 				return isMinOccursValid(ivalue);
 			} catch (NumberFormatException e) {
-				return PDEPlugin.getResourceString("GrammarPropertySource.minOccursFormat"); //$NON-NLS-1$
+				return PDEUIMessages.GrammarPropertySource_minOccursFormat; //$NON-NLS-1$
 			}
 		}
 	}
@@ -42,20 +42,20 @@ public class GrammarPropertySource extends SchemaObjectPropertySource {
 				int ivalue = Integer.parseInt(svalue);
 				return isMaxOccursValid(ivalue);
 			} catch (NumberFormatException e) {
-				return PDEPlugin.getResourceString("GrammarPropertySource.maxOccursFormat"); //$NON-NLS-1$
+				return PDEUIMessages.GrammarPropertySource_maxOccursFormat; //$NON-NLS-1$
 			}
 		}
 	}
 	
 	protected String isMinOccursValid(int ivalue) {
 		if (ivalue < 0)
-			return PDEPlugin.getResourceString("GrammarPropertySource.minOccursValue"); //$NON-NLS-1$
+			return PDEUIMessages.GrammarPropertySource_minOccursValue; //$NON-NLS-1$
 		return null;
 	}
 	
 	protected String isMaxOccursValid(int ivalue) {
 		if (ivalue < 0)
-			return PDEPlugin.getResourceString("GrammarPropertySource.maxOccursValue"); //$NON-NLS-1$
+			return PDEUIMessages.GrammarPropertySource_maxOccursValue; //$NON-NLS-1$
 		return null;
 	}
 

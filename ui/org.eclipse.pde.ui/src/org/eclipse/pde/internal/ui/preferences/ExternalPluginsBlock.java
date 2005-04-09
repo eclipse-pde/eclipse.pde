@@ -38,9 +38,6 @@ import org.eclipse.ui.forms.widgets.*;
 
 
 public class ExternalPluginsBlock {
-	private static final String KEY_RELOAD = "ExternalPluginsBlock.reload"; //$NON-NLS-1$
-	private static final String KEY_WORKSPACE = "ExternalPluginsBlock.workspace"; //$NON-NLS-1$
-
 	private CheckboxTableViewer fPluginListViewer;
 	private TargetPlatformPreferencePage fPage;
 	private boolean fReloaded;
@@ -141,15 +138,14 @@ public class ExternalPluginsBlock {
 		this.fPage = page;
 		String[] buttonLabels =
 			{
-				PDEPlugin.getResourceString(KEY_RELOAD),
+				PDEUIMessages.ExternalPluginsBlock_reload,
 				null,
 				null,
-				PDEPlugin.getResourceString(WizardCheckboxTablePart.KEY_SELECT_ALL),
-				PDEPlugin.getResourceString(
-					WizardCheckboxTablePart.KEY_DESELECT_ALL),
-				PDEPlugin.getResourceString("ExternalPluginsBlock.workingSet"), //$NON-NLS-1$
-				PDEPlugin.getResourceString("ExternalPluginsBlock.addRequired"), //$NON-NLS-1$
-				PDEPlugin.getResourceString(KEY_WORKSPACE)};
+				PDEUIMessages.WizardCheckboxTablePart_selectAll,
+				PDEUIMessages.WizardCheckboxTablePart_deselectAll,
+				PDEUIMessages.ExternalPluginsBlock_workingSet, //$NON-NLS-1$
+				PDEUIMessages.ExternalPluginsBlock_addRequired, //$NON-NLS-1$
+				PDEUIMessages.ExternalPluginsBlock_workspace};
 		fTablePart = new TablePart(buttonLabels);
 		fTablePart.setSelectAllIndex(3);
 		fTablePart.setDeselectAllIndex(4);
@@ -204,7 +200,7 @@ public class ExternalPluginsBlock {
 		gd.heightHint = 100;
 				
 		fIncludeFragments = new Button(container, SWT.CHECK);
-		fIncludeFragments.setText(PDEPlugin.getResourceString("ExternalPluginsBlock.includeFragments")); //$NON-NLS-1$
+		fIncludeFragments.setText(PDEUIMessages.ExternalPluginsBlock_includeFragments); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		gd.verticalIndent = 5;

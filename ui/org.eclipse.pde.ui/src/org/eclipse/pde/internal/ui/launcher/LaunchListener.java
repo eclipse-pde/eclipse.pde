@@ -123,8 +123,8 @@ public class LaunchListener implements ILaunchListener, IDebugEventSetListener {
                 Display.getDefault().asyncExec(new Runnable() {
                     public void run() {
                         MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(),
-                                PDEPlugin.getResourceString("Launcher.error.title"), //$NON-NLS-1$
-                                PDEPlugin.getResourceString("Launcher.error.code15")); //$NON-NLS-1$
+                                PDEUIMessages.Launcher_error_title, //$NON-NLS-1$
+                                PDEUIMessages.Launcher_error_code15); //$NON-NLS-1$
                     }
                 });
                 return;
@@ -139,10 +139,8 @@ public class LaunchListener implements ILaunchListener, IDebugEventSetListener {
                                     && MessageDialog
                                             .openQuestion(
                                                     PDEPlugin.getActiveWorkbenchShell(),
-                                                    PDEPlugin
-                                                            .getResourceString("Launcher.error.title"), //$NON-NLS-1$
-                                                    PDEPlugin
-                                                            .getResourceString("Launcher.error.code13"))) { //$NON-NLS-1$
+                                                    PDEUIMessages.Launcher_error_title, //$NON-NLS-1$
+                                                    PDEUIMessages.Launcher_error_code13)) { //$NON-NLS-1$
                                 if (log.exists()) {
                                     if (log.length() > MAX_FILE_LENGTH) {
                                         OpenLogDialog openDialog = new OpenLogDialog(

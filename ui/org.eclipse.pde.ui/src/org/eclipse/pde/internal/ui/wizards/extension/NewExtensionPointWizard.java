@@ -22,8 +22,6 @@ public class NewExtensionPointWizard extends NewWizard {
 	private IProject project;
 	private IPluginExtensionPoint point;
 	private ManifestEditor editor;
-	private static final String KEY_WTITLE = "NewExtensionPointWizard.wtitle"; //$NON-NLS-1$
-
 	public NewExtensionPointWizard(IProject project, IPluginModelBase model, ManifestEditor editor) {
 		this(project, model, (IPluginExtensionPoint)null);
 		this.editor = editor;
@@ -39,7 +37,7 @@ public class NewExtensionPointWizard extends NewWizard {
 	public void initialize(){
 		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWEXP_WIZ);
-		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
+		setWindowTitle(PDEUIMessages.NewExtensionPointWizard_wtitle);
 		setNeedsProgressMonitor(true);
 	}
 	

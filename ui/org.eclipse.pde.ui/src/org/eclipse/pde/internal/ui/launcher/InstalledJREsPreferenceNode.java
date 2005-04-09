@@ -19,7 +19,7 @@ package org.eclipse.pde.internal.ui.launcher;
 import org.eclipse.jdt.internal.debug.ui.jres.JREsPreferencePage;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferencePage;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.graphics.Image;
 
 public class InstalledJREsPreferenceNode implements IPreferenceNode {
@@ -73,7 +73,7 @@ public class InstalledJREsPreferenceNode implements IPreferenceNode {
 	 * @see org.eclipse.jface.preference.IPreferenceNode#getLabelText()
 	 */
 	public String getLabelText() {
-		return PDEPlugin.getResourceString("BasicLauncherTab.jrePreferencePage"); //$NON-NLS-1$
+		return PDEUIMessages.BasicLauncherTab_jrePreferencePage; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

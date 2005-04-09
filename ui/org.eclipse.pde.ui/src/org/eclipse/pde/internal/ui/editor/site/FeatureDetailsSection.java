@@ -18,6 +18,7 @@ import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.isite.ISiteFeature;
 import org.eclipse.pde.internal.core.isite.ISiteModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
@@ -46,14 +47,6 @@ public class FeatureDetailsSection extends PDESection implements IFormPart,
 
 	private static final String PROPERTY_URL = "url"; //$NON-NLS-1$
 
-	private static final String SECTION_DESC = "FeatureDetailsSection.desc"; //$NON-NLS-1$
-
-	private static final String SECTION_PATH = "FeatureDetailsSection.patch"; //$NON-NLS-1$
-
-	private static final String SECTION_TITLE = "FeatureDetailsSection.title"; //$NON-NLS-1$
-
-	private static final String SECTION_URL = "FeatureDetailsSection.url"; //$NON-NLS-1$
-
 	private ISiteFeature fCurrentSiteFeature;
 
 	private Button fPatchCheckBox;
@@ -61,8 +54,8 @@ public class FeatureDetailsSection extends PDESection implements IFormPart,
 	private FormEntry fUrlText;
 
 	public FeatureDetailsSection(PDEFormPage page, Composite parent) {
-		this(page, parent, PDEPlugin.getResourceString(SECTION_TITLE),
-				PDEPlugin.getResourceString(SECTION_DESC), SWT.NULL);
+		this(page, parent, PDEUIMessages.FeatureDetailsSection_title,
+				PDEUIMessages.FeatureDetailsSection_desc, SWT.NULL);
 		getSection().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	}
 
@@ -135,21 +128,17 @@ public class FeatureDetailsSection extends PDESection implements IFormPart,
 		layout.horizontalSpacing = 6;
 		container.setLayout(layout);
 
-		fUrlText = new FormEntry(container, toolkit, PDEPlugin
-				.getResourceString(SECTION_URL), null, false);
+		fUrlText = new FormEntry(container, toolkit, PDEUIMessages.FeatureDetailsSection_url, null, false);
 		fUrlText.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
 				try {
 					if (text.getValue().length() <= 0) {
 						setValue(PROPERTY_URL);
-						String message = PDEPlugin
-								.getResourceString("FeatureDetailsSection.requiredURL"); //$NON-NLS-1$
 						MessageDialog
 								.openError(
 										PDEPlugin.getActiveWorkbenchShell(),
-										PDEPlugin
-												.getResourceString("FeatureDetailsSection.requiredURL.title"), //$NON-NLS-1$
-										message);
+										PDEUIMessages.FeatureDetailsSection_requiredURL_title, //$NON-NLS-1$
+												PDEUIMessages.FeatureDetailsSection_requiredURL);
 					} else {
 						applyValue(PROPERTY_URL, text.getValue());
 					}
@@ -172,8 +161,7 @@ public class FeatureDetailsSection extends PDESection implements IFormPart,
 	}
 
 	private void createPatchButton(FormToolkit toolkit, Composite container) {
-		fPatchCheckBox = toolkit.createButton(container, PDEPlugin
-				.getResourceString(SECTION_PATH), SWT.CHECK);
+		fPatchCheckBox = toolkit.createButton(container, PDEUIMessages.FeatureDetailsSection_patch, SWT.CHECK);
 		fPatchCheckBox.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				try {

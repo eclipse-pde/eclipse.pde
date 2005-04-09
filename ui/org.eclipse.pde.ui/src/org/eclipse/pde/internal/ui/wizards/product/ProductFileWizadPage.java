@@ -38,7 +38,7 @@ public class ProductFileWizadPage extends WizardNewFileCreationPage {
 	
 	public ProductFileWizadPage(String pageName, IStructuredSelection selection) {
 		super(pageName, selection);
-		setDescription(PDEPlugin.getResourceString("ProductFileWizadPage.title")); //$NON-NLS-1$
+		setDescription(PDEUIMessages.ProductFileWizadPage_title); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
@@ -46,12 +46,12 @@ public class ProductFileWizadPage extends WizardNewFileCreationPage {
 	 */
 	protected void createAdvancedControls(Composite parent) {
 		Group group = new Group(parent, SWT.NONE);
-		group.setText(PDEPlugin.getResourceString("ProductFileWizadPage.groupTitle")); //$NON-NLS-1$
+		group.setText(PDEUIMessages.ProductFileWizadPage_groupTitle); //$NON-NLS-1$
 		group.setLayout(new GridLayout(2, false));
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		fProductButton = new Button(group, SWT.RADIO);
-		fProductButton.setText(PDEPlugin.getResourceString("ProductFileWizadPage.existingProduct")); //$NON-NLS-1$
+		fProductButton.setText(PDEUIMessages.ProductFileWizadPage_existingProduct); //$NON-NLS-1$
 		fProductButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				fProductCombo.setEnabled(fProductButton.getSelection());
@@ -63,7 +63,7 @@ public class ProductFileWizadPage extends WizardNewFileCreationPage {
 		fProductCombo.setItems(TargetPlatform.getProductNames());
 		
 		fLaunchConfigButton = new Button(group, SWT.RADIO);
-		fLaunchConfigButton.setText(PDEPlugin.getResourceString("ProductFileWizadPage.existingLaunchConfig")); //$NON-NLS-1$
+		fLaunchConfigButton.setText(PDEUIMessages.ProductFileWizadPage_existingLaunchConfig); //$NON-NLS-1$
 		fLaunchConfigButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				fLaunchConfigCombo.setEnabled(fLaunchConfigButton.getSelection());
@@ -78,7 +78,7 @@ public class ProductFileWizadPage extends WizardNewFileCreationPage {
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		fBasicButton.setLayoutData(gd);
-		fBasicButton.setText(PDEPlugin.getResourceString("ProductFileWizadPage.basic")); //$NON-NLS-1$
+		fBasicButton.setText(PDEUIMessages.ProductFileWizadPage_basic); //$NON-NLS-1$
 		
 		initializeState();
 	}
@@ -106,7 +106,7 @@ public class ProductFileWizadPage extends WizardNewFileCreationPage {
 	 */
 	protected boolean validatePage() {
 		if (!getFileName().trim().endsWith(".product")) { //$NON-NLS-1$
-			setErrorMessage(PDEPlugin.getResourceString("ProductFileWizadPage.error")); //$NON-NLS-1$
+			setErrorMessage(PDEUIMessages.ProductFileWizadPage_error); //$NON-NLS-1$
 			return false;
 		}
 		if (getFileName().trim().length() <= 8) {

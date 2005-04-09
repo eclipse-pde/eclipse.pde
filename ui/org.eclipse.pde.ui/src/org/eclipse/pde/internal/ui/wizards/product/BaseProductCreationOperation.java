@@ -42,7 +42,7 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 	 */
 	protected void execute(IProgressMonitor monitor) throws CoreException,
 			InvocationTargetException, InterruptedException {
-		monitor.beginTask(PDEPlugin.getResourceString("BaseProductCreationOperation.taskName"), 2); //$NON-NLS-1$
+		monitor.beginTask(PDEUIMessages.BaseProductCreationOperation_taskName, 2); //$NON-NLS-1$
 		createContent();
 		monitor.worked(1);
         openFile();

@@ -29,7 +29,7 @@ public class NewFragmentProjectWizard extends NewWizard implements IExecutableEx
 	
 	public NewFragmentProjectWizard() {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWFRAGPRJ_WIZ);
-		setWindowTitle(PDEPlugin.getResourceString("NewFragmentProjectWizard.title")); //$NON-NLS-1$
+		setWindowTitle(PDEUIMessages.NewFragmentProjectWizard_title); //$NON-NLS-1$
 		setNeedsProgressMonitor(true);
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		fFragmentData = new FragmentFieldData();
@@ -40,8 +40,8 @@ public class NewFragmentProjectWizard extends NewWizard implements IExecutableEx
 	 */
 	public void addPages() {
 		fMainPage = new NewProjectCreationPage("main", fFragmentData, true); //$NON-NLS-1$
-		fMainPage.setTitle(PDEPlugin.getResourceString("NewProjectWizard.MainPage.ftitle")); //$NON-NLS-1$
-		fMainPage.setDescription(PDEPlugin.getResourceString("NewProjectWizard.MainPage.fdesc")); //$NON-NLS-1$
+		fMainPage.setTitle(PDEUIMessages.NewProjectWizard_MainPage_ftitle); //$NON-NLS-1$
+		fMainPage.setDescription(PDEUIMessages.NewProjectWizard_MainPage_fdesc); //$NON-NLS-1$
 		addPage(fMainPage);
 		
 		fProjectProvider = new IProjectProvider() {

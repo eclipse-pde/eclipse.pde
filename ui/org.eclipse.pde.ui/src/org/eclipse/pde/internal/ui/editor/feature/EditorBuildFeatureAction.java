@@ -19,15 +19,15 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.ResizableWizardDialog;
 import org.eclipse.pde.internal.ui.wizards.exports.FeatureExportWizard;
 import org.eclipse.ui.PlatformUI;
 public class EditorBuildFeatureAction extends Action {
-	public static final String LABEL = "FeatureEditor.BuildAction.label"; //$NON-NLS-1$
 	private FeatureEditor activeEditor;
 	private IFile featureFile;
 	public EditorBuildFeatureAction() {
-		setText(PDEPlugin.getResourceString(LABEL));
+		setText(PDEUIMessages.FeatureEditor_BuildAction_label);
 	}
 	private void ensureContentSaved() {
 		if (activeEditor.isDirty()) {

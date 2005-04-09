@@ -42,17 +42,9 @@ import org.eclipse.ui.wizards.newresource.*;
 public class NewFeatureProjectWizard extends NewWizard
 		implements
 			IExecutableExtension {
-	public static final String KEY_WTITLE = "NewFeatureWizard.wtitle"; //$NON-NLS-1$
-	public static final String MAIN_PAGE_TITLE = "NewFeatureWizard.MainPage.title"; //$NON-NLS-1$
-	public static final String MAIN_PAGE_DESC = "NewFeatureWizard.MainPage.desc"; //$NON-NLS-1$
 	public static final String DEF_PROJECT_NAME = "project-name"; //$NON-NLS-1$
 	public static final String DEF_ID = "feature-id"; //$NON-NLS-1$
 	public static final String DEF_NAME = "feature-name"; //$NON-NLS-1$
-
-	public static final String CREATING_PROJECT = "NewFeatureWizard.creatingProject"; //$NON-NLS-1$
-	public static final String OVERWRITE_FEATURE = "NewFeatureWizard.overwriteFeature"; //$NON-NLS-1$
-	public static final String CREATING_FOLDERS = "NewFeatureWizard.creatingFolders"; //$NON-NLS-1$
-	public static final String CREATING_MANIFEST = "NewFeatureWizard.creatingManifest"; //$NON-NLS-1$
 
 	private WizardNewProjectCreationPage mainPage;
 	private FeatureSpecPage specPage;
@@ -90,7 +82,7 @@ public class NewFeatureProjectWizard extends NewWizard
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWFTRPRJ_WIZ);
 		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
 		setNeedsProgressMonitor(true);
-		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
+		setWindowTitle(PDEUIMessages.NewFeatureWizard_wtitle);
 	}
 	
 	public void addPages() {
@@ -102,8 +94,8 @@ public class NewFeatureProjectWizard extends NewWizard
 			}
 		};
 		
-		mainPage.setTitle(PDEPlugin.getResourceString(MAIN_PAGE_TITLE));
-		mainPage.setDescription(PDEPlugin.getResourceString(MAIN_PAGE_DESC));
+		mainPage.setTitle(PDEUIMessages.NewFeatureWizard_MainPage_title);
+		mainPage.setDescription(PDEUIMessages.NewFeatureWizard_MainPage_desc);
 		String pname = getDefaultValue(DEF_PROJECT_NAME);
 		if (pname != null)
 			mainPage.setInitialProjectName(pname);
@@ -267,19 +259,19 @@ public class NewFeatureProjectWizard extends NewWizard
 		feature.setFeatureInfo(info, IFeature.INFO_COPYRIGHT);
 		
 		info.setURL("http://www.yourdomain.com/copyright"); //$NON-NLS-1$
-		info.setDescription(PDEPlugin.getResourceString("NewFeatureWizard.sampleCopyrightDesc")); //$NON-NLS-1$
+		info.setDescription(PDEUIMessages.NewFeatureWizard_sampleCopyrightDesc); //$NON-NLS-1$
 		
 		info = model.getFactory().createInfo(IFeature.INFO_LICENSE);
 		feature.setFeatureInfo(info, IFeature.INFO_LICENSE);
 		
 		info.setURL("http://www.yourdomain.com/license"); //$NON-NLS-1$
-		info.setDescription(PDEPlugin.getResourceString("NewFeatureWizard.sampleLicenseDesc")); //$NON-NLS-1$
+		info.setDescription(PDEUIMessages.NewFeatureWizard_sampleLicenseDesc); //$NON-NLS-1$
 
 		info = model.getFactory().createInfo(IFeature.INFO_DESCRIPTION);
 		feature.setFeatureInfo(info, IFeature.INFO_DESCRIPTION);
 		
 		info.setURL("http://www.yourdomain.com/description"); //$NON-NLS-1$
-		info.setDescription(PDEPlugin.getResourceString("NewFeatureWizard.sampleDescriptionDesc")); //$NON-NLS-1$
+		info.setDescription(PDEUIMessages.NewFeatureWizard_sampleDescriptionDesc); //$NON-NLS-1$
 
 		// Save the model
 		model.save();
@@ -292,13 +284,11 @@ public class NewFeatureProjectWizard extends NewWizard
 			FeatureData data, IPluginBase[] plugins, IProgressMonitor monitor)
 			throws CoreException {
 
-		monitor.beginTask(PDEPlugin.getResourceString(CREATING_PROJECT), 3);
+		monitor.beginTask(PDEUIMessages.NewFeatureWizard_creatingProject, 3);
 		boolean overwrite = true;
 		if (location.append(project.getName()).toFile().exists()) {
 			overwrite = MessageDialog.openQuestion(PDEPlugin
-					.getActiveWorkbenchShell(), PDEPlugin
-					.getResourceString(KEY_WTITLE), PDEPlugin
-					.getResourceString(OVERWRITE_FEATURE));
+					.getActiveWorkbenchShell(), PDEUIMessages.NewFeatureWizard_wtitle, PDEUIMessages.NewFeatureWizard_overwriteFeature);
 		}
 		if (overwrite) {
 			CoreUtility.createProject(project, location, monitor);
@@ -335,7 +325,7 @@ public class NewFeatureProjectWizard extends NewWizard
 						monitor);
 			}
 
-			monitor.subTask(PDEPlugin.getResourceString(CREATING_MANIFEST));
+			monitor.subTask(PDEUIMessages.NewFeatureWizard_creatingManifest);
 			monitor.worked(1);
 			createBuildProperties(project, data);
 			monitor.worked(1);

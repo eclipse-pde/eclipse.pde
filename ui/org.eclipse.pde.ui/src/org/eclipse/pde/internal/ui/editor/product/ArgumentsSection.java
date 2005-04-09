@@ -32,14 +32,14 @@ public class ArgumentsSection extends PDESection {
 	}
 	
 	protected void createClient(Section section, FormToolkit toolkit) {
-		section.setText(PDEPlugin.getResourceString("ArgumentsSection.title")); //$NON-NLS-1$
-		section.setDescription(PDEPlugin.getResourceString("ArgumentsSection.desc")); //$NON-NLS-1$
+		section.setText(PDEUIMessages.ArgumentsSection_title); //$NON-NLS-1$
+		section.setDescription(PDEUIMessages.ArgumentsSection_desc); //$NON-NLS-1$
 		section.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		Composite client = toolkit.createComposite(section);
 		client.setLayout(new GridLayout());
 		
-		Label label = toolkit.createLabel(client, PDEPlugin.getResourceString("ArgumentsSection.program")); //$NON-NLS-1$
+		Label label = toolkit.createLabel(client, PDEUIMessages.ArgumentsSection_program); //$NON-NLS-1$
 		label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
 		
 		fProgramArgs = toolkit.createText(client, "", SWT.MULTI); //$NON-NLS-1$
@@ -51,7 +51,7 @@ public class ArgumentsSection extends PDESection {
 			}
 		});
 		
-		label = toolkit.createLabel(client, PDEPlugin.getResourceString("ArgumentsSection.vm")); //$NON-NLS-1$
+		label = toolkit.createLabel(client, PDEUIMessages.ArgumentsSection_vm); //$NON-NLS-1$
 		label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
 		
 		fVMArgs = toolkit.createText(client, "", SWT.MULTI); //$NON-NLS-1$

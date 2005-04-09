@@ -20,7 +20,7 @@ import org.eclipse.jface.preference.PreferenceNode;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.internal.builders.CompilerFlags;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.preferences.*;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
@@ -83,8 +83,7 @@ public class CompilersPropertyPage extends PropertyPage {
 		useWorkspaceButton = new Button(composite, SWT.RADIO);
 		useWorkspaceButton.addSelectionListener(listener);
 		useWorkspaceButton
-				.setText(PDEPlugin
-						.getResourceString("CompilersPropertyPage.useworkspacesettings.label")); //$NON-NLS-1$
+				.setText(PDEUIMessages.CompilersPropertyPage_useworkspacesettings_label); //$NON-NLS-1$
 		GridData gd = new GridData();
 		gd.horizontalSpan = 1;
 		gd.horizontalAlignment = GridData.FILL;
@@ -98,8 +97,7 @@ public class CompilersPropertyPage extends PropertyPage {
 		// Change Workspace Settings push button
 		changeWorkspaceSettingsButton = new Button(composite, SWT.PUSH);
 		changeWorkspaceSettingsButton
-				.setText(PDEPlugin
-						.getResourceString("CompilersPropertyPage.useworkspacesettings.change")); //$NON-NLS-1$
+				.setText(PDEUIMessages.CompilersPropertyPage_useworkspacesettings_change); //$NON-NLS-1$
 		changeWorkspaceSettingsButton.addSelectionListener(listener);
 		gd = new GridData();
 		gd.horizontalSpan = 1;
@@ -111,8 +109,7 @@ public class CompilersPropertyPage extends PropertyPage {
 		useProjectButton = new Button(composite, SWT.RADIO);
 		useProjectButton.addSelectionListener(listener);
 		useProjectButton
-				.setText(PDEPlugin
-						.getResourceString("CompilersPropertyPage.useprojectsettings.label")); //$NON-NLS-1$
+				.setText(PDEUIMessages.CompilersPropertyPage_useprojectsettings_label); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 1;
 		gd.horizontalAlignment = GridData.FILL;

@@ -67,11 +67,11 @@ public class MigratePluginWizardPage extends WizardPage {
 
 	public MigratePluginWizardPage(IPluginModelBase[] models, IPluginModelBase[] selected) {
 		super("MigrateWizardPage"); //$NON-NLS-1$
-		setTitle(PDEPlugin.getResourceString("MigrationWizard.title")); //$NON-NLS-1$
-		setDescription(PDEPlugin.getResourceString("MigrationWizardPage.desc")); //$NON-NLS-1$
+		setTitle(PDEUIMessages.MigrationWizard_title); //$NON-NLS-1$
+		setDescription(PDEUIMessages.MigrationWizardPage_desc); //$NON-NLS-1$
 		this.fUnmigrated = models;
 		this.fSelected = selected;
-		fTablePart = new TablePart(PDEPlugin.getResourceString("MigrationWizardPage.label")); //$NON-NLS-1$
+		fTablePart = new TablePart(PDEUIMessages.MigrationWizardPage_label); //$NON-NLS-1$
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 	
@@ -103,7 +103,7 @@ public class MigratePluginWizardPage extends WizardPage {
 		fTablePart.setSelection(fSelected);
 		
 		fUpdateClasspathButton = new Button(container, SWT.CHECK);
-		fUpdateClasspathButton.setText(PDEPlugin.getResourceString("MigrationWizard.update")); //$NON-NLS-1$
+		fUpdateClasspathButton.setText(PDEUIMessages.MigrationWizard_update); //$NON-NLS-1$
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = 2;
 		fUpdateClasspathButton.setLayoutData(gd);
@@ -112,7 +112,7 @@ public class MigratePluginWizardPage extends WizardPage {
 		fUpdateClasspathButton.setSelection(doUpdate);
 		
 		fCleanProjectsButton = new Button(container, SWT.CHECK);
-		fCleanProjectsButton.setText(PDEPlugin.getResourceString("MigratePluginWizard.cleanProjects")); //$NON-NLS-1$
+		fCleanProjectsButton.setText(PDEUIMessages.MigratePluginWizard_cleanProjects); //$NON-NLS-1$
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = 2;
 		fCleanProjectsButton.setLayoutData(gd);

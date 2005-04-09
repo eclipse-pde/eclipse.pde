@@ -12,7 +12,7 @@ package org.eclipse.pde.internal.ui.editor.schema;
 import org.eclipse.pde.core.IEditable;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.schema.Schema;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.swt.layout.*;
@@ -22,18 +22,13 @@ import org.eclipse.ui.forms.widgets.*;
  *
  */
 public class SchemaSpecSection extends PDESection {
-	public static final String SECTION_TITLE = "SchemaEditor.SpecSection.title"; //$NON-NLS-1$
-	public static final String SECTION_DESC = "SchemaEditor.SpecSection.desc"; //$NON-NLS-1$
-	public static final String SECTION_PLUGIN = "SchemaEditor.SpecSection.plugin"; //$NON-NLS-1$
-	public static final String SECTION_POINT = "SchemaEditor.SpecSection.point"; //$NON-NLS-1$
-	public static final String SECTION_NAME = "SchemaEditor.SpecSection.name"; //$NON-NLS-1$
 	private FormEntry pluginText;
 	private FormEntry pointText;
 	private FormEntry nameText;
 	public SchemaSpecSection(SchemaFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION | Section.TWISTIE);
-		getSection().setText(PDEPlugin.getResourceString(SECTION_TITLE));
-		getSection().setDescription(PDEPlugin.getResourceString(SECTION_DESC));
+		getSection().setText(PDEUIMessages.SchemaEditor_SpecSection_title);
+		getSection().setDescription(PDEUIMessages.SchemaEditor_SpecSection_desc);
 		createClient(getSection(), page.getManagedForm().getToolkit());
 	}
 	public void commit(boolean onSave) {
@@ -57,22 +52,19 @@ public class SchemaSpecSection extends PDESection {
 		layout.horizontalSpacing = 6;
 		container.setLayout(layout);
 		final Schema schema = (Schema) getPage().getModel();
-		pluginText = new FormEntry(container, toolkit, PDEPlugin
-				.getResourceString(SECTION_PLUGIN), null, false);
+		pluginText = new FormEntry(container, toolkit, PDEUIMessages.SchemaEditor_SpecSection_plugin, null, false);
 		pluginText.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
 				schema.setPluginId(text.getValue());
 			}
 		});
-		pointText = new FormEntry(container, toolkit, PDEPlugin
-				.getResourceString(SECTION_POINT), null, false);
+		pointText = new FormEntry(container, toolkit, PDEUIMessages.SchemaEditor_SpecSection_point, null, false);
 		pointText.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
 				schema.setPointId(text.getValue());
 			}
 		});
-		nameText = new FormEntry(container, toolkit, PDEPlugin
-				.getResourceString(SECTION_NAME), null, false);
+		nameText = new FormEntry(container, toolkit, PDEUIMessages.SchemaEditor_SpecSection_name, null, false);
 		nameText.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
 				schema.setName(text.getValue());

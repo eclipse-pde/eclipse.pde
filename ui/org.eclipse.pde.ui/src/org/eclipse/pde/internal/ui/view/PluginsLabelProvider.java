@@ -16,6 +16,7 @@ import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
@@ -118,7 +119,7 @@ public class PluginsLabelProvider extends LabelProvider {
 		IPluginModelBase model = entry.getActiveModel();
 		String text = sharedProvider.getText(model);
 		if (model.isEnabled() == false)
-			text = PDEPlugin.getFormattedMessage("PluginsView.disabled", text); //$NON-NLS-1$
+			text = NLS.bind(PDEUIMessages.PluginsView_disabled, text); //$NON-NLS-1$
 		return text;
 	}
 

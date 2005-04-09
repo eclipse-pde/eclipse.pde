@@ -58,15 +58,15 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 	
 	private static String[] getButtonLabels() {
 		String[] labels = new String[9];
-		labels[0] = PDEPlugin.getResourceString("Product.PluginSection.add"); //$NON-NLS-1$
-		labels[1] = PDEPlugin.getResourceString("Product.PluginSection.working"); //$NON-NLS-1$
-		labels[2] = PDEPlugin.getResourceString("Product.PluginSection.required"); //$NON-NLS-1$
-		labels[3] = PDEPlugin.getResourceString("PluginSection.remove"); //$NON-NLS-1$
-		labels[4] = PDEPlugin.getResourceString("Product.PluginSection.removeAll"); //$NON-NLS-1$
+		labels[0] = PDEUIMessages.Product_PluginSection_add; //$NON-NLS-1$
+		labels[1] = PDEUIMessages.Product_PluginSection_working; //$NON-NLS-1$
+		labels[2] = PDEUIMessages.Product_PluginSection_required; //$NON-NLS-1$
+		labels[3] = PDEUIMessages.PluginSection_remove; //$NON-NLS-1$
+		labels[4] = PDEUIMessages.Product_PluginSection_removeAll; //$NON-NLS-1$
 		labels[5] = null;
 		labels[6] = null;
-		labels[7] = PDEPlugin.getResourceString("Product.PluginSection.newPlugin"); //$NON-NLS-1$
-		labels[8] = PDEPlugin.getResourceString("Product.PluginSection.newFragment"); //$NON-NLS-1$
+		labels[7] = PDEUIMessages.Product_PluginSection_newPlugin; //$NON-NLS-1$
+		labels[8] = PDEUIMessages.Product_PluginSection_newFragment; //$NON-NLS-1$
 		return labels;
 	}
 
@@ -91,7 +91,7 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		});
 		fPluginTable.setInput(PDECore.getDefault().getModelManager());
 		
-		fIncludeFragments = toolkit.createButton(container, PDEPlugin.getResourceString("Product.PluginSection.includeFragments"), SWT.CHECK); //$NON-NLS-1$
+		fIncludeFragments = toolkit.createButton(container, PDEUIMessages.Product_PluginSection_includeFragments, SWT.CHECK); //$NON-NLS-1$
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		fIncludeFragments.setLayoutData(gd);
@@ -115,8 +115,8 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.verticalSpan = 2;
 		section.setLayoutData(gd);
-		section.setText(PDEPlugin.getResourceString("Product.PluginSection.title")); //$NON-NLS-1$
-		section.setDescription(PDEPlugin.getResourceString("Product.PluginSection.desc")); //$NON-NLS-1$
+		section.setText(PDEUIMessages.Product_PluginSection_title); //$NON-NLS-1$
+		section.setDescription(PDEUIMessages.Product_PluginSection_desc); //$NON-NLS-1$
 		getModel().addModelChangedListener(this);
 	}
 	
@@ -220,7 +220,7 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		if (ssel == null)
 			return;
 		
-		Action openAction = new Action(PDEPlugin.getResourceString("PluginSection.open")) { //$NON-NLS-1$
+		Action openAction = new Action(PDEUIMessages.PluginSection_open) { //$NON-NLS-1$
 			public void run() {
 				handleDoubleClick((IStructuredSelection)fPluginTable.getSelection());
 			}
@@ -230,7 +230,7 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		
 		manager.add(new Separator());
 		
-		Action removeAction = new Action(PDEPlugin.getResourceString("PluginSection.remove")) { //$NON-NLS-1$
+		Action removeAction = new Action(PDEUIMessages.PluginSection_remove) { //$NON-NLS-1$
 			public void run() {
 				handleDelete();
 			}
@@ -238,7 +238,7 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		removeAction.setEnabled(isEditable() && ssel.size() > 0);
 		manager.add(removeAction);
 		
-		Action removeAll = new Action(PDEPlugin.getResourceString("PluginSection.removeAll")) { //$NON-NLS-1$
+		Action removeAll = new Action(PDEUIMessages.PluginSection_removeAll) { //$NON-NLS-1$
 			public void run() {
 				handleRemoveAll();
 			}

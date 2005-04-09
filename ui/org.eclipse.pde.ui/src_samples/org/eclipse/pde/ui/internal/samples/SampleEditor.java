@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.launcher.RuntimeWorkbenchShortcut;
 import org.eclipse.swt.SWT;
@@ -93,7 +94,7 @@ public class SampleEditor extends EditorPart {
 		descText = toolkit.createFormText(form.getBody(), true);
 		descText.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		String desc = properties.getProperty("description"); //$NON-NLS-1$
-		String content = PDEPlugin.getFormattedMessage("SampleEditor.desc",(desc!=null?desc:"")); //$NON-NLS-1$ //$NON-NLS-2$
+		String content = NLS.bind(PDEUIMessages.SampleEditor_desc, (desc!=null?desc:"")); //$NON-NLS-1$ //$NON-NLS-2$
 		descText.setText(content, true, false);
 		final String helpURL = properties.getProperty("helpHref"); //$NON-NLS-1$
 		if (helpURL!=null) {
@@ -107,7 +108,7 @@ public class SampleEditor extends EditorPart {
 		instText = toolkit.createFormText(form.getBody(), true);
 		instText.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		StringBuffer buf = new StringBuffer();
-		buf.append(PDEPlugin.getResourceString("SampleEditor.content")); //$NON-NLS-1$
+		buf.append(PDEUIMessages.SampleEditor_content); //$NON-NLS-1$
 		instText.setText(buf.toString(), true, false);
 		instText.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {

@@ -37,6 +37,7 @@ import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.model.IDocumentAttribute;
 import org.eclipse.pde.internal.ui.model.IEditingModel;
 import org.eclipse.pde.internal.ui.model.plugin.FragmentModel;
@@ -67,18 +68,10 @@ public class SynchronizeVersionsWizardPage extends WizardPage {
 	private static final String PREFIX =
 		PDEPlugin.getPluginId() + ".synchronizeVersions."; //$NON-NLS-1$
 	private static final String PROP_SYNCHRO_MODE = PREFIX + "mode"; //$NON-NLS-1$
-	public static final String PAGE_TITLE = "VersionSyncWizard.title"; //$NON-NLS-1$
-	public static final String KEY_GROUP = "VersionSyncWizard.group"; //$NON-NLS-1$
-	public static final String KEY_USE_COMPONENT = "VersionSyncWizard.useComponent"; //$NON-NLS-1$
-	public static final String KEY_USE_PLUGINS = "VersionSyncWizard.usePlugins"; //$NON-NLS-1$
-	public static final String KEY_USE_REFERENCES = "VersionSyncWizard.useReferences"; //$NON-NLS-1$
-	public static final String KEY_SYNCHRONIZING = "VersionSyncWizard.synchronizing"; //$NON-NLS-1$
-	public static final String PAGE_DESC = "VersionSyncWizard.desc"; //$NON-NLS-1$
-
-public SynchronizeVersionsWizardPage(FeatureEditor featureEditor) {
+	public SynchronizeVersionsWizardPage(FeatureEditor featureEditor) {
 	super("featureJar"); //$NON-NLS-1$
-	setTitle(PDEPlugin.getResourceString(PAGE_TITLE));
-	setDescription(PDEPlugin.getResourceString(PAGE_DESC));
+	setTitle(PDEUIMessages.VersionSyncWizard_title);
+	setDescription(PDEUIMessages.VersionSyncWizard_desc);
 	this.fFeatureEditor = featureEditor;
 }
 public void createControl(Composite parent) {
@@ -91,20 +84,20 @@ public void createControl(Composite parent) {
 	layout = new GridLayout();
 	group.setLayout(layout);
 	group.setLayoutData(gd);
-	group.setText(PDEPlugin.getResourceString(KEY_GROUP));
+	group.setText(PDEUIMessages.VersionSyncWizard_group);
 
 	fUseComponentButton = new Button(group, SWT.RADIO);
-	fUseComponentButton.setText(PDEPlugin.getResourceString(KEY_USE_COMPONENT));
+	fUseComponentButton.setText(PDEUIMessages.VersionSyncWizard_useComponent);
 	gd = new GridData(GridData.FILL_HORIZONTAL);
 	fUseComponentButton.setLayoutData(gd);
 
 	fUsePluginsButton = new Button(group, SWT.RADIO);
-	fUsePluginsButton.setText(PDEPlugin.getResourceString(KEY_USE_PLUGINS));
+	fUsePluginsButton.setText(PDEUIMessages.VersionSyncWizard_usePlugins);
 	gd = new GridData(GridData.FILL_HORIZONTAL);
 	fUsePluginsButton.setLayoutData(gd);
 	
 	fUseReferencesButton = new Button(group, SWT.RADIO);
-	fUseReferencesButton.setText(PDEPlugin.getResourceString(KEY_USE_REFERENCES));
+	fUseReferencesButton.setText(PDEUIMessages.VersionSyncWizard_useReferences);
 	gd = new GridData(GridData.FILL_HORIZONTAL);
 	fUseReferencesButton.setLayoutData(gd);  
 
@@ -263,7 +256,7 @@ private void runOperation(int mode, IProgressMonitor monitor)
 	IFeature feature = model.getFeature();
 	IFeaturePlugin[] plugins = feature.getPlugins();
 	int size = plugins.length;
-	monitor.beginTask(PDEPlugin.getResourceString(KEY_SYNCHRONIZING), size);
+	monitor.beginTask(PDEUIMessages.VersionSyncWizard_synchronizing, size);
 	for (int i = 0; i < plugins.length; i++) {
 		synchronizeVersion(mode, feature.getVersion(), plugins[i], monitor);
 	}

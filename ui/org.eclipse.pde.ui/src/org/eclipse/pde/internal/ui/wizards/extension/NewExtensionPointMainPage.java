@@ -20,8 +20,6 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.widgets.*;
 
 public class NewExtensionPointMainPage extends BaseExtensionPointMainPage {
-	public static final String KEY_TITLE = "NewExtensionPointWizard.title"; //$NON-NLS-1$
-	public static final String KEY_DESC = "NewExtensionPointWizard.desc"; //$NON-NLS-1$
 	private IPluginModelBase model;
 	private IPluginExtensionPoint point;
 	
@@ -38,8 +36,8 @@ public class NewExtensionPointMainPage extends BaseExtensionPointMainPage {
 		this.point = point;
 	}
 	public void initialize(){
-		setTitle(PDEPlugin.getResourceString(KEY_TITLE));
-		setDescription(PDEPlugin.getResourceString(KEY_DESC));
+		setTitle(PDEUIMessages.NewExtensionPointWizard_title);
+		setDescription(PDEUIMessages.NewExtensionPointWizard_desc);
 	}
 	public void createControl(Composite parent) {
 		super.createControl(parent);

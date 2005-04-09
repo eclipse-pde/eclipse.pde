@@ -31,6 +31,7 @@ import org.eclipse.pde.internal.core.isite.ISiteModel;
 import org.eclipse.pde.internal.core.site.WorkspaceSiteModel;
 import org.eclipse.pde.internal.core.util.PatternConstructor;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.exports.FeatureExportJob;
 import org.eclipse.swt.widgets.Display;
 
@@ -226,6 +227,6 @@ public class BuildSiteJob extends FeatureExportJob {
 	 * @see org.eclipse.pde.internal.ui.wizards.exports.FeatureExportJob#getLogFoundMessage()
 	 */
 	protected String getLogFoundMessage() {
-		return PDEPlugin.getResourceString("BuildSiteJob.message"); //$NON-NLS-1$
+		return PDEUIMessages.BuildSiteJob_message; //$NON-NLS-1$
 	}
 }

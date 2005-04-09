@@ -28,7 +28,6 @@ import org.eclipse.pde.ui.*;
 public abstract class AbstractNewPluginTemplateWizard extends Wizard
 		implements
 			IPluginContentWizard {
-	private static final String KEY_WTITLE = "PluginCodeGeneratorWizard.title"; //$NON-NLS-1$
 	private IFieldData data;
 	/**
 	 * Creates a new template wizard.
@@ -44,7 +43,7 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard
 	 */
 	public void init(IFieldData data) {
 		this.data = data;
-		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
+		setWindowTitle(PDEUIMessages.PluginCodeGeneratorWizard_title);
 	}
 	/**
 	 * Returns the field data passed to the wizard during the initialization.

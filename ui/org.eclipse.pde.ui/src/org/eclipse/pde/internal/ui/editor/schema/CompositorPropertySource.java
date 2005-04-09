@@ -18,16 +18,14 @@ import org.eclipse.pde.internal.ui.*;
 
 public class CompositorPropertySource extends GrammarPropertySource {
 	public static final String P_KIND = "kind"; //$NON-NLS-1$
-	public static final String KEY_KIND = "SchemaEditor.CompositorPR.kind"; //$NON-NLS-1$
-
-public CompositorPropertySource(ISchemaCompositor obj) {
+	public CompositorPropertySource(ISchemaCompositor obj) {
 	super(obj);
 }
 public IPropertyDescriptor[] getPropertyDescriptors() {
 	if (descriptors == null) {
 		descriptors = (Vector) super.getPropertyDescriptorsVector();
 		PropertyDescriptor cdesc =
-			createComboBoxPropertyDescriptor(P_KIND, PDEPlugin.getResourceString(KEY_KIND), ISchemaCompositor.kindTable);
+			createComboBoxPropertyDescriptor(P_KIND, PDEUIMessages.SchemaEditor_CompositorPR_kind, ISchemaCompositor.kindTable);
 		if (cdesc instanceof ComboBoxPropertyDescriptor)
 			((ComboBoxPropertyDescriptor) cdesc).setLabelProvider(
 				new ComboProvider(P_KIND, ISchemaCompositor.kindTable));

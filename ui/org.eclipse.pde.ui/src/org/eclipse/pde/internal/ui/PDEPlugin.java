@@ -35,8 +35,6 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 
 	// Shared instance
 	private static PDEPlugin fInstance;
-	// Resource bundle
-	private ResourceBundle fResourceBundle;
 	
 	// Launches listener
 	private LaunchListener fLaunchListener;
@@ -58,16 +56,6 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 		return getDefault().getBundle().getEntry("/"); //$NON-NLS-1$
 	}
 	
-	public ResourceBundle getResourceBundle() {
-		try {
-			if (fResourceBundle == null)
-				fResourceBundle = ResourceBundle.getBundle("org.eclipse.pde.internal.ui.pderesources"); //$NON-NLS-1$
-		} catch (MissingResourceException x) {
-			fResourceBundle = null;
-		}
-		return fResourceBundle;
-	}
-
 	public static IWorkbenchPage getActivePage() {
 		return getDefault().internalGetActivePage();
 	}
@@ -89,26 +77,8 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 			fCounters = new Hashtable();
 		return fCounters;
 	}
-	public static String getFormattedMessage(String key, String[] args) {
-		String text = getResourceString(key);
-		return java.text.MessageFormat.format(text, args);
-	}
-	public static String getFormattedMessage(String key, String arg) {
-		String text = getResourceString(key);
-		return java.text.MessageFormat.format(text, new Object[] { arg });
-	}
-
 	public static String getPluginId() {
 		return getDefault().getBundle().getSymbolicName();
-	}
-	
-	public static String getResourceString(String key) {
-		ResourceBundle bundle = getDefault().getResourceBundle();
-		try {
-			return (bundle != null) ? bundle.getString(key) : key;
-		} catch (MissingResourceException e) {
-			return key;
-		}
 	}
 	
 	public static IWorkspace getWorkspace() {

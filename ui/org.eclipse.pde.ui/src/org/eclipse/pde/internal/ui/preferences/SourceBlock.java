@@ -106,8 +106,8 @@ public class SourceBlock implements IHyperlinkListener {
 
 	public SourceBlock() {
 		initializeImages();
-		fSystemNode = new NamedElement(PDEPlugin.getResourceString("SourceBlock.target")); //$NON-NLS-1$
-		fUserNode = new NamedElement(PDEPlugin.getResourceString("SourceBlock.additional")); //$NON-NLS-1$
+		fSystemNode = new NamedElement(PDEUIMessages.SourceBlock_target); //$NON-NLS-1$
+		fUserNode = new NamedElement(PDEUIMessages.SourceBlock_additional); //$NON-NLS-1$
 		SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
 		fExtensionLocations = manager.getExtensionLocations();
 		fUserLocations.addAll(Arrays.asList(manager.getUserLocations()));
@@ -165,7 +165,7 @@ public class SourceBlock implements IHyperlinkListener {
 	
 	private DirectoryDialog getDirectoryDialog(String filterPath) {
 		DirectoryDialog dialog = new DirectoryDialog(PDEPlugin.getActiveWorkbenchShell());
-		dialog.setMessage(PDEPlugin.getResourceString("SourcePreferencePage.dialogMessage")); //$NON-NLS-1$
+		dialog.setMessage(PDEUIMessages.SourcePreferencePage_dialogMessage); //$NON-NLS-1$
 		if (filterPath != null)
 			dialog.setFilterPath(filterPath);
 		return dialog;
@@ -195,7 +195,7 @@ public class SourceBlock implements IHyperlinkListener {
 
 		FormToolkit toolkit = new FormToolkit(parent.getDisplay());	
 		FormText text = toolkit.createFormText(container, true);
-		text.setText(PDEPlugin.getResourceString("SourceBlock.desc"), true, false); //$NON-NLS-1$
+		text.setText(PDEUIMessages.SourceBlock_desc, true, false); //$NON-NLS-1$
 		GridData gd = new GridData(GridData.FILL);
 		gd.horizontalSpan = 2;
 		text.setLayoutData(gd);
@@ -235,7 +235,7 @@ public class SourceBlock implements IHyperlinkListener {
 		buttonContainer.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 		
 		fAddButton = new Button(buttonContainer, SWT.PUSH);
-		fAddButton.setText(PDEPlugin.getResourceString("SourceBlock.add")); //$NON-NLS-1$
+		fAddButton.setText(PDEUIMessages.SourceBlock_add); //$NON-NLS-1$
 		fAddButton.setLayoutData(new GridData(GridData.FILL | GridData.VERTICAL_ALIGN_BEGINNING));
 		SWTUtil.setButtonDimensionHint(fAddButton);
 		fAddButton.addSelectionListener(new SelectionAdapter() {
@@ -245,7 +245,7 @@ public class SourceBlock implements IHyperlinkListener {
 		});
 		
 		fRemoveButton = new Button(buttonContainer, SWT.PUSH);
-		fRemoveButton.setText(PDEPlugin.getResourceString("SourceBlock.remove")); //$NON-NLS-1$
+		fRemoveButton.setText(PDEUIMessages.SourceBlock_remove); //$NON-NLS-1$
 		fRemoveButton.setLayoutData(new GridData(GridData.FILL | GridData.VERTICAL_ALIGN_BEGINNING));
 		SWTUtil.setButtonDimensionHint(fRemoveButton);
 		fRemoveButton.addSelectionListener(new SelectionAdapter() {

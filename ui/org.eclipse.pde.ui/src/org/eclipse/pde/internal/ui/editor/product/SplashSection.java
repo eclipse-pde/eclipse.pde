@@ -38,8 +38,8 @@ public class SplashSection extends PDESection {
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
-		section.setText(PDEPlugin.getResourceString("SplashSection.title")); //$NON-NLS-1$
-		section.setDescription(PDEPlugin.getResourceString("SplashSection.desc")); //$NON-NLS-1$
+		section.setText(PDEUIMessages.SplashSection_title); //$NON-NLS-1$
+		section.setDescription(PDEUIMessages.SplashSection_desc); //$NON-NLS-1$
 
 		Composite client = toolkit.createComposite(section);
 		TableWrapLayout layout = new TableWrapLayout();
@@ -47,13 +47,13 @@ public class SplashSection extends PDESection {
 		layout.topMargin = 5;
 		client.setLayout(layout);
 		
-		Label label = toolkit.createLabel(client, PDEPlugin.getResourceString("SplashSection.label"), SWT.WRAP); //$NON-NLS-1$
+		Label label = toolkit.createLabel(client, PDEUIMessages.SplashSection_label, SWT.WRAP); //$NON-NLS-1$
 		TableWrapData td = new TableWrapData();
 		td.colspan = 3;
 		label.setLayoutData(td);
 		
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
-		fPluginEntry = new FormEntry(client, toolkit, PDEPlugin.getResourceString("SplashSection.plugin"), PDEPlugin.getResourceString("SplashSection.browse"), false); //$NON-NLS-1$ //$NON-NLS-2$
+		fPluginEntry = new FormEntry(client, toolkit, PDEUIMessages.SplashSection_plugin, PDEUIMessages.SplashSection_browse, false); //$NON-NLS-1$ //$NON-NLS-2$
 		fPluginEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
 				getSplashInfo().setLocation(entry.getValue());
@@ -105,8 +105,8 @@ public class SplashSection extends PDESection {
 		ElementListSelectionDialog dialog = new ElementListSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), PDEPlugin.getDefault().getLabelProvider());
 		dialog.setElements(PDECore.getDefault().getWorkspaceModelManager().getAllModels());
 		dialog.setMultipleSelection(false);
-		dialog.setTitle(PDEPlugin.getResourceString("SplashSection.selection")); //$NON-NLS-1$
-		dialog.setMessage(PDEPlugin.getResourceString("SplashSection.message")); //$NON-NLS-1$
+		dialog.setTitle(PDEUIMessages.SplashSection_selection); //$NON-NLS-1$
+		dialog.setMessage(PDEUIMessages.SplashSection_message); //$NON-NLS-1$
 		if (dialog.open() == ElementListSelectionDialog.OK) {
 			IPluginModelBase model = (IPluginModelBase)dialog.getFirstResult();
 			fPluginEntry.setValue(model.getPluginBase().getId());

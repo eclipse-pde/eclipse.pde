@@ -70,8 +70,8 @@ public class SelectionPage extends WizardPage {
 	public SelectionPage(SampleWizard wizard) {
 		super("selection"); //$NON-NLS-1$
 		this.wizard = wizard;
-		setTitle(PDEPlugin.getResourceString("SelectionPage.title")); //$NON-NLS-1$
-		setDescription(PDEPlugin.getResourceString("SelectionPage.desc")); //$NON-NLS-1$
+		setTitle(PDEUIMessages.SelectionPage_title); //$NON-NLS-1$
+		setDescription(PDEUIMessages.SelectionPage_desc); //$NON-NLS-1$
 		part  = new SelectionPart();
 	}
 

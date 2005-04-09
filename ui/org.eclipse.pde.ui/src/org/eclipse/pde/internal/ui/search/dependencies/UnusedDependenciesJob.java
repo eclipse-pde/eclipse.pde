@@ -60,22 +60,22 @@ public class UnusedDependenciesJob extends Job {
 					list.add(imports[i]);
 				}
 				monitor.setTaskName(
-						PDEPlugin.getResourceString("UnusedDependencies.analyze") //$NON-NLS-1$
+						PDEUIMessages.UnusedDependencies_analyze
 							+ list.size()
 							+ " " //$NON-NLS-1$
-							+ PDEPlugin.getResourceString("UnusedDependencies.unused") //$NON-NLS-1$
+							+ PDEUIMessages.UnusedDependencies_unused
 							+ " " //$NON-NLS-1$
 							+ (list.size() == 1
-								? PDEPlugin.getResourceString("DependencyExtent.singular") //$NON-NLS-1$
-								: PDEPlugin.getResourceString("DependencyExtent.plural")) //$NON-NLS-1$
+								? PDEUIMessages.DependencyExtent_singular
+								: PDEUIMessages.DependencyExtent_plural) //$NON-NLS-1$
 							+ " " //$NON-NLS-1$
-							+ PDEPlugin.getResourceString("DependencyExtent.found")); //$NON-NLS-1$
+							+ PDEUIMessages.DependencyExtent_found); //$NON-NLS-1$
 			}
 			showResults((IPluginImport[])list.toArray(new IPluginImport[list.size()]));
 		} finally {
 			monitor.done();
 		}
-		return new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, PDEPlugin.getResourceString("UnusedDependenciesJob.viewResults"), null); //$NON-NLS-1$
+		return new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, PDEUIMessages.UnusedDependenciesJob_viewResults, null); //$NON-NLS-1$
 	}
 	
 	private boolean isUnused(IPluginImport plugin, SubProgressMonitor monitor) {

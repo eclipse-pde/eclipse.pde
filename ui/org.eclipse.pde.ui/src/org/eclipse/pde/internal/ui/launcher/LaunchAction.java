@@ -193,11 +193,11 @@ public class LaunchAction extends Action {
 		IDebugModelPresentation labelProvider = DebugUITools.newDebugModelPresentation();
 		ElementListSelectionDialog dialog= new ElementListSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), labelProvider);
 		dialog.setElements(configs);
-		dialog.setTitle(PDEPlugin.getResourceString("RuntimeWorkbenchShortcut.title"));  //$NON-NLS-1$
+		dialog.setTitle(PDEUIMessages.RuntimeWorkbenchShortcut_title);  //$NON-NLS-1$
 		if (fMode.equals(ILaunchManager.DEBUG_MODE)) {
-			dialog.setMessage(PDEPlugin.getResourceString("RuntimeWorkbenchShortcut.select.debug")); //$NON-NLS-1$
+			dialog.setMessage(PDEUIMessages.RuntimeWorkbenchShortcut_select_debug); //$NON-NLS-1$
 		} else {
-			dialog.setMessage(PDEPlugin.getResourceString("RuntimeWorkbenchShortcut.select.run"));  //$NON-NLS-1$
+			dialog.setMessage(PDEUIMessages.RuntimeWorkbenchShortcut_select_run);  //$NON-NLS-1$
 		}
 		dialog.setMultipleSelection(false);
 		int result= dialog.open();

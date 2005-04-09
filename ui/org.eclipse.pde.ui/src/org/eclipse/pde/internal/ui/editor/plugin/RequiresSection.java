@@ -20,6 +20,7 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
@@ -70,12 +71,12 @@ public class RequiresSection
 
 	public RequiresSection(DependenciesPage page, Composite parent, String[] labels) {
 		super(page, parent, Section.DESCRIPTION, labels);
-		getSection().setText(PDEPlugin.getResourceString("RequiresSection.title")); //$NON-NLS-1$
+		getSection().setText(PDEUIMessages.RequiresSection_title); //$NON-NLS-1$
 		boolean fragment = ((IPluginModelBase)getPage().getModel()).isFragmentModel();
 		if (fragment)
-			getSection().setDescription(PDEPlugin.getResourceString("RequiresSection.fDesc")); //$NON-NLS-1$
+			getSection().setDescription(PDEUIMessages.RequiresSection_fDesc); //$NON-NLS-1$
 		else
-			getSection().setDescription(PDEPlugin.getResourceString("RequiresSection.desc")); //$NON-NLS-1$
+			getSection().setDescription(PDEUIMessages.RequiresSection_desc); //$NON-NLS-1$
 		getTablePart().setEditable(false);
 	}
 
@@ -343,17 +344,17 @@ public class RequiresSection
 	}
 
 	private void makeActions() {
-		fAddAction = new Action(PDEPlugin.getResourceString("RequiresSection.add")) { //$NON-NLS-1$
+		fAddAction = new Action(PDEUIMessages.RequiresSection_add) { //$NON-NLS-1$
 			public void run() {
 				handleAdd();
 			}
 		};
-		fOpenAction = new Action(PDEPlugin.getResourceString("RequiresSection.open")) { //$NON-NLS-1$
+		fOpenAction = new Action(PDEUIMessages.RequiresSection_open) { //$NON-NLS-1$
 			public void run() {
 				handleOpen(fImportViewer.getSelection());
 			}
 		};
-		fRemoveAction = new Action(PDEPlugin.getResourceString("RequiresSection.delete")) { //$NON-NLS-1$
+		fRemoveAction = new Action(PDEUIMessages.RequiresSection_delete) { //$NON-NLS-1$
 			public void run() {
 				handleRemove();
 			}

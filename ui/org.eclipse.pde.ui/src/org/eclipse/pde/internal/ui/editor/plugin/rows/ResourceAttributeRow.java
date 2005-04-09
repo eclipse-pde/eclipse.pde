@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PartInitException;
@@ -82,11 +83,9 @@ public class ResourceAttributeRow extends ReferenceAttributeRow {
 		});
 		dialog.setAllowMultiple(false);
 		dialog
-				.setTitle(PDEPlugin
-						.getResourceString("ResourceAttributeCellEditor.title")); //$NON-NLS-1$
+				.setTitle(PDEUIMessages.ResourceAttributeCellEditor_title); //$NON-NLS-1$
 		dialog
-				.setMessage(PDEPlugin
-						.getResourceString("ResourceAttributeCellEditor.message")); //$NON-NLS-1$
+				.setMessage(PDEUIMessages.ResourceAttributeCellEditor_message); //$NON-NLS-1$
 		dialog.setValidator(new ISelectionStatusValidator() {
 			public IStatus validate(Object[] selection) {
 				if (selection != null && selection.length > 0

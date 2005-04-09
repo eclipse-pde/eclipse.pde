@@ -35,6 +35,7 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureURLElement;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
@@ -52,18 +53,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 public class URLSection extends TableSection {
-	private static final String SECTION_DESC = "FeatureEditor.URLSection.desc"; //$NON-NLS-1$
-
-	private static final String KEY_NEW = "FeatureEditor.URLSection.new"; //$NON-NLS-1$
-
-	private static final String POPUP_NEW = "Menus.new.label"; //$NON-NLS-1$
-
-	private static final String POPUP_DELETE = "Actions.delete.label"; //$NON-NLS-1$
-
-	private static final String NEW_DISCOVERY_SITE = "FeatureEditor.URLSection.newDiscoverySite"; //$NON-NLS-1$
-
-	private static final String NEW_URL = "FeatureEditor.URLSection.newURL"; //$NON-NLS-1$
-
 	private TableViewer fUrlViewer;
 
 	private Action fNewAction;
@@ -97,12 +86,12 @@ public class URLSection extends TableSection {
 
 	public URLSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION | ExpandableComposite.NO_TITLE,
-				false, new String[] { PDEPlugin.getResourceString(KEY_NEW) });
+				false, new String[] { PDEUIMessages.FeatureEditor_URLSection_new });
 		PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
 		fUrlImage = provider.get(PDEPluginImages.DESC_LINK_OBJ);
 		createClient(getSection(), page.getManagedForm().getToolkit());
 
-		getSection().setDescription(PDEPlugin.getResourceString(SECTION_DESC));
+		getSection().setDescription(PDEUIMessages.FeatureEditor_URLSection_desc);
 	}
 
 	public void commit(boolean onSave) {
@@ -171,8 +160,8 @@ public class URLSection extends TableSection {
 		try {
 			IFeatureURLElement element = model.getFactory().createURLElement(
 					url, IFeatureURLElement.DISCOVERY);
-			element.setLabel(PDEPlugin.getResourceString(NEW_DISCOVERY_SITE));
-			element.setURL(new URL(PDEPlugin.getResourceString(NEW_URL)));
+			element.setLabel(PDEUIMessages.FeatureEditor_URLSection_newDiscoverySite);
+			element.setURL(new URL(PDEUIMessages.FeatureEditor_URLSection_newURL));
 			url.addDiscovery(element);
 			fUrlViewer.setSelection(new StructuredSelection(element));
 
@@ -297,7 +286,7 @@ public class URLSection extends TableSection {
 				handleNew();
 			}
 		};
-		fNewAction.setText(PDEPlugin.getResourceString(POPUP_NEW));
+		fNewAction.setText(PDEUIMessages.Menus_new_label);
 		fNewAction.setEnabled(model.isEditable());
 
 		fDeleteAction = new Action() {
@@ -310,7 +299,7 @@ public class URLSection extends TableSection {
 						});
 			}
 		};
-		fDeleteAction.setText(PDEPlugin.getResourceString(POPUP_DELETE));
+		fDeleteAction.setText(PDEUIMessages.Actions_delete_label);
 		fDeleteAction.setEnabled(model.isEditable());
 	}
 

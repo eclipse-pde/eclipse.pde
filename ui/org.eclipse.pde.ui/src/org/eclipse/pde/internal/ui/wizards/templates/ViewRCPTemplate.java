@@ -31,21 +31,21 @@ public class ViewRCPTemplate extends PDETemplateSection {
 	
 	public void addPages(Wizard wizard) {
 		WizardPage page = createPage(0, IHelpContextIds.TEMPLATE_RCP_MAIL);
-		page.setTitle(PDEPlugin.getResourceString("ViewRCPTemplate.title")); //$NON-NLS-1$
-		page.setDescription(PDEPlugin.getResourceString("ViewRCPTemplate.desc"));  //$NON-NLS-1$
+		page.setTitle(PDEUIMessages.ViewRCPTemplate_title); //$NON-NLS-1$
+		page.setDescription(PDEUIMessages.ViewRCPTemplate_desc);  //$NON-NLS-1$
 		wizard.addPage(page);
 		markPagesAdded();
 	}
 
 	
 	private void createOptions() {
-		addOption(KEY_WINDOW_TITLE, PDEPlugin.getResourceString("ViewRCPTemplate.windowTitle"), "RCP Application", 0); //$NON-NLS-1$ //$NON-NLS-2$
+		addOption(KEY_WINDOW_TITLE, PDEUIMessages.ViewRCPTemplate_windowTitle, "RCP Application", 0); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		addOption(KEY_APPLICATION_ID, PDEPlugin.getResourceString("ViewRCPTemplate.appId"), "application", 0); //$NON-NLS-1$ //$NON-NLS-2$
+		addOption(KEY_APPLICATION_ID, PDEUIMessages.ViewRCPTemplate_appId, "application", 0); //$NON-NLS-1$ //$NON-NLS-2$
 
-		addOption(KEY_PACKAGE_NAME, PDEPlugin.getResourceString("ViewRCPTemplate.packageName"), (String) null, 0); //$NON-NLS-1$
+		addOption(KEY_PACKAGE_NAME, PDEUIMessages.ViewRCPTemplate_packageName, (String) null, 0); //$NON-NLS-1$
 		
-		addOption(KEY_APPLICATION_CLASS, PDEPlugin.getResourceString("ViewRCPTemplate.appClass"), "Application", 0); //$NON-NLS-1$ //$NON-NLS-2$
+		addOption(KEY_APPLICATION_CLASS, PDEUIMessages.ViewRCPTemplate_appClass, "Application", 0); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	protected void initializeFields(IFieldData data) {

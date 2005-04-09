@@ -15,20 +15,17 @@ import org.eclipse.core.resources.*;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.widgets.Composite;
 
 public class SrcSection extends BuildContentsSection
 		implements
 			IModelChangedListener {
 
-	private static String SECTION_TITLE = "BuildEditor.SrcSection.title"; //$NON-NLS-1$
-	private static String SECTION_DESC = "BuildEditor.SrcSection.desc"; //$NON-NLS-1$
-
 	public SrcSection(BuildPage page, Composite parent) {
 		super(page, parent);
-		getSection().setText(PDEPlugin.getResourceString(SECTION_TITLE));
-		getSection().setDescription(PDEPlugin.getResourceString(SECTION_DESC));
+		getSection().setText(PDEUIMessages.BuildEditor_SrcSection_title);
+		getSection().setDescription(PDEUIMessages.BuildEditor_SrcSection_desc);
 
 	}
 

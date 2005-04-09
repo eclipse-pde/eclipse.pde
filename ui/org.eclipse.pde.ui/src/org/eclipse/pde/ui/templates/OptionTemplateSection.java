@@ -13,7 +13,8 @@ import java.net.*;
 import java.util.ArrayList;
 
 import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 /**
  * This class adds some conventions to the class it is based on. For example, it
@@ -38,7 +39,6 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
  */
 
 public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
-	private static final String KEY_MUST_BE_SET = "OptionTemplateSection.mustBeSet"; //$NON-NLS-1$
 	private ArrayList pages = new ArrayList();
 
 	private static class TemplatePage {
@@ -291,8 +291,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 		}
 		if (page != null) {
 			page.setPageComplete(false);
-			String message = PDEPlugin.getFormattedMessage(KEY_MUST_BE_SET,
-					option.getMessageLabel());
+			String message = NLS.bind(PDEUIMessages.OptionTemplateSection_mustBeSet, option.getMessageLabel());
 			page.setErrorMessage(message);
 		}
 	}

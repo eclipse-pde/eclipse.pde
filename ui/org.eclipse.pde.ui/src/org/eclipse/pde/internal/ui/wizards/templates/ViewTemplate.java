@@ -24,28 +24,6 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.jface.wizard.*;
 
 public class ViewTemplate extends PDETemplateSection {
-	private static final String NL_TITLE0 = "ViewTemplate.title0"; //$NON-NLS-1$
-	private static final String NL_DESC0 = "ViewTemplate.desc0"; //$NON-NLS-1$
-	private static final String NL_TITLE1 = "ViewTemplate.title1"; //$NON-NLS-1$
-	private static final String NL_DESC1 = "ViewTemplate.desc1"; //$NON-NLS-1$
-	private static final String NL_PACKAGE_NAME = "ViewTemplate.packageName"; //$NON-NLS-1$
-	private static final String NL_CLASS_NAME = "ViewTemplate.className"; //$NON-NLS-1$
-	private static final String NL_NAME = "ViewTemplate.name"; //$NON-NLS-1$
-	private static final String NL_DEFAULT_NAME = "ViewTemplate.defaultName"; //$NON-NLS-1$
-	private static final String NL_CATEGORY_ID = "ViewTemplate.categoryId"; //$NON-NLS-1$
-	private static final String NL_CATEGORY_NAME = "ViewTemplate.categoryName"; //$NON-NLS-1$
-	private static final String NL_DEFAULT_CATEGORY_NAME = "ViewTemplate.defaultCategoryName"; //$NON-NLS-1$
-	private static final String NL_SELECT = "ViewTemplate.select"; //$NON-NLS-1$
-	private static final String NL_TABLE = "ViewTemplate.table"; //$NON-NLS-1$
-	private static final String NL_TREE = "ViewTemplate.tree"; //$NON-NLS-1$
-	private static final String NL_DOUBLE_CLICK = "ViewTemplate.doubleClick"; //$NON-NLS-1$
-	private static final String NL_POPUP = "ViewTemplate.popup"; //$NON-NLS-1$
-	private static final String NL_TOOLBAR = "ViewTemplate.toolbar"; //$NON-NLS-1$
-	private static final String NL_PULLDOWN = "ViewTemplate.pulldown"; //$NON-NLS-1$
-	private static final String NL_SORTING = "ViewTemplate.sorting"; //$NON-NLS-1$
-	private static final String NL_DRILLDOWN = "ViewTemplate.drilldown"; //$NON-NLS-1$
-	private static final String NL_ADD_TO_PERSPECTIVE = "ViewTemplate.addToPerspective"; //$NON-NLS-1$
-	
 	private BooleanOption addToPerspective;
 	/**
 	 * Constructor for HelloWorldTemplate.
@@ -67,25 +45,25 @@ public class ViewTemplate extends PDETemplateSection {
 	
 	private void createOptions() {
 		// first page	
-		addOption(KEY_PACKAGE_NAME, PDEPlugin.getResourceString(NL_PACKAGE_NAME), (String)null, 0);
-		addOption("className", PDEPlugin.getResourceString(NL_CLASS_NAME), "SampleView", 0); //$NON-NLS-1$ //$NON-NLS-2$
-		addOption("viewName", PDEPlugin.getResourceString(NL_NAME), PDEPlugin.getResourceString(NL_DEFAULT_NAME), 0); //$NON-NLS-1$
-		addOption("viewCategoryId", PDEPlugin.getResourceString(NL_CATEGORY_ID), (String)null, 0); //$NON-NLS-1$
-		addOption("viewCategoryName", PDEPlugin.getResourceString(NL_CATEGORY_NAME), PDEPlugin.getResourceString(NL_DEFAULT_CATEGORY_NAME), 0); //$NON-NLS-1$
-		addOption("viewType", PDEPlugin.getResourceString(NL_SELECT),  //$NON-NLS-1$
+		addOption(KEY_PACKAGE_NAME, PDEUIMessages.ViewTemplate_packageName, (String)null, 0);
+		addOption("className", PDEUIMessages.ViewTemplate_className, "SampleView", 0); //$NON-NLS-1$ //$NON-NLS-2$
+		addOption("viewName", PDEUIMessages.ViewTemplate_name, PDEUIMessages.ViewTemplate_defaultName, 0); //$NON-NLS-1$
+		addOption("viewCategoryId", PDEUIMessages.ViewTemplate_categoryId, (String)null, 0); //$NON-NLS-1$
+		addOption("viewCategoryName", PDEUIMessages.ViewTemplate_categoryName, PDEUIMessages.ViewTemplate_defaultCategoryName, 0); //$NON-NLS-1$
+		addOption("viewType", PDEUIMessages.ViewTemplate_select,  //$NON-NLS-1$
 					new String [][] {
-						{"tableViewer", PDEPlugin.getResourceString(NL_TABLE)}, //$NON-NLS-1$
-						{"treeViewer", PDEPlugin.getResourceString(NL_TREE)}}, //$NON-NLS-1$
+						{"tableViewer", PDEUIMessages.ViewTemplate_table}, //$NON-NLS-1$
+						{"treeViewer", PDEUIMessages.ViewTemplate_tree}}, //$NON-NLS-1$
 						"tableViewer", 0); //$NON-NLS-1$
-		addToPerspective = (BooleanOption)addOption("addToPerspective",PDEPlugin.getResourceString(NL_ADD_TO_PERSPECTIVE),true,0); //$NON-NLS-1$
+		addToPerspective = (BooleanOption)addOption("addToPerspective",PDEUIMessages.ViewTemplate_addToPerspective,true,0); //$NON-NLS-1$
 		// second page
-		addOption("doubleClick", PDEPlugin.getResourceString(NL_DOUBLE_CLICK), true, 1); //$NON-NLS-1$
-		addOption("popup", PDEPlugin.getResourceString(NL_POPUP), true, 1); //$NON-NLS-1$
-		addOption("localToolbar", PDEPlugin.getResourceString(NL_TOOLBAR), true, 1); //$NON-NLS-1$
-		addOption("localPulldown", PDEPlugin.getResourceString(NL_PULLDOWN), true, 1); //$NON-NLS-1$
-		addOption("sorter", PDEPlugin.getResourceString(NL_SORTING), true, 1); //$NON-NLS-1$
+		addOption("doubleClick", PDEUIMessages.ViewTemplate_doubleClick, true, 1); //$NON-NLS-1$
+		addOption("popup", PDEUIMessages.ViewTemplate_popup, true, 1); //$NON-NLS-1$
+		addOption("localToolbar", PDEUIMessages.ViewTemplate_toolbar, true, 1); //$NON-NLS-1$
+		addOption("localPulldown", PDEUIMessages.ViewTemplate_pulldown, true, 1); //$NON-NLS-1$
+		addOption("sorter", PDEUIMessages.ViewTemplate_sorting, true, 1); //$NON-NLS-1$
 		//addOption("filter", PDEPlugin.getResourceString(NL_FILTER), true, lists[1]);
-		addOption("drillDown", PDEPlugin.getResourceString(NL_DRILLDOWN), true, 1); //$NON-NLS-1$
+		addOption("drillDown", PDEUIMessages.ViewTemplate_drilldown, true, 1); //$NON-NLS-1$
 		setOptionEnabled("drillDown", false); //$NON-NLS-1$
 	}
 
@@ -110,13 +88,13 @@ public class ViewTemplate extends PDETemplateSection {
 	
 	public void addPages(Wizard wizard) {
 		WizardPage page0 = createPage(0, IHelpContextIds.TEMPLATE_VIEW);
-		page0.setTitle(PDEPlugin.getResourceString(NL_TITLE0));
-		page0.setDescription(PDEPlugin.getResourceString(NL_DESC0));
+		page0.setTitle(PDEUIMessages.ViewTemplate_title0);
+		page0.setDescription(PDEUIMessages.ViewTemplate_desc0);
 		wizard.addPage(page0);
 		
 		WizardPage page1 = createPage(1, IHelpContextIds.TEMPLATE_VIEW);
-		page1.setTitle(PDEPlugin.getResourceString(NL_TITLE1));
-		page1.setDescription(PDEPlugin.getResourceString(NL_DESC1));
+		page1.setTitle(PDEUIMessages.ViewTemplate_title1);
+		page1.setDescription(PDEUIMessages.ViewTemplate_desc1);
 		wizard.addPage(page1);
 		markPagesAdded();
 	}

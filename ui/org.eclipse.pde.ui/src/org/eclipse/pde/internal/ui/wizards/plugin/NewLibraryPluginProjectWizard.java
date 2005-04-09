@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
 import org.eclipse.pde.internal.ui.wizards.NewWizard;
 import org.eclipse.pde.internal.ui.wizards.WizardElement;
@@ -48,8 +49,7 @@ public class NewLibraryPluginProjectWizard extends NewWizard implements
 	public NewLibraryPluginProjectWizard() {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_JAR_TO_PLUGIN_WIZ);
 		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
-		setWindowTitle(PDEPlugin
-				.getResourceString("NewLibraryPluginProjectWizard.title")); //$NON-NLS-1$
+		setWindowTitle(PDEUIMessages.NewLibraryPluginProjectWizard_title); //$NON-NLS-1$
 		setNeedsProgressMonitor(true);
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		fPluginData = new LibraryPluginFieldData();

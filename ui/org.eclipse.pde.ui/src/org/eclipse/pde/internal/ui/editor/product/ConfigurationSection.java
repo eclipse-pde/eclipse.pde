@@ -46,14 +46,14 @@ public class ConfigurationSection extends PDESection {
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
-		section.setText(PDEPlugin.getResourceString("ConfigurationSection.title")); //$NON-NLS-1$
-		section.setDescription(PDEPlugin.getResourceString("ConfigurationSection.desc")); //$NON-NLS-1$
+		section.setText(PDEUIMessages.ConfigurationSection_title); //$NON-NLS-1$
+		section.setDescription(PDEUIMessages.ConfigurationSection_desc); //$NON-NLS-1$
 		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		Composite client = toolkit.createComposite(section);
 		client.setLayout(new GridLayout(3, false));
 		
-		fDefault = toolkit.createButton(client, PDEPlugin.getResourceString("ConfigurationSection.default"), SWT.RADIO); //$NON-NLS-1$
+		fDefault = toolkit.createButton(client, PDEUIMessages.ConfigurationSection_default, SWT.RADIO); //$NON-NLS-1$
 		GridData gd = new GridData();
 		gd.horizontalSpan = 3;
 		fDefault.setLayoutData(gd);
@@ -66,14 +66,14 @@ public class ConfigurationSection extends PDESection {
 			}
 		});
 		
-		fCustom = toolkit.createButton(client, PDEPlugin.getResourceString("ConfigurationSection.existing"), SWT.RADIO); //$NON-NLS-1$
+		fCustom = toolkit.createButton(client, PDEUIMessages.ConfigurationSection_existing, SWT.RADIO); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		fCustom.setLayoutData(gd);
 		fCustom.setEnabled(isEditable());
 		
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
-		fCustomEntry = new FormEntry(client, toolkit, PDEPlugin.getResourceString("ConfigurationSection.file"), PDEPlugin.getResourceString("ConfigurationSection.browse"), isEditable(), 35); //$NON-NLS-1$ //$NON-NLS-2$
+		fCustomEntry = new FormEntry(client, toolkit, PDEUIMessages.ConfigurationSection_file, PDEUIMessages.ConfigurationSection_browse, isEditable(), 35); //$NON-NLS-1$ //$NON-NLS-2$
 		fCustomEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
 				getConfigurationFileInfo().setPath(entry.getValue());
@@ -100,8 +100,8 @@ public class ConfigurationSection extends PDESection {
 				
 		dialog.setValidator(new FileValidator());
 		dialog.setAllowMultiple(false);
-		dialog.setTitle(PDEPlugin.getResourceString("ConfigurationSection.selection"));  //$NON-NLS-1$
-		dialog.setMessage(PDEPlugin.getResourceString("ConfigurationSection.message"));  //$NON-NLS-1$
+		dialog.setTitle(PDEUIMessages.ConfigurationSection_selection);  //$NON-NLS-1$
+		dialog.setMessage(PDEUIMessages.ConfigurationSection_message);  //$NON-NLS-1$
 		dialog.addFilter(new FileNameFilter("config.ini")); //$NON-NLS-1$
 		dialog.setInput(PDEPlugin.getWorkspace().getRoot());
 
@@ -165,7 +165,7 @@ public class ConfigurationSection extends PDESection {
 		IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
 		Path path = new Path(fCustomEntry.getValue());
 		if(path.isEmpty()){
-			MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEPlugin.getResourceString("WindowImagesSection.open"), PDEPlugin.getResourceString("WindowImagesSection.emptyPath")); //$NON-NLS-1$ //$NON-NLS-2$
+			MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.WindowImagesSection_open, PDEUIMessages.WindowImagesSection_emptyPath); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
 		IResource resource = root.findMember(path);
@@ -173,7 +173,7 @@ public class ConfigurationSection extends PDESection {
 			if (resource != null && resource instanceof IFile)
 				IDE.openEditor(PDEPlugin.getActivePage(), (IFile)resource, true);
 			else
-				MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEPlugin.getResourceString("WindowImagesSection.open"), PDEPlugin.getResourceString("WindowImagesSection.warning")); //$NON-NLS-1$ //$NON-NLS-2$
+				MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.WindowImagesSection_open, PDEUIMessages.WindowImagesSection_warning); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (PartInitException e) {
 		}			
 	}

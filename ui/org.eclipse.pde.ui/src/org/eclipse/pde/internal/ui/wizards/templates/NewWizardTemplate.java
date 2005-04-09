@@ -23,18 +23,6 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.jface.wizard.*;
 
 public class NewWizardTemplate extends PDETemplateSection {
-	private static final String KEY_TITLE = "NewWizardTemplate.title"; //$NON-NLS-1$
-	private static final String KEY_DESC = "NewWizardTemplate.desc"; //$NON-NLS-1$
-	private static final String KEY_PACKAGE_LABEL = "NewWizardTemplate.packageName";	 //$NON-NLS-1$
-	private static final String KEY_CATEGORY_ID_LABEL = "NewWizardTemplate.categoryId"; //$NON-NLS-1$
-	private static final String KEY_CATEGORY_NAME_LABEL = "NewWizardTemplate.categoryName"; //$NON-NLS-1$
-	private static final String KEY_CLASS_LABEL = "NewWizardTemplate.className"; //$NON-NLS-1$
-	private static final String KEY_PAGE_CLASS_LABEL = "NewWizardTemplate.pageClassName"; //$NON-NLS-1$
-	private static final String KEY_WIZARD_LABEL = "NewWizardTemplate.wizardName"; //$NON-NLS-1$
-	private static final String KEY_DEFAULT_NAME = "NewWizardTemplate.defaultName"; //$NON-NLS-1$
-	private static final String KEY_EXTENSION_LABEL = "NewWizardTemplate.extension"; //$NON-NLS-1$
-	private static final String KEY_FILE_LABEL = "NewWizardTemplate.fileName"; //$NON-NLS-1$
-	
 	public NewWizardTemplate() {
 		setPageCount(1);
 		createOptions();
@@ -52,14 +40,14 @@ public class NewWizardTemplate extends PDETemplateSection {
 	
 	private void createOptions() {
 		// first page
-		addOption(KEY_PACKAGE_NAME, PDEPlugin.getResourceString(KEY_PACKAGE_LABEL), (String)null, 0);
-		addOption("categoryId", PDEPlugin.getResourceString(KEY_CATEGORY_ID_LABEL), (String)null, 0); //$NON-NLS-1$
-		addOption("categoryName", PDEPlugin.getResourceString(KEY_CATEGORY_NAME_LABEL), "Sample Wizards", 0); //$NON-NLS-1$ //$NON-NLS-2$
-		addOption("wizardClassName", PDEPlugin.getResourceString(KEY_CLASS_LABEL), "SampleNewWizard", 0); //$NON-NLS-1$ //$NON-NLS-2$
-		addOption("wizardPageClassName", PDEPlugin.getResourceString(KEY_PAGE_CLASS_LABEL), "SampleNewWizardPage", 0); //$NON-NLS-1$ //$NON-NLS-2$
-		addOption("wizardName", PDEPlugin.getResourceString(KEY_WIZARD_LABEL), PDEPlugin.getResourceString(KEY_DEFAULT_NAME), 0); //$NON-NLS-1$
-		addOption("extension", PDEPlugin.getResourceString(KEY_EXTENSION_LABEL), "mpe", 0);  //$NON-NLS-1$ //$NON-NLS-2$
-		addOption("initialFileName", PDEPlugin.getResourceString(KEY_FILE_LABEL),"new_file.mpe", 0);  //$NON-NLS-1$ //$NON-NLS-2$
+		addOption(KEY_PACKAGE_NAME, PDEUIMessages.NewWizardTemplate_packageName, (String)null, 0);
+		addOption("categoryId", PDEUIMessages.NewWizardTemplate_categoryId, (String)null, 0); //$NON-NLS-1$
+		addOption("categoryName", PDEUIMessages.NewWizardTemplate_categoryName, "Sample Wizards", 0); //$NON-NLS-1$ //$NON-NLS-2$
+		addOption("wizardClassName", PDEUIMessages.NewWizardTemplate_className, "SampleNewWizard", 0); //$NON-NLS-1$ //$NON-NLS-2$
+		addOption("wizardPageClassName", PDEUIMessages.NewWizardTemplate_pageClassName, "SampleNewWizardPage", 0); //$NON-NLS-1$ //$NON-NLS-2$
+		addOption("wizardName", PDEUIMessages.NewWizardTemplate_wizardName, PDEUIMessages.NewWizardTemplate_defaultName, 0); //$NON-NLS-1$
+		addOption("extension", PDEUIMessages.NewWizardTemplate_extension, "mpe", 0);  //$NON-NLS-1$ //$NON-NLS-2$
+		addOption("initialFileName", PDEUIMessages.NewWizardTemplate_fileName,"new_file.mpe", 0);  //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	protected void initializeFields(IFieldData data) {
@@ -97,8 +85,8 @@ public class NewWizardTemplate extends PDETemplateSection {
 	
 	public void addPages(Wizard wizard) {
 		WizardPage page = createPage(0, IHelpContextIds.TEMPLATE_NEW_WIZARD);
-		page.setTitle(PDEPlugin.getResourceString(KEY_TITLE));
-		page.setDescription(PDEPlugin.getResourceString(KEY_DESC));
+		page.setTitle(PDEUIMessages.NewWizardTemplate_title);
+		page.setDescription(PDEUIMessages.NewWizardTemplate_desc);
 		wizard.addPage(page);
 		markPagesAdded();
 	}

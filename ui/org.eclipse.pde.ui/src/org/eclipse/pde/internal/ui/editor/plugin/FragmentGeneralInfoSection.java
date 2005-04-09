@@ -16,6 +16,7 @@ import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
@@ -34,12 +35,6 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 
 public class FragmentGeneralInfoSection extends GeneralInfoSection {
 
-	public static final String KEY_MATCH = "ManifestEditor.PluginSpecSection.versionMatch"; //$NON-NLS-1$
-	public static final String KEY_MATCH_PERFECT = "ManifestEditor.MatchSection.perfect"; //$NON-NLS-1$
-	public static final String KEY_MATCH_EQUIVALENT = "ManifestEditor.MatchSection.equivalent"; //$NON-NLS-1$
-	public static final String KEY_MATCH_COMPATIBLE = "ManifestEditor.MatchSection.compatible"; //$NON-NLS-1$
-	public static final String KEY_MATCH_GREATER = "ManifestEditor.MatchSection.greater"; //$NON-NLS-1$
-
 	private FormEntry fPluginIdEntry;
 	private FormEntry fPluginVersionEntry;
 	private ComboPart fMatchCombo;
@@ -49,7 +44,7 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 	}
 	
 	protected String getSectionDescription() {
-		return PDEPlugin.getResourceString("ManifestEditor.PluginSpecSection.fdesc"); //$NON-NLS-1$
+		return PDEUIMessages.ManifestEditor_PluginSpecSection_fdesc; //$NON-NLS-1$
 	}
 	
 	protected void createSpecificControls(Composite parent, FormToolkit toolkit, IActionBars actionBars) {
@@ -63,8 +58,8 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 		fPluginIdEntry = new FormEntry(
 				parent,
 				toolkit,
-				PDEPlugin.getResourceString("GeneralInfoSection.pluginId"),  //$NON-NLS-1$
-				PDEPlugin.getResourceString("GeneralInfoSection.browse"), //$NON-NLS-1$ 
+				PDEUIMessages.GeneralInfoSection_pluginId,  //$NON-NLS-1$
+				PDEUIMessages.GeneralInfoSection_browse, //$NON-NLS-1$ 
 				isEditable());
 		fPluginIdEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
@@ -97,11 +92,15 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 
 	private void createPluginVersionEntry(Composite client,
 			FormToolkit toolkit, IActionBars actionBars) {
-		String key = isBundle() ? "GeneralInfoSection.hostVersionRange" : "GeneralInfoSection.pluginVersion"; //$NON-NLS-1$ //$NON-NLS-2$
+		String labelText;
+		if(isBundle())
+			labelText= PDEUIMessages.GeneralInfoSection_hostVersionRange;
+		else
+			labelText= PDEUIMessages.GeneralInfoSection_pluginVersion;
 		fPluginVersionEntry = new FormEntry(
 				client,
 				toolkit,
-				PDEPlugin.getResourceString(key), null, false); 
+				labelText, null, false); 
 		fPluginVersionEntry.setFormEntryListener(new FormEntryAdapter(this,
 				actionBars) {
 			public void textValueChanged(FormEntry entry) {
@@ -117,7 +116,7 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 	
 	private void createMatchCombo(Composite client, FormToolkit toolkit,
 			IActionBars actionBars) {
-		Label matchLabel = toolkit.createLabel(client, PDEPlugin.getResourceString(KEY_MATCH));
+		Label matchLabel = toolkit.createLabel(client, PDEUIMessages.ManifestEditor_PluginSpecSection_versionMatch);
 		matchLabel.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
 		matchLabel.setLayoutData(new TableWrapData(TableWrapData.MIDDLE));
 		
@@ -128,10 +127,10 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 		fMatchCombo.getControl().setLayoutData(td);
 		
 		String[] items = new String[]{"", //$NON-NLS-1$
-				PDEPlugin.getResourceString(KEY_MATCH_EQUIVALENT),
-				PDEPlugin.getResourceString(KEY_MATCH_COMPATIBLE),
-				PDEPlugin.getResourceString(KEY_MATCH_PERFECT),
-				PDEPlugin.getResourceString(KEY_MATCH_GREATER)};
+				PDEUIMessages.ManifestEditor_MatchSection_equivalent,
+				PDEUIMessages.ManifestEditor_MatchSection_compatible,
+				PDEUIMessages.ManifestEditor_MatchSection_perfect,
+				PDEUIMessages.ManifestEditor_MatchSection_greater};
 		fMatchCombo.setItems(items);
 		fMatchCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {

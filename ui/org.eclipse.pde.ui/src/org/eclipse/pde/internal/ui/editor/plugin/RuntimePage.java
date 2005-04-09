@@ -23,13 +23,13 @@ public class RuntimePage extends PDEFormPage {
 	public static final String PAGE_ID="runtime"; //$NON-NLS-1$
 
     public RuntimePage(FormEditor editor) {
-		super(editor, PAGE_ID, PDEPlugin.getResourceString("RuntimePage.tabName"));  //$NON-NLS-1$
+		super(editor, PAGE_ID, PDEUIMessages.RuntimePage_tabName);  //$NON-NLS-1$
 	}
     
 	protected void createFormContent(IManagedForm mform) {
 		super.createFormContent(mform);
 		ScrolledForm form = mform.getForm();
-		form.setText(PDEPlugin.getResourceString("ManifestEditor.RuntimeForm.title")); //$NON-NLS-1$
+		form.setText(PDEUIMessages.ManifestEditor_RuntimeForm_title); //$NON-NLS-1$
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.marginWidth = 10;

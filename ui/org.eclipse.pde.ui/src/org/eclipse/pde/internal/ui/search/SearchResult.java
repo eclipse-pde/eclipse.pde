@@ -43,7 +43,7 @@ public class SearchResult extends AbstractTextSearchResult implements IEditorMat
 	 */
 	public String getLabel() {
 		int numMatches = getMatchCount();	
-		return fQuery.getLabel() + " - " + numMatches + " " + (numMatches == 1 ? PDEPlugin.getResourceString("SearchResult.match") : PDEPlugin.getResourceString("SearchResult.matches")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		return fQuery.getLabel() + " - " + numMatches + " " + (numMatches == 1 ? PDEUIMessages.SearchResult_match : PDEUIMessages.SearchResult_matches); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
 
 	/* (non-Javadoc)

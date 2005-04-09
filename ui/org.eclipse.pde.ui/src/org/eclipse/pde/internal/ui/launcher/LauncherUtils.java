@@ -19,25 +19,13 @@ import org.eclipse.debug.core.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.launching.*;
 import org.eclipse.jface.dialogs.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.widgets.*;
 
 public class LauncherUtils {
-	private static final String KEY_MISSING_REQUIRED =
-		"WorkbenchLauncherConfigurationDelegate.missingRequired"; //$NON-NLS-1$
-	private static final String KEY_BROKEN_PLUGINS =
-		"WorkbenchLauncherConfigurationDelegate.brokenPlugins"; //$NON-NLS-1$
-	private static final String KEY_NO_JRE =
-		"WorkbenchLauncherConfigurationDelegate.noJRE"; //$NON-NLS-1$
-	private static final String KEY_JRE_PATH_NOT_FOUND =
-		"WorkbenchLauncherConfigurationDelegate.jrePathNotFound"; //$NON-NLS-1$
-	private static final String KEY_TITLE =
-		"WorkbenchLauncherConfigurationDelegate.title"; //$NON-NLS-1$
-	private static final String KEY_DELETE_WORKSPACE =
-		"WorkbenchLauncherConfigurationDelegate.confirmDeleteWorkspace"; //$NON-NLS-1$
-
 	public static IVMInstall[] getAllVMInstances() {
 		ArrayList res = new ArrayList();
 		IVMInstallType[] types = JavaRuntime.getVMInstallTypes();
@@ -203,8 +191,8 @@ public class LauncherUtils {
 				public void run() {
 					MessageDialog.openError(
 							display.getActiveShell(),
-							PDEPlugin.getResourceString(KEY_TITLE),
-							PDEPlugin.getFormattedMessage(KEY_MISSING_REQUIRED, requiredPlugin));
+							PDEUIMessages.WorkbenchLauncherConfigurationDelegate_title,
+							NLS.bind(PDEUIMessages.WorkbenchLauncherConfigurationDelegate_missingRequired, requiredPlugin));
 				}
 			});
 			return null;
@@ -217,7 +205,7 @@ public class LauncherUtils {
 						PDEPlugin.getPluginId(),
 						IStatus.OK,
 						(IStatus[])statusEntries.toArray(new IStatus[statusEntries.size()]),
-						PDEPlugin.getResourceString(KEY_BROKEN_PLUGINS),
+						PDEUIMessages.WorkbenchLauncherConfigurationDelegate_brokenPlugins,
 						null);
 			if (!ignoreValidationErrors(multiStatus)) {
 				return null;
@@ -342,7 +330,7 @@ public class LauncherUtils {
 				result[0] =
 					MessageDialog.openConfirm(
 						getDisplay().getActiveShell(),
-						PDEPlugin.getResourceString(KEY_TITLE),
+						PDEUIMessages.WorkbenchLauncherConfigurationDelegate_title,
 						status.getMessage());
 			}
 		});
@@ -365,11 +353,11 @@ public class LauncherUtils {
 
 		if (launcher == null) 
 			throw new CoreException(
-				createErrorStatus(PDEPlugin.getFormattedMessage(KEY_NO_JRE, vm)));
+				createErrorStatus(NLS.bind(PDEUIMessages.WorkbenchLauncherConfigurationDelegate_noJRE, vm)));
 		
 		if (!launcher.getInstallLocation().exists()) 
 			throw new CoreException(
-				createErrorStatus(PDEPlugin.getResourceString(KEY_JRE_PATH_NOT_FOUND)));
+				createErrorStatus(PDEUIMessages.WorkbenchLauncherConfigurationDelegate_jrePathNotFound));
 		
 		return launcher;
 	}
@@ -435,11 +423,9 @@ public class LauncherUtils {
 		final int[] result = new int[1];
 		getDisplay().syncExec(new Runnable() {
 			public void run() {
-				String title = PDEPlugin.getResourceString(KEY_TITLE);
+				String title = PDEUIMessages.WorkbenchLauncherConfigurationDelegate_title;
 				String message =
-					PDEPlugin.getFormattedMessage(
-						KEY_DELETE_WORKSPACE,
-						workspaceFile.getPath());
+					NLS.bind(PDEUIMessages.WorkbenchLauncherConfigurationDelegate_confirmDeleteWorkspace, workspaceFile.getPath());
 				MessageDialog dialog = new MessageDialog(getDisplay().getActiveShell(), title, null,
 						message, MessageDialog.QUESTION, new String[]{IDialogConstants.YES_LABEL,
 								IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL}, 0);

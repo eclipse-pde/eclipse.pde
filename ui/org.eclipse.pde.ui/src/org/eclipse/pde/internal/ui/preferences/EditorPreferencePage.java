@@ -27,15 +27,15 @@ public class EditorPreferencePage
 	public EditorPreferencePage() {
 		super(GRID);
 		setPreferenceStore(PDEPlugin.getDefault().getPreferenceStore());
-		setDescription(PDEPlugin.getResourceString("EditorPreferencePage.desc")); //$NON-NLS-1$
+		setDescription(PDEUIMessages.EditorPreferencePage_desc); //$NON-NLS-1$
 	}
 	
 	protected void createFieldEditors() {
 		addField(new BooleanFieldEditor(P_USE_SOURCE_PAGE, 
-				PDEPlugin.getResourceString("EditorPreferencePage.useSourcePage"), //$NON-NLS-1$
+				PDEUIMessages.EditorPreferencePage_useSourcePage, //$NON-NLS-1$
 				getFieldEditorParent()));
 		addLabel("", 2); //$NON-NLS-1$
-		addLabel(PDEPlugin.getResourceString("EditorPreferencePage.colorSettings"), 2); //$NON-NLS-1$
+		addLabel(PDEUIMessages.EditorPreferencePage_colorSettings, 2); //$NON-NLS-1$
 		addSourceColorFields();
 	}
 	
@@ -61,27 +61,27 @@ public class EditorPreferencePage
 		addField(
 			new ColorFieldEditor(
 				IPDEColorConstants.P_DEFAULT,
-				PDEPlugin.getResourceString("EditorPreferencePage.text"), //$NON-NLS-1$
+				PDEUIMessages.EditorPreferencePage_text, //$NON-NLS-1$
 				getFieldEditorParent()));
 		addField(
 			new ColorFieldEditor(
 				IPDEColorConstants.P_PROC_INSTR,
-				PDEPlugin.getResourceString("EditorPreferencePage.proc"), //$NON-NLS-1$
+				PDEUIMessages.EditorPreferencePage_proc, //$NON-NLS-1$
 				getFieldEditorParent()));
 		addField(
 			new ColorFieldEditor(
 				IPDEColorConstants.P_STRING,
-				PDEPlugin.getResourceString("EditorPreferencePage.string"), //$NON-NLS-1$
+				PDEUIMessages.EditorPreferencePage_string, //$NON-NLS-1$
 				getFieldEditorParent()));
 		addField(
 			new ColorFieldEditor(
 				IPDEColorConstants.P_TAG,
-				PDEPlugin.getResourceString("EditorPreferencePage.tag"), //$NON-NLS-1$
+				PDEUIMessages.EditorPreferencePage_tag, //$NON-NLS-1$
 				getFieldEditorParent()));
 		addField(
 			new ColorFieldEditor(
 				IPDEColorConstants.P_XML_COMMENT,
-				PDEPlugin.getResourceString("EditorPreferencePage.comment"), //$NON-NLS-1$
+				PDEUIMessages.EditorPreferencePage_comment, //$NON-NLS-1$
 				getFieldEditorParent()));
 	}
 

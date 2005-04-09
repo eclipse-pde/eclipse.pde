@@ -34,20 +34,6 @@ import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.widgets.*;
 
 public class DocSection extends PDESection {
-	public static final String SECTION_TITLE = "SchemaEditor.DocSection.title"; //$NON-NLS-1$
-	public static final String KEY_APPLY = "Actions.apply.flabel"; //$NON-NLS-1$
-	public static final String KEY_RESET = "Actions.reset.flabel"; //$NON-NLS-1$
-	public static final String SECTION_DESC = "SchemaEditor.DocSection.desc"; //$NON-NLS-1$
-	public static final String KEY_TOPIC_OVERVIEW =
-		"SchemaEditor.topic.overview"; //$NON-NLS-1$
-	public static final String KEY_TOPIC_SINCE = "SchemaEditor.topic.since"; //$NON-NLS-1$
-	public static final String KEY_TOPIC_EXAMPLES =
-		"SchemaEditor.topic.examples"; //$NON-NLS-1$
-	public static final String KEY_TOPIC_IMPLEMENTATION =
-		"SchemaEditor.topic.implementation"; //$NON-NLS-1$
-	public static final String KEY_TOPIC_API = "SchemaEditor.topic.api"; //$NON-NLS-1$
-	public static final String KEY_TOPIC_COPYRIGHT =
-		"SchemaEditor.topic.copyright"; //$NON-NLS-1$
 	private IDocument document;
 	private IDocumentPartitioner partitioner;
 	private SourceViewerConfiguration sourceConfiguration;
@@ -61,7 +47,7 @@ public class DocSection extends PDESection {
 
 	public DocSection(PDEFormPage page, Composite parent, IColorManager colorManager) {
 		super(page, parent, Section.DESCRIPTION|Section.NO_TITLE, false);
-		String description = PDEPlugin.getResourceString(SECTION_DESC);
+		String description = PDEUIMessages.SchemaEditor_DocSection_desc;
 		getSection().setDescription(description);
 		sourceConfiguration = new XMLConfiguration(colorManager);
 		document = new Document();
@@ -149,7 +135,7 @@ public class DocSection extends PDESection {
 		applyButton =
 			toolkit.createButton(
 				buttonContainer,
-				PDEPlugin.getResourceString(KEY_APPLY),
+				PDEUIMessages.Actions_apply_flabel,
 				SWT.PUSH);
 		applyButton.setEnabled(false);
 		gd =
@@ -165,7 +151,7 @@ public class DocSection extends PDESection {
 		resetButton =
 			toolkit.createButton(
 				buttonContainer,
-				PDEPlugin.getResourceString(KEY_RESET),
+				PDEUIMessages.Actions_reset_flabel,
 				SWT.PUSH);
 		resetButton.setEnabled(false);
 		gd =
@@ -243,20 +229,20 @@ public class DocSection extends PDESection {
 	
 	private String getTopicName(Object object) {
 		if (object instanceof ISchema) {
-			return PDEPlugin.getResourceString(KEY_TOPIC_OVERVIEW);
+			return PDEUIMessages.SchemaEditor_topic_overview;
 		} else if (object instanceof IDocumentSection) {
 			IDocumentSection section = (IDocumentSection) object;
 			String sectionId = section.getSectionId();
 			if (sectionId.equals(IDocumentSection.EXAMPLES))
-				return PDEPlugin.getResourceString(KEY_TOPIC_EXAMPLES);
+				return PDEUIMessages.SchemaEditor_topic_examples;
 			if (sectionId.equals(IDocumentSection.SINCE))
-				return PDEPlugin.getResourceString(KEY_TOPIC_SINCE);
+				return PDEUIMessages.SchemaEditor_topic_since;
 			if (sectionId.equals(IDocumentSection.IMPLEMENTATION))
-				return PDEPlugin.getResourceString(KEY_TOPIC_IMPLEMENTATION);
+				return PDEUIMessages.SchemaEditor_topic_implementation;
 			if (sectionId.equals(IDocumentSection.API_INFO))
-				return PDEPlugin.getResourceString(KEY_TOPIC_API);
+				return PDEUIMessages.SchemaEditor_topic_api;
 			if (sectionId.equals(IDocumentSection.COPYRIGHT))
-				return PDEPlugin.getResourceString(KEY_TOPIC_COPYRIGHT);
+				return PDEUIMessages.SchemaEditor_topic_copyright;
 		}
 		return "?"; //$NON-NLS-1$
 	}

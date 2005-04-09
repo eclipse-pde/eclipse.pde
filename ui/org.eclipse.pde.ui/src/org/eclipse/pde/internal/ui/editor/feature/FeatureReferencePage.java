@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.swt.layout.GridData;
@@ -25,8 +25,6 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
  */
 public class FeatureReferencePage extends PDEFormPage {
 	public static final String PAGE_ID = "reference"; //$NON-NLS-1$
-
-	private static final String KEY_HEADING = "FeatureEditor.ReferencePage.heading"; //$NON-NLS-1$
 
 	private PluginSection fPluginSection;
 
@@ -88,7 +86,7 @@ public class FeatureReferencePage extends PDEFormPage {
 		managedForm.addPart(fPluginDetailsSection);
 		managedForm.addPart(fPluginPortabilitySection);
 
-		form.setText(PDEPlugin.getResourceString(KEY_HEADING));
+		form.setText(PDEUIMessages.FeatureEditor_ReferencePage_heading);
 		// WorkbenchHelp.setHelp(form.getBody(),
 		// IHelpContextIds.MANIFEST_FEATURE_CONTENT);
 		fPluginSection.fireSelection();

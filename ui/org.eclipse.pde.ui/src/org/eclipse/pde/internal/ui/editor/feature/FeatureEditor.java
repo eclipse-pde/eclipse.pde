@@ -25,6 +25,7 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeatureObject;
 import org.eclipse.pde.internal.ui.IPreferenceConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
 import org.eclipse.pde.internal.ui.editor.MultiSourceEditor;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
@@ -50,28 +51,6 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 
 public class FeatureEditor extends MultiSourceEditor {
-	public static final String UNRESOLVED_TITLE = "FeatureEditor.Unresolved.title"; //$NON-NLS-1$
-
-	public static final String VERSION_TITLE = "FeatureEditor.Version.title"; //$NON-NLS-1$
-
-	public static final String VERSION_MESSAGE = "FeatureEditor.Version.message"; //$NON-NLS-1$
-
-	public static final String VERSION_EXISTS = "FeatureEditor.Version.exists"; //$NON-NLS-1$
-
-	public static final String UNRESOLVED_MESSAGE = "FeatureEditor.Unresolved.message"; //$NON-NLS-1$
-
-	public static final String FEATURE_PAGE_TITLE = "FeatureEditor.FeaturePage.title"; //$NON-NLS-1$
-
-	public static final String REFERENCE_PAGE_TITLE = "FeatureEditor.ReferencePage.title"; //$NON-NLS-1$
-
-	public static final String INCLUDES_PAGE_TITLE = "FeatureEditor.IncludesPage.title"; //$NON-NLS-1$
-
-	public static final String DEPENDENCIES_PAGE_TITLE = "FeatureEditor.DependenciesPage.title"; //$NON-NLS-1$
-
-	public static final String ADVANCED_PAGE_TITLE = "FeatureEditor.AdvancedPage.title"; //$NON-NLS-1$
-
-	public static final String INFO_PAGE_TITLE = "FeatureEditor.InfoPage.title"; //$NON-NLS-1$
-
 	public FeatureEditor() {
 	}
 
@@ -203,18 +182,12 @@ public class FeatureEditor extends MultiSourceEditor {
 
 	protected void addPages() {
 		try {
-			addPage(new FeatureFormPage(this, PDEPlugin
-					.getResourceString(FEATURE_PAGE_TITLE)));
-			addPage(new InfoFormPage(this, PDEPlugin
-					.getResourceString(INFO_PAGE_TITLE)));
-			addPage(new FeatureReferencePage(this, PDEPlugin
-					.getResourceString(REFERENCE_PAGE_TITLE)));
-			addPage(new FeatureIncludesPage(this, PDEPlugin
-					.getResourceString(INCLUDES_PAGE_TITLE)));
-			addPage(new FeatureDependenciesPage(this, PDEPlugin
-					.getResourceString(DEPENDENCIES_PAGE_TITLE)));
-			addPage(new FeatureAdvancedPage(this, PDEPlugin
-					.getResourceString(ADVANCED_PAGE_TITLE)));
+			addPage(new FeatureFormPage(this, PDEUIMessages.FeatureEditor_FeaturePage_title));
+			addPage(new InfoFormPage(this, PDEUIMessages.FeatureEditor_InfoPage_title));
+			addPage(new FeatureReferencePage(this, PDEUIMessages.FeatureEditor_ReferencePage_title));
+			addPage(new FeatureIncludesPage(this, PDEUIMessages.FeatureEditor_IncludesPage_title));
+			addPage(new FeatureDependenciesPage(this, PDEUIMessages.FeatureEditor_DependenciesPage_title));
+			addPage(new FeatureAdvancedPage(this, PDEUIMessages.FeatureEditor_AdvancedPage_title));
 			if (inputContextManager.hasContext(BuildInputContext.CONTEXT_ID))
 				addPage(new BuildPage(this));
 		} catch (PartInitException e) {

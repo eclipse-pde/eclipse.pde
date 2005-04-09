@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.site;
 import org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEDetailsSections;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
@@ -60,14 +60,14 @@ public class FeaturesPage extends PDEFormPage {
 	}
 	
 	public FeaturesPage(PDEFormEditor editor) {
-		super(editor, PAGE_ID, PDEPlugin.getResourceString("FeaturesPage.title")); //$NON-NLS-1$
+		super(editor, PAGE_ID, PDEUIMessages.FeaturesPage_title); //$NON-NLS-1$
 		fBlock = new SiteFeaturesBlock();
 	}
 	protected void createFormContent(IManagedForm managedForm) {
 		
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
-		form.setText(PDEPlugin.getResourceString("FeaturesPage.header")); //$NON-NLS-1$
+		form.setText(PDEUIMessages.FeaturesPage_header); //$NON-NLS-1$
 		fBlock.createContent(managedForm);
 		fCategorySection.fireSelection();
 

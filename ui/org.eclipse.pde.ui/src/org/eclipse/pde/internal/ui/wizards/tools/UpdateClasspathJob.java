@@ -23,23 +23,16 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public class UpdateClasspathJob extends Job {
-	private static final String KEY_JOB_TITLE = "UpdateClasspathJob.title"; //$NON-NLS-1$
-
-	private static final String KEY_TITLE = "UpdateClasspathJob.error.title"; //$NON-NLS-1$
-
-	private static final String KEY_MESSAGE = "UpdateClasspathJob.error.message"; //$NON-NLS-1$
-
-	private static final String KEY_UPDATE = "UpdateClasspathJob.task"; //$NON-NLS-1$
-
 	IPluginModelBase[] fModels;
 
 	/**
 	 * @param name
 	 */
 	public UpdateClasspathJob(IPluginModelBase[] models) {
-		super(PDEPlugin.getResourceString(KEY_JOB_TITLE));
+		super(PDEUIMessages.UpdateClasspathJob_title);
 		setPriority(Job.LONG);
 		fModels = models;
 	}
@@ -48,7 +41,7 @@ public class UpdateClasspathJob extends Job {
 	 */
 	public boolean doUpdateClasspath(IProgressMonitor monitor,
 			IPluginModelBase[] models) throws CoreException {
-		monitor.beginTask(PDEPlugin.getResourceString(KEY_UPDATE),
+		monitor.beginTask(PDEUIMessages.UpdateClasspathJob_task,
 				models.length);
 		try {
 			for (int i = 0; i < models.length; i++) {
@@ -93,8 +86,8 @@ public class UpdateClasspathJob extends Job {
 			}
 
 		} catch (CoreException e) {
-			String title = PDEPlugin.getResourceString(KEY_TITLE);
-			String message = PDEPlugin.getResourceString(KEY_MESSAGE);
+			String title = PDEUIMessages.UpdateClasspathJob_error_title;
+			String message = PDEUIMessages.UpdateClasspathJob_error_message;
 			PDEPlugin.logException(e, title, message);
 			return new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, IStatus.OK, message, e);
 		}

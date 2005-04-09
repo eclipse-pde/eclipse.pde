@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.editor.schema;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.swt.graphics.Image;
 
@@ -74,24 +75,21 @@ public class SchemaFormOutlinePage extends FormOutlinePage {
 	}
 	String getObjectLabel(Object obj) {
 		if (obj instanceof ISchema) {
-			return PDEPlugin.getResourceString(DocSection.KEY_TOPIC_OVERVIEW);
+			return PDEUIMessages.SchemaEditor_topic_overview;
 		}
 		if (obj instanceof IDocumentSection) {
 			IDocumentSection section = (IDocumentSection) obj;
 			String sectionId = section.getSectionId();
 			if (sectionId.equals(IDocumentSection.EXAMPLES))
-				return PDEPlugin
-						.getResourceString(DocSection.KEY_TOPIC_EXAMPLES);
+				return PDEUIMessages.SchemaEditor_topic_examples;
 			if (sectionId.equals(IDocumentSection.SINCE))
-				return PDEPlugin.getResourceString(DocSection.KEY_TOPIC_SINCE);
+				return PDEUIMessages.SchemaEditor_topic_since;
 			if (sectionId.equals(IDocumentSection.IMPLEMENTATION))
-				return PDEPlugin
-						.getResourceString(DocSection.KEY_TOPIC_IMPLEMENTATION);
+				return PDEUIMessages.SchemaEditor_topic_implementation;
 			if (sectionId.equals(IDocumentSection.API_INFO))
-				return PDEPlugin.getResourceString(DocSection.KEY_TOPIC_API);
+				return PDEUIMessages.SchemaEditor_topic_api;
 			if (sectionId.equals(IDocumentSection.COPYRIGHT))
-				return PDEPlugin
-						.getResourceString(DocSection.KEY_TOPIC_COPYRIGHT);
+				return PDEUIMessages.SchemaEditor_topic_copyright;
 		}
 		return null;
 	}

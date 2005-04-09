@@ -28,13 +28,6 @@ import org.eclipse.ui.forms.widgets.*;
 public class BodyTextSection
 	extends PDESection
 	implements IModelChangedListener, IPartSelectionListener {
-	public static final String SECTION_TITLE =
-		"ManifestEditor.BodyTextSection.title"; //$NON-NLS-1$
-	public static final String SECTION_TITLE_FULL =
-		"ManifestEditor.BodyTextSection.titleFull"; //$NON-NLS-1$
-	public static final String KEY_APPLY = "Actions.apply.flabel"; //$NON-NLS-1$
-	public static final String KEY_RESET = "Actions.reset.flabel"; //$NON-NLS-1$
-	public static final String KEY_DELETE = "Actions.delete.flabel"; //$NON-NLS-1$
 	private Button applyButton;
 	private Button resetButton;
 	private IPluginElement currentElement;
@@ -43,16 +36,16 @@ public class BodyTextSection
 
 	public BodyTextSection(ExtensionsPage page, Composite parent) {
 		super(page, parent, Section.TWISTIE);
-		getSection().setText(PDEPlugin.getResourceString(SECTION_TITLE));
+		getSection().setText(PDEUIMessages.ManifestEditor_BodyTextSection_title);
 		createClient(getSection(), page.getManagedForm().getToolkit());
 	}
 
 	private void updateTitle(boolean hasContents) {
 		String title;
 		if (hasContents)
-			title = PDEPlugin.getResourceString(SECTION_TITLE_FULL);
+			title = PDEUIMessages.ManifestEditor_BodyTextSection_titleFull;
 		else
-			title = PDEPlugin.getResourceString(SECTION_TITLE);
+			title = PDEUIMessages.ManifestEditor_BodyTextSection_title;
 		if (!getSection().getText().equals(title)) {
 			getSection().setText(title);
 			getSection().layout();
@@ -110,7 +103,7 @@ public class BodyTextSection
 		applyButton =
 			toolkit.createButton(
 				buttonContainer,
-				PDEPlugin.getResourceString(KEY_APPLY),
+				PDEUIMessages.Actions_apply_flabel,
 				SWT.PUSH);
 		gd =
 			new GridData(
@@ -125,7 +118,7 @@ public class BodyTextSection
 		resetButton =
 			toolkit.createButton(
 				buttonContainer,
-				PDEPlugin.getResourceString(KEY_RESET),
+				PDEUIMessages.Actions_reset_flabel,
 				SWT.PUSH);
 		gd =
 			new GridData(

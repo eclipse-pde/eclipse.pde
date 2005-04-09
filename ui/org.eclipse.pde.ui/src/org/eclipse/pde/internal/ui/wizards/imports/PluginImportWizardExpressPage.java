@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.*;
@@ -98,8 +99,8 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 	public PluginImportWizardExpressPage(String pageName, PluginImportWizardFirstPage page, IStructuredSelection selection) {
 		super(pageName, page);
 		this.initialSelection = selection;
-		setTitle(PDEPlugin.getResourceString("ImportWizard.expressPage.title")); //$NON-NLS-1$
-		setMessage(PDEPlugin.getResourceString("ImportWizard.expressPage.desc")); //$NON-NLS-1$
+		setTitle(PDEUIMessages.ImportWizard_expressPage_title); //$NON-NLS-1$
+		setMessage(PDEUIMessages.ImportWizard_expressPage_desc); //$NON-NLS-1$
 	}
 
 	public void createControl(Composite parent) {
@@ -137,10 +138,10 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		
 		tablePart =
 			new TablePart(
-				PDEPlugin.getResourceString("ImportWizard.expressPage.nonBinary"), //$NON-NLS-1$
+				PDEUIMessages.ImportWizard_expressPage_nonBinary, //$NON-NLS-1$
 				new String[] {
-					PDEPlugin.getResourceString(TablePart.KEY_SELECT_ALL),
-					PDEPlugin.getResourceString(TablePart.KEY_DESELECT_ALL)});
+					PDEUIMessages.WizardCheckboxTablePart_selectAll,
+					PDEUIMessages.WizardCheckboxTablePart_deselectAll});
 		tablePart.createControl(container);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 225;
@@ -272,9 +273,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 
 	private void updateCount() {
 		counterLabel.setText(
-			PDEPlugin.getFormattedMessage(
-				"ImportWizard.expressPage.total", //$NON-NLS-1$
-				new Integer(importListViewer.getTable().getItemCount()).toString()));
+			NLS.bind(PDEUIMessages.ImportWizard_expressPage_total, new Integer(importListViewer.getTable().getItemCount()).toString()));
 		counterLabel.getParent().layout();
 	}
 

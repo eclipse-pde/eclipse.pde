@@ -74,11 +74,11 @@ public class ProductExportWizard extends BaseExportWizard {
 		try {
 			fProductModel.load();
 			if (!fProductModel.isLoaded()) {
-				MessageDialog.openError(getContainer().getShell(), PDEPlugin.getResourceString("ProductExportWizard.error"), PDEPlugin.getResourceString("ProductExportWizard.corrupt")); //$NON-NLS-1$ //$NON-NLS-2$
+				MessageDialog.openError(getContainer().getShell(), PDEUIMessages.ProductExportWizard_error, PDEUIMessages.ProductExportWizard_corrupt); //$NON-NLS-1$ //$NON-NLS-2$
 				return false;
 			}
 		} catch (CoreException e) {
-			MessageDialog.openError(getContainer().getShell(), PDEPlugin.getResourceString("ProductExportWizard.error"), PDEPlugin.getResourceString("ProductExportWizard.corrupt")); //$NON-NLS-1$ //$NON-NLS-2$
+			MessageDialog.openError(getContainer().getShell(), PDEUIMessages.ProductExportWizard_error, PDEUIMessages.ProductExportWizard_corrupt); //$NON-NLS-1$ //$NON-NLS-2$
 			return false;
 		}
 

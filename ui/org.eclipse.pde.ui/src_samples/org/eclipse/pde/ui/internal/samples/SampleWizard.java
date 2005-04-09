@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
@@ -48,8 +49,8 @@ public class SampleWizard extends Wizard
 			final int[] result = {IDialogConstants.CANCEL_ID};
 			getShell().getDisplay().syncExec(new Runnable() {
 				public void run() {
-					String title = PDEPlugin.getResourceString("SampleWizard.title"); //$NON-NLS-1$
-					String msg = PDEPlugin.getFormattedMessage("SampleWizard.overwrite",file); //$NON-NLS-1$
+					String title = PDEUIMessages.SampleWizard_title; //$NON-NLS-1$
+					String msg = NLS.bind(PDEUIMessages.SampleWizard_overwrite, file); //$NON-NLS-1$
 					String[] options = {IDialogConstants.YES_LABEL,
 							IDialogConstants.NO_LABEL,
 							IDialogConstants.YES_TO_ALL_LABEL,

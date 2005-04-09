@@ -39,20 +39,14 @@ public class DescriptionSection extends PDESection implements IPartSelectionList
 	private SourceViewerConfiguration sourceConfiguration;
 	private ISchemaObject element;
 	private SourceViewer sourceViewer;
-	public static final String SECTION_TITLE =
-		"SchemaEditor.DescriptionSection.title"; //$NON-NLS-1$
-	public static final String KEY_APPLY = "Actions.apply.flabel"; //$NON-NLS-1$
-	public static final String KEY_RESET = "Actions.reset.flabel"; //$NON-NLS-1$
-	public static final String SECTION_DESC =
-		"SchemaEditor.DescriptionSection.desc"; //$NON-NLS-1$
 	private IDocumentPartitioner partitioner;
 	private ISchema schema;
 	private boolean ignoreChange = false;
 
 	public DescriptionSection(PDEFormPage page, Composite parent, IColorManager colorManager) {
 		super(page, parent, Section.DESCRIPTION);
-		getSection().setText(PDEPlugin.getResourceString(SECTION_TITLE));
-		getSection().setDescription(PDEPlugin.getResourceString(SECTION_DESC));
+		getSection().setText(PDEUIMessages.SchemaEditor_DescriptionSection_title);
+		getSection().setDescription(PDEUIMessages.SchemaEditor_DescriptionSection_desc);
 		sourceConfiguration = new XMLConfiguration(colorManager);
 		document = new Document();
 		partitioner =
@@ -129,7 +123,7 @@ public class DescriptionSection extends PDESection implements IPartSelectionList
 		applyButton =
 			toolkit.createButton(
 				buttonContainer,
-				PDEPlugin.getResourceString(KEY_APPLY),
+				PDEUIMessages.Actions_apply_flabel,
 				SWT.PUSH);
 		applyButton.setEnabled(false);
 		gd =
@@ -145,7 +139,7 @@ public class DescriptionSection extends PDESection implements IPartSelectionList
 		resetButton =
 			toolkit.createButton(
 				buttonContainer,
-				PDEPlugin.getResourceString(KEY_RESET),
+				PDEUIMessages.Actions_reset_flabel,
 				SWT.PUSH);
 		resetButton.setEnabled(false);
 		gd =

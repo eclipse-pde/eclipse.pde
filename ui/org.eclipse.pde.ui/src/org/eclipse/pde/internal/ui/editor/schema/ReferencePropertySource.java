@@ -12,7 +12,7 @@ package org.eclipse.pde.internal.ui.editor.schema;
 
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.schema.SchemaElementReference;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public class ReferencePropertySource extends GrammarPropertySource {
 
@@ -24,7 +24,7 @@ public class ReferencePropertySource extends GrammarPropertySource {
 		String status = super.isMinOccursValid(ivalue);
 		if (status==null && isInAll()) {
 			if (ivalue!=0 && ivalue!=1) {
-				return PDEPlugin.getResourceString("ReferencePropertySource.minOccurs.value"); //$NON-NLS-1$
+				return PDEUIMessages.ReferencePropertySource_minOccurs_value; //$NON-NLS-1$
 			}
 		}
 		return status;
@@ -34,7 +34,7 @@ public class ReferencePropertySource extends GrammarPropertySource {
 		String status = super.isMaxOccursValid(ivalue);
 		if (status==null && isInAll()) {
 			if (ivalue!=1) {
-				return PDEPlugin.getResourceString("ReferencePropertySource.maxOccurs.value"); //$NON-NLS-1$
+				return PDEUIMessages.ReferencePropertySource_maxOccurs_value; //$NON-NLS-1$
 			}
 		}
 		return status;

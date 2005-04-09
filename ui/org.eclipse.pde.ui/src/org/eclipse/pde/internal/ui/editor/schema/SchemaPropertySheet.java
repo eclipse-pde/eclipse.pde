@@ -18,8 +18,6 @@ import org.eclipse.pde.internal.ui.*;
 
 
 public class SchemaPropertySheet extends PropertySheetPage {
-	public static final String CLONE_LABEL = "SchemaPropertySheet.clone.label"; //$NON-NLS-1$
-	public static final String CLONE_TOOLTIP = "SchemaPropertySheet.clone.tooltip"; //$NON-NLS-1$
 	private Action cloneAction;
 	protected ISelection currentSelection;
 	private IWorkbenchPart part;
@@ -61,7 +59,7 @@ public class SchemaPropertySheet extends PropertySheetPage {
 		fillLocalToolBar(toolBarManager);
 	}
 	protected void makeSchemaActions() {
-		cloneAction = new Action(PDEPlugin.getResourceString(CLONE_LABEL)) {
+		cloneAction = new Action(PDEUIMessages.SchemaPropertySheet_clone_label) {
 			public void run() {
 				handleClone();
 			}
@@ -69,7 +67,7 @@ public class SchemaPropertySheet extends PropertySheetPage {
 		cloneAction.setImageDescriptor(PDEPluginImages.DESC_CLONE_ATT);
 		cloneAction
 				.setDisabledImageDescriptor(PDEPluginImages.DESC_CLONE_ATT_DISABLED);
-		cloneAction.setToolTipText(PDEPlugin.getResourceString(CLONE_TOOLTIP));
+		cloneAction.setToolTipText(PDEUIMessages.SchemaPropertySheet_clone_tooltip);
 		cloneAction.setEnabled(false);
 	}
 	public void selectionChanged(IWorkbenchPart part, ISelection sel) {

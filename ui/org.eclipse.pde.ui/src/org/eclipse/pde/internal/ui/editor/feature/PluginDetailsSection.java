@@ -17,6 +17,7 @@ import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
@@ -36,18 +37,6 @@ import org.eclipse.ui.forms.widgets.Section;
 
 public class PluginDetailsSection extends PDESection implements IFormPart,
 		IPartSelectionListener {
-	private static final String SECTION_DESC = "SiteEditor.PluginDetailsSection.desc"; //$NON-NLS-1$
-
-	private static final String SECTION_PLUGIN_LABEL = "SiteEditor.PluginDetailsSection.pluginLabel"; //$NON-NLS-1$
-
-	private static final String SECTION_DOWNLOAD_SIZE = "SiteEditor.PluginDetailsSection.downloadSize"; //$NON-NLS-1$
-
-	private static final String SECTION_TITLE = "SiteEditor.PluginDetailsSection.title"; //$NON-NLS-1$
-
-	private static final String SECTION_INSTALL_SIZE = "SiteEditor.PluginDetailsSection.installSize"; //$NON-NLS-1$
-
-	private static final String SECTION_UNPACK = "SiteEditor.PluginDetailsSection.unpack"; //$NON-NLS-1$
-
 	protected IFeaturePlugin fInput;
 
 	private FormEntry fNameText;
@@ -61,8 +50,8 @@ public class PluginDetailsSection extends PDESection implements IFormPart,
 	private boolean fBlockNotification;
 
 	public PluginDetailsSection(PDEFormPage page, Composite parent) {
-		this(page, parent, PDEPlugin.getResourceString(SECTION_TITLE),
-				PDEPlugin.getResourceString(SECTION_DESC), SWT.NULL);
+		this(page, parent, PDEUIMessages.SiteEditor_PluginDetailsSection_title,
+				PDEUIMessages.SiteEditor_PluginDetailsSection_desc, SWT.NULL);
 	}
 
 	public PluginDetailsSection(PDEFormPage page, Composite parent,
@@ -93,14 +82,12 @@ public class PluginDetailsSection extends PDESection implements IFormPart,
 		layout.horizontalSpacing = 6;
 		container.setLayout(layout);
 
-		fNameText = new FormEntry(container, toolkit, PDEPlugin
-				.getResourceString(SECTION_PLUGIN_LABEL), null, false);
+		fNameText = new FormEntry(container, toolkit, PDEUIMessages.SiteEditor_PluginDetailsSection_pluginLabel, null, false);
 		limitTextWidth(fNameText);
 		fNameText.setEditable(false);
 		fNameText.getText().setEnabled(false);
 
-		fdownloadSizeText = new FormEntry(container, toolkit, PDEPlugin
-				.getResourceString(SECTION_DOWNLOAD_SIZE), null, false);
+		fdownloadSizeText = new FormEntry(container, toolkit, PDEUIMessages.SiteEditor_PluginDetailsSection_downloadSize, null, false);
 		fdownloadSizeText.setFormEntryListener(new FormEntryAdapter(this) {
 
 			public void textValueChanged(FormEntry text) {
@@ -115,8 +102,7 @@ public class PluginDetailsSection extends PDESection implements IFormPart,
 		limitTextWidth(fdownloadSizeText);
 		fdownloadSizeText.setEditable(isEditable());
 
-		fInstallSizeText = new FormEntry(container, toolkit, PDEPlugin
-				.getResourceString(SECTION_INSTALL_SIZE), null, false);
+		fInstallSizeText = new FormEntry(container, toolkit, PDEUIMessages.SiteEditor_PluginDetailsSection_installSize, null, false);
 		fInstallSizeText.setFormEntryListener(new FormEntryAdapter(this) {
 
 			public void textValueChanged(FormEntry text) {
@@ -131,8 +117,7 @@ public class PluginDetailsSection extends PDESection implements IFormPart,
 		limitTextWidth(fInstallSizeText);
 		fInstallSizeText.setEditable(isEditable());
 
-		fUnpackButton = toolkit.createButton(container, PDEPlugin
-				.getResourceString(SECTION_UNPACK), SWT.CHECK);
+		fUnpackButton = toolkit.createButton(container, PDEUIMessages.SiteEditor_PluginDetailsSection_unpack, SWT.CHECK);
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = 2;
 		fUnpackButton.setLayoutData(gd);

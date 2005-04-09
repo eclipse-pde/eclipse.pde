@@ -37,12 +37,6 @@ import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.part.*;
 
 public class ExtensionPointsSection extends TableSection {
-	public static final String SECTION_TITLE = "ManifestEditor.DetailExtensionPointSection.title"; //$NON-NLS-1$
-	public static final String SECTION_DESC = "ManifestEditor.DetailExtensionPointSection.desc"; //$NON-NLS-1$
-	public static final String SECTION_NEW = "ManifestEditor.DetailExtensionPointSection.new"; //$NON-NLS-1$
-	public static final String POPUP_NEW_EXTENSION_POINT = "ManifestEditor.DetailExtensionPointSection.newExtensionPoint"; //$NON-NLS-1$
-	public static final String POPUP_OPEN_SCHEMA = "ManifestEditor.DetailExtensionPointSection.openSchema"; //$NON-NLS-1$
-	public static final String POPUP_DELETE = "Actions.delete.label"; //$NON-NLS-1$
 	private TableViewer pointTable;
 
 	class TableContentProvider extends DefaultContentProvider implements
@@ -57,10 +51,9 @@ public class ExtensionPointsSection extends TableSection {
 	}
 
 	public ExtensionPointsSection(PDEFormPage page, Composite parent) {
-		super(page, parent, Section.DESCRIPTION, new String[] { PDEPlugin
-				.getResourceString(SECTION_NEW) });
-		getSection().setText(PDEPlugin.getResourceString(SECTION_TITLE));
-		getSection().setDescription(PDEPlugin.getResourceString(SECTION_DESC));
+		super(page, parent, Section.DESCRIPTION, new String[] { PDEUIMessages.ManifestEditor_DetailExtensionPointSection_new });
+		getSection().setText(PDEUIMessages.ManifestEditor_DetailExtensionPointSection_title);
+		getSection().setDescription(PDEUIMessages.ManifestEditor_DetailExtensionPointSection_desc);
 		handleDefaultButton = false;
 		getTablePart().setEditable(false);
 	}
@@ -164,8 +157,7 @@ public class ExtensionPointsSection extends TableSection {
 	protected void fillContextMenu(IMenuManager manager) {
 		ISelection selection = pointTable.getSelection();
 
-		Action newAction = new Action(PDEPlugin
-				.getResourceString(POPUP_NEW_EXTENSION_POINT)) {
+		Action newAction = new Action(PDEUIMessages.ManifestEditor_DetailExtensionPointSection_newExtensionPoint) {
 			public void run() {
 				handleNew();
 			}
@@ -184,8 +176,7 @@ public class ExtensionPointsSection extends TableSection {
 				if (input instanceof IFileEditorInput
 						|| input instanceof SystemFileEditorInput) {
 
-					Action openSchemaAction = new Action(PDEPlugin
-							.getResourceString(POPUP_OPEN_SCHEMA)) {
+					Action openSchemaAction = new Action(PDEUIMessages.ManifestEditor_DetailExtensionPointSection_openSchema) {
 						public void run() {
 							handleOpenSchema(point);
 						}
@@ -196,8 +187,7 @@ public class ExtensionPointsSection extends TableSection {
 
 			manager.add(new Separator());
 
-			Action deleteAction = new Action(PDEPlugin
-					.getResourceString(POPUP_DELETE)) {
+			Action deleteAction = new Action(PDEUIMessages.Actions_delete_label) {
 				public void run() {
 					handleDelete();
 				}
@@ -236,7 +226,7 @@ public class ExtensionPointsSection extends TableSection {
 					IFile schemaFile = project.getFile(schema);
 					if (schemaFile.exists())
 						if (MessageDialog.openQuestion(getSection().getShell(),
-								PDEPlugin.getResourceString("ExtensionPointsSection.title"), PDEPlugin.getResourceString("ExtensionPointsSection.message1") //$NON-NLS-1$ //$NON-NLS-2$
+								PDEUIMessages.ExtensionPointsSection_title, PDEUIMessages.ExtensionPointsSection_message1
 										+ schemaFile + "?" )) //$NON-NLS-1$
 							schemaFile.delete(true, false,
 									new NullProgressMonitor());

@@ -81,7 +81,7 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 	private boolean fFirstCheck;
 
 	public PluginWorkingSet() {
-		super("page1", PDEPlugin.getResourceString("PluginWorkingSet.title"), PDEPluginImages.DESC_DEFCON_WIZ); //$NON-NLS-1$ //$NON-NLS-2$
+		super("page1", PDEUIMessages.PluginWorkingSet_title, PDEPluginImages.DESC_DEFCON_WIZ); //$NON-NLS-1$ //$NON-NLS-2$
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 
@@ -132,7 +132,7 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 		setControl(composite);
 
 		Label label= new Label(composite, SWT.WRAP);
-		label.setText(PDEPlugin.getResourceString("PluginWorkingSet.setName")); //$NON-NLS-1$
+		label.setText(PDEUIMessages.PluginWorkingSet_setName); //$NON-NLS-1$
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		fWorkingSetName= new Text(composite, SWT.SINGLE | SWT.BORDER);
@@ -147,7 +147,7 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 		fWorkingSetName.setFocus();
 		
 		label= new Label(composite, SWT.WRAP);
-		label.setText(PDEPlugin.getResourceString("PluginWorkingSet.setContent")); //$NON-NLS-1$
+		label.setText(PDEUIMessages.PluginWorkingSet_setContent); //$NON-NLS-1$
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		fTable= CheckboxTableViewer.newCheckList(composite, SWT.BORDER);
@@ -207,7 +207,7 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 		String newText= fWorkingSetName.getText();
 
 		if (newText.trim().length() == 0) { //$NON-NLS-1$
-			errorMessage = PDEPlugin.getResourceString("PluginWorkingSet.emptyName"); //$NON-NLS-1$
+			errorMessage = PDEUIMessages.PluginWorkingSet_emptyName; //$NON-NLS-1$
 			if (fFirstCheck) {
 				setPageComplete(false);
 				fFirstCheck= false;
@@ -215,14 +215,14 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 			}
 		}
 		if (errorMessage == null && fTable.getCheckedElements().length == 0) {
-			errorMessage = PDEPlugin.getResourceString("PluginWorkingSet.noPluginsChecked"); //$NON-NLS-1$
+			errorMessage = PDEUIMessages.PluginWorkingSet_noPluginsChecked; //$NON-NLS-1$
 		}
 		
 		if (errorMessage == null && fWorkingSet == null) {
 			IWorkingSet[] workingSets = PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSets();
 			for (int i = 0; i < workingSets.length; i++) {
 				if (newText.equals(workingSets[i].getName())) {
-					errorMessage = PDEPlugin.getResourceString("PluginWorkingSet.nameInUse"); //$NON-NLS-1$
+					errorMessage = PDEUIMessages.PluginWorkingSet_nameInUse; //$NON-NLS-1$
 					break;
 				}
 			}

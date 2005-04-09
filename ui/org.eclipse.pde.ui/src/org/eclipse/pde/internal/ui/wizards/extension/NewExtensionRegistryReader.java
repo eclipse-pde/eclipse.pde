@@ -14,6 +14,7 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.elements.ElementList;
 import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.swt.graphics.Image;
@@ -155,7 +156,7 @@ public class NewExtensionRegistryReader {
 
 		category = new Category(config);
 		if (category.getID() == null || category.getLabel() == null) {
-			System.out.println(PDEPlugin.getResourceString("NewExtensionRegistryReader.missingProperty")); //$NON-NLS-1$
+			System.out.println(PDEUIMessages.NewExtensionRegistryReader_missingProperty); //$NON-NLS-1$
 			return;
 		}
 

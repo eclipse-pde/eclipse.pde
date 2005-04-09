@@ -21,6 +21,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.*;
@@ -61,9 +62,8 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
     	
     	// start task
 		monitor.beginTask(
-				PDEPlugin.getResourceString("NewProjectCreationOperation.creating"), getNumberOfWorkUnits()); //$NON-NLS-1$
-		monitor.subTask(PDEPlugin
-				.getResourceString("NewProjectCreationOperation.project")); //$NON-NLS-1$
+				PDEUIMessages.NewProjectCreationOperation_creating, getNumberOfWorkUnits()); //$NON-NLS-1$
+		monitor.subTask(PDEUIMessages.NewProjectCreationOperation_project); //$NON-NLS-1$
 
 		// create project
 		IProject project = createProject();
@@ -75,8 +75,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 				File jarFile = new File(paths[i]);
 				String jarName = jarFile.getName();
 				IFile file = project.getFile(jarName);
-				monitor.subTask(PDEPlugin.getFormattedMessage(
-						"NewProjectCreationOperation.copyingJar", jarName)); //$NON-NLS-1$
+				monitor.subTask(NLS.bind(PDEUIMessages.NewProjectCreationOperation_copyingJar, jarName)); //$NON-NLS-1$
 
 				InputStream in = null;
 				try {
@@ -97,8 +96,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		}
 		// set classpath if project has a Java nature
 		if (project.hasNature(JavaCore.NATURE_ID)) {
-			monitor.subTask(PDEPlugin
-							.getResourceString("NewProjectCreationOperation.setClasspath")); //$NON-NLS-1$
+			monitor.subTask(PDEUIMessages.NewProjectCreationOperation_setClasspath); //$NON-NLS-1$
 			setClasspath(project, fData);
 			monitor.worked(1);
 		}
@@ -112,14 +110,12 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			}
 		}
 		// generate the manifest file
-		monitor.subTask(PDEPlugin
-				.getResourceString("NewProjectCreationOperation.manifestFile")); //$NON-NLS-1$
+		monitor.subTask(PDEUIMessages.NewProjectCreationOperation_manifestFile); //$NON-NLS-1$
 		createManifest(project);
 		monitor.worked(1);
 		
 		// generate the build.properties file
-		monitor.subTask(PDEPlugin
-						.getResourceString("NewProjectCreationOperation.buildPropertiesFile")); //$NON-NLS-1$
+		monitor.subTask(PDEUIMessages.NewProjectCreationOperation_buildPropertiesFile); //$NON-NLS-1$
 		createBuildPropertiesFile(project);
 		monitor.worked(1);
 		

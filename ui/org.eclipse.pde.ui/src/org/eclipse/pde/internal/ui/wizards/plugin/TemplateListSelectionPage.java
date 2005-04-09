@@ -64,8 +64,8 @@ public class TemplateListSelectionPage extends WizardListSelectionPage
 	public TemplateListSelectionPage(ElementList wizardElements, ContentPage page, String message) {
 		super(wizardElements, message);
 		fContentPage = page;
-		setTitle(PDEPlugin.getResourceString("WizardListSelectionPage.title")); //$NON-NLS-1$
-		setDescription(PDEPlugin.getResourceString("WizardListSelectionPage.desc")); //$NON-NLS-1$
+		setTitle(PDEUIMessages.WizardListSelectionPage_title); //$NON-NLS-1$
+		setDescription(PDEUIMessages.WizardListSelectionPage_desc); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
@@ -78,7 +78,7 @@ public class TemplateListSelectionPage extends WizardListSelectionPage
 	
 	public void createAbove(Composite container, int span) {
 		fUseTemplate = new Button(container, SWT.CHECK);
-		fUseTemplate.setText(PDEPlugin.getResourceString("WizardListSelectionPage.label")); //$NON-NLS-1$
+		fUseTemplate.setText(PDEUIMessages.WizardListSelectionPage_label); //$NON-NLS-1$
 		GridData gd = new GridData();
 		gd.horizontalSpan = span;
 		fUseTemplate.setLayoutData(gd);

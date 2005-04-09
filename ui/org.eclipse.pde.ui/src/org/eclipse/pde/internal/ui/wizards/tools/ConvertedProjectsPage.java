@@ -38,12 +38,6 @@ import org.eclipse.ui.ide.*;
 	
 public class ConvertedProjectsPage extends WizardPage  {
 	private CheckboxTableViewer projectViewer;
-	public static final String KEY_TITLE = "ConvertedProjectWizard.title"; //$NON-NLS-1$
-	public static final String KEY_CONVERTING = "ConvertedProjectWizard.converting"; //$NON-NLS-1$
-	public static final String KEY_UPDATING = "ConvertedProjectWizard.updating"; //$NON-NLS-1$
-	public static final String KEY_DESC = "ConvertedProjectWizard.desc"; //$NON-NLS-1$
-	public static final String KEY_PROJECT_LIST =
-		"ConvertedProjectWizard.projectList"; //$NON-NLS-1$
 	private TablePart tablePart;
 	private IProject[] fSelected;
 	private IProject[] fUnconverted;
@@ -83,9 +77,9 @@ public class ConvertedProjectsPage extends WizardPage  {
 
 	public ConvertedProjectsPage(IProject[] projects, Vector initialSelection) {
 		super("convertedProjects"); //$NON-NLS-1$
-		setTitle(PDEPlugin.getResourceString(KEY_TITLE));
-		setDescription(PDEPlugin.getResourceString(KEY_DESC));
-		tablePart = new TablePart(PDEPlugin.getResourceString(KEY_PROJECT_LIST));
+		setTitle(PDEUIMessages.ConvertedProjectWizard_title);
+		setDescription(PDEUIMessages.ConvertedProjectWizard_desc);
+		tablePart = new TablePart(PDEUIMessages.ConvertedProjectWizard_projectList);
 		this.fSelected = (IProject[])initialSelection.toArray(new IProject[initialSelection.size()]);
 		this.fUnconverted = projects;
 	}
@@ -207,7 +201,7 @@ public class ConvertedProjectsPage extends WizardPage  {
 		throws CoreException {
 		int totalCount = 2 * selected.length;
 		monitor.beginTask(
-			PDEPlugin.getResourceString(KEY_CONVERTING),
+			PDEUIMessages.ConvertedProjectWizard_converting,
 			totalCount);
 		for (int i = 0; i < selected.length; i++) {
 			convertProject((IProject) selected[i], monitor);
@@ -215,7 +209,7 @@ public class ConvertedProjectsPage extends WizardPage  {
 		}
 		
 		// update build path
-		monitor.subTask(PDEPlugin.getResourceString(KEY_UPDATING));
+		monitor.subTask(PDEUIMessages.ConvertedProjectWizard_updating);
 		for (int i = 0; i < selected.length; i++) {
 			if (((IProject) selected[i]).hasNature(JavaCore.NATURE_ID)) {
 				updateBuildPath((IProject) selected[i], new SubProgressMonitor(monitor,1));

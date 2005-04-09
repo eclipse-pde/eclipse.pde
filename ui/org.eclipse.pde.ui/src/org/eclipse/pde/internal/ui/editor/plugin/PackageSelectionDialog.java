@@ -19,8 +19,6 @@ import org.eclipse.ui.dialogs.*;
 
 public class PackageSelectionDialog extends ElementListSelectionDialog {
 
-	public static final String PACKAGE_MESSAGE = "PackageSelectionDialog.label"; //$NON-NLS-1$
-	
 	public PackageSelectionDialog(Shell parent, ILabelProvider renderer, IJavaProject jProject) {
 		this(parent, renderer, jProject, new Vector());
 	}
@@ -32,7 +30,7 @@ public class PackageSelectionDialog extends ElementListSelectionDialog {
 		super(parent, renderer);
 		setElements(jProject, existingPackages);
 		setMultipleSelection(true);
-		setMessage(PDEPlugin.getResourceString(PACKAGE_MESSAGE));
+		setMessage(PDEUIMessages.PackageSelectionDialog_label);
 	}
 	/**
 	 * 
@@ -74,7 +72,7 @@ public class PackageSelectionDialog extends ElementListSelectionDialog {
 	 */
 	protected Control createDialogArea(Composite parent) {
 		Control control = super.createDialogArea(parent);
-		getShell().setText(PDEPlugin.getResourceString("PackageSelectionDialog.title")); //$NON-NLS-1$
+		getShell().setText(PDEUIMessages.PackageSelectionDialog_title); //$NON-NLS-1$
 		return control;
 	}
 }

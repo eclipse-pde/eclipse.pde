@@ -35,6 +35,7 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureData;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
@@ -51,16 +52,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 public class DataSection extends TableSection {
-	private static final String SECTION_TITLE = "FeatureEditor.DataSection.title"; //$NON-NLS-1$
-
-	private static final String SECTION_DESC = "FeatureEditor.DataSection.desc"; //$NON-NLS-1$
-
-	private static final String KEY_NEW = "FeatureEditor.DataSection.new"; //$NON-NLS-1$
-
-	private static final String POPUP_NEW = "Menus.new.label"; //$NON-NLS-1$
-
-	private static final String POPUP_DELETE = "Actions.delete.label"; //$NON-NLS-1$
-
 	private TableViewer fDataViewer;
 
 	private Action fNewAction;
@@ -80,10 +71,9 @@ public class DataSection extends TableSection {
 	}
 
 	public DataSection(PDEFormPage page, Composite parent) {
-		super(page, parent, Section.DESCRIPTION, new String[] { PDEPlugin
-				.getResourceString(KEY_NEW) });
-		getSection().setText(PDEPlugin.getResourceString(SECTION_TITLE));
-		getSection().setDescription(PDEPlugin.getResourceString(SECTION_DESC));
+		super(page, parent, Section.DESCRIPTION, new String[] { PDEUIMessages.FeatureEditor_DataSection_new });
+		getSection().setText(PDEUIMessages.FeatureEditor_DataSection_title);
+		getSection().setDescription(PDEUIMessages.FeatureEditor_DataSection_desc);
 		getTablePart().setEditable(false);
 	}
 
@@ -305,7 +295,7 @@ public class DataSection extends TableSection {
 				handleNew();
 			}
 		};
-		fNewAction.setText(PDEPlugin.getResourceString(POPUP_NEW));
+		fNewAction.setText(PDEUIMessages.Menus_new_label);
 		fNewAction.setEnabled(model.isEditable());
 
 		fDeleteAction = new Action() {
@@ -319,7 +309,7 @@ public class DataSection extends TableSection {
 			}
 		};
 		fDeleteAction.setEnabled(model.isEditable());
-		fDeleteAction.setText(PDEPlugin.getResourceString(POPUP_DELETE));
+		fDeleteAction.setText(PDEUIMessages.Actions_delete_label);
 		fOpenAction = new OpenReferenceAction(fDataViewer);
 	}
 

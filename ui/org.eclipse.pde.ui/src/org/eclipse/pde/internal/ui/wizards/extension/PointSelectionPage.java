@@ -18,6 +18,7 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
@@ -142,15 +143,15 @@ public class PointSelectionPage
 	}
 
 	public PointSelectionPage(IProject project, IPluginBase model, WizardCollectionElement element, WizardCollectionElement templates, NewExtensionWizard wizard) {
-		super("pointSelectionPage", PDEPlugin.getResourceString("NewExtensionWizard.PointSelectionPage.title")); //$NON-NLS-1$ //$NON-NLS-2$
+		super("pointSelectionPage", PDEUIMessages.NewExtensionWizard_PointSelectionPage_title); //$NON-NLS-1$ //$NON-NLS-2$
 		this.fPluginBase = model;
 		this.wizardCollection = element;
 		this.templateCollection = templates;
 		this.wizard= wizard;
 		this.project=project;
 		fAvailableImports = PluginSelectionDialog.getExistingImports(model);
-		setTitle(PDEPlugin.getResourceString("NewExtensionWizard.PointSelectionPage.title")); //$NON-NLS-1$
-		setDescription(PDEPlugin.getResourceString("NewExtensionWizard.PointSelectionPage.desc")); //$NON-NLS-1$
+		setTitle(PDEUIMessages.NewExtensionWizard_PointSelectionPage_title); //$NON-NLS-1$
+		setDescription(PDEUIMessages.NewExtensionWizard_PointSelectionPage_desc); //$NON-NLS-1$
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		makeActions();
 	}
@@ -159,9 +160,9 @@ public class PointSelectionPage
 		// tab folder
 		final TabFolder tabFolder = new TabFolder(parent, SWT.FLAT);
 		TabItem firstTab = new TabItem(tabFolder, SWT.NULL);
-		firstTab.setText(PDEPlugin.getResourceString("PointSelectionPage.tab1")); //$NON-NLS-1$
+		firstTab.setText(PDEUIMessages.PointSelectionPage_tab1); //$NON-NLS-1$
 		TabItem secondTab = new TabItem(tabFolder, SWT.NULL);
-		secondTab.setText(PDEPlugin.getResourceString("PointSelectionPage.tab2")); //$NON-NLS-1$
+		secondTab.setText(PDEUIMessages.PointSelectionPage_tab2); //$NON-NLS-1$
 		secondTab.setControl(createWizardsPage(tabFolder));
 		tabFolder.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -184,7 +185,7 @@ public class PointSelectionPage
 		pointContainer.setLayoutData(gd);
 
 		Label pointLabel = new Label(pointContainer, SWT.NONE);
-		pointLabel.setText(PDEPlugin.getResourceString("NewExtensionWizard.PointSelectionPage.availExtPoints.label")); //$NON-NLS-1$
+		pointLabel.setText(PDEUIMessages.NewExtensionWizard_PointSelectionPage_availExtPoints_label); //$NON-NLS-1$
 		
 		fPointListViewer =
 			new TableViewer(
@@ -219,7 +220,7 @@ public class PointSelectionPage
 		templateComposite.setLayoutData(gd);
 		
 		templateLabel = new Label(templateComposite, SWT.NONE);
-		templateLabel.setText(PDEPlugin.getResourceString("NewExtensionWizard.PointSelectionPage.contributedTemplates.title")); //$NON-NLS-1$
+		templateLabel.setText(PDEUIMessages.NewExtensionWizard_PointSelectionPage_contributedTemplates_title); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		templateLabel.setLayoutData(gd);
 		
@@ -270,7 +271,7 @@ public class PointSelectionPage
 
 		
 		fFilterCheck = new Button(outerContainer, SWT.CHECK);
-		fFilterCheck.setText(PDEPlugin.getResourceString("NewExtensionWizard.PointSelectionPage.filterCheck")); //$NON-NLS-1$
+		fFilterCheck.setText(PDEUIMessages.NewExtensionWizard_PointSelectionPage_filterCheck); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fFilterCheck.setLayoutData(gd);
 		fFilterCheck.setSelection(true);
@@ -290,7 +291,7 @@ public class PointSelectionPage
 			IHelpContextIds.ADD_EXTENSIONS_SCHEMA_BASED);
 	}
 	private Control createWizardsPage(Composite parent) {
-		wizardsPage = new ExtensionTreeSelectionPage(wizardCollection, null, PDEPlugin.getResourceString("PointSelectionPage.categories")); //$NON-NLS-1$
+		wizardsPage = new ExtensionTreeSelectionPage(wizardCollection, null, PDEUIMessages.PointSelectionPage_categories); //$NON-NLS-1$
 		wizardsPage.createControl(parent);
 		wizardsPage.setWizard(wizard);
 		wizardsPage.getSelectionProvider().addSelectionChangedListener(this);
@@ -404,7 +405,7 @@ public class PointSelectionPage
 				doShowDescription();
 			}
 		};
-		showDetailsAction.setText(PDEPlugin.getResourceString("NewExtensionWizard.PointSelectionPage.showDetails")); //$NON-NLS-1$
+		showDetailsAction.setText(PDEUIMessages.NewExtensionWizard_PointSelectionPage_showDetails); //$NON-NLS-1$
 	}
 	
 	public void selectionChanged(SelectionChangedEvent event) {
@@ -421,18 +422,18 @@ public class PointSelectionPage
 						setMessage(null);
 					else
 						setMessage(
-							PDEPlugin.getResourceString("NewExtensionWizard.PointSelectionPage.message"), //$NON-NLS-1$
+							PDEUIMessages.NewExtensionWizard_PointSelectionPage_message, //$NON-NLS-1$
 							INFORMATION);
-					setDescription(PDEPlugin.getFormattedMessage("NewExtensionWizard.PointSelectionPage.pluginDescription",fCurrentPoint.getFullId())); //$NON-NLS-1$
+					setDescription(NLS.bind(PDEUIMessages.NewExtensionWizard_PointSelectionPage_pluginDescription, fCurrentPoint.getFullId())); //$NON-NLS-1$
 					setDescriptionText(""); //$NON-NLS-1$
-					templateLabel.setText(PDEPlugin.getFormattedMessage("NewExtensionWizard.PointSelectionPage.contributedTemplates.label", fCurrentPoint.getFullId())); //$NON-NLS-1$
+					templateLabel.setText(NLS.bind(PDEUIMessages.NewExtensionWizard_PointSelectionPage_contributedTemplates_label, fCurrentPoint.getFullId())); //$NON-NLS-1$
 					setSelectedNode(null);
 					setPageComplete(true);
 				} else if (ssel.getFirstElement() instanceof WizardElement) {
 					WizardElement wizardSelection = (WizardElement)ssel.getFirstElement();
 					setSelectedNode(createWizardNode(wizardSelection));
 					setDescriptionText(wizardSelection.getDescription());
-					setDescription(PDEPlugin.getFormattedMessage("NewExtensionWizard.PointSelectionPage.templateDescription",wizardSelection.getLabel())); //$NON-NLS-1$
+					setDescription(NLS.bind(PDEUIMessages.NewExtensionWizard_PointSelectionPage_templateDescription, wizardSelection.getLabel())); //$NON-NLS-1$
 					setPageComplete(false);
 				}
 			}

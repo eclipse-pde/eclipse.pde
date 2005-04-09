@@ -13,8 +13,8 @@ package org.eclipse.pde.internal.ui.view;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IMenuCreator;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
@@ -31,8 +31,7 @@ public class HistoryDropDownAction extends Action implements IMenuCreator {
 	public HistoryDropDownAction(DependenciesView view) {
 		fView = view;
 		fMenu = null;
-		setToolTipText(PDEPlugin
-				.getResourceString("HistoryDropDownAction.tooltip")); //$NON-NLS-1$
+		setToolTipText(PDEUIMessages.HistoryDropDownAction_tooltip); //$NON-NLS-1$
 		setImageDescriptor(PDEPluginImages.DESC_HISTORY_LIST);
 		setDisabledImageDescriptor(PDEPluginImages.DESC_HISTORY_LIST_DISABLED);
 		setMenuCreator(this);

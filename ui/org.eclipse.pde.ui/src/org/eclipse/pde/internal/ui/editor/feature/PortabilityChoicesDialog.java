@@ -25,8 +25,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.*;
 
 public class PortabilityChoicesDialog extends Dialog {
-	private static final String KEY_CHOICES =
-		"FeatureEditor.PortabilityChoicesDialog.choices"; //$NON-NLS-1$
 	private String value;
 	private Choice[] choices;
 	private CheckboxTableViewer choiceViewer;
@@ -58,7 +56,7 @@ public class PortabilityChoicesDialog extends Dialog {
 		this.value = value;
 		this.choices = choices;
 		
-		checkboxTablePart = new WizardCheckboxTablePart(PDEPlugin.getResourceString(KEY_CHOICES));
+		checkboxTablePart = new WizardCheckboxTablePart(PDEUIMessages.FeatureEditor_PortabilityChoicesDialog_choices);
 	}
 
 	protected void createButtonsForButtonBar(Composite parent) {

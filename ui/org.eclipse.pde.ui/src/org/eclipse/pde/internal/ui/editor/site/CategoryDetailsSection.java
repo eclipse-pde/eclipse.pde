@@ -21,6 +21,7 @@ import org.eclipse.pde.internal.core.isite.ISiteDescription;
 import org.eclipse.pde.internal.core.isite.ISiteFeature;
 import org.eclipse.pde.internal.core.isite.ISiteModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
@@ -48,16 +49,6 @@ public class CategoryDetailsSection extends PDESection implements IFormPart,
 
 	private static final String PROPERTY_TYPE = "type"; //$NON-NLS-1$
 
-	public static final String SECTION_DESC = "CategoryDetails.desc"; //$NON-NLS-1$
-
-	public static final String SECTION_LABEL = "CategoryDetails.label"; //$NON-NLS-1$
-
-	public static final String SECTION_NAME = "CategoryDetails.name"; //$NON-NLS-1$
-
-	public static final String SECTION_SECT_DESC = "CategoryDetails.sectionDescription"; //$NON-NLS-1$
-
-	public static final String SECTION_TITLE = "CategoryDetails.title"; //$NON-NLS-1$
-
 	private ISiteCategoryDefinition fCurrentCategoryDefinition;
 
 	private FormEntry fDescriptionText;
@@ -67,8 +58,8 @@ public class CategoryDetailsSection extends PDESection implements IFormPart,
 	private FormEntry fNameText;
 
 	public CategoryDetailsSection(PDEFormPage page, Composite parent) {
-		this(page, parent, PDEPlugin.getResourceString(SECTION_TITLE),
-				PDEPlugin.getResourceString(SECTION_SECT_DESC), SWT.NULL);
+		this(page, parent, PDEUIMessages.CategoryDetails_title,
+				PDEUIMessages.CategoryDetails_sectionDescription, SWT.NULL);
 		getSection().setLayoutData(new GridData(GridData.FILL_BOTH));
 
 	}
@@ -174,21 +165,18 @@ public class CategoryDetailsSection extends PDESection implements IFormPart,
 		layout.horizontalSpacing = 6;
 		container.setLayout(layout);
 		
-		fNameText = new FormEntry(container, toolkit, PDEPlugin
-				.getResourceString(SECTION_NAME), null, false);
+		fNameText = new FormEntry(container, toolkit, PDEUIMessages.CategoryDetails_name, null, false);
 		fNameText.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
 				try {
 					if (text.getValue().length() <= 0
 							|| alreadyExists(text.getValue())) {
 						setValue(PROPERTY_NAME);
-						String message = PDEPlugin
-								.getResourceString("CategoryDetails.alreadyExists"); //$NON-NLS-1$
+						String message = PDEUIMessages.CategoryDetails_alreadyExists; //$NON-NLS-1$
 						MessageDialog
 								.openError(
 										PDEPlugin.getActiveWorkbenchShell(),
-										PDEPlugin
-												.getResourceString("CategoryDetails.alreadyExists.title"), //$NON-NLS-1$
+										PDEUIMessages.CategoryDetails_alreadyExists_title, //$NON-NLS-1$
 										message);
 					} else {
 						applyValue(PROPERTY_NAME, text.getValue());
@@ -201,8 +189,7 @@ public class CategoryDetailsSection extends PDESection implements IFormPart,
 		limitTextWidth(fNameText);
 		fNameText.setEditable(isEditable());
 
-		fLabelText = new FormEntry(container, toolkit, PDEPlugin
-				.getResourceString(SECTION_LABEL), null, false);
+		fLabelText = new FormEntry(container, toolkit, PDEUIMessages.CategoryDetails_label, null, false);
 		fLabelText.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
 				try {
@@ -215,8 +202,7 @@ public class CategoryDetailsSection extends PDESection implements IFormPart,
 		limitTextWidth(fLabelText);
 		fLabelText.setEditable(isEditable());
 
-		fDescriptionText = new FormEntry(container, toolkit, PDEPlugin
-				.getResourceString(SECTION_DESC), SWT.WRAP | SWT.MULTI);
+		fDescriptionText = new FormEntry(container, toolkit, PDEUIMessages.CategoryDetails_desc, SWT.WRAP | SWT.MULTI);
 		fDescriptionText.getText().setLayoutData(
 				new GridData(GridData.FILL_BOTH));
 

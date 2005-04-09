@@ -32,21 +32,21 @@ public class HelloRCPTemplate extends PDETemplateSection {
 	
 	public void addPages(Wizard wizard) {
 		WizardPage page = createPage(0, IHelpContextIds.TEMPLATE_RCP_MAIL);
-		page.setTitle(PDEPlugin.getResourceString("HelloRCPTemplate.title")); //$NON-NLS-1$
-		page.setDescription(PDEPlugin.getResourceString("HelloRCPTemplate.desc"));  //$NON-NLS-1$
+		page.setTitle(PDEUIMessages.HelloRCPTemplate_title); //$NON-NLS-1$
+		page.setDescription(PDEUIMessages.HelloRCPTemplate_desc);  //$NON-NLS-1$
 		wizard.addPage(page);
 		markPagesAdded();
 	}
 
 	
 	private void createOptions() {
-		addOption(KEY_WINDOW_TITLE, PDEPlugin.getResourceString("HelloRCPTemplate.windowTitle"), "Hello RCP", 0); //$NON-NLS-1$ //$NON-NLS-2$
+		addOption(KEY_WINDOW_TITLE, PDEUIMessages.HelloRCPTemplate_windowTitle, "Hello RCP", 0); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		addOption(KEY_APPLICATION_ID, PDEPlugin.getResourceString("HelloRCPTemplate.appId"), "application", 0); //$NON-NLS-1$ //$NON-NLS-2$
+		addOption(KEY_APPLICATION_ID, PDEUIMessages.HelloRCPTemplate_appId, "application", 0); //$NON-NLS-1$ //$NON-NLS-2$
 
-		addOption(KEY_PACKAGE_NAME, PDEPlugin.getResourceString("MailTemplate.packageName"), (String) null, 0); //$NON-NLS-1$
+		addOption(KEY_PACKAGE_NAME, PDEUIMessages.MailTemplate_packageName, (String) null, 0); //$NON-NLS-1$
 		
-		addOption(KEY_APPLICATION_CLASS, PDEPlugin.getResourceString("HelloRCPTemplate.appClass"), "Application", 0); //$NON-NLS-1$ //$NON-NLS-2$
+		addOption(KEY_APPLICATION_CLASS, PDEUIMessages.HelloRCPTemplate_appClass, "Application", 0); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		addOption(KEY_PERSPECTIVE_NAME, "Pe&rspective Name:", "Sample Perspective", 0); //$NON-NLS-1$ //$NON-NLS-2$						
 	}

@@ -48,18 +48,18 @@ public class SWTApplicationLaunchShortcut implements ILaunchShortcut {
 			} catch (InterruptedException e) {
 				return;
 			} catch (InvocationTargetException e) {
-				MessageDialog.openError(getShell(), PDEPlugin.getResourceString("SWTApplicationLaunchShortcut.failed"), e.getMessage()); //$NON-NLS-1$
+				MessageDialog.openError(getShell(), PDEUIMessages.SWTApplicationLaunchShortcut_failed, e.getMessage()); //$NON-NLS-1$
 				return;
 			}
 			IType type = null;
 			if (types.length == 0) {
 				String message = null;
 				if (editor) {
-					message = PDEPlugin.getResourceString("SWTApplicationLaunchShortcut.noMainInEditor");  //$NON-NLS-1$
+					message = PDEUIMessages.SWTApplicationLaunchShortcut_noMainInEditor;  //$NON-NLS-1$
 				} else {
-					message = PDEPlugin.getResourceString("SWTApplicationLaunchShortcut.noMainInSelection"); //$NON-NLS-1$
+					message = PDEUIMessages.SWTApplicationLaunchShortcut_noMainInSelection; //$NON-NLS-1$
 				}
-				MessageDialog.openError(getShell(), PDEPlugin.getResourceString("SWTApplicationLaunchShortcut.failed"), message); //$NON-NLS-1$
+				MessageDialog.openError(getShell(), PDEUIMessages.SWTApplicationLaunchShortcut_failed, message); //$NON-NLS-1$
 			} else if (types.length > 1) {
 				type = chooseType(types, mode);
 			} else {
@@ -107,9 +107,9 @@ public class SWTApplicationLaunchShortcut implements ILaunchShortcut {
 	protected IType chooseType(IType[] types, String mode) {
 		MainTypeSelectionDialog dialog= new MainTypeSelectionDialog(getShell(), types);		
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
-			dialog.setTitle(PDEPlugin.getResourceString("SWTApplicationLaunchShortcut.debug")); //$NON-NLS-1$
+			dialog.setTitle(PDEUIMessages.SWTApplicationLaunchShortcut_debug); //$NON-NLS-1$
 		} else {
-			dialog.setTitle(PDEPlugin.getResourceString("SWTApplicationLaunchShortcut.run")); //$NON-NLS-1$
+			dialog.setTitle(PDEUIMessages.SWTApplicationLaunchShortcut_run); //$NON-NLS-1$
 		}
 		dialog.setMultipleSelection(false);
 		if (dialog.open() == Window.OK) {
@@ -182,11 +182,11 @@ public class SWTApplicationLaunchShortcut implements ILaunchShortcut {
 		IDebugModelPresentation labelProvider = DebugUITools.newDebugModelPresentation();
 		ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), labelProvider);
 		dialog.setElements(configList.toArray());
-		dialog.setTitle(PDEPlugin.getResourceString("SWTApplicationLaunchShortcut.launch"));  //$NON-NLS-1$
+		dialog.setTitle(PDEUIMessages.SWTApplicationLaunchShortcut_launch);  //$NON-NLS-1$
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
-			dialog.setMessage(PDEPlugin.getResourceString("SWTApplicationLaunchShortcut.chooseRun")); //$NON-NLS-1$
+			dialog.setMessage(PDEUIMessages.SWTApplicationLaunchShortcut_chooseRun); //$NON-NLS-1$
 		} else {
-			dialog.setMessage(PDEPlugin.getResourceString("SWTApplicationLaunchShortcut.chooseDebug")); //$NON-NLS-1$
+			dialog.setMessage(PDEUIMessages.SWTApplicationLaunchShortcut_chooseDebug); //$NON-NLS-1$
 		}
 		dialog.setMultipleSelection(false);
 		int result = dialog.open();
@@ -223,7 +223,7 @@ public class SWTApplicationLaunchShortcut implements ILaunchShortcut {
 	protected void reportCreatingConfiguration(final CoreException exception) {
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
-				ErrorDialog.openError(getShell(), PDEPlugin.getResourceString("SWTApplicationLaunchShortcut.error"), PDEPlugin.getResourceString("SWTApplicationLaunchShortcut.exception"), exception.getStatus());  //$NON-NLS-1$ //$NON-NLS-2$
+				ErrorDialog.openError(getShell(), PDEUIMessages.SWTApplicationLaunchShortcut_error, PDEUIMessages.SWTApplicationLaunchShortcut_exception, exception.getStatus());  //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		});
 	}
@@ -255,7 +255,7 @@ public class SWTApplicationLaunchShortcut implements ILaunchShortcut {
 		if (je != null) {
 			searchAndLaunch(new Object[] {je}, mode, true);
 		} else {
-			MessageDialog.openError(getShell(), PDEPlugin.getResourceString("SWTApplicationLaunchShortcut.failed"), PDEPlugin.getResourceString("SWTApplicationLaunchShortcut.noMainInEditor"));   //$NON-NLS-1$//$NON-NLS-2$
+			MessageDialog.openError(getShell(), PDEUIMessages.SWTApplicationLaunchShortcut_failed, PDEUIMessages.SWTApplicationLaunchShortcut_noMainInEditor);   //$NON-NLS-1$//$NON-NLS-2$
 		}
 		
 	}
@@ -267,7 +267,7 @@ public class SWTApplicationLaunchShortcut implements ILaunchShortcut {
 		if (selection instanceof IStructuredSelection) {
 			searchAndLaunch(((IStructuredSelection)selection).toArray(), mode, false);
 		} else {
-			MessageDialog.openError(getShell(), PDEPlugin.getResourceString("SWTApplicationLaunchShortcut.failed"), PDEPlugin.getResourceString("SWTApplicationLaunchShortcut.noMainInSelection"));  //$NON-NLS-1$//$NON-NLS-2$
+			MessageDialog.openError(getShell(), PDEUIMessages.SWTApplicationLaunchShortcut_failed, PDEUIMessages.SWTApplicationLaunchShortcut_noMainInSelection);  //$NON-NLS-1$//$NON-NLS-2$
 		}
 	}
 

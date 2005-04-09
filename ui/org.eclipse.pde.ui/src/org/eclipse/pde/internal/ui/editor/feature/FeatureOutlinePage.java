@@ -27,6 +27,7 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureURL;
 import org.eclipse.pde.internal.core.ifeature.IFeatureURLElement;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormOutlinePage;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
@@ -91,8 +92,7 @@ public class FeatureOutlinePage extends FormOutlinePage {
 		super(editor);
 		Image folderImage = PDEPlugin.getDefault().getLabelProvider().get(
 				PDEPluginImages.DESC_DOC_SECTION_OBJ);
-		fDiscoveryUrls = new NamedElement(PDEPlugin
-				.getResourceString("FeatureOutlinePage.discoverUrls"), //$NON-NLS-1$
+		fDiscoveryUrls = new NamedElement(PDEUIMessages.FeatureOutlinePage_discoverUrls, //$NON-NLS-1$
 				folderImage);
 	}
 

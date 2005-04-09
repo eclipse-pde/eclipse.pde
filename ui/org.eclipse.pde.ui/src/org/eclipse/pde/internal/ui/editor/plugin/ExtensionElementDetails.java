@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.editor.plugin;
 import java.util.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ischema.*;
@@ -67,8 +68,8 @@ public class ExtensionElementDetails extends PDEDetails {
 		section.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
 		section.marginHeight = 5;
 		section.marginWidth = 5;
-		section.setText(PDEPlugin.getResourceString("ExtensionElementDetails.title")); //$NON-NLS-1$
-		section.setDescription(PDEPlugin.getResourceString("ExtensionElementDetails.desc")); //$NON-NLS-1$
+		section.setText(PDEUIMessages.ExtensionElementDetails_title); //$NON-NLS-1$
+		section.setDescription(PDEUIMessages.ExtensionElementDetails_desc); //$NON-NLS-1$
 		TableWrapData td = new TableWrapData(TableWrapData.FILL,
 				TableWrapData.TOP);
 		td.grabHorizontal = true;
@@ -219,10 +220,10 @@ public class ExtensionElementDetails extends PDEDetails {
 	private void updateDescription() {
 		if (input != null) {
 			String iname = input.getName();
-			section.setDescription(PDEPlugin.getFormattedMessage("ExtensionElementDetails.setDesc", iname)); //$NON-NLS-1$
+			section.setDescription(NLS.bind(PDEUIMessages.ExtensionElementDetails_setDesc, iname)); //$NON-NLS-1$
 		} else {
 			section
-					.setDescription(PDEPlugin.getResourceString("ExtensionElementDetails.setSelectedDesc")); //$NON-NLS-1$
+					.setDescription(PDEUIMessages.ExtensionElementDetails_setSelectedDesc); //$NON-NLS-1$
 		}
 		section.layout();
 	}

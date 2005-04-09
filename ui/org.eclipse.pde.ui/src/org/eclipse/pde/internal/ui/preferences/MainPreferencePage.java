@@ -26,20 +26,12 @@ import org.eclipse.pde.internal.ui.*;
 public class MainPreferencePage
 	extends PreferencePage
 	implements IWorkbenchPreferencePage, IPreferenceConstants {
-	private static final String KEY_DESCRIPTION =
-		"Preferences.MainPage.Description"; //$NON-NLS-1$
-	private static final String KEY_SHOW_OBJECTS =
-		"Preferences.MainPage.showObjects"; //$NON-NLS-1$
-	private static final String KEY_USE_IDS = "Preferences.MainPage.useIds"; //$NON-NLS-1$
-	private static final String KEY_USE_FULL_NAMES =
-		"Preferences.MainPage.useFullNames"; //$NON-NLS-1$
-
 	private Button useID;
 	private Button useName;
 	
 	public MainPreferencePage() {
 		setPreferenceStore(PDEPlugin.getDefault().getPreferenceStore());
-		setDescription(PDEPlugin.getResourceString(KEY_DESCRIPTION));
+		setDescription(PDEUIMessages.Preferences_MainPage_Description);
 	}
 
 	protected Control createContents(Composite parent) {
@@ -50,14 +42,14 @@ public class MainPreferencePage
 		
 		Group group = new Group(composite, SWT.NONE);
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));		
-		group.setText(PDEPlugin.getResourceString(KEY_SHOW_OBJECTS));
+		group.setText(PDEUIMessages.Preferences_MainPage_showObjects);
 		group.setLayout(new GridLayout());
 		
 		useID = new Button(group, SWT.RADIO);
-		useID.setText(PDEPlugin.getResourceString(KEY_USE_IDS));
+		useID.setText(PDEUIMessages.Preferences_MainPage_useIds);
 		
 		useName = new Button(group, SWT.RADIO);
-		useName.setText(PDEPlugin.getResourceString(KEY_USE_FULL_NAMES));
+		useName.setText(PDEUIMessages.Preferences_MainPage_useFullNames);
 		
 		if (store.getString(PROP_SHOW_OBJECTS).equals(VALUE_USE_IDS)) {
 			useID.setSelection(true);

@@ -24,8 +24,6 @@ public class NewSchemaFileWizard extends Wizard implements INewWizard {
 	private IContainer container;
 	private IPluginExtensionPoint point;
 	private boolean isPluginIdFinal;
-	public static final String KEY_WTITLE = "NewSchemaFileWizard.wtitle"; //$NON-NLS-1$
-
 	public NewSchemaFileWizard() {
 		this(null, null, false);
 	}
@@ -38,7 +36,7 @@ public class NewSchemaFileWizard extends Wizard implements INewWizard {
 	public void initialize(){
 		setDialogSettings(getSettingsSection());
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_EXT_POINT_SCHEMA_WIZ);
-		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
+		setWindowTitle(PDEUIMessages.NewSchemaFileWizard_wtitle);
 		setNeedsProgressMonitor(true);
 	}
 	public void addPages() {

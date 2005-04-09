@@ -17,6 +17,7 @@ import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
@@ -42,15 +43,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class FeatureFormPage extends PDEFormPage implements IHyperlinkListener {
 	public static final String PAGE_ID = "feature"; //$NON-NLS-1$
-
-	private static final String fContentText = PDEPlugin
-			.getResourceString("FeatureEditor.InfoPage.ContentSection.text"); //$NON-NLS-1$
-
-	private static final String fPackagingText = PDEPlugin
-			.getResourceString("FeatureEditor.InfoPage.PackagingSection.text"); //$NON-NLS-1$
-
-	private static final String fPublishingText = PDEPlugin
-			.getResourceString("FeatureEditor.InfoPage.PublishingSection.text"); //$NON-NLS-1$
 
 	private FeatureSpecSection fSpecSection;
 
@@ -136,9 +128,8 @@ public class FeatureFormPage extends PDEFormPage implements IHyperlinkListener {
 		Section section = createStaticSection(parent, toolkit);
 		FormText text;
 		section
-				.setText(PDEPlugin
-						.getResourceString("FeatureEditor.InfoPage.ContentSection.title")); //$NON-NLS-1$
-		text = createClient(section, fContentText, toolkit);
+				.setText(PDEUIMessages.FeatureEditor_InfoPage_ContentSection_title); //$NON-NLS-1$
+		text = createClient(section, PDEUIMessages.FeatureEditor_InfoPage_ContentSection_text, toolkit);
 		PDELabelProvider lp = PDEPlugin.getDefault().getLabelProvider();
 		text.setImage("page", lp.get(PDEPluginImages.DESC_PAGE_OBJ, //$NON-NLS-1$
 				SharedLabelProvider.F_EDIT));
@@ -149,8 +140,7 @@ public class FeatureFormPage extends PDEFormPage implements IHyperlinkListener {
 			Composite parent, FormToolkit toolkit) {
 		Section section = createStaticSection(parent, toolkit);
 		section
-				.setText(PDEPlugin
-						.getResourceString("FeatureEditor.InfoPage.PackagingSection.title")); //$NON-NLS-1$
+				.setText(PDEUIMessages.FeatureEditor_InfoPage_PackagingSection_title); //$NON-NLS-1$
 		// ImageHyperlink info = new ImageHyperlink(section, SWT.NULL);
 		// toolkit.adapt(info, true, true);
 		// Image image =
@@ -165,7 +155,7 @@ public class FeatureFormPage extends PDEFormPage implements IHyperlinkListener {
 		// });
 		// info.setBackground(section.getTitleBarGradientBackground());
 		// section.setTextClient(info);
-		createClient(section, fPackagingText, toolkit);
+		createClient(section, PDEUIMessages.FeatureEditor_InfoPage_PackagingSection_text, toolkit);
 		return section;
 	}
 
@@ -173,8 +163,7 @@ public class FeatureFormPage extends PDEFormPage implements IHyperlinkListener {
 			Composite parent, FormToolkit toolkit) {
 		Section section = createStaticSection(parent, toolkit);
 		section
-				.setText(PDEPlugin
-						.getResourceString("FeatureEditor.InfoPage.PublishingSection.title")); //$NON-NLS-1$
+				.setText(PDEUIMessages.FeatureEditor_InfoPage_PublishingSection_title); //$NON-NLS-1$
 		// ImageHyperlink info = new ImageHyperlink(section, SWT.NULL);
 		// toolkit.adapt(info, true, true);
 		// Image image =
@@ -189,7 +178,7 @@ public class FeatureFormPage extends PDEFormPage implements IHyperlinkListener {
 		// });
 		// info.setBackground(section.getTitleBarGradientBackground());
 		// section.setTextClient(info);
-		createClient(section, fPublishingText, toolkit);
+		createClient(section, PDEUIMessages.FeatureEditor_InfoPage_PublishingSection_text, toolkit);
 		return section;
 	}
 

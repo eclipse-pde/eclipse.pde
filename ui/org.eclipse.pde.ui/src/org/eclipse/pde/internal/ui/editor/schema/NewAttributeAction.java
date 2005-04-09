@@ -11,6 +11,8 @@
 package org.eclipse.pde.internal.ui.editor.schema;
 
 import java.util.*;
+
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.schema.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.pde.internal.core.ischema.*;
@@ -19,14 +21,10 @@ import org.eclipse.pde.internal.ui.*;
 public class NewAttributeAction extends Action {
 	private SchemaElement element;
 	private static final String NAME_COUNTER_KEY = "__schema_attribute_name"; //$NON-NLS-1$
-	public static final String KEY_LABEL = "SchemaEditor.NewAttribute.label"; //$NON-NLS-1$
-	public static final String KEY_TOOLTIP = "SchemaEditor.NewAttribute.tooltip"; //$NON-NLS-1$
-	public static final String KEY_INITIAL_NAME = "SchemaEditor.NewAttribute.initialName"; //$NON-NLS-1$
-
-public NewAttributeAction() {
-	setText(PDEPlugin.getResourceString(KEY_LABEL));
+	public NewAttributeAction() {
+	setText(PDEUIMessages.SchemaEditor_NewAttribute_label);
 	setImageDescriptor(PDEPluginImages.DESC_ATT_IMPL_OBJ);
-	setToolTipText(PDEPlugin.getResourceString(KEY_TOOLTIP));
+	setToolTipText(PDEUIMessages.SchemaEditor_NewAttribute_tooltip);
 }
 public org.eclipse.pde.internal.core.schema.SchemaElement getElement() {
 	return element;
@@ -41,7 +39,7 @@ private String getInitialName() {
 		counter = new Integer(counter.intValue()+1);
 	}
 	counters.put(NAME_COUNTER_KEY, counter);
-	return PDEPlugin.getFormattedMessage(KEY_INITIAL_NAME, counter.intValue()+""); //$NON-NLS-1$
+	return NLS.bind(PDEUIMessages.SchemaEditor_NewAttribute_initialName, counter.intValue()+""); //$NON-NLS-1$
 }
 public void run() {
 	String name = getInitialName();

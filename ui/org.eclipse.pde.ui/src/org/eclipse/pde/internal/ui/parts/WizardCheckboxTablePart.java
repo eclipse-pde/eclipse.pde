@@ -9,7 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.parts;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.*;
@@ -22,11 +23,6 @@ import org.eclipse.pde.internal.ui.util.SWTUtil;
  * @author
  */
 public class WizardCheckboxTablePart extends CheckboxTablePart {
-	public static final String KEY_SELECT_ALL = "WizardCheckboxTablePart.selectAll"; //$NON-NLS-1$
-	public static final String KEY_DESELECT_ALL =
-		"WizardCheckboxTablePart.deselectAll"; //$NON-NLS-1$
-	public static final String KEY_COUNTER = "WizardCheckboxTablePart.counter"; //$NON-NLS-1$
-
 	private int selectAllIndex = -1;
 	private int deselectAllIndex = -1;
 	private String tableName;
@@ -46,8 +42,8 @@ public class WizardCheckboxTablePart extends CheckboxTablePart {
 		this(
 			mainLabel,
 			new String[] {
-				PDEPlugin.getResourceString(KEY_SELECT_ALL),
-				PDEPlugin.getResourceString(KEY_DESELECT_ALL)});
+				PDEUIMessages.WizardCheckboxTablePart_selectAll,
+				PDEUIMessages.WizardCheckboxTablePart_deselectAll});
 		setSelectAllIndex(0);
 		setDeselectAllIndex(1);
 	}
@@ -131,9 +127,7 @@ public class WizardCheckboxTablePart extends CheckboxTablePart {
 		String number = "" + getSelectionCount(); //$NON-NLS-1$
 		String totalNumber = "" + getTotalCount(); //$NON-NLS-1$
 		String message =
-			PDEPlugin.getFormattedMessage(
-				KEY_COUNTER,
-				new String[] { number, totalNumber });
+			NLS.bind(PDEUIMessages.WizardCheckboxTablePart_counter, (new String[] { number, totalNumber }));
 		counterLabel.setText(message);
 	}
 

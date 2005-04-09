@@ -19,13 +19,10 @@ import org.eclipse.ui.help.*;
 
 public class FeatureSpecPage extends BaseFeatureSpecPage {
 
-	public static final String PAGE_TITLE = "NewFeatureWizard.SpecPage.title"; //$NON-NLS-1$
-	public static final String PAGE_DESC = "NewFeatureWizard.SpecPage.desc"; //$NON-NLS-1$
-
 	protected FeatureSpecPage(WizardNewProjectCreationPage mainPage) {
 		super(mainPage, false);
-		setTitle(PDEPlugin.getResourceString(PAGE_TITLE));
-		setDescription(PDEPlugin.getResourceString(PAGE_DESC));
+		setTitle(PDEUIMessages.NewFeatureWizard_SpecPage_title);
+		setDescription(PDEUIMessages.NewFeatureWizard_SpecPage_desc);
 	}
 	
 	/* (non-Javadoc)
@@ -83,7 +80,7 @@ public class FeatureSpecPage extends BaseFeatureSpecPage {
 		}
 		if (customChoice.getSelection() && libraryText.getText().length() == 0) {
 			setPageComplete(false);
-			setErrorMessage(PDEPlugin.getResourceString(KEY_LIBRARY_MISSING));
+			setErrorMessage(PDEUIMessages.NewFeatureWizard_SpecPage_error_library);
 			return;
 		}
 		setPageComplete(true);

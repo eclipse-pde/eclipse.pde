@@ -15,7 +15,6 @@ import org.eclipse.pde.ui.*;
 import org.eclipse.pde.ui.templates.*;
 
 public class PopupMenuNewWizard extends NewPluginTemplateWizard {
-	private static final String KEY_WTITLE = "PopupMenuNewWizard.wtitle"; //$NON-NLS-1$
 	/**
 	 * Constructor for PerspectiveExtensionsNewWizard.
 	 */
@@ -25,7 +24,7 @@ public class PopupMenuNewWizard extends NewPluginTemplateWizard {
 
 	public void init(IFieldData data) {
 		super.init(data);
-		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
+		setWindowTitle(PDEUIMessages.PopupMenuNewWizard_wtitle);
 	}
 	/**
 	 * @see NewPluginTemplateWizard#createTemplateSections()

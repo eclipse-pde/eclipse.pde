@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.debug.ui.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.launcher.*;
 import org.eclipse.swt.*;
@@ -83,7 +84,7 @@ public class SampleStandbyContent implements IStandbyContentPart {
 		instText = toolkit.createFormText(form.getBody(), true);
 		instText.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		StringBuffer buf = new StringBuffer();
-		buf.append(PDEPlugin.getResourceString("SampleStandbyContent.content")); //$NON-NLS-1$
+		buf.append(PDEUIMessages.SampleStandbyContent_content); //$NON-NLS-1$
 		instText.setText(buf.toString(), true, false);
 		instText.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
@@ -238,7 +239,7 @@ public class SampleStandbyContent implements IStandbyContentPart {
 				.getChildren("description") : null; //$NON-NLS-1$
 		if (descConfig.length == 1) {
 			String desc = descConfig[0].getValue();
-			String content = PDEPlugin.getFormattedMessage("SampleStandbyContent.desc",(desc != null ? desc : "")); //$NON-NLS-1$ //$NON-NLS-2$
+			String content = NLS.bind(PDEUIMessages.SampleStandbyContent_desc, (desc != null ? desc : "")); //$NON-NLS-1$ //$NON-NLS-2$
 			helpURL = descConfig[0].getAttribute("helpHref"); //$NON-NLS-1$
 			moreLink.setVisible(helpURL != null);
 			descText.setText(content, true, false);

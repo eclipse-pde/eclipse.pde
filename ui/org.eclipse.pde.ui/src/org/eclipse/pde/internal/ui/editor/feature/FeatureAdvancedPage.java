@@ -11,7 +11,7 @@
 package org.eclipse.pde.internal.ui.editor.feature;
 
 import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.swt.widgets.Composite;
@@ -23,8 +23,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
 
 public class FeatureAdvancedPage extends PDEFormPage {
 	public static final String PAGE_ID = "advanced"; //$NON-NLS-1$
-
-	private static final String KEY_HEADING = "FeatureEditor.AdvancedPage.heading"; //$NON-NLS-1$
 
 	private InstallSection fInstallSection;
 
@@ -82,7 +80,7 @@ public class FeatureAdvancedPage extends PDEFormPage {
 		WorkbenchHelp.setHelp(form.getBody(),
 				IHelpContextIds.MANIFEST_FEATURE_OVERVIEW);
 
-		form.setText(PDEPlugin.getResourceString(KEY_HEADING));
+		form.setText(PDEUIMessages.FeatureEditor_AdvancedPage_heading);
 		fDataSection.fireSelection();
 	}
 }

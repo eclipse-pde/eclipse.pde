@@ -27,6 +27,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
@@ -56,9 +57,6 @@ public class ExportPackageVisibilitySection extends TableSection
     private static int ADD_INDEX = 0;
     private static int REMOVE_INDEX = 1;
     
-	private static final String KEY_ADD = "ManifestEditor.ExportSection.add"; //$NON-NLS-1$
-	private static final String KEY_REMOVE = "ManifestEditor.ExportSection.remove"; //$NON-NLS-1$
-
 	private TableViewer fFriendViewer;
     private Action fAddAction;
     private Action fRemoveAction;
@@ -87,8 +85,8 @@ public class ExportPackageVisibilitySection extends TableSection
     
 	public ExportPackageVisibilitySection(PDEFormPage formPage, Composite parent) {
 		super(formPage, parent, Section.DESCRIPTION, new String[]{
-				PDEPlugin.getResourceString(KEY_ADD),
-				PDEPlugin.getResourceString(KEY_REMOVE)});
+				PDEUIMessages.ManifestEditor_ExportSection_add,
+				PDEUIMessages.ManifestEditor_ExportSection_remove});
 		handleDefaultButton = false;
 	}
     
@@ -137,14 +135,14 @@ public class ExportPackageVisibilitySection extends TableSection
 	}
     
 	private void makeActions() {
-        fAddAction = new Action(PDEPlugin.getResourceString(KEY_ADD)) {
+        fAddAction = new Action(PDEUIMessages.ManifestEditor_ExportSection_add) {
             public void run() {
                 handleAdd();
             }
         };
         fAddAction.setEnabled(isEditable());
         
-        fRemoveAction = new Action(PDEPlugin.getResourceString(KEY_REMOVE)) {
+        fRemoveAction = new Action(PDEUIMessages.ManifestEditor_ExportSection_remove) {
             public void run() {
                 handleRemove();
             }

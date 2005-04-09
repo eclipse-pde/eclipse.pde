@@ -32,18 +32,6 @@ public class GrammarSection extends PDESection implements IPartSelectionListener
 	private TreeViewer treeViewer;
 	private Text dtdLabel;
 	private PropertiesAction propertiesAction;
-	public static final String SECTION_TITLE =
-		"SchemaEditor.GrammarSection.title"; //$NON-NLS-1$
-	public static final String SECTION_COMPOSITOR =
-		"SchemaEditor.GrammarSection.compositor"; //$NON-NLS-1$
-	public static final String SECTION_REFERENCE =
-		"SchemaEditor.GrammarSection.reference"; //$NON-NLS-1$
-	public static final String POPUP_NEW = "Menus.new.label"; //$NON-NLS-1$
-	public static final String POPUP_DELETE = "Actions.delete.label"; //$NON-NLS-1$
-	public static final String SECTION_DESC =
-		"SchemaEditor.GrammarSection.desc"; //$NON-NLS-1$
-	public static final String KEY_DTD = "SchemaEditor.GrammarSection.dtd"; //$NON-NLS-1$
-
 	class GrammarContentProvider
 		extends DefaultContentProvider
 		implements ITreeContentProvider {
@@ -98,8 +86,8 @@ public class GrammarSection extends PDESection implements IPartSelectionListener
 
 	public GrammarSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION);
-		getSection().setText(PDEPlugin.getResourceString(SECTION_TITLE));
-		getSection().setDescription(PDEPlugin.getResourceString(SECTION_DESC));
+		getSection().setText(PDEUIMessages.SchemaEditor_GrammarSection_title);
+		getSection().setDescription(PDEUIMessages.SchemaEditor_GrammarSection_desc);
 		createClient(getSection(), page.getManagedForm().getToolkit());
 	}
 	
@@ -214,10 +202,10 @@ public class GrammarSection extends PDESection implements IPartSelectionListener
 			ISchema schema = sourceElement.getSchema();
 
 			MenuManager submenu =
-				new MenuManager(PDEPlugin.getResourceString(POPUP_NEW));
+				new MenuManager(PDEUIMessages.Menus_new_label);
 			MenuManager cmenu =
 				new MenuManager(
-					PDEPlugin.getResourceString(SECTION_COMPOSITOR));
+					PDEUIMessages.SchemaEditor_GrammarSection_compositor);
 
 			cmenu.add(
 				new NewCompositorAction(
@@ -246,7 +234,7 @@ public class GrammarSection extends PDESection implements IPartSelectionListener
 				&& object instanceof SchemaCompositor) {
 				MenuManager refMenu =
 					new MenuManager(
-						PDEPlugin.getResourceString(SECTION_REFERENCE));
+						PDEUIMessages.SchemaEditor_GrammarSection_reference);
 				ISchemaElement[] elements = schema.getResolvedElements();
 				for (int i = 0; i < elements.length; i++) {
 					ISchemaElement element = elements[i];
@@ -268,7 +256,7 @@ public class GrammarSection extends PDESection implements IPartSelectionListener
 						handleDelete(object);
 					}
 				};
-				deleteAction.setText(PDEPlugin.getResourceString(POPUP_DELETE));
+				deleteAction.setText(PDEUIMessages.Actions_delete_label);
 				deleteAction.setEnabled(schema.isEditable());
 				manager.add(deleteAction);
 			}
@@ -373,7 +361,7 @@ public class GrammarSection extends PDESection implements IPartSelectionListener
 		treeViewer.setInput(changeObject);
 	}
 	private void updateDTDLabel(ISchemaObject object) {
-		String prefix = PDEPlugin.getResourceString(KEY_DTD) + "\n"; //$NON-NLS-1$
+		String prefix = PDEUIMessages.SchemaEditor_GrammarSection_dtd + "\n"; //$NON-NLS-1$
 		String text = ""; //$NON-NLS-1$
 		if (object != null) {
 			ISchemaElement element = (ISchemaElement) object;

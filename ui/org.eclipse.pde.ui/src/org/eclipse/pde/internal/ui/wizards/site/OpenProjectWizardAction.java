@@ -15,6 +15,7 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.ui.*;
 import org.eclipse.ui.cheatsheets.*;
@@ -24,7 +25,7 @@ public class OpenProjectWizardAction extends Action implements ICheatSheetAction
 	 * @param text
 	 */
 	public OpenProjectWizardAction() {
-		super(PDEPlugin.getResourceString("Actions.Site.OpenProjectWizardAction")); //$NON-NLS-1$
+		super(PDEUIMessages.Actions_Site_OpenProjectWizardAction); //$NON-NLS-1$
 	}
 	
 	/**

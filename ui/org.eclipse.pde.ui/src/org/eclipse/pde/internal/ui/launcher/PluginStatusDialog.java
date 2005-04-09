@@ -49,7 +49,7 @@ public class PluginStatusDialog extends Dialog {
 		container.setLayoutData(gd);
 
 		Label label = new Label(container, SWT.NONE);
-		label.setText(PDEPlugin.getResourceString("PluginStatusDialog.label")); //$NON-NLS-1$
+		label.setText(PDEUIMessages.PluginStatusDialog_label); //$NON-NLS-1$
 		
 		TreeViewer treeViewer = new TreeViewer(container);
 		treeViewer.setContentProvider(fOperation.getContentProvider());
@@ -58,7 +58,7 @@ public class PluginStatusDialog extends Dialog {
 		treeViewer.setInput(fOperation.getState());
 		treeViewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		getShell().setText(PDEPlugin.getResourceString("PluginStatusDialog.pluginValidation")); //$NON-NLS-1$
+		getShell().setText(PDEUIMessages.PluginStatusDialog_pluginValidation); //$NON-NLS-1$
 		Dialog.applyDialogFont(container);
 		return container;
 	}

@@ -27,7 +27,7 @@ public class ArchivePage extends PDEFormPage {
 	private ArchiveSection fArchiveSection;
 	
 	public ArchivePage(PDEFormEditor editor) {
-		super(editor, PAGE_ID, PDEPlugin.getResourceString("ArchivePage.name"));  //$NON-NLS-1$
+		super(editor, PAGE_ID, PDEUIMessages.ArchivePage_name);  //$NON-NLS-1$
 	}
 	protected void createFormContent(IManagedForm mform) {
 		ScrolledForm form = mform.getForm();
@@ -50,6 +50,6 @@ public class ArchivePage extends PDEFormPage {
 		
 		//WorkbenchHelp.setHelp(form.getBody(),
 		// IHelpContextIds.MANIFEST_SITE_OVERVIEW);
-		form.setText(PDEPlugin.getResourceString("ArchivePage.title")); //$NON-NLS-1$
+		form.setText(PDEUIMessages.ArchivePage_title); //$NON-NLS-1$
 	}
 }

@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.swt.SWT;
@@ -31,12 +32,10 @@ public class DescriptionSection extends PDESection {
 		super(page, parent, Section.DESCRIPTION);
 		getSection()
 				.setText(
-						PDEPlugin
-								.getResourceString("SiteEditor.DescriptionSection.header")); //$NON-NLS-1$
+						PDEUIMessages.SiteEditor_DescriptionSection_header); //$NON-NLS-1$
 		getSection()
 				.setDescription(
-						PDEPlugin
-								.getResourceString("SiteEditor.DescriptionSection.desc")); //$NON-NLS-1$
+						PDEUIMessages.SiteEditor_DescriptionSection_desc); //$NON-NLS-1$
 		createClient(getSection(), page.getManagedForm().getToolkit());		
 	}
 	public void commit(boolean onSave) {
@@ -50,8 +49,7 @@ public class DescriptionSection extends PDESection {
 		layout.numColumns = 2;
 		layout.verticalSpacing = 10;
 		container.setLayout(layout);
-		fURLEntry = new FormEntry(container, toolkit, PDEPlugin
-				.getResourceString("SiteEditor.DescriptionSection.urlLabel"), //$NON-NLS-1$
+		fURLEntry = new FormEntry(container, toolkit, PDEUIMessages.SiteEditor_DescriptionSection_urlLabel, //$NON-NLS-1$
 				null, false);
 		fURLEntry.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
@@ -60,8 +58,7 @@ public class DescriptionSection extends PDESection {
 		});
 		fURLEntry.setEditable(isEditable());
 
-		fDescEntry = new FormEntry(container, toolkit, PDEPlugin
-				.getResourceString("SiteEditor.DescriptionSection.descLabel"), //$NON-NLS-1$
+		fDescEntry = new FormEntry(container, toolkit, PDEUIMessages.SiteEditor_DescriptionSection_descLabel, //$NON-NLS-1$
 				SWT.WRAP | SWT.MULTI);
 		fDescEntry.getText().setLayoutData(new GridData(GridData.FILL_BOTH));
 		fDescEntry.setFormEntryListener(new FormEntryAdapter(this) {

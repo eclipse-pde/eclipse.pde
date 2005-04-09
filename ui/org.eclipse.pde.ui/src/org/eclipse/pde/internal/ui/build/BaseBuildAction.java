@@ -87,18 +87,17 @@ public abstract class BaseBuildAction
 	private void doBuild(IProgressMonitor monitor) throws CoreException,
 			InvocationTargetException {
 		monitor.beginTask(
-				PDEPlugin.getResourceString("BuildAction.Validate"), 4); //$NON-NLS-1$
+				PDEUIMessages.BuildAction_Validate, 4); //$NON-NLS-1$
 		if (!ensureValid(fManifestFile, monitor)) {
 			monitor.done();
 			return;
 		}
 		monitor.worked(1);
 		monitor
-				.setTaskName(PDEPlugin
-						.getResourceString("BuildAction.Generate")); //$NON-NLS-1$
+				.setTaskName(PDEUIMessages.BuildAction_Generate); //$NON-NLS-1$
 		makeScripts(monitor);
 		monitor.worked(1);
-		monitor.setTaskName(PDEPlugin.getResourceString("BuildAction.Update")); //$NON-NLS-1$
+		monitor.setTaskName(PDEUIMessages.BuildAction_Update); //$NON-NLS-1$
 		refreshLocal(monitor);
 		monitor.worked(1);
 		setDefaultValues();
@@ -123,10 +122,8 @@ public abstract class BaseBuildAction
 			MessageDialog
 					.openError(
 							null,
-							PDEPlugin
-									.getResourceString("BuildAction.ErrorDialog.Title"), //$NON-NLS-1$
-							PDEPlugin
-									.getResourceString("BuildAction.ErrorDialog.Message")); //$NON-NLS-1$
+							PDEUIMessages.BuildAction_ErrorDialog_Title, //$NON-NLS-1$
+							PDEUIMessages.BuildAction_ErrorDialog_Message); //$NON-NLS-1$
 			return false;
 		}
 		return true;

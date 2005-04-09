@@ -49,8 +49,8 @@ public class PluginContentPage extends ContentPage {
 	public PluginContentPage(String pageName, IProjectProvider provider,
 			NewProjectCreationPage page,AbstractFieldData data) {
 		super(pageName, provider, page, data);
-		setTitle(PDEPlugin.getResourceString("ContentPage.title")); //$NON-NLS-1$
-		setDescription(PDEPlugin.getResourceString("ContentPage.desc")); //$NON-NLS-1$
+		setTitle(PDEUIMessages.ContentPage_title); //$NON-NLS-1$
+		setDescription(PDEUIMessages.ContentPage_desc); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
@@ -72,26 +72,26 @@ public class PluginContentPage extends ContentPage {
 		Group propertiesGroup = new Group(container, SWT.NONE);
 		propertiesGroup.setLayout(new GridLayout(2, false));
 		propertiesGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		propertiesGroup.setText(PDEPlugin.getResourceString("ContentPage.pGroup")); //$NON-NLS-1$
+		propertiesGroup.setText(PDEUIMessages.ContentPage_pGroup); //$NON-NLS-1$
 
 		Label label = new Label(propertiesGroup, SWT.NONE);
-		label.setText(PDEPlugin.getResourceString("ContentPage.pid")); //$NON-NLS-1$
+		label.setText(PDEUIMessages.ContentPage_pid); //$NON-NLS-1$
 		fIdText = createText(propertiesGroup, propertiesListener);
 
 		label = new Label(propertiesGroup, SWT.NONE);
-		label.setText(PDEPlugin.getResourceString("ContentPage.pversion")); //$NON-NLS-1$
+		label.setText(PDEUIMessages.ContentPage_pversion); //$NON-NLS-1$
 		fVersionText = createText(propertiesGroup, propertiesListener);
 
 		label = new Label(propertiesGroup, SWT.NONE);
-		label.setText(PDEPlugin.getResourceString("ContentPage.pname")); //$NON-NLS-1$
+		label.setText(PDEUIMessages.ContentPage_pname); //$NON-NLS-1$
 		fNameText = createText(propertiesGroup, propertiesListener);
 
 		label = new Label(propertiesGroup, SWT.NONE);
-		label.setText(PDEPlugin.getResourceString("ContentPage.pprovider")); //$NON-NLS-1$
+		label.setText(PDEUIMessages.ContentPage_pprovider); //$NON-NLS-1$
 		fProviderText = createText(propertiesGroup, propertiesListener);
 
 		fLibraryLabel = new Label(propertiesGroup, SWT.NONE);
-		fLibraryLabel.setText(PDEPlugin.getResourceString("ProjectStructurePage.library")); //$NON-NLS-1$
+		fLibraryLabel.setText(PDEUIMessages.ProjectStructurePage_library); //$NON-NLS-1$
 		fLibraryText = createText(propertiesGroup, propertiesListener);
 	}
 
@@ -101,10 +101,10 @@ public class PluginContentPage extends ContentPage {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		classGroup.setLayoutData(gd);
-		classGroup.setText(PDEPlugin.getResourceString("ContentPage.pClassGroup")); //$NON-NLS-1$
+		classGroup.setText(PDEUIMessages.ContentPage_pClassGroup); //$NON-NLS-1$
 
 		fGenerateClass = new Button(classGroup, SWT.CHECK);
-		fGenerateClass.setText(PDEPlugin.getResourceString("ContentPage.generate")); //$NON-NLS-1$
+		fGenerateClass.setText(PDEUIMessages.ContentPage_generate); //$NON-NLS-1$
 		fGenerateClass.setSelection(true);
 		gd = new GridData();
 		gd.horizontalSpan = 2;
@@ -121,14 +121,14 @@ public class PluginContentPage extends ContentPage {
 		});
 
 		fClassLabel = new Label(classGroup, SWT.NONE);
-		fClassLabel.setText(PDEPlugin.getResourceString("ContentPage.classname")); //$NON-NLS-1$
+		fClassLabel.setText(PDEUIMessages.ContentPage_classname); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalIndent = 20;
 		fClassLabel.setLayoutData(gd);
 		fClassText = createText(classGroup, classListener);
 
 		fUIPlugin = new Button(classGroup, SWT.CHECK);
-		fUIPlugin.setText(PDEPlugin.getResourceString("ContentPage.uicontribution")); //$NON-NLS-1$
+		fUIPlugin.setText(PDEUIMessages.ContentPage_uicontribution); //$NON-NLS-1$
 		fUIPlugin.setSelection(true);
 		gd = new GridData();
 		gd.horizontalIndent = 20;
@@ -159,7 +159,7 @@ public class PluginContentPage extends ContentPage {
 	    fRCPGroup = new Group(container, SWT.NONE);
 	    fRCPGroup.setLayout(new GridLayout(2, false));
 	    fRCPGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	    fRCPGroup.setText(PDEPlugin.getResourceString("PluginContentPage.rcpGroup")); //$NON-NLS-1$
+	    fRCPGroup.setText(PDEUIMessages.PluginContentPage_rcpGroup); //$NON-NLS-1$
 	    
 	    createRCPQuestion(fRCPGroup, 2);    
 	}
@@ -174,11 +174,11 @@ public class PluginContentPage extends ContentPage {
 	    comp.setLayoutData(gd);
 	    
 	    fLabel = new Label(comp, SWT.NONE);
-	    fLabel.setText(PDEPlugin.getResourceString("PluginContentPage.appQuestion")); //$NON-NLS-1$
+	    fLabel.setText(PDEUIMessages.PluginContentPage_appQuestion); //$NON-NLS-1$
 	    fLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	    
 	    fYesButton = new Button(comp, SWT.RADIO);
-	    fYesButton.setText(PDEPlugin.getResourceString("PluginContentPage.yes")); //$NON-NLS-1$
+	    fYesButton.setText(PDEUIMessages.PluginContentPage_yes); //$NON-NLS-1$
 	    fYesButton.setSelection(false);
 	    gd = new GridData();
 	    gd.widthHint = 50;
@@ -191,7 +191,7 @@ public class PluginContentPage extends ContentPage {
 	    });
 	    
 	    fNoButton = new Button(comp, SWT.RADIO);
-	    fNoButton.setText(PDEPlugin.getResourceString("PluginContentPage.no")); //$NON-NLS-1$
+	    fNoButton.setText(PDEUIMessages.PluginContentPage_no); //$NON-NLS-1$
 	    fNoButton.setSelection(true);
 	    gd = new GridData();
 	    gd.widthHint = 50;
@@ -261,7 +261,7 @@ public class PluginContentPage extends ContentPage {
 		String errorMessage = validateProperties();
 		if (errorMessage == null && !fData.isSimple()) {
 			if (fLibraryText.getText().trim().length() == 0) {
-				errorMessage = PDEPlugin.getResourceString("PluginContentPage.noLibrary"); //$NON-NLS-1$
+				errorMessage = PDEUIMessages.PluginContentPage_noLibrary; //$NON-NLS-1$
 			}	
 		}
 		if (errorMessage == null && fGenerateClass.isEnabled() && fGenerateClass.getSelection()) {
@@ -280,6 +280,6 @@ public class PluginContentPage extends ContentPage {
 	 * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#getNameFieldQualifier()
 	 */
 	protected String getNameFieldQualifier() {
-		return PDEPlugin.getResourceString("ContentPage.plugin"); //$NON-NLS-1$
+		return PDEUIMessages.ContentPage_plugin; //$NON-NLS-1$
 	}
 }

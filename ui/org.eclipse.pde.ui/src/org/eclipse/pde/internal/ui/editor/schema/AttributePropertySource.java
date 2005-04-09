@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.schema;
 
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.schema.*;
 import org.eclipse.ui.views.properties.*;
 import java.util.*;
@@ -27,14 +28,6 @@ public class AttributePropertySource extends SchemaObjectPropertySource implemen
     public static final String P_TRANSLATABLE = "translatable"; //$NON-NLS-1$
     public static final String P_DEPRECATED = "deprecated"; //$NON-NLS-1$
     
-    public static final String KEY_COPY_OF = "SchemaEditor.AttributePR.attributeCopy"; //$NON-NLS-1$
-    public static final String KEY_USE = "SchemaEditor.AttributePR.use"; //$NON-NLS-1$
-    public static final String KEY_KIND = "SchemaEditor.AttributePR.kind"; //$NON-NLS-1$
-    public static final String KEY_TYPE = "SchemaEditor.AttributePR.type"; //$NON-NLS-1$
-    public static final String KEY_RESTRICTION = "SchemaEditor.AttributePR.restriction"; //$NON-NLS-1$
-    public static final String KEY_VALUE = "SchemaEditor.AttributePR.value"; //$NON-NLS-1$
-    public static final String KEY_BASED_ON = "SchemaEditor.AttributePR.basedOn"; //$NON-NLS-1$
-    public static final String KEY_NAME = "SchemaEditor.AttributePR.name"; //$NON-NLS-1$
     public static final String P_RESTRICTION = "restriction"; //$NON-NLS-1$
     public static final String P_NAME = "name"; //$NON-NLS-1$
     private Vector descriptors;
@@ -49,14 +42,12 @@ public class AttributePropertySource extends SchemaObjectPropertySource implemen
             ISchemaSimpleType type = att.getType();
             if (type.getName().equals("boolean")) { //$NON-NLS-1$
                 if (!svalue.equals("true") && !svalue.equals("false")) //$NON-NLS-1$ //$NON-NLS-2$
-                    return PDEPlugin
-                            .getResourceString("AttributePropertySource.assertBoolean"); //$NON-NLS-1$
+                    return PDEUIMessages.AttributePropertySource_assertBoolean; //$NON-NLS-1$
             } else if (type.getName().equals("string") //$NON-NLS-1$
                     && type.getRestriction() != null) {
                 ISchemaRestriction restriction = type.getRestriction();
                 if (restriction.isValueValid(svalue) == false) {
-                    return PDEPlugin.getFormattedMessage(
-                            "AttributePropertySource.invalidRestriction", svalue); //$NON-NLS-1$
+                    return NLS.bind(PDEUIMessages.AttributePropertySource_invalidRestriction, svalue); //$NON-NLS-1$
                 }
             }
             return null;
@@ -71,7 +62,7 @@ public class AttributePropertySource extends SchemaObjectPropertySource implemen
     public Object doClone() {
         ISchemaAttribute att = (ISchemaAttribute) getSourceObject();
         SchemaElement element = (SchemaElement) att.getParent();
-        String value = PDEPlugin.getFormattedMessage(KEY_COPY_OF, att.getName());
+        String value = NLS.bind(PDEUIMessages.SchemaEditor_AttributePR_attributeCopy, att.getName());
         SchemaAttribute att2 = new SchemaAttribute(att, value);
         ((SchemaComplexType) element.getType()).addAttribute(att2);
         return att2;
@@ -91,43 +82,36 @@ public class AttributePropertySource extends SchemaObjectPropertySource implemen
 
     public IPropertyDescriptor[] getPropertyDescriptors() {
         descriptors = new Vector();
-        PropertyDescriptor cdesc = createComboBoxPropertyDescriptor(P_USE, PDEPlugin
-                .getResourceString(KEY_USE), ISchemaAttribute.useTable);
+        PropertyDescriptor cdesc = createComboBoxPropertyDescriptor(P_USE, PDEUIMessages.SchemaEditor_AttributePR_use, ISchemaAttribute.useTable);
         cdesc.setLabelProvider(new ComboProvider(P_USE, ISchemaAttribute.useTable));
         descriptors.addElement(cdesc);
         
-        cdesc = createComboBoxPropertyDescriptor(P_KIND, PDEPlugin
-                .getResourceString(KEY_KIND), ISchemaAttribute.kindTable);
+        cdesc = createComboBoxPropertyDescriptor(P_KIND, PDEUIMessages.SchemaEditor_AttributePR_kind, ISchemaAttribute.kindTable);
         cdesc.setLabelProvider(new ComboProvider(P_KIND, ISchemaAttribute.kindTable));
         descriptors.addElement(cdesc);
         
-        cdesc = createComboBoxPropertyDescriptor(P_TYPE, PDEPlugin
-                .getResourceString(KEY_TYPE), typeTable);
+        cdesc = createComboBoxPropertyDescriptor(P_TYPE, PDEUIMessages.SchemaEditor_AttributePR_type, typeTable);
         cdesc.setLabelProvider(new ComboProvider(P_TYPE, typeTable));
         descriptors.addElement(cdesc);
         
-        cdesc = createComboBoxPropertyDescriptor(P_TRANSLATABLE, PDEPlugin.getResourceString("AttributePropertySource.translatable"), booleanTable); //$NON-NLS-1$
+        cdesc = createComboBoxPropertyDescriptor(P_TRANSLATABLE, PDEUIMessages.AttributePropertySource_translatable, booleanTable); //$NON-NLS-1$
         cdesc.setLabelProvider(new ComboProvider(P_TRANSLATABLE, booleanTable));
         descriptors.addElement(cdesc);
 
-        cdesc = createComboBoxPropertyDescriptor(P_DEPRECATED, PDEPlugin.getResourceString("AttributePropertySource.deprecated"), booleanTable); //$NON-NLS-1$
+        cdesc = createComboBoxPropertyDescriptor(P_DEPRECATED, PDEUIMessages.AttributePropertySource_deprecated, booleanTable); //$NON-NLS-1$
         cdesc.setLabelProvider(new ComboProvider(P_DEPRECATED, booleanTable));
         descriptors.addElement(cdesc);
 
-        cdesc = new TypeRestrictionDescriptor(P_RESTRICTION, PDEPlugin
-                .getResourceString(KEY_RESTRICTION), !isEditable());
+        cdesc = new TypeRestrictionDescriptor(P_RESTRICTION, PDEUIMessages.SchemaEditor_AttributePR_restriction, !isEditable());
         descriptors.addElement(cdesc);
-        cdesc = createTextPropertyDescriptor(P_VALUE, PDEPlugin
-                .getResourceString(KEY_VALUE));
+        cdesc = createTextPropertyDescriptor(P_VALUE, PDEUIMessages.SchemaEditor_AttributePR_value);
         cdesc.setValidator(new ValueValidator());
         descriptors.addElement(cdesc);
         
-        PropertyDescriptor desc = createTextPropertyDescriptor(P_BASED_ON, PDEPlugin
-                .getResourceString(KEY_BASED_ON));
+        PropertyDescriptor desc = createTextPropertyDescriptor(P_BASED_ON, PDEUIMessages.SchemaEditor_AttributePR_basedOn);
         descriptors.addElement(desc);
         
-        desc = createTextPropertyDescriptor(P_NAME, PDEPlugin
-                .getResourceString(KEY_NAME));
+        desc = createTextPropertyDescriptor(P_NAME, PDEUIMessages.SchemaEditor_AttributePR_name);
         descriptors.addElement(desc);
 
         return toDescriptorArray(descriptors);

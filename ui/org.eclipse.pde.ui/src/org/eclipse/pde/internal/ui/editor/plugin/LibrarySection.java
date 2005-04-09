@@ -43,17 +43,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
     private static final int UP_INDEX = 3;
     private static final int DOWN_INDEX = 4;
     
-    private static final String SECTION_TITLE ="ManifestEditor.LibrarySection.title"; //$NON-NLS-1$
-	private static final String SECTION_DESC = "ManifestEditor.LibrarySection.desc"; //$NON-NLS-1$
-	private static final String SECTION_FDESC ="ManifestEditor.LibrarySection.fdesc"; //$NON-NLS-1$
-	private static final String SECTION_ADD = "NewManifestEditor.LibrarySection.add"; //$NON-NLS-1$
-	private static final String SECTION_NEW = "NewManifestEditor.LibrarySection.new"; //$NON-NLS-1$
-	private static final String SECTION_UP = "ManifestEditor.LibrarySection.up"; //$NON-NLS-1$
-	private static final String SECTION_DOWN = "ManifestEditor.LibrarySection.down"; //$NON-NLS-1$
-	private static final String POPUP_NEW_LIBRARY = "ManifestEditor.LibrarySection.newLibrary"; //$NON-NLS-1$
-	private static final String NEW_LIBRARY_ENTRY = "ManifestEditor.LibrarySection.newLibraryEntry"; //$NON-NLS-1$
-
-	private Action fRenameAction;
+    private Action fRenameAction;
     private Action fRemoveAction;
     private Action fNewAction;
 	    
@@ -98,11 +88,11 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 			parent,
 			Section.DESCRIPTION,
 			new String[] {
-				PDEPlugin.getResourceString(SECTION_NEW),
-				PDEPlugin.getResourceString(SECTION_ADD),
-                PDEPlugin.getResourceString("Remove"),
-				PDEPlugin.getResourceString(SECTION_UP),
-				PDEPlugin.getResourceString(SECTION_DOWN)});
+				PDEUIMessages.NewManifestEditor_LibrarySection_new,
+				PDEUIMessages.NewManifestEditor_LibrarySection_add,
+                PDEUIMessages.NewManifestEditor_LibrarySection_remove,
+				PDEUIMessages.ManifestEditor_LibrarySection_up,
+				PDEUIMessages.ManifestEditor_LibrarySection_down});
 	}
     
     private String getSectionDescription() {
@@ -113,8 +103,8 @@ public class LibrarySection extends TableSection implements IModelChangedListene
                : "Specify the libraries and folders that constitute the plug-in runtime.  If unspecified, the classes and resources are assumed to be at the root of the plug-in.";
         }      
         return (model.isFragmentModel())
-                    ? PDEPlugin.getResourceString(SECTION_FDESC)
-                    : PDEPlugin.getResourceString(SECTION_DESC);       
+                    ? PDEUIMessages.ManifestEditor_LibrarySection_fdesc
+                    : PDEUIMessages.ManifestEditor_LibrarySection_desc;       
     }
     
     protected boolean isBundle() {
@@ -127,7 +117,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
     }
     
 	public void createClient(Section section, FormToolkit toolkit) {
-        section.setText(PDEPlugin.getResourceString(SECTION_TITLE));
+        section.setText(PDEUIMessages.ManifestEditor_LibrarySection_title);
         section.setDescription(getSectionDescription());
         
 		Composite container = createClientContainer(section, 2, toolkit);
@@ -166,21 +156,21 @@ public class LibrarySection extends TableSection implements IModelChangedListene
     }
 
     private void makeActions() {
-        fNewAction = new Action(PDEPlugin.getResourceString(POPUP_NEW_LIBRARY)) {
+        fNewAction = new Action(PDEUIMessages.ManifestEditor_LibrarySection_newLibrary) {
             public void run() {
                 handleNew();
             }
         };
         fNewAction.setEnabled(isEditable());
         
-        fRenameAction = new Action(PDEPlugin.getResourceString("EditableTablePart.renameAction")) {
+        fRenameAction = new Action(PDEUIMessages.EditableTablePart_renameAction) {
             public void run() {
                 getRenameAction().run();
             }
         };
         fRenameAction.setEnabled(isEditable());
         
-        fRemoveAction = new Action(PDEPlugin.getResourceString("Remove")) {
+        fRemoveAction = new Action(PDEUIMessages.NewManifestEditor_LibrarySection_remove) {
             public void run() {
                 handleRemove();
             }
@@ -303,7 +293,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		NewRuntimeLibraryDialog dialog = new NewRuntimeLibraryDialog(getPage().getSite().getShell(), 
 				model.getPluginBase().getLibraries());
 		dialog.create();
-		dialog.getShell().setText(PDEPlugin.getResourceString(NEW_LIBRARY_ENTRY));
+		dialog.getShell().setText(PDEUIMessages.ManifestEditor_LibrarySection_newLibraryEntry);
 		SWTUtil.setDialogSize(dialog, 250, 175);
 
 		if (dialog.open() == Dialog.OK){
@@ -329,8 +319,8 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 				
 		Class[] acceptedClasses = new Class[] { IFile.class };
 		dialog.setValidator(new LibrarySelectionValidator(acceptedClasses, true));
-		dialog.setTitle(PDEPlugin.getResourceString("BuildEditor.ClasspathSection.jarsTitle")); //$NON-NLS-1$
-		dialog.setMessage(PDEPlugin.getResourceString("LibrarySection.jarsMessage")); //$NON-NLS-1$
+		dialog.setTitle(PDEUIMessages.BuildEditor_ClasspathSection_jarsTitle); //$NON-NLS-1$
+		dialog.setMessage(PDEUIMessages.LibrarySection_jarsMessage); //$NON-NLS-1$
 		IPluginLibrary[] libraries = ((IPluginModelBase)getPage().getModel()).getPluginBase().getLibraries();
 		HashSet set = new HashSet();
 		for (int i = 0; i < libraries.length; i++) {

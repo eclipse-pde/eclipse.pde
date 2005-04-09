@@ -19,9 +19,6 @@ import org.eclipse.pde.internal.ui.elements.ElementList;
 
 public class ExtensionEditorWizard extends Wizard {
 	public static final String PLUGIN_POINT = "newExtension"; //$NON-NLS-1$
-	public static final String STATUS_MESSAGE = "ExtensionEditorWizard.statusMessage"; //$NON-NLS-1$
-	private static final String KEY_WTITLE = "ExtensionEditorWizard.wtitle"; //$NON-NLS-1$
-
 	private ExtensionEditorSelectionPage pointPage;
 	private IPluginModelBase model;
 	private IProject project;
@@ -35,7 +32,7 @@ public class ExtensionEditorWizard extends Wizard {
 		this.project = project;
 		this.selection = selection;
 		setForcePreviousAndNextButtons(true);
-		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
+		setWindowTitle(PDEUIMessages.ExtensionEditorWizard_wtitle);
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		loadWizardCollection();
 	}

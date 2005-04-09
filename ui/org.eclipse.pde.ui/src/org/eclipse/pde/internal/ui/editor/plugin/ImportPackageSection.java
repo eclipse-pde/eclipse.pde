@@ -31,6 +31,7 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.osgi.service.resolver.State;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.core.plugin.IPluginImport;
@@ -41,6 +42,7 @@ import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
@@ -137,7 +139,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
         section.setText("Required Packages"); 
-        section.setDescription(PDEPlugin.getFormattedMessage("ImportPackageSection.desc", isFragment() ? "fragment" : "plug-in")); 
+        section.setDescription(NLS.bind(PDEUIMessages.ImportPackageSection_desc, isFragment() ? "fragment" : "plug-in")); 
 
         Composite container = createClientContainer(section, 2, toolkit);
 		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
@@ -350,13 +352,13 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 	}
     
     private void makeActions() {
-        fAddAction = new Action(PDEPlugin.getResourceString("RequiresSection.add")) { //$NON-NLS-1$
+        fAddAction = new Action(PDEUIMessages.RequiresSection_add) { //$NON-NLS-1$
             public void run() {
                 handleAdd();
             }
         };
         fAddAction.setEnabled(isEditable());
-        fRemoveAction = new Action(PDEPlugin.getResourceString("RequiresSection.delete")) { //$NON-NLS-1$
+        fRemoveAction = new Action(PDEUIMessages.RequiresSection_delete) { //$NON-NLS-1$
             public void run() {
                 handleRemove();
             }

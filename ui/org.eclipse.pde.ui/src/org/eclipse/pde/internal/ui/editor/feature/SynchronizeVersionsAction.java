@@ -20,14 +20,12 @@ import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.PlatformUI;
 public class SynchronizeVersionsAction extends Action {
-	public static final String LABEL = "Actions.synchronizeVersions.label"; //$NON-NLS-1$
-	public static final String DIALOG_TITLE = "FeatureEditor.modelsInUse.title"; //$NON-NLS-1$
-	public static final String DIALOG_MESSAGE = "FeatureEditor.modelsInUse.message"; //$NON-NLS-1$
 	private FeatureEditor activeEditor;
 	public SynchronizeVersionsAction() {
-		setText(PDEPlugin.getResourceString(LABEL));
+		setText(PDEUIMessages.Actions_synchronizeVersions_label);
 	}
 	private void ensureContentSaved() {
 		if (activeEditor.isDirty()) {
@@ -52,8 +50,7 @@ public class SynchronizeVersionsAction extends Action {
 				.getAllEditableModelsUnused(modelClass);
 		if (!result) {
 			MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(),
-					PDEPlugin.getResourceString(DIALOG_TITLE), PDEPlugin
-							.getResourceString(DIALOG_MESSAGE));
+					PDEUIMessages.FeatureEditor_modelsInUse_title, PDEUIMessages.FeatureEditor_modelsInUse_message);
 		}
 		return result;
 	}

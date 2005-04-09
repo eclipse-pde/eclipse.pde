@@ -22,7 +22,7 @@ public class ViewRCPNewWizard extends NewPluginTemplateWizard {
 	 */
 	public void init(IFieldData data) {
 		super.init(data);
-		setWindowTitle(PDEPlugin.getResourceString("ViewRCPNewWizard.title")); //$NON-NLS-1$
+		setWindowTitle(PDEUIMessages.ViewRCPNewWizard_title); //$NON-NLS-1$
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.NewPluginTemplateWizard#createTemplateSections()

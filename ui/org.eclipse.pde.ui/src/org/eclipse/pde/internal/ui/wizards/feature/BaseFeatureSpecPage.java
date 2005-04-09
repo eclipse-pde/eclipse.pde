@@ -20,7 +20,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.FeatureSelectionDialog;
 import org.eclipse.swt.SWT;
@@ -57,26 +57,6 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 	protected boolean isInitialized = false;
 	protected IFeatureModel fFeatureToPatch;
 	
-	public static final String PATCH_ID = "NewFeaturePatch.SpecPage.id"; //$NON-NLS-1$
-	public static final String PATCH_NAME = "NewFeaturePatch.SpecPage.name"; //$NON-NLS-1$
-	public static final String PATCH_PROVIDER = "NewFeaturePatch.SpecPage.provider"; //$NON-NLS-1$
-	
-	public static final String FEATURE_ID = "NewFeatureWizard.SpecPage.id"; //$NON-NLS-1$
-	public static final String FEATURE_NAME = "NewFeatureWizard.SpecPage.name"; //$NON-NLS-1$
-	public static final String FEATURE_VERSION = "NewFeatureWizard.SpecPage.version"; //$NON-NLS-1$
-	public static final String FEATURE_PROVIDER = "NewFeatureWizard.SpecPage.provider"; //$NON-NLS-1$
-	public static final String KEY_LIBRARY = "NewFeatureWizard.SpecPage.library"; //$NON-NLS-1$
-	
-	public static final String KEY_VERSION_FORMAT = "NewFeatureWizard.SpecPage.versionFormat"; //$NON-NLS-1$
-	public static final String KEY_INVALID_ID = "NewFeatureWizard.SpecPage.invalidId"; //$NON-NLS-1$
-	public static final String KEY_MISSING = "NewFeatureWizard.SpecPage.missing"; //$NON-NLS-1$
-	public static final String KEY_PMISSING = "NewFeatureWizard.SpecPage.pmissing"; //$NON-NLS-1$
-	public static final String KEY_LIBRARY_MISSING = "NewFeatureWizard.SpecPage.error.library"; //$NON-NLS-1$
-	
-	private static final String KEY_CUSTOM_INSTALL_HANDLER =
-		"NewFeatureWizard.SpecPage.customProject"; //$NON-NLS-1$
-	private static final String KEY_PATCH_CUSTOM_INSTALL_HANDLER =
-		"NewFeatureWizard.SpecPage.patch.customProject"; //$NON-NLS-1$
 	public BaseFeatureSpecPage(WizardNewProjectCreationPage mainPage,
 			boolean isPatch) {
 		super("specPage"); //$NON-NLS-1$
@@ -105,9 +85,9 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 2;
 			patchPropertiesGroup.setLayoutData(gd);
-			patchPropertiesGroup.setText(PDEPlugin.getResourceString("NewFeatureWizard.SpecPage.patchProperties")); //$NON-NLS-1$
+			patchPropertiesGroup.setText(PDEUIMessages.NewFeatureWizard_SpecPage_patchProperties); //$NON-NLS-1$
 			Label label = new Label(patchPropertiesGroup, SWT.NULL);
-			label.setText(PDEPlugin.getResourceString(PATCH_ID));
+			label.setText(PDEUIMessages.NewFeaturePatch_SpecPage_id);
 			patchIdText = new Text(patchPropertiesGroup, SWT.BORDER);
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			patchIdText.setLayoutData(gd);
@@ -116,7 +96,7 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 			patchIdText.addModifyListener(listener);
 			
 			label = new Label(patchPropertiesGroup, SWT.NULL);
-			label.setText(PDEPlugin.getResourceString(PATCH_NAME));
+			label.setText(PDEUIMessages.NewFeaturePatch_SpecPage_name);
 			patchNameText = new Text(patchPropertiesGroup, SWT.BORDER);
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			patchNameText.setLayoutData(gd);
@@ -125,7 +105,7 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 			patchNameText.addModifyListener(listener);
 			
 			label = new Label(patchPropertiesGroup, SWT.NULL);
-			label.setText(PDEPlugin.getResourceString(PATCH_PROVIDER));
+			label.setText(PDEUIMessages.NewFeaturePatch_SpecPage_provider);
 			patchProviderText = new Text(patchPropertiesGroup, SWT.BORDER);
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			patchProviderText.setLayoutData(gd);
@@ -145,13 +125,13 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		customHandlerGroup.setLayoutData(gd);
-		customHandlerGroup.setText(PDEPlugin.getResourceString("BaseFeatureSpecPage.customGroup")); //$NON-NLS-1$
+		customHandlerGroup.setText(PDEUIMessages.BaseFeatureSpecPage_customGroup); //$NON-NLS-1$
 
 		customChoice = new Button(customHandlerGroup, SWT.CHECK);
 		if (!isPatch())
-			customChoice.setText(PDEPlugin.getResourceString(KEY_CUSTOM_INSTALL_HANDLER));
+			customChoice.setText(PDEUIMessages.NewFeatureWizard_SpecPage_customProject);
 		else 
-			customChoice.setText(PDEPlugin.getResourceString(KEY_PATCH_CUSTOM_INSTALL_HANDLER));
+			customChoice.setText(PDEUIMessages.NewFeatureWizard_SpecPage_patch_customProject);
 		customChoice.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				boolean isSelected = ((Button) e.widget).getSelection();
@@ -166,7 +146,7 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 		
 		libraryLabel = new Label(customHandlerGroup, SWT.NULL);
 		libraryLabel.setText(
-			PDEPlugin.getResourceString(KEY_LIBRARY));
+			PDEUIMessages.NewFeatureWizard_SpecPage_library);
 		gd = new GridData();
 		gd.horizontalIndent = 22;
 		libraryLabel.setLayoutData(gd);
@@ -225,10 +205,10 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 		featurePropertiesGroup.setLayoutData(gd);
 		
 		if (isPatch()){
-			featurePropertiesGroup.setText(PDEPlugin.getResourceString("BaseFeatureSpecPage.patchGroup.title")); //$NON-NLS-1$
+			featurePropertiesGroup.setText(PDEUIMessages.BaseFeatureSpecPage_patchGroup_title); //$NON-NLS-1$
 						
 			Label label = new Label(featurePropertiesGroup, SWT.NULL);
-			label.setText(PDEPlugin.getResourceString(FEATURE_ID));
+			label.setText(PDEUIMessages.NewFeatureWizard_SpecPage_id);
 			
 			Composite patchcontainer = new Composite(featurePropertiesGroup, SWT.NULL);
 			layout = new GridLayout(2, false);
@@ -247,7 +227,7 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 			featureIdText.addModifyListener(listener);
 			
 			browseButton = new Button(patchcontainer, SWT.PUSH);
-			browseButton.setText(PDEPlugin.getResourceString("BaseFeatureSpecPage.browse")); //$NON-NLS-1$
+			browseButton.setText(PDEUIMessages.BaseFeatureSpecPage_browse); //$NON-NLS-1$
 			gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 			browseButton.setLayoutData(gd);
 			browseButton.addSelectionListener(new SelectionAdapter() {
@@ -270,10 +250,10 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 			});
 			SWTUtil.setButtonDimensionHint(browseButton);
 		} else {
-			featurePropertiesGroup.setText(PDEPlugin.getResourceString("BaseFeatureSpecPage.featurePropertiesGroup.title")); //$NON-NLS-1$
+			featurePropertiesGroup.setText(PDEUIMessages.BaseFeatureSpecPage_featurePropertiesGroup_title); //$NON-NLS-1$
 			
 			Label label = new Label(featurePropertiesGroup, SWT.NULL);
-			label.setText(PDEPlugin.getResourceString(FEATURE_ID));
+			label.setText(PDEUIMessages.NewFeatureWizard_SpecPage_id);
 			featureIdText = new Text(featurePropertiesGroup, SWT.BORDER);
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			featureIdText.setLayoutData(gd);
@@ -284,7 +264,7 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 		}
 		
 		Label label = new Label(featurePropertiesGroup, SWT.NULL);
-		label.setText(PDEPlugin.getResourceString(FEATURE_NAME));
+		label.setText(PDEUIMessages.NewFeatureWizard_SpecPage_name);
 		featureNameText = new Text(featurePropertiesGroup, SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		featureNameText.setLayoutData(gd);
@@ -293,14 +273,14 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 		featureNameText.addModifyListener(listener);
 		
 		label = new Label(featurePropertiesGroup, SWT.NULL);
-		label.setText(PDEPlugin.getResourceString(FEATURE_VERSION));
+		label.setText(PDEUIMessages.NewFeatureWizard_SpecPage_version);
 		featureVersionText = new Text(featurePropertiesGroup, SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		featureVersionText.setLayoutData(gd);
 		featureVersionText.addModifyListener(listener);
 		if (!isPatch()) {
 			label = new Label(featurePropertiesGroup, SWT.NULL);
-			label.setText(PDEPlugin.getResourceString(FEATURE_PROVIDER));
+			label.setText(PDEUIMessages.NewFeatureWizard_SpecPage_provider);
 			featureProviderText = new Text(featurePropertiesGroup, SWT.BORDER);
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			featureProviderText.setLayoutData(gd);
@@ -324,7 +304,7 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 	}
 	
 	protected String verifyVersion() {
-		String problemText = PDEPlugin.getResourceString(KEY_VERSION_FORMAT);
+		String problemText = PDEUIMessages.NewFeatureWizard_SpecPage_versionFormat;
 		String value = featureVersionText.getText();
 		if (PluginVersionIdentifier.validateVersion(value).getSeverity() != IStatus.OK)
 			return problemText;
@@ -332,10 +312,10 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 	}
 	
 	protected String verifyIdRules() {
-		String problemText = PDEPlugin.getResourceString(KEY_INVALID_ID);
+		String problemText = PDEUIMessages.NewFeatureWizard_SpecPage_invalidId;
 		String name = featureIdText.getText();
 		if (name == null || name.length() == 0)
-			 return PDEPlugin.getResourceString(KEY_MISSING);
+			 return PDEUIMessages.NewFeatureWizard_SpecPage_missing;
 		StringTokenizer stok = new StringTokenizer(name, "."); //$NON-NLS-1$
 		while (stok.hasMoreTokens()) {
 			String token = stok.nextToken();

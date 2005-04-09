@@ -15,6 +15,7 @@ import java.util.*;
 
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.wizard.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.widgets.*;
@@ -25,8 +26,8 @@ public class PatchSpecPage extends BaseFeatureSpecPage {
 
 	public PatchSpecPage(WizardNewProjectCreationPage mainPage) {
 		super(mainPage, true);
-		setTitle(PDEPlugin.getResourceString("PatchSpec.title")); //$NON-NLS-1$
-		setDescription(PDEPlugin.getResourceString("PatchSpec.desc")); //$NON-NLS-1$
+		setTitle(PDEUIMessages.PatchSpec_title); //$NON-NLS-1$
+		setDescription(PDEUIMessages.PatchSpec_desc); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
@@ -64,7 +65,7 @@ public class PatchSpecPage extends BaseFeatureSpecPage {
 		}
 		if (customChoice.getSelection() && libraryText.getText().length() == 0) {
 			setPageComplete(false);
-			setErrorMessage(PDEPlugin.getResourceString(KEY_LIBRARY_MISSING));
+			setErrorMessage(PDEUIMessages.NewFeatureWizard_SpecPage_error_library);
 			return;
 		}
 		
@@ -78,7 +79,7 @@ public class PatchSpecPage extends BaseFeatureSpecPage {
 			return;
 		}
 		
-		setMessage(PDEPlugin.getFormattedMessage("NewFeaturePatch.SpecPage.notFound", featureIdText.getText()), IMessageProvider.WARNING); //$NON-NLS-1$
+		setMessage(NLS.bind(PDEUIMessages.NewFeaturePatch_SpecPage_notFound, featureIdText.getText()), IMessageProvider.WARNING); //$NON-NLS-1$
 		setErrorMessage(null);
 		getContainer().updateButtons();
 		return;
@@ -126,10 +127,10 @@ public class PatchSpecPage extends BaseFeatureSpecPage {
 	}
 
 	protected String verifyIdRules() {
-		String problemText = PDEPlugin.getResourceString(KEY_INVALID_ID);
+		String problemText = PDEUIMessages.NewFeatureWizard_SpecPage_invalidId;
 		String name = patchIdText.getText();
 		if (name == null || name.length() == 0)
-			return PDEPlugin.getResourceString(KEY_PMISSING);
+			return PDEUIMessages.NewFeatureWizard_SpecPage_pmissing;
 		StringTokenizer stok = new StringTokenizer(name, "."); //$NON-NLS-1$
 		while (stok.hasMoreTokens()) {
 			String token = stok.nextToken();

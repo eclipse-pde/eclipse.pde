@@ -46,16 +46,6 @@ public class RuntimeInfoSection extends PDESection
 implements
 IModelChangedListener {
 	
-	public static final String SECTION_TITLE = "BuildEditor.RuntimeInfoSection.title"; //$NON-NLS-1$
-	public static final String SECTION_DESC = "BuildEditor.RuntimeInfoSection.desc"; //$NON-NLS-1$
-	public static final String SECTION_NEW = "BuildEditor.RuntimeInfoSection.addLibrary"; //$NON-NLS-1$
-	public static final String SECTION_UP = "ManifestEditor.LibrarySection.up"; //$NON-NLS-1$
-	public static final String SECTION_DOWN = "ManifestEditor.LibrarySection.down"; //$NON-NLS-1$
-	public static final String POPUP_NEW_LIBRARY = "BuildEditor.RuntimeInfoSection.popupAdd"; //$NON-NLS-1$
-	public static final String POPUP_DELETE = "Actions.delete.label"; //$NON-NLS-1$
-	public static final String JSECTION_NEW = "BuildEditor.RuntimeInfoSection.addFolder"; //$NON-NLS-1$
-	public static final String POPUP_NEW_FOLDER = "BuildEditor.RuntimeInfoSection.popupFolder"; //$NON-NLS-1$
-	public static final String JAR_INCLUDE = "BuildEditor.RuntimeInfoSection.buildInclude"; //$NON-NLS-1$
 	protected TableViewer fLibraryViewer;
 	protected TableViewer fFolderViewer;
 	
@@ -70,7 +60,7 @@ IModelChangedListener {
 	class RenameAction extends Action {
 		
 		public RenameAction() {
-			super(PDEPlugin.getResourceString("EditableTablePart.renameAction")); //$NON-NLS-1$
+			super(PDEUIMessages.EditableTablePart_renameAction); //$NON-NLS-1$
 		}
 		
 		public void run() {
@@ -207,8 +197,8 @@ IModelChangedListener {
 	
 	public RuntimeInfoSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION);
-		getSection().setText(PDEPlugin.getResourceString(SECTION_TITLE));
-		getSection().setDescription(PDEPlugin.getResourceString(SECTION_DESC));
+		getSection().setText(PDEUIMessages.BuildEditor_RuntimeInfoSection_title);
+		getSection().setDescription(PDEUIMessages.BuildEditor_RuntimeInfoSection_desc);
 		getBuildModel().addModelChangedListener(this);
 		createClient(getSection(), page.getManagedForm().getToolkit());
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
@@ -345,8 +335,7 @@ IModelChangedListener {
 		createLeftSection(container, toolkit);
 		createRightSection(container, toolkit);
 		
-		fIncludeLibraryButton = toolkit.createButton(container, PDEPlugin
-				.getResourceString(JAR_INCLUDE), SWT.CHECK);
+		fIncludeLibraryButton = toolkit.createButton(container, PDEUIMessages.BuildEditor_RuntimeInfoSection_buildInclude, SWT.CHECK);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		fIncludeLibraryButton.setLayoutData(gd);
@@ -373,9 +362,9 @@ IModelChangedListener {
 		container.setLayoutData(gd);
 		
 		fLibraryPart = new PartAdapter(new String[]{
-				PDEPlugin.getResourceString(SECTION_NEW), null,
-				PDEPlugin.getResourceString(SECTION_UP),
-				PDEPlugin.getResourceString(SECTION_DOWN)});
+				PDEUIMessages.BuildEditor_RuntimeInfoSection_addLibrary, null,
+				PDEUIMessages.ManifestEditor_LibrarySection_up,
+				PDEUIMessages.ManifestEditor_LibrarySection_down});
 		fLibraryPart.createControl(container, SWT.FULL_SELECTION, 2, toolkit);
 		fLibraryViewer = (TableViewer) fLibraryPart.getViewer();
 		fLibraryViewer.setContentProvider(new LibraryContentProvider());
@@ -408,8 +397,7 @@ IModelChangedListener {
 		gd.widthHint = 100;
 		container.setLayoutData(gd);
 		
-		fFolderPart = new PartAdapter(new String[]{PDEPlugin
-				.getResourceString(JSECTION_NEW)});
+		fFolderPart = new PartAdapter(new String[]{PDEUIMessages.BuildEditor_RuntimeInfoSection_addFolder});
 		fFolderPart.createControl(container, SWT.FULL_SELECTION, 2, toolkit);
 		fFolderViewer = (TableViewer) fFolderPart.getViewer();
 		fFolderViewer.setContentProvider(new FolderContentProvider());
@@ -431,8 +419,7 @@ IModelChangedListener {
 	protected void fillFolderViewerContextMenu(IMenuManager manager) {
 		ISelection selection = fFolderViewer.getSelection();
 		if (fCurrentLibrary != null) {
-			Action newAction = new Action(PDEPlugin
-					.getResourceString(POPUP_NEW_FOLDER)) {
+			Action newAction = new Action(PDEUIMessages.BuildEditor_RuntimeInfoSection_popupFolder) {
 				
 				public void run() {
 					handleNewFolder();
@@ -443,8 +430,7 @@ IModelChangedListener {
 		}
 		
 		manager.add(new Separator());
-		Action deleteAction = new Action(PDEPlugin
-				.getResourceString(POPUP_DELETE)) {
+		Action deleteAction = new Action(PDEUIMessages.Actions_delete_label) {
 			
 			public void run() {
 				handleDeleteFolder();
@@ -461,8 +447,7 @@ IModelChangedListener {
 	
 	protected void fillLibraryContextMenu(IMenuManager manager) {
 		ISelection selection = fLibraryViewer.getSelection();
-		Action newAction = new Action(PDEPlugin
-				.getResourceString(POPUP_NEW_LIBRARY)) {
+		Action newAction = new Action(PDEUIMessages.BuildEditor_RuntimeInfoSection_popupAdd) {
 			
 			public void run() {
 				handleNew();
@@ -476,8 +461,7 @@ IModelChangedListener {
 		renameAction.setEnabled(!selection.isEmpty() && fEnabled);
 		manager.add(renameAction);
 		
-		Action deleteAction = new Action(PDEPlugin
-				.getResourceString(POPUP_DELETE)) {
+		Action deleteAction = new Action(PDEUIMessages.Actions_delete_label) {
 			
 			public void run() {
 				handleDelete();
@@ -586,7 +570,7 @@ IModelChangedListener {
 			RenameDialog dialog = new RenameDialog(fLibraryViewer.getControl()
 					.getShell(), oldName);
 			dialog.create();
-            dialog.setTitle(PDEPlugin.getResourceString("RuntimeInfoSection.rename")); //$NON-NLS-1$
+            dialog.setTitle(PDEUIMessages.RuntimeInfoSection_rename); //$NON-NLS-1$
 			dialog.getShell().setSize(300, 150);
 			if (dialog.open() == Dialog.OK) {
 				entryModified(entry, dialog.getNewName());
@@ -782,7 +766,7 @@ IModelChangedListener {
 						getSection().getShell(), libNames,
 						pluginModelBase);
 				dialog.create();
-				dialog.getShell().setText(PDEPlugin.getResourceString("RuntimeInfoSection.addEntry"));  //$NON-NLS-1$
+				dialog.getShell().setText(PDEUIMessages.RuntimeInfoSection_addEntry);  //$NON-NLS-1$
 				
 				try {
 					if (dialog.open() == Dialog.OK) {
@@ -972,10 +956,8 @@ IModelChangedListener {
 			}
 		});
 		dialog.setAllowMultiple(false);
-		dialog.setTitle(PDEPlugin
-				.getResourceString("ManifestEditor.JarsSection.dialogTitle")); //$NON-NLS-1$
-		dialog.setMessage(PDEPlugin
-				.getResourceString("ManifestEditor.JarsSection.dialogMessage")); //$NON-NLS-1$
+		dialog.setTitle(PDEUIMessages.ManifestEditor_JarsSection_dialogTitle); //$NON-NLS-1$
+		dialog.setMessage(PDEUIMessages.ManifestEditor_JarsSection_dialogMessage); //$NON-NLS-1$
 		
 		dialog.setValidator(new ISelectionStatusValidator() {
 			
@@ -999,8 +981,7 @@ IModelChangedListener {
 							IStatus.ERROR,
 							PDEPlugin.getPluginId(),
 							IStatus.ERROR,
-							PDEPlugin
-							.getResourceString("BuildEditor.RuntimeInfoSection.duplicateFolder"), //$NON-NLS-1$
+							PDEUIMessages.BuildEditor_RuntimeInfoSection_duplicateFolder, //$NON-NLS-1$
 							null);
 				
 				return new Status(IStatus.OK, PDEPlugin.getPluginId(),

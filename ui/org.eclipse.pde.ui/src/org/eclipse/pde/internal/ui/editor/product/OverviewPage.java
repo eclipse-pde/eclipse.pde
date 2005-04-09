@@ -23,6 +23,7 @@ import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.launcher.*;
@@ -47,7 +48,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 	public static final String PAGE_ID = "overview"; //$NON-NLS-1$
 
 	public OverviewPage(FormEditor editor) {
-		super(editor, PAGE_ID, PDEPlugin.getResourceString("OverviewPage.title")); //$NON-NLS-1$
+		super(editor, PAGE_ID, PDEUIMessages.OverviewPage_title); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
@@ -57,7 +58,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
-		form.setText(PDEPlugin.getResourceString("OverviewPage.title"));  //$NON-NLS-1$
+		form.setText(PDEUIMessages.OverviewPage_title);  //$NON-NLS-1$
 		fillBody(managedForm, toolkit);
 		managedForm.refresh();
 	}
@@ -86,8 +87,8 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 	private void createTestingSection(Composite parent, FormToolkit toolkit) {
 		Section section = toolkit.createSection(parent, Section.TITLE_BAR);
 		section.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
-		section.setText(PDEPlugin.getResourceString("Product.OverviewPage.testing")); //$NON-NLS-1$
-		FormText text = createClient(section, PDEPlugin.getResourceString("Product.overview.testing"), toolkit); //$NON-NLS-1$
+		section.setText(PDEUIMessages.Product_OverviewPage_testing); //$NON-NLS-1$
+		FormText text = createClient(section, PDEUIMessages.Product_overview_testing, toolkit); //$NON-NLS-1$
 		text.setImage("run", getImage(PDEPluginImages.DESC_RUN_EXC)); //$NON-NLS-1$
 		text.setImage("debug", getImage(PDEPluginImages.DESC_DEBUG_EXC)); //$NON-NLS-1$
 		text.addHyperlinkListener(this);
@@ -98,8 +99,8 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 	private void createExportingSection(Composite parent, FormToolkit toolkit) {
 		Section section = toolkit.createSection(parent, Section.TITLE_BAR);
 		section.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
-		section.setText(PDEPlugin.getResourceString("OverviewPage.exportingTitle")); //$NON-NLS-1$
-		FormText text = createClient(section, PDEPlugin.getResourceString("Product.overview.exporting"), toolkit); //$NON-NLS-1$
+		section.setText(PDEUIMessages.OverviewPage_exportingTitle); //$NON-NLS-1$
+		FormText text = createClient(section, PDEUIMessages.Product_overview_exporting, toolkit); //$NON-NLS-1$
 		text.addHyperlinkListener(this);
 		section.setClient(text);
 		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));		
@@ -165,7 +166,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 			IProgressService service = PlatformUI.getWorkbench().getProgressService();
 			SynchronizationOperation op = new SynchronizationOperation(getProduct(), getSite().getShell());
 			service.runInUI(service, op, PDEPlugin.getWorkspace().getRoot());
-			MessageDialog.openInformation(getSite().getShell(), PDEPlugin.getResourceString("OverviewPage.sync"), PDEPlugin.getResourceString("OverviewPage.successfulSync")); //$NON-NLS-1$ //$NON-NLS-2$
+			MessageDialog.openInformation(getSite().getShell(), PDEUIMessages.OverviewPage_sync, PDEUIMessages.OverviewPage_successfulSync); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (InterruptedException e) {
 		} catch (InvocationTargetException e) {		
 			MessageDialog.openError(getSite().getShell(), "Synchronize", e.getTargetException().getMessage()); //$NON-NLS-1$

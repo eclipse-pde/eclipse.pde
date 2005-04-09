@@ -12,7 +12,8 @@ package org.eclipse.pde.ui.internal.samples;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.Composite;
@@ -28,8 +29,8 @@ public class ReviewPage extends WizardPage {
 	public ReviewPage(SampleWizard wizard) {
 		super("last"); //$NON-NLS-1$
 		this.wizard = wizard;
-		setTitle(PDEPlugin.getResourceString("ReviewPage.title")); //$NON-NLS-1$
-		setDescription(PDEPlugin.getResourceString("ReviewPage.desc")); //$NON-NLS-1$
+		setTitle(PDEUIMessages.ReviewPage_title); //$NON-NLS-1$
+		setDescription(PDEUIMessages.ReviewPage_desc); //$NON-NLS-1$
 	}
 	public void setVisible(boolean visible) {
 		setPageComplete(wizard.getSelection()!=null);			
@@ -46,12 +47,12 @@ public class ReviewPage extends WizardPage {
 			setMessage(null);
 			IConfigurationElement [] desc = selection.getChildren("description");  //$NON-NLS-1$
 			if (desc.length==1)
-				buf.append(PDEPlugin.getFormattedMessage("ReviewPage.descContent", new String[]{selection.getAttribute("name"), desc[0].getValue()})); //$NON-NLS-1$ //$NON-NLS-2$
+				buf.append(NLS.bind(PDEUIMessages.ReviewPage_descContent, (new String[]{selection.getAttribute("name"), desc[0].getValue()}))); //$NON-NLS-1$ //$NON-NLS-2$
 			else
-				buf.append(PDEPlugin.getFormattedMessage("ReviewPage.content", selection.getAttribute("name"))); //$NON-NLS-1$ //$NON-NLS-2$
+				buf.append(NLS.bind(PDEUIMessages.ReviewPage_content, selection.getAttribute("name"))); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		else {
-			setMessage(PDEPlugin.getResourceString("ReviewPage.noSampleFound"), WizardPage.WARNING); //$NON-NLS-1$
+			setMessage(PDEUIMessages.ReviewPage_noSampleFound, WizardPage.WARNING); //$NON-NLS-1$
 		}
 		buf.append("</form>"); //$NON-NLS-1$
 		formText.setText(buf.toString());

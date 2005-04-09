@@ -18,6 +18,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.*;
 import org.eclipse.ui.intro.IIntroSite;
 import org.eclipse.ui.intro.config.*;
@@ -52,7 +53,7 @@ public class ShowSampleAction extends Action implements IIntroAction {
 			WizardDialog dialog = new WizardDialog(PDEPlugin
 					.getActiveWorkbenchShell(), wizard);
 			dialog.create();
-			dialog.getShell().setText(PDEPlugin.getResourceString("ShowSampleAction.title")); //$NON-NLS-1$
+			dialog.getShell().setText(PDEUIMessages.ShowSampleAction_title); //$NON-NLS-1$
 			dialog.getShell().setSize(400, 500);
 			if (dialog.open() == WizardDialog.OK) {
 				switchToSampleStandby(wizard);
@@ -100,8 +101,8 @@ public class ShowSampleAction extends Action implements IIntroAction {
 		if (MessageDialog
 				.openQuestion(
 						PDEPlugin.getActiveWorkbenchShell(),
-						PDEPlugin.getResourceString("ShowSampleAction.msgTitle"), //$NON-NLS-1$
-						PDEPlugin.getResourceString("ShowSampleAction.msgDesc"))) { //$NON-NLS-1$
+						PDEUIMessages.ShowSampleAction_msgTitle, //$NON-NLS-1$
+						PDEUIMessages.ShowSampleAction_msgDesc)) { //$NON-NLS-1$
 			return downloadFeature();
 		}
 		return false;

@@ -13,7 +13,7 @@ package org.eclipse.pde.internal.ui.wizards;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -43,7 +43,7 @@ public class FolderSelectionDialog extends ElementTreeSelectionDialog implements
 		getTreeViewer().addSelectionChangedListener(this);
 		getTreeViewer().expandToLevel(2);
 		fNewFolderButton = new Button(result, SWT.PUSH);
-		fNewFolderButton.setText(PDEPlugin.getResourceString("BuildEditor.SourceFolderSelectionDialog.button")); //$NON-NLS-1$
+		fNewFolderButton.setText(PDEUIMessages.BuildEditor_SourceFolderSelectionDialog_button); //$NON-NLS-1$
 		fNewFolderButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				newFolderButtonPressed();

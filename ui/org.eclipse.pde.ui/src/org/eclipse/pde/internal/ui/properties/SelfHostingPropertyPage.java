@@ -95,7 +95,7 @@ public class SelfHostingPropertyPage extends PropertyPage {
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		Label label = new Label(composite, SWT.WRAP);
-		label.setText(PDEPlugin.getResourceString("SelfHostingPropertyPage.label")); //$NON-NLS-1$
+		label.setText(PDEUIMessages.SelfHostingPropertyPage_label); //$NON-NLS-1$
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 300;
 		label.setLayoutData(gd);
@@ -103,7 +103,7 @@ public class SelfHostingPropertyPage extends PropertyPage {
 		new Label(composite, SWT.NONE);
 		
 		label = new Label(composite, SWT.WRAP);
-		label.setText(PDEPlugin.getResourceString("SelfHostingPropertyPage.viewerLabel")); //$NON-NLS-1$
+		label.setText(PDEUIMessages.SelfHostingPropertyPage_viewerLabel); //$NON-NLS-1$
 		
 		fViewer = CheckboxTableViewer.newCheckList(composite, SWT.BORDER);
 		fViewer.setContentProvider(new ContentProvider());

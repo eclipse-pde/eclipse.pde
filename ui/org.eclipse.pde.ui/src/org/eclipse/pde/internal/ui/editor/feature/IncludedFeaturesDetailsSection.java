@@ -17,6 +17,7 @@ import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
@@ -37,22 +38,6 @@ import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 public class IncludedFeaturesDetailsSection extends PDESection implements
 		IFormPart, IPartSelectionListener {
-	private static final String SECTION_DESC = "SiteEditor.IncludedFeaturesDetailsSection.desc"; //$NON-NLS-1$
-
-	private static final String SECTION_FEATURE_LABEL = "SiteEditor.IncludedFeaturesDetailsSection.featureLabel"; //$NON-NLS-1$
-
-	private static final String SECTION_TITLE = "SiteEditor.IncludedFeaturesDetailsSection.title"; //$NON-NLS-1$
-
-	private static final String SECTION_OPTIONAL = "SiteEditor.IncludedFeaturesDetailsSection.optional"; //$NON-NLS-1$
-
-	private static final String SECTION_SEARCH_LOCATION = "SiteEditor.IncludedFeaturesDetailsSection.searchLocation"; //$NON-NLS-1$
-
-	private static final String SECTION_ROOT = "SiteEditor.IncludedFeaturesDetailsSection.root"; //$NON-NLS-1$
-
-	private static final String SECTION_SELF = "SiteEditor.IncludedFeaturesDetailsSection.self"; //$NON-NLS-1$
-
-	private static final String SECTION_BOTH = "SiteEditor.IncludedFeaturesDetailsSection.both"; //$NON-NLS-1$
-
 	protected IFeatureChild fInput;
 
 	private FormEntry fNameText;
@@ -68,8 +53,8 @@ public class IncludedFeaturesDetailsSection extends PDESection implements
 	private boolean fBlockNotification;
 
 	public IncludedFeaturesDetailsSection(PDEFormPage page, Composite parent) {
-		this(page, parent, PDEPlugin.getResourceString(SECTION_TITLE),
-				PDEPlugin.getResourceString(SECTION_DESC), SWT.NULL);
+		this(page, parent, PDEUIMessages.SiteEditor_IncludedFeaturesDetailsSection_title,
+				PDEUIMessages.SiteEditor_IncludedFeaturesDetailsSection_desc, SWT.NULL);
 	}
 
 	public IncludedFeaturesDetailsSection(PDEFormPage page, Composite parent,
@@ -98,8 +83,7 @@ public class IncludedFeaturesDetailsSection extends PDESection implements
 		layout.horizontalSpacing = 6;
 		container.setLayout(layout);
 
-		fNameText = new FormEntry(container, toolkit, PDEPlugin
-				.getResourceString(SECTION_FEATURE_LABEL), null, false);
+		fNameText = new FormEntry(container, toolkit, PDEUIMessages.SiteEditor_IncludedFeaturesDetailsSection_featureLabel, null, false);
 		fNameText.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
 				if (fInput != null)
@@ -112,8 +96,7 @@ public class IncludedFeaturesDetailsSection extends PDESection implements
 		});
 		fNameText.setEditable(isEditable());
 
-		fOptionalButton = toolkit.createButton(container, PDEPlugin
-				.getResourceString(SECTION_OPTIONAL), SWT.CHECK);
+		fOptionalButton = toolkit.createButton(container, PDEUIMessages.SiteEditor_IncludedFeaturesDetailsSection_optional, SWT.CHECK);
 
 		TableWrapData gd = new TableWrapData(TableWrapData.FILL);
 		gd.colspan = 2;
@@ -129,13 +112,12 @@ public class IncludedFeaturesDetailsSection extends PDESection implements
 			}
 		});
 		Label fSearchLocationDescLabel = toolkit.createLabel(container,
-				PDEPlugin.getResourceString(SECTION_SEARCH_LOCATION), SWT.WRAP);
+				PDEUIMessages.SiteEditor_IncludedFeaturesDetailsSection_searchLocation, SWT.WRAP);
 		gd = new TableWrapData(TableWrapData.FILL);
 		gd.colspan = 2;
 		fSearchLocationDescLabel.setLayoutData(gd);
 
-		fSearchRootButton = toolkit.createButton(container, PDEPlugin
-				.getResourceString(SECTION_ROOT), SWT.RADIO);
+		fSearchRootButton = toolkit.createButton(container, PDEUIMessages.SiteEditor_IncludedFeaturesDetailsSection_root, SWT.RADIO);
 		fSearchRootButton.setSelection(true);
 		gd = new TableWrapData(TableWrapData.FILL);
 		gd.colspan = 2;
@@ -153,8 +135,7 @@ public class IncludedFeaturesDetailsSection extends PDESection implements
 			}
 		});
 
-		fSearchSelfButton = toolkit.createButton(container, PDEPlugin
-				.getResourceString(SECTION_SELF), SWT.RADIO);
+		fSearchSelfButton = toolkit.createButton(container, PDEUIMessages.SiteEditor_IncludedFeaturesDetailsSection_self, SWT.RADIO);
 		fSearchSelfButton.setSelection(true);
 		gd = new TableWrapData(TableWrapData.FILL);
 		gd.colspan = 2;
@@ -172,8 +153,7 @@ public class IncludedFeaturesDetailsSection extends PDESection implements
 			}
 		});
 
-		fSearchBothButton = toolkit.createButton(container, PDEPlugin
-				.getResourceString(SECTION_BOTH), SWT.RADIO);
+		fSearchBothButton = toolkit.createButton(container, PDEUIMessages.SiteEditor_IncludedFeaturesDetailsSection_both, SWT.RADIO);
 		fSearchBothButton.setSelection(true);
 		gd = new TableWrapData(TableWrapData.FILL);
 		gd.colspan = 2;

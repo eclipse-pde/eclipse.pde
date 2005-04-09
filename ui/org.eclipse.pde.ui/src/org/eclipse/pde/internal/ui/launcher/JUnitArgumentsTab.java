@@ -37,7 +37,7 @@ public class JUnitArgumentsTab extends BasicLauncherTab {
 	
 	protected String[] getApplicationNames() {
 		TreeSet result = new TreeSet();
-		result.add(PDEPlugin.getResourceString("JUnitArgumentsTab.headless")); //$NON-NLS-1$
+		result.add(PDEUIMessages.JUnitArgumentsTab_headless); //$NON-NLS-1$
 		String[] appNames = super.getApplicationNames();
 		for (int i = 0; i < appNames.length; i++) {
 			result.add(appNames[i]);
@@ -52,7 +52,7 @@ public class JUnitArgumentsTab extends BasicLauncherTab {
 			throws CoreException {
 		String application = config.getAttribute(APPLICATION, (String)null);
 		if (JUnitLaunchConfiguration.CORE_APPLICATION.equals(application)) 
-			fApplicationCombo.setText(PDEPlugin.getResourceString("JUnitArgumentsTab.headless")); //$NON-NLS-1$
+			fApplicationCombo.setText(PDEUIMessages.JUnitArgumentsTab_headless); //$NON-NLS-1$
 		else
 			super.initializeApplicationSection(config);
 	}
@@ -61,7 +61,7 @@ public class JUnitArgumentsTab extends BasicLauncherTab {
 	 * @see org.eclipse.pde.internal.ui.launcher.BasicLauncherTab#saveApplicationSection(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	protected void saveApplicationSection(ILaunchConfigurationWorkingCopy config) {
-		if (fApplicationCombo.getText().equals(PDEPlugin.getResourceString("JUnitArgumentsTab.headless"))) { //$NON-NLS-1$
+		if (fApplicationCombo.getText().equals(PDEUIMessages.JUnitArgumentsTab_headless)) { //$NON-NLS-1$
 			config.setAttribute(APPLICATION, JUnitLaunchConfiguration.CORE_APPLICATION);
 			config.setAttribute(APP_TO_TEST, (String)null);
 		} else {

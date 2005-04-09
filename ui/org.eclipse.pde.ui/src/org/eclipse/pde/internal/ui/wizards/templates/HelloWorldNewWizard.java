@@ -16,8 +16,6 @@ import org.eclipse.pde.ui.*;
 import org.eclipse.pde.ui.templates.*;
 
 public class HelloWorldNewWizard extends NewPluginTemplateWizard {
-	private static final String KEY_WTITLE = "HelloWorldNewWizard.wtitle"; //$NON-NLS-1$
-
 	/**
 	 * Constructor for HelloWorldNewWizard.
 	 */
@@ -27,7 +25,7 @@ public class HelloWorldNewWizard extends NewPluginTemplateWizard {
 
 	public void init(IFieldData data) {
 		super.init(data);
-		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
+		setWindowTitle(PDEUIMessages.HelloWorldNewWizard_wtitle);
 	}
 	/*
 	 * @see NewExtensionTemplateWizard#createTemplateSections()

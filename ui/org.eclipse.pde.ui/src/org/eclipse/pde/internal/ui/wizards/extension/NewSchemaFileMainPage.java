@@ -19,8 +19,6 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.widgets.*;
 
 public class NewSchemaFileMainPage extends BaseExtensionPointMainPage {
-	public static final String KEY_TITLE = "NewSchemaFileWizard.title"; //$NON-NLS-1$
-	public static final String KEY_DESC = "NewSchemaFileWizard.desc"; //$NON-NLS-1$
 	private IPluginExtensionPoint point;
 	private IContainer container;
 	private boolean isPluginIdFinal;
@@ -31,8 +29,8 @@ public class NewSchemaFileMainPage extends BaseExtensionPointMainPage {
 	
 	public NewSchemaFileMainPage(IContainer container, IPluginExtensionPoint point, boolean isPluginIdFinal){
 		super(container);
-		setTitle(PDEPlugin.getResourceString(KEY_TITLE));
-		setDescription(PDEPlugin.getResourceString(KEY_DESC));
+		setTitle(PDEUIMessages.NewSchemaFileWizard_title);
+		setDescription(PDEUIMessages.NewSchemaFileWizard_desc);
 		this.point = point;
 		this.container = container;
 		this.isPluginIdFinal = isPluginIdFinal;

@@ -37,7 +37,7 @@ public class MigratePluginWizard extends Wizard {
 				.getDialogSettings();
 		setDialogSettings(getSettingsSection(masterSettings));
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_MIGRATE_30_WIZ);
-		setWindowTitle(PDEPlugin.getResourceString("MigrationWizard.title")); //$NON-NLS-1$
+		setWindowTitle(PDEUIMessages.MigrationWizard_title); //$NON-NLS-1$
 		setNeedsProgressMonitor(true);
 		this.fSelected = selected;
 		this.fUnmigrated = models;
@@ -64,8 +64,7 @@ public class MigratePluginWizard extends Wizard {
 						: models.length;
 				monitor
 						.beginTask(
-								PDEPlugin
-										.getResourceString("MigrationWizard.progress"), numUnits); //$NON-NLS-1$
+								PDEUIMessages.MigrationWizard_progress, numUnits); //$NON-NLS-1$
 				try {
 					for (int i = 0; i < models.length; i++) {
 						monitor.subTask(models[i].getPluginBase().getId());

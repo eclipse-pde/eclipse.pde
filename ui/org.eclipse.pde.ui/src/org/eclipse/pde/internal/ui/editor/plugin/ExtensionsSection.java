@@ -46,18 +46,6 @@ public class ExtensionsSection extends TreeSection
 	//private TableTreeViewer extensionTree;
 	private TreeViewer extensionTree;
 	private Image extensionImage;
-	public static final String SECTION_TITLE = "ManifestEditor.DetailExtension.title"; //$NON-NLS-1$
-	public static final String SECTION_NEW = "ManifestEditor.DetailExtension.new"; //$NON-NLS-1$
-	public static final String SECTION_EDIT = "ManifestEditor.DetailExtension.edit"; //$NON-NLS-1$
-	public static final String SECTION_DOWN = "ManifestEditor.DetailExtension.down"; //$NON-NLS-1$
-	public static final String SECTION_UP = "ManifestEditor.DetailExtension.up"; //$NON-NLS-1$
-	public static final String SECTION_SHOW_CHILDREN = "ManifestEditor.DetailExtension.showAllChildren"; //$NON-NLS-1$
-	public static final String POPUP_NEW = "Menus.new.label"; //$NON-NLS-1$
-	public static final String POPUP_EDIT = "Menus.edit.label"; //$NON-NLS-1$
-	public static final String POPUP_NEW_EXTENSION = "ManifestEditor.DetailExtension.newExtension"; //$NON-NLS-1$
-	public static final String POPUP_COLLAPSE_ALL = "ManifestEditor.DetailExtension.collapseAll"; //$NON-NLS-1$
-	public static final String POPUP_GO_TO = "Menus.goTo.label"; //$NON-NLS-1$
-	public static final String POPUP_DELETE = "Actions.delete.label"; //$NON-NLS-1$
 	private Image genericElementImage;
 
 	private SchemaRegistry schemaRegistry;
@@ -109,12 +97,12 @@ public class ExtensionsSection extends TreeSection
 	}
 	public ExtensionsSection(PDEFormPage page, Composite parent) {
 		super(page, parent, 0, new String[]{
-				PDEPlugin.getResourceString(SECTION_NEW), 
-				PDEPlugin.getResourceString(SECTION_EDIT),
+				PDEUIMessages.ManifestEditor_DetailExtension_new, 
+				PDEUIMessages.ManifestEditor_DetailExtension_edit,
 				null,
-				PDEPlugin.getResourceString(SECTION_UP),
-				PDEPlugin.getResourceString(SECTION_DOWN)});
-		getSection().setText(PDEPlugin.getResourceString(SECTION_TITLE));
+				PDEUIMessages.ManifestEditor_DetailExtension_up,
+				PDEUIMessages.ManifestEditor_DetailExtension_down});
+		getSection().setText(PDEUIMessages.ManifestEditor_DetailExtension_title);
 		pluginInfoRegistry = PDECore.getDefault().getExternalModelManager();
 		handleDefaultButton = false;
 	}
@@ -246,13 +234,13 @@ public class ExtensionsSection extends TreeSection
 					handleDelete();
 				}
 			};
-			delAction.setText(PDEPlugin.getResourceString(POPUP_DELETE));
+			delAction.setText(PDEUIMessages.Actions_delete_label);
 			manager.add(delAction);
 			manager.add(new Separator());
 			delAction.setEnabled(isEditable());
 		}
 		if (newMenu == null) {
-			newMenu = new MenuManager(PDEPlugin.getResourceString(POPUP_NEW));
+			newMenu = new MenuManager(PDEUIMessages.Menus_new_label);
 			manager.add(newMenu);
 		}
 		if (!newMenu.isEmpty())
@@ -290,8 +278,7 @@ public class ExtensionsSection extends TreeSection
 	static IMenuManager fillContextMenu(PDEFormPage page,
 			final IPluginParent parent, IMenuManager manager,
 			boolean addSiblingItems, boolean fullMenu) {
-		MenuManager menu = new MenuManager(PDEPlugin
-				.getResourceString(POPUP_NEW));
+		MenuManager menu = new MenuManager(PDEUIMessages.Menus_new_label);
 		IPluginExtension extension = getExtension(parent);
 		ISchema schema = getSchema(extension);
 		if (schema == null) {
@@ -310,8 +297,7 @@ public class ExtensionsSection extends TreeSection
 		manager.add(menu);
 		manager.add(new Separator());
 		if (fullMenu) {
-			Action deleteAction = new Action(PDEPlugin
-					.getResourceString(POPUP_DELETE)) {
+			Action deleteAction = new Action(PDEUIMessages.Actions_delete_label) {
 				public void run() {
 					try {
 						IPluginObject parentsParent = parent.getParent();
@@ -489,8 +475,7 @@ public class ExtensionsSection extends TreeSection
 				handleNew();
 			}
 		};
-		newExtensionAction.setText(PDEPlugin
-				.getResourceString(POPUP_NEW_EXTENSION));
+		newExtensionAction.setText(PDEUIMessages.ManifestEditor_DetailExtension_newExtension);
 		newExtensionAction
 				.setImageDescriptor(PDEPluginImages.DESC_EXTENSION_OBJ);
 		newExtensionAction.setEnabled(editable);
@@ -499,8 +484,7 @@ public class ExtensionsSection extends TreeSection
 				handleCollapseAll();
 			}
 		};
-		collapseAllAction.setText(PDEPlugin
-				.getResourceString(POPUP_COLLAPSE_ALL));
+		collapseAllAction.setText(PDEUIMessages.ManifestEditor_DetailExtension_collapseAll);
 	}
 	private void selectFirstExtension() {
 		Tree tree = extensionTree.getTree();

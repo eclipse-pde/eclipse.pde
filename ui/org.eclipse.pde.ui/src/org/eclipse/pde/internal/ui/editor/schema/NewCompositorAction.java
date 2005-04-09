@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.schema;
 
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.schema.*;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.jface.action.*;
@@ -17,7 +18,6 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.jface.resource.*;
 
 public class NewCompositorAction extends Action {
-	public static final String KEY_TOOLTIP = "SchemaEditor.NewCompositor.tooltip"; //$NON-NLS-1$
 	private ISchemaElement source;
 	private Object object;
 	private int kind;
@@ -27,7 +27,7 @@ public NewCompositorAction(ISchemaElement source, Object object, int kind) {
 	this.object = object;
 	this.kind = kind;
 	setText("&"+ISchemaCompositor.kindTable[kind]); //$NON-NLS-1$
-	setToolTipText(PDEPlugin.getFormattedMessage(KEY_TOOLTIP, ISchemaCompositor.kindTable[kind]));
+	setToolTipText(NLS.bind(PDEUIMessages.SchemaEditor_NewCompositor_tooltip, ISchemaCompositor.kindTable[kind]));
 	ImageDescriptor desc = null;
 
 	switch (kind) {

@@ -20,6 +20,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.*;
 import org.osgi.framework.*;
@@ -71,8 +72,7 @@ public class SampleOperation implements IRunnableWithProgress {
 							.getChildren("project"); //$NON-NLS-1$
 					monitor
 							.beginTask(
-									PDEPlugin
-											.getResourceString("SampleOperation.creating"), 4 * projects.length); //$NON-NLS-1$
+									PDEUIMessages.SampleOperation_creating, 4 * projects.length); //$NON-NLS-1$
 					createdProjects = new IProject[projects.length];
 					try {
 					for (int i = 0; i < projects.length; i++) {

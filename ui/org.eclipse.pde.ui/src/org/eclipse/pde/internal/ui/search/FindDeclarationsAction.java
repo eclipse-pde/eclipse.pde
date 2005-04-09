@@ -18,12 +18,10 @@ import org.eclipse.search.ui.*;
 
 public class FindDeclarationsAction extends BaseSearchAction {
 	
-	private static final String KEY_DECLARATION = "SearchAction.Declaration"; //$NON-NLS-1$
-
 	private Object fSelectedObject;
 
 	public FindDeclarationsAction(Object object) {
-		super(PDEPlugin.getResourceString(KEY_DECLARATION));
+		super(PDEUIMessages.SearchAction_Declaration);
 		this.fSelectedObject = object;
 	}
 	

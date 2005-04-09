@@ -31,6 +31,7 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
@@ -55,7 +56,7 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 	}
 	
 	protected String getSectionDescription() {
-		return PDEPlugin.getResourceString("ManifestEditor.PluginSpecSection.desc"); //$NON-NLS-1$
+		return PDEUIMessages.ManifestEditor_PluginSpecSection_desc; //$NON-NLS-1$
 	}
 	
 	protected void createSpecificControls(Composite parent, FormToolkit toolkit, IActionBars actionBars) {
@@ -66,8 +67,8 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 		fClassEntry = new FormEntry(
 							client,
 							toolkit,
-							PDEPlugin.getResourceString("GeneralInfoSection.class"),  //$NON-NLS-1$
-							PDEPlugin.getResourceString("GeneralInfoSection.browse"), //$NON-NLS-1$ 
+							PDEUIMessages.GeneralInfoSection_class,  //$NON-NLS-1$
+							PDEUIMessages.GeneralInfoSection_browse, //$NON-NLS-1$ 
 							isEditable());
 		fClassEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
@@ -135,7 +136,7 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 						IJavaElementSearchConstants.CONSIDER_CLASSES, 
 						false,
 						""); //$NON-NLS-1$
-				dialog.setTitle(PDEPlugin.getResourceString("GeneralInfoSection.selectionTitle")); //$NON-NLS-1$
+				dialog.setTitle(PDEUIMessages.GeneralInfoSection_selectionTitle); //$NON-NLS-1$
 				if (dialog.open() == SelectionDialog.OK) {
 					IType type = (IType) dialog.getResult()[0];
 					fClassEntry.setValue(type.getFullyQualifiedName('.'));

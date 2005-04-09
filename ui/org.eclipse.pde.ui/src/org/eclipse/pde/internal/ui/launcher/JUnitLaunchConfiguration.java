@@ -15,6 +15,7 @@ import org.eclipse.debug.core.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.internal.junit.launcher.JUnitBaseLaunchConfiguration;
 import org.eclipse.jdt.launching.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.*;
@@ -26,8 +27,6 @@ import org.eclipse.update.configurator.*;
  */
 public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration implements ILauncherSettings {
 
-	protected static final String KEY_NO_STARTUP = "WorkbenchLauncherConfigurationDelegate.noStartup"; //$NON-NLS-1$
-		
 	public static final String CORE_APPLICATION = "org.eclipse.pde.junit.runtime.coretestapplication"; //$NON-NLS-1$
 	public static final String LEGACY_CORE_APPLICATION = "org.eclipse.pde.junit.runtime.legacyCoretestapplication"; //$NON-NLS-1$
 	public static final String UI_APPLICATION = "org.eclipse.pde.junit.runtime.uitestapplication"; //$NON-NLS-1$
@@ -47,11 +46,11 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 			monitor.beginTask("", 6); //$NON-NLS-1$
 			IJavaProject javaProject = getJavaProject(configuration);
 			if ((javaProject == null) || !javaProject.exists()) {
-				abort(PDEPlugin.getResourceString("JUnitLaunchConfiguration.error.invalidproject"), null, IJavaLaunchConfigurationConstants.ERR_NOT_A_JAVA_PROJECT); //$NON-NLS-1$ //$NON-NLS-2$
+				abort(PDEUIMessages.JUnitLaunchConfiguration_error_invalidproject, null, IJavaLaunchConfigurationConstants.ERR_NOT_A_JAVA_PROJECT); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			IType[] testTypes = getTestTypes(configuration, javaProject, new SubProgressMonitor(monitor, 1));
 			if (testTypes.length == 0) {
-				abort(PDEPlugin.getResourceString("JUnitLaunchConfiguration.error.notests"), null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE); //$NON-NLS-1$
+				abort(PDEUIMessages.JUnitLaunchConfiguration_error_notests, null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE); //$NON-NLS-1$
 			}
 			monitor.worked(1);
 			
@@ -101,7 +100,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		throws CoreException {
 		String[] classpath = LauncherUtils.constructClasspath(configuration);
 		if (classpath == null) {
-			abort(PDEPlugin.getResourceString(KEY_NO_STARTUP), null, IStatus.OK);
+			abort(PDEUIMessages.WorkbenchLauncherConfigurationDelegate_noStartup, null, IStatus.OK);
 		}
 
 		// Program arguments
@@ -134,7 +133,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 					IStatus.ERROR,
 					PDEPlugin.PLUGIN_ID,
 					IStatus.ERROR,
-					PDEPlugin.getResourceString("JUnitLaunchConfiguration.error.notaplugin"), //$NON-NLS-1$
+					PDEUIMessages.JUnitLaunchConfiguration_error_notaplugin, //$NON-NLS-1$
 					null));
 		if (model instanceof IFragmentModel)
 			return ((IFragmentModel)model).getFragment().getPluginId();
@@ -321,9 +320,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 				return registryPlugins[i];
 		}
 		abort(
-			PDEPlugin.getFormattedMessage(
-				"JUnitLaunchConfiguration.error.missingPlugin", //$NON-NLS-1$
-				id),
+			NLS.bind(PDEUIMessages.JUnitLaunchConfiguration_error_missingPlugin, id),
 			null,
 			IStatus.OK);
 		return null;

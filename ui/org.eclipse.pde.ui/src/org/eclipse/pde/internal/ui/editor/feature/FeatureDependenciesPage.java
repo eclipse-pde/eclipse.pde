@@ -11,7 +11,7 @@
 package org.eclipse.pde.internal.ui.editor.feature;
 
 import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.plugin.MatchSection;
@@ -28,8 +28,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class FeatureDependenciesPage extends PDEFormPage {
 	public static final String PAGE_ID = "dependencies"; //$NON-NLS-1$
-
-	private static final String KEY_HEADING = "FeatureEditor.DependenciesPage.heading"; //$NON-NLS-1$
 
 	private RequiresSection fRequiresSection;
 
@@ -88,6 +86,6 @@ public class FeatureDependenciesPage extends PDEFormPage {
 
 	public void initialize() {
 		getManagedForm().getForm().setText(
-				PDEPlugin.getResourceString(KEY_HEADING));
+				PDEUIMessages.FeatureEditor_DependenciesPage_heading);
 	}
 }

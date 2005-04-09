@@ -47,8 +47,8 @@ public class AboutSection extends PDESection {
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
-		section.setText(PDEPlugin.getResourceString("AboutSection.title")); //$NON-NLS-1$
-		section.setDescription(PDEPlugin.getResourceString("AboutSection.desc")); //$NON-NLS-1$
+		section.setText(PDEUIMessages.AboutSection_title); //$NON-NLS-1$
+		section.setDescription(PDEUIMessages.AboutSection_desc); //$NON-NLS-1$
 		
 		Composite client = toolkit.createComposite(section);
 		GridLayout layout = new GridLayout(3, false);
@@ -56,7 +56,7 @@ public class AboutSection extends PDESection {
 		client.setLayout(layout);
 		
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
-		fImageEntry = new FormEntry(client, toolkit, PDEPlugin.getResourceString("AboutSection.image"), PDEPlugin.getResourceString("AboutSection.browse"), isEditable()); //$NON-NLS-1$ //$NON-NLS-2$
+		fImageEntry = new FormEntry(client, toolkit, PDEUIMessages.AboutSection_image, PDEUIMessages.AboutSection_browse, isEditable()); //$NON-NLS-1$ //$NON-NLS-2$
 		fImageEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
 				getAboutInfo().setImagePath(entry.getValue());
@@ -70,7 +70,7 @@ public class AboutSection extends PDESection {
 		});
 		fImageEntry.setEditable(isEditable());
 		
-		fTextEntry = new FormEntry(client, toolkit, PDEPlugin.getResourceString("AboutSection.text"), SWT.MULTI|SWT.WRAP); //$NON-NLS-1$
+		fTextEntry = new FormEntry(client, toolkit, PDEUIMessages.AboutSection_text, SWT.MULTI|SWT.WRAP); //$NON-NLS-1$
 		fTextEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
 				getAboutInfo().setText(entry.getValue());
@@ -96,8 +96,8 @@ public class AboutSection extends PDESection {
 				
 		dialog.setValidator(new FileValidator());
 		dialog.setAllowMultiple(false);
-		dialog.setTitle(PDEPlugin.getResourceString("AboutSection.imgTitle"));  //$NON-NLS-1$
-		dialog.setMessage(PDEPlugin.getResourceString("AboutSection.imgMessage"));  //$NON-NLS-1$
+		dialog.setTitle(PDEUIMessages.AboutSection_imgTitle);  //$NON-NLS-1$
+		dialog.setMessage(PDEUIMessages.AboutSection_imgMessage);  //$NON-NLS-1$
 		dialog.addFilter(new FileExtensionFilter("gif")); //$NON-NLS-1$
 		dialog.setInput(PDEPlugin.getWorkspace().getRoot());
 
@@ -136,7 +136,7 @@ public class AboutSection extends PDESection {
 			if (resource != null && resource instanceof IFile)
 				IDE.openEditor(PDEPlugin.getActivePage(), (IFile)resource, true);
 			else
-				MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEPlugin.getResourceString("AboutSection.open"), PDEPlugin.getResourceString("AboutSection.warning")); //$NON-NLS-1$ //$NON-NLS-2$
+				MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.AboutSection_open, PDEUIMessages.AboutSection_warning); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (PartInitException e) {
 		}		
 	}

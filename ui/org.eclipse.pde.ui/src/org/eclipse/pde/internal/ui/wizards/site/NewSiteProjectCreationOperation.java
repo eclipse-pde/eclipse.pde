@@ -47,7 +47,7 @@ public class NewSiteProjectCreationOperation extends WorkspaceModifyOperation {
 			InvocationTargetException, InterruptedException {
 		int numUnits = fWebLocation == null ? 3 : 4;
 		
-		monitor.beginTask(PDEPlugin.getResourceString("NewSiteWizard.creatingProject"), numUnits); //$NON-NLS-1$
+		monitor.beginTask(PDEUIMessages.NewSiteWizard_creatingProject, numUnits); //$NON-NLS-1$
 
 		CoreUtility.createProject(fProject, fPath, monitor);		
 		fProject.open(monitor);
@@ -62,7 +62,7 @@ public class NewSiteProjectCreationOperation extends WorkspaceModifyOperation {
 			monitor.worked(1);
 		}
 	
-		monitor.subTask(PDEPlugin.getResourceString("NewSiteWizard.creatingManifest")); //$NON-NLS-1$
+		monitor.subTask(PDEUIMessages.NewSiteWizard_creatingManifest); //$NON-NLS-1$
 		IFile file = createSiteManifest();
 		monitor.worked(1);
 		
@@ -130,7 +130,7 @@ public class NewSiteProjectCreationOperation extends WorkspaceModifyOperation {
 		writer.println("				xmlFile.load(\"site.xml\");"); //$NON-NLS-1$
 		writer.println("				stylesheet.load(\""+fWebLocation+"/site.xsl\");"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("			} else {"); //$NON-NLS-1$
-		writer.println("				alert(\"" + PDEPlugin.getResourceString("SiteHTML.loadError") + "\");"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		writer.println("				alert(\"" + PDEUIMessages.SiteHTML_loadError + "\");"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		writer.println("			}"); //$NON-NLS-1$
 		writer.println("			xmlFile.addEventListener(\"load\", transform, false);"); //$NON-NLS-1$
 		writer.println("			stylesheet.addEventListener(\"load\", transform, false);"); //$NON-NLS-1$

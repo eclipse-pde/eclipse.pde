@@ -33,6 +33,7 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeatureURLElement;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.editor.XMLConfiguration;
@@ -64,20 +65,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 public class InfoSection extends PDESection {
-	private static final String SECTION_DESC = "FeatureEditor.InfoSection.desc"; //$NON-NLS-1$
-
-	private static final String KEY_URL = "FeatureEditor.InfoSection.url"; //$NON-NLS-1$
-
-	private static final String KEY_TEXT = "FeatureEditor.InfoSection.text"; //$NON-NLS-1$
-
-	private static final String KEY_INFO_DESCRIPTION = "FeatureEditor.info.description"; //$NON-NLS-1$
-
-	private static final String KEY_INFO_LICENSE = "FeatureEditor.info.license"; //$NON-NLS-1$
-
-	private static final String KEY_INFO_COPYRIGHT = "FeatureEditor.info.copyright"; //$NON-NLS-1$
-
-	private static final String KEY_INFO_DISCOVERY_URLS = "FeatureEditor.info.discoveryUrls"; //$NON-NLS-1$
-
 	private IDocument fDocument;
 
 	private IDocumentPartitioner fPartitioner;
@@ -108,7 +95,7 @@ public class InfoSection extends PDESection {
 			IColorManager colorManager) {
 		super(page, parent, Section.DESCRIPTION | ExpandableComposite.NO_TITLE,
 				false);
-		String description = PDEPlugin.getResourceString(SECTION_DESC);
+		String description = PDEUIMessages.FeatureEditor_InfoSection_desc;
 		getSection().setDescription(description);
 		fSourceConfiguration = new XMLConfiguration(colorManager);
 		fDocument = new Document();
@@ -187,8 +174,7 @@ public class InfoSection extends PDESection {
 		layout.verticalSpacing = 8;
 		page.setLayout(layout);
 		GridData gd;
-		Label label = toolkit.createLabel(page, PDEPlugin
-				.getResourceString(KEY_URL));
+		Label label = toolkit.createLabel(page, PDEUIMessages.FeatureEditor_InfoSection_url);
 		label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
 		fUrlText = toolkit.createText(page, null, SWT.SINGLE);
 		fUrlText.addModifyListener(new ModifyListener() {
@@ -199,7 +185,7 @@ public class InfoSection extends PDESection {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fUrlText.setLayoutData(gd);
 		label = toolkit
-				.createLabel(page, PDEPlugin.getResourceString(KEY_TEXT));
+				.createLabel(page, PDEUIMessages.FeatureEditor_InfoSection_text);
 		label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		label.setLayoutData(gd);
@@ -408,13 +394,13 @@ public class InfoSection extends PDESection {
 	private void createTabs() {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		IFeature feature = model.getFeature();
-		addTab(PDEPlugin.getResourceString(KEY_INFO_DESCRIPTION), feature
+		addTab(PDEUIMessages.FeatureEditor_info_description, feature
 				.getFeatureInfo(0));
-		addTab(PDEPlugin.getResourceString(KEY_INFO_COPYRIGHT), feature
+		addTab(PDEUIMessages.FeatureEditor_info_copyright, feature
 				.getFeatureInfo(1));
-		addTab(PDEPlugin.getResourceString(KEY_INFO_LICENSE), feature
+		addTab(PDEUIMessages.FeatureEditor_info_license, feature
 				.getFeatureInfo(2));
-		addTab(PDEPlugin.getResourceString(KEY_INFO_DISCOVERY_URLS), null);
+		addTab(PDEUIMessages.FeatureEditor_info_discoveryUrls, null);
 	}
 
 	private void addTab(String label, IFeatureInfo info) {

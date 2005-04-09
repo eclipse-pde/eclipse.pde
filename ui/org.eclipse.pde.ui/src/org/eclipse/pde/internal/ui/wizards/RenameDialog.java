@@ -87,7 +87,7 @@ public class RenameDialog extends SelectionStatusDialog {
 		container.setLayoutData(gd);
 		
 		Label label = new Label(container, SWT.NULL);
-		label.setText(PDEPlugin.getResourceString("RenameDialog.label")); //$NON-NLS-1$
+		label.setText(PDEUIMessages.RenameDialog_label); //$NON-NLS-1$
 		
 		text = new Text(container, SWT.SINGLE|SWT.BORDER);
 		text.addModifyListener(new ModifyListener() {
@@ -126,8 +126,7 @@ public class RenameDialog extends SelectionStatusDialog {
 						IStatus.ERROR,
 						PDEPlugin.getPluginId(),
 						IStatus.ERROR,
-						PDEPlugin.getResourceString(
-							"RenameDialog.validationError"), //$NON-NLS-1$
+						PDEUIMessages.RenameDialog_validationError, //$NON-NLS-1$
 						null);
 				updateStatus(status);
 				okButton.setEnabled(false);

@@ -25,6 +25,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
@@ -117,12 +118,9 @@ public class PluginsView extends ViewPart {
     class CollapseAllAction extends Action {
         public CollapseAllAction() {
             super();
-            setText(PDEPlugin
-                    .getResourceString("PluginsView.CollapseAllAction.label")); //$NON-NLS-1$
-            setDescription(PDEPlugin
-                    .getResourceString("PluginsView.CollapseAllAction.description")); //$NON-NLS-1$
-            setToolTipText(PDEPlugin
-                    .getResourceString("PluginsView.CollapseAllAction.tooltip")); //$NON-NLS-1$
+            setText(PDEUIMessages.PluginsView_CollapseAllAction_label); //$NON-NLS-1$
+            setDescription(PDEUIMessages.PluginsView_CollapseAllAction_description); //$NON-NLS-1$
+            setToolTipText(PDEUIMessages.PluginsView_CollapseAllAction_tooltip); //$NON-NLS-1$
             setImageDescriptor(PDEPluginImages.DESC_COLLAPSE_ALL);
         }
 
@@ -222,7 +220,7 @@ public class PluginsView extends ViewPart {
 				handleDoubleClick();
 			}
 		};
-		openAction.setText(PDEPlugin.getResourceString("PluginsView.open")); //$NON-NLS-1$
+		openAction.setText(PDEUIMessages.PluginsView_open); //$NON-NLS-1$
 
 		openDependenciesAction = new OpenDependenciesAction();
 		openDependenciesAction.init(PDEPlugin.getActiveWorkbenchWindow());
@@ -236,20 +234,20 @@ public class PluginsView extends ViewPart {
 				openDependenciesAction.run(this);
 			}
 		};
-		openDependenciesAdapter.setText(PDEPlugin.getResourceString("PluginsView.openDependencies")); //$NON-NLS-1$
+		openDependenciesAdapter.setText(PDEUIMessages.PluginsView_openDependencies); //$NON-NLS-1$
 
 		importBinaryAction = new Action() {
 			public void run() {
 				handleImport(false);
 			}
 		};
-		importBinaryAction.setText(PDEPlugin.getResourceString("PluginsView.asBinaryProject")); //$NON-NLS-1$
+		importBinaryAction.setText(PDEUIMessages.PluginsView_asBinaryProject); //$NON-NLS-1$
 		importSourceAction = new Action() {
 			public void run() {
 				handleImport(true);
 			}
 		};
-		importSourceAction.setText(PDEPlugin.getResourceString("PluginsView.asSourceProject")); //$NON-NLS-1$
+		importSourceAction.setText(PDEUIMessages.PluginsView_asSourceProject); //$NON-NLS-1$
 		disabledFilterAction = new Action() {
 			public void run() {
 				boolean checked = disabledFilterAction.isChecked();
@@ -260,7 +258,7 @@ public class PluginsView extends ViewPart {
 				getSettings().put("disabledFilter", !checked); //$NON-NLS-1$
 			}
 		};
-		disabledFilterAction.setText(PDEPlugin.getResourceString("PluginsView.showDisabled")); //$NON-NLS-1$
+		disabledFilterAction.setText(PDEUIMessages.PluginsView_showDisabled); //$NON-NLS-1$
 		disabledFilterAction.setChecked(false);
 		workspaceFilterAction = new Action() {
 			public void run() {
@@ -272,7 +270,7 @@ public class PluginsView extends ViewPart {
 				getSettings().put("workspaceFilter", !checked); //$NON-NLS-1$
 			}
 		};
-		workspaceFilterAction.setText(PDEPlugin.getResourceString("PluginsView.showWorkspace")); //$NON-NLS-1$
+		workspaceFilterAction.setText(PDEUIMessages.PluginsView_showWorkspace); //$NON-NLS-1$
 		workspaceFilterAction.setChecked(true);
 
 		openTextEditorAction = new Action() {
@@ -280,7 +278,7 @@ public class PluginsView extends ViewPart {
 				handleOpenTextEditor(getSelectedFile(), null);
 			}
 		};
-		openTextEditorAction.setText(PDEPlugin.getResourceString("PluginsView.textEditor")); //$NON-NLS-1$
+		openTextEditorAction.setText(PDEUIMessages.PluginsView_textEditor); //$NON-NLS-1$
 		openTextEditorAction.setImageDescriptor(
 			PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(
 				ISharedImages.IMG_OBJ_FILE));
@@ -290,57 +288,57 @@ public class PluginsView extends ViewPart {
 				handleOpenSystemEditor(getSelectedFile());
 			}
 		};
-		openSystemEditorAction.setText(PDEPlugin.getResourceString("PluginsView.systemEditor")); //$NON-NLS-1$
+		openSystemEditorAction.setText(PDEUIMessages.PluginsView_systemEditor); //$NON-NLS-1$
 		openManifestAction = new Action() {
 			public void run() {
 				handleOpenManifestEditor(getSelectedFile());
 			}
 		};
-		openManifestAction.setText(PDEPlugin.getResourceString("PluginsView.manifestEditor")); //$NON-NLS-1$
+		openManifestAction.setText(PDEUIMessages.PluginsView_manifestEditor); //$NON-NLS-1$
 		
 		openSchemaAction = new Action() {
 			public void run() {
 				handleOpenSchemaEditor(getSelectedFile());
 			}
 		};
-		openSchemaAction.setText(PDEPlugin.getResourceString("PluginsView.schemaEditor")); //$NON-NLS-1$
+		openSchemaAction.setText(PDEUIMessages.PluginsView_schemaEditor); //$NON-NLS-1$
 
 		copyAction = new CopyToClipboardAction(clipboard);
-		copyAction.setText(PDEPlugin.getResourceString("PluginsView.copy")); //$NON-NLS-1$
+		copyAction.setText(PDEUIMessages.PluginsView_copy); //$NON-NLS-1$
 
 		selectDependentAction = new Action() {
 			public void run() {
 				handleSelectDependent();
 			}
 		};
-		selectDependentAction.setText(PDEPlugin.getResourceString("PluginsView.dependentPlugins")); //$NON-NLS-1$
+		selectDependentAction.setText(PDEUIMessages.PluginsView_dependentPlugins); //$NON-NLS-1$
 		selectInJavaSearchAction = new Action() {
 			public void run() {
 				handleSelectInJavaSearch();
 			}
 		};
-		selectInJavaSearchAction.setText(PDEPlugin.getResourceString("PluginsView.pluginsInJavaSearch")); //$NON-NLS-1$
+		selectInJavaSearchAction.setText(PDEUIMessages.PluginsView_pluginsInJavaSearch); //$NON-NLS-1$
 
 		addToJavaSearchAction = new Action() {
 			public void run() {
 				handleJavaSearch(true);
 			}
 		};
-		addToJavaSearchAction.setText(PDEPlugin.getResourceString("PluginsView.addToJavaSearch")); //$NON-NLS-1$
+		addToJavaSearchAction.setText(PDEUIMessages.PluginsView_addToJavaSearch); //$NON-NLS-1$
 
 		removeFromJavaSearchAction = new Action() {
 			public void run() {
 				handleJavaSearch(false);
 			}
 		};
-		removeFromJavaSearchAction.setText(PDEPlugin.getResourceString("PluginsView.removeFromJavaSearch")); //$NON-NLS-1$
+		removeFromJavaSearchAction.setText(PDEUIMessages.PluginsView_removeFromJavaSearch); //$NON-NLS-1$
 
 		showInNavigatorAction =
 			new ShowInWorkspaceAction(IPageLayout.ID_RES_NAV, treeViewer);
-		showInNavigatorAction.setText(PDEPlugin.getResourceString("PluginsView.showInNavigator")); //$NON-NLS-1$
+		showInNavigatorAction.setText(PDEUIMessages.PluginsView_showInNavigator); //$NON-NLS-1$
 		showInPackagesAction =
 			new ShowInWorkspaceAction(JavaUI.ID_PACKAGES, treeViewer);
-		showInPackagesAction.setText(PDEPlugin.getResourceString("PluginsView.showInPackageExplorer")); //$NON-NLS-1$
+		showInPackagesAction.setText(PDEUIMessages.PluginsView_showInPackageExplorer); //$NON-NLS-1$
         
         collapseAllAction = new CollapseAllAction();
 
@@ -395,7 +393,7 @@ public class PluginsView extends ViewPart {
 			if (sobj instanceof FileAdapter
 				&& ((FileAdapter) sobj).isDirectory() == false) {
 				manager.add(openAction);
-				MenuManager openWithMenu = new MenuManager(PDEPlugin.getResourceString("PluginsView.openWith")); //$NON-NLS-1$
+				MenuManager openWithMenu = new MenuManager(PDEUIMessages.PluginsView_openWith); //$NON-NLS-1$
 				fillOpenWithMenu(openWithMenu, sobj);
 				manager.add(openWithMenu);
 				addSeparator = true;
@@ -435,7 +433,7 @@ public class PluginsView extends ViewPart {
 				manager.add(new Separator());
 			}
 			if (canImport(selection)) {
-				MenuManager importMenu = new MenuManager(PDEPlugin.getResourceString("PluginsView.import")); //$NON-NLS-1$
+				MenuManager importMenu = new MenuManager(PDEUIMessages.PluginsView_import); //$NON-NLS-1$
 				importMenu.add(importBinaryAction);
 				importMenu.add(importSourceAction);
 				manager.add(importMenu);
@@ -456,7 +454,7 @@ public class PluginsView extends ViewPart {
 		}
 		copyAction.setSelection(selection);
 		manager.add(copyAction);
-		IMenuManager selectionMenu = new MenuManager(PDEPlugin.getResourceString("PluginsView.select")); //$NON-NLS-1$
+		IMenuManager selectionMenu = new MenuManager(PDEUIMessages.PluginsView_select); //$NON-NLS-1$
 		manager.add(selectionMenu);
 		if (selection.size() > 0)
 			selectionMenu.add(selectDependentAction);
@@ -809,9 +807,7 @@ public class PluginsView extends ViewPart {
 		if (!result[0]) {
 			PDEPlugin.logException(
 				new PartInitException(
-					PDEPlugin.getFormattedMessage(
-						"PluginsView.unableToOpen", //$NON-NLS-1$
-						file.getName())));
+					NLS.bind(PDEUIMessages.PluginsView_unableToOpen, file.getName())));
 		} else {
 			adapter.setEditorId("@system"); //$NON-NLS-1$
 		}

@@ -15,8 +15,6 @@ import org.eclipse.pde.ui.*;
 import org.eclipse.pde.ui.templates.*;
 
 public class EditorNewWizard extends NewPluginTemplateWizard {
-	private static final String KEY_WTITLE = "EditorNewWizard.wtitle"; //$NON-NLS-1$
-
 	/**
 	 * Constructor for EditorNewWizard.
 	 */
@@ -25,7 +23,7 @@ public class EditorNewWizard extends NewPluginTemplateWizard {
 	}
 	public void init(IFieldData data) {
 		super.init(data);
-		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
+		setWindowTitle(PDEUIMessages.EditorNewWizard_wtitle);
 	}
 
 	/*

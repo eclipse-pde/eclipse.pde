@@ -24,10 +24,6 @@ import org.eclipse.pde.internal.core.*;
 
 public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDelegate 
 			implements ILauncherSettings {
-	protected static final String KEY_BAD_FEATURE_SETUP =
-		"WorkbenchLauncherConfigurationDelegate.badFeatureSetup"; //$NON-NLS-1$
-	protected static final String KEY_NO_STARTUP =
-		"WorkbenchLauncherConfigurationDelegate.noStartup"; //$NON-NLS-1$
 	protected File fConfigDir = null;
 	
 	/*
@@ -83,7 +79,7 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 		throws CoreException {
 		String[] classpath = LauncherUtils.constructClasspath(configuration);
 		if (classpath == null) {
-			String message = PDEPlugin.getResourceString(KEY_NO_STARTUP);
+			String message = PDEUIMessages.WorkbenchLauncherConfigurationDelegate_noStartup;
 			throw new CoreException(LauncherUtils.createErrorStatus(message));
 		}
 		
@@ -253,8 +249,7 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 					|| !featuresPath.toFile().exists();
 		}
 		if (badStructure) {
-			throw new CoreException(LauncherUtils.createErrorStatus(PDEPlugin
-					.getResourceString(KEY_BAD_FEATURE_SETUP)));
+			throw new CoreException(LauncherUtils.createErrorStatus(PDEUIMessages.WorkbenchLauncherConfigurationDelegate_badFeatureSetup));
 		}
 		// Ensure important files are present
 		ensureProductFilesExist(getProductPath());		

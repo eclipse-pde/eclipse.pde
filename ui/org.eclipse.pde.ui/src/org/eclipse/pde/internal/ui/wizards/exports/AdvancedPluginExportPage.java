@@ -36,12 +36,12 @@ public class AdvancedPluginExportPage extends WizardPage {
 
 	public AdvancedPluginExportPage(String pageName) {
 		super(pageName);
-		setTitle(PDEPlugin.getResourceString("AdvancedPluginExportPage.title")); //$NON-NLS-1$
+		setTitle(PDEUIMessages.AdvancedPluginExportPage_title); //$NON-NLS-1$
 		setDescription(getDescriptionText()); //$NON-NLS-1$
 	}
 	
 	protected String getDescriptionText() {
-		return PDEPlugin.getResourceString("AdvancedPluginExportPage.desc"); //$NON-NLS-1$
+		return PDEUIMessages.AdvancedPluginExportPage_desc; //$NON-NLS-1$
 	}
 
 	public void createControl(Composite parent) {
@@ -61,13 +61,13 @@ public class AdvancedPluginExportPage extends WizardPage {
 	
 	private void createSigningSection(Composite parent) {
 		Group group = new Group(parent, SWT.NONE);
-		group.setText(PDEPlugin.getResourceString("AdvancedPluginExportPage.signJar")); //$NON-NLS-1$
+		group.setText(PDEUIMessages.AdvancedPluginExportPage_signJar); //$NON-NLS-1$
 		group.setLayout(new GridLayout(2, false));
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		IDialogSettings settings = getDialogSettings();
 		
-		fButton = createbutton(group, PDEPlugin.getResourceString("AdvancedPluginExportPage.signButton")); //$NON-NLS-1$
+		fButton = createbutton(group, PDEUIMessages.AdvancedPluginExportPage_signButton); //$NON-NLS-1$
 		fButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				boolean selected = fButton.getSelection();
@@ -76,15 +76,15 @@ public class AdvancedPluginExportPage extends WizardPage {
 			}
 		});
 		
-		fKeystoreLabel = createLabel(group, PDEPlugin.getResourceString("AdvancedPluginExportPage.keystore"));	 //$NON-NLS-1$
+		fKeystoreLabel = createLabel(group, PDEUIMessages.AdvancedPluginExportPage_keystore);	 //$NON-NLS-1$
 		fKeystoreText = createText(group);
 		fKeystoreText.setText(getString(S_KEYSTORE));
 		
-		fAliasLabel = createLabel(group, PDEPlugin.getResourceString("AdvancedPluginExportPage.alias")); //$NON-NLS-1$
+		fAliasLabel = createLabel(group, PDEUIMessages.AdvancedPluginExportPage_alias); //$NON-NLS-1$
 		fAliasText = createText(group);
 		fAliasText.setText(getString(S_ALIAS));
 		
-		fPasswordLabel = createLabel(group, PDEPlugin.getResourceString("AdvancedPluginExportPage.password"));	 //$NON-NLS-1$
+		fPasswordLabel = createLabel(group, PDEUIMessages.AdvancedPluginExportPage_password);	 //$NON-NLS-1$
 		fPasswordText = createText(group);
 		fPasswordText.setEchoChar('*');
 		fPasswordText.setText(getString(S_PASSWORD));
@@ -136,11 +136,11 @@ public class AdvancedPluginExportPage extends WizardPage {
 		String error = null;
 		if (fButton.getSelection()) {
 			if (fKeystoreText.getText().trim().length() == 0) {
-				error = PDEPlugin.getResourceString("AdvancedPluginExportPage.noKeystore"); //$NON-NLS-1$
+				error = PDEUIMessages.AdvancedPluginExportPage_noKeystore; //$NON-NLS-1$
 			} else if (fAliasText.getText().trim().length() == 0) {
-				error = PDEPlugin.getResourceString("AdvancedPluginExportPage.noAlias"); //$NON-NLS-1$
+				error = PDEUIMessages.AdvancedPluginExportPage_noAlias; //$NON-NLS-1$
 			} else if (fPasswordText.getText().trim().length() == 0) {
-				error = PDEPlugin.getResourceString("AdvancedPluginExportPage.noPassword"); //$NON-NLS-1$
+				error = PDEUIMessages.AdvancedPluginExportPage_noPassword; //$NON-NLS-1$
 			}
 		}
 		setErrorMessage(error);

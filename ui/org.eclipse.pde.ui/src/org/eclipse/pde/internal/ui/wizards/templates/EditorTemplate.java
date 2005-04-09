@@ -24,16 +24,6 @@ public class EditorTemplate extends BaseEditorTemplate {
 	public static final String EDITOR_CLASS_NAME = "editorClass"; //$NON-NLS-1$
 	public static final String EDITOR_NAME = "editorName"; //$NON-NLS-1$
 	public static final String EXTENSIONS = "extensions"; //$NON-NLS-1$
-	private static final String KEY_TITLE = "EditorTemplate.title"; //$NON-NLS-1$
-	private static final String KEY_DESC = "EditorTemplate.desc"; //$NON-NLS-1$
-	private static final String KEY_PACKAGE_LABEL = "EditorTemplate.packageName"; //$NON-NLS-1$
-	private static final String KEY_CLASS_LABEL = "EditorTemplate.editorClass"; //$NON-NLS-1$
-	private static final String KEY_EDITOR_LABEL = "EditorTemplate.editorName"; //$NON-NLS-1$
-	private static final String KEY_EXTENSION_LABEL =
-		"EditorTemplate.fileExtension"; //$NON-NLS-1$
-	private static final String KEY_DEFAULT_EDITOR_NAME =
-		"EditorTemplate.defaultEditorName"; //$NON-NLS-1$
-	
 	/**
 	 * Constructor for EditorTemplate.
 	 */
@@ -60,8 +50,8 @@ public class EditorTemplate extends BaseEditorTemplate {
 
 	public void addPages(Wizard wizard) {
 		WizardPage page = createPage(0, IHelpContextIds.TEMPLATE_EDITOR);
-		page.setTitle(PDEPlugin.getResourceString(KEY_TITLE));
-		page.setDescription(PDEPlugin.getResourceString(KEY_DESC));
+		page.setTitle(PDEUIMessages.EditorTemplate_title);
+		page.setDescription(PDEUIMessages.EditorTemplate_desc);
 		wizard.addPage(page);
 		markPagesAdded();
 	}
@@ -70,22 +60,22 @@ public class EditorTemplate extends BaseEditorTemplate {
 		// first page	
 		addOption(
 			KEY_PACKAGE_NAME,
-			PDEPlugin.getResourceString(KEY_PACKAGE_LABEL),
+			PDEUIMessages.EditorTemplate_packageName,
 			(String) null,
 			0);
 		addOption(
 			EDITOR_CLASS_NAME,
-			PDEPlugin.getResourceString(KEY_CLASS_LABEL),
+			PDEUIMessages.EditorTemplate_editorClass,
 			"XMLEditor", //$NON-NLS-1$
 			0);
 		addOption(
 			EDITOR_NAME,
-			PDEPlugin.getResourceString(KEY_EDITOR_LABEL),
-			PDEPlugin.getResourceString(KEY_DEFAULT_EDITOR_NAME),
+			PDEUIMessages.EditorTemplate_editorName,
+			PDEUIMessages.EditorTemplate_defaultEditorName,
 			0);
 		addOption(
 			EXTENSIONS,
-			PDEPlugin.getResourceString(KEY_EXTENSION_LABEL),
+			PDEUIMessages.EditorTemplate_fileExtension,
 			"xml", //$NON-NLS-1$
 			0);
 	}

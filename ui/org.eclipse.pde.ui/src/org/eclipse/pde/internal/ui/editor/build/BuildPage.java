@@ -26,7 +26,6 @@ import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.help.*;
 
 public class BuildPage extends PDEFormPage {
-	public static final String FORM_TITLE = "BuildEditor.BuildPage.title"; //$NON-NLS-1$
 	public static final String PAGE_ID = "build"; //$NON-NLS-1$
 	private BuildClasspathSection classpathSection;
 	private BuildContentsSection srcSection;
@@ -36,7 +35,7 @@ public class BuildPage extends PDEFormPage {
 	private Button customButton;
 	
 	public BuildPage(FormEditor editor) {
-		super(editor, PAGE_ID, PDEPlugin.getResourceString("BuildPage.name"));  //$NON-NLS-1$
+		super(editor, PAGE_ID, PDEUIMessages.BuildPage_name);  //$NON-NLS-1$
 	}
 
 	protected void createFormContent(IManagedForm mform) {
@@ -44,7 +43,7 @@ public class BuildPage extends PDEFormPage {
 		FormToolkit toolkit = mform.getToolkit();
 		GridLayout layout = new GridLayout();
 		ScrolledForm form = mform.getForm();
-		form.setText(PDEPlugin.getResourceString(FORM_TITLE));
+		form.setText(PDEUIMessages.BuildEditor_BuildPage_title);
 		layout.numColumns = 2;
 		layout.marginWidth = 10;
 		layout.horizontalSpacing = 15;
@@ -167,7 +166,7 @@ public class BuildPage extends PDEFormPage {
 	}
 	
 	private String getCustomText() {
-		return PDEPlugin.getResourceString("BuildPage.custom"); //$NON-NLS-1$
+		return PDEUIMessages.BuildPage_custom; //$NON-NLS-1$
 	}
 
 }

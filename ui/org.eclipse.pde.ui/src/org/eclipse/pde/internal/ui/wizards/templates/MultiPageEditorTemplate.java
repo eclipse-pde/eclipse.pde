@@ -20,21 +20,6 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.jface.wizard.*;
 
 public class MultiPageEditorTemplate extends BaseEditorTemplate {
-	private static final String KEY_TITLE = "MultiPageEditorTemplate.title"; //$NON-NLS-1$
-	private static final String KEY_DESC = "MultiPageEditorTemplate.desc"; //$NON-NLS-1$
-	private static final String KEY_PACKAGE_LABEL =
-		"MultiPageEditorTemplate.packageName"; //$NON-NLS-1$
-	private static final String KEY_CLASS_LABEL =
-		"MultiPageEditorTemplate.className"; //$NON-NLS-1$
-	private static final String KEY_CONTRIBUTOR_LABEL =
-		"MultiPageEditorTemplate.contributor"; //$NON-NLS-1$
-	private static final String KEY_EDITOR_LABEL =
-		"MultiPageEditorTemplate.editorName"; //$NON-NLS-1$
-	private static final String KEY_DEFAULT_EDITOR_NAME =
-		"MultiPageEditorTemplate.defaultEditorName"; //$NON-NLS-1$
-	private static final String KEY_EXTENSIONS_LABEL =
-		"MultiPageEditorTemplate.extensions"; //$NON-NLS-1$
-
 	/**
 	 * Constructor for MultiPageEditorTemplate.
 	 */
@@ -73,27 +58,27 @@ public class MultiPageEditorTemplate extends BaseEditorTemplate {
 		// first page	
 		addOption(
 			KEY_PACKAGE_NAME,
-			PDEPlugin.getResourceString(KEY_PACKAGE_LABEL),
+			PDEUIMessages.MultiPageEditorTemplate_packageName,
 			(String) null,
 			0);
 		addOption(
 			"editorClassName", //$NON-NLS-1$
-			PDEPlugin.getResourceString(KEY_CLASS_LABEL),
+			PDEUIMessages.MultiPageEditorTemplate_className,
 			"MultiPageEditor", //$NON-NLS-1$
 			0);
 		addOption(
 			"contributorClassName", //$NON-NLS-1$
-			PDEPlugin.getResourceString(KEY_CONTRIBUTOR_LABEL),
+			PDEUIMessages.MultiPageEditorTemplate_contributor,
 			"MultiPageEditorContributor", //$NON-NLS-1$
 			0);
 		addOption(
 			"editorName", //$NON-NLS-1$
-			PDEPlugin.getResourceString(KEY_EDITOR_LABEL),
-			PDEPlugin.getResourceString(KEY_DEFAULT_EDITOR_NAME),
+			PDEUIMessages.MultiPageEditorTemplate_editorName,
+			PDEUIMessages.MultiPageEditorTemplate_defaultEditorName,
 			0);
 		addOption(
 			"extensions", //$NON-NLS-1$
-			PDEPlugin.getResourceString(KEY_EXTENSIONS_LABEL),
+			PDEUIMessages.MultiPageEditorTemplate_extensions,
 			"mpe",  //$NON-NLS-1$
 			0);
 	}
@@ -117,8 +102,8 @@ public class MultiPageEditorTemplate extends BaseEditorTemplate {
 
 	public void addPages(Wizard wizard) {
 		WizardPage page = createPage(0, IHelpContextIds.TEMPLATE_MULTIPAGE_EDITOR);
-		page.setTitle(PDEPlugin.getResourceString(KEY_TITLE));
-		page.setDescription(PDEPlugin.getResourceString(KEY_DESC));
+		page.setTitle(PDEUIMessages.MultiPageEditorTemplate_title);
+		page.setDescription(PDEUIMessages.MultiPageEditorTemplate_desc);
 		wizard.addPage(page);
 		markPagesAdded();
 	}

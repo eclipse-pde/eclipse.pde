@@ -18,8 +18,6 @@ import org.eclipse.search.ui.*;
 
 public class DependencyExtentAction extends Action {
 	
-	private static final String KEY_COMPUTE = "DependencyExtentAction.label"; //$NON-NLS-1$
-	
 	private IProject fProject;
 
 	private String fImportID;
@@ -27,7 +25,7 @@ public class DependencyExtentAction extends Action {
 	public DependencyExtentAction(IProject project, String importID) {
 		fProject = project;
 		fImportID = importID;
-		setText(PDEPlugin.getResourceString(KEY_COMPUTE));
+		setText(PDEUIMessages.DependencyExtentAction_label);
 	}
 		
 	public void run() {

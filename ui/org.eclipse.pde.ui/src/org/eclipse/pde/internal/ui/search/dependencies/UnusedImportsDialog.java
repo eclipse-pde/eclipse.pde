@@ -17,6 +17,7 @@ import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
@@ -48,7 +49,7 @@ public class UnusedImportsDialog extends Dialog {
 		this.unused = unused;
 		checkboxTablePart =
 			new WizardCheckboxTablePart(
-				PDEPlugin.getResourceString("UnusedDependencies.remove")); //$NON-NLS-1$
+				PDEUIMessages.UnusedDependencies_remove); //$NON-NLS-1$
 	}
 
 	protected void createButtonsForButtonBar(Composite parent) {

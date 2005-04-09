@@ -22,6 +22,7 @@ import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.schema.*;
 import org.eclipse.pde.internal.core.schema.Schema;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
@@ -40,16 +41,6 @@ public class ElementSection extends TreeSection {
 	private NewElementAction newElementAction = new NewElementAction();
 	private NewAttributeAction newAttributeAction = new NewAttributeAction();
 	private Clipboard clipboard;
-	public static final String SECTION_TITLE =
-		"SchemaEditor.ElementSection.title"; //$NON-NLS-1$
-	public static final String SECTION_DESC =
-		"SchemaEditor.ElementSection.desc"; //$NON-NLS-1$
-	public static final String SECTION_NEW_ELEMENT =
-		"SchemaEditor.ElementSection.newElement"; //$NON-NLS-1$
-	public static final String SECTION_NEW_ATTRIBUTE =
-		"SchemaEditor.ElementSection.newAttribute"; //$NON-NLS-1$
-	public static final String POPUP_NEW = "Menus.new.label"; //$NON-NLS-1$
-	public static final String POPUP_DELETE = "Actions.delete.label"; //$NON-NLS-1$
 	private PropertiesAction propertiesAction;
 
 	class ContentProvider
@@ -82,10 +73,10 @@ public class ElementSection extends TreeSection {
 			parent,
 			Section.DESCRIPTION,
 			new String[] {
-				PDEPlugin.getResourceString(SECTION_NEW_ELEMENT),
-				PDEPlugin.getResourceString(SECTION_NEW_ATTRIBUTE)});
-		getSection().setText(PDEPlugin.getResourceString(SECTION_TITLE));
-		getSection().setDescription(PDEPlugin.getResourceString(SECTION_DESC));
+				PDEUIMessages.SchemaEditor_ElementSection_newElement,
+				PDEUIMessages.SchemaEditor_ElementSection_newAttribute});
+		getSection().setText(PDEUIMessages.SchemaEditor_ElementSection_title);
+		getSection().setDescription(PDEUIMessages.SchemaEditor_ElementSection_desc);
 	}
 	public void createClient(
 		Section section,
@@ -183,7 +174,7 @@ public class ElementSection extends TreeSection {
 			((IStructuredSelection) selection).getFirstElement();
 
 		MenuManager submenu =
-			new MenuManager(PDEPlugin.getResourceString(POPUP_NEW));
+			new MenuManager(PDEUIMessages.Menus_new_label);
 		if (object == null || object instanceof SchemaElement) {
 			newElementAction.setSchema(schema);
 			newElementAction.setEnabled(schema.isEditable());
@@ -213,7 +204,7 @@ public class ElementSection extends TreeSection {
 						handleDelete((IStructuredSelection) selection);
 					}
 				};
-				deleteAction.setText(PDEPlugin.getResourceString(POPUP_DELETE));
+				deleteAction.setText(PDEUIMessages.Actions_delete_label);
 				deleteAction.setEnabled(schema.isEditable());
 				manager.add(deleteAction);
 			}

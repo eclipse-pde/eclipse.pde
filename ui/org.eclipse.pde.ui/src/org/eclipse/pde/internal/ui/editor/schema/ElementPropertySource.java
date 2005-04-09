@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.schema;
 
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.schema.*;
 import java.util.*;
 import org.eclipse.pde.internal.core.ischema.*;
@@ -26,14 +27,6 @@ public class ElementPropertySource extends SchemaObjectPropertySource {
     public static final String P_TRANSLATABLE = "translatable"; //$NON-NLS-1$
     public static final String P_DEPRECATED = "deprecated"; //$NON-NLS-1$
 
-	public static final String KEY_NAME = "SchemaEditor.ElementPR.name"; //$NON-NLS-1$
-
-	public static final String KEY_ICON = "SchemaEditor.ElementPR.icon"; //$NON-NLS-1$
-
-	public static final String KEY_LABEL_ATTRIBUTE = "SchemaEditor.ElementPR.labelAttribute"; //$NON-NLS-1$
-
-	public static final String KEY_INVALID = "SchemaEditor.ElementPR.invalid"; //$NON-NLS-1$
-
 	private Vector descriptors;
 	
     private static final String[] booleanTable = { "false", "true" }; //$NON-NLS-1$ //$NON-NLS-2$
@@ -42,7 +35,7 @@ public class ElementPropertySource extends SchemaObjectPropertySource {
 		public String isValid(Object value) {
 			String svalue = value.toString();
 			if (isValidAttribute(svalue) == false) {
-				return PDEPlugin.getFormattedMessage(KEY_INVALID, svalue);
+				return NLS.bind(PDEUIMessages.SchemaEditor_ElementPR_invalid, svalue);
 			}
 			return null;
 		}
@@ -64,26 +57,23 @@ public class ElementPropertySource extends SchemaObjectPropertySource {
 		if (descriptors == null) {
 			descriptors = new Vector();
 			PropertyDescriptor desc = createTextPropertyDescriptor(
-					P_LABEL_ATTRIBUTE, PDEPlugin
-							.getResourceString(KEY_LABEL_ATTRIBUTE));
+					P_LABEL_ATTRIBUTE, PDEUIMessages.SchemaEditor_ElementPR_labelAttribute);
 			desc.setValidator(new LabelAttributeValidator());
 			descriptors.addElement(desc);
 			
-			desc = createTextPropertyDescriptor(P_ICON, PDEPlugin
-					.getResourceString(KEY_ICON));
+			desc = createTextPropertyDescriptor(P_ICON, PDEUIMessages.SchemaEditor_ElementPR_icon);
 			descriptors.addElement(desc);
 			
-			desc = createTextPropertyDescriptor(P_NAME, PDEPlugin
-					.getResourceString(KEY_NAME));
+			desc = createTextPropertyDescriptor(P_NAME, PDEUIMessages.SchemaEditor_ElementPR_name);
 			descriptors.addElement(desc);
 			
-            desc = createComboBoxPropertyDescriptor(P_TRANSLATABLE, PDEPlugin.getResourceString("ElementPropertySource.translatable"), booleanTable); //$NON-NLS-1$
+            desc = createComboBoxPropertyDescriptor(P_TRANSLATABLE, PDEUIMessages.ElementPropertySource_translatable, booleanTable); //$NON-NLS-1$
             if (desc instanceof ComboBoxPropertyDescriptor)
                 ((ComboBoxPropertyDescriptor) desc).setLabelProvider(new ComboProvider(
                         P_TRANSLATABLE, booleanTable));
             descriptors.addElement(desc);
 
-            desc = createComboBoxPropertyDescriptor(P_DEPRECATED, PDEPlugin.getResourceString("ElementPropertySource.deprecated"), booleanTable); //$NON-NLS-1$
+            desc = createComboBoxPropertyDescriptor(P_DEPRECATED, PDEUIMessages.ElementPropertySource_deprecated, booleanTable); //$NON-NLS-1$
             if (desc instanceof ComboBoxPropertyDescriptor)
                 ((ComboBoxPropertyDescriptor) desc).setLabelProvider(new ComboProvider(
                         P_DEPRECATED, booleanTable));

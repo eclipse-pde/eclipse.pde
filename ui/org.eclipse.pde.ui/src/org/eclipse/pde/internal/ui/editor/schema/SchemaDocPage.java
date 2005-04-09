@@ -21,17 +21,10 @@ import org.eclipse.ui.help.*;
 public class SchemaDocPage extends PDEFormPage {
 	
 	public static final String PAGE_ID = "doc"; //$NON-NLS-1$
-	public static final String PAGE_TITLE = "SchemaEditor.DocPage.title"; //$NON-NLS-1$
 	private IColorManager colorManager = ColorManager.getDefault();
 	private DocSection docSection;
-	public static final String FORM_TITLE = "SchemaEditor.DocForm.title"; //$NON-NLS-1$
-	public static final String KEY_PENDING_TITLE =
-		"SchemaEditor.pending.title"; //$NON-NLS-1$
-	public static final String KEY_PENDING_MESSAGE =
-		"SchemaEditor.pending.docMessage"; //$NON-NLS-1$
-	
 	public SchemaDocPage(PDEFormEditor editor) {
-		super(editor, PAGE_ID, PDEPlugin.getResourceString(PAGE_TITLE));
+		super(editor, PAGE_ID, PDEUIMessages.SchemaEditor_DocPage_title);
 	}
 	
 	/**
@@ -60,7 +53,7 @@ public class SchemaDocPage extends PDEFormPage {
 		managedForm.addPart(docSection);
 		
 		WorkbenchHelp.setHelp(form.getBody(), IHelpContextIds.SCHEMA_EDITOR_DOC);
-		form.setText(PDEPlugin.getResourceString(FORM_TITLE));		
+		form.setText(PDEUIMessages.SchemaEditor_DocForm_title);		
 	}
 	
 	public void dispose() {

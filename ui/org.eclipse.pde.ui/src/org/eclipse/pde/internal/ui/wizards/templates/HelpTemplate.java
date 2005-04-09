@@ -36,18 +36,6 @@ public class HelpTemplate extends PDETemplateSection {
 	public static final String KEY_REFERENCE   = "reference"; //$NON-NLS-1$
 	public static final String KEY_SAMPLES     = "samples"; //$NON-NLS-1$
 	
-	private static final String NL_TOC_LABEL   = "HelpTemplate.tocLabel"; //$NON-NLS-1$
-	private static final String NL_IS_PRIMARY  = "HelpTemplate.isPrimary"; //$NON-NLS-1$
-	private static final String NL_GEN_TEST    = "HelpTemplate.generateTest"; //$NON-NLS-1$
-	private static final String NL_GET_STARTED = "HelpTemplate.gettingStarted"; //$NON-NLS-1$
-	private static final String NL_CONCEPTS    = "HelpTemplate.concepts"; //$NON-NLS-1$
-	private static final String NL_TASKS       = "HelpTemplate.tasks"; //$NON-NLS-1$
-	private static final String NL_REFERENCE   = "HelpTemplate.reference"; //$NON-NLS-1$
-	private static final String NL_SAMPLES     = "HelpTemplate.samples"; //$NON-NLS-1$
-	
-	private static final String NL_DESC        = "HelpTemplate.desc"; //$NON-NLS-1$
-	private static final String NL_TITLE       = "HelpTemplate.title"; //$NON-NLS-1$
-	
 	private TemplateOption tocLabelOption;
 	private BooleanOption primaryOption;
 	private BooleanOption genTestOption;
@@ -65,8 +53,8 @@ public class HelpTemplate extends PDETemplateSection {
 
 	public void addPages(Wizard wizard) {
 		WizardPage page = createPage(0, IHelpContextIds.TEMPLATE_HELP);
-		page.setTitle(PDEPlugin.getResourceString(NL_TITLE));
-		page.setDescription(PDEPlugin.getResourceString(NL_DESC));
+		page.setTitle(PDEUIMessages.HelpTemplate_title);
+		page.setDescription(PDEUIMessages.HelpTemplate_desc);
 		wizard.addPage(page);
 		markPagesAdded();
 	}
@@ -83,49 +71,49 @@ public class HelpTemplate extends PDETemplateSection {
 	private void createOptions() {
 		tocLabelOption = addOption(
 			KEY_TOC_LABEL,
-			PDEPlugin.getResourceString(NL_TOC_LABEL),
+			PDEUIMessages.HelpTemplate_tocLabel,
 			"Sample Table of Contents", //$NON-NLS-1$
 			0);
 			
 		primaryOption = (BooleanOption)addOption(
 			KEY_IS_PRIMARY,
-			PDEPlugin.getResourceString(NL_IS_PRIMARY),
+			PDEUIMessages.HelpTemplate_isPrimary,
 			false,
 			0);
 			
 		genTestOption = (BooleanOption)addOption(
 			KEY_GEN_TEST,
-			PDEPlugin.getResourceString(NL_GEN_TEST),
+			PDEUIMessages.HelpTemplate_generateTest,
 			true,
 			0);
 
 		gettingStartedOption = (BooleanOption)addOption(
 			KEY_GET_STARTED,
-			PDEPlugin.getResourceString(NL_GET_STARTED),
+			PDEUIMessages.HelpTemplate_gettingStarted,
 			true,
 			0);
 			
 		conceptsOption = (BooleanOption)addOption(
 			KEY_CONCEPTS,
-			PDEPlugin.getResourceString(NL_CONCEPTS),
+			PDEUIMessages.HelpTemplate_concepts,
 			true,
 			0);
 			
 		tasksOption = (BooleanOption)addOption(
 			KEY_TASKS,
-			PDEPlugin.getResourceString(NL_TASKS),
+			PDEUIMessages.HelpTemplate_tasks,
 			true,
 			0);
 			
 		referenceOption = (BooleanOption)addOption(
 			KEY_REFERENCE,
-			PDEPlugin.getResourceString(NL_REFERENCE),
+			PDEUIMessages.HelpTemplate_reference,
 			true,
 			0);
 			
 		samplesOption = (BooleanOption)addOption(
 			KEY_SAMPLES,
-			PDEPlugin.getResourceString(NL_SAMPLES),
+			PDEUIMessages.HelpTemplate_samples,
 			true,
 			0);
 

@@ -20,6 +20,7 @@ import org.eclipse.pde.internal.core.ifeature.IEnvironment;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
@@ -39,22 +40,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 public class PortabilitySection extends PDESection {
-	private static final String DIALOG_TITLE = "FeatureEditor.PortabilityChoicesDialog.title"; //$NON-NLS-1$
-
-	private static final String SECTION_ARCH = "FeatureEditor.PortabilitySection.arch"; //$NON-NLS-1$
-
-	private static final String SECTION_DESC = "FeatureEditor.PortabilitySection.desc"; //$NON-NLS-1$
-
-	private static final String SECTION_EDIT = "FeatureEditor.PortabilitySection.edit"; //$NON-NLS-1$
-
-	private static final String SECTION_NL = "FeatureEditor.PortabilitySection.nl"; //$NON-NLS-1$
-
-	private static final String SECTION_OS = "FeatureEditor.PortabilitySection.os"; //$NON-NLS-1$
-
-	private static final String SECTION_TITLE = "FeatureEditor.PortabilitySection.title"; //$NON-NLS-1$
-
-	private static final String SECTION_WS = "FeatureEditor.PortabilitySection.ws"; //$NON-NLS-1$
-
 	public static Choice[] getArchChoices() {
 		return getKnownChoices(Platform.knownOSArchValues());
 	}
@@ -95,8 +80,8 @@ public class PortabilitySection extends PDESection {
 	private FormEntry fWsText;
 
 	public PortabilitySection(FeatureFormPage page, Composite parent) {
-		this(page, parent, PDEPlugin.getResourceString(SECTION_TITLE),
-				PDEPlugin.getResourceString(SECTION_DESC), SWT.NULL);
+		this(page, parent, PDEUIMessages.FeatureEditor_PortabilitySection_title,
+				PDEUIMessages.FeatureEditor_PortabilitySection_desc, SWT.NULL);
 	}
 
 	public PortabilitySection(PDEFormPage page, Composite parent, String title,
@@ -157,10 +142,9 @@ public class PortabilitySection extends PDESection {
 		layout.horizontalSpacing = 6;
 		container.setLayout(layout);
 
-		String editLabel = PDEPlugin.getResourceString(SECTION_EDIT);
+		String editLabel = PDEUIMessages.FeatureEditor_PortabilitySection_edit;
 
-		fOsText = new FormEntry(container, toolkit, PDEPlugin
-				.getResourceString(SECTION_OS), editLabel, false);
+		fOsText = new FormEntry(container, toolkit, PDEUIMessages.FeatureEditor_PortabilitySection_os, editLabel, false);
 		fOsText.setFormEntryListener(new FormEntryAdapter(this) {
 
 			public void browseButtonSelected(FormEntry entry) {
@@ -185,8 +169,7 @@ public class PortabilitySection extends PDESection {
 		limitTextWidth(fOsText);
 		fOsText.setEditable(isEditable());
 
-		fWsText = new FormEntry(container, toolkit, PDEPlugin
-				.getResourceString(SECTION_WS), editLabel, false);
+		fWsText = new FormEntry(container, toolkit, PDEUIMessages.FeatureEditor_PortabilitySection_ws, editLabel, false);
 		fWsText.setFormEntryListener(new FormEntryAdapter(this) {
 
 			public void browseButtonSelected(FormEntry entry) {
@@ -211,8 +194,7 @@ public class PortabilitySection extends PDESection {
 		limitTextWidth(fWsText);
 		fWsText.setEditable(isEditable());
 
-		fNlText = new FormEntry(container, toolkit, PDEPlugin
-				.getResourceString(SECTION_NL), editLabel, false);
+		fNlText = new FormEntry(container, toolkit, PDEUIMessages.FeatureEditor_PortabilitySection_nl, editLabel, false);
 
 		fNlText.setFormEntryListener(new FormEntryAdapter(this) {
 
@@ -238,8 +220,7 @@ public class PortabilitySection extends PDESection {
 		limitTextWidth(fNlText);
 		fNlText.setEditable(isEditable());
 
-		fArchText = new FormEntry(container, toolkit, PDEPlugin
-				.getResourceString(SECTION_ARCH), editLabel, false);
+		fArchText = new FormEntry(container, toolkit, PDEUIMessages.FeatureEditor_PortabilitySection_arch, editLabel, false);
 		fArchText.setFormEntryListener(new FormEntryAdapter(this) {
 
 			public void browseButtonSelected(FormEntry entry) {
@@ -304,7 +285,7 @@ public class PortabilitySection extends PDESection {
 		PortabilityChoicesDialog dialog = new PortabilityChoicesDialog(
 				PDEPlugin.getActiveWorkbenchShell(), choices, value);
 		dialog.create();
-		dialog.getShell().setText(PDEPlugin.getResourceString(DIALOG_TITLE));
+		dialog.getShell().setText(PDEUIMessages.FeatureEditor_PortabilityChoicesDialog_title);
 
 		int result = dialog.open();
 		if (result == Window.OK) {

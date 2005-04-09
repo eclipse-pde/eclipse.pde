@@ -29,6 +29,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.FeatureModelManager;
 import org.eclipse.pde.internal.core.IFeatureModelDelta;
@@ -43,6 +44,7 @@ import org.eclipse.pde.internal.core.isite.ISiteFeature;
 import org.eclipse.pde.internal.core.isite.ISiteModel;
 import org.eclipse.pde.internal.core.site.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.build.BuildSiteJob;
 import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
@@ -155,15 +157,15 @@ public class CategorySection extends TreeSection implements
 
 	public CategorySection(PDEFormPage formPage, Composite parent) {
 		super(formPage, parent, Section.DESCRIPTION, new String[] {
-				PDEPlugin.getResourceString("CategorySection.new"), //$NON-NLS-1$
-				PDEPlugin.getResourceString("CategorySection.add"), //$NON-NLS-1$
-				null, PDEPlugin.getResourceString("CategorySection.environment"), //$NON-NLS-1$
-					null, PDEPlugin.getResourceString("CategorySection.build"), //$NON-NLS-1$
-				PDEPlugin.getResourceString("CategorySection.buildAll") }); //$NON-NLS-1$
+				PDEUIMessages.CategorySection_new, //$NON-NLS-1$
+				PDEUIMessages.CategorySection_add, //$NON-NLS-1$
+				null, PDEUIMessages.CategorySection_environment, //$NON-NLS-1$
+					null, PDEUIMessages.CategorySection_build, //$NON-NLS-1$
+				PDEUIMessages.CategorySection_buildAll }); //$NON-NLS-1$
 		getSection().setText(
-				PDEPlugin.getResourceString("CategorySection.title")); //$NON-NLS-1$
+				PDEUIMessages.CategorySection_title); //$NON-NLS-1$
 		getSection().setDescription(
-				PDEPlugin.getResourceString("CategorySection.desc")); //$NON-NLS-1$
+				PDEUIMessages.CategorySection_desc); //$NON-NLS-1$
 	}
 
 	/*
@@ -411,17 +413,11 @@ public class CategorySection extends TreeSection implements
 	}
 
 	private void handleAddCategoryDefinition() {
-		String name = PDEPlugin.getFormattedMessage(
-				"CategorySection.newCategoryName", //$NON-NLS-1$
-				Integer .toString(++newCategoryCounter));
+		String name = NLS.bind(PDEUIMessages.CategorySection_newCategoryName, Integer .toString(++newCategoryCounter));
 		while (categoryExists(name)) {
-			name = PDEPlugin.getFormattedMessage(
-					"CategorySection.newCategoryName", //$NON-NLS-1$
-					Integer .toString(++newCategoryCounter));
+			name = NLS.bind(PDEUIMessages.CategorySection_newCategoryName, Integer .toString(++newCategoryCounter));
 		}
-		String label = PDEPlugin.getFormattedMessage(
-				"CategorySection.newCategoryLabel", //$NON-NLS-1$
-				Integer .toString(newCategoryCounter));
+		String label = NLS.bind(PDEUIMessages.CategorySection_newCategoryLabel, Integer .toString(newCategoryCounter));
 		ISiteCategoryDefinition categoryDef = fModel.getFactory()
 				.createCategoryDefinition();
 		try {
@@ -526,8 +522,7 @@ public class CategorySection extends TreeSection implements
 	}
 
 	protected void fillContextMenu(IMenuManager manager) {
-		Action removeAction = new Action(PDEPlugin
-				.getResourceString("CategorySection.remove")) { //$NON-NLS-1$
+		Action removeAction = new Action(PDEUIMessages.CategorySection_remove) { //$NON-NLS-1$
 			public void run() {
 				doGlobalAction(ActionFactory.DELETE.getId());
 			}
@@ -549,8 +544,7 @@ public class CategorySection extends TreeSection implements
 				manager.add(synchronizeAction);
 				synchronizeAction.setEnabled(isEditable());
 
-				Action buildAction = new Action(PDEPlugin
-						.getResourceString("CategorySection.build")) { //$NON-NLS-1$
+				Action buildAction = new Action(PDEUIMessages.CategorySection_build) { //$NON-NLS-1$
 							public void run() {
 								handleBuild(new ISiteFeature[] { adapter.feature });
 							}

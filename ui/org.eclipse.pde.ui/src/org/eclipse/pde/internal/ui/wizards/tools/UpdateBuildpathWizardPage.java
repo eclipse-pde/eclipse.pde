@@ -28,11 +28,6 @@ public class UpdateBuildpathWizardPage extends WizardPage {
 	private IPluginModelBase[] fSelected;
 	private IPluginModelBase[] fUnmigrated;
 	private CheckboxTableViewer pluginListViewer;
-	private static final String KEY_TITLE = "UpdateBuildpathWizard.title"; //$NON-NLS-1$
-	private static final String KEY_DESC = "UpdateBuildpathWizard.desc"; //$NON-NLS-1$
-	private static final String KEY_PLUGIN_LIST =
-		"UpdateBuildpathWizard.availablePlugins"; //$NON-NLS-1$
-	
 	private TablePart tablePart;
 
 	public class BuildpathContentProvider
@@ -67,11 +62,11 @@ public class UpdateBuildpathWizardPage extends WizardPage {
 
 	public UpdateBuildpathWizardPage(IPluginModelBase[] models, IPluginModelBase[] selected) {
 		super("UpdateBuildpathWizardPage"); //$NON-NLS-1$
-		setTitle(PDEPlugin.getResourceString(KEY_TITLE));
-		setDescription(PDEPlugin.getResourceString(KEY_DESC));
+		setTitle(PDEUIMessages.UpdateBuildpathWizard_title);
+		setDescription(PDEUIMessages.UpdateBuildpathWizard_desc);
 		this.fUnmigrated = models;
 		this.fSelected = selected;
-		tablePart = new TablePart(PDEPlugin.getResourceString(KEY_PLUGIN_LIST));
+		tablePart = new TablePart(PDEUIMessages.UpdateBuildpathWizard_availablePlugins);
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 	

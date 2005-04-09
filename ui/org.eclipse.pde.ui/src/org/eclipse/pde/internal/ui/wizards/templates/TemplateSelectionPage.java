@@ -31,12 +31,6 @@ public class TemplateSelectionPage extends WizardPage {
 	private ArrayList fVisiblePages;
 	private WizardCheckboxTablePart fTablePart;
 	private FormBrowser fDescriptionBrowser;
-	private static final String NL_TITLE = "TemplateSelectionPage.title"; //$NON-NLS-1$
-	private static final String NL_DESC = "TemplateSelectionPage.desc"; //$NON-NLS-1$
-	private static final String NL_TABLE = "TemplateSelectionPage.table"; //$NON-NLS-1$
-	private static final String NL_CNAME = "TemplateSelectionPage.column.name"; //$NON-NLS-1$
-	private static final String NL_CPOINT = "TemplateSelectionPage.column.point"; //$NON-NLS-1$
-
 	class TablePart extends WizardCheckboxTablePart {
 		public TablePart(String mainLabel) {
 			super(mainLabel);
@@ -88,13 +82,13 @@ public class TemplateSelectionPage extends WizardPage {
 	public TemplateSelectionPage(ITemplateSection[] candidates) {
 		super("templateSelection"); //$NON-NLS-1$
         fCandidates = candidates;
-		setTitle(PDEPlugin.getResourceString(NL_TITLE));
-		setDescription(PDEPlugin.getResourceString(NL_DESC));
+		setTitle(PDEUIMessages.TemplateSelectionPage_title);
+		setDescription(PDEUIMessages.TemplateSelectionPage_desc);
 		initializeTemplates();
 	}
 
 	private void initializeTemplates(){
-		fTablePart = new TablePart(PDEPlugin.getResourceString(NL_TABLE));
+		fTablePart = new TablePart(PDEUIMessages.TemplateSelectionPage_table);
 		fDescriptionBrowser = new FormBrowser(SWT.BORDER | SWT.V_SCROLL);
 		fDescriptionBrowser.setText(""); //$NON-NLS-1$
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
@@ -150,10 +144,10 @@ public class TemplateSelectionPage extends WizardPage {
 	private void initializeTable(Table table) {
 		table.setHeaderVisible(true);
 		TableColumn column = new TableColumn(table, SWT.NULL);
-		column.setText(PDEPlugin.getResourceString(NL_CNAME));
+		column.setText(PDEUIMessages.TemplateSelectionPage_column_name);
 		column.setResizable(true);
 		column = new TableColumn(table, SWT.NULL);
-		column.setText(PDEPlugin.getResourceString(NL_CPOINT));
+		column.setText(PDEUIMessages.TemplateSelectionPage_column_point);
 		column.setResizable(true);
 
 		TableLayout layout = new TableLayout();

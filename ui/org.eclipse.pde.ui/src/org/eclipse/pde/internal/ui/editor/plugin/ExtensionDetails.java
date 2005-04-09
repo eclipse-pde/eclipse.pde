@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
@@ -35,7 +36,7 @@ public class ExtensionDetails extends PDEDetails {
 	private FormText rtext;
 
 	private static final String RTEXT_DATA =
-		PDEPlugin.getResourceString("ExtensionDetails.extensionPointLinks"); //$NON-NLS-1$
+		PDEUIMessages.ExtensionDetails_extensionPointLinks; //$NON-NLS-1$
 	/**
 	 * 
 	 */
@@ -59,8 +60,8 @@ public class ExtensionDetails extends PDEDetails {
 		section.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
 		section.marginHeight = 5;		
 		section.marginWidth = 5;
-		section.setText(PDEPlugin.getResourceString("ExtensionDetails.title")); //$NON-NLS-1$
-		section.setDescription(PDEPlugin.getResourceString("ExtensionDetails.desc")); //$NON-NLS-1$
+		section.setText(PDEUIMessages.ExtensionDetails_title); //$NON-NLS-1$
+		section.setDescription(PDEUIMessages.ExtensionDetails_desc); //$NON-NLS-1$
 		TableWrapData td = new TableWrapData(TableWrapData.FILL, TableWrapData.TOP);
 		td.grabHorizontal = true;
 		section.setLayoutData(td);
@@ -75,7 +76,7 @@ public class ExtensionDetails extends PDEDetails {
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 
-		id = new FormEntry(client, toolkit, PDEPlugin.getResourceString("ExtensionDetails.id"), null, false); //$NON-NLS-1$
+		id = new FormEntry(client, toolkit, PDEUIMessages.ExtensionDetails_id, null, false); //$NON-NLS-1$
 		id.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
 				if (input!=null)
@@ -87,7 +88,7 @@ public class ExtensionDetails extends PDEDetails {
 			}
 		});
 		
-		name = new FormEntry(client, toolkit, PDEPlugin.getResourceString("ExtensionDetails.name"), null, false); //$NON-NLS-1$
+		name = new FormEntry(client, toolkit, PDEUIMessages.ExtensionDetails_name, null, false); //$NON-NLS-1$
 		name.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
 				if (input!=null)
@@ -99,7 +100,7 @@ public class ExtensionDetails extends PDEDetails {
 			}
 		});
 		
-		point = new FormEntry(client, toolkit, PDEPlugin.getResourceString("ExtensionDetails.point"), null, false); //$NON-NLS-1$
+		point = new FormEntry(client, toolkit, PDEUIMessages.ExtensionDetails_point, null, false); //$NON-NLS-1$
 		point.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
 				if (input!=null)
@@ -232,8 +233,8 @@ public class ExtensionDetails extends PDEDetails {
 		return getPage().getPDEEditor().getAggregateModel().isEditable();
 	}
 	private void showNoExtensionPointMessage() {
-		String title = PDEPlugin.getResourceString("ExtensionDetails.noPoint.title"); //$NON-NLS-1$
-		String message = PDEPlugin.getFormattedMessage("ShowDescriptionAction.noPoint.desc",input.getPoint()); //$NON-NLS-1$
+		String title = PDEUIMessages.ExtensionDetails_noPoint_title; //$NON-NLS-1$
+		String message = NLS.bind(PDEUIMessages.ShowDescriptionAction_noPoint_desc, input.getPoint()); //$NON-NLS-1$
 		
 		MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), title, message);
 	}

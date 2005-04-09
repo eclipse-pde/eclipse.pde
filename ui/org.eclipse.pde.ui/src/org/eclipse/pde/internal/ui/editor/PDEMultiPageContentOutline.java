@@ -18,6 +18,7 @@ import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.IPreferenceConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
@@ -161,11 +162,11 @@ public class PDEMultiPageContentOutline extends Page
 		public SortingAction() {
 			super();
 			WorkbenchHelp.setHelp(this, IHelpContextIds.OUTLINE_SORT_ACTION);
-			setText(PDEPlugin.getResourceString("PDEMultiPageContentOutline.SortingAction.label")); //$NON-NLS-1$
+			setText(PDEUIMessages.PDEMultiPageContentOutline_SortingAction_label); //$NON-NLS-1$
 			setImageDescriptor(PDEPluginImages.DESC_ALPHAB_SORT_CO);
 			setDisabledImageDescriptor(PDEPluginImages.DESC_ALPHAB_SORT_CO_DISABLED);
-			setToolTipText(PDEPlugin.getResourceString("PDEMultiPageContentOutline.SortingAction.tooltip")); //$NON-NLS-1$
-			setDescription(PDEPlugin.getResourceString("PDEMultiPageContentOutline.SortingAction.description")); //$NON-NLS-1$
+			setToolTipText(PDEUIMessages.PDEMultiPageContentOutline_SortingAction_tooltip); //$NON-NLS-1$
+			setDescription(PDEUIMessages.PDEMultiPageContentOutline_SortingAction_description); //$NON-NLS-1$
 			setChecked(sortingOn);
 		}
 		

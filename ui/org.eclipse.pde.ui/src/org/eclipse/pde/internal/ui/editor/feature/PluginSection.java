@@ -37,6 +37,7 @@ import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
@@ -55,20 +56,6 @@ import org.eclipse.ui.forms.widgets.Section;
 
 public class PluginSection extends TableSection implements
 		IPluginModelListener {
-	private static final String PLUGIN_TITLE = "FeatureEditor.PluginSection.pluginTitle"; //$NON-NLS-1$
-
-	private static final String PLUGIN_DESC = "FeatureEditor.PluginSection.pluginDesc"; //$NON-NLS-1$
-
-	private static final String KEY_NEW = "FeatureEditor.PluginSection.new"; //$NON-NLS-1$
-
-	public static final String KEY_SYNCHRONIZE = "FeatureEditor.SpecSection.synchronize"; //$NON-NLS-1$
-
-	public static final String POPUP_NEW = "Menus.new.label"; //$NON-NLS-1$
-
-	public static final String POPUP_OPEN = "Actions.open.label"; //$NON-NLS-1$
-
-	public static final String POPUP_DELETE = "Actions.delete.label"; //$NON-NLS-1$
-
 	private OpenReferenceAction fOpenAction;
 
 	private TableViewer fPluginViewer;
@@ -89,10 +76,10 @@ public class PluginSection extends TableSection implements
 
 	public PluginSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION, new String[] {
-				PDEPlugin.getResourceString(KEY_NEW), null,
-				PDEPlugin.getResourceString(KEY_SYNCHRONIZE) });
-		getSection().setText(PDEPlugin.getResourceString(PLUGIN_TITLE));
-		getSection().setDescription(PDEPlugin.getResourceString(PLUGIN_DESC));
+				PDEUIMessages.FeatureEditor_PluginSection_new, null,
+				PDEUIMessages.FeatureEditor_SpecSection_synchronize });
+		getSection().setText(PDEUIMessages.FeatureEditor_PluginSection_pluginTitle);
+		getSection().setDescription(PDEUIMessages.FeatureEditor_PluginSection_pluginDesc);
 		getTablePart().setEditable(false);
 	}
 
@@ -333,7 +320,7 @@ public class PluginSection extends TableSection implements
 				handleNew();
 			}
 		};
-		fNewAction.setText(PDEPlugin.getResourceString(POPUP_NEW));
+		fNewAction.setText(PDEUIMessages.Menus_new_label);
 		fNewAction.setEnabled(model.isEditable());
 
 		fDeleteAction = new Action() {
@@ -346,7 +333,7 @@ public class PluginSection extends TableSection implements
 						});
 			}
 		};
-		fDeleteAction.setText(PDEPlugin.getResourceString(POPUP_DELETE));
+		fDeleteAction.setText(PDEUIMessages.Actions_delete_label);
 		fDeleteAction.setEnabled(model.isEditable());
 		fOpenAction = new OpenReferenceAction(fPluginViewer);
 	}

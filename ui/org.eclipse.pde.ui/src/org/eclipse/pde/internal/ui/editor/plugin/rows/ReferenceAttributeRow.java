@@ -54,7 +54,7 @@ public abstract class ReferenceAttributeRow extends TextAttributeRow {
 	}
 	public void createContents(Composite parent, FormToolkit toolkit, int span) {
 		super.createContents(parent, toolkit, span);
-		Button button = toolkit.createButton(parent, PDEPlugin.getResourceString("ReferenceAttributeRow.browse"), SWT.PUSH); //$NON-NLS-1$
+		Button button = toolkit.createButton(parent, PDEUIMessages.ReferenceAttributeRow_browse, SWT.PUSH); //$NON-NLS-1$
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (!isReferenceModel())

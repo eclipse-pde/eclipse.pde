@@ -23,6 +23,7 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeatureURL;
 import org.eclipse.pde.internal.core.ifeature.IFeatureURLElement;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
@@ -43,16 +44,6 @@ import org.eclipse.ui.forms.widgets.Section;
 
 public class URLDetailsSection extends PDESection implements
 		IPartSelectionListener {
-	private static final String SECTION_DESC = "FeatureEditor.URLDetailsSection.desc"; //$NON-NLS-1$
-
-	private static final String SECTION_UPDATE_SITE_LABEL = "FeatureEditor.URLDetailsSection.updateUrlLabel"; //$NON-NLS-1$
-
-	private static final String SECTION_UPDATE_SITE_URL = "FeatureEditor.URLDetailsSection.updateUrl"; //$NON-NLS-1$
-
-	private static final String KEY_BAD_URL_TITLE = "FeatureEditor.URLDetailsSection.badUrlTitle"; //$NON-NLS-1$
-
-	private static final String KEY_BAD_URL_MESSAGE = "FeatureEditor.URLDetailsSection.badUrlMessage"; //$NON-NLS-1$
-
 	private FormEntry fNameText;
 
 	private FormEntry fUrlText;
@@ -62,7 +53,7 @@ public class URLDetailsSection extends PDESection implements
 	public URLDetailsSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION | ExpandableComposite.NO_TITLE,
 				false);
-		getSection().setDescription(PDEPlugin.getResourceString(SECTION_DESC));
+		getSection().setDescription(PDEUIMessages.FeatureEditor_URLDetailsSection_desc);
 		createClient(getSection(), page.getManagedForm().getToolkit());
 	}
 
@@ -112,8 +103,7 @@ public class URLDetailsSection extends PDESection implements
 		final IFeatureModel model = (IFeatureModel) getPage().getModel();
 		final IFeature feature = model.getFeature();
 
-		fUrlText = new FormEntry(container, toolkit, PDEPlugin
-				.getResourceString(SECTION_UPDATE_SITE_URL), null, false);
+		fUrlText = new FormEntry(container, toolkit, PDEUIMessages.FeatureEditor_URLDetailsSection_updateUrl, null, false);
 		fUrlText.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
 				String url = text.getValue() != null ? text.getValue() : ""; //$NON-NLS-1$
@@ -126,8 +116,7 @@ public class URLDetailsSection extends PDESection implements
 			}
 		});
 
-		fNameText = new FormEntry(container, toolkit, PDEPlugin
-				.getResourceString(SECTION_UPDATE_SITE_LABEL), null, false);
+		fNameText = new FormEntry(container, toolkit, PDEUIMessages.FeatureEditor_URLDetailsSection_updateUrlLabel, null, false);
 		fNameText.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
 				String name = text.getValue() != null ? text.getValue() : ""; //$NON-NLS-1$
@@ -153,9 +142,7 @@ public class URLDetailsSection extends PDESection implements
 	}
 
 	private void warnBadUrl(String text) {
-		MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), PDEPlugin
-				.getResourceString(KEY_BAD_URL_TITLE), PDEPlugin
-				.getResourceString(KEY_BAD_URL_MESSAGE));
+		MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.FeatureEditor_URLDetailsSection_badUrlTitle, PDEUIMessages.FeatureEditor_URLDetailsSection_badUrlMessage);
 	}
 
 	public void dispose() {

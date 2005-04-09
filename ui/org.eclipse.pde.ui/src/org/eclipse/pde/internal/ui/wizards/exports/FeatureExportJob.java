@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jface.dialogs.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.*;
@@ -84,7 +85,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 	}
 	
 	public FeatureExportJob(boolean toDirectory, boolean useJarFormat, boolean exportSource, String destination, String zipFileName, Object[] items, String[] signingInfo, String[] jnlpInfo) {
-		super(PDEPlugin.getResourceString("FeatureExportJob.name")); //$NON-NLS-1$
+		super(PDEUIMessages.FeatureExportJob_name); //$NON-NLS-1$
 		fExportToDirectory = toDirectory;
 		fUseJarFormat = useJarFormat;
 		fExportSource = exportSource;
@@ -115,7 +116,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 			final Display display = getStandardDisplay();
 			display.asyncExec(new Runnable() {
 				public void run() {
-					ErrorDialog.openError(display.getActiveShell(), PDEPlugin.getResourceString("FeatureExportJob.error"), PDEPlugin.getResourceString("FeatureExportJob.problems"), e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
+					ErrorDialog.openError(display.getActiveShell(), PDEUIMessages.FeatureExportJob_error, PDEUIMessages.FeatureExportJob_problems, e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
 					done(new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "", null)); //$NON-NLS-1$
 				}
 			});
@@ -218,13 +219,13 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		File file = new File(fDestinationDirectory);
 		if (!file.exists() || !file.isDirectory()) {
 			if (!file.mkdirs())
-				throw new InvocationTargetException(new Exception(PDEPlugin.getResourceString("ExportWizard.badDirectory"))); //$NON-NLS-1$
+				throw new InvocationTargetException(new Exception(PDEUIMessages.ExportWizard_badDirectory)); //$NON-NLS-1$
 		}
 	}
 
 	protected void doExport(String featureID, String version, String featureLocation, String os, String ws, String arch, IProgressMonitor monitor) throws CoreException, InvocationTargetException {
 		monitor.beginTask("", 5); //$NON-NLS-1$
-		monitor.setTaskName(PDEPlugin.getResourceString("FeatureExportJob.taskName")); //$NON-NLS-1$
+		monitor.setTaskName(PDEUIMessages.FeatureExportJob_taskName); //$NON-NLS-1$
 		try {
 			HashMap properties = createAntBuildProperties(os, ws, arch);
 			makeScript(featureID, version, os, ws, arch, featureLocation);
@@ -567,12 +568,12 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 
 	private void asyncNotifyExportException(String errorMessage) {
 		getStandardDisplay().beep();
-		MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), PDEPlugin.getResourceString("FeatureExportJob.error"), errorMessage); //$NON-NLS-1$
+		MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.FeatureExportJob_error, errorMessage); //$NON-NLS-1$
 		done(new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "", null)); //$NON-NLS-1$
 	}
 
 	protected String getLogFoundMessage() {
-		return PDEPlugin.getFormattedMessage("ExportJob.error.message", fDestinationDirectory + File.separator + "logs.zip"); //$NON-NLS-1$ //$NON-NLS-2$
+		return NLS.bind(PDEUIMessages.ExportJob_error_message, fDestinationDirectory + File.separator + "logs.zip"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
     
     protected void createFeature(String featureID, String featureLocation) throws IOException {

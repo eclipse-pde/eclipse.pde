@@ -12,7 +12,7 @@ package org.eclipse.pde.internal.ui.editor.schema;
 
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.action.Action;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -59,7 +59,6 @@ public class SchemaEditorContributor extends PDEFormEditorContributor {
 		super.makeActions();
 		previewAction = new PreviewAction();
 		previewAction.setText(
-			PDEPlugin.getResourceString(
-				"SchemaEditorContributor.previewAction")); //$NON-NLS-1$
+			PDEUIMessages.SchemaEditorContributor_previewAction); //$NON-NLS-1$
 	}
 }

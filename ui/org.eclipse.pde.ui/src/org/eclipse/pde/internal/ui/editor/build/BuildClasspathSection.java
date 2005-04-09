@@ -37,15 +37,6 @@ public class BuildClasspathSection
 	extends TableSection
 	implements IModelChangedListener {
 
-	private final static String SECTION_ADD =
-		"BuildEditor.ClasspathSection.add"; //$NON-NLS-1$
-	private final static String SECTION_REMOVE =
-		"BuildEditor.ClasspathSection.remove"; //$NON-NLS-1$
-	private final static String SECTION_TITLE =
-		"BuildEditor.ClasspathSection.title"; //$NON-NLS-1$
-	private final static String SECTION_DESC =
-		"BuildEditor.ClasspathSection.desc"; //$NON-NLS-1$
-		
 	private TableViewer fTableViewer;
 	private boolean fEnabled = true;
 	private IStructuredSelection fCurrentSelection;
@@ -155,12 +146,12 @@ public class BuildClasspathSection
 			parent,
 			Section.DESCRIPTION | Section.TWISTIE,
 			new String[] {
-				PDEPlugin.getResourceString(SECTION_ADD),
-				PDEPlugin.getResourceString(SECTION_REMOVE),
+				PDEUIMessages.BuildEditor_ClasspathSection_add,
+				PDEUIMessages.BuildEditor_ClasspathSection_remove,
 				null,
 				null });
-		getSection().setText(PDEPlugin.getResourceString(SECTION_TITLE));
-		getSection().setDescription(PDEPlugin.getResourceString(SECTION_DESC));
+		getSection().setText(PDEUIMessages.BuildEditor_ClasspathSection_title);
+		getSection().setDescription(PDEUIMessages.BuildEditor_ClasspathSection_desc);
 		initialize();
 
 	}
@@ -202,7 +193,7 @@ public class BuildClasspathSection
 
 		// add NEW action
 		Action action =
-			new Action(PDEPlugin.getResourceString(SECTION_ADD)) {
+			new Action(PDEUIMessages.BuildEditor_ClasspathSection_add) {
 				public void run() {
 					handleNew();
 				}
@@ -214,7 +205,7 @@ public class BuildClasspathSection
 
 		// add DELETE action
 		action =
-			new Action(PDEPlugin.getResourceString(SECTION_REMOVE)) {
+			new Action(PDEUIMessages.BuildEditor_ClasspathSection_remove) {
 				public void run() {
 					handleDelete();
 				}
@@ -291,8 +282,8 @@ public class BuildClasspathSection
 	private void initializeDialogSettings(ElementTreeSelectionDialog dialog){
 		Class[] acceptedClasses = new Class[] { IFile.class };
 		dialog.setValidator(new ElementSelectionValidator(acceptedClasses, true));
-		dialog.setTitle(PDEPlugin.getResourceString("BuildEditor.ClasspathSection.jarsTitle")); //$NON-NLS-1$
-		dialog.setMessage(PDEPlugin.getResourceString("BuildEditor.ClasspathSection.jarsDesc")); //$NON-NLS-1$
+		dialog.setTitle(PDEUIMessages.BuildEditor_ClasspathSection_jarsTitle); //$NON-NLS-1$
+		dialog.setMessage(PDEUIMessages.BuildEditor_ClasspathSection_jarsDesc); //$NON-NLS-1$
 		dialog.addFilter(new JARFileFilter());
 		dialog.setInput(PDEPlugin.getWorkspace().getRoot());
 		dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));

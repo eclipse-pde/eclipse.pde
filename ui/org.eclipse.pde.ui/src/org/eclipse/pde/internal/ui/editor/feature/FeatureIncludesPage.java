@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.swt.layout.GridData;
@@ -25,8 +25,6 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
  */
 public class FeatureIncludesPage extends PDEFormPage {
 	public static final String PAGE_ID = "includes"; //$NON-NLS-1$
-
-	private static final String KEY_HEADING = "FeatureEditor.IncludesPage.heading"; //$NON-NLS-1$
 
 	private IncludedFeaturesSection fIncludedSection;
 
@@ -89,7 +87,7 @@ public class FeatureIncludesPage extends PDEFormPage {
 		managedForm.addPart(fIncludedSection);
 		managedForm.addPart(fIncludedDetailsSection);
 		managedForm.addPart(fIncludedPortabilitySection);
-		form.setText(PDEPlugin.getResourceString(KEY_HEADING)); //$NON-NLS-1$
+		form.setText(PDEUIMessages.FeatureEditor_IncludesPage_heading); //$NON-NLS-1$
 		// WorkbenchHelp.setHelp(form.getBody(),
 		// IHelpContextIds.MANIFEST_FEATURE_CONTENT);
 		fIncludedSection.fireSelection();

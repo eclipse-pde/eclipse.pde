@@ -25,7 +25,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.StatusInfo;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
@@ -65,7 +65,7 @@ public class HistoryListDialog extends StatusDialog {
 
 	public HistoryListDialog(Shell shell, String[] elements) {
 		super(shell);
-		setTitle(PDEPlugin.getResourceString("HistoryListDialog.title")); //$NON-NLS-1$
+		setTitle(PDEUIMessages.HistoryListDialog_title); //$NON-NLS-1$
 		fHistoryList.addAll(Arrays.asList(elements));
 	}
 
@@ -103,7 +103,7 @@ public class HistoryListDialog extends StatusDialog {
 		inner.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Label label = new Label(inner, SWT.NONE);
-		label.setText(PDEPlugin.getResourceString("HistoryListDialog.label")); //$NON-NLS-1$
+		label.setText(PDEUIMessages.HistoryListDialog_label); //$NON-NLS-1$
 
 		Composite container = createListArea(inner);
 
@@ -136,8 +136,7 @@ public class HistoryListDialog extends StatusDialog {
 	 */
 	private void createListButtons(Composite parent) {
 		fRemoveButton = new Button(parent, SWT.PUSH);
-		fRemoveButton.setText(PDEPlugin
-				.getResourceString("HistoryListDialog.remove.button")); //$NON-NLS-1$
+		fRemoveButton.setText(PDEUIMessages.HistoryListDialog_remove_button); //$NON-NLS-1$
 		fRemoveButton.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, false,
 				false));
 		SWTUtil.setButtonDimensionHint(fRemoveButton);

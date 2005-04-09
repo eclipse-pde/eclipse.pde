@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.templates.*;
 
 /**
@@ -66,8 +66,6 @@ public abstract class AbstractTemplateSection
 	 * (value="packageName").
 	 */
 	public static final String KEY_PACKAGE_NAME = "packageName"; //$NON-NLS-1$
-
-	private static final String KEY_GENERATING = "AbstractTemplateSection.generating"; //$NON-NLS-1$
 
 	private boolean pagesAdded = false;
 	/**
@@ -241,7 +239,7 @@ public abstract class AbstractTemplateSection
 	 *            progress monitor to use to indicate generation progress
 	 */
 	protected void generateFiles(IProgressMonitor monitor) throws CoreException {
-		monitor.setTaskName(PDEPlugin.getResourceString(KEY_GENERATING));
+		monitor.setTaskName(PDEUIMessages.AbstractTemplateSection_generating);
 
 		URL locationUrl = getTemplateLocation();
 		if (locationUrl == null) {

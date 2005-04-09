@@ -21,13 +21,11 @@ public class UpdateBuildpathWizard extends Wizard {
 	private IPluginModelBase[] fSelected;
 	private IPluginModelBase[] fUnupdated;
 	private static final String STORE_SECTION = "UpdateBuildpathWizard"; //$NON-NLS-1$
-	private static final String KEY_WTITLE = "UpdateBuildpathWizard.wtitle"; //$NON-NLS-1$
-
 	public UpdateBuildpathWizard(IPluginModelBase[] models, IPluginModelBase[] selected) {
 		IDialogSettings masterSettings = PDEPlugin.getDefault().getDialogSettings();
 		setDialogSettings(getSettingsSection(masterSettings));
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_CONVJPPRJ_WIZ);
-		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
+		setWindowTitle(PDEUIMessages.UpdateBuildpathWizard_wtitle);
 		setNeedsProgressMonitor(true);
 		this.fSelected = selected;
 		this.fUnupdated = models;

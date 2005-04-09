@@ -34,7 +34,7 @@ import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.isite.ISite;
 import org.eclipse.pde.internal.core.isite.ISiteArchive;
 import org.eclipse.pde.internal.core.isite.ISiteModel;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditorContributor;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
@@ -110,10 +110,9 @@ public class ArchiveSection extends PDESection {
 		super(formPage, parent, Section.DESCRIPTION);
 		getSection()
 				.setText(
-						PDEPlugin
-								.getResourceString("SiteEditor.ArchiveSection.header")); //$NON-NLS-1$
+						PDEUIMessages.SiteEditor_ArchiveSection_header); //$NON-NLS-1$
 		getSection().setDescription(
-				PDEPlugin.getResourceString("SiteEditor.ArchiveSection.instruction")); //$NON-NLS-1$
+				PDEUIMessages.SiteEditor_ArchiveSection_instruction); //$NON-NLS-1$
 		createClient(getSection(), formPage.getManagedForm().getToolkit());
 	}
 	/*
@@ -154,8 +153,7 @@ public class ArchiveSection extends PDESection {
 		container.setLayout(layout);
 		container
 				.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
-		fAddButton = toolkit.createButton(container, PDEPlugin
-				.getResourceString("SiteEditor.add"), SWT.PUSH); //$NON-NLS-1$
+		fAddButton = toolkit.createButton(container, PDEUIMessages.SiteEditor_add, SWT.PUSH); //$NON-NLS-1$
 		fAddButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fAddButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -163,8 +161,7 @@ public class ArchiveSection extends PDESection {
 			}
 		});
 		fAddButton.setEnabled(isEditable());
-		fEditButton = toolkit.createButton(container, PDEPlugin
-				.getResourceString("SiteEditor.edit"), SWT.PUSH); //$NON-NLS-1$
+		fEditButton = toolkit.createButton(container, PDEUIMessages.SiteEditor_edit, SWT.PUSH); //$NON-NLS-1$
 		fEditButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fEditButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -174,8 +171,7 @@ public class ArchiveSection extends PDESection {
 					showDialog((ISiteArchive) ssel.getFirstElement());
 			}
 		});
-		fRemoveButton = toolkit.createButton(container, PDEPlugin
-				.getResourceString("SiteEditor.remove"), SWT.PUSH); //$NON-NLS-1$
+		fRemoveButton = toolkit.createButton(container, PDEUIMessages.SiteEditor_remove, SWT.PUSH); //$NON-NLS-1$
 		fRemoveButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fRemoveButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -192,11 +188,9 @@ public class ArchiveSection extends PDESection {
 		gd.heightHint = 100;
 		fTable.setLayoutData(gd);
 		TableColumn col1 = new TableColumn(fTable, SWT.NULL);
-		col1.setText(PDEPlugin
-				.getResourceString("SiteEditor.ArchiveSection.col1")); //$NON-NLS-1$
+		col1.setText(PDEUIMessages.SiteEditor_ArchiveSection_col1); //$NON-NLS-1$
 		TableColumn col2 = new TableColumn(fTable, SWT.NULL);
-		col2.setText(PDEPlugin
-				.getResourceString("SiteEditor.ArchiveSection.col2")); //$NON-NLS-1$
+		col2.setText(PDEUIMessages.SiteEditor_ArchiveSection_col2); //$NON-NLS-1$
 		TableLayout tlayout = new TableLayout();
 		tlayout.addColumnData(new ColumnWeightData(50, 200));
 		tlayout.addColumnData(new ColumnWeightData(50, 200));
@@ -288,8 +282,7 @@ public class ArchiveSection extends PDESection {
 		MenuManager popupMenuManager = new MenuManager();
 		IMenuListener listener = new IMenuListener() {
 			public void menuAboutToShow(IMenuManager mng) {
-				Action removeAction = new Action(PDEPlugin
-						.getResourceString("SiteEditor.remove")) { //$NON-NLS-1$
+				Action removeAction = new Action(PDEUIMessages.SiteEditor_remove) { //$NON-NLS-1$
 					public void run() {
 						doGlobalAction(ActionFactory.DELETE.getId());
 					}

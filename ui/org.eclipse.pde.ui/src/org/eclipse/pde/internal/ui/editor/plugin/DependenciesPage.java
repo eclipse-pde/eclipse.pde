@@ -24,13 +24,13 @@ public class DependenciesPage extends PDEFormPage {
 	public static final String PAGE_ID = "dependencies"; //$NON-NLS-1$
 	
 	public DependenciesPage(FormEditor editor) {
-		super(editor, PAGE_ID, PDEPlugin.getResourceString("DependenciesPage.tabName"));  //$NON-NLS-1$
+		super(editor, PAGE_ID, PDEUIMessages.DependenciesPage_tabName);  //$NON-NLS-1$
 	}
 	
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
-		form.setText(PDEPlugin.getResourceString("DependenciesPage.title")); //$NON-NLS-1$
+		form.setText(PDEUIMessages.DependenciesPage_title); //$NON-NLS-1$
 		Composite body = form.getBody();
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -60,10 +60,10 @@ public class DependenciesPage extends PDEFormPage {
     
     private String[] getRequiredSectionLabels() {
         ArrayList labels = new ArrayList();
-        labels.add(PDEPlugin.getResourceString("RequiresSection.add"));
-        labels.add(PDEPlugin.getResourceString("RequiresSection.delete"));
-        labels.add(PDEPlugin.getResourceString("RequiresSection.up"));
-        labels.add(PDEPlugin.getResourceString("RequiresSection.down"));
+        labels.add(PDEUIMessages.RequiresSection_add);
+        labels.add(PDEUIMessages.RequiresSection_delete);
+        labels.add(PDEUIMessages.RequiresSection_up);
+        labels.add(PDEUIMessages.RequiresSection_down);
         if (isBundle())
             labels.add("Properties...");
         return (String[])labels.toArray(new String[labels.size()]);

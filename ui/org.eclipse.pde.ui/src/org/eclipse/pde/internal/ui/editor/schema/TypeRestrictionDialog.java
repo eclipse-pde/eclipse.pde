@@ -20,10 +20,10 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.*;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.ui.*;
+
 import java.util.Hashtable;
 
 public class TypeRestrictionDialog extends Dialog {
-	public static final String KEY_RESTRICTION_TYPE ="RestrictionDialog.type"; //$NON-NLS-1$
 	private static final String T_ENUMERATION = "enumeration"; //$NON-NLS-1$
 	private static final String T_NONE = "none"; //$NON-NLS-1$
 	
@@ -52,7 +52,7 @@ protected Control createDialogArea(Composite parent) {
 	container.setLayoutData(gd);
 
 	Label label = new Label(container, SWT.NULL);
-	label.setText(PDEPlugin.getResourceString(KEY_RESTRICTION_TYPE));
+	label.setText(PDEUIMessages.RestrictionDialog_type);
 	gd = new GridData();
 	label.setLayoutData(gd);
 	typeCombo = new Combo(container, SWT.DROP_DOWN | SWT.READ_ONLY);

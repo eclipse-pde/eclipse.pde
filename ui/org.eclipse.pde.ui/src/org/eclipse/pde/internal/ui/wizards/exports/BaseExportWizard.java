@@ -23,8 +23,10 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.ui.IPreferenceConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
 
@@ -45,7 +47,7 @@ public abstract class BaseExportWizard
 			PDEPlugin.getDefault().getDialogSettings();
 		setNeedsProgressMonitor(true);
 		setDialogSettings(getSettingsSection(masterSettings));
-		setWindowTitle(PDEPlugin.getResourceString("BaseExportWizard.wtitle")); //$NON-NLS-1$
+		setWindowTitle(PDEUIMessages.BaseExportWizard_wtitle); //$NON-NLS-1$
 	}
 
 	public void addPages() {
@@ -110,9 +112,8 @@ public abstract class BaseExportWizard
 			File zipFile = new File(fPage1.getDestination(), fPage1.getFileName());
 			if (zipFile.exists()) {
 				if (!MessageDialog.openQuestion(getContainer().getShell(),
-						PDEPlugin.getResourceString("BaseExportWizard.confirmReplace.title"),  //$NON-NLS-1$
-						PDEPlugin.getFormattedMessage("BaseExportWizard.confirmReplace.desc", //$NON-NLS-1$
-								zipFile.getAbsolutePath())))
+						PDEUIMessages.BaseExportWizard_confirmReplace_title,  //$NON-NLS-1$
+						NLS.bind(PDEUIMessages.BaseExportWizard_confirmReplace_desc, zipFile.getAbsolutePath())))
 					return false;
 				zipFile.delete();
 			}

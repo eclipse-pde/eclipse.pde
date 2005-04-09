@@ -24,6 +24,7 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeatureURL;
 import org.eclipse.pde.internal.core.ifeature.IFeatureURLElement;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
@@ -39,38 +40,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 public class FeatureSpecSection extends PDESection {
-	public static final String SECTION_TITLE = "FeatureEditor.SpecSection.title"; //$NON-NLS-1$
-
-	public static final String SECTION_DESC = "FeatureEditor.SpecSection.desc"; //$NON-NLS-1$
-
-	public static final String SECTION_DESC_PATCH = "FeatureEditor.SpecSection.desc.patch"; //$NON-NLS-1$
-
-	public static final String SECTION_ID = "FeatureEditor.SpecSection.id"; //$NON-NLS-1$
-
-	public static final String SECTION_PATCHED_ID = "FeatureEditor.SpecSection.patchedId"; //$NON-NLS-1$
-
-	public static final String SECTION_NAME = "FeatureEditor.SpecSection.name"; //$NON-NLS-1$
-
-	public static final String SECTION_VERSION = "FeatureEditor.SpecSection.version"; //$NON-NLS-1$
-
-	public static final String SECTION_PATCHED_VERSION = "FeatureEditor.SpecSection.patchedVersion"; //$NON-NLS-1$
-
-	public static final String SECTION_PROVIDER = "FeatureEditor.SpecSection.provider"; //$NON-NLS-1$
-
-	public static final String SECTION_UPDATE_SITE = "FeatureEditor.SpecSection.updateSite"; //$NON-NLS-1$
-
-	public static final String SECTION_UPDATE_SITE_LABEL = "FeatureEditor.SpecSection.updateUrlLabel"; //$NON-NLS-1$
-
-	public static final String SECTION_UPDATE_SITE_URL = "FeatureEditor.SpecSection.updateUrl"; //$NON-NLS-1$
-
-	public static final String KEY_BAD_VERSION_TITLE = "FeatureEditor.SpecSection.badVersionTitle"; //$NON-NLS-1$
-
-	public static final String KEY_BAD_VERSION_MESSAGE = "FeatureEditor.SpecSection.badVersionMessage"; //$NON-NLS-1$
-
-	public static final String KEY_BAD_URL_TITLE = "FeatureEditor.SpecSection.badUrlTitle"; //$NON-NLS-1$
-
-	public static final String KEY_BAD_URL_MESSAGE = "FeatureEditor.SpecSection.badUrlMessage"; //$NON-NLS-1$
-
 	private FormEntry fIdText;
 
 	private FormEntry fTitleText;
@@ -91,7 +60,7 @@ public class FeatureSpecSection extends PDESection {
 
 	public FeatureSpecSection(FeatureFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION);
-		getSection().setText(PDEPlugin.getResourceString(SECTION_TITLE));
+		getSection().setText(PDEUIMessages.FeatureEditor_SpecSection_title);
 		createClient(getSection(), page.getManagedForm().getToolkit());
 	}
 
@@ -235,9 +204,13 @@ public class FeatureSpecSection extends PDESection {
 		final IFeatureModel model = (IFeatureModel) getPage().getModel();
 		final IFeature feature = model.getFeature();
 
-		getSection().setDescription(
-				PDEPlugin.getResourceString(isPatch() ? SECTION_DESC_PATCH
-						: SECTION_DESC));
+		if(isPatch()){
+			getSection().setDescription(
+				PDEUIMessages.FeatureEditor_SpecSection_desc_patch);
+		}else{
+			getSection().setDescription(
+					PDEUIMessages.FeatureEditor_SpecSection_desc);
+		}
 
 		Composite container = toolkit.createComposite(section);
 		GridLayout layout = new GridLayout();
@@ -246,8 +219,7 @@ public class FeatureSpecSection extends PDESection {
 		layout.horizontalSpacing = 6;
 		container.setLayout(layout);
 
-		fIdText = new FormEntry(container, toolkit, PDEPlugin
-				.getResourceString(SECTION_ID), null, false);
+		fIdText = new FormEntry(container, toolkit, PDEUIMessages.FeatureEditor_SpecSection_id, null, false);
 		fIdText.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
 				try {
@@ -258,8 +230,7 @@ public class FeatureSpecSection extends PDESection {
 			}
 		});
 
-		fVersionText = new FormEntry(container, toolkit, PDEPlugin
-				.getResourceString(SECTION_VERSION), null, false);
+		fVersionText = new FormEntry(container, toolkit, PDEUIMessages.FeatureEditor_SpecSection_version, null, false);
 		fVersionText.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
 				if (verifySetVersion(feature, text.getValue()) == false) {
@@ -269,8 +240,7 @@ public class FeatureSpecSection extends PDESection {
 			}
 		});
 
-		fTitleText = new FormEntry(container, toolkit, PDEPlugin
-				.getResourceString(SECTION_NAME), null, false);
+		fTitleText = new FormEntry(container, toolkit, PDEUIMessages.FeatureEditor_SpecSection_name, null, false);
 		fTitleText.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
 				try {
@@ -283,8 +253,7 @@ public class FeatureSpecSection extends PDESection {
 				((FeatureEditor) getPage().getEditor()).updateTitle();
 			}
 		});
-		fProviderText = new FormEntry(container, toolkit, PDEPlugin
-				.getResourceString(SECTION_PROVIDER), null, false);
+		fProviderText = new FormEntry(container, toolkit, PDEUIMessages.FeatureEditor_SpecSection_provider, null, false);
 		fProviderText.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
 				try {
@@ -298,8 +267,7 @@ public class FeatureSpecSection extends PDESection {
 		});
 
 		if (isPatch()) {
-			fPatchedIdText = new FormEntry(container, toolkit, PDEPlugin
-					.getResourceString(SECTION_PATCHED_ID), null, false);
+			fPatchedIdText = new FormEntry(container, toolkit, PDEUIMessages.FeatureEditor_SpecSection_patchedId, null, false);
 			fPatchedIdText.setFormEntryListener(new FormEntryAdapter(this) {
 				public void textValueChanged(FormEntry text) {
 					try {
@@ -313,8 +281,7 @@ public class FeatureSpecSection extends PDESection {
 				}
 			});
 
-			fPatchedVersionText = new FormEntry(container, toolkit, PDEPlugin
-					.getResourceString(SECTION_PATCHED_VERSION), null, false);
+			fPatchedVersionText = new FormEntry(container, toolkit, PDEUIMessages.FeatureEditor_SpecSection_patchedVersion, null, false);
 			fPatchedVersionText
 					.setFormEntryListener(new FormEntryAdapter(this) {
 						public void textValueChanged(FormEntry text) {
@@ -331,8 +298,7 @@ public class FeatureSpecSection extends PDESection {
 
 		}
 
-		fUpdateSiteUrlText = new FormEntry(container, toolkit, PDEPlugin
-				.getResourceString(SECTION_UPDATE_SITE_URL), null, false);
+		fUpdateSiteUrlText = new FormEntry(container, toolkit, PDEUIMessages.FeatureEditor_SpecSection_updateUrl, null, false);
 		fUpdateSiteUrlText.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
 				String url = text.getValue() != null ? text.getValue() : ""; //$NON-NLS-1$
@@ -345,8 +311,7 @@ public class FeatureSpecSection extends PDESection {
 			}
 		});
 
-		fUpdateSiteNameText = new FormEntry(container, toolkit, PDEPlugin
-				.getResourceString(SECTION_UPDATE_SITE_LABEL), null, false);
+		fUpdateSiteNameText = new FormEntry(container, toolkit, PDEUIMessages.FeatureEditor_SpecSection_updateUrlLabel, null, false);
 		fUpdateSiteNameText.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
 				String name = text.getValue() != null ? text.getValue() : ""; //$NON-NLS-1$
@@ -392,15 +357,11 @@ public class FeatureSpecSection extends PDESection {
 	}
 
 	private void warnBadVersionFormat(String text) {
-		MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), PDEPlugin
-				.getResourceString(KEY_BAD_VERSION_TITLE), PDEPlugin
-				.getResourceString(KEY_BAD_VERSION_MESSAGE));
+		MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.FeatureEditor_SpecSection_badVersionTitle, PDEUIMessages.FeatureEditor_SpecSection_badVersionMessage);
 	}
 
 	private void warnBadUrl(String text) {
-		MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), PDEPlugin
-				.getResourceString(KEY_BAD_URL_TITLE), PDEPlugin
-				.getResourceString(KEY_BAD_URL_MESSAGE));
+		MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.FeatureEditor_SpecSection_badUrlTitle, PDEUIMessages.FeatureEditor_SpecSection_badUrlMessage);
 	}
 
 	public void dispose() {

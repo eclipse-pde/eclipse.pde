@@ -15,7 +15,6 @@ import org.eclipse.pde.ui.*;
 import org.eclipse.pde.ui.templates.*;
 
 public class PropertyPageNewWizard extends NewPluginTemplateWizard {
-	private static final String KEY_WTITLE = "PropertyPageNewWizard.wtitle"; //$NON-NLS-1$
 	/**
 	 * Constructor for PropertyPageNewWizard.
 	 */
@@ -25,7 +24,7 @@ public class PropertyPageNewWizard extends NewPluginTemplateWizard {
 
 	public void init(IFieldData data) {
 		super.init(data);
-		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
+		setWindowTitle(PDEUIMessages.PropertyPageNewWizard_wtitle);
 	}
 	/**
 	 * @see NewPluginTemplateWizard#createTemplateSections()

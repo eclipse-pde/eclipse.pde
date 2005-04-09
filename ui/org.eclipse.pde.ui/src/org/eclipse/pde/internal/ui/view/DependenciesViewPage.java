@@ -26,6 +26,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginImport;
@@ -36,6 +37,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.plugin.PluginReference;
 import org.eclipse.pde.internal.ui.IPreferenceConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.search.dependencies.DependencyExtentAction;
 import org.eclipse.pde.internal.ui.search.dependencies.UnusedDependenciesAction;
@@ -56,8 +58,7 @@ public abstract class DependenciesViewPage extends Page {
 			setEnabled(object != null);
 			String name = ((LabelProvider) fViewer.getLabelProvider())
 					.getText(object);
-			setText(PDEPlugin.getFormattedMessage(
-					"DependenciesViewPage.focusOnSelection", name)); //$NON-NLS-1$
+			setText(NLS.bind(PDEUIMessages.DependenciesViewPage_focusOnSelection, name)); //$NON-NLS-1$
 		}
 	}
 
@@ -252,8 +253,7 @@ public abstract class DependenciesViewPage extends Page {
 			public void update(Object object) {
 			}
 		};
-		fOpenAction.setText(PDEPlugin
-				.getResourceString("DependenciesView.open")); //$NON-NLS-1$
+		fOpenAction.setText(PDEUIMessages.DependenciesView_open); //$NON-NLS-1$
 
 		fFocusOnSelectionAction = new FocusOnSelectionAction();
 
@@ -262,8 +262,7 @@ public abstract class DependenciesViewPage extends Page {
 				handleFocusOn();
 			}
 		};
-		fFocusOnAction.setText(PDEPlugin
-				.getResourceString("DependenciesViewPage.focusOn")); //$NON-NLS-1$
+		fFocusOnAction.setText(PDEUIMessages.DependenciesViewPage_focusOn); //$NON-NLS-1$
 	}
 
 	/*

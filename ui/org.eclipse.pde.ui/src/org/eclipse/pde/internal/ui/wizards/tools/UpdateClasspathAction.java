@@ -27,6 +27,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
@@ -42,8 +43,8 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 		if (fUnupdated.length == 0) {
 			MessageDialog.openInformation(
 					PDEPlugin.getActiveWorkbenchShell(),
-					PDEPlugin.getResourceString("UpdateClasspathAction.find"),  //$NON-NLS-1$
-					PDEPlugin.getResourceString("UpdateClasspathAction.none")); //$NON-NLS-1$
+					PDEUIMessages.UpdateClasspathAction_find,  //$NON-NLS-1$
+					PDEUIMessages.UpdateClasspathAction_none); //$NON-NLS-1$
 			return;
 		}
 		if (fSelection instanceof IStructuredSelection) {

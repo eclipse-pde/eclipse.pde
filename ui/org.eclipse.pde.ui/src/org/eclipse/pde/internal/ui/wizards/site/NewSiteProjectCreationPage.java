@@ -23,10 +23,6 @@ import org.eclipse.ui.help.*;
 
 public class NewSiteProjectCreationPage extends WizardNewProjectCreationPage {
 	
-	public static final String HTML_CHECK_LABEL = "SiteHTML.checkLabel"; //$NON-NLS-1$
-	public static final String HTML_WEB_LABEL = "SiteHTML.webLabel"; //$NON-NLS-1$
-	public static final String WEB_ERR = "SiteHTML.webError"; //$NON-NLS-1$
-
 	private Button fWebButton;
 	protected Text fWebText;
 	private Label fWebLabel;
@@ -51,7 +47,7 @@ public class NewSiteProjectCreationPage extends WizardNewProjectCreationPage {
 		control.setLayout(layout);
 		
 		Group webGroup = new Group(control, SWT.NULL);
-		webGroup.setText(PDEPlugin.getResourceString("NewSiteProjectCreationPage.webTitle")); //$NON-NLS-1$
+		webGroup.setText(PDEUIMessages.NewSiteProjectCreationPage_webTitle); //$NON-NLS-1$
 		
 		initializeDialogUnits(parent);
 		layout = new GridLayout();
@@ -60,7 +56,7 @@ public class NewSiteProjectCreationPage extends WizardNewProjectCreationPage {
 		webGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		fWebButton = new Button(webGroup, SWT.CHECK);
-		fWebButton.setText(PDEPlugin.getResourceString(HTML_CHECK_LABEL));
+		fWebButton.setText(PDEUIMessages.SiteHTML_checkLabel);
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		fWebButton.setLayoutData(gd);
@@ -73,7 +69,7 @@ public class NewSiteProjectCreationPage extends WizardNewProjectCreationPage {
 		});
 		
 		fWebLabel = new Label(webGroup, SWT.NULL);
-		fWebLabel.setText(PDEPlugin.getResourceString(HTML_WEB_LABEL));
+		fWebLabel.setText(PDEUIMessages.SiteHTML_webLabel);
 		fWebLabel.setEnabled(false);
 		
 		fWebText = new Text(webGroup, SWT.BORDER);
@@ -109,7 +105,7 @@ public class NewSiteProjectCreationPage extends WizardNewProjectCreationPage {
 			return false;
 		String webLocation = getWebLocation();
 		if (webLocation != null && webLocation.trim().length() == 0){ //$NON-NLS-1$
-			setErrorMessage(PDEPlugin.getResourceString(WEB_ERR));
+			setErrorMessage(PDEUIMessages.SiteHTML_webError);
 			return false;
 		}
 		return true;

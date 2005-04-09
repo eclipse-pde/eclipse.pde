@@ -24,7 +24,6 @@ import org.eclipse.ui.views.properties.IPropertySheetPage;
  */
 public class SchemaFormPage extends PDEFormPage implements IModelChangedListener {
 	public static final String PAGE_ID = "form"; //$NON-NLS-1$
-	public static final String PAGE_TITLE = "SchemaEditor.FormPage.title"; //$NON-NLS-1$
 	private SchemaSpecSection schemaSpecSection;
 	private ElementSection elementSection;
 	private DescriptionSection descriptionSection;
@@ -33,7 +32,7 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 	private IColorManager colorManager= ColorManager.getDefault();	
 
 	public SchemaFormPage(PDEFormEditor editor) {
-		super(editor, PAGE_ID, PDEPlugin.getResourceString(PAGE_TITLE));
+		super(editor, PAGE_ID, PDEUIMessages.SchemaEditor_FormPage_title);
 	}
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);

@@ -22,21 +22,8 @@ import org.eclipse.jface.wizard.*;
 public class HelloWorldTemplate extends PDETemplateSection {
 	public static final String KEY_CLASS_NAME = "className"; //$NON-NLS-1$
 	public static final String KEY_MESSAGE = "message"; //$NON-NLS-1$
-	public static final String KEY_ADD_TO_PERSPECTIVE = "addToPerspective"; //$NON-NLS-1$
 	public static final String CLASS_NAME = "SampleAction"; //$NON-NLS-1$
 
-	private static final String KEY_TITLE = "HelloWorldTemplate.title"; //$NON-NLS-1$
-	private static final String KEY_DESC = "HelloWorldTemplate.desc"; //$NON-NLS-1$
-	private static final String KEY_PACKAGE_LABEL =
-		"HelloWorldTemplate.packageName"; //$NON-NLS-1$
-	private static final String KEY_CLASS_LABEL = "HelloWorldTemplate.className"; //$NON-NLS-1$
-	private static final String KEY_TEXT_LABEL = "HelloWorldTemplate.messageText"; //$NON-NLS-1$
-	private static final String KEY_DEFAULT_MESSAGE =
-		"HelloWorldTemplate.defaultMessage"; //$NON-NLS-1$
-	private static final String KEY_SAMPLE_ACTION_SET = "HelloWorldTemplate.sampleActionSet";		 //$NON-NLS-1$
-	private static final String KEY_SAMPLE_MENU = "HelloWorldTemplate.sampleMenu"; //$NON-NLS-1$
-	private static final String KEY_SAMPLE_ACTION = "HelloWorldTemplate.sampleAction"; //$NON-NLS-1$
-	
 	/**
 	 * Constructor for HelloWorldTemplate.
 	 */
@@ -58,25 +45,25 @@ public class HelloWorldTemplate extends PDETemplateSection {
 	private void createOptions() {
 		addOption(
 			KEY_PACKAGE_NAME,
-			PDEPlugin.getResourceString(KEY_PACKAGE_LABEL),
+			PDEUIMessages.HelloWorldTemplate_packageName,
 			(String) null,
 			0);
 		addOption(
 			KEY_CLASS_NAME,
-			PDEPlugin.getResourceString(KEY_CLASS_LABEL),
+			PDEUIMessages.HelloWorldTemplate_className,
 			CLASS_NAME,
 			0);
 		addOption(
 			KEY_MESSAGE,
-			PDEPlugin.getResourceString(KEY_TEXT_LABEL),
-			PDEPlugin.getResourceString(KEY_DEFAULT_MESSAGE),
+			PDEUIMessages.HelloWorldTemplate_messageText,
+			PDEUIMessages.HelloWorldTemplate_defaultMessage,
 			0);
 	}
 
 	public void addPages(Wizard wizard) {
 		WizardPage page = createPage(0, IHelpContextIds.TEMPLATE_HELLO_WORLD);
-		page.setTitle(PDEPlugin.getResourceString(KEY_TITLE));
-		page.setDescription(PDEPlugin.getResourceString(KEY_DESC));
+		page.setTitle(PDEUIMessages.HelloWorldTemplate_title);
+		page.setDescription(PDEUIMessages.HelloWorldTemplate_desc);
 		wizard.addPage(page);
 		markPagesAdded();
 	}
@@ -131,12 +118,12 @@ public class HelloWorldTemplate extends PDETemplateSection {
 		IPluginElement setElement = factory.createElement(extension);
 		setElement.setName("actionSet"); //$NON-NLS-1$
 		setElement.setAttribute("id", plugin.getId() + ".actionSet"); //$NON-NLS-1$ //$NON-NLS-2$
-		setElement.setAttribute("label", PDEPlugin.getResourceString(KEY_SAMPLE_ACTION_SET)); //$NON-NLS-1$
+		setElement.setAttribute("label", PDEUIMessages.HelloWorldTemplate_sampleActionSet); //$NON-NLS-1$
 		setElement.setAttribute("visible", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		IPluginElement menuElement = factory.createElement(setElement);
 		menuElement.setName("menu"); //$NON-NLS-1$
-		menuElement.setAttribute("label", PDEPlugin.getResourceString(KEY_SAMPLE_MENU)); //$NON-NLS-1$
+		menuElement.setAttribute("label", PDEUIMessages.HelloWorldTemplate_sampleMenu); //$NON-NLS-1$
 		menuElement.setAttribute("id", "sampleMenu"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		IPluginElement groupElement = factory.createElement(menuElement);
@@ -151,11 +138,11 @@ public class HelloWorldTemplate extends PDETemplateSection {
 		IPluginElement actionElement = factory.createElement(setElement);
 		actionElement.setName("action"); //$NON-NLS-1$
 		actionElement.setAttribute("id", fullClassName); //$NON-NLS-1$
-		actionElement.setAttribute("label", PDEPlugin.getResourceString(KEY_SAMPLE_ACTION)); //$NON-NLS-1$
+		actionElement.setAttribute("label", PDEUIMessages.HelloWorldTemplate_sampleAction); //$NON-NLS-1$
 		actionElement.setAttribute("menubarPath", "sampleMenu/sampleGroup"); //$NON-NLS-1$ //$NON-NLS-2$
 		actionElement.setAttribute("toolbarPath", "sampleGroup"); //$NON-NLS-1$ //$NON-NLS-2$
 		actionElement.setAttribute("icon", "icons/sample.gif"); //$NON-NLS-1$ //$NON-NLS-2$
-		actionElement.setAttribute("tooltip", PDEPlugin.getResourceString(KEY_DEFAULT_MESSAGE)); //$NON-NLS-1$
+		actionElement.setAttribute("tooltip", PDEUIMessages.HelloWorldTemplate_defaultMessage); //$NON-NLS-1$
 		actionElement.setAttribute("class", fullClassName); //$NON-NLS-1$
 		setElement.add(actionElement);
 		extension.add(setElement);

@@ -36,34 +36,6 @@ public class BuilderTemplate extends PDETemplateSection {
 
 	private static final String KEY_GEN_ACTION = "genAction"; //$NON-NLS-1$
 
-	private static final String NL_TITLE = "BuilderTemplate.title"; //$NON-NLS-1$
-
-	private static final String NL_DESC = "BuilderTemplate.desc"; //$NON-NLS-1$
-
-	private static final String NL_BUILDER_CLASS_NAME = "BuilderTemplate.builderClass"; //$NON-NLS-1$
-
-	private static final String NL_BUILDER_ID = "BuilderTemplate.builderId"; //$NON-NLS-1$
-
-	private static final String NL_BUILDER_NAME = "BuilderTemplate.builderName"; //$NON-NLS-1$
-
-	private static final String NL_NATURE_CLASS_NAME = "BuilderTemplate.natureClass"; //$NON-NLS-1$
-
-	private static final String NL_NATURE_ID = "BuilderTemplate.natureId"; //$NON-NLS-1$
-
-	private static final String NL_NATURE_NAME = "BuilderTemplate.natureName"; //$NON-NLS-1$
-
-	private static final String NL_PACKAGE_LABEL = "BuilderTemplate.packageLabel"; //$NON-NLS-1$
-
-	private static final String NL_ACTION_LABEL = "BuilderTemplate.actionLabel"; //$NON-NLS-1$
-
-	private static final String NL_DEFAULT_BUILDER_NAME = "BuilderTemplate.defaultBuilderName"; //$NON-NLS-1$
-
-	private static final String NL_DEFAULT_NATURE_NAME = "BuilderTemplate.defaultNatureName"; //$NON-NLS-1$
-
-	private static final String NL_MARKER_NAME = "BuilderTemplate.markerName"; //$NON-NLS-1$
-
-	private static final String NL_GEN_ACTION = "BuilderTemplate.generateAction"; //$NON-NLS-1$
-
 	private BooleanOption actionOption;
 
 	/**
@@ -91,32 +63,26 @@ public class BuilderTemplate extends PDETemplateSection {
 	}
 
 	private void createOptions() {
-		addOption(KEY_PACKAGE_NAME, PDEPlugin
-				.getResourceString(NL_PACKAGE_LABEL), (String) null, 0);
+		addOption(KEY_PACKAGE_NAME, PDEUIMessages.BuilderTemplate_packageLabel, (String) null, 0);
 
-		addOption(KEY_BUILDER_CLASS_NAME, PDEPlugin
-				.getResourceString(NL_BUILDER_CLASS_NAME), "SampleBuilder", 0); //$NON-NLS-1$
-		addOption(KEY_BUILDER_ID, PDEPlugin.getResourceString(NL_BUILDER_ID),
+		addOption(KEY_BUILDER_CLASS_NAME, PDEUIMessages.BuilderTemplate_builderClass, "SampleBuilder", 0); //$NON-NLS-1$
+		addOption(KEY_BUILDER_ID, PDEUIMessages.BuilderTemplate_builderId,
 				"sampleBuilder", 0); //$NON-NLS-1$
-		addOption(KEY_BUILDER_NAME, PDEPlugin
-				.getResourceString(NL_BUILDER_NAME), PDEPlugin
-				.getResourceString(NL_DEFAULT_BUILDER_NAME), 0);
+		addOption(KEY_BUILDER_NAME, PDEUIMessages.BuilderTemplate_builderName, PDEUIMessages.BuilderTemplate_defaultBuilderName, 0);
 
-		addOption(KEY_NATURE_CLASS_NAME, PDEPlugin
-				.getResourceString(NL_NATURE_CLASS_NAME), "SampleNature", 0); //$NON-NLS-1$
-		addOption(KEY_NATURE_ID, PDEPlugin.getResourceString(NL_NATURE_ID),
+		addOption(KEY_NATURE_CLASS_NAME, PDEUIMessages.BuilderTemplate_natureClass, "SampleNature", 0); //$NON-NLS-1$
+		addOption(KEY_NATURE_ID, PDEUIMessages.BuilderTemplate_natureId,
 				"sampleNature", 0); //$NON-NLS-1$
-		addOption(KEY_NATURE_NAME, PDEPlugin.getResourceString(NL_NATURE_NAME),
-				PDEPlugin.getResourceString(NL_DEFAULT_NATURE_NAME), 0);
+		addOption(KEY_NATURE_NAME, PDEUIMessages.BuilderTemplate_natureName,
+				PDEUIMessages.BuilderTemplate_defaultNatureName, 0);
 
-		actionOption = (BooleanOption) addOption(KEY_GEN_ACTION, PDEPlugin
-				.getResourceString(NL_GEN_ACTION), true, 0);
+		actionOption = (BooleanOption) addOption(KEY_GEN_ACTION, PDEUIMessages.BuilderTemplate_generateAction, true, 0);
 	}
 
 	public void addPages(Wizard wizard) {
 		WizardPage page = createPage(0, IHelpContextIds.TEMPLATE_BUILDER);
-		page.setTitle(PDEPlugin.getResourceString(NL_TITLE));
-		page.setDescription(PDEPlugin.getResourceString(NL_DESC));
+		page.setTitle(PDEUIMessages.BuilderTemplate_title);
+		page.setDescription(PDEUIMessages.BuilderTemplate_desc);
 		wizard.addPage(page);
 		markPagesAdded();
 	}
@@ -235,7 +201,7 @@ public class BuilderTemplate extends PDETemplateSection {
 			IPluginElement action = factory.createElement(objectContribution);
 			action.setName("action"); //$NON-NLS-1$
 			action.setAttribute(
-					"label", PDEPlugin.getResourceString(NL_ACTION_LABEL)); //$NON-NLS-1$
+					"label", PDEUIMessages.BuilderTemplate_actionLabel); //$NON-NLS-1$
 			action.setAttribute("class", getStringOption(KEY_PACKAGE_NAME) //$NON-NLS-1$
 					+ ".ToggleNatureAction"); //$NON-NLS-1$
 			action.setAttribute("menubarPath", "additions"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -252,7 +218,7 @@ public class BuilderTemplate extends PDETemplateSection {
 		IPluginExtension extension4 = createExtension(
 				"org.eclipse.core.resources.markers", true); //$NON-NLS-1$
 		extension4.setId("xmlProblem"); //$NON-NLS-1$
-		extension4.setName(PDEPlugin.getResourceString(NL_MARKER_NAME));
+		extension4.setName(PDEUIMessages.BuilderTemplate_markerName);
 
 		IPluginElement superElement = factory.createElement(extension4);
 		superElement.setName("super"); //$NON-NLS-1$

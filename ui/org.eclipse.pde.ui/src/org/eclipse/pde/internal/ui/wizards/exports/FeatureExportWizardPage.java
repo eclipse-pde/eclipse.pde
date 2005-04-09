@@ -28,8 +28,8 @@ public class FeatureExportWizardPage extends ExportWizardPageWithTable {
 		super(
 			selection,
 			"featureExport", //$NON-NLS-1$
-			PDEPlugin.getResourceString("ExportWizard.Feature.pageBlock")); //$NON-NLS-1$
-		setTitle(PDEPlugin.getResourceString("ExportWizard.Feature.pageTitle")); //$NON-NLS-1$
+			PDEUIMessages.ExportWizard_Feature_pageBlock); //$NON-NLS-1$
+		setTitle(PDEUIMessages.ExportWizard_Feature_pageTitle); //$NON-NLS-1$
 	}
 
 	public Object[] getListElements() {
@@ -60,6 +60,6 @@ public class FeatureExportWizardPage extends ExportWizardPageWithTable {
 	}
 	
 	protected String getJarButtonText() {
-		return PDEPlugin.getResourceString("BaseExportWizardPage.fPackageJARs"); //$NON-NLS-1$
+		return PDEUIMessages.BaseExportWizardPage_fPackageJARs; //$NON-NLS-1$
 	}
 }

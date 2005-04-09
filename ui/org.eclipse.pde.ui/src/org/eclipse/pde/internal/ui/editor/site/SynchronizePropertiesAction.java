@@ -15,17 +15,16 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.internal.core.isite.ISiteFeature;
 import org.eclipse.pde.internal.core.isite.ISiteModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public class SynchronizePropertiesAction extends Action {
-	private static final String LABEL = "SynchronizePropertiesAction.label"; //$NON-NLS-1$
-
 	private ISiteModel fModel;
 
 	private ISiteFeature fSiteFeature;
 
 	public SynchronizePropertiesAction(ISiteFeature siteFeature,
 			ISiteModel model) {
-		setText(PDEPlugin.getResourceString(LABEL));
+		setText(PDEUIMessages.SynchronizePropertiesAction_label);
 		fSiteFeature = siteFeature;
 		fModel = model;
 	}

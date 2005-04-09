@@ -25,14 +25,6 @@ public class PreferencePageTemplate extends PDETemplateSection {
 	private static final String KEY_PLUGIN_CLASS_NAME = "pluginClassName"; //$NON-NLS-1$
 	private static final String KEY_FULL_PLUGIN_CLASS_NAME = "fullPluginClassName"; //$NON-NLS-1$
 
-	private static final String NL_TITLE = "PreferencePageTemplate.title"; //$NON-NLS-1$
-	private static final String NL_DESC = "PreferencePageTemplate.desc"; //$NON-NLS-1$
-	private static final String NL_PACKAGE_NAME =
-		"PreferencePageTemplate.packageName"; //$NON-NLS-1$
-	private static final String NL_CLASS_NAME = "PreferencePageTemplate.className"; //$NON-NLS-1$
-	private static final String NL_PAGE_NAME = "PreferencePageTemplate.pageName"; //$NON-NLS-1$
-	private static final String NL_DEFAULT_PAGE_NAME =
-		"PreferencePageTemplate.defaultPageName"; //$NON-NLS-1$
 	private String mainClassName;
 	
 	public PreferencePageTemplate() {
@@ -54,18 +46,18 @@ public class PreferencePageTemplate extends PDETemplateSection {
 		// first page
 		addOption(
 			KEY_PACKAGE_NAME,
-			PDEPlugin.getResourceString(NL_PACKAGE_NAME),
+			PDEUIMessages.PreferencePageTemplate_packageName,
 			(String) null,
 			0);
 		addOption(
 			KEY_PAGE_CLASS_NAME,
-			PDEPlugin.getResourceString(NL_CLASS_NAME),
+			PDEUIMessages.PreferencePageTemplate_className,
 			"SamplePreferencePage", //$NON-NLS-1$
 			0);
 		addOption(
 			KEY_PAGE_NAME,
-			PDEPlugin.getResourceString(NL_PAGE_NAME),
-			PDEPlugin.getResourceString(NL_DEFAULT_PAGE_NAME),
+			PDEUIMessages.PreferencePageTemplate_pageName,
+			PDEUIMessages.PreferencePageTemplate_defaultPageName,
 			0);
 	}
 
@@ -144,8 +136,8 @@ public class PreferencePageTemplate extends PDETemplateSection {
 
 	public void addPages(Wizard wizard) {
 		WizardPage page = createPage(0, IHelpContextIds.TEMPLATE_PREFERENCE_PAGE);
-		page.setTitle(PDEPlugin.getResourceString(NL_TITLE));
-		page.setDescription(PDEPlugin.getResourceString(NL_DESC));
+		page.setTitle(PDEUIMessages.PreferencePageTemplate_title);
+		page.setDescription(PDEUIMessages.PreferencePageTemplate_desc);
 		wizard.addPage(page);
 		markPagesAdded();
 	}

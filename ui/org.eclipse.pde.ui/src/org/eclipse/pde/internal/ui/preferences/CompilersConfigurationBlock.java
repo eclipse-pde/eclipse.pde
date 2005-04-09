@@ -31,7 +31,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.pde.internal.PDE;
 import org.eclipse.pde.internal.builders.CompilerFlags;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -68,6 +68,23 @@ public class CompilersConfigurationBlock {
 	private Composite fSchemaPage;
 
 	private Shell fShell;
+	
+	// The size of label array must match CompilerFlag.fFlags
+	private static final String[][] fLabels = {
+			{ PDEUIMessages.compilers_p_unresolved_import,
+					PDEUIMessages.compilers_p_unresolved_ex_points,
+					PDEUIMessages.compilers_p_no_required_att,
+					PDEUIMessages.compilers_p_unknown_element,
+					PDEUIMessages.compilers_p_unknown_attribute,
+					PDEUIMessages.compilers_p_deprecated,
+					PDEUIMessages.compilers_p_unknown_class,
+					PDEUIMessages.compilers_p_unknown_resource,
+					PDEUIMessages.compilers_p_not_externalized_att },
+			{ PDEUIMessages.compilers_s_create_docs,
+					PDEUIMessages.compilers_s_doc_folder,
+					PDEUIMessages.compilers_s_open_tags },
+			{ PDEUIMessages.compilers_f_unresolved_plugins,
+					PDEUIMessages.compilers_f_unresolved_features }, {} };
 
 	/**
 	 * @param project nNot null in property page
@@ -124,16 +141,14 @@ public class CompilersConfigurationBlock {
 		};
 
 		String[] choices = new String[] {
-				PDEPlugin
-						.getResourceString("CompilersConfigurationBlock.error"), PDEPlugin.getResourceString("CompilersConfigurationBlock.warning"), PDEPlugin.getResourceString("CompilersConfigurationBlock.ignore") }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				PDEUIMessages.CompilersConfigurationBlock_error, PDEUIMessages.CompilersConfigurationBlock_warning, PDEUIMessages.CompilersConfigurationBlock_ignore }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		
 		if (project != null) { // property page
 			try {
 				if (project.hasNature(PDE.PLUGIN_NATURE)) {
 					fPluginPage = createPage(
 							container,
-							PDEPlugin
-									.getResourceString("CompilersConfigurationBlock.plugins"), CompilerFlags.PLUGIN_FLAGS, choices); //$NON-NLS-1$
+							PDEUIMessages.CompilersConfigurationBlock_plugins, CompilerFlags.PLUGIN_FLAGS, choices); //$NON-NLS-1$
 
 				}
 			} catch (CoreException ce) {
@@ -146,16 +161,13 @@ public class CompilersConfigurationBlock {
 
 			fPluginPage = createPage(
 					folder,
-					PDEPlugin
-							.getResourceString("CompilersConfigurationBlock.plugins"), CompilerFlags.PLUGIN_FLAGS, choices); //$NON-NLS-1$
+					PDEUIMessages.CompilersConfigurationBlock_plugins, CompilerFlags.PLUGIN_FLAGS, choices); //$NON-NLS-1$
 			fSchemaPage = createPage(
 					folder,
-					PDEPlugin
-							.getResourceString("CompilersConfigurationBlock.schemas"), CompilerFlags.SCHEMA_FLAGS, choices); //$NON-NLS-1$
+					PDEUIMessages.CompilersConfigurationBlock_schemas, CompilerFlags.SCHEMA_FLAGS, choices); //$NON-NLS-1$
 			fFeaturePage = createPage(
 					folder,
-					PDEPlugin
-							.getResourceString("CompilersConfigurationBlock.features"), CompilerFlags.FEATURE_FLAGS, choices); //$NON-NLS-1$
+					PDEUIMessages.CompilersConfigurationBlock_features, CompilerFlags.FEATURE_FLAGS, choices); //$NON-NLS-1$
 			// createPage(folder,
 			// PDEPlugin.getResourceString("CompilersConfigurationBlock.sites"),
 			// CompilerFlags.SITE_FLAGS, choices); //$NON-NLS-1$
@@ -178,14 +190,14 @@ public class CompilersConfigurationBlock {
 		Control control = null;
 		if (CompilerFlags.getFlagType(flagId) == CompilerFlags.MARKER) {
 			Label label = new Label(page, SWT.NULL);
-			label.setText(PDEPlugin.getResourceString(flagId));
+			label.setText(getFlagLabel(flagId));
 			Combo combo = new Combo(page, SWT.READ_ONLY);
 			combo.setItems(choices);
 			combo.select(CompilerFlags.getFlag(project, flagId));
 			control = combo;
 		} else if (CompilerFlags.getFlagType(flagId) == CompilerFlags.BOOLEAN) {
 			Button button = new Button(page, SWT.CHECK);
-			button.setText(PDEPlugin.getResourceString(flagId));
+			button.setText(getFlagLabel(flagId));
 			button.setSelection(CompilerFlags.getBoolean(project, flagId));
 			GridData gd = new GridData();
 			gd.horizontalSpan = 2;
@@ -193,7 +205,7 @@ public class CompilersConfigurationBlock {
 			control = button;
 		} else if (CompilerFlags.getFlagType(flagId) == CompilerFlags.STRING) {
 			Label label = new Label(page, SWT.NULL);
-			label.setText(PDEPlugin.getResourceString(flagId));
+			label.setText(getFlagLabel(flagId));
 			Text text = new Text(page, SWT.SINGLE | SWT.BORDER);
 			text.setText(CompilerFlags.getString(project, flagId));
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -203,8 +215,7 @@ public class CompilersConfigurationBlock {
 			new Label(page, SWT.NULL).setLayoutData(new GridData());
 			GridData sgd = new GridData();
 			Label slabel = new Label(page, SWT.NULL);
-			slabel.setText(PDEPlugin
-					.getResourceString("CompilersConfigurationBlock.label")); //$NON-NLS-1$
+			slabel.setText(PDEUIMessages.CompilersConfigurationBlock_label); //$NON-NLS-1$
 			sgd.horizontalSpan = 2;
 			slabel.setLayoutData(sgd);
 
@@ -212,6 +223,18 @@ public class CompilersConfigurationBlock {
 		}
 		control.setData(flagId);
 		return control;
+	}
+	
+	private String getFlagLabel(String flagId) {
+		for (int i = 0; i < fLabels.length; i++) {
+			String[] flags = CompilerFlags.getFlags(i);
+			for (int j = 0; j < flags.length; j++) {
+				if (flags[j].equals(flagId)) {
+					return fLabels[i][j];
+				}
+			}
+		}
+		return ""; //$NON-NLS-1$
 	}
 
 	private Composite createPage(Composite parent, String name, int index,
@@ -221,12 +244,12 @@ public class CompilersConfigurationBlock {
 		layout.numColumns = 2;
 		group.setLayout(layout);
 
-		String textKey;
+		String labelText;
 		if (index == CompilerFlags.SCHEMA_FLAGS)
-			textKey = "CompilersConfigurationBlock.altlabel"; //$NON-NLS-1$
+			labelText = PDEUIMessages.CompilersConfigurationBlock_altlabel; //$NON-NLS-1$
 		else
-			textKey = "CompilersConfigurationBlock.label"; //$NON-NLS-1$
-		group.setText(PDEPlugin.getResourceString(textKey));
+			labelText = PDEUIMessages.CompilersConfigurationBlock_label; //$NON-NLS-1$
+		group.setText(labelText);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		gd.grabExcessHorizontalSpace = true;
@@ -251,12 +274,12 @@ public class CompilersConfigurationBlock {
 		tab.setControl(page);
 
 		Label label = new Label(page, SWT.NULL);
-		String textKey;
+		String labelText;
 		if (index == CompilerFlags.SCHEMA_FLAGS)
-			textKey = "CompilersConfigurationBlock.altlabel"; //$NON-NLS-1$
+			labelText = PDEUIMessages.CompilersConfigurationBlock_altlabel; //$NON-NLS-1$
 		else
-			textKey = "CompilersConfigurationBlock.label"; //$NON-NLS-1$
-		label.setText(PDEPlugin.getResourceString(textKey));
+			labelText = PDEUIMessages.CompilersConfigurationBlock_label; //$NON-NLS-1$
+		label.setText(labelText);
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -270,8 +293,7 @@ public class CompilersConfigurationBlock {
 	}
 
 	private void doFullBuild() {
-		Job buildJob = new Job(PDEPlugin
-				.getResourceString("CompilersConfigurationBlock.building")) { //$NON-NLS-1$
+		Job buildJob = new Job(PDEUIMessages.CompilersConfigurationBlock_building) { //$NON-NLS-1$
 			/*
 			 * (non-Javadoc)
 			 * 
@@ -409,15 +431,11 @@ public class CompilersConfigurationBlock {
 			String title;
 			String message;
 			if (project != null) {
-				title = PDEPlugin
-						.getResourceString("CompilersConfigurationBlock.rebuild.title"); //$NON-NLS-1$
-				message = PDEPlugin
-						.getResourceString("CompilersConfigurationBlock.rebuild.message"); //$NON-NLS-1$
+				title = PDEUIMessages.CompilersConfigurationBlock_rebuild_title; //$NON-NLS-1$
+				message = PDEUIMessages.CompilersConfigurationBlock_rebuild_message; //$NON-NLS-1$
 			} else {
-				title = PDEPlugin
-						.getResourceString("CompilersConfigurationBlock.rebuild.many.title"); //$NON-NLS-1$
-				message = PDEPlugin
-						.getResourceString("CompilersConfigurationBlock.rebuild.many.message"); //$NON-NLS-1$
+				title = PDEUIMessages.CompilersConfigurationBlock_rebuild_many_title; //$NON-NLS-1$
+				message = PDEUIMessages.CompilersConfigurationBlock_rebuild_many_message; //$NON-NLS-1$
 
 			}
 

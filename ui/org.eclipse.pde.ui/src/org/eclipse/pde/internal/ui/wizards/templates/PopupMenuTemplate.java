@@ -26,24 +26,6 @@ public class PopupMenuTemplate extends PDETemplateSection {
 	public static final String KEY_ACTION_CLASS = "actionClass"; //$NON-NLS-1$
 	public static final String KEY_SELECTION = "selection"; //$NON-NLS-1$
 
-	private static final String NL_TITLE = "PopupMenuTemplate.title"; //$NON-NLS-1$
-	private static final String NL_DESC = "PopupMenuTemplate.desc"; //$NON-NLS-1$
-	private static final String NL_TARGET_CLASS = "PopupMenuTemplate.targetClass"; //$NON-NLS-1$
-	private static final String NL_NAME_FILTER = "PopupMenuTemplate.nameFilter"; //$NON-NLS-1$
-	private static final String NL_SUBMENU_NAME = "PopupMenuTemplate.submenuName"; //$NON-NLS-1$
-	private static final String NL_DEFAULT_SUBMENU_NAME =
-		"PopupMenuTemplate.defaultSubmenuName"; //$NON-NLS-1$
-	private static final String NL_ACTION_LABEL = "PopupMenuTemplate.actionLabel"; //$NON-NLS-1$
-	private static final String NL_DEFAULT_ACTION_NAME =
-		"PopupMenuTemplate.defaultActionName"; //$NON-NLS-1$
-	private static final String NL_PACKAGE_NAME = "PopupMenuTemplate.packageName"; //$NON-NLS-1$
-	private static final String NL_ACTION_CLASS = "PopupMenuTemplate.actionClass"; //$NON-NLS-1$
-	private static final String NL_ENABLED_FOR = "PopupMenuTemplate.enabledFor"; //$NON-NLS-1$
-	private static final String NL_SINGLE_SELECTION =
-		"PopupMenuTemplate.singleSelection"; //$NON-NLS-1$
-	private static final String NL_MULTIPLE_SELECTION =
-		"PopupMenuTemplate.multipleSelection"; //$NON-NLS-1$
-
 	/**
 	 * Constructor for PropertyPageTemplate.
 	 */
@@ -54,8 +36,8 @@ public class PopupMenuTemplate extends PDETemplateSection {
 
 	public void addPages(Wizard wizard) {
 		WizardPage page = createPage(0, IHelpContextIds.TEMPLATE_POPUP_MENU);
-		page.setTitle(PDEPlugin.getResourceString(NL_TITLE));
-		page.setDescription(PDEPlugin.getResourceString(NL_DESC));
+		page.setTitle(PDEUIMessages.PopupMenuTemplate_title);
+		page.setDescription(PDEUIMessages.PopupMenuTemplate_desc);
 		wizard.addPage(page);
 		markPagesAdded();
 	}
@@ -63,41 +45,41 @@ public class PopupMenuTemplate extends PDETemplateSection {
 	private void createOptions() {
 		addOption(
 			KEY_TARGET_OBJECT,
-			PDEPlugin.getResourceString(NL_TARGET_CLASS),
+			PDEUIMessages.PopupMenuTemplate_targetClass,
 			"org.eclipse.core.resources.IFile", //$NON-NLS-1$
 			0);
 		addOption(
 			KEY_NAME_FILTER,
-			PDEPlugin.getResourceString(NL_NAME_FILTER),
+			PDEUIMessages.PopupMenuTemplate_nameFilter,
 			"plugin.xml", //$NON-NLS-1$
 			0);
 		addOption(
 			KEY_SUBMENU_LABEL,
-			PDEPlugin.getResourceString(NL_SUBMENU_NAME),
-			PDEPlugin.getResourceString(NL_DEFAULT_SUBMENU_NAME),
+			PDEUIMessages.PopupMenuTemplate_submenuName,
+			PDEUIMessages.PopupMenuTemplate_defaultSubmenuName,
 			0);
 		addOption(
 			KEY_ACTION_LABEL,
-			PDEPlugin.getResourceString(NL_ACTION_LABEL),
-			PDEPlugin.getResourceString(NL_DEFAULT_ACTION_NAME),
+			PDEUIMessages.PopupMenuTemplate_actionLabel,
+			PDEUIMessages.PopupMenuTemplate_defaultActionName,
 			0);
 		addOption(
 			KEY_PACKAGE_NAME,
-			PDEPlugin.getResourceString(NL_PACKAGE_NAME),
+			PDEUIMessages.PopupMenuTemplate_packageName,
 			(String) null,
 			0);
 		addOption(
 			KEY_ACTION_CLASS,
-			PDEPlugin.getResourceString(NL_ACTION_CLASS),
-			PDEPlugin.getResourceString("PopupMenuTemplate.newAction"), //$NON-NLS-1$
+			PDEUIMessages.PopupMenuTemplate_actionClass,
+			PDEUIMessages.PopupMenuTemplate_newAction, //$NON-NLS-1$
 			0);
 		addOption(
 			KEY_SELECTION,
-			PDEPlugin.getResourceString(NL_ENABLED_FOR),
+			PDEUIMessages.PopupMenuTemplate_enabledFor,
 			new String[][] {
-				{ "singleSelection", PDEPlugin.getResourceString(NL_SINGLE_SELECTION)}, //$NON-NLS-1$
+				{ "singleSelection", PDEUIMessages.PopupMenuTemplate_singleSelection}, //$NON-NLS-1$
 				{
-				"multipleSelection", PDEPlugin.getResourceString(NL_MULTIPLE_SELECTION) //$NON-NLS-1$
+				"multipleSelection", PDEUIMessages.PopupMenuTemplate_multipleSelection
 				}
 		}, "singleSelection", 0); //$NON-NLS-1$
 	}

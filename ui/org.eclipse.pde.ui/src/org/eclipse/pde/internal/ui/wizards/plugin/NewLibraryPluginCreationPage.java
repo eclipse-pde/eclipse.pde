@@ -19,7 +19,7 @@ import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -83,10 +83,8 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 	public NewLibraryPluginCreationPage(String pageName, AbstractFieldData data) {
 		super(pageName);
 		fData = data;
-		setTitle(PDEPlugin
-				.getResourceString("NewLibraryPluginCreationPage.title")); //$NON-NLS-1$
-		setDescription(PDEPlugin
-				.getResourceString("NewLibraryPluginCreationPage.desc")); //$NON-NLS-1$
+		setTitle(PDEUIMessages.NewLibraryPluginCreationPage_title); //$NON-NLS-1$
+		setDescription(PDEUIMessages.NewLibraryPluginCreationPage_desc); //$NON-NLS-1$
 	}
 
 	protected String computeId() {
@@ -112,16 +110,14 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 
 	private void createFormatGroup(Composite container) {
 		Group group = new Group(container, SWT.NONE);
-		group.setText(PDEPlugin
-				.getResourceString("NewLibraryPluginCreationPage.pformat")); //$NON-NLS-1$			
+		group.setText(PDEUIMessages.NewLibraryPluginCreationPage_pformat); //$NON-NLS-1$			
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		group.setLayout(layout);
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		Label label = new Label(group, SWT.NONE);
-		label.setText(PDEPlugin
-				.getResourceString("NewLibraryPluginCreationPage.pTarget")); //$NON-NLS-1$
+		label.setText(PDEUIMessages.NewLibraryPluginCreationPage_pTarget); //$NON-NLS-1$
 		fTargetCombo = new Combo(group, SWT.READ_ONLY | SWT.SINGLE);
 		fTargetCombo.setItems(new String[] { ICoreConstants.TARGET31,
 				ICoreConstants.TARGET30, ICoreConstants.TARGET21 });
@@ -135,8 +131,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 			}
 		});
 		fBundleCheck = new Button(group, SWT.CHECK);
-		fBundleCheck.setText(PDEPlugin
-				.getResourceString("NewLibraryPluginCreationPage.bundle")); //$NON-NLS-1$
+		fBundleCheck.setText(PDEUIMessages.NewLibraryPluginCreationPage_bundle); //$NON-NLS-1$
 		updateBundleCheck();
 	}
 
@@ -144,30 +139,25 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		Group propertiesGroup = new Group(container, SWT.NONE);
 		propertiesGroup.setLayout(new GridLayout(2, false));
 		propertiesGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		propertiesGroup.setText(PDEPlugin
-				.getResourceString("NewLibraryPluginCreationPage.pGroup")); //$NON-NLS-1$
+		propertiesGroup.setText(PDEUIMessages.NewLibraryPluginCreationPage_pGroup); //$NON-NLS-1$
 
 		Label label = new Label(propertiesGroup, SWT.NONE);
-		label.setText(PDEPlugin
-				.getResourceString("NewLibraryPluginCreationPage.pid")); //$NON-NLS-1$
+		label.setText(PDEUIMessages.NewLibraryPluginCreationPage_pid); //$NON-NLS-1$
 		fIdText = createText(propertiesGroup, fPropertiesListener);
 
 		label = new Label(propertiesGroup, SWT.NONE);
-		label.setText(PDEPlugin
-				.getResourceString("NewLibraryPluginCreationPage.pversion")); //$NON-NLS-1$
+		label.setText(PDEUIMessages.NewLibraryPluginCreationPage_pversion); //$NON-NLS-1$
 		fVersionText = createText(propertiesGroup, fPropertiesListener);
 		fPropertiesListener.setBlocked(true);
 		fVersionText.setText("1.0.0"); //$NON-NLS-1$
 		fPropertiesListener.setBlocked(false);
 
 		label = new Label(propertiesGroup, SWT.NONE);
-		label.setText(PDEPlugin
-				.getResourceString("NewLibraryPluginCreationPage.pname")); //$NON-NLS-1$
+		label.setText(PDEUIMessages.NewLibraryPluginCreationPage_pname); //$NON-NLS-1$
 		fNameText = createText(propertiesGroup, fPropertiesListener);
 
 		label = new Label(propertiesGroup, SWT.NONE);
-		label.setText(PDEPlugin
-				.getResourceString("NewLibraryPluginCreationPage.pprovider")); //$NON-NLS-1$
+		label.setText(PDEUIMessages.NewLibraryPluginCreationPage_pprovider); //$NON-NLS-1$
 		fProviderText = createText(propertiesGroup, fPropertiesListener);
 
 	}
@@ -184,8 +174,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 	}
 
 	protected String getNameFieldQualifier() {
-		return PDEPlugin
-				.getResourceString("NewLibraryPluginCreationPage.plugin"); //$NON-NLS-1$
+		return PDEUIMessages.NewLibraryPluginCreationPage_plugin; //$NON-NLS-1$
 	}
 
 	/*
@@ -261,12 +250,10 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 	private String validateId() {
 		String id = fIdText.getText().trim();
 		if (id.length() == 0)
-			return PDEPlugin
-					.getResourceString("NewLibraryPluginCreationPage.noid"); //$NON-NLS-1$
+			return PDEUIMessages.NewLibraryPluginCreationPage_noid; //$NON-NLS-1$
 
 		if (!IdUtil.isValidPluginId(id)) { //$NON-NLS-1$
-			return PDEPlugin
-					.getResourceString("NewLibraryPluginCreationPage.invalidId"); //$NON-NLS-1$
+			return PDEUIMessages.NewLibraryPluginCreationPage_invalidId; //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -295,14 +282,11 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 			return errorMessage;
 
 		if (fVersionText.getText().trim().length() == 0) {
-			errorMessage = PDEPlugin
-					.getResourceString("NewLibraryPluginCreationPage.noversion"); //$NON-NLS-1$
+			errorMessage = PDEUIMessages.NewLibraryPluginCreationPage_noversion; //$NON-NLS-1$
 		} else if (!isVersionValid(fVersionText.getText().trim())) {
-			errorMessage = PDEPlugin
-					.getResourceString("ContentPage.badversion"); //$NON-NLS-1$
+			errorMessage = PDEUIMessages.ContentPage_badversion; //$NON-NLS-1$
 		} else if (fNameText.getText().trim().length() == 0) {
-			errorMessage = PDEPlugin
-					.getResourceString("NewLibraryPluginCreationPage.noname"); //$NON-NLS-1$
+			errorMessage = PDEUIMessages.NewLibraryPluginCreationPage_noname; //$NON-NLS-1$
 		}
 
 		if (errorMessage != null)

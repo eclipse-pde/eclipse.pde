@@ -31,13 +31,13 @@ public class NewSiteProjectWizard extends NewWizard implements IExecutableExtens
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWSITEPRJ_WIZ);
 		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
 		setNeedsProgressMonitor(true);
-		setWindowTitle(PDEPlugin.getResourceString("NewSiteWizard.wtitle")); //$NON-NLS-1$
+		setWindowTitle(PDEUIMessages.NewSiteWizard_wtitle); //$NON-NLS-1$
 	}
 	
 	public void addPages() {
 		fMainPage = new NewSiteProjectCreationPage("main"); //$NON-NLS-1$
-		fMainPage.setTitle(PDEPlugin.getResourceString("NewSiteWizard.MainPage.title")); //$NON-NLS-1$
-		fMainPage.setDescription(PDEPlugin.getResourceString("NewSiteWizard.MainPage.desc")); //$NON-NLS-1$
+		fMainPage.setTitle(PDEUIMessages.NewSiteWizard_MainPage_title); //$NON-NLS-1$
+		fMainPage.setDescription(PDEUIMessages.NewSiteWizard_MainPage_desc); //$NON-NLS-1$
 		String pname = getDefaultValue(DEF_PROJECT_NAME);
 		if (pname!=null)
 			fMainPage.setInitialProjectName(pname);

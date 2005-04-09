@@ -23,9 +23,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.*;
 
 public class PluginListPage extends BasePluginListPage {
-	public static final String PAGE_TITLE = "NewFeatureWizard.PlugPage.title"; //$NON-NLS-1$
-	public static final String PAGE_DESC = "NewFeatureWizard.PlugPage.desc"; //$NON-NLS-1$
-
 	class PluginContentProvider
 		extends DefaultContentProvider
 		implements IStructuredContentProvider {
@@ -36,8 +33,8 @@ public class PluginListPage extends BasePluginListPage {
 
 	public PluginListPage() {
 		super("pluginListPage"); //$NON-NLS-1$
-		setTitle(PDEPlugin.getResourceString(PAGE_TITLE));
-		setDescription(PDEPlugin.getResourceString(PAGE_DESC));
+		setTitle(PDEUIMessages.NewFeatureWizard_PlugPage_title);
+		setDescription(PDEUIMessages.NewFeatureWizard_PlugPage_desc);
 	}
 
 	public void createControl(Composite parent) {

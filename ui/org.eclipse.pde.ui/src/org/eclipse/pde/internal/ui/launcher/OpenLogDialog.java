@@ -48,7 +48,7 @@ public final class OpenLogDialog extends Dialog {
      */
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
-        newShell.setText(PDEPlugin.getResourceString("OpenLogDialog.title")); //$NON-NLS-1$
+        newShell.setText(PDEUIMessages.OpenLogDialog_title); //$NON-NLS-1$
         readConfiguration();
     }
 
@@ -159,12 +159,11 @@ public final class OpenLogDialog extends Dialog {
                     InterruptedException {
                 monitor
                         .beginTask(
-                                PDEPlugin.getResourceString("OpenLogDialog.message"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
+                                PDEUIMessages.OpenLogDialog_message, IProgressMonitor.UNKNOWN); //$NON-NLS-1$
                 try {
                     readLargeFile(writer);
                 } catch (IOException e) {
-                    writer.println(PDEPlugin
-                            .getResourceString("OpenLogDialog.cannotDisplay")); //$NON-NLS-1$
+                    writer.println(PDEUIMessages.OpenLogDialog_cannotDisplay); //$NON-NLS-1$
                 }
             }
         };
@@ -182,12 +181,11 @@ public final class OpenLogDialog extends Dialog {
                     InterruptedException {
                 monitor
                         .beginTask(
-                                PDEPlugin.getResourceString("OpenLogDialog.message"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
+                                PDEUIMessages.OpenLogDialog_message, IProgressMonitor.UNKNOWN); //$NON-NLS-1$
                 try {
                     readFile(writer);
                 } catch (IOException e) {
-                    writer.println(PDEPlugin
-                            .getResourceString("OpenLogDialog.cannotDisplay")); //$NON-NLS-1$
+                    writer.println(PDEUIMessages.OpenLogDialog_cannotDisplay); //$NON-NLS-1$
                 }
             }
         };

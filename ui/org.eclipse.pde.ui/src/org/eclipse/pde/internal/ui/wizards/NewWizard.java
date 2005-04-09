@@ -12,18 +12,17 @@ package org.eclipse.pde.internal.ui.wizards;
 import java.util.Dictionary;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.*;
 
 public class NewWizard extends Wizard implements INewWizard, IDefaultValueConsumer {
 	private org.eclipse.ui.IWorkbench workbench;
 	private org.eclipse.jface.viewers.IStructuredSelection selection;
-	private static final String KEY_WTITLE = "NewWizard.wtitle"; //$NON-NLS-1$
 	private Dictionary defaultValues;
 	
 	public NewWizard() {
 		super();
-		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
+		setWindowTitle(PDEUIMessages.NewWizard_wtitle);
 	}
 	public org.eclipse.jface.viewers.IStructuredSelection getSelection() {
 		return selection;

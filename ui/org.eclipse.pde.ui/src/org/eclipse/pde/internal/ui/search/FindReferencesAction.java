@@ -22,7 +22,7 @@ public class FindReferencesAction extends BaseSearchAction {
 	private Object fSelectedObject;
 	
 	public FindReferencesAction(Object object) {
-		super(PDEPlugin.getResourceString(KEY_REFERENCES));
+		super(PDEUIMessages.SearchAction_references);
 		fSelectedObject = object;
 	}
 	

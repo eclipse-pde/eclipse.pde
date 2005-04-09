@@ -14,6 +14,7 @@ package org.eclipse.pde.internal.ui.editor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 /**
  * This action toggles whether the Outline page links its selection to the
@@ -26,15 +27,13 @@ public class ToggleLinkWithEditorAction extends Action {
 	PDEFormEditor fEditor;
 
 	public ToggleLinkWithEditorAction(PDEFormEditor editor) {
-		super(PDEPlugin.getResourceString("ToggleLinkWithEditorAction.label")); //$NON-NLS-1$
+		super(PDEUIMessages.ToggleLinkWithEditorAction_label); //$NON-NLS-1$
 		boolean isLinkingEnabled = PDEPlugin.getDefault().getPreferenceStore()
 				.getBoolean("ToggleLinkWithEditorAction.isChecked"); //$NON-NLS-1$
 		setChecked(isLinkingEnabled);
 		fEditor = editor;
-		setToolTipText(PDEPlugin
-				.getResourceString("ToggleLinkWithEditorAction.toolTip")); //$NON-NLS-1$
-		setDescription(PDEPlugin
-				.getResourceString("ToggleLinkWithEditorAction.description")); //$NON-NLS-1$
+		setToolTipText(PDEUIMessages.ToggleLinkWithEditorAction_toolTip); //$NON-NLS-1$
+		setDescription(PDEUIMessages.ToggleLinkWithEditorAction_description); //$NON-NLS-1$
 		setImageDescriptor(PDEPluginImages.DESC_LINK_WITH_EDITOR);
 		setDisabledImageDescriptor(PDEPluginImages.DESC_LINK_WITH_EDITOR_DISABLED);
 	}

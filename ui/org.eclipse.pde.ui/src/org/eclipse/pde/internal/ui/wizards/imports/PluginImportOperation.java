@@ -18,12 +18,14 @@ import java.util.zip.ZipFile;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.PDE;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.team.core.*;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.*;
@@ -65,14 +67,14 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			monitor = new NullProgressMonitor();
 		}
 		monitor.beginTask(
-			PDEPlugin.getResourceString("ImportWizard.operation.creating"), //$NON-NLS-1$
+			PDEUIMessages.ImportWizard_operation_creating, //$NON-NLS-1$
 			fModels.length);
 		try {
 			MultiStatus multiStatus =
 				new MultiStatus(
 					PDEPlugin.getPluginId(),
 					IStatus.OK,
-					PDEPlugin.getResourceString("ImportWizard.operation.multiProblem"), //$NON-NLS-1$
+					PDEUIMessages.ImportWizard_operation_multiProblem, //$NON-NLS-1$
 					null);
 
 			for (int i = 0; i < fModels.length; i++) {
@@ -98,7 +100,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 
 		String id = model.getPluginBase().getId();
 		String task =
-			PDEPlugin.getFormattedMessage("ImportWizard.operation.creating2", id); //$NON-NLS-1$
+			NLS.bind(PDEUIMessages.ImportWizard_operation_creating2, id); //$NON-NLS-1$
 		monitor.beginTask(task, 6);
 		try {
 			fBuildModel = null;
@@ -251,7 +253,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		
 		File[] items = new File(model.getInstallLocation()).listFiles();
 		if (items != null) {
-			monitor.beginTask(PDEPlugin.getResourceString("PluginImportOperation.linking"), items.length); //$NON-NLS-1$
+			monitor.beginTask(PDEUIMessages.PluginImportOperation_linking, items.length); //$NON-NLS-1$
 			for (int i = 0; i < items.length; i++) {
 				File sourceFile = items[i];
 				if (sourceFile.isDirectory()) {
@@ -423,7 +425,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
 		IPluginLibrary[] libraries = plugin.getLibraries();
 		monitor.beginTask(
-			PDEPlugin.getResourceString("ImportWizard.operation.copyingSource"), //$NON-NLS-1$
+			PDEUIMessages.ImportWizard_operation_copyingSource, //$NON-NLS-1$
 			libraries.length);
 		for (int i = 0; i < libraries.length; i++) {
 			IPath libPath = new Path(libraries[i].getName());

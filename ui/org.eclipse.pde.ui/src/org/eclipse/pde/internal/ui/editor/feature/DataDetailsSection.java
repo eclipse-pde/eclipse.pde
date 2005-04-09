@@ -18,6 +18,7 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureData;
 import org.eclipse.pde.internal.core.ifeature.IFeatureEntry;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
@@ -34,14 +35,6 @@ import org.eclipse.ui.forms.widgets.Section;
 
 public class DataDetailsSection extends PDESection implements IFormPart,
 		IPartSelectionListener {
-	private static final String SECTION_DESC = "SiteEditor.DataDetailsSection.desc"; //$NON-NLS-1$
-
-	private static final String SECTION_DOWNLOAD_SIZE = "SiteEditor.DataDetailsSection.downloadSize"; //$NON-NLS-1$
-
-	private static final String SECTION_TITLE = "SiteEditor.DataDetailsSection.title"; //$NON-NLS-1$
-
-	private static final String SECTION_INSTALL_SIZE = "SiteEditor.DataDetailsSection.installSize"; //$NON-NLS-1$
-
 	protected IFeatureEntry fInput;
 
 	private FormEntry fdownloadSizeText;
@@ -49,8 +42,8 @@ public class DataDetailsSection extends PDESection implements IFormPart,
 	private FormEntry fInstallSizeText;
 
 	public DataDetailsSection(PDEFormPage page, Composite parent) {
-		this(page, parent, PDEPlugin.getResourceString(SECTION_TITLE),
-				PDEPlugin.getResourceString(SECTION_DESC), SWT.NULL);
+		this(page, parent, PDEUIMessages.SiteEditor_DataDetailsSection_title,
+				PDEUIMessages.SiteEditor_DataDetailsSection_desc, SWT.NULL);
 	}
 
 	public DataDetailsSection(PDEFormPage page, Composite parent, String title,
@@ -81,8 +74,7 @@ public class DataDetailsSection extends PDESection implements IFormPart,
 		layout.horizontalSpacing = 6;
 		container.setLayout(layout);
 
-		fdownloadSizeText = new FormEntry(container, toolkit, PDEPlugin
-				.getResourceString(SECTION_DOWNLOAD_SIZE), null, false);
+		fdownloadSizeText = new FormEntry(container, toolkit, PDEUIMessages.SiteEditor_DataDetailsSection_downloadSize, null, false);
 		fdownloadSizeText.setFormEntryListener(new FormEntryAdapter(this) {
 
 			public void textValueChanged(FormEntry text) {
@@ -97,8 +89,7 @@ public class DataDetailsSection extends PDESection implements IFormPart,
 		limitTextWidth(fdownloadSizeText);
 		fdownloadSizeText.setEditable(isEditable());
 
-		fInstallSizeText = new FormEntry(container, toolkit, PDEPlugin
-				.getResourceString(SECTION_INSTALL_SIZE), null, false);
+		fInstallSizeText = new FormEntry(container, toolkit, PDEUIMessages.SiteEditor_DataDetailsSection_installSize, null, false);
 		fInstallSizeText.setFormEntryListener(new FormEntryAdapter(this) {
 
 			public void textValueChanged(FormEntry text) {

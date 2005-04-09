@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -29,6 +30,7 @@ import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.IPreferenceConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.plugin.LoopDialog;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
@@ -90,12 +92,9 @@ public class DependenciesView extends PageBookView implements
 
 		public ShowLoopsAction() {
 			super("", AS_PUSH_BUTTON); //$NON-NLS-1$
-			setText(PDEPlugin
-					.getResourceString("DependenciesView.ShowLoopsAction.label")); //$NON-NLS-1$
-			setDescription(PDEPlugin
-					.getResourceString("DependenciesView.ShowLoopsAction.description")); //$NON-NLS-1$
-			setToolTipText(PDEPlugin
-					.getResourceString("DependenciesView.ShowLoopsAction.tooltip")); //$NON-NLS-1$
+			setText(PDEUIMessages.DependenciesView_ShowLoopsAction_label); //$NON-NLS-1$
+			setDescription(PDEUIMessages.DependenciesView_ShowLoopsAction_description); //$NON-NLS-1$
+			setToolTipText(PDEUIMessages.DependenciesView_ShowLoopsAction_tooltip); //$NON-NLS-1$
 			setImageDescriptor(PDEPluginImages.DESC_DEP_LOOP);
 			setDisabledImageDescriptor(PDEPluginImages.DESC_DEP_LOOP_DISABLED);
 			setEnabled(false);
@@ -115,12 +114,9 @@ public class DependenciesView extends PageBookView implements
 
 		public ShowCalleesAction() {
 			super("", AS_RADIO_BUTTON); //$NON-NLS-1$
-			setText(PDEPlugin
-					.getResourceString("DependenciesView.ShowCalleesAction.label")); //$NON-NLS-1$
-			setDescription(PDEPlugin
-					.getResourceString("DependenciesView.ShowCalleesAction.description")); //$NON-NLS-1$
-			setToolTipText(PDEPlugin
-					.getResourceString("DependenciesView.ShowCalleesAction.tooltip")); //$NON-NLS-1$
+			setText(PDEUIMessages.DependenciesView_ShowCalleesAction_label); //$NON-NLS-1$
+			setDescription(PDEUIMessages.DependenciesView_ShowCalleesAction_description); //$NON-NLS-1$
+			setToolTipText(PDEUIMessages.DependenciesView_ShowCalleesAction_tooltip); //$NON-NLS-1$
 			setImageDescriptor(PDEPluginImages.DESC_CALLEES);
 			setDisabledImageDescriptor(PDEPluginImages.DESC_CALLEES_DISABLED);
 		}
@@ -139,12 +135,9 @@ public class DependenciesView extends PageBookView implements
 	class ShowCallersAction extends Action {
 		public ShowCallersAction() {
 			super("", AS_RADIO_BUTTON); //$NON-NLS-1$
-			setText(PDEPlugin
-					.getResourceString("DependenciesView.ShowCallersAction.label")); //$NON-NLS-1$
-			setDescription(PDEPlugin
-					.getResourceString("DependenciesView.ShowCallersAction.description")); //$NON-NLS-1$
-			setToolTipText(PDEPlugin
-					.getResourceString("DependenciesView.ShowCallersAction.tooltip")); //$NON-NLS-1$
+			setText(PDEUIMessages.DependenciesView_ShowCallersAction_label); //$NON-NLS-1$
+			setDescription(PDEUIMessages.DependenciesView_ShowCallersAction_description); //$NON-NLS-1$
+			setToolTipText(PDEUIMessages.DependenciesView_ShowCallersAction_tooltip); //$NON-NLS-1$
 			setImageDescriptor(PDEPluginImages.DESC_CALLERS);
 			setDisabledImageDescriptor(PDEPluginImages.DESC_CALLERS_DISABLED);
 		}
@@ -163,12 +156,9 @@ public class DependenciesView extends PageBookView implements
 	class ShowListAction extends Action {
 		public ShowListAction() {
 			super("", AS_RADIO_BUTTON); //$NON-NLS-1$
-			setText(PDEPlugin
-					.getResourceString("DependenciesView.ShowListAction.label")); //$NON-NLS-1$
-			setDescription(PDEPlugin
-					.getResourceString("DependenciesView.ShowListAction.description")); //$NON-NLS-1$
-			setToolTipText(PDEPlugin
-					.getResourceString("DependenciesView.ShowListAction.tooltip")); //$NON-NLS-1$
+			setText(PDEUIMessages.DependenciesView_ShowListAction_label); //$NON-NLS-1$
+			setDescription(PDEUIMessages.DependenciesView_ShowListAction_description); //$NON-NLS-1$
+			setToolTipText(PDEUIMessages.DependenciesView_ShowListAction_tooltip); //$NON-NLS-1$
 			setImageDescriptor(PDEPluginImages.DESC_FLAT_LAYOUT);
 			setDisabledImageDescriptor(PDEPluginImages.DESC_FLAT_LAYOUT_DISABLED);
 		}
@@ -188,12 +178,9 @@ public class DependenciesView extends PageBookView implements
 
 		public ShowTreeAction() {
 			super("", AS_RADIO_BUTTON); //$NON-NLS-1$
-			setText(PDEPlugin
-					.getResourceString("DependenciesView.ShowTreeAction.label")); //$NON-NLS-1$
-			setDescription(PDEPlugin
-					.getResourceString("DependenciesView.ShowTreeAction.description")); //$NON-NLS-1$
-			setToolTipText(PDEPlugin
-					.getResourceString("DependenciesView.ShowTreeAction.tooltip")); //$NON-NLS-1$
+			setText(PDEUIMessages.DependenciesView_ShowTreeAction_label); //$NON-NLS-1$
+			setDescription(PDEUIMessages.DependenciesView_ShowTreeAction_description); //$NON-NLS-1$
+			setToolTipText(PDEUIMessages.DependenciesView_ShowTreeAction_tooltip); //$NON-NLS-1$
 			setImageDescriptor(PDEPluginImages.DESC_HIERARCHICAL_LAYOUT);
 			setDisabledImageDescriptor(PDEPluginImages.DESC_HIERARCHICAL_LAYOUT_DISABLED);
 		}
@@ -555,21 +542,16 @@ public class DependenciesView extends PageBookView implements
 					newInput);
 			String title;
 			if (getCurrentContributingPart() == PART_CALLEES_TREE) {
-				title = PDEPlugin.getFormattedMessage(
-						"DependenciesView.callees.tree.title", name); //$NON-NLS-1$
+				title = NLS.bind(PDEUIMessages.DependenciesView_callees_tree_title, name); //$NON-NLS-1$
 			} else if (getCurrentContributingPart() == PART_CALLEES_LIST) {
-				title = PDEPlugin.getFormattedMessage(
-						"DependenciesView.callees.list.title", name); //$NON-NLS-1$
+				title = NLS.bind(PDEUIMessages.DependenciesView_callees_list_title, name); //$NON-NLS-1$
 			} else if (getCurrentContributingPart() == PART_CALLERS_TREE) {
-				title = PDEPlugin.getFormattedMessage(
-						"DependenciesView.callers.tree.title", name); //$NON-NLS-1$
+				title = NLS.bind(PDEUIMessages.DependenciesView_callers_tree_title, name); //$NON-NLS-1$
 			} else {
-				title = PDEPlugin.getFormattedMessage(
-						"DependenciesView.callers.list.title", name); //$NON-NLS-1$
+				title = NLS.bind(PDEUIMessages.DependenciesView_callers_list_title, name); //$NON-NLS-1$
 			}
 			if(fLoops != NO_LOOPS){
-				title = title + " " + PDEPlugin.getResourceString( //$NON-NLS-1$
-						"DependenciesView.cycles.title"); //$NON-NLS-1$
+				title = title + " " + PDEUIMessages.DependenciesView_cycles_title; //$NON-NLS-1$
 			}
 			setContentDescription(title); //$NON-NLS-1$
 		}

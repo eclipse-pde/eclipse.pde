@@ -14,6 +14,7 @@ import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.isite.ISite;
 import org.eclipse.pde.internal.core.isite.ISiteModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
@@ -38,12 +39,10 @@ public class MirrorsSection extends PDESection {
 		super(page, parent, Section.DESCRIPTION | ExpandableComposite.TWISTIE);
 		getSection()
 				.setText(
-						PDEPlugin
-								.getResourceString("SiteEditor.MirrorsSection.header")); //$NON-NLS-1$
+						PDEUIMessages.SiteEditor_MirrorsSection_header); //$NON-NLS-1$
 		getSection()
 				.setDescription(
-						PDEPlugin
-								.getResourceString("SiteEditor.MirrorsSection.desc")); //$NON-NLS-1$
+						PDEUIMessages.SiteEditor_MirrorsSection_desc); //$NON-NLS-1$
 		createClient(getSection(), page.getManagedForm().getToolkit());		
 	}
 	public void commit(boolean onSave) {
@@ -56,8 +55,7 @@ public class MirrorsSection extends PDESection {
 		layout.numColumns = 2;
 		layout.verticalSpacing = 10;
 		container.setLayout(layout);
-		fMirrorsURLEntry = new FormEntry(container, toolkit, PDEPlugin
-				.getResourceString("SiteEditor.MirrorsSection.urlLabel"), //$NON-NLS-1$
+		fMirrorsURLEntry = new FormEntry(container, toolkit, PDEUIMessages.SiteEditor_MirrorsSection_urlLabel, //$NON-NLS-1$
 				null, false);
 		fMirrorsURLEntry.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {

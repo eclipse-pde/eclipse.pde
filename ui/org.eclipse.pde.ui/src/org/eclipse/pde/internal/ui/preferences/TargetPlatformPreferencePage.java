@@ -54,7 +54,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	}
 	
 	public TargetPlatformPreferencePage(int index) {
-		setDescription(PDEPlugin.getResourceString("Preferences.TargetPlatformPage.Description")); //$NON-NLS-1$
+		setDescription(PDEUIMessages.Preferences_TargetPlatformPage_Description); //$NON-NLS-1$
 		fPreferences = PDECore.getDefault().getPluginPreferences();
 		fPluginsBlock = new ExternalPluginsBlock(this);
 		fIndex = index;
@@ -73,7 +73,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		container.setLayout(layout);
 
 		fHomeLabel = new Label(container, SWT.NULL);
-		fHomeLabel.setText(PDEPlugin.getResourceString("Preferences.TargetPlatformPage.PlatformHome")); //$NON-NLS-1$
+		fHomeLabel.setText(PDEUIMessages.Preferences_TargetPlatformPage_PlatformHome); //$NON-NLS-1$
 		
 		fHomeText = new Combo(container, SWT.NONE);
 		fHomeText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -103,7 +103,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		});
 		
 		fBrowseButton = new Button(container, SWT.PUSH);
-		fBrowseButton.setText(PDEPlugin.getResourceString("Preferences.TargetPlatformPage.PlatformHome.Button")); //$NON-NLS-1$
+		fBrowseButton.setText(PDEUIMessages.Preferences_TargetPlatformPage_PlatformHome_Button); //$NON-NLS-1$
 		fBrowseButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		SWTUtil.setButtonDimensionHint(fBrowseButton);
 		fBrowseButton.addSelectionListener(new SelectionAdapter() {
@@ -134,7 +134,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		fPluginsBlock.initialize();
 
 		TabItem tab = new TabItem(folder, SWT.NONE);
-		tab.setText(PDEPlugin.getResourceString("TargetPlatformPreferencePage.pluginsTab")); //$NON-NLS-1$
+		tab.setText(PDEUIMessages.TargetPlatformPreferencePage_pluginsTab); //$NON-NLS-1$
 		tab.setControl(block);	
 	}
 	
@@ -143,7 +143,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		Control block = fEnvironmentBlock.createContents(folder);
 		
 		TabItem tab = new TabItem(folder, SWT.NONE);
-		tab.setText(PDEPlugin.getResourceString("TargetPlatformPreferencePage.environmentTab")); //$NON-NLS-1$
+		tab.setText(PDEUIMessages.TargetPlatformPreferencePage_environmentTab); //$NON-NLS-1$
 		tab.setControl(block);
 	}
 	
@@ -152,7 +152,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		Control block = fSourceBlock.createContents(folder);
 		
 		TabItem tab = new TabItem(folder, SWT.NONE);
-		tab.setText(PDEPlugin.getResourceString("TargetPlatformPreferencePage.sourceCode"));  //$NON-NLS-1$
+		tab.setText(PDEUIMessages.TargetPlatformPreferencePage_sourceCode);  //$NON-NLS-1$
 		tab.setControl(block);
 	}
 
@@ -191,9 +191,9 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			MessageDialog dialog =
 				new MessageDialog(
 					getShell(),
-					PDEPlugin.getResourceString("Preferences.TargetPlatformPage.title"), //$NON-NLS-1$
+					PDEUIMessages.Preferences_TargetPlatformPage_title, //$NON-NLS-1$
 					null,
-					PDEPlugin.getResourceString("Preferences.TargetPlatformPage.question"), //$NON-NLS-1$
+					PDEUIMessages.Preferences_TargetPlatformPage_question, //$NON-NLS-1$
 					MessageDialog.QUESTION,
 					new String[] {
 						IDialogConstants.YES_LABEL,

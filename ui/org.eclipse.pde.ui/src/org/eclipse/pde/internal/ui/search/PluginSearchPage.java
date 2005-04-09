@@ -51,21 +51,6 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 		
 	}
 	
-	private static final String KEY_SEARCH_STRING = "SearchPage.searchString"; //$NON-NLS-1$
-	private static final String KEY_CASE_SENSITIVE = "SearchPage.caseSensitive"; //$NON-NLS-1$
-	private static final String KEY_SEARCH_FOR = "SearchPage.searchFor"; //$NON-NLS-1$
-	private static final String KEY_LIMIT_TO = "SearchPage.limitTo"; //$NON-NLS-1$
-	private static final String KEY_EXTERNAL_SCOPE = "SearchPage.externalScope"; //$NON-NLS-1$
-	private static final String KEY_PLUGIN = "SearchPage.plugin"; //$NON-NLS-1$
-	private static final String KEY_FRAGMENT = "SearchPage.fragment"; //$NON-NLS-1$
-	private static final String KEY_EXT_PT = "SearchPage.extPt"; //$NON-NLS-1$
-	private static final String KEY_DECLARATIONS = "SearchPage.declarations"; //$NON-NLS-1$
-	private static final String KEY_REFERENCES = "SearchPage.references"; //$NON-NLS-1$
-	private static final String KEY_ALL_OCCURRENCES = "SearchPage.allOccurrences"; //$NON-NLS-1$
-	private static final String KEY_ALL = "SearchPage.all"; //$NON-NLS-1$
-	private static final String KEY_ENABLED = "SearchPage.enabledOnly"; //$NON-NLS-1$
-	private static final String KEY_NONE = "SearchPage.none"; //$NON-NLS-1$
-	
 	private static ArrayList previousQueries = new ArrayList();
 	
 	private Button caseSensitive;
@@ -121,13 +106,13 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 		GridData data = new GridData();
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
-		label.setText(PDEPlugin.getResourceString(KEY_SEARCH_STRING));
+		label.setText(PDEUIMessages.SearchPage_searchString);
 
 		patternCombo = new Combo(result, SWT.SINGLE | SWT.BORDER);
 		patternCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		caseSensitive = new Button(result, SWT.CHECK);
-		caseSensitive.setText(PDEPlugin.getResourceString(KEY_CASE_SENSITIVE));
+		caseSensitive.setText(PDEUIMessages.SearchPage_caseSensitive);
 	}
 	
 	private void createSettingsSection(Composite parent) {
@@ -138,29 +123,29 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 		createGroup(
 			result,
 			searchForButtons,
-			PDEPlugin.getResourceString(KEY_SEARCH_FOR),
+			PDEUIMessages.SearchPage_searchFor,
 			new String[] {
-				PDEPlugin.getResourceString(KEY_PLUGIN),
-				PDEPlugin.getResourceString(KEY_FRAGMENT),
-				PDEPlugin.getResourceString(KEY_EXT_PT)},
+				PDEUIMessages.SearchPage_plugin,
+				PDEUIMessages.SearchPage_fragment,
+				PDEUIMessages.SearchPage_extPt},
 			2);
 		createGroup(
 			result,
 			limitToButtons,
-			PDEPlugin.getResourceString(KEY_LIMIT_TO),
+			PDEUIMessages.SearchPage_limitTo,
 			new String[] {
-				PDEPlugin.getResourceString(KEY_DECLARATIONS),
-				PDEPlugin.getResourceString(KEY_REFERENCES),
-				PDEPlugin.getResourceString(KEY_ALL_OCCURRENCES)},
+				PDEUIMessages.SearchPage_declarations,
+				PDEUIMessages.SearchPage_references,
+				PDEUIMessages.SearchPage_allOccurrences},
 			1);
 		createGroup(
 			result,
 			externalScopeButtons,
-			PDEPlugin.getResourceString(KEY_EXTERNAL_SCOPE),
+			PDEUIMessages.SearchPage_externalScope,
 			new String[] {
-				PDEPlugin.getResourceString(KEY_ALL),
-				PDEPlugin.getResourceString(KEY_ENABLED),
-				PDEPlugin.getResourceString(KEY_NONE)},
+				PDEUIMessages.SearchPage_all,
+				PDEUIMessages.SearchPage_enabledOnly,
+				PDEUIMessages.SearchPage_none},
 			1);
 	}
 	

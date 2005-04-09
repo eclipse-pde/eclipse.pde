@@ -25,18 +25,6 @@ public class PropertyPageTemplate extends PDETemplateSection {
 	public static final String KEY_TARGET_CLASS = "targetClass"; //$NON-NLS-1$
 	public static final String KEY_NAME_FILTER = "nameFilter"; //$NON-NLS-1$
 
-	private static final String NL_TITLE = "PropertyPageTemplate.title"; //$NON-NLS-1$
-	private static final String NL_DESC = "PropertyPageTemplate.desc"; //$NON-NLS-1$
-	private static final String NL_PACKAGE_NAME =
-		"PropertyPageTemplate.packageName"; //$NON-NLS-1$
-	private static final String NL_PAGE_CLASS = "PropertyPageTemplate.pageClass"; //$NON-NLS-1$
-	private static final String NL_PAGE_NAME = "PropertyPageTemplate.pageName"; //$NON-NLS-1$
-	private static final String NL_DEFAULT_PAGE_NAME =
-		"PropertyPageTemplate.defaultPageName"; //$NON-NLS-1$
-	private static final String NL_TARGET_CLASS =
-		"PropertyPageTemplate.targetClass"; //$NON-NLS-1$
-	private static final String NL_NAME_FILTER = "PropertyPageTemplate.nameFilter"; //$NON-NLS-1$
-
 	/**
 	 * Constructor for PropertyPageTemplate.
 	 */
@@ -47,8 +35,8 @@ public class PropertyPageTemplate extends PDETemplateSection {
 
 	public void addPages(Wizard wizard) {
 		WizardPage page = createPage(0, IHelpContextIds.TEMPLATE_PROPERTY_PAGE);
-		page.setTitle(PDEPlugin.getResourceString(NL_TITLE));
-		page.setDescription(PDEPlugin.getResourceString(NL_DESC));
+		page.setTitle(PDEUIMessages.PropertyPageTemplate_title);
+		page.setDescription(PDEUIMessages.PropertyPageTemplate_desc);
 		wizard.addPage(page);
 		markPagesAdded();
 	}
@@ -56,27 +44,27 @@ public class PropertyPageTemplate extends PDETemplateSection {
 	private void createOptions() {
 		addOption(
 			KEY_PACKAGE_NAME,
-			PDEPlugin.getResourceString(NL_PACKAGE_NAME),
+			PDEUIMessages.PropertyPageTemplate_packageName,
 			(String) null,
 			0);
 		addOption(
 			KEY_CLASSNAME,
-			PDEPlugin.getResourceString(NL_PAGE_CLASS),
+			PDEUIMessages.PropertyPageTemplate_pageClass,
 			"SamplePropertyPage", //$NON-NLS-1$
 			0);
 		addOption(
 			KEY_PAGE_NAME,
-			PDEPlugin.getResourceString(NL_PAGE_NAME),
-			PDEPlugin.getResourceString(NL_DEFAULT_PAGE_NAME),
+			PDEUIMessages.PropertyPageTemplate_pageName,
+			PDEUIMessages.PropertyPageTemplate_defaultPageName,
 			0);
 		addOption(
 			KEY_TARGET_CLASS,
-			PDEPlugin.getResourceString(NL_TARGET_CLASS),
+			PDEUIMessages.PropertyPageTemplate_targetClass,
 			"org.eclipse.core.resources.IFile", //$NON-NLS-1$
 			0);
 		addOption(
 			KEY_NAME_FILTER,
-			PDEPlugin.getResourceString(NL_NAME_FILTER),
+			PDEUIMessages.PropertyPageTemplate_nameFilter,
 			"*.*", //$NON-NLS-1$
 			0);
 	}

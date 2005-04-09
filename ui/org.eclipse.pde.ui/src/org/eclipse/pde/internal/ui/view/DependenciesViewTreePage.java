@@ -17,8 +17,8 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -29,12 +29,9 @@ public class DependenciesViewTreePage extends DependenciesViewPage {
 	class CollapseAllAction extends Action {
 		public CollapseAllAction() {
 			super();
-			setText(PDEPlugin
-					.getResourceString("DependenciesViewTreePage.CollapseAllAction.label")); //$NON-NLS-1$
-			setDescription(PDEPlugin
-					.getResourceString("DependenciesViewTreePage.CollapseAllAction.description")); //$NON-NLS-1$
-			setToolTipText(PDEPlugin
-					.getResourceString("DependenciesViewTreePage.CollapseAllAction.tooltip")); //$NON-NLS-1$
+			setText(PDEUIMessages.DependenciesViewTreePage_CollapseAllAction_label); //$NON-NLS-1$
+			setDescription(PDEUIMessages.DependenciesViewTreePage_CollapseAllAction_description); //$NON-NLS-1$
+			setToolTipText(PDEUIMessages.DependenciesViewTreePage_CollapseAllAction_tooltip); //$NON-NLS-1$
 			setImageDescriptor(PDEPluginImages.DESC_COLLAPSE_ALL);
 			setDisabledImageDescriptor(PDEPluginImages.DESC_COLLAPSE_ALL);
 		}

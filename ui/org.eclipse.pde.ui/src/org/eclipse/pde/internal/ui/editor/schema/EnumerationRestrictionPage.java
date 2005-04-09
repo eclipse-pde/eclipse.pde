@@ -21,14 +21,6 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 
 public class EnumerationRestrictionPage implements IRestrictionPage {
-	public static final String KEY_CHOICES =
-		"RestrictionDialog.choices"; //$NON-NLS-1$
-	public static final String KEY_NEW_CHOICE =
-		"RestrictionDialog.newChoice"; //$NON-NLS-1$
-	public static final String KEY_ADD =
-		"RestrictionDialog.add"; //$NON-NLS-1$
-	public static final String KEY_REMOVE =
-		"RestrictionDialog.remove"; //$NON-NLS-1$
 	private List choiceList;
 	private Button addButton;
 	private Button deleteButton;
@@ -49,7 +41,7 @@ public class EnumerationRestrictionPage implements IRestrictionPage {
 		
 		
 		Label label = new Label(top, SWT.NULL);
-		label.setText(PDEPlugin.getResourceString(KEY_NEW_CHOICE));
+		label.setText(PDEUIMessages.RestrictionDialog_newChoice);
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -58,7 +50,7 @@ public class EnumerationRestrictionPage implements IRestrictionPage {
 		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		addButton = new Button(top, SWT.PUSH);
-		addButton.setText(PDEPlugin.getResourceString(KEY_ADD));
+		addButton.setText(PDEUIMessages.RestrictionDialog_add);
 		addButton.setEnabled(false);
 		addButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -81,13 +73,13 @@ public class EnumerationRestrictionPage implements IRestrictionPage {
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
-		label.setText(PDEPlugin.getResourceString(KEY_CHOICES));
+		label.setText(PDEUIMessages.RestrictionDialog_choices);
 		
 		choiceList = new List(bottom, SWT.MULTI | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		choiceList.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		deleteButton = new Button(bottom, SWT.PUSH);
-		deleteButton.setText(PDEPlugin.getResourceString(KEY_REMOVE));
+		deleteButton.setText(PDEUIMessages.RestrictionDialog_remove);
 		deleteButton.setEnabled(false);
 		deleteButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {

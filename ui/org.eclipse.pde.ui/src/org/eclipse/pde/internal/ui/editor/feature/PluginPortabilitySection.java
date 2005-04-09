@@ -10,19 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
 public class PluginPortabilitySection extends DataPortabilitySection {
-	private static final String SECTION_DESC = "FeatureEditor.PluginPortabilitySection.desc"; //$NON-NLS-1$
-
-	private static final String SECTION_TITLE = "FeatureEditor.PluginPortabilitySection.title"; //$NON-NLS-1$
-
 	public PluginPortabilitySection(PDEFormPage page, Composite parent) {
-		super(page, parent, PDEPlugin.getResourceString(SECTION_TITLE),
-				PDEPlugin.getResourceString(SECTION_DESC), SWT.NULL);
+		super(page, parent, PDEUIMessages.FeatureEditor_PluginPortabilitySection_title,
+				PDEUIMessages.FeatureEditor_PluginPortabilitySection_desc, SWT.NULL);
 	}
 
 }

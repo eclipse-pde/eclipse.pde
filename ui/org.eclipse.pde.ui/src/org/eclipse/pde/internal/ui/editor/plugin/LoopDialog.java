@@ -108,7 +108,7 @@ public class LoopDialog extends Dialog {
 		tree.setLayoutData(gd);
 		fLoopViewer.setInput(PDEPlugin.getDefault());
 		fLoopViewer.expandAll();
-		getShell().setText(PDEPlugin.getResourceString("LoopDialog.title")); //$NON-NLS-1$
+		getShell().setText(PDEUIMessages.LoopDialog_title); //$NON-NLS-1$
 		return container;
 	}
 }

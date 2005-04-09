@@ -13,12 +13,12 @@ package org.eclipse.pde.internal.ui.editor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.text.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
 
 public abstract class XMLSourcePage extends PDESourcePage {
-	public static final String ERROR_MESSAGE = "SourcePage.errorMessage"; //$NON-NLS-1$
 	protected IColorManager colorManager;
 	/**
 	 * @param editor
@@ -50,7 +50,7 @@ public abstract class XMLSourcePage extends PDESourcePage {
 			MessageDialog.openError(
 				PDEPlugin.getActiveWorkbenchShell(),
 				title,
-				PDEPlugin.getResourceString(ERROR_MESSAGE));
+				PDEUIMessages.SourcePage_errorMessage);
 		}
 		return cleanModel;
 	}

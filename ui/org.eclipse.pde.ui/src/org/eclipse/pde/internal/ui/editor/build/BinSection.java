@@ -23,13 +23,10 @@ public class BinSection extends BuildContentsSection
 		implements
 			IModelChangedListener {
 
-	private static String SECTION_TITLE = "BuildEditor.BinSection.title"; //$NON-NLS-1$
-	private static String SECTION_DESC = "BuildEditor.BinSection.desc"; //$NON-NLS-1$
-
 	public BinSection(BuildPage page, Composite parent) {
 		super(page, parent);
-		getSection().setText(PDEPlugin.getResourceString(SECTION_TITLE));
-		getSection().setDescription(PDEPlugin.getResourceString(SECTION_DESC));
+		getSection().setText(PDEUIMessages.BuildEditor_BinSection_title);
+		getSection().setDescription(PDEUIMessages.BuildEditor_BinSection_desc);
 	}
 
 	protected void initializeCheckState() {

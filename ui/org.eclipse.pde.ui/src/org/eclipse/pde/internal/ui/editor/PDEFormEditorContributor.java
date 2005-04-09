@@ -14,6 +14,7 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.editors.text.TextEditorActionContributor;
@@ -25,11 +26,6 @@ import org.eclipse.ui.texteditor.IUpdate;
 public class PDEFormEditorContributor
 		extends
 			MultiPageEditorActionBarContributor {
-	public static final String ACTIONS_SAVE = "EditorActions.save"; //$NON-NLS-1$
-	public static final String ACTIONS_CUT = "EditorActions.cut"; //$NON-NLS-1$
-	public static final String ACTIONS_COPY = "EditorActions.copy"; //$NON-NLS-1$
-	public static final String ACTIONS_PASTE = "EditorActions.paste"; //$NON-NLS-1$
-	public static final String ACTIONS_REVERT = "EditorActions.revert"; //$NON-NLS-1$
 	private SubActionBars sourceActionBars;
 	private PDEFormEditor editor;
 	private IFormPage page;
@@ -72,7 +68,7 @@ public class PDEFormEditorContributor
 	class CutAction extends ClipboardAction {
 		public CutAction() {
 			super(ActionFactory.CUT.getId());
-			setText(PDEPlugin.getResourceString(ACTIONS_CUT));
+			setText(PDEUIMessages.EditorActions_cut);
 		}
 		public void selectionChanged(ISelection selection) {
 			setEnabled(isEditable() && editor.canCopy(selection));
@@ -81,7 +77,7 @@ public class PDEFormEditorContributor
 	class CopyAction extends ClipboardAction {
 		public CopyAction() {
 			super(ActionFactory.COPY.getId());
-			setText(PDEPlugin.getResourceString(ACTIONS_COPY));
+			setText(PDEUIMessages.EditorActions_copy);
 		}
 		public void selectionChanged(ISelection selection) {
 			setEnabled(editor.canCopy(selection));
@@ -90,7 +86,7 @@ public class PDEFormEditorContributor
 	class PasteAction extends ClipboardAction {
 		public PasteAction() {
 			super(ActionFactory.PASTE.getId());
-			setText(PDEPlugin.getResourceString(ACTIONS_PASTE));
+			setText(PDEUIMessages.EditorActions_paste);
 			//selectionChanged(null);
 		}
 		public void selectionChanged(ISelection selection) {
@@ -211,9 +207,9 @@ public class PDEFormEditorContributor
 		addGlobalAction(IDEActionFactory.BOOKMARK.getId());
 		// save/revert
 		saveAction = new SaveAction();
-		saveAction.setText(PDEPlugin.getResourceString(ACTIONS_SAVE));
+		saveAction.setText(PDEUIMessages.EditorActions_save);
 		revertAction = new RevertAction();
-		revertAction.setText(PDEPlugin.getResourceString(ACTIONS_REVERT));
+		revertAction.setText(PDEUIMessages.EditorActions_revert);
 	}
 	public void setActiveEditor(IEditorPart targetEditor) {
 		//if (editor != null)

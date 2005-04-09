@@ -38,14 +38,7 @@ public class LibraryVisibilitySection extends TableSection
     private static int ADD_INDEX = 0;
     private static int REMOVE_INDEX = 1;
     
-	private static final String SECTION_TITLE = "ManifestEditor.ExportSection.title"; //$NON-NLS-1$
-	private static final String SECTION_DESC = "ManifestEditor.ExportSection.desc"; //$NON-NLS-1$
-	private static final String KEY_FULL_EXPORT = "ManifestEditor.ExportSection.fullExport"; //$NON-NLS-1$
-	private static final String KEY_SELECTED_EXPORT = "ManifestEditor.ExportSection.selectedExport"; //$NON-NLS-1$
-	private static final String KEY_ADD = "ManifestEditor.ExportSection.add"; //$NON-NLS-1$
-	private static final String KEY_REMOVE = "ManifestEditor.ExportSection.remove"; //$NON-NLS-1$
-
-    private Button fFullExportButton;
+	private Button fFullExportButton;
 	private Button fSelectedExportButton;
 	private IPluginLibrary fCurrentLibrary;
 	private Composite fPackageExportContainer;
@@ -77,10 +70,10 @@ public class LibraryVisibilitySection extends TableSection
     
 	public LibraryVisibilitySection(PDEFormPage formPage, Composite parent) {
 		super(formPage, parent, Section.DESCRIPTION, new String[]{
-				PDEPlugin.getResourceString(KEY_ADD),
-				PDEPlugin.getResourceString(KEY_REMOVE)});
-		getSection().setText(PDEPlugin.getResourceString(SECTION_TITLE));
-		getSection().setDescription(PDEPlugin.getResourceString(SECTION_DESC));
+				PDEUIMessages.ManifestEditor_ExportSection_add,
+				PDEUIMessages.ManifestEditor_ExportSection_remove});
+		getSection().setText(PDEUIMessages.ManifestEditor_ExportSection_title);
+		getSection().setDescription(PDEUIMessages.ManifestEditor_ExportSection_desc);
 		handleDefaultButton = false;
 	}
     
@@ -88,7 +81,7 @@ public class LibraryVisibilitySection extends TableSection
 		Composite container = toolkit.createComposite(section);
 		container.setLayout(new GridLayout());
         
-		String label = PDEPlugin.getResourceString(KEY_FULL_EXPORT);
+		String label = PDEUIMessages.ManifestEditor_ExportSection_fullExport;
 		fFullExportButton = toolkit.createButton(container, label, SWT.RADIO);
 		fFullExportButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fFullExportButton.addSelectionListener(new SelectionAdapter() {
@@ -103,7 +96,7 @@ public class LibraryVisibilitySection extends TableSection
 			}
 		});
         
-		label = PDEPlugin.getResourceString(KEY_SELECTED_EXPORT);
+		label = PDEUIMessages.ManifestEditor_ExportSection_selectedExport;
 		fSelectedExportButton = toolkit.createButton(container, label, SWT.RADIO);
 		fSelectedExportButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
@@ -119,14 +112,14 @@ public class LibraryVisibilitySection extends TableSection
 	}
     
 	private void makeActions() {
-        fAddAction = new Action(PDEPlugin.getResourceString(KEY_ADD)) {
+        fAddAction = new Action(PDEUIMessages.ManifestEditor_ExportSection_add) {
             public void run() {
                 handleAdd();
             }
         };
         fAddAction.setEnabled(isEditable());
         
-        fRemoveAction = new Action(PDEPlugin.getResourceString(KEY_REMOVE)) {
+        fRemoveAction = new Action(PDEUIMessages.ManifestEditor_ExportSection_remove) {
             public void run() {
                 handleRemove();
             }

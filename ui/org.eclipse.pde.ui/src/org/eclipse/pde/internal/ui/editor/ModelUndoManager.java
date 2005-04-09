@@ -12,8 +12,9 @@ package org.eclipse.pde.internal.ui.editor;
 import java.util.*;
 
 import org.eclipse.jface.action.IAction;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.forms.editor.IFormPage;
 
 /**
@@ -22,13 +23,6 @@ import org.eclipse.ui.forms.editor.IFormPage;
  */
 public abstract class ModelUndoManager
 	implements IModelUndoManager, IModelChangedListener {
-	private static final String KEY_NO_UNDO = "UpdateManager.noUndo"; //$NON-NLS-1$
-	private static final String KEY_NO_REDO = "UpdateManager.noRedo"; //$NON-NLS-1$
-	private static final String KEY_UNDO = "UpdateManager.undo"; //$NON-NLS-1$
-	private static final String KEY_REDO = "UpdateManager.redo"; //$NON-NLS-1$
-	private static final String KEY_OP_ADD = "UpdateManager.op.add"; //$NON-NLS-1$
-	private static final String KEY_OP_REMOVE = "UpdateManager.op.remove"; //$NON-NLS-1$
-	private static final String KEY_OP_CHANGE = "UpdateManager.op.change"; //$NON-NLS-1$
 	private boolean ignoreChanges;
 	private List operations;
 	private int undoLevelLimit = 10;
@@ -178,30 +172,30 @@ public abstract class ModelUndoManager
 	private String getUndoText() {
 		IModelChangedEvent op = getCurrentOperation();
 		if (op == null) {
-			return PDEPlugin.getResourceString(KEY_NO_UNDO);
+			return PDEUIMessages.UpdateManager_noUndo;
 		}
-		return PDEPlugin.getFormattedMessage(KEY_UNDO, getOperationText(op));	
+		return NLS.bind(PDEUIMessages.UpdateManager_undo, getOperationText(op));	
 	}
 
 	private String getRedoText() {
 		IModelChangedEvent op = getNextOperation();
 		if (op == null) {
-			return PDEPlugin.getResourceString(KEY_NO_REDO);
+			return PDEUIMessages.UpdateManager_noRedo;
 		}
-		return PDEPlugin.getFormattedMessage(KEY_REDO, getOperationText(op));
+		return NLS.bind(PDEUIMessages.UpdateManager_redo, getOperationText(op));
 	}
 		
 	private String getOperationText(IModelChangedEvent op) {
 		String opText=""; //$NON-NLS-1$
 		switch (op.getChangeType()) {
 			case IModelChangedEvent.INSERT:
-			opText = PDEPlugin.getResourceString(KEY_OP_ADD);
+			opText = PDEUIMessages.UpdateManager_op_add;
 			break;
 			case IModelChangedEvent.REMOVE:
-			opText = PDEPlugin.getResourceString(KEY_OP_REMOVE);
+			opText = PDEUIMessages.UpdateManager_op_remove;
 			break;
 			case IModelChangedEvent.CHANGE:
-			opText = PDEPlugin.getResourceString(KEY_OP_CHANGE);
+			opText = PDEUIMessages.UpdateManager_op_change;
 			break;
 		}
 		return opText;

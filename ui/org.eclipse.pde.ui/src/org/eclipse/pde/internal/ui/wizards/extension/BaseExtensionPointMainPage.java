@@ -39,23 +39,6 @@ import org.eclipse.ui.model.*;
 import org.eclipse.ui.part.*;
 import org.eclipse.ui.views.navigator.*;
 public abstract class BaseExtensionPointMainPage extends WizardPage {
-	public static final String KEY_PLUGIN_ID = "BaseExtensionPoint.pluginId"; //$NON-NLS-1$
-	public static final String KEY_ID = "BaseExtensionPoint.id"; //$NON-NLS-1$
-	public static final String KEY_NAME = "BaseExtensionPoint.name"; //$NON-NLS-1$
-	public static final String KEY_SCHEMA = "BaseExtensionPoint.schema"; //$NON-NLS-1$
-	public static final String KEY_SCHEMA_LOCATION = "BaseExtensionPoint.schemaLocation"; //$NON-NLS-1$
-	public static final String KEY_EDIT = "BaseExtensionPoint.edit"; //$NON-NLS-1$
-	public static final String KEY_SHARED = "BaseExtensionPoint.shared"; //$NON-NLS-1$
-	public static final String KEY_MISSING_ID = "BaseExtensionPoint.missingId"; //$NON-NLS-1$
-    public static final String KEY_NO_PLUGIN_MISSING_ID = "BaseExtensionPoint.noPlugin.missingId"; //$NON-NLS-1$
-    public static final String KEY_INVALID_ID = "BaseExtensionPoint.malformedId"; //$NON-NLS-1$
-    public static final String KEY_SECTIONS_OVERVIEW = "BaseExtensionPoint.sections.overview"; //$NON-NLS-1$
-	public static final String KEY_SECTIONS_SINCE = "BaseExtensionPoint.sections.since"; //$NON-NLS-1$
-	public static final String KEY_SECTIONS_USAGE = "BaseExtensionPoint.sections.usage"; //$NON-NLS-1$
-	public static final String KEY_GENERATING = "BaseExtensionPoint.generating"; //$NON-NLS-1$
-	public static final String KEY_SECTIONS_API = "BaseExtensionPoint.sections.api"; //$NON-NLS-1$
-	public static final String KEY_SECTIONS_SUPPLIED = "BaseExtensionPoint.sections.supplied"; //$NON-NLS-1$
-	public static final String KEY_SECTIONS_COPYRIGHT = "BaseExtensionPoint.sections.copyright"; //$NON-NLS-1$
 	public static final String SETTINGS_PLUGIN_ID = "BaseExtensionPoint.settings.pluginId"; //$NON-NLS-1$
 	public static final String SCHEMA_DIR = "schema"; //$NON-NLS-1$
 
@@ -89,7 +72,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		GridData gd;
 		if (isPluginIdNeeded()) {
 			label = new Label(container, SWT.NONE);
-			label.setText(PDEPlugin.getResourceString(KEY_PLUGIN_ID));
+			label.setText(PDEUIMessages.BaseExtensionPoint_pluginId);
 			fPluginIdText = new Text(container, SWT.SINGLE | SWT.BORDER);
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan=1;
@@ -105,8 +88,8 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			gd.horizontalSpan =1;
 			gd.widthHint = 50;
 			fPluginBrowseButton.setLayoutData(gd);
-			fPluginBrowseButton.setText(PDEPlugin.getResourceString("BaseExtensionPointMainPage.pluginBrowse")); //$NON-NLS-1$
-			fPluginBrowseButton.setToolTipText(PDEPlugin.getResourceString("BaseExtensionPointMainPage.pluginId.tooltip")); //$NON-NLS-1$
+			fPluginBrowseButton.setText(PDEUIMessages.BaseExtensionPointMainPage_pluginBrowse); //$NON-NLS-1$
+			fPluginBrowseButton.setToolTipText(PDEUIMessages.BaseExtensionPointMainPage_pluginId_tooltip); //$NON-NLS-1$
 			fPluginBrowseButton.addSelectionListener(new SelectionAdapter(){
 				public void widgetSelected(SelectionEvent e) {
 					handlePluginBrowse();
@@ -115,7 +98,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			SWTUtil.setButtonDimensionHint(fPluginBrowseButton);
 		}
 		label = new Label(container, SWT.NONE);
-		label.setText(PDEPlugin.getResourceString(KEY_ID));
+		label.setText(PDEUIMessages.BaseExtensionPoint_id);
 		fIdText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
@@ -129,7 +112,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			}
 		});
 		label = new Label(container, SWT.NONE);
-		label.setText(PDEPlugin.getResourceString(KEY_NAME));
+		label.setText(PDEUIMessages.BaseExtensionPoint_name);
 		fNameText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
@@ -141,7 +124,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		});
 		if (isPluginIdNeeded() && !isPluginIdFinal()){
 			label = new Label(container, SWT.NONE);
-			label.setText(PDEPlugin.getResourceString(KEY_SCHEMA_LOCATION));
+			label.setText(PDEUIMessages.BaseExtensionPoint_schemaLocation);
 			fSchemaLocationText = new Text(container, SWT.SINGLE | SWT.BORDER);
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.widthHint = 150;
@@ -156,8 +139,8 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 			gd.widthHint = 50;
 			fFindLocationButton.setLayoutData(gd);
-			fFindLocationButton.setText(PDEPlugin.getResourceString("BaseExtensionPointMainPage.findBrowse")); //$NON-NLS-1$
-			fFindLocationButton.setToolTipText(PDEPlugin.getResourceString("BaseExtensionPointMainPage.schemaLocation.tooltip")); //$NON-NLS-1$
+			fFindLocationButton.setText(PDEUIMessages.BaseExtensionPointMainPage_findBrowse); //$NON-NLS-1$
+			fFindLocationButton.setToolTipText(PDEUIMessages.BaseExtensionPointMainPage_schemaLocation_tooltip); //$NON-NLS-1$
 			fFindLocationButton.addSelectionListener(new SelectionAdapter(){
 				public void widgetSelected(SelectionEvent e) {
 					handleSchemaLocation();
@@ -166,7 +149,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			SWTUtil.setButtonDimensionHint(fFindLocationButton);
 		}
 		label = new Label(container, SWT.NONE);
-		label.setText(PDEPlugin.getResourceString(KEY_SCHEMA));
+		label.setText(PDEUIMessages.BaseExtensionPoint_schema);
 		fSchemaText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
@@ -178,13 +161,13 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		});
 		if (isSharedSchemaSwitchNeeded()) {
 			fSharedSchemaButton = new Button(container, SWT.CHECK);
-			fSharedSchemaButton.setText(PDEPlugin.getResourceString(KEY_SHARED));
+			fSharedSchemaButton.setText(PDEUIMessages.BaseExtensionPoint_shared);
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 2;
 			fSharedSchemaButton.setLayoutData(gd);
 		}
 		fOpenSchemaButton = new Button(container, SWT.CHECK);
-		fOpenSchemaButton.setText(PDEPlugin.getResourceString(KEY_EDIT));
+		fOpenSchemaButton.setText(PDEUIMessages.BaseExtensionPoint_edit);
 		fOpenSchemaButton.setSelection(true);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
@@ -203,11 +186,10 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		if (name.length() == 0)
 			name = pointId;
 		EditableSchema schema = new EditableSchema(pluginId, pointId, name, false);
-		schema.setDescription(PDEPlugin
-				.getResourceString(KEY_SECTIONS_OVERVIEW));
+		schema.setDescription(PDEUIMessages.BaseExtensionPoint_sections_overview);
 		DocumentSection section;
-		section = new DocumentSection(schema, IDocumentSection.SINCE, PDEPlugin.getResourceString("BaseExtensionPointMainPage.since")); //$NON-NLS-1$
-		section.setDescription(PDEPlugin.getResourceString(KEY_SECTIONS_SINCE));
+		section = new DocumentSection(schema, IDocumentSection.SINCE, PDEUIMessages.BaseExtensionPointMainPage_since); //$NON-NLS-1$
+		section.setDescription(PDEUIMessages.BaseExtensionPoint_sections_since);
 		schema.addDocumentSection(section);
 		SchemaElement element;
 		if (!shared) {
@@ -232,21 +214,19 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		}
 		section = new DocumentSection(schema, IDocumentSection.EXAMPLES,
 		"Examples"); //$NON-NLS-1$
-		section.setDescription(PDEPlugin.getResourceString(KEY_SECTIONS_USAGE));
+		section.setDescription(PDEUIMessages.BaseExtensionPoint_sections_usage);
 		schema.addDocumentSection(section);
 		section = new DocumentSection(schema, IDocumentSection.API_INFO,
 		"API Information"); //$NON-NLS-1$
-		section.setDescription(PDEPlugin.getResourceString(KEY_SECTIONS_API));
+		section.setDescription(PDEUIMessages.BaseExtensionPoint_sections_api);
 		schema.addDocumentSection(section);
 		section = new DocumentSection(schema, IDocumentSection.IMPLEMENTATION,
 		"Supplied Implementation"); //$NON-NLS-1$
-		section.setDescription(PDEPlugin
-				.getResourceString(KEY_SECTIONS_SUPPLIED));
+		section.setDescription(PDEUIMessages.BaseExtensionPoint_sections_supplied);
 		schema.addDocumentSection(section);
 		section = new DocumentSection(schema, IDocumentSection.COPYRIGHT,
 		"Copyright"); //$NON-NLS-1$
-		section.setDescription(PDEPlugin
-				.getResourceString(KEY_SECTIONS_COPYRIGHT));
+		section.setDescription(PDEUIMessages.BaseExtensionPoint_sections_copyright);
 		schema.addDocumentSection(section);
 		StringWriter swriter = new StringWriter();
 		try {
@@ -270,7 +250,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		IWorkspace workspace = fContainer.getWorkspace();
 		IPath schemaPath = new Path(schema).removeLastSegments(1);
 		IPath newSchemaPath = fContainer.getProjectRelativePath().append(schemaPath);
-		monitor.subTask(PDEPlugin.getResourceString(KEY_GENERATING));
+		monitor.subTask(PDEUIMessages.BaseExtensionPoint_generating);
 		if (newSchemaPath.isEmpty() == false) {
 			IFolder folder = fContainer.getProject().getFolder(newSchemaPath);
 			CoreUtility.createFolder(folder, true, true, null);
@@ -394,12 +374,12 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		boolean isFilled = checkFieldsFilled();
 		String message = null;
         if (isInvalidValidId())
-            message = PDEPlugin.getResourceString(KEY_INVALID_ID);                
+            message = PDEUIMessages.BaseExtensionPoint_malformedId;                
         else if (!isFilled) {
             if (isPluginIdNeeded())
-				message = PDEPlugin.getResourceString(KEY_MISSING_ID);
+				message = PDEUIMessages.BaseExtensionPoint_missingId;
 			else
-				message = PDEPlugin.getResourceString(KEY_NO_PLUGIN_MISSING_ID);
+				message = PDEUIMessages.BaseExtensionPoint_noPlugin_missingId;
 		}
 		setPageComplete(isFilled);
 		setMessage(message, IMessageProvider.WARNING);
@@ -433,8 +413,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		return exists;
 	}
 	private void handleInvalidContainer(){
-		setErrorMessage(PDEPlugin
-				.getResourceString("BaseExtensionPointMainPage.noContainer")); //$NON-NLS-1$
+		setErrorMessage(PDEUIMessages.BaseExtensionPointMainPage_noContainer); //$NON-NLS-1$
 		setPageComplete(false);
 	}
 	private void handleValidContainer(){
@@ -454,8 +433,8 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 				getShell(),
 				new WorkbenchLabelProvider(),
 				new WorkbenchContentProvider());
-		dialog.setTitle(PDEPlugin.getResourceString("BaseExtensionPointMainPage.schemaLocation.title")); //$NON-NLS-1$
-		dialog.setMessage(PDEPlugin.getResourceString("BaseExtensionPointMainPage.schemaLocation.desc")); //$NON-NLS-1$
+		dialog.setTitle(PDEUIMessages.BaseExtensionPointMainPage_schemaLocation_title); //$NON-NLS-1$
+		dialog.setMessage(PDEUIMessages.BaseExtensionPointMainPage_schemaLocation_desc); //$NON-NLS-1$
 		dialog.setDoubleClickSelects(false);
 		dialog.setAllowMultiple(false);
 		dialog.addFilter(new ViewerFilter(){

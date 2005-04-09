@@ -46,8 +46,7 @@ public class JavaAttributeWizard extends Wizard {
 		IDialogSettings masterSettings = PDEPlugin.getDefault()
 				.getDialogSettings();
 		setDialogSettings(getSettingsSection(masterSettings));
-		setWindowTitle(PDEPlugin
-				.getResourceString("JavaAttributeWizard.wtitle")); //$NON-NLS-1$
+		setWindowTitle(PDEUIMessages.JavaAttributeWizard_wtitle); //$NON-NLS-1$
 		setNeedsProgressMonitor(true);
 	}
 	private IDialogSettings getSettingsSection(IDialogSettings master) {
