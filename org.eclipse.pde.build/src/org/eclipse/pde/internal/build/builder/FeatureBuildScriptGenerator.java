@@ -216,6 +216,8 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			}
 			return;
 		}
+		if (analyseIncludedFeatures)
+			generateIncludedFeatureBuildFile();
 		if (sourceFeatureGeneration)
 			generateSourceFeature();
 		if (analysePlugins)
@@ -228,8 +230,6 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			collectElementToAssemble(feature);
 
 		// Do the recursive generation of build files for the features required by the current feature
-		if (analyseIncludedFeatures)
-			generateIncludedFeatureBuildFile();
 		if (sourceFeatureGeneration)
 			generateSourceFeatureScripts();
 		if (scriptGeneration) {
