@@ -18,7 +18,6 @@ import org.eclipse.search.ui.*;
 
 public class FindReferencesAction extends BaseSearchAction {
 	
-	private static final String KEY_REFERENCES = "SearchAction.references"; //$NON-NLS-1$
 	private Object fSelectedObject;
 	
 	public FindReferencesAction(Object object) {
