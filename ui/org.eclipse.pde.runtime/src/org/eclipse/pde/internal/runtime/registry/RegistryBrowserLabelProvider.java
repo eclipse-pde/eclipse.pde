@@ -21,7 +21,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.internal.runtime.OverlayIcon;
-import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
+import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
 import org.eclipse.pde.internal.runtime.PDERuntimePluginImages;
 import org.eclipse.swt.graphics.Image;
 
@@ -33,11 +33,6 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 	private Image genericTagImage;
 	private Image extensionImage;
 	private Image extensionsImage;
-	private static final String KEY_IMPORTS = "RegistryView.folders.imports"; //$NON-NLS-1$
-	private static final String KEY_LIBRARIES = "RegistryView.folders.libraries"; //$NON-NLS-1$
-	private static final String KEY_EXPOINTS =
-		"RegistryView.folders.extensionPoints"; //$NON-NLS-1$
-	private static final String KEY_EXTENSIONS = "RegistryView.folders.extensions"; //$NON-NLS-1$
 	private Image extensionPointImage;
 	private Image extensionPointsImage;
 	private Image requiresImage;
@@ -125,13 +120,13 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 		if (element instanceof IPluginFolder) {
 			switch (((IPluginFolder) element).getFolderId()) {
 				case IPluginFolder.F_IMPORTS :
-					return PDERuntimePlugin.getResourceString(KEY_IMPORTS);
+					return PDERuntimeMessages.RegistryView_folders_imports;
 				case IPluginFolder.F_LIBRARIES :
-					return PDERuntimePlugin.getResourceString(KEY_LIBRARIES);
+					return PDERuntimeMessages.RegistryView_folders_libraries;
 				case IPluginFolder.F_EXTENSION_POINTS :
-					return PDERuntimePlugin.getResourceString(KEY_EXPOINTS);
+					return PDERuntimeMessages.RegistryView_folders_extensionPoints;
 				case IPluginFolder.F_EXTENSIONS :
-					return PDERuntimePlugin.getResourceString(KEY_EXTENSIONS);
+					return PDERuntimeMessages.RegistryView_folders_extensions;
 			}
 		}
 		if (element instanceof IExtension) {

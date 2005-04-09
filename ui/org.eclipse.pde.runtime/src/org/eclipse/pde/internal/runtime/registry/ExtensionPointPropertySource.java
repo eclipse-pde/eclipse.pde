@@ -13,14 +13,12 @@ package org.eclipse.pde.internal.runtime.registry;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
+import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
 import org.eclipse.ui.views.properties.*;
 
 public class ExtensionPointPropertySource extends RegistryPropertySource {
 	private IExtensionPoint extensionPoint;
 	public static final String P_NAME = "name"; //$NON-NLS-1$
-	public static final String KEY_ID = "RegistryView.extensionPointPR.id"; //$NON-NLS-1$
-	public static final String KEY_NAME = "RegistryView.extensionPointPR.name"; //$NON-NLS-1$
 	public static final String P_ID = "id"; //$NON-NLS-1$
 
 public ExtensionPointPropertySource(IExtensionPoint extensionPoint) {
@@ -29,8 +27,8 @@ public ExtensionPointPropertySource(IExtensionPoint extensionPoint) {
 public IPropertyDescriptor[] getPropertyDescriptors() {
 	Vector result = new Vector();
 
-	result.addElement(new PropertyDescriptor(P_NAME, PDERuntimePlugin.getResourceString(KEY_NAME)));
-	result.addElement(new PropertyDescriptor(P_ID, PDERuntimePlugin.getResourceString(KEY_ID)));
+	result.addElement(new PropertyDescriptor(P_NAME, PDERuntimeMessages.RegistryView_extensionPointPR_name));
+	result.addElement(new PropertyDescriptor(P_ID, PDERuntimeMessages.RegistryView_extensionPointPR_id));
 	return toDescriptorArray(result);
 }
 public Object getPropertyValue(Object name) {

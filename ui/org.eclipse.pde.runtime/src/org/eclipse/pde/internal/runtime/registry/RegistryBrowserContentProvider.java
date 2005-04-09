@@ -239,13 +239,9 @@ public class RegistryBrowserContentProvider
 	
 	public String getTitleSummary(){
 		if (viewer == null || viewer.getTree() == null)
-			return PDERuntimePlugin.getFormattedMessage(
-					"RegistryView.titleSummary",  //$NON-NLS-1$
-					new String[] {"0", "0"}); //$NON-NLS-1$ //$NON-NLS-2$
+			return NLS.bind(PDERuntimeMessages.RegistryView_titleSummary, (new String[] {"0", "0"})); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		return PDERuntimePlugin.getFormattedMessage(
-				"RegistryView.titleSummary",  //$NON-NLS-1$
-				new String[] {new Integer(viewer.getTree().getItemCount()).toString(), new Integer(numPluginsTotal).toString()});
+		return NLS.bind(PDERuntimeMessages.RegistryView_titleSummary, (new String[] {new Integer(viewer.getTree().getItemCount()).toString(), new Integer(numPluginsTotal).toString()}));
 	}
 	
 }

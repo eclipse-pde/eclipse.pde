@@ -13,7 +13,7 @@ package org.eclipse.pde.internal.runtime.registry;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IPluginPrerequisite;
-import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
+import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
 import org.eclipse.ui.views.properties.*;
 
 public class PrerequisitePropertySource extends RegistryPropertySource {
@@ -23,25 +23,6 @@ public class PrerequisitePropertySource extends RegistryPropertySource {
 	public static final String P_EXPORTED = "exported"; //$NON-NLS-1$
 	public static final String P_MATCH = "match"; //$NON-NLS-1$
 	public static final String P_OPTIONAL = "optional"; //$NON-NLS-1$
-	public static final String KEY_EXPORTED =
-		"RegistryView.prerequisitePR.exported"; //$NON-NLS-1$
-	public static final String KEY_ID = "RegistryView.prerequisitePR.id"; //$NON-NLS-1$
-	public static final String KEY_MATCH = "RegistryView.prerequisitePR.match"; //$NON-NLS-1$
-	public static final String KEY_VERSION =
-		"RegistryView.prerequisitePR.version"; //$NON-NLS-1$
-	public static final String KEY_OPTIONAL =
-		"RegistryView.prerequisitePR.optional"; //$NON-NLS-1$
-	public static final String KEY_MATCHED_COMPATIBLE =
-		"RegistryView.prerequisitePR.matchedCompatible"; //$NON-NLS-1$
-	public static final String KEY_MATCHED_EXACT =
-		"RegistryView.prerequisitePR.matchedExact"; //$NON-NLS-1$
-	public static final String KEY_MATCHED_EQUIVALENT =
-		"RegistryView.prerequisitePR.matchedEquivalent"; //$NON-NLS-1$
-	public static final String KEY_MATCHED_GREATER_OR_EQUAL =
-		"RegistryView.prerequisitePR.matchedGreaterOrEqual"; //$NON-NLS-1$
-	public static final String KEY_MATCHED_PERFECT =
-		"RegistryView.prerequisitePR.matchedPerfect"; //$NON-NLS-1$
-
 	public PrerequisitePropertySource(IPluginPrerequisite prereq) {
 		this.prereq = prereq;
 	}
@@ -51,23 +32,23 @@ public class PrerequisitePropertySource extends RegistryPropertySource {
 		result.addElement(
 			new PropertyDescriptor(
 				P_EXPORTED,
-				PDERuntimePlugin.getResourceString(KEY_EXPORTED)));
+				PDERuntimeMessages.RegistryView_prerequisitePR_exported));
 		result.addElement(
 			new PropertyDescriptor(
 				P_ID,
-				PDERuntimePlugin.getResourceString(KEY_ID)));
+				PDERuntimeMessages.RegistryView_prerequisitePR_id));
 		result.addElement(
 			new PropertyDescriptor(
 				P_VERSION,
-				PDERuntimePlugin.getResourceString(KEY_VERSION)));
+				PDERuntimeMessages.RegistryView_prerequisitePR_version));
 		result.addElement(
 			new PropertyDescriptor(
 				P_MATCH,
-				PDERuntimePlugin.getResourceString(KEY_MATCH)));
+				PDERuntimeMessages.RegistryView_prerequisitePR_match));
 		result.addElement(
 			new PropertyDescriptor(
 				P_OPTIONAL,
-				PDERuntimePlugin.getResourceString(KEY_OPTIONAL)));
+				PDERuntimeMessages.RegistryView_prerequisitePR_optional));
 		return toDescriptorArray(result);
 		
 	}
@@ -89,18 +70,15 @@ public class PrerequisitePropertySource extends RegistryPropertySource {
 
 		if (name.equals(P_MATCH)) {
 			if (prereq.isMatchedAsCompatible())
-				return PDERuntimePlugin.getResourceString(
-					KEY_MATCHED_COMPATIBLE);
+				return PDERuntimeMessages.RegistryView_prerequisitePR_matchedCompatible;
 			if (prereq.isMatchedAsEquivalent())
-				return PDERuntimePlugin.getResourceString(
-					KEY_MATCHED_EQUIVALENT);
+				return PDERuntimeMessages.RegistryView_prerequisitePR_matchedEquivalent;
 			if (prereq.isMatchedAsExact())
-				return PDERuntimePlugin.getResourceString(KEY_MATCHED_EXACT);
+				return PDERuntimeMessages.RegistryView_prerequisitePR_matchedExact;
 			if (prereq.isMatchedAsGreaterOrEqual())
-				return PDERuntimePlugin.getResourceString(
-					KEY_MATCHED_GREATER_OR_EQUAL);
+				return PDERuntimeMessages.RegistryView_prerequisitePR_matchedGreaterOrEqual;
 			if (prereq.isMatchedAsPerfect())
-				return PDERuntimePlugin.getResourceString(KEY_MATCHED_PERFECT);
+				return PDERuntimeMessages.RegistryView_prerequisitePR_matchedPerfect;
 		}
 		return ""; //$NON-NLS-1$
 	}

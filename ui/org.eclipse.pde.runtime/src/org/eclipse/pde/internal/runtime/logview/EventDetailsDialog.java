@@ -63,12 +63,6 @@ public class EventDetailsDialog extends Dialog {
 	private Point dialogSize;
 	private int[] sashWeights;
 	
-	// externalize strings
-	private String EVENT_NO_STACK = "EventDetailsDialog.noStack"; //$NON-NLS-1$
-	private String EVENT_PREVIOUS = "EventDetailsDialog.previous"; //$NON-NLS-1$
-	private String EVENT_NEXT = "EventDetailsDialog.next"; //$NON-NLS-1$
-	private String EVENT_COPY = "EventDetailsDialog.copy"; //$NON-NLS-1$
-
 	/**
 	 * 
 	 * @param parentShell shell in which dialog is displayed
@@ -331,7 +325,7 @@ public class EventDetailsDialog extends Dialog {
 		if (stack != null) {
 			stackTraceText.setText(stack);
 		} else {
-			stackTraceText.setText(PDERuntimePlugin.getResourceString(EVENT_NO_STACK));
+			stackTraceText.setText(PDERuntimeMessages.EventDetailsDialog_noStack);
 		}
 		LogSession session = entry.getSession();
 		if (session != null && session.getSessionData() != null)
@@ -503,7 +497,7 @@ public class EventDetailsDialog extends Dialog {
 		gd.horizontalSpan = 3;
 		gd.verticalSpan = 1;
 		backButton.setLayoutData(gd);
-		backButton.setToolTipText(PDERuntimePlugin.getResourceString(EVENT_PREVIOUS));
+		backButton.setToolTipText(PDERuntimeMessages.EventDetailsDialog_previous);
 		backButton.setImage(imgPrevEnabled);
 		
 		nextButton = createButton(container, IDialogConstants.NEXT_ID, "", false); //$NON-NLS-1$
@@ -511,7 +505,7 @@ public class EventDetailsDialog extends Dialog {
 		gd.horizontalSpan = 3;
 		gd.verticalSpan = 1;
 		nextButton.setLayoutData(gd);
-		nextButton.setToolTipText(PDERuntimePlugin.getResourceString(EVENT_NEXT));
+		nextButton.setToolTipText(PDERuntimeMessages.EventDetailsDialog_next);
 		nextButton.setImage(imgNextEnabled);
 		
 		copyButton = createButton(container, COPY_ID, "", false); //$NON-NLS-1$
@@ -520,7 +514,7 @@ public class EventDetailsDialog extends Dialog {
 		gd.verticalSpan = 1;
 		copyButton.setLayoutData(gd);
 		copyButton.setImage(imgCopyEnabled);
-		copyButton.setToolTipText(PDERuntimePlugin.getResourceString(EVENT_COPY));
+		copyButton.setToolTipText(PDERuntimeMessages.EventDetailsDialog_copy);
 	}
 
 	protected void createButtonsForButtonBar(Composite parent) {
@@ -548,21 +542,21 @@ public class EventDetailsDialog extends Dialog {
 		textContainer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		Label label = new Label(textContainer, SWT.NONE);
-		label.setText(PDERuntimePlugin.getResourceString("EventDetailsDialog.date")); //$NON-NLS-1$
+		label.setText(PDERuntimeMessages.EventDetailsDialog_date); //$NON-NLS-1$
 		dateLabel = new Label(textContainer, SWT.NULL);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		dateLabel.setLayoutData(gd);
 
 		label = new Label(textContainer, SWT.NONE);
-		label.setText(PDERuntimePlugin.getResourceString("EventDetailsDialog.severity")); //$NON-NLS-1$
+		label.setText(PDERuntimeMessages.EventDetailsDialog_severity); //$NON-NLS-1$
 		severityImageLabel = new Label(textContainer, SWT.NULL);
 		severityLabel = new Label(textContainer, SWT.NULL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		severityLabel.setLayoutData(gd);
 
 		label = new Label(textContainer, SWT.NONE);
-		label.setText(PDERuntimePlugin.getResourceString("EventDetailsDialog.message")); //$NON-NLS-1$
+		label.setText(PDERuntimeMessages.EventDetailsDialog_message); //$NON-NLS-1$
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		label.setLayoutData(gd);
 		msgText = new Text(textContainer, SWT.MULTI | SWT.V_SCROLL | SWT.WRAP | SWT.BORDER);
@@ -585,7 +579,7 @@ public class EventDetailsDialog extends Dialog {
 		container.setLayoutData(gd);
 
 		Label label = new Label(container, SWT.NULL);
-		label.setText(PDERuntimePlugin.getResourceString("EventDetailsDialog.exception")); //$NON-NLS-1$
+		label.setText(PDERuntimeMessages.EventDetailsDialog_exception); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 3;
 		label.setLayoutData(gd);
@@ -613,7 +607,7 @@ public class EventDetailsDialog extends Dialog {
 		line.setLayoutData(gd);
 		
 		Label label = new Label(container, SWT.NONE);
-		label.setText(PDERuntimePlugin.getResourceString("EventDetailsDialog.session")); //$NON-NLS-1$
+		label.setText(PDERuntimeMessages.EventDetailsDialog_session); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		label.setLayoutData(gd);
 		sessionDataText = new Text(container, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL );

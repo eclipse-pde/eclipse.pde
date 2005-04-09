@@ -12,7 +12,7 @@ package org.eclipse.pde.internal.runtime.logview;
 
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
+import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
@@ -52,18 +52,18 @@ public class FilterDialog extends Dialog {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 275;
 		group.setLayoutData(gd);
-		group.setText(PDERuntimePlugin.getResourceString("LogView.FilterDialog.eventTypes")); //$NON-NLS-1$
+		group.setText(PDERuntimeMessages.LogView_FilterDialog_eventTypes); //$NON-NLS-1$
 		
 		infoButton = new Button(group, SWT.CHECK);
-		infoButton.setText(PDERuntimePlugin.getResourceString("LogView.FilterDialog.information")); //$NON-NLS-1$
+		infoButton.setText(PDERuntimeMessages.LogView_FilterDialog_information); //$NON-NLS-1$
 		infoButton.setSelection(memento.getString(LogView.P_LOG_INFO).equals("true")); //$NON-NLS-1$
 		
 		warningButton = new Button(group, SWT.CHECK);
-		warningButton.setText(PDERuntimePlugin.getResourceString("LogView.FilterDialog.warning")); //$NON-NLS-1$
+		warningButton.setText(PDERuntimeMessages.LogView_FilterDialog_warning); //$NON-NLS-1$
 		warningButton.setSelection(memento.getString(LogView.P_LOG_WARNING).equals("true")); //$NON-NLS-1$
 		
 		errorButton = new Button(group, SWT.CHECK);
-		errorButton.setText(PDERuntimePlugin.getResourceString("LogView.FilterDialog.error")); //$NON-NLS-1$
+		errorButton.setText(PDERuntimeMessages.LogView_FilterDialog_error); //$NON-NLS-1$
 		errorButton.setSelection(memento.getString(LogView.P_LOG_ERROR).equals("true"));		 //$NON-NLS-1$
 	}
 	
@@ -75,7 +75,7 @@ public class FilterDialog extends Dialog {
 		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		limit = new Button(comp, SWT.CHECK);
-		limit.setText(PDERuntimePlugin.getResourceString("LogView.FilterDialog.limitTo")); //$NON-NLS-1$
+		limit.setText(PDERuntimeMessages.LogView_FilterDialog_limitTo); //$NON-NLS-1$
 		limit.setSelection(memento.getString(LogView.P_USE_LIMIT).equals("true")); //$NON-NLS-1$
 		limit.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
@@ -106,16 +106,16 @@ public class FilterDialog extends Dialog {
 		container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		Label label = new Label(container, SWT.NONE);
-		label.setText(PDERuntimePlugin.getResourceString("LogView.FilterDialog.eventsLogged")); //$NON-NLS-1$
+		label.setText(PDERuntimeMessages.LogView_FilterDialog_eventsLogged); //$NON-NLS-1$
 		
 		showAllButton = new Button(container, SWT.RADIO);
-		showAllButton.setText(PDERuntimePlugin.getResourceString("LogView.FilterDialog.allSessions")); //$NON-NLS-1$
+		showAllButton.setText(PDERuntimeMessages.LogView_FilterDialog_allSessions); //$NON-NLS-1$
 		GridData gd = new GridData();
 		gd.horizontalIndent = 20;
 		showAllButton.setLayoutData(gd);
 		
 		Button button = new Button(container, SWT.RADIO);
-		button.setText(PDERuntimePlugin.getResourceString("LogView.FilterDialog.recentSession")); //$NON-NLS-1$
+		button.setText(PDERuntimeMessages.LogView_FilterDialog_recentSession); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalIndent = 20;
 		button.setLayoutData(gd);

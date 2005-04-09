@@ -17,13 +17,10 @@ import java.util.*;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
+import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
-	private static final String KEY_ERROR = "LogView.severity.error"; //$NON-NLS-1$
-	private static final String KEY_WARNING = "LogView.severity.warning"; //$NON-NLS-1$
-	private static final String KEY_INFO = "LogView.severity.info"; //$NON-NLS-1$
 	private ArrayList children;
 	private LogEntry parent;
 	private String pluginId;
@@ -116,11 +113,11 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 	private String getSeverityText(int severity) {
 		switch (severity) {
 			case IStatus.ERROR :
-				return PDERuntimePlugin.getResourceString(KEY_ERROR);
+				return PDERuntimeMessages.LogView_severity_error;
 			case IStatus.WARNING :
-				return PDERuntimePlugin.getResourceString(KEY_WARNING);
+				return PDERuntimeMessages.LogView_severity_warning;
 			case IStatus.INFO :
-				return PDERuntimePlugin.getResourceString(KEY_INFO);
+				return PDERuntimeMessages.LogView_severity_info;
 		}
 		return "?"; //$NON-NLS-1$
 	}

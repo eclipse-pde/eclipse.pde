@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime;
 
-import java.util.*;
-
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.runtime.registry.*;
 import org.eclipse.swt.widgets.*;
@@ -23,7 +21,7 @@ import org.osgi.framework.*;
 public class PDERuntimePlugin extends AbstractUIPlugin {
 	
 	private static PDERuntimePlugin inst;
-	private ResourceBundle resourceBundle;
+
 	private BundleContext fContext;
 
 	public static IWorkbenchPage getActivePage() {
@@ -48,35 +46,6 @@ public class PDERuntimePlugin extends AbstractUIPlugin {
 	
 	public PDERuntimePlugin() {
 		inst = this;
-	}
-	
-	public ResourceBundle getResourceBundle() {
-		try {
-			if (resourceBundle == null)
-				resourceBundle = ResourceBundle.getBundle("org.eclipse.pde.internal.runtime.pderuntimeresources"); //$NON-NLS-1$
-		} catch (MissingResourceException x) {
-			resourceBundle = null;
-		}
-		return resourceBundle;
-	}
-	
-	public static String getResourceString(String key) {
-		ResourceBundle bundle = getDefault().getResourceBundle();
-		try {
-			return (bundle != null) ? bundle.getString(key) : key;
-		} catch (MissingResourceException e) {
-			return key;
-		}
-	}
-	
-	public static String getFormattedMessage(String key, String arg) {
-		String text = getResourceString(key);
-		return java.text.MessageFormat.format(text, new Object[] { arg });
-	}
-	
-	public static String getFormattedMessage(String key, String[] args) {
-		String text = getResourceString(key);
-		return java.text.MessageFormat.format(text, args);
 	}
 	
 	private IWorkbenchPage internalGetActivePage() {
@@ -104,7 +73,6 @@ public class PDERuntimePlugin extends AbstractUIPlugin {
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
 		inst = null;
-		resourceBundle = null;
 	}
 
 }

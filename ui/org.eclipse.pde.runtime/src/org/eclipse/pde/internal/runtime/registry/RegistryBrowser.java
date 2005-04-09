@@ -26,13 +26,8 @@ public class RegistryBrowser extends ViewPart
 implements
 BundleListener,
 IRegistryChangeListener {
-	public static final String KEY_REFRESH_LABEL = "RegistryView.refresh.label"; //$NON-NLS-1$
-	public static final String KEY_REFRESH_TOOLTIP = "RegistryView.refresh.tooltip"; //$NON-NLS-1$
 	public static final String SHOW_RUNNING_PLUGINS = "RegistryView.showRunning.label"; //$NON-NLS-1$
 	public static final String REGISTRY_ORIENTATION = "RegistryView.orientation"; //$NON-NLS-1$
-	public static final String KEY_COLLAPSE_ALL_LABEL = "RegistryView.collapseAll.label"; //$NON-NLS-1$
-	public static final String KEY_COLLAPSE_ALL_TOOLTIP = "RegistryView.collapseAll.tooltip"; //$NON-NLS-1$
-	
 	public static final int VERTICAL_ORIENTATION = 1;
 	public static final int HORIZONTAL_ORIENTATION = 2;
 	public static final int SINGLE_PANE_ORIENTATION = 3;
@@ -110,8 +105,6 @@ IRegistryChangeListener {
 		// show all plug-ins by default (i.e. not just activated ones)
 		if (memento.getString(SHOW_RUNNING_PLUGINS) == null)
 			memento.putString(SHOW_RUNNING_PLUGINS, "false"); //$NON-NLS-1$
-		if (memento.getString(TogglePropertiesAction.SHOW_PROPERTIES_SHEET) == null)
-			memento.putString(TogglePropertiesAction.SHOW_PROPERTIES_SHEET, "true"); //$NON-NLS-1$
 		if (memento.getInteger(REGISTRY_ORIENTATION) == null)
 			memento.putInteger(REGISTRY_ORIENTATION, HORIZONTAL_ORIENTATION);
 	}
@@ -384,15 +377,13 @@ IRegistryChangeListener {
 				});
 			}
 		};
-		refreshAction.setText(PDERuntimePlugin
-				.getResourceString(KEY_REFRESH_LABEL));
-		refreshAction.setToolTipText(PDERuntimePlugin
-				.getResourceString(KEY_REFRESH_TOOLTIP));
+		refreshAction.setText(PDERuntimeMessages.RegistryView_refresh_label);
+		refreshAction.setToolTipText(PDERuntimeMessages.RegistryView_refresh_tooltip);
 		refreshAction.setImageDescriptor(PDERuntimePluginImages.DESC_REFRESH);
 		refreshAction
 		.setDisabledImageDescriptor(PDERuntimePluginImages.DESC_REFRESH_DISABLED);
 		
-		showPluginsAction = new Action(PDERuntimePlugin.getResourceString(SHOW_RUNNING_PLUGINS)){
+		showPluginsAction = new Action(PDERuntimeMessages.RegistryView_showRunning_label){
 			public void run(){
 				((RegistryBrowserContentProvider) treeViewer.getContentProvider())
 			.setShowRunning(showPluginsAction.isChecked());
@@ -407,9 +398,9 @@ IRegistryChangeListener {
 				treeViewer.collapseAll();
 			}
 		};
-		collapseAllAction.setText(PDERuntimePlugin.getResourceString(KEY_COLLAPSE_ALL_LABEL));
+		collapseAllAction.setText(PDERuntimeMessages.RegistryView_collapseAll_label);
 		collapseAllAction.setImageDescriptor(PDERuntimePluginImages.DESC_COLLAPSE_ALL);
-		collapseAllAction.setToolTipText(PDERuntimePlugin.getResourceString(KEY_COLLAPSE_ALL_TOOLTIP));
+		collapseAllAction.setToolTipText(PDERuntimeMessages.RegistryView_collapseAll_tooltip);
 		
 		toggleViewAction = new TogglePropertiesAction[3];
 		toggleViewAction[0] = new TogglePropertiesAction(this, VERTICAL_ORIENTATION);

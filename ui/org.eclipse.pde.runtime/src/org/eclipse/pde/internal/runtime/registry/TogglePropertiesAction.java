@@ -23,18 +23,6 @@ import org.eclipse.pde.internal.runtime.*;
  * @since 3.0
  */
 public class TogglePropertiesAction extends Action {
-	public static final String SHOW_PROPERTIES_SHEET = "RegistryView.showPropertiesSheet.label"; //$NON-NLS-1$
-	public static final String SHOW_PROPERTIES_SHEET_TOOLTIP = "RegistryView.showPropertiesSheet.tooltip"; //$NON-NLS-1$
-	public static final String SHOW_PROPERTIES_SHEET_DESC = "RegistryView.showPropertiesSheet.desc"; //$NON-NLS-1$
-	
-	public static final String USE_VERTICAL_ORIENTATION = "RegistryView.verticalOrientation.label"; //$NON-NLS-1$
-	public static final String USE_VERTICAL_ORIENTATION_TOOLTIP = "RegistryView.verticalOrientation.tooltip"; //$NON-NLS-1$
-	public static final String USE_VERTICAL_ORIENTATION_DESC = "RegistryView.verticalOrientation.desc"; //$NON-NLS-1$
-	
-	public static final String USE_HORIZONTAL_ORIENTATION = "RegistryView.horizontalOrientation.label"; //$NON-NLS-1$
-	public static final String USE_HORIZONTAL_ORIENTATION_TOOLTIP = "RegistryView.horizontalOrientation.tooltip"; //$NON-NLS-1$
-	public static final String USE_HORIZONTAL_ORIENTATION_DESC = "RegistryView.horizontalOrientation.desc"; //$NON-NLS-1$
-	
 	private RegistryBrowser fViewer;
 	private int fOrientation;
 
@@ -44,21 +32,21 @@ public class TogglePropertiesAction extends Action {
 		setOrientation(orientation);
 				
 		if (orientation == RegistryBrowser.VERTICAL_ORIENTATION) {
-			setText(PDERuntimePlugin.getResourceString(USE_VERTICAL_ORIENTATION));  //$NON-NLS-1$
-			setToolTipText(PDERuntimePlugin.getResourceString(USE_VERTICAL_ORIENTATION_TOOLTIP));  //$NON-NLS-1$
-			setDescription(PDERuntimePlugin.getResourceString(USE_VERTICAL_ORIENTATION_DESC));  //$NON-NLS-1$
+			setText(PDERuntimeMessages.RegistryView_verticalOrientation_label);  //$NON-NLS-1$
+			setToolTipText(PDERuntimeMessages.RegistryView_verticalOrientation_tooltip);  //$NON-NLS-1$
+			setDescription(PDERuntimeMessages.RegistryView_verticalOrientation_desc);  //$NON-NLS-1$
 			setImageDescriptor(PDERuntimePluginImages.DESC_VERTICAL_VIEW);
 			setDisabledImageDescriptor(PDERuntimePluginImages.DESC_VERTICAL_VIEW_DISABLED);
 		} else if (orientation == RegistryBrowser.HORIZONTAL_ORIENTATION) {
-			setText(PDERuntimePlugin.getResourceString(USE_HORIZONTAL_ORIENTATION));  //$NON-NLS-1$
-			setToolTipText(PDERuntimePlugin.getResourceString(USE_HORIZONTAL_ORIENTATION_TOOLTIP));  //$NON-NLS-1$
-			setDescription(PDERuntimePlugin.getResourceString(USE_HORIZONTAL_ORIENTATION_DESC));  //$NON-NLS-1$
+			setText(PDERuntimeMessages.RegistryView_horizontalOrientation_label);  //$NON-NLS-1$
+			setToolTipText(PDERuntimeMessages.RegistryView_horizontalOrientation_tooltip);  //$NON-NLS-1$
+			setDescription(PDERuntimeMessages.RegistryView_horizontalOrientation_desc);  //$NON-NLS-1$
 			setImageDescriptor(PDERuntimePluginImages.DESC_HORIZONTAL_VIEW);
 			setDisabledImageDescriptor(PDERuntimePluginImages.DESC_HORIZONTAL_VIEW_DISABLED);
 		} else {
-			setText(PDERuntimePlugin.getResourceString(SHOW_PROPERTIES_SHEET));
-			setToolTipText(PDERuntimePlugin.getResourceString(SHOW_PROPERTIES_SHEET_TOOLTIP));  //$NON-NLS-1$
-			setDescription(PDERuntimePlugin.getResourceString(SHOW_PROPERTIES_SHEET_DESC));  //$NON-NLS-1$
+			setText(PDERuntimeMessages.RegistryView_showPropertiesSheet_label);
+			setToolTipText(PDERuntimeMessages.RegistryView_showPropertiesSheet_tooltip);  //$NON-NLS-1$
+			setDescription(PDERuntimeMessages.RegistryView_showPropertiesSheet_desc);  //$NON-NLS-1$
 			setImageDescriptor(PDERuntimePluginImages.DESC_HIDE_PANE);
 		} 		
 

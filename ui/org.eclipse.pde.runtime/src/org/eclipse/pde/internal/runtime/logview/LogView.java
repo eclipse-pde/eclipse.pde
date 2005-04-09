@@ -26,6 +26,7 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.runtime.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.*;
@@ -178,7 +179,7 @@ public class LogView extends ViewPart implements ILogListener {
     }
      
      private Action createActivateViewAction() {
-        Action action = new Action(PDERuntimePlugin.getResourceString("LogView.activate")) { //$NON-NLS-1$       	
+        Action action = new Action(PDERuntimeMessages.LogView_activate) { //$NON-NLS-1$       	
             public void run() {
             	fMemento.putString(P_ACTIVATE, isChecked() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
             }
@@ -188,20 +189,20 @@ public class LogView extends ViewPart implements ILogListener {
      }
      
      private Action createClearAction() {
-        Action action = new Action(PDERuntimePlugin.getResourceString("LogView.clear")) { //$NON-NLS-1$
+        Action action = new Action(PDERuntimeMessages.LogView_clear) { //$NON-NLS-1$
             public void run() {
                 handleClear();
             }
         };
         action.setImageDescriptor(PDERuntimePluginImages.DESC_CLEAR);
         action.setDisabledImageDescriptor(PDERuntimePluginImages.DESC_CLEAR_DISABLED);
-        action.setToolTipText(PDERuntimePlugin.getResourceString("LogView.clear.tooltip")); //$NON-NLS-1$
-        action.setText(PDERuntimePlugin.getResourceString("LogView.clear")); //$NON-NLS-1$
+        action.setToolTipText(PDERuntimeMessages.LogView_clear_tooltip); //$NON-NLS-1$
+        action.setText(PDERuntimeMessages.LogView_clear); //$NON-NLS-1$
     	return action;
     }
      
     private Action createCopyAction() {
-        Action action = new Action(PDERuntimePlugin.getResourceString("LogView.copy")) { //$NON-NLS-1$
+        Action action = new Action(PDERuntimeMessages.LogView_copy) { //$NON-NLS-1$
             public void run() {
                 copyToClipboard(fTreeViewer.getSelection());
             }
@@ -212,12 +213,12 @@ public class LogView extends ViewPart implements ILogListener {
     }
     
     private Action createDeleteLogAction() {
-        Action action = new Action(PDERuntimePlugin.getResourceString("LogView.delete")) { //$NON-NLS-1$
+        Action action = new Action(PDERuntimeMessages.LogView_delete) { //$NON-NLS-1$
             public void run() {
                 doDeleteLog();
             }
         };
-        action.setToolTipText(PDERuntimePlugin.getResourceString("LogView.delete.tooltip")); //$NON-NLS-1$
+        action.setToolTipText(PDERuntimeMessages.LogView_delete_tooltip); //$NON-NLS-1$
         action.setImageDescriptor(PDERuntimePluginImages.DESC_REMOVE_LOG);
         action.setDisabledImageDescriptor(PDERuntimePluginImages.DESC_REMOVE_LOG_DISABLED);
         action.setEnabled(fInputFile.exists() && fInputFile.equals(Platform.getLogFileLocation().toFile()));
@@ -225,12 +226,12 @@ public class LogView extends ViewPart implements ILogListener {
     }
 
     private Action createExportAction() {
-        Action action = new Action(PDERuntimePlugin.getResourceString("LogView.export")) { //$NON-NLS-1$
+        Action action = new Action(PDERuntimeMessages.LogView_export) { //$NON-NLS-1$
             public void run() {
                 handleExport();
             }
         };
-        action.setToolTipText(PDERuntimePlugin.getResourceString("LogView.export.tooltip")); //$NON-NLS-1$
+        action.setToolTipText(PDERuntimeMessages.LogView_export_tooltip); //$NON-NLS-1$
         action.setImageDescriptor(PDERuntimePluginImages.DESC_EXPORT);
         action.setDisabledImageDescriptor(PDERuntimePluginImages.DESC_EXPORT_DISABLED);
 		action.setEnabled(fInputFile.exists());
@@ -238,31 +239,31 @@ public class LogView extends ViewPart implements ILogListener {
     }
     
     private Action createFilterAction() {
-        Action action = new Action(PDERuntimePlugin.getResourceString("LogView.filter")) { //$NON-NLS-1$
+        Action action = new Action(PDERuntimeMessages.LogView_filter) { //$NON-NLS-1$
             public void run() {
                 handleFilter();
             }
         };
-        action.setToolTipText(PDERuntimePlugin.getResourceString("LogView.filter")); //$NON-NLS-1$
+        action.setToolTipText(PDERuntimeMessages.LogView_filter); //$NON-NLS-1$
         action.setImageDescriptor(PDERuntimePluginImages.DESC_FILTER);
         action.setDisabledImageDescriptor(PDERuntimePluginImages.DESC_FILTER_DISABLED);
     	return action;
     }
     
     private Action createImportLogAction() {
-        Action action = new Action(PDERuntimePlugin.getResourceString("LogView.import")) { //$NON-NLS-1$
+        Action action = new Action(PDERuntimeMessages.LogView_import) { //$NON-NLS-1$
             public void run() {
                 handleImport();
             }
         };
-        action.setToolTipText(PDERuntimePlugin.getResourceString("LogView.import.tooltip")); //$NON-NLS-1$
+        action.setToolTipText(PDERuntimeMessages.LogView_import_tooltip); //$NON-NLS-1$
         action.setImageDescriptor(PDERuntimePluginImages.DESC_IMPORT);
         action.setDisabledImageDescriptor(PDERuntimePluginImages.DESC_IMPORT_DISABLED);
         return action;
     }
     
     private Action createOpenLogAction() {
-        Action action = new Action(PDERuntimePlugin.getResourceString("LogView.view.currentLog")) { //$NON-NLS-1$
+        Action action = new Action(PDERuntimeMessages.LogView_view_currentLog) { //$NON-NLS-1$
             public void run() {
                 if (fInputFile.exists()) {
                     if (fInputFile.length() > LogReader.MAX_FILE_LENGTH) {
@@ -289,7 +290,7 @@ public class LogView extends ViewPart implements ILogListener {
         action.setImageDescriptor(PDERuntimePluginImages.DESC_OPEN_LOG);
         action.setDisabledImageDescriptor(PDERuntimePluginImages.DESC_OPEN_LOG_DISABLED);
         action.setEnabled(fInputFile.exists());
-        action.setToolTipText(PDERuntimePlugin.getResourceString("LogView.view.currentLog.tooltip")); //$NON-NLS-1$
+        action.setToolTipText(PDERuntimeMessages.LogView_view_currentLog_tooltip); //$NON-NLS-1$
     	return action;
     }
     
@@ -298,19 +299,18 @@ public class LogView extends ViewPart implements ILogListener {
         fPropertiesAction.setImageDescriptor(PDERuntimePluginImages.DESC_PROPERTIES);
         fPropertiesAction
                 .setDisabledImageDescriptor(PDERuntimePluginImages.DESC_PROPERTIES_DISABLED);
-        fPropertiesAction.setToolTipText(PDERuntimePlugin
-                .getResourceString("LogView.properties.tooltip")); //$NON-NLS-1$
+        fPropertiesAction.setToolTipText(PDERuntimeMessages.LogView_properties_tooltip); //$NON-NLS-1$
         fPropertiesAction.setEnabled(false);
     }
     
     private Action createReadLogAction() {
-        Action action = new Action(PDERuntimePlugin.getResourceString("LogView.readLog.restore")) { //$NON-NLS-1$
+        Action action = new Action(PDERuntimeMessages.LogView_readLog_restore) { //$NON-NLS-1$
             public void run() {
                 fInputFile = Platform.getLogFileLocation().toFile();
                 reloadLog();
             }
         };
-        action.setToolTipText(PDERuntimePlugin.getResourceString("LogView.readLog.restore.tooltip")); //$NON-NLS-1$
+        action.setToolTipText(PDERuntimeMessages.LogView_readLog_restore_tooltip); //$NON-NLS-1$
         action.setImageDescriptor(PDERuntimePluginImages.DESC_READ_LOG);
         action.setDisabledImageDescriptor(PDERuntimePluginImages.DESC_READ_LOG_DISABLED);
     	return action;
@@ -341,7 +341,7 @@ public class LogView extends ViewPart implements ILogListener {
 
     private void createColumns(Tree tree) {
         fColumn1 = new TreeColumn(tree, SWT.LEFT);
-        fColumn1.setText(PDERuntimePlugin.getResourceString("LogView.column.message")); //$NON-NLS-1$
+        fColumn1.setText(PDERuntimeMessages.LogView_column_message); //$NON-NLS-1$
         fColumn1.setWidth(fMemento.getInteger(P_COLUMN_1).intValue());
         fColumn1.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
@@ -361,7 +361,7 @@ public class LogView extends ViewPart implements ILogListener {
         });
 
         fColumn2 = new TreeColumn(tree, SWT.LEFT);
-        fColumn2.setText(PDERuntimePlugin.getResourceString("LogView.column.plugin")); //$NON-NLS-1$
+        fColumn2.setText(PDERuntimeMessages.LogView_column_plugin); //$NON-NLS-1$
         fColumn2.setWidth(fMemento.getInteger(P_COLUMN_2).intValue());
         fColumn2.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
@@ -381,7 +381,7 @@ public class LogView extends ViewPart implements ILogListener {
         });
 
         fColumn3 = new TreeColumn(tree, SWT.LEFT);
-        fColumn3.setText(PDERuntimePlugin.getResourceString("LogView.column.date"));//$NON-NLS-1$
+        fColumn3.setText(PDERuntimeMessages.LogView_column_date);//$NON-NLS-1$
         fColumn3.setWidth(fMemento.getInteger(P_COLUMN_3).intValue());
         fColumn3.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
@@ -428,7 +428,7 @@ public class LogView extends ViewPart implements ILogListener {
             IRunnableWithProgress op = new IRunnableWithProgress() {
                 public void run(IProgressMonitor monitor)
                         throws InvocationTargetException, InterruptedException {
-                    monitor.beginTask(PDERuntimePlugin.getResourceString("LogView.operation.importing"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
+                    monitor.beginTask(PDERuntimeMessages.LogView_operation_importing, IProgressMonitor.UNKNOWN); //$NON-NLS-1$
                     readLogFile();
                 }
             };
@@ -438,8 +438,8 @@ public class LogView extends ViewPart implements ILogListener {
             } catch (InvocationTargetException e) {
             } catch (InterruptedException e) {
             } finally {
-                fReadLogAction.setText(PDERuntimePlugin.getResourceString("LogView.readLog.reload")); //$NON-NLS-1$
-                fReadLogAction.setToolTipText(PDERuntimePlugin.getResourceString("LogView.readLog.reload")); //$NON-NLS-1$
+                fReadLogAction.setText(PDERuntimeMessages.LogView_readLog_reload); //$NON-NLS-1$
+                fReadLogAction.setToolTipText(PDERuntimeMessages.LogView_readLog_reload); //$NON-NLS-1$
                 asyncRefresh(false);
                 resetDialogButtons();
             }
@@ -458,10 +458,8 @@ public class LogView extends ViewPart implements ILogListener {
             File outputFile = new Path(path).toFile();
             fDirectory = outputFile.getParent();
             if (outputFile.exists()) {
-                String message = PDERuntimePlugin.getFormattedMessage(
-                        "LogView.confirmOverwrite.message", //$NON-NLS-1$
-                        outputFile.toString());
-                if (!MessageDialog.openQuestion(getViewSite().getShell(), PDERuntimePlugin.getResourceString("LogView.exportLog"), message)) //$NON-NLS-1$
+                String message = NLS.bind(PDERuntimeMessages.LogView_confirmOverwrite_message, outputFile.toString());
+                if (!MessageDialog.openQuestion(getViewSite().getShell(), PDERuntimeMessages.LogView_exportLog, message)) //$NON-NLS-1$
                     return;
             }
             copy(fInputFile, outputFile);
@@ -497,15 +495,14 @@ public class LogView extends ViewPart implements ILogListener {
     			PDERuntimePlugin.getActiveWorkbenchShell(), fMemento);
     	dialog.create();
     	dialog.getShell().setText(
-    			PDERuntimePlugin.getResourceString("LogView.FilterDialog.title")); //$NON-NLS-1$
+    			PDERuntimeMessages.LogView_FilterDialog_title); //$NON-NLS-1$
     	if (dialog.open() == FilterDialog.OK)
     		reloadLog();
     }
     
     private void doDeleteLog() {
-    	String title = PDERuntimePlugin.getResourceString("LogView.confirmDelete.title"); //$NON-NLS-1$
-    	String message = PDERuntimePlugin
-    	.getResourceString("LogView.confirmDelete.message"); //$NON-NLS-1$
+    	String title = PDERuntimeMessages.LogView_confirmDelete_title; //$NON-NLS-1$
+    	String message = PDERuntimeMessages.LogView_confirmDelete_message; //$NON-NLS-1$
     	if (!MessageDialog.openConfirm(fTree.getShell(), title,
     			message))
     		return;
@@ -538,8 +535,7 @@ public class LogView extends ViewPart implements ILogListener {
         IRunnableWithProgress op = new IRunnableWithProgress() {
             public void run(IProgressMonitor monitor) throws InvocationTargetException,
                     InterruptedException {
-                monitor.beginTask(PDERuntimePlugin
-                        .getResourceString("LogView.operation.reloading"), //$NON-NLS-1$
+                monitor.beginTask(PDERuntimeMessages.LogView_operation_reloading, //$NON-NLS-1$
                         IProgressMonitor.UNKNOWN);
                 readLogFile();
             }
@@ -550,10 +546,8 @@ public class LogView extends ViewPart implements ILogListener {
         } catch (InvocationTargetException e) {
         } catch (InterruptedException e) {
         } finally {
-            fReadLogAction.setText(PDERuntimePlugin
-                    .getResourceString("LogView.readLog.restore")); //$NON-NLS-1$
-            fReadLogAction.setToolTipText(PDERuntimePlugin
-                    .getResourceString("LogView.readLog.restore")); //$NON-NLS-1$
+            fReadLogAction.setText(PDERuntimeMessages.LogView_readLog_restore); //$NON-NLS-1$
+            fReadLogAction.setToolTipText(PDERuntimeMessages.LogView_readLog_restore); //$NON-NLS-1$
             asyncRefresh(false);
             resetDialogButtons();
         }
