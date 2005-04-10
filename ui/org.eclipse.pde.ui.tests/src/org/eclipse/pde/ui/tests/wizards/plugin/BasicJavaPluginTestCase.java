@@ -34,20 +34,20 @@ public class BasicJavaPluginTestCase extends NewProjectTest {
 	public void testMinimalJavaPlugin() {
 		try {
 			playScript(Catalog.BASIC_JAVA_PLUGIN_1);
-			verifyProject(false);
+			verifyProject(true);
 			verifyPluginModel(null, "xyz.jar");
-			verifyBuildProperties(false, "xyz.jar", "src", "bin");
+			verifyBuildProperties(true, "xyz.jar", "src", "bin");
 		} catch (CoreException e) {
 			fail("testMinimalJavaPlugin:" + e);
 		}
 	}
 	
-	public void testMinimalJavaPluginWithManifest() {
+	public void testMinimalJavaPluginWithoutManifest() {
 		try {
 			playScript(Catalog.BASIC_JAVA_PLUGIN_2);
-			verifyProject(true);
+			verifyProject(false);
 			verifyPluginModel(null, "xyz.jar");
-			verifyBuildProperties(true, "xyz.jar", "src", "bin");
+			verifyBuildProperties(false, "xyz.jar", "src", "bin");
 		} catch (CoreException e) {
 			fail("testMinimalJavaPluginWithManifest:" + e);
 		}
@@ -56,9 +56,9 @@ public class BasicJavaPluginTestCase extends NewProjectTest {
 	public void testMultiSegmentSourceFolder() {
 		try {
 			playScript(Catalog.BASIC_JAVA_PLUGIN_3);
-			verifyProject(false, null, "src/abc", "bin");
+			verifyProject(true, null, "src/abc", "bin");
 			verifyPluginModel(null, "xyz.jar");
-			verifyBuildProperties(false, "xyz.jar", "src/abc", "bin");
+			verifyBuildProperties(true, "xyz.jar", "src/abc", "bin");
 		} catch (CoreException e) {
 			fail("testMultiSegmentSourceFolder:" + e);
 		}
@@ -67,9 +67,9 @@ public class BasicJavaPluginTestCase extends NewProjectTest {
 	public void testMultiSegmentOutputFolder() {
 		try {
 			playScript(Catalog.BASIC_JAVA_PLUGIN_4);
-			verifyProject(false, null, "src", "bin/abc");
+			verifyProject(true, null, "src", "bin/abc");
 			verifyPluginModel(null, "xyz.jar");
-			verifyBuildProperties(false, "xyz.jar", "src", "bin/abc");
+			verifyBuildProperties(true, "xyz.jar", "src", "bin/abc");
 		} catch (CoreException e) {
 			fail("testMultiSegmentOutputFolder:" + e);
 		}
@@ -78,9 +78,9 @@ public class BasicJavaPluginTestCase extends NewProjectTest {
 	public void testPluginWithDot() {
 		try {
 			playScript(Catalog.BASIC_JAVA_PLUGIN_5);
-			verifyProject(false);
+			verifyProject(true);
 			verifyPluginModel(null, ".");
-			verifyBuildProperties(false, ".", "src", "bin");
+			verifyBuildProperties(true, ".", "src", "bin");
 		} catch (CoreException e) {
 			fail("testPluginWithDot:" + e);
 		}	
@@ -89,9 +89,9 @@ public class BasicJavaPluginTestCase extends NewProjectTest {
 	public void testUIPlugin() {
 		try {
 			playScript(Catalog.BASIC_JAVA_PLUGIN_6);
-			verifyProject(false, "com.example.xyz.XyzPlugin", "src", "bin");
+			verifyProject(true, "com.example.xyz.XyzPlugin", "src", "bin");
 			verifyPluginModel("com.example.xyz.XyzPlugin", "xyz.jar");
-			verifyBuildProperties(false, "xyz.jar", "src", "bin");
+			verifyBuildProperties(true, "xyz.jar", "src", "bin");
 			verifyType(true, "com.example.xyz.XyzPlugin");
 		} catch (CoreException e) {
 			fail("testUIPlugin:" + e);
@@ -101,9 +101,9 @@ public class BasicJavaPluginTestCase extends NewProjectTest {
 	public void testNonUIPlugin() {
 		try {
 			playScript(Catalog.BASIC_JAVA_PLUGIN_7);
-			verifyProject(false, "com.example.xyz.XyzPlugin", "src", "bin");
+			verifyProject(true, "com.example.xyz.XyzPlugin", "src", "bin");
 			verifyPluginModel("com.example.xyz.XyzPlugin", "xyz.jar");
-			verifyBuildProperties(false, "xyz.jar", "src", "bin");
+			verifyBuildProperties(true, "xyz.jar", "src", "bin");
 			verifyType(false, "com.example.xyz.XyzPlugin");
 		} catch (CoreException e) {
 			fail("testNonUIPlugin:" + e);

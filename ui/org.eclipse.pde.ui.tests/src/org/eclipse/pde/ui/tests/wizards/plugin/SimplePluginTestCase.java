@@ -32,12 +32,12 @@ public class SimplePluginTestCase extends NewProjectTest {
 
 	public void testSimplePluginProject() {
 		playScript(Catalog.SIMPLE_PLUGIN_1);
-		verifyProjectContent(false);
+		verifyProjectContent(true);
 	}
 	
-	public void testSimplePluginWithManifest() {
+	public void testSimplePluginWithoutManifest() {
 		playScript(Catalog.SIMPLE_PLUGIN_2);
-		verifyProjectContent(true);
+		verifyProjectContent(false);
 	}
 	
 	private void verifyProjectContent(boolean isBundle) {

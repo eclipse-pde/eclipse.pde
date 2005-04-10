@@ -123,9 +123,8 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 	
 	private void updateBundleCheck() {
 		boolean legacy = fTargetCombo.getText().equals(ICoreConstants.TARGET21);
+		fBundleCheck.setSelection(!legacy);
 		fBundleCheck.setEnabled(!legacy);
-		if (legacy)
-			fBundleCheck.setSelection(false);		
 	}
 	
 	private Button createButton(Composite container) {
