@@ -20,7 +20,6 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.launcher.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -36,9 +35,8 @@ public class EnvironmentBlock implements IEnvironmentVariables {
 	private TreeSet fOSChoices;
 	private TreeSet fWSChoices;
 	private TreeSet fArchChoices;
-	private Button fDefaultJREButton;
 	private Combo fJRECombo;
-	private Button fThisJREButton;
+	//private Button fStrictButton;
 
 	public EnvironmentBlock() {
 		preferences = PDECore.getDefault().getPluginPreferences();
@@ -79,11 +77,10 @@ public class EnvironmentBlock implements IEnvironmentVariables {
 
 	public Control createContents(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.verticalSpacing = 20;
-		container.setLayout(layout);
+		container.setLayout(new GridLayout());
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
+		//createRuntimeGroup(container);
 		createTargetEnvironmentGroup(container);
 		createJREGroup(container);
 		
@@ -92,25 +89,27 @@ public class EnvironmentBlock implements IEnvironmentVariables {
 		return container;
 	}
 	
+	/*private void createRuntimeGroup(Composite container) {
+		Group group = new Group(container, SWT.NULL);
+		group.setLayout(new GridLayout());
+		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		group.setText("Self-hosting Mode");
+		
+		fStrictButton = new Button(group, SWT.CHECK);
+		fStrictButton.setText("Self-host in strict mode to enforce inter-plugin code access restrictions");
+		fStrictButton.setSelection(preferences.getBoolean(ICoreConstants.STRICT_MODE));
+	}*/
+
 	private void createJREGroup(Composite container) {
 		Group group = new Group(container, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		group.setLayout(layout);
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		group.setText(PDEUIMessages.EnvironmentBlock_jreGroup); //$NON-NLS-1$
+		group.setText("Java Runtime Environment");
 		
-		fDefaultJREButton = new Button(group, SWT.RADIO);
-		fDefaultJREButton.setText(PDEUIMessages.EnvironmentBlock_defaultJRE + LauncherUtils.getDefaultVMInstallName() + "."); //$NON-NLS-1$ //$NON-NLS-2$
-		GridData gd = new GridData();
-		gd.horizontalSpan = 2;
-		fDefaultJREButton.setLayoutData(gd);
-		boolean usedefault = preferences.getBoolean(ICoreConstants.USE_DEFAULT_JRE);
-		fDefaultJREButton.setSelection(usedefault);
-		
-		fThisJREButton = new Button(group, SWT.RADIO);
-		fThisJREButton.setText(PDEUIMessages.EnvironmentBlock_thisJRE); //$NON-NLS-1$
-		fThisJREButton.setSelection(!usedefault);
+		Label label = new Label(group, SWT.NONE);
+		label.setText(PDEUIMessages.EnvironmentBlock_jreGroup);  //$NON-NLS-1$
 		
 		fJRECombo = new Combo(group, SWT.SINGLE|SWT.READ_ONLY);
 		fJRECombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -121,17 +120,10 @@ public class EnvironmentBlock implements IEnvironmentVariables {
 			fJRECombo.setText(LauncherUtils.getDefaultVMInstallName());
 		else 
 			fJRECombo.setText(vm);
-		fJRECombo.setEnabled(!usedefault);
 		
-		fThisJREButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				fJRECombo.setEnabled(fThisJREButton.getSelection());
-			}
-		});
-		
-		Label label = new Label(group, SWT.WRAP);
+		label = new Label(group, SWT.WRAP);
 		label.setText(PDEUIMessages.EnvironmentBlock_jreNote); //$NON-NLS-1$
-		gd = new GridData();
+		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		gd.horizontalIndent = 25;
 		gd.widthHint = 400;
@@ -186,34 +178,31 @@ public class EnvironmentBlock implements IEnvironmentVariables {
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
+		//fStrictButton.setSelection(preferences.getDefaultBoolean(ICoreConstants.STRICT_MODE));
 		fOSCombo.setText(preferences.getDefaultString(OS));
 		fWSCombo.setText(preferences.getDefaultString(WS));
 		fNLCombo.setText(expandLocaleName(preferences.getDefaultString(NL)));
 		fArchCombo.setText(preferences.getDefaultString(ARCH));
-		fDefaultJREButton.setSelection(true);
-		fThisJREButton.setSelection(false);
-		fJRECombo.setEnabled(false);
 		fJRECombo.setText(LauncherUtils.getDefaultVMInstallName());
 	}
 
 	public boolean performOk() {
+		applySelfHostingMode();
 		applyTargetEnvironmentGroup();
 		applyJREGroup();
 		return true;
 	}
 	
 	private void applyJREGroup() {
-		boolean useDefault = fDefaultJREButton.getSelection();
-		preferences.setValue(ICoreConstants.USE_DEFAULT_JRE, useDefault);
-		if (useDefault)
-			preferences.setValue(ICoreConstants.TARGET_JRE, LauncherUtils.getDefaultVMInstallName());
-		else {
-			preferences.setValue(ICoreConstants.TARGET_JRE, fJRECombo.getText());
-			try {
-				JavaRuntime.setDefaultVMInstall(LauncherUtils.getVMInstall(fJRECombo.getText()), null);
-			} catch (CoreException e) {
-			}
+		preferences.setValue(ICoreConstants.TARGET_JRE, fJRECombo.getText());
+		try {
+			JavaRuntime.setDefaultVMInstall(LauncherUtils.getVMInstall(fJRECombo.getText()), null);
+		} catch (CoreException e) {
 		}
+	}
+	
+	private void applySelfHostingMode() {
+		preferences.setValue(ICoreConstants.STRICT_MODE, false);
 	}
 	
 	private void applyTargetEnvironmentGroup() {
