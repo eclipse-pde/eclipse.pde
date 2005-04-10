@@ -27,8 +27,10 @@ public interface ICoreConstants {
 	String P_EXT_LOCATIONS = "ext_locations"; //$NON-NLS-1$
 	
 	// Target JRE
-	String USE_DEFAULT_JRE = "useDefaultJRE"; //$NON-NLS-1$
 	String TARGET_JRE = "targetJRE"; //$NON-NLS-1$
+	
+	// Self-hosting mode
+	String STRICT_MODE = "strictMode";
 
 	public final static String TARGET21 = "2.1"; //$NON-NLS-1$
 	public final static String TARGET30 = "3.0"; //$NON-NLS-1$

@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.core.bundle;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.ibundle.*;
 import org.osgi.framework.*;
 
@@ -56,7 +57,7 @@ public class BundlePlugin extends BundlePluginBase implements IBundlePlugin {
 	}
 
 	public boolean hasExtensibleAPI() {
-		return "true".equals(parseSingleValuedHeader("Eclipse-ExtensibleAPI")); //$NON-NLS-1$ //$NON-NLS-2$
+		return "true".equals(parseSingleValuedHeader(ICoreConstants.EXTENSIBLE_API)); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 }

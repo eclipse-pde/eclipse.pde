@@ -15,6 +15,7 @@ import java.util.TreeMap;
 import java.util.Vector;
 
 import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.osgi.framework.Constants;
@@ -32,7 +33,7 @@ public abstract class BasePackageHeader extends ManifestHeader {
 
     protected String getVersionAttribute() {
         int manifestVersion = BundlePluginBase.getBundleManifestVersion(getBundle());
-        return (manifestVersion < 2) ? Constants.PACKAGE_SPECIFICATION_VERSION : Constants.VERSION_ATTRIBUTE;
+        return (manifestVersion < 2) ? ICoreConstants.PACKAGE_SPECIFICATION_VERSION : Constants.VERSION_ATTRIBUTE;
     }
     
     protected abstract void processValue();

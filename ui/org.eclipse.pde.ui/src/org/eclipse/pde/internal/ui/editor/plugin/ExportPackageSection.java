@@ -375,7 +375,7 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
     
     private String getVersionAttribute() {
         int manifestVersion = BundlePluginBase.getBundleManifestVersion(getBundle());
-        return (manifestVersion < 2) ? Constants.PACKAGE_SPECIFICATION_VERSION : Constants.VERSION_ATTRIBUTE;
+        return (manifestVersion < 2) ? ICoreConstants.PACKAGE_SPECIFICATION_VERSION : Constants.VERSION_ATTRIBUTE;
     }
  
     public String getExportedPackageHeader() {
