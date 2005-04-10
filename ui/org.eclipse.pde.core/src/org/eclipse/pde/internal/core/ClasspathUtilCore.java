@@ -21,14 +21,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jdt.core.IAccessRule;
-import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
@@ -43,8 +39,6 @@ import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.plugin.Plugin;
 
 public class ClasspathUtilCore {
-	
-	private static boolean ENABLE_RESTRICTIONS = false;
 	
 	public static IClasspathEntry createContainerEntry() {
 		return JavaCore.newContainerEntry(new Path(PDECore.CLASSPATH_CONTAINER_ID));
@@ -69,29 +63,6 @@ public class ClasspathUtilCore {
 			}		
 		}
 	}
-
-	protected static void addProjectEntry(IPluginModelBase model, boolean isExported, boolean useinclusionPatterns, ArrayList result) throws CoreException {
-		IProject project = model.getUnderlyingResource().getProject();
-		if (project.hasNature(JavaCore.NATURE_ID)) {
-			IClasspathEntry entry = null;
-			if (ENABLE_RESTRICTIONS && useinclusionPatterns) {
-				IPath[] inclusionPatterns = model.isFragmentModel()
-												? getInclusionPatterns((IFragmentModel)model)
-											    : getInclusions(model);
-				IAccessRule[] accessRules = getAccessRules(inclusionPatterns);
-				entry = JavaCore.newProjectEntry(
-							project.getFullPath(), 
-							accessRules, 
-							false, 
-							new IClasspathAttribute[0], 
-							isExported);
-			} else {
-				entry = JavaCore.newProjectEntry(project.getFullPath(), isExported);		
-			}
-			if (entry != null && !result.contains(entry))
-				result.add(entry);
-		}
-	}
 	
 	private static void addJARdPlugin(IPluginModelBase model,
 			boolean isExported, boolean useInclusionPatterns, ArrayList result)
@@ -101,26 +72,11 @@ public class ClasspathUtilCore {
 		if (sourcePath == null)
 			sourcePath = new Path(model.getInstallLocation());
 		
-		IClasspathEntry entry = null;
-		if (ENABLE_RESTRICTIONS && useInclusionPatterns) {
-			IPath[] inclusionPatterns = model.isFragmentModel()
-											? getInclusionPatterns((IFragmentModel)model)
-										    : getInclusions(model);
-			IAccessRule[] accessRules = getAccessRules(inclusionPatterns);
-			entry = JavaCore.newLibraryEntry(
-						new Path(model.getInstallLocation()), 
-						sourcePath, 
-						null,
-						accessRules,
-						new IClasspathAttribute[0],
-						isExported);
-		} else {
-			entry = JavaCore.newLibraryEntry(
+		IClasspathEntry entry  = JavaCore.newLibraryEntry(
 						new Path(model.getInstallLocation()), 
 						sourcePath, 
 						null, 
 						isExported);
-		}
 		if (entry != null && !result.contains(entry)) {
 			result.add(entry);
 		}
@@ -147,39 +103,16 @@ public class ClasspathUtilCore {
 				path = getPath(model, expandedName);
 			}
 			
-			if (ENABLE_RESTRICTIONS && useInclusionPatterns) {
-				IPath[] inclusionPatterns = getInclusionPatterns(library);
-				IAccessRule[] accessRules = getAccessRules(inclusionPatterns);
-				entry = JavaCore.newLibraryEntry(
-							path, 
-							getSourceAnnotation(model, expandedName), 
-							null, 
-							accessRules,
-							new IClasspathAttribute[0], 
-							exported);
-			} else {
+
 				entry = JavaCore.newLibraryEntry(
 						path, 
 						getSourceAnnotation(model, expandedName),
 						null, 
 						exported);
-			}
+		
 		} catch (CoreException e) {
 		}
 		return entry;
-	}
-	
-	private static IPath[] getInclusionPatterns(IFragmentModel model) throws CoreException{
-		IPath[] direct = getInclusions(model);
-		IPlugin plugin = PDECore.getDefault().findPlugin(model.getFragment().getPluginId());
-		if (plugin == null || !hasExtensibleAPI(plugin))
-			return direct;
-		
-		IPath[] indirect = getInclusions((IPluginModelBase)plugin.getModel());		
-		IPath[] all = new IPath[direct.length + indirect.length];
-		System.arraycopy(direct, 0, all, 0, direct.length);
-		System.arraycopy(indirect, 0, all, direct.length, indirect.length);
-		return all;
 	}
 	
 	public static boolean hasExtensibleAPI(IPlugin plugin) {
@@ -189,30 +122,7 @@ public class ClasspathUtilCore {
 			return ((BundlePlugin) plugin).hasExtensibleAPI();
 		return false;
 	}
-	
-	private static IPath[] getInclusions(IPluginModelBase model) throws CoreException {
-		ArrayList list = new ArrayList();
-		if (isBundle(model)) {
-			BundleDescription desc = model.getBundleDescription();
-			if (desc != null) {
-				ExportPackageDescription[] exports = desc.getExportPackages();
-				for (int i = 0; i < exports.length; i++) {
-					list.add(new Path(exports[i].getName().replaceAll("\\.", "/") + "/*")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				}
-			}
-		} else {
-			IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
-			for (int i = 0; i < libraries.length; i++) {
-				IPath[] paths = getInclusionPatterns(libraries[i]);
-				for (int j = 0; j < paths.length; j++) {
-					if (!list.contains(paths[j]))
-						list.add(paths[j]);
-				}
-			}
-		}
-		return (IPath[])list.toArray(new IPath[list.size()]);
-	}
-	
+		
 	public static boolean isBundle(IPluginModelBase model) {
 		if (model instanceof IBundlePluginModelBase)
 			return true;
@@ -234,32 +144,6 @@ public class ClasspathUtilCore {
 			}
 		}
 		return false;
-	}
-	
-	private static IAccessRule[] getAccessRules(IPath[] inclusionPatterns) {
-		int length = inclusionPatterns.length;
-		IAccessRule[] accessRules;
-		if (length == 0) {
-			accessRules = new IAccessRule[] {JavaCore.newAccessRule(new Path("**/*"), IAccessRule.K_NON_ACCESSIBLE)}; //$NON-NLS-1$
-		} else {
-			accessRules = new IAccessRule[length];
-			for (int i = 0; i < length; i++) {
-				accessRules[i] = JavaCore.newAccessRule(inclusionPatterns[i], IAccessRule.K_ACCESSIBLE);
-			}
-		}
-		return accessRules;
-	}
-	
-	private static IPath[] getInclusionPatterns(IPluginLibrary library) {		
-		String[] exports = library.getContentFilters();
-		ArrayList list = new ArrayList();
-		for (int i = 0; i < exports.length; i++) {
-			String export = exports[i].replaceAll("\\.", "/"); //$NON-NLS-1$ //$NON-NLS-2$
-			if (!export.endsWith("/*")) //$NON-NLS-1$
-				export = export + "/*"; //$NON-NLS-1$
-			list.add(new Path(export)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		}
-		return (IPath[])list.toArray(new IPath[list.size()]);
 	}
 	
 	public static boolean containsVariables(String name) {
@@ -419,7 +303,5 @@ public class ClasspathUtilCore {
 			}
 		}
 	}
-
-
 
 }

@@ -10,15 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.zip.ZipFile;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.osgi.service.resolver.BaseDescription;
@@ -29,7 +29,6 @@ import org.eclipse.osgi.service.resolver.HostSpecification;
 import org.eclipse.osgi.service.resolver.StateHelper;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 
 public class RequiredPluginsClasspathContainer extends PDEClasspathContainer implements IClasspathContainer {
 	private IPluginModelBase fModel;
@@ -202,7 +201,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		
 		IPath[] inclusions = getInclusions(desc);
 		
-		return (inclusions.length == 0 && !isBundle(model)) ? null : inclusions;
+		return (inclusions.length == 0 && !ClasspathUtilCore.isBundle(model)) ? null : inclusions;
 
 	}
 	
@@ -284,28 +283,4 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 					: false;
 	}
 	
-	protected boolean isBundle(IPluginModelBase model) {
-		if (model instanceof IBundlePluginModelBase)
-			return true;
-		if (model.getUnderlyingResource() == null) {
-			File file = new File(model.getInstallLocation());
-			if (file.isDirectory())
-				return new File(file, "META-INF/MANIFEST.MF").exists();
-			ZipFile jarFile = null;
-			try {
-				jarFile = new ZipFile(file, ZipFile.OPEN_READ);
-				return jarFile.getEntry("META-INF/MANIFEST.MF") != null;
-			} catch (IOException e) {
-			} finally {
-				try {
-					if (jarFile != null)
-						jarFile.close();
-				} catch (IOException e) {
-				}
-			}
-		}
-		return false;
-	}
-
-
 }
