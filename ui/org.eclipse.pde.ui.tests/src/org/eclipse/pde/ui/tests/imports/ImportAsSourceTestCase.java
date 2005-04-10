@@ -60,8 +60,6 @@ public class ImportAsSourceTestCase extends PDETestCase {
 
 	private void verifyProject(IProject project) throws CoreException {
 		assertTrue("Project was not created.", project.exists());
-		if (!project.getName().equals("org.eclipse.swt"))
-			assertFalse(WorkspaceModelManager.isBinaryPluginProject(project));
 		if (project.hasNature(JavaCore.NATURE_ID))
 			assertTrue(checkSourceAttached(JavaCore.create(project)));
 	}
