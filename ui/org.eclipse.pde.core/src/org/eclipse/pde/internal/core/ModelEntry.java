@@ -195,9 +195,10 @@ public class ModelEntry extends PlatformObject {
 		if (!manager.isOSGiRuntime()
 			&& !id.startsWith("org.eclipse.swt") //$NON-NLS-1$
 			&& !id.equals("org.eclipse.core.boot") //$NON-NLS-1$
-			&& !id.equals("org.apache.xerces")) //$NON-NLS-1$
-			set.add("org.eclipse.core.boot"); //$NON-NLS-1$
-			set.add("org.eclipse.core.runtime"); //$NON-NLS-1$
+			&& !id.equals("org.apache.xerces")) { //$NON-NLS-1$
+				set.add("org.eclipse.core.boot"); //$NON-NLS-1$
+				set.add("org.eclipse.core.runtime"); //$NON-NLS-1$
+		}
 		try {
 			IBuild build = ClasspathUtilCore.getBuild(plugin.getPluginModel());
 			IBuildEntry entry = (build == null) ? null : build.getEntry(IBuildEntry.JARS_EXTRA_CLASSPATH);

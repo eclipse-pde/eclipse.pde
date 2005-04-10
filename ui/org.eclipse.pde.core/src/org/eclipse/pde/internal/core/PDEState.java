@@ -403,7 +403,7 @@ public class PDEState {
 		setTargetMode();
 		fMonitor.beginTask("", fURLs.length); //$NON-NLS-1$
 		for (int i = 0; i < fURLs.length; i++) {
-			addBundle(new File(fURLs[i].getFile()), true, true, null);
+			addBundle(new File(fURLs[i].getFile()), true, true, null, -1);
 			fMonitor.worked(1);
 		}
 	}
@@ -447,12 +447,20 @@ public class PDEState {
 		return fConverter;
 	}
 	
-	public BundleDescription addBundle(Dictionary manifest, File bundleLocation, boolean keepLibraries) {
+	public BundleDescription addBundle(Dictionary manifest, File bundleLocation, boolean keepLibraries, long bundleId) {
 		try {
-			BundleDescription descriptor = stateObjectFactory.createBundleDescription(fState, manifest, bundleLocation.getAbsolutePath(), getNextId());
+			BundleDescription descriptor = stateObjectFactory.createBundleDescription(
+					fState, 
+					manifest, 
+					bundleLocation.getAbsolutePath(), 
+					bundleId == -1 ? getNextId() : bundleId);
 			if (keepLibraries)
 				createPluginInfo(descriptor, manifest);
-			fState.addBundle(descriptor);
+			// new bundle
+			if (bundleId == -1)
+				fState.addBundle(descriptor);
+			else
+				fState.updateBundle(descriptor);
 			return descriptor;
 		} catch (BundleException e) {
 		} catch (NumberFormatException e) {
@@ -489,11 +497,13 @@ public class PDEState {
 		fPluginInfos.put(element.getAttribute("bundleID"), info); //$NON-NLS-1$
 	}
 	
-	public BundleDescription addBundle(IPluginModelBase model) {
-		return addBundle(new File(model.getInstallLocation()), false, false, null);
+	public void addBundle(IPluginModelBase model) {
+		BundleDescription desc = model.getBundleDescription();
+		long bundleId = desc == null ? -1 : desc.getBundleId();
+		model.setBundleDescription(addBundle(new File(model.getInstallLocation()), false, false, null, bundleId));
 	}
 	
-	public BundleDescription addBundle(File bundleLocation, boolean keepLibraries, boolean logException, Dictionary dictionary) {
+	public BundleDescription addBundle(File bundleLocation, boolean keepLibraries, boolean logException, Dictionary dictionary, long bundleId) {
 		Dictionary manifest =  loadManifest(bundleLocation);
 		if (manifest == null || manifest.get(Constants.BUNDLE_SYMBOLICNAME) == null) {
 			try {
@@ -510,7 +520,7 @@ public class PDEState {
 				return null;
 			}
 		}
-		return addBundle(manifest, bundleLocation, keepLibraries);
+		return addBundle(manifest, bundleLocation, keepLibraries, bundleId);
 	}
 	
 	private Dictionary loadManifest(File bundleLocation) {

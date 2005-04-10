@@ -10,13 +10,36 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.*;
-import java.util.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Properties;
+import java.util.StringTokenizer;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.*;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jdt.core.ElementChangedEvent;
+import org.eclipse.jdt.core.IClasspathContainer;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IElementChangedListener;
+import org.eclipse.jdt.core.IJavaElementDelta;
+import org.eclipse.jdt.core.IJavaModel;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 /**
  * This class manages the ability of external plug-ins in the model manager to
@@ -165,12 +188,12 @@ public class SearchablePluginsManager implements IFileAdapterFactory {
 
 	public IClasspathEntry[] computeContainerClasspathEntries()
 			throws CoreException {
-		Vector result = new Vector();
+		ArrayList result = new ArrayList();
 
 		ModelEntry[] entries = manager.getEntries();
 		for (int i = 0; i < entries.length; i++) {
 			ModelEntry entry = entries[i];
-			Vector entryResult = new Vector();			
+			ArrayList entryResult = new ArrayList();			
 			if (entry.getWorkspaceModel() != null) {
 				// We used to skip workspace models before.
 				// If we add them as references,
@@ -214,8 +237,8 @@ public class SearchablePluginsManager implements IFileAdapterFactory {
 		}
 	}
 
-	private void addUniqueEntries(Vector result, Vector localResult) {
-		Vector resultCopy = (Vector) result.clone();
+	private void addUniqueEntries(ArrayList result, ArrayList localResult) {
+		ArrayList resultCopy = (ArrayList) result.clone();
 		for (int i = 0; i < localResult.size(); i++) {
 			IClasspathEntry localEntry = (IClasspathEntry) localResult.get(i);
 			boolean duplicate = false;

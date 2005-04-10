@@ -31,10 +31,8 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 	public static final String BINARY_REPOSITORY_PROVIDER =
 		PLUGIN_ID + "." + "BinaryRepositoryProvider"; //$NON-NLS-1$ //$NON-NLS-2$
 
-	public static final String CLASSPATH_CONTAINER_ID =
-		PLUGIN_ID + ".requiredPlugins"; //$NON-NLS-1$
-	public static final String JAVA_SEARCH_CONTAINER_ID =
-		PLUGIN_ID + ".externalJavaSearch"; //$NON-NLS-1$
+	public static final String CLASSPATH_CONTAINER_ID =PLUGIN_ID + ".requiredPlugins"; //$NON-NLS-1$
+	public static final String JAVA_SEARCH_CONTAINER_ID = PLUGIN_ID + ".externalJavaSearch"; //$NON-NLS-1$
 
 	public static final String ECLIPSE_HOME_VARIABLE = "ECLIPSE_HOME"; //$NON-NLS-1$
 	public static final QualifiedName EXTERNAL_PROJECT_PROPERTY =

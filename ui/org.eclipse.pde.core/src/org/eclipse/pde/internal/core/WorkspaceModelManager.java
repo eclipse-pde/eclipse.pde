@@ -42,7 +42,15 @@ public class WorkspaceModelManager
 		public ModelChange(IModel model) {
 			this.model = model;
 			this.type = IModelProviderEvent.MODELS_CHANGED;
-		}		
+		}
+		
+		public boolean equals(Object obj) {
+			if (obj instanceof ModelChange) {
+				IProject project = ((ModelChange)obj).model.getUnderlyingResource().getProject();
+				return model.getUnderlyingResource().getProject().equals(project);
+			}
+			return false;
+		}
 	}
 	
 	private Map fModels;
@@ -185,7 +193,11 @@ public class WorkspaceModelManager
 			return;
 		}
 		if (file.getName().equals("build.properties") && isPluginProject(file.getProject())) { //$NON-NLS-1$
-			fireModelsChanged(new IModel[] {getWorkspaceModel(file.getProject())});
+			if (fChangedModels == null)
+				fChangedModels = new ArrayList();
+			ModelChange change = new ModelChange(getWorkspaceModel(file.getProject()));
+			if (!fChangedModels.contains(change))
+				fChangedModels.add(change);
 			return;
 		}
 		
@@ -292,27 +304,12 @@ public class WorkspaceModelManager
 			} else {
 				loadModel(model, true);
 			}
-			if (model instanceof IPluginModelBase) {
-				String id = ((IPluginModelBase)model).getPluginBase().getId();
-				if (id == null || id.length() == 0)
-					return;
-				// overwrite old model if one exists.
-				// add a new model if none already existed.
-				addWorkspaceModel(file.getProject(), true);
-			}
-			fireModelsChanged(new IModel[] { model });
+			if (fChangedModels == null)
+				fChangedModels = new ArrayList();
+			ModelChange change = new ModelChange(model);
+			if (!fChangedModels.contains(change))
+				fChangedModels.add(change);
 		}		
-	}
-	
-	public void fireModelsChanged(IModel[] models) {
-		ModelProviderEvent event =
-			new ModelProviderEvent(
-				this,
-				IModelProviderEvent.MODELS_CHANGED,
-				null,
-				null,
-				models);
-		fireModelProviderEvent(event);
 	}
 	
 	private boolean isSupportedFile(IFile file) {

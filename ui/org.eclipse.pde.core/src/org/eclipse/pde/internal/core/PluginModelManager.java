@@ -61,20 +61,7 @@ public class PluginModelManager implements IAdaptable {
 			if (major == 3 && minor == 0)
 				return ICoreConstants.TARGET30;
 		}
-		
-		//TODO temporary hack for backward compatibility with 3.1 milestones
-		Properties prop = TargetPlatform.getConfigIniProperties("configuration/config.ini"); //$NON-NLS-1$
-		if (prop != null) {
-			String property = prop.getProperty("eclipse.buildId"); //$NON-NLS-1$
-			if (property != null && property.length() >= 10) {
-				try {
-					if (Integer.parseInt(property.substring(1, 9)) < 20050119)
-						return ICoreConstants.TARGET30;
-				} catch (RuntimeException e) {
-				}
-			}
-		}
-		
+				
 		return ICoreConstants.TARGET31;	
 	}
 
@@ -165,6 +152,10 @@ public class PluginModelManager implements IAdaptable {
 		return (entry != null) ? entry.getActiveModel() : null;
 	}
 	
+	public IPluginModelBase findModel(BundleDescription desc) {
+		return desc == null ? null : findModel(desc.getSymbolicName());
+	}
+	
 	public ModelEntry findEntry(String id) {
 		return id == null ? null : (ModelEntry) getEntryTable().get(id);
 	}
@@ -228,7 +219,7 @@ public class PluginModelManager implements IAdaptable {
 				if (!(changed[i] instanceof IPluginModelBase)) continue;
 				IPluginModelBase model = (IPluginModelBase) changed[i];
 				boolean workspace = model.getUnderlyingResource()!=null;
-				updateBundleDescription(model);
+				fExternalManager.getState().addBundle(model);
 				IPluginBase plugin = model.getPluginBase();
 				String id = plugin.getId();
 				if (id != null) {
@@ -470,21 +461,12 @@ public class PluginModelManager implements IAdaptable {
 	}
 	
 	private void addWorkspaceBundleToState(IPluginModelBase model, PDEState state) {
-		String id = model.getPluginBase().getId();
-		if (id == null)
-			return;
-		ModelEntry entry = findEntry(id);
-		if (entry == null)
-			return;
-		IPluginModelBase external = entry.getExternalModel();
+		ModelEntry entry = findEntry(model.getPluginBase().getId());
+		IPluginModelBase external = entry == null ? null : entry.getExternalModel();
 		if (external != null) {
-			BundleDescription desc = external.getBundleDescription();
-			state.removeBundleDescription(desc);
+			state.removeBundleDescription(external.getBundleDescription());
 		}
-		if (model.getBundleDescription() != null) {
-			state.removeBundleDescription(model.getBundleDescription());
-		}
-		model.setBundleDescription(state.addBundle(model));		
+		state.addBundle(model);		
 	}
 	
 	private void removeWorkspaceBundleFromState(IPluginModelBase model, PDEState state) {
@@ -494,32 +476,11 @@ public class PluginModelManager implements IAdaptable {
 		
 		state.removeBundleDescription(description);
 		
-		String id = model.getPluginBase().getId();
-		if (id == null) {
-			return;
-		}
-		
-		ModelEntry entry = findEntry(id);
-		if (entry == null) {
-			return;
-		}
-		
-		IPluginModelBase external = entry.getExternalModel();
+		ModelEntry entry = findEntry(model.getPluginBase().getId());
+		IPluginModelBase external = entry == null ? null : entry.getExternalModel();
 		if (external != null) {
-			BundleDescription desc = external.getBundleDescription();
-			state.addBundleDescription(desc);
+			state.addBundleDescription(external.getBundleDescription());
 		}
-	}
-	
-	private void updateBundleDescription(IPluginModelBase model) {
-		BundleDescription description = model.getBundleDescription();
-		if (description == null)
-			return;
-		PDEState state = fExternalManager.getState();
-		state.removeBundleDescription(description);
-		
-		BundleDescription newDesc = state.addBundle(model);
-		model.setBundleDescription(newDesc);
 	}
 	
 	private void fireDelta(PluginModelDelta delta) {

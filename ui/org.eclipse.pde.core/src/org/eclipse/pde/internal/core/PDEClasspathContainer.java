@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,56 +10,124 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.*;
+import java.io.File;
+import java.util.ArrayList;
 
-/**
- *
- */
-public abstract class PDEClasspathContainer implements IClasspathContainer {
-	protected IClasspathEntry[] entries;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IAccessRule;
+import org.eclipse.jdt.core.IClasspathAttribute;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.pde.core.plugin.IPluginLibrary;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 
-	public void reset() {
-		entries = null;
+public class PDEClasspathContainer {
+	
+	protected ArrayList fEntries;
+
+	protected void addProjectEntry(IProject project, boolean isExported, IPath[] inclusions) throws CoreException {
+		if (project.hasNature(JavaCore.NATURE_ID)) {
+			IClasspathEntry entry = null;
+			if (inclusions != null) {
+				IAccessRule[] accessRules = getAccessRules(inclusions);
+				entry = JavaCore.newProjectEntry(
+							project.getFullPath(), 
+							accessRules, 
+							false, 
+							new IClasspathAttribute[0], 
+							isExported);
+			} else {
+				entry = JavaCore.newProjectEntry(project.getFullPath(), isExported);
+			}
+			if (!fEntries.contains(entry))
+				fEntries.add(entry);
+		}
 	}
-
-	protected IClasspathEntry[] verifyWithAttachmentManager(IClasspathEntry[] entries) {
-		SourceAttachmentManager manager =
-			PDECore.getDefault().getSourceAttachmentManager();
-		if (manager.isEmpty())
-			return entries;
-		IClasspathEntry[] newEntries = new IClasspathEntry[entries.length];
-		for (int i = 0; i < entries.length; i++) {
-			IClasspathEntry entry = entries[i];
-			newEntries[i] = entry;
-			if (entry.getEntryKind() == IClasspathEntry.CPE_LIBRARY) {
-				SourceAttachmentManager.SourceAttachmentEntry saentry =
-					manager.findEntry(entry.getPath());
-				if (saentry != null) {
-					IClasspathEntry newEntry =
-						JavaCore.newLibraryEntry(
-							entry.getPath(),
-							saentry.getAttachmentPath(),
-							saentry.getAttachmentRootPath(),
-							entry.isExported());
-					newEntries[i] = newEntry;
+	
+	protected void addExternalPlugin(IPluginModelBase model, boolean isExported, IPath[] inclusions) throws CoreException {
+		if (new File(model.getInstallLocation()).isFile()) {
+			IPath srcPath = ClasspathUtilCore.getSourceAnnotation(model, "."); //$NON-NLS-1$
+			if (srcPath == null)
+				srcPath = new Path(model.getInstallLocation());			
+			addLibraryEntry(new Path(model.getInstallLocation()), srcPath, isExported, inclusions);			
+		} else {
+			IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
+			for (int i = 0; i < libraries.length; i++) {
+				if (IPluginLibrary.RESOURCE.equals(libraries[i].getType()))
+					continue;
+				model = (IPluginModelBase)libraries[i].getModel();
+				String name = libraries[i].getName();
+				String expandedName = ClasspathUtilCore.expandLibraryName(name);
+				IPath path = getPath(model, expandedName);
+				if (path == null && !model.isFragmentModel() && ClasspathUtilCore.containsVariables(name)) {
+					model = resolveLibraryInFragments(model, expandedName);
+					if (model != null)
+						path = getPath(model, expandedName);
 				}
+				if (path != null)
+					addLibraryEntry(path, ClasspathUtilCore.getSourceAnnotation(model, expandedName), isExported, inclusions);
+			}		
+		}
+	}
+	
+	protected void addLibraryEntry(IPath path, IPath srcPath, boolean isExported, IPath[] inclusions) {
+		IClasspathEntry entry = null;
+		if (inclusions != null) {
+			entry = JavaCore.newLibraryEntry(
+						path, 
+						srcPath, 
+						null,
+						getAccessRules(inclusions),
+						new IClasspathAttribute[0],
+						isExported);
+		} else {
+			entry = JavaCore.newLibraryEntry(path, srcPath, null, isExported);
+		}
+		if (!fEntries.contains(entry)) {
+			fEntries.add(entry);
+		}
+	}
+	
+	protected IAccessRule[] getAccessRules(IPath[] inclusionPatterns) {
+		int length = inclusionPatterns.length;
+		IAccessRule[] accessRules;
+		if (length == 0) {
+			accessRules = new IAccessRule[] {JavaCore.newAccessRule(new Path("**/*"), IAccessRule.K_NON_ACCESSIBLE)}; //$NON-NLS-1$
+		} else {
+			accessRules = new IAccessRule[length];
+			for (int i = 0; i < length; i++) {
+				accessRules[i] = JavaCore.newAccessRule(inclusionPatterns[i], IAccessRule.K_ACCESSIBLE);
 			}
 		}
-		return newEntries;
+		return accessRules;
 	}
+	
+	protected IPath getPath(IPluginModelBase model, String libraryName) {
+		IResource resource = model.getUnderlyingResource();
+		if (resource != null) {
+			IResource jarFile = resource.getProject().findMember(libraryName);
+			return (jarFile != null) ? jarFile.getFullPath() : null;
+		} 
 
-	/**
-	 * @see org.eclipse.jdt.core.IClasspathContainer#getKind()
-	 */
-	public int getKind() {
-		return K_APPLICATION;
+		File file = new File(model.getInstallLocation(), libraryName);
+		return file.exists() ? new Path(file.getAbsolutePath()) : null;
 	}
-
-	/**
-	 * @see org.eclipse.jdt.core.IClasspathContainer#getPath()
-	 */
-	public IPath getPath() {
-		return new Path(PDECore.CLASSPATH_CONTAINER_ID);
+	
+	protected IPluginModelBase resolveLibraryInFragments(IPluginModelBase model, String libraryName) {
+		BundleDescription desc = model.getBundleDescription();
+		if (desc != null) {
+			BundleDescription[] fragments = desc.getFragments();
+			for (int i = 0; i < fragments.length; i++) {
+				if (new File(fragments[i].getLocation(), libraryName).exists())
+					return PDECore.getDefault().getModelManager().findModel(fragments[i]);
+			}
+		}
+		return null;
 	}
+	
 }

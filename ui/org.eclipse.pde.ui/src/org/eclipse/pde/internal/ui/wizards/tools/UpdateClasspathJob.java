@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.ClasspathUtilCore;
+import org.eclipse.pde.internal.core.ClasspathComputer;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -53,7 +53,7 @@ public class UpdateClasspathJob extends Job {
 					monitor.worked(1);
 					continue;
 				}
-				ClasspathUtilCore.setClasspath(model, new SubProgressMonitor(
+				ClasspathComputer.setClasspath(model, new SubProgressMonitor(
 						monitor, 1));
 				if (monitor.isCanceled())
 					return false;

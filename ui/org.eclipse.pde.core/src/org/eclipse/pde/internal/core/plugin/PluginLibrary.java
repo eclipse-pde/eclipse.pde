@@ -41,8 +41,7 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 			if (desc != null) {
 				ExportPackageDescription[] exports = desc.getExportPackages();
 				for (int i = 0; i < exports.length; i++) {
-					if (ClasspathUtilCore.isPackageAccessible(exports[i], null))
-						list.add(exports[i].getName());
+					list.add(exports[i].getName());
 				}
 			}
 			return (String[])list.toArray(new String[list.size()]);

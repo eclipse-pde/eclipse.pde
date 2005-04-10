@@ -581,7 +581,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 	private void setClasspath(IProject project, IPluginModelBase model)
 		throws CoreException {
 		IJavaProject jProject = JavaCore.create(project);
-		Vector entries = new Vector();
+		ArrayList entries = new ArrayList();
 		if (new File(model.getInstallLocation()).isFile()) {
 			if (project.getFile("build.properties").exists()) //$NON-NLS-1$
 				entries.add(JavaCore.newSourceEntry(project.getFullPath()));
@@ -612,7 +612,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 				.getOutputLocation(), null);
 	}
 	
-	private void getLinkedLibraries(IProject project, IPluginModelBase model, Vector entries) throws CoreException {
+	private void getLinkedLibraries(IProject project, IPluginModelBase model, ArrayList entries) throws CoreException {
 		ClasspathUtilCore.addLibraries(model, true, false, entries);
 		for (int i = 0; i < entries.size(); i++) {
 			IPath path = new Path(model.getInstallLocation());
@@ -638,7 +638,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			}
 			IPath srcAttachment = entry.getSourceAttachmentPath();
 			IPath srcAttRoot = entry.getSourceAttachmentRootPath();
-			entries.setElementAt(JavaCore.newLibraryEntry(path, srcAttachment, srcAttRoot, entry.isExported()), i);	
+			entries.set(i, JavaCore.newLibraryEntry(path, srcAttachment, srcAttRoot, entry.isExported()));	
 		}		
 	}
 	
