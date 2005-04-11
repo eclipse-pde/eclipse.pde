@@ -49,7 +49,7 @@ public class MailTemplate extends PDETemplateSection {
 		
 		addOption(KEY_APPLICATION_ID, PDEUIMessages.MailTemplate_appId, "application", 0); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		addOption(KEY_PERSPECTIVE_NAME, PDEUIMessages.MailTemplate_perspectiveName, "Sample Perspective", 0); //$NON-NLS-1$ //$NON-NLS-2$
+		addOption(KEY_PERSPECTIVE_NAME, PDEUIMessages.MailTemplate_perspectiveName, (String)null, 0); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		addOption(KEY_PACKAGE_NAME, PDEUIMessages.MailTemplate_packageName, (String) null, 0); //$NON-NLS-1$		
 
@@ -59,15 +59,12 @@ public class MailTemplate extends PDETemplateSection {
 	protected void initializeFields(IFieldData data) {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
-		String id = data.getId();
-		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(id) + ".rcp");  //$NON-NLS-1$
-	}
-	
-	public void initializeFields(IPluginModelBase model) {
-		// In the new extension wizard, the model exists so 
-		// we can initialize directly from it
-		String pluginId = model.getPluginBase().getId();
-		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(pluginId) + ".rcp");  //$NON-NLS-1$
+		String packageName = getFormattedPackageName(data.getId());
+		initializeOption(KEY_PACKAGE_NAME, packageName);
+
+		int index = packageName.lastIndexOf('.');
+		String name = packageName.substring(index + 1) + " Perspective";
+		initializeOption(KEY_PERSPECTIVE_NAME, Character.toUpperCase(name.charAt(0)) + name.substring(1));
 	}
 	
 	/*
