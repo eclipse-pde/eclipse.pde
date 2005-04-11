@@ -173,7 +173,6 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		}		
 	}
 
-
 	private void addDependency(BundleDescription desc, boolean isExported, HashSet added) throws CoreException {
 		if (desc == null || !added.add(desc.getSymbolicName()))
 			return;
@@ -217,7 +216,11 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		if (desc == null)
 			return null;
 		
-		IPath[] inclusions = getInclusions(desc);
+		IPath[] inclusions;
+		if (desc.isResolved() && desc.getHost() != null)
+			inclusions = getInclusions(desc.getHost().getHosts()[0]);
+		else
+			inclusions = getInclusions(desc);
 		
 		return (inclusions.length == 0 && !ClasspathUtilCore.isBundle(model)) ? null : inclusions;
 
@@ -241,13 +244,13 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		String schemaVersion = fModel.getPluginBase().getSchemaVersion();
 		boolean isOSGi = TargetPlatform.isOSGi();
 		
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
-
 		if ((isOSGi && schemaVersion != null)
 				|| id.equals("org.eclipse.core.boot") //$NON-NLS-1$
 				|| id.equals("org.apache.xerces") //$NON-NLS-1$
 				|| id.startsWith("org.eclipse.swt")) //$NON-NLS-1$
 			return;
+
+		PluginModelManager manager = PDECore.getDefault().getModelManager();
 
 		if (schemaVersion == null && isOSGi) {
 			if (!id.equals("org.eclipse.core.runtime")) { //$NON-NLS-1$
@@ -282,8 +285,8 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 				// if the plug-in is a project in the workspace, only add
 				// non-reexported dependencies since the fragment will
 				// automatically get the reexported dependencies.
-				// if the plug-in is in the target, then you need to explicit
-				// all the parent plug-in's dependencies.
+				// if the plug-in is in the target, then you need to explicitly add
+				// all the parent plug-in's non-reexported dependencies.
 				if ((!inWorkspace || !required[i].isExported())) {
 					desc = getSupplier(required[i]);
 					if (desc instanceof BundleDescription) {
