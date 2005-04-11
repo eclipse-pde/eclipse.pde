@@ -63,8 +63,6 @@ public class HelloRCPTemplate extends PDETemplateSection {
 	}
 	
 	public void initializeFields(IPluginModelBase model) {
-		// In a new project wizard, we don't know this yet - the
-		// model has not been created
 		String packageName = getFormattedPackageName(model.getPluginBase().getId());
 		initializeOption(KEY_PACKAGE_NAME, packageName);
 
