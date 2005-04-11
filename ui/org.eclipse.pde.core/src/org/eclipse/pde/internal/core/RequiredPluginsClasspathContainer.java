@@ -156,7 +156,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		if (bundle.isResolved()) {
 			BundleDescription desc = bundle;
 			if (desc.getHost() != null)
-				desc = desc.getHost().getHosts()[0];
+				desc = (BundleDescription)desc.getHost().getSupplier();
 			
 			StateHelper helper = Platform.getPlatformAdmin().getStateHelper();
 			ExportPackageDescription[] exports = helper.getVisiblePackages(desc);
@@ -218,7 +218,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		
 		IPath[] inclusions;
 		if (desc.isResolved() && desc.getHost() != null)
-			inclusions = getInclusions(desc.getHost().getHosts()[0]);
+			inclusions = getInclusions((BundleDescription)desc.getHost().getSupplier());
 		else
 			inclusions = getInclusions(desc);
 		
@@ -239,7 +239,6 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	}
 
 	private void addImplicitDependencies(HashSet added) throws CoreException {
-
 		String id = fModel.getPluginBase().getId();
 		String schemaVersion = fModel.getPluginBase().getSchemaVersion();
 		boolean isOSGi = TargetPlatform.isOSGi();
