@@ -353,7 +353,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 	protected String getApplicationName(TreeMap pluginMap, ILaunchConfiguration configuration) {
 		try {
 			String application = configuration.getAttribute(APPLICATION, (String)null);
-			if (CORE_APPLICATION.equals(application) || !requiresUI(configuration)) {
+			if (CORE_APPLICATION.equals(application)) {
 				if (PDECore.getDefault().getModelManager().isOSGiRuntime())
 					return CORE_APPLICATION;
 				return LEGACY_CORE_APPLICATION;
