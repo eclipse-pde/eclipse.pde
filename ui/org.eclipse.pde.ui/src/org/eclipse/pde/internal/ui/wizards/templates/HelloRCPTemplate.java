@@ -62,6 +62,17 @@ public class HelloRCPTemplate extends PDETemplateSection {
 		initializeOption(KEY_PERSPECTIVE_NAME, Character.toUpperCase(name.charAt(0)) + name.substring(1));
 	}
 	
+	public void initializeFields(IPluginModelBase model) {
+		// In a new project wizard, we don't know this yet - the
+		// model has not been created
+		String packageName = getFormattedPackageName(model.getPluginBase().getId());
+		initializeOption(KEY_PACKAGE_NAME, packageName);
+
+		int index = packageName.lastIndexOf('.');
+		String name = packageName.substring(index + 1) + " Perspective";
+		initializeOption(KEY_PERSPECTIVE_NAME, Character.toUpperCase(name.charAt(0)) + name.substring(1));
+	}	
+	
 	/*
 	 * (non-Javadoc)
 	 * 
