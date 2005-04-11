@@ -169,7 +169,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		
 		// If a product is specified, then add it to the program args
 		if (configuration.getAttribute(USE_PRODUCT, false)) {
-			programArgs.add("-testProduct"); //$NON-NLS-1$
+			programArgs.add("-product"); //$NON-NLS-1$
 			programArgs.add(configuration.getAttribute(PRODUCT, "")); //$NON-NLS-1$
 		} else {
 			// Specify the application to test
