@@ -272,8 +272,8 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 				// automatically get the reexported dependencies.
 				// if the plug-in is in the target, then you need to explicit
 				// all the parent plug-in's dependencies.
-				if ((!inWorkspace || !required[i].isExported()) && required[i].isResolved()) {
-					desc = required[i].getSupplier();
+				if ((!inWorkspace || !required[i].isExported())) {
+					desc = getSupplier(required[i]);
 					if (desc instanceof BundleDescription) {
 						addDependency((BundleDescription)desc, false, added);
 					}
