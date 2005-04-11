@@ -49,7 +49,7 @@ public class OpenDependenciesAction implements IWorkbenchWindowActionDelegate {
 		}
 	}
 	
-	private void openDependencies(IPluginModelBase model) {
+	public static void openDependencies(IPluginModelBase model) {
 		IWorkbenchPage page = PDEPlugin.getActivePage();
 		try {
 			IViewPart view = page.showView(PDEPlugin.DEPENDENCIES_VIEW_ID);
