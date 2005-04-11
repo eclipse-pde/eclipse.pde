@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.core;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -122,11 +123,22 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 							required[i].isExported(), 
 							added);
 			}
+			
+			// add Import-Package
+			Iterator iter = fVisiblePackages.keySet().iterator();
+			while (iter.hasNext()) {
+				BundleDescription dep = (BundleDescription)iter.next();
+				if (added.add(dep.getSymbolicName())) {
+					addPlugin(dep, false, true);
+				}
+			}
 
 			ClasspathUtilCore.addExtraClasspathEntries(fModel, fEntries);
 
 			// add implicit dependencies
 			addImplicitDependencies(added);
+			
+			fVisiblePackages.clear();
 		} catch (CoreException e) {
 		}
 	}
@@ -166,7 +178,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		if (desc == null || !added.add(desc.getSymbolicName()))
 			return;
 
-		boolean inWorkspace = addPlugin(desc, isExported, true, added);
+		boolean inWorkspace = addPlugin(desc, isExported, true);
 
 		if (hasExtensibleAPI(desc)) {
 			BundleDescription[] fragments = desc.getFragments();
@@ -187,8 +199,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	}
 
 
-	private boolean addPlugin(BundleDescription desc, boolean isExported,
-			boolean useInclusions, HashSet added)
+	private boolean addPlugin(BundleDescription desc, boolean isExported, boolean useInclusions)
 			throws CoreException {		
 		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(desc);
 		IResource resource = model.getUnderlyingResource();
@@ -264,7 +275,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		if (desc instanceof BundleDescription && added.add(desc.getName())) {
 			BundleDescription host = (BundleDescription)desc;
 			// add host plug-in
-			boolean inWorkspace = addPlugin(host, false, false, added);
+			boolean inWorkspace = addPlugin(host, false, false);
 			
 			BundleSpecification[] required = host.getRequiredBundles();
 			for (int i = 0; i < required.length; i++) {
