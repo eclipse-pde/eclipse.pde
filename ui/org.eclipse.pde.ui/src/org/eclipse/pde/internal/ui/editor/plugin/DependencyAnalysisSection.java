@@ -19,6 +19,7 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.search.*;
 import org.eclipse.pde.internal.ui.search.dependencies.*;
+import org.eclipse.pde.internal.ui.view.OpenDependenciesAction;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
@@ -54,6 +55,7 @@ public class DependencyAnalysisSection extends PDESection {
 		PDELabelProvider lp = PDEPlugin.getDefault().getLabelProvider();
 		formText.setImage("loops", lp.get(PDEPluginImages.DESC_LOOP_OBJ)); //$NON-NLS-1$
 		formText.setImage("search", lp.get(PDEPluginImages.DESC_PSEARCH_OBJ)); //$NON-NLS-1$
+		formText.setImage("hierarchy", lp.get(PDEPluginImages.DESC_HIERARCHICAL_LAYOUT));
 		formText.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				if (e.getHref().equals("unused")) //$NON-NLS-1$
@@ -62,6 +64,8 @@ public class DependencyAnalysisSection extends PDESection {
 					doFindLoops();
 				else if (e.getHref().equals("references")) //$NON-NLS-1$
 					doFindReferences();
+				else if (e.getHref().equals("hierarchy"))
+					OpenDependenciesAction.openDependencies((IPluginModelBase)getPage().getModel());
 			}
 		});
 		
