@@ -192,10 +192,11 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			throws CoreException {		
 		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(desc);
 		IResource resource = model.getUnderlyingResource();
+		IPath[] inclusions = useInclusions ? getInclusions(model) : null;
 		if (resource != null) {
-			addProjectEntry(resource.getProject(), isExported, getInclusions(model));
+			addProjectEntry(resource.getProject(), isExported, inclusions);
 		} else {
-			addExternalPlugin(model, isExported, getInclusions(model));
+			addExternalPlugin(model, isExported, inclusions);
 		}
 		return resource != null;
 	}
