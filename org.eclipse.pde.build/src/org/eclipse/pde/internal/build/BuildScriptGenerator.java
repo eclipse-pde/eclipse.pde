@@ -258,7 +258,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	public void setArchivesFormat(String archivesFormatAsString) throws CoreException {
-		if ("${archivesFormat}".equalsIgnoreCase(archivesFormatAsString)) {
+		if ("${archivesFormat}".equalsIgnoreCase(archivesFormatAsString)) { //$NON-NLS-1$
 			//Set backward compatible values
 			archivesFormatAsString = "win32, win32, x86 - zip & " + //$NON-NLS-1$
 					"linux, gtk, x86 - tar & " + //$NON-NLS-1$
@@ -270,7 +270,8 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 					"aix, motif, ppc - zip & " + //$NON-NLS-1$
 					"hpux, motif, PA_RISC - zip &" + //$NON-NLS-1$
 					"macosx, carbon, ppc - tar & " + //$NON-NLS-1$
-					"qnx, photon, x86 - zip"; //$NON-NLS-1$
+					"qnx, photon, x86 - zip & " +  //$NON-NLS-1$
+					"*, *, * - zip"; //$NON-NLS-1$
 		}
 
 		archivesFormat = new HashMap(getConfigInfos().size());
