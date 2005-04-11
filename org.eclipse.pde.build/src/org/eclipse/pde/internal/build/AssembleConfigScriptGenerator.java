@@ -31,7 +31,8 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	protected Collection rootFileProviders;
 	protected Properties pluginsPostProcessingSteps;
 	protected Properties featuresPostProcessingSteps;
-
+	protected ArrayList addedByPermissions;	//contains the list of files and folders that have been added to an archive by permission management
+	
 	private static final String PROPERTY_SOURCE = "source"; //$NON-NLS-1$
 	private static final String PROPERTY_ELEMENT_NAME = "elementName"; //$NON-NLS-1$
 
@@ -493,8 +494,9 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 
 		FileSet[] permissionSets = generatePermissions(true);
 		FileSet[] rootFiles = new FileSet[permissionSets.length + 1];
+		String toExcludeFromArchive = Utils.getStringFromCollection(this.addedByPermissions, ","); //$NON-NLS-1$
 		System.arraycopy(permissionSets, 0, rootFiles, 1, permissionSets.length);
-		rootFiles[0] = new ZipFileSet(getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER), false, null, "**/**", null, null, null, getPropertyFormat(PROPERTY_ARCHIVE_PREFIX), null, null); //$NON-NLS-1$//$NON-NLS-2$
+		rootFiles[0] = new ZipFileSet(getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER), false, null, "**/**", null, toExcludeFromArchive, null, getPropertyFormat(PROPERTY_ARCHIVE_PREFIX), null, null); //$NON-NLS-1$//$NON-NLS-2$
 		script.printZipTask(getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH), null, false, true, rootFiles);
 	}
 
@@ -503,6 +505,8 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		String prefixPermissions = ROOT_PREFIX + configInfix + '.' + PERMISSIONS + '.';
 		String commonPermissions = ROOT_PREFIX + PERMISSIONS + '.';
 		ArrayList fileSets = new ArrayList();
+		addedByPermissions = new ArrayList();
+		
 		for (Iterator iter = rootFileProviders.iterator(); iter.hasNext();) {
 			Properties featureProperties = null;
 			try {
@@ -515,19 +519,26 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 				Map.Entry permission = (Map.Entry) iter2.next();
 				String instruction = (String) permission.getKey();
 				String parameters = (String) permission.getValue();
-				if (instruction.startsWith(prefixPermissions)) {
-					if (zip)
-						fileSets.add(new ZipFileSet(getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER) + '/' + parameters, true, null, "**/**", null, null, null, getPropertyFormat(PROPERTY_ARCHIVE_PREFIX), null, instruction.substring(prefixPermissions.length()))); //$NON-NLS-1$//$NON-NLS-2$
-					else
-						fileSets.add(new TarFileSet(getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER) + '/' + parameters, true, null, "**/**", null, null, null, getPropertyFormat(PROPERTY_ARCHIVE_PREFIX), null, instruction.substring(prefixPermissions.length()))); //$NON-NLS-1$//$NON-NLS-2$
-					continue;
-				}
-				if (instruction.startsWith(commonPermissions)) {
-					if (zip)
-						fileSets.add(new ZipFileSet(getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER) + '/' + parameters, true, null, "**/**", null, null, null, getPropertyFormat(PROPERTY_ARCHIVE_PREFIX), null, instruction.substring(commonPermissions.length()))); //$NON-NLS-1$//$NON-NLS-2$
-					else
-						fileSets.add(new TarFileSet(getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER) + '/' + parameters, true, null, "**/**", null, null, null, getPropertyFormat(PROPERTY_ARCHIVE_PREFIX), null, instruction.substring(commonPermissions.length()))); //$NON-NLS-1$//$NON-NLS-2$
-					continue;
+				String[] values = Utils.getArrayFromString(parameters);
+				for (int i = 0; i < values.length; i++) {
+					boolean isFile = ! values[i].endsWith("/"); //$NON-NLS-1$
+					String prefix = getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER); //$NON-NLS-1$
+					if (instruction.startsWith(prefixPermissions)) {
+						addedByPermissions.add(values[i]);
+						if (zip)
+							fileSets.add(new ZipFileSet(prefix + (isFile ? '/' + values[i] : ""), isFile, null, isFile ? null : values[i] + "/**", null, null, null, getPropertyFormat(PROPERTY_ARCHIVE_PREFIX), null, instruction.substring(prefixPermissions.length()))); //$NON-NLS-1$//$NON-NLS-2$
+						else
+							fileSets.add(new TarFileSet(prefix + (isFile ? '/' + values[i] : ""), isFile, null, isFile ? null : values[i] + "/**", null, null, null, getPropertyFormat(PROPERTY_ARCHIVE_PREFIX), null, instruction.substring(prefixPermissions.length()))); //$NON-NLS-1$//$NON-NLS-2$
+						continue;
+					}
+					if (instruction.startsWith(commonPermissions)) {
+						addedByPermissions.add(values[i]);
+						if (zip)
+							fileSets.add(new ZipFileSet(prefix + (isFile ? '/' + values[i] : ""), isFile, null, isFile ? null : values[i] + "/**", null, null, null, getPropertyFormat(PROPERTY_ARCHIVE_PREFIX), null, instruction.substring(commonPermissions.length()))); //$NON-NLS-1$//$NON-NLS-2$
+						else
+							fileSets.add(new TarFileSet(prefix + (isFile ? '/' + values[i] : ""), isFile, null, isFile ? null : values[i] + "/**", null, null, null, getPropertyFormat(PROPERTY_ARCHIVE_PREFIX), null, instruction.substring(commonPermissions.length()))); //$NON-NLS-1$//$NON-NLS-2$
+						continue;
+					}
 				}
 			}
 		}

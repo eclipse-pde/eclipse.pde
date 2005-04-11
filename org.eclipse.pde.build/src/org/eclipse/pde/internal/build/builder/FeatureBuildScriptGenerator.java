@@ -544,7 +544,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		for (Iterator iter = featureProperties.entrySet().iterator(); iter.hasNext();) {
 			Map.Entry permission = (Map.Entry) iter.next();
 			String instruction = (String) permission.getKey();
-			String parameters = (String) permission.getValue();
+			String parameters = removeEndingSlashes((String) permission.getValue());
 			if (instruction.startsWith(prefixPermissions)) {
 				generateChmodInstruction(getPropertyFormat(PROPERTY_FEATURE_BASE) + '/' + configInfix + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER), instruction.substring(prefixPermissions.length()), parameters); //$NON-NLS-1$ //$NON-NLS-2$
 				continue;
@@ -564,6 +564,15 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		}
 	}
 
+	private String removeEndingSlashes(String value) {
+		String[] params = Utils.getArrayFromString(value, ",");
+		for (int i = 0; i < params.length; i++) {
+			if (params[i].endsWith("/"))
+				params[i] = params[i].substring(0, params[i].length() - 1);
+		}
+		return Utils.getStringFromArray(params, ",");
+	}
+	
 	private void generateChmodInstruction(String dir, String rights, String files) {
 		if (rights.equals(EXECUTABLE)) {
 			rights = "755"; //$NON-NLS-1$
