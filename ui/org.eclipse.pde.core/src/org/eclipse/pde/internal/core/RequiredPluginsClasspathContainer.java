@@ -118,11 +118,9 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			// add dependencies
 			BundleSpecification[] required = desc.getRequiredBundles();
 			for (int i = 0; i < required.length; i++) {
-				if (required[i].isResolved()) {
-					addDependency((BundleDescription)required[i].getSupplier(),
+				addDependency(getSupplier(required[i]),
 							required[i].isExported(), 
 							added);
-				}
 			}
 
 			ClasspathUtilCore.addExtraClasspathEntries(fModel, fEntries);
@@ -131,6 +129,14 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			addImplicitDependencies(added);
 		} catch (CoreException e) {
 		}
+	}
+	
+	private BundleDescription getSupplier(BundleSpecification spec) {
+		if (spec.isResolved())
+			return (BundleDescription)spec.getSupplier();
+		
+		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(spec.getName());
+		return model == null ? null : model.getBundleDescription();	
 	}
 	
 	private void retrieveVisiblePackagesFromState(BundleDescription bundle) {
@@ -173,13 +179,13 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		if (!inWorkspace) {
 			BundleSpecification[] required = desc.getRequiredBundles();
 			for (int i = 0; i < required.length; i++) {
-				if (required[i].isResolved() && required[i].isExported()) {
-					BundleDescription supplier = (BundleDescription)required[i].getSupplier();
-					addDependency(supplier, isExported, added);
+				if (required[i].isExported()) {
+					addDependency(getSupplier(required[i]), isExported, added);
 				}
 			}
 		}
 	}
+
 
 	private boolean addPlugin(BundleDescription desc, boolean isExported,
 			boolean useInclusions, HashSet added)
