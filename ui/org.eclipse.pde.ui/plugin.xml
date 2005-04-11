@@ -230,6 +230,15 @@
          </description>
       </wizard>
       <wizard
+            name="%pluginContent.intro.name"
+            icon="icons/etool16/newexprj_wiz.gif"
+            class="org.eclipse.pde.internal.ui.wizards.templates.IntroNewWizard"
+            id="org.eclipse.pde.ui.pluginContent.intro">
+         <description>
+            %pluginContent.intro.description
+         </description>
+      </wizard>
+      <wizard
             name="%pluginContent.mail.name"
             icon="icons/etool16/newexprj_wiz.gif"
             class="org.eclipse.pde.internal.ui.wizards.templates.MailNewWizard"
@@ -1214,6 +1223,12 @@
             name="%template.helloWorld.name"
             class="org.eclipse.pde.internal.ui.wizards.templates.HelloWorldTemplate"
             id="org.eclipse.pde.ui.templates.helloWorld">
+      </template>
+      <template
+            contributingId="org.eclipse.ui.intro"
+            name="%template.introWorld.name"
+            class="org.eclipse.pde.internal.ui.wizards.templates.IntroTemplate"
+            id="org.eclipse.pde.ui.templates.intro">
       </template>
       <template
             contributingId="org.eclipse.ui.propertyPages"

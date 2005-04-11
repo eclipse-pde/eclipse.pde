@@ -75,6 +75,7 @@ public interface IHelpContextIds {
  	public static final String TEMPLATE_SELECTION = PREFIX + "template_selection"; //$NON-NLS-1$
  	public static final String TEMPLATE_EDITOR = PREFIX + "template_editor"; //$NON-NLS-1$
  	public static final String TEMPLATE_HELLO_WORLD = PREFIX + "template_hello_world"; //$NON-NLS-1$
+    public static final String TEMPLATE_INTRO = PREFIX + "template_intro"; //$NON-NLS-1$
  	public static final String TEMPLATE_HELP = PREFIX + "template_help"; //$NON-NLS-1$
  	public static final String TEMPLATE_MULTIPAGE_EDITOR = PREFIX + "template_multipage_editor"; //$NON-NLS-1$
  	public static final String TEMPLATE_NEW_WIZARD = PREFIX + "template_new_wizard"; //$NON-NLS-1$

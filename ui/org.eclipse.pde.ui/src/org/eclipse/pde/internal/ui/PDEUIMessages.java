@@ -1014,6 +1014,18 @@ public class PDEUIMessages extends NLS {
 	public static String HelloWorldTemplate_sampleMenu;
 	public static String HelloWorldTemplate_sampleAction;
 
+	public static String IntroNewWizard_wtitle;
+	public static String IntroTemplate_title;
+	public static String IntroTemplate_desc;
+	public static String IntroTemplate_productID;
+	public static String IntroTemplate_productName;
+	public static String IntroTemplate_application;
+	public static String IntroTemplate_introID;
+	public static String IntroTemplate_configurationID;
+    public static String IntroTemplate_generateDynamicContent;
+    public static String IntroTemplate_packageName;
+    public static String IntroTemplate_className;
+
 	public static String ViewRCPNewWizard_title;
 	public static String ViewRCPTemplate_title;
 	public static String ViewRCPTemplate_desc;
