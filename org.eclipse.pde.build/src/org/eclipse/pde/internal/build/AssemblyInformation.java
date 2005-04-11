@@ -73,7 +73,7 @@ public class AssemblyInformation implements IPDEBuildConstants {
 	
 	public Collection getCompiledFeatures(Config config) {
 		Collection allFeatures= getFeatures(config);
-		Set result = new HashSet(allFeatures.size()); 
+		ArrayList result = new ArrayList(allFeatures.size()); 
 		for (Iterator iter = allFeatures.iterator(); iter.hasNext();) {
 			Object tmp = iter.next();
 			if (tmp instanceof BuildTimeFeature) {
@@ -86,7 +86,7 @@ public class AssemblyInformation implements IPDEBuildConstants {
 	
 	public Collection getBinaryFeatures(Config config) {
 		Collection allFeatures= getFeatures(config);
-		Set result = new HashSet(allFeatures.size()); 
+		ArrayList result = new ArrayList(allFeatures.size()); 
 		for (Iterator iter = allFeatures.iterator(); iter.hasNext();) {
 			Object tmp = iter.next();
 			if (tmp instanceof BuildTimeFeature) {
@@ -99,7 +99,7 @@ public class AssemblyInformation implements IPDEBuildConstants {
 		return result;
 	}
 	
-	public Collection getFeatures(Config config) {
+	public ArrayList getFeatures(Config config) {
 		return ((AssemblyLevelConfigInfo) assembleInformation.get(config)).getFeatures();
 	}
 
@@ -120,7 +120,7 @@ public class AssemblyInformation implements IPDEBuildConstants {
 		// the plugins that are contained into this config
 		private Collection plugins = new HashSet(20);
 		// the features that are contained into this config
-		private Collection features = new HashSet(7);
+		private ArrayList features = new ArrayList(7);
 		// indicate whether root files needs to be copied and where they are coming from
 		private Collection rootFileProviders = new HashSet(7);
 
@@ -141,7 +141,7 @@ public class AssemblyInformation implements IPDEBuildConstants {
 			return rootFileProviders.size() > 0;
 		}
 
-		public Collection getFeatures() {
+		public ArrayList getFeatures() {
 			return features;
 		}
 
