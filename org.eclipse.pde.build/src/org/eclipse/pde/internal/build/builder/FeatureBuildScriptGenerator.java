@@ -449,7 +449,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			script.printMkdirTask(root);
 			if (include != null || exclude != null) {
 				FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BASEDIR), null, include, null, exclude, null, null);
-				script.printCopyTask(null, root, new FileSet[] {fileSet}, true);
+				script.printCopyTask(null, root, new FileSet[] {fileSet}, true, false);
 			}
 			// Generate the parameters for the Id Replacer.
 			String featureVersionInfo = ""; //$NON-NLS-1$
@@ -528,7 +528,10 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				fileSet[i] = new FileSet(fromDir + file, null, "**", null, null, null, null); //$NON-NLS-1$
 			}
 		}
-		script.printCopyTask(null, getPropertyFormat(PROPERTY_FEATURE_BASE) + '/' + configName + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER), fileSet, true);
+		String shouldOverwrite =  (String) getBuildProperties().get("overwriteRootFiles");
+		if (shouldOverwrite == null)
+			shouldOverwrite = "true";
+		script.printCopyTask(null, getPropertyFormat(PROPERTY_FEATURE_BASE) + '/' + configName + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER), fileSet, true, Boolean.valueOf(shouldOverwrite).booleanValue());
 	}
 
 	private void generatePermissions(Config aConfig) throws CoreException {

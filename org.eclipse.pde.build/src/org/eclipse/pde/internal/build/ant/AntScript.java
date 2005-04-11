@@ -259,17 +259,18 @@ public class AntScript {
 	 * Print a <code>copy</code> task to the script. The source file is specified 
 	 * by the <code>file</code> parameter. The destination directory is specified by 
 	 * the <code>todir</code> parameter. 
-	 * 
 	 * @param file the source file
 	 * @param todir the destination directory
 	 * @param fileSets the inclusion/exclusion rules to use when copying
+	 * @param overwrite TODO
 	 */
-	public void printCopyTask(String file, String todir, FileSet[] fileSets, boolean failOnError) {
+	public void printCopyTask(String file, String todir, FileSet[] fileSets, boolean failOnError, boolean overwrite) {
 		printTab();
 		output.print("<copy"); //$NON-NLS-1$
 		printAttribute("file", file, false); //$NON-NLS-1$
 		printAttribute("todir", todir, false); //$NON-NLS-1$
 		printAttribute("failonerror", failOnError ? "true" : "false", true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		printAttribute("overwrite", overwrite ? "true" : "false", true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (fileSets == null)
 			output.println("/>"); //$NON-NLS-1$
 		else {
