@@ -18,7 +18,6 @@ import org.eclipse.swt.custom.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.help.*;
 import org.eclipse.ui.part.*;
 import org.eclipse.ui.views.properties.*;
 import org.osgi.framework.*;
@@ -176,7 +175,7 @@ IRegistryChangeListener {
 			}
 		});
 		
-		WorkbenchHelp.setHelp(treeViewer.getControl(),
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(treeViewer.getControl(),
 				IHelpContextIds.REGISTRY_VIEW);
 		
 		getViewSite().setSelectionProvider(treeViewer);

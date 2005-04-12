@@ -38,7 +38,6 @@ import org.eclipse.swt.program.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
-import org.eclipse.ui.help.*;
 import org.eclipse.ui.part.*;
 
 public class LogView extends ViewPart implements ILogListener {
@@ -113,7 +112,7 @@ public class LogView extends ViewPart implements ILogListener {
         initializeViewerSorter();
         
         Platform.addLogListener(this);
-        WorkbenchHelp.setHelp(fTree, IHelpContextIds.LOG_VIEW);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(fTree, IHelpContextIds.LOG_VIEW);
     }
 
      private void createActions() {
