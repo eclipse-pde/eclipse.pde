@@ -437,6 +437,10 @@ public class TargetPlatform implements IEnvironmentVariables {
 	public static boolean isOSGi() {
 		return PDECore.getDefault().getModelManager().isOSGiRuntime();
 	}
+	
+	public static String getTargetVersion() {
+		return PDECore.getDefault().getModelManager().getTargetVersion();
+	}
 
 
 }

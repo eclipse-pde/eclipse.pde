@@ -127,6 +127,8 @@ public class ConvertedProjectsPage extends WizardPage  {
 		plugin.setName(createInitialName(plugin.getId()));
 		plugin.setVersion("1.0.0"); //$NON-NLS-1$
 		model.save();
+		PDEPluginConverter.convertToOSGIFormat(file.getProject(), TargetPlatform.getTargetVersion(), null, new SubProgressMonitor(monitor, 1));
+		file.delete(true, null);
 	}
 	
 	public boolean finish() {
@@ -175,24 +177,8 @@ public class ConvertedProjectsPage extends WizardPage  {
 		IProgressMonitor monitor)
 		throws CoreException {
 		CoreUtility.addNatureToProject(project, PDE.PLUGIN_NATURE, monitor);
-		IPath manifestPath = project.getFullPath().append("plugin.xml"); //$NON-NLS-1$
-		IFile file = project.getWorkspace().getRoot().getFile(manifestPath);
-		if (file.exists()) {
-			IDE.setDefaultEditor(file, PDEPlugin.MANIFEST_EDITOR_ID);
-		} else {
-			manifestPath = project.getFullPath().append("fragment.xml"); //$NON-NLS-1$
-			IFile fragmentFile = project.getWorkspace().getRoot().getFile(manifestPath);
-			if (!fragmentFile.exists()) {
-				createManifestFile(file, monitor);				
-			}
-			IDE.setDefaultEditor(file, PDEPlugin.MANIFEST_EDITOR_ID);
-		}
-		
-		IPath buildPath = project.getFullPath().append("build.properties"); //$NON-NLS-1$
-		IFile buildFile = project.getWorkspace().getRoot().getFile(buildPath);
-		if (buildFile.exists()) {
-			IDE.setDefaultEditor(buildFile, PDEPlugin.BUILD_EDITOR_ID);
-		}
+		if (!WorkspaceModelManager.isPluginProject(project))
+			createManifestFile(project.getFile("plugin.xml"), monitor);
 	}
 	
 	private void convertProjects(
