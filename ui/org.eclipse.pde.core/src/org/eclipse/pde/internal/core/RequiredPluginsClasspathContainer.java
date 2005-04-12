@@ -38,6 +38,9 @@ import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 public class RequiredPluginsClasspathContainer extends PDEClasspathContainer implements IClasspathContainer {
+
+	private static final boolean ENABLE_ACCESS_RESTRICTIONS = false;
+	
 	private IPluginModelBase fModel;
 	
 	private HashMap fVisiblePackages = new HashMap();
@@ -218,6 +221,9 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	}
 	
 	private IPath[] getInclusions(IPluginModelBase model) {
+		if (!ENABLE_ACCESS_RESTRICTIONS)
+			return null;
+		
 		BundleDescription desc = model.getBundleDescription();
 		if (desc == null)
 			return null;
