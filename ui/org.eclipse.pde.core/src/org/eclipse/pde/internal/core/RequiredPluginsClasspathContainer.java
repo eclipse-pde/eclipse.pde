@@ -157,7 +157,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			return (BundleDescription)spec.getSupplier();
 		
 		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(spec.getName());
-		return model == null && model.isEnabled() ? null : model.getBundleDescription();	
+		return model != null && model.isEnabled() ? model.getBundleDescription() : null;	
 	}
 	
 	private void retrieveVisiblePackagesFromState(BundleDescription bundle) {
