@@ -302,7 +302,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 				// all the parent plug-in's non-reexported dependencies.
 				if ((!inWorkspace || !required[i].isExported())) {
 					desc = getSupplier(required[i]);
-					if (desc instanceof BundleDescription) {
+					if (desc != null && desc instanceof BundleDescription) {
 						addDependency((BundleDescription)desc, false, added);
 					}
 				}
