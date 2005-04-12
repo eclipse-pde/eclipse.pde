@@ -40,7 +40,7 @@ public class IntroTemplate extends PDETemplateSection {
     
     public static final String CLASS_NAME = "SampleXHTMLContentProvider"; //$NON-NLS-1$
     
-    public static final String KEY_ANCHOR = "className";
+    public static final String KEY_ANCHOR = "className"; //$NON-NLS-1$
     
     private BooleanOption generateDynamicContent = null;
     private StringOption classNameOption = null;
@@ -117,13 +117,13 @@ public class IntroTemplate extends PDETemplateSection {
         // In a new project wizard, we don't know this yet - the
         // model has not been created
         String id = data.getId();
-        initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(id) + ".intro"); 
+        initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(id) + ".intro");  //$NON-NLS-1$
     }
     public void initializeFields(IPluginModelBase model) {
         // In the new extension wizard, the model exists so 
         // we can initialize directly from it
         String pluginId = model.getPluginBase().getId();
-        initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(pluginId) + ".intro"); 
+        initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(pluginId) + ".intro");  //$NON-NLS-1$
     }
 
 	public void validateOptions(TemplateOption source) {
@@ -231,8 +231,8 @@ public class IntroTemplate extends PDETemplateSection {
 
             IPluginElement configExtensionElement = factory.createElement(extension4);
             configExtensionElement.setName("configExtension"); //$NON-NLS-1$
-            configExtensionElement.setAttribute("configId", plugin.getId() + '.' + "configId"); //$NON-NLS-1$
-            configExtensionElement.setAttribute("content", "ext.xml"); //$NON-NLS-1$
+            configExtensionElement.setAttribute("configId", plugin.getId() + '.' + "configId"); //$NON-NLS-1$ //$NON-NLS-2$
+            configExtensionElement.setAttribute("content", "ext.xml"); //$NON-NLS-1$ //$NON-NLS-2$
             extension4.add(configExtensionElement);
 
             if (!extension4.isInTheModel())
@@ -252,10 +252,10 @@ public class IntroTemplate extends PDETemplateSection {
 	protected boolean isOkToCreateFile(File sourceFile) {
 
         if ( !generateDynamicContent.isSelected() && 
-                (sourceFile.getName().equals("$className$.java") || 
-                 sourceFile.getName().equals("concept3.xhtml") ||
-                 sourceFile.getName().equals("extContent.xhtml") ||
-                 sourceFile.getName().equals("ext.xml") ) ) {
+                (sourceFile.getName().equals("$className$.java") ||  //$NON-NLS-1$
+                 sourceFile.getName().equals("concept3.xhtml") || //$NON-NLS-1$
+                 sourceFile.getName().equals("extContent.xhtml") || //$NON-NLS-1$
+                 sourceFile.getName().equals("ext.xml") ) ) { //$NON-NLS-1$
             return false;
         }
         
@@ -263,7 +263,7 @@ public class IntroTemplate extends PDETemplateSection {
 	}
 
 	public String getUsedExtensionPoint() {
-		return "org.eclipse.ui.intro"; // need more then one extension point
+		return "org.eclipse.ui.intro"; // need more then one extension point //$NON-NLS-1$
 	}
 
 	public IPluginReference[] getDependencies(String schemaVersion) {
@@ -284,12 +284,4 @@ public class IntroTemplate extends PDETemplateSection {
 		return super.getNumberOfWorkUnits() + 1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#getFoldersToInclude()
-	 */
-	// public String[] getNewFiles() {
-	// return new String[] {"content/", "*.xml"}; //$NON-NLS-1$ //$NON-NLS-2$
-	// }
 }
