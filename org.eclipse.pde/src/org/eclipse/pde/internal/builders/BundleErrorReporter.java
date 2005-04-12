@@ -114,6 +114,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	 */
 	private void addProjectPackages(Map map, IProject proj) {
 		IJavaProject jp = JavaCore.create(proj);
+		if (!jp.isOpen()) {
+			return;
+		}
 		try {
 			IPackageFragmentRoot[] roots = jp.getPackageFragmentRoots();
 			for (int i = 0; i < roots.length; i++) {
@@ -215,14 +218,17 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
                     addProjectPackages(map, resource.getProject());
                 } else {
                     try {
-                        IPackageFragment[] packages = PluginJavaSearchUtil
-                                .collectPackageFragments(
-                                        new IPluginBase[] { model
-                                                .getPluginBase() }, JavaCore
-                                                .create(fProject), false);
-                        for (int i = 0; i < packages.length; i++)
-                            map.put(packages[i].getElementName(),
-                                    packages[i]);
+						IJavaProject javaProject = JavaCore.create(fProject);
+						if (javaProject.isOpen()) {
+							IPackageFragment[] packages = PluginJavaSearchUtil
+									.collectPackageFragments(
+											new IPluginBase[] { model
+													.getPluginBase() },
+											javaProject, false);
+							for (int i = 0; i < packages.length; i++)
+								map.put(packages[i].getElementName(),
+										packages[i]);
+						}
                     } catch (JavaModelException jme) {
                         PDE.log(jme);
                     }
@@ -328,6 +334,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		}
 		if (isCheckUnknownClass()) {
 			IJavaProject javaProject = JavaCore.create(fProject);
+			if (!javaProject.isOpen()) {
+				return;
+			}
 			try {
 				// Look for this activator in the project's classpath
 				IType type = javaProject.findType(activator);
