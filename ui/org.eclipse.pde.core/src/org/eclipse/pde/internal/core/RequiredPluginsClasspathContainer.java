@@ -363,7 +363,11 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	}
 	
 	private void addExtraLibrary(IPath path, IPluginModelBase model) throws CoreException {
-		IPath srcPath = model == null ? null : ClasspathUtilCore.getSourceAnnotation(model, path.lastSegment());
+		IPath srcPath = null;
+		if (model != null) {
+			IPath shortPath = path.removeFirstSegments(path.matchingFirstSegments(new Path(model.getInstallLocation())));
+			srcPath = ClasspathUtilCore.getSourceAnnotation(model, shortPath.toString());
+		}
 		IClasspathEntry clsEntry = JavaCore.newLibraryEntry(
 				path,
 				srcPath,

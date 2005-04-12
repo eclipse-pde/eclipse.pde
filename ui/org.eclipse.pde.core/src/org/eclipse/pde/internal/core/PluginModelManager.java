@@ -97,7 +97,7 @@ public class PluginModelManager implements IAdaptable {
 		for (Iterator iter = values.iterator(); iter.hasNext();) {
 			ModelEntry entry = (ModelEntry) iter.next();
 			IPluginModelBase model = entry.getActiveModel();
-			if (model.isEnabled())
+			if (model != null && model.isEnabled())
 				result.add(model);
 		}
 		return (IPluginModelBase[])result.toArray(new IPluginModelBase[result.size()]);
