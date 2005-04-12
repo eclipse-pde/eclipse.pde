@@ -22,11 +22,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.core.build.IBuild;
-import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.plugin.IFragment;
 import org.eclipse.pde.core.plugin.IFragmentModel;
@@ -249,59 +246,6 @@ public class ClasspathUtilCore {
 			}
 		}
 		return (buildModel != null) ? buildModel.getBuild() : null;
-	}
-
-	protected static void addExtraClasspathEntries(IPluginModelBase model,
-			ArrayList result) throws CoreException {
-		IBuild build = ClasspathUtilCore.getBuild(model);
-		IBuildEntry entry = (build == null) ? null : build
-				.getEntry(IBuildEntry.JARS_EXTRA_CLASSPATH);
-		if (entry == null)
-			return;
-
-		String[] tokens = entry.getTokens();
-		for (int i = 0; i < tokens.length; i++) {
-			String device = new Path(tokens[i]).getDevice();
-			IPath path = null;
-			if (device == null) {
-				path = new Path(model.getUnderlyingResource().getProject()
-						.getName());
-				path = path.append(tokens[i]);
-			} else if (device.equals("platform:")) { //$NON-NLS-1$
-				path = new Path(tokens[i]);
-				if (path.segmentCount() > 1 && path.segment(0).equals("plugin")) { //$NON-NLS-1$
-					path = path.setDevice(null);
-					path = path.removeFirstSegments(1);
-				}
-			}
-			if (path != null) {
-				IResource resource = PDECore.getWorkspace().getRoot()
-						.findMember(path);
-				if (resource != null && resource instanceof IFile) {
-					IClasspathEntry newEntry = JavaCore.newLibraryEntry(
-							resource.getFullPath(), null, null);
-					IProject project = resource.getProject();
-					if (project.hasNature(JavaCore.NATURE_ID)) {
-						IJavaProject jProject = JavaCore.create(project);
-						IClasspathEntry[] entries = jProject.getRawClasspath();
-						for (int j = 0; j < entries.length; j++) {
-							if (entries[j].getEntryKind() == IClasspathEntry.CPE_LIBRARY
-									&& entries[j].getContentKind() == IPackageFragmentRoot.K_BINARY
-									&& entries[j].getPath().equals(
-											resource.getFullPath())) {
-								newEntry = JavaCore.newLibraryEntry(entries[j]
-										.getPath(), entries[j]
-										.getSourceAttachmentPath(), entries[j]
-										.getSourceAttachmentRootPath());
-								break;
-							}
-						}
-					}
-					if (!result.contains(newEntry))
-						result.add(newEntry);
-				}
-			}
-		}
 	}
 
 }

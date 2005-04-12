@@ -10,11 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -22,12 +25,15 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.osgi.service.resolver.BaseDescription;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.osgi.service.resolver.HostSpecification;
 import org.eclipse.osgi.service.resolver.StateHelper;
+import org.eclipse.pde.core.build.IBuild;
+import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 
@@ -133,7 +139,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 				}
 			}
 
-			ClasspathUtilCore.addExtraClasspathEntries(fModel, fEntries);
+			addExtraClasspathEntries();
 
 			// add implicit dependencies
 			addImplicitDependencies(added);
@@ -148,7 +154,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			return (BundleDescription)spec.getSupplier();
 		
 		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(spec.getName());
-		return model == null ? null : model.getBundleDescription();	
+		return model == null && model.isEnabled() ? null : model.getBundleDescription();	
 	}
 	
 	private void retrieveVisiblePackagesFromState(BundleDescription bundle) {
@@ -255,17 +261,17 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			if (!id.equals("org.eclipse.core.runtime")) { //$NON-NLS-1$
 				IPluginModelBase plugin = manager.findModel(
 						"org.eclipse.core.runtime.compatibility"); //$NON-NLS-1$
-				if (plugin != null)
+				if (plugin != null && plugin.isEnabled())
 					addDependency(plugin.getBundleDescription(), false, added);
 			}
 		} else {
 			IPluginModelBase plugin = manager.findModel("org.eclipse.core.boot"); //$NON-NLS-1$
-			if (plugin != null)
+			if (plugin != null && plugin.isEnabled())
 				addDependency(plugin.getBundleDescription(), false, added);
 			
 			if (!id.equals("org.eclipse.core.runtime")) { //$NON-NLS-1$
 				plugin = manager.findModel("org.eclipse.core.runtime"); //$NON-NLS-1$
-				if (plugin != null)
+				if (plugin != null && plugin.isEnabled())
 					addDependency(plugin.getBundleDescription(), false, added);
 			}
 		}
@@ -303,4 +309,66 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 					: false;
 	}
 	
+	protected void addExtraClasspathEntries() throws CoreException {
+		IBuild build = ClasspathUtilCore.getBuild(fModel);
+		IBuildEntry entry = (build == null) ? null : build.getEntry(IBuildEntry.JARS_EXTRA_CLASSPATH);
+		if (entry == null)
+			return;
+
+		String[] tokens = entry.getTokens();
+		for (int i = 0; i < tokens.length; i++) {
+			IPath path = new Path(tokens[i]);
+			if (!path.isAbsolute()) {
+				File file = new File(fModel.getInstallLocation(), path.toString());
+				if (file.exists()) {
+					IFile resource = PDECore.getWorkspace().getRoot().getFileForLocation(new Path(file.getAbsolutePath()));
+					if (resource != null && resource.getProject().equals(fModel.getUnderlyingResource().getProject())) {
+						addExtraLibrary(resource.getFullPath(), null);
+						continue;
+					}
+				}
+				if (path.segmentCount() > 3 && "..".equals(path.segment(0))) {
+					path = path.removeFirstSegments(1);
+					path = new Path("platform:").append("plugin").append(path);
+				} else {
+					continue;
+				}
+			}
+			
+			if (!"platform:".equals(path.getDevice())) {
+				File file = new File(path.toOSString());
+				if (file.exists()) {
+					addExtraLibrary(path, null);			
+				}
+			} else if (path.segmentCount() > 3){
+				IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(path.segment(1));
+				if (model != null && model.isEnabled()) {
+					path = path.setDevice(null);
+					path = path.removeFirstSegments(2);
+					if (model.getUnderlyingResource() == null) {
+						File file = new File(model.getInstallLocation(), path.toOSString());
+						if (file.exists()) {
+							addExtraLibrary(new Path(file.getAbsolutePath()), model);
+						}
+					} else {
+						IProject project = model.getUnderlyingResource().getProject();
+						IFile file = project.getFile(path);
+						if (file.exists()) {
+							addExtraLibrary(file.getFullPath(), model);
+						}
+					}
+				}
+			}						
+		}	
+	}
+	
+	private void addExtraLibrary(IPath path, IPluginModelBase model) throws CoreException {
+		IPath srcPath = model == null ? null : ClasspathUtilCore.getSourceAnnotation(model, path.lastSegment());
+		IClasspathEntry clsEntry = JavaCore.newLibraryEntry(
+				path,
+				srcPath,
+				null);
+		if (!fEntries.contains(clsEntry))
+			fEntries.add(clsEntry);						
+	}
 }
