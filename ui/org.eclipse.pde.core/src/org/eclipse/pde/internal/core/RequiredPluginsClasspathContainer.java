@@ -210,6 +210,8 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	private boolean addPlugin(BundleDescription desc, boolean isExported, boolean useInclusions)
 			throws CoreException {		
 		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(desc);
+		if (model == null || !model.isEnabled())
+			return false;
 		IResource resource = model.getUnderlyingResource();
 		IPath[] inclusions = useInclusions ? getInclusions(model) : null;
 		if (resource != null) {
