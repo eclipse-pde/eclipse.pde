@@ -94,6 +94,5 @@
       <command type="focus" contextId="view/org.eclipse.jdt.ui.PackageExplorer" widgetId="org.eclipse.swt.widgets.Tree#1"/>
       <command type="wait"/>
       <command type="focus" contextId="view/org.eclipse.jdt.ui.PackageExplorer" widgetId="org.eclipse.swt.widgets.Tree#1"/>
-      <command type="focus" contextId="editor/org.eclipse.pde.ui.manifestEditor/plugin.xml" widgetId="org.eclipse.swt.widgets.Text#1"/>
    </shell>
 </macro>
