@@ -39,7 +39,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 public class RequiredPluginsClasspathContainer extends PDEClasspathContainer implements IClasspathContainer {
 
-	private static final boolean ENABLE_ACCESS_RESTRICTIONS = true;
+	private static final boolean ENABLE_ACCESS_RESTRICTIONS = false;
 	
 	private IPluginModelBase fModel;
 	
@@ -335,7 +335,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 						continue;
 					}
 				}
-				if (path.segmentCount() > 3 && "..".equals(path.segment(0))) {
+				if (path.segmentCount() >= 3 && "..".equals(path.segment(0))) {
 					path = path.removeFirstSegments(1);
 					path = new Path("platform:").append("plugin").append(path);
 				} else {
@@ -348,7 +348,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 				if (file.exists()) {
 					addExtraLibrary(path, null);			
 				}
-			} else if (path.segmentCount() > 3){
+			} else if (path.segmentCount() >= 3){
 				IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(path.segment(1));
 				if (model != null && model.isEnabled()) {
 					path = path.setDevice(null);
