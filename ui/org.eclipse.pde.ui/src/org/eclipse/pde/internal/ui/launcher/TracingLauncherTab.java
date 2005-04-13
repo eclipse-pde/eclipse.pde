@@ -9,25 +9,51 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Map;
+import java.util.Properties;
+import java.util.StringTokenizer;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.debug.core.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.util.*;
-import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.custom.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.help.*;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ModelEntry;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PluginModelManager;
+import org.eclipse.pde.internal.core.TracingOptionsManager;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.pde.internal.ui.wizards.ListUtil;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ScrolledPageBook;
 public class TracingLauncherTab extends AbstractLauncherTab
 		implements
 			ILauncherSettings {
@@ -56,7 +82,7 @@ public class TracingLauncherTab extends AbstractLauncherTab
 		createButtonSection(container);
 		setControl(container);
 		Dialog.applyDialogFont(container);
-		WorkbenchHelp.setHelp(container, IHelpContextIds.LAUNCHER_TRACING);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.LAUNCHER_TRACING);
 	}
 	private void createButtonSection(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);

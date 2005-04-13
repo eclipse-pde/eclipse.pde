@@ -10,19 +10,31 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
-import java.util.*;
+import java.util.Locale;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.TreeSet;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.jdt.launching.*;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.launcher.*;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.IEnvironmentVariables;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.launcher.LauncherUtils;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.PlatformUI;
 
 public class EnvironmentBlock implements IEnvironmentVariables {
 	private Combo fOSCombo;
@@ -85,7 +97,7 @@ public class EnvironmentBlock implements IEnvironmentVariables {
 		createJREGroup(container);
 		
 		Dialog.applyDialogFont(container);
-		WorkbenchHelp.setHelp(container, IHelpContextIds.TARGET_ENVIRONMENT_PREFERENCE_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.TARGET_ENVIRONMENT_PREFERENCE_PAGE);
 		return container;
 	}
 	

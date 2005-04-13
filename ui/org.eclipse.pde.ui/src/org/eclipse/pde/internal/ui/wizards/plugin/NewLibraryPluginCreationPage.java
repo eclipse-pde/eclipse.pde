@@ -34,8 +34,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 
@@ -103,7 +103,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		createFormatGroup(control);
 
 		Dialog.applyDialogFont(control);
-		WorkbenchHelp.setHelp(control,
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(control,
 				IHelpContextIds.NEW_LIBRARY_PROJECT_STRUCTURE_PAGE);
 		setControl(control);
 	}

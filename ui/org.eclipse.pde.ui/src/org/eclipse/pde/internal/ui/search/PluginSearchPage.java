@@ -10,23 +10,38 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.core.search.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.search.ui.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.help.*;
+import org.eclipse.jface.dialogs.DialogPage;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.pde.internal.core.search.PluginSearchInput;
+import org.eclipse.pde.internal.core.search.PluginSearchScope;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.search.ui.ISearchPage;
+import org.eclipse.search.ui.ISearchPageContainer;
+import org.eclipse.search.ui.NewSearchUI;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.PlatformUI;
 
 
 
@@ -76,7 +91,7 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 		
 		setControl(result);
 		Dialog.applyDialogFont(result);
-		WorkbenchHelp.setHelp(result, IHelpContextIds.SEARCH_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(result, IHelpContextIds.SEARCH_PAGE);
 	}
 		
 	private void createGroup(

@@ -10,16 +10,25 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.site;
 
-import java.io.*;
+import java.io.File;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.dialogs.*;
-import org.eclipse.ui.help.*;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 
 public class NewSiteProjectCreationPage extends WizardNewProjectCreationPage {
 	
@@ -85,7 +94,7 @@ public class NewSiteProjectCreationPage extends WizardNewProjectCreationPage {
 		setPageComplete(validatePage());
 		setControl(webGroup);
 		Dialog.applyDialogFont(webGroup);
-		WorkbenchHelp.setHelp(control, IHelpContextIds.NEW_SITE_MAIN);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(control, IHelpContextIds.NEW_SITE_MAIN);
 	}
 
 	public String getWebLocation(){

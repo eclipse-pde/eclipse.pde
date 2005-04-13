@@ -42,7 +42,7 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.part.PageBook;
@@ -338,7 +338,7 @@ public class DependenciesView extends PageBookView implements
 		IActionBars actionBars = getViewSite().getActionBars();
 		contributeToActionBars(actionBars);
 
-		WorkbenchHelp.setHelp(parent, IHelpContextIds.DEPENDENCIES_VIEW);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IHelpContextIds.DEPENDENCIES_VIEW);
 	}
 
 	/*

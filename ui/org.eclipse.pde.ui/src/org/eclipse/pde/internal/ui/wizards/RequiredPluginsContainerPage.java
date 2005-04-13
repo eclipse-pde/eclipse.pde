@@ -10,27 +10,53 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards;
 
-import java.util.*;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.core.*;
-import org.eclipse.jdt.ui.*;
-import org.eclipse.jdt.ui.wizards.*;
+import org.eclipse.jdt.core.IClasspathContainer;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jdt.ui.wizards.BuildPathDialogAccess;
+import org.eclipse.jdt.ui.wizards.IClasspathContainerPage;
+import org.eclipse.jdt.ui.wizards.IClasspathContainerPageExtension;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.core.ClasspathUtilCore;
+import org.eclipse.pde.internal.core.ModelEntry;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PluginModelManager;
+import org.eclipse.pde.internal.core.RequiredPluginsClasspathContainer;
+import org.eclipse.pde.internal.core.SourceAttachmentManager;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.ide.*;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 
 /**
  * Insert the type's description here.
@@ -169,7 +195,7 @@ public class RequiredPluginsContainerPage
 			}
 		});
 		attachSourceButton.setEnabled(false);
-		WorkbenchHelp.setHelp(
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(
 			container,
 			IHelpContextIds.PLUGINS_CONTAINER_PAGE);
 		setControl(container);

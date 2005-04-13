@@ -10,31 +10,73 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.extension;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.action.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.wizard.*;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.jface.wizard.IWizardNode;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.pde.internal.ui.search.*;
-import org.eclipse.pde.internal.ui.util.*;
-import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.pde.ui.*;
-import org.eclipse.pde.ui.templates.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.custom.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.help.*;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PluginModelManager;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDELabelProvider;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.ui.elements.ElementLabelProvider;
+import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
+import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
+import org.eclipse.pde.internal.ui.wizards.BaseWizardSelectionPage;
+import org.eclipse.pde.internal.ui.wizards.ListUtil;
+import org.eclipse.pde.internal.ui.wizards.PluginSelectionDialog;
+import org.eclipse.pde.internal.ui.wizards.WizardCollectionElement;
+import org.eclipse.pde.internal.ui.wizards.WizardElement;
+import org.eclipse.pde.internal.ui.wizards.WizardNode;
+import org.eclipse.pde.ui.IBasePluginWizard;
+import org.eclipse.pde.ui.IExtensionWizard;
+import org.eclipse.pde.ui.templates.ITemplateSection;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.ui.PlatformUI;
 
 public class PointSelectionPage
 	extends BaseWizardSelectionPage {
@@ -286,7 +328,7 @@ public class PointSelectionPage
 		initialize();
 		setControl(tabFolder);
 		Dialog.applyDialogFont(outerContainer);
-		WorkbenchHelp.setHelp(
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(
 			outerContainer,
 			IHelpContextIds.ADD_EXTENSIONS_SCHEMA_BASED);
 	}

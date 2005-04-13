@@ -9,15 +9,20 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.schema;
-import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.internal.core.ischema.ISchema;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.editor.text.*;
-import org.eclipse.swt.layout.*;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
+import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.editor.text.ColorManager;
+import org.eclipse.pde.internal.ui.editor.text.IColorManager;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
-import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 /**
  * 
@@ -70,7 +75,7 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 		managedForm.addPart(grammarSection);
 		managedForm.addPart(descriptionSection);
 		
-		WorkbenchHelp.setHelp(form.getBody(), IHelpContextIds.SCHEMA_EDITOR_MAIN);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.SCHEMA_EDITOR_MAIN);
 		initialize();
 	}
 	public void initialize() {

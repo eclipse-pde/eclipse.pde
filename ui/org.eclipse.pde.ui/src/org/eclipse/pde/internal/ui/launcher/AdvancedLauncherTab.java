@@ -10,35 +10,65 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import java.io.*;
-import java.lang.reflect.*;
-import java.util.*;
+import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.debug.core.*;
-import org.eclipse.debug.ui.*;
-import org.eclipse.jdt.core.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.window.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.plugin.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.pde.internal.ui.util.*;
-import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.custom.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.dialogs.*;
-import org.eclipse.ui.help.*;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.window.Window;
+import org.eclipse.pde.core.plugin.IFragmentModel;
+import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.pde.core.plugin.IPluginLibrary;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ClasspathUtilCore;
+import org.eclipse.pde.internal.core.ModelEntry;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PluginModelManager;
+import org.eclipse.pde.internal.core.plugin.ExternalPluginModelBase;
+import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.ui.elements.NamedElement;
+import org.eclipse.pde.internal.ui.util.PersistablePluginObject;
+import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.pde.internal.ui.wizards.ListUtil;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 
 public class AdvancedLauncherTab
 	extends AbstractLauncherTab
@@ -141,7 +171,7 @@ public class AdvancedLauncherTab
 		setControl(composite);
 
 		Dialog.applyDialogFont(composite);
-		WorkbenchHelp.setHelp(composite, IHelpContextIds.LAUNCHER_ADVANCED);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.LAUNCHER_ADVANCED);
 	}
 
 	private void hookListeners() {

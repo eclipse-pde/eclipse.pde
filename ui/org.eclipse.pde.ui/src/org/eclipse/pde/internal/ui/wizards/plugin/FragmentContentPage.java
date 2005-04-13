@@ -11,17 +11,29 @@
 
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.util.*;
-import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.custom.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.help.*;
+import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.pde.core.plugin.IPluginModel;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
+import org.eclipse.pde.internal.ui.wizards.PluginSelectionDialog;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 
 public class FragmentContentPage extends ContentPage {
 
@@ -55,7 +67,7 @@ public class FragmentContentPage extends ContentPage {
 		createParentPluginGroup(container);
 
 		setControl(container);
-		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.NEW_FRAGMENT_REQUIRED_DATA);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.NEW_FRAGMENT_REQUIRED_DATA);
 	}
 
 	public void createFragmentPropertiesGroup(Composite container) {

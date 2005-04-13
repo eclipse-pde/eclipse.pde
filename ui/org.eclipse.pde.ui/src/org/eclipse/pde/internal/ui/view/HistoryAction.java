@@ -18,7 +18,7 @@ import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Action used for the open historical input again in DependenciesView
@@ -83,7 +83,7 @@ public class HistoryAction extends Action {
 
 		setDescription(NLS.bind(PDEUIMessages.HistoryAction_description, elementName)); //$NON-NLS-1$
 		setToolTipText(NLS.bind(PDEUIMessages.HistoryAction_tooltip, elementName)); //$NON-NLS-1$
-		WorkbenchHelp.setHelp(this, IHelpContextIds.HISTORY_ACTION);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IHelpContextIds.HISTORY_ACTION);
 	}
 
 	private ImageDescriptor getImageDescriptor(String element) {

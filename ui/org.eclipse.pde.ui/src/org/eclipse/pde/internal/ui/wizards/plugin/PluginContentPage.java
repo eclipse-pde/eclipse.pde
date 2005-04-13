@@ -11,18 +11,27 @@
 
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
-import java.util.*;
+import java.util.StringTokenizer;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.help.*;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jdt.core.JavaConventions;
+import org.eclipse.jface.dialogs.DialogPage;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 
 public class PluginContentPage extends ContentPage {
 	protected final static int P_CLASS_GROUP = 2;
@@ -65,7 +74,7 @@ public class PluginContentPage extends ContentPage {
 		createRCPGroup(container);
 		
 		setControl(container);	
-		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.NEW_PROJECT_REQUIRED_DATA);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.NEW_PROJECT_REQUIRED_DATA);
 	}
 
 	private void createPluginPropertiesGroup(Composite container) {

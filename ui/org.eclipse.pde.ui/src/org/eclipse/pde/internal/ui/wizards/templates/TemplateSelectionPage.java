@@ -13,18 +13,37 @@ package org.eclipse.pde.internal.ui.wizards.templates;
 import java.util.ArrayList;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.TableLayout;
+import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
-import org.eclipse.pde.internal.ui.parts.*;
+import org.eclipse.pde.internal.ui.parts.FormBrowser;
+import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
 import org.eclipse.pde.ui.templates.ITemplateSection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public class TemplateSelectionPage extends WizardPage {
 	private ITemplateSection[] fCandidates;
@@ -131,7 +150,7 @@ public class TemplateSelectionPage extends WizardPage {
 		fTablePart.selectAll(true);
 		setControl(container);
 		Dialog.applyDialogFont(container);
-		WorkbenchHelp.setHelp(container, IHelpContextIds.TEMPLATE_SELECTION);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.TEMPLATE_SELECTION);
 	}
 
 	public ITemplateSection[] getSelectedTemplates() {

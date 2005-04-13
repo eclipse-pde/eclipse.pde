@@ -10,42 +10,91 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.view;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jdt.core.IClassFile;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.actions.OpenAction;
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.util.*;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.EntryFileAdapter;
+import org.eclipse.pde.internal.core.FileAdapter;
+import org.eclipse.pde.internal.core.ModelEntry;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.JarEntryEditorInput;
 import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
 import org.eclipse.pde.internal.ui.search.PluginSearchActionGroup;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
-import org.eclipse.pde.internal.ui.wizards.imports.*;
+import org.eclipse.pde.internal.ui.wizards.imports.PluginImportOperation;
+import org.eclipse.pde.internal.ui.wizards.imports.PluginImportWizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.dnd.*;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.FileTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.program.Program;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionContext;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.part.*;
+import org.eclipse.ui.part.DrillDownAdapter;
+import org.eclipse.ui.part.ViewPart;
 
 public class PluginsView extends ViewPart {
 	private static final String DEFAULT_EDITOR_ID = "org.eclipse.ui.DefaultTextEditor"; //$NON-NLS-1$
@@ -193,7 +242,7 @@ public class PluginsView extends ViewPart {
 			propertyListener);
 		getViewSite().setSelectionProvider(treeViewer);
 
-		WorkbenchHelp.setHelp(
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(
 			treeViewer.getControl(),
 			IHelpContextIds.PLUGINS_VIEW);
 	}

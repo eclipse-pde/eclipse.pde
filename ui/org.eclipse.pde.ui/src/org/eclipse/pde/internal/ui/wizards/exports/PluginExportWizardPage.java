@@ -11,19 +11,23 @@
 package org.eclipse.pde.internal.ui.wizards.exports;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.util.*;
+import org.eclipse.pde.internal.core.ModelEntry;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.WorkspaceModelManager;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.util.PersistablePluginObject;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 
 public class PluginExportWizardPage extends ExportWizardPageWithTable {
@@ -52,7 +56,7 @@ public class PluginExportWizardPage extends ExportWizardPageWithTable {
 	}
 	
 	protected void hookHelpContext(Control control) {
-		WorkbenchHelp.setHelp(control, IHelpContextIds.PLUGIN_EXPORT_WIZARD);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(control, IHelpContextIds.PLUGIN_EXPORT_WIZARD);
 	}
 	
 	private boolean hasBuildProperties(IPluginModelBase model) {

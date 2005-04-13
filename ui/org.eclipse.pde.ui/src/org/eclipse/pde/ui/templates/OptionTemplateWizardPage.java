@@ -10,14 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.templates;
 
-import java.util.*;
+import java.util.ArrayList;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.help.*;
+import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * An implementation of the standard wizard page that creates its contents from
@@ -68,7 +69,7 @@ public class OptionTemplateWizardPage extends WizardPage {
 			option.createControl(container, 2);
 		}
 		if (helpContextId != null)
-			WorkbenchHelp.setHelp(container, helpContextId);
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(container, helpContextId);
 		setControl(container);
 		Dialog.applyDialogFont(container);
 	}

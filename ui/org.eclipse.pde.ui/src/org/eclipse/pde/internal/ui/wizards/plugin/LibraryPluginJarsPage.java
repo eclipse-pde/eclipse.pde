@@ -42,8 +42,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -213,7 +213,7 @@ public class LibraryPluginJarsPage extends WizardPage {
 		});
 
 		Dialog.applyDialogFont(control);
-		WorkbenchHelp.setHelp(control,
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(control,
 				IHelpContextIds.NEW_LIBRARY_PROJECT_JAR_PAGE);
 		setControl(control);
 	}

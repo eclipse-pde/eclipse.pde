@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 public class CompilersPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
@@ -53,7 +53,7 @@ public class CompilersPreferencePage extends PreferencePage implements
 	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		WorkbenchHelp
+		PlatformUI.getWorkbench().getHelpSystem()
 				.setHelp(parent, IHelpContextIds.COMPILERS_PREFERENCE_PAGE);
 	}
 

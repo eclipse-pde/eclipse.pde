@@ -15,11 +15,11 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 public class FeatureAdvancedPage extends PDEFormPage {
 	public static final String PAGE_ID = "advanced"; //$NON-NLS-1$
@@ -77,7 +77,7 @@ public class FeatureAdvancedPage extends PDEFormPage {
 		managedForm.addPart(fDataDetailsSection);
 		managedForm.addPart(fDataPortabilitySection);
 
-		WorkbenchHelp.setHelp(form.getBody(),
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(),
 				IHelpContextIds.MANIFEST_FEATURE_OVERVIEW);
 
 		form.setText(PDEUIMessages.FeatureEditor_AdvancedPage_heading);

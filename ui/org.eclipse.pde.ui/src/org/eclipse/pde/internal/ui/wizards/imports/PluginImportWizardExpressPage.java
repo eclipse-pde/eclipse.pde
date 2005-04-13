@@ -10,28 +10,43 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
-import java.util.*;
+import java.util.ArrayList;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.build.*;
+import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PluginModelManager;
+import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.help.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 
 /**
  * @author Wassim Melhem
@@ -125,7 +140,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		
 		initialize();
 		setControl(container);
-		WorkbenchHelp.setHelp(container, IHelpContextIds.PLUGIN_IMPORT_EXPRESS_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.PLUGIN_IMPORT_EXPRESS_PAGE);
 		Dialog.applyDialogFont(container);
 	}
 	

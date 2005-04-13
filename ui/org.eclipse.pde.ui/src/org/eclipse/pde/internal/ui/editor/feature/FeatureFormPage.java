@@ -26,6 +26,7 @@ import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
@@ -36,7 +37,6 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Feature page.
@@ -111,7 +111,7 @@ public class FeatureFormPage extends PDEFormPage implements IHyperlinkListener {
 		managedForm.addPart(fSpecSection);
 		managedForm.addPart(fPortabilitySection);
 
-		WorkbenchHelp.setHelp(form.getBody(),
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(),
 				IHelpContextIds.MANIFEST_FEATURE_OVERVIEW);
 		initialize();
 	}

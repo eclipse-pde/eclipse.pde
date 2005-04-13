@@ -10,20 +10,28 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.build;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.build.*;
-import org.eclipse.pde.internal.build.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.editor.context.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.forms.*;
-import org.eclipse.ui.forms.editor.*;
-import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.help.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.build.IBuild;
+import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.editor.context.InputContext;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.forms.IManagedForm;
+import org.eclipse.ui.forms.editor.FormEditor;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 public class BuildPage extends PDEFormPage {
 	public static final String PAGE_ID = "build"; //$NON-NLS-1$
@@ -101,7 +109,7 @@ public class BuildPage extends PDEFormPage {
 		mform.addPart(classpathSection);
 
 		handleCustomCheckState(getCustomSelection());
-		WorkbenchHelp.setHelp(form, IHelpContextIds.BUILD_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form, IHelpContextIds.BUILD_PAGE);
 	}
 
 	private IBuildModel getBuildModel() {

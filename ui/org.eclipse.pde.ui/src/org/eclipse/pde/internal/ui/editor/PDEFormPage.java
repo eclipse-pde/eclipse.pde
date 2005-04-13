@@ -9,18 +9,26 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.pde.core.IBaseModel;
-import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.forms.*;
-import org.eclipse.ui.forms.editor.*;
+import org.eclipse.ui.forms.AbstractFormPart;
+import org.eclipse.ui.forms.IFormPart;
+import org.eclipse.ui.forms.IManagedForm;
+import org.eclipse.ui.forms.editor.FormEditor;
+import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 
 public abstract class PDEFormPage extends FormPage {
@@ -44,7 +52,7 @@ public abstract class PDEFormPage extends FormPage {
 				public void run() {
 					BusyIndicator.showWhile(form.getDisplay(), new Runnable() {
 						public void run() {
-							WorkbenchHelp.displayHelpResource(href);
+							PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(href);
 						}
 					});
 				}

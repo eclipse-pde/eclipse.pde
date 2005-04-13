@@ -26,7 +26,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.EditorPart;
 /**
  * @see EditorPart
@@ -101,7 +100,7 @@ public class SampleEditor extends EditorPart {
 			Hyperlink moreLink = toolkit.createHyperlink(form.getBody(), "Read More", SWT.NULL); //$NON-NLS-1$
 			moreLink.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
-					WorkbenchHelp.displayHelpResource(helpURL);
+					PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(helpURL);
 				}
 			});
 		}
@@ -114,7 +113,7 @@ public class SampleEditor extends EditorPart {
 			public void linkActivated(HyperlinkEvent e) {
 				Object href = e.getHref();
 				if (href.equals("help")) { //$NON-NLS-1$
-					WorkbenchHelp.displayHelpResource(helpURL);
+					PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(helpURL);
 				}
 				else if (href.equals("run")) { //$NON-NLS-1$
 					doRun(launcher, launchTarget, false);

@@ -9,27 +9,46 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.ui.internal.samples;
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Properties;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.debug.core.*;
-import org.eclipse.debug.ui.*;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.ui.ILaunchShortcut;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.launcher.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.custom.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.forms.events.*;
-import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.help.*;
-import org.eclipse.ui.intro.*;
-import org.eclipse.ui.intro.config.*;
-import org.eclipse.ui.part.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.launcher.RuntimeWorkbenchShortcut;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.forms.events.HyperlinkAdapter;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.widgets.FormText;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Hyperlink;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eclipse.ui.forms.widgets.TableWrapData;
+import org.eclipse.ui.forms.widgets.TableWrapLayout;
+import org.eclipse.ui.intro.IIntroPart;
+import org.eclipse.ui.intro.config.IStandbyContentPart;
+import org.eclipse.ui.part.ISetSelectionTarget;
 
 public class SampleStandbyContent implements IStandbyContentPart {
 	private ScrolledForm form;
@@ -78,7 +97,7 @@ public class SampleStandbyContent implements IStandbyContentPart {
 		moreLink.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				if (helpURL != null)
-					WorkbenchHelp.displayHelpResource(helpURL);
+					PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(helpURL);
 			}
 		});
 		instText = toolkit.createFormText(form.getBody(), true);
@@ -90,7 +109,7 @@ public class SampleStandbyContent implements IStandbyContentPart {
 			public void linkActivated(HyperlinkEvent e) {
 				Object href = e.getHref();
 				if (href.equals("help")) { //$NON-NLS-1$
-					WorkbenchHelp.displayHelpResource(helpURL);
+					PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(helpURL);
 				} else if (href.equals("browse")) { //$NON-NLS-1$
 					doBrowse();
 				} else if (href.equals("run")) { //$NON-NLS-1$

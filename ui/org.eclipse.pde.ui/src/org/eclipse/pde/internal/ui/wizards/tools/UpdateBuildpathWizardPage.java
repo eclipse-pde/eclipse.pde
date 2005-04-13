@@ -11,18 +11,23 @@
 package org.eclipse.pde.internal.ui.wizards.tools;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.pde.internal.ui.parts.*;
-import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.help.*;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
+import org.eclipse.pde.internal.ui.wizards.ListUtil;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public class UpdateBuildpathWizardPage extends WizardPage {
 	private IPluginModelBase[] fSelected;
@@ -98,7 +103,7 @@ public class UpdateBuildpathWizardPage extends WizardPage {
 
 		setControl(container);
 		Dialog.applyDialogFont(container);
-		WorkbenchHelp.setHelp(container, IHelpContextIds.UPDATE_CLASSPATH);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.UPDATE_CLASSPATH);
 	}
 
 	public void storeSettings() {

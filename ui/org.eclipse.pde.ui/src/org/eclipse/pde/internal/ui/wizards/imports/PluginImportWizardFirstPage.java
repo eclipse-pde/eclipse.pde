@@ -17,29 +17,52 @@
 package org.eclipse.pde.internal.ui.wizards.imports;
 
 import java.io.File;
-import java.lang.reflect.*;
-import java.net.*;
-import java.util.*;
+import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.DialogPage;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.preference.*;
+import org.eclipse.jface.preference.IPreferenceNode;
+import org.eclipse.jface.preference.PreferenceDialog;
+import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ExternalModelManager;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDEState;
+import org.eclipse.pde.internal.core.PluginPathFinder;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.preferences.*;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.preferences.SourceCodeLocationsPreferenceNode;
+import org.eclipse.pde.internal.ui.preferences.TargetEnvironmentPreferenceNode;
+import org.eclipse.pde.internal.ui.preferences.TargetPlatformPreferenceNode;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.help.*;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * @author Wassim Melhem
@@ -88,7 +111,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		Dialog.applyDialogFont(container);
 		initialize();
 		setControl(container);
-		WorkbenchHelp.setHelp(container, IHelpContextIds.PLUGIN_IMPORT_FIRST_PAGE);		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.PLUGIN_IMPORT_FIRST_PAGE);		
 	}
 	
 	private void createImportChoicesGroup(Composite container) {

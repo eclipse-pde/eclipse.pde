@@ -9,35 +9,73 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.extension;
-import java.io.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.operation.*;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.ischema.*;
-import org.eclipse.pde.internal.core.plugin.*;
-import org.eclipse.pde.internal.core.schema.*;
+import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.pde.internal.core.CoreUtility;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.ischema.IDocumentSection;
+import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
+import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
+import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
+import org.eclipse.pde.internal.core.schema.DocumentSection;
+import org.eclipse.pde.internal.core.schema.EditableSchema;
+import org.eclipse.pde.internal.core.schema.SchemaAttribute;
+import org.eclipse.pde.internal.core.schema.SchemaComplexType;
+import org.eclipse.pde.internal.core.schema.SchemaCompositor;
+import org.eclipse.pde.internal.core.schema.SchemaElement;
+import org.eclipse.pde.internal.core.schema.SchemaSimpleType;
 import org.eclipse.pde.internal.core.util.IdUtil;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.util.*;
-import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.actions.*;
-import org.eclipse.ui.dialogs.*;
-import org.eclipse.ui.help.*;
-import org.eclipse.ui.ide.*;
-import org.eclipse.ui.model.*;
-import org.eclipse.ui.part.*;
-import org.eclipse.ui.views.navigator.*;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.pde.internal.ui.wizards.PluginSelectionDialog;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
+import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.model.WorkbenchContentProvider;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.views.navigator.ResourceSorter;
 public abstract class BaseExtensionPointMainPage extends WizardPage {
 	public static final String SETTINGS_PLUGIN_ID = "BaseExtensionPoint.settings.pluginId"; //$NON-NLS-1$
 	public static final String SCHEMA_DIR = "schema"; //$NON-NLS-1$
@@ -179,7 +217,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		setControl(container);
 		validatePage(false);
 		Dialog.applyDialogFont(container);
-		WorkbenchHelp.setHelp(container, IHelpContextIds.NEW_SCHEMA);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.NEW_SCHEMA);
 	}
 	private InputStream createSchemaStream(String pluginId, String pointId,
 			String name, boolean shared) {

@@ -10,19 +10,27 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import java.util.*;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
-import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.pde.internal.ui.parts.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.help.*;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
+import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 
 public class PortabilityChoicesDialog extends Dialog {
 	private String value;
@@ -89,7 +97,7 @@ public class PortabilityChoicesDialog extends Dialog {
 
 		Dialog.applyDialogFont(parent);
 		initialize();
-		WorkbenchHelp.setHelp(container, IHelpContextIds.FEATURE_PORTABILITY_WIZARD);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.FEATURE_PORTABILITY_WIZARD);
 		return container;
 	}
 	public String getValue() {

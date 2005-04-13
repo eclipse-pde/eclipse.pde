@@ -10,26 +10,39 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
-import java.io.*;
-import java.lang.reflect.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.operation.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.internal.core.feature.*;
-import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.pde.internal.ui.parts.*;
-import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.help.*;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.pde.internal.core.feature.ExternalFeatureModel;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
+import org.eclipse.pde.internal.ui.wizards.ListUtil;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public class FeatureImportWizardDetailedPage extends WizardPage {
 
@@ -149,7 +162,7 @@ public class FeatureImportWizardDetailedPage extends WizardPage {
 		setControl(container);
 		dialogChanged();
 		Dialog.applyDialogFont(container);
-		WorkbenchHelp.setHelp(container, IHelpContextIds.FEATURE_IMPORT_SECOND_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.FEATURE_IMPORT_SECOND_PAGE);
 	}
 
 	public void dispose() {

@@ -18,10 +18,10 @@ import org.eclipse.pde.internal.ui.editor.plugin.MatchSection;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * 
@@ -78,7 +78,7 @@ public class FeatureDependenciesPage extends PDEFormPage {
 		fMatchSection.getSection().setLayoutData(gd);
 		managedForm.addPart(fRequiresSection);
 		managedForm.addPart(fMatchSection);
-		WorkbenchHelp.setHelp(form.getBody(),
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(),
 				IHelpContextIds.MANIFEST_FEATURE_CONTENT);
 		initialize();
 		fRequiresSection.fireSelection();

@@ -10,34 +10,57 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.feature;
 
-import java.lang.reflect.*;
+import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.*;
-import org.eclipse.jdt.launching.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.operation.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.core.build.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.*;
-import org.eclipse.pde.internal.build.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.build.*;
-import org.eclipse.pde.internal.core.feature.*;
-import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.actions.*;
-import org.eclipse.ui.dialogs.*;
-import org.eclipse.ui.help.*;
-import org.eclipse.ui.ide.*;
-import org.eclipse.ui.part.*;
-import org.eclipse.ui.wizards.newresource.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExecutableExtension;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.internal.PDE;
+import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
+import org.eclipse.pde.internal.core.CoreUtility;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
+import org.eclipse.pde.internal.core.feature.FeaturePlugin;
+import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
+import org.eclipse.pde.internal.core.ifeature.IFeature;
+import org.eclipse.pde.internal.core.ifeature.IFeatureInfo;
+import org.eclipse.pde.internal.core.ifeature.IFeatureInstallHandler;
+import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
+import org.eclipse.pde.internal.ui.wizards.NewWizard;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
+import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.part.ISetSelectionTarget;
+import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 
 public class NewFeatureProjectWizard extends NewWizard
 		implements
@@ -90,7 +113,7 @@ public class NewFeatureProjectWizard extends NewWizard
 		mainPage = new WizardNewProjectCreationPage("main") { //$NON-NLS-1$
 			public void createControl(Composite parent) {
 				super.createControl(parent);
-				WorkbenchHelp.setHelp(getControl(), IHelpContextIds.NEW_FEATURE_MAIN);
+				PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.NEW_FEATURE_MAIN);
 			}
 		};
 		

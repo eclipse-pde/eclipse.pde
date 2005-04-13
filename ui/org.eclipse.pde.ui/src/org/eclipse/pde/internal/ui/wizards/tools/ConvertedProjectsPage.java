@@ -10,31 +10,44 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.tools;
 
-import java.lang.reflect.*;
-import java.util.*;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Vector;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.operation.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.plugin.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.pde.internal.ui.parts.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.actions.*;
-import org.eclipse.ui.help.*;
-import org.eclipse.ui.ide.*;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.pde.internal.PDE;
+import org.eclipse.pde.internal.core.ClasspathComputer;
+import org.eclipse.pde.internal.core.CoreUtility;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDEPluginConverter;
+import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.WorkspaceModelManager;
+import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.ide.IDE;
 	
 public class ConvertedProjectsPage extends WizardPage  {
 	private CheckboxTableViewer projectViewer;
@@ -104,7 +117,7 @@ public class ConvertedProjectsPage extends WizardPage  {
 
 		setControl(container);
 		Dialog.applyDialogFont(container);
-		WorkbenchHelp.setHelp(container, IHelpContextIds.CONVERTED_PROJECTS);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.CONVERTED_PROJECTS);
 	}
 
 

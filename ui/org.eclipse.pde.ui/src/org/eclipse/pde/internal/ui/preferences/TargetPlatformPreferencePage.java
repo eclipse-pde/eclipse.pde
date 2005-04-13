@@ -11,22 +11,38 @@
 package org.eclipse.pde.internal.ui.preferences;
 
 
-import java.util.*;
+import java.util.ArrayList;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.core.ExternalModelManager;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
 
 public class TargetPlatformPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
@@ -124,7 +140,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		folder.setSelection(fIndex);
 		
 		Dialog.applyDialogFont(container);
-		WorkbenchHelp.setHelp(container, IHelpContextIds.TARGET_PLATFORM_PREFERENCE_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.TARGET_PLATFORM_PREFERENCE_PAGE);
 		return container;
 	}
 	

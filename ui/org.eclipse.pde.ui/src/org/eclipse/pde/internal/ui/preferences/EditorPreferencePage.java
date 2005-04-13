@@ -11,14 +11,21 @@
 package org.eclipse.pde.internal.ui.preferences;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.preference.*;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.jface.preference.BooleanFieldEditor;
+import org.eclipse.jface.preference.ColorFieldEditor;
+import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.IPreferenceConstants;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.text.IPDEColorConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
 
 public class EditorPreferencePage
 	extends FieldEditorPreferencePage
@@ -42,7 +49,7 @@ public class EditorPreferencePage
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		Dialog.applyDialogFont(getControl());
-		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.EDITOR_PREFERENCE_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.EDITOR_PREFERENCE_PAGE);
 	}
 	
 	public static boolean getUseSourcePage() {

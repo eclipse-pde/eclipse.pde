@@ -10,14 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.ui.forms.*;
-import org.eclipse.ui.forms.editor.*;
-import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.help.*;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.forms.IManagedForm;
+import org.eclipse.ui.forms.editor.FormEditor;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 public class RuntimePage extends PDEFormPage {
 	public static final String PAGE_ID="runtime"; //$NON-NLS-1$
@@ -48,9 +49,9 @@ public class RuntimePage extends PDEFormPage {
         }
 		
 		if (((IPluginModelBase)getPDEEditor().getAggregateModel()).isFragmentModel())
-			WorkbenchHelp.setHelp(form, IHelpContextIds.MANIFEST_FRAGMENT_RUNTIME);
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(form, IHelpContextIds.MANIFEST_FRAGMENT_RUNTIME);
 		else
-			WorkbenchHelp.setHelp(form, IHelpContextIds.MANIFEST_PLUGIN_RUNTIME);
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(form, IHelpContextIds.MANIFEST_PLUGIN_RUNTIME);
 	}
     
     private boolean isBundle() {

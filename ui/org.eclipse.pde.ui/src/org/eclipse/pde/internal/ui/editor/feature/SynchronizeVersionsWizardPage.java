@@ -53,8 +53,8 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.text.edits.TextEdit;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 public class SynchronizeVersionsWizardPage extends WizardPage {
 	public static final int USE_FEATURE = 1;
@@ -104,7 +104,7 @@ public void createControl(Composite parent) {
 	setControl(container);
 	Dialog.applyDialogFont(container);
 	loadSettings();
-	WorkbenchHelp.setHelp(container, IHelpContextIds.FEATURE_SYNCHRONIZE_VERSIONS);
+	PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.FEATURE_SYNCHRONIZE_VERSIONS);
 }
 private WorkspacePluginModelBase findFragment(String id) {
 	IPluginModelBase[] models =

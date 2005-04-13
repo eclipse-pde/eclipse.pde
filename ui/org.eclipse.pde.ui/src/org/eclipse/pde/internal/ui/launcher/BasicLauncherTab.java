@@ -10,24 +10,44 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import java.util.*;
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.debug.core.*;
-import org.eclipse.jdt.launching.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.preference.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.jface.preference.IPreferenceNode;
+import org.eclipse.jface.preference.PreferenceDialog;
+import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 
 public class BasicLauncherTab
 	extends AbstractLauncherTab
@@ -81,7 +101,7 @@ public class BasicLauncherTab
 		
 		setControl(composite);
 		Dialog.applyDialogFont(composite);
-		WorkbenchHelp.setHelp(composite, IHelpContextIds.LAUNCHER_BASIC);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.LAUNCHER_BASIC);
 	}
 	
 	private void createProgramSection(Composite composite) {

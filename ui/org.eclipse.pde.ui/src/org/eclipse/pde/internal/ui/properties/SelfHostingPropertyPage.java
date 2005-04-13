@@ -10,24 +10,38 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.properties;
 
-import java.util.*;
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ProjectScope;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.dialogs.*;
-import org.eclipse.ui.help.*;
-import org.osgi.service.prefs.*;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.PropertyPage;
+import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
 public class SelfHostingPropertyPage extends PropertyPage {
@@ -123,7 +137,7 @@ public class SelfHostingPropertyPage extends PropertyPage {
 	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.SELFHOSTING_PROPERTY_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.SELFHOSTING_PROPERTY_PAGE);
 	}
 	
 	private void initialize() {

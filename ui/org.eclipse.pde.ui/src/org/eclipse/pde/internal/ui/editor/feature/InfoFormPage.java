@@ -10,15 +10,17 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.editor.text.*;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
+import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.editor.text.ColorManager;
 import org.eclipse.pde.internal.ui.editor.text.IColorManager;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
-import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 /**
  * 
@@ -49,7 +51,7 @@ public class InfoFormPage extends PDEFormPage {
 		infoSection.getSection().setLayoutData(gd);
 		managedForm.addPart(infoSection);
 		
-		WorkbenchHelp.setHelp(form.getBody(), IHelpContextIds.MANIFEST_FEATURE_INFO);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.MANIFEST_FEATURE_INFO);
 		initialize();
 	}
 	public void dispose() {

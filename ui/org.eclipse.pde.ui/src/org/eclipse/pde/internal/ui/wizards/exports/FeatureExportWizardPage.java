@@ -10,16 +10,18 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.help.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.WorkspaceModelManager;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.PlatformUI;
 
 
 public class FeatureExportWizardPage extends ExportWizardPageWithTable {
@@ -38,7 +40,7 @@ public class FeatureExportWizardPage extends ExportWizardPageWithTable {
 	}
 	
 	protected void hookHelpContext(Control control) {
-		WorkbenchHelp.setHelp(control, IHelpContextIds.FEATURE_EXPORT_WIZARD);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(control, IHelpContextIds.FEATURE_EXPORT_WIZARD);
 	}
 	
 	/* (non-Javadoc)

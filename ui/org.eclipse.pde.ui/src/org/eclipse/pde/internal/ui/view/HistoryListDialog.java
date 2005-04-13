@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -43,7 +43,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 public class HistoryListDialog extends StatusDialog {
 	class ContentProvider extends DefaultContentProvider implements
@@ -74,7 +74,7 @@ public class HistoryListDialog extends StatusDialog {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		WorkbenchHelp.setHelp(newShell, IHelpContextIds.HISTORY_LIST_DIALOG);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell, IHelpContextIds.HISTORY_LIST_DIALOG);
 	}
 
 	/*

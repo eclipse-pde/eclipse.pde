@@ -11,7 +11,12 @@
 package org.eclipse.pde.internal.ui.preferences;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.preference.*;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.IPreferenceConstants;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -19,9 +24,9 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.ui.*;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
 
 public class MainPreferencePage
 	extends PreferencePage
@@ -63,7 +68,7 @@ public class MainPreferencePage
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		Dialog.applyDialogFont(getControl());
-		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.MAIN_PREFERENCE_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.MAIN_PREFERENCE_PAGE);
 	}	
 
 	public boolean performOk() {

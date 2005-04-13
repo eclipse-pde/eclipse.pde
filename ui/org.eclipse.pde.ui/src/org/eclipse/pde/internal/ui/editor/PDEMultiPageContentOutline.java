@@ -10,22 +10,30 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
-import java.util.*;
+import java.util.ArrayList;
 
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.IPreferenceConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.swt.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.part.*;
-import org.eclipse.ui.views.contentoutline.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.part.Page;
+import org.eclipse.ui.part.PageBook;
+import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 public class PDEMultiPageContentOutline extends Page 
 	implements IContentOutlinePage, ISelectionProvider, ISelectionChangedListener, IPreferenceConstants {
@@ -161,7 +169,7 @@ public class PDEMultiPageContentOutline extends Page
 		
 		public SortingAction() {
 			super();
-			WorkbenchHelp.setHelp(this, IHelpContextIds.OUTLINE_SORT_ACTION);
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IHelpContextIds.OUTLINE_SORT_ACTION);
 			setText(PDEUIMessages.PDEMultiPageContentOutline_SortingAction_label); //$NON-NLS-1$
 			setImageDescriptor(PDEPluginImages.DESC_ALPHAB_SORT_CO);
 			setDisabledImageDescriptor(PDEPluginImages.DESC_ALPHAB_SORT_CO_DISABLED);

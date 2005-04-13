@@ -10,18 +10,30 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.pde.ui.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.help.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExecutableExtension;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.jface.wizard.IWizardNode;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.elements.ElementList;
+import org.eclipse.pde.internal.ui.wizards.WizardElement;
+import org.eclipse.pde.internal.ui.wizards.WizardListSelectionPage;
+import org.eclipse.pde.internal.ui.wizards.WizardNode;
+import org.eclipse.pde.ui.IBasePluginWizard;
+import org.eclipse.pde.ui.IPluginContentWizard;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.PlatformUI;
 
 
 public class TemplateListSelectionPage extends WizardListSelectionPage
@@ -73,7 +85,7 @@ public class TemplateListSelectionPage extends WizardListSelectionPage
 	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.NEW_PROJECT_CODE_GEN_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.NEW_PROJECT_CODE_GEN_PAGE);
 	}
 	
 	public void createAbove(Composite container, int span) {

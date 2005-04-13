@@ -10,29 +10,53 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 
-import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.resource.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.pde.internal.ui.search.*;
-import org.eclipse.pde.internal.ui.util.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.forms.events.*;
-import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.help.*;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.SourceLocation;
+import org.eclipse.pde.internal.core.SourceLocationManager;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
+import org.eclipse.pde.internal.ui.util.OverlayIcon;
+import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.events.IHyperlinkListener;
+import org.eclipse.ui.forms.widgets.FormText;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 
 
 public class SourceBlock implements IHyperlinkListener {	
@@ -256,7 +280,7 @@ public class SourceBlock implements IHyperlinkListener {
 		fRemoveButton.setEnabled(false);
 		
 		Dialog.applyDialogFont(parent);
-		WorkbenchHelp.setHelp(parent, IHelpContextIds.SOURCE_PREFERENCE_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IHelpContextIds.SOURCE_PREFERENCE_PAGE);
 		return container;
 	}
 

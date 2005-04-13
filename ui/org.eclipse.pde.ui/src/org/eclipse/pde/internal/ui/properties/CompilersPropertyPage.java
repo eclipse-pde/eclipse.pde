@@ -21,7 +21,8 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.pde.internal.builders.CompilerFlags;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.preferences.*;
+import org.eclipse.pde.internal.ui.preferences.CompilersConfigurationBlock;
+import org.eclipse.pde.internal.ui.preferences.CompilersPreferencePage;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -33,8 +34,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 public class CompilersPropertyPage extends PropertyPage {
 
@@ -142,7 +143,7 @@ public class CompilersPropertyPage extends PropertyPage {
 	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		WorkbenchHelp.setHelp(getControl(),
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
 				IHelpContextIds.COMPILERS_PROPERTY_PAGE);
 	}
 

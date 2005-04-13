@@ -10,21 +10,34 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.util.ArrayList;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.util.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.help.*;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.PlatformUI;
 
 public class FeatureImportWizardFirstPage extends WizardPage {
 
@@ -90,7 +103,7 @@ public class FeatureImportWizardFirstPage extends WizardPage {
 
 		setControl(composite);
 		Dialog.applyDialogFont(composite);
-		WorkbenchHelp.setHelp(composite, IHelpContextIds.FEATURE_IMPORT_FIRST_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.FEATURE_IMPORT_FIRST_PAGE);
 	}
 
 	private String getTargetHome() {

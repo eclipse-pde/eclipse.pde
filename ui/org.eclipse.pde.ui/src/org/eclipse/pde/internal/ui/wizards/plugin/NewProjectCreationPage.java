@@ -10,17 +10,28 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
-import org.eclipse.jdt.ui.*;
+import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.preference.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.dialogs.*;
-import org.eclipse.ui.help.*;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 
 
 public class NewProjectCreationPage extends WizardNewProjectCreationPage {
@@ -51,7 +62,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		createFormatGroup(control);
 		
 		Dialog.applyDialogFont(control);
-		WorkbenchHelp.setHelp(control,
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(control,
 				fIsFragment ? IHelpContextIds.NEW_FRAGMENT_STRUCTURE_PAGE
 							: IHelpContextIds.NEW_PROJECT_STRUCTURE_PAGE);
 		setControl(control);

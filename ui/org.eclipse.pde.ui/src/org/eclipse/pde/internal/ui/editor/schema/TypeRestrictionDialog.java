@@ -10,18 +10,25 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.schema;
 
-import org.eclipse.swt.events.*;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.part.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import java.util.Hashtable;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.swt.*;
-import org.eclipse.pde.internal.core.ischema.*;
-import org.eclipse.pde.internal.ui.*;
-
-import java.util.Hashtable;
+import org.eclipse.pde.internal.core.ischema.ISchemaRestriction;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.part.PageBook;
 
 public class TypeRestrictionDialog extends Dialog {
 	private static final String T_ENUMERATION = "enumeration"; //$NON-NLS-1$
@@ -76,7 +83,7 @@ protected Control createDialogArea(Composite parent) {
 	pageBook = new PageBook(container, SWT.NULL);
 	pageBook.setLayoutData(gd);
 	initializePages();
-	WorkbenchHelp.setHelp(container, IHelpContextIds.SCHEMA_TYPE_RESTRICTION);
+	PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.SCHEMA_TYPE_RESTRICTION);
 	return container;
 }
 public Object getValue() {

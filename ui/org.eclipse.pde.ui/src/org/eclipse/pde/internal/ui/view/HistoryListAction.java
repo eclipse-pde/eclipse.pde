@@ -17,7 +17,7 @@ import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 public class HistoryListAction extends Action {
 
@@ -28,7 +28,7 @@ public class HistoryListAction extends Action {
 		setText(PDEUIMessages.HistoryListAction_label); //$NON-NLS-1$
 		setImageDescriptor(PDEPluginImages.DESC_HISTORY_LIST);
 		setDisabledImageDescriptor(PDEPluginImages.DESC_HISTORY_LIST_DISABLED);
-		WorkbenchHelp.setHelp(this, IHelpContextIds.HISTORY_LIST_ACTION);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IHelpContextIds.HISTORY_LIST_ACTION);
 	}
 
 	/*

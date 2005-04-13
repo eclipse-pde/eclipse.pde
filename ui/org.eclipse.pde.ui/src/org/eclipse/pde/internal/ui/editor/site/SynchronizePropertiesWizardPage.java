@@ -33,8 +33,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 public class SynchronizePropertiesWizardPage extends WizardPage {
 
@@ -96,7 +96,7 @@ public class SynchronizePropertiesWizardPage extends WizardPage {
 		Dialog.applyDialogFont(container);
 		loadSettings();
 		// TODO add own F1 context
-		WorkbenchHelp.setHelp(container,
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(container,
 				IHelpContextIds.FEATURE_SYNCHRONIZE_VERSIONS);
 	}
 

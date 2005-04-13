@@ -13,8 +13,8 @@ package org.eclipse.pde.internal.ui.editor.site;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.pde.internal.core.isite.ISiteArchive;
 import org.eclipse.pde.internal.core.isite.ISiteModel;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 public class NewArchiveDialog extends StatusDialog {
 
@@ -84,7 +84,7 @@ public class NewArchiveDialog extends StatusDialog {
 		fUrlText.addModifyListener(listener);
 		setTitle(PDEUIMessages.SiteEditor_NewArchiveDialog_title); //$NON-NLS-1$
 		Dialog.applyDialogFont(container);
-		WorkbenchHelp.setHelp(container, IHelpContextIds.NEW_ARCHIVE_DIALOG);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.NEW_ARCHIVE_DIALOG);
 		return container;
 	}
 

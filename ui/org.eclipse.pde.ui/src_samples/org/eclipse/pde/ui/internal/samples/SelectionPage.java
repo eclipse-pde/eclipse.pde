@@ -11,18 +11,23 @@
 package org.eclipse.pde.ui.internal.samples;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
-import org.eclipse.pde.internal.ui.parts.*;
+import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 
 public class SelectionPage extends WizardPage {
 	private TablePart part;
@@ -96,7 +101,7 @@ public class SelectionPage extends WizardPage {
 		if (wizard.getSelection()!=null) {
 			IConfigurationElement desc[] = wizard.getSelection().getChildren("description"); //$NON-NLS-1$
 			String helpHref = desc[0].getAttribute("helpHref"); //$NON-NLS-1$
-			WorkbenchHelp.displayHelpResource(helpHref);
+			PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(helpHref);
 		}
 	}
 	private void updateSelection(IStructuredSelection selection) {

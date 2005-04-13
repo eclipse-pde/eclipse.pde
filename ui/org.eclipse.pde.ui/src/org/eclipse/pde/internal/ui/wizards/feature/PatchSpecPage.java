@@ -11,16 +11,17 @@
 
 package org.eclipse.pde.internal.ui.wizards.feature;
 
-import java.util.*;
+import java.util.StringTokenizer;
 
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.wizard.*;
+import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.dialogs.*;
-import org.eclipse.ui.help.*;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 
 public class PatchSpecPage extends BaseFeatureSpecPage {
 
@@ -35,7 +36,7 @@ public class PatchSpecPage extends BaseFeatureSpecPage {
 	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.NEW_PATCH_REQUIRED_DATA);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.NEW_PATCH_REQUIRED_DATA);
 	}
 
 	protected void initialize() {
