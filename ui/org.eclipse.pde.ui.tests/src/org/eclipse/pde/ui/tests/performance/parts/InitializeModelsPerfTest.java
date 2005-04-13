@@ -35,7 +35,7 @@ public class InitializeModelsPerfTest extends PerformanceTestCase {
 	}
 	
 	public void testModels() throws Exception {
-		tagAsSummary("Initialize Plug-ins (no caching)", Dimension.CPU_TIME);
+		tagAsSummary("Initialize Plug-ins (no caching)", Dimension.ELAPSED_PROCESS);
 		String path = ExternalModelManager.getEclipseHome().toOSString();
 		startMeasuring();
 		new PDEState(PluginPathFinder.getPluginPaths(path), true, new NullProgressMonitor());
@@ -45,7 +45,7 @@ public class InitializeModelsPerfTest extends PerformanceTestCase {
 	}
 	
 	public void testCachedModels() throws Exception {
-		tagAsGlobalSummary("Initialize Plug-ins (with caching)", Dimension.CPU_TIME);
+		tagAsGlobalSummary("Initialize Plug-ins (with caching)", Dimension.ELAPSED_PROCESS);
 		String path = ExternalModelManager.getEclipseHome().toOSString();
 		new PDEState(PluginPathFinder.getPluginPaths(path), true, new NullProgressMonitor());
 		startMeasuring();
