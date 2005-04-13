@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
@@ -113,10 +114,14 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	 * Adds IPackageFragment from a project to a map
 	 */
 	private void addProjectPackages(Map map, IProject proj) {
-		IJavaProject jp = JavaCore.create(proj);
-		if (!jp.isOpen()) {
+		try {
+			if (!proj.hasNature(JavaCore.NATURE_ID)) {
+				return;
+			}
+		} catch (CoreException ce) {
 			return;
 		}
+		IJavaProject jp = JavaCore.create(proj);
 		try {
 			IPackageFragmentRoot[] roots = jp.getPackageFragmentRoots();
 			for (int i = 0; i < roots.length; i++) {
@@ -217,21 +222,21 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				if (resource != null) {
                     addProjectPackages(map, resource.getProject());
                 } else {
-                    try {
-						IJavaProject javaProject = JavaCore.create(fProject);
-						if (javaProject.isOpen()) {
+            		try {
+						if (fProject.hasNature(JavaCore.NATURE_ID)) {
 							IPackageFragment[] packages = PluginJavaSearchUtil
 									.collectPackageFragments(
 											new IPluginBase[] { model
 													.getPluginBase() },
-											javaProject, false);
+											JavaCore.create(fProject), false);
 							for (int i = 0; i < packages.length; i++)
 								map.put(packages[i].getElementName(),
 										packages[i]);
 						}
-                    } catch (JavaModelException jme) {
-                        PDE.log(jme);
-                    }
+					} catch (JavaModelException jme) {
+						PDE.log(jme);
+					} catch (CoreException ce) {
+					}
                 }
 			}
 			fHostPackagesMap = map;
@@ -333,6 +338,13 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			return;
 		}
 		if (isCheckUnknownClass()) {
+			try {
+				if (!fProject.hasNature(JavaCore.NATURE_ID)) {
+					return;
+				}
+			} catch (CoreException ce) {
+				return;
+			}
 			IJavaProject javaProject = JavaCore.create(fProject);
 			if (!javaProject.isOpen()) {
 				return;
