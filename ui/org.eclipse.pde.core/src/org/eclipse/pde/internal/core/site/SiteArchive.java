@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.site;
 
-import java.io.*;
-import java.util.*;
+import java.io.PrintWriter;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.core.isite.*;
-import org.w3c.dom.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.internal.core.isite.ISiteArchive;
+import org.w3c.dom.Node;
 
 public class SiteArchive extends SiteObject implements ISiteArchive {
 	private static final long serialVersionUID = 1L;
@@ -49,11 +48,10 @@ public class SiteArchive extends SiteObject implements ISiteArchive {
 		url = null;
 		path = null;
 	}
-	protected void parse(Node node, Hashtable lineTable) {
-		super.parse(node, lineTable);
+	protected void parse(Node node) {
+		super.parse(node);
 		path = getNodeAttribute(node, "path"); //$NON-NLS-1$
 		url = getNodeAttribute(node, "url"); //$NON-NLS-1$
-		bindSourceLocation(node, lineTable);
 	}
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent);

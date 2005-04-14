@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.core.feature;
 
 import java.io.*;
 import java.net.*;
-import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.core.ifeature.*;
@@ -42,9 +41,8 @@ public class FeatureURLElement
 	public int getSiteType() {
 		return fSiteType;
 	}
-	protected void parse(Node node, Hashtable lineTable) {
-		super.parse(node, lineTable);
-		bindSourceLocation(node, lineTable);
+	protected void parse(Node node) {
+		super.parse(node);
 		String urlName = getNodeAttribute(node, "url"); //$NON-NLS-1$
 		try {
 			if(urlName!=null)

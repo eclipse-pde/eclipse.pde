@@ -10,14 +10,19 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.feature;
 
-import java.io.*;
-import java.util.*;
+import java.io.PrintWriter;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.ifeature.*;
-import org.w3c.dom.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.plugin.IFragment;
+import org.eclipse.pde.core.plugin.IFragmentModel;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginModel;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ModelEntry;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PluginModelManager;
+import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
+import org.w3c.dom.Node;
 
 public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 	private static final long serialVersionUID = 1L;
@@ -87,8 +92,8 @@ public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 		this.fFragment = fragment;
 	}
 
-	protected void parse(Node node, Hashtable lineTable) {
-		super.parse(node, lineTable);
+	protected void parse(Node node) {
+		super.parse(node);
 		fVersion = getNodeAttribute(node, "version"); //$NON-NLS-1$
 		String f = getNodeAttribute(node, "fragment"); //$NON-NLS-1$
 		if (f != null && f.equalsIgnoreCase("true")) //$NON-NLS-1$

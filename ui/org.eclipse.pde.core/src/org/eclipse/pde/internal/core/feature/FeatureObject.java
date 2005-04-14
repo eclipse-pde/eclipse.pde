@@ -10,23 +10,29 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.feature;
 
-import java.io.*;
-import java.util.*;
+import java.io.PrintWriter;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.ifeature.*;
-import org.w3c.dom.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.pde.core.IModelChangeProvider;
+import org.eclipse.pde.core.ModelChangedEvent;
+import org.eclipse.pde.internal.core.CoreUtility;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDECoreMessages;
+import org.eclipse.pde.internal.core.ifeature.IFeature;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.ifeature.IFeatureObject;
+import org.w3c.dom.Node;
 
 public abstract class FeatureObject
 	extends PlatformObject
-	implements IFeatureObject, ISourceObject {
+	implements IFeatureObject {
 	transient IFeatureModel model;
 	transient IFeatureObject parent;
 	protected String label;
 	boolean inTheModel;
-	protected int[] range;
 
 	void setInTheModel(boolean value) {
 		inTheModel = value;
@@ -115,31 +121,13 @@ public abstract class FeatureObject
 		result = result.trim();
 
 		return result;
-		/*
-		 boolean skip = false;
-		
-		StringBuffer buff = new StringBuffer();
-		for (int i=0; i<result.length(); i++) {
-			char c = result.charAt(i);
-			if (c=='\n') {
-				skip = true;
-			}
-			else if (c==' ') {
-				if (skip) continue;
-			}
-			else skip = false;
-			
-			buff.append(c);
-		}
-		return buff.toString();
-		*/
 	}
 
 	public IFeatureObject getParent() {
 		return parent;
 	}
 
-	protected void parse(Node node, Hashtable lineTable) {
+	protected void parse(Node node) {
 		label = getNodeAttribute(node, "label"); //$NON-NLS-1$
 	}
 
@@ -176,26 +164,6 @@ public abstract class FeatureObject
 	
 	public void setParent(IFeatureObject parent) {
 		this.parent = parent;
-	}
-	
-	void bindSourceLocation(Node node, Map lineTable) {
-		Integer[] lines = (Integer[]) lineTable.get(node);
-		if (lines != null) {
-			range = new int[2];
-			range[0] = lines[0].intValue();
-			range[1] = lines[1].intValue();
-		}
-	}
-
-	public int getStartLine() {
-		if (range == null)
-			return -1;
-		return range[0];
-	}
-	public int getStopLine() {
-		if (range == null)
-			return -1;
-		return range[1];
 	}
 	
 	protected String getWritableString(String source) {

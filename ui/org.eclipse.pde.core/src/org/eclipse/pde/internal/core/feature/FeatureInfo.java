@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.core.feature;
 
 import java.io.*;
-import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.core.*;
@@ -79,8 +78,7 @@ public class FeatureInfo extends FeatureObject implements IFeatureInfo {
 		this.description = description;
 		firePropertyChanged(P_DESC, oldValue, description);
 	}
-	protected void parse(Node node, Hashtable lineTable) {
-		bindSourceLocation(node, lineTable);
+	protected void parse(Node node) {
 		url = getNodeAttribute(node, "url"); //$NON-NLS-1$
 		Node firstChild = node.getFirstChild();
 		if (firstChild!=null)

@@ -145,8 +145,8 @@ public class Feature extends VersionableObject implements IFeature {
 		return fExclusive;
 	}
 
-	protected void parse(Node node, Hashtable lineTable) {
-		super.parse(node, lineTable);
+	protected void parse(Node node) {
+		super.parse(node);
 		fProviderName = getNodeAttribute(node, "provider-name"); //$NON-NLS-1$
 		fPlugin = getNodeAttribute(node, "plugin"); //$NON-NLS-1$
 		fOs = getNodeAttribute(node, "os"); //$NON-NLS-1$
@@ -169,49 +169,49 @@ public class Feature extends VersionableObject implements IFeature {
 					IFeatureInfo info = getModel().getFactory().createInfo(
 							IFeature.INFO_DESCRIPTION);
 					((FeatureInfo) info).setInTheModel(true);
-					((FeatureInfo) info).parse(child, lineTable);
+					((FeatureInfo) info).parse(child);
 					fInfos[IFeature.INFO_DESCRIPTION] = info;
 				} else if (tag.equals("license")) { //$NON-NLS-1$
 					IFeatureInfo info = getModel().getFactory().createInfo(
 							IFeature.INFO_LICENSE);
 					((FeatureInfo) info).setInTheModel(true);
-					((FeatureInfo) info).parse(child, lineTable);
+					((FeatureInfo) info).parse(child);
 					fInfos[IFeature.INFO_LICENSE] = info;
 				} else if (tag.equals("copyright")) { //$NON-NLS-1$
 					IFeatureInfo info = getModel().getFactory().createInfo(
 							IFeature.INFO_COPYRIGHT);
 					((FeatureInfo) info).setInTheModel(true);
-					((FeatureInfo) info).parse(child, lineTable);
+					((FeatureInfo) info).parse(child);
 					fInfos[IFeature.INFO_COPYRIGHT] = info;
 				} else if (tag.equals("url")) { //$NON-NLS-1$
 					if (fUrl == null) {
 						fUrl = getModel().getFactory().createURL();
 						((FeatureURL) fUrl).setInTheModel(true);
-						((FeatureURL) fUrl).parse(child, lineTable);
+						((FeatureURL) fUrl).parse(child);
 					}
 				} else if (tag.equals("requires")) { //$NON-NLS-1$
-					parseRequires(child, lineTable);
+					parseRequires(child);
 				} else if (tag.equals("install-handler")) { //$NON-NLS-1$
 					IFeatureInstallHandler handler = getModel().getFactory()
 							.createInstallHandler();
-					((FeatureInstallHandler) handler).parse(child, lineTable);
+					((FeatureInstallHandler) handler).parse(child);
 					((FeatureInstallHandler) handler).setInTheModel(true);
 					this.fHandler = handler;
 				} else if (tag.equals("plugin")) { //$NON-NLS-1$
 					IFeaturePlugin plugin = getModel().getFactory()
 							.createPlugin();
-					((FeaturePlugin) plugin).parse(child, lineTable);
+					((FeaturePlugin) plugin).parse(child);
 					((FeaturePlugin) plugin).setInTheModel(true);
 					fPlugins.add(plugin);
 				} else if (tag.equals("data")) { //$NON-NLS-1$
 					IFeatureData newData = getModel().getFactory().createData();
-					((FeatureData) newData).parse(child, lineTable);
+					((FeatureData) newData).parse(child);
 					((FeatureData) newData).setInTheModel(true);
 					fData.add(newData);
 				} else if (tag.equals("includes")) { //$NON-NLS-1$
 					IFeatureChild newChild = getModel().getFactory()
 							.createChild();
-					((FeatureChild) newChild).parse(child, lineTable);
+					((FeatureChild) newChild).parse(child);
 					((FeatureChild) newChild).setInTheModel(true);
 					this.fChildren.add(newChild);
 				}
@@ -219,7 +219,7 @@ public class Feature extends VersionableObject implements IFeature {
 		}
 		fValid = hasRequiredAttributes();
 	}
-	private void parseRequires(Node node, Hashtable lineTable) {
+	private void parseRequires(Node node) {
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
@@ -227,7 +227,7 @@ public class Feature extends VersionableObject implements IFeature {
 				if (child.getNodeName().equalsIgnoreCase("import")) { //$NON-NLS-1$
 					IFeatureImport iimport = getModel().getFactory()
 							.createImport();
-					((FeatureImport) iimport).parse(child, lineTable);
+					((FeatureImport) iimport).parse(child);
 					((FeatureImport) iimport).setInTheModel(true);
 					fImports.add(iimport);
 				}

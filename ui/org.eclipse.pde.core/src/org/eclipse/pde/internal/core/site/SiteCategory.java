@@ -33,7 +33,6 @@ public class SiteCategory extends SiteObject implements ISiteCategory {
 	
 	protected void parse(Node node, Hashtable lineTable) {
 		name = getNodeAttribute(node, "name"); //$NON-NLS-1$
-		bindSourceLocation(node, lineTable);
 	}
 	
 	protected void reset() {

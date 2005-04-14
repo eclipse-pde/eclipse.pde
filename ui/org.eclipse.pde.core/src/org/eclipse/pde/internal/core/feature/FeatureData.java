@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.feature;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.PrintWriter;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.core.ifeature.*;
-import org.w3c.dom.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.internal.core.ifeature.IFeatureData;
+import org.w3c.dom.Node;
 
 public class FeatureData
 	extends IdentifiableObject
@@ -49,9 +49,8 @@ public class FeatureData
 		return file.exists();
 	}
 
-	protected void parse(Node node, Hashtable lineTable) {
-		super.parse(node, lineTable);
-		bindSourceLocation(node, lineTable);
+	protected void parse(Node node) {
+		super.parse(node);
 		os = getNodeAttribute(node, "os"); //$NON-NLS-1$
 		ws = getNodeAttribute(node, "ws"); //$NON-NLS-1$
 		nl = getNodeAttribute(node, "nl"); //$NON-NLS-1$

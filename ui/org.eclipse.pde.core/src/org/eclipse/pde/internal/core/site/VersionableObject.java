@@ -10,11 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.site;
 
-import java.util.*;
-
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.core.ifeature.*;
-import org.w3c.dom.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.internal.core.ifeature.IVersionable;
+import org.w3c.dom.Node;
 
 public class VersionableObject
 	extends IdentifiableObject
@@ -26,8 +24,8 @@ public class VersionableObject
 		return version;
 	}
 
-	protected void parse(Node node, Hashtable lineTable) {
-		super.parse(node, lineTable);
+	protected void parse(Node node) {
+		super.parse(node);
 		version = getNodeAttribute(node, "version"); //$NON-NLS-1$
 	}
 

@@ -54,7 +54,7 @@ public class FeatureURL extends FeatureObject implements IFeatureURL {
 	public IFeatureURLElement getUpdate() {
 		return fUpdate;
 	}
-	protected void parse(Node node, Hashtable lineTable) {
+	protected void parse(Node node) {
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
@@ -69,7 +69,7 @@ public class FeatureURL extends FeatureObject implements IFeatureURL {
 				if (urlType != -1) {
 					IFeatureURLElement element =
 						getModel().getFactory().createURLElement(this, urlType);
-					((FeatureURLElement) element).parse(child, lineTable);
+					((FeatureURLElement) element).parse(child);
 					if (urlType == IFeatureURLElement.UPDATE) {
 						((FeatureURLElement)element).setInTheModel(true);
 						fUpdate = element;

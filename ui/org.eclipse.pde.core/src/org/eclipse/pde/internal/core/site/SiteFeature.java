@@ -111,9 +111,8 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 		firePropertyChanged(P_TYPE, oldValue, url);
 	}
 
-	protected void parse(Node node, Hashtable lineTable) {
-		super.parse(node, lineTable);
-		bindSourceLocation(node, lineTable);
+	protected void parse(Node node) {
+		super.parse(node);
 		fType = getNodeAttribute(node, "type"); //$NON-NLS-1$
 		fUrl = getNodeAttribute(node, "url"); //$NON-NLS-1$
 		fOS = getNodeAttribute(node, "os"); //$NON-NLS-1$
@@ -129,7 +128,7 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 				&& child.getNodeName().equalsIgnoreCase("category")) { //$NON-NLS-1$
 				SiteCategory category =
 					(SiteCategory) getModel().getFactory().createCategory(this);
-				((SiteCategory) category).parse(child, lineTable);
+				((SiteCategory) category).parse(child);
 				((SiteCategory) category).setInTheModel(true);
 				fCategories.add(category);
 			}

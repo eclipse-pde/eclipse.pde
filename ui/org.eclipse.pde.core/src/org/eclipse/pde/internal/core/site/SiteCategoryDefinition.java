@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.site;
 
-import java.io.*;
-import java.util.*;
+import java.io.PrintWriter;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.core.isite.*;
-import org.w3c.dom.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition;
+import org.eclipse.pde.internal.core.isite.ISiteDescription;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class SiteCategoryDefinition
 	extends SiteObject
@@ -70,9 +71,8 @@ public class SiteCategoryDefinition
 		description = null;
 	}
 
-	protected void parse(Node node, Hashtable lineTable) {
-		super.parse(node, lineTable);
-		bindSourceLocation(node, lineTable);
+	protected void parse(Node node) {
+		super.parse(node);
 		name = getNodeAttribute(node, "name"); //$NON-NLS-1$
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
@@ -80,7 +80,7 @@ public class SiteCategoryDefinition
 			if (child.getNodeType() == Node.ELEMENT_NODE
 				&& child.getNodeName().equalsIgnoreCase("description")) { //$NON-NLS-1$
 				description = getModel().getFactory().createDescription(this);
-				((SiteDescription) description).parse(child, lineTable);
+				((SiteDescription) description).parse(child);
 				((SiteDescription)description).setInTheModel(true);
 				break;
 			}

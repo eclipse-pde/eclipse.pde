@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.feature;
 
-import java.util.*;
-
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
 import org.w3c.dom.*;
@@ -24,8 +22,8 @@ public class IdentifiableObject extends FeatureObject implements IIdentifiable {
 		return id;
 	}
 
-	protected void parse(Node node, Hashtable lineTable) {
-		super.parse(node, lineTable);
+	protected void parse(Node node) {
+		super.parse(node);
 		id = getNodeAttribute(node, "id"); //$NON-NLS-1$
 	}
 

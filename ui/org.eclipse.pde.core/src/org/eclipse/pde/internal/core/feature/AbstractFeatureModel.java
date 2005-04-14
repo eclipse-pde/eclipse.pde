@@ -10,17 +10,22 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.feature;
 
-import java.io.*;
-import java.util.*;
+import java.io.InputStream;
 
-import javax.xml.parsers.*;
+import javax.xml.parsers.SAXParser;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.ifeature.*;
-import org.w3c.dom.*;
-import org.xml.sax.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.ModelChangedEvent;
+import org.eclipse.pde.internal.core.AbstractModel;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.XMLDefaultHandler;
+import org.eclipse.pde.internal.core.ifeature.IFeature;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModelFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 public abstract class AbstractFeatureModel
 	extends AbstractModel
@@ -59,7 +64,7 @@ public abstract class AbstractFeatureModel
 			SAXParser parser = getSaxParser();
 			XMLDefaultHandler handler = new XMLDefaultHandler();
 			parser.parse(stream, handler);
-			processDocument(handler.getDocument(), handler.getLineTable());
+			processDocument(handler.getDocument());
 			setLoaded(true);
 			if (!outOfSync)
 				updateTimeStamp();
@@ -75,7 +80,7 @@ public abstract class AbstractFeatureModel
 		return feature!=null && feature.isValid();
 	}
 
-	private void processDocument(Document doc, Hashtable lineTable) {
+	private void processDocument(Document doc) {
 		Node rootNode = doc.getDocumentElement();
 		if (feature == null) {
 			feature = new Feature();
@@ -83,7 +88,7 @@ public abstract class AbstractFeatureModel
 		} else {
 			feature.reset();
 		}
-		feature.parse(rootNode, lineTable);
+		feature.parse(rootNode);
 	}
 	public void reload(InputStream stream, boolean outOfSync)
 		throws CoreException {

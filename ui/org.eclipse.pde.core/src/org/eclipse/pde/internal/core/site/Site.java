@@ -211,43 +211,42 @@ public class Site extends SiteObject implements ISite {
 		url = null;
 		mirrorsUrl = null;
 	}
-	protected void parse(Node node, Hashtable lineTable) {
+	protected void parse(Node node) {
 		type = getNodeAttribute(node, "type"); //$NON-NLS-1$
 		url = getNodeAttribute(node, "url"); //$NON-NLS-1$
 		mirrorsUrl = getNodeAttribute(node, "mirrorsURL"); //$NON-NLS-1$
-		bindSourceLocation(node, lineTable);
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
-				parseChild(child, lineTable);
+				parseChild(child);
 			}
 		}
 	}
 
-	protected void parseChild(Node child, Hashtable lineTable) {
+	protected void parseChild(Node child) {
 		String tag = child.getNodeName().toLowerCase();
 		if (tag.equals("feature")) { //$NON-NLS-1$
 			ISiteFeature feature = getModel().getFactory().createFeature();
-			((SiteFeature) feature).parse(child, lineTable);
+			((SiteFeature) feature).parse(child);
 			((SiteFeature) feature).setInTheModel(true);
 			features.add(feature);
 		} else if (tag.equals("archive")) { //$NON-NLS-1$
 			ISiteArchive archive = getModel().getFactory().createArchive();
-			((SiteArchive) archive).parse(child, lineTable);
+			((SiteArchive) archive).parse(child);
 			((SiteArchive) archive).setInTheModel(true);
 			archives.add(archive);
 		} else if (tag.equals("category-def")) { //$NON-NLS-1$
 			ISiteCategoryDefinition def =
 				getModel().getFactory().createCategoryDefinition();
-			((SiteCategoryDefinition) def).parse(child, lineTable);
+			((SiteCategoryDefinition) def).parse(child);
 			((SiteCategoryDefinition) def).setInTheModel(true);
 			categoryDefs.add(def);
 		} else if (tag.equals("description")) { //$NON-NLS-1$
 			if (description != null)
 				return;
 			description = getModel().getFactory().createDescription(this);
-			((SiteDescription) description).parse(child, lineTable);
+			((SiteDescription) description).parse(child);
 			((SiteDescription) description).setInTheModel(true);
 		}
 	}

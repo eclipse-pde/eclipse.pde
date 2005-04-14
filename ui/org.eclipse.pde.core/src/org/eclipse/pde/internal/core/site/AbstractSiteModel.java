@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.core.site;
 
 import java.io.*;
-import java.util.*;
 
 import javax.xml.parsers.*;
 
@@ -62,7 +61,7 @@ public abstract class AbstractSiteModel
 			SAXParser parser = getSaxParser();
 			XMLDefaultHandler handler = new XMLDefaultHandler();
 			parser.parse(stream, handler);
-			processDocument(handler.getDocument(), handler.getLineTable());
+			processDocument(handler.getDocument());
 			setLoaded(true);
 			if (!outOfSync)
 				updateTimeStamp();
@@ -71,7 +70,7 @@ public abstract class AbstractSiteModel
 		}
 	}
 
-	private void processDocument(Document doc, Hashtable lineTable) {
+	private void processDocument(Document doc) {
 		Node rootNode = doc.getDocumentElement();
 		if (site == null) {
 			site = new Site();
@@ -79,7 +78,7 @@ public abstract class AbstractSiteModel
 		} else {
 			site.reset();
 		}
-		site.parse(rootNode, lineTable);
+		site.parse(rootNode);
 	}
 	public void reload(InputStream stream, boolean outOfSync)
 		throws CoreException {

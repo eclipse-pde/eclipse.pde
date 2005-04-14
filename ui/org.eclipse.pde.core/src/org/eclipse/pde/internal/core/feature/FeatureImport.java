@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.feature;
 
-import java.io.*;
-import java.util.*;
+import java.io.PrintWriter;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.ifeature.*;
-import org.w3c.dom.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.ifeature.IFeature;
+import org.eclipse.pde.internal.core.ifeature.IFeatureImport;
+import org.w3c.dom.Node;
 
 public class FeatureImport
 	extends VersionableObject
@@ -57,9 +57,8 @@ public class FeatureImport
 		fIdMatch = PERFECT;
 	}
 
-	protected void parse(Node node, Hashtable lineTable) {
-		super.parse(node, lineTable);
-		bindSourceLocation(node, lineTable);
+	protected void parse(Node node) {
+		super.parse(node);
 		this.id = getNodeAttribute(node, "plugin"); //$NON-NLS-1$
 		if (id != null)
 			fType = PLUGIN;

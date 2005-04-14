@@ -63,7 +63,6 @@ public class SiteDescription extends SiteObject implements ISiteDescription {
 
 	protected void parse(Node node, Hashtable lineTable) {
 		url = getNodeAttribute(node, "url"); //$NON-NLS-1$
-		bindSourceLocation(node, lineTable);
 		NodeList children = node.getChildNodes();
 		for (int i=0; i<children.getLength(); i++) {
 			Node child = children.item(i);

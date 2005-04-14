@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.core.feature;
 
 import java.io.*;
-import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.core.*;
@@ -42,9 +41,8 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 		fArch = null;
 		fNl = null;
 	}
-	protected void parse(Node node, Hashtable lineTable) {
-		super.parse(node, lineTable);
-		bindSourceLocation(node, lineTable);
+	protected void parse(Node node) {
+		super.parse(node);
 		fVersion = getNodeAttribute(node, "version"); //$NON-NLS-1$
 		fName = getNodeAttribute(node, "name"); //$NON-NLS-1$
 		fOptional = getBooleanAttribute(node, "optional"); //$NON-NLS-1$

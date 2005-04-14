@@ -18,14 +18,17 @@ import org.w3c.dom.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
 
-public class XMLDefaultHandler extends DefaultHandler {
+public class XMLHandler extends DefaultHandler {
 	
 	private org.w3c.dom.Document fDocument;
+	private Locator fLocator;
+	private Hashtable fLineTable;
 	private Element fRootElement;
 	
 	private Stack fElementStack = new Stack();
 	
-	public XMLDefaultHandler() {
+	public XMLHandler() {
+		fLineTable = new Hashtable();
 	}
 	
 	public void startElement(String uri, String localName, String qName, Attributes attributes)
@@ -35,6 +38,9 @@ public class XMLDefaultHandler extends DefaultHandler {
 			element.setAttribute(attributes.getQName(i), attributes.getValue(i));
 		}
 		
+		Integer lineNumber = new Integer(fLocator.getLineNumber());
+		Integer[] range = new Integer[] {lineNumber, new Integer(-1)};
+		fLineTable.put(element, range);
 		if (fRootElement == null)
 			fRootElement = element;
 		else 
@@ -43,13 +49,15 @@ public class XMLDefaultHandler extends DefaultHandler {
 	}
 	
 	public void endElement(String uri, String localName, String qName) throws SAXException {
-		fElementStack.pop();
+		Integer[] range = (Integer[])fLineTable.get(fElementStack.pop());
+		range[1] = new Integer(fLocator.getLineNumber());
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#setDocumentLocator(org.xml.sax.Locator)
 	 */
 	public void setDocumentLocator(Locator locator) {
+		fLocator = locator;
 	}
 
 	/* (non-Javadoc)
@@ -102,4 +110,7 @@ public class XMLDefaultHandler extends DefaultHandler {
 		return fDocument;
 	}
 	
+	public Hashtable getLineTable() {
+		return fLineTable;
+	}	
 }

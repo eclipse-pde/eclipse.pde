@@ -130,7 +130,7 @@ public abstract class AbstractPluginModelBase
 		setLoaded(false);
 		try {
 			SAXParser parser = getSaxParser();
-			XMLDefaultHandler handler = new XMLDefaultHandler();
+			XMLHandler handler = new XMLHandler();
 			parser.parse(stream, handler);
 			processDocument(handler.getDocument(), handler.getLineTable());
 			setLoaded(true);
