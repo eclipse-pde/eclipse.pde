@@ -167,6 +167,10 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		pluginUpdateJarDestination = PLUGIN_DESTINATION + '/' + fullName + ".jar"; //$NON-NLS-1$ //$NON-NLS-2$
 		String[] classpathInfo = getClasspathEntries(model);
 		dotOnTheClasspath = specialDotProcessing(getBuildProperties(), classpathInfo);
+		
+		//Persist this information for use in the assemble script generation
+		Properties bundleProperties = (Properties) model.getUserObject();
+		bundleProperties.put(WITH_DOT, Boolean.valueOf(dotOnTheClasspath));
 	}
 
 	protected static boolean findAndReplaceDot(String[] classpathInfo) {
@@ -367,12 +371,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				script.printMkdirTask(destination.toString());
 				destinations.add(destination);
 			}
-			if (embeddedSource && dotOnTheClasspath) {
-				script.println("<unzip dest=\"" + destination + "/src\">");
-				script.println("\t<fileset file=\"" + getSRCLocation(jar) + "\"/>");
-				script.println("</unzip>");
-			} else
-				script.printCopyTask(getSRCLocation(jar), destination.toString(), null, false, false);
+			script.printCopyTask(getSRCLocation(jar), destination.toString(), null, false, false);
 		}
 		String include = (String) getBuildProperties().get(PROPERTY_SRC_INCLUDES);
 		String exclude = (String) getBuildProperties().get(PROPERTY_SRC_EXCLUDES);

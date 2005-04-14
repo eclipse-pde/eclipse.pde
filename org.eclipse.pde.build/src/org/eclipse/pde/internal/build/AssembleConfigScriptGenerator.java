@@ -14,6 +14,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.internal.build.ant.*;
+import org.eclipse.pde.internal.build.builder.ModelBuildScriptGenerator;
 import org.eclipse.update.core.*;
 
 /**
@@ -144,10 +145,27 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	protected void generateGatherSourceCalls() {
 		Map properties = new HashMap(1);
 		properties.put(PROPERTY_DESTINATION_TEMP_FOLDER, getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS));
+		
 		for (int i = 0; i < plugins.length; i++) {
 			BundleDescription plugin = plugins[i];
 			String placeToGather = getLocation(plugin);
+			
 			script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, Utils.makeRelative(new Path(placeToGather), new Path(workingDirectory)).toOSString(), TARGET_GATHER_SOURCES, null, null, properties);
+			
+			Properties bundleProperties = (Properties) plugin.getUserObject();
+			//Source code for plugins with . on the classpath must be put in a folder in the final jar.
+			if (bundleProperties.get(WITH_DOT) == Boolean.TRUE) {		
+				String targetLocation = getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS) + '/' +ModelBuildScriptGenerator.getNormalizedName(plugin);
+				String targetLocationSrc = targetLocation +  "/src"; //$NON-NLS-1$
+				
+				//Find the source zip where it has been gathered and extract it in a folder  
+				script.println("<unzip dest=\"" +  targetLocationSrc + "\">");  //$NON-NLS-1$//$NON-NLS-2$
+				script.println("\t<fileset dir=\"" + targetLocation  + "\" includes=\"**/*src.zip\" casesensitive=\"false\"/>");  //$NON-NLS-1$//$NON-NLS-2$
+				script.println("</unzip>"); //$NON-NLS-1$
+				
+				//	Delete the source zip where it has been gathered since we extracted it
+				script.printDeleteTask(null, null, new FileSet[] {new FileSet(targetLocation, null, "**/*src.zip", null, null, null, "false")});  //$NON-NLS-1$ //$NON-NLS-2$//$NON-bNLS-3$
+			} 
 		}
 
 		properties = new HashMap(1);
