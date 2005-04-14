@@ -75,8 +75,11 @@ public class PDEMessages extends NLS {
 	public static String BundleErrorReporter_att_value;
 	public static String BundleErrorReporter_dir_value;
 	public static String BundleErrorReporter_illegal_value;
-	public static String BundleErrorReporter_deprecated_header;
-	public static String BundleErrorReporter_deprecated_attribute;
+	public static String BundleErrorReporter_deprecated_header_Provide_Package;
+	public static String BundleErrorReporter_deprecated_attribute_optional;
+	public static String BundleErrorReporter_deprecated_attribute_reprovide;
+	public static String BundleErrorReporter_deprecated_attribute_singleton;
+	public static String BundleErrorReporter_deprecated_attribute_specification_version;
 	public static String BundleErrorReporter_singletonAttrRequired;
 	public static String BundleErrorReporter_singletonRequired;
 	public static String BundleErrorReporter_headerMissing;

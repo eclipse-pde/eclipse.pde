@@ -797,7 +797,10 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			validateBooleanAttributeValue(header, requireBundleElements,
 					ICoreConstants.OPTIONAL_ATTRIBUTE);
 			if (fEclipse3_1 && isCheckDeprecated()) {
-				message = NLS.bind(PDEMessages.BundleErrorReporter_deprecated_attribute, ICoreConstants.SINGLETON_ATTRIBUTE); //$NON-NLS-1$
+				message = NLS
+						.bind(
+								PDEMessages.BundleErrorReporter_deprecated_attribute_optional,
+								ICoreConstants.OPTIONAL_ATTRIBUTE); //$NON-NLS-1$
 				report(
 						message,
 						getLine(header, ICoreConstants.OPTIONAL_ATTRIBUTE + "="), CompilerFlags.P_DEPRECATED); //$NON-NLS-1$
@@ -822,7 +825,10 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		}
 		String message = null;
 		if (fEclipse3_1 && isCheckDeprecated()) {
-			message = NLS.bind(PDEMessages.BundleErrorReporter_deprecated_header, ICoreConstants.PROVIDE_PACKAGE); //$NON-NLS-1$
+			message = NLS
+					.bind(
+							PDEMessages.BundleErrorReporter_deprecated_header_Provide_Package,
+							ICoreConstants.PROVIDE_PACKAGE); //$NON-NLS-1$
 			report(message, header.getLineNumber() + 1,
 					CompilerFlags.P_DEPRECATED);
 		}
@@ -875,7 +881,10 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			validateBooleanAttributeValue(header, requireBundleElements,
 					ICoreConstants.REPROVIDE_ATTRIBUTE);
 			if (fEclipse3_1 && isCheckDeprecated()) {
-				message = NLS.bind(PDEMessages.BundleErrorReporter_deprecated_attribute, ICoreConstants.REPROVIDE_ATTRIBUTE); //$NON-NLS-1$
+				message = NLS
+						.bind(
+								PDEMessages.BundleErrorReporter_deprecated_attribute_reprovide,
+								ICoreConstants.REPROVIDE_ATTRIBUTE); //$NON-NLS-1$
 				report(message,
 						getLine(header, ICoreConstants.REPROVIDE_ATTRIBUTE
 								+ "="), CompilerFlags.P_DEPRECATED); //$NON-NLS-1$
@@ -970,7 +979,10 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		}
 		if (isCheckDeprecated()) {
 			if (fEclipse3_1 && singletonAttr != null) {
-				message = NLS.bind(PDEMessages.BundleErrorReporter_deprecated_attribute, ICoreConstants.SINGLETON_ATTRIBUTE); //$NON-NLS-1$
+				message = NLS
+						.bind(
+								PDEMessages.BundleErrorReporter_deprecated_attribute_singleton,
+								ICoreConstants.SINGLETON_ATTRIBUTE); //$NON-NLS-1$
 				report(message,
 						getLine(header, ICoreConstants.SINGLETON_ATTRIBUTE
 								+ "="), CompilerFlags.P_DEPRECATED); //$NON-NLS-1$
@@ -1017,7 +1029,10 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		}
 		if (isCheckDeprecated()) {
 			if (fEclipse3_1 && version != null) {
-				String message = NLS.bind(PDEMessages.BundleErrorReporter_deprecated_attribute, ICoreConstants.PACKAGE_SPECIFICATION_VERSION); //$NON-NLS-1$
+				String message = NLS
+						.bind(
+								PDEMessages.BundleErrorReporter_deprecated_attribute_specification_version,
+								ICoreConstants.PACKAGE_SPECIFICATION_VERSION); //$NON-NLS-1$
 				report(message,
 						getPackageLine(header,
 								element.getValue()), CompilerFlags.P_DEPRECATED); //$NON-NLS-1$
