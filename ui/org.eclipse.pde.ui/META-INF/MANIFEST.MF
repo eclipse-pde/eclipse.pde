@@ -69,5 +69,6 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.jdt.junit,
  org.eclipse.ui.intro,
  org.eclipse.ui.cheatsheets,
- org.eclipse.update.configurator
+ org.eclipse.update.configurator,
+ org.eclipse.help.base
 Eclipse-AutoStart: true
