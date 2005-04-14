@@ -15,6 +15,7 @@ import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.feature.*;
 import org.eclipse.pde.internal.core.ifeature.*;
@@ -441,6 +442,13 @@ public class TargetPlatform implements IEnvironmentVariables {
 	public static String getTargetVersion() {
 		return PDECore.getDefault().getModelManager().getTargetVersion();
 	}
+	
+	public static PDEState getPDEState() {
+		return PDECore.getDefault().getExternalModelManager().getState();
+	}
 
+	public static State getState() {
+		return getPDEState().getState();
+	}
 
 }
