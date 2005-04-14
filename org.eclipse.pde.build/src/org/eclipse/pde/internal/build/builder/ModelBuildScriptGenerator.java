@@ -367,7 +367,12 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				script.printMkdirTask(destination.toString());
 				destinations.add(destination);
 			}
-			script.printCopyTask(getSRCLocation(jar), destination.toString(), null, false, false);
+			if (embeddedSource && dotOnTheClasspath) {
+				script.println("<unzip dest=\"" + destination + "/src\">");
+				script.println("\t<fileset file=\"" + getSRCLocation(jar) + "\"/>");
+				script.println("</unzip>");
+			} else
+				script.printCopyTask(getSRCLocation(jar), destination.toString(), null, false, false);
 		}
 		String include = (String) getBuildProperties().get(PROPERTY_SRC_INCLUDES);
 		String exclude = (String) getBuildProperties().get(PROPERTY_SRC_EXCLUDES);
