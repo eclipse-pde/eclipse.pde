@@ -31,17 +31,20 @@ public class ClasspathHelper {
 			}
 		}
 		Properties properties = new Properties();
-		WorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
-		IPluginModelBase[] models = manager.getAllModels();
+		PluginModelManager manager = PDECore.getDefault().getModelManager();
+		IPluginModelBase[] models = manager.getPlugins();
 		for (int i = 0; i < models.length; i++) {
 			String id = models[i].getPluginBase().getId();
 			if (id == null)
 				continue;
-			String entry = writeEntry(getOutputFolders(models[i], checkExcluded));
+			String entry;
+			if (models[i].getUnderlyingResource() != null)
+				entry = writeEntry(getOutputFolders(models[i], checkExcluded));
+			else
+				entry = getLibraries(models[i]);
 			if (entry.length() > 0)
 				properties.put(id, entry);
 		}
-		properties.put("@ignoredot@", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		FileOutputStream stream = null;
 		try {
@@ -59,6 +62,17 @@ public class ClasspathHelper {
 			}			
 		}
 		return getDevEntries(checkExcluded);
+	}
+	
+	private static String getLibraries(IPluginModelBase model) {
+		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
+		StringBuffer buffer = new StringBuffer();
+		for (int i = 0; i < libraries.length; i++) {
+			if (buffer.length() > 0)
+				buffer.append(",");
+			buffer.append(libraries[i].getName());
+		}
+		return buffer.length() > 0 ? buffer.toString() : ".";
 	}
 
     public static String getDevEntriesProperties(String fileName, Map map) {
