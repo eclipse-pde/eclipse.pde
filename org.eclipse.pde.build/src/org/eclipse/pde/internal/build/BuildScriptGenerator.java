@@ -48,7 +48,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	protected boolean generateJnlp = false;
 
 	//Map configuration with the expected output format: key: Config, value: string
-	protected HashMap archivesFormat;
+	private HashMap archivesFormat;
 
 	/**
 	 * flag indicating if the assemble script should be generated
@@ -64,6 +64,8 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	/** flag indicating if missing properties file should be logged */
 	private boolean ignoreMissingPropertiesFile = false;
 
+	private static final String PROPERTY_ARCHIVESFORMAT = "archivesFormat";   //$NON-NLS-1$
+	
 	/**
 	 * 
 	 * @throws CoreException
@@ -172,7 +174,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		PackageScriptGenerator assembler = new PackageScriptGenerator(workingDirectory, assemblageInformation, featureInfo[0]);
 		assembler.setSignJars(signJars);
 		assembler.setGenerateJnlp(generateJnlp);
-		assembler.setArchivesFormat(archivesFormat); //TODO Check 
+		assembler.setArchivesFormat(getArchivesFormat());
 		assembler.generate();
 	}
 
@@ -180,7 +182,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		AssembleScriptGenerator assembler = new AssembleScriptGenerator(workingDirectory, assemblageInformation, featureInfo[0]);
 		assembler.setSignJars(signJars);
 		assembler.setGenerateJnlp(generateJnlp);
-		assembler.setArchivesFormat(archivesFormat);
+		assembler.setArchivesFormat(getArchivesFormat());
 		assembler.generate();
 	}
 
@@ -257,8 +259,9 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		generateJnlp = value;
 	}
 
+	
 	public void setArchivesFormat(String archivesFormatAsString) throws CoreException {
-		if ("${archivesFormat}".equalsIgnoreCase(archivesFormatAsString)) { //$NON-NLS-1$
+		if (getPropertyFormat(PROPERTY_ARCHIVESFORMAT).equalsIgnoreCase(archivesFormatAsString)) { //$NON-NLS-1$
 			//Set backward compatible values
 			archivesFormatAsString = "win32, win32, x86 - zip & " + //$NON-NLS-1$
 					"linux, gtk, x86 - tar & " + //$NON-NLS-1$
@@ -289,5 +292,17 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 				archivesFormat.put(aConfig, archAndFormat[1]);
 			}
 		}
+	}
+	
+	protected HashMap getArchivesFormat() {
+		if (archivesFormat == null) {
+			try {
+				//If not set, pass in the empty property to trigger the default value to be loaded
+				setArchivesFormat(getPropertyFormat(PROPERTY_ARCHIVESFORMAT));
+			} catch (CoreException e) {
+				//ignore
+			}
+		}
+		return archivesFormat;
 	}
 }
