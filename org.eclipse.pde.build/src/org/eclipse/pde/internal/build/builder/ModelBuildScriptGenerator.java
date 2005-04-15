@@ -410,7 +410,6 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 		//Copy only the jars that has been compiled and are listed in the includes
 		String[] splitIncludes = Utils.getArrayFromString(include);
-		boolean allJars = containsStarDotJar(splitIncludes);
 		String[] fileSetValues = new String[compiledJarNames.size()];
 		int count = 0;
 		
@@ -429,10 +428,8 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				dotIncluded = dotIncluded & true;
 				continue;
 			}
-			if (allJars) {
-				fileSetValues[count++] = formatedName;
-				continue;
-			}
+			fileSetValues[count++] = formatedName;
+			continue;
 		}
 		if (count != 0) {
 			FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER), null, Utils.getStringFromArray(fileSetValues, ","), null, replaceVariables(exclude, true), null, null); //$NON-NLS-1$
