@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.core;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -29,6 +30,10 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 public class PDEClasspathContainer {
 	
 	protected ArrayList fEntries;
+	
+	private static HashMap ACCESS_RULES = new HashMap();
+	private static final IAccessRule EXCLUDE_ALL_RULE = 
+		JavaCore.newAccessRule(new Path("**/*"), IAccessRule.K_NON_ACCESSIBLE);
 
 	protected void addProjectEntry(IProject project, boolean isExported, IPath[] inclusions) throws CoreException {
 		if (project.hasNature(JavaCore.NATURE_ID)) {
@@ -94,16 +99,18 @@ public class PDEClasspathContainer {
 	}
 	
 	protected IAccessRule[] getAccessRules(IPath[] inclusionPatterns) {
-		int length = inclusionPatterns.length;
-		IAccessRule[] accessRules;
-		if (length == 0) {
-			accessRules = new IAccessRule[] {JavaCore.newAccessRule(new Path("**/*"), IAccessRule.K_NON_ACCESSIBLE)}; //$NON-NLS-1$
-		} else {
-			accessRules = new IAccessRule[length];
-			for (int i = 0; i < length; i++) {
-				accessRules[i] = JavaCore.newAccessRule(inclusionPatterns[i], IAccessRule.K_ACCESSIBLE);
+		IAccessRule[] accessRules = new IAccessRule[inclusionPatterns.length + 1];
+		for (int i = 0; i < inclusionPatterns.length; i++) {
+			IAccessRule rule = (IAccessRule)ACCESS_RULES.get(inclusionPatterns[i]);
+			if (rule == null) {
+				rule = JavaCore.newAccessRule(inclusionPatterns[i], IAccessRule.K_ACCESSIBLE);
+				ACCESS_RULES.put(inclusionPatterns[i], rule);
 			}
+			accessRules[i] = rule;
 		}
+		accessRules[inclusionPatterns.length] = EXCLUDE_ALL_RULE;
+
+		System.out.println("Size: " + ACCESS_RULES.size());
 		return accessRules;
 	}
 	
