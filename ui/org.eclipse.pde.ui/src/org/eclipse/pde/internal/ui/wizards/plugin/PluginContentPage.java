@@ -15,6 +15,7 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.JavaConventions;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -73,6 +74,7 @@ public class PluginContentPage extends ContentPage {
 		createPluginClassGroup(container);
 		createRCPGroup(container);
 		
+		Dialog.applyDialogFont(container);
 		setControl(container);	
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.NEW_PROJECT_REQUIRED_DATA);
 	}

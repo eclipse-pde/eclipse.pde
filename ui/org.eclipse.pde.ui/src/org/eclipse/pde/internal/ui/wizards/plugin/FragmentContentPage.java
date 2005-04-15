@@ -11,6 +11,7 @@
 
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.internal.core.PDECore;
@@ -66,6 +67,7 @@ public class FragmentContentPage extends ContentPage {
 		createFragmentPropertiesGroup(container);
 		createParentPluginGroup(container);
 
+		Dialog.applyDialogFont(container);
 		setControl(container);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.NEW_FRAGMENT_REQUIRED_DATA);
 	}

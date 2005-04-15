@@ -15,6 +15,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.debug.ui.*;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
@@ -35,6 +36,7 @@ public class ProductFileWizadPage extends WizardNewFileCreationPage {
 	private Combo fProductCombo;
 	private Button fLaunchConfigButton;
 	private Combo fLaunchConfigCombo;
+	private Group fGroup;
 	
 	public ProductFileWizadPage(String pageName, IStructuredSelection selection) {
 		super(pageName, selection);
@@ -45,12 +47,12 @@ public class ProductFileWizadPage extends WizardNewFileCreationPage {
 	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#createAdvancedControls(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void createAdvancedControls(Composite parent) {
-		Group group = new Group(parent, SWT.NONE);
-		group.setText(PDEUIMessages.ProductFileWizadPage_groupTitle); //$NON-NLS-1$
-		group.setLayout(new GridLayout(2, false));
-		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fGroup = new Group(parent, SWT.NONE);
+		fGroup.setText(PDEUIMessages.ProductFileWizadPage_groupTitle); //$NON-NLS-1$
+		fGroup.setLayout(new GridLayout(2, false));
+		fGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		fProductButton = new Button(group, SWT.RADIO);
+		fProductButton = new Button(fGroup, SWT.RADIO);
 		fProductButton.setText(PDEUIMessages.ProductFileWizadPage_existingProduct); //$NON-NLS-1$
 		fProductButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -58,11 +60,11 @@ public class ProductFileWizadPage extends WizardNewFileCreationPage {
 			}
 		});
 		
-		fProductCombo = new Combo(group, SWT.SINGLE|SWT.READ_ONLY);
+		fProductCombo = new Combo(fGroup, SWT.SINGLE|SWT.READ_ONLY);
 		fProductCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fProductCombo.setItems(TargetPlatform.getProductNames());
 		
-		fLaunchConfigButton = new Button(group, SWT.RADIO);
+		fLaunchConfigButton = new Button(fGroup, SWT.RADIO);
 		fLaunchConfigButton.setText(PDEUIMessages.ProductFileWizadPage_existingLaunchConfig); //$NON-NLS-1$
 		fLaunchConfigButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -70,11 +72,11 @@ public class ProductFileWizadPage extends WizardNewFileCreationPage {
 			}
 		});
 		
-		fLaunchConfigCombo = new Combo(group, SWT.SINGLE|SWT.READ_ONLY);
+		fLaunchConfigCombo = new Combo(fGroup, SWT.SINGLE|SWT.READ_ONLY);
 		fLaunchConfigCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fLaunchConfigCombo.setItems(getLaunchConfigurations());
 		
-		fBasicButton = new Button(group, SWT.RADIO);
+		fBasicButton = new Button(fGroup, SWT.RADIO);
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		fBasicButton.setLayoutData(gd);
@@ -175,6 +177,7 @@ public class ProductFileWizadPage extends WizardNewFileCreationPage {
 	
 	public void createControl(Composite parent) {
 		super.createControl(parent);
+		Dialog.applyDialogFont(fGroup);
 		setFileName(".product"); //$NON-NLS-1$
 	}
 	

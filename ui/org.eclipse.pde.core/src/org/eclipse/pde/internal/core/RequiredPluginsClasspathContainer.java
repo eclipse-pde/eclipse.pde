@@ -261,7 +261,6 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			inclusions = getInclusions(desc);
 		
 		return (inclusions.length == 0 && !ClasspathUtilCore.isBundle(model)) ? null : inclusions;
-
 	}
 	
 	private IPath[] getInclusions(BundleDescription desc) {
