@@ -49,6 +49,9 @@ import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
 
 public class BundleErrorReporter extends JarManifestErrorReporter {
+	private static final String COMPATIBILITY_PLUGIN = "org.eclipse.core.runtime.compatibility"; //$NON-NLS-1$
+
+	private static final String COMPATIBILITY_ACTIVATOR = "org.eclipse.core.internal.compatibility.PluginActivator"; //$NON-NLS-1$
 	
 	/**
 	 * @param versionString
@@ -105,6 +108,10 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	private String fPluginId = ""; //$NON-NLS-1$
 
 	private Map fProjectPackagesMap = null;
+	
+	private boolean fCompatibility = false;
+
+	private boolean fCompatibilityActivator = false;
 
 	public BundleErrorReporter(IFile file) {
 		super(file);
@@ -330,6 +337,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			return;
 		}
 		String activator = header.getValue();
+		fCompatibilityActivator = COMPATIBILITY_ACTIVATOR.equals(activator);
 		String message;
 		if (fFragment) {
 			/* Fragment bundles must not specify a Bundle Activator */
@@ -346,17 +354,105 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				return;
 			}
 			IJavaProject javaProject = JavaCore.create(fProject);
-			if (!javaProject.isOpen()) {
-				return;
-			}
 			try {
 				// Look for this activator in the project's classpath
 				IType type = javaProject.findType(activator);
+	
+				if (!fCompatibilityActivator) {
+					/* Activator type does not exist */
+					if (type == null || !type.exists()) {
+						message = NLS.bind(
+								PDEMessages.BundleErrorReporter_NoExist,
+								activator); //$NON-NLS-1$
+						report(message, getLine(header, activator),
+								CompilerFlags.P_UNKNOWN_CLASS);
+						return;
+					}
+	
+					// activator must be a local class
+					IPackageFragmentRoot pfroot = (IPackageFragmentRoot) type
+							.getAncestor(IJavaElement.PACKAGE_FRAGMENT_ROOT);
+					if (pfroot != null && pfroot.isExternal()) {
+						message = NLS
+								.bind(
+										PDEMessages.BundleErrorReporter_externalClass,
+										activator); //$NON-NLS-1$
+						report(message, getLine(header, activator),
+								CompilerFlags.P_UNKNOWN_CLASS);
+						return;
+					}
+				} else {
+					if (!fCompatibility) {
+						message = NLS
+								.bind(
+										PDEMessages.BundleErrorReporter_unresolvedCompatibilityActivator,
+										activator); //$NON-NLS-1$
+						report(message, getLine(header, activator),
+								CompilerFlags.P_UNKNOWN_CLASS);
+						return;
+					}
+				}
+			} catch (JavaModelException e) {
+				PDECore.logException(e);
+			}
+		}
+	}
 
-				/* Activator type does not exist */
+	private void validatePluginClass() {
+		IHeader header = (IHeader) fHeaders.get(ICoreConstants.PLUGIN_CLASS);
+		if (header == null) {
+			return;
+		}
+		String pluginClass = header.getValue();
+		String message;
+		if (fFragment) {
+			/* Fragment bundles must not specify Plugin Class */
+			message = PDEMessages.BundleErrorReporter_fragmentActivator; //$NON-NLS-1$
+			report(message, header.getLineNumber() + 1, CompilerFlags.ERROR);
+			return;
+		}
+		if (!fCompatibilityActivator) {
+			if (fCompatibility) {
+				// add compatibility activator
+				message = PDEMessages.BundleErrorReporter_requiredCompatibilityActivator; //$NON-NLS-1$
+				report(message, header.getLineNumber() + 1, CompilerFlags.ERROR);
+			} else {
+				// rename Plugin-Class to Bundle-Activator
+				message = PDEMessages.BundleErrorReporter_unusedPluginClass; //$NON-NLS-1$
+				report(message, header.getLineNumber() + 1, CompilerFlags.ERROR);
+			}
+		}
+
+		if (isCheckUnknownClass()) {
+			try {
+				if (!fProject.hasNature(JavaCore.NATURE_ID)) {
+					return;
+				}
+			} catch (CoreException ce) {
+				return;
+			}
+			IJavaProject javaProject = JavaCore.create(fProject);
+			try {
+				// Look for this plugin class in the project's classpath
+				IType type = javaProject.findType(pluginClass);
+
+				/* Plugin class type does not exist */
 				if (type == null || !type.exists()) {
-					message = NLS.bind(PDEMessages.BundleErrorReporter_NoExist, activator); //$NON-NLS-1$
-					report(message, getLine(header, activator),
+					message = NLS.bind(PDEMessages.BundleErrorReporter_NoExist,
+							pluginClass); //$NON-NLS-1$
+					report(message, getLine(header, pluginClass),
+							CompilerFlags.P_UNKNOWN_CLASS);
+					return;
+				}
+
+				// Plugin class must be a local class
+				IPackageFragmentRoot pfroot = (IPackageFragmentRoot) type
+						.getAncestor(IJavaElement.PACKAGE_FRAGMENT_ROOT);
+				if (pfroot != null && pfroot.isExternal()) {
+					message = NLS.bind(
+							PDEMessages.BundleErrorReporter_externalClass,
+							pluginClass); //$NON-NLS-1$
+					report(message, getLine(header, pluginClass),
 							CompilerFlags.P_UNKNOWN_CLASS);
 					return;
 				}
@@ -472,8 +568,11 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		// sets fHostBundleId
 		validateFragmentHost();
 		validateBundleClasspath();
-		validateBundleActivator();
 		validateRequireBundle();
+		// sets fCompatibility
+		// sets fCompatibilityActivator
+		validateBundleActivator();
+		validatePluginClass();
 		validateExportPackage();
 		validateProvidePackage();
 		validateImportPackage();
@@ -903,6 +1002,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		ManifestElement[] requireBundleElements = header.getElements();
 		for (int i = 0; i < requireBundleElements.length; i++) {
 			String requireBundleStmt = requireBundleElements[i].getValue();
+			if (COMPATIBILITY_PLUGIN.equals(requireBundleStmt)) {
+				fCompatibility = true;
+			}
 
 			validateBundleVersionAttribute(header, requireBundleElements[i]);
 
