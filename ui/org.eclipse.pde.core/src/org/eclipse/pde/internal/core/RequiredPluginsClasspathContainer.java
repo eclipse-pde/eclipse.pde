@@ -39,7 +39,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 public class RequiredPluginsClasspathContainer extends PDEClasspathContainer implements IClasspathContainer {
 
-	private static final boolean ENABLE_ACCESS_RESTRICTIONS = true;
+	private static final boolean ENABLE_ACCESS_RESTRICTIONS = false;
 	
 	private IPluginModelBase fModel;
 	
