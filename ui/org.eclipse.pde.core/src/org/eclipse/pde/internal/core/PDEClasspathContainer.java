@@ -109,8 +109,6 @@ public class PDEClasspathContainer {
 			accessRules[i] = rule;
 		}
 		accessRules[inclusionPatterns.length] = EXCLUDE_ALL_RULE;
-
-		System.out.println("Size: " + ACCESS_RULES.size());
 		return accessRules;
 	}
 	
