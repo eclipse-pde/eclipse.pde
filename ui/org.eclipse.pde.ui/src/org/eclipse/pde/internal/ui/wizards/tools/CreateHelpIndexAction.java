@@ -120,14 +120,9 @@ public class CreateHelpIndexAction implements IObjectActionDelegate {
 				return null;
 			}
 			IFile pluginFile = pluginModel.getUnderlyingResource().getProject().getFile("plugin.xml");
-			if (pluginFile.exists())
-				return pluginFile.getLocation().toFile();
-			else
-				return null;
+			return (pluginFile.exists()) ? pluginFile.getLocation().toFile() : null;
 		}
-		else {
-			return file.getLocation().toFile();
-		}
+		return file.getLocation().toFile();
 	}
 
 	private File getTarget() {
