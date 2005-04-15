@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -39,7 +40,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 public class RequiredPluginsClasspathContainer extends PDEClasspathContainer implements IClasspathContainer {
 
-	private static final boolean ENABLE_ACCESS_RESTRICTIONS = false;
+	private static final boolean ENABLE_ACCESS_RESTRICTIONS = true;
 	
 	private IPluginModelBase fModel;
 	
@@ -203,7 +204,30 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 					addDependency(getSupplier(required[i]), isExported, added);
 				}
 			}
+		} else {
+			BundleSpecification[] required = desc.getRequiredBundles();
+			for (int i = 0; i < required.length; i++) {
+				if (required[i].isExported()) {
+					addReexportedPluginsToSet(required[i], added);
+				}
+			}	
 		}
+	}
+	
+	private void addReexportedPluginsToSet(BundleSpecification spec, Set added) {
+		if (!added.add(spec.getName()))
+			return;
+		
+		BundleDescription desc = getSupplier(spec);
+		if (desc == null)
+			return;
+		
+		BundleSpecification[] required = desc.getRequiredBundles();
+		for (int i = 0; i < required.length; i++) {
+			if (required[i].isExported()) {
+				addReexportedPluginsToSet(required[i], added);
+			}
+		}	
 	}
 
 
