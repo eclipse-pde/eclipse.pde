@@ -44,4 +44,5 @@ public interface ICoreConstants {
 	public final static String SINGLETON_ATTRIBUTE = "singleton"; //$NON-NLS-1$
 	public final static String PACKAGE_SPECIFICATION_VERSION = "specification-version"; //$NON-NLS-1$
 	public final static String EXTENSIBLE_API = "Eclipse-ExtensibleAPI"; //$NON-NLS-1$
+	public final static String PLUGIN_CLASS = "Plugin-Class"; //$NON-NLS-1$
 }
