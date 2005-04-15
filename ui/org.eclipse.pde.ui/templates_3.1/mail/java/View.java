@@ -1,20 +1,23 @@
 package $packageName$;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
 
 public class View extends ViewPart {
 
 	public static final String ID = "$pluginId$.view";
 	
-	private Font boldFont;
-
 	public void createPartControl(Composite parent) {
 		Composite top = new Composite(parent, SWT.BORDER);
 		top.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -30,13 +33,10 @@ public class View extends ViewPart {
 		layout.marginWidth = 10;
 		layout.numColumns = 2;
 		banner.setLayout(layout);
+		
 		// setup bold font
-		Font defaultFont = JFaceResources.getDefaultFont();
-		FontData[] data = defaultFont.getFontData();
-		for (int i = 0; i < data.length; i++) {
-			data[i].setStyle(SWT.BOLD);
-		}
-		boldFont = new Font(top.getDisplay(), data);
+		Font boldFont = JFaceResources.getFontRegistry().getBold(JFaceResources.DEFAULT_FONT);    
+		
 		Label l = new Label(banner, SWT.WRAP);
 		l.setText("Subject:");
 		l.setFont(boldFont);
@@ -46,10 +46,15 @@ public class View extends ViewPart {
 		l = new Label(banner, SWT.WRAP);
 		l.setText("From:");
 		l.setFont(boldFont);
-		final Label link = new Label(banner, SWT.WRAP);
-		link.setText("nicole@mail.org");
-		link.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));
-		
+    
+		final Link link = new Link(banner, SWT.NONE);
+		link.setText("<a>nicole@mail.org</a>");
+		link.addSelectionListener(new SelectionAdapter() {    
+			public void widgetSelected(SelectionEvent e) {
+				MessageDialog.openInformation(getSite().getShell(), "Not Implemented", "Imagine the address book or a new message being created now.");
+			}    
+		});
+    
 		l = new Label(banner, SWT.WRAP);
 		l.setText("Date:");
 		l.setFont(boldFont);
