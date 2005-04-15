@@ -62,7 +62,7 @@ public class CreateHelpIndexAction implements IObjectActionDelegate {
 		File target = getTarget();
 		if (target==null)
 			return;
-			indexBuilder.setTarget(target);
+			indexBuilder.setDestination(target);
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor)
 					throws InvocationTargetException {
