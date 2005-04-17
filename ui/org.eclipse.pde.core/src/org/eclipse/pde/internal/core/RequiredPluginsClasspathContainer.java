@@ -12,10 +12,10 @@ package org.eclipse.pde.internal.core;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -44,7 +44,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	
 	private IPluginModelBase fModel;
 	
-	private HashMap fVisiblePackages = new HashMap();
+	private TreeMap fVisiblePackages = new TreeMap();
 	
 	private static boolean DEBUG = false;
 	
