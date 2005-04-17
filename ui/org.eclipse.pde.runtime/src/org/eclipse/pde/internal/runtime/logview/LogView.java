@@ -154,7 +154,7 @@ public class LogView extends ViewPart implements ILogListener {
         
         createPropertiesAction();
         
-        MenuManager popupMenuManager = new MenuManager();
+        MenuManager popupMenuManager = new MenuManager("#PopupMenu");
         IMenuListener listener = new IMenuListener() {
             public void menuAboutToShow(IMenuManager manager) {
                 manager.add(fCopyAction);
@@ -169,10 +169,12 @@ public class LogView extends ViewPart implements ILogListener {
                 manager.add(new Separator());
                 ((EventDetailsDialogAction) fPropertiesAction).setComparator(comparator);
                 manager.add(fPropertiesAction);
+		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
             }
         };
         popupMenuManager.addMenuListener(listener);
         popupMenuManager.setRemoveAllWhenShown(true);
+	getSite().registerContextMenu(popupMenuManager, getSite().getSelectionProvider());
         Menu menu = popupMenuManager.createContextMenu(fTree);
         fTree.setMenu(menu);
     }
