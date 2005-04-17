@@ -35,7 +35,7 @@ public class PDEClasspathContainer {
 	private static final IAccessRule EXCLUDE_ALL_RULE = 
 		JavaCore.newAccessRule(new Path("**/*"), IAccessRule.K_NON_ACCESSIBLE);
 
-	protected void addProjectEntry(IProject project, boolean isExported, IPath[] inclusions) throws CoreException {
+	protected void addProjectEntry(IProject project, boolean isExported, IPath[] inclusions, boolean viaImportPackage) throws CoreException {
 		if (project.hasNature(JavaCore.NATURE_ID)) {
 			IClasspathEntry entry = null;
 			if (inclusions != null) {
@@ -43,7 +43,7 @@ public class PDEClasspathContainer {
 				entry = JavaCore.newProjectEntry(
 							project.getFullPath(), 
 							accessRules, 
-							false, 
+							viaImportPackage, 
 							new IClasspathAttribute[0], 
 							isExported);
 			} else {

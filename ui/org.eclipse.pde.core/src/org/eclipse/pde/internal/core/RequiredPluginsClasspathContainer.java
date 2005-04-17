@@ -138,10 +138,9 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			Iterator iter = fVisiblePackages.keySet().iterator();
 			while (iter.hasNext()) {
 				String symbolicName = iter.next().toString();
-				if (added.add(symbolicName)) {
-					IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(symbolicName);
-					addPlugin(model, false, true);
-				}
+				IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(symbolicName);
+				if (model != null && model.isEnabled())
+					addDependencyViaImportPackage(model.getBundleDescription(), false, added);
 			}
 
 			addExtraClasspathEntries();
@@ -183,12 +182,27 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			}
 		}		
 	}
+	
+	private void addDependencyViaImportPackage(BundleDescription desc, boolean isExported, HashSet added) throws CoreException {
+		if (desc == null || !added.add(desc.getSymbolicName()))
+			return;
+
+		addPlugin(desc, isExported, true, true);
+
+		if (hasExtensibleAPI(desc) && desc.getContainingState() != null) {
+			BundleDescription[] fragments = desc.getFragments();
+			for (int i = 0; i < fragments.length; i++) {
+				if (fragments[i].isResolved())
+					addDependencyViaImportPackage(fragments[i], isExported, added);
+			}
+		}
+	}
 
 	private void addDependency(BundleDescription desc, boolean isExported, HashSet added) throws CoreException {
 		if (desc == null || !added.add(desc.getSymbolicName()))
 			return;
 
-		boolean inWorkspace = addPlugin(desc, isExported, true);
+		boolean inWorkspace = addPlugin(desc, isExported, true, false);
 
 		if (hasExtensibleAPI(desc) && desc.getContainingState() != null) {
 			BundleDescription[] fragments = desc.getFragments();
@@ -231,20 +245,15 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		}	
 	}
 
-
-	private boolean addPlugin(BundleDescription desc, boolean isExported, boolean useInclusions)
+	private boolean addPlugin(BundleDescription desc, boolean isExported, boolean useInclusions, boolean viaImportPackage)
 			throws CoreException {		
-		return addPlugin(PDECore.getDefault().getModelManager().findModel(desc), isExported, useInclusions);
-	}
-	
-	private boolean addPlugin(IPluginModelBase model, boolean isExported,
-			boolean useInclusions) throws CoreException {
+		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(desc);
 		if (model == null || !model.isEnabled())
 			return false;
 		IResource resource = model.getUnderlyingResource();
 		IPath[] inclusions = useInclusions ? getInclusions(model) : null;
 		if (resource != null) {
-			addProjectEntry(resource.getProject(), isExported, inclusions);
+			addProjectEntry(resource.getProject(), isExported, inclusions, viaImportPackage);
 		} else {
 			addExternalPlugin(model, isExported, inclusions);
 		}
@@ -319,7 +328,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		if (desc instanceof BundleDescription && added.add(desc.getName())) {
 			BundleDescription host = (BundleDescription)desc;
 			// add host plug-in
-			boolean inWorkspace = addPlugin(host, false, false);
+			boolean inWorkspace = addPlugin(host, false, false, false);
 			
 			BundleSpecification[] required = host.getRequiredBundles();
 			for (int i = 0; i < required.length; i++) {
