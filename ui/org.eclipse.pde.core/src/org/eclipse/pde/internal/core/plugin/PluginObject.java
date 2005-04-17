@@ -23,12 +23,12 @@ import org.w3c.dom.*;
 public abstract class PluginObject
 	extends PlatformObject
 	implements IPluginObject, ISourceObject, Serializable {
-	protected String name;
-	private String translatedName;
-	private transient IPluginObject parent;
-	private transient ISharedPluginModel model;
-	protected int[] range;
-	private boolean inTheModel;
+	protected String fName;
+	private String fTranslatedName;
+	private transient IPluginObject fParent;
+	private transient ISharedPluginModel fModel;
+	protected int fStartLine = 1;
+	private boolean fInTheModel;
 
 	public PluginObject() {
 	}
@@ -36,17 +36,17 @@ public abstract class PluginObject
 		return true;
 	}
 	protected void ensureModelEditable() throws CoreException {
-		if (!model.isEditable()) {
+		if (!fModel.isEditable()) {
 			throwCoreException(PDECoreMessages.PluginObject_readOnlyChange); //$NON-NLS-1$
 		}
 	}
 
 	public void setInTheModel(boolean value) {
-		inTheModel = value;
+		fInTheModel = value;
 	}
 
 	public boolean isInTheModel() {
-		return inTheModel;
+		return fInTheModel;
 	}
 
 	protected void firePropertyChanged(
@@ -60,8 +60,8 @@ public abstract class PluginObject
 		String property,
 		Object oldValue,
 		Object newValue) {
-		if (model.isEditable() && model instanceof IModelChangeProvider) {
-			IModelChangeProvider provider = (IModelChangeProvider) model;
+		if (fModel.isEditable() && fModel instanceof IModelChangeProvider) {
+			IModelChangeProvider provider = (IModelChangeProvider) fModel;
 			provider.fireModelObjectChanged(
 				object,
 				property,
@@ -85,27 +85,27 @@ public abstract class PluginObject
 		}
 	}
 	public ISharedPluginModel getModel() {
-		return model;
+		return fModel;
 	}
 	
 	public IPluginModelBase getPluginModel() {
-		if (model instanceof IBundlePluginModelProvider)
-			return ((IBundlePluginModelProvider)model).getBundlePluginModel();
+		if (fModel instanceof IBundlePluginModelProvider)
+			return ((IBundlePluginModelProvider)fModel).getBundlePluginModel();
 		
-		return model instanceof IPluginModelBase? (IPluginModelBase)model : null;
+		return fModel instanceof IPluginModelBase? (IPluginModelBase)fModel : null;
 	}
 	
 	public String getName() {
-		return name;
+		return fName;
 	}
 
 	public String getTranslatedName() {
-		if (translatedName != null && !model.isEditable())
-			return translatedName;
-		if (translatedName == null && name != null && model != null) {
-			translatedName = model.getResourceString(name);
+		if (fTranslatedName != null && !fModel.isEditable())
+			return fTranslatedName;
+		if (fTranslatedName == null && fName != null && fModel != null) {
+			fTranslatedName = fModel.getResourceString(fName);
 		}
-		return translatedName;
+		return fTranslatedName;
 	}
 
 	String getNodeAttribute(Node node, String name) {
@@ -115,14 +115,14 @@ public abstract class PluginObject
 		return null;
 	}
 	public IPluginObject getParent() {
-		return parent;
+		return fParent;
 	}
 	public IPluginBase getPluginBase() {
 		IPluginModelBase pluginModel = getPluginModel();
 		return pluginModel != null ? pluginModel.getPluginBase() : null;
 	}
 	public String getResourceString(String key) {
-		return model.getResourceString(key);
+		return fModel.getResourceString(key);
 	}
 	static boolean isNotEmpty(String text) {
 		for (int i = 0; i < text.length(); i++) {
@@ -140,17 +140,17 @@ public abstract class PluginObject
 	}
 
 	public void setModel(ISharedPluginModel model) {
-		this.model = model;
-		translatedName = null;
+		this.fModel = model;
+		fTranslatedName = null;
 	}
 	public void setName(String name) throws CoreException {
 		ensureModelEditable();
-		String oldValue = this.name;
-		this.name = name;
+		String oldValue = this.fName;
+		this.fName = name;
 		firePropertyChanged(P_NAME, oldValue, name);
 	}
 	public void setParent(IPluginObject parent) {
-		this.parent = parent;
+		this.fParent = parent;
 	}
 	protected void throwCoreException(String message) throws CoreException {
 		Status status =
@@ -165,8 +165,8 @@ public abstract class PluginObject
 		throw ce;
 	}
 	public String toString() {
-		if (name != null)
-			return name;
+		if (fName != null)
+			return fName;
 		return super.toString();
 	}
 
@@ -204,23 +204,11 @@ public abstract class PluginObject
 		return CoreUtility.getWritableString(source);
 	}
 
-	protected void bindSourceLocation(Node node, Map lineTable) {
-		Integer[] lines = (Integer[]) lineTable.get(node);
-		if (lines != null) {
-			range = new int[2];
-			range[0] = lines[0].intValue();
-			range[1] = lines[1].intValue();
-		}
-	}
-
 	public int getStartLine() {
-		if (range == null)
-			return -1;
-		return range[0];
+		return fStartLine;
 	}
+	
 	public int getStopLine() {
-		if (range == null)
-			return -1;
-		return range[1];
+		return fStartLine;
 	}
 }

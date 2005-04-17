@@ -127,7 +127,7 @@ public class WorkspaceExtensionsModel
 	}
 	public void save(PrintWriter writer) {
 		if (isLoaded()) {
-			extensions.write("", writer); //$NON-NLS-1$
+			fExtensions.write("", writer); //$NON-NLS-1$
 		}
 		fDirty = false;
 	}

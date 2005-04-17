@@ -117,7 +117,7 @@ public class ManifestEditor extends MultiSourceEditor {
 			return;
 		IProject project = inputContextManager.getCommonProject();
 		IFile file = project.getFile("plugin.xml"); //$NON-NLS-1$
-		WorkspacePluginModel model = new WorkspacePluginModel(file);
+		WorkspacePluginModel model = new WorkspacePluginModel(file, false);
 		IPluginBase pluginBase = model.getPluginBase(true);
 		try {
 			pluginBase.setSchemaVersion("3.0"); //$NON-NLS-1$

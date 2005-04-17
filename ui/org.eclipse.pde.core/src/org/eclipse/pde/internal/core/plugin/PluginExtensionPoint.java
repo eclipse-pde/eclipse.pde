@@ -11,22 +11,20 @@
 package org.eclipse.pde.internal.core.plugin;
 
 import java.io.*;
-import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.*;
 import org.w3c.dom.*;
 
-public class PluginExtensionPoint
-	extends IdentifiablePluginObject
+public class PluginExtensionPoint extends IdentifiablePluginObject
 	implements IPluginExtensionPoint {
 
 	private static final long serialVersionUID = 1L;
-	protected String schema;
-	static final String ID_SEPARATOR = "."; //$NON-NLS-1$
-
+	
+	protected String fSchema;
+	
 	public boolean isValid() {
-		return id != null && name != null;
+		return id != null && fName != null;
 	}
 
 	public String getFullId() {
@@ -34,28 +32,20 @@ public class PluginExtensionPoint
 		String id = pluginBase.getId();
 		if (pluginBase instanceof IFragment)
 			id = ((IFragment) pluginBase).getPluginId();
-		return id + ID_SEPARATOR + getId();
+		return id + "." + getId();
 	}
 	
 	public String getSchema() {
-		return schema;
-	}
-	
-	void load(Node node, Hashtable lineTable) {
-		this.id = getNodeAttribute(node, "id"); //$NON-NLS-1$
-		this.name = getNodeAttribute(node, "name"); //$NON-NLS-1$
-		this.schema = getNodeAttribute(node, "schema"); //$NON-NLS-1$
-		bindSourceLocation(node, lineTable);
+		return fSchema;
 	}
 	
 	void load(Node node) {
 		this.id = getNodeAttribute(node, "id"); //$NON-NLS-1$
-		this.name = getNodeAttribute(node, "name"); //$NON-NLS-1$
-		this.schema = getNodeAttribute(node, "schema"); //$NON-NLS-1$
-		int line = Integer.parseInt(getNodeAttribute(node, "line")); //$NON-NLS-1$
-		this.range = new int[] {line, line};
+		fName = getNodeAttribute(node, "name"); //$NON-NLS-1$
+		fSchema = getNodeAttribute(node, "schema"); //$NON-NLS-1$
+		fStartLine = Integer.parseInt(getNodeAttribute(node, "line"));
 	}
-
+	
 	public boolean equals(Object obj) {
 		if (obj == this)
 			return true;
@@ -75,9 +65,9 @@ public class PluginExtensionPoint
 
 	public void setSchema(String newSchema) throws CoreException {
 		ensureModelEditable();
-		String oldValue = this.schema;
-		schema = newSchema;
-		firePropertyChanged(P_SCHEMA, oldValue, schema);
+		String oldValue = fSchema;
+		fSchema = newSchema;
+		firePropertyChanged(P_SCHEMA, oldValue, fSchema);
 	}
 
 	public void restoreProperty(String name, Object oldValue, Object newValue)

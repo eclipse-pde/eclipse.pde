@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.core.plugin;
 
 import java.io.*;
-import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.*;
@@ -23,23 +22,23 @@ import org.w3c.dom.*;
 public class PluginExtension extends PluginParent implements IPluginExtension {
 
 	private static final long serialVersionUID = 1L;
-	protected String point;
+	protected String fPoint;
 	private transient ISchema schema;
 
 	public PluginExtension() {
 	}
 	public String getPoint() {
-		return point;
+		return fPoint;
 	}
 	
 	public boolean isValid() {
-		return point != null;
+		return fPoint != null;
 	}
 	
 	public Object getSchema() {
 		if (schema == null) {
 			SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
-			schema = registry.getSchema(point);
+			schema = registry.getSchema(fPoint);
 		} else if (schema.isDisposed()) {
 			schema = null;
 		}
@@ -48,8 +47,8 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 	
 	void load(Node node) {
 		this.id = getNodeAttribute(node, "id"); //$NON-NLS-1$
-		this.name = getNodeAttribute(node, "name"); //$NON-NLS-1$
-		this.point = getNodeAttribute(node, "point"); //$NON-NLS-1$
+		fName = getNodeAttribute(node, "name"); //$NON-NLS-1$
+		fPoint = getNodeAttribute(node, "point"); //$NON-NLS-1$
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
@@ -58,31 +57,11 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 				childElement.setModel(getModel());
 				childElement.setInTheModel(true);
 				childElement.setParent(this);
-				this.children.add(childElement);
-				childElement.load((Element)child);
+				this.fChildren.add(childElement);
+				childElement.load(child);
 			}
 		}
-		int line = Integer.parseInt(getNodeAttribute(node, "line")); //$NON-NLS-1$
-		this.range = new int[] {line, line};		
-	}
-	
-	void load(Node node, Hashtable lineTable) {
-		this.id = getNodeAttribute(node, "id"); //$NON-NLS-1$
-		this.name = getNodeAttribute(node, "name"); //$NON-NLS-1$
-		this.point = getNodeAttribute(node, "point"); //$NON-NLS-1$
-		NodeList children = node.getChildNodes();
-		for (int i = 0; i < children.getLength(); i++) {
-			Node child = children.item(i);
-			if (child.getNodeType() == Node.ELEMENT_NODE) {
-				PluginElement childElement = new PluginElement();
-				childElement.setModel(getModel());
-				childElement.setInTheModel(true);
-				childElement.setParent(this);
-				this.children.add(childElement);
-				childElement.load(child, lineTable);
-			}
-		}
-		bindSourceLocation(node, lineTable);
+		fStartLine = Integer.parseInt(getNodeAttribute(node, "line"));
 	}
 
 	public boolean equals(Object obj) {
@@ -110,8 +89,8 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 
 	public void setPoint(String point) throws CoreException {
 		ensureModelEditable();
-		String oldValue = this.point;
-		this.point = point;
+		String oldValue = fPoint;
+		fPoint = point;
 		firePropertyChanged(P_POINT, oldValue, point);
 	}
 

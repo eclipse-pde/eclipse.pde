@@ -81,8 +81,8 @@ public class ProductDefinitionOperation implements IRunnableWithProgress {
 	
 	private IPluginModelBase getModel(IFile file) {
 		if ("plugin.xml".equals(file.getName())) //$NON-NLS-1$
-			return new WorkspacePluginModel(file);
-		return new WorkspaceFragmentModel(file);
+			return new WorkspacePluginModel(file, false);
+		return new WorkspaceFragmentModel(file, false);
 	}
 
 	private PluginModelBase getEditingModel(boolean isFragment) {

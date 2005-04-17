@@ -10,15 +10,18 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginModel;
 
 public class WorkspacePluginModel extends WorkspacePluginModelBase implements
 		IPluginModel {
 
 	private static final long serialVersionUID = 1L;
 
-	public WorkspacePluginModel(org.eclipse.core.resources.IFile file) {
-		super(file);
+	public WorkspacePluginModel(IFile file, boolean abbreviated) {
+		super(file, abbreviated);
 	}
 
 	public IPluginBase createPluginBase() {

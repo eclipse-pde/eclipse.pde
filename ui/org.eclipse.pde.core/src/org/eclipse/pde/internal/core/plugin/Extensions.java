@@ -10,11 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
-import java.io.*;
-import java.util.*;
+import java.io.PrintWriter;
 
-import org.eclipse.pde.core.plugin.*;
-import org.w3c.dom.*;
+import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class Extensions
 	extends AbstractExtensions {
@@ -26,22 +27,18 @@ public class Extensions
 	}
 
 	void load(Extensions srcPluginBase) {
-		range= srcPluginBase.range;
 		super.load(srcPluginBase);
 		valid = hasRequiredAttributes();
 	}
-	public void load(IPluginBase srcPluginBase) {
-		this.load(srcPluginBase);
-	}
 
-	void load(Node node, Hashtable lineTable) {
-		bindSourceLocation(node, lineTable);
-
+	void load(Node node) {
+		if (node == null)
+			return;
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
-				processChild(child, lineTable);
+				processChild(child);
 			}
 		}
 		valid = hasRequiredAttributes();

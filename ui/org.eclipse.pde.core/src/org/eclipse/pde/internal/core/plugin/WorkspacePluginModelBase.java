@@ -10,14 +10,25 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
-import java.io.*;
-import java.net.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.build.*;
-import org.eclipse.pde.internal.core.*;
+import javax.xml.parsers.SAXParser;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.pde.core.IEditableModel;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.pde.internal.core.NLResourceHelper;
+import org.eclipse.pde.internal.core.PDECore;
 
 public abstract class WorkspacePluginModelBase extends AbstractPluginModelBase
 		implements IEditableModel {
@@ -29,6 +40,8 @@ public abstract class WorkspacePluginModelBase extends AbstractPluginModelBase
 	private boolean fEditable = true;
 
 	private IBuildModel fBuildModel;
+
+	private boolean fAbbreviated;
 
 	protected NLResourceHelper createNLResourceHelper() {
 		return new NLResourceHelper("plugin" ,getNLLookupLocations()); //$NON-NLS-1$
@@ -42,8 +55,9 @@ public abstract class WorkspacePluginModelBase extends AbstractPluginModelBase
 		}
 	}
 
-	public WorkspacePluginModelBase(IFile file) {
+	public WorkspacePluginModelBase(IFile file, boolean abbreviated) {
 		fUnderlyingResource = file;
+		fAbbreviated = abbreviated;
 		setEnabled(true);
 	}
 
@@ -54,6 +68,27 @@ public abstract class WorkspacePluginModelBase extends AbstractPluginModelBase
 
 	public IBuildModel getBuildModel() {
 		return fBuildModel;
+	}
+	
+	public void load(InputStream stream, boolean outOfSync)
+			throws CoreException {
+
+		if (fPluginBase == null) {
+			fPluginBase = (PluginBase) createPluginBase();
+			fPluginBase.setModel(this);
+		}
+		fPluginBase.reset();
+		setLoaded(false);
+		try {
+			SAXParser parser = getSaxParser();
+			PluginHandler handler = new PluginHandler(fAbbreviated);
+			parser.parse(stream, handler);
+			fPluginBase.load(handler.getDocumentElement(), handler.getSchemaVersion());
+			setLoaded(true);
+			if (!outOfSync)
+				updateTimeStamp();
+		} catch (Exception e) {
+		}
 	}
 
 	public String getContents() {
@@ -110,8 +145,8 @@ public abstract class WorkspacePluginModelBase extends AbstractPluginModelBase
 				PDECore.logException(e);
 			}
 		} else {
-			pluginBase = (PluginBase) createPluginBase();
-			pluginBase.setModel(this);
+			fPluginBase = (PluginBase) createPluginBase();
+			fPluginBase.setModel(this);
 			setLoaded(true);
 		}
 	}
@@ -141,7 +176,7 @@ public abstract class WorkspacePluginModelBase extends AbstractPluginModelBase
 
 	public void save(PrintWriter writer) {
 		if (isLoaded()) {
-			pluginBase.write("", writer); //$NON-NLS-1$
+			fPluginBase.write("", writer); //$NON-NLS-1$
 		}
 		fDirty = false;
 	}

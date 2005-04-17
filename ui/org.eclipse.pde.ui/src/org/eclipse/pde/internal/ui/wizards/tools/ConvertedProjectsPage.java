@@ -131,7 +131,7 @@ public class ConvertedProjectsPage extends WizardPage  {
 	}
 	private static void createManifestFile(IFile file, IProgressMonitor monitor)
 		throws CoreException {
-		WorkspacePluginModel model = new WorkspacePluginModel(file);
+		WorkspacePluginModel model = new WorkspacePluginModel(file, false);
 		model.load();
 		IPlugin plugin = model.getPlugin();
 		if (PDECore.getDefault().getModelManager().isOSGiRuntime())
@@ -176,13 +176,12 @@ public class ConvertedProjectsPage extends WizardPage  {
 		IFile file = project.getWorkspace().getRoot().getFile(manifestPath);
 		if (!file.exists())
 			return;
-		WorkspacePluginModel model = new WorkspacePluginModel(file);
+		WorkspacePluginModel model = new WorkspacePluginModel(file, true);
 		model.load();
 		if (!model.isLoaded())
 			return;
 			
-		ClasspathComputer.setClasspath(model, monitor); // error occurs here on initial
-	
+		ClasspathComputer.setClasspath(model, monitor); // error occurs here on initial	
 	}
 
 	public static void convertProject(

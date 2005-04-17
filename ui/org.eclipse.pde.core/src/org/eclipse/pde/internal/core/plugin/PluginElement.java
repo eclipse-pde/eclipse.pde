@@ -37,7 +37,7 @@ public class PluginElement extends PluginParent implements IPluginElement {
 	PluginElement(PluginElement element) {
 		setModel(element.getModel());
 		setParent(element.getParent());
-		this.name = element.getName();
+		fName = element.getName();
 		IPluginAttribute[] atts = element.getAttributes();
 		for (int i = 0; i < atts.length; i++) {
 			PluginAttribute att = (PluginAttribute) atts[i];
@@ -115,14 +115,14 @@ public class PluginElement extends PluginParent implements IPluginElement {
 	}
 
 	void load(Element element) {
-		this.name = element.getTagName();
+		fName = element.getTagName();
 		NamedNodeMap attributes = element.getAttributes();
 		for (int i = 0; i < attributes.getLength(); i++) {
 			PluginAttribute att = (PluginAttribute) getModel().getFactory()
 					.createAttribute(this);
 			Attr attr = (Attr)attributes.item(i);
-			att.name = attr.getName();
-			att.value = attr.getValue();
+			att.fName = attr.getName();
+			att.fValue = attr.getValue();
 			fAttributes.put(att.getName(), att);
 		}
 		NodeList children = element.getChildNodes();
@@ -133,7 +133,7 @@ public class PluginElement extends PluginParent implements IPluginElement {
 				childElement.setModel(getModel());
 				childElement.setInTheModel(true);
 				childElement.setParent(this);
-				this.children.add(childElement);
+				this.fChildren.add(childElement);
 				childElement.load((Element)child);
 			}
 		}
@@ -154,15 +154,14 @@ public class PluginElement extends PluginParent implements IPluginElement {
 		}
 	}
 
-	void load(Node node, Hashtable lineTable) {
-		this.name = node.getNodeName();
+	void load(Node node) {
+		fName = node.getNodeName();
 		NamedNodeMap attributes = node.getAttributes();
-		bindSourceLocation(node, lineTable);
 		for (int i = 0; i < attributes.getLength(); i++) {
 			Node attribute = attributes.item(i);
 			IPluginAttribute att = getModel().getFactory()
 					.createAttribute(this);
-			((PluginAttribute) att).load(attribute, lineTable);
+			((PluginAttribute) att).load(attribute);
 			((PluginAttribute) att).setInTheModel(true);
 			this.fAttributes.put(attribute.getNodeName(), att);
 		}
@@ -173,9 +172,9 @@ public class PluginElement extends PluginParent implements IPluginElement {
 				PluginElement childElement = new PluginElement();
 				childElement.setModel(getModel());
 				childElement.setInTheModel(true);
-				this.children.add(childElement);
+				this.fChildren.add(childElement);
 				childElement.setParent(this);
-				childElement.load(child, lineTable);
+				childElement.load(child);
 			} else if (child.getNodeType() == Node.TEXT_NODE
 					&& child.getNodeValue() != null) {
 				String text = child.getNodeValue();

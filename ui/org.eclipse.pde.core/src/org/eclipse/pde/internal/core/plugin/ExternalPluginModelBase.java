@@ -10,25 +10,32 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
-import java.io.*;
-import java.net.*;
+import java.io.File;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.osgi.service.resolver.*;
-import org.eclipse.pde.core.build.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.build.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.internal.core.NLResourceHelper;
+import org.eclipse.pde.internal.core.PDEState;
 
 public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
-	private String installLocation;
-	private transient IBuildModel buildModel;
+
+	private String fInstallLocation;
+	
+	private String fLocalization = null;
 
 	public ExternalPluginModelBase() {
 		super();
 	}
+	
 	protected NLResourceHelper createNLResourceHelper() {
-		return new NLResourceHelper("plugin", getNLLookupLocations()); //$NON-NLS-1$
+		return new NLResourceHelper(fLocalization == null ? "plugin" : fLocalization, getNLLookupLocations()); //$NON-NLS-1$
 	}
 	
 	public URL getNLLookupLocation() {
@@ -40,21 +47,21 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 	}
 
 	public IBuildModel getBuildModel() {
-		if (buildModel == null) {
-			buildModel = new ExternalBuildModel(getInstallLocation());
-			((ExternalBuildModel) buildModel).load();
-		}
-		return buildModel;
+		return null;
 	}
 	
 	public String getInstallLocation() {
-		return installLocation;
+		return fInstallLocation;
 	}
+	
 	public boolean isEditable() {
 		return false;
 	}
 	
 	public void load() {
+	}
+	
+	public void load(InputStream source, boolean outOfSync) throws CoreException {
 	}
 	
 	public void load(BundleDescription description, PDEState state, boolean ignoreExtensions) {
@@ -73,7 +80,7 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 		setLoaded(true);
 		
 	}
-
+	
 	public boolean isInSync() {
 		return isInSync(getLocalFile());
 	}
@@ -96,9 +103,9 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 	}
 
 	public void setInstallLocation(String newInstallLocation) {
-		installLocation = newInstallLocation;
+		fInstallLocation = newInstallLocation;
 		File file = new File(newInstallLocation);
 		if (file.isDirectory())
-			installLocation += File.separator;
+			fInstallLocation += File.separator;
 	}
 }

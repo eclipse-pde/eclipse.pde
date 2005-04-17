@@ -153,6 +153,7 @@ public class PDEState {
 				Document doc = factory.newDocumentBuilder().parse(file);
 				Element root = doc.getDocumentElement();
 				if (root != null) {
+					root.normalize();
 					NodeList bundles = root.getElementsByTagName("bundle"); //$NON-NLS-1$
 					for (int i = 0; i < bundles.getLength(); i++) {
 						Element bundle = (Element)bundles.item(i); 

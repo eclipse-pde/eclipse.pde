@@ -10,19 +10,19 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
-import java.io.*;
-import java.util.*;
+import java.io.PrintWriter;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.ischema.*;
-import org.w3c.dom.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.plugin.IPluginAttribute;
+import org.eclipse.pde.internal.core.ischema.ISchema;
+import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
+import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+import org.w3c.dom.Node;
 
 public class PluginAttribute extends PluginObject implements IPluginAttribute {
 	private static final long serialVersionUID = 1L;
 
-	protected String value;
+	protected String fValue;
 
 	private transient ISchemaAttribute attributeInfo;
 
@@ -32,8 +32,8 @@ public class PluginAttribute extends PluginObject implements IPluginAttribute {
 	PluginAttribute(IPluginAttribute attribute) {
 		setModel(attribute.getModel());
 		setParent(attribute.getParent());
-		this.name = attribute.getName();
-		this.value = attribute.getValue();
+		fName = attribute.getName();
+		fValue = attribute.getValue();
 		this.attributeInfo = ((PluginAttribute) attribute).getAttributeInfo();
 	}
 
@@ -76,20 +76,12 @@ public class PluginAttribute extends PluginObject implements IPluginAttribute {
 	}
 
 	public String getValue() {
-		return value;
+		return fValue;
 	}
 
-	void load(Node node, Hashtable lineTable) {
-		this.name = node.getNodeName();
-		this.value = node.getNodeValue();
-		if (getParent() instanceof ISourceObject) {
-			ISourceObject pobj = (ISourceObject) getParent();
-			int start = pobj.getStartLine();
-			int stop = pobj.getStopLine();
-			if (start != -1 && stop != -1) {
-				range = new int[] { start, stop };
-			}
-		}
+	void load(Node node) {
+		fName = node.getNodeName();
+		fValue = node.getNodeValue();
 	}
 
 	public void setAttributeInfo(ISchemaAttribute newAttributeInfo) {
@@ -98,17 +90,17 @@ public class PluginAttribute extends PluginObject implements IPluginAttribute {
 
 	public void setValue(String newValue) throws CoreException {
 		ensureModelEditable();
-		String oldValue = this.value;
-		this.value = newValue;
+		String oldValue = fValue;
+		fValue = newValue;
 		AttributeChangedEvent e = new AttributeChangedEvent(getModel(),
 				getParent(), this, oldValue, newValue);
 		fireModelChanged(e);
 	}
 
 	public void write(String indent, PrintWriter writer) {
-		if (value == null)
+		if (fValue == null)
 			return;
 		writer.print(indent);
-		writer.print(getName() + "=\"" + getWritableString(value) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.print(getName() + "=\"" + getWritableString(fValue) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

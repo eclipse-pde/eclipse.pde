@@ -10,22 +10,28 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.InputStream;
+import java.net.URL;
 
-import javax.xml.parsers.*;
+import javax.xml.parsers.SAXParser;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
-import org.w3c.dom.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.ModelChangedEvent;
+import org.eclipse.pde.core.plugin.IExtensions;
+import org.eclipse.pde.core.plugin.IExtensionsModel;
+import org.eclipse.pde.core.plugin.IExtensionsModelFactory;
+import org.eclipse.pde.core.plugin.IPluginAttribute;
+import org.eclipse.pde.core.plugin.IPluginElement;
+import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.pde.internal.core.AbstractModel;
 
 public abstract class AbstractExtensionsModel
 	extends AbstractModel
 	implements IExtensionsModel, IExtensionsModelFactory {
-	protected Extensions extensions;
+	protected Extensions fExtensions;
 
 	public IExtensionsModelFactory getFactory() {
 		return this;
@@ -41,11 +47,11 @@ public abstract class AbstractExtensionsModel
 		return getExtensions(true);
 	}
 	public IExtensions getExtensions(boolean createIfMissing) {
-		if (extensions == null && createIfMissing) {
-			extensions = createExtensions();
+		if (fExtensions == null && createIfMissing) {
+			fExtensions = createExtensions();
 			setLoaded(true);
 		}
-		return extensions;
+		return fExtensions;
 	}
 
 	public abstract URL getNLLookupLocation();
@@ -58,26 +64,23 @@ public abstract class AbstractExtensionsModel
 	public synchronized void load(InputStream stream, boolean outOfSync)
 		throws CoreException {
 
-		if (extensions == null) {
-			extensions = (Extensions) createExtensions();
-			extensions.setModel(this);
+		if (fExtensions == null) {
+			fExtensions = (Extensions) createExtensions();
+			fExtensions.setModel(this);
 		}
-		extensions.reset();
+		fExtensions.reset();
 		setLoaded(false);
 		try {
 			SAXParser parser = getSaxParser();
-			XMLHandler handler = new XMLHandler();
+			PluginHandler handler = new PluginHandler(true);
 			parser.parse(stream, handler);
-			processDocument(handler.getDocument(), handler.getLineTable());
+			fExtensions.load(handler.getDocumentElement());
 			setLoaded(true);
 			if (!outOfSync)
 				updateTimeStamp();
 		} catch (Exception e) {
+			System.out.println(e);
 		}
-	}
-	private void processDocument(Document doc, Hashtable lineTable) {
-		Node extensionsNode = doc.getDocumentElement();
-		extensions.load(extensionsNode, lineTable);
 	}
 
 	public void reload(InputStream stream, boolean outOfSync)
@@ -86,7 +89,7 @@ public abstract class AbstractExtensionsModel
 		fireModelChanged(
 			new ModelChangedEvent(this,
 				IModelChangedEvent.WORLD_CHANGED,
-				new Object[] { extensions },
+				new Object[] { fExtensions },
 				null));
 	}
 	protected abstract void updateTimeStamp();
@@ -118,7 +121,7 @@ public abstract class AbstractExtensionsModel
 	
 	public boolean isValid() {
 		if (!isLoaded()) return false;
-		if (extensions==null) return false;
-		return extensions.isValid();	
+		if (fExtensions==null) return false;
+		return fExtensions.isValid();	
 	}
 }

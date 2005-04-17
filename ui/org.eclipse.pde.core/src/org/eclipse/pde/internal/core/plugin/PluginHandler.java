@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,49 +8,75 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.core;
+package org.eclipse.pde.internal.core.plugin;
 
-import java.util.*;
+import java.util.Stack;
 
-import javax.xml.parsers.*;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
-import org.w3c.dom.*;
-import org.xml.sax.*;
-import org.xml.sax.helpers.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.Text;
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
-public class XMLHandler extends DefaultHandler {
+public class PluginHandler extends DefaultHandler {
+	private Document fDocument;
+	private Element fRootElement;	
+	private Stack fOpenElements = new Stack();
 	
-	private org.w3c.dom.Document fDocument;
+	private String fSchemaVersion;
+	private boolean fAbbreviated;
 	private Locator fLocator;
-	private Hashtable fLineTable;
-	private Element fRootElement;
+	private boolean fPop;
 	
-	private Stack fElementStack = new Stack();
-	
-	public XMLHandler() {
-		fLineTable = new Hashtable();
+	public PluginHandler(boolean abbreviated) {
+		fAbbreviated = abbreviated;
 	}
 	
 	public void startElement(String uri, String localName, String qName, Attributes attributes)
 		throws SAXException {
+		
+		fPop = true;
+		
+		if (fAbbreviated && fOpenElements.size() == 2) {
+			Element parent = (Element)fOpenElements.peek();
+			if (parent.getNodeName().equals("extension") && !isInterestingExtension((Element)fOpenElements.peek())) {
+				fPop = false;
+				return;
+			}
+		}
+		
 		Element element = fDocument.createElement(qName);
 		for (int i = 0; i < attributes.getLength(); i++) {
 			element.setAttribute(attributes.getQName(i), attributes.getValue(i));
+			if ("extension".equals(qName) || "extension-point".equals(qName)) {
+				element.setAttribute("line", Integer.toString(fLocator.getLineNumber())); //$NON-NLS-1$
+			}
 		}
 		
-		Integer lineNumber = new Integer(fLocator.getLineNumber());
-		Integer[] range = new Integer[] {lineNumber, new Integer(-1)};
-		fLineTable.put(element, range);
 		if (fRootElement == null)
 			fRootElement = element;
 		else 
-			((Element)fElementStack.peek()).appendChild(element);
-		fElementStack.push(element);
+			((Element)fOpenElements.peek()).appendChild(element);
+		
+		fOpenElements.push(element);
 	}
 	
+	private boolean isInterestingExtension(Element element) {
+		String point = element.getAttribute("point");
+		return "org.eclipse.pde.core.source".equals(point) 
+				|| "org.eclipse.core.runtime.products".equals(point);
+	}
+		
 	public void endElement(String uri, String localName, String qName) throws SAXException {
-		Integer[] range = (Integer[])fLineTable.get(fElementStack.pop());
-		range[1] = new Integer(fLocator.getLineNumber());
+		if (fPop || (qName.equals("extension") && fOpenElements.size() == 2)) {
+			fOpenElements.pop();
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -82,13 +108,18 @@ public class XMLHandler extends DefaultHandler {
 	 * @see org.xml.sax.helpers.DefaultHandler#processingInstruction(java.lang.String, java.lang.String)
 	 */
 	public void processingInstruction(String target, String data) throws SAXException {
-		fDocument.appendChild(fDocument.createProcessingInstruction(target, data));
+		if ("eclipse".equals(target)) { //$NON-NLS-1$
+			fSchemaVersion = "3.0"; //$NON-NLS-1$
+		}
 	}
 		
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
 	 */
 	public void characters(char[] characters, int start, int length) throws SAXException {
+		if (fAbbreviated)
+			return;
+		
 		StringBuffer buff = new StringBuffer();
 		for (int i = 0; i < length; i++) {
 			buff.append(characters[start + i]);
@@ -97,20 +128,18 @@ public class XMLHandler extends DefaultHandler {
 		if (fRootElement == null)
 			fDocument.appendChild(text);
 		else 
-			((Element)fElementStack.peek()).appendChild(text);
+			((Element)fOpenElements.peek()).appendChild(text);
 	}
 	
 	public Node getDocumentElement() {
-		fDocument.getDocumentElement().normalize();
-		return fDocument.getDocumentElement();
+		if (fRootElement != null) {
+			fRootElement.normalize();
+		}
+		return fRootElement;
 	}
 	
-	public org.w3c.dom.Document getDocument() {
-		fDocument.getDocumentElement().normalize();
-		return fDocument;
+	public String getSchemaVersion() {
+		return fSchemaVersion;
 	}
 	
-	public Hashtable getLineTable() {
-		return fLineTable;
-	}	
 }

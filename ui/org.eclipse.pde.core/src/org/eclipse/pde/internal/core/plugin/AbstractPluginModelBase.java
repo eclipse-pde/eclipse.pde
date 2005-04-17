@@ -10,23 +10,38 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.xml.parsers.*;
-
-import org.eclipse.core.runtime.*;
-import org.eclipse.osgi.service.resolver.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
-import org.w3c.dom.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.ModelChangedEvent;
+import org.eclipse.pde.core.plugin.IExtensions;
+import org.eclipse.pde.core.plugin.IExtensionsModelFactory;
+import org.eclipse.pde.core.plugin.IFragment;
+import org.eclipse.pde.core.plugin.IFragmentModel;
+import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.pde.core.plugin.IPluginAttribute;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginElement;
+import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.pde.core.plugin.IPluginLibrary;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.IPluginModelFactory;
+import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.pde.internal.core.AbstractModel;
+import org.eclipse.pde.internal.core.PDECore;
 
 public abstract class AbstractPluginModelBase
 	extends AbstractModel
 	implements IPluginModelBase, IPluginModelFactory {
-	protected PluginBase pluginBase;
+	protected PluginBase fPluginBase;
 	private boolean enabled;
 	private BundleDescription fBundleDescription;
 	
@@ -54,11 +69,11 @@ public abstract class AbstractPluginModelBase
 		return getPluginBase(true);
 	}
 	public IPluginBase getPluginBase(boolean createIfMissing) {
-		if (pluginBase == null && createIfMissing) {
-			pluginBase = (PluginBase) createPluginBase();
+		if (fPluginBase == null && createIfMissing) {
+			fPluginBase = (PluginBase) createPluginBase();
 			setLoaded(true);
 		}
-		return pluginBase;
+		return fPluginBase;
 	}
 	
 	public IExtensions getExtensions() {
@@ -95,9 +110,9 @@ public abstract class AbstractPluginModelBase
 				}	
 			}
 		} else {
-			if (pluginBase != null) {
-				String id = pluginBase.getId();
-				String version = pluginBase.getVersion();
+			if (fPluginBase != null) {
+				String id = fPluginBase.getId();
+				String version = fPluginBase.getVersion();
 				addMatchingFragments(PDECore.getDefault().findFragmentsFor(id, version), list);
 			}
 		}		
@@ -118,73 +133,14 @@ public abstract class AbstractPluginModelBase
 			}
 		}
 	}
-	
-	public void load(InputStream stream, boolean outOfSync)
-		throws CoreException {
-
-		if (pluginBase == null) {
-			pluginBase = (PluginBase) createPluginBase();
-			pluginBase.setModel(this);
-		}
-		pluginBase.reset();
-		setLoaded(false);
-		try {
-			SAXParser parser = getSaxParser();
-			XMLHandler handler = new XMLHandler();
-			parser.parse(stream, handler);
-			processDocument(handler.getDocument(), handler.getLineTable());
-			setLoaded(true);
-			if (!outOfSync)
-				updateTimeStamp();
-		} catch (Exception e) {
-		}
-	}
-
-	private void processDocument(Document doc, Hashtable lineTable) {
-		String schemaVersion = processSchemaVersion(doc);
-		//System.out.println("Schema Version="+schemaVersion);
-		Node pluginNode = doc.getDocumentElement();
-		pluginBase.load(pluginNode, schemaVersion, lineTable);
-	}
-
-	private String processSchemaVersion(Document doc) {
-		NodeList children = doc.getChildNodes();
-		for (int i=0; i<children.getLength(); i++) {
-			Node node = children.item(i);
-			if (node.getNodeType()==Node.PROCESSING_INSTRUCTION_NODE) {
-				ProcessingInstruction pi = (ProcessingInstruction)node;
-				String target = pi.getTarget();
-				if (target.equals("eclipse")) { //$NON-NLS-1$
-					String data = pi.getData();
-					if (data!=null) {
-						data = data.trim().toLowerCase();
-						int loc = data.indexOf('=');
-						if (loc!=-1) {
-							String key = data.substring(0, loc);
-							if (key.equals("version")) { //$NON-NLS-1$
-								int start = loc+1;
-								if (data.charAt(start)=='\"')
-									start++;
-								int end = data.length()-1;
-								if (data.charAt(end)=='\"')
-									end--;
-								return data.substring(start, end+1);
-							}
-						}
-					}
-				}
-			}
-		}
-		return null;
-	}
-	
+		
 	public void reload(InputStream stream, boolean outOfSync)
 		throws CoreException {
 		load(stream, outOfSync);
 		fireModelChanged(
 			new ModelChangedEvent(this,
 				IModelChangedEvent.WORLD_CHANGED,
-				new Object[] { pluginBase },
+				new Object[] { fPluginBase },
 				null));
 	}
 	public void setEnabled(boolean newEnabled) {
@@ -238,8 +194,8 @@ public abstract class AbstractPluginModelBase
 	
 	public boolean isValid() {
 		if (!isLoaded()) return false;
-		if (pluginBase==null) return false;
-		return pluginBase.isValid();	
+		if (fPluginBase==null) return false;
+		return fPluginBase.isValid();	
 	}
 
 	public boolean isBundleModel() {

@@ -28,28 +28,27 @@ public abstract class PluginBase
 	implements IPluginBase {
 	private static final Version maxVersion = new Version(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
 
-	private Vector libraries = new Vector();
-	private Vector imports = new Vector();
-	private String providerName;
-	private String id;
-	private String version;
-	private String schemaVersion;
-	private boolean valid;
+	private ArrayList fLibraries = new ArrayList();
+	private ArrayList fImports = new ArrayList();
+	private String fProviderName;
+	private String fId;
+	private String fVersion;
+	private String fSchemaVersion;
 
 	private String fTargetVersion = "3.1";
 
 	public String getSchemaVersion() {
-		return schemaVersion;
+		return fSchemaVersion;
 	}
 	public void setSchemaVersion(String schemaVersion) throws CoreException {
 		ensureModelEditable();
-		String oldValue = this.schemaVersion;
-		this.schemaVersion = schemaVersion;
+		String oldValue = fSchemaVersion;
+		fSchemaVersion = schemaVersion;
 		firePropertyChanged(P_SCHEMA_VERSION, oldValue, schemaVersion);
 	}
 	public void add(IPluginLibrary library) throws CoreException {
 		ensureModelEditable();
-		libraries.addElement(library);
+		fLibraries.add(library);
 		((PluginLibrary) library).setInTheModel(true);
 		((PluginLibrary) library).setParent(this);
 		fireStructureChanged(library, IModelChangedEvent.INSERT);
@@ -58,37 +57,33 @@ public abstract class PluginBase
 		ensureModelEditable();
 		((PluginImport) iimport).setInTheModel(true);
 		((PluginImport) iimport).setParent(this);
-		imports.addElement(iimport);
+		fImports.add(iimport);
 		fireStructureChanged(iimport, IModelChangedEvent.INSERT);
 	}
 	public IPluginLibrary[] getLibraries() {
-		IPluginLibrary[] result = new IPluginLibrary[libraries.size()];
-		libraries.copyInto(result);
-		return result;
+		return (IPluginLibrary[])fLibraries.toArray(new IPluginLibrary[fLibraries.size()]);
 	}
 	public IPluginImport[] getImports() {
-		IPluginImport[] result = new IPluginImport[imports.size()];
-		imports.copyInto(result);
-		return result;
+		return (IPluginImport[])fImports.toArray(new IPluginImport[fImports.size()]);
 	}
 	public IPluginBase getPluginBase() {
 		return this;
 	}
 	public String getProviderName() {
-		return providerName;
+		return fProviderName;
 	}
 	public String getVersion() {
-		return version;
+		return fVersion;
 	}
 	public String getId() {
-		return id;
+		return fId;
 	}
 
 	void load(BundleDescription bundleDesc, PDEState state, boolean ignoreExtensions) {
-		this.id = bundleDesc.getSymbolicName();
-		this.version = bundleDesc.getVersion().toString();
-		this.name = state.getPluginName(bundleDesc.getBundleId());
-		this.providerName = state.getProviderName(bundleDesc.getBundleId());
+		fId = bundleDesc.getSymbolicName();
+		fVersion = bundleDesc.getVersion().toString();
+		fName = state.getPluginName(bundleDesc.getBundleId());
+		fProviderName = state.getProviderName(bundleDesc.getBundleId());
 		loadRuntime(bundleDesc, state);
 		loadImports(bundleDesc);		
 		if (!ignoreExtensions) {
@@ -99,28 +94,28 @@ public abstract class PluginBase
 	
 	void loadExtensions(NodeList list) {
 		if (list != null) {
-			extensions = new Vector();
+			fExtensions = new ArrayList();
 			for (int i = 0; i < list.getLength(); i++) {
 				PluginExtension extension = new PluginExtension();
 				extension.setInTheModel(true);
 				extension.setModel(getModel());
 				extension.setParent(this);
 				extension.load(list.item(i));
-				extensions.add(extension);
+				fExtensions.add(extension);
 			}
 		}
 	}
 	
 	void loadExtensionPoints(NodeList list) {
 		if (list != null) {
-			extensionPoints = new Vector();
+			fExtensionPoints = new ArrayList();
 			for (int i = 0; i < list.getLength(); i++) {
 				PluginExtensionPoint extPoint = new PluginExtensionPoint();
 				extPoint.setInTheModel(true);
 				extPoint.setModel(getModel());
 				extPoint.setParent(this);
 				extPoint.load(list.item(i));
-				extensionPoints.add(extPoint);
+				fExtensionPoints.add(extPoint);
 			}
 		}	
 	}
@@ -150,24 +145,22 @@ public abstract class PluginBase
 		super.restoreProperty(name, oldValue, newValue);
 	}
 
-	void load(Node node, String schemaVersion, Hashtable lineTable) {
-		bindSourceLocation(node, lineTable);
-		this.schemaVersion = schemaVersion;
-		this.id = getNodeAttribute(node, "id"); //$NON-NLS-1$
-		this.name = getNodeAttribute(node, "name"); //$NON-NLS-1$
-		this.providerName = getNodeAttribute(node, "provider-name"); //$NON-NLS-1$
-		if (providerName == null)
-			this.providerName = getNodeAttribute(node, "vendor"); //$NON-NLS-1$
-		this.version = getNodeAttribute(node, "version"); //$NON-NLS-1$
+	void load(Node node, String schemaVersion) {
+		if (node == null)
+			return;
+		fSchemaVersion = schemaVersion;
+		fId = getNodeAttribute(node, "id"); //$NON-NLS-1$
+		fName = getNodeAttribute(node, "name"); //$NON-NLS-1$
+		fProviderName = getNodeAttribute(node, "provider-name"); //$NON-NLS-1$
+		fVersion = getNodeAttribute(node, "version"); //$NON-NLS-1$
 
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
-				processChild(child, lineTable);
+				processChild(child);
 			}
 		}
-		valid = hasRequiredAttributes();
 	}
 
 	void loadRuntime(BundleDescription description, PDEState state) {
@@ -178,11 +171,11 @@ public abstract class PluginBase
 			library.setInTheModel(true);
 			library.setParent(this);
 			library.load(libraryNames[i]);
-			libraries.add(library);
+			fLibraries.add(library);
 		}
 	}
 
-	void loadRuntime(Node node, Hashtable lineTable) {
+	void loadRuntime(Node node) {
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
@@ -192,8 +185,8 @@ public abstract class PluginBase
 				library.setModel(getModel());
 				library.setInTheModel(true);
 				library.setParent(this);
-				libraries.add(library);
-				library.load(child, lineTable);
+				fLibraries.add(library);
+				library.load(child);
 			}
 		}
 	}
@@ -205,7 +198,7 @@ public abstract class PluginBase
 			importElement.setModel(getModel());
 			importElement.setInTheModel(true);
 			importElement.setParent(this);
-			imports.add(importElement);
+			fImports.add(importElement);
 			importElement.load(required[i]);
 		}
 		BundleDescription[] imported = PDEStateHelper.getImportedBundles(description);
@@ -214,12 +207,12 @@ public abstract class PluginBase
 			importElement.setModel(getModel());
 			importElement.setInTheModel(true);
 			importElement.setParent(this);
-			imports.add(importElement);
+			fImports.add(importElement);
 			importElement.load(imported[i]);
 		}		
 	}
 	
-	void loadImports(Node node, Hashtable lineTable) {
+	void loadImports(Node node) {
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
@@ -229,82 +222,83 @@ public abstract class PluginBase
 				importElement.setModel(getModel());
 				importElement.setInTheModel(true);
 				importElement.setParent(this);
-				imports.add(importElement);
-				importElement.load(child, lineTable);
+				fImports.add(importElement);
+				importElement.load(child);
 			}
 		}
 	}
-	protected void processChild(Node child, Hashtable lineTable) {
+	protected void processChild(Node child) {
 		String name = child.getNodeName().toLowerCase();
 		if (name.equals("runtime")) { //$NON-NLS-1$
-			loadRuntime(child, lineTable);
+			loadRuntime(child);
 		} else if (name.equals("requires")) { //$NON-NLS-1$
-			loadImports(child, lineTable);
+			loadImports(child);
+		} else  {
+			super.processChild(child);
 		}
-		else super.processChild(child, lineTable);
 	}
 
 	public void remove(IPluginLibrary library) throws CoreException {
 		ensureModelEditable();
-		libraries.removeElement(library);
+		fLibraries.remove(library);
 		((PluginLibrary) library).setInTheModel(false);
 		fireStructureChanged(library, ModelChangedEvent.REMOVE);
 	}
 	public void remove(IPluginImport iimport) throws CoreException {
 		ensureModelEditable();
-		imports.removeElement(iimport);
+		fImports.remove(iimport);
 		((PluginImport) iimport).setInTheModel(false);
 		fireStructureChanged(iimport, ModelChangedEvent.REMOVE);
 	}
 	public void reset() {
-		libraries = new Vector();
-		imports = new Vector();
-		providerName = null;
-		schemaVersion = null;
-		version = ""; //$NON-NLS-1$
-		this.name = ""; //$NON-NLS-1$
-		this.id = ""; //$NON-NLS-1$
+		fLibraries = new ArrayList();
+		fImports = new ArrayList();
+		fProviderName = null;
+		fSchemaVersion = null;
+		fVersion = ""; //$NON-NLS-1$
+		fName = ""; //$NON-NLS-1$
+		fId = ""; //$NON-NLS-1$
 		if (getModel() != null && getModel().getUnderlyingResource() != null) {
-			this.id = getModel().getUnderlyingResource().getProject().getName();
-			this.name = this.id;
-			this.version = "0.0.0"; //$NON-NLS-1$
+			fId = getModel().getUnderlyingResource().getProject().getName();
+			fName = fId;
+			fVersion = "0.0.0"; //$NON-NLS-1$
 		}
 		super.reset();
-		valid=false;
 	}
+	
 	public void setProviderName(String providerName) throws CoreException {
 		ensureModelEditable();
-		String oldValue = this.providerName;
-		this.providerName = providerName;
+		String oldValue = this.fProviderName;
 		firePropertyChanged(P_PROVIDER, oldValue, providerName);
 	}
+	
 	public void setVersion(String newVersion) throws CoreException {
 		ensureModelEditable();
-		String oldValue = version;
-		version = newVersion;
-		firePropertyChanged(P_VERSION, oldValue, version);
+		String oldValue = fVersion;
+		fVersion = newVersion;
+		firePropertyChanged(P_VERSION, oldValue, fVersion);
 	}
 	
 	public void setId(String newId) throws CoreException {
 		ensureModelEditable();
-		String oldValue = id;
-		id = newId;
-		firePropertyChanged(P_ID, oldValue, id);
+		String oldValue = fId;
+		fId = newId;
+		firePropertyChanged(P_ID, oldValue, fId);
 	}
 
 	public void internalSetVersion(String newVersion) {
-		version = newVersion;
+		fVersion = newVersion;
 	}
 
 	public void swap(IPluginLibrary l1, IPluginLibrary l2)
 		throws CoreException {
 		ensureModelEditable();
-		int index1 = libraries.indexOf(l1);
-		int index2 = libraries.indexOf(l2);
+		int index1 = fLibraries.indexOf(l1);
+		int index2 = fLibraries.indexOf(l2);
 		if (index1 == -1 || index2 == -1)
 			throwCoreException(PDECoreMessages.PluginBase_librariesNotFoundException); //$NON-NLS-1$
-		libraries.setElementAt(l1, index2);
-		libraries.setElementAt(l2, index1);
+		fLibraries.set(index2, l1);
+		fLibraries.set(index1, l2);
 		firePropertyChanged(this, P_LIBRARY_ORDER, l1, l2);
 	}
 	
@@ -314,31 +308,31 @@ public abstract class PluginBase
 	public void swap(IPluginImport import1, IPluginImport import2)
 			throws CoreException {
 		ensureModelEditable();
-		int index1 = imports.indexOf(import1);
-		int index2 = imports.indexOf(import2);
+		int index1 = fImports.indexOf(import1);
+		int index2 = fImports.indexOf(import2);
 		if (index1 == -1 || index2 == -1)
 			throwCoreException(PDECoreMessages.PluginBase_importsNotFoundException); //$NON-NLS-1$
-		imports.setElementAt(import1, index2);
-		imports.setElementAt(import2, index1);
+		fImports.set(index2, import1);
+		fImports.set(index1, import2);
 		firePropertyChanged(this, P_IMPORT_ORDER, import1, import2);
 	}
 
 	public boolean isValid() {
-		return valid;
+		return hasRequiredAttributes();
 	}
 	protected boolean hasRequiredAttributes(){
-		if (name==null) return false;
-		if (id==null) return false;
-		if (version==null) return false;
+		if (fName==null) return false;
+		if (fId==null) return false;
+		if (fVersion==null) return false;
 
 		// validate libraries
-		for (int i = 0; i < libraries.size(); i++) {
-			IPluginLibrary library = (IPluginLibrary)libraries.get(i);
+		for (int i = 0; i < fLibraries.size(); i++) {
+			IPluginLibrary library = (IPluginLibrary)fLibraries.get(i);
 			if (!library.isValid()) return false;
 		}
 		// validate imports
-		for (int i = 0; i < imports.size(); i++) {
-			IPluginImport iimport = (IPluginImport)imports.get(i);
+		for (int i = 0; i < fImports.size(); i++) {
+			IPluginImport iimport = (IPluginImport)fImports.get(i);
 			if (!iimport.isValid()) return false;
 		}
 		return super.hasRequiredAttributes();

@@ -22,12 +22,13 @@ import org.w3c.dom.*;
 public abstract class AbstractExtensions
 	extends PluginObject
 	implements IExtensions {
-	protected Vector extensions = new Vector();
-	protected Vector extensionPoints = new Vector();
+	
+	protected ArrayList fExtensions = new ArrayList(1);
+	protected ArrayList fExtensionPoints = new ArrayList(1);
 
 	public void add(IPluginExtension extension) throws CoreException {
 		ensureModelEditable();
-		extensions.addElement(extension);
+		fExtensions.add(extension);
 		((PluginExtension) extension).setInTheModel(true);
 		((PluginExtension) extension).setParent(this);
 		fireStructureChanged(extension, IModelChangedEvent.INSERT);
@@ -35,22 +36,17 @@ public abstract class AbstractExtensions
 	public void add(IPluginExtensionPoint extensionPoint)
 		throws CoreException {
 		ensureModelEditable();
-		extensionPoints.addElement(extensionPoint);
+		fExtensionPoints.add(extensionPoint);
 		((PluginExtensionPoint) extensionPoint).setInTheModel(true);
 		((PluginExtensionPoint) extensionPoint).setParent(this);
 		fireStructureChanged(extensionPoint, IModelChangedEvent.INSERT);
 	}
 
 	public IPluginExtensionPoint[] getExtensionPoints() {
-		IPluginExtensionPoint[] result =
-			new IPluginExtensionPoint[extensionPoints.size()];
-		extensionPoints.copyInto(result);
-		return result;
+		return (IPluginExtensionPoint[])fExtensionPoints.toArray(new IPluginExtensionPoint[fExtensionPoints.size()]);
 	}
 	public IPluginExtension[] getExtensions() {
-		IPluginExtension[] result = new IPluginExtension[extensions.size()];
-		extensions.copyInto(result);
-		return result;
+		return (IPluginExtension[])fExtensions.toArray(new IPluginExtension[fExtensions.size()]);
 	}
 
 	public void restoreProperty(String name, Object oldValue, Object newValue)
@@ -63,11 +59,11 @@ public abstract class AbstractExtensions
 	}
 
 	public void load(IExtensions srcExtensions) {
-		addArrayToVector(extensions, srcExtensions.getExtensions());
-		addArrayToVector(extensionPoints, srcExtensions.getExtensionPoints());
+		addArrayToVector(fExtensions, srcExtensions.getExtensions());
+		addArrayToVector(fExtensionPoints, srcExtensions.getExtensionPoints());
 	}
 
-	protected void addArrayToVector(Vector vector, Object[] array) {
+	protected void addArrayToVector(ArrayList vector, Object[] array) {
 		for (int i = 0; i < array.length; i++) {
 			Object obj= array[i];
 			if (obj instanceof PluginObject)
@@ -76,59 +72,60 @@ public abstract class AbstractExtensions
 		}
 	}
 
-	protected void processChild(Node child, Hashtable lineTable) {
-		String name = child.getNodeName().toLowerCase();
+	protected void processChild(Node child) {
+		String name = child.getNodeName();
 		if (name.equals("extension")) { //$NON-NLS-1$
 			PluginExtension extension = new PluginExtension();
 			extension.setModel(getModel());
 			extension.setParent(this);
-			extensions.add(extension);
+			fExtensions.add(extension);
 			extension.setInTheModel(true);
-			extension.load(child, lineTable);
+			extension.load(child);
 		} else if (name.equals("extension-point")) { //$NON-NLS-1$
 			PluginExtensionPoint point = new PluginExtensionPoint();
 			point.setModel(getModel());
 			point.setParent(this);
 			point.setInTheModel(true);
-			extensionPoints.add(point);
-			point.load(child, lineTable);
+			fExtensionPoints.add(point);
+			point.load(child);
 		}
 	}
+	
 	public void remove(IPluginExtension extension) throws CoreException {
 		ensureModelEditable();
-		extensions.removeElement(extension);
+		fExtensions.remove(extension);
 		((PluginExtension) extension).setInTheModel(false);
 		fireStructureChanged(extension, ModelChangedEvent.REMOVE);
 	}
 	public void remove(IPluginExtensionPoint extensionPoint)
 		throws CoreException {
 		ensureModelEditable();
-		extensionPoints.removeElement(extensionPoint);
+		fExtensionPoints.remove(extensionPoint);
 		((PluginExtensionPoint) extensionPoint).setInTheModel(false);
 		fireStructureChanged(extensionPoint, ModelChangedEvent.REMOVE);
 	}
 
 	public void reset() {
-		extensions = new Vector();
-		extensionPoints = new Vector();
+		fExtensions = new ArrayList();
+		fExtensionPoints = new ArrayList();
 	}
 
 	public int getExtensionCount() {
-		return extensions.size();
+		return fExtensions.size();
 	}
 
 	public int getIndexOf(IPluginExtension e) {
-		return extensions.indexOf(e);
+		return fExtensions.indexOf(e);
 	}
 	public void swap(IPluginExtension e1, IPluginExtension e2)
 		throws CoreException {
 		ensureModelEditable();
-		int index1 = extensions.indexOf(e1);
-		int index2 = extensions.indexOf(e2);
+		int index1 = fExtensions.indexOf(e1);
+		int index2 = fExtensions.indexOf(e2);
 		if (index1 == -1 || index2 == -1)
 			throwCoreException(PDECoreMessages.AbstractExtensions_extensionsNotFoundException); //$NON-NLS-1$
-		extensions.setElementAt(e1, index2);
-		extensions.setElementAt(e2, index1);
+		fExtensions.set(index2, e1);
+		fExtensions.set(index2, e2);
 		firePropertyChanged(this, P_EXTENSION_ORDER, e1, e2);
 	}
 	protected void writeChildren(
@@ -146,13 +143,13 @@ public abstract class AbstractExtensions
 
 	protected boolean hasRequiredAttributes(){
 		// validate extensions
-		for (int i = 0; i < extensions.size(); i++) {
-			IPluginExtension extension = (IPluginExtension)extensions.get(i);
+		for (int i = 0; i < fExtensions.size(); i++) {
+			IPluginExtension extension = (IPluginExtension)fExtensions.get(i);
 			if (!extension.isValid()) return false;
 		}
 		// validate extension points
-		for (int i = 0; i < extensionPoints.size(); i++) {
-			IPluginExtensionPoint expoint = (IPluginExtensionPoint)extensionPoints.get(i);
+		for (int i = 0; i < fExtensionPoints.size(); i++) {
+			IPluginExtensionPoint expoint = (IPluginExtensionPoint)fExtensionPoints.get(i);
 			if (!expoint.isValid()) return false;
 		}
 		return true;

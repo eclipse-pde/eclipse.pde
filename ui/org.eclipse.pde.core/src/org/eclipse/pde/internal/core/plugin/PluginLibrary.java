@@ -30,7 +30,7 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 	}
 	
 	public boolean isValid() {
-		return name != null;
+		return fName != null;
 	}
 	
 	public String[] getContentFilters() {
@@ -82,12 +82,12 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 
 	
 	public void load(String name) {
-		this.name = name;
+		fName = name;
 		fExported = true;
 	}
 	
-	void load(Node node, Hashtable lineTable) {
-		this.name = getNodeAttribute(node, "name"); //$NON-NLS-1$
+	void load(Node node) {
+		fName = getNodeAttribute(node, "name"); //$NON-NLS-1$
 		fType = getNodeAttribute(node, "type"); //$NON-NLS-1$
 		NodeList children = node.getChildNodes();
 		Vector exports = new Vector();
@@ -114,7 +114,6 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 			exports.copyInto(fContentFilters);
 		}
 		fExported = all || exports.size() > 0;
-		bindSourceLocation(node, lineTable);
 	}
 	public void setContentFilters(String[] filters) throws CoreException {
 		ensureModelEditable();

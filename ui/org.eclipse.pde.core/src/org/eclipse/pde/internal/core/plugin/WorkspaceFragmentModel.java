@@ -10,15 +10,18 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.pde.core.plugin.IFragment;
+import org.eclipse.pde.core.plugin.IFragmentModel;
+import org.eclipse.pde.core.plugin.IPluginBase;
 
 public class WorkspaceFragmentModel extends WorkspacePluginModelBase implements
 		IFragmentModel {
 
 	private static final long serialVersionUID = 1L;
 
-	public WorkspaceFragmentModel(org.eclipse.core.resources.IFile file) {
-		super(file);
+	public WorkspaceFragmentModel(IFile file, boolean abbreviated) {
+		super(file, abbreviated);
 	}
 
 	public IPluginBase createPluginBase() {

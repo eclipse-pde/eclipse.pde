@@ -220,9 +220,9 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
     
     private void createManifest(IProject project) throws CoreException {
         if (fData instanceof IFragmentFieldData) {
-            fModel = new WorkspaceFragmentModel(project.getFile("fragment.xml")); //$NON-NLS-1$
+            fModel = new WorkspaceFragmentModel(project.getFile("fragment.xml"), false); //$NON-NLS-1$
         } else {
-            fModel = new WorkspacePluginModel(project.getFile("plugin.xml")); //$NON-NLS-1$
+            fModel = new WorkspacePluginModel(project.getFile("plugin.xml"), false); //$NON-NLS-1$
         }
         PluginBase pluginBase = (PluginBase)fModel.getPluginBase();
         if (!fData.isLegacy())

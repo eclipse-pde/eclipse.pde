@@ -10,16 +10,18 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
-import java.io.*;
-import java.util.*;
+import java.io.PrintWriter;
+import java.io.Serializable;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.osgi.service.resolver.*;
-import org.eclipse.osgi.util.*;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.BundleSpecification;
+import org.eclipse.osgi.service.resolver.VersionRange;
+import org.eclipse.osgi.util.ManifestElement;
+import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.internal.core.ICoreConstants;
-import org.osgi.framework.*;
-import org.w3c.dom.*;
+import org.osgi.framework.Constants;
+import org.w3c.dom.Node;
 
 public class PluginImport
 	extends IdentifiablePluginObject
@@ -85,7 +87,6 @@ public class PluginImport
 			this.version = versionRange.getMinimum() != null ? versionRange.getMinimum().toString() : null;
 			match = PluginBase.getMatchRule(versionRange);
 		}
-		range = new int[] {0,0};
 	}
 
 	public boolean equals(Object obj) {
@@ -110,7 +111,7 @@ public class PluginImport
 		return false;
 	}
 
-	void load(Node node, Hashtable lineTable) {
+	void load(Node node) {
 		String id = getNodeAttribute(node, "plugin"); //$NON-NLS-1$
 		String export = getNodeAttribute(node, "export"); //$NON-NLS-1$
 		String option = getNodeAttribute(node, "optional"); //$NON-NLS-1$
@@ -136,7 +137,6 @@ public class PluginImport
 		this.id = id;
 		this.reexported = reexport;
 		this.optional = optional;
-		bindSourceLocation(node, lineTable);
 	}
 	public void setMatch(int match) throws CoreException {
 		ensureModelEditable();

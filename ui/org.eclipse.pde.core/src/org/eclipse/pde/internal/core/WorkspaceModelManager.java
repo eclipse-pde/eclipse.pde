@@ -517,7 +517,7 @@ public class WorkspaceModelManager
 		if (!file.exists())
 			return null;
 		
-		WorkspacePluginModel model = new WorkspacePluginModel(file);
+		WorkspacePluginModel model = new WorkspacePluginModel(file, true);
 		loadModel(model, false);
 		return model;
 	}
@@ -530,7 +530,7 @@ public class WorkspaceModelManager
 		if (!file.exists())
 			return null;
 		
-		WorkspaceFragmentModel model = new WorkspaceFragmentModel(file);
+		WorkspaceFragmentModel model = new WorkspaceFragmentModel(file, true);
 		loadModel(model, false);
 		return model;
 	}

@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.core.plugin;
 
 import java.io.*;
-import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.*;
@@ -21,14 +20,11 @@ import org.w3c.dom.*;
 
 public class Plugin extends PluginBase implements IPlugin {
 	private static final long serialVersionUID = 1L;
-	private String className;
+	private String fClassname;
 	private boolean fHasExtensibleAPI;
 
-	public Plugin() {
-	}
-
 	public String getClassName() {
-		return className;
+		return fClassname;
 	}
 
 	public IPlugin getPlugin() {
@@ -36,25 +32,25 @@ public class Plugin extends PluginBase implements IPlugin {
 	}
 
 	void load(BundleDescription bundleDescription, PDEState state, boolean ignoreExtensions) {
-		this.className = state.getClassName(bundleDescription.getBundleId());
+		fClassname = state.getClassName(bundleDescription.getBundleId());
 		fHasExtensibleAPI = state.hasExtensibleAPI(bundleDescription.getBundleId());
 		super.load(bundleDescription, state, ignoreExtensions);
 	}
 	
-	void load(Node node, String schemaVersion, Hashtable lineTable) {
-		this.className = getNodeAttribute(node, "class"); //$NON-NLS-1$
-		super.load(node, schemaVersion, lineTable);
+	void load(Node node, String schemaVersion) {
+		fClassname = getNodeAttribute(node, "class"); //$NON-NLS-1$
+		super.load(node, schemaVersion);
 	}
 
 	public void reset() {
-		className = null;
+		fClassname = null;
 		super.reset();
 	}
 	public void setClassName(String newClassName) throws CoreException {
 		ensureModelEditable();
-		String oldValue = className;
-		className = newClassName;
-		firePropertyChanged(P_CLASS_NAME, oldValue, className);
+		String oldValue = fClassname;
+		fClassname = newClassName;
+		firePropertyChanged(P_CLASS_NAME, oldValue, fClassname);
 	}
 
 	public void restoreProperty(String name, Object oldValue, Object newValue)
