@@ -12,10 +12,10 @@ package org.eclipse.pde.internal.core;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -44,7 +44,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	
 	private IPluginModelBase fModel;
 	
-	private HashMap fVisiblePackages = new HashMap();
+	private TreeMap fVisiblePackages = new TreeMap();
 	
 	private static boolean DEBUG = false;
 	
@@ -137,9 +137,10 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			// add Import-Package
 			Iterator iter = fVisiblePackages.keySet().iterator();
 			while (iter.hasNext()) {
-				BundleDescription dep = (BundleDescription)iter.next();
-				if (added.add(dep.getSymbolicName())) {
-					addPlugin(dep, false, true);
+				String symbolicName = iter.next().toString();
+				if (added.add(symbolicName)) {
+					IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(symbolicName);
+					addPlugin(model, false, true);
 				}
 			}
 
@@ -174,11 +175,11 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 				BundleDescription exporter = exports[i].getExporter();
 				if (exporter == null)
 					continue;
-				ArrayList list = (ArrayList)fVisiblePackages.get(exporter);
+				ArrayList list = (ArrayList)fVisiblePackages.get(exporter.getName());
 				if (list == null) 
 					list = new ArrayList();
 				list.add(new Path(exports[i].getName().replaceAll("\\.", "/") + "/*"));
-				fVisiblePackages.put(exporter, list);
+				fVisiblePackages.put(exporter.getName(), list);
 			}
 		}		
 	}
@@ -189,7 +190,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 
 		boolean inWorkspace = addPlugin(desc, isExported, true);
 
-		if (hasExtensibleAPI(desc)) {
+		if (hasExtensibleAPI(desc) && desc.getContainingState() != null) {
 			BundleDescription[] fragments = desc.getFragments();
 			for (int i = 0; i < fragments.length; i++) {
 				if (fragments[i].isResolved())
@@ -233,7 +234,11 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 
 	private boolean addPlugin(BundleDescription desc, boolean isExported, boolean useInclusions)
 			throws CoreException {		
-		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(desc);
+		return addPlugin(PDECore.getDefault().getModelManager().findModel(desc), isExported, useInclusions);
+	}
+	
+	private boolean addPlugin(IPluginModelBase model, boolean isExported,
+			boolean useInclusions) throws CoreException {
 		if (model == null || !model.isEnabled())
 			return false;
 		IResource resource = model.getUnderlyingResource();
@@ -264,7 +269,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	}
 	
 	private IPath[] getInclusions(BundleDescription desc) {
-		ArrayList list = (ArrayList)fVisiblePackages.get(desc);
+		ArrayList list = (ArrayList)fVisiblePackages.get(desc.getSymbolicName());
 		if (list == null) {
 			list = new ArrayList();
 			ExportPackageDescription[] exports = desc.getExportPackages();
