@@ -49,9 +49,9 @@ public class RuntimePage extends PDEFormPage {
         }
 		
 		if (((IPluginModelBase)getPDEEditor().getAggregateModel()).isFragmentModel())
-			PlatformUI.getWorkbench().getHelpSystem().setHelp(form, IHelpContextIds.MANIFEST_FRAGMENT_RUNTIME);
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.MANIFEST_FRAGMENT_RUNTIME);
 		else
-			PlatformUI.getWorkbench().getHelpSystem().setHelp(form, IHelpContextIds.MANIFEST_PLUGIN_RUNTIME);
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.MANIFEST_PLUGIN_RUNTIME);
 	}
     
     private boolean isBundle() {

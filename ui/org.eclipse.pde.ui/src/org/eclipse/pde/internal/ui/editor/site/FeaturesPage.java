@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.site;
 import org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEDetailsSections;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
@@ -17,6 +18,7 @@ import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDEMasterDetailsBlock;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.DetailsPart;
 import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IDetailsPageProvider;
@@ -70,6 +72,7 @@ public class FeaturesPage extends PDEFormPage {
 		form.setText(PDEUIMessages.FeaturesPage_header); //$NON-NLS-1$
 		fBlock.createContent(managedForm);
 		fCategorySection.fireSelection();
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.MANIFEST_SITE_FEATURES);
 
 	}
 	/**

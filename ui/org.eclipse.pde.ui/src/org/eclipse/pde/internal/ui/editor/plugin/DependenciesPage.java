@@ -15,6 +15,7 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.editor.*;
 import org.eclipse.ui.forms.widgets.*;
@@ -52,6 +53,7 @@ public class DependenciesPage extends PDEFormPage {
 		if (isBundle)
 			gd.horizontalSpan = 2;
 		section.getSection().setLayoutData(gd);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.MANIFEST_PLUGIN_DEPENDENCIES);
 	}
 	
 	private boolean isBundle() {

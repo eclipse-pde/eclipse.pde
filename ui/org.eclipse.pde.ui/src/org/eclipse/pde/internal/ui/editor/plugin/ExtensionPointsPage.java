@@ -13,6 +13,7 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.editor.*;
 import org.eclipse.ui.forms.widgets.*;
@@ -60,5 +61,6 @@ public class ExtensionPointsPage extends PDEFormPage {
 		form.setText(PDEUIMessages.ExtensionPointsPage_title); //$NON-NLS-1$
 		block.createContent(managedForm);
 		extensionPointsSection.fireSelection();
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.MANIFEST_PLUGIN_EXT_POINTS);
 	}
 }

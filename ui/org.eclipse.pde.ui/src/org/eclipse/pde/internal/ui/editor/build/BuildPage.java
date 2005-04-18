@@ -109,7 +109,7 @@ public class BuildPage extends PDEFormPage {
 		mform.addPart(classpathSection);
 
 		handleCustomCheckState(getCustomSelection());
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(form, IHelpContextIds.BUILD_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.BUILD_PAGE);
 	}
 
 	private IBuildModel getBuildModel() {

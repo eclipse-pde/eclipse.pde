@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.editor.site;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.swt.layout.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.*;
 
@@ -48,8 +49,7 @@ public class ArchivePage extends PDEFormPage {
 		mform.addPart(fMirrorsSection);
 		mform.addPart(fArchiveSection);
 		
-		//WorkbenchHelp.setHelp(form.getBody(),
-		// IHelpContextIds.MANIFEST_SITE_OVERVIEW);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.MANIFEST_SITE_ARCHIVES);
 		form.setText(PDEUIMessages.ArchivePage_title); //$NON-NLS-1$
 	}
 }

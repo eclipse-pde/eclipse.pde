@@ -53,6 +53,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		FormToolkit toolkit = managedForm.getToolkit();
 		form.setText(PDEUIMessages.ManifestEditor_OverviewPage_title); //$NON-NLS-1$
 		fillBody(managedForm, toolkit);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.MANIFEST_PLUGIN_OVERVIEW);		
 		managedForm.refresh();
 	}
 	

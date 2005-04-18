@@ -97,7 +97,7 @@ public class ShowDescriptionAction extends Action {
 			transformer.transform(fSchema, printWriter); 
 			os.flush();
 			os.close();
-			showURL(fPreviewFile.getPath());
+			showURL(fPreviewFile);
 		} catch (IOException e) {
 			PDEPlugin.logException(e);
 		}
@@ -113,7 +113,7 @@ public class ShowDescriptionAction extends Action {
 		return null;
 	}
 	
-	private void showURL(String url) {
+	private void showURL(File file) {
 		try {
 			IWorkbenchBrowserSupport support = PlatformUI.getWorkbench()
 					.getBrowserSupport();
@@ -121,7 +121,8 @@ public class ShowDescriptionAction extends Action {
 					IWorkbenchBrowserSupport.AS_EDITOR
 							| IWorkbenchBrowserSupport.STATUS,
 					"org.eclipse.pde", fPointID, fPointID); //$NON-NLS-1$
-			browser.openURL(new URL("file:///" + url)); //$NON-NLS-1$
+			URL url = file.toURL();
+			browser.openURL(url); //$NON-NLS-1$
 		} catch (MalformedURLException e) {
 			PDEPlugin.logException(e);
 		}

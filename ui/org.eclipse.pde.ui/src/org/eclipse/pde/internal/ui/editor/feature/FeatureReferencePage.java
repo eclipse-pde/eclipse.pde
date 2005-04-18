@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
@@ -89,6 +91,7 @@ public class FeatureReferencePage extends PDEFormPage {
 		form.setText(PDEUIMessages.FeatureEditor_ReferencePage_heading);
 		// WorkbenchHelp.setHelp(form.getBody(),
 		// IHelpContextIds.MANIFEST_FEATURE_CONTENT);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.MANIFEST_FEATURE_CONTENT);
 		fPluginSection.fireSelection();
 	}
 
