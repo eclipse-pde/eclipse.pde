@@ -458,10 +458,11 @@ public class PDEState {
 			if (keepLibraries)
 				createPluginInfo(descriptor, manifest);
 			// new bundle
-			if (bundleId == -1)
+			if (bundleId == -1) {
 				fState.addBundle(descriptor);
-			else
-				fState.updateBundle(descriptor);
+			} else if (!fState.updateBundle(descriptor)) {
+				fState.addBundle(descriptor);
+			}
 			return descriptor;
 		} catch (BundleException e) {
 		} catch (NumberFormatException e) {
@@ -502,6 +503,10 @@ public class PDEState {
 		BundleDescription desc = model.getBundleDescription();
 		long bundleId = desc == null ? -1 : desc.getBundleId();
 		model.setBundleDescription(addBundle(new File(model.getInstallLocation()), false, false, null, bundleId));
+	}
+	
+	public void addBundle(IPluginModelBase model, long bundleId) {
+		addBundle(new File(model.getInstallLocation()), false, false, null, -1);
 	}
 	
 	public BundleDescription addBundle(File bundleLocation, boolean keepLibraries, boolean logException, Dictionary dictionary, long bundleId) {
