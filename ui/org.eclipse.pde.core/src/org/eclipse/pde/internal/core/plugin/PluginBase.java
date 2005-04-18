@@ -268,8 +268,9 @@ public abstract class PluginBase
 	
 	public void setProviderName(String providerName) throws CoreException {
 		ensureModelEditable();
-		String oldValue = this.fProviderName;
-		firePropertyChanged(P_PROVIDER, oldValue, providerName);
+		String oldValue = fProviderName;
+		fProviderName = providerName;
+		firePropertyChanged(P_PROVIDER, oldValue, fProviderName);
 	}
 	
 	public void setVersion(String newVersion) throws CoreException {
