@@ -412,14 +412,10 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			return;
 		}
 		if (!fCompatibilityActivator) {
-			if (fCompatibility) {
-				// add compatibility activator
-				message = PDEMessages.BundleErrorReporter_requiredCompatibilityActivator; //$NON-NLS-1$
-				report(message, header.getLineNumber() + 1, CompilerFlags.ERROR);
-			} else {
+			if (!fCompatibility) {
 				// rename Plugin-Class to Bundle-Activator
 				message = PDEMessages.BundleErrorReporter_unusedPluginClass; //$NON-NLS-1$
-				report(message, header.getLineNumber() + 1, CompilerFlags.ERROR);
+				report(message, header.getLineNumber() + 1, CompilerFlags.WARNING);
 			}
 		}
 

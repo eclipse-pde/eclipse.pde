@@ -88,7 +88,6 @@ public class PDEMessages extends NLS {
 	public static String BundleErrorReporter_fragmentActivator;
 	public static String BundleErrorReporter_NoExist;
 	public static String BundleErrorReporter_externalClass;
-	public static String BundleErrorReporter_requiredCompatibilityActivator;
 	public static String BundleErrorReporter_unusedPluginClass;
 	public static String BundleErrorReporter_unresolvedCompatibilityActivator;
 	public static String BundleErrorReporter_InvalidFormatInBundleVersion;
