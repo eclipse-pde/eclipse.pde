@@ -16,9 +16,8 @@ import java.util.ArrayList;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.*;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.util.IdUtil;
 import org.w3c.dom.*;
 
 
@@ -120,19 +119,19 @@ public class ManifestErrorReporter extends XMLErrorReporter {
 		}
 	}
 	
-	protected void validatePluginID(Element element, Attr attr) {
-		int severity = CompilerFlags
-				.getFlag(fProject, CompilerFlags.P_UNRESOLVED_IMPORTS);
-		if ("true".equals(element.getAttribute("optional")) && severity == CompilerFlags.ERROR)  //$NON-NLS-1$ //$NON-NLS-2$
-			severity = CompilerFlags.WARNING;
-		if (severity != CompilerFlags.IGNORE) {
-			IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(attr.getValue());
-			if (model == null || !model.isEnabled()) {
-				report(NLS.bind(PDEMessages.Builders_Manifest_dependency, attr.getValue()),  //$NON-NLS-1$
-						getLine(element, attr.getName()),
-						severity);
-			}
-		}
+	/**
+	 * @param element
+	 * @param attr
+	 * @return false if failed
+	 */
+	protected boolean validatePluginID(Element element, Attr attr) {
+        if (!IdUtil.isValidPluginId(attr.getValue())) {
+            String message = NLS.bind(PDEMessages.Builders_Manifest_pluginId_value, attr.getValue(), attr.getName());
+            report(message, getLine(element, attr.getName()),
+                    CompilerFlags.ERROR);
+            return false;
+        }
+        return true;
 	}
 
 	protected void validateBoolean(Element element, Attr attr) {

@@ -13,10 +13,9 @@ package org.eclipse.pde.internal.builders;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.util.IdUtil;
+import org.eclipse.pde.internal.core.PDECore;
 import org.w3c.dom.*;
 
 
@@ -93,7 +92,7 @@ public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {
 	
 	protected void validateImport(Element element) {
 		if (assertAttributeDefined(element, "plugin", CompilerFlags.ERROR)) { //$NON-NLS-1$
-			validatePluginID(element, element.getAttributeNode("plugin")); //$NON-NLS-1$
+			validatePluginIDRef(element, element.getAttributeNode("plugin")); //$NON-NLS-1$
 		}
 		Attr attr = element.getAttributeNode("version"); //$NON-NLS-1$
 		if (attr != null)
@@ -147,13 +146,10 @@ public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {
 		}
 	}
 	
-	protected void validatePluginID(Element element, Attr attr) {
-        if (!IdUtil.isValidPluginId(attr.getValue())) {
-            String message = NLS.bind(PDEMessages.Builders_Manifest_pluginId_value, attr.getValue());
-            report(message, getLine(element, attr.getName()),
-                    CompilerFlags.ERROR);
-            return;
-        }
+	protected void validatePluginIDRef(Element element, Attr attr) {
+		if(!validatePluginID(element, attr)){
+			return;
+		}
 		int severity = CompilerFlags
 				.getFlag(fProject, CompilerFlags.P_UNRESOLVED_IMPORTS);
 		if ("true".equals(element.getAttribute("optional")) && severity == CompilerFlags.ERROR)  //$NON-NLS-1$ //$NON-NLS-2$

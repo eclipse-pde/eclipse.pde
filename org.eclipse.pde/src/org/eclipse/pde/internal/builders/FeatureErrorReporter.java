@@ -367,14 +367,18 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 	}
 	
 	private void validatePluginID(Element element, Attr attr, boolean isFragment) {
+		String id = attr.getValue();
+		if(!validatePluginID(element, attr)){
+			return;
+		}
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.F_UNRESOLVED_PLUGINS);
 		if (severity != CompilerFlags.IGNORE) {
-			IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(attr.getValue());
+			IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(id);
 			if (model == null 
 					|| !model.isEnabled() 
 					|| (isFragment && !model.isFragmentModel())
 					|| (!isFragment && model.isFragmentModel())) {
-				report(NLS.bind(PDEMessages.Builders_Feature_reference, attr.getValue()),  //$NON-NLS-1$
+				report(NLS.bind(PDEMessages.Builders_Feature_reference, id),  //$NON-NLS-1$
 						getLine(element, attr.getName()),
 						severity);
 			}

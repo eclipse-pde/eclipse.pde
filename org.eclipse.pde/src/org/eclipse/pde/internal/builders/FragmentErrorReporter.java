@@ -27,7 +27,7 @@ public class FragmentErrorReporter extends PluginBaseErrorReporter {
 		super.validateTopLevelAttributes(element);
 		
 		if (assertAttributeDefined(element, "plugin-id", CompilerFlags.ERROR)) //$NON-NLS-1$
-			validatePluginID(element, element.getAttributeNode("plugin-id")); //$NON-NLS-1$
+			validatePluginIDRef(element, element.getAttributeNode("plugin-id")); //$NON-NLS-1$
 		
 		if (assertAttributeDefined(element, "plugin-version", CompilerFlags.ERROR)) //$NON-NLS-1$
 			validateVersionAttribute(element, element.getAttributeNode("plugin-version")); //$NON-NLS-1$
