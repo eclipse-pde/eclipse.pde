@@ -20,6 +20,7 @@ import org.eclipse.debug.core.sourcelookup.*;
 import org.eclipse.debug.core.sourcelookup.containers.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.launching.sourcelookup.containers.*;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 
@@ -34,7 +35,13 @@ public class SWTSourcePathComputer extends JavaSourcePathComputer {
 	public ISourceContainer[] computeSourceContainers(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
 		ISourceContainer[] containers =  super.computeSourceContainers(configuration, monitor);
 
-		IFragment fragment = SWTLaunchConfiguration.findFragment();
+		BundleDescription desc = SWTLaunchConfiguration.findFragment();
+		IFragment fragment = null;
+		if (desc != null) {
+			IFragmentModel model = PDECore.getDefault().getModelManager().findFragmentModel(desc.getSymbolicName());
+			fragment = model != null ? model.getFragment() : null;
+		}
+		
 		if (fragment == null)
 			return containers;
 		
@@ -47,7 +54,7 @@ public class SWTSourcePathComputer extends JavaSourcePathComputer {
 					int matchCount = fragmentPath.matchingFirstSegments(root.getPath());
 					if (matchCount == fragmentPath.segmentCount()) {
 						IPath libPath = root.getPath().removeFirstSegments(matchCount);
-						String libLocation = getLibrarySourceLocation(fragment, libPath.toString());
+						String libLocation = getLibrarySourceLocation(fragment, libPath);
 						if (libLocation != null) {
 							containers[i] = new ExternalArchiveSourceContainer(libLocation, false);
 						}
@@ -73,7 +80,7 @@ public class SWTSourcePathComputer extends JavaSourcePathComputer {
 			IPluginLibrary[] libraries = fragment.getLibraries();
 			for (int i = 0; i < libraries.length; i++) {
 				String name = ClasspathUtilCore.expandLibraryName(libraries[i].getName());
-				String location = getLibrarySourceLocation(fragment, name);
+				String location = getLibrarySourceLocation(fragment, new Path(name));
 				if (location != null)
 					extra.add(new ExternalArchiveSourceContainer(location, false));
 			}
@@ -89,7 +96,8 @@ public class SWTSourcePathComputer extends JavaSourcePathComputer {
 		return containers;
 	}
 	
-	private String getLibrarySourceLocation(IFragment fragment, String library) {
+	private String getLibrarySourceLocation(IFragment fragment, IPath path) {
+		String library = path.segmentCount() == 0 ? "." : path.setDevice(null).toString();
 		SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
 		int dot = library.lastIndexOf('.');
 		if (dot != -1) {

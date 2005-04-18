@@ -10,17 +10,48 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import java.io.*;
-import java.text.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.debug.core.*;
-import org.eclipse.jdt.core.*;
-import org.eclipse.jdt.launching.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate;
+import org.eclipse.jdt.launching.ExecutionArguments;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.IVMRunner;
+import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.VMRunnerConfiguration;
+import org.eclipse.osgi.framework.adaptor.core.AbstractFrameworkAdaptor;
+import org.eclipse.osgi.service.environment.Constants;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.pde.core.plugin.IFragmentModel;
+import org.eclipse.pde.core.plugin.IPluginLibrary;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ClasspathUtilCore;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.osgi.framework.Version;
 
 public class SWTLaunchConfiguration extends
 		AbstractJavaLaunchConfigurationDelegate {
@@ -60,7 +91,7 @@ public class SWTLaunchConfiguration extends
 		ExecutionArguments execArgs = new ExecutionArguments(vmArgs, pgmArgs);
 		
 		// Find SWT Fragment for the target platform
-		IFragment fragment = findFragment();
+		BundleDescription fragment = findFragment();
 		
 		// VM-specific attributes
 		Map vmAttributesMap = getVMSpecificAttributesMap(configuration);
@@ -105,7 +136,7 @@ public class SWTLaunchConfiguration extends
 		monitor.done();
 	}
 	
-	private String[] getVMArguments(IFragment fragment, ExecutionArguments execArgs) {
+	private String[] getVMArguments(BundleDescription fragment, ExecutionArguments execArgs) {
 		if (fragment == null)
 			return execArgs.getVMArgumentsArray();
 		
@@ -123,26 +154,83 @@ public class SWTLaunchConfiguration extends
 		return all;
 	}
 	
-	public static IFragment findFragment() {
-		IPlugin plugin = PDECore.getDefault().findPlugin("org.eclipse.swt"); //$NON-NLS-1$
-		if (plugin != null) {
-			IFragment[] fragments = PDECore.getDefault().findFragmentsFor("org.eclipse.swt", plugin.getVersion()); //$NON-NLS-1$
-			if (fragments.length == 1)
-				return fragments[0];
-			String targetId = "org.eclipse.swt." + TargetPlatform.getWS(); //$NON-NLS-1$
-			if (TargetPlatform.getOSArch().indexOf("64") != -1) //$NON-NLS-1$
-				targetId += "64"; //$NON-NLS-1$
-			for (int i = 0; i < fragments.length; i++) {
-				if (targetId.equals(fragments[i].getId()))
-					return fragments[i];
+	public static BundleDescription findFragment() {
+		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel("org.eclipse.swt");
+		if (model != null && model.isEnabled()) {
+			BundleDescription desc = model.getBundleDescription();
+			if (desc.getContainingState() != null) {
+				BundleDescription[] fragments = desc.getFragments();
+				if (fragments.length > 0) {
+					return fragments[0];
+				}
 			}
 		}
 		return null;
 	}
+
+	private String getNativeLibrariesLocation(BundleDescription fragment) {
+		Version version = fragment.getVersion();
+		if (version.getMajor() < 3 || version.getMinor() < 1)
+			return getLegacyNativeLibrariesLocation(fragment);
+		
+		File file = new File(fragment.getLocation());
+		return file.isDirectory() ? fragment.getLocation() : getExtractedLocation(file);
+	}
 	
-	private String getNativeLibrariesLocation(IFragment fragment) {
+	private String getExtractedLocation(File file) {
+		long timestamp = file.lastModified() ^ file.getAbsolutePath().hashCode();
+		File metadata = PDEPlugin.getDefault().getStateLocation().toFile();
+		File cache = new File(metadata, Long.toString(timestamp) + ".swt");
+		if (!cache.exists()){
+			cache.mkdirs();
+			extractZipFile(file, cache);
+		}		
+		return cache.getAbsolutePath();
+	}
+	
+	private void extractZipFile(File fragment, File destination) {
+		ZipFile zipFile = null;
+		try {
+			zipFile = new ZipFile(fragment);
+			for (Enumeration zipEntries = zipFile.entries(); zipEntries.hasMoreElements();) {
+				ZipEntry zipEntry = (ZipEntry) zipEntries.nextElement();
+				String name = zipEntry.getName();
+				IPath entryPath = new Path(name);
+				if (entryPath.segmentCount() == 1 && name.indexOf("swt") != -1) {
+					InputStream in = null;
+					try {
+						in = zipFile.getInputStream(zipEntry);
+						if (in != null) {
+							File file = new File(destination, zipEntry.getName());
+							AbstractFrameworkAdaptor.readFile(in, file);
+							if (Platform.getOS().equals(Constants.OS_HPUX))
+								Runtime.getRuntime().exec(new String[] {"chmod", "755", file.getAbsolutePath()}).waitFor();
+						}
+					} catch (IOException e) {
+					} catch (InterruptedException e) {
+					} finally {
+						try {
+							if (in != null)
+								in.close();
+						} catch (IOException e1) {
+						}						
+					}
+				}
+			}
+		} catch (ZipException e) {
+		} catch (IOException e) {
+		} finally {
+			try {
+				if (zipFile != null)
+					zipFile.close();
+			} catch (IOException e) {
+			}
+		}
+	}
+	
+	private String getLegacyNativeLibrariesLocation(BundleDescription fragment) {
 		StringBuffer buffer = new StringBuffer();
-		IPath path = new Path(fragment.getModel().getInstallLocation());
+		IPath path = new Path(fragment.getLocation());
 		buffer.append(path.removeTrailingSeparator().toString());
 		buffer.append(IPath.SEPARATOR);
 		buffer.append("os"); //$NON-NLS-1$
@@ -152,14 +240,17 @@ public class SWTLaunchConfiguration extends
 		buffer.append(TargetPlatform.getOSArch());
 		return buffer.toString();
 	}
-	
-	private String[] getClasspath(IFragment fragment, ILaunchConfiguration configuration) throws CoreException {
+		
+	private String[] getClasspath(BundleDescription desc, ILaunchConfiguration configuration) throws CoreException {
 		String[] entries = getClasspath(configuration);
+		
+		IFragmentModel fragment = PDECore.getDefault().getModelManager().findFragmentModel(desc.getSymbolicName());
+		
 		if (fragment == null)
 			return entries;
 		
 		ArrayList extra = new ArrayList();
-		IResource resource = fragment.getModel().getUnderlyingResource();
+		IResource resource = fragment.getUnderlyingResource();
 		if (resource != null) {
 			IProject project = resource.getProject();
 			if (project.hasNature(JavaCore.NATURE_ID)) {
@@ -174,8 +265,8 @@ public class SWTLaunchConfiguration extends
 				}
 			}
 		} else {
-			IPluginLibrary[] libraries = fragment.getLibraries();
-			String location = fragment.getModel().getInstallLocation();
+			IPluginLibrary[] libraries = fragment.getFragment().getLibraries();
+			String location = fragment.getInstallLocation();
 			for (int i = 0; i < libraries.length; i++) {
 				String name = ClasspathUtilCore.expandLibraryName(libraries[i].getName());
 				extra.add(new Path(location).append(name).toOSString());
@@ -191,5 +282,4 @@ public class SWTLaunchConfiguration extends
 		}
 		return entries;
 	}
-
 }
