@@ -48,7 +48,7 @@ public class HelloRCPTemplate extends PDETemplateSection {
 		
 		addOption(KEY_APPLICATION_CLASS, PDEUIMessages.HelloRCPTemplate_appClass, "Application", 0); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		addOption(KEY_PERSPECTIVE_NAME, "Pe&rspective Name:", (String) null, 0); 					
+		addOption(KEY_PERSPECTIVE_NAME, "Pe&rspective Name:", (String) null, 0); 					 //$NON-NLS-1$
 	}
 	
 	protected void initializeFields(IFieldData data) {
@@ -58,7 +58,7 @@ public class HelloRCPTemplate extends PDETemplateSection {
 		initializeOption(KEY_PACKAGE_NAME, packageName);
 		
 		int index = packageName.lastIndexOf('.');
-		String name = packageName.substring(index + 1) + " Perspective";
+		String name = packageName.substring(index + 1) + " Perspective"; //$NON-NLS-1$
 		initializeOption(KEY_PERSPECTIVE_NAME, Character.toUpperCase(name.charAt(0)) + name.substring(1));
 	}
 	
@@ -67,7 +67,7 @@ public class HelloRCPTemplate extends PDETemplateSection {
 		initializeOption(KEY_PACKAGE_NAME, packageName);
 
 		int index = packageName.lastIndexOf('.');
-		String name = packageName.substring(index + 1) + " Perspective";
+		String name = packageName.substring(index + 1) + " Perspective"; //$NON-NLS-1$
 		initializeOption(KEY_PERSPECTIVE_NAME, Character.toUpperCase(name.charAt(0)) + name.substring(1));
 	}	
 	
