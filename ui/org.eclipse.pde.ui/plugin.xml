@@ -233,7 +233,8 @@
             name="%pluginContent.intro.name"
             icon="icons/etool16/newexprj_wiz.gif"
             class="org.eclipse.pde.internal.ui.wizards.templates.IntroNewWizard"
-            id="org.eclipse.pde.ui.pluginContent.intro">
+            id="org.eclipse.pde.ui.pluginContent.intro"
+            rcp="true">
          <description>
             %pluginContent.intro.description
          </description>

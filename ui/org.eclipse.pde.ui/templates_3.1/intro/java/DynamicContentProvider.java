@@ -10,7 +10,7 @@ import org.w3c.dom.*;
 
 //
 
-public class $className$ implements IIntroXHTMLContentProvider {
+public class DynamicContentProvider implements IIntroXHTMLContentProvider {
 
 
     public void init(IIntroContentProviderSite site) {

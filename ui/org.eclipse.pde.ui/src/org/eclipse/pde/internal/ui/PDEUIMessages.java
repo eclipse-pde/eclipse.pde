@@ -1022,9 +1022,13 @@ public class PDEUIMessages extends NLS {
 	public static String IntroTemplate_application;
 	public static String IntroTemplate_introID;
 	public static String IntroTemplate_configurationID;
+    public static String IntroTemplate_generate;
     public static String IntroTemplate_generateDynamicContent;
+    public static String IntroTemplate_generateStaticContent;
     public static String IntroTemplate_packageName;
     public static String IntroTemplate_className;
+    public static String IntroTemplate_appId;
+    public static String IntroTemplate_applicationClassName;
 
 	public static String ViewRCPNewWizard_title;
 	public static String ViewRCPTemplate_title;

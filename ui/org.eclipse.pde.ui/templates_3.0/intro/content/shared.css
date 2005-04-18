@@ -1,0 +1,17 @@
+html, body {
+	overflow:auto;}  
+ 
+body {
+	padding:25px;
+	font-family: Times, "Times New Roman", serif;
+	
+	} 
+	
+h1 {
+	text-align: center;
+	font-size: x-large;
+	}
+	
+a {
+	text-decoration:none;
+}
