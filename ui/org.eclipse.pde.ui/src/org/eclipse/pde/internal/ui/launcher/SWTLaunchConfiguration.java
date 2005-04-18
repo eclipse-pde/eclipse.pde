@@ -48,6 +48,7 @@ import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
+import org.eclipse.pde.internal.core.CoreUtility;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -174,18 +175,33 @@ public class SWTLaunchConfiguration extends
 			return getLegacyNativeLibrariesLocation(fragment);
 		
 		File file = new File(fragment.getLocation());
-		return file.isDirectory() ? fragment.getLocation() : getExtractedLocation(file);
+		return file.isDirectory() ? fragment.getLocation() : getExtractionLocation(file);
 	}
 	
-	private String getExtractedLocation(File file) {
+	private String getExtractionLocation(File file) {
 		long timestamp = file.lastModified() ^ file.getAbsolutePath().hashCode();
 		File metadata = PDEPlugin.getDefault().getStateLocation().toFile();
 		File cache = new File(metadata, Long.toString(timestamp) + ".swt");
 		if (!cache.exists()){
+			deleteStaleCache(metadata);
 			cache.mkdirs();
 			extractZipFile(file, cache);
 		}		
 		return cache.getAbsolutePath();
+	}
+	
+	private void deleteStaleCache(File metadata) {
+		if (!metadata.exists())
+			return;
+		
+		File[] children = metadata.listFiles();
+		if (children == null)
+			return;
+		for (int i = 0; i < children.length; i++) {
+			if (children[i].isDirectory() && children[i].getName().endsWith(".swt")) {
+				CoreUtility.deleteContent(children[i]);
+			}
+		}
 	}
 	
 	private void extractZipFile(File fragment, File destination) {
