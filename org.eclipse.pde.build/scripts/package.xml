@@ -39,7 +39,8 @@
 									configInfo="${config}" 
 									baseLocation="${tempDirectory}/${featurePaths}" 
 									packagePropertyFile="${packagingPropertyFile}" 
-									deltaPack="${deltaPack}"/> 
+									deltaPack="${deltaPack}"
+									archivesFormat="${archivesFormat}"/> 
 	</target>
 
 	<!-- Call the assemble.xml script -->

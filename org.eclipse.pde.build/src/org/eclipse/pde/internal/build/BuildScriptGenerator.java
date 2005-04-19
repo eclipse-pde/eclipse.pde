@@ -44,9 +44,10 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	protected String[] pluginPath;
 
 	protected boolean recursiveGeneration = true;
+	protected boolean generateBuildScript = true;
+	protected boolean includePlatformIndependent = true;
 	protected boolean signJars = false;
 	protected boolean generateJnlp = false;
-
 	//Map configuration with the expected output format: key: Config, value: string
 	private HashMap archivesFormat;
 
@@ -137,14 +138,14 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 			generator.setAnalyseChildren(this.children);
 			generator.setSourceFeatureGeneration(false);
 			generator.setBinaryFeatureGeneration(true);
-			generator.setScriptGeneration(true);
+			generator.setScriptGeneration(generateBuildScript);
 			generator.setPluginPath(pluginPath);
 			generator.setBuildSiteFactory(null);
 			generator.setDevEntries(devEntries);
-			generator.setSourceToGather(new SourceFeatureInformation());
+			generator.setSourceToGather(new SourceFeatureInformation());//
 			generator.setCompiledElements(generator.getCompiledElements());
 			generator.setBuildingOSGi(isBuildingOSGi());
-			generator.includePlatformIndependent(true);
+			generator.includePlatformIndependent(includePlatformIndependent);
 			generator.setReportResolutionErrors(reportResolutionErrors);
 			generator.setIgnoreMissingPropertiesFile(ignoreMissingPropertiesFile);
 			generator.setSignJars(signJars);
@@ -170,8 +171,10 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		}
 	}
 
-	private void generatePackageScripts(AssemblyInformation assemblageInformation, String[] featureInfo) throws CoreException {
-		PackageScriptGenerator assembler = new PackageScriptGenerator(workingDirectory, assemblageInformation, featureInfo[0]);
+	protected void generatePackageScripts(AssemblyInformation assemblageInformation, String[] featureInfo) throws CoreException {
+		PackageScriptGenerator assembler = null;
+		assembler = new PackageScriptGenerator(workingDirectory, assemblageInformation, featureInfo[0]);
+		
 		assembler.setSignJars(signJars);
 		assembler.setGenerateJnlp(generateJnlp);
 		assembler.setArchivesFormat(getArchivesFormat());
@@ -304,5 +307,9 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 			}
 		}
 		return archivesFormat;
+	}
+	
+	public void includePlatformIndependent(boolean b) {
+		includePlatformIndependent = b;
 	}
 }
