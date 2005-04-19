@@ -46,6 +46,7 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 	public static final String SITEBUILD_TEMP_FOLDER = "temp.folder"; //$NON-NLS-1$
 	
 	private static boolean isDevLaunchMode = false;
+	private static boolean isPromiscuous = false;
 
 	public static boolean compare(
 		String id1,
@@ -169,6 +170,17 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		}
 		return isDevLaunchMode;
 	}
+
+	public static boolean isPromiscuousMode() {
+		String[] args = Platform.getApplicationArgs();
+		for (int i = 0; i < args.length; i++) {
+			if (args[i].equals("-promiscuous")) //$NON-NLS-1$
+				isPromiscuous  = true;			
+		}
+		return isPromiscuous;
+	}
+	
+	
 	// External model manager
 	private PluginModelManager modelManager;
 	//private boolean modelsLocked = false;
