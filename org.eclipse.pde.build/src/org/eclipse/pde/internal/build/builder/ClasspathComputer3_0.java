@@ -176,14 +176,14 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		if (generator.getCompiledElements().contains(pluginId)) {
 			if (modelProperties == null || modelProperties.getProperty(IBuildPropertiesConstants.PROPERTY_SOURCE_PREFIX + libraryName) != null) //$NON-NLS-1$
 				path = generator.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + '/' + path;
-				secondaryPath = generator.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + "/../" + pluginId + '/' + libraryName;  //$NON-NLS-1$
+			secondaryPath = generator.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + "/../" + pluginId + '/' + libraryName; //$NON-NLS-1$
 		}
 		if (!classpath.contains(path))
 			classpath.add(path);
-		
+
 		if (secondaryPath != null && !classpath.contains(secondaryPath))
 			classpath.add(secondaryPath);
-		
+
 	}
 
 	private void addSelf(BundleDescription model, ModelBuildScriptGenerator.CompiledEntry jar, List classpath, String location, List pluginChain, Set addedPlugins) throws CoreException {
@@ -191,7 +191,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		HostSpecification host = model.getHost();
 		if (host != null) {
 			BundleDescription[] hosts = host.getHosts();
-			for(int i=0; i<hosts.length; i++)
+			for (int i = 0; i < hosts.length; i++)
 				addPluginAndPrerequisites(hosts[i], classpath, location, pluginChain, addedPlugins);
 		}
 
@@ -247,7 +247,9 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			for (int i = 0; i < extra.length; i++) {
 				//Potential pb: if the path refers to something that is being compiled (which is supposetly not the case, but who knows...)
 				//the user will get $basexx instead of $ws 
-				addPathAndCheck(null, new Path(computeExtraPath(extra[i], location)), "", modelProperties, classpath); //$NON-NLS-1$
+				String toAdd = computeExtraPath(extra[i], classpath, location);
+				if (toAdd != null)
+					addPathAndCheck(null, new Path(toAdd), "", modelProperties, classpath); //$NON-NLS-1$
 			}
 		}
 
@@ -256,7 +258,9 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		for (int i = 0; i < jarSpecificExtraClasspath.length; i++) {
 			//Potential pb: if the path refers to something that is being compiled (which is supposetly not the case, but who knows...)
 			//the user will get $basexx instead of $ws 
-			addPathAndCheck(null, new Path(computeExtraPath(jarSpecificExtraClasspath[i], location)), "", modelProperties, classpath); //$NON-NLS-1$
+			String toAdd = computeExtraPath(jarSpecificExtraClasspath[i], classpath, location);
+			if (toAdd != null)
+				addPathAndCheck(null, new Path(toAdd), "", modelProperties, classpath); //$NON-NLS-1$
 		}
 	}
 
@@ -267,7 +271,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	 * @return String the relative path 
 	 * @throws CoreException
 	 */
-	private String computeExtraPath(String url, String location) throws CoreException {
+	private String computeExtraPath(String url, List classpath, String location) throws CoreException {
 		String relativePath = null;
 
 		String[] urlfragments = Utils.getArrayFromString(url, "/"); //$NON-NLS-1$
@@ -275,11 +279,16 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		// A valid platform url for a plugin has a leat 3 segments.
 		if (urlfragments.length > 2 && urlfragments[0].equals(PlatformURLHandler.PROTOCOL + PlatformURLHandler.PROTOCOL_SEPARATOR)) {
 			String modelLocation = null;
-			if (urlfragments[1].equalsIgnoreCase(PlatformURLPluginConnection.PLUGIN))
-				modelLocation = generator.getLocation(generator.getSite(false).getRegistry().getResolvedBundle(urlfragments[2]));
+			BundleDescription bundle = null;
+			if (urlfragments[1].equalsIgnoreCase(PlatformURLPluginConnection.PLUGIN) || urlfragments[1].equalsIgnoreCase(PlatformURLFragmentConnection.FRAGMENT))
+				bundle = generator.getSite(false).getRegistry().getResolvedBundle(urlfragments[2]);
 
-			if (urlfragments[1].equalsIgnoreCase(PlatformURLFragmentConnection.FRAGMENT))
-				modelLocation = generator.getLocation(generator.getSite(false).getRegistry().getResolvedBundle(urlfragments[2]));
+			if (urlfragments.length == 3) {
+				addPlugin(bundle, classpath, location);
+				return null;
+			}
+
+			modelLocation = generator.getLocation(bundle);
 
 			if (urlfragments[1].equalsIgnoreCase("resource")) { //$NON-NLS-1$
 				String message = NLS.bind(Messages.exception_url, generator.getPropertiesFileName() + "::" + url); //$NON-NLS-1$
@@ -287,10 +296,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			}
 			if (modelLocation != null) {
 				for (int i = 3; i < urlfragments.length; i++) {
-					if (i == 3)
-						modelLocation += urlfragments[i];
-					else
-						modelLocation += '/' + urlfragments[i]; //$NON-NLS-1$
+					modelLocation += '/' + urlfragments[i];
 				}
 				return relativePath = Utils.makeRelative(new Path(modelLocation), new Path(location)).toOSString();
 			}
@@ -352,7 +358,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	private void addPluginAndPrerequisites(BundleDescription target, List classpath, String baseLocation, List pluginChain, Set addedPlugins) throws CoreException {
 		if (matchFilter(target) == false)
 			return;
-		
+
 		addPlugin(target, classpath, baseLocation);
 		addPrerequisites(target, classpath, baseLocation, pluginChain, addedPlugins);
 	}
@@ -361,23 +367,23 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		String filter = target.getPlatformFilter();
 		if (filter == null) //Target is platform independent, add it 
 			return true;
-		
-		IPluginEntry associatedEntry = generator.getAssociatedEntry(); 
+
+		IPluginEntry associatedEntry = generator.getAssociatedEntry();
 		if (associatedEntry == null)
 			return true;
-		
+
 		String os = associatedEntry.getOS();
 		String ws = associatedEntry.getWS();
 		String arch = associatedEntry.getOSArch();
 		String nl = associatedEntry.getNL();
-		if (os==null && ws == null && arch == null && nl == null) //I'm a platform independent plugin
+		if (os == null && ws == null && arch == null && nl == null) //I'm a platform independent plugin
 			return true;
-		
+
 		//The plugin for which we are generating the classpath and target are not platform independent
 		Filter f = BundleHelper.getDefault().createFilter(filter);
 		if (f == null)
 			return true;
-		
+
 		Dictionary properties = new Hashtable(3);
 		if (os != null) {
 			properties.put(OSGI_OS, os);
@@ -385,23 +391,23 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			properties.put(OSGI_OS, CatchAllValue.singleton);
 		}
 		if (ws != null)
-			properties.put(OSGI_WS,ws);
+			properties.put(OSGI_WS, ws);
 		else
-			properties.put(OSGI_WS,CatchAllValue.singleton);
-		
+			properties.put(OSGI_WS, CatchAllValue.singleton);
+
 		if (arch != null)
 			properties.put(OSGI_ARCH, arch);
 		else
-			properties.put(OSGI_ARCH,CatchAllValue.singleton);
-		
+			properties.put(OSGI_ARCH, CatchAllValue.singleton);
+
 		if (arch != null)
 			properties.put(OSGI_NL, arch);
 		else
-			properties.put(OSGI_NL,CatchAllValue.singleton);
-		
+			properties.put(OSGI_NL, CatchAllValue.singleton);
+
 		return f.match(properties);
 	}
-	
+
 	/**
 	 * 
 	 * @param model
