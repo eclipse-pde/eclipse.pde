@@ -79,7 +79,7 @@ public class PopupMenuTemplate extends PDETemplateSection {
 			new String[][] {
 				{ "singleSelection", PDEUIMessages.PopupMenuTemplate_singleSelection}, //$NON-NLS-1$
 				{
-				"multipleSelection", PDEUIMessages.PopupMenuTemplate_multipleSelection
+				"multipleSelection", PDEUIMessages.PopupMenuTemplate_multipleSelection //$NON-NLS-1$
 				}
 		}, "singleSelection", 0); //$NON-NLS-1$
 	}
