@@ -210,16 +210,16 @@ public class SWTLaunchConfiguration extends
 			zipFile = new ZipFile(fragment);
 			for (Enumeration zipEntries = zipFile.entries(); zipEntries.hasMoreElements();) {
 				ZipEntry zipEntry = (ZipEntry) zipEntries.nextElement();
-				String name = zipEntry.getName();
-				IPath entryPath = new Path(name);
-				if (entryPath.segmentCount() == 1 && name.indexOf("swt") != -1) {
+				if (zipEntry.isDirectory())
+					continue;
+				if (isInterestingFile(zipEntry.getName())) {
 					InputStream in = null;
 					try {
 						in = zipFile.getInputStream(zipEntry);
 						if (in != null) {
 							File file = new File(destination, zipEntry.getName());
 							AbstractFrameworkAdaptor.readFile(in, file);
-							if (Platform.getOS().equals(Constants.OS_HPUX))
+							if (!Platform.getOS().equals(Constants.OS_WIN32))
 								Runtime.getRuntime().exec(new String[] {"chmod", "755", file.getAbsolutePath()}).waitFor();
 						}
 					} catch (IOException e) {
@@ -242,6 +242,17 @@ public class SWTLaunchConfiguration extends
 			} catch (IOException e) {
 			}
 		}
+	}
+	
+	private boolean isInterestingFile(String name) {
+		Path path = new Path(name);
+		if (path.segmentCount() > 1)
+			return false;
+		return name.endsWith(".dll")
+				|| name.endsWith(".jnilib")
+				|| name.endsWith(".sl")
+				|| name.endsWith(".a")
+				|| name.indexOf(".so") != -1;
 	}
 	
 	private String getLegacyNativeLibrariesLocation(BundleDescription fragment) {
