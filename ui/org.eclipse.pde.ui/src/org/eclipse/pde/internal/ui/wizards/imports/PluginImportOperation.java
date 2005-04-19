@@ -18,6 +18,7 @@ import java.util.zip.ZipFile;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
+import org.eclipse.osgi.service.environment.Constants;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.*;
@@ -121,6 +122,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 					importJARdPlugin(file, project, model, new SubProgressMonitor(monitor, 4));
 				else
 					importJARdPluginWithSource(file, project, model, new SubProgressMonitor(monitor, 4));
+				setPermissions(model, project);
 			} else {
 				switch (fImportType) {
 					case IMPORT_BINARY :
@@ -146,6 +148,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 
 			if (project.hasNature(JavaCore.NATURE_ID) && project.findMember(".classpath") == null) //$NON-NLS-1$
 				setClasspath(project, model);
+		} catch (CoreException e) {
 		} finally {
 			monitor.done();
 		}
@@ -742,5 +745,31 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		if (srcFile != null) {
 			importArchive(project, srcFile, srcPath);
 		}
+	}
+	
+	private void setPermissions(IPluginModelBase model, IProject project) {
+		try {
+			if (!Platform.getOS().equals(Constants.OS_WIN32) && model instanceof IFragmentModel) {
+				IFragment fragment = ((IFragmentModel)model).getFragment();
+				if ("org.eclipse.swt".equals(fragment.getPluginId())) {
+					IResource[] children = project.members();
+					for (int i = 0; i < children.length; i++) {
+						if (children[i] instanceof IFile && isInterestingResource(children[i].getName())) {
+							Runtime.getRuntime().exec(new String[] {"chmod", "755", children[i].getLocation().toOSString()}).waitFor();						
+						}
+					}
+				}			
+			}
+		} catch (CoreException e) {
+		} catch (InterruptedException e) {
+		} catch (IOException e) {
+		}
+	}
+	
+	private boolean isInterestingResource(String name) {
+		return name.endsWith(".jnilib")
+		|| name.endsWith(".sl")
+		|| name.endsWith(".a")
+		|| name.indexOf(".so") != -1;
 	}
 }
