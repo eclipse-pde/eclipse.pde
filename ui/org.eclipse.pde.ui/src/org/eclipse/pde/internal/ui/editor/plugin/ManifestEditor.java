@@ -116,8 +116,15 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
 		if (inputContextManager.hasContext(PluginInputContext.CONTEXT_ID))
 			return;
 		IProject project = inputContextManager.getCommonProject();
-		IFile file = project.getFile("plugin.xml"); //$NON-NLS-1$
-		WorkspacePluginModel model = new WorkspacePluginModel(file, false);
+		String name = (inputContextManager.getAggregateModel() instanceof IFragmentModel)
+						? "fragment.xml" : "plugin.xml";
+		IFile file = project.getFile(name); //$NON-NLS-1$
+		WorkspacePluginModelBase model;
+		if (name.equals("fragment.xml")) 
+			model = new WorkspaceFragmentModel(file, false);
+		else
+			model = new WorkspacePluginModel(file, false);
+		
 		IPluginBase pluginBase = model.getPluginBase(true);
 		try {
 			pluginBase.setSchemaVersion("3.0"); //$NON-NLS-1$

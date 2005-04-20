@@ -143,15 +143,7 @@ public class SiteEditor extends MultiSourceEditor {
 
 
 	protected String computeInitialPageId() {
-		String firstPageId = super.computeInitialPageId();
-		if (firstPageId == null) {
-			InputContext primary = inputContextManager.getPrimaryContext();
-			if (primary.getId().equals(SiteInputContext.CONTEXT_ID))
-				firstPageId = FeaturesPage.PAGE_ID;
-			if (firstPageId == null)
-				firstPageId = FeaturesPage.PAGE_ID;
-		}
-		return firstPageId;
+		return FeaturesPage.PAGE_ID;
 	}
 	
 	/* (non-Javadoc)
