@@ -209,7 +209,8 @@ public class ExternalModelManager {
 		}
 		
 		PDECore.getDefault().savePluginPreferences();
-		clearStaleStates();
+		if (fState != null)
+			clearStaleStates();
 	}
 	
 	private void clearStaleStates() {
