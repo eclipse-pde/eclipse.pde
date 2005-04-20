@@ -455,6 +455,7 @@
             icon="icons/obj16/plugin_mf_obj.gif"
             class="org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor"
             contributorClass="org.eclipse.pde.internal.ui.editor.plugin.ManifestEditorContributor"
+			matchingStrategy="org.eclipse.pde.internal.ui.editor.plugin.ManifestEditorMatchingStrategy"
             id="org.eclipse.pde.ui.manifestEditor">
             <contentTypeBinding contentTypeId="org.eclipse.pde.pluginManifest"/>
             <contentTypeBinding contentTypeId="org.eclipse.pde.fragmentManifest"/>
@@ -484,6 +485,7 @@
             icon="icons/obj16/ftr_xml_obj.gif"
             class="org.eclipse.pde.internal.ui.editor.feature.FeatureEditor"
             contributorClass="org.eclipse.pde.internal.ui.editor.feature.FeatureEditorContributor"
+			matchingStrategy="org.eclipse.pde.internal.ui.editor.feature.FeatureEditorMatchingStrategy"
             id="org.eclipse.pde.ui.featureEditor">
             <contentTypeBinding contentTypeId="org.eclipse.pde.featureManifest"/>
       </editor>

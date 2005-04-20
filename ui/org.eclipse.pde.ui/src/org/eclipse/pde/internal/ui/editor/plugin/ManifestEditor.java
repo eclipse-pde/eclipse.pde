@@ -30,7 +30,7 @@ import org.eclipse.ui.forms.editor.*;
 import org.eclipse.ui.part.*;
 import org.eclipse.ui.views.properties.*;
 
-public class ManifestEditor extends MultiSourceEditor {
+public class ManifestEditor extends MultiSourceEditor implements IShowEditorInput {
     
     private static int BUILD_INDEX = 5;
     
@@ -475,5 +475,23 @@ public class ManifestEditor extends MultiSourceEditor {
 		}		
 		return context;
 	}
+	
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IShowEditorInput#showEditorInput(org.eclipse.ui.IEditorInput)
+     */
+    public void showEditorInput(IEditorInput editorInput) {
+    	String name = editorInput.getName();
+    	if (name.equals("MANIFEST.MF")) {
+    		setActivePage(0);
+    	} else if (name.equals("build.properties")) {
+    		setActivePage(BUILD_INDEX);
+    	} else {
+    		if (inputContextManager.hasContext(BundleInputContext.CONTEXT_ID))
+    			setActivePage(3);
+    		else
+    			setActivePage(0);
+    	}
+    }
+
 
 }

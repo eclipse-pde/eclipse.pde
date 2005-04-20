@@ -44,13 +44,14 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IShowEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 
-public class FeatureEditor extends MultiSourceEditor {
+public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput {
 	public FeatureEditor() {
 	}
 
@@ -316,5 +317,14 @@ public class FeatureEditor extends MultiSourceEditor {
 			}
 		}
 		return false;
+	}
+
+	public void showEditorInput(IEditorInput editorInput) {
+    	String name = editorInput.getName();
+    	if (name.equals("feature.xml")) {
+    		setActivePage(0);
+    	} else {
+    		setActivePage(getPageCount() - 3);
+    	}
 	}
 }
