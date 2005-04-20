@@ -39,9 +39,10 @@ public abstract class XMLSourcePage extends PDESourcePage {
 	}
 	
 	public void dispose() {
-		colorManager.dispose();
 		super.dispose();
+		colorManager.dispose();
 	}
+	
 	public boolean canLeaveThePage() {
 		boolean cleanModel = getInputContext().isModelCorrect();
 		if (!cleanModel) {
