@@ -14,20 +14,20 @@ package org.eclipse.pde.ui.tests;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.pde.ui.tests.imports.AllImportTests;
-import org.eclipse.pde.ui.tests.wizards.NewSiteProjectTest;
-import org.eclipse.pde.ui.tests.wizards.feature.AllNewFeatureProjectTests;
-import org.eclipse.pde.ui.tests.wizards.plugin.AllNewProjectTests;
+//import org.eclipse.pde.ui.tests.imports.AllImportTests;
+//import org.eclipse.pde.ui.tests.wizards.NewSiteProjectTest;
+//import org.eclipse.pde.ui.tests.wizards.feature.AllNewFeatureProjectTests;
+//import org.eclipse.pde.ui.tests.wizards.plugin.AllNewProjectTests;
 
 
 public class AllPDETests {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite("Test Suite for org.eclipse.pde.ui"); //$NON-NLS-1$
-		suite.addTest(AllNewProjectTests.suite());
-		suite.addTest(AllNewFeatureProjectTests.suite());
-		suite.addTest(AllImportTests.suite());
-		suite.addTest(NewSiteProjectTest.suite());
+//		suite.addTest(AllNewProjectTests.suite());
+//		suite.addTest(AllNewFeatureProjectTests.suite());
+//		suite.addTest(AllImportTests.suite());
+//		suite.addTest(NewSiteProjectTest.suite());
 		return suite;
 	}
 	
