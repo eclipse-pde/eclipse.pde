@@ -105,13 +105,13 @@
          point="org.eclipse.ui.intro.configExtension">
       <configExtension
             configId="org.eclipse.platform.introConfig" 
-            content="$nl$/overviewExtensionContent.xml"/>  
+            content="$nl$/intro/overviewExtensionContent.xml"/>  
       <configExtension
             configId="org.eclipse.platform.introConfig"
-            content="$nl$/tutorialsExtensionContent.xml"/>
+            content="$nl$/intro/tutorialsExtensionContent.xml"/>
       <configExtension
             configId="org.eclipse.platform.introConfig"
-            content="$nl$/newsExtensionContent.xml"/>      
+            content="$nl$/intro/newsExtensionContent.xml"/>      
    </extension>
 
    <extension 

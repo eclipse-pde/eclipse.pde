@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <introContent>
   <!-- Extension to the SDK Overview Page. -->
-  <extensionContent alt-style="css/swt.properties" style="css/overview.css" path="overview/page-content/overview-links/pdeAnchor">
+  <extensionContent alt-style="intro/css/swt.properties" style="intro/css/overview.css" path="overview/page-content/overview-links/pdeAnchor">
     <link label="Eclipse plug-in development" url="http://org.eclipse.ui.intro/showHelpTopic?id=/org.eclipse.pde.doc.user/guide/pde.htm&amp;embed=true" id="pde">
       <text>Learn how to extend Eclipse by building new plug-ins</text>
     </link>
