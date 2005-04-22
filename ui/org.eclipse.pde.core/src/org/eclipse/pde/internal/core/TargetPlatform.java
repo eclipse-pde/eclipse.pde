@@ -456,7 +456,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 		Properties properties = new Properties();
 		BundleDescription[] bundles = state.getState().getBundles();
 		for (int i = 0; i < bundles.length; i++) {
-			properties.put(bundles[i].getSymbolicName(), getValue(bundles[i], state));
+			properties.put(Long.toString(bundles[i].getBundleId()), getValue(bundles[i], state));
 		}		
 		return properties;
 	}
