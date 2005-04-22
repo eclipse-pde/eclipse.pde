@@ -15,6 +15,7 @@ import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.feature.*;
@@ -449,6 +450,50 @@ public class TargetPlatform implements IEnvironmentVariables {
 
 	public static State getState() {
 		return getPDEState().getState();
+	}
+	
+	public static Properties getBundleClasspaths(PDEState state) {
+		Properties properties = new Properties();
+		BundleDescription[] bundles = state.getState().getBundles();
+		for (int i = 0; i < bundles.length; i++) {
+			properties.put(bundles[i].getSymbolicName(), getValue(bundles[i], state));
+		}		
+		return properties;
+	}
+	
+	public static File getBundleClasspathFile(PDEState state) {
+		Properties properties = getBundleClasspaths(state);
+		File file = new File(PDECore.getDefault().getStateLocation().toOSString(), "bundle.properties");
+		try {
+			FileOutputStream stream = new FileOutputStream(file);
+			properties.store(stream, "Master Tracing Options"); //$NON-NLS-1$
+			stream.flush();
+			stream.close();
+		} catch (IOException e) {
+			PDECore.logException(e);
+		}
+		return file;
+	}
+	
+	private static String getValue(BundleDescription bundle, PDEState state) {
+		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(bundle);
+		StringBuffer buffer = new StringBuffer();
+		if (model != null) {
+			IPluginLibrary[] libs = model.getPluginBase().getLibraries();
+			for (int i = 0; i < libs.length; i++) {
+				if (buffer.length() > 0)
+					buffer.append(",");
+				buffer.append(libs[i].getName());
+			}
+		} else {
+			String[] libs = state.getLibraryNames(bundle.getBundleId());
+			for (int i = 0; i < libs.length; i++) {
+				if (buffer.length() > 0)
+					buffer.append(",");
+				buffer.append(libs[i]);
+			}			
+		}
+		return buffer.length() == 0 ? "." : buffer.toString();
 	}
 
 }

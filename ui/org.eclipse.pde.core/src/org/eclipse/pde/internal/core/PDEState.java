@@ -105,8 +105,6 @@ public class PDEState {
 		if (fResolve)
 			logResolutionErrors();
 		createModels();
-		fPluginInfos = null;
-		fExtensions = null;
 
 		long end = System.currentTimeMillis();
 		if (DEBUG)
