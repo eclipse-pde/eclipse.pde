@@ -14,16 +14,12 @@ import java.io.*;
 import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.build.*;
-import org.eclipse.pde.internal.build.site.BuildTimeSite;
-import org.eclipse.pde.internal.build.site.BuildTimeSiteFactory;
 import org.eclipse.update.core.IPlatformEnvironment;
 
 /**
  * Instance of this class and subclasses are created on a plugin / feature basis. 
  */
 public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerator {
-	/** Location of the plug-ins and fragments. */
-	protected String[] pluginPath;
 	/** Additional dev entries for the compile classpath. */
 	protected DevClassPathHelper devEntries;
 
@@ -32,12 +28,9 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 
 	/** The content of the build.properties file associated to the element for which the script is generated */
 	protected Properties buildProperties;
-	protected BuildTimeSiteFactory siteFactory;
 	private Set compiledElements; //The elements we are compiling
 
 	private boolean includePlatformIndependent = true;
-
-	private boolean reportResolutionErrors;
 
 	/** flag indicating whether or not the missing properties file should be logged */ 
 	private boolean ignoreMissingPropertiesFile = false;
@@ -58,57 +51,6 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 	
 	public boolean isPlatformIndependentIncluded() {
 		return includePlatformIndependent;
-	}
-	
-	/**
-	 * Return the path of the plugins		//TODO Do we need to add support for features, or do we simply consider one list of URL? It is just a matter of style/
-	 * @return URL[]
-	 */
-	protected String[] getPluginPath() {
-		return pluginPath;
-	}
-
-	/**
-	 * Sets the pluginPath.
-	 * 
-	 * @param path
-	 */
-	public void setPluginPath(String[] path) {
-		pluginPath = path;
-	}
-
-	/**
-	 * Return a build time site referencing things to be built.   
-	 * @param refresh : indicate if a refresh must be performed. Although this flag is set to true, a new site is not rebuild if the urls of the site did not changed 
-	 * @return BuildTimeSite
-	 * @throws CoreException
-	 */
-	public BuildTimeSite getSite(boolean refresh) throws CoreException {
-		if (siteFactory != null && refresh == false)
-			return (BuildTimeSite) siteFactory.createSite();
-
-		if (siteFactory == null || refresh == true) {
-			siteFactory = new BuildTimeSiteFactory();
-			siteFactory.setReportResolutionErrors(reportResolutionErrors);
-		}
-
-		siteFactory.setSitePaths(getPaths());
-		return (BuildTimeSite) siteFactory.createSite();
-	}
-
-	/**
-	 * Method getPaths. 
-	 * @return URL[]
-	 */
-	private String[] getPaths() {
-		if (pluginPath != null)
-			return pluginPath;
-
-		return new String[] {workingDirectory};
-	}
-
-	public void setBuildSiteFactory(BuildTimeSiteFactory siteFactory) {
-		this.siteFactory = siteFactory;
 	}
 
 	/**

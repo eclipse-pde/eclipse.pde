@@ -30,6 +30,7 @@
 		directory="${buildDirectory}/directory.txt"
 		fetchTag="${fetchTag}"
 		configInfo="${configs}"
+		baseLocation="${baseLocation}"
 	/>
 	
 	<!-- Run generated fetch script -->

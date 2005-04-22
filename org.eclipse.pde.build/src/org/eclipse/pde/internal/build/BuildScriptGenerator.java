@@ -38,11 +38,6 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	 */
 	protected DevClassPathHelper devEntries;
 
-	/**
-	 * Plugin path. URLs that point where to find the plugins.
-	 */
-	protected String[] pluginPath;
-
 	protected boolean recursiveGeneration = true;
 	protected boolean generateBuildScript = true;
 	protected boolean includePlatformIndependent = true;
@@ -55,12 +50,6 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	 * flag indicating if the assemble script should be generated
 	 */
 	private boolean generateAssembleScript = true;
-
-	/**
-	 * flag indicating if the errors detected when the state is resolved must be reported or not.
-	 * For example in releng mode we are interested in reporting the errors. It is the default. 
-	 */
-	private boolean reportResolutionErrors = true;
 
 	/** flag indicating if missing properties file should be logged */
 	private boolean ignoreMissingPropertiesFile = false;

@@ -40,7 +40,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 
 	// Points to the map files containing references to cvs repository
 	protected String directoryLocation;
-	protected static Properties directory;	//TODO Should be passed around
+	protected Properties directory;
 
 	// The location of the CVS password file.
 	protected String cvsPassFileLocation;
@@ -153,6 +153,8 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			generator.setCvsPassFileLocation(cvsPassFileLocation);
 			generator.setRecursiveGeneration(recursiveGeneration);
 			generator.setFetchTag(fetchTag);
+			generator.setDirectory(directory);
+			generator.setBuildSiteFactory(siteFactory);
 			generator.repositoryPluginVersions = repositoryPluginVersions;
 			generator.generate();
 		}
@@ -255,7 +257,12 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 				}
 				continue;
 			}
-
+			
+			//Included features can be available in the baseLocation.
+			if (getCVSInfo(FEATURE + '@' + featureId) == null && getSite(false).findFeature(featureId, null, false) != null) {
+				String message = NLS.bind(Messages.error_cannotFetchNorFindFeature, featureId);
+				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, message, null));
+			}
 			script.printAntTask(getPropertyFormat(PROPERTY_BUILD_DIRECTORY) + '/' + FETCH_FILE_PREFIX + featureId + ".xml", null, TARGET_FETCH, null, null, null); //$NON-NLS-1$
 		}
 		script.printTargetEnd();
@@ -557,4 +564,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		this.recursiveGeneration = recursiveGeneration;
 	}
 
+	public void setDirectory(Properties dir) {
+		directory = dir;
+	}
 }

@@ -16,6 +16,8 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.ant.AntScript;
+import org.eclipse.pde.internal.build.site.BuildTimeSite;
+import org.eclipse.pde.internal.build.site.BuildTimeSiteFactory;
 import org.eclipse.update.core.SiteManager;
 
 /**
@@ -30,6 +32,12 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	protected static String workingDirectory;
 	protected static boolean buildingOSGi = true;
 	protected AntScript script;
+	
+	/** Location of the plug-ins and fragments. */
+	protected String[] pluginPath;
+	protected BuildTimeSiteFactory siteFactory;
+	
+	protected boolean reportResolutionErrors;
 
 	static {
 		// By default, a generic configuration is set
@@ -222,5 +230,56 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 
 	public static boolean getDefaultBuildingOSGi() {
 		return true;
+	}
+
+	/**
+	 * Return a build time site referencing things to be built.   
+	 * @param refresh : indicate if a refresh must be performed. Although this flag is set to true, a new site is not rebuild if the urls of the site did not changed 
+	 * @return BuildTimeSite
+	 * @throws CoreException
+	 */
+	public BuildTimeSite getSite(boolean refresh) throws CoreException {
+		if (siteFactory != null && refresh == false)
+			return (BuildTimeSite) siteFactory.createSite();
+	
+		if (siteFactory == null || refresh == true) {
+			siteFactory = new BuildTimeSiteFactory();
+			siteFactory.setReportResolutionErrors(reportResolutionErrors);
+		}
+	
+		siteFactory.setSitePaths(getPaths());
+		return (BuildTimeSite) siteFactory.createSite();
+	}
+
+	/**
+	 * Method getPaths. 
+	 * @return URL[]
+	 */
+	private String[] getPaths() {
+		if (pluginPath != null)
+			return pluginPath;
+	
+		return new String[] {workingDirectory};
+	}
+
+	public void setBuildSiteFactory(BuildTimeSiteFactory siteFactory) {
+		this.siteFactory = siteFactory;
+	}
+	
+	/**
+	 * Return the path of the plugins		//TODO Do we need to add support for features, or do we simply consider one list of URL? It is just a matter of style/
+	 * @return URL[]
+	 */
+	public String[] getPluginPath() {
+		return pluginPath;
+	}
+
+	/**
+	 * Sets the pluginPath.
+	 * 
+	 * @param path
+	 */
+	public void setPluginPath(String[] path) {
+		pluginPath = path;
 	}
 }

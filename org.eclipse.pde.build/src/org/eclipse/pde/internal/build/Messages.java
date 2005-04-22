@@ -24,6 +24,7 @@ public class Messages extends NLS {
 	public static String error_incorrectDirectoryEntry;
 	public static String error_missingElement;
 	public static String error_missingFeatureId;
+	public static String error_cannotFetchNorFindFeature;
 	public static String error_missingInstallLocation;
 	public static String error_creatingFeature;
 	public static String error_readingDirectory;

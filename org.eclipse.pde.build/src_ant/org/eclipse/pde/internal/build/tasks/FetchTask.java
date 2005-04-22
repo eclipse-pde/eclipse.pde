@@ -15,6 +15,7 @@ import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.build.AbstractScriptGenerator;
 import org.eclipse.pde.internal.build.FetchScriptGenerator;
+import org.eclipse.pde.internal.build.site.BuildTimeSiteFactory;
 
 /**
  * Generate fetch scripts for the given elements. This is the implementation of the "eclipse.fetch" Ant task.
@@ -124,4 +125,12 @@ public class FetchTask extends Task {
 		AbstractScriptGenerator.setConfigInfo(configInfo);
 	}
 
+	/**
+	 * Set a location that contains plugins and features required by plugins and features for which build scripts are being generated.
+	 * @param baseLocation a path to a folder
+	 * @since 3.1
+	 */
+	public void setBaseLocation(String baseLocation) {
+		BuildTimeSiteFactory.setInstalledBaseSite(baseLocation);
+	}
 }
