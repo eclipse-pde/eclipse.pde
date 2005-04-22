@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<introContent>
+  <!-- Extension to the SDK What's New Page. -->
+  <extensionContent alt-style="intro/css/swt.properties" style="intro/css/news.css" path="news/page-content/news-links/linksBeginAnchor">
+    <link label="Migration from the previous release" url="http://org.eclipse.ui.intro/showHelpTopic?id=/org.eclipse.platform.doc.isv/porting/eclipse_3_1_porting_guide.html" id="migration">
+        <text>Learn what you need to do to make your old code work in Eclipse 3.1</text>
+    </link>
+  </extensionContent>
+</introContent>

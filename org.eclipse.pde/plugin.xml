@@ -111,7 +111,13 @@
             content="$nl$/intro/tutorialsExtensionContent.xml"/>
       <configExtension
             configId="org.eclipse.platform.introConfig"
-            content="$nl$/intro/newsExtensionContent.xml"/>      
+            content="$nl$/intro/samplesExtensionContent.xml"/>
+      <configExtension
+            configId="org.eclipse.platform.introConfig"
+            content="$nl$/intro/newsExtensionContent.xml"/> 
+      <configExtension
+            configId="org.eclipse.platform.introConfig"
+            content="$nl$/intro/newsExtensionContent2.xml"/>     
    </extension>
 
    <extension 

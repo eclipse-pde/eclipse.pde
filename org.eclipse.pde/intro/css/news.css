@@ -1,0 +1,3 @@
+a#migration img { background-image : url(graphics/obj_48/migrate_obj.gif); }
+a#migration:hover img { background-image : url(graphics/obj_48/migratehov_obj.gif); }
+
