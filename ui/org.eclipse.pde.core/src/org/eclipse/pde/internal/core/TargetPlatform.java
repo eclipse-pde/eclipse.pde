@@ -466,7 +466,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 		File file = new File(PDECore.getDefault().getStateLocation().toOSString(), "bundle.properties");
 		try {
 			FileOutputStream stream = new FileOutputStream(file);
-			properties.store(stream, "Master Tracing Options"); //$NON-NLS-1$
+			properties.store(stream, "Bundle Classpaths"); //$NON-NLS-1$
 			stream.flush();
 			stream.close();
 		} catch (IOException e) {
