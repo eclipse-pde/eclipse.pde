@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 

@@ -30,6 +30,7 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.build.*;
 import org.eclipse.pde.internal.core.feature.FeatureChild;
 import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.build.*;
 import org.eclipse.swt.widgets.*;

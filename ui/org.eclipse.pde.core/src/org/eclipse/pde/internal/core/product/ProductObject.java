@@ -13,10 +13,10 @@ package org.eclipse.pde.internal.core.product;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.pde.core.IModelChangeProvider;
 import org.eclipse.pde.core.ModelChangedEvent;
-import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.core.iproduct.IProductObject;
+import org.eclipse.pde.internal.core.util.CoreUtility;
 
 
 public abstract class ProductObject extends PlatformObject implements IProductObject {

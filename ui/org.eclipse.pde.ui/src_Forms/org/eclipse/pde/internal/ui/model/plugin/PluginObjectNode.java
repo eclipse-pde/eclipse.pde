@@ -10,14 +10,22 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.model.plugin;
 
-import java.io.*;
+import java.io.PrintWriter;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.text.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.model.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.text.TextUtilities;
+import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.core.IModelChangeProvider;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.ModelChangedEvent;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.pde.core.plugin.ISharedPluginModel;
+import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.ui.model.IDocumentAttribute;
+import org.eclipse.pde.internal.ui.model.IDocumentNode;
+import org.eclipse.pde.internal.ui.model.IEditingModel;
 
 public class PluginObjectNode extends PluginDocumentNode
 		implements

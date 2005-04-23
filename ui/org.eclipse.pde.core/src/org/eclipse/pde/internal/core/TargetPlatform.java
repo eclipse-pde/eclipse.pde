@@ -20,6 +20,7 @@ import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.feature.*;
 import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.update.configurator.*;
 
 public class TargetPlatform implements IEnvironmentVariables {

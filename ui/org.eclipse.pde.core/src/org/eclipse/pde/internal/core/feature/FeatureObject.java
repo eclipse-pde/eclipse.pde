@@ -18,12 +18,12 @@ import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.pde.core.IModelChangeProvider;
 import org.eclipse.pde.core.ModelChangedEvent;
-import org.eclipse.pde.internal.core.CoreUtility;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeatureObject;
+import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.w3c.dom.Node;
 
 public abstract class FeatureObject

@@ -9,18 +9,31 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.context;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
-import org.eclipse.core.filebuffers.*;
-import org.eclipse.jface.text.*;
+import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
-import org.eclipse.jface.text.rules.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TextUtilities;
+import org.eclipse.jface.text.rules.FastPartitioner;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.text.XMLPartitionScanner;
-import org.eclipse.pde.internal.ui.model.*;
-import org.eclipse.text.edits.*;
+import org.eclipse.pde.internal.ui.model.IDocumentAttribute;
+import org.eclipse.pde.internal.ui.model.IDocumentNode;
+import org.eclipse.pde.internal.ui.model.IDocumentTextNode;
+import org.eclipse.text.edits.DeleteEdit;
+import org.eclipse.text.edits.InsertEdit;
+import org.eclipse.text.edits.MoveSourceEdit;
+import org.eclipse.text.edits.MoveTargetEdit;
+import org.eclipse.text.edits.ReplaceEdit;
+import org.eclipse.text.edits.TextEdit;
 import org.eclipse.ui.IEditorInput;
 
 public abstract class XMLInputContext extends UTF8InputContext {

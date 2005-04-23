@@ -10,10 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.product;
 
-import org.eclipse.jface.text.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.model.*;
-import org.eclipse.text.edits.*;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.TextUtilities;
+import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.ui.model.IDocumentAttribute;
+import org.eclipse.pde.internal.ui.model.IDocumentNode;
+import org.eclipse.text.edits.InsertEdit;
+import org.eclipse.text.edits.ReplaceEdit;
+import org.eclipse.text.edits.TextEdit;
 
 public class TextEditUtilities {
 

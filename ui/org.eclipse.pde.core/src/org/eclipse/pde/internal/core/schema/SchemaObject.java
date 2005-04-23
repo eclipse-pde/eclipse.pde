@@ -10,11 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.schema;
 
-import java.io.*;
+import java.io.Serializable;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.pde.internal.core.ischema.ISchema;
+import org.eclipse.pde.internal.core.ischema.ISchemaObject;
+import org.eclipse.pde.internal.core.util.CoreUtility;
 
 public abstract class SchemaObject extends PlatformObject implements
 		ISchemaObject, Serializable {

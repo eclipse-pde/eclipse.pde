@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.core.plugin.IPluginReference;
-import org.eclipse.pde.internal.core.CoreUtility;
+import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.wizards.templates.PluginReference;
 import org.eclipse.pde.ui.IPluginFieldData;
 
