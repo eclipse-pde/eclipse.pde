@@ -763,6 +763,14 @@
                enablesFor="1"
                id="org.eclipse.pde.ui.BuildPluginAction2">
          </action>
+         <action
+               label="%popupMenus.createHelpIndex.label"
+               helpContextId="org.eclipse.pde.doc.user.create_help_index"
+               class="org.eclipse.pde.internal.ui.wizards.tools.CreateHelpIndexAction"
+               menubarPath="org.eclipse.pde.ui.manifest.tools/group1"
+               enablesFor="1"
+               id="org.eclipse.pde.ui.CreateHelpIndexAction">
+         </action>         
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.core.resources.IFile"

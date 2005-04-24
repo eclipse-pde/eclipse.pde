@@ -131,7 +131,7 @@ public class CreateHelpIndexAction implements IObjectActionDelegate {
 		Object obj = ((IStructuredSelection) selection).getFirstElement();
 		if (obj instanceof IFile) {
 			IFile fileResource = (IFile) obj;
-			return fileResource.getLocation().toFile().getParentFile();
+			return fileResource.getProject().getLocation().toFile();
 		}
 		return null;
 	}
@@ -139,7 +139,7 @@ public class CreateHelpIndexAction implements IObjectActionDelegate {
 	private void refreshTarget(IProgressMonitor monitor) throws CoreException {
 		Object obj = ((IStructuredSelection) selection).getFirstElement();
 		IFile fileResource = (IFile) obj;
-		fileResource.getParent().refreshLocal(IResource.DEPTH_INFINITE, monitor);
+		fileResource.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {
