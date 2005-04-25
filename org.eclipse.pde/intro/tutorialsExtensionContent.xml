@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <introContent>
   <!-- Extension to the SDK Tutorial Page. -->
-  <extensionContent alt-style="intro/css/swt.properties" style="intro/css/tutorials.css" path="tutorials/page-content/pdeAnchor">
+  <extensionContent alt-style="css/swt.properties" style="css/tutorials.css" path="tutorials/page-content/pdeAnchor">
     <group label="Eclipse Plug-in Development" id="pde" style-id="tutorials-group">
 <!-- DG: commenting out links that are not implemented
       <link url="http://org.eclipse.ui.intro/showMessage?message=Action not implemented." label="Build a Rich Client Platform application" id="rcp" style-id="tutorials-link">
