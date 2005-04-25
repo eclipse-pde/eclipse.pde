@@ -29,7 +29,6 @@ import org.w3c.dom.Node;
 
 public class Macro implements IWritable, IPlayable {
 	private static final String SYNTAX_VERSION="0.1";
-	private transient Event lastEvent;
 	private transient IIndexHandler indexHandler;
 	ArrayList shells;
 	private String name;
@@ -40,6 +39,7 @@ public class Macro implements IWritable, IPlayable {
 	}
 	
 	public Macro(String name) {
+		this();
 		this.name = name;
 	}
 	
@@ -197,7 +197,6 @@ public class Macro implements IWritable, IPlayable {
 		return true;
 	}
 	private void reset() {
-		lastEvent = null;
 		shellStack = null;
 	}
 	public void write(String indent, PrintWriter writer) {
