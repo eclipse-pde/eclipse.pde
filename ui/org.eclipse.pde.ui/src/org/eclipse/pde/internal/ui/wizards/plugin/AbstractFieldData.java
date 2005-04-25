@@ -25,7 +25,6 @@ public abstract class AbstractFieldData implements IFieldData {
 	private boolean fHasBundleStructure;
 	private boolean fSimple;
 	private String fTargetVersion = "3.1"; //$NON-NLS-1$
-	private boolean fJarred = false;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.IFieldData2#getId()
@@ -141,13 +140,4 @@ public abstract class AbstractFieldData implements IFieldData {
 	public void setTargetVersion(String version) {
 		fTargetVersion = version;
 	}
-
-	public boolean isJarred() {
-		return fJarred;
-	}
-
-	public void setJarred(boolean jarred) {
-		fJarred = jarred;
-	}
-
 }

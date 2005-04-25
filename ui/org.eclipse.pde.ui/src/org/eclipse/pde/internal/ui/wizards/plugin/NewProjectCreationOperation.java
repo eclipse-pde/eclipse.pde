@@ -77,7 +77,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			String[] paths = ((LibraryPluginFieldData) fData).getLibraryPaths();
 			for (int i = 0; i < paths.length; i++) {
 				File jarFile = new File(paths[i]);
-				if (fData.isJarred()) {
+				if (((LibraryPluginFieldData)fData).isJarred()) {
 					importJar(jarFile, project, monitor);
 				} else {
 					addJar(jarFile, project, monitor);
@@ -285,13 +285,11 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
                         .getClassname());
         }
         if (!fData.isSimple()) {
-			if (fData.isJarred()) {
+			if (fData instanceof LibraryPluginFieldData && ((LibraryPluginFieldData)fData).isJarred()) {
 				IPluginLibrary library = fModel.getPluginFactory()
 						.createLibrary();
 				library.setName("."); //$NON-NLS-1$
-				if (fData instanceof LibraryPluginFieldData) {
-					library.setExported(true);
-				}
+				library.setExported(true);
 				pluginBase.add(library);
 
 			} else if (fData.getLibraryName() != null) {
@@ -305,7 +303,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			}
 		}
 		if (fData instanceof LibraryPluginFieldData
-				&& !fData.isJarred()) { //$NON-NLS-1$
+				&& !((LibraryPluginFieldData)fData).isJarred()) { //$NON-NLS-1$
 			String[] paths = ((LibraryPluginFieldData) fData).getLibraryPaths();
 			for (int i = 0; i < paths.length; i++) {
 				File jarFile = new File(paths[i]);
@@ -343,7 +341,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
                 binEntry.addToken("META-INF/"); //$NON-NLS-1$
 			
 			if (fData instanceof LibraryPluginFieldData) {
-				if (fData.isJarred()) {
+				if (((LibraryPluginFieldData)fData).isJarred()) {
 					IResource[] resources = project.members(false);
 					for (int j = 0; j < resources.length; j++) {
 						if (resources[j] instanceof IFolder) {
@@ -427,7 +425,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		} else {
 			String[] libraryPaths = new String[0];
 			if (fData instanceof LibraryPluginFieldData) {
-				if (fData.isJarred()) {
+				if (((LibraryPluginFieldData)fData).isJarred()) {
 					libraryPaths = new String[] { "" }; //$NON-NLS-1$
 				} else {
 					libraryPaths = ((LibraryPluginFieldData) fData)

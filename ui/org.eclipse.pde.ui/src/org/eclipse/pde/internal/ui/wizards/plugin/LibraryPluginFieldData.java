@@ -13,12 +13,22 @@ package org.eclipse.pde.internal.ui.wizards.plugin;
 public class LibraryPluginFieldData extends PluginFieldData {
 	private String[] fLibraryPaths;
 
+	private boolean fJarred = false;
+
 	public String[] getLibraryPaths() {
 		return fLibraryPaths;
 	}
 
 	public void setLibraryPaths(String[] libraryPaths) {
 		fLibraryPaths = libraryPaths;
+	}
+
+	public boolean isJarred() {
+		return fJarred;
+	}
+
+	public void setJarred(boolean jarred) {
+		fJarred = jarred;
 	}
 
 }

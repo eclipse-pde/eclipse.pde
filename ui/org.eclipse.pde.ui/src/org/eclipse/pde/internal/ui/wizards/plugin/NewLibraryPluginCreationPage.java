@@ -62,7 +62,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 
 	protected Button fBundleCheck;
 
-	private AbstractFieldData fData;
+	private LibraryPluginFieldData fData;
 
 	protected Text fIdText;
 
@@ -82,7 +82,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 
 	protected Text fVersionText;
 
-	public NewLibraryPluginCreationPage(String pageName, AbstractFieldData data) {
+	public NewLibraryPluginCreationPage(String pageName, LibraryPluginFieldData data) {
 		super(pageName);
 		fData = data;
 		setTitle(PDEUIMessages.NewLibraryPluginCreationPage_title); //$NON-NLS-1$
@@ -255,7 +255,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		fData.setJarred(fJarredCheck.isEnabled()
 				&& fJarredCheck.getSelection());
 
-		PluginFieldData data = (PluginFieldData) fData;
+		PluginFieldData data = fData;
 		data.setClassname(null);
 		data.setUIPlugin(false);
 		data.setDoGenerateClass(false);
