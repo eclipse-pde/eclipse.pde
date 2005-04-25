@@ -193,12 +193,12 @@ public class MacroManager {
 	 * @throws CoreException
 	 */
 	public boolean play(final Display display, IRunnableContext context,
-			InputStream is) throws CoreException {
+			String scriptName, InputStream is) throws CoreException {
 		XMLDefaultHandler handler = createMacroDocument(is);
 		Node root = handler.getDocumentElement();
 		NodeList children = root.getChildNodes();
 
-		final Macro macro = new Macro();
+		final Macro macro = new Macro(scriptName);
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeName().equals("shell")) {

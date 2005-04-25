@@ -52,7 +52,7 @@ public abstract class PDETestCase extends TestCase {
 			if (url == null)
 				fail("Script \"" + scriptName + "\" could not be found");
 			stream = url.openStream();			
-			recorder.play(fWorkbench.getDisplay(), fWorkbench.getActiveWorkbenchWindow(), stream);
+			recorder.play(fWorkbench.getDisplay(), fWorkbench.getActiveWorkbenchWindow(), scriptName, stream);
 			recorder.shutdown();
 		} catch (CoreException e) {
 			fail("Error playing the script: \"" + scriptName + "\"");

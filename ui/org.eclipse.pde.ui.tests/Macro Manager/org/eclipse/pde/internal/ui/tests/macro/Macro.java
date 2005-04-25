@@ -32,10 +32,15 @@ public class Macro implements IWritable, IPlayable {
 	private transient Event lastEvent;
 	private transient IIndexHandler indexHandler;
 	ArrayList shells;
+	private String name;
 	private Stack shellStack;
 	
 	public Macro() {
 		shells = new ArrayList();
+	}
+	
+	public Macro(String name) {
+		this.name = name;
 	}
 	
 	void addShell(Node node, Hashtable lineTable) {
@@ -174,7 +179,8 @@ public class Macro implements IWritable, IPlayable {
 	
 	public boolean playback(Display display, Composite parent, IProgressMonitor monitor) throws CoreException {
 		reset();
-		monitor.beginTask("Executing macro...", shells.size());
+		String mname = name!=null?name:"macro";
+		monitor.beginTask("Executing "+mname+" ...", shells.size());
 		for (int i=0; i<shells.size(); i++) {
 			MacroCommandShell shell = (MacroCommandShell)shells.get(i);
 			shell.setIndexHandler(getIndexHandler());

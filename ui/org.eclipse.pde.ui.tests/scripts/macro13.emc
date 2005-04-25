@@ -20,6 +20,5 @@
          <command type="select" contextId="wizard" widgetId="org.eclipse.swt.widgets.Button#ButtonId=16"/>
          <command type="focus" contextId="wizard" widgetId="org.eclipse.swt.widgets.Button#ButtonId=16"/>
       </shell>
-      <command type="focus" contextId="editor/org.eclipse.ui.DefaultTextEditor/12.emc" widgetId="org.eclipse.swt.custom.StyledText#1"/>
    </shell>
 </macro>
