@@ -259,11 +259,12 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			}
 			
 			//Included features can be available in the baseLocation.
-			if (getCVSInfo(FEATURE + '@' + featureId) == null && getSite(false).findFeature(featureId, null, false) != null) {
+			if (getCVSInfo(FEATURE + '@' + featureId) != null)
+				script.printAntTask(getPropertyFormat(PROPERTY_BUILD_DIRECTORY) + '/' + FETCH_FILE_PREFIX + featureId + ".xml", null, TARGET_FETCH, null, null, null); //$NON-NLS-1$
+			else if (getSite(false).findFeature(featureId, null, false) == null) {
 				String message = NLS.bind(Messages.error_cannotFetchNorFindFeature, featureId);
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, message, null));
 			}
-			script.printAntTask(getPropertyFormat(PROPERTY_BUILD_DIRECTORY) + '/' + FETCH_FILE_PREFIX + featureId + ".xml", null, TARGET_FETCH, null, null, null); //$NON-NLS-1$
 		}
 		script.printTargetEnd();
 	}
