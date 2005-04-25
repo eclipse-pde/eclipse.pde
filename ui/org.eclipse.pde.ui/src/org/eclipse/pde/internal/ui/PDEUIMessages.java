@@ -775,6 +775,7 @@ public class PDEUIMessages extends NLS {
 	public static String NewLibraryPluginCreationPage_pformat;
 	public static String NewLibraryPluginCreationPage_pTarget;
 	public static String NewLibraryPluginCreationPage_bundle;
+	public static String NewLibraryPluginCreationPage_jarred;
 	public static String NewLibraryPluginCreationPage_pGroup;
 	public static String NewLibraryPluginCreationPage_pid;
 	public static String NewLibraryPluginCreationPage_pversion;
@@ -800,6 +801,7 @@ public class PDEUIMessages extends NLS {
 	public static String NewProjectCreationOperation_manifestFile;
 	public static String NewProjectCreationOperation_buildPropertiesFile;
 	public static String NewProjectCreationOperation_copyingJar;
+	public static String NewProjectCreationOperation_errorImportingJar;
 
 	public static String AbstractTemplateSection_generating;
 

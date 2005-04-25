@@ -66,6 +66,8 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 
 	protected Text fIdText;
 
+	protected Button fJarredCheck;
+
 	protected NewLibraryPluginCreationPage fMainPage;
 
 	protected Text fNameText;
@@ -132,6 +134,14 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		});
 		fBundleCheck = new Button(group, SWT.CHECK);
 		fBundleCheck.setText(PDEUIMessages.NewLibraryPluginCreationPage_bundle); //$NON-NLS-1$
+		gd = new GridData();
+		gd.horizontalSpan = 2;
+		fBundleCheck.setLayoutData(gd);
+		fJarredCheck = new Button(group, SWT.CHECK);
+		fJarredCheck.setText(PDEUIMessages.NewLibraryPluginCreationPage_jarred); //$NON-NLS-1$
+		gd = new GridData();
+		gd.horizontalSpan = 2;
+		fJarredCheck.setLayoutData(gd);
 		updateBundleCheck();
 	}
 
@@ -221,8 +231,11 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 	private void updateBundleCheck() {
 		boolean legacy = fTargetCombo.getText().equals(ICoreConstants.TARGET21);
 		fBundleCheck.setEnabled(!legacy);
-		if (legacy)
-			fBundleCheck.setSelection(false);
+		fBundleCheck.setSelection(!legacy);
+		fJarredCheck.setEnabled(!legacy);
+		boolean pre31 = fTargetCombo.getText().equals(ICoreConstants.TARGET30)
+				|| fTargetCombo.getText().equals(ICoreConstants.TARGET21);
+		fJarredCheck.setSelection(!pre31);
 	}
 
 	public void updateData() {
@@ -239,6 +252,8 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		fData.setName(fNameText.getText().trim());
 		fData.setProvider(fProviderText.getText().trim());
 		fData.setLibraryName(null);
+		fData.setJarred(fJarredCheck.isEnabled()
+				&& fJarredCheck.getSelection());
 
 		PluginFieldData data = (PluginFieldData) fData;
 		data.setClassname(null);

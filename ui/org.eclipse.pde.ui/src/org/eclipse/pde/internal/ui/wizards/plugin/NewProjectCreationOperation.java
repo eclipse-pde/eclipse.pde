@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.zip.ZipFile;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
@@ -34,8 +35,10 @@ import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.pde.ui.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
+import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.ide.*;
 import org.eclipse.ui.part.*;
+import org.eclipse.ui.wizards.datatransfer.*;
 
 public class NewProjectCreationOperation extends WorkspaceModifyOperation {
     private IFieldData fData;
@@ -52,7 +55,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
         fProjectProvider = provider;
         fContentWizard = contentWizard;
     }
-    
+   	
     /*
      * (non-Javadoc)
      * 
@@ -74,25 +77,19 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			String[] paths = ((LibraryPluginFieldData) fData).getLibraryPaths();
 			for (int i = 0; i < paths.length; i++) {
 				File jarFile = new File(paths[i]);
-				String jarName = jarFile.getName();
-				IFile file = project.getFile(jarName);
-				monitor.subTask(NLS.bind(PDEUIMessages.NewProjectCreationOperation_copyingJar, jarName)); //$NON-NLS-1$
-
-				InputStream in = null;
-				try {
-					in = new FileInputStream(jarFile);
-					file.create(in, true, monitor);
-				} catch (FileNotFoundException fnfe) {
-				} finally {
-					if (in != null) {
-						try {
-							in.close();
-						} catch (IOException ioe) {
-
-						}
-					}
+				if (fData.isJarred()) {
+					importJar(jarFile, project, monitor);
+				} else {
+					addJar(jarFile, project, monitor);
 				}
 				monitor.worked(1);
+			}
+			if(!fData.hasBundleStructure()){
+				// delete manifest.mf imported from libraries
+				IFile importedManifest = project.getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
+				if(importedManifest.exists()){
+					importedManifest.delete(true, false, monitor);
+				}
 			}
 		}
 		// set classpath if project has a Java nature
@@ -147,6 +144,49 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		fResult = contentWizardResult;
 	}
      
+	private void addJar(File jarFile, IProject project, IProgressMonitor monitor) throws CoreException {
+		String jarName = jarFile.getName();
+		IFile file = project.getFile(jarName);
+		monitor.subTask(NLS.bind(PDEUIMessages.NewProjectCreationOperation_copyingJar, jarName)); //$NON-NLS-1$
+		InputStream in = null;
+		try {
+			in = new FileInputStream(jarFile);
+			file.create(in, true, monitor);
+		} catch (FileNotFoundException fnfe) {
+		} finally {
+			if (in != null) {
+				try {
+					in.close();
+				} catch (IOException ioe) {
+				}
+			}
+		}
+	}
+	
+    private void importJar(File jar, IResource destination, IProgressMonitor monitor) throws CoreException,
+    		InvocationTargetException, InterruptedException {
+    	ZipFile input = null;
+    	try {
+    		try {
+	    		input = new ZipFile(jar);
+				ZipFileStructureProvider provider = new ZipFileStructureProvider(input);
+				ImportOperation op = new ImportOperation(destination.getFullPath(), provider.getRoot(), provider, new IOverwriteQuery(){
+					public String queryOverwrite(String pathString) {
+						return IOverwriteQuery.ALL;
+					}					
+				});
+				op.run(monitor);
+    		} finally {
+				input.close();
+			}
+		} catch (IOException e) {
+			throw new CoreException(new Status(IStatus.ERROR,
+					PDEPlugin.PLUGIN_ID, IStatus.OK,
+					PDEUIMessages.NewProjectCreationOperation_errorImportingJar
+							+ jar, e));
+		} 
+    }
+       
     private void trimModel(IPluginBase base) throws CoreException {
         base.setId(null);
         base.setVersion(null);
@@ -244,12 +284,28 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
                 ((IPlugin) pluginBase).setClassName(((IPluginFieldData) fData)
                         .getClassname());
         }
-        if (!fData.isSimple() && fData.getLibraryName() != null) {
-            IPluginLibrary library = fModel.getPluginFactory().createLibrary();
-            library.setName(fData.getLibraryName());
-            pluginBase.add(library);
-        }
-		if (fData instanceof LibraryPluginFieldData) {
+        if (!fData.isSimple()) {
+			if (fData.isJarred()) {
+				IPluginLibrary library = fModel.getPluginFactory()
+						.createLibrary();
+				library.setName("."); //$NON-NLS-1$
+				if (fData instanceof LibraryPluginFieldData) {
+					library.setExported(true);
+				}
+				pluginBase.add(library);
+
+			} else if (fData.getLibraryName() != null) {
+				IPluginLibrary library = fModel.getPluginFactory()
+						.createLibrary();
+				library.setName(fData.getLibraryName());
+				if (fData instanceof LibraryPluginFieldData) {
+					library.setExported(true);
+				}
+				pluginBase.add(library);
+			}
+		}
+		if (fData instanceof LibraryPluginFieldData
+				&& !fData.isJarred()) { //$NON-NLS-1$
 			String[] paths = ((LibraryPluginFieldData) fData).getLibraryPaths();
 			for (int i = 0; i < paths.length; i++) {
 				File jarFile = new File(paths[i]);
@@ -287,13 +343,33 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
                 binEntry.addToken("META-INF/"); //$NON-NLS-1$
 			
 			if (fData instanceof LibraryPluginFieldData) {
-				String[] libraryPaths = ((LibraryPluginFieldData) fData)
-						.getLibraryPaths();
-				for (int j = 0; j < libraryPaths.length; j++) {
-					File jarFile = new File(libraryPaths[j]);
-					String name = jarFile.getName();
-					if (!binEntry.contains(name))
-						binEntry.addToken(name);
+				if (fData.isJarred()) {
+					IResource[] resources = project.members(false);
+					for (int j = 0; j < resources.length; j++) {
+						if (resources[j] instanceof IFolder) {
+							if (!binEntry.contains(resources[j].getName()+"/")) //$NON-NLS-1$
+								binEntry.addToken(resources[j].getName()+"/"); //$NON-NLS-1$
+						} else {
+							if (".project".equals(resources[j].getName()) //$NON-NLS-1$
+									|| ".classpath".equals(resources[j] //$NON-NLS-1$
+											.getName())
+									|| "build.properties".equals(resources[j] //$NON-NLS-1$
+											.getName())) {
+								continue;
+							}
+							if (!binEntry.contains(resources[j].getName()))
+								binEntry.addToken(resources[j].getName());
+						}
+					}
+				} else {
+					String[] libraryPaths = ((LibraryPluginFieldData) fData)
+							.getLibraryPaths();
+					for (int j = 0; j < libraryPaths.length; j++) {
+						File jarFile = new File(libraryPaths[j]);
+						String name = jarFile.getName();
+						if (!binEntry.contains(name))
+							binEntry.addToken(name);
+					}
 				}
 			}
 			
@@ -351,8 +427,12 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		} else {
 			String[] libraryPaths = new String[0];
 			if (fData instanceof LibraryPluginFieldData) {
-				libraryPaths = ((LibraryPluginFieldData) fData)
-						.getLibraryPaths();
+				if (fData.isJarred()) {
+					libraryPaths = new String[] { "" }; //$NON-NLS-1$
+				} else {
+					libraryPaths = ((LibraryPluginFieldData) fData)
+							.getLibraryPaths();
+				}
 			}
 			entries = new IClasspathEntry[2 + libraryPaths.length];
 			for (int j = 0; j < libraryPaths.length; j++) {

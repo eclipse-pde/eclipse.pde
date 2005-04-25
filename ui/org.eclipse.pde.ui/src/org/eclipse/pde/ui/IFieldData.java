@@ -91,4 +91,13 @@ public interface IFieldData {
 	 *         nature, <code>false</code> otherwise.
 	 */
 	boolean isSimple();
+
+	/**
+	 * Determines if plug-in runs from jar or is will be unpacked.
+	 * 
+	 * @return <code>true</code> if jarred plug-in
+	 * <code>false</code> otherwise.
+	 */
+	public boolean isJarred();
+
 }
