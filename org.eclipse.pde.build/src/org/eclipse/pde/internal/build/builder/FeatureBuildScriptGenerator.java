@@ -69,6 +69,8 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	//Cache the result of compteElements for performance
 	private List computedElements = null;
 	
+	private static final String TEMPLATE = "data";
+	
 	public FeatureBuildScriptGenerator() {
 		super();
 	}
@@ -936,7 +938,11 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		Feature featureExample = (Feature) feature;
 		sourceFeature = createSourceFeature(featureExample);
 		associateExtraPlugins();
-		sourcePlugin = createSourcePlugin();
+		if (isBuildingOSGi())
+			sourcePlugin = create30SourcePlugin();
+		else
+			sourcePlugin = createSourcePlugin();
+
 		generateSourceFragment();
 	}
 
@@ -956,7 +962,10 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			sourceFragment.setArch(configInfo.getArch());
 			sourceFragment.isFragment(true);
 			//sourceFeature.addPluginEntryModel(sourceFragment);
-			createSourceFragment(sourceFragment, sourcePlugin);
+			if (isBuildingOSGi())
+				create30SourceFragment(sourceFragment, sourcePlugin);
+			else
+				createSourceFragment(sourceFragment, sourcePlugin);
 		}
 	}
 
@@ -1023,6 +1032,84 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		}
 	}
 
+	private PluginEntry create30SourcePlugin() throws CoreException {
+		//Create an object representing the plugin
+		PluginEntry result = new PluginEntry();
+		String sourcePluginId = sourceFeature.getFeatureIdentifier();
+		result.setPluginIdentifier(sourcePluginId);
+		result.setPluginVersion(sourceFeature.getFeatureVersion());
+		sourceFeature.addPluginEntryModel(result);
+		// create the directory for the plugin
+		IPath sourcePluginDirURL = new Path(workingDirectory + '/' + DEFAULT_PLUGIN_LOCATION + '/' + getSourcePluginName(result, false) ); //$NON-NLS-1$
+		File sourcePluginDir = sourcePluginDirURL.toFile();
+		new File(sourcePluginDir, "META-INF").mkdirs();
+
+		// Create the MANIFEST.MF
+		StringBuffer buffer;
+		Path templateManifest = new Path(TEMPLATE + "/30/plugin/" + DEFAULT_BUNDLE_FILENAME_DESCRIPTOR); //$NON-NLS-1$
+		URL templateManifestURL = BundleHelper.getDefault().find(templateManifest);
+		if (templateManifestURL == null) {
+			IStatus status = new Status(IStatus.WARNING, PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_READING_FILE, NLS.bind(Messages.error_readingDirectory, templateManifestURL.toExternalForm()), null);
+			BundleHelper.getDefault().getLog().log(status);
+			return null;
+		}
+		try {
+			buffer = readFile(templateManifestURL.openStream()); //$NON-NLS-1$
+		} catch (IOException e1) {
+			String message = NLS.bind(Messages.exception_readingFile, templateManifestURL.toExternalForm());
+			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READING_FILE, message, e1));
+		}
+		int beginId = scan(buffer, 0, REPLACED_PLUGIN_ID);
+		buffer.replace(beginId, beginId + REPLACED_PLUGIN_ID.length(), result.getPluginIdentifier());
+		//set the version number
+		beginId = scan(buffer, beginId, REPLACED_PLUGIN_VERSION);
+		buffer.replace(beginId, beginId + REPLACED_PLUGIN_VERSION.length(), result.getPluginVersion());
+		try {
+			Utils.transferStreams(new ByteArrayInputStream(buffer.toString().getBytes()), new FileOutputStream(sourcePluginDirURL.append(DEFAULT_BUNDLE_FILENAME_DESCRIPTOR).toOSString()));
+		} catch (IOException e1) {
+			String message = NLS.bind(Messages.exception_writingFile, templateManifestURL.toExternalForm());
+			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READING_FILE, message, e1));
+		}
+		
+		//Copy the plugin.xml
+		try {
+			InputStream pluginXML = BundleHelper.getDefault().getBundle().getEntry(TEMPLATE + "/30/plugin/plugin.xml").openStream();
+			Utils.transferStreams(pluginXML, new FileOutputStream(sourcePluginDirURL.append(DEFAULT_PLUGIN_FILENAME_DESCRIPTOR).toOSString()));
+		} catch (IOException e1) {
+			String message = NLS.bind(Messages.exception_readingFile, TEMPLATE + "/30/plugin/plugin.xml");
+			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e1));
+		}
+
+		//Copy the other files
+		Collection copiedFiles = Utils.copyFiles(featureRootLocation + '/' + "sourceTemplatePlugin", sourcePluginDir.getAbsolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
+		//	If a build.properties file already exist then we use it supposing it is correct.
+		File buildProperty = sourcePluginDirURL.append(PROPERTIES_FILE).toFile();
+		if (!buildProperty.exists()) {
+			copiedFiles.add(DEFAULT_PLUGIN_FILENAME_DESCRIPTOR); //Because the plugin.xml is not copied, we need to add it to the file
+			copiedFiles.add("src/**/*.zip"); //$NON-NLS-1$
+			copiedFiles.add(DEFAULT_BUNDLE_FILENAME_DESCRIPTOR);//Because the manifest.mf is not copied, we need to add it to the file
+			Properties sourceBuildProperties = new Properties();
+			sourceBuildProperties.put(PROPERTY_BIN_INCLUDES, Utils.getStringFromCollection(copiedFiles, ",")); //$NON-NLS-1$
+			sourceBuildProperties.put(SOURCE_PLUGIN_ATTRIBUTE, "true"); //$NON-NLS-1$
+			try {
+				OutputStream buildFile = new BufferedOutputStream(new FileOutputStream(buildProperty));
+				try {
+					sourceBuildProperties.store(buildFile, null); //$NON-NLS-1$
+				} finally {
+					buildFile.close();
+				}
+			} catch (FileNotFoundException e) {
+				String message = NLS.bind(Messages.exception_writingFile, buildProperty.getAbsolutePath());
+				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
+			} catch (IOException e) {
+				String message = NLS.bind(Messages.exception_writingFile, buildProperty.getAbsolutePath());
+				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
+			}
+		}
+		getSite(false).getRegistry().addBundle(sourcePluginDir);
+		return result;
+	}
+	
 	/**
 	 * Method createSourcePlugin.
 	 */
@@ -1040,7 +1127,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 		// Create the plugin.xml
 		StringBuffer buffer;
-		Path templatePluginXML = new Path("templates/plugin/" + DEFAULT_PLUGIN_FILENAME_DESCRIPTOR); //$NON-NLS-1$
+		Path templatePluginXML = new Path(TEMPLATE + "/21/plugin/" + DEFAULT_PLUGIN_FILENAME_DESCRIPTOR); //$NON-NLS-1$
 		URL templatePluginURL = BundleHelper.getDefault().find(templatePluginXML);
 		if (templatePluginURL == null) {
 			IStatus status = new Status(IStatus.WARNING, PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_READING_FILE, NLS.bind(Messages.error_readingDirectory, templatePluginURL.toExternalForm()), null);
@@ -1092,6 +1179,75 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		return result;
 	}
 
+	private void create30SourceFragment(PluginEntry fragment, PluginEntry plugin) throws CoreException {
+		// create the directory for the plugin
+		Path sourceFragmentDirURL = new Path(workingDirectory + '/' + DEFAULT_PLUGIN_LOCATION + '/' + getSourcePluginName(fragment, false)); //$NON-NLS-1$ //$NON-NLS-2$
+		File sourceFragmentDir = new File(sourceFragmentDirURL.toOSString());
+		new File(sourceFragmentDir, "META-INF").mkdirs();
+		try {
+			// read the content of the template file
+			Path fragmentPath = new Path(TEMPLATE + "/30/fragment/" + DEFAULT_BUNDLE_FILENAME_DESCRIPTOR);//$NON-NLS-1$
+			URL templateLocation = BundleHelper.getDefault().find(fragmentPath);
+			if (templateLocation == null) {
+				IStatus status = new Status(IStatus.WARNING, PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_READING_FILE, NLS.bind(Messages.error_readingDirectory, fragmentPath), null);
+				BundleHelper.getDefault().getLog().log(status);
+				return;
+			}
+
+			//Copy the fragment.xml
+			try {
+				InputStream fragmentXML = BundleHelper.getDefault().getBundle().getEntry(TEMPLATE + "/30/fragment/fragment.xml").openStream();
+				Utils.transferStreams(fragmentXML, new FileOutputStream(sourceFragmentDirURL.append(DEFAULT_FRAGMENT_FILENAME_DESCRIPTOR).toOSString()));
+			} catch (IOException e1) {
+				String message = NLS.bind(Messages.exception_readingFile, TEMPLATE + "/30/fragment/fragment.xml");
+				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e1));
+			}
+			
+			StringBuffer buffer = readFile(templateLocation.openStream()); //$NON-NLS-1$
+			//Set the Id of the fragment
+			int beginId = scan(buffer, 0, REPLACED_FRAGMENT_ID);
+			buffer.replace(beginId, beginId + REPLACED_FRAGMENT_ID.length(), fragment.getPluginIdentifier());
+			//		set the version number
+			beginId = scan(buffer, beginId, REPLACED_FRAGMENT_VERSION);
+			buffer.replace(beginId, beginId + REPLACED_FRAGMENT_VERSION.length(), fragment.getPluginVersion());
+			// Set the Id of the plugin for the fragment
+			beginId = scan(buffer, beginId, REPLACED_PLUGIN_ID);
+			buffer.replace(beginId, beginId + REPLACED_PLUGIN_ID.length(), plugin.getPluginIdentifier());
+			//		set the version number of the plugin to which the fragment is attached to
+			beginId = scan(buffer, beginId, REPLACED_PLUGIN_VERSION);
+			buffer.replace(beginId, beginId + REPLACED_PLUGIN_VERSION.length(), plugin.getPluginVersion());
+			Utils.transferStreams(new ByteArrayInputStream(buffer.toString().getBytes()), new FileOutputStream(sourceFragmentDirURL.append(DEFAULT_BUNDLE_FILENAME_DESCRIPTOR).toOSString()));
+			Collection copiedFiles = Utils.copyFiles(featureRootLocation + '/' + "sourceTemplateFragment", sourceFragmentDir.getAbsolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
+			File buildProperty = sourceFragmentDirURL.append(PROPERTIES_FILE).toFile();
+			if (!buildProperty.exists()) { //If a build.properties file already exist  then we don't override it.
+				copiedFiles.add(DEFAULT_FRAGMENT_FILENAME_DESCRIPTOR); //Because the fragment.xml is not copied, we need to add it to the file
+				copiedFiles.add("src/**"); //$NON-NLS-1$
+				copiedFiles.add(DEFAULT_BUNDLE_FILENAME_DESCRIPTOR);
+				Properties sourceBuildProperties = new Properties();
+				sourceBuildProperties.put(PROPERTY_BIN_INCLUDES, Utils.getStringFromCollection(copiedFiles, ",")); //$NON-NLS-1$
+				sourceBuildProperties.put("sourcePlugin", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+				try {
+					OutputStream buildFile = new BufferedOutputStream(new FileOutputStream(buildProperty));
+					try {
+						sourceBuildProperties.store(buildFile, null); //$NON-NLS-1$
+					} finally {
+						buildFile.close();
+					}
+				} catch (FileNotFoundException e) {
+					String message = NLS.bind(Messages.exception_writingFile, buildProperty.getAbsolutePath());
+					throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
+				} catch (IOException e) {
+					String message = NLS.bind(Messages.exception_writingFile, buildProperty.getAbsolutePath());
+					throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
+				}
+			}
+		} catch (IOException e) {
+			String message = NLS.bind(Messages.exception_writingFile, sourceFragmentDir.getName());
+			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, null));
+		}
+		getSite(false).getRegistry().addBundle(sourceFragmentDir);
+	}
+	
 	private void createSourceFragment(PluginEntry fragment, PluginEntry plugin) throws CoreException {
 		// create the directory for the plugin
 		Path sourceFragmentDirURL = new Path(workingDirectory + '/' + DEFAULT_PLUGIN_LOCATION + '/' + getSourcePluginName(fragment, false)); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1099,7 +1255,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		sourceFragmentDir.mkdirs();
 		try {
 			// read the content of the template file
-			Path fragmentPath = new Path("templates/fragment/" + DEFAULT_FRAGMENT_FILENAME_DESCRIPTOR);//$NON-NLS-1$
+			Path fragmentPath = new Path(TEMPLATE + "/21/fragment/" + DEFAULT_FRAGMENT_FILENAME_DESCRIPTOR);//$NON-NLS-1$
 			URL templateLocation = BundleHelper.getDefault().find(fragmentPath);
 			if (templateLocation == null) {
 				IStatus status = new Status(IStatus.WARNING, PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_READING_FILE, NLS.bind(Messages.error_readingDirectory, fragmentPath), null);
