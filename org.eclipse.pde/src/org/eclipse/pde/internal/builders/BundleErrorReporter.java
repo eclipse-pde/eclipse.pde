@@ -133,7 +133,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			IPackageFragmentRoot[] roots = jp.getPackageFragmentRoots();
 			for (int i = 0; i < roots.length; i++) {
 				if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE
-						|| (roots[i].isArchive() && !roots[i].isExternal())) {
+						|| (roots[i].getKind() == IPackageFragmentRoot.K_BINARY && !roots[i]
+								.isExternal())) {
 					IJavaElement[] children = roots[i].getChildren();
 					for (int j = 0; j < children.length; j++) {
 						IPackageFragment f = (IPackageFragment) children[j];
