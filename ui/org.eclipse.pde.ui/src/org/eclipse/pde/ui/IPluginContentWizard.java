@@ -95,5 +95,4 @@ public interface IPluginContentWizard extends IBasePluginWizard {
 	boolean performFinish(IProject project, IPluginModelBase model,
 			IProgressMonitor monitor);
 	
-	boolean hasPages();
 }

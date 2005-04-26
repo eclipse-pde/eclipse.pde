@@ -71,12 +71,6 @@ public interface IFieldData {
 	boolean isLegacy();
 	
 	/**
-	 * Target Platform version selection
-	 * 
-	 * @return the Eclipse version this plug-in is targeted for.
-	 */
-	String getTargetVersion();
-	/**
 	 * OSGi bundle selection
 	 * 
 	 * @return <code>true</code> if the plug-in has structure as expected by

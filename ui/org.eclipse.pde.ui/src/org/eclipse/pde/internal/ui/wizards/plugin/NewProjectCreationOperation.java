@@ -127,7 +127,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		fModel.save();
 
 		if (fData.hasBundleStructure()) {
-			PDEPluginConverter.convertToOSGIFormat(project, fData.getTargetVersion(), null, new SubProgressMonitor(monitor, 1));
+			PDEPluginConverter.convertToOSGIFormat(project, ((AbstractFieldData)fData).getTargetVersion(), null, new SubProgressMonitor(monitor, 1));
 			if (fModel.getPluginBase().getExtensions().length == 0) {
 				project.getFile(fData instanceof IPluginFieldData ? "plugin.xml" : "fragment.xml").delete(true, null); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
@@ -272,7 +272,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
         pluginBase.setVersion(fData.getVersion());
         pluginBase.setName(fData.getName());
         pluginBase.setProviderName(fData.getProvider());
-        pluginBase.setTargetVersion(fData.getTargetVersion());
+        pluginBase.setTargetVersion(((AbstractFieldData)fData).getTargetVersion());
         if (pluginBase instanceof IFragment) {
             IFragment fragment = (IFragment) pluginBase;
             FragmentFieldData data = (FragmentFieldData) fData;
