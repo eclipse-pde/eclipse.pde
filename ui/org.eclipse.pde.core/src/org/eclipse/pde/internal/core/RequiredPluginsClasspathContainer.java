@@ -141,7 +141,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 					addDependencyViaImportPackage(model.getBundleDescription(), false, added);
 			}
 
-			addExtraClasspathEntries();
+			addExtraClasspathEntries(added);
 
 			// add implicit dependencies
 			addImplicitDependencies(added);
@@ -352,7 +352,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 					: false;
 	}
 	
-	protected void addExtraClasspathEntries() throws CoreException {
+	protected void addExtraClasspathEntries(HashSet added) throws CoreException {
 		IBuild build = ClasspathUtilCore.getBuild(fModel);
 		IBuildEntry entry = (build == null) ? null : build.getEntry(IBuildEntry.JARS_EXTRA_CLASSPATH);
 		if (entry == null)
@@ -385,7 +385,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 				}
 			} else if (path.segmentCount() >= 3){
 				IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(path.segment(1));
-				if (model != null && model.isEnabled()) {
+				if (model != null && model.isEnabled() && !added.contains(path.segment(1))) {
 					path = path.setDevice(null);
 					path = path.removeFirstSegments(2);
 					if (model.getUnderlyingResource() == null) {
