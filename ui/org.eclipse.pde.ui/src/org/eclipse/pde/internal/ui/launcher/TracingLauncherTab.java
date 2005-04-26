@@ -184,10 +184,6 @@ public class TracingLauncherTab extends AbstractLauncherTab
 
 		fPageBook = new ScrolledPageBook(container, style | SWT.V_SCROLL | SWT.H_SCROLL);
 		fToolkit.adapt(fPageBook, false, false);	
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.heightHint = 100;
-		gd.widthHint = 125;
-		fPageBook.setLayoutData(gd);
 		
 		if (style == SWT.NULL) {
 			fPageBook.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TREE_BORDER);
