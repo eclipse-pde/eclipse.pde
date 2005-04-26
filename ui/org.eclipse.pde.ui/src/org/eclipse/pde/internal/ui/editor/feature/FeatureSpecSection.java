@@ -17,6 +17,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.internal.core.feature.FeatureImport;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureImport;
@@ -27,7 +29,9 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
+import org.eclipse.pde.internal.ui.wizards.PluginSelectionDialog;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.RTFTransfer;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -36,6 +40,7 @@ import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
@@ -47,6 +52,8 @@ public class FeatureSpecSection extends PDESection {
 	private FormEntry fVersionText;
 
 	private FormEntry fProviderText;
+
+	private FormEntry fPluginText;
 
 	private FormEntry fUpdateSiteNameText;
 
@@ -68,6 +75,7 @@ public class FeatureSpecSection extends PDESection {
 		fTitleText.commit();
 		fProviderText.commit();
 		fIdText.commit();
+		fPluginText.commit();
 		fVersionText.commit();
 		if (fPatchedIdText != null) {
 			fPatchedIdText.commit();
@@ -214,7 +222,7 @@ public class FeatureSpecSection extends PDESection {
 
 		Composite container = toolkit.createComposite(section);
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
+		layout.numColumns = 3;
 		layout.verticalSpacing = 5;
 		layout.horizontalSpacing = 6;
 		container.setLayout(layout);
@@ -263,6 +271,27 @@ public class FeatureSpecSection extends PDESection {
 				} catch (CoreException e) {
 					PDEPlugin.logException(e);
 				}
+			}
+		});
+
+		fPluginText = new FormEntry(container, toolkit, PDEUIMessages.FeatureEditor_SpecSection_plugin, PDEUIMessages.GeneralInfoSection_browse, 
+				isEditable());
+
+		fPluginText.setFormEntryListener(new FormEntryAdapter(this) {
+			public void textValueChanged(FormEntry text) {
+				try {
+					String value = text.getValue();
+					feature
+							.setPlugin((value.length() > 0 ? value : null));
+				} catch (CoreException e) {
+					PDEPlugin.logException(e);
+				}
+			}
+			public void linkActivated(HyperlinkEvent e) {
+				ManifestEditor.openPluginEditor(fPluginText.getValue());
+			}
+			public void browseButtonSelected(FormEntry entry) {
+				handleOpenDialog();
 			}
 		});
 
@@ -379,6 +408,7 @@ public class FeatureSpecSection extends PDESection {
 			fTitleText.getText().setEditable(false);
 			fVersionText.getText().setEditable(false);
 			fProviderText.getText().setEditable(false);
+			fPluginText.getText().setEditable(false);
 			if (isPatch()) {
 				fPatchedIdText.getText().setEditable(false);
 				fPatchedVersionText.getText().setEditable(false);
@@ -435,6 +465,7 @@ public class FeatureSpecSection extends PDESection {
 				model.getResourceString(feature.getLabel()));
 		setIfDefined(fVersionText, feature.getVersion());
 		setIfDefined(fProviderText, feature.getProviderName());
+		setIfDefined(fPluginText, feature.getPlugin());
 		if (isPatch()) {
 			IFeatureImport featureImport = getPatchedFeature();
 			if (featureImport != null) {
@@ -493,6 +524,7 @@ public class FeatureSpecSection extends PDESection {
 		fTitleText.cancelEdit();
 		fVersionText.cancelEdit();
 		fProviderText.cancelEdit();
+		fPluginText.cancelEdit();
 		if (isPatch()) {
 			fPatchedIdText.cancelEdit();
 			fPatchedVersionText.cancelEdit();
@@ -516,5 +548,14 @@ public class FeatureSpecSection extends PDESection {
 			}
 		}
 		return false;
+	}
+	protected void handleOpenDialog() {
+		PluginSelectionDialog dialog = new PluginSelectionDialog(getSection().getShell(), false, false);
+		dialog.create();
+		if (dialog.open() == PluginSelectionDialog.OK) {
+			IPluginModel model = (IPluginModel) dialog.getFirstResult();
+			IPlugin plugin = model.getPlugin();
+			fPluginText.setValue(plugin.getId());
+		}
 	}
 }

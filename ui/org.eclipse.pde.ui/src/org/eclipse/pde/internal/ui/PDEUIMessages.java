@@ -151,6 +151,8 @@ public class PDEUIMessages extends NLS {
 	public static String FeatureEditor_SpecSection_version;
 	public static String FeatureEditor_SpecSection_patchedVersion;
 	public static String FeatureEditor_SpecSection_provider;
+	public static String FeatureEditor_SpecSection_plugin;
+	public static String FeatureEditor_SpecSection_browse;
 	public static String FeatureEditor_SpecSection_updateSite;
 	public static String FeatureEditor_SpecSection_updateUrlLabel;
 	public static String FeatureEditor_SpecSection_updateUrl;
