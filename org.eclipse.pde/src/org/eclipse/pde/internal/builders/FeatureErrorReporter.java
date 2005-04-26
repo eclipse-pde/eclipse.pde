@@ -360,7 +360,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 			} else if (name.equals("version")) { //$NON-NLS-1$
 				validateVersionAttribute(element, (Attr)attributes.item(i));
 			}
-			if (name.equals("primary") || name.equals("plugin")){ //$NON-NLS-1$ //$NON-NLS-2$
+			if (name.equals("primary")){ //$NON-NLS-1$ //$NON-NLS-2$
 				reportDeprecatedAttribute(element, (Attr)attributes.item(i));
 			}
 		}
