@@ -362,6 +362,8 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 			}
 			if (name.equals("primary")){ //$NON-NLS-1$ //$NON-NLS-2$
 				reportDeprecatedAttribute(element, (Attr)attributes.item(i));
+			} else if (name.equals("plugin")){ //$NON-NLS-1$ //$NON-NLS-2$
+				validatePluginID(element, (Attr)attributes.item(i), false);
 			}
 		}
 	}
