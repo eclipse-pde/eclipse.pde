@@ -121,6 +121,9 @@ public abstract class AbstractStructuredCommand extends MacroCommand {
 
 		Widget widget = target.getWidget();
 		
+		if (widget==null || widget.isDisposed())
+			return false;
+		
 		if (widget instanceof Tree) {
 			TreeItem[] matches = findMatches((Tree)widget);
 			playTreeCommand((Tree)widget, matches);

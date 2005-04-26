@@ -19,9 +19,12 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTError;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.StyledText;
@@ -511,6 +514,14 @@ public class MacroCommandShell extends MacroInstruction {
 					MacroUtil.processDisplayEvents(display);
 				} catch (CoreException e) {
 					ex[0] = e;
+				} catch (SWTException e) {
+					IStatus status = new Status(IStatus.ERROR, "org.eclipse.pde.ui.tests", IStatus.OK,
+							"SWT exception while executing a macro command", e);
+					ex[0] = new CoreException(status);
+				} catch (SWTError error) {
+					IStatus status = new Status(IStatus.ERROR, "org.eclipse.pde.ui.tests", IStatus.OK,
+							"SWT error while executing a macro command", error);
+					ex[0] = new CoreException(status);
 				}
 			}
 		};

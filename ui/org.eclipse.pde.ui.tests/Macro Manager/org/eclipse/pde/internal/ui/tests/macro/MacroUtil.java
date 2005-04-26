@@ -756,7 +756,9 @@ public class MacroUtil {
 		Composite pparent = (Composite)page.getControl();
 		Control control=locateVisibleChild(shell, pparent, wpath);
 		if (control==null)
-			throwCoreException("Cannot locate wizard control: "+wpath.toString(), line);		
+			throwCoreException("Cannot locate wizard control: "+wpath.toString(), line);
+		if (control.isDisposed())
+			throwCoreException("Wizard control is disposed: "+wpath.toString(), line);
 		return new WizardCommandTarget(control, wdialog);
 	}
 	
@@ -764,7 +766,9 @@ public class MacroUtil {
 		Window window = (Window)shell.getData();
 		Control control=locateVisibleChild(shell, null, wpath);
 		if (control==null)
-			throwCoreException("Cannot locate shell control: "+wpath.toString(), line);		
+			throwCoreException("Cannot locate shell control: "+wpath.toString(), line);
+		if (control.isDisposed())
+			throwCoreException("Shell control is disposed: "+wpath.toString(), line);
 		return new WindowCommandTarget(control, window);
 	}
 
