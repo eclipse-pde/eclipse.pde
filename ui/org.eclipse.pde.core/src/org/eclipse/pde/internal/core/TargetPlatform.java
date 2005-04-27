@@ -453,48 +453,48 @@ public class TargetPlatform implements IEnvironmentVariables {
 		return getPDEState().getState();
 	}
 	
-	public static Properties getBundleClasspaths(PDEState state) {
-		Properties properties = new Properties();
+	public static HashMap getBundleClasspaths(PDEState state) {
+		HashMap properties = new HashMap();
 		BundleDescription[] bundles = state.getState().getBundles();
 		for (int i = 0; i < bundles.length; i++) {
-			properties.put(Long.toString(bundles[i].getBundleId()), getValue(bundles[i], state));
+			properties.put(new Long(bundles[i].getBundleId()), getValue(bundles[i], state));
 		}		
 		return properties;
 	}
 	
-	public static File getBundleClasspathFile(PDEState state) {
-		Properties properties = getBundleClasspaths(state);
-		File file = new File(PDECore.getDefault().getStateLocation().toOSString(), "bundle.properties");
-		try {
-			FileOutputStream stream = new FileOutputStream(file);
-			properties.store(stream, "Bundle Classpaths"); //$NON-NLS-1$
-			stream.flush();
-			stream.close();
-		} catch (IOException e) {
-			PDECore.logException(e);
-		}
-		return file;
-	}
+//	public static File getBundleClasspathFile(PDEState state) {
+//		HashMap properties = getBundleClasspaths(state);
+//		File file = new File(PDECore.getDefault().getStateLocation().toOSString(), "bundle.properties");
+//		try {
+//			FileOutputStream stream = new FileOutputStream(file);
+//			properties.store(stream, "Bundle Classpaths"); //$NON-NLS-1$
+//			stream.flush();
+//			stream.close();
+//		} catch (IOException e) {
+//			PDECore.logException(e);
+//		}
+//		return file;
+//	}
 	
-	private static String getValue(BundleDescription bundle, PDEState state) {
+	private static String[] getValue(BundleDescription bundle, PDEState state) {
 		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(bundle);
-		StringBuffer buffer = new StringBuffer();
+		String[] result = null;
 		if (model != null) {
 			IPluginLibrary[] libs = model.getPluginBase().getLibraries();
+			result = new String[libs.length];
 			for (int i = 0; i < libs.length; i++) {
-				if (buffer.length() > 0)
-					buffer.append(",");
-				buffer.append(libs[i].getName());
+				result[i] = libs[i].getName();
 			}
 		} else {
 			String[] libs = state.getLibraryNames(bundle.getBundleId());
+			result = new String[libs.length];
 			for (int i = 0; i < libs.length; i++) {
-				if (buffer.length() > 0)
-					buffer.append(",");
-				buffer.append(libs[i]);
+				result[i] = libs[i];
 			}			
 		}
-		return buffer.length() == 0 ? "." : buffer.toString();
+		if (result.length == 0)
+			return new String[] {"."}; //$NON-NLS-1$
+		return result;
 	}
 
 }
