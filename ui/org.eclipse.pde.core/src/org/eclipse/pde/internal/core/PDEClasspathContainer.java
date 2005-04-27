@@ -33,7 +33,7 @@ public class PDEClasspathContainer {
 	
 	private static HashMap ACCESS_RULES = new HashMap();
 	private static final IAccessRule EXCLUDE_ALL_RULE = 
-		JavaCore.newAccessRule(new Path("**/*"), IAccessRule.K_NON_ACCESSIBLE);
+		JavaCore.newAccessRule(new Path("**/*"), IAccessRule.K_NON_ACCESSIBLE); //$NON-NLS-1$
 
 	protected void addProjectEntry(IProject project, boolean isExported, IPath[] inclusions, boolean viaImportPackage) throws CoreException {
 		if (project.hasNature(JavaCore.NATURE_ID)) {

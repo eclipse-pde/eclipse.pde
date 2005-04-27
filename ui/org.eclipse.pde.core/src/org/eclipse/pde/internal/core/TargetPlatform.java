@@ -462,20 +462,6 @@ public class TargetPlatform implements IEnvironmentVariables {
 		return properties;
 	}
 	
-//	public static File getBundleClasspathFile(PDEState state) {
-//		HashMap properties = getBundleClasspaths(state);
-//		File file = new File(PDECore.getDefault().getStateLocation().toOSString(), "bundle.properties");
-//		try {
-//			FileOutputStream stream = new FileOutputStream(file);
-//			properties.store(stream, "Bundle Classpaths"); //$NON-NLS-1$
-//			stream.flush();
-//			stream.close();
-//		} catch (IOException e) {
-//			PDECore.logException(e);
-//		}
-//		return file;
-//	}
-	
 	private static String[] getValue(BundleDescription bundle, PDEState state) {
 		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(bundle);
 		String[] result = null;

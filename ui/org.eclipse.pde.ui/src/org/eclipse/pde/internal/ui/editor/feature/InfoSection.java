@@ -19,7 +19,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.ITextOperationTarget;
-import org.eclipse.jface.text.rules.DefaultPartitioner;
+import org.eclipse.jface.text.rules.FastPartitioner;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.viewers.ISelection;
@@ -99,7 +99,7 @@ public class InfoSection extends PDESection {
 		getSection().setDescription(description);
 		fSourceConfiguration = new XMLConfiguration(colorManager);
 		fDocument = new Document();
-		fPartitioner = new DefaultPartitioner(new XMLPartitionScanner(),
+		fPartitioner = new FastPartitioner(new XMLPartitionScanner(),
 				new String[] { XMLPartitionScanner.XML_TAG,
 						XMLPartitionScanner.XML_COMMENT });
 		fPartitioner.connect(fDocument);

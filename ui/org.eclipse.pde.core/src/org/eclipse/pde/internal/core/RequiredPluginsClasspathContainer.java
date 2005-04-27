@@ -175,7 +175,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 				ArrayList list = (ArrayList)fVisiblePackages.get(exporter.getName());
 				if (list == null) 
 					list = new ArrayList();
-				list.add(new Path(exports[i].getName().replaceAll("\\.", "/") + "/*"));
+				list.add(new Path(exports[i].getName().replaceAll("\\.", "/") + "/*")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				fVisiblePackages.put(exporter.getName(), list);
 			}
 		}		
@@ -281,7 +281,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			list = new ArrayList();
 			ExportPackageDescription[] exports = desc.getExportPackages();
 			for (int i = 0; i < exports.length; i++) {
-				list.add(new Path(exports[i].getName().replaceAll("\\.", "/") + "/*"));
+				list.add(new Path(exports[i].getName().replaceAll("\\.", "/") + "/*")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 		}
 		return (IPath[])list.toArray(new IPath[list.size()]);		
@@ -370,15 +370,15 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 						continue;
 					}
 				}
-				if (path.segmentCount() >= 3 && "..".equals(path.segment(0))) {
+				if (path.segmentCount() >= 3 && "..".equals(path.segment(0))) { //$NON-NLS-1$
 					path = path.removeFirstSegments(1);
-					path = new Path("platform:").append("plugin").append(path);
+					path = new Path("platform:").append("plugin").append(path); //$NON-NLS-1$ //$NON-NLS-2$
 				} else {
 					continue;
 				}
 			}
 			
-			if (!"platform:".equals(path.getDevice())) {
+			if (!"platform:".equals(path.getDevice())) { //$NON-NLS-1$
 				File file = new File(path.toOSString());
 				if (file.exists()) {
 					addExtraLibrary(path, null);			

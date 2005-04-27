@@ -45,7 +45,7 @@ public class PluginHandler extends DefaultHandler {
 		
 		if (fAbbreviated && fOpenElements.size() == 2) {
 			Element parent = (Element)fOpenElements.peek();
-			if (parent.getNodeName().equals("extension") && !isInterestingExtension((Element)fOpenElements.peek())) {
+			if (parent.getNodeName().equals("extension") && !isInterestingExtension((Element)fOpenElements.peek())) { //$NON-NLS-1$
 				fPop = false;
 				return;
 			}
@@ -54,7 +54,7 @@ public class PluginHandler extends DefaultHandler {
 		Element element = fDocument.createElement(qName);
 		for (int i = 0; i < attributes.getLength(); i++) {
 			element.setAttribute(attributes.getQName(i), attributes.getValue(i));
-			if ("extension".equals(qName) || "extension-point".equals(qName)) {
+			if ("extension".equals(qName) || "extension-point".equals(qName)) { //$NON-NLS-1$ //$NON-NLS-2$
 				element.setAttribute("line", Integer.toString(fLocator.getLineNumber())); //$NON-NLS-1$
 			}
 		}
@@ -68,13 +68,13 @@ public class PluginHandler extends DefaultHandler {
 	}
 	
 	private boolean isInterestingExtension(Element element) {
-		String point = element.getAttribute("point");
-		return "org.eclipse.pde.core.source".equals(point) 
-				|| "org.eclipse.core.runtime.products".equals(point);
+		String point = element.getAttribute("point"); //$NON-NLS-1$
+		return "org.eclipse.pde.core.source".equals(point)  //$NON-NLS-1$
+				|| "org.eclipse.core.runtime.products".equals(point); //$NON-NLS-1$
 	}
 		
 	public void endElement(String uri, String localName, String qName) throws SAXException {
-		if (fPop || (qName.equals("extension") && fOpenElements.size() == 2)) {
+		if (fPop || (qName.equals("extension") && fOpenElements.size() == 2)) { //$NON-NLS-1$
 			fOpenElements.pop();
 		}
 	}

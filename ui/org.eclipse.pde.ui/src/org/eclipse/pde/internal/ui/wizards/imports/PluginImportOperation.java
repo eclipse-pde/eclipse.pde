@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,72 +10,106 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
-import java.io.*;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.zip.ZipFile;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.osgi.service.environment.Constants;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.build.*;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.build.IBuild;
+import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.core.plugin.IFragment;
+import org.eclipse.pde.core.plugin.IFragmentModel;
+import org.eclipse.pde.core.plugin.IPluginLibrary;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.PDE;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ClasspathComputer;
+import org.eclipse.pde.internal.core.ClasspathUtilCore;
+import org.eclipse.pde.internal.core.ModelEntry;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDEPluginConverter;
+import org.eclipse.pde.internal.core.SourceLocationManager;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.team.core.*;
-import org.eclipse.ui.dialogs.IOverwriteQuery;
-import org.eclipse.ui.wizards.datatransfer.*;
+import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.core.TeamException;
+import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
+import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
 
-public class PluginImportOperation implements IWorkspaceRunnable {
-		
+public class PluginImportOperation extends JarImportOperation {
+
 	public static final int IMPORT_BINARY = 1;
+
 	public static final int IMPORT_BINARY_WITH_LINKS = 2;
+
 	public static final int IMPORT_WITH_SOURCE = 3;
 
 	private IPluginModelBase[] fModels;
+
 	private int fImportType;
+
 	private IReplaceQuery fReplaceQuery;
-	private WorkspaceBuildModel fBuildModel;
+	
+	private Hashtable fProjectClasspaths = new Hashtable();
 
 	public interface IReplaceQuery {
 		public static final int CANCEL = 0;
+
 		public static final int NO = 1;
+
 		public static final int YES = 2;
 
 		int doQuery(IProject project);
 	}
-	
-	public PluginImportOperation(
-		IPluginModelBase[] models,
-		int importType,
-		IReplaceQuery replaceQuery) {
+
+	public PluginImportOperation(IPluginModelBase[] models, int importType, IReplaceQuery replaceQuery) {
 		fModels = models;
 		fImportType = importType;
 		fReplaceQuery = replaceQuery;
 	}
-
+	
 	/*
 	 * @see IWorkspaceRunnable#run(IProgressMonitor)
 	 */
-	public void run(IProgressMonitor monitor)
-		throws CoreException, OperationCanceledException {
+	public void run(IProgressMonitor monitor) throws CoreException,
+			OperationCanceledException{
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		monitor.beginTask(
-			PDEUIMessages.ImportWizard_operation_creating, //$NON-NLS-1$
-			fModels.length);
+		monitor.beginTask(PDEUIMessages.ImportWizard_operation_creating, fModels.length + 1);
 		try {
-			MultiStatus multiStatus =
-				new MultiStatus(
-					PDEPlugin.getPluginId(),
+			//if (isAutobuilding) 
+				//toggleAutobuild(false);
+			
+			MultiStatus multiStatus = new MultiStatus(PDEPlugin.getPluginId(),
 					IStatus.OK,
-					PDEUIMessages.ImportWizard_operation_multiProblem, //$NON-NLS-1$
+					PDEUIMessages.ImportWizard_operation_multiProblem, 
 					null);
 
 			for (int i = 0; i < fModels.length; i++) {
@@ -92,71 +126,354 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 				throw new CoreException(multiStatus);
 			}
 		} finally {
+			setClasspaths(new SubProgressMonitor(monitor, 1));
+			try {
+				Platform.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD, null);
+			} catch (OperationCanceledException e) {
+			} catch (InterruptedException e) {
+			}
+			//if (isAutobuilding || fTurnAutobuild)
+				//toggleAutobuild(true);			
+			
 			monitor.done();
 		}
 	}
 	
-	private void importPlugin(IPluginModelBase model, IProgressMonitor monitor)
-		throws CoreException {
+	/*private void toggleAutobuild(boolean on) throws CoreException {
+		IWorkspaceDescription desc = PDEPlugin.getWorkspace().getDescription();
+		desc.setAutoBuilding(on);
+		PDEPlugin.getWorkspace().setDescription(desc);	
+	}*/
+	
+	private void setClasspaths(IProgressMonitor monitor) throws JavaModelException {
+		monitor.beginTask("Setting classpath...", fProjectClasspaths.size());
+		Enumeration keys = fProjectClasspaths.keys();
+		while (keys.hasMoreElements()) {
+			IProject project = (IProject)keys.nextElement();
+			IClasspathEntry[] classpath = (IClasspathEntry[])fProjectClasspaths.get(project);
+			monitor.subTask(project.getName());
+			JavaCore.create(project).setRawClasspath(classpath, new SubProgressMonitor(monitor, 1));
+		}		
+	}
 
+	private void importPlugin(IPluginModelBase model, IProgressMonitor monitor)
+			throws CoreException {
 		String id = model.getPluginBase().getId();
-		String task =
-			NLS.bind(PDEUIMessages.ImportWizard_operation_creating2, id); //$NON-NLS-1$
-		monitor.beginTask(task, 6);
+		monitor.beginTask(NLS.bind(PDEUIMessages.ImportWizard_operation_creating2, id), 6);
 		try {
-			fBuildModel = null;
-			
 			IProject project = findProject(model.getPluginBase().getId());
 
 			if (project.exists()) {
 				if (!queryReplace(project))
 					return;
-				deleteProject(project, new SubProgressMonitor(monitor, 1));
+				if (RepositoryProvider.isShared(project))
+					RepositoryProvider.unmap(project);
+				project.delete(true, true, monitor);
 			}
 
-			createProject(project, new SubProgressMonitor(monitor, 1));
-			
-			File file = new File(model.getInstallLocation());
-			if (file.isFile()) {
-				if (fImportType != IMPORT_WITH_SOURCE)
-					importJARdPlugin(file, project, model, new SubProgressMonitor(monitor, 4));
-				else
-					importJARdPluginWithSource(file, project, model, new SubProgressMonitor(monitor, 4));
-				setPermissions(model, project);
-			} else {
-				switch (fImportType) {
-					case IMPORT_BINARY :
-						importAsBinary(project, model, new SubProgressMonitor(monitor, 4));
-						break;
-					case IMPORT_BINARY_WITH_LINKS :
-						importAsBinaryWithLinks(
-								project,
-								model,
-								new SubProgressMonitor(monitor, 4));
-						break;
-					case IMPORT_WITH_SOURCE :
-						if (id.equals("org.apache.ant") || id.equals("org.eclipse.osgi.util") //$NON-NLS-1$ //$NON-NLS-2$
-								|| id.equals("org.eclipse.osgi.services") || id.equals("org.eclipse.swt")) { //$NON-NLS-1$ //$NON-NLS-2$
-							importAsBinary(project, model, new SubProgressMonitor(monitor, 4));
-						} else {
-							importWithSource(project, model, new SubProgressMonitor(monitor, 4));
-						}
-				}
+			project.create(monitor);
+			if (!project.isOpen())
+				project.open(monitor);			
+			monitor.worked(1);
+
+			switch (fImportType) {
+				case IMPORT_BINARY:
+					importAsBinary(project, model, true, new SubProgressMonitor(monitor, 4));
+					break;
+				case IMPORT_BINARY_WITH_LINKS:
+					importAsBinaryWithLinks(project, model, new SubProgressMonitor(monitor, 4));
+					break;
+				case IMPORT_WITH_SOURCE:
+					if (isExempt(model)) {
+						importAsBinary(project, model, true, new SubProgressMonitor(monitor, 4));
+					} else {
+						importAsSource(project, model, new SubProgressMonitor(monitor, 4));
+					}
 			}
-			
+
 			setProjectDescription(project, model);
 
 			if (project.hasNature(JavaCore.NATURE_ID) && project.findMember(".classpath") == null) //$NON-NLS-1$
-				setClasspath(project, model);
+				fProjectClasspaths .put(project, ClasspathComputer.getClasspath(project, model, true));
 		} catch (CoreException e) {
 		} finally {
 			monitor.done();
 		}
 	}
 	
+	private void importAsBinaryWithLinks(IProject project, IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
+		if (isJARd(model)) {
+			extractJARdPlugin(
+					project,
+					model,
+					monitor);
+		} else {
+			File[] items = new File(model.getInstallLocation()).listFiles();
+			if (items != null) {
+				monitor.beginTask(PDEUIMessages.PluginImportOperation_linking, items.length + 1); //$NON-NLS-1$
+				for (int i = 0; i < items.length; i++) {
+					File sourceFile = items[i];
+					String name = sourceFile.getName();
+					if (sourceFile.isDirectory()) {
+						project.getFolder(name).createLink(
+							new Path(sourceFile.getPath()),
+							IResource.NONE,
+							new SubProgressMonitor(monitor, 1));
+					} else {
+						if (!name.equals(".project")) { //$NON-NLS-1$ 
+							project.getFile(name).createLink(
+								new Path(sourceFile.getPath()),
+								IResource.NONE,
+								new SubProgressMonitor(monitor, 1));
+						}
+					}
+				}
+			}
+			linkSourceArchives(project, model, new SubProgressMonitor(monitor, 1));
+		}
+		try {
+			RepositoryProvider.map(project, PDECore.BINARY_REPOSITORY_PROVIDER);
+		} catch (TeamException e) {
+		}
+	}
+
+	private void importAsBinary(IProject project, IPluginModelBase model, boolean markAsBinary, IProgressMonitor monitor) throws CoreException {
+		monitor.beginTask("", 2); //$NON-NLS-1$
+		if (isJARd(model)) {
+			extractJARdPlugin(
+					project,
+					model,
+					new SubProgressMonitor(monitor, 1));
+		} else {
+			importContent(
+					new File(model.getInstallLocation()),
+					project.getFullPath(),
+					FileSystemStructureProvider.INSTANCE,
+					null,
+					new SubProgressMonitor(monitor, 1));
+			importSourceArchives(
+					project,
+					model,
+					new SubProgressMonitor(monitor, 1));			
+		}
+		
+		if (markAsBinary)
+			project.setPersistentProperty(
+					PDECore.EXTERNAL_PROJECT_PROPERTY,
+					PDECore.BINARY_PROJECT_VALUE);		
+	}
+
+	private void importAsSource(IProject project, IPluginModelBase model, SubProgressMonitor monitor) throws CoreException {
+		monitor.beginTask("", 3); //$NON-NLS-1$
+		importAsBinary(project, model, false, new SubProgressMonitor(monitor, 2));
+		
+		WorkspaceBuildModel buildModel = new WorkspaceBuildModel(project.getFile("build.properties"));
+		if (!isJARd(model) || containsCode(new File(model.getInstallLocation()))) {
+			String[] libraries = getLibraryNames(model, false);
+			for (int i = 0; i < libraries.length; i++) {
+				if (ClasspathUtilCore.containsVariables(libraries[i]))
+					continue;
+				String name = ClasspathUtilCore.expandLibraryName(libraries[i]);
+				IPath libraryPath = (name.equals(".") && isJARd(model))
+										? new Path(new File(model.getInstallLocation()).getName())
+										: new Path(name);
+				IResource jarFile = project.findMember(libraryPath);
+				if (jarFile != null) {
+					IResource srcZip = jarFile.getProject().findMember(ClasspathUtilCore.getSourceZipName(jarFile.getName()));
+					if (srcZip != null) {
+						String jarName = libraries[i].equals(".") ? "" : libraryPath.removeFileExtension().lastSegment();
+						String folder = addBuildEntry(buildModel, "source." + libraries[i], "src" + (jarName.length() == 0 ? "/" : "-" + jarName + "/"));
+						IFolder dest = jarFile.getProject().getFolder(folder); //$NON-NLS-1$
+						if (!dest.exists()) {
+							dest.create(true, true, null);
+						}
+						extractZipFile(srcZip.getLocation().toFile(), dest.getFullPath(), monitor);
+						if (isJARd(model)) {
+							extractJavaResources(jarFile.getLocation().toFile(), dest, monitor);
+						} else {
+							extractResources(jarFile.getLocation().toFile(), dest, monitor);
+						}
+						srcZip.delete(true, null);
+						jarFile.delete(true, null);
+					}
+				}
+			}	
+		}
+		configureBinIncludes(buildModel, model);
+		buildModel.save();
+	}
+	
+	private void configureBinIncludes(WorkspaceBuildModel buildModel, IPluginModelBase model) throws CoreException {
+		IBuildEntry entry = buildModel.getBuild(true).getEntry("bin.includes");
+		if (entry == null) {
+			entry = buildModel.getFactory().createEntry("bin.includes");
+			File location = new File(model.getInstallLocation());
+			if (location.isDirectory()) {
+				File[] files = location.listFiles();
+				for (int i = 0; i < files.length; i++) {
+					String token = files[i].getName();
+					if (files[i].isDirectory())
+						token = token + "/"; //$NON-NLS-1$
+					entry.addToken(token);
+				}
+			} else {
+				String[] tokens = getTopLevelResources(location);
+				for (int i = 0; i < tokens.length; i++) {
+					entry.addToken(tokens[i]);
+				}
+			}
+			buildModel.getBuild().add(entry);
+		}
+	}
+	
+	private String addBuildEntry(WorkspaceBuildModel model, String key, String value) throws CoreException {
+		IBuild build = model.getBuild(true);
+		IBuildEntry entry = build.getEntry(key);
+		if (entry == null) {
+			entry = model.getFactory().createEntry(key);
+			entry.addToken(value);
+			build.add(entry);
+		}
+		String[] tokens = entry.getTokens();
+		return (tokens.length > 0) ? tokens[0] : "src/";
+	}
+
+	private void linkSourceArchives(IProject project, IPluginModelBase model,
+			IProgressMonitor monitor) throws CoreException {
+
+		String[] libraries = getLibraryNames(model, true);
+		monitor.beginTask(PDEUIMessages.ImportWizard_operation_copyingSource,
+				libraries.length);
+
+		SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
+		for (int i = 0; i < libraries.length; i++) {
+			String zipName = ClasspathUtilCore.getSourceZipName(libraries[i]);
+			IPath path = new Path(zipName);
+			if (project.findMember(path) == null) {
+				IPath srcPath = manager.findSourcePath(model.getPluginBase(), path);
+				if (srcPath != null) {
+					if ("src.zip".equals(zipName) && isJARd(model)) {
+						path = new Path(ClasspathUtilCore.getSourceZipName(new File(model
+								.getInstallLocation()).getName()));
+					}
+					IFile zipFile = project.getFile(path.lastSegment());
+					if (!zipFile.exists()) {
+						zipFile.createLink(
+								srcPath,
+								IResource.NONE,
+								new SubProgressMonitor(monitor, 1));
+					}
+				}
+			}
+			monitor.worked(1);
+		}
+		monitor.done();
+	}
+
+	private void importSourceArchives(IProject project, IPluginModelBase model, IProgressMonitor monitor)
+			throws CoreException {
+		
+		String[] libraries = getLibraryNames(model, true);
+		monitor.beginTask(PDEUIMessages.ImportWizard_operation_copyingSource, libraries.length);
+
+		SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
+		for (int i = 0; i < libraries.length; i++) {
+			String zipName = ClasspathUtilCore.getSourceZipName(libraries[i]);
+			IPath path = new Path(zipName);
+			if (project.findMember(path) == null) {
+				IPath srcPath = manager.findSourcePath(model.getPluginBase(), path);
+				if (srcPath != null) {
+					if ("src.zip".equals(zipName) && isJARd(model)) {
+						path = new Path(ClasspathUtilCore.getSourceZipName(new File(model.getInstallLocation()).getName()));
+					}
+					importArchive(project, new File(srcPath.toOSString()), path);						
+				}
+			}
+			monitor.worked(1);
+		}
+		monitor.done();
+	}
+	
+	private String[] getLibraryNames(IPluginModelBase model, boolean expand) {
+		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
+		ArrayList list = new ArrayList();
+		for (int i = 0; i < libraries.length; i++) {
+			if (expand)
+				list.add(ClasspathUtilCore.expandLibraryName(libraries[i].getName()));
+			else
+				list.add(libraries[i].getName());
+		}
+		if (libraries.length == 0 && isJARd(model))
+			list.add(".");
+		return (String[])list.toArray(new String[list.size()]);
+	}
+	
+	private void extractJARdPlugin(IProject project, IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
+		ZipFile zipFile = null;
+		try {
+			zipFile = new ZipFile(model.getInstallLocation());
+			ZipFileStructureProvider provider = new ZipFileStructureProvider(zipFile);
+			if (!containsCode(provider)) {
+				extractZipFile(new File(model.getInstallLocation()), project.getFullPath(), monitor);
+				return;
+			}
+			ArrayList collected = new ArrayList();
+			collectNonJavaResources(provider, provider.getRoot(), collected);
+			importContent(provider.getRoot(), project.getFullPath(), provider, collected, monitor);
+
+			File file = new File(model.getInstallLocation());
+			if (hasEmbeddedSource(provider) && fImportType == IMPORT_WITH_SOURCE) {
+				collected = new ArrayList();
+				collectJavaFiles(provider, provider.getRoot(), collected);
+				importContent(provider.getRoot(), project.getFullPath(), provider, collected, monitor);
+				collected = new ArrayList();
+				collectJavaResources(provider, provider.getRoot(), collected);
+				importContent(provider.getRoot(), project.getFullPath().append("src"), provider, collected, monitor);
+			} else {
+				if (fImportType == IMPORT_BINARY_WITH_LINKS) {
+					 project.getFile(file.getName()).createLink(
+						new Path(file.getAbsolutePath()),
+						IResource.NONE,
+					 	null);
+				} else {
+					importArchive(project, file, new Path(file.getName()));				
+				}
+				if (!hasEmbeddedSource(provider)) {
+					if (fImportType == IMPORT_BINARY_WITH_LINKS) {
+						linkSourceArchives(
+								project, 
+								model, 
+								new SubProgressMonitor(monitor, 1));
+					} else {
+						importSourceArchives(
+								project,
+								model,
+								new SubProgressMonitor(monitor, 1));
+					}
+				}
+			}
+			if (fImportType != IMPORT_WITH_SOURCE) {
+				PDEPluginConverter.modifyManifest(project, model);
+			}
+			setPermissions(model, project);
+		} catch (IOException e) {
+			IStatus status = new Status(IStatus.ERROR, PDEPlugin.getPluginId(),
+					IStatus.ERROR, e.getMessage(), e);
+			throw new CoreException(status);
+		} finally {
+			if (zipFile != null) {
+				try {
+					zipFile.close();
+				} catch (IOException e) {
+				}
+			}
+		}
+	}
+
+
+
 	private IProject findProject(String id) {
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
-		ModelEntry entry = manager.findEntry(id);
+		ModelEntry entry = PDECore.getDefault().getModelManager().findEntry(id);
 		if (entry != null) {
 			IPluginModelBase model = entry.getWorkspaceModel();
 			if (model != null)
@@ -164,587 +481,59 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		}
 		return PDEPlugin.getWorkspace().getRoot().getProject(id);
 	}
-	
-	private void deleteProject(IProject project, IProgressMonitor monitor)
-		throws CoreException {
-		if (RepositoryProvider.getProvider(project) != null)
-			RepositoryProvider.unmap(project);
-		project.delete(true, true, monitor);
-	}
-	
-	private void createProject(IProject project, IProgressMonitor monitor)
-		throws CoreException {
-		project.create(monitor);
-		if (!project.isOpen()) {
-			project.open(null);
-		}
-	}
-	
-	private void importJARdPlugin(File file, IProject project, IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
-		monitor.beginTask("", 2); //$NON-NLS-1$
-		extractZipFile(file, project.getFullPath(), new SubProgressMonitor(monitor, 1));
-		IPath srcPath = getJARdPluginSrcPath(project);
-		if (srcPath == null) {
-			srcPath = ClasspathUtilCore.getSourceAnnotation(model, "."); //$NON-NLS-1$
-			if (srcPath != null) {
-				importArchive(project, srcPath.toFile(), new Path("src.zip")); //$NON-NLS-1$
-				monitor.worked(1);
-			}
-		}
-		project.setPersistentProperty(
-				PDECore.EXTERNAL_PROJECT_PROPERTY,
-				PDECore.BINARY_PROJECT_VALUE);
-	}
-	
-	private void importJARdPluginWithSource(File file, IProject project, IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
-		monitor.beginTask("", 2); //$NON-NLS-1$
-		
-		IPath srcPath = ClasspathUtilCore.getSourceAnnotation(model, "."); //$NON-NLS-1$
-		if (srcPath != null) {
-			extractZipFile(srcPath.toFile(), project.getFullPath(), new SubProgressMonitor(monitor, 1));
-			extractResources(file, project, false, new SubProgressMonitor(monitor, 1));
-			fBuildModel = new WorkspaceBuildModel(project.getFile("build.properties")); //$NON-NLS-1$
-			IBuild build = fBuildModel.getBuild(true);
-			IBuildEntry entry = fBuildModel.getFactory().createEntry("source.."); //$NON-NLS-1$
-			entry.addToken("."); //$NON-NLS-1$
-			build.add(entry);
-			entry = fBuildModel.getFactory().createEntry("bin.includes"); //$NON-NLS-1$
-			entry.addToken("."); //$NON-NLS-1$
-			build.add(entry);
-			entry = fBuildModel.getFactory().createEntry("bin.excludes"); //$NON-NLS-1$
-			entry.addToken("bin/**"); //$NON-NLS-1$
-			entry.addToken("temp.folder/**"); //$NON-NLS-1$
-			entry.addToken(".project"); //$NON-NLS-1$
-			entry.addToken(".classpath"); //$NON-NLS-1$
-			entry.addToken("build.properties"); //$NON-NLS-1$
-			build.add(entry);
-			fBuildModel.save();		
-		} else {
-			importJARdPlugin(file, project, model, monitor);
-		}	
-	}
 
-	private IPath getJARdPluginSrcPath(IProject project) {
-		IFolder folder = project.getFolder("src"); //$NON-NLS-1$
-		IPath srcPath = folder.exists() ? folder.getFullPath() : null;
-		if (srcPath == null) {
-			IFile file = project.getFile("src.zip"); //$NON-NLS-1$
-			srcPath = file.exists() ? file.getFullPath() : null;
-		}
-		return srcPath;
-	}
-	
-	private void importAsBinary(
-		IProject project,
-		IPluginModelBase model,
-		IProgressMonitor monitor)
-		throws CoreException {
-
-		importPluginContent(project, model, monitor);
-
-		project.setPersistentProperty(
-				PDECore.EXTERNAL_PROJECT_PROPERTY,
-				PDECore.BINARY_PROJECT_VALUE);
-		
-	}
-	
-	private void importAsBinaryWithLinks(
-		IProject project,
-		IPluginModelBase model,
-		IProgressMonitor monitor)
-		throws CoreException {
-		
-		File[] items = new File(model.getInstallLocation()).listFiles();
-		if (items != null) {
-			monitor.beginTask(PDEUIMessages.PluginImportOperation_linking, items.length); //$NON-NLS-1$
-			for (int i = 0; i < items.length; i++) {
-				File sourceFile = items[i];
-				if (sourceFile.isDirectory()) {
-					IFolder folder = project.getFolder(sourceFile.getName());
-					folder.createLink(
-						new Path(sourceFile.getPath()),
-						IResource.NONE,
-						new SubProgressMonitor(monitor, 1));
-				} else {
-					String fileName = sourceFile.getName();
-					// Ignore .project in the plug-in.
-					// This file will be created, so ignore the imported one.
-					if (!fileName.equals(".project")) { //$NON-NLS-1$ //$NON-NLS-2$
-						IFile file = project.getFile(fileName);
-						file.createLink(
-							new Path(sourceFile.getPath()),
-							IResource.NONE,
-							new SubProgressMonitor(monitor, 1));
-					}
-				}
-			}
-		}
-
-		try {
-			RepositoryProvider.map(project, PDECore.BINARY_REPOSITORY_PROVIDER);
-		} catch (TeamException e) {
-		}
-		
-	}
-
-	private void importWithSource(
-			IProject project,
-			IPluginModelBase model,
-			IProgressMonitor monitor)
-	throws CoreException {
-		
-		monitor.beginTask("", 3); //$NON-NLS-1$
-		
-		importPluginContent(project, model, new SubProgressMonitor(monitor, 2));
-		
-		fBuildModel = configureBinIncludes(project, model);
-		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
-		
-		for (int i = 0; i < libraries.length; i++) {
-			if (ClasspathUtilCore.containsVariables(libraries[i].getName()))
-				continue;
-			IPath libraryPath = new Path(libraries[i].getName());
-			IResource jarFile = project.findMember(libraryPath);
-			if (jarFile != null) {
-				IPath srcPath = getSourcePath(libraryPath);
-				IResource srcZip = jarFile.getProject().findMember(srcPath);
-				if (srcZip != null) {
-					String jarName = libraryPath.removeFileExtension().lastSegment();
-					IFolder dest = jarFile.getProject().getFolder("src-" + jarName); //$NON-NLS-1$
-					IBuildEntry entry =
-					fBuildModel.getFactory().createEntry(
-							"source." + libraries[i].getName()); //$NON-NLS-1$
-					entry.addToken(dest.getName() + "/"); //$NON-NLS-1$
-					fBuildModel.getBuild().add(entry);
-					if (!dest.exists()) {
-						dest.create(true, true, null);
-					}
-					extractZipFile(srcZip.getLocation().toFile(), dest.getFullPath(), monitor);
-					extractResources(jarFile.getLocation().toFile(), dest, true, monitor);
-					srcZip.delete(true, null);
-					jarFile.delete(true, null);
-				}
-			}
-		}
-		fBuildModel.save();
-		monitor.done();
-	}
-	
-	private WorkspaceBuildModel configureBinIncludes(IProject project, IPluginModelBase model) {
-		WorkspaceBuildModel buildModel =
-			new WorkspaceBuildModel(project.getFile("build.properties")); //$NON-NLS-1$
-		IBuild build = buildModel.getBuild(true);
-		IBuildEntry entry = buildModel.getFactory().createEntry("bin.includes"); //$NON-NLS-1$
-
-		File[] files = new File(model.getInstallLocation()).listFiles();
-		try {
-			for (int i = 0; i < files.length; i++) {
-				String token = files[i].getName();
-				if (files[i].isDirectory())
-					token = token + "/"; //$NON-NLS-1$
-				entry.addToken(token);
-			}
-			build.add(entry);
-			buildModel.save();
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
-		}
-		return buildModel;
-	}
-	
-	private void importPluginContent(IProject project, IPluginModelBase model, IProgressMonitor monitor) throws CoreException {		
-		monitor.beginTask("", 2); //$NON-NLS-1$
-		
-		importContent(
-			new File(model.getInstallLocation()),
-			project.getFullPath(),
-			FileSystemStructureProvider.INSTANCE,
-			null,
-			new SubProgressMonitor(monitor, 1));
-		
-		importSource(
-					project,
-					model.getPluginBase(),
-					new Path(model.getInstallLocation()),
-					new SubProgressMonitor(monitor, 1));
-		
-		// make sure all libraries have been imported
-		// if any are missing, check in fragments		
-		IFragment[] fragments = getFragmentsFor(model);
-		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
-		
-		for (int i = 0; i < libraries.length; i++) {
-			String libraryName = libraries[i].getName();
-			if (ClasspathUtilCore.containsVariables(libraryName) &&
-					!project.exists(new Path(ClasspathUtilCore.expandLibraryName(libraryName)))) {
-				for (int j = 0; j < fragments.length; j++) {
-					importJarFromFragment(project, fragments[j], libraryName);
-					importSourceFromFragment(project, fragments[j], libraryName);
-				}
-			}
-		}
-	}
-	
-	private void importContent(
-		Object source,
-		IPath destPath,
-		IImportStructureProvider provider,
-		List filesToImport,
-		IProgressMonitor monitor)
-		throws CoreException {
-		IOverwriteQuery query = new IOverwriteQuery() {
-			public String queryOverwrite(String file) {
-				return ALL;
-			}
-		};
-		ImportOperation op = new ImportOperation(destPath, source, provider, query);
-		op.setCreateContainerStructure(false);
-		if (filesToImport != null) {
-			op.setFilesToImport(filesToImport);
-		}
-
-		try {
-			op.run(monitor);
-		} catch (InvocationTargetException e) {
-			IStatus status =
-				new Status(
-					IStatus.ERROR,
-					PDEPlugin.getPluginId(),
-					IStatus.ERROR,
-					e.getMessage(),
-					e);
-			throw new CoreException(status);
-		} catch (InterruptedException e) {
-			throw new OperationCanceledException(e.getMessage());
-		}
-	}
-
-	private void importSource(
-		IProject project,
-		IPluginBase plugin,
-		IPath pluginPath,
-		IProgressMonitor monitor)
-		throws CoreException {
-		SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
-		IPluginLibrary[] libraries = plugin.getLibraries();
-		monitor.beginTask(
-			PDEUIMessages.ImportWizard_operation_copyingSource, //$NON-NLS-1$
-			libraries.length);
-		for (int i = 0; i < libraries.length; i++) {
-			IPath libPath = new Path(libraries[i].getName());
-			IPath srcPath = getSourcePath(libPath);
-			if (srcPath != null && !project.getFile(srcPath).exists()) {
-				File srcZip = manager.findSourceFile(plugin, srcPath);
-				if (srcZip != null) {
-					importArchive(project, srcZip, srcPath);
-				}
-			}
-			monitor.worked(1);
-		}
-	}
-
-	private void importArchive(IProject project, File archive, IPath destPath)
-		throws CoreException {
-		try {
-			if (destPath.segmentCount() > 2) {
-				for (int i = 1; i < destPath.segmentCount(); i++) {
-					IFolder folder = project.getFolder(destPath.uptoSegment(i));
-					if (!folder.exists())
-						folder.create(true, true, null);
-				}
-			}
-			IFile file = project.getFile(destPath);
-			FileInputStream fstream = new FileInputStream(archive);
-			if (file.exists())
-				file.setContents(fstream, true, false, null);
-			else
-				file.create(fstream, true, null);
-			fstream.close();
-		} catch (IOException e) {
-			IStatus status =
-				new Status(
-					IStatus.ERROR,
-					PDEPlugin.getPluginId(),
-					IStatus.OK,
-					e.getMessage(),
-					e);
-			throw new CoreException(status);
-		}
-	}
-
-	private void extractZipFile(File file, IPath destPath, IProgressMonitor monitor)
-		throws CoreException {
-		ZipFile zipFile = null;
-		try {
-			zipFile = new ZipFile(file);
-			ZipFileStructureProvider provider = new ZipFileStructureProvider(zipFile);
-			importContent(
-				provider.getRoot(),
-				destPath,
-				provider,
-				null,
-				monitor);
-		} catch (IOException e) {
-			IStatus status =
-				new Status(
-					IStatus.ERROR,
-					PDEPlugin.getPluginId(),
-					IStatus.ERROR,
-					e.getMessage(),
-					e);
-			throw new CoreException(status);
-		} finally {
-			if (zipFile != null) {
-				try {
-					zipFile.close();
-				} catch (IOException e) {
-				}
-			}
-		}
-	}
-
-	private void extractResources(File file, IResource dest, boolean excludeMetaFolder, IProgressMonitor monitor)
-		throws CoreException {
-		ZipFile zipFile = null;
-		try {
-			zipFile = new ZipFile(file);
-			ZipFileStructureProvider provider = new ZipFileStructureProvider(zipFile);
-			ArrayList collected = new ArrayList();
-			collectResources(provider, provider.getRoot(), excludeMetaFolder, collected);
-
-			importContent(
-				provider.getRoot(),
-				dest.getFullPath(),
-				provider,
-				collected,
-				monitor);
-		} catch (IOException e) {
-			IStatus status =
-				new Status(
-					IStatus.ERROR,
-					PDEPlugin.getPluginId(),
-					IStatus.ERROR,
-					e.getMessage(),
-					e);
-			throw new CoreException(status);
-		} finally {
-			if (zipFile != null) {
-				try {
-					zipFile.close();
-				} catch (IOException e) {
-				}
-			}
-		}
-	}
-
-	private void collectResources(
-		ZipFileStructureProvider provider,
-		Object element,
-		boolean excludeMetaFolder,
-		ArrayList collected) {
-		List children = provider.getChildren(element);
-		if (children != null && !children.isEmpty()) {
-			for (int i = 0; i < children.size(); i++) {
-				Object curr = children.get(i);
-				if (provider.isFolder(curr)) {
-					if (!excludeMetaFolder || !provider.getLabel(curr).equals("META-INF")) { //$NON-NLS-1$
-						collectResources(provider, curr, excludeMetaFolder, collected);
-					}					
-				} else if (!provider.getLabel(curr).endsWith(".class")) { //$NON-NLS-1$
-					collected.add(curr);
-				}
-			}
-		}
-	}
-
-	private boolean queryReplace(IProject project)
-		throws OperationCanceledException {
+	private boolean queryReplace(IProject project) throws OperationCanceledException {
 		switch (fReplaceQuery.doQuery(project)) {
-			case IReplaceQuery.CANCEL :
+			case IReplaceQuery.CANCEL:
 				throw new OperationCanceledException();
-			case IReplaceQuery.NO :
+			case IReplaceQuery.NO:
 				return false;
 		}
 		return true;
 	}
-
-	private void setProjectDescription(
-		IProject project,
-		IPluginModelBase model)
-		throws CoreException {
+	
+	private void setProjectDescription(IProject project, IPluginModelBase model)
+			throws CoreException {
 		IProjectDescription desc = project.getDescription();
 		if (needsJavaNature(project, model))
-			desc.setNatureIds(
-				new String[] { JavaCore.NATURE_ID, PDE.PLUGIN_NATURE });
+			desc.setNatureIds(new String[] { JavaCore.NATURE_ID, PDE.PLUGIN_NATURE });
 		else
 			desc.setNatureIds(new String[] { PDE.PLUGIN_NATURE });
 		project.setDescription(desc, null);
 	}
-	
-	private void setClasspath(IProject project, IPluginModelBase model)
-		throws CoreException {
-		IJavaProject jProject = JavaCore.create(project);
-		ArrayList entries = new ArrayList();
-		if (new File(model.getInstallLocation()).isFile()) {
-			if (project.getFile("build.properties").exists()) //$NON-NLS-1$
-				entries.add(JavaCore.newSourceEntry(project.getFullPath()));
-			else
-				entries.add(JavaCore.newLibraryEntry(project.getFullPath(), getJARdPluginSrcPath(project), null, true));
-		} else if (fImportType == IMPORT_BINARY_WITH_LINKS) {
-			getLinkedLibraries(project, model, entries);
-		} else {
-			IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
-			for (int i = 0; i < libraries.length; i++) {
-				if (fBuildModel != null) {
-					IBuildEntry buildEntry = fBuildModel.getBuild().getEntry("source." + libraries[i].getName()); //$NON-NLS-1$
-					if (buildEntry != null) {
-						IPath path = new Path(buildEntry.getTokens()[0]);
-						entries.add(JavaCore.newSourceEntry(project.getFullPath().append(path)));
-						continue;
-					}
-				}
-				IClasspathEntry entry = getLibraryEntry(project, libraries[i]);
-				if (entry != null)
-					entries.add(entry);
+
+	private boolean needsJavaNature(IProject project, IPluginModelBase model) {
+		if (model.getPluginBase().getLibraries().length > 0)
+			return true;
+		
+		BundleDescription desc = model.getBundleDescription();
+		if (desc != null) {
+			if (desc.getExportPackages().length > 0)
+				return true;
+			BundleSpecification[] specs = desc.getRequiredBundles();
+			for (int i = 0; i < specs.length; i++) {
+				if (specs[i].isExported())
+					return true;
 			}
-		}
-		entries.add(ClasspathUtilCore.createContainerEntry());
-		entries.add(ClasspathUtilCore.createJREEntry());
-		jProject.setRawClasspath((IClasspathEntry[]) entries
-				.toArray(new IClasspathEntry[entries.size()]), jProject
-				.getOutputLocation(), null);
-	}
-	
-	private void getLinkedLibraries(IProject project, IPluginModelBase model, ArrayList entries) throws CoreException {
-		ClasspathUtilCore.addLibraries(model, true, false, entries);
-		for (int i = 0; i < entries.size(); i++) {
-			IPath path = new Path(model.getInstallLocation());
-			IClasspathEntry entry = (IClasspathEntry)entries.get(i);	
-			if (PDEPlugin.getWorkspace().getRoot().findMember(entry.getPath()) != null)
-				continue;
-			if (entry.getPath().matchingFirstSegments(path) == path.segmentCount()) {
-				path = entry.getPath().removeFirstSegments(path.segmentCount());
-				path = project.getFullPath().append(path).setDevice(null);
-			} else {
-				if (!(model instanceof IFragmentModel)) {
-					IFragment[] fragments = getFragmentsFor(model);
-					for (int j = 0; j < fragments.length; j++) {
-						IPath fragPath = new Path(fragments[j].getModel().getInstallLocation());
-						if (entry.getPath().matchingFirstSegments(fragPath) == fragPath.segmentCount()) {
-							path = PDEPlugin.getWorkspace().getRoot().getFullPath();
-							path = path.append(fragments[j].getId());
-							path = path.append(entry.getPath().removeFirstSegments(fragPath.segmentCount())).setDevice(null);
-							break;
-						}
-					}
-				}
-			}
-			IPath srcAttachment = entry.getSourceAttachmentPath();
-			IPath srcAttRoot = entry.getSourceAttachmentRootPath();
-			entries.set(i, JavaCore.newLibraryEntry(path, srcAttachment, srcAttRoot, entry.isExported()));	
 		}		
+		return false;
 	}
 	
-	private IClasspathEntry getLibraryEntry(IProject project, IPluginLibrary library) {
-		if (IPluginLibrary.RESOURCE.equals(library.getType()))
-			return null;
+	private boolean isExempt(IPluginModelBase model) {
+		String id = model.getPluginBase().getId();
+		if ("org.apache.ant".equals(id)
+			|| "org.eclipse.osgi.util".equals(id)
+			|| "org.eclipse.osgi.services".equals(id)
+			|| "org.eclipse.team.cvs.ssh2".equals(id))
+			return true;
 		
-		String libraryName = ClasspathUtilCore.expandLibraryName(library.getName());
-		if (!project.exists(new Path(libraryName)))
-			return null;
-		
-		IPath srcAttach = getSourceAttachmentPath(project, project.getFullPath().append(libraryName));
-		IPath srcRoot = srcAttach != null ? Path.EMPTY : null;
-		return JavaCore.newLibraryEntry(project.getFullPath().append(libraryName), srcAttach, srcRoot, library.isExported());
+		if ("org.eclipse.swt".equals(id) && !isJARd(model))
+			return true;
+		return false;
 	}
 
-	private IPath getSourceAttachmentPath(IProject project, IPath jarPath) {
-		IPath sourcePath = getSourcePath(jarPath);
-		if (sourcePath == null)
-			return null;
-		IWorkspaceRoot root = project.getWorkspace().getRoot();
-		if (root.findMember(sourcePath) != null) {
-			return sourcePath;
-		}
-		return null;
-	}
-	
-	private IPath getSourcePath(IPath jarPath) {
-		jarPath = new Path(ClasspathUtilCore.expandLibraryName(jarPath
-				.toString()));
-		String libName = jarPath.lastSegment();
-		if (libName != null) {
-			int idx = libName.lastIndexOf('.');
-			if (idx != -1) {
-				String srcName = libName.substring(0, idx) + "src.zip"; //$NON-NLS-1$
-				IPath path = jarPath.removeLastSegments(1).append(srcName);
-				return path;
-			}
-		}
-		return null;
-	}
-	
-	private boolean needsJavaNature(IProject project, IPluginModelBase model) {
-		// Always return true when the model is in the plugin-in-jar format
-		if (new File(model.getInstallLocation()).isFile())
-			return true;
-		boolean isJavaProject = false;
-		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
-		for (int i = 0; i < libraries.length; i++) {
-			if (!IPluginLibrary.RESOURCE.equals(libraries[i].getType())) {
-				isJavaProject = true;
-				break;
-			}
-		}
-		if (!isJavaProject) {
-			IPluginImport[] imports = model.getPluginBase().getImports();
-			for (int i = 0; i < imports.length; i++) {
-				if (imports[i].isReexported()) {
-					isJavaProject = true;
-					break;
-				}
-			}
-		}
-		return isJavaProject;
-	}
-	
-	private IFragment[] getFragmentsFor(IPluginModelBase model) {
-		ArrayList result = new ArrayList();
-		for (int i = 0; i < fModels.length; i++) {
-			if (fModels[i] instanceof IFragmentModel) {
-				IFragment fragment = ((IFragmentModel) fModels[i]).getFragment();
-				if (PDECore.compare(
-						model.getPluginBase().getId(),
-						model.getPluginBase().getVersion(),
-						fragment.getPluginId(),
-						fragment.getVersion(),
-						fragment.getRule())) {
-					result.add(fragment);
-				}
-			}
-		}
-		return (IFragment[])result.toArray(new IFragment[result.size()]);
-	}
-	
-	private void importJarFromFragment(IProject project, IFragment fragment, String name)
-		throws CoreException {
-		IPath jarPath = new Path(ClasspathUtilCore.expandLibraryName(name));
-		File swtJar =
-			new File(fragment.getModel().getInstallLocation(), jarPath.toString());
-		if (swtJar.exists()) {
-			importArchive(project, swtJar, jarPath);
-		}
-	}
-	
-	private void importSourceFromFragment(IProject project, IFragment fragment, String name)
-		throws CoreException {
-		IPath jarPath = new Path(ClasspathUtilCore.expandLibraryName(name));
-		IPath srcPath = getSourcePath(jarPath);
-		SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
-		File srcFile = manager.findSourceFile(fragment, srcPath);
-		if (srcFile != null) {
-			importArchive(project, srcFile, srcPath);
-		}
+	private boolean isJARd(IPluginModelBase model) {
+		return new File(model.getInstallLocation()).isFile();
 	}
 	
 	private void setPermissions(IPluginModelBase model, IProject project) {
@@ -772,4 +561,6 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		|| name.endsWith(".a")
 		|| name.indexOf(".so") != -1;
 	}
+
+	
 }

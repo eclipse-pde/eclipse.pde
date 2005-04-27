@@ -291,7 +291,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		monitor.subTask(PDEUIMessages.BaseExtensionPoint_generating);
 		if (newSchemaPath.isEmpty() == false) {
 			IFolder folder = fContainer.getProject().getFolder(newSchemaPath);
-			CoreUtility.createFolder(folder, true, true, null);
+			CoreUtility.createFolder(folder);
 		}
 		InputStream source = createSchemaStream(pluginId, id, name, shared);
 		IPath filePath = fContainer.getFullPath().append(schema);

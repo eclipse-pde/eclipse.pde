@@ -182,9 +182,7 @@ public class ClasspathHelper {
 				if (resource != null) {
 					if (resource.isLinked()) {
 						path = resource.getLocation();
-					} else if (resource instanceof IFile) {
-						path = null;	
-					}
+					} 
 				} else {
 					path = null;
 				}

@@ -29,14 +29,13 @@ public class CoreUtility {
 		proj.setDescription(description, monitor);
 	}
 	
-	public static void createFolder(IFolder folder, boolean force,
-			boolean local, IProgressMonitor monitor) throws CoreException {
+	public static void createFolder(IFolder folder) throws CoreException {
 		if (!folder.exists()) {
 			IContainer parent = folder.getParent();
 			if (parent instanceof IFolder) {
-				createFolder((IFolder) parent, force, local, monitor);
+				createFolder((IFolder) parent);
 			}
-			folder.create(force, local, monitor);
+			folder.create(true, true, null);
 		}
 	}
 

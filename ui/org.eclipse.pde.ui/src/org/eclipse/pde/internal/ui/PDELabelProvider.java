@@ -134,10 +134,10 @@ public class PDELabelProvider extends SharedLabelProvider {
 	public String getObjectText(ImportObject obj) {
         String version = obj.getImport().getVersion();
         if (version != null && version.length() > 0 && Character.isDigit(version.charAt(0)))
-            version = "(" + version + ")";
+            version = "(" + version + ")"; //$NON-NLS-1$ //$NON-NLS-2$
        
         String text = isFullNameModeEnabled() ? obj.toString() : preventNull(obj.getId());
-        return version == null || version.length() > 0 ? text : text + " " + version;
+        return version == null || version.length() > 0 ? text : text + " " + version; //$NON-NLS-1$
     }
 	
 	public String getObjectText(IProductPlugin obj) {

@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -53,8 +52,8 @@ public class UpdateClasspathJob extends Job {
 					monitor.worked(1);
 					continue;
 				}
-				ClasspathComputer.setClasspath(model, new SubProgressMonitor(
-						monitor, 1));
+				ClasspathComputer.setClasspath(project, model);
+				monitor.worked(1);
 				if (monitor.isCanceled())
 					return false;
 			}

@@ -254,7 +254,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 				&& fData.getSourceFolderName().trim().length() > 0) {
             IFolder folder = project.getFolder(fData.getSourceFolderName());
             if (!folder.exists())
-                CoreUtility.createFolder(folder, true, true, null);
+                CoreUtility.createFolder(folder);
         }
         return project;
     }

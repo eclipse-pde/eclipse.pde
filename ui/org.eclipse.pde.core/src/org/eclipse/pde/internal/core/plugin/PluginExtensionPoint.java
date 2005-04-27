@@ -32,7 +32,7 @@ public class PluginExtensionPoint extends IdentifiablePluginObject
 		String id = pluginBase.getId();
 		if (pluginBase instanceof IFragment)
 			id = ((IFragment) pluginBase).getPluginId();
-		return id + "." + getId();
+		return id + "." + getId(); //$NON-NLS-1$
 	}
 	
 	public String getSchema() {
@@ -43,7 +43,7 @@ public class PluginExtensionPoint extends IdentifiablePluginObject
 		this.id = getNodeAttribute(node, "id"); //$NON-NLS-1$
 		fName = getNodeAttribute(node, "name"); //$NON-NLS-1$
 		fSchema = getNodeAttribute(node, "schema"); //$NON-NLS-1$
-		fStartLine = Integer.parseInt(getNodeAttribute(node, "line"));
+		fStartLine = Integer.parseInt(getNodeAttribute(node, "line")); //$NON-NLS-1$
 	}
 	
 	public boolean equals(Object obj) {

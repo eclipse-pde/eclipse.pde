@@ -181,7 +181,7 @@ public class ConvertedProjectsPage extends WizardPage  {
 		if (!model.isLoaded())
 			return;
 			
-		ClasspathComputer.setClasspath(model, monitor); // error occurs here on initial	
+		ClasspathComputer.setClasspath(project, model);
 	}
 
 	public static void convertProject(

@@ -280,13 +280,13 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
         if (context != null) {
                IBuildModel buildModel = (IBuildModel)context.getModel();
                IBuild build = buildModel.getBuild();
-               IBuildEntry entry = build.getEntry("bin.includes");
+               IBuildEntry entry = build.getEntry("bin.includes"); //$NON-NLS-1$
                if (entry == null) {
-                   entry = buildModel.getFactory().createEntry("bin.includes");
+                   entry = buildModel.getFactory().createEntry("bin.includes"); //$NON-NLS-1$
                    build.add(entry);
                } 
-               if (!entry.contains("META-INF"))
-                   entry.addToken("META-INF/");          
+               if (!entry.contains("META-INF")) //$NON-NLS-1$
+                   entry.addToken("META-INF/");           //$NON-NLS-1$
            }
         } catch (CoreException e) {
             throw new InvocationTargetException(e);

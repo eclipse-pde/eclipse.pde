@@ -30,7 +30,7 @@ public interface ICoreConstants {
 	String TARGET_JRE = "targetJRE"; //$NON-NLS-1$
 	
 	// Self-hosting mode
-	String STRICT_MODE = "strictMode";
+	String STRICT_MODE = "strictMode"; //$NON-NLS-1$
 
 	public final static String TARGET21 = "2.1"; //$NON-NLS-1$
 	public final static String TARGET30 = "3.0"; //$NON-NLS-1$

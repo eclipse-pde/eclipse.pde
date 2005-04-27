@@ -50,7 +50,7 @@ public class DescriptionSection extends PDESection implements IPartSelectionList
 		sourceConfiguration = new XMLConfiguration(colorManager);
 		document = new Document();
 		partitioner =
-			new DefaultPartitioner(
+			new FastPartitioner(
 				new XMLPartitionScanner(),
 				new String[] {
 					XMLPartitionScanner.XML_TAG,

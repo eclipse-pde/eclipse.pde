@@ -67,7 +67,7 @@ public class NewSiteProjectCreationOperation extends WorkspaceModifyOperation {
 		monitor.worked(1);
 		
 		if (fWebLocation != null){
-			CoreUtility.createFolder(fProject.getFolder(fWebLocation), true, true, monitor);
+			CoreUtility.createFolder(fProject.getFolder(fWebLocation));
 			createXSLFile();
 			createCSSFile();
 			createHTMLFile();

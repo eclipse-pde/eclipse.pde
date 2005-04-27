@@ -61,7 +61,7 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 				childElement.load(child);
 			}
 		}
-		fStartLine = Integer.parseInt(getNodeAttribute(node, "line"));
+		fStartLine = Integer.parseInt(getNodeAttribute(node, "line")); //$NON-NLS-1$
 	}
 
 	public boolean equals(Object obj) {

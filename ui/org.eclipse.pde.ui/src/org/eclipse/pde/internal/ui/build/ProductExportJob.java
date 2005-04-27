@@ -84,7 +84,7 @@ public class ProductExportJob extends FeatureExportJob {
 	protected void doExports(IProgressMonitor monitor)
 			throws InvocationTargetException, CoreException {
 		try {
-            monitor.beginTask("", 10);
+            monitor.beginTask("", 10); //$NON-NLS-1$
 			// create a feature to wrap all plug-ins and features
 			String featureID = "org.eclipse.pde.container.feature"; //$NON-NLS-1$
 			fFeatureLocation = fBuildTempLocation + File.separator + featureID;
@@ -246,7 +246,7 @@ public class ProductExportJob extends FeatureExportJob {
 			BufferedReader in = null;
 			try {
                 in = new BufferedReader(new FileReader(path));
-                writer = new PrintWriter(new FileWriter(new File(dir, "config.ini")));
+                writer = new PrintWriter(new FileWriter(new File(dir, "config.ini"))); //$NON-NLS-1$
                 String line;
                 while ((line = in.readLine()) != null) {
                     writer.println(line);
@@ -264,9 +264,9 @@ public class ProductExportJob extends FeatureExportJob {
             return;
 		} 
         try {
-            writer = new PrintWriter(new FileWriter(new File(dir, "config.ini")));
+            writer = new PrintWriter(new FileWriter(new File(dir, "config.ini"))); //$NON-NLS-1$
             String location = getSplashLocation();
-            writer.println("#Product Runtime Configuration File");
+            writer.println("#Product Runtime Configuration File"); //$NON-NLS-1$
             writer.println();
             if (location != null)
             	writer.println("osgi.splashPath=" + location); //$NON-NLS-1$
@@ -313,8 +313,8 @@ public class ProductExportJob extends FeatureExportJob {
 			buffer.append(id);
 			if ("org.eclipse.core.runtime".equals(id)) //$NON-NLS-1$
 				buffer.append("@2:start"); //$NON-NLS-1$
-            if ("org.eclipse.update.configurator".equals(id))
-                buffer.append("@3:start");
+            if ("org.eclipse.update.configurator".equals(id)) //$NON-NLS-1$
+                buffer.append("@3:start"); //$NON-NLS-1$
 		}
 		return buffer.toString();
 	}

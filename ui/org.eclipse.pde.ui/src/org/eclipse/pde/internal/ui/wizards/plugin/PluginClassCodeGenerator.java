@@ -46,7 +46,7 @@ public class PluginClassCodeGenerator {
 		if (fPluginData.getSourceFolderName().trim().length() > 0)
 			path = new Path(fPluginData.getSourceFolderName()).append(path);
 
-		CoreUtility.createFolder(fProject.getFolder(path), true, true, null);
+		CoreUtility.createFolder(fProject.getFolder(path));
 
 		IFile file = fProject.getFile(path.append(className + ".java")); //$NON-NLS-1$
 		StringWriter swriter = new StringWriter();

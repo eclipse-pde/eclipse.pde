@@ -321,7 +321,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 
 	public void showEditorInput(IEditorInput editorInput) {
     	String name = editorInput.getName();
-    	if (name.equals("feature.xml")) {
+    	if (name.equals("feature.xml")) { //$NON-NLS-1$
     		setActivePage(0);
     	} else {
     		setActivePage(getPageCount() - 3);

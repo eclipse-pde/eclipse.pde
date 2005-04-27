@@ -35,7 +35,7 @@ public abstract class PluginBase
 	private String fVersion;
 	private String fSchemaVersion;
 
-	private String fTargetVersion = "3.1";
+	private String fTargetVersion = "3.1"; //$NON-NLS-1$
 
 	public String getSchemaVersion() {
 		return fSchemaVersion;

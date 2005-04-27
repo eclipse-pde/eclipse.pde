@@ -99,14 +99,11 @@ public class ClasspathUtilCore {
 					return null;
 				path = getPath(model, expandedName);
 			}
-			
-
-				entry = JavaCore.newLibraryEntry(
-						path, 
-						getSourceAnnotation(model, expandedName),
-						null, 
-						exported);
-		
+			entry = JavaCore.newLibraryEntry(
+					path, 
+					getSourceAnnotation(model, expandedName),
+					null, 
+					exported);		
 		} catch (CoreException e) {
 		}
 		return entry;
@@ -126,11 +123,11 @@ public class ClasspathUtilCore {
 		if (model.getUnderlyingResource() == null) {
 			File file = new File(model.getInstallLocation());
 			if (file.isDirectory())
-				return new File(file, "META-INF/MANIFEST.MF").exists();
+				return new File(file, "META-INF/MANIFEST.MF").exists(); //$NON-NLS-1$
 			ZipFile jarFile = null;
 			try {
 				jarFile = new ZipFile(file, ZipFile.OPEN_READ);
-				return jarFile.getEntry("META-INF/MANIFEST.MF") != null;
+				return jarFile.getEntry("META-INF/MANIFEST.MF") != null; //$NON-NLS-1$
 			} catch (IOException e) {
 			} finally {
 				try {
@@ -178,17 +175,18 @@ public class ClasspathUtilCore {
 
 	public static IPath getSourceAnnotation(IPluginModelBase model, String libraryName)
 		throws CoreException {
-		IPath path = null;
-		int dot = libraryName.lastIndexOf('.');
-		if (dot != -1) {
-			String zipName = libraryName.substring(0, dot) + "src.zip"; //$NON-NLS-1$
-			path = getPath(model, zipName);
-			if (path == null) {
-				SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
-				path = manager.findSourcePath(model.getPluginBase(), new Path(zipName));
-			}
+		String zipName = getSourceZipName(libraryName);
+		IPath path = getPath(model, zipName);
+		if (path == null) {
+			SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
+			path = manager.findSourcePath(model.getPluginBase(), new Path(zipName));
 		}
 		return path;
+	}
+	
+	public static String getSourceZipName(String libraryName) {
+		int dot = libraryName.lastIndexOf('.');
+		return (dot != -1) ? libraryName.substring(0, dot) + "src.zip" : libraryName;	 //$NON-NLS-1$
 	}
 
 	private static IPluginModelBase resolveLibraryInFragments(
