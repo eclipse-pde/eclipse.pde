@@ -26,6 +26,9 @@ import org.osgi.framework.*;
 
 // This class provides a higher level API on the state
 public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
+	private static final String PROFILE_EXTENSION = ".profile"; //$NON-NLS-1$
+	private static final String SYSTEM_PACKAGES = "org.osgi.framework.system.packages"; //$NON-NLS-1$
+	
 	private StateObjectFactory factory;
 	protected State state;
 	private long id;
@@ -33,6 +36,9 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	private HashMap bundleClasspaths;
 	private List addedBundle;
 	
+	private String javaProfile;
+	private String[] javaProfiles;
+
 	protected long getNextId() {
 		return ++id;
 	}
@@ -205,15 +211,15 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		}
 		return manifest;
 	}
-	
+
 	private void enforceSymbolicName(File bundleLocation, Dictionary initialManifest) {
 		if (initialManifest.get(Constants.BUNDLE_SYMBOLICNAME) != null)
 			return;
-	
+
 		Dictionary generatedManifest = convertPluginManifest(bundleLocation, false);
 		if (generatedManifest == null)
 			return;
-		
+
 		//merge manifests. The values from the generated manifest are added to the initial one. Values from the initial one are not deleted 
 		Enumeration enumeration = generatedManifest.keys();
 		while (enumeration.hasMoreElements()) {
@@ -222,19 +228,18 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 				initialManifest.put(key, generatedManifest.get(key));
 		}
 	}
-	
 
 	private void enforceClasspath(Dictionary manifest) {
 		String classpath = (String) manifest.get(Constants.BUNDLE_CLASSPATH);
 		if (classpath == null)
 			manifest.put(Constants.BUNDLE_CLASSPATH, "."); //$NON-NLS-1$
 	}
-	
+
 	private Dictionary loadManifest(File bundleLocation) {
 		Dictionary manifest = basicLoadManifest(bundleLocation);
 		if (manifest == null)
 			return null;
-		
+
 		enforceSymbolicName(bundleLocation, manifest);
 		enforceClasspath(manifest);
 		return manifest;
@@ -284,7 +289,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		String[] archs = new String[configs.size()];
 		int i = 0;
 		for (Iterator iter = configs.iterator(); iter.hasNext();) {
-			Config aConfig = (Config) iter.next();			
+			Config aConfig = (Config) iter.next();
 			os[i] = aConfig.getOs();
 			ws[i] = aConfig.getWs();
 			archs[i] = aConfig.getArch();
@@ -296,25 +301,39 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		} else {
 			properties.put(OSGI_WS, ws);
 		}
-		
+
 		if (os.length == 1 && Config.ANY.equalsIgnoreCase(os[0])) {
 			properties.put(OSGI_OS, CatchAllValue.singleton);
 		} else {
 			properties.put(OSGI_OS, os);
 		}
-		
+
 		if (archs.length == 1 && Config.ANY.equalsIgnoreCase(archs[0])) {
 			properties.put(OSGI_ARCH, CatchAllValue.singleton);
 		} else {
 			properties.put(OSGI_ARCH, archs);
 		}
-		
+
+		//Set the JRE profile
+		if (javaProfile == null) {
+			javaProfile = getDefaultJavaProfile();
+		}
+		String profile = getJavaProfilePackages();
+		if (profile != null)
+			properties.put(SYSTEM_PACKAGES, profile);
+
 		state.setPlatformProperties(properties);
 		state.resolve(false);
 	}
 
+	private String getDefaultJavaProfile() {
+		if (javaProfiles == null)
+			setJavaProfiles(getOSGiLocation());
+		if (javaProfiles != null && javaProfiles.length > 0)
+			return javaProfiles[0];
+		return null;
+	}
 
-	
 	public State getState() {
 		return state;
 	}
@@ -478,4 +497,105 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		StateDelta d = state.resolve();
 		System.out.println(d);
 	}
+	
+
+	private File getOSGiLocation() {
+		BundleDescription osgiBundle = state.getBundle("org.eclipse.osgi", null); //$NON-NLS-1$
+		if (osgiBundle == null)
+			return null;
+		return new File(osgiBundle.getLocation());
+	}
+
+	private void setJavaProfiles(File bundleLocation) {
+		if (bundleLocation == null)
+			return;
+		if (bundleLocation.isDirectory())
+			javaProfiles = getDirJavaProfiles(bundleLocation);
+		else
+			javaProfiles = getJarJavaProfiles(bundleLocation);
+		if (javaProfiles == null)
+			return;
+		// sort the javaProfiles in descending order
+		Arrays.sort(javaProfiles, new Comparator() {
+			public int compare(Object profile1, Object profile2) {
+				return -((String) profile1).compareTo(profile2);
+			}
+		});
+	}
+
+	private String[] getDirJavaProfiles(File bundleLocation) {
+		String[] profiles = bundleLocation.list(new FilenameFilter() {
+			public boolean accept(File dir, String name) {
+				return name.endsWith(PROFILE_EXTENSION);
+			}
+		});
+		return profiles;
+	}
+
+	private String[] getJarJavaProfiles(File bundleLocation) {
+		ZipFile zipFile = null;
+		ArrayList results = new ArrayList(6);
+		try {
+			zipFile = new ZipFile(bundleLocation, ZipFile.OPEN_READ);
+			Enumeration entries = zipFile.entries();
+			while (entries.hasMoreElements()) {
+				String entryName = ((ZipEntry) entries.nextElement()).getName();
+				if (entryName.indexOf('/') < 0 && entryName.endsWith(PROFILE_EXTENSION))
+					results.add(entryName);
+			}
+		} catch (IOException e) {
+			// nothing to do
+		} finally {
+			if (zipFile != null)
+				try {
+					zipFile.close();
+				} catch (IOException e) {
+					// nothing to do
+				}
+		}
+		return (String[]) results.toArray(new String[results.size()]);
+	}
+
+	private String getJavaProfilePackages() {
+		if (javaProfile == null)
+			return null;
+		File location = getOSGiLocation();
+		InputStream is = null;
+		ZipFile zipFile = null;
+		try {
+			if (location.isDirectory()) {
+				is = new FileInputStream(new File(location, javaProfile));
+			} else {
+				zipFile = null;
+				try {
+					zipFile = new ZipFile(location, ZipFile.OPEN_READ);
+					ZipEntry entry = zipFile.getEntry(javaProfile);
+					if (entry != null)
+						is = zipFile.getInputStream(entry);
+				} catch (IOException e) {
+					// nothing to do
+				}
+			}
+			Properties profile = new Properties();
+			profile.load(is);
+			return profile.getProperty(SYSTEM_PACKAGES);
+		} catch (IOException e) {
+			// nothing to do
+		} finally {
+			if (is != null)
+				try {
+					is.close();
+				} catch (IOException e) {
+					// nothing to do
+				}
+			if (zipFile != null)
+				try {
+					zipFile.close();
+				} catch (IOException e) {
+					// nothing to do
+				}
+		}
+		return null;
+	}
+
 }
