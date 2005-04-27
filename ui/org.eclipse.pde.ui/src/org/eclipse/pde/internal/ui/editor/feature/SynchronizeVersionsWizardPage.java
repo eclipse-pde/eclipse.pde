@@ -38,8 +38,12 @@ import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.model.AbstractEditingModel;
 import org.eclipse.pde.internal.ui.model.IDocumentAttribute;
 import org.eclipse.pde.internal.ui.model.IEditingModel;
+import org.eclipse.pde.internal.ui.model.bundle.Bundle;
+import org.eclipse.pde.internal.ui.model.bundle.BundleModel;
+import org.eclipse.pde.internal.ui.model.bundle.ManifestHeader;
 import org.eclipse.pde.internal.ui.model.plugin.FragmentModel;
 import org.eclipse.pde.internal.ui.model.plugin.PluginBaseNode;
 import org.eclipse.pde.internal.ui.model.plugin.PluginModel;
@@ -55,6 +59,7 @@ import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.text.edits.TextEdit;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.osgi.framework.Constants;
 
 public class SynchronizeVersionsWizardPage extends WizardPage {
 	public static final int USE_FEATURE = 1;
@@ -106,24 +111,13 @@ public void createControl(Composite parent) {
 	loadSettings();
 	PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.FEATURE_SYNCHRONIZE_VERSIONS);
 }
-private WorkspacePluginModelBase findFragment(String id) {
-	IPluginModelBase[] models =
-		PDECore.getDefault().getWorkspaceModelManager().getFragmentModels();
-	return findWorkspaceModelBase(models, id);
-}
-private WorkspacePluginModelBase findModel(String id) {
-	IPluginModelBase [] models = PDECore.getDefault().getWorkspaceModelManager().getPluginModels();
-	return findWorkspaceModelBase(models, id);
-}
 
-private WorkspacePluginModelBase findWorkspaceModelBase(
-	IPluginModelBase[] models,
-	String id) {
+private IPluginModelBase findModel(String id) {
+	IPluginModelBase [] models = PDECore.getDefault().getWorkspaceModelManager().getAllModels();
 	for (int i = 0; i < models.length; i++) {
 		IPluginModelBase modelBase = models[i];
-		if (modelBase instanceof WorkspacePluginModelBase
-			&& modelBase.getPluginBase().getId().equals(id))
-			return (WorkspacePluginModelBase) modelBase;
+		if (modelBase.getPluginBase().getId().equals(id))
+			return modelBase;
 	}
 	return null;
 }
@@ -176,8 +170,12 @@ public boolean finish() {
 					.getFullPath());
 
 			IDocument document = buffer.getDocument();
-			PluginModelBase model = getEditingModel(document,
-					"fragment.xml".equals(file.getName())); //$NON-NLS-1$
+			AbstractEditingModel model = null;
+			if(modelBase instanceof WorkspacePluginModelBase){
+				model = getPluginEditingModel(document, "fragment.xml".equals(file.getName())); //$NON-NLS-1$	
+			} else {
+				model = getBundleEditingModel(document);
+			}
 			model.load();
 			if (!model.isLoaded())
 				throw new CoreException(
@@ -186,8 +184,13 @@ public boolean finish() {
 								IPDEUIConstants.PLUGIN_ID,
 								IStatus.ERROR,
 								"The synchronize version operation cannot proceed because plug-in '" + modelBase.getPluginBase().getId() + "' has a malformed manifest file.", null)); //$NON-NLS-1$ //$NON-NLS-2$
-
-			TextEdit edit = modifyVersion(model, targetVersion);
+			TextEdit edit = null;
+			if(model instanceof PluginModelBase){
+				edit = modifyVersion((PluginModelBase)model, targetVersion);
+			} else if( model instanceof BundleModel){
+				edit = modifyVersion((BundleModel)model, targetVersion);
+				
+			}
 			if (edit != null) {
 				edit.apply(document);
 				buffer.commit(monitor, true);
@@ -195,6 +198,13 @@ public boolean finish() {
 		} finally {
 			manager.disconnect(file.getFullPath(), monitor);
 		}
+	}
+
+	private TextEdit modifyVersion(BundleModel model, String targetVersion) {
+		Bundle bundle = (Bundle)model.getBundle();
+		ManifestHeader header = bundle.getManifestHeader(Constants.BUNDLE_VERSION);
+		header.setValue(targetVersion);
+		return new ReplaceEdit(header.getOffset(), header.getLength(), header.write() + System.getProperty("line.separator")); //$NON-NLS-1$
 	}
 
 	private TextEdit modifyVersion(PluginModelBase model, String version)
@@ -223,11 +233,15 @@ public boolean finish() {
 		return null;
 	}
 
-	private PluginModelBase getEditingModel(IDocument document,
+	private PluginModelBase getPluginEditingModel(IDocument document,
 			boolean isFragment) {
 		if (isFragment)
 			return new FragmentModel(document, false);
 		return new PluginModel(document, false);
+	}
+
+	private BundleModel getBundleEditingModel(IDocument document) {
+		return new BundleModel(document, false);
 	}
 
 private void loadSettings() {
@@ -282,12 +296,8 @@ private void synchronizeVersion(
 	throws CoreException,
 	BadLocationException{
 	String id = ref.getId();
-	WorkspacePluginModelBase modelBase = null;
-	if (ref.isFragment()) {
-		modelBase = findFragment(id);
-	} else {
-		modelBase = findModel(id);
-	}
+	IPluginModelBase modelBase = findModel(id);
+	
 	if (modelBase == null)
 		return;
 	if (mode == USE_PLUGINS) {
