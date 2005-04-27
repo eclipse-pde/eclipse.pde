@@ -168,6 +168,15 @@ public class Macro implements IWritable, IPlayable {
 		}
 	}
 	
+	private void closeSecondaryShells() {
+		updateStack();
+		while (shellStack.size()>1) {
+			MacroCommandShell top = getTopShell();
+			top.close();
+			popStack();
+		}
+	}
+	
 	public String [] getExistingIndices() {
 		ArrayList list = new ArrayList();
 		for (int i=0; i<shells.size(); i++) {
@@ -190,9 +199,15 @@ public class Macro implements IWritable, IPlayable {
 					sh[0] = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 				}
 			});
-			boolean result = shell.playback(display, sh[0], new SubProgressMonitor(monitor, 1));
-			if (!result)
-				return false;
+			try {
+				boolean result = shell.playback(display, sh[0], new SubProgressMonitor(monitor, 1));
+				if (!result)
+					return false;
+			}
+			catch (CoreException e) {
+				closeSecondaryShells();
+				throw e;
+			}
 		}
 		return true;
 	}
@@ -219,6 +234,10 @@ public class Macro implements IWritable, IPlayable {
 
 	public void setIndexHandler(IIndexHandler indexHandler) {
 		this.indexHandler = indexHandler;
+	}
+
+	public String getName() {
+		return name;
 	}
 	
 }

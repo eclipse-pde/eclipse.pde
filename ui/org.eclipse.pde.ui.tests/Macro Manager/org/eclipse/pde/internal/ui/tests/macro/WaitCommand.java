@@ -40,10 +40,14 @@ public class WaitCommand extends MacroCommand {
 			}
 		}
 		public void running(IJobChangeEvent event) {
-			change(1);
+			Job job = event.getJob();
+			if (!job.isSystem()) 
+				change(1);
 		}
 		public void done(IJobChangeEvent event) {
-			change(-1);
+			Job job = event.getJob();
+			if (!job.isSystem()) 
+				change(-1);
 		}
 	}
 
@@ -109,7 +113,7 @@ public class WaitCommand extends MacroCommand {
 		int count = 0;
 		Job[] jobs = manager.find(null);
 		for (int i=0; i<jobs.length; i++) {
-			if (jobs[i].getState()==Job.RUNNING)
+			if (!jobs[i].isSystem() && jobs[i].getState()==Job.RUNNING)
 				count++;
 		}
 		return count;

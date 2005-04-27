@@ -413,6 +413,11 @@ public class MacroCommandShell extends MacroInstruction {
 	public boolean isDisposed() {
 		return this.shell != null && this.shell.isDisposed();
 	}
+	
+	public void close() {
+		if (this.shell!=null && !this.shell.isDisposed())
+			this.shell.close();
+	}
 
 	public boolean tracks(Shell shell) {
 		if (this.shell != null && this.shell.equals(shell))
@@ -509,6 +514,7 @@ public class MacroCommandShell extends MacroInstruction {
 		Runnable runnable = new Runnable() {
 			public void run() {
 				try {
+					//System.out.println("Executing: "+playable.toString());
 					playable.playback(display, MacroCommandShell.this.shell,
 							monitor);
 					MacroUtil.processDisplayEvents(display);

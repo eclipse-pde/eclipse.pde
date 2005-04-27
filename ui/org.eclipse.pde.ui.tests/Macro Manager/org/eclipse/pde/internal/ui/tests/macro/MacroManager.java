@@ -62,12 +62,12 @@ public class MacroManager {
 		private int state = IDLE;
 
 		public void running(IJobChangeEvent event) {
-			if (state == IDLE)
+			if (!event.getJob().isSystem() && state == IDLE)
 				state = RUNNING;
 		}
 
 		public void done(IJobChangeEvent event) {
-			if (state == RUNNING)
+			if (!event.getJob().isSystem() && state == RUNNING)
 				state = DONE;
 		}
 
@@ -216,11 +216,15 @@ public class MacroManager {
 			public void run(IProgressMonitor monitor)
 					throws InvocationTargetException {
 				try {
+					//System.out.println("Start macro: "+macro.getName());
 					result[0] = macro.playback(display, null, monitor);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
+				} catch (ClassCastException e) {
+					throw new InvocationTargetException(e);
 				} finally {
 					monitor.done();
+					//System.out.println("Stop macro: "+macro.getName());
 				}
 			}
 		};
