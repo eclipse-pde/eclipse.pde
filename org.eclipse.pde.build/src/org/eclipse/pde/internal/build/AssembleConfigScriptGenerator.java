@@ -551,7 +551,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			script.printExecTask("rm", getPropertyFormat(PROPERTY_BASEDIR), parameters, null); //$NON-NLS-1$
 		}
 		parameters.clear();
-		parameters.add("-cvf " + getPropertyFormat(PROPERTY_TAR_ARGS) + ' ' + getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH) + ' ' + getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + ' '); //$NON-NLS-1$
+		parameters.add(getPropertyFormat(PROPERTY_TAR_ARGS) + " -cvf "  + getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH) + ' ' + getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + ' '); //$NON-NLS-1$
 		script.printExecTask("tar", getPropertyFormat(PROPERTY_ASSEMBLY_TMP), parameters, null); //$NON-NLS-1$ 
 	}
 
