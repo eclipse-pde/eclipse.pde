@@ -1049,7 +1049,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		Path templateManifest = new Path(TEMPLATE + "/30/plugin/" + DEFAULT_BUNDLE_FILENAME_DESCRIPTOR); //$NON-NLS-1$
 		URL templateManifestURL = BundleHelper.getDefault().find(templateManifest);
 		if (templateManifestURL == null) {
-			IStatus status = new Status(IStatus.WARNING, PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_READING_FILE, NLS.bind(Messages.error_readingDirectory, templateManifestURL.toExternalForm()), null);
+			IStatus status = new Status(IStatus.WARNING, PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_READING_FILE, NLS.bind(Messages.error_readingDirectory, templateManifest), null);
 			BundleHelper.getDefault().getLog().log(status);
 			return null;
 		}
@@ -1130,7 +1130,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		Path templatePluginXML = new Path(TEMPLATE + "/21/plugin/" + DEFAULT_PLUGIN_FILENAME_DESCRIPTOR); //$NON-NLS-1$
 		URL templatePluginURL = BundleHelper.getDefault().find(templatePluginXML);
 		if (templatePluginURL == null) {
-			IStatus status = new Status(IStatus.WARNING, PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_READING_FILE, NLS.bind(Messages.error_readingDirectory, templatePluginURL.toExternalForm()), null);
+			IStatus status = new Status(IStatus.WARNING, PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_READING_FILE, NLS.bind(Messages.error_readingDirectory, templatePluginXML), null);
 			BundleHelper.getDefault().getLog().log(status);
 			return null;
 		}
