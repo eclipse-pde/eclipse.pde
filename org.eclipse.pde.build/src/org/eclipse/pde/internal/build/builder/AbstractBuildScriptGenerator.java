@@ -34,7 +34,7 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 
 	/** flag indicating whether or not the missing properties file should be logged */ 
 	private boolean ignoreMissingPropertiesFile = false;
-	
+
 	abstract protected Properties getBuildProperties() throws CoreException;
 
 	public void setDevEntries(String entries) {
@@ -233,5 +233,4 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 	public void setIgnoreMissingPropertiesFile(boolean value) {
 		ignoreMissingPropertiesFile = value;
 	}
-
 }

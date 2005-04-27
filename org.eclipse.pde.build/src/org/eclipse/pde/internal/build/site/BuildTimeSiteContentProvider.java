@@ -14,17 +14,20 @@ import java.io.File;
 import java.net.URL;
 import java.util.*;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
+import org.eclipse.pde.internal.build.PDEUIStateWrapper;
 import org.eclipse.update.core.ISiteContentProvider;
 import org.eclipse.update.core.SiteContentProvider;
 
 public class BuildTimeSiteContentProvider extends SiteContentProvider implements ISiteContentProvider, IPDEBuildConstants {
 	private String installedBaseURL;
 	private String[] urls;
-
-	public BuildTimeSiteContentProvider(String[] urls, String installedBaseURL) {
+	private PDEUIStateWrapper pdeUIState;
+	
+	public BuildTimeSiteContentProvider(String[] urls, String installedBaseURL, PDEUIStateWrapper initialState) {
 		super(null);
 		this.installedBaseURL = installedBaseURL;
 		this.urls = urls;
+		this.pdeUIState = initialState;
 	}
 
 	/**
@@ -60,6 +63,10 @@ public class BuildTimeSiteContentProvider extends SiteContentProvider implements
 			}
 		}
 		return collectedElements;
+	}
+
+	public PDEUIStateWrapper getInitialState() {
+		return pdeUIState;
 	}
 
 }

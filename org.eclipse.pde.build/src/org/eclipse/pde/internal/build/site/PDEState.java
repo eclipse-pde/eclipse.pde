@@ -31,11 +31,21 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	private long id;
 	private Properties repositoryVersions;
 	private HashMap bundleClasspaths;
-
+	private List addedBundle;
+	
 	protected long getNextId() {
 		return ++id;
 	}
 
+	public PDEState(PDEUIStateWrapper initialState) {
+		this();
+		state = initialState.getState();
+		factory = state.getFactory();
+		id = state.getBundles().length;
+		bundleClasspaths = initialState.getExtraData();
+		addedBundle = new ArrayList();
+	}
+	
 	public PDEState() {
 		factory = Platform.getPlatformAdmin().getFactory();
 		state = factory.createState();
@@ -65,6 +75,8 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			descriptor = factory.createBundleDescription(state, enhancedManifest, bundleLocation.getAbsolutePath(), getNextId());
 			bundleClasspaths.put(new Long(descriptor.getBundleId()), getClasspath(enhancedManifest));
 			state.addBundle(descriptor);
+			if (addedBundle != null)
+				addedBundle.add(descriptor);
 		} catch (BundleException e) {
 			IStatus status = new Status(IStatus.WARNING, IPDEBuildConstants.PI_PDEBUILD, EXCEPTION_STATE_PROBLEM, NLS.bind(Messages.exception_stateAddition, enhancedManifest.get(Constants.BUNDLE_NAME)), e);
 			BundleHelper.getDefault().getLog().log(status);
@@ -448,5 +460,22 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 
 	public List getSortedBundles() {
 		return Utils.computePrerequisiteOrder(Arrays.asList(getState().getResolvedBundles()));
+	}
+	
+	public void cleanupOriginalState() {
+		if (addedBundle == null)
+			return;
+		
+		for (Iterator iter = addedBundle.iterator(); iter.hasNext();) {
+			BundleDescription added = (BundleDescription) iter.next();
+			state.removeBundle(added);
+		}
+		
+		BundleDescription[] allBundles = state.getBundles();
+		for (int i = 0; i < allBundles.length; i++) {
+			allBundles[i].setUserObject(null);
+		}
+		StateDelta d = state.resolve();
+		System.out.println(d);
 	}
 }

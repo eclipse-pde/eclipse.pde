@@ -35,6 +35,8 @@ public class BuildTimeSiteFactory extends BaseSiteFactory implements ISiteFactor
 	private static String installedBaseLocation = null;
 
 	private boolean reportResolutionErrors;
+
+	private PDEUIStateWrapper pdeUIState;
 	
 	/** 
 	 * Create a build time site, using the sitePaths, and the installedBaseLocation.
@@ -95,7 +97,7 @@ public class BuildTimeSiteFactory extends BaseSiteFactory implements ISiteFactor
 				}
 			}
 		}
-		ISiteContentProvider contentProvider = new BuildTimeSiteContentProvider(sitePaths, installedBaseURL);
+		ISiteContentProvider contentProvider = new BuildTimeSiteContentProvider(sitePaths, installedBaseURL, pdeUIState);
 		site.setSiteContentProvider(contentProvider);
 		contentProvider.setSite(site);
 		((BuildTimeSite) site).setReportResolutionErrors(reportResolutionErrors);
@@ -161,6 +163,10 @@ public class BuildTimeSiteFactory extends BaseSiteFactory implements ISiteFactor
 
 	public void setReportResolutionErrors(boolean value) {
 		reportResolutionErrors = value;
+	}
+
+	public void setInitialState(PDEUIStateWrapper uiState) {
+		this.pdeUIState = uiState;
 	}
 	
 }

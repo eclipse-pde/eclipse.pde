@@ -120,9 +120,10 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		AssemblyInformation assemblageInformation = null;
 		assemblageInformation = new AssemblyInformation();
 
+		FeatureBuildScriptGenerator generator = null;
 		for (Iterator i = features.iterator(); i.hasNext();) {
 			String[] featureInfo = getNameAndVersion((String) i.next());
-			FeatureBuildScriptGenerator generator = new FeatureBuildScriptGenerator(featureInfo[0], featureInfo[1], assemblageInformation);
+			generator = new FeatureBuildScriptGenerator(featureInfo[0], featureInfo[1], assemblageInformation);
 			generator.setGenerateIncludedFeatures(this.recursiveGeneration);
 			generator.setAnalyseChildren(this.children);
 			generator.setSourceFeatureGeneration(false);
@@ -158,6 +159,9 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 
 			generatePackageScripts(assemblageInformation, featureInfo);
 		}
+		
+		generator.getSite(false).getRegistry().cleanupOriginalState();
+		flushState();
 	}
 
 	protected void generatePackageScripts(AssemblyInformation assemblageInformation, String[] featureInfo) throws CoreException {

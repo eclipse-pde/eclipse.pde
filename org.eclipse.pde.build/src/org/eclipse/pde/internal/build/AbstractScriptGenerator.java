@@ -14,6 +14,7 @@ import java.io.*;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.ant.AntScript;
 import org.eclipse.pde.internal.build.site.BuildTimeSite;
@@ -32,6 +33,8 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	protected static String workingDirectory;
 	protected static boolean buildingOSGi = true;
 	protected AntScript script;
+	
+	private static PDEUIStateWrapper pdeUIState;
 	
 	/** Location of the plug-ins and fragments. */
 	protected String[] pluginPath;
@@ -248,6 +251,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		}
 	
 		siteFactory.setSitePaths(getPaths());
+		siteFactory.setInitialState(pdeUIState);
 		return (BuildTimeSite) siteFactory.createSite();
 	}
 
@@ -281,5 +285,25 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	 */
 	public void setPluginPath(String[] path) {
 		pluginPath = path;
+	}
+	
+	public void setPDEState(State  state) {
+		ensurePDEUIStateNotNull();
+		pdeUIState.setState(state);
+	}
+
+	public void setStateExtraData(HashMap p) {
+		ensurePDEUIStateNotNull();
+		pdeUIState.setExtraData(p);
+	}
+	
+	protected void flushState() {
+		ensurePDEUIStateNotNull();
+		pdeUIState = null;
+	}
+	
+	private void ensurePDEUIStateNotNull() {
+		if (pdeUIState == null)
+			pdeUIState = new PDEUIStateWrapper();
 	}
 }
