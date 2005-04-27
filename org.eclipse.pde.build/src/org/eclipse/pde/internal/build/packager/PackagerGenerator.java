@@ -49,6 +49,7 @@ public class PackagerGenerator extends BuildScriptGenerator {
 		assembler.setGenerateJnlp(generateJnlp);
 		assembler.setArchivesFormat(getArchivesFormat());
 		assembler.setPropertyFile(propertyFile);
+		assembler.setBackwardCompatibleName(true);
 		assembler.generate();
 	}
 	

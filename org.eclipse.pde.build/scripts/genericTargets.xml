@@ -61,6 +61,7 @@
 		baseLocation="${baseLocation}"
 		buildingOSGi="${buildingOSGi}"
 		archivesFormat="${archivesFormat}"
+		product="${product}"
 	/>
 </target>
 
@@ -134,6 +135,13 @@ set here?
 	<ant antfile="assemble.${id}.all.xml" dir="${buildDirectory}"/>
 </target>
 
+<!-- ===================================================================== -->
+<!-- Package one build element -->
+<!-- ===================================================================== -->
+<target name="packageElement" description="Packaging the build..." depends="init">
+	<ant antfile="package.${id}.all.xml" dir="${buildDirectory}"/>
+</target>
+	
 <!-- ===================================================================== -->
 <!-- Miscellaneous helper targets -->
 <!-- ===================================================================== -->

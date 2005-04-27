@@ -16,7 +16,8 @@ import org.eclipse.pde.internal.build.*;
 
 public class PackageScriptGenerator extends AssembleScriptGenerator {
 	private String packagingPropertiesLocation;
-		
+	private boolean backwardCompatibleName = false;
+	
 	public PackageScriptGenerator(String directory, AssemblyInformation assemblageInformation, String featureId) throws CoreException {
 		super(directory, assemblageInformation, featureId);
 	}
@@ -42,7 +43,7 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 		((PackageConfigScriptGenerator) configScriptGenerator).setPackagingPropertiesLocation(packagingPropertiesLocation);
 		configScriptGenerator.setArchiveFormat((String) archivesFormat.get(aConfig));
 		setForceUpdateJar(forceUpdateJarFormat);
-		setBrandExecutable(false);
+		configScriptGenerator.setBuildSiteFactory(siteFactory);
 		configScriptGenerator.generate();
 
 		Map params = new HashMap(1);
@@ -50,7 +51,11 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 		script.printAntTask(getPropertyFormat(DEFAULT_CUSTOM_TARGETS), null, computeBackwardCompatibleName(aConfig), null, null, params);
 	}
 	
+	public void setBackwardCompatibleName(boolean value) {
+		backwardCompatibleName = value;
+	}
+	
 	private String computeBackwardCompatibleName(Config configInfo) {
-		return DEFAULT_ASSEMBLE_NAME + (featureId.equals("") ? "" : ('.' + featureId)) + (configInfo.equals(Config.genericConfig()) ? "" : ('.' + configInfo.toStringReplacingAny(".", ANY_STRING)) + ".xml"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+		return DEFAULT_ASSEMBLE_NAME + (featureId.equals("") ? "" : ('.' + featureId)) + (configInfo.equals(Config.genericConfig()) ? "" : ('.' + configInfo.toStringReplacingAny(".", ANY_STRING)) + (backwardCompatibleName ? ".xml" : "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 	}
 }

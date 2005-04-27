@@ -4,6 +4,7 @@
 <!-- Global properties.  See the build.properties for information on -->
 <!-- the properties which callers can control. -->
 <!-- ===================================================================== -->
+<property name="builder" location="${user.dir}"/>
 <property name="builderDirectory" location="${builder}"/>
 <property name="buildProperties" location="${builder}/build.properties"/>
 <property file="${buildProperties}"/>
@@ -22,6 +23,7 @@
 	<antcall target="generate" /> 
 	<antcall target="process" /> 
 	<antcall target="assemble" />
+	<antcall target="package" />
 	<antcall target="postBuild" />
 </target>
 
@@ -42,7 +44,7 @@
 <!-- ===================================================================== -->
 <!-- Fetch the elements identified in the customTargets -->
 <!-- ===================================================================== -->
-<target name="fetch">
+<target name="fetch" unless="skipFetch">
 	<ant antfile="${customTargets}" target="preFetch"/>
 	<!-- Generates and then execute the fetch scripts for each build element-->
 	<ant antfile="${customTargets}" target="allElements">
@@ -89,6 +91,17 @@
 		<property name="target" value="assembleElement"/>
 	</ant>
 	<ant antfile="${customTargets}" target="postAssemble"/>	
+</target>
+
+<!-- ===================================================================== -->
+<!-- Package the build elements into final distributions -->
+<!-- ===================================================================== -->
+<target name="package" if="runPackager">
+	<ant antfile="${customTargets}" target="prePackage"/>
+	<ant antfile="${customTargets}" target="allElements">
+		<property name="target" value="packageElement"/>
+	</ant>
+	<ant antfile="${customTargets}" target="postPackage"/>	
 </target>
 
 <!-- ===================================================================== -->

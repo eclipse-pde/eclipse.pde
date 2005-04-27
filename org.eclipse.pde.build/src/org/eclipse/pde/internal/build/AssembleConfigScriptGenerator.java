@@ -10,11 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build;
 
+import java.io.File;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.internal.build.ant.*;
 import org.eclipse.pde.internal.build.builder.ModelBuildScriptGenerator;
+import org.eclipse.pde.internal.build.site.PDEState;
 import org.eclipse.update.core.*;
 
 /**
@@ -51,6 +53,8 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	private boolean generateJnlp;
 
 	private String archiveFormat;
+	private String product;
+	private ProductFile productFile = null;
 
 	public AssembleConfigScriptGenerator() {
 		super();
@@ -71,8 +75,33 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		this.plugins = new BundleDescription[elementList.size()];
 		this.plugins = (BundleDescription[]) elementList.toArray(this.plugins);
 
-		openScript(directoryName, getTargetName() + ".xml");
+		openScript(directoryName, getTargetName() + ".xml"); //$NON-NLS-1$
 		loadPostProcessingSteps();
+		loadProduct();
+	}
+
+	private void loadProduct() {
+		if (product == null || product.startsWith("${")) { //$NON-NLS-1$
+			productFile = null;
+			return;
+		}
+		String productPath = findFile(product, false);
+		if (productPath == null)
+			productPath = product;
+		productFile = new ProductFile(productPath, configInfo.getOs());
+	}
+
+	private String computeIconsList() {
+		if (productFile == null)
+			return getPropertyFormat(PROPERTY_LAUNCHER_ICONS);
+		String[] icons = productFile.getIcons();
+		String result = new String();
+		for (int i = 0; i < icons.length; i++) {
+			String location = findFile(icons[i], true);
+			if (location != null)
+				result +=  (i > 0 ? ", " : "") + getPropertyFormat(PROPERTY_BASEDIR) + '/' + location; //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		return result.length() == 0 ? null : result;
 	}
 
 	private void loadPostProcessingSteps() {
@@ -84,15 +113,14 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		}
 	}
 
-	public void generate() throws CoreException {
+	public void generate() {
 		generatePrologue();
 		generateInitializationSteps();
 		generateGatherBinPartsCalls();
 		if (embeddedSource)
 			generateGatherSourceCalls();
 		generatePostProcessingSteps();
-		if (brandExecutable)
-			generateBrandingCalls();
+		generateBrandingCalls();
 		generateArchivingSteps();
 		generateEpilogue();
 	}
@@ -102,9 +130,46 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	 */
 	private void generateBrandingCalls() {
 		String install = getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER); //$NON-NLS-1$
-		script.printBrandTask(install, getPropertyFormat(PROPERTY_LAUNCHER_ICONS), getPropertyFormat(PROPERTY_LAUNCHER_NAME), getPropertyFormat(PROPERTY_OS));
+		script.printBrandTask(install, computeIconsList(), getPropertyFormat(PROPERTY_LAUNCHER_NAME), getPropertyFormat(PROPERTY_OS));
 	}
 
+	private String findFile(String location, boolean makeRelative) {
+		PDEState state;
+		try {
+			state = getSite(false).getRegistry();
+		} catch (CoreException e) {
+			return null;
+		}
+		Path path = new Path(location);
+		String id = path.segment(0);
+		BundleDescription bundle = state.getResolvedBundle(id);
+		if (bundle != null) {
+			String result = checkFile(new Path(bundle.getLocation()), path, makeRelative);
+			if (result != null)
+				return result;
+		}
+		// Couldn't find the file in any of the plugins, try in a feature.
+		IFeature feature = null;
+		try {
+			feature = getSite(false).findFeature(id, null, false);
+		} catch (CoreException e) {
+		}
+		if (feature == null) 
+			return null;
+		ISiteFeatureReference ref = feature.getSite().getFeatureReference(feature);
+		IPath featureBase = new Path(ref.getURL().getFile()).removeLastSegments(1);
+		return checkFile(featureBase, path, makeRelative);
+	}
+
+	private String checkFile(IPath base, Path target, boolean makeRelative) {
+		IPath path = base.append(target.removeFirstSegments(1));
+		String result = path.toOSString();
+		if (!new File(result).exists())
+			return null;
+		if (makeRelative)
+			return Utils.makeRelative(path, new Path(workingDirectory)).toOSString();
+		return result;
+	}
 	private void generateArchivingSteps() {
 		if (FORMAT_FOLDER.equalsIgnoreCase(archiveFormat)) {
 			generateMoveRootFiles();
@@ -231,7 +296,8 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		script.printProperty(PROPERTY_ECLIPSE_PLUGINS, getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + DEFAULT_PLUGIN_LOCATION);
 		script.printProperty(PROPERTY_ECLIPSE_FEATURES, getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + DEFAULT_FEATURE_LOCATION);
 		script.printProperty(PROPERTY_ARCHIVE_FULLPATH, getPropertyFormat(PROPERTY_BASEDIR) + '/' + getPropertyFormat(PROPERTY_BUILD_LABEL) + '/' + getPropertyFormat(PROPERTY_ARCHIVE_NAME)); //$NON-NLS-1$ //$NON-NLS-2$
-		script.printProperty(PROPERTY_LAUNCHER_NAME, "eclipse"); //$NON-NLS-1$
+		if (productFile != null && productFile.getLauncherName() != null)
+			script.printProperty(PROPERTY_LAUNCHER_NAME, productFile.getLauncherName()); 
 		script.printProperty(PROPERTY_TAR_ARGS, ""); //$NON-NLS-1$
 		generatePackagingTargets();
 		script.printTargetDeclaration(TARGET_MAIN, null, null, null, null);
@@ -597,6 +663,10 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 
 	public void setSignJars(boolean value) {
 		signJars = value;
+	}
+
+	public void setProduct(String value) {
+		product = value;
 	}
 
 	public void setArchiveFormat(String archiveFormat) {

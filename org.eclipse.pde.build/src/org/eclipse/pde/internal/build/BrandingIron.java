@@ -18,7 +18,7 @@ import org.eclipse.swt.tools.internal.IconExe;
  */
 public class BrandingIron implements IXMLConstants {
 
-	private String[] icons;
+	private String[] icons = null;
 	private String root;
 	private String name;
 	private String os = "win32"; //$NON-NLS-1$
@@ -38,10 +38,16 @@ public class BrandingIron implements IXMLConstants {
 
 	public void brand() throws Exception {
 		// if the name property is not set it will be ${launcher.name} so just bail.
-		if (name.equals("${" + PROPERTY_LAUNCHER_NAME + "}")) //$NON-NLS-1$//$NON-NLS-2$
+		if (name.startsWith("${")) //$NON-NLS-1$
+			return;
+
+		// if the root does not exists (happens in some packaging cases) or 
+		// there is already a file with target name, don't do anything
+		String testName = os.equals("win32") ? name + ".exe" : name;
+		if (!new File(root).exists() || new File(root, testName).exists())
 			return;
 		
-		if (("${" + PROPERTY_LAUNCHER_ICONS + "}").equals(icons[0]))
+		if (icons == null || icons[0].startsWith("${"))
 			brandIcons = false;
 		
 		if ("win32".equals(os)) //$NON-NLS-1$
@@ -117,10 +123,12 @@ public class BrandingIron implements IXMLConstants {
 
 	private void brandWindows() throws Exception {
 		File templateLauncher = new File(root, "eclipse.exe");
-		String[] args = new String[icons.length + 1];
-		args[0] = templateLauncher.getAbsolutePath();
-		System.arraycopy(icons, 0, args, 1, icons.length);
-		IconExe.main(args);
+		if (brandIcons) {
+			String[] args = new String[icons.length + 1];
+			args[0] = templateLauncher.getAbsolutePath();
+			System.arraycopy(icons, 0, args, 1, icons.length);
+			IconExe.main(args);
+		}
 		templateLauncher.renameTo(new File(root, name + ".exe"));
 	}
 

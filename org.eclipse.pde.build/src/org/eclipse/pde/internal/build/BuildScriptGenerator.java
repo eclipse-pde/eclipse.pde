@@ -43,6 +43,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	protected boolean includePlatformIndependent = true;
 	protected boolean signJars = false;
 	protected boolean generateJnlp = false;
+	private String product;
 	//Map configuration with the expected output format: key: Config, value: string
 	private HashMap archivesFormat;
 
@@ -171,6 +172,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		assembler.setSignJars(signJars);
 		assembler.setGenerateJnlp(generateJnlp);
 		assembler.setArchivesFormat(getArchivesFormat());
+		assembler.setProduct(product);
 		assembler.generate();
 	}
 
@@ -179,6 +181,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		assembler.setSignJars(signJars);
 		assembler.setGenerateJnlp(generateJnlp);
 		assembler.setArchivesFormat(getArchivesFormat());
+		assembler.setProduct(product);
 		assembler.generate();
 	}
 
@@ -245,6 +248,10 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	 */
 	public void setIgnoreMissingPropertiesFile(boolean value) {
 		ignoreMissingPropertiesFile = value;
+	}
+
+	public void setProduct(String value) {
+		product = value;
 	}
 
 	public void setSignJars(boolean value) {

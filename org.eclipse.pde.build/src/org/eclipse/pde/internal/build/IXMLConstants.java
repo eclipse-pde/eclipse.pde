@@ -81,8 +81,9 @@ public interface IXMLConstants {
 	public static final String PROPERTY_FEATURE_VERSION_SUFFIX = "feature.version.suffix"; //$NON-NLS-1$
 	public static final String PROPERTY_FULL_NAME = "full.name"; //$NON-NLS-1$
 	public static final String PROPERTY_INCLUDE_CHILDREN = "include.children"; //$NON-NLS-1$
-	public static final String PROPERTY_LAUNCHER_ICONS = "launcher.icons"; //$NON-NLS-1$
-	public static final String PROPERTY_LAUNCHER_NAME = "launcher.name"; //$NON-NLS-1$
+	public static final String PROPERTY_LAUNCHER_ICONS = "launcherIcons"; //$NON-NLS-1$
+	public static final String PROPERTY_LAUNCHER_NAME = "launcherName"; //$NON-NLS-1$
+	public static final String PROPERTY_PRODUCT = "product"; //$NON-NLS-1$
 	
 	//public static final String PROPERTY_INSTALL = "install"; //$NON-NLS-1$
 	public static final String PROPERTY_NL = "nl"; //$NON-NLS-1$

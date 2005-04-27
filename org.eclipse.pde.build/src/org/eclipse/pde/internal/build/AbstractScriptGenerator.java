@@ -28,7 +28,6 @@ import org.eclipse.update.core.SiteManager;
 public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuildConstants, IBuildPropertiesConstants {
 	protected static boolean embeddedSource = false;
 	protected static boolean forceUpdateJarFormat = false;
-	protected static boolean brandExecutable = false;
 	private static List configInfos;
 	protected static String workingDirectory;
 	protected static boolean buildingOSGi = true;
@@ -213,10 +212,6 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 
 	public static void setEmbeddedSource(boolean embed) {
 		embeddedSource = embed;
-	}
-
-	public static void setBrandExecutable(boolean brand) {
-		brandExecutable = brand;
 	}
 
 	public static boolean getForceUpdateJarFormat() {

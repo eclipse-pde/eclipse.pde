@@ -390,7 +390,8 @@ public class AntScript {
 		printTab();
 		print("<eclipse.brand"); //$NON-NLS-1$
 		printAttribute("root", root, true); //$NON-NLS-1$
-		printAttribute("icons", icons, true); //$NON-NLS-1$
+		if (icons != null)
+			printAttribute("icons", icons, true); //$NON-NLS-1$
 		printAttribute("name", name, true); //$NON-NLS-1$
 		printAttribute("os", os, true); //$NON-NLS-1$
 		println("/>"); //$NON-NLS-1$

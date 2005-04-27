@@ -163,7 +163,7 @@ public class IdReplaceTask extends Task {
 			int foundElement = -1;
 			boolean isPlugin = false;
 
-			//Find which a plugin or a feature is referenced first 
+			//Find which of a plugin or a feature is referenced first 
 			if (startPlugin == -1 || startInclude == -1) {
 				foundElement = startPlugin != -1 ? startPlugin : startInclude;
 				isPlugin = (startPlugin != -1 ? true : false);
@@ -171,18 +171,20 @@ public class IdReplaceTask extends Task {
 				if (startPlugin < startInclude) {
 					foundElement = startPlugin;
 					isPlugin = true;
-					//Check that the plugin word that has been found is not preceded by an import statement
-					int importPosition = scan(buffer, startElement + 1, IMPORT); 
-					if (importPosition != -1 && importPosition < startPlugin) {
-						startElement = startPlugin;
-						continue;
-					}
+//					//Check that the plugin word that has been found is not preceded by an import statement
+//					int importPosition = scan(buffer, startElement + 1, IMPORT); 
+//					if (importPosition != -1 && importPosition < startPlugin) {
+//						startElement = startPlugin;
+//						continue;
+//					}
 				} else {
 					foundElement = startInclude;
 					isPlugin = false;
 				}
 			}
 
+			//Verify that we have a "<" before the matching position.
+			
 			startId = scan(buffer, foundElement, ID);
 			if (startId == -1)
 				break;

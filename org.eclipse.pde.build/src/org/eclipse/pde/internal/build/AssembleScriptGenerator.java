@@ -59,6 +59,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 		// generate the script for a configuration
 		configScriptGenerator.initialize(directory, featureId, aConfig, assemblageInformation.getCompiledPlugins(aConfig), assemblageInformation.getCompiledFeatures(aConfig), assemblageInformation.getFeatures(aConfig), assemblageInformation.getRootFileProviders(aConfig));
 		configScriptGenerator.setArchiveFormat((String) archivesFormat.get(aConfig));
+		configScriptGenerator.setBuildSiteFactory(siteFactory);
 		configScriptGenerator.generate();
 
 		Map params = new HashMap(1);
@@ -68,6 +69,10 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 
 	public void setSignJars(boolean value) {
 		configScriptGenerator.setSignJars(value);
+	}
+
+	public void setProduct(String value) {
+		configScriptGenerator.setProduct(value);
 	}
 
 	public void setGenerateJnlp(boolean value) {

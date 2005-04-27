@@ -158,13 +158,14 @@ public class BuildScriptGeneratorTask extends Task {
 	public void setWorkingDirectory(String installLocation) {
 		generator.setWorkingDirectory(installLocation);
 	}
-	
+
 	/**
-	 * Set the boolean value indicating whether or not the executable should be branded.
-	 * @param brand <code>true</code> if branding the executable is necessary.
+	 * Set the location of the product being built. This should be a / separated path
+	 * where the first segment is the id of the plugin containing the .product file.
+	 * @param value the location of the .product file being built.
 	 */
-	public void setBrandExecutable(boolean brand) {
-		AbstractScriptGenerator.setBrandExecutable(brand);
+	public void setProduct(String value) {
+		generator.setProduct(value);
 	}
 
 	/**
