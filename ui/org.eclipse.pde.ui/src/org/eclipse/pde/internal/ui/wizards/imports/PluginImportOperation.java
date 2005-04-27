@@ -181,7 +181,11 @@ public class PluginImportOperation extends JarImportOperation {
 					importAsBinary(project, model, true, new SubProgressMonitor(monitor, 4));
 					break;
 				case IMPORT_BINARY_WITH_LINKS:
-					importAsBinaryWithLinks(project, model, new SubProgressMonitor(monitor, 4));
+					if (model.getPluginBase().getId().startsWith("org.eclipse.swt") && !isJARd(model)) {
+						importAsBinary(project, model, true, monitor);
+					} else {
+						importAsBinaryWithLinks(project, model, new SubProgressMonitor(monitor, 4));
+					}
 					break;
 				case IMPORT_WITH_SOURCE:
 					if (isExempt(model)) {
@@ -254,7 +258,23 @@ public class PluginImportOperation extends JarImportOperation {
 			importSourceArchives(
 					project,
 					model,
-					new SubProgressMonitor(monitor, 1));			
+					new SubProgressMonitor(monitor, 1));	
+			
+			// make sure all libraries have been imported
+			// if any are missing, check in fragments		
+			IFragment[] fragments = getFragmentsFor(model);
+			IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
+			
+			for (int i = 0; i < libraries.length; i++) {
+				String libraryName = libraries[i].getName();
+				if (ClasspathUtilCore.containsVariables(libraryName) &&
+						!project.exists(new Path(ClasspathUtilCore.expandLibraryName(libraryName)))) {
+					for (int j = 0; j < fragments.length; j++) {
+						importJarFromFragment(project, fragments[j], libraryName);
+						importSourceFromFragment(project, fragments[j], libraryName);
+					}
+				}
+			}
 		}
 		
 		if (markAsBinary)
@@ -561,6 +581,47 @@ public class PluginImportOperation extends JarImportOperation {
 		|| name.endsWith(".a")
 		|| name.indexOf(".so") != -1;
 	}
+	
+	private IFragment[] getFragmentsFor(IPluginModelBase model) {
+		ArrayList result = new ArrayList();
+		for (int i = 0; i < fModels.length; i++) {
+			if (fModels[i] instanceof IFragmentModel) {
+				IFragment fragment = ((IFragmentModel) fModels[i]).getFragment();
+				if (PDECore.compare(
+						model.getPluginBase().getId(),
+						model.getPluginBase().getVersion(),
+						fragment.getPluginId(),
+						fragment.getVersion(),
+						fragment.getRule())) {
+					result.add(fragment);
+				}
+			}
+		}
+		return (IFragment[])result.toArray(new IFragment[result.size()]);
+	}
+	
+	private void importJarFromFragment(IProject project, IFragment fragment, String name)
+		throws CoreException {
+		IPath jarPath = new Path(ClasspathUtilCore.expandLibraryName(name));
+		File jar =
+			new File(fragment.getModel().getInstallLocation(), jarPath.toString());
+		if (jar.exists()) {
+			importArchive(project, jar, jarPath);
+		}
+	}
+	
+	private void importSourceFromFragment(IProject project, IFragment fragment, String name)
+		throws CoreException {
+		IPath jarPath = new Path(ClasspathUtilCore.expandLibraryName(name));
+		IPath srcPath = new Path(ClasspathUtilCore.getSourceZipName(jarPath.toString()));
+		SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
+		File srcFile = manager.findSourceFile(fragment, srcPath);
+		if (srcFile != null) {
+			importArchive(project, srcFile, srcPath);
+		}
+	}
+	
+
 
 	
 }
