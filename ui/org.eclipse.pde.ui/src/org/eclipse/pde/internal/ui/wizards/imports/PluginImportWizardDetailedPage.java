@@ -65,7 +65,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		extends DefaultContentProvider
 		implements IStructuredContentProvider {
 		public Object[] getElements(Object element) {
-			return models;
+			return fModels;
 		}
 	}
 
@@ -113,7 +113,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 			}
 		});
 				
-		importListViewer.addDoubleClickListener(new IDoubleClickListener() {
+		fImportListViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
 				handleRemove();
 			}
@@ -277,24 +277,24 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	}
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
-		setPageComplete(visible && importListViewer.getTable().getItemCount() > 0);
+		setPageComplete(visible && fImportListViewer.getTable().getItemCount() > 0);
 		
 	}
 	protected void refreshPage() {
 		fAvailableListViewer.refresh();
-		importListViewer.getTable().removeAll();		
+		fImportListViewer.getTable().removeAll();		
 		pageChanged();
 	}
 	protected void pageChanged() {
 		updateCount();
 		handleFilter();
-		setPageComplete(importListViewer.getTable().getItemCount() > 0);
+		setPageComplete(fImportListViewer.getTable().getItemCount() > 0);
 	}
 	private void updateCount() {
 		fCountLabel.setText(
 			NLS.bind(PDEUIMessages.ImportWizard_DetailedPage_count, (new String[] {
-			new Integer(importListViewer.getTable().getItemCount()).toString(),
-			new Integer(models.length).toString()})));
+			new Integer(fImportListViewer.getTable().getItemCount()).toString(),
+			new Integer(fModels.length).toString()})));
 		fCountLabel.getParent().layout();
 	}
 	
@@ -304,7 +304,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 			Table table = fAvailableListViewer.getTable();
 			int index = table.getSelectionIndices()[0];
 			fAvailableListViewer.remove(ssel.toArray());
-			importListViewer.add(ssel.toArray());
+			fImportListViewer.add(ssel.toArray());
 			table.setSelection(index < table.getItemCount() ? index : table.getItemCount() -1);
 			pageChanged();
 		}		
@@ -318,7 +318,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 			data.add(items[i].getData());
 		}
 		if (data.size() > 0) {
-			importListViewer.add(data.toArray());
+			fImportListViewer.add(data.toArray());
 			fAvailableListViewer.remove(data.toArray());
 			pageChanged();
 		}
@@ -351,11 +351,11 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	}
 	
 	private void handleRemove() {
-		IStructuredSelection ssel = (IStructuredSelection)importListViewer.getSelection();
+		IStructuredSelection ssel = (IStructuredSelection)fImportListViewer.getSelection();
 		if (ssel.size() > 0) {
-			Table table = importListViewer.getTable();
+			Table table = fImportListViewer.getTable();
 			int index = table.getSelectionIndices()[0];
-			importListViewer.remove(ssel.toArray());
+			fImportListViewer.remove(ssel.toArray());
 			fAvailableListViewer.add(ssel.toArray());
 			table.setSelection(index < table.getItemCount() ? index : table.getItemCount() -1);
 			pageChanged();
@@ -367,7 +367,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	}
 	
 	private void handleRemoveAll(boolean refresh) {
-		TableItem[] items = importListViewer.getTable().getItems();
+		TableItem[] items = fImportListViewer.getTable().getItems();
 		
 		ArrayList data = new ArrayList();
 		for (int i = 0; i < items.length; i++) {
@@ -375,14 +375,14 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		}
 		if (data.size() > 0) {
 			fAvailableListViewer.add(data.toArray());
-			importListViewer.remove(data.toArray());
+			fImportListViewer.remove(data.toArray());
 			pageChanged();
 		}		
 	}
 	
 	private void handleSwap() {
 		TableItem[] aItems = fAvailableListViewer.getTable().getItems();
-		TableItem[] iItems = importListViewer.getTable().getItems();
+		TableItem[] iItems = fImportListViewer.getTable().getItems();
 		
 		ArrayList data = new ArrayList();
 		for (int i = 0; i < iItems.length; i++) {
@@ -390,7 +390,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		}
 		if (data.size() > 0) {
 			fAvailableListViewer.add(data.toArray());
-			importListViewer.remove(data.toArray());
+			fImportListViewer.remove(data.toArray());
 		}
 		
 		data.clear();
@@ -398,7 +398,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 			data.add(aItems[i].getData());
 		}
 		if (data.size() > 0) {
-			importListViewer.add(data.toArray());
+			fImportListViewer.add(data.toArray());
 			fAvailableListViewer.remove(data.toArray());
 		}
 		pageChanged();		
@@ -407,18 +407,18 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	private void handleExistingProjects() {
 		handleRemoveAll(false);
 		ArrayList result = new ArrayList();
-		for (int i = 0; i < models.length; i++) {
-			String id = models[i].getPluginBase().getId();
+		for (int i = 0; i < fModels.length; i++) {
+			String id = fModels[i].getPluginBase().getId();
 			IProject project =
 				(IProject) PDEPlugin.getWorkspace().getRoot().findMember(id);
 			if (project != null
 				&& project.isOpen()
 				&& WorkspaceModelManager.isPluginProject(project)) {
-				result.add(models[i]);
+				result.add(fModels[i]);
 			}
 		}
 		if (result.size() > 0) {
-			importListViewer.add(result.toArray());
+			fImportListViewer.add(result.toArray());
 			fAvailableListViewer.remove(result.toArray());
 		}
 		pageChanged();		
@@ -427,25 +427,25 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	private void handleExistingUnshared() {
 		handleRemoveAll(false);
 		ArrayList result = new ArrayList();
-		for (int i = 0; i < models.length; i++) {
-			String id = models[i].getPluginBase().getId();
+		for (int i = 0; i < fModels.length; i++) {
+			String id = fModels[i].getPluginBase().getId();
 			IProject project =
 				(IProject) PDEPlugin.getWorkspace().getRoot().findMember(id);
 			if (project != null
 				&& project.isOpen()
 				&& WorkspaceModelManager.isUnsharedPluginProject(project)) {
-				result.add(models[i]);
+				result.add(fModels[i]);
 			}
 		}
 		if (result.size() > 0) {
-			importListViewer.add(result.toArray());
+			fImportListViewer.add(result.toArray());
 			fAvailableListViewer.remove(result.toArray());
 		}
 		pageChanged();		
 	}
 	
 	private void handleAddRequiredPlugins() {
-		TableItem[] items = importListViewer.getTable().getItems();
+		TableItem[] items = fImportListViewer.getTable().getItems();
 		if (items.length == 0)
 			return;
 		if (items.length == 1) {
@@ -457,11 +457,11 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 						
 		ArrayList result = new ArrayList();
 		for (int i = 0; i < items.length; i++) {
-			addPluginAndDependencies((IPluginModelBase) items[i].getData(), result, addFragmentsButton.getSelection());
+			addPluginAndDependencies((IPluginModelBase) items[i].getData(), result, fAddFragmentsButton.getSelection());
 		}
 
 		handleRemoveAll(false);
-		importListViewer.add(result.toArray());
+		fImportListViewer.add(result.toArray());
 		fAvailableListViewer.remove(result.toArray());
 		pageChanged();		
 	}

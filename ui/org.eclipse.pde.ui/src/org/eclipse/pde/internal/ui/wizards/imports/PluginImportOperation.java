@@ -22,6 +22,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -78,6 +79,8 @@ public class PluginImportOperation extends JarImportOperation {
 	
 	private Hashtable fProjectClasspaths = new Hashtable();
 
+	private boolean fForceAutobuild;
+
 	public interface IReplaceQuery {
 		public static final int CANCEL = 0;
 
@@ -93,10 +96,12 @@ public class PluginImportOperation extends JarImportOperation {
 		fImportType = importType;
 		fReplaceQuery = replaceQuery;
 	}
-	
-	/*
-	 * @see IWorkspaceRunnable#run(IProgressMonitor)
-	 */
+
+	public PluginImportOperation(IPluginModelBase[] models, int importType, IReplaceQuery replaceQuery, boolean forceAutobuild) {
+		this(models, importType, replaceQuery);
+		fForceAutobuild = forceAutobuild;
+	}
+
 	public void run(IProgressMonitor monitor) throws CoreException,
 			OperationCanceledException{
 		if (monitor == null) {
@@ -104,9 +109,6 @@ public class PluginImportOperation extends JarImportOperation {
 		}
 		monitor.beginTask(PDEUIMessages.ImportWizard_operation_creating, fModels.length + 1);
 		try {
-			//if (isAutobuilding) 
-				//toggleAutobuild(false);
-			
 			MultiStatus multiStatus = new MultiStatus(PDEPlugin.getPluginId(),
 					IStatus.OK,
 					PDEUIMessages.ImportWizard_operation_multiProblem, 
@@ -127,26 +129,20 @@ public class PluginImportOperation extends JarImportOperation {
 			}
 		} finally {
 			setClasspaths(new SubProgressMonitor(monitor, 1));
-			try {
-				Platform.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD, null);
-			} catch (OperationCanceledException e) {
-			} catch (InterruptedException e) {
-			}
-			//if (isAutobuilding || fTurnAutobuild)
-				//toggleAutobuild(true);			
-			
+			if (!ResourcesPlugin.getWorkspace().isAutoBuilding() && fForceAutobuild)
+				toggleAutobuild(true);						
 			monitor.done();
 		}
 	}
 	
-	/*private void toggleAutobuild(boolean on) throws CoreException {
+	private void toggleAutobuild(boolean on) throws CoreException {
 		IWorkspaceDescription desc = PDEPlugin.getWorkspace().getDescription();
 		desc.setAutoBuilding(on);
 		PDEPlugin.getWorkspace().setDescription(desc);	
-	}*/
+	}
 	
 	private void setClasspaths(IProgressMonitor monitor) throws JavaModelException {
-		monitor.beginTask("Setting classpath...", fProjectClasspaths.size());
+		monitor.beginTask("", fProjectClasspaths.size());
 		Enumeration keys = fProjectClasspaths.keys();
 		while (keys.hasMoreElements()) {
 			IProject project = (IProject)keys.nextElement();

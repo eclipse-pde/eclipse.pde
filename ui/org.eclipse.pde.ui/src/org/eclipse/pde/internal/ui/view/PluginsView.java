@@ -693,7 +693,8 @@ public class PluginsView extends ViewPart {
 				PluginImportWizard.getImportOperation(
 					shell,
 					importType,
-					models);
+					models,
+					false);
 			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(op);
 		} catch (InterruptedException e) {
 		} catch (InvocationTargetException e) {

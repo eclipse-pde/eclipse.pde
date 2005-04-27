@@ -132,7 +132,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 
 		createComputationsOption(container, 2);
 
-		addFragmentsButton.addSelectionListener(new SelectionAdapter() {
+		fAddFragmentsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				pageChanged();
 			}
@@ -208,13 +208,13 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 	
 	
 	private void computeModelsToImport() {
-		importListViewer.getTable().removeAll();
+		fImportListViewer.getTable().removeAll();
 		
 		ArrayList result = new ArrayList();
 		Object[] wModels = tablePart.getSelection();
 		for (int i = 0; i < wModels.length; i++) {
 			IPluginModelBase model = (IPluginModelBase)wModels[i];
-			addDependencies(model, result, addFragmentsButton.getSelection());
+			addDependencies(model, result, fAddFragmentsButton.getSelection());
 			addExtraPrerequisites(model, result);
 		}
 		
@@ -222,7 +222,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 			removeSharedModels(result);
 		}
 		
-		importListViewer.add(result.toArray());
+		fImportListViewer.add(result.toArray());
 	}
 	
 	private void removeSharedModels(ArrayList result) {
@@ -264,10 +264,10 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 			for (int i = 0; i < tokens.length; i++) {
 				Path path = new Path(tokens[i]);
 				if (path.segmentCount() >= 2 && path.segment(0).equals("..")) { //$NON-NLS-1$
-					for (int j = 0; j < models.length; j++) {
-						if (models[j].getPluginBase().getId().equals(path.segment(1))
-							&& !result.contains(models[j])) {
-							result.add(models[j]);
+					for (int j = 0; j < fModels.length; j++) {
+						if (fModels[j].getPluginBase().getId().equals(path.segment(1))
+							&& !result.contains(fModels[j])) {
+							result.add(fModels[j]);
 						}
 					}
 				}
@@ -283,12 +283,12 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 	protected void pageChanged() {
 		computeModelsToImport();
 		updateCount();
-		setPageComplete(importListViewer.getTable().getItemCount() > 0);	
+		setPageComplete(fImportListViewer.getTable().getItemCount() > 0);	
 	}
 
 	private void updateCount() {
 		counterLabel.setText(
-			NLS.bind(PDEUIMessages.ImportWizard_expressPage_total, new Integer(importListViewer.getTable().getItemCount()).toString()));
+			NLS.bind(PDEUIMessages.ImportWizard_expressPage_total, new Integer(fImportListViewer.getTable().getItemCount()).toString()));
 		counterLabel.getParent().layout();
 	}
 

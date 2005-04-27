@@ -87,7 +87,8 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 				getImportOperation(
 					getShell(),
 					page1.getImportType(),
-					models);
+					models,
+					page2.forceAutoBuild());
 			getContainer().run(true, true, op);
 
 		} catch (InterruptedException e) {
@@ -102,14 +103,15 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 	public static IRunnableWithProgress getImportOperation(
 		final Shell shell,
 		final int importType,
-		final IPluginModelBase[] models) {
+		final IPluginModelBase[] models,
+		final boolean forceAutobuild) {
 		return new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor)
 				throws InvocationTargetException, InterruptedException {
 				try {
 					PluginImportOperation.IReplaceQuery query = new ReplaceQuery(shell);
 					PluginImportOperation op =
-						new PluginImportOperation(models, importType, query);
+						new PluginImportOperation(models, importType, query, forceAutobuild);
 					PDEPlugin.getWorkspace().run(op, monitor);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);

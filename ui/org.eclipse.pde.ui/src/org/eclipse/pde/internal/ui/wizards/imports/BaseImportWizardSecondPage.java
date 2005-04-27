@@ -42,12 +42,14 @@ import org.eclipse.swt.widgets.TableItem;
 public abstract class BaseImportWizardSecondPage extends WizardPage implements IModelProviderListener {
 	
 	protected static final String SETTINGS_ADD_FRAGMENTS = "addFragments"; //$NON-NLS-1$
+	protected static final String SETTINGS_AUTOBUILD = "autobuild";
 	
-	protected PluginImportWizardFirstPage page1;
-	protected IPluginModelBase[] models = new IPluginModelBase[0];
-	private String location;
-	protected Button addFragmentsButton;
-	protected TableViewer importListViewer;
+	protected PluginImportWizardFirstPage fPage1;
+	protected IPluginModelBase[] fModels = new IPluginModelBase[0];
+	private String fLocation;
+	protected Button fAddFragmentsButton;
+	private Button fAutoBuildButton;
+	protected TableViewer fImportListViewer;
 	private boolean fRefreshNeeded = true;
 
 	class ContentProvider
@@ -60,7 +62,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 	
 	public BaseImportWizardSecondPage(String pageName, PluginImportWizardFirstPage page) {
 		super(pageName);
-		this.page1 = page;
+		fPage1 = page;
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		PDECore.getDefault().getExternalModelManager().addModelProviderListener(this);
 	}
@@ -81,11 +83,11 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 		gd.widthHint = 225;
 		table.setLayoutData(gd);
 
-		importListViewer = new TableViewer(table);
-		importListViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
-		importListViewer.setContentProvider(new ContentProvider());
-		importListViewer.setInput(PDECore.getDefault().getExternalModelManager());
-		importListViewer.setSorter(ListUtil.PLUGIN_SORTER);
+		fImportListViewer = new TableViewer(table);
+		fImportListViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
+		fImportListViewer.setContentProvider(new ContentProvider());
+		fImportListViewer.setInput(PDECore.getDefault().getExternalModelManager());
+		fImportListViewer.setSorter(ListUtil.PLUGIN_SORTER);
 		return container;
 	}
 	
@@ -96,14 +98,20 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 		gd.horizontalSpan = span;
 		composite.setLayoutData(gd);
 		
-		addFragmentsButton = new Button(composite, SWT.CHECK);
-		addFragmentsButton.setText(PDEUIMessages.ImportWizard_SecondPage_addFragments); //$NON-NLS-1$
-		addFragmentsButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fAddFragmentsButton = new Button(composite, SWT.CHECK);
+		fAddFragmentsButton.setText(PDEUIMessages.ImportWizard_SecondPage_addFragments); //$NON-NLS-1$
+		fAddFragmentsButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		if (getDialogSettings().get(SETTINGS_ADD_FRAGMENTS) != null)
-			addFragmentsButton.setSelection(getDialogSettings().getBoolean(SETTINGS_ADD_FRAGMENTS));
+			fAddFragmentsButton.setSelection(getDialogSettings().getBoolean(SETTINGS_ADD_FRAGMENTS));
 		else 
-			addFragmentsButton.setSelection(true);
-			
+			fAddFragmentsButton.setSelection(true);
+		
+		if (!PDEPlugin.getWorkspace().isAutoBuilding()) {
+			fAutoBuildButton = new Button(composite, SWT.CHECK);
+			fAutoBuildButton.setText("Build projects after the import operation completes");
+			fAutoBuildButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			fAutoBuildButton.setSelection(getDialogSettings().getBoolean(SETTINGS_AUTOBUILD));
+		}
 		return composite;
 		
 	}
@@ -116,7 +124,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible && isRefreshNeeded()) {
-			models = page1.getModels();
+			fModels = fPage1.getModels();
 			refreshPage();
 		}
 	}
@@ -126,33 +134,33 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 	protected boolean isRefreshNeeded() {
 		if (fRefreshNeeded) {
 			fRefreshNeeded = false;
-			location = page1.getDropLocation();
+			fLocation = fPage1.getDropLocation();
 			return true;	
 		}			
-		String currLocation = page1.getDropLocation();
-		if (location == null || !location.equals(currLocation)) {
-			location = page1.getDropLocation();
+		String currLocation = fPage1.getDropLocation();
+		if (fLocation == null || !fLocation.equals(currLocation)) {
+			fLocation = fPage1.getDropLocation();
 			return true;
 		}
 		return false;	
 	}
 	
 	private IPluginModelBase findModel(String id) {
-		for (int i = 0; i < models.length; i++) {
-			String modelId = models[i].getPluginBase().getId();
+		for (int i = 0; i < fModels.length; i++) {
+			String modelId = fModels[i].getPluginBase().getId();
 			if (modelId != null && modelId.equals(id))
-				return models[i];
+				return fModels[i];
 		}
 		return null;
 	}
 
 	private IFragmentModel[] findFragments(IPlugin plugin) {
 		ArrayList result = new ArrayList();
-		for (int i = 0; i < models.length; i++) {
-			if (models[i] instanceof IFragmentModel) {
-				IFragment fragment = ((IFragmentModel) models[i]).getFragment();
+		for (int i = 0; i < fModels.length; i++) {
+			if (fModels[i] instanceof IFragmentModel) {
+				IFragment fragment = ((IFragmentModel) fModels[i]).getFragment();
 				if (plugin.getId().equalsIgnoreCase(fragment.getPluginId())) {
-					result.add(models[i]);
+					result.add(fModels[i]);
 				}
 			}
 		}
@@ -213,7 +221,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 	}
 	
 	public IPluginModelBase[] getModelsToImport() {
-		TableItem[] items = importListViewer.getTable().getItems();
+		TableItem[] items = fImportListViewer.getTable().getItems();
 		ArrayList result = new ArrayList();
 		for (int i = 0; i < items.length; i++) {
 			result.add(items[i].getData());
@@ -223,7 +231,9 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 	
 	public void storeSettings() {
 		IDialogSettings settings = getDialogSettings();
-		settings.put(SETTINGS_ADD_FRAGMENTS, addFragmentsButton.getSelection());
+		settings.put(SETTINGS_ADD_FRAGMENTS, fAddFragmentsButton.getSelection());
+		if (fAutoBuildButton != null)
+			settings.put(SETTINGS_AUTOBUILD, fAutoBuildButton.getSelection());
 	}
 	
 	/* (non-Javadoc)
@@ -231,6 +241,10 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 	 */
 	public void modelsChanged(IModelProviderEvent event) {
 		fRefreshNeeded = true;
+	}
+	
+	public boolean forceAutoBuild() {
+		return fAutoBuildButton != null && getDialogSettings().getBoolean(SETTINGS_AUTOBUILD);
 	}
 
 }
