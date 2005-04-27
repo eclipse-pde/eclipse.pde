@@ -55,8 +55,8 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	/** flag indicating if missing properties file should be logged */
 	private boolean ignoreMissingPropertiesFile = false;
 
-	private static final String PROPERTY_ARCHIVESFORMAT = "archivesFormat";   //$NON-NLS-1$
-	
+	private static final String PROPERTY_ARCHIVESFORMAT = "archivesFormat"; //$NON-NLS-1$
+
 	/**
 	 * 
 	 * @throws CoreException
@@ -122,53 +122,57 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		assemblageInformation = new AssemblyInformation();
 
 		FeatureBuildScriptGenerator generator = null;
-		for (Iterator i = features.iterator(); i.hasNext();) {
-			String[] featureInfo = getNameAndVersion((String) i.next());
-			generator = new FeatureBuildScriptGenerator(featureInfo[0], featureInfo[1], assemblageInformation);
-			generator.setGenerateIncludedFeatures(this.recursiveGeneration);
-			generator.setAnalyseChildren(this.children);
-			generator.setSourceFeatureGeneration(false);
-			generator.setBinaryFeatureGeneration(true);
-			generator.setScriptGeneration(generateBuildScript);
-			generator.setPluginPath(pluginPath);
-			generator.setBuildSiteFactory(null);
-			generator.setDevEntries(devEntries);
-			generator.setSourceToGather(new SourceFeatureInformation());//
-			generator.setCompiledElements(generator.getCompiledElements());
-			generator.setBuildingOSGi(isBuildingOSGi());
-			generator.includePlatformIndependent(includePlatformIndependent);
-			generator.setReportResolutionErrors(reportResolutionErrors);
-			generator.setIgnoreMissingPropertiesFile(ignoreMissingPropertiesFile);
-			generator.setSignJars(signJars);
-			generator.setGenerateJnlp(generateJnlp);
-			generator.generate();
+		try {
+			for (Iterator i = features.iterator(); i.hasNext();) {
+				String[] featureInfo = getNameAndVersion((String) i.next());
+				generator = new FeatureBuildScriptGenerator(featureInfo[0], featureInfo[1], assemblageInformation);
+				generator.setGenerateIncludedFeatures(this.recursiveGeneration);
+				generator.setAnalyseChildren(this.children);
+				generator.setSourceFeatureGeneration(false);
+				generator.setBinaryFeatureGeneration(true);
+				generator.setScriptGeneration(generateBuildScript);
+				generator.setPluginPath(pluginPath);
+				generator.setBuildSiteFactory(null);
+				generator.setDevEntries(devEntries);
+				generator.setSourceToGather(new SourceFeatureInformation());//
+				generator.setCompiledElements(generator.getCompiledElements());
+				generator.setBuildingOSGi(isBuildingOSGi());
+				generator.includePlatformIndependent(includePlatformIndependent);
+				generator.setReportResolutionErrors(reportResolutionErrors);
+				generator.setIgnoreMissingPropertiesFile(ignoreMissingPropertiesFile);
+				generator.setSignJars(signJars);
+				generator.setGenerateJnlp(generateJnlp);
+				generator.generate();
+			}
+
+			if (generateAssembleScript == true) {
+				String[] featureInfo = null;
+				if (features.size() == 1)
+					featureInfo = getNameAndVersion((String) features.get(0));
+				else
+					featureInfo = new String[] {"all"};
+
+				generateAssembleScripts(assemblageInformation, featureInfo);
+
+				if (features.size() == 1)
+					featureInfo = getNameAndVersion((String) features.get(0));
+				else
+					featureInfo = new String[] {""};
+
+				generatePackageScripts(assemblageInformation, featureInfo);
+			}
+		} catch (CoreException ce) {
+			throw ce;
+		} finally {
+			generator.getSite(false).getRegistry().cleanupOriginalState();
+			flushState();
 		}
-
-		if (generateAssembleScript == true) {
-			String[] featureInfo = null;
-			if (features.size() == 1)
-				featureInfo = getNameAndVersion((String) features.get(0));
-			else
-				featureInfo = new String[] {"all"};
-
-			generateAssembleScripts(assemblageInformation, featureInfo);
-
-			if (features.size() == 1)
-				featureInfo = getNameAndVersion((String) features.get(0));
-			else
-				featureInfo = new String[] {""};
-
-			generatePackageScripts(assemblageInformation, featureInfo);
-		}
-		
-		generator.getSite(false).getRegistry().cleanupOriginalState();
-		flushState();
 	}
 
 	protected void generatePackageScripts(AssemblyInformation assemblageInformation, String[] featureInfo) throws CoreException {
 		PackageScriptGenerator assembler = null;
 		assembler = new PackageScriptGenerator(workingDirectory, assemblageInformation, featureInfo[0]);
-		
+
 		assembler.setSignJars(signJars);
 		assembler.setGenerateJnlp(generateJnlp);
 		assembler.setArchivesFormat(getArchivesFormat());
@@ -262,7 +266,6 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		generateJnlp = value;
 	}
 
-	
 	public void setArchivesFormat(String archivesFormatAsString) throws CoreException {
 		if (getPropertyFormat(PROPERTY_ARCHIVESFORMAT).equalsIgnoreCase(archivesFormatAsString)) { //$NON-NLS-1$
 			//Set backward compatible values
@@ -276,7 +279,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 					"aix, motif, ppc - zip & " + //$NON-NLS-1$
 					"hpux, motif, PA_RISC - zip &" + //$NON-NLS-1$
 					"macosx, carbon, ppc - tar & " + //$NON-NLS-1$
-					"qnx, photon, x86 - zip & " +  //$NON-NLS-1$
+					"qnx, photon, x86 - zip & " + //$NON-NLS-1$
 					"*, *, * - zip"; //$NON-NLS-1$
 		}
 
@@ -296,7 +299,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 			}
 		}
 	}
-	
+
 	protected HashMap getArchivesFormat() {
 		if (archivesFormat == null) {
 			try {
@@ -308,7 +311,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		}
 		return archivesFormat;
 	}
-	
+
 	public void includePlatformIndependent(boolean b) {
 		includePlatformIndependent = b;
 	}
