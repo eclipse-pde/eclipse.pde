@@ -17,6 +17,7 @@ import org.eclipse.osgi.service.resolver.State;
 public class PDEUIStateWrapper {
 	private State state;
 	private HashMap extraData;
+	private long nextId;
 	
 	public void setState(State s) {
 		state = s;
@@ -32,5 +33,13 @@ public class PDEUIStateWrapper {
 	
 	public HashMap getExtraData() {
 		return extraData;
+	}
+
+	public void setNextId(long nextId) {
+		this.nextId = nextId;
+	}
+	
+	public long getNextId() {
+		return nextId;
 	}
 }

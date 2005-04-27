@@ -47,7 +47,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		this();
 		state = initialState.getState();
 		factory = state.getFactory();
-		id = state.getBundles().length;
+		id = initialState.getNextId();
 		bundleClasspaths = initialState.getExtraData();
 		addedBundle = new ArrayList();
 	}
@@ -80,8 +80,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			BundleDescription descriptor;
 			descriptor = factory.createBundleDescription(state, enhancedManifest, bundleLocation.getAbsolutePath(), getNextId());
 			bundleClasspaths.put(new Long(descriptor.getBundleId()), getClasspath(enhancedManifest));
-			state.addBundle(descriptor);
-			if (addedBundle != null)
+			if (state.addBundle(descriptor) == true && addedBundle != null)
 				addedBundle.add(descriptor);
 		} catch (BundleException e) {
 			IStatus status = new Status(IStatus.WARNING, IPDEBuildConstants.PI_PDEBUILD, EXCEPTION_STATE_PROBLEM, NLS.bind(Messages.exception_stateAddition, enhancedManifest.get(Constants.BUNDLE_NAME)), e);
