@@ -69,7 +69,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	//Cache the result of compteElements for performance
 	private List computedElements = null;
 	
-	private static final String TEMPLATE = "data";
+	private static final String TEMPLATE = "data"; //$NON-NLS-1$
 	
 	public FeatureBuildScriptGenerator() {
 		super();
