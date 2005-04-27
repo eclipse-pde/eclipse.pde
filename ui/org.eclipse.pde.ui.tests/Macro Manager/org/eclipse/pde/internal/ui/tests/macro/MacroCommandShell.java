@@ -512,16 +512,14 @@ public class MacroCommandShell extends MacroInstruction {
 					playable.playback(display, MacroCommandShell.this.shell,
 							monitor);
 					MacroUtil.processDisplayEvents(display);
+				} catch (ClassCastException e) {
+					ex[0] = createPlaybackException(playable, e);
 				} catch (CoreException e) {
 					ex[0] = e;
 				} catch (SWTException e) {
-					IStatus status = new Status(IStatus.ERROR, "org.eclipse.pde.ui.tests", IStatus.OK,
-							"SWT exception while executing a macro command", e);
-					ex[0] = new CoreException(status);
+					ex[0] = createPlaybackException(playable, e);
 				} catch (SWTError error) {
-					IStatus status = new Status(IStatus.ERROR, "org.eclipse.pde.ui.tests", IStatus.OK,
-							"SWT error while executing a macro command", error);
-					ex[0] = new CoreException(status);
+					ex[0] = createPlaybackException(playable, error);
 				}
 			}
 		};
@@ -561,5 +559,11 @@ public class MacroCommandShell extends MacroInstruction {
 				child.setIndexHandler(indexHandler);
 			}
 		}
+	}
+	
+	private CoreException createPlaybackException(IPlayable playable, Throwable th) {
+		IStatus status = new Status(IStatus.ERROR, "org.eclipse.pde.ui.tests", IStatus.OK,
+				"Error while executing a macro command: "+playable.toString(), th);
+		return new CoreException(status);		
 	}
 }

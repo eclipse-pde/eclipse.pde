@@ -63,4 +63,7 @@ public abstract class MacroCommand implements IWritable, IPlayable {
 	public WidgetIdentifier getWidgetId() {
 		return widgetId;
 	}
+	public String toString() {
+		return "MacroCommand ["+getType()+", line "+getStartLine()+"]";
+	}
 }

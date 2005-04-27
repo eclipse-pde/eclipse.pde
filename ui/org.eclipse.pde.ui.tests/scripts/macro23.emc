@@ -19,16 +19,11 @@
          </command>
          <command type="select" contextId="wizard-page/page2" widgetId="org.eclipse.swt.widgets.Button#1" selection="false"/>
          <command type="select" contextId="wizard" widgetId="org.eclipse.swt.widgets.Button#ButtonId=16"/>
-         <command type="wait"/>
-         <command type="focus" contextId="wizard" widgetId="org.eclipse.swt.widgets.Button#ButtonId=16"/>
       </shell>
-      <command type="focus" contextId="view/org.eclipse.jdt.ui.PackageExplorer" widgetId="org.eclipse.swt.widgets.Tree#1"/>
-      <command type="wait"/>
+ 	  <command type="wait"/>
       <command type="focus" contextId="editor/org.eclipse.pde.ui.manifestEditor/MANIFEST.MF" widgetId="org.eclipse.swt.widgets.Text#1"/>
-      <command type="wait"/>
       <command type="select" contextId="menus" widgetId="contribid/close">
          <parent widgetId="file"/>
       </command>
-      <command type="focus" contextId="view/org.eclipse.jdt.ui.PackageExplorer" widgetId="org.eclipse.swt.widgets.Tree#1"/>
    </shell>
 </macro>
