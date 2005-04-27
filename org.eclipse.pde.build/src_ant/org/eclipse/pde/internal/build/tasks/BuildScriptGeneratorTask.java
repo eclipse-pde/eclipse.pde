@@ -184,4 +184,8 @@ public class BuildScriptGeneratorTask extends Task {
 	public void setGenerateJnlp(boolean value) {
 		generator.setGenerateJnlp(value);
 	}
+	
+	public void setOutputUpdateJars(boolean value) {
+		AbstractScriptGenerator.setForceUpdateJar(value);
+	}
 }

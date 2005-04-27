@@ -60,6 +60,7 @@
 		configInfo="${configs}"
 		baseLocation="${baseLocation}"
 		buildingOSGi="${buildingOSGi}"
+		outputUpdateJars="${outputUpdateJars}"
 		archivesFormat="${archivesFormat}"
 		product="${product}"
 	/>
