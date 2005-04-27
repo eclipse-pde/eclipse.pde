@@ -252,7 +252,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		fData.setName(fNameText.getText().trim());
 		fData.setProvider(fProviderText.getText().trim());
 		fData.setLibraryName(null);
-		fData.setJarred(fJarredCheck.isEnabled()
+		fData.setUnzipLibraries(fJarredCheck.isEnabled()
 				&& fJarredCheck.getSelection());
 
 		PluginFieldData data = fData;

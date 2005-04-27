@@ -13,7 +13,7 @@ package org.eclipse.pde.internal.ui.wizards.plugin;
 public class LibraryPluginFieldData extends PluginFieldData {
 	private String[] fLibraryPaths;
 
-	private boolean fJarred = false;
+	private boolean fUnzipLibraries = false;
 
 	public String[] getLibraryPaths() {
 		return fLibraryPaths;
@@ -23,12 +23,12 @@ public class LibraryPluginFieldData extends PluginFieldData {
 		fLibraryPaths = libraryPaths;
 	}
 
-	public boolean isJarred() {
-		return fJarred;
+	public boolean isUnzipLibraries() {
+		return fUnzipLibraries;
 	}
 
-	public void setJarred(boolean jarred) {
-		fJarred = jarred;
+	public void setUnzipLibraries(boolean jarred) {
+		fUnzipLibraries = jarred;
 	}
 
 }
