@@ -29,7 +29,6 @@ public class IdReplaceTask extends Task {
 	private static final String EMPTY = ""; //$NON-NLS-1$
 	private static final String PLUGIN = "plugin"; //$NON-NLS-1$
 	private static final String INCLUDES = "includes"; //$NON-NLS-1$
-	private static final String IMPORT = "import"; //$NON-NLS-1$
 	
 	//Path of the file where we are replacing the values
 	private String featureFilePath;
@@ -179,7 +178,7 @@ public class IdReplaceTask extends Task {
 
 			//Verify that we have a "<" before the matching position.
 			int character = foundElement;
-			while(Character.isWhitespace(buffer.charAt(--character))) {}
+			while(Character.isWhitespace(buffer.charAt(--character))) {/*Nothing to do */}
 			if (buffer.charAt(character) != '<') {
 				startElement = foundElement;
 				continue;
