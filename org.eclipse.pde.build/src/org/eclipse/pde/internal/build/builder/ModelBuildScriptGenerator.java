@@ -807,7 +807,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 * @param properties
 	 * @return JAR[]
 	 */
-	protected CompiledEntry[] extractEntriesToCompile(Properties properties) {
+	protected CompiledEntry[] extractEntriesToCompile(Properties properties) throws CoreException {
 		List result = new ArrayList(5);
 		int prefixLength = PROPERTY_SOURCE_PREFIX.length();
 		for (Iterator iterator = properties.entrySet().iterator(); iterator.hasNext();) {
@@ -817,6 +817,10 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				continue;
 			key = key.substring(prefixLength);
 			String[] source = Utils.getArrayFromString((String) entry.getValue());
+			if (source.length == 0) {
+				String message = NLS.bind(Messages.error_missingSourceFolder, model.getSymbolicName(), entry.getKey());
+				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_GENERIC, message, null));
+			}
 			String[] output = Utils.getArrayFromString(properties.getProperty(PROPERTY_OUTPUT_PREFIX + key));
 			String[] extraClasspath = Utils.getArrayFromString(properties.getProperty(PROPERTY_EXTRAPATH_PREFIX + key));
 			CompiledEntry newEntry = new CompiledEntry(key, source, output, extraClasspath, key.endsWith(PROPERTY_JAR_SUFFIX) ? CompiledEntry.JAR : CompiledEntry.FOLDER);

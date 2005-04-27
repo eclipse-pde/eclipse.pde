@@ -32,7 +32,8 @@ public class Messages extends NLS {
 	public static String error_fetchingFailed;
 	public static String error_configWrongFormat;
 	public static String error_missingCustomBuildFile;
-
+	public static String error_missingSourceFolder;
+	
 	// exception
 	public static String exception_missingElement;
 	public static String exception_missingFeature;
