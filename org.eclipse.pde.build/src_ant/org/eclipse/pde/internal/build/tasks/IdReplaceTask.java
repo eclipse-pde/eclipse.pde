@@ -171,12 +171,6 @@ public class IdReplaceTask extends Task {
 				if (startPlugin < startInclude) {
 					foundElement = startPlugin;
 					isPlugin = true;
-//					//Check that the plugin word that has been found is not preceded by an import statement
-//					int importPosition = scan(buffer, startElement + 1, IMPORT); 
-//					if (importPosition != -1 && importPosition < startPlugin) {
-//						startElement = startPlugin;
-//						continue;
-//					}
 				} else {
 					foundElement = startInclude;
 					isPlugin = false;
@@ -184,6 +178,13 @@ public class IdReplaceTask extends Task {
 			}
 
 			//Verify that we have a "<" before the matching position.
+			int character = foundElement;
+			while(Character.isWhitespace(buffer.charAt(--character))) {}
+			if (buffer.charAt(character) != '<') {
+				startElement = foundElement;
+				continue;
+			}
+				
 			
 			startId = scan(buffer, foundElement, ID);
 			if (startId == -1)
