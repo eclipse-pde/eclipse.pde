@@ -63,8 +63,9 @@ public class PDEPluginConverter {
 					StringBuffer buffer = new StringBuffer();
 					for (int i = 0; i < elements.length; i++) {
 						if (buffer.length() > 0) {
+							buffer.append(",");
 							buffer.append(System.getProperty("line.separator")); //$NON-NLS-1$
-							buffer.append(", "); //$NON-NLS-1$
+							buffer.append(" "); //$NON-NLS-1$
 						}
 						if (elements[i].getValue().equals(".")) //$NON-NLS-1$
 							buffer.append(ClasspathComputer.getFilename(model));
