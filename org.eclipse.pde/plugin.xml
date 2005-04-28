@@ -123,17 +123,22 @@
    <extension 
    		 point="org.eclipse.ui.cheatsheets.cheatSheetContent">
       <cheatsheet
-            name="%cheatsheet.helloworld.name"
+            category="org.eclipse.pde"
             contentFile="$nl$/cheatsheets/helloworld.xml"
-            id="org.eclipse.pde.helloworld">
+            id="org.eclipse.pde.helloworld"
+            name="%cheatsheet.helloworld.name">
          <description>%cheatsheet.helloworld.desc</description>
       </cheatsheet>
       <cheatsheet
-            name="%cheatsheet.updates.name"
+            category="org.eclipse.pde"
             contentFile="$nl$/cheatsheets/updates.xml"
-            id="org.eclipse.pde.updates">
+            id="org.eclipse.pde.updates"
+            name="%cheatsheet.updates.name">
          <description>%cheatsheet.updates.desc</description>
       </cheatsheet>
+      <category
+            id="org.eclipse.pde"
+            name="%cheatsheet.category.pde"/>
    </extension>
    
    <extension 
