@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c)  2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -107,22 +107,28 @@ public class BrandingIron implements IXMLConstants {
 		new File(target + "/MacOS").mkdirs();
 		new File(target + "/Resources").mkdirs();
 
-		String initialRoot = root + "/Eclipse.app/Contents"; //$NON-NLS-1$
+		String initialRoot = root + "/Launcher.app/Contents"; //$NON-NLS-1$
+		if (!new File(initialRoot).exists())
+			initialRoot = root + "/Eclipse.app/Contents";  //$NON-NLS-1$
 		copyMacLauncher(initialRoot, target);
-		File icon = new File(icons[0]);
+		String iconName = "";
 		if (brandIcons) {
+			File icon = new File(icons[0]);
+			iconName = icon.getName();
 			copy(icon, new File(target + "/Resources/" + icon.getName())); //$NON-NLS-1$
 			new File(initialRoot + "/Resources/Eclipse.icns").delete();
 			new File(initialRoot + "/Resources/").delete();
 		}
-		modifyInfoPListFile(initialRoot, target, icon.getName());
+		modifyInfoPListFile(initialRoot, target, iconName);
 		File rootFolder = new File(initialRoot);
 		rootFolder.delete();
 		rootFolder.getParentFile().delete();
 	}
 
 	private void brandWindows() throws Exception {
-		File templateLauncher = new File(root, "eclipse.exe");
+		File templateLauncher = new File(root, "launcher.exe");
+		if (!templateLauncher.exists())
+			templateLauncher = new File(root, "eclipse.exe");
 		if (brandIcons) {
 			String[] args = new String[icons.length + 1];
 			args[0] = templateLauncher.getAbsolutePath();
@@ -133,12 +139,13 @@ public class BrandingIron implements IXMLConstants {
 	}
 
 	private void renameLauncher() {
-		new File(root, "eclipse").renameTo(new File(root, name));
+		if (!new File(root, "launcher").renameTo(new File(root, name)))
+			new File(root, "eclipse").renameTo(new File(root, name));
 	}
 
 	private void copyMacLauncher(String initialRoot, String target) {
 		String targetLauncher = target + "/MacOS/";
-		File launcher = new File(initialRoot + "/MacOS/eclipse");
+		File launcher = new File(initialRoot + "/MacOS/launcher");
 		File targetFile = new File(targetLauncher, name);
 		try {
 			copy(launcher, targetFile);
