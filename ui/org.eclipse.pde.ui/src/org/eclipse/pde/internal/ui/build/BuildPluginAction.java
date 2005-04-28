@@ -29,7 +29,6 @@ public class BuildPluginAction extends BaseBuildAction {
 		ModelBuildScriptGenerator.setEmbeddedSource(AbstractScriptGenerator.getDefaultEmbeddedSource());
 		ModelBuildScriptGenerator.setForceUpdateJar(AbstractScriptGenerator.getForceUpdateJarFormat());
 		ModelBuildScriptGenerator.setConfigInfo(AbstractScriptGenerator.getDefaultConfigInfos());
-		AbstractBuildScriptGenerator.setBrandExecutable(false);
 		
 		IProject project = fManifestFile.getProject();
 		generator.setWorkingDirectory(project.getLocation().toOSString());

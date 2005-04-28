@@ -40,7 +40,7 @@ public class PluginExportJob extends FeatureExportJob {
 			String zipFileName,
 			Object[] items,
 			String[] signingInfo) {
-			super(toDirectory, useJarFormat, exportSource, destination, zipFileName, items, signingInfo, null);
+			super(toDirectory, useJarFormat, exportSource, destination, zipFileName, items, signingInfo, null, null);
 		}
 
 	/* (non-Javadoc)
@@ -53,7 +53,8 @@ public class PluginExportJob extends FeatureExportJob {
 			// create a feature to contain all plug-ins
 			String featureID = "org.eclipse.pde.container.feature"; //$NON-NLS-1$
 			fFeatureLocation = fBuildTempLocation + File.separator + featureID;
-			createFeature(featureID, fFeatureLocation);
+			String[] config = new String[] {TargetPlatform.getOS(), TargetPlatform.getWS(), TargetPlatform.getOSArch(), TargetPlatform.getNL() };
+			createFeature(featureID, fFeatureLocation, config, false);
 			createBuildPropertiesFile(fFeatureLocation);
 			if (fUseJarFormat)
 				createPostProcessingFile(new File(fFeatureLocation, PLUGIN_POST_PROCESSING));
@@ -65,7 +66,7 @@ public class PluginExportJob extends FeatureExportJob {
 				if (fItems[i] instanceof IPluginModelBase)
 					deleteBuildFiles((IPluginModelBase)fItems[i]);
 			}
-			cleanup(new SubProgressMonitor(monitor, 3));
+			cleanup(null, new SubProgressMonitor(monitor, 3));
 			monitor.done();
 		}
 	}

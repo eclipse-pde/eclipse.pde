@@ -62,7 +62,8 @@ public class ProductExportWizard extends BaseExportWizard {
 										page.doExportToDirectory(),
 										page.doExportSource(), 
 										page.getDestination(), 
-										page.getFileName());
+										page.getFileName(),
+										null);
 		job.setUser(true);
 		job.schedule();
 		job.setProperty(IProgressConstants.ICON_PROPERTY, PDEPluginImages.DESC_FEATURE_OBJ);

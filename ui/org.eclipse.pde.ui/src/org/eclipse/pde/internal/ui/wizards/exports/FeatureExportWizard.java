@@ -46,7 +46,8 @@ public class FeatureExportWizard extends BaseExportWizard {
 				fPage1.getFileName(),
 				((ExportWizardPageWithTable)fPage1).getSelectedItems(),
 				signingInfo,
-				jnlpInfo);
+				jnlpInfo,
+				null);
 		job.setUser(true);
 		job.schedule();
 		job.setProperty(IProgressConstants.ICON_PROPERTY, PDEPluginImages.DESC_FEATURE_OBJ);

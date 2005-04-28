@@ -12,17 +12,23 @@ package org.eclipse.pde.internal.ui.build;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.AbstractScriptGenerator;
-import org.eclipse.pde.internal.build.builder.*;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.build.BuildScriptGenerator;
+import org.eclipse.pde.internal.build.IXMLConstants;
+import org.eclipse.pde.internal.core.ClasspathHelper;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.feature.FeatureChild;
-import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.core.ifeature.IFeature;
+import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 
 public class BuildFeatureAction extends BaseBuildAction {
 	
@@ -49,7 +55,6 @@ public class BuildFeatureAction extends BaseBuildAction {
 		generator.setBuildingOSGi(PDECore.getDefault().getModelManager().isOSGiRuntime());
 		generator.setChildren(true);
 		AbstractScriptGenerator.setEmbeddedSource(AbstractScriptGenerator.getDefaultEmbeddedSource());
-		AbstractBuildScriptGenerator.setBrandExecutable(false);
 
 		String url = ClasspathHelper.getDevEntriesProperties(fManifestFile.getProject().getLocation().addTrailingSeparator().toString() + "dev.properties", false); //$NON-NLS-1$
 		generator.setDevEntries(url);

@@ -32,13 +32,11 @@ import org.eclipse.pde.internal.ui.wizards.exports.*;
 
 public class ProductExportJob extends FeatureExportJob {
 	
-	private IProduct fProduct;
-
 	private String fFeatureLocation;
 
 	private String fRoot;
 
-	public ProductExportJob(IProductModel model, String productRoot, boolean toDirectory, boolean exportSource, String destination, String zipFileName) {
+	public ProductExportJob(IProductModel model, String productRoot, boolean toDirectory, boolean exportSource, String destination, String zipFileName, String[][] targets) {
 		super(PDEUIMessages.ProductExportJob_jobName); //$NON-NLS-1$
 		fProduct = model.getProduct();
 		fExportToDirectory = toDirectory;
@@ -46,6 +44,10 @@ public class ProductExportJob extends FeatureExportJob {
 		fDestinationDirectory = destination;
 		fZipFilename = zipFileName;
 		fRoot = productRoot;
+		ftargets = targets;
+		// TODO remove when there is UI to set ftargets
+		if (ftargets == null)
+			ftargets = new String[][] { { "linux", "gtk", "x86", ""} , {"win32", "win32", "x86", ""} };
 		if (fProduct.useFeatures()) {
 			fItems = getFeatureModels();
 		} else {
@@ -83,30 +85,36 @@ public class ProductExportJob extends FeatureExportJob {
 
 	protected void doExports(IProgressMonitor monitor)
 			throws InvocationTargetException, CoreException {
-		try {
-            monitor.beginTask("", 10); //$NON-NLS-1$
-			// create a feature to wrap all plug-ins and features
-			String featureID = "org.eclipse.pde.container.feature"; //$NON-NLS-1$
-			fFeatureLocation = fBuildTempLocation + File.separator + featureID;
-			createFeature(featureID, fFeatureLocation);
-			createBuildPropertiesFile(fFeatureLocation);
-			createConfigIniFile();
-			createEclipseProductFile();
-			createLauncherIniFile();
-			doExport(featureID, 
-                        null, 
-                        fFeatureLocation, 
-                        TargetPlatform.getOS(),
-                        TargetPlatform.getWS(), 
-                        TargetPlatform.getOSArch(), 
-                        new SubProgressMonitor(monitor, 7));
-		} catch (IOException e) {
-		} finally {
-			for (int i = 0; i < fItems.length; i++) {
-				deleteBuildFiles((IModel)fItems[i]);
+		String[][] configurations = ftargets;
+		if (configurations == null)
+			configurations = new String[][] { {TargetPlatform.getOS(), TargetPlatform.getWS(), TargetPlatform.getOSArch(), TargetPlatform.getNL() } };
+		for (int i = 0; i < configurations.length; i++) {
+			try {
+				String[] config = configurations[i];
+	            monitor.beginTask("", 10);
+				// create a feature to wrap all plug-ins and features
+				String featureID = "org.eclipse.pde.container.feature"; //$NON-NLS-1$
+				fFeatureLocation = fBuildTempLocation + File.separator + featureID;
+				createFeature(featureID, fFeatureLocation, config, true);
+				createBuildPropertiesFile(fFeatureLocation);
+				createConfigIniFile();
+				createEclipseProductFile();
+				createLauncherIniFile();
+				doExport(featureID, 
+	                        null, 
+	                        fFeatureLocation, 
+	                        config[0], 
+	                        config[1], 
+	                        config[2], 
+	                        new SubProgressMonitor(monitor, 7));
+			} catch (IOException e) {
+			} finally {
+				for (int j = 0; j < fItems.length; j++) {
+					deleteBuildFiles((IModel)fItems[j]);
+				}
+				cleanup(ftargets == null ? null : configurations[i], new SubProgressMonitor(monitor, 3));
+				monitor.done();
 			}
-			cleanup(new SubProgressMonitor(monitor, 3));
-			monitor.done();
 		}
 	}
 	
@@ -140,39 +148,42 @@ public class ProductExportJob extends FeatureExportJob {
 		File file = new File(featureLocation);
 		if (!file.exists() || !file.isDirectory())
 			file.mkdirs();
+		boolean hasLaunchers = false;
+		IFeatureModel[] models = PDECore.getDefault().getFeatureModelManager().getModels();
+		for (int i = 0; i < models.length; i++) {
+			if ("org.eclipse.platform.launchers".equals(models[i].getFeature().getId()))
+				hasLaunchers = true;
+		}
 
 		Properties properties = new Properties();
-		properties.put(IBuildPropertiesConstants.ROOT, getRootFileLocations()); //To copy a folder
-		properties.put("root.permissions.755", getLauncherName()); //$NON-NLS-1$
-		if (TargetPlatform.getOS().equals("linux")) { //$NON-NLS-1$
-			properties.put("root.linux.motif.x86.link", "libXm.so.2.1,libXm.so.2,libXm.so.2.1,libXm.so"); //$NON-NLS-1$ //$NON-NLS-2$
-			properties.put("root.linux.motif.x86.permissions.755", "*.so*"); //$NON-NLS-1$ //$NON-NLS-2$
+		properties.put(IBuildPropertiesConstants.ROOT, getRootFileLocations(hasLaunchers)); //To copy a folder
+		if (!hasLaunchers) {
+			properties.put("root.permissions.755", getLauncherName()); //$NON-NLS-1$
+			if (TargetPlatform.getOS().equals("linux")) { //$NON-NLS-1$
+				properties.put("root.linux.motif.x86.link", "libXm.so.2.1,libXm.so.2,libXm.so.2.1,libXm.so"); //$NON-NLS-1$ //$NON-NLS-2$
+				properties.put("root.linux.motif.x86.permissions.755", "*.so*"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 		}
 		save(new File(file, "build.properties"), properties, "Build Configuration"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
-	private String getRootFileLocations() {
+	private String getRootFileLocations(boolean hasLaunchers) {
 		StringBuffer buffer = new StringBuffer();
-		
-		File homeDir = ExternalModelManager.getEclipseHome().toFile();
-		if (homeDir.exists() && homeDir.isDirectory()) {
-			File[] files = homeDir.listFiles();
-			for (int i = 0; i < files.length; i++) {
-				// TODO for now copy everything except .eclipseproduct
-				// Once the branded executable is generated, we should not copy
-				// eclipse.exe nor icon.xpm
-				if (files[i].isFile() && !files[i].getName().startsWith(".")  //$NON-NLS-1$
-						&& !files[i].getName().endsWith(".html")) { //$NON-NLS-1$
-					buffer.append("absolute:file:"); //$NON-NLS-1$
-					buffer.append(files[i].getAbsolutePath());
-					buffer.append(","); //$NON-NLS-1$
-				}	
-			}		
+
+		if (!hasLaunchers) {
+			File homeDir = ExternalModelManager.getEclipseHome().toFile();
+			if (homeDir.exists() && homeDir.isDirectory()) {
+				buffer.append("absolute:file:"); //$NON-NLS-1$
+				buffer.append(new File(homeDir, "eclipse").getAbsolutePath());
+				buffer.append(","); //$NON-NLS-1$
+				buffer.append(new File(homeDir, "eclipse.exe").getAbsolutePath());
+				buffer.append(","); //$NON-NLS-1$
+				buffer.append(new File(homeDir, "startup.jar").getAbsolutePath());
+				buffer.append(","); //$NON-NLS-1$
+			}	
 		}
 		// add content of temp folder (.eclipseproduct, configuration/config.ini)
 		buffer.append("/temp/"); //$NON-NLS-1$
-		buffer.append(","); //$NON-NLS-1$
-
 		return buffer.toString();
 	}
 	
@@ -317,10 +328,6 @@ public class ProductExportJob extends FeatureExportJob {
                 buffer.append("@3:start"); //$NON-NLS-1$
 		}
 		return buffer.toString();
-	}
-	
-	protected boolean needBranding() {
-		return true;
 	}
 	
 	protected HashMap createAntBuildProperties(String os, String ws, String arch) {
