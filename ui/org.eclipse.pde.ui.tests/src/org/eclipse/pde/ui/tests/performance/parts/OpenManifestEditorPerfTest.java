@@ -13,12 +13,12 @@ public class OpenManifestEditorPerfTest extends PerformanceTestCase {
 	}
 	
 	public void testOpen() throws Exception {
-		tagAsGlobalSummary("Open Plug-in Editor", Dimension.CPU_TIME); //$NON-NLS-1$
+		tagAsGlobalSummary("Open Plug-in Editor", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
 		IWorkbenchPage page= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 
 		for (int i = 0; i < 20; i++) {
 			startMeasuring();
-			ManifestEditor.openPluginEditor("org.eclipse.jdt.ui"); //$NON-NLS-1$
+			ManifestEditor.openPluginEditor("org.eclipse.core.runtime"); //$NON-NLS-1$
 			stopMeasuring();
 			page.closeAllEditors(false);
 		}	
