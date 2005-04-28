@@ -360,7 +360,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 
 		String[] tokens = entry.getTokens();
 		for (int i = 0; i < tokens.length; i++) {
-			IPath path = new Path(tokens[i]);
+			IPath path = Path.fromPortableString(tokens[i]);
 			if (!path.isAbsolute()) {
 				File file = new File(fModel.getInstallLocation(), path.toString());
 				if (file.exists()) {
@@ -372,32 +372,38 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 				}
 				if (path.segmentCount() >= 3 && "..".equals(path.segment(0))) { //$NON-NLS-1$
 					path = path.removeFirstSegments(1);
-					path = new Path("platform:").append("plugin").append(path); //$NON-NLS-1$ //$NON-NLS-2$
+					path = Path.fromPortableString("platform:/plugin/").append(path); //$NON-NLS-1$ //$NON-NLS-2$
 				} else {
 					continue;
 				}
 			}
 			
-			if (!"platform:".equals(path.getDevice())) { //$NON-NLS-1$
+			if (!path.toPortableString().startsWith("platform:")) { //$NON-NLS-1$
 				File file = new File(path.toOSString());
 				if (file.exists()) {
 					addExtraLibrary(path, null);			
 				}
-			} else if (path.segmentCount() >= 3){
-				IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(path.segment(1));
-				if (model != null && model.isEnabled() && !added.contains(path.segment(1))) {
-					path = path.setDevice(null);
-					path = path.removeFirstSegments(2);
-					if (model.getUnderlyingResource() == null) {
-						File file = new File(model.getInstallLocation(), path.toOSString());
-						if (file.exists()) {
-							addExtraLibrary(new Path(file.getAbsolutePath()), model);
-						}
-					} else {
-						IProject project = model.getUnderlyingResource().getProject();
-						IFile file = project.getFile(path);
-						if (file.exists()) {
-							addExtraLibrary(file.getFullPath(), model);
+			} else {
+				int count = path.getDevice() == null ? 4 : 3;
+				if (path.segmentCount() >= count) {
+					String pluginID = path.segment(count-2);
+					if (added.contains(pluginID))
+						continue;
+					IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(pluginID);
+					if (model != null && model.isEnabled()) {
+						path = path.setDevice(null);
+						path = path.removeFirstSegments(count-1);
+						if (model.getUnderlyingResource() == null) {
+							File file = new File(model.getInstallLocation(), path.toOSString());
+							if (file.exists()) {
+								addExtraLibrary(new Path(file.getAbsolutePath()), model);
+							}
+						} else {
+							IProject project = model.getUnderlyingResource().getProject();
+							IFile file = project.getFile(path);
+							if (file.exists()) {
+								addExtraLibrary(file.getFullPath(), model);
+							}
 						}
 					}
 				}
