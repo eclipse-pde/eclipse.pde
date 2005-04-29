@@ -125,7 +125,7 @@ public class NewLibraryPluginProjectWizard extends NewWizard implements
 			getContainer().run(
 					false,
 					true,
-					new NewProjectCreationOperation(fPluginData,
+					new NewLibraryPluginCreationOperation(fPluginData,
 							fProjectProvider, null));
 			return true;
 		} catch (InvocationTargetException e) {
