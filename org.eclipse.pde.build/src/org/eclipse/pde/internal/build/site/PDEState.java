@@ -493,8 +493,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		for (int i = 0; i < allBundles.length; i++) {
 			allBundles[i].setUserObject(null);
 		}
-		StateDelta d = state.resolve();
-		System.out.println(d);
+		state.resolve();
 	}
 	
 
