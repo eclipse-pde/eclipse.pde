@@ -39,5 +39,7 @@ public class Catalog {
 	public static final String BASIC_JAVA_PLUGIN_7 = "macro25.emc";
 	public static final String LIBRARY_PLUGIN_1 = "macro26.emc";
 	public static final String LIBRARY_PLUGIN_2 = "macro27.emc";
+	public static final String LIBRARY_PLUGIN_3 = "macro28.emc";
+	public static final String LIBRARY_PLUGIN_4 = "macro29.emc";
 
 }

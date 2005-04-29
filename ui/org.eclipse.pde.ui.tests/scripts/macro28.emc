@@ -87,7 +87,7 @@
                Eclipse.org
                </command>
                <command type="select" contextId="wizard-page/main" widgetId="org.eclipse.swt.widgets.Button#3" selection="false"/>
-               <command type="select" contextId="wizard-page/main" widgetId="org.eclipse.swt.widgets.Button#4" selection="false"/>
+               <command type="select" contextId="wizard-page/main" widgetId="org.eclipse.swt.widgets.Button#4" selection="true"/>
                <command type="select" contextId="wizard" widgetId="org.eclipse.swt.widgets.Button#ButtonId=16"/>
                <command type="wait"/>
                <command type="focus" contextId="wizard" widgetId="org.eclipse.swt.widgets.Button#ButtonId=16"/>

@@ -34,7 +34,7 @@ public class LibraryPluginTestCase extends NewProjectTest {
 	public void testLibrariesFromWorkspacePlugin() {
 		try {
 			playScript(Catalog.LIBRARY_PLUGIN_1);
-			verifyProject(false);
+			verifyProject(false, "pdeuiant.jar", "bin");
 			verifyPluginModel(null, "pdeuiant.jar");
 			verifyBuildProperties(false, "pdeuiant.jar");
 		} catch (CoreException e) {
@@ -45,9 +45,31 @@ public class LibraryPluginTestCase extends NewProjectTest {
 	public void testLibrariesFromWorkspacePluginWithManifest() {
 		try {
 			playScript(Catalog.LIBRARY_PLUGIN_2);
-			verifyProject(true);
+			verifyProject(true, "pdeuiant.jar", "bin");
 			verifyPluginModel(null, "pdeuiant.jar");
 			verifyBuildProperties(true, "pdeuiant.jar");
+		} catch (CoreException e) {
+			fail("testLibrariesFromWorkspacePluginWithManifest:" + e);
+		}
+	}
+	
+	public void testUnzipFromWorkspacePlugin() {
+		try {
+			playScript(Catalog.LIBRARY_PLUGIN_3);
+			verifyProject(false, ".", "bin");
+			verifyPluginModel(null, ".");
+			verifyBuildProperties(false, ".");
+		} catch (CoreException e) {
+			fail("testLibrariesFromWorkspacePlugin:" + e);
+		}
+	}
+	
+	public void testUnzipFromWorkspacePluginWithManifest() {
+		try {
+			playScript(Catalog.LIBRARY_PLUGIN_4);
+			verifyProject(true, ".", "bin");
+			verifyPluginModel(null, ".");
+			verifyBuildProperties(true, ".");
 		} catch (CoreException e) {
 			fail("testLibrariesFromWorkspacePluginWithManifest:" + e);
 		}
@@ -70,10 +92,6 @@ public class LibraryPluginTestCase extends NewProjectTest {
 
 	protected String getProjectName() {
 		return PROJECT_NAME;
-	}
-	
-	private void verifyProject(boolean isBundle) throws CoreException {
-		verifyProject(isBundle, "pdeuiant.jar", "bin");
 	}
 	
 	private void verifyProject(boolean isBundle, String libName, String outputFolder) throws CoreException {
@@ -162,9 +180,11 @@ public class LibraryPluginTestCase extends NewProjectTest {
 		IBuildEntry entry = build.getEntry("bin.includes");
 		assertNotNull(entry);		
 		String[] tokens = entry.getTokens();
-		assertEquals(libraryName.equals(".")? 1 : 2, tokens.length);
+		assertEquals(2, tokens.length);
 		assertEquals(isBundle ? "META-INF/" : "plugin.xml", tokens[0]);
-		if (!libraryName.equals("."))
+		if (libraryName.equals("."))
+			assertEquals("org/", tokens[1]);
+		else
 			assertEquals(libraryName, tokens[1]);
 		
 	}
