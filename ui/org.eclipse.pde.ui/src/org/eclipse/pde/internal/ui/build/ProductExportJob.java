@@ -179,8 +179,10 @@ public class ProductExportJob extends FeatureExportJob {
 				buffer.append("absolute:file:"); //$NON-NLS-1$
 				buffer.append(new File(homeDir, "eclipse").getAbsolutePath());
 				buffer.append(","); //$NON-NLS-1$
+				buffer.append("absolute:file:"); //$NON-NLS-1$
 				buffer.append(new File(homeDir, "eclipse.exe").getAbsolutePath());
 				buffer.append(","); //$NON-NLS-1$
+				buffer.append("absolute:file:"); //$NON-NLS-1$
 				buffer.append(new File(homeDir, "startup.jar").getAbsolutePath());
 				buffer.append(","); //$NON-NLS-1$
 			}	
