@@ -53,7 +53,12 @@ public class PDEState {
 	private HashMap fPluginInfos;
 	private HashMap fExtensions;
 	private long fTimestamp;
-	
+
+	private boolean fJavaProfileChanged = false; // indicates that the java profile has changed
+	private String fJavaProfile; // the currently selected java profile
+	private String[] fJavaProfiles; // the list of available java profiles
+	private static final String SYSTEM_BUNDLE = "org.eclipse.osgi"; //$NON-NLS-1$
+
 	static {
 		DEBUG  = PDECore.getDefault().isDebugging() 
 					&& "true".equals(Platform.getDebugOption("org.eclipse.pde.core/cache")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -524,9 +529,71 @@ public class PDEState {
 				return null;
 			}
 		}
-		return addBundle(manifest, bundleLocation, keepLibraries, bundleId);
+		BundleDescription desc = addBundle(manifest, bundleLocation, keepLibraries, bundleId);
+		if (SYSTEM_BUNDLE.equals(desc.getSymbolicName())) {
+			// if this is the system bundle then reset the java profile and indicate that the javaProfile has changed
+			setJavaProfiles(bundleLocation);
+		}
+		return desc;
 	}
 	
+	private void setJavaProfiles(File bundleLocation) {
+		if (bundleLocation == null)
+			return;
+		if (bundleLocation.isDirectory())
+			fJavaProfiles = getDirJavaProfiles(bundleLocation);
+		else
+			fJavaProfiles = getJarJavaProfiles(bundleLocation);
+		if (fJavaProfiles != null)
+			// sort the javaProfiles in descending order
+			Arrays.sort(fJavaProfiles, new Comparator(){
+				public int compare(Object profile1, Object profile2) {
+					return -((String) profile1).compareTo(profile2);
+				}
+			});
+		// if the selected java profile is set; make sure it is still available
+		if (fJavaProfile != null) {
+			if (fJavaProfiles == null)
+				fJavaProfile = null;
+			else if (Arrays.binarySearch(fJavaProfiles, fJavaProfile) < 0)
+				fJavaProfile = null;
+		}
+		fJavaProfileChanged = true; // alway indicate the selected java profile has changed
+	}
+
+	private String[] getDirJavaProfiles(File bundleLocation) {
+		String[] profiles = bundleLocation.list(new FilenameFilter() {
+			public boolean accept(File dir, String name) {
+				return name.endsWith(".profile");
+			}
+		});
+		return profiles;
+	}
+
+	private String[] getJarJavaProfiles(File bundleLocation) {
+		ZipFile zipFile = null;
+		ArrayList results = new ArrayList(6);
+		try {
+			zipFile = new ZipFile(bundleLocation, ZipFile.OPEN_READ);
+			Enumeration entries = zipFile.entries();
+			while (entries.hasMoreElements()) {
+				String entryName = ((ZipEntry)entries.nextElement()).getName();
+				if (entryName.indexOf('/') < 0 && entryName.endsWith(".profile"))
+					results.add(entryName);
+			}
+		} catch (IOException e){
+			// nothing to do
+		} finally {
+			if (zipFile != null)
+				try {
+					zipFile.close();
+				} catch (IOException e) {
+					// nothing to do
+				}
+		}
+		return (String[]) results.toArray(new String[results.size()]);
+	}
+
 	private Dictionary loadManifest(File bundleLocation) {
 		ZipFile jarFile = null;
 		InputStream manifestStream = null;
@@ -577,13 +644,98 @@ public class PDEState {
 	}
 	
 	public StateDelta resolveState() {
-		return fState.resolve(false);
+		return internalResolveState(false);
 	}
 	
 	public void resolveState(boolean incremental) {
-		fState.resolve(incremental);
+		internalResolveState(incremental);
 	}
-	
+
+	private synchronized StateDelta internalResolveState(boolean incremental) {
+		if (fJavaProfile == null) {
+			fJavaProfile = getDefaultJavaProfile();
+			fJavaProfileChanged = true;
+		}
+		if (fJavaProfileChanged) {
+			incremental = !fState.setPlatformProperties(getProfilePlatformProperties());
+			fJavaProfileChanged = false;
+		}
+		return fState.resolve(incremental);
+	}
+
+	private Dictionary getProfilePlatformProperties() {
+		// get the target platform properties
+		Dictionary props = TargetPlatform.getTargetEnvironment();
+		// add the selected java profile
+		String profile = getJavaProfilePackages();
+		if (profile != null)
+			props.put("org.osgi.framework.system.packages", profile);
+		return props;
+	}
+
+	private File getOSGiLocation() {
+		// return the File location of the system bundle
+		BundleDescription osgiBundle = fState.getBundle(SYSTEM_BUNDLE, null);
+		if (osgiBundle == null)
+			return null;
+		return new File(osgiBundle.getLocation());
+	}
+
+	private String getJavaProfilePackages() {
+		// returns the list of packages in the selected java profile
+		if (fJavaProfile == null)
+			return null;
+		File location = getOSGiLocation();
+		InputStream is = null;
+		ZipFile zipFile = null;
+		try {
+			// find the input stream to the profile properties file
+			if (location.isDirectory()) {
+				is = new FileInputStream(new File(location, fJavaProfile));
+			} else {
+				zipFile = null;
+				try {
+					zipFile = new ZipFile(location, ZipFile.OPEN_READ);
+					ZipEntry entry = zipFile.getEntry(fJavaProfile);
+					if (entry != null)
+						is = zipFile.getInputStream(entry);
+				} catch (IOException e){
+					// nothing to do
+				}
+			}
+			Properties profile = new Properties();
+			profile.load(is);
+			// return the value of the system packages property
+			return profile.getProperty("org.osgi.framework.system.packages");
+		} catch (IOException e) {
+			// nothing to do
+		} finally {
+			if (is != null)
+				try {
+					is.close();
+				} catch (IOException e) {
+					// nothing to do
+				}
+			if (zipFile != null)
+				try {
+					zipFile.close();
+				} catch (IOException e) {
+					// nothing to do
+				}
+		}
+		return null;
+	}
+
+	public String getDefaultJavaProfile() {
+		// if the java profiles list is not set then find the list
+		if (fJavaProfiles == null)
+			setJavaProfiles(getOSGiLocation());
+		// the javaProfiles list is sorted in descending order; return the first profile in the list (highest available profile)
+		if (fJavaProfiles != null && fJavaProfiles.length > 0)
+			return fJavaProfiles[0]; 
+		return null;
+	}
+
 	public void removeBundleDescription(BundleDescription description) {
 		fState.removeBundle(description);
 	}
