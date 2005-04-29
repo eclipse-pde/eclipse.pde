@@ -51,7 +51,7 @@ public class ProductFile extends DefaultHandler {
 	/**
 	 * Constructs a feature parser.
 	 */
-	public ProductFile(String location, String os) throws {
+	public ProductFile(String location, String os) {
 		super();
 		this.location = new File(location);
 		this.currentOS = os;
