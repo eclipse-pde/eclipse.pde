@@ -48,8 +48,9 @@ public class ProductExportJob extends FeatureExportJob {
 		fRoot = productRoot;
 		fTargets = targets;
 		// TODO remove when there is UI to set ftargets
-		if (fTargets == null)
-			fTargets = new String[][] { { "linux", "gtk", "x86", ""} , {"win32", "win32", "x86", ""} };
+		//if (fTargets == null)
+			//fTargets = new String[][] { /*{ "linux", "gtk", "x86", ""} ,*/ {"win32", "win32", "x86", ""} };
+		fTargets = new String[][] {{TargetPlatform.getOS(), TargetPlatform.getWS(), TargetPlatform.getOSArch(), ""}};
 		if (fProduct.useFeatures()) {
 			fItems = getFeatureModels();
 		} else {
