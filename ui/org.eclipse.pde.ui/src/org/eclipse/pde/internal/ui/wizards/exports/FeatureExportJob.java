@@ -110,11 +110,6 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		this(toDirectory, useJarFormat, exportSource, destination, zipFileName, items, null, null, null);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.internal.jobs.InternalJob#run(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	protected IStatus run(IProgressMonitor monitor) {
 		String errorMessage = null;
 		try {
@@ -360,6 +355,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 			format = config + '-' + IXMLConstants.FORMAT_ANTZIP;
 		generator.setArchivesFormat(format);
 		generator.setPDEState(TargetPlatform.getState());
+		generator.setNextId(TargetPlatform.getPDEState().getNextId());
 		generator.setStateExtraData(TargetPlatform.getBundleClasspaths(TargetPlatform.getPDEState()));
 		AbstractScriptGenerator.setForceUpdateJar(false);
 		AbstractScriptGenerator.setEmbeddedSource(fExportSource);
@@ -489,13 +485,8 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		return false;
 	}
 
-	protected String[] getPaths() throws CoreException {
-		IFeatureModel[] models = PDECore.getDefault().getFeatureModelManager().getModels();
-		String[] paths = new String[models.length];
-		for (int i = 0; i < models.length; i++) {
-			paths[i] = models[i].getInstallLocation() + IPath.SEPARATOR + "feature.xml"; //$NON-NLS-1$
-		}
-		return paths;
+	protected String[] getPaths() {
+		return TargetPlatform.getFeaturePaths();
 	}
 
 	private static void createLogWriter() {

@@ -34,7 +34,9 @@ public class BuildPluginAction extends BaseBuildAction {
 		generator.setWorkingDirectory(project.getLocation().toOSString());
 		String url = ClasspathHelper.getDevEntriesProperties(project.getLocation().addTrailingSeparator().toString() + "dev.properties", false); //$NON-NLS-1$
 		generator.setDevEntries(new DevClassPathHelper(url));
-		generator.setPluginPath(TargetPlatform.createPluginPath());
+		generator.setPDEState(TargetPlatform.getState());
+		generator.setNextId(TargetPlatform.getPDEState().getNextId());
+		generator.setStateExtraData(TargetPlatform.getBundleClasspaths(TargetPlatform.getPDEState()));
 		generator.setBuildingOSGi(PDECore.getDefault().getModelManager().isOSGiRuntime());
 		try {
 			IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(project);

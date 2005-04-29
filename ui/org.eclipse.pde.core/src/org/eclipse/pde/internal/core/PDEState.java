@@ -323,7 +323,7 @@ public class PDEState {
 			System.out.println("########Time to parse and save extensions: " + (end - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	private long getNextId() {
+	public long getNextId() {
 		return ++fId;
 	}
 	

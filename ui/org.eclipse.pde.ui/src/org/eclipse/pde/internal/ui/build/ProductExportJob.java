@@ -136,7 +136,7 @@ public class ProductExportJob extends FeatureExportJob {
 	 * 
 	 * @see org.eclipse.pde.internal.ui.wizards.exports.FeatureExportJob#getPaths()
 	 */
-	protected String[] getPaths() throws CoreException {
+	protected String[] getPaths() {
 		String[] paths = super.getPaths();
 		String[] all = new String[paths.length + 1];
 		all[0] = fFeatureLocation + File.separator + "feature.xml"; //$NON-NLS-1$
