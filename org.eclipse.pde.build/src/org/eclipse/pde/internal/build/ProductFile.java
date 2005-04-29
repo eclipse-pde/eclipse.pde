@@ -51,7 +51,7 @@ public class ProductFile extends DefaultHandler {
 	/**
 	 * Constructs a feature parser.
 	 */
-	public ProductFile(String location, String os) {
+	public ProductFile(String location, String os) throws {
 		super();
 		this.location = new File(location);
 		this.currentOS = os;
@@ -59,9 +59,11 @@ public class ProductFile extends DefaultHandler {
 			parserFactory.setNamespaceAware(true);
 			parser = parserFactory.newSAXParser();
 		} catch (ParserConfigurationException e) {
-			System.out.println(e);
+			if (BundleHelper.getDefault().isDebugging())
+				System.out.println(e);	
 		} catch (SAXException e) {
-			System.out.println(e);
+			if (BundleHelper.getDefault().isDebugging())
+				System.out.println(e);
 		}
 	}
 
