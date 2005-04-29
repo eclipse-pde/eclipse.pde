@@ -35,6 +35,8 @@ public class ProductExportJob extends FeatureExportJob {
 	private String fFeatureLocation;
 
 	private String fRoot;
+	
+	private IProduct fProduct;
 
 	public ProductExportJob(IProductModel model, String productRoot, boolean toDirectory, boolean exportSource, String destination, String zipFileName, String[][] targets) {
 		super(PDEUIMessages.ProductExportJob_jobName); //$NON-NLS-1$
@@ -44,10 +46,10 @@ public class ProductExportJob extends FeatureExportJob {
 		fDestinationDirectory = destination;
 		fZipFilename = zipFileName;
 		fRoot = productRoot;
-		ftargets = targets;
+		fTargets = targets;
 		// TODO remove when there is UI to set ftargets
-		if (ftargets == null)
-			ftargets = new String[][] { { "linux", "gtk", "x86", ""} , {"win32", "win32", "x86", ""} };
+		if (fTargets == null)
+			fTargets = new String[][] { { "linux", "gtk", "x86", ""} , {"win32", "win32", "x86", ""} };
 		if (fProduct.useFeatures()) {
 			fItems = getFeatureModels();
 		} else {
@@ -85,7 +87,7 @@ public class ProductExportJob extends FeatureExportJob {
 
 	protected void doExports(IProgressMonitor monitor)
 			throws InvocationTargetException, CoreException {
-		String[][] configurations = ftargets;
+		String[][] configurations = fTargets;
 		if (configurations == null)
 			configurations = new String[][] { {TargetPlatform.getOS(), TargetPlatform.getWS(), TargetPlatform.getOSArch(), TargetPlatform.getNL() } };
 		for (int i = 0; i < configurations.length; i++) {
@@ -112,7 +114,7 @@ public class ProductExportJob extends FeatureExportJob {
 				for (int j = 0; j < fItems.length; j++) {
 					deleteBuildFiles((IModel)fItems[j]);
 				}
-				cleanup(ftargets == null ? null : configurations[i], new SubProgressMonitor(monitor, 3));
+				cleanup(fTargets == null ? null : configurations[i], new SubProgressMonitor(monitor, 3));
 				monitor.done();
 			}
 		}
@@ -422,6 +424,12 @@ public class ProductExportJob extends FeatureExportJob {
 		} catch (IOException e) {
 			PDECore.logException(e);
 		}
+	}
+	
+	protected void setupGenerator(BuildScriptGenerator generator, String featureID, String versionId, String os, String ws, String arch, String featureLocation) throws CoreException {
+		super.setupGenerator(generator, featureID, versionId, os, ws, arch, featureLocation);
+		if (fProduct != null)
+			generator.setProduct(fProduct.getModel().getInstallLocation());
 	}
 	
 }
