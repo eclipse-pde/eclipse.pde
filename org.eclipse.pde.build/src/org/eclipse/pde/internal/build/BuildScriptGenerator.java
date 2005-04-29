@@ -12,10 +12,10 @@ package org.eclipse.pde.internal.build;
 
 import java.util.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.builder.*;
 import org.eclipse.pde.internal.build.packager.PackageScriptGenerator;
+import org.eclipse.pde.internal.build.site.BuildTimeSiteFactory;
 
 public class BuildScriptGenerator extends AbstractScriptGenerator {
 	/**
@@ -152,14 +152,14 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 				else
 					featureInfo = new String[] {"all"};
 
-				generateAssembleScripts(assemblageInformation, featureInfo);
+				generateAssembleScripts(assemblageInformation, featureInfo, generator.siteFactory);
 
 				if (features.size() == 1)
 					featureInfo = getNameAndVersion((String) features.get(0));
 				else
 					featureInfo = new String[] {""};
 
-				generatePackageScripts(assemblageInformation, featureInfo);
+				generatePackageScripts(assemblageInformation, featureInfo, generator.siteFactory);
 			}
 		} catch (CoreException ce) {
 			throw ce;
@@ -169,23 +169,24 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		}
 	}
 
-	protected void generatePackageScripts(AssemblyInformation assemblageInformation, String[] featureInfo) throws CoreException {
+	protected void generatePackageScripts(AssemblyInformation assemblageInformation, String[] featureInfo, BuildTimeSiteFactory factory) throws CoreException {
 		PackageScriptGenerator assembler = null;
 		assembler = new PackageScriptGenerator(workingDirectory, assemblageInformation, featureInfo[0]);
-
 		assembler.setSignJars(signJars);
 		assembler.setGenerateJnlp(generateJnlp);
 		assembler.setArchivesFormat(getArchivesFormat());
 		assembler.setProduct(product);
+		assembler.setBuildSiteFactory(factory);
 		assembler.generate();
 	}
 
-	private void generateAssembleScripts(AssemblyInformation assemblageInformation, String[] featureInfo) throws CoreException {
+	private void generateAssembleScripts(AssemblyInformation assemblageInformation, String[] featureInfo, BuildTimeSiteFactory factory) throws CoreException {
 		AssembleScriptGenerator assembler = new AssembleScriptGenerator(workingDirectory, assemblageInformation, featureInfo[0]);
 		assembler.setSignJars(signJars);
 		assembler.setGenerateJnlp(generateJnlp);
 		assembler.setArchivesFormat(getArchivesFormat());
 		assembler.setProduct(product);
+		assembler.setBuildSiteFactory(factory);
 		assembler.generate();
 	}
 

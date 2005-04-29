@@ -77,7 +77,6 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 
 		openScript(directoryName, getTargetName() + ".xml"); //$NON-NLS-1$
 		loadPostProcessingSteps();
-		loadProduct();
 	}
 
 	private void loadProduct() {
@@ -114,6 +113,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	public void generate() {
+		loadProduct();
 		generatePrologue();
 		generateInitializationSteps();
 		generateGatherBinPartsCalls();
