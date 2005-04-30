@@ -353,14 +353,17 @@ public class ExtensionsSection extends TreeSection
 					public void run() {
 						NewExtensionWizard wizard = new NewExtensionWizard(
 								project, (IPluginModelBase) getPage()
-										.getModel(), (ManifestEditor)getPage().getPDEEditor());
-						WizardDialog dialog = new WizardDialog(PDEPlugin
-								.getActiveWorkbenchShell(), wizard) {
-							protected void finishPressed() {
-								((ManifestEditor)getPage().getEditor()).ensurePluginContextPresence();
-								super.finishPressed();
+										.getModel(), (ManifestEditor) getPage()
+										.getPDEEditor()) {
+							public boolean performFinish() {
+								((ManifestEditor) ExtensionsSection.this
+										.getPage().getEditor())
+										.ensurePluginContextPresence();
+								return super.performFinish();
 							}
 						};
+						WizardDialog dialog = new WizardDialog(PDEPlugin
+								.getActiveWorkbenchShell(), wizard);
 						dialog.create();
 						SWTUtil.setDialogSize(dialog, 500, 500);
 						dialog.open();

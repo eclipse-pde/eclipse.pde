@@ -239,7 +239,7 @@ public class PointSelectionPage
 		fPointListViewer.addDoubleClickListener(new IDoubleClickListener(){
 			public void doubleClick(DoubleClickEvent event) {
 				if (canFinish()){
-					finish();
+					wizard.performFinish();
 					wizard.getShell().close();
 					wizard.dispose();
 					wizard.setContainer(null);
