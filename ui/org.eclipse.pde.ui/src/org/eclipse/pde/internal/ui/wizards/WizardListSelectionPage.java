@@ -66,7 +66,13 @@ public abstract class WizardListSelectionPage extends BaseWizardSelectionPage
 		label.setLayoutData(gd);
 		
 		SashForm sashForm = new SashForm(container, SWT.HORIZONTAL);
-		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
+		gd = new GridData(GridData.FILL_BOTH);
+		// limit the width of the sash form to avoid the wizard
+		// opening very wide. This is just preferred size - 
+		// it can be made bigger by the wizard
+		// See bug #83356
+		gd.widthHint = 300;
+		sashForm.setLayoutData(gd);
 		
 		wizardSelectionViewer = new TableViewer(sashForm, SWT.BORDER);
 		wizardSelectionViewer.setContentProvider(new ListContentProvider());
