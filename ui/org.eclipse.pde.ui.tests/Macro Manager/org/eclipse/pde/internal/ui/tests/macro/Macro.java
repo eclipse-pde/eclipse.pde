@@ -169,12 +169,6 @@ public class Macro implements IWritable, IPlayable {
 	}
 	
 	private void closeSecondaryShells() {
-		updateStack();
-		while (shellStack.size()>1) {
-			MacroCommandShell top = getTopShell();
-			top.close();
-			popStack();
-		}
 	}
 	
 	public String [] getExistingIndices() {
