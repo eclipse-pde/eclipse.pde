@@ -50,9 +50,8 @@ public abstract class SiteObject
 		String property,
 		Object oldValue,
 		Object newValue) {
-		if (model.isEditable() && model instanceof IModelChangeProvider) {
-			IModelChangeProvider provider = (IModelChangeProvider) model;
-			provider.fireModelObjectChanged(object, property, oldValue, newValue);
+		if (model.isEditable()) {
+			model.fireModelObjectChanged(object, property, oldValue, newValue);
 		}
 	}
 	protected void fireStructureChanged(ISiteObject child, int changeType) {
@@ -62,9 +61,8 @@ public abstract class SiteObject
 		ISiteObject[] children,
 		int changeType) {
 		ISiteModel model = getModel();
-		if (model.isEditable() && model instanceof IModelChangeProvider) {
-			IModelChangeProvider provider = (IModelChangeProvider) model;
-			provider.fireModelChanged(new ModelChangedEvent(provider, changeType, children, null));
+		if (model.isEditable()) {
+			model.fireModelChanged(new ModelChangedEvent(model, changeType, children, null));
 		}
 	}
 	public ISite getSite() {

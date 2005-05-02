@@ -49,10 +49,8 @@ public class TemplateListSelectionPage extends WizardListSelectionPage
 			boolean simple = data.isSimple();
 			boolean generate = false;
 			boolean ui = false;
-			if (data instanceof PluginFieldData){
-				ui = ((PluginFieldData)data).isUIPlugin();
-				generate = ((PluginFieldData)data).doGenerateClass();
-			}
+			ui = data.isUIPlugin();
+			generate = data.doGenerateClass();
 			WizardElement welement = (WizardElement)element;
 			IConfigurationElement config = welement.getConfigurationElement();
 			boolean uiFlag = getFlag(config, "ui-content", true); //$NON-NLS-1$
@@ -138,7 +136,7 @@ public class TemplateListSelectionPage extends WizardListSelectionPage
 	
 	public IPluginContentWizard getSelectedWizard() {
 		if (fUseTemplate.getSelection()) 
-			return (IPluginContentWizard)super.getSelectedWizard();
+			return super.getSelectedWizard();
 		return null;
 	}
 	

@@ -61,8 +61,8 @@ public abstract class PluginObject
 		String property,
 		Object oldValue,
 		Object newValue) {
-		if (fModel.isEditable() && fModel instanceof IModelChangeProvider) {
-			IModelChangeProvider provider = (IModelChangeProvider) fModel;
+		if (fModel.isEditable()) {
+			IModelChangeProvider provider = fModel;
 			provider.fireModelObjectChanged(
 				object,
 				property,

@@ -76,7 +76,7 @@ public class SiteCategoryDefinition
 		name = getNodeAttribute(node, "name"); //$NON-NLS-1$
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
-			Node child = (Node) children.item(i);
+			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE
 				&& child.getNodeName().equalsIgnoreCase("description")) { //$NON-NLS-1$
 				description = getModel().getFactory().createDescription(this);

@@ -58,8 +58,8 @@ public abstract class FeatureObject
 		String property,
 		Object oldValue,
 		Object newValue) {
-		if (model.isEditable() && model instanceof IModelChangeProvider) {
-			IModelChangeProvider provider = (IModelChangeProvider) model;
+		if (model.isEditable()) {
+			IModelChangeProvider provider = model;
 			provider.fireModelObjectChanged(object, property, oldValue, newValue);
 		}
 	}
@@ -70,8 +70,8 @@ public abstract class FeatureObject
 		IFeatureObject[] children,
 		int changeType) {
 		IFeatureModel model = getModel();
-		if (model.isEditable() && model instanceof IModelChangeProvider) {
-			IModelChangeProvider provider = (IModelChangeProvider) model;
+		if (model.isEditable()) {
+			IModelChangeProvider provider = model;
 			provider.fireModelChanged(new ModelChangedEvent(provider, changeType, children, null));
 		}
 	}

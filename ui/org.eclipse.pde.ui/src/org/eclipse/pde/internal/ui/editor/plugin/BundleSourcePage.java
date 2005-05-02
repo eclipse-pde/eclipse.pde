@@ -90,7 +90,7 @@ public class BundleSourcePage extends KeyValueSourcePage {
 
 	private IDocumentRange findBuildNode(IDocumentRange[] nodes, int offset) {
 		for (int i = 0; i < nodes.length; i++) {
-			IDocumentRange node = (IDocumentRange) nodes[i];
+			IDocumentRange node = nodes[i];
 			if (offset >= node.getOffset()
 					&& offset < node.getOffset() + node.getLength()) {
 				return node;

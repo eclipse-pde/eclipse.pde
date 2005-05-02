@@ -52,9 +52,9 @@ public class BundleObject implements Serializable {
 	}
     
     protected void fireStructureChanged(BundleObject child, int changeType) {
-        if (model.isEditable() && model instanceof IModelChangeProvider) {
+        if (model.isEditable()) {
             IModelChangedEvent e = new ModelChangedEvent(
-                    (IModelChangeProvider)model, 
+                    model, 
                     changeType,
                     new Object[]{child}, 
                     null);
@@ -63,15 +63,15 @@ public class BundleObject implements Serializable {
     }
 
     protected void fireModelChanged(IModelChangedEvent e) {
-        if (model.isEditable() && model instanceof IModelChangeProvider) {
-            IModelChangeProvider provider = (IModelChangeProvider) model;
+        if (model.isEditable()) {
+            IModelChangeProvider provider = model;
             provider.fireModelChanged(e);
         }
     }
     protected void firePropertyChanged(BundleObject object, String property,
             Object oldValue, Object newValue) {
-        if (model.isEditable() && model instanceof IModelChangeProvider) {
-            IModelChangeProvider provider = (IModelChangeProvider) model;
+        if (model.isEditable()) {
+            IModelChangeProvider provider = model;
             provider.fireModelObjectChanged(object, property, oldValue, newValue);
         }
     }

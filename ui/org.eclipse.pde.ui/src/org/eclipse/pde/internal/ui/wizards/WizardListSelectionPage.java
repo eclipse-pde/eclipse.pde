@@ -114,7 +114,7 @@ public abstract class WizardListSelectionPage extends BaseWizardSelectionPage
 		}
 		final WizardElement finalSelection = currentWizardSelection;
 		setSelectedNode(createWizardNode(finalSelection));
-		setDescriptionText((String) finalSelection.getDescription());
+		setDescriptionText(finalSelection.getDescription());
 		getContainer().updateButtons();
 	}
 	

@@ -374,7 +374,7 @@ public class ExternalPluginsBlock {
 					if (element instanceof IJavaProject)
 						element = ((IJavaProject)element).getProject();
 					if (element instanceof IProject) {
-						IPluginModelBase model = (IPluginModelBase)PDECore.getDefault().getWorkspaceModelManager().getWorkspacePluginModel((IProject)element);
+						IPluginModelBase model = PDECore.getDefault().getWorkspaceModelManager().getWorkspacePluginModel((IProject)element);
 						if (model != null)
 							set.add(model.getPluginBase().getId());
 					}

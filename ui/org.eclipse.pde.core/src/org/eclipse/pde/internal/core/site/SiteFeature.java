@@ -128,8 +128,8 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 				&& child.getNodeName().equalsIgnoreCase("category")) { //$NON-NLS-1$
 				SiteCategory category =
 					(SiteCategory) getModel().getFactory().createCategory(this);
-				((SiteCategory) category).parse(child);
-				((SiteCategory) category).setInTheModel(true);
+				category.parse(child);
+				category.setInTheModel(true);
 				fCategories.add(category);
 			}
 		}

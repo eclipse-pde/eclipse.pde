@@ -211,7 +211,7 @@ public class ExtensionPointsSection extends TableSection {
 	}
 
 	private void handleDelete() {
-		Object[] selection = (Object[]) ((IStructuredSelection) pointTable
+		Object[] selection = ((IStructuredSelection) pointTable
 				.getSelection()).toArray();
 		for (int i = 0; i < selection.length; i++) {
 			Object object = selection[i];

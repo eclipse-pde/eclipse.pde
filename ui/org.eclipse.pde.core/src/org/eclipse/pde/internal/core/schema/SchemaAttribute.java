@@ -189,7 +189,7 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 
 	public void write(String indent, PrintWriter writer) {
 		boolean annotation = false;
-		ISchemaSimpleType type = (ISchemaSimpleType) getType();
+		ISchemaSimpleType type = getType();
 		String typeName = type.getName();
 		writer.print(indent);
 		writer.print("<attribute name=\"" + getName() + "\""); //$NON-NLS-1$ //$NON-NLS-2$

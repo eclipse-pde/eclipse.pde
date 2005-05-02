@@ -55,7 +55,7 @@ public IWizard getWizard() {
 			PDEUIMessages.Errors_CreationError_NoWizard); 
 		return null;
 	}
-	wizard = (IWizard)pluginWizard;
+	wizard = pluginWizard;
 	//wizard.setUseContainerState(false);
 	return wizard;
 }

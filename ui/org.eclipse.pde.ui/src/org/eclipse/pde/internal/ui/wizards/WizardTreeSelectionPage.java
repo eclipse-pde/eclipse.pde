@@ -179,7 +179,7 @@ public abstract class WizardTreeSelectionPage
 				public void run() {
 				*/
 		setSelectedNode(createWizardNode(finalSelection));
-		setDescriptionText((String) finalSelection.getDescription());
+		setDescriptionText(finalSelection.getDescription());
 		/*
 				}
 			});

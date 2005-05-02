@@ -278,7 +278,7 @@ public class AdvancedLauncherTab
 					if (element instanceof IJavaProject)
 						element = ((IJavaProject)element).getProject();
 					if (element instanceof IProject) {
-						IPluginModelBase model = (IPluginModelBase)PDECore.getDefault().getWorkspaceModelManager().getWorkspacePluginModel((IProject)element);
+						IPluginModelBase model = PDECore.getDefault().getWorkspaceModelManager().getWorkspacePluginModel((IProject)element);
 						if (model != null)
 							set.add(model.getPluginBase().getId());
 					}
@@ -749,7 +749,7 @@ public class AdvancedLauncherTab
 			// store deselected projects
 			StringBuffer wbuf = new StringBuffer();
 			for (int i = 0; i < fWorkspaceModels.length; i++) {
-				IPluginModelBase model = (IPluginModelBase) fWorkspaceModels[i];
+				IPluginModelBase model = fWorkspaceModels[i];
 				// if "automatic add" option is selected, save "deselected" workspace plugins
 				// Otherwise, save "selected" workspace plugins
 				if (fPluginTreeViewer.getChecked(model) != fAddWorkspaceButton.getSelection())

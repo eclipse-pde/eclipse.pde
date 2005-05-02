@@ -174,9 +174,8 @@ public class PluginObjectNode extends PluginDocumentNode
 
 	protected void firePropertyChanged(IDocumentNode node, String property,
 			Object oldValue, Object newValue) {
-		if (fModel.isEditable() && fModel instanceof IModelChangeProvider) {
-			IModelChangeProvider provider = (IModelChangeProvider) fModel;
-			provider.fireModelObjectChanged(node, property, oldValue, newValue);
+		if (fModel.isEditable()) {
+			fModel.fireModelObjectChanged(node, property, oldValue, newValue);
 		}
 	}
 

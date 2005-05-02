@@ -123,7 +123,7 @@ public class PluginJavaSearchUtil {
 					plugin.getModel().getInstallLocation() + Path.SEPARATOR + libraryName;
 				if (new File(path).exists()) {
 					libraryPaths.add(new Path(path));
-				} else if (model instanceof IPluginModelBase){
+				} else {
 					findLibraryInFragments(fragments, libraryName, libraryPaths);
 				}
 			}

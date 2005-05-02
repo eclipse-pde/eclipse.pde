@@ -45,7 +45,7 @@ public class SchemaInclude extends SchemaObject implements ISchemaInclude {
 	 * @see org.eclipse.pde.internal.core.ischema.ISchemaInclude#setLocation(java.lang.String)
 	 */
 	public void setLocation(String location) throws CoreException {
-		String oldValue = (String) this.fLocation;
+		String oldValue = this.fLocation;
 		this.fLocation = location;
 		fIncludedSchema = null;
 		getSchema()

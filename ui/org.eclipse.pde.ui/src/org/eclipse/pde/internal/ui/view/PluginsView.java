@@ -44,7 +44,6 @@ import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -586,7 +585,7 @@ public class PluginsView extends ViewPart {
 		treeViewer.addDragSupport(
 			ops,
 			transfers,
-			new PluginsDragAdapter((ISelectionProvider) treeViewer));
+			new PluginsDragAdapter(treeViewer));
 	}
 
 	private IDialogSettings getSettings() {
@@ -661,7 +660,7 @@ public class PluginsView extends ViewPart {
 
 	private void handleOpenStorage(IStorage obj) {
 		IWorkbenchPage page = PDEPlugin.getActivePage();
-		IEditorInput input = new JarEntryEditorInput((IStorage) obj);
+		IEditorInput input = new JarEntryEditorInput(obj);
 		try {
 			page.openEditor(input, DEFAULT_EDITOR_ID);
 		} catch (PartInitException e) {

@@ -54,7 +54,7 @@ public class PluginUndoManager extends ModelUndoManager {
 		Object[] elements = event.getChangedObjects();
 		int type = event.getChangeType();
 		String propertyName = event.getChangedProperty();
-		IModelChangeProvider model = (IModelChangeProvider)event.getChangeProvider();
+		IModelChangeProvider model = event.getChangeProvider();
 
 		switch (type) {
 			case IModelChangedEvent.INSERT :

@@ -65,8 +65,8 @@ public abstract class ProductObject extends PlatformObject implements IProductOb
 		String property,
 		Object oldValue,
 		Object newValue) {
-		if (fModel.isEditable() && fModel instanceof IModelChangeProvider) {
-			IModelChangeProvider provider = (IModelChangeProvider) fModel;
+		if (fModel.isEditable()) {
+			IModelChangeProvider provider = fModel;
 			provider.fireModelObjectChanged(object, property, oldValue, newValue);
 		}
 	}
@@ -78,8 +78,8 @@ public abstract class ProductObject extends PlatformObject implements IProductOb
 	protected void fireStructureChanged(
 		IProductObject[] children,
 		int changeType) {
-		if (fModel.isEditable() && fModel instanceof IModelChangeProvider) {
-			IModelChangeProvider provider = (IModelChangeProvider) fModel;
+		if (fModel.isEditable()) {
+			IModelChangeProvider provider = fModel;
 			provider.fireModelChanged(new ModelChangedEvent(provider, changeType, children, null));
 		}
 	}

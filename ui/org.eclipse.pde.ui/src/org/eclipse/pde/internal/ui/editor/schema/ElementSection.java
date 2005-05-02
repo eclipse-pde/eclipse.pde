@@ -109,7 +109,7 @@ public class ElementSection extends TreeSection {
 		treeViewer.addDragSupport(
 			ops,
 			transfers,
-			new ElementSectionDragAdapter((ISelectionProvider) treeViewer, this));
+			new ElementSectionDragAdapter(treeViewer, this));
 		treeViewer.addDropSupport(
 			ops | DND.DROP_DEFAULT,
 			transfers,

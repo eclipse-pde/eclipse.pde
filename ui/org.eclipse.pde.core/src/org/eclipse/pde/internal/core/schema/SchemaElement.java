@@ -80,7 +80,7 @@ public class SchemaElement extends RepeatableSchemaObject implements
 			return "EMPTY"; //$NON-NLS-1$
 		String text = kind == ISchemaCompositor.GROUP ? "(" : ""; //$NON-NLS-1$ //$NON-NLS-2$
 		for (int i = 0; i < children.length; i++) {
-			ISchemaObject object = (ISchemaObject) children[i];
+			ISchemaObject object = children[i];
 			String child = calculateChildRepresentation(object, addLinks);
 
 			text += child;

@@ -201,7 +201,7 @@ public class PluginElement extends PluginParent implements IPluginElement {
 			removeAttribute(name);
 			return;
 		}
-		IPluginAttribute attribute = (IPluginAttribute) getAttribute(name);
+		IPluginAttribute attribute = getAttribute(name);
 		if (attribute == null) {
 			attribute = getModel().getFactory().createAttribute(this);
 			attribute.setName(name);

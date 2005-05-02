@@ -78,7 +78,7 @@ public class LaunchAction extends Action {
 		StringBuffer explugins = new StringBuffer();
 		IPluginModelBase[] models = getModels();
 		for (int i = 0; i < models.length; i++) {
-			IPluginModelBase model = (IPluginModelBase)models[i];
+			IPluginModelBase model = models[i];
 			String id = model.getPluginBase().getId();
 			if (model.getUnderlyingResource() == null) {
 				explugins.append(id + File.pathSeparatorChar);

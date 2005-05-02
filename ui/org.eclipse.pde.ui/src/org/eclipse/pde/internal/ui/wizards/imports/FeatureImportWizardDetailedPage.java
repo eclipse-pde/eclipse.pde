@@ -153,7 +153,7 @@ public class FeatureImportWizardDetailedPage extends WizardPage {
 		container.setLayout(layout);
 
 		fTablePart.createControl(container);
-		fFeatureViewer = (CheckboxTableViewer) fTablePart.getTableViewer();
+		fFeatureViewer = fTablePart.getTableViewer();
 		fFeatureViewer.setContentProvider(new ContentProvider());
 		fFeatureViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		GridData gd = (GridData) fTablePart.getControl().getLayoutData();

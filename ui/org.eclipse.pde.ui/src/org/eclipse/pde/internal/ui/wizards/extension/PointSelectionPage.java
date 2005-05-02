@@ -118,7 +118,7 @@ public class PointSelectionPage
 						if (wizardContributorId == null || point == null || point.getFullId() == null)
 							continue;
 						if (wizards[i] instanceof WizardElement && wizardContributorId.equals(point.getFullId()))
-							result.add((WizardElement)wizards[i]);
+							result.add(wizards[i]);
 					}
 					return result.toArray();
 				}
@@ -160,7 +160,7 @@ public class PointSelectionPage
 		public String getColumnText(Object obj, int index) {
 			PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
 			if (provider.isFullNameModeEnabled())
-				return provider.getText((IPluginExtensionPoint) obj);
+				return provider.getText(obj);
 			return ((IPluginExtensionPoint) obj).getFullId();
 		}
 		
@@ -292,7 +292,7 @@ public class PointSelectionPage
 		fTemplateViewer.getTable().setLayoutData(gd);  
 		TableItem[] selection = fPointListViewer.getTable().getSelection();
 		if (selection != null && selection.length > 0)
-			fTemplateViewer.setInput((IPluginExtensionPoint)selection[0]);
+			fTemplateViewer.setInput(selection[0]);
 		fTemplateViewer.addDoubleClickListener(new IDoubleClickListener(){
 			public void doubleClick(DoubleClickEvent event) {
 				if (canFlipToNextPage()){

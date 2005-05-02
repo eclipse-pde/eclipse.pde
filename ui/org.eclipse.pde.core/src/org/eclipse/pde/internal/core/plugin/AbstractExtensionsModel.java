@@ -65,7 +65,7 @@ public abstract class AbstractExtensionsModel
 		throws CoreException {
 
 		if (fExtensions == null) {
-			fExtensions = (Extensions) createExtensions();
+			fExtensions = createExtensions();
 			fExtensions.setModel(this);
 		}
 		fExtensions.reset();

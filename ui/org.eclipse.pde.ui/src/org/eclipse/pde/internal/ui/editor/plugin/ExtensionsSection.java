@@ -742,7 +742,7 @@ public class ExtensionsSection extends TreeSection
 			}
 		} else if (object instanceof IPluginExtension) {
 			IPluginExtension extension = (IPluginExtension) object;
-			IPluginBase plugin = (IPluginBase) extension.getPluginBase();
+			IPluginBase plugin = extension.getPluginBase();
 			IPluginExtension[] extensions = plugin.getExtensions();
 			int index = plugin.getIndexOf(extension);
 			int newIndex = up ? index - 1 : index + 1;

@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.ui.editor.schema;
 
 import org.eclipse.pde.internal.core.schema.*;
-import java.util.*;
 import org.eclipse.ui.views.properties.*;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.ui.*;
@@ -23,7 +22,7 @@ public class CompositorPropertySource extends GrammarPropertySource {
 }
 public IPropertyDescriptor[] getPropertyDescriptors() {
 	if (descriptors == null) {
-		descriptors = (Vector) super.getPropertyDescriptorsVector();
+		descriptors = super.getPropertyDescriptorsVector();
 		PropertyDescriptor cdesc =
 			createComboBoxPropertyDescriptor(P_KIND, PDEUIMessages.SchemaEditor_CompositorPR_kind, ISchemaCompositor.kindTable);
 		if (cdesc instanceof ComboBoxPropertyDescriptor)
