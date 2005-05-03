@@ -125,9 +125,10 @@ public class PDEState {
 				Document doc = factory.newDocumentBuilder().parse(file);
 				Element root = doc.getDocumentElement();
 				if (root != null) {
-					NodeList bundles = root.getElementsByTagName("bundle"); //$NON-NLS-1$
-					for (int i = 0; i < bundles.getLength(); i++) {
-						createPluginInfo((Element)bundles.item(i));
+					NodeList children = root.getChildNodes();
+					for (int i = 0; i < children.getLength(); i++) {
+						if ("bundle".equals(children.item(i).getNodeName()))
+							createPluginInfo((Element)children.item(i));
 					}
 				}
 				return true;
@@ -156,12 +157,13 @@ public class PDEState {
 				Document doc = factory.newDocumentBuilder().parse(file);
 				Element root = doc.getDocumentElement();
 				if (root != null) {
-					root.normalize();
-					NodeList bundles = root.getElementsByTagName("bundle"); //$NON-NLS-1$
-					for (int i = 0; i < bundles.getLength(); i++) {
-						Element bundle = (Element)bundles.item(i); 
-						String id = bundle.getAttribute("bundleID"); //$NON-NLS-1$
-						fExtensions.put(id, bundle.getChildNodes());
+					NodeList children = root.getChildNodes();
+					for (int i = 0; i < children.getLength(); i++) {
+						if ("bundle".equals(children.item(i).getNodeName())) {
+							Element bundle = (Element)children.item(i); 
+							String id = bundle.getAttribute("bundleID"); //$NON-NLS-1$
+							fExtensions.put(id, bundle.getChildNodes());
+						}
 					}
 				}
 				return true;
