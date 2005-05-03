@@ -96,7 +96,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		fItems = items;
 		fSigningInfo = signingInfo;
 		fJnlpInfo = jnlpInfo;
-		fTargets = targets;
+		fTargets = null;
 		// TODO remove when there is UI to set ftargets
 //		if (ftargets == null)
 //			ftargets = new String[][] { { "linux", "gtk", "x86", ""} , {"win32", "win32", "x86", ""} };

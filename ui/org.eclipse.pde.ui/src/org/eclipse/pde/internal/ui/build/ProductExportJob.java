@@ -46,11 +46,11 @@ public class ProductExportJob extends FeatureExportJob {
 		fDestinationDirectory = destination;
 		fZipFilename = zipFileName;
 		fRoot = productRoot;
-		fTargets = targets;
+		fTargets = null;
 		// TODO remove when there is UI to set ftargets
 		//if (fTargets == null)
 			//fTargets = new String[][] { /*{ "linux", "gtk", "x86", ""} ,*/ {"win32", "win32", "x86", ""} };
-		fTargets = new String[][] {{TargetPlatform.getOS(), TargetPlatform.getWS(), TargetPlatform.getOSArch(), ""}};
+		//fTargets = new String[][] {{TargetPlatform.getOS(), TargetPlatform.getWS(), TargetPlatform.getOSArch(), ""}};
 		if (fProduct.useFeatures()) {
 			fItems = getFeatureModels();
 		} else {
