@@ -177,7 +177,7 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 	}
 
 	private void handleBrowse() {
-		PluginSelectionDialog dialog = new PluginSelectionDialog(getShell(), PDECore.getDefault().getWorkspaceModelManager().getAllModels(), false);
+		PluginSelectionDialog dialog = new PluginSelectionDialog(getShell(), PDECore.getDefault().getModelManager().getWorkspaceModels(), false);
 		if (dialog.open() == PluginSelectionDialog.OK) {
 			IPluginModelBase model = (IPluginModelBase)dialog.getFirstResult();
 			fPluginText.setText(model.getPluginBase().getId());

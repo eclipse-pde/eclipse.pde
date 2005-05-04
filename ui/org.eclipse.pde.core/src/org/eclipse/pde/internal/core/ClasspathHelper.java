@@ -31,8 +31,8 @@ public class ClasspathHelper {
 			}
 		}
 		Properties properties = new Properties();
-		WorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
-		IPluginModelBase[] models = manager.getAllModels();
+		PluginModelManager manager = PDECore.getDefault().getModelManager();
+		IPluginModelBase[] models = manager.getWorkspaceModels();
 		for (int i = 0; i < models.length; i++) {
 			String id = models[i].getPluginBase().getId();
 			if (id == null)
@@ -100,8 +100,7 @@ public class ClasspathHelper {
     }
 
 	public static String getDevEntries(boolean checkExcluded) {
-		WorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
-		IPluginModelBase[] models = manager.getAllModels();
+		IPluginModelBase[] models = PDECore.getDefault().getModelManager().getWorkspaceModels();
 		ArrayList list = new ArrayList();
 		for (int i = 0; i < models.length; i++) {
 			String id = models[i].getPluginBase().getId();

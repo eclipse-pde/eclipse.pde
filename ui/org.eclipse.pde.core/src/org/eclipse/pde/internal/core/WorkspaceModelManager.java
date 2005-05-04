@@ -11,6 +11,8 @@
 package org.eclipse.pde.internal.core;
 
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 
 import org.eclipse.core.resources.*;
@@ -140,18 +142,23 @@ public class WorkspaceModelManager
 				|| isBinaryPluginProject(project);
 	}
 	
-	/**
-	 * 
-	 */
-	public WorkspaceModelManager() {
-		super();
+	public static URL[] getPluginPaths() {
+		ArrayList list = new ArrayList();
+		IProject[] projects = PDECore.getWorkspace().getRoot().getProjects();
+		for (int i = 0; i < projects.length; i++) {
+			if (isPluginProject(projects[i])) {			
+				try {
+					IPath path = projects[i].getLocation();
+					if (path != null) {
+						list.add(path.toFile().toURL());
+					}
+				} catch (MalformedURLException e) {
+				}
+			}
+		}
+		return (URL[])list.toArray(new URL[list.size()]);
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IWorkspaceModelManager#getAllEditableModelsUnused(java.lang.Class)
-	 */
-	public boolean getAllEditableModelsUnused(Class modelClass) {
-		return true;
-	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IWorkspaceModelManager#getWorkspaceModel(org.eclipse.core.resources.IProject)
 	 */
@@ -176,7 +183,7 @@ public class WorkspaceModelManager
 		return null;
 	}
 	
-	public IPluginModelBase getWorkspacePluginModel(IProject project) {
+	protected IPluginModelBase getWorkspacePluginModel(IProject project) {
 		IModel model = getWorkspaceModel(project);
 		return (model instanceof IPluginModelBase) ? (IPluginModelBase)model : null;
 	}
@@ -348,10 +355,39 @@ public class WorkspaceModelManager
 		return null;		
 	}
 	
+	protected void initializeModels(IPluginModelBase[] models) {
+		fModels = Collections.synchronizedMap(new HashMap());
+		fFragmentModels = Collections.synchronizedMap(new HashMap());
+		fFeatureModels = Collections.synchronizedMap(new HashMap());
+		
+		for (int i = 0; i < models.length; i++) {
+			IProject project = models[i].getUnderlyingResource().getProject();
+			if (models[i] instanceof IPluginModel) {
+				fModels.put(project, models[i]);
+			} else {
+				fFragmentModels.put(project, models[i]);
+			}
+		}
+				fFeatureModels = Collections.synchronizedMap(new HashMap());
+		
+		IWorkspace workspace = PDECore.getWorkspace();
+		IProject[] projects = workspace.getRoot().getProjects();
+		for (int i = 0; i < projects.length; i++) {
+			IProject project = projects[i];
+			if (!isFeatureProject(project))
+				continue;
+			addWorkspaceModel(project, false);			
+		}
+
+		PDECore.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.PRE_CLOSE);
+		JavaCore.addPreProcessingResourceChangedListener(this);
+		fInitialized = true;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModelManager#getAllModels()
 	 */
-	public IPluginModelBase[] getAllModels() {
+	protected IPluginModelBase[] getAllModels() {
 		initializeWorkspaceModels();
 		
 		ArrayList result = new ArrayList();
@@ -465,27 +501,19 @@ public class WorkspaceModelManager
 		IWorkspace workspace = PDECore.getWorkspace();
 		IProject[] projects = workspace.getRoot().getProjects();
 		
-		// must do plugins/fragments before features
 		for (int i = 0; i < projects.length; i++) {
 			IProject project = projects[i];
-			if (!isPluginProject(project))
-				continue;
-			addWorkspaceModel(project, false);			
+			if (isPluginProject(project) || isFeatureProject(project))
+				addWorkspaceModel(project, false);			
 		}
 		
-		// must do features after plugins/fragments
-		for (int i = 0; i < projects.length; i++) {
-			IProject project = projects[i];
-			if (!isFeatureProject(project))
-				continue;
-			addWorkspaceModel(project, false);			
-		}
 		workspace.addResourceChangeListener(this, IResourceChangeEvent.PRE_CLOSE);
 		JavaCore.addPreProcessingResourceChangedListener(this);
+		
 		fModelsLocked = false;
 		fInitialized = true;
 	}
-	
+
 	/**
 	 * @param project
 	 * @return
@@ -581,7 +609,6 @@ public class WorkspaceModelManager
 		}
 	}
 
-
 	/**
 	 * @param project
 	 */
@@ -616,48 +643,13 @@ public class WorkspaceModelManager
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModelManager#getPluginModels()
-	 */
-	public IPluginModel[] getPluginModels() {
-		initializeWorkspaceModels();
-		return (IPluginModel[])fModels.values().toArray(new IPluginModel[fModels.size()]);
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModelManager#getFragmentModels()
-	 */
-	public IFragmentModel[] getFragmentModels() {
-		initializeWorkspaceModels();
-		return (IFragmentModel[]) fFragmentModels.values().toArray(new IFragmentModel[fFragmentModels.size()]);
-	}
-	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModelManager#getFeatureModels()
 	 */
 	public IFeatureModel[] getFeatureModels() {
 		initializeWorkspaceModels();
 		return (IFeatureModel[]) fFeatureModels.values().toArray(new IFeatureModel[fFeatureModels.size()]);
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModelManager#getFragmentsFor(java.lang.String, java.lang.String)
-	 */
-	public IFragment[] getFragmentsFor(String pluginId, String version) {
-		initializeWorkspaceModels();
-		ArrayList result = new ArrayList();
-		
-		Iterator iter = fFragmentModels.values().iterator();
-		while (iter.hasNext()) {
-			IFragment fragment = ((IFragmentModel)iter.next()).getFragment();
-			if (PDECore
-				.compare(
-					fragment.getPluginId(),
-					fragment.getPluginVersion(),
-					pluginId,
-					version,
-					fragment.getRule())) {
-				result.add(fragment);
-			}
-		}
-		return (IFragment[]) result.toArray(new IFragment[result.size()]);
-	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModelManager#shutdown()
 	 */

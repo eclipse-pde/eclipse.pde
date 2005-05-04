@@ -10,12 +10,16 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.ModelChangedEvent;
 import org.eclipse.pde.core.plugin.IExtensions;
@@ -27,6 +31,8 @@ import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.AbstractModel;
+import org.eclipse.pde.internal.core.PDEState;
+import org.xml.sax.SAXException;
 
 public abstract class AbstractExtensionsModel
 	extends AbstractModel
@@ -78,9 +84,19 @@ public abstract class AbstractExtensionsModel
 			setLoaded(true);
 			if (!outOfSync)
 				updateTimeStamp();
-		} catch (Exception e) {
-			System.out.println(e);
+		} catch (ParserConfigurationException e) {
+		} catch (SAXException e) {
+		} catch (FactoryConfigurationError e) {
+		} catch (IOException e) {
 		}
+	}
+	
+	public void load(BundleDescription desc, PDEState state) {
+		fExtensions = (Extensions) createExtensions();
+		fExtensions.setModel(this);
+		fExtensions.load(state.getAllExtensions(desc.getBundleId()));
+		updateTimeStamp();
+		setLoaded(true);
 	}
 
 	public void reload(InputStream stream, boolean outOfSync)

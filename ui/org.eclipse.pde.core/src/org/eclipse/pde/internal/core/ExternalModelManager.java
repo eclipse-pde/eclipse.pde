@@ -9,26 +9,24 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.net.URL;
+import java.util.Iterator;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Preferences;
+import org.eclipse.pde.core.IModelProviderEvent;
+import org.eclipse.pde.core.IModelProviderListener;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 public class ExternalModelManager {
-	private List fModels;
-	private List fFragmentModels;
-	private Vector fListeners = new Vector();
-	private PDEState fState = null;
-	private boolean fInitialized = false;
 	
-	public ExternalModelManager() {
-		fModels = Collections.synchronizedList(new ArrayList());
-		fFragmentModels = Collections.synchronizedList(new ArrayList());
-	}
+	private Vector fListeners = new Vector();	
+	private IPluginModelBase[] fModels = new IPluginModelBase[0];
+	
 
 	public static String computeDefaultPlatformPath() {
 		URL installURL = Platform.getInstallLocation().getURL();
@@ -93,11 +91,8 @@ public class ExternalModelManager {
 	}
 	
 	private void enableAll() {
-		for (int i = 0; i < fModels.size(); i++)
-			((IPluginModel)fModels.get(i)).setEnabled(true);
-			
-		for (int i = 0; i < fFragmentModels.size(); i++)
-			((IFragmentModel)fFragmentModels.get(i)).setEnabled(true);			
+		for (int i = 0; i < fModels.length; i++)
+			fModels[i].setEnabled(true);	
 	}
 
 	public void fireModelProviderEvent(IModelProviderEvent e) {
@@ -107,101 +102,53 @@ public class ExternalModelManager {
 		}
 	}
 
-	public IPluginModelBase[] getAllModels() {
-		loadModels(new NullProgressMonitor());
-		IPluginModelBase[] allModels =
-			new IPluginModelBase[fModels.size() + fFragmentModels.size()];
-		System.arraycopy(fModels.toArray(), 0, allModels, 0, fModels.size());
-		System.arraycopy(
-			fFragmentModels.toArray(),
-			0,
-			allModels,
-			fModels.size(),
-			fFragmentModels.size());
-
-		return allModels;
+	protected IPluginModelBase[] getAllModels() {
+		return fModels;
 	}
 	
-	private void initializeAllModels() {
+	protected void initializeModels(IPluginModelBase[] models) {
+		fModels = models;
 		Preferences pref = PDECore.getDefault().getPluginPreferences();
 		String saved = pref.getString(ICoreConstants.CHECKED_PLUGINS);
 		if (saved.equals(ICoreConstants.VALUE_SAVED_ALL))
 			enableAll();
 		else if (!saved.equals(ICoreConstants.VALUE_SAVED_NONE)) {
 			Vector list = createSavedList(saved);
-			for (int i = 0; i < fModels.size(); i++) {
-				IPluginModel model = (IPluginModel) fModels.get(i);
-				model.setEnabled(!list.contains(model.getPlugin().getId()));
-			}
-			for (int i = 0; i < fFragmentModels.size(); i++) {
-				IFragmentModel fmodel = (IFragmentModel) fFragmentModels.get(i);
-				fmodel.setEnabled(!list.contains(fmodel.getFragment().getId()));
+			for (int i = 0; i < fModels.length; i++) {
+				fModels[i].setEnabled(!list.contains(fModels[i].getPluginBase().getId()));
 			}
 		}
-
+	}
+	
+	protected void setModels(IPluginModelBase[] models) {
+		fModels = models;
 	}
 
-	private synchronized void loadModels(IProgressMonitor monitor) {
-		if (fInitialized)
-			return;
+	public static URL[] getPluginPaths() {
 		Preferences pref = PDECore.getDefault().getPluginPreferences();
-		URL[] pluginPaths =
-			PluginPathFinder.getPluginPaths(
-				pref.getString(ICoreConstants.PLATFORM_PATH));
-		fState = new PDEState(pluginPaths, true, monitor);
-		IPluginModelBase[] resolved = fState.getModels();
-		for (int i = 0; i < resolved.length; i++) {
-			if (resolved[i] instanceof IPluginModel) {
-				fModels.add(resolved[i]);
-			} else {
-				fFragmentModels.add(resolved[i]);
-			}
-		}		
-		initializeAllModels();
-		fInitialized=true;
+		return PluginPathFinder.getPluginPaths(pref.getString(ICoreConstants.PLATFORM_PATH));	
 	}
 	
 	public void removeModelProviderListener(IModelProviderListener listener) {
 		fListeners.remove(listener);
 	}
 			
-	public void reset(PDEState state, IPluginModelBase[] newModels) {
-		fState = state;
-		PDECore.getDefault().getModelManager().addWorkspaceBundlesToState();
-		fModels.clear();
-		fFragmentModels.clear();
-		for (int i = 0; i < newModels.length; i++) {
-			if (newModels[i] instanceof IPluginModel)
-				fModels.add(newModels[i]);
-			else
-				fFragmentModels.add(newModels[i]);
-		}
-	}
-	
 	public void shutdown() {
 		int disabled = 0;
 		StringBuffer saved = new StringBuffer();
-		for (int i = 0; i < fModels.size(); i++) {
-			IPluginModel model = (IPluginModel)fModels.get(i);
+		for (int i = 0; i < fModels.length; i++) {
+			IPluginModelBase model = fModels[i];
 			if (!model.isEnabled()) {
 				disabled += 1;
 				if (saved.length() > 0) saved.append(" "); //$NON-NLS-1$
-				saved.append(model.getPlugin().getId());
+				saved.append(model.getPluginBase().getId());
 			}
 		}
-		for (int i = 0; i < fFragmentModels.size(); i++) {
-			IFragmentModel fmodel = (IFragmentModel)fFragmentModels.get(i);
-			if (!fmodel.isEnabled()) {
-				disabled += 1;
-				if (saved.length() > 0) saved.append(" "); //$NON-NLS-1$
-				saved.append(fmodel.getFragment().getId());
-			}
-		}
-		
+
 		Preferences pref= PDECore.getDefault().getPluginPreferences();
 		if (disabled == 0) {
 			pref.setValue(ICoreConstants.CHECKED_PLUGINS, ICoreConstants.VALUE_SAVED_ALL);
-		} else if (disabled == fModels.size() + fFragmentModels.size()) {
+		} else if (disabled == fModels.length) {
 			pref.setValue(
 				ICoreConstants.CHECKED_PLUGINS,
 				ICoreConstants.VALUE_SAVED_NONE);
@@ -210,30 +157,6 @@ public class ExternalModelManager {
 		}
 		
 		PDECore.getDefault().savePluginPreferences();
-		if (fState != null)
-			clearStaleStates();
 	}
 	
-	private void clearStaleStates() {
-		File dir = new File(PDECore.getDefault().getStateLocation().toOSString());
-		File[] children = dir.listFiles();
-		if (children != null) {
-			for (int i = 0; i < children.length; i++) {
-				File child = children[i];
-				if (child.isDirectory()) {
-					String name = child.getName();
-					if (name.endsWith(".cache")  //$NON-NLS-1$
-							&& name.length() != 6
-							&& !name.equals(Long.toString(fState.getTimestamp()) + ".cache")) { //$NON-NLS-1$
-						CoreUtility.deleteContent(child);
-					}
-				}
-			}
-		}
-	}
-
-	public PDEState getState() {
-		loadModels(new NullProgressMonitor());
-		return fState;
-	}
 }

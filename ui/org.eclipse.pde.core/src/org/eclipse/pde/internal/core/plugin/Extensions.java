@@ -43,6 +43,16 @@ public class Extensions
 		}
 		valid = hasRequiredAttributes();
 	}
+	
+	void load(Node[] nodes) {
+		for (int i = 0; i < nodes.length; i++) {
+			Node child = nodes[i];
+			if (child.getNodeType() == Node.ELEMENT_NODE) {
+				processChild(child);
+			}
+		}
+		valid = hasRequiredAttributes();	
+	}
 
 	public void reset() {
 		super.reset();

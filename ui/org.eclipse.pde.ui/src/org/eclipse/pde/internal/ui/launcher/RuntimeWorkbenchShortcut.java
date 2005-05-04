@@ -98,7 +98,7 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 				if (object instanceof IAdaptable) {
 					IProject project = (IProject)((IAdaptable)object).getAdapter(IProject.class);
 					if (project != null && project.isOpen())
-						return PDECore.getDefault().getWorkspaceModelManager().getWorkspacePluginModel(project);
+						return PDECore.getDefault().getModelManager().findModel(project);
 				}
 			}
 		}

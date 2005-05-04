@@ -115,7 +115,7 @@ public class MigrationAction implements IObjectActionDelegate {
 	private IPluginModelBase[] getModelsToMigrate() {
 		Vector result = new Vector();
 		IPluginModelBase[] models = PDECore.getDefault()
-				.getWorkspaceModelManager().getAllModels();
+				.getModelManager().getWorkspaceModels();
 		for (int i = 0; i < models.length; i++) {
 			if (!models[i].getUnderlyingResource().isLinked()
 					&& models[i].isLoaded()

@@ -218,7 +218,7 @@ public class ExternalPluginsBlock {
 	public IPluginModelBase[] getAllModels() {
 		if (fModels == null) {
 			fInitialModels =
-				PDECore.getDefault().getExternalModelManager().getAllModels();
+				PDECore.getDefault().getModelManager().getExternalModels();
 			return fInitialModels;
 		}
 		return fModels;
@@ -299,13 +299,12 @@ public class ExternalPluginsBlock {
 		}
 
 		if (fReloaded) {
-			PDECore.getDefault().getExternalModelManager().reset(fCurrentState, fModels);
+			PDECore.getDefault().getModelManager().setState(fCurrentState);
 		}
 	}
 	
 	private void selectNotInWorkspace() {
-		WorkspaceModelManager wm = PDECore.getDefault().getWorkspaceModelManager();
-		IPluginModelBase[] wsModels = wm.getAllModels();
+		IPluginModelBase[] wsModels = PDECore.getDefault().getModelManager().getWorkspaceModels();
 		IPluginModelBase[] exModels = getAllModels();
 		Vector selected = new Vector();
 		for (int i = 0; i < exModels.length; i++) {
@@ -374,7 +373,7 @@ public class ExternalPluginsBlock {
 					if (element instanceof IJavaProject)
 						element = ((IJavaProject)element).getProject();
 					if (element instanceof IProject) {
-						IPluginModelBase model = PDECore.getDefault().getWorkspaceModelManager().getWorkspacePluginModel((IProject)element);
+						IPluginModelBase model = (IPluginModelBase)PDECore.getDefault().getModelManager().findModel((IProject)element);
 						if (model != null)
 							set.add(model.getPluginBase().getId());
 					}

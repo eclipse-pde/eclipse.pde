@@ -68,7 +68,7 @@ public class XMLPrintHandler {
 
 	}
 
-	public static void printNode(Writer xmlWriter, Node node,String encoding)  throws Exception{
+	public static void printNode(Writer xmlWriter, Node node,String encoding) throws IOException {
 		if (node == null) {
 			return;
 		}

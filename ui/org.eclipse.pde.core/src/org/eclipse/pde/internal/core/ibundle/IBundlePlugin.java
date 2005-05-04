@@ -21,4 +21,6 @@ import org.eclipse.pde.core.plugin.IPlugin;
  */
 public interface IBundlePlugin extends IBundlePluginBase, IPlugin {
 
+	boolean hasExtensibleAPI();
+
 }

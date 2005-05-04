@@ -113,7 +113,7 @@ public void createControl(Composite parent) {
 }
 
 private IPluginModelBase findModel(String id) {
-	IPluginModelBase [] models = PDECore.getDefault().getWorkspaceModelManager().getAllModels();
+	IPluginModelBase [] models = PDECore.getDefault().getModelManager().getWorkspaceModels();
 	for (int i = 0; i < models.length; i++) {
 		IPluginModelBase modelBase = models[i];
 		if (modelBase.getPluginBase().getId().equals(id))

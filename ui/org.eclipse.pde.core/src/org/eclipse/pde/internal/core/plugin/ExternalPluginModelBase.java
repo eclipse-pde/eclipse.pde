@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.build.IBuildModel;
-import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.internal.core.NLResourceHelper;
 import org.eclipse.pde.internal.core.PDEState;
 
@@ -70,17 +69,9 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 		if (device != null)
 			path = path.setDevice(device.toUpperCase());
 		setInstallLocation(path.toOSString());
-		setBundleDescription(description);
-		IPluginBase base = getPluginBase();
-		if (base instanceof Plugin)
-			((Plugin)base).load(description, state, ignoreExtensions);
-		else
-			((Fragment)base).load(description, state, ignoreExtensions);
-		updateTimeStamp();
-		setLoaded(true);
-		
+		super.load(description, state, ignoreExtensions);
 	}
-	
+		
 	public boolean isInSync() {
 		return isInSync(getLocalFile());
 	}

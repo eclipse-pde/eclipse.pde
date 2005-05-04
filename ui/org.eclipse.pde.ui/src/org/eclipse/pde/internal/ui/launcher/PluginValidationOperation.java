@@ -28,7 +28,7 @@ import org.eclipse.swt.graphics.*;
 public class PluginValidationOperation implements IRunnableWithProgress {
 	
 	private IPluginModelBase[] fModels;
-	private PDEState fState;
+	private MinimalState fState;
 	private ArrayList fInvalidModels = new ArrayList();
 	private String fProductID;
 	private String fApplicationID;
@@ -191,7 +191,7 @@ public class PluginValidationOperation implements IRunnableWithProgress {
 		fModels = models;
 		fProductID = product;
 		fApplicationID = application;
-		fState = new PDEState();
+		fState = new MinimalState();
 	}
 
 	/* (non-Javadoc)
@@ -204,7 +204,7 @@ public class PluginValidationOperation implements IRunnableWithProgress {
 			if (fModels[i].getBundleDescription() == null)
 				fInvalidModels.add(fModels[i]);
 		}
-		fState.resolveState();
+		fState.resolveState(false);
 	}
 	
 	public State getState() {

@@ -102,7 +102,7 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 	
 	private IPluginModelBase[] getModelsToUpdate(){
 		IPluginModelBase[] models =
-			PDECore.getDefault().getWorkspaceModelManager().getAllModels();
+			PDECore.getDefault().getModelManager().getWorkspaceModels();
 		ArrayList modelArray = new ArrayList();
 		try{
 			for (int i = 0; i < models.length; i++) {

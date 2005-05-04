@@ -446,7 +446,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 	}
 	
 	public static PDEState getPDEState() {
-		return PDECore.getDefault().getExternalModelManager().getState();
+		return PDECore.getDefault().getModelManager().getState();
 	}
 
 	public static State getState() {

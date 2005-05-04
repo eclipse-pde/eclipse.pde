@@ -421,7 +421,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	private void resolveTargetPlatform() {
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
-				models = PDECore.getDefault().getExternalModelManager().getAllModels();
+				models = PDECore.getDefault().getModelManager().getExternalModels();
 				monitor.done();
 			}
 		};

@@ -13,15 +13,13 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IModel;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.PlatformUI;
+
 public class SynchronizeVersionsAction extends Action {
 	private FeatureEditor activeEditor;
 	public SynchronizeVersionsAction() {
@@ -44,20 +42,9 @@ public class SynchronizeVersionsAction extends Action {
 			}
 		}
 	}
-	private boolean ensureEditorsClosed() {
-		Class modelClass = IPluginModelBase.class;
-		boolean result = PDECore.getDefault().getWorkspaceModelManager()
-				.getAllEditableModelsUnused(modelClass);
-		if (!result) {
-			MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(),
-					PDEUIMessages.FeatureEditor_modelsInUse_title, PDEUIMessages.FeatureEditor_modelsInUse_message);
-		}
-		return result;
-	}
+
 	public void run() {
 		ensureContentSaved();
-		if (!ensureEditorsClosed())
-			return;
 		SynchronizeVersionsWizard wizard = new SynchronizeVersionsWizard(
 				activeEditor);
 		WizardDialog dialog = new WizardDialog(PDEPlugin

@@ -102,7 +102,7 @@ public class WorkspaceExtensionsModel
 			setLoaded(true);
 		}
 	}
-
+	
 	protected void updateTimeStamp() {
 		updateTimeStamp(fUnderlyingResource.getLocation().toFile());
 	}

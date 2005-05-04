@@ -14,6 +14,8 @@ import java.io.*;
 import java.util.*;
 import java.util.jar.*;
 
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.HostSpecification;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ibundle.*;
@@ -52,10 +54,60 @@ public abstract class BundleModel
 			fBundle.load(manifestToProperties(m.getMainAttributes()));
 			if (!outOfSync)
 				updateTimeStamp();
+			setLoaded(true);
 		} catch (IOException e) {
 		} finally {
 		}
 	}
+	
+	public void load(BundleDescription desc, PDEState state) {
+		long id = desc.getBundleId();
+		Properties properties = new Properties();
+		String value = state.getPluginName(id);
+		if (value != null)
+			properties.put(Constants.BUNDLE_NAME, value);
+		value = state.getProviderName(id);
+		if (value != null)
+			properties.put(Constants.BUNDLE_VENDOR, value);
+		value = state.getClassName(id);
+		if (value != null)
+			properties.put(Constants.BUNDLE_ACTIVATOR, value);
+		if (state.hasExtensibleAPI(id))
+			properties.put(ICoreConstants.EXTENSIBLE_API, "true");
+		String[] libraries = state.getLibraryNames(id);
+		if (libraries.length > 0) {
+			StringBuffer buffer = new StringBuffer();
+			for (int i = 0; i < libraries.length; i++) {
+				if (buffer.length() > 0) {
+					buffer.append(",");
+					buffer.append(System.getProperty("line.separator"));
+					buffer.append(" ");
+				}
+				buffer.append(libraries[i]);
+			}
+			properties.put(Constants.BUNDLE_CLASSPATH, buffer.toString());
+		}
+		if (desc.getHost() != null) {
+			properties.put(Constants.FRAGMENT_HOST, writeFragmentHost(desc.getHost()));
+		}
+		fBundle.load(properties);
+		updateTimeStamp();
+		setLoaded(true);
+	}
+	
+	private String writeFragmentHost(HostSpecification host) {
+		String id = host.getName();
+		String version = host.getVersionRange().toString();
+		StringBuffer buffer = new StringBuffer();
+		if (id != null)
+			buffer.append(id);
+		
+		if (version != null && version.trim().length() > 0) {
+			buffer.append(";" + Constants.BUNDLE_VERSION_ATTRIBUTE + "=\"" + version + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
+		return buffer.toString();
+	}
+
 	
 	private Properties manifestToProperties(Attributes d) {
 		Iterator iter = d.keySet().iterator();

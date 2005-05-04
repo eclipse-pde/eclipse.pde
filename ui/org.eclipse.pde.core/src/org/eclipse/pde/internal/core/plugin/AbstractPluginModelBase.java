@@ -37,6 +37,7 @@ import org.eclipse.pde.core.plugin.IPluginModelFactory;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.AbstractModel;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDEState;
 
 public abstract class AbstractPluginModelBase
 	extends AbstractModel
@@ -74,6 +75,17 @@ public abstract class AbstractPluginModelBase
 			setLoaded(true);
 		}
 		return fPluginBase;
+	}
+	
+	public void load(BundleDescription description, PDEState state, boolean ignoreExtensions) {
+		setBundleDescription(description);
+		IPluginBase base = getPluginBase();
+		if (base instanceof Plugin)
+			((Plugin)base).load(description, state, ignoreExtensions);
+		else
+			((Fragment)base).load(description, state, ignoreExtensions);
+		updateTimeStamp();
+		setLoaded(true);	
 	}
 	
 	public IExtensions getExtensions() {

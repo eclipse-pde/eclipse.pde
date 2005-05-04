@@ -312,7 +312,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		if (registryPlugins == null) {
 			URL[] pluginPaths = ConfiguratorUtils.getCurrentPlatformConfiguration().getPluginPath();
 			PDEState state = new PDEState(pluginPaths, false, new NullProgressMonitor());
-			registryPlugins = state.getModels();
+			registryPlugins = state.getTargetModels();
 		}
 
 		for (int i = 0; i < registryPlugins.length; i++) {

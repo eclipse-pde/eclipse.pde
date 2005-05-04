@@ -362,7 +362,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory {
 		}
 		// Find in other plugin (and fragments) projects dependencies
 		IPluginModelBase[] pluginModels = PDECore.getDefault()
-				.getWorkspaceModelManager().getAllModels();
+				.getModelManager().getWorkspaceModels();
 		for (int i = 0; i < pluginModels.length; i++) {
 			IProject project = pluginModels[i].getUnderlyingResource()
 					.getProject();

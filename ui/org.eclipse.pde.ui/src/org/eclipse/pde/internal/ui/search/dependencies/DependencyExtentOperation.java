@@ -68,7 +68,7 @@ public class DependencyExtentOperation {
 		fSearchResult = (DependencyExtentSearchResult)searchResult;
 		fProject = project;
 		fImportID = importID;
-		fModel = PDECore.getDefault().getWorkspaceModelManager().getWorkspacePluginModel(project);
+		fModel = PDECore.getDefault().getModelManager().findModel(project);
 	}
 	
 	public void execute(IProgressMonitor monitor) {

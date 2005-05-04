@@ -111,20 +111,10 @@ public class Feature extends VersionableObject implements IFeature {
 	}
 
 	public IPluginModelBase getReferencedModel(IFeaturePlugin reference) {
-		WorkspaceModelManager mng = PDECore.getDefault()
-				.getWorkspaceModelManager();
-		IPluginModelBase[] models = null;
-		if (reference.isFragment())
-			models = mng.getFragmentModels();
-		else
-			models = mng.getPluginModels();
-
-		for (int i = 0; i < models.length; i++) {
-			IPluginBase base = models[i].getPluginBase();
-			if (base.getId().equals(reference.getId()))
-				return models[i];
-		}
-		return null;
+		PluginModelManager mng = PDECore.getDefault().getModelManager();
+		IPluginModelBase model = mng.findModel(reference.getId());
+		
+		return (model != null && model.isEnabled()) ? model : null;
 	}
 	public IFeatureURL getURL() {
 		return fUrl;

@@ -129,7 +129,7 @@ public class PDEStateHelper {
 			String path = desc.getLocation();
 
 			File file = new File(path);
-			if (file.isFile() && file.getName().endsWith(".jar")) { //$NON-NLS-1$
+			if (file.isFile()) {
 				jarFile = new ZipFile(file, ZipFile.OPEN_READ);
 				ZipEntry manifestEntry = jarFile.getEntry(filename); //$NON-NLS-1$
 				if (manifestEntry != null) 

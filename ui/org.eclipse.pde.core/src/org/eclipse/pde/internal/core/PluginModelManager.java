@@ -28,13 +28,19 @@ public class PluginModelManager implements IAdaptable {
 	private SearchablePluginsManager fSearchablePluginsManager;
 	private ArrayList fListeners;
 	private Map fEntries;
+	
+	private PDEState fState;
 
-	public PluginModelManager() {
+	public PluginModelManager(WorkspaceModelManager wm, ExternalModelManager em) {
 		fProviderListener = new IModelProviderListener() {
 			public void modelsChanged(IModelProviderEvent e) {
 				handleModelsChanged(e);
 			}
 		};
+		fWorkspaceManager = wm;
+		fExternalManager = em;
+		fExternalManager.addModelProviderListener(fProviderListener);
+		fWorkspaceManager.addModelProviderListener(fProviderListener);
 		fListeners = new ArrayList();
 		fSearchablePluginsManager = new SearchablePluginsManager(this);
 	}
@@ -219,7 +225,7 @@ public class PluginModelManager implements IAdaptable {
 				if (!(changed[i] instanceof IPluginModelBase)) continue;
 				IPluginModelBase model = (IPluginModelBase) changed[i];
 				boolean workspace = model.getUnderlyingResource()!=null;
-				fExternalManager.getState().addBundle(model);
+				fState.addBundle(model);
 				IPluginBase plugin = model.getPluginBase();
 				String id = plugin.getId();
 				if (id != null) {
@@ -259,7 +265,7 @@ public class PluginModelManager implements IAdaptable {
 		}
 		
 		if (changedPlugins.size() > 0)
-			fExternalManager.getState().resolveState(true);
+			fState.resolveState(true);
 		updateAffectedEntries((IPluginBase[])changedPlugins.toArray(new IPluginBase[changedPlugins.size()]), oldIds);
 		if (javaSearchAffected)
 			fSearchablePluginsManager.updateClasspathContainer();
@@ -360,11 +366,10 @@ public class PluginModelManager implements IAdaptable {
 			}
 		}
 		if (workspace) {
-			PDEState state = fExternalManager.getState();
 			if (added) {
-				addWorkspaceBundleToState(model, state);
+				addWorkspaceBundleToState(model);
 			} else {
-				removeWorkspaceBundleFromState(model, state);
+				removeWorkspaceBundleFromState(model);
 			}
 		}
 		if (kind==0) kind = PluginModelDelta.CHANGED;
@@ -427,15 +432,39 @@ public class PluginModelManager implements IAdaptable {
 	private synchronized void initializeTable() {
 		if (fEntries != null) return;
 		fEntries = Collections.synchronizedMap(new TreeMap());
-		addToTable(fWorkspaceManager.getAllModels(), true);
+		fState = new PDEState(
+						WorkspaceModelManager.getPluginPaths(),
+						ExternalModelManager.getPluginPaths(),
+						TargetPlatform.getTargetEnvironment(),
+						new NullProgressMonitor());
+		
+		fExternalManager.initializeModels(fState.getTargetModels());	
 		addToTable(fExternalManager.getAllModels(), false);
-		addWorkspaceBundlesToState();
+		if (fState.isCombined()) {
+			IPluginModelBase[] models = fState.getWorkspaceModels();
+			fWorkspaceManager.initializeModels(models);
+			addToTable(models, true);
+		} else {
+			addToTable(fWorkspaceManager.getAllModels(), true);			
+			addWorkspaceBundlesToState();
+		}
 		fSearchablePluginsManager.initialize();
 	}
+	
+	public PDEState getState() {
+		initializeTable();
+		return fState;
+	}
+	
+	public void setState(PDEState state) {
+		fState = state;
+		fExternalManager.setModels(state.getTargetModels());
+		addWorkspaceBundlesToState();
+	}
 
-	private void addToTable(IPluginModelBase[] pmodels, boolean workspace) {
-		for (int i = 0; i < pmodels.length; i++) {
-			IPluginModelBase model = pmodels[i];
+	private void addToTable(IPluginModelBase[] models, boolean workspace) {
+		for (int i = 0; i < models.length; i++) {
+			IPluginModelBase model = models[i];
 			String id = model.getPluginBase().getId();
 			if (id == null)
 				continue;
@@ -453,33 +482,32 @@ public class PluginModelManager implements IAdaptable {
 		
 	public void addWorkspaceBundlesToState() {
 		IPluginModelBase[] models = fWorkspaceManager.getAllModels();
-		PDEState state = fExternalManager.getState();
 		for (int i = 0; i < models.length; i++) {
-			addWorkspaceBundleToState(models[i], state);
+			addWorkspaceBundleToState(models[i]);
 		}
-		state.resolveState(true);
+		fState.resolveState(true);
 	}
 	
-	private void addWorkspaceBundleToState(IPluginModelBase model, PDEState state) {
+	private void addWorkspaceBundleToState(IPluginModelBase model) {
 		ModelEntry entry = findEntry(model.getPluginBase().getId());
 		IPluginModelBase external = entry == null ? null : entry.getExternalModel();
 		if (external != null) {
-			state.removeBundleDescription(external.getBundleDescription());
+			fState.removeBundleDescription(external.getBundleDescription());
 		}
-		state.addBundle(model);		
+		fState.addBundle(model);		
 	}
 	
-	private void removeWorkspaceBundleFromState(IPluginModelBase model, PDEState state) {
+	private void removeWorkspaceBundleFromState(IPluginModelBase model) {
 		BundleDescription description = model.getBundleDescription();
 		if (description == null)
 			return;
 		
-		state.removeBundleDescription(description);
+		fState.removeBundleDescription(description);
 		
 		ModelEntry entry = findEntry(model.getPluginBase().getId());
 		IPluginModelBase external = entry == null ? null : entry.getExternalModel();
 		if (external != null) {
-			state.addBundleDescription(external.getBundleDescription());
+			fState.addBundleDescription(external.getBundleDescription());
 		}
 	}
 	
@@ -490,17 +518,13 @@ public class PluginModelManager implements IAdaptable {
 		}
 	}
 
-	public void connect(WorkspaceModelManager wm, ExternalModelManager em) {
-		fExternalManager = em;
-		fWorkspaceManager = wm;
-		fExternalManager.addModelProviderListener(fProviderListener);
-		fWorkspaceManager.addModelProviderListener(fProviderListener);
-	}
 	public void shutdown() {
 		if (fWorkspaceManager != null)	
 			fWorkspaceManager.removeModelProviderListener(fProviderListener);
 		if (fExternalManager != null)
 			fExternalManager.removeModelProviderListener(fProviderListener);
+		if (fState != null)
+			fState.shutdown();
 		fSearchablePluginsManager.shutdown();
 	}
 	
@@ -543,5 +567,15 @@ public class PluginModelManager implements IAdaptable {
 	public SearchablePluginsManager getSearchablePluginsManager() {
 		initializeTable();
 		return fSearchablePluginsManager;
+	}
+	
+	public IPluginModelBase[] getExternalModels() {
+		initializeTable();
+		return fExternalManager.getAllModels();
+	}
+	
+	public IPluginModelBase[] getWorkspaceModels() {
+		initializeTable();
+		return fWorkspaceManager.getAllModels();
 	}
 }

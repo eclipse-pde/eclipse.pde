@@ -386,8 +386,7 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 			return;
 		externalModelManager = new ExternalModelManager();
 		workspaceModelManager = new WorkspaceModelManager();
-		modelManager = new PluginModelManager();
-		modelManager.connect(workspaceModelManager, externalModelManager);
+		modelManager = new PluginModelManager(workspaceModelManager, externalModelManager);
 		fFeatureModelManager = new FeatureModelManager(workspaceModelManager);
 	}
 

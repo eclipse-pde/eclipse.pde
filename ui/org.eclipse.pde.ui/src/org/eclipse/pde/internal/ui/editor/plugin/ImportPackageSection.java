@@ -38,7 +38,7 @@ import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PDEState;
+import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
@@ -297,8 +297,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
         Set set = getForbiddenIds();
         
         //TODO add method to PluginModelManager
-        PDEState state = PDECore.getDefault().getExternalModelManager().getState();
-        ExportPackageDescription[] desc = state.getState().getExportedPackages();
+        ExportPackageDescription[] desc = TargetPlatform.getState().getExportedPackages();
         for (int i = 0; i < desc.length; i++) {
             String id = desc[i].getExporter().getSymbolicName();
             //TODO hack until we use the state properly
@@ -412,9 +411,9 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
         if (id != null)
             set.add(id);
         IPluginImport[] imports = model.getPluginBase().getImports();
-        PDEState state = PDECore.getDefault().getExternalModelManager().getState();
+        State state = TargetPlatform.getState();
         for (int i = 0; i < imports.length; i++) {
-            addDependency(state.getState(), imports[i].getId(), set);
+            addDependency(state, imports[i].getId(), set);
         }
         return set;
     }

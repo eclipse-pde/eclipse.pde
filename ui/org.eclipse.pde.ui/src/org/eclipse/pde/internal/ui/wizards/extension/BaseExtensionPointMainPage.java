@@ -458,7 +458,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		setErrorMessage(null);
 	}
 	private void handlePluginBrowse(){
-		PluginSelectionDialog dialog = new PluginSelectionDialog(getShell(), PDECore.getDefault().getWorkspaceModelManager().getAllModels(), false);
+		PluginSelectionDialog dialog = new PluginSelectionDialog(getShell(), PDECore.getDefault().getModelManager().getWorkspaceModels(), false);
 		dialog.create();
 		if (dialog.open() == Window.OK){
 			WorkspacePluginModelBase workspaceModelBase = (WorkspacePluginModelBase)dialog.getFirstResult();

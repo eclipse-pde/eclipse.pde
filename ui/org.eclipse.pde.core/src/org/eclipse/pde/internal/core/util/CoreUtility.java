@@ -14,6 +14,15 @@ import java.io.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.pde.core.plugin.IPluginAttribute;
+import org.eclipse.pde.core.plugin.IPluginElement;
+import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.pde.internal.core.plugin.PluginExtension;
+import org.eclipse.pde.internal.core.plugin.PluginExtensionPoint;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 
 public class CoreUtility {
@@ -101,6 +110,50 @@ public class CoreUtility {
 			curr.delete();
 		}
 	}
+	
+	public static Element writeExtension(Document doc, IPluginExtension extension) {
+		Element child = doc.createElement("extension");
+		if (extension.getPoint() != null)
+			child.setAttribute("point", getWritableString(extension.getPoint()));
+		if (extension.getName() != null)
+			child.setAttribute("name", getWritableString(extension.getName()));
+		if (extension.getId() != null)
+			child.setAttribute("id", getWritableString(extension.getId()));
+		if (extension instanceof PluginExtension)
+			child.setAttribute("line", Integer.toString(((PluginExtension)extension).getStartLine()));
+		IPluginObject[] children = extension.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			child.appendChild(writeElement(doc, (IPluginElement)children[i]));
+		}
+		return child;	
+	}
+	
+	public static Element writeElement(Document doc, IPluginElement element) {
+		Element child = doc.createElement(element.getName());
+		IPluginAttribute[] attrs = element.getAttributes();
+		for (int i = 0; i < attrs.length; i++) {
+			child.setAttribute(attrs[i].getName(), getWritableString(attrs[i].getValue()));
+		}
+		IPluginObject[] elements = element.getChildren();
+		for (int i = 0; i < elements.length; i++) {
+			child.appendChild(writeElement(doc, (IPluginElement)elements[i]));
+		}
+		return child;
+	}
+	
+	public static Element writeExtensionPoint(Document doc, IPluginExtensionPoint extPoint) {
+		Element child = doc.createElement("extension-point");
+		if (extPoint.getId() != null)
+			child.setAttribute("id", getWritableString(extPoint.getId()));
+		if (extPoint.getName() != null)
+			child.setAttribute("name", getWritableString(extPoint.getName()));
+		if (extPoint.getSchema() != null)
+			child.setAttribute("schema", getWritableString(extPoint.getSchema()));
+		if (extPoint instanceof PluginExtensionPoint)
+			child.setAttribute("line", Integer.toString(((PluginExtensionPoint)extPoint).getStartLine()));
+		return child;	
+	}
+	
 
 
 }

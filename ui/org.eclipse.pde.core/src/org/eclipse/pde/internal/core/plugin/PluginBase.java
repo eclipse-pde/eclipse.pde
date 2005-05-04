@@ -92,32 +92,28 @@ public abstract class PluginBase
 		}
 	}
 	
-	void loadExtensions(NodeList list) {
-		if (list != null) {
-			fExtensions = new ArrayList();
-			for (int i = 0; i < list.getLength(); i++) {
-				PluginExtension extension = new PluginExtension();
-				extension.setInTheModel(true);
-				extension.setModel(getModel());
-				extension.setParent(this);
-				extension.load(list.item(i));
-				fExtensions.add(extension);
-			}
+	void loadExtensions(Node[] list) {
+		fExtensions = new ArrayList();
+		for (int i = 0; i < list.length; i++) {
+			PluginExtension extension = new PluginExtension();
+			extension.setInTheModel(true);
+			extension.setModel(getModel());
+			extension.setParent(this);
+			extension.load(list[i]);
+			fExtensions.add(extension);
 		}
 	}
 	
-	void loadExtensionPoints(NodeList list) {
-		if (list != null) {
-			fExtensionPoints = new ArrayList();
-			for (int i = 0; i < list.getLength(); i++) {
-				PluginExtensionPoint extPoint = new PluginExtensionPoint();
-				extPoint.setInTheModel(true);
-				extPoint.setModel(getModel());
-				extPoint.setParent(this);
-				extPoint.load(list.item(i));
-				fExtensionPoints.add(extPoint);
-			}
-		}	
+	void loadExtensionPoints(Node[] list) {
+		fExtensionPoints = new ArrayList(list.length);
+		for (int i = 0; i < list.length; i++) {
+			PluginExtensionPoint extPoint = new PluginExtensionPoint();
+			extPoint.setInTheModel(true);
+			extPoint.setModel(getModel());
+			extPoint.setParent(this);
+			extPoint.load(list[i]);
+			fExtensionPoints.add(extPoint);
+		}
 	}
 	
 	public void restoreProperty(String name, Object oldValue, Object newValue)
