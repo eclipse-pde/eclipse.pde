@@ -148,7 +148,7 @@ public class MinimalState {
 						"Error parsing plug-in manifest file at " + bundleLocation.toString(), null)); //$NON-NLS-1$
 		}
 		BundleDescription desc = addBundle(manifest, bundleLocation, keepLibraries, bundleId);
-		if (SYSTEM_BUNDLE.equals(desc.getSymbolicName())) {
+		if (desc != null && SYSTEM_BUNDLE.equals(desc.getSymbolicName())) {
 			// if this is the system bundle then reset the java profile and
 			// indicate that the javaProfile has changed
 			setJavaProfiles(bundleLocation);

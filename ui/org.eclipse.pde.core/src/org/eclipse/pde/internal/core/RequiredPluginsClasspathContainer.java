@@ -175,10 +175,17 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 				ArrayList list = (ArrayList)fVisiblePackages.get(exporter.getName());
 				if (list == null) 
 					list = new ArrayList();
-				list.add(new Path(exports[i].getName().replaceAll("\\.", "/") + "/*")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				list.add(getRule(exports[i])); //$NON-NLS-1$ 
 				fVisiblePackages.put(exporter.getName(), list);
 			}
 		}		
+	}
+	
+	private Rule getRule(ExportPackageDescription export) {
+		Rule rule = new Rule();
+		rule.internal = ((Boolean)export.getDirective("x-internal")).booleanValue();
+		rule.path = new Path(export.getName().replaceAll("\\.", "/") + "/*");
+		return rule;
 	}
 	
 	private void addDependencyViaImportPackage(BundleDescription desc, boolean isExported, HashSet added) throws CoreException {
@@ -249,42 +256,42 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		if (model == null || !model.isEnabled())
 			return false;
 		IResource resource = model.getUnderlyingResource();
-		IPath[] inclusions = useInclusions ? getInclusions(model) : null;
+		Rule[] rules = useInclusions ? getInclusions(model) : null;
 		if (resource != null) {
-			addProjectEntry(resource.getProject(), isExported, inclusions, viaImportPackage);
+			addProjectEntry(resource.getProject(), isExported, rules, viaImportPackage);
 		} else {
-			addExternalPlugin(model, isExported, inclusions);
+			addExternalPlugin(model, isExported, rules);
 		}
 		return resource != null;
 	}
 	
-	private IPath[] getInclusions(IPluginModelBase model) {
-		if (!PDECore.isPromiscuousMode())
+	private Rule[] getInclusions(IPluginModelBase model) {
+		if ("false".equals(System.getProperty("pde.restriction")))
 			return null;
 		
 		BundleDescription desc = model.getBundleDescription();
 		if (desc == null)
 			return null;
 		
-		IPath[] inclusions;
+		Rule[] rules;
 		if (desc.isResolved() && desc.getHost() != null)
-			inclusions = getInclusions((BundleDescription)desc.getHost().getSupplier());
+			rules = getInclusions((BundleDescription)desc.getHost().getSupplier());
 		else
-			inclusions = getInclusions(desc);
+			rules = getInclusions(desc);
 		
-		return (inclusions.length == 0 && !ClasspathUtilCore.isBundle(model)) ? null : inclusions;
+		return (rules.length == 0 && !ClasspathUtilCore.isBundle(model)) ? null : rules;
 	}
 	
-	private IPath[] getInclusions(BundleDescription desc) {
+	private Rule[] getInclusions(BundleDescription desc) {
 		ArrayList list = (ArrayList)fVisiblePackages.get(desc.getSymbolicName());
 		if (list == null) {
 			list = new ArrayList();
 			ExportPackageDescription[] exports = desc.getExportPackages();
 			for (int i = 0; i < exports.length; i++) {
-				list.add(new Path(exports[i].getName().replaceAll("\\.", "/") + "/*")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				list.add(getRule(exports[i]));
 			}
 		}
-		return (IPath[])list.toArray(new IPath[list.size()]);		
+		return (Rule[])list.toArray(new Rule[list.size()]);		
 	}
 
 	private void addImplicitDependencies(HashSet added) throws CoreException {
