@@ -11,6 +11,10 @@
 package org.eclipse.pde.internal.ui.build;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Properties;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IContainer;
@@ -21,9 +25,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.core.runtime.jobs.MultiRule;
+import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.isite.ISiteFeature;
@@ -46,6 +54,8 @@ public class BuildSiteJob extends FeatureExportJob {
 	private IContainer fSiteContainer;
 	
 	private long fBuildTime;
+
+	private String fFeatureLocation;
 
 	public BuildSiteJob(Display display, IFeatureModel[] models,
 			ISiteModel siteModel) {
@@ -80,6 +90,82 @@ public class BuildSiteJob extends FeatureExportJob {
 		return super.run(monitor);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ui.wizards.exports.FeatureExportJob#doExports(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected void doExports(IProgressMonitor monitor)
+			throws InvocationTargetException, CoreException {
+		String[][] configurations = fTargets;
+		if (configurations == null)
+			configurations = new String[][] { { TargetPlatform.getOS(),
+					TargetPlatform.getWS(), TargetPlatform.getOSArch(),
+					TargetPlatform.getNL() } };
+		for (int i = 0; i < configurations.length; i++) {
+			try {
+				String[] config = configurations[i];
+				monitor.beginTask("", 10); //$NON-NLS-1$
+				// create a feature to wrap all plug-ins and features
+				String featureID = "org.eclipse.pde.container.feature"; //$NON-NLS-1$
+				fFeatureLocation = fBuildTempLocation + File.separator
+						+ featureID;
+				createFeature(featureID, fFeatureLocation, config, false);
+				createBuildPropertiesFile(fFeatureLocation);
+				if (fUseJarFormat)
+					if (fUseJarFormat) {
+						createPostProcessingFile(new File(fFeatureLocation,
+								FEATURE_POST_PROCESSING));
+						createPostProcessingFile(new File(fFeatureLocation,
+								PLUGIN_POST_PROCESSING));
+					}
+				doExport(featureID, null, fFeatureLocation, config[0],
+						config[1], config[2],
+						new SubProgressMonitor(monitor, 7));
+			} catch (IOException e) {
+			} finally {
+				for (int j = 0; j < fItems.length; j++) {
+					deleteBuildFiles((IModel) fItems[j]);
+				}
+				cleanup(fTargets == null ? null : configurations[i],
+						new SubProgressMonitor(monitor, 3));
+				monitor.done();
+			}
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ui.wizards.exports.FeatureExportJob#getPaths()
+	 */
+	protected String[] getPaths() {
+		String[] paths = super.getPaths();
+		String[] all = new String[paths.length + 1];
+		all[0] = fFeatureLocation + File.separator + "feature.xml"; //$NON-NLS-1$
+		System.arraycopy(paths, 0, all, 1, paths.length);
+		return all;
+	}
+
+	private void createBuildPropertiesFile(String featureLocation) {
+		File file = new File(featureLocation);
+		if (!file.exists() || !file.isDirectory())
+			file.mkdirs();
+		Properties prop = new Properties();
+		prop.put("pde", "marker"); //$NON-NLS-1$ //$NON-NLS-2$
+		save(new File(file, "build.properties"), prop, "Marker File"); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	private void save(File file, Properties properties, String header) {
+		try {
+			FileOutputStream stream = new FileOutputStream(file);
+			properties.store(stream, header);
+			stream.flush();
+			stream.close();
+		} catch (IOException e) {
+			PDECore.logException(e);
+		}
+	}
 	private void updateSiteFeatureVersions() {
 		try {
 			for (int i = 0; i < fFeaturemodels.length; i++) {
