@@ -31,7 +31,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 	
 	public ExtensionsErrorReporter(IFile file) {
 		super(file);
-		fModel = PDECore.getDefault().getWorkspaceModelManager().getWorkspacePluginModel(file.getProject());
+		fModel = PDECore.getDefault().getModelManager().findModel(file.getProject());
 	}
 	
 	/* (non-Javadoc)
