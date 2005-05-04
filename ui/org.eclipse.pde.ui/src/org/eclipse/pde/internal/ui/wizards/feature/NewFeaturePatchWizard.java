@@ -189,7 +189,7 @@ public class NewFeaturePatchWizard extends NewWizard implements IExecutableExten
 			IProjectDescription desc = project.getWorkspace().newProjectDescription(
 					project.getName());
 			desc.setLocation(provider.getLocationPath());
-			if (!project.hasNature(PDE.FEATURE_BUILDER_ID))
+			if (!project.hasNature(PDE.FEATURE_NATURE))
 				CoreUtility.addNatureToProject(project, PDE.FEATURE_NATURE, monitor);
 
 			if (!project.hasNature(JavaCore.NATURE_ID) && data.hasCustomHandler()) {

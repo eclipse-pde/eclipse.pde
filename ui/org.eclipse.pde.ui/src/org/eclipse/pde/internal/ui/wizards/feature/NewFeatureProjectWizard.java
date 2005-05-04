@@ -319,7 +319,7 @@ public class NewFeatureProjectWizard extends NewWizard
 			IProjectDescription desc = project.getWorkspace()
 					.newProjectDescription(project.getName());
 			desc.setLocation(provider.getLocationPath());
-			if (!project.hasNature(PDE.FEATURE_BUILDER_ID))
+			if (!project.hasNature(PDE.FEATURE_NATURE))
 				CoreUtility.addNatureToProject(project, PDE.FEATURE_NATURE,
 						monitor);
 
