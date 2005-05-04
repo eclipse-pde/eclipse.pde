@@ -225,7 +225,7 @@ public class PDEState extends MinimalState {
 		String className = (String)manifest.get("Plugin-Class"); //$NON-NLS-1$
 		info.className	= className != null ? className : (String)manifest.get(Constants.BUNDLE_ACTIVATOR);	
 		info.libraries = PDEStateHelper.getClasspath(manifest);
-		info.hasExtensibleAPI = "true".equals((String)manifest.get(ICoreConstants.EXTENSIBLE_API)); //$NON-NLS-1$ 
+		info.hasExtensibleAPI = "true".equals(manifest.get(ICoreConstants.EXTENSIBLE_API)); //$NON-NLS-1$ 
 		
 		fPluginInfos.put(Long.toString(desc.getBundleId()), info);
 	}

@@ -92,7 +92,7 @@ public abstract class AbstractExtensionsModel
 	}
 	
 	public void load(BundleDescription desc, PDEState state) {
-		fExtensions = (Extensions) createExtensions();
+		fExtensions = createExtensions();
 		fExtensions.setModel(this);
 		fExtensions.load(state.getAllExtensions(desc.getBundleId()));
 		updateTimeStamp();
