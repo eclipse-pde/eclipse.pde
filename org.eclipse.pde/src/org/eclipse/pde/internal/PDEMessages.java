@@ -112,7 +112,7 @@ public class PDEMessages extends NLS {
 	public static String BundleErrorReporter_NativeInvalidProcessor;
 	public static String BundleErrorReporter_NativeInvalidLanguage;
 	public static String BundleErrorReporter_NativeInvalidOSVersion;
-
+	public static String FeatureConsistencyTrigger_JobName;
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, PDEMessages.class);

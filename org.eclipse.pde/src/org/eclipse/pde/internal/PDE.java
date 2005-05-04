@@ -40,6 +40,8 @@ public class PDE extends Plugin {
 	
 	private BundleContext fBundleContext;
 	
+	private FeatureRebuilder fFeatureRebuilder;
+	
 	public PDE() {
 		fInstance = this;
 	}
@@ -53,12 +55,16 @@ public class PDE extends Plugin {
 		fBundleContext = context;
 		super.start(context);
 		CompilerFlags.initializeDefaults();
+		fFeatureRebuilder = new FeatureRebuilder();
+		fFeatureRebuilder.start();
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
+		fFeatureRebuilder.stop();
+		fFeatureRebuilder = null;
 		super.stop(context);
 		fInstance = null;
 		fBundleContext = null;
