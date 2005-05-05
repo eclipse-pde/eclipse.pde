@@ -175,15 +175,15 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 				ArrayList list = (ArrayList)fVisiblePackages.get(exporter.getName());
 				if (list == null) 
 					list = new ArrayList();
-				list.add(getRule(exports[i])); //$NON-NLS-1$ 
+				list.add(getRule(helper, desc, exports[i]));
 				fVisiblePackages.put(exporter.getName(), list);
 			}
 		}		
 	}
 	
-	private Rule getRule(ExportPackageDescription export) {
+	private Rule getRule(StateHelper helper, BundleDescription desc, ExportPackageDescription export) {
 		Rule rule = new Rule();
-		rule.internal = ((Boolean)export.getDirective("x-internal")).booleanValue();
+		rule.discouraged = helper.getAccessCode(desc, export) == StateHelper.ACCESS_DISCOURAGED;
 		rule.path = new Path(export.getName().replaceAll("\\.", "/") + "/*");
 		return rule;
 	}
@@ -284,14 +284,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	
 	private Rule[] getInclusions(BundleDescription desc) {
 		ArrayList list = (ArrayList)fVisiblePackages.get(desc.getSymbolicName());
-		if (list == null) {
-			list = new ArrayList();
-			ExportPackageDescription[] exports = desc.getExportPackages();
-			for (int i = 0; i < exports.length; i++) {
-				list.add(getRule(exports[i]));
-			}
-		}
-		return (Rule[])list.toArray(new Rule[list.size()]);		
+		return list != null ? (Rule[])list.toArray(new Rule[list.size()]) : null;		
 	}
 
 	private void addImplicitDependencies(HashSet added) throws CoreException {

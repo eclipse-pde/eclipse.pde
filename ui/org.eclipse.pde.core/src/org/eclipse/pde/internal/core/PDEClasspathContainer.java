@@ -31,7 +31,7 @@ public class PDEClasspathContainer {
 	
 	class Rule {
 		IPath path;
-		boolean internal;
+		boolean discouraged;
 	}
 	
 	protected ArrayList fEntries;
@@ -109,7 +109,7 @@ public class PDEClasspathContainer {
 		IAccessRule[] accessRules = new IAccessRule[rules.length + 1];
 		for (int i = 0; i < rules.length; i++) {
 			Rule rule = rules[i];
-			accessRules[i] = rule.internal ? getDiscouragedRule(rule.path) : getAccessibleRule(rule.path);
+			accessRules[i] = rule.discouraged ? getDiscouragedRule(rule.path) : getAccessibleRule(rule.path);
 		}
 		accessRules[rules.length] = EXCLUDE_ALL_RULE;
 		return accessRules;
