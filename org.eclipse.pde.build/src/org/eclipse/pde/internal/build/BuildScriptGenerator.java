@@ -164,7 +164,8 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		} catch (CoreException ce) {
 			throw ce;
 		} finally {
-			generator.getSite(false).getRegistry().cleanupOriginalState();
+			if (generator != null)
+				generator.getSite(false).getRegistry().cleanupOriginalState();
 			flushState();
 		}
 	}
