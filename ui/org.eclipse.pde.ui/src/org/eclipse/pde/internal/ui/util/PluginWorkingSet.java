@@ -180,6 +180,7 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 				validatePage();
 			}
 		});
+		SWTUtil.setButtonDimensionHint(selectAllButton);
 
 		Button deselectAllButton = new Button(buttonComposite, SWT.PUSH);
 		deselectAllButton.setText(PDEUIMessages.PluginWorkingSet_deselectAll_label);
@@ -190,7 +191,8 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 				validatePage();
 			}
 		});
-		
+		SWTUtil.setButtonDimensionHint(deselectAllButton);
+			
 		initialize();
 		Dialog.applyDialogFont(composite);
 	}
