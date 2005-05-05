@@ -111,8 +111,8 @@ public class ExportPackageVisibilitySection extends TableSection
         Composite container = toolkit.createComposite(comp);
         container.setLayoutData(new GridData(GridData.FILL_BOTH));
         layout = new GridLayout();
-        layout.marginWidth = 0;
-        layout.marginHeight = 0;
+        layout.marginWidth = 1;
+        layout.marginHeight = 1;
         layout.numColumns = 2;
         container.setLayout(layout);
         container.setLayoutData(new GridData(GridData.FILL_BOTH));
