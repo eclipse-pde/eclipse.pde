@@ -1457,6 +1457,10 @@ public class PDEUIMessages extends NLS {
 	public static String PluginsView_removeFromJavaSearch;
 	public static String PluginsView_showInNavigator;
 	public static String PluginWorkingSet_setContent;
+	public static String PluginWorkingSet_selectAll_label;
+	public static String PluginWorkingSet_selectAll_toolTip;
+	public static String PluginWorkingSet_deselectAll_label;
+	public static String PluginWorkingSet_deselectAll_toolTip;
 	public static String PluginsView_showInPackageExplorer;
 	public static String PluginWorkingSet_noPluginsChecked;
 	public static String PluginStatusDialog_pluginValidation;

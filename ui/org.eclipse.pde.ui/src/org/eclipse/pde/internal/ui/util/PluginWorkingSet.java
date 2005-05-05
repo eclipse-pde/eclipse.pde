@@ -154,13 +154,39 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 250;
 		fTable.getControl().setLayoutData(gd);
-		fTable.setContentProvider(new ContentProvider());
+		final IStructuredContentProvider fTableContentProvider = new ContentProvider(); 
+		fTable.setContentProvider(fTableContentProvider);
 		fTable.setLabelProvider(new WorkingSetLabelProvider());
 		fTable.setUseHashlookup(true);
 		fTable.setInput(PDECore.getDefault().getModelManager());
 
 		fTable.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
+				validatePage();
+			}
+		});
+
+		// Add select / deselect all buttons for bug 46669
+		Composite buttonComposite = new Composite(composite, SWT.NONE);
+		buttonComposite.setLayout(new GridLayout(2, false));
+		buttonComposite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+		
+		Button selectAllButton = new Button(buttonComposite, SWT.PUSH);
+		selectAllButton.setText(PDEUIMessages.PluginWorkingSet_selectAll_label);
+		selectAllButton.setToolTipText(PDEUIMessages.PluginWorkingSet_selectAll_toolTip);
+		selectAllButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent selectionEvent) {
+				fTable.setCheckedElements(fTableContentProvider.getElements(fTable.getInput()));
+				validatePage();
+			}
+		});
+
+		Button deselectAllButton = new Button(buttonComposite, SWT.PUSH);
+		deselectAllButton.setText(PDEUIMessages.PluginWorkingSet_deselectAll_label);
+		deselectAllButton.setToolTipText(PDEUIMessages.PluginWorkingSet_deselectAll_toolTip);
+		deselectAllButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent selectionEvent) {
+				fTable.setCheckedElements(new Object[0]);
 				validatePage();
 			}
 		});
