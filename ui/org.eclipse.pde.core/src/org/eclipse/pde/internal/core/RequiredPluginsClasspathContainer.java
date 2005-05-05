@@ -266,7 +266,8 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	}
 	
 	private Rule[] getInclusions(IPluginModelBase model) {
-		if ("false".equals(System.getProperty("pde.restriction")))
+		//if ("false".equals(System.getProperty("pde.restriction")))
+		if (true)
 			return null;
 		
 		BundleDescription desc = model.getBundleDescription();
