@@ -66,7 +66,8 @@ public class DevClassPathHelper {
 				is = url.openStream();
 				props.load(is);
 			} finally {
-				is.close();
+				if (is != null)
+					is.close();
 			}
 		} catch (IOException e) {
 			String message = NLS.bind(Messages.exception_missingFile, url.toExternalForm());
