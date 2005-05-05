@@ -208,10 +208,13 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			script.printMoveTask(getPropertyFormat(PROPERTY_ECLIPSE_BASE), rootFiles, false);
 			script.printDeleteTask(getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING), null, null); //$NON-NLS-1$
 		} else {
-			List params = new ArrayList(2);
-			params.add(getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER)); //$NON-NLS-1$
+			List params = new ArrayList(3);
+			params.add("-R"); //$NON-NLS-1$
+			params.add("."); //$NON-NLS-1$
 			params.add(getPropertyFormat(PROPERTY_ECLIPSE_BASE));
-			script.printExecTask("mv", getPropertyFormat(PROPERTY_BASEDIR),  params, null); //$NON-NLS-1$
+			String rootFileFolder = getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING); //$NON-NLS-1$
+			script.printExecTask("cp", rootFileFolder + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER),  params, null); //$NON-NLS-1$
+			script.printDeleteTask(rootFileFolder, null, null);
 		}
 	}
 
