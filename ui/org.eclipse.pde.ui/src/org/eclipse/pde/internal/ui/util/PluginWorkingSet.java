@@ -168,7 +168,7 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 
 		// Add select / deselect all buttons for bug 46669
 		Composite buttonComposite = new Composite(composite, SWT.NONE);
-		buttonComposite.setLayout(new GridLayout(2, false));
+		buttonComposite.setLayout(new GridLayout(2, true));
 		buttonComposite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 		
 		Button selectAllButton = new Button(buttonComposite, SWT.PUSH);
@@ -180,6 +180,7 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 				validatePage();
 			}
 		});
+		selectAllButton.setLayoutData(new GridData());
 		SWTUtil.setButtonDimensionHint(selectAllButton);
 
 		Button deselectAllButton = new Button(buttonComposite, SWT.PUSH);
@@ -191,6 +192,7 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 				validatePage();
 			}
 		});
+		deselectAllButton.setLayoutData(new GridData());
 		SWTUtil.setButtonDimensionHint(deselectAllButton);
 			
 		initialize();
