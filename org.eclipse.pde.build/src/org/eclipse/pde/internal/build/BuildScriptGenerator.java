@@ -145,7 +145,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 				generator.generate();
 			}
 
-			if (generateAssembleScript == true) {
+			if (generator != null && generateAssembleScript == true) {
 				String[] featureInfo = null;
 				if (features.size() == 1)
 					featureInfo = getNameAndVersion((String) features.get(0));
