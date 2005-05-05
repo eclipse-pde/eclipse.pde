@@ -116,7 +116,6 @@ public class PDEState extends MinimalState {
 			readWorkspaceState();
 		}
 		
-		fId = fState.getBundles().length;
 		if (DEBUG)
 			System.out.println("Time to create state: " + (System.currentTimeMillis() - start) + " ms");
 	}
@@ -130,6 +129,8 @@ public class PDEState extends MinimalState {
 			saveState(dir);
 			savePluginInfo(dir);
 			fNewState = true;
+		} else {
+			fId = fState.getBundles().length;
 		}
 		if ((fExtensions = readExtensionsCache(dir)) == null)
 			saveExtensions(dir);
@@ -197,6 +198,7 @@ public class PDEState extends MinimalState {
 				BundleDescription newbundle = stateObjectFactory.createBundleDescription(desc);
 				IPluginModelBase model = createWorkspaceModel(newbundle);
 				if (model != null && fState.addBundle(newbundle)) {
+					fId += 1;
 					fWorkspaceModels.add(model);
 				}
 				fExtensions.remove(Long.toString(newbundle.getBundleId()));
@@ -656,7 +658,7 @@ public class PDEState extends MinimalState {
 				IPluginBase plugin = models[i].getPluginBase();
 				IPluginExtension[] extensions = plugin.getExtensions();
 				IPluginExtensionPoint[] extPoints = plugin.getExtensionPoints();
-				if (extensions.length == 0 && extensions.length == 0)
+				if (extensions.length == 0 && extPoints.length == 0)
 					continue;
 				Element element = doc.createElement("bundle"); //$NON-NLS-1$
 				element.setAttribute("bundleID", Long.toString(models[i].getBundleDescription().getBundleId())); //$NON-NLS-1$

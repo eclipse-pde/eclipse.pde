@@ -225,7 +225,7 @@ public class PluginModelManager implements IAdaptable {
 				if (!(changed[i] instanceof IPluginModelBase)) continue;
 				IPluginModelBase model = (IPluginModelBase) changed[i];
 				boolean workspace = model.getUnderlyingResource()!=null;
-				fState.addBundle(model);
+				fState.addBundle(model, true);
 				IPluginBase plugin = model.getPluginBase();
 				String id = plugin.getId();
 				if (id != null) {
@@ -367,7 +367,7 @@ public class PluginModelManager implements IAdaptable {
 		}
 		if (workspace) {
 			if (added) {
-				addWorkspaceBundleToState(model);
+				addWorkspaceBundleToState(model, true);
 			} else {
 				removeWorkspaceBundleFromState(model);
 			}
@@ -446,7 +446,7 @@ public class PluginModelManager implements IAdaptable {
 			addToTable(models, true);
 		} else {
 			addToTable(fWorkspaceManager.getAllModels(), true);			
-			addWorkspaceBundlesToState();
+			addWorkspaceBundlesToNewState();
 		}
 		fSearchablePluginsManager.initialize();
 	}
@@ -459,7 +459,7 @@ public class PluginModelManager implements IAdaptable {
 	public void setState(PDEState state) {
 		fState = state;
 		fExternalManager.setModels(state.getTargetModels());
-		addWorkspaceBundlesToState();
+		addWorkspaceBundlesToNewState();
 	}
 
 	private void addToTable(IPluginModelBase[] models, boolean workspace) {
@@ -480,21 +480,21 @@ public class PluginModelManager implements IAdaptable {
 		}
 	}
 		
-	public void addWorkspaceBundlesToState() {
+	private void addWorkspaceBundlesToNewState() {
 		IPluginModelBase[] models = fWorkspaceManager.getAllModels();
 		for (int i = 0; i < models.length; i++) {
-			addWorkspaceBundleToState(models[i]);
+			addWorkspaceBundleToState(models[i], false);
 		}
 		fState.resolveState(true);
 	}
 	
-	private void addWorkspaceBundleToState(IPluginModelBase model) {
+	private void addWorkspaceBundleToState(IPluginModelBase model, boolean update) {
 		ModelEntry entry = findEntry(model.getPluginBase().getId());
 		IPluginModelBase external = entry == null ? null : entry.getExternalModel();
 		if (external != null) {
 			fState.removeBundleDescription(external.getBundleDescription());
 		}
-		fState.addBundle(model);		
+		fState.addBundle(model, update);		
 	}
 	
 	private void removeWorkspaceBundleFromState(IPluginModelBase model) {

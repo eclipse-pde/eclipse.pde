@@ -91,9 +91,9 @@ public class MinimalState {
         fState.setPlatformProperties(TargetPlatform.getTargetEnvironment());		
 	}
 	
-	public void addBundle(IPluginModelBase model) {
+	public void addBundle(IPluginModelBase model, boolean update) {
 		BundleDescription desc = model.getBundleDescription();
-		long bundleId = desc == null ? -1 : desc.getBundleId();
+		long bundleId = desc == null || !update ? -1 : desc.getBundleId();
 		try {
 			model.setBundleDescription(
 					addBundle(new File(model.getInstallLocation()), false,  bundleId));
@@ -103,7 +103,7 @@ public class MinimalState {
 			PDECore.log(e);
 		}
 	}
-
+	
 	public void addBundle(IPluginModelBase model, long bundleId) {
 		try {
 			addBundle(new File(model.getInstallLocation()), false, -1);
