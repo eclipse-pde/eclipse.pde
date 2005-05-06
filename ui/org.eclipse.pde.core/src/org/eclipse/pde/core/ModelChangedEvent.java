@@ -81,7 +81,7 @@ public class ModelChangedEvent implements IModelChangedEvent {
 		return changedProperty;
 	}
 	/**
-	 * The old property value.
+	 *  Returns the old property value.
 	 * 
 	 * @return the value before the change
 	 */
@@ -89,7 +89,7 @@ public class ModelChangedEvent implements IModelChangedEvent {
 		return oldValue;
 	}
 	/**
-	 * The new property value.
+	 *  Returns the new property value.
 	 * 
 	 * @return the value after the change
 	 */
@@ -97,7 +97,11 @@ public class ModelChangedEvent implements IModelChangedEvent {
 		return newValue;
 	}
 	/**
-	 * @see IModelChangedEvent#getChangeType
+	 *  Returns the event change type
+	 *  
+	 *  @return the event change type
+	 *  
+	 *  @see IModelChangedEvent#getChangeType
 	 */
 	public int getChangeType() {
 		return type;

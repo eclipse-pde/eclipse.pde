@@ -115,7 +115,7 @@ public interface IModel extends IBaseModel {
 	 * @param source
 	 *            an input stream that should be parsed to load the model.
 	 * @param outOfSync
-	 *            if true, time stamp will not be updated to maintain
+	 *            if true, the timestamp will not be updated to maintain
 	 *            out-of-sync state of the model.
 	 * @throws CoreException
 	 *             if errors are encountered during the reloading.

@@ -56,22 +56,22 @@ public interface IModelChangedEvent {
 	 */
 	public String getChangedProperty();
 	/**
-	 * When model change is of type <samp>CHANGE </samp>, this method is used to
+	 * When model change is of type <samp>CHANGE</samp>, this method is used to
 	 * obtain the old value of the property (before the change).
 	 * 
 	 * @return the old value of the changed property
 	 */
 	public Object getOldValue();
 	/**
-	 * When model change is of type <samp>CHANGE </samp>, this method is used to
+	 * When model change is of type <samp>CHANGE</samp>, this method is used to
 	 * obtain the new value of the property (after the change).
 	 * 
 	 * @return the new value of the changed property.
 	 */
 	public Object getNewValue();
 	/**
-	 * Returns the type of change that occured in the model (one of <samp>INSERT
-	 * </samp>, <samp>REMOVE </samp>, <samp>CHANGE </samp> or
+	 * Returns the type of change that occured in the model (one of <samp>INSERT</samp>,
+	 * <samp>REMOVE</samp>, <samp>CHANGE</samp> or
 	 * <samp>WORLD_CHANGED </samp>).
 	 * 
 	 * @return type of change

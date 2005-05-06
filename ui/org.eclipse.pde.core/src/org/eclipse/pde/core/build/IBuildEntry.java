@@ -22,23 +22,29 @@ public interface IBuildEntry extends IWritable {
 	 */
 	public static final String P_NAME = "name"; //$NON-NLS-1$
 	/**
-	 * A property name for changes to the '' field.
+	 * The prefix for any key denoting the source folders that
+	 * should be compiled into a JAR.  The suffix will
+	 * be the name of the JAR.
 	 */
 	public static final String JAR_PREFIX = "source."; //$NON-NLS-1$
 	/**
-	 * A property name for changes to the 'name' field.
+	 * The prefix for any key denoting output folders for a particular 
+	 * JAR.  The suffix will be the name of the JAR.
 	 */	
 	public static final String OUTPUT_PREFIX = "output."; //$NON-NLS-1$
 	/**
-	 * A property name for changes to the 'name' field.
+	 * The name of the key that lists all the folders and files
+	 * to be included in the binary build.
 	 */	
 	public static final String BIN_INCLUDES = "bin.includes"; //$NON-NLS-1$
 	/**
-	 * A property name for changes to the 'name' field.
+	 * The name of the key that lists all the folders and files
+	 * to be included in the source build.
 	 */	
 	public static final String SRC_INCLUDES = "src.includes"; //$NON-NLS-1$
 	/**
-	 * A property name for changes to the 'name' field.
+	 * The name of the key that declares extra library entries to be added
+	 * to the class path at build time only..
 	 */	
 	public static final String JARS_EXTRA_CLASSPATH = "jars.extra.classpath"; //$NON-NLS-1$
 	/**

@@ -17,9 +17,6 @@ import org.eclipse.core.resources.IFile;
  * <ul>
  * <li>To hold model objects in one place
  * <li>To allow requesters to connect to the models or to disconnect from them.
- * <li>To maintain reference count of model users.
- * <li>To ensure "one writer/many readers" access to the model so that only one
- * requester can get an editable copy of the model at any time.
  * <li>To notify interested parties when models are added and removed.
  * </ul>
  * Model providers are responsible for listening to the workspace, updating

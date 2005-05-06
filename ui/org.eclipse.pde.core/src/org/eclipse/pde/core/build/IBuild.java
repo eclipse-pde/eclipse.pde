@@ -36,7 +36,7 @@ public interface IBuild extends IWritable {
 	 * 
 	 * @param name
 	 *            name of the desired entry
-	 * @return the entry object with the specified name, or <samp>null </samp>
+	 * @return the entry object with the specified name, or <samp>null</samp>
 	 *         if not found.
 	 */
 	IBuildEntry getEntry(String name);

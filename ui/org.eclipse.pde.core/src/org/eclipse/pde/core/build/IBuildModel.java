@@ -12,7 +12,7 @@ package org.eclipse.pde.core.build;
 
 import org.eclipse.pde.core.*;
 /**
- * This model is created from the "plugin.jars" file
+ * This model is created from the "build.properties" file
  * that defines what source folders in the plug-in are
  * to be used to build require plug-in Jars.
  * <p>
