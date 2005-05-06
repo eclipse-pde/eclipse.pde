@@ -596,6 +596,10 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			validateSpecificationVersionAttribute(header,
 					exportPackageElements[i]);
 
+			validateX_InternalDirective(header, exportPackageElements[i]);
+			
+			validateX_FriendsDirective(header, exportPackageElements[i]);
+			
 			if (!isCheckUnresolvedImports()) {
 				continue;
 			}
@@ -1160,6 +1164,39 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 					Constants.VISIBILITY_DIRECTIVE, new String[] {
 							Constants.VISIBILITY_PRIVATE,
 							Constants.VISIBILITY_REEXPORT });
+		}
+	}
+
+		private void validateX_InternalDirective(IHeader header,
+			ManifestElement element) {
+		String internal = element
+				.getDirective(ICoreConstants.INTERNAL_DIRECTIVE);
+		if (internal == null) {
+			return;
+		}
+		for (int i = 0; i < BOOLEAN_VALUES.length; i++) {
+			if (BOOLEAN_VALUES[i].equals(internal)) {
+				return;
+			}
+		}
+		String message = NLS.bind(PDEMessages.BundleErrorReporter_dir_value,
+				(new String[] { internal, ICoreConstants.INTERNAL_DIRECTIVE })); //$NON-NLS-1$
+		report(message, getPackageLine(header, element.getValue()),
+				CompilerFlags.ERROR); //$NON-NLS-1$
+	}
+
+	private void validateX_FriendsDirective(IHeader header,
+			ManifestElement element) {
+		String friends = element.getDirective(ICoreConstants.FRIENDS_DIRECTIVE);
+		String internal = element
+				.getDirective(ICoreConstants.INTERNAL_DIRECTIVE);
+		if (friends != null && internal != null) {
+			String message = NLS.bind(
+					PDEMessages.BundleErrorReporter_directive_hasNoEffectWith_,
+					new String[] { ICoreConstants.FRIENDS_DIRECTIVE,
+							ICoreConstants.INTERNAL_DIRECTIVE }); //$NON-NLS-1$
+			report(message, getPackageLine(header, element.getValue()),
+					CompilerFlags.WARNING); //$NON-NLS-1$
 		}
 	}
 

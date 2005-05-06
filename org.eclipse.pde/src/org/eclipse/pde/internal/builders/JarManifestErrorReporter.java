@@ -35,7 +35,7 @@ import org.eclipse.pde.internal.core.PDECore;
 
 public class JarManifestErrorReporter {
 
-	private static final String[] BOOLEAN_VALUES = new String[] { "true", //$NON-NLS-1$
+	protected static final String[] BOOLEAN_VALUES = new String[] { "true", //$NON-NLS-1$
 			"false" }; //$NON-NLS-1$
 
 	private int fErrorCount;

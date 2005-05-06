@@ -80,6 +80,7 @@ public class PDEMessages extends NLS {
 	public static String BundleErrorReporter_deprecated_attribute_reprovide;
 	public static String BundleErrorReporter_deprecated_attribute_singleton;
 	public static String BundleErrorReporter_deprecated_attribute_specification_version;
+	public static String BundleErrorReporter_directive_hasNoEffectWith_;
 	public static String BundleErrorReporter_singletonAttrRequired;
 	public static String BundleErrorReporter_singletonRequired;
 	public static String BundleErrorReporter_headerMissing;
