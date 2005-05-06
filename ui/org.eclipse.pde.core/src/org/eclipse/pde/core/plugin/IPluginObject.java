@@ -27,6 +27,10 @@ public interface IPluginObject extends IWritable, IAdaptable {
 	 */
 	ISharedPluginModel getModel();
 	
+	/**
+	 * Returns the model that owns this object.
+	 * @return the model instance
+	 */	
 	IPluginModelBase getPluginModel();
 	/**
 	 * Returns the name of this model object

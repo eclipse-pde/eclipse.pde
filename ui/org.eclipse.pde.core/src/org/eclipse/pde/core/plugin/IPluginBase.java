@@ -51,7 +51,7 @@ public interface IPluginBase extends IExtensions, IIdentifiable {
 	 * This method will throw a CoreException if
 	 * model is not editable.
 	 *
-	 * @param library the new library object
+	 * @param library the new library
 	 */
 	void add(IPluginLibrary library) throws CoreException;
 
@@ -143,7 +143,7 @@ public interface IPluginBase extends IExtensions, IIdentifiable {
 	
 	/**
 	 * Returns version of the manifest grammar
-	 * @return version of the manifest grammer, or <samp>null</samp>
+	 * @return version of the manifest grammar, or <samp>null</samp>
 	 */
 	String getSchemaVersion();
 	/**

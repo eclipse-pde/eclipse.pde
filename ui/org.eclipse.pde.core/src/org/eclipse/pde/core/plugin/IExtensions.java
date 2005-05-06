@@ -35,9 +35,12 @@ public interface IExtensions extends IPluginObject {
 	 */
 	void add(IPluginExtension extension) throws CoreException;
 	/**
-	 * @param extension org.eclipse.pde.ui.model.plugin.IPluginExtension
+	 * Adds a new extension point to this object.
+	 * This method will throw a CoreException if the model is not editable.
+	 * 
+	 * @param extensionPoint the extension point
 	 */
-	void add(IPluginExtensionPoint extension) throws CoreException;
+	void add(IPluginExtensionPoint extensionPoint) throws CoreException;
 	/**
 	 * Returns extension points defined in this object.
 	 * @return an array of extension point objects

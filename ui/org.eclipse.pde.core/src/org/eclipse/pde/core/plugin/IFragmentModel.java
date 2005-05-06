@@ -12,15 +12,15 @@ package org.eclipse.pde.core.plugin;
 
 
 /**
- * This type of model is created by parsing the fragment.xml file.
+ * This type of model is created by parsing the manifest file.
  * If the file is a workspace resource, it will be
  * available as the underlying resource of the model.
  * The model may be read-only or editable.
- * It will also make a reference to the plugin.jars
+ * It will also make a reference to the build properties
  * model when created. The reference will be of the
  * same type as the model itself: if the model is
  * editable, it will attempt to obtain an exclusive
- * editable copy of plugin.jars model.
+ * editable copy of build.properties model.
  * <p>
  * The fragment model can be disabled. Disabling the
  * model will not change its data. Users of the

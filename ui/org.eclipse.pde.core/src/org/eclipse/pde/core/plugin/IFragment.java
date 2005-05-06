@@ -32,20 +32,22 @@ public interface IFragment extends IPluginBase {
 	 */
 	String P_RULE = "match"; //$NON-NLS-1$
 	/**
-	 * Returns the id of the plug-in that is the target
-	 * of this fragment.
-	 * @return target plug-in id
+	 * Returns the id of the fragment host.
+	 * 
+	 * @return the host id
 	 */
 	String getPluginId();
 	/**
-	 * Returns the version of the plug-in that is the target
-	 * of this fragment.
-	 * @return target plug-in version
+	 * Returns the version of the fragment host.
+	 * 
+	 * @return the host version
 	 */
 	String getPluginVersion();
 	/**
 	 * Returns an optional version match rule as defined in
 	 * IMatchRule interface.
+	 * 
+	 * @return the match rule
 	 */
 	int getRule();
 	/**

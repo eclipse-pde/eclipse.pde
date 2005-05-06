@@ -40,7 +40,7 @@ public interface IPluginParent extends IPluginObject {
 	void add(IPluginObject child) throws CoreException;
 	/**
 	 * Returns the number of children
-	 * currently owned by this parent.
+	 * currently owned by this parent.  Returns 0 if this is a lightweight model.
 	 *
 	 * @return the number of children
 	 */
@@ -61,7 +61,8 @@ public interface IPluginParent extends IPluginObject {
 	 */	
 	void swap(IPluginObject child1, IPluginObject child2) throws CoreException;
 	/**
-	 * Returns the children owned by this parent.
+	 * Returns the children owned by this parent.  Returns an empty array
+	 * if this is a lightweight model.
 	 *
 	 * @return an array of children
 	 */

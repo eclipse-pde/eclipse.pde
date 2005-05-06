@@ -17,19 +17,19 @@ import org.eclipse.core.runtime.*;
  */
 public interface IPlugin extends IPluginBase {
 	/**
-	 * A property that will be used when "className"
+	 * A property that will be used when the plug-in activator
 	 * field is changed.
 	 */
 	String P_CLASS_NAME = "class"; //$NON-NLS-1$
 
 	/**
-	 * Returns a plug-in class name.
-	 * @return plug-in class name or <samp>null</samp> if not specified.
+	 * Returns a plug-in activator class name
+	 * @return plug-in activator class name or <samp>null</samp> if not specified.
 	 */
 	String getClassName();
 
 	/**
-	 * Sets the name of the plug-in class.
+	 * Sets the name of the plug-in activator class.
 	 * This method will throw a CoreException
 	 * if the model is not editable.
 	 *
