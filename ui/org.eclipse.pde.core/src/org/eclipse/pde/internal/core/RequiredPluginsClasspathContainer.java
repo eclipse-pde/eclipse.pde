@@ -274,7 +274,10 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			return null;
 		
 		Rule[] rules;
-		if (desc.isResolved() && desc.getHost() != null)
+		if (!desc.isResolved())
+			return null;
+		
+		if (desc.getHost() != null)
 			rules = getInclusions((BundleDescription)desc.getHost().getSupplier());
 		else
 			rules = getInclusions(desc);
@@ -284,7 +287,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	
 	private Rule[] getInclusions(BundleDescription desc) {
 		ArrayList list = (ArrayList)fVisiblePackages.get(desc.getSymbolicName());
-		return list != null ? (Rule[])list.toArray(new Rule[list.size()]) : null;		
+		return list != null ? (Rule[])list.toArray(new Rule[list.size()]) : new Rule[0];		
 	}
 
 	private void addImplicitDependencies(HashSet added) throws CoreException {
