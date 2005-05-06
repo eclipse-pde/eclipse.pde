@@ -233,23 +233,15 @@ public class WorkspaceModelManager
 		
 		int kind = delta.getKind();
 		switch (kind) {
-			case IResourceDelta.ADDED:
-				handleFileAdded(file);
-				break;
 			case IResourceDelta.REMOVED:
 				handleFileRemoved(file);
 				break;
 			case IResourceDelta.CHANGED:
 				handleFileChanged(file, delta);
 				break;
+			case IResourceDelta.ADDED:
+				handleFileChanged(file, delta);
 		}		
-	}
-	
-	private void handleFileAdded(IFile file) {
-		IModel model = getWorkspaceModel(file);
-		if (model != null)
-			removeWorkspaceModel(file.getProject());
-		addWorkspaceModel(file.getProject(), true);
 	}
 	
 	private void handleFileRemoved(IFile file) {
@@ -295,7 +287,7 @@ public class WorkspaceModelManager
 	private void handleFileChanged(IFile file, IResourceDelta delta) {
 		IModel model = getWorkspaceModel(file);
 		if (model == null) {
-			handleFileAdded(file);
+			addWorkspaceModel(file.getProject(), true);
 			return;
 		}
 		if ((IResourceDelta.CONTENT & delta.getFlags()) != 0) {
