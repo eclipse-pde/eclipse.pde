@@ -116,9 +116,13 @@ public class Bundle implements IBundle {
     private ManifestHeader createHeader(String key, String value) {
         ManifestHeader header = null;
         if (key.equals(Constants.EXPORT_PACKAGE) || key.equals(ICoreConstants.PROVIDE_PACKAGE)) {
-            header = new ExportPackageHeader(key, value, this);
+        	String newLine = TextUtilities.getDefaultLineDelimiter(fModel
+					.getDocument());
+			header = new ExportPackageHeader(key, value, this, newLine);
         } else if (key.equals(Constants.IMPORT_PACKAGE)){
-            header = new ImportPackageHeader(key, value, this);
+        	String newLine = TextUtilities.getDefaultLineDelimiter(fModel
+					.getDocument());
+			header = new ImportPackageHeader(key, value, this, newLine);
         } else {
             header = new ManifestHeader(key, value, this);
         }

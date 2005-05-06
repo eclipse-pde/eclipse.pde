@@ -279,7 +279,7 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
         for (int i = 0; i < objects.length; i++) {
             IPackageFragment fragment = (IPackageFragment)objects[i];
             if (buffer.length() > 0)
-                buffer.append("," + System.getProperty("line.separator") + " ");
+                buffer.append("," + getLineDelimiter() + " ");
             buffer.append(fragment.getElementName());
         }
         return buffer.toString();
@@ -368,7 +368,15 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
         
     }
     
-    private IBundle getBundle() {
+     private String getLineDelimiter() {
+		BundleInputContext inputContext = getBundleContext();
+		if (inputContext != null) {
+			return inputContext.getLineDelimiter();
+		}
+		return System.getProperty("line.separator"); //$NON-NLS-1$
+	}
+
+     private IBundle getBundle() {
         IBundleModel model = getBundleModel();
          return (model != null) ? model.getBundle() : null;
     }

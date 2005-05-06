@@ -21,6 +21,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
+import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IEditable;
@@ -383,5 +384,15 @@ public abstract class InputContext {
 	 */
 	public void setValidated(boolean validated) {
 		this.fValidated = validated;
+	}
+	
+	public String getLineDelimiter() {
+		if (fDocumentProvider != null) {
+			IDocument document = fDocumentProvider.getDocument(fEditorInput);
+			if (document != null) {
+				return TextUtilities.getDefaultLineDelimiter(document);
+			}
+		}
+		return System.getProperty("line.separator"); //$NON-NLS-1$
 	}
 }

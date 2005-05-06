@@ -35,6 +35,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
@@ -259,6 +260,7 @@ public class NewLibraryPluginCreationOperation extends
 
 	private TextEdit removeRootExportPackage(BundleModel model) {
 		Bundle bundle = (Bundle) model.getBundle();
+		String newLine = TextUtilities.getDefaultLineDelimiter(model.getDocument());
 		ExportPackageHeader header = (ExportPackageHeader) bundle
 				.getManifestHeader(Constants.EXPORT_PACKAGE);
 		ExportPackageObject[] packages = header.getPackages();
@@ -266,7 +268,7 @@ public class NewLibraryPluginCreationOperation extends
 			if (".".equals(packages[i].getName())) { //$NON-NLS-1$
 				header.removePackage(packages[i]);
 				return new ReplaceEdit(header.getOffset(), header.getLength(),
-						header.write() + System.getProperty("line.separator")); //$NON-NLS-1$
+						header.write() + newLine); //$NON-NLS-1$
 			}
 		}
 		return null;

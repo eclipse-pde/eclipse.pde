@@ -66,6 +66,7 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
 
+
 public class ImportPackageSection extends TableSection implements IModelChangedListener {
 
     private static final int ADD_INDEX = 0;
@@ -278,7 +279,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
         for (int i = 0; i < objects.length; i++) {
             ExportPackageDescription desc = (ExportPackageDescription)objects[i];
             if (buffer.length() > 0)
-                buffer.append("," + System.getProperty("line.separator") + " ");
+                buffer.append("," + getLineDelimiter() + " ");
             buffer.append(desc.getName());
             String version = desc.getVersion().toString();
             if (!version.equals(Version.emptyVersion.toString())) {
@@ -393,6 +394,13 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
         return (context != null) ? (IBundleModel)context.getModel() : null;
         
     }
+    private String getLineDelimiter() {
+		BundleInputContext inputContext = getBundleContext();
+		if (inputContext != null) {
+			return inputContext.getLineDelimiter();
+		}
+		return System.getProperty("line.separator"); //$NON-NLS-1$
+	}
     
     private IBundle getBundle() {
         IBundleModel model = getBundleModel();

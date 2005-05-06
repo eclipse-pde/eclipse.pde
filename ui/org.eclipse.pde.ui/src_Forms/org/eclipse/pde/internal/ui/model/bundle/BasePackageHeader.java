@@ -25,11 +25,15 @@ public abstract class BasePackageHeader extends ManifestHeader {
     private static final long serialVersionUID = 1L;
     
     protected TreeMap fPackages = new TreeMap();
+    
+    protected String fLineDelimiter;
 
-    public BasePackageHeader(String name, String value, IBundle bundle) {
-        super(name, value, bundle);
-        processValue();
-    }
+	public BasePackageHeader(String name, String value, IBundle bundle,
+			String lineDelimiter) {
+		super(name, value, bundle);
+		this.fLineDelimiter = lineDelimiter;
+		processValue();
+	}
 
     protected String getVersionAttribute() {
         int manifestVersion = BundlePluginBase.getBundleManifestVersion(getBundle());
@@ -69,9 +73,9 @@ public abstract class BasePackageHeader extends ManifestHeader {
         while (iter.hasNext()) {
             buffer.append(((PackageObject)iter.next()).write());
             if (iter.hasNext()) {
-                buffer.append(",");
-                buffer.append(System.getProperty("line.separator"));
-                buffer.append(" "); 
+                buffer.append(","); //$NON-NLS-1$
+                buffer.append(fLineDelimiter);
+                buffer.append(" ");  //$NON-NLS-1$
             }
         }
        fValue = buffer.toString();

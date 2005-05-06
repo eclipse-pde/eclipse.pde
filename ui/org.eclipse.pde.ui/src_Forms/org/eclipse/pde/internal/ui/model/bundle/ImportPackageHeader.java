@@ -18,9 +18,10 @@ public class ImportPackageHeader extends BasePackageHeader {
 
     private static final long serialVersionUID = 1L;
 
-    public ImportPackageHeader(String name, String value, IBundle bundle) {
-        super(name, value, bundle);
-    }
+    public ImportPackageHeader(String name, String value, IBundle bundle,
+			String lineDelimiter) {
+		super(name, value, bundle, lineDelimiter);
+	}
 
     protected void processValue() {
         try {

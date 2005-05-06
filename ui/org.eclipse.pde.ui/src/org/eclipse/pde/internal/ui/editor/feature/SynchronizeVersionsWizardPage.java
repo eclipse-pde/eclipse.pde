@@ -204,7 +204,10 @@ public boolean finish() {
 		Bundle bundle = (Bundle)model.getBundle();
 		ManifestHeader header = bundle.getManifestHeader(Constants.BUNDLE_VERSION);
 		header.setValue(targetVersion);
-		return new ReplaceEdit(header.getOffset(), header.getLength(), header.write() + System.getProperty("line.separator")); //$NON-NLS-1$
+		String newLine = TextUtilities
+		.getDefaultLineDelimiter(((IEditingModel) model)
+				.getDocument());
+		return new ReplaceEdit(header.getOffset(), header.getLength(), header.write() + newLine); //$NON-NLS-1$
 	}
 
 	private TextEdit modifyVersion(PluginModelBase model, String version)

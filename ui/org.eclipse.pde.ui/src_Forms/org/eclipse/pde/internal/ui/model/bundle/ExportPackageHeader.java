@@ -11,25 +11,17 @@
 package org.eclipse.pde.internal.ui.model.bundle;
 
 import org.eclipse.osgi.util.*;
-import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.osgi.framework.*;
 
 public class ExportPackageHeader extends BasePackageHeader {
     
     private static final long serialVersionUID = 1L;
-
-    private static String getExportedPackageHeader(int manifestVersion) {
-        return (manifestVersion < 2) ? ICoreConstants.PROVIDE_PACKAGE : Constants.EXPORT_PACKAGE;
-   }
    
-    public ExportPackageHeader(int manifestVersion, String value, IBundle bundle) {
-       super(getExportedPackageHeader(manifestVersion), value, bundle);
-    }
- 
-    public ExportPackageHeader(String name, String value, IBundle bundle) {
-        super(name, value, bundle);
-    }
+    public ExportPackageHeader(String name, String value, IBundle bundle,
+			String lineDelimiter) {
+		super(name, value, bundle, lineDelimiter);
+	}
     
     protected void processValue() {
         try {
