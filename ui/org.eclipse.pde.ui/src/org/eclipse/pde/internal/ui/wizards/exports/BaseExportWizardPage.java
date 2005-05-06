@@ -325,7 +325,9 @@ public abstract class BaseExportWizardPage extends WizardPage {
 		String[] items = (String[])list.toArray(new String[list.size()]);
 		combo.setItems(items);
 		if (items.length > 0)
-			combo.setText(items[0]);				
+			combo.setText(items[0]);
+		else
+			combo.setText(""); //$NON-NLS-1$
 	}
 
 	public void saveSettings() {
