@@ -45,4 +45,7 @@ public interface ICoreConstants {
 	public final static String PACKAGE_SPECIFICATION_VERSION = "specification-version"; //$NON-NLS-1$
 	public final static String EXTENSIBLE_API = "Eclipse-ExtensibleAPI"; //$NON-NLS-1$
 	public final static String PLUGIN_CLASS = "Plugin-Class"; //$NON-NLS-1$
+
+	public static final String INTERNAL_DIRECTIVE = "x-internal"; //$NON-NLS-1$
+	public static final String FRIENDS_DIRECTIVE = "x-friends"; //$NON-NLS-1$
 }
