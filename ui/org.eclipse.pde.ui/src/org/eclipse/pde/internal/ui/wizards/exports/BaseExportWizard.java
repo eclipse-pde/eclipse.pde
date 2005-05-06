@@ -136,24 +136,24 @@ public abstract class BaseExportWizard
 		if (!dir.exists())
 			dir.mkdirs();
 		
-		FileWriter fwriter = null;
+		OutputStream out = null;
 		PrintWriter writer = null;
 		try {
 			File buildFile = new File(dir, buildFilename);
-			fwriter = new FileWriter(buildFile);
-			writer = new PrintWriter(fwriter);
+			out = new FileOutputStream(buildFile);
+			writer = new PrintWriter(new OutputStreamWriter(out, "UTF-8")); //$NON-NLS-1$
 			generateAntTask(writer);
 			writer.close();
-			setDefaultValues(dir, buildFilename);				
+			setDefaultValues(dir, buildFilename);
 		} catch (IOException e) {
 		} finally {
-			try {
-				if (fwriter != null) 
-					fwriter.close();
-			} catch (IOException e) {
-			}
 			if (writer != null)
 				writer.close();
+			try {
+				if (out != null)
+					out.close();
+			} catch (IOException e) {
+			}
 		}
 	}
 	
