@@ -198,12 +198,13 @@ public class PDEState extends MinimalState {
 				BundleDescription newbundle = stateObjectFactory.createBundleDescription(desc);
 				IPluginModelBase model = createWorkspaceModel(newbundle);
 				if (model != null && fState.addBundle(newbundle)) {
-					fId = newbundle.getBundleId();
+					fId = Math.max(fId, newbundle.getBundleId());
 					fWorkspaceModels.add(model);
 				}
 				fExtensions.remove(Long.toString(newbundle.getBundleId()));
 				fPluginInfos.remove(Long.toString(newbundle.getBundleId()));
 			}
+			fId = Math.max(fId, fState.getBundles().length);
 			fState.resolve(true);
 		}
 	}
