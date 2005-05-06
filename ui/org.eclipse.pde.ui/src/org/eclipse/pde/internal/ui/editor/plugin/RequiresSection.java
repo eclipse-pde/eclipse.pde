@@ -333,6 +333,8 @@ public class RequiresSection
 
 	public void initialize() {
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
+		if (model == null)
+			return;
 		fImportViewer.setInput(model.getPluginBase());
         updateButtons();
 		model.addModelChangedListener(this);
