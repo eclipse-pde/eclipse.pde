@@ -124,7 +124,7 @@ represent the wizard.
          <attribute name="rcp" type="boolean" use="default" value="false">
             <annotation>
                <documentation>
-                  a boolean flag indicating whether the wizard contributes a standalone fully-functioning rich client application.  If set to &lt;code&gt;true&lt;/code&gt;, the wizard will appear in the New Plug-in Project wizard only when the user chooses the Rich Client Application option.
+                  Since 3.1.  A boolean flag indicating whether the wizard contributes a standalone fully-functioning rich client application.  If set to &lt;code&gt;true&lt;/code&gt;, the wizard will appear in the New Plug-in Project wizard only when the user chooses the Rich Client Application option.
                </documentation>
             </annotation>
          </attribute>
