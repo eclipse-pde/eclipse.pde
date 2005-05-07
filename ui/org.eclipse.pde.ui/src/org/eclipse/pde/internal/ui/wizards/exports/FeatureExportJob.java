@@ -511,9 +511,11 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
         fAntBuildProperties = null;
 
 		File scriptFile = null;
+		OutputStream out = null;
 		try {
 			scriptFile = createScriptFile();
-			writer = new PrintWriter(new FileWriter(scriptFile), true);
+			out = new FileOutputStream(scriptFile);
+			writer = new PrintWriter(new OutputStreamWriter(out, "UTF-8")); //$NON-NLS-1$
 			generateHeader(writer);
 			generateDeleteZipTarget(writer, config);
 			generateCleanTarget(writer);
@@ -533,6 +535,13 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		} catch (IOException e) {
 		} catch (CoreException e) {
 		} finally {
+			if (writer != null)
+				writer.close();
+			try {
+				if (out != null)
+					out.close();
+			} catch (IOException e) {
+			}
 			if (scriptFile != null && scriptFile.exists())
 				scriptFile.delete();
             monitor.done();
