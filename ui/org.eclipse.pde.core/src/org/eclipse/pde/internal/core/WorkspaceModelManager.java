@@ -202,9 +202,12 @@ public class WorkspaceModelManager
 		if (file.getName().equals("build.properties") && isPluginProject(file.getProject())) { //$NON-NLS-1$
 			if (fChangedModels == null)
 				fChangedModels = new ArrayList();
-			ModelChange change = new ModelChange(getWorkspaceModel(file.getProject()));
-			if (!fChangedModels.contains(change))
-				fChangedModels.add(change);
+			IModel model = getWorkspaceModel(file.getProject());
+			if (model != null) {
+				ModelChange change = new ModelChange(model);
+				if (!fChangedModels.contains(change))
+					fChangedModels.add(change);
+			}
 			return;
 		}
 		
