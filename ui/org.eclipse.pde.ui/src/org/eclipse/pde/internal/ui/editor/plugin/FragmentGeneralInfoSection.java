@@ -118,12 +118,15 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 			IActionBars actionBars) {
 		Label matchLabel = toolkit.createLabel(client, PDEUIMessages.ManifestEditor_PluginSpecSection_versionMatch);
 		matchLabel.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
-		matchLabel.setLayoutData(new TableWrapData(TableWrapData.MIDDLE));
+		TableWrapData td = new TableWrapData();
+		td.valign = TableWrapData.MIDDLE;
+		matchLabel.setLayoutData(td);
 		
 		fMatchCombo = new ComboPart();
 		fMatchCombo.createControl(client, toolkit, SWT.READ_ONLY);
-		TableWrapData td = new TableWrapData(TableWrapData.FILL);
+		td = new TableWrapData(TableWrapData.FILL);
 		td.colspan = 2;
+		td.valign = TableWrapData.MIDDLE;
 		fMatchCombo.getControl().setLayoutData(td);
 		
 		String[] items = new String[]{"", //$NON-NLS-1$
