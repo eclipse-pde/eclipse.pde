@@ -88,12 +88,12 @@ public class PDEState extends MinimalState {
 	private boolean fNewState;
 	
 	public PDEState(URL[] urls, boolean resolve, IProgressMonitor monitor) {
-		this(new URL[0], urls, TargetPlatform.getTargetEnvironment(), monitor);
-		fResolve = resolve;
+		this(new URL[0], urls, resolve, TargetPlatform.getTargetEnvironment(), monitor);
 	}
 	
-	public PDEState(URL[] workspace, URL[] target, Dictionary properties, IProgressMonitor monitor) {
+	public PDEState(URL[] workspace, URL[] target, boolean resolve, Dictionary properties, IProgressMonitor monitor) {
 		long start = System.currentTimeMillis();
+		fResolve = resolve;
 		fWorkspaceURLs = workspace;
 		fTargetURLs = target;
 		fMonitor = monitor;
@@ -102,6 +102,7 @@ public class PDEState extends MinimalState {
 			readTargetState();
 		} else {
 			createNewTargetState();
+			createExtensionDocument();
 		}
 		fState.setResolver(Platform.getPlatformAdmin().getResolver());
 		fState.setPlatformProperties(fPlatformProperties);
@@ -253,31 +254,40 @@ public class PDEState extends MinimalState {
 		map.put(element.getAttribute("bundleID"), info); //$NON-NLS-1$
 	}
 	
-	private void saveExtensions(File dir) {
+	private Document createExtensionDocument(){
 		fExtensions = new HashMap();
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		Document doc = null;
+		try {
+			doc = factory.newDocumentBuilder().newDocument();
+		} catch (ParserConfigurationException e) {
+			return null;
+		}
+		Element root = doc.createElement("extensions"); //$NON-NLS-1$
+
+		BundleDescription[] bundles = fState.getBundles();
+		for (int i = 0; i < bundles.length; i++) {
+			BundleDescription desc = bundles[i];
+			Element element = doc.createElement("bundle"); //$NON-NLS-1$
+			element.setAttribute("bundleID", Long.toString(desc.getBundleId())); //$NON-NLS-1$
+			PDEStateHelper.parseExtensions(desc, element);
+			if (element.hasChildNodes()) {
+				root.appendChild(element);
+				fExtensions.put(Long.toString(desc.getBundleId()), element);
+			}
+		}
+		doc.appendChild(root);
+		return doc;
+	}
+	
+	private void saveExtensions(File dir) {
 		File file = new File(dir, ".extensions"); //$NON-NLS-1$
 		OutputStream out = null;
 		Writer writer = null;
 		try {
 			out = new FileOutputStream(file);
 			writer = new OutputStreamWriter(out, "UTF-8"); //$NON-NLS-1$
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			Document doc = factory.newDocumentBuilder().newDocument();
-			Element root = doc.createElement("extensions"); //$NON-NLS-1$
-			
-			BundleDescription[] bundles = fState.getBundles();
-			for (int i = 0; i < bundles.length; i++) {
-				BundleDescription desc = bundles[i];
-				Element element = doc.createElement("bundle"); //$NON-NLS-1$
-				element.setAttribute("bundleID", Long.toString(desc.getBundleId())); //$NON-NLS-1$
-				PDEStateHelper.parseExtensions(desc, element);
-				if (element.hasChildNodes()) {
-					root.appendChild(element);
-					fExtensions.put(Long.toString(desc.getBundleId()), element);
-				}
-			}	
-			doc.appendChild(root);
-			XMLPrintHandler.printNode(writer, doc, "UTF-8"); //$NON-NLS-1$
+			XMLPrintHandler.printNode(writer, createExtensionDocument(), "UTF-8"); //$NON-NLS-1$
 		} catch (Exception e) {
 			PDECore.log(e);
 		} finally {

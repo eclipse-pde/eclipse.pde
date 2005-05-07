@@ -38,7 +38,7 @@ public class InitializeModelsPerfTest extends PerformanceTestCase {
 		tagAsSummary("Initialize Plug-ins (no caching)", Dimension.ELAPSED_PROCESS);
 		String path = ExternalModelManager.getEclipseHome().toOSString();
 		startMeasuring();
-		new PDEState(PluginPathFinder.getPluginPaths(path), true, new NullProgressMonitor());
+		new PDEState(PluginPathFinder.getPluginPaths(path), false, new NullProgressMonitor());
 		stopMeasuring();
 		commitMeasurements();
 		assertPerformance();

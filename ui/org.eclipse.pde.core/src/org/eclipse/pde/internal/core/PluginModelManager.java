@@ -435,6 +435,7 @@ public class PluginModelManager implements IAdaptable {
 		fState = new PDEState(
 						WorkspaceModelManager.getPluginPaths(),
 						ExternalModelManager.getPluginPaths(),
+						true,
 						TargetPlatform.getTargetEnvironment(),
 						new NullProgressMonitor());
 		
