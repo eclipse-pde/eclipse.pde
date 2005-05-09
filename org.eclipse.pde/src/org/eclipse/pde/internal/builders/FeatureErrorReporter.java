@@ -355,6 +355,8 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 			String name = attributes.item(i).getNodeName();
 			if (!attrs.contains(name)) {
 				reportUnknownAttribute(element, name, CompilerFlags.ERROR);
+			} else if (name.equals("id")){ //$NON-NLS-1$
+				validatePluginID(element, (Attr)attributes.item(i)); //$NON-NLS-1$
 			} else if (name.equals("primary") || name.equals("exclusive")){ //$NON-NLS-1$ //$NON-NLS-2$
 				validateBoolean(element, (Attr)attributes.item(i));
 			} else if (name.equals("version")) { //$NON-NLS-1$
