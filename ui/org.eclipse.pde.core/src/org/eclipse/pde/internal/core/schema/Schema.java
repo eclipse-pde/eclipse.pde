@@ -900,7 +900,7 @@ public class Schema extends PlatformObject implements ISchema {
 		writer.println(indent2 + "</appInfo>"); //$NON-NLS-1$
 		writer.println(indent2 + "<documentation>"); //$NON-NLS-1$
 		writer.println(indent3
-				+ CoreUtility.getWritableString(getDescription()));
+				+ getWritableDescription());
 		writer.println(indent2 + "</documentation>"); //$NON-NLS-1$
 		writer.println(INDENT + "</annotation>"); //$NON-NLS-1$
 		writer.println();
@@ -926,5 +926,14 @@ public class Schema extends PlatformObject implements ISchema {
 			writer.println();
 		}
 		writer.println("</schema>"); //$NON-NLS-1$
+	}
+
+	private String getWritableDescription() {
+		String lineDelimiter = System.getProperty("line.separator"); //$NON-NLS-1$
+		String description = CoreUtility.getWritableString(getDescription());
+		String platformDescription = description.replaceAll(
+				"[\\r\\n|\\r|\\n]", lineDelimiter); //$NON-NLS-1$
+
+		return platformDescription;
 	}
 }

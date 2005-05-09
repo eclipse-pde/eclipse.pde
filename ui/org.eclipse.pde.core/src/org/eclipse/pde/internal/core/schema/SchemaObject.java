@@ -56,7 +56,12 @@ public abstract class SchemaObject extends PlatformObject implements
 	}
 
 	public String getWritableDescription() {
-		return CoreUtility.getWritableString(getDescription());
+		String lineDelimiter = System.getProperty("line.separator"); //$NON-NLS-1$
+		String description = CoreUtility.getWritableString(getDescription());
+		String platformDescription = description.replaceAll(
+				"[\\r\\n|\\r|\\n]", lineDelimiter); //$NON-NLS-1$
+
+		return platformDescription;
 	}
 
 	public void setDescription(String newDescription) {
