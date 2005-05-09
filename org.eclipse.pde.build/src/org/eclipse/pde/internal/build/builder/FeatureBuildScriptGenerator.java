@@ -530,9 +530,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				fileSet[i] = new FileSet(fromDir + file, null, "**", null, null, null, null); //$NON-NLS-1$
 			}
 		}
-		String shouldOverwrite =  (String) getBuildProperties().get("overwriteRootFiles");
-		if (shouldOverwrite == null)
-			shouldOverwrite = "true";
+		String shouldOverwrite =  getBuildProperties().getProperty(PROPERTY_OVERWRITE_ROOTFILES, "true"); //$NON-NLS-1$
 		script.printCopyTask(null, getPropertyFormat(PROPERTY_FEATURE_BASE) + '/' + configName + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER), fileSet, true, Boolean.valueOf(shouldOverwrite).booleanValue());
 	}
 
@@ -567,12 +565,12 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	}
 
 	private String removeEndingSlashes(String value) {
-		String[] params = Utils.getArrayFromString(value, ",");
+		String[] params = Utils.getArrayFromString(value, ","); //$NON-NLS-1$
 		for (int i = 0; i < params.length; i++) {
-			if (params[i].endsWith("/"))
+			if (params[i].endsWith("/")) //$NON-NLS-1$
 				params[i] = params[i].substring(0, params[i].length() - 1);
 		}
-		return Utils.getStringFromArray(params, ",");
+		return Utils.getStringFromArray(params, ","); //$NON-NLS-1$
 	}
 	
 	private void generateChmodInstruction(String dir, String rights, String files) {
