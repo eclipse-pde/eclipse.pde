@@ -19,7 +19,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Dictionary;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
@@ -52,6 +54,8 @@ import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.exports.FeatureExportJob;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.InvalidSyntaxException;
 
 public class ProductExportJob extends FeatureExportJob {
 	
@@ -117,7 +121,7 @@ public class ProductExportJob extends FeatureExportJob {
 				fFeatureLocation = fBuildTempLocation + File.separator + featureID;
 				createFeature(featureID, fFeatureLocation, config, true);
 				createBuildPropertiesFile(fFeatureLocation);
-				createConfigIniFile();
+				createConfigIniFile(config);
 				createEclipseProductFile();
 				createLauncherIniFile();
 				doExport(featureID, 
@@ -265,7 +269,7 @@ public class ProductExportJob extends FeatureExportJob {
 	}	
 	
 	
-	private void createConfigIniFile() {
+	private void createConfigIniFile(String[] config) {
 		File dir = new File(fFeatureLocation, "temp/configuration"); //$NON-NLS-1$
 		if (!dir.exists() || !dir.isDirectory())
 			dir.mkdirs();
@@ -306,7 +310,7 @@ public class ProductExportJob extends FeatureExportJob {
             if (fProduct.useFeatures()) {
                 writer.println("osgi.bundles=" +  "org.eclipse.core.runtime@2:start,org.eclipse.update.configurator@3:start"); //$NON-NLS-1$ //$NON-NLS-2$
             } else {
-                writer.println("osgi.bundles=" + getPluginList()); //$NON-NLS-1$
+                writer.println("osgi.bundles=" + getPluginList(config)); //$NON-NLS-1$
             }
             writer.println("osgi.bundles.defaultStartLevel=4"); //$NON-NLS-1$ //$NON-NLS-2$		
         } catch (IOException e) {
@@ -333,20 +337,35 @@ public class ProductExportJob extends FeatureExportJob {
 		return (dot != -1) ? fProduct.getId().substring(0, dot) : null;
 	}
 	
-	private String getPluginList() {
+	private String getPluginList(String[] config) {
 		StringBuffer buffer = new StringBuffer();
-		IProductPlugin[] plugins = fProduct.getPlugins();
-		for (int i = 0; i < plugins.length; i++) {
-			String id = plugins[i].getId();
-			if ("org.eclipse.osgi".equals(id)) //$NON-NLS-1$
-				continue;
-			if (buffer.length() > 0)
-				buffer.append(","); //$NON-NLS-1$
-			buffer.append(id);
-			if ("org.eclipse.core.runtime".equals(id)) //$NON-NLS-1$
-				buffer.append("@2:start"); //$NON-NLS-1$
-            if ("org.eclipse.update.configurator".equals(id)) //$NON-NLS-1$
-                buffer.append("@3:start"); //$NON-NLS-1$
+		
+        Dictionary environment = new Hashtable(4);
+        environment.put("osgi.os", config[0]); //$NON-NLS-1$
+        environment.put("osgi.ws", config[1]); //$NON-NLS-1$
+        environment.put("osgi.arch", config[2]); //$NON-NLS-1$
+        environment.put("osgi.nl", config[3]); //$NON-NLS-1$
+
+        BundleContext context = PDEPlugin.getDefault().getBundleContext();
+
+		for (int i = 0; i < fItems.length; i++) {
+			BundleDescription bundle = (BundleDescription)fItems[i];
+            String filterSpec = bundle.getPlatformFilter();
+            try {
+				if (filterSpec == null|| context.createFilter(filterSpec).match(environment)) {			
+					String id = ((BundleDescription)fItems[i]).getSymbolicName();				
+					if ("org.eclipse.osgi".equals(id)) //$NON-NLS-1$
+						continue;
+					if (buffer.length() > 0)
+						buffer.append(","); //$NON-NLS-1$
+					buffer.append(id);
+					if ("org.eclipse.core.runtime".equals(id)) //$NON-NLS-1$
+						buffer.append("@2:start"); //$NON-NLS-1$
+				    if ("org.eclipse.update.configurator".equals(id)) //$NON-NLS-1$
+				        buffer.append("@3:start"); //$NON-NLS-1$
+				}
+			} catch (InvalidSyntaxException e) {
+			}
 		}
 		return buffer.toString();
 	}
