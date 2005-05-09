@@ -98,7 +98,6 @@ public class MinimalState {
 			model.setBundleDescription(
 					addBundle(new File(model.getInstallLocation()), false,  bundleId));
 		} catch (PluginConversionException e) {
-			PDECore.log(e);
 		} catch (CoreException e) {
 			PDECore.log(e);
 		}

@@ -289,7 +289,8 @@ public class WorkspaceModelManager
 	
 	private void handleFileChanged(IFile file, IResourceDelta delta) {
 		IModel model = getWorkspaceModel(file);
-		if (model == null) {
+		if (model == null
+				|| (model instanceof WorkspacePluginModelBase && file.getName().equals("MANIFEST.MF"))) {
 			addWorkspaceModel(file.getProject(), true);
 			return;
 		}
