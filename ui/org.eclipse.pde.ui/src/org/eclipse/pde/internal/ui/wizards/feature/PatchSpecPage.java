@@ -11,12 +11,11 @@
 
 package org.eclipse.pde.internal.ui.wizards.feature;
 
-import java.util.StringTokenizer;
-
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.widgets.Composite;
@@ -128,17 +127,11 @@ public class PatchSpecPage extends BaseFeatureSpecPage {
 	}
 
 	protected String verifyIdRules() {
-		String problemText = PDEUIMessages.NewFeatureWizard_SpecPage_invalidId;
-		String name = patchIdText.getText();
-		if (name == null || name.length() == 0)
+		String id = patchIdText.getText();
+		if (id == null || id.length() == 0)
 			return PDEUIMessages.NewFeatureWizard_SpecPage_pmissing;
-		StringTokenizer stok = new StringTokenizer(name, "."); //$NON-NLS-1$
-		while (stok.hasMoreTokens()) {
-			String token = stok.nextToken();
-			for (int i = 0; i < token.length(); i++) {
-				if (Character.isLetterOrDigit(token.charAt(i)) == false)
-					return problemText;
-			}
+		if (!IdUtil.isValidPluginId(id)) {
+			return PDEUIMessages.NewFeatureWizard_SpecPage_invalidId;
 		}
 		return super.verifyIdRules();
 	}

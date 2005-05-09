@@ -11,15 +11,14 @@
 
 package org.eclipse.pde.internal.ui.wizards.feature;
 
-import java.util.StringTokenizer;
-
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.FeatureSelectionDialog;
@@ -288,19 +287,7 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 		}
 	}
 	protected String computeInitialId(String projectName) {
-		StringBuffer buffer = new StringBuffer();
-		StringTokenizer stok = new StringTokenizer(projectName, "."); //$NON-NLS-1$
-		while (stok.hasMoreTokens()) {
-			String token = stok.nextToken();
-			for (int i = 0; i < token.length(); i++) {
-				if (Character.isLetterOrDigit(token.charAt(i)))
-					buffer.append(token.charAt(i));
-			}
-			if (stok.hasMoreTokens()
-					&& buffer.charAt(buffer.length() - 1) != '.')
-				buffer.append("."); //$NON-NLS-1$
-		}
-		return buffer.toString();
+		return projectName.replaceAll("[^a-zA-Z0-9\\._]", "_"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	protected String verifyVersion() {
@@ -312,17 +299,11 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 	}
 	
 	protected String verifyIdRules() {
-		String problemText = PDEUIMessages.NewFeatureWizard_SpecPage_invalidId;
-		String name = featureIdText.getText();
-		if (name == null || name.length() == 0)
-			 return PDEUIMessages.NewFeatureWizard_SpecPage_missing;
-		StringTokenizer stok = new StringTokenizer(name, "."); //$NON-NLS-1$
-		while (stok.hasMoreTokens()) {
-			String token = stok.nextToken();
-			for (int i = 0; i < token.length(); i++) {
-				if (Character.isLetterOrDigit(token.charAt(i)) == false)
-					return problemText;
-			}
+		String id = featureIdText.getText();
+		if (id == null || id.length() == 0)
+			return PDEUIMessages.NewFeatureWizard_SpecPage_missing;
+		if (!IdUtil.isValidPluginId(id)) {
+			return PDEUIMessages.NewFeatureWizard_SpecPage_invalidId;
 		}
 		return null;
 	}
