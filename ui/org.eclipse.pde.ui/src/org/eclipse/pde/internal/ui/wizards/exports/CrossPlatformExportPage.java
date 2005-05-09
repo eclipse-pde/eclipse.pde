@@ -160,7 +160,7 @@ public class CrossPlatformExportPage extends ExportWizardPage {
 	private void getOS(ArrayList list, File file, String ws) {
 		File[] children = file.listFiles();
 		for (int i = 0; i < children.length; i++) {
-			if (children[i].isDirectory() && !"qnx".equals(file.getName())) {
+			if (children[i].isDirectory()) {
 				Configuration config = new Configuration();
 				config.ws = ws;
 				config.os = file.getName();
