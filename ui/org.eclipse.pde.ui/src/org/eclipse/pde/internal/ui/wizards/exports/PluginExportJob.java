@@ -69,7 +69,7 @@ public class PluginExportJob extends FeatureExportJob {
 		} finally {
 			for (int i = 0; i < fItems.length; i++) {
 				if (fItems[i] instanceof IPluginModelBase)
-					deleteBuildFiles((IPluginModelBase)fItems[i]);
+					deleteBuildFiles(fItems[i]);
 			}
 			cleanup(null, new SubProgressMonitor(monitor, 3));
 			monitor.done();

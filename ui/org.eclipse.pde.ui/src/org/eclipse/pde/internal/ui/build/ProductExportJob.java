@@ -10,25 +10,48 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.build;
 
-import java.io.*;
-import java.lang.reflect.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Properties;
+import java.util.StringTokenizer;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.build.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.core.iproduct.*;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.State;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.build.BuildScriptGenerator;
+import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
+import org.eclipse.pde.internal.build.IXMLConstants;
+import org.eclipse.pde.internal.core.ExternalModelManager;
+import org.eclipse.pde.internal.core.FeatureModelManager;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.iproduct.IArgumentsInfo;
+import org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo;
+import org.eclipse.pde.internal.core.iproduct.ILauncherInfo;
+import org.eclipse.pde.internal.core.iproduct.IProduct;
+import org.eclipse.pde.internal.core.iproduct.IProductFeature;
+import org.eclipse.pde.internal.core.iproduct.IProductModel;
+import org.eclipse.pde.internal.core.iproduct.IProductPlugin;
+import org.eclipse.pde.internal.core.iproduct.ISplashInfo;
 import org.eclipse.pde.internal.core.util.CoreUtility;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.wizards.exports.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.wizards.exports.FeatureExportJob;
 
 public class ProductExportJob extends FeatureExportJob {
 	
@@ -68,18 +91,16 @@ public class ProductExportJob extends FeatureExportJob {
 		return (IFeatureModel[]) list.toArray(new IFeatureModel[list.size()]);
 	}
 
-	private IPluginModelBase[] getPluginModels() {
+	private BundleDescription[] getPluginModels() {
 		ArrayList list = new ArrayList();
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
+		State state = TargetPlatform.getState();
 		IProductPlugin[] plugins = fProduct.getPlugins();
 		for (int i = 0; i < plugins.length; i++) {
-			IPluginModelBase model = manager.findModel(plugins[i].getId());
-			if (model != null) {
-				list.add(model);
-			}
+			BundleDescription bundle = state.getBundle(plugins[i].getId(), null);
+			if (bundle != null)
+				list.add(bundle);
 		}
-		return (IPluginModelBase[]) list.toArray(new IPluginModelBase[list
-				.size()]);
+		return (BundleDescription[]) list.toArray(new BundleDescription[list.size()]);
 	}
 
 	protected void doExports(IProgressMonitor monitor)
@@ -109,7 +130,7 @@ public class ProductExportJob extends FeatureExportJob {
 			} catch (IOException e) {
 			} finally {
 				for (int j = 0; j < fItems.length; j++) {
-					deleteBuildFiles((IModel)fItems[j]);
+					deleteBuildFiles(fItems[j]);
 				}
 				cleanup(fTargets == null ? null : configurations[i], new SubProgressMonitor(monitor, 3));
 			}

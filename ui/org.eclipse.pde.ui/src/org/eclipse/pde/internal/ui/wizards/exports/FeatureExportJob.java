@@ -46,6 +46,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.build.IBuild;
@@ -457,7 +458,14 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		return new String[] {"build.jars"}; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	public void deleteBuildFiles(IModel model) throws CoreException {
+	public void deleteBuildFiles(Object object) throws CoreException {
+		IModel model = null;
+		if (object instanceof BundleDescription) {
+			model = PDECore.getDefault().getModelManager().findModel((BundleDescription)object);
+		} else if (object instanceof IModel){
+			model = (IModel)object;
+		}
+		
 		if (model == null)
 			return;
 
@@ -653,27 +661,36 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 
             BundleContext context = PDEPlugin.getDefault().getBundleContext();
             for (int i = 0; i < fItems.length; i++) {
-                if (fItems[i] instanceof IPluginModelBase) {
-                    IPluginModelBase model = (IPluginModelBase) fItems[i];
+            	if (fItems[i] instanceof IFeatureModel) {
+                    IFeature feature = ((IFeatureModel) fItems[i]).getFeature();
+  					Element includes = doc.createElement("includes"); //$NON-NLS-1$
+ 					includes.setAttribute("id", feature.getId()); //$NON-NLS-1$
+ 					includes.setAttribute("version", feature.getVersion()); //$NON-NLS-1$
+ 					root.appendChild(includes);
+                } else {
+	            	BundleDescription bundle = null;
+	                if (fItems[i] instanceof IPluginModelBase) {
+	                	bundle = ((IPluginModelBase)fItems[i]).getBundleDescription();
+	                }
+	                if (bundle == null) {
+	                	if (fItems[i] instanceof BundleDescription)
+	                		bundle = (BundleDescription)fItems[i];
+	                }
+	                if (bundle == null)
+	                	continue;
                     try {
-                        String filterSpec = model.getBundleDescription().getPlatformFilter();
+                        String filterSpec = bundle.getPlatformFilter();
                         if (filterSpec == null|| context.createFilter(filterSpec).match(environment)) {
                         	Element plugin = doc.createElement("plugin"); //$NON-NLS-1$
-                        	plugin.setAttribute("id", model.getPluginBase().getId()); //$NON-NLS-1$
+                        	plugin.setAttribute("id", bundle.getSymbolicName()); //$NON-NLS-1$
                             plugin.setAttribute("version", "0.0.0"); //$NON-NLS-1$ //$NON-NLS-2$
                             if (!fUseJarFormat) {
-                                plugin.setAttribute("unpack", Boolean.toString(doUnpack(model))); //$NON-NLS-1$
+                                plugin.setAttribute("unpack", Boolean.toString(doUnpack(bundle))); //$NON-NLS-1$
                              }
                             root.appendChild(plugin);
                          }
                     } catch (InvalidSyntaxException e) {
                     }
-                } else if (fItems[i] instanceof IFeatureModel) {
-                    IFeature feature = ((IFeatureModel) fItems[i]).getFeature();
- 					Element includes = doc.createElement("includes"); //$NON-NLS-1$
-					includes.setAttribute("id", feature.getId()); //$NON-NLS-1$
-					includes.setAttribute("version", feature.getVersion()); //$NON-NLS-1$
-					root.appendChild(includes);
                 }
             }
             XMLPrintHandler.writeFile(doc, new File(file, "feature.xml")); //$NON-NLS-1$
@@ -683,10 +700,16 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		}      	
     }
 
-    private boolean doUnpack(IPluginModelBase model) {
-        if (new File(model.getInstallLocation()).isFile())
+    private boolean doUnpack(BundleDescription bundle) {
+        if (new File(bundle.getLocation()).isFile())
             return false;
         
+        if (PDECore.getWorkspace().getRoot().getContainerForLocation(new Path(bundle.getLocation())) == null)
+        	return true;
+        	
+        IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(bundle);
+        if (model == null)
+        	return true;
         IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
         if (libraries.length == 0 && PDECore.getDefault().getModelManager().isOSGiRuntime())
             return false;

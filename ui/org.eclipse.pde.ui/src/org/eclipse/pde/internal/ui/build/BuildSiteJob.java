@@ -29,7 +29,6 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.core.runtime.jobs.MultiRule;
-import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
@@ -125,7 +124,7 @@ public class BuildSiteJob extends FeatureExportJob {
 			} catch (IOException e) {
 			} finally {
 				for (int j = 0; j < fItems.length; j++) {
-					deleteBuildFiles((IModel) fItems[j]);
+					deleteBuildFiles(fItems[j]);
 				}
 				cleanup(fTargets == null ? null : configurations[i],
 						new SubProgressMonitor(monitor, 3));
