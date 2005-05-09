@@ -1,7 +1,27 @@
+/* Using a page style */
+.page_style {	text-align: center;	}
+
+/* Give some space for main div.*/
+#content {
+	margin-top:100px;
+	width:20em;
+	text-align: left;	} 
+
+/* Setup anchors. Set the background 
+picture and layout the text. */
 a {
 	display:block;
-	text-decoration:none;
 	margin-bottom:20px;
-}
+	background-repeat: no-repeat;
+	background-image: url("./link_obj.gif");
+	background-position: left;
+	height:48px;
+	}
+
+a span  { 
+	display:block;
+	position: relative;
+	left:54px;
+	}
 	
 	

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?> 
 <introContent>
 	
-	<page style-id="page style" id="root" style="content/root.css">
+	<page style-id="page_style" id="root" style="content/root.css">
 		<title id="title_id">Welcome to $productName$</title>
 		<group id="content"> 
 			<link label="Learn about Concept One..." url="http://org.eclipse.ui.intro/showPage?id=concept1" />
