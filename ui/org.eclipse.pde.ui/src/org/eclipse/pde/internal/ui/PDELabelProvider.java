@@ -46,6 +46,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 		if (obj instanceof IProductPlugin) {
 			return getObjectText((IProductPlugin)obj);
 		}
+		if (obj instanceof BundleDescription) {
+			return getObjectText((BundleDescription)obj);
+		}
 		if (obj instanceof IPluginImport) {
 			return getObjectText((IPluginImport)obj);
 		}
@@ -143,6 +146,10 @@ public class PDELabelProvider extends SharedLabelProvider {
 	
 	public String getObjectText(IProductPlugin obj) {
 		return obj.getId();
+	}
+	
+	public String getObjectText(BundleDescription bundle) {
+		return bundle.getSymbolicName();
 	}
 	
 	public String getObjectText(IPluginImport obj) {
@@ -265,6 +272,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 		if (obj instanceof IProductPlugin) {
 			return getObjectImage((IProductPlugin)obj);
 		}
+		if (obj instanceof BundleDescription) {
+			return getObjectImage((BundleDescription)obj);
+		}
 		
 		if (obj instanceof IPluginLibrary) {
 			return getObjectImage((IPluginLibrary) obj);
@@ -338,6 +348,12 @@ public class PDELabelProvider extends SharedLabelProvider {
 
 	private Image getObjectImage(IPlugin plugin) {
 		return getObjectImage(plugin, false, false);
+	}
+	
+	private Image getObjectImage(BundleDescription bundle) {
+		return bundle.getHost() == null 
+			? get(PDEPluginImages.DESC_PLUGIN_OBJ)
+			: get(PDEPluginImages.DESC_FRAGMENT_OBJ);
 	}
 
 	public Image getObjectImage(

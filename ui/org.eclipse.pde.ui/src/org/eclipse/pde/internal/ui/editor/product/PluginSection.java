@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
@@ -48,7 +49,6 @@ import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.pde.internal.ui.util.PersistablePluginObject;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
-import org.eclipse.pde.internal.ui.wizards.PluginSelectionDialog;
 import org.eclipse.pde.internal.ui.wizards.plugin.NewFragmentProjectWizard;
 import org.eclipse.pde.internal.ui.wizards.plugin.NewPluginProjectWizard;
 import org.eclipse.swt.SWT;
@@ -60,6 +60,7 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -373,14 +374,33 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		}
 	}
 
-	private void handleAdd() {	
-		PluginSelectionDialog dialog = new PluginSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), getAvailableChoices(), true);
-		if (dialog.open() == PluginSelectionDialog.OK) {
-			Object[] models = dialog.getResult();
-			for (int i = 0; i < models.length; i++) {
-				addPlugin(((IPluginModelBase)models[i]).getPluginBase().getId());
+	private void handleAdd() {
+		ElementListSelectionDialog dialog = new ElementListSelectionDialog(
+				PDEPlugin.getActiveWorkbenchShell(), 
+				PDEPlugin.getDefault().getLabelProvider());
+		dialog.setElements(getBundles());
+		dialog.setTitle(PDEUIMessages.PluginSelectionDialog_title); 
+		dialog.setMessage(PDEUIMessages.PluginSelectionDialog_message);
+		dialog.setMultipleSelection(true);
+		if (dialog.open() == Window.OK) {
+			Object[] bundles = dialog.getResult();
+			for (int i = 0; i < bundles.length; i++) {
+				addPlugin(((BundleDescription)bundles[i]).getSymbolicName());
 			}
 		}
+	}
+	
+	private BundleDescription[] getBundles() {
+		TreeMap map = new TreeMap();
+		IProduct product = getProduct();
+		BundleDescription[] bundles = TargetPlatform.getState().getBundles();
+		for (int i = 0; i < bundles.length; i++) {
+			String id = bundles[i].getSymbolicName();
+			if (!product.containsPlugin(id)) {
+				map.put(id, bundles[i]);
+			}
+		}
+		return (BundleDescription[])map.values().toArray(new BundleDescription[map.size()]);
 	}
 	
 	private void addPlugin(String id) {
@@ -389,19 +409,6 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		IProductPlugin plugin = factory.createPlugin();
 		plugin.setId(id);
 		product.addPlugin(plugin);
-	}
-	
-	private IPluginModelBase[] getAvailableChoices() {
-		IPluginModelBase[] models = PDECore.getDefault().getModelManager ().getPlugins();
-		IProduct product = getProduct();
-		ArrayList list = new ArrayList();
-		for (int i = 0; i < models.length; i++) {
-			String id = models[i].getPluginBase().getId();
-			if (id != null && !product.containsPlugin(id)) {
-				list.add(models[i]);
-			}
-		}
-		return (IPluginModelBase[])list.toArray(new IPluginModelBase[list.size()]);
 	}
 	
 	private IProduct getProduct() {
