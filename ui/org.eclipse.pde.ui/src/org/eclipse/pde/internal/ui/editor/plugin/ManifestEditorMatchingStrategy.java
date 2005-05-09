@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorMatchingStrategy;
 import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.ResourceUtil;
 
@@ -22,6 +23,9 @@ import org.eclipse.ui.ide.ResourceUtil;
 public class ManifestEditorMatchingStrategy implements IEditorMatchingStrategy {
 
     public boolean matches(IEditorReference editorRef, IEditorInput input) {
+    	if (!(input instanceof IFileEditorInput))
+    		return false;
+    	
         IFile inputFile = ResourceUtil.getFile(input);
         if (inputFile != null) {
             String path = inputFile.getProjectRelativePath().toString();
