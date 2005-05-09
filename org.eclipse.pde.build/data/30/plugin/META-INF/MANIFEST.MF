@@ -1,5 +1,4 @@
 Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: PLUGIN_ID
 Bundle-Version: PLUGIN_VERSION
