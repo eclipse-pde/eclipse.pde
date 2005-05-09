@@ -48,34 +48,32 @@ public class IconExe {
 	 * Note 3. This function modifies the content of the executable program and may cause
 	 * its corruption.
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		if (args.length < 2) {
 			System.err.println("Usage: IconExe <windows executable> <ico file>");
 			return;
 		}
 		ImageLoader loader = new ImageLoader();
-		try {
-			ImageData[] data = null;
-			
-			if (args.length == 2) {
-				/* ICO case */
-				data = loader.load(args[1]);
-			} else {
-				/* BMP case - each following argument is a single BMP file
-				 * BMP is handled for testing purpose only. The ICO file is the
-				 * official Microsoft format for image resources.
-				 */
-				data = new ImageData[args.length - 1];
-				for (int i = 1; i < args.length; i++) {
-					ImageData[] current = loader.load(args[i]);
-					data[i - 1] = current[0];
-				}
+		ImageData[] data = null;
+
+		if (args.length == 2) {
+			/* ICO case */
+			data = loader.load(args[1]);
+		} else {
+			/*
+			 * BMP case - each following argument is a single BMP file BMP is
+			 * handled for testing purpose only. The ICO file is the official
+			 * Microsoft format for image resources.
+			 */
+			data = new ImageData[args.length - 1];
+			for (int i = 1; i < args.length; i++) {
+				ImageData[] current = loader.load(args[i]);
+				data[i - 1] = current[0];
 			}
-			int nMissing = unloadIcons(args[0], data);
-			if (nMissing != 0) System.err.println("Error - "+nMissing+" icon(s) not replaced in "+args[0]+" using "+args[1]);
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
+		int nMissing = unloadIcons(args[0], data);
+		if (nMissing != 0)
+			System.err.println("Error - " + nMissing + " icon(s) not replaced in " + args[0] + " using " + args[1]);
 	}
 	
 	/* Implementation */
