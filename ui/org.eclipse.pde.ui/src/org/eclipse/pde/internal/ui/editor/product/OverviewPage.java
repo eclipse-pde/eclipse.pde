@@ -36,10 +36,6 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.forms.widgets.FormText;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.progress.*;
 
 
@@ -148,6 +144,10 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 			if (getPDEEditor().isDirty())
 				getPDEEditor().doSave(null);
 			new ProductExportAction(getPDEEditor()).run();
+		} else if (href.equals("configuration")) { //$NON-NLS-1$
+			String pageId = getProduct().useFeatures() ? ConfigurationPage.FEATURE_ID : ConfigurationPage.PLUGIN_ID;
+			getEditor().setActivePage(pageId);
+			
 		}
 	}
 	

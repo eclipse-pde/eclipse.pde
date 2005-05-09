@@ -279,7 +279,7 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		BundleDescription[] fragments = getAllFragments();
 		for (int i = 0; i < fragments.length; i++) {
 			String id = fragments[i].getSymbolicName();
-			if (set.contains(id) || "org.eclipse.ui.workbench.compatibility".equals(id))
+			if (set.contains(id) || "org.eclipse.ui.workbench.compatibility".equals(id)) //$NON-NLS-1$
 				continue;
 			String host = fragments[i].getHost().getName();
 			if (set.contains(host) || getProduct().containsPlugin(host)) {
@@ -309,7 +309,7 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		if (desc.getHost() != null) {
 			addDependencies((BundleDescription)desc.getHost().getSupplier(), set);
 		} else {
-			if (desc != null && !"org.eclipse.ui.workbench".equals(desc.getSymbolicName())) {
+			if (desc != null && !"org.eclipse.ui.workbench".equals(desc.getSymbolicName())) { //$NON-NLS-1$
 				BundleDescription[] fragments = desc.getFragments();
 				for (int i = 0; i < fragments.length; i++) {
 					addDependencies(fragments[i], set);
