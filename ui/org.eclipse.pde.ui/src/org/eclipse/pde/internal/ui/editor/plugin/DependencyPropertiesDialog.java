@@ -68,7 +68,7 @@ public class DependencyPropertiesDialog extends StatusDialog {
         Composite comp = (Composite)super.createDialogArea(parent);
         
         Group container = new Group(comp, SWT.NONE);
-        container.setText("Properties");
+        container.setText(PDEUIMessages.DependencyPropertiesDialog_properties);
         GridLayout layout = new GridLayout();
         layout.numColumns = 2;
         container.setLayout(layout);
@@ -76,7 +76,7 @@ public class DependencyPropertiesDialog extends StatusDialog {
         
         if (fShowOptional) {
             fOptionalButton = new Button(container, SWT.CHECK);
-            fOptionalButton.setText("Optional");
+            fOptionalButton.setText(PDEUIMessages.DependencyPropertiesDialog_optional);
             GridData gd = new GridData();
             gd.horizontalSpan = 2;
             fOptionalButton.setLayoutData(gd); 
@@ -86,7 +86,7 @@ public class DependencyPropertiesDialog extends StatusDialog {
         
         if (fShowReexport) {
             fReexportButton = new Button(container, SWT.CHECK);
-            fReexportButton.setText("Reexport this dependency");
+            fReexportButton.setText(PDEUIMessages.DependencyPropertiesDialog_reexport);
             GridData gd = new GridData();
             gd.horizontalSpan = 2;
             fReexportButton.setLayoutData(gd);
@@ -95,12 +95,12 @@ public class DependencyPropertiesDialog extends StatusDialog {
         }
         
         Label label = new Label(container, SWT.NONE);
-        label.setText("Version:");
+        label.setText(PDEUIMessages.DependencyPropertiesDialog_version);
         
         fVersionText = new Text(container, SWT.SINGLE|SWT.BORDER);
         fVersionText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         fVersionText.setEnabled(fEditable);
-        fVersionText.setText(fVersion == null ? "" : fVersion);
+        fVersionText.setText(fVersion == null ? "" : fVersion); //$NON-NLS-1$
         fVersionText.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
                 dialogChanged();
@@ -128,7 +128,7 @@ public class DependencyPropertiesDialog extends StatusDialog {
         if (range.length() > 2) {
             char last = range.charAt(range.length() - 1);
             if (last == ')' || last == ']') {
-                StringTokenizer tokenizer = new StringTokenizer(range.substring(1, range.length() - 1), ",");
+                StringTokenizer tokenizer = new StringTokenizer(range.substring(1, range.length() - 1), ","); //$NON-NLS-1$
                 int count = tokenizer.countTokens();
                 if (count == 1 && range.indexOf(',') == -1) {
                     return validateVersion(tokenizer.nextToken());                        
@@ -146,12 +146,12 @@ public class DependencyPropertiesDialog extends StatusDialog {
                 }              
             }
         }
-        return new Status(IStatus.ERROR, "org.eclipse.pde.ui", IStatus.ERROR, "Invalid version range", null);
+        return new Status(IStatus.ERROR, "org.eclipse.pde.ui", IStatus.ERROR, PDEUIMessages.DependencyPropertiesDialog_invalidRange, null); //$NON-NLS-1$
     }
     
     private IStatus validateVersion(String text) {
         if (PluginVersionIdentifier.validateVersion(text).getSeverity() != IStatus.OK)
-            return new Status(IStatus.ERROR, "org.eclipse.pde.ui", IStatus.ERROR, "Invalid version format", null);
+            return new Status(IStatus.ERROR, "org.eclipse.pde.ui", IStatus.ERROR, PDEUIMessages.DependencyPropertiesDialog_invalidFormat, null); //$NON-NLS-1$
         return Status.OK_STATUS;
     }
     

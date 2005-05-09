@@ -163,6 +163,25 @@ public class FeatureModelManager {
 		}
 		return (IFeatureModel[])valid.toArray(new IFeatureModel[valid.size()]);
 	}
+	
+	public IFeatureModel findFeatureModel(String id) {
+		IFeatureModel[] models = findFeatureModels(id);
+		IFeatureModel model = null;
+		for (int i = 0; i < models.length; i++) {
+			if (model == null) {
+				model = models[i];
+			} else {
+				String version = model.getFeature().getVersion();
+				String version2 = models[i].getFeature().getVersion();
+				PluginVersionIdentifier vid = new PluginVersionIdentifier(version);
+				PluginVersionIdentifier vid2 = new PluginVersionIdentifier(version2);
+				if (vid2.isGreaterOrEqualTo(vid)) {
+					model = models[i];
+				}
+			}
+		}
+		return model;
+	}
 
 	private void handleModelsChanged(IModelProviderEvent e) {
 		init();

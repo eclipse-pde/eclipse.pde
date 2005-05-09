@@ -121,7 +121,7 @@ public class DependencyExtentSearchResultPage extends
 			final Object object = ssel.getFirstElement();
 			if (object instanceof IType) {
 				mgr.add(new Separator());
-				mgr.add(new Action("Find references in this plug-in") {
+				mgr.add(new Action(PDEUIMessages.DependencyExtentSearchResultPage_referencesInPlugin) {
 					public void run() {
 						DependencyExtentQuery query = (DependencyExtentQuery)getInput().getQuery();
 						IWorkingSetManager manager = PlatformUI.getWorkbench().getWorkingSetManager();

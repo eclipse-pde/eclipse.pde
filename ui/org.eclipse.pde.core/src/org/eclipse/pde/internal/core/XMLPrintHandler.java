@@ -29,21 +29,26 @@ public class XMLPrintHandler {
 	public static final String XML_EQUAL = "="; //$NON-NLS-1$
 	public static final String XML_SLASH = "/"; //$NON-NLS-1$
 
-	public static void printBeginElement(Writer xmlWriter, String elementString) throws IOException{
-		StringBuffer temp = new StringBuffer(XML_BEGIN_TAG);
-		temp.append(elementString).append(XML_END_TAG).append("\n"); //$NON-NLS-1$
+	public static void printBeginElement(Writer xmlWriter, String elementString, String indent, boolean terminate) throws IOException{
+		StringBuffer temp = new StringBuffer(indent);
+		temp.append(XML_BEGIN_TAG);
+		temp.append(elementString);
+		if (terminate)
+			temp.append(XML_SLASH);
+		temp.append(XML_END_TAG);
+		temp.append("\n"); //$NON-NLS-1$
 		xmlWriter.write(temp.toString());
 
 	}
 
-	public static void printEndElement(Writer xmlWriter, String elementString) throws IOException{
-		StringBuffer temp = new StringBuffer(XML_BEGIN_TAG);
+	public static void printEndElement(Writer xmlWriter, String elementString, String indent) throws IOException{
+		StringBuffer temp = new StringBuffer(indent);
+		temp.append(XML_BEGIN_TAG);
 		temp.append(XML_SLASH).append(elementString).append(XML_END_TAG).append("\n"); //$NON-NLS-1$
 		xmlWriter.write(temp.toString());
 
 	}
 
-	
 	public static void printText(Writer xmlWriter, String text) throws IOException{
 		xmlWriter.write(encode(text).toString());
 	}
@@ -68,7 +73,7 @@ public class XMLPrintHandler {
 
 	}
 
-	public static void printNode(Writer xmlWriter, Node node,String encoding) throws IOException {
+	public static void printNode(Writer xmlWriter, Node node,String encoding, String indent) throws IOException {
 		if (node == null) {
 			return;
 		}
@@ -76,7 +81,7 @@ public class XMLPrintHandler {
 		switch (node.getNodeType()) {
 		case Node.DOCUMENT_NODE: {
 			printHead(xmlWriter,encoding);
-			printNode(xmlWriter, ((Document) node).getDocumentElement(),encoding);
+			printNode(xmlWriter, ((Document) node).getDocumentElement(),encoding, indent);
 			break;
 		}
 		case Node.ELEMENT_NODE: {
@@ -89,18 +94,17 @@ public class XMLPrintHandler {
 					tempElementString.append(wrapAttributeForPrint(attribute.getNodeName(),attribute.getNodeValue()));
 				}
 			}
-			printBeginElement(xmlWriter,tempElementString.toString());
-			
+
 			// do this recursively for the child nodes.
 			NodeList childNodes = node.getChildNodes();
-			if (childNodes != null) {
-				int length = childNodes.getLength();
-				for (int i = 0; i < length; i++) {
-					printNode(xmlWriter, childNodes.item(i),encoding);
-				}
-			}
-			
-			printEndElement(xmlWriter,node.getNodeName());
+			int length = childNodes.getLength();
+			printBeginElement(xmlWriter,tempElementString.toString(), indent, length == 0);
+
+			for (int i = 0; i < length; i++)
+				printNode(xmlWriter, childNodes.item(i),encoding, indent + "\t"); //$NON-NLS-1$
+		
+			if (length > 0)
+				printEndElement(xmlWriter,node.getNodeName(), indent);
 			break;
 		}
 		
@@ -109,10 +113,9 @@ public class XMLPrintHandler {
 			break;
 		}
 		default: {
-			throw new UnsupportedOperationException("Unsupported XML Node Type."); //$NON-NLS-1$
-			
+			throw new UnsupportedOperationException("Unsupported XML Node Type."); //$NON-NLS-1$		
 		}
-		}
+	}
 
 	}
 
@@ -143,4 +146,26 @@ public class XMLPrintHandler {
 		}
 		return buf;
 	}
+	
+	public static void writeFile(Document doc, File file) throws IOException {
+		Writer writer = null;
+		OutputStream out = null;
+		try {
+			out = new FileOutputStream(file);
+			writer = new OutputStreamWriter(out, "UTF-8"); //$NON-NLS-1$
+			XMLPrintHandler.printNode(writer, doc, "UTF-8", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		} finally {
+			try {
+				if (writer != null)
+					writer.close();
+			} catch (IOException e1) {
+			}
+			try {
+				if (out != null)
+					out.close();
+			} catch (IOException e1) {
+			}
+		}
+	}
+
 }

@@ -112,15 +112,15 @@ public class CoreUtility {
 	}
 	
 	public static Element writeExtension(Document doc, IPluginExtension extension) {
-		Element child = doc.createElement("extension");
+		Element child = doc.createElement("extension"); //$NON-NLS-1$
 		if (extension.getPoint() != null)
-			child.setAttribute("point", getWritableString(extension.getPoint()));
+			child.setAttribute("point", getWritableString(extension.getPoint())); //$NON-NLS-1$
 		if (extension.getName() != null)
-			child.setAttribute("name", getWritableString(extension.getName()));
+			child.setAttribute("name", getWritableString(extension.getName())); //$NON-NLS-1$
 		if (extension.getId() != null)
-			child.setAttribute("id", getWritableString(extension.getId()));
+			child.setAttribute("id", getWritableString(extension.getId())); //$NON-NLS-1$
 		if (extension instanceof PluginExtension)
-			child.setAttribute("line", Integer.toString(((PluginExtension)extension).getStartLine()));
+			child.setAttribute("line", Integer.toString(((PluginExtension)extension).getStartLine())); //$NON-NLS-1$
 		IPluginObject[] children = extension.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			child.appendChild(writeElement(doc, (IPluginElement)children[i]));
@@ -142,15 +142,15 @@ public class CoreUtility {
 	}
 	
 	public static Element writeExtensionPoint(Document doc, IPluginExtensionPoint extPoint) {
-		Element child = doc.createElement("extension-point");
+		Element child = doc.createElement("extension-point"); //$NON-NLS-1$
 		if (extPoint.getId() != null)
-			child.setAttribute("id", getWritableString(extPoint.getId()));
+			child.setAttribute("id", getWritableString(extPoint.getId())); //$NON-NLS-1$
 		if (extPoint.getName() != null)
-			child.setAttribute("name", getWritableString(extPoint.getName()));
+			child.setAttribute("name", getWritableString(extPoint.getName())); //$NON-NLS-1$
 		if (extPoint.getSchema() != null)
-			child.setAttribute("schema", getWritableString(extPoint.getSchema()));
+			child.setAttribute("schema", getWritableString(extPoint.getSchema())); //$NON-NLS-1$
 		if (extPoint instanceof PluginExtensionPoint)
-			child.setAttribute("line", Integer.toString(((PluginExtensionPoint)extPoint).getStartLine()));
+			child.setAttribute("line", Integer.toString(((PluginExtensionPoint)extPoint).getStartLine())); //$NON-NLS-1$
 		return child;	
 	}
 	

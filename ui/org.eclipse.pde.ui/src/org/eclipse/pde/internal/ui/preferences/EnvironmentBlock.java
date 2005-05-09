@@ -118,7 +118,7 @@ public class EnvironmentBlock implements IEnvironmentVariables {
 		layout.numColumns = 2;
 		group.setLayout(layout);
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		group.setText("Java Runtime Environment");
+		group.setText(PDEUIMessages.EnvironmentBlock_jreTitle);
 		
 		Label label = new Label(group, SWT.NONE);
 		label.setText(PDEUIMessages.EnvironmentBlock_jreGroup);  //$NON-NLS-1$

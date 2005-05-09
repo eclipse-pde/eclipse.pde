@@ -76,7 +76,7 @@ public class LauncherUtils {
 				if (model != null) {
                     File file = new File(model.getInstallLocation());
                     if (!file.isFile())
-                        file = new File(file, "jdi.jar");
+                        file = new File(file, "jdi.jar"); //$NON-NLS-1$
 					if (file.exists())
 						map.put(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH_PREPEND, new String[] {file.getAbsolutePath()});
 				}

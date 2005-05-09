@@ -362,7 +362,7 @@ public class RequiresSection
 			}
 		};
         if (isBundle()) {
-            fPropertiesAction = new Action("Properties") { 
+            fPropertiesAction = new Action(PDEUIMessages.RequiresSection_properties) { 
                 public void run() {
                     handleOpenProperties();
                 }

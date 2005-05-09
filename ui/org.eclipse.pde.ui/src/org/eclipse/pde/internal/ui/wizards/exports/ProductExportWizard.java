@@ -10,18 +10,22 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
-import java.io.*;
-import java.lang.reflect.*;
+import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.core.product.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.build.*;
-import org.eclipse.pde.internal.ui.wizards.product.*;
-import org.eclipse.ui.progress.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.pde.internal.core.FeatureModelManager;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.product.WorkspaceProductModel;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.build.ProductExportJob;
+import org.eclipse.pde.internal.ui.wizards.product.SynchronizationOperation;
+import org.eclipse.ui.progress.IProgressConstants;
+import org.w3c.dom.Document;
 
 
 public class ProductExportWizard extends BaseExportWizard {
@@ -29,6 +33,7 @@ public class ProductExportWizard extends BaseExportWizard {
 	private static final String STORE_SECTION = "ProductExportWizard"; //$NON-NLS-1$
 	private IFile fFile;
 	private WorkspaceProductModel fProductModel;
+	private CrossPlatformExportPage fPage2;
 
 	public ProductExportWizard() {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_PRODUCT_EXPORT_WIZ);
@@ -43,19 +48,27 @@ public class ProductExportWizard extends BaseExportWizard {
 		return new ProductExportWizardPage(fFile == null ? getSelection() : new StructuredSelection(fFile));
 	}
 
-	protected AdvancedPluginExportPage createPage2() {
-		return null;
+	public void addPages() {
+		super.addPages();
+		FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
+		IFeatureModel model = manager.findFeatureModel("org.eclipse.platform.launchers"); //$NON-NLS-1$
+		if (model != null) {
+			fPage2 = new CrossPlatformExportPage("environment", model); //$NON-NLS-1$
+			addPage(fPage2);
+		}	
 	}
 	
 	protected String getSettingsSectionName() {
 		return STORE_SECTION;
 	}
 
-	protected void generateAntTask(PrintWriter writer) {
+	protected Document generateAntTask() {
+		return null;
 	}
 
 	protected void scheduleExportJob() {
 		ProductExportWizardPage page = (ProductExportWizardPage)fPage1;
+		String[][] targets = fPage2 == null ? null : fPage2.getTargets();
 		ProductExportJob job = new ProductExportJob(
 										fProductModel, 
 										page.getRootDirectory(), 
@@ -63,7 +76,7 @@ public class ProductExportWizard extends BaseExportWizard {
 										page.doExportSource(), 
 										page.getDestination(), 
 										page.getFileName(),
-										null);
+										targets);
 		job.setUser(true);
 		job.schedule();
 		job.setProperty(IProgressConstants.ICON_PROPERTY, PDEPluginImages.DESC_FEATURE_OBJ);

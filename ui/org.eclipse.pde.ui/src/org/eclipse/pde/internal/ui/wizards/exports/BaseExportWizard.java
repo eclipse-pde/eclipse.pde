@@ -10,25 +10,33 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
 
-import org.eclipse.ant.internal.ui.launchConfigurations.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.debug.core.*;
-import org.eclipse.jdt.launching.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.ant.internal.ui.IAntUIConstants;
+import org.eclipse.ant.internal.ui.launchConfigurations.AntLaunchShortcut;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.*;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.core.XMLPrintHandler;
 import org.eclipse.pde.internal.ui.IPreferenceConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
+import org.w3c.dom.Document;
 
 public abstract class BaseExportWizard
 	extends Wizard
@@ -36,7 +44,6 @@ public abstract class BaseExportWizard
 
 	protected IStructuredSelection fSelection;
 	protected BaseExportWizardPage fPage1;
-	protected AdvancedPluginExportPage fPage2;
 
 	/**
 	 * The constructor.
@@ -52,15 +59,10 @@ public abstract class BaseExportWizard
 
 	public void addPages() {
 		fPage1 = createPage1();
-		fPage2 = createPage2();
 		addPage(fPage1);
-        if (fPage2 != null)
-            addPage(fPage2);
-	}
+ 	}
 
 	protected abstract BaseExportWizardPage createPage1();
-	
-	protected abstract AdvancedPluginExportPage createPage2();
 	
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
@@ -98,9 +100,7 @@ public abstract class BaseExportWizard
 	 * @see Wizard#performFinish
 	 */
 	public boolean performFinish() {
-		fPage1.saveSettings();
-        if (fPage2 != null)
-            fPage2.saveSettings();
+		saveSettings();
 		
 		if (fPage1.doGenerateAntFile())
 			generateAntBuildFile(fPage1.getAntBuildFileName());
@@ -123,6 +123,13 @@ public abstract class BaseExportWizard
 		return true;
 	}
 	
+	private void saveSettings() {
+		IWizardPage[] pages = getPages();
+		for (int i = 0; i < pages.length; i++) {
+			((IExportWizardPage)pages[i]).saveSettings();
+		}
+	}
+	
 	protected boolean performPreliminaryChecks() {
 		return true;
 	}
@@ -135,25 +142,16 @@ public abstract class BaseExportWizard
 		File dir = new File(new File(parent).getAbsolutePath());
 		if (!dir.exists())
 			dir.mkdirs();
-		
-		OutputStream out = null;
-		PrintWriter writer = null;
+
 		try {
-			File buildFile = new File(dir, buildFilename);
-			out = new FileOutputStream(buildFile);
-			writer = new PrintWriter(new OutputStreamWriter(out, "UTF-8")); //$NON-NLS-1$
-			generateAntTask(writer);
-			writer.close();
-			setDefaultValues(dir, buildFilename);
-		} catch (IOException e) {
-		} finally {
-			if (writer != null)
-				writer.close();
-			try {
-				if (out != null)
-					out.close();
-			} catch (IOException e) {
+			Document task = generateAntTask();
+			if (task != null) {
+				File buildFile = new File(dir, buildFilename);
+				XMLPrintHandler.writeFile(task, buildFile);
+				generateAntTask();
+				setDefaultValues(dir, buildFilename);
 			}
+		} catch (IOException e) {
 		}
 	}
 	
@@ -178,6 +176,15 @@ public abstract class BaseExportWizard
 					launchCopy.setAttribute(
 							IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE,
 							(String) null);
+					launchCopy.setAttribute(
+							IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME,
+							(String) null);
+					launchCopy.setAttribute(
+							IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,
+							(String) null);
+					launchCopy.setAttribute(
+							IAntUIConstants.ATTR_DEFAULT_VM_INSTALL,
+							(String) null);
 					launchCopy.doSave();				
 				}
 			}
@@ -185,7 +192,7 @@ public abstract class BaseExportWizard
 		}		
 	}
 		
-	protected abstract void generateAntTask(PrintWriter writer);
+	protected abstract Document generateAntTask();
 	
 	protected abstract void scheduleExportJob();
 	

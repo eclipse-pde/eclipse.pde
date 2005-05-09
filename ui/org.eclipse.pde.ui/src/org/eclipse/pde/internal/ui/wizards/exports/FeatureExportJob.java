@@ -10,38 +10,80 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
-import java.io.*;
-import java.lang.reflect.*;
-import java.net.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Map;
+import java.util.Properties;
 
-import org.eclipse.ant.core.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.*;
-import org.eclipse.jdt.core.*;
-import org.eclipse.jface.dialogs.*;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.eclipse.ant.core.AntCorePlugin;
+import org.eclipse.ant.core.AntCorePreferences;
+import org.eclipse.ant.core.AntRunner;
+import org.eclipse.ant.core.IAntClasspathEntry;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.build.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.build.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.build.*;
+import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.core.build.IBuild;
+import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.pde.core.plugin.IPluginLibrary;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.build.AbstractScriptGenerator;
+import org.eclipse.pde.internal.build.BuildScriptGenerator;
+import org.eclipse.pde.internal.build.IXMLConstants;
+import org.eclipse.pde.internal.core.ClasspathHelper;
+import org.eclipse.pde.internal.core.ModelEntry;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PluginModelManager;
+import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.XMLPrintHandler;
+import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.feature.FeatureChild;
-import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.core.ifeature.IFeature;
+import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.eclipse.pde.internal.core.util.CoreUtility;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.build.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.pde.internal.ui.IPreferenceConstants;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.build.BaseBuildAction;
+import org.eclipse.swt.widgets.Display;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 public class FeatureExportJob extends Job implements IPreferenceConstants {
 
 	// write to the ant build listener log
-	protected static PrintWriter writer;
-	protected static File logFile;
+	private static boolean fHasErrors;
 
 	// Export options specified in the wizard
 	protected boolean fExportToDirectory;
@@ -62,6 +104,8 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 	protected static String FEATURE_POST_PROCESSING = "features.postProcessingSteps.properties"; //$NON-NLS-1$
 	protected static String PLUGIN_POST_PROCESSING = "plugins.postProcessingSteps.properties"; //$NON-NLS-1$
 	protected String[][] fTargets;
+
+	private static int fNumberErrors;
 
 	class SchedulingRule implements ISchedulingRule {
 
@@ -96,10 +140,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		fItems = items;
 		fSigningInfo = signingInfo;
 		fJnlpInfo = jnlpInfo;
-		fTargets = null;
-		// TODO remove when there is UI to set ftargets
-//		if (ftargets == null)
-//			ftargets = new String[][] { { "linux", "gtk", "x86", ""} , {"win32", "win32", "x86", ""} };
+		fTargets = targets;
 		fBuildTempLocation = PDEPlugin.getDefault().getStateLocation().append("temp").toString(); //$NON-NLS-1$
 		setRule(new SchedulingRule());
 	}
@@ -111,7 +152,8 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 	protected IStatus run(IProgressMonitor monitor) {
 		String errorMessage = null;
 		try {
-			createLogWriter();
+			fHasErrors = false;
+			fNumberErrors = 0;
 			doExports(monitor);
 		} catch (final CoreException e) {
 			final Display display = getStandardDisplay();
@@ -127,11 +169,8 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 			if (message != null && message.length() > 0) {
 				errorMessage = e.getTargetException().getMessage();
 			}
-		} finally {
-			if (writer != null)
-				writer.close();
 		}
-		if (errorMessage == null && logFile != null && logFile.exists() && logFile.length() > 0) {
+		if (errorMessage == null && fNumberErrors > 0) {
 			errorMessage = getLogFoundMessage();
 		}
 
@@ -146,20 +185,25 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		}
 		return new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$
 	}
+	
+	public static void errorFound() {
+		fHasErrors = true;
+		fNumberErrors += 1;
+	}
 
 	protected void doExports(IProgressMonitor monitor) throws InvocationTargetException, CoreException {
 		createDestination();
-		monitor.beginTask("", fItems.length + 1); //$NON-NLS-1$
 		String[][] configurations = fTargets;
 		if (configurations == null)
 			configurations = new String[][] { null };
 		
+		monitor.beginTask("", configurations.length * fItems.length * 10); //$NON-NLS-1$
 		for (int i = 0; i < configurations.length; i++) {
 			try {
 				for (int j = 0; j < fItems.length; j++) {
 					if (monitor.isCanceled())
 						throw new OperationCanceledException();
-					doExport((IFeatureModel) fItems[j], configurations[i], monitor);
+					doExport((IFeatureModel) fItems[j], configurations[i], new SubProgressMonitor(monitor, 9));
 				}
 			} finally {
 				cleanup(configurations[i], new SubProgressMonitor(monitor, 1));
@@ -176,7 +220,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 				createPostProcessingFile(new File(location, PLUGIN_POST_PROCESSING));
 			}
 			IFeature feature = model.getFeature();
-			doExport(feature.getId(), feature.getVersion(), location, os, ws, arch, new SubProgressMonitor(monitor, 1));
+			doExport(feature.getId(), feature.getVersion(), location, os, ws, arch, monitor);
 		} finally {
 			deleteBuildFiles(model);
 		}
@@ -240,7 +284,6 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 	}
 
 	protected void doExport(IFeatureModel model, String[] config, IProgressMonitor monitor) throws CoreException, InvocationTargetException {
-		// TODO progress monitoring
 		if (config == null) {
 			IFeature feature = model.getFeature();
 			doExport(model, getOS(feature), getWS(feature), getOSArch(feature), monitor);
@@ -251,7 +294,8 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 	}
 		
 	protected void doExport(String featureID, String version, String featureLocation, String os, String ws, String arch, IProgressMonitor monitor) throws CoreException, InvocationTargetException {
-		monitor.beginTask("", 5); //$NON-NLS-1$
+		fHasErrors = false;
+		monitor.beginTask("", 9); //$NON-NLS-1$
 		monitor.setTaskName(PDEUIMessages.FeatureExportJob_taskName); //$NON-NLS-1$
 		try {
 			HashMap properties = createAntBuildProperties(os, ws, arch);
@@ -484,67 +528,58 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 	protected String[] getPaths() {
 		return TargetPlatform.getFeaturePaths();
 	}
-
-	private static void createLogWriter() {
-		try {
-			String path = PDEPlugin.getDefault().getStateLocation().toOSString();
-			logFile = new File(path, "exportLog.txt"); //$NON-NLS-1$
-			if (logFile.exists()) {
-				logFile.delete();
-				logFile.createNewFile();
-			}
-			writer = new PrintWriter(new FileWriter(logFile), true);
-		} catch (IOException e) {
-		}
-	}
-
-	public static PrintWriter getWriter() {
-		if (writer == null)
-			createLogWriter();
-		return writer;
-	}
-
+	
 	protected void cleanup(String[] config, IProgressMonitor monitor) {
-        monitor.beginTask("", 2);
+        monitor.beginTask("", 2); //$NON-NLS-1$
         // clear out some cached values that depend on the configuration being built.
         fDevProperties = null;
         fAntBuildProperties = null;
 
 		File scriptFile = null;
-		OutputStream out = null;
 		try {
 			scriptFile = createScriptFile();
-			out = new FileOutputStream(scriptFile);
-			writer = new PrintWriter(new OutputStreamWriter(out, "UTF-8")); //$NON-NLS-1$
-			generateHeader(writer);
-			generateDeleteZipTarget(writer, config);
-			generateCleanTarget(writer);
-			boolean errors = generateZipLogsTarget(writer, config);
-			generateClosingTag(writer);
-			writer.close();
-
-			ArrayList targets = new ArrayList();
-			targets.add("deleteZip"); //$NON-NLS-1$
-			if (errors)
-				targets.add("zip.logs"); //$NON-NLS-1$
-			targets.add("clean"); //$NON-NLS-1$
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			Document doc = factory.newDocumentBuilder().newDocument();
+			
+			Element root = doc.createElement("project"); //$NON-NLS-1$
+			root.setAttribute("name", "temp"); //$NON-NLS-1$ //$NON-NLS-2$
+			root.setAttribute("default", "clean"); //$NON-NLS-1$ //$NON-NLS-2$
+			root.setAttribute("basedir", "."); //$NON-NLS-1$ //$NON-NLS-2$
+			doc.appendChild(root);
+			
+			Element target = doc.createElement("target"); //$NON-NLS-1$
+			target.setAttribute("name", "clean"); //$NON-NLS-1$ //$NON-NLS-2$
+			Element child = doc.createElement("delete"); //$NON-NLS-1$
+			child.setAttribute("dir", fBuildTempLocation); //$NON-NLS-1$
+			target.appendChild(child);
+			root.appendChild(target);
+							
+			if (fHasErrors) {
+				target = doc.createElement("target"); //$NON-NLS-1$
+				target.setAttribute("name", "zip.logs"); //$NON-NLS-1$ //$NON-NLS-2$
+				child = doc.createElement("zip"); //$NON-NLS-1$
+				child.setAttribute("zipfile", fDestinationDirectory + logName(config)); //$NON-NLS-1$
+				child.setAttribute("basedir", fBuildTempLocation + "/pde.logs"); //$NON-NLS-1$ //$NON-NLS-2$
+				target.appendChild(child);
+				root.appendChild(target);
+			}	
+			XMLPrintHandler.writeFile(doc, scriptFile);
+			
+			String[] targets = fHasErrors 
+						? new String[] {"zip.logs", "clean"}  //$NON-NLS-1$ //$NON-NLS-2$
+						: new String[] {"clean"}; //$NON-NLS-1$
 			AntRunner runner = new AntRunner();
 			runner.setBuildFileLocation(scriptFile.getAbsolutePath());
-			runner.setExecutionTargets((String[]) targets.toArray(new String[targets.size()]));
+			runner.setExecutionTargets(targets);
 			runner.run(new SubProgressMonitor(monitor, 1));
-		} catch (IOException e) {
+		} catch (FactoryConfigurationError e) {
+		} catch (ParserConfigurationException e) {
 		} catch (CoreException e) {
+		} catch (IOException e) {
 		} finally {
-			if (writer != null)
-				writer.close();
-			try {
-				if (out != null)
-					out.close();
-			} catch (IOException e) {
-			}
 			if (scriptFile != null && scriptFile.exists())
 				scriptFile.delete();
-            monitor.done();
+			monitor.done();
 		}
 	}
 
@@ -558,40 +593,10 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		return zip;
 	}
 
-	private void generateHeader(PrintWriter writer) {
-		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
-		writer.println("<project name=\"temp\" default=\"clean\" basedir=\".\">"); //$NON-NLS-1$
-	}
-
-	private void generateCleanTarget(PrintWriter writer) {
-		writer.println("<target name=\"clean\">"); //$NON-NLS-1$
-		writer.println("<delete dir=\"" + fBuildTempLocation + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
-		writer.println("</target>"); //$NON-NLS-1$
-	}
-
 	private String logName(String[] config) {
 		if (config == null)
-			return "/logs.zip";
-		return "/logs." + config[0] + '.' + config[1] + '.' + config[2] + ".zip"; 
-	}
-	private void generateDeleteZipTarget(PrintWriter writer, String[] config) {
-		writer.println("<target name=\"deleteZip\">"); //$NON-NLS-1$
-		writer.println("<delete file=\"" + fDestinationDirectory + logName(config) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
-		writer.println("</target>"); //$NON-NLS-1$
-	}
-
-	private boolean generateZipLogsTarget(PrintWriter writer, String[] config) {
-		if (logFile != null && logFile.exists() && logFile.length() > 0) {
-			writer.println("<target name=\"zip.logs\">"); //$NON-NLS-1$
-			writer.println("<zip zipfile=\"" + fDestinationDirectory + logName(config) + "\" basedir=\"" + fBuildTempLocation + "/pde.logs\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			writer.println("</target>"); //$NON-NLS-1$
-			return true;
-		}
-		return false;
-	}
-
-	private void generateClosingTag(PrintWriter writer) {
-		writer.println("</project>"); //$NON-NLS-1$
+			return "/logs.zip"; //$NON-NLS-1$
+		return "/logs." + config[0] + '.' + config[1] + '.' + config[2] + ".zip";  //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -614,7 +619,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 	}
 
 	protected String getLogFoundMessage() {
-		return NLS.bind(PDEUIMessages.ExportJob_error_message, fDestinationDirectory + File.separator + "logs.zip"); //$NON-NLS-1$ //$NON-NLS-2$
+		return NLS.bind(PDEUIMessages.ExportJob_error_message, fDestinationDirectory); 
 	}
     
     protected void createFeature(String featureID, String featureLocation, String[] config, boolean includeLauncher) throws IOException {
@@ -622,53 +627,60 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
         if (!file.exists() || !file.isDirectory())
             file.mkdirs();
         
-        File featureXML = new File(file, "feature.xml"); //$NON-NLS-1$
-        PrintWriter writer = new PrintWriter(new OutputStreamWriter(
-                new FileOutputStream(featureXML), "UTF-8"), true); //$NON-NLS-1$
-        writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
-        writer.println("<feature id=\"" + featureID + "\" version=\"1.0\">"); //$NON-NLS-1$ //$NON-NLS-2$
-
-		if (includeLauncher) {
-			IFeatureModel[] models = PDECore.getDefault().getFeatureModelManager().getModels();
-			for (int i = 0; i < models.length; i++) {
-				IFeature feature = models[i].getFeature();
-				if ("org.eclipse.platform.launchers".equals(feature.getId()))
-			        writer.println("<includes id=\"" + feature.getId() + "\" version=\"" + feature.getVersion() + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
+		try {
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			Document doc = factory.newDocumentBuilder().newDocument();
+			Element root = doc.createElement("feature"); //$NON-NLS-1$
+			root.setAttribute("id", featureID); //$NON-NLS-1$
+			root.setAttribute("version", "1.0"); //$NON-NLS-1$ //$NON-NLS-2$
+			doc.appendChild(root);
+			
+			if (includeLauncher) {
+				IFeatureModel model = PDECore.getDefault().getFeatureModelManager().findFeatureModel("org.eclipse.platform.launchers"); //$NON-NLS-1$
+				if (model != null) {
+					IFeature feature = model.getFeature();
+					Element includes = doc.createElement("includes"); //$NON-NLS-1$
+					includes.setAttribute("id", feature.getId()); //$NON-NLS-1$
+					includes.setAttribute("version", feature.getVersion()); //$NON-NLS-1$
+					root.appendChild(includes);
+				}
 			}
-		}
+            Dictionary environment = new Hashtable(4);
+            environment.put("osgi.os", config[0]); //$NON-NLS-1$
+            environment.put("osgi.ws", config[1]); //$NON-NLS-1$
+            environment.put("osgi.arch", config[2]); //$NON-NLS-1$
+            environment.put("osgi.nl", config[3]); //$NON-NLS-1$
 
-        Dictionary environment = new Hashtable(4);
-        environment.put("osgi.os", config[0]);
-        environment.put("osgi.ws", config[1]);
-        environment.put("osgi.arch", config[2]);
-        environment.put("osgi.nl", config[3]);
-        	
-        BundleContext context = PDEPlugin.getDefault().getBundleContext();
-        for (int i = 0; i < fItems.length; i++) {
-            if (fItems[i] instanceof IPluginModelBase) {
-                IPluginModelBase model = (IPluginModelBase) fItems[i];
-                try {
-                    String filterSpec = model.getBundleDescription().getPlatformFilter();
-                    if (filterSpec == null|| context.createFilter(filterSpec).match(environment)) {
-                        writer.print("<plugin id=\"");
-                        writer.print(model.getPluginBase().getId());
-                        writer.print("\" version=\"0.0.0\"");
-                        if (!fUseJarFormat) {
-                            writer.print(" unpack=\"");
-                            writer.print(Boolean.toString(doUnpack(model)));
-                            writer.print("\"");
-                        }
-                        writer.println("/>");
+            BundleContext context = PDEPlugin.getDefault().getBundleContext();
+            for (int i = 0; i < fItems.length; i++) {
+                if (fItems[i] instanceof IPluginModelBase) {
+                    IPluginModelBase model = (IPluginModelBase) fItems[i];
+                    try {
+                        String filterSpec = model.getBundleDescription().getPlatformFilter();
+                        if (filterSpec == null|| context.createFilter(filterSpec).match(environment)) {
+                        	Element plugin = doc.createElement("plugin"); //$NON-NLS-1$
+                        	plugin.setAttribute("id", model.getPluginBase().getId()); //$NON-NLS-1$
+                            plugin.setAttribute("version", "0.0.0"); //$NON-NLS-1$ //$NON-NLS-2$
+                            if (!fUseJarFormat) {
+                                plugin.setAttribute("unpack", Boolean.toString(doUnpack(model))); //$NON-NLS-1$
+                             }
+                            root.appendChild(plugin);
+                         }
+                    } catch (InvalidSyntaxException e) {
                     }
-                } catch (InvalidSyntaxException e) {
+                } else if (fItems[i] instanceof IFeatureModel) {
+                    IFeature feature = ((IFeatureModel) fItems[i]).getFeature();
+ 					Element includes = doc.createElement("includes"); //$NON-NLS-1$
+					includes.setAttribute("id", feature.getId()); //$NON-NLS-1$
+					includes.setAttribute("version", feature.getVersion()); //$NON-NLS-1$
+					root.appendChild(includes);
                 }
-            } else if (fItems[i] instanceof IFeatureModel) {
-                IFeature feature = ((IFeatureModel) fItems[i]).getFeature();
-                writer.println("<includes id=\"" + feature.getId() + "\" version=\"" + feature.getVersion() + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             }
-        }
-        writer.println("</feature>"); //$NON-NLS-1$
-        writer.close();
+            XMLPrintHandler.writeFile(doc, new File(file, "feature.xml")); //$NON-NLS-1$
+ 		} catch (DOMException e1) {
+		} catch (FactoryConfigurationError e1) {
+		} catch (ParserConfigurationException e1) {
+		}      	
     }
 
     private boolean doUnpack(IPluginModelBase model) {
@@ -680,7 +692,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
             return false;
         
         for (int i = 0; i < libraries.length; i++) {
-            if (libraries[i].getName().equals("."))
+            if (libraries[i].getName().equals(".")) //$NON-NLS-1$
                 return false;
         }
         return true;

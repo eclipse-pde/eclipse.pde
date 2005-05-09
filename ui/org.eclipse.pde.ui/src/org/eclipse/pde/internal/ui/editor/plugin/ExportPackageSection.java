@@ -100,9 +100,9 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
             StringBuffer buffer = new StringBuffer(p.getName());
             String version = p.getVersion().toString();
             if (!version.equals(Version.emptyVersion.toString())) {
-                buffer.append(" (");
+                buffer.append(PDEUIMessages.ExportPackageSection_0);
                 buffer.append(version);
-                buffer.append(")");
+                buffer.append(")"); //$NON-NLS-1$
             }
 			return buffer.toString();
 		}
@@ -120,7 +120,7 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 				page,
 				parent,
 				Section.DESCRIPTION,
-				new String[] {"Add...", "Remove", "Properties..."}); 
+				new String[] {PDEUIMessages.ExportPackageSection_add, PDEUIMessages.ExportPackageSection_remove, PDEUIMessages.ExportPackageSection_properties}); 
 	}
 
     private boolean isFragment() {
@@ -135,8 +135,8 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 	 *      org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
-        section.setText("Exported Packages"); 
-        section.setDescription(NLS.bind(PDEUIMessages.ExportPackageSection_desc, isFragment() ? "fragment" : "plug-in")); 
+        section.setText(PDEUIMessages.ExportPackageSection_title); 
+        section.setDescription(NLS.bind(PDEUIMessages.ExportPackageSection_desc, isFragment() ? "fragment" : "plug-in"));  //$NON-NLS-1$ //$NON-NLS-2$
 
         Composite container = createClientContainer(section, 2, toolkit);
 		createViewerPartControl(container, SWT.SINGLE, 2, toolkit);
@@ -148,10 +148,10 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
             public int compare(Viewer viewer, Object e1, Object e2) {
                 String s1 = e1.toString();
                 String s2 = e2.toString();
-                if (s1.indexOf(" ") != -1)
-                    s1 = s1.substring(0, s1.indexOf(" "));
-                if (s2.indexOf(" ") != -1)
-                    s2 = s2.substring(0, s2.indexOf(" "));
+                if (s1.indexOf(" ") != -1) //$NON-NLS-1$
+                    s1 = s1.substring(0, s1.indexOf(" ")); //$NON-NLS-1$
+                if (s2.indexOf(" ") != -1) //$NON-NLS-1$
+                    s2 = s2.substring(0, s2.indexOf(" ")); //$NON-NLS-1$
                 return super.compare(viewer, s1, s2);
             }
         });
@@ -279,7 +279,7 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
         for (int i = 0; i < objects.length; i++) {
             IPackageFragment fragment = (IPackageFragment)objects[i];
             if (buffer.length() > 0)
-                buffer.append("," + getLineDelimiter() + " ");
+                buffer.append("," + getLineDelimiter() + " "); //$NON-NLS-1$ //$NON-NLS-2$
             buffer.append(fragment.getElementName());
         }
         return buffer.toString();
@@ -339,7 +339,7 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
         };
         fRemoveAction.setEnabled(isEditable());
         
-        fPropertiesAction = new Action("Properties") { 
+        fPropertiesAction = new Action(PDEUIMessages.ExportPackageSection_propertyAction) { 
             public void run() {
                 handleOpenProperties();
             }

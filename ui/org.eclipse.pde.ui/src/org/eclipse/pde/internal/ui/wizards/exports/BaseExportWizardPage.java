@@ -10,22 +10,33 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.util.ArrayList;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.util.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Group;
 
 
-public abstract class BaseExportWizardPage extends WizardPage {
+public abstract class BaseExportWizardPage extends ExportWizardPage  {
 	private static final String S_JAR_FORMAT = "exportUpdate"; //$NON-NLS-1$
 	private static final String S_EXPORT_DIRECTORY = "exportDirectory";	 //$NON-NLS-1$
 	private static final String S_EXPORT_SOURCE="exportSource"; //$NON-NLS-1$
@@ -249,7 +260,10 @@ public abstract class BaseExportWizardPage extends WizardPage {
 
 	private void chooseFile(Combo combo, String filter) {
 		FileDialog dialog = new FileDialog(getShell(), SWT.SAVE);
-		dialog.setFileName(fArchiveCombo.getText());
+		String path = fArchiveCombo.getText();
+		if (path.trim().length() == 0)
+			path = PDEPlugin.getWorkspace().getRoot().getLocation().toString();
+		dialog.setFileName(path);
 		dialog.setFilterExtensions(new String[] {filter});
 		String res = dialog.open();
 		if (res != null) {
@@ -261,7 +275,10 @@ public abstract class BaseExportWizardPage extends WizardPage {
 	
 	private void chooseDestination() {
 		DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.SAVE);
-		dialog.setFilterPath(fDirectoryCombo.getText());
+		String path = fDirectoryCombo.getText();
+		if (path.trim().length() == 0)
+			path = PDEPlugin.getWorkspace().getRoot().getLocation().toString();
+		dialog.setFilterPath(path);
 		dialog.setText(PDEUIMessages.ExportWizard_dialog_title); //$NON-NLS-1$
 		dialog.setMessage(PDEUIMessages.ExportWizard_dialog_message); //$NON-NLS-1$
 		String res = dialog.open();
@@ -408,7 +425,7 @@ public abstract class BaseExportWizardPage extends WizardPage {
 	}
 	
 	public String getAntBuildFileName() {
-		return fAntCombo != null ? fAntCombo.getText().trim() : "";
+		return fAntCombo != null ? fAntCombo.getText().trim() : ""; //$NON-NLS-1$
 	}
 	
 	public IWizardPage getNextPage() {

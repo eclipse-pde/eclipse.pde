@@ -30,7 +30,7 @@ public class FeatureExportTask extends BaseExportTask {
 	}
 	
 	public void setFeatures(String features) {
-		StringTokenizer tok = new StringTokenizer(features, ",");
+		StringTokenizer tok = new StringTokenizer(features, ","); //$NON-NLS-1$
 		ArrayList list = new ArrayList();
 		while (tok.hasMoreTokens()) {
 			list.add(tok.nextToken().trim());

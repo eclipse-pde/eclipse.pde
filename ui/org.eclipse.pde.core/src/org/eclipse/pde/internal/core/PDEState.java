@@ -12,11 +12,7 @@ package org.eclipse.pde.internal.core;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -24,6 +20,7 @@ import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -80,7 +77,7 @@ public class PDEState extends MinimalState {
 	private Map fPluginInfos;
 	private Map fExtensions;
 	private Dictionary fPlatformProperties;
-	private ArrayList fTargetModels = new ArrayList();
+	private TreeMap fTargetModels = new TreeMap();
 	private ArrayList fWorkspaceModels = new ArrayList();
 	private boolean fCombined;
 	private long fTargetTimestamp;
@@ -113,17 +110,17 @@ public class PDEState extends MinimalState {
 		
 		createTargetModels();
 		
-		if (fResolve && workspace.length > 0 && !fNewState && !"true".equals(System.getProperty("pde.nocache"))) {
+		if (fResolve && workspace.length > 0 && !fNewState && !"true".equals(System.getProperty("pde.nocache"))) { //$NON-NLS-1$ //$NON-NLS-2$
 			readWorkspaceState();
 		}
 		
 		if (DEBUG)
-			System.out.println("Time to create state: " + (System.currentTimeMillis() - start) + " ms");
+			System.out.println("Time to create state: " + (System.currentTimeMillis() - start) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private void readTargetState() {
 		fTargetTimestamp = computeTimestamp(fTargetURLs);
-		File dir = new File(DIR, Long.toString(fTargetTimestamp) + ".target");
+		File dir = new File(DIR, Long.toString(fTargetTimestamp) + ".target"); //$NON-NLS-1$
 		if ((fState = readStateCache(dir)) == null
 				|| (fPluginInfos = readPluginInfoCache(dir)) == null) {
 			createNewTargetState();
@@ -140,7 +137,7 @@ public class PDEState extends MinimalState {
 	private void createNewTargetState() {
 		fState = stateObjectFactory.createState();
 		fPluginInfos = new HashMap();
-		fMonitor.beginTask("Reading plug-ins...", fTargetURLs.length);
+		fMonitor.beginTask(PDECoreMessages.PDEState_readingPlugins, fTargetURLs.length);
 		for (int i = 0; i < fTargetURLs.length; i++) {
 			try {
 				File file = new File(fTargetURLs[i].getFile());
@@ -159,7 +156,7 @@ public class PDEState extends MinimalState {
 		for (int i = 0; i < bundleDescriptions.length; i++) {
 			BundleDescription desc = bundleDescriptions[i];
 			fMonitor.subTask(bundleDescriptions[i].getSymbolicName());
-			fTargetModels.add(createExternalModel(desc));
+			fTargetModels.put(desc.getSymbolicName(), createExternalModel(desc));
 			fExtensions.remove(Long.toString(desc.getBundleId()));
 			fPluginInfos.remove(Long.toString(desc.getBundleId()));
 		}
@@ -167,7 +164,7 @@ public class PDEState extends MinimalState {
  	
 	private void readWorkspaceState() {
 		long workspace = computeTimestamp(fWorkspaceURLs);
-		File dir = new File(DIR, Long.toString(workspace) + ".workspace");
+		File dir = new File(DIR, Long.toString(workspace) + ".workspace"); //$NON-NLS-1$
 		State localState = readStateCache(dir);
 		Map localPluginInfos = readPluginInfoCache(dir);
 		Map localExtensions = readExtensionsCache(dir);
@@ -240,7 +237,7 @@ public class PDEState extends MinimalState {
 		info.providerName = element.getAttribute("provider"); //$NON-NLS-1$
 		info.className	= element.getAttribute("class"); //$NON-NLS-1$
 		info.hasExtensibleAPI = "true".equals(element.getAttribute("hasExtensibleAPI")); //$NON-NLS-1$ //$NON-NLS-2$
-		info.project = element.getAttribute("project");
+		info.project = element.getAttribute("project"); //$NON-NLS-1$
 		
 		NodeList libs = element.getChildNodes(); //$NON-NLS-1$
 		ArrayList list = new ArrayList(libs.getLength());
@@ -280,30 +277,6 @@ public class PDEState extends MinimalState {
 		return doc;
 	}
 	
-	private void saveExtensions(File dir) {
-		File file = new File(dir, ".extensions"); //$NON-NLS-1$
-		OutputStream out = null;
-		Writer writer = null;
-		try {
-			out = new FileOutputStream(file);
-			writer = new OutputStreamWriter(out, "UTF-8"); //$NON-NLS-1$
-			XMLPrintHandler.printNode(writer, createExtensionDocument(), "UTF-8"); //$NON-NLS-1$
-		} catch (Exception e) {
-			PDECore.log(e);
-		} finally {
-			try {
-				if (writer != null)
-					writer.close();
-			} catch (IOException e1) {
-			}
-			try {
-				if (out != null)
-					out.close();
-			} catch (IOException e1) {
-			}
-		}
-	}
-
 	private void savePluginInfo(File dir) {
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -334,33 +307,20 @@ public class PDEState extends MinimalState {
 				root.appendChild(element);
 			}
 			doc.appendChild(root);
-			writeXMLFile(doc, new File(dir, ".pluginInfo")); //$NON-NLS-1$
+			XMLPrintHandler.writeFile(doc, new File(dir, ".pluginInfo")); //$NON-NLS-1$
 		} catch (Exception e) {
 			PDECore.log(e);
 		} 
 	}
 	
-	private void writeXMLFile(Document doc, File file) throws IOException {
-		Writer writer = null;
-		OutputStream out = null;
+	private void saveExtensions(File dir) {
 		try {
-			out = new FileOutputStream(file);
-			writer = new OutputStreamWriter(out, "UTF-8"); //$NON-NLS-1$
-			XMLPrintHandler.printNode(writer, doc, "UTF-8"); //$NON-NLS-1$
-		} finally {
-			try {
-				if (writer != null)
-					writer.close();
-			} catch (IOException e1) {
-			}
-			try {
-				if (out != null)
-					out.close();
-			} catch (IOException e1) {
-			}
+			File file = new File(dir, ".extensions"); //$NON-NLS-1$
+			XMLPrintHandler.writeFile(createExtensionDocument(), file);
+		} catch (IOException e) {
 		}
 	}
-
+	
 	private Map readExtensionsCache(File dir) {
 		long start = System.currentTimeMillis();
 		File file = new File(dir, ".extensions"); //$NON-NLS-1$
@@ -381,7 +341,7 @@ public class PDEState extends MinimalState {
 					}
 				}
 				if (DEBUG)
-					System.out.println("Time to read extensions: " + (System.currentTimeMillis() - start) + " ms");
+					System.out.println("Time to read extensions: " + (System.currentTimeMillis() - start) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 				return map;
 			} catch (org.xml.sax.SAXException e) {
 				PDECore.log(e);
@@ -473,12 +433,12 @@ public class PDEState extends MinimalState {
  			else
  				model = new BundleFragmentModel();
  			model.setEnabled(true);
- 			WorkspaceBundleModel bundle = new WorkspaceBundleModel(project.getFile("META-INF/MANIFEST.MF"));
+ 			WorkspaceBundleModel bundle = new WorkspaceBundleModel(project.getFile("META-INF/MANIFEST.MF")); //$NON-NLS-1$
  			bundle.load(desc, this);
   			model.setBundleDescription(desc);
  			model.setBundleModel(bundle);
  			
- 			String filename = (desc.getHost() == null) ? "plugin.xml" : "fragment.xml";
+ 			String filename = (desc.getHost() == null) ? "plugin.xml" : "fragment.xml"; //$NON-NLS-1$ //$NON-NLS-2$
  			IFile file = project.getFile(filename);
  			if (file.exists()) {
  				WorkspaceExtensionsModel extensions = new WorkspaceExtensionsModel(file);
@@ -491,9 +451,9 @@ public class PDEState extends MinimalState {
  		
 		WorkspacePluginModelBase model = null;
 		if (desc.getHost() == null)
-			model = new WorkspacePluginModel(project.getFile("plugin.xml"), true);
+			model = new WorkspacePluginModel(project.getFile("plugin.xml"), true); //$NON-NLS-1$
 		else
-			model = new WorkspaceFragmentModel(project.getFile("fragment.xml"), true);
+			model = new WorkspaceFragmentModel(project.getFile("fragment.xml"), true); //$NON-NLS-1$
 		model.load(desc, this, false);
 		model.setBundleDescription(desc);
 		return model;
@@ -511,7 +471,7 @@ public class PDEState extends MinimalState {
  	}
  	
  	public IPluginModelBase[] getTargetModels() {
- 		return (IPluginModelBase[])fTargetModels.toArray(new IPluginModelBase[fTargetModels.size()]);
+ 		return (IPluginModelBase[])fTargetModels.values().toArray(new IPluginModelBase[fTargetModels.size()]);
  	}
  	
  	public IPluginModelBase[] getWorkspaceModels() {
@@ -591,7 +551,7 @@ public class PDEState extends MinimalState {
 				NodeList children = bundle.getChildNodes();
 				for (int i = 0; i < children.getLength(); i++) {
 					String name = children.item(i).getNodeName();
-					if ("extension".equals(name) || "extension-point".equals(name)) {
+					if ("extension".equals(name) || "extension-point".equals(name)) { //$NON-NLS-1$ //$NON-NLS-2$
 						list.add(children.item(i));
 					}
 				}
@@ -603,9 +563,9 @@ public class PDEState extends MinimalState {
 	public void shutdown() {
 		IPluginModelBase[] models = PDECore.getDefault().getModelManager().getWorkspaceModels();
 		long timestamp = 0;
-		if (!"true".equals(System.getProperty("pde.nocache")) && shouldSaveState(models)) {
+		if (!"true".equals(System.getProperty("pde.nocache")) && shouldSaveState(models)) { //$NON-NLS-1$ //$NON-NLS-2$
 			timestamp = computeTimestamp(models);
-			File dir = new File(DIR, Long.toString(timestamp) + ".workspace");
+			File dir = new File(DIR, Long.toString(timestamp) + ".workspace"); //$NON-NLS-1$
 			State state = stateObjectFactory.createState();
 			for (int i = 0; i < models.length; i++) {
 				state.addBundle(models[i].getBundleDescription());
@@ -614,9 +574,9 @@ public class PDEState extends MinimalState {
 			writePluginInfo(models, dir);
 			writeExtensions(models, dir);
 		}
-		clearStaleStates(".target", fTargetTimestamp);
-		clearStaleStates(".workspace", timestamp);
-		clearStaleStates(".cache", 0);
+		clearStaleStates(".target", fTargetTimestamp); //$NON-NLS-1$
+		clearStaleStates(".workspace", timestamp); //$NON-NLS-1$
+		clearStaleStates(".cache", 0); //$NON-NLS-1$
 	}
 	
 	public void writePluginInfo(IPluginModelBase[] models, File destination) {
@@ -631,7 +591,7 @@ public class PDEState extends MinimalState {
 				BundleDescription desc = models[i].getBundleDescription();
 				Element element = doc.createElement("bundle"); //$NON-NLS-1$
 				element.setAttribute("bundleID", Long.toString(desc.getBundleId())); //$NON-NLS-1$
-				element.setAttribute("project", models[i].getUnderlyingResource().getProject().getName());
+				element.setAttribute("project", models[i].getUnderlyingResource().getProject().getName()); //$NON-NLS-1$
 				if (plugin instanceof IPlugin && ((IPlugin)plugin).getClassName() != null)
 					element.setAttribute("class", ((IPlugin)plugin).getClassName()); //$NON-NLS-1$
 				if (plugin.getProviderName() != null)
@@ -645,12 +605,12 @@ public class PDEState extends MinimalState {
 						Element lib = doc.createElement("library"); //$NON-NLS-1$
 						lib.setAttribute("name", libraries[j].getName()); //$NON-NLS-1$
 						if (!libraries[j].isExported())
-							lib.setAttribute("exported", "false");
+							lib.setAttribute("exported", "false"); //$NON-NLS-1$ //$NON-NLS-2$
 						element.appendChild(lib);
 				}
 				root.appendChild(element);
 			}
-			writeXMLFile(doc, new File(destination, ".pluginInfo"));
+			XMLPrintHandler.writeFile(doc, new File(destination, ".pluginInfo")); //$NON-NLS-1$
 		} catch (ParserConfigurationException e) {
 		} catch (FactoryConfigurationError e) {
 		} catch (IOException e) {
@@ -681,7 +641,7 @@ public class PDEState extends MinimalState {
 				}			
 				root.appendChild(element);
 			}
-			writeXMLFile(doc, new File(destination, ".extensions"));
+			XMLPrintHandler.writeFile(doc, new File(destination, ".extensions")); //$NON-NLS-1$
 		} catch (ParserConfigurationException e) {
 		} catch (FactoryConfigurationError e) {
 		} catch (IOException e) {

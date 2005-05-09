@@ -10,18 +10,21 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
-import java.io.*;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
 
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.ui.progress.*;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.ui.progress.IProgressConstants;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 public class PluginExportWizard extends BaseExportWizard {
 	private static final String STORE_SECTION = "PluginExportWizard"; //$NON-NLS-1$
+	private AdvancedPluginExportPage fPage2;
 
-	/**
-	 * The constructor.
-	 */
 	public PluginExportWizard() {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_PLUGIN_EXPORT_WIZ);
 	}
@@ -32,6 +35,12 @@ public class PluginExportWizard extends BaseExportWizard {
 	
 	protected String getSettingsSectionName() {
 		return STORE_SECTION;
+	}
+	
+	public void addPages() {
+		super.addPages();
+		fPage2 = new AdvancedPluginExportPage("plugin-sign"); //$NON-NLS-1$
+		addPage(fPage2);
 	}
 	
 	protected void scheduleExportJob() {
@@ -50,23 +59,35 @@ public class PluginExportWizard extends BaseExportWizard {
 		job.setProperty(IProgressConstants.ICON_PROPERTY, PDEPluginImages.DESC_PLUGIN_OBJ);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.exports.BaseExportWizard#generateAntTask(java.io.PrintWriter)
-	 */
-	protected void generateAntTask(PrintWriter writer) {
-		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
-		writer.println("<project name=\"build\" default=\"plugin_export\">"); //$NON-NLS-1$
-		writer.println("\t<target name=\"plugin_export\">"); //$NON-NLS-1$
-		writer.print("\t\t<pde.exportPlugins plugins=\"" + getPluginIDs() //$NON-NLS-1$
-				+ "\" destination=\"" + fPage1.getDestination() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
-		String filename = fPage1.getFileName();
-		if (filename != null)
-			writer.print("filename=\"" + filename + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
-		writer.print("exportType=\"" + getExportOperation() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
-		writer.print("useJARFormat=\"" + Boolean.toString(fPage1.useJARFormat()) + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
-		writer.println("exportSource=\"" + Boolean.toString(fPage1.doExportSource()) + "\"/>");  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		writer.println("\t</target>"); //$NON-NLS-1$
-		writer.println("</project>"); //$NON-NLS-1$
+	protected Document generateAntTask() {
+		try {
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			Document doc = factory.newDocumentBuilder().newDocument();
+			Element root = doc.createElement("project"); //$NON-NLS-1$
+			root.setAttribute("name", "build"); //$NON-NLS-1$ //$NON-NLS-2$
+			root.setAttribute("default", "plugin_export"); //$NON-NLS-1$ //$NON-NLS-2$
+			doc.appendChild(root);
+			
+			Element target = doc.createElement("target"); //$NON-NLS-1$
+			target.setAttribute("name", "plugin_export"); //$NON-NLS-1$ //$NON-NLS-2$
+			root.appendChild(target);
+			
+			Element export = doc.createElement("pde.exportPlugins"); //$NON-NLS-1$
+			export.setAttribute("plugins", getPluginIDs()); //$NON-NLS-1$
+			export.setAttribute("destination", fPage1.getDestination()); //$NON-NLS-1$
+			String filename = fPage1.getFileName();
+			if (filename != null)
+				export.setAttribute("filename", filename); //$NON-NLS-1$
+			export.setAttribute("exportType", getExportOperation());  //$NON-NLS-1$
+			export.setAttribute("useJARFormat", Boolean.toString(fPage1.useJARFormat()));  //$NON-NLS-1$
+			export.setAttribute("exportSource", Boolean.toString(fPage1.doExportSource()));  //$NON-NLS-1$
+			target.appendChild(export);
+			return doc;
+		} catch (DOMException e) {
+		} catch (FactoryConfigurationError e) {
+		} catch (ParserConfigurationException e) {
+		}
+		return null;
 	}
 	
 	private String getPluginIDs() {
@@ -81,10 +102,6 @@ public class PluginExportWizard extends BaseExportWizard {
 			}
 		}
 		return buffer.toString();
-	}
-
-	protected AdvancedPluginExportPage createPage2() {
-		return new AdvancedPluginExportPage("plugin-sign"); //$NON-NLS-1$
 	}
 
 }

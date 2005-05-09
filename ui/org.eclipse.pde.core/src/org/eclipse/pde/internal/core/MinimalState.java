@@ -246,7 +246,7 @@ public class MinimalState {
 		// add the selected java profile
 		String profile = getJavaProfilePackages();
 		if (profile != null)
-			props.put("org.osgi.framework.system.packages", profile);
+			props.put("org.osgi.framework.system.packages", profile); //$NON-NLS-1$
 		return props;
 	}
 
@@ -283,7 +283,7 @@ public class MinimalState {
 			Properties profile = new Properties();
 			profile.load(is);
 			// return the value of the system packages property
-			return profile.getProperty("org.osgi.framework.system.packages");
+			return profile.getProperty("org.osgi.framework.system.packages"); //$NON-NLS-1$
 		} catch (IOException e) {
 			// nothing to do
 		} finally {
@@ -364,7 +364,7 @@ public class MinimalState {
 	private String[] getDirJavaProfiles(File bundleLocation) {
 		String[] profiles = bundleLocation.list(new FilenameFilter() {
 			public boolean accept(File dir, String name) {
-				return name.endsWith(".profile");
+				return name.endsWith(".profile"); //$NON-NLS-1$
 			}
 		});
 		return profiles;
@@ -378,7 +378,7 @@ public class MinimalState {
 			Enumeration entries = zipFile.entries();
 			while (entries.hasMoreElements()) {
 				String entryName = ((ZipEntry) entries.nextElement()).getName();
-				if (entryName.indexOf('/') < 0 && entryName.endsWith(".profile"))
+				if (entryName.indexOf('/') < 0 && entryName.endsWith(".profile")) //$NON-NLS-1$
 					results.add(entryName);
 			}
 		} catch (IOException e) {

@@ -10,23 +10,17 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.ant;
 
-import java.io.PrintWriter;
-
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildListener;
 import org.apache.tools.ant.Project;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.wizards.exports.*;
+import org.eclipse.pde.internal.ui.wizards.exports.FeatureExportJob;
 
 public class ExportBuildListener implements BuildListener {
 	
-	PrintWriter writer = null;
-
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#buildStarted(org.apache.tools.ant.BuildEvent)
 	 */
 	public void buildStarted(BuildEvent event) {
-		writer = FeatureExportJob.getWriter();
 	}
 
 	/* (non-Javadoc)
@@ -63,27 +57,8 @@ public class ExportBuildListener implements BuildListener {
 	 * @see org.apache.tools.ant.BuildListener#messageLogged(org.apache.tools.ant.BuildEvent)
 	 */
 	public void messageLogged(BuildEvent event) {
-		if (writer != null && event.getPriority() == Project.MSG_ERR) {
-			if (event.getMessage() != null)
-				writer.println(
-					PDEUIMessages.ExportBuildListener_error_error
-						+ " "
-						+ event.getMessage());
-			if (event.getProject() != null && event.getProject().getName() != null)
-				writer.println(
-					"\t"
-						+ PDEUIMessages.ExportBuildListener_error_project
-						+ " "
-						+ event.getProject().getName());
-			if (event.getTarget() != null && event.getTarget().getName() != null)
-				writer.println(
-					"\t"
-						+ PDEUIMessages.ExportBuildListener_error_target
-						+ " "
-						+ event.getTarget().getName());
-			if (event.getException() != null
-				&& event.getException().getMessage() != null)
-				writer.println("\t" + event.getException().getMessage());
+		if (event.getPriority() == Project.MSG_ERR) {
+			FeatureExportJob.errorFound();
 		}
 	}
 

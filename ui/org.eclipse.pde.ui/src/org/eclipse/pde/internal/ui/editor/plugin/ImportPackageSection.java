@@ -106,9 +106,9 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
             StringBuffer buffer = new StringBuffer(p.getName());
             String version = p.getVersion().toString();
             if (!version.equals(Version.emptyVersion.toString())) {
-                buffer.append(" (");
+                buffer.append(" ("); //$NON-NLS-1$
                 buffer.append(version);
-                buffer.append(")");
+                buffer.append(")"); //$NON-NLS-1$
             }
 			return buffer.toString();
 		}
@@ -125,7 +125,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 				page,
 				parent,
 				Section.DESCRIPTION,
-				new String[] {"Add...", "Remove", "Properties..."}); 
+				new String[] {PDEUIMessages.ImportPackageSection_add, PDEUIMessages.ImportPackageSection_remove, PDEUIMessages.ImportPackageSection_properties}); 
 	}
     
     private boolean isFragment() {
@@ -140,8 +140,8 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 	 *      org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
-        section.setText("Required Packages"); 
-        section.setDescription(NLS.bind(PDEUIMessages.ImportPackageSection_desc, isFragment() ? "fragment" : "plug-in")); 
+        section.setText(PDEUIMessages.ImportPackageSection_required); 
+        section.setDescription(NLS.bind(PDEUIMessages.ImportPackageSection_desc, isFragment() ? "fragment" : "plug-in"));  //$NON-NLS-1$ //$NON-NLS-2$
 
         Composite container = createClientContainer(section, 2, toolkit);
 		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
@@ -154,10 +154,10 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
             public int compare(Viewer viewer, Object e1, Object e2) {
                 String s1 = e1.toString();
                 String s2 = e2.toString();
-                if (s1.indexOf(" ") != -1)
-                    s1 = s1.substring(0, s1.indexOf(" "));
-                if (s2.indexOf(" ") != -1)
-                    s2 = s2.substring(0, s2.indexOf(" "));
+                if (s1.indexOf(" ") != -1) //$NON-NLS-1$
+                    s1 = s1.substring(0, s1.indexOf(" ")); //$NON-NLS-1$
+                if (s2.indexOf(" ") != -1) //$NON-NLS-1$
+                    s2 = s2.substring(0, s2.indexOf(" ")); //$NON-NLS-1$
                 return super.compare(viewer, s1, s2);
             }
         });
@@ -257,8 +257,8 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
                 new ImportPackageDialogLabelProvider());
         dialog.setElements(getAvailablePackages());
         dialog.setMultipleSelection(true);
-        dialog.setMessage("Packages exported by other plug-ins:");
-        dialog.setTitle("Package Selection");
+        dialog.setMessage(PDEUIMessages.ImportPackageSection_exported);
+        dialog.setTitle(PDEUIMessages.ImportPackageSection_selection);
         dialog.create();
         SWTUtil.setDialogSize(dialog, 400, 500);
 		if (dialog.open() == ElementListSelectionDialog.OK) {
@@ -279,15 +279,15 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
         for (int i = 0; i < objects.length; i++) {
             ExportPackageDescription desc = (ExportPackageDescription)objects[i];
             if (buffer.length() > 0)
-                buffer.append("," + getLineDelimiter() + " ");
+                buffer.append("," + getLineDelimiter() + " "); //$NON-NLS-1$ //$NON-NLS-2$
             buffer.append(desc.getName());
             String version = desc.getVersion().toString();
             if (!version.equals(Version.emptyVersion.toString())) {
-                buffer.append(";");
+                buffer.append(";"); //$NON-NLS-1$
                 buffer.append(getVersionAttribute());
-                buffer.append("=\"");
+                buffer.append("=\""); //$NON-NLS-1$
                 buffer.append(version);
-                buffer.append("\"");
+                buffer.append("\""); //$NON-NLS-1$
             }
         }
         return buffer.toString();
@@ -366,7 +366,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
         };
         fRemoveAction.setEnabled(isEditable());
         
-        fPropertiesAction = new Action("Properties") { 
+        fPropertiesAction = new Action(PDEUIMessages.ImportPackageSection_propertyAction) { 
             public void run() {
                 handleOpenProperties();
             }

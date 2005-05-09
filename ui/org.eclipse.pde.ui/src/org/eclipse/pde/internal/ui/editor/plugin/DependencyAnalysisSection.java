@@ -55,7 +55,7 @@ public class DependencyAnalysisSection extends PDESection {
 		PDELabelProvider lp = PDEPlugin.getDefault().getLabelProvider();
 		formText.setImage("loops", lp.get(PDEPluginImages.DESC_LOOP_OBJ)); //$NON-NLS-1$
 		formText.setImage("search", lp.get(PDEPluginImages.DESC_PSEARCH_OBJ)); //$NON-NLS-1$
-		formText.setImage("hierarchy", lp.get(PDEPluginImages.DESC_HIERARCHICAL_LAYOUT));
+		formText.setImage("hierarchy", lp.get(PDEPluginImages.DESC_HIERARCHICAL_LAYOUT)); //$NON-NLS-1$
 		formText.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				if (e.getHref().equals("unused")) //$NON-NLS-1$
@@ -64,7 +64,7 @@ public class DependencyAnalysisSection extends PDESection {
 					doFindLoops();
 				else if (e.getHref().equals("references")) //$NON-NLS-1$
 					doFindReferences();
-				else if (e.getHref().equals("hierarchy"))
+				else if (e.getHref().equals("hierarchy")) //$NON-NLS-1$
 					OpenDependenciesAction.openDependencies((IPluginModelBase)getPage().getModel());
 			}
 		});

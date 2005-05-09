@@ -29,24 +29,24 @@ public abstract class BaseExportTask extends Task {
 	 */
 	public void execute() throws BuildException {
 		if (fDestination == null)
-			throw new BuildException("No destination is specified");
+			throw new BuildException("No destination is specified"); //$NON-NLS-1$
 		
 		if (!fToDirectory && fZipFilename == null)
-			throw new BuildException("No zip file is specified");
+			throw new BuildException("No zip file is specified"); //$NON-NLS-1$
 		
 		getExportJob().schedule(2000);
 	}
 	
 	public void setExportType(String type) {
-		fToDirectory = !"zip".equals(type);
+		fToDirectory = !"zip".equals(type); //$NON-NLS-1$
 	}
 	
 	public void setUseJARFormat(String useJarFormat) {
-		fUseJarFormat = "true".equals(useJarFormat);
+		fUseJarFormat = "true".equals(useJarFormat); //$NON-NLS-1$
 	}
 	
 	public void setExportSource(String doExportSource) {
-		fExportSource = "true".equals(doExportSource);
+		fExportSource = "true".equals(doExportSource); //$NON-NLS-1$
 	}
 	
 	public void setDestination(String destination) {

@@ -30,7 +30,7 @@ public class PluginExportTask extends BaseExportTask {
 	}
 	
 	public void setPlugins(String plugins) {
-		StringTokenizer tok = new StringTokenizer(plugins, ",");
+		StringTokenizer tok = new StringTokenizer(plugins, ","); //$NON-NLS-1$
 		PluginModelManager manager = PDECore.getDefault().getModelManager();
 		ArrayList models = new ArrayList();
 		while (tok.hasMoreTokens()) {

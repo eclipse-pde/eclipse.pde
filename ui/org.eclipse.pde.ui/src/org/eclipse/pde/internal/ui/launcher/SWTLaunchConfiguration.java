@@ -156,7 +156,7 @@ public class SWTLaunchConfiguration extends
 	}
 	
 	public static BundleDescription findFragment() {
-		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel("org.eclipse.swt");
+		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel("org.eclipse.swt"); //$NON-NLS-1$
 		if (model != null && model.isEnabled()) {
 			BundleDescription desc = model.getBundleDescription();
 			if (desc.getContainingState() != null) {
@@ -181,7 +181,7 @@ public class SWTLaunchConfiguration extends
 	private String getExtractionLocation(File file) {
 		long timestamp = file.lastModified() ^ file.getAbsolutePath().hashCode();
 		File metadata = PDEPlugin.getDefault().getStateLocation().toFile();
-		File cache = new File(metadata, Long.toString(timestamp) + ".swt");
+		File cache = new File(metadata, Long.toString(timestamp) + ".swt"); //$NON-NLS-1$
 		if (!cache.exists()){
 			deleteStaleCache(metadata);
 			cache.mkdirs();
@@ -198,7 +198,7 @@ public class SWTLaunchConfiguration extends
 		if (children == null)
 			return;
 		for (int i = 0; i < children.length; i++) {
-			if (children[i].isDirectory() && children[i].getName().endsWith(".swt")) {
+			if (children[i].isDirectory() && children[i].getName().endsWith(".swt")) { //$NON-NLS-1$
 				CoreUtility.deleteContent(children[i]);
 			}
 		}
@@ -220,7 +220,7 @@ public class SWTLaunchConfiguration extends
 							File file = new File(destination, zipEntry.getName());
 							AbstractFrameworkAdaptor.readFile(in, file);
 							if (!Platform.getOS().equals(Constants.OS_WIN32))
-								Runtime.getRuntime().exec(new String[] {"chmod", "755", file.getAbsolutePath()}).waitFor();
+								Runtime.getRuntime().exec(new String[] {"chmod", "755", file.getAbsolutePath()}).waitFor(); //$NON-NLS-1$ //$NON-NLS-2$
 						}
 					} catch (IOException e) {
 					} catch (InterruptedException e) {
@@ -248,11 +248,11 @@ public class SWTLaunchConfiguration extends
 		Path path = new Path(name);
 		if (path.segmentCount() > 1)
 			return false;
-		return name.endsWith(".dll")
-				|| name.endsWith(".jnilib")
-				|| name.endsWith(".sl")
-				|| name.endsWith(".a")
-				|| name.indexOf(".so") != -1;
+		return name.endsWith(".dll") //$NON-NLS-1$
+				|| name.endsWith(".jnilib") //$NON-NLS-1$
+				|| name.endsWith(".sl") //$NON-NLS-1$
+				|| name.endsWith(".a") //$NON-NLS-1$
+				|| name.indexOf(".so") != -1; //$NON-NLS-1$
 	}
 	
 	private String getLegacyNativeLibrariesLocation(BundleDescription fragment) {

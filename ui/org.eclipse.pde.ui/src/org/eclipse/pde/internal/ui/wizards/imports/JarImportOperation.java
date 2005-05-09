@@ -169,7 +169,7 @@ public abstract class JarImportOperation implements IWorkspaceRunnable {
 			for (int i = 0; i < children.size(); i++) {
 				Object curr = children.get(i);
 				if (provider.isFolder(curr)) {
-					if (!provider.getLabel(curr).equals("src") && !isClassFolder(provider, curr)) {
+					if (!provider.getLabel(curr).equals("src") && !isClassFolder(provider, curr)) { //$NON-NLS-1$
 						ArrayList list = new ArrayList();
 						collectResources(provider, curr, false, list);
 						collected.addAll(list);
@@ -187,7 +187,7 @@ public abstract class JarImportOperation implements IWorkspaceRunnable {
 			for (int i = 0; i < children.size(); i++) {
 				Object curr = children.get(i);
 				if (provider.isFolder(curr)) {
-					if (provider.getLabel(curr).equals("src")) {
+					if (provider.getLabel(curr).equals("src")) { //$NON-NLS-1$
 						ArrayList list = new ArrayList();
 						collectResources(provider, curr, false, list);
 						collected.addAll(list);
@@ -235,7 +235,7 @@ public abstract class JarImportOperation implements IWorkspaceRunnable {
 		if (children != null && !children.isEmpty()) {
 			for (int i = 0; i < children.size(); i++) {
 				Object curr = children.get(i);
-				if (provider.isFolder(curr) && provider.getLabel(curr).equals("src")) {
+				if (provider.isFolder(curr) && provider.getLabel(curr).equals("src")) { //$NON-NLS-1$
 					return true;
 				}
 			}
@@ -285,10 +285,10 @@ public abstract class JarImportOperation implements IWorkspaceRunnable {
 					Object curr = children.get(i);
 					if (provider.isFolder(curr)) {
 						if (!isClassFolder(provider, curr)) 
-							result.add(provider.getLabel(curr) + "/");
+							result.add(provider.getLabel(curr) + "/"); //$NON-NLS-1$
 						else {
-							if (!result.contains("."))
-								result.add(".");
+							if (!result.contains(".")) //$NON-NLS-1$
+								result.add("."); //$NON-NLS-1$
 						}
 					} else {
 						result.add(provider.getLabel(curr));

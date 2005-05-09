@@ -1879,12 +1879,76 @@ public class PDEUIMessages extends NLS {
 	public static String ImportPackageSection_desc;
 	public static String ExportPackageSection_desc;
 
-	public static String ExportBuildListener_error_error;
-	public static String ExportBuildListener_error_project;
-	public static String ExportBuildListener_error_target;
-
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, PDEUIMessages.class);
 	}
+
+	public static String ExportPackageVisibilitySection_title;
+
+	public static String ExportPackageVisibilitySection_default;
+
+	public static String ExportPackageVisibilitySection_hideAll;
+
+	public static String ExportPackageVisibilitySection_hideOnly;
+
+	public static String ExportPackageSection_0;
+
+	public static String ExportPackageSection_add;
+
+	public static String ExportPackageSection_remove;
+
+	public static String ExportPackageSection_properties;
+
+	public static String ExportPackageSection_title;
+
+	public static String ExportPackageSection_propertyAction;
+
+	public static String DependenciesPage_properties;
+
+	public static String ImportPackageSection_add;
+
+	public static String ImportPackageSection_remove;
+
+	public static String ImportPackageSection_properties;
+
+	public static String ImportPackageSection_required;
+
+	public static String ImportPackageSection_exported;
+
+	public static String ImportPackageSection_selection;
+
+	public static String ImportPackageSection_propertyAction;
+
+	public static String DependencyPropertiesDialog_properties;
+
+	public static String DependencyPropertiesDialog_optional;
+
+	public static String DependencyPropertiesDialog_reexport;
+
+	public static String DependencyPropertiesDialog_version;
+
+	public static String DependencyPropertiesDialog_invalidRange;
+
+	public static String DependencyPropertiesDialog_invalidFormat;
+
+	public static String RequiresSection_properties;
+
+	public static String LibrarySection_fragment;
+
+	public static String LibrarySection_plugin;
+
+	public static String EnvironmentBlock_jreTitle;
+
+	public static String DependencyExtentSearchResultPage_referencesInPlugin;
+
+	public static String CrossPlatformExportPage_available;
+
+	public static String CrossPlatformExportPage_title;
+
+	public static String CrossPlatformExportPage_desc;
+
+	public static String BaseImportWizardSecondPage_autobuild;
+
+	public static String CreateHelpIndexAction_creating;
 }

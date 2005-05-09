@@ -30,7 +30,6 @@ public class Product extends ProductObject implements IProduct {
 	private TreeMap fFeatures = new TreeMap();
 	private IConfigurationFileInfo fConfigIniInfo;
 	private boolean fUseFeatures;
-	private boolean fIncludeFragments;
 	private IWindowImages fWindowImages;
 	private ISplashInfo fSplashInfo;
 	private ILauncherInfo fLauncherInfo;
@@ -143,7 +142,7 @@ public class Product extends ProductObject implements IProduct {
 		}
 		
 		writer.println();
-		writer.println(indent + "   <plugins " + P_INCLUDE_FRAGMENTS + "=\"" + Boolean.toString(fIncludeFragments) + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		writer.println(indent + "   <plugins>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		Iterator iter = fPlugins.values().iterator();
 		while (iter.hasNext()) {
 			IProductPlugin plugin = (IProductPlugin)iter.next();
@@ -205,7 +204,6 @@ public class Product extends ProductObject implements IProduct {
 						fAboutInfo = factory.createAboutInfo();
 						fAboutInfo.parse(child);
 					} else if (name.equals("plugins")) { //$NON-NLS-1$
-						fIncludeFragments = "true".equals(((Element)child).getAttribute(P_INCLUDE_FRAGMENTS)); //$NON-NLS-1$
 						parsePlugins(child.getChildNodes());
 					} else if (name.equals("features")) { //$NON-NLS-1$
 						parseFeatures(child.getChildNodes());
@@ -309,17 +307,6 @@ public class Product extends ProductObject implements IProduct {
 		fUseFeatures = use;
 		if (isEditable())
 			firePropertyChanged(P_USEFEATURES, Boolean.toString(old), Boolean.toString(fUseFeatures));
-	}
-
-	public boolean includeFragments() {
-		return fIncludeFragments;
-	}
-
-	public void setIncludeFragments(boolean include) {
-		boolean old = fIncludeFragments;
-		fIncludeFragments = include;
-		if (isEditable())
-			firePropertyChanged(P_USEFEATURES, Boolean.toString(old), Boolean.toString(fIncludeFragments));
 	}
 
 	public boolean containsPlugin(String id) {

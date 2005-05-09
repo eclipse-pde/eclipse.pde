@@ -40,9 +40,9 @@ public class ImportPackageObject extends PackageObject {
     protected void appendSupportedAttributes(StringBuffer buffer) {
         super.appendSupportedAttributes(buffer);
         if (fOptional) {
-            buffer.append(";");
+            buffer.append(";"); //$NON-NLS-1$
             buffer.append(Constants.RESOLUTION_DIRECTIVE);
-            buffer.append(":=");
+            buffer.append(":="); //$NON-NLS-1$
             buffer.append(Constants.RESOLUTION_OPTIONAL);
         }
     }

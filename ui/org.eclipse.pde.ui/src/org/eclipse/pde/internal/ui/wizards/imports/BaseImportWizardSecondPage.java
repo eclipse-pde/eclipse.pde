@@ -18,14 +18,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.core.plugin.IFragment;
-import org.eclipse.pde.core.plugin.IFragmentModel;
-import org.eclipse.pde.core.plugin.IPlugin;
-import org.eclipse.pde.core.plugin.IPluginImport;
-import org.eclipse.pde.core.plugin.IPluginModel;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
@@ -42,7 +35,7 @@ import org.eclipse.swt.widgets.TableItem;
 public abstract class BaseImportWizardSecondPage extends WizardPage implements IModelProviderListener {
 	
 	protected static final String SETTINGS_ADD_FRAGMENTS = "addFragments"; //$NON-NLS-1$
-	protected static final String SETTINGS_AUTOBUILD = "autobuild";
+	protected static final String SETTINGS_AUTOBUILD = "autobuild"; //$NON-NLS-1$
 	
 	protected PluginImportWizardFirstPage fPage1;
 	protected IPluginModelBase[] fModels = new IPluginModelBase[0];
@@ -108,7 +101,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 		
 		if (!PDEPlugin.getWorkspace().isAutoBuilding()) {
 			fAutoBuildButton = new Button(composite, SWT.CHECK);
-			fAutoBuildButton.setText("Build projects after the import operation completes");
+			fAutoBuildButton.setText(PDEUIMessages.BaseImportWizardSecondPage_autobuild);
 			fAutoBuildButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			fAutoBuildButton.setSelection(getDialogSettings().getBoolean(SETTINGS_AUTOBUILD));
 		}

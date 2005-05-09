@@ -73,15 +73,15 @@ public abstract class BundleModel
 		if (value != null)
 			properties.put(Constants.BUNDLE_ACTIVATOR, value);
 		if (state.hasExtensibleAPI(id))
-			properties.put(ICoreConstants.EXTENSIBLE_API, "true");
+			properties.put(ICoreConstants.EXTENSIBLE_API, "true"); //$NON-NLS-1$
 		String[] libraries = state.getLibraryNames(id);
 		if (libraries.length > 0) {
 			StringBuffer buffer = new StringBuffer();
 			for (int i = 0; i < libraries.length; i++) {
 				if (buffer.length() > 0) {
-					buffer.append(",");
-					buffer.append(System.getProperty("line.separator"));
-					buffer.append(" ");
+					buffer.append(","); //$NON-NLS-1$
+					buffer.append(System.getProperty("line.separator")); //$NON-NLS-1$
+					buffer.append(" "); //$NON-NLS-1$
 				}
 				buffer.append(libraries[i]);
 			}

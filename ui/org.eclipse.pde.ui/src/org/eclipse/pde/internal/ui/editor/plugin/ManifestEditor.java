@@ -73,8 +73,8 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
 					file == buildFile));
 		}
 		manager.monitorFile(manifestFile);
-		manager.monitorFile(project.getFile("plugin.xml"));
-		manager.monitorFile(project.getFile("fragment.xml"));
+		manager.monitorFile(project.getFile("plugin.xml")); //$NON-NLS-1$
+		manager.monitorFile(project.getFile("fragment.xml")); //$NON-NLS-1$
 		manager.monitorFile(buildFile);
 	}
 	
@@ -117,10 +117,10 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
 			return;
 		IProject project = inputContextManager.getCommonProject();
 		String name = (inputContextManager.getAggregateModel() instanceof IFragmentModel)
-						? "fragment.xml" : "plugin.xml";
+						? "fragment.xml" : "plugin.xml"; //$NON-NLS-1$ //$NON-NLS-2$
 		IFile file = project.getFile(name); //$NON-NLS-1$
 		WorkspacePluginModelBase model;
-		if (name.equals("fragment.xml")) 
+		if (name.equals("fragment.xml"))  //$NON-NLS-1$
 			model = new WorkspaceFragmentModel(file, false);
 		else
 			model = new WorkspacePluginModel(file, false);
@@ -488,9 +488,9 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
      */
     public void showEditorInput(IEditorInput editorInput) {
     	String name = editorInput.getName();
-    	if (name.equals("MANIFEST.MF")) {
+    	if (name.equals("MANIFEST.MF")) { //$NON-NLS-1$
     		setActivePage(0);
-    	} else if (name.equals("build.properties")) {
+    	} else if (name.equals("build.properties")) { //$NON-NLS-1$
     		setActivePage(BUILD_INDEX);
     	} else {
     		if (inputContextManager.hasContext(BundleInputContext.CONTEXT_ID))

@@ -99,8 +99,8 @@ public class LibrarySection extends TableSection implements IModelChangedListene
         IPluginModelBase model = (IPluginModelBase)getPage().getPDEEditor().getAggregateModel();
         if (isBundle()) {
            return (model.isFragmentModel())
-               ? "Specify the libraries and folders that constitute the fragment runtime.  If unspecified, the classes and resources are assumed to be at the root of the fragment."
-               : "Specify the libraries and folders that constitute the plug-in runtime.  If unspecified, the classes and resources are assumed to be at the root of the plug-in.";
+               ? PDEUIMessages.LibrarySection_fragment
+               : PDEUIMessages.LibrarySection_plugin;
         }      
         return (model.isFragmentModel())
                     ? PDEUIMessages.ManifestEditor_LibrarySection_fdesc

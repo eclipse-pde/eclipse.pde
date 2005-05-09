@@ -190,7 +190,7 @@ public class ConvertedProjectsPage extends WizardPage  {
 		throws CoreException {
 		CoreUtility.addNatureToProject(project, PDE.PLUGIN_NATURE, monitor);
 		if (!WorkspaceModelManager.isPluginProject(project))
-			createManifestFile(project.getFile("plugin.xml"), monitor);
+			createManifestFile(project.getFile("plugin.xml"), monitor); //$NON-NLS-1$
 	}
 	
 	private void convertProjects(

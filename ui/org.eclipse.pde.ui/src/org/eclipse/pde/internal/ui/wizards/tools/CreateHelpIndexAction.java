@@ -30,6 +30,7 @@ import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
@@ -67,7 +68,7 @@ public class CreateHelpIndexAction implements IObjectActionDelegate {
 			public void run(IProgressMonitor monitor)
 					throws InvocationTargetException {
 				try {
-					monitor.beginTask("Creating index...", 10);
+					monitor.beginTask(PDEUIMessages.CreateHelpIndexAction_creating, 10);
 					indexBuilder.execute(new SubProgressMonitor(monitor, 9));
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
@@ -119,7 +120,7 @@ public class CreateHelpIndexAction implements IObjectActionDelegate {
 			if (pluginModel.getUnderlyingResource()==null) {
 				return null;
 			}
-			IFile pluginFile = pluginModel.getUnderlyingResource().getProject().getFile("plugin.xml");
+			IFile pluginFile = pluginModel.getUnderlyingResource().getProject().getFile("plugin.xml"); //$NON-NLS-1$
 			return (pluginFile.exists()) ? pluginFile.getLocation().toFile() : null;
 		}
 		return file.getLocation().toFile();

@@ -97,7 +97,7 @@ public class SWTSourcePathComputer extends JavaSourcePathComputer {
 	}
 	
 	private String getLibrarySourceLocation(IFragment fragment, IPath path) {
-		String library = path.segmentCount() == 0 ? "." : path.setDevice(null).toString();
+		String library = path.segmentCount() == 0 ? "." : path.setDevice(null).toString(); //$NON-NLS-1$
 		SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
 		int dot = library.lastIndexOf('.');
 		if (dot != -1) {

@@ -54,4 +54,6 @@ public class PDECoreMessages extends NLS {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, PDECoreMessages.class);
 	}
+
+	public static String PDEState_readingPlugins;
 }

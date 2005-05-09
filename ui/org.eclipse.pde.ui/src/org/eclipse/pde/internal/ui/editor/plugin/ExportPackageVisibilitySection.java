@@ -91,14 +91,14 @@ public class ExportPackageVisibilitySection extends TableSection
 	}
     
 	public void createClient(Section section, FormToolkit toolkit) {
-        section.setText("Package Visibility (Eclipse 3.1 Only)");
-        section.setDescription("By default, an exported package is visible to all clients.  Eclipse 3.1 allows access restrictions on exported packages.");
+        section.setText(PDEUIMessages.ExportPackageVisibilitySection_title);
+        section.setDescription(PDEUIMessages.ExportPackageVisibilitySection_default);
 		Composite comp = toolkit.createComposite(section);
         GridLayout layout = new GridLayout();
         layout.verticalSpacing = 9;
 		comp.setLayout(layout);
         
-        fInternalButton = toolkit.createButton(comp, "Hide this package from all plug-ins when running in strict mode", SWT.CHECK);
+        fInternalButton = toolkit.createButton(comp, PDEUIMessages.ExportPackageVisibilitySection_hideAll, SWT.CHECK);
         fInternalButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {
                 if (!fBlockChanges)
@@ -106,7 +106,7 @@ public class ExportPackageVisibilitySection extends TableSection
             }
         });
         
-        toolkit.createLabel(comp, "Expose this package to the following plug-ins only:");
+        toolkit.createLabel(comp, PDEUIMessages.ExportPackageVisibilitySection_hideOnly);
         
         Composite container = toolkit.createComposite(comp);
         container.setLayoutData(new GridData(GridData.FILL_BOTH));

@@ -19,8 +19,8 @@ import org.eclipse.pde.core.IModelChangedEvent;
 
 public class ExportPackageObject extends PackageObject {
     
-    private static final String INTERNAL = "x-internal";
-    private static final String FRIENDS = "x-friends";
+    private static final String INTERNAL = "x-internal"; //$NON-NLS-1$
+    private static final String FRIENDS = "x-friends"; //$NON-NLS-1$
     
     private static final long serialVersionUID = 1L;
     
@@ -30,7 +30,7 @@ public class ExportPackageObject extends PackageObject {
      
     public ExportPackageObject(ManifestHeader header, ManifestElement element, String versionAttribute) {
         super(header, element, versionAttribute);
-        fInternal = "true".equals(element.getDirective(INTERNAL));
+        fInternal = "true".equals(element.getDirective(INTERNAL)); //$NON-NLS-1$
         processFriends(element.getDirective(FRIENDS));
     }
     
@@ -51,21 +51,21 @@ public class ExportPackageObject extends PackageObject {
     protected void appendSupportedAttributes(StringBuffer buffer) {
        super.appendSupportedAttributes(buffer);
        if (fInternal) {
-           buffer.append(";");
+           buffer.append(";"); //$NON-NLS-1$
            buffer.append(INTERNAL);
-           buffer.append(":=true");
+           buffer.append(":=true"); //$NON-NLS-1$
        }
        if (fFriends.size() > 0) {
-           buffer.append(";");
+           buffer.append(";"); //$NON-NLS-1$
            buffer.append(FRIENDS);
-           buffer.append(":=\"");
+           buffer.append(":=\""); //$NON-NLS-1$
            Iterator iter = fFriends.keySet().iterator();
            while (iter.hasNext()) {
                buffer.append(iter.next().toString());
                if (iter.hasNext())
-                   buffer.append(",");
+                   buffer.append(","); //$NON-NLS-1$
            }
-           buffer.append("\"");
+           buffer.append("\""); //$NON-NLS-1$
        }
     }
 

@@ -184,7 +184,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	private Rule getRule(StateHelper helper, BundleDescription desc, ExportPackageDescription export) {
 		Rule rule = new Rule();
 		rule.discouraged = helper.getAccessCode(desc, export) == StateHelper.ACCESS_DISCOURAGED;
-		rule.path = new Path(export.getName().replaceAll("\\.", "/") + "/*");
+		rule.path = new Path(export.getName().replaceAll("\\.", "/") + "/*"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		return rule;
 	}
 	
@@ -266,7 +266,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	}
 	
 	private Rule[] getInclusions(IPluginModelBase model) {
-		if ("false".equals(System.getProperty("pde.restriction"))
+		if ("false".equals(System.getProperty("pde.restriction")) //$NON-NLS-1$ //$NON-NLS-2$
 				||!fModel.getBundleDescription().isResolved())
 			return null;
 		

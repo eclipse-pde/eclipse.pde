@@ -154,7 +154,7 @@ public class LogView extends ViewPart implements ILogListener {
         
         createPropertiesAction();
         
-        MenuManager popupMenuManager = new MenuManager("#PopupMenu");
+        MenuManager popupMenuManager = new MenuManager("#PopupMenu"); //$NON-NLS-1$
         IMenuListener listener = new IMenuListener() {
             public void menuAboutToShow(IMenuManager manager) {
                 manager.add(fCopyAction);

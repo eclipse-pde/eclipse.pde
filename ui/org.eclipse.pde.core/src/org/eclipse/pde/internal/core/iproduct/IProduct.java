@@ -27,8 +27,6 @@ public interface IProduct extends IProductObject {
 	
 	boolean useFeatures();
 	
-	boolean includeFragments();
-	
 	IAboutInfo getAboutInfo();
 	
 	IConfigurationFileInfo getConfigurationFileInfo();
@@ -72,8 +70,6 @@ public interface IProduct extends IProductObject {
 	void setLauncherInfo(ILauncherInfo info);
 	
 	void setUseFeatures(boolean use);
-	
-	void setIncludeFragments(boolean include);
 	
 	void reset();
 	

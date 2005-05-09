@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.builders.CompilerFlags;
@@ -141,17 +142,7 @@ public class PDELabelProvider extends SharedLabelProvider {
     }
 	
 	public String getObjectText(IProductPlugin obj) {
-		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(obj.getId());	
-		String version = model == null ? null : model.getPluginBase().getVersion();
-		String text = null;
-		if (isFullNameModeEnabled()) {
-			if (model != null) {
-				text = model.getPluginBase().getTranslatedName();
-			}
-		} else {
-			text = preventNull(obj.getId());
-		}
-		return version == null ? text : text + " (" + version + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+		return obj.getId();
 	}
 	
 	public String getObjectText(IPluginImport obj) {
@@ -437,11 +428,12 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 	
 	private Image getObjectImage(IProductPlugin obj) {
-		String id = obj.getId();
-		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(id);
-		if (model != null)
-			return getImage(model);
-	
+		BundleDescription desc = TargetPlatform.getState().getBundle(obj.getId(), null);
+		if (desc != null) {
+			return desc.getHost() == null 
+				? get(PDEPluginImages.DESC_PLUGIN_OBJ)
+				: get(PDEPluginImages.DESC_FRAGMENT_OBJ);
+		}
 		return get(PDEPluginImages.DESC_PLUGIN_OBJ, F_ERROR);
 	}
 

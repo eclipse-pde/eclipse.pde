@@ -46,13 +46,13 @@ public class PackageObject extends BundleObject {
      public String toString() {
         StringBuffer buffer = new StringBuffer(fName);
         if (fVersion != null && fVersion.length() > 0) {
-            buffer.append(" ");
+            buffer.append(" "); //$NON-NLS-1$
             boolean wrap = Character.isDigit(fVersion.charAt(0));
             if (wrap)
-                buffer.append("(");
+                buffer.append("("); //$NON-NLS-1$
             buffer.append(fVersion);
             if (wrap)
-                buffer.append(")");
+                buffer.append(")"); //$NON-NLS-1$
         }
         return buffer.toString();
     }
@@ -72,11 +72,11 @@ public class PackageObject extends BundleObject {
                 String attr = attrs.nextElement().toString();
                 if (attr.equals(fVersionAttribute))
                     continue;
-                buffer.append(";");
+                buffer.append(";"); //$NON-NLS-1$
                 buffer.append(attr);
-                buffer.append("=\"");
+                buffer.append("=\""); //$NON-NLS-1$
                 buffer.append(fElement.getAttribute(attr));
-                buffer.append("\"");
+                buffer.append("\""); //$NON-NLS-1$
             }
         }
         
@@ -86,12 +86,12 @@ public class PackageObject extends BundleObject {
                 String directive = directives.nextElement().toString();
                 if (skipDirective(directive))
                     continue;
-                buffer.append(";");
+                buffer.append(";"); //$NON-NLS-1$
                 buffer.append(directive);
-                buffer.append(":=");
-                buffer.append("\"");
+                buffer.append(":="); //$NON-NLS-1$
+                buffer.append("\""); //$NON-NLS-1$
                 buffer.append(fElement.getDirective(directive));
-                buffer.append("\"");
+                buffer.append("\""); //$NON-NLS-1$
             }
         }
         return buffer.toString();
@@ -99,11 +99,11 @@ public class PackageObject extends BundleObject {
     
     protected void appendSupportedAttributes(StringBuffer buffer) {
         if (fVersion != null && fVersion.length() > 0) {
-            buffer.append(";");
+            buffer.append(";"); //$NON-NLS-1$
             buffer.append(fVersionAttribute);
-            buffer.append("=\"");
+            buffer.append("=\""); //$NON-NLS-1$
             buffer.append(fVersion.trim());
-            buffer.append("\"");
+            buffer.append("\""); //$NON-NLS-1$
         }
     }
     

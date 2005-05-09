@@ -99,7 +99,7 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 
 		fMatchCombo = new ComboPart();
 		fMatchCombo.createControl(container, toolkit, SWT.READ_ONLY);
-		fMatchCombo.add("");
+		fMatchCombo.add(""); //$NON-NLS-1$
 		fMatchCombo.add(PDEUIMessages.ManifestEditor_MatchSection_equivalent);
 		fMatchCombo.add(PDEUIMessages.ManifestEditor_MatchSection_compatible);
 		fMatchCombo.add(PDEUIMessages.ManifestEditor_MatchSection_perfect);

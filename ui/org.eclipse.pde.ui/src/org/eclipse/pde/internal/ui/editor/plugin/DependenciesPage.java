@@ -67,7 +67,7 @@ public class DependenciesPage extends PDEFormPage {
         labels.add(PDEUIMessages.RequiresSection_up);
         labels.add(PDEUIMessages.RequiresSection_down);
         if (isBundle())
-            labels.add("Properties...");
+            labels.add(PDEUIMessages.DependenciesPage_properties);
         return (String[])labels.toArray(new String[labels.size()]);
     }
 
