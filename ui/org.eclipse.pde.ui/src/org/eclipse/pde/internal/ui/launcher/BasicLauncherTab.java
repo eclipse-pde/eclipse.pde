@@ -513,6 +513,11 @@ public class BasicLauncherTab
 		config.setAttribute(PROGARGS, ""); //$NON-NLS-1$
 		config.setAttribute(VMARGS,""); //$NON-NLS-1$
 		config.setAttribute(BOOTSTRAP_ENTRIES, ""); //$NON-NLS-1$
+		String product = TargetPlatform.getDefaultProduct();
+		if (product != null) {
+			config.setAttribute(USE_PRODUCT, true);
+			config.setAttribute(PRODUCT, product); //$NON-NLS-1$
+		}
 	}
 	
 	private void updateStatus() {

@@ -245,7 +245,15 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 				}
 				wc.setAttribute(ILauncherSettings.WSPROJECT, wsplugins.toString());
 				wc.setAttribute(ILauncherSettings.EXTPLUGINS, explugins.toString());
+			} else {
+				String defaultProduct = TargetPlatform.getDefaultProduct();
+				if (defaultProduct != null) {
+					wc.setAttribute(ILauncherSettings.USE_DEFAULT, true);
+					wc.setAttribute(ILauncherSettings.USE_PRODUCT, true);
+					wc.setAttribute(ILauncherSettings.PRODUCT, defaultProduct);
+				}
 			}
+
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, CLASSPATH_PROVIDER);
 			config= wc.doSave();		
 		} catch (CoreException ce) {

@@ -492,5 +492,26 @@ public class TargetPlatform implements IEnvironmentVariables {
 		return paths;
 	}
 
+	/**
+	 * Obtains product ID
+	 * 
+	 * @return String or null
+	 */
+	public static String getDefaultProduct() {
+		if (ICoreConstants.TARGET21.equals(TargetPlatform.getTargetVersion())) {
+			return null;
+		}
+		Properties config = getConfigIniProperties("configuration/config.ini"); //$NON-NLS-1$
+		if (config != null) {
+			String product = (String) config.get("eclipse.product"); //$NON-NLS-1$
+			if (product != null && getProductNameSet().contains(product)) {
+				return product;
+			}
+		}
+		if (getProductNameSet().contains("org.eclipse.platform.ide")) { //$NON-NLS-1$
+			return "org.eclipse.platform.ide"; //$NON-NLS-1$
+		}
+		return null;
+	}
 
 }
