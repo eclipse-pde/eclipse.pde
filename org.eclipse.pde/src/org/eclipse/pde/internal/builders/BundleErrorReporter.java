@@ -46,6 +46,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.search.PluginJavaSearchUtil;
 import org.eclipse.pde.internal.core.util.IdUtil;
 import org.osgi.framework.Constants;
+import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.Version;
 
 public class BundleErrorReporter extends JarManifestErrorReporter {
@@ -573,6 +574,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		validateExportPackage();
 		validateProvidePackage();
 		validateImportPackage();
+		validateEclipsePlatformFilter();
 		// validateNativeCode();
 	}
 
@@ -1197,6 +1199,20 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 							ICoreConstants.INTERNAL_DIRECTIVE }); //$NON-NLS-1$
 			report(message, getPackageLine(header, element.getValue()),
 					CompilerFlags.WARNING); //$NON-NLS-1$
+		}
+	}
+
+	private void validateEclipsePlatformFilter() {
+		IHeader header = (IHeader) fHeaders.get(ICoreConstants.PLATFORM_FILTER);
+		if (header == null) {
+			return;
+		}
+		String filter = header.getValue();
+		try {
+			PDE.getDefault().getBundleContext().createFilter(filter);
+		} catch (InvalidSyntaxException ise) {
+			report(PDEMessages.BundleErrorReporter_invalidFilterSyntax, header
+					.getLineNumber() + 1, CompilerFlags.ERROR);
 		}
 	}
 
