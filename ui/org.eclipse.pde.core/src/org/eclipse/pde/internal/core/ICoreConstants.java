@@ -48,4 +48,5 @@ public interface ICoreConstants {
 
 	public static final String INTERNAL_DIRECTIVE = "x-internal"; //$NON-NLS-1$
 	public static final String FRIENDS_DIRECTIVE = "x-friends"; //$NON-NLS-1$
+	public static final String PLATFORM_FILTER = "Eclipse-PlatformFilter"; //$NON-NLS-1$
 }
