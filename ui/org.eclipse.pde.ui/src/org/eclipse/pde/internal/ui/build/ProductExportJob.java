@@ -172,20 +172,14 @@ public class ProductExportJob extends FeatureExportJob {
 		File file = new File(featureLocation);
 		if (!file.exists() || !file.isDirectory())
 			file.mkdirs();
-		boolean hasLaunchers = false;
-		IFeatureModel[] models = PDECore.getDefault().getFeatureModelManager().getModels();
-		for (int i = 0; i < models.length; i++) {
-			if ("org.eclipse.platform.launchers".equals(models[i].getFeature().getId())) //$NON-NLS-1$
-				hasLaunchers = true;
-		}
-
+		
+		boolean hasLaunchers = PDECore.getDefault().getFeatureModelManager().findFeatureModel("org.eclipse.platform.launchers") != null;
 		Properties properties = new Properties();
 		properties.put(IBuildPropertiesConstants.ROOT, getRootFileLocations(hasLaunchers)); //To copy a folder
 		if (!hasLaunchers) {
 			properties.put("root.permissions.755", getLauncherName()); //$NON-NLS-1$
-			if (TargetPlatform.getOS().equals("linux")) { //$NON-NLS-1$
-				properties.put("root.linux.motif.x86.link", "libXm.so.2.1,libXm.so.2,libXm.so.2.1,libXm.so"); //$NON-NLS-1$ //$NON-NLS-2$
-				properties.put("root.linux.motif.x86.permissions.755", "*.so*"); //$NON-NLS-1$ //$NON-NLS-2$
+			if (TargetPlatform.getWS().equals("motif") && TargetPlatform.getOS().equals("linux")) { //$NON-NLS-1$
+				properties.put("root.linux.motif.x86.permissions.755", "libXm.so.2"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		save(new File(file, "build.properties"), properties, "Build Configuration"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -198,15 +192,24 @@ public class ProductExportJob extends FeatureExportJob {
 		if (!hasLaunchers) {
 			if (homeDir.exists() && homeDir.isDirectory()) {
 				buffer.append("absolute:file:"); //$NON-NLS-1$
-				buffer.append(new File(homeDir, "eclipse").getAbsolutePath()); //$NON-NLS-1$
-				buffer.append(","); //$NON-NLS-1$
-				buffer.append("absolute:file:"); //$NON-NLS-1$
-				buffer.append(new File(homeDir, "eclipse.exe").getAbsolutePath()); //$NON-NLS-1$
-				buffer.append(","); //$NON-NLS-1$
+				buffer.append(new File(homeDir, "startup.jar").getAbsolutePath()); //$NON-NLS-1$
+				File file = new File(homeDir, "eclipse");
+				if (file.exists()) {
+					buffer.append(",absolute:file:"); //$NON-NLS-1$
+					buffer.append(file.getAbsolutePath()); //$NON-NLS-1$
+				}				
+				file = new File(homeDir, "eclipse.exe");
+				if (file.exists()) {
+					buffer.append(",absolute:file:"); //$NON-NLS-1$
+					buffer.append(file.getAbsolutePath()); //$NON-NLS-1$
+				}
+				file = new File(homeDir, "libXm.so.2");
+				if (file.exists()) {
+					buffer.append(",absolute:file:"); //$NON-NLS-1$
+					buffer.append(file.getAbsolutePath()); //$NON-NLS-1$
+				}
 			}	
 		}
-		buffer.append("absolute:file:"); //$NON-NLS-1$
-		buffer.append(new File(homeDir, "startup.jar").getAbsolutePath()); //$NON-NLS-1$
 		// add content of temp folder (.eclipseproduct, configuration/config.ini)
 		buffer.append(",/temp/"); //$NON-NLS-1$
 		return buffer.toString();
