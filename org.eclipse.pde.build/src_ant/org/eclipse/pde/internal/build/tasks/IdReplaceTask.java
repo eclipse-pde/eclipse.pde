@@ -39,6 +39,8 @@ public class IdReplaceTask extends Task {
 	//The new version number for this feature
 	private String selfVersion;
 
+	private boolean contentChanged = false;
+	
 	private final static String GENERIC_VERSION_NUMBER = "0.0.0"; //$NON-NLS-1$
 	private final static String DOT_QUALIFIER = ".qualifier"; //$NON-NLS-1$
 
@@ -146,6 +148,7 @@ public class IdReplaceTask extends Task {
 				int startVersionId = scan(buffer, startVersionWord + 1, BACKSLASH);
 				int endVersionId = scan(buffer, startVersionId + 1, BACKSLASH);
 				buffer.replace(startVersionId + 1, endVersionId, selfVersion);
+				contentChanged = true;
 				versionFound = true;
 			}
 		}
@@ -215,13 +218,19 @@ public class IdReplaceTask extends Task {
 				System.err.println("Could not find" + new String(elementId)); //$NON-NLS-1$
 			} else {
 				buffer.replace(startVersionId, endVersionId, replacementVersion);
+				contentChanged = true;
 			}
 
 			startElement = startVersionId;
 		}
 
-		try {
-			transferStreams(new ByteArrayInputStream(buffer.toString().getBytes()), new FileOutputStream(featureFilePath));
+		if (!contentChanged)
+			return;
+		
+		try {	
+			OutputStreamWriter w = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(featureFilePath)), "UTF-8"); //$NON-NLS-1$
+			w.write(buffer.toString());
+			w.close();
 		} catch (FileNotFoundException e) {
 			// ignore
 		} catch (IOException e) {
@@ -247,7 +256,7 @@ public class IdReplaceTask extends Task {
 	}
 
 	private StringBuffer readFile(File targetName) throws IOException {
-		InputStreamReader reader = new InputStreamReader(new BufferedInputStream(new FileInputStream(targetName)));
+		InputStreamReader reader = new InputStreamReader(new BufferedInputStream(new FileInputStream(targetName)), "UTF-8"); //$NON-NLS-1$
 		StringBuffer result = new StringBuffer();
 		char[] buf = new char[4096];
 		int count;
@@ -265,30 +274,5 @@ public class IdReplaceTask extends Task {
 			}
 		}
 		return result;
-	}
-
-	private static void transferStreams(InputStream source, OutputStream destination) throws IOException {
-		source = new BufferedInputStream(source);
-		destination = new BufferedOutputStream(destination);
-		try {
-			byte[] buffer = new byte[8192];
-			while (true) {
-				int bytesRead = -1;
-				if ((bytesRead = source.read(buffer)) == -1)
-					break;
-				destination.write(buffer, 0, bytesRead);
-			}
-		} finally {
-			try {
-				source.close();
-			} catch (IOException e) {
-				// ignore
-			}
-			try {
-				destination.close();
-			} catch (IOException e) {
-				// ignore
-			}
-		}
 	}
 }
