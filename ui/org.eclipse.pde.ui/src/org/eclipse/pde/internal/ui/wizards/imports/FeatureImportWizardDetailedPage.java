@@ -268,6 +268,15 @@ public class FeatureImportWizardDetailedPage extends WizardPage {
 		try {
 			stream = new FileInputStream(manifest);
 			model.load(stream, false);
+			if(!model.isValid()){
+				status =
+					new Status(
+						IStatus.WARNING,
+						PDEPlugin.PLUGIN_ID,
+						IStatus.OK,
+						"Import location "+dir+" contains invalid feature.", //$NON-NLS-1$ //$NON-NLS-2$
+						null);
+			}
 		} catch (Exception e) {
 			// Errors in the file
 			status =
