@@ -48,7 +48,7 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 
 		Map params = new HashMap(1);
 		params.put("assembleScriptName", configScriptGenerator.getTargetName() + ".xml");
-		script.printAntTask(getPropertyFormat(DEFAULT_CUSTOM_TARGETS), null, computeBackwardCompatibleName(aConfig), null, null, params);
+		script.printAntTask(Utils.getPropertyFormat(DEFAULT_CUSTOM_TARGETS), null, computeBackwardCompatibleName(aConfig), null, null, params);
 	}
 	
 	public void setBackwardCompatibleName(boolean value) {

@@ -92,7 +92,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private FeatureBuildScriptGenerator featureGenerator;
 
 	/** constants */
-	protected final String PLUGIN_DESTINATION = getPropertyFormat(PROPERTY_PLUGIN_DESTINATION);
+	protected final String PLUGIN_DESTINATION = Utils.getPropertyFormat(PROPERTY_PLUGIN_DESTINATION);
 
 	private Properties permissionProperties;
 
@@ -281,7 +281,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				IPath location = Utils.makeRelative(new Path(getLocation(plugin)), new Path(getLocation(model)));
 				script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, location.toOSString(), TARGET_BUILD_SOURCES, null, null, null);
 				HashMap params = new HashMap(1);
-				params.put(PROPERTY_DESTINATION_TEMP_FOLDER, getPropertyFormat(PROPERTY_BASEDIR) + "/src"); //$NON-NLS-1$
+				params.put(PROPERTY_DESTINATION_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_BASEDIR) + "/src"); //$NON-NLS-1$
 				script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, location.toOSString(), TARGET_GATHER_SOURCES, null, null, params);
 			}
 		}
@@ -309,7 +309,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		}
 		script.printDeleteTask(null, pluginUpdateJarDestination, null);
 		script.printDeleteTask(null, pluginZipDestination, null);
-		script.printDeleteTask(getPropertyFormat(IXMLConstants.PROPERTY_TEMP_FOLDER), null, null);
+		script.printDeleteTask(Utils.getPropertyFormat(IXMLConstants.PROPERTY_TEMP_FOLDER), null, null);
 		script.printTargetEnd();
 	}
 
@@ -321,7 +321,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private void generateGatherLogTarget() throws CoreException {
 		script.println();
 		script.printTargetDeclaration(TARGET_GATHER_LOGS, TARGET_INIT, PROPERTY_DESTINATION_TEMP_FOLDER, null, null);
-		IPath baseDestination = new Path(getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER));
+		IPath baseDestination = new Path(Utils.getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER));
 		baseDestination = baseDestination.append(fullName);
 		List destinations = new ArrayList(5);
 		Properties properties = getBuildProperties();
@@ -346,7 +346,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private void generateZipIndividualTarget(String zipName, String source) {
 		script.println();
 		script.printTargetDeclaration(zipName, TARGET_INIT, null, null, null);
-		IPath root = new Path(getPropertyFormat(IXMLConstants.PROPERTY_BASEDIR));
+		IPath root = new Path(Utils.getPropertyFormat(IXMLConstants.PROPERTY_BASEDIR));
 		script.printZipTask(root.append(zipName).toString(), root.append(source).toString(), false, false, null);
 		script.printTargetEnd();
 	}
@@ -359,7 +359,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private void generateGatherSourcesTarget() throws CoreException {
 		script.println();
 		script.printTargetDeclaration(TARGET_GATHER_SOURCES, TARGET_INIT, PROPERTY_DESTINATION_TEMP_FOLDER, null, null);
-		IPath baseDestination = new Path(getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER));
+		IPath baseDestination = new Path(Utils.getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER));
 		baseDestination = baseDestination.append(fullName);
 		List destinations = new ArrayList(5);
 		Properties properties = getBuildProperties();
@@ -376,7 +376,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		String include = (String) getBuildProperties().get(PROPERTY_SRC_INCLUDES);
 		String exclude = (String) getBuildProperties().get(PROPERTY_SRC_EXCLUDES);
 		if (include != null || exclude != null) {
-			FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BASEDIR), null, include, null, exclude, null, null);
+			FileSet fileSet = new FileSet(Utils.getPropertyFormat(PROPERTY_BASEDIR), null, include, null, exclude, null, null);
 			script.printCopyTask(null, baseDestination.toString(), new FileSet[] {fileSet}, false, false);
 		}
 		script.printTargetEnd();
@@ -399,7 +399,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private void generateGatherBinPartsTarget() throws CoreException {
 		script.println();
 		script.printTargetDeclaration(TARGET_GATHER_BIN_PARTS, TARGET_INIT, PROPERTY_DESTINATION_TEMP_FOLDER, null, null);
-		IPath destination = new Path(getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER));
+		IPath destination = new Path(Utils.getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER));
 		destination = destination.append(fullName);
 		String root = destination.toString();
 		script.printMkdirTask(root);
@@ -432,17 +432,17 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			continue;
 		}
 		if (count != 0) {
-			FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER), null, Utils.getStringFromArray(fileSetValues, ","), null, replaceVariables(exclude, true), null, null); //$NON-NLS-1$
+			FileSet fileSet = new FileSet(Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER), null, Utils.getStringFromArray(fileSetValues, ","), null, replaceVariables(exclude, true), null, null); //$NON-NLS-1$
 			script.printCopyTask(null, root, new FileSet[] {fileSet}, true, false);
 		}
 		//Dot on the classpath need to be copied in a special way
 		if (dotIncluded) {
-			FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + '/' + EXPANDED_DOT, null, "**", null, replaceVariables(exclude, true), null, null); //$NON-NLS-1$
+			FileSet fileSet = new FileSet(Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + '/' + EXPANDED_DOT, null, "**", null, replaceVariables(exclude, true), null, null); //$NON-NLS-1$
 			script.printCopyTask(null, root, new FileSet[] {fileSet}, true, false);
 		}
 		//General copy of the files listed in the includes
 		if (include != null || exclude != null) {
-			FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BASEDIR), null, replaceVariables(Utils.getStringFromArray(splitIncludes, ","), true), null, replaceVariables(exclude, true), null, null);
+			FileSet fileSet = new FileSet(Utils.getPropertyFormat(PROPERTY_BASEDIR), null, replaceVariables(Utils.getStringFromArray(splitIncludes, ","), true), null, replaceVariables(exclude, true), null, null);
 			script.printCopyTask(null, root, new FileSet[] {fileSet}, true, false);
 		}
 		generatePermissionProperties(root);
@@ -506,18 +506,18 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private void generateZipPluginTarget() {
 		script.println();
 		script.printTargetDeclaration(TARGET_ZIP_PLUGIN, TARGET_INIT, null, null, NLS.bind(Messages.build_plugin_zipPlugin, model.getSymbolicName()));
-		script.printDeleteTask(getPropertyFormat(PROPERTY_TEMP_FOLDER), null, null);
-		script.printMkdirTask(getPropertyFormat(PROPERTY_TEMP_FOLDER));
+		script.printDeleteTask(Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER), null, null);
+		script.printMkdirTask(Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER));
 		script.printAntCallTask(TARGET_BUILD_JARS, null, null);
 		script.printAntCallTask(TARGET_BUILD_SOURCES, null, null);
 		Map params = new HashMap(1);
-		params.put(PROPERTY_DESTINATION_TEMP_FOLDER, getPropertyFormat(PROPERTY_TEMP_FOLDER) + '/'); //$NON-NLS-1$
+		params.put(PROPERTY_DESTINATION_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER) + '/'); //$NON-NLS-1$
 		script.printAntCallTask(TARGET_GATHER_BIN_PARTS, null, params);
 		script.printAntCallTask(TARGET_GATHER_SOURCES, null, params);
-		FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_TEMP_FOLDER), null, "**/*.bin.log", null, null, null, null); //$NON-NLS-1$
+		FileSet fileSet = new FileSet(Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER), null, "**/*.bin.log", null, null, null, null); //$NON-NLS-1$
 		script.printDeleteTask(null, null, new FileSet[] {fileSet});
-		script.printZipTask(pluginZipDestination, getPropertyFormat(PROPERTY_TEMP_FOLDER), true, false, null);
-		script.printDeleteTask(getPropertyFormat(PROPERTY_TEMP_FOLDER), null, null);
+		script.printZipTask(pluginZipDestination, Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER), true, false, null);
+		script.printDeleteTask(Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER), null, null);
 		script.printTargetEnd();
 	}
 
@@ -527,16 +527,16 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private void generateBuildUpdateJarTarget() {
 		script.println();
 		script.printTargetDeclaration(TARGET_BUILD_UPDATE_JAR, TARGET_INIT, null, null, NLS.bind(Messages.build_plugin_buildUpdateJar, model.getSymbolicName()));
-		script.printDeleteTask(getPropertyFormat(PROPERTY_TEMP_FOLDER), null, null);
-		script.printMkdirTask(getPropertyFormat(PROPERTY_TEMP_FOLDER));
+		script.printDeleteTask(Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER), null, null);
+		script.printMkdirTask(Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER));
 		script.printAntCallTask(TARGET_BUILD_JARS, null, null);
 		Map params = new HashMap(1);
-		params.put(PROPERTY_DESTINATION_TEMP_FOLDER, getPropertyFormat(PROPERTY_TEMP_FOLDER) + '/'); //$NON-NLS-1$
+		params.put(PROPERTY_DESTINATION_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER) + '/'); //$NON-NLS-1$
 		script.printAntCallTask(TARGET_GATHER_BIN_PARTS, null, params);
-		script.printZipTask(pluginUpdateJarDestination, getPropertyFormat(PROPERTY_TEMP_FOLDER) + '/' + fullName, false, false, null); //$NON-NLS-1$
-		script.printDeleteTask(getPropertyFormat(PROPERTY_TEMP_FOLDER), null, null);
+		script.printZipTask(pluginUpdateJarDestination, Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER) + '/' + fullName, false, false, null); //$NON-NLS-1$
+		script.printDeleteTask(Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER), null, null);
 		if (signJars)
-			script.println("<signjar jar=\"" + pluginUpdateJarDestination + "\" alias=\"" + getPropertyFormat("sign.alias") + "\" keystore=\"" + getPropertyFormat("sign.keystore") + "\" storepass=\"" + getPropertyFormat("sign.storepass") + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ 
+			script.println("<signjar jar=\"" + pluginUpdateJarDestination + "\" alias=\"" + Utils.getPropertyFormat("sign.alias") + "\" keystore=\"" + Utils.getPropertyFormat("sign.keystore") + "\" storepass=\"" + Utils.getPropertyFormat("sign.storepass") + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ 
 		script.printTargetEnd();
 	}
 
@@ -547,7 +547,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.println();
 		script.printTargetDeclaration(TARGET_REFRESH, TARGET_INIT, PROPERTY_ECLIPSE_RUNNING, null, Messages.build_plugin_refresh);
 		script.printConvertPathTask(new Path(getLocation(model)).removeLastSegments(0).toOSString().replace('\\', '/'), PROPERTY_RESOURCE_PATH, false);
-		script.printRefreshLocalTask(getPropertyFormat(PROPERTY_RESOURCE_PATH), "infinite"); //$NON-NLS-1$
+		script.printRefreshLocalTask(Utils.getPropertyFormat(PROPERTY_RESOURCE_PATH), "infinite"); //$NON-NLS-1$
 		script.printTargetEnd();
 	}
 
@@ -566,10 +566,10 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printProjectDeclaration(model.getSymbolicName(), TARGET_BUILD_JARS, DOT); //$NON-NLS-1$
 		script.println();
 		
-		script.printProperty(PROPERTY_BASE_WS, getPropertyFormat(PROPERTY_WS));
-		script.printProperty(PROPERTY_BASE_OS, getPropertyFormat(PROPERTY_OS));
-		script.printProperty(PROPERTY_BASE_ARCH, getPropertyFormat(PROPERTY_ARCH));
-		script.printProperty(PROPERTY_BASE_NL, getPropertyFormat(PROPERTY_NL));
+		script.printProperty(PROPERTY_BASE_WS, Utils.getPropertyFormat(PROPERTY_WS));
+		script.printProperty(PROPERTY_BASE_OS, Utils.getPropertyFormat(PROPERTY_OS));
+		script.printProperty(PROPERTY_BASE_ARCH, Utils.getPropertyFormat(PROPERTY_ARCH));
+		script.printProperty(PROPERTY_BASE_NL, Utils.getPropertyFormat(PROPERTY_NL));
 		script.println();
 		
 		script.printComment(Messages.build_compilerSetting);
@@ -589,19 +589,19 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		
 		script.printTargetDeclaration(TARGET_INIT, TARGET_PROPERTIES, null, null, null);
 
-		script.println("<condition property=\"" + PROPERTY_PLUGIN_TEMP + "\" value=\"" + getPropertyFormat(PROPERTY_BUILD_TEMP) + '/' + DEFAULT_PLUGIN_LOCATION + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		script.println("<condition property=\"" + PROPERTY_PLUGIN_TEMP + "\" value=\"" + Utils.getPropertyFormat(PROPERTY_BUILD_TEMP) + '/' + DEFAULT_PLUGIN_LOCATION + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		script.println("\t<isset property=\"" + PROPERTY_BUILD_TEMP + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
 		script.println("</condition>"); //$NON-NLS-1$
 
-		script.printProperty(PROPERTY_PLUGIN_TEMP, getPropertyFormat(PROPERTY_BASEDIR));
+		script.printProperty(PROPERTY_PLUGIN_TEMP, Utils.getPropertyFormat(PROPERTY_BASEDIR));
 
-		script.println("<condition property=\"" + PROPERTY_BUILD_RESULT_FOLDER + "\" value=\"" + getPropertyFormat(PROPERTY_PLUGIN_TEMP) + '/' + new Path(model.getLocation()).lastSegment() + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		script.println("<condition property=\"" + PROPERTY_BUILD_RESULT_FOLDER + "\" value=\"" + Utils.getPropertyFormat(PROPERTY_PLUGIN_TEMP) + '/' + new Path(model.getLocation()).lastSegment() + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		script.println("\t<isset property=\"" + PROPERTY_BUILD_TEMP + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
 		script.println("</condition>"); //$NON-NLS-1$
-		script.printProperty(PROPERTY_BUILD_RESULT_FOLDER, getPropertyFormat(PROPERTY_BASEDIR));
+		script.printProperty(PROPERTY_BUILD_RESULT_FOLDER, Utils.getPropertyFormat(PROPERTY_BASEDIR));
 
-		script.printProperty(PROPERTY_TEMP_FOLDER, getPropertyFormat(PROPERTY_BASEDIR) + '/' + PROPERTY_TEMP_FOLDER);
-		script.printProperty(PROPERTY_PLUGIN_DESTINATION, getPropertyFormat(PROPERTY_BASEDIR));
+		script.printProperty(PROPERTY_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_BASEDIR) + '/' + PROPERTY_TEMP_FOLDER);
+		script.printProperty(PROPERTY_PLUGIN_DESTINATION, Utils.getPropertyFormat(PROPERTY_BASEDIR));
 		script.printTargetEnd();
 		script.println();
 		script.printTargetDeclaration(TARGET_PROPERTIES, null, PROPERTY_ECLIPSE_RUNNING, null, null);
@@ -760,15 +760,15 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printComment("compile the source code"); //$NON-NLS-1$
 		JavacTask javac = new JavacTask();
 		javac.setClasspath(classpath);
-		javac.setBootClasspath(getPropertyFormat(PROPERTY_BOOTCLASSPATH));
+		javac.setBootClasspath(Utils.getPropertyFormat(PROPERTY_BOOTCLASSPATH));
 		javac.setDestdir(destdir);
-		javac.setFailOnError(getPropertyFormat(PROPERTY_JAVAC_FAIL_ON_ERROR));
-		javac.setDebug(getPropertyFormat(PROPERTY_JAVAC_DEBUG_INFO));
-		javac.setVerbose(getPropertyFormat(PROPERTY_JAVAC_VERBOSE));
+		javac.setFailOnError(Utils.getPropertyFormat(PROPERTY_JAVAC_FAIL_ON_ERROR));
+		javac.setDebug(Utils.getPropertyFormat(PROPERTY_JAVAC_DEBUG_INFO));
+		javac.setVerbose(Utils.getPropertyFormat(PROPERTY_JAVAC_VERBOSE));
 		javac.setIncludeAntRuntime("no"); //$NON-NLS-1$
-		javac.setSource(getPropertyFormat(PROPERTY_JAVAC_SOURCE));
-		javac.setTarget(getPropertyFormat(PROPERTY_JAVAC_TARGET));
-		javac.setCompileArgs(getPropertyFormat(PROPERTY_JAVAC_COMPILERARG));
+		javac.setSource(Utils.getPropertyFormat(PROPERTY_JAVAC_SOURCE));
+		javac.setTarget(Utils.getPropertyFormat(PROPERTY_JAVAC_TARGET));
+		javac.setCompileArgs(Utils.getPropertyFormat(PROPERTY_JAVAC_COMPILERARG));
 		String[] sources = entry.getSource();
 		javac.setSrcdir(sources);
 		script.print(javac);
@@ -889,7 +889,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 * @return String
 	 */
 	protected String getTempJARFolderLocation(String jarName) {
-		IPath destination = new Path(getPropertyFormat(PROPERTY_TEMP_FOLDER));
+		IPath destination = new Path(Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER));
 		destination = destination.append(jarName + ".bin"); //$NON-NLS-1$
 		return destination.toString();
 	}
@@ -901,7 +901,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 * @return String
 	 */
 	protected String getJARLocation(String jarName) {
-		return new Path(getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER)).append(jarName).toString();
+		return new Path(Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER)).append(jarName).toString();
 	}
 
 	protected String[] getClasspathEntries(BundleDescription lookedUpModel) throws CoreException {
@@ -964,13 +964,13 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		int i = -1;
 		String result = sourceString;
 		while ((i = result.indexOf(DESCRIPTION_VARIABLE_WS)) >= 0)
-			result = result.substring(0, i) + "ws/" + getPropertyFormat(compiledElement ? PROPERTY_WS : PROPERTY_BASE_WS) + result.substring(i + DESCRIPTION_VARIABLE_WS.length()); //$NON-NLS-1$
+			result = result.substring(0, i) + "ws/" + Utils.getPropertyFormat(compiledElement ? PROPERTY_WS : PROPERTY_BASE_WS) + result.substring(i + DESCRIPTION_VARIABLE_WS.length()); //$NON-NLS-1$
 		while ((i = result.indexOf(DESCRIPTION_VARIABLE_OS)) >= 0)
-			result = result.substring(0, i) + "os/" + getPropertyFormat(compiledElement ? PROPERTY_OS : PROPERTY_BASE_OS) + result.substring(i + DESCRIPTION_VARIABLE_OS.length()); //$NON-NLS-1$
+			result = result.substring(0, i) + "os/" + Utils.getPropertyFormat(compiledElement ? PROPERTY_OS : PROPERTY_BASE_OS) + result.substring(i + DESCRIPTION_VARIABLE_OS.length()); //$NON-NLS-1$
 		while ((i = result.indexOf(DESCRIPTION_VARIABLE_ARCH)) >= 0)
-			result = result.substring(0, i) + "arch/" + getPropertyFormat(compiledElement ? PROPERTY_ARCH : PROPERTY_BASE_ARCH) + result.substring(i + DESCRIPTION_VARIABLE_OS.length()); //$NON-NLS-1$		
+			result = result.substring(0, i) + "arch/" + Utils.getPropertyFormat(compiledElement ? PROPERTY_ARCH : PROPERTY_BASE_ARCH) + result.substring(i + DESCRIPTION_VARIABLE_OS.length()); //$NON-NLS-1$		
 		while ((i = result.indexOf(DESCRIPTION_VARIABLE_NL)) >= 0)
-			result = result.substring(0, i) + "nl/" + getPropertyFormat(compiledElement ? PROPERTY_NL : PROPERTY_BASE_NL) + result.substring(i + DESCRIPTION_VARIABLE_NL.length()); //$NON-NLS-1$
+			result = result.substring(0, i) + "nl/" + Utils.getPropertyFormat(compiledElement ? PROPERTY_NL : PROPERTY_BASE_NL) + result.substring(i + DESCRIPTION_VARIABLE_NL.length()); //$NON-NLS-1$
 		return result;
 	}
 

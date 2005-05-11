@@ -166,7 +166,7 @@ public class ClasspathComputer2_1 implements IClasspathComputer, IPDEBuildConsta
 		path = generator.replaceVariables(path, pluginId == null ? false : generator.getCompiledElements().contains(pluginId));
 		if (generator.getCompiledElements().contains(pluginId)) {
 			if (modelProperties == null || modelProperties.getProperty("source." + libraryName) != null) //$NON-NLS-1$
-				path = generator.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + '/' + path;
+				path = Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + '/' + path;
 		}
 		if (!classpath.contains(path))
 			classpath.add(path);

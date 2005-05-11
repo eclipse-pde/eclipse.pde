@@ -80,7 +80,7 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 			IStatus status = new Status(IStatus.WARNING, PI_PDEBUILD, 1, NLS.bind(Messages.warning_missingPassword, fileName), null);
 			BundleHelper.getDefault().getLog().log(status);
 		}
-		script.printGet(baseurl + fileName, getPropertyFormat(PROPERTY_DOWNLOAD_DIRECTORY) + '/' + fileName, login, password, true);
+		script.printGet(baseurl + fileName, Utils.getPropertyFormat(PROPERTY_DOWNLOAD_DIRECTORY) + '/' + fileName, login, password, true);
 	}
 
 	public void setContentFilter(String filters) {

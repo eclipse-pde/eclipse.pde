@@ -28,22 +28,22 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 			Path pluginLocation = new Path(plugins[i].getLocation());
 			boolean isFolder = isFolder(pluginLocation);
 			if (isFolder) {
-				script.printCopyTask(null, getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + getPropertyFormat(PROPERTY_PLUGIN_ARCHIVE_PREFIX) + '/' + ModelBuildScriptGenerator.getNormalizedName(plugins[i]), new FileSet[] {new FileSet(pluginLocation.toOSString(), null, null, null, excludedFiles, null, null)}, false, false);
+				script.printCopyTask(null, Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + Utils.getPropertyFormat(PROPERTY_PLUGIN_ARCHIVE_PREFIX) + '/' + ModelBuildScriptGenerator.getNormalizedName(plugins[i]), new FileSet[] {new FileSet(pluginLocation.toOSString(), null, null, null, excludedFiles, null, null)}, false, false);
 			} else {
-				script.printCopyFileTask(pluginLocation.toOSString(), getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + getPropertyFormat(PROPERTY_PLUGIN_ARCHIVE_PREFIX) + '/' + pluginLocation.lastSegment(), false);
+				script.printCopyFileTask(pluginLocation.toOSString(), Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + Utils.getPropertyFormat(PROPERTY_PLUGIN_ARCHIVE_PREFIX) + '/' + pluginLocation.lastSegment(), false);
 			}
 		}
 
 		for (int i = 0; i < features.length; i++) {
 			IPath featureLocation = new Path(features[i].getURL().getPath()); // Here we assume that all the features are local
 			featureLocation = featureLocation.removeLastSegments(1);
-			script.printCopyTask(null, getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + getPropertyFormat(PROPERTY_FEATURE_ARCHIVE_PREFIX) + '/' + FeatureBuildScriptGenerator.getNormalizedName(features[i]), new FileSet[] {new FileSet(featureLocation.toOSString(), null, null, null, null, null, null)}, false, false);
+			script.printCopyTask(null, Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + Utils.getPropertyFormat(PROPERTY_FEATURE_ARCHIVE_PREFIX) + '/' + FeatureBuildScriptGenerator.getNormalizedName(features[i]), new FileSet[] {new FileSet(featureLocation.toOSString(), null, null, null, null, null, null)}, false, false);
 		}
 		
 		if (rootFileProviders.size() != 0) {
 			//When the root files are copied, it is assumed that are all in a folder called eclipse
-			FileSet rootFiles = new FileSet(getPropertyFormat("tempDirectory") + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + "/eclipse", null, "**/**", null, null, null, null);
-			String target = getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER);
+			FileSet rootFiles = new FileSet(Utils.getPropertyFormat("tempDirectory") + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + "/eclipse", null, "**/**", null, null, null, null);
+			String target = Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER);
 			script.printCopyTask(null, target, new FileSet[] { rootFiles }, false, false);
 		}
 	}
