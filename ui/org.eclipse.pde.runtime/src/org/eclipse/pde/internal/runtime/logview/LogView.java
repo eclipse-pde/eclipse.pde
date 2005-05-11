@@ -964,9 +964,12 @@ public class LogView extends ViewPart implements ILogListener {
 			fMemento.putString(P_LOG_WARNING, s.getBoolean(P_LOG_WARNING) ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 			fMemento.putString(P_LOG_ERROR, s.getBoolean(P_LOG_ERROR) ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 			fMemento.putString(P_SHOW_ALL_SESSIONS, s.getBoolean(P_SHOW_ALL_SESSIONS) ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
-			fMemento.putInteger(P_COLUMN_1, p.getInt(P_COLUMN_1));
-			fMemento.putInteger(P_COLUMN_2, p.getInt(P_COLUMN_2));
-			fMemento.putInteger(P_COLUMN_3, p.getInt(P_COLUMN_3));
+			fMemento.putInteger(P_COLUMN_1, p.getInt(P_COLUMN_1) > 0 ? p
+					.getInt(P_COLUMN_1) : 300);
+			fMemento.putInteger(P_COLUMN_2, p.getInt(P_COLUMN_2) > 0 ? p
+					.getInt(P_COLUMN_2) : 150);
+			fMemento.putInteger(P_COLUMN_3, p.getInt(P_COLUMN_3) > 0 ? p
+					.getInt(P_COLUMN_3) : 300);
 			fMemento.putString(P_ACTIVATE, p.getBoolean(P_ACTIVATE) ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 			int order = p.getInt(P_ORDER_VALUE);
 			fMemento.putInteger(P_ORDER_VALUE, order == 0 ? -1 : order);
