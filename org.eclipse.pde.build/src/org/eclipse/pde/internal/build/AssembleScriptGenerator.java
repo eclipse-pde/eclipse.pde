@@ -64,7 +64,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 
 		Map params = new HashMap(1);
 		params.put("assembleScriptName", configScriptGenerator.getTargetName() + ".xml"); //$NON-NLS-1$
-		script.printAntTask(getPropertyFormat(DEFAULT_CUSTOM_TARGETS), null, configScriptGenerator.getTargetName(), null, null, params);
+		script.printAntTask(Utils.getPropertyFormat(DEFAULT_CUSTOM_TARGETS), null, configScriptGenerator.getTargetName(), null, null, params);
 	}
 
 	public void setSignJars(boolean value) {

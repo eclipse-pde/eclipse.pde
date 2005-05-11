@@ -260,7 +260,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			
 			//Included features can be available in the baseLocation.
 			if (getCVSInfo(FEATURE + '@' + featureId) != null)
-				script.printAntTask(getPropertyFormat(PROPERTY_BUILD_DIRECTORY) + '/' + FETCH_FILE_PREFIX + featureId + ".xml", null, TARGET_FETCH, null, null, null); //$NON-NLS-1$
+				script.printAntTask(Utils.getPropertyFormat(PROPERTY_BUILD_DIRECTORY) + '/' + FETCH_FILE_PREFIX + featureId + ".xml", null, TARGET_FETCH, null, null, null); //$NON-NLS-1$
 			else if (getSite(false).findFeature(featureId, null, false) == null) {
 				String message = NLS.bind(Messages.error_cannotFetchNorFindFeature, featureId);
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, message, null));
@@ -321,7 +321,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		if (type.equals(PLUGIN) || type.equals(FRAGMENT)) {
 			script.printAvailableTask(fullLocation, location + '/' + (String) mapFileEntry.get(ELEMENT) + '/' + DEFAULT_BUNDLE_FILENAME_DESCRIPTOR);
 		}
-		script.printAntTask("../" + scriptName, getPropertyFormat(PROPERTY_BUILD_DIRECTORY) + '/' + (type.equals(FEATURE) ? DEFAULT_FEATURE_LOCATION : DEFAULT_PLUGIN_LOCATION), TARGET_GET_FROM_CVS, null, null, params); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		script.printAntTask("../" + scriptName, Utils.getPropertyFormat(PROPERTY_BUILD_DIRECTORY) + '/' + (type.equals(FEATURE) ? DEFAULT_FEATURE_LOCATION : DEFAULT_PLUGIN_LOCATION), TARGET_GET_FROM_CVS, null, null, params); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		return true;
 	}
 
@@ -483,7 +483,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	 * @return String
 	 */
 	protected String getElementLocation(String type) {
-		IPath location = new Path(getPropertyFormat(PROPERTY_BUILD_DIRECTORY));
+		IPath location = new Path(Utils.getPropertyFormat(PROPERTY_BUILD_DIRECTORY));
 		if (type.equals(FEATURE)) //$NON-NLS-1$
 			location = location.append(DEFAULT_FEATURE_LOCATION);
 		else

@@ -269,7 +269,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	public void setArchivesFormat(String archivesFormatAsString) throws CoreException {
-		if (getPropertyFormat(PROPERTY_ARCHIVESFORMAT).equalsIgnoreCase(archivesFormatAsString)) { //$NON-NLS-1$
+		if (Utils.getPropertyFormat(PROPERTY_ARCHIVESFORMAT).equalsIgnoreCase(archivesFormatAsString)) { //$NON-NLS-1$
 			//Set backward compatible values
 			archivesFormatAsString = "win32, win32, x86 - zip & " + //$NON-NLS-1$
 					"linux, gtk, x86 - tar & " + //$NON-NLS-1$
@@ -306,7 +306,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		if (archivesFormat == null) {
 			try {
 				//If not set, pass in the empty property to trigger the default value to be loaded
-				setArchivesFormat(getPropertyFormat(PROPERTY_ARCHIVESFORMAT));
+				setArchivesFormat(Utils.getPropertyFormat(PROPERTY_ARCHIVESFORMAT));
 			} catch (CoreException e) {
 				//ignore
 			}

@@ -59,21 +59,6 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	 */
 	public abstract void generate() throws CoreException;
 
-	/**
-	 * Return a string with the given property name in the format:
-	 * <pre>${propertyName}</pre>.
-	 * 
-	 * @param propertyName the name of the property
-	 * @return String
-	 */
-	public String getPropertyFormat(String propertyName) {
-		StringBuffer sb = new StringBuffer();
-		sb.append(PROPERTY_ASSIGNMENT_PREFIX);
-		sb.append(propertyName);
-		sb.append(PROPERTY_ASSIGNMENT_SUFFIX);
-		return sb.toString();
-	}
-
 	public static void setConfigInfo(String spec) throws CoreException {
 		configInfos.clear();
 		String[] configs = Utils.getArrayFromStringWithBlank(spec, "&"); //$NON-NLS-1$

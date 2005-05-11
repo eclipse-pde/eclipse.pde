@@ -17,6 +17,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.build.ant.AntScript;
 import org.eclipse.pde.internal.build.site.PDEState;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.core.IPluginEntry;
@@ -24,7 +25,7 @@ import org.eclipse.update.core.IPluginEntry;
 /**
  * General utility class.
  */
-public final class Utils implements IPDEBuildConstants {
+public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstants, IXMLConstants {
 	/**
 	 * Convert a list of tokens into an array. The list separator has to be
 	 * specified.
@@ -474,5 +475,78 @@ public final class Utils implements IPDEBuildConstants {
 				return i;
 		}
 		return -1;
+	}
+
+	public static void generatePermissions(Properties featureProperties, Config aConfig, String targetRootProperty, AntScript script) {
+		String configInfix = aConfig.toString("."); //$NON-NLS-1$
+		//Properties featureProperties = getBuildProperties();
+		String prefixPermissions = ROOT_PREFIX + configInfix + '.' + PERMISSIONS + '.';
+		String prefixLinks = ROOT_PREFIX + configInfix + '.' + LINK;
+		String commonPermissions = ROOT_PREFIX + PERMISSIONS + '.';
+		String commonLinks = ROOT_PREFIX + LINK;
+		for (Iterator iter = featureProperties.entrySet().iterator(); iter.hasNext();) {
+			Map.Entry permission = (Map.Entry) iter.next();
+			String instruction = (String) permission.getKey();
+			String parameters = removeEndingSlashes((String) permission.getValue());
+			if (instruction.startsWith(prefixPermissions)) {
+				generateChmodInstruction(script, getPropertyFormat(targetRootProperty) + '/' + configInfix + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER), instruction.substring(prefixPermissions.length()), parameters); //$NON-NLS-1$ //$NON-NLS-2$
+				continue;
+			}
+			if (instruction.startsWith(prefixLinks)) {
+				generateLinkInstruction(script, getPropertyFormat(targetRootProperty) + '/' + configInfix + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER), parameters);
+				continue;
+			}
+			if (instruction.startsWith(commonPermissions)) {
+				generateChmodInstruction(script, getPropertyFormat(targetRootProperty) + '/' + configInfix + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER), instruction.substring(commonPermissions.length()), parameters);
+				continue;
+			}
+			if (instruction.startsWith(commonLinks)) {
+				generateLinkInstruction(script, getPropertyFormat(targetRootProperty) + '/' + configInfix + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER), parameters);
+				continue;
+			}
+		}
+	}
+	
+	public static String removeEndingSlashes(String value) {
+		String[] params = Utils.getArrayFromString(value, ","); //$NON-NLS-1$
+		for (int i = 0; i < params.length; i++) {
+			if (params[i].endsWith("/")) //$NON-NLS-1$
+				params[i] = params[i].substring(0, params[i].length() - 1);
+		}
+		return Utils.getStringFromArray(params, ","); //$NON-NLS-1$
+	}
+	
+	private static void generateChmodInstruction(AntScript script, String dir, String rights, String files) {
+		if (rights.equals(EXECUTABLE)) {
+			rights = "755"; //$NON-NLS-1$
+		}
+		script.printChmod(dir, rights, files);
+	}
+
+	private static void generateLinkInstruction(AntScript script, String dir, String files) {
+		String[] links = Utils.getArrayFromString(files, ","); //$NON-NLS-1$
+		List arguments = new ArrayList(2);
+		for (int i = 0; i < links.length; i += 2) {
+			arguments.add("-s"); //$NON-NLS-1$
+			arguments.add(links[i]);
+			arguments.add(links[i + 1]);
+			script.printExecTask("ln", dir, arguments, "Linux"); //$NON-NLS-1$ //$NON-NLS-2$
+			arguments.clear();
+		}
+	}
+
+	/**
+	 * Return a string with the given property name in the format:
+	 * <pre>${propertyName}</pre>.
+	 * 
+	 * @param propertyName the name of the property
+	 * @return String
+	 */
+	public static String getPropertyFormat(String propertyName) {
+		StringBuffer sb = new StringBuffer();
+		sb.append(PROPERTY_ASSIGNMENT_PREFIX);
+		sb.append(propertyName);
+		sb.append(PROPERTY_ASSIGNMENT_SUFFIX);
+		return sb.toString();
 	}
 }
