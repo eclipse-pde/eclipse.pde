@@ -43,7 +43,7 @@ public class DynamicContentProvider implements IIntroContentProvider {
         String content = getCurrentTimeString();
         Label label1 = toolkit.createLabel(parent, content, SWT.WRAP);
         Label label2 = toolkit.createLabel(parent,
-                "Some other content from SWT presentation", SWT.WRAP);
+                "Some content from SWT presentation", SWT.WRAP);
 
 
     }
@@ -51,7 +51,7 @@ public class DynamicContentProvider implements IIntroContentProvider {
     private String getCurrentTimeString() {
         StringBuffer content = new StringBuffer(
                 "Dynamic content from Intro ContentProvider: ");
-        content.append("Current Time is: ");
+        content.append("Current time is: ");
         content.append(new Date(System.currentTimeMillis()));
         return content.toString();
     }
