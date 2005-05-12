@@ -22,7 +22,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceDescription;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -35,6 +35,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
@@ -129,16 +130,29 @@ public class PluginImportOperation extends JarImportOperation {
 			}
 		} finally {
 			setClasspaths(new SubProgressMonitor(monitor, 1));
-			if (!ResourcesPlugin.getWorkspace().isAutoBuilding() && fForceAutobuild)
-				toggleAutobuild(true);						
+			if (!ResourcesPlugin.getWorkspace().isAutoBuilding() && fForceAutobuild) {
+				runBuildJob();
+			}
 			monitor.done();
 		}
 	}
 	
-	private void toggleAutobuild(boolean on) throws CoreException {
-		IWorkspaceDescription desc = PDEPlugin.getWorkspace().getDescription();
-		desc.setAutoBuilding(on);
-		PDEPlugin.getWorkspace().setDescription(desc);	
+	private void runBuildJob() {
+		Job buildJob = new Job(PDEUIMessages.CompilersConfigurationBlock_building) { //$NON-NLS-1$
+			public boolean belongsTo(Object family) {
+				return ResourcesPlugin.FAMILY_AUTO_BUILD == family;
+			}
+
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					PDEPlugin.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, monitor);
+				} catch (CoreException e) {
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		buildJob.setRule(ResourcesPlugin.getWorkspace().getRuleFactory().buildRule());
+		buildJob.schedule();
 	}
 	
 	private void setClasspaths(IProgressMonitor monitor) throws JavaModelException {
