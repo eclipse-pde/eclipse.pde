@@ -24,6 +24,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -169,12 +170,14 @@ public class JarManifestErrorReporter {
 	 * @param document
 	 * @return Map of Header by header name
 	 */
-	protected void parseManifest(IDocument document) {
+	protected void parseManifest(IDocument document, IProgressMonitor monitor) {
 		try {
 			fHeaders = new HashMap();
 			JarManifestHeader header = null;
 			int l = 0;
 			for (; l < document.getNumberOfLines(); l++) {
+				if(l % 100 ==0)
+					checkCanceled(monitor);
 				IRegion lineInfo = document.getLineInformation(l);
 				String line = document.get(lineInfo.getOffset(), lineInfo
 						.getLength());
@@ -367,7 +370,7 @@ public class JarManifestErrorReporter {
 		if (fTextDocument == null) {
 			return;
 		}
-		parseManifest(fTextDocument);
+		parseManifest(fTextDocument, monitor);
 	}
 
 	protected void validateDirectiveValue(IHeader header,
@@ -395,5 +398,10 @@ public class JarManifestErrorReporter {
 		}
 		reportIllegalValue(header);
 	}
-
+	protected void checkCanceled(IProgressMonitor monitor)
+			throws OperationCanceledException {
+		if (monitor.isCanceled()) {
+			throw new OperationCanceledException();
+		}
+	}
 }
