@@ -34,11 +34,11 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.IDocumentSection;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
-import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
 import org.eclipse.pde.internal.core.schema.DocumentSection;
 import org.eclipse.pde.internal.core.schema.EditableSchema;
 import org.eclipse.pde.internal.core.schema.SchemaAttribute;
@@ -461,7 +461,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		PluginSelectionDialog dialog = new PluginSelectionDialog(getShell(), PDECore.getDefault().getModelManager().getWorkspaceModels(), false);
 		dialog.create();
 		if (dialog.open() == Window.OK){
-			WorkspacePluginModelBase workspaceModelBase = (WorkspacePluginModelBase)dialog.getFirstResult();
+			IPluginModelBase workspaceModelBase = (IPluginModelBase)dialog.getFirstResult();
 			fPluginIdText.setText(workspaceModelBase.getPluginBase().getId());
 		}
 	}
