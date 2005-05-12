@@ -26,7 +26,7 @@ public class FormEntry {
 	private Control label;
 	private Text text;
 	private Button browse;
-	private String value;
+	private String value=""; //$NON-NLS-1$
 	private boolean dirty;
 	boolean ignoreModify = false;
 	private IFormEntryListener listener;
