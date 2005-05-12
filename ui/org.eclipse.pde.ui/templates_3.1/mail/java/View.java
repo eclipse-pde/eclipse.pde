@@ -19,8 +19,7 @@ public class View extends ViewPart {
 	public static final String ID = "$pluginId$.view";
 	
 	public void createPartControl(Composite parent) {
-		Composite top = new Composite(parent, SWT.BORDER);
-		top.setLayoutData(new GridData(GridData.FILL_BOTH));
+		Composite top = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;

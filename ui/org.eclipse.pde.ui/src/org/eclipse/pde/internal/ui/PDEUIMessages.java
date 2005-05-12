@@ -1484,8 +1484,6 @@ public class PDEUIMessages extends NLS {
 	public static String RequiredPluginsContainerPage_title;
 	public static String RequiredPluginsContainerPage_desc;
 	public static String RequiredPluginsContainerPage_label;
-	public static String RequiredPluginsContainerPage_attachSource;
-	public static String SourceAttachmentDialog_title;
 
 	public static String NewSiteWizard_wtitle;
 	public static String NewSiteWizard_MainPage_title;
