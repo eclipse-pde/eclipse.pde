@@ -42,7 +42,7 @@ public class PDEClasspathContainer {
 	private static final IAccessRule EXCLUDE_ALL_RULE = 
 		JavaCore.newAccessRule(new Path("**/*"), IAccessRule.K_NON_ACCESSIBLE); //$NON-NLS-1$
 
-	protected void addProjectEntry(IProject project, boolean isExported, Rule[] rules, boolean viaImportPackage) throws CoreException {
+	protected void addProjectEntry(IProject project, Rule[] rules) throws CoreException {
 		if (project.hasNature(JavaCore.NATURE_ID)) {
 			IClasspathEntry entry = null;
 			if (rules != null) {
@@ -50,23 +50,23 @@ public class PDEClasspathContainer {
 				entry = JavaCore.newProjectEntry(
 							project.getFullPath(), 
 							accessRules, 
-							viaImportPackage, 
-							new IClasspathAttribute[0], 
-							isExported);
+							true, 
+							new IClasspathAttribute[0],
+							false);
 			} else {
-				entry = JavaCore.newProjectEntry(project.getFullPath(), isExported);
+				entry = JavaCore.newProjectEntry(project.getFullPath());
 			}
 			if (!fEntries.contains(entry))
 				fEntries.add(entry);
 		}
 	}
 	
-	protected void addExternalPlugin(IPluginModelBase model, boolean isExported, Rule[] rules) throws CoreException {
+	protected void addExternalPlugin(IPluginModelBase model, Rule[] rules) throws CoreException {
 		if (new File(model.getInstallLocation()).isFile()) {
 			IPath srcPath = ClasspathUtilCore.getSourceAnnotation(model, "."); //$NON-NLS-1$
 			if (srcPath == null)
 				srcPath = new Path(model.getInstallLocation());			
-			addLibraryEntry(new Path(model.getInstallLocation()), srcPath, isExported, rules);			
+			addLibraryEntry(new Path(model.getInstallLocation()), srcPath, rules);			
 		} else {
 			IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
 			for (int i = 0; i < libraries.length; i++) {
@@ -82,12 +82,12 @@ public class PDEClasspathContainer {
 						path = getPath(model, expandedName);
 				}
 				if (path != null)
-					addLibraryEntry(path, ClasspathUtilCore.getSourceAnnotation(model, expandedName), isExported, rules);
+					addLibraryEntry(path, ClasspathUtilCore.getSourceAnnotation(model, expandedName), rules);
 			}		
 		}
 	}
 	
-	protected void addLibraryEntry(IPath path, IPath srcPath, boolean isExported, Rule[] rules) {
+	protected void addLibraryEntry(IPath path, IPath srcPath, Rule[] rules) {
 		IClasspathEntry entry = null;
 		if (rules != null) {
 			entry = JavaCore.newLibraryEntry(
@@ -96,9 +96,9 @@ public class PDEClasspathContainer {
 						null,
 						getAccessRules(rules),
 						new IClasspathAttribute[0],
-						isExported);
+						false);
 		} else {
-			entry = JavaCore.newLibraryEntry(path, srcPath, null, isExported);
+			entry = JavaCore.newLibraryEntry(path, srcPath, null);
 		}
 		if (!fEntries.contains(entry)) {
 			fEntries.add(entry);

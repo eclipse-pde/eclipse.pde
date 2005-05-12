@@ -14,7 +14,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 import java.util.TreeMap;
 
 import org.eclipse.core.resources.IFile;
@@ -127,9 +126,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			// add dependencies
 			BundleSpecification[] required = desc.getRequiredBundles();
 			for (int i = 0; i < required.length; i++) {
-				addDependency(getSupplier(required[i]),
-							required[i].isExported(), 
-							added);
+				addDependency(getSupplier(required[i]), added);
 			}
 			
 			// add Import-Package
@@ -138,7 +135,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 				String symbolicName = iter.next().toString();
 				IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(symbolicName);
 				if (model != null && model.isEnabled())
-					addDependencyViaImportPackage(model.getBundleDescription(), false, added);
+					addDependencyViaImportPackage(model.getBundleDescription(), added);
 			}
 
 			addExtraClasspathEntries(added);
@@ -188,69 +185,44 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		return rule;
 	}
 	
-	private void addDependencyViaImportPackage(BundleDescription desc, boolean isExported, HashSet added) throws CoreException {
+	private void addDependencyViaImportPackage(BundleDescription desc, HashSet added) throws CoreException {
 		if (desc == null || !added.add(desc.getSymbolicName()))
 			return;
 
-		addPlugin(desc, isExported, true, true);
+		addPlugin(desc, true);
 
 		if (hasExtensibleAPI(desc) && desc.getContainingState() != null) {
 			BundleDescription[] fragments = desc.getFragments();
 			for (int i = 0; i < fragments.length; i++) {
 				if (fragments[i].isResolved())
-					addDependencyViaImportPackage(fragments[i], isExported, added);
+					addDependencyViaImportPackage(fragments[i], added);
 			}
 		}
 	}
 
-	private void addDependency(BundleDescription desc, boolean isExported, HashSet added) throws CoreException {
+	private void addDependency(BundleDescription desc, HashSet added) throws CoreException {
 		if (desc == null || !added.add(desc.getSymbolicName()))
 			return;
 
-		boolean inWorkspace = addPlugin(desc, isExported, true, false);
+		addPlugin(desc, true);
 
 		if (hasExtensibleAPI(desc) && desc.getContainingState() != null) {
 			BundleDescription[] fragments = desc.getFragments();
 			for (int i = 0; i < fragments.length; i++) {
 				if (fragments[i].isResolved())
-					addDependency(fragments[i], isExported, added);
+					addDependency(fragments[i], added);
 			}
 		}
 
-		if (!inWorkspace) {
-			BundleSpecification[] required = desc.getRequiredBundles();
-			for (int i = 0; i < required.length; i++) {
-				if (required[i].isExported()) {
-					addDependency(getSupplier(required[i]), isExported, added);
-				}
-			}
-		} else {
-			BundleSpecification[] required = desc.getRequiredBundles();
-			for (int i = 0; i < required.length; i++) {
-				if (required[i].isExported()) {
-					addReexportedPluginsToSet(required[i], added);
-				}
-			}	
-		}
-	}
-	
-	private void addReexportedPluginsToSet(BundleSpecification spec, Set added) {
-		if (!added.add(spec.getName()))
-			return;
-		
-		BundleDescription desc = getSupplier(spec);
-		if (desc == null)
-			return;
-		
 		BundleSpecification[] required = desc.getRequiredBundles();
 		for (int i = 0; i < required.length; i++) {
 			if (required[i].isExported()) {
-				addReexportedPluginsToSet(required[i], added);
+				addDependency(getSupplier(required[i]), added);
 			}
-		}	
+		}
 	}
-
-	private boolean addPlugin(BundleDescription desc, boolean isExported, boolean useInclusions, boolean viaImportPackage)
+	
+	private boolean addPlugin(BundleDescription desc, boolean useInclusions)
 			throws CoreException {		
 		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(desc);
 		if (model == null || !model.isEnabled())
@@ -258,9 +230,9 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		IResource resource = model.getUnderlyingResource();
 		Rule[] rules = useInclusions ? getInclusions(model) : null;
 		if (resource != null) {
-			addProjectEntry(resource.getProject(), isExported, rules, viaImportPackage);
+			addProjectEntry(resource.getProject(), rules);
 		} else {
-			addExternalPlugin(model, isExported, rules);
+			addExternalPlugin(model, rules);
 		}
 		return resource != null;
 	}
@@ -309,17 +281,17 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 				IPluginModelBase plugin = manager.findModel(
 						"org.eclipse.core.runtime.compatibility"); //$NON-NLS-1$
 				if (plugin != null && plugin.isEnabled())
-					addDependency(plugin.getBundleDescription(), false, added);
+					addDependency(plugin.getBundleDescription(), added);
 			}
 		} else {
 			IPluginModelBase plugin = manager.findModel("org.eclipse.core.boot"); //$NON-NLS-1$
 			if (plugin != null && plugin.isEnabled())
-				addDependency(plugin.getBundleDescription(), false, added);
+				addDependency(plugin.getBundleDescription(), added);
 			
 			if (!id.equals("org.eclipse.core.runtime")) { //$NON-NLS-1$
 				plugin = manager.findModel("org.eclipse.core.runtime"); //$NON-NLS-1$
 				if (plugin != null && plugin.isEnabled())
-					addDependency(plugin.getBundleDescription(), false, added);
+					addDependency(plugin.getBundleDescription(), added);
 			}
 		}
 	}
@@ -330,20 +302,13 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		if (desc instanceof BundleDescription && added.add(desc.getName())) {
 			BundleDescription host = (BundleDescription)desc;
 			// add host plug-in
-			boolean inWorkspace = addPlugin(host, false, false, false);
+			addPlugin(host, false);
 			
 			BundleSpecification[] required = host.getRequiredBundles();
 			for (int i = 0; i < required.length; i++) {
-				// if the plug-in is a project in the workspace, only add
-				// non-reexported dependencies since the fragment will
-				// automatically get the reexported dependencies.
-				// if the plug-in is in the target, then you need to explicitly add
-				// all the parent plug-in's non-reexported dependencies.
-				if ((!inWorkspace || !required[i].isExported())) {
-					desc = getSupplier(required[i]);
-					if (desc != null && desc instanceof BundleDescription) {
-						addDependency((BundleDescription)desc, false, added);
-					}
+				desc = getSupplier(required[i]);
+				if (desc != null && desc instanceof BundleDescription) {
+					addDependency((BundleDescription)desc, added);
 				}
 			}
 		}

@@ -95,13 +95,13 @@ public class PDEState extends MinimalState {
 		fTargetURLs = target;
 		fMonitor = monitor;
 		fPlatformProperties = properties;
+		setTargetMode(target);
 		if (fResolve) {
 			readTargetState();
 		} else {
 			createNewTargetState();
 			createExtensionDocument();
 		}
-		setTargetMode(target);
 		fState.setResolver(Platform.getPlatformAdmin().getResolver());
 		fState.setPlatformProperties(fPlatformProperties);
 		fState.resolve(false);
