@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.BuildScriptGenerator;
 import org.eclipse.pde.internal.build.Utils;
+import org.eclipse.pde.internal.build.site.BuildTimeSiteFactory;
 
 public class PackagerGenerator extends BuildScriptGenerator {
 	private String featureList = null;
@@ -38,7 +39,7 @@ public class PackagerGenerator extends BuildScriptGenerator {
 			}
 	}
 	
-	protected void generatePackageScripts(AssemblyInformation assemblageInformation, String[] featureInfo) throws CoreException {
+	protected void generatePackageScripts(AssemblyInformation assemblageInformation, String[] featureInfo, BuildTimeSiteFactory factory) throws CoreException {
 		PackageScriptGenerator assembler = null;
 		if (groupConfigs)
 			assembler = new DeltaPackScriptGenerator(workingDirectory, assemblageInformation, featureInfo[0]);
@@ -50,6 +51,7 @@ public class PackagerGenerator extends BuildScriptGenerator {
 		assembler.setArchivesFormat(getArchivesFormat());
 		assembler.setPropertyFile(propertyFile);
 		assembler.setBackwardCompatibleName(true);
+		assembler.setBuildSiteFactory(factory);
 		assembler.generate();
 	}
 	
