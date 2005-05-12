@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.core.site;
 
 import java.io.*;
-import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.core.isite.*;
@@ -61,7 +60,7 @@ public class SiteDescription extends SiteObject implements ISiteDescription {
 		text = null;
 	}
 
-	protected void parse(Node node, Hashtable lineTable) {
+	protected void parse(Node node) {
 		url = getNodeAttribute(node, "url"); //$NON-NLS-1$
 		NodeList children = node.getChildNodes();
 		for (int i=0; i<children.getLength(); i++) {

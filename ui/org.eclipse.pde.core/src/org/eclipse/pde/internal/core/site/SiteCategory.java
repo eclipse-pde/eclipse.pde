@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.core.site;
 
 import java.io.*;
-import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.core.isite.*;
@@ -31,7 +30,7 @@ public class SiteCategory extends SiteObject implements ISiteCategory {
 		return name!=null;
 	}
 	
-	protected void parse(Node node, Hashtable lineTable) {
+	protected void parse(Node node) {
 		name = getNodeAttribute(node, "name"); //$NON-NLS-1$
 	}
 	
