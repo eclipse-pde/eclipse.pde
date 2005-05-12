@@ -289,12 +289,16 @@ public class WorkspaceModelManager
 	
 	private void handleFileChanged(IFile file, IResourceDelta delta) {
 		IModel model = getWorkspaceModel(file);
-		if (model == null
-				|| (model instanceof WorkspacePluginModelBase && file.getName().equals("MANIFEST.MF"))) {
+		String filename = file.getName();
+		if (model == null) {
 			addWorkspaceModel(file.getProject(), true);
-			return;
-		}
-		if ((IResourceDelta.CONTENT & delta.getFlags()) != 0) {
+		} else if (delta.getKind() == IResourceDelta.ADDED) {
+			if (model instanceof WorkspacePluginModelBase && filename.equals("MANIFEST.MF")) {
+				addWorkspaceModel(file.getProject(), true);
+			} else if (model instanceof IBundlePluginModelBase && (filename.equals("plugin.xml") || filename.equals("fragment.xml"))) {
+				addWorkspaceModel(file.getProject(), false);
+			}
+		} else if ((IResourceDelta.CONTENT & delta.getFlags()) != 0) {
 			if (model instanceof IBundlePluginModelBase) {
 				if (isBundleManifestFile(file)) {
 					loadModel(((IBundlePluginModelBase)model).getBundleModel(), true);
