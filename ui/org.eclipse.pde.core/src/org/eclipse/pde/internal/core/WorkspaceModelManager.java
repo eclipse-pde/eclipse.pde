@@ -300,8 +300,10 @@ public class WorkspaceModelManager
 					loadModel(((IBundlePluginModelBase)model).getBundleModel(), true);
 				} else {
 					ISharedExtensionsModel extensions = ((IBundlePluginModelBase)model).getExtensionsModel();
-					if (extensions == null)
+					if (extensions == null) {
 						extensions = new WorkspaceExtensionsModel(file);
+						((IBundlePluginModelBase)model).setExtensionsModel(extensions);
+					}
 					loadModel(extensions, true);
 					// no need to fire any notifications if the plugin.xml/fragment.xml
 					// of a bundle is modified.
