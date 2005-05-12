@@ -174,8 +174,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 		HashMap map = new HashMap();
 		for (int i = 0; i < plugins.length; i++) {
-			if ((plugins[i].getPluginBase().getId() != null)
-					&& !(plugins[i].getPluginBase().getId()).equals(fPluginId)) {
+			if ((plugins[i].getPluginBase().getId() != null)) {
 				BundleDescription bd = plugins[i].getBundleDescription();
 				if (bd != null) {
 					ExportPackageDescription[] elements = bd
