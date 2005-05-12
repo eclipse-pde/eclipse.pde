@@ -11,9 +11,11 @@
 package org.eclipse.pde.internal.ui.build;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.build.AbstractScriptGenerator;
@@ -30,10 +32,19 @@ import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 
 public class BuildFeatureAction extends BaseBuildAction {
 	
-	private IFeatureModel model;
+	private IFeatureModel fFeatureModel;
 
 	protected void makeScripts(IProgressMonitor monitor)
 		throws InvocationTargetException, CoreException {
+		
+		ArrayList paths = new ArrayList();
+		IFeatureModel[] models = PDECore.getDefault().getFeatureModelManager().getModels();
+		for (int i = 0; i < models.length; i++) {
+			paths.add(models[i].getInstallLocation() + IPath.SEPARATOR + "feature.xml"); //$NON-NLS-1$
+			if (models[i].getUnderlyingResource() != null
+					&& models[i].getUnderlyingResource().equals(fManifestFile))
+				fFeatureModel = models[i];
+		}
 		
 		BuildScriptGenerator generator = new BuildScriptGenerator();
 		generator.setBuildingOSGi(PDECore.getDefault().getModelManager().isOSGiRuntime());
@@ -45,7 +56,7 @@ public class BuildFeatureAction extends BaseBuildAction {
 		generator.setWorkingDirectory(fManifestFile.getProject().getLocation().toOSString());
 		AbstractScriptGenerator.setConfigInfo(AbstractScriptGenerator.getDefaultConfigInfos()); //This needs to be set before we set the format
 		generator.setArchivesFormat(AbstractScriptGenerator.getDefaultConfigInfos() + '-' + IXMLConstants.FORMAT_ANTZIP);
-		generator.setElements(new String[] { "feature@" + model.getFeature().getId() + (model.getFeature().getVersion() == null ? "" : ":" + model.getFeature().getVersion()) }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		generator.setElements(new String[] { "feature@" + fFeatureModel.getFeature().getId() + (fFeatureModel.getFeature().getVersion() == null ? "" : ":" + fFeatureModel.getFeature().getVersion()) }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		generator.setPluginPath(TargetPlatform.getFeaturePaths());
 		generator.setPDEState(TargetPlatform.getState());
 		generator.setNextId(TargetPlatform.getPDEState().getNextId());
@@ -69,7 +80,7 @@ public class BuildFeatureAction extends BaseBuildAction {
 		for (int i = 0; i < included.length; i++) {
 			IFeature child = ((FeatureChild) included[i])
 					.getReferencedFeature();
-			if (child != null && child != model.getFeature()) {
+			if (child != null && child != fFeatureModel.getFeature()) {
 				IFeatureModel refmodel = child.getModel();
 				if (refmodel != null) {
 					refmodel.getUnderlyingResource().getProject().refreshLocal(
@@ -84,6 +95,6 @@ public class BuildFeatureAction extends BaseBuildAction {
 	protected void refreshLocal(IProgressMonitor monitor)
 		throws CoreException {
 		super.refreshLocal(monitor);
-		refreshLocal(model.getFeature(), monitor);
+		refreshLocal(fFeatureModel.getFeature(), monitor);
 	}
 }
