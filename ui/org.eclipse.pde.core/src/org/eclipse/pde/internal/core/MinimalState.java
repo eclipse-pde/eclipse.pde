@@ -334,6 +334,10 @@ public class MinimalState {
 	public String getTargetMode() {
 		return fTargetMode;
 	}
+	
+	public void setTargetMode(String mode) {
+		fTargetMode = mode;
+	}
 
 	private void setJavaProfiles(File bundleLocation) {
 		if (bundleLocation == null)
