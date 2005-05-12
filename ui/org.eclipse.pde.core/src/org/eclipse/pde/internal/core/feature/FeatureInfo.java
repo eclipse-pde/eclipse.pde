@@ -91,7 +91,7 @@ public class FeatureInfo extends FeatureObject implements IFeatureInfo {
 		writer.println();
 		writer.print(indent + "<" + getTag()); //$NON-NLS-1$
 		if (url != null) {
-			writer.print(" url=\"" + url + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			writer.print(" url=\"" + getWritableString(url) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		writer.println(">"); //$NON-NLS-1$
 		if (desc!=null) writer.println(indent2 + desc);
