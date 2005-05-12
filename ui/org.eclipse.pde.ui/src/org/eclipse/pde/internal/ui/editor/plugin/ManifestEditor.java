@@ -26,7 +26,6 @@ import org.eclipse.pde.internal.ui.editor.build.*;
 import org.eclipse.pde.internal.ui.editor.context.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.forms.editor.*;
 import org.eclipse.ui.part.*;
 import org.eclipse.ui.views.properties.*;
 
@@ -155,19 +154,8 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
 			PDEPlugin.logException(e);
 		}
 	}
-	public void contextRemoved(InputContext context) {
-		if (context.isPrimary()) {
-			close(true);
-			return;
-		}
-		IFormPage page = findPage(context.getId());
-		if (page!=null) {
-			removePage(context.getId());
-			if (context.getId().equals(BuildInputContext.CONTEXT_ID))
-				removePage(BuildPage.PAGE_ID);
-			else
-				updateFirstThreePages();          
-		}
+	public void contextRemoved(InputContext context) {		
+		close(true);
 	}
 	
 	private void updateFirstThreePages() {
