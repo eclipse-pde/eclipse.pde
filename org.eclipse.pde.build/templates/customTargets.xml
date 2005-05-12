@@ -24,30 +24,30 @@
 
 	<!-- ===================================================================== -->
 	<!-- ===================================================================== -->
-	<target name="getBaseComponents" depends="checkLocalBase" unless="baseExists">
+	<target name="getBaseComponents" depends="checkLocalBase" unless="skipBase">
 		<get src="${eclipseBaseURL}" dest="${buildDirectory}/../temp-base.zip" />
 		<unzip dest="${base}" overwrite="true" src="${buildDirectory}/../temp-base.zip" />
 	</target>
 
 	<target name="checkLocalBase">
-		<available file="${base}" property="baseExists" />
+		<available file="${base}" property="skipBase" />
 	</target>
 
 	<!-- ===================================================================== -->
 	<!-- Check out map files from correct repository -->
-	<!-- Replace values for cvsRoot, package and mapVersionTag as desired. -->
+	<!-- Replace values for mapsCheckoutTag as desired. -->
 	<!-- ===================================================================== -->
-	<target name="getMapFiles" depends="checkLocalMaps" unless="mapsLocal">
+	<target name="getMapFiles" depends="checkLocalMaps" unless="skipMaps">
 		<property name="mapsCheckoutTag" value="HEAD" />
 		<cvs cvsRoot="${mapsRepo}" package="${mapsRoot}" dest="${buildDirectory}/maps" tag="${mapsCheckoutTag}" />
 	</target>
 
 	<target name="checkLocalMaps">
-		<available property="mapsLocal" file="${buildDirectory}/maps" />
+		<available property="skipMaps" file="${buildDirectory}/maps" />
 	</target>
 
 	<target name="tagMapFiles" if="tagMaps">
-		<cvs dest="${buildDirectory}/maps/${mapsRoot}" command="tag ${mapTagTag}" />
+		<cvs dest="${buildDirectory}/maps/${mapsRoot}" command="tag ${mapsTagTag}" />
 	</target>
 
 	<!-- ===================================================================== -->
