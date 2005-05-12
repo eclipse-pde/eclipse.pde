@@ -52,7 +52,7 @@ public class SchemaTransformer {
 		} catch (IOException e) {
 		}
 		if (fCssURL == null && fCssPurpose != BUILD)
-			fCssURL = getResourceURL(PLATFORM_PLUGIN, PLATFORM_CSS);
+			fCssURL = getResourceURL(getProductPlugin(), PLATFORM_CSS);
 	}
 	
 	private String getCssURL() {
@@ -364,5 +364,16 @@ public class SchemaTransformer {
 			width = Math.max(width, attributes[i].getName().length());
 		}
 		return width;
+	}
+
+	private String getProductPlugin() {
+		IProduct product = Platform.getProduct();
+		if (product != null) {
+			Bundle plugin = product.getDefiningBundle();
+			if (plugin != null) {
+				return plugin.getSymbolicName();
+			}
+		}
+		return PLATFORM_PLUGIN;
 	}
 }
