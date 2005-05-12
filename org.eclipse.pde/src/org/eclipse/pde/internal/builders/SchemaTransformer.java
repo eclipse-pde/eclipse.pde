@@ -20,6 +20,7 @@ import org.osgi.framework.*;
 
 public class SchemaTransformer {
 	
+	private static final String PLATFORM_PLUGIN = "org.eclipse.platform"; //$NON-NLS-1$
 	private static final String PLATFORM_PLUGIN_DOC = "org.eclipse.platform.doc.isv"; //$NON-NLS-1$
 	private static final String SCHEMA_CSS = "schema.css"; //$NON-NLS-1$
 	private static final String PLATFORM_CSS = "book.css"; //$NON-NLS-1$
@@ -51,7 +52,7 @@ public class SchemaTransformer {
 		} catch (IOException e) {
 		}
 		if (fCssURL == null && fCssPurpose != BUILD)
-			fCssURL = getResourceURL(PLATFORM_PLUGIN_DOC, PLATFORM_CSS);
+			fCssURL = getResourceURL(PLATFORM_PLUGIN, PLATFORM_CSS);
 	}
 	
 	private String getCssURL() {
