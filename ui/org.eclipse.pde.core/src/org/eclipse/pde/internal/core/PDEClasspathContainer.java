@@ -34,15 +34,13 @@ public class PDEClasspathContainer {
 		boolean discouraged;
 	}
 	
-	protected ArrayList fEntries;
-	
 	private static HashMap ACCESSIBLE_RULES = new HashMap();
 	private static HashMap DISCOURAGED_RULES = new HashMap();
 	
 	private static final IAccessRule EXCLUDE_ALL_RULE = 
 		JavaCore.newAccessRule(new Path("**/*"), IAccessRule.K_NON_ACCESSIBLE); //$NON-NLS-1$
 
-	protected void addProjectEntry(IProject project, Rule[] rules) throws CoreException {
+	protected void addProjectEntry(IProject project, Rule[] rules, ArrayList entries) throws CoreException {
 		if (project.hasNature(JavaCore.NATURE_ID)) {
 			IClasspathEntry entry = null;
 			if (rules != null) {
@@ -56,17 +54,17 @@ public class PDEClasspathContainer {
 			} else {
 				entry = JavaCore.newProjectEntry(project.getFullPath());
 			}
-			if (!fEntries.contains(entry))
-				fEntries.add(entry);
+			if (!entries.contains(entry))
+				entries.add(entry);
 		}
 	}
 	
-	protected void addExternalPlugin(IPluginModelBase model, Rule[] rules) throws CoreException {
+	protected void addExternalPlugin(IPluginModelBase model, Rule[] rules, ArrayList entries) throws CoreException {
 		if (new File(model.getInstallLocation()).isFile()) {
 			IPath srcPath = ClasspathUtilCore.getSourceAnnotation(model, "."); //$NON-NLS-1$
 			if (srcPath == null)
 				srcPath = new Path(model.getInstallLocation());			
-			addLibraryEntry(new Path(model.getInstallLocation()), srcPath, rules);			
+			addLibraryEntry(new Path(model.getInstallLocation()), srcPath, rules, entries);			
 		} else {
 			IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
 			for (int i = 0; i < libraries.length; i++) {
@@ -82,12 +80,12 @@ public class PDEClasspathContainer {
 						path = getPath(model, expandedName);
 				}
 				if (path != null)
-					addLibraryEntry(path, ClasspathUtilCore.getSourceAnnotation(model, expandedName), rules);
+					addLibraryEntry(path, ClasspathUtilCore.getSourceAnnotation(model, expandedName), rules, entries);
 			}		
 		}
 	}
 	
-	protected void addLibraryEntry(IPath path, IPath srcPath, Rule[] rules) {
+	protected void addLibraryEntry(IPath path, IPath srcPath, Rule[] rules, ArrayList entries) {
 		IClasspathEntry entry = null;
 		if (rules != null) {
 			entry = JavaCore.newLibraryEntry(
@@ -100,8 +98,8 @@ public class PDEClasspathContainer {
 		} else {
 			entry = JavaCore.newLibraryEntry(path, srcPath, null);
 		}
-		if (!fEntries.contains(entry)) {
-			fEntries.add(entry);
+		if (!entries.contains(entry)) {
+			entries.add(entry);
 		}
 	}
 	
