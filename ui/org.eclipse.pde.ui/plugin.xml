@@ -1278,12 +1278,6 @@
             id="org.eclipse.pde.ui.templates.helloWorld">
       </template>
       <template
-            contributingId="org.eclipse.ui.intro"
-            name="%template.introWorld.name"
-            class="org.eclipse.pde.internal.ui.wizards.templates.IntroTemplate"
-            id="org.eclipse.pde.ui.templates.intro">
-      </template>
-      <template
             contributingId="org.eclipse.ui.propertyPages"
             name="%template.propertyPages.name"
             class="org.eclipse.pde.internal.ui.wizards.templates.PropertyPageTemplate"

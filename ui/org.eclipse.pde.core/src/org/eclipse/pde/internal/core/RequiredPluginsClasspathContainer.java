@@ -222,11 +222,11 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		}
 	}
 	
-	private boolean addPlugin(BundleDescription desc, boolean useInclusions)
+	private void addPlugin(BundleDescription desc, boolean useInclusions)
 			throws CoreException {		
 		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(desc);
 		if (model == null || !model.isEnabled())
-			return false;
+			return;
 		IResource resource = model.getUnderlyingResource();
 		Rule[] rules = useInclusions ? getInclusions(model) : null;
 		if (resource != null) {
@@ -234,7 +234,6 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		} else {
 			addExternalPlugin(model, rules);
 		}
-		return resource != null;
 	}
 	
 	private Rule[] getInclusions(IPluginModelBase model) {
