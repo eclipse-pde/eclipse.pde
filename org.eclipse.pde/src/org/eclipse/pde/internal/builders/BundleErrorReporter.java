@@ -596,7 +596,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				continue;
 			}
 
-			validateVersionAttribute(header, exportPackageElements[i]);
+			validateVersionAttribute(header, exportPackageElements[i], false);
 
 			validateSpecificationVersionAttribute(header,
 					exportPackageElements[i]);
@@ -723,7 +723,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 			validateSpecificationVersionAttribute(header,
 					importPackageElements[i]);
-			validateVersionAttribute(header, importPackageElements[i]);
+			validateVersionAttribute(header, importPackageElements[i], true);
 
 			validateResolutionDirective(header, importPackageElements[i]);
 
@@ -1154,11 +1154,12 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	}
 
 	private void validateVersionAttribute(IHeader header,
-			ManifestElement element) {
-		String versionRange = element.getAttribute(Constants.VERSION_ATTRIBUTE);
-		if (versionRange == null)
+			ManifestElement element, boolean range) {
+		String version = element.getAttribute(Constants.VERSION_ATTRIBUTE);
+		if (version == null)
 			return;
-		IStatus status =validateVersionRange(versionRange);
+		IStatus status = range ? validateVersionRange(version)
+				: validateVersionString(version);
 		if(!status.isOK()) {
 			report(status.getMessage(), getPackageLine(header, element),
 					CompilerFlags.ERROR); //$NON-NLS-1$
