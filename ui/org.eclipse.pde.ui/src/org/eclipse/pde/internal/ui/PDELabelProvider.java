@@ -141,7 +141,7 @@ public class PDELabelProvider extends SharedLabelProvider {
             version = "(" + version + ")"; //$NON-NLS-1$ //$NON-NLS-2$
        
         String text = isFullNameModeEnabled() ? obj.toString() : preventNull(obj.getId());
-        return version == null || version.length() > 0 ? text : text + " " + version; //$NON-NLS-1$
+        return version == null || version.length() == 0 ? text : text + " " + version; //$NON-NLS-1$
     }
 	
 	public String getObjectText(IProductPlugin obj) {
