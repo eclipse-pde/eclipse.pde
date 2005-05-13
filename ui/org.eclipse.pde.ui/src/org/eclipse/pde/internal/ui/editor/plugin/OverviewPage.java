@@ -65,22 +65,31 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		layout.leftMargin = 10;
 		layout.rightMargin = 10;
 		layout.numColumns = 2;
-		layout.verticalSpacing = 20;
 		layout.horizontalSpacing = 10;
 		body.setLayout(layout);
 
-		// sections
+		Composite left = toolkit.createComposite(body);
+		layout = new TableWrapLayout();
+		layout.verticalSpacing = 20;
+		left.setLayout(layout);
+		left.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		GeneralInfoSection general = null;
 		if (isFragment())
-			general = new FragmentGeneralInfoSection(this, body);
+			general = new FragmentGeneralInfoSection(this, left);
 		else
-			general = new PluginGeneralInfoSection(this, body);
-		managedForm.addPart(general);
-		createContentSection(managedForm, body, toolkit);
-        if (isEditable()) {
-    		createTestingSection(managedForm, body, toolkit);
-    		createExportingSection(managedForm, body, toolkit);
-        }
+			general = new PluginGeneralInfoSection(this, left);
+		managedForm.addPart(general);		
+		if (isEditable())
+    		createTestingSection(managedForm, left, toolkit);
+		
+		Composite right = toolkit.createComposite(body);			
+		layout = new TableWrapLayout();
+		layout.verticalSpacing = 20;
+		right.setLayout(layout);
+		right.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
+		createContentSection(managedForm, right, toolkit);
+        if (isEditable())
+    		createExportingSection(managedForm, right, toolkit);
 	}
 	
 	private void createContentSection(IManagedForm managedForm,
