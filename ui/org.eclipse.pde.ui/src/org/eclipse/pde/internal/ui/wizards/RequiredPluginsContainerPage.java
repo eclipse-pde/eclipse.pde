@@ -155,6 +155,8 @@ public class RequiredPluginsContainerPage
 		Dialog.applyDialogFont(container);
 		if (realEntries != null)
 			initializeView();
+		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.REQUIRED_PLUINGS_CONTAINER);
 	}
 
 	/**

@@ -197,6 +197,8 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 			
 		initialize();
 		Dialog.applyDialogFont(composite);
+		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.PLUGIN_WORKING_SET);
 	}
 	
 	/**

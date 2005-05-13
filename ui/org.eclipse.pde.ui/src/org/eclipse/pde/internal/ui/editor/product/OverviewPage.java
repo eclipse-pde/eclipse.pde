@@ -20,6 +20,7 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.iproduct.*;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
@@ -57,6 +58,8 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		form.setText(PDEUIMessages.OverviewPage_title);  //$NON-NLS-1$
 		fillBody(managedForm, toolkit);
 		managedForm.refresh();
+		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.OVERVIEW_PAGE);
 	}
 
 	private void fillBody(IManagedForm managedForm, FormToolkit toolkit) {

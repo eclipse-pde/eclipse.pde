@@ -20,6 +20,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
@@ -28,6 +29,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.ui.PlatformUI;
 
 public class CrossPlatformExportPage extends ExportWizardPage {
 	
@@ -100,6 +102,8 @@ public class CrossPlatformExportPage extends ExportWizardPage {
 		
 		initialize();
 		setControl(container);
+		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.CROSS_PLATFORM_EXPORT);
 	}
 	
 	private void initialize() {

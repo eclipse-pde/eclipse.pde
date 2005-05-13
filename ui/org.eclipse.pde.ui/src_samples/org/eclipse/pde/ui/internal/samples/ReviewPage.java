@@ -13,10 +13,12 @@ package org.eclipse.pde.ui.internal.samples;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.HyperlinkSettings;
 import org.eclipse.ui.forms.widgets.ScrolledFormText;
 
@@ -74,5 +76,7 @@ public class ReviewPage extends WizardPage {
 		formText.getFormText().setHyperlinkSettings(settings);
 		setControl(container);
 		updateContent();
+		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.REVIEW);
 	}
 }

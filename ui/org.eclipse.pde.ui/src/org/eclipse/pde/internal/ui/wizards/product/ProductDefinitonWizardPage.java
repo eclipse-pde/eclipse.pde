@@ -24,6 +24,7 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
 
@@ -59,6 +60,8 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 		toolkit.dispose();
 		setControl(comp);
 		setPageComplete(false);
+		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IHelpContextIds.PRODUCT_DEFINITIONS_WIZARD);
 	}
 	
 	private void createFormText(FormToolkit toolkit, Composite parent, String content, int span) {

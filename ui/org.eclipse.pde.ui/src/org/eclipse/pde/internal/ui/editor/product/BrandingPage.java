@@ -14,6 +14,7 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.widgets.*;
@@ -37,6 +38,8 @@ public class BrandingPage extends PDEFormPage {
 		form.setText(PDEUIMessages.BrandingPage_title);  //$NON-NLS-1$
 		fillBody(managedForm, toolkit);
 		managedForm.refresh();
+		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.BRANDING_PAGE);
 	}
 	
 	private void fillBody(IManagedForm managedForm, FormToolkit toolkit) {

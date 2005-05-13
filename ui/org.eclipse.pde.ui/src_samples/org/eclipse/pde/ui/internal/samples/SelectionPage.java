@@ -15,6 +15,7 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -96,6 +97,8 @@ public class SelectionPage extends WizardPage {
 		part.getTableViewer().setInput(this);
 		updateSelection(null);
 		setControl(container);
+		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.SELECTION);
 	}
 	private void doMoreInfo() {
 		if (wizard.getSelection()!=null) {

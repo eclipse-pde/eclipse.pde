@@ -14,6 +14,7 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.widgets.*;
@@ -41,6 +42,8 @@ public class ConfigurationPage extends PDEFormPage {
 		form.setText(PDEUIMessages.Product_ConfigurationPage_title);  //$NON-NLS-1$
 		fillBody(managedForm, toolkit);
 		managedForm.refresh();
+		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.CONFIGURATION_PAGE);
 	}
 
 	private void fillBody(IManagedForm managedForm, FormToolkit toolkit) {

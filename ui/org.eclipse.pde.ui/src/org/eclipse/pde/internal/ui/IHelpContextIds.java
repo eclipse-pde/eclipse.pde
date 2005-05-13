@@ -42,6 +42,20 @@ public interface IHelpContextIds {
  	public static final String NEW_PROJECT_REQUIRED_DATA = PREFIX + "new_project_required_data"; //$NON-NLS-1$
  	public static final String NEW_PROJECT_CODE_GEN_PAGE = PREFIX + "new_project_code_gen_page"; //$NON-NLS-1$
 
+ 	
+ 	// JUST ADDED ------------ ( DELETE ME )
+	public static final String ADVANCED_PLUGIN_EXPORT = PREFIX + "advanced_plugin_export_page";
+	public static final String CROSS_PLATFORM_EXPORT = PREFIX + "cross_platform_export_page";
+	public static final String LIBRARY_PLUGIN_JARS = PREFIX + "library_plugin_jars";
+	public static final String PLUGIN_WORKING_SET = PREFIX + "plugin_working_set";
+	public static final String PRODUCT_DEFINITIONS_WIZARD = PREFIX + "product_definitions_wizard_page";
+	public static final String PROJECT_NAMES = PREFIX + "project_names_page";
+	public static final String REQUIRED_PLUINGS_CONTAINER = PREFIX + "required_plugins_container_page";
+	public static final String REVIEW = PREFIX + "review_page";
+	public static final String SELECTION = PREFIX + "selection_page";
+	
+	
+	
  	public static final String NEW_FRAGMENT_STRUCTURE_PAGE = PREFIX + "new_fragment_structure_page"; //$NON-NLS-1$
  	public static final String NEW_FRAGMENT_REQUIRED_DATA = PREFIX + "new_fragment_required_data"; //$NON-NLS-1$
 	
@@ -148,4 +162,9 @@ public interface IHelpContextIds {
 	// Editor Outline
 	public static final String OUTLINE_SORT_ACTION = PREFIX + "outline_sort_action";	 //$NON-NLS-1$
 	
+	
+	// Used by PDEFormPage children
+	public static final String BRANDING_PAGE = PREFIX + "branding_page";
+	public static final String CONFIGURATION_PAGE = PREFIX + "configuration_page";
+	public static final String OVERVIEW_PAGE = PREFIX + "overview_page";
 }

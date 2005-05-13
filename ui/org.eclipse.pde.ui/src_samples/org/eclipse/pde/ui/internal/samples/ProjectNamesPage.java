@@ -16,12 +16,14 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 
 /**
  *
@@ -151,5 +153,7 @@ public class ProjectNamesPage extends WizardPage {
 		container.setLayout(layout);
 		setControl(container);
 		updateEntries();
+		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.PROJECT_NAMES);
 	}
 }

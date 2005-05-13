@@ -216,6 +216,8 @@ public class LibraryPluginJarsPage extends WizardPage {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(control,
 				IHelpContextIds.NEW_LIBRARY_PROJECT_JAR_PAGE);
 		setControl(control);
+		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(control, IHelpContextIds.LIBRARY_PLUGIN_JARS);
 	}
 
 	private void handleRemove() {

@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.wizards.exports;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -25,6 +26,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 
 public class AdvancedPluginExportPage extends ExportWizardPage {
 
@@ -64,6 +66,8 @@ public class AdvancedPluginExportPage extends ExportWizardPage {
 		Dialog.applyDialogFont(container);
 		validatePage();
 		setControl(container);
+		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.ADVANCED_PLUGIN_EXPORT);
 	}
 	
 	private void createSigningSection(Composite parent) {
