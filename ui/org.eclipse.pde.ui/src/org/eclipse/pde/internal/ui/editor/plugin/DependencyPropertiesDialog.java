@@ -35,20 +35,21 @@ public class DependencyPropertiesDialog extends StatusDialog {
     private String fVersion;
     private Text fVersionText;
     private boolean fShowOptional;
+	private boolean fRangeAllowed;
 
     public DependencyPropertiesDialog(boolean editable, IPluginImport plugin) {
-        this (editable, true, plugin.isReexported(), plugin.isOptional(), plugin.getVersion(), true);
+        this (editable, true, plugin.isReexported(), plugin.isOptional(), plugin.getVersion(), true, true);
     }
     
     public DependencyPropertiesDialog(boolean editable, ImportPackageObject object) {
-        this (editable, false, false, object.isOptional(), object.getVersion(), true);
+        this (editable, false, false, object.isOptional(), object.getVersion(), true, true);
     }
 
     public DependencyPropertiesDialog(boolean editable, ExportPackageObject object) {
-        this (editable, false, false, false, object.getVersion(), false);
+        this (editable, false, false, false, object.getVersion(), false, false);
     }
 
-    public DependencyPropertiesDialog(boolean editable, boolean showReexport, boolean export, boolean optional, String version, boolean showOptional) {
+    public DependencyPropertiesDialog(boolean editable, boolean showReexport, boolean export, boolean optional, String version, boolean showOptional, boolean rangeAllowed) {
         super(PDEPlugin.getActiveWorkbenchShell());
         fEditable = editable;
         fShowReexport = showReexport;
@@ -56,6 +57,7 @@ public class DependencyPropertiesDialog extends StatusDialog {
         fOptional = optional;
         fVersion = version;
         fShowOptional = showOptional;
+        fRangeAllowed = rangeAllowed;
     }
     
     
@@ -114,7 +116,7 @@ public class DependencyPropertiesDialog extends StatusDialog {
         String version = fVersionText.getText().trim();
         if (version.length() > 0) {
             char first = version.charAt(0);
-            if (first == '(' || first == '[') {
+            if (fRangeAllowed && (first == '(' || first == '[')) {
                 updateStatus(validateRange(version));
             } else {
                 updateStatus(validateVersion(version));
