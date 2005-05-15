@@ -44,14 +44,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		try {
 			fConfigDir = null;
 			monitor.beginTask("", 6); //$NON-NLS-1$
-			IJavaProject javaProject = getJavaProject(configuration);
-			if ((javaProject == null) || !javaProject.exists()) {
-				abort(PDEUIMessages.JUnitLaunchConfiguration_error_invalidproject, null, IJavaLaunchConfigurationConstants.ERR_NOT_A_JAVA_PROJECT); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			IType[] testTypes = getTestTypes(configuration, javaProject, new SubProgressMonitor(monitor, 1));
-			if (testTypes.length == 0) {
-				abort(PDEUIMessages.JUnitLaunchConfiguration_error_notests, null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE); //$NON-NLS-1$
-			}
+			IType[] testTypes = getTestTypes(configuration, monitor);
 			monitor.worked(1);
 			
 			String workspace = configuration.getAttribute(LOCATION + "0", getDefaultWorkspace(configuration)); //$NON-NLS-1$

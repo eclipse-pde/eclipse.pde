@@ -44,15 +44,15 @@ public interface IHelpContextIds {
 
  	
  	// JUST ADDED ------------ ( DELETE ME )
-	public static final String ADVANCED_PLUGIN_EXPORT = PREFIX + "advanced_plugin_export_page";
-	public static final String CROSS_PLATFORM_EXPORT = PREFIX + "cross_platform_export_page";
-	public static final String LIBRARY_PLUGIN_JARS = PREFIX + "library_plugin_jars";
-	public static final String PLUGIN_WORKING_SET = PREFIX + "plugin_working_set";
-	public static final String PRODUCT_DEFINITIONS_WIZARD = PREFIX + "product_definitions_wizard_page";
-	public static final String PROJECT_NAMES = PREFIX + "project_names_page";
-	public static final String REQUIRED_PLUINGS_CONTAINER = PREFIX + "required_plugins_container_page";
-	public static final String REVIEW = PREFIX + "review_page";
-	public static final String SELECTION = PREFIX + "selection_page";
+	public static final String ADVANCED_PLUGIN_EXPORT = PREFIX + "advanced_plugin_export_page"; //$NON-NLS-1$
+	public static final String CROSS_PLATFORM_EXPORT = PREFIX + "cross_platform_export_page"; //$NON-NLS-1$
+	public static final String LIBRARY_PLUGIN_JARS = PREFIX + "library_plugin_jars"; //$NON-NLS-1$
+	public static final String PLUGIN_WORKING_SET = PREFIX + "plugin_working_set"; //$NON-NLS-1$
+	public static final String PRODUCT_DEFINITIONS_WIZARD = PREFIX + "product_definitions_wizard_page"; //$NON-NLS-1$
+	public static final String PROJECT_NAMES = PREFIX + "project_names_page"; //$NON-NLS-1$
+	public static final String REQUIRED_PLUINGS_CONTAINER = PREFIX + "required_plugins_container_page"; //$NON-NLS-1$
+	public static final String REVIEW = PREFIX + "review_page"; //$NON-NLS-1$
+	public static final String SELECTION = PREFIX + "selection_page"; //$NON-NLS-1$
 	
 	
 	
@@ -164,7 +164,7 @@ public interface IHelpContextIds {
 	
 	
 	// Used by PDEFormPage children
-	public static final String BRANDING_PAGE = PREFIX + "branding_page";
-	public static final String CONFIGURATION_PAGE = PREFIX + "configuration_page";
-	public static final String OVERVIEW_PAGE = PREFIX + "overview_page";
+	public static final String BRANDING_PAGE = PREFIX + "branding_page"; //$NON-NLS-1$
+	public static final String CONFIGURATION_PAGE = PREFIX + "configuration_page"; //$NON-NLS-1$
+	public static final String OVERVIEW_PAGE = PREFIX + "overview_page"; //$NON-NLS-1$
 }

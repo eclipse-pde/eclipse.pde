@@ -293,9 +293,9 @@ public class WorkspaceModelManager
 		if (model == null) {
 			addWorkspaceModel(file.getProject(), true);
 		} else if (delta.getKind() == IResourceDelta.ADDED) {
-			if (model instanceof WorkspacePluginModelBase && filename.equals("MANIFEST.MF")) {
+			if (model instanceof WorkspacePluginModelBase && filename.equals("MANIFEST.MF")) { //$NON-NLS-1$
 				addWorkspaceModel(file.getProject(), true);
-			} else if (model instanceof IBundlePluginModelBase && (filename.equals("plugin.xml") || filename.equals("fragment.xml"))) {
+			} else if (model instanceof IBundlePluginModelBase && (filename.equals("plugin.xml") || filename.equals("fragment.xml"))) { //$NON-NLS-1$ //$NON-NLS-2$
 				addWorkspaceModel(file.getProject(), false);
 			}
 		} else if ((IResourceDelta.CONTENT & delta.getFlags()) != 0) {

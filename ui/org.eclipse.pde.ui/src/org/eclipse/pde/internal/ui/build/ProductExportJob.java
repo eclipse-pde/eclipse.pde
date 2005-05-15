@@ -173,12 +173,12 @@ public class ProductExportJob extends FeatureExportJob {
 		if (!file.exists() || !file.isDirectory())
 			file.mkdirs();
 		
-		boolean hasLaunchers = PDECore.getDefault().getFeatureModelManager().findFeatureModel("org.eclipse.platform.launchers") != null;
+		boolean hasLaunchers = PDECore.getDefault().getFeatureModelManager().findFeatureModel("org.eclipse.platform.launchers") != null; //$NON-NLS-1$
 		Properties properties = new Properties();
 		properties.put(IBuildPropertiesConstants.ROOT, getRootFileLocations(hasLaunchers)); //To copy a folder
 		if (!hasLaunchers) {
 			properties.put("root.permissions.755", getLauncherName()); //$NON-NLS-1$
-			if (TargetPlatform.getWS().equals("motif") && TargetPlatform.getOS().equals("linux")) { //$NON-NLS-1$
+			if (TargetPlatform.getWS().equals("motif") && TargetPlatform.getOS().equals("linux")) { //$NON-NLS-1$ //$NON-NLS-2$
 				properties.put("root.linux.motif.x86.permissions.755", "libXm.so.2"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
@@ -193,17 +193,17 @@ public class ProductExportJob extends FeatureExportJob {
 			if (homeDir.exists() && homeDir.isDirectory()) {
 				buffer.append("absolute:file:"); //$NON-NLS-1$
 				buffer.append(new File(homeDir, "startup.jar").getAbsolutePath()); //$NON-NLS-1$
-				File file = new File(homeDir, "eclipse");
+				File file = new File(homeDir, "eclipse"); //$NON-NLS-1$
 				if (file.exists()) {
 					buffer.append(",absolute:file:"); //$NON-NLS-1$
 					buffer.append(file.getAbsolutePath()); //$NON-NLS-1$
 				}				
-				file = new File(homeDir, "eclipse.exe");
+				file = new File(homeDir, "eclipse.exe"); //$NON-NLS-1$
 				if (file.exists()) {
 					buffer.append(",absolute:file:"); //$NON-NLS-1$
 					buffer.append(file.getAbsolutePath()); //$NON-NLS-1$
 				}
-				file = new File(homeDir, "libXm.so.2");
+				file = new File(homeDir, "libXm.so.2"); //$NON-NLS-1$
 				if (file.exists()) {
 					buffer.append(",absolute:file:"); //$NON-NLS-1$
 					buffer.append(file.getAbsolutePath()); //$NON-NLS-1$
