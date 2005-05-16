@@ -146,6 +146,8 @@ public class BrandingIron implements IXMLConstants {
 	private void copyMacLauncher(String initialRoot, String target) {
 		String targetLauncher = target + "/MacOS/";
 		File launcher = new File(initialRoot + "/MacOS/launcher");
+		if (! launcher.exists())
+			launcher = new File(initialRoot +  "/MacOS/eclipse");
 		File targetFile = new File(targetLauncher, name);
 		try {
 			copy(launcher, targetFile);
