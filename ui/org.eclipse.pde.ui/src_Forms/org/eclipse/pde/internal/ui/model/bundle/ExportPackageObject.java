@@ -100,5 +100,20 @@ public class ExportPackageObject extends PackageObject {
     protected boolean skipDirective(String directive) {
         return INTERNAL.equals(directive) || FRIENDS.equals(directive);
     }
+    
+    public boolean hasSameVisibility(ExportPackageObject object) {
+    	if (object.fInternal != fInternal)
+    		return false;
+    	
+    	if (fFriends.size() != object.fFriends.size())
+    		return false;
+    	
+    	Iterator iter = fFriends.keySet().iterator();
+    	while (iter.hasNext()) {
+    		if (!object.fFriends.containsKey(iter.next()))
+    			return false;
+    	}
+    	return true;
+    }
 
 }

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
@@ -18,7 +19,6 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginModel;
@@ -43,7 +43,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IPartSelectionListener;
@@ -62,7 +61,7 @@ public class ExportPackageVisibilitySection extends TableSection
     private Action fRemoveAction;
     private Button fInternalButton;
     private boolean fBlockChanges;
-    private ExportPackageObject fCurrentObject;
+    private ExportPackageObject[] fSelectedObjects;
     private Image fImage;
 	
 	class TableContentProvider extends DefaultContentProvider
@@ -101,8 +100,11 @@ public class ExportPackageVisibilitySection extends TableSection
         fInternalButton = toolkit.createButton(comp, PDEUIMessages.ExportPackageVisibilitySection_hideAll, SWT.CHECK);
         fInternalButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {
-                if (!fBlockChanges)
-                    fCurrentObject.setInternal(fInternalButton.getSelection());                   
+                if (!fBlockChanges) {
+                	for (int i = 0; i < fSelectedObjects.length; i++) {
+                		fSelectedObjects[i].setInternal(fInternalButton.getSelection());
+                	}
+                }
             }
         });
         
@@ -190,7 +192,9 @@ public class ExportPackageVisibilitySection extends TableSection
             Object[] selected = dialog.getResult();
             for (int i = 0; i < selected.length; i++) {
                 IPluginModelBase model = (IPluginModelBase)selected[i];
-                fCurrentObject.addFriend(new PackageFriend(fCurrentObject, model.getPluginBase().getId()));
+                for (int j = 0; j < fSelectedObjects.length; j++) {
+                	fSelectedObjects[j].addFriend(new PackageFriend(fSelectedObjects[j], model.getPluginBase().getId()));
+                }
             }
         }
 	}
@@ -199,7 +203,8 @@ public class ExportPackageVisibilitySection extends TableSection
         ArrayList list = new ArrayList();
         IPluginModel[] models = PDECore.getDefault().getModelManager().getPluginsOnly();
         for (int i = 0; i < models.length; i++) {
-            if (!fCurrentObject.hasFriend(models[i].getPlugin().getId()))
+        	String id = models[i].getPlugin().getId();
+            if (!fSelectedObjects[0].hasFriend(id))
                 list.add(models[i]);
         }
         return (IPluginModelBase[])list.toArray(new IPluginModelBase[list.size()]);
@@ -208,7 +213,9 @@ public class ExportPackageVisibilitySection extends TableSection
 	private void handleRemove() {
         Object[] removed = ((IStructuredSelection) fFriendViewer.getSelection()).toArray();
         for (int i = 0; i < removed.length; i++) {
-            fCurrentObject.removeFriend((PackageFriend) removed[i]);
+        	for (int j = 0; j < fSelectedObjects.length; j++) {
+        		fSelectedObjects[j].removeFriend((PackageFriend) removed[i]);
+        	}
         }
 	}
     
@@ -222,27 +229,9 @@ public class ExportPackageVisibilitySection extends TableSection
             refresh();
             return;
         }
-        
-        Object[] objects = event.getChangedObjects();
-        for (int i = 0; i < objects.length; i++) {
-            if (objects[i] instanceof PackageFriend) {
-                switch (event.getChangeType()) {
-                    case IModelChangedEvent.INSERT:
-                        fFriendViewer.add(objects[i]);
-                        fFriendViewer.setSelection(new StructuredSelection(objects[i]));
-                        fFriendViewer.getTable().setFocus();
-                        break;
-                    case IModelChangedEvent.REMOVE:
-                        Table table = fFriendViewer.getTable();
-                        int index = table.getSelectionIndex();
-                        fFriendViewer.remove(objects[i]);
-                        table.setSelection(index < table.getItemCount() ? index : table.getItemCount() -1);
-                        break;
-                    default:
-                        fFriendViewer.refresh(objects[i]);
-                }
-            }
-        }
+        int index = fFriendViewer.getTable().getSelectionIndex();
+		fFriendViewer.refresh();
+		fFriendViewer.getTable().setSelection(Math.min(index, fFriendViewer.getTable().getItemCount() - 1));
 	}
 
 	public void refresh() {
@@ -251,20 +240,27 @@ public class ExportPackageVisibilitySection extends TableSection
 	}
 
 	public void selectionChanged(IFormPart source, ISelection selection) {
-        IStructuredSelection ssel = (IStructuredSelection)selection;
-        if (ssel.size() == 1) {
-            Object object = ((IStructuredSelection) selection).getFirstElement();
-             if (object instanceof ExportPackageObject)
-                 update((ExportPackageObject)object);
+        List list = ((IStructuredSelection)selection).toList();
+        if (list.size() > 0) {
+            ExportPackageObject[] objects = (ExportPackageObject[])list.toArray(new ExportPackageObject[list.size()]);
+            ExportPackageObject first = objects[0];
+            for (int i = 1; i < objects.length; i++) {
+            	if (!first.hasSameVisibility(objects[i])) {
+            		update(null);
+            		return;
+            	}
+            }
+            update(objects);
         } else {
             update(null);
         }
 	}
     
-    private void update(ExportPackageObject object) {
+    private void update(ExportPackageObject[] objects) {
         fBlockChanges = true;
-        fCurrentObject = object;
+        fSelectedObjects = objects;
         boolean hasSelection = !fFriendViewer.getSelection().isEmpty();
+        ExportPackageObject object = objects == null ? null : objects[0];
         fInternalButton.setEnabled(object != null && isEditable());
         fInternalButton.setSelection(object != null && object.isInternal());
         getTablePart().setButtonEnabled(0, object != null && isEditable());

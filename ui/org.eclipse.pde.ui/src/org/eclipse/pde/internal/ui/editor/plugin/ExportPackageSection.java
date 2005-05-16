@@ -139,7 +139,7 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
         section.setDescription(NLS.bind(PDEUIMessages.ExportPackageSection_desc, isFragment() ? "fragment" : "plug-in"));  //$NON-NLS-1$ //$NON-NLS-2$
 
         Composite container = createClientContainer(section, 2, toolkit);
-		createViewerPartControl(container, SWT.SINGLE, 2, toolkit);
+		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
 		TablePart tablePart = getTablePart();
 		fPackageViewer = tablePart.getTableViewer();
 		fPackageViewer.setContentProvider(new ExportPackageContentProvider());
@@ -202,11 +202,33 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 	}
 
 	private void updateButtons() {
-        int size = ((IStructuredSelection)fPackageViewer.getSelection()).size();
-        TablePart tablePart = getTablePart();
+		Object[] selected = ((IStructuredSelection)fPackageViewer.getSelection()).toArray();
+
+		TablePart tablePart = getTablePart();
         tablePart.setButtonEnabled(ADD_INDEX, isEditable());
-        tablePart.setButtonEnabled(REMOVE_INDEX, isEditable() && size > 0);
-        tablePart.setButtonEnabled(PROPERTIES_INDEX, size == 1);  
+        tablePart.setButtonEnabled(REMOVE_INDEX, isEditable() && selected.length > 0);
+        
+        if (selected.length == 0)
+        	tablePart.setButtonEnabled(PROPERTIES_INDEX, false);  
+        else if (selected.length == 1)
+        	tablePart.setButtonEnabled(PROPERTIES_INDEX, true);
+        else {
+        	String version = ((ExportPackageObject)selected[0]).getVersion();
+        	boolean enable = true;
+        	for (int i = 1; i < selected.length; i++) {
+        		ExportPackageObject object = (ExportPackageObject)selected[i];
+        		if (version == null) {
+        			if (object.getVersion() != null) {
+        				enable = false;
+        				break;
+        			}
+        		} else if (!version.equals(object.getVersion())) {
+        			enable = false;
+        			break;
+        		}
+        	}
+        	tablePart.setButtonEnabled(PROPERTIES_INDEX, enable);
+        }
     }
     
     protected void handleDoubleClick(IStructuredSelection selection) {
@@ -227,15 +249,22 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 	}
 
 	private void handleOpenProperties() {
-        Object object = ((IStructuredSelection)fPackageViewer.getSelection()).getFirstElement();
-        ExportPackageObject exportObject = (ExportPackageObject)object;
-
-        DependencyPropertiesDialog dialog = new DependencyPropertiesDialog(isEditable(),exportObject);
+		Object[] selected = ((IStructuredSelection) fPackageViewer.getSelection()).toArray();
+		ExportPackageObject first = (ExportPackageObject)selected[0];
+        DependencyPropertiesDialog dialog = new DependencyPropertiesDialog(isEditable(), first);
         dialog.create();
         SWTUtil.setDialogSize(dialog, 400, -1);
-        dialog.setTitle(exportObject.getName());
+        if (selected.length == 1)
+        	dialog.setTitle(((ExportPackageObject)selected[0]).getName());
+        else 
+        	dialog.setTitle("Properties");
         if (dialog.open() == DependencyPropertiesDialog.OK && isEditable()) {
-             exportObject.setVersion(dialog.getVersion());
+        	String newVersion = dialog.getVersion();
+        	for (int i = 0; i < selected.length; i++) {
+        		ExportPackageObject object = (ExportPackageObject)selected[i];
+        		if (!newVersion.equals(object.getVersion()))
+        			object.setVersion(newVersion);
+        	}
          }
     }
 

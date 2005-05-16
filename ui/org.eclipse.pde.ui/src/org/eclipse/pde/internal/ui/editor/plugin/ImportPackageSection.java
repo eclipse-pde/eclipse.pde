@@ -297,17 +297,17 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 		ArrayList result = new ArrayList();
         Set set = getForbiddenIds();
         
-        //TODO add method to PluginModelManager
-        ExportPackageDescription[] desc = TargetPlatform.getState().getExportedPackages();
-        for (int i = 0; i < desc.length; i++) {
-            String id = desc[i].getExporter().getSymbolicName();
-            //TODO hack until we use the state properly
+        ExportPackageDescription[] packages = TargetPlatform.getState().getExportedPackages();
+        for (int i = 0; i < packages.length; i++) {
+        	if (".".equals(packages[i].getName()))
+        		continue;
+            String id = packages[i].getExporter().getSymbolicName();
             if (PDECore.getDefault().findPlugin(id) == null)
                 continue;
-			if (set.contains(desc[i].getExporter().getSymbolicName()))
+			if (set.contains(packages[i].getExporter().getSymbolicName()))
                 continue;
-			if (fHeader == null || !fHeader.hasPackage(desc[i].getName()))
-				result.add(desc[i]);			
+			if (fHeader == null || !fHeader.hasPackage(packages[i].getName()))
+				result.add(packages[i]);			
 		}
 		return (ExportPackageDescription[])result.toArray(new ExportPackageDescription[result.size()]);
 	}
