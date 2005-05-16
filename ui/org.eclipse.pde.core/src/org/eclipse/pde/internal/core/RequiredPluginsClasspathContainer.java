@@ -110,7 +110,6 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 
 	private IClasspathEntry[] computePluginEntries() {
 		ArrayList entries = new ArrayList();
-		TreeMap fVisiblePackages = new TreeMap();
 		try {			
 			BundleDescription desc = fModel.getBundleDescription();
 			if (desc == null)
@@ -132,7 +131,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			}
 			
 			// add Import-Package
-			Iterator iter = fVisiblePackages.keySet().iterator();
+			Iterator iter = map.keySet().iterator();
 			while (iter.hasNext()) {
 				String symbolicName = iter.next().toString();
 				IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(symbolicName);
@@ -145,7 +144,6 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			// add implicit dependencies
 			addImplicitDependencies(added, map, entries);
 			
-			fVisiblePackages.clear();
 		} catch (CoreException e) {
 		}
 		return (IClasspathEntry[])entries.toArray(new IClasspathEntry[entries.size()]);
