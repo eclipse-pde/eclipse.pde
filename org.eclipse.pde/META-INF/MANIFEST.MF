@@ -6,8 +6,8 @@ Bundle-Version: 3.1.0
 Bundle-Activator: org.eclipse.pde.internal.PDE
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: org.eclipse.pde.internal,
- org.eclipse.pde.internal.builders
+Export-Package: org.eclipse.pde.internal;x-friends:="org.eclipse.pde.ui",
+ org.eclipse.pde.internal.builders;x-friends:="org.eclipse.pde.ui"
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.pde.core;visibility:=reexport,
  org.eclipse.core.resources,
