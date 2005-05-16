@@ -207,29 +207,29 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 		TablePart tablePart = getTablePart();
         tablePart.setButtonEnabled(ADD_INDEX, isEditable());
         tablePart.setButtonEnabled(REMOVE_INDEX, isEditable() && selected.length > 0);
+    	tablePart.setButtonEnabled(PROPERTIES_INDEX, shouldEnableProperties(selected));  
         
-        if (selected.length == 0)
-        	tablePart.setButtonEnabled(PROPERTIES_INDEX, false);  
-        else if (selected.length == 1)
-        	tablePart.setButtonEnabled(PROPERTIES_INDEX, true);
-        else {
-        	String version = ((ExportPackageObject)selected[0]).getVersion();
-        	boolean enable = true;
-        	for (int i = 1; i < selected.length; i++) {
-        		ExportPackageObject object = (ExportPackageObject)selected[i];
-        		if (version == null) {
-        			if (object.getVersion() != null) {
-        				enable = false;
-        				break;
-        			}
-        		} else if (!version.equals(object.getVersion())) {
-        			enable = false;
-        			break;
-        		}
-        	}
-        	tablePart.setButtonEnabled(PROPERTIES_INDEX, enable);
-        }
     }
+	
+	private boolean shouldEnableProperties(Object[] selected) {
+		if (selected.length == 0)
+			return false;
+		if (selected.length == 1)
+			return true;
+
+		String version = ((ExportPackageObject) selected[0]).getVersion();
+		for (int i = 1; i < selected.length; i++) {
+			ExportPackageObject object = (ExportPackageObject) selected[i];
+			if (version == null) {
+				if (object.getVersion() != null) {
+					return false;
+				}
+			} else if (!version.equals(object.getVersion())) {
+				return false;
+			}
+		}
+		return true;
+	}
     
     protected void handleDoubleClick(IStructuredSelection selection) {
         handleOpenProperties();
@@ -380,7 +380,7 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
         manager.add(new Separator());
         manager.add(fRemoveAction);
 		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
-        if (!fPackageViewer.getSelection().isEmpty()) {
+        if (shouldEnableProperties(((IStructuredSelection)fPackageViewer.getSelection()).toArray())) {
             manager.add(new Separator());
             manager.add(fPropertiesAction);
         }
