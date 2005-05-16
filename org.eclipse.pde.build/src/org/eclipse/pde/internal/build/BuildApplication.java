@@ -7,6 +7,7 @@ import org.eclipse.core.runtime.*;
 public class BuildApplication implements IPlatformRunnable {
 
 	public Object run(Object args) throws Exception {
+		Platform.endSplash();
 		IPlatformRunnable antRunner = getAntRunner();
 		args = updateArgs((String[]) args);
 		return antRunner.run(args);
