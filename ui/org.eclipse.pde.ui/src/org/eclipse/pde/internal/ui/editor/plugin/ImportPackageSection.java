@@ -299,7 +299,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
         
         ExportPackageDescription[] packages = TargetPlatform.getState().getExportedPackages();
         for (int i = 0; i < packages.length; i++) {
-        	if (".".equals(packages[i].getName()))
+        	if (".".equals(packages[i].getName())) //$NON-NLS-1$
         		continue;
             String id = packages[i].getExporter().getSymbolicName();
             if (PDECore.getDefault().findPlugin(id) == null)

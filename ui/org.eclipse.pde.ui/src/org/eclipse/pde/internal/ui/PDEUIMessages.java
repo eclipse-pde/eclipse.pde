@@ -1949,4 +1949,8 @@ public class PDEUIMessages extends NLS {
 	public static String BaseImportWizardSecondPage_autobuild;
 
 	public static String CreateHelpIndexAction_creating;
+
+	public static String ExportPackageVisibilitySection_unconditional;
+
+	public static String ExportPackageSection_props;
 }

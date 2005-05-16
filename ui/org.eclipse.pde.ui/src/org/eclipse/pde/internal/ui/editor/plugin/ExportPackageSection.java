@@ -257,7 +257,7 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
         if (selected.length == 1)
         	dialog.setTitle(((ExportPackageObject)selected[0]).getName());
         else 
-        	dialog.setTitle("Properties");
+        	dialog.setTitle(PDEUIMessages.ExportPackageSection_props);
         if (dialog.open() == DependencyPropertiesDialog.OK && isEditable()) {
         	String newVersion = dialog.getVersion();
         	for (int i = 0; i < selected.length; i++) {

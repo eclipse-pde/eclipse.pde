@@ -63,11 +63,13 @@ public class ExportPackageVisibilitySection extends TableSection
     private boolean fBlockChanges;
     private ExportPackageObject[] fSelectedObjects;
     private Image fImage;
+	private Button fVisibleButton;
 	
 	class TableContentProvider extends DefaultContentProvider
 			implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
             ExportPackageObject object = (ExportPackageObject)parent;
+            if (!object.isInternal()) return new Object[0];
             return (object != null) ? object.getFriends() : new Object[0];
 		}
 	}
@@ -94,21 +96,24 @@ public class ExportPackageVisibilitySection extends TableSection
         section.setDescription(PDEUIMessages.ExportPackageVisibilitySection_default);
 		Composite comp = toolkit.createComposite(section);
         GridLayout layout = new GridLayout();
-        layout.verticalSpacing = 9;
+        layout.verticalSpacing = 5;
 		comp.setLayout(layout);
         
-        fInternalButton = toolkit.createButton(comp, PDEUIMessages.ExportPackageVisibilitySection_hideAll, SWT.CHECK);
+        fVisibleButton = toolkit.createButton(comp, PDEUIMessages.ExportPackageVisibilitySection_unconditional, SWT.RADIO);
+
+        fInternalButton = toolkit.createButton(comp, PDEUIMessages.ExportPackageVisibilitySection_hideAll, SWT.RADIO);
         fInternalButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {
                 if (!fBlockChanges) {
                 	for (int i = 0; i < fSelectedObjects.length; i++) {
                 		fSelectedObjects[i].setInternal(fInternalButton.getSelection());
                 	}
+                	getTablePart().setButtonEnabled(ADD_INDEX, fInternalButton.getSelection());
+                	getTablePart().setButtonEnabled(REMOVE_INDEX, fInternalButton.getSelection());
+                	fFriendViewer.refresh();
                 }
             }
         });
-        
-        toolkit.createLabel(comp, PDEUIMessages.ExportPackageVisibilitySection_hideOnly);
         
         Composite container = toolkit.createComposite(comp);
         container.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -259,12 +264,16 @@ public class ExportPackageVisibilitySection extends TableSection
     private void update(ExportPackageObject[] objects) {
         fBlockChanges = true;
         fSelectedObjects = objects;
-        boolean hasSelection = !fFriendViewer.getSelection().isEmpty();
+
         ExportPackageObject object = objects == null ? null : objects[0];
+        fVisibleButton.setEnabled(object != null && isEditable());
+        fVisibleButton.setSelection(fVisibleButton.getEnabled() && !object.isInternal());
+
         fInternalButton.setEnabled(object != null && isEditable());
-        fInternalButton.setSelection(object != null && object.isInternal());
-        getTablePart().setButtonEnabled(0, object != null && isEditable());
-        getTablePart().setButtonEnabled(1, object != null && isEditable() && hasSelection);
+        fInternalButton.setSelection(fInternalButton.getEnabled() && object.isInternal());
+        
+        getTablePart().setButtonEnabled(0, fInternalButton.getSelection());
+        getTablePart().setButtonEnabled(1, fInternalButton.getSelection());
         fFriendViewer.setInput(object);
         fBlockChanges = false;
     }

@@ -50,7 +50,10 @@ public class ExportPackageObject extends PackageObject {
 
     protected void appendSupportedAttributes(StringBuffer buffer) {
        super.appendSupportedAttributes(buffer);
-       if (fInternal) {
+       if (!fInternal)
+    	   return;
+       
+       if (fInternal && fFriends.size() == 0) {
            buffer.append(";"); //$NON-NLS-1$
            buffer.append(INTERNAL);
            buffer.append(":=true"); //$NON-NLS-1$
