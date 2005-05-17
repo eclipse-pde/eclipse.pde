@@ -98,6 +98,9 @@ public class NewSiteProjectCreationPage extends WizardNewProjectCreationPage {
 	}
 
 	public String getWebLocation(){
+		if (fWebButton == null)
+			return null;
+		
 		if (!fWebButton.getSelection())
 			return null;
 		
