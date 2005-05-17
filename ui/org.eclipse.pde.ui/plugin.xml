@@ -1121,7 +1121,7 @@
                  		<or>
                    			<test property="org.eclipse.debug.ui.matchesPattern" value="*.java"/>
                    			<test property="org.eclipse.debug.ui.matchesPattern" value="*.class"/>
-                   			<instanceof value="org.eclipse.jdt.core.IJavaElement"/>
+                   			<adapt type="org.eclipse.jdt.core.IJavaElement"/>
                  		</or>
                  		<test property="org.eclipse.debug.ui.projectNature" value="org.eclipse.pde.PluginNature"/>
                  		<test property="org.eclipse.jdt.junit.isTest"/>
@@ -1202,7 +1202,7 @@
                  <or>
                    <test property="org.eclipse.debug.ui.matchesPattern" value="*.java"/>
                    <test property="org.eclipse.debug.ui.matchesPattern" value="*.class"/>
-                   <instanceof value="org.eclipse.jdt.core.IJavaElement"/>
+                   <adapt type="org.eclipse.jdt.core.IJavaElement"/>
                  </or>
                  <test property="org.eclipse.jdt.debug.ui.hasMainType"/>
                </iterate>
