@@ -30,6 +30,7 @@ import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.IPluginModelListener;
@@ -303,7 +304,7 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 			return;
 		
 		String id = desc.getSymbolicName();
-		if (getProduct().containsPlugin(id) || !set.add(id))
+		if (!set.add(id))
 			return;
 
 		
@@ -318,9 +319,9 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 			}
 		}
 		
-		BundleDescription[] requires = desc.getResolvedRequires();
+		BundleSpecification[] requires = desc.getRequiredBundles();
 		for (int i = 0; i < requires.length; i++) {
-			addDependencies(requires[i], set);
+			addDependencies((BundleDescription)requires[i].getSupplier(), set);
 		}
 	}
 	
