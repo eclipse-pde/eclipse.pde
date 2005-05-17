@@ -100,7 +100,7 @@ public class ProductInfoSection extends PDESection {
 		fProductCombo.createControl(client, toolkit, SWT.READ_ONLY);
 		td = new TableWrapData(TableWrapData.FILL_GRAB);
 		td.valign = TableWrapData.MIDDLE;
-		td.maxWidth = 100;
+		td.maxWidth = 200;
 		fProductCombo.getControl().setLayoutData(td);
 		fProductCombo.setItems(TargetPlatform.getProductNames());
 		fProductCombo.add(""); //$NON-NLS-1$
