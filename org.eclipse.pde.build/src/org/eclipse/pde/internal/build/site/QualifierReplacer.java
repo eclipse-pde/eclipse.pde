@@ -16,7 +16,8 @@ import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 
 public class QualifierReplacer implements IBuildPropertiesConstants {
 	private static final String DOT_QUALIFIER = '.' + PROPERTY_QUALIFIER;
-
+	private static String globalQualifier = null;
+	
 	public static String replaceQualifierInVersion(String version, String id, String replaceTag, Properties newVersions) {
 		if (replaceTag == null)
 			return null;
@@ -26,7 +27,10 @@ public class QualifierReplacer implements IBuildPropertiesConstants {
 
 		String newQualifier = null;
 		if (replaceTag.equalsIgnoreCase(PROPERTY_CONTEXT)) {
-			if (newVersions.size() != 0) { //Skip the lookp in the file if there is no entries
+			if (globalQualifier != null)
+				newQualifier = globalQualifier;
+			
+			if (newQualifier == null && newVersions.size() != 0) { //Skip the lookup in the file if there is no entries
 				newQualifier = (String) newVersions.get(id);
 				if (newQualifier == null)
 					newQualifier = newVersions.getProperty(DEFAULT_MATCH_ALL);
@@ -59,5 +63,10 @@ public class QualifierReplacer implements IBuildPropertiesConstants {
 		String minute = (minuteNbr < 10 ? "0" : empty) + minuteNbr; //$NON-NLS-1$
 
 		return empty + Calendar.getInstance().get(Calendar.YEAR) + month + day + hour + minute; //$NON-NLS-1$
+	}
+
+	public static void setGlobalQualifier(String globalQualifier) {
+		if (globalQualifier.length() > 0 && globalQualifier.charAt(0)!='$')
+			QualifierReplacer.globalQualifier = globalQualifier;
 	}
 }

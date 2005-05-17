@@ -15,6 +15,7 @@ import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.site.BuildTimeSiteFactory;
+import org.eclipse.pde.internal.build.site.QualifierReplacer;
 
 /**
  * Generate build scripts for the listed elements. This is the implementation of the "eclipse.buildScript" Ant task.
@@ -187,5 +188,9 @@ public class BuildScriptGeneratorTask extends Task {
 	
 	public void setOutputUpdateJars(boolean value) {
 		AbstractScriptGenerator.setForceUpdateJar(value);
+	}
+	
+	public void setForceContextQualifier(String value) {
+		QualifierReplacer.setGlobalQualifier(value);
 	}
 }
