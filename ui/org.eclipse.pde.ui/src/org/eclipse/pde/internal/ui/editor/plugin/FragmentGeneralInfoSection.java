@@ -11,17 +11,21 @@
 package org.eclipse.pde.internal.ui.editor.plugin;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.plugin.IFragment;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
+import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.PluginSelectionDialog;
+import org.eclipse.pde.internal.ui.wizards.plugin.NewPluginProjectWizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -70,10 +74,31 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 				}
 			}
 			public void linkActivated(HyperlinkEvent e) {
+				String plugin = fPluginIdEntry.getValue();				
+				if (PDECore.getDefault().getModelManager().findPluginModel(
+						plugin) == null) {
+					createFragmentPlugin();
+				}
 				ManifestEditor.openPluginEditor(fPluginIdEntry.getValue());
 			}
 			public void browseButtonSelected(FormEntry entry) {
 				handleOpenDialog();
+			}
+			private void createFragmentPlugin() {
+				NewPluginProjectWizard wizard = new NewPluginProjectWizard();
+				WizardDialog dialog = new WizardDialog(PDEPlugin
+						.getActiveWorkbenchShell(), wizard);
+				dialog.create();
+				SWTUtil.setDialogSize(dialog, 400, 500);
+				if (dialog.open() == WizardDialog.OK) {
+					String plugin = wizard.getPluginId();
+					try {
+						((IFragment) getPluginBase()).setPluginId(plugin);
+						fPluginIdEntry.setValue(plugin, false);
+					} catch (CoreException ce) {
+						PDEPlugin.logException(ce);
+					}
+				}
 			}
 		});
 		fPluginIdEntry.setEditable(isEditable());		

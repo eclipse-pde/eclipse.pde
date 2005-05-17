@@ -16,9 +16,11 @@ import java.net.URL;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginModel;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.feature.FeatureImport;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureImport;
@@ -31,7 +33,9 @@ import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
+import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.PluginSelectionDialog;
+import org.eclipse.pde.internal.ui.wizards.plugin.NewPluginProjectWizard;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.RTFTransfer;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -288,10 +292,31 @@ public class FeatureSpecSection extends PDESection {
 				}
 			}
 			public void linkActivated(HyperlinkEvent e) {
+				String plugin = fPluginText.getValue();
+				if (PDECore.getDefault().getModelManager().findPluginModel(
+						plugin) == null) {
+					createFeaturePlugin();
+				}
 				ManifestEditor.openPluginEditor(fPluginText.getValue());
 			}
 			public void browseButtonSelected(FormEntry entry) {
 				handleOpenDialog();
+			}
+			private void createFeaturePlugin() {
+				NewPluginProjectWizard wizard = new NewPluginProjectWizard();
+				WizardDialog dialog = new WizardDialog(PDEPlugin
+						.getActiveWorkbenchShell(), wizard);
+				dialog.create();
+				SWTUtil.setDialogSize(dialog, 400, 500);
+				if (dialog.open() == WizardDialog.OK) {
+					String plugin = wizard.getPluginId();
+					try {
+						feature.setPlugin(plugin);
+						fPluginText.setValue(plugin, false);
+					} catch (CoreException ce) {
+						PDEPlugin.logException(ce);
+					}
+				}
 			}
 		});
 
