@@ -92,7 +92,26 @@ public class SWTApplicationLaunchShortcut implements ILaunchShortcut {
 							element= type;
 						}
 					}
-					list.add(element);
+					// for projects consider only src and not external libs
+					if (element instanceof IJavaProject) {
+						IJavaProject project = (IJavaProject) element;
+						try {
+							IClasspathEntry[] cpEntries = project
+									.getRawClasspath();
+							for (int j = 0; j < cpEntries.length; j++) {
+								if (cpEntries[j].getEntryKind() == IClasspathEntry.CPE_SOURCE
+										|| cpEntries[j].getEntryKind() == IClasspathEntry.CPE_LIBRARY) {
+									IPackageFragmentRoot[] roots = project.findPackageFragmentRoots(cpEntries[j]);
+									for(int r=0; r< roots.length; r++){
+										list.add(roots[r]);
+									}
+								}
+							}
+						} catch (JavaModelException jme) {
+						}
+					} else {
+						list.add(element);
+					}
 				}
 			}
 		}
