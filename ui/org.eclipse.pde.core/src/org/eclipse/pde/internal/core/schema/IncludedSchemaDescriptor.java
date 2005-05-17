@@ -56,8 +56,13 @@ public class IncludedSchemaDescriptor implements ISchemaDescriptor {
 		}
 		URL url = null;
 		try {
-			if (file != null && file.exists() && file.isFile())
+			if (file != null && file.exists() && file.isFile()) {
 				url = file.toURL();
+			} else {
+				file = new File("../" + pluginID, path.toString());
+				if (file.exists() && file.isFile())
+					url = file.toURL();
+			}
 		} catch (MalformedURLException e) {
 		}
 		return url;
