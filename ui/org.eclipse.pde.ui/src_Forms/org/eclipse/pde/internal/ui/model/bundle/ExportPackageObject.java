@@ -30,8 +30,8 @@ public class ExportPackageObject extends PackageObject {
      
     public ExportPackageObject(ManifestHeader header, ManifestElement element, String versionAttribute) {
         super(header, element, versionAttribute);
-        fInternal = "true".equals(element.getDirective(INTERNAL)); //$NON-NLS-1$
         processFriends(element.getDirective(FRIENDS));
+        fInternal = "true".equals(element.getDirective(INTERNAL)) || fFriends.size() > 0; //$NON-NLS-1$
     }
     
     public ExportPackageObject(ManifestHeader header, IPackageFragment fragment, String versionAttribute) {
