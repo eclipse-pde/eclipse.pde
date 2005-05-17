@@ -485,7 +485,7 @@
             id="org.eclipse.pde.ui.manifestEditor">
             <contentTypeBinding contentTypeId="org.eclipse.pde.pluginManifest"/>
             <contentTypeBinding contentTypeId="org.eclipse.pde.fragmentManifest"/>
-            <contentTypeBinding contentTypeId="org.eclipse.jdt.core.JARManifest"/>            
+            <contentTypeBinding contentTypeId="org.eclipse.pde.bundleManifest"/>            
       </editor>
       <editor
             default="true"
