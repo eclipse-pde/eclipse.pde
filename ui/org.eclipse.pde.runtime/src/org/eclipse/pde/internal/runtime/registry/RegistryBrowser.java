@@ -44,18 +44,18 @@ IRegistryChangeListener {
 	private Action collapseAllAction;
 	private Action[] toggleViewAction;
 	private DrillDownAdapter drillDownAdapter;
-	
-	//attributes view
-	private SashForm fSashForm;
-	private Label fPropertyLabel;
-	private Label fPropertyImage;
-	private PropertySheetPage fPropertySheet;
-	
+
 	// title bar
 	private Label titleLabel;
 	
-	// single-pane control
+	//attributes view
+	private SashForm fSashForm;
+	private PropertySheetPage fPropertySheet;
+	
+	// parent composite
 	private Composite mainView;
+	// tree view composite
+	private Composite treeView;
 	
 	/*
 	 * customized DrillDownAdapter which modifies enabled state of showing active/inactive
@@ -116,14 +116,16 @@ IRegistryChangeListener {
 	}
 	
 	public void createPartControl(Composite parent) {
-		// create the sash form that will contain the tree viewer & text viewer
-		fSashForm = new SashForm(parent, SWT.HORIZONTAL);
-		fSashForm.setLayout(new GridLayout());
-		fSashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
-		setSashForm(fSashForm);
+		mainView = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = layout.marginWidth = 0;
+		mainView.setLayout(layout);
+		mainView.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		
+		createLabel(mainView); // create lable
+		createSashForm(mainView); // create the sashform that will contain the tree viewer & text viewer
+		
 		makeActions();
-		createTreeViewer();
-		createAttributesViewer();
 		fillToolBar();
 		treeViewer.refresh();
 		setViewOrientation(orientation);
@@ -132,27 +134,40 @@ IRegistryChangeListener {
 		Platform.getExtensionRegistry().addRegistryChangeListener(this);
 		PDERuntimePlugin.getDefault().getBundleContext().addBundleListener(this);
 	}
-	private void createTreeViewer() {
-		mainView = new Composite(getSashForm(), SWT.NONE);
+	
+	private void createLabel(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = layout.marginHeight = 3;
+		composite.setLayout(layout);
+		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		titleLabel = new Label(composite, SWT.NONE);
+		titleLabel.setLayoutData(new GridData(GridData.FILL));
+	}
+	
+	private void createSashForm(Composite parent) {
+		fSashForm = new SashForm(parent, SWT.HORIZONTAL);
+		fSashForm.setLayout(new GridLayout());
+		fSashForm.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		createTreeViewer(fSashForm);
+		createAttributesViewer(fSashForm);
+	}
+	
+	private void createTreeViewer(Composite parent) {
+		treeView = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = layout.marginWidth = 0;
-		mainView.setLayout(layout);
-		mainView.setLayoutData(new GridData(GridData.FILL_BOTH));
+		treeView.setLayout(layout);
+		treeView.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		// create title bar with filter information
-		titleLabel = new Label(mainView, SWT.NONE);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.heightHint = 15;
-		titleLabel.setLayoutData(gd);
-		
-		Tree tree = new Tree(mainView, SWT.FLAT);
-		gd = new GridData(GridData.FILL_BOTH);
+		Tree tree = new Tree(treeView, SWT.FLAT);
+		GridData gd = new GridData(GridData.FILL_BOTH);
 		tree.setLayoutData(gd);
 		treeViewer = new TreeViewer(tree);
 		boolean showRunning = memento.getString(SHOW_RUNNING_PLUGINS).equals("true") ? true : false; //$NON-NLS-1$
 		treeViewer.setContentProvider(new RegistryBrowserContentProvider(treeViewer, showRunning));
-		treeViewer
-		.setLabelProvider(new RegistryBrowserLabelProvider(treeViewer));
+		treeViewer.setLabelProvider(new RegistryBrowserLabelProvider(treeViewer));
 		treeViewer.setUseHashlookup(true);
 		treeViewer.setSorter(new ViewerSorter() {
 		});
@@ -194,8 +209,8 @@ IRegistryChangeListener {
 	/* 
 	 * add attributes viewer 
 	 */
-	protected void createAttributesViewer() {
-		Composite composite = new Composite(getSashForm(), SWT.FLAT);
+	protected void createAttributesViewer(Composite parent) {
+		Composite composite = new Composite(parent, SWT.FLAT);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = layout.marginHeight = 0;
 		layout.numColumns = 2;
@@ -203,16 +218,6 @@ IRegistryChangeListener {
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		fPropertyImage = new Label(composite, SWT.NONE);
-		GridData gd = new GridData(GridData.FILL);
-		gd.heightHint = 15; 
-		gd.widthHint = 20;
-		fPropertyImage.setLayoutData(gd);
-		
-		fPropertyLabel = new Label(composite, SWT.NULL);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.heightHint = 15;
-		fPropertyLabel.setLayoutData(gd);
 		createPropertySheet(composite);
 	}	
 	/*
@@ -258,9 +263,7 @@ IRegistryChangeListener {
 	public TreeViewer getTreeViewer() {
 		return treeViewer;
 	}
-	protected SashForm getSashForm() {
-		return fSashForm;
-	}
+	
 	public void saveState(IMemento memento) {
 		if (memento == null || this.memento == null || treeViewer == null)
 			return;
@@ -275,10 +278,6 @@ IRegistryChangeListener {
 	}
 	
 	public void updateAttributesView(Object selection) {
-		fPropertyImage.setImage(((RegistryBrowserLabelProvider) treeViewer
-				.getLabelProvider()).getImage(selection));
-		fPropertyLabel.setText(((RegistryBrowserLabelProvider) treeViewer
-				.getLabelProvider()).getText(selection));
 		if (selection != null)
 			fPropertySheet.selectionChanged(null, new StructuredSelection(
 					selection));
@@ -287,9 +286,6 @@ IRegistryChangeListener {
 					new Object()));
 	}
 	
-	private void setSashForm(SashForm sashForm) {
-		fSashForm = sashForm;
-	}
 	public void setFocus() {
 	}
 	
@@ -341,8 +337,7 @@ IRegistryChangeListener {
 				for (int i = 0; i < deltas.length; i++) {
 					IExtension ext = deltas[i].getExtension();
 					IExtensionPoint extPoint = deltas[i].getExtensionPoint();
-					IPluginDescriptor descriptor = extPoint
-					.getDeclaringPluginDescriptor();
+					IPluginDescriptor descriptor = extPoint.getDeclaringPluginDescriptor();
 					PluginObjectAdapter adapter = new PluginObjectAdapter(
 							descriptor);
 					if (deltas[i].getKind() == IExtensionDelta.ADDED) {
@@ -424,16 +419,16 @@ IRegistryChangeListener {
 	}
 	
 	public void setViewOrientation(int viewOrientation){
-		setLastSashWeights(getSashForm().getWeights());
+		setLastSashWeights(fSashForm.getWeights());
 		if (viewOrientation == SINGLE_PANE_ORIENTATION){
-			getSashForm().setMaximizedControl(mainView);
+			fSashForm.setMaximizedControl(treeView);
 		} else {
 			if (viewOrientation == VERTICAL_ORIENTATION)
-				getSashForm().setOrientation(SWT.VERTICAL);
+				fSashForm.setOrientation(SWT.VERTICAL);
 			else
-				getSashForm().setOrientation(SWT.HORIZONTAL);
-			getSashForm().setMaximizedControl(null);
-			getSashForm().setWeights(getLastSashWeights(viewOrientation));
+				fSashForm.setOrientation(SWT.HORIZONTAL);
+			fSashForm.setMaximizedControl(null);
+			fSashForm.setWeights(getLastSashWeights(viewOrientation));
 		}
 		orientation = viewOrientation;
 	}
