@@ -214,7 +214,13 @@
 		    name="%buildPropertiesName" 
 		    base-type="org.eclipse.jdt.core.javaProperties"
 		    priority="high"
-		    file-names="build.properties"/>   
+		    file-names="build.properties"/>
+      <content-type 
+		    id="bundleManifest" 
+		    name="%bundleManifest" 
+		    base-type="org.eclipse.jdt.core.JARManifest"
+		    priority="high"
+            describer="org.eclipse.pde.internal.content.BundleManifestDescriber"/>
     </extension>
    
 </plugin>

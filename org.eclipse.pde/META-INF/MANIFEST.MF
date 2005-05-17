@@ -7,6 +7,7 @@ Bundle-Activator: org.eclipse.pde.internal.PDE
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.pde.internal;x-friends:="org.eclipse.pde.ui",
+ org.eclipse.pde.internal.content;x-internal:=true,
  org.eclipse.pde.internal.builders;x-friends:="org.eclipse.pde.ui"
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.pde.core;visibility:=reexport,
@@ -17,4 +18,4 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.filebuffers,
  org.eclipse.ui.intro;resolution:=optional,
  org.eclipse.ui.cheatsheets;resolution:=optional
-Eclipse-AutoStart: true
+Eclipse-AutoStart: true;exceptions="org.eclipse.pde.internal.content"
