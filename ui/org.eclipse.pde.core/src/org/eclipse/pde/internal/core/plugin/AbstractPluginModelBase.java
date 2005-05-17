@@ -16,6 +16,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.parsers.SAXParser;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.IModelChangedEvent;
@@ -45,6 +47,7 @@ public abstract class AbstractPluginModelBase
 	protected PluginBase fPluginBase;
 	private boolean enabled;
 	private BundleDescription fBundleDescription;
+	protected boolean fAbbreviated;
 	
 	public AbstractPluginModelBase() {
 		super();
@@ -75,6 +78,25 @@ public abstract class AbstractPluginModelBase
 			setLoaded(true);
 		}
 		return fPluginBase;
+	}
+	
+	public void load(InputStream stream, boolean outOfSync) throws CoreException {
+		if (fPluginBase == null) {
+			fPluginBase = (PluginBase) createPluginBase();
+			fPluginBase.setModel(this);
+		}
+		fPluginBase.reset();
+		setLoaded(false);
+		try {
+			SAXParser parser = getSaxParser();
+			PluginHandler handler = new PluginHandler(fAbbreviated);
+			parser.parse(stream, handler);
+			fPluginBase.load(handler.getDocumentElement(), handler.getSchemaVersion());
+			setLoaded(true);
+			if (!outOfSync)
+				updateTimeStamp();
+		} catch (Exception e) {
+		}
 	}
 	
 	public void load(BundleDescription description, PDEState state, boolean ignoreExtensions) {

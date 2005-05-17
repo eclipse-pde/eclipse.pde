@@ -11,11 +11,9 @@
 package org.eclipse.pde.internal.core.plugin;
 
 import java.io.File;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -58,9 +56,6 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 	}
 	
 	public void load() {
-	}
-	
-	public void load(InputStream source, boolean outOfSync) throws CoreException {
 	}
 	
 	public void load(BundleDescription description, PDEState state, boolean ignoreExtensions) {

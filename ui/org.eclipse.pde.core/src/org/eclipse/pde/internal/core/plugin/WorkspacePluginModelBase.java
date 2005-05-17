@@ -18,8 +18,6 @@ import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import javax.xml.parsers.SAXParser;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -40,8 +38,6 @@ public abstract class WorkspacePluginModelBase extends AbstractPluginModelBase
 	private boolean fEditable = true;
 
 	private IBuildModel fBuildModel;
-
-	private boolean fAbbreviated;
 
 	protected NLResourceHelper createNLResourceHelper() {
 		return new NLResourceHelper("plugin" ,getNLLookupLocations()); //$NON-NLS-1$
@@ -70,27 +66,6 @@ public abstract class WorkspacePluginModelBase extends AbstractPluginModelBase
 		return fBuildModel;
 	}
 	
-	public void load(InputStream stream, boolean outOfSync)
-			throws CoreException {
-
-		if (fPluginBase == null) {
-			fPluginBase = (PluginBase) createPluginBase();
-			fPluginBase.setModel(this);
-		}
-		fPluginBase.reset();
-		setLoaded(false);
-		try {
-			SAXParser parser = getSaxParser();
-			PluginHandler handler = new PluginHandler(fAbbreviated);
-			parser.parse(stream, handler);
-			fPluginBase.load(handler.getDocumentElement(), handler.getSchemaVersion());
-			setLoaded(true);
-			if (!outOfSync)
-				updateTimeStamp();
-		} catch (Exception e) {
-		}
-	}
-
 	public String getContents() {
 		StringWriter swriter = new StringWriter();
 		PrintWriter writer = new PrintWriter(swriter);
