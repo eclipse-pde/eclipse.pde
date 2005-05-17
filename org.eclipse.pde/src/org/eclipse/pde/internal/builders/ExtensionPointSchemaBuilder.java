@@ -93,7 +93,6 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 
 				SchemaDescriptor desc = new SchemaDescriptor(file, false);
 				Schema schema = (Schema)desc.getSchema(false);
-				schema.traverseDocumentTree(reporter.getDocumentRoot());
 				
 				SchemaTransformer transformer = new SchemaTransformer();
 				transformer.transform(schema, writer);
