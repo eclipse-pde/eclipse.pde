@@ -1236,19 +1236,27 @@
          <description>
             %decorator.desc
          </description>
-         <enablement>
+        <enablement>
             <and>
                <objectClass
                      name="org.eclipse.core.resources.IProject">
                </objectClass>
                <or>
-                 <objectState
-                       name="persistentProperty"
-                       value="org.eclipse.pde.core.imported = binary">
-                 </objectState>
-                 <objectState
-                       name="persistentProperty"
-                       value="org.eclipse.pde.core.imported = external">
+                  <and>
+                     <objectState
+                           name="persistentProperty"
+                           value="org.eclipse.pde.core.imported = binary">
+                     </objectState>
+                     <not>
+                        <objectState
+                              name="sessionProperty"
+                              value="org.eclipse.team.core.repository">
+                        </objectState>
+                     </not>
+                  </and>
+                  <objectState
+                        name="persistentProperty"
+                        value="org.eclipse.pde.core.imported = external">
                   </objectState>
                </or>
             </and>
