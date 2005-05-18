@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.iproduct.*;
@@ -49,8 +50,9 @@ public class SynchronizationOperation extends ProductDefinitionOperation {
 		}
 		
 		if (model.getUnderlyingResource() == null) {
+			String id = model.getPluginBase().getId();
 			String message = PDEUIMessages.SynchronizationOperation_externalPlugin; //$NON-NLS-1$
-			throw new InvocationTargetException(createCoreException(message));
+			throw new InvocationTargetException(createCoreException(NLS.bind(message, id)));
 		}
 		
 		super.run(monitor);	
