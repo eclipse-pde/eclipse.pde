@@ -125,7 +125,7 @@ public class PluginContentPage extends ContentPage {
 				fClassLabel.setEnabled(fGenerateClass.getSelection());
 				fClassText.setEnabled(fGenerateClass.getSelection());
 				fUIPlugin.setEnabled(fGenerateClass.getSelection());
-				fRCPGroup.setVisible(!fGenerateClass.getSelection() || fUIPlugin.getSelection());
+				fRCPGroup.setVisible(!fData.isLegacy() && (!fGenerateClass.getSelection() || fUIPlugin.getSelection()));
 				updateData();
 				validatePage();
 			}
@@ -147,7 +147,7 @@ public class PluginContentPage extends ContentPage {
 		fUIPlugin.setLayoutData(gd);
 		fUIPlugin.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				fRCPGroup.setVisible(fUIPlugin.getSelection());
+				fRCPGroup.setVisible(!fData.isLegacy() && fUIPlugin.getSelection());
 				updateData();
 				validatePage();
 			}
