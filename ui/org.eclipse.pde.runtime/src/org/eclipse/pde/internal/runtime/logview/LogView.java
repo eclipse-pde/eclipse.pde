@@ -555,14 +555,11 @@ public class LogView extends ViewPart implements ILogListener {
     }
 
     private void readLogFile() {
-        fLogs.clear();
-        if (!fInputFile.exists())
-            return;
-        if (fInputFile.length() > LogReader.MAX_FILE_LENGTH)
-            LogReader.parseLargeFile(fInputFile, fLogs, fMemento);
-        else
-            LogReader.parseLogFile(fInputFile, fLogs, fMemento);
-    }
+		fLogs.clear();
+		if (!fInputFile.exists())
+			return;
+		LogReader.parseLogFile(fInputFile, fLogs, fMemento);
+	}
 
     public void logging(IStatus status, String plugin) {
         if (!fInputFile.equals(Platform.getLogFileLocation().toFile()))
