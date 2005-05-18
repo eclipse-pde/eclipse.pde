@@ -922,7 +922,7 @@ public class PluginsView extends ViewPart {
 	 * @see IWorkbenchPart#setFocus()
 	 */
 	public void setFocus() {
-		//treeViewer.getTree().setFocus();
+		treeViewer.getTree().setFocus();
 	}
 	void updateTitle(Object newInput) {
 		IConfigurationElement config = getConfigurationElement();
