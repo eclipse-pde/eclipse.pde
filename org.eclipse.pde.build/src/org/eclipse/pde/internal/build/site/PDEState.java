@@ -28,14 +28,15 @@ import org.osgi.framework.*;
 public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	private static final String PROFILE_EXTENSION = ".profile"; //$NON-NLS-1$
 	private static final String SYSTEM_PACKAGES = "org.osgi.framework.system.packages"; //$NON-NLS-1$
-	
+
 	private StateObjectFactory factory;
 	protected State state;
 	private long id;
 	private Properties repositoryVersions;
 	private HashMap bundleClasspaths;
 	private List addedBundle;
-	
+	private List unqualifiedBundles; //All the bundle description objects that have .qualifier in them 
+
 	private String javaProfile;
 	private String[] javaProfiles;
 
@@ -50,8 +51,10 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		id = initialState.getNextId();
 		bundleClasspaths = initialState.getExtraData();
 		addedBundle = new ArrayList();
+		unqualifiedBundles = new ArrayList();
+		forceQualifiers();
 	}
-	
+
 	public PDEState() {
 		factory = Platform.getPlatformAdmin().getFactory();
 		state = factory.createState();
@@ -479,23 +482,28 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	public List getSortedBundles() {
 		return Utils.computePrerequisiteOrder(Arrays.asList(getState().getResolvedBundles()));
 	}
-	
+
 	public void cleanupOriginalState() {
-		if (addedBundle == null)
+		if (addedBundle == null && unqualifiedBundles == null)
 			return;
-		
+
 		for (Iterator iter = addedBundle.iterator(); iter.hasNext();) {
 			BundleDescription added = (BundleDescription) iter.next();
 			state.removeBundle(added);
 		}
-		
+
+		for (Iterator iter = unqualifiedBundles.iterator(); iter.hasNext();) {
+			BundleDescription toAddBack = (BundleDescription) iter.next();
+			state.removeBundle(toAddBack.getBundleId());
+			state.addBundle(toAddBack);
+		}
+
 		BundleDescription[] allBundles = state.getBundles();
 		for (int i = 0; i < allBundles.length; i++) {
 			allBundles[i].setUserObject(null);
 		}
 		state.resolve();
 	}
-	
 
 	private File getOSGiLocation() {
 		BundleDescription osgiBundle = state.getBundle("org.eclipse.osgi", null); //$NON-NLS-1$
@@ -596,4 +604,26 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		return null;
 	}
 
+	//Replace the version numbers that ends with .qualifier
+	private void forceQualifiers() {
+		BundleDescription[] resolvedBundles = state.getResolvedBundles(); //We only get the resolved bundles since, changing the qualifier should not change the resolution state 
+		for (int i = 0; i < resolvedBundles.length; i++) {
+			if (resolvedBundles[i].getVersion().getQualifier().equals(PROPERTY_QUALIFIER)) {
+				BundleDescription b = resolvedBundles[i];
+				String qualifierInfo;
+				try {
+					qualifierInfo = AbstractScriptGenerator.readProperties(b.getLocation(), IPDEBuildConstants.PROPERTIES_FILE, IStatus.INFO).getProperty(PROPERTY_QUALIFIER);
+				} catch (CoreException e) {
+					continue;
+				}
+				unqualifiedBundles.add(state.removeBundle(b.getBundleId())); //We keep the removed bundle so we can reinsert it in the state when we are done
+				String newVersion = QualifierReplacer.replaceQualifierInVersion(b.getVersion().toString(), b.getSymbolicName(), qualifierInfo, null);
+				
+				//Here it is important to reuse the same bundle id than the bundle we are removing so that we don't loose the information about the classpath
+				BundleDescription newBundle = state.getFactory().createBundleDescription(b.getBundleId(), b.getSymbolicName(), new Version(newVersion), b.getLocation(), b.getRequiredBundles(), b.getHost(), b.getImportPackages(), b.getExportPackages(), null, b.isSingleton());
+				state.addBundle(newBundle);
+			}
+		}
+		state.resolve();
+	}
 }

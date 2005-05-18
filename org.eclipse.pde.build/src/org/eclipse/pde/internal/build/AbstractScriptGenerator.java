@@ -283,7 +283,6 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	}
 	
 	protected void flushState() {
-		ensurePDEUIStateNotNull();
 		pdeUIState = null;
 	}
 	

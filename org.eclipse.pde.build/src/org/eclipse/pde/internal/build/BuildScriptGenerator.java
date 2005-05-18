@@ -70,6 +70,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		// it is only for the building of a single plugin
 		generateModels(plugins);
 		generateFeatures(features);
+		flushState();
 	}
 
 	/**
@@ -93,16 +94,22 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	 * @throws CoreException
 	 */
 	protected void generateModels(List models) throws CoreException {
-		for (Iterator iterator = models.iterator(); iterator.hasNext();) {
-			ModelBuildScriptGenerator generator = new ModelBuildScriptGenerator();
-			generator.setReportResolutionErrors(reportResolutionErrors);
-			generator.setIgnoreMissingPropertiesFile(ignoreMissingPropertiesFile);
-			//Filtering is not required here, since we are only generating the
-			// build for a plugin or a fragment
-			String model = (String) iterator.next();
-			generator.setModelId(model);
-			generator.setSignJars(signJars);
-			generator.generate();
+		ModelBuildScriptGenerator generator = null;
+		try {
+			for (Iterator iterator = models.iterator(); iterator.hasNext();) {
+				generator = new ModelBuildScriptGenerator();
+				generator.setReportResolutionErrors(reportResolutionErrors);
+				generator.setIgnoreMissingPropertiesFile(ignoreMissingPropertiesFile);
+				//Filtering is not required here, since we are only generating the
+				// build for a plugin or a fragment
+				String model = (String) iterator.next();
+				generator.setModelId(model);
+				generator.setSignJars(signJars);
+				generator.generate();
+			}
+		} finally {
+			if (generator != null)
+				generator.getSite(false).getRegistry().cleanupOriginalState();
 		}
 	}
 
@@ -161,12 +168,9 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 
 				generatePackageScripts(assemblageInformation, featureInfo, generator.siteFactory);
 			}
-		} catch (CoreException ce) {
-			throw ce;
 		} finally {
 			if (generator != null)
 				generator.getSite(false).getRegistry().cleanupOriginalState();
-			flushState();
 		}
 	}
 
