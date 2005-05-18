@@ -59,14 +59,16 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 			// compile is, and a existing installation of eclipse
 			BuildTimeSiteContentProvider contentProvider = (BuildTimeSiteContentProvider) getSiteContentProvider();
 
+			if (contentProvider.getInitialState() != null) {
+				state = new PDEState(contentProvider.getInitialState());
+				return state;
+			}
+			
 			if (AbstractScriptGenerator.isBuildingOSGi()) {
-				if (contentProvider.getInitialState() != null)
-					state = new PDEState(contentProvider.getInitialState());
-				else 
-					state = new PDEState();
-			} else
+				state = new PDEState(); 
+			} else {
 				state = new PluginRegistryConverter();
-
+			}
 			state.addBundles(contentProvider.getPluginPaths());
 
 			state.resolveState();
