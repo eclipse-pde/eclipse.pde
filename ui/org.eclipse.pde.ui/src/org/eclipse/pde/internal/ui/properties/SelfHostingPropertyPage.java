@@ -180,11 +180,12 @@ public class SelfHostingPropertyPage extends PropertyPage {
 				pref.put(PDECore.SELFHOSTING_BIN_EXLCUDES, buffer.toString());
 			else
 				pref.remove(PDECore.SELFHOSTING_BIN_EXLCUDES);
-		}
-		try {
-			pref.flush();
-		} catch (BackingStoreException e) {
-			PDEPlugin.logException(e);
+			
+			try {
+				pref.flush();
+			} catch (BackingStoreException e) {
+				PDEPlugin.logException(e);
+			}
 		}
 		return super.performOk();
 	}

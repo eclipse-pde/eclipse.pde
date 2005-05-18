@@ -46,12 +46,12 @@ public class SiteEditor extends MultiSourceEditor {
 		String name = file.getName().toLowerCase();
 		if (name.equals("site.xml")) { //$NON-NLS-1$
 			siteFile = file;
+			if (siteFile.exists()) {
+				IEditorInput in = new FileEditorInput(siteFile);
+				manager.putContext(in, new SiteInputContext(this, in, file==siteFile));
+			}
+			manager.monitorFile(siteFile);
 		}
-		if (siteFile.exists()) {
-			IEditorInput in = new FileEditorInput(siteFile);
-			manager.putContext(in, new SiteInputContext(this, in, file==siteFile));
-		}
-		manager.monitorFile(siteFile);
 	}
 	
 	protected InputContextManager createInputContextManager() {
@@ -110,11 +110,11 @@ public class SiteEditor extends MultiSourceEditor {
 		String name = file.getName().toLowerCase();
 		if (name.equals("site.xml")) { //$NON-NLS-1$
 			siteFile = file;
-		}
-		if (siteFile.exists()) {
-			IEditorInput in = new SystemFileEditorInput(siteFile);
-			manager.putContext(in, new SiteInputContext(this, in,
-					file == siteFile));
+			if (siteFile.exists()) {
+				IEditorInput in = new SystemFileEditorInput(siteFile);
+				manager.putContext(in, new SiteInputContext(this, in,
+						file == siteFile));
+			}
 		}
 	}
 
