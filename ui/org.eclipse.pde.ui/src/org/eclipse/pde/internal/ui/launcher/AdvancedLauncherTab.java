@@ -814,10 +814,16 @@ public class AdvancedLauncherTab
 				fProductID = config.getAttribute(PRODUCT, (String)null);
 				fApplicationID = null;
 			} else {
+				String appToRun = config.getAttribute(APPLICATION, LauncherUtils.getDefaultApplicationName());
 				if (fUseFeaturesRadio != null)
-					fApplicationID = config.getAttribute(APPLICATION, LauncherUtils.getDefaultApplicationName());
-				else
-					fApplicationID = config.getAttribute(APP_TO_TEST, LauncherUtils.getDefaultApplicationName());					
+					fApplicationID = appToRun;
+				else {
+					if(JUnitLaunchConfiguration.CORE_APPLICATION.equals(appToRun)){
+						fApplicationID = null;
+					} else {
+						fApplicationID = config.getAttribute(APP_TO_TEST, LauncherUtils.getDefaultApplicationName());
+					}
+				}
 				fProductID = null;
 			}
 		} catch (CoreException e) {
