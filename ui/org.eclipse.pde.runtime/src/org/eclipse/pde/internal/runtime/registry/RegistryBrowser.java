@@ -287,6 +287,7 @@ IRegistryChangeListener {
 	}
 	
 	public void setFocus() {
+		treeViewer.getTree().setFocus();
 	}
 	
 	/*
