@@ -302,7 +302,6 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		} else {
 			schemaFile.setContents(source, true, false, monitor);
 		}
-		monitor.done();
 		IDE.setDefaultEditor(schemaFile, IPDEUIConstants.SCHEMA_EDITOR_ID);
 		return schemaFile;
 	}

@@ -174,7 +174,7 @@ public class LogView extends ViewPart implements ILogListener {
         };
         popupMenuManager.addMenuListener(listener);
         popupMenuManager.setRemoveAllWhenShown(true);
-	getSite().registerContextMenu(popupMenuManager, getSite().getSelectionProvider());
+        getSite().registerContextMenu(popupMenuManager, getSite().getSelectionProvider());
         Menu menu = popupMenuManager.createContextMenu(fTree);
         fTree.setMenu(menu);
     }
@@ -507,7 +507,7 @@ public class LogView extends ViewPart implements ILogListener {
     	if (!MessageDialog.openConfirm(fTree.getShell(), title,
     			message))
     		return;
-    	if (fInputFile.delete()) {
+    	if (fInputFile.delete() || fLogs.size() > 0) {
     		fLogs.clear();
             asyncRefresh(false);
             resetDialogButtons();

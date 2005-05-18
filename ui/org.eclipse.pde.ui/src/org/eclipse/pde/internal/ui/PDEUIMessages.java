@@ -1135,7 +1135,6 @@ public class PDEUIMessages extends NLS {
 	public static String ViewTemplate_pulldown;
 	public static String ViewTemplate_sorting;
 	public static String ViewTemplate_filtering;
-	public static String ViewTemplate_drilldown;
 	public static String ViewTemplate_addToPerspective;
 
 	public static String HelpTemplate_title;

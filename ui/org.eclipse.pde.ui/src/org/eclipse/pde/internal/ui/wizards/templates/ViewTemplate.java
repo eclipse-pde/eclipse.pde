@@ -63,8 +63,6 @@ public class ViewTemplate extends PDETemplateSection {
 		addOption("localPulldown", PDEUIMessages.ViewTemplate_pulldown, true, 1); //$NON-NLS-1$
 		addOption("sorter", PDEUIMessages.ViewTemplate_sorting, true, 1); //$NON-NLS-1$
 		//addOption("filter", PDEPlugin.getResourceString(NL_FILTER), true, lists[1]);
-		addOption("drillDown", PDEUIMessages.ViewTemplate_drilldown, true, 1); //$NON-NLS-1$
-		setOptionEnabled("drillDown", false); //$NON-NLS-1$
 	}
 
 	protected void initializeFields(IFieldData data) {
@@ -100,8 +98,6 @@ public class ViewTemplate extends PDETemplateSection {
 	}
 
 	public void validateOptions(TemplateOption source) {
-		String viewType = getValue("viewType").toString(); //$NON-NLS-1$
-		setOptionEnabled("drillDown", viewType.equals("treeViewer")); //$NON-NLS-1$ //$NON-NLS-2$
 		if (source.isRequired() && source.isEmpty()) {
 			flagMissingRequiredOption(source);
 		} else {
