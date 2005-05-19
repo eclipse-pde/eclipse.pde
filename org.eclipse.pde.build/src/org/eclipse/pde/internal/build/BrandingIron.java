@@ -29,7 +29,7 @@ public class BrandingIron implements IXMLConstants {
 	}
 
 	public void setIcons(String value) {
-		icons = value.split(","); //$NON-NLS-1$
+		icons = value.split(", "); //$NON-NLS-1$
 	}
 
 	public void setRoot(String value) {
